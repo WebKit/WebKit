@@ -31,6 +31,7 @@
 #include "HTMLMediaElement.h"
 #include "MediaControlElements.h"
 #include "MediaControls.h"
+#include "RenderView.h"
 
 namespace WebCore {
 
@@ -80,17 +81,24 @@ void RenderMedia::layout()
     if (!controlsRenderer)
         return;
     IntSize newSize = contentBoxRect().size();
-    if (newSize != oldSize || controlsRenderer->needsLayout()) {
+    if (newSize == oldSize && !controlsRenderer->needsLayout())
+        return;
 
-        m_controls->updateTimeDisplayVisibility();
+    // When calling layout() on a child node, a parent must either push a LayoutStateMaintainter, or 
+    // call view()->disableLayoutState().  Since using a LayoutStateMaintainer is slightly more efficient,
+    // and this method will be called many times per second during playback, use a LayoutStateMaintainer:
+    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
 
-        controlsRenderer->setLocation(borderLeft() + paddingLeft(), borderTop() + paddingTop());
-        controlsRenderer->style()->setHeight(Length(newSize.height(), Fixed));
-        controlsRenderer->style()->setWidth(Length(newSize.width(), Fixed));
-        controlsRenderer->setNeedsLayout(true, false);
-        controlsRenderer->layout();
-        setChildNeedsLayout(false);
-    }
+    m_controls->updateTimeDisplayVisibility();
+
+    controlsRenderer->setLocation(borderLeft() + paddingLeft(), borderTop() + paddingTop());
+    controlsRenderer->style()->setHeight(Length(newSize.height(), Fixed));
+    controlsRenderer->style()->setWidth(Length(newSize.width(), Fixed));
+    controlsRenderer->setNeedsLayout(true, false);
+    controlsRenderer->layout();
+    setChildNeedsLayout(false);
+
+    statePusher.pop();
 }
 
 void RenderMedia::updateFromElement()

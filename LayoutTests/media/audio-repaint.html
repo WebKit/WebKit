@@ -1,0 +1,19 @@
+<p>
+    This tests that in a standalone media document with audio content, the media element repaints correctly
+    while playing.
+</p>
+<audio controls autoplay src="content/test.wav"></audio><br/>
+<audio controls autoplay src="content/test.wav" style="margin-bottom:25px; -webkit-box-reflect:below;"></audio><br/>
+<audio controls autoplay src="content/test.wav" style="margin:27px 0; -webkit-transform: rotate(15deg);"></audio><br>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    if (window.layoutTestController)
+        layoutTestController.display();
+    
+    setTimeout(function() {             
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 1500);
+</script>

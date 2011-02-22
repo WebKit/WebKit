@@ -1,3 +1,24 @@
+2011-02-15  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Built-in HTML5 <audio> (and sometimes <video>) UI doesn't update playhead location or time displays
+        https://bugs.webkit.org/show_bug.cgi?id=46142
+        
+        Added a repaint test which ensures the timeline controls repaint in an audio-only MediaDocument.  Since
+        the change also affects in-page audio, also added a repaint test for those cases as well.
+        
+        Other platforms will need to have results generated.
+
+        * media/audio-repaint.html: Added.
+        * media/media-document-audio-repaint-expected.txt: Added.
+        * media/media-document-audio-repaint.html: Added.
+        * platform/mac/media/audio-repaint-expected.checksum: Added.
+        * platform/mac/media/audio-repaint-expected.png: Added.
+        * platform/mac/media/audio-repaint-expected.txt: Added.
+        * platform/mac/media/media-document-audio-repaint-expected.checksum: Added.
+        * platform/mac/media/media-document-audio-repaint-expected.png: Added.
+
 2011-02-22  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip crashing inspector test on GTK

@@ -1,0 +1,20 @@
+<p>
+    This tests that in a standalone media document with audio content, the media element repaints correctly
+    while playing.
+</p>
+<iframe src="content/test.wav" width=380 height=330 onload="frameLoaded()"></iframe>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    function frameLoaded()
+    {
+        if (window.layoutTestController)
+            layoutTestController.display();
+        
+        setTimeout(function() {             
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }, 1500);
+    }
+</script>

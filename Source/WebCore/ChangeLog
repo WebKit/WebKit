@@ -1,3 +1,19 @@
+2011-02-15  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Built-in HTML5 <audio> (and sometimes <video>) UI doesn't update playhead location or time displays
+        https://bugs.webkit.org/show_bug.cgi?id=46142
+
+        Push a LayoutStateMaintainer in RenderMedia::layout() before calling layout() on the
+        container elements.  This is necessary because, during layout(), the child renderers
+        query the current LayoutState to determine where they will be repainting.  If a new
+        LayoutState is not pushed here, child renderers will attempt to repaint relative to
+        their grandparent's origin instead of their parents', and repaint operations will fail.
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::layout):
+
 2011-02-22  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
