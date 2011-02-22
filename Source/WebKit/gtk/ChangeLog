@@ -1,3 +1,19 @@
+2011-02-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] position:fixed elements flicker while scrolling after r74196
+        https://bugs.webkit.org/show_bug.cgi?id=54981
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::ChromeClient): Initialize the new m_pendingScrollInvalidations
+        boolean to false.
+        (WebKit::ChromeClient::invalidateWindow): If this is an immediate invalidation and we
+        having pending scrolling invalidations, instruct GDK to process updates now.
+        (WebKit::ChromeClient::scroll): Remove the call to gdk_window_process_updates. Set
+        m_pendingScrollInvalidations to true to force it to happen in invalidateWindow instead.
+        * WebCoreSupport/ChromeClientGtk.h: Add new boolean member.
+
 2011-02-02  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

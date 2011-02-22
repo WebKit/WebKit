@@ -72,6 +72,7 @@ namespace WebKit {
 ChromeClient::ChromeClient(WebKitWebView* webView)
     : m_webView(webView)
     , m_closeSoonTimer(0)
+    , m_pendingScrollInvalidations(false)
 {
     ASSERT(m_webView);
 }
@@ -367,9 +368,16 @@ IntRect ChromeClient::windowResizerRect() const
     return IntRect();
 }
 
-void ChromeClient::invalidateWindow(const IntRect&, bool)
+void ChromeClient::invalidateWindow(const IntRect&, bool immediate)
 {
-    notImplemented();
+    // If we've invalidated regions for scrolling, force GDK to process those invalidations
+    // now. This will also cause child windows to move right away. This prevents redraw
+    // artifacts with child windows (e.g. Flash plugin instances).
+    if (immediate && m_pendingScrollInvalidations) {
+        m_pendingScrollInvalidations = false;
+        if (GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(m_webView)))
+            gdk_window_process_updates(window, TRUE);
+    }
 }
 
 void ChromeClient::invalidateContentsAndWindow(const IntRect& updateRect, bool immediate)
@@ -395,6 +403,8 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
     GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(m_webView));
     if (!window)
         return;
+
+    m_pendingScrollInvalidations = true;
 
     // We cannot use gdk_window_scroll here because it is only able to
     // scroll the whole window at once, and we often need to scroll
@@ -433,8 +443,6 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
     gdk_window_invalidate_region(window, invalidRegion, FALSE);
     cairo_region_destroy(invalidRegion);
 #endif
-
-    gdk_window_process_updates(window, TRUE);
 }
 
 // FIXME: this does not take into account the WM decorations
