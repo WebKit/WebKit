@@ -398,7 +398,7 @@ void Chrome::setToolTip(const HitTestResult& result)
                 if (input->isFileUpload()) {
                     FileList* files = input->files();
                     unsigned listSize = files->length();
-                    if (files && listSize > 1) {
+                    if (listSize > 1) {
                         Vector<UChar> names;
                         for (size_t i = 0; i < listSize; ++i) {
                             append(names, files->item(i)->fileName());

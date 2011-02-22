@@ -1,3 +1,16 @@
+2011-02-22  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Cleaning: remove a overzealous check for the pointer "files" from Chrome::setToolTip()
+        https://bugs.webkit.org/show_bug.cgi?id=54952
+
+        Remove the unnecessary condition from the if(), HTMLInputElement::files() always return
+        a valid reference for the input type FileInputType. 
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::setToolTip):
+
 2011-02-22  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.
