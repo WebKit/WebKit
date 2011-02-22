@@ -601,6 +601,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\DoublyLinkedList.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\dtoa.cpp"
 			>
 		</File>

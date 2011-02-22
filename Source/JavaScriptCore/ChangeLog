@@ -1,3 +1,54 @@
+2011-02-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Manage MarkedBlocks in a linked list instead of a vector, so arbitrary removal is O(1)
+        https://bugs.webkit.org/show_bug.cgi?id=54999
+        
+        SunSpider reports no change.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj: So many build systems, so little time.
+        * wtf/CMakeLists.txt:
+
+        * runtime/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        * runtime/MarkedBlock.h:
+        (JSC::MarkedBlock::setPrev):
+        (JSC::MarkedBlock::setNext):
+        (JSC::MarkedBlock::prev):
+        (JSC::MarkedBlock::next): Added linked list data members and accessors.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::destroy):
+        (JSC::MarkedSpace::allocateBlock): Stop using vector, since it doesn't exist anymore.
+
+        (JSC::MarkedSpace::freeBlocks): New helper function for updating relevant
+        data structures when freeing blocks.
+
+        (JSC::MarkedSpace::allocate): Updated for nextBlock being a pointer and
+        not a vector index.
+
+        (JSC::MarkedSpace::shrink): Construct a temporary list of empties and
+        then free them, to avoid modifying our hash table while iterating it.
+        This wasn't a concern before because we were using indirect array
+        indexing, not direct pointer indexing.
+
+        (JSC::MarkedSpace::reset): Updated for nextBlock being a pointer and
+        not a vector index.
+
+        * runtime/MarkedSpace.h:
+        (JSC::CollectorHeap::CollectorHeap): Changed data type from vector to linked list.
+
+        * wtf/DoublyLinkedList.h: Added. New linked list class.
+        (WTF::::DoublyLinkedList):
+        (WTF::::isEmpty):
+        (WTF::::head):
+        (WTF::::append):
+        (WTF::::remove):
+
 2011-02-22  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix.

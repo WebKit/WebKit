@@ -26,6 +26,7 @@
 #include "MarkedBlock.h"
 #include "PageAllocationAligned.h"
 #include <wtf/Bitmap.h>
+#include <wtf/DoublyLinkedList.h>
 #include <wtf/FixedArray.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -49,15 +50,10 @@ namespace JSC {
             , nextAtom(0)
         {
         }
-        
-        MarkedBlock* collectorBlock(size_t index) const
-        {
-            return blocks[index];
-        }
 
-        size_t nextBlock;
+        MarkedBlock* nextBlock;
         size_t nextAtom;
-        Vector<MarkedBlock*> blocks;
+        DoublyLinkedList<MarkedBlock> blockList;
     };
 
     class MarkedSpace {
@@ -100,7 +96,7 @@ namespace JSC {
         typedef HashSet<MarkedBlock*>::iterator BlockIterator;
 
         NEVER_INLINE MarkedBlock* allocateBlock();
-        NEVER_INLINE void freeBlock(size_t);
+        NEVER_INLINE void freeBlocks(DoublyLinkedList<MarkedBlock>&);
 
         void clearMarks(MarkedBlock*);
 
