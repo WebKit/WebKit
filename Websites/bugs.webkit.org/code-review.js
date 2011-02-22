@@ -1502,6 +1502,10 @@ var CODE_REVIEW_UNITTEST;
     if (e.target.nodeName == 'TEXTAREA')
       return;
 
+    // Don't want to override browser shortcuts like ctrl+r.
+    if (e.metaKey || e.ctrlKey)
+      return;
+
     if (handleModifyContextKey(e))
       return;
 
