@@ -1,5 +1,11 @@
 2011-02-22  Gavin Barraclough  <barraclough@apple.com>
 
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2011-02-22  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Bug 54988 - Re-create StructureTransitionTable class, encapsulate transition table
