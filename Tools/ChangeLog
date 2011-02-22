@@ -1,3 +1,22 @@
+2011-02-22  Adam Roben  <aroben@apple.com>
+
+        Don't trigger a Windows build when the top-level ChangeLog changes
+
+        r79320 is an example of a change that shouldn't have built on Windows, but did, because of
+        this bug.
+
+        Fixes <http://webkit.org/b/54957> Windows bots build when top-level ChangeLog changes, but
+        shouldn't
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitpy/common/config/build.py:
+        (_should_file_trigger_build): Modified the ChangeLog pattern to match the top-level
+        ChangeLog, and re-sorted it in the list.
+
+        * Scripts/webkitpy/common/config/build_unittest.py:
+        (ShouldBuildTest): Added a test that ChangeLogs don't trigger builds.
+
 2011-02-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r78691.

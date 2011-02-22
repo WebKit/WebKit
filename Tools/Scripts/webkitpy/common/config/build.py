@@ -83,10 +83,10 @@ def _should_file_trigger_build(target_platform, file):
     ]
     patterns = [
         # Patterns that shouldn't trigger builds on any bots.
+        (r"(?:^|/)ChangeLog.*$", []),
         (r"(?:^|/)Makefile$", []),
         (r"/ARM", []),
         (r"/CMake.*", []),
-        (r"/ChangeLog.*$", []),
         (r"/LICENSE[^/]+$", []),
         (r"ARM(?:v7)?\.(?:cpp|h)$", []),
         (r"MIPS\.(?:cpp|h)$", []),

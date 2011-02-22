@@ -27,6 +27,7 @@ from webkitpy.common.config import build
 
 class ShouldBuildTest(unittest.TestCase):
     _should_build_tests = [
+        (["ChangeLog", "Source/WebCore/ChangeLog", "Source/WebKit2/ChangeLog-2011-02-11"], []),
         (["Websites/bugs.webkit.org/foo", "Source/WebCore/bar"], ["*"]),
         (["Websites/bugs.webkit.org/foo"], []),
         (["Source/JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-leopard", "mac-snowleopard"]),
