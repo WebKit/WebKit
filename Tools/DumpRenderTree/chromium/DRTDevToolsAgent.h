@@ -31,9 +31,9 @@
 #ifndef DRTDevToolsAgent_h
 #define DRTDevToolsAgent_h
 
-#include "DRTDevToolsCallArgs.h"
 #include "Task.h"
 #include "WebDevToolsAgentClient.h"
+#include "WebString.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 
@@ -41,7 +41,6 @@ namespace WebKit {
 
 class WebCString;
 class WebDevToolsAgent;
-class WebString;
 class WebView;
 struct WebDevToolsMessageData;
 
@@ -65,7 +64,7 @@ public:
     virtual WebKit::WebCString debuggerScriptSource();
     virtual WebKitClientMessageLoop* createClientMessageLoop();
 
-    void asyncCall(const DRTDevToolsCallArgs&);
+    void asyncCall(const WebKit::WebString& args);
 
     void attach(DRTDevToolsClient*);
     void detach();
@@ -76,18 +75,18 @@ public:
     TaskList* taskList() { return &m_taskList; }
 
 private:
-    void call(const DRTDevToolsCallArgs&);
+    void call(const WebKit::WebString& args);
     void delayedFrontendLoaded();
     static void dispatchMessageLoop();
     WebKit::WebDevToolsAgent* webDevToolsAgent();
 
     class AsyncCallTask: public MethodTask<DRTDevToolsAgent> {
     public:
-        AsyncCallTask(DRTDevToolsAgent* object, const DRTDevToolsCallArgs& args)
+        AsyncCallTask(DRTDevToolsAgent* object, const WebKit::WebString& args)
             : MethodTask<DRTDevToolsAgent>(object), m_args(args) {}
         virtual void runIfValid() { m_object->call(m_args); }
     private:
-        DRTDevToolsCallArgs m_args;
+        WebKit::WebString m_args;
     };
 
     struct DelayedFrontendLoadedTask: public MethodTask<DRTDevToolsAgent> {

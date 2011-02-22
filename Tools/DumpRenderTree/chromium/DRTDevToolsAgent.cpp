@@ -31,12 +31,10 @@
 #include "config.h"
 #include "DRTDevToolsAgent.h"
 
-#include "DRTDevToolsCallArgs.h"
 #include "DRTDevToolsClient.h"
 
 #include "WebCString.h"
 #include "WebDevToolsAgent.h"
-#include "WebString.h"
 #include "WebView.h"
 #include "webkit/support/webkit_support.h"
 
@@ -63,13 +61,13 @@ void DRTDevToolsAgent::setWebView(WebView* webView)
     m_webView = webView;
 }
 
-void DRTDevToolsAgent::sendMessageToInspectorFrontend(const WebKit::WebString& data)
+void DRTDevToolsAgent::sendMessageToInspectorFrontend(const WebString& data)
 {
     if (m_drtDevToolsClient)
-         m_drtDevToolsClient->asyncCall(DRTDevToolsCallArgs(data));
+         m_drtDevToolsClient->asyncCall(data);
 }
 
-void DRTDevToolsAgent::runtimePropertyChanged(const WebKit::WebString& name, const WebKit::WebString& value)
+void DRTDevToolsAgent::runtimePropertyChanged(const WebString& name, const WebString& value)
 {
     // FIXME: Implement.
 }
@@ -84,18 +82,16 @@ WebDevToolsAgentClient::WebKitClientMessageLoop* DRTDevToolsAgent::createClientM
     return webkit_support::CreateDevToolsMessageLoop();
 }
 
-void DRTDevToolsAgent::asyncCall(const DRTDevToolsCallArgs& args)
+void DRTDevToolsAgent::asyncCall(const WebString& args)
 {
     postTask(new AsyncCallTask(this, args));
 }
 
-void DRTDevToolsAgent::call(const DRTDevToolsCallArgs &args)
+void DRTDevToolsAgent::call(const WebString& args)
 {
     WebDevToolsAgent* agent = webDevToolsAgent();
     if (agent)
-        agent->dispatchOnInspectorBackend(args.m_data);
-    if (DRTDevToolsCallArgs::callsCount() == 1 && m_drtDevToolsClient)
-        m_drtDevToolsClient->allMessagesProcessed();
+        agent->dispatchOnInspectorBackend(args);
 }
 
 void DRTDevToolsAgent::delayedFrontendLoaded()

@@ -1,3 +1,28 @@
+2011-02-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: flakyness of inspector tests.
+        https://bugs.webkit.org/show_bug.cgi?id=54729
+
+        As far as we have the protocol with sequence numbers we can simplify test harness support
+        and drop out chomium specific methods.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DRTDevToolsAgent.cpp:
+        (DRTDevToolsAgent::sendMessageToInspectorFrontend):
+        (DRTDevToolsAgent::runtimePropertyChanged):
+        (DRTDevToolsAgent::asyncCall):
+        (DRTDevToolsAgent::call):
+        * DumpRenderTree/chromium/DRTDevToolsAgent.h:
+        * DumpRenderTree/chromium/DRTDevToolsCallArgs.cpp: Removed.
+        * DumpRenderTree/chromium/DRTDevToolsCallArgs.h: Removed.
+        * DumpRenderTree/chromium/DRTDevToolsClient.cpp:
+        (DRTDevToolsClient::sendMessageToBackend):
+        (DRTDevToolsClient::asyncCall):
+        (DRTDevToolsClient::call):
+        * DumpRenderTree/chromium/DRTDevToolsClient.h:
+
 2011-02-22  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Laszlo Gombos.

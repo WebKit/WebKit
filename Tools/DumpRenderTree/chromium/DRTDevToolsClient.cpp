@@ -32,13 +32,11 @@
 #include "DRTDevToolsClient.h"
 
 #include "DRTDevToolsAgent.h"
-#include "DRTDevToolsCallArgs.h"
 
 #include "WebDevToolsAgent.h"
 #include "WebDevToolsFrontend.h"
 #include "WebFrame.h"
 #include "WebScriptSource.h"
-#include "WebString.h"
 #include "WebView.h"
 #include "webkit/support/webkit_support.h"
 
@@ -76,7 +74,7 @@ void DRTDevToolsClient::sendFrontendLoaded() {
 void DRTDevToolsClient::sendMessageToBackend(const WebString& data)
 {
     if (m_drtDevToolsAgent)
-        m_drtDevToolsAgent->asyncCall(DRTDevToolsCallArgs(data));
+        m_drtDevToolsAgent->asyncCall(data);
 }
 
 void DRTDevToolsClient::sendDebuggerCommandToAgent(const WebString& command)
@@ -104,21 +102,13 @@ void DRTDevToolsClient::undockWindow()
     // Not implemented.
 }
 
-void DRTDevToolsClient::asyncCall(const DRTDevToolsCallArgs& args)
+void DRTDevToolsClient::asyncCall(const WebString& args)
 {
     postTask(new AsyncCallTask(this, args));
 }
 
-void DRTDevToolsClient::call(const DRTDevToolsCallArgs& args)
+void DRTDevToolsClient::call(const WebString& args)
 {
-    m_webDevToolsFrontend->dispatchOnInspectorFrontend(args.m_data);
-    if (DRTDevToolsCallArgs::callsCount() == 1)
-        allMessagesProcessed();
+    m_webDevToolsFrontend->dispatchOnInspectorFrontend(args);
 }
 
-void DRTDevToolsClient::allMessagesProcessed()
-{
-    m_webView->mainFrame()->executeScript(
-        WebKit::WebScriptSource(WebString::fromUTF8(
-            "if (window.WebInspector && WebInspector.queuesAreEmpty) WebInspector.queuesAreEmpty();")));
-}

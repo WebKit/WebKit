@@ -130,26 +130,6 @@ WebInspector.openLinkExternallyLabel = function()
 
 
 
-///////////////////////////////////////////
-// Chromium layout test harness support. //
-///////////////////////////////////////////
-
-WebInspector.runAfterPendingDispatchesQueue = [];
-
-WebInspector.TestController.prototype.runAfterPendingDispatches = function(callback)
-{
-    WebInspector.runAfterPendingDispatchesQueue.push(callback);
-};
-
-WebInspector.queuesAreEmpty = function()
-{
-    var copy = this.runAfterPendingDispatchesQueue.slice();
-    this.runAfterPendingDispatchesQueue = [];
-    for (var i = 0; i < copy.length; ++i)
-        copy[i].call(this);
-};
-
-
 /////////////////////////////
 // Chromium theme support. //
 /////////////////////////////

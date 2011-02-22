@@ -1,3 +1,22 @@
+2011-02-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: flakyness of inspector tests.
+        https://bugs.webkit.org/show_bug.cgi?id=54729
+
+        As far as we have the protocol with sequence numbers we can simplify test harness support
+        and drop out chomium specific methods.
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/front-end/TestController.js:
+        (WebInspector.TestController):
+        (WebInspector.TestController.prototype.notifyDone):
+        (WebInspector.TestController.prototype.runAfterPendingDispatches):
+        (WebInspector.TestController.prototype._evaluateForTestInFrontend):
+        * inspector/front-end/inspector.js:
+        (WebInspector.dispatch):
+
 2011-02-22  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.

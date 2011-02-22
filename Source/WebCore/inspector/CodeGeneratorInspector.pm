@@ -711,6 +711,7 @@ $licenseTemplate
 InspectorBackendStub = function()
 {
     this._lastCallbackId = 1;
+    this._pendingResponsesCount = 0;
     this._callbacks = {};
     this._domainDispatchers = {};
 $JSStubs
@@ -720,20 +721,9 @@ InspectorBackendStub.prototype = {
     _wrap: function(callback)
     {
         var callbackId = this._lastCallbackId++;
+        ++this._pendingResponsesCount;
         this._callbacks[callbackId] = callback || function() {};
         return callbackId;
-    },
-
-    _processResponse: function(callbackId, args)
-    {
-        var callback = this._callbacks[callbackId];
-        callback.apply(null, args);
-        delete this._callbacks[callbackId];
-    },
-
-    _removeResponseCallbackEntry: function(callbackId)
-    {
-        delete this._callbacks[callbackId];
     },
 
     _registerDelegate: function(commandInfo)
@@ -799,11 +789,16 @@ InspectorBackendStub.prototype = {
 
         if ("seq" in messageObject) { // just a response for some request
             if (messageObject.success)
-                this._processResponse(messageObject.seq, arguments);
-            else {
-                this._removeResponseCallbackEntry(messageObject.seq)
+                this._callbacks[messageObject.seq].apply(null, arguments);
+            else
                 this.reportProtocolError(messageObject);
-            }
+
+            --this._pendingResponsesCount;
+            delete this._callbacks[messageObject.seq];
+
+            if (this._scripts && !this._pendingResponsesCount)
+                this.runAfterPendingDispatches();
+
             return;
         }
 
@@ -826,7 +821,22 @@ InspectorBackendStub.prototype = {
         console.error("Protocol Error: InspectorBackend request with seq = " + messageObject.seq + " failed.");
         for (var i = 0; i < messageObject.errors.length; ++i)
             console.error("    " + messageObject.errors[i]);
-        this._removeResponseCallbackEntry(messageObject.seq);
+    },
+
+    runAfterPendingDispatches: function(script)
+    {
+        if (!this._scripts)
+            this._scripts = [];
+
+        if (script)
+            this._scripts.push(script);
+
+        if (!this._pendingResponsesCount) {
+            var scripts = this._scripts;
+            this._scripts = []
+            for (var id = 0; id < scripts.length; ++id)
+                 scripts[id].call(this);
+        }
     }
 }
 

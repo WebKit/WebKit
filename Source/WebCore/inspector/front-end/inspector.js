@@ -592,13 +592,7 @@ window.addEventListener("DOMContentLoaded", windowLoaded, false);
 WebInspector.dispatch = function(message) {
     // We'd like to enforce asynchronous interaction between the inspector controller and the frontend.
     // This is important to LayoutTests.
-    function delayDispatch()
-    {
-        InspectorBackend.dispatch(message);
-        WebInspector.pendingDispatches--;
-    }
-    WebInspector.pendingDispatches++;
-    setTimeout(delayDispatch, 0);
+    setTimeout(InspectorBackend.dispatch.bind(InspectorBackend), 0, message);
 }
 
 WebInspector.dispatchMessageFromBackend = function(messageObject)

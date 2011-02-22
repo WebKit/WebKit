@@ -129,8 +129,7 @@ InspectorTest.pageReloaded = function()
 InspectorTest.runAfterPendingDispatches = function(callback)
 {
     callback = InspectorTest.safeWrap(callback);
-
-    WebInspector.TestController.prototype.runAfterPendingDispatches(callback);
+    InspectorBackend.runAfterPendingDispatches(callback);
 }
 
 InspectorTest.createKeyEvent = function(keyIdentifier)

@@ -31,17 +31,15 @@
 #ifndef DRTDevToolsClient_h
 #define DRTDevToolsClient_h
 
-#include "DRTDevToolsCallArgs.h"
 #include "Task.h"
 #include "WebDevToolsFrontendClient.h"
+#include "WebString.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
-
 namespace WebKit {
 
 class WebDevToolsFrontend;
 struct WebDevToolsMessageData;
-class WebString;
 class WebView;
 
 } // namespace WebKit
@@ -65,20 +63,20 @@ public:
     virtual void dockWindow();
     virtual void undockWindow();
 
-    void asyncCall(const DRTDevToolsCallArgs&);
+    void asyncCall(const WebKit::WebString& args);
 
     void allMessagesProcessed();
     TaskList* taskList() { return &m_taskList; }
 
  private:
-    void call(const DRTDevToolsCallArgs&);
+    void call(const WebKit::WebString& args);
     class AsyncCallTask: public MethodTask<DRTDevToolsClient> {
     public:
-        AsyncCallTask(DRTDevToolsClient* object, const DRTDevToolsCallArgs& args)
+        AsyncCallTask(DRTDevToolsClient* object, const WebKit::WebString& args)
             : MethodTask<DRTDevToolsClient>(object), m_args(args) {}
         virtual void runIfValid() { m_object->call(m_args); }
     private:
-        DRTDevToolsCallArgs m_args;
+        WebKit::WebString m_args;
     };
 
     TaskList m_taskList;

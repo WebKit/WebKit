@@ -11,8 +11,6 @@
             'chromium/CppVariant.h',
             'chromium/DRTDevToolsAgent.cpp',
             'chromium/DRTDevToolsAgent.h',
-            'chromium/DRTDevToolsCallArgs.cpp',
-            'chromium/DRTDevToolsCallArgs.h',
             'chromium/DRTDevToolsClient.cpp',
             'chromium/DRTDevToolsClient.h',
             'chromium/DumpRenderTree.cpp',
