@@ -45,7 +45,7 @@ namespace WebCore {
         virtual String filenameExtension() const { return "gif"; }
         virtual void setData(SharedBuffer* data, bool allDataReceived);
         virtual bool isSizeAvailable();
-        virtual bool setSize(int width, int height);
+        virtual bool setSize(unsigned width, unsigned height);
         virtual size_t frameCount();
         virtual int repetitionCount() const;
         virtual ImageFrame* frameBufferAtIndex(size_t index);

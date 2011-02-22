@@ -61,9 +61,9 @@ bool GIFImageDecoder::isSizeAvailable()
     return ImageDecoder::isSizeAvailable();
 }
 
-bool GIFImageDecoder::setSize(int width, int height)
+bool GIFImageDecoder::setSize(unsigned width, unsigned height)
 {
-    if (ImageDecoder::isSizeAvailable() && size().width() == width && size().height() == height)
+    if (ImageDecoder::isSizeAvailable() && size() == IntSize(width, height))
         return true;
 
     if (!ImageDecoder::setSize(width, height))
