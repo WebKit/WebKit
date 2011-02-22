@@ -1,3 +1,59 @@
+2011-02-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 54988 - Re-create StructureTransitionTable class, encapsulate transition table
+
+        The Structure class keeps a table of transitions to derived Structure types. Since
+        this table commonly contains a single entry we employ an optimization where instead
+        of holding a map, we may hold a pointer directly to a single instance of the mapped
+        type. We use an additional bit of data to flag whether the pointer is currently
+        pointing to a table of transitions, or a singleton transition. Previously we had
+        commonly used a pattern of storing data in the low bits of pointers, but had moved
+        away from this since it causes false leaks to be reported by the leaks tool. However
+        in this case, the entries in the map are weak links - this pointer will never be
+        responsible for keeping an object alive.  As such we can use this approach provided
+        that the bit is set when a table is not in use (otherwise the table would appear to
+        be leaked).
+
+        Additionally, the transition table currently allows two entries to exist for a given
+        key - one specialized to a particular value, and one not specialized. This is
+        unnecessary, wasteful, and a little inconsistent. (If you create an entry for a
+        specialized value, then a non-specialized entry, both will exist.  If you create an
+        entry for a non-specialized value, then try to create a specialized entry, only a
+        non-specialized form will be allowed.)
+
+        This shows a small progression on v8.
+
+        * JavaScriptCore.exp:
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::contains):
+        (JSC::StructureTransitionTable::get):
+        (JSC::StructureTransitionTable::remove):
+        (JSC::StructureTransitionTable::add):
+        (JSC::Structure::dumpStatistics):
+        (JSC::Structure::Structure):
+        (JSC::Structure::~Structure):
+        (JSC::Structure::addPropertyTransitionToExistingStructure):
+        (JSC::Structure::addPropertyTransition):
+        * runtime/Structure.h:
+        (JSC::Structure::get):
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::Hash::hash):
+        (JSC::StructureTransitionTable::Hash::equal):
+        (JSC::StructureTransitionTable::HashTraits::emptyValue):
+        (JSC::StructureTransitionTable::HashTraits::constructDeletedValue):
+        (JSC::StructureTransitionTable::HashTraits::isDeletedValue):
+        (JSC::StructureTransitionTable::StructureTransitionTable):
+        (JSC::StructureTransitionTable::~StructureTransitionTable):
+        (JSC::StructureTransitionTable::isUsingSingleSlot):
+        (JSC::StructureTransitionTable::map):
+        (JSC::StructureTransitionTable::setMap):
+        (JSC::StructureTransitionTable::singleTransition):
+        (JSC::StructureTransitionTable::setSingleTransition):
+
 2011-02-22  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Laszlo Gombos.

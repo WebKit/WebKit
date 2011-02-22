@@ -35,9 +35,12 @@
 
 namespace JSC {
 
-    class Structure;
+class Structure;
 
-    struct StructureTransitionTableHash {
+class StructureTransitionTable {
+    static const intptr_t UsingSingleSlotFlag = 1;
+
+    struct Hash {
         typedef std::pair<RefPtr<StringImpl>, unsigned> Key;
         static unsigned hash(const Key& p)
         {
@@ -52,7 +55,7 @@ namespace JSC {
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
 
-    struct StructureTransitionTableHashTraits {
+    struct HashTraits {
         typedef WTF::HashTraits<RefPtr<StringImpl> > FirstTraits;
         typedef WTF::GenericHashTraits<unsigned> SecondTraits;
         typedef std::pair<FirstTraits::TraitType, SecondTraits::TraitType > TraitType;
@@ -65,6 +68,62 @@ namespace JSC {
         static void constructDeletedValue(TraitType& slot) { FirstTraits::constructDeletedValue(slot.first); }
         static bool isDeletedValue(const TraitType& value) { return FirstTraits::isDeletedValue(value.first); }
     };
+
+    typedef HashMap<Hash::Key, Structure*, Hash, HashTraits> TransitionMap;
+
+public:
+    StructureTransitionTable()
+        : m_data(UsingSingleSlotFlag)
+    {
+    }
+
+    ~StructureTransitionTable()
+    {
+        if (!isUsingSingleSlot())
+            delete map();
+    }
+
+    inline void add(Structure*);
+    inline void remove(Structure*);
+    inline bool contains(StringImpl* rep, unsigned attributes) const;
+    inline Structure* get(StringImpl* rep, unsigned attributes) const;
+
+private:
+    bool isUsingSingleSlot() const
+    {
+        return m_data & UsingSingleSlotFlag;
+    }
+
+    TransitionMap* map() const
+    {
+        ASSERT(!isUsingSingleSlot());
+        return reinterpret_cast<TransitionMap*>(m_data);
+    }
+
+    void setMap(TransitionMap* map)
+    {
+        ASSERT(isUsingSingleSlot());
+
+        // This implicitly clears the flag that indicates we're using a single transition
+        m_data = reinterpret_cast<intptr_t>(map);
+
+        ASSERT(!isUsingSingleSlot());
+    }
+
+    Structure* singleTransition() const
+    {
+        ASSERT(isUsingSingleSlot());
+        return reinterpret_cast<Structure*>(m_data & ~UsingSingleSlotFlag);
+    }
+
+    void setSingleTransition(Structure* structure)
+    {
+        ASSERT(isUsingSingleSlot());
+        m_data = reinterpret_cast<intptr_t>(structure) | UsingSingleSlotFlag;
+    }
+
+    intptr_t m_data;
+};
 
 } // namespace JSC
 

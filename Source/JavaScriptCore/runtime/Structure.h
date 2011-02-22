@@ -115,15 +115,6 @@ namespace JSC {
             ASSERT(!propertyName.isNull());
             return get(propertyName.impl(), attributes, specificValue);
         }
-        bool transitionedFor(const JSCell* specificValue)
-        {
-            return m_specificValueInPrevious == specificValue;
-        }
-        bool hasTransition(StringImpl*, unsigned attributes);
-        bool hasTransition(const Identifier& propertyName, unsigned attributes)
-        {
-            return hasTransition(propertyName.impl(), attributes);
-        }
 
         bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
         void setHasGetterSetterProperties(bool hasGetterSetterProperties) { m_hasGetterSetterProperties = hasGetterSetterProperties; }
@@ -190,20 +181,6 @@ namespace JSC {
             return m_offset == noOffset ? 0 : m_offset + 1;
         }
 
-        typedef std::pair<Structure*, Structure*> Transition;
-        typedef HashMap<StructureTransitionTableHash::Key, Transition, StructureTransitionTableHash, StructureTransitionTableHashTraits> TransitionTable;
-
-        inline bool transitionTableContains(const StructureTransitionTableHash::Key& key, JSCell* specificValue);
-        inline void transitionTableRemove(const StructureTransitionTableHash::Key& key, JSCell* specificValue);
-        inline void transitionTableAdd(const StructureTransitionTableHash::Key& key, Structure* structure, JSCell* specificValue);
-        inline bool transitionTableHasTransition(const StructureTransitionTableHash::Key& key) const;
-        inline Structure* transitionTableGet(const StructureTransitionTableHash::Key& key, JSCell* specificValue) const;
-
-        TransitionTable* transitionTable() const { ASSERT(!m_isUsingSingleSlot); return m_transitions.m_table; }
-        inline void setTransitionTable(TransitionTable* table);
-        Structure* singleTransition() const { ASSERT(m_isUsingSingleSlot); return m_transitions.m_singleTransition; }
-        void setSingleTransition(Structure* structure) { ASSERT(m_isUsingSingleSlot); m_transitions.m_singleTransition = structure; }
-        
         bool isValid(ExecState*, StructureChain* cachedPrototypeChain) const;
 
         static const unsigned emptyEntryIndex = 0;
@@ -225,11 +202,7 @@ namespace JSC {
 
         const ClassInfo* m_classInfo;
 
-        // 'm_isUsingSingleSlot' indicates whether we are using the single transition optimisation.
-        union {
-            TransitionTable* m_table;
-            Structure* m_singleTransition;
-        } m_transitions;
+        StructureTransitionTable m_transitionTable;
 
         WeakGCPtr<JSPropertyNameIterator> m_enumerationCache;
 
@@ -254,8 +227,7 @@ namespace JSC {
 #endif
         unsigned m_specificFunctionThrashCount : 2;
         unsigned m_anonymousSlotCount : 5;
-        unsigned m_isUsingSingleSlot : 1;
-        // 4 free bits
+        // 5 free bits
     };
 
     inline size_t Structure::get(const Identifier& propertyName)

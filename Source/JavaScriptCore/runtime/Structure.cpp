@@ -79,103 +79,67 @@ static HashSet<Structure*>& liveStructureSet = *(new HashSet<Structure*>);
 
 static int comparePropertyMapEntryIndices(const void* a, const void* b);
 
-inline void Structure::setTransitionTable(TransitionTable* table)
+bool StructureTransitionTable::contains(StringImpl* rep, unsigned attributes) const
 {
-    ASSERT(m_isUsingSingleSlot);
-#ifndef NDEBUG
-    setSingleTransition(0);
-#endif
-    m_isUsingSingleSlot = false;
-    m_transitions.m_table = table;
-    // This implicitly clears the flag that indicates we're using a single transition
-    ASSERT(!m_isUsingSingleSlot);
-}
-
-// The contains and get methods accept imprecise matches, so if an unspecialised transition exists
-// for the given key they will consider that transition to be a match.  If a specialised transition
-// exists and it matches the provided specificValue, get will return the specific transition.
-inline bool Structure::transitionTableContains(const StructureTransitionTableHash::Key& key, JSCell* specificValue)
-{
-    if (m_isUsingSingleSlot) {
-        Structure* existingTransition = singleTransition();
-        return existingTransition && existingTransition->m_nameInPrevious.get() == key.first
-               && existingTransition->m_attributesInPrevious == key.second
-               && (existingTransition->m_specificValueInPrevious == specificValue || existingTransition->m_specificValueInPrevious == 0);
-    }
-    TransitionTable::iterator find = transitionTable()->find(key);
-    if (find == transitionTable()->end())
-        return false;
-
-    return find->second.first || find->second.second->transitionedFor(specificValue);
-}
-
-inline Structure* Structure::transitionTableGet(const StructureTransitionTableHash::Key& key, JSCell* specificValue) const
-{
-    if (m_isUsingSingleSlot) {
-        Structure* existingTransition = singleTransition();
-        if (existingTransition && existingTransition->m_nameInPrevious.get() == key.first
-            && existingTransition->m_attributesInPrevious == key.second
-            && (existingTransition->m_specificValueInPrevious == specificValue || existingTransition->m_specificValueInPrevious == 0))
-            return existingTransition;
-        return 0;
-    }
-
-    Transition transition = transitionTable()->get(key);
-    if (transition.second && transition.second->transitionedFor(specificValue))
-        return transition.second;
-    return transition.first;
-}
-
-inline bool Structure::transitionTableHasTransition(const StructureTransitionTableHash::Key& key) const
-{
-    if (m_isUsingSingleSlot) {
+    if (isUsingSingleSlot()) {
         Structure* transition = singleTransition();
-        return transition && transition->m_nameInPrevious == key.first
-        && transition->m_attributesInPrevious == key.second;
+        return transition && transition->m_nameInPrevious == rep && transition->m_attributesInPrevious == attributes;
     }
-    return transitionTable()->contains(key);
+    return map()->contains(make_pair(rep, attributes));
 }
 
-inline void Structure::transitionTableRemove(const StructureTransitionTableHash::Key& key, JSCell* specificValue)
+inline Structure* StructureTransitionTable::get(StringImpl* rep, unsigned attributes) const
 {
-    if (m_isUsingSingleSlot) {
-        ASSERT(transitionTableContains(key, specificValue));
+    if (isUsingSingleSlot()) {
+        Structure* transition = singleTransition();
+        return (transition && transition->m_nameInPrevious == rep && transition->m_attributesInPrevious == attributes) ? transition : 0;
+    }
+    return map()->get(make_pair(rep, attributes));
+}
+
+inline void StructureTransitionTable::remove(Structure* structure)
+{
+    if (isUsingSingleSlot()) {
+        // If more than one transition had been added, then we wouldn't be in
+        // single slot mode (even despecifying a from a specific value triggers
+        // map mode).
+        // As such, the passed structure *must* be the existing transition.
+        ASSERT(singleTransition() == structure);
         setSingleTransition(0);
-        return;
+    } else {
+        // Check whether a mapping exists for structure's key, and whether the
+        // entry is structure (the latter check may fail if we initially had a
+        // transition with a specific value, and this has been despecified).
+        TransitionMap::iterator entry = map()->find(make_pair(structure->m_nameInPrevious, structure->m_attributesInPrevious));
+        if (entry != map()->end() && structure == entry->second)
+            map()->remove(entry);
     }
-    TransitionTable::iterator find = transitionTable()->find(key);
-    if (!specificValue)
-        find->second.first = 0;
-    else
-        find->second.second = 0;
-    if (!find->second.first && !find->second.second)
-        transitionTable()->remove(find);
 }
 
-inline void Structure::transitionTableAdd(const StructureTransitionTableHash::Key& key, Structure* structure, JSCell* specificValue)
+inline void StructureTransitionTable::add(Structure* structure)
 {
-    if (m_isUsingSingleSlot) {
-        if (!singleTransition()) {
+    if (isUsingSingleSlot()) {
+        Structure* existingTransition = singleTransition();
+
+        // This handles the first transition being added.
+        if (!existingTransition) {
             setSingleTransition(structure);
             return;
         }
-        Structure* existingTransition = singleTransition();
-        TransitionTable* transitionTable = new TransitionTable;
-        setTransitionTable(transitionTable);
-        if (existingTransition)
-            transitionTableAdd(std::make_pair(existingTransition->m_nameInPrevious.get(), existingTransition->m_attributesInPrevious), existingTransition, existingTransition->m_specificValueInPrevious);
+
+        // This handles the second transition being added
+        // (or the first transition being despecified!)
+        setMap(new TransitionMap());
+        add(existingTransition);
     }
-    if (!specificValue) {
-        TransitionTable::iterator find = transitionTable()->find(key);
-        if (find == transitionTable()->end())
-            transitionTable()->add(key, Transition(structure, static_cast<Structure*>(0)));
-        else
-            find->second.first = structure;
-    } else {
-        // If we're adding a transition to a specific value, then there cannot be
-        // an existing transition
-        ASSERT(!transitionTable()->contains(key));
-        transitionTable()->add(key, Transition(static_cast<Structure*>(0), structure));
+
+    // Add the structure to the map.
+    std::pair<TransitionMap::iterator, bool> result = map()->add(make_pair(structure->m_nameInPrevious, structure->m_attributesInPrevious), structure);
+    if (!result.second) {
+        // There already is an entry! - we should only hit this when despecifying.
+        ASSERT(result.first->second->m_specificValueInPrevious);
+        ASSERT(!structure->m_specificValueInPrevious);
+        result.first->second = structure;
     }
 }
 
@@ -192,12 +156,12 @@ void Structure::dumpStatistics()
     for (HashSet<Structure*>::const_iterator it = liveStructureSet.begin(); it != end; ++it) {
         Structure* structure = *it;
         if (structure->m_usingSingleTransitionSlot) {
-            if (!structure->m_transitions.singleTransition)
+            if (!structure->m_transitionTable.singleTransition())
                 ++numberLeaf;
             else
                 ++numberUsingSingleSlot;
 
-           if (!structure->m_previous && !structure->m_transitions.singleTransition)
+           if (!structure->m_previous && !structure->m_transitionTable.singleTransition())
                 ++numberSingletons;
         }
 
@@ -238,10 +202,7 @@ Structure::Structure(JSValue prototype, const TypeInfo& typeInfo, unsigned anony
     , m_attributesInPrevious(0)
     , m_specificFunctionThrashCount(0)
     , m_anonymousSlotCount(anonymousSlotCount)
-    , m_isUsingSingleSlot(true)
 {
-    m_transitions.m_singleTransition = 0;
-
     ASSERT(m_prototype);
     ASSERT(m_prototype->isObject() || m_prototype->isNull());
 
@@ -275,10 +236,7 @@ Structure::Structure(const Structure* previous)
     , m_attributesInPrevious(0)
     , m_specificFunctionThrashCount(previous->m_specificFunctionThrashCount)
     , m_anonymousSlotCount(previous->anonymousSlotCount())
-    , m_isUsingSingleSlot(true)
 {
-    m_transitions.m_singleTransition = 0;
-
     ASSERT(m_prototype);
     ASSERT(m_prototype->isObject() || m_prototype->isNull());
 
@@ -301,8 +259,7 @@ Structure::~Structure()
 {
     if (m_previous) {
         ASSERT(m_nameInPrevious);
-        m_previous->transitionTableRemove(make_pair(m_nameInPrevious.get(), m_attributesInPrevious), m_specificValueInPrevious);
-
+        m_previous->m_transitionTable.remove(this);
     }
 
     if (m_propertyTable) {
@@ -315,9 +272,6 @@ Structure::~Structure()
         delete m_propertyTable->deletedOffsets;
         fastFree(m_propertyTable);
     }
-
-    if (!m_isUsingSingleSlot)
-        delete transitionTable();
 
 #ifndef NDEBUG
 #if ENABLE(JSC_MULTIPLE_THREADS)
@@ -482,7 +436,10 @@ PassRefPtr<Structure> Structure::addPropertyTransitionToExistingStructure(Struct
     ASSERT(!structure->isDictionary());
     ASSERT(structure->typeInfo().type() == ObjectType);
 
-    if (Structure* existingTransition = structure->transitionTableGet(make_pair(propertyName.impl(), attributes), specificValue)) {
+    if (Structure* existingTransition = structure->m_transitionTable.get(propertyName.impl(), attributes)) {
+        JSCell* specificValueInPrevious = existingTransition->m_specificValueInPrevious;
+        if (specificValueInPrevious && specificValueInPrevious != specificValue)
+            return 0;
         ASSERT(existingTransition->m_offset != noOffset);
         offset = existingTransition->m_offset + existingTransition->m_anonymousSlotCount;
         ASSERT(offset >= structure->m_anonymousSlotCount);
@@ -495,6 +452,16 @@ PassRefPtr<Structure> Structure::addPropertyTransitionToExistingStructure(Struct
 
 PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset)
 {
+    // If we have a specific function, we may have got to this point if there is
+    // already a transition with the correct property name and attributes, but
+    // specialized to a different function.  In this case we just want to give up
+    // and despecialize the transition.
+    // In this case we clear the value of specificFunction which will result
+    // in us adding a non-specific transition, and any subsequent lookup in
+    // Structure::addPropertyTransitionToExistingStructure will just use that.
+    if (specificValue && structure->m_transitionTable.contains(propertyName.impl(), attributes))
+        specificValue = 0;
+
     ASSERT(!structure->isDictionary());
     ASSERT(structure->typeInfo().type() == ObjectType);
     ASSERT(!Structure::addPropertyTransitionToExistingStructure(structure, propertyName, attributes, specificValue, offset));
@@ -543,7 +510,7 @@ PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, con
 
     transition->m_offset = offset - structure->m_anonymousSlotCount;
     ASSERT(structure->anonymousSlotCount() == transition->anonymousSlotCount());
-    structure->transitionTableAdd(make_pair(propertyName.impl(), attributes), transition.get(), specificValue);
+    structure->m_transitionTable.add(transition.get());
     return transition.release();
 }
 
@@ -972,11 +939,6 @@ size_t Structure::put(const Identifier& propertyName, unsigned attributes, JSCel
 
     checkConsistency();
     return newOffset;
-}
-
-bool Structure::hasTransition(StringImpl* rep, unsigned attributes)
-{
-    return transitionTableHasTransition(make_pair(rep, attributes));
 }
 
 size_t Structure::remove(const Identifier& propertyName)
