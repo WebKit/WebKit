@@ -3420,7 +3420,6 @@ BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH TIMEOUT
 
 // For some reason, we can't rebaseline these because they don't end up in the archive. Disable while
 // we figure this out.
-BUGATWILSON WIN LINUX : compositing/reflections/deeply-nested-reflections.html = IMAGE+TEXT
 
 // morrita: In addition, some tests are flaky between IMAGE, TEXT and IMAGE+TEXT. So marked then FAIL at this time.
 BUGWK54736 MAC : css2.1/t1202-counter-04-b.html = FAIL PASS

@@ -1,3 +1,14 @@
+2011-02-22  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed expectations update for deeply-nested-reflections.html
+
+        * platform/chromium-linux/compositing/reflections/deeply-nested-reflections-expected.checksum: Added.
+        * platform/chromium-linux/compositing/reflections/deeply-nested-reflections-expected.png: Added.
+        * platform/chromium-win/compositing/reflections/deeply-nested-reflections-expected.checksum: Added.
+        * platform/chromium-win/compositing/reflections/deeply-nested-reflections-expected.png: Added.
+        * platform/chromium-win/compositing/reflections/deeply-nested-reflections-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-22  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rolling out r79321.
