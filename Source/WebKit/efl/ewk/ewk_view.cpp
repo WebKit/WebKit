@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2009-2010 ProFUSION embedded systems
-    Copyright (C) 2009-2010 Samsung Electronics
+    Copyright (C) 2009-2011 Samsung Electronics
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -618,6 +618,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->settings.resizable_textareas = priv->page_settings->textAreasAreResizable();
     priv->settings.private_browsing = priv->page_settings->privateBrowsingEnabled();
     priv->settings.caret_browsing = priv->page_settings->caretBrowsingEnabled();
+    priv->settings.spatial_navigation = priv->page_settings->isSpatialNavigationEnabled();
     priv->settings.local_storage = priv->page_settings->localStorageEnabled();
     priv->settings.offline_app_cache = true; // XXX no function to read setting; this keeps the original setting
     priv->settings.page_cache = priv->page_settings->usesPageCache();
@@ -2918,6 +2919,12 @@ Eina_Bool ewk_view_setting_font_sans_serif_set(Evas_Object* o, const char* famil
     return EINA_TRUE;
 }
 
+/**
+ * Gets if the spatial naviagtion is enabled.
+ *
+ * @param o view object to get spatial navigation setting.
+ * @return @c EINA_TRUE if spatial navigation is enabled, @c EINA_FALSE if not or on errors.
+ */
 Eina_Bool ewk_view_setting_spatial_navigation_get(Evas_Object* o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2925,6 +2932,12 @@ Eina_Bool ewk_view_setting_spatial_navigation_get(Evas_Object* o)
     return priv->settings.spatial_navigation;
 }
 
+/**
+ * Sets the spatial navigation.
+ *
+ * @param o view object to set spatial navigation setting.
+ * @return @c EINA_TRUE on success and @c EINA_FALSE on failure
+ */
 Eina_Bool ewk_view_setting_spatial_navigation_set(Evas_Object* o, Eina_Bool enable)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);

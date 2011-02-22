@@ -568,11 +568,10 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
     } else if (!strcmp(ev->key, "F6")) {
         info("Stop (F6) was pressed, stop loading.\n");
         ewk_view_stop(obj);
-    /* } FIXME: uncomment code below after Bug 18662 lands upstream.
-    else if (!strcmp(ev->key, "F12")) {
-        bool status = ewk_webframe_object_keyboard_navigation_get(page);
-        ewk_webframe_object_keyboard_navigation_set(page, !status);
-        info("Command::keyboard navigation toggle\n");*/
+    } else if (!strcmp(ev->key, "F12")) {
+        Eina_Bool status = ewk_view_setting_spatial_navigation_get(obj);
+        ewk_view_setting_spatial_navigation_set(obj, !status);
+        info("Command::keyboard navigation toggle\n");
     } else if (!strcmp(ev->key, "F7")) {
         info("Zoom out (F7) was pressed.\n");
         if (currentZoomLevel > MIN_ZOOM_LEVEL && zoom_level_set(obj, currentZoomLevel - 1))
