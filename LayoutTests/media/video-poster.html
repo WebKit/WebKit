@@ -1,7 +1,6 @@
 <html>
     <head>
         <title>&lt;video&gt; element with poster size test</title>
-        <script src=../http/tests/media/media-file.js></script>
         <script src=../http/tests/media/video-test.js></script>
         <script>
             var posterInfo = 
@@ -44,6 +43,18 @@
                 ]
             };
 
+            // Wait for |video| to have the |expectedWidth| and |expectedHeight|
+            // and invoke |callback()|.
+            function listenForWidthAndHeight(expectedWidth, expectedHeight, callback) {
+              if (video.clientWidth == expectedWidth && video.clientHeight == expectedHeight) {
+                callback();
+              } else {
+                // This uses a 20ms sleep loop to accomplish the wait, since the
+                // standard specifies no events that fire on poster load or error.
+                window.setTimeout(listenForWidthAndHeight, 20, expectedWidth, expectedHeight, callback);
+              }
+            }
+
             function testPoster()
             {
                 var temp = document.body.offsetWidth;
@@ -71,12 +82,12 @@
                   endTest();
                   return;
                 }
-                var url = posterInfo.posters[posterInfo.current].url;
+                var currentPoster = posterInfo.posters[posterInfo.current];
+                listenForWidthAndHeight(currentPoster.width, currentPoster.height, testPoster);
+                var url = currentPoster.url;
                 var desc = "<b>Setting poster to <em>\""+ url + "\"</em></b>";
                 consoleWrite(desc);
                 video.poster = url;
-                // This is icky but necessary since no event fires on setting video.poster="".
-                if (url == "") setTimeout(testPoster, 0);
             }
         </script>
     </head>
@@ -86,8 +97,6 @@
         <p>Test &lt;video&gt; element with and without a poster.</p>
         <script>
           findMediaElement();
-          video.addEventListener("load", function() { testPoster(); });
-          video.addEventListener("error", function() { testPoster(); });
           testPoster();
         </script>
     </body>

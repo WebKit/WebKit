@@ -1,3 +1,19 @@
+2011-02-22  Ami Fischman  <fischman@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Second attempt at removing flakiness from media/video-poster.html (in
+        service of http://crbug.com/60845).  First attempt (r79161)
+        relied on load & error events firing on the video element for
+        poster-related events, which the standard does not specify (and
+        are thus a bug).  This change instead relies on a 20ms sleep loop to
+        observe the new expected dimensions (and relies on the test
+        runner to time out if the expectations fail to be met).
+
+        https://bugs.webkit.org/show_bug.cgi?id=54685
+
+        * media/video-poster.html:
+
 2011-02-22  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r79339.
