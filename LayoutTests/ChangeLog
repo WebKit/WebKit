@@ -1,3 +1,11 @@
+2011-02-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] New fails caused by change(s) between r79317-r79320.
+
+        * platform/qt/Skipped: Skip tests until fix.
+
 2011-02-22  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed expectations change.

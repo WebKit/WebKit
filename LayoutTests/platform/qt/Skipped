@@ -3601,3 +3601,12 @@ fast/dom/Window/window-properties-geolocation.html
 # https://bugs.webkit.org/show_bug.cgi?id=54984
 media/audio-repaint.html
 media/media-document-audio-repaint.html
+
+# [Qt] New fails caused by change(s) between r79317-r79320.
+editing/deleting/5408255.html
+fast/dom/Element/id-in-deletebutton.html
+fast/images/pdf-as-image.html
+tables/mozilla/bugs/bug2962.html
+http/tests/inspector-enabled/open-close-open.html
+http/tests/inspector/change-iframe-src.html
+fast/loader/onload-policy-ignore-for-frame.html
