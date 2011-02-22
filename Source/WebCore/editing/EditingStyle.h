@@ -86,6 +86,7 @@ public:
     void removeStyleAddedByNode(Node*);
     void removeStyleConflictingWithStyleOfNode(Node*);
     void removeNonEditingProperties();
+    void collapseTextDecorationProperties();
     void prepareToApplyAt(const Position&, ShouldPreserveWritingDirection = DoNotPreserveWritingDirection);
 
     float fontSizeDelta() const { return m_fontSizeDelta; }

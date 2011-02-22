@@ -182,6 +182,9 @@ bool EditingStyle::isEmpty() const
 
 bool EditingStyle::textDirection(WritingDirection& writingDirection) const
 {
+    if (!m_mutableStyle)
+        return false;
+
     RefPtr<CSSValue> unicodeBidi = m_mutableStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi);
     if (!unicodeBidi)
         return false;
@@ -304,6 +307,19 @@ void EditingStyle::removeNonEditingProperties()
 {
     if (m_mutableStyle)
         m_mutableStyle = copyEditingProperties(m_mutableStyle.get());
+}
+
+void EditingStyle::collapseTextDecorationProperties()
+{
+    if (!m_mutableStyle)
+        return;
+
+    RefPtr<CSSValue> textDecorationsInEffect = m_mutableStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
+    if (!textDecorationsInEffect)
+        return;
+
+    m_mutableStyle->setProperty(CSSPropertyTextDecoration, textDecorationsInEffect->cssText(), m_mutableStyle->getPropertyPriority(CSSPropertyTextDecoration));
+    m_mutableStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
 }
 
 void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWritingDirection shouldPreserveWritingDirection)
