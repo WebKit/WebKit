@@ -1,3 +1,56 @@
+2011-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] make distcheck fails
+        https://bugs.webkit.org/show_bug.cgi?id=54943
+
+        Added new headers and removed references to deleted files.
+
+        * GNUmakefile.am:
+
+2011-02-21  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: make DOM storage and Database agents have the same lifetime as InspectorAgent
+        https://bugs.webkit.org/show_bug.cgi?id=54891
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::setFrontend):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        (WebCore::InspectorAgent::createFrontendLifetimeAgents):
+        (WebCore::InspectorAgent::releaseFrontendLifetimeAgents):
+        (WebCore::InspectorAgent::didCommitLoad):
+        * inspector/InspectorAgent.h:
+        (WebCore::InspectorAgent::instrumentingAgents):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::InspectorDOMStorageAgent):
+        (WebCore::InspectorDOMStorageAgent::~InspectorDOMStorageAgent):
+        (WebCore::InspectorDOMStorageAgent::setFrontend):
+        (WebCore::InspectorDOMStorageAgent::clearFrontend):
+        (WebCore::InspectorDOMStorageAgent::selectDOMStorage):
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageResourceForId):
+        (WebCore::InspectorDOMStorageAgent::didUseDOMStorage):
+        (WebCore::InspectorDOMStorageAgent::clearResources):
+        * inspector/InspectorDOMStorageAgent.h:
+        (WebCore::InspectorDOMStorageAgent::create):
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::didOpenDatabase):
+        (WebCore::InspectorDatabaseAgent::clearResources):
+        (WebCore::InspectorDatabaseAgent::InspectorDatabaseAgent):
+        (WebCore::InspectorDatabaseAgent::~InspectorDatabaseAgent):
+        (WebCore::InspectorDatabaseAgent::setFrontend):
+        (WebCore::InspectorDatabaseAgent::clearFrontend):
+        (WebCore::InspectorDatabaseAgent::databaseForId):
+        (WebCore::InspectorDatabaseAgent::selectDatabase):
+        * inspector/InspectorDatabaseAgent.h:
+        (WebCore::InspectorDatabaseAgent::create):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didOpenDatabaseImpl):
+        (WebCore::InspectorInstrumentation::didUseDOMStorageImpl):
+
 2011-02-21  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
