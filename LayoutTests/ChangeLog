@@ -1,3 +1,25 @@
+2011-02-22  Adrienne Walker  <enne@google.com>
+
+        Unreviewed rebaseline of some GPU tests.
+
+        This cleans up the rest of the BUGWK54409 expectations after r79084.
+
+        * platform/chromium-gpu-linux/compositing/direct-image-compositing-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/direct-image-compositing-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/fixed-position-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/horizontal-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/vertical-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/fixed-position-expected.checksum:
+        * platform/chromium-gpu-win/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/horizontal-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-win/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/vertical-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-win/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-02-22  Adam Roben  <aroben@apple.com>
 
         Skip a flaky Inspector test on Windows
