@@ -1,3 +1,15 @@
+2011-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, rolling out r79321.
+        http://trac.webkit.org/changeset/79321
+        https://bugs.webkit.org/show_bug.cgi?id=53146
+
+        Regresses  fast/forms/listbox-typeahead-cyrillic.html and fast
+        /spatial-navigation/snav-single-select.html on GTK
+
+        * platform/gtk/accessibility/combo-box-collapsed-selection-changed-expected.txt: Removed.
+        * platform/gtk/accessibility/combo-box-collapsed-selection-changed.html: Removed.
+
 2011-02-02  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
