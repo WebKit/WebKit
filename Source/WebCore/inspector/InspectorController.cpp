@@ -43,6 +43,7 @@
 #include "InspectorFrontend.h"
 #include "InspectorFrontendClient.h"
 #include "InspectorInstrumentation.h"
+#include "InspectorTimelineAgent.h"
 #include "Page.h"
 #include "ScriptObject.h"
 #include "Settings.h"
@@ -84,12 +85,12 @@ void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWo
 
 void InspectorController::startTimelineProfiler()
 {
-    m_inspectorAgent->startTimelineProfiler();
+    m_inspectorAgent->timelineAgent()->start();
 }
 
 void InspectorController::stopTimelineProfiler()
 {
-    m_inspectorAgent->stopTimelineProfiler();
+    m_inspectorAgent->timelineAgent()->stop();
 }
 
 void InspectorController::connectFrontend()
@@ -189,7 +190,7 @@ Page* InspectorController::inspectedPage() const
 
 bool InspectorController::timelineProfilerEnabled()
 {
-    return m_inspectorAgent->timelineAgent();
+    return m_inspectorAgent->timelineAgent()->started();
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

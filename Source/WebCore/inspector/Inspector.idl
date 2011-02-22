@@ -63,9 +63,6 @@ module core {
         void deleteCookie(in String cookieName, in String domain);
 
         // FIXME: dispatch on agents.
-        void startTimelineProfiler();
-        void stopTimelineProfiler();
-
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         void enableDebugger();
         void disableDebugger();
@@ -198,6 +195,8 @@ module core {
     };
 
     interface [Conditional=INSPECTOR] Timeline {
+        void start();
+        void stop();
         [notify] void timelineProfilerWasStarted();
         [notify] void timelineProfilerWasStopped();
         [notify] void addRecordToTimeline(out Object record);

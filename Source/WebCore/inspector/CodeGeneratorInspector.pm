@@ -78,6 +78,11 @@ $typeTransform{"Runtime"} = {
     "header" => "InspectorRuntimeAgent.h",
     "domainAccessor" => "m_inspectorAgent->runtimeAgent()",
 };
+$typeTransform{"Timeline"} = {
+    "forward" => "InspectorTimelineAgent",
+    "header" => "InspectorTimelineAgent.h",
+    "domainAccessor" => "m_inspectorAgent->timelineAgent()",
+};
 
 $typeTransform{"Frontend"} = {
     "forward" => "InspectorFrontend",

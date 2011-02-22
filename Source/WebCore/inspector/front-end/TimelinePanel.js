@@ -270,10 +270,10 @@ WebInspector.TimelinePanel.prototype = {
     _toggleTimelineButtonClicked: function()
     {
         if (this.toggleTimelineButton.toggled)
-            InspectorAgent.stopTimelineProfiler();
+            TimelineAgent.stop();
         else {
             this._clearPanel();
-            InspectorAgent.startTimelineProfiler();
+            TimelineAgent.start();
         }
     },
 

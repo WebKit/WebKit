@@ -147,6 +147,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client)
     , m_domStorageAgent(InspectorDOMStorageAgent::create(m_instrumentingAgents.get()))
 #endif
     , m_state(new InspectorState(client))
+    , m_timelineAgent(InspectorTimelineAgent::create(m_instrumentingAgents.get(), m_state.get()))
     , m_consoleAgent(new InspectorConsoleAgent(m_instrumentingAgents.get(), this, m_state.get(), m_injectedScriptHost.get(), m_domAgent.get()))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_profilerAgent(InspectorProfilerAgent::create(this))
@@ -202,7 +203,7 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
     pushDataCollectedOffline();
 
     m_resourceAgent = InspectorResourceAgent::restore(m_inspectedPage, m_state.get(), m_frontend);
-    m_timelineAgent = InspectorTimelineAgent::restore(m_state.get(), m_frontend);
+    m_timelineAgent->restore(m_state.get(), m_frontend);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     restoreDebugger(false);
@@ -344,6 +345,7 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
 
     m_domAgent->setFrontend(m_frontend);
     m_consoleAgent->setFrontend(m_frontend);
+    m_timelineAgent->setFrontend(m_frontend);
 #if ENABLE(DATABASE)
     m_databaseAgent->setFrontend(m_frontend);
 #endif
@@ -382,6 +384,7 @@ void InspectorAgent::disconnectFrontend()
 
     m_consoleAgent->clearFrontend();
     m_domAgent->clearFrontend();
+    m_timelineAgent->clearFrontend();
 #if ENABLE(DATABASE)
     m_databaseAgent->clearFrontend();
 #endif
@@ -413,8 +416,6 @@ void InspectorAgent::releaseFrontendLifetimeAgents()
 {
     m_resourceAgent.clear();
     m_runtimeAgent.clear();
-    m_timelineAgent.clear();
-
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheAgent.clear();
 #endif
@@ -501,8 +502,8 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
         m_injectedScriptHost->discardInjectedScripts();
         m_consoleAgent->reset();
 
-        if (m_timelineAgent)
-            m_timelineAgent->didCommitLoad();
+        if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
+            timelineAgent->didCommitLoad();
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         if (m_applicationCacheAgent)
@@ -549,8 +550,8 @@ void InspectorAgent::domContentLoadedEventFired(DocumentLoader* loader, const KU
 
     if (InspectorDOMAgent* domAgent = m_instrumentingAgents->inspectorDOMAgent())
         domAgent->mainFrameDOMContentLoaded();
-    if (m_timelineAgent)
-        m_timelineAgent->didMarkDOMContentEvent();
+    if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->didMarkDOMContentEvent();
     if (m_frontend)
         m_frontend->domContentEventFired(currentTime());
 }
@@ -566,8 +567,8 @@ void InspectorAgent::loadEventFired(DocumentLoader* loader, const KURL& url)
     if (!isMainResourceLoader(loader, url))
         return;
 
-    if (m_timelineAgent)
-        m_timelineAgent->didMarkLoadEvent();
+    if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->didMarkLoadEvent();
     if (m_frontend)
         m_frontend->loadEventFired(currentTime());
 }
@@ -586,19 +587,6 @@ void InspectorAgent::applyUserAgentOverride(String* userAgent) const
 {
     if (!m_userAgentOverride.isEmpty())
         *userAgent = m_userAgentOverride;
-}
-
-void InspectorAgent::startTimelineProfiler()
-{
-    if (m_timelineAgent || !enabled() || !m_frontend)
-        return;
-
-    m_timelineAgent = InspectorTimelineAgent::create(m_state.get(), m_frontend);
-}
-
-void InspectorAgent::stopTimelineProfiler()
-{
-    m_timelineAgent.clear();
 }
 
 #if ENABLE(WORKERS)

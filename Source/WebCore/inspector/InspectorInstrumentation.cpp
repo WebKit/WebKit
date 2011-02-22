@@ -682,7 +682,7 @@ void InspectorInstrumentation::cancelPauseOnNativeEvent(InspectorAgent* inspecto
 
 InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(InspectorAgent* inspectorAgent)
 {
-    return inspectorAgent->timelineAgent();
+    return inspectorAgent->instrumentingAgents()->inspectorTimelineAgent();
 }
 
 InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const InspectorInstrumentationCookie& cookie)

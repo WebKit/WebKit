@@ -1,3 +1,44 @@
+2011-02-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Timeline agent should have same lifetime as InspectorAgent
+        https://bugs.webkit.org/show_bug.cgi?id=54951
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        (WebCore::InspectorAgent::setFrontend):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        (WebCore::InspectorAgent::releaseFrontendLifetimeAgents):
+        (WebCore::InspectorAgent::didCommitLoad):
+        (WebCore::InspectorAgent::domContentLoadedEventFired):
+        (WebCore::InspectorAgent::loadEventFired):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::startTimelineProfiler):
+        (WebCore::InspectorController::stopTimelineProfiler):
+        (WebCore::InspectorController::timelineProfilerEnabled):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::retrieveTimelineAgent):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::~InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::setFrontend):
+        (WebCore::InspectorTimelineAgent::clearFrontend):
+        (WebCore::InspectorTimelineAgent::restore):
+        (WebCore::InspectorTimelineAgent::startTimelineProfiler):
+        (WebCore::InspectorTimelineAgent::stopTimelineProfiler):
+        (WebCore::InspectorTimelineAgent::timelineProfilerStarted):
+        (WebCore::InspectorTimelineAgent::didCommitLoad):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::clearRecordStack):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::create):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._toggleTimelineButtonClicked):
+
 2011-02-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

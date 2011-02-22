@@ -168,9 +168,6 @@ public:
 
     void didCommitLoad(DocumentLoader*);
 
-    void startTimelineProfiler();
-    void stopTimelineProfiler();
-
     void getCookies(RefPtr<InspectorArray>* cookies, WTF::String* cookiesString);
     void deleteCookie(const String& cookieName, const String& domain);
 
@@ -277,8 +274,8 @@ private:
     OwnPtr<InspectorDOMStorageAgent> m_domStorageAgent;
 #endif
 
-    OwnPtr<InspectorTimelineAgent> m_timelineAgent;
     OwnPtr<InspectorState> m_state;
+    OwnPtr<InspectorTimelineAgent> m_timelineAgent;
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     OwnPtr<InspectorApplicationCacheAgent> m_applicationCacheAgent;

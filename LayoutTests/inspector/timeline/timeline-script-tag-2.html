@@ -13,7 +13,7 @@ function performActions()
 
 function test() 
 {
-    InspectorAgent.startTimelineProfiler(step1);
+    TimelineAgent.start(step1);
     function step1()
     {
         InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
@@ -22,7 +22,7 @@ function test()
 
     function step2()
     {
-        InspectorAgent.stopTimelineProfiler(step3);
+        TimelineAgent.stop(step3);
     }
 
     function step3()

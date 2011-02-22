@@ -36,6 +36,7 @@
 #include "Event.h"
 #include "InspectorFrontend.h"
 #include "InspectorState.h"
+#include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -47,15 +48,6 @@ namespace WebCore {
 
 namespace TimelineAgentState {
 static const char timelineAgentEnabled[] = "timelineAgentEnabled";
-}
-
-int InspectorTimelineAgent::s_id = 0;
-
-PassOwnPtr<InspectorTimelineAgent> InspectorTimelineAgent::restore(InspectorState* state, InspectorFrontend* frontend)
-{
-    if (state->getBoolean(TimelineAgentState::timelineAgentEnabled))
-        return create(state, frontend);
-    return 0;
 }
 
 void InspectorTimelineAgent::pushGCEventRecords()
@@ -80,9 +72,55 @@ void InspectorTimelineAgent::didGC(double startTime, double endTime, size_t coll
 
 InspectorTimelineAgent::~InspectorTimelineAgent()
 {
-    m_frontend->timelineProfilerWasStopped();
+    clearFrontend();
+}
+
+void InspectorTimelineAgent::setFrontend(InspectorFrontend* frontend)
+{
+    m_frontend = frontend;
+}
+
+void InspectorTimelineAgent::clearFrontend()
+{
+    stop();
+    m_frontend = 0;
+}
+
+void InspectorTimelineAgent::restore(InspectorState* state, InspectorFrontend* frontend)
+{
+    setFrontend(frontend);
+    if (state->getBoolean(TimelineAgentState::timelineAgentEnabled))
+        start();
+}
+
+void InspectorTimelineAgent::start()
+{
+    if (!m_frontend)
+        return;
+    m_instrumentingAgents->setInspectorTimelineAgent(this);
+    ScriptGCEvent::addEventListener(this);
+    m_frontend->timelineProfilerWasStarted();
+    m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, true);
+}
+
+void InspectorTimelineAgent::stop()
+{
+    if (!started())
+        return;
+    m_instrumentingAgents->setInspectorTimelineAgent(0);
+    if (m_frontend)
+        m_frontend->timelineProfilerWasStopped();
     ScriptGCEvent::removeEventListener(this);
+
+    clearRecordStack();
+    m_gcEvents.clear();
+
     m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, false);
+}
+
+bool InspectorTimelineAgent::started() const
+{
+    return m_state->getBoolean(TimelineAgentState::timelineAgentEnabled);
 }
 
 void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine)
@@ -280,14 +318,7 @@ void InspectorTimelineAgent::didMarkLoadEvent()
 
 void InspectorTimelineAgent::didCommitLoad()
 {
-    m_recordStack.clear();
-}
-
-void InspectorTimelineAgent::setFrontend(InspectorFrontend* frontend)
-{
-    ASSERT(frontend);
-    m_recordStack.clear();
-    m_frontend = frontend;
+    clearRecordStack();
 }
 
 void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, TimelineRecordType type)
@@ -329,14 +360,12 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
     }
 }
 
-InspectorTimelineAgent::InspectorTimelineAgent(InspectorState* state, InspectorFrontend* frontend)
-    : m_state(state)
-    , m_frontend(frontend)
-    , m_id(++s_id)
+InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state)
+    : m_instrumentingAgents(instrumentingAgents)
+    , m_state(state)
+    , m_frontend(0)
+    , m_id(1)
 {
-    ScriptGCEvent::addEventListener(this);
-    m_frontend->timelineProfilerWasStarted();
-    m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, true);
 }
 
 void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, TimelineRecordType type)
@@ -345,6 +374,13 @@ void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data,
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS());
     m_recordStack.append(TimelineRecordEntry(record.release(), data, InspectorArray::create(), type));
 }
+
+void InspectorTimelineAgent::clearRecordStack()
+{
+    m_recordStack.clear();
+    m_id++;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)
