@@ -640,6 +640,7 @@ protected:
     
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const { }
     void setTabIndexExplicitly(short);
+    void clearTabIndexExplicitly();
     
     bool hasRareData() const { return getFlag(HasRareDataFlag); }
 

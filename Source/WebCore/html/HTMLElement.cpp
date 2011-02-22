@@ -148,7 +148,9 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == tabindexAttr) {
         indexstring = getAttribute(tabindexAttr);
         int tabindex = 0;
-        if (parseHTMLInteger(indexstring, tabindex)) {
+        if (!indexstring.length()) {
+            clearTabIndexExplicitly();
+        } else if (parseHTMLInteger(indexstring, tabindex)) {
             // Clamp tabindex to the range of 'short' to match Firefox's behavior.
             setTabIndexExplicitly(max(static_cast<int>(std::numeric_limits<short>::min()), min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));
         }

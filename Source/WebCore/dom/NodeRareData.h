@@ -104,6 +104,7 @@ public:
     short tabIndex() const { return m_tabIndex; }
     void setTabIndexExplicitly(short index) { m_tabIndex = index; m_tabIndexWasSetExplicitly = true; }
     bool tabIndexSetExplicitly() const { return m_tabIndexWasSetExplicitly; }
+    void clearTabIndexExplicitly() { m_tabIndex = 0; m_tabIndexWasSetExplicitly = false; }
 
     EventTargetData* eventTargetData() { return m_eventTargetData.get(); }
     EventTargetData* ensureEventTargetData()

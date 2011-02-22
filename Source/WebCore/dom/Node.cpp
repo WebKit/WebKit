@@ -511,6 +511,11 @@ void Node::setTabIndexExplicitly(short i)
     ensureRareData()->setTabIndexExplicitly(i);
 }
 
+void Node::clearTabIndexExplicitly()
+{
+    ensureRareData()->clearTabIndexExplicitly();
+}
+
 String Node::nodeValue() const
 {
     return String();
