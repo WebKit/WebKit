@@ -176,13 +176,12 @@ WebInspector.ExtensionServer.prototype = {
         // shouldn't be hit unless someone is bypassing the API.
         if (id in this._clientObjects || id in WebInspector.panels)
             return this._status.E_EXISTS(id);
+
         var panel = new WebInspector.ExtensionPanel(id, message.title, message.icon);
         this._clientObjects[id] = panel;
-
-        var toolbarElement = document.getElementById("toolbar");
-        var lastToolbarItem = WebInspector.panelOrder[WebInspector.panelOrder.length - 1].toolbarItem;
-        WebInspector.addPanelToolbarIcon(toolbarElement, panel, lastToolbarItem);
         WebInspector.panels[id] = panel;
+        WebInspector.addPanel(panel);
+
         var iframe = this._createClientIframe(panel.element, message.url);
         iframe.style.height = "100%";
         return this._status.OK();

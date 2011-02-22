@@ -66205,6 +66205,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\Toolbar.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\TopDownProfileDataGridTree.js"
 					>
 				</File>

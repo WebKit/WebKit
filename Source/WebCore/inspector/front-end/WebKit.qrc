@@ -111,6 +111,7 @@
     <file>TimelineGrid.js</file>
     <file>TimelineOverviewPane.js</file>
     <file>TimelinePanel.js</file>
+    <file>Toolbar.js</file>
     <file>TopDownProfileDataGridTree.js</file>
     <file>treeoutline.js</file>
     <file>utilities.js</file>

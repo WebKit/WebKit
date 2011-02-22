@@ -46,29 +46,7 @@ WebInspector.Panel.prototype = {
         if (this._toolbarItem)
             return this._toolbarItem;
 
-        // Sample toolbar item as markup:
-        // <button class="toolbar-item resources toggleable">
-        // <div class="toolbar-icon"></div>
-        // <div class="toolbar-label">Resources</div>
-        // </button>
-
-        this._toolbarItem = document.createElement("button");
-        this._toolbarItem.className = "toolbar-item toggleable";
-        this._toolbarItem.panel = this;
-
-        this._toolbarItem.addStyleClass(this._panelName);
-
-        var iconElement = document.createElement("div");
-        iconElement.className = "toolbar-icon";
-        this._toolbarItem.appendChild(iconElement);
-
-        if ("toolbarItemLabel" in this) {
-            var labelElement = document.createElement("div");
-            labelElement.className = "toolbar-label";
-            labelElement.textContent = this.toolbarItemLabel;
-            this._toolbarItem.appendChild(labelElement);
-        }
-
+        this._toolbarItem = WebInspector.Toolbar.createPanelToolbarItem(this);
         return this._toolbarItem;
     },
 

@@ -76,7 +76,6 @@ img {
     left: 0;
     right: 0;
     height: 56px;
-    display: -webkit-box;
     padding: 0 5px;
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(191, 191, 191)), to(rgb(151, 151, 151)));
     border-bottom: 1px solid rgb(80, 80, 80);
@@ -111,30 +110,21 @@ body.attached.inactive #toolbar {
 }
 
 .toolbar-item {
-    display: -webkit-box;
-    padding: 4px 6px;
     margin: 0;
+    padding: 0 6px;
     background-color: transparent;
     border-style: none;
     border-color: transparent;
-    -webkit-box-orient: vertical;
-    -webkit-box-align: center;
-    -webkit-box-pack: end;
+}
+
+.toolbar-item.toggleable {
+    padding-top: 4px;
 }
 
 .toolbar-item.toggleable.toggled-on {
     border-width: 0 2px 0 2px;
-    padding: 4px 4px;
+    padding: 4px 4px 0 4px;
     -webkit-border-image: url(Images/toolbarItemSelected.png) 0 2 0 2;
-}
-
-.toolbar-item.flexable-space {
-    -webkit-box-flex: 1;
-    visibility: hidden;
-}
-
-.toolbar-item input {
-    margin-bottom: 8px;
 }
 
 .toolbar-icon {
@@ -144,7 +134,8 @@ body.attached.inactive #toolbar {
     -webkit-background-size: 100% auto;
 }
 
-body.attached .toolbar-icon {
+body.attached .toolbar-icon,
+#toolbar-dropdown .toolbar-icon {
     width: 24px;
     height: 24px;
     vertical-align: middle;
@@ -168,9 +159,9 @@ body.attached .toolbar-item:active .toolbar-icon {
     text-shadow: none;
 }
 
-body.attached .toolbar-label {
+body.attached .toolbar-label,
+#toolbar-dropdown .toolbar-label {
     display: inline-block;
-    vertical-align: middle;
     margin-left: 3px;
 }
 
@@ -178,25 +169,145 @@ body.attached #search-toolbar-label {
     display: none;
 }
 
+#toolbar-controls {
+    float: right;
+    display: -webkit-box;
+    -webkit-box-align: center;
+    height: 100%;
+}
+
+#toolbar-dropdown-arrow {
+    font-size: 16px;
+    font-weight: bold;
+    border: 0;
+    background-color: transparent;
+    -webkit-border-radius: 5px;
+    text-shadow: none;
+}
+
+body.attached #toolbar-dropdown-arrow {
+    font-size: 14px;
+    padding-bottom: 4px;
+}
+
+#toolbar-dropdown-arrow.dropdown-visible {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(251, 251, 251, 0.9)), to(rgba(231, 231, 231, 0.9)));
+}
+
+#toolbar-dropdown-arrow:hover {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(191, 191, 191, 0.7)), to(rgba(171, 171, 171, 0.5)));
+}
+
+#toolbar-dropdown-arrow:active {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(111, 111, 111, 0.8)), to(rgba(91, 91, 91, 0.8)));
+}
+
+#toolbar-dropdown {
+    position: absolute;
+    z-index: 1000;
+    -webkit-box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgb(128, 128, 128);
+    padding: 4px;
+    background-color: inherit;
+    background-image: inherit;
+}
+
+body.detached.platform-mac-leopard #toolbar-dropdown,
+body.detached.platform-mac-snowleopard #toolbar-dropdown {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(191, 191, 191)), to(rgb(151, 151, 151)));
+}
+
+#toolbar-dropdown .scrollable-content {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: start;
+}
+
+#toolbar-dropdown .toolbar-item {
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    margin: 0px 2px;
+    padding: 4px;
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+#toolbar-dropdown .toolbar-item.toggleable.toggled-on {
+    border: 1px solid rgba(100, 100, 120, 0.4);
+    -webkit-border-image: none;
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(128, 128, 128, 0.6)), to(rgba(128, 128, 128, 0.6)), color-stop(20%, rgba(158, 158, 158, 0.2)), color-stop(80%, rgba(158, 158, 158, 0.2)));
+}
+
+#toolbar-dropdown .toolbar-item:hover {
+    -webkit-border-image: none;
+    border: 1px solid rgba(100, 100, 120, 0.8);
+}
+
+#toolbar-dropdown .toolbar-item.toggleable.toggled-on:hover {
+    border: 1px solid rgba(100, 100, 120, 1);
+}
+
+#toolbar-dropdown .toolbar-icon {
+    margin-right: 0.5em;
+}
+
+#toolbar-dropdown .toolbar-item:active .toolbar-icon {
+    background-position: 0 24px;
+}
+
+.scrollable-content {
+    position: static;
+    height: 100%;
+    overflow-y: auto;
+    width: 100%;
+    margin-right: 12px;
+    padding-right: 3px;
+}
+
+.scrollable-content::-webkit-scrollbar {
+    width: 11px;
+}
+
+.scrollable-content::-webkit-scrollbar-corner,
+.scrollable-content::-webkit-resizer {
+    display: none;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:vertical {
+    background: -webkit-gradient(linear, left top, right top, from(rgb(192, 192, 192)), to(rgb(192, 192, 192)), color-stop(40%, rgb(214, 214, 214)));
+    border-radius: 5px;
+    min-height: 20px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:vertical:hover,
+.scrollable-content::-webkit-scrollbar-thumb:vertical:active {
+    background: -webkit-gradient(linear, left top, right top, from(rgb(230, 230, 230)), to(rgb(230, 230, 230)), color-stop(40%, rgb(252, 252, 252)));
+}
+
+.scrollable-content::-webkit-scrollbar-track:vertical {
+    background: -webkit-gradient(linear, left top, right top, from(rgb(128, 128, 128)), to(rgb(164, 164, 164)), color-stop(25%, rgb(164, 164, 164)));
+    border-radius: 5px;
+}
+
+.toolbar-search-item {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: center;
+    -webkit-box-pack: end;
+}
+
 #search {
     width: 205px;
     font-size: 16px;
-    margin-bottom: 5px;
 }
 
 body.attached #search {
     font-size: 11px;
-    margin-bottom: 8px;
 }
 
 #search-results-matches {
     font-size: 11px;
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
-    margin-bottom: 22px;
-}
-
-body.attached #search-results-matches {
-    margin-bottom: 6px;
 }
 
 .toolbar-item.elements .toolbar-icon {
@@ -238,7 +349,7 @@ body.attached #search-results-matches {
     background-position: 0 0;
     background-color: transparent;
     border: 0 none transparent;
-    margin: 5px 0;
+    margin-top: 9px;
 }
 
 #close-button-left:hover, #close-button-right:hover {
@@ -247,6 +358,10 @@ body.attached #search-results-matches {
 
 #close-button-left:active, #close-button-right:active {
     background-position: 28px 0;
+}
+
+.close-left {
+    float: left;
 }
 
 body.detached .toolbar-item.close-left, body.detached .toolbar-item.close-right {

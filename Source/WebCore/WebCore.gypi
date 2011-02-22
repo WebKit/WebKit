@@ -4798,6 +4798,7 @@
             'inspector/front-end/TimelineOverviewPane.js',
             'inspector/front-end/TimelineGrid.js',
             'inspector/front-end/TimelinePanel.js',
+            'inspector/front-end/Toolbar.js',
             'inspector/front-end/TopDownProfileDataGridTree.js',
             'inspector/front-end/treeoutline.js',
             'inspector/front-end/utilities.js',

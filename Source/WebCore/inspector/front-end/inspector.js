@@ -264,6 +264,8 @@ var WebInspector = {
         }
         if (this.drawer)
             this.drawer.resize();
+        if (this.toolbar)
+            this.toolbar.resize();
     },
 
     get errors()
@@ -496,13 +498,11 @@ WebInspector.doLoadedDone = function()
     this.panels = {};
     this._createPanels();
     this._panelHistory = new WebInspector.PanelHistory();
-
-    var toolbarElement = document.getElementById("toolbar");
-    var previousToolbarItem = toolbarElement.children[0];
+    this.toolbar = new WebInspector.Toolbar();
 
     this.panelOrder = [];
     for (var panelName in this.panels)
-        previousToolbarItem = WebInspector.addPanelToolbarIcon(toolbarElement, this.panels[panelName], previousToolbarItem);
+        this.addPanel(this.panels[panelName]);
 
     this.Tips = {
         ResourceNotCompressed: {id: 0, message: WebInspector.UIString("You could save bandwidth by having your web server compress this transfer with gzip or zlib.")}
@@ -539,10 +539,6 @@ WebInspector.doLoadedDone = function()
     searchField.addEventListener("mousedown", this._searchFieldManualFocus.bind(this), false); // when the search field is manually selected
     searchField.addEventListener("keydown", this._searchKeyDown.bind(this), true);
 
-    toolbarElement.addEventListener("mousedown", this.toolbarDragStart, true);
-    document.getElementById("close-button-left").addEventListener("click", this.close, true);
-    document.getElementById("close-button-right").addEventListener("click", this.close, true);
-
     this.extensionServer.initExtensions();
 
     function onPopulateScriptObjects()
@@ -569,16 +565,10 @@ WebInspector.doLoadedDone = function()
     CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
 }
 
-WebInspector.addPanelToolbarIcon = function(toolbarElement, panel, previousToolbarItem)
+WebInspector.addPanel = function(panel)
 {
-    var panelToolbarItem = panel.toolbarItem;
     this.panelOrder.push(panel);
-    panelToolbarItem.addEventListener("click", this._toolbarItemClicked.bind(this));
-    if (previousToolbarItem)
-        toolbarElement.insertBefore(panelToolbarItem, previousToolbarItem.nextSibling);
-    else
-        toolbarElement.insertBefore(panelToolbarItem, toolbarElement.firstChild);
-    return panelToolbarItem;
+    this.toolbar.addPanel(panel);
 }
 
 var windowLoaded = function()
@@ -621,6 +611,7 @@ WebInspector.windowResize = function(event)
     if (this.currentPanel)
         this.currentPanel.resize();
     this.drawer.resize();
+    this.toolbar.resize();
 }
 
 WebInspector.windowFocused = function(event)
@@ -1032,58 +1023,6 @@ WebInspector.toggleAttach = function()
         InspectorFrontendHost.requestAttachWindow();
     else
         InspectorFrontendHost.requestDetachWindow();
-}
-
-WebInspector.toolbarDragStart = function(event)
-{
-    if ((!WebInspector.attached && WebInspector.platformFlavor !== WebInspector.PlatformFlavor.MacLeopard && WebInspector.platformFlavor !== WebInspector.PlatformFlavor.MacSnowLeopard) || WebInspector.port == "qt")
-        return;
-
-    var target = event.target;
-    if (target.hasStyleClass("toolbar-item") && target.hasStyleClass("toggleable"))
-        return;
-
-    var toolbar = document.getElementById("toolbar");
-    if (target !== toolbar && !target.hasStyleClass("toolbar-item"))
-        return;
-
-    toolbar.lastScreenX = event.screenX;
-    toolbar.lastScreenY = event.screenY;
-
-    WebInspector.elementDragStart(toolbar, WebInspector.toolbarDrag, WebInspector.toolbarDragEnd, event, (WebInspector.attached ? "row-resize" : "default"));
-}
-
-WebInspector.toolbarDragEnd = function(event)
-{
-    var toolbar = document.getElementById("toolbar");
-
-    WebInspector.elementDragEnd(event);
-
-    delete toolbar.lastScreenX;
-    delete toolbar.lastScreenY;
-}
-
-WebInspector.toolbarDrag = function(event)
-{
-    var toolbar = document.getElementById("toolbar");
-
-    if (WebInspector.attached) {
-        var height = window.innerHeight - (event.screenY - toolbar.lastScreenY);
-
-        InspectorFrontendHost.setAttachedWindowHeight(height);
-    } else {
-        var x = event.screenX - toolbar.lastScreenX;
-        var y = event.screenY - toolbar.lastScreenY;
-
-        // We cannot call window.moveBy here because it restricts the movement
-        // of the window at the edges.
-        InspectorFrontendHost.moveWindowBy(x, y);
-    }
-
-    toolbar.lastScreenX = event.screenX;
-    toolbar.lastScreenY = event.screenY;
-
-    event.preventDefault();
 }
 
 WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor)
