@@ -16,8 +16,6 @@ DESTDIR = $$WEBCORE_DESTDIR
 RESOURCES += \
     $$PWD/../WebCore/WebCore.qrc
 
-include_webinspector: RESOURCES += $$PWD/../WebCore/inspector/front-end/WebKit.qrc $$WC_GENERATED_SOURCES_DIR/InspectorBackendStub.qrc
-
 contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
     DEFINES += ENABLE_NO_LISTBOX_RENDERING=1
 }

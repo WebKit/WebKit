@@ -48,6 +48,8 @@ moduleFile=$$PWD/qt_webkit_version.pri
 isEmpty(QT_BUILD_TREE):include($$moduleFile)
 VERSION = $${QT_WEBKIT_MAJOR_VERSION}.$${QT_WEBKIT_MINOR_VERSION}.$${QT_WEBKIT_PATCH_VERSION}
 
+include_webinspector: RESOURCES += $$SOURCE_DIR/WebCore/inspector/front-end/WebKit.qrc $$WC_GENERATED_SOURCES_DIR/InspectorBackendStub.qrc
+
 # Extract sources to build from the generator definitions
 defineTest(addExtraCompiler) {
     isEqual($${1}.wkAddOutputToSources, false): return(true)

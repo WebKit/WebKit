@@ -1,5 +1,16 @@
 2011-02-22  Andras Becsi  <abecsi@webkit.org>
 
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Redesign the build system
+        https://bugs.webkit.org/show_bug.cgi?id=51339
+
+        Move inspector's resource files into the final build step to fix the layout test regression.
+
+        * QtWebKit.pro: Add inspector's reaource files.
+
+2011-02-22  Andras Becsi  <abecsi@webkit.org>
+
         Reviewed by Laszlo Gombos.
         Rubber-stamped by Csaba Osztrogonác.
 
