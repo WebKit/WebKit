@@ -23,48 +23,60 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SecurityOriginData.h"
+#ifndef WebApplicationCacheManagerProxy_h
+#define WebApplicationCacheManagerProxy_h
 
 #include "APIObject.h"
+#include "GenericCallback.h"
 #include "ImmutableArray.h"
-#include "WebCoreArgumentCoders.h"
-#include "WebSecurityOrigin.h"
 
-using namespace WebCore;
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class Connection;
+    class MessageID;
+}
 
 namespace WebKit {
 
-void SecurityOriginData::encode(CoreIPC::ArgumentEncoder* encoder) const
-{
-    encoder->encode(CoreIPC::In(protocol, host, port));
-}
+struct SecurityOriginData;
+class WebContext;
+class WebSecurityOrigin;
 
-bool SecurityOriginData::decode(CoreIPC::ArgumentDecoder* decoder, SecurityOriginData& securityOriginData)
-{
-    return decoder->decode(CoreIPC::Out(securityOriginData.protocol, securityOriginData.host, securityOriginData.port));
-}
+typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginData>& originDatas, ArrayCallback* callback)
-{
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
+class WebApplicationCacheManagerProxy : public APIObject {
+public:
+    static const Type APIType = TypeApplicationCacheManager;
+
+    static PassRefPtr<WebApplicationCacheManagerProxy> create(WebContext*);
+    virtual ~WebApplicationCacheManagerProxy();
+
+    void invalidate();
+    void clearContext() { m_webContext = 0; }
     
-    size_t originDataCount = originDatas.size();
-    Vector<RefPtr<APIObject> > securityOrigins;
-    securityOrigins.reserveCapacity(originDataCount);
+    void getApplicationCacheOrigins(PassRefPtr<ArrayCallback>);
+    void deleteEntriesForOrigin(WebSecurityOrigin*);
+    void deleteAllEntries();
 
-    for (size_t i = 0; i < originDataCount; ++i) {
-        SecurityOriginData originData = originDatas[i];
-        RefPtr<APIObject> origin = WebSecurityOrigin::create(originData.protocol, originData.host, originData.port);
-        if (!origin)
-            continue;
-        securityOrigins.uncheckedAppend(origin);
-    }
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
-    callback->performCallbackWithReturnValue(ImmutableArray::adopt(securityOrigins).get());
-}
+private:
+    WebApplicationCacheManagerProxy(WebContext*);
+
+    virtual Type type() const { return APIType; }
+
+    void didGetApplicationCacheOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
+    
+    void didReceiveWebApplicationCacheManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
+    WebContext* m_webContext;
+    HashMap<uint64_t, RefPtr<ArrayCallback> > m_arrayCallbacks;
+};
 
 } // namespace WebKit
+
+#endif // WebApplicationCacheManagerProxy_h

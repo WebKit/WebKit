@@ -230,9 +230,10 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
     if (messageID.is<CoreIPC::MessageClassWebContext>()
         || messageID.is<CoreIPC::MessageClassWebContextLegacy>()
         || messageID.is<CoreIPC::MessageClassDownloadProxy>()
-        || messageID.is<CoreIPC::MessageClassWebResourceCacheManagerProxy>()
+        || messageID.is<CoreIPC::MessageClassWebApplicationCacheManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebDatabaseManagerProxy>()
-        || messageID.is<CoreIPC::MessageClassWebGeolocationManagerProxy>()) {
+        || messageID.is<CoreIPC::MessageClassWebGeolocationManagerProxy>()
+        || messageID.is<CoreIPC::MessageClassWebResourceCacheManagerProxy>()) {
         m_context->didReceiveMessage(connection, messageID, arguments);
         return;
     }

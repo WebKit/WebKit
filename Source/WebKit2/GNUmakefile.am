@@ -38,6 +38,7 @@ libWebKit2_la_HEADERS = \
 	$(WebKit2)/UIProcess/API/C/gtk/WKView.h \
 	$(WebKit2)/UIProcess/API/C/WebKit2.h \
 	$(WebKit2)/UIProcess/API/C/WKAPICast.h \
+	$(WebKit2)/UIProcess/API/C/WKApplicationCacheManager.h \
 	$(WebKit2)/UIProcess/API/C/WKAuthenticationChallenge.h \
 	$(WebKit2)/UIProcess/API/C/WKAuthenticationDecisionListener.h \
 	$(WebKit2)/UIProcess/API/C/WKBackForwardList.h \
@@ -283,6 +284,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/API/C/gtk/WKView.h \
 	Source/WebKit2/UIProcess/API/C/WebKit2.h \
 	Source/WebKit2/UIProcess/API/C/WKAPICast.h \
+	Source/WebKit2/UIProcess/API/C/WKApplicationCacheManager.h \
+	Source/WebKit2/UIProcess/API/C/WKApplicationCacheManager.cpp \
 	Source/WebKit2/UIProcess/API/C/WKAuthenticationChallenge.cpp \
 	Source/WebKit2/UIProcess/API/C/WKAuthenticationChallenge.h \
 	Source/WebKit2/UIProcess/API/C/WKAuthenticationDecisionListener.cpp \
@@ -385,6 +388,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/TiledDrawingAreaTile.h \
 	Source/WebKit2/UIProcess/VisitedLinkProvider.cpp \
 	Source/WebKit2/UIProcess/VisitedLinkProvider.h \
+	Source/WebKit2/UIProcess/WebApplicationCacheManagerProxy.h \
+	Source/WebKit2/UIProcess/WebApplicationCacheManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebBackForwardList.cpp \
 	Source/WebKit2/UIProcess/WebBackForwardList.h \
 	Source/WebKit2/UIProcess/WebContext.cpp \
@@ -449,6 +454,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/WebResourceLoadClient.h \
 	Source/WebKit2/UIProcess/WebUIClient.cpp \
 	Source/WebKit2/UIProcess/WebUIClient.h \
+	Source/WebKit2/WebProcess/ApplicationCache/WebApplicationCacheManager.h \
+	Source/WebKit2/WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
 	Source/WebKit2/WebProcess/Authentication/AuthenticationManager.cpp \
 	Source/WebKit2/WebProcess/Authentication/AuthenticationManager.h \
 	Source/WebKit2/WebProcess/Downloads/curl/DownloadCurl.cpp \
@@ -651,6 +658,7 @@ libWebKit2_la_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Plugins \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Plugins/gtk \
 	-I$(srcdir)/Source/WebKit2/WebProcess \
+	-I$(srcdir)/Source/WebKit2/WebProcess/ApplicationCache \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Authentication \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Downloads \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Geolocation \
@@ -801,6 +809,10 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/PluginProcessProxyMessages.h \
 	DerivedSources/WebKit2/PluginProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/PluginProxyMessages.h \
+	DerivedSources/WebKit2/WebApplicationCacheManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebApplicationCacheManagerMessages.h \
+	DerivedSources/WebKit2/WebApplicationCacheManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebApplicationCacheManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebContextMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebContextMessages.h \
 	DerivedSources/WebKit2/WebDatabaseManagerMessageReceiver.cpp \
@@ -843,11 +855,13 @@ vpath %.messages.in = \
 	$(WebKit2)/PluginProcess \
 	$(WebKit2)/Shared/Plugins \
 	$(WebKit2)/UIProcess \
+	$(WebKit2)/UIProcess/ApplicationCache \
 	$(WebKit2)/UIProcess/Downloads \
 	$(WebKit2)/UIProcess/Geolocation \
 	$(WebKit2)/UIProcess/Plugins \
 	$(WebKit2)/UIProcess/ResourceCache \
 	$(WebKit2)/WebProcess \
+	$(WebKit2)/WebProcess/ApplicationCache \
 	$(WebKit2)/WebProcess/Authentication \
 	$(WebKit2)/WebProcess/Geolocation \
 	$(WebKit2)/WebProcess/Plugins \

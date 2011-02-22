@@ -158,9 +158,9 @@ void WKContextClearApplicationCache(WKContextRef contextRef)
     toImpl(contextRef)->clearApplicationCache();
 }
 
-WKResourceCacheManagerRef WKContextGetResourceCacheManager(WKContextRef contextRef)
+WKApplicationCacheManagerRef WKContextGetApplicationCacheManager(WKContextRef contextRef)
 {
-    return toAPI(toImpl(contextRef)->resourceCacheManagerProxy());
+    return toAPI(toImpl(contextRef)->applicationCacheManagerProxy());
 }
 
 WKDatabaseManagerRef WKContextGetDatabaseManager(WKContextRef contextRef)
@@ -176,6 +176,11 @@ WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef contextRef)
 WKPluginSiteDataManagerRef WKContextGetPluginSiteDataManager(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->pluginSiteDataManager());
+}
+
+WKResourceCacheManagerRef WKContextGetResourceCacheManager(WKContextRef contextRef)
+{
+    return toAPI(toImpl(contextRef)->resourceCacheManagerProxy());
 }
 
 void WKContextStartMemorySampler(WKContextRef contextRef, WKDoubleRef interval)

@@ -23,36 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SecurityOriginData_h
-#define SecurityOriginData_h
+#ifndef WKApplicationCacheManager_h
+#define WKApplicationCacheManager_h
 
-#include "APIObject.h"
-#include "GenericCallback.h"
-#include <wtf/text/WTFString.h>
+#include <WebKit2/WKBase.h>
 
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class ArgumentEncoder;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT WKTypeID WKApplicationCacheManagerGetTypeID();
+
+typedef void (*WKApplicationCacheManagerGetApplicationCacheOriginsFunction)(WKArrayRef, WKErrorRef, void*);
+WK_EXPORT void WKApplicationCacheManagerGetApplicationCacheOrigins(WKApplicationCacheManagerRef applicationCacheManager, void* context, WKApplicationCacheManagerGetApplicationCacheOriginsFunction function);
+
+WK_EXPORT void WKApplicationCacheManagerDeleteEntriesForOrigin(WKApplicationCacheManagerRef applicationCacheManager, WKSecurityOriginRef origin);
+WK_EXPORT void WKApplicationCacheManagerDeleteAllEntries(WKApplicationCacheManagerRef applicationCacheManager);
+
+#ifdef __cplusplus
 }
+#endif
 
-namespace WebKit {
-
-typedef GenericCallback<WKArrayRef> ArrayCallback;
-
-struct SecurityOriginData {
-    void encode(CoreIPC::ArgumentEncoder*) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, SecurityOriginData&);
-
-    // FIXME <rdar://9018386>: We should be sending more state across the wire than just the protocol,
-    // host, and port.
-
-    String protocol;
-    String host;
-    int port;
-};
-
-void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginData>&, ArrayCallback*);
-
-} // namespace WebKit
-
-#endif // SecurityOriginData_h
+#endif // WKApplicationCacheManager_h

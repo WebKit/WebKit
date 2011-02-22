@@ -32,8 +32,8 @@ WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebApplicationCacheManagerMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebApplicationCacheManagerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebContextMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerProxyMessages.h \
@@ -45,7 +45,9 @@ WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessConnectionMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessProxyMessages.h
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerProxyMessages.h
 
 WEBKIT2_GENERATED_SOURCES = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/AuthenticationManagerMessageReceiver.cpp \
@@ -54,8 +56,8 @@ WEBKIT2_GENERATED_SOURCES = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebApplicationCacheManagerMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebApplicationCacheManagerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebContextMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerProxyMessageReceiver.cpp \
@@ -67,7 +69,9 @@ WEBKIT2_GENERATED_SOURCES = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessConnectionMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessProxyMessageReceiver.cpp
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerProxyMessageReceiver.cpp
 
 HEADERS += \
     Platform/CoreIPC/ArgumentDecoder.h \
@@ -156,7 +160,7 @@ HEADERS += \
     UIProcess/TextChecker.h \
     UIProcess/TiledDrawingAreaProxy.h \
     UIProcess/VisitedLinkProvider.h \
-    UIProcess/WebResourceCacheManagerProxy.h \
+    UIProcess/WebApplicationCacheManagerProxy.h \
     UIProcess/WebContext.h \
     UIProcess/WebContextInjectedBundleClient.h \
     UIProcess/WebContextMenuProxy.h \
@@ -177,18 +181,20 @@ HEADERS += \
     UIProcess/WebInspectorProxy.h \
     UIProcess/WebLoaderClient.h \
     UIProcess/WebNavigationData.h \
-    UIProcess/WebPageContextMenuClient.h \
     UIProcess/WebOpenPanelResultListenerProxy.h \
+    UIProcess/WebPageContextMenuClient.h \
     UIProcess/WebPageGroup.h \
     UIProcess/WebPageProxy.h \
     UIProcess/WebPolicyClient.h \
     UIProcess/WebPreferences.h \
     UIProcess/WebProcessManager.h \
     UIProcess/WebProcessProxy.h \
+    UIProcess/WebResourceCacheManagerProxy.h \
     UIProcess/WebResourceLoadClient.h \
     UIProcess/WebUIClient.h \
     UIProcess/qt/WebContextMenuProxyQt.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
+    WebProcess/ApplicationCache/WebApplicationCacheManager.h \
     WebProcess/Authentication/AuthenticationManager.h \
     WebProcess/Downloads/Download.h \
     WebProcess/Downloads/DownloadManager.h \
@@ -327,9 +333,9 @@ SOURCES += \
     UIProcess/ResponsivenessTimer.cpp \
     UIProcess/TiledDrawingAreaProxy.cpp \
     UIProcess/VisitedLinkProvider.cpp \
+    UIProcess/WebApplicationCacheManagerProxy.cpp \
     UIProcess/WebBackForwardList.cpp \
     UIProcess/WebContext.cpp \
-    UIProcess/WebResourceCacheManagerProxy.cpp \
     UIProcess/WebContextInjectedBundleClient.cpp \
     UIProcess/WebContextMenuProxy.cpp \
     UIProcess/WebDatabaseManagerProxy.cpp \
@@ -348,14 +354,15 @@ SOURCES += \
     UIProcess/WebInspectorProxy.cpp \
     UIProcess/WebLoaderClient.cpp \
     UIProcess/WebNavigationData.cpp \
-    UIProcess/WebPageContextMenuClient.cpp \
     UIProcess/WebOpenPanelResultListenerProxy.cpp \
+    UIProcess/WebPageContextMenuClient.cpp \
     UIProcess/WebPageGroup.cpp \
     UIProcess/WebPageProxy.cpp \
     UIProcess/WebPolicyClient.cpp \
     UIProcess/WebPreferences.cpp \
     UIProcess/WebProcessManager.cpp \
     UIProcess/WebProcessProxy.cpp \
+    UIProcess/WebResourceCacheManagerProxy.cpp \
     UIProcess/WebResourceLoadClient.cpp \
     UIProcess/WebUIClient.cpp \
     UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp \
@@ -368,6 +375,7 @@ SOURCES += \
     UIProcess/qt/WebPageProxyQt.cpp \
     UIProcess/qt/WebPopupMenuProxyQt.cpp \
     UIProcess/qt/WebPreferencesQt.cpp \
+    WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
     WebProcess/Authentication/AuthenticationManager.cpp \
     WebProcess/Downloads/Download.cpp \
     WebProcess/Downloads/DownloadManager.cpp \

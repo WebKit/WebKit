@@ -39,18 +39,19 @@ enum MessageClass {
     MessageClassDrawingArea,
     MessageClassDrawingAreaLegacy,
     MessageClassInjectedBundle,
-    MessageClassWebResourceCacheManager,
+    MessageClassWebApplicationCacheManager,
     MessageClassWebDatabaseManager,
     MessageClassWebGeolocationManagerProxy,
     MessageClassWebInspector,
     MessageClassWebPage,
     MessageClassWebProcess,
+    MessageClassWebResourceCacheManager,
 
     // Messages sent by the web process to the UI process.
     MessageClassDownloadProxy,
     MessageClassDrawingAreaProxy,
     MessageClassDrawingAreaProxyLegacy,
-    MessageClassWebResourceCacheManagerProxy,
+    MessageClassWebApplicationCacheManagerProxy,
     MessageClassWebContext,
     MessageClassWebContextLegacy,
     MessageClassWebDatabaseManagerProxy,
@@ -59,6 +60,7 @@ enum MessageClass {
     MessageClassWebPageProxy,
     MessageClassWebProcessProxy,
     MessageClassWebProcessProxyLegacy,
+    MessageClassWebResourceCacheManagerProxy,
 
     // Messages sent by the UI process to the plug-in process.
     MessageClassPluginProcess,

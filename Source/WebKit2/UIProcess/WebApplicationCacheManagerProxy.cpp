@@ -24,73 +24,76 @@
  */
 
 #include "config.h"
-#include "WebResourceCacheManagerProxy.h"
+#include "WebApplicationCacheManagerProxy.h"
 
-#include "ImmutableArray.h"
-#include "ImmutableDictionary.h"
 #include "SecurityOriginData.h"
+#include "WebApplicationCacheManagerMessages.h"
 #include "WebContext.h"
-#include "WebResourceCacheManagerMessages.h"
 #include "WebSecurityOrigin.h"
-
-using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebResourceCacheManagerProxy> WebResourceCacheManagerProxy::create(WebContext* webContext)
+PassRefPtr<WebApplicationCacheManagerProxy> WebApplicationCacheManagerProxy::create(WebContext* context)
 {
-    return adoptRef(new WebResourceCacheManagerProxy(webContext));
+    return adoptRef(new WebApplicationCacheManagerProxy(context));
 }
 
-WebResourceCacheManagerProxy::WebResourceCacheManagerProxy(WebContext* webContext)
-    : m_webContext(webContext)
-{
-}
-
-WebResourceCacheManagerProxy::~WebResourceCacheManagerProxy()
+WebApplicationCacheManagerProxy::WebApplicationCacheManagerProxy(WebContext* context)
+    : m_webContext(context)
 {
 }
 
-void WebResourceCacheManagerProxy::invalidate()
+WebApplicationCacheManagerProxy::~WebApplicationCacheManagerProxy()
+{
+}
+
+void WebApplicationCacheManagerProxy::invalidate()
 {
     invalidateCallbackMap(m_arrayCallbacks);
 }
 
-void WebResourceCacheManagerProxy::getCacheOrigins(PassRefPtr<ArrayCallback> prpCallback)
+void WebApplicationCacheManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+{
+    didReceiveWebApplicationCacheManagerProxyMessage(connection, messageID, arguments);
+}
+
+void WebApplicationCacheManagerProxy::getApplicationCacheOrigins(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;
     if (!m_webContext->hasValidProcess()) {
         callback->invalidate();
         return;
     }
+    
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
-    m_webContext->process()->send(Messages::WebResourceCacheManager::GetCacheOrigins(callbackID), 0);
+    m_webContext->process()->send(Messages::WebApplicationCacheManager::GetApplicationCacheOrigins(callbackID), 0);
 }
-
-void WebResourceCacheManagerProxy::didGetCacheOrigins(const Vector<SecurityOriginData>& origins, uint64_t callbackID)
+    
+void WebApplicationCacheManagerProxy::didGetApplicationCacheOrigins(const Vector<SecurityOriginData>& originDatas, uint64_t callbackID)
 {
     RefPtr<ArrayCallback> callback = m_arrayCallbacks.take(callbackID);
-    performAPICallbackWithSecurityOriginDataVector(origins, callback.get());
+    performAPICallbackWithSecurityOriginDataVector(originDatas, callback.get());
 }
 
-void WebResourceCacheManagerProxy::clearCacheForOrigin(WebSecurityOrigin* origin)
+void WebApplicationCacheManagerProxy::deleteEntriesForOrigin(WebSecurityOrigin* origin)
 {
     if (!m_webContext->hasValidProcess())
         return;
+    
+    SecurityOriginData securityOriginData;
+    securityOriginData.protocol = origin->protocol();
+    securityOriginData.host = origin->host();
+    securityOriginData.port = origin->port();
 
-    SecurityOriginData securityOrigin;
-    securityOrigin.protocol = origin->protocol();
-    securityOrigin.host = origin->host();
-    securityOrigin.port = origin->port();
-    m_webContext->process()->send(Messages::WebResourceCacheManager::ClearCacheForOrigin(securityOrigin), 0);
+    m_webContext->process()->send(Messages::WebApplicationCacheManager::DeleteEntriesForOrigin(securityOriginData), 0);
 }
 
-void WebResourceCacheManagerProxy::clearCacheForAllOrigins()
+void WebApplicationCacheManagerProxy::deleteAllEntries()
 {
     if (!m_webContext->hasValidProcess())
         return;
-    m_webContext->process()->send(Messages::WebResourceCacheManager::ClearCacheForAllOrigins(), 0);
+    m_webContext->process()->send(Messages::WebApplicationCacheManager::DeleteAllEntries(), 0);
 }
 
 } // namespace WebKit

@@ -1314,6 +1314,22 @@
 				RelativePath="..\WebProcess\WebProcessMain.h"
 				>
 			</File>
+            <Filter
+                Name="ApplicationCache"
+                >
+                <File
+					RelativePath="..\WebProcess\ApplicationCache\WebApplicationCacheManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\ApplicationCache\WebApplicationCacheManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\ApplicationCache\WebApplicationCacheManager.messages.in"
+					>
+				</File>
+            </Filter>
 			<Filter
 				Name="Authentication"
 				>
@@ -2286,6 +2302,18 @@
 				RelativePath="..\UIProcess\VisitedLinkProvider.h"
 				>
 			</File>
+            <File
+				RelativePath="..\UIProcess\WebApplicationCacheManagerProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebApplicationCacheManagerProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebApplicationCacheManagerProxy.messages.in"
+				>
+			</File>
 			<File
 				RelativePath="..\UIProcess\WebBackForwardList.cpp"
 				>
@@ -2574,6 +2602,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKAPICast.h"
+						>
+					</File>
+                    <File
+						RelativePath="..\UIProcess\API\C\WKApplicationCacheManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKApplicationCacheManager.h"
 						>
 					</File>
 					<File
@@ -3364,6 +3400,22 @@
 			</File>
 			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\DrawingAreaProxyMessages.h"
+				>
+			</File>
+            <File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebApplicationCacheManagerMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebApplicationCacheManagerMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebApplicationCacheManagerProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebApplicationCacheManagerProxyMessages.h"
 				>
 			</File>
             <File

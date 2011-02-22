@@ -33,7 +33,7 @@
 #include "InjectedBundleUserMessageCoders.h"
 #include "RunLoop.h"
 #include "SandboxExtension.h"
-#include "WebResourceCacheManager.h"
+#include "WebApplicationCacheManager.h"
 #include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManager.h"
@@ -47,6 +47,7 @@
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"
+#include "WebResourceCacheManager.h"
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/Font.h>
@@ -526,8 +527,8 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 
-    if (messageID.is<CoreIPC::MessageClassWebResourceCacheManager>()) {
-        WebResourceCacheManager::shared().didReceiveMessage(connection, messageID, arguments);
+    if (messageID.is<CoreIPC::MessageClassWebApplicationCacheManager>()) {
+        WebApplicationCacheManager::shared().didReceiveMessage(connection, messageID, arguments);
         return;
     }
 
@@ -538,6 +539,11 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 
     if (messageID.is<CoreIPC::MessageClassWebGeolocationManager>()) {
         m_geolocationManager.didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebResourceCacheManager>()) {
+        WebResourceCacheManager::shared().didReceiveMessage(connection, messageID, arguments);
         return;
     }
 

@@ -45,6 +45,7 @@ class AuthenticationChallengeProxy;
 class AuthenticationDecisionListener;
 class DownloadProxy;
 class GeolocationPermissionRequestProxy;
+class WebApplicationCacheManagerProxy;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebResourceCacheManagerProxy;
@@ -66,6 +67,7 @@ class WebPluginSiteDataManager;
 class WebPreferences;
 class WebProtectionSpace;
 
+WK_ADD_API_MAPPING(WKApplicationCacheManagerRef, WebApplicationCacheManagerProxy)
 WK_ADD_API_MAPPING(WKAuthenticationChallengeRef, AuthenticationChallengeProxy)
 WK_ADD_API_MAPPING(WKAuthenticationDecisionListenerRef, AuthenticationDecisionListener)
 WK_ADD_API_MAPPING(WKBackForwardListItemRef, WebBackForwardListItem)

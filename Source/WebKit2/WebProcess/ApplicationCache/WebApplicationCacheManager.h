@@ -23,48 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SecurityOriginData.h"
+#ifndef WebApplicationCacheManager_h
+#define WebApplicationCacheManager_h
 
-#include "APIObject.h"
-#include "ImmutableArray.h"
-#include "WebCoreArgumentCoders.h"
-#include "WebSecurityOrigin.h"
+#include <wtf/Noncopyable.h>
+#include <wtf/text/WTFString.h>
 
-using namespace WebCore;
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class Connection;
+    class MessageID;
+}
 
 namespace WebKit {
 
-void SecurityOriginData::encode(CoreIPC::ArgumentEncoder* encoder) const
-{
-    encoder->encode(CoreIPC::In(protocol, host, port));
-}
+class SecurityOriginData;
 
-bool SecurityOriginData::decode(CoreIPC::ArgumentDecoder* decoder, SecurityOriginData& securityOriginData)
-{
-    return decoder->decode(CoreIPC::Out(securityOriginData.protocol, securityOriginData.host, securityOriginData.port));
-}
+class WebApplicationCacheManager {
+    WTF_MAKE_NONCOPYABLE(WebApplicationCacheManager);
 
-void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginData>& originDatas, ArrayCallback* callback)
-{
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
+public:
+    static WebApplicationCacheManager& shared();
+
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
+private:
+    WebApplicationCacheManager();
     
-    size_t originDataCount = originDatas.size();
-    Vector<RefPtr<APIObject> > securityOrigins;
-    securityOrigins.reserveCapacity(originDataCount);
+    void getApplicationCacheOrigins(uint64_t callbackID);
+    void deleteEntriesForOrigin(const SecurityOriginData&);
+    void deleteAllEntries();
 
-    for (size_t i = 0; i < originDataCount; ++i) {
-        SecurityOriginData originData = originDatas[i];
-        RefPtr<APIObject> origin = WebSecurityOrigin::create(originData.protocol, originData.host, originData.port);
-        if (!origin)
-            continue;
-        securityOrigins.uncheckedAppend(origin);
-    }
-
-    callback->performCallbackWithReturnValue(ImmutableArray::adopt(securityOrigins).get());
-}
+    void didReceiveWebApplicationCacheManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+};
 
 } // namespace WebKit
+
+#endif // WebApplicationCacheManager_h

@@ -45,11 +45,12 @@
 namespace WebKit {
 
 class DownloadProxy;
-class WebResourceCacheManagerProxy;
+class WebApplicationCacheManagerProxy;
 class WebDatabaseManagerProxy;
 class WebGeolocationManagerProxy;
 class WebPageGroup;
 class WebPageProxy;
+class WebResourceCacheManagerProxy;
 struct WebProcessCreationParameters;
 
 class WebContext : public APIObject {
@@ -132,10 +133,11 @@ public:
 
     static HashSet<String, CaseFoldingHash> pdfAndPostScriptMIMETypes();
 
-    WebResourceCacheManagerProxy* resourceCacheManagerProxy() const { return m_resourceCacheManagerProxy.get(); }
+    WebApplicationCacheManagerProxy* applicationCacheManagerProxy() const { return m_applicationCacheManagerProxy.get(); }
     WebDatabaseManagerProxy* databaseManagerProxy() const { return m_databaseManagerProxy.get(); }
     WebGeolocationManagerProxy* geolocationManagerProxy() const { return m_geolocationManagerProxy.get(); }
     WebPluginSiteDataManager* pluginSiteDataManager() const { return m_pluginSiteDataManager.get(); }
+    WebResourceCacheManagerProxy* resourceCacheManagerProxy() const { return m_resourceCacheManagerProxy.get(); }
 
     struct Statistics {
         unsigned wkViewCount;
@@ -214,10 +216,11 @@ private:
     bool m_memorySamplerEnabled;
     double m_memorySamplerInterval;
 
-    RefPtr<WebResourceCacheManagerProxy> m_resourceCacheManagerProxy;
+    RefPtr<WebApplicationCacheManagerProxy> m_applicationCacheManagerProxy;
     RefPtr<WebDatabaseManagerProxy> m_databaseManagerProxy;
     RefPtr<WebGeolocationManagerProxy> m_geolocationManagerProxy;
     RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
+    RefPtr<WebResourceCacheManagerProxy> m_resourceCacheManagerProxy;
 
 #if PLATFORM(WIN)
     bool m_shouldPaintNativeControls;

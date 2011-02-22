@@ -33,7 +33,7 @@
 #include "SandboxExtension.h"
 #include "TextChecker.h"
 #include "WKContextPrivate.h"
-#include "WebResourceCacheManagerProxy.h"
+#include "WebApplicationCacheManagerProxy.h"
 #include "WebContextMessageKinds.h"
 #include "WebContextUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
@@ -46,6 +46,7 @@
 #include "WebProcessManager.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
+#include "WebResourceCacheManagerProxy.h"
 #include <WebCore/Language.h>
 #include <WebCore/LinkHash.h>
 #include <WebCore/Logging.h>
@@ -110,10 +111,11 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_clearApplicationCacheForNewWebProcess(false)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
-    , m_resourceCacheManagerProxy(WebResourceCacheManagerProxy::create(this))
+    , m_applicationCacheManagerProxy(WebApplicationCacheManagerProxy::create(this))
     , m_databaseManagerProxy(WebDatabaseManagerProxy::create(this))
     , m_geolocationManagerProxy(WebGeolocationManagerProxy::create(this))
     , m_pluginSiteDataManager(WebPluginSiteDataManager::create(this))
+    , m_resourceCacheManagerProxy(WebResourceCacheManagerProxy::create(this))
 #if PLATFORM(WIN)
     , m_shouldPaintNativeControls(true)
 #endif
@@ -138,8 +140,8 @@ WebContext::~WebContext()
 
     WebProcessManager::shared().contextWasDestroyed(this);
 
-    m_resourceCacheManagerProxy->invalidate();
-    m_resourceCacheManagerProxy->clearContext();
+    m_applicationCacheManagerProxy->invalidate();
+    m_applicationCacheManagerProxy->clearContext();
 
     m_geolocationManagerProxy->invalidate();
     m_geolocationManagerProxy->clearContext();
@@ -149,6 +151,9 @@ WebContext::~WebContext()
 
     m_pluginSiteDataManager->invalidate();
     m_pluginSiteDataManager->clearContext();
+
+    m_resourceCacheManagerProxy->invalidate();
+    m_resourceCacheManagerProxy->clearContext();
 
 #ifndef NDEBUG
     webContextCounter.decrement();
@@ -275,6 +280,7 @@ void WebContext::processDidClose(WebProcessProxy* process)
 
     m_downloads.clear();
 
+    m_applicationCacheManagerProxy->invalidate();
     m_databaseManagerProxy->invalidate();
     m_geolocationManagerProxy->invalidate();
     m_resourceCacheManagerProxy->invalidate();
@@ -542,8 +548,8 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 
-    if (messageID.is<CoreIPC::MessageClassWebResourceCacheManagerProxy>()) {
-        m_resourceCacheManagerProxy->didReceiveWebResourceCacheManagerProxyMessage(connection, messageID, arguments);
+    if (messageID.is<CoreIPC::MessageClassWebApplicationCacheManagerProxy>()) {
+        m_applicationCacheManagerProxy->didReceiveMessage(connection, messageID, arguments);
         return;
     }
 
@@ -554,6 +560,11 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 
     if (messageID.is<CoreIPC::MessageClassWebGeolocationManagerProxy>()) {
         m_geolocationManagerProxy->didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebResourceCacheManagerProxy>()) {
+        m_resourceCacheManagerProxy->didReceiveWebResourceCacheManagerProxyMessage(connection, messageID, arguments);
         return;
     }
 

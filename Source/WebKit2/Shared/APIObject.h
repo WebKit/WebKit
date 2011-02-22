@@ -61,6 +61,7 @@ public:
         TypeUInt64,
         
         // UIProcess types
+        TypeApplicationCacheManager,
         TypeBackForwardList,
         TypeBackForwardListItem,
         TypeCacheManager,

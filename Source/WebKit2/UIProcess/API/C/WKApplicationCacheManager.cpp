@@ -24,47 +24,29 @@
  */
 
 #include "config.h"
-#include "SecurityOriginData.h"
+#include "WKApplicationCacheManager.h"
 
-#include "APIObject.h"
-#include "ImmutableArray.h"
-#include "WebCoreArgumentCoders.h"
-#include "WebSecurityOrigin.h"
+#include "WKAPICast.h"
+#include "WebApplicationCacheManagerProxy.h"
 
-using namespace WebCore;
+using namespace WebKit;
 
-namespace WebKit {
-
-void SecurityOriginData::encode(CoreIPC::ArgumentEncoder* encoder) const
+WKTypeID WKApplicationCacheManagerGetTypeID()
 {
-    encoder->encode(CoreIPC::In(protocol, host, port));
+    return toAPI(WebApplicationCacheManagerProxy::APIType);
 }
 
-bool SecurityOriginData::decode(CoreIPC::ArgumentDecoder* decoder, SecurityOriginData& securityOriginData)
+void WKApplicationCacheManagerGetApplicationCacheOrigins(WKApplicationCacheManagerRef applicationCacheManagerRef, void* context, WKApplicationCacheManagerGetApplicationCacheOriginsFunction callback)
 {
-    return decoder->decode(CoreIPC::Out(securityOriginData.protocol, securityOriginData.host, securityOriginData.port));
+    toImpl(applicationCacheManagerRef)->getApplicationCacheOrigins(ArrayCallback::create(context, callback));
 }
 
-void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginData>& originDatas, ArrayCallback* callback)
+void WKApplicationCacheManagerDeleteEntriesForOrigin(WKApplicationCacheManagerRef applicationCacheManagerRef, WKSecurityOriginRef originRef)
 {
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
-    
-    size_t originDataCount = originDatas.size();
-    Vector<RefPtr<APIObject> > securityOrigins;
-    securityOrigins.reserveCapacity(originDataCount);
-
-    for (size_t i = 0; i < originDataCount; ++i) {
-        SecurityOriginData originData = originDatas[i];
-        RefPtr<APIObject> origin = WebSecurityOrigin::create(originData.protocol, originData.host, originData.port);
-        if (!origin)
-            continue;
-        securityOrigins.uncheckedAppend(origin);
-    }
-
-    callback->performCallbackWithReturnValue(ImmutableArray::adopt(securityOrigins).get());
+    toImpl(applicationCacheManagerRef)->deleteEntriesForOrigin(toImpl(originRef));
 }
 
-} // namespace WebKit
+void WKApplicationCacheManagerDeleteAllEntries(WKApplicationCacheManagerRef applicationCacheManagerRef)
+{
+    toImpl(applicationCacheManagerRef)->deleteAllEntries();
+}

@@ -23,6 +23,7 @@
 VPATH = \
     $(WebKit2)/PluginProcess \
     $(WebKit2)/Shared/Plugins \
+    $(WebKit2)/WebProcess/ApplicationCache \
     $(WebKit2)/WebProcess/Authentication \
     $(WebKit2)/WebProcess/Geolocation \
     $(WebKit2)/WebProcess/Plugins \
@@ -45,6 +46,8 @@ MESSAGE_RECEIVERS = \
     PluginProcess \
     PluginProcessProxy \
     PluginProxy \
+    WebApplicationCacheManager \
+    WebApplicationCacheManagerProxy \
     WebContext \
     WebDatabaseManager \
     WebDatabaseManagerProxy \
