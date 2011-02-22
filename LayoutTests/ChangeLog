@@ -1,3 +1,12 @@
+2011-02-22  Adam Roben  <aroben@apple.com>
+
+        Add Windows expected failure results for new tests from r79318
+
+        <http://webkit.org/b/54966> tracks the failure.
+
+        * platform/win/media/audio-repaint-expected.txt: Added.
+        * platform/win/media/media-document-audio-repaint-expected.txt: Added.
+
 2011-02-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
