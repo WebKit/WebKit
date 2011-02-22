@@ -1,5 +1,12 @@
 TEMPLATE = app
 TARGET = QtWebProcess
+INSTALLS += target
+
+isEmpty(INSTALL_BINS) {
+    target.path = $$[QT_INSTALL_BINS]
+} else {
+    target.path = $$INSTALL_BINS
+}
 
 SOURCES += \
     qt/MainQt.cpp
