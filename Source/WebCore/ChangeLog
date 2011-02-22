@@ -1,3 +1,11 @@
+2011-02-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/8995483> Remove stubs of unneeded NSURLAuthenticationChallengeSender methods
+
+        * platform/network/mac/AuthenticationMac.mm: Remove the stubs that are no longer needed.
+
 2011-02-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
