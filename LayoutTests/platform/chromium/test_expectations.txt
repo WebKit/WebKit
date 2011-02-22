@@ -2892,7 +2892,6 @@ BUGWK51841 : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
 // This was introduced by r75077.
 BUGWK52082 LINUX MAC : fast/text/basic/014.html = IMAGE
 BUGWK52082 LINUX MAC : fast/text/midword-break-after-breakable-char.html = IMAGE
-BUGWK52082 LINUX : fast/text/capitalize-boundaries.html = IMAGE
 BUGWK52082 WIN : fast/text/basic/014.html = IMAGE+TEXT
 BUGWK52082 WIN : fast/text/midword-break-after-breakable-char.html = IMAGE+TEXT
 
@@ -3427,8 +3426,6 @@ BUGWK54499 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMA
 
 BUGWK54472 : media/audio-delete-while-slider-thumb-clicked.html = TIMEOUT
 
-BUGWK54387 : fast/js/kde/math.html = TEXT
-
 // Flaky
 BUGCR73080 LINUX DEBUG : fast/forms/form-attribute-elements-order.html = PASS TIMEOUT
 BUGCR73091 WIN LINUX : animations/play-state-suspend.html = PASS TEXT
@@ -3667,7 +3664,6 @@ BUGWK54736 MAC : fast/text/atsui-partial-selection.html = IMAGE
 BUGWK54736 MAC : fast/text/atsui-spacing-features.html = IMAGE
 BUGWK54736 MAC : fast/text/backslash-to-yen-sign-euc.html = IMAGE
 BUGWK54736 MAC : fast/text/bidi-embedding-pop-and-push-same.html = IMAGE
-BUGWK54736 MAC : fast/text/capitalize-boundaries.html = IMAGE
 BUGWK54736 MAC : fast/text/in-rendered-text-rtl.html = IMAGE
 BUGWK54736 MAC : fast/text/international/bidi-L2-run-reordering.html = IMAGE
 BUGWK54736 MAC : fast/text/international/bidi-LDB-2-CSS.html = IMAGE
