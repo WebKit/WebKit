@@ -36,10 +36,10 @@
 #include "DOMWindow.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
-#include "InspectorAgent.h"
 #include "InspectorDOMStorageResource.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
+#include "InstrumentingAgents.h"
 #include "Storage.h"
 #include "StorageArea.h"
 #include "VoidCallback.h"
@@ -50,31 +50,33 @@ namespace WebCore {
 
 typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
 
-class InspectorDOMStorageAgent::Resources : public InspectorOfflineResourcesBase {
-public:
-    DOMStorageResourcesMap m_map;
-};
-
-InspectorDOMStorageAgent::InspectorDOMStorageAgent(InspectorOfflineResourcesBase* domStorageAgentResources, InspectorFrontend* frontend)
-    : m_resources(static_cast<InspectorDOMStorageAgent::Resources*>(domStorageAgentResources))
-    , m_frontend(frontend)
+InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrumentingAgents)
+    : m_instrumentingAgents(instrumentingAgents)
+    , m_frontend(0)
 {
-    ASSERT(domStorageAgentResources);
-    DOMStorageResourcesMap::iterator resourcesEnd = m_resources->m_map.end();
-    for (DOMStorageResourcesMap::iterator it = m_resources->m_map.begin(); it != resourcesEnd; ++it)
-        it->second->bind(m_frontend);
+    m_instrumentingAgents->setInspectorDOMStorageAgent(this);
 }
 
 InspectorDOMStorageAgent::~InspectorDOMStorageAgent()
 {
-    DOMStorageResourcesMap::iterator domStorageEnd = m_resources->m_map.end();
-    for (DOMStorageResourcesMap::iterator it = m_resources->m_map.begin(); it != domStorageEnd; ++it)
-        it->second->unbind();
+    m_instrumentingAgents->setInspectorDOMStorageAgent(0);
+    m_instrumentingAgents = 0;
 }
 
-PassOwnPtr<InspectorOfflineResourcesBase> InspectorDOMStorageAgent::createStorage()
+void InspectorDOMStorageAgent::setFrontend(InspectorFrontend* frontend)
 {
-    return adoptPtr(new Resources());
+    m_frontend = frontend;
+    DOMStorageResourcesMap::iterator resourcesEnd = m_resources.end();
+    for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
+        it->second->bind(m_frontend);
+}
+
+void InspectorDOMStorageAgent::clearFrontend()
+{
+    DOMStorageResourcesMap::iterator domStorageEnd = m_resources.end();
+    for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != domStorageEnd; ++it)
+        it->second->unbind();
+    m_frontend = 0;
 }
 
 void InspectorDOMStorageAgent::getDOMStorageEntries(long storageId, RefPtr<InspectorArray>* entries)
@@ -123,8 +125,8 @@ void InspectorDOMStorageAgent::selectDOMStorage(Storage* storage)
     ExceptionCode ec = 0;
     bool isLocalStorage = (frame->domWindow()->localStorage(ec) == storage && !ec);
     long storageResourceId = 0;
-    DOMStorageResourcesMap::iterator domStorageEnd = m_resources->m_map.end();
-    for (DOMStorageResourcesMap::iterator it = m_resources->m_map.begin(); it != domStorageEnd; ++it) {
+    DOMStorageResourcesMap::iterator domStorageEnd = m_resources.end();
+    for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != domStorageEnd; ++it) {
         if (it->second->isSameHostAndType(frame, isLocalStorage)) {
             storageResourceId = it->first;
             break;
@@ -136,36 +138,32 @@ void InspectorDOMStorageAgent::selectDOMStorage(Storage* storage)
 
 InspectorDOMStorageResource* InspectorDOMStorageAgent::getDOMStorageResourceForId(long storageId)
 {
-    DOMStorageResourcesMap::iterator it = m_resources->m_map.find(storageId);
-    if (it == m_resources->m_map.end())
+    DOMStorageResourcesMap::iterator it = m_resources.find(storageId);
+    if (it == m_resources.end())
         return 0;
     return it->second.get();
 }
 
-void InspectorDOMStorageAgent::didUseDOMStorage(InspectorAgent* inspectorAgent, StorageArea* storageArea, bool isLocalStorage, Frame* frame)
+void InspectorDOMStorageAgent::didUseDOMStorage(StorageArea* storageArea, bool isLocalStorage, Frame* frame)
 {
-    if (!inspectorAgent->enabled())
-        return;
-
-    Resources* resources = static_cast<Resources*>(inspectorAgent->domStorageAgentResources());
-    DOMStorageResourcesMap::iterator domStorageEnd = resources->m_map.end();
-    for (DOMStorageResourcesMap::iterator it = resources->m_map.begin(); it != domStorageEnd; ++it)
+    DOMStorageResourcesMap::iterator domStorageEnd = m_resources.end();
+    for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != domStorageEnd; ++it)
         if (it->second->isSameHostAndType(frame, isLocalStorage))
             return;
 
     RefPtr<Storage> domStorage = Storage::create(frame, storageArea);
     RefPtr<InspectorDOMStorageResource> resource = InspectorDOMStorageResource::create(domStorage.get(), isLocalStorage, frame);
 
-    resources->m_map.set(resource->id(), resource);
+    m_resources.set(resource->id(), resource);
 
     // Resources are only bound while visible.
-    if (inspectorAgent->frontend())
-        resource->bind(inspectorAgent->frontend());
+    if (m_frontend)
+        resource->bind(m_frontend);
 }
 
-void InspectorDOMStorageAgent::clear(InspectorAgent* inspectorAgent)
+void InspectorDOMStorageAgent::clearResources()
 {
-    static_cast<Resources*>(inspectorAgent->domStorageAgentResources())->m_map.clear();
+    m_resources.clear();
 }
 
 

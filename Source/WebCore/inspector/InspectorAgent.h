@@ -62,7 +62,6 @@ class InspectorConsoleAgent;
 class InspectorCSSAgent;
 class InspectorDOMAgent;
 class InspectorDOMStorageAgent;
-class InspectorDOMStorageResource;
 class InspectorDatabaseAgent;
 class InspectorDatabaseResource;
 class InspectorDebuggerAgent;
@@ -99,15 +98,6 @@ class InspectorApplicationCacheAgent;
 class WebSocketHandshakeRequest;
 class WebSocketHandshakeResponse;
 #endif
-
-class InspectorOfflineResourcesBase {
-    WTF_MAKE_NONCOPYABLE(InspectorOfflineResourcesBase);
-public:
-    virtual ~InspectorOfflineResourcesBase() {}
-
-protected:
-    InspectorOfflineResourcesBase() {}
-};
 
 class InspectorAgent {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
@@ -146,6 +136,8 @@ public:
 
     InspectorResourceAgent* resourceAgent();
 
+    InstrumentingAgents* instrumentingAgents() const { return m_instrumentingAgents.get(); }
+
     InspectorAgent* inspectorAgent() { return this; }
     InspectorConsoleAgent* consoleAgent() { return m_consoleAgent.get(); }
     InspectorCSSAgent* cssAgent() { return m_cssAgent.get(); }
@@ -155,11 +147,9 @@ public:
     InspectorTimelineAgent* timelineAgent() { return m_timelineAgent.get(); }
 #if ENABLE(DATABASE)
     InspectorDatabaseAgent* databaseAgent() { return m_databaseAgent.get(); }
-    InspectorOfflineResourcesBase* databaseAgentResources() { return m_databaseAgentResources.get(); }
 #endif
 #if ENABLE(DOM_STORAGE)
     InspectorDOMStorageAgent* domStorageAgent() { return m_domStorageAgent.get(); }
-    InspectorOfflineResourcesBase* domStorageAgentResources() { return m_domStorageAgentResources.get(); }
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     InspectorBrowserDebuggerAgent* browserDebuggerAgent() const { return m_browserDebuggerAgent.get(); }
@@ -281,12 +271,10 @@ private:
 
 #if ENABLE(DATABASE)
     OwnPtr<InspectorDatabaseAgent> m_databaseAgent;
-    OwnPtr<InspectorOfflineResourcesBase> m_databaseAgentResources;
 #endif
 
 #if ENABLE(DOM_STORAGE)
     OwnPtr<InspectorDOMStorageAgent> m_domStorageAgent;
-    OwnPtr<InspectorOfflineResourcesBase> m_domStorageAgentResources;
 #endif
 
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;

@@ -34,10 +34,10 @@
 
 #include "Database.h"
 #include "ExceptionCode.h"
-#include "InspectorAgent.h"
 #include "InspectorDatabaseResource.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
+#include "InstrumentingAgents.h"
 #include "SQLError.h"
 #include "SQLStatementCallback.h"
 #include "SQLStatementErrorCallback.h"
@@ -218,53 +218,45 @@ private:
 
 } // namespace
 
-typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
-
-class InspectorDatabaseAgent::Resources : public InspectorOfflineResourcesBase {
-public:
-    DatabaseResourcesMap m_map;
-};
-
-void InspectorDatabaseAgent::didOpenDatabase(InspectorAgent* inspectorAgent, PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
+void InspectorDatabaseAgent::didOpenDatabase(PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
 {
-    if (!inspectorAgent->enabled())
-        return;
-
     RefPtr<InspectorDatabaseResource> resource = InspectorDatabaseResource::create(database, domain, name, version);
-
-    Resources* resources = static_cast<Resources*>(inspectorAgent->databaseAgentResources());
-    ASSERT(resources);
-    resources->m_map.set(resource->id(), resource);
-
+    m_resources.set(resource->id(), resource);
     // Resources are only bound while visible.
-    if (InspectorFrontend* frontend = inspectorAgent->frontend())
-        resource->bind(frontend);
+    if (m_frontendProvider)
+        resource->bind(m_frontendProvider->frontend());
 }
 
-void InspectorDatabaseAgent::clear(InspectorAgent* inspectorAgent)
+void InspectorDatabaseAgent::clearResources()
 {
-    static_cast<Resources*>(inspectorAgent->databaseAgentResources())->m_map.clear();
+    m_resources.clear();
 }
 
-
-InspectorDatabaseAgent::InspectorDatabaseAgent(InspectorOfflineResourcesBase* resources, InspectorFrontend* frontend)
-    : m_resources(static_cast<Resources*>(resources))
-    , m_frontendProvider(FrontendProvider::create(frontend))
+InspectorDatabaseAgent::InspectorDatabaseAgent(InstrumentingAgents* instrumentingAgents)
+    : m_instrumentingAgents(instrumentingAgents)
 {
-    ASSERT(resources);
-    DatabaseResourcesMap::iterator databasesEnd = m_resources->m_map.end();
-    for (DatabaseResourcesMap::iterator it = m_resources->m_map.begin(); it != databasesEnd; ++it)
-        it->second->bind(m_frontendProvider->frontend());
+    m_instrumentingAgents->setInspectorDatabaseAgent(this);
 }
 
 InspectorDatabaseAgent::~InspectorDatabaseAgent()
 {
-    m_frontendProvider->clearFrontend();
+    if (m_frontendProvider)
+        clearFrontend();
+    m_instrumentingAgents->setInspectorDatabaseAgent(0);
 }
 
-PassOwnPtr<InspectorOfflineResourcesBase> InspectorDatabaseAgent::createStorage()
+void InspectorDatabaseAgent::setFrontend(InspectorFrontend* frontend)
 {
-    return adoptPtr(new Resources());
+    m_frontendProvider = FrontendProvider::create(frontend);
+    DatabaseResourcesMap::iterator databasesEnd = m_resources.end();
+    for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != databasesEnd; ++it)
+        it->second->bind(frontend);
+}
+
+void InspectorDatabaseAgent::clearFrontend()
+{
+    m_frontendProvider->clearFrontend();
+    m_frontendProvider.clear();
 }
 
 void InspectorDatabaseAgent::getDatabaseTableNames(long databaseId, RefPtr<InspectorArray>* names)
@@ -296,18 +288,18 @@ void InspectorDatabaseAgent::executeSQL(long databaseId, const String& query, bo
 
 Database* InspectorDatabaseAgent::databaseForId(long databaseId)
 {
-    DatabaseResourcesMap::iterator it = m_resources->m_map.find(databaseId);
-    if (it == m_resources->m_map.end())
+    DatabaseResourcesMap::iterator it = m_resources.find(databaseId);
+    if (it == m_resources.end())
         return 0;
     return it->second->database();
 }
 
 void InspectorDatabaseAgent::selectDatabase(Database* database)
 {
-    if (!m_frontendProvider->frontend())
+    if (!m_frontendProvider)
         return;
 
-    for (DatabaseResourcesMap::iterator it = m_resources->m_map.begin(); it != m_resources->m_map.end(); ++it) {
+    for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != m_resources.end(); ++it) {
         if (it->second->database() == database) {
             m_frontendProvider->frontend()->selectDatabase(it->first);
             break;

@@ -49,6 +49,7 @@
 #include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"
 #include "InspectorTimelineAgent.h"
+#include "InstrumentingAgents.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "XMLHttpRequest.h"
@@ -593,14 +594,20 @@ bool InspectorInstrumentation::profilerEnabledImpl(InspectorAgent* inspectorAgen
 #if ENABLE(DATABASE)
 void InspectorInstrumentation::didOpenDatabaseImpl(InspectorAgent* inspectorAgent, PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
 {
-    InspectorDatabaseAgent::didOpenDatabase(inspectorAgent, database, domain, name, version);
+    if (!inspectorAgent->enabled())
+        return;
+    if (InspectorDatabaseAgent* dbAgent = inspectorAgent->instrumentingAgents()->inspectorDatabaseAgent())
+        dbAgent->didOpenDatabase(database, domain, name, version);
 }
 #endif
 
 #if ENABLE(DOM_STORAGE)
 void InspectorInstrumentation::didUseDOMStorageImpl(InspectorAgent* inspectorAgent, StorageArea* storageArea, bool isLocalStorage, Frame* frame)
 {
-    InspectorDOMStorageAgent::didUseDOMStorage(inspectorAgent, storageArea, isLocalStorage, frame);
+    if (!inspectorAgent->enabled())
+        return;
+    if (InspectorDOMStorageAgent* domStorageAgent = inspectorAgent->instrumentingAgents()->inspectorDOMStorageAgent())
+        domStorageAgent->didUseDOMStorage(storageArea, isLocalStorage, frame);
 }
 #endif
 

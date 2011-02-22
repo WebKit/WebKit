@@ -62,8 +62,6 @@
 #include "InspectorConsoleAgent.h"
 #include "InspectorController.h"
 #include "InspectorDOMAgent.h"
-#include "InspectorDOMStorageResource.h"
-#include "InspectorDatabaseResource.h"
 #include "InspectorDebuggerAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorFrontendClient.h"
@@ -143,10 +141,10 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client)
     , m_domAgent(InspectorDOMAgent::create(m_instrumentingAgents.get(), m_injectedScriptHost.get()))
     , m_cssAgent(new InspectorCSSAgent(m_domAgent.get()))
 #if ENABLE(DATABASE)
-    , m_databaseAgentResources(InspectorDatabaseAgent::createStorage())
+    , m_databaseAgent(InspectorDatabaseAgent::create(m_instrumentingAgents.get()))
 #endif
 #if ENABLE(DOM_STORAGE)
-    , m_domStorageAgentResources(InspectorDOMStorageAgent::createStorage())
+    , m_domStorageAgent(InspectorDOMStorageAgent::create(m_instrumentingAgents.get()))
 #endif
     , m_state(new InspectorState(client))
     , m_consoleAgent(new InspectorConsoleAgent(m_instrumentingAgents.get(), this, m_state.get(), m_injectedScriptHost.get(), m_domAgent.get()))
@@ -346,7 +344,12 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
 
     m_domAgent->setFrontend(m_frontend);
     m_consoleAgent->setFrontend(m_frontend);
-
+#if ENABLE(DATABASE)
+    m_databaseAgent->setFrontend(m_frontend);
+#endif
+#if ENABLE(DOM_STORAGE)
+    m_domStorageAgent->setFrontend(m_frontend);
+#endif
     // Initialize Web Inspector title.
     m_frontend->inspectedURLChanged(inspectedURL().string());
 }
@@ -379,6 +382,12 @@ void InspectorAgent::disconnectFrontend()
 
     m_consoleAgent->clearFrontend();
     m_domAgent->clearFrontend();
+#if ENABLE(DATABASE)
+    m_databaseAgent->clearFrontend();
+#endif
+#if ENABLE(DOM_STORAGE)
+    m_domStorageAgent->clearFrontend();
+#endif
 
     releaseFrontendLifetimeAgents();
     m_userAgentOverride = "";
@@ -395,14 +404,6 @@ void InspectorAgent::createFrontendLifetimeAgents()
 {
     m_runtimeAgent = InspectorRuntimeAgent::create(m_injectedScriptHost.get());
 
-#if ENABLE(DATABASE)
-    m_databaseAgent = InspectorDatabaseAgent::create(databaseAgentResources(), m_frontend);
-#endif
-
-#if ENABLE(DOM_STORAGE)
-    m_domStorageAgent = InspectorDOMStorageAgent::create(domStorageAgentResources(), m_frontend);
-#endif
-
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheAgent = new InspectorApplicationCacheAgent(m_inspectedPage->mainFrame()->loader()->documentLoader(), m_frontend);
 #endif
@@ -413,14 +414,6 @@ void InspectorAgent::releaseFrontendLifetimeAgents()
     m_resourceAgent.clear();
     m_runtimeAgent.clear();
     m_timelineAgent.clear();
-
-#if ENABLE(DATABASE)
-    m_databaseAgent.clear();
-#endif
-
-#if ENABLE(DOM_STORAGE)
-    m_domStorageAgent.clear();
-#endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheAgent.clear();
@@ -539,12 +532,11 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
         m_workers.clear();
 #endif
 #if ENABLE(DATABASE)
-        InspectorDatabaseAgent::clear(this);
+        m_databaseAgent->clearResources();
 #endif
 #if ENABLE(DOM_STORAGE)
-        InspectorDOMStorageAgent::clear(this);
+        m_domStorageAgent->clearResources();
 #endif
-
         if (InspectorDOMAgent* domAgent = m_instrumentingAgents->inspectorDOMAgent())
             domAgent->setDocument(m_inspectedPage->mainFrame()->document());
     }

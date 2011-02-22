@@ -36,25 +36,25 @@
 namespace WebCore {
 
 class Database;
-class InspectorAgent;
 class InspectorArray;
+class InspectorDatabaseResource;
 class InspectorFrontend;
-class InspectorOfflineResourcesBase;
+class InstrumentingAgents;
 
 class InspectorDatabaseAgent {
 public:
     class FrontendProvider;
-    class Resources;
 
-    static PassOwnPtr<InspectorDatabaseAgent> create(InspectorOfflineResourcesBase* storage, InspectorFrontend* frontend)
+    static PassOwnPtr<InspectorDatabaseAgent> create(InstrumentingAgents* instrumentingAgents)
     {
-        return adoptPtr(new InspectorDatabaseAgent(storage, frontend));
+        return adoptPtr(new InspectorDatabaseAgent(instrumentingAgents));
     }
+    ~InspectorDatabaseAgent();
 
-    static PassOwnPtr<InspectorOfflineResourcesBase> createStorage();
-    static void clear(InspectorAgent*);
+    void setFrontend(InspectorFrontend*);
+    void clearFrontend();
 
-    virtual ~InspectorDatabaseAgent();
+    void clearResources();
 
     // Called from the front-end.
     void getDatabaseTableNames(long databaseId, RefPtr<InspectorArray>* names);
@@ -64,11 +64,13 @@ public:
     Database* databaseForId(long databaseId);
     void selectDatabase(Database* database);
 
-    static void didOpenDatabase(InspectorAgent*, PassRefPtr<Database>, const String& domain, const String& name, const String& version);
+    void didOpenDatabase(PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 private:
-    InspectorDatabaseAgent(InspectorOfflineResourcesBase*, InspectorFrontend*);
+    explicit InspectorDatabaseAgent(InstrumentingAgents*);
 
-    Resources* m_resources;
+    InstrumentingAgents* m_instrumentingAgents;
+    typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
+    DatabaseResourcesMap m_resources;
     RefPtr<FrontendProvider> m_frontendProvider;
 };
 
