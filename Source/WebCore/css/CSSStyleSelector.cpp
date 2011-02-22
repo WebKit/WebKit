@@ -6,6 +6,7 @@
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1012,9 +1013,12 @@ bool CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element*
 }
 
 static const unsigned cStyleSearchThreshold = 10;
+static const unsigned cStyleSearchLevelThreshold = 10;
 
-Node* CSSStyleSelector::locateCousinList(Element* parent, unsigned depth) const
+Node* CSSStyleSelector::locateCousinList(Element* parent, unsigned& visitedNodeCount) const
 {
+    if (visitedNodeCount >= cStyleSearchThreshold * cStyleSearchLevelThreshold)
+        return 0;
     if (!parent || !parent->isStyledElement())
         return 0;
     StyledElement* p = static_cast<StyledElement*>(parent);
@@ -1022,25 +1026,31 @@ Node* CSSStyleSelector::locateCousinList(Element* parent, unsigned depth) const
         return 0;
     if (p->hasID() && m_idsInRules.contains(p->idForStyleResolution().impl()))
         return 0;
-    Node* r = p->previousSibling();
+
+    RenderStyle* parentStyle = p->renderStyle();
     unsigned subcount = 0;
-    RenderStyle* st = p->renderStyle();
-    while (r) {
-        if (r->renderStyle() == st)
-            return r->lastChild();
-        if (subcount++ == cStyleSearchThreshold)
-            return 0;
-        r = r->previousSibling();
+    Node* thisCousin = p;
+    Node* currentNode = p->previousSibling();
+
+    // Reserve the tries for this level. This effectively makes sure that the algorithm
+    // will never go deeper than cStyleSearchLevelThreshold levels into recursion.
+    visitedNodeCount += cStyleSearchThreshold;
+    while (thisCousin) {
+        while (currentNode) {
+            ++subcount;
+            if (currentNode->renderStyle() == parentStyle && currentNode->lastChild()) {
+                // Adjust for unused reserved tries.
+                visitedNodeCount -= cStyleSearchThreshold - subcount;
+                return currentNode->lastChild();
+            }
+            if (subcount >= cStyleSearchThreshold)
+                return 0;
+            currentNode = currentNode->previousSibling();
+        }
+        currentNode = locateCousinList(thisCousin->parentElement(), visitedNodeCount);
+        thisCousin = currentNode;
     }
-    if (!r && depth < cStyleSearchThreshold)
-        r = locateCousinList(parent->parentElement(), depth + 1);
-    while (r) {
-        if (r->renderStyle() == st)
-            return r->lastChild();
-        if (subcount++ == cStyleSearchThreshold)
-            return 0;
-        r = r->previousSibling();
-    }
+
     return 0;
 }
 
@@ -1186,15 +1196,23 @@ ALWAYS_INLINE RenderStyle* CSSStyleSelector::locateSharedStyle()
         return 0;
     if (parentStylePreventsSharing(m_parentStyle))
         return 0;
-    // Check previous siblings.
+
+    // Check previous siblings and their cousins.
     unsigned count = 0;
-    Node* shareNode = findSiblingForStyleSharing(m_styledElement->previousSibling(), count);
-    if (!shareNode) {
-        Node* cousinList = locateCousinList(m_styledElement->parentElement());
-        shareNode = findSiblingForStyleSharing(cousinList, count); 
-        if (!shareNode)
-            return 0;
+    unsigned visitedNodeCount = 0;
+    Node* shareNode = 0;
+    Node* cousinList = m_styledElement->previousSibling();
+    while (cousinList) {
+        shareNode = findSiblingForStyleSharing(cousinList, count);
+        if (shareNode)
+            break;
+        cousinList = locateCousinList(cousinList->parentElement(), visitedNodeCount);
     }
+
+    // If we have exhausted all our budget or our cousins.
+    if (!shareNode)
+        return 0;
+
     // Can't share if sibling rules apply. This is checked at the end as it should rarely fail.
     if (matchesSiblingRules())
         return 0;

@@ -116,7 +116,7 @@ public:
         void initElement(Element*);
         RenderStyle* locateSharedStyle();
         bool matchesSiblingRules();
-        Node* locateCousinList(Element* parent, unsigned depth = 1) const;
+        Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
         Node* findSiblingForStyleSharing(Node*, unsigned& count) const;
         bool canShareStyleWithElement(Node*) const;
         

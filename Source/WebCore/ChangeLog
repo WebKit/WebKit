@@ -1,3 +1,31 @@
+2011-02-21  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Antti Koivisto.
+
+        Improve the local{SharedStyle,CousinList} algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=45507
+
+        This change improves the algorithm to find shared styles: the old
+        algorithm would stop the search after the first cousin, even if
+        the search threshold is not met. As such, the algorithm would
+        systematically miss sharings across second cousins and beyond.
+        The new algorithm continues the search, as long as threshold is
+        not met. It also separates the threshold for sibling/cousins
+        search, from that on the levels of search, which is easier to
+        optimize.
+        The new algorithm finds up to 30% more sharings on some sites
+        (e.g. amazon.com and rakuten.co.jp) with no noticeable slowdown.
+
+        No new test, refactoring only.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::locateCousinList):
+        (WebCore::CSSStyleSelector::locateSharedStyle):
+        While changing the algorithm, cleaned up the style of those 2 methods
+        (use early return, renamed some variables).
+
+        * css/CSSStyleSelector.h:
+
 2011-02-21  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Adam Barth.
