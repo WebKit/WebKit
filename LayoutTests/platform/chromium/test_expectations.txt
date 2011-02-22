@@ -3605,7 +3605,3 @@ BUGWK54885 MAC : fast/forms/password-placeholder-text-security.html = TIMEOUT
 BUGWK54885 MAC : plugins/embed-attributes-setting.html = TIMEOUT
 BUGWK54885 MAC : plugins/embed-attributes-style.html = TIMEOUT
 BUGWK54885 MAC : userscripts/user-script-video-document.html = TIMEOUT
-
-// [Chromium] Generate results for media/audio-repaint.html and media/media-document-audio-repaint.html
-BUGWK54983 : media/audio-repaint.html = FAIL
-BUGWK54983 : media/media-document-audio-repaint.html = FAIL

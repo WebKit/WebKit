@@ -1,3 +1,30 @@
+2011-02-22  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed expectations change.
+
+        [Chromium] Generate results for media/audio-repaint.html and media/media-document-audio-repaint.html
+        https://bugs.webkit.org/show_bug.cgi?id=54983
+
+        * platform/chromium-linux/media/audio-repaint-expected.checksum: Added.
+        * platform/chromium-linux/media/audio-repaint-expected.png: Added.
+        * platform/chromium-linux/media/audio-repaint-expected.txt: Added.
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.checksum: Added.
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.png: Added.
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.txt: Added.
+        * platform/chromium-mac/media/audio-repaint-expected.checksum: Added.
+        * platform/chromium-mac/media/audio-repaint-expected.png: Added.
+        * platform/chromium-mac/media/audio-repaint-expected.txt: Added.
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.checksum: Added.
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.png: Added.
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.txt: Added.
+        * platform/chromium-win/media/audio-repaint-expected.checksum: Added.
+        * platform/chromium-win/media/audio-repaint-expected.png: Added.
+        * platform/chromium-win/media/audio-repaint-expected.txt: Added.
+        * platform/chromium-win/media/media-document-audio-repaint-expected.checksum: Added.
+        * platform/chromium-win/media/media-document-audio-repaint-expected.png: Added.
+        * platform/chromium-win/media/media-document-audio-repaint-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-22  Martin Robinson  <mrobinson@igalia.com>
 
         Add some GTK+-specific expectations for new media tests.
