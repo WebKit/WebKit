@@ -3539,7 +3539,7 @@ BUGCR73651 MAC : http/tests/navigation/ping-same-origin.html = TEXT
 BUGCR73651 MAC : http/tests/security/isolatedWorld/all-window-properties.html = TEXT
 BUGCR73651 MAC : http/tests/security/isolatedWorld/all-window-prototypes.html = TEXT
 
-BUGWK54882 WIN : inspector/styles/styles-update-from-js.html = TEXT
+BUGWK54882 WIN : inspector/styles/styles-update-from-js.html = TEXT TIMEOUT
 
 BUGWK54885 MAC : editing/deleting/delete-3928305-fix.html = TIMEOUT
 BUGWK54885 MAC : editing/deleting/delete-3959464-fix.html = TIMEOUT
