@@ -1,3 +1,10 @@
+2011-02-22  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed; neglected to update an expected result after changing some
+        boilerplate text at the top of the test.
+
+        * media/audio-repaint-expected.txt:
+
 2011-02-22  Ami Fischman  <fischman@chromium.org>
 
         Reviewed by Eric Carlson.
