@@ -1,3 +1,28 @@
+2011-02-22  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] [WK2] Improve the memory handling of the context menu for WebKit 2
+        https://bugs.webkit.org/show_bug.cgi?id=54902
+
+        Refactor the context menu handling of Qt to make it simpler to manage memory.
+
+        WebContextMenuProxyQt uses smart pointer for all the references to menu so
+        there is no need to delete it explicitely.
+
+        Passing the QMenu from QWKPage to the client of the signal now uses a QSharedPointer so
+        the client can choose to handle the memory, but there is no leak if it does not.
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::QGraphicsWKView):
+        (QGraphicsWKView::showContextMenu):
+        * UIProcess/API/qt/qgraphicswkview.h:
+        * UIProcess/API/qt/qwkpage.h:
+        * UIProcess/qt/WebContextMenuProxyQt.cpp:
+        (WebKit::WebContextMenuProxyQt::showContextMenu):
+        (WebKit::WebContextMenuProxyQt::createContextMenu):
+        * UIProcess/qt/WebContextMenuProxyQt.h:
+
 2011-02-22  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.

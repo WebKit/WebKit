@@ -55,7 +55,7 @@ struct QGraphicsWKViewPrivate {
 
     QGraphicsWKView* q;
     QWKPage* page;
-    QMenu* activeMenu;
+    QSharedPointer<QMenu> activeMenu;
     RunLoop::Timer<QGraphicsWKViewPrivate> m_scaleCommitTimer;
     bool m_isChangingScale;
 };
@@ -83,7 +83,7 @@ QGraphicsWKView::QGraphicsWKView(QWKContext* context, BackingStoreType backingSt
     connect(d->page, SIGNAL(urlChanged(const QUrl&)), this, SIGNAL(urlChanged(const QUrl&)));
     connect(d->page, SIGNAL(cursorChanged(const QCursor&)), this, SLOT(updateCursor(const QCursor&)));
     connect(d->page, SIGNAL(focusNextPrevChild(bool)), this, SLOT(focusNextPrevChildCallback(bool)));
-    connect(d->page, SIGNAL(showContextMenu(QMenu*)), this, SLOT(showContextMenu(QMenu*)));
+    connect(d->page, SIGNAL(showContextMenu(QSharedPointer<QMenu>)), this, SLOT(showContextMenu(QSharedPointer<QMenu>)));
 }
 
 QGraphicsWKView::~QGraphicsWKView()
@@ -327,7 +327,7 @@ void QGraphicsWKView::focusOutEvent(QFocusEvent*)
     page()->d->page->viewStateDidChange(WebPageProxy::ViewIsFocused | WebPageProxy::ViewWindowIsActive);
 }
 
-void QGraphicsWKView::showContextMenu(QMenu* menu)
+void QGraphicsWKView::showContextMenu(QSharedPointer<QMenu> menu)
 {
     // Remove the active menu in case this function is called twice.
     if (d->activeMenu)
@@ -351,7 +351,7 @@ void QGraphicsWKView::showContextMenu(QMenu* menu)
         menu->setParent(view, menu->windowFlags());
     menu->exec(view->mapToGlobal(menu->pos()));
     if (d->activeMenu == menu)
-        d->activeMenu = 0;
+        d->activeMenu.clear();
 }
 
 void QGraphicsWKView::takeSnapshot(const QSize& size, const QRect& contentsRect)

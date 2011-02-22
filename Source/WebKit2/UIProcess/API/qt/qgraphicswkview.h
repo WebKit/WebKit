@@ -89,7 +89,7 @@ protected:
     virtual void focusOutEvent(QFocusEvent*);
 
 private Q_SLOTS:
-    void showContextMenu(QMenu*);
+    void showContextMenu(QSharedPointer<QMenu>);
 
 private:
     Q_PRIVATE_SLOT(d, void onScaleChanged());

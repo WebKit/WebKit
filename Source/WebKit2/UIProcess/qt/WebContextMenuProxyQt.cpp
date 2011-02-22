@@ -28,6 +28,7 @@
 #include "WebContextMenuProxyQt.h"
 
 #include <IntPoint.h>
+#include <OwnPtr.h>
 #include <WebContextMenuItemData.h>
 #include <qmenu.h>
 #include <qwkpage.h>
@@ -81,9 +82,9 @@ PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create(QWKPage* page)
 
 void WebContextMenuProxyQt::showContextMenu(const IntPoint& position, const Vector<WebContextMenuItemData>& items)
 {
-    if (QMenu* menu = createContextMenu(items)) {
+    if (OwnPtr<QMenu> menu = createContextMenu(items)) {
         menu->move(position);
-        emit m_page->showContextMenu(menu);
+        emit m_page->showContextMenu(QSharedPointer<QMenu>(menu.leakPtr()));
     }
 }
 
@@ -91,9 +92,9 @@ void WebContextMenuProxyQt::hideContextMenu()
 {
 }
 
-QMenu* WebContextMenuProxyQt::createContextMenu(const Vector<WebContextMenuItemData>& items)
+PassOwnPtr<QMenu> WebContextMenuProxyQt::createContextMenu(const Vector<WebContextMenuItemData>& items) const
 {
-    QMenu* menu = new QMenu;
+    OwnPtr<QMenu> menu = adoptPtr(new QMenu);
     for (int i = 0; i < items.size(); ++i) {
         const WebContextMenuItemData& item = items.at(i);
         switch (item.type()) {
@@ -114,9 +115,11 @@ QMenu* WebContextMenuProxyQt::createContextMenu(const Vector<WebContextMenuItemD
             menu->addSeparator();
             break;
         case WebCore::SubmenuType:
-            if (QMenu *subMenu = createContextMenu(item.submenu())) {
+            if (OwnPtr<QMenu> subMenu = createContextMenu(item.submenu())) {
+                subMenu->setParent(menu.get());
+                QMenu* const subMenuPtr = subMenu.leakPtr();
                 subMenu->setTitle(item.title());
-                menu->addAction(subMenu->menuAction());
+                menu->addMenu(subMenuPtr);
             }
 
             break;
@@ -124,22 +127,19 @@ QMenu* WebContextMenuProxyQt::createContextMenu(const Vector<WebContextMenuItemD
     }
 
     // Do not show sub-menus with just disabled actions.
-    if (menu->isEmpty()) {
-        delete menu;
-        return 0;
-    }
+    if (menu->isEmpty())
+        return PassOwnPtr<QMenu>();
+
     bool isAnyActionEnabled = false;
     QList<QAction *> actions = menu->actions();
     for (int i = 0; i < actions.count(); ++i) {
         if (actions.at(i)->isVisible())
             isAnyActionEnabled |= actions.at(i)->isEnabled();
     }
-    if (!isAnyActionEnabled) {
-        delete menu;
-        return 0;
-    }
+    if (!isAnyActionEnabled)
+        return PassOwnPtr<QMenu>();
 
-    return menu;
+    return menu.release();
 }
 
 } // namespace WebKit

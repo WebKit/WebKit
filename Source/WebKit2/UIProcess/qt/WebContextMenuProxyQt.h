@@ -28,6 +28,7 @@
 #define WebContextMenuProxyQt_h
 
 #include "WebContextMenuProxy.h"
+#include <PassOwnPtr.h>
 
 class QMenu;
 class QWKPage;
@@ -45,7 +46,7 @@ private:
     virtual void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&);
     virtual void hideContextMenu();
 
-    QMenu* createContextMenu(const Vector<WebContextMenuItemData>& items);
+    PassOwnPtr<QMenu> createContextMenu(const Vector<WebContextMenuItemData>& items) const;
 
     QWKPage* const m_page;
 };

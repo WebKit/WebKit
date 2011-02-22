@@ -3,6 +3,7 @@
 
 #include "qwebkitglobal.h"
 #include <QAction>
+#include <QMenu>
 #include <QObject>
 #include <QPoint>
 #include <QRect>
@@ -134,7 +135,7 @@ public:
     Q_SIGNAL void windowCloseRequested();
     Q_SIGNAL void zoomableAreaFound(const QRect&);
     Q_SIGNAL void focusNextPrevChild(bool);
-    Q_SIGNAL void showContextMenu(QMenu*);
+    Q_SIGNAL void showContextMenu(QSharedPointer<QMenu>);
     Q_SIGNAL void engineConnectionChanged(bool connected);
 
 protected:
