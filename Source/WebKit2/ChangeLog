@@ -1,3 +1,42 @@
+2011-02-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Grammar correction from Spelling & Grammar window doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=54982
+        <rdar://problem/8940918>
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView isGrammarCheckingEnabled]):
+        (-[WKView setGrammarCheckingEnabled:]):
+        Call down to the text checker.
+
+        * UIProcess/TextChecker.h:
+        Add updateSpellingUIWithGrammarString.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateSpellingUIWithGrammarString):
+        Call TextChecker::updateSpellingUIWithGrammarString.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Add UpdateSpellingUIWithGrammarString message.
+
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        * UIProcess/qt/TextCheckerQt.cpp:
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        * UIProcess/win/TextCheckerWin.cpp:
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        Add stubs.
+
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        Update the spelling panel.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::updateSpellingUIWithGrammarString):
+        Send an UpdateSpellingUIWithGrammarString message to the UI process.
+
 2011-02-22  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Anders Carlsson.

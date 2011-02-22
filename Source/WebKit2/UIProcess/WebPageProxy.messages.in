@@ -197,6 +197,7 @@ messages -> WebPageProxy {
     # Spelling and grammar messages
     CheckTextOfParagraph(WTF::String text, uint64_t checkingTypes) -> (Vector<WebCore::TextCheckingResult> results)
     UpdateSpellingUIWithMisspelledWord(WTF::String misspelledWord)
+    UpdateSpellingUIWithGrammarString(WTF::String badGrammarPhrase, WebCore::GrammarDetail grammarDetail)
     GetGuessesForWord(WTF::String word, WTF::String context) -> (Vector<WTF::String> guesses)
     LearnWord(WTF::String word);
     IgnoreWord(WTF::String word);

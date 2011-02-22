@@ -2282,6 +2282,11 @@ void WebPageProxy::updateSpellingUIWithMisspelledWord(const String& misspelledWo
     TextChecker::updateSpellingUIWithMisspelledWord(misspelledWord);
 }
 
+void WebPageProxy::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
+{
+    TextChecker::updateSpellingUIWithGrammarString(badGrammarPhrase, grammarDetail);
+}
+
 void WebPageProxy::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses)
 {
     TextChecker::getGuessesForWord(spellDocumentTag(), word, context, guesses);

@@ -297,6 +297,21 @@ void TextChecker::updateSpellingUIWithMisspelledWord(const String& misspelledWor
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithMisspelledWord:misspelledWord];
 }
 
+void TextChecker::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
+{
+    RetainPtr<NSMutableArray> corrections(AdoptNS, [[NSMutableArray alloc] init]);
+    for (size_t i = 0; i < grammarDetail.guesses.size(); ++i) {
+        NSString *guess = grammarDetail.guesses[i];
+        [corrections.get() addObject:guess];
+    }
+
+    NSRange grammarRange = NSMakeRange(grammarDetail.location, grammarDetail.length);
+    NSString *grammarUserDescription = grammarDetail.userDescription;
+    RetainPtr<NSMutableDictionary> grammarDetailDict(AdoptNS, [[NSDictionary alloc] initWithObjectsAndKeys:[NSValue valueWithRange:grammarRange], NSGrammarRange, grammarUserDescription, NSGrammarUserDescription, corrections.get(), NSGrammarCorrections, nil]);
+
+    [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:grammarDetailDict.get()];
+}
+
 void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, Vector<String>& guesses)
 {
 #if !defined(BUILDING_ON_SNOW_LEOPARD)

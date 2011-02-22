@@ -81,6 +81,11 @@ void TextChecker::updateSpellingUIWithMisspelledWord(const String& misspelledWor
     notImplemented();
 }
 
+void TextChecker::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
+{
+    notImplemented();
+}
+
 void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, Vector<String>& guesses)
 {
     notImplemented();

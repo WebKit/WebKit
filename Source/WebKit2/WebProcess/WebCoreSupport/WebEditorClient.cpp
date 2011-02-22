@@ -27,6 +27,7 @@
 #include "WebEditorClient.h"
 
 #include "SelectionState.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebFrameLoaderClient.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -403,9 +404,9 @@ void WebEditorClient::checkGrammarOfString(const UChar*, int, Vector<GrammarDeta
     notImplemented();
 }
 
-void WebEditorClient::updateSpellingUIWithGrammarString(const String&, const GrammarDetail&)
+void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
-    notImplemented();
+    m_page->send(Messages::WebPageProxy::UpdateSpellingUIWithGrammarString(badGrammarPhrase, grammarDetail));
 }
 
 void WebEditorClient::updateSpellingUIWithMisspelledWord(const String& misspelledWord)

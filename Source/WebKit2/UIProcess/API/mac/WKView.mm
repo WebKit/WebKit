@@ -715,6 +715,23 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
         _data->_page->unmarkAllMisspellings();
 }
 
+- (BOOL)isGrammarCheckingEnabled
+{
+    return TextChecker::state().isGrammarCheckingEnabled;
+}
+
+- (void)setGrammarCheckingEnabled:(BOOL)flag
+{
+    if (static_cast<bool>(flag) == TextChecker::state().isGrammarCheckingEnabled)
+        return;
+    
+    TextChecker::setGrammarCheckingEnabled(flag);
+    _data->_page->process()->updateTextCheckerState();
+
+    if (!flag)
+        _data->_page->unmarkAllBadGrammar();
+}
+
 - (IBAction)toggleGrammarChecking:(id)sender
 {
     bool grammarCheckingEnabled = !TextChecker::state().isGrammarCheckingEnabled;
