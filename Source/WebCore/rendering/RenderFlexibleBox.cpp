@@ -1004,7 +1004,7 @@ void RenderFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutC
         int blockLeftEdge = destBlock->logicalLeftOffsetForLine(lastVisibleLine->y(), false);
 
         int blockEdge = leftToRight ? blockRightEdge : blockLeftEdge;
-        if (!lastVisibleLine->canAccommodateEllipsis(leftToRight, blockEdge, lastVisibleLine->x() + lastVisibleLine->logicalWidth(), totalWidth))
+        if (!lastVisibleLine->lineCanAccommodateEllipsis(leftToRight, blockEdge, lastVisibleLine->x() + lastVisibleLine->logicalWidth(), totalWidth))
             continue;
 
         // Let the truncation code kick in.

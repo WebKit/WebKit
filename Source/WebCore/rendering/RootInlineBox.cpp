@@ -85,7 +85,7 @@ void RootInlineBox::clearTruncation()
     }
 }
 
-bool RootInlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxEdge, int ellipsisWidth)
+bool RootInlineBox::lineCanAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxEdge, int ellipsisWidth)
 {
     // First sanity-check the unoverflowed width of the whole line to see if there is sufficient room.
     int delta = ltr ? lineBoxEdge - blockEdge : blockEdge - lineBoxEdge;

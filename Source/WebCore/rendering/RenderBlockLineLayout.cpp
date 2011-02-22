@@ -2130,7 +2130,7 @@ void RenderBlock::checkLinesForTextOverflow()
             // space.
             int width = curr == firstRootBox() ? firstLineEllipsisWidth : ellipsisWidth;
             int blockEdge = ltr ? blockRightEdge : blockLeftEdge;
-            if (curr->canAccommodateEllipsis(ltr, blockEdge, lineBoxEdge, width))
+            if (curr->lineCanAccommodateEllipsis(ltr, blockEdge, lineBoxEdge, width))
                 curr->placeEllipsis(ellipsisStr, ltr, blockLeftEdge, blockRightEdge, width);
         }
     }

@@ -1,3 +1,21 @@
+2011-02-21  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        canAccommodateEllipsis() confuses clang's -Woverloaded-virtual
+        https://bugs.webkit.org/show_bug.cgi?id=54909
+
+        Rename the overload in RootInlineBox to lineCanAccomodateEllipsis() to
+        unconfuse clang. No intended functionality change.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::checkLinesForTextOverflow):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::applyLineClamp):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::lineCanAccommodateEllipsis):
+        * rendering/RootInlineBox.h:
+
 2011-02-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.
