@@ -1,3 +1,9 @@
+2011-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip crashing inspector test on GTK
+
+        * platform/gtk/Skipped: Skip http/tests/inspector-enabled/open-close-open.html
+
 2011-02-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
