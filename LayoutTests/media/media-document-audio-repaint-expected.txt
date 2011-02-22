@@ -27,15 +27,15 @@ layer at (8,42) size 384x334
         RenderButton {INPUT} at (32,4) size 16x16
         RenderFlexibleBox {DIV} at (49,5) size 226x15
           RenderSlider {INPUT} at (45,2) size 136x13
-            RenderBlock {DIV} at (23,2) size 10x8
+            RenderBlock {DIV} at (63,2) size 10x8
         RenderButton {INPUT} at (277,6) size 14x12
     layer at (89,172) size 45x11
       RenderFlexibleBox {DIV} at (0,2) size 45x11 [color=#FFFFFF]
         RenderBlock (anonymous) at (9,0) size 26x11
           RenderText {#text} at (0,0) size 26x11
-            text run at (0,0) width 26: "00:01"
+            text run at (0,0) width 26: "00:00"
     layer at (270,172) size 45x11
       RenderFlexibleBox {DIV} at (181,2) size 45x11 [color=#FFFFFF]
         RenderBlock (anonymous) at (7,0) size 31x11
           RenderText {#text} at (0,0) size 31x11
-            text run at (0,0) width 31: "-00:06"
+            text run at (0,0) width 31: "-00:00"

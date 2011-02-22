@@ -2,7 +2,7 @@
     This tests that in a standalone media document with audio content, the media element repaints correctly
     while playing.
 </p>
-<iframe src="content/test.wav" width=380 height=330 onload="frameLoaded()"></iframe>
+<iframe src="content/silence.wav" id="fr" width=380 height=330 onload="frameLoaded()"></iframe>
 <script>
     if (window.layoutTestController)
         layoutTestController.waitUntilDone();
@@ -11,10 +11,15 @@
     {
         if (window.layoutTestController)
             layoutTestController.display();
-        
-        setTimeout(function() {             
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 1500);
+
+        var videoElement = document.getElementById("fr").contentDocument.querySelector("video");
+        setTimeout(function(){
+            videoElement.pause();
+            videoElement.addEventListener("seeked", function() {
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }, false);
+            videoElement.currentTime = videoElement.duration * 0.50;
+        }, 100)
     }
 </script>
