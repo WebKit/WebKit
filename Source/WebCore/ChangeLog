@@ -1,3 +1,13 @@
+2011-02-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Inspector.IDL change. rename attribute notify -> event.
+        https://bugs.webkit.org/show_bug.cgi?id=54958
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+
 2011-02-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

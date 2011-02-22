@@ -301,7 +301,7 @@ sub generateFunctions
     my $interface = shift;
 
     foreach my $function (@{$interface->functions}) {
-        if ($function->signature->extendedAttributes->{"notify"}) {
+        if ($function->signature->extendedAttributes->{"event"}) {
             generateFrontendFunction($interface, $function);
         } else {
             generateBackendFunction($interface, $function);
@@ -312,12 +312,12 @@ sub generateFunctions
     push(@documentationLines, "<h2 id='" . $interface->name . "'><a name=" . $interface->name . "></a>" . $interface->name . "</h2>");
 
     push(@documentationLines, "<h3>Events</h3>");
-    foreach my $function (grep($_->signature->extendedAttributes->{"notify"}, @{$interface->functions}) ) {
+    foreach my $function (grep($_->signature->extendedAttributes->{"event"}, @{$interface->functions}) ) {
         generateDocumentationEvent($interface, $function);
     }
 
     push(@documentationLines, "<h3>Commands</h3>");
-    foreach my $function (grep(!$_->signature->extendedAttributes->{"notify"}, @{$interface->functions})) {
+    foreach my $function (grep(!$_->signature->extendedAttributes->{"event"}, @{$interface->functions})) {
         generateDocumentationCommand($interface, $function);
     }
 
@@ -692,7 +692,7 @@ EOF
 sub collectBackendJSStubFunctions
 {
     my $interface = shift;
-    my @functions = grep(!$_->signature->extendedAttributes->{"notify"}, @{$interface->functions});
+    my @functions = grep(!$_->signature->extendedAttributes->{"event"}, @{$interface->functions});
     my $domain = $interface->name;
 
     foreach my $function (@functions) {

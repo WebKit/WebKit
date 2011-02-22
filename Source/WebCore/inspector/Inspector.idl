@@ -38,24 +38,24 @@ module core {
 
         void openInInspectedWindow(in String url);
         void setSearchingForNode(in boolean enabled, out boolean newState);
-        [notify] void frontendReused();
-        [notify] void addNodesToSearchResult(out Array nodeIds);
-        [notify] void bringToFront();
-        [notify] void disconnectFromBackend();
-        [notify] void inspectedURLChanged(out String url);
-        [notify] void domContentEventFired(out double time);
-        [notify] void loadEventFired(out double time);
-        [notify] void reset();
-        [notify] void showPanel(out String panel);
+        [event] void frontendReused();
+        [event] void addNodesToSearchResult(out Array nodeIds);
+        [event] void bringToFront();
+        [event] void disconnectFromBackend();
+        [event] void inspectedURLChanged(out String url);
+        [event] void domContentEventFired(out double time);
+        [event] void loadEventFired(out double time);
+        [event] void reset();
+        [event] void showPanel(out String panel);
 
-        [notify] void evaluateForTestInFrontend(out long testCallId, out String script);
+        [event] void evaluateForTestInFrontend(out long testCallId, out String script);
         void didEvaluateForTestInFrontend(in long testCallId, in String jsonResult);
 
         void highlightDOMNode(in long nodeId);
         void hideDOMNodeHighlight();
         void highlightFrame(in unsigned long frameId);
         void hideFrameHighlight();
-        [notify] void updateFocusedNode(out long nodeId);
+        [event] void updateFocusedNode(out long nodeId);
 
         void setUserAgentOverride(in String userAgent);
 
@@ -87,11 +87,11 @@ module core {
 
     interface [Conditional=INSPECTOR] Console {
         void setConsoleMessagesEnabled(in boolean enabled, out boolean newState);
-        [notify] void addConsoleMessage(out Object messageObj);
-        [notify] void updateConsoleMessageExpiredCount(out unsigned long count);
-        [notify] void updateConsoleMessageRepeatCount(out unsigned long count);
+        [event] void addConsoleMessage(out Object messageObj);
+        [event] void updateConsoleMessageExpiredCount(out unsigned long count);
+        [event] void updateConsoleMessageRepeatCount(out unsigned long count);
         void clearConsoleMessages();
-        [notify] void consoleMessagesCleared();
+        [event] void consoleMessagesCleared();
         void setMonitoringXHREnabled(in boolean enabled);
     };
 
@@ -100,21 +100,21 @@ module core {
         void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out boolean success, out String content);
         void setExtraHeaders(in Object headers);
 
-        [notify] void frameDetachedFromParent(out unsigned long frameId);
-        [notify] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out Value callStack);
-        [notify] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
-        [notify] void markResourceAsCached(out long identifier);
-        [notify] void didReceiveResponse(out long identifier, out double time, out String resourceType, out Object response);
-        [notify] void didReceiveContentLength(out long identifier, out double time, out long lengthReceived);
-        [notify] void didFinishLoading(out long identifier, out double finishTime);
-        [notify] void didFailLoading(out long identifier, out double time, out String localizedDescription);
-        [notify] void didLoadResourceFromMemoryCache(out double time, out Object resource);
-        [notify] void setInitialContent(out long identifier, out String sourceString, out String type);
-        [notify] void didCommitLoadForFrame(out Object frame, out Object loader);
-        [notify] void didCreateWebSocket(out unsigned long identifier, out String requestURL);
-        [notify] void willSendWebSocketHandshakeRequest(out unsigned long identifier, out double time, out Object request);
-        [notify] void didReceiveWebSocketHandshakeResponse(out unsigned long identifier, out double time, out Object response);
-        [notify] void didCloseWebSocket(out unsigned long identifier, out double time);
+        [event] void frameDetachedFromParent(out unsigned long frameId);
+        [event] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out Value callStack);
+        [event] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
+        [event] void markResourceAsCached(out long identifier);
+        [event] void didReceiveResponse(out long identifier, out double time, out String resourceType, out Object response);
+        [event] void didReceiveContentLength(out long identifier, out double time, out long lengthReceived);
+        [event] void didFinishLoading(out long identifier, out double finishTime);
+        [event] void didFailLoading(out long identifier, out double time, out String localizedDescription);
+        [event] void didLoadResourceFromMemoryCache(out double time, out Object resource);
+        [event] void setInitialContent(out long identifier, out String sourceString, out String type);
+        [event] void didCommitLoadForFrame(out Object frame, out Object loader);
+        [event] void didCreateWebSocket(out unsigned long identifier, out String requestURL);
+        [event] void willSendWebSocketHandshakeRequest(out unsigned long identifier, out double time, out Object request);
+        [event] void didReceiveWebSocketHandshakeResponse(out unsigned long identifier, out double time, out Object response);
+        [event] void didCloseWebSocket(out unsigned long identifier, out double time);
     };
 
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
@@ -122,10 +122,10 @@ module core {
         void getDatabaseTableNames(in long databaseId, out Array tableNames);
         void executeSQL(in long databaseId, in String query, out boolean success, out long transactionId);
 
-        [notify] void addDatabase(out Object database);
-        [notify] void selectDatabase(out int databaseId);
-        [notify] void sqlTransactionSucceeded(out long transactionId, out Value columnNames, out Value values);
-        [notify] void sqlTransactionFailed(out long transactionId, out Value sqlError);
+        [event] void addDatabase(out Object database);
+        [event] void selectDatabase(out int databaseId);
+        [event] void sqlTransactionSucceeded(out long transactionId, out Value columnNames, out Value values);
+        [event] void sqlTransactionFailed(out long transactionId, out Value sqlError);
     };
 #endif
 
@@ -134,17 +134,17 @@ module core {
         void getDOMStorageEntries(in long storageId, out Array entries);
         void setDOMStorageItem(in long storageId, in String key, in String value, out boolean success);
         void removeDOMStorageItem(in long storageId, in String key, out boolean success);
-        [notify] void addDOMStorage(out Object storage);
-        [notify] void updateDOMStorage(out int storageId);
-        [notify] void selectDOMStorage(out int storageId);
+        [event] void addDOMStorage(out Object storage);
+        [event] void updateDOMStorage(out int storageId);
+        [event] void selectDOMStorage(out int storageId);
     };
 #endif
 
 #if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
     interface [Conditional=INSPECTOR] ApplicationCache {
         void getApplicationCaches(out Value applicationCaches);
-        [notify] void updateApplicationCacheStatus(out int status);
-        [notify] void updateNetworkState(out boolean isNowOnline);
+        [event] void updateApplicationCacheStatus(out int status);
+        [event] void updateNetworkState(out boolean isNowOnline);
     };
 #endif
 
@@ -168,14 +168,14 @@ module core {
         void getNodePrototypes(in long nodeId, out Value result);
         void pushNodeToFrontend(in Object objectId, out Value result);
 
-        [notify] void setDocument(out Value root); // FIXME: should be requested from the front-end as getDocument.
-        [notify] void attributesUpdated(out long id, out Array attributes);
-        [notify] void characterDataModified(out long id, out String newValue);
-        [notify] void setChildNodes(out long parentId, out Array nodes);
-        [notify] void setDetachedRoot(out Object root);
-        [notify] void childNodeCountUpdated(out long id, out int newValue);
-        [notify] void childNodeInserted(out long parentId, out long prevId, out Object node);
-        [notify] void childNodeRemoved(out long parentId, out long id);
+        [event] void setDocument(out Value root); // FIXME: should be requested from the front-end as getDocument.
+        [event] void attributesUpdated(out long id, out Array attributes);
+        [event] void characterDataModified(out long id, out String newValue);
+        [event] void setChildNodes(out long parentId, out Array nodes);
+        [event] void setDetachedRoot(out Object root);
+        [event] void childNodeCountUpdated(out long id, out int newValue);
+        [event] void childNodeInserted(out long parentId, out long prevId, out Object node);
+        [event] void childNodeRemoved(out long parentId, out long id);
     };
 
     interface [Conditional=INSPECTOR] CSS {
@@ -197,18 +197,18 @@ module core {
     interface [Conditional=INSPECTOR] Timeline {
         void start();
         void stop();
-        [notify] void timelineProfilerWasStarted();
-        [notify] void timelineProfilerWasStopped();
-        [notify] void addRecordToTimeline(out Object record);
+        [event] void timelineProfilerWasStarted();
+        [event] void timelineProfilerWasStopped();
+        [event] void addRecordToTimeline(out Object record);
     };
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
     interface [Conditional=INSPECTOR] Debugger {
-        [notify] void debuggerWasEnabled();
-        [notify] void debuggerWasDisabled();
+        [event] void debuggerWasEnabled();
+        [event] void debuggerWasDisabled();
 
-        [notify] void parsedScriptSource(out String sourceID, out String url, out int lineOffset, out int columnOffset, out int length, out int scriptWorldType);
-        [notify] void failedToParseScriptSource(out String url, out String data, out int firstLine, out int errorLine, out String errorMessage);
+        [event] void parsedScriptSource(out String sourceID, out String url, out int lineOffset, out int columnOffset, out int length, out int scriptWorldType);
+        [event] void failedToParseScriptSource(out String url, out String data, out int firstLine, out int errorLine, out String errorMessage);
 
         void activateBreakpoints();
         void deactivateBreakpoints();
@@ -216,16 +216,16 @@ module core {
         void setJavaScriptBreakpoint(in String url, in int lineNumber, in int columnNumber, in String condition, in boolean enabled, out String breakpointId, out Array locations);
         void setJavaScriptBreakpointBySourceId(in String sourceId, in int lineNumber, in int columnNumber, in String condition, in boolean enabled, out String breakpointId, out int actualLineNumber, out int actualColumnNumber);
         void removeJavaScriptBreakpoint(in String breakpointId);
-        [notify] void breakpointResolved(out String breakpointId, out String sourceId, out int lineNumber, out int columnNumber);
+        [event] void breakpointResolved(out String breakpointId, out String sourceId, out int lineNumber, out int columnNumber);
         void continueToLocation(in String sourceId, in int lineNumber, in int columnNumber);
 
         void stepOver();
         void stepInto();
         void stepOut();
         void pause();
-        [notify] void pausedScript(out Object details);
+        [event] void pausedScript(out Object details);
         void resume();
-        [notify] void resumedScript(); // FIXME: Make this out parameter of resume if possible.
+        [event] void resumedScript(); // FIXME: Make this out parameter of resume if possible.
 
         void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
         void getScriptSource(in String sourceID, out String scriptSource);
@@ -236,8 +236,8 @@ module core {
         void getCompletionsOnCallFrame(in Object callFrameId, in String expression, in boolean includeCommandLineAPI, out Value result);
 
 #if defined(ENABLE_WORKERS) && ENABLE_WORKERS
-        [notify] void didCreateWorker(out long id, out String url, out boolean isShared);
-        [notify] void didDestroyWorker(out long id);
+        [event] void didCreateWorker(out long id, out String url, out boolean isShared);
+        [event] void didDestroyWorker(out long id);
 #endif // ENABLE_WORKERS
 
     };
@@ -257,8 +257,8 @@ module core {
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
     interface [Conditional=INSPECTOR] Profiler {
-        [notify] void profilerWasEnabled();
-        [notify] void profilerWasDisabled();
+        [event] void profilerWasEnabled();
+        [event] void profilerWasDisabled();
 
         void getProfileHeaders(out Array headers);
         void getProfile(in String type, in unsigned long uid, out Object profile);
@@ -267,12 +267,12 @@ module core {
 
         // FIXME: split into Profiler and HeapProfiler.
         void takeHeapSnapshot(in boolean detailed);
-        [notify] void addProfileHeader(out Object header);
-        [notify] void addHeapSnapshotChunk(out unsigned long uid, out String chunk);
-        [notify] void finishHeapSnapshot(out unsigned long uid);
-        [notify] void setRecordingProfile(out boolean isProfiling);
-        [notify] void resetProfiles();
-        [notify] void reportHeapSnapshotProgress(out int done, out int total);
+        [event] void addProfileHeader(out Object header);
+        [event] void addHeapSnapshotChunk(out unsigned long uid, out String chunk);
+        [event] void finishHeapSnapshot(out unsigned long uid);
+        [event] void setRecordingProfile(out boolean isProfiling);
+        [event] void resetProfiles();
+        [event] void reportHeapSnapshotProgress(out int done, out int total);
     };
 #endif // ENABLE_JAVASCRIPT_DEBUGGER
 }
