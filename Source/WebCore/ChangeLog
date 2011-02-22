@@ -1,3 +1,78 @@
+2011-02-22  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: provide a button to expand inspector toolbar when not all panel buttons fit
+        https://bugs.webkit.org/show_bug.cgi?id=54671
+
+        - factored toolbar handling out of inspector.js
+        - added toolbar dropdown
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onCreatePanel):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.get toolbarItem):
+        * inspector/front-end/Toolbar.js: Added.
+        (WebInspector.Toolbar):
+        (WebInspector.Toolbar.prototype.resize):
+        (WebInspector.Toolbar.prototype.addPanel):
+        (WebInspector.Toolbar.prototype._toolbarDragStart):
+        (WebInspector.Toolbar.prototype._toolbarDragEnd):
+        (WebInspector.Toolbar.prototype._toolbarDrag):
+        (WebInspector.Toolbar.prototype._onClose):
+        (WebInspector.Toolbar.prototype._setDropdownVisible):
+        (WebInspector.Toolbar.prototype._toggleDropdown):
+        (WebInspector.Toolbar.prototype._updateDropdownButtonAndHideDropdown):
+        (WebInspector.Toolbar.createPanelToolbarItem.onToolbarItemClicked):
+        (WebInspector.Toolbar.createPanelToolbarItem):
+        (WebInspector.ToolbarDropdown):
+        (WebInspector.ToolbarDropdown.prototype.show):
+        (WebInspector.ToolbarDropdown.prototype.hide):
+        (WebInspector.ToolbarDropdown.prototype.get visible):
+        (WebInspector.ToolbarDropdown.prototype._populate):
+        (WebInspector.ToolbarDropdown.prototype._onKeyDown):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (#toolbar):
+        (.toolbar-item):
+        (.toolbar-item.toggleable):
+        (.toolbar-item.toggleable.toggled-on):
+        (#toolbar-dropdown .toolbar-icon):
+        (#toolbar-dropdown .toolbar-label):
+        (#toolbar-controls):
+        (#toolbar-dropdown-arrow):
+        (body.attached #toolbar-dropdown-arrow):
+        (#toolbar-dropdown-arrow.dropdown-visible):
+        (#toolbar-dropdown-arrow:hover):
+        (#toolbar-dropdown-arrow:active):
+        (#toolbar-dropdown):
+        (body.detached.platform-mac-snowleopard #toolbar-dropdown):
+        (#toolbar-dropdown .scrollable-content):
+        (#toolbar-dropdown .toolbar-item):
+        (#toolbar-dropdown .toolbar-item.toggleable.toggled-on):
+        (#toolbar-dropdown .toolbar-item:hover):
+        (#toolbar-dropdown .toolbar-item.toggleable.toggled-on:hover):
+        (#toolbar-dropdown .toolbar-item:active .toolbar-icon):
+        (.scrollable-content):
+        (.scrollable-content::-webkit-scrollbar):
+        (.scrollable-content::-webkit-resizer):
+        (.scrollable-content::-webkit-scrollbar-thumb:vertical):
+        (.scrollable-content::-webkit-scrollbar-thumb:vertical:active):
+        (.scrollable-content::-webkit-scrollbar-track:vertical):
+        (.toolbar-search-item):
+        (#search):
+        (body.attached #search):
+        (#search-results-matches):
+        (#close-button-left, #close-button-right):
+        (.close-left):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.set attached):
+        (WebInspector.addPanel):
+        (WebInspector.windowResize):
+
 2011-02-22  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.
