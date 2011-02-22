@@ -42,12 +42,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static uint64_t generateStateID()
-{
-    static uint64_t stateID;
-    return ++stateID;
-}
-
 PassOwnPtr<DrawingAreaProxyImpl> DrawingAreaProxyImpl::create(WebPageProxy* webPageProxy)
 {
     return adoptPtr(new DrawingAreaProxyImpl(webPageProxy));
@@ -55,8 +49,9 @@ PassOwnPtr<DrawingAreaProxyImpl> DrawingAreaProxyImpl::create(WebPageProxy* webP
 
 DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaInfo::Impl, webPageProxy)
-    , m_isWaitingForDidUpdateState(false)
     , m_currentStateID(0)
+    , m_requestedStateID(0)
+    , m_isWaitingForDidUpdateState(false)
 {
 }
 
@@ -151,7 +146,8 @@ void DrawingAreaProxyImpl::update(uint64_t stateID, const UpdateInfo& updateInfo
 
 void DrawingAreaProxyImpl::didUpdateState(uint64_t stateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)
 {
-    ASSERT(stateID > m_currentStateID);
+    ASSERT_ARG(stateID, stateID <= m_requestedStateID);
+    ASSERT_ARG(stateID, stateID > m_currentStateID);
     m_currentStateID = stateID;
 
     ASSERT(m_isWaitingForDidUpdateState);
@@ -237,7 +233,7 @@ void DrawingAreaProxyImpl::sendUpdateState()
         return;
 
     m_isWaitingForDidUpdateState = true;
-    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateState(generateStateID(), m_size, m_scrollOffset), m_webPageProxy->pageID());
+    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateState(++m_requestedStateID, m_size, m_scrollOffset), m_webPageProxy->pageID());
     m_scrollOffset = IntSize();
 
     if (!m_layerTreeContext.isEmpty()) {

@@ -1,3 +1,27 @@
+2011-02-21  Adam Roben  <aroben@apple.com>
+
+        Make DrawingAreaProxyImpl keep track of the most recent state ID it sent to the web process
+
+        This will be useful for sending repeated messages for the same state ID to the web process.
+        We don't do this currently, but will need to if we're asked to paint after we've thrown away
+        our backing store to save memory.
+
+        Fixes <http://webkit.org/b/54916> DrawingAreaProxyImpl should keep track of the state ID it
+        last sent to the web process
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl): Initialize m_requestedStateID, and
+        reordered member initialization to match the new declaration order.
+        (WebKit::DrawingAreaProxyImpl::didUpdateState): Added an assertion that the stateID we got
+        from the web process is no newer than the most recent one we requested.
+        (WebKit::DrawingAreaProxyImpl::sendUpdateState): Changed to increment and send
+        m_requestedStateID instead of a new global stateID.
+
+        * UIProcess/DrawingAreaProxyImpl.h: Added m_requestedStateID, and moved the state IDs before
+        other data members. Also beefed the comment explaining m_currentStateID.
+
 2011-02-22  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Laszlo Gombos.

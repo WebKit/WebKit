@@ -69,15 +69,22 @@ private:
 
     bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
 
+    // The state ID corresponding to our current backing store. Updated whenever we allocate
+    // a new backing store. Any messages received that correspond to an earlier state are ignored,
+    // as they don't apply to our current backing store.
+    uint64_t m_currentStateID;
+
+    // The state ID we most recently requested the web process update to. Incremented whenever we
+    // send an UpdateState message to the web process to tell it we need to allocate a new backing
+    // store.
+    uint64_t m_requestedStateID;
+
     // The current layer tree context.
     LayerTreeContext m_layerTreeContext;
     
     // Whether we've sent a UpdateState message and are now waiting for a DidUpdateState message.
     // Used to throttle UpdateState messages so we don't send them faster than the Web process can handle.
     bool m_isWaitingForDidUpdateState;
-
-    // The state ID of the last DidUpdateState message
-    uint64_t m_currentStateID;
 
     OwnPtr<BackingStore> m_backingStore;
 };
