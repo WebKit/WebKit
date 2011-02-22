@@ -233,11 +233,10 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
     if (paintsEntireContents())
         return IntRect(IntPoint(0, 0), contentsSize());
 
-    bool hasOverlayScrollbars = ScrollbarTheme::nativeTheme()->usesOverlayScrollbars();
-    int verticalScrollbarWidth = verticalScrollbar() && !hasOverlayScrollbars && !includeScrollbars
-        ? verticalScrollbar()->width() : 0;
-    int horizontalScrollbarHeight = horizontalScrollbar() && !hasOverlayScrollbars && !includeScrollbars
-        ? horizontalScrollbar()->height() : 0;
+    int verticalScrollbarWidth = verticalScrollbar() && !verticalScrollbar()->isOverlayScrollbar()
+        && !includeScrollbars ? verticalScrollbar()->width() : 0;
+    int horizontalScrollbarHeight = horizontalScrollbar() && !horizontalScrollbar()->isOverlayScrollbar()
+        && !includeScrollbars ? horizontalScrollbar()->height() : 0;
 
     return IntRect(IntPoint(m_scrollOffset.width(), m_scrollOffset.height()),
                    IntSize(max(0, m_boundsSize.width() - verticalScrollbarWidth), 
@@ -598,7 +597,7 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
     // with the clip rect every time to keep it smooth.
     IntRect clipRect = windowClipRect();
     IntRect scrollViewRect = convertToContainingWindow(IntRect(0, 0, visibleWidth(), visibleHeight()));
-    if (ScrollbarTheme::nativeTheme()->usesOverlayScrollbars()) {
+    if (hasOverlayScrollbars()) {
         int verticalScrollbarWidth = verticalScrollbar() ? verticalScrollbar()->width() : 0;
         int horizontalScrollbarHeight = horizontalScrollbar() ? horizontalScrollbar()->height() : 0;
 
@@ -860,7 +859,7 @@ IntRect ScrollView::scrollCornerRect() const
 {
     IntRect cornerRect;
 
-    if (ScrollbarTheme::nativeTheme()->usesOverlayScrollbars())
+    if (hasOverlayScrollbars())
         return cornerRect;
 
     if (m_horizontalScrollbar && m_boundsSize.width() - m_horizontalScrollbar->width() > 0) {
@@ -963,9 +962,10 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 
 void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRect, IntRect& verticalOverhangRect)
 {
-    bool hasOverlayScrollbars = ScrollbarTheme::nativeTheme()->usesOverlayScrollbars();
-    int verticalScrollbarWidth = (verticalScrollbar() && !hasOverlayScrollbars) ? verticalScrollbar()->width() : 0;
-    int horizontalScrollbarHeight = (horizontalScrollbar() && !hasOverlayScrollbars) ? horizontalScrollbar()->height() : 0;
+    int verticalScrollbarWidth = (verticalScrollbar() && !verticalScrollbar()->isOverlayScrollbar())
+        ? verticalScrollbar()->width() : 0;
+    int horizontalScrollbarHeight = (horizontalScrollbar() && !horizontalScrollbar()->isOverlayScrollbar())
+        ? horizontalScrollbar()->height() : 0;
 
     if (scrollY() < 0) {
         horizontalOverhangRect = frameRect();

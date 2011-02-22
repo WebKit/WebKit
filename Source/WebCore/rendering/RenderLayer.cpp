@@ -1901,14 +1901,14 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
 
 int RenderLayer::verticalScrollbarWidth() const
 {
-    if (!m_vBar || ScrollbarTheme::nativeTheme()->usesOverlayScrollbars())
+    if (!m_vBar || m_vBar->isOverlayScrollbar())
         return 0;
     return m_vBar->width();
 }
 
 int RenderLayer::horizontalScrollbarHeight() const
 {
-    if (!m_hBar || ScrollbarTheme::nativeTheme()->usesOverlayScrollbars())
+    if (!m_hBar || m_hBar->isOverlayScrollbar())
         return 0;
     return m_hBar->height();
 }

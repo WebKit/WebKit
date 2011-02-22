@@ -86,6 +86,8 @@ public:
     bool enabled() const { return m_enabled; }
     virtual void setEnabled(bool e);
 
+    virtual bool isOverlayScrollbar() const;
+
     bool isWindowActive() const;
 
     // These methods are used for platform scrollbars to give :hover feedback.  They will not get called

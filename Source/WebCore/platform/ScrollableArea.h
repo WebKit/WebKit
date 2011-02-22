@@ -66,6 +66,8 @@ public:
     void didAddHorizontalScrollbar(Scrollbar*);
     void willRemoveHorizontalScrollbar(Scrollbar*);
 
+    bool hasOverlayScrollbars() const;
+
     ScrollAnimator* scrollAnimator() const { return m_scrollAnimator.get(); }
 
     virtual int scrollSize(ScrollbarOrientation) const = 0;

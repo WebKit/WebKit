@@ -563,14 +563,14 @@ IntRect RenderBox::reflectedRect(const IntRect& r) const
 
 bool RenderBox::includeVerticalScrollbarSize() const
 {
-    return !ScrollbarTheme::nativeTheme()->usesOverlayScrollbars() 
-        && hasOverflowClip() && (style()->overflowY() == OSCROLL || style()->overflowY() == OAUTO);
+    return hasOverflowClip() && !layer()->hasOverlayScrollbars()
+        && (style()->overflowY() == OSCROLL || style()->overflowY() == OAUTO);
 }
 
 bool RenderBox::includeHorizontalScrollbarSize() const
 {
-    return !ScrollbarTheme::nativeTheme()->usesOverlayScrollbars()
-        && hasOverflowClip() && (style()->overflowX() == OSCROLL || style()->overflowX() == OAUTO);
+    return hasOverflowClip() && !layer()->hasOverlayScrollbars()
+        && (style()->overflowX() == OSCROLL || style()->overflowX() == OAUTO);
 }
 
 int RenderBox::verticalScrollbarWidth() const

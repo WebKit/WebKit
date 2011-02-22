@@ -433,6 +433,11 @@ void Scrollbar::setEnabled(bool e)
     invalidate();
 }
 
+bool Scrollbar::isOverlayScrollbar() const
+{
+    return m_theme->usesOverlayScrollbars();
+}
+
 bool Scrollbar::isWindowActive() const
 {
     return m_scrollableArea && m_scrollableArea->isActive();

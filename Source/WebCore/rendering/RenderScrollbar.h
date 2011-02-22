@@ -60,6 +60,8 @@ public:
 
     int minimumThumbLength();
 
+    virtual bool isOverlayScrollbar() const { return false; }
+
 private:
     virtual void setParent(ScrollView*);
     virtual void setEnabled(bool);

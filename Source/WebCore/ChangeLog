@@ -1,3 +1,38 @@
+2011-02-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=54991 
+        Scrollbar::nativeTheme()->usesOverlayScrollbars() should not be consulted for CSS 
+        Scrollbars
+        -and corresponding-
+        <rdar://problem/9034318>
+
+        Instead of consulting the theme directly, callers should ask the Scrollbar or 
+        ScrollableArea if the scrollbars are overlay or not. 
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::visibleContentRect):
+        (WebCore::ScrollView::scrollContents):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::setScrollOffsetFromAnimation):
+        (WebCore::ScrollableArea::hasOverlayScrollbars):
+        * platform/ScrollableArea.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::isOverlayScrollbar):
+        * platform/Scrollbar.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::includeVerticalScrollbarSize):
+        (WebCore::RenderBox::includeHorizontalScrollbarSize):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::verticalScrollbarWidth):
+        (WebCore::RenderLayer::horizontalScrollbarHeight):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::verticalScrollbarWidth):
+        * rendering/RenderScrollbar.h:
+        (WebCore::RenderScrollbar::isOverlayScrollbar):
+
 2011-02-22  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

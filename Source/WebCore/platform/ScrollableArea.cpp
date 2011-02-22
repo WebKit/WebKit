@@ -128,17 +128,15 @@ void ScrollableArea::setScrollOffsetFromAnimation(const IntPoint& offset)
     // Tell the derived class to scroll its contents.
     setScrollOffset(offset);
 
-    bool hasOverlayScrollbars = ScrollbarTheme::nativeTheme()->usesOverlayScrollbars();
-
     // Tell the scrollbars to update their thumb postions.
     if (Scrollbar* horizontalScrollbar = this->horizontalScrollbar()) {
         horizontalScrollbar->offsetDidChange();
-        if (hasOverlayScrollbars)
+        if (horizontalScrollbar->isOverlayScrollbar())
             horizontalScrollbar->invalidate();
     }
     if (Scrollbar* verticalScrollbar = this->verticalScrollbar()) {
         verticalScrollbar->offsetDidChange();
-        if (hasOverlayScrollbars)
+        if (verticalScrollbar->isOverlayScrollbar())
             verticalScrollbar->invalidate();
     }
 }
@@ -177,6 +175,12 @@ void ScrollableArea::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 void ScrollableArea::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 {
     scrollAnimator()->willRemoveHorizontalScrollbar(scrollbar);
+}
+
+bool ScrollableArea::hasOverlayScrollbars() const
+{
+    return (verticalScrollbar() && verticalScrollbar()->isOverlayScrollbar())
+        || (horizontalScrollbar() && horizontalScrollbar()->isOverlayScrollbar());
 }
 
 } // namespace WebCore
