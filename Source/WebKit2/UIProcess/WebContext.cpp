@@ -257,6 +257,7 @@ void WebContext::processDidClose(WebProcessProxy* process)
 
     m_databaseManagerProxy->invalidate();
     m_geolocationManagerProxy->invalidate();
+    m_resourceCacheManagerProxy->invalidate();
 
     // When out of process plug-ins are enabled, we don't want to invalidate the plug-in site data
     // manager just because the web process crashes since it's not involved.

@@ -1,3 +1,12 @@
+2011-02-22  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Brady Eidson.
+
+        Invalidate the WebResourceCacheManagerProxy in WebContext::processDidClose.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::processDidClose):
+
 2011-02-21  Adam Roben  <aroben@apple.com>
 
         Make DrawingAreaProxyImpl keep track of the most recent state ID it sent to the web process
