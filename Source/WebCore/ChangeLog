@@ -1,3 +1,23 @@
+2011-02-21  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        RenderTableCell::baselinePosition() confuses clang's -Woverloaded-virtual
+        https://bugs.webkit.org/show_bug.cgi?id=54922
+
+        RenderTableCell::baselinePosition() has the same name as a virtual
+        method in superclass RenderBlock. Rename the subclass method to make
+        it clear it's not an attempted override.
+
+        No intended functionality change.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::cellBaselinePosition):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        (WebCore::RenderTableSection::layoutRows):
+
 2011-02-21  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ryosuke Niwa.
