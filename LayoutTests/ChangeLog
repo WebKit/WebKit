@@ -1,3 +1,14 @@
+2011-02-22  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed, adding new pixel tests to the skipped list of various platforms.
+
+        media/audio-repaint.html flakey.
+        https://bugs.webkit.org/show_bug.cgi?id=54970
+        
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2011-02-22  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r79337.
