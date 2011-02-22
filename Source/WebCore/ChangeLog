@@ -1,3 +1,13 @@
+2011-02-21  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Stephanie Lewis.
+
+        Fix the Leopard Debug build by incorporating the RenderSVGAllInOne.cpp
+
+        No new tests required.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-02-21  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Darin Adler.
