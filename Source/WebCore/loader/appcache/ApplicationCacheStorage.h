@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010, 2011 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,10 @@
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #include "PlatformString.h"
+#include "SecurityOriginHash.h"
 #include "SQLiteDatabase.h"
 #include <wtf/HashCountedSet.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -91,6 +93,10 @@ public:
     bool cacheGroupSize(const String& manifestURL, int64_t* size);
     bool deleteCacheGroup(const String& manifestURL);
     void vacuumDatabaseFile();
+
+    void getOriginsWithCache(HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>&);
+    void deleteEntriesForOrigin(SecurityOrigin*);
+    void deleteAllEntries();
 
     static int64_t unknownQuota() { return -1; }
     static int64_t noQuota() { return std::numeric_limits<int64_t>::max(); }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "ApplicationCacheResource.h"
 #include "FileSystem.h"
 #include "KURL.h"
+#include "NotImplemented.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include "SecurityOrigin.h"
@@ -1285,6 +1286,24 @@ void ApplicationCacheStorage::checkForMaxSizeReached()
 {
     if (m_database.lastError() == SQLResultFull)
         m_isMaximumSizeReached = true;
+}
+
+void ApplicationCacheStorage::getOriginsWithCache(HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>&)
+{
+    // FIXME: <rdar://problem/8762042> and https://bugs.webkit.org/show_bug.cgi?id=54514 - Implement.
+    notImplemented();
+}
+
+void ApplicationCacheStorage::deleteEntriesForOrigin(SecurityOrigin*)
+{
+    // FIXME: <rdar://problem/8762042> and https://bugs.webkit.org/show_bug.cgi?id=54514 - Implement.
+    notImplemented();
+}
+
+void ApplicationCacheStorage::deleteAllEntries()
+{
+    empty();
+    vacuumDatabaseFile();
 }
 
 ApplicationCacheStorage::ApplicationCacheStorage() 

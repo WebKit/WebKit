@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009, 2011 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,8 +55,7 @@ using namespace WebCore;
 
 + (void)deleteAllApplicationCaches
 {
-    cacheStorage().empty();
-    cacheStorage().vacuumDatabaseFile();
+    cacheStorage().deleteAllEntries();
 }
 
 @end
