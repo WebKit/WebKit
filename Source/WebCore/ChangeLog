@@ -1,3 +1,19 @@
+2011-02-21  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        ImageDocument::imageChanged() confuses clang's -Woverride-virtual
+        https://bugs.webkit.org/show_bug.cgi?id=54924
+
+        Rename ImageDocument::imageChanged() to imageUpdated() to make clear
+        that it's not an override of CachedResourceClient::imageChanged().
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::appendBytes):
+        (WebCore::ImageDocumentParser::finish):
+        (WebCore::ImageDocument::imageUpdated):
+        * html/ImageDocument.h:
+
 2011-02-21  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Kent Tamura.

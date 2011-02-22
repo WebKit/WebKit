@@ -43,7 +43,7 @@ public:
     void disconnectImageElement() { m_imageElement = 0; }
     
     void windowSizeChanged();
-    void imageChanged();
+    void imageUpdated();
     void imageClicked(int x, int y);
 
 private:

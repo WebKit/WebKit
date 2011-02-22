@@ -134,7 +134,7 @@ void ImageDocumentParser::appendBytes(DocumentWriter*, const char*, int, bool)
     CachedImage* cachedImage = document()->cachedImage();
     cachedImage->data(frame->loader()->documentLoader()->mainResourceData(), false);
 
-    document()->imageChanged();
+    document()->imageUpdated();
 }
 
 void ImageDocumentParser::finish()
@@ -165,7 +165,7 @@ void ImageDocumentParser::finish()
             document()->setTitle(imageTitle(fileName, size));
         }
 
-        document()->imageChanged();
+        document()->imageUpdated();
     }
 
     document()->finishedParsing();
@@ -282,7 +282,7 @@ void ImageDocument::imageClicked(int x, int y)
     }
 }
 
-void ImageDocument::imageChanged()
+void ImageDocument::imageUpdated()
 {
     ASSERT(m_imageElement);
     
