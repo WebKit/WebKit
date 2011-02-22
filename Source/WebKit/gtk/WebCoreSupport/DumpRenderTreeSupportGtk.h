@@ -54,6 +54,9 @@ public:
     static void setLinksIncludedInFocusChain(bool);
     static bool linksIncludedInFocusChain();
     static void setIconDatabaseEnabled(bool);
+    static void setSelectTrailingWhitespaceEnabled(bool);
+    static bool selectTrailingWhitespaceEnabled();
+
     static JSValueRef nodesFromRect(JSContextRef context, JSValueRef value, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping);
     static void dumpConfigurationForViewport(WebKitWebView* webView, gint availableWidth, gint availableHeight);
 
@@ -105,6 +108,7 @@ public:
 private:
     static bool s_drtRun;
     static bool s_linksIncludedInTabChain;
+    static bool s_selectTrailingWhitespaceEnabled;
 };
 
 #endif

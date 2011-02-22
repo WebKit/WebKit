@@ -69,6 +69,7 @@ using namespace WebKit;
 
 bool DumpRenderTreeSupportGtk::s_drtRun = false;
 bool DumpRenderTreeSupportGtk::s_linksIncludedInTabChain = true;
+bool DumpRenderTreeSupportGtk::s_selectTrailingWhitespaceEnabled = false;
 
 DumpRenderTreeSupportGtk::DumpRenderTreeSupportGtk()
 {
@@ -100,6 +101,16 @@ bool DumpRenderTreeSupportGtk::linksIncludedInFocusChain()
 void DumpRenderTreeSupportGtk::setIconDatabaseEnabled(bool enabled)
 {
     WebKit::setIconDatabaseEnabled(enabled);
+}
+
+void DumpRenderTreeSupportGtk::setSelectTrailingWhitespaceEnabled(bool enabled)
+{
+    s_selectTrailingWhitespaceEnabled = enabled;
+}
+
+bool DumpRenderTreeSupportGtk::selectTrailingWhitespaceEnabled()
+{
+    return s_selectTrailingWhitespaceEnabled;
 }
 
 JSValueRef DumpRenderTreeSupportGtk::nodesFromRect(JSContextRef context, JSValueRef value, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping)

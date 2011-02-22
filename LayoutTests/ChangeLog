@@ -1,3 +1,12 @@
+2011-02-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] DRT needs an implementation of LayoutTestController.setSelectTrailingWhitespace
+        https://bugs.webkit.org/show_bug.cgi?id=53603
+
+        * platform/gtk/Skipped: Unskip passing tests.
+
 2011-02-22  Adam Roben  <aroben@apple.com>
 
         Add Windows expected failure results for new tests from r79318

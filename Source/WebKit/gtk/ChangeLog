@@ -1,3 +1,23 @@
+2011-02-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] DRT needs an implementation of LayoutTestController.setSelectTrailingWhitespace
+        https://bugs.webkit.org/show_bug.cgi?id=53603
+
+        Add setSelectTrailingWhitespaceEnabled and selectTrailingWhitespaceEnabled which allow
+        setting and querying the selectTrailingWhitespaceEnabled setting. EditorClient just
+        listens to this value during DRT runs. Perhaps later we can expose this to the public
+        API.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setSelectTrailingWhitespaceEnabled): Added
+        (DumpRenderTreeSupportGtk::selectTrailingWhitespaceEnabled): Added
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::isSelectTrailingWhitespaceEnabled): Ask DRTSupportGtk
+        for the appropriate return value.
+
 2011-02-21  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

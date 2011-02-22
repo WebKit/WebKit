@@ -25,6 +25,7 @@
 #include "EditorClientGtk.h"
 
 #include "DataObjectGtk.h"
+#include "DumpRenderTreeSupportGtk.h"
 #include "EditCommand.h"
 #include "Editor.h"
 #include "EventNames.h"
@@ -571,8 +572,9 @@ bool EditorClient::smartInsertDeleteEnabled()
 
 bool EditorClient::isSelectTrailingWhitespaceEnabled()
 {
-    notImplemented();
-    return false;
+    if (!DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled())
+        return false;
+    return DumpRenderTreeSupportGtk::selectTrailingWhitespaceEnabled();
 }
 
 void EditorClient::toggleContinuousSpellChecking()

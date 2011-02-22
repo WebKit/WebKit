@@ -508,7 +508,7 @@ void LayoutTestController::setJavaScriptProfilingEnabled(bool flag)
 
 void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)
 {
-    // FIXME: implement
+    DumpRenderTreeSupportGtk::setSelectTrailingWhitespaceEnabled(flag);
 }
 
 void LayoutTestController::setPopupBlockingEnabled(bool flag)

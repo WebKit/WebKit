@@ -454,6 +454,7 @@ static void resetDefaultsToConsistentValues()
 
     DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(true);
     DumpRenderTreeSupportGtk::setIconDatabaseEnabled(false);
+    DumpRenderTreeSupportGtk::setSelectTrailingWhitespaceEnabled(false);
 
     if (axController)
         axController->resetToConsistentState();

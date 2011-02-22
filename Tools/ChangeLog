@@ -1,3 +1,20 @@
+2011-02-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] DRT needs an implementation of LayoutTestController.setSelectTrailingWhitespace
+        https://bugs.webkit.org/show_bug.cgi?id=53603
+
+        Add support for LayoutTestController.setSelectTrailingWhitespace by calling through
+        to DumpRenderTreeSupportGtk for this functionality.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues): Always call LayoutTestController.setSelectTrailingWhitespace to
+        false when reseting values between tests.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setSelectTrailingWhitespaceEnabled): Call LayoutTestController.setSelectTrailingWhitespace
+        with the appropriate value.
+
 2011-02-22  Adam Roben  <aroben@apple.com>
 
         Don't trigger a Windows build when the top-level ChangeLog changes
