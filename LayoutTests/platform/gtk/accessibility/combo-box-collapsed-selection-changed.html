@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+
+function runTest() {
+  description("This tests that the 'state-changed:selected' signal is emitted when arrowing through the options of a combobox while collapsed.");
+
+  if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+  }
+
+  if (window.accessibilityController) {
+    accessibilityController.logAccessibilityEvents();
+  }
+
+  // Focus in the combobox and move around the options. The signal
+  // 'state-change:selected' should be emitted with every change.
+  document.getElementById("combo").focus();
+  eventSender.keyDown("downArrow");
+  eventSender.keyDown("downArrow");
+  eventSender.keyDown("upArrow");
+  eventSender.keyDown("upArrow");
+}
+</script>
+</head>
+<body onload="runTest();">
+<form>
+<select id="combo">
+<option selected value='foo'>foo</option>
+<option value='bar'>bar</option>
+<option value='baz'>baz</option>
+</select>
+</form>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+successfullyParsed = true;
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
