@@ -1,3 +1,22 @@
+2011-02-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Get rid of WebProcessManager::getAllWebProcessContexts
+        https://bugs.webkit.org/show_bug.cgi?id=55000
+
+        * Shared/WebURLRequest.cpp:
+        (WebKit::WebURLRequest::setDefaultTimeoutInterval):
+        Call WebContext::allContexts instead.
+
+        * UIProcess/WebContext.cpp:
+        * UIProcess/WebContext.h:
+        Add a vector of WebContext objects. Update it when creating and destroying contexts.
+
+        * UIProcess/WebProcessManager.cpp:
+        * UIProcess/WebProcessManager.h:
+        Remove WebProcessManager::getAllWebProcessContexts.
+
 2011-02-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

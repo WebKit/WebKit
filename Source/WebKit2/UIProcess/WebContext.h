@@ -62,6 +62,8 @@ public:
     static PassRefPtr<WebContext> create(const String& injectedBundlePath);
     virtual ~WebContext();
 
+    static const Vector<WebContext*>& allContexts();
+
     void initializeInjectedBundleClient(const WKContextInjectedBundleClient*);
     void initializeHistoryClient(const WKContextHistoryClient*);
     void initializeDownloadClient(const WKContextDownloadClient*);

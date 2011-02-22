@@ -41,8 +41,6 @@ public:
 
     void contextWasDestroyed(WebContext*);
 
-    void getAllWebProcessContexts(Vector<WebContext*>&);
-
 private:
     WebProcessManager();
 

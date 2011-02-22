@@ -32,13 +32,13 @@ double WebURLRequest::defaultTimeoutInterval()
     return ResourceRequest::defaultTimeoutInterval();
 }
 
+// FIXME: This function should really be on WebContext.
 void WebURLRequest::setDefaultTimeoutInterval(double timeoutInterval)
 {
     ResourceRequest::setDefaultTimeoutInterval(timeoutInterval);
-    
-    Vector<WebContext*> contexts;
-    WebProcessManager::shared().getAllWebProcessContexts(contexts);
-    for (unsigned i = 0; i < contexts.size(); ++i)
+
+    const Vector<WebContext*>& contexts = WebContext::allContexts();
+    for (size_t i = 0; i < contexts.size(); ++i)
         contexts[i]->setDefaultRequestTimeoutInterval(timeoutInterval);
 }
 

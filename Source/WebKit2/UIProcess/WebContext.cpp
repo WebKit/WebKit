@@ -86,7 +86,19 @@ PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
     RunLoop::initializeMainRunLoop();
     return adoptRef(new WebContext(ProcessModelSecondaryProcess, injectedBundlePath));
 }
-    
+
+static Vector<WebContext*>& contexts()
+{
+    DEFINE_STATIC_LOCAL(Vector<WebContext*>, contexts, ());
+
+    return contexts;
+}
+
+const Vector<WebContext*>& WebContext::allContexts()
+{
+    return contexts();
+}
+
 WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePath)
     : m_processModel(processModel)
     , m_defaultPageGroup(WebPageGroup::create())
@@ -106,6 +118,8 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_shouldPaintNativeControls(true)
 #endif
 {
+    contexts().append(this);
+
     addLanguageChangeObserver(this, languageChanged);
 
     WebCore::InitializeLoggingChannelsIfNecessary();
@@ -117,6 +131,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 
 WebContext::~WebContext()
 {
+    ASSERT(contexts().find(this) != notFound);
+    contexts().remove(contexts().find(this));
+
     removeLanguageChangeObserver(this);
 
     WebProcessManager::shared().contextWasDestroyed(this);
