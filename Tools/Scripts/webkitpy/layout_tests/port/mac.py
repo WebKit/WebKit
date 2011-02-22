@@ -90,10 +90,19 @@ class MacPort(WebKitPort):
 
         WebKitPort.__init__(self, port_name=port_name, **kwargs)
 
+    def default_child_processes(self):
+        # FIXME: new-run-webkit-tests is unstable on Mac running more than
+        # four threads in parallel.
+        # See https://bugs.webkit.org/show_bug.cgi?id=36622
+        child_processes = WebKitPort.default_child_processes(self)
+        if self.get_option('worker_model') == 'old-threads' and child_processes > 4:
+            return 4
+        return child_processes
+
     def default_worker_model(self):
         if multiprocessing:
             return 'processes'
-        return 'inline'
+        return 'old-threads'
 
     def baseline_search_path(self):
         return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])

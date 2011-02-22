@@ -59,7 +59,7 @@ class MacTest(port_testcase.PortTestCase):
         if multiprocessing:
             self.assertEqual(port.default_worker_model(), 'processes')
         else:
-            self.assertEqual(port.default_worker_model(), 'inline')
+            self.assertEqual(port.default_worker_model(), 'old-threads')
 
     def test_skipped_file_paths(self):
         # We skip this on win32 because we use '/' as the dir separator and it's

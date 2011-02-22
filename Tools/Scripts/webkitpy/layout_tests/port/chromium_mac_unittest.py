@@ -57,7 +57,7 @@ class ChromiumMacPortTest(port_testcase.PortTestCase):
         if multiprocessing:
             self.assertEqual(port.default_worker_model(), 'processes')
         else:
-            self.assertEqual(port.default_worker_model(), 'inline')
+            self.assertEqual(port.default_worker_model(), 'old-threads')
 
     def assert_name(self, port_name, os_version_string, expected):
         port = chromium_mac.ChromiumMacPort(port_name=port_name,

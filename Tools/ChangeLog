@@ -1,5 +1,22 @@
 2011-02-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Kent Tamura.
+
+        nrwt: revert behavior on 10.5 to "old-threads". It's possible
+        that r79062 has introduced a bunch of flakiness, although I
+        can't explain why right now. This change should restore the
+        old behavior, and then we can look at the build logs to see
+        if the tests stop timing out or being flaky.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54925
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+
+2011-02-21  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         nrwt: fix typo causing us to try and repeatedly shut down the servers
