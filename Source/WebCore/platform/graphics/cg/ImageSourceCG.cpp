@@ -40,7 +40,12 @@ using namespace std;
 
 namespace WebCore {
 
-static const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
+const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
+
+// kCGImagePropertyGIFUnclampedDelayTime is available in the ImageIO framework headers on some versions
+// of SnowLeopard. It's not possible to detect whether the constant is available so we define our own here
+// that won't conflict with ImageIO's version when it is available.
+const CFStringRef WebCoreCGImagePropertyGIFUnclampedDelayTime = CFSTR("UnclampedDelayTime");
 
 #if !PLATFORM(MAC)
 size_t sharedBufferGetBytesAtPosition(void* info, void* buffer, off_t position, size_t count)
@@ -312,9 +317,13 @@ float ImageSource::frameDurationAtIndex(size_t index)
     if (properties) {
         CFDictionaryRef typeProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyGIFDictionary);
         if (typeProperties) {
-            CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(typeProperties, kCGImagePropertyGIFDelayTime);
-            if (num)
+            if (CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(typeProperties, WebCoreCGImagePropertyGIFUnclampedDelayTime)) {
+                // Use the unclamped frame delay if it exists.
                 CFNumberGetValue(num, kCFNumberFloatType, &duration);
+            } else if (CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(typeProperties, kCGImagePropertyGIFDelayTime)) {
+                // Fall back to the clamped frame delay if the unclamped frame delay does not exist.
+                CFNumberGetValue(num, kCFNumberFloatType, &duration);
+            }
         }
     }
 

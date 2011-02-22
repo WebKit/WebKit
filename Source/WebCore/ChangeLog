@@ -1,3 +1,14 @@
+2011-02-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler and Alexey Proskuryakov.
+
+        <http://webkit.org/b/54919> / <rdar://problem/7689300> WebCore should retrieve unclamped frame delays from ImageIO
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::frameDurationAtIndex): Look for the unclamped frame delay in the
+        frame properties dictionary and use that if it exists. If it does not exist in the
+        dictionary then fall back to using the clamped frame delay.
+
 2011-02-21  James Kozianski  <koz@chromium.org>
 
         Reviewed by Kent Tamura.
