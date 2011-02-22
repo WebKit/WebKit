@@ -1888,9 +1888,9 @@ webcore_sources += \
 	Source/WebCore/html/parser/XSSFilter.h \
 	Source/WebCore/html/shadow/MediaControls.cpp \
 	Source/WebCore/html/shadow/MediaControls.h \
+	Source/WebCore/html/shadow/ProgressBarValueElement.h \
 	Source/WebCore/html/shadow/SliderThumbElement.cpp \
 	Source/WebCore/html/shadow/SliderThumbElement.h \
-	Source/WebCore/html/shadow/ProgressBarValueElement.h \
 	Source/WebCore/html/PasswordInputType.cpp \
 	Source/WebCore/html/PasswordInputType.h \
 	Source/WebCore/html/PluginDocument.cpp \

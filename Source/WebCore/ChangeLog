@@ -1,3 +1,15 @@
+2011-02-21  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Bug 54934 - Sort the WebCore project file(s)
+        https://bugs.webkit.org/show_bug.cgi?id=54934
+
+        No new tests. (no code affected)
+
+        * GNUmakefile.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-02-21  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Adam Barth.
