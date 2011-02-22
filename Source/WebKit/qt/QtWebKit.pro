@@ -75,33 +75,12 @@ CONFIG(release):!CONFIG(standalone_package) {
     unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
 }
 
-# Pick up 3rdparty libraries from INCLUDE/LIB just like with MSVC
-win32-g++* {
-    TMPPATH            = $$quote($$(INCLUDE))
-    QMAKE_INCDIR_POST += $$split(TMPPATH,";")
-    TMPPATH            = $$quote($$(LIB))
-    QMAKE_LIBDIR_POST += $$split(TMPPATH,";")
-}
-
-symbian {
-    !CONFIG(QTDIR_build) {
-        # Test if symbian OS comes with sqlite
-        exists($${EPOCROOT}epoc32/release/armv5/lib/sqlite3.dso):CONFIG *= system-sqlite
-    } else:!symbian-abld:!symbian-sbsv2 {
-        # When bundled with Qt, all Symbian build systems extract their own sqlite files if
-        # necessary, but on non-mmp based ones we need to specify this ourselves.
-        include($$QT_SOURCE_TREE/src/plugins/sqldrivers/sqlite_symbian/sqlite_symbian.pri)
-    }
-}
-
 CONFIG(QTDIR_build) {
     include($$QT_SOURCE_TREE/src/qbase.pri)
 } else {
     DESTDIR = $$OUTPUT_DIR/lib
     symbian: TARGET =$$TARGET$${QT_LIBINFIX}
 }
-
-unix|win32-g++*:QMAKE_PKGCONFIG_REQUIRES = QtCore QtGui QtNetwork
 
 symbian {
     TARGET.EPOCALLOWDLLDATA=1
@@ -120,7 +99,7 @@ symbian {
         TARGET.UID3 = 0xE00267C2
     }
     webkitlibs.sources = QtWebKit$${QT_LIBINFIX}.dll
-    v8:LIBS += -llibpthread
+    v8:webkitlibs.sources += v8.dll
 
     CONFIG(QTDIR_build): webkitlibs.sources = $$QMAKE_LIBDIR_QT/$$webkitlibs.sources
     webkitlibs.path = /sys/bin
@@ -144,6 +123,16 @@ symbian {
     }
 
     DEPLOYMENT += webkitlibs webkitbackup
+    !CONFIG(production):CONFIG-=def_files
+
+    # Need to build these sources here because of exported symbols
+    SOURCES += \
+        $$SOURCE_DIR/WebCore/plugins/symbian/PluginViewSymbian.cpp \
+        $$SOURCE_DIR/WebCore/plugins/symbian/PluginContainerSymbian.cpp
+
+    HEADERS += \
+        $$SOURCE_DIR/WebCore/plugins/symbian/PluginContainerSymbian.h \
+        $$SOURCE_DIR/WebCore/plugins/symbian/npinterface.h
 }
 
 !static: DEFINES += QT_MAKEDLL
@@ -335,88 +324,13 @@ webkit2 {
         $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h
 }
 
-
-symbian {
-    # Need to build these sources here because of exported symbols
-    SOURCES += \
-    $$SOURCE_DIR/WebCore/plugins/symbian/PluginViewSymbian.cpp \
-    $$SOURCE_DIR/WebCore/plugins/symbian/PluginContainerSymbian.cpp
-
-    HEADERS += \
-    $$SOURCE_DIR/WebCore/plugins/symbian/PluginContainerSymbian.h \
-    $$SOURCE_DIR/WebCore/plugins/symbian/npinterface.h
-}
-
-unix:!mac:!symbian:CONFIG += link_pkgconfig
-
-mac {
-    LIBS_PRIVATE += -framework Carbon -framework AppKit
-}
-
-win32-* {
-    LIBS += -lgdi32
-    LIBS += -lole32
-    LIBS += -luser32
-}
-
-wince* {
-    LIBS += -lmmtimer
-    LIBS += -lole32
-}
-
-contains (CONFIG, text_breaking_with_icu) {
-    LIBS += -licuuc
-}
-
-symbian {
-    # Symbian plugin support
-    LIBS += -lefsrv
-}
-
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
     unix:!symbian {
-        !mac {
-            !embedded {
-                CONFIG += x11
-                LIBS += -lXrender
-            }
-            maemo5 {
-                HEADERS += $$PWD/WebCoreSupport/QtMaemoWebPopup.h
-                SOURCES += $$PWD/WebCoreSupport/QtMaemoWebPopup.cpp
-            }
+        maemo5 {
+            HEADERS += $$PWD/WebCoreSupport/QtMaemoWebPopup.h
+            SOURCES += $$PWD/WebCoreSupport/QtMaemoWebPopup.cpp
         }
     }
-    win32-* {
-        LIBS += \
-            -ladvapi32 \
-            -lgdi32 \
-            -lshell32 \
-            -lshlwapi \
-            -luser32 \
-            -lversion
-    }
-}
-
-contains(DEFINES, ENABLE_SQLITE=1) {
-    !system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {
-            # Build sqlite3 into WebCore from source
-            # somewhat copied from $$QT_SOURCE_TREE/src/plugins/sqldrivers/sqlite/sqlite.pro
-            INCLUDEPATH += $${SQLITE3SRCDIR}
-            SOURCES += $${SQLITE3SRCDIR}/sqlite3.c
-            DEFINES += SQLITE_CORE SQLITE_OMIT_LOAD_EXTENSION SQLITE_OMIT_COMPLETE
-            CONFIG(release, debug|release): DEFINES *= NDEBUG
-            contains(DEFINES, ENABLE_SINGLE_THREADED=1): DEFINES += SQLITE_THREADSAFE=0
-    } else {
-        # Use sqlite3 from the underlying OS
-        CONFIG(QTDIR_build) {
-            QMAKE_CXXFLAGS *= $$QT_CFLAGS_SQLITE
-            LIBS *= $$QT_LFLAGS_SQLITE
-        } else {
-            INCLUDEPATH += $${SQLITE3SRCDIR}
-            LIBS += -lsqlite3
-        }
-    }
-    wince*:DEFINES += HAVE_LOCALTIME_S=0
 }
 
 contains(DEFINES, ENABLE_VIDEO=1) {
@@ -501,15 +415,6 @@ contains(DEFINES, ENABLE_GEOLOCATION=1) {
         install.depends += compiler_inst_headers_make_all
     }
 
-    win32-*|wince* {
-        DLLDESTDIR = $$OUTPUT_DIR/bin
-        build_pass: TARGET = $$qtLibraryTarget($$TARGET)
-
-        dlltarget.commands = $(COPY_FILE) $(DESTDIR_TARGET) $$[QT_INSTALL_BINS]
-        dlltarget.CONFIG = no_path
-        INSTALLS += dlltarget
-    }
-
     unix {
         CONFIG += create_pc create_prl
         QMAKE_PKGCONFIG_LIBDIR = $$target.path
@@ -539,26 +444,7 @@ contains(DEFINES, ENABLE_GEOLOCATION=1) {
         }
 
         QMAKE_LFLAGS_SONAME = "$${QMAKE_LFLAGS_SONAME}$${DESTDIR}$${QMAKE_DIR_SEP}"
-        LIBS += -framework Carbon -framework AppKit
     }
-}
-
-win32:!win32-g++*:contains(QMAKE_HOST.arch, x86_64):{
-    asm_compiler.commands = ml64 /c
-    asm_compiler.commands +=  /Fo ${QMAKE_FILE_OUT} ${QMAKE_FILE_IN}
-    asm_compiler.output = ${QMAKE_VAR_OBJECTS_DIR}${QMAKE_FILE_BASE}$${first(QMAKE_EXT_OBJ)}
-    asm_compiler.input = ASM_SOURCES
-    asm_compiler.variable_out = OBJECTS
-    asm_compiler.name = compiling[asm] ${QMAKE_FILE_IN}
-    silent:asm_compiler.commands = @echo compiling[asm] ${QMAKE_FILE_IN} && $$asm_compiler.commands
-    QMAKE_EXTRA_COMPILERS += asm_compiler
-
-    ASM_SOURCES += \
-        $$SOURCE_DIR/WebCore/plugins/win/PaintHooks.asm
-   if(win32-msvc2005|win32-msvc2008):equals(TEMPLATE_PREFIX, "vc") {
-        SOURCES += \
-            $$SOURCE_DIR/WebCore/plugins/win/PaintHooks.asm
-   }
 }
 
 symbian {
@@ -570,13 +456,5 @@ symbian {
         } else {
             MMP_RULES += EXPORTUNFROZEN
         }
-    }
-}
-
-contains(DEFINES, ENABLE_SYMBIAN_DIALOG_PROVIDERS) {
-    # this feature requires the S60 platform private BrowserDialogsProvider.h header file
-    # and is therefore not enabled by default but only meant for platform builds.
-    symbian {
-        LIBS += -lbrowserdialogsprovider
     }
 }

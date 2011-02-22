@@ -140,30 +140,27 @@ symbian {
     INCLUDEPATH = $$WEBCORE_INCLUDEPATH $$WC_GENERATED_SOURCES_DIR $$INCLUDEPATH
 }
 
-symbian {
-    v8 {
-        webkitlibs.sources += v8.dll
-        QMAKE_CXXFLAGS.ARMCC += -OTime -O3
-        QMAKE_CXXFLAGS.ARMCC += --fpu softvfp+vfpv2 --fpmode fast
-    }
-
-    symbian-abld|symbian-sbsv2 {
-        # RO text (code) section in qtwebkit.dll exceeds allocated space for gcce udeb target.
-        # Move RW-section base address to start from 0xE00000 instead of the toolchain default 0x400000.
-        QMAKE_LFLAGS.ARMCC += --rw-base 0xE00000
-        MMP_RULES += ALWAYS_BUILD_AS_ARM
-    }  else {
-        QMAKE_CFLAGS -= --thumb
-        QMAKE_CXXFLAGS -= --thumb
-    }
-
-    CONFIG(release, debug|release): QMAKE_CXXFLAGS.ARMCC += -OTime -O3
-
-    !CONFIG(production):CONFIG-=def_files
-}
-
 contains(DEFINES, ENABLE_XSLT=1) {
     QT *= xmlpatterns
+}
+
+contains(DEFINES, ENABLE_SQLITE=1) {
+    !system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {
+            INCLUDEPATH += $${SQLITE3SRCDIR}
+            DEFINES += SQLITE_CORE SQLITE_OMIT_LOAD_EXTENSION SQLITE_OMIT_COMPLETE
+            CONFIG(release, debug|release): DEFINES *= NDEBUG
+            contains(DEFINES, ENABLE_SINGLE_THREADED=1): DEFINES += SQLITE_THREADSAFE=0
+    } else {
+        # Use sqlite3 from the underlying OS
+        CONFIG(QTDIR_build) {
+            QMAKE_CXXFLAGS *= $$QT_CFLAGS_SQLITE
+            LIBS *= $$QT_LFLAGS_SQLITE
+        } else {
+            INCLUDEPATH += $${SQLITE3SRCDIR}
+            LIBS += -lsqlite3
+        }
+    }
+    wince*:DEFINES += HAVE_LOCALTIME_S=0
 }
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
@@ -172,6 +169,10 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
             INCLUDEPATH += platform/mac
             # Note: XP_MACOSX is defined in npapi.h
         } else {
+            !embedded {
+                CONFIG += x11
+                LIBS += -lXrender
+            }
             maemo5 {
                 DEFINES += MOZ_PLATFORM_MAEMO=5
             }
@@ -181,6 +182,15 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
             DEFINES += XP_UNIX
             DEFINES += ENABLE_NETSCAPE_PLUGIN_METADATA_CACHE=1
         }
+    }
+    win32-* {
+        LIBS += \
+            -ladvapi32 \
+            -lgdi32 \
+            -lshell32 \
+            -lshlwapi \
+            -luser32 \
+            -lversion
     }
 }
 
@@ -236,6 +246,14 @@ contains(DEFINES, ENABLE_WEBGL=1)|contains(CONFIG, texmap) {
     QT *= opengl
 }
 
+contains(DEFINES, ENABLE_SYMBIAN_DIALOG_PROVIDERS) {
+    # this feature requires the S60 platform private BrowserDialogsProvider.h header file
+    # and is therefore not enabled by default but only meant for platform builds.
+    symbian {
+        LIBS += -lbrowserdialogsprovider
+    }
+}
+
 contains(QT_CONFIG, qpa):CONFIG += embedded
 
 !CONFIG(webkit-debug):CONFIG(QTDIR_build) {
@@ -244,14 +262,68 @@ contains(QT_CONFIG, qpa):CONFIG += embedded
     CONFIG += no_debug_info
 }
 
-unix:!mac:*-g++*:QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections
-unix:!mac:*-g++*:QMAKE_LFLAGS += -Wl,--gc-sections
-linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
+contains (CONFIG, text_breaking_with_icu) {
+    LIBS += -licuuc
+}
 
-unix:!mac:!symbian:CONFIG += link_pkgconfig
+!CONFIG(QTDIR_build) {
+    win32-*|wince* {
+        DLLDESTDIR = $$OUTPUT_DIR/bin
+        build_pass: TARGET = $$qtLibraryTarget($$TARGET)
 
-# Disable C++0x mode in WebCore for those who enabled it in their Qt's mkspec
-*-g++*:QMAKE_CXXFLAGS -= -std=c++0x -std=gnu++0x
+        dlltarget.commands = $(COPY_FILE) $(DESTDIR_TARGET) $$[QT_INSTALL_BINS]
+        dlltarget.CONFIG = no_path
+        INSTALLS += dlltarget
+    }
+    mac {
+        LIBS += -framework Carbon -framework AppKit
+    }
+}
+
+symbian {
+    v8 {
+        QMAKE_CXXFLAGS.ARMCC += -OTime -O3
+        QMAKE_CXXFLAGS.ARMCC += --fpu softvfp+vfpv2 --fpmode fast
+        LIBS += -llibpthread
+    }
+
+    symbian-abld|symbian-sbsv2 {
+        # RO text (code) section in qtwebkit.dll exceeds allocated space for gcce udeb target.
+        # Move RW-section base address to start from 0xE00000 instead of the toolchain default 0x400000.
+        QMAKE_LFLAGS.ARMCC += --rw-base 0xE00000
+        MMP_RULES += ALWAYS_BUILD_AS_ARM
+    }  else {
+        QMAKE_CFLAGS -= --thumb
+        QMAKE_CXXFLAGS -= --thumb
+    }
+
+    CONFIG(release, debug|release): QMAKE_CXXFLAGS.ARMCC += -OTime -O3
+    # Symbian plugin support
+    LIBS += -lefsrv
+
+    !CONFIG(QTDIR_build) {
+        # Test if symbian OS comes with sqlite
+        exists($${EPOCROOT}epoc32/release/armv5/lib/sqlite3.dso):CONFIG *= system-sqlite
+    } else:!symbian-abld:!symbian-sbsv2 {
+        # When bundled with Qt, all Symbian build systems extract their own sqlite files if
+        # necessary, but on non-mmp based ones we need to specify this ourselves.
+        include($$QT_SOURCE_TREE/src/plugins/sqldrivers/sqlite_symbian/sqlite_symbian.pri)
+    }
+}
+
+win32-* {
+    LIBS += -lgdi32
+    LIBS += -lole32
+    LIBS += -luser32
+
+    # Pick up 3rdparty libraries from INCLUDE/LIB just like with MSVC
+    win32-g++* {
+        TMPPATH            = $$quote($$(INCLUDE))
+        QMAKE_INCDIR_POST += $$split(TMPPATH,";")
+        TMPPATH            = $$quote($$(LIB))
+        QMAKE_LIBDIR_POST += $$split(TMPPATH,";")
+    }
+}
 
 # Remove whole program optimizations due to miscompilations
 win32-msvc2005|win32-msvc2008|wince*:{
@@ -266,6 +338,25 @@ win32-msvc2005|win32-msvc2008|wince*:{
         isEmpty(WOW64ARCH): QMAKE_LFLAGS_DEBUG += /INCREMENTAL:NO
     }
 }
+
+wince* {
+    LIBS += -lmmtimer
+    LIBS += -lole32
+}
+
+mac {
+    LIBS_PRIVATE += -framework Carbon -framework AppKit
+}
+
+unix:!mac:*-g++*:QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections
+unix:!mac:*-g++*:QMAKE_LFLAGS += -Wl,--gc-sections
+linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
+
+unix|win32-g++*:QMAKE_PKGCONFIG_REQUIRES = QtCore QtGui QtNetwork
+unix:!mac:!symbian:CONFIG += link_pkgconfig
+
+# Disable C++0x mode in WebCore for those who enabled it in their Qt's mkspec
+*-g++*:QMAKE_CXXFLAGS -= -std=c++0x -std=gnu++0x
 
 enable_fast_mobile_scrolling: DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 
