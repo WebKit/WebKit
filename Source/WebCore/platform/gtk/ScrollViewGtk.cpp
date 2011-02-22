@@ -169,8 +169,8 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
     // scrollbar width should be.
     if (parent() || !hostWindow() || !hostWindow()->platformPageClient()) {
         return IntRect(IntPoint(m_scrollOffset.width(), m_scrollOffset.height()),
-                       IntSize(max(0, width() - (verticalScrollbar() && !includeScrollbars ? verticalScrollbar()->width() : 0)),
-                               max(0, height() - (horizontalScrollbar() && !includeScrollbars ? horizontalScrollbar()->height() : 0))));
+                       IntSize(max(0, m_boundsSize.width() - (verticalScrollbar() && !includeScrollbars ? verticalScrollbar()->width() : 0)),
+                               max(0, m_boundsSize.height() - (horizontalScrollbar() && !includeScrollbars ? horizontalScrollbar()->height() : 0))));
     }
 
     // We don't have a parent, so we are the main frame and thus have
