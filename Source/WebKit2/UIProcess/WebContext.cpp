@@ -48,7 +48,6 @@
 #include "WebProcessProxy.h"
 #include <WebCore/Language.h>
 #include <WebCore/LinkHash.h>
-#include <WebCore/Logging.h>
 #include <wtf/CurrentTime.h>
 
 #ifndef NDEBUG
@@ -107,8 +106,6 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 #endif
 {
     addLanguageChangeObserver(this, languageChanged);
-
-    WebCore::InitializeLoggingChannelsIfNecessary();
 
 #ifndef NDEBUG
     webContextCounter.increment();

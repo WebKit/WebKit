@@ -26,6 +26,9 @@
 #include "config.h"
 #include "WebFrameLoaderClient.h"
 
+#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
+#include "NotImplemented.h"
+
 #include "AuthenticationManager.h"
 #include "DataReference.h"
 #include "InjectedBundleNavigationAction.h"
@@ -60,7 +63,6 @@
 #include <WebCore/HistoryItem.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MouseEvent.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProgressTracker.h>

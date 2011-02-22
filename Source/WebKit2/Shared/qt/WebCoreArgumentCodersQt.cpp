@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
-#include <WebCore/NotImplemented.h>
+#include "NotImplemented.h"
 #include <WebCore/ResourceResponse.h>
 
 namespace CoreIPC {

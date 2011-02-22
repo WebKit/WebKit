@@ -26,6 +26,9 @@
 #include "config.h"
 #include "WebEditorClient.h"
 
+#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
+#include "NotImplemented.h"
+
 #include "SelectionState.h"
 #include "WebFrameLoaderClient.h"
 #include "WebPage.h"
@@ -40,7 +43,6 @@
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/KeyboardEvent.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/UserTypingGestureIndicator.h>
 

@@ -28,6 +28,7 @@
 #include "ProcessLauncher.h"
 
 #include "Connection.h"
+#include "NotImplemented.h"
 #include "RunLoop.h"
 #include "WebProcess.h"
 #include <QApplication>
@@ -38,7 +39,6 @@
 #include <QProcess>
 #include <QString>
 #include <QtCore/qglobal.h>
-#include <WebCore/NotImplemented.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <runtime/InitializeThreading.h>

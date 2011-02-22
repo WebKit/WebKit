@@ -26,8 +26,8 @@
 #include "config.h"
 #include "TextChecker.h"
 
+#include "NotImplemented.h"
 #include "TextCheckerState.h"
-#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
  

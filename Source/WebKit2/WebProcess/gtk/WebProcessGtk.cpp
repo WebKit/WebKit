@@ -27,8 +27,8 @@
 #include "config.h"
 #include "WebProcess.h"
 
+#include "NotImplemented.h"
 #include "WebProcessCreationParameters.h"
-#include <WebCore/NotImplemented.h>
 
 namespace WebKit {
 

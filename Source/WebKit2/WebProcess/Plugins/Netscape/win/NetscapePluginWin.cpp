@@ -26,11 +26,11 @@
 #include "config.h"
 #include "NetscapePlugin.h"
 
+#include "NotImplemented.h"
 #include "PluginController.h"
 #include "WebEvent.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/LocalWindowsContext.h>
-#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 

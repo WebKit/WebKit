@@ -27,12 +27,12 @@
 #include "JSNPMethod.h"
 
 #include "JSNPObject.h"
+#include "NotImplemented.h"
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <WebCore/JSHTMLElement.h>
 #include <WebCore/JSPluginElementFunctions.h>
-#include <WebCore/NotImplemented.h>
 
 using namespace JSC;
 using namespace WebCore;

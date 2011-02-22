@@ -467,6 +467,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\NotImplemented.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\OriginAndDatabases.cpp"
 				>
 			</File>

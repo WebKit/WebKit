@@ -30,6 +30,9 @@
 #import "config.h"
 #import "WebEditorClient.h"
 
+#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
+#import "NotImplemented.h"
+
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebFrame.h"
@@ -42,7 +45,6 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/KeyboardEvent.h>
-#import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebKit/WebResource.h>
 #import <WebKit/WebNSURLExtras.h>

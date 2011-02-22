@@ -30,9 +30,11 @@
 
 #include "WebInspector.h"
 #include "WebPage.h"
-#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <wtf/text/WTFString.h>
+
+#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
+#include "NotImplemented.h"
 
 using namespace WebCore;
 

@@ -28,10 +28,10 @@
 
 #include "NPRuntimeUtilities.h"
 #include "NetscapePlugin.h"
+#include "NotImplemented.h"
 #include "PluginController.h"
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IdentifierRep.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/SharedBuffer.h>
 #include <utility>
 

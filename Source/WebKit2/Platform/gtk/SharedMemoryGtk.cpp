@@ -27,7 +27,7 @@
 #include "config.h"
 #include "SharedMemory.h"
 
-#include <WebCore/NotImplemented.h>
+#include "NotImplemented.h"
 
 namespace WebKit {
 

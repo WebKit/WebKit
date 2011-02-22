@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Download.h"
+#ifndef NotImplemented_h
+#define NotImplemented_h
 
-#include "NotImplemented.h"
+#include <stdio.h>
+#include <wtf/Assertions.h>
 
-using namespace WebCore;
+#if defined(NDEBUG) || (defined(DISABLE_NOT_IMPLEMENTED_WARNINGS) && DISABLE_NOT_IMPLEMENTED_WARNINGS)
+#define notImplemented() ((void)0)
+#else
 
-namespace WebKit {
+#define notImplemented() do { \
+static bool havePrinted = false; \
+if (!havePrinted) { \
+printf("UNIMPLEMENTED: %s: %d - %s\n", __FILE__, __LINE__, WTF_PRETTY_FUNCTION); \
+havePrinted = true; \
+} \
+} while (0)
 
-void Download::start(WebPage* initiatingWebPage)
-{
-    notImplemented();
-}
+#endif // NDEBUG
 
-void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle*, const ResourceRequest& initialRequest, const ResourceResponse&)
-{
-    notImplemented();
-}
-
-void Download::cancel()
-{
-    notImplemented();
-}
-
-void Download::platformInvalidate()
-{
-    notImplemented();
-}
-
-void Download::didDecideDestination(const String& destination, bool allowOverwrite)
-{
-    notImplemented();
-}
-
-void Download::platformDidFinish()
-{
-    notImplemented();
-}
-
-} // namespace WebKit
+#endif // NotImplemented_h

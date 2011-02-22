@@ -26,9 +26,9 @@
 #import "config.h"
 #import "WebContextMenuClient.h"
 
+#import "NotImplemented.h"
 #import "WebPage.h"
 #import <WebCore/Frame.h>
-#include <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <wtf/text/WTFString.h>
 

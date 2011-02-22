@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebContextMenuClient.h"
 
-#include <WebCore/NotImplemented.h>
+#include "NotImplemented.h"
 
 using namespace WebCore;
 
