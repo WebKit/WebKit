@@ -1,3 +1,16 @@
+2011-02-18  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Default to 500 for --exit-after-n-failures
+        https://bugs.webkit.org/show_bug.cgi?id=54773
+
+        Make 500 the default value for --exit-after-n-failures (ORWT bots
+        already default to this as of r75726). Similarly, change the default for
+        --exit-after-n-crashes-or-timeouts to 20.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-02-02  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

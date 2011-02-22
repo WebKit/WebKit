@@ -376,12 +376,12 @@ def parse_args(args=None):
         optparse.make_option("--experimental-fully-parallel",
             action="store_true", default=False,
             help="run all tests in parallel"),
-        optparse.make_option("--exit-after-n-failures", type="int", nargs=1,
+        optparse.make_option("--exit-after-n-failures", type="int", default=500,
             help="Exit after the first N failures instead of running all "
             "tests"),
         optparse.make_option("--exit-after-n-crashes-or-timeouts", type="int",
-            nargs=1, help="Exit after the first N crashes instead of running "
-            "all tests"),
+            default=20, help="Exit after the first N crashes instead of "
+            "running all tests"),
         # FIXME: consider: --iterations n
         #      Number of times to run the set of tests (e.g. ABCABCABC)
         optparse.make_option("--print-last-failures", action="store_true",
