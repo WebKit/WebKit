@@ -1324,6 +1324,10 @@ _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError
 _wkSignalCFReadStreamHasBytes
 
+#if !defined(NDEBUG)
+__ZN7WebCore20LogNotYetImplementedE
+#endif
+
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 _wkContentAreaDidHide
 _wkContentAreaDidShow
