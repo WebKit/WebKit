@@ -1352,7 +1352,8 @@ var CODE_REVIEW_UNITTEST;
   }
   
   function acceptComment(comment) {
-    freezeComment(comment);
+    var frozen_comment = freezeComment(comment);
+    focusOn(frozen_comment);
     saveDraftComments();
   }
 
@@ -1375,7 +1376,9 @@ var CODE_REVIEW_UNITTEST;
     }
     var line_id = comment_textarea.attr('data-comment-for');
     var line = $('#' + line_id)
-    findCommentBlockFor(line).hide().after($('<div class="frozenComment"></div>').text(comment_textarea.val()));
+    var frozen_comment = $('<div class="frozenComment"></div>').text(comment_textarea.val());
+    findCommentBlockFor(line).hide().after(frozen_comment);
+    return frozen_comment;
   }
 
   function focusOn(node) {
