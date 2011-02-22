@@ -195,7 +195,7 @@ bool InspectorAgent::searchingForNodeInPage() const
 
 void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStateCookie)
 {
-    m_state = new InspectorState(m_client, inspectorStateCookie);
+    m_state->loadFromCookie(inspectorStateCookie);
 
     m_frontend->frontendReused();
     m_frontend->inspectedURLChanged(inspectedURL().string());

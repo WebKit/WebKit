@@ -46,8 +46,9 @@ class InspectorClient;
 class InspectorState {
 public:
     InspectorState(InspectorClient*);
-    InspectorState(InspectorClient*, const String& jsonString);
     virtual ~InspectorState() {}
+
+    void loadFromCookie(const String& inspectorStateCookie);
 
     void mute();
     void unmute();

@@ -42,14 +42,12 @@ InspectorState::InspectorState(InspectorClient* client)
 {
 }
 
-InspectorState::InspectorState(InspectorClient* client, const String& json)
-    : m_client(client)
-    , m_properties(InspectorObject::create())
-    , m_isOnMute(false)
+void InspectorState::loadFromCookie(const String& inspectorStateCookie)
 {
-    RefPtr<InspectorValue> jsonValue = InspectorValue::parseJSON(json);
-    if (jsonValue)
-        m_properties = jsonValue->asObject();
+    m_properties.clear();
+    RefPtr<InspectorValue> cookie = InspectorValue::parseJSON(inspectorStateCookie);
+    if (cookie)
+        m_properties = cookie->asObject();
     if (!m_properties)
         m_properties = InspectorObject::create();
 }

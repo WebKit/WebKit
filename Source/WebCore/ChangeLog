@@ -1,3 +1,16 @@
+2011-02-22  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [REGRESSION] navigation does not work when inspector is opened.
+        https://bugs.webkit.org/show_bug.cgi?id=54947
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        * inspector/InspectorState.cpp:
+        (WebCore::InspectorState::loadFromCookie):
+        * inspector/InspectorState.h:
+
 2011-02-15  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
