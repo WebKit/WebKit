@@ -86,6 +86,11 @@ void WebInspector::didClose()
     WebProcess::shared().connection()->send(Messages::WebInspectorProxy::DidClose(), m_page->pageID());
 }
 
+void WebInspector::inspectedURLChanged(const String& urlString)
+{
+    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::InspectedURLChanged(urlString), m_page->pageID());
+}
+
 // Called by WebInspector messages
 void WebInspector::show()
 {

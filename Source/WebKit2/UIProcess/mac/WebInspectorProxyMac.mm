@@ -130,6 +130,13 @@ void WebInspectorProxy::platformClose()
     m_inspectorProxyObjCAdapter = 0;
 }
 
+void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
+{
+    // FIXME: this should be made localizable once WebKit2 supports it. <rdar://problem/8728860>
+    NSString *title = [NSString stringWithFormat:@"Web Inspector \u2014 %@", (NSString *)urlString];
+    [m_inspectorWindow.get() setTitle:title];
+}
+
 String WebInspectorProxy::inspectorPageURL() const
 {
     NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];

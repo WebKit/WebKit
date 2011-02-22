@@ -196,6 +196,11 @@ void WebInspectorProxy::didClose()
     m_isVisible = false;
 }
 
+void WebInspectorProxy::inspectedURLChanged(const String& urlString)
+{
+    platformInspectedURLChanged(urlString);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INSPECTOR)

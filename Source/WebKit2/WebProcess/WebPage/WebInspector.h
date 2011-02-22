@@ -73,6 +73,7 @@ private:
     // Called from WebInspectorFrontendClient
     void didLoadInspectorPage();
     void didClose();
+    void inspectedURLChanged(const String&);
 
     // Implemented in platform WebInspector file
     String localizedStringsURL() const;

@@ -94,9 +94,9 @@ void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned)
     notImplemented();
 }
 
-void WebInspectorFrontendClient::inspectedURLChanged(const String&)
+void WebInspectorFrontendClient::inspectedURLChanged(const String& urlString)
 {
-    notImplemented();
+    m_page->inspector()->inspectedURLChanged(urlString);
 }
 
 } // namespace WebKit

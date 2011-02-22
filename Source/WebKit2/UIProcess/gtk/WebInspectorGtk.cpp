@@ -52,6 +52,11 @@ void WebInspectorProxy::platformClose()
     notImplemented();
 }
 
+void WebInspectorProxy::platformInspectedURLChanged(const String&)
+{
+    notImplemented();
+}
+
 String WebInspectorProxy::inspectorPageURL() const
 {
     notImplemented();

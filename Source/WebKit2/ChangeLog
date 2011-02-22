@@ -1,3 +1,30 @@
+2011-02-21  Timothy Hatcher  <timothy@apple.com>
+
+        Set and update the window title for the Web Inspector in WebKit2.
+
+        https://webkit.org/b/50945
+        rdar://problem/8762410
+
+        Reviewed by Adam Roben.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::inspectedURLChanged): Added. Call platformInspectedURLChanged.
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in: Added InspectedURLChanged.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged): Added. Set the window title.
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged): Added. Set the window title.
+        * UIProcess/gtk/WebInspectorGtk.cpp:
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged): Added. Not implemented.
+        * UIProcess/qt/WebInspectorProxyQt.cpp:
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged): Added. Not implemented.
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        (WebKit::WebInspectorFrontendClient::inspectedURLChanged): Call WebInspector::inspectedURLChanged.
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::inspectedURLChanged): Added. Send the InspectedURLChanged message.
+        * WebProcess/WebPage/WebInspector.h:
+
 2011-02-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

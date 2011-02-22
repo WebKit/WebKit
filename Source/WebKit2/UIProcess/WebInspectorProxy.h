@@ -103,6 +103,7 @@ private:
     WebPageProxy* platformCreateInspectorPage();
     void platformOpen();
     void platformClose();
+    void platformInspectedURLChanged(const String&);
 
     // Implemented the platform WebInspectorProxy file
     String inspectorPageURL() const;
@@ -111,6 +112,7 @@ private:
     void createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters&);
     void didLoadInspectorPage();
     void didClose();
+    void inspectedURLChanged(const String&);
 
     static WebPageGroup* inspectorPageGroup();
 
