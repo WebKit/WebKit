@@ -1064,103 +1064,122 @@ bool CSSStyleSelector::matchesSiblingRules()
     return true;
 }
 
-bool CSSStyleSelector::canShareStyleWithElement(Node* n) const
+bool CSSStyleSelector::canShareStyleWithElement(Node* node) const
 {
-    if (n->isStyledElement()) {
-        StyledElement* s = static_cast<StyledElement*>(n);
-        RenderStyle* style = s->renderStyle();
-        if (style && !style->unique() &&
-            (s->tagQName() == m_element->tagQName()) &&
-            (s->hasClass() == m_element->hasClass()) && !s->inlineStyleDecl() &&
-            (s->hasMappedAttributes() == m_styledElement->hasMappedAttributes()) &&
-            (s->isLink() == m_element->isLink()) && 
-            !style->affectedByAttributeSelectors() &&
-            (s->hovered() == m_element->hovered()) &&
-            (s->active() == m_element->active()) &&
-            (s->focused() == m_element->focused()) &&
-            (s->shadowPseudoId() == m_element->shadowPseudoId()) &&
-            (s != s->document()->cssTarget() && m_element != m_element->document()->cssTarget()) &&
-            (s->fastGetAttribute(typeAttr) == m_element->fastGetAttribute(typeAttr)) &&
-            (s->fastGetAttribute(XMLNames::langAttr) == m_element->fastGetAttribute(XMLNames::langAttr)) &&
-            (s->fastGetAttribute(langAttr) == m_element->fastGetAttribute(langAttr)) &&
-            (s->fastGetAttribute(readonlyAttr) == m_element->fastGetAttribute(readonlyAttr)) &&
-            (s->fastGetAttribute(cellpaddingAttr) == m_element->fastGetAttribute(cellpaddingAttr))) {
-            
-            if (s->hasID() && m_idsInRules.contains(s->idForStyleResolution().impl()))
-                return 0;
-            
-            bool isControl = s->isFormControlElement();
-            if (isControl != m_element->isFormControlElement())
-                return false;
-            if (isControl) {
-                InputElement* thisInputElement = toInputElement(s);
-                InputElement* otherInputElement = toInputElement(m_element);
-                if (thisInputElement && otherInputElement) {
-                    if ((thisInputElement->isAutofilled() != otherInputElement->isAutofilled()) ||
-                        (thisInputElement->isChecked() != otherInputElement->isChecked()) ||
-                        (thisInputElement->isIndeterminate() != otherInputElement->isIndeterminate()))
-                    return false;
-                } else
-                    return false;
+    if (!node->isStyledElement())
+        return false;
 
-                if (s->isEnabledFormControl() != m_element->isEnabledFormControl())
-                    return false;
+    StyledElement* element = static_cast<StyledElement*>(node);
+    RenderStyle* style = element->renderStyle();
 
-                if (s->isDefaultButtonForForm() != m_element->isDefaultButtonForForm())
-                    return false;
-                
-                if (!m_element->document()->containsValidityStyleRules())
-                    return false;
-                
-                bool willValidate = s->willValidate();
-                if (willValidate != m_element->willValidate())
-                    return false;
-                
-                if (willValidate && (s->isValidFormControlElement() != m_element->isValidFormControlElement()))
-                    return false;
+    if (!style)
+        return false;
+    if (style->unique())
+        return false;
+    if (element->tagQName() != m_element->tagQName())
+        return false;
+    if (element->hasClass() != m_element->hasClass())
+        return false;
+    if (element->inlineStyleDecl())
+        return false;
+    if (element->hasMappedAttributes() != m_styledElement->hasMappedAttributes())
+        return false;
+    if (element->isLink() != m_element->isLink())
+        return false;
+    if (style->affectedByAttributeSelectors())
+        return false;
+    if (element->hovered() != m_element->hovered())
+        return false;
+    if (element->active() != m_element->active())
+        return false;
+    if (element->focused() != m_element->focused())
+        return false;
+    if (element->shadowPseudoId() != m_element->shadowPseudoId())
+        return false;
+    if (element == element->document()->cssTarget())
+        return false;
+    if (m_element == m_element->document()->cssTarget())
+        return false;
+    if (element->fastGetAttribute(typeAttr) != m_element->fastGetAttribute(typeAttr))
+        return false;
+    if (element->fastGetAttribute(XMLNames::langAttr) != m_element->fastGetAttribute(XMLNames::langAttr))
+        return false;
+    if (element->fastGetAttribute(langAttr) != m_element->fastGetAttribute(langAttr))
+        return false;
+    if (element->fastGetAttribute(readonlyAttr) != m_element->fastGetAttribute(readonlyAttr))
+        return false;
+    if (element->fastGetAttribute(cellpaddingAttr) != m_element->fastGetAttribute(cellpaddingAttr))
+        return false;
 
-                if (s->isInRange() != m_element->isInRange())
-                    return false;
+    if (element->hasID() && m_idsInRules.contains(element->idForStyleResolution().impl()))
+        return false;
 
-                if (s->isOutOfRange() != m_element->isOutOfRange())
-                    return false;
-            }
+    bool isControl = element->isFormControlElement();
 
-            if (style->transitions() || style->animations())
-                return false;
+    if (isControl != m_element->isFormControlElement())
+        return false;
+
+    if (isControl) {
+        InputElement* thisInputElement = toInputElement(element);
+        InputElement* otherInputElement = toInputElement(m_element);
+
+        if (!thisInputElement || !otherInputElement)
+            return false;
+
+        if (thisInputElement->isAutofilled() != otherInputElement->isAutofilled())
+            return false;
+        if (thisInputElement->isChecked() != otherInputElement->isChecked())
+            return false;
+        if (thisInputElement->isIndeterminate() != otherInputElement->isIndeterminate())
+            return false;
+
+        if (element->isEnabledFormControl() != m_element->isEnabledFormControl())
+            return false;
+
+        if (element->isDefaultButtonForForm() != m_element->isDefaultButtonForForm())
+            return false;
+
+        if (!m_element->document()->containsValidityStyleRules())
+            return false;
+
+        bool willValidate = element->willValidate();
+
+        if (willValidate != m_element->willValidate())
+            return false;
+
+        if (willValidate && (element->isValidFormControlElement() != m_element->isValidFormControlElement()))
+            return false;
+
+        if (element->isInRange() != m_element->isInRange())
+            return false;
+
+        if (element->isOutOfRange() != m_element->isOutOfRange())
+            return false;
+    }
+
+    if (style->transitions() || style->animations())
+        return false;
 
 #if USE(ACCELERATED_COMPOSITING)
-            // Turn off style sharing for elements that can gain layers for reasons outside of the style system.
-            // See comments in RenderObject::setStyle().
-            if (s->hasTagName(iframeTag) || s->hasTagName(embedTag) || s->hasTagName(objectTag) || s->hasTagName(appletTag))
-                return false;
+    // Turn off style sharing for elements that can gain layers for reasons outside of the style system.
+    // See comments in RenderObject::setStyle().
+    if (element->hasTagName(iframeTag) || element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag))
+        return false;
 #endif
 
-            if (equalIgnoringCase(s->fastGetAttribute(dirAttr), "auto") || equalIgnoringCase(m_element->fastGetAttribute(dirAttr), "auto"))
-                return false;
+    if (equalIgnoringCase(element->fastGetAttribute(dirAttr), "auto") || equalIgnoringCase(m_element->fastGetAttribute(dirAttr), "auto"))
+        return false;
 
-            bool classesMatch = true;
-            if (s->hasClass()) {
-                const AtomicString& class1 = m_element->fastGetAttribute(classAttr);
-                const AtomicString& class2 = s->fastGetAttribute(classAttr);
-                classesMatch = (class1 == class2);
-            }
-            
-            if (classesMatch) {
-                bool mappedAttrsMatch = true;
-                if (s->hasMappedAttributes())
-                    mappedAttrsMatch = s->attributeMap()->mappedMapsEquivalent(m_styledElement->attributeMap());
-                if (mappedAttrsMatch) {
-                    if (s->isLink()) {
-                        if (m_elementLinkState != style->insideLink())
-                            return false;
-                    }
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
+    if (element->hasClass() && m_element->fastGetAttribute(classAttr) != element->fastGetAttribute(classAttr))
+        return false;
+
+    if (element->hasMappedAttributes() && !element->attributeMap()->mappedMapsEquivalent(m_styledElement->attributeMap()))
+        return false;
+
+    if (element->isLink() && m_elementLinkState != style->insideLink())
+        return false;
+
+    return true;
 }
     
 inline Node* CSSStyleSelector::findSiblingForStyleSharing(Node* node, unsigned& count) const

@@ -1,3 +1,18 @@
+2011-02-21  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Bug 54435 - Simplify CSSStyleSelector::canShareStyleWithElement
+        https://bugs.webkit.org/show_bug.cgi?id=54435
+
+        Changed the function to a series of early-exit 'if's,
+        removed most temporary variables.
+
+        No new tests. (refactoring)
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+
 2011-02-21  Nico Weber  <thakis@chromium.org>
 
         Reviewed by James Robinson.
