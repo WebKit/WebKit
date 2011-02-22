@@ -1,3 +1,17 @@
+2011-02-22  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r79337.
+        http://trac.webkit.org/changeset/79337
+
+        GPU-only test should have GPU baselines
+
+        * platform/chromium-linux/compositing/reflections/deeply-nested-reflections-expected.checksum: Removed.
+        * platform/chromium-linux/compositing/reflections/deeply-nested-reflections-expected.png: Removed.
+        * platform/chromium-win/compositing/reflections/deeply-nested-reflections-expected.checksum: Removed.
+        * platform/chromium-win/compositing/reflections/deeply-nested-reflections-expected.png: Removed.
+        * platform/chromium-win/compositing/reflections/deeply-nested-reflections-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-22  Adrienne Walker  <enne@google.com>
 
         Unreviewed rebaseline of some GPU tests.
