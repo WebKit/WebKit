@@ -187,7 +187,6 @@ HEADERS += \
     UIProcess/WebPageProxy.h \
     UIProcess/WebPolicyClient.h \
     UIProcess/WebPreferences.h \
-    UIProcess/WebProcessManager.h \
     UIProcess/WebProcessProxy.h \
     UIProcess/WebResourceCacheManagerProxy.h \
     UIProcess/WebResourceLoadClient.h \
@@ -360,7 +359,6 @@ SOURCES += \
     UIProcess/WebPageProxy.cpp \
     UIProcess/WebPolicyClient.cpp \
     UIProcess/WebPreferences.cpp \
-    UIProcess/WebProcessManager.cpp \
     UIProcess/WebProcessProxy.cpp \
     UIProcess/WebResourceCacheManagerProxy.cpp \
     UIProcess/WebResourceLoadClient.cpp \

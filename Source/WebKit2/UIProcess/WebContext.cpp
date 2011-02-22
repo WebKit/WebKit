@@ -43,7 +43,6 @@
 #include "WebPageGroup.h"
 #include "WebMemorySampler.h"
 #include "WebProcessCreationParameters.h"
-#include "WebProcessManager.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include "WebResourceCacheManagerProxy.h"
@@ -138,8 +137,6 @@ WebContext::~WebContext()
 
     removeLanguageChangeObserver(this);
 
-    WebProcessManager::shared().contextWasDestroyed(this);
-
     m_applicationCacheManagerProxy->invalidate();
     m_applicationCacheManagerProxy->clearContext();
 
@@ -198,7 +195,7 @@ void WebContext::ensureWebProcess()
     if (m_process)
         return;
 
-    m_process = WebProcessManager::shared().getWebProcess(this);
+    m_process = WebProcessProxy::create(this);
 
     WebProcessCreationParameters parameters;
 
@@ -255,7 +252,7 @@ void WebContext::processDidFinishLaunching(WebProcessProxy* process)
     
     // Sometimes the memorySampler gets initialized after process initialization has happened but before the process has finished launching
     // so check if it needs to be started here
-    if(m_memorySamplerEnabled) {
+    if (m_memorySamplerEnabled) {
         SandboxExtension::Handle sampleLogSandboxHandle;        
         double now = WTF::currentTime();
         String sampleLogFilePath = String::format("WebProcess%llu", static_cast<uint64_t>(now));

@@ -90,6 +90,30 @@
 
 2011-02-22  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Get rid of WebProcessManager
+        https://bugs.webkit.org/show_bug.cgi?id=55001
+
+        WebProcessManager had become a stupid map of WebContext > WebProcess relations,
+        which isn't really useful since the WebContext already knows about its process.
+
+        * Shared/WebURLRequest.cpp:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::ensureWebProcess):
+        (WebKit::WebContext::processDidFinishLaunching):
+        * UIProcess/WebProcessManager.cpp: Removed.
+        * UIProcess/WebProcessManager.h: Removed.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didClose):
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
+2011-02-22  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Get rid of WebProcessManager::getAllWebProcessContexts

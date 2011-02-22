@@ -35,7 +35,6 @@
 #include "WebContext.h"
 #include "WebNavigationDataStore.h"
 #include "WebPageProxy.h"
-#include "WebProcessManager.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebProcessProxyMessageKinds.h"
@@ -284,7 +283,7 @@ CoreIPC::SyncReplyMode WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connectio
 
 void WebProcessProxy::didClose(CoreIPC::Connection*)
 {
-    // Protect ourselves, as the call to the shared WebProcessManager's processDidClose()
+    // Protect ourselves, as the call to the WebContext::processDidClose()
     // below may otherwise cause us to be deleted before we can finish our work.
     RefPtr<WebProcessProxy> protect(this);
     
@@ -302,8 +301,6 @@ void WebProcessProxy::didClose(CoreIPC::Connection*)
     copyValuesToVector(m_pageMap, pages);
 
     m_context->processDidClose(this);
-
-    WebProcessManager::shared().processDidClose(this, m_context);
 
     for (size_t i = 0, size = pages.size(); i < size; ++i)
         pages[i]->processDidCrash();

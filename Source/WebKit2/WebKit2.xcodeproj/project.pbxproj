@@ -371,7 +371,6 @@
 		BC032DBA10F4380F0058C15A /* WebEventConversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC032DB010F4380F0058C15A /* WebEventConversion.cpp */; };
 		BC032DBB10F4380F0058C15A /* WebEventConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DB110F4380F0058C15A /* WebEventConversion.h */; };
 		BC032DD110F4389F0058C15A /* WebPageProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DCB10F4389F0058C15A /* WebPageProxy.h */; };
-		BC032DD310F4389F0058C15A /* WebProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DCD10F4389F0058C15A /* WebProcessManager.h */; };
 		BC032DD510F4389F0058C15A /* WebProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DCF10F4389F0058C15A /* WebProcessProxy.h */; };
 		BC06F42F12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F42D12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h */; };
 		BC06F43012DBB9B6002D78DE /* GeolocationPermissionRequestManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F42E12DBB9B6002D78DE /* GeolocationPermissionRequestManager.cpp */; };
@@ -403,7 +402,6 @@
 		BC111B09112F5E3C00337BAB /* ResponsivenessTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */; };
 		BC111B0E112F5E4F00337BAB /* WebFrameProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC111B0A112F5E4F00337BAB /* WebFrameProxy.cpp */; };
 		BC111B0F112F5E4F00337BAB /* WebPageProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC111B0B112F5E4F00337BAB /* WebPageProxy.cpp */; };
-		BC111B10112F5E4F00337BAB /* WebProcessManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC111B0C112F5E4F00337BAB /* WebProcessManager.cpp */; };
 		BC111B11112F5E4F00337BAB /* WebProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC111B0D112F5E4F00337BAB /* WebProcessProxy.cpp */; };
 		BC111B1D112F5FE600337BAB /* ProcessLauncherMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC111B1B112F5FE600337BAB /* ProcessLauncherMac.mm */; };
 		BC111B50112F619200337BAB /* PageClientImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B4B112F619200337BAB /* PageClientImpl.h */; };
@@ -1180,7 +1178,6 @@
 		BC032DB010F4380F0058C15A /* WebEventConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebEventConversion.cpp; sourceTree = "<group>"; };
 		BC032DB110F4380F0058C15A /* WebEventConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEventConversion.h; sourceTree = "<group>"; };
 		BC032DCB10F4389F0058C15A /* WebPageProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageProxy.h; sourceTree = "<group>"; };
-		BC032DCD10F4389F0058C15A /* WebProcessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessManager.h; sourceTree = "<group>"; };
 		BC032DCF10F4389F0058C15A /* WebProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessProxy.h; sourceTree = "<group>"; };
 		BC06F42D12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationPermissionRequestManager.h; sourceTree = "<group>"; };
 		BC06F42E12DBB9B6002D78DE /* GeolocationPermissionRequestManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationPermissionRequestManager.cpp; sourceTree = "<group>"; };
@@ -1214,7 +1211,6 @@
 		BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResponsivenessTimer.cpp; sourceTree = "<group>"; };
 		BC111B0A112F5E4F00337BAB /* WebFrameProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFrameProxy.cpp; sourceTree = "<group>"; };
 		BC111B0B112F5E4F00337BAB /* WebPageProxy.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = WebPageProxy.cpp; sourceTree = "<group>"; };
-		BC111B0C112F5E4F00337BAB /* WebProcessManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessManager.cpp; sourceTree = "<group>"; };
 		BC111B0D112F5E4F00337BAB /* WebProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessProxy.cpp; sourceTree = "<group>"; };
 		BC111B1B112F5FE600337BAB /* ProcessLauncherMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessLauncherMac.mm; sourceTree = "<group>"; };
 		BC111B4B112F619200337BAB /* PageClientImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageClientImpl.h; sourceTree = "<group>"; };
@@ -2344,8 +2340,6 @@
 				BC574E611267D080006F0F12 /* WebPopupMenuProxy.h */,
 				BCD597FE112B57BE00EC8C23 /* WebPreferences.cpp */,
 				BCD597FD112B57BE00EC8C23 /* WebPreferences.h */,
-				BC111B0C112F5E4F00337BAB /* WebProcessManager.cpp */,
-				BC032DCD10F4389F0058C15A /* WebProcessManager.h */,
 				BC111B0D112F5E4F00337BAB /* WebProcessProxy.cpp */,
 				BC032DCF10F4389F0058C15A /* WebProcessProxy.h */,
 				BCEE7AB312817095009827DA /* WebProcessProxy.messages.in */,
@@ -3019,7 +3013,6 @@
 				BCD598AC112B7FDF00EC8C23 /* WebPreferencesStore.h in Headers */,
 				BC032D9710F437AF0058C15A /* WebProcess.h in Headers */,
 				1A6FA02011E1528700DB1371 /* WebProcessMain.h in Headers */,
-				BC032DD310F4389F0058C15A /* WebProcessManager.h in Headers */,
 				BC032DD510F4389F0058C15A /* WebProcessProxy.h in Headers */,
 				BCB7346E11CEE3FF00EC5002 /* WebProcessProxyMessageKinds.h in Headers */,
 				BCC5715B115ADAEF001CCAF9 /* WebSystemInterface.h in Headers */,
@@ -3526,7 +3519,6 @@
 				BCD598AD112B7FDF00EC8C23 /* WebPreferencesStore.cpp in Sources */,
 				BC111AE4112F5C2600337BAB /* WebProcess.cpp in Sources */,
 				1A6FA01E11E1526300DB1371 /* WebProcessMainMac.mm in Sources */,
-				BC111B10112F5E4F00337BAB /* WebProcessManager.cpp in Sources */,
 				BC111B11112F5E4F00337BAB /* WebProcessProxy.cpp in Sources */,
 				BCC5715C115ADAEF001CCAF9 /* WebSystemInterface.mm in Sources */,
 				1A594ABA112A1FB6009DE7C7 /* WebUIClient.cpp in Sources */,

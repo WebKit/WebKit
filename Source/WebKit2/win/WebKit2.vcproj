@@ -2555,14 +2555,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\UIProcess\WebProcessManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebProcessManager.h"
-				>
-			</File>
-			<File
 				RelativePath="..\UIProcess\WebProcessProxy.cpp"
 				>
 			</File>

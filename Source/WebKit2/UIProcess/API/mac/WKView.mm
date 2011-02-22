@@ -52,7 +52,6 @@
 #import "WebEventFactory.h"
 #import "WebPage.h"
 #import "WebPageProxy.h"
-#import "WebProcessManager.h"
 #import "WebProcessProxy.h"
 #import "WebSystemInterface.h"
 #import <QuartzCore/QuartzCore.h>
