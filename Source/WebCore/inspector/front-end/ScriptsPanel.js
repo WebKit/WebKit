@@ -27,6 +27,8 @@ WebInspector.ScriptsPanel = function()
 {
     WebInspector.Panel.call(this, "scripts");
 
+    this._presentationModel = new WebInspector.DebuggerPresentationModel();
+
     this.topStatusBar = document.createElement("div");
     this.topStatusBar.className = "status-bar";
     this.topStatusBar.id = "scripts-status-bar";
@@ -189,6 +191,8 @@ WebInspector.ScriptsPanel = function()
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ScriptSourceChanged, this._scriptSourceChanged, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
+    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, this._breakpointAdded, this);
+    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, this._breakpointRemoved, this);
 }
 
 // Keep these in sync with WebCore::ScriptDebugServer
@@ -335,6 +339,24 @@ WebInspector.ScriptsPanel.prototype = {
         this._messages = [];
         for (var url in this._sourceNameToSourceFrame)
             this._sourceNameToSourceFrame[url].clearMessages();
+    },
+
+    _breakpointAdded: function(event)
+    {
+        var breakpoint = event.data;
+
+        var sourceFrame = this._sourceNameToSourceFrame[breakpoint.sourceName];
+        if (sourceFrame && sourceFrame.loaded)
+            sourceFrame.addBreakpoint(breakpoint.lineNumber, breakpoint.resolved, breakpoint.condition, breakpoint.enabled);
+    },
+
+    _breakpointRemoved: function(event)
+    {
+        var breakpoint = event.data;
+
+        var sourceFrame = this._sourceNameToSourceFrame[breakpoint.sourceName];
+        if (sourceFrame && sourceFrame.loaded)
+            sourceFrame.removeBreakpoint(breakpoint.lineNumber);
     },
 
     selectedCallFrameId: function()
@@ -516,12 +538,7 @@ WebInspector.ScriptsPanel.prototype = {
         var contentProvider = new WebInspector.SourceFrameContentProviderForResource(resource);
         var isScript = resource.type === WebInspector.Resource.Type.Script;
         sourceFrame = new WebInspector.SourceFrame(contentProvider, resource.url, isScript);
-        for (var i = 0; i < this._messages.length; ++i) {
-            var message = this._messages[i];
-            if (this._messages[i].url === resource.url)
-                sourceFrame.addMessage(message);
-        }
-        this._sourceNameToSourceFrame[resource.url] = sourceFrame;
+        this._addSourceFrame(resource.url, sourceFrame);
         return sourceFrame;
     },
 
@@ -535,7 +552,7 @@ WebInspector.ScriptsPanel.prototype = {
         var contentProvider = new WebInspector.SourceFrameContentProviderForScript(script);
         var isScript = !script.lineOffset && !script.columnOffset;
         sourceFrame = new WebInspector.SourceFrame(contentProvider, script.sourceURL, isScript);
-        this._sourceNameToSourceFrame[sourceName] = sourceFrame;
+        this._addSourceFrame(sourceName, sourceFrame);
         return sourceFrame;
     },
 
@@ -545,12 +562,47 @@ WebInspector.ScriptsPanel.prototype = {
         if (!oldSourceFrame)
             return;
         delete this._sourceNameToSourceFrame[sourceName];
+        oldSourceFrame.removeEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
         if (this.visibleView !== oldSourceFrame)
             return;
 
         var newSourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource)
         newSourceFrame.scrollTop = oldSourceFrame.scrollTop;
         this.visibleView = newSourceFrame;
+    },
+
+    _addSourceFrame: function(sourceName, sourceFrame)
+    {
+        sourceFrame._sourceName = sourceName;
+        sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
+        this._sourceNameToSourceFrame[sourceName] = sourceFrame;
+    },
+
+    _sourceFrameLoaded: function(event)
+    {
+        var sourceFrame = event.target;
+        var sourceName = sourceFrame._sourceName;
+
+        for (var i = 0; i < this._messages.length; ++i) {
+            var message = this._messages[i];
+            if (message.url === sourceName)
+                sourceFrame.addMessage(message);
+        }
+
+        var breakpoints = this._presentationModel.breakpointsForSourceName(sourceName);
+        for (var i = 0; i < breakpoints.length; ++i) {
+            var breakpoint = breakpoints[i];
+            sourceFrame.addBreakpoint(breakpoint.lineNumber, breakpoint.resolved, breakpoint.condition, breakpoint.enabled);
+        }
+
+        var selectedCallFrame = this.sidebarPanes.callstack.selectedCallFrame;
+        if (selectedCallFrame) {
+            var script = WebInspector.debuggerModel.scriptForSourceID(selectedCallFrame.sourceID);
+            if ((script.sourceURL || script.sourceID) === sourceName) {
+                sourceFrame.setExecutionLine(selectedCallFrame.line);
+                this._executionSourceFrame = sourceFrame;
+            }
+        }
     },
 
     _showScriptOrResource: function(scriptOrResource, options)
@@ -662,7 +714,7 @@ WebInspector.ScriptsPanel.prototype = {
     _clearCurrentExecutionLine: function()
     {
         if (this._executionSourceFrame)
-            this._executionSourceFrame.clearExecutionLocation();
+            this._executionSourceFrame.clearExecutionLine();
         delete this._executionSourceFrame;
     },
 
@@ -682,9 +734,11 @@ WebInspector.ScriptsPanel.prototype = {
         var scriptOrResource = script.resource || script;
         this._showScriptOrResource(scriptOrResource, {line: currentFrame.line});
 
-        this._executionSourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource);
-        if (this._executionSourceFrame)
-            this._executionSourceFrame.setExecutionLocation(currentFrame.line, currentFrame.column);
+        var sourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource);
+        if (sourceFrame && sourceFrame.loaded) {
+            sourceFrame.setExecutionLine(currentFrame.line);
+            this._executionSourceFrame = sourceFrame;
+        }
     },
 
     _changeVisibleFile: function(event)
@@ -1085,7 +1139,7 @@ WebInspector.SourceFrameContentProviderForScript.prototype = {
         var lineNumber = 0;
         var columnNumber = 0;
         var scriptRanges = [];
-        function appendChunk(chunk, isScript)
+        function appendChunk(chunk, script)
         {
             var start = { lineNumber: lineNumber, columnNumber: columnNumber };
             source += chunk;
@@ -1098,15 +1152,15 @@ WebInspector.SourceFrameContentProviderForScript.prototype = {
                 columnNumber = lineEndings[lineCount - 1] - lineEndings[lineCount - 2] - 1;
             }
             var end = { lineNumber: lineNumber, columnNumber: columnNumber };
-            if (isScript)
-                scriptRanges.push({ start: start, end: end });
+            if (script)
+                scriptRanges.push({ start: start, end: end, sourceID: script.sourceID });
         }
 
         var mimeType;
         if (scripts.length === 1 && !scripts[0].lineOffset && !scripts[0].columnOffset) {
             // Single script source.
             mimeType = "text/javascript";
-            appendChunk(sources[0], true);
+            appendChunk(sources[0], scripts[0]);
         } else {
             // Scripts inlined in html document.
             mimeType = "text/html";
@@ -1121,7 +1175,7 @@ WebInspector.SourceFrameContentProviderForScript.prototype = {
 
                 // Add script tag.
                 appendChunk(scriptOpenTag);
-                appendChunk(sources[i], true);
+                appendChunk(sources[i], scripts[i]);
                 appendChunk(scriptCloseTag);
             }
         }

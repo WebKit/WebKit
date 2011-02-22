@@ -1,3 +1,13 @@
+2011-02-21  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: move source mapping from SourceFrame to ScriptsPanel.
+        https://bugs.webkit.org/show_bug.cgi?id=54645
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype._checkExecutionLine):
+
 2011-02-21  Nico Weber  <thakis@chromium.org>
 
         Reviewed by James Robinson.

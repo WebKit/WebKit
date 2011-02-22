@@ -616,7 +616,7 @@ TestSuite.prototype.evaluateInConsole_ = function(code, callback)
  */
 TestSuite.prototype._checkExecutionLine = function(sourceFrame, lineNumber, lineContent)
 {
-    this.assertEquals(lineNumber, sourceFrame._executionLocation.lineNumber + 1, "Unexpected execution line number.");
+    this.assertEquals(lineNumber, sourceFrame._executionLineNumber + 1, "Unexpected execution line number.");
     this.assertEquals(lineContent, sourceFrame._textModel.line(lineNumber - 1), "Unexpected execution line text.");
 }
 

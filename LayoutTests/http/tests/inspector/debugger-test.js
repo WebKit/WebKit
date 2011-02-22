@@ -152,7 +152,7 @@ InspectorTest.showScriptSource = function(scriptName, callback)
     if (InspectorTest._scriptsAreParsed([scriptName]))
         InspectorTest._showScriptSource(scriptName, InspectorTest.safeWrap(callback));
      else
-        InspectorTest.addSniffer(WebInspector.debuggerModel, "_parsedScriptSource", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
+        InspectorTest.addSniffer(WebInspector.panels.scripts, "_addScriptToFilesMenu", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
 };
 
 InspectorTest._scriptsAreParsed = function(scripts)

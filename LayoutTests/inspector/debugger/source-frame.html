@@ -1,0 +1,58 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+
+<script>
+
+function addErrorToConsole()
+{
+    console.error("test error message");
+}
+
+function test()
+{
+    InspectorTest.runDebuggerTestSuite([
+        function testSetBreakpoint(next)
+        {
+            InspectorTest.showScriptSource("source-frame.html", didShowScriptSource);
+
+            function didShowScriptSource(sourceFrame)
+            {
+                InspectorTest.addResult("Script source was shown.");
+                InspectorTest.addSniffer(WebInspector.SourceFrame.prototype, "addBreakpoint", didAddBreakpoint);
+                sourceFrame._setBreakpoint(17, "", true);
+            }
+
+            function didAddBreakpoint(lineNumber)
+            {
+              InspectorTest.addResult("Breakpoint added to source frame at line " + lineNumber);
+              next();
+            }
+        },
+
+        function testConsoleMessage(next)
+        {
+              InspectorTest.addSniffer(WebInspector.SourceFrame.prototype, "addMessage", didAddMessage);
+              InspectorTest.evaluateInPage("addErrorToConsole()");
+
+              function didAddMessage(message)
+              {
+                  InspectorTest.addResult("Message text: " + message.message);
+                  next();
+              }
+        }
+    ]);
+};
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests that it's possible to set breakpoint in source frame, and that
+source frame displays breakpoints and console errors.
+</p>
+
+</body>
+</html>

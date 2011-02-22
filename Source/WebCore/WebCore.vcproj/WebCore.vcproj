@@ -65841,6 +65841,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\DebuggerPresentationModel.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\DetailedHeapshotGridNodes.js"
 					>
 				</File>

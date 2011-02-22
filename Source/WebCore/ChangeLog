@@ -1,3 +1,51 @@
+2011-02-21  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: extract source mapping from SourceFrame to DebuggerPresentationModel.
+        https://bugs.webkit.org/show_bug.cgi?id=54645
+
+        This is needed to map one script to several source files.
+
+        Test: inspector/debugger/source-frame.html
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/DebuggerPresentationModel.js: Added.
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype.breakpointsForSourceName):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointRemoved):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointResolved):
+        (WebInspector.DebuggerPresentationModel.prototype._encodeSourceLocation):
+        (WebInspector.DebuggerPresentationModel.prototype._actualLocationToSourceLocation):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._breakpointAdded):
+        (WebInspector.ScriptsPanel.prototype._breakpointRemoved):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameForResource):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameForScript):
+        (WebInspector.ScriptsPanel.prototype._addSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._removeSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameLoaded):
+        (WebInspector.ScriptsPanel.prototype._clearCurrentExecutionLine):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected):
+        (WebInspector.SourceFrameContentProviderForScript.prototype._buildSource):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.get loaded):
+        (WebInspector.SourceFrame.prototype._createTextViewer):
+        (WebInspector.SourceFrame.prototype._setTextViewerDecorations):
+        (WebInspector.SourceFrame.prototype.setExecutionLine):
+        (WebInspector.SourceFrame.prototype.clearExecutionLine):
+        (WebInspector.SourceFrame.prototype.addBreakpoint):
+        (WebInspector.SourceFrame.prototype.removeBreakpoint):
+        (WebInspector.SourceFrame.prototype._contextMenu.addConditionalBreakpoint.didEditBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._contextMenu.addConditionalBreakpoint):
+        (WebInspector.SourceFrame.prototype._findBreakpoint.filter):
+        (WebInspector.SourceFrame.prototype._findBreakpoint):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-02-22  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.

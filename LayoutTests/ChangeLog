@@ -1,3 +1,17 @@
+2011-02-21  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: move source mapping from SourceFrame to ScriptsPanel.
+        https://bugs.webkit.org/show_bug.cgi?id=54645
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest.InspectorTest.runDebuggerTestSuite.createWrapper.return.try):
+        (initialize_DebuggerTest.InspectorTest.runDebuggerTestSuite):
+        (initialize_DebuggerTest.InspectorTest.showScriptSource):
+        * inspector/debugger/source-frame-expected.txt: Added.
+        * inspector/debugger/source-frame.html: Added.
+
 2011-02-22  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline of fast/forms/placeholder-position.html

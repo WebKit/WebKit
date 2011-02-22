@@ -4716,6 +4716,7 @@
             'inspector/front-end/DatabaseTableView.js',
             'inspector/front-end/DataGrid.js',
             'inspector/front-end/DebuggerModel.js',
+            'inspector/front-end/DebuggerPresentationModel.js',
             'inspector/front-end/DetailedHeapshotGridNodes.js',
             'inspector/front-end/DetailedHeapshotView.js',
             'inspector/front-end/DOMAgent.js',
