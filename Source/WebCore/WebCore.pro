@@ -2,130 +2,16 @@
 CONFIG += building-libs
 CONFIG += depend_includepath
 
-symbian: {
-    TARGET.EPOCALLOWDLLDATA=1
-    # DRM and Allfiles capabilites need to be audited to be signed on Symbian
-    # For regular users that is not possible, so use the CONFIG(production) flag is added
-    # To use all capabilies add CONFIG+=production
-    # If building from QT source tree, also add CONFIG-=QTDIR_build as qbase.pri defaults capabilities to All -Tcb.    
-    CONFIG(production) {
-        TARGET.CAPABILITY = All -Tcb
-    } else {
-        TARGET.CAPABILITY = All -Tcb -DRM -AllFiles
-    }
-    isEmpty(QT_LIBINFIX) {
-        TARGET.UID3 = 0x200267C2
-    } else {
-        TARGET.UID3 = 0xE00267C2
-    }
-    webkitlibs.sources = QtWebKit$${QT_LIBINFIX}.dll
-    v8 {
-        webkitlibs.sources += v8.dll
-        QMAKE_CXXFLAGS.ARMCC += -OTime -O3
-        QMAKE_CXXFLAGS.ARMCC += --fpu softvfp+vfpv2 --fpmode fast
-        LIBS += -llibpthread
-    }
-
-    CONFIG(QTDIR_build): webkitlibs.sources = $$QMAKE_LIBDIR_QT/$$webkitlibs.sources
-    webkitlibs.path = /sys/bin
-    vendorinfo = \
-        "; Localised Vendor name" \
-        "%{\"Nokia\"}" \
-        " " \
-        "; Unique Vendor name" \
-        ":\"Nokia, Qt\"" \
-        " "
-    webkitlibs.pkg_prerules = vendorinfo
-
-    webkitbackup.sources = ../WebKit/qt/symbian/backup_registration.xml
-    webkitbackup.path = /private/10202D56/import/packages/$$replace(TARGET.UID3, 0x,)
-
-    contains(QT_CONFIG, declarative) {
-         declarativeImport.sources = $$QT_BUILD_TREE/imports/QtWebKit/qmlwebkitplugin$${QT_LIBINFIX}.dll
-         declarativeImport.sources += ../WebKit/qt/declarative/qmldir
-         declarativeImport.path = c:$$QT_IMPORTS_BASE_DIR/QtWebKit
-         DEPLOYMENT += declarativeImport
-    }
-
-    DEPLOYMENT += webkitlibs webkitbackup
-
-    symbian-abld|symbian-sbsv2 {
-        # RO text (code) section in qtwebkit.dll exceeds allocated space for gcce udeb target.
-        # Move RW-section base address to start from 0xE00000 instead of the toolchain default 0x400000.
-        QMAKE_LFLAGS.ARMCC += --rw-base 0xE00000
-        MMP_RULES += ALWAYS_BUILD_AS_ARM
-    }  else {
-        QMAKE_CFLAGS -= --thumb
-        QMAKE_CXXFLAGS -= --thumb
-    }
-    CONFIG(release, debug|release): QMAKE_CXXFLAGS.ARMCC += -OTime -O3
-
-    !CONFIG(production):CONFIG-=def_files
-}
-
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ..
 include($$PWD/WebCore.pri)
 include($$PWD/../WebKit.pri)
+include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 
 TEMPLATE = lib
-TARGET = QtWebKit
+TARGET = $$WEBCORE_TARGET
+CONFIG += staticlib
 
-CONFIG(QTDIR_build) {
-    include($$QT_SOURCE_TREE/src/qbase.pri)
-} else {
-    DESTDIR = $$OUTPUT_DIR/lib
-    !static: DEFINES += QT_MAKEDLL
-    symbian: TARGET =$$TARGET$${QT_LIBINFIX}
-}
-moduleFile=$$PWD/../WebKit/qt/qt_webkit_version.pri
-isEmpty(QT_BUILD_TREE):include($$moduleFile)
-VERSION = $${QT_WEBKIT_MAJOR_VERSION}.$${QT_WEBKIT_MINOR_VERSION}.$${QT_WEBKIT_PATCH_VERSION}
-
-unix|win32-g++*:QMAKE_PKGCONFIG_REQUIRES = QtCore QtGui QtNetwork
-
-unix:!mac:*-g++*:QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections 
-unix:!mac:*-g++*:QMAKE_LFLAGS += -Wl,--gc-sections
-linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
-
-CONFIG(release):!CONFIG(standalone_package) {
-    contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
-    unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
-}
-
-DEFINES += BUILDING_WEBKIT
-
-# Remove whole program optimizations due to miscompilations
-win32-msvc2005|win32-msvc2008|wince*:{
-    QMAKE_CFLAGS_RELEASE -= -GL
-    QMAKE_CXXFLAGS_RELEASE -= -GL
-
-    # Disable incremental linking for windows 32bit OS debug build as WebKit is so big
-    # that linker failes to link incrementally in debug mode.
-    ARCH = $$(PROCESSOR_ARCHITECTURE)
-    WOW64ARCH = $$(PROCESSOR_ARCHITEW6432)
-    equals(ARCH, x86):{
-        isEmpty(WOW64ARCH): QMAKE_LFLAGS_DEBUG += /INCREMENTAL:NO
-    }
-}
-
-# Pick up 3rdparty libraries from INCLUDE/LIB just like with MSVC
-win32-g++* {
-    TMPPATH            = $$quote($$(INCLUDE))
-    QMAKE_INCDIR_POST += $$split(TMPPATH,";")
-    TMPPATH            = $$quote($$(LIB))
-    QMAKE_LIBDIR_POST += $$split(TMPPATH,";")
-}
-
-symbian {
-    !CONFIG(QTDIR_build) {
-        # Test if symbian OS comes with sqlite
-        exists($${EPOCROOT}epoc32/release/armv5/lib/sqlite3.dso):CONFIG *= system-sqlite
-    } else:!symbian-abld:!symbian-sbsv2 {
-        # When bundled with Qt, all Symbian build systems extract their own sqlite files if
-        # necessary, but on non-mmp based ones we need to specify this ourselves.
-        include($$QT_SOURCE_TREE/src/plugins/sqldrivers/sqlite_symbian/sqlite_symbian.pri)
-    }
-}
+DESTDIR = $$WEBCORE_DESTDIR
 
 RESOURCES += \
     $$PWD/../WebCore/WebCore.qrc
@@ -136,37 +22,7 @@ contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
     DEFINES += ENABLE_NO_LISTBOX_RENDERING=1
 }
 
-include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
-!v8: addJavaScriptCoreLib(../JavaScriptCore)
-
-webkit2 {
-    include($$PWD/../WebKit2/WebKit2.pri)
-    addWebKit2LibWholeArchive(../WebKit2)
-}
-
-# Extract sources to build from the generator definitions
-defineTest(addExtraCompiler) {
-    isEqual($${1}.wkAddOutputToSources, false): return(true)
-
-    outputRule = $$eval($${1}.output)
-    input = $$eval($${1}.input)
-    input = $$eval($$input)
-
-    for(file,input) {
-        base = $$basename(file)
-        base ~= s/\\..+//
-        newfile=$$replace(outputRule,\\$\\{QMAKE_FILE_BASE\\},$$base)
-        SOURCES += $$newfile
-    }
-    SOURCES += $$eval($${1}.wkExtraSources)
-    export(SOURCES)
-
-    return(true)
-}
-include(CodeGenerators.pri)
-
 DASHBOARDSUPPORTCSSPROPERTIES = $$PWD/css/DashboardSupportCSSPropertyNames.in
-
 
 contains(DEFINES, ENABLE_SVG=1) {
     EXTRACSSPROPERTIES += $$PWD/css/SVGCSSPropertyNames.in
@@ -210,6 +66,7 @@ v8 {
     include($$PWD/../JavaScriptCore/wtf/wtf.pri)
 
     SOURCES += \
+        platform/qt/PlatformBridgeQt.cpp \
         bindings/generic/BindingSecurityBase.cpp \
         \
         bindings/v8/WorldContextHandle.cpp \
@@ -217,7 +74,6 @@ v8 {
         bindings/v8/custom/V8HistoryCustom.cpp \
         bindings/v8/custom/V8PopStateEventCustom.cpp \
         bindings/v8/ScriptGCEvent.cpp
-
 
     SOURCES += \
         bindings/v8/custom/V8ArrayBufferCustom.cpp \
@@ -245,6 +101,7 @@ v8 {
         bindings/v8/ScriptCallStackFactory.cpp \
         bindings/ScriptControllerBase.cpp \
         bindings/v8/ScriptController.cpp \
+        bindings/v8/ScriptControllerQt.cpp \
         bindings/v8/ScriptEventListener.cpp \
         bindings/v8/ScriptFunctionCall.cpp \
         bindings/v8/ScriptInstance.cpp \
@@ -491,6 +348,7 @@ v8 {
         bindings/js/ScriptCachedFrameData.cpp \
         bindings/js/ScriptCallStackFactory.cpp \
         bindings/js/ScriptController.cpp \
+        bindings/js/ScriptControllerQt.cpp \
         bindings/js/ScriptDebugServer.cpp \
         bindings/js/ScriptEventListener.cpp \
         bindings/js/ScriptFunctionCall.cpp \
@@ -509,6 +367,10 @@ v8 {
         bridge/c/c_utility.cpp \
         bridge/jsc/BridgeJSC.cpp \
         bridge/npruntime.cpp \
+        bridge/qt/qt_class.cpp \
+        bridge/qt/qt_instance.cpp \
+        bridge/qt/qt_pixmapruntime.cpp \
+        bridge/qt/qt_runtime.cpp \
         bridge/runtime_array.cpp \
         bridge/runtime_method.cpp \
         bridge/runtime_object.cpp \
@@ -1287,7 +1149,7 @@ SOURCES += \
     xml/XMLHttpRequest.cpp \
     xml/XMLHttpRequestProgressEventThrottle.cpp \
     xml/XMLHttpRequestUpload.cpp \
-    xml/XMLSerializer.cpp 
+    xml/XMLSerializer.cpp
 
 HEADERS += \
     accessibility/AccessibilityARIAGridCell.h \
@@ -2099,6 +1961,7 @@ HEADERS += \
     platform/network/ResourceLoadTiming.h \
     platform/network/ResourceRequestBase.h \
     platform/network/ResourceResponseBase.h \
+    platform/network/qt/DnsPrefetchHelper.h \
     platform/PlatformTouchEvent.h \
     platform/PlatformTouchPoint.h \
     platform/PopupMenu.h \
@@ -2576,34 +2439,7 @@ HEADERS += \
     xml/XSLStyleSheet.h \
     xml/XSLTExtensions.h \
     xml/XSLTProcessor.h \
-    xml/XSLTUnicodeSort.h \
-    $$PWD/../WebKit/qt/Api/qwebplugindatabase_p.h \
-    $$PWD/../WebKit/qt/WebCoreSupport/InspectorServerQt.h \
-    $$PWD/../WebKit/qt/WebCoreSupport/QtFallbackWebPopup.h \
-    $$PWD/../WebKit/qt/WebCoreSupport/ChromeClientQt.h \
-    $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
-    $$PWD/../WebKit/qt/WebCoreSupport/FrameNetworkingContextQt.h \
-    $$PWD/../WebKit/qt/WebCoreSupport/GeolocationPermissionClientQt.h \
-    $$PWD/../WebKit/qt/WebCoreSupport/NotificationPresenterClientQt.h \
-    $$PWD/../WebKit/qt/WebCoreSupport/PageClientQt.h \
-    $$PWD/../WebKit/qt/WebCoreSupport/QtPlatformPlugin.h \
-    $$PWD/../WebKit/qt/WebCoreSupport/PopupMenuQt.h \
-    $$PWD/../WebKit/qt/WebCoreSupport/SearchPopupMenuQt.h \
-    $$PWD/../WebKit/qt/WebCoreSupport/WebPlatformStrategies.h \
-    $$PWD/platform/network/qt/DnsPrefetchHelper.h
-
-v8 {
-    SOURCES += \
-       bindings/v8/ScriptControllerQt.cpp \
-       platform/qt/PlatformBridgeQt.cpp
-} else {
-    SOURCES += \
-       bindings/js/ScriptControllerQt.cpp \
-       bridge/qt/qt_class.cpp \
-       bridge/qt/qt_instance.cpp \
-       bridge/qt/qt_pixmapruntime.cpp \
-       bridge/qt/qt_runtime.cpp
-}
+    xml/XSLTUnicodeSort.h
 
 SOURCES += \
     accessibility/qt/AccessibilityObjectQt.cpp \
@@ -2676,49 +2512,12 @@ SOURCES += \
     platform/text/qt/TextBreakIteratorQt.cpp \
     platform/text/qt/TextCodecQt.cpp \
     platform/qt/WheelEventQt.cpp \
-    platform/qt/WidgetQt.cpp \
-    ../WebKit/qt/WebCoreSupport/QtFallbackWebPopup.cpp \
-    ../WebKit/qt/WebCoreSupport/ChromeClientQt.cpp \
-    ../WebKit/qt/WebCoreSupport/ContextMenuClientQt.cpp \
-    ../WebKit/qt/WebCoreSupport/DragClientQt.cpp \
-    ../WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.cpp \
-    ../WebKit/qt/WebCoreSupport/EditorClientQt.cpp \
-    ../WebKit/qt/WebCoreSupport/EditCommandQt.cpp \
-    ../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp \
-    ../WebKit/qt/WebCoreSupport/FrameNetworkingContextQt.cpp \
-    ../WebKit/qt/WebCoreSupport/GeolocationPermissionClientQt.cpp \
-    ../WebKit/qt/WebCoreSupport/InspectorClientQt.cpp \
-    ../WebKit/qt/WebCoreSupport/InspectorServerQt.cpp \
-    ../WebKit/qt/WebCoreSupport/NotificationPresenterClientQt.cpp \
-    ../WebKit/qt/WebCoreSupport/PageClientQt.cpp \
-    ../WebKit/qt/WebCoreSupport/PopupMenuQt.cpp \
-    ../WebKit/qt/WebCoreSupport/QtPlatformPlugin.cpp \
-    ../WebKit/qt/WebCoreSupport/SearchPopupMenuQt.cpp \
-    ../WebKit/qt/WebCoreSupport/WebPlatformStrategies.cpp \
-    ../WebKit/qt/Api/qwebframe.cpp \
-    ../WebKit/qt/Api/qgraphicswebview.cpp \
-    ../WebKit/qt/Api/qwebpage.cpp \
-    ../WebKit/qt/Api/qwebview.cpp \
-    ../WebKit/qt/Api/qwebelement.cpp \
-    ../WebKit/qt/Api/qwebhistory.cpp \
-    ../WebKit/qt/Api/qwebsettings.cpp \
-    ../WebKit/qt/Api/qwebhistoryinterface.cpp \
-    ../WebKit/qt/Api/qwebplugindatabase.cpp \
-    ../WebKit/qt/Api/qwebpluginfactory.cpp \
-    ../WebKit/qt/Api/qwebsecurityorigin.cpp \
-    ../WebKit/qt/Api/qwebscriptworld.cpp \
-    ../WebKit/qt/Api/qwebdatabase.cpp \
-    ../WebKit/qt/Api/qwebinspector.cpp \
-    ../WebKit/qt/Api/qwebkitversion.cpp
+    platform/qt/WidgetQt.cpp
+
 
 contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
     HEADERS += platform/qt/QtMobileWebStyle.h
     SOURCES += platform/qt/QtMobileWebStyle.cpp
-}
-
-maemo5 {
-    HEADERS += ../WebKit/qt/WebCoreSupport/QtMaemoWebPopup.h
-    SOURCES += ../WebKit/qt/WebCoreSupport/QtMaemoWebPopup.cpp
 }
 
 contains(DEFINES, ENABLE_SMOOTH_SCROLLING=1) {
@@ -2738,101 +2537,51 @@ mac {
     SOURCES += \
         platform/text/cf/StringCF.cpp \
         platform/text/cf/StringImplCF.cpp
-    LIBS_PRIVATE += -framework Carbon -framework AppKit
-}
-
-win32-* {
-    LIBS += -lgdi32
-    LIBS += -lole32
-    LIBS += -luser32
-}
-
-wince* {
-    LIBS += -lmmtimer
-    LIBS += -lole32
 }
 
 contains (CONFIG, text_breaking_with_icu) {
     SOURCES += platform/text/TextBreakIteratorICU.cpp
-    LIBS += -licuuc
 }
 
 symbian {
     SOURCES += \
         plugins/symbian/PluginDatabaseSymbian.cpp \
         plugins/symbian/PluginPackageSymbian.cpp
-
-    LIBS += -lefsrv
 }
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
 
     SOURCES += plugins/npapi.cpp
 
-    symbian {
-        SOURCES += \
-        plugins/symbian/PluginViewSymbian.cpp \
-        plugins/symbian/PluginContainerSymbian.cpp
-
-        HEADERS += \
-        plugins/symbian/PluginContainerSymbian.h \
-        plugins/symbian/npinterface.h
-
-    } else {
-
-        unix {
-    
-            mac {
-                SOURCES += \
-                    plugins/mac/PluginPackageMac.cpp
-                OBJECTIVE_SOURCES += \
-                    platform/text/mac/StringImplMac.mm \
-                    platform/mac/WebCoreNSStringExtras.mm \
-                    plugins/mac/PluginViewMac.mm
-                INCLUDEPATH += platform/mac
-                # Note: XP_MACOSX is defined in npapi.h
-            } else {
-                !embedded {
-                    CONFIG += x11
-                    LIBS += -lXrender
-                }
-                maemo5 {
-                    DEFINES += MOZ_PLATFORM_MAEMO=5
-                }
-                contains(DEFINES, Q_WS_MAEMO_6) {
-                    DEFINES += MOZ_PLATFORM_MAEMO=6
-                }
-                SOURCES += \
-                    plugins/qt/PluginContainerQt.cpp \
-                    plugins/qt/PluginPackageQt.cpp \
-                    plugins/qt/PluginViewQt.cpp
-                HEADERS += \
-                    plugins/qt/PluginContainerQt.h
-                DEFINES += XP_UNIX
-                DEFINES += ENABLE_NETSCAPE_PLUGIN_METADATA_CACHE=1
-            }
+    unix:!symbian {
+        mac {
+            SOURCES += \
+                plugins/mac/PluginPackageMac.cpp
+            OBJECTIVE_SOURCES += \
+                platform/text/mac/StringImplMac.mm \
+                platform/mac/WebCoreNSStringExtras.mm \
+                plugins/mac/PluginViewMac.mm
+        } else {
+            SOURCES += \
+                plugins/qt/PluginContainerQt.cpp \
+                plugins/qt/PluginPackageQt.cpp \
+                plugins/qt/PluginViewQt.cpp
+            HEADERS += \
+                plugins/qt/PluginContainerQt.h
         }
-    
-        win32-* {
-            INCLUDEPATH += $$PWD/plugins/win \
-                           $$PWD/platform/win \
-                           $$PWD/platform/graphics/win
-    
-            SOURCES += plugins/win/PluginDatabaseWin.cpp \
-                       plugins/win/PluginPackageWin.cpp \
-                       plugins/win/PluginMessageThrottlerWin.cpp \
-                       plugins/win/PluginViewWin.cpp \
-                       platform/win/BitmapInfo.cpp \
-                       platform/win/WebCoreInstanceHandle.cpp
-    
-            LIBS += \
-                -ladvapi32 \
-                -lgdi32 \
-                -lshell32 \
-                -lshlwapi \
-                -luser32 \
-                -lversion
-        }
+    }
+
+    win32-* {
+        INCLUDEPATH += $$PWD/plugins/win \
+                       $$PWD/platform/win \
+                       $$PWD/platform/graphics/win
+
+        SOURCES += plugins/win/PluginDatabaseWin.cpp \
+                   plugins/win/PluginPackageWin.cpp \
+                   plugins/win/PluginMessageThrottlerWin.cpp \
+                   plugins/win/PluginViewWin.cpp \
+                   platform/win/BitmapInfo.cpp \
+                   platform/win/WebCoreInstanceHandle.cpp
     }
 
 } else {
@@ -2842,25 +2591,6 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
 }
 
 contains(DEFINES, ENABLE_SQLITE=1) {
-    !system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {
-            # Build sqlite3 into WebCore from source
-            # somewhat copied from $$QT_SOURCE_TREE/src/plugins/sqldrivers/sqlite/sqlite.pro
-            INCLUDEPATH += $${SQLITE3SRCDIR}
-            SOURCES += $${SQLITE3SRCDIR}/sqlite3.c
-            DEFINES += SQLITE_CORE SQLITE_OMIT_LOAD_EXTENSION SQLITE_OMIT_COMPLETE
-            CONFIG(release, debug|release): DEFINES *= NDEBUG
-            contains(DEFINES, ENABLE_SINGLE_THREADED=1): DEFINES += SQLITE_THREADSAFE=0
-    } else {
-        # Use sqlite3 from the underlying OS
-        CONFIG(QTDIR_build) {
-            QMAKE_CXXFLAGS *= $$QT_CFLAGS_SQLITE
-            LIBS *= $$QT_LFLAGS_SQLITE
-        } else {
-            INCLUDEPATH += $${SQLITE3SRCDIR}
-            LIBS += -lsqlite3
-        }
-    }
-
     wince*:DEFINES += HAVE_LOCALTIME_S=0
 
     SOURCES += \
@@ -3173,43 +2903,18 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             platform/graphics/gstreamer/PlatformVideoWindowQt.cpp \
             platform/graphics/gstreamer/ImageGStreamerQt.cpp
 
-        DEFINES += WTF_USE_GSTREAMER=1
-        DEFINES += ENABLE_GLIB_SUPPORT=1
-
-        INCLUDEPATH += $$PWD/platform/graphics/gstreamer
-
-        PKGCONFIG += glib-2.0 gio-2.0 gstreamer-0.10 gstreamer-app-0.10 gstreamer-base-0.10 gstreamer-interfaces-0.10 gstreamer-pbutils-0.10 gstreamer-plugins-base-0.10 gstreamer-video-0.10
-     } else:contains(MOBILITY_CONFIG, multimedia) {
+    } else:contains(MOBILITY_CONFIG, multimedia) {
         HEADERS += \ 
-            platform/graphics/qt/MediaPlayerPrivateQt.h \
-            $$PWD/../WebKit/qt/WebCoreSupport/FullScreenVideoQt.h \
-            $$PWD/../WebKit/qt/WebCoreSupport/FullScreenVideoWidget.h
+            platform/graphics/qt/MediaPlayerPrivateQt.h
 
         SOURCES += \
-            platform/graphics/qt/MediaPlayerPrivateQt.cpp \
-            $$PWD/../WebKit/qt/WebCoreSupport/FullScreenVideoQt.cpp \
-            $$PWD/../WebKit/qt/WebCoreSupport/FullScreenVideoWidget.cpp
-
-        CONFIG *= mobility
-        MOBILITY += multimedia
-        DEFINES += WTF_USE_QT_MULTIMEDIA
-     } else:contains(QT_CONFIG, phonon) {
+            platform/graphics/qt/MediaPlayerPrivateQt.cpp
+    } else:contains(QT_CONFIG, phonon) {
         HEADERS += \
             platform/graphics/qt/MediaPlayerPrivatePhonon.h
 
         SOURCES += \
             platform/graphics/qt/MediaPlayerPrivatePhonon.cpp
-
-        # Add phonon manually to prevent it from coming first in
-        # the include paths, as Phonon's path.h conflicts with
-        # WebCore's Path.h on case-insensitive filesystems.
-        qtAddLibrary(phonon)
-        INCLUDEPATH -= $$QT.phonon.includes
-        INCLUDEPATH += $$QT.phonon.includes
-        mac {
-            INCLUDEPATH -= $$QT.phonon.libs/phonon.framework/Headers
-            INCLUDEPATH += $$QT.phonon.libs/phonon.framework/Headers
-        }
     }
 }
 
@@ -3233,11 +2938,7 @@ contains(DEFINES, ENABLE_XPATH=1) {
         xml/XPathVariableReference.cpp
 }
 
-unix:!mac:!symbian:CONFIG += link_pkgconfig
-
 contains(DEFINES, ENABLE_XSLT=1) {
-    tobe|!tobe: QT += xmlpatterns
-
     v8 {
         SOURCES += \
             bindings/v8/custom/V8XSLTProcessorCustom.cpp
@@ -3348,49 +3049,15 @@ contains(DEFINES, ENABLE_QT_BEARER=1) {
 
     SOURCES += \
         platform/network/qt/NetworkStateNotifierQt.cpp
-
-    # Bearer management is part of Qt 4.7, so don't accidentially
-    # pull in Qt Mobility when building against >= 4.7
-    !greaterThan(QT_MINOR_VERSION, 6) {
-        CONFIG += mobility
-        MOBILITY += bearer
-    }
 }
 
 contains(DEFINES, ENABLE_GEOLOCATION=1) {
-     HEADERS += \
-        $$PWD/../WebKit/qt/WebCoreSupport/GeolocationClientQt.h
-     SOURCES += \
-        $$PWD/../WebKit/qt/WebCoreSupport/GeolocationClientQt.cpp
- 
-    CONFIG += mobility
-    MOBILITY += location
-
     v8 {
         SOURCES += \
             bindings/v8/custom/V8CustomPositionCallback.cpp \
             bindings/v8/custom/V8CustomPositionErrorCallback.cpp \
             bindings/v8/custom/V8GeolocationCustom.cpp
     }
-}
-
-contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
-    HEADERS += \
-        ../WebKit/qt/WebCoreSupport/DeviceMotionClientQt.h \
-        ../WebKit/qt/WebCoreSupport/DeviceMotionProviderQt.h \
-        ../WebKit/qt/WebCoreSupport/DeviceOrientationClientQt.h \
-        ../WebKit/qt/WebCoreSupport/DeviceOrientationClientMockQt.h \
-        ../WebKit/qt/WebCoreSupport/DeviceOrientationProviderQt.h
-
-    SOURCES += \
-        ../WebKit/qt/WebCoreSupport/DeviceMotionClientQt.cpp \
-        ../WebKit/qt/WebCoreSupport/DeviceMotionProviderQt.cpp \
-        ../WebKit/qt/WebCoreSupport/DeviceOrientationClientQt.cpp \
-        ../WebKit/qt/WebCoreSupport/DeviceOrientationClientMockQt.cpp \
-        ../WebKit/qt/WebCoreSupport/DeviceOrientationProviderQt.cpp
-
-    CONFIG += mobility
-    MOBILITY += sensors
 }
 
 contains(DEFINES, ENABLE_SVG=1) {
@@ -3674,8 +3341,6 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
 }
 
 contains(DEFINES, ENABLE_WEBGL=1) {
-    tobe|!tobe: QT += opengl
-
     HEADERS += \
         html/canvas/CanvasContextAttributes.h \
         html/canvas/WebGLObject.h \
@@ -3735,134 +3400,6 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         INCLUDEPATH += $$PWD/platform/graphics/gpu
 }
 
-contains(DEFINES, ENABLE_SYMBIAN_DIALOG_PROVIDERS) {
-    # this feature requires the S60 platform private BrowserDialogsProvider.h header file
-    # and is therefore not enabled by default but only meant for platform builds.
-    symbian {
-        LIBS += -lbrowserdialogsprovider
-    }
-}
-
-!symbian-abld:!symbian-sbsv2 {
-    modfile.files = $$moduleFile
-    modfile.path = $$[QMAKE_MKSPECS]/modules
-
-    INSTALLS += modfile
-} else {
-    # INSTALLS is not implemented in qmake's mmp generators, copy headers manually
-
-    inst_modfile.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
-    inst_modfile.input = moduleFile
-    inst_modfile.output = $$[QMAKE_MKSPECS]/modules
-    inst_modfile.CONFIG = no_clean
-
-    QMAKE_EXTRA_COMPILERS += inst_modfile
-
-    install.depends += compiler_inst_modfile_make_all
-    QMAKE_EXTRA_TARGETS += install
-}
-
-include($$PWD/../WebKit/qt/Api/headers.pri)
-
-HEADERS += $$WEBKIT_API_HEADERS
-
-!CONFIG(QTDIR_build) {
-    exists($$OUTPUT_DIR/include/QtWebKit/classheaders.pri): include($$OUTPUT_DIR/include/QtWebKit/classheaders.pri)
-    WEBKIT_INSTALL_HEADERS = $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS
-
-    !symbian-abld:!symbian-sbsv2 {
-        headers.files = $$WEBKIT_INSTALL_HEADERS
-
-        !isEmpty(INSTALL_HEADERS): headers.path = $$INSTALL_HEADERS/QtWebKit
-        else: headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
-
-        !isEmpty(INSTALL_LIBS): target.path = $$INSTALL_LIBS
-        else: target.path = $$[QT_INSTALL_LIBS]
-
-        INSTALLS += target headers
-    } else {
-        # INSTALLS is not implemented in qmake's mmp generators, copy headers manually
-        inst_headers.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
-        inst_headers.input = WEBKIT_INSTALL_HEADERS
-        inst_headers.CONFIG = no_clean
-
-        !isEmpty(INSTALL_HEADERS): inst_headers.output = $$INSTALL_HEADERS/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
-        else: inst_headers.output = $$[QT_INSTALL_HEADERS]/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
-
-        QMAKE_EXTRA_COMPILERS += inst_headers
-
-        install.depends += compiler_inst_headers_make_all
-    }
-
-    win32-*|wince* {
-        DLLDESTDIR = $$OUTPUT_DIR/bin
-        build_pass: TARGET = $$qtLibraryTarget($$TARGET)
-
-        dlltarget.commands = $(COPY_FILE) $(DESTDIR_TARGET) $$[QT_INSTALL_BINS]
-        dlltarget.CONFIG = no_path
-        INSTALLS += dlltarget
-    }
-
-    unix {
-        CONFIG += create_pc create_prl
-        QMAKE_PKGCONFIG_LIBDIR = $$target.path
-        QMAKE_PKGCONFIG_INCDIR = $$headers.path
-        QMAKE_PKGCONFIG_DESTDIR = pkgconfig
-        lib_replace.match = $$re_escape($$DESTDIR)
-        lib_replace.replace = $$[QT_INSTALL_LIBS]
-        QMAKE_PKGCONFIG_INSTALL_REPLACE += lib_replace
-    }
-
-    mac {
-        !static:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework) {
-            !build_pass {
-                message("Building QtWebKit as a framework, as that's how Qt was built. You can")
-                message("override this by passing CONFIG+=webkit_no_framework to build-webkit.")
-
-                CONFIG += build_all
-            } else {
-                debug_and_release:TARGET = $$qtLibraryTarget($$TARGET)
-            }
-
-            CONFIG += lib_bundle qt_no_framework_direct_includes qt_framework
-            FRAMEWORK_HEADERS.version = Versions
-            FRAMEWORK_HEADERS.files = $${headers.files}
-            FRAMEWORK_HEADERS.path = Headers
-            QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
-        }
-
-        QMAKE_LFLAGS_SONAME = "$${QMAKE_LFLAGS_SONAME}$${DESTDIR}$${QMAKE_DIR_SEP}"
-        LIBS += -framework Carbon -framework AppKit
-    }
-}
-
-!CONFIG(webkit-debug):CONFIG(QTDIR_build) {
-    # Remove the following 2 lines if you want debug information in WebCore
-    CONFIG -= separate_debug_info
-    CONFIG += no_debug_info
-}
-
-win32:!win32-g++*:contains(QMAKE_HOST.arch, x86_64):{
-    asm_compiler.commands = ml64 /c
-    asm_compiler.commands +=  /Fo ${QMAKE_FILE_OUT} ${QMAKE_FILE_IN}
-    asm_compiler.output = ${QMAKE_VAR_OBJECTS_DIR}${QMAKE_FILE_BASE}$${first(QMAKE_EXT_OBJ)}
-    asm_compiler.input = ASM_SOURCES
-    asm_compiler.variable_out = OBJECTS
-    asm_compiler.name = compiling[asm] ${QMAKE_FILE_IN}
-    silent:asm_compiler.commands = @echo compiling[asm] ${QMAKE_FILE_IN} && $$asm_compiler.commands
-    QMAKE_EXTRA_COMPILERS += asm_compiler
-
-    ASM_SOURCES += \
-        plugins/win/PaintHooks.asm
-   if(win32-msvc2005|win32-msvc2008):equals(TEMPLATE_PREFIX, "vc") {
-        SOURCES += \
-            plugins/win/PaintHooks.asm
-    }
-}
-
-# Uncomment this to enable Texture Mapper.
-# CONFIG += texmap
-
 contains(CONFIG, texmap) {
     DEFINES += WTF_USE_TEXTURE_MAPPER=1
     HEADERS += \
@@ -3878,7 +3415,6 @@ contains(CONFIG, texmap) {
         platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
 
     contains(QT_CONFIG, opengl) {
-        QT += opengl
         HEADERS += platform/graphics/opengl/TextureMapperGL.h
         SOURCES += platform/graphics/opengl/TextureMapperGL.cpp
     }
@@ -3886,18 +3422,3 @@ contains(CONFIG, texmap) {
     HEADERS += platform/graphics/qt/GraphicsLayerQt.h
     SOURCES += platform/graphics/qt/GraphicsLayerQt.cpp
 }
-
-symbian {
-    shared {
-        contains(CONFIG, def_files) {
-            DEF_FILE=../WebKit/qt/symbian
-            # defFilePath is for Qt4.6 compatibility
-            defFilePath=../WebKit/qt/symbian
-        } else {
-            MMP_RULES += EXPORTUNFROZEN
-        }
-    }
-}
-
-# Disable C++0x mode in WebCore for those who enabled it in their Qt's mkspec
-*-g++*:QMAKE_CXXFLAGS -= -std=c++0x -std=gnu++0x

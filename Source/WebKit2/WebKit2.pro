@@ -5,14 +5,6 @@ CONFIG += depend_includepath
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../..
 
-CONFIG(standalone_package) {
-    isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = $$PWD/generated
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../WebCore/generated
-} else {
-    isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = generated
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../WebCore/generated
-}
-
 include($$PWD/../WebKit.pri)
 include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 include($$PWD/../WebCore/WebCore.pri)
@@ -32,58 +24,6 @@ DESTDIR = $$WEBKIT2_DESTDIR
 
 # Build both debug and release configurations
 mac: CONFIG += build_all
-
-WEBKIT2_INCLUDEPATH = \
-    $$PWD \
-    Platform \
-    Platform/CoreIPC \
-    Platform/qt \
-    Shared \
-    Shared/API/c \
-    Shared/CoreIPCSupport \
-    Shared/Plugins \
-    Shared/Plugins/Netscape \
-    Shared/qt \
-    UIProcess \
-    UIProcess/API/C \
-    UIProcess/API/cpp \
-    UIProcess/API/cpp/qt \
-    UIProcess/API/qt \
-    UIProcess/Authentication \
-    UIProcess/Downloads \
-    UIProcess/Launcher \
-    UIProcess/Plugins \
-    UIProcess/qt \
-    WebProcess \
-    WebProcess/Authentication \
-    WebProcess/Downloads \
-    WebProcess/Downloads/qt \
-    WebProcess/Geolocation \
-    WebProcess/InjectedBundle \
-    WebProcess/InjectedBundle/DOM \
-    WebProcess/InjectedBundle/API/c \
-    WebProcess/ResourceCache \
-    WebProcess/Plugins \
-    WebProcess/Plugins/Netscape \
-    WebProcess/WebCoreSupport \
-    WebProcess/WebCoreSupport/qt \
-    WebProcess/WebPage \
-    WebProcess/qt \
-    $$OUTPUT_DIR/include
-
-WEBKIT2_INCLUDEPATH = \
-    $$WC_GENERATED_SOURCES_DIR \
-    $$WEBKIT2_GENERATED_SOURCES_DIR \
-    $$WEBKIT2_INCLUDEPATH
-
-# On Symbian PREPEND_INCLUDEPATH is the best way to make sure that WebKit headers
-# are included before platform headers.
-
-symbian {
-    PREPEND_INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$PREPEND_INCLUDEPATH
-} else {
-    INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$INCLUDEPATH
-}
 
 WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/AuthenticationManagerMessages.h \
@@ -148,25 +88,6 @@ HEADERS += \
     Platform/SharedMemory.h \
     Platform/WorkItem.h \
     Platform/WorkQueue.h \
-    Shared/API/c/WKBase.h \
-    Shared/API/c/WKCertificateInfo.h \
-    Shared/API/c/WKContextMenuItem.h \
-    Shared/API/c/WKContextMenuItemTypes.h \
-    Shared/API/c/WKGeometry.h \
-    Shared/API/c/WKGraphicsContext.h \
-    Shared/API/c/WKImage.h \
-    Shared/API/c/WKNumber.h \
-    Shared/API/c/WKPageLoadTypes.h \
-    Shared/API/c/WKSecurityOrigin.h \
-    Shared/API/c/WKSerializedScriptValue.h \
-    Shared/API/c/WKSharedAPICast.h \
-    Shared/API/c/WKString.h \
-    Shared/API/c/WKStringPrivate.h \
-    Shared/API/c/WKType.h \
-    Shared/API/c/WKURL.h \
-    Shared/API/c/WKURLRequest.h \
-    Shared/API/c/WKURLResponse.h \
-    Shared/API/c/WKUserContentURLPattern.h \
     Shared/ShareableBitmap.h \
     Shared/CacheModel.h \
     Shared/ChildProcess.h \
@@ -216,49 +137,6 @@ HEADERS += \
     Shared/qt/PlatformCertificateInfo.h \
     Shared/qt/UpdateChunk.h \
     Shared/qt/WebEventFactoryQt.h \
-    UIProcess/API/C/WKAPICast.h \
-    UIProcess/API/C/WKAuthenticationChallenge.h \
-    UIProcess/API/C/WKAuthenticationDecisionListener.h \
-    UIProcess/API/C/WKBackForwardList.h \
-    UIProcess/API/C/WKBackForwardListItem.h \
-    UIProcess/API/C/WKResourceCacheManager.h \
-    UIProcess/API/C/WKContext.h \
-    UIProcess/API/C/WKContextPrivate.h \
-    UIProcess/API/C/WKCredential.h \
-    UIProcess/API/C/WKCredentialTypes.h \
-    UIProcess/API/C/WKDatabaseManager.h \
-    UIProcess/API/C/WKDownload.h \
-    UIProcess/API/C/WKFrame.h \
-    UIProcess/API/C/WKFramePolicyListener.h \
-    UIProcess/API/C/WKGeolocationManager.h \
-    UIProcess/API/C/WKGeolocationPermissionRequest.h \
-    UIProcess/API/C/WKGeolocationPosition.h \
-    UIProcess/API/C/WKInspector.h \
-    UIProcess/API/C/WKOpenPanelParameters.h \
-    UIProcess/API/C/WKOpenPanelResultListener.h \
-    UIProcess/API/C/WKNavigationData.h \
-    UIProcess/API/C/WKPage.h \
-    UIProcess/API/C/WKPageGroup.h \
-    UIProcess/API/C/WKPagePrivate.h \
-    UIProcess/API/C/WKPluginSiteDataManager.h \
-    UIProcess/API/C/WKPreferences.h \
-    UIProcess/API/C/WKPreferencesPrivate.h \
-    UIProcess/API/C/WKProtectionSpace.h \
-    UIProcess/API/C/WKProtectionSpaceTypes.h \
-    UIProcess/API/C/WebKit2.h \
-    UIProcess/API/C/qt/WKNativeEvent.h \
-    UIProcess/API/cpp/WKRetainPtr.h \
-    UIProcess/API/cpp/qt/WKStringQt.h \
-    UIProcess/API/cpp/qt/WKURLQt.h \
-    UIProcess/API/qt/ClientImpl.h \
-    UIProcess/API/qt/qgraphicswkview.h \
-    UIProcess/API/qt/qwkcontext.h \
-    UIProcess/API/qt/qwkcontext_p.h \
-    UIProcess/API/qt/qwkhistory.h \
-    UIProcess/API/qt/qwkhistory_p.h \
-    UIProcess/API/qt/qwkpage.h \
-    UIProcess/API/qt/qwkpage_p.h \
-    UIProcess/API/qt/qwkpreferences.h \
     UIProcess/Authentication/AuthenticationChallengeProxy.h \
     UIProcess/Authentication/AuthenticationDecisionListener.h \
     UIProcess/Authentication/WebCredential.h \
@@ -317,15 +195,6 @@ HEADERS += \
     WebProcess/Downloads/DownloadManager.h \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
     WebProcess/Geolocation/WebGeolocationManager.h \
-    WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
-    WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h \
-    WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \
-    WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.h \
-    WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
-    WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h \
-    WebProcess/InjectedBundle/API/c/WKBundlePage.h \
-    WebProcess/InjectedBundle/API/c/WKBundlePageGroup.h \
-    WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h \
     WebProcess/InjectedBundle/InjectedBundle.h \
@@ -395,20 +264,6 @@ SOURCES += \
     Platform/qt/RunLoopQt.cpp \
     Platform/qt/SharedMemoryQt.cpp \
     Platform/qt/WorkQueueQt.cpp \
-    Shared/API/c/WKArray.cpp \
-    Shared/API/c/WKCertificateInfo.cpp \
-    Shared/API/c/WKContextMenuItem.cpp \
-    Shared/API/c/WKGraphicsContext.cpp \
-    Shared/API/c/WKImage.cpp \
-    Shared/API/c/WKNumber.cpp \
-    Shared/API/c/WKSecurityOrigin.cpp \
-    Shared/API/c/WKSerializedScriptValue.cpp \
-    Shared/API/c/WKString.cpp \
-    Shared/API/c/WKType.cpp \
-    Shared/API/c/WKURL.cpp \
-    Shared/API/c/WKURLRequest.cpp \
-    Shared/API/c/WKURLResponse.cpp \
-    Shared/API/c/WKUserContentURLPattern.cpp \
     Shared/Plugins/Netscape/NetscapePluginModule.cpp \
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
     Shared/ShareableBitmap.cpp \
@@ -453,37 +308,6 @@ SOURCES += \
     Shared/qt/WebEventFactoryQt.cpp \
     Shared/qt/WebURLRequestQt.cpp \
     Shared/qt/WebURLResponseQt.cpp \
-    UIProcess/API/C/WKAuthenticationChallenge.cpp \
-    UIProcess/API/C/WKAuthenticationDecisionListener.cpp \
-    UIProcess/API/C/WKBackForwardList.cpp \
-    UIProcess/API/C/WKBackForwardListItem.cpp \
-    UIProcess/API/C/WKResourceCacheManager.cpp \
-    UIProcess/API/C/WKContext.cpp \
-    UIProcess/API/C/WKCredential.cpp \
-    UIProcess/API/C/WKDatabaseManager.cpp \
-    UIProcess/API/C/WKDownload.cpp \
-    UIProcess/API/C/WKFrame.cpp \
-    UIProcess/API/C/WKFramePolicyListener.cpp \
-    UIProcess/API/C/WKGeolocationManager.cpp \
-    UIProcess/API/C/WKGeolocationPermissionRequest.cpp \
-    UIProcess/API/C/WKGeolocationPosition.cpp \
-    UIProcess/API/C/WKInspector.cpp \
-    UIProcess/API/C/WKOpenPanelParameters.cpp \
-    UIProcess/API/C/WKOpenPanelResultListener.cpp \
-    UIProcess/API/C/WKNavigationData.cpp \
-    UIProcess/API/C/WKPage.cpp \
-    UIProcess/API/C/WKPageGroup.cpp \
-    UIProcess/API/C/WKPluginSiteDataManager.cpp \
-    UIProcess/API/C/WKPreferences.cpp \
-    UIProcess/API/C/WKProtectionSpace.cpp \
-    UIProcess/API/cpp/qt/WKStringQt.cpp \
-    UIProcess/API/cpp/qt/WKURLQt.cpp \
-    UIProcess/API/qt/ClientImpl.cpp \
-    UIProcess/API/qt/qgraphicswkview.cpp \
-    UIProcess/API/qt/qwkcontext.cpp \
-    UIProcess/API/qt/qwkhistory.cpp \
-    UIProcess/API/qt/qwkpage.cpp \
-    UIProcess/API/qt/qwkpreferences.cpp \
     UIProcess/Authentication/AuthenticationChallengeProxy.cpp \
     UIProcess/Authentication/AuthenticationDecisionListener.cpp \
     UIProcess/Authentication/WebCredential.cpp \
@@ -551,18 +375,6 @@ SOURCES += \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \
     WebProcess/Geolocation/WebGeolocationManager.cpp \
     WebProcess/Downloads/qt/DownloadQt.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundle.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundlePage.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundlePageGroup.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp \
     WebProcess/InjectedBundle/InjectedBundle.cpp \

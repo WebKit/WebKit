@@ -1,6 +1,6 @@
 # WebKit2 - Qt4 build info
 
-QT += network
+SOURCE_DIR = $$replace(PWD, /WebKit2, "")
 
 # Use a config-specific target to prevent parallel builds file clashes on Mac
 mac: CONFIG(debug, debug|release): WEBKIT2_TARGET = webkit2d
@@ -9,6 +9,58 @@ else: WEBKIT2_TARGET = webkit2
 # Output in WebKit2/<config>
 CONFIG(debug, debug|release) : WEBKIT2_DESTDIR = debug
 else: WEBKIT2_DESTDIR = release
+
+CONFIG(standalone_package) {
+    isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = $$PWD/generated
+} else {
+    isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = generated
+}
+
+WEBKIT2_INCLUDEPATH = \
+    $$SOURCE_DIR/WebKit2 \
+    $$SOURCE_DIR/WebKit2/Platform \
+    $$SOURCE_DIR/WebKit2/Platform/CoreIPC \
+    $$SOURCE_DIR/WebKit2/Platform/qt \
+    $$SOURCE_DIR/WebKit2/Shared \
+    $$SOURCE_DIR/WebKit2/Shared/API/c \
+    $$SOURCE_DIR/WebKit2/Shared/CoreIPCSupport \
+    $$SOURCE_DIR/WebKit2/Shared/Plugins \
+    $$SOURCE_DIR/WebKit2/Shared/Plugins/Netscape \
+    $$SOURCE_DIR/WebKit2/Shared/qt \
+    $$SOURCE_DIR/WebKit2/UIProcess \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/C \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/cpp \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt \
+    $$SOURCE_DIR/WebKit2/UIProcess/Authentication \
+    $$SOURCE_DIR/WebKit2/UIProcess/Downloads \
+    $$SOURCE_DIR/WebKit2/UIProcess/Launcher \
+    $$SOURCE_DIR/WebKit2/UIProcess/Plugins \
+    $$SOURCE_DIR/WebKit2/UIProcess/qt \
+    $$SOURCE_DIR/WebKit2/WebProcess \
+    $$SOURCE_DIR/WebKit2/WebProcess/Authentication \
+    $$SOURCE_DIR/WebKit2/WebProcess/Downloads \
+    $$SOURCE_DIR/WebKit2/WebProcess/Downloads/qt \
+    $$SOURCE_DIR/WebKit2/WebProcess/Geolocation \
+    $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle \
+    $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/DOM \
+    $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c \
+    $$SOURCE_DIR/WebKit2/WebProcess/Plugins \
+    $$SOURCE_DIR/WebKit2/WebProcess/Plugins/Netscape \
+    $$SOURCE_DIR/WebKit2/WebProcess/ResourceCache \
+    $$SOURCE_DIR/WebKit2/WebProcess/WebCoreSupport \
+    $$SOURCE_DIR/WebKit2/WebProcess/WebCoreSupport/qt \
+    $$SOURCE_DIR/WebKit2/WebProcess/WebPage \
+    $$SOURCE_DIR/WebKit2/WebProcess/qt
+
+# On Symbian PREPEND_INCLUDEPATH is the best way to make sure that WebKit headers
+# are included before platform headers.
+
+symbian {
+    PREPEND_INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$WEBKIT2_GENERATED_SOURCES_DIR $$PREPEND_INCLUDEPATH
+} else {
+    INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$WEBKIT2_GENERATED_SOURCES_DIR $$INCLUDEPATH
+}
 
 defineTest(_addWebKit2Lib_common) {
     pathToWebKit2Output = $$ARGS/$$WEBKIT2_DESTDIR

@@ -3,15 +3,28 @@
 include(../common.pri)
 include(features.pri)
 
+# Uncomment this to enable Texture Mapper.
+# CONFIG += texmap
+
+QT *= network
+
 SOURCE_DIR = $$replace(PWD, /WebCore, "")
 
+# Use a config-specific target to prevent parallel builds file clashes on Mac
+mac: CONFIG(debug, debug|release): WEBCORE_TARGET = webcored
+else: WEBCORE_TARGET = webcore
+
+# Output in WebCore/<config>
+CONFIG(debug, debug|release) : WEBCORE_DESTDIR = debug
+else: WEBCORE_DESTDIR = release
+
 CONFIG(standalone_package) {
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/generated
+    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../WebCore/generated
     isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = $$PWD/../JavaScriptCore/generated
 
     PRECOMPILED_HEADER = $$PWD/../WebKit/qt/WebKit_pch.h
 } else {
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = generated
+    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../WebCore/generated
     isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = ../JavaScriptCore/generated
 
     !CONFIG(release, debug|release) {
@@ -19,18 +32,7 @@ CONFIG(standalone_package) {
     } else { # Release
         OBJECTS_DIR = obj/release
     }
-
 }
-
-# On Symbian PREPEND_INCLUDEPATH is the best way to make sure that WebKit headers
-# are included before platform headers.
-symbian {
-    PREPEND_INCLUDEPATH = $$WC_GENERATED_SOURCES_DIR $$PREPEND_INCLUDEPATH
-} else {
-    INCLUDEPATH = $$WC_GENERATED_SOURCES_DIR $$INCLUDEPATH
-}
-
-QT += network
 
 V8_DIR = "$$[QT_INSTALL_PREFIX]/src/3rdparty/v8"
 
@@ -130,15 +132,154 @@ WEBCORE_INCLUDEPATH = \
     $$SOURCE_DIR/WebKit/qt/WebCoreSupport \
     $$WEBCORE_INCLUDEPATH
 
+# On Symbian PREPEND_INCLUDEPATH is the best way to make sure that WebKit headers
+# are included before platform headers.
 symbian {
-    PREPEND_INCLUDEPATH = $$WEBCORE_INCLUDEPATH $$PREPEND_INCLUDEPATH
+    PREPEND_INCLUDEPATH = $$WEBCORE_INCLUDEPATH $$WC_GENERATED_SOURCES_DIR $$PREPEND_INCLUDEPATH
 } else {
+    INCLUDEPATH = $$WEBCORE_INCLUDEPATH $$WC_GENERATED_SOURCES_DIR $$INCLUDEPATH
+}
 
-    INCLUDEPATH = $$WEBCORE_INCLUDEPATH $$INCLUDEPATH
+symbian {
+    v8 {
+        webkitlibs.sources += v8.dll
+        QMAKE_CXXFLAGS.ARMCC += -OTime -O3
+        QMAKE_CXXFLAGS.ARMCC += --fpu softvfp+vfpv2 --fpmode fast
+    }
+
+    symbian-abld|symbian-sbsv2 {
+        # RO text (code) section in qtwebkit.dll exceeds allocated space for gcce udeb target.
+        # Move RW-section base address to start from 0xE00000 instead of the toolchain default 0x400000.
+        QMAKE_LFLAGS.ARMCC += --rw-base 0xE00000
+        MMP_RULES += ALWAYS_BUILD_AS_ARM
+    }  else {
+        QMAKE_CFLAGS -= --thumb
+        QMAKE_CXXFLAGS -= --thumb
+    }
+
+    CONFIG(release, debug|release): QMAKE_CXXFLAGS.ARMCC += -OTime -O3
+
+    !CONFIG(production):CONFIG-=def_files
+}
+
+contains(DEFINES, ENABLE_XSLT=1) {
+    QT *= xmlpatterns
+}
+
+contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
+    unix:!symbian {
+        mac {
+            INCLUDEPATH += platform/mac
+            # Note: XP_MACOSX is defined in npapi.h
+        } else {
+            maemo5 {
+                DEFINES += MOZ_PLATFORM_MAEMO=5
+            }
+            contains(DEFINES, Q_WS_MAEMO_6) {
+                DEFINES += MOZ_PLATFORM_MAEMO=6
+            }
+            DEFINES += XP_UNIX
+            DEFINES += ENABLE_NETSCAPE_PLUGIN_METADATA_CACHE=1
+        }
+    }
+}
+
+contains(DEFINES, ENABLE_GEOLOCATION=1) {
+    CONFIG *= mobility
+    MOBILITY *= location
+}
+
+contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
+    CONFIG *= mobility
+    MOBILITY *= sensors
+}
+
+contains(DEFINES, ENABLE_QT_BEARER=1) {
+    # Bearer management is part of Qt 4.7, so don't accidentially
+    # pull in Qt Mobility when building against >= 4.7
+    !greaterThan(QT_MINOR_VERSION, 6) {
+        CONFIG *= mobility
+        MOBILITY *= bearer
+    }
+}
+
+contains(DEFINES, ENABLE_VIDEO=1) {
+    contains(DEFINES, USE_GSTREAMER=1) {
+        DEFINES += WTF_USE_GSTREAMER=1
+        DEFINES += ENABLE_GLIB_SUPPORT=1
+
+        INCLUDEPATH += $$PWD/platform/graphics/gstreamer
+
+        PKGCONFIG += glib-2.0 gio-2.0 gstreamer-0.10 gstreamer-app-0.10 gstreamer-base-0.10 gstreamer-interfaces-0.10 gstreamer-pbutils-0.10 gstreamer-plugins-base-0.10 gstreamer-video-0.10
+    } else:contains(MOBILITY_CONFIG, multimedia) {
+        CONFIG   *= mobility
+        MOBILITY *= multimedia
+        DEFINES  += WTF_USE_QT_MULTIMEDIA=1
+    } else:contains(QT_CONFIG, phonon) {
+        # Add phonon manually to prevent it from coming first in
+        # the include paths, as Phonon's path.h conflicts with
+        # WebCore's Path.h on case-insensitive filesystems.
+        qtAddLibrary(phonon)
+        INCLUDEPATH -= $$QT.phonon.includes
+        INCLUDEPATH += $$QT.phonon.includes
+        mac {
+            INCLUDEPATH -= $$QT.phonon.libs/phonon.framework/Headers
+            INCLUDEPATH += $$QT.phonon.libs/phonon.framework/Headers
+        }
+    }
+}
+
+contains(DEFINES, ENABLE_WEBGL=1)|contains(CONFIG, texmap) {
+    !contains(QT_CONFIG, opengl) {
+        error( "This configuration needs an OpenGL enabled Qt. Your Qt is missing OpenGL.")
+    }
+    QT *= opengl
 }
 
 contains(QT_CONFIG, qpa):CONFIG += embedded
 
+!CONFIG(webkit-debug):CONFIG(QTDIR_build) {
+    # Remove the following 2 lines if you want debug information in WebCore
+    CONFIG -= separate_debug_info
+    CONFIG += no_debug_info
+}
+
+unix:!mac:*-g++*:QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections
+unix:!mac:*-g++*:QMAKE_LFLAGS += -Wl,--gc-sections
+linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
+
+unix:!mac:!symbian:CONFIG += link_pkgconfig
+
+# Disable C++0x mode in WebCore for those who enabled it in their Qt's mkspec
+*-g++*:QMAKE_CXXFLAGS -= -std=c++0x -std=gnu++0x
+
+# Remove whole program optimizations due to miscompilations
+win32-msvc2005|win32-msvc2008|wince*:{
+    QMAKE_CFLAGS_RELEASE -= -GL
+    QMAKE_CXXFLAGS_RELEASE -= -GL
+
+    # Disable incremental linking for windows 32bit OS debug build as WebKit is so big
+    # that linker failes to link incrementally in debug mode.
+    ARCH = $$(PROCESSOR_ARCHITECTURE)
+    WOW64ARCH = $$(PROCESSOR_ARCHITEW6432)
+    equals(ARCH, x86):{
+        isEmpty(WOW64ARCH): QMAKE_LFLAGS_DEBUG += /INCREMENTAL:NO
+    }
+}
+
 enable_fast_mobile_scrolling: DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 
 use_qt_mobile_theme: DEFINES += WTF_USE_QT_MOBILE_THEME=1
+
+defineTest(addWebCoreLib) {
+    pathToWebCoreOutput = $$ARGS/$$WEBCORE_DESTDIR
+    QMAKE_LIBDIR += $$pathToWebCoreOutput
+    POST_TARGETDEPS += $${pathToWebCoreOutput}$${QMAKE_DIR_SEP}lib$${WEBCORE_TARGET}.a
+    CONFIG -= explicitlib
+    export(QMAKE_LIBDIR)
+    export(POST_TARGETDEPS)
+    export(CONFIG)
+    LIBS = -l$$WEBCORE_TARGET $$LIBS
+    export(LIBS)
+    return(true)
+}

@@ -1,3 +1,19 @@
+2011-02-22  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Redesign the build system
+        https://bugs.webkit.org/show_bug.cgi?id=51339
+
+        Part 2.
+
+        Build WebCore as a static library, compile the WebKit API and WebKit2 API
+        in a final step and link to WebKit2, WebCore and JSC libraries to fix
+        linking issues resulting from stripped away symbols.
+
+        * Source/WebKit.pri: Add common include paths
+        * Source/WebKit.pro: Add new project file to SUBDIRS
+
 2011-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

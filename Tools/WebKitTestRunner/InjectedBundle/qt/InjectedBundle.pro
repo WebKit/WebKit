@@ -49,22 +49,24 @@ addJavaScriptCoreLib(../../../JavaScriptCore)
 include(../../../../Source/WebKit2/WebKit2.pri)
 addWebKit2Lib(../../../WebKit2)
 
-INCLUDEPATH += \
+INCLUDEPATH = \
     $$PWD \
     $$PWD/.. \
     $$PWD/../.. \
     $$PWD/../Bindings \
+    $$PWD/../../../../Source \
     $$PWD/../../../../Source/JavaScriptCore \
-    $$PWD/../../../../Source/JavaScriptCore/wtf \
+    $$PWD/../../../../Source/JavaScriptCore/ForwardingHeaders \
+    $$PWD/../../../../Source/JavaScriptCore/wtf/unicode \
     $$PWD/../../../../Source/WebCore \
     $$PWD/../../../../Source/WebCore/platform/text \
     $$PWD/../../../../Source/WebKit2 \
     $$PWD/../../../../Source/WebKit2/Shared \
-    $$GENERATED_SOURCES_DIR
-
-INCLUDEPATH += \
+    $$OUTPUT_DIR/include/QtWebKit \
     $$OUTPUT_DIR/include \
+    $$GENERATED_SOURCES_DIR \
     $$WC_GENERATED_SOURCES_DIR
+
 
 PREFIX_HEADER = $$PWD/../../WebKitTestRunnerPrefix.h
 *-g++*:QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"

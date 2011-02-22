@@ -51,7 +51,9 @@ CONFIG(release, debug|release) {
     DEFINES += NDEBUG
 }
 
-INCLUDEPATH += $$OUTPUT_DIR/include/QtWebKit
+INCLUDEPATH += \
+    $$OUTPUT_DIR/include/QtWebKit \
+    $$OUTPUT_DIR/include
 INCLUDEPATH += $$QT.script.includes
 
 CONFIG -= warn_on
