@@ -1,3 +1,11 @@
+2011-02-22 MORITA Hajime  <morrita@google.com>
+        
+        Unreviewed test_expectation.txt update. 
+
+        Removed more BUGWK54736 lines which are no longer failed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-22  MORITA Hajime  <morrita@google.com>
 
         Unreviewed test_expectation.txt update. 
