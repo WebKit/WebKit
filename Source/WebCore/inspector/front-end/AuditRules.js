@@ -65,9 +65,15 @@ WebInspector.AuditRules.getDomainToResourcesMap = function(resources, types, nee
 
 WebInspector.AuditRules.evaluateInTargetWindow = function(func, args, callback)
 {
-    InjectedScriptAgent.evaluateOnSelf(func.toString(), args, callback);
+    function mycallback(result)
+    {
+        if (result)
+            callback(JSON.parse(result.description));
+        else
+            callback(null);
+    }
+    RuntimeAgent.evaluate("JSON.stringify((" + func + ")(" + JSON.stringify(args) + "))", "none", false, mycallback);
 }
-
 
 WebInspector.AuditRules.GzipRule = function()
 {
@@ -644,24 +650,23 @@ WebInspector.AuditRules.ImageDimensionsRule = function()
 WebInspector.AuditRules.ImageDimensionsRule.prototype = {
     doRun: function(resources, result, callback)
     {
-        function doneCallback(context)
+        var urlToNoDimensionCount = {};
+
+        function doneCallback()
         {
-            var map = context.urlToNoDimensionCount;
-            for (var url in map) {
+            for (var url in urlToNoDimensionCount) {
                 var entry = entry || result.addChild("A width and height should be specified for all images in order to speed up page display. The following image(s) are missing a width and/or height:", true);
                 var value = WebInspector.AuditRuleResult.linkifyDisplayName(url);
-                if (map[url] > 1)
-                    value += String.sprintf(" (%d uses)", map[url]);
+                if (urlToNoDimensionCount[url] > 1)
+                    value += String.sprintf(" (%d uses)", urlToNoDimensionCount[url]);
                 entry.addChild(value);
                 result.violationCount++;
             }
             callback(entry ? result : null);
         }
 
-        function imageStylesReady(imageId, context, styles)
+        function imageStylesReady(imageId, lastCall, styles)
         {
-            --context.imagesLeft;
-
             const node = WebInspector.domAgent.nodeForId(imageId);
             var src = node.getAttribute("src");
             if (!src.asParsedURL()) {
@@ -677,8 +682,8 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
 
             const computedStyle = styles.computedStyle;
             if (computedStyle.getPropertyValue("position") === "absolute") {
-                if (!context.imagesLeft)
-                    doneCallback(context);
+                if (lastCall)
+                    doneCallback();
                 return;
             }
 
@@ -702,39 +707,66 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             }
 
             if (!widthFound || !heightFound) {
-                if (src in context.urlToNoDimensionCount)
-                    ++context.urlToNoDimensionCount[src];
+                if (src in urlToNoDimensionCount)
+                    ++urlToNoDimensionCount[src];
                 else
-                    context.urlToNoDimensionCount[src] = 1;
+                    urlToNoDimensionCount[src] = 1;
             }
 
-            if (!context.imagesLeft)
-                doneCallback(context);
+            if (lastCall)
+                doneCallback();
         }
 
-        function receivedImages(imageIds)
+        function getStyles(nodeIds)
         {
-            if (!imageIds || !imageIds.length)
+            for (var i = 0; i < nodeIds.length; ++i)
+                WebInspector.cssModel.getStylesAsync(nodeIds[i], imageStylesReady.bind(this, nodeIds[i], i === nodeIds.length - 1));
+        }
+
+        function receivedImages(arrayElements)
+        {
+            if (!arrayElements)
                 return callback(null);
-            var context = {imagesLeft: imageIds.length, urlToNoDimensionCount: {}};
-            for (var i = imageIds.length - 1; i >= 0; --i)
-                WebInspector.cssModel.getStylesAsync(imageIds[i], imageStylesReady.bind(this, imageIds[i], context));
+
+            var nodeIds = [];
+
+            function appendId(lastCall, nodeId)
+            {
+                if (nodeId)
+                    nodeIds.push(nodeId);
+
+                if (lastCall)
+                    getStyles(nodeIds);
+            }
+
+            for (var i = 0; arrayElements && i < arrayElements.length; ++i) {
+                var value = arrayElements[i].value;
+                value.pushNodeToFrontend(appendId.bind(this, i === arrayElements.length - 1));
+            }
+        }
+
+        function receivedImagesArray(payload)
+        {
+            if (!payload)
+                return callback(null);
+
+            var nodeIdsArray = WebInspector.RemoteObject.fromPayload(payload)
+            nodeIdsArray.getOwnProperties(false, receivedImages);
         }
 
         function pushImageNodes()
         {
-            const nodeIds = [];
+            var result = [];
             var nodes = document.getElementsByTagName("img");
+
             for (var i = 0; i < nodes.length; ++i) {
-                if (!nodes[i].src)
-                    continue;
-                var nodeId = this.getNodeId(nodes[i]);
-                nodeIds.push(nodeId);
+                if (nodes[i].src)
+                    result.push(nodes[i]);
             }
-            return nodeIds;
+            return result;
         }
 
-        WebInspector.AuditRules.evaluateInTargetWindow(pushImageNodes, [], receivedImages);
+        RuntimeAgent.evaluate("(" + pushImageNodes + ")()", "none", false, receivedImagesArray);
     }
 }
 

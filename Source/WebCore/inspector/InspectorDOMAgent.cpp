@@ -380,6 +380,16 @@ void InspectorDOMAgent::pushChildNodesToFrontend(long nodeId)
     m_frontend->setChildNodes(nodeId, children.release());
 }
 
+void InspectorDOMAgent::inspect(Node* node)
+{
+    if (!m_frontend)
+        return;
+
+    long id = pushNodePathToFrontend(node);
+    if (id)
+        m_frontend->inspectElementRequested(id);
+}
+
 long InspectorDOMAgent::inspectedNode(unsigned long num)
 {
     if (num < m_inspectedNodes.size())
@@ -778,11 +788,14 @@ void InspectorDOMAgent::getNodePrototypes(long nodeId, RefPtr<InspectorValue>* r
         injectedScript.getNodePrototypes(nodeId, result);
 }
 
-void InspectorDOMAgent::pushNodeToFrontend(PassRefPtr<InspectorObject> objectId, RefPtr<InspectorValue>* result)
+void InspectorDOMAgent::pushNodeToFrontend(PassRefPtr<InspectorObject> objectId, long* nodeId)
 {
     InjectedScript injectedScript = m_injectedScriptHost->injectedScriptForObjectId(objectId.get());
-    if (!injectedScript.hasNoValue())
-        injectedScript.pushNodeToFrontend(objectId, result);
+    Node* node = injectedScript.nodeForObjectId(objectId);
+    if (node)
+        *nodeId = pushNodePathToFrontend(node);
+    else
+        *nodeId = 0;
 }
 
 String InspectorDOMAgent::documentURLString(Document* document) const

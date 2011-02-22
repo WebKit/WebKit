@@ -41,6 +41,7 @@
 namespace WebCore {
 
 class InspectorValue;
+class Node;
 class ScriptFunctionCall;
 
 class InjectedScript {
@@ -52,11 +53,10 @@ public:
 
     void evaluate(const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
     void evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
-    void evaluateOnSelf(const String& functionBody, PassRefPtr<InspectorArray> argumentsArray, RefPtr<InspectorValue>* result);
     void getCompletions(const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
     void getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
     void getProperties(PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result);
-    void pushNodeToFrontend(PassRefPtr<InspectorObject> objectId, RefPtr<InspectorValue>* result);
+    Node* nodeForObjectId(PassRefPtr<InspectorObject> objectId);
     void resolveNode(long nodeId, RefPtr<InspectorValue>* result);
     void getNodeProperties(long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result);
     void getNodePrototypes(long nodeId, RefPtr<InspectorValue>* result);

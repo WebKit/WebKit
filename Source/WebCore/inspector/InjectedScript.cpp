@@ -33,7 +33,9 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "InjectedScriptHost.h"
 #include "InspectorValues.h"
+#include "Node.h"
 #include "PlatformString.h"
 #include "ScriptFunctionCall.h"
 
@@ -60,14 +62,6 @@ void InjectedScript::evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId
     function.appendArgument(expression);
     function.appendArgument(objectGroup);
     function.appendArgument(includeCommandLineAPI);
-    makeCall(function, result);
-}
-
-void InjectedScript::evaluateOnSelf(const String& functionBody, PassRefPtr<InspectorArray> argumentsArray, RefPtr<InspectorValue>* result)
-{
-    ScriptFunctionCall function(m_injectedScriptObject, "evaluateOnSelf");
-    function.appendArgument(functionBody);
-    function.appendArgument(argumentsArray->toJSONString());
     makeCall(function, result);
 }
 
@@ -98,11 +92,19 @@ void InjectedScript::getProperties(PassRefPtr<InspectorObject> objectId, bool ig
     makeCall(function, result);
 }
 
-void InjectedScript::pushNodeToFrontend(PassRefPtr<InspectorObject> objectId, RefPtr<InspectorValue>* result)
+Node* InjectedScript::nodeForObjectId(PassRefPtr<InspectorObject> objectId)
 {
-    ScriptFunctionCall function(m_injectedScriptObject, "pushNodeToFrontend");
+    if (hasNoValue() || !canAccessInspectedWindow())
+        return 0;
+
+    ScriptFunctionCall function(m_injectedScriptObject, "nodeForObjectId");
     function.appendArgument(objectId->toJSONString());
-    makeCall(function, result);
+
+    bool hadException = false;
+    ScriptValue resultValue = function.call(hadException);
+    ASSERT(!hadException);
+
+    return InjectedScriptHost::toNode(resultValue);
 }
 
 void InjectedScript::resolveNode(long nodeId, RefPtr<InspectorValue>* result)

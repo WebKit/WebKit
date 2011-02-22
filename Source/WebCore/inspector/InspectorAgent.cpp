@@ -233,8 +233,7 @@ void InspectorAgent::focusNode()
     ASSERT(m_frontend);
     ASSERT(m_nodeToFocus);
 
-    long id = m_domAgent->pushNodePathToFrontend(m_nodeToFocus.get());
-    m_frontend->updateFocusedNode(id);
+    m_domAgent->inspect(m_nodeToFocus.get());
     m_nodeToFocus = 0;
 }
 

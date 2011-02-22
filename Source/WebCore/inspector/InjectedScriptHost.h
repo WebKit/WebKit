@@ -47,6 +47,7 @@ class InspectorFrontend;
 class InspectorObject;
 class Node;
 class ScriptObject;
+class ScriptValue;
 class Storage;
 
 class InjectedScriptHost : public RefCounted<InjectedScriptHost>
@@ -57,10 +58,11 @@ public:
         return adoptRef(new InjectedScriptHost(inspectorAgent));
     }
 
+    static Node* toNode(ScriptValue value);
+
     ~InjectedScriptHost();
 
-    // Part of the protocol.
-    void evaluateOnSelf(const String& functionBody, PassRefPtr<InspectorArray> argumentsArray, RefPtr<InspectorValue>* result);
+    void inspect(Node* node);
 
     InspectorAgent* inspectorAgent() { return m_inspectorAgent; }
     void disconnectController() { m_inspectorAgent = 0; }
@@ -69,7 +71,6 @@ public:
 
     void copyText(const String& text);
     Node* nodeForId(long nodeId);
-    long pushNodePathToFrontend(Node* node, bool withChildren, bool selectInUI);
     long inspectedNode(unsigned long num);
 
 #if ENABLE(DATABASE)

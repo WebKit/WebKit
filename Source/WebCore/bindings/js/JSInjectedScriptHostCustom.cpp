@@ -70,11 +70,19 @@
 #include "JavaScriptCallFrame.h"
 #include "JSJavaScriptCallFrame.h"
 #include "ScriptDebugServer.h"
+#include "ScriptValue.h"
 #endif
 
 using namespace JSC;
 
 namespace WebCore {
+
+Node* InjectedScriptHost::toNode(ScriptValue value)
+{
+    if (!value.isObject() || value.isNull())
+        return 0;
+    return WebCore::toNode(value.jsValue());
+}
 
 ScriptObject InjectedScriptHost::createInjectedScript(const String& source, ScriptState* scriptState, long id)
 {
@@ -144,18 +152,14 @@ JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)
     return jsString(exec, result);
 }
 
-JSValue JSInjectedScriptHost::pushNodePathToFrontend(ExecState* exec)
+JSValue JSInjectedScriptHost::inspect(ExecState* exec)
 {
-    if (exec->argumentCount() < 3)
-        return jsUndefined();
-
-    Node* node = toNode(exec->argument(0));
-    if (!node)
-        return jsUndefined();
-
-    bool withChildren = exec->argument(1).toBoolean(exec);
-    bool selectInUI = exec->argument(2).toBoolean(exec);
-    return jsNumber(impl()->pushNodePathToFrontend(node, withChildren, selectInUI));
+    if (exec->argumentCount() >= 1) {
+        Node* node = WebCore::toNode(exec->argument(0));
+        if (node)
+            impl()->inspect(node);
+    }
+    return jsUndefined();
 }
 
 #if ENABLE(DATABASE)

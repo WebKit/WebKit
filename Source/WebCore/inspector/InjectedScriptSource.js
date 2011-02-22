@@ -287,11 +287,6 @@ InjectedScript.prototype = {
         }
     },
 
-    getNodeId: function(node)
-    {
-        return InjectedScriptHost.pushNodePathToFrontend(node, false, false);
-    },
-
     callFrames: function()
     {
         var callFrame = InjectedScriptHost.currentCallFrame();
@@ -338,6 +333,15 @@ InjectedScript.prototype = {
         return this._idToWrappedObject[objectId.id];
     },
 
+    nodeForObjectId: function(objectId)
+    {
+        var parsedObjectId = this._parseObjectId(objectId);
+        var object = this._objectForId(parsedObjectId);
+        if (!object || this._type(object) !== "node")
+            return null;
+        return object;
+    },
+
     resolveNode: function(nodeId)
     {
         var node = this._nodeForId(nodeId);
@@ -373,21 +377,6 @@ InjectedScript.prototype = {
             prototype = prototype.__proto__;
         } while (prototype)
         return result;
-    },
-
-    pushNodeToFrontend: function(objectId)
-    {
-        var parsedObjectId = this._parseObjectId(objectId);
-        var object = this._objectForId(parsedObjectId);
-        if (!object || this._type(object) !== "node")
-            return false;
-        return InjectedScriptHost.pushNodePathToFrontend(object, false, false);
-    },
-
-    evaluateOnSelf: function(funcBody, args)
-    {
-        var func = eval("(" + funcBody + ")");
-        return func.apply(this, eval("(" + args + ")") || []);
     },
 
     _isDefined: function(object)
@@ -702,7 +691,7 @@ CommandLineAPIImpl.prototype = {
 
         inspectedWindow.console.log(object);
         if (injectedScript._type(object) === "node")
-            InjectedScriptHost.pushNodePathToFrontend(object, false, true);
+            InjectedScriptHost.inspect(object);
         else {
             switch (injectedScript._describe(object)) {
                 case "Database":

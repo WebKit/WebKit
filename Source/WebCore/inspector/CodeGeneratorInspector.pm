@@ -55,10 +55,6 @@ $typeTransform{"FileSystem"} = {
     "header" => "InspectorFileSystemAgent.h",
     "domainAccessor" => "m_inspectorAgent->fileSystemAgent()",
 };
-$typeTransform{"InjectedScript"} = {
-    "forwardHeader" => "InjectedScriptHost.h",
-    "domainAccessor" => "m_inspectorAgent->injectedScriptAgent()",
-};
 $typeTransform{"Inspector"} = {
     "forwardHeader" => "InspectorAgent.h",
     "domainAccessor" => "m_inspectorAgent",

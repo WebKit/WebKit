@@ -1,3 +1,48 @@
+2011-02-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: refactor InjectedScript : InspectorDOMAgent interaction.
+        https://bugs.webkit.org/show_bug.cgi?id=54954
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::toNode):
+        (WebCore::JSInjectedScriptHost::inspect):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::toNode):
+        (WebCore::V8InjectedScriptHost::inspectCallback):
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::nodeForObjectId):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::inspect):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::focusNode):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::inspect):
+        (WebCore::InspectorDOMAgent::pushNodeToFrontend):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.evaluateInTargetWindow):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun.getStyles):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun.receivedImages):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun.pushImageNodes):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.completions):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMDispatcher.prototype.childNodeRemoved):
+        (WebInspector.DOMDispatcher.prototype.inspectElementRequested):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.pushNodeToFrontend):
+
 2011-02-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

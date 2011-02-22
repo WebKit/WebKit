@@ -80,11 +80,11 @@ InjectedScriptHost::~InjectedScriptHost()
 {
 }
 
-void InjectedScriptHost::evaluateOnSelf(const String& functionBody, PassRefPtr<InspectorArray> argumentsArray, RefPtr<InspectorValue>* result)
+void InjectedScriptHost::inspect(Node* node)
 {
-    InjectedScript injectedScript = injectedScriptForMainFrame();
-    if (!injectedScript.hasNoValue())
-        injectedScript.evaluateOnSelf(functionBody, argumentsArray, result);
+    InspectorDOMAgent* domAgent = inspectorDOMAgent();
+    if (domAgent)
+        domAgent->inspect(node);
 }
 
 void InjectedScriptHost::clearConsoleMessages()
@@ -103,19 +103,6 @@ Node* InjectedScriptHost::nodeForId(long nodeId)
     if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
         return domAgent->nodeForId(nodeId);
     return 0;
-}
-
-long InjectedScriptHost::pushNodePathToFrontend(Node* node, bool withChildren, bool selectInUI)
-{
-    InspectorDOMAgent* domAgent = inspectorDOMAgent();
-    if (!domAgent || !frontend())
-        return 0;
-    long id = domAgent->pushNodePathToFrontend(node);
-    if (withChildren)
-        domAgent->pushChildNodesToFrontend(id);
-    if (selectInUI)
-        frontend()->updateFocusedNode(id);
-    return id;
 }
 
 long InjectedScriptHost::inspectedNode(unsigned long num)

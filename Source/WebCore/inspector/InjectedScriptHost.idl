@@ -36,7 +36,7 @@ module core {
 
         void copyText(in DOMString text);
         [Custom] DOMObject nodeForId(in long nodeId);
-        [Custom] int pushNodePathToFrontend(in DOMObject node, in boolean withChildren, in boolean selectInUI);
+        [Custom] int inspect(in DOMObject node);
         long inspectedNode(in unsigned long num);
         [Custom] DOMObject internalConstructorName(in DOMObject object);
 

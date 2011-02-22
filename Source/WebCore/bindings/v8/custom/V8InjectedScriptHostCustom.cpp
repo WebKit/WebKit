@@ -54,6 +54,13 @@
 
 namespace WebCore {
 
+Node* InjectedScriptHost::toNode(ScriptValue value)
+{
+    if (!value.isObject() || value.isNull())
+        return 0;
+    return V8Node::toNative(v8::Handle<v8::Object>::Cast(value.v8Value()));
+}
+
 static void WeakReferenceCallback(v8::Persistent<v8::Value> object, void* parameter)
 {
     InjectedScriptHost* nativeObject = static_cast<InjectedScriptHost*>(parameter);
@@ -164,18 +171,16 @@ v8::Handle<v8::Value> V8InjectedScriptHost::internalConstructorNameCallback(cons
     return args[0]->ToObject()->GetConstructorName();
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::pushNodePathToFrontendCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::inspectCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.pushNodePathToFrontend()");
-    if (args.Length() < 3)
+    INC_STATS("InjectedScriptHost.inspect()");
+    if (args.Length() < 1)
         return v8::Undefined();
 
     InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
     Node* node = V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0]));
-    bool withChildren = args[1]->ToBoolean()->Value();
-    bool selectInUI = args[2]->ToBoolean()->Value();
     if (node)
-        return v8::Number::New(host->pushNodePathToFrontend(node, withChildren, selectInUI));
+        host->inspect(node);
 
     return v8::Undefined();
 }

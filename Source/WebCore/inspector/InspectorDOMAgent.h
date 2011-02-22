@@ -115,7 +115,7 @@ public:
     void resolveNode(long nodeId, RefPtr<InspectorValue>* result);
     void getNodeProperties(long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result);
     void getNodePrototypes(long nodeId, RefPtr<InspectorValue>* result);
-    void pushNodeToFrontend(PassRefPtr<InspectorObject> objectId, RefPtr<InspectorValue>* result);
+    void pushNodeToFrontend(PassRefPtr<InspectorObject> objectId, long* nodeId);
 
     // Methods called from the InspectorInstrumentation.
     void setDocument(Document*);
@@ -134,6 +134,7 @@ public:
     long pushNodePathToFrontend(Node*);
     void pushChildNodesToFrontend(long nodeId);
     void pushNodeByPathToFrontend(const String& path, long* nodeId);
+    void inspect(Node*);
     long inspectedNode(unsigned long num);
     void copyNode(long nodeId);
     void setDOMListener(DOMListener*);

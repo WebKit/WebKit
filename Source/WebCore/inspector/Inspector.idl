@@ -55,7 +55,6 @@ module core {
         void hideDOMNodeHighlight();
         void highlightFrame(in unsigned long frameId);
         void hideFrameHighlight();
-        [event] void updateFocusedNode(out long nodeId);
 
         void setUserAgentOverride(in String userAgent);
 
@@ -79,10 +78,6 @@ module core {
         void getProperties(in Object objectId, in boolean ignoreHasOwnProperty, in boolean abbreviate, out Value result);
         void setPropertyValue(in Object objectId, in String propertyName, in String expression, out Value result);
         void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
-    };
-
-    interface [Conditional=INSPECTOR] InjectedScript {
-        void evaluateOnSelf(in String functionBody, in Array argumentsArray, out Value result);
     };
 
     interface [Conditional=INSPECTOR] Console {
@@ -166,7 +161,7 @@ module core {
         void resolveNode(in long nodeId, out Value result);
         void getNodeProperties(in long nodeId, in Array propertiesArray, out Value result);
         void getNodePrototypes(in long nodeId, out Value result);
-        void pushNodeToFrontend(in Object objectId, out Value result);
+        void pushNodeToFrontend(in Object objectId, out long nodeId);
 
         [event] void setDocument(out Value root); // FIXME: should be requested from the front-end as getDocument.
         [event] void attributesUpdated(out long id, out Array attributes);
@@ -176,6 +171,7 @@ module core {
         [event] void childNodeCountUpdated(out long id, out int newValue);
         [event] void childNodeInserted(out long parentId, out long prevId, out Object node);
         [event] void childNodeRemoved(out long parentId, out long id);
+        [event] void inspectElementRequested(out long nodeId);
     };
 
     interface [Conditional=INSPECTOR] CSS {

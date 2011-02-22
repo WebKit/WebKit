@@ -495,6 +495,11 @@ WebInspector.DOMDispatcher.prototype = {
     childNodeRemoved: function(parentId, nodeId)
     {
         this._domAgent._childNodeRemoved(parentId, nodeId);
+    },
+
+    inspectElementRequested: function(nodeId)
+    {
+        WebInspector.updateFocusedNode(nodeId);
     }
 }
 

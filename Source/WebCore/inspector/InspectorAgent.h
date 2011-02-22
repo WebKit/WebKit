@@ -142,7 +142,6 @@ public:
     InspectorConsoleAgent* consoleAgent() { return m_consoleAgent.get(); }
     InspectorCSSAgent* cssAgent() { return m_cssAgent.get(); }
     InspectorDOMAgent* domAgent() { return m_domAgent.get(); }
-    InjectedScriptHost* injectedScriptAgent() { return m_injectedScriptHost.get(); }
     InspectorRuntimeAgent* runtimeAgent() { return m_runtimeAgent.get(); }
     InspectorTimelineAgent* timelineAgent() { return m_timelineAgent.get(); }
 #if ENABLE(DATABASE)
