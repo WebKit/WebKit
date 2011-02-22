@@ -523,7 +523,7 @@ ChromeClientChromium* PopupContainer::chromeClientChromium()
     return static_cast<ChromeClientChromium*>(m_frameView->frame()->page()->chrome()->client());
 }
 
-void PopupContainer::show(const IntRect& r, FrameView* v, int index)
+void PopupContainer::showInRect(const IntRect& r, FrameView* v, int index)
 {
     // The rect is the size of the select box. It's usually larger than we need.
     // subtract border size so that usually the container will be displayed
@@ -1382,7 +1382,7 @@ void PopupMenuChromium::show(const IntRect& r, FrameView* v, int index)
 {
     if (!p.popup)
         p.popup = PopupContainer::create(client(), PopupContainer::Select, dropDownSettings);
-    p.popup->show(r, v, index);
+    p.popup->showInRect(r, v, index);
 }
 
 void PopupMenuChromium::hide()

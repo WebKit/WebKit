@@ -1979,7 +1979,7 @@ void WebViewImpl::applyAutoFillSuggestions(
     if (m_autoFillPopupShowing) {
         refreshAutoFillPopup();
     } else {
-        m_autoFillPopup->show(focusedNode->getRect(), focusedNode->ownerDocument()->view(), 0);
+        m_autoFillPopup->showInRect(focusedNode->getRect(), focusedNode->ownerDocument()->view(), 0);
         m_autoFillPopupShowing = true;
     }
 }

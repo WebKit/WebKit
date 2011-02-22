@@ -1,5 +1,20 @@
 2011-02-21  Nico Weber  <thakis@chromium.org>
 
+        Reviewed by James Robinson.
+
+        [chromium] PopupContainer::show() confuses clang's -Woverloaded-virtual
+        https://bugs.webkit.org/show_bug.cgi?id=54923
+
+        Rename PopupContainer::show() to showInRect(), to make it obvious it's
+        not an override of ScrollView::show().
+
+        No intended functionality change.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::applyAutoFillSuggestions):
+
+2011-02-21  Nico Weber  <thakis@chromium.org>
+
         Reviewed by Kent Tamura.
 
         [chromium] ChromePluginPrintContext::begin() fails to override superclass method
