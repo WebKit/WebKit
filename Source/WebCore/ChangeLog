@@ -1,3 +1,14 @@
+2011-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] make distcheck fails
+        https://bugs.webkit.org/show_bug.cgi?id=54943
+
+        Added new headers and removed references to deleted files.
+
+        * GNUmakefile.am:
+
 2011-02-21  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -1,3 +1,14 @@
+2011-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] make distcheck fails
+        https://bugs.webkit.org/show_bug.cgi?id=54943
+
+        Removed reference to NotImplemented.h which was removed.
+
+        * GNUmakefile.am:
+
 2011-02-22  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

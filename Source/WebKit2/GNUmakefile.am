@@ -194,7 +194,6 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Shared/MutableDictionary.cpp \
 	Source/WebKit2/Shared/MutableDictionary.h \
 	Source/WebKit2/Shared/NativeWebKeyboardEvent.h \
-	Source/WebKit2/Shared/NotImplemented.h \
 	Source/WebKit2/Shared/OriginAndDatabases.cpp \
 	Source/WebKit2/Shared/OriginAndDatabases.h \
 	Source/WebKit2/Shared/PlatformPopupMenuData.cpp \
