@@ -1,3 +1,14 @@
+2011-02-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Re-add early bail out in dispatchDecidePolicyForNavigationAction with prevents
+        a crash running fast/loader/empty-embed-src-attribute.html. This matches a 
+        bail out in the default policy delegate in WebKit1.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2011-02-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

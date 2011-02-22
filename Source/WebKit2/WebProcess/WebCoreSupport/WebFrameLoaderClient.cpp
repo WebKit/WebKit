@@ -629,6 +629,12 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     if (!webPage)
         return;
 
+    // Always ignore requests with empty URLs. 
+    if (request.isEmpty()) { 
+        (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyIgnore); 
+        return; 
+    }
+
     RefPtr<APIObject> userData;
 
     RefPtr<InjectedBundleNavigationAction> action = InjectedBundleNavigationAction::create(m_frame, navigationAction, formState);
