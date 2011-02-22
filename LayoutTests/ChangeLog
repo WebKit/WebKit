@@ -1,5 +1,11 @@
 2011-02-22  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK rebaseline of fast/forms/placeholder-position.html
+
+        * platform/gtk/fast/forms/placeholder-position-expected.txt:
+
+2011-02-22  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK rebaseline of media/video-aspect-ratio.html
 
         * platform/gtk/media/video-aspect-ratio-expected.txt:

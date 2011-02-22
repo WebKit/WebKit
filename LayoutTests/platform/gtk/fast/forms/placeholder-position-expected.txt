@@ -15,30 +15,37 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (0,16) size 0x0
           RenderBlock {DIV} at (172,0) size 16x16
       RenderBR {BR} at (198,78) size 0x0
-      RenderBR {BR} at (206,135) size 0x0
-      RenderTextControl {INPUT} at (2,137) size 194x39 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderBR {BR} at (198,178) size 0x0
-      RenderBR {BR} at (206,239) size 0x0
-      RenderTextControl {INPUT} at (5,244) size 180x30 [bgcolor=#FFFFFF] [border: (5px solid #000000)]
-      RenderBR {BR} at (190,264) size 0x0
-      RenderBR {BR} at (198,306) size 0x0
+      RenderTextControl {INPUT} at (2,89) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderBlock {DIV} at (3,2) size 188x20
+          RenderBlock {DIV} at (0,0) size 16x16
+          RenderBlock {DIV} at (172,0) size 16x16
+      RenderBR {BR} at (198,107) size 0x0
+      RenderBR {BR} at (206,164) size 0x0
+      RenderTextControl {INPUT} at (2,166) size 194x39 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBR {BR} at (198,207) size 0x0
+      RenderBR {BR} at (206,268) size 0x0
+      RenderTextControl {INPUT} at (5,273) size 180x30 [bgcolor=#FFFFFF] [border: (5px solid #000000)]
+      RenderBR {BR} at (190,293) size 0x0
+      RenderBR {BR} at (198,335) size 0x0
 layer at (13,13) size 172x19
   RenderBlock {DIV} at (0,1) size 172x19
 layer at (13,42) size 188x19
   RenderBlock {DIV} at (3,3) size 188x19
 layer at (13,71) size 172x19
   RenderBlock {DIV} at (0,1) size 172x19
-layer at (10,97) size 202x44 clip at (11,98) size 200x42
-  RenderTextControl {TEXTAREA} at (2,89) size 202x44 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (29,100) size 156x19
+  RenderBlock {DIV} at (16,1) size 156x19
+layer at (10,126) size 202x44 clip at (11,127) size 200x42
+  RenderTextControl {TEXTAREA} at (2,118) size 202x44 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 196x19
-layer at (13,155) size 188x19
+layer at (13,184) size 188x19
   RenderBlock {DIV} at (3,10) size 188x19
-layer at (10,188) size 202x57 clip at (11,189) size 200x55
-  RenderTextControl {TEXTAREA} at (2,180) size 202x57 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (10,217) size 202x57 clip at (11,218) size 200x55
+  RenderTextControl {TEXTAREA} at (2,209) size 202x57 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,16) size 196x19
-layer at (19,258) size 168x18
+layer at (19,287) size 168x18
   RenderBlock {DIV} at (6,6) size 168x18
-layer at (10,289) size 194x39
-  RenderTextControl {INPUT} at (2,281) size 194x39 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-layer at (13,299) size 188x19
+layer at (10,318) size 194x39
+  RenderTextControl {INPUT} at (2,310) size 194x39 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+layer at (13,328) size 188x19
   RenderBlock {DIV} at (3,10) size 188x19
