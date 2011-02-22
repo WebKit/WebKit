@@ -1,3 +1,17 @@
+2011-02-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        This patch changes a test to work around a bug in PrettyPatch where
+        it will crash if lines starting with "--" are missing from the actual
+        output. The actual fix needed to PrettyPatch is described in the
+        bug.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54918
+
+        * platform/mac/fast/objc/dom-html-select-activate-expected.txt:
+        * platform/mac/fast/objc/dom-html-select-activate.html:
+
 2011-02-21  MORITA Hajime  <morrita@google.com>
 
         Unreviewed test_expectation.txt update.
