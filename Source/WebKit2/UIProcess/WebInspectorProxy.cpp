@@ -38,8 +38,7 @@
 #include "WebView.h"
 #endif
 
-#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
-#include "NotImplemented.h"
+#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 

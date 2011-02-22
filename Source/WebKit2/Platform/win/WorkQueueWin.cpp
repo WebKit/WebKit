@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WorkQueue.h"
 
+#include <WebCore/NotImplemented.h>
 #include <wtf/Threading.h>
-#include "NotImplemented.h"
 
 inline WorkQueue::WorkItemWin::WorkItemWin(PassOwnPtr<WorkItem> item, WorkQueue* queue)
     : m_item(item)

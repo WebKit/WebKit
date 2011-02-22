@@ -27,9 +27,9 @@
 #include "config.h"
 #include "PluginInfoStore.h"
 
-#include "NotImplemented.h"
 #include "PluginDatabase.h"
 #include "PluginPackage.h"
+#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 

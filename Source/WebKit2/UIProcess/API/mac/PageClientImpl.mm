@@ -29,7 +29,6 @@
 #import "DataReference.h"
 #import "FindIndicator.h"
 #import "NativeWebKeyboardEvent.h"
-#import "NotImplemented.h"
 #import "TextInfo.h"
 #import "WKAPICast.h"
 #import "WKStringCF.h"
@@ -42,6 +41,7 @@
 #import <WebCore/FoundationExtras.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/NotImplemented.h>
 #import <wtf/PassOwnPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>

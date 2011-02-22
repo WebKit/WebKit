@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LayerTreeContext.h"
 
-#include "NotImplemented.h"
+#include <WebCore/NotImplemented.h>
 
 namespace WebKit {
 

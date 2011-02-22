@@ -1,3 +1,15 @@
+2011-02-22  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        notImplemented() should behave identical in WebCore and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=54449
+
+        No functional change so no new tests.
+
+        * WebCore.xcodeproj/project.pbxproj: Add NotImplemented.h as private header
+        to be able to use it in WebKit2.
+
 2011-02-22  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Laszlo Gombos.

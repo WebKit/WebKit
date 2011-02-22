@@ -1,3 +1,76 @@
+2011-02-22  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        notImplemented() should behave identical in WebCore and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=54449
+
+        Use NotImplemented.h from WebCore. Initialize logging channels.
+        Remove the WebKit2 concept of notImplemented().
+
+        * Platform/gtk/SharedMemoryGtk.cpp:
+        * Platform/gtk/WorkQueueGtk.cpp:
+        * Platform/qt/WorkQueueQt.cpp:
+        * Platform/win/WorkQueueWin.cpp:
+        * Shared/NotImplemented.h: Removed.
+        * Shared/Plugins/NPIdentifierData.cpp:
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        * Shared/Plugins/NPVariantData.cpp:
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        * Shared/gtk/ShareableBitmapGtk.cpp:
+        * Shared/gtk/WebCoreArgumentCodersGtk.cpp:
+        * Shared/qt/WebCoreArgumentCodersQt.cpp:
+        * Shared/win/LayerTreeContextWin.cpp:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/API/qt/qwkpage.cpp:
+        * UIProcess/Launcher/gtk/ThreadLauncherGtk.cpp:
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        * UIProcess/Plugins/gtk/PluginInfoStoreGtk.cpp:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        * UIProcess/WebInspectorProxy.cpp:
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        * UIProcess/gtk/WebInspectorGtk.cpp:
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        * UIProcess/qt/TextCheckerQt.cpp:
+        * UIProcess/qt/WebInspectorProxyQt.cpp:
+        * UIProcess/win/TextCheckerWin.cpp:
+        * UIProcess/win/WebContextMenuProxyWin.cpp:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Downloads/cf/DownloadCFNet.cpp:
+        * WebProcess/Downloads/curl/DownloadCurl.cpp:
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        * WebProcess/Downloads/qt/DownloadQt.cpp:
+        * WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp:
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        * WebProcess/Plugins/Netscape/gtk/NetscapePluginGtk.cpp:
+        * WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp:
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp:
+        * WebProcess/WebCoreSupport/gtk/WebPopupMenuGtk.cpp:
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        * WebProcess/WebCoreSupport/qt/WebContextMenuClientQt.cpp:
+        * WebProcess/WebPage/gtk/WebInspectorGtk.cpp:
+        * WebProcess/WebPage/qt/WebInspectorQt.cpp:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        * WebProcess/gtk/WebProcessGtk.cpp:
+        * config.h:
+        * win/WebKit2.vcproj:
+
 2011-02-22  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Brady Eidson.

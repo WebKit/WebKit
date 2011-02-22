@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Download.h"
 
-#include "NotImplemented.h"
+#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 

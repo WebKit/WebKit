@@ -27,11 +27,11 @@
 #include "Download.h"
 
 #include "DataReference.h"
-#include "NotImplemented.h"
 
 #pragma warning(push, 0)
 #include <WebCore/DownloadBundle.h>
 #include <WebCore/LoaderRunLoopCF.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceResponse.h>

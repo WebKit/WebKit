@@ -28,11 +28,11 @@
 
 #import <WebCore/BackForwardController.h>
 #import <WebCore/HistoryItem.h>
+#import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceResponse.h>
 #import "DataReference.h"
-#import "NotImplemented.h"
 #import "WebPage.h"
 
 @interface NSURLDownload (WebNSURLDownloadDetails)

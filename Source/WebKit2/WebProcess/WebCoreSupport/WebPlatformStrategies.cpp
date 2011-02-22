@@ -28,11 +28,11 @@
 
 #if USE(PLATFORM_STRATEGIES)
 
-#include "NotImplemented.h"
 #include "PluginInfoStore.h"
 #include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <wtf/MathExtras.h>

@@ -27,7 +27,7 @@
 #include "config.h"
 #include "ThreadLauncher.h"
 
-#include "NotImplemented.h"
+#include <WebCore/NotImplemented.h>
 
 namespace WebKit {
 

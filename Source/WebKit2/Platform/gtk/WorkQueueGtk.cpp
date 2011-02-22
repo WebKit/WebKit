@@ -27,8 +27,8 @@
 #include "config.h"
 #include "WorkQueue.h"
 
-#include "NotImplemented.h"
 #include "WKBase.h"
+#include <WebCore/NotImplemented.h>
 #include <glib.h>
 
 // WorkQueue::EventSource

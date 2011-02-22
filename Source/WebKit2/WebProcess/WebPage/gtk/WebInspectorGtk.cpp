@@ -29,10 +29,8 @@
 
 #if ENABLE(INSPECTOR)
 
+#include <WebCore/NotImplemented.h>
 #include <wtf/text/WTFString.h>
-
-#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
-#include "NotImplemented.h"
 
 namespace WebKit {
 

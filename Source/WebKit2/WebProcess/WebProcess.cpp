@@ -51,6 +51,7 @@
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/Font.h>
 #include <WebCore/Language.h>
+#include <WebCore/Logging.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
@@ -126,6 +127,8 @@ WebProcess::WebProcess()
     // Initialize our platform strategies.
     WebPlatformStrategies::initialize();
 #endif // USE(PLATFORM_STRATEGIES)
+
+    WebCore::InitializeLoggingChannelsIfNecessary();
 }
 
 void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, RunLoop* runLoop)
