@@ -1,3 +1,14 @@
+2011-02-22  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r79339.
+        http://trac.webkit.org/changeset/79339
+        https://bugs.webkit.org/show_bug.cgi?id=54974
+
+        Baselines were put in the wrong directory, so we need to
+        continue to ignore failures
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-22  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.
