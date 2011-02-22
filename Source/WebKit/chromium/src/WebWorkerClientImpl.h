@@ -99,10 +99,6 @@ public:
         ASSERT_NOT_REACHED();
         return true;
     }
-    virtual void openFileSystem(WebFrame*, WebFileSystem::Type, long long size, WebFileSystemCallbacks*)
-    {
-        ASSERT_NOT_REACHED();
-    }
 
 private:
     virtual ~WebWorkerClientImpl();

@@ -1,3 +1,31 @@
+2011-02-21  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] WebWorkerBase::openFileSystem confuses clang's -Woverloaded-virtual
+        https://bugs.webkit.org/show_bug.cgi?id=54920
+
+        Rename WebWorkerBase::openFileSystem() to openFileSystemForWorker() to
+        make it obvious it's not an override of
+        WebFrameClient::openFileSystem().
+
+        Remove a failed attempt to override it in WebWorkerClientImpl (the
+        override didn't change the behavior).
+
+        No intended functionality change.
+
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::LocalFileSystem::requestFileSystem):
+        Call new name.
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::openFileSystemForWorker):
+        Rename openFileSystem() to openFileSystemForWorker().
+        * src/WebWorkerBase.h:
+        Rename openFileSystem() to openFileSystemForWorker().
+        * src/WebWorkerClientImpl.h:
+        (WebKit::WebWorkerClientImpl::allowDatabase):
+        Remove unsuccessful (and pointless) override.
+
 2011-02-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

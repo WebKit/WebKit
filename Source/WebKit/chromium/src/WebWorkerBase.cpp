@@ -237,7 +237,7 @@ bool WebWorkerBase::allowDatabase(WebFrame*, const WebString& name, const WebStr
 }
 
 #if ENABLE(FILE_SYSTEM)
-void WebWorkerBase::openFileSystem(WebFileSystem::Type type, long long size, WebFileSystemCallbacks* callbacks, bool synchronous)
+void WebWorkerBase::openFileSystemForWorker(WebFileSystem::Type type, long long size, WebFileSystemCallbacks* callbacks, bool synchronous)
 {
     WorkerRunLoop& runLoop = m_workerThread->runLoop();
     WorkerScriptController* controller = WorkerScriptController::controllerForContext();

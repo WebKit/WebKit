@@ -92,8 +92,7 @@ public:
     virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize);
 
 #if ENABLE(FILE_SYSTEM)
-    // Requests to open a file system for this worker. (Note that this is not the implementation for WebFrameClient::openFileSystem.)
-    void openFileSystem(WebFileSystem::Type, long long size, WebFileSystemCallbacks*, bool synchronous);
+    void openFileSystemForWorker(WebFileSystem::Type, long long size, WebFileSystemCallbacks*, bool synchronous);
 #endif
 
     // Executes the given task on the main thread.
