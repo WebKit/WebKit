@@ -1,3 +1,16 @@
+2011-02-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Overhang areas need to be invalidated on scroll
+        <rdar://problem/9032194>
+        https://bugs.webkit.org/show_bug.cgi?id=54917
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+        We need to explicitly invalidate the overhang areas when we scroll the contents
+        of a ScrollView, since they could contain arbitrary content that cannot be blitted.
+
 2011-02-21  Lucas Forschler  <lforschler@apple.com>
 
         Reviewed by Stephanie Lewis.

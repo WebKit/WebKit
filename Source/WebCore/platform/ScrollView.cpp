@@ -632,6 +632,15 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
        scrollContentsSlowPath(updateRect);
     }
 
+    // Invalidate the overhang areas if they are visible.
+    IntRect horizontalOverhangRect;
+    IntRect verticalOverhangRect;
+    calculateOverhangAreasForPainting(horizontalOverhangRect, verticalOverhangRect);
+    if (!horizontalOverhangRect.isEmpty())
+        hostWindow()->invalidateContentsAndWindow(horizontalOverhangRect, false /*immediate*/);
+    if (!verticalOverhangRect.isEmpty())
+        hostWindow()->invalidateContentsAndWindow(verticalOverhangRect, false /*immediate*/);
+
     // This call will move children with native widgets (plugins) and invalidate them as well.
     frameRectsChanged();
 
