@@ -35,20 +35,24 @@
 
 namespace WebCore {
 
-static RetainPtr<CFHTTPCookieStorageRef> s_cookieStorage;
+static CFHTTPCookieStorageRef s_cookieStorage;
 
 CFHTTPCookieStorageRef currentCookieStorage()
 {
     ASSERT(isMainThread());
 
     if (s_cookieStorage)
-        return s_cookieStorage.get();
+        return s_cookieStorage;
     return wkGetDefaultHTTPCookieStorage();
 }
 
 void setCurrentCookieStorage(CFHTTPCookieStorageRef cookieStorage)
 {
     ASSERT(isMainThread());
+
+    CFRetain(cookieStorage);
+    if (s_cookieStorage)
+        CFRelease(s_cookieStorage);
 
     s_cookieStorage = cookieStorage;
 }
@@ -57,8 +61,11 @@ void setCookieStoragePrivateBrowsingEnabled(bool enabled)
 {
     ASSERT(isMainThread());
 
+    if (s_cookieStorage)
+        CFRelease(s_cookieStorage);
+
     if (enabled)
-        s_cookieStorage.adoptCF(wkCreatePrivateHTTPCookieStorage());
+        s_cookieStorage = wkCreatePrivateHTTPCookieStorage();
     else
         s_cookieStorage = 0;
 }
