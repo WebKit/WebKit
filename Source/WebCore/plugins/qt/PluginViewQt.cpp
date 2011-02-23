@@ -179,7 +179,10 @@ void PluginView::updatePluginWidget()
     if (!m_platformLayer) {
         // Make sure we get repainted afterwards. This is necessary for downward
         // scrolling to move the plugin widget properly.
-        invalidate();
+        // Note that we don't invalidate the frameRect() here. This is because QWebFrame::renderRelativeCoords()
+        // imitates ScrollView and adds the scroll offset back on to the rect we damage here (making the co-ordinates absolute
+        // to the frame again) before passing it to FrameView.
+        frameView->invalidateRect(m_windowRect);
     }
 }
 

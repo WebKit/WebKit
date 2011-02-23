@@ -1,3 +1,18 @@
+2011-02-22  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] painting of windowed plugins faulty on certain scroll events
+
+        https://bugs.webkit.org/show_bug.cgi?id=52735
+
+        Invalidate the pluginview's relative rect rather then the frameRect(). This is because QWebFrame::renderRelativeCoords()
+        imitates ScrollView and adds the scroll offset back on to the rect we damage here (making the co-ordinates absolute
+        to the frame again) before passing it to FrameView.
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+
 2011-02-22  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
