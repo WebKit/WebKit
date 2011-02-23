@@ -1,3 +1,14 @@
+2011-02-23  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Reviewed by James Robinson.
+
+        SVGCursorElement::removeClient() should verify that its argument is connected with
+        the proper cursor element.
+        https://bugs.webkit.org/show_bug.cgi?id=54979
+
+        * svg/css/multiple-cursors-crash-expected.txt: Added.
+        * svg/css/multiple-cursors-crash.html: Added.
+
 2011-02-22  Simon Fraser  <simon.fraser@apple.com>
 
         New Leopard results after r78846.

@@ -1,3 +1,16 @@
+2011-02-23  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Reviewed by James Robinson.
+
+        SVGCursorElement::removeClient() should verify that its argument is connected with
+        the proper cursor element.
+        https://bugs.webkit.org/show_bug.cgi?id=54979
+
+        Test: svg/css/multiple-cursors-crash.html
+
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::removeClient):
+
 2011-02-23  Renata Hodovan  <reni@webkit.org>
 
         Reviewed by Darin Adler.
