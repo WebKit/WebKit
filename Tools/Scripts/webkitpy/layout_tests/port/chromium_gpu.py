@@ -48,11 +48,11 @@ def get(platform=None, port_name='chromium-gpu', **kwargs):
         else:
             raise NotImplementedError('unsupported platform: %s' % platform)
 
-    if port_name == 'chromium-gpu-linux':
+    if port_name.startswith('chromium-gpu-linux'):
         return ChromiumGpuLinuxPort(port_name=port_name, **kwargs)
-    if port_name == 'chromium-gpu-mac':
+    if port_name.startswith('chromium-gpu-mac'):
         return ChromiumGpuMacPort(port_name=port_name, **kwargs)
-    if port_name == 'chromium-gpu-win':
+    if port_name.startswith('chromium-gpu-win'):
         return ChromiumGpuWinPort(port_name=port_name, **kwargs)
     raise NotImplementedError('unsupported port: %s' % port_name)
 
@@ -89,6 +89,10 @@ class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
         chromium_linux.ChromiumLinuxPort.__init__(self, port_name=port_name, **kwargs)
         _set_gpu_options(self)
 
+    def baseline_path(self):
+        # GPU baselines aren't yet versioned.
+        return self._webkit_baseline_path('chromium-gpu-linux')
+
     def baseline_search_path(self):
         # Mimic the Linux -> Win expectations fallback in the ordinary Chromium port.
         return (map(self._webkit_baseline_path, ['chromium-gpu-linux', 'chromium-gpu-win', 'chromium-gpu']) +
@@ -110,6 +114,10 @@ class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
         chromium_mac.ChromiumMacPort.__init__(self, port_name=port_name, **kwargs)
         _set_gpu_options(self)
 
+    def baseline_path(self):
+        # GPU baselines aren't yet versioned.
+        return self._webkit_baseline_path('chromium-gpu-mac')
+
     def baseline_search_path(self):
         return (map(self._webkit_baseline_path, ['chromium-gpu-mac', 'chromium-gpu']) +
                 chromium_mac.ChromiumMacPort.baseline_search_path(self))
@@ -129,6 +137,10 @@ class ChromiumGpuWinPort(chromium_win.ChromiumWinPort):
     def __init__(self, port_name='chromium-gpu-win', **kwargs):
         chromium_win.ChromiumWinPort.__init__(self, port_name=port_name, **kwargs)
         _set_gpu_options(self)
+
+    def baseline_path(self):
+        # GPU baselines aren't yet versioned.
+        return self._webkit_baseline_path('chromium-gpu-win')
 
     def baseline_search_path(self):
         return (map(self._webkit_baseline_path, ['chromium-gpu-win', 'chromium-gpu']) +

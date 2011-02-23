@@ -29,6 +29,7 @@ import unittest
 from webkitpy.tool import mocktool
 import chromium_gpu
 
+from webkitpy.layout_tests.port import factory
 
 class ChromiumGpuTest(unittest.TestCase):
     def test_get_chromium_gpu_linux(self):
@@ -94,6 +95,31 @@ class ChromiumGpuTest(unittest.TestCase):
             path = port.abspath_for_test('fast/canvas/set-colors.html')
             self.assertTrue(port._filesystem.exists(path))
             self.assertFalse(path in files)
+
+    def test_chromium_gpu__vista(self):
+        port = factory.get('chromium-gpu-win-vista')
+        self.assertEquals(port.name(), 'chromium-gpu-win-vista')
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-win'))
+
+    def test_chromium_gpu__xp(self):
+        port = factory.get('chromium-gpu-win-xp')
+        self.assertEquals(port.name(), 'chromium-gpu-win-xp')
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-win'))
+
+    def test_chromium_gpu__win7(self):
+        port = factory.get('chromium-gpu-win-win7')
+        self.assertEquals(port.name(), 'chromium-gpu-win-win7')
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-win'))
+
+    def test_chromium_gpu__leopard(self):
+        port = factory.get('chromium-gpu-mac-leopard')
+        self.assertEquals(port.name(), 'chromium-gpu-mac-leopard')
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-mac'))
+
+    def test_chromium_gpu__snowleopard(self):
+        port = factory.get('chromium-gpu-mac-snowleopard')
+        self.assertEquals(port.name(), 'chromium-gpu-mac-snowleopard')
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-mac'))
 
 
 if __name__ == '__main__':
