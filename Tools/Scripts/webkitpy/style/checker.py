@@ -123,7 +123,8 @@ _PATH_RULES_SPECIFIER = [
       # The API test harnesses have no config.h and use funny macros like
       # TEST_CLASS_NAME.
       "Tools/WebKitAPITest/",
-      "Tools/TestWebKitAPI/"],
+      "Tools/TestWebKitAPI/",
+      "Source/WebKit/qt/tests/qdeclarativewebview"],
      ["-build/include",
       "-readability/naming"]),
     ([# The EFL APIs use EFL naming style, which includes
