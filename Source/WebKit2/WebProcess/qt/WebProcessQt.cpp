@@ -55,7 +55,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 #endif
 }
 
-void WebProcess::platformShutdown()
+void WebProcess::platformTerminate()
 {
     delete m_networkAccessManager;
     m_networkAccessManager = 0;

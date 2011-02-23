@@ -187,7 +187,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
 }
 
-void WebProcess::platformShutdown()
+void WebProcess::platformTerminate()
 {
 }
 

@@ -121,7 +121,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 #endif
 }
 
-void WebProcess::platformShutdown()
+void WebProcess::platformTerminate()
 {
 }
 

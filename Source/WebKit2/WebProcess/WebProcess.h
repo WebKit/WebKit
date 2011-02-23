@@ -103,8 +103,8 @@ public:
     QNetworkAccessManager* networkAccessManager() { return m_networkAccessManager; }
 #endif
 
-    // Will shut down the web process if there are no live pages or downloads.
-    void shutdownIfPossible();
+    // Will terminate the web process if there are no live pages or downloads.
+    void terminateIfPossible();
 
     bool shouldUseCustomRepresentationForMIMEType(const String& mimeType) const { return m_mimeTypesWithCustomRepresentations.contains(mimeType); }
 
@@ -121,7 +121,7 @@ private:
 
     void initializeWebProcess(const WebProcessCreationParameters&, CoreIPC::ArgumentDecoder*);
     void platformInitializeWebProcess(const WebProcessCreationParameters&, CoreIPC::ArgumentDecoder*);
-    void platformShutdown();
+    void platformTerminate();
     void setShouldTrackVisitedLinks(bool);
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&) const;

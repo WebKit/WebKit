@@ -47,7 +47,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     notImplemented();
 }
 
-void WebProcess::platformShutdown()
+void WebProcess::platformTerminate()
 {
 }
 

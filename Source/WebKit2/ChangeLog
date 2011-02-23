@@ -1,3 +1,26 @@
+2011-02-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Rename WebProcess::shutdownIfPossible to WebProcess::terminateIfPossible
+        https://bugs.webkit.org/show_bug.cgi?id=55008
+
+        * WebProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::downloadFinished):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::removeWebPage):
+        (WebKit::WebProcess::terminateIfPossible):
+        (WebKit::WebProcess::getSitesWithPluginData):
+        * WebProcess/WebProcess.h:
+        * WebProcess/gtk/WebProcessGtk.cpp:
+        (WebKit::WebProcess::platformTerminate):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformTerminate):
+        * WebProcess/qt/WebProcessQt.cpp:
+        (WebKit::WebProcess::platformTerminate):
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::platformTerminate):
+
 2011-02-22  Brady Eidson  <beidson@apple.com>
 
         Windows build-fix attempt.

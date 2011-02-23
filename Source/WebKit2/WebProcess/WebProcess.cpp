@@ -460,8 +460,7 @@ void WebProcess::createWebPage(uint64_t pageID, const WebPageCreationParameters&
 void WebProcess::removeWebPage(uint64_t pageID)
 {
     m_pageMap.remove(pageID);
-
-    shutdownIfPossible();
+    terminateIfPossible();
 }
 
 bool WebProcess::isSeparateProcess() const
@@ -470,7 +469,7 @@ bool WebProcess::isSeparateProcess() const
     return m_runLoop == RunLoop::main();
 }
  
-void WebProcess::shutdownIfPossible()
+void WebProcess::terminateIfPossible()
 {
     if (!m_pageMap.isEmpty())
         return;
@@ -496,8 +495,7 @@ void WebProcess::shutdownIfPossible()
     m_connection->invalidate();
     m_connection = nullptr;
 
-    platformShutdown();
-
+    platformTerminate();
     m_runLoop->stop();
 }
 
@@ -683,7 +681,7 @@ void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint6
     copyToVector(sitesSet, sites);
 
     m_connection->send(Messages::WebContext::DidGetSitesWithPluginData(sites, callbackID), 0);
-    shutdownIfPossible();
+    terminateIfPossible();
 }
 
 void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
