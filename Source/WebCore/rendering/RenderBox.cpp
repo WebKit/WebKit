@@ -2135,17 +2135,21 @@ void RenderBox::computePositionedLogicalWidth()
     // relative positioned inline.
     const RenderBoxModelObject* containerBlock = toRenderBoxModelObject(container());
     
-    const int containerWidth = containingBlockLogicalWidthForPositioned(containerBlock);
+    const int containerLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock);
 
     // To match WinIE, in quirks mode use the parent's 'direction' property
     // instead of the the container block's.
     TextDirection containerDirection = (document()->inQuirksMode()) ? parent()->style()->direction() : containerBlock->style()->direction();
 
-    const int bordersPlusPadding = borderAndPaddingWidth();
-    const Length marginLeft = style()->marginLeft();
-    const Length marginRight = style()->marginRight();
-    Length left = style()->left();
-    Length right = style()->right();
+    bool isHorizontal = style()->isHorizontalWritingMode();
+    const int bordersPlusPadding = borderAndPaddingLogicalWidth();
+    const Length marginLogicalLeft = isHorizontal ? style()->marginLeft() : style()->marginTop();
+    const Length marginLogicalRight = isHorizontal ? style()->marginRight() : style()->marginBottom();
+    int& marginLogicalLeftAlias = isHorizontal ? m_marginLeft : m_marginTop;
+    int& marginLogicalRightAlias = isHorizontal ? m_marginRight : m_marginBottom;
+
+    Length logicalLeft = style()->logicalLeft();
+    Length logicalRight = style()->logicalRight();
 
     /*---------------------------------------------------------------------------*\
      * For the purposes of this section and the next, the term "static position"
@@ -2173,7 +2177,8 @@ void RenderBox::computePositionedLogicalWidth()
 
     // see FIXME 2
     // Calculate the static distance if needed.
-    if (left.isAuto() && right.isAuto()) {
+    // FIXME: The static distance computation has not been patched for writing modes yet.
+    if (logicalLeft.isAuto() && logicalRight.isAuto()) {
         if (containerDirection == LTR) {
             // 'staticX' should already have been set through layout of the parent.
             int staticPosition = layer()->staticX() - containerBlock->borderLeft();
@@ -2181,81 +2186,81 @@ void RenderBox::computePositionedLogicalWidth()
                 if (curr->isBox())
                     staticPosition += toRenderBox(curr)->x();
             }
-            left.setValue(Fixed, staticPosition);
+            logicalLeft.setValue(Fixed, staticPosition);
         } else {
             RenderBox* enclosingBox = parent()->enclosingBox();
             // 'staticX' should already have been set through layout of the parent.
-            int staticPosition = layer()->staticX() + containerWidth + containerBlock->borderRight();
+            int staticPosition = layer()->staticX() + containerLogicalWidth + containerBlock->borderRight();
             staticPosition -= enclosingBox->width();
             for (RenderObject* curr = enclosingBox; curr && curr != containerBlock; curr = curr->parent()) {
                 if (curr->isBox())
                     staticPosition -= toRenderBox(curr)->x();
             }
-            right.setValue(Fixed, staticPosition);
+            logicalRight.setValue(Fixed, staticPosition);
         }
     }
 
     // Calculate constraint equation values for 'width' case.
-    int widthResult;
-    int xResult;
-    computePositionedLogicalWidthUsing(style()->width(), containerBlock, containerDirection,
-                                 containerWidth, bordersPlusPadding,
-                                 left, right, marginLeft, marginRight,
-                                 widthResult, m_marginLeft, m_marginRight, xResult);
-    setWidth(widthResult);
-    setX(xResult);
+    int logicalWidthResult;
+    int logicalLeftResult;
+    computePositionedLogicalWidthUsing(style()->logicalWidth(), containerBlock, containerDirection,
+                                       containerLogicalWidth, bordersPlusPadding,
+                                       logicalLeft, logicalRight, marginLogicalLeft, marginLogicalRight,
+                                       logicalWidthResult, marginLogicalLeftAlias, marginLogicalRightAlias, logicalLeftResult);
+    setLogicalWidth(logicalWidthResult);
+    setLogicalLeft(logicalLeftResult);
 
     // Calculate constraint equation values for 'max-width' case.
-    if (!style()->maxWidth().isUndefined()) {
-        int maxWidth;
-        int maxMarginLeft;
-        int maxMarginRight;
-        int maxXPos;
+    if (!style()->logicalMaxWidth().isUndefined()) {
+        int maxLogicalWidth;
+        int maxMarginLogicalLeft;
+        int maxMarginLogicalRight;
+        int maxLogicalLeftPos;
 
-        computePositionedLogicalWidthUsing(style()->maxWidth(), containerBlock, containerDirection,
-                                     containerWidth, bordersPlusPadding,
-                                     left, right, marginLeft, marginRight,
-                                     maxWidth, maxMarginLeft, maxMarginRight, maxXPos);
+        computePositionedLogicalWidthUsing(style()->logicalMaxWidth(), containerBlock, containerDirection,
+                                           containerLogicalWidth, bordersPlusPadding,
+                                           logicalLeft, logicalRight, marginLogicalLeft, marginLogicalRight,
+                                           maxLogicalWidth, maxMarginLogicalLeft, maxMarginLogicalRight, maxLogicalLeftPos);
 
-        if (width() > maxWidth) {
-            setWidth(maxWidth);
-            m_marginLeft = maxMarginLeft;
-            m_marginRight = maxMarginRight;
-            m_frameRect.setX(maxXPos);
+        if (logicalWidth() > maxLogicalWidth) {
+            setLogicalWidth(maxLogicalWidth);
+            marginLogicalLeftAlias = maxMarginLogicalLeft;
+            marginLogicalRightAlias = maxMarginLogicalRight;
+            setLogicalLeft(maxLogicalLeftPos);
         }
     }
 
     // Calculate constraint equation values for 'min-width' case.
-    if (!style()->minWidth().isZero()) {
-        int minWidth;
-        int minMarginLeft;
-        int minMarginRight;
-        int minXPos;
+    if (!style()->logicalMinWidth().isZero()) {
+        int minLogicalWidth;
+        int minMarginLogicalLeft;
+        int minMarginLogicalRight;
+        int minLogicalLeftPos;
 
-        computePositionedLogicalWidthUsing(style()->minWidth(), containerBlock, containerDirection,
-                                     containerWidth, bordersPlusPadding,
-                                     left, right, marginLeft, marginRight,
-                                     minWidth, minMarginLeft, minMarginRight, minXPos);
+        computePositionedLogicalWidthUsing(style()->logicalMinWidth(), containerBlock, containerDirection,
+                                           containerLogicalWidth, bordersPlusPadding,
+                                           logicalLeft, logicalRight, marginLogicalLeft, marginLogicalRight,
+                                           minLogicalWidth, minMarginLogicalLeft, minMarginLogicalRight, minLogicalLeftPos);
 
-        if (width() < minWidth) {
-            setWidth(minWidth);
-            m_marginLeft = minMarginLeft;
-            m_marginRight = minMarginRight;
-            m_frameRect.setX(minXPos);
+        if (logicalWidth() < minLogicalWidth) {
+            setLogicalWidth(minLogicalWidth);
+            marginLogicalLeftAlias = minMarginLogicalLeft;
+            marginLogicalRightAlias = minMarginLogicalRight;
+            setLogicalLeft(minLogicalLeftPos);
         }
     }
 
-    if (stretchesToMinIntrinsicLogicalWidth() && width() < minPreferredLogicalWidth() - bordersPlusPadding) {
+    if (stretchesToMinIntrinsicLogicalWidth() && logicalWidth() < minPreferredLogicalWidth() - bordersPlusPadding) {
         computePositionedLogicalWidthUsing(Length(minPreferredLogicalWidth() - bordersPlusPadding, Fixed), containerBlock, containerDirection,
-                                     containerWidth, bordersPlusPadding,
-                                     left, right, marginLeft, marginRight,
-                                     widthResult, m_marginLeft, m_marginRight, xResult);
-        setWidth(widthResult);
-        setX(xResult);
+                                           containerLogicalWidth, bordersPlusPadding,
+                                           logicalLeft, logicalRight, marginLogicalLeft, marginLogicalRight,
+                                           logicalWidthResult, marginLogicalLeftAlias, marginLogicalRightAlias, logicalLeftResult);
+        setLogicalWidth(logicalWidthResult);
+        setLogicalLeft(logicalLeftResult);
     }
 
-    // Put width() into correct form.
-    setWidth(width() + bordersPlusPadding);
+    // Put logicalWidth() into correct form.
+    setLogicalWidth(logicalWidth() + bordersPlusPadding);
 }
 
 void RenderBox::computePositionedLogicalWidthUsing(Length width, const RenderBoxModelObject* containerBlock, TextDirection containerDirection,
