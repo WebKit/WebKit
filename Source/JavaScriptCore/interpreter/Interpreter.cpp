@@ -645,7 +645,7 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
             start++;
         while (stop < dataLength && (stop - expressionStart < 20) && data[stop] != '\n')
             stop++;
-        while (stop > expressionStart && isStrWhiteSpace(data[stop]))
+        while (stop > expressionStart && isStrWhiteSpace(data[stop - 1]))
             stop--;
         message = makeUString(message, " (near '...", codeBlock->source()->getRange(start, stop), "...')");
     }

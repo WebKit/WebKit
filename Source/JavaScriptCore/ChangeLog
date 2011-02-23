@@ -1,3 +1,20 @@
+2011-02-23  Adam Roben  <aroben@apple.com>
+
+        Fix an off-by-one error in JSC::appendSourceToError
+
+        Looks like this bug has been around since the code was first added in r35245.
+
+        Fixes <http://webkit.org/b/55052> <rdar://problem/9043512> Crash in JSC::appendSourceToError
+        when running fast/dom/objc-big-method-name.html on Windows with full page heap enabled
+
+        Reviewed by Darin Adler.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::appendSourceToError): When trimming whitespace off the end of the string, examine the
+        character at stop-1 rather than at stop. At this point in the code, stop represents the
+        index just past the end of the characters we care about, and can even be just past the end
+        of the entire data buffer.
+
 2011-02-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
