@@ -493,6 +493,11 @@ void InjectedBundlePage::dump()
 
     InjectedBundle::shared().layoutTestController()->invalidateWaitToDumpWatchdogTimer();
 
+    WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
+    string url = toSTD(adoptWK(WKURLCopyString(adoptWK(WKBundleFrameCopyURL(frame)).get())));
+    if (strstr(url.c_str(), "dumpAsText/"))
+        InjectedBundle::shared().layoutTestController()->dumpAsText();
+
     switch (InjectedBundle::shared().layoutTestController()->whatToDump()) {
     case LayoutTestController::RenderTree: {
         WKRetainPtr<WKStringRef> text(AdoptWK, WKBundlePageCopyRenderTreeExternalRepresentation(m_page));

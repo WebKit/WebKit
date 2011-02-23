@@ -996,6 +996,11 @@ static bool shouldOpenWebInspector(const char* pathOrURL)
     return strstr(pathOrURL, "inspector/");
 }
 
+static bool shouldDumpAsText(const char* pathOrURL)
+{
+    return strstr(pathOrURL, "dumpAsText/");
+}
+
 static bool shouldEnableDeveloperExtras(const char* pathOrURL)
 {
     return true;
@@ -1090,6 +1095,10 @@ static void runTest(const string& testPathOrURL)
         gLayoutTestController->setDeveloperExtrasEnabled(true);
         if (shouldOpenWebInspector(pathOrURL.c_str()))
             gLayoutTestController->showWebInspector();
+        if (shouldDumpAsText(pathOrURL.c_str())) {
+            gLayoutTestController->setDumpAsText(true);
+            gLayoutTestController->setGeneratePixelResults(false);
+        }
     }
 
     if ([WebHistory optionalSharedHistory])

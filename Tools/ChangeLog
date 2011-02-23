@@ -1,3 +1,31 @@
+2011-02-22  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        DumpRenderTree should dump as text if test path contains "dumpAsText/"
+        https://bugs.webkit.org/show_bug.cgi?id=54873
+
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController::setShouldDumpAsText):
+        (LayoutTestController::setShouldGeneratePixelResults):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::runFileTest):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (shouldDumpAsText):
+        (dump):
+        (runTest):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (shouldDumpAsText):
+        (runTest):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::isDumpAsTextTest):
+        (WebCore::DumpRenderTree::open):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (shouldDumpAsText):
+        (runTest):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump):
+
 2011-02-22  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

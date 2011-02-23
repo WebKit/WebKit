@@ -105,6 +105,11 @@ static bool shouldOpenWebInspector(const string& pathOrURL)
     return pathOrURL.find("inspector/") != string::npos;
 }
 
+static bool shouldDumpAsText(const string& pathOrURL)
+{
+    return pathOrURL.find("dumpAsText/") != string::npos;
+}
+
 static bool shouldEnableDeveloperExtras(const string& pathOrURL)
 {
     return true;
@@ -513,7 +518,7 @@ void dump()
         gchar* responseMimeType = webkit_web_frame_get_response_mime_type(mainFrame);
 
         if (g_str_equal(responseMimeType, "text/plain")) {
-            gLayoutTestController->setDumpAsText(true);        
+            gLayoutTestController->setDumpAsText(true);
             gLayoutTestController->setGeneratePixelResults(false);
         }
         g_free(responseMimeType);
@@ -639,6 +644,10 @@ static void runTest(const string& testPathOrURL)
         gLayoutTestController->setDeveloperExtrasEnabled(true);
         if (shouldOpenWebInspector(testURL))
             gLayoutTestController->showWebInspector();
+        if (shouldDumpAsText(testURL)) {
+            gLayoutTestController->setDumpAsText(true);
+            gLayoutTestController->setGeneratePixelResults(false);
+        }
     }
 
     WorkQueue::shared()->clear();

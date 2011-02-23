@@ -596,6 +596,14 @@ static bool isWebInspectorTest(const QUrl& url)
     return false;
 }
 
+static bool isDumpAsTextTest(const QUrl& url)
+{
+    if (url.path().contains("dumpAsText/"))
+        return true;
+    return false;
+}
+
+
 void DumpRenderTree::open(const QUrl& url)
 {
     DumpRenderTreeSupportQt::dumpResourceLoadCallbacksPath(QFileInfo(url.toString()).path());
@@ -606,6 +614,11 @@ void DumpRenderTree::open(const QUrl& url)
 
     if (isWebInspectorTest(url))
         layoutTestController()->showWebInspector();
+
+    if (isDumpAsTextTest(url)) {
+        layoutTestController()->dumpAsText();
+        setDumpPixels(false);
+    }
 
     if (isGlobalHistoryTest(url))
         layoutTestController()->dumpHistoryCallbacks();
