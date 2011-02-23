@@ -1,3 +1,15 @@
+2011-02-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/9039670>
+        
+        Make sure that we set the accelerateDrawing property on the LayerTreeHosts's
+        non-composited content layer if the preference is set.
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::LayerTreeHostMac):
+
 2011-02-22  Brady Eidson  <beidson@apple.com>
 
         Fix it Windows-style.

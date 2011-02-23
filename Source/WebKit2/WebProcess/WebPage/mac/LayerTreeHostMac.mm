@@ -74,6 +74,8 @@ LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage)
     m_nonCompositedContentLayer->setDrawsContent(true);
     m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
     m_nonCompositedContentLayer->setSize(webPage->size());
+    if (m_webPage->corePage()->settings()->acceleratedDrawingEnabled())
+        m_nonCompositedContentLayer->setAcceleratesDrawing(true);
 
     m_rootLayer->addChild(m_nonCompositedContentLayer.get());
 
