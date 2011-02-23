@@ -136,6 +136,8 @@ namespace JSC {
 
         const ClassInfo* classInfo() const { return m_classInfo; }
 
+        static void initializeThreading();
+
     private:
         Structure(JSValue prototype, const TypeInfo&, unsigned anonymousSlotCount, const ClassInfo*);
         Structure(const Structure*);

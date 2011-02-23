@@ -66,7 +66,11 @@ static const unsigned newTableSize = 16;
 static WTF::RefCountedLeakCounter structureCounter("Structure");
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
-static Mutex& ignoreSetMutex = *(new Mutex);
+static Mutex& ignoreSetMutex()
+{
+    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    return mutex;
+}
 #endif
 
 static bool shouldIgnoreLeaks;
@@ -208,7 +212,7 @@ Structure::Structure(JSValue prototype, const TypeInfo& typeInfo, unsigned anony
 
 #ifndef NDEBUG
 #if ENABLE(JSC_MULTIPLE_THREADS)
-    MutexLocker protect(ignoreSetMutex);
+    MutexLocker protect(ignoreSetMutex());
 #endif
     if (shouldIgnoreLeaks)
         ignoreSet.add(this);
@@ -242,7 +246,7 @@ Structure::Structure(const Structure* previous)
 
 #ifndef NDEBUG
 #if ENABLE(JSC_MULTIPLE_THREADS)
-    MutexLocker protect(ignoreSetMutex);
+    MutexLocker protect(ignoreSetMutex());
 #endif
     if (shouldIgnoreLeaks)
         ignoreSet.add(this);
@@ -275,7 +279,7 @@ Structure::~Structure()
 
 #ifndef NDEBUG
 #if ENABLE(JSC_MULTIPLE_THREADS)
-    MutexLocker protect(ignoreSetMutex);
+    MutexLocker protect(ignoreSetMutex());
 #endif
     HashSet<Structure*>::iterator it = ignoreSet.find(this);
     if (it != ignoreSet.end())
@@ -1179,6 +1183,13 @@ void Structure::getPropertyNames(PropertyNameArray& propertyNames, EnumerationMo
         for (size_t i = 0; i < sortedEnumerables.size(); ++i)
             propertyNames.add(sortedEnumerables[i]->key);
     }
+}
+
+void Structure::initializeThreading()
+{
+#if !defined(NDEBUG) && ENABLE(JSC_MULTIPLE_THREADS)
+    ignoreSetMutex();
+#endif
 }
 
 #if DO_PROPERTYMAP_CONSTENCY_CHECK

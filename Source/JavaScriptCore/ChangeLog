@@ -1,5 +1,21 @@
 2011-02-23  Patrick Gansterer  <paroga@webkit.org>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Use DEFINE_STATIC_LOCAL for ignoreSetMutex in Structure.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=54831
+
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/Structure.cpp:
+        (JSC::ignoreSetMutex):
+        (JSC::Structure::Structure):
+        (JSC::Structure::~Structure):
+        (JSC::Structure::initializeThreading):
+        * runtime/Structure.h:
+
+2011-02-23  Patrick Gansterer  <paroga@webkit.org>
+
         Reviewed by Darin Adler.
 
         Rename PLATFORM(CF) to USE(CF)
