@@ -70,8 +70,7 @@ messages -> WebPage {
     GetSourceForFrame(uint64_t frameID, uint64_t callbackID)
     GetWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
     RunJavaScriptInMainFrame(WTF::String script, uint64_t callbackID)
-
-    ForceRepaint(uint32_t repaintFlags, uint64_t callbackID)
+    ForceRepaint(uint64_t callbackID)
 
 #if PLATFORM(MAC)
     # Dictionary support.

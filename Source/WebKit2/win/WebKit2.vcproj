@@ -427,10 +427,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\ForceRepaintFlags.h"
-				>
-			</File>
-			<File
 				RelativePath="..\Shared\ImmutableArray.cpp"
 				>
 			</File>

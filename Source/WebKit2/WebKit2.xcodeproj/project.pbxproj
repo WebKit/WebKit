@@ -457,7 +457,6 @@
 		BC33DD681238464600360F3F /* WebNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = BC33DD671238464600360F3F /* WebNumber.h */; };
 		BC33E0D112408E8600360F3F /* InjectedBundleRangeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC33E0CF12408E8600360F3F /* InjectedBundleRangeHandle.h */; };
 		BC33E0D212408E8600360F3F /* InjectedBundleRangeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC33E0D012408E8600360F3F /* InjectedBundleRangeHandle.cpp */; };
-		BC3C8C7F1314AC8700585C8C /* ForceRepaintFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3C8C7E1314AC8700585C8C /* ForceRepaintFlags.h */; };
 		BC4075F3124FF0270068F20A /* WKArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4075D7124FF0270068F20A /* WKArray.cpp */; };
 		BC4075F4124FF0270068F20A /* WKArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4075D8124FF0270068F20A /* WKArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC4075F5124FF0270068F20A /* WKCertificateInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4075D9124FF0270068F20A /* WKCertificateInfo.cpp */; };
@@ -1270,7 +1269,6 @@
 		BC33DD671238464600360F3F /* WebNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNumber.h; sourceTree = "<group>"; };
 		BC33E0CF12408E8600360F3F /* InjectedBundleRangeHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleRangeHandle.h; sourceTree = "<group>"; };
 		BC33E0D012408E8600360F3F /* InjectedBundleRangeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleRangeHandle.cpp; sourceTree = "<group>"; };
-		BC3C8C7E1314AC8700585C8C /* ForceRepaintFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForceRepaintFlags.h; sourceTree = "<group>"; };
 		BC4075D7124FF0270068F20A /* WKArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKArray.cpp; sourceTree = "<group>"; };
 		BC4075D8124FF0270068F20A /* WKArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKArray.h; sourceTree = "<group>"; };
 		BC4075D9124FF0270068F20A /* WKCertificateInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKCertificateInfo.cpp; sourceTree = "<group>"; };
@@ -1879,7 +1877,6 @@
 				C517388012DF8F4F00EE3F47 /* DragControllerAction.h */,
 				0FB659221208B4DB0044816C /* DrawingAreaInfo.h */,
 				762B7481120BBA0100819339 /* FontSmoothingLevel.h */,
-				BC3C8C7E1314AC8700585C8C /* ForceRepaintFlags.h */,
 				BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */,
 				BC64696D11DBE603006455B0 /* ImmutableArray.cpp */,
 				BC64696E11DBE603006455B0 /* ImmutableArray.h */,
@@ -3302,7 +3299,6 @@
 				33367656130C9ECA006C9DE2 /* WebResourceCacheManagerMessages.h in Headers */,
 				33367658130C9ECB006C9DE2 /* WebResourceCacheManagerProxyMessages.h in Headers */,
 				33152976130D0CB200ED2483 /* SecurityOriginData.h in Headers */,
-				BC3C8C7F1314AC8700585C8C /* ForceRepaintFlags.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

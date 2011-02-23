@@ -1,3 +1,27 @@
+2011-02-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Remove WKPageForceRepaintWithInvalidation and instead make WKPageForceRepaint
+        always dirty the entire page.
+
+        * Shared/ForceRepaintFlags.h: Removed.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageForceRepaint):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::forceRepaint):
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::forceRepaint):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::forceRepaint):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * win/WebKit2.vcproj:
+
 2011-02-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
