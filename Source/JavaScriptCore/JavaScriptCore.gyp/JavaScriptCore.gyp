@@ -113,9 +113,22 @@
         ['exclude', '../'],
         # ... Then include what we want.
         ['include', '../wtf/'],
+        # FIXME: This is clearly not sustainable.
+        ['exclude', '../wtf/brew'],
+        ['exclude', '../wtf/efl'],
+        ['exclude', '../wtf/gtk'],
+        ['exclude', '../wtf/qt'],
+        ['exclude', '../wtf/haiku'],
+        ['exclude', '../wtf/url'],
+        ['exclude', '../wtf/wince'],
+        ['exclude', '../wtf/wx'],
+        ['exclude', '../wtf/unicode/brew'],
+        ['exclude', '../wtf/unicode/wince'],
+        ['exclude', '../wtf/unicode/glib'],
+        ['exclude', '../wtf/unicode/qt4'],
         # GLib/GTK, even though its name doesn't really indicate.
         ['exclude', '/(gtk|glib|gobject)/.*\\.(cpp|h)$'],
-        ['exclude', '(Default|Gtk|Mac|None|Qt|Win|Wx)\\.(cpp|mm)$'],
+        ['exclude', '(Default|Gtk|Mac|None|Qt|Win|Wx|Efl|Symbian)\\.(cpp|mm)$'],
         ['exclude', 'wtf/CurrentTime\\.cpp$'],
         ['exclude', 'wtf/MainThread.cpp$'],
         ['exclude', 'wtf/TC.*\\.(cpp|h)$'],
