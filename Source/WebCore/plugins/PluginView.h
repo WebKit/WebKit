@@ -64,6 +64,11 @@ QT_BEGIN_NAMESPACE
 class QPainter;
 QT_END_NAMESPACE
 #endif
+#if PLATFORM(GTK)
+#include "GOwnPtrGtk.h"
+typedef struct _GtkSocket GtkSocket;
+typedef struct _GdkRectangle GtkAllocation;
+#endif
 
 #if USE(JSC)
 namespace JSC {
@@ -431,6 +436,13 @@ private:
 #endif // USE(ACCELERATED_COMPOSITING)
 #endif
 #endif // PLATFORM(QT)
+
+#if PLATFORM(GTK)
+        static gboolean plugRemovedCallback(GtkSocket*, PluginView*);
+        static void plugAddedCallback(GtkSocket*, PluginView*);
+        bool m_plugAdded;
+        GOwnPtr<GtkAllocation> m_delayedAllocation;
+#endif
 
         IntRect m_clipRect; // The clip rect to apply to a windowed plug-in
         IntRect m_windowRect; // Our window rect.

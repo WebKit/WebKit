@@ -513,16 +513,27 @@ void PluginView::setNPWindowIfNeeded()
     setCallingPlugin(false);
     PluginView::setCurrentPluginView(0);
 
-    if (m_isWindowed) {
-        GtkAllocation allocation = { m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height() };
-        gtk_widget_size_allocate(platformPluginWidget(), &allocation);
+    if (!m_isWindowed)
+        return;
+
 #if defined(XP_UNIX)
-        if (!m_needsXEmbed) {
-            gtk_xtbin_set_position(GTK_XTBIN(platformPluginWidget()), m_windowRect.x(), m_windowRect.y());
-            gtk_xtbin_resize(platformPluginWidget(), m_windowRect.width(), m_windowRect.height());
-        }
-#endif
+    // GtkXtBin will call gtk_widget_size_allocate, so we don't need to do it here.
+    if (!m_needsXEmbed) {
+        gtk_xtbin_set_position(GTK_XTBIN(platformPluginWidget()), m_windowRect.x(), m_windowRect.y());
+        gtk_xtbin_resize(platformPluginWidget(), m_windowRect.width(), m_windowRect.height());
+        return;
     }
+#endif
+
+    GtkAllocation allocation = { m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height() };
+
+    // If the window has not been embedded yet (the plug added), we delay setting its allocation until 
+    // that point. This fixes issues with some Java plugin instances not rendering immediately.
+    if (!m_plugAdded) {
+        m_delayedAllocation.set(static_cast<GtkAllocation*>(g_memdup(&allocation, sizeof(GtkAllocation))));
+        return;
+    }
+    gtk_widget_size_allocate(platformPluginWidget(), &allocation);
 }
 
 void PluginView::setParentVisible(bool visible)
@@ -743,25 +754,22 @@ static void getVisualAndColormap(int depth, Visual** visual, Colormap* colormap)
 }
 #endif
 
-static gboolean plugRemovedCallback(GtkSocket* socket, gpointer)
+gboolean PluginView::plugRemovedCallback(GtkSocket* socket, PluginView* view)
 {
+    view->m_plugAdded = false;
     return TRUE;
 }
 
-static void plugAddedCallback(GtkSocket* socket, PluginView* view)
+void PluginView::plugAddedCallback(GtkSocket* socket, PluginView* view)
 {
-    if (!socket || !view)
-        return;
+    ASSERT(socket);
+    ASSERT(view);
 
-    // FIXME: Java Plugins do not seem to draw themselves properly the
-    // first time unless we do a size-allocate after they have done
-    // the plug operation on their side, which in general does not
-    // happen since we do size-allocates before setting the
-    // NPWindow. Apply this workaround until we figure out a better
-    // solution, if any.
-    IntRect rect = view->frameRect();
-    GtkAllocation allocation = { rect.x(), rect.y(), rect.width(), rect.height() };
-    gtk_widget_size_allocate(GTK_WIDGET(socket), &allocation);
+    view->m_plugAdded = true;
+    if (view->m_delayedAllocation) {
+        gtk_widget_size_allocate(GTK_WIDGET(socket), view->m_delayedAllocation.get());
+        view->m_delayedAllocation.clear();
+    }
 }
 
 bool PluginView::platformStart()
@@ -790,10 +798,11 @@ bool PluginView::platformStart()
             if (!gtk_widget_get_parent(pageClient))
                 return false;
 
+            m_plugAdded = false;
             setPlatformWidget(gtk_socket_new());
             gtk_container_add(GTK_CONTAINER(pageClient), platformPluginWidget());
-            g_signal_connect(platformPluginWidget(), "plug-added", G_CALLBACK(plugAddedCallback), this);
-            g_signal_connect(platformPluginWidget(), "plug-removed", G_CALLBACK(plugRemovedCallback), NULL);
+            g_signal_connect(platformPluginWidget(), "plug-added", G_CALLBACK(PluginView::plugAddedCallback), this);
+            g_signal_connect(platformPluginWidget(), "plug-removed", G_CALLBACK(PluginView::plugRemovedCallback), this);
         } else
             setPlatformWidget(gtk_xtbin_new(pageClient, 0));
 #else

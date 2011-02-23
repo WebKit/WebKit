@@ -1,3 +1,26 @@
+2011-02-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Flash item placed on wrong location right after load
+        https://bugs.webkit.org/show_bug.cgi?id=37769
+
+        If a plugin is GtkSocket based, do not set the widget allocation until the
+        window is actually embedded in the parent. When the window is embedded, use
+        any pending allocation for the call to gtk_widget_size_allocate. This bug
+        seems to only appear with Flash movies loaded as the src of an iframe.
+
+        * manual-tests/plugins/windowed-in-iframe.html: Added.
+        * plugins/PluginView.h: Add a few new members to track window embedding state.
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded): If this is a GtkSocket-based plugin
+        wait until the plug-added signal fires to set the widget allocation.
+        (WebCore::PluginView::plugAddedCallback): Updated to be a static method, so that
+        we can access private members. If there is a pending allocation, call gtk_widget_size_allocate
+        with it.
+        (WebCore::PluginView::platformStart): Update the plugin state, so that we do not
+        call gtk_widget_size_allocate if the window isn't embedded.
+
 2011-02-18  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adam Roben.
