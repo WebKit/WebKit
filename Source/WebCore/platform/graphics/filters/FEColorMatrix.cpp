@@ -52,9 +52,12 @@ ColorMatrixType FEColorMatrix::type() const
     return m_type;
 }
 
-void FEColorMatrix::setType(ColorMatrixType type)
+bool FEColorMatrix::setType(ColorMatrixType type)
 {
+    if (m_type == type)
+        return false;
     m_type = type;
+    return true;
 }
 
 const Vector<float>& FEColorMatrix::values() const
@@ -62,9 +65,12 @@ const Vector<float>& FEColorMatrix::values() const
     return m_values;
 }
 
-void FEColorMatrix::setValues(const Vector<float> &values)
+bool FEColorMatrix::setValues(const Vector<float> &values)
 {
+    if (m_values == values)
+        return false;
     m_values = values;
+    return true;
 }
 
 inline void matrix(double& red, double& green, double& blue, double& alpha, const Vector<float>& values)

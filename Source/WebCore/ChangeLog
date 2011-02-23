@@ -1,3 +1,24 @@
+2011-02-23  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        FEColorMatrixElement changes doesn't require relayout
+        https://bugs.webkit.org/show_bug.cgi?id=54880
+
+        When the FEColorMatrixElement receives an update message but the given value remains the same we don't need
+        to relayout the filter.
+
+        No new tests are needed because this modificiation is covered by the dynamic update tests of FEColorMatrix.
+
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::setType):
+        (WebCore::FEColorMatrix::setValues):
+        * platform/graphics/filters/FEColorMatrix.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::setFilterEffectAttribute):
+        (WebCore::SVGFEColorMatrixElement::svgAttributeChanged):
+        * svg/SVGFEColorMatrixElement.h:
+
 2011-02-23  James Robinson  <jamesr@chromium.org>
 
         REGRESSION(79466): fast/parser/test-unicode-characters-in-attribute-name.html fails

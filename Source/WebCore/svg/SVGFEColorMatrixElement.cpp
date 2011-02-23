@@ -69,13 +69,26 @@ void SVGFEColorMatrixElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
+bool SVGFEColorMatrixElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+{
+    FEColorMatrix* colorMatrix = static_cast<FEColorMatrix*>(effect);
+    if (attrName == SVGNames::typeAttr)
+        return colorMatrix->setType(static_cast<ColorMatrixType>(type()));
+    if (attrName == SVGNames::valuesAttr)
+        return colorMatrix->setValues(values());
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 void SVGFEColorMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 
     if (attrName == SVGNames::typeAttr
-        || attrName == SVGNames::inAttr
         || attrName == SVGNames::valuesAttr)
+        primitiveAttributeChanged(attrName);
+    if (attrName == SVGNames::inAttr)
         invalidate();
 }
 

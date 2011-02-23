@@ -43,10 +43,10 @@ public:
     static PassRefPtr<FEColorMatrix> create(Filter*, ColorMatrixType, const Vector<float>&);
 
     ColorMatrixType type() const;
-    void setType(ColorMatrixType);
+    bool setType(ColorMatrixType);
 
     const Vector<float>& values() const;
-    void setValues(const Vector<float>&);
+    bool setValues(const Vector<float>&);
 
     virtual void apply();
     virtual void dump();
