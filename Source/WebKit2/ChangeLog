@@ -1,3 +1,10 @@
+2011-02-22  Dan Bernstein  <mitz@apple.com>
+
+        LLVM Compiler build fix.
+
+        * Scripts/webkit2/messages.py:
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.h:
+
 2011-02-22  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Alexey Proskuryakov.

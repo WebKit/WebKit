@@ -251,6 +251,7 @@ def message_to_struct_declaration(message):
 def struct_or_class(namespace, type):
     structs = frozenset([
         'WebCore::CompositionUnderline',
+        'WebCore::GrammarDetail',
         'WebCore::KeypressCommand',
         'WebCore::PluginInfo',
         'WebCore::PrintInfo',
@@ -261,6 +262,7 @@ def struct_or_class(namespace, type):
         'WebKit::PlatformPopupMenuData',
         'WebKit::PluginProcessCreationParameters',
         'WebKit::PrintInfo',
+        'WebKit::SecurityOriginData',
         'WebKit::SelectionState',
         'WebKit::TextCheckerState',
         'WebKit::WebNavigationDataStore',

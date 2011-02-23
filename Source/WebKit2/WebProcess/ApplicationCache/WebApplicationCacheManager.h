@@ -37,7 +37,7 @@ namespace CoreIPC {
 
 namespace WebKit {
 
-class SecurityOriginData;
+struct SecurityOriginData;
 
 class WebApplicationCacheManager {
     WTF_MAKE_NONCOPYABLE(WebApplicationCacheManager);
