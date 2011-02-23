@@ -869,43 +869,7 @@ AffineTransform GraphicsContext::getCTM() const
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
 {
-    // This logic is copied from GraphicsContextCG, eseidel 5/05/08
-
-    // It is not enough just to round to pixels in device space. The rotation
-    // part of the affine transform matrix to device space can mess with this
-    // conversion if we have a rotating image like the hands of the world clock
-    // widget. We just need the scale, so we get the affine transform matrix and
-    // extract the scale.
-
-    const SkMatrix& deviceMatrix = platformContext()->canvas()->getTotalMatrix();
-    if (deviceMatrix.isIdentity())
-        return rect;
-
-    float deviceScaleX = sqrtf(square(deviceMatrix.getScaleX())
-        + square(deviceMatrix.getSkewY()));
-    float deviceScaleY = sqrtf(square(deviceMatrix.getSkewX())
-        + square(deviceMatrix.getScaleY()));
-
-    FloatPoint deviceOrigin(rect.x() * deviceScaleX, rect.y() * deviceScaleY);
-    FloatPoint deviceLowerRight((rect.x() + rect.width()) * deviceScaleX,
-        (rect.y() + rect.height()) * deviceScaleY);
-
-    deviceOrigin.setX(roundf(deviceOrigin.x()));
-    deviceOrigin.setY(roundf(deviceOrigin.y()));
-    deviceLowerRight.setX(roundf(deviceLowerRight.x()));
-    deviceLowerRight.setY(roundf(deviceLowerRight.y()));
-
-    // Don't let the height or width round to 0 unless either was originally 0
-    if (deviceOrigin.y() == deviceLowerRight.y() && rect.height())
-        deviceLowerRight.move(0, 1);
-    if (deviceOrigin.x() == deviceLowerRight.x() && rect.width())
-        deviceLowerRight.move(1, 0);
-
-    FloatPoint roundedOrigin(deviceOrigin.x() / deviceScaleX,
-        deviceOrigin.y() / deviceScaleY);
-    FloatPoint roundedLowerRight(deviceLowerRight.x() / deviceScaleX,
-        deviceLowerRight.y() / deviceScaleY);
-    return FloatRect(roundedOrigin, roundedLowerRight - roundedOrigin);
+    return rect;
 }
 
 void GraphicsContext::scale(const FloatSize& size)

@@ -1,3 +1,17 @@
+2011-02-21  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Jittering when animating a rotated image
+        https://bugs.webkit.org/show_bug.cgi?id=50775
+
+        Since Skia does not seem to suffer from pixel cracks when scaling to
+        non-integral sizes the way CG does, no-op roundToDevicePixels on the
+        Skia implementation.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::roundToDevicePixels):
+
 2011-02-23 Patrick Gansterer <paroga@webkit.org>
 
         Reviewed by Andreas Kling.
