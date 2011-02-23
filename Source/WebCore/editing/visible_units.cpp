@@ -89,7 +89,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
     if (ec)
         return VisiblePosition();
 
-    SimplifiedBackwardsTextIterator it(searchRange.get(), TextIteratorEndsAtEditingBoundary);
+    SimplifiedBackwardsTextIterator it(searchRange.get());
     unsigned next = 0;
     bool inTextSecurityMode = start.deprecatedNode() && start.deprecatedNode()->renderer() && start.deprecatedNode()->renderer()->style()->textSecurity() != TSNONE;
     bool needMoreContext = false;
@@ -124,7 +124,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
         return VisiblePosition(Position(node, next), DOWNSTREAM);
 
     // Use the character iterator to translate the next value into a DOM position.
-    BackwardsCharacterIterator charIt(searchRange.get(), TextIteratorEndsAtEditingBoundary);
+    BackwardsCharacterIterator charIt(searchRange.get());
     charIt.advance(string.size() - suffixLength - next);
     return VisiblePosition(charIt.range()->endPosition(), DOWNSTREAM);
 }

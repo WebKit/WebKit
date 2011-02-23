@@ -1,3 +1,15 @@
+2011-02-23  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Moving or selecting backwards by words jumps to start of contenteditable region if contenteditable=false span is encountered
+        https://bugs.webkit.org/show_bug.cgi?id=51001
+
+        Add regression test.
+
+        * editing/selection/extend-backward-by-word-over-non-editable-expected.txt: Added.
+        * editing/selection/extend-backward-by-word-over-non-editable.html: Added.
+
 2011-02-23  Dominic Mazzoni  <dmazzoni@google.com>
 
         Reviewed by Kenneth Russell.

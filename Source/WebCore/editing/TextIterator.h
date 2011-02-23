@@ -41,8 +41,7 @@ enum TextIteratorBehavior {
     TextIteratorEmitsCharactersBetweenAllVisiblePositions = 1 << 0,
     TextIteratorEntersTextControls = 1 << 1,
     TextIteratorEmitsTextsWithoutTranscoding = 1 << 2,
-    TextIteratorEndsAtEditingBoundary = 1 << 3,
-    TextIteratorIgnoresStyleVisibility = 1 << 4
+    TextIteratorIgnoresStyleVisibility = 1 << 3
 };
     
 // FIXME: Can't really answer this question correctly without knowing the white-space mode.
@@ -205,9 +204,7 @@ private:
     bool handleReplacedElement();
     bool handleNonTextNode();
     void emitCharacter(UChar, Node*, int startOffset, int endOffset);
-    bool crossesEditingBoundary(Node*) const;
-    bool setCurrentNode(Node*);
-    void clearCurrentNode();
+    bool advanceRespectingRange(Node*);
 
     TextIteratorBehavior m_behavior;
     // Current position, not necessarily of the text being returned, but position
@@ -238,9 +235,9 @@ private:
     
     // Used for whitespace characters that aren't in the DOM, so we can point at them.
     UChar m_singleCharacterBuffer;
-    
-    // The node after the last node this iterator should process.
-    Node* m_pastStartNode;
+
+    // Whether m_node has advanced beyond the iteration range (i.e. m_startNode).
+    bool m_havePassedStartNode;
 };
 
 // Builds on the text iterator, adding a character position so we can walk one

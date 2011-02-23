@@ -194,21 +194,6 @@ static Node* nextInPreOrderCrossingShadowBoundaries(Node* rangeEndContainer, int
     return 0;
 }
 
-static Node* previousInPostOrderCrossingShadowBoundaries(Node* rangeStartContainer, int rangeStartOffset)
-{
-    if (!rangeStartContainer)
-        return 0;
-    if (rangeStartOffset > 0 && !rangeStartContainer->offsetInCharacters()) {
-        if (Node* previous = rangeStartContainer->childNode(rangeStartOffset - 1))
-            return previous;
-    }
-    for (Node* node = rangeStartContainer; node; node = node->parentOrHostNode()) {
-        if (Node* previous = node->previousSibling())
-            return previous;
-    }
-    return 0;
-}
-
 // --------
 
 static inline bool fullyClipsContents(Node* node)
@@ -290,9 +275,6 @@ TextIterator::TextIterator(const Range* r, TextIteratorBehavior behavior)
     , m_handledFirstLetter(false)
     , m_ignoresStyleVisibility(behavior & TextIteratorIgnoresStyleVisibility)
 {
-    // FIXME: should support TextIteratorEndsAtEditingBoundary http://webkit.org/b/43609
-    ASSERT(behavior != TextIteratorEndsAtEditingBoundary);
-
     if (!r)
         return;
 
@@ -1052,7 +1034,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r,
     , m_node(0)
     , m_positionNode(0)
 {
-    ASSERT(m_behavior == TextIteratorDefaultBehavior || m_behavior == TextIteratorEndsAtEditingBoundary);
+    ASSERT(m_behavior == TextIteratorDefaultBehavior);
 
     if (!r)
         return;
@@ -1077,7 +1059,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r,
         }
     }
 
-    setCurrentNode(endNode);
+    m_node = endNode;
     setUpFullyClippedStack(m_fullyClippedStack, m_node);    
     m_offset = endOffset;
     m_handledNode = false;
@@ -1096,7 +1078,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r,
     m_lastTextNode = 0;
     m_lastCharacter = '\n';
 
-    m_pastStartNode = previousInPostOrderCrossingShadowBoundaries(startNode, startOffset);
+    m_havePassedStartNode = false;
 
     advance();
 }
@@ -1108,7 +1090,7 @@ void SimplifiedBackwardsTextIterator::advance()
     m_positionNode = 0;
     m_textLength = 0;
 
-    while (m_node && m_node != m_pastStartNode) {
+    while (m_node && !m_havePassedStartNode) {
         // Don't handle node if we start iterating at [node, 0].
         if (!m_handledNode && !(m_node == m_endNode && m_endOffset == 0)) {
             RenderObject* renderer = m_node->renderer();
@@ -1125,8 +1107,10 @@ void SimplifiedBackwardsTextIterator::advance()
                 return;
         }
 
-        Node* next = m_handledChildren ? 0 : m_node->lastChild();
-        if (!next) {
+        if (!m_handledChildren && m_node->hasChildNodes()) {
+            m_node = m_node->lastChild();
+            pushFullyClippedState(m_fullyClippedStack, m_node);
+        } else {
             // Exit empty containers as we pass over them or containers
             // where [container, 0] is where we started iterating.
             if (!m_handledNode
@@ -1138,11 +1122,12 @@ void SimplifiedBackwardsTextIterator::advance()
                     m_handledNode = true;
                     m_handledChildren = true;
                     return;
-                }            
+                }
             }
+
             // Exit all other containers.
             while (!m_node->previousSibling()) {
-                if (!setCurrentNode(m_node->parentOrHostNode()))
+                if (!advanceRespectingRange(m_node->parentOrHostNode()))
                     break;
                 m_fullyClippedStack.pop();
                 exitNode();
@@ -1153,14 +1138,12 @@ void SimplifiedBackwardsTextIterator::advance()
                 }
             }
 
-            next = m_node->previousSibling();
             m_fullyClippedStack.pop();
+            if (advanceRespectingRange(m_node->previousSibling()))
+                pushFullyClippedState(m_fullyClippedStack, m_node);
+            else
+                m_node = 0;
         }
-        
-        if (m_node && setCurrentNode(next))
-            pushFullyClippedState(m_fullyClippedStack, m_node);
-        else
-            clearCurrentNode();
 
         // For the purpose of word boundary detection,
         // we should iterate all visible text and trailing (collapsed) whitespaces. 
@@ -1240,24 +1223,15 @@ void SimplifiedBackwardsTextIterator::emitCharacter(UChar c, Node* node, int sta
     m_lastCharacter = c;
 }
 
-bool SimplifiedBackwardsTextIterator::crossesEditingBoundary(Node* node) const
+bool SimplifiedBackwardsTextIterator::advanceRespectingRange(Node* next)
 {
-    return m_node && m_node->isContentEditable() != node->isContentEditable();
-}
-
-bool SimplifiedBackwardsTextIterator::setCurrentNode(Node* node)
-{
-    if (!node)
+    if (!next)
         return false;
-    if (m_behavior == TextIteratorEndsAtEditingBoundary && crossesEditingBoundary(node))
+    m_havePassedStartNode |= m_node == m_startNode;
+    if (m_havePassedStartNode)
         return false;
-    m_node = node;
+    m_node = next;
     return true;
-}
-
-void SimplifiedBackwardsTextIterator::clearCurrentNode()
-{
-    m_node = 0;
 }
 
 PassRefPtr<Range> SimplifiedBackwardsTextIterator::range() const

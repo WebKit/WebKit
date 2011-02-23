@@ -1,3 +1,36 @@
+2011-02-23  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Moving or selecting backwards by words jumps to start of contenteditable region if contenteditable=false span is encountered
+        https://bugs.webkit.org/show_bug.cgi?id=51001
+
+        Test: editing/selection/extend-backward-by-word-over-non-editable.html
+
+        Revert some previous changes (the TextIteratorEndsAtEditingBoundary text iteration behaviour) which caused this
+        bug in the first place, and fix SimplifiedBackwardsTextIterator's iteration range check as an alternative fix.
+
+        The original bug was that double-clicking on an inline editable span at the start of a paragraph would clear the
+        selection (webkit.org/b/36360).  This was caused by upstream/downstream VisbiblePosition complications.  To fix,
+        refuse to iterate beyond the start node (rather than refusing to iterate across editable boundaries, which
+        causes this bug).
+
+        To see why this is correct, and to make it clearer that is indeed what is happening, the text iterator code has
+        been slightly restructured to express the invariant that the iterator will never advance past the start node.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator): Remove references to TextIterationEndsAtEditing boundary.
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator): Remove m_pastStartNode as the
+        mechanism for iteration range checking, and use a flag m_havePassedStartNode instead.
+        (WebCore::SimplifiedBackwardsTextIterator::advance): Clean up, use advanceRespectingRange and
+        m_havePassedStartNode for iteration range checking rather than m_pastStartNode.
+        (WebCore::SimplifiedBackwardsTextIterator::advanceRespectingRange): The new way of modifying m_node
+        which updates m_havePassedStartNode and refuses to continue when it becomes true.
+        * editing/TextIterator.h: Remove TextIteratorEndsAtEditingBoundary, update for new/removed prototypes and
+        member variables.
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary): Remove references to TextIteratorEndsAtEditingBoundary.
+
 2011-02-23  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Adam Barth.
