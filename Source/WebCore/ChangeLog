@@ -1,3 +1,18 @@
+2011-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Minimal build broken
+        https://bugs.webkit.org/show_bug.cgi?id=54743
+
+        Moved the code of setInspectorExtensionAPI and
+        dispatchMessageFromFrontend out of #if
+        ENABLE(JAVASCRIPT_DEBUGGER) to fix link error of the minimal build.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setInspectorExtensionAPI):
+        (WebCore::InspectorController::dispatchMessageFromFrontend):
+
 2011-02-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r79367.

@@ -193,6 +193,16 @@ bool InspectorController::timelineProfilerEnabled()
     return m_inspectorAgent->timelineAgent()->started();
 }
 
+void InspectorController::setInspectorExtensionAPI(const String& source)
+{
+    m_inspectorAgent->setInspectorExtensionAPI(source);
+}
+
+void InspectorController::dispatchMessageFromFrontend(const String& message)
+{
+    m_inspectorBackendDispatcher->dispatch(message);
+}
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorController::enableProfiler()
 {
@@ -245,11 +255,6 @@ bool InspectorController::isRecordingUserInitiatedProfile() const
     return m_inspectorAgent->isRecordingUserInitiatedProfile();
 }
 
-void InspectorController::setInspectorExtensionAPI(const String& source)
-{
-    m_inspectorAgent->setInspectorExtensionAPI(source);
-}
-
 void InspectorController::resume()
 {
     if (InspectorDebuggerAgent* debuggerAgent = m_inspectorAgent->debuggerAgent())
@@ -259,11 +264,6 @@ void InspectorController::resume()
 void InspectorController::hideHighlight()
 {
     m_inspectorAgent->hideHighlight();
-}
-
-void InspectorController::dispatchMessageFromFrontend(const String& message)
-{
-    m_inspectorBackendDispatcher->dispatch(message);
 }
 
 #endif
