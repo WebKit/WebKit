@@ -1,3 +1,16 @@
+2011-02-23  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] DumpRenderTree --check-layout-test-sys-deps leaks 4 temp dirs
+        https://bugs.webkit.org/show_bug.cgi?id=55004
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (WebKitSupportTestEnvironment::WebKitSupportTestEnvironment):
+        (WebKitSupportTestEnvironment::~WebKitSupportTestEnvironment):
+        (main): Use a C++ object to ensure that TearDownTestEnvironment
+            gets called when --check-layout-test-sys-deps is called
+
 2011-02-23  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
 
         Reviewed by Anders Carlsson.

@@ -60,6 +60,18 @@ static const char optionStressDeopt[] = "--stress-deopt";
 static const char optionJavaScriptFlags[] = "--js-flags=";
 static const char optionNoTimeout[] = "--no-timeout";
 
+class WebKitSupportTestEnvironment {
+public:
+    WebKitSupportTestEnvironment()
+    {
+        webkit_support::SetUpTestEnvironment();
+    }
+    ~WebKitSupportTestEnvironment()
+    {
+        webkit_support::TearDownTestEnvironment();
+    }
+};
+
 static void runTest(TestShell& shell, TestParams& params, const string& testName, bool testShellMode)
 {
     int oldTimeoutMsec = shell.layoutTestTimeout();
@@ -109,7 +121,7 @@ static void runTest(TestShell& shell, TestParams& params, const string& testName
 
 int main(int argc, char* argv[])
 {
-    webkit_support::SetUpTestEnvironment();
+    WebKitSupportTestEnvironment testEnvironment;
     platformInit(&argc, &argv);
 
     TestParams params;
@@ -144,7 +156,7 @@ int main(int argc, char* argv[])
         else if (argument == optionStartupDialog)
             startupDialog = true;
         else if (argument == optionCheckLayoutTestSystemDeps)
-            exit(checkLayoutTestSystemDependencies() ? EXIT_SUCCESS : EXIT_FAILURE);
+            return checkLayoutTestSystemDependencies() ? EXIT_SUCCESS : EXIT_FAILURE;
         else if (argument == optionHardwareAcceleratedGL)
             hardwareAcceleratedGL = true;
         else if (argument == optionEnableAcceleratedCompositing)
@@ -218,6 +230,5 @@ int main(int argc, char* argv[])
         shell.resetTestController();
     }
 
-    webkit_support::TearDownTestEnvironment();
     return EXIT_SUCCESS;
 }
