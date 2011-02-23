@@ -381,30 +381,35 @@ void RenderThemeQt::adjustRepaintRect(const RenderObject* o, IntRect& rect)
 Color RenderThemeQt::platformActiveSelectionBackgroundColor() const
 {
     QPalette pal = QApplication::palette();
+    setPaletteFromPageClientIfExists(pal);
     return pal.brush(QPalette::Active, QPalette::Highlight).color();
 }
 
 Color RenderThemeQt::platformInactiveSelectionBackgroundColor() const
 {
     QPalette pal = QApplication::palette();
+    setPaletteFromPageClientIfExists(pal);
     return pal.brush(QPalette::Inactive, QPalette::Highlight).color();
 }
 
 Color RenderThemeQt::platformActiveSelectionForegroundColor() const
 {
     QPalette pal = QApplication::palette();
+    setPaletteFromPageClientIfExists(pal);
     return pal.brush(QPalette::Active, QPalette::HighlightedText).color();
 }
 
 Color RenderThemeQt::platformInactiveSelectionForegroundColor() const
 {
     QPalette pal = QApplication::palette();
+    setPaletteFromPageClientIfExists(pal);
     return pal.brush(QPalette::Inactive, QPalette::HighlightedText).color();
 }
 
 Color RenderThemeQt::platformFocusRingColor() const
 {
     QPalette pal = QApplication::palette();
+    setPaletteFromPageClientIfExists(pal);
     return pal.brush(QPalette::Active, QPalette::Highlight).color();
 }
 

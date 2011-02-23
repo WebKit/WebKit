@@ -1,3 +1,20 @@
+2011-02-22  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QWebView ignores a palette set with QWebView::setPalette()
+        https://bugs.webkit.org/show_bug.cgi?id=31742
+
+        Use custom QWebView palette if the view provides one.
+        Modified version of a patch made by Fabrizio Machado.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeQt::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeQt::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeQt::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeQt::platformFocusRingColor):
+
 2011-02-22  Brian Salomon  <bsalomon@google.com>
 
         Reviewed by Kenneth Russell.

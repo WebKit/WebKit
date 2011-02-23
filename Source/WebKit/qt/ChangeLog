@@ -1,3 +1,17 @@
+2011-02-22  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QWebView ignores a palette set with QWebView::setPalette()
+        https://bugs.webkit.org/show_bug.cgi?id=31742
+
+        Test case to check that the palette sets on the QWebView is taken
+        into account.
+
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::setPalette_data):
+        (tst_QWebView::setPalette):
+
 2011-02-22  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Alexey Proskuryakov.
