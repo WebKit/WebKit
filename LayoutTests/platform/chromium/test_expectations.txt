@@ -3501,13 +3501,6 @@ BUGWK54736 MAC : tables/mozilla/marvin/x_th_align_justify.xml = IMAGE
 BUGWK54736 MAC : tables/mozilla/marvin/x_tr_align_justify.xml = IMAGE
 BUGWK54736 MAC : svg/zoom/text/zoom-hixie-mixed-008.xml = TEXT
 
-// Need rebaselines after r79084 (GPU only). Disable DEBUG-only lines above when done.
-BUGATWILSON GPU : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGATWILSON GPU : fast/canvas/image-object-in-canvas.html = IMAGE
-BUGATWILSON GPU : compositing/masks/masked-ancestor.html = IMAGE
-BUGATWILSON GPU : compositing/masks/simple-composited-mask.html = IMAGE
-BUGATWILSON GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
-
 BUGWK54794 GPU MAC : compositing/geometry/object-clip-rects-assertion.html = TIMEOUT
 
 BUGCR73510 MAC : fast/text/font-size-zero.html = TEXT

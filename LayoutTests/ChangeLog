@@ -11,6 +11,34 @@
 
 2011-02-22  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed chromium-gpu expectations update.
+
+        * platform/chromium-gpu-linux/compositing/masks/masked-ancestor-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-gpu-linux/compositing/masks/simple-composited-mask-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/masks/simple-composited-mask-expected.png:
+        * platform/chromium-gpu-linux/compositing/overflow/fixed-position-ancestor-clip-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/canvas-text-alignment-expected.checksum:
+        * platform/chromium-gpu-linux/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/image-object-in-canvas-expected.checksum:
+        * platform/chromium-gpu-linux/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-gpu-mac/compositing/masks/masked-ancestor-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/masks/masked-ancestor-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/masks/simple-composited-mask-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/masks/simple-composited-mask-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/fixed-position-ancestor-clip-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/fixed-position-ancestor-clip-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/overflow/fixed-position-ancestor-clip-expected.checksum:
+        * platform/chromium-gpu-win/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/canvas-text-alignment-expected.checksum:
+        * platform/chromium-gpu-win/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/image-object-in-canvas-expected.checksum:
+        * platform/chromium-gpu-win/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-02-22  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed expectations change for chromium.
 
         * platform/chromium-gpu-linux/compositing/reflections/deeply-nested-reflections-expected.checksum:
