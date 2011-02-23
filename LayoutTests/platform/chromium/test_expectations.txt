@@ -3256,7 +3256,7 @@ BUGWK54322 MAC SNOWLEOPARD : fast/text/international/bidi-linebreak-002.html = I
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/bidi-linebreak-003.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/bidi-mirror-he-ar.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/bidi-neutral-directionality-paragraph-start.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE+TEXT
+BUGWK54322 MAC SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/justify-ideograph-simple.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE
@@ -3631,10 +3631,5 @@ BUGWK54736 MAC : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
 BUGWK54736 MAC : tables/mozilla_expected_failures/bugs/bug58402-2.html = IMAGE
 BUGWK54736 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE
 BUGWK54736 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-6.html = IMAGE
-
-// Flaky
-BUGMORRITA MAC LEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = TEXT
-BUGMORRITA MAC LEOPARD : svg/zoom/page/zoom-hixie-mixed-008.xml = TEXT
-BUGMORRITA MAC : svg/zoom/text/zoom-hixie-mixed-008.xml = TEXT
-BUGWK54736 MAC : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
+BUGWK54736 MAC : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT
 
