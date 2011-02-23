@@ -85,7 +85,6 @@
 #import "WebNSPrintOperationExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
-#import "WebNSUserDefaultsExtras.h"
 #import "WebNSViewExtras.h"
 #import "WebNodeHighlight.h"
 #import "WebPDFView.h"
@@ -548,10 +547,9 @@ static NSString *createUserVisibleWebKitVersionString()
         osVersion = createMacOSXVersionString();
     if (!webKitVersion)
         webKitVersion = createUserVisibleWebKitVersionString();
-    NSString *language = [NSUserDefaults _webkit_preferredLanguageCode];
     if ([applicationName length])
-        return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@; %@) AppleWebKit/%@ (KHTML, like Gecko) %@", osVersion, language, webKitVersion, applicationName];
-    return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@; %@) AppleWebKit/%@ (KHTML, like Gecko)", osVersion, language, webKitVersion];
+        return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@) AppleWebKit/%@ (KHTML, like Gecko) %@", osVersion, webKitVersion, applicationName];
+    return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@) AppleWebKit/%@ (KHTML, like Gecko)", osVersion, webKitVersion];
 }
 
 + (void)_reportException:(JSValueRef)exception inContext:(JSContextRef)context

@@ -25,7 +25,6 @@
 #include <QDir>
 #include <QGraphicsWidget>
 #include <QLineEdit>
-#include <QLocale>
 #include <QMainWindow>
 #include <QMenu>
 #include <QPushButton>
@@ -119,7 +118,6 @@ private slots:
     void errorPageExtensionInIFrames();
     void errorPageExtensionInFrameset();
     void userAgentApplicationName();
-    void userAgentLocaleChange();
 
     void viewModes();
 
@@ -2404,20 +2402,6 @@ void tst_QWebPage::userAgentApplicationName()
     QVERIFY(page.userAgentForUrl(QUrl()).contains(applicationNameMarker));
 
     QCoreApplication::setApplicationName(oldApplicationName);
-}
-
-void tst_QWebPage::userAgentLocaleChange()
-{
-    FriendlyWebPage page;
-    m_view->setPage(&page);
-
-    const QString markerString = QString::fromLatin1(" nn-NO)");
-
-    if (page.userAgentForUrl(QUrl()).contains(markerString))
-        QSKIP("marker string already present", SkipSingle);
-
-    m_view->setLocale(QLocale(QString::fromLatin1("nn_NO")));
-    QVERIFY(page.userAgentForUrl(QUrl()).contains(markerString));
 }
 
 void tst_QWebPage::crashTests_LazyInitializationOfMainFrame()

@@ -27,7 +27,6 @@
 #import "WebPageProxy.h"
 
 #import "PageClient.h"
-#import <WebCore/Language.h>
 #import <wtf/text/StringConcatenate.h>
 
 @interface NSApplication (Details)
@@ -88,12 +87,9 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
     DEFINE_STATIC_LOCAL(String, osVersion, (macOSXVersionString()));
     DEFINE_STATIC_LOCAL(String, webKitVersion, (userVisibleWebKitVersionString()));
 
-    // FIXME: We should upate the user agent if the default language changes.
-    String language = defaultLanguage();
-
     if (applicationNameForUserAgent.isEmpty())
-        return makeString("Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X ", osVersion, "; ", language, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko)");
-    return makeString("Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X ", osVersion, "; ", language, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) ", applicationNameForUserAgent);
+        return makeString("Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X ", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko)");
+    return makeString("Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X ", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) ", applicationNameForUserAgent);
 }
 
 void WebPageProxy::getIsSpeaking(bool& isSpeaking)

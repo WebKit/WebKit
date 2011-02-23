@@ -124,7 +124,6 @@
 #include <QFileDialog>
 #include <QHttpRequestHeader>
 #include <QInputDialog>
-#include <QLocale>
 #include <QMessageBox>
 #include <QNetworkProxy>
 #include <QUndoStack>
@@ -3684,7 +3683,7 @@ QWebPluginFactory *QWebPage::pluginFactory() const
 
     The default implementation returns the following value:
 
-    "Mozilla/5.0 (%Platform%; %Security%; %Subplatform%; %Locale%) AppleWebKit/%WebKitVersion% (KHTML, like Gecko) %AppVersion Safari/%WebKitVersion%"
+    "Mozilla/5.0 (%Platform%; %Security%; %Subplatform%) AppleWebKit/%WebKitVersion% (KHTML, like Gecko) %AppVersion Safari/%WebKitVersion%"
 
     On mobile platforms such as Symbian S60 and Maemo, "Mobile Safari" is used instead of "Safari".
 
@@ -3692,8 +3691,6 @@ QWebPluginFactory *QWebPage::pluginFactory() const
     \list
     \o %Platform% and %Subplatform% are expanded to the windowing system and the operation system.
     \o %Security% expands to U if SSL is enabled, otherwise N. SSL is enabled if QSslSocket::supportsSsl() returns true.
-    \o %Locale% is replaced with QLocale::name(). The locale is determined from the view of the QWebPage. If no view is set on the QWebPage,
-    then a default constructed QLocale is used instead.
     \o %WebKitVersion% is the version of WebKit the application was compiled against.
     \o %AppVersion% expands to QCoreApplication::applicationName()/QCoreApplication::applicationVersion() if they're set; otherwise defaulting to Qt and the current Qt version.
     \endlist
@@ -3898,8 +3895,6 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
         firstPartTemp += QString::fromLatin1("Unknown");
 #endif
 
-        // language is the split
-        firstPartTemp += QString::fromLatin1("; ");
         firstPartTemp.squeeze();
         firstPart = firstPartTemp;
 
@@ -3932,14 +3927,6 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
         Q_ASSERT(!thirdPart.isNull());
     }
 
-    // Language
-    QString languageName;
-    if (d->client && d->client->ownerWidget())
-        languageName = d->client->ownerWidget()->locale().name();
-    else
-        languageName = QLocale().name();
-    languageName.replace(QLatin1Char('_'), QLatin1Char('-'));
-
     // Application name/version
     QString appName = QCoreApplication::applicationName();
     if (!appName.isEmpty()) {
@@ -3951,7 +3938,7 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
         appName = QString::fromLatin1("Qt/") + QString::fromLatin1(qVersion());
     }
 
-    return firstPart + languageName + secondPart + appName + thirdPart;
+    return firstPart + secondPart + appName + thirdPart;
 }
 
 

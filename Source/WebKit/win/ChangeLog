@@ -1,3 +1,13 @@
+2011-02-22  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Drop the language tag part from the User Agent string
+        https://bugs.webkit.org/show_bug.cgi?id=54560
+
+        * WebView.cpp:
+        (WebView::standardUserAgentWithApplicationName):
+
 2011-02-19  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Mihai Parparita.

@@ -43,7 +43,6 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLFormElement.h"
-#include "Language.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -120,8 +119,6 @@ static String composeUserAgent()
     ua += agentPlatform(); // Platform
     ua += "; U; "; // Security
     ua += agentOS(); // OS-or-CPU
-    ua += "; ";
-    ua += defaultLanguage(); // Localization information
     ua += ") ";
 
     // WebKit Product

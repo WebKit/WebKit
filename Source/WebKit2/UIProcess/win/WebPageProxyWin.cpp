@@ -27,7 +27,6 @@
 #include "WebPageProxy.h"
 
 #include <tchar.h>
-#include <WebCore/Language.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringConcatenate.h>
@@ -100,15 +99,12 @@ exit:
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
-   DEFINE_STATIC_LOCAL(String, osVersion, (windowsVersion()));
-   DEFINE_STATIC_LOCAL(String, webKitVersion, (userVisibleWebKitVersionString()));
+    DEFINE_STATIC_LOCAL(String, osVersion, (windowsVersion()));
+    DEFINE_STATIC_LOCAL(String, webKitVersion, (userVisibleWebKitVersionString()));
 
-   // FIXME: We should upate the user agent if the default language changes.
-   String language = defaultLanguage();
-
-   if (applicationNameForUserAgent.isEmpty())
-       return makeString("Mozilla/5.0 (Windows; U; ", osVersion, "; ", language, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko)");
-   return makeString("Mozilla/5.0 (Windows; U; ", osVersion, "; ", language, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) ", applicationNameForUserAgent);
+    if (applicationNameForUserAgent.isEmpty())
+        return makeString("Mozilla/5.0 (Windows; U; ", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko)");
+    return makeString("Mozilla/5.0 (Windows; U; ", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) ", applicationNameForUserAgent);
 }
 
 } // namespace WebKit

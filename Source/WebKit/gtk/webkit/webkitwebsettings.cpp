@@ -28,7 +28,6 @@
 
 #include "EditingBehavior.h"
 #include "FileSystem.h"
-#include "Language.h"
 #include "PluginDatabase.h"
 #include "webkitenumtypes.h"
 #include "webkitglobalsprivate.h"
@@ -223,7 +222,7 @@ String webkitUserAgent()
     // We re-use the WebKit version, though it doesn't seem to matter much in practice
 
     DEFINE_STATIC_LOCAL(const String, uaVersion, (makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+')));
-    DEFINE_STATIC_LOCAL(const String, staticUA, (makeString("Mozilla/5.0 (", webkitPlatform(), "; U; ", webkitOSVersion(), "; ", defaultLanguage(), ") AppleWebKit/", uaVersion) +
+    DEFINE_STATIC_LOCAL(const String, staticUA, (makeString("Mozilla/5.0 (", webkitPlatform(), "; U; ", webkitOSVersion(), ") AppleWebKit/", uaVersion) +
                                                  makeString(" (KHTML, like Gecko) Version/5.0 Safari/", uaVersion)));
 
     return staticUA;

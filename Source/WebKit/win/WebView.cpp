@@ -98,7 +98,6 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/JSElement.h>
 #include <WebCore/KeyboardEvent.h>
-#include <WebCore/Language.h>
 #include <WebCore/Logging.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/Page.h>
@@ -1245,8 +1244,8 @@ bool WebView::canHandleRequest(const WebCore::ResourceRequest& request)
 String WebView::standardUserAgentWithApplicationName(const String& applicationName)
 {
     if (applicationName.isEmpty())
-        return makeString("Mozilla/5.0 (Windows; U; ", osVersion(), "; ", defaultLanguage(), ") AppleWebKit/", webKitVersion(), " (KHTML, like Gecko)");
-    return makeString("Mozilla/5.0 (Windows; U; ", osVersion(), "; ", defaultLanguage(), ") AppleWebKit/", webKitVersion(), " (KHTML, like Gecko) ", applicationName);
+        return makeString("Mozilla/5.0 (Windows; U; ", osVersion(), ") AppleWebKit/", webKitVersion(), " (KHTML, like Gecko)");
+    return makeString("Mozilla/5.0 (Windows; U; ", osVersion(), ") AppleWebKit/", webKitVersion(), " (KHTML, like Gecko) ", applicationName);
 }
 
 Page* WebView::page()

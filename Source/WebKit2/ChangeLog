@@ -1,3 +1,23 @@
+2011-02-22  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Drop the language tag part from the User Agent string
+        https://bugs.webkit.org/show_bug.cgi?id=54560
+
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::standardUserAgent):
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::standardUserAgent):
+
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit::WebPageProxy::standardUserAgent):
+
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::standardUserAgent): Drop the language tag
+        part and fix style.
+
 2011-02-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
