@@ -1,3 +1,11 @@
+2011-02-22  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update. Update Snow Leopard
+        expectations (some SVG tests now pass thanks to patches for bug 54474,
+        others now fail).
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed; fixed Windows expected failure results added by r79328 for new tests from r79318 
