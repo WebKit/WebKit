@@ -3551,3 +3551,5 @@ BUGWK54885 MAC : fast/forms/password-placeholder-text-security.html = TIMEOUT
 BUGWK54885 MAC : plugins/embed-attributes-setting.html = TIMEOUT
 BUGWK54885 MAC : plugins/embed-attributes-style.html = TIMEOUT
 BUGWK54885 MAC : userscripts/user-script-video-document.html = TIMEOUT
+
+BUGWK55023 : http/tests/navigation/useragent.php = TEXT

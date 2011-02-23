@@ -1,3 +1,9 @@
+2011-02-22  MORITA Hajime <morrita@google.com>
+
+        Unreviewed test_expectations.txt update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-22  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, added Leopard-specific expectations for Chromium.
