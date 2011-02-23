@@ -561,6 +561,10 @@ media/invalid-media-url-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=39481
 media/audio-only-video-intrinsic-size.html
 
+# [Qt] media/controls-without-preload.html is flakey
+# https://bugs.webkit.org/show_bug.cgi?id=55028
+media/controls-without-preload.html
+
 media/adopt-node-crash.html
 media/audio-constructor.html
 media/audio-constructor-preload.html
