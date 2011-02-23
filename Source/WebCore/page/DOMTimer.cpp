@@ -153,8 +153,16 @@ void DOMTimer::adjustMinimumTimerInterval(double oldMinimumTimerInterval)
 {
     if (m_nestingLevel < maxTimerNestingLevel)
         return;
+
+    double newMinimumInterval = scriptExecutionContext()->minimumTimerInterval();
+    double newClampedInterval = intervalClampedToMinimum(m_originalTimeout, newMinimumInterval);
+
+    if (repeatInterval()) {
+        augmentRepeatInterval(newClampedInterval - repeatInterval());
+        return;
+    }
+
     double previousClampedInterval = intervalClampedToMinimum(m_originalTimeout, oldMinimumTimerInterval);
-    double newClampedInterval = intervalClampedToMinimum(m_originalTimeout, scriptExecutionContext()->minimumTimerInterval());
     augmentFireInterval(newClampedInterval - previousClampedInterval);
 }
 

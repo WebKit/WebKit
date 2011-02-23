@@ -1,3 +1,20 @@
+2011-02-22  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Per-page minimum DOMTimer interval broken for repeating timers
+        https://bugs.webkit.org/show_bug.cgi?id=55014
+
+        When the minimum timer interval is adjusted, if the timer is
+        repeating, cause its repeat interval to be set to its original
+        timeout clamped to the new minimum interval.
+
+        Tests: fast/dom/timer-increase-min-interval-repeating.html
+               fast/dom/timer-increase-then-decrease-min-interval-repeating.html
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::adjustMinimumTimerInterval):
+
 2011-02-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

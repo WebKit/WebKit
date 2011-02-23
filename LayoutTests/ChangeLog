@@ -1,3 +1,20 @@
+2011-02-23  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Per-page minimum DOMTimer interval broken for repeating timers
+        https://bugs.webkit.org/show_bug.cgi?id=55014
+
+        Add tests using setInterval rather than setTimeout.
+        timer-increase-then-decrease-min-interval-repeating.html catches
+        the bug.
+
+        * fast/dom/timer-increase-min-interval-repeating-expected.txt: Added.
+        * fast/dom/timer-increase-min-interval-repeating.html: Added.
+        * fast/dom/timer-increase-then-decrease-min-interval-repeating-expected.txt: Added.
+        * fast/dom/timer-increase-then-decrease-min-interval-repeating.html: Added.
+        * platform/mac-wk2/Skipped:
+
 2011-02-23  Jessie Berlin  <jberlin@apple.com>
 
         [Windows 7 Release Tests] ~26 tests failing after r78846
