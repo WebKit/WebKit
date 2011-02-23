@@ -333,6 +333,8 @@ void tst_QWebView::setPalette()
     QFETCH(bool, active);
     QFETCH(bool, background);
 
+    QWidget* activeView = 0;
+
     // Use controlView to manage active/inactive state of test views by raising
     // or lowering their position in the window stack.
     QWebView controlView;
@@ -368,8 +370,13 @@ void tst_QWebView::setPalette()
         controlView.show();
         controlView.activateWindow();
         QTest::qWaitForWindowShown(&controlView);
-    } else
+        activeView = &controlView;
+    } else {
         view1.activateWindow();
+        activeView = &view1;
+    }
+
+    QTRY_COMPARE(QApplication::activeWindow(), activeView);
 
     view1.page()->triggerAction(QWebPage::SelectAll);
 
@@ -410,8 +417,13 @@ void tst_QWebView::setPalette()
         controlView.show();
         controlView.activateWindow();
         QTest::qWaitForWindowShown(&controlView);
-    } else
+        activeView = &controlView;
+    } else {
         view2.activateWindow();
+        activeView = &view2;
+    }
+
+    QTRY_COMPARE(QApplication::activeWindow(), activeView);
 
     view2.page()->triggerAction(QWebPage::SelectAll);
 

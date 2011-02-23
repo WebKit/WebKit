@@ -1,5 +1,19 @@
 2011-02-23  Alexis Menard  <alexis.menard@openbossa.org>
 
+        Reviewed by Ariya Hidayat.
+
+        [Qt] tst_QWebView::setPalette(activeFG) fails
+        https://bugs.webkit.org/show_bug.cgi?id=55029
+
+        Attempt to make the test more robust. By investigating with the bot virtual machine
+        I discovered that the activation can take some time. In this patch we make sure that
+        the active window we want to have is the same as the QApplication.
+
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::setPalette):
+
+2011-02-23  Alexis Menard  <alexis.menard@openbossa.org>
+
         Reviewed by Dan Bernstein.
 
         [Qt]REGRESSION(r79167): It broke 3 Qt-API test cases
