@@ -527,7 +527,7 @@ static WTF::PassRefPtr<WebCore::Frame> _ewk_view_core_frame_new(Ewk_View_Smart_D
         CRITICAL("Could not create frame loader client.");
         return 0;
     }
-    flc->setCustomUserAgent(WTF::String::fromUTF8(priv->settings.user_agent));
+    flc->setCustomUserAgent(String::fromUTF8(priv->settings.user_agent));
 
     return WebCore::Frame::create(priv->page, owner, flc);
 }
@@ -538,7 +538,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
 {
     Ewk_View_Private_Data* priv =
         (Ewk_View_Private_Data*)calloc(1, sizeof(Ewk_View_Private_Data));
-    WTF::AtomicString s;
+    AtomicString s;
     WebCore::KURL url;
 
     if (!priv) {
@@ -1437,7 +1437,7 @@ Eina_Bool ewk_view_text_search(const Evas_Object* o, const char* string, Eina_Bo
     else
         direction = WebCore::FindDirectionBackward;
 
-    return priv->page->findString(WTF::String::fromUTF8(string), sensitive, direction, wrap);
+    return priv->page->findString(String::fromUTF8(string), sensitive, direction, wrap);
 }
 
 /**
@@ -1463,7 +1463,7 @@ unsigned int ewk_view_text_matches_mark(Evas_Object* o, const char* string, Eina
     else
         sensitive = WTF::TextCaseInsensitive;
 
-    return priv->page->markAllMatchesForText(WTF::String::fromUTF8(string), sensitive, highlight, limit);
+    return priv->page->markAllMatchesForText(String::fromUTF8(string), sensitive, highlight, limit);
 }
 
 /**
@@ -1533,7 +1533,7 @@ char* ewk_view_selection_get(const Evas_Object* o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
-    WTF::CString s = priv->page->focusController()->focusedOrMainFrame()->editor()->selectedText().utf8();
+    CString s = priv->page->focusController()->focusedOrMainFrame()->editor()->selectedText().utf8();
     if (s.isNull())
         return 0;
     return strdup(s.data());
@@ -1541,7 +1541,7 @@ char* ewk_view_selection_get(const Evas_Object* o)
 
 static Eina_Bool _ewk_view_editor_command(Ewk_View_Private_Data* priv, const char* command)
 {
-    return priv->page->focusController()->focusedOrMainFrame()->editor()->command(WTF::String::fromUTF8(command)).execute();
+    return priv->page->focusController()->focusedOrMainFrame()->editor()->command(String::fromUTF8(command)).execute();
 }
 
 /**
@@ -2368,7 +2368,7 @@ Eina_Bool ewk_view_setting_user_agent_set(Evas_Object* o, const char* user_agent
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     if (eina_stringshare_replace(&priv->settings.user_agent, user_agent)) {
         WebCore::FrameLoaderClientEfl* client = static_cast<WebCore::FrameLoaderClientEfl*>(priv->main_frame->loader()->client());
-        client->setCustomUserAgent(WTF::String::fromUTF8(user_agent));
+        client->setCustomUserAgent(String::fromUTF8(user_agent));
     }
     return EINA_TRUE;
 }
@@ -2385,7 +2385,7 @@ Eina_Bool ewk_view_setting_user_stylesheet_set(Evas_Object* o, const char* uri)
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     if (eina_stringshare_replace(&priv->settings.user_stylesheet, uri)) {
-        WebCore::KURL kurl(WebCore::KURL(), WTF::String::fromUTF8(uri));
+        WebCore::KURL kurl(WebCore::KURL(), String::fromUTF8(uri));
         priv->page_settings->setUserStyleSheetLocation(kurl);
     }
     return EINA_TRUE;
@@ -2646,7 +2646,7 @@ const char* ewk_view_setting_encoding_custom_get(const Evas_Object* o)
     Evas_Object* main_frame = ewk_view_frame_main_get(o);
     WebCore::Frame* core_frame = ewk_frame_core_get(main_frame);
 
-    WTF::String overrideEncoding = core_frame->loader()->documentLoader()->overrideEncoding();
+    String overrideEncoding = core_frame->loader()->documentLoader()->overrideEncoding();
 
     if (overrideEncoding.isEmpty())
         return 0;
@@ -2671,7 +2671,7 @@ Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object* o, const char *encod
     WebCore::Frame* core_frame = ewk_frame_core_get(main_frame);
 DBG("%s", encoding);
     eina_stringshare_replace(&priv->settings.encoding_custom, encoding);
-    core_frame->loader()->reloadWithOverrideEncoding(WTF::String::fromUTF8(encoding));
+    core_frame->loader()->reloadWithOverrideEncoding(String::fromUTF8(encoding));
 
     return EINA_TRUE;
 }
@@ -2688,7 +2688,7 @@ Eina_Bool ewk_view_setting_encoding_default_set(Evas_Object* o, const char* enco
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     if (eina_stringshare_replace(&priv->settings.encoding_default, encoding))
-        priv->page_settings->setDefaultTextEncodingName(WTF::String::fromUTF8(encoding));
+        priv->page_settings->setDefaultTextEncodingName(String::fromUTF8(encoding));
     return EINA_TRUE;
 }
 
@@ -2735,7 +2735,7 @@ Eina_Bool ewk_view_setting_cache_directory_set(Evas_Object* o, const char* path)
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     if (eina_stringshare_replace(&priv->settings.cache_directory, path))
-        WebCore::cacheStorage().setCacheDirectory(WTF::String::fromUTF8(path));
+        WebCore::cacheStorage().setCacheDirectory(String::fromUTF8(path));
     return EINA_TRUE;
 }
 
@@ -2822,10 +2822,8 @@ Eina_Bool ewk_view_setting_font_standard_set(Evas_Object* o, const char* family)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.font_standard, family)) {
-        WTF::AtomicString s = WTF::String::fromUTF8(family);
-        priv->page_settings->setStandardFontFamily(s);
-    }
+    if (eina_stringshare_replace(&priv->settings.font_standard, family))
+        priv->page_settings->setStandardFontFamily(AtomicString::fromUTF8(family));
     return EINA_TRUE;
 }
 
@@ -2840,10 +2838,8 @@ Eina_Bool ewk_view_setting_font_cursive_set(Evas_Object* o, const char* family)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.font_cursive, family)) {
-        WTF::AtomicString s = WTF::String::fromUTF8(family);
-        priv->page_settings->setCursiveFontFamily(s);
-    }
+    if (eina_stringshare_replace(&priv->settings.font_cursive, family))
+        priv->page_settings->setCursiveFontFamily(AtomicString::fromUTF8(family));
     return EINA_TRUE;
 }
 
@@ -2858,10 +2854,8 @@ Eina_Bool ewk_view_setting_font_fantasy_set(Evas_Object* o, const char* family)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.font_fantasy, family)) {
-        WTF::AtomicString s = WTF::String::fromUTF8(family);
-        priv->page_settings->setFantasyFontFamily(s);
-    }
+    if (eina_stringshare_replace(&priv->settings.font_fantasy, family))
+        priv->page_settings->setFantasyFontFamily(AtomicString::fromUTF8(family));
     return EINA_TRUE;
 }
 
@@ -2876,10 +2870,8 @@ Eina_Bool ewk_view_setting_font_monospace_set(Evas_Object* o, const char* family
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.font_monospace, family)) {
-        WTF::AtomicString s = WTF::String::fromUTF8(family);
-        priv->page_settings->setFixedFontFamily(s);
-    }
+    if (eina_stringshare_replace(&priv->settings.font_monospace, family))
+        priv->page_settings->setFixedFontFamily(AtomicString::fromUTF8(family));
     return EINA_TRUE;
 }
 
@@ -2894,10 +2886,8 @@ Eina_Bool ewk_view_setting_font_serif_set(Evas_Object* o, const char* family)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.font_serif, family)) {
-        WTF::AtomicString s = WTF::String::fromUTF8(family);
-        priv->page_settings->setSerifFontFamily(s);
-    }
+    if (eina_stringshare_replace(&priv->settings.font_serif, family))
+        priv->page_settings->setSerifFontFamily(AtomicString::fromUTF8(family));
     return EINA_TRUE;
 }
 
@@ -2912,10 +2902,8 @@ Eina_Bool ewk_view_setting_font_sans_serif_set(Evas_Object* o, const char* famil
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.font_sans_serif, family)) {
-        WTF::AtomicString s = WTF::String::fromUTF8(family);
-        priv->page_settings->setSansSerifFontFamily(s);
-    }
+    if (eina_stringshare_replace(&priv->settings.font_sans_serif, family))
+        priv->page_settings->setSansSerifFontFamily(AtomicString::fromUTF8(family));
     return EINA_TRUE;
 }
 
@@ -3035,10 +3023,8 @@ Eina_Bool ewk_view_setting_local_storage_database_path_set(Evas_Object* o, const
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.local_storage_database_path, path)) {
-        WTF::AtomicString s = WTF::String::fromUTF8(path);
-        priv->page_settings->setLocalStorageDatabasePath(s);
-    }
+    if (eina_stringshare_replace(&priv->settings.local_storage_database_path, path))
+        priv->page_settings->setLocalStorageDatabasePath(String::fromUTF8(path));
     return EINA_TRUE;
 }
 

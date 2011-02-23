@@ -564,7 +564,7 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
             m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "CR doesn't follow LF after value at " + trimConsoleMessage(p, end - p), 0, clientOrigin(), 0);
             return 0;
         }
-        AtomicString nameStr(String::fromUTF8(name.data(), name.size()));
+        AtomicString nameStr = AtomicString::fromUTF8(name.data(), name.size());
         String valueStr = String::fromUTF8(value.data(), value.size());
         if (nameStr.isNull()) {
             m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "invalid UTF-8 sequence in header name", 0, clientOrigin(), 0);
