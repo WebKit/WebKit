@@ -9,21 +9,21 @@ layer at (0,0) size 800x600
           text run at (439,0) width 341: "There should be spaces added before and after the"
           text run at (0,21) width 112: "inserted content."
       RenderBlock {DIV} at (0,58) size 784x31
-        RenderMenuList {SELECT} at (2,2) size 74x27 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (8,4) size 42x21
+        RenderMenuList {SELECT} at (2,2) size 70x27 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,3) size 42x21
             RenderText at (0,0) size 8x21
               text run at (0,0) width 8: "1"
       RenderBlock {DIV} at (0,89) size 784x31
-        RenderText {#text} at (0,6) size 8x21
-          text run at (0,6) width 8: "x"
-        RenderText {#text} at (8,6) size 4x21
-          text run at (8,6) width 4: " "
-        RenderMenuList {SELECT} at (14,2) size 74x27 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (8,4) size 42x21
+        RenderText {#text} at (0,5) size 8x21
+          text run at (0,5) width 8: "x"
+        RenderText {#text} at (8,5) size 4x21
+          text run at (8,5) width 4: " "
+        RenderMenuList {SELECT} at (14,2) size 70x27 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,3) size 42x21
             RenderText at (0,0) size 8x21
               text run at (0,0) width 8: "1"
-        RenderText {#text} at (90,6) size 4x21
-          text run at (90,6) width 4: " "
-        RenderText {#text} at (94,6) size 8x21
-          text run at (94,6) width 8: "x"
+        RenderText {#text} at (86,5) size 4x21
+          text run at (86,5) width 4: " "
+        RenderText {#text} at (90,5) size 8x21
+          text run at (90,5) width 8: "x"
 caret: position 1 of child 3 {#text} of child 4 {DIV} of body

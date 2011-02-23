@@ -184,15 +184,15 @@ layer at (0,0) size 784x2809
         RenderBlock {P} at (0,0) size 768x87
           RenderText {#text} at (0,0) size 277x21
             text run at (0,0) width 277: "How does your browser fare on this test?"
-          RenderMenuList {SELECT} at (2,23) size 593x27 [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (8,4) size 561x21
+          RenderMenuList {SELECT} at (2,23) size 589x27 [bgcolor=#FFFFFF]
+            RenderBlock (anonymous) at (4,3) size 561x21
               RenderText at (0,0) size 561x21
                 text run at (0,0) width 561: "The tests all render identically, and this browser may or may not grok CSS2 tables."
-          RenderText {#text} at (597,27) size 4x21
-            text run at (597,27) width 4: " "
-          RenderInline {LABEL} at (0,0) size 677x54
-            RenderText {#text} at (601,27) size 76x21
-              text run at (601,27) width 76: "Comment: "
+          RenderText {#text} at (593,26) size 4x21
+            text run at (593,26) width 4: " "
+          RenderInline {LABEL} at (0,0) size 673x55
+            RenderText {#text} at (597,26) size 76x21
+              text run at (597,26) width 76: "Comment: "
             RenderTextControl {INPUT} at (2,58) size 176x25
           RenderText {#text} at (180,60) size 4x21
             text run at (180,60) width 4: " "

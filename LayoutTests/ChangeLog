@@ -1,3 +1,65 @@
+2011-02-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] <select>s on  http://www.ryanair.com render wrong
+        https://bugs.webkit.org/show_bug.cgi?id=29647
+
+        Update Qt specific expected files after r79407.
+
+        * platform/qt/editing/pasteboard/4641033-expected.checksum: Added.
+        * platform/qt/editing/pasteboard/4641033-expected.png: Added.
+        * platform/qt/editing/pasteboard/4641033-expected.txt:
+        * platform/qt/editing/pasteboard/4944770-1-expected.checksum: Added.
+        * platform/qt/editing/pasteboard/4944770-1-expected.png: Added.
+        * platform/qt/editing/pasteboard/4944770-1-expected.txt:
+        * platform/qt/editing/pasteboard/4944770-2-expected.checksum: Added.
+        * platform/qt/editing/pasteboard/4944770-2-expected.png: Added.
+        * platform/qt/editing/pasteboard/4944770-2-expected.txt:
+        * platform/qt/editing/selection/caret-before-select-expected.checksum:
+        * platform/qt/editing/selection/caret-before-select-expected.png:
+        * platform/qt/editing/selection/caret-before-select-expected.txt:
+        * platform/qt/editing/selection/replaced-boundaries-3-expected.checksum:
+        * platform/qt/editing/selection/replaced-boundaries-3-expected.png:
+        * platform/qt/editing/selection/replaced-boundaries-3-expected.txt:
+        * platform/qt/fast/forms/basic-selects-expected.checksum:
+        * platform/qt/fast/forms/basic-selects-expected.png:
+        * platform/qt/fast/forms/basic-selects-expected.txt:
+        * platform/qt/fast/forms/menulist-style-color-expected.checksum: Added.
+        * platform/qt/fast/forms/menulist-style-color-expected.png: Added.
+        * platform/qt/fast/forms/menulist-style-color-expected.txt:
+        * platform/qt/http/tests/navigation/javascriptlink-frames-expected.checksum: Added.
+        * platform/qt/http/tests/navigation/javascriptlink-frames-expected.png: Added.
+        * platform/qt/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug1188-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug18359-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2479-3-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug29326-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug29326-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug29326-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug33855-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug33855-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug4382-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug4382-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug4382-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug96334-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug96334-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/qt/tables/mozilla/core/margins-expected.checksum:
+        * platform/qt/tables/mozilla/core/margins-expected.png:
+        * platform/qt/tables/mozilla/core/margins-expected.txt:
+        * platform/qt/tables/mozilla/dom/tableDom-expected.checksum:
+        * platform/qt/tables/mozilla/dom/tableDom-expected.png:
+        * platform/qt/tables/mozilla/dom/tableDom-expected.txt:
+
 2011-02-22 MORITA Hajime  <morrita@google.com>
 
         Unreviewed, added or updated more Leopard-specific expectations for Chromium.

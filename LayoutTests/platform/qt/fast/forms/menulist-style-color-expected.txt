@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderMenuList {SELECT} at (2,2) size 82x27 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (8,4) size 50x21
+      RenderMenuList {SELECT} at (2,2) size 78x27 [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (4,3) size 50x21
           RenderText at (0,0) size 50x21
             text run at (0,0) width 50: "Default"
-      RenderText {#text} at (86,6) size 4x21
-        text run at (86,6) width 4: " "
-      RenderMenuList {SELECT} at (92,2) size 74x27 [color=#FF0000] [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (8,4) size 42x21
+      RenderText {#text} at (82,5) size 4x21
+        text run at (82,5) width 4: " "
+      RenderMenuList {SELECT} at (88,2) size 70x27 [color=#FF0000] [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (4,3) size 42x21
           RenderText at (0,0) size 28x21
             text run at (0,0) width 28: "Red"
-      RenderText {#text} at (168,6) size 4x21
-        text run at (168,6) width 4: " "
-      RenderMenuList {SELECT} at (174,3) size 147x25 [bgcolor=#008000] [border: (1px solid #000000)]
-        RenderBlock (anonymous) at (9,3) size 113x21
+      RenderText {#text} at (160,5) size 4x21
+        text run at (160,5) width 4: " "
+      RenderMenuList {SELECT} at (166,2) size 143x27 [bgcolor=#008000] [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (5,3) size 113x21
           RenderText at (0,0) size 113x21
             text run at (0,0) width 113: "Default on green"
-      RenderText {#text} at (323,6) size 4x21
-        text run at (323,6) width 4: " "
-      RenderMenuList {SELECT} at (329,3) size 125x25 [color=#FF0000] [bgcolor=#008000] [border: (1px solid #FF0000)]
-        RenderBlock (anonymous) at (9,3) size 91x21
+      RenderText {#text} at (311,5) size 4x21
+        text run at (311,5) width 4: " "
+      RenderMenuList {SELECT} at (317,2) size 121x27 [color=#FF0000] [bgcolor=#008000] [border: (1px solid #FF0000)]
+        RenderBlock (anonymous) at (5,3) size 91x21
           RenderText at (0,0) size 91x21
             text run at (0,0) width 91: "Red on green"
       RenderText {#text} at (0,0) size 0x0

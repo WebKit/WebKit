@@ -16,20 +16,20 @@ layer at (0,0) size 800x600
           text run at (0,0) width 715: "This tests for a bug when creating markup for a selection that contained unrendered nodes with children. "
           text run at (715,0) width 29: "You"
           text run at (0,21) width 345: "should see a picture of abe followed by a select box."
-      RenderBlock {DIV} at (0,58) size 784x112
+      RenderBlock {DIV} at (0,58) size 784x113
         RenderImage {IMG} at (0,0) size 76x103
         RenderText {#text} at (76,87) size 4x21
           text run at (76,87) width 4: " "
-        RenderMenuList {SELECT} at (82,83) size 74x27 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (8,4) size 42x21
+        RenderMenuList {SELECT} at (82,84) size 70x27 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,3) size 42x21
             RenderText at (0,0) size 8x21
               text run at (0,0) width 8: "1"
-      RenderBlock (anonymous) at (0,170) size 784x112
+      RenderBlock (anonymous) at (0,171) size 784x113
         RenderImage {IMG} at (0,0) size 76x103
         RenderText {#text} at (76,87) size 4x21
           text run at (76,87) width 4: " "
-        RenderMenuList {SELECT} at (82,83) size 74x27 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (8,4) size 42x21
+        RenderMenuList {SELECT} at (82,84) size 70x27 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,3) size 42x21
             RenderText at (0,0) size 8x21
               text run at (0,0) width 8: "1"
         RenderText {#text} at (0,0) size 0x0
