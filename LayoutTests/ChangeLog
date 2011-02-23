@@ -1,3 +1,576 @@
+2011-02-22  Andrew Wilson  <atwilson@chromium.org>
+
+        Reverted r79034 because the baselines were landed in the wrong directory (should be in chromium-mac-leopard). Unreviewed.
+
+        * platform/chromium-mac/compositing/reflections/deeply-nested-reflections-expected.checksum: Removed.
+        * platform/chromium-mac/compositing/reflections/deeply-nested-reflections-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/clear_float-expected.checksum:
+        * platform/chromium-mac/css1/box_properties/clear_float-expected.png:
+        * platform/chromium-mac/css1/box_properties/float_elements_in_series-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/float_elements_in_series-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/float_on_text_elements-expected.checksum:
+        * platform/chromium-mac/css1/box_properties/float_on_text_elements-expected.png:
+        * platform/chromium-mac/css1/text_properties/text_align-expected.checksum: Removed.
+        * platform/chromium-mac/css1/text_properties/text_align-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0805-c5518-brdr-t-01-e-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0805-c5518-brdr-t-01-e-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltcont-00-d-g-expected.checksum:
+        * platform/chromium-mac/css2.1/t0905-c5525-fltcont-00-d-g-expected.png:
+        * platform/chromium-mac/css2.1/t0905-c5525-fltwidth-00-c-g-expected.checksum:
+        * platform/chromium-mac/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png:
+        * platform/chromium-mac/css2.1/t1202-counter-03-b-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1202-counter-03-b-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1202-counter-04-b-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1202-counter-04-b-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1202-counter-04-b-expected.txt: Removed.
+        * platform/chromium-mac/css2.1/t1202-counters-03-b-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1202-counters-03-b-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1202-counters-04-b-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1202-counters-04-b-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1202-counters-04-b-expected.txt: Removed.
+        * platform/chromium-mac/css2.1/t1602-c43-center-00-d-ag-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1602-c43-center-00-d-ag-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1602-c546-txt-align-00-b-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1602-c546-txt-align-00-b-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-tab-003-expected.checksum: Removed.
+        * platform/chromium-mac/editing/deleting/delete-tab-003-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-ws-fixup-001-expected.checksum: Removed.
+        * platform/chromium-mac/editing/deleting/delete-ws-fixup-001-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/insert-tab-003-expected.checksum: Removed.
+        * platform/chromium-mac/editing/inserting/insert-tab-003-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/typing-tab-designmode-forms-expected.checksum: Removed.
+        * platform/chromium-mac/editing/inserting/typing-tab-designmode-forms-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/4641033-expected.checksum: Removed.
+        * platform/chromium-mac/editing/pasteboard/4641033-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/block-wrappers-necessary-expected.checksum: Removed.
+        * platform/chromium-mac/editing/pasteboard/block-wrappers-necessary-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/nested-blocks-with-text-area-expected.checksum: Removed.
+        * platform/chromium-mac/editing/pasteboard/nested-blocks-with-text-area-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/nested-blocks-with-text-field-expected.checksum: Removed.
+        * platform/chromium-mac/editing/pasteboard/nested-blocks-with-text-field-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/paste-blockquote-2-expected.checksum: Removed.
+        * platform/chromium-mac/editing/pasteboard/paste-blockquote-2-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/pasting-tabs-expected.checksum: Removed.
+        * platform/chromium-mac/editing/pasteboard/pasting-tabs-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/3690703-2-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/3690703-2-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/3690703-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/3690703-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/3690719-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/3690719-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/4397952-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/4397952-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/4975120-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/4975120-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/5240265-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/5240265-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-2-expected.checksum:
+        * platform/chromium-mac/editing/selection/caret-rtl-2-expected.png:
+        * platform/chromium-mac/editing/selection/caret-rtl-2-left-expected.checksum:
+        * platform/chromium-mac/editing/selection/caret-rtl-2-left-expected.png:
+        * platform/chromium-mac/editing/selection/caret-rtl-expected.checksum:
+        * platform/chromium-mac/editing/selection/caret-rtl-expected.png:
+        * platform/chromium-mac/editing/selection/caret-rtl-right-expected.checksum:
+        * platform/chromium-mac/editing/selection/caret-rtl-right-expected.png:
+        * platform/chromium-mac/editing/selection/extend-selection-bidi-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/extend-selection-bidi-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/move-past-trailing-space-expected.checksum: Added.
+        * platform/chromium-mac/editing/selection/replaced-boundaries-3-expected.checksum:
+        * platform/chromium-mac/editing/selection/replaced-boundaries-3-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/select-from-textfield-outwards-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/select-from-textfield-outwards-expected.png: Removed.
+        * platform/chromium-mac/editing/style/5046875-1-expected.checksum: Removed.
+        * platform/chromium-mac/editing/style/5046875-1-expected.png: Removed.
+        * platform/chromium-mac/editing/style/create-block-for-style-011-expected.checksum: Added.
+        * platform/chromium-mac/editing/style/create-block-for-style-011-expected.png: Added.
+        * platform/chromium-mac/editing/style/create-block-for-style-012-expected.checksum: Added.
+        * platform/chromium-mac/editing/style/create-block-for-style-012-expected.png: Added.
+        * platform/chromium-mac/editing/style/table-selection-expected.checksum: Removed.
+        * platform/chromium-mac/editing/style/table-selection-expected.png: Removed.
+        * platform/chromium-mac/fast/block/margin-collapse/103-expected.checksum:
+        * platform/chromium-mac/fast/block/margin-collapse/103-expected.png:
+        * platform/chromium-mac/fast/block/positioning/inline-block-relposition-expected.checksum: Removed.
+        * platform/chromium-mac/fast/block/positioning/inline-block-relposition-expected.png: Removed.
+        * platform/chromium-mac/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/Kusa-Makura-background-canvas-expected.png: Removed.
+        * platform/chromium-mac/fast/blockflow/border-vertical-lr-expected.checksum:
+        * platform/chromium-mac/fast/blockflow/border-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/blockflow/border-vertical-lr-expected.txt: Removed.
+        * platform/chromium-mac/fast/blockflow/japanese-lr-selection-expected.checksum:
+        * platform/chromium-mac/fast/blockflow/japanese-lr-selection-expected.png:
+        * platform/chromium-mac/fast/blockflow/japanese-lr-text-expected.checksum:
+        * platform/chromium-mac/fast/blockflow/japanese-lr-text-expected.png:
+        * platform/chromium-mac/fast/blockflow/japanese-rl-selection-expected.checksum:
+        * platform/chromium-mac/fast/blockflow/japanese-rl-selection-expected.png:
+        * platform/chromium-mac/fast/blockflow/japanese-rl-text-expected.checksum:
+        * platform/chromium-mac/fast/blockflow/japanese-rl-text-expected.png: Removed.
+        * platform/chromium-mac/fast/blockflow/japanese-ruby-vertical-lr-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/japanese-ruby-vertical-lr-expected.png: Removed.
+        * platform/chromium-mac/fast/blockflow/japanese-ruby-vertical-rl-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/japanese-ruby-vertical-rl-expected.png: Removed.
+        * platform/chromium-mac/fast/blockflow/vertical-align-table-baseline-expected.checksum:
+        * platform/chromium-mac/fast/blockflow/vertical-align-table-baseline-expected.png:
+        * platform/chromium-mac/fast/blockflow/vertical-baseline-alignment-expected.checksum:
+        * platform/chromium-mac/fast/blockflow/vertical-baseline-alignment-expected.png:
+        * platform/chromium-mac/fast/blockflow/vertical-font-fallback-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/vertical-font-fallback-expected.png: Removed.
+        * platform/chromium-mac/fast/css/beforeSelectorOnCodeElement-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/beforeSelectorOnCodeElement-expected.png: Removed.
+        * platform/chromium-mac/fast/css/continuationCrash-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/continuationCrash-expected.png: Removed.
+        * platform/chromium-mac/fast/css/css2-system-fonts-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/css2-system-fonts-expected.png: Removed.
+        * platform/chromium-mac/fast/css/font-face-default-font-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/font-face-default-font-expected.png: Removed.
+        * platform/chromium-mac/fast/css/font-face-locally-installed-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/font-face-locally-installed-expected.png: Removed.
+        * platform/chromium-mac/fast/css/margin-top-bottom-dynamic-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/margin-top-bottom-dynamic-expected.png: Removed.
+        * platform/chromium-mac/fast/css/rtl-ordering-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/rtl-ordering-expected.png: Removed.
+        * platform/chromium-mac/fast/css/text-input-with-webkit-border-radius-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/text-input-with-webkit-border-radius-expected.png: Removed.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-bidi-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-bidi-expected.png: Removed.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-strict-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-strict-expected.png: Removed.
+        * platform/chromium-mac/fast/css/text-security-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/text-security-expected.png: Removed.
+        * platform/chromium-mac/fast/dom/52776-expected.txt:
+        * platform/chromium-mac/fast/dom/HTMLInputElement/input-image-alt-text-expected.checksum: Removed.
+        * platform/chromium-mac/fast/dom/HTMLInputElement/input-image-alt-text-expected.png: Removed.
+        * platform/chromium-mac/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.checksum: Removed.
+        * platform/chromium-mac/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.png: Removed.
+        * platform/chromium-mac/fast/dom/HTMLTextAreaElement/reset-textarea-expected.checksum: Removed.
+        * platform/chromium-mac/fast/dom/HTMLTextAreaElement/reset-textarea-expected.png: Removed.
+        * platform/chromium-mac/fast/dynamic/008-expected.checksum: Removed.
+        * platform/chromium-mac/fast/dynamic/008-expected.png: Removed.
+        * platform/chromium-mac/fast/events/autoscroll-expected.checksum: Removed.
+        * platform/chromium-mac/fast/events/autoscroll-expected.png: Removed.
+        * platform/chromium-mac/fast/events/context-no-deselect-expected.checksum: Removed.
+        * platform/chromium-mac/fast/events/context-no-deselect-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/HTMLOptionElement_label01-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/HTMLOptionElement_label01-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/HTMLOptionElement_label02-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/HTMLOptionElement_label02-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/HTMLOptionElement_label03-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/HTMLOptionElement_label03-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/HTMLOptionElement_label04-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/HTMLOptionElement_label04-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/basic-buttons-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/basic-buttons-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/basic-selects-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/basic-selects-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/basic-selects-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/basic-textareas-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/basic-textareas-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/basic-textareas-quirks-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/basic-textareas-quirks-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/blankbuttons-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/blankbuttons-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/button-align-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/button-align-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/button-cannot-be-nested-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/button-cannot-be-nested-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/button-default-title-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/button-default-title-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/button-generated-content-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/button-generated-content-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/button-positioned-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/button-positioned-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/button-sizes-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/button-sizes-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/button-style-color-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/button-style-color-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/button-table-styles-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/button-table-styles-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/button-text-transform-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/button-text-transform-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/button-white-space-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/button-white-space-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/control-clip-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/control-clip-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/control-restrict-line-height-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/control-restrict-line-height-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/file-input-direction-expected.checksum:
+        * platform/chromium-mac/fast/forms/file-input-direction-expected.png:
+        * platform/chromium-mac/fast/forms/file-input-direction-expected.txt:
+        * platform/chromium-mac/fast/forms/formmove3-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/formmove3-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-align-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-align-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-bkcolor-expected.checksum:
+        * platform/chromium-mac/fast/forms/input-appearance-bkcolor-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-default-bkcolor-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-default-bkcolor-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-disabled-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-disabled-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-focus-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-focus-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-preventDefault-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-preventDefault-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-readonly-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-readonly-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-selection-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-selection-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-visibility-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-visibility-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-width-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-width-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-button-sizes-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-button-sizes-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-disabled-color-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-disabled-color-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-double-click-selection-gap-bug-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-double-click-selection-gap-bug-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-field-text-truncated-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-field-text-truncated-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-file-re-render-expected.checksum:
+        * platform/chromium-mac/fast/forms/input-file-re-render-expected.png:
+        * platform/chromium-mac/fast/forms/input-first-letter-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-first-letter-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-readonly-autoscroll-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-readonly-autoscroll-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-readonly-dimmed-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-readonly-dimmed-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-spaces-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-spaces-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-table-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-table-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-text-double-click-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-text-double-click-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-text-drag-down-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-text-drag-down-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-text-scroll-left-on-blur-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-text-scroll-left-on-blur-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-text-word-wrap-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-text-word-wrap-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/menulist-no-overflow-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/menulist-no-overflow-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/menulist-option-wrap-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/menulist-option-wrap-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/menulist-restrict-line-height-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/menulist-restrict-line-height-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/menulist-style-color-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/menulist-style-color-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/menulist-width-change-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/menulist-width-change-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/option-strip-whitespace-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/option-strip-whitespace-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/option-text-clip-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/option-text-clip-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/placeholder-position-expected.checksum:
+        * platform/chromium-mac/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-mac/fast/forms/placeholder-set-value-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/placeholder-set-value-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/plaintext-mode-2-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/plaintext-mode-2-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/search-cancel-button-style-sharing-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/search-cancel-button-style-sharing-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/search-rtl-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/search-rtl-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/search-transformed-expected.checksum:
+        * platform/chromium-mac/fast/forms/search-transformed-expected.png:
+        * platform/chromium-mac/fast/forms/search-zoomed-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/search-zoomed-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/select-align-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/select-align-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/select-baseline-expected.checksum:
+        * platform/chromium-mac/fast/forms/select-baseline-expected.png:
+        * platform/chromium-mac/fast/forms/select-change-listbox-to-popup-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/select-change-listbox-to-popup-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/select-disabled-appearance-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/select-disabled-appearance-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/select-initial-position-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/select-initial-position-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/select-selected-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/select-selected-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/select-visual-hebrew-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/select-visual-hebrew-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/stuff-on-my-optgroup-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/stuff-on-my-optgroup-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/tabbing-input-iframe-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/tabbing-input-iframe-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/targeted-frame-submission-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/targeted-frame-submission-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/text-style-color-expected.checksum:
+        * platform/chromium-mac/fast/forms/text-style-color-expected.png:
+        * platform/chromium-mac/fast/forms/textarea-align-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/textarea-align-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/textarea-placeholder-set-value-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/textarea-placeholder-set-value-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/textarea-scroll-height-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/textarea-scroll-height-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/textarea-scrolled-type-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/textarea-scrolled-type-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/visual-hebrew-text-field-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/visual-hebrew-text-field-expected.png: Removed.
+        * platform/chromium-mac/fast/html/keygen-expected.checksum: Removed.
+        * platform/chromium-mac/fast/html/keygen-expected.png: Removed.
+        * platform/chromium-mac/fast/inline/inline-box-background-expected.checksum:
+        * platform/chromium-mac/fast/inline/inline-box-background-expected.png:
+        * platform/chromium-mac/fast/inline/inline-box-background-long-image-expected.checksum:
+        * platform/chromium-mac/fast/inline/inline-box-background-long-image-expected.png:
+        * platform/chromium-mac/fast/inline/inline-box-background-repeat-x-expected.checksum:
+        * platform/chromium-mac/fast/inline/inline-box-background-repeat-x-expected.png:
+        * platform/chromium-mac/fast/inline/inline-box-background-repeat-y-expected.checksum:
+        * platform/chromium-mac/fast/inline/inline-box-background-repeat-y-expected.png:
+        * platform/chromium-mac/fast/lists/dynamic-marker-crash-expected.checksum: Removed.
+        * platform/chromium-mac/fast/lists/dynamic-marker-crash-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/float-avoidance-expected.checksum: Removed.
+        * platform/chromium-mac/fast/multicol/float-avoidance-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/shadow-breaking-expected.checksum:
+        * platform/chromium-mac/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium-mac/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.checksum: Removed.
+        * platform/chromium-mac/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.png: Removed.
+        * platform/chromium-mac/fast/parser/document-write-option-expected.checksum: Removed.
+        * platform/chromium-mac/fast/parser/document-write-option-expected.png: Removed.
+        * platform/chromium-mac/fast/parser/entity-comment-in-textarea-expected.checksum: Removed.
+        * platform/chromium-mac/fast/parser/entity-comment-in-textarea-expected.png: Removed.
+        * platform/chromium-mac/fast/parser/open-comment-in-textarea-expected.checksum: Removed.
+        * platform/chromium-mac/fast/parser/open-comment-in-textarea-expected.png: Removed.
+        * platform/chromium-mac/fast/repaint/japanese-rl-selection-clear-expected.checksum:
+        * platform/chromium-mac/fast/repaint/japanese-rl-selection-clear-expected.png:
+        * platform/chromium-mac/fast/repaint/japanese-rl-selection-repaint-expected.checksum:
+        * platform/chromium-mac/fast/repaint/japanese-rl-selection-repaint-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-1-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-10-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-2-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-3-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-4-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-5-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-6-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-7-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-8-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-9-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-9-expected.png:
+        * platform/chromium-mac/fast/repaint/repaint-across-writing-mode-boundary-expected.checksum:
+        * platform/chromium-mac/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png: Added.
+        * platform/chromium-mac/fast/replaced/width100percent-button-expected.checksum: Removed.
+        * platform/chromium-mac/fast/replaced/width100percent-button-expected.png: Removed.
+        * platform/chromium-mac/fast/replaced/width100percent-searchfield-expected.checksum: Removed.
+        * platform/chromium-mac/fast/replaced/width100percent-searchfield-expected.png: Removed.
+        * platform/chromium-mac/fast/replaced/width100percent-textarea-expected.checksum:
+        * platform/chromium-mac/fast/replaced/width100percent-textarea-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-textfield-expected.checksum: Removed.
+        * platform/chromium-mac/fast/replaced/width100percent-textfield-expected.png: Removed.
+        * platform/chromium-mac/fast/selectors/064-expected.checksum: Removed.
+        * platform/chromium-mac/fast/selectors/064-expected.png: Removed.
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.checksum:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium-mac/fast/table/append-cells2-expected.checksum: Removed.
+        * platform/chromium-mac/fast/table/append-cells2-expected.png: Removed.
+        * platform/chromium-mac/fast/table/border-collapsing/004-vertical-expected.checksum: Removed.
+        * platform/chromium-mac/fast/table/border-collapsing/004-vertical-expected.png: Removed.
+        * platform/chromium-mac/fast/table/frame-and-rules-expected.checksum: Removed.
+        * platform/chromium-mac/fast/table/frame-and-rules-expected.png: Removed.
+        * platform/chromium-mac/fast/table/remove-td-display-none-expected.checksum: Removed.
+        * platform/chromium-mac/fast/table/remove-td-display-none-expected.png: Removed.
+        * platform/chromium-mac/fast/text/atsui-negative-spacing-features-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/atsui-negative-spacing-features-expected.png: Removed.
+        * platform/chromium-mac/fast/text/atsui-partial-selection-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/atsui-partial-selection-expected.png: Removed.
+        * platform/chromium-mac/fast/text/atsui-spacing-features-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/atsui-spacing-features-expected.png: Removed.
+        * platform/chromium-mac/fast/text/backslash-to-yen-sign-euc-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/backslash-to-yen-sign-euc-expected.png: Removed.
+        * platform/chromium-mac/fast/text/bidi-embedding-pop-and-push-same-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/bidi-embedding-pop-and-push-same-expected.png: Removed.
+        * platform/chromium-mac/fast/text/capitalize-boundaries-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/capitalize-boundaries-expected.png: Removed.
+        * platform/chromium-mac/fast/text/in-rendered-text-rtl-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/in-rendered-text-rtl-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-L-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-L-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-L-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-L2-run-reordering-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-L2-run-reordering-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-CSS-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-CSS-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-HTML-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-HTML-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-formatting-characters-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-formatting-characters-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-european-terminators-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-european-terminators-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-ignored-for-first-child-inline-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-ignored-for-first-child-inline-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-innertext-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-innertext-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-layout-across-linebreak-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-layout-across-linebreak-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-001-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-001-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-002-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-002-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-003-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-linebreak-003-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-listbox-atsui-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-listbox-atsui-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-listbox-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-listbox-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-mirror-he-ar-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-mirror-he-ar-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-mirror-he-ar-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-neutral-run-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-neutral-run-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-neutral-run-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-override-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-override-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/hebrew-vowels-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/hebrew-vowels-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/hindi-spacing-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/hindi-spacing-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.checksum:
+        * platform/chromium-mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.png:
+        * platform/chromium-mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Added.
+        * platform/chromium-mac/fast/text/international/rtl-caret-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/rtl-caret-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/rtl-white-space-pre-wrap-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/rtl-white-space-pre-wrap-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/text-combine-image-test-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/text-combine-image-test-expected.png: Removed.
+        * platform/chromium-mac/fast/text/international/text-combine-image-test-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/justified-selection-at-edge-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/justified-selection-at-edge-expected.png: Removed.
+        * platform/chromium-mac/fast/text/justify-ideograph-simple-expected.checksum:
+        * platform/chromium-mac/fast/text/justify-ideograph-simple-expected.png:
+        * platform/chromium-mac/fast/text/justify-ideograph-vertical-expected.checksum:
+        * platform/chromium-mac/fast/text/justify-ideograph-vertical-expected.png:
+        * platform/chromium-mac/fast/text/justify-nbsp-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/justify-nbsp-expected.png: Removed.
+        * platform/chromium-mac/fast/text/line-breaks-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/line-breaks-expected.png: Removed.
+        * platform/chromium-mac/fast/text/trailing-white-space-2-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/trailing-white-space-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/word-break-run-rounding-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/word-break-run-rounding-expected.png: Removed.
+        * platform/chromium-mac/fonts/sans-serif-expected.checksum: Removed.
+        * platform/chromium-mac/fonts/sans-serif-expected.png: Removed.
+        * platform/chromium-mac/svg/custom/animate-path-discrete-expected.checksum: Removed.
+        * platform/chromium-mac/svg/custom/animate-path-discrete-expected.png: Removed.
+        * platform/chromium-mac/svg/custom/inline-svg-in-xhtml-expected.checksum:
+        * platform/chromium-mac/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/chromium-mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.checksum:
+        * platform/chromium-mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-mac/svg/custom/text-dom-01-f-expected.checksum: Removed.
+        * platform/chromium-mac/svg/custom/text-dom-01-f-expected.png: Removed.
+        * platform/chromium-mac/svg/hixie/mixed/003-expected.checksum:
+        * platform/chromium-mac/svg/hixie/mixed/003-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-hixie-mixed-008-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug113424-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug113424-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1188-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1188-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug138725-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug138725-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug14323-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug14323-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug18359-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug18359-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-2-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-2-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-3-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-3-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug26178-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug26178-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug28928-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug28928-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2962-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2962-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug30692-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug30692-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug33855-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug33855-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug39209-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug39209-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug4429-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug4429-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug44505-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug44505-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug46368-1-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug46368-1-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug46368-2-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug46368-2-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug51037-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug51037-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug51727-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug51727-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug52505-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug52505-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug52506-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug52506-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug60749-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug60749-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug67915-1-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug67915-1-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug68912-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug68912-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug7342-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug7342-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug88035-1-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug88035-1-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug88035-2-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug88035-2-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug96334-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug96334-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/collapsing_borders/bug41262-4-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/collapsing_borders/bug41262-4-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/core/bloomberg-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/core/bloomberg-expected.png:
+        * platform/chromium-mac/tables/mozilla/core/misc-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/core/misc-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/dom/tableDom-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/dom/tableDom-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/marvin/x_tbody_align_justify-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/marvin/x_tbody_align_justify-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/marvin/x_td_align_justify-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/marvin/x_td_align_justify-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/marvin/x_tfoot_align_justify-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/marvin/x_tfoot_align_justify-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/marvin/x_th_align_justify-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/marvin/x_th_align_justify-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/marvin/x_thead_align_justify-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/x_thead_align_justify-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/x_tr_align_justify-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/marvin/x_tr_align_justify-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/other/move_row-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla/other/move_row-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug1725-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug1725-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug58402-2-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug58402-2-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.checksum: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.png: Removed.
+
 2011-02-22  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed; neglected to update an expected result after changing some
