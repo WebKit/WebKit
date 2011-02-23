@@ -264,6 +264,12 @@ public:
     // Wall clock time in seconds since the epoch.
     virtual double currentTime() { return 0; }
 
+    virtual void cryptographicallyRandomValues(unsigned char* buffer, size_t length)
+    {
+        // WebKit clients must implement this funcion if they use cryptographic randomness.
+        WEBKIT_ASSERT_NOT_REACHED();
+    }
+
     // Delayed work is driven by a shared timer.
     virtual void setSharedTimerFiredFunction(void (*func)()) { }
     virtual void setSharedTimerFireTime(double fireTime) { }

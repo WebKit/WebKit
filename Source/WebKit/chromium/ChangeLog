@@ -1,3 +1,16 @@
+2011-02-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Add WebKitClient::cryptographicallyRandomValues
+        https://bugs.webkit.org/show_bug.cgi?id=55073
+
+        This patch adds a WebKit client API to get cryptographic randomness.
+        We'll use this API to gather seed randomness while inside the sandbox.
+
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::cryptographicallyRandomValues):
+
 2011-02-23  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r79387.
