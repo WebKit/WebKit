@@ -82,10 +82,15 @@ PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create(QWKPage* page)
 
 void WebContextMenuProxyQt::showContextMenu(const IntPoint& position, const Vector<WebContextMenuItemData>& items)
 {
-    if (OwnPtr<QMenu> menu = createContextMenu(items)) {
-        menu->move(position);
-        emit m_page->showContextMenu(QSharedPointer<QMenu>(menu.leakPtr()));
-    }
+    OwnPtr<QMenu> menu = createContextMenu(items);
+
+    // We send the signal, even with no items, because the client should be able to show custom items
+    // even if WebKit has nothing to show.
+    if (!menu)
+        menu = adoptPtr(new QMenu);
+
+    menu->move(position);
+    emit m_page->showContextMenu(QSharedPointer<QMenu>(menu.leakPtr()));
 }
 
 void WebContextMenuProxyQt::hideContextMenu()

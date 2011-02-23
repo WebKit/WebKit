@@ -333,6 +333,9 @@ void QGraphicsWKView::showContextMenu(QSharedPointer<QMenu> menu)
     if (d->activeMenu)
         d->activeMenu->hide();
 
+    if (menu->isEmpty())
+        return;
+
     d->activeMenu = menu;
 
     QWidget* view = 0;

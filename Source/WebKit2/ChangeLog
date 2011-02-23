@@ -1,3 +1,18 @@
+2011-02-23  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] [WK2] When the context menu is empty, we should still send the signal QWKPage::showContextMenu()
+        https://bugs.webkit.org/show_bug.cgi?id=54996
+
+        Send the signal QWKPage::showContextMenu() with an empty menu even if the content menu generated
+        is empty/contain only disabled elements.
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::showContextMenu):
+        * UIProcess/qt/WebContextMenuProxyQt.cpp:
+        (WebKit::WebContextMenuProxyQt::showContextMenu):
+
 2011-02-22  Dan Bernstein  <mitz@apple.com>
 
         LLVM Compiler build fix.
