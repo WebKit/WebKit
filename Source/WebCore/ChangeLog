@@ -1,3 +1,14 @@
+2011-02-22  Brian Salomon  <bsalomon@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Don't disable accelerated canvas when using the skia gpu backend.
+
+        No new tests are required.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setGlobalCompositeOperation):
+
 2011-02-22  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
