@@ -1,3 +1,13 @@
+2011-02-23  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WKBundleNavigationAction.h should be exposed as a public header
+        https://bugs.webkit.org/show_bug.cgi?id=55059
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Changed WKBundleNavigationAction.h from 'project' to 'public'.
+
 2011-02-23  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.

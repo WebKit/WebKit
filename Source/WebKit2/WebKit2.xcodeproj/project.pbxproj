@@ -533,7 +533,7 @@
 		BC646C1C11DD399F006455B0 /* WKBackForwardListItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC646C1811DD399F006455B0 /* WKBackForwardListItem.cpp */; };
 		BC646C1D11DD399F006455B0 /* WKBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = BC646C1911DD399F006455B0 /* WKBackForwardListItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC6EDAA6111271C600E7678B /* PageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6EDAA5111271C600E7678B /* PageClient.h */; };
-		BC7043CC12F75EE0006472B9 /* WKBundleNavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7043CA12F75EE0006472B9 /* WKBundleNavigationAction.h */; };
+		BC7043CC12F75EE0006472B9 /* WKBundleNavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7043CA12F75EE0006472B9 /* WKBundleNavigationAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC7043CD12F75EE0006472B9 /* WKBundleNavigationAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7043CB12F75EE0006472B9 /* WKBundleNavigationAction.cpp */; };
 		BC72B9FA11E6476B001EB4EA /* WebBackForwardListProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC72B9F811E6476B001EB4EA /* WebBackForwardListProxy.cpp */; };
 		BC72B9FB11E6476B001EB4EA /* WebBackForwardListProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC72B9F911E6476B001EB4EA /* WebBackForwardListProxy.h */; };
