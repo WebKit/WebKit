@@ -1,3 +1,10 @@
+2011-02-23  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed attempt to fix a flaky test.
+        https://bugs.webkit.org/show_bug.cgi?id=51757
+
+        * fast/css/font-face-download-error.html: Increase the wait to 200ms.
+
 2011-02-23  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ojan Vafai.
