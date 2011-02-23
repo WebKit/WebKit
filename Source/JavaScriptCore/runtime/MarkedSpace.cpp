@@ -39,56 +39,66 @@ MarkedSpace::MarkedSpace(JSGlobalData* globalData)
 
 void MarkedSpace::destroy()
 {
-    clearMarks(); // Make sure weak pointers appear dead during destruction.
-
-    while (m_heap.blocks.size())
-        freeBlock(0);
+    clearMarks();
+    shrink();
+    ASSERT(!size());
 }
 
 NEVER_INLINE MarkedBlock* MarkedSpace::allocateBlock()
 {
     MarkedBlock* block = MarkedBlock::create(globalData(), cellSize);
-    m_heap.blocks.append(block);
+    m_heap.blockList.append(block);
     m_blocks.add(block);
+
     return block;
 }
 
-NEVER_INLINE void MarkedSpace::freeBlock(size_t blockNumber)
+void MarkedSpace::freeBlocks(DoublyLinkedList<MarkedBlock>& blocks)
 {
-    MarkedBlock* block = m_heap.blocks[blockNumber];
+    MarkedBlock* next;
+    for (MarkedBlock* block = blocks.head(); block; block = next) {
+        next = block->next();
 
-    // swap with the last block so we compact as we go
-    m_heap.blocks[blockNumber] = m_heap.blocks.last();
-    m_heap.blocks.removeLast();
-    m_blocks.remove(block);
-
-    MarkedBlock::destroy(block);
+        blocks.remove(block);
+        m_blocks.remove(block);
+        MarkedBlock::destroy(block);
+    }
 }
 
 void* MarkedSpace::allocate(size_t)
 {
-    for ( ; m_heap.nextBlock < m_heap.blocks.size(); ++m_heap.nextBlock) {
-        MarkedBlock* block = m_heap.collectorBlock(m_heap.nextBlock);
-        if (void* result = block->allocate(m_heap.nextAtom))
+    for ( ; m_heap.nextBlock; m_heap.nextBlock = m_heap.nextBlock->next()) {
+        if (void* result = m_heap.nextBlock->allocate(m_heap.nextAtom))
             return result;
 
-        m_waterMark += block->capacity();
+        m_waterMark += m_heap.nextBlock->capacity();
     }
 
-    if (m_waterMark < m_highWaterMark)
-        return allocateBlock()->allocate(m_heap.nextAtom);
+    if (m_waterMark < m_highWaterMark) {
+        m_heap.nextBlock = allocateBlock();
+        return m_heap.nextBlock->allocate(m_heap.nextAtom);
+    }
 
     return 0;
 }
 
 void MarkedSpace::shrink()
 {
-    for (size_t i = 0; i != m_heap.blocks.size() && m_heap.blocks.size() > 1; ) { // We assume at least one block exists at all times.
-        if (m_heap.collectorBlock(i)->isEmpty()) {
-            freeBlock(i);
-        } else
-            ++i;
+    // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
+    DoublyLinkedList<MarkedBlock> empties;
+
+    BlockIterator end = m_blocks.end();
+    for (BlockIterator it = m_blocks.begin(); it != end; ++it) {
+        if ((*it)->isEmpty()) {
+            m_heap.blockList.remove(*it);
+            empties.append(*it);
+        }
     }
+    
+    m_heap.nextBlock = m_heap.blockList.head();
+
+    freeBlocks(empties);
+    ASSERT(empties.isEmpty());
 }
 
 void MarkedSpace::clearMarks()
@@ -134,7 +144,7 @@ size_t MarkedSpace::capacity() const
 
 void MarkedSpace::reset()
 {
-    m_heap.nextBlock = 0;
+    m_heap.nextBlock = m_heap.blockList.head();
     m_heap.nextAtom = MarkedBlock::firstAtom();
     m_waterMark = 0;
 #if ENABLE(JSC_ZOMBIES)

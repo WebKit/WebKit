@@ -1,3 +1,17 @@
+2011-02-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Rolled back in r79367 with SnowLeopard Release bot crash fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=54999
+        
+        The crash was caused by failure to update the "nextBlock" pointer when
+        removing a block from the list while shrinking. The fix is to update the
+        "nextBlock" pointer.
+        
+        This crash was very rare because it only happened in cases where the very
+        first block in the heap contained no marked cells.
+
 2011-02-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Gavin Barraclough.

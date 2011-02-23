@@ -54,6 +54,11 @@ namespace JSC {
         static size_t firstAtom();
         
         Heap* heap() const;
+
+        void setPrev(MarkedBlock*);
+        void setNext(MarkedBlock*);
+        MarkedBlock* prev() const;
+        MarkedBlock* next() const;
         
         void* allocate(size_t& nextCell);
         void sweep();
@@ -97,6 +102,8 @@ namespace JSC {
         WTF::Bitmap<blockSize / atomSize> m_marks;
         PageAllocationAligned m_allocation;
         Heap* m_heap;
+        MarkedBlock* m_prev;
+        MarkedBlock* m_next;
     };
 
     inline size_t MarkedBlock::firstAtom()
@@ -122,6 +129,26 @@ namespace JSC {
     inline Heap* MarkedBlock::heap() const
     {
         return m_heap;
+    }
+
+    inline void MarkedBlock::setPrev(MarkedBlock* prev)
+    {
+        m_prev = prev;
+    }
+
+    inline void MarkedBlock::setNext(MarkedBlock* next)
+    {
+        m_next = next;
+    }
+
+    inline MarkedBlock* MarkedBlock::prev() const
+    {
+        return m_prev;
+    }
+
+    inline MarkedBlock* MarkedBlock::next() const
+    {
+        return m_next;
     }
 
     inline bool MarkedBlock::isEmpty()

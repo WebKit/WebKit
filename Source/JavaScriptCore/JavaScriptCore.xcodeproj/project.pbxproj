@@ -103,6 +103,7 @@
 		1440F8920A508B100005F061 /* JSCallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440F8900A508B100005F061 /* JSCallbackFunction.cpp */; };
 		1440F8AF0A508D200005F061 /* JSCallbackConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440F8AD0A508D200005F061 /* JSCallbackConstructor.cpp */; };
 		1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440FCE20A51E46B0005F061 /* JSClassRef.cpp */; };
+		14456A321314657800212CA3 /* DoublyLinkedList.h in Headers */ = {isa = PBXBuildFile; fileRef = 14456A311314657800212CA3 /* DoublyLinkedList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14469DD7107EC79E00650446 /* dtoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651F6412039D5B5F0078395C /* dtoa.cpp */; };
 		14469DDE107EC7E700650446 /* Lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8680255597D01FF60F7 /* Lookup.cpp */; };
 		14469DDF107EC7E700650446 /* MathObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A86A0255597D01FF60F7 /* MathObject.cpp */; };
@@ -689,6 +690,7 @@
 		1440F8AD0A508D200005F061 /* JSCallbackConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackConstructor.cpp; sourceTree = "<group>"; };
 		1440FCE10A51E46B0005F061 /* JSClassRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSClassRef.h; sourceTree = "<group>"; };
 		1440FCE20A51E46B0005F061 /* JSClassRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSClassRef.cpp; sourceTree = "<group>"; };
+		14456A311314657800212CA3 /* DoublyLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoublyLinkedList.h; sourceTree = "<group>"; };
 		145C507F0D9DF63B0088F6B9 /* CallData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallData.h; sourceTree = "<group>"; };
 		146AAB2A0B66A84900E55F16 /* JSStringRefCF.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSStringRefCF.h; sourceTree = "<group>"; };
 		146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSStringRefCF.cpp; sourceTree = "<group>"; };
@@ -1519,6 +1521,7 @@
 				862AF4B512239C7B0024E5B8 /* DecimalNumber.h */,
 				5186111D0CC824830081412B /* Deque.h */,
 				938C4F6B0CA06BCE00D9310A /* DisallowCType.h */,
+				14456A311314657800212CA3 /* DoublyLinkedList.h */,
 				651F6412039D5B5F0078395C /* dtoa.cpp */,
 				651F6413039D5B5F0078395C /* dtoa.h */,
 				E48E0F2C0F82151700A8CA37 /* FastAllocBase.h */,
@@ -2144,6 +2147,7 @@
 				5135FAF212D26ACE003C083B /* Decoder.h in Headers */,
 				BC18C3FC0E16F5CD00B34460 /* Deque.h in Headers */,
 				BC18C3FD0E16F5CD00B34460 /* DisallowCType.h in Headers */,
+				14456A321314657800212CA3 /* DoublyLinkedList.h in Headers */,
 				BC18C3FE0E16F5CD00B34460 /* dtoa.h in Headers */,
 				5135FAF312D26AD1003C083B /* Encoder.h in Headers */,
 				BC3046070E1F497F003232CF /* Error.h in Headers */,
