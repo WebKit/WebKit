@@ -1,3 +1,15 @@
+2011-02-23  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows 7 Release Tests] ~26 tests failing after r78846
+        https://bugs.webkit.org/show_bug.cgi?id=54748
+
+        Update the pixel results for fast/blockflow/Kusa-Makura-background-canvas.html.
+        The pixel results for fast/ruby/nested-ruby.html turned out to be identical to
+        those before r78846. Unreviewed.
+
+        * platform/win/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum:
+        * platform/win/fast/blockflow/Kusa-Makura-background-canvas-expected.png:
+
 2011-02-23  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update. Mark failures from bug 54885
