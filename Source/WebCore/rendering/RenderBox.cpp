@@ -1917,7 +1917,7 @@ int RenderBox::computeReplacedLogicalWidthUsing(Length logicalWidth) const
             // FIXME: containingBlockLogicalWidthForContent() is wrong if the replaced element's block-flow is perpendicular to the
             // containing block's block-flow.
             // https://bugs.webkit.org/show_bug.cgi?id=46496
-            const int cw = isPositioned() ? containingBlockWidthForPositioned(toRenderBoxModelObject(container())) : containingBlockLogicalWidthForContent();
+            const int cw = isPositioned() ? containingBlockLogicalWidthForPositioned(toRenderBoxModelObject(container())) : containingBlockLogicalWidthForContent();
             if (cw > 0)
                 return computeContentBoxLogicalWidth(logicalWidth.calcMinValue(cw));
         }
@@ -1964,7 +1964,7 @@ int RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) const
             // FIXME: availableLogicalHeight() is wrong if the replaced element's block-flow is perpendicular to the
             // containing block's block-flow.
             // https://bugs.webkit.org/show_bug.cgi?id=46496
-            int availableHeight = isPositioned() ? containingBlockHeightForPositioned(toRenderBoxModelObject(cb)) : toRenderBox(cb)->availableLogicalHeight();
+            int availableHeight = isPositioned() ? containingBlockLogicalHeightForPositioned(toRenderBoxModelObject(cb)) : toRenderBox(cb)->availableLogicalHeight();
 
             // It is necessary to use the border-box to match WinIE's broken
             // box model.  This is essential for sizing inside
@@ -2040,13 +2040,14 @@ void RenderBox::computeBlockDirectionMargins(RenderBlock* containingBlock)
     containingBlock->setMarginAfterForChild(this, style()->marginAfterUsing(containingBlockStyle).calcMinValue(cw));
 }
 
-int RenderBox::containingBlockWidthForPositioned(const RenderBoxModelObject* containingBlock) const
+int RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode) const
 {
-    if (containingBlock->isBox()) {
-        const RenderBox* containingBlockBox = toRenderBox(containingBlock);
-        return containingBlockBox->width() - containingBlockBox->borderLeft() - containingBlockBox->borderRight() - containingBlockBox->verticalScrollbarWidth();
-    }
-    
+    if (checkForPerpendicularWritingMode && containingBlock->style()->isHorizontalWritingMode() != style()->isHorizontalWritingMode())
+        return containingBlockLogicalHeightForPositioned(containingBlock, false);
+
+    if (containingBlock->isBox())
+        return toRenderBox(containingBlock)->clientLogicalWidth();
+
     ASSERT(containingBlock->isRenderInline() && containingBlock->isRelPositioned());
 
     const RenderInline* flow = toRenderInline(containingBlock);
@@ -2070,16 +2071,32 @@ int RenderBox::containingBlockWidthForPositioned(const RenderBoxModelObject* con
     return max(0, (fromRight - fromLeft));
 }
 
-int RenderBox::containingBlockHeightForPositioned(const RenderBoxModelObject* containingBlock) const
-{   
-    int heightResult = 0;
+int RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode) const
+{
+    if (checkForPerpendicularWritingMode && containingBlock->style()->isHorizontalWritingMode() != style()->isHorizontalWritingMode())
+        return containingBlockLogicalWidthForPositioned(containingBlock, false);
+
     if (containingBlock->isBox())
-         heightResult = toRenderBox(containingBlock)->height();
-    else if (containingBlock->isRenderInline()) {
-        ASSERT(containingBlock->isRelPositioned());
-        heightResult = toRenderInline(containingBlock)->linesBoundingBox().height();
-    }
-    return heightResult - containingBlock->borderTop() - containingBlock->borderBottom();
+        return toRenderBox(containingBlock)->clientLogicalHeight();
+        
+    ASSERT(containingBlock->isRenderInline() && containingBlock->isRelPositioned());
+
+    const RenderInline* flow = toRenderInline(containingBlock);
+    InlineFlowBox* first = flow->firstLineBox();
+    InlineFlowBox* last = flow->lastLineBox();
+
+    // If the containing block is empty, return a height of 0.
+    if (!first || !last)
+        return 0;
+
+    int heightResult;
+    IntRect boundingBox = flow->linesBoundingBox();
+    if (containingBlock->style()->isHorizontalWritingMode())
+        heightResult = boundingBox.height();
+    else
+        heightResult = boundingBox.width();
+    heightResult -= (containingBlock->borderBefore() + containingBlock->borderAfter());
+    return heightResult;
 }
 
 void RenderBox::computePositionedLogicalWidth()
@@ -2118,7 +2135,7 @@ void RenderBox::computePositionedLogicalWidth()
     // relative positioned inline.
     const RenderBoxModelObject* containerBlock = toRenderBoxModelObject(container());
     
-    const int containerWidth = containingBlockWidthForPositioned(containerBlock);
+    const int containerWidth = containingBlockLogicalWidthForPositioned(containerBlock);
 
     // To match WinIE, in quirks mode use the parent's 'direction' property
     // instead of the the container block's.
@@ -2430,7 +2447,7 @@ void RenderBox::computePositionedLogicalHeight()
     // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
     const RenderBoxModelObject* containerBlock = toRenderBoxModelObject(container());
 
-    const int containerHeight = containingBlockHeightForPositioned(containerBlock);
+    const int containerHeight = containingBlockLogicalHeightForPositioned(containerBlock);
 
     const int bordersPlusPadding = borderAndPaddingHeight();
     const Length marginTop = style()->marginTop();
@@ -2653,7 +2670,7 @@ void RenderBox::computePositionedLogicalWidthReplaced()
     // relative positioned inline.
     const RenderBoxModelObject* containerBlock = toRenderBoxModelObject(container());
 
-    const int containerWidth = containingBlockWidthForPositioned(containerBlock);
+    const int containerWidth = containingBlockLogicalWidthForPositioned(containerBlock);
 
     // To match WinIE, in quirks mode use the parent's 'direction' property
     // instead of the the container block's.
@@ -2830,7 +2847,7 @@ void RenderBox::computePositionedLogicalHeightReplaced()
     // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
     const RenderBoxModelObject* containerBlock = toRenderBoxModelObject(container());
 
-    const int containerHeight = containingBlockHeightForPositioned(containerBlock);
+    const int containerHeight = containingBlockLogicalHeightForPositioned(containerBlock);
 
     // Variables to solve.
     Length top = style()->top();

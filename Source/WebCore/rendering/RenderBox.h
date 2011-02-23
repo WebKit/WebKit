@@ -176,7 +176,9 @@ public:
     int clientTop() const { return borderTop(); }
     int clientWidth() const;
     int clientHeight() const;
-    int clientLogicalBottom() const { return borderBefore() + (style()->isHorizontalWritingMode() ? clientHeight() : clientWidth()); }
+    int clientLogicalWidth() const { return style()->isHorizontalWritingMode() ? clientWidth() : clientHeight(); }
+    int clientLogicalHeight() const { return style()->isHorizontalWritingMode() ? clientHeight() : clientWidth(); }
+    int clientLogicalBottom() const { return borderBefore() + clientLogicalHeight(); }
     IntRect clientBoxRect() const { return IntRect(clientLeft(), clientTop(), clientWidth(), clientHeight()); }
 
     // scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the
@@ -424,8 +426,8 @@ private:
     // Returns true if we did a full repaint
     bool repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer* layers, bool drawingBackground);
    
-    int containingBlockWidthForPositioned(const RenderBoxModelObject* containingBlock) const;
-    int containingBlockHeightForPositioned(const RenderBoxModelObject* containingBlock) const;
+    int containingBlockLogicalWidthForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode = true) const;
+    int containingBlockLogicalHeightForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode = true) const;
 
     void computePositionedLogicalHeight();
     void computePositionedLogicalWidthUsing(Length width, const RenderBoxModelObject* cb, TextDirection containerDirection,

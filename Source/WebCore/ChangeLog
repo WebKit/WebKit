@@ -1,3 +1,30 @@
+2011-02-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler and Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46500, make positioned elements work with vertical text.
+        
+        - Add clientLogicalWidth and clientLogicalHeight that call the correct clientWidth or clientHeight based off
+        writing-mode.
+        - Patch clientLogicalBottom to use clientLogicalHeight.
+        - Convert containingBlockWidthForPositioned and containingBlockHeightForPositioned to be logical and to make use of
+        clientLogicalHeight/Width.  Also make them able to handle perpendicular writing mode containining blocks.
+        - Refine containingBlockLogicalHeightForPositioned to match containingBlockLogicalWidthForPositioned more closely.
+        
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::clientLogicalWidth):
+        (WebCore::RenderBox::clientLogicalHeight):
+        (WebCore::RenderBox::clientLogicalBottom):
+
 2011-02-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey Proskuryakov.
