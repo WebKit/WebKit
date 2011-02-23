@@ -1,3 +1,17 @@
+2011-02-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46500, make positioned elements work with vertical text.
+        
+        Add logical accessors for the left()/right()/top()/bottom() properties on the RenderStyle.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::logicalLeft):
+        (WebCore::InheritedFlags::logicalRight):
+        (WebCore::InheritedFlags::logicalTop):
+        (WebCore::InheritedFlags::logicalBottom):
+
 2011-02-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey Proskuryakov.
