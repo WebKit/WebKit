@@ -2,6 +2,15 @@
 
         Reviewed by Laszlo Gombos.
 
+        [Qt] Make sure Symbian binary UIDs are unique
+
+        * WebProcess.pro: Resolve the UID collision with QtTestBrowser.pro
+        by changing the UID.
+
+2011-02-23  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
         [Qt] Fix the Symbian build after r79334
         https://bugs.webkit.org/show_bug.cgi?id=55044
 

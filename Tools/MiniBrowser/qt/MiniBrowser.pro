@@ -47,7 +47,7 @@ linux-* {
 }
 
 symbian {
-    TARGET.UID3 = 0xA000E543
+    TARGET.UID3 = 0xA000E545
     TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices
 }
 
