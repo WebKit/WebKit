@@ -1,3 +1,14 @@
+2011-02-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; fixed Windows expected failure results added by r79328 for new tests from r79318 
+        http://webkit.org/b/54966 tracks the failure.
+
+        * platform/win-xp/media: Added.
+        * platform/win-xp/media/audio-repaint-expected.txt: Added.
+        * platform/win-xp/media/media-document-audio-repaint-expected.txt: Added.
+        * platform/win/media/audio-repaint-expected.txt:
+        * platform/win/media/media-document-audio-repaint-expected.txt:
+
 2011-02-22  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update. Uncomment SNOWLEOPARD
