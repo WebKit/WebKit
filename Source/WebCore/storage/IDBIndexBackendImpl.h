@@ -32,21 +32,21 @@
 
 namespace WebCore {
 
+class IDBBackingStore;
 class IDBKey;
 class IDBObjectStoreBackendImpl;
-class IDBSQLiteDatabase;
 class SQLiteDatabase;
 class ScriptExecutionContext;
 
 class IDBIndexBackendImpl : public IDBIndexBackendInterface {
 public:
-    static PassRefPtr<IDBIndexBackendImpl> create(IDBSQLiteDatabase* database, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique)
+    static PassRefPtr<IDBIndexBackendImpl> create(IDBBackingStore* backingStore, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique)
     {
-        return adoptRef(new IDBIndexBackendImpl(database, id, name, storeName, keyPath, unique));
+        return adoptRef(new IDBIndexBackendImpl(backingStore, id, name, storeName, keyPath, unique));
     }
-    static PassRefPtr<IDBIndexBackendImpl> create(IDBSQLiteDatabase* database, const String& name, const String& storeName, const String& keyPath, bool unique)
+    static PassRefPtr<IDBIndexBackendImpl> create(IDBBackingStore* backingStore, const String& name, const String& storeName, const String& keyPath, bool unique)
     {
-        return adoptRef(new IDBIndexBackendImpl(database, name, storeName, keyPath, unique));
+        return adoptRef(new IDBIndexBackendImpl(backingStore, name, storeName, keyPath, unique));
     }
     virtual ~IDBIndexBackendImpl();
 
@@ -72,8 +72,8 @@ public:
     virtual void getKey(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
 private:
-    IDBIndexBackendImpl(IDBSQLiteDatabase*, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique);
-    IDBIndexBackendImpl(IDBSQLiteDatabase*, const String& name, const String& storeName, const String& keyPath, bool unique);
+    IDBIndexBackendImpl(IDBBackingStore*, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique);
+    IDBIndexBackendImpl(IDBBackingStore*, const String& name, const String& storeName, const String& keyPath, bool unique);
 
     SQLiteDatabase& sqliteDatabase() const;
 
@@ -82,7 +82,7 @@ private:
 
     static const int64_t InvalidId = 0;
 
-    RefPtr<IDBSQLiteDatabase> m_database;
+    RefPtr<IDBBackingStore> m_backingStore;
 
     int64_t m_id;
     String m_name;

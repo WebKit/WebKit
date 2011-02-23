@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "CrossThreadTask.h"
+#include "IDBBackingStore.h"
 #include "IDBCallbacks.h"
 #include "IDBCursorBackendImpl.h"
 #include "IDBDatabaseBackendImpl.h"
@@ -36,14 +37,13 @@
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendImpl.h"
-#include "IDBSQLiteDatabase.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
 
 namespace WebCore {
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(IDBSQLiteDatabase* database, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique)
-    : m_database(database)
+IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique)
+    : m_backingStore(backingStore)
     , m_id(id)
     , m_name(name)
     , m_storeName(storeName)
@@ -52,8 +52,8 @@ IDBIndexBackendImpl::IDBIndexBackendImpl(IDBSQLiteDatabase* database, int64_t id
 {
 }
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(IDBSQLiteDatabase* database, const String& name, const String& storeName, const String& keyPath, bool unique)
-    : m_database(database)
+IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, const String& name, const String& storeName, const String& keyPath, bool unique)
+    : m_backingStore(backingStore)
     , m_id(InvalidId)
     , m_name(name)
     , m_storeName(storeName)
@@ -108,7 +108,7 @@ void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr
     RefPtr<IDBObjectStoreBackendInterface> objectStore = transaction->objectStore(index->m_storeName, ec);
     ASSERT(objectStore && !ec);
 
-    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(index->m_database.get(), range, direction, query.release(), objectCursor, transaction.get(), objectStore.get());
+    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(index->m_backingStore.get(), range, direction, query.release(), objectCursor, transaction.get(), objectStore.get());
     callbacks->onSuccess(cursor.release());
 }
 
@@ -202,7 +202,7 @@ bool IDBIndexBackendImpl::addingKeyAllowed(IDBKey* key)
 
 SQLiteDatabase& IDBIndexBackendImpl::sqliteDatabase() const
 {
-    return m_database->db();
+    return m_backingStore->db();
 }
 
 } // namespace WebCore

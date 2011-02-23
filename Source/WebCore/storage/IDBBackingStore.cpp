@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBSQLiteDatabase_h
-#define IDBSQLiteDatabase_h
+#include "config.h"
+#include "IDBBackingStore.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "SQLiteDatabase.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include "IDBFactoryBackendImpl.h"
 
 namespace WebCore {
 
-class IDBFactoryBackendImpl;
+IDBBackingStore::IDBBackingStore(String identifier, IDBFactoryBackendImpl* factory)
+    : m_identifier(identifier)
+    , m_factory(factory)
+{
+}
 
-class IDBSQLiteDatabase : public RefCounted<IDBSQLiteDatabase> {
-public:
-    static PassRefPtr<IDBSQLiteDatabase> create(String identifier, IDBFactoryBackendImpl* factory)
-    {
-        return adoptRef(new IDBSQLiteDatabase(identifier, factory));
-    }
-    ~IDBSQLiteDatabase();
-
-    SQLiteDatabase& db() { return m_db; }
-
-private:
-    IDBSQLiteDatabase(String identifier, IDBFactoryBackendImpl* factory);
-
-    SQLiteDatabase m_db;
-    String m_identifier;
-    RefPtr<IDBFactoryBackendImpl> m_factory;
-};
+IDBBackingStore::~IDBBackingStore()
+{
+    m_factory->removeIDBBackingStore(m_identifier);
+}
 
 } // namespace WebCore
 
-#endif
-
-#endif // IDBSQLiteDatabase_h
+#endif // ENABLE(INDEXED_DATABASE)

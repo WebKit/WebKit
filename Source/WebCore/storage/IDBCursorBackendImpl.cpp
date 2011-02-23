@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "CrossThreadTask.h"
+#include "IDBBackingStore.h"
 #include "IDBCallbacks.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseError.h"
@@ -37,7 +38,6 @@
 #include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendImpl.h"
 #include "IDBRequest.h"
-#include "IDBSQLiteDatabase.h"
 #include "IDBTransactionBackendInterface.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
@@ -45,8 +45,8 @@
 
 namespace WebCore {
 
-IDBCursorBackendImpl::IDBCursorBackendImpl(IDBSQLiteDatabase* database, PassRefPtr<IDBKeyRange> keyRange, IDBCursor::Direction direction, PassOwnPtr<SQLiteStatement> query, bool isSerializedScriptValueCursor, IDBTransactionBackendInterface* transaction, IDBObjectStoreBackendInterface* objectStore)
-    : m_database(database)
+IDBCursorBackendImpl::IDBCursorBackendImpl(IDBBackingStore* backingStore, PassRefPtr<IDBKeyRange> keyRange, IDBCursor::Direction direction, PassOwnPtr<SQLiteStatement> query, bool isSerializedScriptValueCursor, IDBTransactionBackendInterface* transaction, IDBObjectStoreBackendInterface* objectStore)
+    : m_backingStore(backingStore)
     , m_keyRange(keyRange)
     , m_direction(direction)
     , m_query(query)
@@ -101,7 +101,7 @@ void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPt
 bool IDBCursorBackendImpl::currentRowExists()
 {
     String sql = m_currentIDBKeyValue ? "SELECT id FROM IndexData WHERE id = ?" : "SELECT id FROM ObjectStoreData WHERE id = ?";
-    SQLiteStatement statement(m_database->db(), sql);
+    SQLiteStatement statement(m_backingStore->db(), sql);
 
     bool ok = statement.prepare() == SQLResultOk;
     ASSERT_UNUSED(ok, ok);
@@ -174,7 +174,7 @@ void IDBCursorBackendImpl::loadCurrentRow()
 
 SQLiteDatabase& IDBCursorBackendImpl::database() const
 {
-    return m_database->db();
+    return m_backingStore->db();
 }
 
 } // namespace WebCore

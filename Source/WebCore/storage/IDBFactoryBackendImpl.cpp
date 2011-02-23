@@ -31,9 +31,9 @@
 
 #include "DOMStringList.h"
 #include "FileSystem.h"
+#include "IDBBackingStore.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
-#include "IDBSQLiteDatabase.h"
 #include "IDBTransactionCoordinator.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
@@ -60,13 +60,13 @@ void IDBFactoryBackendImpl::removeIDBDatabaseBackend(const String& uniqueIdentif
     m_databaseBackendMap.remove(uniqueIdentifier);
 }
 
-void IDBFactoryBackendImpl::removeSQLiteDatabase(const String& uniqueIdentifier)
+void IDBFactoryBackendImpl::removeIDBBackingStore(const String& uniqueIdentifier)
 {
-    ASSERT(m_sqliteDatabaseMap.contains(uniqueIdentifier));
-    m_sqliteDatabaseMap.remove(uniqueIdentifier);
+    ASSERT(m_backingStoreMap.contains(uniqueIdentifier));
+    m_backingStoreMap.remove(uniqueIdentifier);
 }
 
-static PassRefPtr<IDBSQLiteDatabase> openSQLiteDatabase(SecurityOrigin* securityOrigin, const String& pathBase, int64_t maximumSize, const String& fileIdentifier, IDBFactoryBackendImpl* factory)
+static PassRefPtr<IDBBackingStore> openSQLiteDatabase(SecurityOrigin* securityOrigin, const String& pathBase, int64_t maximumSize, const String& fileIdentifier, IDBFactoryBackendImpl* factory)
 {
     String path = ":memory:";
     if (!pathBase.isEmpty()) {
@@ -79,18 +79,18 @@ static PassRefPtr<IDBSQLiteDatabase> openSQLiteDatabase(SecurityOrigin* security
         path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb");
     }
 
-    RefPtr<IDBSQLiteDatabase> sqliteDatabase = IDBSQLiteDatabase::create(fileIdentifier, factory);
-    if (!sqliteDatabase->db().open(path)) {
+    RefPtr<IDBBackingStore> backingStore = IDBBackingStore::create(fileIdentifier, factory);
+    if (!backingStore->db().open(path)) {
         // FIXME: Is there any other thing we could possibly do to recover at this point? If so, do it rather than just erroring out.
         LOG_ERROR("Failed to open database file %s for IndexedDB", path.utf8().data());
         return 0;
     }
 
     // FIXME: Error checking?
-    sqliteDatabase->db().setMaximumSize(maximumSize);
-    sqliteDatabase->db().turnOnIncrementalAutoVacuum();
+    backingStore->db().setMaximumSize(maximumSize);
+    backingStore->db().turnOnIncrementalAutoVacuum();
 
-    return sqliteDatabase.release();
+    return backingStore.release();
 }
 
 static bool runCommands(SQLiteDatabase& sqliteDatabase, const char** commands, size_t numberOfCommands)
@@ -220,22 +220,22 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
 
     // FIXME: Everything from now on should be done on another thread.
 
-    RefPtr<IDBSQLiteDatabase> sqliteDatabase;
-    SQLiteDatabaseMap::iterator it2 = m_sqliteDatabaseMap.find(fileIdentifier);
-    if (it2 != m_sqliteDatabaseMap.end())
-        sqliteDatabase = it2->second;
+    RefPtr<IDBBackingStore> backingStore;
+    IDBBackingStoreMap::iterator it2 = m_backingStoreMap.find(fileIdentifier);
+    if (it2 != m_backingStoreMap.end())
+        backingStore = it2->second;
     else {
-        sqliteDatabase = openSQLiteDatabase(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
+        backingStore = openSQLiteDatabase(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
 
-        if (!sqliteDatabase || !createTables(sqliteDatabase->db()) || !migrateDatabase(sqliteDatabase->db())) {
+        if (!backingStore || !createTables(backingStore->db()) || !migrateDatabase(backingStore->db())) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
-            m_sqliteDatabaseMap.set(fileIdentifier, 0);
+            m_backingStoreMap.set(fileIdentifier, 0);
             return;
         }
-        m_sqliteDatabaseMap.set(fileIdentifier, sqliteDatabase.get());
+        m_backingStoreMap.set(fileIdentifier, backingStore.get());
     }
 
-    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, sqliteDatabase.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);
+    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, backingStore.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);
     databaseBackend->open();
     callbacks->onSuccess(databaseBackend.get());
     m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());

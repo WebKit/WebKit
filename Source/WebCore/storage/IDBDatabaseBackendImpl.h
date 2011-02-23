@@ -36,15 +36,15 @@
 
 namespace WebCore {
 
+class IDBBackingStore;
 class IDBFactoryBackendImpl;
 class IDBObjectStoreBackendImpl;
-class IDBSQLiteDatabase;
 class IDBTransactionCoordinator;
 class SQLiteDatabase;
 
 class IDBDatabaseBackendImpl : public IDBDatabaseBackendInterface {
 public:
-    static PassRefPtr<IDBDatabaseBackendImpl> create(const String& name, IDBSQLiteDatabase* database, IDBTransactionCoordinator* coordinator, IDBFactoryBackendImpl* factory, const String& uniqueIdentifier)
+    static PassRefPtr<IDBDatabaseBackendImpl> create(const String& name, IDBBackingStore* database, IDBTransactionCoordinator* coordinator, IDBFactoryBackendImpl* factory, const String& uniqueIdentifier)
     {
         return adoptRef(new IDBDatabaseBackendImpl(name, database, coordinator, factory, uniqueIdentifier));
     }
@@ -70,7 +70,7 @@ public:
     IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
 
 private:
-    IDBDatabaseBackendImpl(const String& name, IDBSQLiteDatabase* database, IDBTransactionCoordinator*, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
+    IDBDatabaseBackendImpl(const String& name, IDBBackingStore* database, IDBTransactionCoordinator*, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
 
     void loadObjectStores();
 
@@ -83,7 +83,7 @@ private:
     static void addObjectStoreToMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>);
     static void resetVersion(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& version);
 
-    RefPtr<IDBSQLiteDatabase> m_sqliteDatabase;
+    RefPtr<IDBBackingStore> m_backingStore;
     int64 m_id;
     String m_name;
     String m_version;

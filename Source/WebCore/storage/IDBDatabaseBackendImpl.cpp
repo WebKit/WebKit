@@ -30,10 +30,10 @@
 
 #include "CrossThreadTask.h"
 #include "DOMStringList.h"
+#include "IDBBackingStore.h"
 #include "IDBDatabaseException.h"
 #include "IDBFactoryBackendImpl.h"
 #include "IDBObjectStoreBackendImpl.h"
-#include "IDBSQLiteDatabase.h"
 #include "IDBTransactionBackendImpl.h"
 #include "IDBTransactionCoordinator.h"
 #include "SQLiteStatement.h"
@@ -105,8 +105,8 @@ static bool setMetaData(SQLiteDatabase& sqliteDatabase, const String& name, cons
     return true;
 }
 
-IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBSQLiteDatabase* sqliteDatabase, IDBTransactionCoordinator* coordinator, IDBFactoryBackendImpl* factory, const String& uniqueIdentifier)
-    : m_sqliteDatabase(sqliteDatabase)
+IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingStore* backingStore, IDBTransactionCoordinator* coordinator, IDBFactoryBackendImpl* factory, const String& uniqueIdentifier)
+    : m_backingStore(backingStore)
     , m_id(InvalidId)
     , m_name(name)
     , m_version("")
@@ -117,9 +117,9 @@ IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBSQLiteData
 {
     ASSERT(!m_name.isNull());
 
-    bool success = extractMetaData(m_sqliteDatabase->db(), m_name, m_version, m_id);
+    bool success = extractMetaData(m_backingStore->db(), m_name, m_version, m_id);
     ASSERT_UNUSED(success, success == (m_id != InvalidId));
-    if (!setMetaData(m_sqliteDatabase->db(), m_name, m_version, m_id))
+    if (!setMetaData(m_backingStore->db(), m_name, m_version, m_id))
         ASSERT_NOT_REACHED(); // FIXME: Need better error handling.
     loadObjectStores();
 }
@@ -131,7 +131,7 @@ IDBDatabaseBackendImpl::~IDBDatabaseBackendImpl()
 
 SQLiteDatabase& IDBDatabaseBackendImpl::sqliteDatabase() const
 {
-    return m_sqliteDatabase->db();
+    return m_backingStore->db();
 }
 
 PassRefPtr<DOMStringList> IDBDatabaseBackendImpl::objectStoreNames() const
@@ -151,7 +151,7 @@ PassRefPtr<IDBObjectStoreBackendInterface>  IDBDatabaseBackendImpl::createObject
         return 0;
     }
 
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(m_sqliteDatabase.get(), name, keyPath, autoIncrement);
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(m_backingStore.get(), name, keyPath, autoIncrement);
     ASSERT(objectStore->name() == name);
 
     RefPtr<IDBDatabaseBackendImpl> database = this;
@@ -253,7 +253,7 @@ void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRef
 {
     int64_t databaseId = database->id();
     database->m_version = version;
-    if (!setMetaData(database->m_sqliteDatabase->db(), database->m_name, database->m_version, databaseId)) {
+    if (!setMetaData(database->m_backingStore->db(), database->m_name, database->m_version, databaseId)) {
         // FIXME: The Indexed Database specification does not have an error code dedicated to I/O errors.
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
         transaction->abort();
@@ -309,7 +309,7 @@ void IDBDatabaseBackendImpl::loadObjectStores()
         String keyPath = objectStoresQuery.getColumnText(2);
         bool autoIncrement = !!objectStoresQuery.getColumnInt(3);
 
-        m_objectStores.set(name, IDBObjectStoreBackendImpl::create(m_sqliteDatabase.get(), id, name, keyPath, autoIncrement));
+        m_objectStores.set(name, IDBObjectStoreBackendImpl::create(m_backingStore.get(), id, name, keyPath, autoIncrement));
     }
 }
 

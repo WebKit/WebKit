@@ -41,7 +41,7 @@ class IDBDatabaseBackendImpl;
 class IDBIndexBackendImpl;
 class IDBKeyRange;
 class IDBObjectStoreBackendInterface;
-class IDBSQLiteDatabase;
+class IDBBackingStore;
 class IDBTransactionBackendInterface;
 class SQLiteDatabase;
 class SQLiteStatement;
@@ -49,9 +49,9 @@ class SerializedScriptValue;
 
 class IDBCursorBackendImpl : public IDBCursorBackendInterface {
 public:
-    static PassRefPtr<IDBCursorBackendImpl> create(IDBSQLiteDatabase* database, PassRefPtr<IDBKeyRange> keyRange, IDBCursor::Direction direction, PassOwnPtr<SQLiteStatement> query, bool isSerializedScriptValueCursor, IDBTransactionBackendInterface* transaction, IDBObjectStoreBackendInterface* objectStore)
+    static PassRefPtr<IDBCursorBackendImpl> create(IDBBackingStore* backingStore, PassRefPtr<IDBKeyRange> keyRange, IDBCursor::Direction direction, PassOwnPtr<SQLiteStatement> query, bool isSerializedScriptValueCursor, IDBTransactionBackendInterface* transaction, IDBObjectStoreBackendInterface* objectStore)
     {
-        return adoptRef(new IDBCursorBackendImpl(database, keyRange, direction, query, isSerializedScriptValueCursor, transaction, objectStore));
+        return adoptRef(new IDBCursorBackendImpl(backingStore, keyRange, direction, query, isSerializedScriptValueCursor, transaction, objectStore));
     }
     virtual ~IDBCursorBackendImpl();
 
@@ -63,7 +63,7 @@ public:
     virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);
 
 private:
-    IDBCursorBackendImpl(IDBSQLiteDatabase*, PassRefPtr<IDBKeyRange>, IDBCursor::Direction, PassOwnPtr<SQLiteStatement> query, bool isSerializedScriptValueCursor, IDBTransactionBackendInterface*, IDBObjectStoreBackendInterface*);
+    IDBCursorBackendImpl(IDBBackingStore*, PassRefPtr<IDBKeyRange>, IDBCursor::Direction, PassOwnPtr<SQLiteStatement> query, bool isSerializedScriptValueCursor, IDBTransactionBackendInterface*, IDBObjectStoreBackendInterface*);
 
     bool currentRowExists();
     void loadCurrentRow();
@@ -73,7 +73,7 @@ private:
 
     static const int64_t InvalidId = -1;
 
-    RefPtr<IDBSQLiteDatabase> m_database;
+    RefPtr<IDBBackingStore> m_backingStore;
 
     RefPtr<IDBKeyRange> m_keyRange;
     IDBCursor::Direction m_direction;

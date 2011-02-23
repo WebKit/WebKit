@@ -3097,6 +3097,8 @@ webcore_sources += \
 	Source/WebCore/storage/DatabaseTracker.h \
 	Source/WebCore/storage/IDBAny.cpp \
 	Source/WebCore/storage/IDBAny.h \
+	Source/WebCore/storage/IDBBackingStore.cpp \
+	Source/WebCore/storage/IDBBackingStore.h \
 	Source/WebCore/storage/IDBCallbacks.h \
 	Source/WebCore/storage/IDBCursorBackendImpl.cpp \
 	Source/WebCore/storage/IDBCursorBackendImpl.h \
@@ -3137,8 +3139,6 @@ webcore_sources += \
 	Source/WebCore/storage/IDBObjectStore.h \
 	Source/WebCore/storage/IDBRequest.cpp \
 	Source/WebCore/storage/IDBRequest.h \
-	Source/WebCore/storage/IDBSQLiteDatabase.cpp \
-	Source/WebCore/storage/IDBSQLiteDatabase.h \
 	Source/WebCore/storage/IDBTransactionBackendInterface.h \
 	Source/WebCore/storage/IDBTransactionCoordinator.h \
 	Source/WebCore/storage/IDBTransaction.cpp \
