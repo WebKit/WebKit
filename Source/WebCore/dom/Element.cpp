@@ -1139,6 +1139,10 @@ void Element::setShadowRoot(PassRefPtr<Node> node)
 
     ensureRareData()->m_shadowRoot = newRoot.get();
     newRoot->setShadowHost(this);
+    if (inDocument())
+        newRoot->insertedIntoDocument();
+    if (attached() && !newRoot->attached())
+        newRoot->lazyAttach();
 }
 
 void Element::removeShadowRoot()

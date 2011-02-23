@@ -1,3 +1,17 @@
+2011-02-23  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Setting shadow host should also attach and set inDocument, just like
+        appending/inserting a child.
+        https://bugs.webkit.org/show_bug.cgi?id=55065
+
+        No new tests, because functionality is not yet used.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setShadowRoot): Add attaching and setting inDocument
+            for the shadow DOM subtree, like the host.
+
 2011-02-23  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler and Simon Fraser.
