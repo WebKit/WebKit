@@ -1,3 +1,28 @@
+2011-02-22  Simon Fraser  <simon.fraser@apple.com>
+
+        New Leopard results after r78846.
+
+        * platform/mac-leopard/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/mac-leopard/css2.1/t1202-counters-04-b-expected.txt:
+        * platform/mac-leopard/fast/blockflow/border-vertical-lr-expected.txt: Added.
+        * platform/mac-leopard/fast/dom/52776-expected.txt:
+        * platform/mac-leopard/fast/forms/basic-selects-expected.txt:
+        * platform/mac-leopard/fast/forms/select-writing-direction-natural-expected.txt:
+        * platform/mac-leopard/fast/forms/text-control-intrinsic-widths-expected.txt: Added.
+        * platform/mac-leopard/fast/text/international/bidi-AN-after-L-expected.txt:
+        * platform/mac-leopard/fast/text/international/bidi-menulist-expected.txt:
+        * platform/mac-leopard/fast/text/international/bidi-neutral-run-expected.txt:
+        * platform/mac-leopard/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt:
+        * platform/mac-leopard/fast/text/international/text-combine-image-test-expected.txt: Added.
+        * platform/mac-leopard/media/controls-after-reload-expected.txt:
+        * platform/mac-leopard/media/controls-strict-expected.txt:
+        * platform/mac-leopard/media/controls-styling-expected.txt:
+        * platform/mac-leopard/media/video-controls-rendering-expected.txt:
+        * platform/mac-leopard/media/video-display-toggle-expected.txt:
+        * platform/mac-leopard/media/video-no-audio-expected.txt:
+        * platform/mac-leopard/svg/zoom/page/zoom-hixie-mixed-008-expected.txt: Removed.
+        * platform/mac-leopard/svg/zoom/text/zoom-hixie-mixed-008-expected.txt: Removed.
+
 2011-02-23  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. Qt rebaseline for my crasher test in r79462.
