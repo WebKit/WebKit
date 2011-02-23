@@ -1,3 +1,10 @@
+2011-02-23  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline of media tests.
+
+        * platform/gtk/media/audio-repaint-expected.txt:
+        * platform/gtk/media/media-document-audio-repaint-expected.txt:
+
 2011-02-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
