@@ -1,3 +1,15 @@
+2011-02-23  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add a hit test handler for canvas elements that handles clicks on the canvas but ignores children.
+        https://bugs.webkit.org/show_bug.cgi?id=54697
+
+        New test to prevent this from regressing in the future: canvas/canvas-mouse-events.html
+
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::nodeAtPoint):
+
 2011-02-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

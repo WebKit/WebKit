@@ -1,3 +1,18 @@
+2011-02-23  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add a new test to make sure that a canvas can receive click events and
+        that hit testing is working correctly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54697
+
+        * canvas/canvas-mouse-events-expected.txt: Added.
+        * canvas/canvas-mouse-events.html: Added.
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/win-wk2/Skipped:
+
 2011-02-23  MORITA Hajime  <morrita@google.com>
 
         Unreviewed test_expectations.txt update.
