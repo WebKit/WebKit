@@ -1,3 +1,26 @@
+2011-02-22  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed expectation update to catch up r79359.
+
+        * platform/chromium-linux/media/audio-repaint-expected.checksum:
+        * platform/chromium-linux/media/audio-repaint-expected.png:
+        * platform/chromium-linux/media/audio-repaint-expected.txt: Removed.
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.checksum:
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.txt: Removed.
+        * platform/chromium-mac/media/audio-repaint-expected.checksum:
+        * platform/chromium-mac/media/audio-repaint-expected.png:
+        * platform/chromium-mac/media/audio-repaint-expected.txt:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.checksum:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.txt:
+        * platform/chromium-win/media/audio-repaint-expected.checksum:
+        * platform/chromium-win/media/audio-repaint-expected.png:
+        * platform/chromium-win/media/audio-repaint-expected.txt:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.checksum:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.txt:
+
 2011-02-22  Ami Fischman  <fischman@chromium.org>
 
         Reviewed by Peter Kasting.
