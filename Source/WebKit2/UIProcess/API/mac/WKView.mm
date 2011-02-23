@@ -207,6 +207,8 @@ static bool useNewDrawingArea()
     if (!self)
         return nil;
 
+    [NSApp registerServicesMenuSendTypes:PasteboardTypes::forSelection() returnTypes:PasteboardTypes::forEditing()];
+
     InitWebCoreSystemInterface();
     RunLoop::initializeMainRunLoop();
 
@@ -494,6 +496,30 @@ WEBCORE_COMMAND(yank)
 WEBCORE_COMMAND(yankAndSelect)
 
 #undef WEBCORE_COMMAND
+
+- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
+{
+    Vector<String> pasteboardTypes;
+    size_t numTypes = [types count];
+    for (size_t i = 0; i < numTypes; ++i)
+        pasteboardTypes.append([types objectAtIndex:i]);
+    return _data->_page->writeSelectionToPasteboard([pasteboard name], pasteboardTypes);
+}
+
+- (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
+{
+    BOOL isValidSendType = !sendType || ([PasteboardTypes::forSelection() containsObject:sendType] && !_data->_page->selectionState().isNone);
+    BOOL isValidReturnType = NO;
+    if (!returnType)
+        isValidReturnType = YES;
+    else if ([PasteboardTypes::forEditing() containsObject:returnType] && _data->_page->selectionState().isContentEditable) {
+        // We can insert strings in any editable context.  We can insert other types, like images, only in rich edit contexts.
+        isValidReturnType = _data->_page->selectionState().isContentRichlyEditable || [returnType isEqualToString:NSStringPboardType];
+    }
+    if (isValidSendType && isValidReturnType)
+        return self;
+    return [[self nextResponder] validRequestorForSendType:sendType returnType:returnType];
+}
 
 /*
 

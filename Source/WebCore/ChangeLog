@@ -1,3 +1,28 @@
+2011-02-18  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Mac OS X Services are not available for selected text in WebKit2 windows.
+        https://bugs.webkit.org/show_bug.cgi?id=54777
+        <rdar://problem/8666428>
+
+        The changes to WebCore for this bug are limited to exposing a new
+        entry point in the Editor class to write to the pasteboard and
+        changes to the Pasteboard class to write the selection with
+        a given set of pasteboard types. The majority of the work
+        is done in WebKit2.
+        
+        * WebCore.exp.in:
+        * editing/Editor.h:
+        * editing/mac/EditorMac.mm: Added entrypoint to write the
+        selection to the pasteboard.
+        (WebCore::Editor::writeSelectionToPasteboard):
+        * platform/Pasteboard.h:
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::writeRange):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection):
+
 2011-02-23  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

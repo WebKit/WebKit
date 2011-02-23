@@ -208,4 +208,12 @@ void Editor::takeFindStringFromSelection()
     [findPasteboard setString:nsSelectedText forType:NSStringPboardType];
 }
 
+void Editor::writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes)
+{
+    RetainPtr<NSMutableArray> types(AdoptNS, [[NSMutableArray alloc] init]);    
+    for (size_t i = 0; i < pasteboardTypes.size(); ++i)
+        [types.get() addObject:pasteboardTypes[i]];
+    Pasteboard::writeSelection([NSPasteboard pasteboardWithName:pasteboardName], types.get(), selectedRange().get(), true, m_frame);
+}
+    
 } // namespace WebCore

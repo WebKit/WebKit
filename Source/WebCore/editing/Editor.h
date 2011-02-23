@@ -379,6 +379,7 @@ public:
     NSWritingDirection baseWritingDirectionForSelectionStart() const;
     bool canCopyExcludingStandaloneImages();
     void takeFindStringFromSelection();
+    void writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes);
 #endif
 
     bool selectionStartHasSpellingMarkerFor(int from, int length) const;

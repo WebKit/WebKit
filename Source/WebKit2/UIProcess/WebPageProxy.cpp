@@ -652,6 +652,14 @@ WebCore::IntRect WebPageProxy::firstRectForCharacterRange(uint64_t location, uin
     process()->sendSync(Messages::WebPage::FirstRectForCharacterRange(location, length), Messages::WebPage::FirstRectForCharacterRange::Reply(resultRect), m_pageID);
     return resultRect;
 }
+    
+bool WebPageProxy::writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes)
+{
+    bool result;
+    const double MessageTimeout = 20;
+    process()->sendSync(Messages::WebPage::WriteSelectionToPasteboard(pasteboardName, pasteboardTypes), Messages::WebPage::WriteSelectionToPasteboard::Reply(result), m_pageID, MessageTimeout);
+    return result;
+}
 #elif PLATFORM(WIN)
 WebCore::IntRect WebPageProxy::firstRectForCharacterInSelectedRange(int characterPosition)
 {

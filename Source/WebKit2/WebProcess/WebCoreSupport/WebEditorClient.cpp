@@ -192,6 +192,7 @@ void WebEditorClient::respondToChangedSelection()
     SelectionState selectionState;
     selectionState.isNone = frame->selection()->isNone();
     selectionState.isContentEditable = frame->selection()->isContentEditable();
+    selectionState.isContentRichlyEditable = frame->selection()->isContentRichlyEditable();
     selectionState.isInPasswordField = frame->selection()->isInPasswordField();
     selectionState.hasComposition = frame->editor()->hasComposition();
 

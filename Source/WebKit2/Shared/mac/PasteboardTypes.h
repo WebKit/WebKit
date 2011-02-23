@@ -39,6 +39,7 @@ public:
     static NSArray *forURL();
     static NSArray *forImages();
     static NSArray *forImagesWithArchive();
+    static NSArray *forSelection();
 };
 
 } // namespace WebKit

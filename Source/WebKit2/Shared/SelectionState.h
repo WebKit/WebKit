@@ -35,6 +35,7 @@ struct SelectionState {
     SelectionState()
         : isNone(true)
         , isContentEditable(false)
+        , isContentRichlyEditable(false)
         , isInPasswordField(false)
         , hasComposition(false)
         , selectedRangeStart(notFound)
@@ -47,6 +48,9 @@ struct SelectionState {
 
     // Whether the selection is in a content editable area.
     bool isContentEditable;
+    
+    // Whether the selection is in a rich content editable area.
+    bool isContentRichlyEditable;
 
     // Whether the selection is in a password field.
     bool isInPasswordField;

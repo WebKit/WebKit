@@ -1,3 +1,42 @@
+2011-02-18  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Mac OS X Services are not available for selected text in WebKit2 windows.
+        https://bugs.webkit.org/show_bug.cgi?id=54777
+        <rdar://problem/8666428>
+        
+        This patch adds support for Mac OS X Services in WebKit2 windows.
+        In WKView we now call registerServicesMenuSendTypes providing the
+        pasteboard types supported by WebKit and we also implement the two
+        protocol methods required to validate the send type and write the
+        content to the pasteboard. Unfortunately, AppKit expects the content
+        to be available in the pasteboard upon return from writeSelectionToPasteboard and
+        this is the reason why the call to the WebProcess is synchronous.
+
+        * Shared/SelectionState.h:
+        (WebKit::SelectionState::SelectionState): Extended to include
+        isContentRichlyEditable
+        * Shared/mac/PasteboardTypes.h:
+        * Shared/mac/PasteboardTypes.mm:
+        (WebKit::PasteboardTypes::forSelection): Added.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]): Added call
+        to registerServicesMenuSendTypes.
+        (-[WKView writeSelectionToPasteboard:types:]): Added.
+        (-[WKView validRequestorForSendType:returnType:]): Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::writeSelectionToPasteboard):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::respondToChangedSelection): Modified to
+        support the new SelectionState value.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::writeSelectionToPasteboard): Added synchronous
+        message to write the selected content to the pasteboard.
+
 2011-02-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

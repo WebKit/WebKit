@@ -86,7 +86,7 @@ class Pasteboard {
 public:
 #if PLATFORM(MAC)
     //Helper functions to allow Clipboard to share code
-    static void writeSelection(NSPasteboard* pasteboard, Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame);
+    static void writeSelection(NSPasteboard*, NSArray* pasteboardTypes, Range* selectedRange, bool canSmartCopyOrDelete, Frame*);
     static void writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& url, const String& titleStr, Frame* frame);
     static void writePlainText(NSPasteboard* pasteboard, const String& text);
 

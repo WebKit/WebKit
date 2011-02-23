@@ -138,7 +138,7 @@ static NSAttributedString *stripAttachmentCharacters(NSAttributedString *string)
     return result;
 }
 
-void Pasteboard::writeSelection(NSPasteboard* pasteboard, Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
+void Pasteboard::writeSelection(NSPasteboard* pasteboard, NSArray* pasteboardTypes, Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
     if (!WebArchivePboardType)
         Pasteboard::generalPasteboard(); // Initializes pasteboard types.
@@ -153,7 +153,7 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, Range* selectedRange, 
     // we can't call WebCore::Pasteboard's method for setting types. 
     UNUSED_PARAM(canSmartCopyOrDelete);
 
-    NSArray *types = frame->editor()->client()->pasteboardTypesForSelection(frame);
+    NSArray *types = pasteboardTypes ? pasteboardTypes : frame->editor()->client()->pasteboardTypesForSelection(frame);
     // Don't write RTFD to the pasteboard when the copied attributed string has no attachments.
     NSMutableArray *mutableTypes = nil;
     if (![attributedString containsAttachments]) {
@@ -163,7 +163,7 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, Range* selectedRange, 
     }
     [pasteboard declareTypes:types owner:nil];    
 #else
-    NSArray *types = selectionPasteboardTypes(canSmartCopyOrDelete, [attributedString containsAttachments]);
+    NSArray *types = pasteboardTypes ? pasteboardTypes : selectionPasteboardTypes(canSmartCopyOrDelete, [attributedString containsAttachments]);
     [pasteboard declareTypes:types owner:nil];
     frame->editor()->client()->didSetSelectionTypesForPasteboard();
 #endif
@@ -215,7 +215,7 @@ void Pasteboard::writePlainText(NSPasteboard* pasteboard, const String& text)
     
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
-    Pasteboard::writeSelection(m_pasteboard.get(), selectedRange, canSmartCopyOrDelete, frame);
+    Pasteboard::writeSelection(m_pasteboard.get(), 0, selectedRange, canSmartCopyOrDelete, frame);
 }
 
 void Pasteboard::writePlainText(const String& text)

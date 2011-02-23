@@ -136,6 +136,8 @@ bool WebPage::interceptEditingKeyboardEvent(KeyboardEvent* evt, bool shouldSaveC
                     if (evt->charCode() < ' ')
                         return false;
                     eventWasHandled = frame->editor()->insertText(commands[i].text, evt);
+                } else if (commands[i].commandName == "stopLoading") {
+                    m_mainFrame->coreFrame()->loader()->stopForUserCancel();
                 } else
                     if (frame->editor()->command(commands[i].commandName).isSupported())
                         eventWasHandled = frame->editor()->command(commands[i].commandName).execute(evt);
@@ -418,6 +420,13 @@ void WebPage::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference&
     
     [accessibilityRemoteObject() setRemoteParent:remoteElement];
 #endif
+}
+
+void WebPage::writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes, bool& result)
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    frame->editor()->writeSelectionToPasteboard(pasteboardName, pasteboardTypes);
+    result = true;
 }
 
 AccessibilityWebPageObject* WebPage::accessibilityRemoteObject()

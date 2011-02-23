@@ -68,5 +68,11 @@ NSArray* PasteboardTypes::forImagesWithArchive()
     static NSArray *types = retain([NSArray arrayWithObjects:NSTIFFPboardType, WebURLsWithTitlesPboardType, NSURLPboardType, WebURLPboardType, WebURLNamePboardType, NSStringPboardType, NSRTFDPboardType, WebArchivePboardType, nil]);
     return types;
 }
+
+NSArray* PasteboardTypes::forSelection()
+{
+    static NSArray *types = retain([NSArray arrayWithObjects:WebArchivePboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil]);
+    return types;
+}
     
 } // namespace WebKit
