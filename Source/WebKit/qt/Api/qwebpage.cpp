@@ -2438,7 +2438,7 @@ void QWebPage::setViewportSize(const QSize &size) const
     QWebFrame *frame = mainFrame();
     if (frame->d->frame && frame->d->frame->view()) {
         WebCore::FrameView* view = frame->d->frame->view();
-        view->setFrameRect(QRect(QPoint(0, 0), size));
+        view->resize(size);
         view->adjustViewSize();
     }
 }

@@ -1,3 +1,16 @@
+2011-02-23  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Dan Bernstein.
+
+        [Qt]REGRESSION(r79167): It broke 3 Qt-API test cases
+        http://trac.webkit.org/changeset/79167 refactored the way the bound size of
+        the frame is handled. A new API setBoundsSize was added, we need to call it
+        in addition to setFrameRect. I could call setBoundSize after setFrameRect but
+        I thought It would be more elegant to use the resize method.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setViewportSize):
+
 2011-02-22  Fabrizio Machado  <fabrizio.machado@nokia.com>
 
         Reviewed by Laszlo Gombos.
