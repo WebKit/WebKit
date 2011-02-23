@@ -2,6 +2,18 @@
 
         Reviewed by Adam Barth.
 
+        [codereviewtool] remove patch fuzzing
+        https://bugs.webkit.org/show_bug.cgi?id=54940
+
+        This code is buggy and not as necessary now that we
+        include svn revision numbers in uploaded patches.
+
+        * code-review.js:
+
+2011-02-21  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         [codereviewtool] focus comment on accept
         https://bugs.webkit.org/show_bug.cgi?id=54930
 

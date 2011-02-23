@@ -915,21 +915,13 @@ var CODE_REVIEW_UNITTEST;
   }
 
   function hunkStartingLine(patched_file, context, prev_line, hunk_num) {
-    var PATCH_FUZZ = 2;
     var current_line = -1;
     var last_context_line = context[context.length - 1];
     if (patched_file[prev_line] == last_context_line)
       current_line = prev_line + 1;
     else {
-      for (var i = prev_line - PATCH_FUZZ; i < prev_line + PATCH_FUZZ; i++) {
-        if (patched_file[i] == last_context_line)
-          current_line = i + 1;
-      }
-
-      if (current_line == -1) {
-        console.log('Hunk #' + hunk_num + ' FAILED.');
-        return -1;
-      }
+      console.log('Hunk #' + hunk_num + ' FAILED.');
+      return -1;
     }
 
     // For paranoia sake, confirm the rest of the context matches;
