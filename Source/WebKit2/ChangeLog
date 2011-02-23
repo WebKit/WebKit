@@ -1,3 +1,9 @@
+2011-02-23  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, fixed GTK WebKit2 compilation after r79366.
+
+        * GNUmakefile.am:
+
 2011-02-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

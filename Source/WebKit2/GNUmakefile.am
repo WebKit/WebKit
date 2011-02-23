@@ -444,8 +444,6 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/WebPopupMenuProxy.h \
 	Source/WebKit2/UIProcess/WebPreferences.cpp \
 	Source/WebKit2/UIProcess/WebPreferences.h \
-	Source/WebKit2/UIProcess/WebProcessManager.cpp \
-	Source/WebKit2/UIProcess/WebProcessManager.h \
 	Source/WebKit2/UIProcess/WebProcessProxy.cpp \
 	Source/WebKit2/UIProcess/WebProcessProxy.h \
 	Source/WebKit2/UIProcess/WebResourceCacheManagerProxy.h \
