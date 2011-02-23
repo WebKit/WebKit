@@ -1,5 +1,17 @@
 2011-02-23  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46500, make positioned elements work with vertical text.
+
+        Patch computePositionedLogicalHeight to be writing-mode-aware.  Functions it calls have not been
+        patched yet, so still not testable in a vertical text environment.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+
+2011-02-23  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=46500, make positioned elements work with vertical text.

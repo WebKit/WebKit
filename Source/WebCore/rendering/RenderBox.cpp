@@ -2452,13 +2452,17 @@ void RenderBox::computePositionedLogicalHeight()
     // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
     const RenderBoxModelObject* containerBlock = toRenderBoxModelObject(container());
 
-    const int containerHeight = containingBlockLogicalHeightForPositioned(containerBlock);
+    const int containerLogicalHeight = containingBlockLogicalHeightForPositioned(containerBlock);
 
-    const int bordersPlusPadding = borderAndPaddingHeight();
-    const Length marginTop = style()->marginTop();
-    const Length marginBottom = style()->marginBottom();
-    Length top = style()->top();
-    Length bottom = style()->bottom();
+    bool isHorizontal = style()->isHorizontalWritingMode();
+    const int bordersPlusPadding = borderAndPaddingLogicalHeight();
+    const Length marginLogicalTop = isHorizontal ? style()->marginTop() : style()->marginLeft();
+    const Length marginLogicalBottom = isHorizontal ? style()->marginBottom() : style()->marginRight();
+    int& marginLogicalTopAlias = isHorizontal ? m_marginTop : m_marginLeft;
+    int& marginLogicalBottomAlias = isHorizontal ? m_marginBottom : m_marginRight;
+
+    Length logicalTop = style()->logicalTop();
+    Length logicalBottom = style()->logicalBottom();
 
     /*---------------------------------------------------------------------------*\
      * For the purposes of this section and the next, the term "static position"
@@ -2479,69 +2483,70 @@ void RenderBox::computePositionedLogicalHeight()
 
     // see FIXME 2
     // Calculate the static distance if needed.
-    if (top.isAuto() && bottom.isAuto()) {
+    // FIXME: The static distance computation has not been patched for writing modes.
+    if (logicalTop.isAuto() && logicalBottom.isAuto()) {
         // staticY should already have been set through layout of the parent()
         int staticTop = layer()->staticY() - containerBlock->borderTop();
         for (RenderObject* po = parent(); po && po != containerBlock; po = po->parent()) {
             if (po->isBox() && !po->isTableRow())
                 staticTop += toRenderBox(po)->y();
         }
-        top.setValue(Fixed, staticTop);
+        logicalTop.setValue(Fixed, staticTop);
     }
 
 
-    int h; // Needed to compute overflow.
-    int y;
+    int logicalHeightResult; // Needed to compute overflow.
+    int logicalTopPos;
 
     // Calculate constraint equation values for 'height' case.
-    computePositionedLogicalHeightUsing(style()->height(), containerBlock, containerHeight, bordersPlusPadding,
-                               top, bottom, marginTop, marginBottom,
-                               h, m_marginTop, m_marginBottom, y);
-    setY(y);
+    computePositionedLogicalHeightUsing(style()->logicalHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding,
+                                        logicalTop, logicalBottom, marginLogicalTop, marginLogicalBottom,
+                                        logicalHeightResult, marginLogicalTopAlias, marginLogicalBottomAlias, logicalTopPos);
+    setLogicalTop(logicalTopPos);
 
     // Avoid doing any work in the common case (where the values of min-height and max-height are their defaults).
     // see FIXME 3
 
     // Calculate constraint equation values for 'max-height' case.
-    if (!style()->maxHeight().isUndefined()) {
-        int maxHeight;
-        int maxMarginTop;
-        int maxMarginBottom;
-        int maxYPos;
+    if (!style()->logicalMaxHeight().isUndefined()) {
+        int maxLogicalHeight;
+        int maxMarginLogicalTop;
+        int maxMarginLogicalBottom;
+        int maxLogicalTopPos;
 
-        computePositionedLogicalHeightUsing(style()->maxHeight(), containerBlock, containerHeight, bordersPlusPadding,
-                                   top, bottom, marginTop, marginBottom,
-                                   maxHeight, maxMarginTop, maxMarginBottom, maxYPos);
+        computePositionedLogicalHeightUsing(style()->logicalMaxHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding,
+                                            logicalTop, logicalBottom, marginLogicalTop, marginLogicalBottom,
+                                            maxLogicalHeight, maxMarginLogicalTop, maxMarginLogicalBottom, maxLogicalTopPos);
 
-        if (h > maxHeight) {
-            h = maxHeight;
-            m_marginTop = maxMarginTop;
-            m_marginBottom = maxMarginBottom;
-            m_frameRect.setY(maxYPos);
+        if (logicalHeightResult > maxLogicalHeight) {
+            logicalHeightResult = maxLogicalHeight;
+            marginLogicalTopAlias = maxMarginLogicalTop;
+            marginLogicalBottomAlias = maxMarginLogicalBottom;
+            setLogicalTop(maxLogicalTopPos);
         }
     }
 
     // Calculate constraint equation values for 'min-height' case.
-    if (!style()->minHeight().isZero()) {
-        int minHeight;
-        int minMarginTop;
-        int minMarginBottom;
-        int minYPos;
+    if (!style()->logicalMinHeight().isZero()) {
+        int minLogicalHeight;
+        int minMarginLogicalTop;
+        int minMarginLogicalBottom;
+        int minLogicalTopPos;
 
-        computePositionedLogicalHeightUsing(style()->minHeight(), containerBlock, containerHeight, bordersPlusPadding,
-                                   top, bottom, marginTop, marginBottom,
-                                   minHeight, minMarginTop, minMarginBottom, minYPos);
+        computePositionedLogicalHeightUsing(style()->logicalMinHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding,
+                                            logicalTop, logicalBottom, marginLogicalTop, marginLogicalBottom,
+                                            minLogicalHeight, minMarginLogicalTop, minMarginLogicalBottom, minLogicalTopPos);
 
-        if (h < minHeight) {
-            h = minHeight;
-            m_marginTop = minMarginTop;
-            m_marginBottom = minMarginBottom;
-            m_frameRect.setY(minYPos);
+        if (logicalHeightResult < minLogicalHeight) {
+            logicalHeightResult = minLogicalHeight;
+            marginLogicalTopAlias = minMarginLogicalTop;
+            marginLogicalBottomAlias = minMarginLogicalBottom;
+            setLogicalTop(minLogicalTopPos);
         }
     }
 
     // Set final height value.
-    setHeight(h + bordersPlusPadding);
+    setLogicalHeight(logicalHeightResult + bordersPlusPadding);
 }
 
 void RenderBox::computePositionedLogicalHeightUsing(Length h, const RenderBoxModelObject* containerBlock,
