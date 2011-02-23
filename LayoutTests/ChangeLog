@@ -1,3 +1,11 @@
+2011-02-22  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update. Uncomment SNOWLEOPARD
+        expectations, since we still fail all those tests on Snow Leopard
+        (lines were commented out by r79275).
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-22  Andrew Wilson  <atwilson@chromium.org>
 
         Marked tests as failing (image + text) on chromium, to reflect now-deleted rebaselines.
