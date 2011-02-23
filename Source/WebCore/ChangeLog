@@ -1,3 +1,15 @@
+2011-02-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8762042> and https://bugs.webkit.org/show_bug.cgi?id=54514
+        API to view and delete Application Cache data by origin.
+
+        Implement these to be used by WK2 API:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::getOriginsWithCache):
+        (WebCore::ApplicationCacheStorage::deleteEntriesForOrigin):
+
 2011-02-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

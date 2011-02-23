@@ -1288,16 +1288,39 @@ void ApplicationCacheStorage::checkForMaxSizeReached()
         m_isMaximumSizeReached = true;
 }
 
-void ApplicationCacheStorage::getOriginsWithCache(HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>&)
+void ApplicationCacheStorage::getOriginsWithCache(HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>& origins)
 {
-    // FIXME: <rdar://problem/8762042> and https://bugs.webkit.org/show_bug.cgi?id=54514 - Implement.
-    notImplemented();
+    Vector<KURL> urls;
+    if (!manifestURLs(&urls)) {
+        LOG_ERROR("Failed to retrieve ApplicationCache manifest URLs");
+        return;
+    }
+
+    // Multiple manifest URLs might share the same SecurityOrigin, so we might be creating extra, wasted origins here.
+    // The current schema doesn't allow for a more efficient way of building this list.
+    size_t count = urls.size();
+    for (size_t i = 0; i < count; ++i) {
+        RefPtr<SecurityOrigin> origin = SecurityOrigin::create(urls[i]);
+        origins.add(origin);
+    }
 }
 
-void ApplicationCacheStorage::deleteEntriesForOrigin(SecurityOrigin*)
+void ApplicationCacheStorage::deleteEntriesForOrigin(SecurityOrigin* origin)
 {
-    // FIXME: <rdar://problem/8762042> and https://bugs.webkit.org/show_bug.cgi?id=54514 - Implement.
-    notImplemented();
+    Vector<KURL> urls;
+    if (!manifestURLs(&urls)) {
+        LOG_ERROR("Failed to retrieve ApplicationCache manifest URLs");
+        return;
+    }
+
+    // Multiple manifest URLs might share the same SecurityOrigin, so we might be creating extra, wasted origins here.
+    // The current schema doesn't allow for a more efficient way of deleting by origin.
+    size_t count = urls.size();
+    for (size_t i = 0; i < count; ++i) {
+        RefPtr<SecurityOrigin> manifestOrigin = SecurityOrigin::create(urls[i]);
+        if (manifestOrigin->isSameSchemeHostPort(origin))
+            deleteCacheGroup(urls[i]);
+    }
 }
 
 void ApplicationCacheStorage::deleteAllEntries()
