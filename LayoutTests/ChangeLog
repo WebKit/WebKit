@@ -15,6 +15,26 @@
 
 2011-02-23  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed removal of superfluous chromium expectations.
+
+        * platform/chromium-mac/editing/selection/move-past-trailing-space-expected.checksum: Removed.
+        * platform/chromium-mac/editing/style/create-block-for-style-011-expected.checksum: Removed.
+        * platform/chromium-mac/editing/style/create-block-for-style-011-expected.png: Removed.
+        * platform/chromium-mac/editing/style/create-block-for-style-012-expected.checksum: Removed.
+        * platform/chromium-mac/editing/style/create-block-for-style-012-expected.png: Removed.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.checksum: Removed.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png: Removed.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.checksum: Removed.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png: Removed.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.checksum: Removed.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png: Removed.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.checksum: Removed.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png: Removed.
+        * platform/chromium-mac/fast/text/trailing-white-space-2-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/trailing-white-space-expected.checksum: Removed.
+
+2011-02-23  Andrew Wilson  <atwilson@chromium.org>
+
         More unreviewed expectations cleanup for chromium.
 
         * platform/chromium-mac-leopard/editing/deleting/delete-tab-003-expected.checksum: Added.
