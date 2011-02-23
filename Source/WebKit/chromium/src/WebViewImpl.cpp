@@ -805,6 +805,15 @@ bool WebViewImpl::scrollViewWithKeyboard(int keyCode, int modifiers)
 {
     ScrollDirection scrollDirection;
     ScrollGranularity scrollGranularity;
+#if OS(DARWIN)
+    // Control-Up/Down should be PageUp/Down on Mac.
+    if (modifiers & WebMouseEvent::ControlKey) {
+      if (keyCode == VKEY_UP)
+        keyCode = VKEY_PRIOR;
+      else if (keyCode == VKEY_DOWN)
+        keyCode = VKEY_NEXT;
+    }
+#endif
     if (!mapKeyCodeForScroll(keyCode, &scrollDirection, &scrollGranularity))
         return false;
     return propagateScroll(scrollDirection, scrollGranularity);

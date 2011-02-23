@@ -1,3 +1,13 @@
+2011-02-23  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        [chromium] Control-Up/Down should be PageUp/Down on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=54606
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::scrollViewWithKeyboard):
+
 2011-02-22  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.
