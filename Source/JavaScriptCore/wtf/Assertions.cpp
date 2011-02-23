@@ -225,12 +225,12 @@ void WTFReportBacktrace()
             // Assume c++ & try to demangle the name.
             char* demangledName = abi::__cxa_demangle(mangledName, 0, 0, 0);
             if (demangledName) {
-                fprintf(stderr, " -> %s\n", demangledName);
+                fprintf(stderr, "%-3d %s\n", i, demangledName);
                 free(demangledName);
             } else
-                fprintf(stderr, " -> %s\n", mangledName);
+                fprintf(stderr, "%-3d %s\n", i, mangledName);
         } else
-            fprintf(stderr, " -> %p\n", pointer);
+            fprintf(stderr, "%-3d %p\n", i, pointer);
     }
 #endif
 }
