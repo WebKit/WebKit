@@ -3196,6 +3196,7 @@ BUGWK54322 MAC SNOWLEOPARD : fast/css/only-child-pseudo-class.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/css/only-of-type-pseudo-class.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/css/transform-default-parameter.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/dom/34176.html = IMAGE
+BUGWK54322 MAC SNOWLEOPARD : fast/dom/52776.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/dom/blur-contenteditable.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/dom/HTMLInputElement/input-slider-update.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/dom/HTMLTableColElement/resize-table-using-col-width.html = IMAGE
@@ -3205,6 +3206,7 @@ BUGWK54322 MAC SNOWLEOPARD : fast/dynamic/008.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/events/context-no-deselect.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/basic-buttons.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/button-sizes.html = IMAGE
+BUGWK54322 MAC SNOWLEOPARD : fast/forms/file-input-direction.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/input-align-image.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/input-appearance-bkcolor.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/input-file-re-render.html = IMAGE
@@ -3256,6 +3258,7 @@ BUGWK54322 MAC SNOWLEOPARD : fast/text/international/bidi-linebreak-002.html = I
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/bidi-linebreak-003.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/bidi-mirror-he-ar.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/bidi-neutral-directionality-paragraph-start.html = IMAGE
+BUGWK54322 MAC SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/justify-ideograph-simple.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE
@@ -3265,6 +3268,9 @@ BUGWK54322 MAC SNOWLEOPARD : fonts/sans-serif.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : media/audio-controls-rendering.html = TEXT
 BUGWK54322 MAC SNOWLEOPARD : media/audio-repaint.html = IMAGE
+BUGWK54322 MAC SNOWLEOPARD : media/controls-after-reload.html = IMAGE+TEXT
+BUGWK54322 MAC SNOWLEOPARD : media/controls-strict.html = IMAGE+TEXT
+BUGWK54322 MAC SNOWLEOPARD : media/controls-styling.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : media/controls-without-preload.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : media/media-document-audio-repaint.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : media/video-aspect-ratio.html = IMAGE
@@ -3404,6 +3410,14 @@ BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/other/cell_widths.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : transforms/no_transform_hit_testing.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : transforms/svg-vs-css.xhtml = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
+
+// Snow Leopard-only flakiness
+BUGWK54322 MAC SNOWLEOPARD : scrollbars/hidden-iframe-scrollbar-crash2.html = TEXT PASS
+BUGWK54322 MAC SNOWLEOPARD : dom/html/level1/core/hc_textwithnomarkup.html = TIMEOUT PASS
+BUGWK54322 MAC SNOWLEOPARD : fast/history/history-back-within-subframe-hash.html = TIMEOUT PASS
+BUGWK54322 MAC SNOWLEOPARD : storage/indexeddb/data-corruption.html = TIMEOUT PASS
+BUGWK54322 MAC SNOWLEOPARD : svg/custom/acid3-test-77.html = TIMEOUT PASS
+BUGWK54322 MAC SNOWLEOPARD : fast/css/font-face-in-shadow-DOM.html = IMAGE+TEXT PASS
 
 BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
 
@@ -3714,7 +3728,7 @@ BUGWK54736 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.
 BUGWK54736 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-6.html = IMAGE
 
 // Flaky
-BUGMORRITA MAC : fast/text/international/pop-up-button-text-alignment-and-direction.html = TEXT
+BUGMORRITA MAC LEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = TEXT
 BUGMORRITA MAC LEOPARD : svg/zoom/page/zoom-hixie-mixed-008.xml = TEXT
 BUGMORRITA MAC : svg/zoom/text/zoom-hixie-mixed-008.xml = TEXT
 BUGWK54736 MAC : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
