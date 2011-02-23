@@ -7,6 +7,9 @@ TEMPLATE = lib
 
 DEFINES += BUILDING_WEBKIT
 
+RESOURCES += \
+    $$PWD/../../WebCore/WebCore.qrc
+
 CONFIG(debug, debug|release) : CONFIG_DIR = debug
 else: CONFIG_DIR = release
 

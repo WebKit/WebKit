@@ -1,3 +1,14 @@
+2011-02-22  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] editing/deleting/5408255.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=54964
+
+        Move WebCore resource file to QtWebKit since they are referred in WebKit.
+
+        * QtWebKit.pro:
+
 2011-02-22  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

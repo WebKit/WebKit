@@ -13,9 +13,6 @@ CONFIG += staticlib
 
 DESTDIR = $$WEBCORE_DESTDIR
 
-RESOURCES += \
-    $$PWD/../WebCore/WebCore.qrc
-
 contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
     DEFINES += ENABLE_NO_LISTBOX_RENDERING=1
 }
