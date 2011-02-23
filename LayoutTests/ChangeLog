@@ -1,3 +1,16 @@
+2011-02-23  Andrew Wilson  <atwilson@chromium.org>
+
+        More unreviewed expectations cleanup for chromium.
+
+        * platform/chromium-mac-leopard/editing/deleting/delete-tab-003-expected.checksum: Added.
+        * platform/chromium-mac-leopard/editing/deleting/delete-tab-003-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/deleting/delete-ws-fixup-001-expected.checksum: Added.
+        * platform/chromium-mac-leopard/editing/deleting/delete-ws-fixup-001-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/inserting/insert-tab-003-expected.checksum: Added.
+        * platform/chromium-mac-leopard/editing/inserting/insert-tab-003-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/select-from-textfield-outwards-expected.checksum: Added.
+        * platform/chromium-mac-leopard/editing/selection/select-from-textfield-outwards-expected.png: Added.
+
 2011-02-23  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update. Add failing expectations for
