@@ -75,6 +75,7 @@ defineReplace(message_receiver_generator_output) {
 
 VPATH = \
     PluginProcess \
+    WebProcess/ApplicationCache \
     WebProcess/Authentication \
     WebProcess/Geolocation \
     WebProcess/Plugins \
@@ -99,6 +100,8 @@ MESSAGE_RECEIVERS = \
     WebGeolocationManager.messages.in \
     WebGeolocationManagerProxy.messages.in \
     WebInspectorProxy.messages.in \
+    WebApplicationCacheManager.messages.in \
+    WebApplicationCacheManagerProxy.messages.in \
     WebPage/WebInspector.messages.in \
     WebPage/WebPage.messages.in \
     WebPageProxy.messages.in \
