@@ -1,5 +1,13 @@
 2011-02-23  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed Chromium expectations update. Mark failures from bug 54885
+        as being Leopard-only (which they are) so that they don't result in
+        duplicates with all the Snow Leopard expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-23  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed Chromium expectations update. Add more Snow Leopard-only
         failures.
 
