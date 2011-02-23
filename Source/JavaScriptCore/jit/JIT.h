@@ -402,14 +402,14 @@ namespace JSC {
 #elif CPU(ARM_THUMB2)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 10;
-        static const int patchOffsetPutByIdPropertyMapOffset1 = 46;
-        static const int patchOffsetPutByIdPropertyMapOffset2 = 58;
+        static const int patchOffsetPutByIdPropertyMapOffset1 = 36;
+        static const int patchOffsetPutByIdPropertyMapOffset2 = 48;
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 10;
         static const int patchOffsetGetByIdBranchToSlowCase = 26;
-        static const int patchOffsetGetByIdPropertyMapOffset1 = 46;
-        static const int patchOffsetGetByIdPropertyMapOffset2 = 58;
-        static const int patchOffsetGetByIdPutResult = 62;
+        static const int patchOffsetGetByIdPropertyMapOffset1 = 36;
+        static const int patchOffsetGetByIdPropertyMapOffset2 = 48;
+        static const int patchOffsetGetByIdPutResult = 52;
 #if ENABLE(OPCODE_SAMPLING)
         #error "OPCODE_SAMPLING is not yet supported"
 #else
