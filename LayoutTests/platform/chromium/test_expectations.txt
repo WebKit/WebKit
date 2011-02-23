@@ -3617,7 +3617,7 @@ BUGMORRITA MAC : svg/zoom/text/zoom-hixie-mixed-008.xml = TEXT
 BUGWK54736 MAC : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
 
 // These are mix of BUGWK54885 and BUGWK54736
-BUGWK54885 MAC : editing/deleting/delete-ws-fixup-001.html = FAIL
-BUGWK54885 MAC : editing/deleting/delete-tab-003.html = FAIL
-BUGWK54885 MAC : editing/inserting/insert-tab-003.html = FAIL
-BUGWK54885 MAC : editing/selection/select-from-textfield-outwards.html = FAIL
+BUGWK54885 MAC : editing/deleting/delete-ws-fixup-001.html = FAIL TIMEOUT
+BUGWK54885 MAC : editing/deleting/delete-tab-003.html = FAIL TIMEOUT
+BUGWK54885 MAC : editing/inserting/insert-tab-003.html = FAIL TIMEOUT
+BUGWK54885 MAC : editing/selection/select-from-textfield-outwards.html = FAIL TIMEOUT

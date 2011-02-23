@@ -1,3 +1,11 @@
+2011-02-23  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed test_expectations.txt update. 
+        
+        Added TIMEOUTs that the last change missed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-23 MORITA Hajime  <morrita@google.com>
 
         Unreviewed test_expectations.txt update.
