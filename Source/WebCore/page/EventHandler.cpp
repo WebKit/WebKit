@@ -196,7 +196,7 @@ EventHandler::EventHandler(Frame* frame)
 #if PLATFORM(MAC)
     , m_mouseDownView(nil)
     , m_sendingEventToSubview(false)
-    , m_activationEventNumber(0)
+    , m_activationEventNumber(-1)
 #endif
 #if ENABLE(TOUCH_EVENTS)
     , m_touchPressed(false)

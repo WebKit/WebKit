@@ -1,3 +1,18 @@
+2011-02-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix two issues seen in WebKit2 views on Mac:
+        - <rdar://problem/8867831> WebKit2: Insertion points in form fields no longer blink
+        - <rdar://problem/8950362> REGRESSION (WebKit2): Cannot deselect text
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler): Initialize m_activationEventNumber
+        to -1. Since WebKit2 doesn’t support non-activating clicks yet (<http://webkit.org/b/55053>
+        <rdar://problem/9042197>) and doesn’t send event numbers, all events were considered to be
+        window-activating events. This in turn prevented them from clearing the selection and resuming
+        caret blinking on mouse up.
+
 2011-02-23  Jacob Dinu  <dinu.jacob@nokia.com>
 
         Reviewed by Pavel Feldman.
