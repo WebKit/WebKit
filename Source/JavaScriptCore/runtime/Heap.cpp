@@ -376,6 +376,10 @@ void Heap::reset(SweepToggle sweepToggle)
     m_markedSpace.reset();
     m_extraCost = 0;
 
+#if ENABLE(JSC_ZOMBIES)
+    sweep();
+#endif
+
     if (sweepToggle == DoSweep) {
         m_markedSpace.sweep();
         m_markedSpace.shrink();

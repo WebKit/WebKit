@@ -34,7 +34,6 @@ MarkedSpace::MarkedSpace(JSGlobalData* globalData)
     , m_highWaterMark(0)
     , m_globalData(globalData)
 {
-    m_heap.nextAtom = MarkedBlock::firstAtom();
 }
 
 void MarkedSpace::destroy()
@@ -68,7 +67,7 @@ void MarkedSpace::freeBlocks(DoublyLinkedList<MarkedBlock>& blocks)
 void* MarkedSpace::allocate(size_t)
 {
     for ( ; m_heap.nextBlock; m_heap.nextBlock = m_heap.nextBlock->next()) {
-        if (void* result = m_heap.nextBlock->allocate(m_heap.nextAtom))
+        if (void* result = m_heap.nextBlock->allocate())
             return result;
 
         m_waterMark += m_heap.nextBlock->capacity();
@@ -76,7 +75,7 @@ void* MarkedSpace::allocate(size_t)
 
     if (m_waterMark < m_highWaterMark) {
         m_heap.nextBlock = allocateBlock();
-        return m_heap.nextBlock->allocate(m_heap.nextAtom);
+        return m_heap.nextBlock->allocate();
     }
 
     return 0;
@@ -145,11 +144,11 @@ size_t MarkedSpace::capacity() const
 void MarkedSpace::reset()
 {
     m_heap.nextBlock = m_heap.blockList.head();
-    m_heap.nextAtom = MarkedBlock::firstAtom();
     m_waterMark = 0;
-#if ENABLE(JSC_ZOMBIES)
-    sweep();
-#endif
+
+    BlockIterator end = m_blocks.end();
+    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+        (*it)->reset();
 }
 
 } // namespace JSC

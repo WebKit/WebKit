@@ -1,3 +1,37 @@
+2011-02-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Moved the "nextAtom" allocation pointer into MarkedBlock for better encapsulation
+        https://bugs.webkit.org/show_bug.cgi?id=55079
+        
+        SunSpider reports no change.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::reset): Moved Zombie sweeping here, up from MarkedSpace,
+        since we want Heap to logically control MarkedSpace. MarkedSpace should
+        never choose to sweep itself.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::MarkedBlock::allocate): Updated for nextAtom becoming a
+        member of MarkedBlock. No need to reset nextAtom to firstAtom() when
+        we reach the end of a block, since there's now an explicit reset pass
+        during GC.
+
+        * runtime/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        * runtime/MarkedBlock.h:
+        (JSC::MarkedBlock::reset): Added the nextAtom data member, and reordered
+        some data members to improve cache locality.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::allocate):
+        (JSC::MarkedSpace::reset):
+        * runtime/MarkedSpace.h:
+        (JSC::CollectorHeap::CollectorHeap): Removed nextAtom, and added an
+        explicit reset pass.
+
 2011-02-23  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r79428.

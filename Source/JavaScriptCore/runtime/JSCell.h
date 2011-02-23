@@ -402,19 +402,18 @@ namespace JSC {
     }
 #endif
 
-    inline void* MarkedBlock::allocate(size_t& nextAtom)
+    inline void* MarkedBlock::allocate()
     {
-        while (nextAtom < m_endAtom) {
-            if (!m_marks.testAndSet(nextAtom)) {
-                JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[nextAtom]);
-                nextAtom += m_atomsPerCell;
+        while (m_nextAtom < m_endAtom) {
+            if (!m_marks.testAndSet(m_nextAtom)) {
+                JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[m_nextAtom]);
+                m_nextAtom += m_atomsPerCell;
                 cell->~JSCell();
                 return cell;
             }
-            nextAtom += m_atomsPerCell;
+            m_nextAtom += m_atomsPerCell;
         }
 
-        nextAtom = firstAtom();
         return 0;
     }
 

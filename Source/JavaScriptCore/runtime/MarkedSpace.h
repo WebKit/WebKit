@@ -47,12 +47,10 @@ namespace JSC {
     struct CollectorHeap {
         CollectorHeap()
             : nextBlock(0)
-            , nextAtom(0)
         {
         }
 
         MarkedBlock* nextBlock;
-        size_t nextAtom;
         DoublyLinkedList<MarkedBlock> blockList;
     };
 

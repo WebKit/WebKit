@@ -46,13 +46,15 @@ void MarkedBlock::destroy(MarkedBlock* block)
 }
 
 MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, JSGlobalData* globalData, size_t cellSize)
-    : m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
-    , m_endAtom(atomsPerBlock - m_atomsPerCell + 1)
+    : m_nextAtom(firstAtom())
     , m_allocation(allocation)
     , m_heap(&globalData->heap)
     , m_prev(0)
     , m_next(0)
 {
+    m_atomsPerCell = (cellSize + atomSize - 1) / atomSize;
+    m_endAtom = atomsPerBlock - m_atomsPerCell + 1;
+
     Structure* dummyMarkableCellStructure = globalData->dummyMarkableCellStructure.get();
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell)
         new (&atoms()[i]) JSCell(dummyMarkableCellStructure);

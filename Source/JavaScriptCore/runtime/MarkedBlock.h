@@ -60,7 +60,8 @@ namespace JSC {
         MarkedBlock* prev() const;
         MarkedBlock* next() const;
         
-        void* allocate(size_t& nextCell);
+        void* allocate();
+        void reset();
         void sweep();
         
         bool isEmpty();
@@ -97,8 +98,9 @@ namespace JSC {
         MarkedBlock(const PageAllocationAligned&, JSGlobalData*, size_t cellSize);
         Atom* atoms();
 
-        size_t m_atomsPerCell;
+        size_t m_nextAtom;
         size_t m_endAtom; // This is a fuzzy end. Always test for < m_endAtom.
+        size_t m_atomsPerCell;
         WTF::Bitmap<blockSize / atomSize> m_marks;
         PageAllocationAligned m_allocation;
         Heap* m_heap;
@@ -149,6 +151,11 @@ namespace JSC {
     inline MarkedBlock* MarkedBlock::next() const
     {
         return m_next;
+    }
+
+    inline void MarkedBlock::reset()
+    {
+        m_nextAtom = firstAtom();
     }
 
     inline bool MarkedBlock::isEmpty()
