@@ -195,8 +195,6 @@ public:
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
 
 #if ENABLE(DATABASE)
-        // We currently ignore any DatabasePolicy used for the document's
-        // databases; if it's actually used anywhere, this should be revisited.
         DatabaseTaskSynchronizer cleanupSync;
         workerContext->stopDatabases(&cleanupSync);
 #endif

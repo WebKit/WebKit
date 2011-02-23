@@ -362,7 +362,7 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
     targetFrame->navigationScheduler()->scheduleFormSubmission(submission);
 }
 
-void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolicy databasePolicy)
+void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
 {
     if (m_frame->document() && m_frame->document()->parser())
         m_frame->document()->parser()->stopParsing();
@@ -429,10 +429,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolic
             cachedResourceLoader->cancelRequests();
 
 #if ENABLE(DATABASE)
-        if (databasePolicy == DatabasePolicyStop)
-            doc->stopDatabases(0);
-#else
-    UNUSED_PARAM(databasePolicy);
+        doc->stopDatabases(0);
 #endif
     }
 
@@ -1688,13 +1685,13 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
     return false;
 }
 
-void FrameLoader::stopLoadingSubframes(DatabasePolicy databasePolicy, ClearProvisionalItemPolicy clearProvisionalItemPolicy)
+void FrameLoader::stopLoadingSubframes(ClearProvisionalItemPolicy clearProvisionalItemPolicy)
 {
     for (RefPtr<Frame> child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->loader()->stopAllLoaders(databasePolicy, clearProvisionalItemPolicy);
+        child->loader()->stopAllLoaders(clearProvisionalItemPolicy);
 }
 
-void FrameLoader::stopAllLoaders(DatabasePolicy databasePolicy, ClearProvisionalItemPolicy clearProvisionalItemPolicy)
+void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItemPolicy)
 {
     ASSERT(!m_frame->document() || !m_frame->document()->inPageCache());
     if (m_pageDismissalEventBeingDispatched)
@@ -1713,11 +1710,11 @@ void FrameLoader::stopAllLoaders(DatabasePolicy databasePolicy, ClearProvisional
     if (clearProvisionalItemPolicy == ShouldClearProvisionalItem)
         history()->setProvisionalItem(0);
 
-    stopLoadingSubframes(databasePolicy, clearProvisionalItemPolicy);
+    stopLoadingSubframes(clearProvisionalItemPolicy);
     if (m_provisionalDocumentLoader)
-        m_provisionalDocumentLoader->stopLoading(databasePolicy);
+        m_provisionalDocumentLoader->stopLoading();
     if (m_documentLoader)
-        m_documentLoader->stopLoading(databasePolicy);
+        m_documentLoader->stopLoading();
 
     setProvisionalDocumentLoader(0);
     
@@ -2379,7 +2376,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 // FIXME: can stopping loading here possibly have any effect, if isLoading is false,
                 // which it must be to be in this branch of the if? And is it OK to just do a full-on
                 // stopAllLoaders instead of stopLoadingSubframes?
-                stopLoadingSubframes(DatabasePolicyStop, ShouldNotClearProvisionalItem);
+                stopLoadingSubframes(ShouldNotClearProvisionalItem);
                 pdl->stopLoading();
 
                 // If we're in the middle of loading multipart data, we need to restore the document loader.
@@ -2984,7 +2981,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
 
     FrameLoadType type = policyChecker()->loadType();
     // A new navigation is in progress, so don't clear the history's provisional item.
-    stopAllLoaders(DatabasePolicyStop, ShouldNotClearProvisionalItem);
+    stopAllLoaders(ShouldNotClearProvisionalItem);
     
     // <rdar://problem/6250856> - In certain circumstances on pages with multiple frames, stopAllLoaders()
     // might detach the current FrameLoader, in which case we should bail on this newly defunct load. 

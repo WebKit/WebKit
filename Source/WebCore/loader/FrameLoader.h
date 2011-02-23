@@ -128,8 +128,7 @@ public:
     bool canHandleRequest(const ResourceRequest&);
 
     // Also not cool.
-    // FIXME: We no longer need DatabasePolicy, since we always stop databases now.
-    void stopAllLoaders(DatabasePolicy = DatabasePolicyStop, ClearProvisionalItemPolicy = ShouldClearProvisionalItem);
+    void stopAllLoaders(ClearProvisionalItemPolicy = ShouldClearProvisionalItem);
     void stopForUserCancel(bool deferCheckLoadComplete = false);
 
     bool isLoadingMainResource() const { return m_isLoadingMainResource; }
@@ -222,7 +221,7 @@ public:
     void submitForm(PassRefPtr<FormSubmission>);
 
     void stop();
-    void stopLoading(UnloadEventPolicy, DatabasePolicy = DatabasePolicyStop);
+    void stopLoading(UnloadEventPolicy);
     bool closeURL();
 
     void didExplicitOpen();
@@ -353,7 +352,7 @@ private:
     void addExtraFieldsToRequest(ResourceRequest&, FrameLoadType loadType, bool isMainResource, bool cookiePolicyURLFromRequest);
 
     // Also not cool.
-    void stopLoadingSubframes(DatabasePolicy, ClearProvisionalItemPolicy);
+    void stopLoadingSubframes(ClearProvisionalItemPolicy);
 
     void clearProvisionalLoad();
     void markLoadComplete();

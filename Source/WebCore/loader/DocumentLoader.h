@@ -100,7 +100,7 @@ namespace WebCore {
         
         void replaceRequestURLForSameDocumentNavigation(const KURL&);
         bool isStopping() const { return m_isStopping; }
-        void stopLoading(DatabasePolicy = DatabasePolicyStop);
+        void stopLoading();
         void setCommitted(bool committed) { m_committed = committed; }
         bool isCommitted() const { return m_committed; }
         bool isLoading() const { return m_loading; }

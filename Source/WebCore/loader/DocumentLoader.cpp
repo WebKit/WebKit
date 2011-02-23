@@ -209,7 +209,7 @@ void DocumentLoader::mainReceivedError(const ResourceError& error, bool isComple
 // one document at a time, but one document may have many related resources. 
 // stopLoading will stop all loads initiated by the data source, 
 // but not loads initiated by child frames' data sources -- that's the WebFrame's job.
-void DocumentLoader::stopLoading(DatabasePolicy databasePolicy)
+void DocumentLoader::stopLoading()
 {
     // In some rare cases, calling FrameLoader::stopLoading could set m_loading to false.
     // (This can happen when there's a single XMLHttpRequest currently loading and stopLoading causes it
@@ -222,7 +222,7 @@ void DocumentLoader::stopLoading(DatabasePolicy databasePolicy)
         Document* doc = m_frame->document();
         
         if (loading || doc->parsing())
-            m_frame->loader()->stopLoading(UnloadEventPolicyNone, databasePolicy);
+            m_frame->loader()->stopLoading(UnloadEventPolicyNone);
     }
 
     // Always cancel multipart loaders

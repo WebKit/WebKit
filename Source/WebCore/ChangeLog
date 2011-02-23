@@ -1,3 +1,23 @@
+2011-02-22  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Remove DatabasePolicy from FrameLoaderTypes
+        https://bugs.webkit.org/show_bug.cgi?id=54968
+
+        The DatabasePolicy enum is no longer needed now that we avoid stopping
+        loaders on same-document navigations.
+
+        Existing test: storage/hash-change-with-xhr.html
+
+        * WebCore.exp.in:
+        * loader/DocumentLoader.cpp:
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderTypes.h:
+        * workers/WorkerThread.cpp:
+
 2011-02-22  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.
