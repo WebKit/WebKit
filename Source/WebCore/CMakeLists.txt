@@ -1233,7 +1233,6 @@ SET(WebCore_SOURCES
     platform/graphics/GraphicsTypes.cpp
     platform/graphics/Image.cpp
     platform/graphics/ImageBuffer.cpp
-    platform/graphics/ImageSource.cpp
     platform/graphics/IntRect.cpp
     platform/graphics/Path.cpp
     platform/graphics/PathTraversalState.cpp
@@ -1278,16 +1277,6 @@ SET(WebCore_SOURCES
     platform/graphics/transforms/TransformOperations.cpp
     platform/graphics/transforms/TransformationMatrix.cpp
     platform/graphics/transforms/TranslateTransformOperation.cpp
-
-    platform/image-decoders/ImageDecoder.cpp
-    platform/image-decoders/bmp/BMPImageDecoder.cpp
-    platform/image-decoders/bmp/BMPImageReader.cpp
-    platform/image-decoders/gif/GIFImageDecoder.cpp
-    platform/image-decoders/gif/GIFImageReader.cpp
-    platform/image-decoders/ico/ICOImageDecoder.cpp
-    platform/image-decoders/jpeg/JPEGImageDecoder.cpp
-    platform/image-decoders/png/PNGImageDecoder.cpp
-    platform/image-decoders/webp/WEBPImageDecoder.cpp
 
     platform/mock/DeviceOrientationClientMock.cpp
     platform/mock/GeolocationClientMock.cpp

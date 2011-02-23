@@ -1,3 +1,17 @@
+2011-02-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [CMake] Move platform dependent files out of main CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=53891
+
+        Apple Windows port does not use the image decoders,
+        so move them into the platform specific CMake files.
+
+        * CMakeLists.txt:
+        * CMakeListsEfl.txt:
+        * CMakeListsWinCE.txt:
+
 2011-02-21  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.
