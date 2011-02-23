@@ -1,3 +1,14 @@
+2011-02-23  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r79387.
+        https://bugs.webkit.org/show_bug.cgi?id=54885
+
+        Reapply the code changes from r79038 since they weren't the root
+        cause of the test timeouts.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::reset):
+
 2011-02-23  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.
