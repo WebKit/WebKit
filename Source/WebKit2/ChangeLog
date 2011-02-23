@@ -1,3 +1,15 @@
+2011-02-23  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Fix the Symbian build after r79334
+        https://bugs.webkit.org/show_bug.cgi?id=55044
+
+        * WebKit2.pri: Copy the rules from JavaScriptCore.pri for
+        defineTest().
+
+        Remove addWebKit2LibWholeArchive as it is no longer needed.
+
 2011-02-23  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, fixed GTK WebKit2 compilation after r79366.

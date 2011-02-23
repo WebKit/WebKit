@@ -1,3 +1,17 @@
+2011-02-23  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Fix the Symbian build after r79334
+        https://bugs.webkit.org/show_bug.cgi?id=55044
+
+        No new tests as there is no new functionality.
+
+        * WebCore.pri: Reorder symbian blocks to make sure that
+        system-sqlite is set before it is tested.
+
+        Copy the rules from JavaScriptCore.pri for defineTest().
+
 2011-02-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

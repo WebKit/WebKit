@@ -140,6 +140,37 @@ symbian {
     INCLUDEPATH = $$WEBCORE_INCLUDEPATH $$WC_GENERATED_SOURCES_DIR $$INCLUDEPATH
 }
 
+symbian {
+    v8 {
+        QMAKE_CXXFLAGS.ARMCC += -OTime -O3
+        QMAKE_CXXFLAGS.ARMCC += --fpu softvfp+vfpv2 --fpmode fast
+        LIBS += -llibpthread
+    }
+
+    symbian-abld|symbian-sbsv2 {
+        # RO text (code) section in qtwebkit.dll exceeds allocated space for gcce udeb target.
+        # Move RW-section base address to start from 0xE00000 instead of the toolchain default 0x400000.
+        QMAKE_LFLAGS.ARMCC += --rw-base 0xE00000
+        MMP_RULES += ALWAYS_BUILD_AS_ARM
+    }  else {
+        QMAKE_CFLAGS -= --thumb
+        QMAKE_CXXFLAGS -= --thumb
+    }
+
+    CONFIG(release, debug|release): QMAKE_CXXFLAGS.ARMCC += -OTime -O3
+    # Symbian plugin support
+    LIBS += -lefsrv
+
+    !CONFIG(QTDIR_build) {
+        # Test if symbian OS comes with sqlite
+        exists($${EPOCROOT}epoc32/release/armv5/lib/sqlite3.dso):CONFIG *= system-sqlite
+    } else:!symbian-abld:!symbian-sbsv2 {
+        # When bundled with Qt, all Symbian build systems extract their own sqlite files if
+        # necessary, but on non-mmp based ones we need to specify this ourselves.
+        include($$QT_SOURCE_TREE/src/plugins/sqldrivers/sqlite_symbian/sqlite_symbian.pri)
+    }
+}
+
 contains(DEFINES, ENABLE_XSLT=1) {
     QT *= xmlpatterns
 }
@@ -280,37 +311,6 @@ contains (CONFIG, text_breaking_with_icu) {
     }
 }
 
-symbian {
-    v8 {
-        QMAKE_CXXFLAGS.ARMCC += -OTime -O3
-        QMAKE_CXXFLAGS.ARMCC += --fpu softvfp+vfpv2 --fpmode fast
-        LIBS += -llibpthread
-    }
-
-    symbian-abld|symbian-sbsv2 {
-        # RO text (code) section in qtwebkit.dll exceeds allocated space for gcce udeb target.
-        # Move RW-section base address to start from 0xE00000 instead of the toolchain default 0x400000.
-        QMAKE_LFLAGS.ARMCC += --rw-base 0xE00000
-        MMP_RULES += ALWAYS_BUILD_AS_ARM
-    }  else {
-        QMAKE_CFLAGS -= --thumb
-        QMAKE_CXXFLAGS -= --thumb
-    }
-
-    CONFIG(release, debug|release): QMAKE_CXXFLAGS.ARMCC += -OTime -O3
-    # Symbian plugin support
-    LIBS += -lefsrv
-
-    !CONFIG(QTDIR_build) {
-        # Test if symbian OS comes with sqlite
-        exists($${EPOCROOT}epoc32/release/armv5/lib/sqlite3.dso):CONFIG *= system-sqlite
-    } else:!symbian-abld:!symbian-sbsv2 {
-        # When bundled with Qt, all Symbian build systems extract their own sqlite files if
-        # necessary, but on non-mmp based ones we need to specify this ourselves.
-        include($$QT_SOURCE_TREE/src/plugins/sqldrivers/sqlite_symbian/sqlite_symbian.pri)
-    }
-}
-
 win32-* {
     LIBS += -lgdi32
     LIBS += -lole32
@@ -364,13 +364,26 @@ use_qt_mobile_theme: DEFINES += WTF_USE_QT_MOBILE_THEME=1
 
 defineTest(addWebCoreLib) {
     pathToWebCoreOutput = $$ARGS/$$WEBCORE_DESTDIR
-    QMAKE_LIBDIR += $$pathToWebCoreOutput
-    POST_TARGETDEPS += $${pathToWebCoreOutput}$${QMAKE_DIR_SEP}lib$${WEBCORE_TARGET}.a
+
+    win32-msvc*|wince* {
+        LIBS += -L$$pathToWebCoreOutput
+        LIBS += -l$$WEBCORE_TARGET
+        POST_TARGETDEPS += $${pathToWebCoreOutput}$${QMAKE_DIR_SEP}$${WEBCORE_TARGET}.lib
+    } else:symbian {
+        LIBS += -l$${WEBCORE_TARGET}.lib
+        QMAKE_LIBDIR += $$pathToWebCoreOutput
+        POST_TARGETDEPS += $${pathToWebCoreOutput}$${QMAKE_DIR_SEP}$${WEBCORE_TARGET}.lib
+    } else {
+        QMAKE_LIBDIR = $$pathToWebCoreOutput $$QMAKE_LIBDIR
+        LIBS += -l$$WEBCORE_TARGET
+        POST_TARGETDEPS += $${pathToWebCoreOutput}$${QMAKE_DIR_SEP}lib$${WEBCORE_TARGET}.a
+    }
+    
     CONFIG -= explicitlib
     export(QMAKE_LIBDIR)
     export(POST_TARGETDEPS)
     export(CONFIG)
-    LIBS = -l$$WEBCORE_TARGET $$LIBS
     export(LIBS)
+
     return(true)
 }
