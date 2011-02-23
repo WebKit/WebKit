@@ -1,3 +1,14 @@
+2011-02-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Add missing files from r79351. These are expected results for new media tests.
+
+        * platform/gtk/media/audio-repaint-expected.checksum: Added.
+        * platform/gtk/media/audio-repaint-expected.png: Added.
+        * platform/gtk/media/audio-repaint-expected.txt: Added.
+        * platform/gtk/media/media-document-audio-repaint-expected.checksum: Added.
+        * platform/gtk/media/media-document-audio-repaint-expected.png: Added.
+        * platform/gtk/media/media-document-audio-repaint-expected.txt: Added.
+
 2011-02-22  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed expectations change for chromium.
