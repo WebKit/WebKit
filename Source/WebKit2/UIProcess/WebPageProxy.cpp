@@ -1163,7 +1163,7 @@ void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, PassRefPtr<DataCal
     process()->send(Messages::WebPage::GetWebArchiveOfFrame(frame->frameID(), callbackID), m_pageID);
 }
 
-void WebPageProxy::forceRepaint(PassRefPtr<VoidCallback> prpCallback)
+void WebPageProxy::forceRepaint(ForceRepaintFlags flags, PassRefPtr<VoidCallback> prpCallback)
 {
     RefPtr<VoidCallback> callback = prpCallback;
 
@@ -1174,7 +1174,7 @@ void WebPageProxy::forceRepaint(PassRefPtr<VoidCallback> prpCallback)
 
     uint64_t callbackID = callback->callbackID();
     m_voidCallbacks.set(callbackID, callback.get());
-    process()->send(Messages::WebPage::ForceRepaint(callbackID), m_pageID); 
+    process()->send(Messages::WebPage::ForceRepaint(static_cast<unsigned>(flags), callbackID), m_pageID); 
 }
 
 #if PLATFORM(MAC)

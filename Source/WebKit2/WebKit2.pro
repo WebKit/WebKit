@@ -95,6 +95,7 @@ HEADERS += \
     Shared/ShareableBitmap.h \
     Shared/CacheModel.h \
     Shared/ChildProcess.h \
+    Shared/ForceRepaintFlags.h \
     Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
     Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
     Shared/ImageOptions.h \

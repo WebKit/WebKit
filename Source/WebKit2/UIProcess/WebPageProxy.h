@@ -30,6 +30,7 @@
 #include "ContextMenuState.h"
 #include "DragControllerAction.h"
 #include "DrawingAreaProxy.h"
+#include "ForceRepaintFlags.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
 #include "SandboxExtension.h"
 #include "SelectionState.h"
@@ -300,7 +301,7 @@ public:
     void getSourceForFrame(WebFrameProxy*, PassRefPtr<StringCallback>);
     void getWebArchiveOfFrame(WebFrameProxy*, PassRefPtr<DataCallback>);
     void runJavaScriptInMainFrame(const String&, PassRefPtr<StringCallback>);
-    void forceRepaint(PassRefPtr<VoidCallback>);
+    void forceRepaint(ForceRepaintFlags, PassRefPtr<VoidCallback>);
 
     float headerHeight(WebFrameProxy*);
     float footerHeight(WebFrameProxy*);

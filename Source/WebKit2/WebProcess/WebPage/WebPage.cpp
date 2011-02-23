@@ -30,6 +30,7 @@
 #include "DataReference.h"
 #include "DecoderAdapter.h"
 #include "DrawingArea.h"
+#include "ForceRepaintFlags.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardList.h"
 #include "MessageID.h"
@@ -1315,8 +1316,12 @@ void WebPage::getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
     send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
 }
 
-void WebPage::forceRepaint(uint64_t callbackID)
+void WebPage::forceRepaint(uint32_t opaqueRepaintFlags, uint64_t callbackID)
 {
+    ForceRepaintFlags repaintFlags = static_cast<ForceRepaintFlags>(opaqueRepaintFlags);
+    if (repaintFlags & ForceRepaintFlagsInvalidatePage)
+        m_drawingArea->setNeedsDisplay(bounds());
+
     m_drawingArea->forceRepaint();
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }

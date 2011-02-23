@@ -458,7 +458,16 @@ void WKPageGetContentsAsString_b(WKPageRef pageRef, WKPageGetSourceForFrameBlock
 
 void WKPageForceRepaint(WKPageRef pageRef, void* context, WKPageForceRepaintFunction callback)
 {
-    toImpl(pageRef)->forceRepaint(VoidCallback::create(context, callback));
+    toImpl(pageRef)->forceRepaint(ForceRepaintFlagsNone, VoidCallback::create(context, callback));
+}
+
+static void voidForceRepaintFunction(WKErrorRef, void*)
+{
+}
+
+void WKPageForceRepaintWithInvalidation(WKPageRef pageRef)
+{
+    toImpl(pageRef)->forceRepaint(ForceRepaintFlagsInvalidatePage, VoidCallback::create(0, voidForceRepaintFunction));
 }
 
 WK_EXPORT WKURLRef WKPageCopyPendingAPIRequestURL(WKPageRef pageRef)
