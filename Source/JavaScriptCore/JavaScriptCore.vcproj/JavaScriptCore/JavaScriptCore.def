@@ -108,6 +108,7 @@ EXPORTS
     ?createThread@WTF@@YAIP6APAXPAX@Z0@Z
     ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
     ?createTypeError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
+    ?cryptographicallyRandomNumber@WTF@@YAIXZ
     ?cryptographicallyRandomValues@WTF@@YAXPAXI@Z
     ?currentThread@WTF@@YAIXZ
     ?currentTime@WTF@@YANXZ
