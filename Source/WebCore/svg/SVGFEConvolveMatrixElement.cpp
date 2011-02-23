@@ -128,6 +128,26 @@ void SVGFEConvolveMatrixElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
+bool SVGFEConvolveMatrixElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+{
+    FEConvolveMatrix* convolveMatrix = static_cast<FEConvolveMatrix*>(effect);
+    if (attrName == SVGNames::edgeModeAttr)
+        return convolveMatrix->setEdgeMode(static_cast<EdgeModeType>(edgeMode()));
+    if (attrName == SVGNames::divisorAttr)
+        return convolveMatrix->setDivisor(divisor());
+    if (attrName == SVGNames::biasAttr)
+        return convolveMatrix->setBias(bias());
+    if (attrName == SVGNames::targetXAttr)
+       return convolveMatrix->setTargetOffset(IntPoint(targetX(), targetY()));
+    if (attrName == SVGNames::targetYAttr)
+       return convolveMatrix->setTargetOffset(IntPoint(targetX(), targetY()));
+    if (attrName == SVGNames::preserveAlphaAttr)
+        return convolveMatrix->setPreserveAlpha(preserveAlpha());
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 void SVGFEConvolveMatrixElement::setOrder(float x, float y)
 {
     setOrderXBaseValue(x);
@@ -146,16 +166,18 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
 {
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 
-    if (attrName == SVGNames::inAttr
-        || attrName == SVGNames::orderAttr
-        || attrName == SVGNames::edgeModeAttr
-        || attrName == SVGNames::kernelMatrixAttr
+    if (attrName == SVGNames::edgeModeAttr
         || attrName == SVGNames::divisorAttr
         || attrName == SVGNames::biasAttr
         || attrName == SVGNames::targetXAttr
         || attrName == SVGNames::targetYAttr
         || attrName == SVGNames::kernelUnitLengthAttr
         || attrName == SVGNames::preserveAlphaAttr)
+        primitiveAttributeChanged(attrName);
+
+    if (attrName == SVGNames::inAttr
+        || attrName == SVGNames::orderAttr
+        || attrName == SVGNames::kernelMatrixAttr)
         invalidate();
 }
 

@@ -83,9 +83,12 @@ float FEConvolveMatrix::divisor() const
     return m_divisor; 
 }
 
-void FEConvolveMatrix::setDivisor(float divisor)
+bool FEConvolveMatrix::setDivisor(float divisor)
 {
-    m_divisor = divisor; 
+    if (m_divisor == divisor)
+        return false;
+    m_divisor = divisor;
+    return true;
 }
 
 float FEConvolveMatrix::bias() const
@@ -93,9 +96,12 @@ float FEConvolveMatrix::bias() const
     return m_bias; 
 }
 
-void FEConvolveMatrix::setBias(float bias)
+bool FEConvolveMatrix::setBias(float bias)
 {
-    m_bias = bias; 
+    if (m_bias == bias)
+        return false;
+    m_bias = bias;
+    return true;
 }
 
 IntPoint FEConvolveMatrix::targetOffset() const
@@ -103,19 +109,25 @@ IntPoint FEConvolveMatrix::targetOffset() const
     return m_targetOffset; 
 }
 
-void FEConvolveMatrix::setTargetOffset(IntPoint targetOffset)
+bool FEConvolveMatrix::setTargetOffset(IntPoint targetOffset)
 {
-    m_targetOffset = targetOffset; 
+    if (m_targetOffset == targetOffset)
+        return false;
+    m_targetOffset = targetOffset;
+    return true;
 }
 
 EdgeModeType FEConvolveMatrix::edgeMode() const
 {
-    return m_edgeMode; 
+    return m_edgeMode;
 }
 
-void FEConvolveMatrix::setEdgeMode(EdgeModeType edgeMode)
+bool FEConvolveMatrix::setEdgeMode(EdgeModeType edgeMode)
 {
-    m_edgeMode = edgeMode; 
+    if (m_edgeMode == edgeMode)
+        return false;
+    m_edgeMode = edgeMode;
+    return true;
 }
 
 FloatPoint FEConvolveMatrix::kernelUnitLength() const
@@ -133,9 +145,12 @@ bool FEConvolveMatrix::preserveAlpha() const
     return m_preserveAlpha; 
 }
 
-void FEConvolveMatrix::setPreserveAlpha(bool preserveAlpha)
+bool FEConvolveMatrix::setPreserveAlpha(bool preserveAlpha)
 {
-    m_preserveAlpha = preserveAlpha; 
+    if (m_preserveAlpha == preserveAlpha)
+        return false;
+    m_preserveAlpha = preserveAlpha;
+    return true;
 }
 
 /*

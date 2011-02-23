@@ -1,3 +1,29 @@
+2011-02-23  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        FEConvolveMatrixElement changes doesn't require relayout
+        https://bugs.webkit.org/show_bug.cgi?id=55067
+
+        When the FEConvolveMatrixElement receives an update message but the
+        given value remains the same we don't need to relayout the filter.
+
+        No new tests are needed because this modificiation is covered by the
+        dynamic update tests of FEConvolveMatrix.
+
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::setDivisor):
+        (WebCore::FEConvolveMatrix::setBias):
+        (WebCore::FEConvolveMatrix::setTargetOffset):
+        (WebCore::FEConvolveMatrix::edgeMode):
+        (WebCore::FEConvolveMatrix::setEdgeMode):
+        (WebCore::FEConvolveMatrix::setPreserveAlpha):
+        * platform/graphics/filters/FEConvolveMatrix.h:
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::setFilterEffectAttribute):
+        (WebCore::SVGFEConvolveMatrixElement::svgAttributeChanged):
+        * svg/SVGFEConvolveMatrixElement.h:
+
 2011-02-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

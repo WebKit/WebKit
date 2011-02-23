@@ -42,6 +42,7 @@ private:
     SVGFEConvolveMatrixElement(const QualifiedName&, Document*);
 
     virtual void parseMappedAttribute(Attribute*);
+    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void fillAttributeToPropertyTypeMap();
     virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();

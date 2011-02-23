@@ -55,22 +55,22 @@ public:
     void setKernel(const Vector<float>&);
 
     float divisor() const;
-    void setDivisor(float);
+    bool setDivisor(float);
 
     float bias() const;
-    void setBias(float);
+    bool setBias(float);
 
     IntPoint targetOffset() const;
-    void setTargetOffset(IntPoint);
+    bool setTargetOffset(IntPoint);
 
     EdgeModeType edgeMode() const;
-    void setEdgeMode(EdgeModeType);
+    bool setEdgeMode(EdgeModeType);
 
     FloatPoint kernelUnitLength() const;
     void setKernelUnitLength(FloatPoint);
 
     bool preserveAlpha() const;
-    void setPreserveAlpha(bool);
+    bool setPreserveAlpha(bool);
 
     virtual void apply();
     virtual void dump();
