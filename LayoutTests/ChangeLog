@@ -1,5 +1,11 @@
 2011-02-23  Abhishek Arya  <inferno@chromium.org>
 
+        Unreviewed. Qt rebaseline for my crasher test in r79462.
+
+        * platform/qt/fast/overflow/overflow-height-float-not-removed-crash3-expected.txt: Added.
+
+2011-02-23  Abhishek Arya  <inferno@chromium.org>
+
         Reviewed by Dave Hyatt.
 
         Rename a layouttest for conformity. Tests that we do not crash
