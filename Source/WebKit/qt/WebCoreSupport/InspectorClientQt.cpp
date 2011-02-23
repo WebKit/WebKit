@@ -152,8 +152,10 @@ private:
         switch (qvariant.type()) {
         case QVariant::Bool:
             retVal = qvariant.toBool() ? "true" : "false";
+            break;
         case QVariant::String:
             retVal = qvariant.toString();
+            break;
         default:
             break;
         }

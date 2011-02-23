@@ -1,3 +1,14 @@
+2011-02-22  Fabrizio Machado  <fabrizio.machado@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Don't fall through case in variantToSetting() if qvariant.type() is Bool
+        https://bugs.webkit.org/show_bug.cgi?id=54976
+
+        Test not needed.
+        
+        * WebCoreSupport/InspectorClientQt.cpp:
+
 2011-02-22  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.
