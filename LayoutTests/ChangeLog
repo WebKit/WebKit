@@ -1,3 +1,16 @@
+2011-02-22  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed expectations change for chromium.
+
+        * platform/chromium-gpu-linux/compositing/reflections/deeply-nested-reflections-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/reflections/deeply-nested-reflections-expected.png:
+        * platform/chromium-gpu-mac/compositing/reflections/deeply-nested-reflections-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/deeply-nested-reflections-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/deeply-nested-reflections-expected.checksum:
+        * platform/chromium-gpu-win/compositing/reflections/deeply-nested-reflections-expected.png:
+        * platform/chromium-gpu-win/compositing/reflections/deeply-nested-reflections-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-02-22  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectation update to catch up r79359.

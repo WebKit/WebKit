@@ -3407,10 +3407,6 @@ BUGWK54634 SKIP : media/video-controls-in-media-document.html = TIMEOUT
 
 BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH TIMEOUT
 
-// For some reason, we can't rebaseline these because they don't end up in the archive. Disable while
-// we figure this out.
-BUGATWILSON WIN LINUX : compositing/reflections/deeply-nested-reflections.html = IMAGE+TEXT
-
 // morrita: In addition, some tests are flaky between IMAGE, TEXT and IMAGE+TEXT. So marked then FAIL at this time.
 BUGWK54736 MAC : css2.1/t1202-counter-04-b.html = FAIL PASS
 BUGWK54736 MAC : css2.1/t1202-counters-04-b.html = FAIL PASS
@@ -3423,7 +3419,6 @@ BUGWK54736 MAC : svg/zoom/page/zoom-hixie-mixed-008.xml = FAIL PASS
 BUGWK54736 MAC : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT
 BUGWK54736 MAC : fast/text/international/bidi-AN-after-L.html = IMAGE
 BUGWK54736 MAC : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
-BUGWK54736 MAC : compositing/reflections/deeply-nested-reflections.html = IMAGE
 BUGWK54736 MAC : css1/text_properties/text_align.html = IMAGE
 BUGWK54736 MAC : css2.1/t0805-c5518-brdr-t-01-e.html = IMAGE
 BUGWK54736 MAC : css2.1/t1202-counter-03-b.html = IMAGE
