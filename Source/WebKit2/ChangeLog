@@ -1,5 +1,17 @@
 2011-02-23  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Add a ShareableBitmap::create overload that takes an existing SharedMemory object
+        https://bugs.webkit.org/show_bug.cgi?id=55081
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::createShareable):
+        (WebKit::ShareableBitmap::create):
+        * Shared/ShareableBitmap.h:
+
+2011-02-23  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Web Inspector toolbar looks bad in WebKit2

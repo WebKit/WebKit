@@ -47,10 +47,20 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size
 PassRefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size)
 {
     size_t numBytes = numBytesForSize(size);
-    
+
     RefPtr<SharedMemory> sharedMemory = SharedMemory::create(numBytes);
     if (!sharedMemory)
         return 0;
+
+    return adoptRef(new ShareableBitmap(size, sharedMemory));
+}
+
+PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size, PassRefPtr<SharedMemory> sharedMemory)
+{
+    ASSERT(sharedMemory);
+
+    size_t numBytes = numBytesForSize(size);
+    ASSERT_UNUSED(numBytes, sharedMemory->size() >= numBytes);
     
     return adoptRef(new ShareableBitmap(size, sharedMemory));
 }
@@ -62,10 +72,7 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size
     if (!sharedMemory)
         return 0;
 
-    size_t numBytes = numBytesForSize(size);
-    ASSERT_UNUSED(numBytes, sharedMemory->size() >= numBytes);
-
-    return adoptRef(new ShareableBitmap(size, sharedMemory));
+    return create(size, sharedMemory.release());
 }
 
 bool ShareableBitmap::createHandle(SharedMemory::Handle& handle)
