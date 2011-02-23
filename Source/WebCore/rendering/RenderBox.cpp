@@ -2263,22 +2263,22 @@ void RenderBox::computePositionedLogicalWidth()
     setLogicalWidth(logicalWidth() + bordersPlusPadding);
 }
 
-void RenderBox::computePositionedLogicalWidthUsing(Length width, const RenderBoxModelObject* containerBlock, TextDirection containerDirection,
-                                             const int containerWidth, const int bordersPlusPadding,
-                                             const Length left, const Length right, const Length marginLeft, const Length marginRight,
-                                             int& widthValue, int& marginLeftValue, int& marginRightValue, int& xPos)
+void RenderBox::computePositionedLogicalWidthUsing(Length logicalWidth, const RenderBoxModelObject* containerBlock, TextDirection containerDirection,
+                                                   int containerLogicalWidth, int bordersPlusPadding,
+                                                   Length logicalLeft, Length logicalRight, Length marginLogicalLeft, Length marginLogicalRight,
+                                                   int& logicalWidthValue, int& marginLogicalLeftValue, int& marginLogicalRightValue, int& logicalLeftPos)
 {
     // 'left' and 'right' cannot both be 'auto' because one would of been
     // converted to the static position already
-    ASSERT(!(left.isAuto() && right.isAuto()));
+    ASSERT(!(logicalLeft.isAuto() && logicalRight.isAuto()));
 
-    int leftValue = 0;
+    int logicalLeftValue = 0;
 
-    bool widthIsAuto = width.isIntrinsicOrAuto();
-    bool leftIsAuto = left.isAuto();
-    bool rightIsAuto = right.isAuto();
+    bool logicalWidthIsAuto = logicalWidth.isIntrinsicOrAuto();
+    bool logicalLeftIsAuto = logicalLeft.isAuto();
+    bool logicalRightIsAuto = logicalRight.isAuto();
 
-    if (!leftIsAuto && !widthIsAuto && !rightIsAuto) {
+    if (!logicalLeftIsAuto && !logicalWidthIsAuto && !logicalRightIsAuto) {
         /*-----------------------------------------------------------------------*\
          * If none of the three is 'auto': If both 'margin-left' and 'margin-
          * right' are 'auto', solve the equation under the extra constraint that
@@ -2294,43 +2294,43 @@ void RenderBox::computePositionedLogicalWidthUsing(Length width, const RenderBox
         // NOTE:  It is not necessary to solve for 'right' in the over constrained
         // case because the value is not used for any further calculations.
 
-        leftValue = left.calcValue(containerWidth);
-        widthValue = computeContentBoxLogicalWidth(width.calcValue(containerWidth));
+        logicalLeftValue = logicalLeft.calcValue(containerLogicalWidth);
+        logicalWidthValue = computeContentBoxLogicalWidth(logicalWidth.calcValue(containerLogicalWidth));
 
-        const int availableSpace = containerWidth - (leftValue + widthValue + right.calcValue(containerWidth) + bordersPlusPadding);
+        const int availableSpace = containerLogicalWidth - (logicalLeftValue + logicalWidthValue + logicalRight.calcValue(containerLogicalWidth) + bordersPlusPadding);
 
         // Margins are now the only unknown
-        if (marginLeft.isAuto() && marginRight.isAuto()) {
+        if (marginLogicalLeft.isAuto() && marginLogicalRight.isAuto()) {
             // Both margins auto, solve for equality
             if (availableSpace >= 0) {
-                marginLeftValue = availableSpace / 2; // split the difference
-                marginRightValue = availableSpace - marginLeftValue;  // account for odd valued differences
+                marginLogicalLeftValue = availableSpace / 2; // split the difference
+                marginLogicalRightValue = availableSpace - marginLogicalLeftValue; // account for odd valued differences
             } else {
                 // see FIXME 1
                 if (containerDirection == LTR) {
-                    marginLeftValue = 0;
-                    marginRightValue = availableSpace; // will be negative
+                    marginLogicalLeftValue = 0;
+                    marginLogicalRightValue = availableSpace; // will be negative
                 } else {
-                    marginLeftValue = availableSpace; // will be negative
-                    marginRightValue = 0;
+                    marginLogicalLeftValue = availableSpace; // will be negative
+                    marginLogicalRightValue = 0;
                 }
             }
-        } else if (marginLeft.isAuto()) {
+        } else if (marginLogicalLeft.isAuto()) {
             // Solve for left margin
-            marginRightValue = marginRight.calcValue(containerWidth);
-            marginLeftValue = availableSpace - marginRightValue;
-        } else if (marginRight.isAuto()) {
+            marginLogicalRightValue = marginLogicalRight.calcValue(containerLogicalWidth);
+            marginLogicalLeftValue = availableSpace - marginLogicalRightValue;
+        } else if (marginLogicalRight.isAuto()) {
             // Solve for right margin
-            marginLeftValue = marginLeft.calcValue(containerWidth);
-            marginRightValue = availableSpace - marginLeftValue;
+            marginLogicalLeftValue = marginLogicalLeft.calcValue(containerLogicalWidth);
+            marginLogicalRightValue = availableSpace - marginLogicalLeftValue;
         } else {
             // Over-constrained, solve for left if direction is RTL
-            marginLeftValue = marginLeft.calcValue(containerWidth);
-            marginRightValue = marginRight.calcValue(containerWidth);
+            marginLogicalLeftValue = marginLogicalLeft.calcValue(containerLogicalWidth);
+            marginLogicalRightValue = marginLogicalRight.calcValue(containerLogicalWidth);
 
             // see FIXME 1 -- used to be "this->style()->direction()"
             if (containerDirection == RTL)
-                leftValue = (availableSpace + leftValue) - marginLeftValue - marginRightValue;
+                logicalLeftValue = (availableSpace + logicalLeftValue) - marginLogicalLeftValue - marginLogicalRightValue;
         }
     } else {
         /*--------------------------------------------------------------------*\
@@ -2375,51 +2375,51 @@ void RenderBox::computePositionedLogicalWidthUsing(Length width, const RenderBox
         // because the value is not used for any further calculations.
 
         // Calculate margins, 'auto' margins are ignored.
-        marginLeftValue = marginLeft.calcMinValue(containerWidth);
-        marginRightValue = marginRight.calcMinValue(containerWidth);
+        marginLogicalLeftValue = marginLogicalLeft.calcMinValue(containerLogicalWidth);
+        marginLogicalRightValue = marginLogicalRight.calcMinValue(containerLogicalWidth);
 
-        const int availableSpace = containerWidth - (marginLeftValue + marginRightValue + bordersPlusPadding);
+        const int availableSpace = containerLogicalWidth - (marginLogicalLeftValue + marginLogicalRightValue + bordersPlusPadding);
 
         // FIXME: Is there a faster way to find the correct case?
         // Use rule/case that applies.
-        if (leftIsAuto && widthIsAuto && !rightIsAuto) {
+        if (logicalLeftIsAuto && logicalWidthIsAuto && !logicalRightIsAuto) {
             // RULE 1: (use shrink-to-fit for width, and solve of left)
-            int rightValue = right.calcValue(containerWidth);
+            int logicalRightValue = logicalRight.calcValue(containerLogicalWidth);
 
             // FIXME: would it be better to have shrink-to-fit in one step?
             int preferredWidth = maxPreferredLogicalWidth() - bordersPlusPadding;
             int preferredMinWidth = minPreferredLogicalWidth() - bordersPlusPadding;
-            int availableWidth = availableSpace - rightValue;
-            widthValue = min(max(preferredMinWidth, availableWidth), preferredWidth);
-            leftValue = availableSpace - (widthValue + rightValue);
-        } else if (!leftIsAuto && widthIsAuto && rightIsAuto) {
+            int availableWidth = availableSpace - logicalRightValue;
+            logicalWidthValue = min(max(preferredMinWidth, availableWidth), preferredWidth);
+            logicalLeftValue = availableSpace - (logicalWidthValue + logicalRightValue);
+        } else if (!logicalLeftIsAuto && logicalWidthIsAuto && logicalRightIsAuto) {
             // RULE 3: (use shrink-to-fit for width, and no need solve of right)
-            leftValue = left.calcValue(containerWidth);
+            logicalLeftValue = logicalLeft.calcValue(containerLogicalWidth);
 
             // FIXME: would it be better to have shrink-to-fit in one step?
             int preferredWidth = maxPreferredLogicalWidth() - bordersPlusPadding;
             int preferredMinWidth = minPreferredLogicalWidth() - bordersPlusPadding;
-            int availableWidth = availableSpace - leftValue;
-            widthValue = min(max(preferredMinWidth, availableWidth), preferredWidth);
-        } else if (leftIsAuto && !width.isAuto() && !rightIsAuto) {
+            int availableWidth = availableSpace - logicalLeftValue;
+            logicalWidthValue = min(max(preferredMinWidth, availableWidth), preferredWidth);
+        } else if (logicalLeftIsAuto && !logicalWidthIsAuto && !logicalRightIsAuto) {
             // RULE 4: (solve for left)
-            widthValue = computeContentBoxLogicalWidth(width.calcValue(containerWidth));
-            leftValue = availableSpace - (widthValue + right.calcValue(containerWidth));
-        } else if (!leftIsAuto && widthIsAuto && !rightIsAuto) {
+            logicalWidthValue = computeContentBoxLogicalWidth(logicalWidth.calcValue(containerLogicalWidth));
+            logicalLeftValue = availableSpace - (logicalWidthValue + logicalRight.calcValue(containerLogicalWidth));
+        } else if (!logicalLeftIsAuto && logicalWidthIsAuto && !logicalRightIsAuto) {
             // RULE 5: (solve for width)
-            leftValue = left.calcValue(containerWidth);
-            widthValue = availableSpace - (leftValue + right.calcValue(containerWidth));
-        } else if (!leftIsAuto&& !widthIsAuto && rightIsAuto) {
+            logicalLeftValue = logicalLeft.calcValue(containerLogicalWidth);
+            logicalWidthValue = availableSpace - (logicalLeftValue + logicalRight.calcValue(containerLogicalWidth));
+        } else if (!logicalLeftIsAuto && !logicalWidthIsAuto && logicalRightIsAuto) {
             // RULE 6: (no need solve for right)
-            leftValue = left.calcValue(containerWidth);
-            widthValue = computeContentBoxLogicalWidth(width.calcValue(containerWidth));
+            logicalLeftValue = logicalLeft.calcValue(containerLogicalWidth);
+            logicalWidthValue = computeContentBoxLogicalWidth(logicalWidth.calcValue(containerLogicalWidth));
         }
     }
 
     // Use computed values to calculate the horizontal position.
 
-    // FIXME: This hack is needed to calculate the xPos for a 'rtl' relatively
-    // positioned, inline because right now, it is using the xPos
+    // FIXME: This hack is needed to calculate the  logical left position for a 'rtl' relatively
+    // positioned, inline because right now, it is using the logical left position
     // of the first line box when really it should use the last line box.  When
     // this is fixed elsewhere, this block should be removed.
     if (containerBlock->isRenderInline() && !containerBlock->style()->isLeftToRightDirection()) {
@@ -2427,12 +2427,12 @@ void RenderBox::computePositionedLogicalWidthUsing(Length width, const RenderBox
         InlineFlowBox* firstLine = flow->firstLineBox();
         InlineFlowBox* lastLine = flow->lastLineBox();
         if (firstLine && lastLine && firstLine != lastLine) {
-            xPos = leftValue + marginLeftValue + lastLine->borderLogicalLeft() + (lastLine->x() - firstLine->x());
+            logicalLeftPos = logicalLeftValue + marginLogicalLeftValue + lastLine->borderLogicalLeft() + (lastLine->logicalLeft() - firstLine->logicalLeft());
             return;
         }
     }
 
-    xPos = leftValue + marginLeftValue + containerBlock->borderLeft();
+    logicalLeftPos = logicalLeftValue + marginLogicalLeftValue + (style()->isHorizontalWritingMode() ? containerBlock->borderLeft() : containerBlock->borderTop());
 }
 
 void RenderBox::computePositionedLogicalHeight()

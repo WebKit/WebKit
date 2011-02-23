@@ -430,10 +430,10 @@ private:
     int containingBlockLogicalHeightForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode = true) const;
 
     void computePositionedLogicalHeight();
-    void computePositionedLogicalWidthUsing(Length width, const RenderBoxModelObject* cb, TextDirection containerDirection,
-                                      int containerWidth, int bordersPlusPadding,
-                                      Length left, Length right, Length marginLeft, Length marginRight,
-                                      int& widthValue, int& marginLeftValue, int& marginRightValue, int& xPos);
+    void computePositionedLogicalWidthUsing(Length logicalWidth, const RenderBoxModelObject* containerBlock, TextDirection containerDirection,
+                                            int containerLogicalWidth, int bordersPlusPadding,
+                                            Length logicalLeft, Length logicalRight, Length marginLogicalLeft, Length marginLogicalRight,
+                                            int& logicalWidthValue, int& marginLogicalLeftValue, int& marginLogicalRightValue, int& logicalLeftPos);
     void computePositionedLogicalHeightUsing(Length height, const RenderBoxModelObject* cb,
                                     int containerHeight, int bordersPlusPadding,
                                     Length top, Length bottom, Length marginTop, Length marginBottom,
