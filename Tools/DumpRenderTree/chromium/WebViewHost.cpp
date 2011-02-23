@@ -1210,7 +1210,8 @@ void WebViewHost::reset()
 
     if (m_webWidget) {
         webView()->mainFrame()->setName(WebString());
-        webView()->settings()->setMinimumTimerInterval(webkit_support::GetForegroundTabTimerInterval());
+        // FIXME: change to use webkit_support::ForegroundTabTimerInterval once that lands.
+        webView()->settings()->setMinimumTimerInterval(0.004);
     }
 }
 

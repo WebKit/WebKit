@@ -1,3 +1,18 @@
+2011-02-22  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Many tests started timing out on the chrome mac canaries around r79035
+        https://bugs.webkit.org/show_bug.cgi?id=54885
+
+        Revert the code changes, but not the Chromium DEPS roll, from
+        r79038 to see whether this clears up the timing-out tests. Was not
+        able to reproduce the timeouts locally with a Release mode build
+        of DRT (on Snow Leopard).
+
+        * src/WebKit.cpp:
+        (WebKit::initialize):
+
 2011-02-21  Nico Weber  <thakis@chromium.org>
 
         Reviewed by James Robinson.
