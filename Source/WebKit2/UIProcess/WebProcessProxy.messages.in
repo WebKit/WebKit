@@ -25,4 +25,5 @@ messages -> WebProcessProxy {
     AddBackForwardItem(uint64_t itemID, WTF::String originalURL, WTF::String url, WTF::String title, CoreIPC::DataReference backForwardData)
     DidDestroyFrame(uint64_t frameID) 
 
+    ShouldTerminate() -> (bool shouldTerminate)
 }

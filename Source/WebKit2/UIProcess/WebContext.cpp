@@ -243,6 +243,20 @@ void WebContext::ensureWebProcess()
     m_pendingMessagesToPostToInjectedBundle.clear();
 }
 
+bool WebContext::shouldTerminate(WebProcessProxy* process)
+{
+    // FIXME: Once we support multiple processes per context, this assertion won't hold.
+    ASSERT(process == m_process);
+
+    if (!m_downloads.isEmpty())
+        return false;
+
+    if (!m_pluginSiteDataManager->shouldTerminate(process))
+        return false;
+
+    return true;
+}
+
 void WebContext::processDidFinishLaunching(WebProcessProxy* process)
 {
     // FIXME: Once we support multiple processes per context, this assertion won't hold.
@@ -262,7 +276,7 @@ void WebContext::processDidFinishLaunching(WebProcessProxy* process)
     }
 }
 
-void WebContext::processDidClose(WebProcessProxy* process)
+void WebContext::disconnectProcess(WebProcessProxy* process)
 {
     // FIXME: Once we support multiple processes per context, this assertion won't hold.
     ASSERT_UNUSED(process, process == m_process);

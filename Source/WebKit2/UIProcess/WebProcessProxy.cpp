@@ -110,6 +110,25 @@ void WebProcessProxy::connect()
     }
 }
 
+void WebProcessProxy::disconnect()
+{
+    if (m_connection) {
+        m_connection->invalidate();
+        m_connection = nullptr;
+    }
+
+    m_responsivenessTimer.stop();
+
+    Vector<RefPtr<WebFrameProxy> > frames;
+    copyValuesToVector(m_frameMap, frames);
+
+    for (size_t i = 0, size = frames.size(); i < size; ++i)
+        frames[i]->disconnect();
+    m_frameMap.clear();
+
+    m_context->disconnectProcess(this);
+}
+
 bool WebProcessProxy::sendMessage(CoreIPC::MessageID messageID, PassOwnPtr<CoreIPC::ArgumentEncoder> arguments, unsigned messageSendFlags)
 {
     // If we're waiting for the web process to launch, we need to stash away the messages so we can send them once we have
@@ -250,6 +269,9 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
 
 CoreIPC::SyncReplyMode WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
 {
+    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>())
+        return didReceiveSyncWebProcessProxyMessage(connection, messageID, arguments, reply);
+
 #if ENABLE(PLUGIN_PROCESS)
     if (messageID.is<CoreIPC::MessageClassWebProcessProxyLegacy>()) {
         switch (messageID.get<WebProcessProxyLegacyMessage::Kind>()) {
@@ -283,24 +305,14 @@ CoreIPC::SyncReplyMode WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connectio
 
 void WebProcessProxy::didClose(CoreIPC::Connection*)
 {
-    // Protect ourselves, as the call to the WebContext::processDidClose()
-    // below may otherwise cause us to be deleted before we can finish our work.
+    // Protect ourselves, as the call to disconnect() below may otherwise cause us
+    // to be deleted before we can finish our work.
     RefPtr<WebProcessProxy> protect(this);
-    
-    m_connection = nullptr;
-    m_responsivenessTimer.stop();
-
-    Vector<RefPtr<WebFrameProxy> > frames;
-    copyValuesToVector(m_frameMap, frames);
-
-    for (size_t i = 0, size = frames.size(); i < size; ++i)
-        frames[i]->disconnect();
-    m_frameMap.clear();
 
     Vector<RefPtr<WebPageProxy> > pages;
     copyValuesToVector(m_pageMap, pages);
 
-    m_context->processDidClose(this);
+    disconnect();
 
     for (size_t i = 0, size = pages.size(); i < size; ++i)
         pages[i]->processDidCrash();
@@ -408,6 +420,19 @@ size_t WebProcessProxy::frameCountInPage(WebPageProxy* page) const
             ++result;
     }
     return result;
+}
+
+void WebProcessProxy::shouldTerminate(bool& shouldTerminate)
+{
+    if (!m_pageMap.isEmpty() || !m_context->shouldTerminate(this)) {
+        shouldTerminate = false;
+        return;
+    }
+
+    shouldTerminate = true;
+
+    // We know that the web process is going to terminate so disconnect it from the context.
+    disconnect();
 }
 
 void WebProcessProxy::updateTextCheckerState()

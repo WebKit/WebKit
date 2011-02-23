@@ -74,7 +74,9 @@ public:
     bool hasValidProcess() const { return m_process && m_process->isValid(); }
 
     void processDidFinishLaunching(WebProcessProxy*);
-    void processDidClose(WebProcessProxy*);
+
+    // Disconnect the process from the context.
+    void disconnectProcess(WebProcessProxy*);
 
     WebPageProxy* createWebPage(PageClient*, WebPageGroup*);
 
@@ -149,6 +151,8 @@ public:
     void setDatabaseDirectory(const String& dir) { m_overrideDatabaseDirectory = dir; }
 
     void ensureWebProcess();
+
+    bool shouldTerminate(WebProcessProxy*);
 
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);

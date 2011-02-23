@@ -484,7 +484,13 @@ void WebProcess::terminateIfPossible()
     if (!isSeparateProcess())
         return;
 
-    // Actually shut down the process.
+    // FIXME: the ShouldTerminate message should also send termination parameters, such as any session cookies that need to be preserved.
+    bool shouldTerminate = false;
+    if (m_connection->sendSync(Messages::WebProcessProxy::ShouldTerminate(), Messages::WebProcessProxy::ShouldTerminate::Reply(shouldTerminate), 0)
+        && !shouldTerminate)
+        return;
+
+    // Actually terminate the process.
 
 #ifndef NDEBUG
     gcController().garbageCollectNow();

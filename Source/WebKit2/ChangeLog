@@ -1,3 +1,37 @@
+2011-02-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Race condition when creating and destroying pages quickly
+        https://bugs.webkit.org/show_bug.cgi?id=55061
+        <rdar://problem/8708435>
+
+        When the last page in a web process is closed, the web process would
+        previously terminate, even if the UI process had created a new page
+        (the CreateNewPage message just wouldn't have reached the web process yet).
+
+        Fix this by adding a ShouldTerminate message that the web process sends when it's
+        about to terminate. If the UI process has any pending pages, downloads etc. it will
+        prevent the web process from terminating. Otherwise, it will immmediately disconnect
+        the WebPageProxy so that creating a page after that will launch a new web process.
+
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::shouldTerminate):
+        * UIProcess/Plugins/WebPluginSiteDataManager.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::shouldTerminate):
+        (WebKit::WebContext::disconnectProcess):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::disconnect):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        (WebKit::WebProcessProxy::didClose):
+        (WebKit::WebProcessProxy::shouldTerminate):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::terminateIfPossible):
+
 2011-02-23  Mike Thole  <mthole@apple.com>
 
         Reviewed by Darin Adler.

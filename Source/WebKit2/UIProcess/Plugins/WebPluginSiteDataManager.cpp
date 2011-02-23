@@ -250,6 +250,16 @@ void WebPluginSiteDataManager::didClearSiteData(uint64_t callbackID)
     callback->performCallback();
 }
 
+bool WebPluginSiteDataManager::shouldTerminate(WebProcessProxy*) const
+{
+#if ENABLE(PLUGIN_PROCESS)
+    // When out of process plug-ins are enabled, the web process is not involved in fetching site data.
+    return true;
+#else
+    return m_arrayCallbacks.isEmpty() && m_voidCallbacks.isEmpty();
+#endif
+}
+
 #if ENABLE(PLUGIN_PROCESS)
 void WebPluginSiteDataManager::didGetSitesWithDataForSinglePlugin(const Vector<String>& sites, uint64_t callbackID)
 {

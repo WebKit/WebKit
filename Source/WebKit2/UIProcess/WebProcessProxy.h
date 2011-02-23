@@ -97,7 +97,6 @@ public:
     WebFrameProxy* webFrame(uint64_t) const;
     bool canCreateFrame(uint64_t frameID) const;
     void frameCreated(uint64_t, WebFrameProxy*);
-    void didDestroyFrame(uint64_t);
     void disconnectFramesFromPage(WebPageProxy*); // Including main frame.
     size_t frameCountInPage(WebPageProxy*) const; // Including main frame.
 
@@ -111,11 +110,20 @@ public:
 private:
     explicit WebProcessProxy(WebContext*);
 
+    // Initializes the process or thread launcher which will begin launching the process.
     void connect();
+
+    // Called when the web process has crashed or we know that it will terminate soon.
+    // Will potentially cause the WebProcessProxy object to be freed.
+    void disconnect();
 
     bool sendMessage(CoreIPC::MessageID, PassOwnPtr<CoreIPC::ArgumentEncoder>, unsigned messageSendFlags);
 
+    // CoreIPC message handlers.
     void addBackForwardItem(uint64_t itemID, const String& originalURLString, const String& urlString, const String& title, const CoreIPC::DataReference& backForwardData);
+    void didDestroyFrame(uint64_t);
+    
+    void shouldTerminate(bool& shouldTerminate);
 
 #if ENABLE(PLUGIN_PROCESS)
     void getPluginProcessConnection(const String& pluginPath, CoreIPC::ArgumentEncoder* reply);
@@ -141,6 +149,7 @@ private:
 
     // Implemented in generated WebProcessProxyMessageReceiver.cpp
     void didReceiveWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    CoreIPC::SyncReplyMode didReceiveSyncWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply);
 
     ResponsivenessTimer m_responsivenessTimer;
     RefPtr<CoreIPC::Connection> m_connection;

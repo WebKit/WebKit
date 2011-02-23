@@ -35,6 +35,7 @@
 namespace WebKit {
 
 class WebContext;
+class WebProcessProxy;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
@@ -58,6 +59,8 @@ public:
     void didGetSitesWithDataForSinglePlugin(const Vector<String>& sites, uint64_t callbackID);
     void didClearSiteDataForSinglePlugin(uint64_t callbackID);    
 #endif
+
+    bool shouldTerminate(WebProcessProxy*) const;
 
 private:
     explicit WebPluginSiteDataManager(WebContext*);
