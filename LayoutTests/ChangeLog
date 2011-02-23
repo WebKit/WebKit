@@ -1,3 +1,9 @@
+2011-02-22  Andrew Wilson  <atwilson@chromium.org>
+
+        Marked tests as failing (image + text) on chromium, to reflect now-deleted rebaselines.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-22  Martin Robinson  <mrobinson@igalia.com>
 
         Add missing files from r79351. These are expected results for new media tests.
