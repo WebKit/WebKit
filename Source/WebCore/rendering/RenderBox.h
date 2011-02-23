@@ -434,10 +434,10 @@ private:
                                             int containerLogicalWidth, int bordersPlusPadding,
                                             Length logicalLeft, Length logicalRight, Length marginLogicalLeft, Length marginLogicalRight,
                                             int& logicalWidthValue, int& marginLogicalLeftValue, int& marginLogicalRightValue, int& logicalLeftPos);
-    void computePositionedLogicalHeightUsing(Length height, const RenderBoxModelObject* cb,
-                                    int containerHeight, int bordersPlusPadding,
-                                    Length top, Length bottom, Length marginTop, Length marginBottom,
-                                    int& heightValue, int& marginTopValue, int& marginBottomValue, int& yPos);
+    void computePositionedLogicalHeightUsing(Length logicalHeight, const RenderBoxModelObject* containerBlock,
+                                             int containerLogicalHeight, int bordersPlusPadding,
+                                             Length logicalTop, Length logicalBottom, Length marginLogicalTop, Length marginLogicalBottom,
+                                             int& logicalHeightValue, int& marginLogicalTopValue, int& marginLogicalBottomValue, int& logicalTopPos);
 
     void computePositionedLogicalHeightReplaced();
     void computePositionedLogicalWidthReplaced();

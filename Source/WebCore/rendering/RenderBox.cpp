@@ -2416,6 +2416,9 @@ void RenderBox::computePositionedLogicalWidthUsing(Length logicalWidth, const Re
         }
     }
 
+    // FIXME: Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space, so that
+    // can make the result here rather complicated to compute.
+    
     // Use computed values to calculate the horizontal position.
 
     // FIXME: This hack is needed to calculate the  logical left position for a 'rtl' relatively
@@ -2549,30 +2552,30 @@ void RenderBox::computePositionedLogicalHeight()
     setLogicalHeight(logicalHeightResult + bordersPlusPadding);
 }
 
-void RenderBox::computePositionedLogicalHeightUsing(Length h, const RenderBoxModelObject* containerBlock,
-                                           const int containerHeight, const int bordersPlusPadding,
-                                           const Length top, const Length bottom, const Length marginTop, const Length marginBottom,
-                                           int& heightValue, int& marginTopValue, int& marginBottomValue, int& yPos)
+void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, const RenderBoxModelObject* containerBlock,
+                                                    int containerLogicalHeight, int bordersPlusPadding,
+                                                    Length logicalTop, Length logicalBottom, Length marginLogicalTop, Length marginLogicalBottom,
+                                                    int& logicalHeightValue, int& marginLogicalTopValue, int& marginLogicalBottomValue, int& logicalTopPos)
 {
     // 'top' and 'bottom' cannot both be 'auto' because 'top would of been
     // converted to the static position in computePositionedLogicalHeight()
-    ASSERT(!(top.isAuto() && bottom.isAuto()));
+    ASSERT(!(logicalTop.isAuto() && logicalBottom.isAuto()));
 
-    int contentHeight = height() - bordersPlusPadding;
+    int contentLogicalHeight = logicalHeight() - bordersPlusPadding;
 
-    int topValue = 0;
+    int logicalTopValue = 0;
 
-    bool heightIsAuto = h.isAuto();
-    bool topIsAuto = top.isAuto();
-    bool bottomIsAuto = bottom.isAuto();
+    bool logicalHeightIsAuto = logicalHeightLength.isAuto();
+    bool logicalTopIsAuto = logicalTop.isAuto();
+    bool logicalBottomIsAuto = logicalBottom.isAuto();
 
     // Height is never unsolved for tables.
     if (isTable()) {
-        h.setValue(Fixed, contentHeight);
-        heightIsAuto = false;
+        logicalHeightLength.setValue(Fixed, contentLogicalHeight);
+        logicalHeightIsAuto = false;
     }
 
-    if (!topIsAuto && !heightIsAuto && !bottomIsAuto) {
+    if (!logicalTopIsAuto && !logicalHeightIsAuto && !logicalBottomIsAuto) {
         /*-----------------------------------------------------------------------*\
          * If none of the three are 'auto': If both 'margin-top' and 'margin-
          * bottom' are 'auto', solve the equation under the extra constraint that
@@ -2584,29 +2587,29 @@ void RenderBox::computePositionedLogicalHeightUsing(Length h, const RenderBoxMod
         // NOTE:  It is not necessary to solve for 'bottom' in the over constrained
         // case because the value is not used for any further calculations.
 
-        heightValue = computeContentBoxLogicalHeight(h.calcValue(containerHeight));
-        topValue = top.calcValue(containerHeight);
+        logicalHeightValue = computeContentBoxLogicalHeight(logicalHeightLength.calcValue(containerLogicalHeight));
+        logicalTopValue = logicalTop.calcValue(containerLogicalHeight);
 
-        const int availableSpace = containerHeight - (topValue + heightValue + bottom.calcValue(containerHeight) + bordersPlusPadding);
+        const int availableSpace = containerLogicalHeight - (logicalTopValue + logicalHeightValue + logicalBottom.calcValue(containerLogicalHeight) + bordersPlusPadding);
 
         // Margins are now the only unknown
-        if (marginTop.isAuto() && marginBottom.isAuto()) {
+        if (marginLogicalTop.isAuto() && marginLogicalBottom.isAuto()) {
             // Both margins auto, solve for equality
             // NOTE: This may result in negative values.
-            marginTopValue = availableSpace / 2; // split the difference
-            marginBottomValue = availableSpace - marginTopValue; // account for odd valued differences
-        } else if (marginTop.isAuto()) {
+            marginLogicalTopValue = availableSpace / 2; // split the difference
+            marginLogicalBottomValue = availableSpace - marginLogicalTopValue; // account for odd valued differences
+        } else if (marginLogicalTop.isAuto()) {
             // Solve for top margin
-            marginBottomValue = marginBottom.calcValue(containerHeight);
-            marginTopValue = availableSpace - marginBottomValue;
-        } else if (marginBottom.isAuto()) {
+            marginLogicalBottomValue = marginLogicalBottom.calcValue(containerLogicalHeight);
+            marginLogicalTopValue = availableSpace - marginLogicalBottomValue;
+        } else if (marginLogicalBottom.isAuto()) {
             // Solve for bottom margin
-            marginTopValue = marginTop.calcValue(containerHeight);
-            marginBottomValue = availableSpace - marginTopValue;
+            marginLogicalTopValue = marginLogicalTop.calcValue(containerLogicalHeight);
+            marginLogicalBottomValue = availableSpace - marginLogicalTopValue;
         } else {
             // Over-constrained, (no need solve for bottom)
-            marginTopValue = marginTop.calcValue(containerHeight);
-            marginBottomValue = marginBottom.calcValue(containerHeight);
+            marginLogicalTopValue = marginLogicalTop.calcValue(containerLogicalHeight);
+            marginLogicalBottomValue = marginLogicalBottom.calcValue(containerLogicalHeight);
         }
     } else {
         /*--------------------------------------------------------------------*\
@@ -2635,37 +2638,55 @@ void RenderBox::computePositionedLogicalHeightUsing(Length h, const RenderBoxMod
         // because the value is not used for any further calculations.
 
         // Calculate margins, 'auto' margins are ignored.
-        marginTopValue = marginTop.calcMinValue(containerHeight);
-        marginBottomValue = marginBottom.calcMinValue(containerHeight);
+        marginLogicalTopValue = marginLogicalTop.calcMinValue(containerLogicalHeight);
+        marginLogicalBottomValue = marginLogicalBottom.calcMinValue(containerLogicalHeight);
 
-        const int availableSpace = containerHeight - (marginTopValue + marginBottomValue + bordersPlusPadding);
+        const int availableSpace = containerLogicalHeight - (marginLogicalTopValue + marginLogicalBottomValue + bordersPlusPadding);
 
         // Use rule/case that applies.
-        if (topIsAuto && heightIsAuto && !bottomIsAuto) {
+        if (logicalTopIsAuto && logicalHeightIsAuto && !logicalBottomIsAuto) {
             // RULE 1: (height is content based, solve of top)
-            heightValue = contentHeight;
-            topValue = availableSpace - (heightValue + bottom.calcValue(containerHeight));
-        } else if (!topIsAuto && heightIsAuto && bottomIsAuto) {
+            logicalHeightValue = contentLogicalHeight;
+            logicalTopValue = availableSpace - (logicalHeightValue + logicalBottom.calcValue(containerLogicalHeight));
+        } else if (!logicalTopIsAuto && logicalHeightIsAuto && logicalBottomIsAuto) {
             // RULE 3: (height is content based, no need solve of bottom)
-            topValue = top.calcValue(containerHeight);
-            heightValue = contentHeight;
-        } else if (topIsAuto && !heightIsAuto && !bottomIsAuto) {
+            logicalTopValue = logicalTop.calcValue(containerLogicalHeight);
+            logicalHeightValue = contentLogicalHeight;
+        } else if (logicalTopIsAuto && !logicalHeightIsAuto && !logicalBottomIsAuto) {
             // RULE 4: (solve of top)
-            heightValue = computeContentBoxLogicalHeight(h.calcValue(containerHeight));
-            topValue = availableSpace - (heightValue + bottom.calcValue(containerHeight));
-        } else if (!topIsAuto && heightIsAuto && !bottomIsAuto) {
+            logicalHeightValue = computeContentBoxLogicalHeight(logicalHeightLength.calcValue(containerLogicalHeight));
+            logicalTopValue = availableSpace - (logicalHeightValue + logicalBottom.calcValue(containerLogicalHeight));
+        } else if (!logicalTopIsAuto && logicalHeightIsAuto && !logicalBottomIsAuto) {
             // RULE 5: (solve of height)
-            topValue = top.calcValue(containerHeight);
-            heightValue = max(0, availableSpace - (topValue + bottom.calcValue(containerHeight)));
-        } else if (!topIsAuto && !heightIsAuto && bottomIsAuto) {
+            logicalTopValue = logicalTop.calcValue(containerLogicalHeight);
+            logicalHeightValue = max(0, availableSpace - (logicalTopValue + logicalBottom.calcValue(containerLogicalHeight)));
+        } else if (!logicalTopIsAuto && !logicalHeightIsAuto && logicalBottomIsAuto) {
             // RULE 6: (no need solve of bottom)
-            heightValue = computeContentBoxLogicalHeight(h.calcValue(containerHeight));
-            topValue = top.calcValue(containerHeight);
+            logicalHeightValue = computeContentBoxLogicalHeight(logicalHeightLength.calcValue(containerLogicalHeight));
+            logicalTopValue = logicalTop.calcValue(containerLogicalHeight);
         }
     }
 
+    // FIXME: Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space, so that
+    // can make the result here rather complicated to compute.
+
     // Use computed values to calculate the vertical position.
-    yPos = topValue + marginTopValue + containerBlock->borderTop();
+    logicalTopPos = logicalTopValue;
+    
+    // Our offset is from the logical bottom edge in a flipped environment, e.g., right for vertical-rl and bottom for horizontal-bt.
+    if (style()->isFlippedBlocksWritingMode()) {
+        logicalTopPos += marginLogicalBottomValue;
+        if (style()->isHorizontalWritingMode())
+            logicalTopPos += containerBlock->borderBottom();
+        else
+            logicalTopPos += containerBlock->borderRight();
+    } else {
+        logicalTopPos += marginLogicalTopValue;
+        if (style()->isHorizontalWritingMode())
+            logicalTopPos += containerBlock->borderTop();
+        else
+            logicalTopPos += containerBlock->borderLeft();
+    }
 }
 
 void RenderBox::computePositionedLogicalWidthReplaced()
