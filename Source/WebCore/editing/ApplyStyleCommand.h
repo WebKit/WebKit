@@ -78,11 +78,11 @@ private:
     // style-removal helpers
     bool isStyledInlineElementToRemove(Element*) const;
     bool removeStyleFromRunBeforeApplyingStyle(EditingStyle*, RefPtr<Node>& runStart, RefPtr<Node>& runEnd);
-    bool removeInlineStyleFromElement(CSSMutableStyleDeclaration*, PassRefPtr<HTMLElement>, InlineStyleRemovalMode = RemoveIfNeeded, CSSMutableStyleDeclaration* extractedStyle = 0);
-    inline bool shouldRemoveInlineStyleFromElement(CSSMutableStyleDeclaration* style, HTMLElement* element) {return removeInlineStyleFromElement(style, element, RemoveNone);}
+    bool removeInlineStyleFromElement(EditingStyle*, PassRefPtr<HTMLElement>, InlineStyleRemovalMode = RemoveIfNeeded, CSSMutableStyleDeclaration* extractedStyle = 0);
+    inline bool shouldRemoveInlineStyleFromElement(EditingStyle* style, HTMLElement* element) {return removeInlineStyleFromElement(style, element, RemoveNone);}
     bool removeImplicitlyStyledElement(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode, CSSMutableStyleDeclaration* extractedStyle);
     void replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&);
-    bool removeCSSStyle(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveIfNeeded, CSSMutableStyleDeclaration* extractedStyle = 0);
+    bool removeCSSStyle(EditingStyle*, HTMLElement*, InlineStyleRemovalMode = RemoveIfNeeded, CSSMutableStyleDeclaration* extractedStyle = 0);
     HTMLElement* highestAncestorWithConflictingInlineStyle(EditingStyle*, Node*);
     void applyInlineStyleToPushDown(Node*, CSSMutableStyleDeclaration*);
     void pushDownInlineStyleAroundNode(EditingStyle*, Node*);
@@ -102,7 +102,7 @@ private:
     void splitTextAtEnd(const Position& start, const Position& end);
     void splitTextElementAtStart(const Position& start, const Position& end);
     void splitTextElementAtEnd(const Position& start, const Position& end);
-    bool shouldSplitTextElement(Element* elem, CSSMutableStyleDeclaration*);
+    bool shouldSplitTextElement(Element*, EditingStyle*);
     bool isValidCaretPositionInTextNode(const Position& position);
     bool mergeStartWithPreviousIfIdentical(const Position& start, const Position& end);
     bool mergeEndWithNextIfIdentical(const Position& start, const Position& end);

@@ -31,9 +31,11 @@
 #ifndef EditingStyle_h
 #define EditingStyle_h
 
+#include "CSSPropertyNames.h"
 #include "WritingDirection.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -43,6 +45,7 @@ class CSSMutableStyleDeclaration;
 class Node;
 class Position;
 class RenderStyle;
+class StyledElement;
 
 class EditingStyle : public RefCounted<EditingStyle> {
 public:
@@ -87,6 +90,11 @@ public:
     void removeStyleConflictingWithStyleOfNode(Node*);
     void removeNonEditingProperties();
     void collapseTextDecorationProperties();
+    bool conflictsWithInlineStyleOfElement(StyledElement* element) const { return conflictsWithInlineStyleOfElement(element, 0); }
+    bool conflictsWithInlineStyleOfElement(StyledElement* element, Vector<CSSPropertyID>& conflictingProperties) const
+    {
+        return conflictsWithInlineStyleOfElement(element, &conflictingProperties);
+    }
     void prepareToApplyAt(const Position&, ShouldPreserveWritingDirection = DoNotPreserveWritingDirection);
 
     float fontSizeDelta() const { return m_fontSizeDelta; }
@@ -101,6 +109,7 @@ private:
     void removeTextFillAndStrokeColorsIfNeeded(RenderStyle*);
     void replaceFontSizeByKeywordIfPossible(RenderStyle*, CSSComputedStyleDeclaration*);
     void extractFontSizeDelta();
+    bool conflictsWithInlineStyleOfElement(StyledElement*, Vector<CSSPropertyID>* conflictingProperties) const;
 
     RefPtr<CSSMutableStyleDeclaration> m_mutableStyle;
     bool m_shouldUseFixedDefaultFontSize;

@@ -601,7 +601,7 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle *style)
             }
             ASSERT(block->isHTMLElement());
             if (block->isHTMLElement()) {
-                removeCSSStyle(style->style(), toHTMLElement(block.get()));
+                removeCSSStyle(style, toHTMLElement(block.get()));
                 if (!m_removeOnly)
                     addBlockStyle(styleChange, toHTMLElement(block.get()));
             }
@@ -876,7 +876,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
     // split the start node and containing element if the selection starts inside of it
     bool splitStart = isValidCaretPositionInTextNode(start);
     if (splitStart) {
-        if (shouldSplitTextElement(start.deprecatedNode()->parentElement(), style->style()))
+        if (shouldSplitTextElement(start.deprecatedNode()->parentElement(), style))
             splitTextElementAtStart(start, end);
         else
             splitTextAtStart(start, end);
@@ -888,7 +888,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
     // split the end node and containing element if the selection ends inside of it
     bool splitEnd = isValidCaretPositionInTextNode(end);
     if (splitEnd) {
-        if (shouldSplitTextElement(end.deprecatedNode()->parentElement(), style->style()))
+        if (shouldSplitTextElement(end.deprecatedNode()->parentElement(), style))
             splitTextElementAtEnd(start, end);
         else
             splitTextAtEnd(start, end);
@@ -1117,7 +1117,7 @@ bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(EditingStyle* styl
         RefPtr<Node> previousSibling = node->previousSibling();
         RefPtr<Node> nextSibling = node->nextSibling();
         RefPtr<ContainerNode> parent = node->parentNode();
-        removeInlineStyleFromElement(style->style(), toHTMLElement(node.get()), RemoveAlways);
+        removeInlineStyleFromElement(style, toHTMLElement(node.get()), RemoveAlways);
         if (!node->inDocument()) {
             // FIXME: We might need to update the start and the end of current selection here but need a test.
             if (runStart == node)
@@ -1130,7 +1130,7 @@ bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(EditingStyle* styl
     return true;
 }
 
-bool ApplyStyleCommand::removeInlineStyleFromElement(CSSMutableStyleDeclaration* style, PassRefPtr<HTMLElement> element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
+bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle* style, PassRefPtr<HTMLElement> element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
 {
     ASSERT(element);
 
@@ -1147,11 +1147,11 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(CSSMutableStyleDeclaration*
         return true;
     }
 
-    if (!style)
+    if (!style->style())
         return false;
 
     bool removed = false;
-    if (removeImplicitlyStyledElement(style, element.get(), mode, extractedStyle))
+    if (removeImplicitlyStyledElement(style->style(), element.get(), mode, extractedStyle))
         removed = true;
 
     if (!element->inDocument())
@@ -1289,50 +1289,37 @@ void ApplyStyleCommand::replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&
     }
 }
 
-bool ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclaration* style, HTMLElement* element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
+bool ApplyStyleCommand::removeCSSStyle(EditingStyle* style, HTMLElement* element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
 {
     ASSERT(style);
     ASSERT(element);
+    
+    if (mode == RemoveNone)
+        return style->conflictsWithInlineStyleOfElement(element);
 
-    CSSMutableStyleDeclaration* decl = element->inlineStyleDecl();
-    if (!decl)
+    Vector<CSSPropertyID> properties;
+    if (!style->conflictsWithInlineStyleOfElement(element, properties))
         return false;
 
-    bool removed = false;
-    CSSMutableStyleDeclaration::const_iterator end = style->end();
-    for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
-        CSSPropertyID propertyID = static_cast<CSSPropertyID>(it->id());
-        RefPtr<CSSValue> value = decl->getPropertyCSSValue(propertyID);
-        if (!value || (isTabSpanNode(element) && propertyID == CSSPropertyWhiteSpace))
-            continue;
-
-        removed = true;
-        if (mode == RemoveNone)
-            return true;
-
-        ExceptionCode ec = 0;
-        if (extractedStyle)
-            extractedStyle->setProperty(propertyID, value->cssText(), decl->getPropertyPriority(propertyID), ec);
-        removeCSSProperty(element, propertyID);
-
-        if (propertyID == CSSPropertyUnicodeBidi && !decl->getPropertyValue(CSSPropertyDirection).isEmpty()) {
-            if (extractedStyle)
-                extractedStyle->setProperty(CSSPropertyDirection, decl->getPropertyValue(CSSPropertyDirection), decl->getPropertyPriority(CSSPropertyDirection), ec);
-            removeCSSProperty(element, CSSPropertyDirection);
+    CSSMutableStyleDeclaration* inlineStyle = element->inlineStyleDecl();
+    ASSERT(inlineStyle);
+    for (size_t i = 0; i < properties.size(); i++) {
+        CSSPropertyID id = properties[i];
+        if (extractedStyle) {
+            ExceptionCode ec = 0;
+            extractedStyle->setProperty(id, inlineStyle->getPropertyValue(id), inlineStyle->getPropertyPriority(id), ec);
         }
+        removeCSSProperty(element, id);
     }
 
-    if (mode == RemoveNone)
-        return removed;
-
     // No need to serialize <foo style=""> if we just removed the last css property
-    if (decl->isEmpty())
+    if (inlineStyle->isEmpty())
         removeNodeAttribute(element, styleAttr);
 
     if (isSpanWithoutAttributesOrUnstyleStyleSpan(element))
         removeNodePreservingChildren(element);
 
-    return removed;
+    return true;
 }
 
 HTMLElement* ApplyStyleCommand::highestAncestorWithConflictingInlineStyle(EditingStyle* style, Node* node)
@@ -1344,7 +1331,7 @@ HTMLElement* ApplyStyleCommand::highestAncestorWithConflictingInlineStyle(Editin
     Node* unsplittableElement = unsplittableElementForPosition(firstPositionInOrBeforeNode(node));
 
     for (Node *n = node; n; n = n->parentNode()) {
-        if (n->isHTMLElement() && shouldRemoveInlineStyleFromElement(style->style(), toHTMLElement(n)))
+        if (n->isHTMLElement() && shouldRemoveInlineStyleFromElement(style, toHTMLElement(n)))
             result = toHTMLElement(n);
         // Should stop at the editable root (cannot cross editing boundary) and
         // also stop at the unsplittable element to be consistent with other UAs
@@ -1436,7 +1423,7 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
             elementsToPushDown.append(styledElement);
         }
         RefPtr<CSSMutableStyleDeclaration> styleToPushDown = CSSMutableStyleDeclaration::create();
-        removeInlineStyleFromElement(style->style(), toHTMLElement(current), RemoveIfNeeded, styleToPushDown.get());
+        removeInlineStyleFromElement(style, toHTMLElement(current), RemoveIfNeeded, styleToPushDown.get());
 
         // The inner loop will go through children on each level
         // FIXME: we should aggregate inline child elements together so that we don't wrap each child separately.
@@ -1513,7 +1500,7 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position &s
                 childNode = elem->firstChild();
             }
 
-            removeInlineStyleFromElement(style->style(), elem.get(), RemoveIfNeeded, styleToPushDown.get());
+            removeInlineStyleFromElement(style, elem.get(), RemoveIfNeeded, styleToPushDown.get());
             if (!elem->inDocument()) {
                 if (s.deprecatedNode() == elem) {
                     // Since elem must have been fully selected, and it is at the start
@@ -1622,7 +1609,7 @@ void ApplyStyleCommand::splitTextElementAtEnd(const Position& start, const Posit
     updateStartEnd(newStart, Position(prevNode->parentNode(), prevNode->nodeIndex() + 1, Position::PositionIsOffsetInAnchor));
 }
 
-bool ApplyStyleCommand::shouldSplitTextElement(Element* element, CSSMutableStyleDeclaration* style)
+bool ApplyStyleCommand::shouldSplitTextElement(Element* element, EditingStyle* style)
 {
     if (!element || !element->isHTMLElement())
         return false;

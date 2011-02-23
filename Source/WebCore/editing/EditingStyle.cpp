@@ -32,10 +32,13 @@
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSValueKeywords.h"
 #include "Frame.h"
+#include "HTMLNames.h"
 #include "Node.h"
 #include "Position.h"
 #include "RenderStyle.h"
 #include "SelectionController.h"
+#include "StyledElement.h"
+#include "htmlediting.h"
 
 namespace WebCore {
 
@@ -320,6 +323,46 @@ void EditingStyle::collapseTextDecorationProperties()
 
     m_mutableStyle->setProperty(CSSPropertyTextDecoration, textDecorationsInEffect->cssText(), m_mutableStyle->getPropertyPriority(CSSPropertyTextDecoration));
     m_mutableStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
+}
+
+bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Vector<CSSPropertyID>* conflictingProperties) const
+{
+    ASSERT(element);
+    ASSERT(!conflictingProperties || conflictingProperties->isEmpty());
+
+    CSSMutableStyleDeclaration* inlineStyle = element->inlineStyleDecl();
+    if (!m_mutableStyle || !inlineStyle)
+        return false;
+
+    if (!conflictingProperties) {
+        CSSMutableStyleDeclaration::const_iterator end = m_mutableStyle->end();
+        for (CSSMutableStyleDeclaration::const_iterator it = m_mutableStyle->begin(); it != end; ++it) {
+            CSSPropertyID propertyID = static_cast<CSSPropertyID>(it->id());
+
+            // We don't override whitespace property of a tab span because that would collapse the tab into a space.
+            if (propertyID == CSSPropertyWhiteSpace && isTabSpanNode(element))
+                continue;
+
+            if (inlineStyle->getPropertyCSSValue(propertyID))
+                return true;
+        }
+
+        return false;
+    }
+
+    CSSMutableStyleDeclaration::const_iterator end = m_mutableStyle->end();
+    for (CSSMutableStyleDeclaration::const_iterator it = m_mutableStyle->begin(); it != end; ++it) {
+        CSSPropertyID propertyID = static_cast<CSSPropertyID>(it->id());
+        if ((propertyID == CSSPropertyWhiteSpace && isTabSpanNode(element)) || !inlineStyle->getPropertyCSSValue(propertyID))
+            continue;
+
+        if (propertyID == CSSPropertyUnicodeBidi && inlineStyle->getPropertyCSSValue(CSSPropertyDirection))
+            conflictingProperties->append(CSSPropertyDirection);
+
+        conflictingProperties->append(propertyID);
+    }
+
+    return !conflictingProperties->isEmpty();
 }
 
 void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWritingDirection shouldPreserveWritingDirection)
