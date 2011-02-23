@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2008, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,10 @@
 #include "TextCodecUTF16.h"
 
 #include "PlatformString.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>
-#include <wtf/unicode/CharacterNames.h>
+#include <wtf/PassOwnPtr.h>
 
-using namespace WTF::Unicode;
 using namespace std;
 
 namespace WebCore {
@@ -54,12 +52,12 @@ void TextCodecUTF16::registerEncodingNames(EncodingNameRegistrar registrar)
 
 static PassOwnPtr<TextCodec> newStreamingTextDecoderUTF16LE(const TextEncoding&, const void*)
 {
-    return adoptPtr(new TextCodecUTF16(true));
+    return new TextCodecUTF16(true);
 }
 
 static PassOwnPtr<TextCodec> newStreamingTextDecoderUTF16BE(const TextEncoding&, const void*)
 {
-    return adoptPtr(new TextCodecUTF16(false));
+    return new TextCodecUTF16(false);
 }
 
 void TextCodecUTF16::registerCodecs(TextCodecRegistrar registrar)
@@ -68,54 +66,53 @@ void TextCodecUTF16::registerCodecs(TextCodecRegistrar registrar)
     registrar("UTF-16BE", newStreamingTextDecoderUTF16BE, 0);
 }
 
-String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
+String TextCodecUTF16::decode(const char* bytes, size_t length, bool, bool, bool&)
 {
-    // FIXME: This should buffer surrogates, not just single bytes,
-    // and should generate an error if there is an unpaired surrogate.
+    if (!length)
+        return String();
 
-    const uint8_t* source = reinterpret_cast<const uint8_t*>(bytes);
+    // FIXME: This should generate an error if there is an unpaired surrogate.
+
+    const unsigned char* p = reinterpret_cast<const unsigned char*>(bytes);
     size_t numBytes = length + m_haveBufferedByte;
-    size_t numCharacters = numBytes / 2;
+    size_t numChars = numBytes / 2;
 
-    StringBuffer buffer(numCharacters + (flush && (numBytes & 1)));
-    UChar* destination = buffer.characters();
+    StringBuffer buffer(numChars);
+    UChar* q = buffer.characters();
 
-    if (length) {
-        if (m_haveBufferedByte) {
-            if (m_littleEndian)
-                *destination++ = m_bufferedByte | (source[0] << 8);
-            else
-                *destination++ = (m_bufferedByte << 8) | source[0];
-            m_haveBufferedByte = false;
-            ++source;
-            --numCharacters;
+    if (m_haveBufferedByte) {
+        UChar c;
+        if (m_littleEndian)
+            c = m_bufferedByte | (p[0] << 8);
+        else
+            c = (m_bufferedByte << 8) | p[0];
+        *q++ = c;
+        m_haveBufferedByte = false;
+        p += 1;
+        numChars -= 1;
+    }
+
+    if (m_littleEndian) {
+        for (size_t i = 0; i < numChars; ++i) {
+            UChar c = p[0] | (p[1] << 8);
+            p += 2;
+            *q++ = c;
         }
-
-        if (m_littleEndian) {
-            for (size_t i = 0; i < numCharacters; ++i) {
-                *destination++ = source[0] | (source[1] << 8);
-                source += 2;
-            }
-        } else {
-            for (size_t i = 0; i < numCharacters; ++i) {
-                *destination++ = (source[0] << 8) | source[1];
-                source += 2;
-            }
+    } else {
+        for (size_t i = 0; i < numChars; ++i) {
+            UChar c = (p[0] << 8) | p[1];
+            p += 2;
+            *q++ = c;
         }
     }
 
     if (numBytes & 1) {
-        if (flush) {
-            sawError = true;
-            if (!stopOnError)
-                *destination++ = replacementCharacter;
-        } else if (!m_haveBufferedByte) {
-            m_haveBufferedByte = true;
-            m_bufferedByte = source[0];
-        }
+        ASSERT(!m_haveBufferedByte);
+        m_haveBufferedByte = true;
+        m_bufferedByte = p[0];
     }
-    
-    buffer.shrink(destination - buffer.characters());
+
+    buffer.shrink(q - buffer.characters());
 
     return String::adopt(buffer);
 }
@@ -137,15 +134,15 @@ CString TextCodecUTF16::encode(const UChar* characters, size_t length, Unencodab
     // null characters inside it. Perhaps the result of encode should not be a CString.
     if (m_littleEndian) {
         for (size_t i = 0; i < length; ++i) {
-            UChar character = characters[i];
-            bytes[i * 2] = character;
-            bytes[i * 2 + 1] = character >> 8;
+            UChar c = characters[i];
+            bytes[i * 2] = c;
+            bytes[i * 2 + 1] = c >> 8;
         }
     } else {
         for (size_t i = 0; i < length; ++i) {
-            UChar character = characters[i];
-            bytes[i * 2] = character >> 8;
-            bytes[i * 2 + 1] = character;
+            UChar c = characters[i];
+            bytes[i * 2] = c >> 8;
+            bytes[i * 2 + 1] = c;
         }
     }
 

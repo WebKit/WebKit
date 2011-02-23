@@ -1,3 +1,15 @@
+2011-02-23  James Robinson  <jamesr@chromium.org>
+
+        REGRESSION(79466): fast/parser/test-unicode-characters-in-attribute-name.html fails
+
+        Reverts TextCodecUTF16.cpp back to pre-79466 state.  The crash fix in 79466 was for UTF-8 only, it also caused the UTF16 path to fail.
+
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::newStreamingTextDecoderUTF16LE):
+        (WebCore::newStreamingTextDecoderUTF16BE):
+        (WebCore::TextCodecUTF16::decode):
+        (WebCore::TextCodecUTF16::encode):
+
 2011-02-23  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
