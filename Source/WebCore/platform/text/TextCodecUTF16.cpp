@@ -82,7 +82,6 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool
 
     if (length) {
         if (m_haveBufferedByte) {
-            UChar character;
             if (m_littleEndian)
                 *destination++ = m_bufferedByte | (source[0] << 8);
             else
