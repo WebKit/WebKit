@@ -1,3 +1,21 @@
+2011-02-22  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        On Mac OS X, English contractions are marked misspelled with certain user preference setting.
+        https://bugs.webkit.org/show_bug.cgi?id=54975
+
+        manual test: manual-tests/autocorrection/spellcheck-on-contraction-when-autocorrection-is-off.html
+
+        Without this patch, we check for contraction only when autocorrection or other type of auto-
+        substituation is on. And we failed to check for contraction if only spellchecking is turned on.
+        This patch implements the desired behavior, checking for contraction when either correction/substitution,
+        or spellchecking, is on.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        * manual-tests/autocorrection/spellcheck-on-contraction-when-autocorrection-is-off.html: Added.
+
 2011-02-22  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Darin Fisher.
