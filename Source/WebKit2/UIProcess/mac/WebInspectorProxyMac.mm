@@ -82,6 +82,8 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     m_inspectorView.adoptNS([[WKView alloc] initWithFrame:NSZeroRect contextRef:toAPI(page()->context()) pageGroupRef:toAPI(inspectorPageGroup())]);
     ASSERT(m_inspectorView);
 
+    [m_inspectorView.get() setDrawsBackground:NO];
+
     return toImpl(m_inspectorView.get().pageRef);
 }
 

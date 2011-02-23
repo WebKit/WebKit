@@ -1512,6 +1512,13 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     return _data->_page->drawsBackground();
 }
 
+- (BOOL)mouseDownCanMoveWindow
+{
+    // -[NSView mouseDownCanMoveWindow] returns YES when the NSView is transparent,
+    // but we don't want a drag in the NSView to move the window, even if it's transparent.
+    return NO;
+}
+
 - (void)viewDidHide
 {
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);

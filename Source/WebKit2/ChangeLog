@@ -1,3 +1,20 @@
+2011-02-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Web Inspector toolbar looks bad in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=55076
+        <rdar://problem/8866258>
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView mouseDownCanMoveWindow]):
+        Return NO from mouseDownCanMoveWindow to prevent drags in the (now transparent) inspector WKView
+        from dragging the window around.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        Call [WKView setDrawsBackground:NO].
+
 2011-02-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
