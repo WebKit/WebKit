@@ -33,13 +33,6 @@ import os
 import platform
 import signal
 
-# Handle Python < 2.6 where multiprocessing isn't available.
-try:
-    import multiprocessing
-except ImportError:
-    multiprocessing = None
-
-
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
 _log = logging.getLogger("webkitpy.layout_tests.port.mac")
@@ -100,7 +93,7 @@ class MacPort(WebKitPort):
         return child_processes
 
     def default_worker_model(self):
-        if multiprocessing:
+        if self._multiprocessing_is_available:
             return 'processes'
         return 'old-threads'
 

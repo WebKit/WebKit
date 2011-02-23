@@ -31,6 +31,12 @@
 import sys
 import unittest
 
+# Handle Python < 2.6 where multiprocessing isn't available.
+try:
+    import multiprocessing
+except ImportError:
+    multiprocessing = None
+
 from webkitpy.tool import mocktool
 mock_options = mocktool.MockOptions(results_directory='layout-test-results',
                                     use_apache=True,
@@ -58,6 +64,16 @@ class PortTestCase(unittest.TestCase):
         if hasattr(options, "results_directory"):
             port._options.results_directory = port.results_directory()
         return port
+
+    def test_default_worker_model(self):
+        port = self.make_port()
+        if not port:
+            return
+
+        if multiprocessing:
+            self.assertEqual(port.default_worker_model(), 'processes')
+        else:
+            self.assertEqual(port.default_worker_model(), 'old-threads')
 
     def test_driver_cmd_line(self):
         port = self.make_port()

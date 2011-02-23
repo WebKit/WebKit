@@ -38,6 +38,12 @@ import shlex
 import sys
 import time
 
+# Handle Python < 2.6 where multiprocessing isn't available.
+try:
+    import multiprocessing
+except ImportError:
+    multiprocessing = None
+
 import apache_http_server
 import config as port_config
 import http_lock
@@ -124,6 +130,7 @@ class Port(object):
         if not hasattr(self._options, 'configuration') or self._options.configuration is None:
             self._options.configuration = self.default_configuration()
         self._test_configuration = None
+        self._multiprocessing_is_available = (multiprocessing is not None)
 
     def default_child_processes(self):
         """Return the number of DumpRenderTree instances to use for this

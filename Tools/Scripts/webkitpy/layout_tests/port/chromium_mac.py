@@ -33,12 +33,6 @@ import logging
 import os
 import signal
 
-# Handle Python < 2.6 where multiprocessing isn't available.
-try:
-    import multiprocessing
-except ImportError:
-    multiprocessing = None
-
 from webkitpy.layout_tests.port import mac
 from webkitpy.layout_tests.port import chromium
 
@@ -118,7 +112,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
         return chromium.ChromiumPort.default_child_processes(self)
 
     def default_worker_model(self):
-        if multiprocessing:
+        if self._multiprocessing_is_available:
             return 'processes'
         return 'old-threads'
 

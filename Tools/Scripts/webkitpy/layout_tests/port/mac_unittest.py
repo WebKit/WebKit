@@ -30,12 +30,6 @@ import StringIO
 import sys
 import unittest
 
-# Handle Python < 2.6 where multiprocessing isn't available.
-try:
-    import multiprocessing
-except ImportError:
-    multiprocessing = None
-
 from webkitpy.layout_tests.port import mac
 from webkitpy.layout_tests.port import port_testcase
 
@@ -53,13 +47,6 @@ class MacTest(port_testcase.PortTestCase):
         # So to make it unit testable, we strip the WebKit directory from the path.
         relative_paths = [path[len(port.path_from_webkit_base()):] for path in skipped_paths]
         self.assertEqual(relative_paths, expected_paths)
-
-    def test_default_worker_model(self):
-        port = mac.MacPort()
-        if multiprocessing:
-            self.assertEqual(port.default_worker_model(), 'processes')
-        else:
-            self.assertEqual(port.default_worker_model(), 'old-threads')
 
     def test_skipped_file_paths(self):
         # We skip this on win32 because we use '/' as the dir separator and it's

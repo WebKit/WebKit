@@ -28,12 +28,6 @@
 
 import unittest
 
-# Handle Python < 2.6 where multiprocessing isn't available.
-try:
-    import multiprocessing
-except ImportError:
-    multiprocessing = None
-
 from webkitpy.thirdparty.mock import Mock
 
 from webkitpy.layout_tests.port import chromium_mac
@@ -51,13 +45,6 @@ class ChromiumMacPortTest(port_testcase.PortTestCase):
 
         # Currently is always true, just logs if missing.
         self.assertTrue(port._check_wdiff_install())
-
-    def test_check_default_worker_model(self):
-        port = chromium_mac.ChromiumMacPort()
-        if multiprocessing:
-            self.assertEqual(port.default_worker_model(), 'processes')
-        else:
-            self.assertEqual(port.default_worker_model(), 'old-threads')
 
     def assert_name(self, port_name, os_version_string, expected):
         port = chromium_mac.ChromiumMacPort(port_name=port_name,

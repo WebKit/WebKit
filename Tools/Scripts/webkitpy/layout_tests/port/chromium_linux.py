@@ -65,6 +65,11 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
                        'LinuxBuildInstructions')
         return result
 
+    def default_worker_model(self):
+        if self._multiprocessing_is_available:
+            return 'processes'
+        return 'old-threads'
+
     def test_platform_name(self):
         # We use 'linux' instead of 'chromium-linux' in test_expectations.txt.
         return 'linux'
