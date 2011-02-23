@@ -1,3 +1,11 @@
+2011-02-22  Brady Eidson  <beidson@apple.com>
+
+        Fix it Windows-style.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getSitesWithPluginData):
+        (WebKit::WebProcess::clearPluginSiteData):
+
 2011-02-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

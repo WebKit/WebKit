@@ -702,7 +702,7 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
     }
 
     m_connection->send(Messages::WebContext::DidClearPluginSiteData(callbackID), 0);
-    shutdownIfPossible();
+    terminateIfPossible();
 }
 #endif
 
