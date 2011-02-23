@@ -66,6 +66,7 @@
 #include <QColor>
 #include <QFile>
 #include <QLineEdit>
+#include <QMacStyle>
 #include <QPainter>
 #include <QPushButton>
 #include <QStyleFactory>
@@ -701,15 +702,17 @@ void RenderThemeQt::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, E
 
 void RenderThemeQt::setPopupPadding(RenderStyle* style) const
 {
-    const int padding = 8;
-    style->setPaddingLeft(Length(padding, Fixed));
+    const int paddingLeft = 4;
+    const int paddingRight = style->width().isFixed() || style->width().isPercent() ? 5 : 8;
+
+    style->setPaddingLeft(Length(paddingLeft, Fixed));
 
     QStyleOptionComboBox opt;
     int w = qStyle()->pixelMetric(QStyle::PM_ButtonIconSize, &opt, 0);
-    style->setPaddingRight(Length(padding + w, Fixed));
+    style->setPaddingRight(Length(paddingRight + w, Fixed));
 
     style->setPaddingTop(Length(2, Fixed));
-    style->setPaddingBottom(Length(0, Fixed));
+    style->setPaddingBottom(Length(2, Fixed));
 }
 
 
@@ -723,10 +726,20 @@ bool RenderThemeQt::paintMenuList(RenderObject* o, const PaintInfo& i, const Int
     initStyleOption(p.widget, opt);
     initializeCommonQStyleOptions(opt, o);
 
-    const QPoint topLeft = r.location();
+    IntRect rect = r;
+
+#if defined(Q_WS_MAC) && !defined(QT_NO_STYLE_MAC)
+    // QMacStyle makes the combo boxes a little bit smaller to leave space for the focus rect.
+    // Because of it, the combo button is drawn at a point to the left of where it was expect to be and may end up
+    // overlapped with the text. This will force QMacStyle to draw the combo box with the expected width.
+    if (qobject_cast<QMacStyle*>(p.style))
+        rect.inflateX(3);
+#endif
+
+    const QPoint topLeft = rect.location();
     p.painter->translate(topLeft);
     opt.rect.moveTo(QPoint(0, 0));
-    opt.rect.setSize(r.size());
+    opt.rect.setSize(rect.size());
 
     p.drawComplexControl(QStyle::CC_ComboBox, opt);
     p.painter->translate(-topLeft);
