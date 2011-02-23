@@ -1,3 +1,16 @@
+2011-02-23  Jacob Dinu  <dinu.jacob@nokia.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Linking error for some InspectorController symbols
+        https://bugs.webkit.org/show_bug.cgi?id=54953
+
+        Moved out hideHighlight definition from under JAVASCRIPT_DEBUGGER flag 
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::hideHighlight):
+        (WebCore::InspectorController::resume):
+
 2011-02-23  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Move some SQL code into IDBBackingStore

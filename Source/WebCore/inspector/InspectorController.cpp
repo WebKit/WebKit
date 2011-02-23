@@ -203,6 +203,11 @@ void InspectorController::dispatchMessageFromFrontend(const String& message)
     m_inspectorBackendDispatcher->dispatch(message);
 }
 
+void InspectorController::hideHighlight()
+{
+    m_inspectorAgent->hideHighlight();
+}
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorController::enableProfiler()
 {
@@ -259,11 +264,6 @@ void InspectorController::resume()
 {
     if (InspectorDebuggerAgent* debuggerAgent = m_inspectorAgent->debuggerAgent())
         debuggerAgent->resume();
-}
-
-void InspectorController::hideHighlight()
-{
-    m_inspectorAgent->hideHighlight();
 }
 
 #endif
