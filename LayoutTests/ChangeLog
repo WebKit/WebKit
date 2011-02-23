@@ -1,3 +1,11 @@
+2011-02-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; second attempt to land Windows 7 expected failure results for new tests from r79318 
+        http://webkit.org/b/54966 tracks the failure.
+
+        * platform/win/media/audio-repaint-expected.txt:
+        * platform/win/media/media-document-audio-repaint-expected.txt:
+
 2011-02-22  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Alexey Proskuryakov.
