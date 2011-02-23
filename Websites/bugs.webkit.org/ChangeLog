@@ -2,6 +2,19 @@
 
         Reviewed by Adam Barth.
 
+        [codereviewtool] focus first visible node if no node is focused
+        https://bugs.webkit.org/show_bug.cgi?id=54935
+
+        Now hitting j/k/n/p will focus the first/last visible node
+        if no other node is focused. Also tweaked the scroll into view
+        logic a bit to avoid scrolling in this case.
+
+        * code-review.js:
+
+2011-02-21  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         [codereviewtool] remove patch fuzzing
         https://bugs.webkit.org/show_bug.cgi?id=54940
 

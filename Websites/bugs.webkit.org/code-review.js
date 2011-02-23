@@ -1373,7 +1373,7 @@ var CODE_REVIEW_UNITTEST;
     return frozen_comment;
   }
 
-  function focusOn(node) {
+  function focusOn(node, opt_is_backward) {
     if (node.length == 0)
       return;
 
@@ -1383,7 +1383,47 @@ var CODE_REVIEW_UNITTEST;
     node.focus();
     // Remove the tabindex on blur to avoid having the node be mouse-focusable.
     node.bind('blur', function() { node.removeAttr('tabindex'); });
-    $(document).scrollTop(node.position().top - window.innerHeight / 2);
+    
+    var node_top = node.offset().top;
+    var is_top_offscreen = node_top <= $(document).scrollTop();
+    
+    var half_way_point = $(document).scrollTop() + window.innerHeight / 2;
+    var is_top_past_halfway = opt_is_backward ? node_top < half_way_point : node_top > half_way_point;
+
+    if (is_top_offscreen || is_top_past_halfway)
+      $(document).scrollTop(node_top - window.innerHeight / 2);
+  }
+
+  function visibleNodeFilterFunction(is_backward) {
+    var y = is_backward ? $('#toolbar')[0].offsetTop - 1 : 0;
+    var x = window.innerWidth / 2;
+    var reference_element = document.elementFromPoint(x, y);
+
+    if (reference_element.nodeName == 'HTML' || reference_element.nodeName == 'BODY') {
+      // In case we hit test a margin between file diffs, shift a fudge factor and try again.
+      // FIXME: Is there a better way to do this?
+      var file_diffs = $('.FileDiff');
+      var first_diff = file_diffs.first();
+      var second_diff = $(file_diffs[1]);
+      var distance_between_file_diffs = second_diff.position().top - first_diff.position().top - first_diff.height();
+
+      if (is_backward)
+        y -= distance_between_file_diffs;
+      else
+        y += distance_between_file_diffs;
+
+      reference_element = document.elementFromPoint(x, y);
+    }
+
+    if (reference_element.nodeName == 'HTML' || reference_element.nodeName == 'BODY')
+      return null;
+    
+    return function(node) {
+      var compare = reference_element.compareDocumentPosition(node[0]);
+      if (is_backward)
+        return compare & Node.DOCUMENT_POSITION_PRECEDING;
+      return compare & Node.DOCUMENT_POSITION_FOLLOWING;
+    }
   }
 
   function focusNext(filter, direction) {
@@ -1393,15 +1433,21 @@ var CODE_REVIEW_UNITTEST;
 
     var is_backward = direction == DIRECTION.BACKWARD;
     var index = focusable_nodes.index($(document.activeElement));
-    if (index == -1 && is_backward)
-      index = focusable_nodes.length;
+    
+    var extra_filter = null;
+
+    if (index == -1) {
+      if (is_backward)
+        index = focusable_nodes.length;
+      extra_filter = visibleNodeFilterFunction(is_backward);
+    }
 
     var offset = is_backward ? -1 : 1;
     var end = is_backward ? -1 : focusable_nodes.size();
     for (var i = index + offset; i != end; i = i + offset) {
       var node = $(focusable_nodes[i]);
-      if (filter(node)) {
-        focusOn(node);
+      if (filter(node) && (!extra_filter || extra_filter(node))) {
+        focusOn(node, is_backward);
         return true;
       }
     }
