@@ -37,7 +37,7 @@ all:
     xcopy /y /d "..\Shared\API\c\WKURLResponse.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\WKUserContentURLPattern.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WebKit2.h" "%ConfigurationBuildDir%\include\WebKit2"
-    xcopy /y /d "..\UIProcess\API\c\WKApplicationCacheManager.h" "%ConfigurationBuildDir%\include\WebKit2"
+    xcopy /y /d "..\UIProcess\API\C\WKApplicationCacheManager.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKAuthenticationChallenge.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKAuthenticationDecisionListener.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKBackForwardList.h" "%ConfigurationBuildDir%\include\WebKit2"

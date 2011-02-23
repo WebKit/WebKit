@@ -1,3 +1,9 @@
+2011-02-22  Brady Eidson  <beidson@apple.com>
+
+        Windows build-fix attempt.
+
+        * win/WebKit2Generated.make:
+
 2011-02-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
