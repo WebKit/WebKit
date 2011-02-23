@@ -1,3 +1,14 @@
+2011-02-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r79418.
+        http://trac.webkit.org/changeset/79418
+        https://bugs.webkit.org/show_bug.cgi?id=55043
+
+        "breaks shlib linux build" (Requested by morrita on #webkit).
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+        * JavaScriptCore.gypi:
+
 2011-02-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
