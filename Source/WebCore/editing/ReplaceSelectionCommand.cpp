@@ -797,8 +797,10 @@ void ReplaceSelectionCommand::doApply()
         && (selection.end().deprecatedNode()->renderer() && selection.end().deprecatedNode()->renderer()->style()->userModify() == READ_WRITE_PLAINTEXT_ONLY))
         m_matchStyle = false;
     
-    if (m_matchStyle)
-        m_insertionStyle = editingStyleIncludingTypingStyle(selection.start());
+    if (m_matchStyle) {
+        m_insertionStyle = EditingStyle::create(selection.start());
+        m_insertionStyle->mergeTypingStyle(document());
+    }
 
     VisiblePosition visibleStart = selection.visibleStart();
     VisiblePosition visibleEnd = selection.visibleEnd();

@@ -967,7 +967,8 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // too, <div><b><br></b></div> for example.  Save it so that we can preserve it later.
     RefPtr<EditingStyle> styleInEmptyParagraph;
     if (startOfParagraphToMove == endOfParagraphToMove && preserveStyle) {
-        styleInEmptyParagraph = editingStyleIncludingTypingStyle(startOfParagraphToMove.deepEquivalent());
+        styleInEmptyParagraph = EditingStyle::create(startOfParagraphToMove.deepEquivalent());
+        styleInEmptyParagraph->mergeTypingStyle(document());
         // The moved paragraph should assume the block style of the destination.
         styleInEmptyParagraph->removeBlockProperties();
     }
@@ -1036,7 +1037,8 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     if (!emptyListItem)
         return false;
 
-    RefPtr<EditingStyle> style = editingStyleIncludingTypingStyle(endingSelection().start());
+    RefPtr<EditingStyle> style = EditingStyle::create(endingSelection().start());
+    style->mergeTypingStyle(document());
 
     ContainerNode* listNode = emptyListItem->parentNode();
     // FIXME: Can't we do something better when the immediate parent wasn't a list node?

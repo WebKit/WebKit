@@ -1,3 +1,41 @@
+2011-02-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Make Editor::selectionComputedStyle return EditingStyle
+        https://bugs.webkit.org/show_bug.cgi?id=54933
+
+        Renamed selectionComputedStyle to selectionStartStyle and changed the return type to EditingStyle.
+        It also no longer takes a boolean shouldUseFixedFontDefaultSize.
+
+        Also added EditingStyle::mergeTypingStyle which replaced old editingStyleIncludingTypingStyle. This function
+        doesn't extract inheritable properties prior to merge because this turned out be a bug, which was revealed
+        by an existing layout test only after the code was shared with selectionStartStyle.
+
+        No tests are added since this is a refactoring.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): Calls EditingStyle::create and EditingStyle::mergeTypingStyle.
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem): Ditto.
+        * editing/EditingStyle.cpp: Removed editingStyleIncludingTypingStyle.
+        (WebCore::EditingStyle::mergeTypingStyle): Added.
+        * editing/EditingStyle.h:
+        (WebCore::EditingStyle::shouldUseFixedDefaultFontSize): Added.
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionStartHasStyle): Calls selectionStartStyle.
+        (WebCore::Editor::selectionHasStyle): Ditto.
+        (WebCore::Editor::selectionStartCSSPropertyValue): Ditto.
+        (WebCore::Editor::selectionStartStyle): Renamed from selectionComputedStyle; returns EditingStyle.
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::executeToggleStyleInList): Calls selectionStartStyle.
+        * editing/InsertLineBreakCommand.cpp:
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion): Calls EditingStyle::create and
+        EditingStyle::mergeTypingStyle.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Ditto.
+
 2011-02-22  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.

@@ -132,12 +132,11 @@ static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditActi
 static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, CSSValue* value)
 {
     ExceptionCode ec = 0;
-    bool shouldUseFixedFontDefaultSize;
-    RefPtr<CSSMutableStyleDeclaration> selectionStyle = frame->editor()->selectionComputedStyle(shouldUseFixedFontDefaultSize);
-    if (!selectionStyle)
+    RefPtr<EditingStyle> selectionStyle = frame->editor()->selectionStartStyle();
+    if (!selectionStyle || !selectionStyle->style())
         return false;
 
-    RefPtr<CSSValue> selectedCSSValue = selectionStyle->getPropertyCSSValue(propertyID);
+    RefPtr<CSSValue> selectedCSSValue = selectionStyle->style()->getPropertyCSSValue(propertyID);
     String newStyle = "none";
     if (selectedCSSValue->isValueList()) {
         RefPtr<CSSValueList> selectedCSSValueList = static_cast<CSSValueList*>(selectedCSSValue.get());

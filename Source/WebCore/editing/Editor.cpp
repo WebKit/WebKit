@@ -985,38 +985,38 @@ static TriState triStateOfStyle(CSSStyleDeclaration* desiredStyle, CSSStyleDecla
 
 bool Editor::selectionStartHasStyle(CSSStyleDeclaration* style) const
 {
-    bool shouldUseFixedFontDefaultSize;
-    RefPtr<CSSMutableStyleDeclaration> selectionStyle = selectionComputedStyle(shouldUseFixedFontDefaultSize);
-    if (!selectionStyle)
+    RefPtr<EditingStyle> selectionStyle = selectionStartStyle();
+    if (!selectionStyle || !selectionStyle->style())
         return false;
-    return triStateOfStyle(style, selectionStyle.get()) == TrueTriState;
+    return triStateOfStyle(style, selectionStyle->style()) == TrueTriState;
 }
 
 TriState Editor::selectionHasStyle(CSSStyleDeclaration* style) const
 {
-    TriState state = FalseTriState;
+    if (!m_frame->selection()->isCaretOrRange())
+        return FalseTriState;
 
-    if (!m_frame->selection()->isRange()) {
-        bool shouldUseFixedFontDefaultSize;
-        RefPtr<CSSMutableStyleDeclaration> selectionStyle = selectionComputedStyle(shouldUseFixedFontDefaultSize);
-        if (!selectionStyle)
+    if (m_frame->selection()->isCaret()) {
+        RefPtr<EditingStyle> selectionStyle = selectionStartStyle();
+        if (!selectionStyle || !selectionStyle->style())
             return FalseTriState;
-        state = triStateOfStyle(style, selectionStyle.get());
-    } else {
-        for (Node* node = m_frame->selection()->start().deprecatedNode(); node; node = node->traverseNextNode()) {
-            RefPtr<CSSComputedStyleDeclaration> nodeStyle = computedStyle(node);
-            if (nodeStyle) {
-                TriState nodeState = triStateOfStyle(style, nodeStyle.get(), !node->isTextNode());
-                if (node == m_frame->selection()->start().deprecatedNode())
-                    state = nodeState;
-                else if (state != nodeState && node->isTextNode()) {
-                    state = MixedTriState;
-                    break;
-                }
-            }
-            if (node == m_frame->selection()->end().deprecatedNode())
+        return triStateOfStyle(style, selectionStyle->style());
+    }
+
+    TriState state = FalseTriState;
+    for (Node* node = m_frame->selection()->start().deprecatedNode(); node; node = node->traverseNextNode()) {
+        RefPtr<CSSComputedStyleDeclaration> nodeStyle = computedStyle(node);
+        if (nodeStyle) {
+            TriState nodeState = triStateOfStyle(style, nodeStyle.get(), !node->isTextNode());
+            if (node == m_frame->selection()->start().deprecatedNode())
+                state = nodeState;
+            else if (state != nodeState && node->isTextNode()) {
+                state = MixedTriState;
                 break;
+            }
         }
+        if (node == m_frame->selection()->end().deprecatedNode())
+            break;
     }
 
     return state;
@@ -1040,33 +1040,30 @@ static bool hasTransparentBackgroundColor(CSSStyleDeclaration* style)
 
 String Editor::selectionStartCSSPropertyValue(int propertyID)
 {
-    bool shouldUseFixedFontDefaultSize = false;
-    RefPtr<CSSMutableStyleDeclaration> selectionStyle = selectionComputedStyle(shouldUseFixedFontDefaultSize);
-    if (!selectionStyle)
+    RefPtr<EditingStyle> selectionStyle = selectionStartStyle();
+    if (!selectionStyle->style())
         return String();
 
-    String value = selectionStyle->getPropertyValue(propertyID);
+    String value = selectionStyle->style()->getPropertyValue(propertyID);
 
     // If background color is transparent, traverse parent nodes until we hit a different value or document root
     // Also, if the selection is a range, ignore the background color at the start of selection,
     // and find the background color of the common ancestor.
-    if (propertyID == CSSPropertyBackgroundColor && (m_frame->selection()->isRange() || hasTransparentBackgroundColor(selectionStyle.get()))) {
+    if (propertyID == CSSPropertyBackgroundColor && (m_frame->selection()->isRange() || hasTransparentBackgroundColor(selectionStyle->style()))) {
         RefPtr<Range> range(m_frame->selection()->toNormalizedRange());
         ExceptionCode ec = 0;
         for (Node* ancestor = range->commonAncestorContainer(ec); ancestor; ancestor = ancestor->parentNode()) {
-            selectionStyle = computedStyle(ancestor)->copy();
-            if (!hasTransparentBackgroundColor(selectionStyle.get())) {
-                value = selectionStyle->getPropertyValue(CSSPropertyBackgroundColor);
-                break;
-            }
+            RefPtr<CSSComputedStyleDeclaration> ancestorStyle = computedStyle(ancestor);
+            if (!hasTransparentBackgroundColor(ancestorStyle.get()))
+                return ancestorStyle->getPropertyValue(CSSPropertyBackgroundColor);
         }
     }
 
     if (propertyID == CSSPropertyFontSize) {
-        RefPtr<CSSValue> cssValue = selectionStyle->getPropertyCSSValue(CSSPropertyFontSize);
+        RefPtr<CSSValue> cssValue = selectionStyle->style()->getPropertyCSSValue(CSSPropertyFontSize);
         if (cssValue->isPrimitiveValue()) {
             value = String::number(legacyFontSizeFromCSSValue(m_frame->document(), static_cast<CSSPrimitiveValue*>(cssValue.get()),
-                shouldUseFixedFontDefaultSize, AlwaysUseLegacyFontSize));
+                selectionStyle->shouldUseFixedDefaultFontSize(), AlwaysUseLegacyFontSize));
         }
     }
 
@@ -3176,7 +3173,7 @@ void Editor::computeAndSetTypingStyle(CSSStyleDeclaration* style, EditAction edi
     m_frame->selection()->setTypingStyle(typingStyle);
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> Editor::selectionComputedStyle(bool& shouldUseFixedFontDefaultSize) const
+PassRefPtr<EditingStyle> Editor::selectionStartStyle() const
 {
     if (m_frame->selection()->isNone())
         return 0;
@@ -3196,19 +3193,9 @@ PassRefPtr<CSSMutableStyleDeclaration> Editor::selectionComputedStyle(bool& shou
     if (!element)
         return 0;
 
-    RefPtr<Element> styleElement = element;
-    RefPtr<CSSComputedStyleDeclaration> style = computedStyle(styleElement.release());
-    RefPtr<CSSMutableStyleDeclaration> mutableStyle = style->copy();
-    shouldUseFixedFontDefaultSize = style->useFixedFontDefaultSize();
-
-    if (!m_frame->selection()->typingStyle())
-        return mutableStyle;
-
-    RefPtr<EditingStyle> typingStyle = m_frame->selection()->typingStyle()->copy();
-    typingStyle->prepareToApplyAt(position);
-    mutableStyle->merge(typingStyle->style());
-
-    return mutableStyle;
+    RefPtr<EditingStyle> style = EditingStyle::create(element, EditingStyle::AllProperties);
+    style->mergeTypingStyle(m_frame->document());
+    return style;
 }
 
 void Editor::textFieldDidBeginEditing(Element* e)

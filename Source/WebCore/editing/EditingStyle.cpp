@@ -402,13 +402,18 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
     }
 }
 
-PassRefPtr<EditingStyle> editingStyleIncludingTypingStyle(const Position& position)
+void EditingStyle::mergeTypingStyle(Document* document)
 {
-    RefPtr<EditingStyle> editingStyle = EditingStyle::create(position);
-    RefPtr<EditingStyle> typingStyle = position.anchorNode()->document()->frame()->selection()->typingStyle();
-    if (typingStyle && typingStyle->style())
-        editingStyle->style()->merge(copyEditingProperties(typingStyle->style()).get());
-    return editingStyle;
+    ASSERT(document);
+
+    RefPtr<EditingStyle> typingStyle = document->frame()->selection()->typingStyle();
+    if (!typingStyle || !typingStyle->style() || typingStyle == this)
+        return;
+
+    if (m_mutableStyle)
+        m_mutableStyle->merge(typingStyle->style(), true);
+    else
+        m_mutableStyle = typingStyle->style()->copy();
 }
     
 }

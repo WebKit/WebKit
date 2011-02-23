@@ -42,6 +42,7 @@ namespace WebCore {
 class CSSStyleDeclaration;
 class CSSComputedStyleDeclaration;
 class CSSMutableStyleDeclaration;
+class Document;
 class Node;
 class Position;
 class RenderStyle;
@@ -96,9 +97,11 @@ public:
         return conflictsWithInlineStyleOfElement(element, &conflictingProperties);
     }
     void prepareToApplyAt(const Position&, ShouldPreserveWritingDirection = DoNotPreserveWritingDirection);
+    void mergeTypingStyle(Document*);
 
     float fontSizeDelta() const { return m_fontSizeDelta; }
     bool hasFontSizeDelta() const { return m_fontSizeDelta != NoFontDelta; }
+    bool shouldUseFixedDefaultFontSize() const { return m_shouldUseFixedDefaultFontSize; }
 
 private:
     EditingStyle();
@@ -116,8 +119,6 @@ private:
     float m_fontSizeDelta;
 };
 
-PassRefPtr<EditingStyle> editingStyleIncludingTypingStyle(const Position&);
-    
 } // namespace WebCore
 
 #endif // EditingStyle_h

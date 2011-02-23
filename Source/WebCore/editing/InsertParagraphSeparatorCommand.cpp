@@ -78,8 +78,10 @@ void InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion(const Positi
     VisiblePosition visiblePos(pos, VP_DEFAULT_AFFINITY);
     if (!isStartOfParagraph(visiblePos) && !isEndOfParagraph(visiblePos))
         return;
-    
-    m_style = editingStyleIncludingTypingStyle(pos);
+
+    ASSERT(pos.isNotNull());
+    m_style = EditingStyle::create(pos);
+    m_style->mergeTypingStyle(pos.anchorNode()->document());
 }
 
 void InsertParagraphSeparatorCommand::applyStyleAfterInsertion(Node* originalEnclosingBlock)

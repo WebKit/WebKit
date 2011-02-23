@@ -365,7 +365,7 @@ public:
     bool markedTextMatchesAreHighlighted() const;
     void setMarkedTextMatchesAreHighlighted(bool);
 
-    PassRefPtr<CSSMutableStyleDeclaration> selectionComputedStyle(bool& shouldUseFixedFontDefaultSize) const;
+    PassRefPtr<EditingStyle> selectionStartStyle() const;
 
     void textFieldDidBeginEditing(Element*);
     void textFieldDidEndEditing(Element*);
