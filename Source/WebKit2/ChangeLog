@@ -1,3 +1,11 @@
+2011-02-23  Enrica Casucci  <enrica@apple.com>
+
+        Reverting an unintentional change that was part of http://trac.webkit.org/changeset/79494.
+        Unreviewed.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::interceptEditingKeyboardEvent):
+
 2011-02-18  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adam Roben.
