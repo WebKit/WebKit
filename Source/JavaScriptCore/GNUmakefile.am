@@ -441,7 +441,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/Decoder.h \
 	Source/JavaScriptCore/wtf/Deque.h \
 	Source/JavaScriptCore/wtf/DisallowCType.h \
-	Source/JavaScriptCore/wtf/DoublyLinkedList.h \
 	Source/JavaScriptCore/wtf/dtoa.cpp \
 	Source/JavaScriptCore/wtf/dtoa.h \
 	Source/JavaScriptCore/wtf/Encoder.h \

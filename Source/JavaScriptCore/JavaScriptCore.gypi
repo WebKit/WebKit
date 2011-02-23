@@ -371,7 +371,6 @@
             'wtf/DecimalNumber.cpp',
             'wtf/Deque.h',
             'wtf/DisallowCType.h',
-            'wtf/DoublyLinkedList.h',
             'wtf/dtoa.cpp',
             'wtf/dtoa.h',
             'wtf/FastAllocBase.h',

@@ -16,7 +16,6 @@ SET(WTF_HEADERS
     Decoder.h
     Deque.h
     DisallowCType.h
-    DoublyLinkedList.h
     Encoder.h
     FastAllocBase.h
     FastMalloc.h
