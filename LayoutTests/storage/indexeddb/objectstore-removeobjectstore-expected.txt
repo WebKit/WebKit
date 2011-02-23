@@ -3,7 +3,7 @@ Test IndexedDB's webkitIDBObjectStore.deleteObjectStore().
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('name')
+webkitIndexedDB.open('objectstore-removeobjectstore')
 db = event.target.result
 db.setVersion('new version')
 trans = event.target.result

@@ -16,7 +16,7 @@ if (window.layoutTestController)
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('name')");
+    request = evalAndLog("webkitIndexedDB.open('database-quota')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -40,7 +40,7 @@ function setVersionSuccess()
     deleteAllObjectStores(db);
 
     shouldBeEqualToString("db.version", "new version");
-    shouldBeEqualToString("db.name", "name");
+    shouldBeEqualToString("db.name", "database-quota");
     shouldBe("db.objectStoreNames", "[]");
     shouldBe("db.objectStoreNames.length", "0");
     shouldBe("db.objectStoreNames.contains('')", "false");

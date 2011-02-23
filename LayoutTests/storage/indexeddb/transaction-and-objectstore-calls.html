@@ -19,7 +19,7 @@ function test()
     shouldBeTrue("'webkitIndexedDB' in window");
     shouldBeFalse("webkitIndexedDB == null");
 
-    request = evalAndLog("webkitIndexedDB.open('name', 'description')");
+    request = evalAndLog("webkitIndexedDB.open('transaction-and-objectstore-calls', 'description')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }

@@ -7,7 +7,7 @@ PASS 'webkitIndexedDB' in window is true
 PASS webkitIndexedDB == null is false
 PASS 'webkitIDBCursor' in window is true
 PASS webkitIDBCursor == null is false
-webkitIndexedDB.open('name')
+webkitIndexedDB.open('basics')
 PASS 'result' in request is true
 Expecting exception from request.result
 PASS Exception was thrown.

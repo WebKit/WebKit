@@ -70,7 +70,7 @@ function start()
     // "addEventListener" if you'd like, but I'm using the simpler = syntax. Only one or the other
     // will fire. You're guaranteed that they won't fire until control is returned from JavaScript
     // execution.
-    var request = indexedDB.open("myDB");
+    var request = indexedDB.open("tutorialDB");
     request.onsuccess = onOpen;
     request.onerror = unexpectedError;
 }

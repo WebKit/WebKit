@@ -3,7 +3,7 @@ Test the basics of IndexedDB's IDBObjectStore.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('name')
+webkitIndexedDB.open('objectstore-basics')
 openSuccess():
 db = event.target.result
 db.setVersion('new version')

@@ -27,7 +27,7 @@ function test()
 
 function openDBConnection()
 {
-    request = evalAndLog("IndexedDB.open('some db name')");
+    request = evalAndLog("IndexedDB.open('set-version-blocked')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }

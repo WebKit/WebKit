@@ -16,7 +16,7 @@ if (window.layoutTestController)
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('name')");
+    request = evalAndLog("webkitIndexedDB.open('objectstore-basics')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }

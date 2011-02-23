@@ -16,7 +16,7 @@ if (window.layoutTestController)
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('name')");
+    request = evalAndLog("webkitIndexedDB.open('queued-commands')");
     request.onsuccess = setVersion;
     request.onerror = unexpectedErrorCallback;
 }

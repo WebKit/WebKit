@@ -19,7 +19,7 @@ function test()
     shouldBeTrue("'webkitIndexedDB' in window");
     shouldBeFalse("webkitIndexedDB == null");
 
-    request = evalAndLog("webkitIndexedDB.open('some db name')");
+    request = evalAndLog("webkitIndexedDB.open('transaction-after-close')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -68,7 +68,7 @@ function firstTransactionComplete()
 
     debug("")
     debug("verify that we can reopen the db after calling close")
-    request = evalAndLog("webkitIndexedDB.open('some db name')");
+    request = evalAndLog("webkitIndexedDB.open('transaction-after-close')");
     request.onsuccess = onSecondOpen
     request.onerror = unexpectedErrorCallback;
 }

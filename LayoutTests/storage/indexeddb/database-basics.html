@@ -16,7 +16,7 @@ if (window.layoutTestController)
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('name')");
+    request = evalAndLog("webkitIndexedDB.open('database-basics')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -55,7 +55,7 @@ function setVersionAgain()
 function createObjectStore()
 {
     shouldBeEqualToString("db.version", "version b");
-    shouldBeEqualToString("db.name", "name");
+    shouldBeEqualToString("db.name", "database-basics");
     shouldBe("db.objectStoreNames", "[]");
     shouldBe("db.objectStoreNames.length", "0");
     shouldBe("db.objectStoreNames.contains('')", "false");
@@ -91,7 +91,7 @@ function testSetVersionAbort()
 function createAnotherObjectStore()
 {
     shouldBeEqualToString("db.version", "version c");
-    shouldBeEqualToString("db.name", "name");
+    shouldBeEqualToString("db.name", "database-basics");
     checkObjectStore();
 
     objectStore = evalAndLog('db.createObjectStore("test456")');

@@ -3,7 +3,7 @@ Test IndexedDB's create and removeObjectStore
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('name')
+webkitIndexedDB.open('create-and-remove-object-store')
 openSuccess():
 db = event.target.result
 Trying create

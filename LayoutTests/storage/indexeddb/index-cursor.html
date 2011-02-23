@@ -29,7 +29,7 @@ window.testData = [
  
 function openDatabase()
 {
-    result = evalAndLog("webkitIndexedDB.open('someDB')");
+    result = evalAndLog("webkitIndexedDB.open('index-cursor')");
     result.onsuccess = setVersion;
     result.onerror = unexpectedErrorCallback;
 }

@@ -27,7 +27,7 @@ function test()
 
 function openDBConnection()
 {
-    result = evalAndLog("IndexedDB.open('some db name')");
+    result = evalAndLog("IndexedDB.open('set-version-queue')");
     result.onsuccess = openSuccess;
     result.onerror = unexpectedErrorCallback;
 }

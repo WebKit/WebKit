@@ -18,7 +18,7 @@ test();
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('name')");
+    request = evalAndLog("webkitIndexedDB.open('cursor-update')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }

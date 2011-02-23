@@ -22,7 +22,7 @@ function test()
     shouldBeTrue("'webkitIDBCursor' in window");
     shouldBeFalse("webkitIDBCursor == null");
 
-    request = evalAndLog("webkitIndexedDB.open('name')");
+    request = evalAndLog("webkitIndexedDB.open('basics')");
     shouldBeTrue("'result' in request");
     evalAndExpectException("request.result", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
     shouldBeTrue("'errorCode' in request");

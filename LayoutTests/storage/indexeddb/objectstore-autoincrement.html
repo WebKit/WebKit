@@ -16,7 +16,7 @@ if (window.layoutTestController)
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('Address Book')");
+    request = evalAndLog("webkitIndexedDB.open('objectstore-autoincrement')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }

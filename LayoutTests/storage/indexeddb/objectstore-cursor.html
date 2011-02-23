@@ -28,7 +28,7 @@ window.testData = [
  
 function openDatabase()
 {
-    request = evalAndLog("webkitIndexedDB.open('someDB')");
+    request = evalAndLog("webkitIndexedDB.open('objectstore-cursor')");
     request.onsuccess = setVersion;
     request.onerror = unexpectedErrorCallback;
 }

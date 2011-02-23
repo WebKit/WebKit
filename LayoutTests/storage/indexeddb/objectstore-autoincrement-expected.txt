@@ -3,7 +3,7 @@ Test IndexedDB's IDBObjectStore auto-increment feature.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('Address Book')
+webkitIndexedDB.open('objectstore-autoincrement')
 openSuccess():
 db = event.target.result
 db.setVersion('new version')

@@ -3,7 +3,7 @@ Verify that queuing up several commands works (and they all fire).
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('name')
+webkitIndexedDB.open('queued-commands')
 db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():

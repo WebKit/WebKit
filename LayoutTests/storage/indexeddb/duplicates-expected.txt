@@ -3,7 +3,7 @@ Verify that you can put the same data in 2 different databases without uniquenes
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('name')
+webkitIndexedDB.open('duplicates-1')
 db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
@@ -47,7 +47,7 @@ PASS event.target.result.value.x is "value2"
 PASS event.target.result.value.y is "zzz2"
 event.target.result.continue()
 PASS event.target.result === null is true
-webkitIndexedDB.open('name2')
+webkitIndexedDB.open('duplicates-2')
 db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():

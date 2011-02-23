@@ -16,7 +16,7 @@ if (window.layoutTestController)
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('name')");
+    request = evalAndLog("webkitIndexedDB.open('data-corruption')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }

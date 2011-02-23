@@ -84,7 +84,7 @@ function openSuccess()
  
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('name')");
+    request = evalAndLog("webkitIndexedDB.open('open-cursor')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }

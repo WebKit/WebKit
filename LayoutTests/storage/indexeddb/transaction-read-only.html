@@ -19,7 +19,7 @@ function test()
     shouldBeTrue("'webkitIndexedDB' in window");
     shouldBeFalse("webkitIndexedDB == null");
 
-    request = evalAndLog("webkitIndexedDB.open('name')");
+    request = evalAndLog("webkitIndexedDB.open('transaction-read-only')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }

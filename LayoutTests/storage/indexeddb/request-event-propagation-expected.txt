@@ -3,7 +3,7 @@ Test event propogation on IDBRequest.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('name')
+webkitIndexedDB.open('request-event-propagation')
 db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():

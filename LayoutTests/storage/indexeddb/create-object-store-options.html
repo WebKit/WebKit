@@ -19,7 +19,7 @@ function test()
     shouldBeTrue("'webkitIndexedDB' in window");
     shouldBeFalse("webkitIndexedDB == null");
 
-    request = evalAndLog("webkitIndexedDB.open('name', 'description')");
+    request = evalAndLog("webkitIndexedDB.open('create-object-store-options', 'description')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }

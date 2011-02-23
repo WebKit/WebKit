@@ -3,7 +3,7 @@ Test that data inserted into IndexedDB does not get corrupted on disk.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('name')
+webkitIndexedDB.open('data-corruption')
 openSuccess():
 db = event.target.result
 db.setVersion('new version')

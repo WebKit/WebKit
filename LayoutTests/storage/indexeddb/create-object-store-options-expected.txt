@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS 'webkitIndexedDB' in window is true
 PASS webkitIndexedDB == null is false
-webkitIndexedDB.open('name', 'description')
+webkitIndexedDB.open('create-object-store-options', 'description')
 db = event.target.result
 request = db.setVersion('version 1')
 Deleted all object stores.

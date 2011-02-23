@@ -18,9 +18,9 @@ testCount = 0;
 function test()
 {
     if (testCount++ == 0)
-        request = evalAndLog("webkitIndexedDB.open('name')");
+        request = evalAndLog("webkitIndexedDB.open('duplicates-1')");
     else
-        request = evalAndLog("webkitIndexedDB.open('name2')");
+        request = evalAndLog("webkitIndexedDB.open('duplicates-2')");
     request.onsuccess = setVersion;
     request.onerror = unexpectedErrorCallback;
 }
