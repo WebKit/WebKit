@@ -1,3 +1,14 @@
+2011-02-23 Patrick Gansterer <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [WINCE] Get rid of TemporaryLinkStubs.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=54825
+
+        * CMakeListsWinCE.txt:
+        * platform/network/win/CookieStorageWin.cpp: Copied from platform/wince/TemporaryLinkStubs.cpp.
+        * platform/wince/TemporaryLinkStubs.cpp: Removed.
+
 2011-02-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

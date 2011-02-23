@@ -23,8 +23,8 @@
  */
 
 #include "config.h"
-
 #include "CookieStorage.h"
+
 #include "NotImplemented.h"
 
 namespace WebCore {

@@ -70,9 +70,9 @@ LIST(APPEND WebCore_SOURCES
     platform/wince/KURLWince.cpp
     platform/wince/MIMETypeRegistryWince.cpp
     platform/wince/SharedTimerWince.cpp
-    platform/wince/TemporaryLinkStubs.cpp
 
     platform/network/win/CookieJarWin.cpp
+    platform/network/win/CookieStorageWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp
     platform/network/win/ProxyServerWin.cpp
     platform/network/win/ResourceHandleWin.cpp
