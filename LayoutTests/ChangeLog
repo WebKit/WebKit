@@ -1,3 +1,12 @@
+2011-02-22  Anna Cavender  <annacc@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Fix for media/video-replaces-poster.html.  The test was failing because it assumes the results of a seek will be immediately available, when in fact the seek is asynchronous.  I did not remove the line in test-expectations because rebaselines for many (all?) platforms will likely be needed after this patch lands.  See also, http://code.google.com/p/chromium/issues/detail?id=60244
+        https://bugs.webkit.org/show_bug.cgi?id=54910
+
+        * media/video-replaces-poster.html:
+
 2011-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed; second attempt to land Windows 7 expected failure results for new tests from r79318 

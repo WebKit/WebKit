@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="video-paint-test.js"></script>
     <script src="../http/tests/media/media-file.js"></script>
     <script type="text/javascript" charset="utf-8">
+        if (window.layoutTestController)
+            layoutTestController.waitUntilDone();
         function doSetup()
         {
             var video = document.getElementsByTagName('video')[0];
@@ -12,7 +13,10 @@
                 video.pause();
                 video.currentTime = 1;  // so the snapshot always has the same frame.
             });
-            init();
+            video.addEventListener("seeked", function() {
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            });
         }
         window.addEventListener('load', doSetup, false);
     </script>
