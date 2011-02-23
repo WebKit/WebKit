@@ -3618,3 +3618,4 @@ BUGWK54736 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-6.
 BUGMORRITA MAC : fast/text/international/pop-up-button-text-alignment-and-direction.html = TEXT
 BUGMORRITA MAC : svg/zoom/page/zoom-hixie-mixed-008.xml = TEXT
 BUGMORRITA MAC : svg/zoom/text/zoom-hixie-mixed-008.xml = TEXT
+BUGWK54736 MAC : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
