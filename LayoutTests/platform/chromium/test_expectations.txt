@@ -2811,7 +2811,6 @@ BUGCR66085 LINUX : fast/dom/Geolocation/disconnected-frame-permission-denied.htm
 BUGCR66085 WIN LINUX : fast/events/5056619.html = PASS TIMEOUT
 BUGCR66085 LINUX : fast/js/cyclic-proto.html = PASS TIMEOUT
 BUGCR66085 WIN LINUX : fast/replaced/css-content-and-webkit-mask-box-image-crash.html = PASS TIMEOUT
-BUGCR72026 LINUX : http/tests/media/video-cancel-load.html = PASS TIMEOUT
 BUGCR66085 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
 
 // Flaky failures

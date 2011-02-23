@@ -1,3 +1,12 @@
+2011-02-22  Ami Fischman  <fischman@chromium.org>
+
+        Reviewed by Peter Kasting.
+
+        Remove no-longer-necessary test expectation (LINUX video-cancel-load)
+        https://bugs.webkit.org/show_bug.cgi?id=55003
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-22  Andrew Wilson  <atwilson@chromium.org>
 
         Reverted r79034 because the baselines were landed in the wrong directory (should be in chromium-mac-leopard). Unreviewed.
