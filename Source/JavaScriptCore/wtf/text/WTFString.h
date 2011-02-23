@@ -31,7 +31,7 @@
 #include <objc/objc.h>
 #endif
 
-#if PLATFORM(CF)
+#if USE(CF)
 typedef const struct __CFString * CFStringRef;
 #endif
 
@@ -289,7 +289,7 @@ public:
     operator UnspecifiedBoolTypeA() const;
     operator UnspecifiedBoolTypeB() const;
 
-#if PLATFORM(CF)
+#if USE(CF)
     String(CFStringRef);
     CFStringRef createCFString() const;
 #endif

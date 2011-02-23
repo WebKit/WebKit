@@ -1,3 +1,15 @@
+2011-02-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Rename PLATFORM(CF) to USE(CF)
+        https://bugs.webkit.org/show_bug.cgi?id=53540
+
+        * UIProcess/WebBackForwardList.h:
+        * UIProcess/WebPageProxy.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::formatLocalizedString):
+
 2011-02-23  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.

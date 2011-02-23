@@ -23,7 +23,7 @@
 
 #include <wtf/text/AtomicString.h>
 
-#if PLATFORM(CF)
+#if USE(CF)
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -41,14 +41,14 @@ PopupMenu* SearchPopupMenuWin::popupMenu()
 
 bool SearchPopupMenuWin::enabled()
 {
-#if PLATFORM(CF)
+#if USE(CF)
     return true;
 #else
     return false;
 #endif
 }
 
-#if PLATFORM(CF)
+#if USE(CF)
 static RetainPtr<CFStringRef> autosaveKey(const String& name)
 {
     String key = "com.apple.WebKit.searchField:" + name;
@@ -61,7 +61,7 @@ void SearchPopupMenuWin::saveRecentSearches(const AtomicString& name, const Vect
     if (name.isEmpty())
         return;
 
-#if PLATFORM(CF)
+#if USE(CF)
     RetainPtr<CFMutableArrayRef> items;
 
     size_t size = searchItems.size();
@@ -83,7 +83,7 @@ void SearchPopupMenuWin::loadRecentSearches(const AtomicString& name, Vector<Str
     if (name.isEmpty())
         return;
 
-#if PLATFORM(CF)
+#if USE(CF)
     searchItems.clear();
     RetainPtr<CFArrayRef> items(AdoptCF, reinterpret_cast<CFArrayRef>(CFPreferencesCopyAppValue(autosaveKey(name).get(), kCFPreferencesCurrentApplication)));
 

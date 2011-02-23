@@ -960,7 +960,7 @@ void WebPageProxy::terminateProcess()
     process()->terminate();
 }
 
-#if !PLATFORM(CF) || defined(BUILDING_QT__)
+#if !USE(CF) || defined(BUILDING_QT__)
 PassRefPtr<WebData> WebPageProxy::sessionStateData(WebPageProxySessionStateFilterCallback, void* context) const
 {
     // FIXME: Return session state data for saving Page state.

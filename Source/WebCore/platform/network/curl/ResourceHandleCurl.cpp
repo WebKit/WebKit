@@ -34,7 +34,7 @@
 #include "ResourceHandleManager.h"
 #include "SharedBuffer.h"
 
-#if PLATFORM(WIN) && PLATFORM(CF)
+#if PLATFORM(WIN) && USE(CF)
 #include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>
 #endif
@@ -124,7 +124,7 @@ bool ResourceHandle::supportsBufferedData()
     return false;
 }
 
-#if PLATFORM(WIN) && PLATFORM(CF)
+#if PLATFORM(WIN) && USE(CF)
 static HashSet<String>& allowsAnyHTTPSCertificateHosts()
 {
     static HashSet<String> hosts;
@@ -138,7 +138,7 @@ void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
 }
 #endif
 
-#if PLATFORM(WIN) && PLATFORM(CF)
+#if PLATFORM(WIN) && USE(CF)
 // FIXME:  The CFDataRef will need to be something else when
 // building without 
 static HashMap<String, RetainPtr<CFDataRef> >& clientCerts()

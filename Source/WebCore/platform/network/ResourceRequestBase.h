@@ -240,7 +240,7 @@ namespace WebCore {
     
     unsigned initializeMaximumHTTPConnectionCountPerHost();
 
-#if PLATFORM(CF)
+#if USE(CF)
     bool isHTTPPipeliningEnabled();
     bool shouldForceHTTPPipeliningPriorityHigh();
 #else

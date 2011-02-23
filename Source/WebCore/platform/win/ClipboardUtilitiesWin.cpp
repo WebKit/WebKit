@@ -38,14 +38,14 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
-#if PLATFORM(CF)
+#if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/RetainPtr.h>
 #endif
 
 namespace WebCore {
 
-#if PLATFORM(CF)
+#if USE(CF)
 FORMATETC* cfHDropFormat()
 {
     static FORMATETC urlFormat = {CF_HDROP, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
@@ -83,7 +83,7 @@ static bool getDataMapItem(const DragDataMap* dataObject, FORMATETC* format, Str
 static bool getWebLocData(IDataObject* dataObject, String& url, String* title) 
 {
     bool succeeded = false;
-#if PLATFORM(CF)
+#if USE(CF)
     WCHAR filename[MAX_PATH];
     WCHAR urlBuffer[INTERNET_MAX_URL_LENGTH];
 
@@ -123,7 +123,7 @@ exit:
 
 static bool getWebLocData(const DragDataMap* dataObject, String& url, String* title) 
 {
-#if PLATFORM(CF)
+#if USE(CF)
     WCHAR filename[MAX_PATH];
     WCHAR urlBuffer[INTERNET_MAX_URL_LENGTH];
 
@@ -390,7 +390,7 @@ String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filena
         ReleaseStgMedium(&store);
         success = true;
     }
-#if PLATFORM(CF)
+#if USE(CF)
     else if (filenamePolicy == DragData::ConvertFilenames) {
         if (SUCCEEDED(dataObject->GetData(filenameWFormat(), &store))) {
             // file using unicode
@@ -434,7 +434,7 @@ String getURL(const DragDataMap* data, DragData::FilenameConversionPolicy filena
         return extractURL(url, title);
     if (getDataMapItem(data, urlFormat(), url))
         return extractURL(url, title);
-#if PLATFORM(CF)
+#if USE(CF)
     if (filenamePolicy != DragData::ConvertFilenames)
         return url;
 
@@ -654,7 +654,7 @@ void getUtf8Data(IDataObject* data, FORMATETC* format, Vector<String>& dataStrin
     ReleaseStgMedium(&store);
 }
 
-#if PLATFORM(CF)
+#if USE(CF)
 void getCFData(IDataObject* data, FORMATETC* format, Vector<String>& dataStrings)
 {
     STGMEDIUM store;
@@ -710,7 +710,7 @@ void setUtf8Data(IDataObject* data, FORMATETC* format, const Vector<String>& dat
     ::GlobalFree(medium.hGlobal);
 }
 
-#if PLATFORM(CF)
+#if USE(CF)
 void setCFData(IDataObject* data, FORMATETC* format, const Vector<String>& dataStrings)
 {
     STGMEDIUM medium = {0};
@@ -738,7 +738,7 @@ static const ClipboardFormatMap& getClipboardMap()
         formatMap.add(texthtmlFormat()->cfFormat, new ClipboardDataItem(texthtmlFormat(), getStringData<UChar>, setUCharData));
         formatMap.add(plainTextFormat()->cfFormat,  new ClipboardDataItem(plainTextFormat(), getStringData<char>, setUtf8Data));
         formatMap.add(plainTextWFormat()->cfFormat,  new ClipboardDataItem(plainTextWFormat(), getStringData<UChar>, setUCharData));
-#if PLATFORM(CF)
+#if USE(CF)
         formatMap.add(cfHDropFormat()->cfFormat,  new ClipboardDataItem(cfHDropFormat(), getCFData, setCFData));
 #endif
         formatMap.add(filenameFormat()->cfFormat,  new ClipboardDataItem(filenameFormat(), getStringData<char>, setUtf8Data));

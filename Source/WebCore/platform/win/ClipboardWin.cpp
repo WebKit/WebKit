@@ -318,7 +318,7 @@ static HRESULT writeFileToDataObject(IDataObject* dataObject, HGLOBAL fileDescri
     if (FAILED(hr = dataObject->SetData(fe, &medium, TRUE)))
         goto exit;
 
-#if PLATFORM(CF)
+#if USE(CF)
     // HDROP
     if (hDropContent) {
         medium.hGlobal = hDropContent;

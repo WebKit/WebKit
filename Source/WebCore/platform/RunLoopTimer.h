@@ -56,7 +56,7 @@ public:
     virtual void fired() = 0;
 
 private:
-#if PLATFORM(CF)
+#if USE(CF)
     RetainPtr<CFRunLoopTimerRef> m_timer;
 #endif
 };

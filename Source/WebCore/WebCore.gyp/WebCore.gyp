@@ -1217,7 +1217,7 @@
             # Additional files from the WebCore Mac build that are presently
             # used in the WebCore Chromium Mac build too.
 
-            # The Mac build is PLATFORM_CF but does not use CFNetwork.
+            # The Mac build is USE(CF) but does not use CFNetwork.
             ['include', 'CF\\.cpp$'],
             ['exclude', 'network/cf/'],
 

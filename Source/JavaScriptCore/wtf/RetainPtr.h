@@ -26,7 +26,7 @@
 #include "TypeTraits.h"
 #include <algorithm>
 
-#if PLATFORM(CF)
+#if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 

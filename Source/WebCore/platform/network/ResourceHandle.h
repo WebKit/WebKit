@@ -37,7 +37,7 @@
 typedef struct _SoupSession SoupSession;
 #endif
 
-#if PLATFORM(CF)
+#if USE(CF)
 typedef const struct __CFData * CFDataRef;
 #endif
 
@@ -140,7 +140,7 @@ public:
 #if PLATFORM(WIN) && USE(CURL)
     static void setHostAllowsAnyHTTPSCertificate(const String&);
 #endif
-#if PLATFORM(WIN) && USE(CURL) && PLATFORM(CF)
+#if PLATFORM(WIN) && USE(CURL) && USE(CF)
     static void setClientCertificate(const String& host, CFDataRef);
 #endif
 
@@ -210,7 +210,7 @@ private:
 
 #if PLATFORM(MAC)
     void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff);
-#elif PLATFORM(CF)
+#elif USE(CF)
     void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff);
 #endif
 

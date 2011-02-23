@@ -35,7 +35,7 @@
 
 #if OS(WINDOWS)
 
-// Windows is first since we want to use hires timers, despite PLATFORM(CF)
+// Windows is first since we want to use hires timers, despite USE(CF)
 // being defined.
 // If defined, WIN32_LEAN_AND_MEAN disables timeBeginPeriod/timeEndPeriod.
 #undef WIN32_LEAN_AND_MEAN

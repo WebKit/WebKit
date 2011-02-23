@@ -28,7 +28,7 @@
 
 #include <wtf/Forward.h>
 
-#if PLATFORM(CF)
+#if USE(CF)
 typedef const struct __CFString * CFStringRef;
 #endif
 
@@ -51,7 +51,7 @@ namespace WebCore {
         BString(const AtomicString&);
         BString(const KURL&);
         BString(const JSC::UString&);
-#if PLATFORM(CF)
+#if USE(CF)
         BString(CFStringRef);
 #endif
         ~BString();

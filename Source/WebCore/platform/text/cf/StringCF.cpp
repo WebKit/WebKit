@@ -21,7 +21,7 @@
 #include "config.h"
 #include "PlatformString.h"
 
-#if PLATFORM(CF)
+#if USE(CF)
 
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -52,4 +52,4 @@ CFStringRef String::createCFString() const
 
 }
 
-#endif // PLATFORM(CF)
+#endif // USE(CF)

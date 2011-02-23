@@ -381,7 +381,7 @@ KURL::KURL(const CString& canonicalSpec,
         m_url.setAscii(canonicalSpec);
 }
 
-#if PLATFORM(CF)
+#if USE(CF)
 KURL::KURL(CFURLRef)
 {
     notImplemented();

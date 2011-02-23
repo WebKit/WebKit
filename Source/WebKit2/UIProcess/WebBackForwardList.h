@@ -33,7 +33,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-#if PLATFORM(CF)
+#if USE(CF)
 #include <CoreFoundation/CFDictionary.h>
 #endif
 
@@ -77,7 +77,7 @@ public:
     PassRefPtr<ImmutableArray> backListAsImmutableArrayWithLimit(unsigned limit);
     PassRefPtr<ImmutableArray> forwardListAsImmutableArrayWithLimit(unsigned limit);
 
-#if PLATFORM(CF)
+#if USE(CF)
     CFDictionaryRef createCFDictionaryRepresentation(WebPageProxy::WebPageProxySessionStateFilterCallback, void* context) const;
     bool restoreFromCFDictionaryRepresentation(CFDictionaryRef);
 #endif

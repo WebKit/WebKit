@@ -36,7 +36,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WTFThreadData.h>
 
-#if !PLATFORM(CF)
+#if !USE(CF)
 #error "This file should only be used on CF platforms."
 #endif
 

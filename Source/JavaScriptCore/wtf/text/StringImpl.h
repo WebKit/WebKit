@@ -34,7 +34,7 @@
 #include <wtf/text/StringImplBase.h>
 #include <wtf/unicode/Unicode.h>
 
-#if PLATFORM(CF)
+#if USE(CF)
 typedef const struct __CFString * CFStringRef;
 #endif
 
@@ -318,7 +318,7 @@ public:
 
     WTF::Unicode::Direction defaultWritingDirection(bool* hasStrongDirectionality = 0);
 
-#if PLATFORM(CF)
+#if USE(CF)
     CFStringRef createCFString();
 #endif
 #ifdef __OBJC__

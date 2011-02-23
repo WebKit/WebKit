@@ -32,7 +32,7 @@
 #include "MIMETypeRegistry.h"
 #include "PlatformString.h"
 
-#if PLATFORM(CF) && !PLATFORM(QT)
+#if USE(CF) && !PLATFORM(QT)
 #include "LegacyWebArchive.h"
 #endif
 
@@ -60,7 +60,7 @@ static ArchiveMIMETypesMap& archiveMIMETypes()
     if (initialized)
         return mimeTypes;
 
-#if PLATFORM(CF)
+#if USE(CF)
     mimeTypes.set("application/x-webarchive", archiveFactoryCreate<LegacyWebArchive>);
 #endif
 

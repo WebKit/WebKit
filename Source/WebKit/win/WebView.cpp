@@ -140,7 +140,7 @@
 #include <CoreGraphics/CGContext.h>
 #endif
 
-#if PLATFORM(CF)
+#if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 

@@ -38,7 +38,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(CF)
+#if USE(CF)
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -57,7 +57,7 @@ namespace WebKit {
 // type according to section 18.7/3 of the C++ N1905 standard.
 static String formatLocalizedString(String format, ...)
 {
-#if PLATFORM(CF)
+#if USE(CF)
     va_list arguments;
     va_start(arguments, format);
     RetainPtr<CFStringRef> formatCFString(AdoptCF, format.createCFString());

@@ -160,7 +160,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     startProfilerServerIfNeeded();
 #endif
 #if ENABLE(JIT) && ENABLE(INTERPRETER)
-#if PLATFORM(CF)
+#if USE(CF)
     CFStringRef canUseJITKey = CFStringCreateWithCString(0 , "JavaScriptCoreUseJIT", kCFStringEncodingMacRoman);
     CFBooleanRef canUseJIT = (CFBooleanRef)CFPreferencesCopyAppValue(canUseJITKey, kCFPreferencesCurrentApplication);
     if (canUseJIT) {

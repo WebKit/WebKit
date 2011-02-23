@@ -32,7 +32,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
-#if PLATFORM(CF)
+#if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
@@ -62,7 +62,7 @@ public:
     void operator()();
     void synchronize();
 
-#if PLATFORM(CF)
+#if USE(CF)
 protected:
     DefaultGCActivityCallback(Heap*, CFRunLoopRef);
     void commonConstructor(Heap*, CFRunLoopRef);

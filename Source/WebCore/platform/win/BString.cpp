@@ -31,7 +31,7 @@
 #include <windows.h>
 #include <wtf/text/AtomicString.h>
 
-#if PLATFORM(CF)
+#if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
@@ -92,7 +92,7 @@ BString::BString(const UString& s)
         m_bstr = SysAllocStringLen(s.characters(), s.length());
 }
 
-#if PLATFORM(CF)
+#if USE(CF)
 BString::BString(CFStringRef cfstr)
     : m_bstr(0)
 {

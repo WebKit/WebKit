@@ -21,7 +21,7 @@
 #include "config.h"
 #include <wtf/text/StringImpl.h>
 
-#if PLATFORM(CF)
+#if USE(CF)
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/MainThread.h>
@@ -159,4 +159,4 @@ CFStringRef StringImpl::createCFString()
 
 }
 
-#endif // PLATFORM(CF)
+#endif // USE(CF)

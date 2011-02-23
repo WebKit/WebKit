@@ -1,3 +1,48 @@
+2011-02-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Rename PLATFORM(CF) to USE(CF)
+        https://bugs.webkit.org/show_bug.cgi?id=53540
+
+        * WebCore.gyp/WebCore.gyp:
+        * editing/SmartReplace.cpp:
+        * editing/SmartReplaceICU.cpp:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveResponse):
+        (WebCore::MainResourceLoader::didReceiveData):
+        (WebCore::MainResourceLoader::didFinishLoading):
+        (WebCore::MainResourceLoader::didFail):
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::archiveMIMETypes):
+        * platform/FileSystem.h:
+        * platform/KURL.h:
+        * platform/KURLGoogle.cpp:
+        * platform/RunLoopTimer.h:
+        * platform/SharedBuffer.cpp:
+        * platform/SharedBuffer.h:
+        * platform/UUID.cpp:
+        (WebCore::createCanonicalUUIDString):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::certificatePath):
+        * platform/text/cf/StringCF.cpp:
+        * platform/text/cf/StringImplCF.cpp:
+        * platform/win/BString.cpp:
+        * platform/win/BString.h:
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::getWebLocData):
+        (WebCore::getURL):
+        (WebCore::getClipboardData):
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::writeFileToDataObject):
+        * platform/win/SearchPopupMenuWin.cpp:
+        (WebCore::SearchPopupMenuWin::enabled):
+        (WebCore::SearchPopupMenuWin::saveRecentSearches):
+        (WebCore::SearchPopupMenuWin::loadRecentSearches):
+
 2011-02-23  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ojan Vafai.

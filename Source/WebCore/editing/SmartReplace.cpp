@@ -29,7 +29,7 @@
 #include "config.h"
 #include "SmartReplace.h"
 
-#if !PLATFORM(CF) && !USE(ICU_UNICODE)
+#if !USE(CF) && !USE(ICU_UNICODE)
 
 namespace WebCore {
 
@@ -40,4 +40,4 @@ bool isCharacterSmartReplaceExempt(UChar32 c, bool isPreviousCharacter)
 
 }
 
-#endif // !PLATFORM(CF)
+#endif // !USE(CF)

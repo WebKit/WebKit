@@ -35,7 +35,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(CF)
+#if USE(CF)
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -47,7 +47,7 @@
 #endif
 #endif
 
-#if PLATFORM(CF) || (PLATFORM(QT) && defined(Q_WS_MAC))
+#if USE(CF) || (PLATFORM(QT) && defined(Q_WS_MAC))
 typedef struct __CFBundle* CFBundleRef;
 typedef const struct __CFData* CFDataRef;
 #endif
@@ -84,7 +84,7 @@ typedef void* PlatformModule;
 #endif
 #elif PLATFORM(GTK)
 typedef GModule* PlatformModule;
-#elif PLATFORM(CF)
+#elif USE(CF)
 typedef CFBundleRef PlatformModule;
 #else
 typedef void* PlatformModule;
@@ -189,7 +189,7 @@ bool unloadModule(PlatformModule);
 // Encode a string for use within a file name.
 String encodeForFileName(const String&);
 
-#if PLATFORM(CF)
+#if USE(CF)
 RetainPtr<CFURLRef> pathAsURL(const String&);
 #endif
 

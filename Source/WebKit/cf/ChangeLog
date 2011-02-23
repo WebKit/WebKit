@@ -1,3 +1,12 @@
+2011-02-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Rename PLATFORM(CF) to USE(CF)
+        https://bugs.webkit.org/show_bug.cgi?id=53540
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
 2011-02-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

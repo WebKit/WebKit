@@ -30,7 +30,7 @@
 #include "config.h"
 #include "SmartReplace.h"
 
-#if !PLATFORM(CF) && USE(ICU_UNICODE)
+#if !USE(CF) && USE(ICU_UNICODE)
 #include "PlatformString.h"
 #include <unicode/uset.h>
 #include <wtf/Assertions.h>
@@ -97,4 +97,4 @@ bool isCharacterSmartReplaceExempt(UChar32 c, bool isPreviousCharacter)
 
 }
 
-#endif // !PLATFORM(CF) && USE(ICU_UNICODE)
+#endif // !USE(CF) && USE(ICU_UNICODE)

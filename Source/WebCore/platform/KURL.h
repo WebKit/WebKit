@@ -30,7 +30,7 @@
 #include "URLString.h"
 #include <wtf/HashMap.h>
 
-#if PLATFORM(CF)
+#if USE(CF)
 typedef const struct __CFURL* CFURLRef;
 #endif
 
@@ -190,7 +190,7 @@ public:
     unsigned pathAfterLastSlash() const;
     operator const String&() const { return string(); }
 
-#if PLATFORM(CF)
+#if USE(CF)
     KURL(CFURLRef);
     CFURLRef createCFURL() const;
 #endif

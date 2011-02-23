@@ -44,7 +44,7 @@
 
 #include <errno.h>
 #include <stdio.h>
-#if PLATFORM(CF)
+#if USE(CF)
 #include <wtf/RetainPtr.h>
 #endif
 #include <wtf/Threading.h>
@@ -66,7 +66,7 @@ static const bool ignoreSSLErrors = getenv("WEBKIT_IGNORE_SSL_ERRORS");
 
 static CString certificatePath()
 {
-#if PLATFORM(CF)
+#if USE(CF)
     CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
     if (webKitBundle) {
         RetainPtr<CFURLRef> certURLRef(AdoptCF, CFBundleCopyResourceURL(webKitBundle, CFSTR("cacert"), CFSTR("pem"), CFSTR("certificates")));

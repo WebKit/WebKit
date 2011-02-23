@@ -130,7 +130,7 @@ enum LocaleDateTimeFormat { LocaleDateAndTime, LocaleDate, LocaleTime };
 #if PLATFORM(MAC)
 
 // FIXME: Since this is superior to the strftime-based version, why limit this to PLATFORM(MAC)?
-// Instead we should consider using this whenever PLATFORM(CF) is true.
+// Instead we should consider using this whenever USE(CF) is true.
 
 static CFDateFormatterStyle styleFromArgString(const UString& string, CFDateFormatterStyle defaultStyle)
 {

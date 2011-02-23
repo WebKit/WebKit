@@ -32,7 +32,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(CF)
+#if USE(CF)
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -69,7 +69,7 @@ public:
     NSData *createNSData();
     static PassRefPtr<SharedBuffer> wrapNSData(NSData *data);
 #endif
-#if PLATFORM(CF)
+#if USE(CF)
     CFDataRef createCFData();
     static PassRefPtr<SharedBuffer> wrapCFData(CFDataRef);
 #endif
@@ -130,7 +130,7 @@ private:
     mutable Vector<char> m_buffer;
     mutable Vector<char*> m_segments;
     OwnPtr<PurgeableBuffer> m_purgeableBuffer;
-#if PLATFORM(CF)
+#if USE(CF)
     SharedBuffer(CFDataRef);
     RetainPtr<CFDataRef> m_cfData;
 #endif

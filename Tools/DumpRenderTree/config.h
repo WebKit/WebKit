@@ -41,7 +41,7 @@
 #endif
 
 #if PLATFORM(MAC)
-#define WTF_PLATFORM_CF 1
+#define WTF_USE_CF 1
 
 #if !defined(MAC_OS_X_VERSION_10_5) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
 #define BUILDING_ON_TIGER 1
@@ -53,7 +53,7 @@
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(WIN)
-#define WTF_PLATFORM_CF 1 
+#define WTF_USE_CF 1 
 #if defined(WIN_CAIRO)
 #define WTF_PLATFORM_CAIRO 1
 #define WTF_USE_CURL 1

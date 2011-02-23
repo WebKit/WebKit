@@ -59,7 +59,7 @@ Collator::Collator(const char* locale)
 
 PassOwnPtr<Collator> Collator::userDefault()
 {
-#if OS(DARWIN) && PLATFORM(CF)
+#if OS(DARWIN) && USE(CF)
     // Mac OS X doesn't set UNIX locale to match user-selected one, so ICU default doesn't work.
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !OS(IOS)
     RetainPtr<CFLocaleRef> currentLocale(AdoptCF, CFLocaleCopyCurrent());

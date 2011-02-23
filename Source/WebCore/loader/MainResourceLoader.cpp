@@ -359,7 +359,7 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
 
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
-#if !PLATFORM(CF)
+#if !USE(CF)
     ASSERT(shouldLoadAsEmptyDocument(r.url()) || !defersLoading());
 #endif
 
@@ -426,7 +426,7 @@ void MainResourceLoader::didReceiveData(const char* data, int length, long long 
 
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
-#if !PLATFORM(CF)
+#if !USE(CF)
     ASSERT(!defersLoading());
 #endif
  
@@ -447,7 +447,7 @@ void MainResourceLoader::didFinishLoading(double finishTime)
 {
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
-#if !PLATFORM(CF)
+#if !USE(CF)
     ASSERT(shouldLoadAsEmptyDocument(frameLoader()->activeDocumentLoader()->url()) || !defersLoading());
 #endif
     
@@ -478,7 +478,7 @@ void MainResourceLoader::didFail(const ResourceError& error)
 
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
-#if !PLATFORM(CF)
+#if !USE(CF)
     ASSERT(!defersLoading());
 #endif
     
