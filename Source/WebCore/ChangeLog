@@ -1,3 +1,25 @@
+2011-02-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Make clear float lineboxes resilient against overflows.        
+        https://bugs.webkit.org/show_bug.cgi?id=54995
+
+        We try to dirty everthing in block range if we have a negative
+        logical bottom, or if our logical bottom is less than our logical
+        top, or if our logical top is equal to INT_MAX. Plus, we also dirty
+        a linebox if its block logical height is less than zero.
+        Tests: fast/overflow/overflow-height-float-not-removed-crash2.html
+               fast/overflow/overflow-height-float-not-removed-crash3.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeFloatingObject):
+        (WebCore::RenderBlock::markLinesDirtyInBlockRange):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection): remove the hack
+        added in r69735. we don't need this anymore since we are making the
+        underlying float dirty logic resilient.
+
 2011-02-22  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

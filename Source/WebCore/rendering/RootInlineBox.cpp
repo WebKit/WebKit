@@ -268,10 +268,6 @@ int RootInlineBox::alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAn
 
     maxHeight = max(0, maxHeight);
 
-    // Detect integer overflow.
-    if (heightOfBlock > numeric_limits<int>::max() - maxHeight)
-        return numeric_limits<int>::max();
-
     return heightOfBlock + maxHeight;
 }
 

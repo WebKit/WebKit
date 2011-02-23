@@ -3102,10 +3102,15 @@ void RenderBlock::removeFloatingObject(RenderBox* o)
                     int logicalTop = logicalTopForFloat(it.current());
                     int logicalBottom = logicalBottomForFloat(it.current());
                     
-                    // Special-case zero- and less-than-zero-height floats: those don't touch
-                    // the line that they're on, but it still needs to be dirtied. This is
-                    // accomplished by pretending they have a height of 1.
-                    logicalBottom = max(logicalBottom, logicalTop == numeric_limits<int>::max() ? logicalTop : logicalTop + 1);
+                    // Fix for https://bugs.webkit.org/show_bug.cgi?id=54995.
+                    if (logicalBottom < 0 || logicalBottom < logicalTop || logicalTop == numeric_limits<int>::max())
+                        logicalBottom = numeric_limits<int>::max();
+                    else {
+                        // Special-case zero- and less-than-zero-height floats: those don't touch
+                        // the line that they're on, but it still needs to be dirtied. This is
+                        // accomplished by pretending they have a height of 1.
+                        logicalBottom = max(logicalBottom, logicalTop + 1);
+                    }
                     markLinesDirtyInBlockRange(0, logicalBottom);
                 }
                 m_floatingObjects->removeRef(it.current());
@@ -3472,7 +3477,7 @@ void RenderBlock::markLinesDirtyInBlockRange(int logicalTop, int logicalBottom, 
         lowestDirtyLine = lowestDirtyLine->prevRootBox();
     }
 
-    while (afterLowest && afterLowest != highest && afterLowest->blockLogicalHeight() >= logicalTop) {
+    while (afterLowest && afterLowest != highest && (afterLowest->blockLogicalHeight() >= logicalTop || afterLowest->blockLogicalHeight() < 0)) {
         afterLowest->markDirty();
         afterLowest = afterLowest->prevRootBox();
     }

@@ -1,3 +1,18 @@
+2011-02-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Rename a layouttest for conformity. Tests that we do not crash
+        when trying to overflow the logical height of a root inline box.
+        https://bugs.webkit.org/show_bug.cgi?id=54995
+
+        * fast/overflow/overflow-block-logical-height-crash-expected.txt: Removed.
+        * fast/overflow/overflow-block-logical-height-crash.html: Removed.
+        * fast/overflow/overflow-height-float-not-removed-crash2-expected.txt: Added.
+        * fast/overflow/overflow-height-float-not-removed-crash2.html: Added.
+        * fast/overflow/overflow-height-float-not-removed-crash3-expected.txt: Added.
+        * fast/overflow/overflow-height-float-not-removed-crash3.html: Added.
+
 2011-02-23  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.
