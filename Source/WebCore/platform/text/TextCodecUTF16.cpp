@@ -109,8 +109,7 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool
             sawError = true;
             if (!stopOnError)
                 *destination++ = replacementCharacter;
-        } else {
-            ASSERT(!m_haveBufferedByte);
+        } else if (!m_haveBufferedByte) {
             m_haveBufferedByte = true;
             m_bufferedByte = source[0];
         }

@@ -1,3 +1,14 @@
+2011-02-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix crash seen in one of the regression tests.
+
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::TextCodecUTF16::decode): Handle case where we did not decode any new data,
+        we were not told to flush, and we had a buffered byte. The assertion here was incorrect,
+        and the correct thing to do is nothing.
+
 2011-02-23  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Reviewed by James Robinson.
