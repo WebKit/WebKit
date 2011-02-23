@@ -30,7 +30,6 @@
 
 #include <InterfaceDefs.h>
 
-
 namespace WebCore {
 
 Color::Color(const rgb_color& color)
@@ -44,11 +43,4 @@ Color::operator rgb_color() const
     return make_color(red(), green(), blue(), alpha());
 }
 
-
-Color focusRingColor()
-{
-    return Color(keyboard_navigation_color());
-}
-
 } // namespace WebCore
-

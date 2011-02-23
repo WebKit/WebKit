@@ -87,7 +87,6 @@ LIST(APPEND WebCore_SOURCES
     platform/graphics/win/IntRectWin.cpp
     platform/graphics/win/IntSizeWin.cpp
 
-    platform/graphics/wince/ColorWince.cpp
     platform/graphics/wince/FontCacheWince.cpp
     platform/graphics/wince/FontCustomPlatformData.cpp
     platform/graphics/wince/FontPlatformData.cpp

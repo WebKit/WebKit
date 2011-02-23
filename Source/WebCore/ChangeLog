@@ -1,3 +1,14 @@
+2011-02-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove obsolete focusRingColor functions
+        https://bugs.webkit.org/show_bug.cgi?id=54824
+
+        * CMakeListsWinCE.txt:
+        * platform/graphics/haiku/ColorHaiku.cpp:
+        * platform/graphics/wince/ColorWinCE.cpp: Removed.
+
 2011-02-22  Jia Pu  <jpu@apple.com>
 
         Reviewed by Dan Bernstein.
