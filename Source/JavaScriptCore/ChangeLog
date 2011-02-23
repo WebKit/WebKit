@@ -1,3 +1,13 @@
+2011-02-23  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r79428.
+        http://trac.webkit.org/changeset/79428
+        https://bugs.webkit.org/show_bug.cgi?id=54714
+
+        Does not work in the Chromium sandbox
+
+        * JavaScriptCore.exp:
+
 2011-02-23  Adam Roben  <aroben@apple.com>
 
         Fix an off-by-one error in JSC::appendSourceToError

@@ -44,8 +44,8 @@
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
-#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MD5.h>
+#include <wtf/RandomNumber.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
@@ -92,39 +92,24 @@ static String trimConsoleMessage(const char* p, size_t len)
     return s;
 }
 
-static uint32_t randomNumberLessThan(uint32_t n)
-{
-    if (!n)
-        return 0;
-    if (n == std::numeric_limits<uint32_t>::max())
-        return cryptographicallyRandomNumber();
-    uint32_t max = std::numeric_limits<uint32_t>::max() - (std::numeric_limits<uint32_t>::max() % n);
-    ASSERT(!(max % n));
-    uint32_t v;
-    do {
-        v = cryptographicallyRandomNumber();
-    } while (v >= max);
-    return v % n;
-}
-
 static void generateSecWebSocketKey(uint32_t& number, String& key)
 {
-    uint32_t space = randomNumberLessThan(12) + 1;
+    uint32_t space = static_cast<uint32_t>(randomNumber() * 12) + 1;
     uint32_t max = 4294967295U / space;
-    number = randomNumberLessThan(max);
+    number = static_cast<uint32_t>(randomNumber() * max);
     uint32_t product = number * space;
 
     String s = String::number(product);
-    int n = randomNumberLessThan(12) + 1;
+    int n = static_cast<int>(randomNumber() * 12) + 1;
     DEFINE_STATIC_LOCAL(String, randomChars, (randomCharacterInSecWebSocketKey));
     for (int i = 0; i < n; i++) {
-        int pos = randomNumberLessThan(s.length() + 1);
-        int chpos = randomNumberLessThan(randomChars.length());
+        int pos = static_cast<int>(randomNumber() * (s.length() + 1));
+        int chpos = static_cast<int>(randomNumber() * randomChars.length());
         s.insert(randomChars.substring(chpos, 1), pos);
     }
     DEFINE_STATIC_LOCAL(String, spaceChar, (" "));
     for (uint32_t i = 0; i < space; i++) {
-        int pos = randomNumberLessThan(s.length() - 1) + 1;
+        int pos = static_cast<int>(randomNumber() * (s.length() - 1)) + 1;
         s.insert(spaceChar, pos);
     }
     ASSERT(s[0] != ' ');
@@ -134,7 +119,8 @@ static void generateSecWebSocketKey(uint32_t& number, String& key)
 
 static void generateKey3(unsigned char key3[8])
 {
-    cryptographicallyRandomValues(key3, 8);
+    for (int i = 0; i < 8; i++)
+        key3[i] = randomNumber() * 256;
 }
 
 static void setChallengeNumber(unsigned char* buf, uint32_t number)
