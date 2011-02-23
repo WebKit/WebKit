@@ -52,6 +52,7 @@ public:
 
     // Notifications from weak pointers.
     void removeIDBDatabaseBackend(const String& uniqueIdentifier);
+    void addIDBBackingStore(const String& uniqueIdentifier, IDBBackingStore*);
     void removeIDBBackingStore(const String& uniqueIdentifier);
 
     virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize);

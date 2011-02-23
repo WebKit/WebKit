@@ -30,13 +30,10 @@
 #include "IDBFactoryBackendImpl.h"
 
 #include "DOMStringList.h"
-#include "FileSystem.h"
 #include "IDBBackingStore.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
 #include "IDBTransactionCoordinator.h"
-#include "SQLiteStatement.h"
-#include "SQLiteTransaction.h"
 #include "SecurityOrigin.h"
 #include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>
@@ -45,11 +42,11 @@
 
 namespace WebCore {
 
-IDBFactoryBackendImpl::IDBFactoryBackendImpl() 
+IDBFactoryBackendImpl::IDBFactoryBackendImpl()
     : m_transactionCoordinator(IDBTransactionCoordinator::create())
 {
 }
- 
+
 IDBFactoryBackendImpl::~IDBFactoryBackendImpl()
 {
 }
@@ -60,151 +57,16 @@ void IDBFactoryBackendImpl::removeIDBDatabaseBackend(const String& uniqueIdentif
     m_databaseBackendMap.remove(uniqueIdentifier);
 }
 
+void IDBFactoryBackendImpl::addIDBBackingStore(const String& uniqueIdentifier, IDBBackingStore* backingStore)
+{
+    ASSERT(!m_backingStoreMap.contains(uniqueIdentifier));
+    m_backingStoreMap.set(uniqueIdentifier, backingStore);
+}
+
 void IDBFactoryBackendImpl::removeIDBBackingStore(const String& uniqueIdentifier)
 {
     ASSERT(m_backingStoreMap.contains(uniqueIdentifier));
     m_backingStoreMap.remove(uniqueIdentifier);
-}
-
-static PassRefPtr<IDBBackingStore> openSQLiteDatabase(SecurityOrigin* securityOrigin, const String& pathBase, int64_t maximumSize, const String& fileIdentifier, IDBFactoryBackendImpl* factory)
-{
-    String path = ":memory:";
-    if (!pathBase.isEmpty()) {
-        if (!makeAllDirectories(pathBase)) {
-            // FIXME: Is there any other thing we could possibly do to recover at this point? If so, do it rather than just erroring out.
-            LOG_ERROR("Unabled to create LocalStorage database path %s", pathBase.utf8().data());
-            return 0;
-        }
-
-        path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb");
-    }
-
-    RefPtr<IDBBackingStore> backingStore = IDBBackingStore::create(fileIdentifier, factory);
-    if (!backingStore->db().open(path)) {
-        // FIXME: Is there any other thing we could possibly do to recover at this point? If so, do it rather than just erroring out.
-        LOG_ERROR("Failed to open database file %s for IndexedDB", path.utf8().data());
-        return 0;
-    }
-
-    // FIXME: Error checking?
-    backingStore->db().setMaximumSize(maximumSize);
-    backingStore->db().turnOnIncrementalAutoVacuum();
-
-    return backingStore.release();
-}
-
-static bool runCommands(SQLiteDatabase& sqliteDatabase, const char** commands, size_t numberOfCommands)
-{
-    SQLiteTransaction transaction(sqliteDatabase, false);
-    transaction.begin();
-    for (size_t i = 0; i < numberOfCommands; ++i) {
-        if (!sqliteDatabase.executeCommand(commands[i])) {
-            LOG_ERROR("Failed to run the following command for IndexedDB: %s", commands[i]);
-            return false;
-        }
-    }
-    transaction.commit();
-    return true;
-}
-
-static bool createTables(SQLiteDatabase& sqliteDatabase)
-{
-    if (sqliteDatabase.tableExists("Databases"))
-        return true;
-    static const char* commands[] = {
-        "CREATE TABLE Databases (id INTEGER PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL, version TEXT NOT NULL)",
-        "CREATE UNIQUE INDEX Databases_name ON Databases(name)",
-
-        "CREATE TABLE ObjectStores (id INTEGER PRIMARY KEY, name TEXT NOT NULL, keyPath TEXT, doAutoIncrement INTEGER NOT NULL, databaseId INTEGER NOT NULL REFERENCES Databases(id))",
-        "CREATE UNIQUE INDEX ObjectStores_composit ON ObjectStores(databaseId, name)",
-
-        "CREATE TABLE Indexes (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), name TEXT NOT NULL, keyPath TEXT, isUnique INTEGER NOT NULL)",
-        "CREATE UNIQUE INDEX Indexes_composit ON Indexes(objectStoreId, name)",
-
-        "CREATE TABLE ObjectStoreData (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), keyString TEXT, keyDate INTEGER, keyNumber INTEGER, value TEXT NOT NULL)",
-        "CREATE UNIQUE INDEX ObjectStoreData_composit ON ObjectStoreData(keyString, keyDate, keyNumber, objectStoreId)",
-
-        "CREATE TABLE IndexData (id INTEGER PRIMARY KEY, indexId INTEGER NOT NULL REFERENCES Indexes(id), keyString TEXT, keyDate INTEGER, keyNumber INTEGER, objectStoreDataId INTEGER NOT NULL REFERENCES ObjectStoreData(id))",
-        "CREATE INDEX IndexData_composit ON IndexData(keyString, keyDate, keyNumber, indexId)",
-        "CREATE INDEX IndexData_objectStoreDataId ON IndexData(objectStoreDataId)",
-        "CREATE INDEX IndexData_indexId ON IndexData(indexId)",
-        };
-
-    return runCommands(sqliteDatabase, commands, sizeof(commands) / sizeof(commands[0]));
-}
-
-static bool createMetaDataTable(SQLiteDatabase& sqliteDatabase)
-{
-    static const char* commands[] = {
-        "CREATE TABLE MetaData (name TEXT PRIMARY KEY, value NONE)",
-        "INSERT INTO MetaData VALUES ('version', 1)",
-    };
-
-    return runCommands(sqliteDatabase, commands, sizeof(commands) / sizeof(commands[0]));
-}
-
-static bool getDatabaseVersion(SQLiteDatabase& sqliteDatabase, int* databaseVersion)
-{
-    SQLiteStatement query(sqliteDatabase, "SELECT value FROM MetaData WHERE name = 'version'");
-    if (query.prepare() != SQLResultOk || query.step() != SQLResultRow)
-        return false;
-
-    *databaseVersion = query.getColumnInt(0);
-    return query.finalize() == SQLResultOk;
-}
-
-static bool migrateDatabase(SQLiteDatabase& sqliteDatabase)
-{
-    if (!sqliteDatabase.tableExists("MetaData")) {
-        if (!createMetaDataTable(sqliteDatabase))
-            return false;
-    }
-
-    int databaseVersion;
-    if (!getDatabaseVersion(sqliteDatabase, &databaseVersion))
-        return false;
-
-    if (databaseVersion == 1) {
-        static const char* commands[] = {
-            "DROP TABLE IF EXISTS ObjectStoreData2",
-            "CREATE TABLE ObjectStoreData2 (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), keyString TEXT, keyDate REAL, keyNumber REAL, value TEXT NOT NULL)",
-            "INSERT INTO ObjectStoreData2 SELECT * FROM ObjectStoreData",
-            "DROP TABLE ObjectStoreData", // This depends on SQLite not enforcing referential consistency.
-            "ALTER TABLE ObjectStoreData2 RENAME TO ObjectStoreData",
-            "CREATE UNIQUE INDEX ObjectStoreData_composit ON ObjectStoreData(keyString, keyDate, keyNumber, objectStoreId)",
-            "DROP TABLE IF EXISTS IndexData2", // This depends on SQLite not enforcing referential consistency.
-            "CREATE TABLE IndexData2 (id INTEGER PRIMARY KEY, indexId INTEGER NOT NULL REFERENCES Indexes(id), keyString TEXT, keyDate REAL, keyNumber REAL, objectStoreDataId INTEGER NOT NULL REFERENCES ObjectStoreData(id))",
-            "INSERT INTO IndexData2 SELECT * FROM IndexData",
-            "DROP TABLE IndexData",
-            "ALTER TABLE IndexData2 RENAME TO IndexData",
-            "CREATE INDEX IndexData_composit ON IndexData(keyString, keyDate, keyNumber, indexId)",
-            "CREATE INDEX IndexData_objectStoreDataId ON IndexData(objectStoreDataId)",
-            "CREATE INDEX IndexData_indexId ON IndexData(indexId)",
-            "UPDATE MetaData SET value = 2 WHERE name = 'version'",
-        };
-
-        if (!runCommands(sqliteDatabase, commands, sizeof(commands) / sizeof(commands[0])))
-            return false;
-
-        databaseVersion = 2;
-    }
-
-    if (databaseVersion == 2) {
-        // We need to make the ObjectStoreData.value be a BLOB instead of TEXT.
-        static const char* commands[] = {
-            "DROP TABLE IF EXISTS ObjectStoreData", // This drops associated indices.
-            "CREATE TABLE ObjectStoreData (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), keyString TEXT, keyDate REAL, keyNumber REAL, value BLOB NOT NULL)",
-            "CREATE UNIQUE INDEX ObjectStoreData_composit ON ObjectStoreData(keyString, keyDate, keyNumber, objectStoreId)",
-            "UPDATE MetaData SET value = 3 WHERE name = 'version'",
-        };
-
-        if (!runCommands(sqliteDatabase, commands, sizeof(commands) / sizeof(commands[0])))
-            return false;
-
-        databaseVersion = 3;
-    }
-
-    return true;
 }
 
 void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir, int64_t maximumSize)
@@ -225,14 +87,11 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
     if (it2 != m_backingStoreMap.end())
         backingStore = it2->second;
     else {
-        backingStore = openSQLiteDatabase(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
-
-        if (!backingStore || !createTables(backingStore->db()) || !migrateDatabase(backingStore->db())) {
+        backingStore = IDBBackingStore::open(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
+        if (!backingStore) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
-            m_backingStoreMap.set(fileIdentifier, 0);
             return;
         }
-        m_backingStoreMap.set(fileIdentifier, backingStore.get());
     }
 
     RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, backingStore.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);

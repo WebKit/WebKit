@@ -28,7 +28,13 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "FileSystem.h"
 #include "IDBFactoryBackendImpl.h"
+#include "IDBKey.h"
+#include "SQLiteDatabase.h"
+#include "SQLiteStatement.h"
+#include "SQLiteTransaction.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 
@@ -36,11 +42,477 @@ IDBBackingStore::IDBBackingStore(String identifier, IDBFactoryBackendImpl* facto
     : m_identifier(identifier)
     , m_factory(factory)
 {
+    m_factory->addIDBBackingStore(identifier, this);
 }
 
 IDBBackingStore::~IDBBackingStore()
 {
     m_factory->removeIDBBackingStore(m_identifier);
+}
+
+static bool runCommands(SQLiteDatabase& sqliteDatabase, const char** commands, size_t numberOfCommands)
+{
+    SQLiteTransaction transaction(sqliteDatabase, false);
+    transaction.begin();
+    for (size_t i = 0; i < numberOfCommands; ++i) {
+        if (!sqliteDatabase.executeCommand(commands[i])) {
+            LOG_ERROR("Failed to run the following command for IndexedDB: %s", commands[i]);
+            return false;
+        }
+    }
+    transaction.commit();
+    return true;
+}
+
+static bool createTables(SQLiteDatabase& sqliteDatabase)
+{
+    if (sqliteDatabase.tableExists("Databases"))
+        return true;
+    static const char* commands[] = {
+        "CREATE TABLE Databases (id INTEGER PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL, version TEXT NOT NULL)",
+        "CREATE UNIQUE INDEX Databases_name ON Databases(name)",
+
+        "CREATE TABLE ObjectStores (id INTEGER PRIMARY KEY, name TEXT NOT NULL, keyPath TEXT, doAutoIncrement INTEGER NOT NULL, databaseId INTEGER NOT NULL REFERENCES Databases(id))",
+        "CREATE UNIQUE INDEX ObjectStores_composit ON ObjectStores(databaseId, name)",
+
+        "CREATE TABLE Indexes (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), name TEXT NOT NULL, keyPath TEXT, isUnique INTEGER NOT NULL)",
+        "CREATE UNIQUE INDEX Indexes_composit ON Indexes(objectStoreId, name)",
+
+        "CREATE TABLE ObjectStoreData (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), keyString TEXT, keyDate INTEGER, keyNumber INTEGER, value TEXT NOT NULL)",
+        "CREATE UNIQUE INDEX ObjectStoreData_composit ON ObjectStoreData(keyString, keyDate, keyNumber, objectStoreId)",
+
+        "CREATE TABLE IndexData (id INTEGER PRIMARY KEY, indexId INTEGER NOT NULL REFERENCES Indexes(id), keyString TEXT, keyDate INTEGER, keyNumber INTEGER, objectStoreDataId INTEGER NOT NULL REFERENCES ObjectStoreData(id))",
+        "CREATE INDEX IndexData_composit ON IndexData(keyString, keyDate, keyNumber, indexId)",
+        "CREATE INDEX IndexData_objectStoreDataId ON IndexData(objectStoreDataId)",
+        "CREATE INDEX IndexData_indexId ON IndexData(indexId)",
+        };
+
+    return runCommands(sqliteDatabase, commands, sizeof(commands) / sizeof(commands[0]));
+}
+
+static bool createMetaDataTable(SQLiteDatabase& sqliteDatabase)
+{
+    static const char* commands[] = {
+        "CREATE TABLE MetaData (name TEXT PRIMARY KEY, value NONE)",
+        "INSERT INTO MetaData VALUES ('version', 1)",
+    };
+
+    return runCommands(sqliteDatabase, commands, sizeof(commands) / sizeof(commands[0]));
+}
+
+static bool getDatabaseSchemaVersion(SQLiteDatabase& sqliteDatabase, int* databaseVersion)
+{
+    SQLiteStatement query(sqliteDatabase, "SELECT value FROM MetaData WHERE name = 'version'");
+    if (query.prepare() != SQLResultOk || query.step() != SQLResultRow)
+        return false;
+
+    *databaseVersion = query.getColumnInt(0);
+    return query.finalize() == SQLResultOk;
+}
+
+static bool migrateDatabase(SQLiteDatabase& sqliteDatabase)
+{
+    if (!sqliteDatabase.tableExists("MetaData")) {
+        if (!createMetaDataTable(sqliteDatabase))
+            return false;
+    }
+
+    int databaseVersion;
+    if (!getDatabaseSchemaVersion(sqliteDatabase, &databaseVersion))
+        return false;
+
+    if (databaseVersion == 1) {
+        static const char* commands[] = {
+            "DROP TABLE IF EXISTS ObjectStoreData2",
+            "CREATE TABLE ObjectStoreData2 (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), keyString TEXT, keyDate REAL, keyNumber REAL, value TEXT NOT NULL)",
+            "INSERT INTO ObjectStoreData2 SELECT * FROM ObjectStoreData",
+            "DROP TABLE ObjectStoreData", // This depends on SQLite not enforcing referential consistency.
+            "ALTER TABLE ObjectStoreData2 RENAME TO ObjectStoreData",
+            "CREATE UNIQUE INDEX ObjectStoreData_composit ON ObjectStoreData(keyString, keyDate, keyNumber, objectStoreId)",
+            "DROP TABLE IF EXISTS IndexData2", // This depends on SQLite not enforcing referential consistency.
+            "CREATE TABLE IndexData2 (id INTEGER PRIMARY KEY, indexId INTEGER NOT NULL REFERENCES Indexes(id), keyString TEXT, keyDate REAL, keyNumber REAL, objectStoreDataId INTEGER NOT NULL REFERENCES ObjectStoreData(id))",
+            "INSERT INTO IndexData2 SELECT * FROM IndexData",
+            "DROP TABLE IndexData",
+            "ALTER TABLE IndexData2 RENAME TO IndexData",
+            "CREATE INDEX IndexData_composit ON IndexData(keyString, keyDate, keyNumber, indexId)",
+            "CREATE INDEX IndexData_objectStoreDataId ON IndexData(objectStoreDataId)",
+            "CREATE INDEX IndexData_indexId ON IndexData(indexId)",
+            "UPDATE MetaData SET value = 2 WHERE name = 'version'",
+        };
+
+        if (!runCommands(sqliteDatabase, commands, sizeof(commands) / sizeof(commands[0])))
+            return false;
+
+        databaseVersion = 2;
+    }
+
+    if (databaseVersion == 2) {
+        // We need to make the ObjectStoreData.value be a BLOB instead of TEXT.
+        static const char* commands[] = {
+            "DROP TABLE IF EXISTS ObjectStoreData", // This drops associated indices.
+            "CREATE TABLE ObjectStoreData (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), keyString TEXT, keyDate REAL, keyNumber REAL, value BLOB NOT NULL)",
+            "CREATE UNIQUE INDEX ObjectStoreData_composit ON ObjectStoreData(keyString, keyDate, keyNumber, objectStoreId)",
+            "UPDATE MetaData SET value = 3 WHERE name = 'version'",
+        };
+
+        if (!runCommands(sqliteDatabase, commands, sizeof(commands) / sizeof(commands[0])))
+            return false;
+
+        databaseVersion = 3;
+    }
+
+    return true;
+}
+
+PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin, const String& pathBase, int64_t maximumSize, const String& fileIdentifier, IDBFactoryBackendImpl* factory)
+{
+    RefPtr<IDBBackingStore> backingStore(adoptRef(new IDBBackingStore(fileIdentifier, factory)));
+
+    String path = ":memory:";
+    if (!pathBase.isEmpty()) {
+        if (!makeAllDirectories(pathBase)) {
+            // FIXME: Is there any other thing we could possibly do to recover at this point? If so, do it rather than just erroring out.
+            LOG_ERROR("Unabled to create LocalStorage database path %s", pathBase.utf8().data());
+            return 0;
+        }
+        path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb");
+    }
+
+    if (!backingStore->m_db.open(path)) {
+        // FIXME: Is there any other thing we could possibly do to recover at this point? If so, do it rather than just erroring out.
+        LOG_ERROR("Failed to open database file %s for IndexedDB", path.utf8().data());
+        return 0;
+    }
+
+    // FIXME: Error checking?
+    backingStore->m_db.setMaximumSize(maximumSize);
+    backingStore->m_db.turnOnIncrementalAutoVacuum();
+
+    if (!createTables(backingStore->m_db))
+        return 0;
+    if (!migrateDatabase(backingStore->m_db))
+        return 0;
+
+    return backingStore.release();
+}
+
+bool IDBBackingStore::extractIDBDatabaseMetaData(const String& name, String& foundVersion, int64_t& foundId)
+{
+    SQLiteStatement databaseQuery(m_db, "SELECT id, version FROM Databases WHERE name = ?");
+    if (databaseQuery.prepare() != SQLResultOk) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    databaseQuery.bindText(1, name);
+    if (databaseQuery.step() != SQLResultRow)
+        return false;
+
+    foundId = databaseQuery.getColumnInt64(0);
+    foundVersion = databaseQuery.getColumnText(1);
+
+    if (databaseQuery.step() == SQLResultRow)
+        ASSERT_NOT_REACHED();
+    return true;
+}
+
+bool IDBBackingStore::setIDBDatabaseMetaData(const String& name, const String& version, int64_t& rowId, bool invalidRowId)
+{
+    ASSERT(!name.isNull());
+    ASSERT(!version.isNull());
+
+    String sql = invalidRowId ? "INSERT INTO Databases (name, description, version) VALUES (?, '', ?)" : "UPDATE Databases SET name = ?, version = ? WHERE id = ?";
+    SQLiteStatement query(m_db, sql);
+    if (query.prepare() != SQLResultOk) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    query.bindText(1, name);
+    query.bindText(2, version);
+    if (!invalidRowId)
+        query.bindInt64(3, rowId);
+
+    if (query.step() != SQLResultDone)
+        return false;
+
+    if (invalidRowId)
+        rowId = m_db.lastInsertRowID();
+
+    return true;
+}
+
+void IDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<String>& foundKeyPaths, Vector<bool>& foundAutoIncrementFlags)
+{
+    SQLiteStatement query(m_db, "SELECT id, name, keyPath, doAutoIncrement FROM ObjectStores WHERE databaseId = ?");
+    bool ok = query.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+
+    ASSERT(foundIds.isEmpty());
+    ASSERT(foundNames.isEmpty());
+    ASSERT(foundKeyPaths.isEmpty());
+    ASSERT(foundAutoIncrementFlags.isEmpty());
+
+    query.bindInt64(1, databaseId);
+
+    while (query.step() == SQLResultRow) {
+        foundIds.append(query.getColumnInt64(0));
+        foundNames.append(query.getColumnText(1));
+        foundKeyPaths.append(query.getColumnText(2));
+        foundAutoIncrementFlags.append(!!query.getColumnInt(3));
+    }
+}
+
+bool IDBBackingStore::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, int64_t databaseId, int64_t& assignedObjectStoreId)
+{
+    SQLiteStatement query(m_db, "INSERT INTO ObjectStores (name, keyPath, doAutoIncrement, databaseId) VALUES (?, ?, ?, ?)");
+    if (query.prepare() != SQLResultOk)
+        return false;
+
+    query.bindText(1, name);
+    query.bindText(2, keyPath);
+    query.bindInt(3, static_cast<int>(autoIncrement));
+    query.bindInt64(4, databaseId);
+
+    if (query.step() != SQLResultDone)
+        return false;
+
+    assignedObjectStoreId = m_db.lastInsertRowID();
+    return true;
+}
+
+static void doDelete(SQLiteDatabase& db, const char* sql, int64_t id)
+{
+    SQLiteStatement deleteQuery(db, sql);
+    bool ok = deleteQuery.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
+    deleteQuery.bindInt64(1, id);
+    ok = deleteQuery.step() == SQLResultDone;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
+}
+
+void IDBBackingStore::deleteObjectStore(int64_t objectStoreId)
+{
+    doDelete(m_db, "DELETE FROM ObjectStores WHERE id = ?", objectStoreId);
+    doDelete(m_db, "DELETE FROM ObjectStoreData WHERE objectStoreId = ?", objectStoreId);
+    doDelete(m_db, "DELETE FROM IndexData WHERE indexId IN (SELECT id FROM Indexes WHERE objectStoreId = ?)", objectStoreId);
+    doDelete(m_db, "DELETE FROM Indexes WHERE objectStoreId = ?", objectStoreId);
+}
+
+static String whereSyntaxForKey(const IDBKey& key, String qualifiedTableName = "")
+{
+    switch (key.type()) {
+    case IDBKey::StringType:
+        return qualifiedTableName + "keyString = ?  AND  " + qualifiedTableName + "keyDate IS NULL  AND  " + qualifiedTableName + "keyNumber IS NULL  ";
+    case IDBKey::NumberType:
+        return qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate IS NULL  AND  " + qualifiedTableName + "keyNumber = ?  ";
+    case IDBKey::DateType:
+        return qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate = ?  AND  " + qualifiedTableName + "keyNumber IS NULL  ";
+    case IDBKey::NullType:
+        return qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate IS NULL  AND  " + qualifiedTableName + "keyNumber IS NULL  ";
+    }
+
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
+// Returns the number of items bound.
+static int bindKeyToQuery(SQLiteStatement& query, int column, const IDBKey& key)
+{
+    switch (key.type()) {
+    case IDBKey::StringType:
+        query.bindText(column, key.string());
+        return 1;
+    case IDBKey::DateType:
+        query.bindDouble(column, key.date());
+        return 1;
+    case IDBKey::NumberType:
+        query.bindDouble(column, key.number());
+        return 1;
+    case IDBKey::NullType:
+        return 0;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+String IDBBackingStore::getObjectStoreRecord(int64_t objectStoreId, const IDBKey& key)
+{
+    SQLiteStatement query(m_db, "SELECT keyString, keyDate, keyNumber, value FROM ObjectStoreData WHERE objectStoreId = ? AND " + whereSyntaxForKey(key));
+    bool ok = query.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+
+    query.bindInt64(1, objectStoreId);
+    bindKeyToQuery(query, 2, key);
+    if (query.step() != SQLResultRow)
+        return String(); // Null String means record not found.
+
+    ASSERT((key.type() == IDBKey::StringType) != query.isColumnNull(0));
+    ASSERT((key.type() == IDBKey::DateType) != query.isColumnNull(1));
+    ASSERT((key.type() == IDBKey::NumberType) != query.isColumnNull(2));
+
+    String record = query.getColumnBlobAsString(3);
+    ASSERT(query.step() != SQLResultRow);
+
+    return record;
+}
+
+static void bindKeyToQueryWithNulls(SQLiteStatement& query, int baseColumn, const IDBKey& key)
+{
+    switch (key.type()) {
+    case IDBKey::StringType:
+        query.bindText(baseColumn + 0, key.string());
+        query.bindNull(baseColumn + 1);
+        query.bindNull(baseColumn + 2);
+        break;
+    case IDBKey::DateType:
+        query.bindNull(baseColumn + 0);
+        query.bindDouble(baseColumn + 1, key.date());
+        query.bindNull(baseColumn + 2);
+        break;
+    case IDBKey::NumberType:
+        query.bindNull(baseColumn + 0);
+        query.bindNull(baseColumn + 1);
+        query.bindDouble(baseColumn + 2, key.number());
+        break;
+    case IDBKey::NullType:
+        query.bindNull(baseColumn + 0);
+        query.bindNull(baseColumn + 1);
+        query.bindNull(baseColumn + 2);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+bool IDBBackingStore::putObjectStoreRecord(int64_t objectStoreId, const IDBKey& key, const String& value, int64_t& rowId, bool invalidRowId)
+{
+    String sql = !invalidRowId ? "UPDATE ObjectStoreData SET keyString = ?, keyDate = ?, keyNumber = ?, value = ? WHERE id = ?"
+                               : "INSERT INTO ObjectStoreData (keyString, keyDate, keyNumber, value, objectStoreId) VALUES (?, ?, ?, ?, ?)";
+    SQLiteStatement query(m_db, sql);
+    if (query.prepare() != SQLResultOk)
+        return false;
+
+    bindKeyToQueryWithNulls(query, 1, key);
+    query.bindBlob(4, value);
+    if (!invalidRowId)
+        query.bindInt64(5, rowId);
+    else
+        query.bindInt64(5, objectStoreId);
+
+    if (query.step() != SQLResultDone)
+        return false;
+
+    if (invalidRowId)
+        rowId = m_db.lastInsertRowID();
+
+    return true;
+}
+
+void IDBBackingStore::clearObjectStore(int64_t objectStoreId)
+{
+    doDelete(m_db, "DELETE FROM IndexData WHERE objectStoreDataId IN (SELECT id FROM ObjectStoreData WHERE objectStoreId = ?)", objectStoreId);
+    doDelete(m_db, "DELETE FROM ObjectStoreData WHERE objectStoreId = ?", objectStoreId);
+}
+
+double IDBBackingStore::nextAutoIncrementNumber(int64_t objectStoreId)
+{
+    SQLiteStatement query(m_db, "SELECT max(keyNumber) + 1 FROM ObjectStoreData WHERE objectStoreId = ? AND keyString IS NULL AND keyDate IS NULL");
+    bool ok = query.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok);
+
+    query.bindInt64(1, objectStoreId);
+
+    if (query.step() != SQLResultRow || query.isColumnNull(0))
+        return 1;
+
+    return query.getColumnDouble(0);
+}
+
+bool IDBBackingStore::forEachObjectStoreRecord(int64_t objectStoreId, ObjectStoreRecordCallback& callback)
+{
+    SQLiteStatement query(m_db, "SELECT id, value FROM ObjectStoreData WHERE objectStoreId = ?");
+    if (query.prepare() != SQLResultOk)
+        return false;
+
+    query.bindInt64(1, objectStoreId);
+
+    while (query.step() == SQLResultRow) {
+        int64_t objectStoreDataId = query.getColumnInt64(0);
+        String value = query.getColumnBlobAsString(1);
+        if (!callback.callback(objectStoreDataId, value))
+            return false;
+    }
+
+    return true;
+}
+
+void IDBBackingStore::getIndexes(int64_t objectStoreId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<String>& foundKeyPaths, Vector<bool>& foundUniqueFlags)
+{
+    SQLiteStatement query(m_db, "SELECT id, name, keyPath, isUnique FROM Indexes WHERE objectStoreId = ?");
+    bool ok = query.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+
+    ASSERT(foundIds.isEmpty());
+    ASSERT(foundNames.isEmpty());
+    ASSERT(foundKeyPaths.isEmpty());
+    ASSERT(foundUniqueFlags.isEmpty());
+
+    query.bindInt64(1, objectStoreId);
+
+    while (query.step() == SQLResultRow) {
+        foundIds.append(query.getColumnInt64(0));
+        foundNames.append(query.getColumnText(1));
+        foundKeyPaths.append(query.getColumnText(2));
+        foundUniqueFlags.append(!!query.getColumnInt(3));
+    }
+}
+
+bool IDBBackingStore::createIndex(int64_t objectStoreId, const String& name, const String& keyPath, bool isUnique, int64_t& indexId)
+{
+    SQLiteStatement query(m_db, "INSERT INTO Indexes (objectStoreId, name, keyPath, isUnique) VALUES (?, ?, ?, ?)");
+    if (query.prepare() != SQLResultOk)
+        return false;
+
+    query.bindInt64(1, objectStoreId);
+    query.bindText(2, name);
+    query.bindText(3, keyPath);
+    query.bindInt(4, static_cast<int>(isUnique));
+
+    if (query.step() != SQLResultDone)
+        return false;
+
+    indexId = m_db.lastInsertRowID();
+    return true;
+}
+
+void IDBBackingStore::deleteIndex(int64_t indexId)
+{
+    doDelete(m_db, "DELETE FROM Indexes WHERE id = ?", indexId);
+    doDelete(m_db, "DELETE FROM IndexData WHERE indexId = ?", indexId);
+}
+
+bool IDBBackingStore::putIndexDataForRecord(int64_t indexId, const IDBKey& key, int64_t objectStoreDataId)
+{
+    SQLiteStatement query(m_db, "INSERT INTO IndexData (keyString, keyDate, keyNumber, indexId, objectStoreDataId) VALUES (?, ?, ?, ?, ?)");
+    if (query.prepare() != SQLResultOk)
+        return false;
+
+    bindKeyToQueryWithNulls(query, 1, key);
+    query.bindInt64(4, indexId);
+    query.bindInt64(5, objectStoreDataId);
+
+    return query.step() == SQLResultDone;
+}
+
+bool IDBBackingStore::deleteIndexDataForRecord(int64_t objectStoreDataId)
+{
+    SQLiteStatement query(m_db, "DELETE FROM IndexData WHERE objectStoreDataId = ?");
+    if (query.prepare() != SQLResultOk)
+        return false;
+
+    query.bindInt64(1, objectStoreDataId);
+    return query.step() == SQLResultDone;
 }
 
 } // namespace WebCore

@@ -1,3 +1,57 @@
+2011-02-23  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Move some SQL code into IDBBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=54889
+
+        The idea is to gather all the SQL logic into IDBBackingStore.
+
+        No new functionality, so no new tests.
+
+        * storage/IDBBackingStore.cpp:
+        (WebCore::IDBBackingStore::IDBBackingStore):
+        (WebCore::runCommands):
+        (WebCore::createTables):
+        (WebCore::createMetaDataTable):
+        (WebCore::getDatabaseSchemaVersion):
+        (WebCore::migrateDatabase):
+        (WebCore::IDBBackingStore::open):
+        (WebCore::IDBBackingStore::extractIDBDatabaseMetaData):
+        (WebCore::IDBBackingStore::setIDBDatabaseMetaData):
+        (WebCore::IDBBackingStore::getObjectStores):
+        (WebCore::IDBBackingStore::createObjectStore):
+        (WebCore::doDelete):
+        (WebCore::IDBBackingStore::deleteObjectStore):
+        (WebCore::whereSyntaxForKey):
+        (WebCore::bindKeyToQuery):
+        (WebCore::IDBBackingStore::getObjectStoreRecord):
+        (WebCore::bindKeyToQueryWithNulls):
+        (WebCore::IDBBackingStore::putObjectStoreRecord):
+        (WebCore::IDBBackingStore::deleteIndexDataForRecord):
+        (WebCore::IDBBackingStore::putIndexDataForRecord):
+        (WebCore::IDBBackingStore::createIndex):
+        (WebCore::IDBBackingStore::deleteIndex):
+        (WebCore::IDBBackingStore::clearObjectStore):
+        * storage/IDBBackingStore.h:
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::createObjectStoreInternal):
+        (WebCore::IDBDatabaseBackendImpl::deleteObjectStoreInternal):
+        (WebCore::IDBDatabaseBackendImpl::setVersionInternal):
+        (WebCore::IDBDatabaseBackendImpl::loadObjectStores):
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::IDBFactoryBackendImpl):
+        (WebCore::IDBFactoryBackendImpl::addIDBBackingStore):
+        (WebCore::IDBFactoryBackendImpl::removeIDBBackingStore):
+        (WebCore::IDBFactoryBackendImpl::open):
+        * storage/IDBFactoryBackendImpl.h:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::getInternal):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::clearInternal):
+        (WebCore::populateIndex):
+        (WebCore::IDBObjectStoreBackendImpl::createIndexInternal):
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndexInternal):
+
 2011-02-23  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.
