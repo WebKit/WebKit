@@ -69,6 +69,8 @@ namespace JSC {
         void clearMarks();
         size_t markCount();
 
+        size_t cellSize();
+
         size_t size();
         size_t capacity();
 
@@ -173,9 +175,14 @@ namespace JSC {
         return m_marks.count();
     }
 
+    inline size_t MarkedBlock::cellSize()
+    {
+        return m_atomsPerCell * atomSize;
+    }
+
     inline size_t MarkedBlock::size()
     {
-        return markCount() * m_atomsPerCell * atomSize;
+        return markCount() * cellSize();
     }
 
     inline size_t MarkedBlock::capacity()

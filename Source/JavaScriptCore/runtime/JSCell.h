@@ -416,6 +416,17 @@ namespace JSC {
 
         return 0;
     }
+    
+    inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t)
+    {
+        return m_sizeClass;
+    }
+
+    inline void* MarkedSpace::allocate(size_t bytes)
+    {
+        SizeClass& sizeClass = sizeClassFor(bytes);
+        return allocateFromSizeClass(sizeClass);
+    }
 
 } // namespace JSC
 

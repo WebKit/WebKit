@@ -44,16 +44,6 @@ namespace JSC {
     class MarkStack;
     class WeakGCHandle;
 
-    struct CollectorHeap {
-        CollectorHeap()
-            : nextBlock(0)
-        {
-        }
-
-        MarkedBlock* nextBlock;
-        DoublyLinkedList<MarkedBlock> blockList;
-    };
-
     class MarkedSpace {
         WTF_MAKE_NONCOPYABLE(MarkedSpace);
     public:
@@ -93,12 +83,23 @@ namespace JSC {
     private:
         typedef HashSet<MarkedBlock*>::iterator BlockIterator;
 
-        NEVER_INLINE MarkedBlock* allocateBlock();
-        NEVER_INLINE void freeBlocks(DoublyLinkedList<MarkedBlock>&);
+        struct SizeClass {
+            SizeClass();
+            void reset();
+
+            MarkedBlock* nextBlock;
+            DoublyLinkedList<MarkedBlock> blockList;
+        };
+
+        MarkedBlock* allocateBlock(SizeClass&);
+        void freeBlocks(DoublyLinkedList<MarkedBlock>&);
+
+        SizeClass& sizeClassFor(size_t);
+        void* allocateFromSizeClass(SizeClass&);
 
         void clearMarks(MarkedBlock*);
 
-        CollectorHeap m_heap;
+        SizeClass m_sizeClass;
         HashSet<MarkedBlock*> m_blocks;
         size_t m_waterMark;
         size_t m_highWaterMark;
@@ -142,6 +143,16 @@ namespace JSC {
         BlockIterator end = m_blocks.end();
         for (BlockIterator it = m_blocks.begin(); it != end; ++it)
             (*it)->forEach(functor);
+    }
+    
+    inline MarkedSpace::SizeClass::SizeClass()
+        : nextBlock(0)
+    {
+    }
+
+    inline void MarkedSpace::SizeClass::reset()
+    {
+        nextBlock = blockList.head();
     }
 
 } // namespace JSC

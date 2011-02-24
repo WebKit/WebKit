@@ -43,10 +43,11 @@ void MarkedSpace::destroy()
     ASSERT(!size());
 }
 
-NEVER_INLINE MarkedBlock* MarkedSpace::allocateBlock()
+MarkedBlock* MarkedSpace::allocateBlock(SizeClass& sizeClass)
 {
     MarkedBlock* block = MarkedBlock::create(globalData(), cellSize);
-    m_heap.blockList.append(block);
+    sizeClass.blockList.append(block);
+    sizeClass.nextBlock = block;
     m_blocks.add(block);
 
     return block;
@@ -64,19 +65,17 @@ void MarkedSpace::freeBlocks(DoublyLinkedList<MarkedBlock>& blocks)
     }
 }
 
-void* MarkedSpace::allocate(size_t)
+void* MarkedSpace::allocateFromSizeClass(SizeClass& sizeClass)
 {
-    for ( ; m_heap.nextBlock; m_heap.nextBlock = m_heap.nextBlock->next()) {
-        if (void* result = m_heap.nextBlock->allocate())
+    for (MarkedBlock*& block = sizeClass.nextBlock ; block; block = block->next()) {
+        if (void* result = block->allocate())
             return result;
 
-        m_waterMark += m_heap.nextBlock->capacity();
+        m_waterMark += block->capacity();
     }
 
-    if (m_waterMark < m_highWaterMark) {
-        m_heap.nextBlock = allocateBlock();
-        return m_heap.nextBlock->allocate();
-    }
+    if (m_waterMark < m_highWaterMark)
+        return allocateBlock(sizeClass)->allocate();
 
     return 0;
 }
@@ -88,14 +87,15 @@ void MarkedSpace::shrink()
 
     BlockIterator end = m_blocks.end();
     for (BlockIterator it = m_blocks.begin(); it != end; ++it) {
-        if ((*it)->isEmpty()) {
-            m_heap.blockList.remove(*it);
-            empties.append(*it);
+        MarkedBlock* block = *it;
+        if (block->isEmpty()) {
+            SizeClass& sizeClass = sizeClassFor(block->cellSize());
+            sizeClass.blockList.remove(block);
+            sizeClass.nextBlock = sizeClass.blockList.head();
+            empties.append(block);
         }
     }
     
-    m_heap.nextBlock = m_heap.blockList.head();
-
     freeBlocks(empties);
     ASSERT(empties.isEmpty());
 }
@@ -143,7 +143,7 @@ size_t MarkedSpace::capacity() const
 
 void MarkedSpace::reset()
 {
-    m_heap.nextBlock = m_heap.blockList.head();
+    m_sizeClass.reset();
     m_waterMark = 0;
 
     BlockIterator end = m_blocks.end();
