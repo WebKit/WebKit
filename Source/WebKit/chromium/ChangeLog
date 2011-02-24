@@ -1,3 +1,13 @@
+2011-02-24  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Add missing plumbing for registerProtocolHandler in ChromeClientImpl.
+        https://bugs.webkit.org/show_bug.cgi?id=55112
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::registerProtocolHandler):
+
 2011-02-24  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r79584.

@@ -505,7 +505,7 @@ IntRect ChromeClientImpl::windowResizerRect() const
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
 void ChromeClientImpl::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title)
 {
-    notImplemented();
+    m_webView->client()->registerProtocolHandler(scheme, baseURL, url, title);
 }
 #endif
 
