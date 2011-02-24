@@ -152,11 +152,6 @@
                       "slavenames": ["szeged-linux-2"]
                     },
                     {
-                      "name": "Qt Linux ARMv5 Release", "type": "Build", "builddir": "qt-linux-armv5-release",
-                      "platform": "qt", "configuration": "release", "architectures": ["armv5"],
-                      "slavenames": ["szeged-linux-3"]
-                    },
-                    {
                       "name": "Qt Linux ARMv7 Release", "type": "Build", "builddir": "qt-linux-armv7-release",
                       "platform": "qt", "configuration": "release", "architectures": ["armv7"],
                       "slavenames": ["szeged-linux-4"]
@@ -227,7 +222,7 @@
                       "builderNames": ["Leopard Intel Release (Build)", "Leopard Intel Debug (Build)",
                                        "SnowLeopard Intel Release (Build)", "SnowLeopard Intel Leaks",
                                        "GTK Linux 32-bit Release", "GTK Linux 32-bit Debug", "GTK Linux 64-bit Debug",
-                                       "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux ARMv5 Release", "Qt Linux ARMv7 Release", 
+                                       "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux ARMv7 Release",
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug",
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
                                        "Chromium Win Release (Tests)", "Chromium Mac Release (Tests)", "Chromium Linux Release (Tests)",

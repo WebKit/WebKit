@@ -1,3 +1,16 @@
+2011-02-24  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Remove ARMv5 Release buildbot.
+
+        Remove ARMv5 Release buildbot, because there is very little difference
+        between ARMv5 and ARMv7 Release bots, and there is also very little
+        interest in ARMv5 build slave (compared to ARMv7).
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
 2011-02-22  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.
