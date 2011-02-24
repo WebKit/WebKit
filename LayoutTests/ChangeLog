@@ -1,5 +1,11 @@
 2011-02-23  James Robinson  <jamesr@chromium.org>
 
+        Update chromium expectations for fast/repaint/text-emphasis-h.html
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-23  James Robinson  <jamesr@chromium.org>
+
         Update chromium baselines and expectations.
 
         * platform/chromium-mac/fast/repaint/text-emphasis-h-expected.txt: Added.

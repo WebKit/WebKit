@@ -2851,7 +2851,7 @@ BUGCR67416 : fast/text/emphasis.html = FAIL
 BUGCR67416 : fast/text/emphasis-vertical.html = FAIL
 BUGCR67540 WIN LINUX : fast/text/emphasis-overlap.html = IMAGE+TEXT
 BUGCR67540 WIN LINUX : fast/text/emphasis-avoid-ruby.html = IMAGE
-BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-h.html = IMAGE
+BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-h.html = IMAGE+TEXT
 BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-v.html = IMAGE
 
 BUGCR67662 WIN LINUX RELEASE : http/tests/inspector/console-websocket-error.html = TEXT
