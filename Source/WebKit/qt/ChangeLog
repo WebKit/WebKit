@@ -1,3 +1,9 @@
+2011-02-24  Sam Weinig  <sam@webkit.org>
+
+        Try to fix the Qt build.
+
+        * QtWebKit.pro:
+
 2011-02-24  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

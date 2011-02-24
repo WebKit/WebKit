@@ -181,6 +181,7 @@ webkit2 {
         $$SOURCE_DIR/WebKit2/Shared/API/c/WKArray.cpp \
         $$SOURCE_DIR/WebKit2/Shared/API/c/WKCertificateInfo.cpp \
         $$SOURCE_DIR/WebKit2/Shared/API/c/WKContextMenuItem.cpp \
+        $$SOURCE_DIR/WebKit2/Shared/API/c/WKDictionary.cpp \
         $$SOURCE_DIR/WebKit2/Shared/API/c/WKGraphicsContext.cpp \
         $$SOURCE_DIR/WebKit2/Shared/API/c/WKImage.cpp \
         $$SOURCE_DIR/WebKit2/Shared/API/c/WKNumber.cpp \
