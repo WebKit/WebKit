@@ -1,3 +1,44 @@
+2011-02-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Refactor HTMLEquivalent into a hierachy of classes
+        https://bugs.webkit.org/show_bug.cgi?id=55025
+
+        Converted HTMLEquivalent into a class.  Some logic in removeImplicitlyStyledElement is
+        extracted as member functions of HTMLEquivalent and its subclasses.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::HTMLEquivalent::create): Added.
+        (WebCore::HTMLEquivalent::~HTMLEquivalent): Added.
+        (WebCore::HTMLEquivalent::matches): Returns true if the element is an equivalent, meaning that
+        the element's implicit style affects the property of this equivalence.
+        (WebCore::HTMLEquivalent::hasAttribute): Returns true if this equivalence requires attributes;
+        e.g. color, size, dir.
+        (WebCore::HTMLEquivalent::propertyExistsInStyle): Returns true if the property of this equivalence
+        exists in the specified style. e.g. if this equivalence is for size attribute and font-size property,
+        this function returns true if the specified style has font-size property set.
+        (WebCore::HTMLEquivalent::HTMLEquivalent): Added.
+        (WebCore::HTMLEquivalent::valueIsPresentInStyle): Returns true if the specified style has the
+        implicit style of the specified element of this equivalence.
+        (WebCore::HTMLEquivalent::addToStyle): Adds the implicit style of the element of this equivalence
+        to the specified mutable style.
+        (WebCore::HTMLEquivalentValueList::create): Added.
+        (WebCore::HTMLEquivalentValueList::HTMLEquivalentValueList): Added.
+        (WebCore::HTMLEquivalentValueList::valueIsPresentInStyle): Added.
+        (WebCore::HTMLEquivalentAttribute::create): Added.
+        (WebCore::HTMLEquivalentAttribute::matches): Added.
+        (WebCore::HTMLEquivalentAttribute::hasAttribute): Added.
+        (WebCore::HTMLEquivalentAttribute::attributeName): Added.
+        (WebCore::HTMLEquivalentAttribute::HTMLEquivalentAttribute): Added.
+        (WebCore::HTMLEquivalentAttribute::valueIsPresentInStyle): Added.
+        (WebCore::HTMLEquivalentAttribute::addToStyle): Added.
+        (WebCore::HTMLEquivalentAttribute::attributeValueAsCSSValue): Added.
+        (WebCore::HTMLEquivalentFontSizeAttribute::create): Added.
+        (WebCore::HTMLEquivalentFontSizeAttribute::HTMLEquivalentFontSizeAttribute): Added.
+        (WebCore::HTMLEquivalentFontSizeAttribute::attributeValueAsCSSValue): Added.
+        (WebCore::ApplyStyleCommand::removeImplicitlyStyledElement): Uses new classes.
+
 2011-02-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r79510.

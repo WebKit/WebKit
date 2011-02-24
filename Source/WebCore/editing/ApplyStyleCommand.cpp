@@ -1164,101 +1164,228 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle* style, PassRe
 
     return removed;
 }
-    
-enum EPushDownType { ShouldBePushedDown, ShouldNotBePushedDown };
-struct HTMLEquivalent {
-    int propertyID;
-    bool isValueList;
-    int primitiveId;
-    const QualifiedName* element;
-    const QualifiedName* attribute;
-    PassRefPtr<CSSValue> (*attributeToCSSValue)(int propertyID, const String&);
-    EPushDownType pushDownType;
+
+class HTMLEquivalent {
+public:
+    static PassOwnPtr<HTMLEquivalent> create(CSSPropertyID propertyID, int primitiveValue, const QualifiedName& tagName)
+    {
+        return adoptPtr(new HTMLEquivalent(propertyID, primitiveValue, tagName));
+    }
+
+    virtual ~HTMLEquivalent() { }
+    virtual bool matches(Element* element) const { return !m_tagName || element->hasTagName(*m_tagName); }
+    virtual bool hasAttribute() const { return false; }
+    bool propertyExistsInStyle(CSSStyleDeclaration* style) const { return style->getPropertyCSSValue(m_propertyID); }
+    virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
+    virtual void addToStyle(Element*, CSSMutableStyleDeclaration*) const;
+
+protected:
+    HTMLEquivalent(CSSPropertyID);
+    HTMLEquivalent(CSSPropertyID, const QualifiedName& tagName);
+    HTMLEquivalent(CSSPropertyID, int primitiveValue, const QualifiedName& tagName);
+    const int m_propertyID;
+    const RefPtr<CSSPrimitiveValue> m_primitiveValue;
+    const QualifiedName* m_tagName; // We can store a pointer because HTML tag names are const global.
 };
 
-static PassRefPtr<CSSValue> stringToCSSValue(int propertyID, const String& value)
+HTMLEquivalent::HTMLEquivalent(CSSPropertyID id)
+    : m_propertyID(id)
+    , m_tagName(0)
 {
-    RefPtr<CSSMutableStyleDeclaration> dummyStyle;
-    dummyStyle = CSSMutableStyleDeclaration::create();
-    dummyStyle->setProperty(propertyID, value);
-    return dummyStyle->getPropertyCSSValue(propertyID);
 }
 
-static PassRefPtr<CSSValue> fontSizeToCSSValue(int propertyID, const String& value)
+HTMLEquivalent::HTMLEquivalent(CSSPropertyID id, const QualifiedName& tagName)
+    : m_propertyID(id)
+    , m_tagName(&tagName)
 {
-    UNUSED_PARAM(propertyID);
-    ASSERT(propertyID == CSSPropertyFontSize);
+}
+
+HTMLEquivalent::HTMLEquivalent(CSSPropertyID id, int primitiveValue, const QualifiedName& tagName)
+    : m_propertyID(id)
+    , m_primitiveValue(CSSPrimitiveValue::createIdentifier(primitiveValue))
+    , m_tagName(&tagName)
+{
+    ASSERT(primitiveValue != CSSValueInvalid);
+}
+
+bool HTMLEquivalent::valueIsPresentInStyle(Element* element, CSSStyleDeclaration* style) const
+{
+    RefPtr<CSSValue> value = style->getPropertyCSSValue(m_propertyID);
+    return matches(element) && value && value->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(value.get())->getIdent() == m_primitiveValue->getIdent();
+}
+
+void HTMLEquivalent::addToStyle(Element*, CSSMutableStyleDeclaration* style) const
+{
+    style->setProperty(m_propertyID, m_primitiveValue->cssText());
+}
+
+class HTMLEquivalentValueList : public HTMLEquivalent
+{
+public:
+    static PassOwnPtr<HTMLEquivalent> create(CSSPropertyID propertyID, int primitiveValue, const QualifiedName& tagName)
+    {
+        return adoptPtr(new HTMLEquivalentValueList(propertyID, primitiveValue, tagName));
+    }
+    virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
+
+private:
+    HTMLEquivalentValueList(CSSPropertyID, int primitiveValue, const QualifiedName& tagName);
+};
+
+HTMLEquivalentValueList::HTMLEquivalentValueList(CSSPropertyID id, int primitiveValue, const QualifiedName& tagName)
+    : HTMLEquivalent(id, primitiveValue, tagName)
+{
+}
+
+bool HTMLEquivalentValueList::valueIsPresentInStyle(Element* element, CSSStyleDeclaration* style) const
+{
+    RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(m_propertyID);
+    return matches(element) && styleValue && styleValue->isValueList() && static_cast<CSSValueList*>(styleValue.get())->hasValue(m_primitiveValue.get());
+}
+
+class HTMLEquivalentAttribute : public HTMLEquivalent
+{
+public:
+    static PassOwnPtr<HTMLEquivalent> create(CSSPropertyID propertyID, const QualifiedName& tagName, const QualifiedName& attrName)
+    {
+        return adoptPtr(new HTMLEquivalentAttribute(propertyID, tagName, attrName));
+    }
+    static PassOwnPtr<HTMLEquivalent> create(CSSPropertyID propertyID, const QualifiedName& attrName)
+    {
+        return adoptPtr(new HTMLEquivalentAttribute(propertyID, attrName));
+    }
+
+    bool matches(Element* elem) const { return HTMLEquivalent::matches(elem) && elem->hasAttribute(m_attrName); }
+    virtual bool hasAttribute() const { return true; }
+    virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
+    virtual void addToStyle(Element*, CSSMutableStyleDeclaration*) const;
+    virtual PassRefPtr<CSSValue> attributeValueAsCSSValue(Element*) const;
+    inline const QualifiedName& attributeName() const { return m_attrName; }
+
+protected:
+    HTMLEquivalentAttribute(CSSPropertyID, const QualifiedName& tagName, const QualifiedName& attrName);
+    HTMLEquivalentAttribute(CSSPropertyID, const QualifiedName& attrName);
+    const QualifiedName& m_attrName; // We can store a reference because HTML attribute names are const global.
+};
+
+HTMLEquivalentAttribute::HTMLEquivalentAttribute(CSSPropertyID id, const QualifiedName& tagName, const QualifiedName& attrName)
+    : HTMLEquivalent(id, tagName)
+    , m_attrName(attrName)
+{
+}
+
+HTMLEquivalentAttribute::HTMLEquivalentAttribute(CSSPropertyID id, const QualifiedName& attrName)
+    : HTMLEquivalent(id)
+    , m_attrName(attrName)
+{
+}
+
+bool HTMLEquivalentAttribute::valueIsPresentInStyle(Element* element, CSSStyleDeclaration* style) const
+{
+    RefPtr<CSSValue> value = attributeValueAsCSSValue(element);
+    RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(m_propertyID);
+    
+    // FIXME: This is very inefficient way of comparing values
+    // but we can't string compare attribute value and CSS property value.
+    return value && styleValue && value->cssText() == styleValue->cssText();
+}
+
+void HTMLEquivalentAttribute::addToStyle(Element* element, CSSMutableStyleDeclaration* style) const
+{
+    if (RefPtr<CSSValue> value = attributeValueAsCSSValue(element))
+        style->setProperty(m_propertyID, value->cssText());
+}
+
+PassRefPtr<CSSValue> HTMLEquivalentAttribute::attributeValueAsCSSValue(Element* element) const
+{
+    ASSERT(element);
+    if (!element->hasAttribute(m_attrName))
+        return 0;
+    
+    RefPtr<CSSMutableStyleDeclaration> dummyStyle;
+    dummyStyle = CSSMutableStyleDeclaration::create();
+    dummyStyle->setProperty(m_propertyID, element->getAttribute(m_attrName));
+    return dummyStyle->getPropertyCSSValue(m_propertyID);
+}
+
+class HTMLEquivalentFontSizeAttribute : public HTMLEquivalentAttribute {
+public:
+    static PassOwnPtr<HTMLEquivalent> create()
+    {
+        return adoptPtr(new HTMLEquivalentFontSizeAttribute());
+    }
+    virtual PassRefPtr<CSSValue> attributeValueAsCSSValue(Element*) const;
+
+private:
+    HTMLEquivalentFontSizeAttribute();
+};
+
+HTMLEquivalentFontSizeAttribute::HTMLEquivalentFontSizeAttribute()
+    : HTMLEquivalentAttribute(CSSPropertyFontSize, fontTag, sizeAttr)
+{
+}
+
+PassRefPtr<CSSValue> HTMLEquivalentFontSizeAttribute::attributeValueAsCSSValue(Element* element) const
+{
+    ASSERT(element);
+    if (!element->hasAttribute(m_attrName))
+        return 0;
     int size;
-    if (!HTMLFontElement::cssValueFromFontSizeNumber(value, size))
+    if (!HTMLFontElement::cssValueFromFontSizeNumber(element->getAttribute(m_attrName), size))
         return 0;
     return CSSPrimitiveValue::createIdentifier(size);
 }
 
-static const HTMLEquivalent HTMLEquivalents[] = {
-    { CSSPropertyFontWeight, false, CSSValueBold, &bTag, 0, 0, ShouldBePushedDown },
-    { CSSPropertyFontWeight, false, CSSValueBold, &strongTag, 0, 0, ShouldBePushedDown },
-    { CSSPropertyVerticalAlign, false, CSSValueSub, &subTag, 0, 0, ShouldBePushedDown },
-    { CSSPropertyVerticalAlign, false, CSSValueSuper, &supTag, 0, 0, ShouldBePushedDown },
-    { CSSPropertyFontStyle, false, CSSValueItalic, &iTag, 0, 0, ShouldBePushedDown },
-    { CSSPropertyFontStyle, false, CSSValueItalic, &emTag, 0, 0, ShouldBePushedDown },
-
-    // text-decorations should be CSSValueList
-    { CSSPropertyTextDecoration, true, CSSValueUnderline, &uTag, 0, 0, ShouldBePushedDown },
-    { CSSPropertyTextDecoration, true, CSSValueLineThrough, &sTag, 0, 0, ShouldBePushedDown },
-    { CSSPropertyTextDecoration, true, CSSValueLineThrough, &strikeTag, 0, 0, ShouldBePushedDown },
-
-    // FIXME: font attributes should only be removed if values were different
-    { CSSPropertyColor, false, CSSValueInvalid, &fontTag, &colorAttr, stringToCSSValue, ShouldBePushedDown },
-    { CSSPropertyFontFamily, false, CSSValueInvalid, &fontTag, &faceAttr, stringToCSSValue, ShouldBePushedDown },
-    { CSSPropertyFontSize, false, CSSValueInvalid, &fontTag, &sizeAttr, fontSizeToCSSValue, ShouldBePushedDown },
-
-    // unicode-bidi and direction are pushed down separately so don't push down with other styles.
-    { CSSPropertyDirection, false, CSSValueInvalid, 0, &dirAttr, stringToCSSValue, ShouldNotBePushedDown },
-    { CSSPropertyUnicodeBidi, false, CSSValueInvalid, 0, &dirAttr, stringToCSSValue, ShouldNotBePushedDown },
-};
-
 bool ApplyStyleCommand::removeImplicitlyStyledElement(CSSMutableStyleDeclaration* style, HTMLElement* element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
 {
+    static const HTMLEquivalent* HTMLEquivalents[] = {
+        HTMLEquivalent::create(CSSPropertyFontWeight, CSSValueBold, bTag).leakPtr(),
+        HTMLEquivalent::create(CSSPropertyFontWeight, CSSValueBold, strongTag).leakPtr(),
+        HTMLEquivalent::create(CSSPropertyVerticalAlign, CSSValueSub, subTag).leakPtr(),
+        HTMLEquivalent::create(CSSPropertyVerticalAlign, CSSValueSuper, supTag).leakPtr(),
+        HTMLEquivalent::create(CSSPropertyFontStyle, CSSValueItalic, iTag).leakPtr(),
+        HTMLEquivalent::create(CSSPropertyFontStyle, CSSValueItalic, emTag).leakPtr(),
+
+        // text-decorations should be CSSValueList
+        HTMLEquivalentValueList::create(CSSPropertyTextDecoration, CSSValueUnderline, uTag).leakPtr(),
+        HTMLEquivalentValueList::create(CSSPropertyTextDecoration, CSSValueLineThrough, sTag).leakPtr(),
+        HTMLEquivalentValueList::create(CSSPropertyTextDecoration, CSSValueLineThrough, strikeTag).leakPtr(),
+
+        // FIXME: font attributes should only be removed if values were different
+        HTMLEquivalentAttribute::create(CSSPropertyColor, fontTag, colorAttr).leakPtr(),
+        HTMLEquivalentAttribute::create(CSSPropertyFontFamily, fontTag, faceAttr).leakPtr(),
+        HTMLEquivalentFontSizeAttribute::create().leakPtr(),
+
+        HTMLEquivalentAttribute::create(CSSPropertyDirection, dirAttr).leakPtr(),
+        HTMLEquivalentAttribute::create(CSSPropertyUnicodeBidi, dirAttr).leakPtr(),
+    };
+
     // Current implementation does not support stylePushedDown when mode == RemoveNone because of early exit.
     ASSERT(style);
     ASSERT(!extractedStyle || mode != RemoveNone);
     bool removed = false;
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(HTMLEquivalents); ++i) {
-        const HTMLEquivalent& equivalent = HTMLEquivalents[i];
-        ASSERT(equivalent.element || equivalent.attribute);
-        if ((extractedStyle && equivalent.pushDownType == ShouldNotBePushedDown)
-            || (equivalent.element && !element->hasTagName(*equivalent.element))
-            || (equivalent.attribute && !element->hasAttribute(*equivalent.attribute)))
+        const HTMLEquivalent* equivalent = HTMLEquivalents[i];
+
+        // unicode-bidi and direction are pushed down separately so don't push down with other styles.
+        if ((extractedStyle && equivalent->hasAttribute() && static_cast<const HTMLEquivalentAttribute*>(equivalent)->attributeName() == dirAttr)
+            || !equivalent->matches(element) || !equivalent->propertyExistsInStyle(style)
+            || (mode != RemoveAlways && equivalent->valueIsPresentInStyle(element, style)))
             continue;
 
-        RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(equivalent.propertyID);
-        if (!styleValue)
-            continue;
-        RefPtr<CSSValue> mapValue;
-        if (equivalent.attribute)
-            mapValue = equivalent.attributeToCSSValue(equivalent.propertyID, element->getAttribute(*equivalent.attribute));
-        else
-            mapValue = CSSPrimitiveValue::createIdentifier(equivalent.primitiveId).get();
-
-        if (mode != RemoveAlways) {
-            if (equivalent.isValueList && styleValue->isValueList() && static_cast<CSSValueList*>(styleValue.get())->hasValue(mapValue.get()))
-                continue; // If CSS value assumes CSSValueList, then only skip if the value was present in style to apply.
-            else if (mapValue && styleValue->cssText() == mapValue->cssText())
-                continue; // If CSS value is primitive, then skip if they are equal.
-        }
-
-        if (extractedStyle && mapValue)
-            extractedStyle->setProperty(equivalent.propertyID, mapValue->cssText());
+        if (extractedStyle)
+            equivalent->addToStyle(element, extractedStyle);
 
         if (mode == RemoveNone)
             return true;
 
-        removed = true;
-        if (!equivalent.attribute) {
+        if (!equivalent->hasAttribute()) {
             replaceWithSpanOrRemoveIfWithoutAttributes(element);
-            break;
+            return true;
         }
-        removeNodeAttribute(element, *equivalent.attribute);
+
+        removed = true;
+        removeNodeAttribute(element, static_cast<const HTMLEquivalentAttribute*>(equivalent)->attributeName());
         if (isEmptyFontTag(element) || isSpanWithoutAttributesOrUnstyleStyleSpan(element))
             removeNodePreservingChildren(element);
     }
