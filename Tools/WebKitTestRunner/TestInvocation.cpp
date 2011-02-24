@@ -30,6 +30,7 @@
 #include "TestController.h"
 #include <climits>
 #include <cstdio>
+#include <WebKit2/WKDictionary.h>
 #include <WebKit2/WKContextPrivate.h>
 #include <WebKit2/WKInspector.h>
 #include <WebKit2/WKRetainPtr.h>
