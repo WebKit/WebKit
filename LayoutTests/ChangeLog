@@ -1,3 +1,13 @@
+2011-02-23  Andrew Wilson  <atwilson@chromium.org>
+
+        Removed outdated/incorrect chromium baselins. Unreviewed.
+
+        * platform/chromium-mac-leopard/editing/deleting/delete-tab-003-expected.txt: Removed.
+        * platform/chromium-mac-leopard/editing/deleting/delete-ws-fixup-001-expected.txt: Removed.
+        * platform/chromium-mac-leopard/editing/inserting/insert-tab-003-expected.txt: Removed.
+        * platform/chromium-mac-leopard/editing/selection/select-from-textfield-outwards-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-23  James Robinson  <jamesr@chromium.org>
 
         Update chromium expectations for fast/repaint/text-emphasis-h.html

@@ -3481,9 +3481,6 @@ BUGWK54882 WIN : inspector/styles/styles-update-from-js.html = TEXT TIMEOUT
 
 BUGWK55023 : http/tests/navigation/useragent.php = TEXT
 
-BUGWK54736 MAC : editing/deleting/delete-tab-003.html = TEXT
-BUGWK54736 MAC : editing/deleting/delete-ws-fixup-001.html = TEXT
-BUGWK54736 MAC : editing/inserting/insert-tab-003.html = TEXT
 BUGWK54736 MAC : editing/inserting/typing-tab-designmode-forms.html = IMAGE
 BUGWK54736 MAC : editing/pasteboard/4641033.html = IMAGE
 BUGWK54736 MAC : editing/pasteboard/block-wrappers-necessary.html = IMAGE
@@ -3498,7 +3495,6 @@ BUGWK54736 MAC : editing/selection/4975120.html = IMAGE
 BUGWK54736 MAC : editing/selection/5240265.html = IMAGE
 BUGWK54736 MAC : editing/selection/move-past-trailing-space.html = IMAGE
 BUGWK54736 MAC : editing/selection/replaced-boundaries-3.html = IMAGE
-BUGWK54736 MAC : editing/selection/select-from-textfield-outwards.html = TEXT
 BUGWK54736 MAC : editing/style/5046875-1.html = IMAGE
 BUGWK54736 MAC : editing/style/create-block-for-style-011.html = IMAGE
 BUGWK54736 MAC : editing/style/create-block-for-style-012.html = IMAGE
