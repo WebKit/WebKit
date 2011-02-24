@@ -1,3 +1,19 @@
+2011-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION: Accelerated transitions are jumpy
+        https://bugs.webkit.org/show_bug.cgi?id=55022
+        
+        When an accelerated transition used the default timing function,
+        a typo in toCAMediaTimingFunction() resulting in the incorrect
+        timing function being used.
+
+        Test: transitions/default-timing-function.html
+
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        (toCAMediaTimingFunction):
+
 2011-02-24  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

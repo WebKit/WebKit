@@ -1,3 +1,18 @@
+2011-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION: Accelerated transitions are jumpy
+        https://bugs.webkit.org/show_bug.cgi?id=55022
+        
+        Testcase with 'transform' and 'left' transitions whose pixel result shows whether
+        the correct timing function is being used for the accelerated transition.
+
+        * platform/mac/transitions/default-timing-function-expected.checksum: Added.
+        * platform/mac/transitions/default-timing-function-expected.png: Added.
+        * platform/mac/transitions/default-timing-function-expected.txt: Added.
+        * transitions/default-timing-function.html: Added.
+
 2011-02-24  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.
