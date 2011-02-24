@@ -66,11 +66,17 @@ ARCHIVE_DIR_NAME_DICT = {'win': 'Webkit_Win__deps_',
                          'win-xp': 'Webkit_Win__deps_',
                          'mac': 'Webkit_Mac10_5__deps_',
                          'linux': 'Webkit_Linux__deps_',
+
                          'win-canary': 'Webkit_Win',
                          'win-vista-canary': 'webkit-dbg-vista',
                          'win-xp-canary': 'Webkit_Win',
                          'mac-canary': 'Webkit_Mac10_5',
-                         'linux-canary': 'Webkit_Linux'}
+                         'linux-canary': 'Webkit_Linux',
+
+                         'gpu-mac-canary': 'Webkit_Mac10_5_-_GPU',
+                         'gpu-win-canary': 'Webkit_Win_-_GPU',
+                         'gpu-linux-canary': 'Webkit_Linux_-_GPU',
+}
 
 
 def log_dashed_string(text, platform, logging_level=logging.INFO):
@@ -276,16 +282,13 @@ class Rebaseliner(object):
         _log.info('Latest revision: "%s"', revisions[len(revisions) - 1])
         return revisions[len(revisions) - 1]
 
-    def _get_archive_dir_name(self, platform, webkit_canary):
+    def _get_archive_dir_name(self, platform):
         """Get name of the layout test archive directory.
 
         Returns:
           Directory name or
           None on failure
         """
-
-        if webkit_canary:
-            platform += '-canary'
 
         if platform in ARCHIVE_DIR_NAME_DICT:
             return ARCHIVE_DIR_NAME_DICT[platform]
@@ -305,8 +308,13 @@ class Rebaseliner(object):
         if self._options.force_archive_url:
             return self._options.force_archive_url
 
-        dir_name = self._get_archive_dir_name(self._platform,
-                                              self._options.webkit_canary)
+        platform = self._platform
+        if self._options.webkit_canary:
+            platform += '-canary'
+        if self._options.gpu:
+            platform = 'gpu-' + platform
+
+        dir_name = self._get_archive_dir_name(platform)
         if not dir_name:
             return None
 
@@ -622,6 +630,7 @@ class HtmlGenerator(object):
         self._html_directory = options.html_directory
         self._port = port
         self._target_port = target_port
+        self._options = options
         self._platforms = platforms
         self._rebaselining_tests = rebaselining_tests
         self._filesystem = port._filesystem
@@ -804,8 +813,12 @@ def parse_options(args):
                              action='store_true',
                              help='Suppress result HTML viewing')
 
+    option_parser.add_option('-g', '--gpu',
+                            action='store_true', default=False,
+                            help='Rebaseline the GPU versions')
+
     option_parser.add_option('-p', '--platforms',
-                             default='mac,win,win-xp,win-vista,linux',
+                             default=None,
                              help=('Comma delimited list of platforms '
                                    'that need rebaselining.'))
 
@@ -847,6 +860,11 @@ def parse_options(args):
                                    '("mac", "chromium", "qt", etc.). Defaults '
                                    'to "chromium".'))
     options = option_parser.parse_args(args)[0]
+    if options.platforms == None:
+        if options.gpu:
+            options.platforms = 'mac,win,linux'
+        else:
+            options.platforms = 'mac,win,win-xp,win-vista,linux'
 
     target_options = copy.copy(options)
     if options.target_platform == 'chromium':
@@ -869,7 +887,10 @@ def main(args):
                                 '%(levelname)s %(message)s'),
                         datefmt='%y%m%d %H:%M:%S')
 
-    target_port_obj = port.get(None, target_options)
+    target_port_name = None
+    if options.gpu and options.target_platform == 'chromium':
+        target_port_name = 'chromium-gpu'
+    target_port_obj = port.get(target_port_name, target_options)
     host_port_obj = get_host_port_object(options)
     if not host_port_obj or not target_port_obj:
         return 1

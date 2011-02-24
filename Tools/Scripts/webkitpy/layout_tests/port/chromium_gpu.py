@@ -84,6 +84,17 @@ def _tests(port, paths):
     return test_files.find(port, paths)
 
 
+def _test_platform_names(self):
+    return ('mac', 'win', 'linux')
+
+
+def _test_platform_name_to_name(self, test_platform_name):
+    if test_platform_name in self.test_platform_names():
+        return 'chromium-gpu-' + test_platform_name
+    raise ValueError('Unsupported test_platform_name: %s' %
+                     test_platform_name)
+
+
 class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
     def __init__(self, port_name='chromium-gpu-linux', **kwargs):
         chromium_linux.ChromiumLinuxPort.__init__(self, port_name=port_name, **kwargs)
@@ -107,6 +118,14 @@ class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
     def tests(self, paths):
         return _tests(self, paths)
 
+    def test_platform_name(self):
+        return 'linux'
+
+    def test_platform_names(self):
+        return _test_platform_names(self)
+
+    def test_platform_name_to_name(self, name):
+        return _test_platform_name_to_name(self, name)
 
 
 class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
@@ -131,6 +150,14 @@ class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
     def tests(self, paths):
         return _tests(self, paths)
 
+    def test_platform_name(self):
+        return 'mac'
+
+    def test_platform_names(self):
+        return _test_platform_names(self)
+
+    def test_platform_name_to_name(self, name):
+        return _test_platform_name_to_name(self, name)
 
 
 class ChromiumGpuWinPort(chromium_win.ChromiumWinPort):
@@ -154,3 +181,12 @@ class ChromiumGpuWinPort(chromium_win.ChromiumWinPort):
 
     def tests(self, paths):
         return _tests(self, paths)
+
+    def test_platform_name(self):
+        return 'win'
+
+    def test_platform_names(self):
+        return _test_platform_names(self)
+
+    def test_platform_name_to_name(self, name):
+        return _test_platform_name_to_name(self, name)

@@ -70,7 +70,8 @@ def test_options():
                                 target_platform='chromium',
                                 verbose=False,
                                 quiet=False,
-                                platforms='mac,win,win-xp')
+                                platforms='mac,win,win-xp',
+                                gpu=False)
 
 
 def test_host_port_and_filesystem(options, expectations):

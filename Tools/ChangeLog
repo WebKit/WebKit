@@ -2,6 +2,16 @@
 
         Reviewed by Mihai Parparita.
 
+        rebaseline-chromium-webkit-tests can't handle GPU variants
+        https://bugs.webkit.org/show_bug.cgi?id=55002
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
+2011-02-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
         nrwt: log command used to start web server to --verbose
 
         https://bugs.webkit.org/show_bug.cgi?id=55188
