@@ -1,3 +1,47 @@
+2011-02-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Variable-sized allocation (but still capped at 64 bytes)
+        https://bugs.webkit.org/show_bug.cgi?id=55159
+        
+        SunSpider reports no change.
+
+        * JavaScriptCore.exp: Some day, I hope not to have to edit this file.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::allocateSlowCase): Split allocation into a fast and slow
+        case, so the fast case can inline size class selection and turn it into
+        a compile-time constant.
+        
+        Changed the collect-on-every allocation debugging switch to collect only
+        on every slow allocation, so you can still flip the switch without
+        recompiling the world. This may also be preferable for debugging purposes,
+        since collecting after every single allocation can be unusably slow,
+        and can mask problems by running destructors early.
+
+        * runtime/Heap.h: Ditto.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::MarkedSpace::sizeClassFor):
+        (JSC::JSCell::Heap::allocate):
+        (JSC::JSCell::JSCell::operator new): The inlining mentioned above.
+
+        * runtime/MarkedBlock.h: Dropped the block size from 256KB to 16KB. With
+        multiple size classes, allocating a full 256KB for the first allocation
+        in a given class can be pathologically wasteful. (8KB, or 4KB Mac and
+        8KB Windows, would be even better, but that seems to be a peformance
+        regression for now.)
+        
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::allocateBlock):
+        (JSC::MarkedSpace::reset): There's more than one size class now, and its
+        cell size is not constant.
+
+        * runtime/MarkedSpace.h:
+        (JSC::MarkedSpace::SizeClass::SizeClass): Ditto.
+
 2011-02-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

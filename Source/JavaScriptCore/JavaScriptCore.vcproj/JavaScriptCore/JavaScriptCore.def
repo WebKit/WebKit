@@ -52,7 +52,9 @@ EXPORTS
     ?addPropertyWithoutTransition@Structure@JSC@@QAEIABVIdentifier@2@IPAVJSCell@2@@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PAVStringImpl@4@@Z
     ?allocate@Heap@JSC@@QAEPAXI@Z
+    ?allocateFromSizeClass@MarkedSpace@JSC@@AAEPAXAAUSizeClass@12@@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXII@Z
+    ?allocateSlowCase@Heap@JSC@@AAEPAXI@Z
     ?allocateStack@MarkStack@JSC@@CAPAXI@Z
     ?append@StringBuilder@WTF@@QAEXPBDI@Z
     ?append@StringBuilder@WTF@@QAEXPB_WI@Z
@@ -111,6 +113,7 @@ EXPORTS
     ?cryptographicallyRandomNumber@WTF@@YAIXZ
     ?cryptographicallyRandomValues@WTF@@YAXPAXI@Z
     ?currentThread@WTF@@YAIXZ
+    ?currentThreadIsHoldingLock@JSLock@JSC@@SA_NXZ
     ?currentTime@WTF@@YANXZ
     ?data@CString@WTF@@QBEPBDXZ
     ?dateToDaysFrom1970@WTF@@YANHHH@Z
@@ -225,6 +228,7 @@ EXPORTS
     ?lock@JSLock@JSC@@SAXW4JSLockBehavior@2@@Z
     ?lock@Mutex@WTF@@QAEXXZ
     ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
+    ?lockCount@JSLock@JSC@@SAHXZ
     ?lookupGetter@JSObject@JSC@@UAE?AVJSValue@2@PAVExecState@2@ABVIdentifier@2@@Z
     ?lookupSetter@JSObject@JSC@@UAE?AVJSValue@2@PAVExecState@2@ABVIdentifier@2@@Z
     ?markChildren@JSGlobalObject@JSC@@UAEXAAVMarkStack@2@@Z

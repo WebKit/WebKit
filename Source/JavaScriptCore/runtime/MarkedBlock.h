@@ -46,6 +46,8 @@ namespace JSC {
 
     class MarkedBlock {
     public:
+        static const size_t atomSize = sizeof(double); // Ensures natural alignment for all built-in types.
+
         static MarkedBlock* create(JSGlobalData*, size_t cellSize);
         static void destroy(MarkedBlock*);
 
@@ -83,14 +85,9 @@ namespace JSC {
         template <typename Functor> void forEach(Functor&);
 
     private:
-#if OS(WINCE) || OS(SYMBIAN) || PLATFORM(BREWMP)
-        static const size_t blockSize = 64 * KB;
-#else
-        static const size_t blockSize = 256 * KB;
-#endif
+        static const size_t blockSize = 16 * KB;
         static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
-        static const size_t atomSize = sizeof(double); // Ensures natural alignment for all built-in types.
         static const size_t atomMask = ~(atomSize - 1); // atomSize must be a power of two.
         
         static const size_t atomsPerBlock = blockSize / atomSize;
