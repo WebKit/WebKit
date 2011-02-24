@@ -1,3 +1,15 @@
+2011-02-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/9002157> Garbage in the bottom right corner of the window 
+        when scrolling
+
+        When there is both a horizontal and a vertical scrollbar, it is necessary to 
+        include the space between them in the invalidation.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::setScrollOffsetFromAnimation):
+
 2011-02-23  Ned Holbrook  <nholbrook@apple.com>
 
         Reviewed by Dan Bernstein.
