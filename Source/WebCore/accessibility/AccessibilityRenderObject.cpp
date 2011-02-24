@@ -51,6 +51,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "LocalizedStrings.h"
+#include "MathMLNames.h"
 #include "NodeList.h"
 #include "ProgressTracker.h"
 #include "RenderButton.h"
@@ -1354,8 +1355,8 @@ String AccessibilityRenderObject::accessibilityDescription() const
     if (!ariaDescription.isEmpty())
         return ariaDescription;
     
+    Node* node = m_renderer->node();
     if (isImage() || isInputImage() || isNativeImage()) {
-        Node* node = m_renderer->node();
         if (node && node->isHTMLElement()) {
             const AtomicString& alt = toHTMLElement(node)->getAttribute(altAttr);
             if (alt.isEmpty())
@@ -1363,6 +1364,11 @@ String AccessibilityRenderObject::accessibilityDescription() const
             return alt;
         }
     }
+    
+#if ENABLE(MATHML)
+    if (node && node->isElementNode() && static_cast<Element*>(node)->isMathMLElement())
+        return getAttribute(MathMLNames::alttextAttr);
+#endif
     
     if (isWebArea()) {
         Document* document = m_renderer->document();
@@ -3047,6 +3053,11 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     
     if (headingLevel())
         return HeadingRole;
+    
+#if ENABLE(MATHML)
+    if (node && node->hasTagName(MathMLNames::mathTag))
+        return DocumentMathRole;
+#endif
     
     if (node && node->hasTagName(ddTag))
         return DefinitionListDefinitionRole;

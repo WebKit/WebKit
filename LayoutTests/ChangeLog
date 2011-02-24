@@ -1,3 +1,13 @@
+2011-02-24  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        AX: WebKit should expose MathML at least as well as it exposes ARIA role="math"
+        https://bugs.webkit.org/show_bug.cgi?id=55049
+
+        * platform/mac/accessibility/math-alttext-expected.txt: Added.
+        * platform/mac/accessibility/math-alttext.html: Added.
+
 2011-02-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

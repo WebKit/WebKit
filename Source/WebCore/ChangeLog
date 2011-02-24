@@ -1,3 +1,20 @@
+2011-02-24  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        AX: WebKit should expose MathML at least as well as it exposes ARIA role="math"
+        https://bugs.webkit.org/show_bug.cgi?id=55049
+
+        Make <math> elements behave as ARIA math roles and use MathML::alttext as a
+        possible accessible label.
+ 
+        Test: platform/mac/accessibility/math-alttext.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityDescription):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * mathml/mathattrs.in:
+
 2011-02-24  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
