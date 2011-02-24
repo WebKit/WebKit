@@ -1,3 +1,12 @@
+2011-02-23  James Robinson  <jamesr@chromium.org>
+
+        Update chromium baselines and expectations.
+
+        * platform/chromium-mac/fast/repaint/text-emphasis-h-expected.txt: Added.
+        * platform/chromium-mac/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt: Added.
+        * platform/chromium-win/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-23  Oliver Hunt  <oliver@apple.com>
 
         Roll out r64156 as it introduces incorrect behaviour.
