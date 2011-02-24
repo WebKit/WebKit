@@ -47,18 +47,25 @@ namespace JSC {
         void setIndex(unsigned i, int value)
         {
             ASSERT(canAccessIndex(i));
+            if (value & ~0xFF) {
+                if (value < 0)
+                    value = 0;
+                else
+                    value = 255;
+            }
             m_storage->data()[i] = static_cast<unsigned char>(value);
         }
-
+        
         void setIndex(unsigned i, double value)
         {
             ASSERT(canAccessIndex(i));
-            // The largest integer value that a double can represent without loss of precision
-            // is 2^53.  long long is the smallest integral type that gives correct results
-            // when casting numbers larger than 2^31 from a value of type double.
-            m_storage->data()[i] = static_cast<unsigned char>(static_cast<long long>(value));
+            if (!(value > 0)) // Clamp NaN to 0
+                value = 0;
+            else if (value > 255)
+                value = 255;
+            m_storage->data()[i] = static_cast<unsigned char>(value + 0.5);
         }
-
+        
         void setIndex(ExecState* exec, unsigned i, JSValue value)
         {
             double byteValue = value.toNumber(exec);
@@ -80,7 +87,7 @@ namespace JSC {
         virtual void getOwnPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 
         static const ClassInfo s_defaultInfo;
-
+        
         size_t length() const { return m_storage->length(); }
 
         WTF::ByteArray* storage() const { return m_storage.get(); }
@@ -101,7 +108,7 @@ namespace JSC {
 
         RefPtr<WTF::ByteArray> m_storage;
     };
-
+    
     JSByteArray* asByteArray(JSValue value);
     inline JSByteArray* asByteArray(JSValue value)
     {

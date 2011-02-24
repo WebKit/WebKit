@@ -11,13 +11,11 @@ for (var i = 0; i < imageData.data.length; i++)
 var testValues = [NaN, true, false, "\"garbage\"", "-1",
                   "\"0\"", "\"1\"", "\"2\"", Infinity, -Infinity,
                   -5, -0.5, 0, 0.5, 5,
-                  Math.pow(2, 31) - 1, Math.pow(2, 31), Math.pow(2, 31) + 1, -Math.pow(2, 40) + 2.5, Math.pow(2, 53) - 1.5,
                   5.4, 255, 256, null, undefined];
-var testResults = [0, 1, 0, 0, 255,
-                   0, 1, 2, 0, 0,
-                   251, 0, 0, 0, 5,
-                   255, 0, 1, 3, 254,
-                   5, 255, 0, 0, 0];
+var testResults = [0, 1, 0, 0, 0,
+                   0, 1, 2, 255, 0,
+                   0, 0, 0, 1, 5,
+                   5, 255, 255, 0, 0];
 for (var i = 0; i < testValues.length; i++) {
     shouldBe("imageData.data[0] = "+testValues[i]+", imageData.data[0]", ""+testResults[i]);
 }

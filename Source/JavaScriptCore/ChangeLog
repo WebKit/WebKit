@@ -1,3 +1,10 @@
+2011-02-23  Oliver Hunt  <oliver@apple.com>
+
+        Roll out r64156 as it introduces incorrect behaviour.
+
+        * runtime/JSByteArray.h:
+        (JSC::JSByteArray::setIndex):
+
 2011-02-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
