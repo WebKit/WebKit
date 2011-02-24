@@ -31,6 +31,8 @@
 #define DEBUG if (1) {} else qDebug
 #endif
 
+using namespace std;
+
 namespace WebCore {
 
 #if USE(QT_ICU_TEXT_BREAKING)
@@ -89,10 +91,30 @@ const char* currentTextBreakLocaleID()
         return characterBreakIterator(string, length);
     }
 
-    TextBreakIterator* lineBreakIterator(const UChar* string, int length)
+    static TextBreakIterator* staticLineBreakIterator;
+
+    TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length)
     {
-        static TextBreakIterator staticLineBreakIterator;
-        return setUpIterator(staticLineBreakIterator, QTextBoundaryFinder::Line, string, length);
+        TextBreakIterator* lineBreakIterator = 0;
+        if (staticLineBreakIterator) {
+            setUpIterator(*staticLineBreakIterator, QTextBoundaryFinder::Line, string, length);
+            swap(staticLineBreakIterator, lineBreakIterator);
+        }
+
+        if (!lineBreakIterator && string && length)
+            lineBreakIterator = new TextBreakIterator(QTextBoundaryFinder::Line, string, length);
+
+        return lineBreakIterator;
+    }
+
+    void releaseLineBreakIterator(TextBreakIterator* iterator)
+    {
+        ASSERT(iterator);
+
+        if (!staticLineBreakIterator)
+            staticLineBreakIterator = iterator;
+        else
+            delete iterator;
     }
 
     TextBreakIterator* sentenceBreakIterator(const UChar* string, int length)

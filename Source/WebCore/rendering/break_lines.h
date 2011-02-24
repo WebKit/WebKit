@@ -25,14 +25,16 @@
 
 namespace WebCore {
 
-    int nextBreakablePosition(const UChar*, int pos, int len, bool breakNBSP = false);
+class LazyLineBreakIterator;
 
-    inline bool isBreakable(const UChar* str, int pos, int len, int& nextBreakable, bool breakNBSP = false)
-    {
-        if (pos > nextBreakable)
-            nextBreakable = nextBreakablePosition(str, pos, len, breakNBSP);
-        return pos == nextBreakable;
-    }
+int nextBreakablePosition(LazyLineBreakIterator&, int pos, bool breakNBSP = false);
+
+inline bool isBreakable(LazyLineBreakIterator& lazyBreakIterator, int pos, int& nextBreakable, bool breakNBSP = false)
+{
+    if (pos > nextBreakable)
+        nextBreakable = nextBreakablePosition(lazyBreakIterator, pos, breakNBSP);
+    return pos == nextBreakable;
+}
 
 } // namespace WebCore
 
