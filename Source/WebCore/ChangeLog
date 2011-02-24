@@ -1,3 +1,18 @@
+2011-02-21  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GStreamer] GRefPtr support for GstElement
+        https://bugs.webkit.org/show_bug.cgi?id=54870
+
+        * CMakeListsEfl.txt:
+        * GNUmakefile.am:
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp: Added.
+        (WTF::GstElement):
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h: Added.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcQuery):
+
 2011-02-24  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

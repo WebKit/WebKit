@@ -3707,6 +3707,8 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GOwnPtrGStreamer.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GOwnPtrGStreamer.h \
+	Source/WebCore/platform/graphics/gstreamer/GRefPtrGStreamer.cpp \
+	Source/WebCore/platform/graphics/gstreamer/GRefPtrGStreamer.h \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerGWorld.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerGWorld.h \
 	Source/WebCore/platform/graphics/gstreamer/ImageGStreamerCairo.cpp \

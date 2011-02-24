@@ -23,6 +23,7 @@
 #include "Document.h"
 #include "GOwnPtr.h"
 #include "GRefPtr.h"
+#include "GRefPtrGStreamer.h"
 #include "NetworkingContext.h"
 #include "Noncopyable.h"
 #include "NotImplemented.h"
@@ -500,7 +501,8 @@ static GstStateChangeReturn webKitWebSrcChangeState(GstElement* element, GstStat
 
 static gboolean webKitWebSrcQuery(GstPad* pad, GstQuery* query)
 {
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(gst_pad_get_parent(pad));
+    GRefPtr<GstElement> src = adoptGRef(gst_pad_get_parent_element(pad));
+    WebKitWebSrc* webkitSrc = WEBKIT_WEB_SRC(src.get());
     gboolean result = FALSE;
 
     switch (GST_QUERY_TYPE(query)) {
@@ -510,16 +512,16 @@ static gboolean webKitWebSrcQuery(GstPad* pad, GstQuery* query)
 
         gst_query_parse_duration(query, &format, NULL);
 
-        GST_DEBUG_OBJECT(src, "duration query in format %s", gst_format_get_name(format));
-        if ((format == GST_FORMAT_BYTES) && (src->priv->size > 0)) {
-            gst_query_set_duration(query, format, src->priv->size);
+        GST_DEBUG_OBJECT(webkitSrc, "duration query in format %s", gst_format_get_name(format));
+        if ((format == GST_FORMAT_BYTES) && (webkitSrc->priv->size > 0)) {
+            gst_query_set_duration(query, format, webkitSrc->priv->size);
             result = TRUE;
         }
         break;
     }
     case GST_QUERY_URI:
     {
-        gst_query_set_uri(query, src->priv->uri);
+        gst_query_set_uri(query, webkitSrc->priv->uri);
         result = TRUE;
         break;
     }
@@ -530,7 +532,6 @@ static gboolean webKitWebSrcQuery(GstPad* pad, GstQuery* query)
     if (!result)
         result = gst_pad_query_default(pad, query);
 
-    gst_object_unref(src);
     return result;
 }
 
