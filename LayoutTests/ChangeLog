@@ -1,3 +1,15 @@
+2011-02-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [gtk] Failing collinear arcTo canvas tests
+        https://bugs.webkit.org/show_bug.cgi?id=54658
+
+        Enable two more tests that pass after adding collinearity check
+        when drawing arcTo in canvas.
+
+        * platform/gtk/Skipped:
+
 2011-02-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium test expectations update.

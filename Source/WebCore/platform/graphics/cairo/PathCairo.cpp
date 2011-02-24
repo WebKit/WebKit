@@ -170,6 +170,11 @@ void Path::addArc(const FloatPoint& p, float r, float startAngle, float endAngle
     }
 }
 
+static inline float areaOfTriangleFormedByPoints(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& p3)
+{
+    return p1.x() * (p2.y() - p3.y()) + p2.x() * (p3.y() - p1.y()) + p3.x() * (p1.y() - p2.y());
+}
+
 void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 {
     if (isEmpty())
@@ -180,7 +185,11 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
     double x0, y0;
     cairo_get_current_point(cr, &x0, &y0);
     FloatPoint p0(x0, y0);
-    if ((p1.x() == p0.x() && p1.y() == p0.y()) || (p1.x() == p2.x() && p1.y() == p2.y()) || radius == 0.f) {
+
+    // Draw only a straight line to p1 if any of the points are equal or the radius is zero
+    // or the points are collinear (triangle that the points form has area of zero value).
+    if ((p1.x() == p0.x() && p1.y() == p0.y()) || (p1.x() == p2.x() && p1.y() == p2.y()) || !radius
+        || !areaOfTriangleFormedByPoints(p0, p1, p2)) {
         cairo_line_to(cr, p1.x(), p1.y());
         return;
     }

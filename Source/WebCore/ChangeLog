@@ -1,3 +1,19 @@
+2011-02-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [gtk] Failing collinear arcTo canvas tests
+        https://bugs.webkit.org/show_bug.cgi?id=54658
+
+        Check for collinearity of the three points that affect how arcTo call
+        results. This behavior is in accordance with the HTML standard.
+
+        No new tests added as this is already covered by at least two tests.
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::areaOfTriangleFormedByPoints):
+        (WebCore::Path::addArcTo):
+
 2011-02-24  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
