@@ -439,13 +439,13 @@ namespace JSC {
 #elif CPU(MIPS)
 #if WTF_MIPS_ISA(1)
         static const int patchOffsetPutByIdStructure = 16;
-        static const int patchOffsetPutByIdPropertyMapOffset1 = 68;
-        static const int patchOffsetPutByIdPropertyMapOffset2 = 84;
+        static const int patchOffsetPutByIdPropertyMapOffset1 = 56;
+        static const int patchOffsetPutByIdPropertyMapOffset2 = 72;
         static const int patchOffsetGetByIdStructure = 16;
         static const int patchOffsetGetByIdBranchToSlowCase = 48;
-        static const int patchOffsetGetByIdPropertyMapOffset1 = 68;
-        static const int patchOffsetGetByIdPropertyMapOffset2 = 88;
-        static const int patchOffsetGetByIdPutResult = 108;
+        static const int patchOffsetGetByIdPropertyMapOffset1 = 56;
+        static const int patchOffsetGetByIdPropertyMapOffset2 = 76;
+        static const int patchOffsetGetByIdPutResult = 96;
 #if ENABLE(OPCODE_SAMPLING)
         #error "OPCODE_SAMPLING is not yet supported"
 #else
@@ -457,13 +457,13 @@ namespace JSC {
         static const int patchOffsetMethodCheckPutFunction = 88;
 #else // WTF_MIPS_ISA(1)
         static const int patchOffsetPutByIdStructure = 12;
-        static const int patchOffsetPutByIdPropertyMapOffset1 = 60;
-        static const int patchOffsetPutByIdPropertyMapOffset2 = 76;
+        static const int patchOffsetPutByIdPropertyMapOffset1 = 48;
+        static const int patchOffsetPutByIdPropertyMapOffset2 = 64;
         static const int patchOffsetGetByIdStructure = 12;
         static const int patchOffsetGetByIdBranchToSlowCase = 44;
-        static const int patchOffsetGetByIdPropertyMapOffset1 = 60;
-        static const int patchOffsetGetByIdPropertyMapOffset2 = 76;
-        static const int patchOffsetGetByIdPutResult = 92;
+        static const int patchOffsetGetByIdPropertyMapOffset1 = 48;
+        static const int patchOffsetGetByIdPropertyMapOffset2 = 64;
+        static const int patchOffsetGetByIdPutResult = 80;
 #if ENABLE(OPCODE_SAMPLING)
         #error "OPCODE_SAMPLING is not yet supported"
 #else
