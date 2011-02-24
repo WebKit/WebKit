@@ -1,3 +1,32 @@
+2011-02-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        SegmentedString does not need an m_composite member
+        https://bugs.webkit.org/show_bug.cgi?id=55083
+
+        Storing m_composite as distinct from m_substrings.isEmpty()
+        was just error prone and eventually going to get us in trouble.
+
+        I also cleaned up some of the style in SegementedString.*
+        since this file long predates check-webkit-style.
+
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::SegmentedString):
+        (WebCore::SegmentedString::operator=):
+        (WebCore::SegmentedString::length):
+        (WebCore::SegmentedString::setExcludeLineNumbers):
+        (WebCore::SegmentedString::clear):
+        (WebCore::SegmentedString::append):
+        (WebCore::SegmentedString::prepend):
+        (WebCore::SegmentedString::advanceSubstring):
+        (WebCore::SegmentedString::toString):
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedSubstring::SegmentedSubstring):
+        (WebCore::SegmentedSubstring::appendTo):
+        (WebCore::SegmentedString::SegmentedString):
+        (WebCore::SegmentedString::isComposite):
+
 2011-02-24  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Add missing include for UnusedParam.h

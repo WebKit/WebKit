@@ -30,7 +30,13 @@ class SegmentedString;
 
 class SegmentedSubstring {
 public:
-    SegmentedSubstring() : m_length(0), m_current(0), m_doNotExcludeLineNumbers(true) {}
+    SegmentedSubstring()
+        : m_length(0)
+        , m_current(0)
+        , m_doNotExcludeLineNumbers(true)
+    {
+    }
+
     SegmentedSubstring(const String& str)
         : m_length(str.length())
         , m_current(str.isEmpty() ? 0 : str.characters())
@@ -55,9 +61,8 @@ public:
                 str = m_string;
             else
                 str.append(m_string);
-        } else {
+        } else
             str.append(String(m_current, m_length));
-        }
     }
 
 public:
@@ -78,7 +83,6 @@ public:
         , m_numberOfCharactersConsumedPriorToCurrentString(0)
         , m_numberOfCharactersConsumedPriorToCurrentLine(0)
         , m_currentLine(0)
-        , m_composite(false)
         , m_closed(false)
     {
     }
@@ -91,7 +95,6 @@ public:
         , m_numberOfCharactersConsumedPriorToCurrentString(0)
         , m_numberOfCharactersConsumedPriorToCurrentLine(0)
         , m_currentLine(0)
-        , m_composite(false)
         , m_closed(false)
     {
     }
@@ -267,6 +270,8 @@ private:
         return result;
     }
 
+    bool isComposite() const { return !m_substrings.isEmpty(); }
+
     UChar m_pushedChar1;
     UChar m_pushedChar2;
     SegmentedSubstring m_currentString;
@@ -275,7 +280,6 @@ private:
     int m_numberOfCharactersConsumedPriorToCurrentLine;
     int m_currentLine;
     Deque<SegmentedSubstring> m_substrings;
-    bool m_composite;
     bool m_closed;
 };
 
