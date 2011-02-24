@@ -43,16 +43,16 @@ public:
     {
     }
     
-    WeakGCPtr(JSGlobalData& globalData, Finalizer finalizer = 0)
+    WeakGCPtr(JSGlobalData& globalData, Finalizer* finalizer = 0, void* context = 0)
         : m_slot(globalData.allocateGlobalHandle())
     {
-        HandleHeap::heapFor(m_slot)->makeWeak(m_slot, finalizer);
+        HandleHeap::heapFor(m_slot)->makeWeak(m_slot, finalizer, context);
     }
     
-    WeakGCPtr(JSGlobalData& globalData, ExternalType value, Finalizer finalizer = 0)
+    WeakGCPtr(JSGlobalData& globalData, ExternalType value, Finalizer* finalizer = 0, void* context = 0)
         : m_slot(globalData.allocateGlobalHandle())
     {
-        HandleHeap::heapFor(m_slot)->makeWeak(m_slot, finalizer);
+        HandleHeap::heapFor(m_slot)->makeWeak(m_slot, finalizer, context);
         internalSet(value);
     }
 
@@ -77,11 +77,11 @@ public:
         HandleHeap::heapFor(m_slot)->deallocate(m_slot);
     }
 
-    void set(JSGlobalData& globalData, ExternalType value, Finalizer finalizer)
+    void set(JSGlobalData& globalData, ExternalType value, Finalizer* finalizer)
     {
         if (!this->m_slot) {
             this->m_slot = globalData.allocateGlobalHandle();
-            HandleHeap::heapFor(this->m_slot)->makeWeak(this->m_slot, finalizer);
+            HandleHeap::heapFor(this->m_slot)->makeWeak(this->m_slot, finalizer, 0);
         } else
             ASSERT(HandleHeap::heapFor(this->m_slot)->getFinalizer(this->m_slot) == finalizer);
         this->internalSet(value);

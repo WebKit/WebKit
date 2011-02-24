@@ -120,7 +120,6 @@ namespace JSC {
         size_t size() const { return m_end - m_start; }
 
         void setGlobalObject(JSGlobalObject*);
-        static void globalObjectCollected(JSGlobalData&, Handle<Unknown>);
         JSGlobalObject* globalObject();
 
         bool grow(Register* newEnd);
@@ -134,6 +133,8 @@ namespace JSC {
         
         static size_t committedByteCount();
         static void initializeThreading();
+
+        static Finalizer* globalObjectCollectedNotifier();
 
     private:
         void releaseExcessCapacity();
@@ -156,7 +157,7 @@ namespace JSC {
         , m_start(0)
         , m_end(0)
         , m_max(0)
-        , m_globalObject(globalData, globalObjectCollected)
+        , m_globalObject(globalData, RegisterFile::globalObjectCollectedNotifier())
     {
         ASSERT(maxGlobals && isPageAligned(maxGlobals));
         ASSERT(capacity && isPageAligned(capacity));

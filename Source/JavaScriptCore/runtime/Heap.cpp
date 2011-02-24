@@ -77,7 +77,7 @@ void Heap::destroy()
 
     delete m_markListSet;
     m_markListSet = 0;
-
+    m_markedSpace.clearMarks();
     m_handleHeap.clearWeakPointers();
     m_markedSpace.destroy();
 

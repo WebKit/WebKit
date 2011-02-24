@@ -1,3 +1,44 @@
+2011-02-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make weaklist processing deal with weak handles being removed during the iteration
+        https://bugs.webkit.org/show_bug.cgi?id=55105
+
+        It is possible for the handle heap to end up in a broken state if
+        a handle's finalizer removes either the current or next handle
+        to be visited during the post-gc cleanup.  This patch removes that
+        problem by allowing the deallocate(Node*) routine to update the
+        iterator if it is called during finalization.
+
+        * collector/handles/HandleHeap.cpp:
+        (JSC::HandleHeap::HandleHeap):
+        (JSC::HandleHeap::updateAfterMark):
+        (JSC::HandleHeap::clearWeakPointers):
+        (JSC::HandleHeap::writeBarrier):
+        (JSC::HandleHeap::protectedGlobalObjectCount):
+        * collector/handles/HandleHeap.h:
+        (JSC::Finalizer::~Finalizer):
+        (JSC::HandleHeap::getFinalizer):
+        (JSC::HandleHeap::deallocate):
+        (JSC::HandleHeap::makeWeak):
+        (JSC::HandleHeap::makeSelfDestroying):
+        (JSC::HandleHeap::Node::Node):
+        (JSC::HandleHeap::Node::setFinalizer):
+        (JSC::HandleHeap::Node::finalizer):
+        (JSC::HandleHeap::Node::finalizerContext):
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::setGlobalObject):
+        (JSC::GlobalObjectNotifier::finalize):
+        (JSC::RegisterFile::globalObjectCollectedNotifier):
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+        * runtime/Heap.cpp:
+        (JSC::Heap::destroy):
+        * runtime/WeakGCPtr.h:
+        (JSC::WeakGCPtr::WeakGCPtr):
+        (JSC::WeakGCPtr::set):
+
 2011-02-24  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Oliver Hunt.

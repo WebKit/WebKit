@@ -27,12 +27,16 @@
 
 #include "HandleHeap.h"
 
-#include "JSCell.h"
+#include "JSObject.h"
 
 namespace JSC {
 
 HandleHeap::HandleHeap(JSGlobalData* globalData)
     : m_globalData(globalData)
+    , m_nextToFinalize(0)
+#if !ASSERT_DISABLED
+    , m_handlingFinalizers(false)
+#endif
 {
     grow();
 }
@@ -56,44 +60,54 @@ void HandleHeap::markStrongHandles(MarkStack& markStack)
 
 void HandleHeap::updateAfterMark()
 {
+    clearWeakPointers();
+}
+
+void HandleHeap::clearWeakPointers()
+{
+#if !ASSERT_DISABLED
+    m_handlingFinalizers = true;
+#endif
     Node* end = m_weakList.end();
-    for (Node* node = m_weakList.begin(); node != end; node = node->next()) {
-        JSValue value = *node->slot();
+    for (Node* node = m_weakList.begin(); node != end;) {
+        Node* current = node;
+        node = current->next();
+        
+        JSValue value = *current->slot();
         if (!value || !value.isCell())
             continue;
+        
         JSCell* cell = value.asCell();
         ASSERT(!cell || cell->structure());
 
         if (Heap::isMarked(cell))
             continue;
-
-        if (Finalizer finalizer = node->finalizer())
-            finalizer(*m_globalData, Handle<Unknown>::wrapSlot(node->slot()));
-
-        if (node->isSelfDestroying())
-            deallocate(toHandle(node));
-        else
-            *node->slot() = JSValue();
+        
+        if (Finalizer* finalizer = current->finalizer()) {
+            m_nextToFinalize = node;
+            finalizer->finalize(Handle<Unknown>::wrapSlot(current->slot()), current->finalizerContext());
+            node = m_nextToFinalize;
+            m_nextToFinalize = 0;
+        } 
+        
+        if (current->isSelfDestroying()) {
+            ASSERT(node != current);
+            ASSERT(current->next() == node);
+            deallocate(toHandle(current));
+        } else if (current->next() == node) { // if current->next() != node, then current has been deallocated
+            SentinelLinkedList<Node>::remove(current);
+            *current->slot() = JSValue();
+            m_immediateList.push(current);
+        }
     }
-}
-    
-void HandleHeap::clearWeakPointers()
-{
-    Node* end = m_weakList.end();
-    for (Node* node = m_weakList.begin(); node != end; node = node->next()) {
-        JSValue value = *node->slot();
-        if (!value || !value.isCell())
-            continue;
-        ASSERT(value.asCell()->structure());
-
-        if (Finalizer finalizer = node->finalizer())
-            finalizer(*m_globalData, Handle<Unknown>::wrapSlot(node->slot()));
-        *node->slot() = JSValue();
-    }
+#if !ASSERT_DISABLED
+    m_handlingFinalizers = false;
+#endif
 }
 
 void HandleHeap::writeBarrier(HandleSlot slot, const JSValue& value)
 {
+    ASSERT(!m_handlingFinalizers);
     if (slot->isCell() == value.isCell() && !value == !*slot)
         return;
     Node* node = toNode(slot);
@@ -106,6 +120,18 @@ void HandleHeap::writeBarrier(HandleSlot slot, const JSValue& value)
         m_weakList.push(node);
     else
         m_strongList.push(node);
+}
+
+unsigned HandleHeap::protectedGlobalObjectCount()
+{
+    unsigned count = 0;
+    Node* end = m_strongList.end();
+    for (Node* node = m_strongList.begin(); node != end; node = node->next()) {
+        JSValue value = *node->slot();
+        if (value.isObject() && asObject(value.asCell())->isGlobalObject())
+            count++;
+    }
+    return count;
 }
 
 }

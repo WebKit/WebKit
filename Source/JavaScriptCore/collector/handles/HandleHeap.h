@@ -38,10 +38,13 @@ class JSGlobalData;
 class JSValue;
 class MarkStack;
 
-typedef void (*Finalizer)(JSGlobalData&, Handle<Unknown>);
+class Finalizer {
+public:
+    virtual void finalize(Handle<Unknown>, void*) = 0;
+    virtual ~Finalizer() {}
+};
 
 class HandleHeap {
-private:
 public:
     static HandleHeap* heapFor(HandleSlot);
 
@@ -50,8 +53,8 @@ public:
     HandleSlot allocate();
     void deallocate(HandleSlot);
     
-    void makeWeak(HandleSlot, Finalizer);
-    void makeSelfDestroying(HandleSlot, Finalizer);
+    void makeWeak(HandleSlot, Finalizer*, void* context);
+    void makeSelfDestroying(HandleSlot, Finalizer*, void* context);
 
     void markStrongHandles(MarkStack&);
     void updateAfterMark();
@@ -62,12 +65,14 @@ public:
     void writeBarrier(HandleSlot, const JSValue&);
 
 #if !ASSERT_DISABLED
-    Finalizer getFinalizer(HandleSlot handle)
+    Finalizer* getFinalizer(HandleSlot handle)
     {
         return toNode(handle)->finalizer();
     }
 #endif
 
+    unsigned protectedGlobalObjectCount();
+    
 private:
     typedef uintptr_t HandleHeapWithFlags;
     enum { FlagsMask = 3, WeakFlag = 1, SelfDestroyingFlag = 2 };
@@ -79,8 +84,9 @@ private:
         HandleSlot slot();
         HandleHeap* handleHeap();
 
-        void setFinalizer(Finalizer);
-        Finalizer finalizer();
+        void setFinalizer(Finalizer*, void* context);
+        Finalizer* finalizer();
+        void* finalizerContext();
 
         void setPrev(Node*);
         Node* prev();
@@ -97,7 +103,8 @@ private:
     private:
         JSValue m_value;
         HandleHeapWithFlags m_handleHeapWithFlags;
-        Finalizer m_finalizer;
+        Finalizer* m_finalizer;
+        void* m_finalizerContext;
         Node* m_prev;
         Node* m_next;
     };
@@ -114,6 +121,11 @@ private:
     SentinelLinkedList<Node> m_weakList;
     SentinelLinkedList<Node> m_immediateList;
     SinglyLinkedList<Node> m_freeList;
+    Node* m_nextToFinalize;
+
+#if !ASSERT_DISABLED
+    bool m_handlingFinalizers;
+#endif
 };
 
 inline HandleHeap* HandleHeap::heapFor(HandleSlot handle)
@@ -145,15 +157,19 @@ inline HandleSlot HandleHeap::allocate()
 inline void HandleHeap::deallocate(HandleSlot handle)
 {
     Node* node = toNode(handle);
+    if (m_nextToFinalize == node) {
+        m_nextToFinalize = node->next();
+        ASSERT(m_nextToFinalize->next());
+    }
     SentinelLinkedList<Node>::remove(node);
     m_freeList.push(node);
 }
 
-inline void HandleHeap::makeWeak(HandleSlot handle, Finalizer finalizer)
+inline void HandleHeap::makeWeak(HandleSlot handle, Finalizer* finalizer, void* context)
 {
     Node* node = toNode(handle);
     SentinelLinkedList<Node>::remove(node);
-    node->setFinalizer(finalizer);
+    node->setFinalizer(finalizer, context);
     node->makeWeak();
     if (handle->isCell() && *handle)
         m_weakList.push(node);
@@ -161,23 +177,24 @@ inline void HandleHeap::makeWeak(HandleSlot handle, Finalizer finalizer)
         m_immediateList.push(node);
 }
 
-inline void HandleHeap::makeSelfDestroying(HandleSlot handle, Finalizer finalizer)
+inline void HandleHeap::makeSelfDestroying(HandleSlot handle, Finalizer* finalizer, void* context)
 {
-    makeWeak(handle, finalizer);
+    makeWeak(handle, finalizer, context);
     Node* node = toNode(handle);
-    SentinelLinkedList<Node>::remove(node);
     node->makeSelfDestroying();
 }
 
 inline HandleHeap::Node::Node(HandleHeap* handleHeap)
     : m_handleHeapWithFlags(reinterpret_cast<uintptr_t>(handleHeap))
     , m_finalizer(0)
+    , m_finalizerContext(0)
 {
 }
 
 inline HandleHeap::Node::Node(WTF::SentinelTag)
     : m_handleHeapWithFlags(0)
     , m_finalizer(0)
+    , m_finalizerContext(0)
 {
 }
 
@@ -191,9 +208,10 @@ inline HandleHeap* HandleHeap::Node::handleHeap()
     return reinterpret_cast<HandleHeap*>(m_handleHeapWithFlags & ~FlagsMask);
 }
 
-inline void HandleHeap::Node::setFinalizer(Finalizer finalizer)
+inline void HandleHeap::Node::setFinalizer(Finalizer* finalizer, void* context)
 {
     m_finalizer = finalizer;
+    m_finalizerContext = context;
 }
 
 inline void HandleHeap::Node::makeWeak()
@@ -219,9 +237,15 @@ inline bool HandleHeap::Node::isSelfDestroying()
     return !!(m_handleHeapWithFlags & SelfDestroyingFlag);
 }
 
-inline Finalizer HandleHeap::Node::finalizer()
+inline Finalizer* HandleHeap::Node::finalizer()
 {
     return m_finalizer;
+}
+
+inline void* HandleHeap::Node::finalizerContext()
+{
+    ASSERT(m_finalizer);
+    return m_finalizerContext;
 }
 
 inline void HandleHeap::Node::setPrev(Node* prev)
