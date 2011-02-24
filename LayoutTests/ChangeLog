@@ -1,3 +1,72 @@
+2011-02-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46500, make positioned elements work with vertical text.
+
+        Rework the logical height computation for positioned elements to work in terms of before and after.  That way the offset is determined from
+        the correct container side in flipped block writing modes (e.g., vertical-rl).
+        
+        Patch locationOffsetIncludingFlipping to use the containing block to flip so that it will behave correctly with absolute/fixed positioned
+        elements.
+        
+        Patch offsetFromContainer to use the flipped location offset for absolute/fixed positioned elements so that localToAbsolute works properly.
+
+        Added twelve tests in fast/block/positioning/vertical-rl and fast/block/positioning/vertical-lr.
+
+        * fast/block/positioning/vertical-lr: Added.
+        * fast/block/positioning/vertical-lr/001.html: Added.
+        * fast/block/positioning/vertical-lr/002.html: Added.
+        * fast/block/positioning/vertical-lr/003.html: Added.
+        * fast/block/positioning/vertical-lr/004.html: Added.
+        * fast/block/positioning/vertical-lr/005.html: Added.
+        * fast/block/positioning/vertical-lr/006.html: Added.
+        * fast/block/positioning/vertical-rl: Added.
+        * fast/block/positioning/vertical-rl/001.html: Added.
+        * fast/block/positioning/vertical-rl/002.html: Added.
+        * fast/block/positioning/vertical-rl/003.html: Added.
+        * fast/block/positioning/vertical-rl/004.html: Added.
+        * fast/block/positioning/vertical-rl/005.html: Added.
+        * fast/block/positioning/vertical-rl/006.html: Added.
+        * platform/mac/fast/block/positioning/vertical-lr: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/001-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/001-expected.png: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/001-expected.txt: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/002-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/002-expected.png: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/002-expected.txt: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/003-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/003-expected.png: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/003-expected.txt: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/004-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/004-expected.png: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/004-expected.txt: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/005-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/005-expected.png: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/005-expected.txt: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/006-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/006-expected.png: Added.
+        * platform/mac/fast/block/positioning/vertical-lr/006-expected.txt: Added.
+        * platform/mac/fast/block/positioning/vertical-rl: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/001-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/001-expected.png: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/001-expected.txt: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/002-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/002-expected.png: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/002-expected.txt: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/003-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/003-expected.png: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/003-expected.txt: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/004-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/004-expected.png: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/004-expected.txt: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/005-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/005-expected.png: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/005-expected.txt: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/006-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/006-expected.png: Added.
+        * platform/mac/fast/block/positioning/vertical-rl/006-expected.txt: Added.
+
 2011-02-24  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

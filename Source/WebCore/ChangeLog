@@ -1,3 +1,28 @@
+2011-02-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46500, make positioned elements work with vertical text.
+
+        Rework the logical height computation for positioned elements to work in terms of before and after.  That way the offset is determined from
+        the correct container side in flipped block writing modes (e.g., vertical-rl).
+        
+        Patch locationOffsetIncludingFlipping to use the containing block to flip so that it will behave correctly with absolute/fixed positioned
+        elements.
+        
+        Patch offsetFromContainer to use the flipped location offset for absolute/fixed positioned elements so that localToAbsolute works properly.
+
+        Added twelve tests in fast/block/positioning/vertical-rl and fast/block/positioning/vertical-lr.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        (WebCore::RenderBox::computePositionedLogicalHeightUsing):
+        (WebCore::RenderBox::locationOffsetIncludingFlipping):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::logicalTop):
+        (WebCore::InheritedFlags::logicalBottom):
+
 2011-02-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

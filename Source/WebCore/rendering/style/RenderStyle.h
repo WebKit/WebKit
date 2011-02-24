@@ -375,8 +375,8 @@ public:
     // Accessors for positioned object edges that take into account writing mode.
     Length logicalLeft() const { return isHorizontalWritingMode() ? left() : top(); }
     Length logicalRight() const { return isHorizontalWritingMode() ? right() : bottom(); }
-    Length logicalTop() const { return isHorizontalWritingMode() ? top() : left(); }
-    Length logicalBottom() const { return isHorizontalWritingMode() ? bottom() : right(); }
+    Length logicalTop() const { return isHorizontalWritingMode() ? (isFlippedBlocksWritingMode() ? bottom() : top()) : (isFlippedBlocksWritingMode() ? right() : left()); }
+    Length logicalBottom() const { return isHorizontalWritingMode() ? (isFlippedBlocksWritingMode() ? top() : bottom()) : (isFlippedBlocksWritingMode() ? left() : right()); }
 
     // Whether or not a positioned element requires normal flow x/y to be computed
     // to determine its position.

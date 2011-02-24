@@ -1275,7 +1275,7 @@ IntSize RenderBox::offsetFromContainer(RenderObject* o, const IntPoint& point) c
             } else
                 offset += locationOffsetIncludingFlipping();
         } else
-            offset += locationOffset();
+            offset += locationOffsetIncludingFlipping();
     }
 
     if (o->hasOverflowClip())
@@ -2458,15 +2458,16 @@ void RenderBox::computePositionedLogicalHeight()
     const int containerLogicalHeight = containingBlockLogicalHeightForPositioned(containerBlock);
 
     bool isHorizontal = style()->isHorizontalWritingMode();
+    bool isFlipped = style()->isFlippedBlocksWritingMode();
     const int bordersPlusPadding = borderAndPaddingLogicalHeight();
-    const Length marginLogicalTop = isHorizontal ? style()->marginTop() : style()->marginLeft();
-    const Length marginLogicalBottom = isHorizontal ? style()->marginBottom() : style()->marginRight();
-    int& marginLogicalTopAlias = isHorizontal ? m_marginTop : m_marginLeft;
-    int& marginLogicalBottomAlias = isHorizontal ? m_marginBottom : m_marginRight;
+    const Length marginBefore = style()->marginBefore();
+    const Length marginAfter = style()->marginAfter();
+    int& marginBeforeAlias = isHorizontal ? (isFlipped ? m_marginBottom : m_marginTop) : (isFlipped ? m_marginRight: m_marginLeft);
+    int& marginAfterAlias = isHorizontal ? (isFlipped ? m_marginTop : m_marginBottom) : (isFlipped ? m_marginLeft: m_marginRight);
 
     Length logicalTop = style()->logicalTop();
     Length logicalBottom = style()->logicalBottom();
-
+        
     /*---------------------------------------------------------------------------*\
      * For the purposes of this section and the next, the term "static position"
      * (of an element) refers, roughly, to the position an element would have had
@@ -2503,8 +2504,8 @@ void RenderBox::computePositionedLogicalHeight()
 
     // Calculate constraint equation values for 'height' case.
     computePositionedLogicalHeightUsing(style()->logicalHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding,
-                                        logicalTop, logicalBottom, marginLogicalTop, marginLogicalBottom,
-                                        logicalHeightResult, marginLogicalTopAlias, marginLogicalBottomAlias, logicalTopPos);
+                                        logicalTop, logicalBottom, marginBefore, marginAfter,
+                                        logicalHeightResult, marginBeforeAlias, marginAfterAlias, logicalTopPos);
     setLogicalTop(logicalTopPos);
 
     // Avoid doing any work in the common case (where the values of min-height and max-height are their defaults).
@@ -2513,18 +2514,18 @@ void RenderBox::computePositionedLogicalHeight()
     // Calculate constraint equation values for 'max-height' case.
     if (!style()->logicalMaxHeight().isUndefined()) {
         int maxLogicalHeight;
-        int maxMarginLogicalTop;
-        int maxMarginLogicalBottom;
+        int maxMarginBefore;
+        int maxMarginAfter;
         int maxLogicalTopPos;
 
         computePositionedLogicalHeightUsing(style()->logicalMaxHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding,
-                                            logicalTop, logicalBottom, marginLogicalTop, marginLogicalBottom,
-                                            maxLogicalHeight, maxMarginLogicalTop, maxMarginLogicalBottom, maxLogicalTopPos);
+                                            logicalTop, logicalBottom, marginBefore, marginAfter,
+                                            maxLogicalHeight, maxMarginBefore, maxMarginAfter, maxLogicalTopPos);
 
         if (logicalHeightResult > maxLogicalHeight) {
             logicalHeightResult = maxLogicalHeight;
-            marginLogicalTopAlias = maxMarginLogicalTop;
-            marginLogicalBottomAlias = maxMarginLogicalBottom;
+            marginBeforeAlias = maxMarginBefore;
+            marginAfterAlias = maxMarginAfter;
             setLogicalTop(maxLogicalTopPos);
         }
     }
@@ -2532,18 +2533,18 @@ void RenderBox::computePositionedLogicalHeight()
     // Calculate constraint equation values for 'min-height' case.
     if (!style()->logicalMinHeight().isZero()) {
         int minLogicalHeight;
-        int minMarginLogicalTop;
-        int minMarginLogicalBottom;
+        int minMarginBefore;
+        int minMarginAfter;
         int minLogicalTopPos;
 
         computePositionedLogicalHeightUsing(style()->logicalMinHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding,
-                                            logicalTop, logicalBottom, marginLogicalTop, marginLogicalBottom,
-                                            minLogicalHeight, minMarginLogicalTop, minMarginLogicalBottom, minLogicalTopPos);
+                                            logicalTop, logicalBottom, marginBefore, marginAfter,
+                                            minLogicalHeight, minMarginBefore, minMarginAfter, minLogicalTopPos);
 
         if (logicalHeightResult < minLogicalHeight) {
             logicalHeightResult = minLogicalHeight;
-            marginLogicalTopAlias = minMarginLogicalTop;
-            marginLogicalBottomAlias = minMarginLogicalBottom;
+            marginBeforeAlias = minMarginBefore;
+            marginAfterAlias = minMarginAfter;
             setLogicalTop(minLogicalTopPos);
         }
     }
@@ -2554,8 +2555,8 @@ void RenderBox::computePositionedLogicalHeight()
 
 void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, const RenderBoxModelObject* containerBlock,
                                                     int containerLogicalHeight, int bordersPlusPadding,
-                                                    Length logicalTop, Length logicalBottom, Length marginLogicalTop, Length marginLogicalBottom,
-                                                    int& logicalHeightValue, int& marginLogicalTopValue, int& marginLogicalBottomValue, int& logicalTopPos)
+                                                    Length logicalTop, Length logicalBottom, Length marginBefore, Length marginAfter,
+                                                    int& logicalHeightValue, int& marginBeforeValue, int& marginAfterValue, int& logicalTopPos)
 {
     // 'top' and 'bottom' cannot both be 'auto' because 'top would of been
     // converted to the static position in computePositionedLogicalHeight()
@@ -2593,23 +2594,23 @@ void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, 
         const int availableSpace = containerLogicalHeight - (logicalTopValue + logicalHeightValue + logicalBottom.calcValue(containerLogicalHeight) + bordersPlusPadding);
 
         // Margins are now the only unknown
-        if (marginLogicalTop.isAuto() && marginLogicalBottom.isAuto()) {
+        if (marginBefore.isAuto() && marginAfter.isAuto()) {
             // Both margins auto, solve for equality
             // NOTE: This may result in negative values.
-            marginLogicalTopValue = availableSpace / 2; // split the difference
-            marginLogicalBottomValue = availableSpace - marginLogicalTopValue; // account for odd valued differences
-        } else if (marginLogicalTop.isAuto()) {
+            marginBeforeValue = availableSpace / 2; // split the difference
+            marginAfterValue = availableSpace - marginBeforeValue; // account for odd valued differences
+        } else if (marginBefore.isAuto()) {
             // Solve for top margin
-            marginLogicalBottomValue = marginLogicalBottom.calcValue(containerLogicalHeight);
-            marginLogicalTopValue = availableSpace - marginLogicalBottomValue;
-        } else if (marginLogicalBottom.isAuto()) {
+            marginAfterValue = marginAfter.calcValue(containerLogicalHeight);
+            marginBeforeValue = availableSpace - marginAfterValue;
+        } else if (marginAfter.isAuto()) {
             // Solve for bottom margin
-            marginLogicalTopValue = marginLogicalTop.calcValue(containerLogicalHeight);
-            marginLogicalBottomValue = availableSpace - marginLogicalTopValue;
+            marginBeforeValue = marginBefore.calcValue(containerLogicalHeight);
+            marginAfterValue = availableSpace - marginBeforeValue;
         } else {
             // Over-constrained, (no need solve for bottom)
-            marginLogicalTopValue = marginLogicalTop.calcValue(containerLogicalHeight);
-            marginLogicalBottomValue = marginLogicalBottom.calcValue(containerLogicalHeight);
+            marginBeforeValue = marginBefore.calcValue(containerLogicalHeight);
+            marginAfterValue = marginAfter.calcValue(containerLogicalHeight);
         }
     } else {
         /*--------------------------------------------------------------------*\
@@ -2638,10 +2639,10 @@ void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, 
         // because the value is not used for any further calculations.
 
         // Calculate margins, 'auto' margins are ignored.
-        marginLogicalTopValue = marginLogicalTop.calcMinValue(containerLogicalHeight);
-        marginLogicalBottomValue = marginLogicalBottom.calcMinValue(containerLogicalHeight);
+        marginBeforeValue = marginBefore.calcMinValue(containerLogicalHeight);
+        marginAfterValue = marginAfter.calcMinValue(containerLogicalHeight);
 
-        const int availableSpace = containerLogicalHeight - (marginLogicalTopValue + marginLogicalBottomValue + bordersPlusPadding);
+        const int availableSpace = containerLogicalHeight - (marginBeforeValue + marginAfterValue + bordersPlusPadding);
 
         // Use rule/case that applies.
         if (logicalTopIsAuto && logicalHeightIsAuto && !logicalBottomIsAuto) {
@@ -2671,17 +2672,15 @@ void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, 
     // can make the result here rather complicated to compute.
 
     // Use computed values to calculate the vertical position.
-    logicalTopPos = logicalTopValue;
+    logicalTopPos = logicalTopValue + marginBeforeValue;
     
     // Our offset is from the logical bottom edge in a flipped environment, e.g., right for vertical-rl and bottom for horizontal-bt.
     if (style()->isFlippedBlocksWritingMode()) {
-        logicalTopPos += marginLogicalBottomValue;
         if (style()->isHorizontalWritingMode())
             logicalTopPos += containerBlock->borderBottom();
         else
             logicalTopPos += containerBlock->borderRight();
     } else {
-        logicalTopPos += marginLogicalTopValue;
         if (style()->isHorizontalWritingMode())
             logicalTopPos += containerBlock->borderTop();
         else
@@ -3414,11 +3413,12 @@ void RenderBox::flipForWritingMode(FloatRect& rect) const
 
 IntSize RenderBox::locationOffsetIncludingFlipping() const
 {
-    if (!parent() || !parent()->isBox())
+    RenderBlock* containerBlock = containingBlock();
+    if (containerBlock == this)
         return locationOffset();
     
     IntRect rect(frameRect());
-    parentBox()->flipForWritingMode(rect);
+    containerBlock->flipForWritingMode(rect); // FIXME: This is wrong if we are an absolutely positioned object enclosed by a relative-positioned inline.
     return IntSize(rect.x(), rect.y());
 }
 
