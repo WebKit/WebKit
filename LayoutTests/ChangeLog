@@ -1,3 +1,20 @@
+2011-02-24  James Robinson  <jamesr@chromium.org>
+
+        Update chromium test expectations.
+
+        * platform/chromium-linux/media/video-display-toggle-expected.checksum:
+        * platform/chromium-linux/media/video-display-toggle-expected.png:
+        * platform/chromium-linux/transitions/default-timing-function-expected.checksum: Added.
+        * platform/chromium-linux/transitions/default-timing-function-expected.png: Added.
+        * platform/chromium-win/media/video-display-toggle-expected.checksum:
+        * platform/chromium-win/media/video-display-toggle-expected.png:
+        * platform/chromium-win/transitions/default-timing-function-expected.checksum: Added.
+        * platform/chromium-win/transitions/default-timing-function-expected.png: Added.
+        * platform/chromium-win/transitions/default-timing-function-expected.txt: Added.
+        * platform/chromium/inspector/debugger/dom-breakpoints-expected.txt: Added.
+        * platform/mac-leopard/transitions/default-timing-function-expected.checksum: Added.
+        * platform/mac-leopard/transitions/default-timing-function-expected.png: Added.
+
 2011-02-24  Victoria Kirst  <vrk@google.com>
 
         Reviewed by Mihai Parparita.
