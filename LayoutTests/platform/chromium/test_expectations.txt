@@ -3443,19 +3443,11 @@ BUGWK54634 SKIP : media/video-controls-in-media-document.html = TIMEOUT
 
 BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH TIMEOUT
 
-// morrita: In addition, some tests are flaky between IMAGE, TEXT and IMAGE+TEXT. So marked then FAIL at this time.
-
 BUGWK54794 GPU MAC : compositing/geometry/object-clip-rects-assertion.html = TIMEOUT
 
 BUGCR73510 MAC : fast/text/font-size-zero.html = TEXT
 
 BUGWK54882 WIN : inspector/styles/styles-update-from-js.html = TEXT TIMEOUT
-
-BUGWK54736 MAC : editing/selection/move-past-trailing-space.html = IMAGE
-
-// regbalining tool couldn't find expectations for these 2 files
-BUGWK54736 MAC : fast/text/trailing-white-space-2.html = IMAGE
-BUGWK54736 MAC : fast/text/trailing-white-space.html = IMAGE
 
 BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 BUGWK55118 : fast/xsl/sort-locale.xml = TEXT

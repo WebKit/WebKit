@@ -1,3 +1,17 @@
+2011-02-24  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Leopard baseline update for some text tests after r78846
+        (Snow Leopard baselines were updated with r78862). chromium-mac (the
+        Leopard bot) should be passing with the mac-leopard baselines.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/editing/selection/move-past-trailing-space-expected.checksum:
+        * platform/mac-leopard/editing/selection/move-past-trailing-space-expected.png:
+        * platform/mac-leopard/fast/text/trailing-white-space-2-expected.checksum:
+        * platform/mac-leopard/fast/text/trailing-white-space-2-expected.png:
+        * platform/mac-leopard/fast/text/trailing-white-space-expected.checksum:
+        * platform/mac-leopard/fast/text/trailing-white-space-expected.png:
+
 2011-02-24  Tom Sepez  <tsepez@chromium.org>
 
         Reviewed by Darin Fisher.
