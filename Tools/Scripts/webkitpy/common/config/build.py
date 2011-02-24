@@ -94,10 +94,10 @@ def _should_file_trigger_build(target_platform, file):
         (r"\.(?:bkl|mk)$", []),
 
         # Patterns that should trigger builds on only some bots.
-        (r"/GNUmakefile\.am$", ["gtk"]),
+        (r"(?:^|/)GNUmakefile\.am$", ["gtk"]),
         (r"/\w+Chromium\w*\.(?:cpp|h|mm)$", ["chromium"]),
         (r"Mac\.(?:cpp|h|mm)$", ["mac"]),
-        (r"\.exp$", ["mac"]),
+        (r"\.exp(?:\.in)?$", ["mac"]),
         (r"\.gypi?", ["chromium"]),
         (r"\.order$", ["mac"]),
         (r"\.pr[io]$", ["qt"]),

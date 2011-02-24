@@ -28,12 +28,14 @@ from webkitpy.common.config import build
 class ShouldBuildTest(unittest.TestCase):
     _should_build_tests = [
         (["ChangeLog", "Source/WebCore/ChangeLog", "Source/WebKit2/ChangeLog-2011-02-11"], []),
+        (["GNUmakefile.am", "Source/WebCore/GNUmakefile.am"], ["gtk"]),
         (["Websites/bugs.webkit.org/foo", "Source/WebCore/bar"], ["*"]),
         (["Websites/bugs.webkit.org/foo"], []),
         (["Source/JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-leopard", "mac-snowleopard"]),
         (["Source/JavaScriptGlue/foo", "Source/WebCore/bar"], ["*"]),
         (["Source/JavaScriptGlue/foo"], ["mac-leopard", "mac-snowleopard"]),
         (["LayoutTests/foo"], ["*"]),
+        (["LayoutTests/canvas/philip/tests/size.attributes.parse.exp-expected.txt", "LayoutTests/canvas/philip/tests/size.attributes.parse.exp.html"], ["*"]),
         (["LayoutTests/platform/chromium-linux/foo"], ["chromium-linux"]),
         (["LayoutTests/platform/chromium-win/fast/compact/001-expected.txt"], ["chromium-win"]),
         (["LayoutTests/platform/mac-leopard/foo"], ["mac-leopard"]),
@@ -43,6 +45,7 @@ class ShouldBuildTest(unittest.TestCase):
         (["LayoutTests/platform/win-xp/foo"], ["win"]),
         (["LayoutTests/platform/win-wk2/foo"], ["win"]),
         (["LayoutTests/platform/win/foo"], ["win"]),
+        (["Source/WebCore.exp.in", "Source/WebKit/mac/WebKit.exp"], ["mac"]),
         (["Source/WebCore/mac/foo"], ["chromium-mac", "mac-leopard", "mac-snowleopard"]),
         (["Source/WebCore/win/foo"], ["chromium-win", "win"]),
         (["Source/WebCore/platform/graphics/gpu/foo"], ["mac-leopard", "mac-snowleopard"]),

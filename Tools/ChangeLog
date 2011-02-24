@@ -1,3 +1,19 @@
+2011-02-24  Adam Roben  <aroben@apple.com>
+
+        Don't trigger Windows builds for changes to WebCore.exp.in or the top-level GNUmakefile.am
+
+        Fixes <http://webkit.org/b/55144> Windows builders should not have built r79343 or r79440,
+        but did
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitpy/common/config/build.py:
+        (_should_file_trigger_build): Loosened the pattern for GNUmakefile.am to include the
+        top-level GNUmakefile.am, and loosened the pattern for .exp files to include WebCore.exp.in.
+
+        * Scripts/webkitpy/common/config/build_unittest.py:
+        (ShouldBuildTest): Added some more tests.
+
 2011-02-24  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Laszlo Gombos.
