@@ -27,8 +27,6 @@
 #include <unicode/ubrk.h>
 #include <wtf/Assertions.h>
 
-using namespace std;
-
 namespace WebCore {
 
 static TextBreakIterator* setUpIterator(bool& createdIterator, TextBreakIterator*& iterator,
@@ -70,34 +68,12 @@ TextBreakIterator* wordBreakIterator(const UChar* string, int length)
         staticWordBreakIterator, UBRK_WORD, string, length);
 }
 
-static bool createdLineBreakIterator = false;
-static TextBreakIterator* staticLineBreakIterator;
-
-TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length)
+TextBreakIterator* lineBreakIterator(const UChar* string, int length)
 {
-    TextBreakIterator* lineBreakIterator = 0;
-    if (!createdLineBreakIterator || staticLineBreakIterator) {
-        setUpIterator(createdLineBreakIterator, staticLineBreakIterator, UBRK_LINE, string, length);
-        swap(staticLineBreakIterator, lineBreakIterator);
-    }
-
-    if (!lineBreakIterator) {
-        bool createdNewLineBreakIterator = false;
-        setUpIterator(createdNewLineBreakIterator, lineBreakIterator, UBRK_LINE, string, length);
-    }
-
-    return lineBreakIterator;
-}
-
-void releaseLineBreakIterator(TextBreakIterator* iterator)
-{
-    ASSERT(createdLineBreakIterator);
-    ASSERT(iterator);
-
-    if (!staticLineBreakIterator)
-        staticLineBreakIterator = iterator;
-    else
-        ubrk_close(reinterpret_cast<UBreakIterator*>(iterator));
+    static bool createdLineBreakIterator = false;
+    static TextBreakIterator* staticLineBreakIterator;
+    return setUpIterator(createdLineBreakIterator,
+        staticLineBreakIterator, UBRK_LINE, string, length);
 }
 
 TextBreakIterator* sentenceBreakIterator(const UChar* string, int length)

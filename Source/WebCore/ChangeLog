@@ -1,3 +1,28 @@
+2011-02-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r79510.
+        http://trac.webkit.org/changeset/79510
+        https://bugs.webkit.org/show_bug.cgi?id=55114
+
+        It made ~200 tests crash on Qt bot (Requested by Ossy_ on
+        #webkit).
+
+        * platform/text/TextBreakIterator.h:
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::lineBreakIterator):
+        * platform/text/qt/TextBreakIteratorQt.cpp:
+        (WebCore::lineBreakIterator):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::findNextLineBreak):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        * rendering/break_lines.cpp:
+        (WebCore::nextBreakablePosition):
+        * rendering/break_lines.h:
+        (WebCore::isBreakable):
+
 2011-02-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Mark Rowe.

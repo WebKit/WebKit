@@ -748,7 +748,6 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
     float wordSpacing = style()->wordSpacing();
     int len = textLength();
     const UChar* txt = characters();
-    LazyLineBreakIterator breakIterator(txt, len);
     bool needsWordSpacing = false;
     bool ignoringSpaces = false;
     bool isSpace = false;
@@ -808,7 +807,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
             continue;
         }
 
-        bool hasBreak = breakAll || isBreakable(breakIterator, i, nextBreakable, breakNBSP);
+        bool hasBreak = breakAll || isBreakable(txt, i, len, nextBreakable, breakNBSP);
         bool betweenWords = true;
         int j = i;
         while (c != '\n' && !isSpaceAccordingToStyle(c, style()) && c != '\t' && c != softHyphen) {
@@ -816,7 +815,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
             if (j == len)
                 break;
             c = txt[j];
-            if (isBreakable(breakIterator, j, nextBreakable, breakNBSP))
+            if (isBreakable(txt, j, len, nextBreakable, breakNBSP))
                 break;
             if (breakAll) {
                 betweenWords = false;

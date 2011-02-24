@@ -34,7 +34,6 @@
 #include "RenderListMarker.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "TextBreakIterator.h"
 #include "TextRun.h"
 #include "TrailingFloatsRootInlineBox.h"
 #include "VerticalPositionCache.h"
@@ -663,7 +662,6 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
         bool isLineEmpty = true;
         bool paginated = view()->layoutState() && view()->layoutState()->isPaginated();
 
-        LineBreakIteratorInfo lineBreakIteratorInfo;
         VerticalPositionCache verticalPositionCache;
 
         while (!end.atEnd()) {
@@ -680,7 +678,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
             
             InlineIterator oldEnd = end;
             FloatingObject* lastFloatFromPreviousLine = m_floatingObjects ? m_floatingObjects->last() : 0;
-            end = findNextLineBreak(resolver, firstLine, isLineEmpty, lineBreakIteratorInfo, previousLineBrokeCleanly, hyphenated, &clear, lastFloatFromPreviousLine);
+            end = findNextLineBreak(resolver, firstLine, isLineEmpty, previousLineBrokeCleanly, hyphenated, &clear, lastFloatFromPreviousLine);
             if (resolver.position().atEnd()) {
                 resolver.deleteRuns();
                 checkForFloatsFromLastLine = true;
@@ -1434,7 +1432,7 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
     hyphenated = true;
 }
 
-InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool firstLine, bool& isLineEmpty, LineBreakIteratorInfo& lineBreakIteratorInfo, bool& previousLineBrokeCleanly, 
+InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool firstLine,  bool& isLineEmpty, bool& previousLineBrokeCleanly, 
                                               bool& hyphenated, EClear* clear, FloatingObject* lastFloatFromPreviousLine)
 {
     ASSERT(resolver.position().block == this);
@@ -1725,12 +1723,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     midWordBreak = w + wrapW + charWidth > width;
                 }
 
-                if (lineBreakIteratorInfo.first != t) {
-                    lineBreakIteratorInfo.first = t;
-                    lineBreakIteratorInfo.second.reset(str, strlen);
-                }
-
-                bool betweenWords = c == '\n' || (currWS != PRE && !atStart && isBreakable(lineBreakIteratorInfo.second, pos, nextBreakable, breakNBSP) && (style->hyphens() != HyphensNone || (pos && str[pos - 1] != softHyphen)));
+                bool betweenWords = c == '\n' || (currWS != PRE && !atStart && isBreakable(str, pos, strlen, nextBreakable, breakNBSP) && (style->hyphens() != HyphensNone || (pos && str[pos - 1] != softHyphen)));
 
                 if (betweenWords || midWordBreak) {
                     bool stoppedIgnoringSpaces = false;
