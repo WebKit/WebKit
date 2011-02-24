@@ -656,7 +656,7 @@ CompositeOperator GraphicsContext::compositeOperation() const
     return m_state.compositeOperator;
 }
 
-#if !PLATFORM(SKIA)
+#if !USE(SKIA)
 void GraphicsContext::setPlatformFillGradient(Gradient*)
 {
 }
@@ -674,7 +674,7 @@ void GraphicsContext::setPlatformStrokePattern(Pattern*)
 }
 #endif
 
-#if !PLATFORM(CG) && !PLATFORM(SKIA)
+#if !PLATFORM(CG) && !USE(SKIA)
 // Implement this if you want to go ahead and push the drawing mode into your native context
 // immediately.
 void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
@@ -682,7 +682,7 @@ void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
 }
 #endif
 
-#if !PLATFORM(QT) && !PLATFORM(CAIRO) && !PLATFORM(SKIA) && !PLATFORM(HAIKU) && !PLATFORM(OPENVG)
+#if !PLATFORM(QT) && !PLATFORM(CAIRO) && !USE(SKIA) && !PLATFORM(HAIKU) && !PLATFORM(OPENVG)
 void GraphicsContext::setPlatformStrokeStyle(StrokeStyle)
 {
 }
@@ -694,7 +694,7 @@ void GraphicsContext::setPlatformShouldSmoothFonts(bool)
 }
 #endif
 
-#if !PLATFORM(SKIA)
+#if !USE(SKIA)
 void GraphicsContext::setSharedGraphicsContext3D(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&)
 {
 }

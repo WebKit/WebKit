@@ -136,7 +136,7 @@ private:
     int m_alphaLocation;
 };
 
-#if PLATFORM(SKIA) && SK_B32_SHIFT
+#if USE(SKIA) && SK_B32_SHIFT
 typedef FragmentShaderRGBATexAlpha FragmentShaderTexAlpha;
 #else
 typedef FragmentShaderBGRATexAlpha FragmentShaderTexAlpha;

@@ -26,7 +26,7 @@
 #include "RenderStyle.h"
 #include "SVGRenderSupport.h"
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 #include "PlatformContextSkia.h"
 #endif
 

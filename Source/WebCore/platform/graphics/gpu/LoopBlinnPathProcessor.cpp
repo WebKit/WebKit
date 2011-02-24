@@ -43,7 +43,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 #include "SkGeometry.h"
 #include "SkPath.h"
 #include "SkScalar.h"
@@ -612,7 +612,7 @@ void LoopBlinnPathProcessor::buildContours(const Path& path)
 {
     // Clear out the contours
     m_contours.clear();
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     SkPath::Iter iter(*path.platformPath(), false);
     SkPoint points[4];
     SkPath::Verb verb;
@@ -700,7 +700,7 @@ void LoopBlinnPathProcessor::buildContours(const Path& path)
             break;
         }
     } while (verb != SkPath::kDone_Verb);
-#else // !PLATFORM(SKIA)
+#else // !USE(SKIA)
     // Must port to your platform.
     ASSERT_NOT_REACHED();
 #endif

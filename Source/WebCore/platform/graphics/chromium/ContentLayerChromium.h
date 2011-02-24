@@ -76,7 +76,7 @@ protected:
     // On platforms using Skia, we use the skia::PlatformCanvas for content layers
     // and the m_uploadPixelData buffer for image layers.
     // FIXME: We should be using memory we control for all uploads.
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     OwnPtr<skia::PlatformCanvas> m_uploadPixelCanvas;
 #endif
     OwnPtr<Vector<uint8_t> > m_uploadPixelData;

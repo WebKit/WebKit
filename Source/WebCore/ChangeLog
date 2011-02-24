@@ -1,3 +1,40 @@
+2011-02-24  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename PLATFORM(SKIA) to USE(SKIA)
+        https://bugs.webkit.org/show_bug.cgi?id=55090
+
+        * config.h: Removed second define of PLATFORM(SKIA).
+        * html/HTMLCanvasElement.cpp:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/Gradient.cpp:
+        * platform/graphics/Gradient.h:
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/Pattern.cpp:
+        * platform/graphics/Pattern.h:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        * platform/graphics/chromium/ShaderChromium.h:
+        * platform/graphics/gpu/LoopBlinnPathProcessor.cpp:
+        * platform/graphics/transforms/AffineTransform.h:
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * platform/image-decoders/ImageDecoder.cpp:
+        * platform/image-decoders/ImageDecoder.h:
+        * rendering/svg/RenderSVGResourceSolidColor.cpp:
+
 2011-02-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

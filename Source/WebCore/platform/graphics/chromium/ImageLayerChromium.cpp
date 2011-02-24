@@ -38,7 +38,7 @@
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #endif
@@ -86,7 +86,7 @@ void ImageLayerChromium::updateContentsIfDirty()
 
     NativeImagePtr nativeImage = m_contents->nativeImageForCurrentFrame();
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     // The layer contains an Image.
     NativeImageSkia* skiaImage = static_cast<NativeImageSkia*>(nativeImage);
     const SkBitmap* skiaBitmap = skiaImage;
@@ -103,7 +103,7 @@ void ImageLayerChromium::updateContentsIfDirty()
         resizeUploadBufferForImage(bitmapSize);
     m_uploadUpdateRect = IntRect(IntPoint(0, 0), bitmapSize);
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     SkAutoLockPixels lock(*skiaBitmap);
     // FIXME: do we need to support more image configurations?
     ASSERT(skiaBitmap->config()== SkBitmap::kARGB_8888_Config);

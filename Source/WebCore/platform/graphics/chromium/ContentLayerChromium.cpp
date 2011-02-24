@@ -39,7 +39,7 @@
 #include "LayerTexture.h"
 #include "RenderLayerBacking.h"
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #include "SkColorPriv.h"
@@ -174,7 +174,7 @@ void ContentLayerChromium::updateContentsIfDirty()
     if (dirtyRect.isEmpty())
         return;
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     OwnPtr<PlatformContextSkia> skiaContext;
 
     skiaContext.set(new PlatformContextSkia(m_uploadPixelCanvas.get()));
@@ -220,7 +220,7 @@ void ContentLayerChromium::resizeUploadBufferForImage(const IntSize& size)
 }
 void ContentLayerChromium::resizeUploadBuffer(const IntSize& size)
 {
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     m_uploadPixelCanvas = new skia::PlatformCanvas(size.width(), size.height(), false);
     m_uploadBufferSize = size;
 #else
@@ -228,7 +228,7 @@ void ContentLayerChromium::resizeUploadBuffer(const IntSize& size)
 #endif
 }
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 class SkBitmapConditionalAutoLockerPixels {
     WTF_MAKE_NONCOPYABLE(SkBitmapConditionalAutoLockerPixels);
 public:
@@ -257,11 +257,11 @@ private:
 void ContentLayerChromium::updateTextureIfNeeded()
 {
     uint8_t* pixels = 0;
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     SkBitmapConditionalAutoLockerPixels locker;
 #endif
     if (!m_uploadUpdateRect.isEmpty()) {
-#if PLATFORM(SKIA)
+#if USE(SKIA)
         if (m_uploadPixelCanvas) {
             const SkBitmap& bitmap = m_uploadPixelCanvas->getDevice()->accessBitmap(false);
             locker.lockPixels(&bitmap);

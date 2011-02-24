@@ -42,7 +42,7 @@
 #include "NotImplemented.h"
 #include "TextureManager.h"
 #include "WebGLLayerChromium.h"
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #elif PLATFORM(CG)

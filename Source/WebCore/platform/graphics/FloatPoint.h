@@ -54,7 +54,7 @@ QT_END_NAMESPACE
 class BPoint;
 #endif
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 struct SkPoint;
 #endif
 
@@ -130,7 +130,7 @@ public:
     operator BPoint() const;
 #endif
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     operator SkPoint() const;
     FloatPoint(const SkPoint&);
 #endif

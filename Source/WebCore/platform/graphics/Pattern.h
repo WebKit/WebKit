@@ -41,7 +41,7 @@ typedef CGPatternRef PlatformPatternPtr;
 #elif PLATFORM(CAIRO)
 #include <cairo.h>
 typedef cairo_pattern_t* PlatformPatternPtr;
-#elif PLATFORM(SKIA)
+#elif USE(SKIA)
 class SkShader;
 typedef SkShader* PlatformPatternPtr;
 #elif PLATFORM(QT)
@@ -79,7 +79,7 @@ public:
     void platformDestroy();
 
     // Pattern space is an abstract space that maps to the default user space by the transformation 'userSpaceTransformation' 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     PlatformPatternPtr platformPattern(const AffineTransform& userSpaceTransformation);
 #else
     PlatformPatternPtr createPlatformPattern(const AffineTransform& userSpaceTransformation) const;

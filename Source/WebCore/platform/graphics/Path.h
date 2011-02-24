@@ -49,7 +49,7 @@ namespace WebCore {
 class CairoPath;
 }
 typedef WebCore::CairoPath PlatformPath;
-#elif PLATFORM(SKIA)
+#elif USE(SKIA)
 class SkPath;
 typedef SkPath PlatformPath;
 #elif PLATFORM(HAIKU)

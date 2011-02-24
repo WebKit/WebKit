@@ -68,7 +68,7 @@ class wxPoint;
 typedef struct _point AEEPoint;
 #endif
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 struct SkPoint;
 struct SkIPoint;
 #endif
@@ -153,7 +153,7 @@ public:
     operator AEEPoint() const;
 #endif
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     IntPoint(const SkIPoint&);
     operator SkIPoint() const;
     operator SkPoint() const;

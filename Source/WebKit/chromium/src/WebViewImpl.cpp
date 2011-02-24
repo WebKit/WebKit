@@ -1017,7 +1017,7 @@ void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect
     ASSERT(rect.maxX() <= m_layerRenderer->rootLayerTextureSize().width()
            && rect.maxY() <= m_layerRenderer->rootLayerTextureSize().height());
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     PlatformContextSkia context(canvas);
 
     // PlatformGraphicsContext is actually a pointer to PlatformContextSkia

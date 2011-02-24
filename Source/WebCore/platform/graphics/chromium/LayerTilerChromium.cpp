@@ -35,7 +35,7 @@
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #elif PLATFORM(CG)
@@ -271,7 +271,7 @@ void LayerTilerChromium::update(TilePaintInterface& painter, const IntRect& cont
 
     const IntRect paintRect = layerRectToContentRect(dirtyLayerRect);
     GraphicsContext3D* context = layerRendererContext();
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     OwnPtr<skia::PlatformCanvas> canvas(new skia::PlatformCanvas(paintRect.width(), paintRect.height(), false));
     OwnPtr<PlatformContextSkia> skiaContext(new PlatformContextSkia(canvas.get()));
     OwnPtr<GraphicsContext> graphicsContext(new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(skiaContext.get())));

@@ -175,11 +175,6 @@
 
 #if PLATFORM(CHROMIUM)
 
-#if !OS(DARWIN)
-// Define SKIA on non-Mac.
-#define WTF_PLATFORM_SKIA 1
-#endif /* !OS(DARWIN) */
-
 // Chromium uses this file instead of JavaScriptCore/config.h to compile
 // JavaScriptCore/wtf (chromium doesn't compile the rest of JSC). Therefore,
 // this define is required.

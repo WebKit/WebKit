@@ -82,7 +82,7 @@ namespace WebCore {
 GraphicsContext3DInternal::GraphicsContext3DInternal()
     : m_webViewImpl(0)
     , m_initializedAvailableExtensions(false)
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 #elif PLATFORM(CG)
     , m_renderOutput(0)
 #else
@@ -165,7 +165,7 @@ void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingCon
     HTMLCanvasElement* canvas = context->canvas();
     ImageBuffer* imageBuffer = canvas->buffer();
     unsigned char* pixels = 0;
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     const SkBitmap* canvasBitmap = imageBuffer->context()->platformContext()->bitmap();
     const SkBitmap* readbackBitmap = 0;
     ASSERT(canvasBitmap->config() == SkBitmap::kARGB_8888_Config);
@@ -200,7 +200,7 @@ void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingCon
 
     m_impl->readBackFramebuffer(pixels, 4 * m_impl->width() * m_impl->height());
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     if (m_resizingBitmap.readyToDraw()) {
         // We need to draw the resizing bitmap into the canvas's backing store.
         SkCanvas canvas(*canvasBitmap);

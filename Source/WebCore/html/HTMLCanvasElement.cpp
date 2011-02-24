@@ -369,7 +369,7 @@ IntSize HTMLCanvasElement::convertToValidDeviceSize(float width, float height) c
     if (width < 1 || height < 1 || width * height > MaxCanvasArea)
         return IntSize();
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     if (width > MaxSkiaDim || height > MaxSkiaDim)
         return IntSize();
 #endif

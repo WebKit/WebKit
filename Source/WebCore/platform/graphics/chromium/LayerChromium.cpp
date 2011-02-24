@@ -36,7 +36,7 @@
 
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #endif

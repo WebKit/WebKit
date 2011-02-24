@@ -40,7 +40,7 @@
 #include "VGUtils.h"
 #elif PLATFORM(QT)
 #include <QTransform>
-#elif PLATFORM(SKIA)
+#elif USE(SKIA)
 #include <SkMatrix.h>
 #elif PLATFORM(WX) && USE(WXGC)
 #include <wx/graphics.h>
@@ -165,7 +165,7 @@ public:
     operator VGMatrix() const;
 #elif PLATFORM(QT)
     operator QTransform() const;
-#elif PLATFORM(SKIA)
+#elif USE(SKIA)
     operator SkMatrix() const;
 #elif PLATFORM(WX) && USE(WXGC)
     operator wxGraphicsMatrix() const;

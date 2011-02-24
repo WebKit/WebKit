@@ -64,7 +64,7 @@ typedef struct _Eina_Rectangle Eina_Rectangle;
 class wxRect;
 #endif
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 struct SkRect;
 struct SkIRect;
 #endif
@@ -186,7 +186,7 @@ public:
     operator CGRect() const;
 #endif
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     IntRect(const SkIRect&);
     operator SkRect() const;
     operator SkIRect() const;

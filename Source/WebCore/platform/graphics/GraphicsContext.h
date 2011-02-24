@@ -74,7 +74,7 @@ class wxWindowDC;
 #else
     typedef wxWindowDC PlatformGraphicsContext;
 #endif
-#elif PLATFORM(SKIA)
+#elif USE(SKIA)
 namespace WebCore {
 class PlatformContextSkia;
 }

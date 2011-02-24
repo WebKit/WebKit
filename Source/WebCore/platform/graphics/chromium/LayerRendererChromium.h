@@ -172,7 +172,7 @@ private:
     unsigned m_offscreenFramebufferId;
     bool m_compositeOffscreen;
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     OwnPtr<skia::PlatformCanvas> m_rootLayerCanvas;
     OwnPtr<PlatformContextSkia> m_rootLayerSkiaContext;
     OwnPtr<GraphicsContext> m_rootLayerGraphicsContext;

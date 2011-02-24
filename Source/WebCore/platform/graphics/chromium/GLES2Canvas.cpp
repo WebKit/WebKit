@@ -43,7 +43,7 @@
 #include "Path.h"
 #include "PlatformString.h"
 #include "SharedGraphicsContext3D.h"
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 #include "SkPath.h"
 #endif
 #include "Texture.h"
@@ -404,9 +404,9 @@ Texture* GLES2Canvas::getTexture(NativeImagePtr ptr)
     return m_context->getTexture(ptr);
 }
 
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 // This is actually cross-platform code, but since its only caller is inside a
-// PLATFORM(SKIA), it will cause a warning-as-error on Chrome/Mac.
+// USE(SKIA), it will cause a warning-as-error on Chrome/Mac.
 static void interpolateQuadratic(DoubleVector* vertices, const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2)
 {
     float tIncrement = 1.0f / pathTesselation, t = tIncrement;
@@ -481,7 +481,7 @@ void GLES2Canvas::createVertexBufferFromPath(const Path& path, int* count, unsig
     checkGLError("createVertexBufferFromPath, createBuffer");
     DoubleVector inVertices;
     WTF::Vector<size_t> contours;
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     const SkPath* skPath = path.platformPath();
     SkPoint pts[4];
     SkPath::Iter iter(*skPath, true);

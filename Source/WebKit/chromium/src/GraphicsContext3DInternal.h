@@ -29,7 +29,7 @@
 #include "GraphicsContext3D.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
-#if PLATFORM(SKIA)
+#if USE(SKIA)
 #include "SkBitmap.h"
 #endif
 
@@ -276,7 +276,7 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     RefPtr<WebGLLayerChromium> m_compositingLayer;
 #endif
-#if PLATFORM(SKIA)
+#if USE(SKIA)
     // If the width and height of the Canvas's backing store don't
     // match those that we were given in the most recent call to
     // reshape(), then we need an intermediate bitmap to read back the
