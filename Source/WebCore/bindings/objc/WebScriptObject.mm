@@ -649,13 +649,13 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     return self;
 }
 
-- (void)release
+- (oneway void)release
 {
 }
 
 - (NSUInteger)retainCount
 {
-    return UINT_MAX;
+    return NSUIntegerMax;
 }
 
 - (id)autorelease

@@ -1,3 +1,14 @@
+2011-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Fix clang build.
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebUndefined release]):
+        Release should be "oneway void".
+
+        (-[WebUndefined retainCount]):
+        Return NSUIntegerMax instead of UINT_MAX.
+
 2011-02-24  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
