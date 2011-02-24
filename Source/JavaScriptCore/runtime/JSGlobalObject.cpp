@@ -102,8 +102,6 @@ JSGlobalObject::~JSGlobalObject()
         (*profiler)->stopProfiling(globalExec(), UString());
     }
 
-    d()->globalData->globalObjects.take(this);
-
     d()->destructor(d());
 }
 
@@ -114,7 +112,6 @@ void JSGlobalObject::init(JSObject* thisValue)
     structure()->disableSpecificFunctionTracking();
 
     d()->globalData = Heap::heap(this)->globalData();
-    d()->globalData->globalObjects.set(this, this);
     d()->globalScopeChain = ScopeChain(this, d()->globalData.get(), this, thisValue);
 
     JSGlobalObject::globalExec()->init(0, 0, d()->globalScopeChain.node(), CallFrame::noCaller(), 0, 0);

@@ -96,7 +96,7 @@ JSObject* Instance::createRuntimeObject(ExecState* exec)
     JSLock lock(SilenceAssertionsOnly);
     RuntimeObject* newObject = newRuntimeObject(exec);
     m_runtimeObject.set(exec->globalData(), newObject, 0);
-    m_rootObject->addRuntimeObject(newObject);
+    m_rootObject->addRuntimeObject(exec->globalData(), newObject);
     return newObject;
 }
 
@@ -107,12 +107,6 @@ RuntimeObject* Instance::newRuntimeObject(ExecState* exec)
     // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
     // We need to pass in the right global object for "i".
     return new (exec) RuntimeObject(exec, exec->lexicalGlobalObject(), WebCore::deprecatedGetDOMStructure<RuntimeObject>(exec), this);
-}
-
-void Instance::willDestroyRuntimeObject(RuntimeObject* object)
-{
-    ASSERT(m_rootObject);
-    m_rootObject->removeRuntimeObject(object);
 }
 
 void Instance::willInvalidateRuntimeObject()

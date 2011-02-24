@@ -52,8 +52,7 @@ typedef void (*JSWeakMapDestroyedCallback)(JSWeakObjectMapRef map, void* data);
  @param destructor A function to call when the weak map is destroyed.
  @result A JSWeakObjectMapRef bound to the given context, data and destructor.
  @discussion The JSWeakObjectMapRef can be used as a storage mechanism to hold custom JS objects without forcing those objects to
- remain live as JSValueProtect would.  Any objects that are intended to be stored in a weak map must be user defined objects that
- remove themselves from the map in their finalizer.
+ remain live as JSValueProtect would.
  */
 JS_EXPORT JSWeakObjectMapRef JSWeakObjectMapCreate(JSContextRef ctx, void* data, JSWeakMapDestroyedCallback destructor);
 

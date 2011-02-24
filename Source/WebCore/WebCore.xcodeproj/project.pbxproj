@@ -4880,8 +4880,6 @@
 		BC53DA481143134D000D817E /* DOMWrapperWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC53DA471143134D000D817E /* DOMWrapperWorld.cpp */; };
 		BC53DA601143141A000D817E /* DOMObjectHashTableMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC53DA5F1143141A000D817E /* DOMObjectHashTableMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC53DA62114314BD000D817E /* DOMObjectHashTableMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC53DA61114314BD000D817E /* DOMObjectHashTableMap.cpp */; };
-		BC53DAC211432EEE000D817E /* JSDebugWrapperSet.h in Headers */ = {isa = PBXBuildFile; fileRef = BC53DAC111432EEE000D817E /* JSDebugWrapperSet.h */; };
-		BC53DAC511432FD9000D817E /* JSDebugWrapperSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC53DAC411432FD9000D817E /* JSDebugWrapperSet.cpp */; };
 		BC53DAC711433064000D817E /* JSDOMWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC53DAC611433064000D817E /* JSDOMWrapper.cpp */; };
 		BC56CB2110D5AC8000A77C64 /* GeolocationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC56CB1C10D5AC8000A77C64 /* GeolocationController.cpp */; };
 		BC56CB2210D5AC8000A77C64 /* GeolocationController.h in Headers */ = {isa = PBXBuildFile; fileRef = BC56CB1D10D5AC8000A77C64 /* GeolocationController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11199,8 +11197,6 @@
 		BC53DA471143134D000D817E /* DOMWrapperWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWrapperWorld.cpp; sourceTree = "<group>"; };
 		BC53DA5F1143141A000D817E /* DOMObjectHashTableMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMObjectHashTableMap.h; sourceTree = "<group>"; };
 		BC53DA61114314BD000D817E /* DOMObjectHashTableMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMObjectHashTableMap.cpp; sourceTree = "<group>"; };
-		BC53DAC111432EEE000D817E /* JSDebugWrapperSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDebugWrapperSet.h; sourceTree = "<group>"; };
-		BC53DAC411432FD9000D817E /* JSDebugWrapperSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDebugWrapperSet.cpp; sourceTree = "<group>"; };
 		BC53DAC611433064000D817E /* JSDOMWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWrapper.cpp; sourceTree = "<group>"; };
 		BC56CB1C10D5AC8000A77C64 /* GeolocationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationController.cpp; sourceTree = "<group>"; };
 		BC56CB1D10D5AC8000A77C64 /* GeolocationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationController.h; sourceTree = "<group>"; };
@@ -17711,8 +17707,6 @@
 				C585A66111D4FAC5004C3E4B /* IDBBindingUtilities.h */,
 				1C81BA030E97348300266E07 /* JavaScriptCallFrame.cpp */,
 				1C81BA040E97348300266E07 /* JavaScriptCallFrame.h */,
-				BC53DAC411432FD9000D817E /* JSDebugWrapperSet.cpp */,
-				BC53DAC111432EEE000D817E /* JSDebugWrapperSet.h */,
 				93B70D4709EB0C7C009D8468 /* JSDOMBinding.cpp */,
 				93B70D4809EB0C7C009D8468 /* JSDOMBinding.h */,
 				E1C36CBC0EB08062007410BC /* JSDOMGlobalObject.cpp */,
@@ -21020,7 +21014,6 @@
 				BC77D16C0FF19F560070887B /* JSDataGridColumnList.h in Headers */,
 				BCBCAE3D0FF19399000762AE /* JSDataGridDataSource.h in Headers */,
 				2E97CE701293AD6B00C5C8FF /* JSDataView.h in Headers */,
-				BC53DAC211432EEE000D817E /* JSDebugWrapperSet.h in Headers */,
 				4162A4581011464700DFF3ED /* JSDedicatedWorkerContext.h in Headers */,
 				FDA15ED212B03F94003A583A /* JSDelayNode.h in Headers */,
 				31FB1A66120A5D3F00DC02A0 /* JSDeviceMotionEvent.h in Headers */,
@@ -23783,7 +23776,6 @@
 				BCBCAE3C0FF19399000762AE /* JSDataGridDataSource.cpp in Sources */,
 				2E97CE6F1293AD6B00C5C8FF /* JSDataView.cpp in Sources */,
 				2E97CCF71293A43A00C5C8FF /* JSDataViewCustom.cpp in Sources */,
-				BC53DAC511432FD9000D817E /* JSDebugWrapperSet.cpp in Sources */,
 				4162A4571011464700DFF3ED /* JSDedicatedWorkerContext.cpp in Sources */,
 				4162A454101145E300DFF3ED /* JSDedicatedWorkerContextCustom.cpp in Sources */,
 				FDA15ED112B03F94003A583A /* JSDelayNode.cpp in Sources */,

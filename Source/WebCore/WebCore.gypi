@@ -605,8 +605,6 @@
             'bindings/js/JSDataGridDataSource.cpp',
             'bindings/js/JSDataGridDataSource.h',
             'bindings/js/JSDedicatedWorkerContextCustom.cpp',
-            'bindings/js/JSDebugWrapperSet.cpp',
-            'bindings/js/JSDebugWrapperSet.h',
             'bindings/js/JSDeviceMotionEventCustom.cpp',
             'bindings/js/JSDeviceOrientationEventCustom.cpp',
             'bindings/js/JSDirectoryEntryCustom.cpp',

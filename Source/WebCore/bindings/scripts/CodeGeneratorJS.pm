@@ -689,9 +689,6 @@ sub GenerateHeader
         push(@headerContent, "    $className(NonNullPassRefPtr<JSC::Structure>, JSDOMGlobalObject*, PassRefPtr<$implType>);\n");
     }
 
-    # Destructor
-    push(@headerContent, "    virtual ~$className();\n") if (!$hasParent or $eventTarget or $interfaceName eq "DOMWindow");
-
     # Prototype
     push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);\n") unless ($dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"});
 
@@ -1432,26 +1429,6 @@ sub GenerateImplementation
         push(@implContent, "        putAnonymousValue(globalObject->globalData(), i, JSValue());\n");
     }
     push(@implContent, "}\n\n");
-
-    # Destructor
-    if (!$hasParent || $eventTarget) {
-        push(@implContent, "${className}::~$className()\n");
-        push(@implContent, "{\n");
-
-        if ($eventTarget) {
-            $implIncludes{"RegisteredEventListener.h"} = 1;
-        }
-
-        if (!$dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"}) {
-            if ($interfaceName eq "Node") {
-                 push(@implContent, "    forgetDOMNode(this, impl(), impl()->document());\n");
-            } else {
-                push(@implContent, "    forgetDOMObject(this, impl());\n");
-            }
-        }
-
-        push(@implContent, "}\n\n");
-    }
 
     if ($needsMarkChildren && !$dataNode->extendedAttributes->{"CustomMarkFunction"}) {
         push(@implContent, "void ${className}::markChildren(MarkStack& markStack)\n");

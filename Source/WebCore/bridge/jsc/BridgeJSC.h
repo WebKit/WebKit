@@ -88,7 +88,6 @@ public:
     virtual Class* getClass() const = 0;
     JSObject* createRuntimeObject(ExecState*);
     void willInvalidateRuntimeObject();
-    void willDestroyRuntimeObject(RuntimeObject*);
 
     // Returns false if the value was not set successfully.
     virtual bool setValueOfUndefinedField(ExecState*, const Identifier&, JSValue) { return false; }

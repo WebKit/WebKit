@@ -47,8 +47,6 @@ RuntimeObject::RuntimeObject(ExecState*, JSGlobalObject* globalObject, NonNullPa
 
 RuntimeObject::~RuntimeObject()
 {
-    if (m_instance)
-        m_instance->willDestroyRuntimeObject(this);
 }
 
 void RuntimeObject::invalidate()

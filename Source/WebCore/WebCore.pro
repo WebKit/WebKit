@@ -264,7 +264,6 @@ v8 {
         bindings/js/JSDataGridColumnListCustom.cpp \
         bindings/js/JSDataGridDataSource.cpp \
         bindings/js/JSDataViewCustom.cpp \
-        bindings/js/JSDebugWrapperSet.cpp \
         bindings/js/JSDesktopNotificationsCustom.cpp \
         bindings/js/JSDeviceMotionEventCustom.cpp \
         bindings/js/JSDeviceOrientationEventCustom.cpp \
@@ -1260,7 +1259,6 @@ v8 {
         bindings/js/JSDOMWindowShell.h \
         bindings/js/JSDOMWrapper.h \
         bindings/js/JSDataGridDataSource.h \
-        bindings/js/JSDebugWrapperSet.h \
         bindings/js/JSErrorHandler.h \
         bindings/js/JSEventListener.h \
         bindings/js/JSEventTarget.h \

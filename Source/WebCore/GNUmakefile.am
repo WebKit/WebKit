@@ -767,8 +767,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSDataGridDataSource.cpp \
 	Source/WebCore/bindings/js/JSDataGridDataSource.h \
 	Source/WebCore/bindings/js/JSDataViewCustom.cpp \
-	Source/WebCore/bindings/js/JSDebugWrapperSet.cpp \
-	Source/WebCore/bindings/js/JSDebugWrapperSet.h \
 	Source/WebCore/bindings/js/JSDedicatedWorkerContextCustom.cpp \
 	Source/WebCore/bindings/js/JSDeviceMotionEventCustom.cpp \
 	Source/WebCore/bindings/js/JSDeviceOrientationEventCustom.cpp \

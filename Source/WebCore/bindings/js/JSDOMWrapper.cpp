@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSDOMWrapper.h"
 
-#include "JSDebugWrapperSet.h"
 #include <runtime/Error.h>
 
 using namespace JSC;
@@ -37,7 +36,6 @@ namespace WebCore {
 
 DOMObject::~DOMObject()
 {
-    ASSERT(!JSDebugWrapperSet::shared().contains(this));
 }
 
 #endif

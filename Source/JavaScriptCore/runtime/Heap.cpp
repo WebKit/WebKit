@@ -272,18 +272,17 @@ size_t Heap::capacity() const
 
 size_t Heap::globalObjectCount()
 {
-    return m_globalData->globalObjects.uncheckedSize();
+    return m_globalData->globalObjectCount;
 }
 
 size_t Heap::protectedGlobalObjectCount()
 {
-    size_t count = 0;
+    size_t count = m_handleHeap.protectedGlobalObjectCount();
 
-    GlobalObjectMap& map = m_globalData->globalObjects;
-    GlobalObjectMap::iterator end = map.uncheckedEnd();
-    for (GlobalObjectMap::iterator it = map.uncheckedBegin(); it != end; ++it) {
-        if (map.isValid(it) && m_protectedValues.contains(it->second.get()))
-            ++count;
+    ProtectCountSet::iterator end = m_protectedValues.end();
+    for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it) {
+        if (it->first->isObject() && asObject(it->first)->isGlobalObject())
+            count++;
     }
 
     return count;

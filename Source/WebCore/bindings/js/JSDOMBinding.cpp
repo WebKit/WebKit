@@ -41,7 +41,6 @@
 #include "HTMLStyleElement.h"
 #include "JSDOMCoreException.h"
 #include "JSDOMWindowCustom.h"
-#include "JSDebugWrapperSet.h"
 #include "JSEventException.h"
 #include "JSExceptionBase.h"
 #include "JSMainThreadExecState.h"
@@ -142,7 +141,7 @@ const JSC::HashTable* getHashTableForGlobalData(JSGlobalData& globalData, const 
 bool hasCachedDOMObjectWrapperUnchecked(JSGlobalData* globalData, void* objectHandle)
 {
     for (JSGlobalDataWorldIterator worldIter(globalData); worldIter; ++worldIter) {
-        if (worldIter->m_wrappers.uncheckedGet(objectHandle))
+        if (worldIter->m_wrappers.get(objectHandle))
             return true;
     }
     return false;
@@ -164,8 +163,7 @@ DOMObject* getCachedDOMObjectWrapper(JSC::ExecState* exec, void* objectHandle)
 
 void cacheDOMObjectWrapper(JSC::ExecState* exec, void* objectHandle, DOMObject* wrapper) 
 {
-    JSDebugWrapperSet::willCacheWrapper(wrapper);
-    domObjectWrapperMapFor(exec).set(objectHandle, wrapper);
+    domObjectWrapperMapFor(exec).set(exec->globalData(), objectHandle, wrapper);
 }
 
 bool hasCachedDOMNodeWrapperUnchecked(Document* document, Node* node)
@@ -175,59 +173,18 @@ bool hasCachedDOMNodeWrapperUnchecked(Document* document, Node* node)
 
     JSWrapperCacheMap& wrapperCacheMap = document->wrapperCacheMap();
     for (JSWrapperCacheMap::iterator iter = wrapperCacheMap.begin(); iter != wrapperCacheMap.end(); ++iter) {
-        if (iter->second->uncheckedGet(node))
+        if (iter->second->get(node))
             return true;
     }
     return false;
 }
 
-void forgetDOMObject(DOMObject* wrapper, void* objectHandle)
-{
-    JSC::JSGlobalData* globalData = Heap::heap(wrapper)->globalData();
-
-    // Check the normal world first!
-    JSGlobalData::ClientData* clientData = globalData->clientData;
-    ASSERT(clientData);
-    DOMObjectWrapperMap& wrappers = static_cast<WebCoreJSClientData*>(clientData)->normalWorld()->m_wrappers;
-    if (wrappers.uncheckedRemove(objectHandle, wrapper)) {
-        JSDebugWrapperSet::didUncacheWrapper(wrapper);
-        return;
-    }
-
-    // We can't guarantee that a wrapper is in the cache when it uncaches itself,
-    // since a new wrapper may be cached before the old wrapper's destructor runs.
-    for (JSGlobalDataWorldIterator worldIter(globalData); worldIter; ++worldIter) {
-        if (worldIter->m_wrappers.uncheckedRemove(objectHandle, wrapper))
-            break;
-    }
-    JSDebugWrapperSet::didUncacheWrapper(wrapper);
-}
-
-void forgetDOMNode(JSNode* wrapper, Node* node, Document* document)
-{
-    if (!document) {
-        forgetDOMObject(wrapper, node);
-        return;
-    }
-
-    // We can't guarantee that a wrapper is in the cache when it uncaches itself,
-    // since a new wrapper may be cached before the old wrapper's destructor runs.
-    JSWrapperCacheMap& wrapperCacheMap = document->wrapperCacheMap();
-    for (JSWrapperCacheMap::iterator wrappersIter = wrapperCacheMap.begin(); wrappersIter != wrapperCacheMap.end(); ++wrappersIter) {
-        if (wrappersIter->second->uncheckedRemove(node, wrapper))
-            break;
-    }
-    JSDebugWrapperSet::didUncacheWrapper(wrapper);
-}
-
 void cacheDOMNodeWrapper(JSC::ExecState* exec, Document* document, Node* node, JSNode* wrapper)
 {
-    JSDebugWrapperSet::willCacheWrapper(wrapper);
-
     if (!document)
-        domObjectWrapperMapFor(exec).set(node, wrapper);
+        domObjectWrapperMapFor(exec).set(exec->globalData(), node, wrapper);
     else
-        document->getWrapperCache(currentWorld(exec))->set(node, wrapper);
+        document->getWrapperCache(currentWorld(exec))->set(exec->globalData(), node, wrapper);
 
     if (currentWorld(exec)->isNormal())
         node->setWrapper(exec->globalData(), wrapper);
@@ -262,7 +219,7 @@ static inline bool isObservableThroughDOM(JSNode* jsNode, DOMWrapperWorld* world
         // keep the node wrappers protecting them alive.
         if (node->isElementNode()) {
             if (NamedNodeMap* attributes = static_cast<Element*>(node)->attributeMap()) {
-                if (DOMObject* wrapper = world->m_wrappers.uncheckedGet(attributes)) {
+                if (DOMObject* wrapper = world->m_wrappers.get(attributes)) {
                     // FIXME: This check seems insufficient, because NamedNodeMap items can have custom properties themselves.
                     // Maybe it would be OK to just keep the wrapper alive, as it is done for CSSOM objects below.
                     if (wrapper->hasCustomProperties())
@@ -271,31 +228,31 @@ static inline bool isObservableThroughDOM(JSNode* jsNode, DOMWrapperWorld* world
             }
             if (node->isStyledElement()) {
                 if (CSSMutableStyleDeclaration* style = static_cast<StyledElement*>(node)->inlineStyleDecl()) {
-                    if (world->m_wrappers.uncheckedGet(style))
+                    if (world->m_wrappers.get(style))
                         return true;
                 }
             }
             if (static_cast<Element*>(node)->hasTagName(canvasTag)) {
                 if (CanvasRenderingContext* context = static_cast<HTMLCanvasElement*>(node)->renderingContext()) {
-                    if (DOMObject* wrapper = world->m_wrappers.uncheckedGet(context)) {
+                    if (DOMObject* wrapper = world->m_wrappers.get(context)) {
                         if (wrapper->hasCustomProperties())
                             return true;
                     }
                 }
             } else if (static_cast<Element*>(node)->hasTagName(linkTag)) {
                 if (StyleSheet* sheet = static_cast<HTMLLinkElement*>(node)->sheet()) {
-                    if (world->m_wrappers.uncheckedGet(sheet))
+                    if (world->m_wrappers.get(sheet))
                         return true;
                 }
             } else if (static_cast<Element*>(node)->hasTagName(styleTag)) {
                 if (StyleSheet* sheet = static_cast<HTMLStyleElement*>(node)->sheet()) {
-                    if (world->m_wrappers.uncheckedGet(sheet))
+                    if (world->m_wrappers.get(sheet))
                         return true;
                 }
             }
         } else if (node->nodeType() == Node::PROCESSING_INSTRUCTION_NODE) {
             if (StyleSheet* sheet = static_cast<ProcessingInstruction*>(node)->sheet()) {
-                if (world->m_wrappers.uncheckedGet(sheet))
+                if (world->m_wrappers.get(sheet))
                     return true;
             }
         }
@@ -330,11 +287,10 @@ void markDOMNodesForDocument(MarkStack& markStack, Document* document)
         DOMWrapperWorld* world = wrappersIter->first;
         JSWrapperCache* nodeDict = wrappersIter->second;
 
-        JSWrapperCache::iterator nodeEnd = nodeDict->uncheckedEnd();
-        for (JSWrapperCache::iterator nodeIt = nodeDict->uncheckedBegin(); nodeIt != nodeEnd; ++nodeIt) {
-            DeprecatedPtr<JSNode>& jsNode = nodeIt->second;
-            if (isObservableThroughDOM(jsNode.get(), world))
-                markStack.append(&jsNode);
+        JSWrapperCache::iterator nodeEnd = nodeDict->end();
+        for (JSWrapperCache::iterator nodeIt = nodeDict->begin(); nodeIt != nodeEnd; ++nodeIt) {
+            if (isObservableThroughDOM(nodeIt.get().second, world))
+                markStack.deprecatedAppend(nodeIt.getSlot().second);
         }
     }
 }
@@ -371,18 +327,14 @@ static inline void takeWrappers(Node* node, Document* document, WrapperSet& wrap
     if (document) {
         JSWrapperCacheMap& wrapperCacheMap = document->wrapperCacheMap();
         for (JSWrapperCacheMap::iterator iter = wrapperCacheMap.begin(); iter != wrapperCacheMap.end(); ++iter) {
-            if (JSNode* wrapper = iter->second->take(node)) {
-                JSDebugWrapperSet::didUncacheWrapper(wrapper);
+            if (JSNode* wrapper = iter->second->take(node))
                 wrapperSet.append(WrapperAndWorld(wrapper, iter->first));
-            }
         }
     } else {
         for (JSGlobalDataWorldIterator worldIter(JSDOMWindow::commonJSGlobalData()); worldIter; ++worldIter) {
             DOMWrapperWorld* world = *worldIter;
-            if (JSNode* wrapper = static_cast<JSNode*>(world->m_wrappers.take(node))) {
-                JSDebugWrapperSet::didUncacheWrapper(wrapper);
+            if (JSNode* wrapper = static_cast<JSNode*>(world->m_wrappers.take(node)))
                 wrapperSet.append(WrapperAndWorld(wrapper, world));
-            }
         }
     }
 }
@@ -396,11 +348,10 @@ void updateDOMNodeDocument(Node* node, Document* oldDocument, Document* newDocum
 
     for (unsigned i = 0; i < wrapperSet.size(); ++i) {
         JSNode* wrapper = wrapperSet[i].first;
-        JSDebugWrapperSet::willCacheWrapper(wrapper);
         if (newDocument)
-            newDocument->getWrapperCache(wrapperSet[i].second)->set(node, wrapper);
+            newDocument->getWrapperCache(wrapperSet[i].second)->set(*wrapperSet[i].second->globalData(), node, wrapper);
         else
-            wrapperSet[i].second->m_wrappers.set(node, wrapper);
+            wrapperSet[i].second->m_wrappers.set(*wrapperSet[i].second->globalData(), node, wrapper);
     }
 }
 
@@ -413,8 +364,8 @@ void markDOMObjectWrapper(MarkStack& markStack, JSGlobalData& globalData, void* 
         return;
 
     for (JSGlobalDataWorldIterator worldIter(&globalData); worldIter; ++worldIter) {
-        if (DeprecatedPtr<DOMObject>* wrapperSlot = worldIter->m_wrappers.uncheckedGetSlot(object))
-            markStack.append(wrapperSlot);
+        if (HandleSlot wrapperSlot = worldIter->m_wrappers.getSlot(object))
+            markStack.deprecatedAppend(wrapperSlot);
     }
 }
 
@@ -423,49 +374,28 @@ void markDOMNodeWrapper(MarkStack& markStack, Document* document, Node* node)
     if (document) {
         JSWrapperCacheMap& wrapperCacheMap = document->wrapperCacheMap();
         for (JSWrapperCacheMap::iterator iter = wrapperCacheMap.begin(); iter != wrapperCacheMap.end(); ++iter) {
-            if (DeprecatedPtr<JSNode>* wrapperSlot = iter->second->uncheckedGetSlot(node))
-                markStack.append(wrapperSlot);
+            if (HandleSlot wrapperSlot = iter->second->getSlot(node))
+                markStack.deprecatedAppend(wrapperSlot);
         }
         return;
     }
 
     for (JSGlobalDataWorldIterator worldIter(JSDOMWindow::commonJSGlobalData()); worldIter; ++worldIter) {
-        if (DeprecatedPtr<DOMObject>* wrapperSlot = worldIter->m_wrappers.uncheckedGetSlot(node))
-            markStack.append(wrapperSlot);
+        if (HandleSlot wrapperSlot = worldIter->m_wrappers.getSlot(node))
+            markStack.deprecatedAppend(wrapperSlot);
     }
 }
 
-static void stringWrapperDestroyed(JSString* str, void* context)
+static void stringWrapperDestroyed(JSString*, void* context)
 {
     StringImpl* cacheKey = static_cast<StringImpl*>(context);
-    JSC::JSGlobalData* globalData = Heap::heap(str)->globalData();
-
-    // Check the normal world first!
-    JSGlobalData::ClientData* clientData = globalData->clientData;
-    ASSERT(clientData);
-    JSStringCache& cache = static_cast<WebCoreJSClientData*>(clientData)->normalWorld()->m_stringCache;
-    if (cache.uncheckedRemove(cacheKey, str)) {
-        cacheKey->deref();
-        return;
-    }
-
-    for (JSGlobalDataWorldIterator worldIter(globalData); worldIter; ++worldIter) {
-        if (worldIter->m_stringCache.uncheckedRemove(cacheKey, str))
-            break;
-    }
-
     cacheKey->deref();
 }
 
 JSValue jsStringSlowCase(ExecState* exec, JSStringCache& stringCache, StringImpl* stringImpl)
 {
-    // If there is a stale entry, we have to explicitly remove it to avoid
-    // problems down the line.
-    if (JSString* wrapper = stringCache.uncheckedGet(stringImpl))
-        stringCache.uncheckedRemove(stringImpl, wrapper);
-
     JSString* wrapper = jsStringWithFinalizer(exec, UString(stringImpl), stringWrapperDestroyed, stringImpl);
-    stringCache.set(stringImpl, wrapper);
+    stringCache.set(exec->globalData(), stringImpl, wrapper);
     // ref explicitly instead of using a RefPtr-keyed hashtable because the wrapper can
     // outlive the cache, so the stringImpl has to match the wrapper's lifetime.
     stringImpl->ref();

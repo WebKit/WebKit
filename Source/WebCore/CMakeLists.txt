@@ -496,7 +496,6 @@ SET(WebCore_SOURCES
     bindings/js/JSDOMWrapper.cpp
     bindings/js/JSDataGridColumnListCustom.cpp
     bindings/js/JSDataGridDataSource.cpp
-    bindings/js/JSDebugWrapperSet.cpp
     bindings/js/JSDedicatedWorkerContextCustom.cpp
     bindings/js/JSDeviceMotionEventCustom.cpp
     bindings/js/JSDeviceOrientationEventCustom.cpp

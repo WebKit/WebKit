@@ -140,6 +140,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , parser(new Parser)
     , interpreter(0)
     , heap(this)
+    , globalObjectCount(0)
     , dynamicGlobalObject(0)
     , firstStringifierToMark(0)
     , cachedUTCOffset(NaN)
