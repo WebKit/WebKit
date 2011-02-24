@@ -1,3 +1,66 @@
+2011-02-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move querySelectorAll from CSS agent to DOM agent where it belongs.
+        https://bugs.webkit.org/show_bug.cgi?id=55131
+
+        Test: inspector/elements/dom-agent-query-selector.html
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorCSSAgent.cpp:
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::nodeToSelectOn):
+        (WebCore::InspectorDOMAgent::querySelector):
+        (WebCore::InspectorDOMAgent::querySelectorAll):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector.callback):
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector):
+        (WebInspector.CSSStyleModel.prototype.addRule.callback):
+        (WebInspector.CSSStyleModel.prototype.addRule):
+
+2011-02-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fragment parsing does not need to use HTMLSourceTracker
+        https://bugs.webkit.org/show_bug.cgi?id=55011
+
+        Any performance gains from this patch are likely
+        the result of working around:
+        https://bugs.webkit.org/show_bug.cgi?id=55005
+        (Which suggests that fixing bug 55005 will speed
+        up normal HTML parsing substantially.)
+
+        Assuming I ran the numbers correct, here is the
+        change from PerformanceTests/Parser/tiny-innerHTML:
+        Before patch:
+        avg 5586.1
+        median 5594
+        stdev 41.295157101045135
+        min 5425
+        max 5633
+
+        After Patch:
+        avg 2603.9
+        median 2609.5
+        stdev 32.500615378789355
+        min 2475
+        max 2649
+
+        Removing just the HTMLSourceTracker calls brought our
+        score from 5500 to 5200, removing the XSSFilter as well
+        brought it to 2600 on my machine.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        * html/parser/HTMLDocumentParser.h:
+
 2011-02-24   Amruth Raj  <amruthraj@motorola.com> and Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com> and Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

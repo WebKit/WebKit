@@ -71,7 +71,6 @@ public:
     void setRuleSelector(ErrorString* error, const RefPtr<InspectorObject>& ruleId, const String& selector, RefPtr<InspectorValue>* result);
     void addRule(ErrorString* error, const long contextNodeId, const String& selector, RefPtr<InspectorValue>* result);
     void getSupportedCSSProperties(ErrorString* error, RefPtr<InspectorArray>* result);
-    void querySelectorAll(ErrorString* error, const long nodeId, const String& selector, RefPtr<InspectorArray>* result);
 
 private:
     typedef HashMap<String, RefPtr<InspectorStyleSheet> > IdToInspectorStyleSheet;

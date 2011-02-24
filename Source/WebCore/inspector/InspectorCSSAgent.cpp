@@ -361,26 +361,6 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString*, RefPtr<Inspector
     *cssProperties = properties.release();
 }
 
-void InspectorCSSAgent::querySelectorAll(ErrorString*, const long nodeId, const String& selector, RefPtr<InspectorArray>* result)
-{
-    Node* node = m_domAgent->nodeForId(nodeId);
-    if (!node)
-        return;
-    if (!node->isDocumentNode())
-        node = node->ownerDocument();
-    if (!node)
-        return;
-    ExceptionCode ec = 0;
-    RefPtr<NodeList> nodes = static_cast<Document*>(node)->querySelectorAll(selector, ec);
-    if (ec)
-        return;
-    for (unsigned i = 0; i < nodes->length(); ++i) {
-        Node* affectedNode = nodes->item(i);
-        long id = m_domAgent->pushNodePathToFrontend(affectedNode);
-        (*result)->pushNumber(id);
-    }
-}
-
 // static
 Element* InspectorCSSAgent::inlineStyleElement(CSSStyleDeclaration* style)
 {

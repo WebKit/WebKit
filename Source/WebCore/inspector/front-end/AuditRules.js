@@ -723,50 +723,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
                 WebInspector.cssModel.getStylesAsync(nodeIds[i], imageStylesReady.bind(this, nodeIds[i], i === nodeIds.length - 1));
         }
 
-        function receivedImages(arrayElements)
-        {
-            if (!arrayElements)
-                return callback(null);
-
-            var nodeIds = [];
-
-            function appendId(lastCall, nodeId)
-            {
-                if (nodeId)
-                    nodeIds.push(nodeId);
-
-                if (lastCall)
-                    getStyles(nodeIds);
-            }
-
-            for (var i = 0; arrayElements && i < arrayElements.length; ++i) {
-                var value = arrayElements[i].value;
-                value.pushNodeToFrontend(appendId.bind(this, i === arrayElements.length - 1));
-            }
-        }
-
-        function receivedImagesArray(payload)
-        {
-            if (!payload)
-                return callback(null);
-
-            var nodeIdsArray = WebInspector.RemoteObject.fromPayload(payload);
-            nodeIdsArray.getOwnProperties(false, receivedImages);
-        }
-
-        function pushImageNodes()
-        {
-            var result = [];
-            var nodes = document.getElementsByTagName("img");
-
-            for (var i = 0; i < nodes.length; ++i) {
-                if (nodes[i].src)
-                    result.push(nodes[i]);
-            }
-            return result;
-        }
-
-        RuntimeAgent.evaluate("(" + pushImageNodes + ")()", "", false, receivedImagesArray);
+        DOMAgent.querySelectorAll(0, "img[src]", true, getStyles);
     }
 }
 

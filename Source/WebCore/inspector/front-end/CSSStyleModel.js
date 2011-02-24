@@ -127,7 +127,7 @@ WebInspector.CSSStyleModel.prototype = {
             if (!rulePayload)
                 failureCallback();
             else
-                CSSAgent.querySelectorAll(nodeId, newSelector, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
+                DOMAgent.querySelectorAll(nodeId, newSelector, true, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
         }
 
         CSSAgent.setRuleSelector(ruleId, newSelector, callback.bind(this, nodeId, successCallback, failureCallback));
@@ -149,7 +149,7 @@ WebInspector.CSSStyleModel.prototype = {
                 // Invalid syntax for a selector
                 failureCallback();
             } else
-                CSSAgent.querySelectorAll(nodeId, selector, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
+                DOMAgent.querySelectorAll(nodeId, selector, true, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
         }
 
         CSSAgent.addRule(nodeId, selector, callback.bind(this, successCallback, failureCallback, selector));

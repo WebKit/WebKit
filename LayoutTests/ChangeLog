@@ -1,3 +1,42 @@
+2011-02-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move querySelectorAll from CSS agent to DOM agent where it belongs.
+        https://bugs.webkit.org/show_bug.cgi?id=55131
+
+        * http/tests/inspector/inspector-test.js:
+        * inspector/elements/dom-agent-query-selector-expected.txt: Added.
+        * inspector/elements/dom-agent-query-selector.html: Added.
+
+2011-02-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fragment parsing does not need to use HTMLSourceTracker
+        https://bugs.webkit.org/show_bug.cgi?id=55011
+
+        Remove support of XSS-filtering innerHTML content.
+
+        * http/tests/security/xssAuditor/dom-write-innerHTML-expected.txt:
+
+2011-02-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: beautified inspector test suite output.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest.InspectorTest.runDebuggerTestSuite.runner):
+        (initialize_DebuggerTest.InspectorTest.runDebuggerTestSuite):
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.runTestSuite.runner):
+        (initialize_InspectorTest.InspectorTest.runTestSuite):
+        * inspector/debugger/source-frame-expected.txt:
+        * inspector/elements/insert-node-collapsed-expected.txt:
+        * inspector/elements/insert-node-expected.txt:
+        * inspector/elements/modify-chardata-expected.txt:
+        * inspector/elements/remove-node-expected.txt:
+        * inspector/elements/set-attribute-expected.txt:
+
 2011-02-24  Adam Roben  <aroben@apple.com>
 
         Update Windows XP test results after r78846

@@ -146,6 +146,8 @@ module core {
 
     interface [Conditional=INSPECTOR] DOM {
         void getChildNodes(in long nodeId);
+        void querySelector(in long nodeId, in String selectors, in boolean documentWide, out long elementId);
+        void querySelectorAll(in long nodeId, in String selectors, in boolean documentWide, out Array result);
         void setAttribute(in long elementId, in String name, in String value, out boolean success);
         void removeAttribute(in long elementId, in String name, out boolean success);
         void setTextNodeValue(in long nodeId, in String value, out boolean success);
@@ -187,7 +189,6 @@ module core {
         void setRuleSelector(in Object ruleId, in String selector, out Value rule);
         void addRule(in long contextNodeId, in String selector, out Value rule);
         void getSupportedCSSProperties(out Array cssProperties);
-        void querySelectorAll(in long documentId, in String selector, out Array result);
     };
 
     interface [Conditional=INSPECTOR] Timeline {

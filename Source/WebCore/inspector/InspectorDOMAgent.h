@@ -101,6 +101,8 @@ public:
     Vector<Document*> documents();
     void reset();
 
+    void querySelector(ErrorString*, long nodeId, const String& selectors, bool documentWide, long* elementId);
+    void querySelectorAll(ErrorString*, long nodeId, const String& selectors, bool documentWide, RefPtr<InspectorArray>* result);
     // Methods called from the frontend for DOM nodes inspection.
     void getChildNodes(ErrorString*, long nodeId);
     void setAttribute(ErrorString*, long elementId, const String& name, const String& value, bool* success);
@@ -158,6 +160,8 @@ private:
     typedef HashMap<RefPtr<Node>, long> NodeToIdMap;
     long bind(Node*, NodeToIdMap*);
     void unbind(Node*, NodeToIdMap*);
+
+    Node* nodeToSelectOn(long nodeId, bool documentWide);
 
     bool pushDocumentToFrontend();
 

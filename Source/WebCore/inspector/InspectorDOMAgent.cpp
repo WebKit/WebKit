@@ -358,6 +358,21 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
     }
 }
 
+Node* InspectorDOMAgent::nodeToSelectOn(long nodeId, bool documentWide)
+{
+    Node* node;
+    if (!nodeId)
+        node = m_document.get();
+    else
+        node = nodeForId(nodeId);
+    if (!node)
+        return 0;
+
+    if (documentWide && nodeId)
+        node = node->ownerDocument();
+    return node;
+}
+
 bool InspectorDOMAgent::pushDocumentToFrontend()
 {
     if (!m_document)
@@ -411,6 +426,37 @@ Node* InspectorDOMAgent::nodeForId(long id)
 void InspectorDOMAgent::getChildNodes(ErrorString*, long nodeId)
 {
     pushChildNodesToFrontend(nodeId);
+}
+
+void InspectorDOMAgent::querySelector(ErrorString*, long nodeId, const String& selectors, bool documentWide, long* elementId)
+{
+    *elementId = 0;
+    Node* node = nodeToSelectOn(nodeId, documentWide);
+    if (!node)
+        return;
+
+    ExceptionCode ec = 0;
+    RefPtr<Element> element = node->querySelector(selectors, ec);
+    if (ec)
+        return;
+
+    if (element)
+        *elementId = pushNodePathToFrontend(element.get());
+}
+
+void InspectorDOMAgent::querySelectorAll(ErrorString*, long nodeId, const String& selectors, bool documentWide, RefPtr<InspectorArray>* result)
+{
+    Node* node = nodeToSelectOn(nodeId, documentWide);
+    if (!node)
+        return;
+
+    ExceptionCode ec = 0;
+    RefPtr<NodeList> nodes = node->querySelectorAll(selectors, ec);
+    if (ec)
+        return;
+
+    for (unsigned i = 0; i < nodes->length(); ++i)
+        (*result)->pushNumber(pushNodePathToFrontend(nodes->item(i)));
 }
 
 long InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
