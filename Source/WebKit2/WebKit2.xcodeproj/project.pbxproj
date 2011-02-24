@@ -33,12 +33,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		0F5265B311DD37680006D33C /* LayerBackedDrawingArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5265B111DD37680006D33C /* LayerBackedDrawingArea.cpp */; };
-		0F5265B411DD37680006D33C /* LayerBackedDrawingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5265B211DD37680006D33C /* LayerBackedDrawingArea.h */; };
-		0F5265B611DD37700006D33C /* LayerBackedDrawingAreaMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F5265B511DD37700006D33C /* LayerBackedDrawingAreaMac.mm */; };
-		0F5265B911DD377F0006D33C /* LayerBackedDrawingAreaProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5265B711DD377F0006D33C /* LayerBackedDrawingAreaProxy.cpp */; };
-		0F5265BA11DD377F0006D33C /* LayerBackedDrawingAreaProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5265B811DD377F0006D33C /* LayerBackedDrawingAreaProxy.h */; };
-		0F5265BC11DD37860006D33C /* LayerBackedDrawingAreaProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F5265BB11DD37860006D33C /* LayerBackedDrawingAreaProxyMac.mm */; };
 		0FB659231208B4DB0044816C /* DrawingAreaInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB659221208B4DB0044816C /* DrawingAreaInfo.h */; };
 		1A043976124D034800FFBFB5 /* PluginProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A043974124D034800FFBFB5 /* PluginProcess.h */; };
 		1A043977124D034800FFBFB5 /* PluginProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A043975124D034800FFBFB5 /* PluginProcess.cpp */; };
@@ -826,12 +820,6 @@
 /* Begin PBXFileReference section */
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		0F5265B111DD37680006D33C /* LayerBackedDrawingArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayerBackedDrawingArea.cpp; sourceTree = "<group>"; };
-		0F5265B211DD37680006D33C /* LayerBackedDrawingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerBackedDrawingArea.h; sourceTree = "<group>"; };
-		0F5265B511DD37700006D33C /* LayerBackedDrawingAreaMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerBackedDrawingAreaMac.mm; sourceTree = "<group>"; };
-		0F5265B711DD377F0006D33C /* LayerBackedDrawingAreaProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayerBackedDrawingAreaProxy.cpp; sourceTree = "<group>"; };
-		0F5265B811DD377F0006D33C /* LayerBackedDrawingAreaProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerBackedDrawingAreaProxy.h; sourceTree = "<group>"; };
-		0F5265BB11DD37860006D33C /* LayerBackedDrawingAreaProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerBackedDrawingAreaProxyMac.mm; sourceTree = "<group>"; };
 		0FB659221208B4DB0044816C /* DrawingAreaInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaInfo.h; sourceTree = "<group>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1A043974124D034800FFBFB5 /* PluginProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcess.h; sourceTree = "<group>"; };
@@ -2248,8 +2236,6 @@
 				93FC67A012D3CC7400A60610 /* EncoderAdapter.h */,
 				1A90C1F31264FD71003E44D4 /* FindController.cpp */,
 				1A90C1F21264FD71003E44D4 /* FindController.h */,
-				0F5265B111DD37680006D33C /* LayerBackedDrawingArea.cpp */,
-				0F5265B211DD37680006D33C /* LayerBackedDrawingArea.h */,
 				1A186EE912EF7618008E5F37 /* LayerTreeHost.cpp */,
 				1A186EE812EF7618008E5F37 /* LayerTreeHost.h */,
 				1A90C23612650717003E44D4 /* PageOverlay.cpp */,
@@ -2302,8 +2288,6 @@
 				BC06F44812DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h */,
 				BC06F43912DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp */,
 				BC06F43812DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h */,
-				0F5265B711DD377F0006D33C /* LayerBackedDrawingAreaProxy.cpp */,
-				0F5265B811DD377F0006D33C /* LayerBackedDrawingAreaProxy.h */,
 				BC6EDAA5111271C600E7678B /* PageClient.h */,
 				BC597074116591D000551FCA /* ProcessModel.h */,
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
@@ -2763,7 +2747,6 @@
 				29CD55A8128E294F00133C85 /* AccessibilityWebPageObject.h */,
 				29CD55A9128E294F00133C85 /* AccessibilityWebPageObject.mm */,
 				BC5F7BB8118237990052C02C /* ChunkedUpdateDrawingAreaMac.cpp */,
-				0F5265B511DD37700006D33C /* LayerBackedDrawingAreaMac.mm */,
 				1A690D1612F39E3300ECD289 /* LayerTreeHostMac.h */,
 				1A18718412EF9877008E5F37 /* LayerTreeHostMac.mm */,
 				1C8E2DAD1278C5B200BC7BD0 /* WebInspectorMac.mm */,
@@ -2786,7 +2769,6 @@
 			children = (
 				1A64292C12DE5F9800CAAE2C /* BackingStoreMac.mm */,
 				BC2651F511825EF800243E12 /* ChunkedUpdateDrawingAreaProxyMac.mm */,
-				0F5265BB11DD37860006D33C /* LayerBackedDrawingAreaProxyMac.mm */,
 				1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */,
 				1A1C648611F415B700553C19 /* WebContextMac.mm */,
 				51ACBB9E127A8F2C00D203B9 /* WebContextMenuProxyMac.h */,
@@ -3005,8 +2987,6 @@
 				BC204EE311C83E98008F3375 /* InjectedBundle.h in Headers */,
 				BCA8C6A911E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.h in Headers */,
 				BCA8C6B011E3C08700812FB7 /* InjectedBundlePageUIClient.h in Headers */,
-				0F5265B411DD37680006D33C /* LayerBackedDrawingArea.h in Headers */,
-				0F5265BA11DD377F0006D33C /* LayerBackedDrawingAreaProxy.h in Headers */,
 				BCC56F791159957D001CCAF9 /* MachPort.h in Headers */,
 				BC032DAC10F437D10058C15A /* MessageID.h in Headers */,
 				1A6FBA2A11E6862700DB1371 /* NetscapeBrowserFuncs.h in Headers */,
@@ -3518,10 +3498,6 @@
 				BC204EE611C83EA9008F3375 /* InjectedBundleMac.cpp in Sources */,
 				BCA8C6A811E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.cpp in Sources */,
 				BCA8C6AF11E3C08700812FB7 /* InjectedBundlePageUIClient.cpp in Sources */,
-				0F5265B311DD37680006D33C /* LayerBackedDrawingArea.cpp in Sources */,
-				0F5265B611DD37700006D33C /* LayerBackedDrawingAreaMac.mm in Sources */,
-				0F5265B911DD377F0006D33C /* LayerBackedDrawingAreaProxy.cpp in Sources */,
-				0F5265BC11DD37860006D33C /* LayerBackedDrawingAreaProxyMac.mm in Sources */,
 				1A6FBA2B11E6862700DB1371 /* NetscapeBrowserFuncs.cpp in Sources */,
 				1A6FBD2911E69BC200DB1371 /* NetscapePlugin.cpp in Sources */,
 				1AE5B7FB11E7AED200BA6767 /* NetscapePluginMac.mm in Sources */,

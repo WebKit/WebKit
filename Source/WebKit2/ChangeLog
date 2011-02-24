@@ -1,3 +1,27 @@
+2011-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Remove the layer backed drawing area
+        https://bugs.webkit.org/show_bug.cgi?id=55174
+
+        * GNUmakefile.am:
+        * Shared/DrawingAreaInfo.h:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp: Removed.
+        * UIProcess/LayerBackedDrawingAreaProxy.h: Removed.
+        * UIProcess/mac/LayerBackedDrawingAreaProxyMac.mm: Removed.
+        * UIProcess/win/LayerBackedDrawingAreaProxyWin.cpp: Removed.
+        * UIProcess/win/WebView.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp: Removed.
+        * WebProcess/WebPage/LayerBackedDrawingArea.h: Removed.
+        * WebProcess/WebPage/mac/LayerBackedDrawingAreaMac.mm: Removed.
+        * WebProcess/WebPage/win/LayerBackedDrawingAreaWin.cpp: Removed.
+        * win/WebKit2.vcproj:
+
 2011-02-24  Mike Thole  <mthole@apple.com>
 
         Reviewed by Sam Weinig.

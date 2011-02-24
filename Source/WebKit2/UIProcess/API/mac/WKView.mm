@@ -31,7 +31,6 @@
 #import "DrawingAreaProxyImpl.h"
 #import "FindIndicator.h"
 #import "FindIndicatorWindow.h"
-#import "LayerBackedDrawingAreaProxy.h"
 #import "LayerTreeContext.h"
 #import "Logging.h"
 #import "NativeWebKeyboardEvent.h"

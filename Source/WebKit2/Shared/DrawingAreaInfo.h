@@ -41,9 +41,6 @@ struct DrawingAreaInfo {
         None,
         Impl,
         ChunkedUpdate,
-#if USE(ACCELERATED_COMPOSITING)
-        LayerBacked,
-#endif
 #if ENABLE(TILED_BACKING_STORE)
         Tiled,
 #endif

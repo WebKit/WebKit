@@ -29,7 +29,6 @@
 #include "ChunkedUpdateDrawingAreaProxy.h"
 #include "DrawingAreaProxyImpl.h"
 #include "FindIndicator.h"
-#include "LayerBackedDrawingAreaProxy.h"
 #include "Logging.h"
 #include "NativeWebKeyboardEvent.h"
 #include "Region.h"

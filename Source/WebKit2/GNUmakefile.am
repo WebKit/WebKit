@@ -374,8 +374,6 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.h \
 	Source/WebKit2/UIProcess/Launcher/ThreadLauncher.cpp \
 	Source/WebKit2/UIProcess/Launcher/ThreadLauncher.h \
-	Source/WebKit2/UIProcess/LayerBackedDrawingAreaProxy.cpp \
-	Source/WebKit2/UIProcess/LayerBackedDrawingAreaProxy.h \
 	Source/WebKit2/UIProcess/PageClient.h \
 	Source/WebKit2/UIProcess/Plugins/gtk/PluginInfoStoreGtk.cpp \
 	Source/WebKit2/UIProcess/Plugins/PluginInfoStore.cpp \
@@ -610,8 +608,6 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/WebPage/FindController.h \
 	Source/WebKit2/WebProcess/WebPage/gtk/ChunkedUpdateDrawingAreaGtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebInspectorGtk.cpp \
-	Source/WebKit2/WebProcess/WebPage/LayerBackedDrawingArea.cpp \
-	Source/WebKit2/WebProcess/WebPage/LayerBackedDrawingArea.h \
 	Source/WebKit2/WebProcess/WebPage/PageOverlay.cpp \
 	Source/WebKit2/WebProcess/WebPage/PageOverlay.h \
 	Source/WebKit2/WebProcess/WebPage/TiledDrawingArea.cpp \

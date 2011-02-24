@@ -33,10 +33,6 @@
 #include "DrawingAreaImpl.h"
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
-#include "LayerBackedDrawingArea.h"
-#endif
-
 #if ENABLE(TILED_BACKING_STORE)
 #include "TiledDrawingArea.h"
 #endif
@@ -61,10 +57,6 @@ PassRefPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreat
         case DrawingAreaInfo::ChunkedUpdate:
             return adoptRef(new ChunkedUpdateDrawingArea(parameters.drawingAreaInfo.identifier, webPage));
 
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
-        case DrawingAreaInfo::LayerBacked:
-            return adoptRef(new LayerBackedDrawingArea(parameters.drawingAreaInfo.identifier, webPage));
-#endif
 #if ENABLE(TILED_BACKING_STORE)
         case DrawingAreaInfo::Tiled:
             return adoptRef(new TiledDrawingArea(parameters.drawingAreaInfo.identifier, webPage));
