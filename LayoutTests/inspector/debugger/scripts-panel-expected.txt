@@ -1,5 +1,9 @@
 Tests that scripts panel UI elements work as intended.
 
 Debugger was enabled.
+
+Running: testInitialLoad
+
+Running: testHistory
 Debugger was disabled.
 

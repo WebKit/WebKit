@@ -1,3 +1,9 @@
+2011-02-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, fix bad expectation for new test added in r79555.
+
+        * inspector/debugger/scripts-panel-expected.txt:
+
 2011-02-24  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Eric Seidel.
