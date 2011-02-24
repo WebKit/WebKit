@@ -1,3 +1,15 @@
+2011-02-24  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r79598.
+        http://trac.webkit.org/changeset/79598
+        https://bugs.webkit.org/show_bug.cgi?id=55089
+
+        Appears to be causing trouble with httpd on windows
+
+        * Scripts/webkitperl/httpd.pm:
+        * Scripts/webkitpy/layout_tests/port/apache_http_server.py:
+        * Scripts/webkitpy/layout_tests/port/http_server.py:
+
 2011-02-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

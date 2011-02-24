@@ -75,7 +75,6 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         test_dir = self._port_obj.layout_tests_dir()
         js_test_resources_dir = self._cygwin_safe_join(test_dir, "fast", "js",
             "resources")
-        media_resources_dir = self._cygwin_safe_join(test_dir, "media")
         mime_types_path = self._cygwin_safe_join(test_dir, "http", "conf",
             "mime.types")
         cert_file = self._cygwin_safe_join(test_dir, "http", "conf",
@@ -93,7 +92,6 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             '-f', "\"%s\"" % self._get_apache_config_file_path(test_dir, output_dir),
             '-C', "\'DocumentRoot \"%s\"\'" % document_root,
             '-c', "\'Alias /js-test-resources \"%s\"'" % js_test_resources_dir,
-            '-c', "\'Alias /media-resources \"%s\"'" % media_resources_dir,
             '-C', "\'Listen %s\'" % "127.0.0.1:8000",
             '-C', "\'Listen %s\'" % "127.0.0.1:8081",
             '-c', "\'TypesConfig \"%s\"\'" % mime_types_path,
