@@ -248,7 +248,7 @@ v8::Handle<v8::Value> V8Location::valueOfCallback(const v8::Arguments& args)
     return args.This();
 }
 
-v8::Handle<v8::Value> V8Location::toStringCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Location::toStringFunctionCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Location.toString");
     v8::Handle<v8::Object> holder = args.Holder();

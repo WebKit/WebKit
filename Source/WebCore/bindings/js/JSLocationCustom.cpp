@@ -265,7 +265,7 @@ JSValue JSLocation::assign(ExecState* exec)
     return jsUndefined();
 }
 
-JSValue JSLocation::toString(ExecState* exec)
+JSValue JSLocation::toStringFunction(ExecState* exec)
 {
     Frame* frame = impl()->frame();
     if (!frame || !allowsAccessFromFrame(exec, frame))

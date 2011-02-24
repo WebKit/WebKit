@@ -1,5 +1,20 @@
 2011-02-24  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Fix the clang -Woverloaded-virtual build.
+
+        JSLocation has a toString function which conflicts with the virtual JSObject::toString  member function.
+        Fix this by renaming the implementation function from JSLocation::toString to JSLocation::toStringFunction.
+
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::toStringFunction):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::toStringFunctionCallback):
+        * page/Location.idl:
+
+2011-02-24  Anders Carlsson  <andersca@apple.com>
+
         Fix clang build.
 
         * bindings/objc/WebScriptObject.mm:
