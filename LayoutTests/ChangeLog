@@ -1,3 +1,9 @@
+2011-02-24  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed skipping failing tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-23  MORITA Hajime <morrita@google.com>
 
         Unreviewed unskipping another passed tests. 

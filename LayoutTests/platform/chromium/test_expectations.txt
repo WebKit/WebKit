@@ -3527,3 +3527,6 @@ BUGWK54736 MAC : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
 BUGWK54736 MAC : tables/mozilla_expected_failures/bugs/bug58402-2.html = IMAGE
 BUGWK54736 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE
 BUGWK54736 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-6.html = IMAGE
+
+BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
+BUGWK55118 : fast/xsl/sort-locale.xml = TEXT
