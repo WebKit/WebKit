@@ -1,3 +1,39 @@
+2011-02-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Simplify RenderTheme::volumeSliderOffsetFromMuteButton, unduplicate code.
+        https://bugs.webkit.org/show_bug.cgi?id=55157
+
+        Refactoring, no functional changes. Covered by existing tests.
+
+        RenderTheme::volumeSliderOffsetFromMuteButton has the same duplicated
+        logic for all platforms. This patch:
+        a) moves the common logic of determining absolute positioning to a
+           platform-agnostic place;
+        b) simplifies the method to return constant offset.
+
+        * html/shadow/MediaControls.cpp:
+        (WebCore::volumeSliderOffset): Added new helper function,
+            capturing common logic of finding the absolute position of the volume slider.
+        (WebCore::MediaControls::updateVolumeSliderContainer): Changed to use the
+            new helper.
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::volumeSliderOffsetRelativeToMuteButton): Simplified.
+        * rendering/RenderMediaControls.h: Ditto.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::volumeSliderOffsetRelativeToMuteButton): Ditto.
+        * rendering/RenderTheme.h: Ditto.
+        * rendering/RenderThemeChromiumMac.h: Ditto.
+        * rendering/RenderThemeChromiumMac.mm: Ditto.
+        (WebCore::RenderThemeChromiumMac::volumeSliderOffsetRelativeToMuteButton): Ditto.
+        * rendering/RenderThemeMac.h: Ditto.
+        * rendering/RenderThemeMac.mm: Ditto.
+        (WebCore::RenderThemeMac::volumeSliderOffsetRelativeToMuteButton): Ditto.
+        * rendering/RenderThemeWin.cpp: Ditto.
+        (WebCore::RenderThemeWin::volumeSliderOffsetRelativeToMuteButton): Ditto.
+        * rendering/RenderThemeWin.h: Ditto.
+
 2011-02-24  Tom Sepez  <tsepez@chromium.org>
 
         Reviewed by Darin Fisher.
