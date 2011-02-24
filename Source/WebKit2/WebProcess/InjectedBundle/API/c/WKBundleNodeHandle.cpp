@@ -45,6 +45,12 @@ WKBundleNodeHandleRef WKBundleNodeHandleCreate(JSContextRef contextRef, JSObject
     return toAPI(nodeHandle.release().releaseRef());
 }
 
+WKBundleNodeHandleRef WKBundleNodeHandleCopyDocument(WKBundleNodeHandleRef nodeHandleRef)
+{
+    RefPtr<InjectedBundleNodeHandle> nodeHandle = toImpl(nodeHandleRef)->document();
+    return toAPI(nodeHandle.release().releaseRef());
+}
+
 WKRect WKBundleNodeHandleGetElementBounds(WKBundleNodeHandleRef nodeHandleRef)
 {
     return toAPI(toImpl(nodeHandleRef)->elementBounds());

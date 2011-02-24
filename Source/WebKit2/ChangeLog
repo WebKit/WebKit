@@ -1,3 +1,17 @@
+2011-02-24  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WK2: Add ability to get document node for a WKBundleNodeHandle
+        https://bugs.webkit.org/post_bug.cgi
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleCopyDocument):
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::document):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+
 2011-02-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam Roben and looked at by Brian Weinstein.

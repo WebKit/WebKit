@@ -36,6 +36,9 @@ extern "C" {
 
 WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCreate(JSContextRef context, JSObjectRef object);
 
+/* Convenience Operations */
+WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCopyDocument(WKBundleNodeHandleRef nodeHandle);
+
 
 /* Additional DOM Operations */
 

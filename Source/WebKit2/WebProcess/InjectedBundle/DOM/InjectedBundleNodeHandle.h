@@ -53,6 +53,9 @@ public:
 
     WebCore::Node* coreNode() const;
 
+    // Convenience DOM Operations
+    PassRefPtr<InjectedBundleNodeHandle> document();
+
     // Additional DOM Operations
     // Note: These should only be operations that are not exposed to JavaScript.
     WebCore::IntRect elementBounds() const;

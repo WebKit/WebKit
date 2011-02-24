@@ -95,6 +95,11 @@ Node* InjectedBundleNodeHandle::coreNode() const
     return m_node.get();
 }
 
+PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::document()
+{
+    return getOrCreate(m_node->document());
+}
+
 // Additional DOM Operations
 // Note: These should only be operations that are not exposed to JavaScript.
 
