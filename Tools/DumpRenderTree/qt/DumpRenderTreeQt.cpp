@@ -580,6 +580,8 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const QUrl& url)
 #ifndef Q_OS_WINCE
     setlocale(LC_ALL, "");
 #endif
+
+    DumpRenderTreeSupportQt::clearOpener(m_page->mainFrame());
 }
 
 static bool isGlobalHistoryTest(const QUrl& url)

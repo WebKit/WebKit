@@ -145,4 +145,8 @@ typedef enum {
 // The top of the accessibility tree.
 - (id)accessibilityRoot;
 
+// Clears frame opener. This is executed between layout tests runs
+- (void)_clearOpener;
+
+
 @end

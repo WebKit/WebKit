@@ -1,3 +1,14 @@
+2011-02-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        DumpRenderTree should reset frame opener between tests.
+        https://bugs.webkit.org/show_bug.cgi?id=54874
+
+        No new tests. (no code affected, just exporting a method for DumpRenderTree use)
+
+        * WebCore.exp.in:
+
 2011-02-24  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Darin Adler.

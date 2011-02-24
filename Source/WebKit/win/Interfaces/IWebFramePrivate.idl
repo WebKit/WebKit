@@ -119,4 +119,6 @@ interface IWebFramePrivate : IUnknown
     HRESULT loadPlainTextString([in] BSTR string, [in] BSTR url);
 
     HRESULT hasSpellingMarker([in] UINT from, [in] UINT length, [out, retval] BOOL* result);
+    
+    HRESULT clearOpener();
 }

@@ -1037,6 +1037,8 @@ static void resetWebViewToConsistentStateBeforeTesting()
     
     // Clear the contents of the general pasteboard
     [[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+
+    [mainFrame _clearOpener];
 }
 
 static void runTest(const string& testPathOrURL)

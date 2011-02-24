@@ -895,6 +895,10 @@ static void resetWebViewToConsistentStateBeforeTesting()
     sharedUIDelegate->resetUndoManager();
 
     sharedFrameLoadDelegate->resetToConsistentState();
+
+    COMPtr<IWebFramePrivate> framePrivate;
+    if (SUCCEEDED(frame->QueryInterface(&framePrivate)))
+        framePrivate->clearOpener();
 }
 
 static void runTest(const string& testPathOrURL)

@@ -914,6 +914,12 @@ QString DumpRenderTreeSupportQt::responseMimeType(QWebFrame* frame)
     return docLoader->responseMIMEType();
 }
 
+void DumpRenderTreeSupportQt::clearOpener(QWebFrame* frame)
+{
+    WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
+    coreFrame->loader()->setOpener(0);
+}
+
 void DumpRenderTreeSupportQt::addURLToRedirect(const QString& origin, const QString& destination)
 {
     FrameLoaderClientQt::URLsToRedirect[origin] = destination;

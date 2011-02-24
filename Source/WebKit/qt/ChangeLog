@@ -1,3 +1,16 @@
+2011-02-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        DumpRenderTree should reset frame opener between tests.
+        https://bugs.webkit.org/show_bug.cgi?id=54874
+
+        Added clearOpener method to DumpRenderTreeSupportQT.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::clearOpener):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2011-02-24  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.
