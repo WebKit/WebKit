@@ -1,3 +1,21 @@
+2011-02-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Add RenderMediaControls to Mac build, unduplicate one method.
+        https://bugs.webkit.org/show_bug.cgi?id=55152
+
+        Refactoring, no functional changes.
+
+        * WebCore.xcodeproj/project.pbxproj: Added RenderMediaControls to project,
+            ran sort-XCode-project-file.
+        * rendering/RenderMediaControls.cpp: Moved ENABLE(VIDEO) and PLATFORM(WIN)
+            defines to allow building on Mac.
+        * rendering/RenderMediaControls.h: Ditto.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::volumeSliderOffsetFromMuteButton): Replaced guts
+            with a call to RenderMediaControls function.
+
 2011-02-24  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r79584.

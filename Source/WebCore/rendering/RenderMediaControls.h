@@ -34,10 +34,14 @@
 namespace WebCore {
 
 class HTMLMediaElement;
+
 class RenderMediaControls {
 public:
+
+#if PLATFORM(WIN)
     static bool paintMediaControlsPart(MediaControlElementType, RenderObject*, const PaintInfo&, const IntRect&);
     static void adjustMediaSliderThumbSize(RenderObject*);
+#endif
     static IntPoint volumeSliderOffsetFromMuteButton(Node*, const IntSize&);
 };
 
