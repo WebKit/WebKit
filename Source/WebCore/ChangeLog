@@ -1,3 +1,19 @@
+2011-02-24  Misha Tyutyunik  <michael.tyutyunik@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Dont use QPixmapCache if QPixmapCache::cacheLimit() is too small 
+        (2048Kb for now).
+        https://bugs.webkit.org/show_bug.cgi?id=54887
+
+        No new tests required.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::allowAcceleratedCompositingCache):
+        (WebCore::GraphicsLayerQtImpl::drawLayerContent):
+        (WebCore::GraphicsLayerQtImpl::paint):
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+
 2011-02-20  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Nikolas Zimmermann.

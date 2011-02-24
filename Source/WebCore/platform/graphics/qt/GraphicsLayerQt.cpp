@@ -54,13 +54,14 @@
 #define GRAPHICS_LAYER_TILING_THRESHOLD 2000
 #endif
 
-
 #define QT_DEBUG_RECACHE 0
 #define QT_DEBUG_CACHEDUMP 0
 
 #define QT_DEBUG_FPS 0
 
 namespace WebCore {
+
+static const int gMinimumPixmapCacheLimit = 2048;
 
 #ifndef QT_NO_GRAPHICSEFFECT
 class MaskEffectQt : public QGraphicsEffect {
@@ -206,6 +207,10 @@ public:
     virtual IntRect tiledBackingStoreVisibleRect();
     virtual Color tiledBackingStoreBackgroundColor() const;
 #endif
+
+    static bool allowAcceleratedCompositingCache() { return QPixmapCache::cacheLimit() > gMinimumPixmapCacheLimit; }
+
+    void drawLayerContent(QPainter*, const QRect&);
 
 public slots:
     // We need to notify the client (ie. the layer compositor) when the animation actually starts.
@@ -379,6 +384,15 @@ const GraphicsLayerQtImpl* GraphicsLayerQtImpl::rootLayer() const
     if (const GraphicsLayerQtImpl* parent = toGraphicsLayerQtImpl(parentObject()))
         return parent->rootLayer();
     return this;
+}
+
+
+void GraphicsLayerQtImpl::drawLayerContent(QPainter* painter, const QRect& clipRect)
+{
+    painter->setClipRect(clipRect, Qt::IntersectClip);
+    painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
+    GraphicsContext gc(painter);
+    m_layer->paintGraphicsLayerContents(gc, clipRect);
 }
 
 QPixmap GraphicsLayerQtImpl::recache(const QRegion& regionToUpdate)
@@ -630,12 +644,16 @@ void GraphicsLayerQtImpl::paint(QPainter* painter, const QStyleOptionGraphicsIte
     switch (m_currentContent.contentType) {
     case HTMLContentType:
         if (m_state.drawsContent) {
-            QPixmap backingStore;
-            // We might need to recache, in case we try to paint and the cache was purged (e.g. if it was full).
-            if (!QPixmapCache::find(m_backingStore.key, &backingStore) || backingStore.size() != m_size.toSize())
-                backingStore = recache(QRegion(m_state.contentsRect));
-            const QRectF bounds(0, 0, m_backingStore.size.width(), m_backingStore.size.height());
-            painter->drawPixmap(0, 0, backingStore);
+            if (!allowAcceleratedCompositingCache())
+                drawLayerContent(painter, option->exposedRect.toRect());
+            else {
+                QPixmap backingStore;
+                // We might need to recache, in case we try to paint and the cache was purged (e.g. if it was full).
+                if (!QPixmapCache::find(m_backingStore.key, &backingStore) || backingStore.size() != m_size.toSize())
+                    backingStore = recache(QRegion(m_state.contentsRect));
+                const QRectF bounds(0, 0, m_backingStore.size.width(), m_backingStore.size.height());
+                painter->drawPixmap(0, 0, backingStore);
+            }
         }
         break;
     case PixmapContentType:
@@ -837,7 +855,7 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
         // Recache now: all the content is ready and we don't want to wait until the paint event.
         // We only need to do this for HTML content, there's no point in caching directly composited
         // content like images or solid rectangles.
-        if (m_pendingContent.contentType == HTMLContentType)
+        if (m_pendingContent.contentType == HTMLContentType && allowAcceleratedCompositingCache())
             recache(m_pendingContent.regionToUpdate);
 #endif
         update(m_pendingContent.regionToUpdate.boundingRect());
