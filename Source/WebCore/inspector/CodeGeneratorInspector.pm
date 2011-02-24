@@ -344,10 +344,10 @@ sub generateFrontendFunction
     push(@function, "    ${functionName}Message->setString(\"type\", \"event\");");
     push(@function, "    ${functionName}Message->setString(\"domain\", \"$domain\");");
     push(@function, "    ${functionName}Message->setString(\"event\", \"$functionName\");");
-    push(@function, "    RefPtr<InspectorObject> payloadDataObject = InspectorObject::create();");
-    my @pushArguments = map("    payloadDataObject->set" . typeTraits($_->type, "JSONType") . "(\"" . $_->name . "\", " . $_->name . ");", @argsFiltered);
+    push(@function, "    RefPtr<InspectorObject> bodyObject = InspectorObject::create();");
+    my @pushArguments = map("    bodyObject->set" . typeTraits($_->type, "JSONType") . "(\"" . $_->name . "\", " . $_->name . ");", @argsFiltered);
     push(@function, @pushArguments);
-    push(@function, "    ${functionName}Message->setObject(\"data\", payloadDataObject);");
+    push(@function, "    ${functionName}Message->setObject(\"body\", bodyObject);");
     push(@function, "    m_inspectorClient->sendMessageToFrontend(${functionName}Message->toJSONString());");
 
     push(@function, "}");
@@ -476,9 +476,9 @@ sub generateBackendFunction
     push(@function, "            responseMessage->setArray(\"errors\", protocolErrors);");
     if (scalar(@outArgs)) {
         push(@function, "        else {");
-        push(@function, "            RefPtr<InspectorObject> responseData = InspectorObject::create();");
-        push(@function, map("            responseData->set" . typeTraits($_->type, "JSONType") . "(\"" . $_->name . "\", " . $_->name . ");", @outArgs));
-        push(@function, "            responseMessage->setObject(\"data\", responseData);");
+        push(@function, "            RefPtr<InspectorObject> responseBody = InspectorObject::create();");
+        push(@function, map("            responseBody->set" . typeTraits($_->type, "JSONType") . "(\"" . $_->name . "\", " . $_->name . ");", @outArgs));
+        push(@function, "            responseMessage->setObject(\"body\", responseBody);");
         push(@function, "        }");
     }
     push(@function, "        m_inspectorAgent->inspectorClient()->sendMessageToFrontend(responseMessage->toJSONString());");
@@ -787,9 +787,9 @@ InspectorBackendStub.prototype = {
         var messageObject = (typeof message === "string") ? JSON.parse(message) : message;
 
         var arguments = [];
-        if (messageObject.data)
-            for (var key in messageObject.data)
-                arguments.push(messageObject.data[key]);
+        if (messageObject.body)
+            for (var key in messageObject.body)
+                arguments.push(messageObject.body[key]);
 
         if ("seq" in messageObject) { // just a response for some request
             if (messageObject.success)
