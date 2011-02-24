@@ -1,3 +1,9 @@
+2011-02-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Chromium Mac build fix after r79591.
+
+        * WebCore.gypi: Added RenderMediaControls to WebCore.gypi.
+
 2011-02-24  Misha Tyutyunik  <michael.tyutyunik@nokia.com>
 
         Reviewed by Andreas Kling.

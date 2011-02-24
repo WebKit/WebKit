@@ -3932,6 +3932,8 @@
             'rendering/RenderMarquee.h',
             'rendering/RenderMedia.cpp',
             'rendering/RenderMedia.h',
+            'rendering/RenderMediaControls.cpp',
+            'rendering/RenderMediaControls.h',
             'rendering/RenderMediaControlsChromium.cpp',
             'rendering/RenderMediaControlsChromium.h',
             'rendering/RenderMenuList.cpp',
