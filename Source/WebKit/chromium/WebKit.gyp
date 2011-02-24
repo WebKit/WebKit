@@ -319,6 +319,7 @@
                 'src/ChromeClientImpl.cpp',
                 'src/ChromeClientImpl.h',
                 'src/ChromiumCurrentTime.cpp',
+                'src/ChromiumOSRandomSource.cpp',
                 'src/ChromiumThreading.cpp',
                 'src/CompositionUnderlineBuilder.h',
                 'src/CompositionUnderlineVectorBuilder.cpp',

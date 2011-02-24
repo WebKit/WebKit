@@ -1,3 +1,15 @@
+2011-02-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by James Robinson.
+
+        [Chromium] Use WebKitClient for OSRandomSource instead of trying to talk to the file system in the sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=55093
+
+        Exclude OSRandomSource.cpp from the Chromium build.  This function is
+        implemented in WebKit/chromium/src instead.
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+
 2011-02-23  Oliver Hunt  <oliver@apple.com>
 
         Roll out r64156 as it introduces incorrect behaviour.

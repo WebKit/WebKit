@@ -117,6 +117,7 @@
         ['exclude', '/(gtk|glib|gobject)/.*\\.(cpp|h)$'],
         ['exclude', '(Default|Gtk|Mac|None|Qt|Win|Wx)\\.(cpp|mm)$'],
         ['exclude', 'wtf/CurrentTime\\.cpp$'],
+        ['exclude', 'wtf/OSRandomSource\\.cpp$'],
         ['exclude', 'wtf/MainThread.cpp$'],
         ['exclude', 'wtf/TC.*\\.(cpp|h)$'],
       ],
