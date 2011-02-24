@@ -2,6 +2,19 @@
 
         Reviewed by Dan Bernstein.
 
+        Crash when trying to send a sync message on an invalid connection
+        https://bugs.webkit.org/show_bug.cgi?id=55190
+        <rdar://problem/9035806>
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::sendSyncMessage):
+        Don't try to call a client function if isValid() returns false since the client
+        will be null in that case.
+
+2011-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Remove the layer backed drawing area
         https://bugs.webkit.org/show_bug.cgi?id=55174
 
