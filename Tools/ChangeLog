@@ -1,3 +1,13 @@
+2011-02-24  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] add android 2.2 user agent to QtTestBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=55085
+
+        Credit to Forrest Hodgkins to find right user-agent which works for youtube.
+        * QtTestBrowser/useragentlist.txt:
+
 2011-02-24  Adam Roben  <aroben@apple.com>
 
         Change FrameLoadDelegate to support any number of delegates with delayed work to process
