@@ -268,7 +268,7 @@ MAINTAINERCLEANFILES += \
 
 # Older automake versions (1.7) place Plo files in a different place so we need
 # to create the output directory manually.
-all-local:
+all-local: stamp-po
 	$(mkdir_p) $(top_builddir)/$(DEPDIR)/DerivedSources
 
 # remove built sources and program directories
