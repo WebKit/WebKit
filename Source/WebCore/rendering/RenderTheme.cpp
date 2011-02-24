@@ -537,9 +537,13 @@ String RenderTheme::formatMediaControlsRemainingTime(float currentTime, float du
     return formatMediaControlsTime(currentTime - duration);
 }
 
-IntPoint RenderTheme::volumeSliderOffsetRelativeToMuteButton() const
+IntPoint RenderTheme::volumeSliderOffsetFromMuteButton(Node* muteButton, const IntSize& size) const
 {
-    return IntPoint(0, 0);
+    int y = -size.height();
+    FloatPoint absPoint = muteButton->renderer()->localToAbsolute(FloatPoint(muteButton->renderBox()->offsetLeft(), y), true, true);
+    if (absPoint.y() < 0)
+        y = muteButton->renderBox()->height();
+    return IntPoint(0, y);
 }
 
 #endif

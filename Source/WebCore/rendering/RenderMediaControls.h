@@ -42,7 +42,7 @@ public:
     static bool paintMediaControlsPart(MediaControlElementType, RenderObject*, const PaintInfo&, const IntRect&);
     static void adjustMediaSliderThumbSize(RenderObject*);
 #endif
-    static IntPoint volumeSliderOffsetRelativeToMuteButton();
+    static IntPoint volumeSliderOffsetFromMuteButton(Node*, const IntSize&);
 };
 
 } // namespace WebCore

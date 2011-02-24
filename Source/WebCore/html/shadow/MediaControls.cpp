@@ -455,16 +455,6 @@ void MediaControls::opacityAnimationTimerFired(Timer<MediaControls>*)
     changeOpacity(m_panel.get(), opacity);
 }
 
-static IntPoint volumeSliderOffset(RenderBox* muteButtonBox, const IntPoint& offset, const IntSize& size)
-{
-    float zoomLevel = muteButtonBox->style()->effectiveZoom();
-    int y = offset.y() * zoomLevel + muteButtonBox->offsetHeight() - size.height();
-    FloatPoint absPoint = muteButtonBox->localToAbsolute(FloatPoint(muteButtonBox->offsetLeft(), y), true, true);
-    if (absPoint.y() < 0)
-        y = muteButtonBox->height();
-    return IntPoint(offset.x() * zoomLevel, y);
-}
-
 void MediaControls::updateVolumeSliderContainer(bool visible)
 {
     if (!m_mediaElement->hasAudio() || !m_volumeSliderContainer || !m_volumeSlider)
@@ -477,7 +467,7 @@ void MediaControls::updateVolumeSliderContainer(bool visible)
         RefPtr<RenderStyle> s = m_volumeSliderContainer->styleForElement();
         int height = s->height().isPercent() ? 0 : s->height().value();
         int width = s->width().isPercent() ? 0 : s->width().value();
-        IntPoint offset = volumeSliderOffset(m_muteButton->renderBox(), m_mediaElement->document()->page()->theme()->volumeSliderOffsetRelativeToMuteButton(), IntSize(width, height));
+        IntPoint offset = m_mediaElement->document()->page()->theme()->volumeSliderOffsetFromMuteButton(m_muteButton->renderer()->node(), IntSize(width, height));
         int x = offset.x() + m_muteButton->renderBox()->offsetLeft();
         int y = offset.y() + m_muteButton->renderBox()->offsetTop();
 

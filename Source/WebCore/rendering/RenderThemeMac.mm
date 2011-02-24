@@ -1987,9 +1987,9 @@ bool RenderThemeMac::usesMediaControlStatusDisplay()
     return mediaControllerTheme() == MediaControllerThemeQuickTime;
 }
 
-IntPoint RenderThemeMac::volumeSliderOffsetRelativeToMuteButton() const
+IntPoint RenderThemeMac::volumeSliderOffsetFromMuteButton(Node* muteButton, const IntSize& size) const
 {
-    return RenderMediaControls::volumeSliderOffsetRelativeToMuteButton();
+    return RenderMediaControls::volumeSliderOffsetFromMuteButton(muteButton, size);
 }
 
 bool RenderThemeMac::shouldShowPlaceholderWhenFocused() const
