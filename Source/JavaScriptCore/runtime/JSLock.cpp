@@ -24,13 +24,16 @@
 #include "Heap.h"
 #include "CallFrame.h"
 
-#if ENABLE(JSC_MULTIPLE_THREADS)
+#if USE(PTHREADS)
 #include <pthread.h>
 #endif
 
 namespace JSC {
 
-#if ENABLE(JSC_MULTIPLE_THREADS)
+// JSLock is only needed to support an obsolete execution model where JavaScriptCore
+// automatically protected against concurrent access from multiple threads.
+// So it's safe to disable it on non-mac platforms where we don't have native pthreads.
+#if ENABLE(JSC_MULTIPLE_THREADS) && (OS(DARWIN) || USE(PTHREADS))
 
 // Acquire this mutex before accessing lock-related data.
 static pthread_mutex_t JSMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -208,7 +211,7 @@ JSLock::DropAllLocks::~DropAllLocks()
     --lockDropDepth;
 }
 
-#else
+#else // ENABLE(JSC_MULTIPLE_THREADS) && (OS(DARWIN) || USE(PTHREADS))
 
 JSLock::JSLock(ExecState*)
     : m_lockBehavior(SilenceAssertionsOnly)
@@ -255,6 +258,6 @@ JSLock::DropAllLocks::~DropAllLocks()
 {
 }
 
-#endif // USE(MULTIPLE_THREADS)
+#endif // ENABLE(JSC_MULTIPLE_THREADS) && (OS(DARWIN) || USE(PTHREADS))
 
 } // namespace JSC
