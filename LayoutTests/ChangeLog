@@ -1,3 +1,14 @@
+2011-02-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fragment parsing does not need to use HTMLSourceTracker
+        https://bugs.webkit.org/show_bug.cgi?id=55011
+
+        Remove support of XSS-filtering innerHTML content.
+
+        * http/tests/security/xssAuditor/dom-write-innerHTML-expected.txt:
+
 2011-02-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: beautified inspector test suite output.

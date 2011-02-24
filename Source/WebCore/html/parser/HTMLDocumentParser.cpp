@@ -151,6 +151,11 @@ void HTMLDocumentParser::prepareToStopParsing()
     attemptToRunDeferredScriptsAndEnd();
 }
 
+bool HTMLDocumentParser::isParsingFragment() const
+{
+    return m_treeBuilder->isParsingFragment();
+}
+
 bool HTMLDocumentParser::processingData() const
 {
     return isScheduledForResume() || inWrite();
@@ -220,7 +225,7 @@ bool HTMLDocumentParser::canTakeNextToken(SynchronousMode mode, PumpSession& ses
     //        should happen is that assigning window.location causes the
     //        parser to stop parsing cleanly.  The problem is we're not
     //        perpared to do that at every point where we run JavaScript.
-    if (!m_treeBuilder->isParsingFragment()
+    if (!isParsingFragment()
         && document()->frame() && document()->frame()->navigationScheduler()->locationChangePending())
         return false;
 
@@ -247,12 +252,19 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
     PumpSession session;
     while (canTakeNextToken(mode, session) && !session.needsYield) {
-        m_sourceTracker.start(m_input, m_token);
+        if (!isParsingFragment())
+            m_sourceTracker.start(m_input, m_token);
+
         if (!m_tokenizer->nextToken(m_input.current(), m_token))
             break;
-        m_sourceTracker.end(m_input, m_token);
 
-        m_xssFilter.filterToken(m_token);
+        if (!isParsingFragment()) {
+            m_sourceTracker.end(m_input, m_token);
+
+            // We do not XSS filter innerHTML, which means we (intentionally) fail
+            // http/tests/security/xssAuditor/dom-write-innerHTML.html
+            m_xssFilter.filterToken(m_token);
+        }
 
         m_treeBuilder->constructTreeFromToken(m_token);
         m_token.clear();
