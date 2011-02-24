@@ -1,3 +1,15 @@
+2011-02-24  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r79584.
+        http://trac.webkit.org/changeset/79584
+        https://bugs.webkit.org/show_bug.cgi?id=44797
+
+        [chromium] Patch does not compile if ENABLE_FULLSCREEN_API is
+        not set
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2011-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -533,22 +533,19 @@
         },
         {
           'action_name': 'UserAgentStyleSheets',
-          # The .css files are in the same order as ../DerivedSources.make.
           'inputs': [
             '../css/make-css-file-arrays.pl',
             '../css/html.css',
             '../css/quirks.css',
             '../css/view-source.css',
-            '../css/themeChromiumLinux.css', # Chromium only.
-            '../css/themeChromiumSkia.css',  # Chromium only.
+            '../css/themeChromiumLinux.css',
+            '../css/themeChromiumSkia.css',
             '../css/themeWin.css',
             '../css/themeWinQuirks.css',
             '../css/svg.css',
-            # Skip WML.
             '../css/mathml.css',
             '../css/mediaControls.css',
             '../css/mediaControlsChromium.css',
-            '../css/fullscreen.css',
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/UserAgentStyleSheets.h',
