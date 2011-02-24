@@ -1,3 +1,9 @@
+2011-02-23  MORITA Hajime <morrita@google.com>
+
+        Unreviewed unskipping another passed tests. 
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-23  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline a couple GTK+ test results.
