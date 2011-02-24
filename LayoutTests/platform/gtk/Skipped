@@ -1328,3 +1328,7 @@ plugins/invalidate_rect.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=54389
 http/tests/misc/generated-content-inside-table.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=40272
+canvas/philip/tests/2d.imageData.object.round.html
+canvas/philip/tests/2d.imageData.object.wrap.html
