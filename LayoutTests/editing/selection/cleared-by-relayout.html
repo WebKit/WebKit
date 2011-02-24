@@ -2,16 +2,13 @@
     Test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=15942">http://bugs.webkit.org/show_bug.cgi?id=15942</a>
     REGRESSION: Selecting "Edit Html" tab in Blogger causes crash (Assertion failed: isRange())</i>.
 </p>
-<p>
-    <iframe onload="prepare()" id="target" src="data:text/html,&lt;body contenteditable&gt;"></iframe>
-</p>
 <script>
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
-    var target = document.getElementById('target');
     function prepare()
     {
+        var target = document.getElementById('target');
         var doc = target.contentDocument;
         target.contentWindow.getSelection().setPosition(doc.body, 0);
         target.focus();
@@ -20,7 +17,11 @@
 
     function test()
     {
+        var target = document.getElementById('target');
         target.style.display = 'none';
         target.contentDocument.body.innerHTML;
     }
 </script>
+<p>
+    <iframe onload="prepare()" id="target" src="data:text/html,&lt;body contenteditable&gt;"></iframe>
+</p>

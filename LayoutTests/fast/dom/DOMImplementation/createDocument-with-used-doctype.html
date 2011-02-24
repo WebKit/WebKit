@@ -1,5 +1,4 @@
 <body>
-<iframe src="resources/createDocument-with-used-doctype-frame.html" onload="test()"></iframe>
 <script>
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
@@ -23,10 +22,12 @@ function test()
         frames[0].history.go(0);
     } else {
         gc();
-        document.body.textContent = frames[0].document.body.textContent;
+        document.getElementById("result").innerText = frames[0].document.body.textContent;
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     }
 }
 </script>
+<iframe src="resources/createDocument-with-used-doctype-frame.html" onload="test()"></iframe>
+<div id="result">FAIL</div>
 </body>

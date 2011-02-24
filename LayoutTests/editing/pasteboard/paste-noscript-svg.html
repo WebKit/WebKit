@@ -1,10 +1,3 @@
-<div id="description">
-This test copies the content of an iframe and pastes it
-in an editable area and verifies that no script, handlers or javascript urls are copied.
-</div>
-<iframe id="iframe1" src="../resources/svgcontent.xhtml" onload="foo()"></iframe>
-<div id="pastehere" contenteditable="true"></div>
-<ul id="console"></ul>
 <script>
 if (window.layoutTestController)
      window.layoutTestController.dumpAsText();
@@ -37,3 +30,10 @@ function log(str) {
     console.appendChild(li);
 }
 </script>
+<div id="description">
+This test copies the content of an iframe and pastes it
+in an editable area and verifies that no script, handlers or javascript urls are copied.
+</div>
+<div id="pastehere" contenteditable="true"></div>
+<ul id="console"></ul>
+<iframe id="iframe1" src="../resources/svgcontent.xhtml" onload="foo()"></iframe>

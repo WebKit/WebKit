@@ -1,3 +1,22 @@
+2011-02-24  Xianzhu Wang  <wangxianzhu@google.com>
+
+        Reviewed by Eric Seidel.
+
+        In layout tests, iframe's onload handler should not use script function
+        defined after the iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=54942
+
+        * editing/pasteboard/paste-noscript-svg-expected.txt:
+        * editing/pasteboard/paste-noscript-svg.html:
+        * editing/selection/cleared-by-relayout.html:
+        * editing/undo/undo-iframe-location-change.html:
+        * fast/dom/DOMImplementation/createDocument-with-used-doctype-expected.txt:
+        * fast/dom/DOMImplementation/createDocument-with-used-doctype.html:
+        * fast/dom/Window/window-postmessage-clone-frames.html:
+        * fast/dom/wrapper-classes.html:
+        * fast/dynamic/paused-event-dispatch.html:
+        * fast/replaced/max-width-percent.html:
+
 2011-02-24  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r79598.
