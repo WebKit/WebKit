@@ -282,6 +282,7 @@ namespace WTF {
     public:
         void allocateBuffer(size_t newCapacity)
         {
+            ASSERT(newCapacity);
             m_capacity = newCapacity;
             if (newCapacity > std::numeric_limits<size_t>::max() / sizeof(T))
                 CRASH();
@@ -290,6 +291,7 @@ namespace WTF {
 
         bool tryAllocateBuffer(size_t newCapacity)
         {
+            ASSERT(newCapacity);
             if (newCapacity > std::numeric_limits<size_t>::max() / sizeof(T))
                 return false;
 
@@ -360,7 +362,10 @@ namespace WTF {
 
         VectorBuffer(size_t capacity)
         {
-            allocateBuffer(capacity);
+            // Calling malloc(0) might take a lock and may actually do an
+            // allocation on some systems (e.g. Brew).
+            if (capacity)
+                allocateBuffer(capacity);
         }
 
         ~VectorBuffer()

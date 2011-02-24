@@ -1,3 +1,23 @@
+2011-02-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        VectorBuffer should not call malloc(0)
+        https://bugs.webkit.org/show_bug.cgi?id=55091
+
+        Turns out the malloc() call which was so hot in:
+        https://bugs.webkit.org/show_bug.cgi?id=55005
+        was actually just malloc(0).
+
+        We shouldn't be calling malloc(0) anyway, since there is no need to
+        and it might actually do work on some systems.
+        I believe on Mac it ends up taking the standard spinlocks (expensive)
+        and the code on Brew actually does a malloc(1) instead.  Neither is desirable.
+
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::VectorBufferBase::tryAllocateBuffer):
+
 2011-02-24  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.
