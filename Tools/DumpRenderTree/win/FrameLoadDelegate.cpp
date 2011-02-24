@@ -206,12 +206,26 @@ void FrameLoadDelegate::resetToConsistentState()
     m_accessibilityController->resetToConsistentState();
 }
 
-static void CALLBACK processWorkTimer(HWND, UINT, UINT_PTR id, DWORD)
+typedef Vector<COMPtr<FrameLoadDelegate> > DelegateVector;
+static DelegateVector& delegatesWithDelayedWork()
 {
-    ::KillTimer(0, id);
-    FrameLoadDelegate* d = g_delegateWaitingOnTimer;
-    g_delegateWaitingOnTimer = 0;
-    d->processWork();
+    DEFINE_STATIC_LOCAL(DelegateVector, delegates, ());
+    return delegates;
+}
+
+static UINT_PTR processWorkTimerID;
+
+static void CALLBACK processWorkTimer(HWND hwnd, UINT, UINT_PTR id, DWORD)
+{
+    ASSERT_ARG(id, id == processWorkTimerID);
+    ::KillTimer(hwnd, id);
+    processWorkTimerID = 0;
+
+    DelegateVector delegates;
+    delegates.swap(delegatesWithDelayedWork());
+
+    for (size_t i = 0; i < delegates.size(); ++i)
+        delegates[i]->processWork();
 }
 
 void FrameLoadDelegate::locationChangeDone(IWebError*, IWebFrame* frame)
@@ -226,9 +240,9 @@ void FrameLoadDelegate::locationChangeDone(IWebError*, IWebFrame* frame)
         return;
 
     if (WorkQueue::shared()->count()) {
-        ASSERT(!g_delegateWaitingOnTimer);
-        g_delegateWaitingOnTimer = this;
-        ::SetTimer(0, 0, 0, processWorkTimer);
+        if (!processWorkTimerID)
+            processWorkTimerID = ::SetTimer(0, 0, 0, processWorkTimer);
+        delegatesWithDelayedWork().append(this);
         return;
     }
 

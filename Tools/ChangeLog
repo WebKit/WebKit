@@ -1,3 +1,28 @@
+2011-02-24  Adam Roben  <aroben@apple.com>
+
+        Change FrameLoadDelegate to support any number of delegates with delayed work to process
+
+        This makes our behavior match Mac more closely, and allows us to remove an incorrect
+        assertion that was firing during some tests. (The assertion was claiming that there was
+        never more than one delegate with delayed work to process, but that was not the case.)
+
+        Fixes <http://webkit.org/b/55146> Assertion failure in FrameLoadDelegate::locationChangeDone
+        when running http/tests/navigation/back-twice-without-commit.html
+
+        Reviewed by Eric Carlson.
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (delegatesWithDelayedWork): Added. Returns all FrameLoadDelegates that have delayed work to
+        process. A single delegate may appear in this Vector more than once (just as, on Mac, a
+        single delegate may have multiple performSelector requests).
+        (processWorkTimer): Pass the HWND to ::KillTimer, for pedantic brownie points. Added an
+        assertion that the timer firing is the shared process work timer. Instead of using the
+        single, global "delegate waiting for timer" delegate, give all delegates that have delayed
+        work to process a chance to process their work.
+        (FrameLoadDelegate::locationChangeDone): If we don't already have an active timer for
+        processing delayed work, create one. Then add ourselves to the delegatesWithDelayedWork
+        Vector so our processWork function will be called when the timer fires.
+
 2011-02-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
