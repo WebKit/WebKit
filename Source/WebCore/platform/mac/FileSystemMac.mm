@@ -32,6 +32,7 @@
 #import "PlatformString.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
+#import <wtf/UnusedParam.h>
 
 namespace WebCore {
 

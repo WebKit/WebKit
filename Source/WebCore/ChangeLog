@@ -1,3 +1,12 @@
+2011-02-24  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Add missing include for UnusedParam.h
+
+        Not reviewed.
+
+        * platform/mac/FileSystemMac.mm: Add include.  It should have
+        originally been added with r76614.
+
 2011-02-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
