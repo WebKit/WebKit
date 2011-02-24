@@ -368,9 +368,9 @@ void tst_QWebView::setPalette()
 
     if (!active) {
         controlView.show();
-        controlView.activateWindow();
         QTest::qWaitForWindowShown(&controlView);
         activeView = &controlView;
+        controlView.activateWindow();
     } else {
         view1.activateWindow();
         activeView = &view1;
@@ -415,9 +415,9 @@ void tst_QWebView::setPalette()
 
     if (!active) {
         controlView.show();
-        controlView.activateWindow();
         QTest::qWaitForWindowShown(&controlView);
         activeView = &controlView;
+        controlView.activateWindow();
     } else {
         view2.activateWindow();
         activeView = &view2;
