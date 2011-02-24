@@ -1,3 +1,18 @@
+2011-02-24  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Share code between elementFromPoint and caretRangeFromPoint in Document.
+        https://bugs.webkit.org/show_bug.cgi?id=54610
+
+        Eliminate duplicate code by moving shared logic from elementFromPoint and
+        caretRangeFromPoint into helper function.
+
+        * dom/Document.cpp:
+        (WebCore::nodeFromPoint):
+        (WebCore::Document::elementFromPoint):
+        (WebCore::Document::caretRangeFromPoint):
+
 2011-02-24  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed build fix.
