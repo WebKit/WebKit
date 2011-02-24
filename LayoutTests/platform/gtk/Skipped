@@ -180,10 +180,6 @@ http/tests/misc/authentication-sent-to-redirect.html
 # https://bugs.webkit.org/show_bug.cgi?id=50744
 http/tests/inspector-enabled/open-close-open.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=55122
-svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr.html
-svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelUnitLength-prop.html
-
 
 ###############################################################################
 # EXPECTED FAILURES

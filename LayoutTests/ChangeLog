@@ -1,3 +1,9 @@
+2011-02-24  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, unskip 2 fixed SVG tests on GTK after r79530.
+
+        * platform/gtk/Skipped:
+
 2011-02-24 MORITA Hajime  <morrita@google.com>
 
         Unreviewed skipping failing tests. (r79517 removed too many.)
