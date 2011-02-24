@@ -61,11 +61,6 @@ template <> void freeOwnedGPtr<GDir>(GDir* ptr)
         g_dir_close(ptr);
 }
 
-template <> void freeOwnedGPtr<GFile>(GFile* ptr)
-{
-    if (ptr)
-        g_object_unref(ptr);
-}
 } // namespace WTF
 
 #endif // ENABLE(GLIB_SUPPORT)

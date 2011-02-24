@@ -1,3 +1,17 @@
+2011-02-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Remove the GFile GOwnPtr specialization
+        https://bugs.webkit.org/show_bug.cgi?id=55154
+
+        Convert uses of GOwnPtr<GFile> to GRefPtr<GFile>.
+
+        No new tests. This should not change behavior.
+
+        * plugins/gtk/PluginPackageGtk.cpp: Fix include order and remove unnecessary include.
+        (WebCore::PluginPackage::load): Use GRefPtr for GFile instead of GOwnPtr.
+
 2011-02-24  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Eric Seidel.

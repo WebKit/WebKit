@@ -29,14 +29,13 @@
 #include "config.h"
 #include "PluginPackage.h"
 
-#include <gio/gio.h>
-#include <stdio.h>
-
-#include "GOwnPtr.h"
+#include "GOwnPtrGtk.h"
+#include "GRefPtrGtk.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "npruntime_impl.h"
 #include "PluginDebug.h"
+#include <gio/gio.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -129,10 +128,10 @@ bool PluginPackage::load()
 
     GOwnPtr<gchar> finalPath(g_strdup(m_path.utf8().data()));
     while (g_file_test(finalPath.get(), G_FILE_TEST_IS_SYMLINK)) {
-        GOwnPtr<GFile> file(g_file_new_for_path(finalPath.get()));
-        GOwnPtr<GFile> dir(g_file_get_parent(file.get()));
+        GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(finalPath.get()));
+        GRefPtr<GFile> dir = adoptGRef(g_file_get_parent(file.get()));
         GOwnPtr<gchar> linkPath(g_file_read_link(finalPath.get(), 0));
-        GOwnPtr<GFile> resolvedFile(g_file_resolve_relative_path(dir.get(), linkPath.get()));
+        GRefPtr<GFile> resolvedFile = adoptGRef(g_file_resolve_relative_path(dir.get(), linkPath.get()));
         finalPath.set(g_file_get_path(resolvedFile.get()));
     }
 
