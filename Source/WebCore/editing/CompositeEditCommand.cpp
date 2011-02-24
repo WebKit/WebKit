@@ -1128,8 +1128,8 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     // If this is an empty paragraph there must be a line break here.
     if (!lineBreakExistsAtVisiblePosition(caret))
         return false;
-    
-    Position caretPos(caret.deepEquivalent());
+
+    Position caretPos(caret.deepEquivalent().downstream());
     // A line break is either a br or a preserved newline.
     ASSERT(caretPos.deprecatedNode()->hasTagName(brTag) || (caretPos.deprecatedNode()->isTextNode() && caretPos.deprecatedNode()->renderer()->style()->preserveNewline()));
     
@@ -1137,7 +1137,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
         Position beforeBR(positionInParentBeforeNode(caretPos.deprecatedNode()));
         removeNode(caretPos.deprecatedNode());
         prune(beforeBR.deprecatedNode());
-    } else {
+    } else if (caretPos.deprecatedNode()->isTextNode()) {
         ASSERT(caretPos.deprecatedEditingOffset() == 0);
         Text* textNode = static_cast<Text*>(caretPos.deprecatedNode());
         ContainerNode* parentNode = textNode->parentNode();
@@ -1146,7 +1146,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
         deleteTextFromNode(textNode, 0, 1);
         prune(parentNode);
     }
-    
+
     return true;
 }
 

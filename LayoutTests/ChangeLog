@@ -1,3 +1,18 @@
+2011-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Crash when deleting inside a blockquote with a large offset
+        https://bugs.webkit.org/show_bug.cgi?id=55098
+
+        Added a test to ensure WebKit doesn't crash when deleting line inside a blockquote
+        and the caret is programmatically set to have a large offset.
+
+        Co-author: Abhishek Arya <inferno@chromium.org>.
+
+        * editing/deleting/delete-blockquote-large-offsets-expected.txt: Added.
+        * editing/deleting/delete-blockquote-large-offsets.html: Added.
+
 2011-02-24  MORITA Hajime  <morrita@google.com>
 
         Unreviewed test_expectations.txt update
