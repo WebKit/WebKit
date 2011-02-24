@@ -1,3 +1,14 @@
+2011-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium Mac test expectations update.
+
+        fast/text/shadow-no-blur.html has been passing for a while.
+        http tests have been passing since r79279.
+        media/video-display-toggle.html has been passing since r79415.
+        svg/text/font-size-below-point-five.svg has been passing since r78844.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
