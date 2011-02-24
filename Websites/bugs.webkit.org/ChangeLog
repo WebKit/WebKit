@@ -1,3 +1,16 @@
+2011-02-23  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        autocomplete=off prevents refilling form fields on back/forward navigation
+        https://bugs.webkit.org/show_bug.cgi?id=47463
+
+        I haven't actually run this patch due to the difficulty of getting
+        a bugzilla instance running. It's simple enough code that I'm not too worried
+        about it.
+
+        * committers-autocomplete.js:
+
 2011-02-21  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

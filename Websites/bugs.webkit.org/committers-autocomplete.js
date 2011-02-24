@@ -371,6 +371,7 @@ WebKitCommitters = (function() {
 
         if (!getMenu()) {
             createMenu(m_focusedInput.name);
+            // Turn off autocomplete to avoid showing the browser's dropdown menu.
             m_focusedInput.setAttribute('autocomplete', 'off');
             m_focusedInput.addEventListener('keyup', handleKeyUp, false);
             m_focusedInput.addEventListener('keydown', handleKeyDown, false);
@@ -378,6 +379,10 @@ WebKitCommitters = (function() {
                 showMenu(false);
                 m_prefix = null;
                 m_selectedIndex = 0;
+            }, false);
+            // Turn on autocomplete on submit to avoid breaking autofill on back/forward navigation.
+            m_focusedInput.form.addEventListener("submit", function() {
+                m_focusedInput.setAttribute("autocomplete", "on");
             }, false);
         }
         
