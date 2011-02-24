@@ -1,3 +1,18 @@
+2011-02-24  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Add code to WebKit Chromium to allow access to NetworkStateNotifier
+        https://bugs.webkit.org/show_bug.cgi?id=54516
+
+        Add a new WebNetworkStateNotifier class with a single static method,
+        setOnLine(), which dispatches to WebCore's singleton NetworkStateNotifier.
+
+        * WebKit.gyp:
+        * public/WebNetworkStateNotifier.h: Added.
+        * src/WebNetworkStateNotifier.cpp: Added.
+        (WebKit::WebNetworkStateNotifier::setOnLine):
+
 2011-02-24  Robert Kroeger <rjkroege@chromium.org>
 
         Reviewed by Darin Fisher.

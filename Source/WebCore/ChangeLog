@@ -1,3 +1,25 @@
+2011-02-24  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Add code to WebKit Chromium to allow access to NetworkStateNotifier
+        https://bugs.webkit.org/show_bug.cgi?id=54516
+
+        Give Chromium's NetworkStateNotifier the ability to change the value
+        of m_isOnLine, rather than making it always true.
+
+        No new tests, not sure how to test this. No other LayoutTests seem
+        to exercise navigator.onLine.
+
+        * WebCore.gypi:
+        * platform/network/NetworkStateNotifier.cpp:
+        (WebCore::NetworkStateNotifier::setOnLine): Moved and renamed from NetworkStateNotifierAndroid.
+        * platform/network/NetworkStateNotifier.h:
+        (WebCore::NetworkStateNotifier::networkStateChange): Forward to setOnLine.
+        * platform/network/android/NetworkStateNotifierAndroid.cpp: Removed.
+        * platform/network/chromium/NetworkStateNotifierChromium.cpp: Removed.
+        * platform/network/chromium/NetworkStateNotifierPrivate.h: Removed.
+
 2011-02-24  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Eric Seidel.

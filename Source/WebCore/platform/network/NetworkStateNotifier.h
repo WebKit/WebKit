@@ -37,10 +37,6 @@
 typedef const struct __CFArray * CFArrayRef;
 typedef const struct __SCDynamicStore * SCDynamicStoreRef;
 
-#elif PLATFORM(CHROMIUM)
-
-#include "NetworkStateNotifierPrivate.h"
-
 #elif PLATFORM(WIN)
 
 #include <windows.h>
@@ -67,14 +63,20 @@ class NetworkStateNotifier {
 public:
     NetworkStateNotifier();
     void setNetworkStateChangedFunction(void (*)());
-    
+
     bool onLine() const { return m_isOnLine; }
 
 #if (PLATFORM(QT) && ENABLE(QT_BEARER))
     void setNetworkAccessAllowed(bool);
+#elif PLATFORM(ANDROID) || PLATFORM(CHROMIUM)
+    void setOnLine(bool);
 #endif
 
-private:    
+#if PLATFORM(ANDROID)
+    void networkStateChange(bool online) { setOnLine(online); }
+#endif
+
+private:
     bool m_isOnLine;
     void (*m_networkStateChangedFunction)();
 
@@ -92,17 +94,10 @@ private:
     static void CALLBACK addrChangeCallback(void*, BOOLEAN timedOut);
     static void callAddressChanged(void*);
     void addressChanged();
-    
+
     void registerForAddressChange();
     HANDLE m_waitHandle;
     OVERLAPPED m_overlapped;
-
-#elif PLATFORM(CHROMIUM)
-    NetworkStateNotifierPrivate p;
-
-#elif PLATFORM(ANDROID)
-public:
-    void networkStateChange(bool online);
 
 #elif PLATFORM(QT) && ENABLE(QT_BEARER)
     friend class NetworkStateNotifierPrivate;
@@ -110,12 +105,12 @@ public:
 #endif
 };
 
-#if !PLATFORM(MAC) && !PLATFORM(WIN) && !PLATFORM(CHROMIUM) && !(PLATFORM(QT) && ENABLE(QT_BEARER))
+#if !PLATFORM(MAC) && !PLATFORM(WIN) && !(PLATFORM(QT) && ENABLE(QT_BEARER))
 
 inline NetworkStateNotifier::NetworkStateNotifier()
     : m_isOnLine(true)
     , m_networkStateChangedFunction(0)
-{    
+{
 }
 
 inline void NetworkStateNotifier::updateState() { }
@@ -123,7 +118,7 @@ inline void NetworkStateNotifier::updateState() { }
 #endif
 
 NetworkStateNotifier& networkStateNotifier();
-    
+
 };
 
 #endif // NetworkStateNotifier_h

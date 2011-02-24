@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -35,15 +35,28 @@ namespace WebCore {
 NetworkStateNotifier& networkStateNotifier()
 {
     AtomicallyInitializedStatic(NetworkStateNotifier*, networkStateNotifier = new NetworkStateNotifier);
-    
+
     return *networkStateNotifier;
 }
 
 void NetworkStateNotifier::setNetworkStateChangedFunction(void(*function)())
 {
     ASSERT(!m_networkStateChangedFunction);
-    
+
     m_networkStateChangedFunction = function;
 }
-    
+
+#if PLATFORM(ANDROID) || PLATFORM(CHROMIUM)
+void NetworkStateNotifier::setOnLine(bool onLine)
+{
+    if (m_isOnLine == onLine)
+        return;
+
+    m_isOnLine = onLine;
+
+    if (m_networkStateChangedFunction)
+        m_networkStateChangedFunction();
+}
+#endif // PLATFORM(ANDROID) || PLATFORM(CHROMIM)
+
 }

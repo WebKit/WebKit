@@ -3166,8 +3166,6 @@
             'platform/network/chromium/AuthenticationChallengeChromium.cpp',
             'platform/network/chromium/CookieJarChromium.cpp',
             'platform/network/chromium/DNSChromium.cpp',
-            'platform/network/chromium/NetworkStateNotifierChromium.cpp',
-            'platform/network/chromium/NetworkStateNotifierPrivate.h',
             'platform/network/chromium/ResourceError.h',
             'platform/network/chromium/ResourceRequest.cpp',
             'platform/network/chromium/ResourceRequest.h',
