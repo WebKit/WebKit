@@ -81,9 +81,24 @@
     return [(NSString *)WKSignedPublicKeyAndChallengeString(keySize, (CFStringRef)challenge, (CFStringRef)keyDescription) autorelease];
 }
 
+static inline WebCertificateParseResult toWebCertificateParseResult(WKCertificateParseResult result)
+{
+    switch (result) {
+    case WKCertificateParseResultSucceeded:
+        return WebCertificateParseResultSucceeded;
+    case WKCertificateParseResultFailed:
+        return WebCertificateParseResultFailed;
+    case WKCertificateParseResultPKCS7:
+        return WebCertificateParseResultPKCS7;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebCertificateParseResultFailed;
+}
+
 - (WebCertificateParseResult)addCertificatesToKeychainFromData:(NSData *)data
 {
-    return WKAddCertificatesToKeychainFromData([data bytes], [data length]);
+    return toWebCertificateParseResult(WKAddCertificatesToKeychainFromData([data bytes], [data length]));
 }
 
 @end

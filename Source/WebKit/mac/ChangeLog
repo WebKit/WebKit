@@ -1,3 +1,12 @@
+2011-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Fix clang build.
+
+        * WebCoreSupport/WebKeyGenerator.m:
+        (toWebCertificateParseResult):
+        (-[WebKeyGenerator addCertificatesToKeychainFromData:]):
+        * WebView/WebTextCompletionController.mm:
+
 2011-02-24  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.
