@@ -38,8 +38,14 @@ namespace WebKit {
 
 class WebTouchPoint {
 public:
+    enum Finger {
+        FingerFirst,
+        FingerSecond,
+        FingerThird
+    };
+
     WebTouchPoint()
-        : id(0)
+        : id(FingerFirst)
         , state(StateUndefined) { }
 
     enum State {

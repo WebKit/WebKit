@@ -1,3 +1,23 @@
+2011-02-24  Robert Kroeger <rjkroege@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Added timestamps to PlatformTouchEvent etc.
+
+        PlatformTouchEvent doesn't have a timestamp and so
+        eventSender.leapForward cannot be used for touchevent based tests.
+        This change constructs PlatformTouchEvents with timestamps
+        provided from a WebTouchEvent on chromium. It also adds an enum
+        to make code referring to specific WebTouchPoints easier to read.
+
+        [chromium] [WebCore] [android] Touch events are missing time stamps
+        https://bugs.webkit.org/show_bug.cgi?id=53510
+
+        * public/WebTouchPoint.h:
+        (WebKit::WebTouchPoint::WebTouchPoint):
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformTouchEventBuilder::PlatformTouchEventBuilder):
+
 2011-02-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by James Robinson.
