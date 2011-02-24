@@ -1,3 +1,9 @@
+2011-02-24  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed Qt rebaseline.
+
+        * platform/qt/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt:
+
 2011-02-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Mac rebaselines for r79490 and r79493.
