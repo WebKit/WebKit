@@ -51,42 +51,10 @@ void LayerBackedDrawingAreaProxy::platformSetSize()
 
 void LayerBackedDrawingAreaProxy::attachCompositingContext(uint32_t contextID)
 {
-#if HAVE(HOSTED_CORE_ANIMATION)
-    m_compositingRootLayer = WKMakeRenderLayer(contextID);
-
-    // Turn off default animations.
-    NSNull *nullValue = [NSNull null];
-    NSDictionary *actions = [NSDictionary dictionaryWithObjectsAndKeys:
-                             nullValue, @"anchorPoint",
-                             nullValue, @"bounds",
-                             nullValue, @"contents",
-                             nullValue, @"contentsRect",
-                             nullValue, @"opacity",
-                             nullValue, @"position",
-                             nullValue, @"sublayerTransform",
-                             nullValue, @"sublayers",
-                             nullValue, @"transform",
-                             nil];
-    [m_compositingRootLayer.get() setStyle:[NSDictionary dictionaryWithObject:actions forKey:@"actions"]];
-    
-    [m_compositingRootLayer.get() setAnchorPoint:CGPointZero];
-    [m_compositingRootLayer.get() setBounds:CGRectMake(0, 0, size().width(), size().height())];
-    
-    // FIXME: this fixes the layer jiggle when resizing the window, but breaks layer flipping because
-    // CA doesn't propagate the kCALayerFlagFlippedAbove through the remote layer.
-    // [m_compositingRootLayer.get() setGeometryFlipped:YES];
-
-#ifndef NDEBUG
-    [m_compositingRootLayer.get() setName:@"Compositing root layer"];
-#endif
-
-    [m_webView _startAcceleratedCompositing:m_compositingRootLayer.get()];
-#endif
 }
 
 void LayerBackedDrawingAreaProxy::detachCompositingContext()
 {
-    [m_webView _stopAcceleratedCompositing];
     m_compositingRootLayer = 0;
 }
 

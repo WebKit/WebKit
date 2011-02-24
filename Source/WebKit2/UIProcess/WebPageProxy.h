@@ -341,11 +341,6 @@ public:
     virtual void exitAcceleratedCompositingMode();
 #endif
     
-#if USE(ACCELERATED_COMPOSITING)
-    void didEnterAcceleratedCompositing();
-    void didLeaveAcceleratedCompositing();
-#endif
-
     void didDraw();
 
     enum UndoOrRedo { Undo, Redo };
@@ -580,10 +575,6 @@ private:
 
     void focusedFrameChanged(uint64_t frameID);
     void frameSetLargestFrameChanged(uint64_t frameID);
-
-#if USE(ACCELERATED_COMPOSITING)
-    void didChangeAcceleratedCompositing(bool compositing, DrawingAreaInfo&);
-#endif
 
     void canAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, const WebCore::ProtectionSpace&, bool& canAuthenticate);
     void didReceiveAuthenticationChallenge(uint64_t frameID, const WebCore::AuthenticationChallenge&, uint64_t challengeID);

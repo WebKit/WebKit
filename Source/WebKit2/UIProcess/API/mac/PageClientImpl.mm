@@ -353,16 +353,6 @@ void PageClientImpl::exitAcceleratedCompositingMode()
 {
     [m_wkView _exitAcceleratedCompositingMode];
 }
-
-void PageClientImpl::pageDidEnterAcceleratedCompositing()
-{
-    [m_wkView _pageDidEnterAcceleratedCompositing];
-}
-
-void PageClientImpl::pageDidLeaveAcceleratedCompositing()
-{
-    [m_wkView _pageDidLeaveAcceleratedCompositing];
-}
 #endif // USE(ACCELERATED_COMPOSITING)
 
 void PageClientImpl::setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled)

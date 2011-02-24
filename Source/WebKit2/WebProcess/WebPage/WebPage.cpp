@@ -324,45 +324,13 @@ void WebPage::clearMainFrameName()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void WebPage::changeAcceleratedCompositingMode(WebCore::GraphicsLayer* layer)
-{
-    if (m_isClosed)
-        return;
-
-    // With the new drawing area we don't need to inform the UI process when the accelerated
-    // compositing mode changes.
-    if (m_drawingArea->info().type == DrawingAreaInfo::Impl)
-        return;
-
-    bool compositing = layer;
-    
-    // Tell the UI process that accelerated compositing changed. It may respond by changing
-    // drawing area types.
-    DrawingAreaInfo newDrawingAreaInfo;
-
-    if (!sendSync(Messages::WebPageProxy::DidChangeAcceleratedCompositing(compositing), Messages::WebPageProxy::DidChangeAcceleratedCompositing::Reply(newDrawingAreaInfo)))
-        return;
-    
-    if (newDrawingAreaInfo.type != drawingArea()->info().type) {
-        m_drawingArea = 0;
-        if (newDrawingAreaInfo.type != DrawingAreaInfo::None) {
-            WebPageCreationParameters parameters;
-            parameters.drawingAreaInfo = newDrawingAreaInfo;
-            m_drawingArea = DrawingArea::create(this, parameters);
-            m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
-        }
-    }
-}
-
 void WebPage::enterAcceleratedCompositingMode(GraphicsLayer* layer)
 {
-    changeAcceleratedCompositingMode(layer);
     m_drawingArea->setRootCompositingLayer(layer);
 }
 
 void WebPage::exitAcceleratedCompositingMode()
 {
-    changeAcceleratedCompositingMode(0);
     m_drawingArea->setRootCompositingLayer(0);
 }
 #endif

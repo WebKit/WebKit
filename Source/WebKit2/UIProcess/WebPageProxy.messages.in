@@ -167,11 +167,6 @@ messages -> WebPageProxy {
     # ContextMenu messages
     ShowContextMenu(WebCore::IntPoint menuLocation, WebKit::ContextMenuState state, Vector<WebKit::WebContextMenuItemData> items, WebKit::InjectedBundleUserMessageEncoder userData)
 
-#if USE(ACCELERATED_COMPOSITING)
-    # Accelerated compositing messages
-    DidChangeAcceleratedCompositing(bool compositing) -> (WebKit::DrawingAreaInfo newDrawingArea)
-#endif
-
     # Authentication messages
     CanAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, WebCore::ProtectionSpace protectionSpace) -> (bool canAuthenticate)
     DidReceiveAuthenticationChallenge(uint64_t frameID, WebCore::AuthenticationChallenge challenge, uint64_t challengeID)

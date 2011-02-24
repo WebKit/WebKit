@@ -1183,46 +1183,6 @@ void WebView::exitAcceleratedCompositingMode()
     ASSERT_NOT_REACHED();
 }
 
-void WebView::pageDidEnterAcceleratedCompositing()
-{
-    ASSERT(!useNewDrawingArea());
-    switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::LayerBacked);
-}
-
-void WebView::pageDidLeaveAcceleratedCompositing()
-{
-    ASSERT(!useNewDrawingArea());
-    switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::ChunkedUpdate);
-}
-
-void WebView::switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::Type type)
-{
-    ASSERT(!useNewDrawingArea());
-
-    DrawingAreaInfo::Type existingDrawingAreaType = m_page->drawingArea() ? m_page->drawingArea()->info().type : DrawingAreaInfo::None;
-    if (existingDrawingAreaType == type)
-        return;
-
-    OwnPtr<DrawingAreaProxy> newDrawingArea;
-    switch (type) {
-    case DrawingAreaInfo::Impl:
-    case DrawingAreaInfo::None:
-        break;
-    case DrawingAreaInfo::ChunkedUpdate:
-        newDrawingArea = ChunkedUpdateDrawingAreaProxy::create(this, m_page.get());
-        break;
-    case DrawingAreaInfo::LayerBacked:
-        newDrawingArea = LayerBackedDrawingAreaProxy::create(this, m_page.get());
-        break;
-    }
-
-    if (m_page->drawingArea())
-        newDrawingArea->setSize(m_page->drawingArea()->size(), IntSize());
-
-    m_page->drawingArea()->detachCompositingContext();
-    m_page->setDrawingArea(newDrawingArea.release());
-}
-
 #endif // USE(ACCELERATED_COMPOSITING)
 
 HWND WebView::nativeWindow()

@@ -86,11 +86,6 @@ private:
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode();
 
-#if USE(ACCELERATED_COMPOSITING)
-    virtual void pageDidEnterAcceleratedCompositing();
-    virtual void pageDidLeaveAcceleratedCompositing();
-#endif
-
     virtual void accessibilityWebProcessTokenReceived(const CoreIPC::DataReference&);    
     virtual void setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled);
     virtual void setAutodisplay(bool);

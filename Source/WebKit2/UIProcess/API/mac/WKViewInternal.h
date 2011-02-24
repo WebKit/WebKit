@@ -52,13 +52,6 @@ namespace WebKit {
 - (void)_enterAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext;
 - (void)_exitAcceleratedCompositingMode;
 
-#if USE(ACCELERATED_COMPOSITING)
-- (void)_startAcceleratedCompositing:(CALayer *)rootLayer;
-- (void)_stopAcceleratedCompositing;
-- (void)_pageDidEnterAcceleratedCompositing;
-- (void)_pageDidLeaveAcceleratedCompositing;
-#endif
-
 - (void)_setAccessibilityWebProcessToken:(NSData *)data;
 - (void)_setComplexTextInputEnabled:(BOOL)complexTextInputEnabled pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier;
 

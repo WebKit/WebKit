@@ -2497,18 +2497,6 @@ void WebPageProxy::frameSetLargestFrameChanged(uint64_t frameID)
     m_frameSetLargestFrame = frame;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
-void WebPageProxy::didChangeAcceleratedCompositing(bool compositing, DrawingAreaInfo& drawingAreaInfo)
-{
-    if (compositing)
-        didEnterAcceleratedCompositing();
-    else
-        didLeaveAcceleratedCompositing();
-
-    drawingAreaInfo = drawingArea()->info();
-}
-#endif
-
 void WebPageProxy::processDidBecomeUnresponsive()
 {
     m_loaderClient.processDidBecomeUnresponsive(this);
@@ -2618,17 +2606,6 @@ void WebPageProxy::exitAcceleratedCompositingMode()
 {
     m_pageClient->exitAcceleratedCompositingMode();
 }
-
-void WebPageProxy::didEnterAcceleratedCompositing()
-{
-    m_pageClient->pageDidEnterAcceleratedCompositing();
-}
-
-void WebPageProxy::didLeaveAcceleratedCompositing()
-{
-    m_pageClient->pageDidLeaveAcceleratedCompositing();
-}
-
 #endif // USE(ACCELERATED_COMPOSITING)
 
 void WebPageProxy::backForwardClear()

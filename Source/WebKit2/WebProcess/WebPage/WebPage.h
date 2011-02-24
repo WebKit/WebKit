@@ -216,7 +216,6 @@ public:
     void setDefersLoading(bool deferLoading);
 
 #if USE(ACCELERATED_COMPOSITING)
-    void changeAcceleratedCompositingMode(WebCore::GraphicsLayer*);
     void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
     void exitAcceleratedCompositingMode();
 #endif

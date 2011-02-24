@@ -1851,95 +1851,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_findIndicatorWindow->setFindIndicator(findIndicator, fadeOut);
 }
 
-#if USE(ACCELERATED_COMPOSITING)
-- (void)_startAcceleratedCompositing:(CALayer *)rootLayer
-{
-    if (!_data->_oldLayerHostingView) {
-        NSView *hostingView = [[NSView alloc] initWithFrame:[self bounds]];
-#if !defined(BUILDING_ON_LEOPARD)
-        [hostingView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-#endif
-        
-        [self addSubview:hostingView];
-        [hostingView release];
-        _data->_oldLayerHostingView = hostingView;
-    }
-
-    // Make a container layer, which will get sized/positioned by AppKit and CA.
-    CALayer *viewLayer = [CALayer layer];
-
-#ifndef NDEBUG
-    [viewLayer setName:@"hosting layer"];
-#endif
-
-#if defined(BUILDING_ON_LEOPARD)
-    // Turn off default animations.
-    NSNull *nullValue = [NSNull null];
-    NSDictionary *actions = [NSDictionary dictionaryWithObjectsAndKeys:
-                             nullValue, @"anchorPoint",
-                             nullValue, @"bounds",
-                             nullValue, @"contents",
-                             nullValue, @"contentsRect",
-                             nullValue, @"opacity",
-                             nullValue, @"position",
-                             nullValue, @"sublayerTransform",
-                             nullValue, @"sublayers",
-                             nullValue, @"transform",
-                             nil];
-    [viewLayer setStyle:[NSDictionary dictionaryWithObject:actions forKey:@"actions"]];
-#endif
-
-#if !defined(BUILDING_ON_LEOPARD)
-    // If we aren't in the window yet, we'll use the screen's scale factor now, and reset the scale 
-    // via -viewDidMoveToWindow.
-    CGFloat scaleFactor = [self window] ? [[self window] userSpaceScaleFactor] : [[NSScreen mainScreen] userSpaceScaleFactor];
-    [viewLayer setTransform:CATransform3DMakeScale(scaleFactor, scaleFactor, 1)];
-#endif
-
-    [_data->_oldLayerHostingView setLayer:viewLayer];
-    [_data->_oldLayerHostingView setWantsLayer:YES];
-    
-    // Parent our root layer in the container layer
-    [viewLayer addSublayer:rootLayer];
-}
-
-- (void)_stopAcceleratedCompositing
-{
-    if (_data->_oldLayerHostingView) {
-        [_data->_oldLayerHostingView setLayer:nil];
-        [_data->_oldLayerHostingView setWantsLayer:NO];
-        [_data->_oldLayerHostingView removeFromSuperview];
-        _data->_oldLayerHostingView = nil;
-    }
-}
-
-- (void)_switchToDrawingAreaTypeIfNecessary:(DrawingAreaInfo::Type)type
-{
-    DrawingAreaInfo::Type existingDrawingAreaType = _data->_page->drawingArea() ? _data->_page->drawingArea()->info().type : DrawingAreaInfo::None;
-    if (existingDrawingAreaType == type)
-        return;
-
-    OwnPtr<DrawingAreaProxy> newDrawingArea;
-    switch (type) {
-        case DrawingAreaInfo::Impl:
-        case DrawingAreaInfo::None:
-            break;
-        case DrawingAreaInfo::ChunkedUpdate: {
-            newDrawingArea = ChunkedUpdateDrawingAreaProxy::create(self, _data->_page.get());
-            break;
-        }
-        case DrawingAreaInfo::LayerBacked: {
-            newDrawingArea = LayerBackedDrawingAreaProxy::create(self, _data->_page.get());
-            break;
-        }
-    }
-
-    newDrawingArea->setSize(IntSize([self frame].size), IntSize());
-
-    _data->_page->drawingArea()->detachCompositingContext();
-    _data->_page->setDrawingArea(newDrawingArea.release());
-}
-
 - (void)_enterAcceleratedCompositingMode:(const LayerTreeContext&)layerTreeContext
 {
     ASSERT(!_data->_layerHostingView);
@@ -1978,18 +1889,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     
     _data->_layerHostingView = nullptr;
 }
-
-- (void)_pageDidEnterAcceleratedCompositing
-{
-    [self _switchToDrawingAreaTypeIfNecessary:DrawingAreaInfo::LayerBacked];
-}
-
-- (void)_pageDidLeaveAcceleratedCompositing
-{
-    // FIXME: we may want to avoid flipping back to the non-layer-backed drawing area until the next page load, to avoid thrashing.
-    [self _switchToDrawingAreaTypeIfNecessary:DrawingAreaInfo::ChunkedUpdate];
-}
-#endif // USE(ACCELERATED_COMPOSITING)
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data
 {
