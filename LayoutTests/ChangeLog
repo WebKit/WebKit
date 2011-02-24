@@ -1,5 +1,11 @@
 2011-02-24  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip flaky media test on GTK.
+
+        * platform/gtk/Skipped:
+
+2011-02-24  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skipping 2 GTK+ SVG crashing tests.
 
         * platform/gtk/Skipped:
