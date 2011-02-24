@@ -47,6 +47,8 @@
 		BC7934AC1190658C005EA8E2 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934AB1190658C005EA8E2 /* WebKit2.framework */; };
 		BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */; };
 		BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8C795B11D2785D004535A1 /* TestControllerMac.mm */; };
+		BC8DAD5D1315C0EC00EC96FC /* TestInvocationMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8DAD5B1315C0EC00EC96FC /* TestInvocationMac.mm */; };
+		BC8DAD7B1316D91000EC96FC /* InjectedBundleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8DAD771316D7B900EC96FC /* InjectedBundleMac.mm */; };
 		BC8FD8CA120E527F00F3E71A /* EventSendingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8FD8C9120E527F00F3E71A /* EventSendingController.cpp */; };
 		BC8FD8D2120E545B00F3E71A /* JSEventSendingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8FD8D0120E545B00F3E71A /* JSEventSendingController.cpp */; };
 		BC952C0D11F3B965003398B4 /* JSWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC952C0C11F3B965003398B4 /* JSWrapper.cpp */; };
@@ -113,6 +115,8 @@
 		BC7934DD119066EC005EA8E2 /* PlatformWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWebView.h; sourceTree = "<group>"; };
 		BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewMac.mm; sourceTree = "<group>"; };
 		BC8C795B11D2785D004535A1 /* TestControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestControllerMac.mm; sourceTree = "<group>"; };
+		BC8DAD5B1315C0EC00EC96FC /* TestInvocationMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestInvocationMac.mm; sourceTree = "<group>"; };
+		BC8DAD771316D7B900EC96FC /* InjectedBundleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleMac.mm; sourceTree = "<group>"; };
 		BC8FD8C8120E527F00F3E71A /* EventSendingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSendingController.h; sourceTree = "<group>"; };
 		BC8FD8C9120E527F00F3E71A /* EventSendingController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventSendingController.cpp; sourceTree = "<group>"; };
 		BC8FD8CB120E52B000F3E71A /* EventSendingController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EventSendingController.idl; sourceTree = "<group>"; };
@@ -218,6 +222,7 @@
 			isa = PBXGroup;
 			children = (
 				65EB859F11EC67CC0034D300 /* ActivateFonts.mm */,
+				BC8DAD771316D7B900EC96FC /* InjectedBundleMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -278,6 +283,7 @@
 				BC7933FF118F7C84005EA8E2 /* main.mm */,
 				BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */,
 				BC8C795B11D2785D004535A1 /* TestControllerMac.mm */,
+				BC8DAD5B1315C0EC00EC96FC /* TestInvocationMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -440,6 +446,7 @@
 				BC793431118F7F19005EA8E2 /* TestController.cpp in Sources */,
 				BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */,
 				BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */,
+				BC8DAD5D1315C0EC00EC96FC /* TestInvocationMac.mm in Sources */,
 				BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -457,6 +464,7 @@
 				BC952F1F11F3C652003398B4 /* JSLayoutTestController.cpp in Sources */,
 				BC14E4DB120E02D000826C0C /* GCController.cpp in Sources */,
 				BC14E4EA120E03D800826C0C /* JSGCController.cpp in Sources */,
+				BC8DAD7B1316D91000EC96FC /* InjectedBundleMac.mm in Sources */,
 				BC8FD8CA120E527F00F3E71A /* EventSendingController.cpp in Sources */,
 				BC8FD8D2120E545B00F3E71A /* JSEventSendingController.cpp in Sources */,
 				C0CE720B1247C93300BC0EC4 /* LayoutTestControllerMac.mm in Sources */,

@@ -401,6 +401,10 @@
 				RelativePath=".\TestControllerWin.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\TestInvocationWin.cpp"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\PlatformWebView.h"

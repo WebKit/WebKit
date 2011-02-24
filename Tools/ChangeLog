@@ -1,3 +1,80 @@
+2011-02-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add basic pixel testing support to WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=55161
+
+        * Scripts/old-run-webkit-tests:
+        Don't print color space information when using WebKitTestRunner since
+        we don't need to change the screen.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::initialize):
+        Add call to initializePlatformDefaults.
+        
+        (WTR::InjectedBundle::done):
+        Return a dictionary on completion with both the text output and pixel dump override.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        Add declaration for initializePlatformDefaults.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController):
+        (WTR::LayoutTestController::dumpAsText):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::shouldDumpPixels):
+        Make setting dumpAsText override the dump pixels preference.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm: Added.
+        (WTR::InjectedBundle::initializePlatformDefaults):
+        Set platform defaults matching DumpRenderTree.
+
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundleQt.cpp: Added.
+        (WTR::InjectedBundle::initializePlatformDefaults):
+        * WebKitTestRunner/InjectedBundle/win/InjectedBundleWin.cpp: Added.
+        (WTR::InjectedBundle::initializePlatformDefaults):
+        Add stubs for initializePlatformDefaults.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::runTest):
+        (WTR::TestController::runTestingServerLoop):
+        (WTR::TestController::run):
+        Parse expected pixel results out of stdin and setup the invocation with it.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::TestInvocation):
+        Initialize new members.
+
+        (WTR::TestInvocation::~TestInvocation):
+        (WTR::TestInvocation::setIsPixelTest):
+        (WTR::sizeWebViewForCurrentTest):
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::dump):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.h:
+        Dump pixels in addition to text by calling dumpPixelsAndCompareWithExpected.
+
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        Use -[NSColorSpace genericRGBColorSpace] instead of the main screen color space.
+
+        * WebKitTestRunner/mac/TestInvocationMac.mm: Added.
+        (WTR::createCGContextFromPlatformView):
+        (WTR::computeMD5HashStringForContext):
+        (WTR::dumpBitmap):
+        (WTR::forceRepaintFunction):
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+        Add mac specific pixel dumping support. Right now, we always pull pixels
+        from the window server.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundle.pro:
+        * WebKitTestRunner/qt/WebKitTestRunner.pro:
+        * WebKitTestRunner/win/InjectedBundle.vcproj:
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj:
+        Add new files.
+
 2011-02-24  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

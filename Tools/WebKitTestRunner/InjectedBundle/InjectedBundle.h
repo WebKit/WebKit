@@ -82,6 +82,7 @@ private:
     void didInitializePageGroup(WKBundlePageGroupRef);
     void didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody);
 
+    void initializePlatformDefaults();
     void resetLocalSettings();
 
     void beginTesting();

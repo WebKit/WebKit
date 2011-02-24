@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestInvocation_h
-#define TestInvocation_h
-
-#include <string>
-#include <WebKit2/WKRetainPtr.h>
-#include <wtf/Noncopyable.h>
+#include "InjectedBundle.h"
 
 namespace WTR {
 
-class TestInvocation {
-    WTF_MAKE_NONCOPYABLE(TestInvocation);
-public:
-    TestInvocation(const std::string& pathOrURL);
-    ~TestInvocation();
-
-    void setIsPixelTest(const std::string& expectedPixelHash);
-    
-    void invoke();
-    void didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
-    WKRetainPtr<WKTypeRef> didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
-
-private:
-    void dump(const char*);
-    void dumpPixelsAndCompareWithExpected();
-    
-    WKRetainPtr<WKURLRef> m_url;
-    std::string m_pathOrURL;
-    
-    bool m_dumpPixels;
-    std::string m_expectedPixelHash;
-
-    // Invocation state
-    bool m_gotInitialResponse;
-    bool m_gotFinalMessage;
-    bool m_gotRepaint;
-    bool m_error;
-};
+void InjectedBundle::initializePlatformDefaults()
+{
+}
 
 } // namespace WTR
-
-#endif // TestInvocation_h

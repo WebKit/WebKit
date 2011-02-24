@@ -55,7 +55,7 @@ public:
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 
     // The basics.
-    void dumpAsText() { m_whatToDump = MainFrameText; }
+    void dumpAsText();
     void dumpChildFramesAsText() { m_whatToDump = AllFramesText; }
     void waitUntilDone();
     void notifyDone();
@@ -114,6 +114,7 @@ public:
     bool shouldDumpMainFrameScrollPosition() const { return m_whatToDump == RenderTree; }
     bool shouldDumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
     bool shouldDumpTitleChanges() const { return m_dumpTitleChanges; }
+    bool shouldDumpPixels() const { return m_dumpPixels; }
 
     bool waitToDump() const { return m_waitToDump; }
     void waitToDumpWatchdogTimerFired();
@@ -154,6 +155,7 @@ private:
     bool m_dumpEditingCallbacks;
     bool m_dumpStatusCallbacks;
     bool m_dumpTitleChanges;
+    bool m_dumpPixels;
     bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
     bool m_testRepaint;
     bool m_testRepaintSweepHorizontally;

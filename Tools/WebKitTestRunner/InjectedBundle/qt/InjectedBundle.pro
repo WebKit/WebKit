@@ -24,6 +24,7 @@ SOURCES += \
     ../LayoutTestController.h \
     ../Bindings/JSWrapper.cpp \
     ActivateFontsQt.cpp \
+    InjectedBundleQt.cpp \
     LayoutTestControllerQt.cpp \
     $$GENERATED_SOURCES_DIR/JSEventSendingController.cpp \
     $$GENERATED_SOURCES_DIR/JSGCController.cpp \

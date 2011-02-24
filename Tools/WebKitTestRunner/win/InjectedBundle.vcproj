@@ -439,6 +439,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\InjectedBundle\win\InjectedBundleWin.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\InjectedBundle\EventSendingController.cpp"
 			>
 		</File>

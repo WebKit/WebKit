@@ -94,6 +94,7 @@ LayoutTestController::LayoutTestController()
     , m_dumpEditingCallbacks(false)
     , m_dumpStatusCallbacks(false)
     , m_dumpTitleChanges(false)
+    , m_dumpPixels(true)
     , m_waitToDump(false)
     , m_testRepaint(false)
     , m_testRepaintSweepHorizontally(false)
@@ -116,6 +117,12 @@ void LayoutTestController::display()
     // FIXME: actually implement, once we want pixel tests
 }
 
+void LayoutTestController::dumpAsText()
+{
+    m_whatToDump = MainFrameText;
+    m_dumpPixels = false;
+}
+    
 void LayoutTestController::waitUntilDone()
 {
     m_waitToDump = true;

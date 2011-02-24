@@ -48,6 +48,7 @@ SOURCES = \
     main.cpp \
     PlatformWebViewQt.cpp \
     TestControllerQt.cpp \
+    TestInvocationQt.cpp \
     $$BASEDIR/TestController.cpp \
     $$BASEDIR/TestInvocation.cpp \
 

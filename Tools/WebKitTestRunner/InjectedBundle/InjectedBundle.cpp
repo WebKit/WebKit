@@ -86,6 +86,8 @@ void InjectedBundle::initialize(WKBundleRef bundle)
     };
     WKBundleSetClient(m_bundle, &client);
 
+    initializePlatformDefaults();
+
     activateFonts();
     WKBundleActivateMacFontAscentHack(m_bundle);
 }
@@ -173,7 +175,15 @@ void InjectedBundle::done()
     setTopLoadingFrame(0);
 
     WKRetainPtr<WKStringRef> doneMessageName(AdoptWK, WKStringCreateWithUTF8CString("Done"));
-    WKRetainPtr<WKStringRef> doneMessageBody(AdoptWK, WKStringCreateWithUTF8CString(m_outputStream.str().c_str()));
+    WKRetainPtr<WKMutableDictionaryRef> doneMessageBody(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> textOutputKey(AdoptWK, WKStringCreateWithUTF8CString("TextOutput"));
+    WKRetainPtr<WKStringRef> textOutput(AdoptWK, WKStringCreateWithUTF8CString(m_outputStream.str().c_str()));
+    WKDictionaryAddItem(doneMessageBody.get(), textOutputKey.get(), textOutput.get());
+    
+    WKRetainPtr<WKStringRef> textOnlyKey(AdoptWK, WKStringCreateWithUTF8CString("TextOnly"));
+    WKRetainPtr<WKBooleanRef> textOnly(AdoptWK, WKBooleanCreate(!m_layoutTestController->shouldDumpPixels()));
+    WKDictionaryAddItem(doneMessageBody.get(), textOnlyKey.get(), textOnly.get());
 
     WKBundlePostMessage(m_bundle, doneMessageName.get(), doneMessageBody.get());
 

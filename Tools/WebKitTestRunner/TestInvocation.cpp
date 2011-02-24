@@ -85,18 +85,25 @@ static WKURLRef createWKURL(const char* pathOrURL)
     return WKURLCreateWithUTF8CString(buffer.get());
 }
 
-TestInvocation::TestInvocation(const char* pathOrURL)
-    : m_url(AdoptWK, createWKURL(pathOrURL))
-    , m_pathOrURL(fastStrDup(pathOrURL))
+TestInvocation::TestInvocation(const std::string& pathOrURL)
+    : m_url(AdoptWK, createWKURL(pathOrURL.c_str()))
+    , m_pathOrURL(pathOrURL)
+    , m_dumpPixels(false)
     , m_gotInitialResponse(false)
     , m_gotFinalMessage(false)
+    , m_gotRepaint(false)
     , m_error(false)
 {
 }
 
 TestInvocation::~TestInvocation()
 {
-    fastFree(m_pathOrURL);
+}
+
+void TestInvocation::setIsPixelTest(const std::string& expectedPixelHash)
+{
+    m_dumpPixels = true;
+    m_expectedPixelHash = expectedPixelHash;
 }
 
 static const unsigned w3cSVGWidth = 480;
@@ -104,7 +111,7 @@ static const unsigned w3cSVGHeight = 360;
 static const unsigned normalWidth = 800;
 static const unsigned normalHeight = 600;
 
-static void sizeWebViewForCurrentTest(char* pathOrURL)
+static void sizeWebViewForCurrentTest(const char* pathOrURL)
 {
     bool isSVGW3CTest = strstr(pathOrURL, "svg/W3C-SVG-1.1") || strstr(pathOrURL, "svg\\W3C-SVG-1.1");
 
@@ -121,7 +128,7 @@ static bool shouldOpenWebInspector(const char* pathOrURL)
 
 void TestInvocation::invoke()
 {
-    sizeWebViewForCurrentTest(m_pathOrURL);
+    sizeWebViewForCurrentTest(m_pathOrURL.c_str());
 
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("BeginTest"));
     WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), 0);
@@ -136,7 +143,7 @@ void TestInvocation::invoke()
         return;
     }
 
-    if (shouldOpenWebInspector(m_pathOrURL))
+    if (shouldOpenWebInspector(m_pathOrURL.c_str()))
         WKInspectorShow(WKPageGetInspector(TestController::shared().mainWebView()->page()));
 
     WKPageLoadURL(TestController::shared().mainWebView()->page(), m_url.get());
@@ -156,11 +163,7 @@ void TestInvocation::dump(const char* stringToDump)
     printf("%s", stringToDump);
 
     fputs("#EOF\n", stdout);
-    fputs("#EOF\n", stdout);
     fputs("#EOF\n", stderr);
-
-    fflush(stdout);
-    fflush(stderr);
 }
 
 void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
@@ -187,11 +190,26 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "Done")) {
-        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
-        WKStringRef messageBodyString = static_cast<WKStringRef>(messageBody);
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
 
-        dump(toSTD(messageBodyString).c_str());
+        WKRetainPtr<WKStringRef> textOutputKey(AdoptWK, WKStringCreateWithUTF8CString("TextOutput"));
+        WKStringRef textOutput = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, textOutputKey.get()));
 
+        WKRetainPtr<WKStringRef> textOnlyKey(AdoptWK, WKStringCreateWithUTF8CString("TextOnly"));
+        bool textOnly = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, textOnlyKey.get())));
+
+        // Dump text.
+        dump(toSTD(textOutput).c_str());
+
+        // Dump pixels (if necessary).
+        if (m_dumpPixels && !textOnly)
+            dumpPixelsAndCompareWithExpected();
+
+        fputs("#EOF\n", stdout);
+        fflush(stdout);
+        fflush(stderr);
+        
         m_gotFinalMessage = true;
         TestController::shared().notifyDone();
         return;

@@ -384,8 +384,20 @@ bool TestController::runTest(const char* test)
         return false;
     }
 
+    std::string pathOrURL(test);
+    std::string expectedPixelHash;
+    size_t separatorPos = pathOrURL.find("'");
+    if (separatorPos != std::string::npos) {
+        pathOrURL = std::string(std::string(test), 0, separatorPos);
+        expectedPixelHash = std::string(std::string(test), separatorPos + 1);
+    }
+
     m_state = RunningTest;
-    m_currentInvocation.set(new TestInvocation(test));
+
+    m_currentInvocation.set(new TestInvocation(pathOrURL));
+    if (m_dumpPixels)
+        m_currentInvocation->setIsPixelTest(expectedPixelHash);    
+
     m_currentInvocation->invoke();
     m_currentInvocation.clear();
 
@@ -396,7 +408,7 @@ void TestController::runTestingServerLoop()
 {
     char filenameBuffer[2048];
     while (fgets(filenameBuffer, sizeof(filenameBuffer), stdin)) {
-        char *newLineCharacter = strchr(filenameBuffer, '\n');
+        char* newLineCharacter = strchr(filenameBuffer, '\n');
         if (newLineCharacter)
             *newLineCharacter = '\0';
 
@@ -418,7 +430,6 @@ void TestController::run()
                 break;
         }
     }
-
 }
 
 void TestController::runUntil(bool& done, TimeoutDuration timeoutDuration)
