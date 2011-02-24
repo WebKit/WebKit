@@ -1,5 +1,12 @@
 2011-02-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed Chromium test expectations update.
+        Removed tests that have been passing since r79478.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Ojan Vafai.
 
         Crash when deleting inside a blockquote with a large offset

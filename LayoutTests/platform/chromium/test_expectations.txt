@@ -3463,7 +3463,6 @@ BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH TIMEOUT
 
 // morrita: In addition, some tests are flaky between IMAGE, TEXT and IMAGE+TEXT. So marked then FAIL at this time.
 
-
 BUGWK54794 GPU MAC : compositing/geometry/object-clip-rects-assertion.html = TIMEOUT
 
 BUGCR73510 MAC : fast/text/font-size-zero.html = TEXT
@@ -3477,57 +3476,7 @@ BUGCR73651 MAC : http/tests/security/isolatedWorld/all-window-prototypes.html = 
 
 BUGWK54882 WIN : inspector/styles/styles-update-from-js.html = TEXT TIMEOUT
 
-BUGWK54736 MAC : editing/inserting/typing-tab-designmode-forms.html = IMAGE
-BUGWK54736 MAC : editing/pasteboard/4641033.html = IMAGE
-BUGWK54736 MAC : editing/pasteboard/block-wrappers-necessary.html = IMAGE
-BUGWK54736 MAC : editing/pasteboard/nested-blocks-with-text-area.html = IMAGE
-BUGWK54736 MAC : editing/pasteboard/nested-blocks-with-text-field.html = IMAGE
-BUGWK54736 MAC : editing/pasteboard/paste-blockquote-2.html = IMAGE
-BUGWK54736 MAC : editing/pasteboard/pasting-tabs.html = IMAGE
-BUGWK54736 MAC : editing/selection/3690703-2.html = IMAGE
-BUGWK54736 MAC : editing/selection/3690703.html = IMAGE
-BUGWK54736 MAC : editing/selection/3690719.html = IMAGE
-BUGWK54736 MAC : editing/selection/4975120.html = IMAGE
-BUGWK54736 MAC : editing/selection/5240265.html = IMAGE
 BUGWK54736 MAC : editing/selection/move-past-trailing-space.html = IMAGE
-BUGWK54736 MAC : editing/selection/replaced-boundaries-3.html = IMAGE
-BUGWK54736 MAC : editing/style/5046875-1.html = IMAGE
-BUGWK54736 MAC : editing/style/create-block-for-style-011.html = IMAGE
-BUGWK54736 MAC : editing/style/create-block-for-style-012.html = IMAGE
-BUGWK54736 MAC : editing/style/table-selection.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug138725.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug14323.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug18359.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug2479-3.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug26178.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug28928.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug2962.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug30692.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug33855.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug39209.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug4429.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug44505.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug46368-1.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug46368-2.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug51037.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug51727.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug52505.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug52506.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug60749.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug67915-1.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug68912.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug7342.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug88035-1.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug88035-2.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/bugs/bug96334.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/collapsing_borders/bug41262-4.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/dom/tableDom.html = IMAGE
-BUGWK54736 MAC : tables/mozilla/other/move_row.html = IMAGE
-BUGWK54736 MAC : tables/mozilla_expected_failures/bugs/bug1725.html = IMAGE
-BUGWK54736 MAC : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
-BUGWK54736 MAC : tables/mozilla_expected_failures/bugs/bug58402-2.html = IMAGE
-BUGWK54736 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE
-BUGWK54736 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-6.html = IMAGE
 
 // regbalining tool couldn't find expectations for these 2 files
 BUGWK54736 MAC : fast/text/trailing-white-space-2.html = IMAGE
