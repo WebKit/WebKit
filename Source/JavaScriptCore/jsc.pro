@@ -22,7 +22,7 @@ QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
 }
 OBJECTS_DIR_WTR = $$OBJECTS_DIR$${QMAKE_DIR_SEP}
 include($$PWD/JavaScriptCore.pri)
-addJavaScriptCoreLib(.)
+prependJavaScriptCoreLib(.)
 
 symbian {
     TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices

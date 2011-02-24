@@ -45,9 +45,9 @@ HEADERS += \
 
 include(../../../../Source/WebKit.pri)
 include(../../../../Source/JavaScriptCore/JavaScriptCore.pri)
-addJavaScriptCoreLib(../../../JavaScriptCore)
+prependJavaScriptCoreLib(../../../JavaScriptCore)
 include(../../../../Source/WebKit2/WebKit2.pri)
-addWebKit2Lib(../../../WebKit2)
+prependWebKit2Lib(../../../WebKit2)
 
 INCLUDEPATH = \
     $$PWD \

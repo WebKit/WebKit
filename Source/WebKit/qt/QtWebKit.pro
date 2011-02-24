@@ -37,11 +37,9 @@ include($$SOURCE_DIR/JavaScriptCore/JavaScriptCore.pri)
 webkit2:include($$SOURCE_DIR/WebKit2/WebKit2.pri)
 include($$SOURCE_DIR/WebCore/WebCore.pri)
 
-webkit2:addWebKit2Lib(../../WebKit2)
-
-addWebCoreLib(../../WebCore)
-
-!v8:addJavaScriptCoreLib(../../JavaScriptCore)
+!v8:prependJavaScriptCoreLib(../../JavaScriptCore)
+prependWebCoreLib(../../WebCore)
+webkit2:prependWebKit2Lib(../../WebKit2)
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../..
 

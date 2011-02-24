@@ -17,7 +17,7 @@ isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
 include($$PWD/../../../WebKit.pri)
 
 include($$PWD/../../JavaScriptCore.pri)
-addJavaScriptCoreLib(../..)
+prependJavaScriptCoreLib(../..)
 
 INCLUDEPATH += $$PWD/../../API
 

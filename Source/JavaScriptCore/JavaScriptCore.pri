@@ -70,16 +70,16 @@ wince* {
 }
 
 
-defineTest(addJavaScriptCoreLib) {
+defineTest(prependJavaScriptCoreLib) {
     # Argument is the relative path to JavaScriptCore.pro's qmake output
     pathToJavaScriptCoreOutput = $$ARGS/$$JAVASCRIPTCORE_DESTDIR
 
     win32-msvc*|wince* {
-        LIBS += -L$$pathToJavaScriptCoreOutput
-        LIBS += -l$$JAVASCRIPTCORE_TARGET
+        LIBS = -l$$JAVASCRIPTCORE_TARGET $$LIBS
+        LIBS = -L$$pathToJavaScriptCoreOutput $$LIBS
         POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}$${JAVASCRIPTCORE_TARGET}.lib
     } else:symbian {
-        LIBS += -l$${JAVASCRIPTCORE_TARGET}.lib
+        LIBS = -l$${JAVASCRIPTCORE_TARGET}.lib $$LIBS
         # The default symbian build system does not use library paths at all. However when building with
         # qmake's symbian makespec that uses Makefiles
         QMAKE_LIBDIR += $$pathToJavaScriptCoreOutput
@@ -88,7 +88,7 @@ defineTest(addJavaScriptCoreLib) {
         # Make sure jscore will be early in the list of libraries to workaround a bug in MinGW
         # that can't resolve symbols from QtCore if libjscore comes after.
         QMAKE_LIBDIR = $$pathToJavaScriptCoreOutput $$QMAKE_LIBDIR
-        LIBS += -l$$JAVASCRIPTCORE_TARGET
+        LIBS = -l$$JAVASCRIPTCORE_TARGET $$LIBS
         POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}lib$${JAVASCRIPTCORE_TARGET}.a
     }
 

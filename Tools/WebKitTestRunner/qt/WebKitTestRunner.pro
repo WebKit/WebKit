@@ -68,4 +68,4 @@ linux-* {
 }
 
 include(../../../Source/JavaScriptCore/JavaScriptCore.pri)
-addJavaScriptCoreLib(../../JavaScriptCore)
+prependJavaScriptCoreLib(../../JavaScriptCore)

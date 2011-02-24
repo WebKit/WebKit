@@ -362,20 +362,20 @@ enable_fast_mobile_scrolling: DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 
 use_qt_mobile_theme: DEFINES += WTF_USE_QT_MOBILE_THEME=1
 
-defineTest(addWebCoreLib) {
+defineTest(prependWebCoreLib) {
     pathToWebCoreOutput = $$ARGS/$$WEBCORE_DESTDIR
 
     win32-msvc*|wince* {
-        LIBS += -L$$pathToWebCoreOutput
-        LIBS += -l$$WEBCORE_TARGET
+        LIBS = -l$$WEBCORE_TARGET $$LIBS
+        LIBS = -L$$pathToWebCoreOutput $$LIBS
         POST_TARGETDEPS += $${pathToWebCoreOutput}$${QMAKE_DIR_SEP}$${WEBCORE_TARGET}.lib
     } else:symbian {
-        LIBS += -l$${WEBCORE_TARGET}.lib
+        LIBS = -l$${WEBCORE_TARGET}.lib $$LIBS
         QMAKE_LIBDIR += $$pathToWebCoreOutput
         POST_TARGETDEPS += $${pathToWebCoreOutput}$${QMAKE_DIR_SEP}$${WEBCORE_TARGET}.lib
     } else {
         QMAKE_LIBDIR = $$pathToWebCoreOutput $$QMAKE_LIBDIR
-        LIBS += -l$$WEBCORE_TARGET
+        LIBS = -l$$WEBCORE_TARGET $$LIBS
         POST_TARGETDEPS += $${pathToWebCoreOutput}$${QMAKE_DIR_SEP}lib$${WEBCORE_TARGET}.a
     }
     

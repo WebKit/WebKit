@@ -63,20 +63,20 @@ symbian {
     INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$WEBKIT2_GENERATED_SOURCES_DIR $$INCLUDEPATH
 }
 
-defineTest(addWebKit2Lib) {
+defineTest(prependWebKit2Lib) {
     pathToWebKit2Output = $$ARGS/$$WEBKIT2_DESTDIR
 
     win32-msvc*|wince* {
-        LIBS += -L$$pathToWebKit2Output
-        LIBS += -l$$WEBKIT2_TARGET
+        LIBS = -l$$WEBKIT2_TARGET $$LIBS
+        LIBS = -L$$pathToWebKit2Output $$LIBS
         POST_TARGETDEPS += $${pathToWebKit2Output}$${QMAKE_DIR_SEP}$${WEBKIT2_TARGET}.lib
     } else:symbian {
-        LIBS += -l$${WEBKIT2_TARGET}.lib
+        LIBS = -l$${WEBKIT2_TARGET}.lib $$LIBS
         QMAKE_LIBDIR += $$pathToWebKit2Output
         POST_TARGETDEPS += $${pathToWebKit2Output}$${QMAKE_DIR_SEP}$${WEBKIT2_TARGET}.lib
     } else {
         QMAKE_LIBDIR = $$pathToWebKit2Output $$QMAKE_LIBDIR
-        LIBS += -l$$WEBKIT2_TARGET
+        LIBS = -l$$WEBKIT2_TARGET $$LIBS
         POST_TARGETDEPS += $${pathToWebKit2Output}$${QMAKE_DIR_SEP}lib$${WEBKIT2_TARGET}.a
     }
 

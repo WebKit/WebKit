@@ -1,3 +1,15 @@
+2011-02-24  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] MinGW build fails to link
+        https://bugs.webkit.org/show_bug.cgi?id=55050
+
+        Prepend the libraries of subcomponents instead of appending them
+        to fix the library order according to the dependency of the libraries
+
+        * QtWebKit.pro: prepend libraries in the correct order
+
 2011-02-23  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Ariya Hidayat.
