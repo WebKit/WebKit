@@ -1,3 +1,13 @@
+2011-02-24  Alejandro G. Castro  <alex@igalia.com>
+
+        Rubber-stamped by Martin Robinson.
+
+        Fixed compilation after r79537, added a bug to solve webkit2
+        translations:
+        https://bugs.webkit.org/show_bug.cgi?id=55153
+
+        * GNUmakefile.am:
+
 2011-02-24  Christian Dywan  <christian@lanedo.com>
 
         Rubber-stamped by Eric Seidel.

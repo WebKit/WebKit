@@ -229,6 +229,9 @@ include Source/JavaScriptCore/GNUmakefile.am
 include Source/WebCore/GNUmakefile.am
 if ENABLE_WEBKIT2
 include Source/WebKit2/GNUmakefile.am
+# [GTK] Refactor the translations now that we have webkit2
+# https://bugs.webkit.org/show_bug.cgi?id=55153
+stamp-po:
 else
 include Source/WebKit/gtk/GNUmakefile.am
 include Source/WebCore/bindings/gobject/GNUmakefile.am
