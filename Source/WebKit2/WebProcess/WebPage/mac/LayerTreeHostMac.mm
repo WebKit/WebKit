@@ -120,9 +120,9 @@ void LayerTreeHostMac::scheduleLayerFlush()
     CFRunLoopAddObserver(currentRunLoop, m_flushPendingLayerChangesRunLoopObserver.get(), kCFRunLoopCommonModes);
 }
 
-void LayerTreeHostMac::setShouldNotifyAfterNextScheduledLayerFlush()
+void LayerTreeHostMac::setShouldNotifyAfterNextScheduledLayerFlush(bool notifyAfterScheduledLayerFlush)
 {
-    m_notifyAfterScheduledLayerFlush = true;
+    m_notifyAfterScheduledLayerFlush = notifyAfterScheduledLayerFlush;
 }
 
 void LayerTreeHostMac::setRootCompositingLayer(GraphicsLayer* graphicsLayer)

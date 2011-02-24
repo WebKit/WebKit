@@ -1,3 +1,25 @@
+2011-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        ASSERTION FAILED: !isInAcceleratedCompositingMode() when entering accelerated compositing early
+        https://bugs.webkit.org/show_bug.cgi?id=55162
+        <rdar://problem/9048523>
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::updateState):
+        Call setShouldNotifyAfterNextScheduledLayerFlush(false) so the web process process won't send an
+        EnterAcceleratedCompositingMode message.
+
+        (WebKit::DrawingAreaImpl::enterAcceleratedCompositingMode):
+        setShouldNotifyAfterNextScheduledLayerFlush now takes a boolean.
+
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::setShouldNotifyAfterNextScheduledLayerFlush):
+        Make this take a boolean.
+
 2011-02-24  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

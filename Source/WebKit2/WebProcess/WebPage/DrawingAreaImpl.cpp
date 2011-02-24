@@ -266,6 +266,12 @@ void DrawingAreaImpl::updateState(uint64_t stateID, const WebCore::IntSize& size
     if (m_layerTreeHost) {
         m_layerTreeHost->sizeDidChange(size);
         layerTreeContext = m_layerTreeHost->layerTreeContext();
+
+        // We don't want the layer tree host to notify after the next scheduled
+        // layer flush because that might end up sending an EnterAcceleratedCompositingMode
+        // message back to the UI process, but the updated layer tree context
+        // will be sent back in the DidUpdateState message.
+        m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(false);
     }
 
     if (m_isPaintingSuspended || m_layerTreeHost)
@@ -322,7 +328,7 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
 
     m_layerTreeHost = LayerTreeHost::create(m_webPage);
     if (!m_inUpdateState)
-        m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush();
+        m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(true);
 
     m_layerTreeHost->setRootCompositingLayer(graphicsLayer);
     

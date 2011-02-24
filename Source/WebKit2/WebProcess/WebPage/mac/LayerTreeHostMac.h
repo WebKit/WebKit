@@ -47,7 +47,7 @@ private:
     // LayerTreeHost.
     virtual const LayerTreeContext& layerTreeContext();
     virtual void scheduleLayerFlush();
-    virtual void setShouldNotifyAfterNextScheduledLayerFlush();
+    virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool);
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
     virtual void invalidate();
 
