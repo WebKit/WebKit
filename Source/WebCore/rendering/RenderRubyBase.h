@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+class RenderRubyRun;
+
 class RenderRubyBase : public RenderBlock {
 public:
     RenderRubyBase(Node*);
@@ -47,13 +49,18 @@ public:
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
 
 private:
+    virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
+    virtual void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const;
+
     bool hasOnlyWrappedInlineChildren(RenderObject* beforeChild = 0) const;
 
     void moveChildren(RenderRubyBase* toBase, RenderObject* fromBeforeChild = 0);
     void moveInlineChildren(RenderRubyBase* toBase, RenderObject* fromBeforeChild = 0);
     void moveBlockChildren(RenderRubyBase* toBase, RenderObject* fromBeforeChild = 0);
     void mergeBlockChildren(RenderRubyBase* toBase, RenderObject* fromBeforeChild = 0);
-    
+
+    RenderRubyRun* rubyRun() const;
+
     // Allow RenderRubyRun to manipulate the children within ruby bases.
     friend class RenderRubyRun;
 };

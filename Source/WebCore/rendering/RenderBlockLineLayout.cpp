@@ -315,16 +315,26 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
     return lastRootBox();
 }
 
+ETextAlign RenderBlock::textAlignmentForLine(bool endsWithSoftBreak) const
+{
+    ETextAlign alignment = style()->textAlign();
+    if (!endsWithSoftBreak && alignment == JUSTIFY)
+        alignment = TAAUTO;
+
+    return alignment;
+}
+
 void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
-    // First determine our total logical width.
-    float availableLogicalWidth = availableLogicalWidthForLine(logicalHeight(), firstLine);
-    float totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();
+    ETextAlign textAlign = textAlignmentForLine(!reachedEnd && !lineBox->endsWithBreak());
+    float logicalLeft = logicalLeftOffsetForLine(logicalHeight(), firstLine);
+    float availableLogicalWidth = logicalRightOffsetForLine(logicalHeight(), firstLine) - logicalLeft;
+
     bool needsWordSpacing = false;
+    float totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();
     unsigned expansionOpportunityCount = 0;
     bool isAfterExpansion = true;
     Vector<unsigned, 16> expansionOpportunities;
-    ETextAlign textAlign = style()->textAlign();
 
     for (BidiRun* r = firstRun; r; r = r->next()) {
         if (!r->m_box || r->m_object->isPositioned() || r->m_box->isLineBreak())
@@ -386,7 +396,6 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
     // we now examine our text-align property in order to determine where to position the
     // objects horizontally.  The total width of the line can be increased if we end up
     // justifying text.
-    float logicalLeft = logicalLeftOffsetForLine(logicalHeight(), firstLine);
     switch (textAlign) {
         case LEFT:
         case WEBKIT_LEFT:
@@ -403,7 +412,8 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             }
             break;
         case JUSTIFY:
-            if (expansionOpportunityCount && !reachedEnd && !lineBox->endsWithBreak()) {
+            if (expansionOpportunityCount) {
+                adjustInlineDirectionLineBounds(expansionOpportunityCount, logicalLeft, availableLogicalWidth);
                 if (trailingSpaceRun) {
                     totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
                     trailingSpaceRun->m_box->setLogicalWidth(0);

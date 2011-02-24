@@ -110,7 +110,6 @@ void RenderRubyRun::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     ASSERT(child);
 
-    // If child is a ruby text
     if (child->isRubyText()) {
         if (!beforeChild) {
             // RenderRuby has already ascertained that we can add the child here.
@@ -133,16 +132,14 @@ void RenderRubyRun::addChild(RenderObject* child, RenderObject* beforeChild)
             RenderBlock::addChild(child, beforeChild);
             RenderBlock::removeChild(beforeChild);
             newRun->addChild(beforeChild);
-        } else {
-            if (hasRubyBase()) {
-                // Insertion before a ruby base object.
-                // In this case we need insert a new run before the current one and split the base.
-                RenderObject* ruby = parent();
-                RenderRubyRun* newRun = staticCreateRubyRun(ruby);
-                ruby->addChild(newRun, this);
-                newRun->addChild(child);
-                rubyBaseSafe()->moveChildren(newRun->rubyBaseSafe(), beforeChild);
-            }
+        } else if (hasRubyBase()) {
+            // Insertion before a ruby base object.
+            // In this case we need insert a new run before the current one and split the base.
+            RenderObject* ruby = parent();
+            RenderRubyRun* newRun = staticCreateRubyRun(ruby);
+            ruby->addChild(newRun, this);
+            newRun->addChild(child);
+            rubyBaseSafe()->moveChildren(newRun->rubyBaseSafe(), beforeChild);
         }
     } else {
         // child is not a text -> insert it into the base

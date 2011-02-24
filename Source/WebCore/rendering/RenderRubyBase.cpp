@@ -31,6 +31,10 @@
 #include "config.h"
 
 #include "RenderRubyBase.h"
+#include "RenderRubyRun.h"
+#include "RenderRubyText.h"
+
+using namespace std;
 
 namespace WebCore {
 
@@ -180,6 +184,32 @@ void RenderRubyBase::mergeBlockChildren(RenderRubyBase* toBase, RenderObject* fr
     }
     // Move all remaining children normally.
     moveChildrenTo(toBase, firstChild(), fromBeforeChild);
+}
+
+RenderRubyRun* RenderRubyBase::rubyRun() const
+{
+    ASSERT(parent());
+    ASSERT(parent()->isRubyRun());
+
+    return static_cast<RenderRubyRun*>(parent());
+}
+
+ETextAlign RenderRubyBase::textAlignmentForLine(bool /* endsWithSoftBreak */) const
+{
+    return JUSTIFY;
+}
+
+void RenderRubyBase::adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const
+{
+    int maxPreferredLogicalWidth = this->maxPreferredLogicalWidth();
+    if (maxPreferredLogicalWidth >= logicalWidth)
+        return;
+
+    // Inset the ruby base by half the inter-ideograph expansion amount.
+    float inset = (logicalWidth - maxPreferredLogicalWidth) / (expansionOpportunityCount + 1);
+
+    logicalLeft += inset / 2;
+    logicalWidth -= inset;
 }
 
 } // namespace WebCore

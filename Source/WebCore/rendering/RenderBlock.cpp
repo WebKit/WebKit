@@ -3427,8 +3427,7 @@ int RenderBlock::logicalRightOffsetForLine(int logicalTop, int fixedOffset, bool
     return right;
 }
 
-int
-RenderBlock::availableLogicalWidthForLine(int position, bool firstLine) const
+int RenderBlock::availableLogicalWidthForLine(int position, bool firstLine) const
 {
     int result = logicalRightOffsetForLine(position, firstLine) - logicalLeftOffsetForLine(position, firstLine);
     return (result < 0) ? 0 : result;

@@ -1,3 +1,30 @@
+2011-02-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/8902740> Expand ruby base when it is shorter than the ruby text
+        https://bugs.webkit.org/show_bug.cgi?id=55183
+
+        Test: fast/ruby/base-shorter-than-text.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::availableLogicalWidthForLine):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::adjustInlineDirectionLineBounds): Added. The base clase implementation does nothing.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::textAlignmentForLine): Added. Implements the logic that changes "justify" to "auto" for
+        the last line or a line that ends with a hard break.
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine): Use textAlignmentForLine(), compute the available
+        width more efficiently, and call adjustInlineDirectionLineBounds() for justified lines.
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::rubyRun): Added.
+        (WebCore::RenderRubyBase::textAlignmentForLine): Added. Alwyas returns "justify".
+        (WebCore::RenderRubyBase::adjustInlineDirectionLineBounds): Added. Insets the line such that the inset is
+        half the width of a single intra-line expansion.
+        * rendering/RenderRubyBase.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::addChild): 
+
 2011-02-24  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r79604.
