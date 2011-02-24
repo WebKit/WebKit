@@ -141,6 +141,8 @@ bool SVGFEConvolveMatrixElement::setFilterEffectAttribute(FilterEffect* effect, 
        return convolveMatrix->setTargetOffset(IntPoint(targetX(), targetY()));
     if (attrName == SVGNames::targetYAttr)
        return convolveMatrix->setTargetOffset(IntPoint(targetX(), targetY()));
+    if (attrName == SVGNames::kernelUnitLengthAttr)
+       return convolveMatrix->setKernelUnitLength(FloatPoint(kernelUnitLengthX(), kernelUnitLengthY()));
     if (attrName == SVGNames::preserveAlphaAttr)
         return convolveMatrix->setPreserveAlpha(preserveAlpha());
 

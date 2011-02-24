@@ -135,9 +135,12 @@ FloatPoint FEConvolveMatrix::kernelUnitLength() const
     return m_kernelUnitLength; 
 }
 
-void FEConvolveMatrix::setKernelUnitLength(FloatPoint kernelUnitLength)
+bool FEConvolveMatrix::setKernelUnitLength(FloatPoint kernelUnitLength)
 {
-    m_kernelUnitLength = kernelUnitLength; 
+    if (m_kernelUnitLength == kernelUnitLength)
+        return false;
+    m_kernelUnitLength = kernelUnitLength;
+    return true;
 }
 
 bool FEConvolveMatrix::preserveAlpha() const

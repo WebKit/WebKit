@@ -1,3 +1,11 @@
+2011-02-24  Renata Hodovan  <reni@webkit.org>
+
+        Unreviewed GTK, Snow Leopard build fix for r79474.
+
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::setKernelUnitLength):
+        * platform/graphics/filters/FEConvolveMatrix.h:
+
 2011-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Xan Lopez.

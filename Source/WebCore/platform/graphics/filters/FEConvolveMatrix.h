@@ -67,7 +67,7 @@ public:
     bool setEdgeMode(EdgeModeType);
 
     FloatPoint kernelUnitLength() const;
-    void setKernelUnitLength(FloatPoint);
+    bool setKernelUnitLength(FloatPoint);
 
     bool preserveAlpha() const;
     bool setPreserveAlpha(bool);
