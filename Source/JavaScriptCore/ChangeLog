@@ -1,3 +1,16 @@
+2011-02-24  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        PatternAlternative leaked in YarrPatternConstructor::atomParenthesesEnd()
+        https://bugs.webkit.org/show_bug.cgi?id=55156
+
+        Added code to delete unneeded PatternAlternative after it is removed
+        from m_alternatives Vector.
+
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::atomParenthesesEnd):
+
 2011-02-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Anders Carlsson.

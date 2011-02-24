@@ -495,7 +495,9 @@ public:
 
         for (unsigned i = 0; i < numParenAlternatives; i++) {
             if (!parenthesesDisjunction->m_alternatives[i]->m_terms.size() && numParenAlternatives > 1) {
+                PatternAlternative* altToRemove = parenthesesDisjunction->m_alternatives[i];
                 parenthesesDisjunction->m_alternatives.remove(i);
+                delete altToRemove;
                 --numParenAlternatives;
 
                 containsEmptyAlternative = true;
