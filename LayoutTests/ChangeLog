@@ -1,3 +1,11 @@
+2011-02-24  Adam Roben  <aroben@apple.com>
+
+        Update Windows XP test results after r78846
+
+        * platform/win-xp/fast/text/backslash-to-yen-sign-euc-expected.checksum: Added.
+        * platform/win-xp/fast/text/backslash-to-yen-sign-euc-expected.png: Added.
+        * platform/win-xp/fast/text/backslash-to-yen-sign-euc-expected.txt:
+
 2011-02-24  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Simon Fraser.
