@@ -1,3 +1,15 @@
+2011-02-24  Anna Cavender  <annacc@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        rebaseline for media/video-controls-rendering.html on mac
+        https://bugs.webkit.org/show_bug.cgi?id=55108
+
+        * platform/chromium-mac/media/video-controls-rendering-expected.checksum:
+        * platform/chromium-mac/media/video-controls-rendering-expected.png:
+        * platform/chromium-mac/media/video-controls-rendering-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-02-20  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Nikolas Zimmermann.

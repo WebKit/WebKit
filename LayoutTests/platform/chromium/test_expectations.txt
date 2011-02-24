@@ -2731,7 +2731,6 @@ BUG_DRT WIN MAC LINUX : http/tests/loading/preload-img-test.html = TEXT TIMEOUT 
 BUGCR57950 WIN : svg/batik/text/verticalText.svg = CRASH PASS
 
 // media/video-* flakyness
-BUGCR59665 MAC : media/video-controls-rendering.html = CRASH FAIL TIMEOUT PASS
 BUGCR59665 MAC : media/video-layer-crash.html = CRASH TIMEOUT PASS IMAGE
 // BUGCR59415 : setting SLOW in test_expectations.txt may fix the problem
 BUGCR59665 BUGCR59415 : media/video-loop.html = CRASH TIMEOUT PASS FAIL
