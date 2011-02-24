@@ -3528,5 +3528,9 @@ BUGWK54736 MAC : tables/mozilla_expected_failures/bugs/bug58402-2.html = IMAGE
 BUGWK54736 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE
 BUGWK54736 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-6.html = IMAGE
 
+// regbalining tool couldn't find expectations for these 2 files
+BUGWK54736 MAC : fast/text/trailing-white-space-2.html = IMAGE
+BUGWK54736 MAC : fast/text/trailing-white-space.html = IMAGE
+
 BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 BUGWK55118 : fast/xsl/sort-locale.xml = TEXT

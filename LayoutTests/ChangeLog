@@ -1,3 +1,9 @@
+2011-02-24 MORITA Hajime  <morrita@google.com>
+
+        Unreviewed skipping failing tests. (r79517 removed too many.)
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-24  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed; skip canvas/philip/tests/2d.imageData.object.round.html and
