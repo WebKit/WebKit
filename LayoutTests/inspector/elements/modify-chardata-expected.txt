@@ -1,8 +1,12 @@
 Tests that elements panel updates dom tree structure upon changes to characters.
 
 Bar
+
+Running: testDumpInitial
 ========= Original ========
   <div id="node">Foo</div>
+
+Running: testSetAttribute
 ===== Mutated text node =====
   <div id="node">Bar</div>
 

@@ -1,11 +1,15 @@
 Tests that elements panel updates dom tree structure upon node insertion.
 
+
+Running: testDumpInitial
 ========= Original ========
 - <div id="container">
       <div id="child1"></div>
       <div id="child2"></div>
       <div id="child3"></div>
   </div>
+
+Running: testInsertBefore
 ===== Inserted before =====
 - <div id="container">
       <div id="child-before"></div>
@@ -13,6 +17,8 @@ Tests that elements panel updates dom tree structure upon node insertion.
       <div id="child2"></div>
       <div id="child3"></div>
   </div>
+
+Running: testInsertMiddle
 ===== Inserted middle =====
 - <div id="container">
       <div id="child-before"></div>
@@ -21,6 +27,8 @@ Tests that elements panel updates dom tree structure upon node insertion.
       <div id="child2"></div>
       <div id="child3"></div>
   </div>
+
+Running: testAppend
 ======== Appended =========
 - <div id="container">
       <div id="child-before"></div>

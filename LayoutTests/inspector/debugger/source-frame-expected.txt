@@ -2,8 +2,12 @@ CONSOLE MESSAGE: line 10: test error message
 Tests that it's possible to set breakpoint in source frame, and that source frame displays breakpoints and console errors.
 
 Debugger was enabled.
+
+Running: testSetBreakpoint
 Script source was shown.
 Breakpoint added to source frame at line 17
+
+Running: testConsoleMessage
 Message text: source-frame.html:10test error message
 Debugger was disabled.
 

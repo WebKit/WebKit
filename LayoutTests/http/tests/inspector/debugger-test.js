@@ -58,7 +58,10 @@ InspectorTest.runDebuggerTestSuite = function(testSuite)
             return;
         }
 
-        InspectorTest.safeWrap(testSuiteTests.shift())(runner, runner);
+        var nextTest = testSuiteTests.shift();
+        InspectorTest.addResult("");
+        InspectorTest.addResult("Running: " + /function\s([^(]*)/.exec(nextTest)[1]);
+        InspectorTest.safeWrap(nextTest)(runner, runner);
     }
 
     InspectorTest.startDebuggerTest(runner);

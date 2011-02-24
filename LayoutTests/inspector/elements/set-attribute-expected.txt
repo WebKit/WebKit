@@ -1,9 +1,15 @@
 Tests that elements panel updates dom tree structure upon setting attribute.
 
+
+Running: testDumpInitial
 ========= Original ========
   <div id="node"></div>
+
+Running: testSetAttribute
 ===== Set attribute =====
   <div id="node" name="value"></div>
+
+Running: testRemoveAttribute
 === Removed attribute ===
   <div id="node"></div>
 
