@@ -1,3 +1,9 @@
+2011-02-24  Oliver Hunt  <oliver@apple.com>
+
+        Build fix
+
+        * bindings/js/JSBindingsAllInOne.cpp:
+
 2011-02-24  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

@@ -68,7 +68,6 @@
 #include "JSDataGridColumnListCustom.cpp"
 #include "JSDataGridDataSource.cpp"
 #include "JSDataViewCustom.cpp"
-#include "JSDebugWrapperSet.cpp"
 #include "JSDedicatedWorkerContextCustom.cpp"
 #include "JSDesktopNotificationsCustom.cpp"
 #include "JSDeviceOrientationEventCustom.cpp"
