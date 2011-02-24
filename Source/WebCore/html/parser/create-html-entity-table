@@ -58,7 +58,8 @@ def offset_table_entry(offset):
 
 program_name = os.path.basename(__file__)
 if len(sys.argv) < 4 or sys.argv[1] != "-o":
-    print >> sys.stderr, "Usage: %s -o OUTPUT_FILE INPUT_FILE" % program_name
+    # Python 3, change to: print("Usage: %s -o OUTPUT_FILE INPUT_FILE" % program_name, file=sys.stderr)
+    sys.stderr.write("Usage: %s -o OUTPUT_FILE INPUT_FILE\n" % program_name)
     exit(1)
 
 output_path = sys.argv[2]
@@ -68,12 +69,12 @@ html_entity_names_file = open(input_path)
 entries = list(csv.reader(html_entity_names_file))
 html_entity_names_file.close()
 
-entries.sort(lambda a, b: cmp(a[ENTITY], b[ENTITY]))
+entries.sort(key = lambda entry: entry[ENTITY])
 entity_count = len(entries)
 
 output_file = open(output_path, "w")
 
-print >> output_file, """/*
+output_file.write("""/*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -107,15 +108,15 @@ print >> output_file, """/*
 namespace WebCore {
 
 namespace {
-"""
+""")
 
 for entry in entries:
-    print >> output_file, "const UChar %sEntityName[] = %s;" % (
+    output_file.write("const UChar %sEntityName[] = %s;" % (
         convert_entity_to_cpp_name(entry[ENTITY]),
-        convert_entity_to_uchar_array(entry[ENTITY]))
+        convert_entity_to_uchar_array(entry[ENTITY])))
 
-print >> output_file, """
-HTMLEntityTableEntry staticEntityTable[%s] = {""" % entity_count
+output_file.write("""
+HTMLEntityTableEntry staticEntityTable[%s] = {""" % entity_count)
 
 index = {}
 offset = 0
@@ -123,26 +124,26 @@ for entry in entries:
     letter = entry[ENTITY][0]
     if not index.get(letter):
         index[letter] = offset
-    print >> output_file, '    { %sEntityName, %s, %s },' % (
+    output_file.write('    { %sEntityName, %s, %s },' % (
         convert_entity_to_cpp_name(entry[ENTITY]),
         len(entry[ENTITY]),
-        convert_value_to_int(entry[VALUE]))
+        convert_value_to_int(entry[VALUE])))
     offset += 1
 
-print >> output_file, """};
-"""
+output_file.write("""};
+""")
 
-print >> output_file, "const HTMLEntityTableEntry* uppercaseOffset[] = {"
-for letter in string.uppercase:
-    print >> output_file, offset_table_entry(index[letter])
-print >> output_file, offset_table_entry(index['a'])
-print >> output_file, """};
+output_file.write("const HTMLEntityTableEntry* uppercaseOffset[] = {")
+for letter in string.ascii_uppercase:
+    output_file.write(offset_table_entry(index[letter]))
+output_file.write(offset_table_entry(index['a']))
+output_file.write("""};
 
-const HTMLEntityTableEntry* lowercaseOffset[] = {"""
-for letter in string.lowercase:
-    print >> output_file, offset_table_entry(index[letter])
-print >> output_file, offset_table_entry(entity_count)
-print >> output_file, """};
+const HTMLEntityTableEntry* lowercaseOffset[] = {""")
+for letter in string.ascii_lowercase:
+    output_file.write(offset_table_entry(index[letter]))
+output_file.write(offset_table_entry(entity_count))
+output_file.write("""};
 
 }
 
@@ -175,4 +176,4 @@ const HTMLEntityTableEntry* HTMLEntityTable::lastEntry()
 }
 
 }
-""" % entity_count
+""" % entity_count)

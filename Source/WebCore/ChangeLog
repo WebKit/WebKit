@@ -1,3 +1,19 @@
+2011-02-24  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Support building WebKit with Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=55038
+
+        Add support for Python 3 without breaking support for Python 2.
+
+        Main issues:
+        -print is a function in Python 3
+        -list.sort() no longer have the cmp parameter
+        -string.uppercase and string.lowercase have been removed
+
+        * html/parser/create-html-entity-table:
+
 2011-02-24  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Eric Seidel.
