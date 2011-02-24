@@ -392,6 +392,7 @@ namespace WTF {
 
     template<typename T, size_t inlineCapacity>
     class VectorBuffer : private VectorBufferBase<T> {
+        WTF_MAKE_NONCOPYABLE(VectorBuffer);
     private:
         typedef VectorBufferBase<T> Base;
     public:
@@ -414,6 +415,7 @@ namespace WTF {
 
         void allocateBuffer(size_t newCapacity)
         {
+            // FIXME: This should ASSERT(!m_buffer) to catch misuse/leaks.
             if (newCapacity > inlineCapacity)
                 Base::allocateBuffer(newCapacity);
             else {

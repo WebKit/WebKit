@@ -1,3 +1,52 @@
+2011-02-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Deque<T> should support inline capacity
+        https://bugs.webkit.org/show_bug.cgi?id=55032
+
+        The title says it all.  There are currently no places
+        which use this code yet, however it's been tested in conjunction
+        with code for bug 55005.
+
+        This also adds an ASSERT that capacity is never 1.  If you were able
+        to set the capacity equal to 1, the Deque would just get confused
+        and happily append your item but still think it had size 0.
+
+        * wtf/Deque.h:
+        (WTF::DequeIterator::DequeIterator):
+        (WTF::DequeConstIterator::DequeConstIterator):
+        (WTF::DequeReverseIterator::DequeReverseIterator):
+        (WTF::DequeConstReverseIterator::DequeConstReverseIterator):
+        (WTF::::checkValidity):
+        (WTF::::checkIndexValidity):
+        (WTF::::invalidateIterators):
+        (WTF::::Deque):
+        (WTF::deleteAllValues):
+        (WTF::::operator):
+        (WTF::::destroyAll):
+        (WTF::::~Deque):
+        (WTF::::swap):
+        (WTF::::clear):
+        (WTF::::findIf):
+        (WTF::::expandCapacityIfNeeded):
+        (WTF::::expandCapacity):
+        (WTF::::takeFirst):
+        (WTF::::append):
+        (WTF::::prepend):
+        (WTF::::removeFirst):
+        (WTF::::remove):
+        (WTF::::addToIteratorsList):
+        (WTF::::removeFromIteratorsList):
+        (WTF::::DequeIteratorBase):
+        (WTF::::~DequeIteratorBase):
+        (WTF::::isEqual):
+        (WTF::::increment):
+        (WTF::::decrement):
+        (WTF::::after):
+        (WTF::::before):
+        * wtf/Vector.h:
+
 2011-02-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Ojan Vafai. 
