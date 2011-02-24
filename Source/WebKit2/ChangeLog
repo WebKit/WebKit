@@ -1,3 +1,14 @@
+2011-02-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben and looked at by Brian Weinstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55165
+        Can call CF API with a null CFArray in WebResourceCacheManager
+
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+        (WebKit::WebResourceCacheManager::getCacheOrigins): cfURLCacheHostNames() can return a null CFArrayRef, 
+          so the call to CFArrayGetCount must be null checked.
+
 2011-02-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Simon Fraser.

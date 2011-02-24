@@ -66,8 +66,8 @@ void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
     memoryCache()->getOriginsWithCache(origins);
 
 #if USE(CFURLCACHE)
-    RetainPtr<CFArrayRef> cfURLHosts = cfURLCacheHostNames(); 
-    CFIndex size = CFArrayGetCount(cfURLHosts.get());
+    RetainPtr<CFArrayRef> cfURLHosts = cfURLCacheHostNames();
+    CFIndex size = cfURLHosts ? CFArrayGetCount(cfURLHosts.get()) : 0;
 
     String httpString("http");
     for (CFIndex i = 0; i < size; ++i) {
