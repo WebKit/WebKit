@@ -72,6 +72,8 @@ nodist_libWebKit2_la_SOURCES = \
 	$(webkit2_built_sources)
 
 libWebKit2_la_SOURCES = \
+	Source/WebKit/gtk/webkit/webkiterror.h \
+	Source/WebKit/gtk/webkit/webkiterror.cpp \
 	Source/WebKit2/Platform/CoreIPC/ArgumentCoder.h \
 	Source/WebKit2/Platform/CoreIPC/ArgumentCoders.h \
 	Source/WebKit2/Platform/CoreIPC/ArgumentDecoder.cpp \
@@ -185,6 +187,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Shared/gtk/UpdateChunk.cpp \
 	Source/WebKit2/Shared/gtk/UpdateChunk.h \
 	Source/WebKit2/Shared/gtk/WebCoreArgumentCodersGtk.cpp \
+	Source/WebKit2/Shared/gtk/WebEventFactory.cpp \
+	Source/WebKit2/Shared/gtk/WebEventFactory.h \
 	Source/WebKit2/Shared/ImageOptions.h \
 	Source/WebKit2/Shared/ImmutableArray.cpp \
 	Source/WebKit2/Shared/ImmutableArray.h \
@@ -559,6 +563,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/ResourceCache/WebResourceCacheManager.h \
 	Source/WebKit2/WebProcess/ResourceCache/WebResourceCacheManager.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp \
+	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebErrorsGtk.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebFrameNetworkingContext.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebPopupMenuGtk.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebChromeClient.cpp \
@@ -627,6 +632,7 @@ libWebKit2_la_CPPFLAGS = \
 	-fno-strict-aliasing \
 	$(global_cppflags) \
 	-include $(srcdir)/Source/WebKit2/WebKit2Prefix.h \
+	-I$(srcdir)/Source/WebKit/gtk \
 	-I$(srcdir)/Source/WebKit2 \
 	-I$(srcdir)/Source/WebKit2/gtk \
 	-I$(srcdir)/Source/WebKit2/Platform \

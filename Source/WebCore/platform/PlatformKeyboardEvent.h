@@ -175,6 +175,11 @@ namespace WebCore {
 #if PLATFORM(GTK)
         PlatformKeyboardEvent(GdkEventKey*);
         GdkEventKey* gdkEventKey() const;
+
+        // Used by WebKit2
+        static String keyIdentifierForGdkKeyCode(unsigned);
+        static int windowsKeyCodeForGdkKeyCode(unsigned);
+        static String singleCharacterString(unsigned);
 #endif
 
 #if PLATFORM(QT)

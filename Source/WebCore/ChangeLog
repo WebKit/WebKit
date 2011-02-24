@@ -1,3 +1,19 @@
+2011-02-24   Amruth Raj  <amruthraj@motorola.com> and Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com> and Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement WebEventFactory, WebErrors classes for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=48510
+
+        Exported static functions for GTK, we need them to create events
+        in WebKit2.
+
+        * platform/PlatformKeyboardEvent.h:
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::keyIdentifierForGdkKeyCode):
+        (WebCore::PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode):
+        (WebCore::PlatformKeyboardEvent::singleCharacterString):
+
 2011-02-24  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
