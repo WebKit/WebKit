@@ -1,3 +1,14 @@
+2011-02-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        nrwt: enable multiple processes by default on Chromium Win.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55163
+
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+
 2011-02-24  Sam Weinig  <sam@webkit.org>
 
         Attempt to fix Qt.
