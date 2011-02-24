@@ -1,3 +1,29 @@
+2011-02-24  James Robinson  <jamesr@chromium.org>
+
+        Add chromium baselines for new fast/block/position/vertical- tests.
+
+        * platform/chromium-linux/fast/block/positioning/vertical-lr/001-expected.checksum: Added.
+        * platform/chromium-linux/fast/block/positioning/vertical-lr/001-expected.png: Added.
+        * platform/chromium-linux/fast/block/positioning/vertical-lr/002-expected.checksum: Added.
+        * platform/chromium-linux/fast/block/positioning/vertical-lr/002-expected.png: Added.
+        * platform/chromium-linux/fast/block/positioning/vertical-rl/001-expected.checksum: Added.
+        * platform/chromium-linux/fast/block/positioning/vertical-rl/001-expected.png: Added.
+        * platform/chromium-linux/fast/block/positioning/vertical-rl/001-expected.txt: Added.
+        * platform/chromium-linux/fast/block/positioning/vertical-rl/002-expected.checksum: Added.
+        * platform/chromium-linux/fast/block/positioning/vertical-rl/002-expected.png: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-lr/001-expected.checksum: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-lr/001-expected.png: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-lr/001-expected.txt: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-lr/002-expected.checksum: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-lr/002-expected.png: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-lr/002-expected.txt: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-rl/001-expected.checksum: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-rl/001-expected.png: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-rl/001-expected.txt: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-rl/002-expected.checksum: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-rl/002-expected.png: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-rl/002-expected.txt: Added.
+
 2011-02-24  Alexey Proskuryakov  <ap@apple.com>
 
         Rubber-stamped by Eric Seidel
