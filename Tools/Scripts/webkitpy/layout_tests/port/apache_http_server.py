@@ -196,6 +196,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         # FIXME: We should not need to be joining shell arguments into strings.
         # shell=True is a trail of tears.
         # Note: Not thread safe: http://bugs.python.org/issue2320
+        _log.debug('Starting http server, cmd="%s"' % str(self._start_cmd))
         self._httpd_proc = subprocess.Popen(self._start_cmd,
                                             stderr=subprocess.PIPE,
             shell=True)

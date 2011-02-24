@@ -207,7 +207,7 @@ class Lighttpd(http_server_base.HttpServerBase):
                             os.path.join(tmp_module_path, lib_file))
 
         env = self._port_obj.setup_environ_for_server()
-        _log.debug('Starting http server')
+        _log.debug('Starting http server, cmd="%s"' % str(start_cmd))
         # FIXME: Should use Executive.run_command
         self._process = subprocess.Popen(start_cmd, env=env)
 
