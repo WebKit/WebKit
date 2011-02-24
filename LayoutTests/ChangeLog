@@ -1,3 +1,13 @@
+2011-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; skip canvas/philip/tests/2d.imageData.object.round.html and
+        canvas/philip/tests/2d.imageData.object.wrap.html on Mac.
+
+        It was removed from the skipped list in r64156 but it wasn't added back
+        when r79501 reverted it.
+
+        * platform/mac/Skipped:
+
 2011-02-24  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip flaky media test on GTK.

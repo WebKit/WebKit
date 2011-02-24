@@ -171,6 +171,8 @@ canvas/philip/tests/2d.composite.uncovered.pattern.destination-atop.html
 canvas/philip/tests/2d.composite.uncovered.pattern.destination-in.html
 canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html
 canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html
+canvas/philip/tests/2d.imageData.object.round.html
+canvas/philip/tests/2d.imageData.object.wrap.html
 
 # IndexedDB is not yet enabled.
 storage/indexeddb
