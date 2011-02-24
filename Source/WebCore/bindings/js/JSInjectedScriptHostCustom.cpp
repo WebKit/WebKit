@@ -130,7 +130,7 @@ JSValue JSInjectedScriptHost::currentCallFrame(ExecState* exec)
     JSLock lock(SilenceAssertionsOnly);
     return toJS(exec, callFrame);
 #else
-    USE_PARAM(exec)
+    UNUSED_PARAM(exec);
     return jsUndefined();
 #endif
 }

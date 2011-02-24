@@ -197,7 +197,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::currentCallFrameCallback(const v8::A
     INC_STATS("InjectedScriptHost.currentCallFrame()");
     return toV8(ScriptDebugServer::shared().currentCallFrame());
 #else
-    USE_PARAM(args);
+    UNUSED_PARAM(args);
     return v8::Undefined();
 #endif
 }

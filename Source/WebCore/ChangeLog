@@ -1,3 +1,15 @@
+2011-02-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: follow up to 79566. USE_PARAM not declared
+        https://bugs.webkit.org/show_bug.cgi?id=55155
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::currentCallFrame):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::currentCallFrameCallback):
+
 2011-02-24  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Simon Fraser.
