@@ -498,7 +498,7 @@ Frame* InspectorResourceAgent::frameForId(unsigned long frameId)
     return 0;
 }
 
-void InspectorResourceAgent::cachedResources(ErrorString* error, RefPtr<InspectorObject>* object)
+void InspectorResourceAgent::cachedResources(ErrorString*, RefPtr<InspectorObject>* object)
 {
     *object = buildObjectForFrameTree(m_page->mainFrame(), true);
 }

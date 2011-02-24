@@ -476,7 +476,7 @@ void InspectorDOMAgent::setAttribute(ErrorString*, long elementId, const String&
     }
 }
 
-void InspectorDOMAgent::removeAttribute(ErrorString* error, long elementId, const String& name, bool* success)
+void InspectorDOMAgent::removeAttribute(ErrorString*, long elementId, const String& name, bool* success)
 {
     Node* node = nodeForId(elementId);
     if (node && (node->nodeType() == Node::ELEMENT_NODE)) {

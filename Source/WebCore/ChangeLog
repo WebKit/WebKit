@@ -1,3 +1,14 @@
+2011-02-24  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed build fix.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::removeAttribute):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::cachedResources):
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::evaluate):
+
 2011-02-24  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Eric Seidel.

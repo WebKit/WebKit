@@ -45,7 +45,7 @@ InspectorRuntimeAgent::InspectorRuntimeAgent(InjectedScriptHost* injectedScriptH
 
 InspectorRuntimeAgent::~InspectorRuntimeAgent() { }
 
-void InspectorRuntimeAgent::evaluate(ErrorString* error, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
+void InspectorRuntimeAgent::evaluate(ErrorString*, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
 {
     InjectedScript injectedScript = m_injectedScriptHost->injectedScriptForMainFrame();
     if (!injectedScript.hasNoValue())
