@@ -94,6 +94,7 @@ sub getDefaultConfigForTestDirectory
     my $httpdConfig = getHTTPDConfigPathForTestDirectory($testDirectory);
     my $documentRoot = "$testDirectory/http/tests";
     my $jsTestResourcesDirectory = $testDirectory . "/fast/js/resources";
+    my $mediaResourcesDirectory = $testDirectory . "/media";
     my $typesConfig = "$testDirectory/http/conf/mime.types";
     my $httpdLockFile = File::Spec->catfile($httpdPidDir, "httpd.lock");
     my $httpdScoreBoardFile = File::Spec->catfile($httpdPidDir, "httpd.scoreboard");
@@ -103,6 +104,7 @@ sub getDefaultConfigForTestDirectory
         "-C", "DocumentRoot \"$documentRoot\"",
         # Setup a link to where the js test templates are stored, use -c so that mod_alias will already be loaded.
         "-c", "Alias /js-test-resources \"$jsTestResourcesDirectory\"",
+        "-c", "Alias /media-resources \"$mediaResourcesDirectory\"",
         "-c", "TypesConfig \"$typesConfig\"",
         "-c", "PidFile \"$httpdPidFile\"",
         "-c", "ScoreBoardFile \"$httpdScoreBoardFile\"",
