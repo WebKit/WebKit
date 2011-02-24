@@ -747,20 +747,12 @@ class Git(SCM):
         return "git"
 
     def prepend_svn_revision(self, diff):
-        revision = None
-        tries = 0
-        while not revision and tries < 10:
-            # If the git checkout is not tracking an SVN repo, then svn_revision_from_git_commit throws.
-            try:
-                revision = self.svn_revision_from_git_commit('HEAD~' + str(tries))
-            except:
-                return diff
-            tries += 1
-
-        if not revision:
+        git_log = self.run(['git', 'log', '-25'])
+        match = re.search("^\s*git-svn-id:.*@(?P<svn_revision>\d+)\ ", git_log, re.MULTILINE)
+        if not match:
             return diff
 
-        return "Subversion Revision: " + str(revision) + '\n' + diff
+        return "Subversion Revision: " + str(match.group('svn_revision')) + '\n' + diff
 
     def create_patch(self, git_commit=None, changed_files=None):
         """Returns a byte array (str()) representing the patch file.

@@ -1138,6 +1138,16 @@ class GitSVNTest(SCMTest):
         self.assertTrue(re.search(r'test_file_commit1', patch))
         self.assertTrue(re.search(r'Subversion Revision: 5', patch))
 
+    def test_create_patch_after_merge(self):
+        run_command(['git', 'checkout', '-b', 'dummy-branch', 'trunk~3'])
+        self._one_local_commit()
+        run_command(['git', 'merge', 'trunk'])
+
+        scm = detect_scm_system(self.git_checkout_path)
+        patch = scm.create_patch()
+        self.assertTrue(re.search(r'test_file_commit1', patch))
+        self.assertTrue(re.search(r'Subversion Revision: 5', patch))
+
     def test_create_patch_with_changed_files(self):
         self._one_local_commit_plus_working_copy_changes()
         scm = detect_scm_system(self.git_checkout_path)

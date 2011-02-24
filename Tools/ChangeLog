@@ -1,3 +1,15 @@
+2011-02-22  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        fix revision number finding when creating git patches
+        https://bugs.webkit.org/show_bug.cgi?id=55024
+
+        HEAD~n does not walk merge commits correctly. git log however does.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+
 2011-02-23  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r79387.
