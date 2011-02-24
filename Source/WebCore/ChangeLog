@@ -1,3 +1,33 @@
+2011-02-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        [CAIRO] Support ImageBuffers clip operation on all Cairo ports
+        https://bugs.webkit.org/show_bug.cgi?id=23526
+
+        Add support for ImageBuffer clipping on Cairo by emulating them with image
+        masks. Since masking is immediate on Cairo, we must store the mask surfaces
+        on a stack and apply them during restorePlatformState.
+
+        * platform/graphics/GraphicsContext.h: Add pushImageMask.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::savePlatformState): Push an empty mask onto the
+        stack, so we can keep track of when to actually apply the image mask.
+        (WebCore::GraphicsContext::restorePlatformState): When we are ready to apply
+        an image mask, use cairo_mask_surface to mask the group that we pushed onto
+        our surface.
+        (WebCore::GraphicsContext::pushImageMask): Added. This method will push a surface
+        onto the image mask stack and push a group onto the Cairo state, so that the masking
+        only affects what we paint after this point.
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h: Added a class to keep
+        track of image masking information after calls to pushImageMask.
+        (WebCore::ImageMaskInformation::update): Added
+        (WebCore::ImageMaskInformation::valid): Added
+        (WebCore::ImageMaskInformation::maskSurface): Added
+        (WebCore::ImageMaskInformation::maskRect): Added
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::clip): Call GraphicsContext::pushImageMask.
+
 2011-02-24  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Carlson.

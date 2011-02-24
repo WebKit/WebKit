@@ -791,9 +791,6 @@ inspector/styles/styles-source-lines-inline.html
 #https://bugs.webkit.org/show_bug.cgi?id=37537
 plugins/npruntime/round-trip-npobject.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=37539
-svg/custom/use-on-clip-path-with-transformation.svg
-
 # https://bugs.webkit.org/show_bug.cgi?id=37544
 svg/custom/use-instanceRoot-as-event-target.xhtml
 
@@ -918,45 +915,16 @@ http/tests/mime/uppercase-mime-type.html
 # SVG tests that seem to produce incorrect output
 svg/custom/marker-strokeWidth-changes.svg
 svg/zoom/text/zoom-hixie-mixed-009.xml
-svg/custom/mask-on-multiple-objects.svg
-svg/filters/filter-clip.svg
-fast/backgrounds/animated-svg-as-mask.html
-fast/backgrounds/svg-as-mask.html
-svg/W3C-SVG-1.1/filters-turb-02-f.svg
-svg/custom/absolute-sized-content-with-resources.xhtml
-svg/custom/marker-child-changes-css.svg
-svg/custom/mask-colorspace.svg
-svg/custom/recursive-mask.svg
-svg/filters/feGaussianBlur.svg
-svg/transforms/text-with-mask-with-svg-transform.svg
-svg/zoom/page/zoom-mask-with-percentages.svg
-svg/css/circle-in-mask-with-shadow.svg
-svg/filters/shadow-on-filter.svg
 svg/filters/shadow-on-rect-with-filter.svg
-svg/filters/sourceAlpha.svg
-svg/css/clippath-with-shadow.svg
-# The shadow in this image is square, while it should be shaped like the layer above.
-svg/W3C-SVG-1.1/filters-example-01-b.svg
-# This should show a series of circles, but instead shows a series of squares.
-svg/W3C-SVG-1.1/filters-offset-01-b.svg
-# The boxes here are totally opaque, but should be partially transparent.
-svg/W3C-SVG-1.1/masking-mask-01-b.svg
-# The text is not clipped properly in the following tests. Masking seem broken entirely.
-svg/W3C-SVG-1.1/masking-path-01-b.svg
-svg/W3C-SVG-1.1/masking-path-04-b.svg
-svg/W3C-SVG-1.1/masking-intro-01-f.svg
-svg/batik/masking/maskRegions.svg
-svg/batik/text/textEffect2.svg
-svg/custom/js-late-mask-creation.svg
-svg/custom/js-late-mask-and-object-creation.svg
-svg/custom/mask-changes.svg
-svg/custom/mask-child-changes.svg
 svg/custom/mask-excessive-malloc.svg
-svg/custom/mask-inside-defs.svg
-svg/custom/mask-with-all-units.svg
-svg/custom/mask-with-default-value.svg
-svg/custom/visibility-override-mask.svg
-svg/clip-path
+
+# There seem to be some bugs with path clipping.
+svg/clip-path/clip-path-use-as-child2.svg
+svg/clip-path/clip-path-use-as-child3.svg
+svg/clip-path/clip-path-use-as-child4.svg
+svg/clip-path/clip-path-with-different-unittypes.svg
+svg/clip-path/clip-path-with-different-unittypes2.svg
+
 # No matching language preference set
 svg/W3C-SVG-1.1/struct-cond-02-t.svg
 # The pixel output shows two broken images instead of the sunset.

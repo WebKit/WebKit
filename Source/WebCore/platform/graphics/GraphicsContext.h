@@ -486,6 +486,10 @@ namespace WebCore {
         ContextShadow* contextShadow();
 #endif
 
+#if PLATFORM(CAIRO)
+        void pushImageMask(cairo_surface_t*, const FloatRect&);
+#endif
+
 #if PLATFORM(GTK)
         void setGdkExposeEvent(GdkEventExpose*);
         GdkWindow* gdkWindow() const;

@@ -1,3 +1,152 @@
+2011-02-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        [CAIRO] Support ImageBuffers clip operation on all Cairo ports
+        https://bugs.webkit.org/show_bug.cgi?id=23526
+
+        Update results for tests which are now passing and unskip them.
+
+        * platform/gtk/Skipped: Unskip tests which are now passing.
+        * platform/gtk/fast/backgrounds/animated-svg-as-mask-expected.checksum: Added.
+        * platform/gtk/fast/backgrounds/animated-svg-as-mask-expected.png: Added.
+        * platform/gtk/fast/backgrounds/animated-svg-as-mask-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/svg-as-mask-expected.checksum: Added.
+        * platform/gtk/fast/backgrounds/svg-as-mask-expected.png: Added.
+        * platform/gtk/fast/backgrounds/svg-as-mask-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * platform/gtk/svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/filters-offset-01-b-expected.checksum:
+        * platform/gtk/svg/W3C-SVG-1.1/filters-offset-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/filters-turb-02-f-expected.checksum: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/masking-intro-01-f-expected.checksum:
+        * platform/gtk/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/masking-mask-01-b-expected.checksum:
+        * platform/gtk/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/masking-path-01-b-expected.checksum:
+        * platform/gtk/svg/W3C-SVG-1.1/masking-path-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/masking-path-04-b-expected.checksum:
+        * platform/gtk/svg/W3C-SVG-1.1/masking-path-04-b-expected.png:
+        * platform/gtk/svg/batik/masking/maskRegions-expected.checksum:
+        * platform/gtk/svg/batik/masking/maskRegions-expected.png:
+        * platform/gtk/svg/batik/text/textEffect2-expected.checksum:
+        * platform/gtk/svg/batik/text/textEffect2-expected.png:
+        * platform/gtk/svg/clip-path/clip-in-mask-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-in-mask-expected.png:
+        * platform/gtk/svg/clip-path/clip-in-mask-objectBoundingBox-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-in-mask-objectBoundingBox-expected.png:
+        * platform/gtk/svg/clip-path/clip-in-mask-userSpaceOnUse-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-in-mask-userSpaceOnUse-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-child-clipped-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-child-clipped-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-childs-clipped-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-childs-clipped-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-clipped-evenodd-twice-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-clipped-evenodd-twice-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-clipped-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-clipped-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-clipped-no-content-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-clipped-no-content-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-clipped-nonzero-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-clipped-nonzero-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-evenodd-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-evenodd-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-evenodd-nonzero-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-evenodd-nonzero-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-nonzero-evenodd-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-nonzero-evenodd-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-nonzero-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-nonzero-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-pixelation-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-pixelation-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-text-and-shape-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-text-and-shape-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-text-and-stroke-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-text-and-stroke-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-text-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-text-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-use-as-child2-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-use-as-child2-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-use-as-child3-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-use-as-child3-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-use-as-child4-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-use-as-child4-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-with-different-unittypes-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-with-different-unittypes-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-with-different-unittypes2-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-with-different-unittypes2-expected.png:
+        * platform/gtk/svg/clip-path/clip-path-with-text-clipped-expected.checksum:
+        * platform/gtk/svg/clip-path/clip-path-with-text-clipped-expected.png:
+        * platform/gtk/svg/clip-path/deep-nested-clip-in-mask-different-unitTypes-expected.checksum:
+        * platform/gtk/svg/clip-path/deep-nested-clip-in-mask-different-unitTypes-expected.png:
+        * platform/gtk/svg/clip-path/deep-nested-clip-in-mask-expected.checksum:
+        * platform/gtk/svg/clip-path/deep-nested-clip-in-mask-expected.png:
+        * platform/gtk/svg/clip-path/deep-nested-clip-in-mask-panning-expected.checksum:
+        * platform/gtk/svg/clip-path/deep-nested-clip-in-mask-panning-expected.png:
+        * platform/gtk/svg/clip-path/nested-clip-in-mask-image-based-clipping-expected.checksum:
+        * platform/gtk/svg/clip-path/nested-clip-in-mask-image-based-clipping-expected.png:
+        * platform/gtk/svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping-expected.checksum:
+        * platform/gtk/svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping-expected.png:
+        * platform/gtk/svg/clip-path/nested-clip-in-mask-path-based-clipping-expected.checksum:
+        * platform/gtk/svg/clip-path/nested-clip-in-mask-path-based-clipping-expected.png:
+        * platform/gtk/svg/css/circle-in-mask-with-shadow-expected.checksum: Added.
+        * platform/gtk/svg/css/circle-in-mask-with-shadow-expected.png: Added.
+        * platform/gtk/svg/css/circle-in-mask-with-shadow-expected.txt: Added.
+        * platform/gtk/svg/css/clippath-with-shadow-expected.checksum: Added.
+        * platform/gtk/svg/css/clippath-with-shadow-expected.png: Added.
+        * platform/gtk/svg/css/clippath-with-shadow-expected.txt: Added.
+        * platform/gtk/svg/custom/absolute-sized-content-with-resources-expected.checksum: Added.
+        * platform/gtk/svg/custom/absolute-sized-content-with-resources-expected.png: Added.
+        * platform/gtk/svg/custom/absolute-sized-content-with-resources-expected.txt: Added.
+        * platform/gtk/svg/custom/circular-marker-reference-2-expected.txt:
+        * platform/gtk/svg/custom/js-late-mask-and-object-creation-expected.checksum:
+        * platform/gtk/svg/custom/js-late-mask-and-object-creation-expected.png:
+        * platform/gtk/svg/custom/js-late-mask-creation-expected.checksum:
+        * platform/gtk/svg/custom/js-late-mask-creation-expected.png:
+        * platform/gtk/svg/custom/marker-child-changes-css-expected.checksum: Added.
+        * platform/gtk/svg/custom/marker-child-changes-css-expected.png: Copied from LayoutTests/platform/gtk/svg/custom/mask-changes-expected.png.
+        * platform/gtk/svg/custom/marker-child-changes-css-expected.txt: Added.
+        * platform/gtk/svg/custom/mask-changes-expected.checksum:
+        * platform/gtk/svg/custom/mask-changes-expected.png:
+        * platform/gtk/svg/custom/mask-child-changes-expected.checksum:
+        * platform/gtk/svg/custom/mask-child-changes-expected.png:
+        * platform/gtk/svg/custom/mask-colorspace-expected.checksum: Added.
+        * platform/gtk/svg/custom/mask-colorspace-expected.png: Added.
+        * platform/gtk/svg/custom/mask-colorspace-expected.txt: Added.
+        * platform/gtk/svg/custom/mask-inside-defs-expected.checksum:
+        * platform/gtk/svg/custom/mask-inside-defs-expected.png:
+        * platform/gtk/svg/custom/mask-on-multiple-objects-expected.checksum: Added.
+        * platform/gtk/svg/custom/mask-on-multiple-objects-expected.png: Added.
+        * platform/gtk/svg/custom/mask-on-multiple-objects-expected.txt: Added.
+        * platform/gtk/svg/custom/mask-with-all-units-expected.checksum:
+        * platform/gtk/svg/custom/mask-with-all-units-expected.png:
+        * platform/gtk/svg/custom/non-circular-marker-reference-expected.txt:
+        * platform/gtk/svg/custom/recursive-mask-expected.checksum: Added.
+        * platform/gtk/svg/custom/recursive-mask-expected.png: Added.
+        * platform/gtk/svg/custom/recursive-mask-expected.txt:
+        * platform/gtk/svg/custom/visibility-override-mask-expected.checksum:
+        * platform/gtk/svg/custom/visibility-override-mask-expected.png:
+        * platform/gtk/svg/filters/feGaussianBlur-expected.checksum: Added.
+        * platform/gtk/svg/filters/feGaussianBlur-expected.png: Added.
+        * platform/gtk/svg/filters/feGaussianBlur-expected.txt: Added.
+        * platform/gtk/svg/filters/filter-clip-expected.checksum: Added.
+        * platform/gtk/svg/filters/filter-clip-expected.png: Added.
+        * platform/gtk/svg/filters/filter-clip-expected.txt: Added.
+        * platform/gtk/svg/filters/shadow-on-filter-expected.checksum: Added.
+        * platform/gtk/svg/filters/shadow-on-filter-expected.png: Added.
+        * platform/gtk/svg/filters/shadow-on-filter-expected.txt: Added.
+        * platform/gtk/svg/filters/shadow-on-rect-with-filter-expected.checksum: Added.
+        * platform/gtk/svg/filters/shadow-on-rect-with-filter-expected.png: Added.
+        * platform/gtk/svg/filters/shadow-on-rect-with-filter-expected.txt: Added.
+        * platform/gtk/svg/transforms/text-with-mask-with-svg-transform-expected.checksum: Added.
+        * platform/gtk/svg/transforms/text-with-mask-with-svg-transform-expected.png: Added.
+        * platform/gtk/svg/transforms/text-with-mask-with-svg-transform-expected.txt: Added.
+        * platform/gtk/svg/zoom/page/zoom-mask-with-percentages-expected.checksum: Added.
+        * platform/gtk/svg/zoom/page/zoom-mask-with-percentages-expected.png: Added.
+        * platform/gtk/svg/zoom/page/zoom-mask-with-percentages-expected.txt:
+
 2011-02-24  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

@@ -112,10 +112,9 @@ PassRefPtr<Image> ImageBuffer::copyImage() const
     return BitmapImage::create(copySurface(m_data.m_surface));
 }
 
-void ImageBuffer::clip(GraphicsContext*, const FloatRect&) const
+void ImageBuffer::clip(GraphicsContext* context, const FloatRect& maskRect) const
 {
-    notImplemented();
-    // See https://bugs.webkit.org/show_bug.cgi?id=23526 for why this is unimplemented.
+    context->pushImageMask(m_data.m_surface, maskRect);
 }
 
 void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,

@@ -4,7 +4,7 @@
  * Copyright (C) 2008, 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Brent Fulgham <bfulgham@webkit.org>
- * Copyright (C) 2010 Igalia S.L.
+ * Copyright (C) 2010, 2011 Igalia S.L.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -230,12 +230,19 @@ void GraphicsContext::savePlatformState()
     cairo_save(m_data->cr);
     m_data->save();
     m_data->shadowStack.append(m_data->shadow);
+    m_data->maskImageStack.append(ImageMaskInformation());
 }
 
 void GraphicsContext::restorePlatformState()
 {
-    cairo_restore(m_data->cr);
-    m_data->restore();
+    cairo_t* cr = m_data->cr;
+    const ImageMaskInformation& maskInformation = m_data->maskImageStack.last();
+    if (maskInformation.isValid()) {
+        const FloatRect& maskRect = maskInformation.maskRect();
+        cairo_pop_group_to_source(cr);
+        cairo_mask_surface(cr, maskInformation.maskSurface(), maskRect.x(), maskRect.y());
+    }
+    m_data->maskImageStack.removeLast();
 
     if (m_data->shadowStack.isEmpty())
         m_data->shadow = ContextShadow();
@@ -243,6 +250,9 @@ void GraphicsContext::restorePlatformState()
         m_data->shadow = m_data->shadowStack.last();
         m_data->shadowStack.removeLast();
     }
+
+    cairo_restore(m_data->cr);
+    m_data->restore();
 }
 
 // Draws a filled rectangle with a stroked border.
@@ -1170,6 +1180,33 @@ void GraphicsContext::setImageInterpolationQuality(InterpolationQuality)
 InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 {
     return InterpolationDefault;
+}
+
+void GraphicsContext::pushImageMask(cairo_surface_t* surface, const FloatRect& rect)
+{
+    // We must call savePlatformState at least once before we can use image masking,
+    // since we actually apply the mask in restorePlatformState.
+    ASSERT(!m_data->maskImageStack.isEmpty());
+    m_data->maskImageStack.last().update(surface, rect);
+
+    // Cairo doesn't support the notion of an image clip, so we push a group here
+    // and then paint it to the surface with an image mask (which is an immediate
+    // operation) during restorePlatformState.
+
+    // We want to allow the clipped elements to composite with the surface as it
+    // is now, but they are isolated in another group. To make this work, we're
+    // going to blit the current surface contents onto the new group once we push it.
+    cairo_t* cr = m_data->cr;
+    cairo_surface_t* currentTarget = cairo_get_target(cr);
+    cairo_surface_flush(currentTarget);
+
+    // Pushing a new group ensures that only things painted after this point are clipped.
+    cairo_push_group(cr);
+    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+
+    cairo_set_source_surface(cr, currentTarget, 0, 0);
+    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
+    cairo_fill(cr);
 }
 
 } // namespace WebCore
