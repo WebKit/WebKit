@@ -1,3 +1,15 @@
+2011-02-24  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r79570.
+        http://trac.webkit.org/changeset/79570
+        https://bugs.webkit.org/show_bug.cgi?id=54874
+
+        Breaks chromium build because glue/mocks/mock_web_frame.h/cc
+        was not updated
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h:
+
 2011-02-23  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben and looked over by Jessie Berlin.

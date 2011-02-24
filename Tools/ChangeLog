@@ -1,3 +1,25 @@
+2011-02-24  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r79570.
+        http://trac.webkit.org/changeset/79570
+        https://bugs.webkit.org/show_bug.cgi?id=54874
+
+        Breaks chromium build because glue/mocks/mock_web_frame.h/cc
+        was not updated
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetTestController):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::reset):
+
 2011-02-24  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Laszlo Gombos.

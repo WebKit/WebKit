@@ -1,3 +1,15 @@
+2011-02-24  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r79570.
+        http://trac.webkit.org/changeset/79570
+        https://bugs.webkit.org/show_bug.cgi?id=54874
+
+        Breaks chromium build because glue/mocks/mock_web_frame.h/cc
+        was not updated
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2011-02-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

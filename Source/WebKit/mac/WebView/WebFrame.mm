@@ -1374,13 +1374,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 #endif
 }
 
-- (void)_clearOpener
-{
-    Frame* coreFrame = _private->coreFrame;
-    if (coreFrame)
-        coreFrame->loader()->setOpener(0);
-}
-
 @end
 
 @implementation WebFrame

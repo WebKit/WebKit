@@ -579,11 +579,6 @@ WebView* WebFrameImpl::view() const
     return viewImpl();
 }
 
-void WebFrameImpl::clearOpener()
-{
-    m_frame->loader()->setOpener(0);
-}
-
 WebFrame* WebFrameImpl::opener() const
 {
     Frame* opener = 0;
