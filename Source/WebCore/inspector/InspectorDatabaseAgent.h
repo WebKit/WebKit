@@ -41,6 +41,8 @@ class InspectorDatabaseResource;
 class InspectorFrontend;
 class InstrumentingAgents;
 
+typedef String ErrorString;
+
 class InspectorDatabaseAgent {
 public:
     class FrontendProvider;
@@ -57,8 +59,8 @@ public:
     void clearResources();
 
     // Called from the front-end.
-    void getDatabaseTableNames(long databaseId, RefPtr<InspectorArray>* names);
-    void executeSQL(long databaseId, const String& query, bool* success, long* transactionId);
+    void getDatabaseTableNames(ErrorString* error, long databaseId, RefPtr<InspectorArray>* names);
+    void executeSQL(ErrorString* error, long databaseId, const String& query, bool* success, long* transactionId);
 
     // Called from the injected script.
     Database* databaseForId(long databaseId);

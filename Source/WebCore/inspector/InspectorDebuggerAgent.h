@@ -42,11 +42,14 @@
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
 class InjectedScriptHost;
 class InspectorAgent;
 class InspectorFrontend;
 class InspectorObject;
 class InspectorValue;
+
+typedef String ErrorString;
 
 enum DebuggerEventType {
     JavaScriptPauseEventType,
@@ -63,27 +66,27 @@ public:
     void inspectedURLChanged(const String& url);
 
     // Part of the protocol.
-    void activateBreakpoints();
-    void deactivateBreakpoints();
+    void activateBreakpoints(ErrorString* error);
+    void deactivateBreakpoints(ErrorString* error);
 
-    void setJavaScriptBreakpoint(const String& url, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, RefPtr<InspectorArray>* locations);
-    void setJavaScriptBreakpointBySourceId(const String& sourceId, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, int* actualLineNumber, int* actualColumnNumber);
-    void removeJavaScriptBreakpoint(const String& breakpointId);
-    void continueToLocation(const String& sourceId, int lineNumber, int columnNumber);
+    void setJavaScriptBreakpoint(ErrorString* error, const String& url, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, RefPtr<InspectorArray>* locations);
+    void setJavaScriptBreakpointBySourceId(ErrorString* error, const String& sourceId, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, int* actualLineNumber, int* actualColumnNumber);
+    void removeJavaScriptBreakpoint(ErrorString* error, const String& breakpointId);
+    void continueToLocation(ErrorString* error, const String& sourceId, int lineNumber, int columnNumber);
 
-    void editScriptSource(const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames);
-    void getScriptSource(const String& sourceID, String* scriptSource);
+    void editScriptSource(ErrorString* error, const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames);
+    void getScriptSource(ErrorString* error, const String& sourceID, String* scriptSource);
     void schedulePauseOnNextStatement(DebuggerEventType type, PassRefPtr<InspectorValue> data);
     void cancelPauseOnNextStatement();
     void breakProgram(DebuggerEventType type, PassRefPtr<InspectorValue> data);
-    void pause();
-    void resume();
-    void stepOver();
-    void stepInto();
-    void stepOut();
-    void setPauseOnExceptionsState(long pauseState, long* newState);
-    void evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
-    void getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
+    void pause(ErrorString* error);
+    void resume(ErrorString* error);
+    void stepOver(ErrorString* error);
+    void stepInto(ErrorString* error);
+    void stepOut(ErrorString* error);
+    void setPauseOnExceptionsState(ErrorString* error, long pauseState, long* newState);
+    void evaluateOnCallFrame(ErrorString* error, PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
+    void getCompletionsOnCallFrame(ErrorString* error, PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
 
 private:
     InspectorDebuggerAgent(InspectorAgent*, InspectorFrontend*, bool eraseStickyBreakpoints);

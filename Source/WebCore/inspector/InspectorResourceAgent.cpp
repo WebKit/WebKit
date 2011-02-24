@@ -311,7 +311,7 @@ void InspectorResourceAgent::identifierForInitialRequest(unsigned long identifie
     m_frontend->identifierForInitialRequest(identifier, url.string(), loaderObject, callStackValue);
 }
 
-void InspectorResourceAgent::setExtraHeaders(PassRefPtr<InspectorObject> headers)
+void InspectorResourceAgent::setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject> headers)
 {
     m_state->setObject(ResourceAgentState::extraRequestHeaders, headers);
 }
@@ -498,12 +498,12 @@ Frame* InspectorResourceAgent::frameForId(unsigned long frameId)
     return 0;
 }
 
-void InspectorResourceAgent::cachedResources(RefPtr<InspectorObject>* object)
+void InspectorResourceAgent::cachedResources(ErrorString* error, RefPtr<InspectorObject>* object)
 {
     *object = buildObjectForFrameTree(m_page->mainFrame(), true);
 }
 
-void InspectorResourceAgent::resourceContent(unsigned long frameId, const String& url, bool base64Encode, bool* success, String* content)
+void InspectorResourceAgent::resourceContent(ErrorString*, unsigned long frameId, const String& url, bool base64Encode, bool* success, String* content)
 {
     Frame* frame = frameForId(frameId);
     if (!frame) {

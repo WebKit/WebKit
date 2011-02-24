@@ -47,6 +47,8 @@ class InspectorObject;
 class ScriptHeapSnapshot;
 class ScriptProfile;
 
+typedef String ErrorString;
+
 class InspectorProfilerAgent {
     WTF_MAKE_NONCOPYABLE(InspectorProfilerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -56,21 +58,21 @@ public:
     void addProfile(PassRefPtr<ScriptProfile> prpProfile, unsigned lineNumber, const String& sourceURL);
     void addProfileFinishedMessageToConsole(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
     void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL);
-    void clearProfiles() { resetState(); }
+    void clearProfiles(ErrorString*) { resetState(); }
     void disable();
     void enable(bool skipRecompile);
     bool enabled() { return m_enabled; }
     String getCurrentUserInitiatedProfileName(bool incrementProfileNumber = false);
-    void getProfileHeaders(RefPtr<InspectorArray>* headers);
-    void getProfile(const String& type, unsigned uid, RefPtr<InspectorObject>* profileObject);
+    void getProfileHeaders(ErrorString* error, RefPtr<InspectorArray>* headers);
+    void getProfile(ErrorString* error, const String& type, unsigned uid, RefPtr<InspectorObject>* profileObject);
     bool isRecordingUserInitiatedProfile() { return m_recordingUserInitiatedProfile; }
-    void removeProfile(const String& type, unsigned uid);
+    void removeProfile(ErrorString* error, const String& type, unsigned uid);
     void resetState();
     void resetFrontendProfiles();
     void setFrontend(InspectorFrontend* frontend) { m_frontend = frontend; }
     void startUserInitiatedProfiling();
     void stopUserInitiatedProfiling(bool ignoreProfile = false);
-    void takeHeapSnapshot(bool detailed);
+    void takeHeapSnapshot(ErrorString* error, bool detailed);
     void toggleRecordButton(bool isProfiling);
 
 private:

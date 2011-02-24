@@ -64,6 +64,8 @@ class WebSocketHandshakeRequest;
 class WebSocketHandshakeResponse;
 #endif
 
+typedef String ErrorString;
+
 class InspectorResourceAgent : public RefCounted<InspectorResourceAgent> {
 public:
     static PassRefPtr<InspectorResourceAgent> create(Page* page, InspectorState* state, InspectorFrontend* frontend)
@@ -102,9 +104,9 @@ public:
     Frame* frameForId(unsigned long);
 
     // Called from frontend 
-    void cachedResources(RefPtr<InspectorObject>*);
-    void resourceContent(unsigned long frameId, const String& url, bool base64Encode, bool* resourceFound, String* content);
-    void setExtraHeaders(PassRefPtr<InspectorObject>);
+    void cachedResources(ErrorString* error, RefPtr<InspectorObject>*);
+    void resourceContent(ErrorString* error, unsigned long frameId, const String& url, bool base64Encode, bool* resourceFound, String* content);
+    void setExtraHeaders(ErrorString* error, PassRefPtr<InspectorObject>);
 
 private:
     InspectorResourceAgent(Page* page, InspectorState*, InspectorFrontend* frontend);

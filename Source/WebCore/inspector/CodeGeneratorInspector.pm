@@ -453,9 +453,12 @@ sub generateBackendFunction
         $indent = "    ";
     }
 
-    my $args = join(", ", (map($_->name, @inArgs), map("&" . $_->name, @outArgs)));
+    push(@function, "$indent    ErrorString error;");
+    my $args = join(", ", ("&error", map($_->name, @inArgs), map("&" . $_->name, @outArgs)));
     push(@function, "$indent    if (!protocolErrors->length())");
     push(@function, "$indent        $domainAccessor->$functionName($args);");
+    push(@function, "$indent    if (error.length())");
+    push(@function, "$indent        protocolErrors->pushString(error);");
     if (scalar(@inArgs)) {
         push(@function, "    } else {");
         push(@function, "        protocolErrors->pushString(\"Protocol Error: 'arguments' property with type 'object' was not found.\");");
@@ -873,6 +876,8 @@ ${forwardHeaders}
 namespace $namespace {
 
 $forwardDeclarations
+
+typedef String ErrorString;
 
 class $className {
 public:

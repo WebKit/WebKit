@@ -49,14 +49,16 @@ class ScriptArguments;
 class ScriptCallStack;
 class ScriptProfile;
 
+typedef String ErrorString;
+
 class InspectorConsoleAgent {
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
 public:
     InspectorConsoleAgent(InstrumentingAgents*, InspectorAgent*, InspectorState*, InjectedScriptHost*, InspectorDOMAgent*);
     ~InspectorConsoleAgent();
 
-    void setConsoleMessagesEnabled(bool enabled, bool* newState);
-    void clearConsoleMessages();
+    void setConsoleMessagesEnabled(ErrorString* error, bool enabled, bool* newState);
+    void clearConsoleMessages(ErrorString* error);
     void reset();
     void setFrontend(InspectorFrontend*);
     void clearFrontend();
@@ -75,7 +77,7 @@ public:
     void addProfileFinishedMessageToConsole(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
     void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL);
 #endif
-    void setMonitoringXHREnabled(bool enabled);
+    void setMonitoringXHREnabled(ErrorString* error, bool enabled);
 
 private:
     void setConsoleMessagesEnabled(bool);

@@ -99,6 +99,8 @@ class WebSocketHandshakeRequest;
 class WebSocketHandshakeResponse;
 #endif
 
+typedef String ErrorString;
+
 class InspectorAgent {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
     WTF_MAKE_FAST_ALLOCATED;
@@ -116,19 +118,19 @@ public:
     Page* inspectedPage() const { return m_inspectedPage; }
     KURL inspectedURL() const;
     KURL inspectedURLWithoutFragment() const;
-    void reloadPage(bool ignoreCache);
+    void reloadPage(ErrorString* error, bool ignoreCache);
     void showConsole();
 
     void restoreInspectorStateFromCookie(const String& inspectorCookie);
 
-    void highlight(Node*);
-    void hideHighlight();
+    void highlight(ErrorString* error, Node*);
+    void hideHighlight(ErrorString* error);
     void inspect(Node*);
-    void highlightDOMNode(long nodeId);
-    void hideDOMNodeHighlight() { hideHighlight(); }
+    void highlightDOMNode(ErrorString* error, long nodeId);
+    void hideDOMNodeHighlight(ErrorString* error) { hideHighlight(error); }
 
-    void highlightFrame(unsigned long frameId);
-    void hideFrameHighlight() { hideHighlight(); }
+    void highlightFrame(ErrorString* error, unsigned long frameId);
+    void hideFrameHighlight(ErrorString* error) { hideHighlight(error); }
 
     void setFrontend(InspectorFrontend*);
     InspectorFrontend* frontend() const { return m_frontend; }
@@ -167,8 +169,8 @@ public:
 
     void didCommitLoad(DocumentLoader*);
 
-    void getCookies(RefPtr<InspectorArray>* cookies, WTF::String* cookiesString);
-    void deleteCookie(const String& cookieName, const String& domain);
+    void getCookies(ErrorString* error, RefPtr<InspectorArray>* cookies, WTF::String* cookiesString);
+    void deleteCookie(ErrorString* error, const String& cookieName, const String& domain);
 
     void domContentLoadedEventFired(DocumentLoader*, const KURL&);
     void loadEventFired(DocumentLoader*, const KURL&);
@@ -191,32 +193,31 @@ public:
     bool hasFrontend() const { return m_frontend; }
 
     void drawNodeHighlight(GraphicsContext&) const;
-    void openInInspectedWindow(const String& url);
+    void openInInspectedWindow(ErrorString* error, const String& url);
     void drawElementTitle(GraphicsContext&, const IntRect& boundingBox, const FloatRect& overlayRect, WebCore::Settings*) const;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     bool isRecordingUserInitiatedProfile() const;
-    void startProfiling() { startUserInitiatedProfiling(); }
+    void startProfiling(ErrorString*) { startUserInitiatedProfiling(); }
     void startUserInitiatedProfiling();
-    void stopProfiling() { stopUserInitiatedProfiling(); }
+    void stopProfiling(ErrorString*) { stopUserInitiatedProfiling(); }
     void stopUserInitiatedProfiling();
-    void enableProfiler();
-    void disableProfiler();
+    void enableProfiler(ErrorString* error);
+    void disableProfiler(ErrorString* error);
     bool profilerEnabled() const;
 
     void startUserInitiatedDebugging();
-    void enableDebugger() { enableDebugger(false); }
+    void enableDebugger(ErrorString*) { enableDebugger(false); }
     void enableDebugger(bool eraseStickyBreakpoints);
-    void disableDebugger();
+    void disableDebugger(ErrorString* error);
     bool debuggerEnabled() const { return m_debuggerAgent; }
-    void resume();
 #endif
 
     // Generic code called from custom implementations.
     void evaluateForTestInFrontend(long testCallId, const String& script);
 
-    void addScriptToEvaluateOnLoad(const String& source);
-    void removeAllScriptsToEvaluateOnLoad();
+    void addScriptToEvaluateOnLoad(ErrorString* error, const String& source);
+    void removeAllScriptsToEvaluateOnLoad(ErrorString* error);
     void setInspectorExtensionAPI(const String& source);
 
     InspectorState* state() { return m_state.get(); }
@@ -224,12 +225,12 @@ public:
     // InspectorAgent API
     void getInspectorState(RefPtr<InspectorObject>* state);
     void setMonitoringXHREnabled(bool enabled, bool* newState);
-    void populateScriptObjects();
+    void populateScriptObjects(ErrorString* error);
     // Following are used from InspectorBackend and internally.
-    void setSearchingForNode(bool enabled, bool* newState);
-    void didEvaluateForTestInFrontend(long callId, const String& jsonResult);
+    void setSearchingForNode(ErrorString* error, bool enabled, bool* newState);
+    void didEvaluateForTestInFrontend(ErrorString* error, long callId, const String& jsonResult);
 
-    void setUserAgentOverride(const String& userAgent);
+    void setUserAgentOverride(ErrorString* error, const String& userAgent);
     void applyUserAgentOverride(String* userAgent) const;
 
 private:

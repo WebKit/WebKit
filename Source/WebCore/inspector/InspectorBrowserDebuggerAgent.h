@@ -48,6 +48,8 @@ class InspectorAgent;
 class InspectorObject;
 class Node;
 
+typedef String ErrorString;
+
 class InspectorBrowserDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(InspectorBrowserDebuggerAgent);
 public:
@@ -55,16 +57,16 @@ public:
 
     virtual ~InspectorBrowserDebuggerAgent();
 
-    void setAllBrowserBreakpoints(PassRefPtr<InspectorObject>);
+    void setAllBrowserBreakpoints(ErrorString* error, PassRefPtr<InspectorObject>);
     void inspectedURLChanged(const String& url);
 
     // BrowserDebugger API for InspectorFrontend
-    void setXHRBreakpoint(const String& url);
-    void removeXHRBreakpoint(const String& url);
-    void setEventListenerBreakpoint(const String& eventName);
-    void removeEventListenerBreakpoint(const String& eventName);
-    void setDOMBreakpoint(long nodeId, long type);
-    void removeDOMBreakpoint(long nodeId, long type);
+    void setXHRBreakpoint(ErrorString* error, const String& url);
+    void removeXHRBreakpoint(ErrorString* error, const String& url);
+    void setEventListenerBreakpoint(ErrorString* error, const String& eventName);
+    void removeEventListenerBreakpoint(ErrorString* error, const String& eventName);
+    void setDOMBreakpoint(ErrorString* error, long nodeId, long type);
+    void removeDOMBreakpoint(ErrorString* error, long nodeId, long type);
 
     // InspectorInstrumentation API
     void willInsertDOMNode(Node*, Node* parent);

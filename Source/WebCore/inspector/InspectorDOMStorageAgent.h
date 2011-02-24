@@ -43,6 +43,8 @@ class InstrumentingAgents;
 class Storage;
 class StorageArea;
 
+typedef String ErrorString;
+
 class InspectorDOMStorageAgent {
 public:
     static PassOwnPtr<InspectorDOMStorageAgent> create(InstrumentingAgents* instrumentingAgents)
@@ -57,9 +59,9 @@ public:
     void clearResources();
 
     // Called from the front-end.
-    void getDOMStorageEntries(long storageId, RefPtr<InspectorArray>* entries);
-    void setDOMStorageItem(long storageId, const String& key, const String& value, bool* success);
-    void removeDOMStorageItem(long storageId, const String& key, bool* success);
+    void getDOMStorageEntries(ErrorString* error, long storageId, RefPtr<InspectorArray>* entries);
+    void setDOMStorageItem(ErrorString* error, long storageId, const String& key, const String& value, bool* success);
+    void removeDOMStorageItem(ErrorString* error, long storageId, const String& key, bool* success);
 
     // Called from the injected script.
     void selectDOMStorage(Storage* storage);

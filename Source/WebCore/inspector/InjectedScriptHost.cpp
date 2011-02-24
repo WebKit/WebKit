@@ -89,8 +89,10 @@ void InjectedScriptHost::inspect(Node* node)
 
 void InjectedScriptHost::clearConsoleMessages()
 {
-    if (m_inspectorAgent)
-        m_inspectorAgent->consoleAgent()->clearConsoleMessages();
+    if (m_inspectorAgent) {
+        ErrorString error;
+        m_inspectorAgent->consoleAgent()->clearConsoleMessages(&error);
+    }
 }
 
 void InjectedScriptHost::copyText(const String& text)

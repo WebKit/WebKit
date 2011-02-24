@@ -259,7 +259,7 @@ void InspectorDatabaseAgent::clearFrontend()
     m_frontendProvider.clear();
 }
 
-void InspectorDatabaseAgent::getDatabaseTableNames(long databaseId, RefPtr<InspectorArray>* names)
+void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString*, long databaseId, RefPtr<InspectorArray>* names)
 {
     Database* database = databaseForId(databaseId);
     if (database) {
@@ -270,7 +270,7 @@ void InspectorDatabaseAgent::getDatabaseTableNames(long databaseId, RefPtr<Inspe
     }
 }
 
-void InspectorDatabaseAgent::executeSQL(long databaseId, const String& query, bool* success, long* transactionId)
+void InspectorDatabaseAgent::executeSQL(ErrorString*, long databaseId, const String& query, bool* success, long* transactionId)
 {
     Database* database = databaseForId(databaseId);
     if (!database) {

@@ -85,12 +85,14 @@ void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWo
 
 void InspectorController::startTimelineProfiler()
 {
-    m_inspectorAgent->timelineAgent()->start();
+    ErrorString error;
+    m_inspectorAgent->timelineAgent()->start(&error);
 }
 
 void InspectorController::stopTimelineProfiler()
 {
-    m_inspectorAgent->timelineAgent()->stop();
+    ErrorString error;
+    m_inspectorAgent->timelineAgent()->stop(&error);
 }
 
 void InspectorController::connectFrontend()
@@ -205,18 +207,21 @@ void InspectorController::dispatchMessageFromFrontend(const String& message)
 
 void InspectorController::hideHighlight()
 {
-    m_inspectorAgent->hideHighlight();
+    ErrorString error;
+    m_inspectorAgent->hideHighlight(&error);
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorController::enableProfiler()
 {
-    m_inspectorAgent->enableProfiler();
+    ErrorString error;
+    m_inspectorAgent->enableProfiler(&error);
 }
 
 void InspectorController::disableProfiler()
 {
-    m_inspectorAgent->disableProfiler();
+    ErrorString error;
+    m_inspectorAgent->disableProfiler(&error);
 }
 
 bool InspectorController::profilerEnabled()
@@ -239,7 +244,8 @@ void InspectorController::showAndEnableDebugger()
 
 void InspectorController::disableDebugger()
 {
-    m_inspectorAgent->disableDebugger();
+    ErrorString error;
+    m_inspectorAgent->disableDebugger(&error);
 }
 
 void InspectorController::startUserInitiatedProfiling()
@@ -262,8 +268,10 @@ bool InspectorController::isRecordingUserInitiatedProfile() const
 
 void InspectorController::resume()
 {
-    if (InspectorDebuggerAgent* debuggerAgent = m_inspectorAgent->debuggerAgent())
-        debuggerAgent->resume();
+    if (InspectorDebuggerAgent* debuggerAgent = m_inspectorAgent->debuggerAgent()) {
+        ErrorString error;
+        debuggerAgent->resume(&error);
+    }
 }
 
 #endif

@@ -1,3 +1,53 @@
+2011-02-24  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: There is a validator of the protocol message format.
+
+        It has two parts. InspectorBackendStub.js is the frontend part.
+        InspectorBackendDispatcher.cpp is the backend part.
+        Both parts are checking protocol message format and report the error if
+        the message has not enough fields or the types of fields do not match with
+        Inspector.idl specification. These validators are generated automatically.
+
+        In addition, we have a number of places at the backend where we check the
+        function arguments and do nothing if the arguments are invalid
+        from the business logic point of view.
+
+        This patch bring us an ability to report a custom error from such function to the frontend.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54971
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InjectedScriptHost.cpp:
+        * inspector/InspectorAgent.cpp:
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        * inspector/InspectorBrowserDebuggerAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorConsoleAgent.cpp:
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        * inspector/InspectorTimelineAgent.h:
+
 2011-02-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.

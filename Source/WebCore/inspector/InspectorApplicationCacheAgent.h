@@ -42,6 +42,8 @@ class InspectorObject;
 class InspectorValue;
 class ResourceResponse;
 
+typedef String ErrorString;
+
 class InspectorApplicationCacheAgent {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -55,7 +57,7 @@ public:
     void networkStateChanged();
 
     // From Frontend
-    void getApplicationCaches(RefPtr<InspectorValue>* applicationCaches);
+    void getApplicationCaches(ErrorString* error, RefPtr<InspectorValue>* applicationCaches);
 
 private:
     PassRefPtr<InspectorObject> buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);

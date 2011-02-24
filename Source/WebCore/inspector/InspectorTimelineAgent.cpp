@@ -82,18 +82,21 @@ void InspectorTimelineAgent::setFrontend(InspectorFrontend* frontend)
 
 void InspectorTimelineAgent::clearFrontend()
 {
-    stop();
+    ErrorString error;
+    stop(&error);
     m_frontend = 0;
 }
 
 void InspectorTimelineAgent::restore(InspectorState* state, InspectorFrontend* frontend)
 {
     setFrontend(frontend);
-    if (state->getBoolean(TimelineAgentState::timelineAgentEnabled))
-        start();
+    if (state->getBoolean(TimelineAgentState::timelineAgentEnabled)) {
+        ErrorString error;
+        start(&error);
+    }
 }
 
-void InspectorTimelineAgent::start()
+void InspectorTimelineAgent::start(ErrorString*)
 {
     if (!m_frontend)
         return;
@@ -103,7 +106,7 @@ void InspectorTimelineAgent::start()
     m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, true);
 }
 
-void InspectorTimelineAgent::stop()
+void InspectorTimelineAgent::stop(ErrorString*)
 {
     if (!started())
         return;

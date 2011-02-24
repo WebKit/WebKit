@@ -151,7 +151,7 @@ String InspectorProfilerAgent::getCurrentUserInitiatedProfileName(bool increment
     return makeString(UserInitiatedProfileName, '.', String::number(m_currentUserInitiatedProfileNumber));
 }
 
-void InspectorProfilerAgent::getProfileHeaders(RefPtr<InspectorArray>* headers)
+void InspectorProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<InspectorArray>* headers)
 {
     ProfilesMap::iterator profilesEnd = m_profiles.end();
     for (ProfilesMap::iterator it = m_profiles.begin(); it != profilesEnd; ++it)
@@ -176,7 +176,7 @@ private:
 
 } // namespace
 
-void InspectorProfilerAgent::getProfile(const String& type, unsigned uid, RefPtr<InspectorObject>* profileObject)
+void InspectorProfilerAgent::getProfile(ErrorString*, const String& type, unsigned uid, RefPtr<InspectorObject>* profileObject)
 {
     if (type == CPUProfileType) {
         ProfilesMap::iterator it = m_profiles.find(uid);
@@ -197,7 +197,7 @@ void InspectorProfilerAgent::getProfile(const String& type, unsigned uid, RefPtr
     }
 }
 
-void InspectorProfilerAgent::removeProfile(const String& type, unsigned uid)
+void InspectorProfilerAgent::removeProfile(ErrorString*, const String& type, unsigned uid)
 {
     if (type == CPUProfileType) {
         if (m_profiles.contains(uid))
@@ -293,7 +293,7 @@ private:
 
 };
 
-void InspectorProfilerAgent::takeHeapSnapshot(bool detailed)
+void InspectorProfilerAgent::takeHeapSnapshot(ErrorString*, bool detailed)
 {
     String title = makeString(UserInitiatedProfileName, '.', String::number(m_nextUserInitiatedHeapSnapshotNumber));
     ++m_nextUserInitiatedHeapSnapshotNumber;

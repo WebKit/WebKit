@@ -171,7 +171,8 @@ void InspectorAgent::inspectedPageDestroyed()
     if (m_frontend)
         m_frontend->disconnectFromBackend();
 
-    hideHighlight();
+    ErrorString error;
+    hideHighlight(&error);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_debuggerAgent.clear();
@@ -237,7 +238,7 @@ void InspectorAgent::focusNode()
     m_nodeToFocus = 0;
 }
 
-void InspectorAgent::highlight(Node* node)
+void InspectorAgent::highlight(ErrorString*, Node* node)
 {
     if (!enabled())
         return;
@@ -246,25 +247,25 @@ void InspectorAgent::highlight(Node* node)
     m_client->highlight(node);
 }
 
-void InspectorAgent::highlightDOMNode(long nodeId)
+void InspectorAgent::highlightDOMNode(ErrorString* error, long nodeId)
 {
     Node* node = 0;
     if (m_domAgent && (node = m_domAgent->nodeForId(nodeId)))
-        highlight(node);
+        highlight(error, node);
 }
 
-void InspectorAgent::highlightFrame(unsigned long frameId)
+void InspectorAgent::highlightFrame(ErrorString* error, unsigned long frameId)
 {
     Frame* mainFrame = m_inspectedPage->mainFrame();
     for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext(mainFrame)) {
         if (reinterpret_cast<uintptr_t>(frame) == frameId && frame->ownerElement()) {
-            highlight(frame->ownerElement());
+            highlight(error, frame->ownerElement());
             return;
         }
     }
 }
 
-void InspectorAgent::hideHighlight()
+void InspectorAgent::hideHighlight(ErrorString*)
 {
     if (!enabled())
         return;
@@ -280,8 +281,10 @@ void InspectorAgent::mouseDidMoveOverElement(const HitTestResult& result, unsign
     Node* node = result.innerNode();
     while (node && node->nodeType() == Node::TEXT_NODE)
         node = node->parentNode();
-    if (node)
-        highlight(node);
+    if (node) {
+        ErrorString error;
+        highlight(&error, node);
+    }
 }
 
 bool InspectorAgent::handleMousePress()
@@ -324,11 +327,13 @@ void InspectorAgent::setSearchingForNode(bool enabled)
     if (searchingForNodeInPage() == enabled)
         return;
     m_state->setBoolean(InspectorAgentState::searchingForNode, enabled);
-    if (!enabled)
-        hideHighlight();
+    if (!enabled) {
+        ErrorString error;
+        hideHighlight(&error);
+    }
 }
 
-void InspectorAgent::setSearchingForNode(bool enabled, bool* newState)
+void InspectorAgent::setSearchingForNode(ErrorString*, bool enabled, bool* newState)
 {
     *newState = enabled;
     setSearchingForNode(enabled);
@@ -366,15 +371,16 @@ void InspectorAgent::disconnectFrontend()
 
     m_frontend = 0;
 
+    ErrorString error;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     // If the window is being closed with the debugger enabled,
     // remember this state to re-enable debugger on the next window
     // opening.
-    disableDebugger();
+    disableDebugger(&error);
 #endif
     setSearchingForNode(false);
 
-    hideHighlight();
+    hideHighlight(&error);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_profilerAgent->setFrontend(0);
@@ -420,7 +426,7 @@ void InspectorAgent::releaseFrontendLifetimeAgents()
 #endif
 }
 
-void InspectorAgent::populateScriptObjects()
+void InspectorAgent::populateScriptObjects(ErrorString*)
 {
     ASSERT(m_frontend);
     if (!m_frontend)
@@ -477,8 +483,10 @@ void InspectorAgent::restoreProfiler(ProfilerRestoreAction action)
     ASSERT(m_frontend);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_profilerAgent->setFrontend(m_frontend);
-    if (m_state->getBoolean(InspectorAgentState::profilerEnabled))
-        enableProfiler();
+    if (m_state->getBoolean(InspectorAgentState::profilerEnabled)) {
+        ErrorString error;
+        enableProfiler(&error);
+    }
     if (action == ProfilerRestoreResetAgent)
         m_profilerAgent->resetFrontendProfiles();
 #endif
@@ -577,7 +585,7 @@ bool InspectorAgent::isMainResourceLoader(DocumentLoader* loader, const KURL& re
     return loader->frame() == m_inspectedPage->mainFrame() && requestUrl == loader->requestURL();
 }
 
-void InspectorAgent::setUserAgentOverride(const String& userAgent)
+void InspectorAgent::setUserAgentOverride(ErrorString*, const String& userAgent)
 {
     m_userAgentOverride = userAgent;
 }
@@ -657,7 +665,7 @@ void InspectorAgent::didDestroyWorker(intptr_t id)
 }
 #endif // ENABLE(WORKERS)
 
-void InspectorAgent::getCookies(RefPtr<InspectorArray>* cookies, WTF::String* cookiesString)
+void InspectorAgent::getCookies(ErrorString*, RefPtr<InspectorArray>* cookies, WTF::String* cookiesString)
 {
     // If we can get raw cookies.
     ListHashSet<Cookie> rawCookiesList;
@@ -728,7 +736,7 @@ PassRefPtr<InspectorObject> InspectorAgent::buildObjectForCookie(const Cookie& c
     return value;
 }
 
-void InspectorAgent::deleteCookie(const String& cookieName, const String& domain)
+void InspectorAgent::deleteCookie(ErrorString*, const String& cookieName, const String& domain)
 {
     for (Frame* frame = m_inspectedPage->mainFrame(); frame; frame = frame->tree()->traverseNext(m_inspectedPage->mainFrame())) {
         Document* document = frame->document();
@@ -798,7 +806,7 @@ bool InspectorAgent::profilerEnabled() const
     return enabled() && m_profilerAgent->enabled();
 }
 
-void InspectorAgent::enableProfiler()
+void InspectorAgent::enableProfiler(ErrorString*)
 {
     if (profilerEnabled())
         return;
@@ -806,7 +814,7 @@ void InspectorAgent::enableProfiler()
     m_profilerAgent->enable(false);
 }
 
-void InspectorAgent::disableProfiler()
+void InspectorAgent::disableProfiler(ErrorString*)
 {
     m_state->setBoolean(InspectorAgentState::profilerEnabled, false);
     m_profilerAgent->disable();
@@ -841,7 +849,7 @@ void InspectorAgent::enableDebugger(bool eraseStickyBreakpoints)
     m_frontend->debuggerWasEnabled();
 }
 
-void InspectorAgent::disableDebugger()
+void InspectorAgent::disableDebugger(ErrorString*)
 {
     if (!enabled())
         return;
@@ -854,12 +862,6 @@ void InspectorAgent::disableDebugger()
         m_state->setBoolean(InspectorAgentState::debuggerEnabled, false);
     }
 }
-
-void InspectorAgent::resume()
-{
-    if (m_debuggerAgent)
-        m_debuggerAgent->resume();
-}
 #endif
 
 void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script)
@@ -870,7 +872,7 @@ void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script
         m_pendingEvaluateTestCommands.append(pair<long, String>(callId, script));
 }
 
-void InspectorAgent::didEvaluateForTestInFrontend(long callId, const String& jsonResult)
+void InspectorAgent::didEvaluateForTestInFrontend(ErrorString*, long callId, const String& jsonResult)
 {
     ScriptState* scriptState = scriptStateFromPage(debuggerWorld(), m_inspectedPage);
     ScriptObject window;
@@ -1125,7 +1127,7 @@ void InspectorAgent::drawElementTitle(GraphicsContext& context, const IntRect& b
     context.drawText(font, nodeTitleRun, IntPoint(titleRect.x() + rectInflatePx, titleRect.y() + font.fontMetrics().height()));
 }
 
-void InspectorAgent::openInInspectedWindow(const String& url)
+void InspectorAgent::openInInspectedWindow(ErrorString*, const String& url)
 {
     Frame* mainFrame = m_inspectedPage->mainFrame();
 
@@ -1143,12 +1145,12 @@ void InspectorAgent::openInInspectedWindow(const String& url)
     newFrame->loader()->changeLocation(mainFrame->document()->securityOrigin(), newFrame->loader()->completeURL(url), "", false, false);
 }
 
-void InspectorAgent::addScriptToEvaluateOnLoad(const String& source)
+void InspectorAgent::addScriptToEvaluateOnLoad(ErrorString*, const String& source)
 {
     m_scriptsToEvaluateOnLoad.append(source);
 }
 
-void InspectorAgent::removeAllScriptsToEvaluateOnLoad()
+void InspectorAgent::removeAllScriptsToEvaluateOnLoad(ErrorString*)
 {
     m_scriptsToEvaluateOnLoad.clear();
 }
@@ -1170,7 +1172,7 @@ KURL InspectorAgent::inspectedURLWithoutFragment() const
     return url;
 }
 
-void InspectorAgent::reloadPage(bool ignoreCache)
+void InspectorAgent::reloadPage(ErrorString*, bool ignoreCache)
 {
     m_inspectedPage->mainFrame()->loader()->reload(ignoreCache);
 }

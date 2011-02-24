@@ -60,6 +60,8 @@ class Node;
 class Page;
 class RevalidateStyleAttributeTask;
 
+typedef String ErrorString;
+
 #if ENABLE(INSPECTOR)
 
 struct EventListenerInfo {
@@ -100,22 +102,22 @@ public:
     void reset();
 
     // Methods called from the frontend for DOM nodes inspection.
-    void getChildNodes(long nodeId);
-    void setAttribute(long elementId, const String& name, const String& value, bool* success);
-    void removeAttribute(long elementId, const String& name, bool* success);
-    void removeNode(long nodeId, long* outNodeId);
-    void changeTagName(long nodeId, const String& tagName, long* newId);
-    void getOuterHTML(long nodeId, WTF::String* outerHTML);
-    void setOuterHTML(long nodeId, const String& outerHTML, long* newId);
-    void setTextNodeValue(long nodeId, const String& value, bool* success);
-    void getEventListenersForNode(long nodeId, long* outNodeId, RefPtr<InspectorArray>* listenersArray);
-    void addInspectedNode(long nodeId);
-    void performSearch(const String& whitespaceTrimmedQuery, bool runSynchronously);
-    void searchCanceled();
-    void resolveNode(long nodeId, RefPtr<InspectorValue>* result);
-    void getNodeProperties(long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result);
-    void getNodePrototypes(long nodeId, RefPtr<InspectorValue>* result);
-    void pushNodeToFrontend(PassRefPtr<InspectorObject> objectId, long* nodeId);
+    void getChildNodes(ErrorString* error, long nodeId);
+    void setAttribute(ErrorString* error, long elementId, const String& name, const String& value, bool* success);
+    void removeAttribute(ErrorString* error, long elementId, const String& name, bool* success);
+    void removeNode(ErrorString* error, long nodeId, long* outNodeId);
+    void changeTagName(ErrorString* error, long nodeId, const String& tagName, long* newId);
+    void getOuterHTML(ErrorString* error, long nodeId, WTF::String* outerHTML);
+    void setOuterHTML(ErrorString* error, long nodeId, const String& outerHTML, long* newId);
+    void setTextNodeValue(ErrorString* error, long nodeId, const String& value, bool* success);
+    void getEventListenersForNode(ErrorString* error, long nodeId, long* outNodeId, RefPtr<InspectorArray>* listenersArray);
+    void addInspectedNode(ErrorString* error, long nodeId);
+    void performSearch(ErrorString* error, const String& whitespaceTrimmedQuery, bool runSynchronously);
+    void searchCanceled(ErrorString* error);
+    void resolveNode(ErrorString* error, long nodeId, RefPtr<InspectorValue>* result);
+    void getNodeProperties(ErrorString* error, long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result);
+    void getNodePrototypes(ErrorString* error, long nodeId, RefPtr<InspectorValue>* result);
+    void pushNodeToFrontend(ErrorString* error, PassRefPtr<InspectorObject> objectId, long* nodeId);
 
     // Methods called from the InspectorInstrumentation.
     void setDocument(Document*);
@@ -133,10 +135,10 @@ public:
     Node* nodeForId(long nodeId);
     long pushNodePathToFrontend(Node*);
     void pushChildNodesToFrontend(long nodeId);
-    void pushNodeByPathToFrontend(const String& path, long* nodeId);
+    void pushNodeByPathToFrontend(ErrorString* error, const String& path, long* nodeId);
     void inspect(Node*);
     long inspectedNode(unsigned long num);
-    void copyNode(long nodeId);
+    void copyNode(ErrorString* error, long nodeId);
     void setDOMListener(DOMListener*);
 
     String documentURLString(Document*) const;

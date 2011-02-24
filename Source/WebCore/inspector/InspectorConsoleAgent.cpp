@@ -78,13 +78,13 @@ InspectorConsoleAgent::~InspectorConsoleAgent()
     m_inspectorDOMAgent = 0;
 }
 
-void InspectorConsoleAgent::setConsoleMessagesEnabled(bool enabled, bool* newState)
+void InspectorConsoleAgent::setConsoleMessagesEnabled(ErrorString*, bool enabled, bool* newState)
 {
     *newState = enabled;
     setConsoleMessagesEnabled(enabled);
 }
 
-void InspectorConsoleAgent::clearConsoleMessages()
+void InspectorConsoleAgent::clearConsoleMessages(ErrorString*)
 {
     m_consoleMessages.clear();
     m_expiredConsoleMessageCount = 0;
@@ -98,7 +98,8 @@ void InspectorConsoleAgent::clearConsoleMessages()
 
 void InspectorConsoleAgent::reset()
 {
-    clearConsoleMessages();
+    ErrorString error;
+    clearConsoleMessages(&error);
     m_times.clear();
     m_counts.clear();
 }
@@ -211,7 +212,7 @@ void InspectorConsoleAgent::didFailLoading(unsigned long identifier, const Resou
     addConsoleMessage(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, error.failingURL(), identifier));
 }
 
-void InspectorConsoleAgent::setMonitoringXHREnabled(bool enabled)
+void InspectorConsoleAgent::setMonitoringXHREnabled(ErrorString*, bool enabled)
 {
     m_inspectorState->setBoolean(ConsoleAgentState::monitoringXHR, enabled);
 }

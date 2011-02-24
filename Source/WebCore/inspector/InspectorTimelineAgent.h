@@ -48,6 +48,8 @@ class IntRect;
 class ResourceRequest;
 class ResourceResponse;
 
+typedef String ErrorString;
+
 // Must be kept in sync with TimelineAgent.js
 enum TimelineRecordType {
     EventDispatchTimelineRecordType = 0,
@@ -88,8 +90,8 @@ public:
 
     void restore(InspectorState*, InspectorFrontend*);
 
-    void start();
-    void stop();
+    void start(ErrorString* error);
+    void stop(ErrorString* error);
     bool started() const;
 
     int id() const { return m_id; }

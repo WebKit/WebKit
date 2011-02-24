@@ -39,6 +39,7 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorDebuggerAgent.h"
 #include "InspectorState.h"
+#include "InspectorValues.h"
 #include <wtf/text/CString.h>
 
 namespace {
@@ -82,7 +83,7 @@ InspectorBrowserDebuggerAgent::~InspectorBrowserDebuggerAgent()
 {
 }
 
-void InspectorBrowserDebuggerAgent::setAllBrowserBreakpoints(PassRefPtr<InspectorObject> breakpoints)
+void InspectorBrowserDebuggerAgent::setAllBrowserBreakpoints(ErrorString*, PassRefPtr<InspectorObject> breakpoints)
 {
     m_inspectorAgent->state()->setObject(BrowserDebuggerAgentState::browserBreakpoints, breakpoints);
     inspectedURLChanged(m_inspectorAgent->inspectedURLWithoutFragment());
@@ -116,20 +117,21 @@ void InspectorBrowserDebuggerAgent::restoreStickyBreakpoint(PassRefPtr<Inspector
     if (!condition)
         return;
 
+    ErrorString error;
     if (type == eventListenerNativeBreakpointType) {
         if (!enabled)
             return;
         String eventName;
         if (!condition->getString("eventName", &eventName))
             return;
-        setEventListenerBreakpoint(eventName);
+        setEventListenerBreakpoint(&error, eventName);
     } else if (type == xhrNativeBreakpointType) {
         if (!enabled)
             return;
         String url;
         if (!condition->getString("url", &url))
             return;
-        setXHRBreakpoint(url);
+        setXHRBreakpoint(&error, url);
     }
 }
 
@@ -138,12 +140,12 @@ void InspectorBrowserDebuggerAgent::discardBindings()
     m_domBreakpoints.clear();
 }
 
-void InspectorBrowserDebuggerAgent::setEventListenerBreakpoint(const String& eventName)
+void InspectorBrowserDebuggerAgent::setEventListenerBreakpoint(ErrorString*, const String& eventName)
 {
     m_eventListenerBreakpoints.add(eventName);
 }
 
-void InspectorBrowserDebuggerAgent::removeEventListenerBreakpoint(const String& eventName)
+void InspectorBrowserDebuggerAgent::removeEventListenerBreakpoint(ErrorString*, const String& eventName)
 {
     m_eventListenerBreakpoints.remove(eventName);
 }
@@ -176,7 +178,7 @@ void InspectorBrowserDebuggerAgent::didRemoveDOMNode(Node* node)
     }
 }
 
-void InspectorBrowserDebuggerAgent::setDOMBreakpoint(long nodeId, long type)
+void InspectorBrowserDebuggerAgent::setDOMBreakpoint(ErrorString*, long nodeId, long type)
 {
     Node* node = m_inspectorAgent->domAgent()->nodeForId(nodeId);
     if (!node)
@@ -190,7 +192,7 @@ void InspectorBrowserDebuggerAgent::setDOMBreakpoint(long nodeId, long type)
     }
 }
 
-void InspectorBrowserDebuggerAgent::removeDOMBreakpoint(long nodeId, long type)
+void InspectorBrowserDebuggerAgent::removeDOMBreakpoint(ErrorString*, long nodeId, long type)
 {
     Node* node = m_inspectorAgent->domAgent()->nodeForId(nodeId);
     if (!node)
@@ -331,7 +333,7 @@ void InspectorBrowserDebuggerAgent::pauseOnNativeEventIfNeeded(const String& cat
         debuggerAgent->schedulePauseOnNextStatement(NativeBreakpointDebuggerEventType, eventData.release());
 }
 
-void InspectorBrowserDebuggerAgent::setXHRBreakpoint(const String& url)
+void InspectorBrowserDebuggerAgent::setXHRBreakpoint(ErrorString*, const String& url)
 {
     if (url.isEmpty())
         m_hasXHRBreakpointWithEmptyURL = true;
@@ -339,7 +341,7 @@ void InspectorBrowserDebuggerAgent::setXHRBreakpoint(const String& url)
         m_XHRBreakpoints.add(url);
 }
 
-void InspectorBrowserDebuggerAgent::removeXHRBreakpoint(const String& url)
+void InspectorBrowserDebuggerAgent::removeXHRBreakpoint(ErrorString*, const String& url)
 {
     if (url.isEmpty())
         m_hasXHRBreakpointWithEmptyURL = false;

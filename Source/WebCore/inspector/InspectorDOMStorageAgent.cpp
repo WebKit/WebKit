@@ -79,7 +79,7 @@ void InspectorDOMStorageAgent::clearFrontend()
     m_frontend = 0;
 }
 
-void InspectorDOMStorageAgent::getDOMStorageEntries(long storageId, RefPtr<InspectorArray>* entries)
+void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, long storageId, RefPtr<InspectorArray>* entries)
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
@@ -96,7 +96,7 @@ void InspectorDOMStorageAgent::getDOMStorageEntries(long storageId, RefPtr<Inspe
     }
 }
 
-void InspectorDOMStorageAgent::setDOMStorageItem(long storageId, const String& key, const String& value, bool* success)
+void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString*, long storageId, const String& key, const String& value, bool* success)
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
@@ -106,7 +106,7 @@ void InspectorDOMStorageAgent::setDOMStorageItem(long storageId, const String& k
     }
 }
 
-void InspectorDOMStorageAgent::removeDOMStorageItem(long storageId, const String& key, bool* success)
+void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString*, long storageId, const String& key, bool* success)
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {

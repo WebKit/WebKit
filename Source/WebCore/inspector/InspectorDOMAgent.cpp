@@ -287,7 +287,8 @@ Vector<Document*> InspectorDOMAgent::documents()
 
 void InspectorDOMAgent::reset()
 {
-    searchCanceled();
+    ErrorString error;
+    searchCanceled(&error);
     discardBindings();
     if (m_revalidateStyleAttrTask)
         m_revalidateStyleAttrTask->reset();
@@ -417,7 +418,7 @@ Node* InspectorDOMAgent::nodeForId(long id)
     return 0;
 }
 
-void InspectorDOMAgent::getChildNodes(long nodeId)
+void InspectorDOMAgent::getChildNodes(ErrorString*, long nodeId)
 {
     pushChildNodesToFrontend(nodeId);
 }
@@ -464,7 +465,7 @@ long InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
     return map->get(nodeToPush);
 }
 
-void InspectorDOMAgent::setAttribute(long elementId, const String& name, const String& value, bool* success)
+void InspectorDOMAgent::setAttribute(ErrorString*, long elementId, const String& name, const String& value, bool* success)
 {
     Node* node = nodeForId(elementId);
     if (node && (node->nodeType() == Node::ELEMENT_NODE)) {
@@ -475,7 +476,7 @@ void InspectorDOMAgent::setAttribute(long elementId, const String& name, const S
     }
 }
 
-void InspectorDOMAgent::removeAttribute(long elementId, const String& name, bool* success)
+void InspectorDOMAgent::removeAttribute(ErrorString* error, long elementId, const String& name, bool* success)
 {
     Node* node = nodeForId(elementId);
     if (node && (node->nodeType() == Node::ELEMENT_NODE)) {
@@ -486,7 +487,7 @@ void InspectorDOMAgent::removeAttribute(long elementId, const String& name, bool
     }
 }
 
-void InspectorDOMAgent::removeNode(long nodeId, long* outNodeId)
+void InspectorDOMAgent::removeNode(ErrorString*, long nodeId, long* outNodeId)
 {
     Node* node = nodeForId(nodeId);
     if (!node)
@@ -504,7 +505,7 @@ void InspectorDOMAgent::removeNode(long nodeId, long* outNodeId)
     *outNodeId = nodeId;
 }
 
-void InspectorDOMAgent::changeTagName(long nodeId, const String& tagName, long* newId)
+void InspectorDOMAgent::changeTagName(ErrorString*, long nodeId, const String& tagName, long* newId)
 {
     Node* oldNode = nodeForId(nodeId);
     if (!oldNode || !oldNode->isElementNode())
@@ -539,7 +540,7 @@ void InspectorDOMAgent::changeTagName(long nodeId, const String& tagName, long* 
         pushChildNodesToFrontend(*newId);
 }
 
-void InspectorDOMAgent::getOuterHTML(long nodeId, WTF::String* outerHTML)
+void InspectorDOMAgent::getOuterHTML(ErrorString*, long nodeId, WTF::String* outerHTML)
 {
     Node* node = nodeForId(nodeId);
     if (!node || !node->isHTMLElement())
@@ -548,7 +549,7 @@ void InspectorDOMAgent::getOuterHTML(long nodeId, WTF::String* outerHTML)
     *outerHTML = toHTMLElement(node)->outerHTML();
 }
 
-void InspectorDOMAgent::setOuterHTML(long nodeId, const String& outerHTML, long* newId)
+void InspectorDOMAgent::setOuterHTML(ErrorString*, long nodeId, const String& outerHTML, long* newId)
 {
     Node* node = nodeForId(nodeId);
     if (!node || !node->isHTMLElement())
@@ -586,7 +587,7 @@ void InspectorDOMAgent::setOuterHTML(long nodeId, const String& outerHTML, long*
         pushChildNodesToFrontend(*newId);
 }
 
-void InspectorDOMAgent::setTextNodeValue(long nodeId, const String& value, bool* success)
+void InspectorDOMAgent::setTextNodeValue(ErrorString*, long nodeId, const String& value, bool* success)
 {
     Node* node = nodeForId(nodeId);
     if (node && (node->nodeType() == Node::TEXT_NODE)) {
@@ -597,7 +598,7 @@ void InspectorDOMAgent::setTextNodeValue(long nodeId, const String& value, bool*
     }
 }
 
-void InspectorDOMAgent::getEventListenersForNode(long nodeId, long* outNodeId, RefPtr<InspectorArray>* listenersArray)
+void InspectorDOMAgent::getEventListenersForNode(ErrorString*, long nodeId, long* outNodeId, RefPtr<InspectorArray>* listenersArray)
 {
     Node* node = nodeForId(nodeId);
     *outNodeId = nodeId;
@@ -664,14 +665,14 @@ void InspectorDOMAgent::getEventListenersForNode(long nodeId, long* outNodeId, R
     }
 }
 
-void InspectorDOMAgent::addInspectedNode(long nodeId)
+void InspectorDOMAgent::addInspectedNode(ErrorString*, long nodeId)
 {
     m_inspectedNodes.prepend(nodeId);
     while (m_inspectedNodes.size() > 5)
         m_inspectedNodes.removeLast();
 }
 
-void InspectorDOMAgent::performSearch(const String& whitespaceTrimmedQuery, bool runSynchronously)
+void InspectorDOMAgent::performSearch(ErrorString* error, const String& whitespaceTrimmedQuery, bool runSynchronously)
 {
     // FIXME: Few things are missing here:
     // 1) Search works with node granularity - number of matches within node is not calculated.
@@ -698,7 +699,7 @@ void InspectorDOMAgent::performSearch(const String& whitespaceTrimmedQuery, bool
     escapedTagNameQuery.replace("'", "\\'");
 
     // Clear pending jobs.
-    searchCanceled();
+    searchCanceled(error);
 
     // Find all frames, iframes and object elements to search their documents.
     Vector<Document*> docs = documents();
@@ -752,13 +753,13 @@ void InspectorDOMAgent::performSearch(const String& whitespaceTrimmedQuery, bool
         for (Deque<MatchJob*>::iterator it = m_pendingMatchJobs.begin(); it != m_pendingMatchJobs.end(); ++it)
             (*it)->match(resultCollector);
         reportNodesAsSearchResults(resultCollector);
-        searchCanceled();
+        searchCanceled(error);
         return;
     }
     m_matchJobsTimer.startOneShot(0);
 }
 
-void InspectorDOMAgent::searchCanceled()
+void InspectorDOMAgent::searchCanceled(ErrorString*)
 {
     if (m_matchJobsTimer.isActive())
         m_matchJobsTimer.stop();
@@ -767,28 +768,28 @@ void InspectorDOMAgent::searchCanceled()
     m_searchResults.clear();
 }
 
-void InspectorDOMAgent::resolveNode(long nodeId, RefPtr<InspectorValue>* result)
+void InspectorDOMAgent::resolveNode(ErrorString*, long nodeId, RefPtr<InspectorValue>* result)
 {
     InjectedScript injectedScript = injectedScriptForNodeId(nodeId);
     if (!injectedScript.hasNoValue())
         injectedScript.resolveNode(nodeId, result);
 }
 
-void InspectorDOMAgent::getNodeProperties(long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result)
+void InspectorDOMAgent::getNodeProperties(ErrorString*, long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result)
 {
     InjectedScript injectedScript = injectedScriptForNodeId(nodeId);
     if (!injectedScript.hasNoValue())
         injectedScript.getNodeProperties(nodeId, propertiesArray, result);
 }
 
-void InspectorDOMAgent::getNodePrototypes(long nodeId, RefPtr<InspectorValue>* result)
+void InspectorDOMAgent::getNodePrototypes(ErrorString*, long nodeId, RefPtr<InspectorValue>* result)
 {
     InjectedScript injectedScript = injectedScriptForNodeId(nodeId);
     if (!injectedScript.hasNoValue())
         injectedScript.getNodePrototypes(nodeId, result);
 }
 
-void InspectorDOMAgent::pushNodeToFrontend(PassRefPtr<InspectorObject> objectId, long* nodeId)
+void InspectorDOMAgent::pushNodeToFrontend(ErrorString*, PassRefPtr<InspectorObject> objectId, long* nodeId)
 {
     InjectedScript injectedScript = m_injectedScriptHost->injectedScriptForObjectId(objectId.get());
     Node* node = injectedScript.nodeForObjectId(objectId);
@@ -1138,7 +1139,8 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::toArray(const Vector<String>& data
 void InspectorDOMAgent::onMatchJobsTimer(Timer<InspectorDOMAgent>*)
 {
     if (!m_pendingMatchJobs.size()) {
-        searchCanceled();
+        ErrorString error;
+        searchCanceled(&error);
         return;
     }
 
@@ -1164,7 +1166,7 @@ void InspectorDOMAgent::reportNodesAsSearchResults(ListHashSet<Node*>& resultCol
     m_frontend->addNodesToSearchResult(nodeIds.release());
 }
 
-void InspectorDOMAgent::copyNode(long nodeId)
+void InspectorDOMAgent::copyNode(ErrorString*, long nodeId)
 {
     Node* node = nodeForId(nodeId);
     if (!node)
@@ -1173,7 +1175,7 @@ void InspectorDOMAgent::copyNode(long nodeId)
     Pasteboard::generalPasteboard()->writePlainText(markup);
 }
 
-void InspectorDOMAgent::pushNodeByPathToFrontend(const String& path, long* nodeId)
+void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString*, const String& path, long* nodeId)
 {
     if (Node* node = nodeForPath(path))
         *nodeId = pushNodePathToFrontend(node);

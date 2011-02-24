@@ -64,7 +64,7 @@ void InspectorApplicationCacheAgent::networkStateChanged()
     m_frontend->updateNetworkState(isNowOnline);
 }
 
-void InspectorApplicationCacheAgent::getApplicationCaches(RefPtr<InspectorValue>* applicationCaches)
+void InspectorApplicationCacheAgent::getApplicationCaches(ErrorString*, RefPtr<InspectorValue>* applicationCaches)
 {
     if (m_documentLoader) {
         ApplicationCacheHost* host = m_documentLoader->applicationCacheHost();
