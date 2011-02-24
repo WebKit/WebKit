@@ -1,3 +1,16 @@
+2011-02-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Rubber-stamped by Eric Seidel
+
+        Moving a test that doesn't need to be an http one out of http/tests.
+
+        * fast/css/counter-crash-expected.txt: Copied from http/tests/css/counter-crash-expected.txt.
+        * fast/css/counter-crash.html: Copied from http/tests/css/counter-crash.html.
+        * fast/css/resources/counter-crash-frame-src.html: Copied from http/tests/css/resources/counter-crash-frame-src.html.
+        * http/tests/css/counter-crash-expected.txt: Removed.
+        * http/tests/css/counter-crash.html: Removed.
+        * http/tests/css/resources/counter-crash-frame-src.html: Removed.
+
 2011-02-24  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Eric Seidel.
