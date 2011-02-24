@@ -61,20 +61,22 @@ public:
     void getNodeProperties(long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result);
     void getNodePrototypes(long nodeId, RefPtr<InspectorValue>* result);
     void setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result);
-
+    void releaseObject(PassRefPtr<InspectorObject> objectId);
+    
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     PassRefPtr<InspectorValue> callFrames();
 #endif
 
-    PassRefPtr<InspectorValue> wrapForConsole(ScriptValue);
+    PassRefPtr<InspectorObject> wrapForConsole(ScriptValue);
+    void inspectNode(Node*);
     void releaseWrapperObjectGroup(const String&);
     ScriptState* scriptState() const { return m_injectedScriptObject.scriptState(); }
 
 private:
     friend InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState*);
     explicit InjectedScript(ScriptObject);
-    bool canAccessInspectedWindow();
 
+    bool canAccessInspectedWindow();
     void makeCall(ScriptFunctionCall&, RefPtr<InspectorValue>* result);
 
     ScriptObject m_injectedScriptObject;

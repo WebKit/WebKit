@@ -102,22 +102,22 @@ public:
     void reset();
 
     // Methods called from the frontend for DOM nodes inspection.
-    void getChildNodes(ErrorString* error, long nodeId);
-    void setAttribute(ErrorString* error, long elementId, const String& name, const String& value, bool* success);
-    void removeAttribute(ErrorString* error, long elementId, const String& name, bool* success);
-    void removeNode(ErrorString* error, long nodeId, long* outNodeId);
-    void changeTagName(ErrorString* error, long nodeId, const String& tagName, long* newId);
-    void getOuterHTML(ErrorString* error, long nodeId, WTF::String* outerHTML);
-    void setOuterHTML(ErrorString* error, long nodeId, const String& outerHTML, long* newId);
-    void setTextNodeValue(ErrorString* error, long nodeId, const String& value, bool* success);
-    void getEventListenersForNode(ErrorString* error, long nodeId, long* outNodeId, RefPtr<InspectorArray>* listenersArray);
-    void addInspectedNode(ErrorString* error, long nodeId);
-    void performSearch(ErrorString* error, const String& whitespaceTrimmedQuery, bool runSynchronously);
-    void searchCanceled(ErrorString* error);
-    void resolveNode(ErrorString* error, long nodeId, RefPtr<InspectorValue>* result);
-    void getNodeProperties(ErrorString* error, long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result);
-    void getNodePrototypes(ErrorString* error, long nodeId, RefPtr<InspectorValue>* result);
-    void pushNodeToFrontend(ErrorString* error, PassRefPtr<InspectorObject> objectId, long* nodeId);
+    void getChildNodes(ErrorString*, long nodeId);
+    void setAttribute(ErrorString*, long elementId, const String& name, const String& value, bool* success);
+    void removeAttribute(ErrorString*, long elementId, const String& name, bool* success);
+    void removeNode(ErrorString*, long nodeId, long* outNodeId);
+    void changeTagName(ErrorString*, long nodeId, const String& tagName, long* newId);
+    void getOuterHTML(ErrorString*, long nodeId, WTF::String* outerHTML);
+    void setOuterHTML(ErrorString*, long nodeId, const String& outerHTML, long* newId);
+    void setTextNodeValue(ErrorString*, long nodeId, const String& value, bool* success);
+    void getEventListenersForNode(ErrorString*, long nodeId, long* outNodeId, RefPtr<InspectorArray>* listenersArray);
+    void addInspectedNode(ErrorString*, long nodeId);
+    void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, bool runSynchronously);
+    void searchCanceled(ErrorString*);
+    void resolveNode(ErrorString*, long nodeId, RefPtr<InspectorValue>* result);
+    void getNodeProperties(ErrorString*, long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result);
+    void getNodePrototypes(ErrorString*, long nodeId, RefPtr<InspectorValue>* result);
+    void pushNodeToFrontend(ErrorString*, PassRefPtr<InspectorObject> objectId, long* nodeId);
 
     // Methods called from the InspectorInstrumentation.
     void setDocument(Document*);
@@ -135,10 +135,9 @@ public:
     Node* nodeForId(long nodeId);
     long pushNodePathToFrontend(Node*);
     void pushChildNodesToFrontend(long nodeId);
-    void pushNodeByPathToFrontend(ErrorString* error, const String& path, long* nodeId);
-    void inspect(Node*);
+    void pushNodeByPathToFrontend(ErrorString*, const String& path, long* nodeId);
     long inspectedNode(unsigned long num);
-    void copyNode(ErrorString* error, long nodeId);
+    void copyNode(ErrorString*, long nodeId);
     void setDOMListener(DOMListener*);
 
     String documentURLString(Document*) const;

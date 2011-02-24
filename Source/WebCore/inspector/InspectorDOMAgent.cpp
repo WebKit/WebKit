@@ -381,16 +381,6 @@ void InspectorDOMAgent::pushChildNodesToFrontend(long nodeId)
     m_frontend->setChildNodes(nodeId, children.release());
 }
 
-void InspectorDOMAgent::inspect(Node* node)
-{
-    if (!m_frontend)
-        return;
-
-    long id = pushNodePathToFrontend(node);
-    if (id)
-        m_frontend->inspectElementRequested(id);
-}
-
 long InspectorDOMAgent::inspectedNode(unsigned long num)
 {
     if (num < m_inspectedNodes.size())

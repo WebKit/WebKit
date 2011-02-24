@@ -58,15 +58,15 @@ public:
         return adoptRef(new InjectedScriptHost(inspectorAgent));
     }
 
-    static Node* toNode(ScriptValue value);
+    static Node* scriptValueAsNode(ScriptValue);
+    static ScriptValue nodeAsScriptValue(ScriptState*, Node*);
 
     ~InjectedScriptHost();
-
-    void inspect(Node* node);
 
     InspectorAgent* inspectorAgent() { return m_inspectorAgent; }
     void disconnectController() { m_inspectorAgent = 0; }
 
+    void inspectImpl(PassRefPtr<InspectorValue> objectId, PassRefPtr<InspectorValue> hints);
     void clearConsoleMessages();
 
     void copyText(const String& text);
@@ -74,11 +74,10 @@ public:
     long inspectedNode(unsigned long num);
 
 #if ENABLE(DATABASE)
-    Database* databaseForId(long databaseId);
-    void selectDatabase(Database* database);
+    long databaseIdImpl(Database*);
 #endif
 #if ENABLE(DOM_STORAGE)
-    void selectDOMStorage(Storage* storage);
+    long storageIdImpl(Storage*);
 #endif
 #if ENABLE(WORKERS)
     long nextWorkerId();

@@ -36,21 +36,13 @@ module core {
 
         void copyText(in DOMString text);
         [Custom] DOMObject nodeForId(in long nodeId);
-        [Custom] int inspect(in DOMObject node);
+        [Custom] void inspect(in DOMObject objectId, in DOMObject hints);
         long inspectedNode(in unsigned long num);
         [Custom] DOMObject internalConstructorName(in DOMObject object);
 
-#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         [Custom] DOMObject currentCallFrame();
-#endif
-
-#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        [Custom] void selectDatabase(in DOMObject database);
-#endif
-
-#if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
-        [Custom] void selectDOMStorage(in DOMObject storage);
-#endif
+        [Custom] long databaseId(in DOMObject database);
+        [Custom] long storageId(in DOMObject storage);
 
 #if defined(ENABLE_WORKERS) && ENABLE_WORKERS
         void didCreateWorker(in long id, in DOMString url, in boolean isFakeWorker);

@@ -82,12 +82,6 @@ WebInspector.DOMStorageDispatcher.prototype = {
         WebInspector.panels.resources.addDOMStorage(domStorage);
     },
 
-    selectDOMStorage: function(o)
-    {
-        WebInspector.showPanel("resources");
-        WebInspector.panels.resources.selectDOMStorage(o);
-    },
-
     updateDOMStorage: function(storageId)
     {
         WebInspector.panels.resources.updateDOMStorage(storageId);

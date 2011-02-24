@@ -73,6 +73,13 @@ void InspectorRuntimeAgent::setPropertyValue(ErrorString*, PassRefPtr<InspectorO
         injectedScript.setPropertyValue(objectId, propertyName, expression, result);
 }
 
+void InspectorRuntimeAgent::releaseObject(ErrorString*, PassRefPtr<InspectorObject> objectId)
+{
+    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptForObjectId(objectId.get());
+    if (!injectedScript.hasNoValue())
+        injectedScript.releaseObject(objectId);
+}
+
 void InspectorRuntimeAgent::releaseWrapperObjectGroup(ErrorString*, long injectedScriptId, const String& objectGroup)
 {
     m_injectedScriptHost->releaseWrapperObjectGroup(injectedScriptId, objectGroup);

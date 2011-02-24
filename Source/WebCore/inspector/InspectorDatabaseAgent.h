@@ -63,12 +63,13 @@ public:
     void executeSQL(ErrorString* error, long databaseId, const String& query, bool* success, long* transactionId);
 
     // Called from the injected script.
-    Database* databaseForId(long databaseId);
-    void selectDatabase(Database* database);
+    long databaseId(Database*);
 
     void didOpenDatabase(PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 private:
     explicit InspectorDatabaseAgent(InstrumentingAgents*);
+
+    Database* databaseForId(long databaseId);
 
     InstrumentingAgents* m_instrumentingAgents;
     typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;

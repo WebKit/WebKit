@@ -50,7 +50,7 @@ var InjectedScript = function()
 }
 
 InjectedScript.prototype = {
-    wrapObjectForConsole: function(object, canAccessInspectedWindow)
+    wrapForConsole: function(object, canAccessInspectedWindow)
     {
         if (canAccessInspectedWindow)
             return this._wrapObject(object, "console");
@@ -60,23 +60,52 @@ InjectedScript.prototype = {
         return result;
     },
 
+    inspectNode: function(object)
+    {
+        this._inspect(object);
+    },
+
+    _inspect: function(object)
+    {
+        if (arguments.length === 0)
+            return;
+
+        var objectId = this._wrapObject(object, "", false);
+        var hints = {};
+
+        switch (injectedScript._describe(object)) {
+            case "Database":
+                var databaseId = InjectedScriptHost.databaseId(object)
+                if (databaseId)
+                    hints.databaseId = databaseId;
+                break;
+            case "Storage":
+                var storageId = InjectedScriptHost.storageId(object)
+                if (storageId)
+                    hints.domStorageId = storageId;
+                break;
+        }
+        InjectedScriptHost.inspect(objectId, hints);
+        return object;
+    },
+
     _wrapObject: function(object, objectGroupName, abbreviate)
     {
         try {
-            var objectId;
             if (typeof object === "object" || typeof object === "function" || this._isHTMLAllCollection(object)) {
                 var id = this._lastBoundObjectId++;
                 this._idToWrappedObject[id] = object;
+                var objectId = { injectedScriptId: injectedScriptId, id: id };
     
-                var group = this._objectGroups[objectGroupName];
-                if (!group) {
-                    group = [];
-                    this._objectGroups[objectGroupName] = group;
+                if (objectGroupName) {
+                    var group = this._objectGroups[objectGroupName];
+                    if (!group) {
+                        group = [];
+                        this._objectGroups[objectGroupName] = group;
+                    }
+                    group.push(id);
+                    objectId.groupName = objectGroupName;
                 }
-                group.push(id);
-                objectId = { injectedScriptId: injectedScriptId,
-                             id: id,
-                             groupName: objectGroupName };
             }
             return InjectedScript.RemoteObject.fromObject(object, objectId, abbreviate);
         } catch (e) {
@@ -179,6 +208,12 @@ InjectedScript.prototype = {
                 return false;
             }
         }
+    },
+
+    releaseObject: function(objectId)
+    {
+        var parsedObjectId = this._parseObjectId(objectId);
+        delete this._idToWrappedObject[parsedObjectId.id];
     },
 
     _populatePropertyNames: function(object, resultSet)
@@ -499,7 +534,7 @@ InjectedScript.RemoteObject.fromObject = function(object, objectId, abbreviate)
 {
     var type = injectedScript._type(object);
     var rawType = typeof object;
-    var hasChildren = (rawType === "object" && object !== null && (Object.getOwnPropertyNames(object).length || !!object.__proto__)) || rawType === "function";
+    var hasChildren = (rawType === "object" && object !== null && (!!Object.getOwnPropertyNames(object).length || !!object.__proto__)) || rawType === "function";
     var description = "";
     try {
         var description = injectedScript._describe(object, abbreviate);
@@ -686,22 +721,7 @@ CommandLineAPIImpl.prototype = {
 
     inspect: function(object)
     {
-        if (arguments.length === 0)
-            return;
-
-        inspectedWindow.console.log(object);
-        if (injectedScript._type(object) === "node")
-            InjectedScriptHost.inspect(object);
-        else {
-            switch (injectedScript._describe(object)) {
-                case "Database":
-                    InjectedScriptHost.selectDatabase(object);
-                    break;
-                case "Storage":
-                    InjectedScriptHost.selectDOMStorage(object);
-                    break;
-            }
-        }
+        return injectedScript._inspect(object);
     },
 
     copy: function(object)

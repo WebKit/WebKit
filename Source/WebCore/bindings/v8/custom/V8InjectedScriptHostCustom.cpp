@@ -40,6 +40,7 @@
 #include "Node.h"
 #include "Page.h"
 #include "ScriptDebugServer.h"
+#include "ScriptValue.h"
 
 #include "V8Binding.h"
 #include "V8BindingState.h"
@@ -54,11 +55,16 @@
 
 namespace WebCore {
 
-Node* InjectedScriptHost::toNode(ScriptValue value)
+Node* InjectedScriptHost::scriptValueAsNode(ScriptValue value)
 {
     if (!value.isObject() || value.isNull())
         return 0;
     return V8Node::toNative(v8::Handle<v8::Object>::Cast(value.v8Value()));
+}
+
+ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node)
+{
+    return ScriptValue(toV8(node));
 }
 
 static void WeakReferenceCallback(v8::Persistent<v8::Value> object, void* parameter)
@@ -174,56 +180,55 @@ v8::Handle<v8::Value> V8InjectedScriptHost::internalConstructorNameCallback(cons
 v8::Handle<v8::Value> V8InjectedScriptHost::inspectCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.inspect()");
-    if (args.Length() < 1)
+    if (args.Length() < 2)
         return v8::Undefined();
 
     InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
-    Node* node = V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0]));
-    if (node)
-        host->inspect(node);
+    ScriptValue objectId(args[0]);
+    ScriptValue hints(args[1]);
+    host->inspectImpl(objectId.toInspectorValue(ScriptState::current()), hints.toInspectorValue(ScriptState::current()));
 
     return v8::Undefined();
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 v8::Handle<v8::Value> V8InjectedScriptHost::currentCallFrameCallback(const v8::Arguments& args)
 {
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     INC_STATS("InjectedScriptHost.currentCallFrame()");
     return toV8(ScriptDebugServer::shared().currentCallFrame());
-}
+#else
+    USE_PARAM(args);
+    return v8::Undefined();
 #endif
+}
 
-#if ENABLE(DATABASE)
-v8::Handle<v8::Value> V8InjectedScriptHost::selectDatabaseCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::databaseIdCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.selectDatabase()");
+    INC_STATS("InjectedScriptHost.databaseId()");
     if (args.Length() < 1)
         return v8::Undefined();
-
+#if ENABLE(DATABASE)
     InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
     Database* database = V8Database::toNative(v8::Handle<v8::Object>::Cast(args[0]));
     if (database)
-        host->selectDatabase(database);
-
+        return v8::Number::New(host->databaseIdImpl(database));
+#endif
     return v8::Undefined();
 }
-#endif
 
-#if ENABLE(DOM_STORAGE)
-v8::Handle<v8::Value> V8InjectedScriptHost::selectDOMStorageCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::storageIdCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.selectDOMStorage()");
     if (args.Length() < 1)
         return v8::Undefined();
-
+#if ENABLE(DOM_STORAGE)
+    INC_STATS("InjectedScriptHost.storageId()");
     InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
     Storage* storage = V8Storage::toNative(v8::Handle<v8::Object>::Cast(args[0]));
     if (storage)
-        host->selectDOMStorage(storage);
-
+        return v8::Number::New(host->storageIdImpl(storage));
+#endif
     return v8::Undefined();
 }
-#endif
 
 InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState* inspectedScriptState)
 {

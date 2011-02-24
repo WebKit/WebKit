@@ -61,6 +61,8 @@ module core {
         void getCookies(out Array cookies, out String cookiesString);
         void deleteCookie(in String cookieName, in String domain);
 
+        [event] void inspect(out Object objectId, out Object hints);
+
         // FIXME: dispatch on agents.
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         void enableDebugger();
@@ -77,6 +79,7 @@ module core {
         void getCompletions(in String expression, in boolean includeCommandLineAPI, out Value result);
         void getProperties(in Object objectId, in boolean ignoreHasOwnProperty, in boolean abbreviate, out Value result);
         void setPropertyValue(in Object objectId, in String propertyName, in String expression, out Value result);
+        void releaseObject(in Object objectId);
         void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
     };
 
@@ -118,7 +121,6 @@ module core {
         void executeSQL(in long databaseId, in String query, out boolean success, out long transactionId);
 
         [event] void addDatabase(out Object database);
-        [event] void selectDatabase(out int databaseId);
         [event] void sqlTransactionSucceeded(out long transactionId, out Value columnNames, out Value values);
         [event] void sqlTransactionFailed(out long transactionId, out Value sqlError);
     };
@@ -131,7 +133,6 @@ module core {
         void removeDOMStorageItem(in long storageId, in String key, out boolean success);
         [event] void addDOMStorage(out Object storage);
         [event] void updateDOMStorage(out int storageId);
-        [event] void selectDOMStorage(out int storageId);
     };
 #endif
 
@@ -171,7 +172,6 @@ module core {
         [event] void childNodeCountUpdated(out long id, out int newValue);
         [event] void childNodeInserted(out long parentId, out long prevId, out Object node);
         [event] void childNodeRemoved(out long parentId, out long id);
-        [event] void inspectElementRequested(out long nodeId);
     };
 
     interface [Conditional=INSPECTOR] CSS {

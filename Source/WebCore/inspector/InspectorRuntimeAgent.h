@@ -59,11 +59,12 @@ public:
     ~InspectorRuntimeAgent();
 
     // Part of the protocol.
-    void evaluate(ErrorString* error, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
-    void getCompletions(ErrorString* error, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
-    void getProperties(ErrorString* error, PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result);
-    void setPropertyValue(ErrorString* error, PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result);
-    void releaseWrapperObjectGroup(ErrorString* error, long injectedScriptId, const String& objectGroup);
+    void evaluate(ErrorString*, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
+    void getCompletions(ErrorString*, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
+    void releaseObject(ErrorString*, PassRefPtr<InspectorObject> objectId);
+    void getProperties(ErrorString*, PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result);
+    void setPropertyValue(ErrorString*, PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result);
+    void releaseWrapperObjectGroup(ErrorString*, long injectedScriptId, const String& objectGroup);
 
 private:
     InspectorRuntimeAgent(InjectedScriptHost*);

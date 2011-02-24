@@ -286,25 +286,21 @@ void InspectorDatabaseAgent::executeSQL(ErrorString*, long databaseId, const Str
     *success = true;
 }
 
+long InspectorDatabaseAgent::databaseId(Database* database)
+{
+    for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != m_resources.end(); ++it) {
+        if (it->second->database() == database)
+            return it->first;
+    }
+    return 0;
+}
+
 Database* InspectorDatabaseAgent::databaseForId(long databaseId)
 {
     DatabaseResourcesMap::iterator it = m_resources.find(databaseId);
     if (it == m_resources.end())
         return 0;
     return it->second->database();
-}
-
-void InspectorDatabaseAgent::selectDatabase(Database* database)
-{
-    if (!m_frontendProvider)
-        return;
-
-    for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != m_resources.end(); ++it) {
-        if (it->second->database() == database) {
-            m_frontendProvider->frontend()->selectDatabase(it->first);
-            break;
-        }
-    }
 }
 
 } // namespace WebCore

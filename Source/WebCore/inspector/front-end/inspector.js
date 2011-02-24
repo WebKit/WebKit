@@ -1240,6 +1240,23 @@ WebInspector.drawLoadingPieChart = function(canvas, percent) {
     g.fill();
 }
 
+WebInspector.inspect = function(objectId, hints)
+{
+    var object = WebInspector.RemoteObject.fromPayload(objectId);
+    if (object.type === "node") {
+        // Request node from backend and focus it.
+        object.pushNodeToFrontend(WebInspector.updateFocusedNode.bind(WebInspector));
+    } else if (hints.databaseId) {
+        WebInspector.currentPanel = WebInspector.panels.resources;
+        WebInspector.panels.resources.selectDatabase(hints.databaseId);
+    } else if (hints.domStorageId) {
+        WebInspector.currentPanel = WebInspector.panels.resources;
+        WebInspector.panels.resources.selectDOMStorage(hints.domStorageId);
+    }
+
+    RuntimeAgent.releaseObject(objectId);
+}
+
 WebInspector.updateFocusedNode = function(nodeId)
 {
     this._updateFocusedNode(nodeId);

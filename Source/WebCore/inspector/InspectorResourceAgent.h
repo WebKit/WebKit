@@ -104,9 +104,9 @@ public:
     Frame* frameForId(unsigned long);
 
     // Called from frontend 
-    void cachedResources(ErrorString* error, RefPtr<InspectorObject>*);
-    void resourceContent(ErrorString* error, unsigned long frameId, const String& url, bool base64Encode, bool* resourceFound, String* content);
-    void setExtraHeaders(ErrorString* error, PassRefPtr<InspectorObject>);
+    void cachedResources(ErrorString*, RefPtr<InspectorObject>*);
+    void resourceContent(ErrorString*, unsigned long frameId, const String& url, bool base64Encode, bool* resourceFound, String* content);
+    void setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject>);
 
 private:
     InspectorResourceAgent(Page* page, InspectorState*, InspectorFrontend* frontend);

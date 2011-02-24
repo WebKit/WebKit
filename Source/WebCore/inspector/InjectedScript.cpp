@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "Frame.h"
 #include "InjectedScriptHost.h"
 #include "InspectorValues.h"
 #include "Node.h"
@@ -104,7 +105,7 @@ Node* InjectedScript::nodeForObjectId(PassRefPtr<InspectorObject> objectId)
     ScriptValue resultValue = function.call(hadException);
     ASSERT(!hadException);
 
-    return InjectedScriptHost::toNode(resultValue);
+    return InjectedScriptHost::scriptValueAsNode(resultValue);
 }
 
 void InjectedScript::resolveNode(long nodeId, RefPtr<InspectorValue>* result)
@@ -138,6 +139,14 @@ void InjectedScript::setPropertyValue(PassRefPtr<InspectorObject> objectId, cons
     makeCall(function, result);
 }
 
+void InjectedScript::releaseObject(PassRefPtr<InspectorObject> objectId)
+{
+    ScriptFunctionCall function(m_injectedScriptObject, "releaseObject");
+    function.appendArgument(objectId->toJSONString());
+    RefPtr<InspectorValue> result;
+    makeCall(function, &result);
+}
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 PassRefPtr<InspectorValue> InjectedScript::callFrames()
 {
@@ -148,17 +157,29 @@ PassRefPtr<InspectorValue> InjectedScript::callFrames()
 }
 #endif
 
-PassRefPtr<InspectorValue> InjectedScript::wrapForConsole(ScriptValue value)
+PassRefPtr<InspectorObject> InjectedScript::wrapForConsole(ScriptValue value)
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall wrapFunction(m_injectedScriptObject, "wrapObjectForConsole");
+    ScriptFunctionCall wrapFunction(m_injectedScriptObject, "wrapForConsole");
     wrapFunction.appendArgument(value);
     wrapFunction.appendArgument(canAccessInspectedWindow());
     bool hadException = false;
     ScriptValue r = wrapFunction.call(hadException);
-    if (hadException)
-        return InspectorString::create("<exception>");
-    return r.toInspectorValue(m_injectedScriptObject.scriptState());
+    if (hadException) {
+        RefPtr<InspectorObject> result = InspectorObject::create();
+        result->setString("description", "<exception>");
+        return result;
+    }
+    return r.toInspectorValue(m_injectedScriptObject.scriptState())->asObject();
+}
+
+void InjectedScript::inspectNode(Node* node)
+{
+    ASSERT(!hasNoValue());
+    ScriptFunctionCall function(m_injectedScriptObject, "inspectNode");
+    function.appendArgument(InjectedScriptHost::nodeAsScriptValue(m_injectedScriptObject.scriptState(), node));
+    RefPtr<InspectorValue> result;
+    makeCall(function, &result);
 }
 
 void InjectedScript::releaseWrapperObjectGroup(const String& objectGroup)

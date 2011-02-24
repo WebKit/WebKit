@@ -76,10 +76,10 @@ namespace WebCore {
         bool m_isLocalStorage;
         RefPtr<Frame> m_frame;
         InspectorFrontend* m_frontend;
-        int m_id;
+        long m_id;
         bool m_reportingChangesToFrontend;
 
-        static int s_nextUnusedId;
+        static long s_nextUnusedId;
     };
 
 } // namespace WebCore

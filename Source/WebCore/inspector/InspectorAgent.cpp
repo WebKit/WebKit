@@ -234,8 +234,21 @@ void InspectorAgent::focusNode()
     ASSERT(m_frontend);
     ASSERT(m_nodeToFocus);
 
-    m_domAgent->inspect(m_nodeToFocus.get());
+    RefPtr<Node> node = m_nodeToFocus.get();
     m_nodeToFocus = 0;
+
+    Document* document = node->ownerDocument();
+    if (!document)
+        return;
+    Frame* frame = document->frame();
+    if (!frame)
+        return;
+
+    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptFor(mainWorldScriptState(frame));
+    if (injectedScript.hasNoValue())
+        return;
+
+    injectedScript.inspectNode(node.get());
 }
 
 void InspectorAgent::highlight(ErrorString*, Node* node)

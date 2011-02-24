@@ -272,7 +272,7 @@ WebInspector.ExtensionServer.prototype = {
             this._dispatchCallback(message.requestId, port, result);
         }
         var evalExpression = "JSON.stringify(eval(unescape('" + escape(message.expression) + "')));";
-        RuntimeAgent.evaluate(evalExpression, "none", true, callback.bind(this));
+        RuntimeAgent.evaluate(evalExpression, "", true, callback.bind(this));
     },
 
     _onRevealAndSelect: function(message)

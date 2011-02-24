@@ -115,25 +115,18 @@ void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString*, long storageId
     }
 }
 
-void InspectorDOMStorageAgent::selectDOMStorage(Storage* storage)
+long InspectorDOMStorageAgent::storageId(Storage* storage)
 {
     ASSERT(storage);
-    if (!m_frontend)
-        return;
-
     Frame* frame = storage->frame();
     ExceptionCode ec = 0;
     bool isLocalStorage = (frame->domWindow()->localStorage(ec) == storage && !ec);
-    long storageResourceId = 0;
     DOMStorageResourcesMap::iterator domStorageEnd = m_resources.end();
     for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != domStorageEnd; ++it) {
-        if (it->second->isSameHostAndType(frame, isLocalStorage)) {
-            storageResourceId = it->first;
-            break;
-        }
+        if (it->second->isSameHostAndType(frame, isLocalStorage))
+            return it->first;
     }
-    if (storageResourceId)
-        m_frontend->selectDOMStorage(storageResourceId);
+    return 0;
 }
 
 InspectorDOMStorageResource* InspectorDOMStorageAgent::getDOMStorageResourceForId(long storageId)
@@ -147,9 +140,10 @@ InspectorDOMStorageResource* InspectorDOMStorageAgent::getDOMStorageResourceForI
 void InspectorDOMStorageAgent::didUseDOMStorage(StorageArea* storageArea, bool isLocalStorage, Frame* frame)
 {
     DOMStorageResourcesMap::iterator domStorageEnd = m_resources.end();
-    for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != domStorageEnd; ++it)
+    for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != domStorageEnd; ++it) {
         if (it->second->isSameHostAndType(frame, isLocalStorage))
             return;
+    }
 
     RefPtr<Storage> domStorage = Storage::create(frame, storageArea);
     RefPtr<InspectorDOMStorageResource> resource = InspectorDOMStorageResource::create(domStorage.get(), isLocalStorage, frame);

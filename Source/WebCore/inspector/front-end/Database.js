@@ -115,12 +115,6 @@ WebInspector.DatabaseDispatcher.prototype = {
         WebInspector.panels.resources.addDatabase(database);
     },
 
-    selectDatabase: function(o)
-    {
-        WebInspector.showPanel("resources");
-        WebInspector.panels.resources.selectDatabase(o);
-    },
-
     sqlTransactionSucceeded: function(transactionId, columnNames, values)
     {
         if (!WebInspector.DatabaseDispatcher._callbacks[transactionId])

@@ -80,11 +80,10 @@ InjectedScriptHost::~InjectedScriptHost()
 {
 }
 
-void InjectedScriptHost::inspect(Node* node)
+void InjectedScriptHost::inspectImpl(PassRefPtr<InspectorValue> objectId, PassRefPtr<InspectorValue> hints)
 {
-    InspectorDOMAgent* domAgent = inspectorDOMAgent();
-    if (domAgent)
-        domAgent->inspect(node);
+    if (InspectorFrontend* fe = frontend())
+        fe->inspect(objectId->asObject(), hints->asObject());
 }
 
 void InjectedScriptHost::clearConsoleMessages()
@@ -117,25 +116,20 @@ long InjectedScriptHost::inspectedNode(unsigned long num)
 }
 
 #if ENABLE(DATABASE)
-Database* InjectedScriptHost::databaseForId(long databaseId)
+long InjectedScriptHost::databaseIdImpl(Database* database)
 {
     if (m_inspectorAgent && m_inspectorAgent->databaseAgent())
-        return m_inspectorAgent->databaseAgent()->databaseForId(databaseId);
+        return m_inspectorAgent->databaseAgent()->databaseId(database);
     return 0;
-}
-
-void InjectedScriptHost::selectDatabase(Database* database)
-{
-    if (m_inspectorAgent && m_inspectorAgent->databaseAgent())
-        m_inspectorAgent->databaseAgent()->selectDatabase(database);
 }
 #endif
 
 #if ENABLE(DOM_STORAGE)
-void InjectedScriptHost::selectDOMStorage(Storage* storage)
+long InjectedScriptHost::storageIdImpl(Storage* storage)
 {
     if (m_inspectorAgent && m_inspectorAgent->domStorageAgent())
-        m_inspectorAgent->domStorageAgent()->selectDOMStorage(storage);
+        return m_inspectorAgent->domStorageAgent()->storageId(storage);
+    return 0;
 }
 #endif
 

@@ -72,7 +72,7 @@ WebInspector.AuditRules.evaluateInTargetWindow = function(func, args, callback)
         else
             callback(null);
     }
-    RuntimeAgent.evaluate("JSON.stringify((" + func + ")(" + JSON.stringify(args) + "))", "none", false, mycallback);
+    RuntimeAgent.evaluate("JSON.stringify((" + func + ")(" + JSON.stringify(args) + "))", "", false, mycallback);
 }
 
 WebInspector.AuditRules.GzipRule = function()
@@ -750,7 +750,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             if (!payload)
                 return callback(null);
 
-            var nodeIdsArray = WebInspector.RemoteObject.fromPayload(payload)
+            var nodeIdsArray = WebInspector.RemoteObject.fromPayload(payload);
             nodeIdsArray.getOwnProperties(false, receivedImages);
         }
 
@@ -766,7 +766,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             return result;
         }
 
-        RuntimeAgent.evaluate("(" + pushImageNodes + ")()", "none", false, receivedImagesArray);
+        RuntimeAgent.evaluate("(" + pushImageNodes + ")()", "", false, receivedImagesArray);
     }
 }
 
