@@ -55,7 +55,7 @@ PASS timing.domainLookupStart is non-zero.
 PASS timing.fetchStart is non-zero.
 PASS timing.loadEventEnd is 0
 PASS timing.loadEventStart is non-zero.
-PASS timing.navigationStart is non-zero.
+PASS timing.navigationStart is 0
 PASS timing.redirectEnd is 0
 PASS timing.redirectStart is 0
 PASS timing.requestStart is non-zero.
@@ -90,15 +90,15 @@ PASS timing.domainLookupStart is non-zero.
 PASS timing.fetchStart is non-zero.
 PASS timing.loadEventEnd is 0
 PASS timing.loadEventStart is non-zero.
-PASS timing.navigationStart is non-zero.
+PASS timing.navigationStart is 0
 PASS timing.redirectEnd is 0
 PASS timing.redirectStart is 0
 PASS timing.requestStart is non-zero.
 PASS timing.responseEnd is non-zero.
 PASS timing.responseStart is non-zero.
 PASS timing.secureConnectionStart is 0
-PASS timing.unloadEventEnd is non-zero.
-PASS timing.unloadEventStart is non-zero.
+PASS timing.unloadEventEnd is 0
+PASS timing.unloadEventStart is 0
 PASS navigation.redirectCount is 0
 PASS successfullyParsed is true
 

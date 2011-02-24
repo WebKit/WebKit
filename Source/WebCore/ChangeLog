@@ -1,3 +1,17 @@
+2011-02-24  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        [Web Timing] Zero out navigationStart and unloadEvent on cross-origin redirect
+        https://bugs.webkit.org/show_bug.cgi?id=55068
+
+        Test: http/tests/misc/webtiming-origins.html
+
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::navigationStart): Zero out on cross origin redirect.
+        (WebCore::PerformanceTiming::unloadEventStart): Ditto.
+        (WebCore::PerformanceTiming::unloadEventEnd): Ditto.
+
 2011-02-24  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Darin Fisher.

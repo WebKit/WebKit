@@ -1,3 +1,14 @@
+2011-02-24  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        [Web Timing] Zero out navigationStart and unloadEvent on cross-origin redirect
+        https://bugs.webkit.org/show_bug.cgi?id=55068
+
+        * http/tests/misc/resources/webtiming-cross-origin-and-back2.html: Expect navStart and unload to be zero.
+        * http/tests/misc/resources/webtiming-cross-origin-redirect.html: Expect navStart to be zero.
+        * http/tests/misc/webtiming-origins-expected.txt:
+
 2011-02-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, fix bad expectation for new test added in r79555.

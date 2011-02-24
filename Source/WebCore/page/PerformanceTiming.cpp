@@ -94,6 +94,9 @@ unsigned long long PerformanceTiming::navigationStart() const
     if (!timing)
         return 0;
 
+    if (timing->hasCrossOriginRedirect)
+        return 0;
+
     return toIntegerMilliseconds(timing->navigationStart);
 }
 
@@ -103,7 +106,7 @@ unsigned long long PerformanceTiming::unloadEventStart() const
     if (!timing)
         return 0;
 
-    if (!timing->hasSameOriginAsPreviousDocument)
+    if (timing->hasCrossOriginRedirect || !timing->hasSameOriginAsPreviousDocument)
         return 0;
 
     return toIntegerMilliseconds(timing->unloadEventStart);
@@ -115,7 +118,7 @@ unsigned long long PerformanceTiming::unloadEventEnd() const
     if (!timing)
         return 0;
 
-    if (!timing->hasSameOriginAsPreviousDocument)
+    if (timing->hasCrossOriginRedirect || !timing->hasSameOriginAsPreviousDocument)
         return 0;
 
     return toIntegerMilliseconds(timing->unloadEventEnd);
