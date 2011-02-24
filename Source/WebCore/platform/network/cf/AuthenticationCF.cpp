@@ -33,6 +33,10 @@
 #include "Credential.h"
 #include "ProtectionSpace.h"
 
+// This header must come before all other CFNetwork headers to work around a CFNetwork bug. It can
+// be removed entirely once <rdar://problem/9042114> is fixed.
+#include <CFNetwork/CFURLConnectionPriv.h>
+
 #include <CFNetwork/CFURLAuthChallengePriv.h>
 #include <CFNetwork/CFURLCredentialPriv.h>
 #include <CFNetwork/CFURLProtectionSpacePriv.h>
