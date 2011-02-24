@@ -1,3 +1,10 @@
+2011-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Mac rebaselines for r79490 and r79493.
+
+        * fast/repaint/text-emphasis-h-expected.txt:
+        * platform/mac/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt:
+
 2011-02-24  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, unskip 2 fixed SVG tests on GTK after r79530.
