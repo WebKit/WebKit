@@ -1,3 +1,14 @@
+2011-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Do not cache the default cairo font options using a static
+        variable. It fixes a memory leak reported by valgrind.
+
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::getDefaultFontOptions):
+        (WebCore::FontPlatformData::initializeWithFontFace):
+
 2011-02-24  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r79570.

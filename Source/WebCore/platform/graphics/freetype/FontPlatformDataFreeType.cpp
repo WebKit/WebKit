@@ -100,17 +100,16 @@ void setCairoFontOptionsFromFontConfigPattern(cairo_font_options_t* options, FcP
         cairo_font_options_set_hint_style(options, CAIRO_HINT_STYLE_NONE);
 }
 
-static const cairo_font_options_t* getDefaultFontOptions()
+static cairo_font_options_t* getDefaultFontOptions()
 {
-    static const cairo_font_options_t* options = cairo_font_options_create();
 #if PLATFORM(GTK)
     if (GdkScreen* screen = gdk_screen_get_default()) {
         const cairo_font_options_t* screenOptions = gdk_screen_get_font_options(screen);
         if (screenOptions)
-            options = screenOptions;
+            return cairo_font_options_copy(screenOptions);
     }
 #endif
-    return options;
+    return cairo_font_options_create();
 }
 
 FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fontDescription)
@@ -242,7 +241,7 @@ String FontPlatformData::description() const
 
 void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace)
 {
-    cairo_font_options_t* options = cairo_font_options_copy(getDefaultFontOptions());
+    cairo_font_options_t* options = getDefaultFontOptions();
 
     cairo_matrix_t ctm;
     cairo_matrix_init_identity(&ctm);
