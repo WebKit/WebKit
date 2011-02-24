@@ -1,5 +1,16 @@
 2011-02-23  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by James Robinson.
+
+        Roll Chromium DEPS
+        https://bugs.webkit.org/show_bug.cgi?id=55096
+
+        Rolling to the future, like a truck.
+
+        * DEPS:
+
+2011-02-23  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Fisher.
 
         [Chromium] Add WebKitClient::cryptographicallyRandomValues
