@@ -530,7 +530,7 @@ void PluginView::setNPWindowIfNeeded()
     // If the window has not been embedded yet (the plug added), we delay setting its allocation until 
     // that point. This fixes issues with some Java plugin instances not rendering immediately.
     if (!m_plugAdded) {
-        m_delayedAllocation.set(static_cast<GtkAllocation*>(g_memdup(&allocation, sizeof(GtkAllocation))));
+        m_delayedAllocation = allocation;
         return;
     }
     gtk_widget_size_allocate(platformPluginWidget(), &allocation);
@@ -766,9 +766,10 @@ void PluginView::plugAddedCallback(GtkSocket* socket, PluginView* view)
     ASSERT(view);
 
     view->m_plugAdded = true;
-    if (view->m_delayedAllocation) {
-        gtk_widget_size_allocate(GTK_WIDGET(socket), view->m_delayedAllocation.get());
-        view->m_delayedAllocation.clear();
+    if (!view->m_delayedAllocation.isEmpty()) {
+        GtkAllocation allocation(view->m_delayedAllocation);
+        gtk_widget_size_allocate(GTK_WIDGET(socket), &allocation);
+        view->m_delayedAllocation.setSize(IntSize());
     }
 }
 

@@ -1,5 +1,17 @@
 2011-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Reviewed by Xan Lopez.
+
+        Use IntRect instead of a pointer to a GtkAllocation struct to avoid
+        unnecessary memory allocations.
+
+        * plugins/PluginView.h:
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::plugAddedCallback):
+
+2011-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix the build with GTK+ 3.
 
         * plugins/PluginView.h:

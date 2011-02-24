@@ -65,9 +65,7 @@ class QPainter;
 QT_END_NAMESPACE
 #endif
 #if PLATFORM(GTK)
-#include "GOwnPtrGtk.h"
 typedef struct _GtkSocket GtkSocket;
-typedef GdkRectangle GtkAllocation;
 #endif
 
 #if USE(JSC)
@@ -441,7 +439,7 @@ private:
         static gboolean plugRemovedCallback(GtkSocket*, PluginView*);
         static void plugAddedCallback(GtkSocket*, PluginView*);
         bool m_plugAdded;
-        GOwnPtr<GtkAllocation> m_delayedAllocation;
+        IntRect m_delayedAllocation;
 #endif
 
         IntRect m_clipRect; // The clip rect to apply to a windowed plug-in
