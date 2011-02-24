@@ -1,3 +1,9 @@
+2011-02-24  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skipping crashing test on GTK
+
+        * platform/gtk/Skipped:
+
 2011-02-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium Mac test expectations update.
