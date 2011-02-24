@@ -3414,7 +3414,7 @@ void RenderBox::flipForWritingMode(FloatRect& rect) const
 IntSize RenderBox::locationOffsetIncludingFlipping() const
 {
     RenderBlock* containerBlock = containingBlock();
-    if (containerBlock == this)
+    if (!containerBlock || containerBlock == this)
         return locationOffset();
     
     IntRect rect(frameRect());
