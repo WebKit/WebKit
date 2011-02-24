@@ -1,3 +1,24 @@
+2011-02-24  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium Snow Leopard expectations update.
+
+        * platform/chromium-mac/editing/deleting/delete-tab-003-expected.checksum: Added.
+        * platform/chromium-mac/editing/deleting/delete-tab-003-expected.png: Added.
+        * platform/chromium-mac/editing/deleting/delete-ws-fixup-001-expected.checksum: Added.
+        * platform/chromium-mac/editing/deleting/delete-ws-fixup-001-expected.png: Added.
+        * platform/chromium-mac/editing/inserting/insert-tab-003-expected.checksum: Added.
+        * platform/chromium-mac/editing/inserting/insert-tab-003-expected.png: Added.
+        * platform/chromium-mac/editing/pasteboard/paste-blockquote-2-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/paste-blockquote-2-expected.png: Added.
+        * platform/chromium-mac/editing/selection/replaced-boundaries-3-expected.checksum:
+        * platform/chromium-mac/editing/selection/replaced-boundaries-3-expected.png: Added.
+        * platform/chromium-mac/editing/selection/select-from-textfield-outwards-expected.checksum: Added.
+        * platform/chromium-mac/editing/selection/select-from-textfield-outwards-expected.png: Added.
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.checksum:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-02-24  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r79604.
