@@ -74,9 +74,13 @@ class Lighttpd(http_server_base.HttpServerBase):
                 self._port_obj.layout_tests_dir(), 'http', 'tests')
             self._js_test_resource = os.path.join(
                 self._port_obj.layout_tests_dir(), 'fast', 'js', 'resources')
+            self._media_resource = os.path.join(
+                self._port_obj.layout_tests_dir(), 'media')
+
         except:
             self._webkit_tests = None
             self._js_test_resource = None
+            self._media_resource = None
 
         # Self generated certificate for SSL server (for client cert get
         # <base-path>\chrome\test\data\ssl\certs\root_ca_cert.crt)
@@ -146,6 +150,10 @@ class Lighttpd(http_server_base.HttpServerBase):
         # Setup a link to where the js test templates are stored
         f.write(('alias.url = ( "/js-test-resources" => "%s" )\n\n') %
                     (self._js_test_resource))
+
+        # Setup a link to where the media resources are stored.
+        f.write(('alias.url = ( "/media-resources" => "%s" )\n\n') %
+                    (self._media_resource))
 
         # dump out of virtual host config at the bottom.
         if self._root:

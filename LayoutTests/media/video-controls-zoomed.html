@@ -6,7 +6,7 @@
       margin: 50px;
     }
   </style>
-  <script src=../http/tests/media/media-file.js></script>
+  <script src=media-file.js></script>
   <script type="text/javascript" charset="utf-8">
     function runTest()
     {
@@ -28,7 +28,7 @@
     <video controls></video>
     <p>Test controls on zoomed video.</p>
     <p>This test only runs in DRT!</p>
-    <script src=../http/tests/media/video-test.js></script>
+    <script src=video-test.js></script>
     <script>
         testExpected("video.controls", null, '!=');
         waitForEvent('canplaythrough', function() {

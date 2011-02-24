@@ -1,3 +1,154 @@
+2011-02-24  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by Mihai Parparita.
+
+        [chromium] Move media-file.js and video-test.js back to media/ for UILayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=55089
+
+        Media's UILayoutTests rely on video-test.js and media-file.js to be in
+        the media/ folder.
+
+        * http/tests/media/pdf-served-as-pdf.html:
+        * http/tests/media/reload-after-dialog.html:
+        * http/tests/media/remove-while-loading.html:
+        * http/tests/media/text-served-as-text.html:
+        * http/tests/media/video-buffered.html:
+        * http/tests/media/video-cancel-load.html:
+        * http/tests/media/video-cookie.html:
+        * http/tests/media/video-error-abort.html:
+        * http/tests/media/video-load-twice.html:
+        * http/tests/media/video-play-stall-seek.html:
+        * http/tests/media/video-play-stall.html:
+        * http/tests/media/video-play-suspend.html:
+        * http/tests/media/video-referer.html:
+        * http/tests/media/video-seekable-stall.html:
+        * http/tests/media/video-served-as-text.html:
+        * media/adopt-node-crash.html:
+        * media/audio-constructor-preload.html:
+        * media/audio-constructor-src.html:
+        * media/audio-constructor.html:
+        * media/audio-controls-rendering.html:
+        * media/audio-data-url.html:
+        * media/audio-delete-while-slider-thumb-clicked.html:
+        * media/audio-delete-while-step-button-clicked.html:
+        * media/audio-mpeg-supported.html:
+        * media/audio-mpeg4-supported.html:
+        * media/audio-play-event.html:
+        * media/before-load-member-access.html:
+        * media/broken-video.html:
+        * media/constructors.html:
+        * media/context-menu-actions.html:
+        * media/controls-after-reload.html:
+        * media/controls-css-overload.html:
+        * media/controls-drag-timebar.html:
+        * media/controls-right-click-on-timebar.html:
+        * media/controls-strict.html:
+        * media/controls-styling.html:
+        * media/controls-without-preload.html:
+        * media/event-attributes.html:
+        * media/invalid-media-url-crash.html:
+        * media/media-can-play-mpeg-audio.html:
+        * media/media-can-play-mpeg4-video.html:
+        * media/media-can-play-octet-stream.html:
+        * media/media-can-play-ogg.html:
+        * media/media-can-play-wav-audio.html:
+        * media/media-captions.html:
+        * media/media-constants.html:
+        * media/media-file.js: Renamed from LayoutTests/http/tests/media/media-file.js.
+        * media/media-fullscreen-inline.html:
+        * media/media-fullscreen-not-in-document.html:
+        * media/media-load-event.html:
+        * media/media-startTime.html:
+        * media/remove-from-document-no-load.html:
+        * media/remove-from-document.html:
+        * media/restore-from-page-cache.html:
+        * media/unsupported-rtsp.html:
+        * media/unsupported-tracks.html:
+        * media/video-append-source.html:
+        * media/video-aspect-ratio.html:
+        * media/video-autoplay.html:
+        * media/video-buffered.html:
+        * media/video-can-play-type.html:
+        * media/video-canvas-alpha.html:
+        * media/video-canvas-source.html:
+        * media/video-click-dblckick-standalone.html:
+        * media/video-controls-rendering.html:
+        * media/video-controls-transformed.html:
+        * media/video-controls-visible-audio-only.html:
+        * media/video-controls-zoomed.html:
+        * media/video-controls.html:
+        * media/video-currentTime-delay.html:
+        * media/video-currentTime-set.html:
+        * media/video-currentTime-set2.html:
+        * media/video-currentTime.html:
+        * media/video-delay-load-event.html:
+        * media/video-display-aspect-ratio.html:
+        * media/video-display-none-crash.html:
+        * media/video-display-toggle.html:
+        * media/video-does-not-loop.html:
+        * media/video-dom-autoplay.html:
+        * media/video-dom-preload.html:
+        * media/video-dom-src.html:
+        * media/video-duration-known-after-eos.html:
+        * media/video-error-does-not-exist.html:
+        * media/video-frame-accurate-seek.html:
+        * media/video-layer-crash.html:
+        * media/video-load-networkState.html:
+        * media/video-load-readyState.html:
+        * media/video-loop.html:
+        * media/video-muted.html:
+        * media/video-no-audio.html:
+        * media/video-no-autoplay.html:
+        * media/video-pause-empty-events.html:
+        * media/video-pause-immediately.html:
+        * media/video-play-empty-events.html:
+        * media/video-play-pause-events.html:
+        * media/video-play-pause-exception.html:
+        * media/video-played-collapse.html:
+        * media/video-played-ranges-1.html:
+        * media/video-played-reset.html:
+        * media/video-poster-delayed.html:
+        * media/video-poster-scale.html:
+        * media/video-poster.html:
+        * media/video-preload.html:
+        * media/video-replaces-poster.html:
+        * media/video-reverse-play-duration.html:
+        * media/video-seek-by-small-increment.html:
+        * media/video-seek-no-src-exception.html:
+        * media/video-seek-past-end-paused.html:
+        * media/video-seek-past-end-playing.html:
+        * media/video-seekable.html:
+        * media/video-seeking.html:
+        * media/video-size-intrinsic-scale.html:
+        * media/video-size.html:
+        * media/video-source-error-no-candidate.html:
+        * media/video-source-error.html:
+        * media/video-source-inserted.html:
+        * media/video-source-media.html:
+        * media/video-source-moved.html:
+        * media/video-source-none-supported.html:
+        * media/video-source-removed.html:
+        * media/video-source-type-params.html:
+        * media/video-source-type.html:
+        * media/video-source.html:
+        * media/video-src-change.html:
+        * media/video-src-invalid-remove.html:
+        * media/video-src-none.html:
+        * media/video-src-plus-source.html:
+        * media/video-src-remove.html:
+        * media/video-src-set.html:
+        * media/video-src-source.html:
+        * media/video-src.html:
+        * media/video-test.js: Renamed from LayoutTests/http/tests/media/video-test.js.
+        * media/video-timeupdate-during-playback.html:
+        * media/video-timeupdate-reverse-play.html:
+        * media/video-transformed.html:
+        * media/video-volume-slider.html:
+        * media/video-volume.html:
+        * media/video-width-height.html:
+        * media/video-zoom-controls.html:
+        * media/video-zoom.html:
+
 2011-02-24  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Ojan Vafai.
