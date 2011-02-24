@@ -1,3 +1,18 @@
+2011-02-24  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Layout test fast/dom/timer-increase-then-decrease-min-interval.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=55176
+
+        Wait twice as long (1 second instead of 0.5 seconds) for results
+        from these two tests. They were on the verge of passing when
+        failures occurred previously, so this increase should push them
+        well over the passing threshold.
+
+        * fast/dom/timer-increase-then-decrease-min-interval-repeating.html:
+        * fast/dom/timer-increase-then-decrease-min-interval.html:
+
 2011-02-24  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Leopard baseline update for some text tests after r78846

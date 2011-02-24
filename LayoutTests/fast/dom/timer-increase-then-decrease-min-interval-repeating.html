@@ -32,15 +32,15 @@ function runTest() {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
 
-    // Make timers run no more often than once per second.
-    layoutTestController.setMinimumTimerInterval(1.0);
+    // Make timers run no more often than once every two seconds.
+    layoutTestController.setMinimumTimerInterval(2.0);
 
-    setInterval(slowTimeoutHandler, 500);
+    setInterval(slowTimeoutHandler, 1000);
     setInterval(fastTimeoutHandler, 1);
 
     // Allow timers to run quickly again.
     // If this doesn't cause timers to get re-evaluated immediately,
-    // the fast timeout handler won't get called for up to a second,
+    // the fast timeout handler won't get called for up to two seconds,
     // which would lead to poor responsiveness.
     layoutTestController.setMinimumTimerInterval(0.004);
 }
