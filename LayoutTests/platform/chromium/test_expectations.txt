@@ -2335,9 +2335,6 @@ BUGCR49970 : platform/chromium/plugins/call-as-function.html = PASS TEXT
 // Flaky since WebKit r63994
 BUGWK42964 WIN LINUX : tables/mozilla_expected_failures/bugs/bug89315.html = PASS FAIL
 
-// Fails since WebKit r64156
-BUGWK43086 : fast/canvas/canvas-ImageData-behaviour.html = TEXT
-
 // Application Cache Quotas
 BUGWK43459 : http/tests/appcache/origin-quota.html = TEXT MISSING
 
@@ -3478,8 +3475,6 @@ BUGCR73651 MAC : http/tests/security/isolatedWorld/all-window-properties.html = 
 BUGCR73651 MAC : http/tests/security/isolatedWorld/all-window-prototypes.html = TEXT
 
 BUGWK54882 WIN : inspector/styles/styles-update-from-js.html = TEXT TIMEOUT
-
-BUGWK55023 : http/tests/navigation/useragent.php = TEXT
 
 BUGWK54736 MAC : editing/inserting/typing-tab-designmode-forms.html = IMAGE
 BUGWK54736 MAC : editing/pasteboard/4641033.html = IMAGE

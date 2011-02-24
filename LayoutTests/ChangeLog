@@ -1,3 +1,9 @@
+2011-02-23  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed unskipping passed tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-23  Andrew Wilson  <atwilson@chromium.org>
 
         Removed outdated/incorrect chromium baselins. Unreviewed.
