@@ -1,3 +1,16 @@
+2011-02-24  Tom Sepez  <tsepez@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add test for frame removal during resize event handler.  Update
+        other tests to account for async onresize event disptach.
+        https://bugs.webkit.org/show_bug.cgi?id=54467
+
+        * fast/dynamic/paused-event-dispatch.html:
+        * fast/events/resize-subframe.html:
+        * fast/replaced/frame-removed-during-resize-smaller-expected.txt: Added.
+        * fast/replaced/frame-removed-during-resize-smaller.html: Added.
+
 2011-02-24  Xianzhu Wang  <wangxianzhu@google.com>
 
         Reviewed by Adam Barth.

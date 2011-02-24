@@ -18,6 +18,9 @@
 
     function test()
     {
+        if (window.layoutTestController)
+            layoutTestController.waitUntilDone();
+
         document.body.offsetTop;
         var bottomBox = document.getElementById("bottomBox");
         bottomBox.parentNode.removeChild(bottomBox);
@@ -27,10 +30,9 @@
     function iframeResized()
     {
         document.body.appendChild(document.createElement("div"));
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
+        if (window.layoutTestController)
             layoutTestController.dumpAsText();
-        }
+
         setTimeout(finish, 0);
     }
 

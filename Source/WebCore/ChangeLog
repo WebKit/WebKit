@@ -1,3 +1,16 @@
+2011-02-24  Tom Sepez  <tsepez@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Make frameview resized event dispatch async so that it occurs
+        after layout has completed.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=54467
+        Test: fast/replaced/frame-removed-during-resize-smaller.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendResizeEvent):
+
 2011-02-24  Xianzhu Wang  <wangxianzhu@google.com>
 
         Reviewed by Adam Barth.

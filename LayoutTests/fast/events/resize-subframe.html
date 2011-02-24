@@ -2,8 +2,10 @@
     function test()
     {
         if (window.layoutTestController)
+        {
             layoutTestController.dumpAsText();
-
+            layoutTestController.waitUntilDone();
+        }
         document.body.offsetTop;
         document.getElementById("iframe").style.height = "100px";
     }
@@ -15,7 +17,10 @@
                 function resized()
                 {
                     if (window.layoutTestController)
+                    {
                         alert('PASS');
+                        layoutTestController.notifyDone();
+                    }
                     else
                         document.body.appendChild(document.createTextNode('PASS'));
                 }
