@@ -1,3 +1,18 @@
+2011-02-24  Anna Cavender  <annacc@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        New baselines for media/video-replaces-poster.html needed after r79401
+        https://bugs.webkit.org/show_bug.cgi?id=54910
+
+        * platform/chromium-linux/media/video-replaces-poster-expected.checksum:
+        * platform/chromium-linux/media/video-replaces-poster-expected.png:
+        * platform/chromium-mac/media/video-replaces-poster-expected.checksum:
+        * platform/chromium-mac/media/video-replaces-poster-expected.png:
+        * platform/chromium-win/media/video-replaces-poster-expected.checksum:
+        * platform/chromium-win/media/video-replaces-poster-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-02-24  Victoria Kirst  <vrk@google.com>
 
         Reviewed by Mihai Parparita.

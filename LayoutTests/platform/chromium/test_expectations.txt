@@ -791,11 +791,6 @@ BUGCR59675 BUGCR59263 SKIP : media/event-attributes.html = PASS FAIL TIMEOUT
 // These tests are flaky with subtle pixel differences.
 BUGCR60744 LINUX : media/video-layer-crash.html = IMAGE PASS
 
-// This is flaky with a subtle pixel difference in the bottom right corner,
-// which I believe is due to new video scaling algorithm.
-// We should rewrite this test so that we wait for timeupdate event until the time is no less than 1. 
-BUGCR60244 : media/video-replaces-poster.html = IMAGE PASS
-
 // These tests are failing because they use position-dependent mouse clicks.
 // TESTISSUE 
 BUGCR25375 : media/video-controls-transformed.html = FAIL
