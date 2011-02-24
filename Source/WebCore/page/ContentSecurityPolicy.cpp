@@ -63,6 +63,11 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header)
     m_havePolicy = true;
 }
 
+bool ContentSecurityPolicy::allowJavaScriptURLs() const
+{
+    return !m_scriptSrc;
+}
+
 bool ContentSecurityPolicy::canLoadExternalScriptFromSrc(const String& url) const
 {
     return !m_scriptSrc || m_scriptSrc->allows(KURL(ParsedURLString, url));

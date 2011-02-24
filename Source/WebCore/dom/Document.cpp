@@ -4417,13 +4417,15 @@ void Document::initSecurityContext()
         // This can occur via document.implementation.createDocument().
         m_cookieURL = KURL(ParsedURLString, "");
         ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::createEmpty());
+        m_contentSecurityPolicy = ContentSecurityPolicy::create();
         return;
     }
 
     // In the common case, create the security context from the currently
-    // loading URL.
+    // loading URL with a fresh content security policy.
     m_cookieURL = m_url;
     ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(m_url, m_frame->loader()->sandboxFlags()));
+    m_contentSecurityPolicy = ContentSecurityPolicy::create();
 
     if (SecurityOrigin::allowSubstituteDataAccessToLocal()) {
         // If this document was loaded with substituteData, then the document can
@@ -4467,6 +4469,8 @@ void Document::initSecurityContext()
         // We alias the SecurityOrigins to match Firefox, see Bug 15313
         // https://bugs.webkit.org/show_bug.cgi?id=15313
         ScriptExecutionContext::setSecurityOrigin(ownerFrame->document()->securityOrigin());
+        // FIXME: Consider moving m_contentSecurityPolicy into SecurityOrigin.
+        m_contentSecurityPolicy = ownerFrame->document()->contentSecurityPolicy();
     }
 }
 

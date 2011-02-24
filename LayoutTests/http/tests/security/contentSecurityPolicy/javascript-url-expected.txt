@@ -1,0 +1,4 @@
+ALERT: PASS
+Loads an iframe which in turns tries to run JavaScript URLs. The test passes if the iframe doesn't alert 'fail'.
+
+  

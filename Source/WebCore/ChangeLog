@@ -1,3 +1,36 @@
+2011-02-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CSP's script-src should block JavaScript URLs
+        https://bugs.webkit.org/show_bug.cgi?id=54787
+
+        Blocking JavaScript URLs required some re-architecting of the lifetime
+        of the ContentSecurityPolicy object.  We now manage the lifetime the
+        same way we manage the lifetime of the SecurityOrigin object.  In
+        particular, when SecurityOrigin inherits into an about:blank iframe, we
+        inherit the CSP object as well.  (This is covered by the test added in
+        this patch.) In the future, we might consider making
+        ContentSecurityPolicy a component of SecurityOrigin instead of a
+        component of Document.
+
+        I noted the trickiness in
+        http://www.w3.org/Security/wiki/Content_Security_Policies so that we'll
+        make sure it gets defined properly in the spec.
+
+        Test: http/tests/security/contentSecurityPolicy/javascript-url.html
+
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        * dom/Document.h:
+        (WebCore::Document::contentSecurityPolicy):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowJavaScriptURLs):
+        * page/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::create):
+
 2011-02-21  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -72,13 +72,10 @@ bool ScriptController::executeIfJavaScriptURL(const KURL& url, ShouldReplaceDocu
     if (!protocolIsJavaScript(url))
         return false;
 
-    if (!m_frame->page())
-        return true;
-
-    if (!m_frame->page()->javaScriptURLsAreAllowed())
-        return true;
-
-    if (m_frame->inViewSourceMode())
+    if (!m_frame->page()
+        || !m_frame->page()->javaScriptURLsAreAllowed()
+        || !m_frame->document()->contentSecurityPolicy()->allowJavaScriptURLs()
+        || m_frame->inViewSourceMode())
         return true;
 
     // We need to hold onto the Frame here because executing script can

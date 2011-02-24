@@ -1109,7 +1109,7 @@ public:
 
     void initDNSPrefetch();
 
-    ContentSecurityPolicy* contentSecurityPolicy() { return &m_contentSecurityPolicy; }
+    ContentSecurityPolicy* contentSecurityPolicy() { return m_contentSecurityPolicy.get(); }
 
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
@@ -1415,7 +1415,7 @@ private:
     OwnPtr<ScriptedAnimationController> m_scriptedAnimationController;
 #endif
 
-    ContentSecurityPolicy m_contentSecurityPolicy;
+    RefPtr<ContentSecurityPolicy> m_contentSecurityPolicy;
 };
 
 inline bool Document::hasElementWithId(AtomicStringImpl* id) const

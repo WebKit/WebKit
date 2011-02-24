@@ -33,16 +33,20 @@ namespace WebCore {
 
 class CSPDirective;
 
-class ContentSecurityPolicy {
-    WTF_MAKE_NONCOPYABLE(ContentSecurityPolicy);
+class ContentSecurityPolicy : public RefCounted<ContentSecurityPolicy> {
 public:
-    ContentSecurityPolicy();
+    static PassRefPtr<ContentSecurityPolicy> create() { return adoptRef(new ContentSecurityPolicy); }
     ~ContentSecurityPolicy();
 
     void didReceiveHeader(const String&);
+
+    bool allowJavaScriptURLs() const;
+    // FIXME: Rename canLoadExternalScriptFromSrc to allowScriptFromURL.
     bool canLoadExternalScriptFromSrc(const String& url) const;
 
 private:
+    ContentSecurityPolicy();
+
     void parse(const String&);
     void parseDirective(const UChar*& pos, const UChar* end, Vector<UChar, 32>& name, Vector<UChar, 64>& value);
     void emitDirective(const String& name, const String& value);

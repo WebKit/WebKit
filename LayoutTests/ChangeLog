@@ -1,3 +1,17 @@
+2011-02-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CSP's script-src should block JavaScript URLs
+        https://bugs.webkit.org/show_bug.cgi?id=54787
+
+        Test how various CSP policies affect JavaScript URLs.  We could test
+        more contexts in the future, but this is a start.
+
+        * http/tests/security/contentSecurityPolicy/javascript-url-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/javascript-url.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/javascript-url.pl: Added.
+
 2011-02-24  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Eric Seidel.
