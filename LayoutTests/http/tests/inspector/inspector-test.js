@@ -157,6 +157,19 @@ InspectorTest.runTestSuite = function(testSuite)
     runner();
 }
 
+InspectorTest.assertEquals = function(expected, found, message)
+{
+    if (expected === found)
+        return;
+
+    var error;
+    if (message)
+        error = "Failure (" + message + "):";
+    else
+        error = "Failure:";
+    throw new Error(error + " expected <" + expected + "> found <" + found + ">");
+}
+
 InspectorTest.safeWrap = function(func, onexception)
 {
     function result()
@@ -167,7 +180,7 @@ InspectorTest.safeWrap = function(func, onexception)
         try {
             return func.apply(wrapThis, arguments);
         } catch(e) {
-            InspectorTest.addResult("Exception while running: " + func + "\n" + e);
+            InspectorTest.addResult("Exception while running: " + func + "\n" + (e.stack || e));
             if (onexception)
                 InspectorTest.safeWrap(onexception)();
             else

@@ -1,0 +1,5 @@
+Tests that scripts panel UI elements work as intended.
+
+Debugger was enabled.
+Debugger was disabled.
+

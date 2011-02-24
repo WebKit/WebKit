@@ -1,0 +1,112 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script src="resources/script1.js"></script>
+<script src="resources/script2.js"></script>
+<script src="resources/script3.js"></script>
+
+<script>
+
+function test()
+{
+    var panel = WebInspector.panels.scripts;
+    var select = panel._filesSelectElement;
+    var files = ["debugger-test.js", "inspector-test.js", "script1.js", "script2.js", "script3.js", "scripts-panel.html"];
+
+    InspectorTest.runDebuggerTestSuite([
+        function testInitialLoad(next)
+        {
+            function checkFilesList()
+            {
+                for (var i = 0; i < files.length; ++i) {
+                    var found = false;
+                    for (var j = 0; j < select.length; ++j) {
+                        if (select[j].text === files[i]) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        InspectorTest.addSniffer(panel, "_addOptionToFilesSelect", checkFilesList);
+                        return;
+                    }
+                }
+
+                var sourceFrameCount = 0;
+                for (var sourceName in panel._sourceNameToSourceFrame)
+                    sourceFrameCount += 1;
+                InspectorTest.assertEquals(1, sourceFrameCount, "wrong number of source frames created during initial load");
+
+                next();
+            }
+            checkFilesList();
+        },
+
+        function testHistory(next)
+        {
+            function showSourceFrame(fileName)
+            {
+                for (var i = 0; i < select.length; ++i) {
+                    if (select[i].text !== fileName)
+                        continue;
+                    select.selectedIndex = i;
+                    panel._filesSelectChanged();
+                    break;
+                }
+            }
+
+            function checkCurrentlySelectedFileName(fileName)
+            {
+                InspectorTest.assertEquals(fileName, select[select.selectedIndex].text);
+            }
+
+            for (var i = 0; i < files.length; ++i)
+                showSourceFrame(files[i]);
+            checkCurrentlySelectedFileName("scripts-panel.html");
+            InspectorTest.assertEquals(true, panel.forwardButton.disabled);
+
+            panel.backButton.click();
+            checkCurrentlySelectedFileName("script3.js");
+            InspectorTest.assertEquals(false, panel.forwardButton.disabled);
+
+            panel.forwardButton.click();
+            checkCurrentlySelectedFileName("scripts-panel.html");
+            InspectorTest.assertEquals(true, panel.forwardButton.disabled);
+
+            for (var i = 0; i < files.length - 1; ++i)
+                panel.backButton.click();
+            checkCurrentlySelectedFileName("debugger-test.js");
+
+            panel.forwardButton.click();
+            panel.forwardButton.click();
+            panel.forwardButton.click();
+            checkCurrentlySelectedFileName("script2.js");
+
+            showSourceFrame("inspector-test.js");
+            checkCurrentlySelectedFileName("inspector-test.js");
+            InspectorTest.assertEquals(true, panel.forwardButton.disabled);
+
+            panel.backButton.click();
+            checkCurrentlySelectedFileName("script2.js");
+
+            panel.backButton.click();
+            checkCurrentlySelectedFileName("script1.js");
+
+            panel.backButton.click();
+            checkCurrentlySelectedFileName("debugger-test.js");
+
+            next();
+        }
+    ]);
+};
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests that scripts panel UI elements work as intended.</p>
+
+</body>
+</html>

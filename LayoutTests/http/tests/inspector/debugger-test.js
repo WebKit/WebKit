@@ -152,59 +152,20 @@ InspectorTest._resumedScript = function()
 
 InspectorTest.showScriptSource = function(scriptName, callback)
 {
-    if (InspectorTest._scriptsAreParsed([scriptName]))
-        InspectorTest._showScriptSource(scriptName, InspectorTest.safeWrap(callback));
-     else
-        InspectorTest.addSniffer(WebInspector.panels.scripts, "_addScriptToFilesMenu", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
-};
-
-InspectorTest._scriptsAreParsed = function(scripts)
-{
-    var scriptSelect = document.getElementById("scripts-files");
-    var options = scriptSelect.options;
-
-    // Check that all the expected scripts are present.
-    for (var i = 0; i < scripts.length; i++) {
-        var found = false;
-        for (var j = 0; j < options.length; j++) {
-            if (options[j].text === scripts[i]) {
-                found = true;
-                break;
-            }
+    var filesSelect = document.getElementById("scripts-files");
+    for (var i = 0; i < filesSelect.length; ++i) {
+        if (filesSelect[i].text === scriptName) {
+            filesSelect.selectedIndex = i;
+            WebInspector.panels.scripts._filesSelectChanged();
+            var sourceFrame = WebInspector.panels.scripts.visibleView;
+            if (sourceFrame.loaded)
+                callback(sourceFrame);
+            else
+                InspectorTest.addSniffer(sourceFrame._textModel, "setText", callback.bind(null, sourceFrame));
+            return;
         }
-        if (!found)
-            return false;
     }
-    return true;
-};
-
-InspectorTest._showScriptSource = function(scriptName, callback)
-{
-    var scriptSelect = document.getElementById("scripts-files");
-    var options = scriptSelect.options;
-    var scriptsPanel = WebInspector.panels.scripts;
-
-    // Select page's script if it's not current option.
-    var scriptResource;
-    if (options[scriptSelect.selectedIndex].text === scriptName)
-        scriptResource = options[scriptSelect.selectedIndex].representedObject;
-    else {
-        var pageScriptIndex = -1;
-        for (var i = 0; i < options.length; i++) {
-            if (options[i].text === scriptName) {
-                pageScriptIndex = i;
-                break;
-            }
-        }
-        scriptResource = options[pageScriptIndex].representedObject;
-        scriptsPanel._showScriptOrResource(scriptResource);
-    }
-
-    var sourceFrame = WebInspector.currentPanel.visibleView;
-    if (sourceFrame._content)
-        callback(sourceFrame);
-    else
-        InspectorTest.addSniffer(sourceFrame._textModel, "setText", callback.bind(null, sourceFrame));
+    InspectorTest.addSniffer(WebInspector.panels.scripts, "_addOptionToFilesSelect", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
 };
 
 InspectorTest.expandProperties = function(properties, callback)

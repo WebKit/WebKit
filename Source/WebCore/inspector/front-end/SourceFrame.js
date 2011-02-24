@@ -351,6 +351,7 @@ WebInspector.SourceFrame.prototype = {
     {
         this._executionLineNumber = lineNumber;
         this._textViewer.addDecoration(lineNumber, "webkit-execution-line");
+        this._textViewer.revealLine(lineNumber);
     },
 
     clearExecutionLine: function()
