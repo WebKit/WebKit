@@ -66,6 +66,7 @@ public:
         TypeBackForwardListItem,
         TypeCacheManager,
         TypeContext,
+        TypeCookieManager,
         TypeDatabaseManager,
         TypeDownload,
         TypeFormSubmissionListener,

@@ -35,6 +35,8 @@ WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebApplicationCacheManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebApplicationCacheManagerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebContextMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebCookieManagerMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebCookieManagerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerMessages.h \
@@ -59,6 +61,8 @@ WEBKIT2_GENERATED_SOURCES = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebApplicationCacheManagerMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebApplicationCacheManagerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebContextMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebCookieManagerMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebCookieManagerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerMessageReceiver.cpp \
@@ -165,6 +169,7 @@ HEADERS += \
     UIProcess/WebContextInjectedBundleClient.h \
     UIProcess/WebContextMenuProxy.h \
     UIProcess/WebContextUserMessageCoders.h \
+    UIProcess/WebCookieManagerProxy.h \
     UIProcess/WebDatabaseManagerProxy.h \
     UIProcess/WebDatabaseManagerProxyClient.h \
     UIProcess/WebDownloadClient.h \
@@ -195,6 +200,7 @@ HEADERS += \
     UIProcess/qt/WebPopupMenuProxyQt.h \
     WebProcess/ApplicationCache/WebApplicationCacheManager.h \
     WebProcess/Authentication/AuthenticationManager.h \
+    WebProcess/Cookies/WebCookieManager.h \
     WebProcess/Downloads/Download.h \
     WebProcess/Downloads/DownloadManager.h \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
@@ -337,6 +343,7 @@ SOURCES += \
     UIProcess/WebContext.cpp \
     UIProcess/WebContextInjectedBundleClient.cpp \
     UIProcess/WebContextMenuProxy.cpp \
+    UIProcess/WebCookieManagerProxy.cpp \
     UIProcess/WebDatabaseManagerProxy.cpp \
     UIProcess/WebDatabaseManagerProxyClient.cpp \
     UIProcess/WebDownloadClient.cpp \
@@ -375,6 +382,7 @@ SOURCES += \
     UIProcess/qt/WebPreferencesQt.cpp \
     WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
     WebProcess/Authentication/AuthenticationManager.cpp \
+    WebProcess/Cookies/WebCookieManager.cpp \
     WebProcess/Downloads/Download.cpp \
     WebProcess/Downloads/DownloadManager.cpp \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \

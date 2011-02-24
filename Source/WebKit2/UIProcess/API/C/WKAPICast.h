@@ -50,6 +50,7 @@ class WebBackForwardList;
 class WebBackForwardListItem;
 class WebResourceCacheManagerProxy;
 class WebContext;
+class WebCookieManagerProxy;
 class WebCredential;
 class WebDatabaseManagerProxy;
 class WebFormSubmissionListenerProxy;
@@ -74,6 +75,7 @@ WK_ADD_API_MAPPING(WKBackForwardListItemRef, WebBackForwardListItem)
 WK_ADD_API_MAPPING(WKBackForwardListRef, WebBackForwardList)
 WK_ADD_API_MAPPING(WKResourceCacheManagerRef, WebResourceCacheManagerProxy)
 WK_ADD_API_MAPPING(WKContextRef, WebContext)
+WK_ADD_API_MAPPING(WKCookieManagerRef, WebCookieManagerProxy)
 WK_ADD_API_MAPPING(WKCredentialRef, WebCredential)
 WK_ADD_API_MAPPING(WKDatabaseManagerRef, WebDatabaseManagerProxy)
 WK_ADD_API_MAPPING(WKDownloadRef, DownloadProxy)

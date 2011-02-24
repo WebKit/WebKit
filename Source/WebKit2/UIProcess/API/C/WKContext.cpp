@@ -158,6 +158,11 @@ void WKContextClearApplicationCache(WKContextRef contextRef)
     toImpl(contextRef)->clearApplicationCache();
 }
 
+WKCookieManagerRef WKContextGetCookieManager(WKContextRef contextRef)
+{
+    return toAPI(toImpl(contextRef)->cookieManagerProxy());
+}
+
 WKApplicationCacheManagerRef WKContextGetApplicationCacheManager(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->applicationCacheManagerProxy());

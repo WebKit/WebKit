@@ -1394,6 +1394,22 @@
 					>
 				</File>
             </Filter>
+            <Filter
+                Name="Cookies"
+                >
+                <File
+					RelativePath="..\WebProcess\Cookies\WebCookieManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Cookies\WebCookieManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Cookies\WebCookieManager.messages.in"
+					>
+				</File>
+            </Filter>
 			<Filter
 				Name="WebCoreSupport"
 				>
@@ -2362,6 +2378,18 @@
 				RelativePath="..\UIProcess\WebContextMenuProxy.h"
 				>
 			</File>
+            <File
+				RelativePath="..\UIProcess\WebCookieManagerProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebCookieManagerProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebCookieManagerProxy.messages.in"
+				>
+			</File>
 			<File
 				RelativePath="..\UIProcess\WebContextUserMessageCoders.h"
 				>
@@ -2662,6 +2690,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\win\WKContextWin.cpp"
+						>
+					</File>
+                    <File
+						RelativePath="..\UIProcess\API\C\WKCookieManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKCookieManager.h"
 						>
 					</File>
 					<File
@@ -3408,6 +3444,22 @@
 			</File>
 			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebApplicationCacheManagerProxyMessages.h"
+				>
+			</File>
+            <File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebCookieManagerMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebCookieManagerMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebCookieManagerProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebCookieManagerProxyMessages.h"
 				>
 			</File>
             <File

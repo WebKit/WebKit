@@ -35,6 +35,7 @@
 #include "SandboxExtension.h"
 #include "WebApplicationCacheManager.h"
 #include "WebContextMessages.h"
+#include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManager.h"
 #include "WebFrame.h"
@@ -533,6 +534,11 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 
     if (messageID.is<CoreIPC::MessageClassWebApplicationCacheManager>()) {
         WebApplicationCacheManager::shared().didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebCookieManager>()) {
+        WebCookieManager::shared().didReceiveMessage(connection, messageID, arguments);
         return;
     }
 

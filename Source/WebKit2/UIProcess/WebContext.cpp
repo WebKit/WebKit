@@ -36,6 +36,7 @@
 #include "WebApplicationCacheManagerProxy.h"
 #include "WebContextMessageKinds.h"
 #include "WebContextUserMessageCoders.h"
+#include "WebCookieManagerProxy.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManagerProxy.h"
 #include "WebGeolocationManagerProxy.h"
@@ -111,6 +112,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
     , m_applicationCacheManagerProxy(WebApplicationCacheManagerProxy::create(this))
+    , m_cookieManagerProxy(WebCookieManagerProxy::create(this))
     , m_databaseManagerProxy(WebDatabaseManagerProxy::create(this))
     , m_geolocationManagerProxy(WebGeolocationManagerProxy::create(this))
     , m_pluginSiteDataManager(WebPluginSiteDataManager::create(this))
@@ -139,6 +141,9 @@ WebContext::~WebContext()
 
     m_applicationCacheManagerProxy->invalidate();
     m_applicationCacheManagerProxy->clearContext();
+
+    m_cookieManagerProxy->invalidate();
+    m_cookieManagerProxy->clearContext();
 
     m_geolocationManagerProxy->invalidate();
     m_geolocationManagerProxy->clearContext();
@@ -292,6 +297,7 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     m_downloads.clear();
 
     m_applicationCacheManagerProxy->invalidate();
+    m_cookieManagerProxy->invalidate();
     m_databaseManagerProxy->invalidate();
     m_geolocationManagerProxy->invalidate();
     m_resourceCacheManagerProxy->invalidate();
@@ -561,6 +567,11 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 
     if (messageID.is<CoreIPC::MessageClassWebApplicationCacheManagerProxy>()) {
         m_applicationCacheManagerProxy->didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebCookieManagerProxy>()) {
+        m_cookieManagerProxy->didReceiveMessage(connection, messageID, arguments);
         return;
     }
 

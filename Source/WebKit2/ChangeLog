@@ -1,3 +1,80 @@
+2011-02-23  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben and looked over by Jessie Berlin.
+
+        Part of WebKit2: Need a way to manage cookies from the web process
+        https://bugs.webkit.org/show_bug.cgi?id=55086
+        
+        This patch adds the plumbing and classes that are needed to manage cookies from the web process.
+        The functions that the API calls are currently stubs, but will be implemented in a follow-up patch.
+
+        Project file changes.
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * GNUmakefile.am:
+        * WebKit2.pri:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Common.vsprops:
+        * win/WebKit2Generated.make:
+
+        Add some needed plumbing for WebCookieManager{Proxy}.
+        * Platform/CoreIPC/MessageID.h:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * UIProcess/API/C/WKAPICast.h:
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetCookieManager): Gets the cookie manager proxy.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKCookieManager.cpp: Added.
+        (WKCookieManagerGetTypeID):
+        (WKCookieManagerGetHostnamesWithCookies): Calls through to WebCookieManagerProxy.
+        (WKCookieManagerDeleteCookiesForHostname): Ditto.
+        (WKCookieManagerDeleteAllCookies): Ditto.
+        * UIProcess/API/C/WKCookieManager.h: Added.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage): Add a case for the cookie manager.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext): Initialize the cookie manager.
+        (WebKit::WebContext::~WebContext): Invalidate the cookie manager.
+        (WebKit::WebContext::disconnectProcess): Ditto.
+        (WebKit::WebContext::didReceiveMessage): Add a case for the cookie manager.
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::cookieManagerProxy): Returns the cookie manager.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage): Add a case for the cookie manager.
+
+        * UIProcess/WebCookieManagerProxy.cpp: Added.
+        (WebKit::WebCookieManagerProxy::create):
+        (WebKit::WebCookieManagerProxy::WebCookieManagerProxy):
+        (WebKit::WebCookieManagerProxy::~WebCookieManagerProxy):
+        (WebKit::WebCookieManagerProxy::invalidate):
+        (WebKit::WebCookieManagerProxy::didReceiveMessage): 
+        (WebKit::WebCookieManagerProxy::getHostnamesWithCookies): Call through to the web process to get hostnames with cookies.
+        (WebKit::WebCookieManagerProxy::didGetHostnamesWithCookies): Call the callback we were passed in getHostnamesWithCookies.
+        (WebKit::WebCookieManagerProxy::deleteCookiesForHostname): Call through to the web process to delete cookies
+            for the origin.
+        (WebKit::WebCookieManagerProxy::deleteAllCookies): Call through to the web process to delete all cookies.
+        * UIProcess/WebCookieManagerProxy.h: Added.
+        (WebKit::WebCookieManagerProxy::clearContext):
+        (WebKit::WebCookieManagerProxy::type):
+        * UIProcess/WebCookieManagerProxy.messages.in: Added.
+
+        * WebProcess/Cookies: Added.
+        * WebProcess/Cookies/WebCookieManager.cpp: Added.
+        (WebKit::WebCookieManager::shared):
+        (WebKit::WebCookieManager::WebCookieManager):
+        (WebKit::WebCookieManager::didReceiveMessage): Call through to didReceiveWebCookieManagerMessage.
+        (WebKit::WebCookieManager::getHostnamesWithCookies): Build an array from a HashSet (that isn't filled yet), and 
+            convert that HashSet to a Vector to send to the UI process.
+        (WebKit::WebCookieManager::deleteCookiesForHostname): Added a stub.
+        (WebKit::WebCookieManager::deleteAllCookies): Ditto.
+        * WebProcess/Cookies/WebCookieManager.h: Added.
+        * WebProcess/Cookies/WebCookieManager.messages.in: Added.
+
 2011-02-24   Amruth Raj  <amruthraj@motorola.com> and Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com> and Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

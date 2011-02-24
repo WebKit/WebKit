@@ -245,6 +245,16 @@
 		1CA8B954127C891500576C2B /* WebInspectorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C8E2DAD1278C5B200BC7BD0 /* WebInspectorMac.mm */; };
 		29CD55AA128E294F00133C85 /* AccessibilityWebPageObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29CD55A8128E294F00133C85 /* AccessibilityWebPageObject.h */; };
 		29CD55AB128E294F00133C85 /* AccessibilityWebPageObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29CD55A9128E294F00133C85 /* AccessibilityWebPageObject.mm */; };
+		330934471315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 330934431315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp */; };
+		330934481315B9220097A7BC /* WebCookieManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 330934441315B9220097A7BC /* WebCookieManagerMessages.h */; };
+		330934491315B9220097A7BC /* WebCookieManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 330934451315B9220097A7BC /* WebCookieManagerProxyMessageReceiver.cpp */; };
+		3309344A1315B9220097A7BC /* WebCookieManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 330934461315B9220097A7BC /* WebCookieManagerProxyMessages.h */; };
+		3309344F1315B94D0097A7BC /* WebCookieManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3309344C1315B94D0097A7BC /* WebCookieManager.cpp */; };
+		330934501315B94D0097A7BC /* WebCookieManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3309344D1315B94D0097A7BC /* WebCookieManager.h */; };
+		330934551315B9750097A7BC /* WebCookieManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 330934521315B9750097A7BC /* WebCookieManagerProxy.cpp */; };
+		330934561315B9750097A7BC /* WebCookieManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 330934531315B9750097A7BC /* WebCookieManagerProxy.h */; };
+		3309345A1315B9980097A7BC /* WKCookieManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 330934581315B9980097A7BC /* WKCookieManager.cpp */; };
+		3309345B1315B9980097A7BC /* WKCookieManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 330934591315B9980097A7BC /* WKCookieManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33152975130D0CB200ED2483 /* SecurityOriginData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33152973130D0CB200ED2483 /* SecurityOriginData.cpp */; };
 		33152976130D0CB200ED2483 /* SecurityOriginData.h in Headers */ = {isa = PBXBuildFile; fileRef = 33152974130D0CB200ED2483 /* SecurityOriginData.h */; };
 		3336762F130C9998006C9DE2 /* WebResourceCacheManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3336762C130C9998006C9DE2 /* WebResourceCacheManager.cpp */; };
@@ -1046,6 +1056,18 @@
 		29CD55A8128E294F00133C85 /* AccessibilityWebPageObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityWebPageObject.h; sourceTree = "<group>"; };
 		29CD55A9128E294F00133C85 /* AccessibilityWebPageObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityWebPageObject.mm; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* WebKit2Prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2Prefix.h; sourceTree = "<group>"; };
+		330934431315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieManagerMessageReceiver.cpp; sourceTree = "<group>"; };
+		330934441315B9220097A7BC /* WebCookieManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCookieManagerMessages.h; sourceTree = "<group>"; };
+		330934451315B9220097A7BC /* WebCookieManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		330934461315B9220097A7BC /* WebCookieManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCookieManagerProxyMessages.h; sourceTree = "<group>"; };
+		3309344C1315B94D0097A7BC /* WebCookieManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebCookieManager.cpp; path = Cookies/WebCookieManager.cpp; sourceTree = "<group>"; };
+		3309344D1315B94D0097A7BC /* WebCookieManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCookieManager.h; path = Cookies/WebCookieManager.h; sourceTree = "<group>"; };
+		3309344E1315B94D0097A7BC /* WebCookieManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebCookieManager.messages.in; path = Cookies/WebCookieManager.messages.in; sourceTree = "<group>"; };
+		330934521315B9750097A7BC /* WebCookieManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieManagerProxy.cpp; sourceTree = "<group>"; };
+		330934531315B9750097A7BC /* WebCookieManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCookieManagerProxy.h; sourceTree = "<group>"; };
+		330934541315B9750097A7BC /* WebCookieManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCookieManagerProxy.messages.in; sourceTree = "<group>"; };
+		330934581315B9980097A7BC /* WKCookieManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKCookieManager.cpp; sourceTree = "<group>"; };
+		330934591315B9980097A7BC /* WKCookieManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKCookieManager.h; sourceTree = "<group>"; };
 		33152973130D0CB200ED2483 /* SecurityOriginData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityOriginData.cpp; sourceTree = "<group>"; };
 		33152974130D0CB200ED2483 /* SecurityOriginData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOriginData.h; sourceTree = "<group>"; };
 		3336762C130C9998006C9DE2 /* WebResourceCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebResourceCacheManager.cpp; path = ResourceCache/WebResourceCacheManager.cpp; sourceTree = "<group>"; };
@@ -2076,6 +2098,16 @@
 			tabWidth = 8;
 			usesTabs = 0;
 		};
+		3309344B1315B93A0097A7BC /* Cookies */ = {
+			isa = PBXGroup;
+			children = (
+				3309344C1315B94D0097A7BC /* WebCookieManager.cpp */,
+				3309344D1315B94D0097A7BC /* WebCookieManager.h */,
+				3309344E1315B94D0097A7BC /* WebCookieManager.messages.in */,
+			);
+			name = Cookies;
+			sourceTree = "<group>";
+		};
 		3336762B130C9978006C9DE2 /* ResourceCache */ = {
 			isa = PBXGroup;
 			children = (
@@ -2145,6 +2177,7 @@
 			children = (
 				512E352A130B559900ABD19A /* ApplicationCache */,
 				512F588612A8834700629530 /* Authentication */,
+				3309344B1315B93A0097A7BC /* Cookies */,
 				1A61614C127798B5003ACD86 /* Downloads */,
 				BC0E5FCB12D696DD0012A72A /* Geolocation */,
 				BC204EDF11C83E72008F3375 /* InjectedBundle */,
@@ -2291,6 +2324,9 @@
 				51A84CE2127F386B00CA6EA4 /* WebContextMenuProxy.cpp */,
 				51ACBB81127A8BAD00D203B9 /* WebContextMenuProxy.h */,
 				BCB0B0DB12305A2500B1341E /* WebContextUserMessageCoders.h */,
+				330934521315B9750097A7BC /* WebCookieManagerProxy.cpp */,
+				330934531315B9750097A7BC /* WebCookieManagerProxy.h */,
+				330934541315B9750097A7BC /* WebCookieManagerProxy.messages.in */,
 				F62A765912B1ABC30005F1B6 /* WebDatabaseManagerProxy.cpp */,
 				F62A765A12B1ABC30005F1B6 /* WebDatabaseManagerProxy.h */,
 				F62A765B12B1ABC30005F1B6 /* WebDatabaseManagerProxy.messages.in */,
@@ -2384,6 +2420,8 @@
 				BCB9E24A1120E15C00A137E0 /* WKContext.cpp */,
 				BCB9E2491120E15C00A137E0 /* WKContext.h */,
 				BCC938E01180DE440085E5FE /* WKContextPrivate.h */,
+				330934581315B9980097A7BC /* WKCookieManager.cpp */,
+				330934591315B9980097A7BC /* WKCookieManager.h */,
 				512F58F112A88A5400629530 /* WKCredential.cpp */,
 				512F58F212A88A5400629530 /* WKCredential.h */,
 				518ACF1012B015F800B04B83 /* WKCredentialTypes.h */,
@@ -2874,6 +2912,10 @@
 				512E35F7130B642E00ABD19A /* WebApplicationCacheManagerProxyMessages.h */,
 				BCEE7D0B12846F69009827DA /* WebContextMessageReceiver.cpp */,
 				BCEE7D0C12846F69009827DA /* WebContextMessages.h */,
+				330934431315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp */,
+				330934441315B9220097A7BC /* WebCookieManagerMessages.h */,
+				330934451315B9220097A7BC /* WebCookieManagerProxyMessageReceiver.cpp */,
+				330934461315B9220097A7BC /* WebCookieManagerProxyMessages.h */,
 				F62A76B212B1B25F0005F1B6 /* WebDatabaseManagerMessageReceiver.cpp */,
 				F62A76B312B1B25F0005F1B6 /* WebDatabaseManagerMessages.h */,
 				F62A76B412B1B25F0005F1B6 /* WebDatabaseManagerProxyMessageReceiver.cpp */,
@@ -3299,6 +3341,11 @@
 				33367656130C9ECA006C9DE2 /* WebResourceCacheManagerMessages.h in Headers */,
 				33367658130C9ECB006C9DE2 /* WebResourceCacheManagerProxyMessages.h in Headers */,
 				33152976130D0CB200ED2483 /* SecurityOriginData.h in Headers */,
+				330934481315B9220097A7BC /* WebCookieManagerMessages.h in Headers */,
+				3309344A1315B9220097A7BC /* WebCookieManagerProxyMessages.h in Headers */,
+				330934501315B94D0097A7BC /* WebCookieManager.h in Headers */,
+				330934561315B9750097A7BC /* WebCookieManagerProxy.h in Headers */,
+				3309345B1315B9980097A7BC /* WKCookieManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3792,6 +3839,11 @@
 				33367657130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp in Sources */,
 				33152975130D0CB200ED2483 /* SecurityOriginData.cpp in Sources */,
 				33F9D5B91312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp in Sources */,
+				330934471315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp in Sources */,
+				330934491315B9220097A7BC /* WebCookieManagerProxyMessageReceiver.cpp in Sources */,
+				3309344F1315B94D0097A7BC /* WebCookieManager.cpp in Sources */,
+				330934551315B9750097A7BC /* WebCookieManagerProxy.cpp in Sources */,
+				3309345A1315B9980097A7BC /* WKCookieManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -40,6 +40,7 @@ WEBKIT2_INCLUDEPATH = \
     $$SOURCE_DIR/WebKit2/WebProcess \
     $$SOURCE_DIR/WebKit2/WebProcess/ApplicationCache \
     $$SOURCE_DIR/WebKit2/WebProcess/Authentication \
+    $$SOURCE_DIR/WebKit2/WebProcess/Cookies \
     $$SOURCE_DIR/WebKit2/WebProcess/Downloads \
     $$SOURCE_DIR/WebKit2/WebProcess/Downloads/qt \
     $$SOURCE_DIR/WebKit2/WebProcess/Geolocation \

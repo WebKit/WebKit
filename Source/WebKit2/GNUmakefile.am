@@ -45,6 +45,7 @@ libWebKit2_la_HEADERS = \
 	$(WebKit2)/UIProcess/API/C/WKBackForwardListItem.h \
 	$(WebKit2)/UIProcess/API/C/WKContext.h \
 	$(WebKit2)/UIProcess/API/C/WKContextPrivate.h \
+	$(WebKit2)/UIProcess/API/C/WKCookieManager.h \
 	$(WebKit2)/UIProcess/API/C/WKCredential.h \
 	$(WebKit2)/UIProcess/API/C/WKCredentialTypes.h \
 	$(WebKit2)/UIProcess/API/C/WKDatabaseManager.h \
@@ -301,6 +302,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/API/C/WKContext.cpp \
 	Source/WebKit2/UIProcess/API/C/WKContext.h \
 	Source/WebKit2/UIProcess/API/C/WKContextPrivate.h \
+	Source/WebKit2/UIProcess/API/C/WKCookieManager.h \
+	Source/WebKit2/UIProcess/API/C/WKCookieManager.cpp \
 	Source/WebKit2/UIProcess/API/C/WKCredential.cpp \
 	Source/WebKit2/UIProcess/API/C/WKCredential.h \
 	Source/WebKit2/UIProcess/API/C/WKCredentialTypes.h \
@@ -403,6 +406,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/WebContextMenuProxy.cpp \
 	Source/WebKit2/UIProcess/WebContextMenuProxy.h \
 	Source/WebKit2/UIProcess/WebContextUserMessageCoders.h \
+	Source/WebKit2/UIProcess/WebCookieManagerProxy.h \
+	Source/WebKit2/UIProcess/WebCookieManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebDatabaseManagerProxyClient.cpp \
 	Source/WebKit2/UIProcess/WebDatabaseManagerProxyClient.h \
 	Source/WebKit2/UIProcess/WebDatabaseManagerProxy.cpp \
@@ -460,6 +465,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
 	Source/WebKit2/WebProcess/Authentication/AuthenticationManager.cpp \
 	Source/WebKit2/WebProcess/Authentication/AuthenticationManager.h \
+	Source/WebKit2/WebProcess/Cookies/WebCookieManager.h \
+	Source/WebKit2/WebProcess/Cookies/WebCookieManager.cpp \
 	Source/WebKit2/WebProcess/Downloads/curl/DownloadCurl.cpp \
 	Source/WebKit2/WebProcess/Downloads/Download.cpp \
 	Source/WebKit2/WebProcess/Downloads/Download.h \
@@ -664,6 +671,7 @@ libWebKit2_la_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit2/WebProcess \
 	-I$(srcdir)/Source/WebKit2/WebProcess/ApplicationCache \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Authentication \
+	-I$(srcdir)/Source/WebKit2/WebProcess/Cookies \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Downloads \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Geolocation \
 	-I$(srcdir)/Source/WebKit2/WebProcess/gtk \
@@ -819,6 +827,10 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebApplicationCacheManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebContextMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebContextMessages.h \
+	DerivedSources/WebKit2/WebCookieManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebCookieManagerMessages.h \
+	DerivedSources/WebKit2/WebCookieManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebCookieManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebDatabaseManagerMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebDatabaseManagerMessages.h \
 	DerivedSources/WebKit2/WebDatabaseManagerProxyMessageReceiver.cpp \
@@ -867,6 +879,7 @@ vpath %.messages.in = \
 	$(WebKit2)/WebProcess \
 	$(WebKit2)/WebProcess/ApplicationCache \
 	$(WebKit2)/WebProcess/Authentication \
+	$(WebKit2)/WebProcess/Cookies \
 	$(WebKit2)/WebProcess/Geolocation \
 	$(WebKit2)/WebProcess/Plugins \
 	$(WebKit2)/WebProcess/ResourceCache \

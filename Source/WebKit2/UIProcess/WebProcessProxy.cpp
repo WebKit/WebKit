@@ -249,6 +249,7 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
         || messageID.is<CoreIPC::MessageClassWebContextLegacy>()
         || messageID.is<CoreIPC::MessageClassDownloadProxy>()
         || messageID.is<CoreIPC::MessageClassWebApplicationCacheManagerProxy>()
+        || messageID.is<CoreIPC::MessageClassWebCookieManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebDatabaseManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebGeolocationManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebResourceCacheManagerProxy>()) {
