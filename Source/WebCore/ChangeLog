@@ -1,3 +1,9 @@
+2011-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the build with GTK+ 3.
+
+        * plugins/PluginView.h:
+
 2011-02-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

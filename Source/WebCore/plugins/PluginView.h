@@ -67,7 +67,7 @@ QT_END_NAMESPACE
 #if PLATFORM(GTK)
 #include "GOwnPtrGtk.h"
 typedef struct _GtkSocket GtkSocket;
-typedef struct _GdkRectangle GtkAllocation;
+typedef GdkRectangle GtkAllocation;
 #endif
 
 #if USE(JSC)
