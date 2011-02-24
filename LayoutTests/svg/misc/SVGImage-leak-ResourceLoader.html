@@ -1,0 +1,46 @@
+<html>
+<body>
+This test checks if SVGIMages cause MainResourceLoaders leaks which will prevent later
+sub-resources from being loaded.<br>
+This test should produce "SUCCESS" and should not timeout.
+
+<div id="result">FAIL</div>
+
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.waitUntilDone();
+
+  // ResourceLoadScheduler limits maximum 20 loading loaders at parsing stage for each host.
+  var totalFrames = 20;
+  var numFramesLoaded = 0;
+
+  for (var i = 0; i < totalFrames; i++) {
+    var iframe = document.createElement('iframe');
+    iframe.onload = function() {
+      numFramesLoaded++;
+      if (numFramesLoaded == totalFrames) {
+        // Before bug 55017 is resolved, the above SVGImages will leak their MainResourceLoaders,
+        // preventing the following script from being loaded, causing the test to timeout.
+        var scriptFrame = document.createElement('iframe');
+        scriptFrame.onload = function() {
+          document.getElementById("result").innerText = "SUCCESS";
+          layoutTestController.notifyDone();
+        }
+        // I tried data URL, but it didn't trigger the issue.
+        scriptFrame.src = "resources/load-script.html";
+        document.body.appendChild(scriptFrame);
+      }
+    }
+
+    // Let the iframe load an SVG document like (?n is to make the image URLs different):
+    // <svg ...><image xlink:href="resources/small.png?n"/></svg>
+    iframe.src = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 xmlns:xlink=%22http://www.w3.org/1999/xlink%22><image xlink:href=%22resources/small.png%3f" + i + "%22/></svg>";
+    document.body.appendChild(iframe);
+  }
+} else {
+  document.write("<br><b>This test only works as a layout test</b><br>");
+}
+</script>
+</body>
+</html>

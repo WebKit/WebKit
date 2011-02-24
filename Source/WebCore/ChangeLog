@@ -1,3 +1,17 @@
+2011-02-24  Xianzhu Wang  <wangxianzhu@google.com>
+
+        Reviewed by Adam Barth.
+
+        Use loader->init() instead of loader->load() to avoid complex fake
+        request loading and cleanup logic, and also avoid ResourceLoader leaks.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55017
+
+        Test: svg/misc/SVGImage-leak-ResourceLoader.html
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2011-02-24  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Chromium Mac build fix after r79591.

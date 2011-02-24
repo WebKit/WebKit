@@ -1,3 +1,17 @@
+2011-02-24  Xianzhu Wang  <wangxianzhu@google.com>
+
+        Reviewed by Adam Barth.
+
+        Add a test to ensure SVGImage won't cause ResourceLoader leaks.
+        https://bugs.webkit.org/show_bug.cgi?id=55017
+
+        * svg/misc: Added.
+        * svg/misc/SVGImage-leak-ResourceLoader-expected.txt: Added.
+        * svg/misc/SVGImage-leak-ResourceLoader.html: Added.
+        * svg/misc/resources: Added.
+        * svg/misc/resources/load-script.html: Added.
+        * svg/misc/resources/small.png: Added.
+
 2011-02-24  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Mihai Parparita.
