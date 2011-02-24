@@ -38,9 +38,11 @@
 
 namespace WebCore {
 class AccessibilityObject;
+class Element;
 class FileChooser;
 class PopupContainer;
 class PopupMenuClient;
+class RenderBox;
 class SecurityOrigin;
 struct WindowFeatures;
 }
@@ -163,6 +165,13 @@ public:
     virtual void enterFullscreenForNode(WebCore::Node*);
     virtual void exitFullscreenForNode(WebCore::Node*);
 
+#if ENABLE(FULLSCREEN_API)
+    virtual bool supportsFullScreenForElement(const WebCore::Element*);
+    virtual void enterFullScreenForElement(WebCore::Element*);
+    virtual void exitFullScreenForElement(WebCore::Element*);
+    virtual void fullScreenRendererChanged(WebCore::RenderBox*);
+#endif
+  
     // ChromeClientChromium methods:
     virtual void popupOpened(WebCore::PopupContainer* popupContainer,
                              const WebCore::IntRect& bounds,

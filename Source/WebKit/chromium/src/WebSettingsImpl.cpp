@@ -360,4 +360,9 @@ void WebSettingsImpl::setMinimumTimerInterval(double interval)
     m_settings->setMinDOMTimerInterval(interval);
 }
 
+void WebSettingsImpl::setFullScreenEnabled(bool enabled)
+{
+    m_settings->setFullScreenEnabled(enabled);
+}
+
 } // namespace WebKit

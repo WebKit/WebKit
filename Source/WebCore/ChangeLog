@@ -1,3 +1,17 @@
+2011-02-24  David Dorwin  <ddorwin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Enable WebKit Full Screen API in Chromium. The element becomes the full size of the window, but the window is not yet full screen. Support is disabled by default.
+
+        fullscreen javascript bindings not implemented for v8
+        https://bugs.webkit.org/show_bug.cgi?id=44797
+
+        Tested by the existing fullscreen Layout Tests.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2011-02-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

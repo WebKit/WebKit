@@ -3898,6 +3898,8 @@
             'rendering/RenderFrameBase.h',
             'rendering/RenderFrameSet.cpp',
             'rendering/RenderFrameSet.h',
+            'rendering/RenderFullScreen.cpp',
+            'rendering/RenderFullScreen.h',
             'rendering/RenderHTMLCanvas.cpp',
             'rendering/RenderHTMLCanvas.h',
             'rendering/RenderIFrame.cpp',
