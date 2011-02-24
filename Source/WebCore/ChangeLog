@@ -1,3 +1,23 @@
+2011-02-24  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Add support for missing properties to getComputedStyle
+        https://bugs.webkit.org/show_bug.cgi?id=23668
+
+        Implement getComputedStyle for the content, counter and outline-offset
+        properties.
+
+        Test: fast/css/getComputedStyle/computed-style-properties.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::contentToCSSValue):
+        (WebCore::counterToCSSValue):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cssText):
+        * css/CSSPrimitiveValue.h:
+
 2011-02-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -90,7 +90,10 @@ public:
         
         // These are from CSS3 Values and Units, but that isn't a finished standard yet
         CSS_TURN = 107,
-        CSS_REMS = 108
+        CSS_REMS = 108,
+
+        // This is used internally for counter names (as opposed to counter values)
+        CSS_COUNTER_NAME = 109
     };
     
     // This enum follows the CSSParser::Units enum augmented with UNIT_FREQUENCY for frequencies.

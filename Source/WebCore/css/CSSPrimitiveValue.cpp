@@ -809,6 +809,11 @@ String CSSPrimitiveValue::cssText() const
             text = String::adopt(result);
             break;
         }
+        case CSS_COUNTER_NAME:
+            text = "counter(";
+            text += m_value.string;
+            text += ")";
+            break;
         case CSS_COUNTER:
             text = "counter(";
             text += String::number(m_value.num);

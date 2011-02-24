@@ -1,3 +1,16 @@
+2011-02-24  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Add support for missing properties to getComputedStyle
+        https://bugs.webkit.org/show_bug.cgi?id=23668
+
+        Test getComputedStyle for the content, counter and outline-offset
+        properties.
+
+        * fast/css/getComputedStyle/computed-style-properties-expected.txt: Added.
+        * fast/css/getComputedStyle/computed-style-properties.html: Added.
+
 2011-02-24  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Darin Adler.

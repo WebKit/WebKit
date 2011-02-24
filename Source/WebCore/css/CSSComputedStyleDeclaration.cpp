@@ -25,6 +25,8 @@
 #include "CSSComputedStyleDeclaration.h"
 
 #include "AnimationController.h"
+#include "ContentData.h"
+#include "CounterContent.h"
 #include "CursorList.h"
 #include "CSSBorderImageValue.h"
 #include "CSSMutableStyleDeclaration.h"
@@ -725,6 +727,36 @@ static PassRefPtr<CSSValue> fillSizeToCSSValue(const FillSize& fillSize)
     return list.release();
 }
 
+static PassRefPtr<CSSValue> contentToCSSValue(const RenderStyle* style)
+{
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    for (const ContentData* contentData = style->contentData(); contentData; contentData = contentData->next()) {
+        if (contentData->isCounter()) {
+            const CounterContent* counter = contentData->counter();
+            ASSERT(counter);
+            list->append(CSSPrimitiveValue::create(counter->identifier(), CSSPrimitiveValue::CSS_COUNTER_NAME));
+        } else if (contentData->isImage()) {
+            const StyleImage* image = contentData->image();
+            ASSERT(image);
+            list->append(image->cssValue());
+        } else if (contentData->isText())
+            list->append(CSSPrimitiveValue::create(contentData->text(), CSSPrimitiveValue::CSS_STRING));
+    }
+    return list.release();
+}
+
+static PassRefPtr<CSSValue> counterToCSSValue(const RenderStyle* style, int propertyID)
+{
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    const CounterDirectiveMap* map = style->counterDirectives();
+    for (CounterDirectiveMap::const_iterator it = map->begin(); it != map->end(); ++it) {
+        list->append(CSSPrimitiveValue::create(it->first.get(), CSSPrimitiveValue::CSS_STRING));
+        short number = propertyID == CSSPropertyCounterIncrement ? it->second.m_incrementValue : it->second.m_resetValue;
+        list->append(CSSPrimitiveValue::create((double)number, CSSPrimitiveValue::CSS_NUMBER));
+    }
+    return list.release();
+}
+
 static void logUnimplementedPropertyID(int propertyID)
 {
     DEFINE_STATIC_LOCAL(HashSet<int>, propertyIDSet, ());
@@ -1180,6 +1212,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->orphans(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyOutlineColor:
             return m_allowVisitedStyle ? CSSPrimitiveValue::createColor(style->visitedDependentColor(CSSPropertyOutlineColor).rgb()) : currentColorOrValidColor(style.get(), style->outlineColor());
+        case CSSPropertyOutlineOffset:
+            return zoomAdjustedPixelValue(style->outlineOffset(), style.get());
         case CSSPropertyOutlineStyle:
             if (style->outlineStyleIsAuto())
                 return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
@@ -1576,6 +1610,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->writingMode());
         case CSSPropertyWebkitTextCombine:
             return CSSPrimitiveValue::create(style->textCombine());
+
+        case CSSPropertyContent:
+            return contentToCSSValue(style.get());
+        case CSSPropertyCounterIncrement:
+            return counterToCSSValue(style.get(), propertyID);
+        case CSSPropertyCounterReset:
+            return counterToCSSValue(style.get(), propertyID);
         
         /* Shorthand properties, currently not supported see bug 13658*/
         case CSSPropertyBackground:
@@ -1591,7 +1632,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyFont:
         case CSSPropertyListStyle:
         case CSSPropertyMargin:
+        case CSSPropertyOutline:
         case CSSPropertyPadding:
+            break;
+
+        /* Individual properties not part of the spec */
+        case CSSPropertyBackgroundRepeatX:
+        case CSSPropertyBackgroundRepeatY:
             break;
 
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
@@ -1654,13 +1701,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             break;
 
         /* Other unimplemented properties */
-        case CSSPropertyBackgroundRepeatX:
-        case CSSPropertyBackgroundRepeatY:
-        case CSSPropertyContent: // FIXME: needs implementation, bug 23668
-        case CSSPropertyCounterIncrement:
-        case CSSPropertyCounterReset:
-        case CSSPropertyOutline: // FIXME: needs implementation
-        case CSSPropertyOutlineOffset: // FIXME: needs implementation
         case CSSPropertyPage: // for @page
         case CSSPropertyQuotes: // FIXME: needs implementation
         case CSSPropertySize: // for @page
