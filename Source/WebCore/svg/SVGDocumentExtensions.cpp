@@ -32,6 +32,7 @@
 #include "FrameLoader.h"
 #include "Page.h"
 #include "SMILTimeContainer.h"
+#include "SVGElement.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
 #include "ScriptController.h"
@@ -48,6 +49,7 @@ SVGDocumentExtensions::SVGDocumentExtensions(Document* document)
 
 SVGDocumentExtensions::~SVGDocumentExtensions()
 {
+    deleteAllValues(m_animatedElements);
     deleteAllValues(m_pendingResources);
 }
 
@@ -133,6 +135,52 @@ bool SVGDocumentExtensions::sampleAnimationAtTime(const String& elementId, SVGSM
     container->sampleAnimationAtTime(elementId, time);
     return true;
 #endif
+}
+
+void SVGDocumentExtensions::addAnimationElementToTarget(SVGSMILElement* animationElement, SVGElement* targetElement)
+{
+    ASSERT(targetElement);
+    ASSERT(animationElement);
+
+    if (HashSet<SVGSMILElement*>* animationElementsForTarget = m_animatedElements.get(targetElement)) {
+        animationElementsForTarget->add(animationElement);
+        return;
+    }
+
+    HashSet<SVGSMILElement*>* animationElementsForTarget = new HashSet<SVGSMILElement*>;
+    animationElementsForTarget->add(animationElement);
+    m_animatedElements.set(targetElement, animationElementsForTarget);
+}
+
+void SVGDocumentExtensions::removeAnimationElementFromTarget(SVGSMILElement* animationElement, SVGElement* targetElement)
+{
+    ASSERT(targetElement);
+    ASSERT(animationElement);
+
+    HashMap<SVGElement*, HashSet<SVGSMILElement*>* >::iterator it = m_animatedElements.find(targetElement);
+    ASSERT(it != m_animatedElements.end());
+    
+    HashSet<SVGSMILElement*>* animationElementsForTarget = it->second;
+    ASSERT(!animationElementsForTarget->isEmpty());
+
+    animationElementsForTarget->remove(animationElement);
+    if (animationElementsForTarget->isEmpty()) {
+        m_animatedElements.remove(it);
+        delete animationElementsForTarget;
+    }
+}
+
+void SVGDocumentExtensions::removeAllAnimationElementsFromTarget(SVGElement* targetElement)
+{
+    ASSERT(targetElement);
+    HashSet<SVGSMILElement*>* animationElementsForTarget = m_animatedElements.take(targetElement);
+    if (!animationElementsForTarget)
+        return;
+    HashSet<SVGSMILElement*>::iterator it = animationElementsForTarget->begin();
+    HashSet<SVGSMILElement*>::iterator end = animationElementsForTarget->end();
+    for (; it != end; ++it)
+        (*it)->resetTargetElement();
+    delete animationElementsForTarget;
 }
 
 // FIXME: Callers should probably use ScriptController::eventHandlerLineNumber()

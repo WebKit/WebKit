@@ -82,6 +82,7 @@ SVGElement::~SVGElement()
         delete rareData;
         rareDataMap.remove(it);
     }
+    document()->accessSVGExtensions()->removeAllAnimationElementsFromTarget(this);
 }
 
 SVGElementRareData* SVGElement::rareSVGData() const
@@ -115,6 +116,12 @@ String SVGElement::xmlbase() const
 void SVGElement::setXmlbase(const String& value, ExceptionCode&)
 {
     setAttribute(XMLNames::baseAttr, value);
+}
+
+void SVGElement::removedFromDocument()
+{
+    document()->accessSVGExtensions()->removeAllAnimationElementsFromTarget(this);
+    StyledElement::removedFromDocument();
 }
 
 SVGSVGElement* SVGElement::ownerSVGElement() const
@@ -370,6 +377,9 @@ void SVGElement::attributeChanged(Attribute* attr, bool preserveDecls)
     // see bug https://bugs.webkit.org/show_bug.cgi?id=40994.
     if (isSynchronizingSVGAttributes())
         return;
+
+    if (isIdAttributeName(attr->name()))
+        document()->accessSVGExtensions()->removeAllAnimationElementsFromTarget(this);
 
     // Changes to the style attribute are processed lazily (see Element::getAttribute() and related methods),
     // so we don't want changes to the style attribute to result in extra work here.

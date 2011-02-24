@@ -37,6 +37,7 @@
 #include "FrameView.h"
 #include "HTMLNames.h"
 #include "SMILTimeContainer.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
@@ -115,6 +116,7 @@ SVGSMILElement::Condition::Condition(Type type, BeginOrEnd beginOrEnd, const Str
 SVGSMILElement::SVGSMILElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
     , m_attributeName(anyQName())
+    , m_targetElement(0)
     , m_conditionsConnected(false)
     , m_hasEndEventConditions(false)
     , m_intervalBegin(SMILTime::unresolved())
@@ -187,6 +189,10 @@ void SVGSMILElement::removedFromDocument()
     if (m_timeContainer) {
         m_timeContainer->unschedule(this);
         m_timeContainer = 0;
+    }
+    if (m_targetElement) {
+        document()->accessSVGExtensions()->removeAnimationElementFromTarget(this, m_targetElement);
+        m_targetElement = 0;
     }
     // Calling disconnectConditions() may kill us if there are syncbase conditions.
     // OK, but we don't want to die inside the call.
@@ -489,11 +495,17 @@ void SVGSMILElement::reschedule()
 
 SVGElement* SVGSMILElement::targetElement() const
 {
+    if (m_targetElement)
+        return m_targetElement;
+
     String href = xlinkHref();
     ContainerNode* target = href.isEmpty() ? parentNode() : document()->getElementById(SVGURIReference::getTarget(href));
-    if (target && target->isSVGElement())
-        return static_cast<SVGElement*>(target);
-    return 0;
+    if (!target || !target->isSVGElement())
+        return 0;
+    
+    m_targetElement = static_cast<SVGElement*>(target);
+    document()->accessSVGExtensions()->addAnimationElementToTarget(const_cast<SVGSMILElement*>(this), m_targetElement);
+    return m_targetElement;
 }
 
 SMILTime SVGSMILElement::elapsed() const 

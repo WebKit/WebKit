@@ -118,6 +118,8 @@ protected:
     virtual void insertedIntoDocument();
     virtual void attributeChanged(Attribute*, bool preserveDecls = false);
     virtual bool childShouldCreateRenderer(Node*) const;
+    
+    virtual void removedFromDocument();
 
     SVGElementRareData* rareSVGData() const;
     SVGElementRareData* ensureRareSVGData();

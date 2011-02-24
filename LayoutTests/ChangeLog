@@ -1,3 +1,25 @@
+2011-02-24  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Removing a SVG animation target during animation crashes WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=12065
+
+        SVGAnimations with IRI references via 'xlink:href' are slow
+        https://bugs.webkit.org/show_bug.cgi?id=49437
+
+        Test that WebKit does not crash, if the target element of a SVG animation gets removed, or if
+        its id changed.
+
+        * platform/mac/svg/custom/animate-target-id-changed-expected.checksum: Added.
+        * platform/mac/svg/custom/animate-target-id-changed-expected.png: Added.
+        * platform/mac/svg/custom/animate-target-id-changed-expected.txt: Added.
+        * platform/mac/svg/custom/animate-target-removed-from-document-expected.checksum: Added.
+        * platform/mac/svg/custom/animate-target-removed-from-document-expected.png: Added.
+        * platform/mac/svg/custom/animate-target-removed-from-document-expected.txt: Added.
+        * svg/custom/animate-target-id-changed.svg: Added.
+        * svg/custom/animate-target-removed-from-document.svg: Added.
+
 2011-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel.

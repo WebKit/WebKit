@@ -1,3 +1,47 @@
+2011-02-24  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Removing a SVG animation target during animation crashes WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=12065
+
+        SVGAnimations with IRI references via 'xlink:href' are slow
+        https://bugs.webkit.org/show_bug.cgi?id=49437
+
+        Store reference to target element for SVG animation elements. This is important if the
+        target gets referenced via 'xlink:href'. At the moment we would call getElementById() multiple
+        times on every animation step. A very expensive operation. This will be avoided with this patch.
+        On the other hand, we need to be sure that the target element is always valid. The reference is
+        reset, if the target was removed from document or its destructor was called. A HashMap in
+        SVGDocumentExtensions stores all mappings from target element to all current animation elements.
+
+        Tests: svg/custom/animate-target-id-changed.svg
+               svg/custom/animate-target-removed-from-document.svg
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::~SVGDocumentExtensions):
+        (WebCore::SVGDocumentExtensions::addAnimationElementToTarget): New animation gets applied to target.
+        (WebCore::SVGDocumentExtensions::removeAnimationElementFromTarget): Animation stoped, remove it from HashMap.
+        (WebCore::SVGDocumentExtensions::removeAllAnimationElementsFromTarget): Target no longer in document, reset all
+        references in SVG animation elements. 
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::~SVGElement):
+        (WebCore::SVGElement::removedFromDocument):
+        (WebCore::SVGElement::attributeChanged):
+        * svg/SVGElement.h:
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::removedFromDocument):
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::removedFromDocument):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::SVGSMILElement):
+        (WebCore::SVGSMILElement::removedFromDocument):
+        (WebCore::SVGSMILElement::eventBaseFor):
+        (WebCore::SVGSMILElement::targetElement):
+        * svg/animation/SVGSMILElement.h:
+        (WebCore::SVGSMILElement::resetTargetElement):
+
 2011-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel.

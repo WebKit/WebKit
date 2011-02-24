@@ -34,6 +34,7 @@ namespace WebCore {
 
 class Document;
 class RenderSVGResourceContainer;
+class SVGElement;
 class SVGStyledElement;
 class SVGSMILElement;
 class SVGSVGElement;
@@ -56,6 +57,10 @@ public:
     void pauseAnimations();
     void unpauseAnimations();
     bool sampleAnimationAtTime(const String& elementId, SVGSMILElement*, double time);
+    
+    void addAnimationElementToTarget(SVGSMILElement*, SVGElement*);
+    void removeAnimationElementFromTarget(SVGSMILElement*, SVGElement*);
+    void removeAllAnimationElementsFromTarget(SVGElement*);
 
     void reportWarning(const String&);
     void reportError(const String&);
@@ -65,6 +70,7 @@ public:
 private:
     Document* m_document; // weak reference
     HashSet<SVGSVGElement*> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
+    HashMap<SVGElement*, HashSet<SVGSMILElement*>* > m_animatedElements;
     HashMap<AtomicString, RenderSVGResourceContainer*> m_resources;
     HashMap<AtomicString, SVGPendingElements*> m_pendingResources;
     OwnPtr<SVGResourcesCache> m_resourcesCache;

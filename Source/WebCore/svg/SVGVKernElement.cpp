@@ -59,6 +59,7 @@ void SVGVKernElement::removedFromDocument()
         if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
             element->invalidateGlyphCache();
     }
+    SVGElement::removedFromDocument();
 }
 
 void SVGVKernElement::buildVerticalKerningPair(KerningPairVector& kerningPairs)

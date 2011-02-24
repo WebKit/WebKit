@@ -61,6 +61,7 @@ void SVGHKernElement::removedFromDocument()
         if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
             element->invalidateGlyphCache();
     }
+    SVGElement::removedFromDocument();
 }
 
 void SVGHKernElement::buildHorizontalKerningPair(KerningPairVector& kerningPairs)

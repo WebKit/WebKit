@@ -55,6 +55,7 @@ public:
     SMILTimeContainer* timeContainer() const { return m_timeContainer.get(); }
 
     SVGElement* targetElement() const;
+    void resetTargetElement() { m_targetElement = 0; }
     const QualifiedName& attributeName() const { return m_attributeName; }
 
     void beginByLinkActivation();
@@ -182,6 +183,8 @@ private:
     ActiveState determineActiveState(SMILTime elapsed) const;
     float calculateAnimationPercentAndRepeat(SMILTime elapsed, unsigned& repeat) const;
     SMILTime calculateNextProgressTime(SMILTime elapsed) const;
+
+    mutable SVGElement* m_targetElement;
 
     Vector<Condition> m_conditions;
     bool m_conditionsConnected;
