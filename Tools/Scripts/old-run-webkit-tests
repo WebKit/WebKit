@@ -1165,6 +1165,7 @@ if (isGtk()) {
     $testResults = "/" . toWindowsPath($testResults);
     $testResults =~ s/\\/\//g;
   }
+  push(@configurationArgs, '-2') if $useWebKitTestRunner;
   system "Tools/Scripts/run-launcher", @configurationArgs, "file://".$testResults if $launchSafari;
 } elsif (isCygwin()) {
   system "cygstart", $testResults if $launchSafari;

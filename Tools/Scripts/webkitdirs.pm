@@ -69,6 +69,7 @@ my $isEfl;
 my @wxArgs;
 my $isChromium;
 my $isInspectorFrontend;
+my $isWK2;
 
 # Variables for Win32 support
 my $vcBuildPath;
@@ -714,6 +715,18 @@ sub checkForArgumentAndRemoveFromArrayRef
     return $#indicesToRemove > -1;
 }
 
+sub isWK2()
+{
+    if (defined($isWK2)) {
+        return $isWK2;
+    }
+    if (checkForArgumentAndRemoveFromARGV("-2")) {
+        $isWK2 = 1;
+    } else {
+        $isWK2 = 0;
+    }
+    return $isWK2;
+}
 
 sub determineIsQt()
 {
