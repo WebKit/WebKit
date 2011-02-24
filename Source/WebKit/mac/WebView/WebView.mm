@@ -548,8 +548,8 @@ static NSString *createUserVisibleWebKitVersionString()
     if (!webKitVersion)
         webKitVersion = createUserVisibleWebKitVersionString();
     if ([applicationName length])
-        return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@) AppleWebKit/%@ (KHTML, like Gecko) %@", osVersion, webKitVersion, applicationName];
-    return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@) AppleWebKit/%@ (KHTML, like Gecko)", osVersion, webKitVersion];
+        return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X %@) AppleWebKit/%@ (KHTML, like Gecko) %@", osVersion, webKitVersion, applicationName];
+    return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X %@) AppleWebKit/%@ (KHTML, like Gecko)", osVersion, webKitVersion];
 }
 
 + (void)_reportException:(JSValueRef)exception inContext:(JSContextRef)context

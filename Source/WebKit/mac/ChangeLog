@@ -1,3 +1,13 @@
+2011-02-24  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Drop the "U; " encryption level from the User Agent string.
+        https://bugs.webkit.org/show_bug.cgi?id=54566
+
+        * WebView/WebView.mm:
+        (+[WebView _standardUserAgentWithApplicationName:]):
+
 2011-02-24  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r79570.

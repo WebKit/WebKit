@@ -3683,14 +3683,14 @@ QWebPluginFactory *QWebPage::pluginFactory() const
 
     The default implementation returns the following value:
 
-    "Mozilla/5.0 (%Platform%; %Security%; %Subplatform%) AppleWebKit/%WebKitVersion% (KHTML, like Gecko) %AppVersion Safari/%WebKitVersion%"
+    "Mozilla/5.0 (%Platform%; %Security%%Subplatform%) AppleWebKit/%WebKitVersion% (KHTML, like Gecko) %AppVersion Safari/%WebKitVersion%"
 
     On mobile platforms such as Symbian S60 and Maemo, "Mobile Safari" is used instead of "Safari".
 
     In this string the following values are replaced at run-time:
     \list
     \o %Platform% and %Subplatform% are expanded to the windowing system and the operation system.
-    \o %Security% expands to U if SSL is enabled, otherwise N. SSL is enabled if QSslSocket::supportsSsl() returns true.
+    \o %Security% expands to "N; " if SSL is disabled.
     \o %WebKitVersion% is the version of WebKit the application was compiled against.
     \o %AppVersion% expands to QCoreApplication::applicationName()/QCoreApplication::applicationVersion() if they're set; otherwise defaulting to Qt and the current Qt version.
     \endlist
@@ -3750,15 +3750,8 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
 
         firstPartTemp += QString::fromLatin1("; ");
 
-        // SSL support
-#if !defined(QT_NO_OPENSSL)
-        // we could check QSslSocket::supportsSsl() here, but this makes
-        // OpenSSL, certificates etc being loaded in all cases were QWebPage
-        // is used. This loading is not needed for non-https.
-        firstPartTemp += QString::fromLatin1("U; ");
-        // this may lead to a false positive: We indicate SSL since it is
-        // compiled in even though supportsSsl() might return false
-#else
+#if defined(QT_NO_OPENSSL)
+        // No SSL support
         firstPartTemp += QString::fromLatin1("N; ");
 #endif
 

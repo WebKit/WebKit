@@ -117,7 +117,7 @@ static String composeUserAgent()
     // Comment
     ua += " (";
     ua += agentPlatform(); // Platform
-    ua += "; U; "; // Security
+    ua += "; ";
     ua += agentOS(); // OS-or-CPU
     ua += ") ";
 

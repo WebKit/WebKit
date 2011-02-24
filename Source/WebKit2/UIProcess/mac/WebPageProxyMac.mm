@@ -88,8 +88,8 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
     DEFINE_STATIC_LOCAL(String, webKitVersion, (userVisibleWebKitVersionString()));
 
     if (applicationNameForUserAgent.isEmpty())
-        return makeString("Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X ", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko)");
-    return makeString("Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X ", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) ", applicationNameForUserAgent);
+        return makeString("Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X ", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko)");
+    return makeString("Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X ", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) ", applicationNameForUserAgent);
 }
 
 void WebPageProxy::getIsSpeaking(bool& isSpeaking)

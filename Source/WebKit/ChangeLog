@@ -1,3 +1,12 @@
+2011-02-24  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Drop the "U; " encryption level from the User Agent string.
+        https://bugs.webkit.org/show_bug.cgi?id=54566
+
+        * StringsNotToBeLocalized.txt:
+
 2011-02-22  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Alexey Proskuryakov.
