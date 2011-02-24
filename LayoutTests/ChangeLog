@@ -1,3 +1,21 @@
+2011-02-24  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Text editor] Bug in the highlighter
+        https://bugs.webkit.org/show_bug.cgi?id=54876
+
+        Fixing two bugs: 1) When restoring the state from a successful updateHighlight() call, we should restore the old state only if it is greater (closer to the end) than the current one.
+        2) When a long line is being highlighted in more than one chunk (timer tick), we wrongly deleted the result of the work done in the previous tick, rather than updating it with the new results.
+
+        * inspector/editor/highlighter-long-line-expected.txt: Added.
+        * inspector/editor/highlighter-long-line.html: Added.
+        * inspector/editor/highlighter-paste-in-comment-expected.txt: Added.
+        * inspector/editor/highlighter-paste-in-comment.html: Added.
+        * inspector/editor/highlighter-test.js: Added.
+        (initialize_HighlighterTests.InspectorTest.dumpTextModel):
+        (initialize_HighlighterTests):
+
 2011-02-24  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Tony Gentilcore.

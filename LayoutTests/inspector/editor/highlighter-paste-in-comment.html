@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="highlighter-test.js"></script>
+<script>
+
+function test()
+{
+    var textModel = new WebInspector.TextEditorModel();
+
+    var highlighter = new WebInspector.TextEditorHighlighter(textModel, function() {});
+    highlighter.mimeType = "text/javascript";
+    highlighter.highlightChunkLimit = Number.MAX_VALUE; // Synchronous.
+
+    function dumpTextModel(msg) {
+        InspectorTest.addResult("\n" + msg);
+        InspectorTest.dumpTextModel(textModel);
+    }
+
+    var src = "/*\n\n1\n2\n3\n4\n5\n\n*/";
+    textModel.setText(null, src);
+    highlighter.reset();
+
+    highlighter.highlight(textModel.linesCount);
+    dumpTextModel("After highlighting all lines");
+
+    var range = new WebInspector.TextRange(7, 0, 7, 0);
+    var newRange = textModel.setText(range, "1\n2\n3\n4\n5\n");
+    highlighter.updateHighlight(7, textModel.linesCount);
+    dumpTextModel("After update highlights");
+
+    highlighter.highlight(textModel.linesCount);
+    dumpTextModel("After highlighting up to the end");
+
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+This test checks against <a href="https://bugs.webkit.org/show_bug.cgi?id=54876">a bug</a> in the highlighter when pasting text inside a comment.
+</p>
+
+</body>
+</html>

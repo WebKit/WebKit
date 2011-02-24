@@ -1,0 +1,54 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="highlighter-test.js"></script>
+<script>
+
+function test()
+{
+    var textModel = new WebInspector.TextEditorModel();
+
+    var highlighter = new WebInspector.TextEditorHighlighter(textModel, function() {});
+    highlighter.mimeType = "text/javascript";
+    highlighter.highlightChunkLimit = Number.MAX_VALUE; // Synchronous.
+
+    var src = "/* asdf */ ";
+    var comments = 1;
+    for (var i = 0; i < 10; ++i) {
+        src += src;
+        comments *= 2;
+    }
+    textModel.setText(null, src);
+    highlighter.reset();
+
+    InspectorTest.addResult("Line length: " + src.length + ", number of comments: " + comments);
+
+    highlighter.highlight(textModel.linesCount);
+
+    var highlight = textModel.getAttribute(0, "highlight");
+    for (var i = 0; i < src.length; ++i) {
+        if (highlight[i]) {
+            if (highlight[i].length !== 10 || (i % 11)) {
+                InspectorTest.addResult("ERROR: unexpected highlight result: i=" + i + ", length=" + highlight[i].length);
+                break;
+            }
+            --comments;
+        }
+    }
+    if (comments)
+        InspectorTest.addResult("ERROR: some of the comments were not highlighted: " + comments);
+
+    InspectorTest.addResult("All checks completed.");
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+This test checks highlighter on a long line.
+</p>
+
+</body>
+</html>

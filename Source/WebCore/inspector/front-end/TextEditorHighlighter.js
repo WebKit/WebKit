@@ -34,6 +34,7 @@ WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
     this._textModel = textModel;
     this._tokenizer = WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer("text/html");
     this._damageCallback = damageCallback;
+    this._highlightChunkLimit = 1000;
     this.reset();
 }
 
@@ -45,6 +46,11 @@ WebInspector.TextEditorHighlighter.prototype = {
             this._tokenizer = tokenizer;
             this._tokenizerConditionStringified = JSON.stringify(this._tokenizer.initialCondition);
         }
+    },
+
+    set highlightChunkLimit(highlightChunkLimit)
+    {
+        this._highlightChunkLimit = highlightChunkLimit;
     },
 
     reset: function()
@@ -104,10 +110,12 @@ WebInspector.TextEditorHighlighter.prototype = {
         var attributes1 = this._textModel.getAttribute(this._lastHighlightedLine - 1, "highlight") || {};
         var attributes2 = this._textModel.getAttribute(this._lastHighlightedLine, "highlight") || {};
         if (this._lastHighlightedColumn === 0 && attributes2.preConditionStringified && attributes1.postConditionStringified === attributes2.preConditionStringified) {
-            // Highlighting ended ahead of time. Restore previously saved state.
-            this._lastHighlightedLine = savedLastHighlightedLine;
-            this._lastHighlightedColumn = savedLastHighlightedColumn;
-            this._tokenizerConditionStringified = savedTokenizerCondition;
+            // Highlighting ended ahead of time. Restore previously saved state, unless we have done more than it was before.
+            if (savedLastHighlightedLine >= this._lastHighlightedLine) {
+                this._lastHighlightedLine = savedLastHighlightedLine;
+                this._lastHighlightedColumn = savedLastHighlightedColumn;
+                this._tokenizerConditionStringified = savedTokenizerCondition;
+            }
             return true;
         } else {
             // If failed to update highlight synchronously, invalidate highlight data for the subsequent lines.
@@ -159,11 +167,12 @@ WebInspector.TextEditorHighlighter.prototype = {
             var line = this._textModel.line(lineNumber);
             this._tokenizer.line = line;
 
-            var attributes = {};
-            this._textModel.setAttribute(lineNumber, "highlight", attributes);
-
-            if (this._lastHighlightedColumn === 0)
+            if (this._lastHighlightedColumn === 0) {
+                var attributes = {};
                 attributes.preConditionStringified = JSON.stringify(this._tokenizer.condition);
+                this._textModel.setAttribute(lineNumber, "highlight", attributes);
+            } else
+                var attributes = this._textModel.getAttribute(lineNumber, "highlight");
 
             // Highlight line.
             do {
@@ -172,7 +181,7 @@ WebInspector.TextEditorHighlighter.prototype = {
                 if (tokenType)
                     attributes[this._lastHighlightedColumn] = { length: newColumn - this._lastHighlightedColumn, tokenType: tokenType };
                 this._lastHighlightedColumn = newColumn;
-                if (++tokensCount > 1000)
+                if (++tokensCount > this._highlightChunkLimit)
                     break;
             } while (this._lastHighlightedColumn < line.length);
 
