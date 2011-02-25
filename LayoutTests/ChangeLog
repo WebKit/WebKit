@@ -1,5 +1,17 @@
 2011-02-25  James Robinson  <jamesr@chromium.org>
 
+        More chromium expectations and baselines.
+
+        * platform/chromium-gpu-linux/platform/chromium/compositing/layout-width-change-expected.checksum: Added.
+        * platform/chromium-gpu-linux/platform/chromium/compositing/layout-width-change-expected.png: Added.
+        * platform/chromium-gpu-mac/platform/chromium/compositing/layout-width-change-expected.checksum: Added.
+        * platform/chromium-gpu-mac/platform/chromium/compositing/layout-width-change-expected.png: Added.
+        * platform/chromium-gpu-win/platform/chromium/compositing/layout-width-change-expected.checksum: Added.
+        * platform/chromium-gpu-win/platform/chromium/compositing/layout-width-change-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-02-25  James Robinson  <jamesr@chromium.org>
+
         Fix typo in Chromium test expectations.
 
         * platform/chromium/test_expectations.txt:

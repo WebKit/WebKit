@@ -3439,4 +3439,17 @@ BUGWK55118 : fast/xsl/sort-locale.xml = TEXT
 
 BUGJAMESR DEBUG : html5lib/runner.html = PASS TIMEOUT
 
+BUGJAMESR WIN LINUX : fast/replaced/vertical-lr/absolute-position-percentage-width.html = IMAGE+TEXT
+BUGJAMESR WIN LINUX : fast/replaced/vertical-lr/absolute-position-with-auto-height-and-top-and-bottom.html = IMAGE+TEXT
+BUGJAMESR WIN LINUX : fast/replaced/vertical-lr/absolute-position-with-auto-width-and-left-and-right.html = IMAGE+TEXT
+BUGJAMESR WIN LINUX : fast/replaced/vertical-rl/absolute-position-percentage-width.html = IMAGE+TEXT
+BUGJAMESR WIN LINUX : fast/replaced/vertical-rl/absolute-position-with-auto-height-and-top-and-bottom.html = IMAGE+TEXT
+BUGJAMESR WIN LINUX : fast/replaced/vertical-rl/absolute-position-with-auto-width-and-left-and-right.html = IMAGE+TEXT
+BUGJAMESR MAC : fast/replaced/vertical-lr/absolute-position-percentage-width.html = IMAGE
+BUGJAMESR MAC : fast/replaced/vertical-lr/absolute-position-with-auto-height-and-top-and-bottom.html = IMAGE
+BUGJAMESR MAC : fast/replaced/vertical-lr/absolute-position-with-auto-width-and-left-and-right.html = IMAGE
+BUGJAMESR MAC : fast/replaced/vertical-rl/absolute-position-percentage-width.html = IMAGE
+BUGJAMESR MAC : fast/replaced/vertical-rl/absolute-position-with-auto-height-and-top-and-bottom.html = IMAGE
+BUGJAMESR MAC : fast/replaced/vertical-rl/absolute-position-with-auto-width-and-left-and-right.html = IMAGE
+
 BUG_ANTONM : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
