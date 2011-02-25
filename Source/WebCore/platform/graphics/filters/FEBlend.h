@@ -43,7 +43,7 @@ public:
     static PassRefPtr<FEBlend> create(Filter*, BlendModeType);
 
     BlendModeType blendMode() const;
-    void setBlendMode(BlendModeType);
+    bool setBlendMode(BlendModeType);
 
     virtual void apply();
     virtual void dump();

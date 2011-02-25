@@ -68,12 +68,24 @@ void SVGFEBlendElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
+bool SVGFEBlendElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+{
+    FEBlend* blend = static_cast<FEBlend*>(effect);
+    if (attrName == SVGNames::modeAttr)
+        return blend->setBlendMode(static_cast<BlendModeType>(mode()));
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 void SVGFEBlendElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 
-    if (attrName == SVGNames::modeAttr
-        || attrName == SVGNames::inAttr
+    if (attrName == SVGNames::modeAttr)
+        primitiveAttributeChanged(attrName);
+
+    if (attrName == SVGNames::inAttr
         || attrName == SVGNames::in2Attr)
         invalidate();
 }

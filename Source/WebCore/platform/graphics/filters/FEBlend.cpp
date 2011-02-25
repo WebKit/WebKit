@@ -53,9 +53,12 @@ BlendModeType FEBlend::blendMode() const
     return m_mode;
 }
 
-void FEBlend::setBlendMode(BlendModeType mode)
+bool FEBlend::setBlendMode(BlendModeType mode)
 {
+    if (m_mode == mode)
+        return false;
     m_mode = mode;
+    return true;
 }
 
 static unsigned char unknown(unsigned char, unsigned char, unsigned char, unsigned char)

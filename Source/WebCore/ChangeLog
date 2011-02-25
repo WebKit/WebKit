@@ -1,3 +1,24 @@
+2011-02-25  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        FEBlendElement changes doesn't require relayout
+        https://bugs.webkit.org/show_bug.cgi?id=55138
+
+        When the FEBlendElement receives an update message but the given value remains the same we don't need
+        to relayout the filter.
+
+        No new tests are needed because this modificiation is covered by the dynamic update tests of FEBlend.
+
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::FEBlend::setBlendMode):
+        * platform/graphics/filters/FEBlend.h:
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::setFilterEffectAttribute):
+        (WebCore::SVGFEBlendElement::svgAttributeChanged):
+        (WebCore::SVGFEBlendElement::synchronizeProperty):
+        * svg/SVGFEBlendElement.h:
+
 2011-02-24  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Antonio Gomes.
