@@ -2,6 +2,33 @@
 
         Unreviewed Chromium expectations update.
         
+        Fix editing/selection/caret-rtl* for Chromium Snow Leopard. Remove
+        outdated chromium-mac baselines (the test will pass on Chromium SL with
+        the mac/ baselines). Promote the chromium-mac-leopard baselines to
+        mac-leopard (since the Mac port will pass with them on Leopard).
+
+        * platform/chromium-mac/editing/selection/caret-rtl-2-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-2-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-2-left-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-2-left-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-right-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-right-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/editing/selection/caret-rtl-2-expected.checksum: Renamed from LayoutTests/platform/chromium-mac-leopard/editing/selection/caret-rtl-2-expected.checksum.
+        * platform/mac-leopard/editing/selection/caret-rtl-2-expected.png: Renamed from LayoutTests/platform/chromium-mac-leopard/editing/selection/caret-rtl-2-expected.png.
+        * platform/mac-leopard/editing/selection/caret-rtl-2-left-expected.checksum: Renamed from LayoutTests/platform/chromium-mac-leopard/editing/selection/caret-rtl-2-left-expected.checksum.
+        * platform/mac-leopard/editing/selection/caret-rtl-2-left-expected.png: Renamed from LayoutTests/platform/chromium-mac-leopard/editing/selection/caret-rtl-2-left-expected.png.
+        * platform/mac-leopard/editing/selection/caret-rtl-expected.checksum: Renamed from LayoutTests/platform/chromium-mac-leopard/editing/selection/caret-rtl-expected.checksum.
+        * platform/mac-leopard/editing/selection/caret-rtl-expected.png: Renamed from LayoutTests/platform/chromium-mac-leopard/editing/selection/caret-rtl-expected.png.
+        * platform/mac-leopard/editing/selection/caret-rtl-right-expected.checksum: Renamed from LayoutTests/platform/chromium-mac-leopard/editing/selection/caret-rtl-right-expected.checksum.
+        * platform/mac-leopard/editing/selection/caret-rtl-right-expected.png: Renamed from LayoutTests/platform/chromium-mac-leopard/editing/selection/caret-rtl-right-expected.png.
+
+2011-02-25  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+        
         editing/pasteboard/merge-end-list.html was failing on Chromium Snow
         Leopard because it was picking up the .checksum file in chromium-mac/,
         even though it would pass with the mac/ .png/.checksum. Additionally, the
