@@ -1,3 +1,27 @@
+2011-02-24  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Revert the support for QNAM affined to a different thread.
+        https://bugs.webkit.org/show_bug.cgi?id=55149
+
+        Qt 4.8 will have QNAM use its own thread internally by default,
+        no need to keep this complexity in WebKit.
+
+        This mainly reverts:
+        http://trac.webkit.org/changeset/73710
+        http://trac.webkit.org/changeset/73712
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::~LauncherWindow):
+        (LauncherWindow::initializeView):
+        (LauncherWindow::createChrome):
+        * QtTestBrowser/launcherwindow.h:
+        (WindowOptions::WindowOptions):
+        * QtTestBrowser/webpage.cpp:
+        (WebPage::WebPage):
+        * QtTestBrowser/webpage.h:
+
 2011-02-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

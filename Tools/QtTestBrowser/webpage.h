@@ -33,14 +33,8 @@
 #ifndef webpage_h
 #define webpage_h
 
-#include <QMutex>
-#include <QScopedPointer>
-#include <QThread>
-#include <QWaitCondition>
 #include <qwebframe.h>
 #include <qwebpage.h>
-
-class QtNAMThread;
 
 class WebPage : public QWebPage {
     Q_OBJECT
@@ -57,7 +51,6 @@ public:
 
     QString userAgentForUrl(const QUrl& url) const;
     void setInterruptingJavaScriptEnabled(bool enabled) { m_interruptingJavaScriptEnabled = enabled; }
-    void setQnamThreaded(bool threaded);
 
 public slots:
     void openUrlInDefaultBrowser(const QUrl& url = QUrl());
@@ -71,46 +64,6 @@ private:
     void applyProxy();
     QString m_userAgent;
     bool m_interruptingJavaScriptEnabled;
-    QtNAMThread* m_qnamThread;
-};
-
-
-class QtNAMThread : public QThread {
-public:
-    QtNAMThread(QObject *parent = 0)
-        : QThread(parent)
-        , m_qnam(0)
-    {
-    }
-    ~QtNAMThread()
-    {
-        quit();
-        wait();
-    }
-
-    QNetworkAccessManager* networkAccessManager()
-    {
-        QMutexLocker lock(&m_mutex);
-        while (!m_qnam)
-            m_waitCondition.wait(&m_mutex);
-        return m_qnam;
-    }
-protected:
-    void run()
-    {
-        Q_ASSERT(!m_qnam);
-        {
-            QMutexLocker lock(&m_mutex);
-            m_qnam = new QNetworkAccessManager;
-            m_waitCondition.wakeAll();
-        }
-        exec();
-        delete m_qnam;
-    }
-private:
-    QNetworkAccessManager* m_qnam;
-    QMutex m_mutex;
-    QWaitCondition m_waitCondition;
 };
 
 #endif

@@ -1945,7 +1945,6 @@ HEADERS += \
     platform/network/NetworkStateNotifier.h \
     platform/network/ProtectionSpace.h \
     platform/network/ProxyServer.h \
-    platform/network/qt/QtNAMThreadSafeProxy.h \
     platform/network/qt/QNetworkReplyHandler.h \
     platform/network/ResourceErrorBase.h \
     platform/network/ResourceHandle.h \
@@ -2462,7 +2461,6 @@ SOURCES += \
     platform/network/qt/ResourceHandleQt.cpp \
     platform/network/qt/ResourceRequestQt.cpp \
     platform/network/qt/DnsPrefetchHelper.cpp \
-    platform/network/qt/QtNAMThreadSafeProxy.cpp \
     platform/network/qt/ProxyServerQt.cpp \
     platform/network/qt/QNetworkReplyHandler.cpp \
     editing/qt/EditorQt.cpp \

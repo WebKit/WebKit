@@ -34,7 +34,6 @@
 #include "KURL.h"
 #include "NetworkingContext.h"
 #include "PlatformString.h"
-#include "QtNAMThreadSafeProxy.h"
 #include "qwebframe.h"
 #include "qwebpage.h"
 #include <QNetworkAccessManager>
@@ -43,8 +42,7 @@
 
 namespace WebCore {
 
-
-static QNetworkAccessManager *networkAccessManager(const Document *document)
+static QNetworkCookieJar *cookieJar(const Document *document)
 {
     if (!document)
         return 0;
@@ -54,30 +52,38 @@ static QNetworkAccessManager *networkAccessManager(const Document *document)
     FrameLoader* loader = frame->loader();
     if (!loader)
         return 0;
-    return loader->networkingContext()->networkAccessManager();
+    QNetworkAccessManager* manager = loader->networkingContext()->networkAccessManager();
+    QNetworkCookieJar* jar = manager->cookieJar();
+    return jar;
 }
 
 void setCookies(Document* document, const KURL& url, const String& value)
 {
-    QNetworkAccessManager* manager = networkAccessManager(document);
-    if (!manager)
+    QUrl u(url);
+    QUrl p(document->firstPartyForCookies());
+    QNetworkCookieJar* jar = cookieJar(document);
+    if (!jar)
         return;
 
-    // Create the manipulator on the heap to let it live until the
-    // async request is picked by the other thread's event loop.
-    QtNAMThreadSafeProxy* managerProxy = new QtNAMThreadSafeProxy(manager);
-    managerProxy->setCookies(url, value);
-    managerProxy->deleteLater();
+    QList<QNetworkCookie> cookies = QNetworkCookie::parseCookies(QString(value).toAscii());
+    QList<QNetworkCookie>::Iterator it = cookies.begin();
+    while (it != cookies.end()) {
+        if (it->isHttpOnly())
+            it = cookies.erase(it);
+        else
+            ++it;
+    }
+    jar->setCookiesFromUrl(cookies, u);
 }
 
 String cookies(const Document* document, const KURL& url)
 {
-    QNetworkAccessManager* manager = networkAccessManager(document);
-    if (!manager)
+    QUrl u(url);
+    QNetworkCookieJar* jar = cookieJar(document);
+    if (!jar)
         return String();
 
-    QtNAMThreadSafeProxy managerProxy(manager);
-    QList<QNetworkCookie> cookies = managerProxy.cookiesForUrl(url);
+    QList<QNetworkCookie> cookies = jar->cookiesForUrl(u);
     if (cookies.isEmpty())
         return String();
 
@@ -94,12 +100,12 @@ String cookies(const Document* document, const KURL& url)
 
 String cookieRequestHeaderFieldValue(const Document* document, const KURL &url)
 {
-    QNetworkAccessManager* manager = networkAccessManager(document);
-    if (!manager)
+    QUrl u(url);
+    QNetworkCookieJar* jar = cookieJar(document);
+    if (!jar)
         return String();
 
-    QtNAMThreadSafeProxy managerProxy(manager);
-    QList<QNetworkCookie> cookies = managerProxy.cookiesForUrl(url);
+    QList<QNetworkCookie> cookies = jar->cookiesForUrl(u);
     if (cookies.isEmpty())
         return String();
 
@@ -114,12 +120,8 @@ String cookieRequestHeaderFieldValue(const Document* document, const KURL &url)
 
 bool cookiesEnabled(const Document* document)
 {
-    QNetworkAccessManager* manager = networkAccessManager(document);
-    if (!manager)
-        return false;
-
-    QtNAMThreadSafeProxy managerProxy(manager);
-    return managerProxy.hasCookieJar();
+    QNetworkCookieJar* jar = cookieJar(document);
+    return jar;
 }
 
 bool getRawCookies(const Document*, const KURL&, Vector<Cookie>& rawCookies)
