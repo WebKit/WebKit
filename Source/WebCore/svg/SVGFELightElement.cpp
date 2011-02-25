@@ -28,6 +28,7 @@
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "SVGFEDiffuseLightingElement.h"
+#include "SVGFESpecularLightingElement.h"
 #include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
@@ -50,6 +51,26 @@ SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document* doc
     : SVGElement(tagName, document)
     , m_specularExponent(1)
 {
+}
+
+SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElement)
+{
+    for (Node* node = svgElement->firstChild(); node; node = node->nextSibling()) {
+        if (node->hasTagName(SVGNames::feDistantLightTag)
+            || node->hasTagName(SVGNames::fePointLightTag)
+            || node->hasTagName(SVGNames::feSpotLightTag)) {
+            return static_cast<SVGFELightElement*>(node);
+        }
+    }
+    return 0;
+}
+
+PassRefPtr<LightSource> SVGFELightElement::findLightSource(const SVGElement* svgElement)
+{
+    SVGFELightElement* lightNode = findLightElement(svgElement);
+    if (!lightNode)
+        return 0;
+    return lightNode->lightSource();
 }
 
 void SVGFELightElement::parseMappedAttribute(Attribute* attr)
@@ -105,9 +126,11 @@ void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)
             SVGFEDiffuseLightingElement* diffuseLighting = static_cast<SVGFEDiffuseLightingElement*>(parent);
             diffuseLighting->lightElementAttributeChanged(this, attrName);
             return;
+        } else if (parent->hasTagName(SVGNames::feSpecularLightingTag)) {
+            SVGFESpecularLightingElement* specularLighting = static_cast<SVGFESpecularLightingElement*>(parent);
+            specularLighting->lightElementAttributeChanged(this, attrName);
+            return;
         }
-        // Handler for SpecularLighting has not implemented yet.
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
     }
 }
 

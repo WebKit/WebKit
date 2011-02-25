@@ -56,9 +56,6 @@ private:
     DECLARE_ANIMATED_NUMBER(SurfaceScale, surfaceScale)
     DECLARE_ANIMATED_NUMBER(KernelUnitLengthX, kernelUnitLengthX)
     DECLARE_ANIMATED_NUMBER(KernelUnitLengthY, kernelUnitLengthY)
-
-    SVGFELightElement* findLightElement() const;
-    PassRefPtr<LightSource> findLight() const;
 };
 
 } // namespace WebCore

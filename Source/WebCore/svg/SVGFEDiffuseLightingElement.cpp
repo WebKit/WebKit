@@ -97,7 +97,9 @@ bool SVGFEDiffuseLightingElement::setFilterEffectAttribute(FilterEffect* effect,
     }
 
     LightSource* lightSource = const_cast<LightSource*>(diffuseLighting->lightSource());
-    const SVGFELightElement* lightElement = findLightElement();
+    const SVGFELightElement* lightElement = SVGFELightElement::findLightElement(this);
+    ASSERT(lightSource);
+    ASSERT(lightElement);
 
     if (attrName == SVGNames::azimuthAttr)
         return lightSource->setAzimuth(lightElement->azimuth());
@@ -140,7 +142,7 @@ void SVGFEDiffuseLightingElement::svgAttributeChanged(const QualifiedName& attrN
 
 void SVGFEDiffuseLightingElement::lightElementAttributeChanged(const SVGFELightElement* lightElement, const QualifiedName& attrName)
 {
-    if (findLightElement() != lightElement)
+    if (SVGFELightElement::findLightElement(this) != lightElement)
         return;
 
     // The light element has different attribute names.
@@ -192,37 +194,21 @@ void SVGFEDiffuseLightingElement::fillAttributeToPropertyTypeMap()
 PassRefPtr<FilterEffect> SVGFEDiffuseLightingElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());
-    
+
     if (!input1)
         return 0;
-    
+
+    RefPtr<LightSource> lightSource = SVGFELightElement::findLightSource(this);
+    if (!lightSource)
+        return 0;
+
     RefPtr<RenderStyle> filterStyle = styleForRenderer();
     Color color = filterStyle->svgStyle()->lightingColor();
-    
-    RefPtr<FilterEffect> effect = FEDiffuseLighting::create(filter, color, surfaceScale(), diffuseConstant(), 
-                                                                kernelUnitLengthX(), kernelUnitLengthY(), findLight());
+
+    RefPtr<FilterEffect> effect = FEDiffuseLighting::create(filter, color, surfaceScale(), diffuseConstant(),
+                                                                kernelUnitLengthX(), kernelUnitLengthY(), lightSource.release());
     effect->inputEffects().append(input1);
     return effect.release();
-}
-
-SVGFELightElement* SVGFEDiffuseLightingElement::findLightElement() const
-{
-    for (Node* node = firstChild(); node; node = node->nextSibling()) {
-        if (node->hasTagName(SVGNames::feDistantLightTag)
-            || node->hasTagName(SVGNames::fePointLightTag)
-            || node->hasTagName(SVGNames::feSpotLightTag)) {
-            return static_cast<SVGFELightElement*>(node);
-        }
-    }
-    return 0;
-}
-
-PassRefPtr<LightSource> SVGFEDiffuseLightingElement::findLight() const
-{
-    SVGFELightElement* lightNode = findLightElement();
-    if (!lightNode)
-        return 0;
-    return lightNode->lightSource();
 }
 
 }

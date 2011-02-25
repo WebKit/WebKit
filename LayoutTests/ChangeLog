@@ -1,3 +1,19 @@
+2011-02-25  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        FESpecularLightingElement changes doesn't require relayout.
+        https://bugs.webkit.org/show_bug.cgi?id=54451
+
+        Test what happens if we remove the light source of specularLight.
+
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource-expected.png: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html: Added.
+        * svg/dynamic-updates/script-tests/SVGFESpecularLightingElement-remove-lightSource.js: Added.
+        (executeTest):
+
 2011-02-25  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed.

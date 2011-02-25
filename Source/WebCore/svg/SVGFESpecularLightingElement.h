@@ -25,6 +25,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FESpecularLighting.h"
 #include "SVGAnimatedNumber.h"
+#include "SVGFELightElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -32,11 +33,13 @@ namespace WebCore {
 class SVGFESpecularLightingElement : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFESpecularLightingElement> create(const QualifiedName&, Document*);
+    void lightElementAttributeChanged(const SVGFELightElement*, const QualifiedName&);
 
 private:
     SVGFESpecularLightingElement(const QualifiedName&, Document*);
     
     virtual void parseMappedAttribute(Attribute*);
+    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual void fillAttributeToPropertyTypeMap();
@@ -53,8 +56,6 @@ private:
     DECLARE_ANIMATED_NUMBER(SurfaceScale, surfaceScale)
     DECLARE_ANIMATED_NUMBER(KernelUnitLengthX, kernelUnitLengthX)
     DECLARE_ANIMATED_NUMBER(KernelUnitLengthY, kernelUnitLengthY)
-
-    PassRefPtr<LightSource> findLights() const;
 };
 
 } // namespace WebCore

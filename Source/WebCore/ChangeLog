@@ -1,3 +1,45 @@
+2011-02-25  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        FESpecularLightingElement changes doesn't require relayout.
+        https://bugs.webkit.org/show_bug.cgi?id=54451
+
+        When the FESpecularLightingElement receives an update message but the given value remains the same we don't need
+        to relayout the filter. Otherwise, the light source requests a repaint on the specular lighting filter.
+        Besides add ASSERTs to DiffuseLightElement::setFilterEffectAttribute as well to avoid lightSources being null.
+
+        No new tests are needed to check the repaint because it is covered by the dynamic update tests of FESpecularLighting.
+        We only test what happens if we remove the light source of specularLight.
+
+        Test: svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html
+
+        * platform/graphics/filters/FESpecularLighting.cpp:
+        (WebCore::FESpecularLighting::setSurfaceScale):
+        (WebCore::FESpecularLighting::setSpecularConstant):
+        (WebCore::FESpecularLighting::setSpecularExponent):
+        (WebCore::FESpecularLighting::setKernelUnitLengthX):
+        (WebCore::FESpecularLighting::setKernelUnitLengthY):
+        * platform/graphics/filters/FESpecularLighting.h:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::setFilterEffectAttribute):
+        (WebCore::SVGFEDiffuseLightingElement::lightElementAttributeChanged):
+        (WebCore::SVGFEDiffuseLightingElement::build):
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::findLightElement):
+        (WebCore::SVGFELightElement::findLight):
+        (WebCore::SVGFELightElement::svgAttributeChanged):
+        * svg/SVGFELightElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::setFilterEffectAttribute):
+        (WebCore::SVGFESpecularLightingElement::svgAttributeChanged):
+        (WebCore::SVGFESpecularLightingElement::lightElementAttributeChanged):
+        (WebCore::SVGFESpecularLightingElement::build):
+        * svg/SVGFESpecularLightingElement.h:
+
 2011-02-24  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Andreas Kling.

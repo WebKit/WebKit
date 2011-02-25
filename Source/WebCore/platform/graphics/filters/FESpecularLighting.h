@@ -37,19 +37,19 @@ public:
     void setLightingColor(const Color&);
 
     float surfaceScale() const;
-    void setSurfaceScale(float);
+    bool setSurfaceScale(float);
 
     float specularConstant() const;
-    void setSpecularConstant(float);
+    bool setSpecularConstant(float);
 
     float specularExponent() const;
-    void setSpecularExponent(float);
+    bool setSpecularExponent(float);
 
     float kernelUnitLengthX() const;
-    void setKernelUnitLengthX(float);
+    bool setKernelUnitLengthX(float);
 
     float kernelUnitLengthY() const;
-    void setKernelUnitLengthY(float);
+    bool setKernelUnitLengthY(float);
 
     const LightSource* lightSource() const;
     void setLightSource(PassRefPtr<LightSource>);

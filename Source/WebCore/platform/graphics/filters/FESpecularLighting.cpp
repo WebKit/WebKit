@@ -64,9 +64,12 @@ float FESpecularLighting::surfaceScale() const
     return m_surfaceScale;
 }
 
-void FESpecularLighting::setSurfaceScale(float surfaceScale)
+bool FESpecularLighting::setSurfaceScale(float surfaceScale)
 {
+    if (m_surfaceScale == surfaceScale)
+        return false;
     m_surfaceScale = surfaceScale;
+    return true;
 }
 
 float FESpecularLighting::specularConstant() const
@@ -74,9 +77,12 @@ float FESpecularLighting::specularConstant() const
     return m_specularConstant;
 }
 
-void FESpecularLighting::setSpecularConstant(float specularConstant)
+bool FESpecularLighting::setSpecularConstant(float specularConstant)
 {
+    if (m_specularConstant == specularConstant)
+        return false;
     m_specularConstant = specularConstant;
+    return true;
 }
 
 float FESpecularLighting::specularExponent() const
@@ -84,9 +90,12 @@ float FESpecularLighting::specularExponent() const
     return m_specularExponent;
 }
 
-void FESpecularLighting::setSpecularExponent(float specularExponent)
+bool FESpecularLighting::setSpecularExponent(float specularExponent)
 {
+    if (m_specularExponent == specularExponent)
+        return false;
     m_specularExponent = specularExponent;
+    return true;
 }
 
 float FESpecularLighting::kernelUnitLengthX() const
@@ -94,9 +103,12 @@ float FESpecularLighting::kernelUnitLengthX() const
     return m_kernelUnitLengthX;
 }
 
-void FESpecularLighting::setKernelUnitLengthX(float kernelUnitLengthX)
+bool FESpecularLighting::setKernelUnitLengthX(float kernelUnitLengthX)
 {
+    if (m_kernelUnitLengthX == kernelUnitLengthX)
+        return false;
     m_kernelUnitLengthX = kernelUnitLengthX;
+    return true;
 }
 
 float FESpecularLighting::kernelUnitLengthY() const
@@ -104,9 +116,12 @@ float FESpecularLighting::kernelUnitLengthY() const
     return m_kernelUnitLengthY;
 }
 
-void FESpecularLighting::setKernelUnitLengthY(float kernelUnitLengthY)
+bool FESpecularLighting::setKernelUnitLengthY(float kernelUnitLengthY)
 {
+    if (m_kernelUnitLengthY == kernelUnitLengthY)
+        return false;
     m_kernelUnitLengthY = kernelUnitLengthY;
+    return true;
 }
 
 const LightSource* FESpecularLighting::lightSource() const
