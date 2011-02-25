@@ -1,3 +1,18 @@
+2011-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        fast/repaint/bugzilla-6473.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=53655
+        
+        Add a waitUntilDone() and notifyDone() to this test, since it uses
+        a setTimeout(), and update results accordingly.
+
+        * fast/repaint/bugzilla-6473.html:
+        * platform/mac/fast/repaint/bugzilla-6473-expected.checksum:
+        * platform/mac/fast/repaint/bugzilla-6473-expected.png:
+        * platform/mac/fast/repaint/bugzilla-6473-expected.txt:
+
 2011-02-24  Dan Bernstein  <mitz@apple.com>
 
         Updated results after r79629.

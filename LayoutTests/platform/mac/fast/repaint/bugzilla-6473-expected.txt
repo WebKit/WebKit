@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x188
-  RenderBlock {HTML} at (0,0) size 800x188
-    RenderBody {BODY} at (8,16) size 784x164
+layer at (0,0) size 800x164
+  RenderBlock {HTML} at (0,0) size 800x164
+    RenderBody {BODY} at (8,16) size 784x132
       RenderBlock {P} at (0,0) size 784x18
         RenderInline {B} at (0,0) size 62x18
           RenderText {#text} at (0,0) size 62x18
@@ -28,10 +28,9 @@ layer at (0,0) size 800x188
         RenderText {#text} at (93,3) size 253x18
           text run at (93,3) width 4: " "
           text run at (97,3) width 249: "A green rectangle will not show below."
-      RenderBlock {DIV} at (0,114) size 784x50
-layer at (8,130) size 784x50
-  RenderBlock {DIV} at (0,0) size 784x50
-layer at (8,146) size 784x18
-  RenderBlock (relative positioned) {P} at (0,16) size 784x18 [bgcolor=#00FF00]
+      RenderBlock {DIV} at (0,114) size 784x18
+        RenderBlock {DIV} at (0,0) size 784x18
+layer at (8,130) size 784x18
+  RenderBlock (relative positioned) {P} at (0,0) size 784x18 [bgcolor=#00FF00]
     RenderText {#text} at (0,0) size 71x18
       text run at (0,0) width 71: "SUCCESS"

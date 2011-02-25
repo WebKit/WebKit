@@ -7,10 +7,16 @@
 function finish()
 {
     document.getElementById('allcontent').style.overflow = '';
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 
 function repaintTest()
 {
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
     window.setTimeout(finish, 1);
 }
 </script>
