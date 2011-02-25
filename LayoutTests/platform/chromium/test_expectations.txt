@@ -852,8 +852,6 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 // SVG TESTS
 // -----------------------------------------------------------------
 
-BUG_ZMO : svg/custom/use-multiple-on-nested-disallowed-font.html = CRASH PASS
-
 BUGCR8763 LINUX WIN MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE+TEXT IMAGE
 
 // We show reduced version of the entire SVN image rather than an image
@@ -3114,11 +3112,6 @@ BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH 
 
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE PASS
 
-// Failure after r77818/77819
-BUG_ZMO : fast/css/text-overflow-ellipsis.html = IMAGE IMAGE+TEXT PASS
-
-BUG_ZMO : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT PASS
-
 BUG_ZMO : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
 // Should be able to remove these two after rebaseline, add them for now so we could roll
@@ -3126,7 +3119,7 @@ BUG_ZMO MAC : fast/box-shadow/inset.html = IMAGE
 
 BUGWK54051 MAC LINUX : plugins/invalidate_rect.html = FAIL
 
-// Snow Leopard-only failures (generally just need updatex pixel results)
+// Snow Leopard-only failures (generally just need updated pixel results)
 BUGWK54322 MAC SNOWLEOPARD : animations/3d/matrix-transform-type-animation.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : animations/3d/state-at-end-event-transform.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : css1/box_properties/clear_float.html = IMAGE

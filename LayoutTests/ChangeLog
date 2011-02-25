@@ -1,3 +1,25 @@
+2011-02-24  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed expectations update.
+
+        - svg/custom/use-multiple-on-nested-disallowed-font.html has not crashed
+          recently
+        - Rebaseline fast/css/text-overflow-ellipsis.html for Leopard (Snow
+          Leopard baselines were checked in with r78890)
+        - Rebaseline fast/table/colspanMinWidth-vertical.html and 
+          fast/table/fixed-with-auto-with-colspan-vertical.html after r79618
+
+        * platform/chromium-mac/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt: Removed.
+        * platform/chromium-win/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/chromium-win/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/css/text-overflow-ellipsis-expected.checksum:
+        * platform/mac-leopard/fast/css/text-overflow-ellipsis-expected.png:
+        * platform/mac/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/mac/fast/table/fixed-with-auto-with-colspan-vertical-expected.checksum:
+        * platform/mac/fast/table/fixed-with-auto-with-colspan-vertical-expected.png:
+        * platform/mac/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt:
+
 2011-02-24  James Robinson  <jamesr@chromium.org>
 
         Add chromium baselines for new fast/block/position/vertical- tests.
