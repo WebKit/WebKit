@@ -1,3 +1,12 @@
+2011-02-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r79672.
+
+        [Qt] Build tst_qdeclarativewebview if QT_CONFIG contains declarative.
+
+        * tests/tests.pri:
+        * tests/tests.pro:
+
 2011-02-25  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
