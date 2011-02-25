@@ -120,6 +120,7 @@
         ['exclude', '../wtf/gobject'], 
         ['exclude', '../wtf/gtk'], 
         ['exclude', '../wtf/haiku'], 
+        ['exclude', '../wtf/mac'], 
         ['exclude', '../wtf/qt'], 
         ['exclude', '../wtf/url'], 
         ['exclude', '../wtf/wince'], 
