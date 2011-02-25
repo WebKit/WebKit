@@ -1,3 +1,16 @@
+2011-02-25  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        [chromium] Adding test to ensure clipping layer gets updated when layout
+        width/height change in the page.
+        https://bugs.webkit.org/show_bug.cgi?id=55103
+
+        * platform/chromium/compositing/layout-width-change-expected.checksum: Added.
+        * platform/chromium/compositing/layout-width-change-expected.png: Added.
+        * platform/chromium/compositing/layout-width-change-expected.txt: Added.
+        * platform/chromium/compositing/layout-width-change.html: Added.
+
 2011-02-25  Jessie Berlin  <jberlin@apple.com>
 
         [Windows 7 Release Tests] fast/ruby/base-shorter-than-text.html failing since introduction

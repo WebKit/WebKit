@@ -1,3 +1,19 @@
+2011-02-25  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Update the clip layer size whenever the root layer's size and position
+        is updated. This only affects the accelerated compositing path.
+        https://bugs.webkit.org/show_bug.cgi?id=55103
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+
+        Test: platform/chromium/compositing/layout-width-change.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+
 2011-02-25  Ned Holbrook  <nholbrook@apple.com>
 
         Reviewed by Dan Bernstein.

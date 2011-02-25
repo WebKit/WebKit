@@ -1102,6 +1102,10 @@ void RenderLayerCompositor::updateRootLayerPosition()
         m_rootPlatformLayer->setSize(FloatSize(m_renderView->docWidth(), m_renderView->docHeight()));
         m_rootPlatformLayer->setPosition(FloatPoint(m_renderView->docLeft(), m_renderView->docTop()));
     }
+    if (m_clipLayer) {
+        FrameView* frameView = m_renderView->frameView();
+        m_clipLayer->setSize(FloatSize(frameView->layoutWidth(), frameView->layoutHeight()));
+    }
 }
 
 void RenderLayerCompositor::didStartAcceleratedAnimation(CSSPropertyID property)
