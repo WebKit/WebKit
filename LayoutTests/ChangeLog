@@ -1,3 +1,14 @@
+2011-02-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Added new GTK test expectations.
+
+        * platform/gtk/fast/block/positioning/vertical-lr: Added 6 new
+        test expectations.
+        * platform/gtk/fast/block/positioning/vertical-rl: Added 6 new
+        test expectations.
+
 2011-02-25  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
