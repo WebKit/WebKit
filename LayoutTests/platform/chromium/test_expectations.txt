@@ -3432,29 +3432,11 @@ BUGCR73510 MAC LEOPARD : fast/text/font-size-zero.html = TEXT
 
 BUGWK54882 WIN : inspector/styles/styles-update-from-js.html = TEXT TIMEOUT
 
-BUGWK55183 : fast/ruby/nested-ruby.html = IMAGE+TEXT
-BUGWK55183 : fast/ruby/ruby-beforeafter.html = IMAGE+TEXT
-BUGWK55183 : fast/ruby/ruby-length.html = IMAGE+TEXT
-BUGWK55183 : fast/ruby/ruby-run-break.html = IMAGE+TEXT
-BUGWK55183 : fast/ruby/ruby-runs-spans.html = IMAGE+TEXT
-BUGWK55183 : fast/ruby/ruby-runs.html = IMAGE+TEXT
-BUGWK55183 : fast/ruby/ruby-trailing.html = IMAGE+TEXT
-BUGWK55183 : fast/ruby/rubyDOM-insert-rt.html = IMAGE+TEXT
-BUGWK55183 : fast/ruby/rubyDOM-insert-text1.html = IMAGE+TEXT
-BUGWK55183 : fast/ruby/rubyDOM-insert-text2.html = IMAGE+TEXT
-BUGWK55183 : fast/ruby/rubyDOM-insert-text3.html = IMAGE+TEXT
-BUGWK55183 : fast/ruby/rubyDOM-remove-rt1.html = IMAGE+TEXT
-BUGWK55183 : fast/ruby/rubyDOM-remove-rt2.html = IMAGE+TEXT
-BUGWK55183 : fast/ruby/rubyDOM-remove-text1.html = IMAGE+TEXT
-BUGWK55183 MAC : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT IMAGE
-
-BUGV8_1202 DEBUG : fast/js/function-call-aliased.html = PASS CRASH
 BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
 
 BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 BUGWK55118 : fast/xsl/sort-locale.xml = TEXT
 
-BUGCR74144 MAC : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
-BUGCR74144 MAC : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUGJAMESR DEBUG SLOW : html5lib/runner.html = PASS TIMEOUT
 
 BUG_ANTONM : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE

@@ -1,3 +1,15 @@
+2011-02-25  James Robinson  <jamesr@chromium.org>
+
+        Update chromium expectations and baselines for some ruby tests.
+
+        * platform/chromium-mac/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum: Added.
+        * platform/chromium-mac/fast/blockflow/Kusa-Makura-background-canvas-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/japanese-ruby-vertical-lr-expected.checksum: Added.
+        * platform/chromium-mac/fast/blockflow/japanese-ruby-vertical-lr-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/japanese-ruby-vertical-rl-expected.checksum: Added.
+        * platform/chromium-mac/fast/blockflow/japanese-ruby-vertical-rl-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-25  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update.
