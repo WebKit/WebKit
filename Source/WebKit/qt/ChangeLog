@@ -1,3 +1,13 @@
+2011-02-25  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Make the WebKit2 build system less confusing for non-Qt developers
+        https://bugs.webkit.org/show_bug.cgi?id=55213
+
+        * QtWebKit.pro: Move the WebKit2 API into a project include file
+        in the WebKit2 directory and include the pri file here.
+
 2011-02-25  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed build fix for Intel ICC and MSVC.

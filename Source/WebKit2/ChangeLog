@@ -1,3 +1,12 @@
+2011-02-25  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Make the WebKit2 build system less confusing for non-Qt developers
+        https://bugs.webkit.org/show_bug.cgi?id=55213
+
+        * WebKit2API.pri: Added.
+
 2011-02-25  Amruth Raj  <amruthraj@motorola.com> and Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com> and Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
