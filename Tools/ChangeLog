@@ -1,5 +1,27 @@
 2011-02-25  Adam Roben  <aroben@apple.com>
 
+        Set the 32-bit post-mortem debugger on 64-bit OSes
+
+        The post-mortem debugger is controlled by some registry values in
+        HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug. On 64-bit OSes, you can either
+        set the values in that key, which will be used for 64-bit apps, or in the equivalent key
+        under Wow6432Node, which will be used for 32-bit apps. Since DumpRenderTree and
+        WebKitTestRunner are 32-bit, we want to use the latter location.
+
+        Fixes <http://webkit.org/b/55225> old-run-webkit-tests sets the post-mortem debugger for
+        64-bit apps, but should set it for 32-bit apps instead
+
+        Reviewed by Darin Adler.
+
+        * Scripts/old-run-webkit-tests:
+        (readRegistryString):
+        (writeRegistryString):
+        Pass --wow32 to regtool so it will get/set values beneath Wow6432Node, which is where
+        Windows looks for the post-mortem debugger values when a 32-bit app crashes on a 64-bit OS.
+        Passing --wow32 on a 32-bit OS will not have any effect.
+
+2011-02-25  Adam Roben  <aroben@apple.com>
+
         Clean up code to set up crash log saving on Windows
 
         Fixes <http://webkit.org/b/55224> old-run-webkit-test's Windows registry code is ugly

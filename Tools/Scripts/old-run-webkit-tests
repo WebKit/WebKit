@@ -2605,14 +2605,14 @@ sub createDebuggerCommandFile()
 sub readRegistryString($)
 {
     my ($valueName) = @_;
-    chomp(my $string = `regtool get "$valueName"`);
+    chomp(my $string = `regtool --wow32 get "$valueName"`);
     return $string;
 }
 
 sub writeRegistryString($$)
 {
     my ($valueName, $string) = @_;
-    my $error = system "regtool", "set", "-s", $valueName, $string;
+    my $error = system "regtool", "--wow32", "set", "-s", $valueName, $string;
     return !$error;
 }
 
