@@ -1,3 +1,15 @@
+2011-02-25  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, updating chromium linux baselines after changes to
+        RGBToHSL code in chromium.
+
+        * platform/chromium-linux/fast/forms/menulist-restrict-line-height-expected.checksum:
+        * platform/chromium-linux/fast/forms/menulist-restrict-line-height-expected.png:
+        * platform/chromium-linux/fast/forms/menulist-style-color-expected.checksum:
+        * platform/chromium-linux/fast/forms/menulist-style-color-expected.png:
+        * platform/chromium-linux/fast/forms/select-baseline-expected.checksum:
+        * platform/chromium-linux/fast/forms/select-baseline-expected.png:
+
 2011-02-25  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Eric Seidel.

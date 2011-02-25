@@ -1,3 +1,9 @@
+2011-02-25  Tony Chang  <tony@chromium.org>
+
+        Roll chromium deps to include RBGToHSL fix and ICU update.
+
+        * DEPS:
+
 2011-02-15  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin Fisher.
