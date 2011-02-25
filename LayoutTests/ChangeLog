@@ -1,5 +1,12 @@
 2011-02-25  Martin Robinson  <mrobinson@igalia.com>
 
+        Add the next set of missing GTK+ SVG pixel results.
+
+        * platform/gtk/svg/dom/SVGRectElement: Add missing pixel reults.
+        * platform/gtk/svg/dynamic-updates: Ditto.
+
+2011-02-25  Martin Robinson  <mrobinson@igalia.com>
+
         Add some missing GTK+ SVG pixel results.
 
         * platform/gtk/svg: Add missing GTK+ SVG pixel results.
