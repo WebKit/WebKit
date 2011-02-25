@@ -96,6 +96,11 @@ void TestController::notifyDone()
 
 void TestController::platformInitialize()
 {
+    // Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
+    // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
+    // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
+    ::SetErrorMode(0);
+
     ::SetUnhandledExceptionFilter(exceptionFilter);
 
     _setmode(1, _O_BINARY);

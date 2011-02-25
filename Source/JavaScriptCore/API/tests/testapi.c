@@ -32,6 +32,10 @@
 #include <wtf/Assertions.h>
 #include <wtf/UnusedParam.h>
 
+#if OS(WINDOWS)
+#include <windows.h>
+#endif
+
 #if COMPILER(MSVC)
 
 #include <wtf/MathExtras.h>
@@ -819,6 +823,13 @@ static bool checkForCycleInPrototypeChain()
 
 int main(int argc, char* argv[])
 {
+#if OS(WINDOWS)
+    // Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
+    // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
+    // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
+    ::SetErrorMode(0);
+#endif
+
     const char *scriptPath = "testapi.js";
     if (argc > 1) {
         scriptPath = argv[1];

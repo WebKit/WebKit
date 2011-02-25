@@ -27,6 +27,11 @@
 
 int main(int argc, const char* argv[])
 {
+    // Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
+    // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
+    // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
+    ::SetErrorMode(0);
+
     bool passed = true;
 
     std::string argument(argv[1]);

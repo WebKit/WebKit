@@ -1,3 +1,27 @@
+2011-02-25  Adam Roben  <aroben@apple.com>
+
+        Work around Cygwin's crash-suppression behavior
+
+        Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which any processes it launches will
+        inherit. This is bad for testing/debugging, as it causes the post-mortem debugger not to be
+        invoked. (Cygwin does this because it makes crashes more UNIX-y.) We reset the error mode
+        when our test apps launch to work around Cygwin's behavior.
+
+        Fixes <http://webkit.org/b/55222> Test apps crash silently (without invoking post-mortem
+        debugger) when launched from Cygwin 1.7
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+        * TestWebKitAPI/win/main.cpp:
+        (main):
+        * WebKitAPITest/main.cpp:
+        (main):
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::platformInitialize):
+        Call ::SetErrorMode(0) to undo Cygwin's folly.
+
 2011-02-24  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Andreas Kling.
