@@ -1,3 +1,25 @@
+2011-02-25  Amruth Raj  <amruthraj@motorola.com> and Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com> and Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement WebView and WebKitWebView classes for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=48509
+
+        * GNUmakefile.am:
+        * UIProcess/API/C/gtk/WKView.cpp:
+        * UIProcess/API/C/gtk/WKView.h: Removed gdkrectangle from
+        constructor.
+        * UIProcess/gtk/WebViewWidget.cpp: Added. The GObject interface
+        for WebView. The GObject is the GtkWidget handle which is used by
+        WebView class for GTK port.
+        * UIProcess/gtk/WebViewWidget.h: Added. The GObject interface
+        declarations for GtkWidget handle for GTK port.
+        * UIProcess/gtk/WebView.cpp: Added. The native GtkWidget handle
+        for GTK port which is associated with each WKViewRef.
+        * UIProcess/gtk/WebView.h: Added. Class which implements the
+        PageClient interface. It is a wrapper over the native GtkWidget
+        handle associated with each WKViewRef for GTK port.
+
 2011-02-25  Alejandro G. Castro  <alex@igalia.com>
 
         Fix GTK compilation after r79654.

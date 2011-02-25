@@ -196,6 +196,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Shared/ImmutableArray.h \
 	Source/WebKit2/Shared/ImmutableDictionary.cpp \
 	Source/WebKit2/Shared/ImmutableDictionary.h \
+	Source/WebKit2/Shared/LayerTreeContext.h \
 	Source/WebKit2/Shared/MutableArray.cpp \
 	Source/WebKit2/Shared/MutableArray.h \
 	Source/WebKit2/Shared/MutableDictionary.cpp \
@@ -369,8 +370,12 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/gtk/ChunkedUpdateDrawingAreaProxyGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/TextCheckerGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebInspectorGtk.cpp \
+	Source/WebKit2/UIProcess/gtk/WebViewWidget.cpp \
+	Source/WebKit2/UIProcess/gtk/WebViewWidget.h \
 	Source/WebKit2/UIProcess/gtk/WebPageProxyGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebPreferencesGtk.cpp \
+	Source/WebKit2/UIProcess/gtk/WebView.cpp \
+	Source/WebKit2/UIProcess/gtk/WebView.h \
 	Source/WebKit2/UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp \
 	Source/WebKit2/UIProcess/Launcher/gtk/ThreadLauncherGtk.cpp \
 	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.cpp \

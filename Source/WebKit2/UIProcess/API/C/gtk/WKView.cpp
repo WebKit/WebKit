@@ -37,9 +37,9 @@
 using namespace WebKit;
 using namespace WebCore;
 
-WKViewRef WKViewCreate(GdkRectangle rect, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+WKViewRef WKViewCreate(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    RefPtr<WebView> view = WebView::create(rect, toImpl(contextRef), toImpl(pageGroupRef));
+    RefPtr<WebView> view = WebView::create(toImpl(contextRef), toImpl(pageGroupRef));
     return toAPI(view.release().leakRef());
 }
 

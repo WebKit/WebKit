@@ -25,26 +25,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKView_h
-#define WKView_h
+#ifndef WebViewWidget_h
+#define WebViewWidget_h
 
-#include <WebKit2/WKBase.h>
+#include "WebView.h"
+
 #include <gtk/gtk.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+using namespace WebKit;
 
-WK_EXPORT WKViewRef WKViewCreate(WKContextRef context, WKPageGroupRef pageGroup);
+G_BEGIN_DECLS
 
-WK_EXPORT GtkWidget* WKViewGetWindow(WKViewRef view);
+#define WEB_VIEW_TYPE_WIDGET              (webViewWidgetGetType())
+#define WEB_VIEW_WIDGET(object)           (G_TYPE_CHECK_INSTANCE_CAST((object), WEB_VIEW_TYPE_WIDGET, WebViewWidget))
+#define WEB_VIEW_WIDGET_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST((klass), WEB_VIEW_TYPE_WIDGET, WebViewWidgetClass))
+#define WEB_VIEW_IS_WIDGET(object)        (G_TYPE_CHECK_INSTANCE_TYPE((object), WEB_VIEW_TYPE_WIDGET))
+#define WEB_VIEW_IS_CLASS(klass)          (G_TYPE_CHECK_CLASS_TYPE((klass), WEB_VIEW_TYPE_WIDGET))
+#define WEB_VIEW_WIDGET_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), WEB_VIEW_TYPE_WIDGET, WebViewWidgetClass))
 
-WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
+typedef struct _WebViewWidget WebViewWidget;
+typedef struct _WebViewWidgetClass WebViewWidgetClass;
+typedef struct _WebViewWidgetPrivate WebViewWidgetPrivate;
 
-WK_EXPORT WKURLRef WKURLCreateWithURL(const char*);
+struct _WebViewWidget {
+    GtkContainer parentInstance;
+    /*< private >*/
+    WebViewWidgetPrivate* priv;
+};
 
-#ifdef __cplusplus
-}
-#endif
+struct _WebViewWidgetClass {
+    GtkContainerClass parentClass;
+};
 
-#endif /* WKView_h */
+GType webViewWidgetGetType();
+
+WebView* webViewWidgetGetWebViewInstance(WebViewWidget*);
+
+void webViewWidgetSetWebViewInstance(WebViewWidget*, WebView*);
+
+GtkIMContext* webViewWidgetGetIMContext(WebViewWidget*);
+
+G_END_DECLS
+
+#endif // WebViewWidget_h
