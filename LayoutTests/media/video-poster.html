@@ -89,15 +89,26 @@
                 consoleWrite(desc);
                 video.poster = url;
             }
+
+            function unexpectedEvent(evt)
+            {
+                consoleWrite("");
+                failTest("Unexpected '" + evt.type + "' event fired!");
+            }
+
+            function setup()
+            {
+                document.addEventListener("error", unexpectedEvent);
+                document.addEventListener("load", unexpectedEvent);
+                findMediaElement();
+                testPoster();
+            }
         </script>
     </head>
 
     <body>
         <video controls width=320 height=240></video>
         <p>Test &lt;video&gt; element with and without a poster.</p>
-        <script>
-          findMediaElement();
-          testPoster();
-        </script>
+        <script>setup();</script>
     </body>
 </html>

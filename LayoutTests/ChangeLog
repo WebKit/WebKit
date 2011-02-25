@@ -1,3 +1,13 @@
+2011-02-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        'load' and 'error' events fired for @poster
+        https://bugs.webkit.org/show_bug.cgi?id=54908
+
+        * media/video-poster.html: Register listeners for 'load' and 'error' events so the test will
+        fail if they ever fire.
+
 2011-02-25  Jessie Berlin  <jberlin@apple.com>
 
         media/controls-without-preload.html failing on Windows.
@@ -2841,7 +2851,11 @@
 
         Reviewed by Eric Carlson.
 
-        Fix for media/video-replaces-poster.html.  The test was failing because it assumes the results of a seek will be immediately available, when in fact the seek is asynchronous.  I did not remove the line in test-expectations because rebaselines for many (all?) platforms will likely be needed after this patch lands.  See also, http://code.google.com/p/chromium/issues/detail?id=60244
+        Fix for media/video-replaces-poster.html.  The test was failing because it assumes the
+        results of a seek will be immediately available, when in fact the seek is asynchronous.
+        I did not remove the line in test-expectations because rebaselines for many (all?) platforms
+        will likely be needed after this patch lands.
+        See also, http://code.google.com/p/chromium/issues/detail?id=60244
         https://bugs.webkit.org/show_bug.cgi?id=54910
 
         * media/video-replaces-poster.html:

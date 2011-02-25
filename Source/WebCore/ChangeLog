@@ -1,3 +1,14 @@
+2011-02-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        'load' and 'error' events fired for @poster
+        https://bugs.webkit.org/show_bug.cgi?id=54908
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::dispatchLoadEvent): Don't fire events when being used
+        by a video element.
+
 2011-02-25  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
@@ -2154,8 +2165,8 @@
 
         * page/EventHandler.cpp:
         (WebCore::EventHandler::EventHandler): Initialize m_activationEventNumber
-        to -1. Since WebKit2 doesnÕt support non-activating clicks yet (<http://webkit.org/b/55053>
-        <rdar://problem/9042197>) and doesnÕt send event numbers, all events were considered to be
+        to -1. Since WebKit2 doesnï¿½t support non-activating clicks yet (<http://webkit.org/b/55053>
+        <rdar://problem/9042197>) and doesnï¿½t send event numbers, all events were considered to be
         window-activating events. This in turn prevented them from clearing the selection and resuming
         caret blinking on mouse up.
 
