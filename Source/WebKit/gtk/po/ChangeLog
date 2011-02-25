@@ -1,3 +1,12 @@
+2011-02-25  Christian Dywan  <christian@lanedo.com>
+
+        Unreviewed translation file.
+
+        L10N: Webkit translated to Basque (eu) language
+        https://bugs.webkit.org/show_bug.cgi?id=36588
+
+        * eu.po: Added.
+
 2011-02-15  Christian Dywan  <christian@lanedo.com>
 
         Rubber-stamped by Gustavo Noronha Silva.
