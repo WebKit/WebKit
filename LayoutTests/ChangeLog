@@ -1,6 +1,14 @@
 2011-02-25  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update.
+        
+        Add recent Snow Leopard failures.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-25  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
 
         Fix fast/inline/inline-box-background-repeat-x.html, fast/inline/
         inline-box-background-repeat-y.html and fast/inline/
