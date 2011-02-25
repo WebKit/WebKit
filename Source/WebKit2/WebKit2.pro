@@ -43,6 +43,8 @@ WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebKeyValueStorageManagerMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebKeyValueStorageManagerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessConnectionMessages.h \
@@ -69,6 +71,8 @@ WEBKIT2_GENERATED_SOURCES = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebKeyValueStorageManagerMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebKeyValueStorageManagerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessConnectionMessageReceiver.cpp \
@@ -184,6 +188,7 @@ HEADERS += \
     UIProcess/WebGeolocationProvider.h \
     UIProcess/WebHistoryClient.h \
     UIProcess/WebInspectorProxy.h \
+    UIProcess/WebKeyValueStorageManagerProxy.h \
     UIProcess/WebLoaderClient.h \
     UIProcess/WebNavigationData.h \
     UIProcess/WebOpenPanelResultListenerProxy.h \
@@ -217,6 +222,7 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.h \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.h \
     WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h \
+    WebProcess/KeyValueStorage/WebKeyValueStorageManager.h \
     WebProcess/ResourceCache/WebResourceCacheManager.h \
     WebProcess/Plugins/Netscape/JSNPMethod.h \
     WebProcess/Plugins/Netscape/JSNPObject.h \
@@ -358,6 +364,7 @@ SOURCES += \
     UIProcess/WebGeolocationProvider.cpp \
     UIProcess/WebHistoryClient.cpp \
     UIProcess/WebInspectorProxy.cpp \
+    UIProcess/WebKeyValueStorageManagerProxy.cpp \
     UIProcess/WebLoaderClient.cpp \
     UIProcess/WebNavigationData.cpp \
     UIProcess/WebOpenPanelResultListenerProxy.cpp \
@@ -405,6 +412,7 @@ SOURCES += \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp \
     WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp \
+    WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp \
     WebProcess/ResourceCache/WebResourceCacheManager.cpp \
     WebProcess/Plugins/Netscape/JSNPMethod.cpp \
     WebProcess/Plugins/Netscape/JSNPObject.cpp \

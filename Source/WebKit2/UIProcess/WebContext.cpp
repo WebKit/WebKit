@@ -40,6 +40,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManagerProxy.h"
 #include "WebGeolocationManagerProxy.h"
+#include "WebKeyValueStorageManagerProxy.h"
 #include "WebPluginSiteDataManager.h"
 #include "WebPageGroup.h"
 #include "WebMemorySampler.h"
@@ -115,6 +116,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_cookieManagerProxy(WebCookieManagerProxy::create(this))
     , m_databaseManagerProxy(WebDatabaseManagerProxy::create(this))
     , m_geolocationManagerProxy(WebGeolocationManagerProxy::create(this))
+    , m_keyValueStorageManagerProxy(WebKeyValueStorageManagerProxy::create(this))
     , m_pluginSiteDataManager(WebPluginSiteDataManager::create(this))
     , m_resourceCacheManagerProxy(WebResourceCacheManagerProxy::create(this))
 #if PLATFORM(WIN)
@@ -150,6 +152,9 @@ WebContext::~WebContext()
 
     m_databaseManagerProxy->invalidate();
     m_databaseManagerProxy->clearContext();
+    
+    m_keyValueStorageManagerProxy->invalidate();
+    m_keyValueStorageManagerProxy->clearContext();
 
     m_pluginSiteDataManager->invalidate();
     m_pluginSiteDataManager->clearContext();
@@ -300,6 +305,7 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     m_cookieManagerProxy->invalidate();
     m_databaseManagerProxy->invalidate();
     m_geolocationManagerProxy->invalidate();
+    m_keyValueStorageManagerProxy->invalidate();
     m_resourceCacheManagerProxy->invalidate();
 
     // When out of process plug-ins are enabled, we don't want to invalidate the plug-in site data
@@ -582,6 +588,11 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 
     if (messageID.is<CoreIPC::MessageClassWebGeolocationManagerProxy>()) {
         m_geolocationManagerProxy->didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebKeyValueStorageManagerProxy>()) {
+        m_keyValueStorageManagerProxy->didReceiveMessage(connection, messageID, arguments);
         return;
     }
 

@@ -1,3 +1,83 @@
+2011-02-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig and looked over by Brian Weinstein.
+
+        Part of <rdar://problem/8762095> and https://bugs.webkit.org/show_bug.cgi?id=55172
+        Need WebKit2 API to view/manage origins with LocalStorage.
+
+        Project file stuff:
+        * GNUmakefile.am:
+        * WebKit2.pri:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Common.vsprops:
+        * win/WebKit2Generated.make:
+
+        WK2 derived sources and API stuff:
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * Platform/CoreIPC/MessageID.h:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * UIProcess/API/C/WKAPICast.h:
+
+        Add an KeyValueStorageManager to the context and invalidate it at the appropriate times:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::disconnectProcess):
+        (WebKit::WebContext::didReceiveMessage):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::keyValueStorageManagerProxy):
+
+        Add API to get the KeyValueStorageManager for a context:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetKeyValueStorageManager):
+        * UIProcess/API/C/WKContext.h:
+
+        Route messages to the right place:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+
+        Add the API object, which wraps to WebKeyValueStorageManagerProxy:
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp: Added.
+        (WKKeyValueStorageManagerGetTypeID):
+        (WKKeyValueStorageManagerGetKeyValueStorageOrigins):
+        (WKKeyValueStorageManagerDeleteEntriesForOrigin):
+        (WKKeyValueStorageManagerDeleteAllEntries):
+        * UIProcess/API/C/WKKeyValueStorageManager.h: Added.
+
+        The UIProcess implementation of the manager to send messages to the WebProcess and pipe a callback back up to the client:
+        * UIProcess/WebKeyValueStorageManagerProxy.cpp: Added.
+        (WebKit::WebKeyValueStorageManagerProxy::create):
+        (WebKit::WebKeyValueStorageManagerProxy::WebKeyValueStorageManagerProxy):
+        (WebKit::WebKeyValueStorageManagerProxy::~WebKeyValueStorageManagerProxy):
+        (WebKit::WebKeyValueStorageManagerProxy::invalidate):
+        (WebKit::WebKeyValueStorageManagerProxy::didReceiveMessage):
+        (WebKit::WebKeyValueStorageManagerProxy::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManagerProxy::didGetKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManagerProxy::deleteEntriesForOrigin):
+        (WebKit::WebKeyValueStorageManagerProxy::deleteAllEntries):
+        * UIProcess/WebKeyValueStorageManagerProxy.h: Added.
+        (WebKit::WebKeyValueStorageManagerProxy::clearContext):
+        (WebKit::WebKeyValueStorageManagerProxy::type):
+        * UIProcess/WebKeyValueStorageManagerProxy.messages.in: Added.
+
+        The WebProcess implementation to response to UIProcess messages and actually do the dirty-work in WebCore:
+        * WebProcess/KeyValueStorage: Added.
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp: Added.
+        (WebKit::WebKeyValueStorageManager::shared):
+        (WebKit::WebKeyValueStorageManager::WebKeyValueStorageManager):
+        (WebKit::WebKeyValueStorageManager::didReceiveMessage):
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManager::deleteEntriesForOrigin):
+        (WebKit::WebKeyValueStorageManager::deleteAllEntries):
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.h: Added.
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.messages.in: Added.
+
 2011-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.

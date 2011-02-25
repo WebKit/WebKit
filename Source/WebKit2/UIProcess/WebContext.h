@@ -49,6 +49,7 @@ class WebApplicationCacheManagerProxy;
 class WebCookieManagerProxy;
 class WebDatabaseManagerProxy;
 class WebGeolocationManagerProxy;
+class WebKeyValueStorageManagerProxy;
 class WebPageGroup;
 class WebPageProxy;
 class WebResourceCacheManagerProxy;
@@ -140,6 +141,7 @@ public:
     WebCookieManagerProxy* cookieManagerProxy() const { return m_cookieManagerProxy.get(); }
     WebDatabaseManagerProxy* databaseManagerProxy() const { return m_databaseManagerProxy.get(); }
     WebGeolocationManagerProxy* geolocationManagerProxy() const { return m_geolocationManagerProxy.get(); }
+    WebKeyValueStorageManagerProxy* keyValueStorageManagerProxy() const { return m_keyValueStorageManagerProxy.get(); }
     WebPluginSiteDataManager* pluginSiteDataManager() const { return m_pluginSiteDataManager.get(); }
     WebResourceCacheManagerProxy* resourceCacheManagerProxy() const { return m_resourceCacheManagerProxy.get(); }
 
@@ -226,6 +228,7 @@ private:
     RefPtr<WebCookieManagerProxy> m_cookieManagerProxy;
     RefPtr<WebDatabaseManagerProxy> m_databaseManagerProxy;
     RefPtr<WebGeolocationManagerProxy> m_geolocationManagerProxy;
+    RefPtr<WebKeyValueStorageManagerProxy> m_keyValueStorageManagerProxy;
     RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
     RefPtr<WebResourceCacheManagerProxy> m_resourceCacheManagerProxy;
 

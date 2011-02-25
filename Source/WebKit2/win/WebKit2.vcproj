@@ -1395,6 +1395,22 @@
 				</File>
 			</Filter>
             <Filter
+                Name="KeyValueStorage"
+                >
+                <File
+					RelativePath="..\WebProcess\KeyValueStorage\WebKeyValueStorageManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\KeyValueStorage\WebKeyValueStorageManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\KeyValueStorage\WebKeyValueStorageManager.messages.in"
+					>
+				</File>
+            </Filter>
+            <Filter
                 Name="ResourceCache"
                 >
                 <Filter
@@ -2519,6 +2535,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebKeyValueStorageManagerProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebKeyValueStorageManagerProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebKeyValueStorageManagerProxy.messages.in"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebLoaderClient.cpp"
 				>
 			</File>
@@ -2786,6 +2814,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKInspector.h"
+						>
+					</File>
+                    <File
+						RelativePath="..\UIProcess\API\C\WKKeyValueStorageManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKKeyValueStorageManager.h"
 						>
 					</File>
 					<File
@@ -3532,6 +3568,22 @@
 			</File>
 			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebInspectorProxyMessages.h"
+				>
+			</File>
+            <File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebKeyValueStorageManagerMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebKeyValueStorageManagerMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebKeyValueStorageManagerProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebKeyValueStorageManagerProxyMessages.h"
 				>
 			</File>
 			<File

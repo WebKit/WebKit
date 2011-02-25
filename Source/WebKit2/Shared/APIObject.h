@@ -76,6 +76,7 @@ public:
         TypeGeolocationPermissionRequest,
         TypeGeolocationPosition,
         TypeInspector,
+        TypeKeyValueStorageManager,
         TypeNavigationData,
         TypeOpenPanelParameters,
         TypeOpenPanelResultListener,

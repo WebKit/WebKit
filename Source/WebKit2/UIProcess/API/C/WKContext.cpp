@@ -178,6 +178,11 @@ WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef contextRef)
     return toAPI(toImpl(contextRef)->geolocationManagerProxy());
 }
 
+WKKeyValueStorageManagerRef WKContextGetKeyValueStorageManager(WKContextRef contextRef)
+{
+    return toAPI(toImpl(contextRef)->keyValueStorageManagerProxy());
+}
+
 WKPluginSiteDataManagerRef WKContextGetPluginSiteDataManager(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->pluginSiteDataManager());

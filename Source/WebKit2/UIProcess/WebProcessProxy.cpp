@@ -252,6 +252,7 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
         || messageID.is<CoreIPC::MessageClassWebCookieManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebDatabaseManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebGeolocationManagerProxy>()
+        || messageID.is<CoreIPC::MessageClassWebKeyValueStorageManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebResourceCacheManagerProxy>()) {
         m_context->didReceiveMessage(connection, messageID, arguments);
         return;
