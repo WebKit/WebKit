@@ -1,3 +1,14 @@
+2011-02-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r79628.
+        http://trac.webkit.org/changeset/79628
+        https://bugs.webkit.org/show_bug.cgi?id=55195
+
+        "broke chromium win tests" (Requested by dpranke on #webkit).
+
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+
 2011-02-24  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Mihai Parparita.
