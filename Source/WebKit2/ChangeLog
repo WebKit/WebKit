@@ -1,3 +1,9 @@
+2011-02-24  Brian Weinstein  <bweinstein@apple.com>
+
+        Qt build fix.
+
+        * WebKit2.pri:
+
 2011-02-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig and looked over by Brian Weinstein.
