@@ -1,5 +1,15 @@
 2011-02-25  Patrick Gansterer  <paroga@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Move timeBeginPeriod into OS(WINDOWS) section
+        https://bugs.webkit.org/show_bug.cgi?id=55247
+
+        * jsc.cpp:
+        (main): timeBeginPeriod is available on all Windows versions and not compiler specific.
+
+2011-02-25  Patrick Gansterer  <paroga@webkit.org>
+
         Unreviewed WinCE build fix for r79695.
 
         * jsc.cpp:

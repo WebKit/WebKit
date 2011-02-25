@@ -340,9 +340,7 @@ int main(int argc, char** argv)
     _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
     _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
 #endif
-#endif
 
-#if COMPILER(MSVC) && !OS(WINCE)
     timeBeginPeriod(1);
 #endif
 
