@@ -1,3 +1,15 @@
+2011-02-24  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        ImageBuffer::clip creates an image of the incorrect context in IOSurface case
+        https://bugs.webkit.org/show_bug.cgi?id=55170
+
+        Test: fast/canvas/2d.fillText.gradient.html
+
+        * platform/graphics/cg/ImageBufferCG.cpp: Clipping against ImageBuffer's context
+        instead of ourself (the passed in context).
+
 2011-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -244,21 +244,21 @@ void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& src
     }
 }
 
-void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
+void ImageBuffer::clip(GraphicsContext* contextToClip, const FloatRect& rect) const
 {
-    CGContextRef platformContext = context->platformContext();
+    CGContextRef platformContextToClip = contextToClip->platformContext();
     RetainPtr<CGImageRef> image;
     if (!m_accelerateRendering)
         image.adoptCF(cgImage(m_size, m_data));
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     else
-        image.adoptCF(wkIOSurfaceContextCreateImage(platformContext));
+        image.adoptCF(wkIOSurfaceContextCreateImage(context()->platformContext()));
 #endif
-    CGContextTranslateCTM(platformContext, rect.x(), rect.y() + rect.height());
-    CGContextScaleCTM(platformContext, 1, -1);
-    CGContextClipToMask(platformContext, FloatRect(FloatPoint(), rect.size()), image.get());
-    CGContextScaleCTM(platformContext, 1, -1);
-    CGContextTranslateCTM(platformContext, -rect.x(), -rect.y() - rect.height());
+    CGContextTranslateCTM(platformContextToClip, rect.x(), rect.y() + rect.height());
+    CGContextScaleCTM(platformContextToClip, 1, -1);
+    CGContextClipToMask(platformContextToClip, FloatRect(FloatPoint(), rect.size()), image.get());
+    CGContextScaleCTM(platformContextToClip, 1, -1);
+    CGContextTranslateCTM(platformContextToClip, -rect.x(), -rect.y() - rect.height());
 }
 
 template <Multiply multiplied>
