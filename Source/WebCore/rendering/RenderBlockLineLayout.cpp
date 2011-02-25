@@ -412,8 +412,8 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             }
             break;
         case JUSTIFY:
+            adjustInlineDirectionLineBounds(expansionOpportunityCount, logicalLeft, availableLogicalWidth);
             if (expansionOpportunityCount) {
-                adjustInlineDirectionLineBounds(expansionOpportunityCount, logicalLeft, availableLogicalWidth);
                 if (trailingSpaceRun) {
                     totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
                     trailingSpaceRun->m_box->setLogicalWidth(0);
@@ -422,7 +422,6 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             }
             // fall through
         case TAAUTO:
-            expansionOpportunityCount = 0;
             // for right to left fall through to right aligned
             if (style()->isLeftToRightDirection()) {
                 if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun)

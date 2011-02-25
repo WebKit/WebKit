@@ -1,3 +1,14 @@
+2011-02-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION (r79629): Non-expanding ruby base is start-aligned rather than centered
+        https://bugs.webkit.org/show_bug.cgi?id=55197
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine): Adjust the line boundaries even
+        if there are no expansion opportunities. This allows RenderRubyBase to center itself.
+
 2011-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey Proskuryakov.
