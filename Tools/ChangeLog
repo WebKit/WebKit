@@ -1,5 +1,22 @@
 2011-02-25  Adam Roben  <aroben@apple.com>
 
+        Double-check that modifying the registry worked
+
+        On Windows Vista/7 with UAC enabled, regtool will fail to modify the registry, but it will
+        still return a successful exit code. So we double-check here that the value we tried to
+        write to the registry was really written.
+
+        Fixes <http://webkit.org/b/55227> old-run-webkit-tests falsely claims to be saving crash
+        logs on Windows Vista/7
+
+        Reviewed by Darin Adler.
+
+        * Scripts/old-run-webkit-tests:
+        (writeRegistryString): After trying to write the string value, check that it was really
+        written.
+
+2011-02-25  Adam Roben  <aroben@apple.com>
+
         Set the 32-bit post-mortem debugger on 64-bit OSes
 
         The post-mortem debugger is controlled by some registry values in
