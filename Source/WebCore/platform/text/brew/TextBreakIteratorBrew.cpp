@@ -271,8 +271,10 @@ TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length)
         swap(staticLineBreakIterator, lineBreakIterator);
     }
 
-    if (!lineBreakIterator && string && length)
-        lineBreakIterator = new LineBreakIterator(string, length);
+    if (!lineBreakIterator && string && length) {
+        lineBreakIterator = new LineBreakIterator;
+        lineBreakIterator->reset(string, length);
+    }
 
     return lineBreakIterator;
 }

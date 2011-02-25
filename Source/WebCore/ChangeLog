@@ -1,3 +1,12 @@
+2011-02-25  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix.
+
+        * platform/text/brew/TextBreakIteratorBrew.cpp:
+        (WebCore::acquireLineBreakIterator):
+        * platform/text/wince/TextBreakIteratorWinCE.cpp:
+        (WebCore::acquireLineBreakIterator):
+
 2011-02-25  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Simon Fraser.
@@ -2256,7 +2265,7 @@
         * platform/graphics/skia/GraphicsContextSkia.cpp:
         (WebCore::GraphicsContext::roundToDevicePixels):
 
-2011-02-23 Patrick Gansterer <paroga@webkit.org>
+2011-02-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.
 
@@ -4301,7 +4310,7 @@
         * bindings/ScriptControllerBase.cpp:
         * dom/Document.h:
 
-2011-02-19 Patrick Gansterer <paroga@webkit.org>
+2011-02-19  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Antonio Gomes.
 
@@ -4312,7 +4321,7 @@
 
         * platform/efl/SystemTimeEfl.cpp:
 
-2011-02-19 Patrick Gansterer <paroga@webkit.org>
+2011-02-19  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.
 
