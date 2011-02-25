@@ -1,3 +1,17 @@
+2011-02-24  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Huge fonts in font preview
+        https://bugs.webkit.org/show_bug.cgi?id=55143
+
+        * inspector/front-end/FontView.js:
+        (WebInspector.FontView.prototype._createContentIfNeeded):
+        (WebInspector.FontView.prototype.show):
+        (WebInspector.FontView.prototype.resize):
+        (WebInspector.FontView.prototype._measureElement):
+        (WebInspector.FontView.prototype.updateFontPreviewSize):
+
 2011-02-25  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
