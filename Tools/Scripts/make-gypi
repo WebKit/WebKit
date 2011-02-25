@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+# Copyright (c) 2011 Google Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import os
+import re
+import sys
+
+GYPI_TEMPLATE = """{
+    'variables': {
+        '%s': [
+%s
+        ]
+    }
+}""" 
+
+def find_source_code():
+    source_code_regexp = re.compile(r'\.(cpp|h|m|mm)$')
+
+    collected_files = []
+    for directory_path, directory_names, file_names in os.walk('.'):
+        for file_name in file_names:
+            if source_code_regexp.search(file_name):
+                relative_path = os.path.join(directory_path, file_name)
+                collected_files.append(os.path.relpath(relative_path, '.'))
+
+    return collected_files
+
+def build_file_line(file_name, indent):
+    return indent +  "'%s'," % file_name
+
+def build_file_list(source_code, indent):
+    return '\n'.join([build_file_line(file_name, indent) for file_name in sorted(source_code)])
+
+def build_gypi(project):
+    key = project.lower() + '_files'
+    value = build_file_list(find_source_code(), '    ' * 3)
+    return GYPI_TEMPLATE % (key, value)
+
+def main():
+    if len(sys.argv) < 2:
+        print 'Usage: %s project_name' % sys.argv[0]
+        return
+    print build_gypi(sys.argv[1])
+
+if __name__ == "__main__":
+    main()
