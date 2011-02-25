@@ -1,3 +1,11 @@
+2011-02-24  James Robinson  <jamesr@chromium.org>
+
+        Update chromium-linux expectations for media/video-replaces-poster.html and expectations for V8 bugs.
+
+        * platform/chromium-linux/media/video-replaces-poster-expected.checksum:
+        * platform/chromium-linux/media/video-replaces-poster-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-02-24  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update.
