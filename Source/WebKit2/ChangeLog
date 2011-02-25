@@ -1,3 +1,32 @@
+2011-02-25  Amruth Raj  <amruthraj@motorola.com> and Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com> and Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement WebContext and NativeKeyboardEvent classes for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=48510
+
+        * GNUmakefile.am:
+        * Shared/NativeWebKeyboardEvent.h: Added the GTK event attribute
+        and constructors, in our case we need it because we use a pointer
+        and copy the event.
+        (WebKit::NativeWebKeyboardEvent::nativeEvent):
+        * Shared/gtk/NativeWebKeyboardEventGtk.cpp: Added.
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent): We need
+        to copy the event in the constructor to avoid two references to
+        the same event.
+        * Shared/gtk/WebEventFactory.cpp: Changed the prototype of the
+        functions to add const, we need it for the NativeWebKeyboardEvent
+        constructor.
+        (WebKit::modifiersForEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * UIProcess/gtk/WebContextGtk.cpp: Added. Stubbed implementation
+        for GTK port. Yet to implement.
+        (WebKit::WebContext::applicationCacheDirectory):
+        (WebKit::WebContext::platformInitializeWebProcess):
+        (WebKit::WebContext::platformDefaultDatabaseDirectory):
+        * UIProcess/gtk/WebView.cpp:
+        (WebKit::WebView::handleKeyboardEvent):
+
 2011-02-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

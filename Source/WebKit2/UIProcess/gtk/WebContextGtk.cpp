@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Copyright (C) 2011 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -12,7 +11,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
@@ -25,58 +24,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NativeWebKeyboardEvent_h
-#define NativeWebKeyboardEvent_h
+#include "config.h"
+#include "WebContext.h"
 
-#include "WebEvent.h"
-
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-OBJC_CLASS NSView;
-#elif PLATFORM(QT)
-#include <QKeyEvent>
-#elif PLATFORM(GTK)
-#include <GOwnPtrGtk.h>
-typedef union _GdkEvent GdkEvent;
-#endif
+#include "ApplicationCacheStorage.h"
+#include "NotImplemented.h"
 
 namespace WebKit {
 
-class NativeWebKeyboardEvent : public WebKeyboardEvent {
-public:
-#if PLATFORM(MAC)
-    NativeWebKeyboardEvent(NSEvent *, NSView *);
-#elif PLATFORM(WIN)
-    NativeWebKeyboardEvent(HWND, UINT message, WPARAM, LPARAM);
-#elif PLATFORM(QT)
-    explicit NativeWebKeyboardEvent(QKeyEvent*);
-#elif PLATFORM(GTK)
-    NativeWebKeyboardEvent(const NativeWebKeyboardEvent&);
-    NativeWebKeyboardEvent(GdkEvent*);
-#endif
+WTF::String WebContext::applicationCacheDirectory()
+{
+    return WebCore::cacheStorage().cacheDirectory();
+}
 
-#if PLATFORM(MAC)
-    NSEvent *nativeEvent() const { return m_nativeEvent.get(); }
-#elif PLATFORM(WIN)
-    const MSG* nativeEvent() const { return &m_nativeEvent; }
-#elif PLATFORM(QT)
-    const QKeyEvent* nativeEvent() const { return &m_nativeEvent; }
-#elif PLATFORM(GTK)
-    const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
-#endif
+void WebContext::platformInitializeWebProcess(WebProcessCreationParameters&)
+{
+}
 
-private:
-#if PLATFORM(MAC)
-    RetainPtr<NSEvent> m_nativeEvent;
-#elif PLATFORM(WIN)
-    MSG m_nativeEvent;
-#elif PLATFORM(QT)
-    QKeyEvent m_nativeEvent;
-#elif PLATFORM(GTK)
-    GOwnPtr<GdkEvent> m_nativeEvent;
-#endif
-};
+String WebContext::platformDefaultDatabaseDirectory() const
+{
+    return WTF::String::fromUTF8(g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL));
+}
 
 } // namespace WebKit
-
-#endif // NativeWebKeyboardEvent_h

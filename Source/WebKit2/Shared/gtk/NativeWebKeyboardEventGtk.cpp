@@ -25,58 +25,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NativeWebKeyboardEvent_h
-#define NativeWebKeyboardEvent_h
+#include "config.h"
+#include "NativeWebKeyboardEvent.h"
 
-#include "WebEvent.h"
-
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-OBJC_CLASS NSView;
-#elif PLATFORM(QT)
-#include <QKeyEvent>
-#elif PLATFORM(GTK)
-#include <GOwnPtrGtk.h>
-typedef union _GdkEvent GdkEvent;
-#endif
+#include "WebEventFactory.h"
+#include <gdk/gdk.h>
 
 namespace WebKit {
 
-class NativeWebKeyboardEvent : public WebKeyboardEvent {
-public:
-#if PLATFORM(MAC)
-    NativeWebKeyboardEvent(NSEvent *, NSView *);
-#elif PLATFORM(WIN)
-    NativeWebKeyboardEvent(HWND, UINT message, WPARAM, LPARAM);
-#elif PLATFORM(QT)
-    explicit NativeWebKeyboardEvent(QKeyEvent*);
-#elif PLATFORM(GTK)
-    NativeWebKeyboardEvent(const NativeWebKeyboardEvent&);
-    NativeWebKeyboardEvent(GdkEvent*);
-#endif
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event)
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(&event->key))
+    , m_nativeEvent(gdk_event_copy(event))
+{
+}
 
-#if PLATFORM(MAC)
-    NSEvent *nativeEvent() const { return m_nativeEvent.get(); }
-#elif PLATFORM(WIN)
-    const MSG* nativeEvent() const { return &m_nativeEvent; }
-#elif PLATFORM(QT)
-    const QKeyEvent* nativeEvent() const { return &m_nativeEvent; }
-#elif PLATFORM(GTK)
-    const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
-#endif
-
-private:
-#if PLATFORM(MAC)
-    RetainPtr<NSEvent> m_nativeEvent;
-#elif PLATFORM(WIN)
-    MSG m_nativeEvent;
-#elif PLATFORM(QT)
-    QKeyEvent m_nativeEvent;
-#elif PLATFORM(GTK)
-    GOwnPtr<GdkEvent> m_nativeEvent;
-#endif
-};
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(const NativeWebKeyboardEvent& event)
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(&event.nativeEvent()->key))
+    , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
+{
+}
 
 } // namespace WebKit
-
-#endif // NativeWebKeyboardEvent_h

@@ -94,7 +94,7 @@ void WebView::setSize(GtkWidget*, IntSize windowSize)
 
 void WebView::handleKeyboardEvent(GdkEventKey* event)
 {
-    m_page->handleKeyboardEvent(NativeWebKeyboardEvent(event));
+    m_page->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event)));
 }
 
 void WebView::handleMouseEvent(GdkEvent* event, int currentClickCount)

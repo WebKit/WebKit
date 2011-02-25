@@ -185,6 +185,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Shared/DrawingAreaInfo.h \
 	Source/WebKit2/Shared/FontSmoothingLevel.h \
 	Source/WebKit2/Shared/gtk/ShareableBitmapGtk.cpp \
+	Source/WebKit2/Shared/gtk/NativeWebKeyboardEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/PlatformCertificateInfo.h \
 	Source/WebKit2/Shared/gtk/UpdateChunk.cpp \
 	Source/WebKit2/Shared/gtk/UpdateChunk.h \
@@ -369,6 +370,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/GeolocationPermissionRequestProxy.h \
 	Source/WebKit2/UIProcess/gtk/ChunkedUpdateDrawingAreaProxyGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/TextCheckerGtk.cpp \
+	Source/WebKit2/UIProcess/gtk/WebContextGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebInspectorGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebViewWidget.cpp \
 	Source/WebKit2/UIProcess/gtk/WebViewWidget.h \

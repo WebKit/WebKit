@@ -44,7 +44,7 @@ static inline bool isGdkKeyCodeFromKeyPad(unsigned keyval)
     return keyval >= GDK_KEY_KP_Space && keyval <= GDK_KEY_KP_9;
 }
 
-static inline WebEvent::Modifiers modifiersForEvent(GdkEvent* event)
+static inline WebEvent::Modifiers modifiersForEvent(const GdkEvent* event)
 {
     unsigned modifiers = 0;
     GdkModifierType state;
@@ -170,7 +170,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(GdkEventScroll* scrollEvent)
                          gdk_event_get_time(event));
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(GdkEventKey* event)
+WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEventKey* event)
 {
     return WebKeyboardEvent((event->type == GDK_KEY_RELEASE) ? WebEvent::KeyUp : WebEvent::KeyDown,
                             PlatformKeyboardEvent::singleCharacterString(event->keyval),
@@ -182,8 +182,8 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(GdkEventKey* event)
                             false /* isAutoRepeat */,
                             isGdkKeyCodeFromKeyPad(event->keyval),
                             false /* isSystemKey */,
-                            modifiersForEvent(reinterpret_cast<GdkEvent*>(event)),
-                            gdk_event_get_time(reinterpret_cast<GdkEvent*>(event)));
+                            modifiersForEvent(reinterpret_cast<const GdkEvent*>(event)),
+                            gdk_event_get_time(reinterpret_cast<const GdkEvent*>(event)));
 }
 
 } // namespace WebKit

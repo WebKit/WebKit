@@ -39,7 +39,7 @@ class WebEventFactory {
 public:
     static WebMouseEvent createWebMouseEvent(GdkEvent*, int);
     static WebWheelEvent createWebWheelEvent(GdkEventScroll*);
-    static WebKeyboardEvent createWebKeyboardEvent(GdkEventKey*);
+    static WebKeyboardEvent createWebKeyboardEvent(const GdkEventKey*);
 };
 
 } // namespace WebKit
