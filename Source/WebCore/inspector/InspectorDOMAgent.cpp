@@ -292,6 +292,7 @@ void InspectorDOMAgent::reset()
     discardBindings();
     if (m_revalidateStyleAttrTask)
         m_revalidateStyleAttrTask->reset();
+    m_document = 0;
 }
 
 void InspectorDOMAgent::setDOMListener(DOMListener* listener)

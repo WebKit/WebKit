@@ -1,5 +1,17 @@
 2011-02-25  Pavel Feldman  <pfeldman@chromium.org>
 
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Empty Elements panel after closing and reopening Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=55248
+
+        Fixing regression real quick. Test to follow.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::reset):
+
+2011-02-25  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: added missing handle scope into V8InjectedScriptHostCustom.
         https://bugs.webkit.org/show_bug.cgi?id=55256
 
