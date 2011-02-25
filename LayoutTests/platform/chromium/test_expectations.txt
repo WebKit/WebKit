@@ -3126,7 +3126,6 @@ BUGWK54322 MAC SNOWLEOPARD : css2.1/t1508-c527-font-10-c.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : css2.1/t1605-c545-txttrans-00-b-ag.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : editing/deleting/delete-ws-fixup-002.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : editing/inserting/typing-around-br-001.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : editing/pasteboard/merge-end-list.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : editing/pasteboard/paste-blockquote-3.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : editing/selection/4402375.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : editing/selection/4932260-3.html = IMAGE

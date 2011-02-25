@@ -1,3 +1,21 @@
+2011-02-25  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+        
+        editing/pasteboard/merge-end-list.html was failing on Chromium Snow
+        Leopard because it was picking up the .checksum file in chromium-mac/,
+        even though it would pass with the mac/ .png/.checksum. Additionally, the
+        chromium-mac .checksum had no corresponding .png.
+        
+        Fixes things by deleting the lone .checksum in chromium-mac and updating
+        the mac-leopard results (which can be used by both the Mac and Chromium
+        ports).
+
+        * platform/chromium-mac/editing/pasteboard/merge-end-list-expected.checksum: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/editing/pasteboard/merge-end-list-expected.checksum:
+        * platform/mac-leopard/editing/pasteboard/merge-end-list-expected.png:
+
 2011-02-25  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Simon Fraser.
