@@ -812,6 +812,7 @@ fast/repaint/moving-shadow-on-container.html
 fast/repaint/moving-shadow-on-path.html
 fast/text/emphasis.html
 fast/text/international/hindi-whitespace.html
+inspector/extensions/extensions-events.html
 svg/css/composite-shadow-example.html
 svg/css/composite-shadow-with-opacity.html
 svg/css/stars-with-shadow.html

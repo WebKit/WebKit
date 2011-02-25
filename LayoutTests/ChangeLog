@@ -1,3 +1,11 @@
+2011-02-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Added an inspector test that fails on GTK debug bots.
+
+        * platform/gtk/Skipped: inspector/extensions/extensions-events.html
+
 2011-02-25  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.
