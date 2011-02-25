@@ -2,6 +2,30 @@
 
         Unreviewed Chromium expectations update.
 
+        Fix fast/inline/inline-box-background-repeat-x.html, fast/inline/
+        inline-box-background-repeat-y.html and fast/inline/
+        inline-box-background.html for Chromium Snow Leopard by promoting
+        chromium-mac-leopard results to mac-leopard and removing outdated
+        chromium-mac ones.        
+
+        * platform/chromium-mac/fast/inline/inline-box-background-expected.checksum: Removed.
+        * platform/chromium-mac/fast/inline/inline-box-background-expected.png: Removed.
+        * platform/chromium-mac/fast/inline/inline-box-background-repeat-x-expected.checksum: Removed.
+        * platform/chromium-mac/fast/inline/inline-box-background-repeat-x-expected.png: Removed.
+        * platform/chromium-mac/fast/inline/inline-box-background-repeat-y-expected.checksum: Removed.
+        * platform/chromium-mac/fast/inline/inline-box-background-repeat-y-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/inline/inline-box-background-expected.checksum: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/inline/inline-box-background-expected.checksum.
+        * platform/mac-leopard/fast/inline/inline-box-background-expected.png: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/inline/inline-box-background-expected.png.
+        * platform/mac-leopard/fast/inline/inline-box-background-repeat-x-expected.checksum: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/inline/inline-box-background-repeat-x-expected.checksum.
+        * platform/mac-leopard/fast/inline/inline-box-background-repeat-x-expected.png: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/inline/inline-box-background-repeat-x-expected.png.
+        * platform/mac-leopard/fast/inline/inline-box-background-repeat-y-expected.checksum: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/inline/inline-box-background-repeat-y-expected.checksum.
+        * platform/mac-leopard/fast/inline/inline-box-background-repeat-y-expected.png: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/inline/inline-box-background-repeat-y-expected.png.
+
+2011-02-25  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+
         Fix fast/dom/34176.html and fast/dom/52776.html for Chromium Snow
         Leopard by promoting chromium-mac-leopard results to mac-leopard and
         removing outdated chromium-mac ones.
