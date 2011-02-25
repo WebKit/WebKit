@@ -1,3 +1,11 @@
+2011-02-25  Brian Weinstein  <bweinstein@apple.com>
+
+        Windows build fix.
+
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::getHostnamesWithCookies): Add a const_cast.
+        (WebCore::deleteCookiesForHostname): Ditto.
+
 2011-02-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -245,7 +245,7 @@ void getHostnamesWithCookies(HashSet<String>& hostnames)
 
     CFIndex count = CFArrayGetCount(cookiesCF.get());
     for (CFIndex i = 0; i < count; ++i) {
-        CFHTTPCookieRef cookie = static_cast<CFHTTPCookieRef>(CFArrayGetValueAtIndex(cookiesCF.get(), i));
+        CFHTTPCookieRef cookie = static_cast<CFHTTPCookieRef>(const_cast<void *>(CFArrayGetValueAtIndex(cookiesCF.get(), i)));
         RetainPtr<CFStringRef> domain = cookieDomain(cookie);
         hostnames.add(domain.get());
     }
@@ -263,7 +263,7 @@ void deleteCookiesForHostname(const String& hostname)
 
     CFIndex count = CFArrayGetCount(cookiesCF.get());
     for (CFIndex i = count - 1; i >=0; i--) {
-        CFHTTPCookieRef cookie = static_cast<CFHTTPCookieRef>(CFArrayGetValueAtIndex(cookiesCF.get(), i));
+        CFHTTPCookieRef cookie = static_cast<CFHTTPCookieRef>(const_cast<void *>(CFArrayGetValueAtIndex(cookiesCF.get(), i)));
         RetainPtr<CFStringRef> domain = cookieDomain(cookie);
         if (String(domain.get()) == hostname)
             CFHTTPCookieStorageDeleteCookie(cookieStorage, cookie);
