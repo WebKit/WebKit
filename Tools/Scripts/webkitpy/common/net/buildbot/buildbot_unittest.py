@@ -255,7 +255,7 @@ class BuildBotTest(unittest.TestCase):
             "SnowLeopard.*Build",
             "SnowLeopard.*\(Test",
             "SnowLeopard.*\(WebKit2 Test",
-            "Leopard",
+            "Leopard.*Release",
             "Windows.*Build",
             "WinCE",
             "EFL",
@@ -267,8 +267,6 @@ class BuildBotTest(unittest.TestCase):
         expected_builders = [
             {'name': u'Leopard Intel Release (Build)', },
             {'name': u'Leopard Intel Release (Tests)', },
-            {'name': u'Leopard Intel Debug (Build)', },
-            {'name': u'Leopard Intel Debug (Tests)', },
             {'name': u'SnowLeopard Intel Release (Build)', },
             {'name': u'SnowLeopard Intel Release (Tests)', },
             {'name': u'SnowLeopard Intel Release (WebKit2 Tests)', },

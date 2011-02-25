@@ -1,3 +1,15 @@
+2011-02-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r79324.
+        http://trac.webkit.org/changeset/79324
+        https://bugs.webkit.org/show_bug.cgi?id=55260
+
+        Leopard Debug is once again running out of address space while
+        linking (Requested by aroben on #webkit).
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
 2011-02-25  Tony Chang  <tony@chromium.org>
 
         Reviewed by James Robinson.
