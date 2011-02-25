@@ -1,3 +1,109 @@
+2011-02-24  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Move draw time properties out of *LayerChromium to CCLayerImpl
+        https://bugs.webkit.org/show_bug.cgi?id=55013
+
+        This adds a new type (tentatively named CCLayerImpl) responsible for drawing/compositing layers.
+        Currently LayerChromiums know about their CCLayerImpls and CCLayerImpls rely on the LayerChromium
+        tree for structure.  In theory updates are a LayerChromium-only concept and draw is a CCLayerImpl-only
+        concept, but this patch doesn't go all there yet in the interest of keeping the patch small-ish.
+
+        RenderSurfaces are a CCLayerImpl-only concepts and no longer have any direct LayerChromium dependencies.
+
+        Note: I've put CCLayerImpl into a new 'cc' directory under platform/graphics/chromium/ and intentionally
+        not added it to the include path.  We plan to add more compositor implementation details to this directory
+        and we want to keep accidental dependencies on these files to a minimum.
+
+        See https://bugs.webkit.org/show_bug.cgi?id=54047 for the big picture.
+
+        Refactor only, compositing/ tests cover these codepaths.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::draw):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::requiresClippedUpdateRect):
+        (WebCore::ContentLayerChromium::updateContentsIfDirty):
+        (WebCore::ContentLayerChromium::draw):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::cleanupResources):
+        (WebCore::LayerChromium::setLayerRenderer):
+        (WebCore::LayerChromium::setBounds):
+        (WebCore::LayerChromium::setFrame):
+        (WebCore::LayerChromium::setNeedsDisplay):
+        (WebCore::LayerChromium::setBorderColor):
+        (WebCore::LayerChromium::borderColor):
+        (WebCore::LayerChromium::setBorderWidth):
+        (WebCore::LayerChromium::borderWidth):
+        (WebCore::LayerChromium::layerRenderer):
+        (WebCore::LayerChromium::setDoubleSided):
+        (WebCore::LayerChromium::bounds):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::maskDrawLayer):
+        (WebCore::LayerChromium::ccLayerImpl):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::compareLayerZ):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::updateLayersRecursive):
+        (WebCore::LayerRendererChromium::setCompositeOffscreen):
+        (WebCore::LayerRendererChromium::getOffscreenLayerTexture):
+        (WebCore::LayerRendererChromium::drawLayer):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/PluginLayerChromium.cpp:
+        (WebCore::PluginLayerChromium::draw):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::RenderSurfaceChromium):
+        (WebCore::RenderSurfaceChromium::drawSurface):
+        (WebCore::RenderSurfaceChromium::draw):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::drawYUV):
+        (WebCore::VideoLayerChromium::drawRGBA):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp: Added.
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        (WebCore::CCLayerImpl::~CCLayerImpl):
+        (WebCore::CCLayerImpl::superlayer):
+        (WebCore::CCLayerImpl::maskLayer):
+        (WebCore::CCLayerImpl::replicaLayer):
+        (WebCore::CCLayerImpl::setLayerRenderer):
+        (WebCore::CCLayerImpl::createRenderSurface):
+        (WebCore::CCLayerImpl::updateContentsIfDirty):
+        (WebCore::CCLayerImpl::drawsContent):
+        (WebCore::CCLayerImpl::draw):
+        (WebCore::CCLayerImpl::unreserveContentsTexture):
+        (WebCore::CCLayerImpl::bindContentsTexture):
+        (WebCore::CCLayerImpl::cleanupResources):
+        (WebCore::CCLayerImpl::getDrawRect):
+        (WebCore::CCLayerImpl::drawDebugBorder):
+        * platform/graphics/chromium/cc/CCLayerImpl.h: Added.
+        (WebCore::CCLayerImpl::create):
+        (WebCore::CCLayerImpl::setDebugBorderColor):
+        (WebCore::CCLayerImpl::debugBorderColor):
+        (WebCore::CCLayerImpl::setDebugBorderWidth):
+        (WebCore::CCLayerImpl::debugBorderWidth):
+        (WebCore::CCLayerImpl::layerRenderer):
+        (WebCore::CCLayerImpl::renderSurface):
+        (WebCore::CCLayerImpl::clearRenderSurface):
+        (WebCore::CCLayerImpl::drawDepth):
+        (WebCore::CCLayerImpl::setDrawDepth):
+        (WebCore::CCLayerImpl::drawOpacity):
+        (WebCore::CCLayerImpl::setDrawOpacity):
+        (WebCore::CCLayerImpl::scissorRect):
+        (WebCore::CCLayerImpl::setScissorRect):
+        (WebCore::CCLayerImpl::targetRenderSurface):
+        (WebCore::CCLayerImpl::setTargetRenderSurface):
+        (WebCore::CCLayerImpl::doubleSided):
+        (WebCore::CCLayerImpl::setDoubleSided):
+        (WebCore::CCLayerImpl::bounds):
+        (WebCore::CCLayerImpl::setBounds):
+        (WebCore::CCLayerImpl::drawTransform):
+        (WebCore::CCLayerImpl::setDrawTransform):
+        (WebCore::CCLayerImpl::drawableContentRect):
+        (WebCore::CCLayerImpl::setDrawableContentRect):
+
 2011-02-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

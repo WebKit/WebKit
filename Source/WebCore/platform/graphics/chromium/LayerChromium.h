@@ -42,6 +42,7 @@
 #include "RenderSurfaceChromium.h"
 #include "ShaderChromium.h"
 #include "TransformationMatrix.h"
+
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -55,13 +56,14 @@ class PlatformCanvas;
 
 namespace WebCore {
 
+class CCLayerImpl;
 class GraphicsContext3D;
 class LayerRendererChromium;
 
 // Base class for composited layers. Special layer types are derived from
 // this class.
 class LayerChromium : public RefCounted<LayerChromium> {
-    friend class LayerRendererChromium;
+    friend class LayerTilerChromium;
 public:
     static PassRefPtr<LayerChromium> create(GraphicsLayerChromium* owner = 0);
 
@@ -86,20 +88,8 @@ public:
     void setBackgroundColor(const Color& color) { m_backgroundColor = color; setNeedsCommit(); }
     Color backgroundColor() const { return m_backgroundColor; }
 
-    void setBorderColor(const Color& color) { m_borderColor = color; setNeedsCommit(); }
-    Color borderColor() const { return m_borderColor; }
-
-    void setBorderWidth(float width) { m_borderWidth = width; setNeedsCommit(); }
-    float borderWidth() const { return m_borderWidth; }
-
-    void setBounds(const IntSize&);
-    IntSize bounds() const { return m_bounds; }
-
     void setClearsContext(bool clears) { m_clearsContext = clears; setNeedsCommit(); }
     bool clearsContext() const { return m_clearsContext; }
-
-    void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }
-    bool doubleSided() const { return m_doubleSided; }
 
     void setFrame(const FloatRect&);
     FloatRect frame() const { return m_frame; }
@@ -114,6 +104,7 @@ public:
     String name() const { return m_name; }
 
     void setMaskLayer(LayerChromium* maskLayer) { m_maskLayer = maskLayer; }
+    CCLayerImpl* maskDrawLayer() const { return m_maskLayer ? m_maskLayer->ccLayerImpl() : 0; }
     LayerChromium* maskLayer() const { return m_maskLayer.get(); }
 
     void setNeedsDisplay(const FloatRect& dirtyRect);
@@ -145,22 +136,19 @@ public:
     void setGeometryFlipped(bool flipped) { m_geometryFlipped = flipped; setNeedsCommit(); }
     bool geometryFlipped() const { return m_geometryFlipped; }
 
-    const TransformationMatrix& drawTransform() const { return m_drawTransform; }
-    float drawOpacity() const { return m_drawOpacity; }
-
     bool preserves3D() { return m_owner && m_owner->preserves3D(); }
 
     // Derived types must override this method if they need to react to a change
     // in the LayerRendererChromium.
     virtual void setLayerRenderer(LayerRendererChromium*);
 
+    // Returns true if any of the layer's descendants has content to draw.
+    bool descendantsDrawContent();
+
     void setOwner(GraphicsLayerChromium* owner) { m_owner = owner; }
 
     void setReplicaLayer(LayerChromium* layer) { m_replicaLayer = layer; }
     LayerChromium* replicaLayer() { return m_replicaLayer; }
-
-    // Returns the rect containtaining this layer in the current view's coordinate system.
-    const IntRect getDrawRect() const;
 
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() { return false; }
@@ -169,22 +157,32 @@ public:
     virtual void bindContentsTexture() { }
     virtual void draw() { }
 
-    void drawDebugBorder();
+    // These exists just for debugging (via drawDebugBorder()).
+    void setBorderColor(const Color&);
+    Color borderColor() const;
 
-    RenderSurfaceChromium* createRenderSurface();
+    void setBorderWidth(float);
+    float borderWidth() const;
 
-    LayerRendererChromium* layerRenderer() const { return m_layerRenderer.get(); }
+    // Everything from here down in the public section will move to CCLayerImpl.
 
-    static void toGLMatrix(float*, const TransformationMatrix&);
+    CCLayerImpl* ccLayerImpl() const { return m_ccLayerImpl.get(); }
 
     static void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& layerMatrix,
                                  float width, float height, float opacity,
                                  int matrixLocation, int alphaLocation);
 
+    // Begin calls that forward to the CCLayerImpl.
+    LayerRendererChromium* layerRenderer() const;
+    void setDoubleSided(bool);
+    void setBounds(const IntSize&);
+    const IntSize& bounds() const;
+    // End calls that forward to the CCLayerImpl.
+
     typedef ProgramBinding<VertexShaderPos, FragmentShaderColor> BorderProgram;
 protected:
     GraphicsLayerChromium* m_owner;
-    LayerChromium(GraphicsLayerChromium* owner);
+    explicit LayerChromium(GraphicsLayerChromium* owner);
 
     // This is called to clean up resources being held in the same context as
     // layerRendererContext(). Subclasses should override this method if they
@@ -193,20 +191,18 @@ protected:
 
     GraphicsContext3D* layerRendererContext() const;
 
-    // Returns true if any of the layer's descendants has content to draw.
-    bool descendantsDrawContent();
+    static void toGLMatrix(float*, const TransformationMatrix&);
 
-    IntSize m_bounds;
     FloatRect m_dirtyRect;
     bool m_contentsDirty;
 
     RefPtr<LayerChromium> m_maskLayer;
 
-    // Render surface this layer draws into. This is a surface that can belong
-    // either to this layer (if m_targetRenderSurface == m_renderSurface) or
-    // to an ancestor of this layer. The target render surface determines the
-    // coordinate system the layer's transforms are relative to.
-    RenderSurfaceChromium* m_targetRenderSurface;
+    // All layer shaders share the same attribute locations for the vertex positions
+    // and texture coordinates. This allows switching shaders without rebinding attribute
+    // arrays.
+    static const unsigned s_positionAttribLocation;
+    static const unsigned s_texCoordAttribLocation;
 
 private:
     void setNeedsCommit();
@@ -233,43 +229,22 @@ private:
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
     Color m_backgroundColor;
-    Color m_borderColor;
     float m_opacity;
     float m_zPosition;
     float m_anchorPointZ;
-    float m_borderWidth;
-    float m_drawOpacity;
     bool m_clearsContext;
-    bool m_doubleSided;
     bool m_hidden;
     bool m_masksToBounds;
     bool m_opaque;
     bool m_geometryFlipped;
     bool m_needsDisplayOnBoundsChange;
 
-    // The global depth value of the center of the layer. This value is used
-    // to sort layers from back to front.
-    float m_drawDepth;
-
-    // Points to the layer renderer that updates and draws this layer.
-    RefPtr<LayerRendererChromium> m_layerRenderer;
-
-    FloatRect m_frame;
     TransformationMatrix m_transform;
     TransformationMatrix m_sublayerTransform;
-    TransformationMatrix m_drawTransform;
 
-    // The scissor rectangle that should be used when this layer is drawn.
-    // Inherited by the parent layer and further restricted if this layer masks
-    // to bounds.
-    IntRect m_scissorRect;
-
-    // Render surface associated with this layer. The layer and its descendants
-    // will render to this surface.
-    OwnPtr<RenderSurfaceChromium> m_renderSurface;
-
-    // Hierarchical bounding rect containing the layer and its descendants.
-    IntRect m_drawableContentRect;
+    FloatRect m_frame;
+    // For now, the LayerChromium directly owns its CCLayerImpl.
+    RefPtr<CCLayerImpl> m_ccLayerImpl;
 
     // Replica layer used for reflections.
     LayerChromium* m_replicaLayer;

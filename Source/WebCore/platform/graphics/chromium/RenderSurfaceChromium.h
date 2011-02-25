@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-class LayerChromium;
+class CCLayerImpl;
 class LayerRendererChromium;
 class LayerTexture;
 
@@ -47,7 +47,7 @@ class RenderSurfaceChromium {
     WTF_MAKE_NONCOPYABLE(RenderSurfaceChromium);
     friend class LayerRendererChromium;
 public:
-    explicit RenderSurfaceChromium(LayerChromium*);
+    explicit RenderSurfaceChromium(CCLayerImpl*);
     ~RenderSurfaceChromium();
 
     bool prepareContentsTexture();
@@ -67,10 +67,10 @@ public:
 
 private:
     LayerRendererChromium* layerRenderer();
-    void drawSurface(LayerChromium* maskLayer, const TransformationMatrix& drawTransform);
+    void drawSurface(CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform);
 
-    LayerChromium* m_owningLayer;
-    LayerChromium* m_maskLayer;
+    CCLayerImpl* m_owningLayer;
+    CCLayerImpl* m_maskLayer;
 
     IntRect m_contentRect;
     bool m_skipsDraw;
@@ -80,7 +80,7 @@ private:
     TransformationMatrix m_replicaDrawTransform;
     TransformationMatrix m_originTransform;
     IntRect m_scissorRect;
-    Vector<LayerChromium*> m_layerList;
+    Vector<CCLayerImpl*> m_layerList;
 };
 
 }

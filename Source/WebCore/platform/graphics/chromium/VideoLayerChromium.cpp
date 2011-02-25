@@ -33,6 +33,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "VideoLayerChromium.h"
 
+#include "cc/CCLayerImpl.h"
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
@@ -294,8 +295,8 @@ void VideoLayerChromium::drawYUV(const VideoLayerChromium::YUVProgram* program)
 
     GLC(context, context->uniformMatrix3fv(program->fragmentShader().ccMatrixLocation(), 0, const_cast<float*>(yuv2RGB), 1));
 
-    drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
-                     bounds().width(), bounds().height(), drawOpacity(),
+    drawTexturedQuad(context, layerRenderer()->projectionMatrix(), ccLayerImpl()->drawTransform(),
+                     bounds().width(), bounds().height(), ccLayerImpl()->drawOpacity(),
                      program->vertexShader().matrixLocation(),
                      program->fragmentShader().alphaLocation());
 
@@ -317,8 +318,8 @@ void VideoLayerChromium::drawRGBA(const VideoLayerChromium::RGBAProgram* program
 
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
-    drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
-                     bounds().width(), bounds().height(), drawOpacity(),
+    drawTexturedQuad(context, layerRenderer()->projectionMatrix(), ccLayerImpl()->drawTransform(),
+                     bounds().width(), bounds().height(), ccLayerImpl()->drawOpacity(),
                      program->vertexShader().matrixLocation(),
                      program->fragmentShader().alphaLocation());
 }

@@ -57,6 +57,7 @@
 
 namespace WebCore {
 
+class CCLayerImpl;
 class GeometryBinding;
 class GraphicsContext3D;
 
@@ -90,7 +91,7 @@ public:
 
     void setCompositeOffscreen(bool);
     bool isCompositingOffscreen() const { return m_compositeOffscreen; }
-    LayerTexture* getOffscreenLayerTexture() { return m_compositeOffscreen ? m_rootLayer->m_renderSurface->m_contentsTexture.get() : 0; }
+    LayerTexture* getOffscreenLayerTexture();
     void copyOffscreenTextureToDisplay();
 
     void setRootLayerCanvasSize(const IntSize&);
@@ -131,9 +132,9 @@ public:
 
 private:
     explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D> graphicsContext3D);
-    void updateLayersRecursive(LayerChromium* layer, const TransformationMatrix& parentMatrix, Vector<LayerChromium*>& renderSurfaceLayerList, Vector<LayerChromium*>& layerList);
+    void updateLayersRecursive(LayerChromium*, const TransformationMatrix& parentMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList);
 
-    void drawLayer(LayerChromium*, RenderSurfaceChromium*);
+    void drawLayer(CCLayerImpl*, RenderSurfaceChromium*);
 
     void updateAndDrawRootLayer(TilePaintInterface& tilePaint, TilePaintInterface& scrollbarPaint, const IntRect& visibleRect, const IntRect& contentRect);
 
@@ -145,7 +146,7 @@ private:
 
     bool makeContextCurrent();
 
-    static bool compareLayerZ(const LayerChromium*, const LayerChromium*);
+    static bool compareLayerZ(const CCLayerImpl*, const CCLayerImpl*);
 
     bool initializeSharedObjects();
     void cleanupSharedObjects();

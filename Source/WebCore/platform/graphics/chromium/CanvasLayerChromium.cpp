@@ -34,6 +34,7 @@
 
 #include "CanvasLayerChromium.h"
 
+#include "cc/CCLayerImpl.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 
@@ -62,11 +63,10 @@ void CanvasLayerChromium::draw()
     GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId));
     layerRenderer()->useShader(program->program());
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
-    drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
-                     bounds().width(), bounds().height(), drawOpacity(),
+    drawTexturedQuad(context, layerRenderer()->projectionMatrix(), ccLayerImpl()->drawTransform(),
+                     bounds().width(), bounds().height(), ccLayerImpl()->drawOpacity(),
                      program->vertexShader().matrixLocation(),
                      program->fragmentShader().alphaLocation());
-
 }
 
 }

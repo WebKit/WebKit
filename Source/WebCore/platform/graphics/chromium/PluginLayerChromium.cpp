@@ -29,6 +29,7 @@
 
 #include "PluginLayerChromium.h"
 
+#include "cc/CCLayerImpl.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include <GLES2/gl2.h>
@@ -72,8 +73,8 @@ void PluginLayerChromium::draw()
     
     layerRenderer()->useShader(program->program());
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
-    drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
-                     bounds().width(), bounds().height(), drawOpacity(),
+    drawTexturedQuad(context, layerRenderer()->projectionMatrix(), ccLayerImpl()->drawTransform(),
+                     bounds().width(), bounds().height(), ccLayerImpl()->drawOpacity(),
                      program->vertexShader().matrixLocation(),
                      program->fragmentShader().alphaLocation());
 }

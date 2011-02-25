@@ -34,6 +34,7 @@
 
 #include "LayerChromium.h"
 
+#include "cc/CCLayerImpl.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #if USE(SKIA)
@@ -57,25 +58,19 @@ LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
     : m_owner(owner)
     , m_contentsDirty(false)
     , m_maskLayer(0)
-    , m_targetRenderSurface(0)
     , m_superlayer(0)
     , m_anchorPoint(0.5, 0.5)
     , m_backgroundColor(0, 0, 0, 0)
-    , m_borderColor(0, 0, 0, 0)
     , m_opacity(1.0)
     , m_zPosition(0.0)
     , m_anchorPointZ(0)
-    , m_borderWidth(0)
     , m_clearsContext(false)
-    , m_doubleSided(true)
     , m_hidden(false)
     , m_masksToBounds(false)
     , m_opaque(true)
     , m_geometryFlipped(false)
     , m_needsDisplayOnBoundsChange(false)
-    , m_drawDepth(0)
-    , m_layerRenderer(0)
-    , m_renderSurface(0)
+    , m_ccLayerImpl(CCLayerImpl::create(this))
     , m_replicaLayer(0)
 {
 }
@@ -92,8 +87,7 @@ LayerChromium::~LayerChromium()
 
 void LayerChromium::cleanupResources()
 {
-    if (m_renderSurface)
-        m_renderSurface->cleanupResources();
+    m_ccLayerImpl->cleanupResources();
 }
 
 void LayerChromium::setLayerRenderer(LayerRendererChromium* renderer)
@@ -105,13 +99,7 @@ void LayerChromium::setLayerRenderer(LayerRendererChromium* renderer)
         setNeedsDisplay();
     }
 
-    m_layerRenderer = renderer;
-}
-
-RenderSurfaceChromium* LayerChromium::createRenderSurface()
-{
-    m_renderSurface = new RenderSurfaceChromium(this);
-    return m_renderSurface.get();
+    m_ccLayerImpl->setLayerRenderer(renderer);
 }
 
 void LayerChromium::setNeedsCommit()
@@ -188,15 +176,15 @@ int LayerChromium::indexOfSublayer(const LayerChromium* reference)
 
 void LayerChromium::setBounds(const IntSize& size)
 {
-    if (m_bounds == size)
+    if (bounds() == size)
         return;
 
-    bool firstResize = !m_bounds.width() && !m_bounds.height() && size.width() && size.height();
+    bool firstResize = !bounds().width() && !bounds().height() && size.width() && size.height();
 
-    m_bounds = size;
+    m_ccLayerImpl->setBounds(size);
 
     if (firstResize)
-        setNeedsDisplay(FloatRect(0, 0, m_bounds.width(), m_bounds.height()));
+        setNeedsDisplay(FloatRect(0, 0, bounds().width(), bounds().height()));
     else
         setNeedsCommit();
 }
@@ -207,7 +195,7 @@ void LayerChromium::setFrame(const FloatRect& rect)
       return;
 
     m_frame = rect;
-    setNeedsDisplay(FloatRect(0, 0, m_bounds.width(), m_bounds.height()));
+    setNeedsDisplay(FloatRect(0, 0, bounds().width(), bounds().height()));
 }
 
 const LayerChromium* LayerChromium::rootLayer() const
@@ -256,7 +244,7 @@ void LayerChromium::setNeedsDisplay(const FloatRect& dirtyRect)
 void LayerChromium::setNeedsDisplay()
 {
     m_dirtyRect.setLocation(FloatPoint());
-    m_dirtyRect.setSize(m_bounds);
+    m_dirtyRect.setSize(bounds());
     m_contentsDirty = true;
     setNeedsCommit();
 }
@@ -315,38 +303,7 @@ void LayerChromium::drawTexturedQuad(GraphicsContext3D* context, const Transform
     GLC(context, context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0));
 }
 
-void LayerChromium::drawDebugBorder()
-{
-    static float glMatrix[16];
-    if (!borderColor().alpha())
-        return;
 
-    ASSERT(layerRenderer());
-    const BorderProgram* program = layerRenderer()->borderProgram();
-    ASSERT(program && program->initialized());
-    layerRenderer()->useShader(program->program());
-    TransformationMatrix renderMatrix = drawTransform();
-    renderMatrix.scale3d(bounds().width(), bounds().height(), 1);
-    toGLMatrix(&glMatrix[0], layerRenderer()->projectionMatrix() * renderMatrix);
-    GraphicsContext3D* context = layerRendererContext();
-    GLC(context, context->uniformMatrix4fv(program->vertexShader().matrixLocation(), false, &glMatrix[0], 1));
-
-    GLC(context, context->uniform4f(program->fragmentShader().colorLocation(), borderColor().red() / 255.0, borderColor().green() / 255.0, borderColor().blue() / 255.0, 1));
-
-    GLC(context, context->lineWidth(borderWidth()));
-
-    // The indices for the line are stored in the same array as the triangle indices.
-    GLC(context, context->drawElements(GraphicsContext3D::LINE_LOOP, 4, GraphicsContext3D::UNSIGNED_SHORT, 6 * sizeof(unsigned short)));
-}
-
-const IntRect LayerChromium::getDrawRect() const
-{
-    // Form the matrix used by the shader to map the corners of the layer's
-    // bounds into the view space.
-    FloatRect layerRect(-0.5 * bounds().width(), -0.5 * bounds().height(), bounds().width(), bounds().height());
-    IntRect mappedRect = enclosingIntRect(drawTransform().mapRect(layerRect));
-    return mappedRect;
-}
 
 // Returns true if any of the layer's descendants has drawable content.
 bool LayerChromium::descendantsDrawContent()
@@ -370,6 +327,49 @@ bool LayerChromium::descendantsDrawContentRecursive()
             return true;
     return false;
 }
+
+// Begin calls that forward to the CCLayerImpl.
+// ==============================================
+// These exists just for debugging (via drawDebugBorder()).
+void LayerChromium::setBorderColor(const Color& color)
+{
+    m_ccLayerImpl->setDebugBorderColor(color);
+    setNeedsCommit();
+}
+
+Color LayerChromium::borderColor() const
+{
+    return m_ccLayerImpl->debugBorderColor();
+}
+
+void LayerChromium::setBorderWidth(float width)
+{
+    m_ccLayerImpl->setDebugBorderWidth(width);
+    setNeedsCommit();
+}
+
+float LayerChromium::borderWidth() const
+{
+    return m_ccLayerImpl->debugBorderWidth();
+}
+
+LayerRendererChromium* LayerChromium::layerRenderer() const
+{
+    return m_ccLayerImpl->layerRenderer();
+}
+
+void LayerChromium::setDoubleSided(bool doubleSided)
+{
+    m_ccLayerImpl->setDoubleSided(doubleSided);
+    setNeedsCommit();
+}
+
+const IntSize& LayerChromium::bounds() const
+{
+    return m_ccLayerImpl->bounds();
+}
+// ==============================================
+// End calls that forward to the CCLayerImpl.
 
 }
 #endif // USE(ACCELERATED_COMPOSITING)

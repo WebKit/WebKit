@@ -34,6 +34,7 @@
 
 #include "ContentLayerChromium.h"
 
+#include "cc/CCLayerImpl.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
@@ -79,8 +80,8 @@ bool ContentLayerChromium::requiresClippedUpdateRect() const
     // one of the layer's dimensions is larger than 2000 pixels or the size of
     // surface it's rendering into. This is a temporary measure until layer tiling is implemented.
     static const int maxLayerSize = 2000;
-    return (bounds().width() > max(maxLayerSize, m_targetRenderSurface->contentRect().width())
-            || bounds().height() > max(maxLayerSize, m_targetRenderSurface->contentRect().height())
+    return (bounds().width() > max(maxLayerSize, ccLayerImpl()->targetRenderSurface()->contentRect().width())
+            || bounds().height() > max(maxLayerSize, ccLayerImpl()->targetRenderSurface()->contentRect().height())
             || !layerRenderer()->checkTextureSize(bounds()));
 }
 
@@ -103,15 +104,15 @@ void ContentLayerChromium::updateContentsIfDirty()
         // A layer with 3D transforms could require an arbitrarily large number
         // of texels to be repainted, so ignore these layers until tiling is
         // implemented.
-        if (!drawTransform().isIdentityOrTranslation()) {
+        if (!ccLayerImpl()->drawTransform().isIdentityOrTranslation()) {
             m_skipsDraw = true;
             return;
         }
 
         // Calculate the region of this layer that is currently visible.
-        const IntRect clipRect = m_targetRenderSurface->contentRect();
+        const IntRect clipRect = ccLayerImpl()->targetRenderSurface()->contentRect();
 
-        TransformationMatrix layerOriginTransform = drawTransform();
+        TransformationMatrix layerOriginTransform = ccLayerImpl()->drawTransform();
         layerOriginTransform.translate3d(-0.5 * bounds().width(), -0.5 * bounds().height(), 0);
 
         // For now we apply the large layer treatment only for layers that are either untransformed
@@ -341,18 +342,18 @@ void ContentLayerChromium::draw()
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
     if (requiresClippedUpdateRect()) {
-        float m43 = drawTransform().m43();
+        float m43 = ccLayerImpl()->drawTransform().m43();
         TransformationMatrix transform;
         transform.translate3d(m_layerCenterInSurfaceCoords.x(), m_layerCenterInSurfaceCoords.y(), m43);
         drawTexturedQuad(context, layerRenderer()->projectionMatrix(),
                          transform, m_visibleRectInLayerCoords.width(),
-                         m_visibleRectInLayerCoords.height(), drawOpacity(),
+                         m_visibleRectInLayerCoords.height(), ccLayerImpl()->drawOpacity(),
                          program->vertexShader().matrixLocation(),
                          program->fragmentShader().alphaLocation());
     } else {
         drawTexturedQuad(context, layerRenderer()->projectionMatrix(),
-                         drawTransform(), bounds().width(), bounds().height(),
-                         drawOpacity(), program->vertexShader().matrixLocation(),
+                         ccLayerImpl()->drawTransform(), bounds().width(), bounds().height(),
+                         ccLayerImpl()->drawOpacity(), program->vertexShader().matrixLocation(),
                          program->fragmentShader().alphaLocation());
     }
     unreserveContentsTexture();

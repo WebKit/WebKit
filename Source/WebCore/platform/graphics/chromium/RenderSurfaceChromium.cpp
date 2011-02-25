@@ -29,13 +29,14 @@
 
 #include "RenderSurfaceChromium.h"
 
+#include "cc/CCLayerImpl.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
 
 namespace WebCore {
 
-RenderSurfaceChromium::RenderSurfaceChromium(LayerChromium* owningLayer)
+RenderSurfaceChromium::RenderSurfaceChromium(CCLayerImpl* owningLayer)
     : m_owningLayer(owningLayer)
     , m_maskLayer(0)
     , m_skipsDraw(false)
@@ -94,7 +95,7 @@ bool RenderSurfaceChromium::prepareContentsTexture()
     return true;
 }
 
-void RenderSurfaceChromium::drawSurface(LayerChromium* maskLayer, const TransformationMatrix& drawTransform)
+void RenderSurfaceChromium::drawSurface(CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform)
 {
     GraphicsContext3D* context3D = layerRenderer()->context();
 
@@ -150,7 +151,7 @@ void RenderSurfaceChromium::draw()
     // both the layer and its reflection). The solution is to introduce yet another RenderSurface
     // to draw the layer and its reflection in. For now we only apply a separate reflection
     // mask if the contents don't have a mask of their own.
-    LayerChromium* replicaMaskLayer = m_maskLayer;
+    CCLayerImpl* replicaMaskLayer = m_maskLayer;
     if (!m_maskLayer && m_owningLayer->replicaLayer())
         replicaMaskLayer = m_owningLayer->replicaLayer()->maskLayer();
 
