@@ -2,6 +2,15 @@
 
         Unreviewed.
 
+        Updated GTK test expectations after r79618.
+
+        * platform/gtk/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/gtk/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt:
+
+2011-02-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
         Skipped 3 SVG tests failing in GTK 32-bit release bot.
 
         * platform/gtk/Skipped:
