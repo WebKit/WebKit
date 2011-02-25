@@ -1,3 +1,18 @@
+2011-02-25  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+
+        Fix fast/dom/34176.html and fast/dom/52776.html for Chromium Snow
+        Leopard by promoting chromium-mac-leopard results to mac-leopard and
+        removing outdated chromium-mac ones.
+
+        * platform/chromium-mac-leopard/fast/dom/52776-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/52776-expected.txt: Removed.
+        * platform/mac-leopard/fast/dom/34176-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/dom/34176-expected.checksum.
+        * platform/mac-leopard/fast/dom/34176-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/dom/34176-expected.png.
+        * platform/mac-leopard/fast/dom/52776-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/dom/52776-expected.checksum.
+        * platform/mac-leopard/fast/dom/52776-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/dom/52776-expected.png.
+
 2011-02-25  James Robinson  <jamesr@chromium.org>
 
         More chromium expectations and baselines.
