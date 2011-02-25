@@ -951,13 +951,20 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, int tx, int ty)
 
                 RenderBlock* cb = 0;
                 bool containingBlockPaintsContinuationOutline = inlineFlow->continuation() || inlineFlow->isInlineElementContinuation();
-                if (containingBlockPaintsContinuationOutline) {
-                    cb = renderer()->containingBlock()->containingBlock();
-
-                    for (RenderBoxModelObject* box = boxModelObject(); box != cb; box = box->parent()->enclosingBoxModelObject()) {
-                        if (box->hasSelfPaintingLayer()) {
-                            containingBlockPaintsContinuationOutline = false;
-                            break;
+                if (containingBlockPaintsContinuationOutline) {           
+                    // FIXME: See https://bugs.webkit.org/show_bug.cgi?id=54690. We currently don't reconnect inline continuations
+                    // after a child removal. As a result, those merged inlines do not get seperated and hence not get enclosed by
+                    // anonymous blocks. In this case, it is better to bail out and paint it ourself.
+                    RenderBlock* enclosingAnonymousBlock = renderer()->containingBlock();
+                    if (!enclosingAnonymousBlock->isAnonymousBlock())
+                        containingBlockPaintsContinuationOutline = false;
+                    else {
+                        cb = enclosingAnonymousBlock->containingBlock();
+                        for (RenderBoxModelObject* box = boxModelObject(); box != cb; box = box->parent()->enclosingBoxModelObject()) {
+                            if (box->hasSelfPaintingLayer()) {
+                                containingBlockPaintsContinuationOutline = false;
+                                break;
+                            }
                         }
                     }
                 }

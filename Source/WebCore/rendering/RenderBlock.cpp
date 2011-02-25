@@ -2590,6 +2590,19 @@ void RenderBlock::addContinuationWithOutline(RenderInline* flow)
     continuations->add(flow);
 }
 
+bool RenderBlock::paintsContinuationOutline(RenderInline* flow)
+{
+    ContinuationOutlineTableMap* table = continuationOutlineTable();
+    if (table->isEmpty())
+        return false;
+        
+    ListHashSet<RenderInline*>* continuations = table->get(this);
+    if (!continuations)
+        return false;
+
+    return continuations->contains(flow);
+}
+
 void RenderBlock::paintContinuationOutlines(PaintInfo& info, int tx, int ty)
 {
     ContinuationOutlineTableMap* table = continuationOutlineTable();

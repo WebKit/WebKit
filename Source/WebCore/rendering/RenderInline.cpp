@@ -53,6 +53,19 @@ RenderInline::RenderInline(Node* node)
 
 void RenderInline::destroy()
 {
+#ifndef NDEBUG
+    // Make sure we do not retain "this" in the continuation outline table map of our containing blocks.
+    if (parent() && style()->visibility() == VISIBLE && hasOutline()) {
+        bool containingBlockPaintsContinuationOutline = continuation() || isInlineElementContinuation();
+        if (containingBlockPaintsContinuationOutline) {
+            if (RenderBlock* cb = containingBlock()) {
+                if (RenderBlock* cbCb = cb->containingBlock())
+                    ASSERT(!cbCb->paintsContinuationOutline(this));
+            }
+        }
+    }
+#endif
+
     // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
     // properly dirty line boxes that they are removed from.  Effects that do :before/:after only on hover could crash otherwise.
     children()->destroyLeftoverChildren();

@@ -133,6 +133,7 @@ public:
     virtual void adjustForColumns(IntSize&, const IntPoint&) const;
 
     void addContinuationWithOutline(RenderInline*);
+    bool paintsContinuationOutline(RenderInline*);
 
     virtual RenderBoxModelObject* virtualContinuation() const { return continuation(); }
     bool isAnonymousBlockContinuation() const { return continuation() && isAnonymousBlock(); }

@@ -1,3 +1,28 @@
+2011-02-25  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Don't add inline continuation outline to the containing block's
+        continuationOutlineTable list if it is not enclosed by an anonymous block.
+        https://bugs.webkit.org/show_bug.cgi?id=54690
+
+        We currently don't reconnect inline continuations after a child removal.
+        As a result, those merged inlines do not get seperated and hence not get enclosed
+        by anonymous blocks. In this case, it is better to bail out and paint it ourself.
+
+        Test: fast/table/table-continuation-outline-paint-crash.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint): 
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintsContinuationOutline): helper function to tell
+        if this containing block has the continuation flow in its continuations list.
+        * rendering/RenderBlock.h: helper function definition.
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::destroy): debug only code that asserts if we leave
+        behind a continuation in the containing block's continuation list when it is
+        getting destroyed.
+
 2011-02-25  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.

@@ -1,3 +1,17 @@
+2011-02-25  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Ensure that we do not add the inline continuation flow to the table's continuation
+        table map for painting. The layout test should not crash on assert and should show
+        a solid outline around the inline child.
+        https://bugs.webkit.org/show_bug.cgi?id=54690        
+
+        * fast/table/table-continuation-outline-paint-crash.html: Added.
+        * platform/mac/fast/table/table-continuation-outline-paint-crash-expected.checksum: Added.
+        * platform/mac/fast/table/table-continuation-outline-paint-crash-expected.png: Added.
+        * platform/mac/fast/table/table-continuation-outline-paint-crash-expected.txt: Added.
+
 2011-02-25  James Robinson  <jamesr@chromium.org>
 
         Update chromium test expectations.
