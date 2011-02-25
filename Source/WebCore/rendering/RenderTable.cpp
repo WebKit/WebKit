@@ -245,6 +245,18 @@ void RenderTable::computeLogicalWidth()
     }
 }
 
+void RenderTable::adjustLogicalHeightForCaption()
+{
+    ASSERT(m_caption);
+    IntRect captionRect(m_caption->x(), m_caption->y(), m_caption->width(), m_caption->height());
+
+    m_caption->setLogicalLocation(m_caption->marginStart(), logicalHeight());
+    if (!selfNeedsLayout() && m_caption->checkForRepaintDuringLayout())
+        m_caption->repaintDuringLayoutIfMoved(captionRect);
+
+    setLogicalHeight(logicalHeight() + m_caption->logicalHeight() + m_caption->marginBefore() + m_caption->marginAfter());
+}
+
 void RenderTable::layout()
 {
     ASSERT(needsLayout());
@@ -308,14 +320,7 @@ void RenderTable::layout()
 
     // FIXME: Collapse caption margin.
     if (m_caption && m_caption->style()->captionSide() != CAPBOTTOM) {
-        IntRect captionRect(m_caption->x(), m_caption->y(), m_caption->width(), m_caption->height());
-
-        m_caption->setLogicalLocation(m_caption->marginStart(), logicalHeight());
-        if (!selfNeedsLayout() && m_caption->checkForRepaintDuringLayout())
-            m_caption->repaintDuringLayoutIfMoved(captionRect);
-
-        setLogicalHeight(logicalHeight() + m_caption->logicalHeight() + m_caption->marginBefore() + m_caption->marginAfter());
-
+        adjustLogicalHeightForCaption();
         if (logicalHeight() != oldTableLogicalTop) {
             sectionMoved = true;
             movedSectionLogicalTop = min(logicalHeight(), oldTableLogicalTop);
@@ -370,15 +375,8 @@ void RenderTable::layout()
 
     setLogicalHeight(logicalHeight() + borderAndPaddingAfter);
 
-    if (m_caption && m_caption->style()->captionSide() == CAPBOTTOM) {
-        IntRect captionRect(m_caption->x(), m_caption->y(), m_caption->width(), m_caption->height());
-
-        m_caption->setLogicalLocation(m_caption->marginStart(), logicalHeight());
-        if (!selfNeedsLayout() && m_caption->checkForRepaintDuringLayout())
-            m_caption->repaintDuringLayoutIfMoved(captionRect);
-
-        setLogicalHeight(logicalHeight() + m_caption->logicalHeight() + m_caption->marginBefore() + m_caption->marginAfter());
-    }
+    if (m_caption && m_caption->style()->captionSide() == CAPBOTTOM)
+        adjustLogicalHeightForCaption();
 
     if (isPositioned())
         computeLogicalHeight();

@@ -1,3 +1,22 @@
+2011-02-24  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Antonio Gomes.
+
+        Clean up: Extract table height adjustment for <caption> into common function
+        https://bugs.webkit.org/show_bug.cgi?id=54936
+
+        We use similar logic for adjusting the height of a table with respect
+        to a top- and bottom-positioned <caption>. Instead, we should extract
+        the common code into a shared function.
+
+        No functionality changed. So no new tests.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::adjustLogicalHeightForCaption): Added.
+        (WebCore::RenderTable::layout): Extracted common code to adjust table height
+        with respect to the <caption> into RenderTable::adjustLogicalHeightForCaption().
+        * rendering/RenderTable.h:
+
 2011-02-24  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
