@@ -343,7 +343,7 @@ void tst_QWebView::setPalette()
     QWebView view1;
 
     QPalette palette1;
-    QBrush brush1(QColor(Qt::red));
+    QBrush brush1(Qt::red);
     brush1.setStyle(Qt::SolidPattern);
     if (active && background) {
         // Rendered image must have red background on an active QWebView.
@@ -390,7 +390,7 @@ void tst_QWebView::setPalette()
     QWebView view2;
 
     QPalette palette2;
-    QBrush brush2(QColor(Qt::blue));
+    QBrush brush2(Qt::blue);
     brush2.setStyle(Qt::SolidPattern);
     if (active && background) {
         // Rendered image must have blue background on an active QWebView.
