@@ -1,3 +1,18 @@
+2011-02-25  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        When trying to find which lines to dirty for a changed child, make sure
+        that we do test if the adjacent next linebox contains that changed child
+        and if yes, dirty it. This can happen in cases when we have a word break
+        between text nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=55206
+
+        Test: fast/text/word-break-next-linebox-not-dirty-crash-main.html
+
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+
 2011-02-25  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

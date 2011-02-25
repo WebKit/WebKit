@@ -1,3 +1,14 @@
+2011-02-25  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that we do not crash when removing a text node adjacent to a word break node.
+        https://bugs.webkit.org/show_bug.cgi?id=55206
+
+        * fast/text/resources/word-break-next-linebox-not-dirty-crash.html: Added.
+        * fast/text/word-break-next-linebox-not-dirty-crash-main-expected.txt: Added.
+        * fast/text/word-break-next-linebox-not-dirty-crash-main.html: Added.
+
 2011-02-25  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium Snow Leopard expectations update. Remove failing
