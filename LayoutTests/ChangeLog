@@ -1,3 +1,11 @@
+2011-02-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Skipped 3 SVG tests failing in GTK 32-bit release bot.
+
+        * platform/gtk/Skipped:
+
 2011-02-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

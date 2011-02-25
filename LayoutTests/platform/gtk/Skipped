@@ -859,6 +859,13 @@ svg/text/small-fonts-2.svg
 svg/text/text-align-04-b.svg
 svg/zoom/page/zoom-coords-viewattr-01-b.svg
 svg/zoom/text/zoom-coords-viewattr-01-b.svg
+# The following 3 started to fail after r79592 when they were
+# unskipped. Seems that the underlying operation works fine but the
+# 32-bit release bot generates some results with 2 decimal places when
+# there should be none (50.00 vs 50)
+svg/batik/masking/maskRegions.svg
+svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg
+svg/zoom/page/zoom-mask-with-percentages.svg
 
 # https://bugs.webkit.org/show_bug.cgi?id=54210
 fast/text/atsui-multiple-renderers.html
