@@ -381,6 +381,8 @@ bool QGraphicsWebView::event(QEvent* event)
     // Re-implemented in order to allows fixing event-related bugs in patch releases.
 
     if (d->page) {
+        if (event->type() == QEvent::PaletteChange)
+            d->page->setPalette(palette());
 #ifndef QT_NO_CONTEXTMENU
         if (event->type() == QEvent::GraphicsSceneContextMenu) {
             if (!isEnabled())

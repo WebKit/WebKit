@@ -36,6 +36,8 @@ private slots:
     void focusInputTypes();
     void crashOnSetScaleBeforeSetUrl();
     void widgetsRenderingThroughCache();
+    void setPalette_data();
+    void setPalette();
 };
 
 void tst_QGraphicsWebView::qgraphicswebview()
@@ -259,7 +261,153 @@ void tst_QGraphicsWebView::focusInputTypes()
     delete view;
 }
 
+void tst_QGraphicsWebView::setPalette_data()
+{
+    QTest::addColumn<bool>("active");
+    QTest::addColumn<bool>("background");
+    QTest::newRow("activeBG") << true << true;
+    QTest::newRow("activeFG") << true << false;
+    QTest::newRow("inactiveBG") << false << true;
+    QTest::newRow("inactiveFG") << false << false;
+}
 
+// Render a QGraphicsWebView to a QImage twice, each time with a different palette set,
+// verify that images rendered are not the same, confirming WebCore usage of
+// custom palette on selections.
+void tst_QGraphicsWebView::setPalette()
+{
+    QString html = "<html><head></head>"
+                   "<body>"
+                   "Some text here"
+                   "</body>"
+                   "</html>";
+
+    QFETCH(bool, active);
+    QFETCH(bool, background);
+
+    QWidget* activeView = 0;
+
+    // Use controlView to manage active/inactive state of test views by raising
+    // or lowering their position in the window stack.
+    QGraphicsScene controlScene;
+    QGraphicsView controlView(&controlScene);
+    QGraphicsWebView controlWebView;
+    controlScene.addItem(&controlWebView);
+    controlWebView.setHtml(html);
+    controlWebView.setGeometry(QRectF(0, 0, 200, 200));
+
+    QGraphicsScene scene1;
+    QGraphicsView view1(&scene1);
+    view1.setSceneRect(0, 0, 300, 300);
+    QGraphicsWebView webView1;
+    webView1.setResizesToContents(true);
+    scene1.addItem(&webView1);
+    webView1.setFocus();
+
+    QPalette palette1;
+    QBrush brush1(QColor(Qt::red));
+    brush1.setStyle(Qt::SolidPattern);
+    if (active && background) {
+        // Rendered image must have red background on an active QGraphicsWebView.
+        palette1.setBrush(QPalette::Active, QPalette::Highlight, brush1);
+    } else if (active && !background) {
+        // Rendered image must have red foreground on an active QGraphicsWebView.
+        palette1.setBrush(QPalette::Active, QPalette::HighlightedText, brush1);
+    } else if (!active && background) {
+        // Rendered image must have red background on an inactive QGraphicsWebView.
+        palette1.setBrush(QPalette::Inactive, QPalette::Highlight, brush1);
+    } else if (!active && !background) {
+        // Rendered image must have red foreground on an inactive QGraphicsWebView.
+        palette1.setBrush(QPalette::Inactive, QPalette::HighlightedText, brush1);
+    }
+
+    webView1.setHtml(html);
+    view1.resize(webView1.page()->viewportSize());
+    webView1.setPalette(palette1);
+    view1.show();
+
+    QVERIFY(webView1.palette() == palette1);
+    QVERIFY(webView1.page()->palette() == palette1);
+
+    QTest::qWaitForWindowShown(&view1);
+
+    if (!active) {
+        controlView.show();
+        QTest::qWaitForWindowShown(&controlView);
+        activeView = &controlView;
+        controlView.activateWindow();
+    } else {
+        view1.activateWindow();
+        activeView = &view1;
+    }
+
+    QTRY_COMPARE(QApplication::activeWindow(), activeView);
+
+    webView1.page()->triggerAction(QWebPage::SelectAll);
+
+    QImage img1(webView1.page()->viewportSize(), QImage::Format_ARGB32);
+    QPainter painter1(&img1);
+    webView1.page()->currentFrame()->render(&painter1);
+    painter1.end();
+    view1.close();
+    controlView.close();
+
+    QGraphicsScene scene2;
+    QGraphicsView view2(&scene2);
+    view2.setSceneRect(0, 0, 300, 300);
+    QGraphicsWebView webView2;
+    webView2.setResizesToContents(true);
+    scene2.addItem(&webView2);
+    webView2.setFocus();
+
+    QPalette palette2;
+    QBrush brush2(QColor(Qt::blue));
+    brush2.setStyle(Qt::SolidPattern);
+    if (active && background) {
+        // Rendered image must have blue background on an active QGraphicsWebView.
+        palette2.setBrush(QPalette::Active, QPalette::Highlight, brush2);
+    } else if (active && !background) {
+        // Rendered image must have blue foreground on an active QGraphicsWebView.
+        palette2.setBrush(QPalette::Active, QPalette::HighlightedText, brush2);
+    } else if (!active && background) {
+        // Rendered image must have blue background on an inactive QGraphicsWebView.
+        palette2.setBrush(QPalette::Inactive, QPalette::Highlight, brush2);
+    } else if (!active && !background) {
+        // Rendered image must have blue foreground on an inactive QGraphicsWebView.
+        palette2.setBrush(QPalette::Inactive, QPalette::HighlightedText, brush2);
+    }
+
+    webView2.setHtml(html);
+    view2.resize(webView2.page()->viewportSize());
+    webView2.setPalette(palette2);
+    view2.show();
+
+    QTest::qWaitForWindowShown(&view2);
+
+    if (!active) {
+        controlView.show();
+        QTest::qWaitForWindowShown(&controlView);
+        activeView = &controlView;
+        controlView.activateWindow();
+    } else {
+        view2.activateWindow();
+        activeView = &view2;
+    }
+
+    QTRY_COMPARE(QApplication::activeWindow(), activeView);
+
+    webView2.page()->triggerAction(QWebPage::SelectAll);
+
+    QImage img2(webView2.page()->viewportSize(), QImage::Format_ARGB32);
+    QPainter painter2(&img2);
+    webView2.page()->currentFrame()->render(&painter2);
+    painter2.end();
+
+    view2.close();
+    controlView.close();
+
+    QVERIFY(img1 != img2);
+}
 
 QTEST_MAIN(tst_QGraphicsWebView)
 
