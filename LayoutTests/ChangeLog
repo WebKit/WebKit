@@ -1,5 +1,11 @@
 2011-02-25  Martin Robinson  <mrobinson@igalia.com>
 
+        Add some missing GTK+ SVG pixel results.
+
+        * platform/gtk/svg: Add missing GTK+ SVG pixel results.
+
+2011-02-25  Martin Robinson  <mrobinson@igalia.com>
+
         Update GTK+ SVG pixel results which have changed.
 
         * platform/gtk/svg: Update SVG pixel resultsj
