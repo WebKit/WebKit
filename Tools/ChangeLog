@@ -1,5 +1,20 @@
 2011-02-25  Adam Roben  <aroben@apple.com>
 
+        Clean up code to set up crash log saving on Windows
+
+        Fixes <http://webkit.org/b/55224> old-run-webkit-test's Windows registry code is ugly
+
+        Reviewed by David Kilzer.
+
+        * Scripts/old-run-webkit-tests:
+        (readRegistryString):
+        (writeRegistryString):
+        Moved code to read strings from and write strings to the registry here...
+
+        (setUpWindowsCrashLogSaving): ...from here.
+
+2011-02-25  Adam Roben  <aroben@apple.com>
+
         Work around Cygwin's crash-suppression behavior
 
         Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which any processes it launches will
