@@ -1,3 +1,16 @@
+2011-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        A WKView without a window will cause CG errors in the console
+        https://bugs.webkit.org/show_bug.cgi?id=55264
+        <rdar://problem/9044281>
+
+        Check that the window has a valid window number before trying to get its graphics context.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::containingWindowGraphicsContext):
+
 2011-02-25  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Brady Eidson and looked over by Jessie Berlin.

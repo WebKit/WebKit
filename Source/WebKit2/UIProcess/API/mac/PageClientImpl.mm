@@ -374,7 +374,13 @@ void PageClientImpl::setAutodisplay(bool newState)
 
 CGContextRef PageClientImpl::containingWindowGraphicsContext()
 {
-    return static_cast<CGContextRef>([[[m_wkView window] graphicsContext] graphicsPort]);
+    NSWindow *window = [m_wkView window];
+
+    // Don't try to get the graphics context if the NSWindow doesn't have a window device.
+    if ([window windowNumber] <= 0)
+        return 0;
+
+    return static_cast<CGContextRef>([[window graphicsContext] graphicsPort]);
 }
 
 void PageClientImpl::didChangeScrollbarsForMainFrame() const
