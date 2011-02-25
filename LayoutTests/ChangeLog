@@ -1,3 +1,17 @@
+2011-02-24  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+        
+        Rebaseline media/audio-repaint.html and media/video-display-toggle.html 
+        for Snow Leopard.
+
+        * platform/chromium-mac-leopard/media/video-display-toggle-expected.checksum: Copied from LayoutTests/platform/chromium-mac/media/video-display-toggle-expected.checksum.
+        * platform/chromium-mac-leopard/media/video-display-toggle-expected.png: Copied from LayoutTests/platform/chromium-mac/media/video-display-toggle-expected.png.
+        * platform/chromium-mac/media/audio-repaint-expected.checksum:
+        * platform/chromium-mac/media/audio-repaint-expected.png:
+        * platform/chromium-mac/media/video-display-toggle-expected.checksum:
+        * platform/chromium-mac/media/video-display-toggle-expected.png:
+
 2011-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
