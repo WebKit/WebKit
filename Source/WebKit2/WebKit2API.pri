@@ -8,6 +8,7 @@ WEBKIT2_API_SOURCES = \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKDictionary.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKGraphicsContext.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKImage.cpp \
+    $$SOURCE_DIR/WebKit2/Shared/API/c/WKMutableDictionary.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKNumber.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKSecurityOrigin.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKSerializedScriptValue.cpp \
@@ -68,9 +69,11 @@ WEBKIT2_API_HEADERS += \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKCertificateInfo.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKContextMenuItem.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKContextMenuItemTypes.h \
+    $$SOURCE_DIR/WebKit2/Shared/API/c/WKDictionary.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKGeometry.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKGraphicsContext.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKImage.h \
+    $$SOURCE_DIR/WebKit2/Shared/API/c/WKMutableDictionary.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKNumber.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKPageLoadTypes.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKSecurityOrigin.h \

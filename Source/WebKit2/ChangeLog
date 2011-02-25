@@ -1,3 +1,10 @@
+2011-02-25  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed.
+        Add missing sources to WebKit2API.pri.
+
+        * WebKit2API.pri:
+
 2011-02-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
