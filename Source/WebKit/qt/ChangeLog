@@ -1,3 +1,32 @@
+2011-02-25  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] QML WebView inside a Flickable shows checkers pattern at startup
+        https://bugs.webkit.org/show_bug.cgi?id=50222.
+
+        This patch fixes the checkerboard visible at startup even if preferredWidth and preferredHeight are not set.
+
+        * declarative/qdeclarativewebview.cpp:
+        (QDeclarativeWebView::init):
+        * tests/qdeclarativewebview: Added.
+        * tests/qdeclarativewebview/qdeclarativewebview.pro: Added.
+        * tests/qdeclarativewebview/resources: Added.
+        * tests/qdeclarativewebview/resources/webviewtest.qml: Added.
+        * tests/qdeclarativewebview/resources/webviewtestdefault.qml: Added.
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.cpp: Added.
+        (tst_QDeclarativeWebView::initTestCase):
+        (tst_QDeclarativeWebView::cleanupTestCase):
+        (tst_QDeclarativeWebView::init):
+        (tst_QDeclarativeWebView::cleanup):
+        (tst_QDeclarativeWebView::preferredWidthTest):
+        (tst_QDeclarativeWebView::preferredHeightTest):
+        (tst_QDeclarativeWebView::preferredWidthDefaultTest):
+        (tst_QDeclarativeWebView::preferredHeightDefaultTest):
+        (tst_QDeclarativeWebView::checkNoErrors):
+        * tests/tests.pri:
+        * tests/tests.pro:
+
 2011-02-24  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Andreas Kling.

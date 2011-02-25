@@ -20,7 +20,7 @@ INCLUDEPATH += \
     $$PWD/../Api
 
 include(../../../WebKit.pri)
-QT += testlib network
+QT += testlib network declarative
 
 QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
 

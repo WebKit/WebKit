@@ -275,6 +275,10 @@ void QDeclarativeWebView::init()
     d->view->setFocus();
     QWebPage* wp = new QDeclarativeWebPage(this);
     setPage(wp);
+    if (!preferredWidth())
+        setPreferredWidth(d->view->preferredWidth());
+    if (!preferredHeight())
+        setPreferredHeight(d->view->preferredHeight());
     connect(d->view, SIGNAL(geometryChanged()), this, SLOT(updateDeclarativeWebViewSize()));
     connect(d->view, SIGNAL(doubleClick(int, int)), this, SIGNAL(doubleClick(int, int)));
     connect(d->view, SIGNAL(scaleChanged()), this, SIGNAL(contentsScaleChanged()));
