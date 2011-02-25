@@ -372,7 +372,7 @@ rect: style.getPropertyValue(color-interpolation-filters) : linearrgb
 rect: style.getPropertyCSSValue(color-interpolation-filters) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(color-rendering) : auto
 rect: style.getPropertyCSSValue(color-rendering) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(fill) : #0000FF
+rect: style.getPropertyValue(fill) : #0000ff
 rect: style.getPropertyCSSValue(fill) : [object SVGPaint]
 rect: style.getPropertyValue(fill-opacity) : 1
 rect: style.getPropertyCSSValue(fill-opacity) : [object CSSPrimitiveValue]
@@ -388,7 +388,7 @@ rect: style.getPropertyValue(marker-start) : none
 rect: style.getPropertyCSSValue(marker-start) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(shape-rendering) : auto
 rect: style.getPropertyCSSValue(shape-rendering) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(stroke) : #FFA500
+rect: style.getPropertyValue(stroke) : #ffa500
 rect: style.getPropertyCSSValue(stroke) : [object SVGPaint]
 rect: style.getPropertyValue(stroke-dasharray) : none
 rect: style.getPropertyCSSValue(stroke-dasharray) : [object CSSPrimitiveValue]
@@ -814,7 +814,7 @@ g: style.getPropertyValue(marker-start) : none
 g: style.getPropertyCSSValue(marker-start) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(shape-rendering) : auto
 g: style.getPropertyCSSValue(shape-rendering) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(stroke) : #FFA500
+g: style.getPropertyValue(stroke) : #ffa500
 g: style.getPropertyCSSValue(stroke) : [object SVGPaint]
 g: style.getPropertyValue(stroke-dasharray) : none
 g: style.getPropertyCSSValue(stroke-dasharray) : [object CSSPrimitiveValue]
