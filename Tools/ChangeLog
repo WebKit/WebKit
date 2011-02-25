@@ -1,3 +1,13 @@
+2011-02-25  Tony Chang  <tony@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Clean up temp files left by crashing DRTs on chromium-win
+        https://bugs.webkit.org/show_bug.cgi?id=55182
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        * BuildSlaveSupport/chromium/remove-crash-logs: Added.
+
 2011-02-25  Adam Roben  <aroben@apple.com>
 
         Double-check that modifying the registry worked
