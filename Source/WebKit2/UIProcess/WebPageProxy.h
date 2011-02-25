@@ -450,7 +450,7 @@ private:
     void didChangeProgress(double);
     void didFinishProgress();
     
-    void decidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, const WebCore::ResourceRequest&, uint64_t listenerID, CoreIPC::ArgumentDecoder*, bool& receivedPolicyAction, uint64_t& policyAction);
+    void decidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, const WebCore::ResourceRequest&, uint64_t listenerID, CoreIPC::ArgumentDecoder*, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID);
     void decidePolicyForNewWindowAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, const WebCore::ResourceRequest&, const String& frameName, uint64_t listenerID, CoreIPC::ArgumentDecoder*);
     void decidePolicyForMIMEType(uint64_t frameID, const String& MIMEType, const WebCore::ResourceRequest&, uint64_t listenerID, CoreIPC::ArgumentDecoder* arguments, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID);
 
@@ -676,7 +676,8 @@ private:
     bool m_inDecidePolicyForNavigationAction;
     bool m_syncNavigationActionPolicyActionIsValid;
     WebCore::PolicyAction m_syncNavigationActionPolicyAction;
-    
+    uint64_t m_syncNavigationActionPolicyDownloadID;
+
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
     bool m_processingWheelEvent;
     OwnPtr<WebWheelEvent> m_nextWheelEvent;

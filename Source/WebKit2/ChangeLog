@@ -1,3 +1,36 @@
+2011-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Option-clicking on links doesn't download them due to sandbox violation
+        https://bugs.webkit.org/show_bug.cgi?id=55250
+        <rdar://problem/9018359>
+
+        The change to make DecidePolicyForNavigationAction sync didn't handle the case when the
+        decided policy was "Download". Fix this by passing along the download ID back to the web process.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        Add new overload.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Initialize m_syncNavigationActionPolicyDownloadID.
+
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        Set m_syncNavigationActionPolicyDownloadID to the download ID.
+
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        Return the m_syncNavigationActionPolicyDownloadID.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        Add a DownloadID reply parameter.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        Don't pass a zero download ID to didReceivePolicyDecision.
+
 2011-02-25  Amruth Raj  <amruthraj@motorola.com> and Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com> and Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

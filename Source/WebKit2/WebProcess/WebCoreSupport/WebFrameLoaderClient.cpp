@@ -645,14 +645,15 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
     bool receivedPolicyAction;
     uint64_t policyAction;
+    uint64_t downloadID;
 
     // Notify the UIProcess.
-    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), action->navigationType(), action->modifiers(), action->mouseButton(), request, listenerID, InjectedBundleUserMessageEncoder(userData.get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(receivedPolicyAction, policyAction)))
+    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), action->navigationType(), action->modifiers(), action->mouseButton(), request, listenerID, InjectedBundleUserMessageEncoder(userData.get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(receivedPolicyAction, policyAction, downloadID)))
         return;
 
     // We call this synchronously because WebCore cannot gracefully handle a frame load without a synchronous navigation policy reply.
     if (receivedPolicyAction)
-        m_frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), 0);
+        m_frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), downloadID);
 }
 
 void WebFrameLoaderClient::cancelPolicyCheck()

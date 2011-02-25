@@ -131,6 +131,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, WebContext* context, WebPageG
     , m_inDecidePolicyForNavigationAction(false)
     , m_syncNavigationActionPolicyActionIsValid(false)
     , m_syncNavigationActionPolicyAction(PolicyUse)
+    , m_syncNavigationActionPolicyDownloadID(0)
     , m_processingWheelEvent(false)
     , m_processingMouseMoveEvent(false)
     , m_pageID(pageID)
@@ -890,6 +891,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
     if (m_inDecidePolicyForNavigationAction) {
         m_syncNavigationActionPolicyActionIsValid = true;
         m_syncNavigationActionPolicyAction = action;
+        m_syncNavigationActionPolicyDownloadID = downloadID;
         return;
     }
     
@@ -1587,7 +1589,7 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
 }
 
 // PolicyClient
-void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t opaqueNavigationType, uint32_t opaqueModifiers, int32_t opaqueMouseButton, const ResourceRequest& request, uint64_t listenerID, CoreIPC::ArgumentDecoder* arguments, bool& receivedPolicyAction, uint64_t& policyAction)
+void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t opaqueNavigationType, uint32_t opaqueModifiers, int32_t opaqueMouseButton, const ResourceRequest& request, uint64_t listenerID, CoreIPC::ArgumentDecoder* arguments, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
 {
     RefPtr<APIObject> userData;
     WebContextUserMessageDecoder messageDecoder(userData, context());
@@ -1620,6 +1622,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t op
     if (m_syncNavigationActionPolicyActionIsValid) {
         receivedPolicyAction = true;
         policyAction = m_syncNavigationActionPolicyAction;
+        downloadID = m_syncNavigationActionPolicyDownloadID;
     }
 }
 
