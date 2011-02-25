@@ -154,11 +154,10 @@ static inline TextBreakLocatorRef lineBreakLocator()
 }
 #endif
 
-int nextBreakablePosition(const UChar* str, int pos, int len, bool treatNoBreakSpaceAsBreak)
+int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, int pos, bool treatNoBreakSpaceAsBreak)
 {
-#if !PLATFORM(MAC) || !defined(BUILDING_ON_TIGER)
-    TextBreakIterator* breakIterator = 0;
-#endif
+    const UChar* str = lazyBreakIterator.string();
+    int len = lazyBreakIterator.length();
     int nextBreak = -1;
 
     UChar lastCh = pos > 0 ? str[pos - 1] : 0;
@@ -171,8 +170,7 @@ int nextBreakablePosition(const UChar* str, int pos, int len, bool treatNoBreakS
         if (needsLineBreakIterator(ch) || needsLineBreakIterator(lastCh)) {
             if (nextBreak < i && i) {
 #if !PLATFORM(MAC) || !defined(BUILDING_ON_TIGER)
-                if (!breakIterator)
-                    breakIterator = lineBreakIterator(str, len);
+                TextBreakIterator* breakIterator = lazyBreakIterator.get();
                 if (breakIterator)
                     nextBreak = textBreakFollowing(breakIterator, i - 1);
 #else

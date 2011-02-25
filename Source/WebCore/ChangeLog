@@ -1,3 +1,50 @@
+2011-02-25  Ned Holbrook  <nholbrook@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Minimize calls to ubrk_setText()
+        https://bugs.webkit.org/show_bug.cgi?id=54912
+        <rdar://problem/9032774>
+
+        Avoid calling ubrk_setText() once per call to isBreakable() by using a LazyLineBreakIterator, which defers
+        break iterator creation until needed. This requires replacing the global line break iterator primitive with a
+        version that can be nested, since in some cases two iterators may need to be outstanding. In particular,
+        layoutInlineChildren() may indirectly call computePreferredLogicalWidths() and each may need an iterator.
+        In a test with a paragraph of Japanese text, this reduced the number of ubrk_setText() calls from 164 to 1.
+
+        * platform/text/TextBreakIterator.h: Add LazyLineBreakIterator.
+        (WebCore::LazyLineBreakIterator::LazyLineBreakIterator):
+        (WebCore::LazyLineBreakIterator::~LazyLineBreakIterator):
+        (WebCore::LazyLineBreakIterator::string):
+        (WebCore::LazyLineBreakIterator::length):
+        (WebCore::LazyLineBreakIterator::get):
+        (WebCore::LazyLineBreakIterator::reset):
+        * platform/text/TextBreakIteratorICU.cpp: Replace lineBreakIterator() primitive with acquireLineBreakIterator()/releaseLineBreakIterator().
+        (WebCore::acquireLineBreakIterator):
+        (WebCore::releaseLineBreakIterator):
+        * platform/text/brew/TextBreakIteratorBrew.cpp: Ditto.
+        (WebCore::acquireLineBreakIterator):
+        (WebCore::releaseLineBreakIterator):
+        * platform/text/gtk/TextBreakIteratorGtk.cpp: Ditto.
+        (WebCore::acquireLineBreakIterator):
+        (WebCore::releaseLineBreakIterator):
+        * platform/text/qt/TextBreakIteratorQt.cpp: Ditto.
+        (WebCore::acquireLineBreakIterator):
+        (WebCore::releaseLineBreakIterator):
+        * platform/text/wince/TextBreakIteratorWinCE.cpp: Ditto.
+        (WebCore::acquireLineBreakIterator):
+        (WebCore::releaseLineBreakIterator):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Pass a mapping of RenderText to LazyLineBreakIterator from one call of findNextLineBreak() to the next.
+        (WebCore::RenderBlock::findNextLineBreak): Use said mapping, resetting LazyLineBreakIterator for any newly-encountered RenderText.
+        * rendering/RenderText.cpp: Use a local LazyLineBreakIterator.
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        * rendering/break_lines.cpp: Accept LazyLineBreakIterator rather than UniChar buffer.
+        (WebCore::nextBreakablePosition):
+        * rendering/break_lines.h: Accept LazyLineBreakIterator rather than UniChar buffer.
+        (WebCore::isBreakable):
+
 2011-02-25  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

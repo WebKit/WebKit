@@ -26,6 +26,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/Unicode.h>
 
+using namespace std;
 using namespace WTF::Unicode;
 
 namespace WebCore {
@@ -241,11 +242,30 @@ TextBreakIterator* characterBreakIterator(const UChar* string, int length)
     return &iterator;
 }
 
-TextBreakIterator* lineBreakIterator(const UChar* string, int length)
+static TextBreakIterator* staticLineBreakIterator;
+
+TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length)
 {
-    DEFINE_STATIC_LOCAL(LineBreakIterator , iterator, ());
-    iterator.reset(string, length);
-    return &iterator;
+    TextBreakIterator* lineBreakIterator = 0;
+    if (staticLineBreakIterator) {
+        staticLineBreakIterator->reset(string, length);
+        swap(staticLineBreakIterator, lineBreakIterator);
+    }
+
+    if (!lineBreakIterator && string && length)
+        lineBreakIterator = new LineBreakIterator(string, length);
+
+    return lineBreakIterator;
+}
+
+void releaseLineBreakIterator(TextBreakIterator* iterator)
+{
+    ASSERT(iterator);
+
+    if (!staticLineBreakIterator)
+        staticLineBreakIterator = iterator;
+    else
+        delete iterator;
 }
 
 TextBreakIterator* sentenceBreakIterator(const UChar* string, int length)
