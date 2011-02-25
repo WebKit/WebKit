@@ -1,3 +1,20 @@
+2011-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Get rid of more old accelerated compositing code
+        https://bugs.webkit.org/show_bug.cgi?id=55235
+
+        * Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h:
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+
 2011-02-25  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

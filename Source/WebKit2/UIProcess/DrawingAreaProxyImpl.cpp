@@ -122,16 +122,6 @@ void DrawingAreaProxyImpl::setPageIsVisible(bool)
 {
 }
 
-void DrawingAreaProxyImpl::attachCompositingContext(uint32_t contextID)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void DrawingAreaProxyImpl::detachCompositingContext()
-{
-    ASSERT_NOT_REACHED();
-}
-
 void DrawingAreaProxyImpl::update(uint64_t stateID, const UpdateInfo& updateInfo)
 {
     ASSERT_ARG(stateID, stateID <= m_currentStateID);

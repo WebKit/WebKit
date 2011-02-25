@@ -65,8 +65,6 @@ public:
     virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) { }
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void attachCompositingContext() = 0;
-    virtual void detachCompositingContext() = 0;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
     virtual void scheduleCompositingLayerSync() = 0;
     virtual void syncCompositingLayers() = 0;

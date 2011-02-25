@@ -84,11 +84,6 @@ private:
 
     void sendSetSize();
 
-#if USE(ACCELERATED_COMPOSITING)
-    virtual void attachCompositingContext(uint32_t) { }
-    virtual void detachCompositingContext() { }
-#endif
-
     bool m_isWaitingForDidSetFrameNotification;
     bool m_isVisible;
     bool m_forceRepaintWhenResumingPainting;

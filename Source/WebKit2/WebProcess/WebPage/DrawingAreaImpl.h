@@ -54,8 +54,6 @@ private:
     virtual void didUninstallPageOverlay();
     virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&);
     
-    virtual void attachCompositingContext();
-    virtual void detachCompositingContext();
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
     virtual void scheduleCompositingLayerSync();
     virtual void syncCompositingLayers();

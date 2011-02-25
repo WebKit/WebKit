@@ -76,11 +76,6 @@ public:
     virtual void visibilityDidChange() { }
 
     virtual void setPageIsVisible(bool isVisible) = 0;
-    
-#if USE(ACCELERATED_COMPOSITING)
-    virtual void attachCompositingContext(uint32_t contextID) = 0;
-    virtual void detachCompositingContext() = 0;
-#endif
 
     const DrawingAreaInfo& info() const { return m_info; }
 

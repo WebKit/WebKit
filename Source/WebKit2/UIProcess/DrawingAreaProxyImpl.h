@@ -51,8 +51,6 @@ private:
     virtual void sizeDidChange();
     virtual void visibilityDidChange();
     virtual void setPageIsVisible(bool);
-    virtual void attachCompositingContext(uint32_t contextID);
-    virtual void detachCompositingContext();
 
     // CoreIPC message handlers
     virtual void update(uint64_t stateID, const UpdateInfo&);

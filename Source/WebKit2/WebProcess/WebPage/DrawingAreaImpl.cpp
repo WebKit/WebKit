@@ -194,14 +194,6 @@ void DrawingAreaImpl::layerHostDidFlushLayers()
     m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_stateID, m_layerTreeHost->layerTreeContext()));
 }
 
-void DrawingAreaImpl::attachCompositingContext()
-{
-}
-
-void DrawingAreaImpl::detachCompositingContext()
-{
-}
-
 void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
     if (graphicsLayer) {
