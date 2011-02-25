@@ -1,3 +1,24 @@
+2011-02-25  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46500, make positioned elements work with vertical text.
+        
+        Make positioned objects work with all possible crazy combinations of mixed writing modes.  Added new helper
+        functions that flip around the padding box of the containing block and then add in the appropriate border
+        side to ensure that the offset of the positioned object is actually correctly placed in the containing block's
+        local coordinate space.
+
+        Added two new tests of both replaced and non-replaced positioned elements in mixed writing mode environments.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::computeLogicalLeftPositionedOffset):
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing):
+        (WebCore::computeLogicalTopPositionedOffset):
+        (WebCore::RenderBox::computePositionedLogicalHeightUsing):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced):
+
 2011-02-25  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Brady Eidson and looked over by Jessie Berlin.

@@ -2263,6 +2263,17 @@ void RenderBox::computePositionedLogicalWidth()
     setLogicalWidth(logicalWidth() + bordersPlusPadding);
 }
 
+static void computeLogicalLeftPositionedOffset(int& logicalLeftPos, const RenderBox* child, int logicalWidthValue, const RenderBoxModelObject* containerBlock, int containerLogicalWidth)
+{
+    // Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space. If the containing block is flipped
+    // along this axis, then we need to flip the coordinate.  This can only happen if the containing block is both a flipped mode and perpendicular to us.
+    if (containerBlock->style()->isHorizontalWritingMode() != child->style()->isHorizontalWritingMode() && containerBlock->style()->isFlippedBlocksWritingMode()) {
+        logicalLeftPos = containerLogicalWidth - logicalWidthValue - logicalLeftPos;
+        logicalLeftPos += (child->style()->isHorizontalWritingMode() ? containerBlock->borderRight() : containerBlock->borderBottom());
+    } else
+        logicalLeftPos += (child->style()->isHorizontalWritingMode() ? containerBlock->borderLeft() : containerBlock->borderTop());
+}
+
 void RenderBox::computePositionedLogicalWidthUsing(Length logicalWidth, const RenderBoxModelObject* containerBlock, TextDirection containerDirection,
                                                    int containerLogicalWidth, int bordersPlusPadding,
                                                    Length logicalLeft, Length logicalRight, Length marginLogicalLeft, Length marginLogicalRight,
@@ -2416,9 +2427,6 @@ void RenderBox::computePositionedLogicalWidthUsing(Length logicalWidth, const Re
         }
     }
 
-    // FIXME: Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space, so that
-    // can make the result here rather complicated to compute.
-    
     // Use computed values to calculate the horizontal position.
 
     // FIXME: This hack is needed to calculate the  logical left position for a 'rtl' relatively
@@ -2435,7 +2443,8 @@ void RenderBox::computePositionedLogicalWidthUsing(Length logicalWidth, const Re
         }
     }
 
-    logicalLeftPos = logicalLeftValue + marginLogicalLeftValue + (style()->isHorizontalWritingMode() ? containerBlock->borderLeft() : containerBlock->borderTop());
+    logicalLeftPos = logicalLeftValue + marginLogicalLeftValue;
+    computeLogicalLeftPositionedOffset(logicalLeftPos, this, logicalWidthValue, containerBlock, containerLogicalWidth);
 }
 
 void RenderBox::computePositionedLogicalHeight()
@@ -2553,6 +2562,28 @@ void RenderBox::computePositionedLogicalHeight()
     setLogicalHeight(logicalHeightResult + bordersPlusPadding);
 }
 
+static void computeLogicalTopPositionedOffset(int& logicalTopPos, const RenderBox* child, int logicalHeightValue, const RenderBoxModelObject* containerBlock, int containerLogicalHeight)
+{
+    // Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space. If the containing block is flipped
+    // along this axis, then we need to flip the coordinate.  This can only happen if the containing block is both a flipped mode and perpendicular to us.
+    if ((child->style()->isFlippedBlocksWritingMode() && child->style()->isHorizontalWritingMode() != containerBlock->style()->isHorizontalWritingMode())
+        || (child->style()->isFlippedBlocksWritingMode() != containerBlock->style()->isFlippedBlocksWritingMode() && child->style()->isHorizontalWritingMode() == containerBlock->style()->isHorizontalWritingMode()))
+        logicalTopPos = containerLogicalHeight - logicalHeightValue - logicalTopPos;
+
+    // Our offset is from the logical bottom edge in a flipped environment, e.g., right for vertical-rl and bottom for horizontal-bt.
+    if (containerBlock->style()->isFlippedBlocksWritingMode() && child->style()->isHorizontalWritingMode() == containerBlock->style()->isHorizontalWritingMode()) {
+        if (child->style()->isHorizontalWritingMode())
+            logicalTopPos += containerBlock->borderBottom();
+        else
+            logicalTopPos += containerBlock->borderRight();
+    } else {
+        if (child->style()->isHorizontalWritingMode())
+            logicalTopPos += containerBlock->borderTop();
+        else
+            logicalTopPos += containerBlock->borderLeft();
+    }
+}
+
 void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, const RenderBoxModelObject* containerBlock,
                                                     int containerLogicalHeight, int bordersPlusPadding,
                                                     Length logicalTop, Length logicalBottom, Length marginBefore, Length marginAfter,
@@ -2668,24 +2699,9 @@ void RenderBox::computePositionedLogicalHeightUsing(Length logicalHeightLength, 
         }
     }
 
-    // FIXME: Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space, so that
-    // can make the result here rather complicated to compute.
-
     // Use computed values to calculate the vertical position.
     logicalTopPos = logicalTopValue + marginBeforeValue;
-    
-    // Our offset is from the logical bottom edge in a flipped environment, e.g., right for vertical-rl and bottom for horizontal-bt.
-    if (style()->isFlippedBlocksWritingMode()) {
-        if (style()->isHorizontalWritingMode())
-            logicalTopPos += containerBlock->borderBottom();
-        else
-            logicalTopPos += containerBlock->borderRight();
-    } else {
-        if (style()->isHorizontalWritingMode())
-            logicalTopPos += containerBlock->borderTop();
-        else
-            logicalTopPos += containerBlock->borderLeft();
-    }
+    computeLogicalTopPositionedOffset(logicalTopPos, this, logicalHeightValue, containerBlock, containerLogicalHeight);
 }
 
 void RenderBox::computePositionedLogicalWidthReplaced()
@@ -2869,7 +2885,9 @@ void RenderBox::computePositionedLogicalWidthReplaced()
         }
     }
 
-    setLogicalLeft(logicalLeftValue + marginLogicalLeftAlias + (isHorizontal ? containerBlock->borderLeft() : containerBlock->borderTop()));
+    int logicalLeftPos = logicalLeftValue + marginLogicalLeftAlias;
+    computeLogicalLeftPositionedOffset(logicalLeftPos, this, logicalWidth(), containerBlock, containerLogicalWidth);    
+    setLogicalLeft(logicalLeftPos);
 }
 
 void RenderBox::computePositionedLogicalHeightReplaced()
@@ -3004,26 +3022,10 @@ void RenderBox::computePositionedLogicalHeightReplaced()
     // NOTE: It is not necessary to do this step because we don't end up using
     // the value of 'bottom' regardless of whether the values are over-constrained
     // or not.
-    
-    // FIXME: Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space, so that
-    // can make the result here rather complicated to compute.
 
     // Use computed values to calculate the vertical position.
     int logicalTopPos = logicalTopValue + marginBeforeAlias;
-    
-    // Our offset is from the logical bottom edge in a flipped environment, e.g., right for vertical-rl and bottom for horizontal-bt.
-    if (isFlipped) {
-        if (isHorizontal)
-            logicalTopPos += containerBlock->borderBottom();
-        else
-            logicalTopPos += containerBlock->borderRight();
-    } else {
-        if (isHorizontal)
-            logicalTopPos += containerBlock->borderTop();
-        else
-            logicalTopPos += containerBlock->borderLeft();
-    }
-    
+    computeLogicalTopPositionedOffset(logicalTopPos, this, logicalHeight(), containerBlock, containerLogicalHeight);
     setLogicalTop(logicalTopPos);
 }
 
