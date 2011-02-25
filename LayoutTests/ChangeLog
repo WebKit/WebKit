@@ -1,3 +1,38 @@
+2011-02-24  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+        
+        Fix a few css1/ and css2.1/ Snow Leopard failures by deleting obsolete
+        chromium-mac baselines (so that we fall back on correct mac ones)
+        
+        Also promotes some chromium-mac-leopard baselines to mac-leopard, since
+        they appear to work for the mac port too.
+
+        * platform/chromium-mac-leopard/css1/box_properties/clear_float-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/css1/box_properties/clear_float-expected.png: Removed.
+        * platform/chromium-mac-leopard/css1/box_properties/float_on_text_elements-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/css1/box_properties/float_on_text_elements-expected.png: Removed.
+        * platform/chromium-mac-leopard/css2.1/t0905-c5525-fltwidth-00-c-g-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/clear_float-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/clear_float-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/float_on_text_elements-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/float_on_text_elements-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltcont-00-d-g-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltcont-00-d-g-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltwidth-00-c-g-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png: Removed.
+        * platform/mac-leopard/css1/box_properties/clear_float-expected.checksum:
+        * platform/mac-leopard/css1/box_properties/clear_float-expected.png:
+        * platform/mac-leopard/css1/box_properties/float_on_text_elements-expected.checksum:
+        * platform/mac-leopard/css1/box_properties/float_on_text_elements-expected.png:
+        * platform/mac-leopard/css2.1/t0905-c5525-fltwidth-00-c-g-expected.checksum:
+        * platform/mac-leopard/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png:
+        * platform/mac/css1/box_properties/float_elements_in_series-expected.checksum:
+        * platform/mac/css1/box_properties/float_elements_in_series-expected.png:
+        * platform/mac/css1/text_properties/text_align-expected.checksum:
+        * platform/mac/css1/text_properties/text_align-expected.png:
+
 2011-02-24  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.
