@@ -2,6 +2,21 @@
 
         Update chromium test expectations and baselines.
 
+        * platform/chromium-mac-leopard/media/media-document-audio-repaint-expected.checksum: Added.
+        * platform/chromium-mac-leopard/media/media-document-audio-repaint-expected.png: Added.
+        * platform/chromium-mac-leopard/media/video-controls-rendering-expected.checksum: Added.
+        * platform/chromium-mac-leopard/media/video-controls-rendering-expected.png: Added.
+        * platform/chromium-mac-leopard/media/video-replaces-poster-expected.checksum: Added.
+        * platform/chromium-mac-leopard/media/video-replaces-poster-expected.png: Added.
+        * platform/chromium-win/fast/block/positioning/vertical-rl/001-expected.checksum:
+        * platform/chromium-win/fast/block/positioning/vertical-rl/001-expected.png:
+        * platform/chromium-win/fast/block/positioning/vertical-rl/001-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2011-02-24  James Robinson  <jamesr@chromium.org>
+
+        Update chromium test expectations and baselines.
+
         * platform/chromium-linux/fast/ruby/base-shorter-than-text-expected.checksum: Added.
         * platform/chromium-linux/fast/ruby/base-shorter-than-text-expected.png: Added.
         * platform/chromium-linux/fast/ruby/base-shorter-than-text-expected.txt: Added.

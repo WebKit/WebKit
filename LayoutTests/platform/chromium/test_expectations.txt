@@ -3152,7 +3152,6 @@ BUGWK54322 MAC SNOWLEOPARD : editing/selection/replaced-boundaries-2.html = IMAG
 BUGWK54322 MAC SNOWLEOPARD : fast/backgrounds/svg-as-background-5.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/backgrounds/svg-as-background-6.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/block/margin-collapse/103.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/blockflow/border-vertical-lr.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/blockflow/english-lr-text.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/blockflow/japanese-lr-selection.html = IMAGE
@@ -3453,6 +3452,7 @@ BUGWK55183 : fast/ruby/rubyDOM-insert-text3.html = IMAGE+TEXT
 BUGWK55183 : fast/ruby/rubyDOM-remove-rt1.html = IMAGE+TEXT
 BUGWK55183 : fast/ruby/rubyDOM-remove-rt2.html = IMAGE+TEXT
 BUGWK55183 : fast/ruby/rubyDOM-remove-text1.html = IMAGE+TEXT
+BUGWK55183 MAC : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
 
 BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 BUGWK55118 : fast/xsl/sort-locale.xml = TEXT
