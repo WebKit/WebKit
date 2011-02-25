@@ -60,7 +60,7 @@ WebInspector.TextEditorHighlighter.prototype = {
         this._tokenizerConditionStringified = JSON.stringify(this._tokenizer.initialCondition);
     },
 
-    highlight: function(endLine)
+    highlight: function(endLine, opt_forceRun)
     {
         // First check if we have work to do.
         if (endLine <= this._lastHighlightedLine)
@@ -68,7 +68,7 @@ WebInspector.TextEditorHighlighter.prototype = {
 
         this._requestedEndLine = endLine;
 
-        if (this._highlightTimer) {
+        if (this._highlightTimer && !opt_forceRun) {
             // There is a timer scheduled, it will catch the new job based on the new endLine set.
             return;
         }

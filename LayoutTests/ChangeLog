@@ -1,3 +1,15 @@
+2011-02-25  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Text editor] Add basic layout tests for the highlighter
+        https://bugs.webkit.org/show_bug.cgi?id=54751
+
+        Adding basic tests for the highlighter.
+
+        * inspector/editor/highlighter-basics-expected.txt: Added.
+        * inspector/editor/highlighter-basics.html: Added.
+
 2011-02-25  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed.
