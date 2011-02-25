@@ -1,3 +1,11 @@
+2011-02-25  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium Snow Leopard expectations update. Remove failing
+        expectations for tests that pass after r79653. Add one more known
+        failure and flake.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-25  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed.
