@@ -2883,14 +2883,18 @@ void RenderBox::computePositionedLogicalHeightReplaced()
     // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
     const RenderBoxModelObject* containerBlock = toRenderBoxModelObject(container());
 
-    const int containerHeight = containingBlockLogicalHeightForPositioned(containerBlock);
+    const int containerLogicalHeight = containingBlockLogicalHeightForPositioned(containerBlock);
 
     // Variables to solve.
-    Length top = style()->top();
-    Length bottom = style()->bottom();
-    Length marginTop = style()->marginTop();
-    Length marginBottom = style()->marginBottom();
+    bool isHorizontal = style()->isHorizontalWritingMode();
+    bool isFlipped = style()->isFlippedBlocksWritingMode();
+    Length marginBefore = style()->marginBefore();
+    Length marginAfter = style()->marginAfter();
+    int& marginBeforeAlias = isHorizontal ? (isFlipped ? m_marginBottom : m_marginTop) : (isFlipped ? m_marginRight: m_marginLeft);
+    int& marginAfterAlias = isHorizontal ? (isFlipped ? m_marginTop : m_marginBottom) : (isFlipped ? m_marginLeft: m_marginRight);
 
+    Length logicalTop = style()->logicalTop();
+    Length logicalBottom = style()->logicalBottom();
 
     /*-----------------------------------------------------------------------*\
      * 1. The used value of 'height' is determined as for inline replaced
@@ -2899,22 +2903,23 @@ void RenderBox::computePositionedLogicalHeightReplaced()
     // NOTE: This value of height is FINAL in that the min/max height calculations
     // are dealt with in computeReplacedHeight().  This means that the steps to produce
     // correct max/min in the non-replaced version, are not necessary.
-    setHeight(computeReplacedLogicalHeight() + borderAndPaddingHeight());
-    const int availableSpace = containerHeight - height();
+    setLogicalHeight(computeReplacedLogicalHeight() + borderAndPaddingLogicalHeight());
+    const int availableSpace = containerLogicalHeight - logicalHeight();
 
     /*-----------------------------------------------------------------------*\
      * 2. If both 'top' and 'bottom' have the value 'auto', replace 'top'
      *    with the element's static position.
     \*-----------------------------------------------------------------------*/
     // see FIXME 2
-    if (top.isAuto() && bottom.isAuto()) {
+    // FIXME: The static distance computation has not been patched for writing modes yet.
+    if (logicalTop.isAuto() && logicalBottom.isAuto()) {
         // staticY should already have been set through layout of the parent().
         int staticTop = layer()->staticY() - containerBlock->borderTop();
         for (RenderObject* po = parent(); po && po != containerBlock; po = po->parent()) {
             if (po->isBox() && !po->isTableRow())
                 staticTop += toRenderBox(po)->y();
         }
-        top.setValue(Fixed, staticTop);
+        logicalTop.setValue(Fixed, staticTop);
     }
 
     /*-----------------------------------------------------------------------*\
@@ -2923,11 +2928,11 @@ void RenderBox::computePositionedLogicalHeightReplaced()
     \*-----------------------------------------------------------------------*/
     // FIXME: The spec. says that this step should only be taken when bottom is
     // auto, but if only top is auto, this makes step 4 impossible.
-    if (top.isAuto() || bottom.isAuto()) {
-        if (marginTop.isAuto())
-            marginTop.setValue(Fixed, 0);
-        if (marginBottom.isAuto())
-            marginBottom.setValue(Fixed, 0);
+    if (logicalTop.isAuto() || logicalBottom.isAuto()) {
+        if (marginBefore.isAuto())
+            marginBefore.setValue(Fixed, 0);
+        if (marginAfter.isAuto())
+            marginAfter.setValue(Fixed, 0);
     }
 
     /*-----------------------------------------------------------------------*\
@@ -2935,59 +2940,59 @@ void RenderBox::computePositionedLogicalHeightReplaced()
      *    'auto', solve the equation under the extra constraint that the two
      *    margins must get equal values.
     \*-----------------------------------------------------------------------*/
-    int topValue = 0;
-    int bottomValue = 0;
+    int logicalTopValue = 0;
+    int logicalBottomValue = 0;
 
-    if (marginTop.isAuto() && marginBottom.isAuto()) {
+    if (marginBefore.isAuto() && marginAfter.isAuto()) {
         // 'top' and 'bottom' cannot be 'auto' due to step 2 and 3 combined.
-        ASSERT(!(top.isAuto() || bottom.isAuto()));
+        ASSERT(!(logicalTop.isAuto() || logicalBottom.isAuto()));
 
-        topValue = top.calcValue(containerHeight);
-        bottomValue = bottom.calcValue(containerHeight);
+        logicalTopValue = logicalTop.calcValue(containerLogicalHeight);
+        logicalBottomValue = logicalBottom.calcValue(containerLogicalHeight);
 
-        int difference = availableSpace - (topValue + bottomValue);
+        int difference = availableSpace - (logicalTopValue + logicalBottomValue);
         // NOTE: This may result in negative values.
-        m_marginTop =  difference / 2; // split the difference
-        m_marginBottom = difference - m_marginTop; // account for odd valued differences
+        marginBeforeAlias =  difference / 2; // split the difference
+        marginAfterAlias = difference - marginBeforeAlias; // account for odd valued differences
 
     /*-----------------------------------------------------------------------*\
      * 5. If at this point there is only one 'auto' left, solve the equation
      *    for that value.
     \*-----------------------------------------------------------------------*/
-    } else if (top.isAuto()) {
-        m_marginTop = marginTop.calcValue(containerHeight);
-        m_marginBottom = marginBottom.calcValue(containerHeight);
-        bottomValue = bottom.calcValue(containerHeight);
+    } else if (logicalTop.isAuto()) {
+        marginBeforeAlias = marginBefore.calcValue(containerLogicalHeight);
+        marginAfterAlias = marginAfter.calcValue(containerLogicalHeight);
+        logicalBottomValue = logicalBottom.calcValue(containerLogicalHeight);
 
         // Solve for 'top'
-        topValue = availableSpace - (bottomValue + m_marginTop + m_marginBottom);
-    } else if (bottom.isAuto()) {
-        m_marginTop = marginTop.calcValue(containerHeight);
-        m_marginBottom = marginBottom.calcValue(containerHeight);
-        topValue = top.calcValue(containerHeight);
+        logicalTopValue = availableSpace - (logicalBottomValue + marginBeforeAlias + marginAfterAlias);
+    } else if (logicalBottom.isAuto()) {
+        marginBeforeAlias = marginBefore.calcValue(containerLogicalHeight);
+        marginAfterAlias = marginAfter.calcValue(containerLogicalHeight);
+        logicalTopValue = logicalTop.calcValue(containerLogicalHeight);
 
         // Solve for 'bottom'
         // NOTE: It is not necessary to solve for 'bottom' because we don't ever
         // use the value.
-    } else if (marginTop.isAuto()) {
-        m_marginBottom = marginBottom.calcValue(containerHeight);
-        topValue = top.calcValue(containerHeight);
-        bottomValue = bottom.calcValue(containerHeight);
+    } else if (marginBefore.isAuto()) {
+        marginAfterAlias = marginAfter.calcValue(containerLogicalHeight);
+        logicalTopValue = logicalTop.calcValue(containerLogicalHeight);
+        logicalBottomValue = logicalBottom.calcValue(containerLogicalHeight);
 
         // Solve for 'margin-top'
-        m_marginTop = availableSpace - (topValue + bottomValue + m_marginBottom);
-    } else if (marginBottom.isAuto()) {
-        m_marginTop = marginTop.calcValue(containerHeight);
-        topValue = top.calcValue(containerHeight);
-        bottomValue = bottom.calcValue(containerHeight);
+        marginBeforeAlias = availableSpace - (logicalTopValue + logicalBottomValue + marginAfterAlias);
+    } else if (marginAfter.isAuto()) {
+        marginBeforeAlias = marginBefore.calcValue(containerLogicalHeight);
+        logicalTopValue = logicalTop.calcValue(containerLogicalHeight);
+        logicalBottomValue = logicalBottom.calcValue(containerLogicalHeight);
 
         // Solve for 'margin-bottom'
-        m_marginBottom = availableSpace - (topValue + bottomValue + m_marginTop);
+        marginAfterAlias = availableSpace - (logicalTopValue + logicalBottomValue + marginBeforeAlias);
     } else {
         // Nothing is 'auto', just calculate the values.
-        m_marginTop = marginTop.calcValue(containerHeight);
-        m_marginBottom = marginBottom.calcValue(containerHeight);
-        topValue = top.calcValue(containerHeight);
+        marginBeforeAlias = marginBefore.calcValue(containerLogicalHeight);
+        marginAfterAlias = marginAfter.calcValue(containerLogicalHeight);
+        logicalTopValue = logicalTop.calcValue(containerLogicalHeight);
         // NOTE: It is not necessary to solve for 'bottom' because we don't ever
         // use the value.
      }
@@ -2999,9 +3004,27 @@ void RenderBox::computePositionedLogicalHeightReplaced()
     // NOTE: It is not necessary to do this step because we don't end up using
     // the value of 'bottom' regardless of whether the values are over-constrained
     // or not.
+    
+    // FIXME: Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space, so that
+    // can make the result here rather complicated to compute.
 
     // Use computed values to calculate the vertical position.
-    m_frameRect.setY(topValue + m_marginTop + containerBlock->borderTop());
+    int logicalTopPos = logicalTopValue + marginBeforeAlias;
+    
+    // Our offset is from the logical bottom edge in a flipped environment, e.g., right for vertical-rl and bottom for horizontal-bt.
+    if (isFlipped) {
+        if (isHorizontal)
+            logicalTopPos += containerBlock->borderBottom();
+        else
+            logicalTopPos += containerBlock->borderRight();
+    } else {
+        if (isHorizontal)
+            logicalTopPos += containerBlock->borderTop();
+        else
+            logicalTopPos += containerBlock->borderLeft();
+    }
+    
+    setLogicalTop(logicalTopPos);
 }
 
 IntRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, int* extraWidthToEndOfLine)

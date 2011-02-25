@@ -1,3 +1,22 @@
+2011-02-25  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46500, make positioned elements work with vertical text.
+        
+        Patch computePositionedLogicalHeightReplaced to be writing-mode aware.
+        
+        Added six new tests in fast/replaced.
+
+        * fast/replaced/vertical-lr: Added.
+        * fast/replaced/vertical-lr/absolute-position-percentage-width.html: Added.
+        * fast/replaced/vertical-lr/absolute-position-with-auto-height-and-top-and-bottom.html: Added.
+        * fast/replaced/vertical-lr/absolute-position-with-auto-width-and-left-and-right.html: Added.
+        * fast/replaced/vertical-rl: Added.
+        * fast/replaced/vertical-rl/absolute-position-percentage-width.html: Added.
+        * fast/replaced/vertical-rl/absolute-position-with-auto-height-and-top-and-bottom.html: Added.
+        * fast/replaced/vertical-rl/absolute-position-with-auto-width-and-left-and-right.html: Added.
+
 2011-02-25  James Robinson  <jamesr@chromium.org>
 
         Update chromium expectations and baselines for some ruby tests.
