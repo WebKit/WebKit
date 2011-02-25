@@ -1,3 +1,14 @@
+2011-02-24  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add a USE() macro to control use of the built-in UTF8 codec
+        https://bugs.webkit.org/show_bug.cgi?id=55189
+
+        Defaults USE(BUILTIN_UTF8_CODEC) to true for all platforms except chromium, which controls the flag via features.gypi.
+
+        * wtf/Platform.h:
+
 2011-02-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
