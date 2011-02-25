@@ -2533,6 +2533,25 @@ void HTMLMediaElement::setShouldDelayLoadEvent(bool shouldDelay)
         document()->decrementLoadEventDelayCount();
 }
     
+
+void HTMLMediaElement::getSitesInMediaCache(Vector<String>& sites)
+{
+    if (m_player)
+        m_player->getSitesInMediaCache(sites);
+}
+
+void HTMLMediaElement::clearMediaCache()
+{
+    if (m_player)
+        m_player->clearMediaCache();
+}
+
+void HTMLMediaElement::clearMediaCacheForSite(const String site)
+{
+    if (m_player)
+        m_player->clearMediaCacheForSite(site);
+}
+
 }
 
 #endif

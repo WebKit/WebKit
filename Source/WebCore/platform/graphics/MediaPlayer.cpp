@@ -718,6 +718,20 @@ void MediaPlayer::reloadTimerFired(Timer<MediaPlayer>*)
     loadWithNextMediaEngine(m_currentMediaEngine);
 }
 
+void MediaPlayer::getSitesInMediaCache(Vector<String>& sites)
+{
+    m_private->getSitesInMediaCache(sites);
+}
+
+void MediaPlayer::clearMediaCache()
+{
+    m_private->clearMediaCache();
+}
+
+void MediaPlayer::clearMediaCacheForSite(const String site)
+{
+    m_private->clearMediaCacheForSite(site);
+}
 
 // Client callbacks.
 void MediaPlayer::networkStateChanged()

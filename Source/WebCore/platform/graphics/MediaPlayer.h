@@ -287,6 +287,11 @@ public:
     unsigned audioDecodedByteCount() const;
     unsigned videoDecodedByteCount() const;
 
+    // Media cache management.
+    void getSitesInMediaCache(Vector<String>&);
+    void clearMediaCache();
+    void clearMediaCacheForSite(const String);
+    
 private:
     MediaPlayer(MediaPlayerClient*);
     void loadWithNextMediaEngine(MediaPlayerFactory*);

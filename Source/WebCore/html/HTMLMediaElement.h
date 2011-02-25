@@ -176,6 +176,11 @@ public:
     void sourceWillBeRemoved(HTMLSourceElement*);
     void sourceWasAdded(HTMLSourceElement*);
 
+    // Media cache management.
+    void getSitesInMediaCache(Vector<String>&);
+    void clearMediaCache();
+    void clearMediaCacheForSite(const String);
+    
 protected:
     HTMLMediaElement(const QualifiedName&, Document*);
     virtual ~HTMLMediaElement();
