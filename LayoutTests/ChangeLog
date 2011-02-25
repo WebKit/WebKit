@@ -1,3 +1,9 @@
+2011-02-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Update GTK+ SVG pixel results which have changed.
+
+        * platform/gtk/svg: Update SVG pixel resultsj
+
 2011-02-25  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.
