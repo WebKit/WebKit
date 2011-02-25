@@ -1,3 +1,41 @@
+2011-02-25  James Robinson  <jamesr@chromium.org>
+
+        Add chromium win/linux baselines for new vertical replaced test and update various expectations.
+
+        * platform/chromium-gpu-win/platform/chromium/compositing/layout-width-change-expected.checksum:
+        * platform/chromium-gpu-win/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-linux/fast/replaced/vertical-lr/absolute-position-percentage-width-expected.checksum: Added.
+        * platform/chromium-linux/fast/replaced/vertical-lr/absolute-position-percentage-width-expected.png: Added.
+        * platform/chromium-linux/fast/replaced/vertical-lr/absolute-position-with-auto-height-and-top-and-bottom-expected.checksum: Added.
+        * platform/chromium-linux/fast/replaced/vertical-lr/absolute-position-with-auto-height-and-top-and-bottom-expected.png: Added.
+        * platform/chromium-linux/fast/replaced/vertical-lr/absolute-position-with-auto-width-and-left-and-right-expected.checksum: Added.
+        * platform/chromium-linux/fast/replaced/vertical-lr/absolute-position-with-auto-width-and-left-and-right-expected.png: Added.
+        * platform/chromium-linux/fast/replaced/vertical-rl/absolute-position-percentage-width-expected.checksum: Added.
+        * platform/chromium-linux/fast/replaced/vertical-rl/absolute-position-percentage-width-expected.png: Added.
+        * platform/chromium-linux/fast/replaced/vertical-rl/absolute-position-with-auto-height-and-top-and-bottom-expected.checksum: Added.
+        * platform/chromium-linux/fast/replaced/vertical-rl/absolute-position-with-auto-height-and-top-and-bottom-expected.png: Added.
+        * platform/chromium-linux/fast/replaced/vertical-rl/absolute-position-with-auto-width-and-left-and-right-expected.checksum: Added.
+        * platform/chromium-linux/fast/replaced/vertical-rl/absolute-position-with-auto-width-and-left-and-right-expected.png: Added.
+        * platform/chromium-win/fast/replaced/vertical-lr/absolute-position-percentage-width-expected.checksum: Added.
+        * platform/chromium-win/fast/replaced/vertical-lr/absolute-position-percentage-width-expected.png: Added.
+        * platform/chromium-win/fast/replaced/vertical-lr/absolute-position-percentage-width-expected.txt: Added.
+        * platform/chromium-win/fast/replaced/vertical-lr/absolute-position-with-auto-height-and-top-and-bottom-expected.checksum: Added.
+        * platform/chromium-win/fast/replaced/vertical-lr/absolute-position-with-auto-height-and-top-and-bottom-expected.png: Added.
+        * platform/chromium-win/fast/replaced/vertical-lr/absolute-position-with-auto-height-and-top-and-bottom-expected.txt: Added.
+        * platform/chromium-win/fast/replaced/vertical-lr/absolute-position-with-auto-width-and-left-and-right-expected.checksum: Added.
+        * platform/chromium-win/fast/replaced/vertical-lr/absolute-position-with-auto-width-and-left-and-right-expected.png: Added.
+        * platform/chromium-win/fast/replaced/vertical-lr/absolute-position-with-auto-width-and-left-and-right-expected.txt: Added.
+        * platform/chromium-win/fast/replaced/vertical-rl/absolute-position-percentage-width-expected.checksum: Added.
+        * platform/chromium-win/fast/replaced/vertical-rl/absolute-position-percentage-width-expected.png: Added.
+        * platform/chromium-win/fast/replaced/vertical-rl/absolute-position-percentage-width-expected.txt: Added.
+        * platform/chromium-win/fast/replaced/vertical-rl/absolute-position-with-auto-height-and-top-and-bottom-expected.checksum: Added.
+        * platform/chromium-win/fast/replaced/vertical-rl/absolute-position-with-auto-height-and-top-and-bottom-expected.png: Added.
+        * platform/chromium-win/fast/replaced/vertical-rl/absolute-position-with-auto-height-and-top-and-bottom-expected.txt: Added.
+        * platform/chromium-win/fast/replaced/vertical-rl/absolute-position-with-auto-width-and-left-and-right-expected.checksum: Added.
+        * platform/chromium-win/fast/replaced/vertical-rl/absolute-position-with-auto-width-and-left-and-right-expected.png: Added.
+        * platform/chromium-win/fast/replaced/vertical-rl/absolute-position-with-auto-width-and-left-and-right-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-25  Tony Chang  <tony@chromium.org>
 
         Unreviewed, updating chromium linux baselines after changes to
