@@ -227,18 +227,16 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
 
     do {
         if (m_partialSequenceSize) {
-            // Explicitly copy destination and source to avoid taking a pointer to them,
-            // which may harm code generation.
+            // Explicitly copy destination and source pointers to avoid taking pointers to the
+            // local variables, which may harm code generation by disabling some optimizations
+            // in some compilers.
             UChar* destinationForHandlePartialSequence = destination;
             const uint8_t* sourceForHandlePartialSequence = source;
             handlePartialSequence(destinationForHandlePartialSequence, sourceForHandlePartialSequence, end, flush, stopOnError, sawError);
             destination = destinationForHandlePartialSequence;
             source = sourceForHandlePartialSequence;
-            if (m_partialSequenceSize) {
-                ASSERT(stopOnError);
-                ASSERT(sawError);
+            if (m_partialSequenceSize)
                 break;
-            }
         }
 
         while (source < end) {

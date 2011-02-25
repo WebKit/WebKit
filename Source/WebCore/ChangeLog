@@ -1,5 +1,15 @@
 2011-02-24  Darin Adler  <darin@apple.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION (r79466): http/tests/incremental/slow-utf8-html.pl flaky due to incorrect assertions
+        https://bugs.webkit.org/show_bug.cgi?id=55135
+
+        * platform/text/TextCodecUTF8.cpp:
+        (WebCore::TextCodecUTF8::decode): Removed incorrect assertions.
+
+2011-02-24  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders Carlsson.
 
         WebKit2: Image-based cursors do not work
