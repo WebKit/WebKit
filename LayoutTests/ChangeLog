@@ -1,3 +1,19 @@
+2011-02-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Added new GTK+ expectations for new tests.
+
+        * platform/gtk/svg/custom/animate-target-id-changed-expected.checksum: Added.
+        * platform/gtk/svg/custom/animate-target-id-changed-expected.png: Added.
+        * platform/gtk/svg/custom/animate-target-id-changed-expected.txt: Added.
+        * platform/gtk/svg/custom/animate-target-removed-from-document-expected.checksum: Added.
+        * platform/gtk/svg/custom/animate-target-removed-from-document-expected.png: Added.
+        * platform/gtk/svg/custom/animate-target-removed-from-document-expected.txt: Added.
+        * platform/gtk/transitions/default-timing-function-expected.checksum: Added.
+        * platform/gtk/transitions/default-timing-function-expected.png: Added.
+        * platform/gtk/transitions/default-timing-function-expected.txt: Added.
+
 2011-02-25  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.
