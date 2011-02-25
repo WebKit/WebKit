@@ -437,8 +437,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/WebHistoryClient.h \
 	Source/WebKit2/UIProcess/WebInspectorProxy.cpp \
 	Source/WebKit2/UIProcess/WebInspectorProxy.h \
-	Source/WebKit2/UIProcess/WebKeyValueManagerProxy.cpp \
-	Source/WebKit2/UIProcess/WebKeyValueManagerProxy.h \
+	Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.cpp \
+	Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.h \
 	Source/WebKit2/UIProcess/WebLoaderClient.cpp \
 	Source/WebKit2/UIProcess/WebLoaderClient.h \
 	Source/WebKit2/UIProcess/WebNavigationData.cpp \
@@ -542,8 +542,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleScriptWorld.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h \
-	Source/WebKit2/WebProcess/KeyValueStorage/KeyValueStorageManager.cpp \
-	Source/WebKit2/WebProcess/KeyValueStorage/KeyValueStorageManager.h \
+	Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp \
+	Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/gtk/NetscapePluginGtk.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/JSNPMethod.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/JSNPMethod.h \
