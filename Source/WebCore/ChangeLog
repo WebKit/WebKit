@@ -1,3 +1,15 @@
+2011-02-25  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46500, make positioned elements work with vertical text.
+        
+        Patch computePositionedLogicalWidthReplaced to be writing-mode aware.  Not testable yet, since the height function overwrites the values
+        in a vertical text environment.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+
 2011-02-25  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

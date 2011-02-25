@@ -2700,18 +2700,20 @@ void RenderBox::computePositionedLogicalWidthReplaced()
     // relative positioned inline.
     const RenderBoxModelObject* containerBlock = toRenderBoxModelObject(container());
 
-    const int containerWidth = containingBlockLogicalWidthForPositioned(containerBlock);
+    const int containerLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock);
 
     // To match WinIE, in quirks mode use the parent's 'direction' property
     // instead of the the container block's.
     TextDirection containerDirection = (document()->inQuirksMode()) ? parent()->style()->direction() : containerBlock->style()->direction();
 
     // Variables to solve.
-    Length left = style()->left();
-    Length right = style()->right();
-    Length marginLeft = style()->marginLeft();
-    Length marginRight = style()->marginRight();
-
+    bool isHorizontal = style()->isHorizontalWritingMode();
+    Length logicalLeft = style()->logicalLeft();
+    Length logicalRight = style()->logicalRight();
+    Length marginLogicalLeft = isHorizontal ? style()->marginLeft() : style()->marginTop();
+    Length marginLogicalRight = isHorizontal ? style()->marginRight() : style()->marginBottom();
+    int& marginLogicalLeftAlias = isHorizontal ? m_marginLeft : m_marginTop;
+    int& marginLogicalRightAlias = isHorizontal ? m_marginRight : m_marginBottom;
 
     /*-----------------------------------------------------------------------*\
      * 1. The used value of 'width' is determined as for inline replaced
@@ -2720,8 +2722,8 @@ void RenderBox::computePositionedLogicalWidthReplaced()
     // NOTE: This value of width is FINAL in that the min/max width calculations
     // are dealt with in computeReplacedWidth().  This means that the steps to produce
     // correct max/min in the non-replaced version, are not necessary.
-    setWidth(computeReplacedLogicalWidth() + borderAndPaddingWidth());
-    const int availableSpace = containerWidth - width();
+    setLogicalWidth(computeReplacedLogicalWidth() + borderAndPaddingLogicalWidth());
+    const int availableSpace = containerLogicalWidth - logicalWidth();
 
     /*-----------------------------------------------------------------------*\
      * 2. If both 'left' and 'right' have the value 'auto', then if 'direction'
@@ -2729,7 +2731,8 @@ void RenderBox::computePositionedLogicalWidthReplaced()
      *    else if 'direction' is 'rtl', set 'right' to the static position.
     \*-----------------------------------------------------------------------*/
     // see FIXME 2
-    if (left.isAuto() && right.isAuto()) {
+    // FIXME: Static position computation has not been patched for writing modes yet.
+    if (logicalLeft.isAuto() && logicalRight.isAuto()) {
         // see FIXME 1
         if (containerDirection == LTR) {
             // 'staticX' should already have been set through layout of the parent.
@@ -2738,16 +2741,16 @@ void RenderBox::computePositionedLogicalWidthReplaced()
                 if (po->isBox())
                     staticPosition += toRenderBox(po)->x();
             }
-            left.setValue(Fixed, staticPosition);
+            logicalLeft.setValue(Fixed, staticPosition);
         } else {
             RenderObject* po = parent();
             // 'staticX' should already have been set through layout of the parent.
-            int staticPosition = layer()->staticX() + containerWidth + containerBlock->borderRight();
+            int staticPosition = layer()->staticX() + containerLogicalWidth + containerBlock->borderRight();
             for ( ; po && po != containerBlock; po = po->parent()) {
                 if (po->isBox())
                     staticPosition += toRenderBox(po)->x();
             }
-            right.setValue(Fixed, staticPosition);
+            logicalRight.setValue(Fixed, staticPosition);
         }
     }
 
@@ -2755,11 +2758,11 @@ void RenderBox::computePositionedLogicalWidthReplaced()
      * 3. If 'left' or 'right' are 'auto', replace any 'auto' on 'margin-left'
      *    or 'margin-right' with '0'.
     \*-----------------------------------------------------------------------*/
-    if (left.isAuto() || right.isAuto()) {
-        if (marginLeft.isAuto())
-            marginLeft.setValue(Fixed, 0);
-        if (marginRight.isAuto())
-            marginRight.setValue(Fixed, 0);
+    if (logicalLeft.isAuto() || logicalRight.isAuto()) {
+        if (marginLogicalLeft.isAuto())
+            marginLogicalLeft.setValue(Fixed, 0);
+        if (marginLogicalRight.isAuto())
+            marginLogicalRight.setValue(Fixed, 0);
     }
 
     /*-----------------------------------------------------------------------*\
@@ -2770,28 +2773,28 @@ void RenderBox::computePositionedLogicalWidthReplaced()
      *    ('rtl'), set 'margin-left' ('margin-right') to zero and solve for
      *    'margin-right' ('margin-left').
     \*-----------------------------------------------------------------------*/
-    int leftValue = 0;
-    int rightValue = 0;
+    int logicalLeftValue = 0;
+    int logicalRightValue = 0;
 
-    if (marginLeft.isAuto() && marginRight.isAuto()) {
+    if (marginLogicalLeft.isAuto() && marginLogicalRight.isAuto()) {
         // 'left' and 'right' cannot be 'auto' due to step 3
-        ASSERT(!(left.isAuto() && right.isAuto()));
+        ASSERT(!(logicalLeft.isAuto() && logicalRight.isAuto()));
 
-        leftValue = left.calcValue(containerWidth);
-        rightValue = right.calcValue(containerWidth);
+        logicalLeftValue = logicalLeft.calcValue(containerLogicalWidth);
+        logicalRightValue = logicalRight.calcValue(containerLogicalWidth);
 
-        int difference = availableSpace - (leftValue + rightValue);
+        int difference = availableSpace - (logicalLeftValue + logicalRightValue);
         if (difference > 0) {
-            m_marginLeft = difference / 2; // split the difference
-            m_marginRight = difference - m_marginLeft; // account for odd valued differences
+            marginLogicalLeftAlias = difference / 2; // split the difference
+            marginLogicalRightAlias = difference - marginLogicalLeftAlias; // account for odd valued differences
         } else {
             // see FIXME 1
             if (containerDirection == LTR) {
-                m_marginLeft = 0;
-                m_marginRight = difference;  // will be negative
+                marginLogicalLeftAlias = 0;
+                marginLogicalRightAlias = difference; // will be negative
             } else {
-                m_marginLeft = difference;  // will be negative
-                m_marginRight = 0;
+                marginLogicalLeftAlias = difference; // will be negative
+                marginLogicalRightAlias = 0;
             }
         }
 
@@ -2799,40 +2802,40 @@ void RenderBox::computePositionedLogicalWidthReplaced()
      * 5. If at this point there is an 'auto' left, solve the equation for
      *    that value.
     \*-----------------------------------------------------------------------*/
-    } else if (left.isAuto()) {
-        m_marginLeft = marginLeft.calcValue(containerWidth);
-        m_marginRight = marginRight.calcValue(containerWidth);
-        rightValue = right.calcValue(containerWidth);
+    } else if (logicalLeft.isAuto()) {
+        marginLogicalLeftAlias = marginLogicalLeft.calcValue(containerLogicalWidth);
+        marginLogicalRightAlias = marginLogicalRight.calcValue(containerLogicalWidth);
+        logicalRightValue = logicalRight.calcValue(containerLogicalWidth);
 
         // Solve for 'left'
-        leftValue = availableSpace - (rightValue + m_marginLeft + m_marginRight);
-    } else if (right.isAuto()) {
-        m_marginLeft = marginLeft.calcValue(containerWidth);
-        m_marginRight = marginRight.calcValue(containerWidth);
-        leftValue = left.calcValue(containerWidth);
+        logicalLeftValue = availableSpace - (logicalRightValue + marginLogicalLeftAlias + marginLogicalRightAlias);
+    } else if (logicalRight.isAuto()) {
+        marginLogicalLeftAlias = marginLogicalLeft.calcValue(containerLogicalWidth);
+        marginLogicalRightAlias = marginLogicalRight.calcValue(containerLogicalWidth);
+        logicalLeftValue = logicalLeft.calcValue(containerLogicalWidth);
 
         // Solve for 'right'
-        rightValue = availableSpace - (leftValue + m_marginLeft + m_marginRight);
-    } else if (marginLeft.isAuto()) {
-        m_marginRight = marginRight.calcValue(containerWidth);
-        leftValue = left.calcValue(containerWidth);
-        rightValue = right.calcValue(containerWidth);
+        logicalRightValue = availableSpace - (logicalLeftValue + marginLogicalLeftAlias + marginLogicalRightAlias);
+    } else if (marginLogicalLeft.isAuto()) {
+        marginLogicalRightAlias = marginLogicalRight.calcValue(containerLogicalWidth);
+        logicalLeftValue = logicalLeft.calcValue(containerLogicalWidth);
+        logicalRightValue = logicalRight.calcValue(containerLogicalWidth);
 
         // Solve for 'margin-left'
-        m_marginLeft = availableSpace - (leftValue + rightValue + m_marginRight);
-    } else if (marginRight.isAuto()) {
-        m_marginLeft = marginLeft.calcValue(containerWidth);
-        leftValue = left.calcValue(containerWidth);
-        rightValue = right.calcValue(containerWidth);
+        marginLogicalLeftAlias = availableSpace - (logicalLeftValue + logicalRightValue + marginLogicalRightAlias);
+    } else if (marginLogicalRight.isAuto()) {
+        marginLogicalLeftAlias = marginLogicalLeft.calcValue(containerLogicalWidth);
+        logicalLeftValue = logicalLeft.calcValue(containerLogicalWidth);
+        logicalRightValue = logicalRight.calcValue(containerLogicalWidth);
 
         // Solve for 'margin-right'
-        m_marginRight = availableSpace - (leftValue + rightValue + m_marginLeft);
+        marginLogicalRightAlias = availableSpace - (logicalLeftValue + logicalRightValue + marginLogicalLeftAlias);
     } else {
         // Nothing is 'auto', just calculate the values.
-        m_marginLeft = marginLeft.calcValue(containerWidth);
-        m_marginRight = marginRight.calcValue(containerWidth);
-        rightValue = right.calcValue(containerWidth);
-        leftValue = left.calcValue(containerWidth);
+        marginLogicalLeftAlias = marginLogicalLeft.calcValue(containerLogicalWidth);
+        marginLogicalRightAlias = marginLogicalRight.calcValue(containerLogicalWidth);
+        logicalRightValue = logicalRight.calcValue(containerLogicalWidth);
+        logicalLeftValue = logicalLeft.calcValue(containerLogicalWidth);
     }
 
     /*-----------------------------------------------------------------------*\
@@ -2843,14 +2846,17 @@ void RenderBox::computePositionedLogicalWidthReplaced()
     \*-----------------------------------------------------------------------*/
     // NOTE:  It is not necessary to solve for 'right' when the direction is
     // LTR because the value is not used.
-    int totalWidth = width() + leftValue + rightValue +  m_marginLeft + m_marginRight;
-    if (totalWidth > containerWidth && (containerDirection == RTL))
-        leftValue = containerWidth - (totalWidth - leftValue);
+    int totalLogicalWidth = logicalWidth() + logicalLeftValue + logicalRightValue +  marginLogicalLeftAlias + marginLogicalRightAlias;
+    if (totalLogicalWidth > containerLogicalWidth && (containerDirection == RTL))
+        logicalLeftValue = containerLogicalWidth - (totalLogicalWidth - logicalLeftValue);
 
+    // FIXME: Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space, so that
+    // can make the result here rather complicated to compute.
+    
     // Use computed values to calculate the horizontal position.
 
-    // FIXME: This hack is needed to calculate the xPos for a 'rtl' relatively
-    // positioned, inline containing block because right now, it is using the xPos
+    // FIXME: This hack is needed to calculate the logical left position for a 'rtl' relatively
+    // positioned, inline containing block because right now, it is using the logical left position
     // of the first line box when really it should use the last line box.  When
     // this is fixed elsewhere, this block should be removed.
     if (containerBlock->isRenderInline() && !containerBlock->style()->isLeftToRightDirection()) {
@@ -2858,12 +2864,12 @@ void RenderBox::computePositionedLogicalWidthReplaced()
         InlineFlowBox* firstLine = flow->firstLineBox();
         InlineFlowBox* lastLine = flow->lastLineBox();
         if (firstLine && lastLine && firstLine != lastLine) {
-            m_frameRect.setX(leftValue + m_marginLeft + lastLine->borderLogicalLeft() + (lastLine->x() - firstLine->x()));
+            setLogicalLeft(logicalLeftValue + marginLogicalLeftAlias + lastLine->borderLogicalLeft() + (lastLine->logicalLeft() - firstLine->logicalLeft()));
             return;
         }
     }
 
-    m_frameRect.setX(leftValue + m_marginLeft + containerBlock->borderLeft());
+    setLogicalLeft(logicalLeftValue + marginLogicalLeftAlias + (isHorizontal ? containerBlock->borderLeft() : containerBlock->borderTop()));
 }
 
 void RenderBox::computePositionedLogicalHeightReplaced()
