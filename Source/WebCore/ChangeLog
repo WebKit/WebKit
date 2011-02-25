@@ -1,3 +1,25 @@
+2011-02-25  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55265, remove the unused "Static" type
+        from Length.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * platform/Length.h:
+        (WebCore::Length::isFixed):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::layout):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::isLogicalWidthSpecified):
+        (WebCore::RenderImage::isLogicalHeightSpecified):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::hasStaticX):
+        (WebCore::InheritedFlags::hasStaticY):
+
 2011-02-25  Brian Weinstein  <bweinstein@apple.com>
 
         Windows build fix.

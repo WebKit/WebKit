@@ -270,7 +270,6 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
             m_value.num = length.percent();
             break;
         case Relative:
-        case Static:
             ASSERT_NOT_REACHED();
             break;
     }

@@ -34,7 +34,7 @@ const int percentScaleFactor = 128;
 const int intMaxForLength = 0x7ffffff; // max value for a 28-bit int
 const int intMinForLength = (-0x7ffffff - 1); // min value for a 28-bit int
 
-enum LengthType { Auto, Relative, Percent, Fixed, Static, Intrinsic, MinIntrinsic };
+enum LengthType { Auto, Relative, Percent, Fixed, Intrinsic, MinIntrinsic };
 
 struct Length {
     WTF_MAKE_FAST_ALLOCATED;
@@ -163,7 +163,6 @@ public:
     bool isRelative() const { return type() == Relative; }
     bool isPercent() const { return type() == Percent; }
     bool isFixed() const { return type() == Fixed; }
-    bool isStatic() const { return type() == Static; }
     bool isIntrinsicOrAuto() const { return type() == Auto || type() == MinIntrinsic || type() == Intrinsic; }
 
     Length blend(const Length& from, double progress) const

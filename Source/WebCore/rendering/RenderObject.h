@@ -981,7 +981,7 @@ inline void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, R
         if (!container && !o->isRenderView())
             return;
         if (!last->isText() && (last->style()->position() == FixedPosition || last->style()->position() == AbsolutePosition)) {
-            if ((last->style()->top().isAuto() && last->style()->bottom().isAuto()) || last->style()->top().isStatic()) {
+            if (last->style()->top().isAuto() && last->style()->bottom().isAuto()) {
                 RenderObject* parent = last->parent();
                 if (!parent->normalChildNeedsLayout()) {
                     parent->setChildNeedsLayout(true, false);

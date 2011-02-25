@@ -439,7 +439,6 @@ bool RenderImage::isLogicalWidthSpecified() const
             return true;
         case Auto:
         case Relative: // FIXME: Shouldn't this case return true?
-        case Static:
         case Intrinsic:
         case MinIntrinsic:
             return false;
@@ -456,7 +455,6 @@ bool RenderImage::isLogicalHeightSpecified() const
             return true;
         case Auto:
         case Relative: // FIXME: Shouldn't this case return true?
-        case Static:
         case Intrinsic:
         case MinIntrinsic:
             return false;
