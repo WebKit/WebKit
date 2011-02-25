@@ -233,6 +233,52 @@ void deleteCookie(const Document*, const KURL& url, const String& name)
     }
 }
 
+void getHostnamesWithCookies(HashSet<String>& hostnames)
+{
+    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    if (!cookieStorage)
+        return;
+
+    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookies(cookieStorage));
+    if (!cookiesCF)
+        return;
+
+    CFIndex count = CFArrayGetCount(cookiesCF.get());
+    for (CFIndex i = 0; i < count; ++i) {
+        CFHTTPCookieRef cookie = static_cast<CFHTTPCookieRef>(CFArrayGetValueAtIndex(cookiesCF.get(), i));
+        RetainPtr<CFStringRef> domain = cookieDomain(cookie);
+        hostnames.add(domain.get());
+    }
+}
+
+void deleteCookiesForHostname(const String& hostname)
+{
+    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    if (!cookieStorage)
+        return;
+
+    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookies(cookieStorage));
+    if (!cookiesCF)
+        return;
+
+    CFIndex count = CFArrayGetCount(cookiesCF.get());
+    for (CFIndex i = count - 1; i >=0; i--) {
+        CFHTTPCookieRef cookie = static_cast<CFHTTPCookieRef>(CFArrayGetValueAtIndex(cookiesCF.get(), i));
+        RetainPtr<CFStringRef> domain = cookieDomain(cookie);
+        if (String(domain.get()) == hostname)
+            CFHTTPCookieStorageDeleteCookie(cookieStorage, cookie);
+    }
+}
+
+void deleteAllCookies()
+{
+    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    if (!cookieStorage)
+        return;
+
+    CFHTTPCookieStorageDeleteAllCookies(cookieStorage);
+}
+
 } // namespace WebCore
 
 #endif // USE(CFNETWORK)

@@ -68,4 +68,19 @@ void setCookieStoragePrivateBrowsingEnabled(bool enabled)
 }
 #endif
 
+void getHostnamesWithCookies(HashSet<String>& hostnames)
+{
+    // FIXME: Not yet implemented
+}
+
+void deleteCookiesForHostname(const String& hostname)
+{
+    // FIXME: Not yet implemented
+}
+
+void deleteAllCookies()
+{
+    // FIXME: Not yet implemented
+}
+
 }

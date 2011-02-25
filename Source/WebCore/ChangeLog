@@ -1,3 +1,39 @@
+2011-02-25  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Brady Eidson and looked over by Jessie Berlin.
+
+        WebKit2: Need a way to manage cookies from the web process
+        https://bugs.webkit.org/show_bug.cgi?id=55086
+        
+        Implement the functions needed to manage cookies in CookieJar (getHostnamesWithCookies,
+        deleteCookiesWithHostname, and deleteAllCookies) for Mac and CFNetwork (stub out the rest),
+        and call them from WebKit2's WebCookieManager.
+
+        No change in behavior needing tests.
+
+        * WebCore.exp.in: Added needed functions to export.
+        * platform/CookieJar.h:
+
+        * platform/mac/CookieJar.mm:
+        (WebCore::getHostnamesWithCookies): Gets all hostnames with cookies from NSHTTPCookieStorage.
+        (WebCore::deleteCookiesForHostname): Deletes all cookies with a given hostname from
+            NSHTTPCookieStorage.
+        (WebCore::deleteAllCookies): Deletes all cookies from NSHTTPCookieStorage.
+        
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::getHostnamesWithCookies): Implement using CFNetwork cookie APIs.
+        (WebCore::deleteCookiesForHostname): Ditto.
+        (WebCore::deleteAllCookies): Ditto.
+
+        * platform/efl/CookieJarEfl.cpp: Added stub functions.
+        * platform/haiku/CookieJarHaiku.cpp: Ditto.
+        * platform/network/android/CookieJarAndroid.cpp: Ditto.
+        * platform/network/chromium/CookieJarChromium.cpp: Ditto.
+        * platform/network/curl/CookieJarCurl.cpp: Ditto.
+        * platform/network/soup/CookieJarSoup.cpp: Ditto.
+        * platform/network/win/CookieJarWin.cpp: Ditto.
+        * platform/qt/CookieJarQt.cpp: Ditto.
+
 2011-02-25  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Eric Seidel.

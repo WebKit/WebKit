@@ -67,4 +67,19 @@ void deleteCookie(const Document* document, const KURL& url, const String& cooki
     return PlatformBridge::deleteCookie(document, url, cookieName);
 }
 
+void getHostnamesWithCookies(HashSet<String>& hostnames)
+{
+    // FIXME: Not yet implemented
+}
+
+void deleteCookiesForHostname(const String& hostname)
+{
+    // FIXME: Not yet implemented
+}
+
+void deleteAllCookies()
+{
+    // FIXME: Not yet implemented
+}
+
 } // namespace WebCore

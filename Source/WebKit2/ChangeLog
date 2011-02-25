@@ -1,3 +1,17 @@
+2011-02-25  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Brady Eidson and looked over by Jessie Berlin.
+
+        WebKit2: Need a way to manage cookies from the web process
+        https://bugs.webkit.org/show_bug.cgi?id=55086
+        
+        Call through to WebCore::CookieJar in our WebCookieManager functions.
+
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::getHostnamesWithCookies):
+        (WebKit::WebCookieManager::deleteCookiesForHostname):
+        (WebKit::WebCookieManager::deleteAllCookies):
+
 2011-02-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

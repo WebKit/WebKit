@@ -177,4 +177,49 @@ void deleteCookie(const Document*, const KURL& url, const String& cookieName)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+void getHostnamesWithCookies(HashSet<String>& hostnames)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    NSArray *cookies = [cookieStorage cookies];
+    
+    for (NSHTTPCookie* cookie in cookies)
+        hostnames.add([cookie domain]);
+    
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+void deleteCookiesForHostname(const String& hostname)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    NSArray *cookies = [cookieStorage cookies];
+    if (!cookies)
+        return;
+    
+    for (NSHTTPCookie* cookie in cookies) {
+        if (hostname == String([cookie domain]))
+            [cookieStorage deleteCookie:cookie];
+    }
+    
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+void deleteAllCookies()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    NSArray *cookies = [cookieStorage cookies];
+    if (!cookies)
+        return;
+    
+    for (NSHTTPCookie* cookie in cookies)
+        [cookieStorage deleteCookie:cookie];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
 }

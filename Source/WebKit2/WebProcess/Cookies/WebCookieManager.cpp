@@ -30,6 +30,7 @@
 #include "SecurityOriginData.h"
 #include "WebCookieManagerProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/CookieJar.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginHash.h>
@@ -57,7 +58,7 @@ void WebCookieManager::getHostnamesWithCookies(uint64_t callbackID)
 {
     HashSet<String> hostnames;
 
-    // FIXME <http://webkit.org/b/55086>: Get a list of all cookies, and add their hostnames to the set of hostnames.
+    WebCore::getHostnamesWithCookies(hostnames);
 
     Vector<String> hostnameList;
     copyToVector(hostnames, hostnameList);
@@ -67,14 +68,12 @@ void WebCookieManager::getHostnamesWithCookies(uint64_t callbackID)
 
 void WebCookieManager::deleteCookiesForHostname(const String& hostname)
 {
-    // FIXME <http://webkit.org/b/55086>: Implement.
-    notImplemented();
+    WebCore::deleteCookiesForHostname(hostname);
 }
 
 void WebCookieManager::deleteAllCookies()
 {
-    // FIXME <http://webkit.org/b/55086>: Implement.
-    notImplemented();
+    WebCore::deleteAllCookies();
 }
 
 } // namespace WebKit
