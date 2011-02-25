@@ -75,11 +75,6 @@ extern void SetPortClipRegion(CGrafPtr, RgnHandle);
 extern void SetPortVisibleRegion(CGrafPtr, RgnHandle);
 
 enum {
-    k16BE555PixelFormat = 0x00000010,
-    k32ARGBPixelFormat = 0x00000020,
-    k16LE555PixelFormat = 'L555',
-    k32BGRAPixelFormat = 'BGRA',
-
     blackColor = 33,
     whiteColor = 30,
     greenColor = 341,
