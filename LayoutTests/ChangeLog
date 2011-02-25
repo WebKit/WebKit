@@ -1,3 +1,9 @@
+2011-02-25  James Robinson  <jamesr@chromium.org>
+
+        Update chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-25  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update.

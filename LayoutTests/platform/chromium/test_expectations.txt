@@ -3350,7 +3350,6 @@ BUGWK54322 MAC SNOWLEOPARD : http/tests/navigation/ping-cookie.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : http/tests/navigation/ping-same-origin.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-properties.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-prototypes.html = TEXT PASS
-BUGWK54322 MAC SNOWLEOPARD : media/video-replaces-poster.html = IMAGE PASS
 BUGWK54322 MAC SNOWLEOPARD : scrollbars/hidden-iframe-scrollbar-crash2.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : storage/indexeddb/data-corruption.html = TIMEOUT PASS
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/acid3-test-77.html = TIMEOUT PASS
@@ -3410,6 +3409,9 @@ BUGWK55118 : fast/xsl/sort-locale.xml = TEXT
 
 BUGJAMESR DEBUG : html5lib/runner.html = PASS TIMEOUT
 
+BUGJAMESR WIN LINUX : fast/block/positioning/differing-writing-modes-replaced.html = IMAGE+TEXT
+BUGJAMESR WIN LINUX : fast/block/positioning/differing-writing-modes.html = IMAGE+TEXT
+BUGJAMESR WIN LINUX : fast/table/fixed-with-auto-with-colspan-vertical.html = IMAGE+TEXT
 
 BUGWK54910 : media/video-replaces-poster.html = PASS IMAGE
 
