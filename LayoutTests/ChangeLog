@@ -2,6 +2,13 @@
 
         Updated results after r79629.
 
+        * platform/mac/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum:
+        * platform/mac/fast/blockflow/Kusa-Makura-background-canvas-expected.png:
+
+2011-02-24  Dan Bernstein  <mitz@apple.com>
+
+        Updated results after r79629.
+
         * platform/mac/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
 
 2011-02-24  Mihai Parparita  <mihaip@chromium.org>
