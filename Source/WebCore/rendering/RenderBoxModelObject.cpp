@@ -1593,7 +1593,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
 {
     // FIXME: Deal with border-image.  Would be great to use border-image as a mask.
 
-    if (context->paintingDisabled())
+    if (context->paintingDisabled() || !s->boxShadow())
         return;
 
     RoundedIntRect border(tx, ty, w, h);

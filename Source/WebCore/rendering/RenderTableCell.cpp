@@ -1005,13 +1005,12 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     int w = width();
     int h = height();
    
-    if (style()->boxShadow())
-        paintBoxShadow(paintInfo.context, tx, ty, w, h, style(), Normal);
+    paintBoxShadow(paintInfo.context, tx, ty, w, h, style(), Normal);
     
     // Paint our cell background.
     paintBackgroundsBehindCell(paintInfo, tx, ty, this);
-    if (style()->boxShadow())
-        paintBoxShadow(paintInfo.context, tx, ty, w, h, style(), Inset);
+
+    paintBoxShadow(paintInfo.context, tx, ty, w, h, style(), Inset);
 
     if (!style()->hasBorder() || tableElt->collapseBorders())
         return;

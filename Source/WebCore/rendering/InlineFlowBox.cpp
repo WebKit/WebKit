@@ -1089,14 +1089,11 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     RenderStyle* styleToUse = renderer()->style(m_firstLine);
     if ((!parent() && m_firstLine && styleToUse != renderer()->style()) || (parent() && renderer()->hasBoxDecorations())) {
         // Shadow comes first and is behind the background and border.
-        if (styleToUse->boxShadow())
-            paintBoxShadow(context, styleToUse, Normal, tx, ty, w, h);
+        paintBoxShadow(context, styleToUse, Normal, tx, ty, w, h);
 
         Color c = styleToUse->visitedDependentColor(CSSPropertyBackgroundColor);
         paintFillLayers(paintInfo, c, styleToUse->backgroundLayers(), tx, ty, w, h);
-
-        if (styleToUse->boxShadow())
-            paintBoxShadow(context, styleToUse, Inset, tx, ty, w, h);
+        paintBoxShadow(context, styleToUse, Inset, tx, ty, w, h);
 
         // :first-line cannot be used to put borders on a line. Always paint borders with our
         // non-first-line style.
