@@ -1,3 +1,17 @@
+2011-02-24  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+        
+        Add LEOPARD modifier to tests that only fail on Leopard, not on Snow
+        Leopard.
+        
+        Also updates Leopard expectations for fast/box-shadow/inset-expected.html
+        (SL expectations were updated in r78062).
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/box-shadow/inset-expected.checksum:
+        * platform/mac-leopard/fast/box-shadow/inset-expected.png:
+
 2011-02-24  James Robinson  <jamesr@chromium.org>
 
         Update chromium test expectations and baselines.

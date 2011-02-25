@@ -692,7 +692,7 @@ BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAG
 // Directionality of mixed-direction text in selected choice should
 // match that in the <select> option lists.
 // Low priority, unclear if test expectations are correct (see bug)
-BUGCR6139 : fast/forms/select-writing-direction-natural.html = FAIL
+BUGCR6139 : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
 
 // This SVG test is occasionally crashing apparently for the same reason.
 BUGCR67732 MAC LINUX DEBUG : svg/W3C-SVG-1.1-SE/paths-dom-02-f.svg = PASS CRASH
@@ -891,7 +891,7 @@ BUGWK42370 WIN MAC : svg/custom/image-rescale-clip.html = FAIL
 BUGCR10295 MAC : fast/dom/prototype-chain.html = FAIL
 
 // Font differences, requiring overriden metrics, not a real bug, not fixing for Beta
-BUGCR10296 MAC : fast/text/international/bidi-menulist.html = FAIL
+BUGCR10296 MAC LEOPARD : fast/text/international/bidi-menulist.html = FAIL
 // Maybe need to be rebaselined - should be looked at in more detail.
 BUGCR10296 LINUX : svg/custom/foreign-object-skew.svg = FAIL
 BUGCR10296 LINUX : svg/batik/text/textLength.svg = FAIL
@@ -1209,25 +1209,25 @@ BUGCR23495 MAC : fast/forms/box-shadow-override.html = IMAGE+TEXT
 
 // Text declared as "monospace" with no size is bigger in Chromium
 BUGCR23494 MAC : css1/font_properties/font_family.html = IMAGE
-BUGCR23494 MAC : css2.1/t1503-c522-font-family-00-b.html = IMAGE
-BUGCR23494 MAC : fast/text/monospace-width-cache.html = IMAGE
+BUGCR23494 MAC LEOPARD : css2.1/t1503-c522-font-family-00-b.html = IMAGE
+BUGCR23494 MAC LEOPARD : fast/text/monospace-width-cache.html = IMAGE
 
 // Actual is just slightly off in color than expected
-BUGCR23488 MAC RELEASE : fast/backgrounds/size/backgroundSize15.html = IMAGE
-BUGCR23488 MAC DEBUG SLOW : fast/backgrounds/size/backgroundSize15.html = IMAGE
+BUGCR23488 MAC RELEASE LEOPARD : fast/backgrounds/size/backgroundSize15.html = IMAGE
+BUGCR23488 MAC DEBUG SLOW LEOPARD : fast/backgrounds/size/backgroundSize15.html = IMAGE
 BUGCR23488 MAC : fast/block/float/float-avoidance.html = IMAGE
 BUGCR23488 MAC : fast/canvas/canvas-incremental-repaint-2.html = IMAGE
-BUGCR23488 MAC : fast/css/shadow-multiple.html = IMAGE
+BUGCR23488 MAC LEOPARD : fast/css/shadow-multiple.html = IMAGE
 BUGCR23488 MAC : fast/forms/search-vertical-alignment.html = IMAGE
-BUGCR23488 MAC : fast/frames/content-opacity-1.html = IMAGE
-BUGCR23488 MAC : fast/frames/content-opacity-2.html = IMAGE
+BUGCR23488 MAC LEOPARD : fast/frames/content-opacity-1.html = IMAGE
+BUGCR23488 MAC LEOPARD : fast/frames/content-opacity-2.html = IMAGE
 BUGCR23488 MAC : fast/layers/add-layer-with-nested-stacking.html = IMAGE
 BUGCR23488 MAC : fast/layers/inline-dirty-z-order-lists.html = IMAGE
 BUGCR23488 MAC : fast/layers/layer-content-visibility-change.html = IMAGE
 BUGCR23488 MAC : fast/layers/remove-layer-with-nested-stacking.html = IMAGE
-BUGCR23488 MAC : fast/lists/ol-start-parsing.html = IMAGE
-BUGCR23488 MAC : fast/multicol/positioned-with-constrained-height.html = IMAGE
-BUGCR23488 MAC : fast/text/shadow-translucent-fill.html = IMAGE
+BUGCR23488 MAC LEOPARD : fast/lists/ol-start-parsing.html = IMAGE
+BUGCR23488 MAC LEOPARD : fast/multicol/positioned-with-constrained-height.html = IMAGE
+BUGCR23488 MAC LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
 BUGCR23488 MAC : svg/transforms/animated-path-inside-transformed-html.xhtml = IMAGE
 BUGCR23488 MAC : tables/mozilla_expected_failures/bugs/bug178855.xml = IMAGE
 
@@ -1247,8 +1247,8 @@ BUGCR23476 MAC : fast/frames/inline-object-inside-frameset.html = IMAGE
 BUGCR23476 MAC : fast/text/font-initial.html = IMAGE
 
 // Disagreeing XML parsing error messages
-BUGCR23475 MAC : fast/parser/xhtml-alternate-entities.xml = IMAGE
-BUGCR23475 MAC : fast/xsl/xslt-extra-content-at-end.xml = IMAGE
+BUGCR23475 MAC LEOPARD : fast/parser/xhtml-alternate-entities.xml = IMAGE
+BUGCR23475 MAC LEOPARD : fast/xsl/xslt-extra-content-at-end.xml = IMAGE
 
 // Repaint tests failing on Mac.  Need to be manually triaged.
 BUGCR23473 MAC : fast/repaint/4774354.html = IMAGE
@@ -1355,7 +1355,7 @@ BUGCR23473 MAC : fast/repaint/transform-translate.html = IMAGE
 BUGWK39966 : fast/repaint/table-cell-collapsed-border.html = IMAGE
 
 // Thicker shadow than expected
-BUGCR23471 MAC : fast/text/stroking.html = IMAGE
+BUGCR23471 MAC LEOPARD : fast/text/stroking.html = IMAGE
 
 // Failing on the bots but not locally; need investigation
 BUGCR23560 MAC : fast/images/animated-svg-as-image.html = IMAGE PASS
@@ -1647,7 +1647,7 @@ BUGCR26344 LINUX DEBUG : fast/text/atsui-partial-selection.html = CRASH IMAGE
 BUGWK45957 : fast/multicol/column-rules-stacking.html = FAIL
 
 // ==== WebKit roll 50258:50313 ====
-BUGCR26291 MAC : fast/text/atsui-multiple-renderers.html = IMAGE
+BUGCR26291 MAC LEOPARD : fast/text/atsui-multiple-renderers.html = IMAGE
 BUGCR26291 MAC : transforms/2d/hindi-rotated.html = IMAGE
 
 // Flaky since at least WebKit 50258.
@@ -2555,7 +2555,7 @@ BUGCR59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
 
 // Needs investigation
 BUGJAMESR LINUX WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
-BUGJAMESR MAC : fast/text/international/vertical-text-glyph-test.html = IMAGE
+BUGJAMESR MAC LEOPARD : fast/text/international/vertical-text-glyph-test.html = IMAGE
 BUGJAMESR LINUX WIN : fast/text/international/vertical-text-metrics-test.html = TEXT
 
 // Added in WebKit r69755, failed immediately.
@@ -2598,7 +2598,7 @@ BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-rl.html = IMAGE+TEXT
 //BUGWK61166 LINUX MAC WIN : media/video-seek-by-small-increment.html = TEXT
 
 // These tests started failing presumably after r70850
-BUGWK48627 MAC : fast/invalid/missing-end-tag.xhtml = IMAGE
+BUGWK48627 MAC LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE
 BUGWK48627 MAC : svg/custom/createImageElement2.xhtml = IMAGE
 
 // New test, seems V8 differs from JSC here.
@@ -2678,11 +2678,11 @@ BUGCR50282 MAC : fast/images/imagemap-case.html = IMAGE
 BUGCR50282 MAC : fast/images/imagemap-focus-ring-zoom.html = IMAGE
 BUGCR50282 MAC : fast/images/imagemap-focus-ring.html = IMAGE
 BUGCR50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE+TEXT
-BUGCR50282 MAC : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE
+BUGCR50282 MAC LEOPARD : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE
 BUGCR50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE+TEXT
-BUGCR50282 MAC : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE
+BUGCR50282 MAC LEOPARD : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE
 BUGCR50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color.html = IMAGE+TEXT
-BUGCR50282 MAC : fast/images/imagemap-focus-ring-outline-color.html = IMAGE
+BUGCR50282 MAC LEOPARD : fast/images/imagemap-focus-ring-outline-color.html = IMAGE
 
 // Selection is wrong.
 BUGCR64938 : editing/selection/5354455-1.html = TEXT
@@ -2970,7 +2970,7 @@ BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 
 // These are waiting for platform/mac pixel baselines to be updated.
 BUGWK50528 MAC : fast/box-shadow/box-shadow-transformed.html = IMAGE
-BUGWK50528 MAC : fast/css/color-correction-on-box-shadow.html = IMAGE
+BUGWK50528 MAC LEOPARD : fast/css/color-correction-on-box-shadow.html = IMAGE
 BUGWK50528 MAC : svg/W3C-SVG-1.1/filters-blend-01-b.svg = IMAGE
 BUGWK50528 MAC : svg/W3C-SVG-1.1/masking-path-04-b.svg = IMAGE
 BUGWK50528 MAC : svg/carto.net/scrollbar.svg = IMAGE
@@ -3108,16 +3108,13 @@ BUGNONE SLOW GPU DEBUG WIN : fast/canvas/canvas-getImageData.html = PASS
 // Started failing after r75648 on everything except Snow Leopard
 BUGWK52341 GPU : fast/canvas/canvas-large-dimensions.html = TEXT
 
-BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH PASS
+BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH
 
-BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE PASS
+BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE
 
-BUG_ZMO : fast/notifications/notifications-document-close-crash.html = PASS TEXT
+BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
-// Should be able to remove these two after rebaseline, add them for now so we could roll
-BUG_ZMO MAC : fast/box-shadow/inset.html = IMAGE
-
-BUGWK54051 MAC LINUX : plugins/invalidate_rect.html = FAIL
+BUGWK54051 MAC LINUX : plugins/invalidate_rect.html = TEXT
 
 // Snow Leopard-only failures (generally just need updated pixel results)
 BUGWK54322 MAC SNOWLEOPARD : animations/3d/matrix-transform-type-animation.html = IMAGE
@@ -3382,12 +3379,18 @@ BUGWK54322 MAC SNOWLEOPARD : transitions/default-timing-function.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
 
 // Snow Leopard-only flakiness
-BUGWK54322 MAC SNOWLEOPARD : scrollbars/hidden-iframe-scrollbar-crash2.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : dom/html/level1/core/hc_textwithnomarkup.html = TIMEOUT PASS
+BUGWK54322 MAC SNOWLEOPARD : fast/css/font-face-in-shadow-DOM.html = IMAGE+TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : fast/history/history-back-within-subframe-hash.html = TIMEOUT PASS
+BUGWK54322 MAC SNOWLEOPARD : http/tests/loading/location-hash-reload-cycle.html = TEXT PASS
+BUGWK54322 MAC SNOWLEOPARD : http/tests/navigation/image-load-in-unload-handler.html = TEXT PASS
+BUGWK54322 MAC SNOWLEOPARD : http/tests/navigation/ping-cookie.html = TEXT PASS
+BUGWK54322 MAC SNOWLEOPARD : http/tests/navigation/ping-same-origin.html = TEXT PASS
+BUGWK54322 MAC SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-properties.html = TEXT PASS
+BUGWK54322 MAC SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-prototypes.html = TEXT PASS
+BUGWK54322 MAC SNOWLEOPARD : scrollbars/hidden-iframe-scrollbar-crash2.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : storage/indexeddb/data-corruption.html = TIMEOUT PASS
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/acid3-test-77.html = TIMEOUT PASS
-BUGWK54322 MAC SNOWLEOPARD : fast/css/font-face-in-shadow-DOM.html = IMAGE+TEXT PASS
 
 BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
 
@@ -3434,7 +3437,7 @@ BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH TIMEOUT
 
 BUGWK54794 GPU MAC : compositing/geometry/object-clip-rects-assertion.html = TIMEOUT
 
-BUGCR73510 MAC : fast/text/font-size-zero.html = TEXT
+BUGCR73510 MAC LEOPARD : fast/text/font-size-zero.html = TEXT
 
 BUGWK54882 WIN : inspector/styles/styles-update-from-js.html = TEXT TIMEOUT
 
