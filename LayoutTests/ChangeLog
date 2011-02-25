@@ -1,3 +1,13 @@
+2011-02-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        Update a Qt specific expected file after r79618.
+
+        * platform/qt/fast/table/fixed-with-auto-with-colspan-vertical-expected.checksum:
+        * platform/qt/fast/table/fixed-with-auto-with-colspan-vertical-expected.png:
+        * platform/qt/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt:
+
 2011-02-24  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update.
