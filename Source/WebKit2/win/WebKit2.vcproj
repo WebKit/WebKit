@@ -587,6 +587,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebCoreArgumentCoders.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebCoreArgumentCoders.h"
 				>
 			</File>
@@ -1207,6 +1211,26 @@
 				>
 				<File
 					RelativePath="..\Shared\cg\ShareableBitmapCG.cpp"
+					>
+					<FileConfiguration
+						Name="Debug_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\Shared\cg\WebCoreArgumentCodersCG.cpp"
 					>
 					<FileConfiguration
 						Name="Debug_Cairo_CFLite|Win32"

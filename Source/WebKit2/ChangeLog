@@ -1,3 +1,36 @@
+2011-02-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Image-based cursors do not work
+        https://bugs.webkit.org/show_bug.cgi?id=55184
+
+        * Shared/ShareableBitmap.h: Added releaseData function
+        declaration. This is only defined for CG, but we can declare
+        it without defining it on non-CG platforms without causing problems.
+
+        * Shared/WebCoreArgumentCoders.cpp: Added.
+        (CoreIPC::encodeImage): Added. For use in the Cursor argument coder.
+        (CoreIPC::decodeImage): Ditto.
+
+        * Shared/WebCoreArgumentCoders.h: Added code to the Cursor encoder
+        and decoder to handle image-based cursors, using the new encodeImage
+        and decodeImage functions.
+
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::releaseData): Added.
+        (WebKit::ShareableBitmap::createGraphicsContext): Use
+        CGBitmapContextCreateWithData instead of CGBitmapContextCreate,
+        to guarantee we outlast the CGBitmapContext we create.
+        (WebKit::ShareableBitmap::paint): Got rid of unnneeded local variable.
+
+        * Shared/cg/WebCoreArgumentCodersCG.cpp: Added.
+        (CoreIPC::createImage): Added. For use by CoreIPC::decodeImage.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added WebCoreArgumentCoders.cpp
+        and WebCoreArgumentCodersCG.cpp.
+        * win/WebKit2.vcproj: Ditto.
+
 2011-02-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

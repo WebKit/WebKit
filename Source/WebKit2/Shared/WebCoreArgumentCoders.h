@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,16 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "Arguments.h"
+#include "ShareableBitmap.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/BitmapImage.h>
 #include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EditorClient.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/PluginData.h>
@@ -182,14 +185,30 @@ template<> struct ArgumentCoder<WebCore::Credential> {
 };
 
 #if USE(LAZY_NATIVE_CURSOR)
+
+void encodeImage(ArgumentEncoder*, WebCore::Image*);
+bool decodeImage(ArgumentDecoder*, RefPtr<WebCore::Image>&);
+RefPtr<WebCore::Image> createImage(WebKit::ShareableBitmap*);
+
 template<> struct ArgumentCoder<WebCore::Cursor> {
     static void encode(ArgumentEncoder* encoder, const WebCore::Cursor& cursor)
     {
-        // FIXME: Support custom cursors.
-        if (cursor.type() == WebCore::Cursor::Custom)
-            encoder->encode(static_cast<uint32_t>(WebCore::Cursor::Pointer));
-        else
-            encoder->encode(static_cast<uint32_t>(cursor.type()));
+        WebCore::Cursor::Type type = cursor.type();
+#if !PLATFORM(CG)
+        // FIXME: Currently we only have the createImage function implemented for CG.
+        // Once we implement it for other platforms we can remove this conditional,
+        // and the other conditionals below and in WebCoreArgumentCoders.cpp.
+        if (type == WebCore::Cursor::Custom)
+            type = WebCore::Cursor::Pointer;
+#endif
+        encoder->encode(static_cast<uint32_t>(type));
+#if PLATFORM(CG)
+        if (type != WebCore::Cursor::Custom)
+            return;
+
+        encodeImage(encoder, cursor.image());
+        encoder->encode(cursor.hotSpot());
+#endif
     }
     
     static bool decode(ArgumentDecoder* decoder, WebCore::Cursor& cursor)
@@ -197,14 +216,33 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
         uint32_t typeInt;
         if (!decoder->decode(typeInt))
             return false;
-
+        if (typeInt > WebCore::Cursor::Custom)
+            return false;
         WebCore::Cursor::Type type = static_cast<WebCore::Cursor::Type>(typeInt);
-        ASSERT(type != WebCore::Cursor::Custom);
 
-        cursor = WebCore::Cursor::fromType(type);
+        if (type != WebCore::Cursor::Custom) {
+            cursor = WebCore::Cursor::fromType(type);
+            return true;
+        }
+
+#if !PLATFORM(CG)
+        return false;
+#else
+        RefPtr<WebCore::Image> image;
+        if (!decodeImage(decoder, image))
+            return false;
+        WebCore::IntPoint hotSpot;
+        if (!decoder->decode(hotSpot))
+            return false;
+        if (!image->rect().contains(WebCore::IntRect(hotSpot, WebCore::IntSize())))
+            return false;
+
+        cursor = WebCore::Cursor(image.get(), hotSpot);
         return true;
+#endif
     }
 };
+
 #endif
 
 // These two functions are implemented in a platform specific manner.

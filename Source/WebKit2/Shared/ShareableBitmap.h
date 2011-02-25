@@ -77,6 +77,8 @@ private:
 
     static size_t numBytesForSize(const WebCore::IntSize& size) { return size.width() * size.height() * 4; }
 
+    static void releaseData(void* typelessBitmap, void* typelessData);
+    
     void* data() const;
     size_t sizeInBytes() const { return numBytesForSize(m_size); }
 

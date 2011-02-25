@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,10 +37,13 @@ namespace WebKit {
 PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(data(), m_size.width(), m_size.height(), 8,  m_size.width() * 4, colorSpace.get(), 
-                                                                         kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
 
-    // We want the origin to be in the top left corner so flip the backing store context.
+    ref(); // Balanced by deref in releaseData.
+    RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreateWithData(data(),
+        m_size.width(), m_size.height(), 8, m_size.width() * 4, colorSpace.get(),
+        kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, releaseData, this));
+
+    // We want the origin to be in the top left corner so we flip the backing store context.
     CGContextTranslateCTM(bitmapContext.get(), 0, m_size.height());
     CGContextScaleCTM(bitmapContext.get(), 1, -1);
 
@@ -49,9 +52,14 @@ PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 
 void ShareableBitmap::paint(WebCore::GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)
 {
-    OwnPtr<GraphicsContext> sourceContext(createGraphicsContext());
-
-    paintBitmapContext(context.platformContext(), sourceContext->platformContext(), dstPoint, srcRect);
+    paintBitmapContext(context.platformContext(), createGraphicsContext()->platformContext(), dstPoint, srcRect);
 }
-        
+
+void ShareableBitmap::releaseData(void* typelessBitmap, void* typelessData)
+{
+    ShareableBitmap* bitmap = static_cast<ShareableBitmap*>(typelessBitmap);
+    ASSERT_UNUSED(typelessData, bitmap->data() == typelessData);
+    bitmap->deref(); // Balanced by ref in createGraphicsContext.
+}
+
 } // namespace WebKit
