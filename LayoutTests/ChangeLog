@@ -1,3 +1,51 @@
+2011-02-25  Mihai Parparita  <mihaip@chromium.org>
+
+        Fix 10 tests for Chromium Snow Leopard by promoting chromium-mac-leopard
+        results to mac-leopard and removing outdated chromium-mac and
+        chromium-mac-snowleopard ones.
+
+        * platform/chromium-mac-leopard/fast/blockflow/vertical-baseline-alignment-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/blockflow/vertical-baseline-alignment-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/forms/select-baseline-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/forms/select-baseline-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/atsui-negative-spacing-features-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/atsui-negative-spacing-features-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/atsui-spacing-features-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/atsui-spacing-features-expected.png: Removed.
+        * platform/chromium-mac/fast/blockflow/vertical-baseline-alignment-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/vertical-baseline-alignment-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/select-baseline-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/select-baseline-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/text-style-color-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/text-style-color-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/shadow-breaking-expected.checksum: Removed.
+        * platform/chromium-mac/fast/multicol/shadow-breaking-expected.png: Removed.
+        * platform/chromium-mac/fast/table/028-vertical-expected.checksum: Removed.
+        * platform/chromium-mac/fast/table/028-vertical-expected.png: Removed.
+        * platform/chromium-mac/fast/text/complex-text-opacity-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/complex-text-opacity-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/blockflow/vertical-baseline-alignment-expected.checksum:
+        * platform/mac-leopard/fast/blockflow/vertical-baseline-alignment-expected.png:
+        * platform/mac-leopard/fast/dom/isindex-002-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/dom/isindex-002-expected.checksum.
+        * platform/mac-leopard/fast/dom/isindex-002-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/dom/isindex-002-expected.png.
+        * platform/mac-leopard/fast/dom/replaceChild-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/dom/replaceChild-expected.checksum.
+        * platform/mac-leopard/fast/dom/replaceChild-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/dom/replaceChild-expected.png.
+        * platform/mac-leopard/fast/forms/select-baseline-expected.checksum:
+        * platform/mac-leopard/fast/forms/select-baseline-expected.png:
+        * platform/mac-leopard/fast/forms/text-style-color-expected.checksum: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/forms/text-style-color-expected.checksum.
+        * platform/mac-leopard/fast/forms/text-style-color-expected.png: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/forms/text-style-color-expected.png.
+        * platform/mac-leopard/fast/multicol/shadow-breaking-expected.checksum: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/multicol/shadow-breaking-expected.checksum.
+        * platform/mac-leopard/fast/multicol/shadow-breaking-expected.png: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/multicol/shadow-breaking-expected.png.
+        * platform/mac-leopard/fast/table/028-vertical-expected.checksum:
+        * platform/mac-leopard/fast/table/028-vertical-expected.png:
+        * platform/mac-leopard/fast/text/atsui-negative-spacing-features-expected.checksum: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/text/atsui-negative-spacing-features-expected.checksum.
+        * platform/mac-leopard/fast/text/atsui-negative-spacing-features-expected.png: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/text/atsui-negative-spacing-features-expected.png.
+        * platform/mac-leopard/fast/text/atsui-spacing-features-expected.checksum: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/text/atsui-spacing-features-expected.checksum.
+        * platform/mac-leopard/fast/text/atsui-spacing-features-expected.png: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/text/atsui-spacing-features-expected.png.
+        * platform/mac-leopard/fast/text/complex-text-opacity-expected.checksum:
+        * platform/mac-leopard/fast/text/complex-text-opacity-expected.png:
+
 2011-02-25  James Robinson  <jamesr@chromium.org>
 
         Add chromium win/linux baselines for new vertical replaced test and update various expectations.
