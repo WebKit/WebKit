@@ -1,3 +1,16 @@
+2011-02-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove unused parameter name in GCActivityCallback.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=55194
+
+        This change is not strictly required for the GYP-based build system,
+        but I noticed this error when working on the new build system.
+
+        * runtime/GCActivityCallback.cpp:
+        (JSC::DefaultGCActivityCallback::DefaultGCActivityCallback):
+
 2011-02-24  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.

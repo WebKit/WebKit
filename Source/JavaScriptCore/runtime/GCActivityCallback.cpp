@@ -34,7 +34,7 @@ namespace JSC {
 struct DefaultGCActivityCallbackPlatformData {
 };
 
-DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
+DefaultGCActivityCallback::DefaultGCActivityCallback(Heap*)
 {
 }
 
