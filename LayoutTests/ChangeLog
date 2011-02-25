@@ -1,3 +1,14 @@
+2011-02-25  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows 7 Release Tests] http/tests/xmlhttprequest/basic-auth-nouser.html and
+        basic-auth-nopassword.html failing since introduction in r74609
+        https://bugs.webkit.org/show_bug.cgi?id=51596
+
+        Unreviewed. Adding http/tests/xmlhttprequest/basic-auth-nopassword.html to the Skipped list
+        because it is consistently timing out on the Windows XP Debug bot.
+
+        * platform/win-xp/Skipped:
+
 2011-02-25  Mihai Parparita  <mihaip@chromium.org>
 
         Fix 10 tests for Chromium Snow Leopard by promoting chromium-mac-leopard
