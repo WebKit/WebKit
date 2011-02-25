@@ -64,6 +64,10 @@ Node* InjectedScriptHost::scriptValueAsNode(ScriptValue value)
 
 ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node)
 {
+    v8::HandleScope scope;
+    v8::Local<v8::Context> context = state->context();
+    v8::Context::Scope contextScope(context);
+
     return ScriptValue(toV8(node));
 }
 

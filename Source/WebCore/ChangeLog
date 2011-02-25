@@ -1,3 +1,12 @@
+2011-02-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: added missing handle scope into V8InjectedScriptHostCustom.
+        https://bugs.webkit.org/show_bug.cgi?id=55256
+
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::nodeAsScriptValue):
+        (WebCore::V8InjectedScriptHost::currentCallFrameCallback):
+
 2011-02-25  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
