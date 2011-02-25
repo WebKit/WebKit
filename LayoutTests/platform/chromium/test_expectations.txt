@@ -3465,3 +3465,5 @@ BUGWK55118 : fast/xsl/sort-locale.xml = TEXT
 
 BUGCR74144 MAC : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
 BUGCR74144 MAC : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+
+BUG_ANTONM : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
