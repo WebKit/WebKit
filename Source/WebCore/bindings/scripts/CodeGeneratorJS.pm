@@ -2369,7 +2369,6 @@ my %nativeType = (
     "NodeFilter" => "RefPtr<NodeFilter>",
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
     "IDBKey" => "RefPtr<IDBKey>",
-    "SVGPaintType" => "SVGPaint::SVGPaintType",
     "boolean" => "bool",
     "double" => "double",
     "float" => "float",
@@ -2456,7 +2455,6 @@ sub JSValueToNative
 
     return "valueToDate(exec, $value)" if $type eq "Date";
     return "static_cast<Range::CompareHow>($value.toInt32(exec))" if $type eq "CompareHow";
-    return "static_cast<SVGPaint::SVGPaintType>($value.toInt32(exec))" if $type eq "SVGPaintType";
 
     if ($type eq "DOMString") {
         return "valueToStringWithNullCheck(exec, $value)" if $signature->extendedAttributes->{"ConvertNullToNullString"} || $signature->extendedAttributes->{"Reflect"};
@@ -2515,7 +2513,7 @@ sub NativeToJSValue
         return "jsNumber(std::max(0, " . $value . "))";
     }
 
-    if ($codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType" or $type eq "DOMTimeStamp") {
+    if ($codeGenerator->IsPrimitiveType($type) or $type eq "DOMTimeStamp") {
         $implIncludes{"<runtime/JSNumberCell.h>"} = 1;
         return "jsNumber($value)";
     }

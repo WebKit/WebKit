@@ -1,3 +1,40 @@
+2011-02-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Implement SVGColor/SVGPaint API
+        https://bugs.webkit.org/show_bug.cgi?id=55119
+
+        SVGColor::cssText() shouldn't return #RRGGBBAA colors
+        https://bugs.webkit.org/show_bug.cgi?id=48120
+
+        Add two new tests covering the SVGColor/SVGPaint APIs.
+        Adapt to SVGColor::cssText() changes, color is properly serialized now.
+
+        * svg/animations/animate-color-transparent-expected.txt:
+        * svg/animations/animate-currentColor-expected.txt:
+        * svg/animations/animate-dynamic-update-attributeName-expected.txt:
+        * svg/animations/animate-inherit-css-property-expected.txt:
+        * svg/animations/script-tests/animate-color-transparent.js:
+        (expectTransparent):
+        (expectOtherColor):
+        * svg/animations/script-tests/animate-currentColor.js:
+        (sample1):
+        * svg/animations/script-tests/animate-inherit-css-property.js:
+        (sample1):
+        * svg/css/getComputedStyle-basic-expected.txt:
+        * svg/custom/getPresentationAttribute-modify.svg:
+        * svg/custom/rgbcolor-syntax.svg:
+        * svg/dom/SVGColor-expected.txt: Added.
+        * svg/dom/SVGColor.html: Added.
+        * svg/dom/SVGPaint-expected.txt: Added.
+        * svg/dom/SVGPaint.html: Added.
+        * svg/dom/script-tests/SVGColor.js: Added.
+        (checkStopColor):
+        * svg/dom/script-tests/SVGPaint.js: Added.
+        (resetStyle):
+        (checkFillColor):
+
 2011-02-25  Renata Hodovan  <reni@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

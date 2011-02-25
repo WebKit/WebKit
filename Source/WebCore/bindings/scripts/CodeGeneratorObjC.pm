@@ -474,7 +474,7 @@ sub GetObjCType
 
     return "id <$name>" if IsProtocolType($type);
     return $name if $codeGenerator->IsPrimitiveType($type) or $type eq "DOMTimeStamp";
-    return "unsigned short" if $type eq "CompareHow" or $type eq "SVGPaintType";
+    return "unsigned short" if $type eq "CompareHow";
     return "$name *";
 }
 
@@ -492,7 +492,7 @@ sub GetPropertyAttributes
         push(@attributes, "copy");
     } elsif ($codeGenerator->IsSVGAnimatedType($type)) {
         push(@attributes, "retain");
-    } elsif (!$codeGenerator->IsStringType($type) && !$codeGenerator->IsPrimitiveType($type) && $type ne "DOMTimeStamp" && $type ne "CompareHow" && $type ne "SVGPaintType") {
+    } elsif (!$codeGenerator->IsStringType($type) && !$codeGenerator->IsPrimitiveType($type) && $type ne "DOMTimeStamp" && $type ne "CompareHow") {
         push(@attributes, "retain");
     }
 
@@ -515,7 +515,6 @@ sub GetObjCTypeGetter
     return $argName if $codeGenerator->IsPrimitiveType($type) or $codeGenerator->IsStringType($type) or IsNativeObjCType($type);
     return $argName . "Node" if $type eq "EventTarget";
     return "static_cast<WebCore::Range::CompareHow>($argName)" if $type eq "CompareHow";
-    return "static_cast<WebCore::SVGPaint::SVGPaintType>($argName)" if $type eq "SVGPaintType";
     return "WTF::getPtr(nativeEventListener)" if $type eq "EventListener";
     return "WTF::getPtr(nativeNodeFilter)" if $type eq "NodeFilter";
     return "WTF::getPtr(nativeResolver)" if $type eq "XPathNSResolver";

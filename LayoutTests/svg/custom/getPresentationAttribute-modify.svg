@@ -22,7 +22,7 @@
         fill.setRGBColor("green");
         rect = document.getElementById("firstrect");
         fill = rect.getPresentationAttribute("fill");
-        if (fill.cssText != '#FF0000') {
+        if (fill.cssText != '#ff0000') {
             log("Changing fill PA should not change firstrect fill PA");
             return;
         }

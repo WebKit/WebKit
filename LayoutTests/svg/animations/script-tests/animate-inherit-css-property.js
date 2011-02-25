@@ -26,7 +26,7 @@ rootSVGElement.appendChild(g);
 // Setup animation test
 function sample1() {
     // Check initial/end conditions
-    shouldBe("rect.style.fill", "'#FF0000'");
+    shouldBe("rect.style.fill", "'#ff0000'");
 }
 
 function sample2() {

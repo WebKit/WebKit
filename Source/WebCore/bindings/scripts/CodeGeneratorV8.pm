@@ -2804,7 +2804,6 @@ sub GetNativeType
     return "bool" if $type eq "boolean";
     return "String" if $type eq "DOMString";
     return "Range::CompareHow" if $type eq "CompareHow";
-    return "SVGPaint::SVGPaintType" if $type eq "SVGPaintType";
     return "DOMTimeStamp" if $type eq "DOMTimeStamp";
     return "unsigned" if $type eq "unsigned int";
     return "Node*" if $type eq "EventTarget" and $isParameter;
@@ -2881,7 +2880,6 @@ sub JSValueToNative
     return "toUInt32($value)" if $type eq "unsigned long" or $type eq "unsigned short";
     return "toInt64($value)" if $type eq "unsigned long long" or $type eq "long long";
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";
-    return "static_cast<SVGPaint::SVGPaintType>($value->ToInt32()->Int32Value())" if $type eq "SVGPaintType";
     return "toWebCoreDate($value)" if $type eq "Date";
     return "v8ValueToWebCoreDOMStringList($value)" if $type eq "DOMStringList";
 
@@ -3035,7 +3033,6 @@ my %non_wrapper_types = (
     'DOMString' => 1,
     'CompareHow' => 1,
     'SerializedScriptValue' => 1,
-    'SVGPaintType' => 1,
     'DOMTimeStamp' => 1,
     'JSObject' => 1,
     'DOMObject' => 1,
@@ -3112,7 +3109,7 @@ sub NativeToJSValue
     return "v8DateOrNull($value)" if $type eq "Date";
     # long long and unsigned long long are not representable in ECMAScript.
     return "v8::Number::New(static_cast<double>($value))" if $type eq "long long" or $type eq "unsigned long long" or $type eq "DOMTimeStamp";
-    return "v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType";
+    return "v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type);
     return "$value.v8Value()" if $nativeType eq "ScriptValue";
 
     if ($codeGenerator->IsStringType($type)) {

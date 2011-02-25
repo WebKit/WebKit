@@ -22,25 +22,23 @@
 module svg {
 
     interface [Conditional=SVG] SVGColor : CSSValue {
-        // Color Types
-        const unsigned short SVG_COLORTYPE_UNKNOWN           = 0;
-        const unsigned short SVG_COLORTYPE_RGBCOLOR          = 1;
+        const unsigned short SVG_COLORTYPE_UNKNOWN = 0;
+        const unsigned short SVG_COLORTYPE_RGBCOLOR = 1;
         const unsigned short SVG_COLORTYPE_RGBCOLOR_ICCCOLOR = 2;
-        const unsigned short SVG_COLORTYPE_CURRENTCOLOR      = 3;
+        const unsigned short SVG_COLORTYPE_CURRENTCOLOR = 3;
 
         readonly attribute unsigned short colorType;
-        readonly attribute RGBColor  rgbColor;
-        /*readonly attribute SVGICCColor    iccColor;*/
+        readonly attribute RGBColor rgbColor;
+        // FIXME: readonly attribute SVGICCColor iccColor;
 
-        void setRGBColor(in DOMString rgbColor)
-            raises(SVGException);
-        void setRGBColorICCColor(in DOMString rgbColor, 
-                                 in DOMString iccColor)
-            raises(SVGException);
-        void setColor(in unsigned short colorType,
-                      in DOMString rgbColor,
-                      in DOMString iccColor)
-            raises(SVGException);
+        [StrictTypeChecking, RequiresAllArguments=Raise] void setRGBColor(in DOMString rgbColor)
+            raises(DOMException, SVGException);
+
+        [StrictTypeChecking, RequiresAllArguments=Raise] void setRGBColorICCColor(in DOMString rgbColor, in DOMString iccColor)
+            raises(DOMException, SVGException);
+
+        [StrictTypeChecking, RequiresAllArguments=Raise] void setColor(in unsigned short colorType, in DOMString rgbColor, in DOMString iccColor)
+            raises(DOMException, SVGException);
     };
 
 }

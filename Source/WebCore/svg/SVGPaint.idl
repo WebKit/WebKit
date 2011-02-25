@@ -26,27 +26,23 @@
 module svg {
 
     interface [Conditional=SVG] SVGPaint : SVGColor {
-        // SVGPaintType
-        const unsigned short SVG_PAINTTYPE_UNKNOWN               = 0;
-        const unsigned short SVG_PAINTTYPE_RGBCOLOR              = 1;
-        const unsigned short SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR     = 2;
-        const unsigned short SVG_PAINTTYPE_NONE                  = 101;
-        const unsigned short SVG_PAINTTYPE_CURRENTCOLOR          = 102;
-        const unsigned short SVG_PAINTTYPE_URI_NONE              = 103;
-        const unsigned short SVG_PAINTTYPE_URI_CURRENTCOLOR      = 104;
-        const unsigned short SVG_PAINTTYPE_URI_RGBCOLOR          = 105;
+        const unsigned short SVG_PAINTTYPE_UNKNOWN = 0;
+        const unsigned short SVG_PAINTTYPE_RGBCOLOR = 1;
+        const unsigned short SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR = 2;
+        const unsigned short SVG_PAINTTYPE_NONE = 101;
+        const unsigned short SVG_PAINTTYPE_CURRENTCOLOR = 102;
+        const unsigned short SVG_PAINTTYPE_URI_NONE = 103;
+        const unsigned short SVG_PAINTTYPE_URI_CURRENTCOLOR = 104;
+        const unsigned short SVG_PAINTTYPE_URI_RGBCOLOR = 105;
         const unsigned short SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR = 106;
-        const unsigned short SVG_PAINTTYPE_URI                   = 107;
+        const unsigned short SVG_PAINTTYPE_URI = 107;
 
-        readonly attribute SVGPaintType paintType;
+        readonly attribute unsigned short paintType;
         readonly attribute DOMString uri;
 
-        void setUri(in DOMString uri);
-        void setPaint(in SVGPaintType paintType, 
-                      in DOMString uri, 
-                      in DOMString rgbColor, 
-                      in DOMString iccColor)
-            raises(SVGException);
+        [StrictTypeChecking, RequiresAllArguments=Raise] void setUri(in DOMString uri);
+        [StrictTypeChecking, RequiresAllArguments=Raise] void setPaint(in unsigned short paintType, in DOMString uri, in DOMString rgbColor, in DOMString iccColor)
+            raises(DOMException, SVGException);
     };
 
 }

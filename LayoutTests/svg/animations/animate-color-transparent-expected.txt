@@ -5,8 +5,8 @@ Tests that 'transparent' is treated as a valid color.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS rect.style.fill is '#00FF00'
-PASS rect.style.fill is '#7F0000'
+PASS rect.style.fill is '#00ff00'
+PASS rect.style.fill is '#7f0000'
 PASS successfullyParsed is true
 
 TEST COMPLETE

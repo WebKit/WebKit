@@ -1,3 +1,77 @@
+2011-02-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Implement SVGColor/SVGPaint API
+        https://bugs.webkit.org/show_bug.cgi?id=55119
+
+        SVGColor::cssText() shouldn't return #RRGGBBAA colors
+        https://bugs.webkit.org/show_bug.cgi?id=48120
+
+        Rewrite SVGColor/SVGPaint to actually implement their desired setPaint/setColor/setURI APIs.
+        SVGPaint is a CSSValue, and its setPaint() function allows to switch to an arbitary paint type.
+        That means, unlike all other CSSValues, SVGColor/SVGPaint are mutable. That means changes to
+        their CSSValues should be reflected in the elements style as well as in the computed style.
+        This patch doesn't yet implement that, the stubbed-out method valueChanged() is what
+        needs to be implemented. For now you can grab a SVGColor/SVGPaint object through getCSSPropertyValue
+        and manipulate it, in every possible way (SVPaint.uri/paintType/colorType/color attributes are all sync'ed).
+        Switch to strict JS bindings (RequiresAllArguments=Raise, StrictTypeChecking) for both objects.
+
+        Enable proper serialization of colors through Color::serialized(), affects some testcases (#FF.. -> #ff..)
+        Add extensive tests of all SVGColor/SVGPaint API, currently shows some FAIL messages, as element style
+        <-> computed style is not live, after mutating SVGColor/SVGPaint. That will be implemented in a follow-up patch.
+
+        Tests: svg/dom/SVGColor.html
+               svg/dom/SVGPaint.html
+
+        * bindings/scripts/CodeGenerator.pm: Remove obsolete handling of "SVGPaintType", take ushort for paintType, as specified in the SVG 1.1 IDLs.
+        * bindings/scripts/CodeGeneratorJS.pm: Ditto.
+        * bindings/scripts/CodeGeneratorObjC.pm: Ditto.
+        * bindings/scripts/CodeGeneratorV8.pm: Ditto.
+        * css/SVGCSSParser.cpp: Adapt to SVGPaint/SVGColor create() naming convention changes.
+        (WebCore::CSSParser::parseSVGValue):
+        (WebCore::CSSParser::parseSVGPaint):
+        (WebCore::CSSParser::parseSVGColor):
+        * svg/SVGColor.cpp: Rewrite to fully implement the SVGColor API, merge all constructors into one, use more descriptable create() naming convention.
+        (WebCore::valueChanged): Stub implementation, will land in a follow-up patch.
+        (WebCore::SVGColor::SVGColor):
+        (WebCore::SVGColor::setRGBColor):
+        (WebCore::SVGColor::colorFromRGBColorString):
+        (WebCore::SVGColor::setRGBColorICCColor):
+        (WebCore::SVGColor::setColor):
+        (WebCore::SVGColor::cssText):
+        * svg/SVGColor.h:
+        (WebCore::SVGColor::createFromString):
+        (WebCore::SVGColor::createFromColor):
+        (WebCore::SVGColor::color):
+        (WebCore::SVGColor::colorType):
+        (WebCore::SVGColor::~SVGColor):
+        (WebCore::SVGColor::setColor):
+        (WebCore::SVGColor::setColorType):
+        * svg/SVGColor.idl: Enable strict type checking.
+        * svg/SVGPaint.cpp: Rewrite to fully implement the SVGPaint API, merge all constructors into one, use more descriptable create() naming convention.
+        (WebCore::valueChanged): Stub implementation, will land in a follow-up patch.
+        (WebCore::colorTypeForPaintType):
+        (WebCore::SVGPaint::SVGPaint):
+        (WebCore::SVGPaint::setUri):
+        (WebCore::SVGPaint::defaultFill):
+        (WebCore::SVGPaint::defaultStroke):
+        (WebCore::SVGPaint::setPaint):
+        (WebCore::SVGPaint::cssText):
+        (WebCore::SVGPaint::matchesTargetURI):
+        * svg/SVGPaint.h:
+        (WebCore::SVGPaint::createUnknown):
+        (WebCore::SVGPaint::createNone):
+        (WebCore::SVGPaint::createCurrentColor):
+        (WebCore::SVGPaint::createColor):
+        (WebCore::SVGPaint::createURI):
+        (WebCore::SVGPaint::createURIAndColor):
+        (WebCore::SVGPaint::paintType):
+        (WebCore::SVGPaint::uri):
+        (WebCore::SVGPaint::create):
+        (WebCore::SVGPaint::isSVGPaint):
+        * svg/SVGPaint.idl: Enable strict type checking.
+
 2011-02-25  Renata Hodovan  <reni@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

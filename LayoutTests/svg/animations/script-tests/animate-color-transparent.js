@@ -21,12 +21,12 @@ rootSVGElement.appendChild(rect);
 // Setup animation test
 function expectTransparent() {
     // Check initial/end conditions
-    shouldBe("rect.style.fill", "'#00FF00'");
+    shouldBe("rect.style.fill", "'#00ff00'");
 }
 
 function expectOtherColor() {
     // Check half-time conditions
-    shouldBe("rect.style.fill", "'#7F0000'");
+    shouldBe("rect.style.fill", "'#7f0000'");
 }
 
 function executeTest() {

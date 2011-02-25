@@ -179,17 +179,17 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     case CSSPropertyStroke:               // <paint> | inherit
         {
             if (id == CSSValueNone)
-                parsedValue = SVGPaint::create(SVGPaint::SVG_PAINTTYPE_NONE);
+                parsedValue = SVGPaint::createNone();
             else if (id == CSSValueCurrentcolor)
-                parsedValue = SVGPaint::create(SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR);
+                parsedValue = SVGPaint::createCurrentColor();
             else if ((id >= CSSValueActiveborder && id <= CSSValueWindowtext) || id == CSSValueMenu)
-                parsedValue = SVGPaint::create(RenderTheme::defaultTheme()->systemColor(id));
+                parsedValue = SVGPaint::createColor(RenderTheme::defaultTheme()->systemColor(id));
             else if (value->unit == CSSPrimitiveValue::CSS_URI) {
                 RGBA32 c = Color::transparent;
                 if (m_valueList->next() && parseColorFromValue(m_valueList->current(), c)) {
-                    parsedValue = SVGPaint::create(value->string, c);
+                    parsedValue = SVGPaint::createURIAndColor(value->string, c);
                 } else
-                    parsedValue = SVGPaint::create(SVGPaint::SVG_PAINTTYPE_URI, value->string);
+                    parsedValue = SVGPaint::createURI(value->string);
             } else
                 parsedValue = parseSVGPaint();
 
@@ -201,7 +201,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     case CSSPropertyColor:                // <color> | inherit
         if ((id >= CSSValueAqua && id <= CSSValueWindowtext) ||
            (id >= CSSValueAliceblue && id <= CSSValueYellowgreen))
-            parsedValue = SVGColor::create(value->string);
+            parsedValue = SVGColor::createFromString(value->string);
         else
             parsedValue = parseSVGColor();
 
@@ -214,7 +214,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     case CSSPropertyLightingColor:
         if ((id >= CSSValueAqua && id <= CSSValueWindowtext) ||
            (id >= CSSValueAliceblue && id <= CSSValueYellowgreen))
-            parsedValue = SVGColor::create(value->string);
+            parsedValue = SVGColor::createFromString(value->string);
         else if (id == CSSValueCurrentcolor)
             parsedValue = SVGColor::createCurrentColor();
         else // TODO : svgcolor (iccColor)
@@ -339,8 +339,8 @@ PassRefPtr<CSSValue> CSSParser::parseSVGPaint()
 {
     RGBA32 c = Color::transparent;
     if (!parseColorFromValue(m_valueList->current(), c))
-        return SVGPaint::create();
-    return SVGPaint::create(Color(c));
+        return SVGPaint::createUnknown();
+    return SVGPaint::createColor(Color(c));
 }
 
 PassRefPtr<CSSValue> CSSParser::parseSVGColor()
@@ -348,11 +348,9 @@ PassRefPtr<CSSValue> CSSParser::parseSVGColor()
     RGBA32 c = Color::transparent;
     if (!parseColorFromValue(m_valueList->current(), c))
         return 0;
-    return SVGColor::create(Color(c));
+    return SVGColor::createFromColor(Color(c));
 }
 
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

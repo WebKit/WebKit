@@ -45,9 +45,9 @@
         if (!expectsException(col, "#fffff")) return;
         if (!expectsException(col, "#fffffff")) return;
         if (!expectsException(col, "green,")) return;
-        if (!expectsValid(col, "rgb(0, 10, 20)", "#000A14")) return;
-        if (!expectsValid(col, "#FFF", "#FFFFFF")) return;
-        if (!expectsValid(col, "#FFFFFF", "#FFFFFF")) return;
+        if (!expectsValid(col, "rgb(0, 10, 20)", "#000a14")) return;
+        if (!expectsValid(col, "#FFF", "#ffffff")) return;
+        if (!expectsValid(col, "#FFFFFF", "#ffffff")) return;
         if (!expectsValid(col, " green", "#008000")) return;
         if (!expectsValid(col, "green ", "#008000")) return;
         if (!expectsValid(col, "green", "#008000")) return;
