@@ -1,3 +1,15 @@
+2011-02-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        REGRESSION(r79398): Webkit crash on dojo theme tester page
+        https://bugs.webkit.org/show_bug.cgi?id=55290
+
+        Added a test to ensure WebKit does not crash when querying style value without selection.
+
+        * editing/execCommand/value-without-selection-crash-expected.txt: Added.
+        * editing/execCommand/value-without-selection-crash.html: Added.
+
 2011-02-26  Rik Cabanier  <cabanier@adobe.com>
 
         Reviewed by David Hyatt.

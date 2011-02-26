@@ -1,3 +1,18 @@
+2011-02-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        REGRESSION(r79398): Webkit crash on dojo theme tester page
+        https://bugs.webkit.org/show_bug.cgi?id=55290
+
+        The bug was caused by selectionStartCSSPropertyValue's not considering the possibility
+        of selectionStartStyle() returning a null pointer. Fixed it by adding a null check.
+
+        Test: editing/execCommand/value-without-selection-crash.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionStartCSSPropertyValue):
+
 2011-02-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

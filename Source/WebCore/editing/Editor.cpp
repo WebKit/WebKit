@@ -1041,7 +1041,7 @@ static bool hasTransparentBackgroundColor(CSSStyleDeclaration* style)
 String Editor::selectionStartCSSPropertyValue(int propertyID)
 {
     RefPtr<EditingStyle> selectionStyle = selectionStartStyle();
-    if (!selectionStyle->style())
+    if (!selectionStyle || !selectionStyle->style())
         return String();
 
     String value = selectionStyle->style()->getPropertyValue(propertyID);
