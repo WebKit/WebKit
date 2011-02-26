@@ -32,7 +32,7 @@
 #include "Tracing.h"
 #include <algorithm>
 
-#define COLLECT_ON_EVERY_SLOW_ALLOCATION 0
+#define COLLECT_ON_EVERY_ALLOCATION 0
 
 using namespace std;
 
@@ -102,24 +102,29 @@ void Heap::reportExtraMemoryCostSlowCase(size_t cost)
     m_extraCost += cost;
 }
 
-void* Heap::allocateSlowCase(size_t bytes)
+void* Heap::allocate(size_t s)
 {
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(JSLock::lockCount() > 0);
     ASSERT(JSLock::currentThreadIsHoldingLock());
-    ASSERT(bytes <= MarkedSpace::maxCellSize);
+    ASSERT_UNUSED(s, s <= MarkedSpace::cellSize);
     ASSERT(m_operationInProgress == NoOperation);
 
-#if COLLECT_ON_EVERY_SLOW_ALLOCATION
+#if COLLECT_ON_EVERY_ALLOCATION
     collectAllGarbage();
     ASSERT(m_operationInProgress == NoOperation);
 #endif
 
-    reset(DoNotSweep);
-
     m_operationInProgress = Allocation;
-    void* result = m_markedSpace.allocate(bytes);
+    void* result = m_markedSpace.allocate(s);
     m_operationInProgress = NoOperation;
+    if (!result) {
+        reset(DoNotSweep);
+
+        m_operationInProgress = Allocation;
+        result = m_markedSpace.allocate(s);
+        m_operationInProgress = NoOperation;
+    }
 
     ASSERT(result);
     return result;

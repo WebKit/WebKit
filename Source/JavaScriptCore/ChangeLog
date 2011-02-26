@@ -1,3 +1,28 @@
+2011-02-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r79627.
+        http://trac.webkit.org/changeset/79627
+        https://bugs.webkit.org/show_bug.cgi?id=55274
+
+        broke worker tests (Requested by olliej on #webkit).
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/Heap.cpp:
+        (JSC::Heap::allocate):
+        * runtime/Heap.h:
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSCell::operator new):
+        (JSC::JSCell::MarkedSpace::sizeClassFor):
+        (JSC::JSCell::MarkedSpace::allocate):
+        * runtime/MarkedBlock.h:
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::allocateBlock):
+        (JSC::MarkedSpace::reset):
+        * runtime/MarkedSpace.h:
+        (JSC::MarkedSpace::SizeClass::SizeClass):
+
 2011-02-25  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Darin Adler.

@@ -107,7 +107,6 @@ namespace JSC {
         static const size_t minExtraCost = 256;
         static const size_t maxExtraCost = 1024 * 1024;
 
-        void* allocateSlowCase(size_t);
         void reportExtraMemoryCostSlowCase(size_t);
 
         void markRoots();
