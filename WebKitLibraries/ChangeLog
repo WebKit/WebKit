@@ -1,3 +1,10 @@
+2011-02-25  Brian Weinstein  <bweinstein@apple.com>
+
+        Fix linking of Chromium Mac build. 
+
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2011-02-21  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
