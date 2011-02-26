@@ -184,7 +184,7 @@ public:
     static QString pageProperty(QWebFrame* frame, const QString& propertyName, int pageNumber);
     static void addUserStyleSheet(QWebPage* page, const QString& sourceCode);
     static void simulateDesktopNotificationClick(const QString& title);
-    static QString viewportAsText(QWebPage*, const QSize&);
+    static QString viewportAsText(QWebPage*, int deviceDPI, const QSize& deviceSize, const QSize& availableSize);
 
     static QVariantList nodesFromRect(const QWebElement& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping);
     static QString responseMimeType(QWebFrame*);

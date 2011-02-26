@@ -869,11 +869,11 @@ bool LayoutTestController::hasSpellingMarker(int from, int length)
     return DumpRenderTreeSupportGtk::webkitWebFrameSelectionHasSpellingMarker(mainFrame, from, length);
 }
 
-void LayoutTestController::dumpConfigurationForViewport(int availableWidth, int availableHeight)
+void LayoutTestController::dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(webView);
-    DumpRenderTreeSupportGtk::dumpConfigurationForViewport(webView, availableWidth, availableHeight);
+    DumpRenderTreeSupportGtk::dumpConfigurationForViewport(webView, deviceDPI, deviceWidth, deviceHeight, availableWidth, availableHeight);
 }
 
 void LayoutTestController::setSerializeHTTPLoads(bool)

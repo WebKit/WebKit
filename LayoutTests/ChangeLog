@@ -1,3 +1,18 @@
+2011-02-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Make it possible to test the targetdensity-dpi support
+        https://bugs.webkit.org/show_bug.cgi?id=55142
+
+        * fast/viewport/viewport-*.html: Update to new JS API.
+        * fast/viewport/viewport-91.html: Add new tests.
+        * fast/viewport/viewport-92.html:
+        * fast/viewport/viewport-93.html:
+        * fast/viewport/viewport-94.html:
+        * fast/viewport/viewport-95.html:
+        * fast/viewport/viewport-96.html:
+
 2011-02-26  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Adam Barth.

@@ -58,7 +58,7 @@ public:
     static bool selectTrailingWhitespaceEnabled();
 
     static JSValueRef nodesFromRect(JSContextRef context, JSValueRef value, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping);
-    static void dumpConfigurationForViewport(WebKitWebView* webView, gint availableWidth, gint availableHeight);
+    static void dumpConfigurationForViewport(WebKitWebView* webView, gint deviceDPI, gint deviceWidth, gint deviceHeight, gint availableWidth, gint availableHeight);
 
     // FIXME: Move these to webkitwebframe.h once their API has been discussed.
     static GSList* getFrameChildren(WebKitWebFrame*);

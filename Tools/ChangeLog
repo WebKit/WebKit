@@ -1,3 +1,31 @@
+2011-02-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Make it possible to test the targetdensity-dpi support
+        https://bugs.webkit.org/show_bug.cgi?id=55142
+
+        Test the viewport meta tag feature targetdensity-dpi by
+        adding extra arguments to dumpConfigurationForViewport
+
+        Add the new arguments to the shared header and all
+        implementation.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (dumpConfigurationForViewportCallback):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::dumpConfigurationForViewport):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::dumpConfigurationForViewport):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::dumpConfigurationForViewport):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::dumpConfigurationForViewport):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::dumpConfigurationForViewport):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2011-02-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r79764.

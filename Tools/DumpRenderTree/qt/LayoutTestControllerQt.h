@@ -114,7 +114,7 @@ public slots:
     void dumpResourceLoadCallbacks();
     void dumpResourceResponseMIMETypes();
     void dumpHistoryCallbacks();
-    void dumpConfigurationForViewport(int availableWidth, int availableHeight);
+    void dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight);
     void setWillSendRequestReturnsNullOnRedirect(bool enabled);
     void setWillSendRequestReturnsNull(bool enabled);
     void setWillSendRequestClearHeader(const QStringList& headers);

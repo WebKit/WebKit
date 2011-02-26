@@ -511,7 +511,7 @@ bool LayoutTestController::hasSpellingMarker(int, int)
     return false;
 }
 
-void LayoutTestController::dumpConfigurationForViewport(int /*availableWidth*/, int /*availableHeight*/)
+void LayoutTestController::dumpConfigurationForViewport(int /*deviceDPI*/, int /*deviceWidth*/, int /*deviceHeight*/, int /*availableWidth*/, int /*availableHeight*/)
 {
     // FIXME: Implement
 }

@@ -1,0 +1,13 @@
+<head>
+    <title>Check that device dimensions are adapted due to the lower DPI.</title>
+    <meta name="viewport" content="width=device-width, target-densitydpi=low-dpi">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpConfigurationForViewport(240, 480, 564, 480, 534);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

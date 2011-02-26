@@ -147,14 +147,21 @@ static JSValueRef dumpConfigurationForViewportCallback(JSContextRef context, JSO
     if (argumentCount < 2)
         return JSValueMakeUndefined(context);
 
-    double availableWidth = JSValueToNumber(context, arguments[0], exception);
+
+    double deviceDPI = JSValueToNumber(context, arguments[0], exception);
     ASSERT(!*exception);
-    double availableHeight = JSValueToNumber(context, arguments[1], exception);
+    double deviceWidth = JSValueToNumber(context, arguments[1], exception);
+    ASSERT(!*exception);
+    double deviceHeight = JSValueToNumber(context, arguments[2], exception);
+    ASSERT(!*exception);
+    double availableWidth = JSValueToNumber(context, arguments[3], exception);
+    ASSERT(!*exception);
+    double availableHeight = JSValueToNumber(context, arguments[4], exception);
     ASSERT(!*exception);
 
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->dumpConfigurationForViewport(static_cast<int>(availableWidth), static_cast<int>(availableHeight));
-   
+    controller->dumpConfigurationForViewport(static_cast<int>(deviceDPI), static_cast<int>(deviceWidth), static_cast<int>(deviceHeight), static_cast<int>(availableWidth), static_cast<int>(availableHeight));
+
     return JSValueMakeUndefined(context);
 }
 
