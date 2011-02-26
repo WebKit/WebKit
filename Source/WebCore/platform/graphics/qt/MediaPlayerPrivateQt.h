@@ -157,6 +157,7 @@ private:
     MediaPlayer::Preload m_preload;
     bool m_delayingLoad;
     String m_mediaUrl;
+    bool m_suppressNextPlaybackChanged;
 
 };
 }

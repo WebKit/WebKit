@@ -1,3 +1,19 @@
+2011-02-26  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Notify HTMLMediaElement when MediaPlayerPrivateQt's playback state gets changed
+        https://bugs.webkit.org/show_bug.cgi?id=55252
+
+        Need to invoke a callback function to notify the HTMLMediaElement
+        when MediaPlayerPrivateQt's playback state gets changed.
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::MediaPlayerPrivateQt): Set a flag to ignore the playback state change for pre-roll
+        (WebCore::MediaPlayerPrivateQt::commitLoad): Call playbackStateChanged() to notify HTMLMediaElement
+        (WebCore::MediaPlayerPrivateQt::stateChanged):
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+
 2011-02-25  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.
