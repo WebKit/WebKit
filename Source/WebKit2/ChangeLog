@@ -1,3 +1,16 @@
+2011-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Plug-in process crashes when using GuardMalloc
+        https://bugs.webkit.org/show_bug.cgi?id=55279
+        <rdar://problem/9044618>
+
+        Update m_environmentPointer after copying the environment variables.
+        
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::EnvironmentVariables::copyEnvironmentVariables):
+
 2011-02-25  Darin Adler  <darin@apple.com>
 
         * UIProcess/Launcher/mac/ProcessLauncherMac.mm:

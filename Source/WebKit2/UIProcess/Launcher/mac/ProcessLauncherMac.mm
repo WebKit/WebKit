@@ -175,6 +175,9 @@ private:
 
         // Null-terminate the array.
         m_environmentVariables.append(static_cast<char*>(0));
+
+        // Update the environment pointer.
+        m_environmentPointer = m_environmentVariables.data();
     }
 
     char** m_environmentPointer;
