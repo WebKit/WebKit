@@ -1554,6 +1554,11 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
+- (id)accessibilityFocusedUIElement
+{
+    return _data->_remoteAccessibilityChild.get();
+}
+
 - (BOOL)accessibilityIsIgnored
 {
     return NO;
