@@ -435,6 +435,12 @@ public:
     virtual bool isFrameSet() const { return false; }
     
     CSSStyleSelector* styleSelectorIfExists() const { return m_styleSelector.get(); }
+
+    bool usesViewSourceStyles() const { return m_usesViewSourceStyles; }
+    void setUsesViewSourceStyles(bool usesViewSourceStyles) { m_usesViewSourceStyles = usesViewSourceStyles; }
+
+    bool sawElementsInKnownNamespaces() const { return m_sawElementsInKnownNamespaces; }
+
     CSSStyleSelector* styleSelector()
     { 
         if (!m_styleSelector)
@@ -1369,6 +1375,9 @@ private:
 
     bool m_isXHTML;
     bool m_isHTML;
+
+    bool m_usesViewSourceStyles;
+    bool m_sawElementsInKnownNamespaces;
 
     unsigned m_numNodeListCaches;
 

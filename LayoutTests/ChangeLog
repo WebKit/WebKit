@@ -1,3 +1,43 @@
+2011-02-25  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        XML without style should render as syntax-highlighted source.
+        https://bugs.webkit.org/show_bug.cgi?id=13807
+
+        Added tests for XML tree view mode. Testing both logic for entering
+        XML tree view mode and rendering itself.
+
+        * http/tests/xmlviewer/dumpAsText/css-stylesheet-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/css-stylesheet.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/frames-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/frames.html: Added.
+        * http/tests/xmlviewer/dumpAsText/mathml-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/mathml.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/resources/css-stylesheet.css: Added.
+        (assertion):
+        * http/tests/xmlviewer/dumpAsText/resources/frames-helper.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/resources/xsl.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/svg-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/svg.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/wml-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/wml.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/xhtml-tag-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/xhtml-tag.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/xlink-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/xlink.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-charset-cp1251-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-charset-cp1251.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-charset-utf8-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-charset-utf8.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/xmlviewer.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/xsl-stylesheet-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/xsl-stylesheet.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/xul-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/xul.xml: Added.
+        * platform/chromium/http/tests/xmlviewer/dumpAsText/mathml-expected.txt: Added.
+
 2011-02-26  Adam Klein  <adamk@chromium.org>
 
         Reviewed by James Robinson.

@@ -387,6 +387,23 @@
       'actions': [
         # Actions to build derived sources.
         {
+          'action_name': 'generateXMLViewerXSL',
+          'inputs': [
+            '../xml/XMLViewer.xsl',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLViewerXSL.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLViewerXSL.cpp',
+          ],
+          'action': [
+            'perl',
+            '../inspector/xxd.pl',
+            'XMLViewer_xsl',
+            '../xml/XMLViewer.xsl',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLViewerXSL.h'
+          ],
+        },
+        {
           'action_name': 'HTMLEntityTable',
           'inputs': [
             '../html/parser/HTMLEntityNames.in',

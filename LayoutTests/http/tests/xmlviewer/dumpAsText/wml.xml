@@ -1,0 +1,11 @@
+<!-- If you can see this, this test has failed, except if you are
+     not using a WML-aware client. -->
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<?sds erfe?>
+<wml>
+    <header>This tests that xml viewer is not used for documents with WML doctype.</header>
+    <card id="card1" title="Card 1">
+        <FAIL/>
+        <p>SUCCESS</p>
+    </card>
+</wml>

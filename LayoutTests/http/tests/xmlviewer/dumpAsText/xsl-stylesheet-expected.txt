@@ -1,0 +1,1 @@
+This tests that xml viewer is not used when there is an XSL stylesheet. SUCCESS

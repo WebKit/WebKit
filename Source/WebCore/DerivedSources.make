@@ -648,6 +648,15 @@ DocTypeStrings.cpp : html/DocTypeStrings.gperf $(WebCore)/make-hash-tools.pl
 
 # --------
 
+# XMLViewer XSLT
+
+all : XMLViewerXSL.h
+
+XMLViewerXSL.h : xml/XMLViewer.xsl
+	perl $(WebCore)/inspector/xxd.pl XMLViewer_xsl $(WebCore)/xml/XMLViewer.xsl XMLViewerXSL.h
+
+# --------
+
 # HTML entity names
 
 HTMLEntityTable.cpp : html/parser/HTMLEntityNames.in $(WebCore)/html/parser/create-html-entity-table
