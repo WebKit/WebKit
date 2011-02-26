@@ -1726,7 +1726,7 @@ def check_spacing(file_extension, clean_lines, line_number, error):
                 error(line_number, 'whitespace/blank_line', 3,
                       'Blank line at the end of a code block.  Is this needed?')
 
-    # Next, we complain if there's a comment too near the text
+    # Next, we check for proper spacing with respect to comments.
     comment_position = line.find('//')
     if comment_position != -1:
         # Check if the // may be in quotes.  If so, ignore it
@@ -1753,6 +1753,11 @@ def check_spacing(file_extension, clean_lines, line_number, error):
                 if not matched:
                     error(line_number, 'whitespace/comments', 4,
                           'Should have a space between // and comment')
+
+            # There should only be one space after punctuation in a comment.
+            if search('[.!?,;:]\s\s', line[comment_position:]):
+                error(line_number, 'whitespace/comments', 5,
+                      'Should only a single space after a punctuation in a comment.')
 
     line = clean_lines.elided[line_number]  # get rid of comments and strings
 

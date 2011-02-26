@@ -1,3 +1,14 @@
+2011-02-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        check-webkit-style should check for spaces after periods in comments
+        https://bugs.webkit.org/show_bug.cgi?id=55253
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Added the check.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Added tests
+          and fixed the name of one related test.
+
 2011-02-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Andreas Kling.

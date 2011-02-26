@@ -1779,7 +1779,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_multi_line_lint('#endif\n    );',
                                     '')
 
-    def test_two_spaces_between_code_and_comments(self):
+    def test_one_spaces_between_code_and_comments(self):
         self.assert_lint('} // namespace foo',
                          '')
         self.assert_lint('}// namespace foo',
@@ -1805,6 +1805,24 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('printf("// In quotes.")', '')
         self.assert_lint('printf("\\"%s // In quotes.")', '')
         self.assert_lint('printf("%s", "// In quotes.")', '')
+
+    def test_one_spaces_after_punctuation_in_comments(self):
+        self.assert_lint('int a; // This is a sentence.',
+                         '')
+        self.assert_lint('int a; // This is a sentence. This is a another sentence.',
+                         '')
+        self.assert_lint('int a; // This is a sentence.  This is a another sentence.',
+                         'Should only a single space after a punctuation in a comment.  [whitespace/comments] [5]')
+        self.assert_lint('int a; // This is a sentence!  This is a another sentence.',
+                         'Should only a single space after a punctuation in a comment.  [whitespace/comments] [5]')
+        self.assert_lint('int a; // Why did I write this?  This is a another sentence.',
+                         'Should only a single space after a punctuation in a comment.  [whitespace/comments] [5]')
+        self.assert_lint('int a; // Elementary,  my dear.',
+                         'Should only a single space after a punctuation in a comment.  [whitespace/comments] [5]')
+        self.assert_lint('int a; // The following should be clear:  Is it?',
+                         'Should only a single space after a punctuation in a comment.  [whitespace/comments] [5]')
+        self.assert_lint('int a; // Look at the follow semicolon;  I hope this gives an error.',
+                         'Should only a single space after a punctuation in a comment.  [whitespace/comments] [5]')
 
     def test_space_after_comment_marker(self):
         self.assert_lint('//', '')
