@@ -116,8 +116,8 @@ var testCases = [
             {fullPath:'/a', isDirectory:true}
         ],
         tests: [
-            function(helper) { helper.getFile('/', 'a', {}, FileError.INVALID_STATE_ERR); },
-            function(helper) { helper.getFile('/', '/a', {}, FileError.INVALID_STATE_ERR); },
+            function(helper) { helper.getFile('/', 'a', {}, FileError.TYPE_MISMATCH_ERR); },
+            function(helper) { helper.getFile('/', '/a', {}, FileError.TYPE_MISMATCH_ERR); },
         ],
         postcondition: [
             {fullPath:'/a', isDirectory:true}
@@ -129,8 +129,8 @@ var testCases = [
             {fullPath:'/a'}
         ],
         tests: [
-            function(helper) { helper.getDirectory('/', 'a', {}, FileError.INVALID_STATE_ERR); },
-            function(helper) { helper.getDirectory('/', '/a', {}, FileError.INVALID_STATE_ERR); },
+            function(helper) { helper.getDirectory('/', 'a', {}, FileError.TYPE_MISMATCH_ERR); },
+            function(helper) { helper.getDirectory('/', '/a', {}, FileError.TYPE_MISMATCH_ERR); },
         ],
         postcondition: [
             {fullPath:'/a'}

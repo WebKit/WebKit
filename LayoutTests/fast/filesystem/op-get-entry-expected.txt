@@ -71,12 +71,12 @@ PASS this.expectedErrorCode + "" is "1"
 PASS this.expectedErrorCode + "" is "1"
 PASS this.expectedErrorCode + "" is "1"
 * Running: GetFileForDirectory
-PASS this.expectedErrorCode + "" is "7"
-PASS this.expectedErrorCode + "" is "7"
+PASS this.expectedErrorCode + "" is "11"
+PASS this.expectedErrorCode + "" is "11"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 * Running: GetDirectoryForFile
-PASS this.expectedErrorCode + "" is "7"
-PASS this.expectedErrorCode + "" is "7"
+PASS this.expectedErrorCode + "" is "11"
+PASS this.expectedErrorCode + "" is "11"
 PASS Verified entry: ENTRY {path:/a name:a type:FILE}
 * Running: CreateWithExclusive
 PASS this.expectedErrorCode + "" is "9"

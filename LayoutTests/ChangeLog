@@ -1,3 +1,25 @@
+2011-02-26  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Update op-get-entry filesystem test to match spec
+        https://bugs.webkit.org/show_bug.cgi?id=55263
+
+        Chromium behavior changed in r76098. This patch updates WebKit test
+        to match. Both now match the spec, which says of TYPE_MISMATCH_ERR:
+
+          user agent MUST use this code when the user has attempted to look up
+          a file or directory, but the Entry found is of the wrong type
+
+        Reference: http://dev.w3.org/2009/dap/file-system/file-dir-sys.html#error-code-descriptions
+
+        * fast/filesystem/op-get-entry-expected.txt:
+        * fast/filesystem/resources/op-get-entry.js:
+        GetFile/GetDirectory now expected to return TYPE_MISMATCH_ERR
+        if requesting a non-file/non-directory.
+        * platform/chromium/test_expectations.txt:
+        Allow op-get-entry to pass while waiting for Chromium roll.
+
 2011-02-26  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations change. 
