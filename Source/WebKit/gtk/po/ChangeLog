@@ -1,3 +1,12 @@
+2011-02-26  Christian Dywan  <christian@lanedo.com>
+
+        Reviewed by Andreas Kling.
+
+        Untranslated network error messages
+        https://bugs.webkit.org/show_bug.cgi?id=55223
+
+        * POTFILES: Add FrameLoaderClientGtk.cpp.
+
 2011-02-25  Christian Dywan  <christian@lanedo.com>
 
         Unreviewed translation file.
