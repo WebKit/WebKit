@@ -26,6 +26,7 @@
 #include "Element.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
+#include "ScopedEventQueue.h"
 #include "Text.h"
 #include "XMLNSNames.h"
 
@@ -119,6 +120,7 @@ String Attr::nodeValue() const
 
 void Attr::setValue(const AtomicString& value)
 {
+    EventQueueScope scope;
     m_ignoreChildrenChanged++;
     removeChildren();
     m_attribute->setValue(value);

@@ -1,3 +1,15 @@
+2011-02-26  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Delay firing of mutation events while setting attribute values
+        https://bugs.webkit.org/show_bug.cgi?id=55199
+
+        Test: fast/dom/attribute-change-on-mutate.html
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue):
+
 2011-02-26  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Andreas Kling.
