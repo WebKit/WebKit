@@ -1,3 +1,90 @@
+2011-02-25  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed rebaseline.
+        
+        Update mac/ pixel baselines for Snow Leopard (new results match
+        chromium-mac and/or chromium-mac-leopard ones, which are known to be
+        good).
+
+        * platform/mac/fast/backgrounds/svg-as-background-5-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-5-expected.png:
+        * platform/mac/fast/block/margin-collapse/103-expected.checksum:
+        * platform/mac/fast/block/margin-collapse/103-expected.png:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-lr-expected.checksum:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-lr-expected.png:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-rl-expected.checksum:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-rl-expected.png:
+        * platform/mac/fast/css/empty-pseudo-class-expected.checksum:
+        * platform/mac/fast/css/empty-pseudo-class-expected.png:
+        * platform/mac/fast/css/first-child-pseudo-class-expected.checksum:
+        * platform/mac/fast/css/first-child-pseudo-class-expected.png:
+        * platform/mac/fast/css/first-of-type-pseudo-class-expected.checksum:
+        * platform/mac/fast/css/first-of-type-pseudo-class-expected.png:
+        * platform/mac/fast/css/font-face-default-font-expected.checksum:
+        * platform/mac/fast/css/font-face-default-font-expected.png:
+        * platform/mac/fast/css/font_property_normal-expected.checksum:
+        * platform/mac/fast/css/font_property_normal-expected.png:
+        * platform/mac/fast/css/last-child-pseudo-class-expected.checksum:
+        * platform/mac/fast/css/last-child-pseudo-class-expected.png:
+        * platform/mac/fast/css/last-of-type-pseudo-class-expected.checksum:
+        * platform/mac/fast/css/last-of-type-pseudo-class-expected.png:
+        * platform/mac/fast/css/line-height-font-order-expected.checksum:
+        * platform/mac/fast/css/line-height-font-order-expected.png:
+        * platform/mac/fast/css/only-child-pseudo-class-expected.checksum:
+        * platform/mac/fast/css/only-child-pseudo-class-expected.png:
+        * platform/mac/fast/css/only-of-type-pseudo-class-expected.checksum:
+        * platform/mac/fast/css/only-of-type-pseudo-class-expected.png:
+        * platform/mac/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.checksum:
+        * platform/mac/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.png:
+        * platform/mac/fast/dynamic/008-expected.checksum:
+        * platform/mac/fast/dynamic/008-expected.png:
+        * platform/mac/fast/events/context-no-deselect-expected.checksum:
+        * platform/mac/fast/events/context-no-deselect-expected.png:
+        * platform/mac/fast/forms/placeholder-position-expected.checksum:
+        * platform/mac/fast/forms/placeholder-position-expected.png:
+        * platform/mac/fast/html/keygen-expected.checksum:
+        * platform/mac/fast/html/keygen-expected.png:
+        * platform/mac/fast/lists/dynamic-marker-crash-expected.checksum:
+        * platform/mac/fast/lists/dynamic-marker-crash-expected.png:
+        * platform/mac/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.checksum:
+        * platform/mac/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.png:
+        * platform/mac/fast/selectors/166-expected.checksum:
+        * platform/mac/fast/selectors/166-expected.png:
+        * platform/mac/fast/text/international/bidi-control-chars-treated-as-ZWS-expected.checksum:
+        * platform/mac/fast/text/international/bidi-control-chars-treated-as-ZWS-expected.png:
+        * platform/mac/fast/text/international/bidi-linebreak-001-expected.checksum:
+        * platform/mac/fast/text/international/bidi-linebreak-001-expected.png:
+        * platform/mac/fast/text/international/bidi-linebreak-002-expected.checksum:
+        * platform/mac/fast/text/international/bidi-linebreak-002-expected.png:
+        * platform/mac/fast/text/international/bidi-linebreak-003-expected.checksum:
+        * platform/mac/fast/text/international/bidi-linebreak-003-expected.png:
+        * platform/mac/fast/text/international/bidi-mirror-he-ar-expected.checksum:
+        * platform/mac/fast/text/international/bidi-mirror-he-ar-expected.png:
+        * platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.checksum:
+        * platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.png:
+        * platform/mac/fonts/sans-serif-expected.checksum:
+        * platform/mac/fonts/sans-serif-expected.png:
+        * platform/mac/svg/custom/text-dom-01-f-expected.checksum:
+        * platform/mac/svg/custom/text-dom-01-f-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug113235-1-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug113235-1-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug113424-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug113424-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug1188-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug16012-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug16012-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug2479-2-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug8858-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug8858-expected.png:
+        * platform/mac/tables/mozilla/core/bloomberg-expected.checksum:
+        * platform/mac/tables/mozilla/core/bloomberg-expected.png:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug89315-expected.checksum:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+
 2011-02-25  Martin Robinson  <mrobinson@igalia.com>
 
         Add the final set of missing GTK+ SVG pixel results.
