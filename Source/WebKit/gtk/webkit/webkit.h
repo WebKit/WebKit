@@ -22,6 +22,7 @@
 #define __WEBKIT_H__
 
 #include <webkit/webkitversion.h>
+#include <webkit/webkitapplicationcache.h>
 #include <webkit/webkitdefines.h>
 #include <webkit/webkitdom.h>
 #include <webkit/webkitdownload.h>

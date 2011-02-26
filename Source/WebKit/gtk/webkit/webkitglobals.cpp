@@ -38,6 +38,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
+#include "webkitapplicationcache.h"
 #include "webkitglobalsprivate.h"
 #include "webkitsoupauthdialog.h"
 #include "webkitwebdatabase.h"
@@ -248,11 +249,8 @@ void webkitInit()
 
     gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL);
     webkit_set_web_database_directory_path(databaseDirectory);
+    webkit_application_cache_set_database_directory_path(databaseDirectory);
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    // FIXME: It should be possible for client applications to override the default appcache location
-    WebCore::cacheStorage().setCacheDirectory(databaseDirectory);
-#endif
     g_free(databaseDirectory);
 
     PageGroup::setShouldTrackVisitedLinks(true);

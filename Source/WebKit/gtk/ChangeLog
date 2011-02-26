@@ -1,3 +1,21 @@
+2011-02-26  Lukasz Slachciak  <l.slachciak@samsung.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Implemented API to set/get web application cache directory path database.
+
+        * GNUmakefile.am: Add webkitapplicationcache.h file.
+        * webkit/webkit.h: Add webkitapplicationcache.h file.
+        * webkit/webkitapplicationcache.cpp: definition of API setting and getting
+        web application cache directory path database.
+        (webkit_application_cache_get_database_directory_path):
+        (webkit_application_cache_set_database_directory_path):
+        * webkit/webkitapplicationcache.h: Added new API file for setting and getting
+        web application cache directory path database.
+        * webkit/webkitglobals.cpp:
+        (webkitInit): use webkit_application_cache_set_database_directory_path
+        to set default web application cache directory path database.
+
 2011-02-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
