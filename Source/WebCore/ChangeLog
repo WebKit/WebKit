@@ -1,3 +1,15 @@
+2011-02-26  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Database: Data race: should only touch the transaction queue inside the
+        lock.
+        https://bugs.webkit.org/show_bug.cgi?id=55031
+
+        * storage/Database.cpp:
+        (WebCore::Database::changeVersion): only touch queue inside lock.
+        (WebCore::Database::runTransaction): only touch queue inside lock.
+
 2011-02-26  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Eric Carlson.
