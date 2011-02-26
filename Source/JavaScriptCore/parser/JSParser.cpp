@@ -36,6 +36,7 @@ using namespace JSC;
 #include "SourceProvider.h"
 #include "SourceProviderCacheItem.h"
 #include <wtf/HashFunctions.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/WTFThreadData.h>
 #include <utility>
 
@@ -293,7 +294,31 @@ private:
             , m_labels(0)
         {
         }
-        
+
+        Scope(const Scope& rhs)
+            : m_globalData(rhs.m_globalData)
+            , m_shadowsArguments(rhs.m_shadowsArguments)
+            , m_usesEval(rhs.m_usesEval)
+            , m_needsFullActivation(rhs.m_needsFullActivation)
+            , m_allowsNewDecls(rhs.m_allowsNewDecls)
+            , m_strictMode(rhs.m_strictMode)
+            , m_isFunction(rhs.m_isFunction)
+            , m_isFunctionBoundary(rhs.m_isFunctionBoundary)
+            , m_isValidStrictMode(rhs.m_isValidStrictMode)
+            , m_loopDepth(rhs.m_loopDepth)
+            , m_switchDepth(rhs.m_switchDepth)
+            , m_labels(0)
+        {
+            if (rhs.m_labels) {
+                m_labels = adoptPtr(new LabelStack);
+                
+                typedef LabelStack::const_iterator iterator;
+                iterator end = rhs.m_labels->end();
+                for (iterator it = rhs.m_labels->begin(); it != end; ++it)
+                    m_labels->append(ScopeLabelInfo(it->m_ident, it->m_isLoop));
+            }
+        }
+
         void startSwitch() { m_switchDepth++; }
         void endSwitch() { m_switchDepth--; }
         void startLoop() { m_loopDepth++; }
@@ -305,7 +330,7 @@ private:
         void pushLabel(const Identifier* label, bool isLoop)
         {
             if (!m_labels)
-                m_labels = new LabelStack;
+                m_labels = adoptPtr(new LabelStack);
             m_labels->append(ScopeLabelInfo(label->impl(), isLoop));
         }
 
@@ -465,13 +490,13 @@ private:
         int m_switchDepth;
 
         typedef Vector<ScopeLabelInfo, 2> LabelStack;
-        LabelStack* m_labels;
+        OwnPtr<LabelStack> m_labels;
         IdentifierSet m_declaredVariables;
         IdentifierSet m_usedVariables;
         IdentifierSet m_closedVariables;
         IdentifierSet m_writtenVariables;
     };
-    
+
     typedef Vector<Scope, 10> ScopeStack;
 
     struct ScopeRef {
@@ -2139,4 +2164,9 @@ template <class TreeBuilder> TreeExpression JSParser::parseUnaryExpression(TreeB
     return expr;
 }
 
+}
+
+namespace WTF
+{
+    template <> struct VectorTraits<JSC::JSParser::Scope> : SimpleClassVectorTraits { };
 }

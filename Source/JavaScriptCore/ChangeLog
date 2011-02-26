@@ -1,3 +1,16 @@
+2011-02-25  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Leak in JSParser::Scope of ScopeLabelInfo Vector
+        https://bugs.webkit.org/show_bug.cgi?id=55249
+
+        Changed m_labels to be an OwnPtr<>.  Added VectorTraits
+        and Scope copy constructor to support this change.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::Scope::~Scope):
+
 2011-02-25  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Adam Barth.
