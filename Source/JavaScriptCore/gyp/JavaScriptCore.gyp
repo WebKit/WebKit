@@ -34,6 +34,7 @@
         'libicucore.dylib',
         'libobjc.dylib',
       ],
+      'xcode_config_file': '../Configurations/Base.xcconfig',
       'sources/': [
         ['exclude', 'qt'],
         ['exclude', 'os-win32'],
@@ -77,100 +78,6 @@
           'xcode_settings': {
             #### From Chromium #####
             'USE_HEADERMAP': 'NO',
-
-            'DEAD_CODE_STRIPPING': 'YES',
-            'DEBUG_INFORMATION_FORMAT': 'dwarf',
-            'GCC_C_LANGUAGE_STANDARD': 'gnu99',
-            'GCC_DEBUGGING_SYMBOLS': 'default',
-            'GCC_DYNAMIC_NO_PIC': 'NO',
-            'GCC_ENABLE_CPP_EXCEPTIONS': 'NO',
-            'GCC_ENABLE_CPP_RTTI': 'NO',
-            'GCC_ENABLE_OBJC_EXCEPTIONS': 'YES',
-            'GCC_ENABLE_OBJC_GC': 'supported',
-            'GCC_ENABLE_SYMBOL_SEPARATION': 'NO',
-            'GCC_FAST_OBJC_DISPATCH': 'YES',
-            'GCC_GENERATE_DEBUGGING_SYMBOLS': 'YES',
-            'GCC_INLINES_ARE_PRIVATE_EXTERN': 'YES',
-            'GCC_MODEL_TUNING': 'G5',
-            'GCC_PRECOMPILE_PREFIX_HEADER': 'YES',
-            'GCC_STRICT_ALIASING': 'YES',
-            'GCC_THREADSAFE_STATICS': 'NO',
-            'GCC_TREAT_WARNINGS_AS_ERRORS': 'YES',
-            'GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS': 'NO',
-            'GCC_WARN_ABOUT_MISSING_NEWLINE': 'YES',
-            'GCC_WARN_ABOUT_MISSING_PROTOTYPES': 'NO',
-            'GCC_WARN_NON_VIRTUAL_DESTRUCTOR': 'YES',
-            'LINKER_DISPLAYS_MANGLED_NAMES': 'YES',
-            'PREBINDING': 'NO',
-            'VALID_ARCHS': 'i386 ppc x86_64 ppc64',
-            'WARNING_CFLAGS': '$(WARNING_CFLAGS_$(CURRENT_ARCH))',
-            'WARNING_CFLAGS_BASE': [
-              '-Wall',
-              '-Wextra',
-              '-Wcast-qual',
-              '-Wchar-subscripts',
-              '-Wextra-tokens',
-              '-Wformat=2',
-              '-Winit-self',
-              # FIXME: Add this warning back.
-              # '-Wmissing-format-attribute',
-              '-Wmissing-noreturn',
-              '-Wpacked',
-              '-Wpointer-arith',
-              '-Wredundant-decls',
-              '-Wundef',
-              '-Wwrite-strings',
-            ],
-            'WARNING_CFLAGS_': '$(WARNING_CFLAGS_BASE) -Wshorten-64-to-32',
-            'WARNING_CFLAGS_i386': '$(WARNING_CFLAGS_BASE) -Wshorten-64-to-32',
-            'WARNING_CFLAGS_ppc': '$(WARNING_CFLAGS_BASE) -Wshorten-64-to-32',
-            # FIXME: JavaScriptGlue 64-bit builds should build with -Wshorten-64-to-32
-            'WARNING_CFLAGS_ppc64': '$(WARNING_CFLAGS_BASE)',
-            'WARNING_CFLAGS_x86_64': '$(WARNING_CFLAGS_BASE)',
-
-            'TARGET_MAC_OS_X_VERSION_MAJOR': '$(MAC_OS_X_VERSION_MAJOR)',
-
-            # DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL and STRIP_INSTALLED_PRODUCT vary between the debug and normal variants.
-            # We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.
-            'DEBUG_DEFINES_debug': '',
-            'DEBUG_DEFINES_normal': 'NDEBUG',
-            'DEBUG_DEFINES': '$(DEBUG_DEFINES_$(CURRENT_VARIANT))',
-
-            'GCC_OPTIMIZATION_LEVEL': '$(GCC_OPTIMIZATION_LEVEL_$(CURRENT_VARIANT))',
-            'GCC_OPTIMIZATION_LEVEL_normal': 's',
-            'GCC_OPTIMIZATION_LEVEL_debug': '0',
-
-            'STRIP_INSTALLED_PRODUCT': '$(STRIP_INSTALLED_PRODUCT_$(CURRENT_VARIANT))',
-            'STRIP_INSTALLED_PRODUCT_normal': 'YES',
-            'STRIP_INSTALLED_PRODUCT_debug': 'NO',
-
-            # Use GCC 4.2 with Xcode 3.1, which includes GCC 4.2 but defaults to GCC 4.0.
-            # Note that Xcode versions as new as 3.1.2 use XCODE_VERSION_ACTUAL for the minor version
-            # number.  Newer versions of Xcode use XCODE_VERSION_MINOR for the minor version, and
-            # XCODE_VERSION_ACTUAL for the full version number.
-            'TARGET_GCC_VERSION': '$(TARGET_GCC_VERSION_$(TARGET_MAC_OS_X_VERSION_MAJOR))',
-            'TARGET_GCC_VERSION_': '$(TARGET_GCC_VERSION_1040)',
-            'TARGET_GCC_VERSION_1040': 'GCC_40',
-            'TARGET_GCC_VERSION_1050': '$(TARGET_GCC_VERSION_1050_$(XCODE_VERSION_MINOR))',
-            'TARGET_GCC_VERSION_1050_': '$(TARGET_GCC_VERSION_1050_$(XCODE_VERSION_ACTUAL))',
-            'TARGET_GCC_VERSION_1050_0310': 'GCC_42',
-            'TARGET_GCC_VERSION_1050_0320': 'GCC_42',
-            'TARGET_GCC_VERSION_1060': 'GCC_42',
-            'TARGET_GCC_VERSION_1070': 'LLVM_GCC_42',
-
-            'GCC_VERSION': '$(GCC_VERSION_$(TARGET_GCC_VERSION))',
-            'GCC_VERSION_GCC_40': '4.0',
-            'GCC_VERSION_GCC_42': '4.2',
-            'GCC_VERSION_LLVM_GCC_42': 'com.apple.compilers.llvmgcc42',
-
-            # If the target Mac OS X version does not match the current Mac OS X version then we'll want to build using the target version's SDK.
-            'SDKROOT': '$(SDKROOT_$(MAC_OS_X_VERSION_MAJOR)_$(TARGET_MAC_OS_X_VERSION_MAJOR))',
-            'SDKROOT_1050_1040': 'macosx10.4',
-            'SDKROOT_1060_1040': 'macosx10.4',
-            'SDKROOT_1060_1050': 'macosx10.5',
-            'SDKROOT_1070_1040': 'macosx10.4',
-            'SDKROOT_1070_1050': 'macosx10.5',
-            'SDKROOT_1070_1060': 'macosx10.6',
 
             ##### From DebugRelease #####
 

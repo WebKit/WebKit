@@ -1,3 +1,16 @@
+2011-02-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        JavaScriptCore should use the xcconfig file instead of importing that information into GYP
+        https://bugs.webkit.org/show_bug.cgi?id=55282
+
+        Technically, this breaks the build because I had removed one of the
+        warnings in this config file, but this change seems like an
+        improvement.
+
+        * gyp/JavaScriptCore.gyp:
+
 2011-02-26  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
 
         Reviewed by Nikolas Zimmermann.
