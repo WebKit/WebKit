@@ -1,3 +1,10 @@
+2011-02-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: follow up to r79799. Fixing WinCE+Efl, mute new tests on Qt.
+        https://bugs.webkit.org/show_bug.cgi?id=55302
+
+        * platform/qt/Skipped:
+
 2011-02-26  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update.
