@@ -1033,15 +1033,6 @@ HRESULT STDMETHODCALLTYPE WebFrame::hasSpellingMarker(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebFrame::clearOpener()
-{
-    HRESULT hr = S_OK;
-    if (Frame* coreFrame = core(this))
-        coreFrame->loader()->setOpener(0);
-
-    return hr;
-}
-
 // IWebDocumentText -----------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebFrame::supportsTextEncoding( 

@@ -80,7 +80,6 @@ public:
     virtual bool hasVisibleContent() const;
     virtual WebView* view() const;
     virtual WebFrame* opener() const;
-    virtual void clearOpener();
     virtual WebFrame* parent() const;
     virtual WebFrame* top() const;
     virtual WebFrame* firstChild() const;

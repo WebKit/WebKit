@@ -278,8 +278,6 @@ public:
         /* [in] */ UINT length,
         /* [retval][out] */ BOOL *result);
 
-    virtual HRESULT STDMETHODCALLTYPE clearOpener();
-
     // IWebDocumentText
     virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding( 
         /* [retval][out] */ BOOL* result);

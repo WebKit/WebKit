@@ -227,7 +227,6 @@ void TestShell::resetTestController()
     m_drtDevToolsAgent->reset();
     if (m_drtDevToolsClient)
         m_drtDevToolsClient->reset();
-    webView()->mainFrame()->clearOpener();
 }
 
 void TestShell::loadURL(const WebURL& url)

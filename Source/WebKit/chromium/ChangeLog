@@ -1,3 +1,15 @@
+2011-02-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r79764.
+        http://trac.webkit.org/changeset/79764
+        https://bugs.webkit.org/show_bug.cgi?id=55295
+
+        "broke Chromium builds" (Requested by rniwa on #webkit).
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        * src/WebFrameImpl.h:
+
 2011-02-26  David Dorwin  <ddorwin@chromium.org>
 
         Reviewed by Darin Fisher.

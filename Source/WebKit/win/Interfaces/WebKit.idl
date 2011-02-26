@@ -301,4 +301,3 @@ library WebKit
         [default] interface IWebUserContentURLPattern;
     }
 }
-
