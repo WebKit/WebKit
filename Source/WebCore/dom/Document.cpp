@@ -2148,6 +2148,14 @@ bool Document::shouldScheduleLayout()
     return (haveStylesheetsLoaded() && body())
         || (documentElement() && !documentElement()->hasTagName(htmlTag));
 }
+    
+bool Document::isLayoutTimerActive()
+{
+    if (!view() || !view()->layoutPending())
+        return false;
+    bool isPendingLayoutImmediate = minimumLayoutDelay() == m_extraLayoutDelay;
+    return isPendingLayoutImmediate;
+}
 
 int Document::minimumLayoutDelay()
 {

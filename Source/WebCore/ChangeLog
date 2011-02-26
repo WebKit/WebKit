@@ -1,3 +1,22 @@
+2011-02-26  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix isLayoutTimerActive for ports that set a minimumLayoutDelay
+        https://bugs.webkit.org/show_bug.cgi?id=54810
+
+        No new tests because no new functionality.
+
+        * dom/Document.cpp:
+        (WebCore::Document::isLayoutTimerActive): Moved from HTMLParserScheduler per FIXME. Compare
+        minimumLayoutDelay() to m_extraLayoutDelay instead of 0. This spirit of this comparison was
+        broken by r52919. The effect would be that ports that set an extra layout delay can't yield
+        between tokens. Note: can't be const because minimumLayoutDelay sets a member.
+        * dom/Document.h:
+        * html/parser/HTMLParserScheduler.cpp:
+        (WebCore::HTMLParserScheduler::continueNextChunkTimerFired):
+        (WebCore::HTMLParserScheduler::checkForYieldBeforeScript):
+
 2011-02-26  David Dorwin  <ddorwin@chromium.org>
 
         Reviewed by Darin Fisher.

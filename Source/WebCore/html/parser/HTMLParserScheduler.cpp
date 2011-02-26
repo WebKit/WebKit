@@ -74,19 +74,12 @@ HTMLParserScheduler::~HTMLParserScheduler()
     m_continueNextChunkTimer.stop();
 }
 
-// FIXME: This belongs on Document.
-static bool isLayoutTimerActive(Document* doc)
-{
-    ASSERT(doc);
-    return doc->view() && doc->view()->layoutPending() && !doc->minimumLayoutDelay();
-}
-
 void HTMLParserScheduler::continueNextChunkTimerFired(Timer<HTMLParserScheduler>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_continueNextChunkTimer);
     // FIXME: The timer class should handle timer priorities instead of this code.
     // If a layout is scheduled, wait again to let the layout timer run first.
-    if (isLayoutTimerActive(m_parser->document())) {
+    if (m_parser->document()->isLayoutTimerActive()) {
         m_continueNextChunkTimer.startOneShot(0);
         return;
     }

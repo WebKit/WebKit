@@ -646,6 +646,7 @@ public:
     void setExtraLayoutDelay(int delay) { m_extraLayoutDelay = delay; }
 
     bool shouldScheduleLayout();
+    bool isLayoutTimerActive();
     int elapsedTime() const;
     
     void setTextColor(const Color& color) { m_textColor = color; }
