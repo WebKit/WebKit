@@ -1,3 +1,9 @@
+2011-02-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: rolling chromium DEPS.
+
+        * DEPS:
+
 2011-02-26  Bill Budge  <bbudge@chromium.org>
 
         Reviewed by David Levin.
