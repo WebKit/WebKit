@@ -1,3 +1,12 @@
+2011-02-25  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        AX: Add Xcode entries back to the navigator list for Accessibility cpp files
+        https://bugs.webkit.org/show_bug.cgi?id=55280
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-02-25  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Adam Barth.
