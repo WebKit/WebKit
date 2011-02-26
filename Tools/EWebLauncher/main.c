@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2008 INdT - Instituto Nokia de Tecnologia
  * Copyright (C) 2009, 2010 ProFUSION embedded systems
- * Copyright (C) 2009, 2010 Samsung Electronics
+ * Copyright (C) 2009, 2010, 2011 Samsung Electronics
  *
  * All rights reserved.
  *
@@ -99,7 +99,7 @@ static const Ecore_Getopt options = {
     "0.0.1",
     "(C)2008 INdT (The Nokia Technology Institute)\n"
     "(C)2009, 2010 ProFUSION embedded systems\n"
-    "(C)2009, 2010 Samsung Electronics",
+    "(C)2009, 2010, 2011 Samsung Electronics",
     "GPL",
     "Test Web Browser using the Enlightenment Foundation Libraries of WebKit",
     EINA_TRUE, {
@@ -110,6 +110,8 @@ static const Ecore_Getopt options = {
              ecore_getopt_callback_ecore_evas_list_engines, NULL),
         ECORE_GETOPT_CHOICE
             ('b', "backing-store", "choose backing store to use.", backingStores),
+        ECORE_GETOPT_STORE_DEF_BOOL
+            ('f', "flattening", "frame flattening.", 0),
         ECORE_GETOPT_STORE_DEF_BOOL
             ('F', "fullscreen", "fullscreen mode.", 0),
         ECORE_GETOPT_CALLBACK_ARGS
@@ -153,12 +155,13 @@ typedef struct _ELauncher {
     const char *theme;
     const char *userAgent;
     const char *backingStore;
+    unsigned char isFlattening;
     Viewport viewport;
 } ELauncher;
 
 static void browserDestroy(Ecore_Evas *ee);
 static void closeWindow(Ecore_Evas *ee);
-static int browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, const char *backingStore, unsigned char isFullscreen, const char *databasePath);
+static int browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, const char *backingStore, unsigned char isFlattening, unsigned char isFullscreen, const char *databasePath);
 
 static void
 print_history(Eina_List *list)
@@ -585,7 +588,7 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         Eina_Rectangle geometry = {0, 0, 0, 0};
         browserCreate("http://www.google.com",
                        app->theme, app->userAgent, geometry, app-> backingStore,
-                       NULL, 0, NULL);
+                       NULL, app->isFlattening, 0, NULL);
     } else if (!strcmp(ev->key, "F10")) {
         Evas_Coord x, y, w, h;
         Evas_Object *frame = ewk_view_frame_main_get(obj);
@@ -649,7 +652,7 @@ quit(Eina_Bool success, const char *msg)
 }
 
 static int
-browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, const char *backingStore, unsigned char isFullscreen, const char *databasePath)
+browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, const char *backingStore, unsigned char isFlattening, unsigned char isFullscreen, const char *databasePath)
 {
     if ((geometry.w <= 0) && (geometry.h <= 0)) {
         geometry.w = DEFAULT_WIDTH;
@@ -680,6 +683,7 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
     app->theme = theme;
     app->userAgent = userAgent;
     app->backingStore = backingStore;
+    app->isFlattening = isFlattening;
 
     app->bg = evas_object_rectangle_add(app->evas);
     evas_object_name_set(app->bg, "bg");
@@ -701,6 +705,7 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
     if (userAgent)
         ewk_view_setting_user_agent_set(app->browser, userAgent);
     ewk_view_setting_local_storage_database_path_set(app->browser, databasePath);
+    ewk_view_setting_enable_frame_flattening_set(app->browser, isFlattening);
     
     evas_object_name_set(app->browser, "browser");
 
@@ -820,6 +825,7 @@ main(int argc, char *argv[])
     char *backingStore = (char *)backingStores[0];
 
     unsigned char quitOption = 0;
+    unsigned char isFlattening = 0;
     unsigned char isFullscreen = 0;
     int args;
 
@@ -827,6 +833,7 @@ main(int argc, char *argv[])
         ECORE_GETOPT_VALUE_STR(engine),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_STR(backingStore),
+        ECORE_GETOPT_VALUE_BOOL(isFlattening),
         ECORE_GETOPT_VALUE_BOOL(isFullscreen),
         ECORE_GETOPT_VALUE_PTR_CAST(geometry),
         ECORE_GETOPT_VALUE_STR(theme),
@@ -878,7 +885,7 @@ main(int argc, char *argv[])
     if (proxyUri)
         ewk_settings_proxy_uri_set(proxyUri);
 
-    browserCreate(url, themePath, userAgent, geometry, engine, backingStore, isFullscreen, path);
+    browserCreate(url, themePath, userAgent, geometry, engine, backingStore, isFlattening, isFullscreen, path);
     ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, &windows);
 
     ecore_main_loop_begin();
