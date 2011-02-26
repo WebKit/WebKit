@@ -1,3 +1,30 @@
+2011-02-25  James Robinson  <jamesr@chromium.org>
+
+        Update chromium expectations and add new chromium and mac-leopard baselines for new tests.
+
+        * platform/chromium-linux/fast/block/positioning/differing-writing-modes-expected.checksum: Added.
+        * platform/chromium-linux/fast/block/positioning/differing-writing-modes-expected.png: Added.
+        * platform/chromium-linux/fast/block/positioning/differing-writing-modes-replaced-expected.checksum: Added.
+        * platform/chromium-linux/fast/block/positioning/differing-writing-modes-replaced-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-continuation-outline-paint-crash-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-continuation-outline-paint-crash-expected.png: Added.
+        * platform/chromium-win/fast/block/positioning/differing-writing-modes-expected.checksum: Added.
+        * platform/chromium-win/fast/block/positioning/differing-writing-modes-expected.png: Added.
+        * platform/chromium-win/fast/block/positioning/differing-writing-modes-expected.txt: Added.
+        * platform/chromium-win/fast/block/positioning/differing-writing-modes-replaced-expected.checksum: Added.
+        * platform/chromium-win/fast/block/positioning/differing-writing-modes-replaced-expected.png: Added.
+        * platform/chromium-win/fast/block/positioning/differing-writing-modes-replaced-expected.txt: Added.
+        * platform/chromium-win/fast/table/table-continuation-outline-paint-crash-expected.checksum: Added.
+        * platform/chromium-win/fast/table/table-continuation-outline-paint-crash-expected.png: Added.
+        * platform/chromium-win/fast/table/table-continuation-outline-paint-crash-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/block/positioning/differing-writing-modes-expected.checksum: Added.
+        * platform/mac-leopard/fast/block/positioning/differing-writing-modes-expected.png: Added.
+        * platform/mac-leopard/fast/block/positioning/differing-writing-modes-replaced-expected.checksum: Added.
+        * platform/mac-leopard/fast/block/positioning/differing-writing-modes-replaced-expected.png: Added.
+        * platform/mac-leopard/fast/table/table-continuation-outline-paint-crash-expected.checksum: Added.
+        * platform/mac-leopard/fast/table/table-continuation-outline-paint-crash-expected.png: Added.
+
 2011-02-25  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed rebaseline.
