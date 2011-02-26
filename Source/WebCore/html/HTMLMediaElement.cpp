@@ -1521,8 +1521,7 @@ void HTMLMediaElement::setMuted(bool muted)
                 m_player->setMuted(m_muted);
                 if (renderer())
                     renderer()->updateFromElement();
-            } else
-                updateVolume();
+            }
         }
         scheduleEvent(eventNames().volumechangeEvent);
     }
@@ -1862,9 +1861,14 @@ void HTMLMediaElement::mediaPlayerVolumeChanged(MediaPlayer*)
     LOG(Media, "HTMLMediaElement::mediaPlayerVolumeChanged");
 
     beginProcessingMediaPlayerCallback();
-    if (m_player)
-        m_volume = m_player->volume();
-    updateVolume();
+    if (m_player) {
+        float vol = m_player->volume();
+        if (vol != m_volume) {
+            m_volume = vol;
+            updateVolume();
+            scheduleEvent(eventNames().volumechangeEvent);
+        }
+    }
     endProcessingMediaPlayerCallback();
 }
 

@@ -1,3 +1,19 @@
+2011-02-26  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        Missing volumechangeEvent in case of mediaPlayerVolumeChanged gets callback
+        https://bugs.webkit.org/show_bug.cgi?id=55147
+
+        When HTMLMediaElement::mediaPlayerVolumeChanged() gets callback, 
+        a volumechangeEvent event should be fired if the volume gets changed.
+
+        Test: media/event-attributes.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setMuted): Remove updateVolume() since it does nothing when m_player is 0.
+        (WebCore::HTMLMediaElement::mediaPlayerVolumeChanged): Fire a volumechangeEvent when the volume is changed.
+
 2011-02-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej Stachowiak.
