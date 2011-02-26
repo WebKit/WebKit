@@ -1,3 +1,16 @@
+2011-02-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        DumpRenderTree should reset frame opener between tests.
+        https://bugs.webkit.org/show_bug.cgi?id=54874
+
+        Added clearOpener method to WKBundleWebFramePrivate.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameClearOpener):
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h:
+
 2011-02-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

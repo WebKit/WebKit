@@ -463,6 +463,8 @@ static void resetDefaultsToConsistentValues()
 
     if (axController)
         axController->resetToConsistentState();
+
+    DumpRenderTreeSupportGtk::clearOpener(mainFrame);
 }
 
 static bool useLongRunningServerMode(int argc, char *argv[])
