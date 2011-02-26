@@ -1,3 +1,24 @@
+2011-02-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8036034> WebKit2 should work even if DYLD_FRAMEWORK_PATH is not set
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::EnvironmentVariables::~EnvironmentVariables): Use fastFree, not delete, on
+        the strings here because they are allocated with fastMalloc, not new.
+        (WebKit::EnvironmentVariables::set): Use const more.
+        (WebKit::EnvironmentVariables::get): Ditto.
+        (WebKit::EnvironmentVariables::appendValue): Ditto.
+        (WebKit::EnvironmentVariables::valueIfVariableHasName): Ditto. Also fix mistake
+        where this would match if the name matched only a prefix of the environment variable's
+        name. We want to match the whole name, so we need to use memcmp, not strncmp.
+        (WebKit::EnvironmentVariables::createStringForVariable): Use const more.
+        (WebKit::ProcessLauncher::launchProcess): Use clearer name, frameworkExecutablePath,
+        for what was called bundlePath before. Append the frameworks path to DYLD_FRAMEWORK_PATH,
+        ensuring we can pick up other frameworks from the same directory in the web process.
+        Use a const_cast instead of a C-style cast.
+
 2011-02-25  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Anders Carlsson.

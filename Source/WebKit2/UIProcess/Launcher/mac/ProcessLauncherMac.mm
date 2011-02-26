@@ -77,7 +77,9 @@ public:
 
     ~EnvironmentVariables()
     {
-        deleteAllValues(m_allocatedStrings);
+        size_t size = m_allocatedStrings.size();
+        for (size_t i = 0; i < size; ++i)
+            fastFree(m_allocatedStrings[i]);
     }
 
     void set(const char* name, const char* value)
@@ -87,30 +89,28 @@ public:
             copyEnvironmentVariables();
 
         // Allocate a string for the name and value.
-        char* nameAndValue = createStringForVariable(name, value);
+        const char* nameAndValue = createStringForVariable(name, value);
 
         for (size_t i = 0; i < m_environmentVariables.size() - 1; ++i) {
-            char* environmentVariable = m_environmentVariables[i];
-
-            if (valueIfVariableHasName(environmentVariable, name)) {
+            if (valueIfVariableHasName(m_environmentVariables[i], name)) {
                 // Just replace the environment variable.
-                m_environmentVariables[i] = nameAndValue;
+                m_environmentVariables[i] = const_cast<char*>(nameAndValue);
                 return;
             }
         }
 
         // Append the new string.
         ASSERT(!m_environmentVariables.last());
-        m_environmentVariables.last() = nameAndValue;
+        m_environmentVariables.last() = const_cast<char*>(nameAndValue);
         m_environmentVariables.append(static_cast<char*>(0));
 
         m_environmentPointer = m_environmentVariables.data();
     }
 
-    char* get(const char* name) const
+    const char* get(const char* name) const
     {
         for (size_t i = 0; m_environmentPointer[i]; ++i) {
-            if (char* value = valueIfVariableHasName(m_environmentPointer[i], name))
+            if (const char* value = valueIfVariableHasName(m_environmentPointer[i], name))
                 return value;
         }
         return 0;
@@ -119,7 +119,7 @@ public:
     // Will append the value with the given separator if the environment variable already exists.
     void appendValue(const char* name, const char* value, char separator)
     {
-        char* existingValue = get(name);
+        const char* existingValue = get(name);
         if (!existingValue) {
             set(name, value);
             return;
@@ -136,20 +136,22 @@ public:
     char** environmentPointer() const { return m_environmentPointer; }
 
 private:
-    char *valueIfVariableHasName(const char* environmentVariable, const char* name) const
+    const char* valueIfVariableHasName(const char* environmentVariable, const char* name) const
     {
         // Find the environment variable name.
-        char* equalsLocation = strchr(environmentVariable, '=');
+        const char* equalsLocation = strchr(environmentVariable, '=');
         ASSERT(equalsLocation);
 
         size_t nameLength = equalsLocation - environmentVariable;
-        if (strncmp(environmentVariable, name, nameLength))
+        if (strlen(name) != nameLength)
+            return 0;
+        if (memcmp(environmentVariable, name, nameLength))
             return 0;
 
         return equalsLocation + 1;
     }
 
-    char* createStringForVariable(const char* name, const char* value)
+    const char* createStringForVariable(const char* name, const char* value)
     {
         int nameLength = strlen(name);
         int valueLength = strlen(value);
@@ -192,7 +194,8 @@ void ProcessLauncher::launchProcess()
     mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
 
     NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];
-    const char* bundlePath = [[webKit2Bundle executablePath] fileSystemRepresentation];
+    const char* frameworksPath = [[[webKit2Bundle bundlePath] stringByDeletingLastPathComponent] fileSystemRepresentation];
+    const char* frameworkExecutablePath = [[webKit2Bundle executablePath] fileSystemRepresentation];
 
     NSString *webProcessAppPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
     NSString *webProcessAppExecutablePath = [[NSBundle bundleWithPath:webProcessAppPath] executablePath];
@@ -200,8 +203,7 @@ void ProcessLauncher::launchProcess()
     // Make a unique, per pid, per process launcher web process service name.
     CString serviceName = String::format("com.apple.WebKit.WebProcess-%d-%p", getpid(), this).utf8();
 
-    const char* path = [webProcessAppExecutablePath fileSystemRepresentation];
-    const char* args[] = { path, bundlePath, "-type", processTypeAsString(m_launchOptions.processType), "-servicename", serviceName.data(), 0 };
+    const char* args[] = { [webProcessAppExecutablePath fileSystemRepresentation], frameworkExecutablePath, "-type", processTypeAsString(m_launchOptions.processType), "-servicename", serviceName.data(), 0 };
 
     // Register ourselves.
     kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.data()), listeningPort, 0);
@@ -243,10 +245,12 @@ void ProcessLauncher::launchProcess()
 
     EnvironmentVariables environmentVariables;
 
+    environmentVariables.appendValue("DYLD_FRAMEWORK_PATH", frameworksPath, ':');
+
     if (m_launchOptions.processType == ProcessLauncher::PluginProcess) {
         // We need to insert the plug-in process shim.
         NSString *pluginProcessShimPathNSString = [[webProcessAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"PluginProcessShim.dylib"];
-        const char *pluginProcessShimPath = [pluginProcessShimPathNSString fileSystemRepresentation];
+        const char* pluginProcessShimPath = [pluginProcessShimPathNSString fileSystemRepresentation];
 
         // Make sure that the file exists.
         struct stat statBuf;
@@ -254,7 +258,7 @@ void ProcessLauncher::launchProcess()
             environmentVariables.appendValue("DYLD_INSERT_LIBRARIES", pluginProcessShimPath, ':');
     }
     
-    int result = posix_spawn(&processIdentifier, path, 0, &attr, (char *const*)args, environmentVariables.environmentPointer());
+    int result = posix_spawn(&processIdentifier, args[0], 0, &attr, const_cast<char**>(args), environmentVariables.environmentPointer());
 
     posix_spawnattr_destroy(&attr);
 
