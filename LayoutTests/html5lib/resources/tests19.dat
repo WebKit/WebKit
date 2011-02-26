@@ -378,11 +378,11 @@
 |     <p>
 |       <math math>
 |         <math mi>
-|     <p>
-|     <h1>
+|           <p>
+|           <h1>
 
 #data
-<!doctype html><p><math><mi><p><h1>
+<!doctype html><p><math><mo><p><h1>
 #errors
 #document
 | <!DOCTYPE html>
@@ -391,9 +391,51 @@
 |   <body>
 |     <p>
 |       <math math>
-|         <math mi>
+|         <math mo>
+|           <p>
+|           <h1>
+
+#data
+<!doctype html><p><math><mn><p><h1>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
 |     <p>
-|     <h1>
+|       <math math>
+|         <math mn>
+|           <p>
+|           <h1>
+
+#data
+<!doctype html><p><math><ms><p><h1>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math ms>
+|           <p>
+|           <h1>
+
+#data
+<!doctype html><p><math><mtext><p><h1>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mtext>
+|           <p>
+|           <h1>
 
 #data
 <!doctype html><frameset></noframes>
@@ -831,6 +873,25 @@
 |     "a "
 
 #data
+<!doctype html><div><frameset>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+
+#data
+<!doctype html><div><body><frameset>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <div>
+
+#data
 <!doctype html><p><math></p>a
 #errors
 #document
@@ -854,7 +915,8 @@
 |       <math math>
 |         <math mn>
 |           <span>
-|     "a"
+|             <p>
+|             "a"
 
 #data
 <!doctype html><math></html>
@@ -1142,3 +1204,17 @@
 |     <summary>
 |       <article>
 |     "a"
+
+#data
+<!doctype html><p><a><plaintext>b
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <a>
+|     <plaintext>
+|       <a>
+|         "b"

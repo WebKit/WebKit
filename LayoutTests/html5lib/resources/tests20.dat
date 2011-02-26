@@ -349,3 +349,107 @@
 |     <svg svg>
 |       <svg title>
 |         "abc"
+
+#data
+<option><span><option>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <option>
+|       <span>
+|         <option>
+
+#data
+<option><option>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <option>
+|     <option>
+
+#data
+<math><annotation-xml><div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|     <div>
+
+#data
+<math><annotation-xml encoding="application/svg+xml"><div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         encoding="application/svg+xml"
+|     <div>
+
+#data
+<math><annotation-xml encoding="application/xhtml+xml"><div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         encoding="application/xhtml+xml"
+|         <div>
+
+#data
+<math><annotation-xml encoding="aPPlication/xhtmL+xMl"><div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         encoding="aPPlication/xhtmL+xMl"
+|         <div>
+
+#data
+<math><annotation-xml encoding="text/html"><div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         encoding="text/html"
+|         <div>
+
+#data
+<math><annotation-xml encoding="Text/htmL"><div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         encoding="Text/htmL"
+|         <div>
+
+#data
+<math><annotation-xml encoding=" text/html "><div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         encoding=" text/html "
+|     <div>

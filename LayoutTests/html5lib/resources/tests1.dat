@@ -834,32 +834,6 @@ Line: 1 Col: 22 Expected closing tag. Unexpected end of file.
 |       "D"
 
 #data
-<cite><b><cite><i><cite><i><cite><i><div>X</b>TEST
-#errors
-Line: 1 Col: 6 Unexpected start tag (cite). Expected DOCTYPE.
-Line: 1 Col: 46 End tag (b) violates step 1, paragraph 3 of the adoption agency algorithm.
-Line: 1 Col: 50 Expected closing tag. Unexpected end of file.
-#document
-| <html>
-|   <head>
-|   <body>
-|     <cite>
-|       <b>
-|         <cite>
-|           <i>
-|             <cite>
-|               <i>
-|                 <cite>
-|                   <i>
-|       <i>
-|         <i>
-|           <i>
-|             <div>
-|               <b>
-|                 "X"
-|               "TEST"
-
-#data
 
 #errors
 Line: 1 Col: 0 Unexpected End of file. Expected DOCTYPE.

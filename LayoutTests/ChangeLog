@@ -1,3 +1,28 @@
+2011-02-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Synchronized tests with html5lib
+        https://bugs.webkit.org/show_bug.cgi?id=55128
+
+        I didn't copy all of plain-test-unsafe because it confuses pretty-diff.
+
+        * html5lib/resources/pending-spec-changes-plain-text-unsafe.dat:
+        * html5lib/resources/pending-spec-changes.dat:
+        * html5lib/resources/tests1.dat:
+        * html5lib/resources/tests10.dat:
+        * html5lib/resources/tests19.dat:
+        * html5lib/resources/tests20.dat:
+        * html5lib/resources/tests22.dat: Added.
+        * html5lib/resources/tests23.dat: Added.
+        * html5lib/resources/tests24.dat: Added.
+        * html5lib/resources/tests25.dat: Added.
+        * html5lib/resources/tests26.dat: Added.
+        * html5lib/resources/tests3.dat:
+        * html5lib/resources/tests6.dat:
+        * html5lib/runner-expected.txt:
+        * html5lib/runner.html:
+
 2011-02-26  Xianzhu Wang  <wangxianzhu@google.com>
 
         Reviewed by Eric Seidel.

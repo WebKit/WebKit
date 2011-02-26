@@ -547,6 +547,32 @@
 |           "a"
 
 #data
+<!DOCTYPE html><p><svg><desc><p>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <svg svg>
+|         <svg desc>
+|           <p>
+
+#data
+<!DOCTYPE html><p><svg><title><p>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <svg svg>
+|         <svg title>
+|           <p>
+
+#data
 <div><svg><path><foreignObject><p></foreignObject><p>
 #errors
 #document
@@ -573,7 +599,7 @@
 |           <object>
 |             <div>
 |               <span>
-|       <mi>
+|       <math mi>
 
 #data
 <math><mi><svg><foreignObject><div><div></div></div></foreignObject></svg></mi><mi>
