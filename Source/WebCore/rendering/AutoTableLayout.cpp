@@ -82,7 +82,7 @@ void AutoTableLayout::recalcColumn(int effCol)
                     Length cellLogicalWidth = cell->styleOrColLogicalWidth();
                     // FIXME: What is this arbitrary value?
                     if (cellLogicalWidth.rawValue() > 32760)
-                        cellLogicalWidth.setRawValue(32760);
+                        cellLogicalWidth.setValue(32760);
                     if (cellLogicalWidth.isNegative())
                         cellLogicalWidth.setValue(0);
                     switch (cellLogicalWidth.type()) {
@@ -374,7 +374,7 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
                         totalWidth -= m_layoutStruct[pos].effectiveMaxLogicalWidth;
                         percentMissing -= percent;
                         if (percent > 0)
-                            m_layoutStruct[pos].effectiveLogicalWidth.setRawValue(Percent, percent);
+                            m_layoutStruct[pos].effectiveLogicalWidth.setValue(Percent, percent);
                         else
                             m_layoutStruct[pos].effectiveLogicalWidth = Length();
                     }
