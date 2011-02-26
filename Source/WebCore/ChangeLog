@@ -1,3 +1,41 @@
+2011-02-26  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Prevent parser yields from triggering early dumpAsText()
+        https://bugs.webkit.org/show_bug.cgi?id=55187
+
+        DRT's dumpAsText() takes a snapshot when DocumentLoader::isLoadingInAPISense()
+        indicates the page is done. isLoadingInAPISense depends on
+        HTMLDocumentParser::isProcessingData(), which just checks if the parser is in an
+        insert() or append().
+
+        This means that if the parser is pumping in a resumeParsingAfterScriptExecution() or
+        resumeParsingAfterYield(), isLoadingInAPISense() may not be blocked. This patch
+        fixes that by repurposing m_writeNestingLevel as m_pumpSessionNestingLevel and
+        incrementing it in pumpTokenizer().
+
+        When I locally cause the parser to yield after every token, a lot of tests fail
+        because DRT snapshots too early. This patch fixes those tests, however I'm having
+        trouble writing a test case that reliably reproduces the problem without this patch
+        and passes with it (without changing yield constants). This is because it requires
+        4,096 tokens in a single pump session to yield and (len('<b>' * 4096 = 12k, which
+        doesn't always happen).
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::~HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::processingData):
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        (WebCore::HTMLDocumentParser::insert):
+        (WebCore::HTMLDocumentParser::append):
+        * html/parser/HTMLDocumentParser.h:
+        (WebCore::HTMLDocumentParser::inPumpSession):
+        (WebCore::HTMLDocumentParser::shouldDelayEnd):
+        * html/parser/HTMLParserScheduler.h:
+        (WebCore::PumpSession::PumpSession):
+        * html/parser/NestingLevelIncrementer.h:
+
 2011-02-26  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Reviewed by David Kilzer.

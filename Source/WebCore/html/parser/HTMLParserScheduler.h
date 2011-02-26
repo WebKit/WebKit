@@ -26,6 +26,7 @@
 #ifndef HTMLParserScheduler_h
 #define HTMLParserScheduler_h
 
+#include "NestingLevelIncrementer.h"
 #include "Timer.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/PassOwnPtr.h>
@@ -34,9 +35,11 @@ namespace WebCore {
 
 class HTMLDocumentParser;
 
-struct PumpSession {
-    PumpSession()
-        : processedTokens(0)
+class PumpSession : public NestingLevelIncrementer {
+public:
+    PumpSession(unsigned& nestingLevel)
+        : NestingLevelIncrementer(nestingLevel)
+        , processedTokens(0)
         , startTime(currentTime())
         , needsYield(false)
     {

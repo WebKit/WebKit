@@ -82,7 +82,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
     , m_parserScheduler(HTMLParserScheduler::create(this))
     , m_xssFilter(this)
     , m_endWasDelayed(false)
-    , m_writeNestingLevel(0)
+    , m_pumpSessionNestingLevel(0)
 {
 }
 
@@ -94,7 +94,7 @@ HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* cont
     , m_treeBuilder(HTMLTreeBuilder::create(this, fragment, contextElement, scriptingPermission, usePreHTML5ParserQuirks(fragment->document())))
     , m_xssFilter(this)
     , m_endWasDelayed(false)
-    , m_writeNestingLevel(0)
+    , m_pumpSessionNestingLevel(0)
 {
     bool reportErrors = false; // For now document fragment parsing never reports errors.
     m_tokenizer->setState(tokenizerStateForContextElement(contextElement, reportErrors));
@@ -103,7 +103,7 @@ HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* cont
 HTMLDocumentParser::~HTMLDocumentParser()
 {
     ASSERT(!m_parserScheduler);
-    ASSERT(!m_writeNestingLevel);
+    ASSERT(!m_pumpSessionNestingLevel);
     ASSERT(!m_preloadScanner);
 }
 
@@ -158,7 +158,7 @@ bool HTMLDocumentParser::isParsingFragment() const
 
 bool HTMLDocumentParser::processingData() const
 {
-    return isScheduledForResume() || inWrite();
+    return isScheduledForResume() || inPumpSession();
 }
 
 void HTMLDocumentParser::pumpTokenizerIfPossible(SynchronousMode mode)
@@ -243,6 +243,8 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     // ASSERT that this object is both attached to the Document and protected.
     ASSERT(refCount() >= 2);
 
+    PumpSession session(m_pumpSessionNestingLevel);
+
     // We tell the InspectorInstrumentation about every pump, even if we
     // end up pumping nothing.  It can filter out empty pumps itself.
     // FIXME: m_input.current().length() is only accurate if we
@@ -250,7 +252,6 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     // much we parsed as part of didWriteHTML instead of willWriteHTML.
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), m_input.current().length(), m_tokenizer->lineNumber());
 
-    PumpSession session;
     while (canTakeNextToken(mode, session) && !session.needsYield) {
         if (!isParsingFragment())
             m_sourceTracker.start(m_input, m_token);
@@ -311,14 +312,10 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
     // but we need to ensure it isn't deleted yet.
     RefPtr<HTMLDocumentParser> protect(this);
 
-    {
-        NestingLevelIncrementer nestingLevelIncrementer(m_writeNestingLevel);
-
-        SegmentedString excludedLineNumberSource(source);
-        excludedLineNumberSource.setExcludeLineNumbers();
-        m_input.insertAtCurrentInsertionPoint(excludedLineNumberSource);
-        pumpTokenizerIfPossible(ForceSynchronous);
-    }
+    SegmentedString excludedLineNumberSource(source);
+    excludedLineNumberSource.setExcludeLineNumbers();
+    m_input.insertAtCurrentInsertionPoint(excludedLineNumberSource);
+    pumpTokenizerIfPossible(ForceSynchronous);
 
     endIfDelayed();
 }
@@ -332,22 +329,18 @@ void HTMLDocumentParser::append(const SegmentedString& source)
     // but we need to ensure it isn't deleted yet.
     RefPtr<HTMLDocumentParser> protect(this);
 
-    {
-        NestingLevelIncrementer nestingLevelIncrementer(m_writeNestingLevel);
+    m_input.appendToEnd(source);
+    if (m_preloadScanner)
+        m_preloadScanner->appendToEnd(source);
 
-        m_input.appendToEnd(source);
-        if (m_preloadScanner)
-            m_preloadScanner->appendToEnd(source);
-
-        if (m_writeNestingLevel > 1) {
-            // We've gotten data off the network in a nested write.
-            // We don't want to consume any more of the input stream now.  Do
-            // not worry.  We'll consume this data in a less-nested write().
-            return;
-        }
-
-        pumpTokenizerIfPossible(AllowYield);
+    if (inPumpSession()) {
+        // We've gotten data off the network in a nested write.
+        // We don't want to consume any more of the input stream now.  Do
+        // not worry.  We'll consume this data in a less-nested write().
+        return;
     }
+
+    pumpTokenizerIfPossible(AllowYield);
 
     endIfDelayed();
 }
