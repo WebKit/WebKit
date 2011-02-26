@@ -1,3 +1,39 @@
+2011-02-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        HashSet<T>::end() creation is expensive and should be avoided
+        https://bugs.webkit.org/show_bug.cgi?id=55205
+
+        In the common case, m_ranges is an empty set.  When that's
+        the case, we spend all our time in skipEmptyBuckets, walking
+        the hash storage skipping over empty buckets.
+        
+        This looks to be at least a 5% speedup on (my local version of) peacekeeper's domDynamicCreationCreateElement.
+
+        Before:
+        avg 383.6666666666667
+        median 386
+        stdev 7.152311203768722
+        min 360
+        max 391
+
+        After:
+        avg 366.3333333333333
+        median 366
+        stdev 2.712112747574399
+        min 362
+        max 377
+
+        * dom/Document.cpp:
+        (WebCore::Document::nodeChildrenChanged):
+        (WebCore::Document::nodeChildrenWillBeRemoved):
+        (WebCore::Document::nodeWillBeRemoved):
+        (WebCore::Document::textInserted):
+        (WebCore::Document::textRemoved):
+        (WebCore::Document::textNodesMerged):
+        (WebCore::Document::textNodeSplit):
+
 2011-02-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r79764.
