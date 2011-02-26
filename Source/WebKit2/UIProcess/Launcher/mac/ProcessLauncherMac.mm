@@ -248,7 +248,7 @@ void ProcessLauncher::launchProcess()
     // To make engineering builds work, if the path is outside of /System set up
     // DYLD_FRAMEWORK_PATH to pick up other frameworks, but don't do it for the
     // production configuration because it involves extra file system access.
-    if ([frameworksPath hasPrefix:@"/System/"])
+    if (![frameworksPath hasPrefix:@"/System/"])
         environmentVariables.appendValue("DYLD_FRAMEWORK_PATH", [frameworksPath fileSystemRepresentation], ':');
 
     if (m_launchOptions.processType == ProcessLauncher::PluginProcess) {

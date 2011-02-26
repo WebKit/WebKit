@@ -1,5 +1,10 @@
 2011-02-25  Darin Adler  <darin@apple.com>
 
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess): Fixed backwards logic from last change.
+
+2011-02-25  Darin Adler  <darin@apple.com>
+
         Reviewed by Mark Rowe.
 
         * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
