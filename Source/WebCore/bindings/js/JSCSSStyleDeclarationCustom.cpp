@@ -135,6 +135,8 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
 
 static bool isCSSPropertyName(const Identifier& propertyName)
 {
+    // FIXME: This mallocs a string for the property name and then throws it
+    // away.  This shows up on peacekeeper's domDynamicCreationCreateElement.
     return CSSStyleDeclaration::isPropertyName(cssPropertyName(propertyName));
 }
 

@@ -2,6 +2,18 @@
 
         Reviewed by Maciej Stachowiak.
 
+        malloc in removeChildren shows up on profile of peacekeeper domDynamicCreationCreateElement
+        https://bugs.webkit.org/show_bug.cgi?id=55204
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChildren):
+         - Using an inlineCapacity of 10 for now. We may want to tweak it later.
+         - This removes yet another malloc from code which removes nodes (which is rather common).
+
+2011-02-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
         HashSet<T>::end() creation is expensive and should be avoided
         https://bugs.webkit.org/show_bug.cgi?id=55205
 
