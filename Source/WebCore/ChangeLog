@@ -1,3 +1,15 @@
+2011-02-25  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        WebSocket uses insecure random numbers
+        https://bugs.webkit.org/show_bug.cgi?id=54714
+
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::randomNumberLessThan):
+        (WebCore::generateSecWebSocketKey):
+        (WebCore::generateKey3):
+
 2011-02-25  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.
