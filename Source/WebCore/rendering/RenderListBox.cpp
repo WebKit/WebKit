@@ -278,6 +278,29 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
     }
 }
 
+void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
+{
+    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+
+    // Focus the last selected item.
+    int selectedItem = select->activeSelectionEndListIndex();
+    if (selectedItem >= 0) {
+        rects.append(itemBoundingBoxRect(tx, ty, selectedItem));
+        return;
+    }
+
+    // No selected items, find the first non-disabled item.
+    int size = numItems();
+    const Vector<Element*>& listItems = select->listItems();
+    for (int i = 0; i < size; ++i) {
+        OptionElement* optionElement = toOptionElement(listItems[i]);
+        if (optionElement && !optionElement->disabled()) {
+            rects.append(itemBoundingBoxRect(tx, ty, i));
+            return;
+        }
+    }
+}
+
 void RenderListBox::paintScrollbar(PaintInfo& paintInfo, int tx, int ty)
 {
     if (m_vBar) {

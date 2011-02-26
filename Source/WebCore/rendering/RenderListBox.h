@@ -77,6 +77,8 @@ private:
 
     virtual void layout();
 
+    virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
+
     virtual bool canBeProgramaticallyScrolled(bool) const { return true; }
     virtual void autoscroll();
     virtual void stopAutoscroll();

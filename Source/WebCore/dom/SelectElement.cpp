@@ -787,18 +787,24 @@ void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element*
             ASSERT_UNUSED(listItems, !listItems.size() || (endIndex >= 0 && (unsigned) endIndex < listItems.size()));
             setActiveSelectionEndIndex(data, endIndex);
             
-            // If the anchor is unitialized, or if we're going to deselect all other options, then set the anchor index equal to the end index.
-            bool deselectOthers = !data.multiple() || !static_cast<KeyboardEvent*>(event)->shiftKey();
-            if (data.activeSelectionAnchorIndex() < 0 || deselectOthers) {
+            bool selectNewItem = !data.multiple() || static_cast<KeyboardEvent*>(event)->shiftKey() || !isSpatialNavigationEnabled(element->document()->frame());
+            if (selectNewItem)
                 data.setActiveSelectionState(true);
+            // If the anchor is unitialized, or if we're going to deselect all other options, then set the anchor index equal to the end index.
+            bool deselectOthers = !data.multiple() || (!static_cast<KeyboardEvent*>(event)->shiftKey() && selectNewItem);
+            if (data.activeSelectionAnchorIndex() < 0 || deselectOthers) {
                 if (deselectOthers)
                     deselectItems(data, element);
                 setActiveSelectionAnchorIndex(data, element, data.activeSelectionEndIndex());
             }
 
             toRenderListBox(element->renderer())->scrollToRevealElementAtListIndex(endIndex);
-            updateListBoxSelection(data, element, deselectOthers);
-            listBoxOnChange(data, element);
+            if (selectNewItem) {
+                updateListBoxSelection(data, element, deselectOthers);
+                listBoxOnChange(data, element);
+            } else
+                scrollToSelection(data, element);
+
             event->setDefaultHandled();
         }
     } else if (event->type() == eventNames().keypressEvent) {
@@ -810,7 +816,12 @@ void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element*
             if (htmlForm)
                 htmlForm->submitImplicitly(event, false);
             event->setDefaultHandled();
-            return;
+        } else if (data.multiple() && keyCode == ' ' && isSpatialNavigationEnabled(element->document()->frame())) {
+            // Use space to toggle selection change.
+            data.setActiveSelectionState(!data.activeSelectionState());
+            updateSelectedState(data, element, listToOptionIndex(data, element, data.activeSelectionEndIndex()), true /*multi*/, false /*shift*/);
+            listBoxOnChange(data, element);
+            event->setDefaultHandled();
         }
     }
 }

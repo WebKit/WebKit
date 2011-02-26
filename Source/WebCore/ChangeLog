@@ -1,3 +1,25 @@
+2011-02-26  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        Based on patch by Carlos Garcia Campos  <cgarcia@igalia.com>.
+
+        Spatial Navigation: Add support for <select> element in multiple selection mode
+        https://bugs.webkit.org/show_bug.cgi?id=49261
+
+        When spatial navigation is enabled, use space key to toggle select
+        items. And the up and down keys should not affect selection but just
+        navigate through items, which is indicated visually by a focus ring.
+
+        New Test: fast/spatial-navigation/snav-single-select-list.html
+        Enhanced Test: fast/spatial-navigation/snav-multiple-select.html
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::listBoxDefaultEventHandler):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::addFocusRingRects):
+        * rendering/RenderListBox.h:
+
 2011-02-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Qt build fix; included CSSValueList.h in EditingStyle.cpp.

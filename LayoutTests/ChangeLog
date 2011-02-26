@@ -1,3 +1,17 @@
+2011-02-26  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        Spatial Navigation: Add support for <select> element in multiple selection mode
+        https://bugs.webkit.org/show_bug.cgi?id=49261
+
+        Enhanced existing tests and added new tests for the bug.
+
+        * fast/spatial-navigation/snav-multiple-select-expected.txt:
+        * fast/spatial-navigation/snav-multiple-select.html:
+        * fast/spatial-navigation/snav-single-select-list-expected.txt: Added.
+        * fast/spatial-navigation/snav-single-select-list.html: Added.
+
 2011-02-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
