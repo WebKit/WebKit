@@ -1,3 +1,10 @@
+2011-02-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed update of the Chromium html5lib expectations after r79765
+        (diff matches the base expectations change).
+
+        * platform/chromium/html5lib/runner-expected.txt:
+
 2011-02-25  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

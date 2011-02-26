@@ -11,16 +11,58 @@ CONSOLE MESSAGE: line 2: PASS
 CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
 resources/pending-spec-changes-plain-text-unsafe.dat: PASS
 
-resources/pending-spec-changes.dat: PASS
+resources/pending-spec-changes.dat:
+2
 
+Test 2 of 2 in resources/pending-spec-changes.dat failed. Input:
+<!DOCTYPE html><table><caption><svg>foo</table>bar
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <caption>
+|         <svg svg>
+|           "foobar"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <caption>
+|         <svg svg>
+|           "foo"
+|     "bar"
 resources/plain-text-unsafe.dat: PASS
 
 resources/tests1.dat: PASS
 
 resources/tests2.dat: PASS
 
-resources/tests3.dat: PASS
+resources/tests3.dat:
+12
 
+Test 12 of 24 in resources/tests3.dat failed. Input:
+<!DOCTYPE html><pre>&#x0a;&#x0a;A</pre>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <pre>
+|       "
+
+A"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <pre>
+|       "
+A"
 resources/tests4.dat: PASS
 
 resources/tests5.dat: PASS
@@ -68,12 +110,11 @@ Expected:
 |       "quux"
 resources/tests10.dat:
 15
-36
-38
-51
-52
+40
+53
+54
 
-Test 15 of 52 in resources/tests10.dat failed. Input:
+Test 15 of 54 in resources/tests10.dat failed. Input:
 <!DOCTYPE html><body><table><caption><svg><g>foo</g><g>bar</g>baz</table><p>quux
 Got:
 | <!DOCTYPE html>
@@ -106,32 +147,7 @@ Expected:
 |     <p>
 |       "quux"
 
-Test 36 of 52 in resources/tests10.dat failed. Input:
-<math><mi><div><object><div><span></span></div></object></div></mi><mi>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math mi>
-|         <div>
-|           <object>
-|             <div>
-|               <span>
-|       <math mi>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math mi>
-|         <div>
-|           <object>
-|             <div>
-|               <span>
-|       <mi>
-
-Test 38 of 52 in resources/tests10.dat failed. Input:
+Test 40 of 54 in resources/tests10.dat failed. Input:
 <svg><script></script><path>
 Got:
 | <html>
@@ -148,7 +164,7 @@ Expected:
 |       <svg script>
 |       <svg path>
 
-Test 51 of 52 in resources/tests10.dat failed. Input:
+Test 53 of 54 in resources/tests10.dat failed. Input:
 <math><annotation-xml><svg><foreignObject><div><math><mi></mi></math><span></span></div></foreignObject><path></path></svg></annotation-xml><mi>
 Got:
 | <html>
@@ -179,7 +195,7 @@ Expected:
 |           <svg path>
 |       <math mi>
 
-Test 52 of 52 in resources/tests10.dat failed. Input:
+Test 54 of 54 in resources/tests10.dat failed. Input:
 <math><annotation-xml><svg><foreignObject><math><mi><svg></svg></mi><mo></mo></math><span></span></foreignObject><path></path></svg></annotation-xml><mi>
 Got:
 | <html>
@@ -226,82 +242,631 @@ resources/tests17.dat: PASS
 resources/tests18.dat: PASS
 
 resources/tests19.dat:
+81
+
+Test 81 of 103 in resources/tests19.dat failed. Input:
+<!doctype html><div><body><frameset>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <div>
+resources/tests20.dat:
 31
-32
-78
+35
+36
+37
+38
 
-Test 31 of 97 in resources/tests19.dat failed. Input:
-<!doctype html><p><math><mi><p><h1>
+Test 31 of 39 in resources/tests20.dat failed. Input:
+<option><span><option>
 Got:
-| <!DOCTYPE html>
 | <html>
 |   <head>
 |   <body>
-|     <p>
-|       <math math>
-|         <math mi>
-|           <p>
-|           <h1>
+|     <option>
+|       <span>
+|     <option>
 Expected:
-| <!DOCTYPE html>
 | <html>
 |   <head>
 |   <body>
-|     <p>
-|       <math math>
-|         <math mi>
-|     <p>
-|     <h1>
+|     <option>
+|       <span>
+|         <option>
 
-Test 32 of 97 in resources/tests19.dat failed. Input:
-<!doctype html><p><math><mi><p><h1>
+Test 35 of 39 in resources/tests20.dat failed. Input:
+<math><annotation-xml encoding="application/xhtml+xml"><div>
 Got:
-| <!DOCTYPE html>
 | <html>
 |   <head>
 |   <body>
-|     <p>
-|       <math math>
-|         <math mi>
-|           <p>
-|           <h1>
+|     <math math>
+|       <math annotation-xml>
+|         encoding="application/xhtml+xml"
+|     <div>
 Expected:
-| <!DOCTYPE html>
 | <html>
 |   <head>
 |   <body>
-|     <p>
-|       <math math>
-|         <math mi>
-|     <p>
-|     <h1>
+|     <math math>
+|       <math annotation-xml>
+|         encoding="application/xhtml+xml"
+|         <div>
 
-Test 78 of 97 in resources/tests19.dat failed. Input:
-<!doctype html><p><math><mn><span></p>a
+Test 36 of 39 in resources/tests20.dat failed. Input:
+<math><annotation-xml encoding="aPPlication/xhtmL+xMl"><div>
 Got:
-| <!DOCTYPE html>
 | <html>
 |   <head>
 |   <body>
-|     <p>
-|       <math math>
-|         <math mn>
-|           <span>
-|             <p>
-|             "a"
+|     <math math>
+|       <math annotation-xml>
+|         encoding="aPPlication/xhtmL+xMl"
+|     <div>
 Expected:
-| <!DOCTYPE html>
 | <html>
 |   <head>
 |   <body>
-|     <p>
-|       <math math>
-|         <math mn>
-|           <span>
-|     "a"
-resources/tests20.dat: PASS
+|     <math math>
+|       <math annotation-xml>
+|         encoding="aPPlication/xhtmL+xMl"
+|         <div>
 
+Test 37 of 39 in resources/tests20.dat failed. Input:
+<math><annotation-xml encoding="text/html"><div>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         encoding="text/html"
+|     <div>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         encoding="text/html"
+|         <div>
+
+Test 38 of 39 in resources/tests20.dat failed. Input:
+<math><annotation-xml encoding="Text/htmL"><div>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         encoding="Text/htmL"
+|     <div>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math annotation-xml>
+|         encoding="Text/htmL"
+|         <div>
 resources/tests21.dat: PASS
+
+resources/tests22.dat:
+1
+3
+4
+5
+
+Test 1 of 5 in resources/tests22.dat failed. Input:
+<a><b><big><em><strong><div>X</a>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|         <big>
+|           <em>
+|             <strong>
+|     <b>
+|       <big>
+|         <em>
+|           <strong>
+|             <div>
+|               <a>
+|                 "X"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|         <big>
+|           <em>
+|             <strong>
+|     <big>
+|       <em>
+|         <strong>
+|           <div>
+|             <a>
+|               "X"
+
+Test 3 of 5 in resources/tests22.dat failed. Input:
+<a><b><div id=1><div id=2><div id=3><div id=4><div id=5><div id=6><div id=7><div id=8><div id=9>A</a>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|     <b>
+|       <div>
+|         id="1"
+|         <a>
+|         <div>
+|           id="2"
+|           <a>
+|           <div>
+|             id="3"
+|             <a>
+|             <div>
+|               id="4"
+|               <a>
+|               <div>
+|                 id="5"
+|                 <a>
+|                 <div>
+|                   id="6"
+|                   <a>
+|                   <div>
+|                     id="7"
+|                     <a>
+|                     <div>
+|                       id="8"
+|                       <a>
+|                       <div>
+|                         id="9"
+|                         <a>
+|                           "A"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|     <b>
+|       <div>
+|         id="1"
+|         <a>
+|         <div>
+|           id="2"
+|           <a>
+|           <div>
+|             id="3"
+|             <a>
+|             <div>
+|               id="4"
+|               <a>
+|               <div>
+|                 id="5"
+|                 <a>
+|                 <div>
+|                   id="6"
+|                   <a>
+|                   <div>
+|                     id="7"
+|                     <a>
+|                     <div>
+|                       id="8"
+|                       <a>
+|                         <div>
+|                           id="9"
+|                           "A"
+
+Test 4 of 5 in resources/tests22.dat failed. Input:
+<a><b><div id=1><div id=2><div id=3><div id=4><div id=5><div id=6><div id=7><div id=8><div id=9><div id=10>A</a>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|     <b>
+|       <div>
+|         id="1"
+|         <a>
+|         <div>
+|           id="2"
+|           <a>
+|           <div>
+|             id="3"
+|             <a>
+|             <div>
+|               id="4"
+|               <a>
+|               <div>
+|                 id="5"
+|                 <a>
+|                 <div>
+|                   id="6"
+|                   <a>
+|                   <div>
+|                     id="7"
+|                     <a>
+|                     <div>
+|                       id="8"
+|                       <a>
+|                       <div>
+|                         id="9"
+|                         <a>
+|                         <div>
+|                           id="10"
+|                           <a>
+|                             "A"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <a>
+|       <b>
+|     <b>
+|       <div>
+|         id="1"
+|         <a>
+|         <div>
+|           id="2"
+|           <a>
+|           <div>
+|             id="3"
+|             <a>
+|             <div>
+|               id="4"
+|               <a>
+|               <div>
+|                 id="5"
+|                 <a>
+|                 <div>
+|                   id="6"
+|                   <a>
+|                   <div>
+|                     id="7"
+|                     <a>
+|                     <div>
+|                       id="8"
+|                       <a>
+|                         <div>
+|                           id="9"
+|                           <div>
+|                             id="10"
+|                             "A"
+
+Test 5 of 5 in resources/tests22.dat failed. Input:
+<cite><b><cite><i><cite><i><cite><i><div>X</b>TEST
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <cite>
+|       <b>
+|         <cite>
+|           <i>
+|             <cite>
+|               <i>
+|                 <cite>
+|                   <i>
+|       <i>
+|         <i>
+|           <i>
+|             <div>
+|               <b>
+|                 "X"
+|               "TEST"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <cite>
+|       <b>
+|         <cite>
+|           <i>
+|             <cite>
+|               <i>
+|                 <cite>
+|                   <i>
+|       <i>
+|         <i>
+|           <div>
+|             <b>
+|               "X"
+|             "TEST"
+resources/tests23.dat:
+1
+2
+3
+
+Test 1 of 5 in resources/tests23.dat failed. Input:
+<p><font size=4><font color=red><font size=4><font size=4><font size=4><font size=4><font size=4><font color=red><p>X
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <font>
+|         size="4"
+|         <font>
+|           color="red"
+|           <font>
+|             size="4"
+|             <font>
+|               size="4"
+|               <font>
+|                 size="4"
+|                 <font>
+|                   size="4"
+|                   <font>
+|                     size="4"
+|                     <font>
+|                       color="red"
+|     <p>
+|       <font>
+|         size="4"
+|         <font>
+|           color="red"
+|           <font>
+|             size="4"
+|             <font>
+|               size="4"
+|               <font>
+|                 size="4"
+|                 <font>
+|                   size="4"
+|                   <font>
+|                     size="4"
+|                     <font>
+|                       color="red"
+|                       "X"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <font>
+|         size="4"
+|         <font>
+|           color="red"
+|           <font>
+|             size="4"
+|             <font>
+|               size="4"
+|               <font>
+|                 size="4"
+|                 <font>
+|                   size="4"
+|                   <font>
+|                     size="4"
+|                     <font>
+|                       color="red"
+|     <p>
+|       <font>
+|         color="red"
+|         <font>
+|           size="4"
+|           <font>
+|             size="4"
+|             <font>
+|               size="4"
+|               <font>
+|                 color="red"
+|                 "X"
+
+Test 2 of 5 in resources/tests23.dat failed. Input:
+<p><font size=4><font size=4><font size=4><font size=4><p>X
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <font>
+|         size="4"
+|         <font>
+|           size="4"
+|           <font>
+|             size="4"
+|             <font>
+|               size="4"
+|     <p>
+|       <font>
+|         size="4"
+|         <font>
+|           size="4"
+|           <font>
+|             size="4"
+|             <font>
+|               size="4"
+|               "X"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <font>
+|         size="4"
+|         <font>
+|           size="4"
+|           <font>
+|             size="4"
+|             <font>
+|               size="4"
+|     <p>
+|       <font>
+|         size="4"
+|         <font>
+|           size="4"
+|           <font>
+|             size="4"
+|             "X"
+
+Test 3 of 5 in resources/tests23.dat failed. Input:
+<p><font size=4><font size=4><font size=4><font size="5"><font size=4><p>X
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <font>
+|         size="4"
+|         <font>
+|           size="4"
+|           <font>
+|             size="4"
+|             <font>
+|               size="5"
+|               <font>
+|                 size="4"
+|     <p>
+|       <font>
+|         size="4"
+|         <font>
+|           size="4"
+|           <font>
+|             size="4"
+|             <font>
+|               size="5"
+|               <font>
+|                 size="4"
+|                 "X"
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <font>
+|         size="4"
+|         <font>
+|           size="4"
+|           <font>
+|             size="4"
+|             <font>
+|               size="5"
+|               <font>
+|                 size="4"
+|     <p>
+|       <font>
+|         size="4"
+|         <font>
+|           size="4"
+|           <font>
+|             size="5"
+|             <font>
+|               size="4"
+|               "X"
+resources/tests24.dat:
+1
+2
+3
+4
+5
+6
+
+Test 1 of 8 in resources/tests24.dat failed. Input:
+<!DOCTYPE html>&NotEqualTilde;
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "&NotEqualTilde;"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "≂̸"
+
+Test 2 of 8 in resources/tests24.dat failed. Input:
+<!DOCTYPE html>&NotEqualTilde;A
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "&NotEqualTilde;A"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "≂̸A"
+
+Test 3 of 8 in resources/tests24.dat failed. Input:
+<!DOCTYPE html>&ThickSpace;
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "&ThickSpace;"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "  "
+
+Test 4 of 8 in resources/tests24.dat failed. Input:
+<!DOCTYPE html>&ThickSpace;A
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "&ThickSpace;A"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "  A"
+
+Test 5 of 8 in resources/tests24.dat failed. Input:
+<!DOCTYPE html>&NotSubset;
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "&NotSubset;"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "⊂⃒"
+
+Test 6 of 8 in resources/tests24.dat failed. Input:
+<!DOCTYPE html>&NotSubset;A
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "&NotSubset;A"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     "⊂⃒A"
+resources/tests25.dat: PASS
+
+resources/tests26.dat: PASS
 
 resources/tests_innerHTML_1.dat: PASS
 
