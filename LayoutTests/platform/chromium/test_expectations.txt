@@ -1825,9 +1825,6 @@ BUGCR33293 SKIP : fast/media/lifetime.html = TIMEOUT
 // WebKit roll 53655 -> 53704
 BUGCR32900 WIN LINUX : http/tests/misc/slow-loading-mask.html = IMAGE+TEXT
 
-// WebKit roll 53941 -> 54015
-BUGCR33358 WIN LINUX : fast/dom/Window/window-postmessage-clone-frames.html = TEXT
-
 // WebKit roll 54059 -> 54075
 BUGCR33538 : fast/dom/Window/anonymous-slot-with-changes.html = TEXT
 

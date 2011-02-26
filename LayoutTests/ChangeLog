@@ -1,3 +1,13 @@
+2011-02-26  Xianzhu Wang  <wangxianzhu@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix Chromium test failure http://crbug.com/33358
+        https://bugs.webkit.org/show_bug.cgi?id=55125
+
+        * platform/chromium/test_expectations.txt:
+        * platform/chromium/fast/dom/Window/window-postmessage-clone-frames-expected.txt: Added.
+
 2011-02-26  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Antonio Gomes.
