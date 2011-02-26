@@ -43,8 +43,10 @@ class CSSStyleDeclaration;
 class CSSComputedStyleDeclaration;
 class CSSMutableStyleDeclaration;
 class Document;
+class HTMLElement;
 class Node;
 class Position;
+class QualifiedName;
 class RenderStyle;
 class StyledElement;
 
@@ -53,6 +55,7 @@ public:
 
     enum PropertiesToInclude { AllProperties, OnlyInheritableProperties };
     enum ShouldPreserveWritingDirection { PreserveWritingDirection, DoNotPreserveWritingDirection };
+    enum ShouldExtractMatchingStyle { ExtractMatchingStyle, DoNotExtractMatchingStyle };
     static float NoFontDelta;
 
     static PassRefPtr<EditingStyle> create()
@@ -96,6 +99,10 @@ public:
     {
         return conflictsWithInlineStyleOfElement(element, &conflictingProperties);
     }
+    bool conflictsWithImplicitStyleOfElement(HTMLElement*, CSSMutableStyleDeclaration* extractedStyle = 0, ShouldExtractMatchingStyle = DoNotExtractMatchingStyle) const;
+    bool conflictsWithImplicitStyleOfAttributes(HTMLElement*) const;
+    bool extractConflictingImplicitStyleOfAttributes(HTMLElement*, ShouldPreserveWritingDirection, CSSMutableStyleDeclaration* extractedStyle,
+            Vector<QualifiedName>& conflictingAttributes, ShouldExtractMatchingStyle) const;
     void prepareToApplyAt(const Position&, ShouldPreserveWritingDirection = DoNotPreserveWritingDirection);
     void mergeTypingStyle(Document*);
 

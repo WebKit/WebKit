@@ -32,6 +32,7 @@
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSValueKeywords.h"
 #include "Frame.h"
+#include "HTMLFontElement.h"
 #include "HTMLNames.h"
 #include "Node.h"
 #include "Position.h"
@@ -83,6 +84,175 @@ static PassRefPtr<CSSMutableStyleDeclaration> editingStyleFromComputedStyle(Pass
     if (!style)
         return CSSMutableStyleDeclaration::create();
     return copyEditingProperties(style.get());
+}
+
+class HTMLElementEquivalent {
+public:
+    static PassOwnPtr<HTMLElementEquivalent> create(CSSPropertyID propertyID, int primitiveValue, const QualifiedName& tagName)
+    {
+        return adoptPtr(new HTMLElementEquivalent(propertyID, primitiveValue, tagName));
+    }
+
+    virtual ~HTMLElementEquivalent() { }
+    virtual bool matches(Element* element) const { return !m_tagName || element->hasTagName(*m_tagName); }
+    virtual bool hasAttribute() const { return false; }
+    bool propertyExistsInStyle(CSSStyleDeclaration* style) const { return style->getPropertyCSSValue(m_propertyID); }
+    virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
+    virtual void addToStyle(Element*, CSSMutableStyleDeclaration*) const;
+
+protected:
+    HTMLElementEquivalent(CSSPropertyID);
+    HTMLElementEquivalent(CSSPropertyID, const QualifiedName& tagName);
+    HTMLElementEquivalent(CSSPropertyID, int primitiveValue, const QualifiedName& tagName);
+    const int m_propertyID;
+    const RefPtr<CSSPrimitiveValue> m_primitiveValue;
+    const QualifiedName* m_tagName; // We can store a pointer because HTML tag names are const global.
+};
+
+HTMLElementEquivalent::HTMLElementEquivalent(CSSPropertyID id)
+    : m_propertyID(id)
+    , m_tagName(0)
+{
+}
+
+HTMLElementEquivalent::HTMLElementEquivalent(CSSPropertyID id, const QualifiedName& tagName)
+    : m_propertyID(id)
+    , m_tagName(&tagName)
+{
+}
+
+HTMLElementEquivalent::HTMLElementEquivalent(CSSPropertyID id, int primitiveValue, const QualifiedName& tagName)
+    : m_propertyID(id)
+    , m_primitiveValue(CSSPrimitiveValue::createIdentifier(primitiveValue))
+    , m_tagName(&tagName)
+{
+    ASSERT(primitiveValue != CSSValueInvalid);
+}
+
+bool HTMLElementEquivalent::valueIsPresentInStyle(Element* element, CSSStyleDeclaration* style) const
+{
+    RefPtr<CSSValue> value = style->getPropertyCSSValue(m_propertyID);
+    return matches(element) && value && value->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(value.get())->getIdent() == m_primitiveValue->getIdent();
+}
+
+void HTMLElementEquivalent::addToStyle(Element*, CSSMutableStyleDeclaration* style) const
+{
+    style->setProperty(m_propertyID, m_primitiveValue->cssText());
+}
+
+class HTMLTextDecorationEquivalent : public HTMLElementEquivalent {
+public:
+    static PassOwnPtr<HTMLElementEquivalent> create(int primitiveValue, const QualifiedName& tagName)
+    {
+        return adoptPtr(new HTMLTextDecorationEquivalent(primitiveValue, tagName));
+    }
+    virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
+
+private:
+    HTMLTextDecorationEquivalent(int primitiveValue, const QualifiedName& tagName);
+};
+
+HTMLTextDecorationEquivalent::HTMLTextDecorationEquivalent(int primitiveValue, const QualifiedName& tagName)
+    : HTMLElementEquivalent(CSSPropertyTextDecoration, primitiveValue, tagName)
+{
+}
+
+bool HTMLTextDecorationEquivalent::valueIsPresentInStyle(Element* element, CSSStyleDeclaration* style) const
+{
+    RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(m_propertyID);
+    return matches(element) && styleValue && styleValue->isValueList() && static_cast<CSSValueList*>(styleValue.get())->hasValue(m_primitiveValue.get());
+}
+
+class HTMLAttributeEquivalent : public HTMLElementEquivalent {
+public:
+    static PassOwnPtr<HTMLAttributeEquivalent> create(CSSPropertyID propertyID, const QualifiedName& tagName, const QualifiedName& attrName)
+    {
+        return adoptPtr(new HTMLAttributeEquivalent(propertyID, tagName, attrName));
+    }
+    static PassOwnPtr<HTMLAttributeEquivalent> create(CSSPropertyID propertyID, const QualifiedName& attrName)
+    {
+        return adoptPtr(new HTMLAttributeEquivalent(propertyID, attrName));
+    }
+
+    bool matches(Element* elem) const { return HTMLElementEquivalent::matches(elem) && elem->hasAttribute(m_attrName); }
+    virtual bool hasAttribute() const { return true; }
+    virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
+    virtual void addToStyle(Element*, CSSMutableStyleDeclaration*) const;
+    virtual PassRefPtr<CSSValue> attributeValueAsCSSValue(Element*) const;
+    inline const QualifiedName& attributeName() const { return m_attrName; }
+
+protected:
+    HTMLAttributeEquivalent(CSSPropertyID, const QualifiedName& tagName, const QualifiedName& attrName);
+    HTMLAttributeEquivalent(CSSPropertyID, const QualifiedName& attrName);
+    const QualifiedName& m_attrName; // We can store a reference because HTML attribute names are const global.
+};
+
+HTMLAttributeEquivalent::HTMLAttributeEquivalent(CSSPropertyID id, const QualifiedName& tagName, const QualifiedName& attrName)
+    : HTMLElementEquivalent(id, tagName)
+    , m_attrName(attrName)
+{
+}
+
+HTMLAttributeEquivalent::HTMLAttributeEquivalent(CSSPropertyID id, const QualifiedName& attrName)
+    : HTMLElementEquivalent(id)
+    , m_attrName(attrName)
+{
+}
+
+bool HTMLAttributeEquivalent::valueIsPresentInStyle(Element* element, CSSStyleDeclaration* style) const
+{
+    RefPtr<CSSValue> value = attributeValueAsCSSValue(element);
+    RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(m_propertyID);
+    
+    // FIXME: This is very inefficient way of comparing values
+    // but we can't string compare attribute value and CSS property value.
+    return value && styleValue && value->cssText() == styleValue->cssText();
+}
+
+void HTMLAttributeEquivalent::addToStyle(Element* element, CSSMutableStyleDeclaration* style) const
+{
+    if (RefPtr<CSSValue> value = attributeValueAsCSSValue(element))
+        style->setProperty(m_propertyID, value->cssText());
+}
+
+PassRefPtr<CSSValue> HTMLAttributeEquivalent::attributeValueAsCSSValue(Element* element) const
+{
+    ASSERT(element);
+    if (!element->hasAttribute(m_attrName))
+        return 0;
+    
+    RefPtr<CSSMutableStyleDeclaration> dummyStyle;
+    dummyStyle = CSSMutableStyleDeclaration::create();
+    dummyStyle->setProperty(m_propertyID, element->getAttribute(m_attrName));
+    return dummyStyle->getPropertyCSSValue(m_propertyID);
+}
+
+class HTMLFontSizeEquivalent : public HTMLAttributeEquivalent {
+public:
+    static PassOwnPtr<HTMLFontSizeEquivalent> create()
+    {
+        return adoptPtr(new HTMLFontSizeEquivalent());
+    }
+    virtual PassRefPtr<CSSValue> attributeValueAsCSSValue(Element*) const;
+
+private:
+    HTMLFontSizeEquivalent();
+};
+
+HTMLFontSizeEquivalent::HTMLFontSizeEquivalent()
+    : HTMLAttributeEquivalent(CSSPropertyFontSize, HTMLNames::fontTag, HTMLNames::sizeAttr)
+{
+}
+
+PassRefPtr<CSSValue> HTMLFontSizeEquivalent::attributeValueAsCSSValue(Element* element) const
+{
+    ASSERT(element);
+    if (!element->hasAttribute(m_attrName))
+        return 0;
+    int size;
+    if (!HTMLFontElement::cssValueFromFontSizeNumber(element->getAttribute(m_attrName), size))
+        return 0;
+    return CSSPrimitiveValue::createIdentifier(size);
 }
 
 float EditingStyle::NoFontDelta = 0.0f;
@@ -363,6 +533,99 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Vec
     }
 
     return !conflictingProperties->isEmpty();
+}
+
+bool EditingStyle::conflictsWithImplicitStyleOfElement(HTMLElement* element, CSSMutableStyleDeclaration* extractedStyle, ShouldExtractMatchingStyle shouldExtractMatchingStyle) const
+{
+    if (!m_mutableStyle)
+        return false;
+
+    static const HTMLElementEquivalent* HTMLEquivalents[] = {
+        HTMLElementEquivalent::create(CSSPropertyFontWeight, CSSValueBold, HTMLNames::bTag).leakPtr(),
+        HTMLElementEquivalent::create(CSSPropertyFontWeight, CSSValueBold, HTMLNames::strongTag).leakPtr(),
+        HTMLElementEquivalent::create(CSSPropertyVerticalAlign, CSSValueSub, HTMLNames::subTag).leakPtr(),
+        HTMLElementEquivalent::create(CSSPropertyVerticalAlign, CSSValueSuper, HTMLNames::supTag).leakPtr(),
+        HTMLElementEquivalent::create(CSSPropertyFontStyle, CSSValueItalic, HTMLNames::iTag).leakPtr(),
+        HTMLElementEquivalent::create(CSSPropertyFontStyle, CSSValueItalic, HTMLNames::emTag).leakPtr(),
+
+        HTMLTextDecorationEquivalent::create(CSSValueUnderline, HTMLNames::uTag).leakPtr(),
+        HTMLTextDecorationEquivalent::create(CSSValueLineThrough, HTMLNames::sTag).leakPtr(),
+        HTMLTextDecorationEquivalent::create(CSSValueLineThrough, HTMLNames::strikeTag).leakPtr(),
+    };
+
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(HTMLEquivalents); ++i) {
+        const HTMLElementEquivalent* equivalent = HTMLEquivalents[i];
+        if (equivalent->matches(element) && equivalent->propertyExistsInStyle(m_mutableStyle.get())
+            && (shouldExtractMatchingStyle == ExtractMatchingStyle || !equivalent->valueIsPresentInStyle(element, m_mutableStyle.get()))) {
+            if (extractedStyle)
+                equivalent->addToStyle(element, extractedStyle);
+            return true;
+        }
+    }
+    return false;
+}
+
+static const Vector<OwnPtr<HTMLAttributeEquivalent> >& htmlAttributeEquivalents()
+{
+    DEFINE_STATIC_LOCAL(Vector<OwnPtr<HTMLAttributeEquivalent> >, HTMLAttributeEquivalents, ());
+
+    if (!HTMLAttributeEquivalents.size()) {
+        HTMLAttributeEquivalents.append(HTMLAttributeEquivalent::create(CSSPropertyColor, HTMLNames::fontTag, HTMLNames::colorAttr));
+        HTMLAttributeEquivalents.append(HTMLAttributeEquivalent::create(CSSPropertyFontFamily, HTMLNames::fontTag, HTMLNames::faceAttr));
+        HTMLAttributeEquivalents.append(HTMLFontSizeEquivalent::create());
+
+        HTMLAttributeEquivalents.append(HTMLAttributeEquivalent::create(CSSPropertyDirection, HTMLNames::dirAttr));
+        HTMLAttributeEquivalents.append(HTMLAttributeEquivalent::create(CSSPropertyUnicodeBidi, HTMLNames::dirAttr));
+    }
+
+    return HTMLAttributeEquivalents;
+}
+
+bool EditingStyle::conflictsWithImplicitStyleOfAttributes(HTMLElement* element) const
+{
+    ASSERT(element);
+    if (!m_mutableStyle)
+        return false;
+
+    const Vector<OwnPtr<HTMLAttributeEquivalent> >& HTMLAttributeEquivalents = htmlAttributeEquivalents();
+    for (size_t i = 0; i < HTMLAttributeEquivalents.size(); ++i) {
+        if (HTMLAttributeEquivalents[i]->matches(element) && HTMLAttributeEquivalents[i]->propertyExistsInStyle(m_mutableStyle.get())
+            && !HTMLAttributeEquivalents[i]->valueIsPresentInStyle(element, m_mutableStyle.get()))
+            return true;
+    }
+
+    return false;
+}
+
+bool EditingStyle::extractConflictingImplicitStyleOfAttributes(HTMLElement* element, ShouldPreserveWritingDirection shouldPreserveWritingDirection,
+    CSSMutableStyleDeclaration* extractedStyle, Vector<QualifiedName>& conflictingAttributes, ShouldExtractMatchingStyle shouldExtractMatchingStyle) const
+{
+    ASSERT(element);
+    // HTMLAttributeEquivalent::addToStyle doesn't support unicode-bidi and direction properties
+    ASSERT(!extractedStyle || shouldPreserveWritingDirection == PreserveWritingDirection);
+    if (!m_mutableStyle)
+        return false;
+
+    const Vector<OwnPtr<HTMLAttributeEquivalent> >& HTMLAttributeEquivalents = htmlAttributeEquivalents();
+    bool removed = false;
+    for (size_t i = 0; i < HTMLAttributeEquivalents.size(); ++i) {
+        const HTMLAttributeEquivalent* equivalent = HTMLAttributeEquivalents[i].get();
+
+        // unicode-bidi and direction are pushed down separately so don't push down with other styles.
+        if (shouldPreserveWritingDirection == PreserveWritingDirection && equivalent->attributeName() == HTMLNames::dirAttr)
+            continue;
+
+        if (!equivalent->matches(element) || !equivalent->propertyExistsInStyle(m_mutableStyle.get())
+            || (shouldExtractMatchingStyle == DoNotExtractMatchingStyle && equivalent->valueIsPresentInStyle(element, m_mutableStyle.get())))
+            continue;
+
+        if (extractedStyle)
+            equivalent->addToStyle(element, extractedStyle);
+        conflictingAttributes.append(equivalent->attributeName());
+        removed = true;
+    }
+
+    return removed;
 }
 
 void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWritingDirection shouldPreserveWritingDirection)

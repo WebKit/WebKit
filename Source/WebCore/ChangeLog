@@ -1,3 +1,52 @@
+2011-02-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Move HTMLEquivalent and its subclasses to EditingStyle
+        https://bugs.webkit.org/show_bug.cgi?id=55207
+
+        Moved HTMLEquivalent and its subclasses from ApplyStyleCommand to EditingStyle,
+        and renamed HTMLEquivalent, HTMLEquivalentValueList, HTMLAttributeEquivalent,
+        and HTMLEquivalentFontSizeAttribute to HTMLElementEquivalent, HTMLTextDecorationEquivalent,
+        HTMLAttributeEquivalent, and HTMLFontSizeEquivalent respectively.
+
+        Also extracted the logic to determine which element and attribute are removed
+        as conflictsWithImplicitStyleOfElement, conflictsWithImplicitStyleOfAttributes,
+        and extractConflictingImplicitStyleOfAttributes.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement):
+        (WebCore::ApplyStyleCommand::removeImplicitlyStyledElement):
+        * editing/ApplyStyleCommand.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::HTMLElementEquivalent::create): Moved from ApplyStyleCommand.cpp.
+        (WebCore::HTMLElementEquivalent::~HTMLElementEquivalent): Ditto.
+        (WebCore::HTMLElementEquivalent::matches): Ditto.
+        (WebCore::HTMLElementEquivalent::hasAttribute): Ditto.
+        (WebCore::HTMLElementEquivalent::propertyExistsInStyle): Ditto.
+        (WebCore::HTMLElementEquivalent::HTMLElementEquivalent): Ditto.
+        (WebCore::HTMLElementEquivalent::valueIsPresentInStyle): Ditto.
+        (WebCore::HTMLElementEquivalent::addToStyle): Ditto.
+        (WebCore::HTMLTextDecorationEquivalent::create): Ditto.
+        (WebCore::HTMLTextDecorationEquivalent::HTMLTextDecorationEquivalent): Ditto.
+        (WebCore::HTMLTextDecorationEquivalent::valueIsPresentInStyle): Ditto.
+        (WebCore::HTMLAttributeEquivalent::create): Ditto.
+        (WebCore::HTMLAttributeEquivalent::matches): Ditto.
+        (WebCore::HTMLAttributeEquivalent::hasAttribute): Ditto.
+        (WebCore::HTMLAttributeEquivalent::attributeName): Ditto.
+        (WebCore::HTMLAttributeEquivalent::HTMLAttributeEquivalent): Ditto.
+        (WebCore::HTMLAttributeEquivalent::valueIsPresentInStyle): Ditto.
+        (WebCore::HTMLAttributeEquivalent::addToStyle): Ditto.
+        (WebCore::HTMLAttributeEquivalent::attributeValueAsCSSValue): Ditto.
+        (WebCore::HTMLFontSizeEquivalent::create): Ditto.
+        (WebCore::HTMLFontSizeEquivalent::HTMLFontSizeEquivalent): Ditto.
+        (WebCore::HTMLFontSizeEquivalent::attributeValueAsCSSValue): Ditto.
+        (WebCore::EditingStyle::conflictsWithImplicitStyleOfElement): Added.
+        (WebCore::htmlAttributeEquivalents): Added.
+        (WebCore::EditingStyle::conflictsWithImplicitStyleOfAttributes): Added.
+        (WebCore::EditingStyle::extractConflictingImplicitStyleOfAttributes): Added.
+        * editing/EditingStyle.h:
+
 2011-02-25  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Anders Carlsson.
