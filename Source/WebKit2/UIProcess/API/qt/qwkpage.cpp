@@ -253,7 +253,7 @@ void QWKPagePrivate::didCommitLoadForMainFrame(bool useCustomRepresentation)
 {
 }
 
-void QWKPagePrivate::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&)
+void QWKPagePrivate::didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&)
 {
 }
 

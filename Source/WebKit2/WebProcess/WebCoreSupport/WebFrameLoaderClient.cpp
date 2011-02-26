@@ -803,7 +803,7 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
             RefPtr<SharedBuffer> mainResourceData = loader->mainResourceData();
             CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(mainResourceData ? mainResourceData->data() : 0), mainResourceData ? mainResourceData->size() : 0);
             
-            webPage->send(Messages::WebPageProxy::DidFinishLoadingDataForCustomRepresentation(dataReference));
+            webPage->send(Messages::WebPageProxy::DidFinishLoadingDataForCustomRepresentation(loader->response().suggestedFilename(), dataReference));
         }
 
         return;

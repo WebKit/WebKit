@@ -393,9 +393,9 @@ void PageClientImpl::didCommitLoadForMainFrame(bool useCustomRepresentation)
     [m_wkView _setPageHasCustomRepresentation:useCustomRepresentation];
 }
 
-void PageClientImpl::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference& dataReference)
+void PageClientImpl::didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference& dataReference)
 {
-    [m_wkView _didFinishLoadingDataForCustomRepresentation:dataReference];
+    [m_wkView _didFinishLoadingDataForCustomRepresentationWithSuggestedFilename:suggestedFilename dataReference:dataReference];
 }
 
 double PageClientImpl::customRepresentationZoomFactor()

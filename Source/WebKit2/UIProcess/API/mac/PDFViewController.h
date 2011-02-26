@@ -49,7 +49,7 @@ public:
     ~PDFViewController();
 
     WKView* wkView() const { return m_wkView; }
-    void setPDFDocumentData(const String& mimeType, const CoreIPC::DataReference&);
+    void setPDFDocumentData(const String& mimeType, const String& suggestedFilename, const CoreIPC::DataReference&);
 
     double zoomFactor() const;
     void setZoomFactor(double);

@@ -1935,11 +1935,11 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         _data->_pdfViewController = PDFViewController::create(self);
 }
 
-- (void)_didFinishLoadingDataForCustomRepresentation:(const CoreIPC::DataReference&)dataReference
+- (void)_didFinishLoadingDataForCustomRepresentationWithSuggestedFilename:(const String&)suggestedFilename dataReference:(const CoreIPC::DataReference&)dataReference
 {
     ASSERT(_data->_pdfViewController);
 
-    _data->_pdfViewController->setPDFDocumentData(_data->_page->mainFrame()->mimeType(), dataReference);
+    _data->_pdfViewController->setPDFDocumentData(_data->_page->mainFrame()->mimeType(), suggestedFilename, dataReference);
 }
 
 - (double)_customRepresentationZoomFactor

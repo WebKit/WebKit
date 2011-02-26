@@ -231,7 +231,7 @@ static RetainPtr<CFDataRef> convertPostScriptDataSourceToPDF(const CoreIPC::Data
     return result;
 }
 
-void PDFViewController::setPDFDocumentData(const String& mimeType, const CoreIPC::DataReference& dataReference)
+void PDFViewController::setPDFDocumentData(const String& mimeType, const String& suggestedFilename, const CoreIPC::DataReference& dataReference)
 {
     RetainPtr<CFDataRef> data;
     

@@ -85,7 +85,7 @@ public:
     virtual void setFindIndicator(PassRefPtr<WebKit::FindIndicator>, bool fadeOut);
 
     virtual void didCommitLoadForMainFrame(bool useCustomRepresentation);
-    virtual void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&);
+    virtual void didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&);
     virtual double customRepresentationZoomFactor() { return 1; }
     virtual void setCustomRepresentationZoomFactor(double) { }
     virtual void didChangeScrollbarsForMainFrame() const { }

@@ -164,7 +164,7 @@ private:
 #endif
 
     void didCommitLoadForMainFrame(bool useCustomRepresentation);
-    void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&);
+    void didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&);
     virtual double customRepresentationZoomFactor();
     virtual void setCustomRepresentationZoomFactor(double);
     WebCore::DragOperation keyStateToDragOperation(DWORD grfKeyState) const;

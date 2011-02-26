@@ -2692,9 +2692,9 @@ void WebPageProxy::didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSid
     m_mainFrameIsPinnedToRightSide = pinnedToRightSide;
 }
 
-void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference& dataReference)
+void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference& dataReference)
 {
-    m_pageClient->didFinishLoadingDataForCustomRepresentation(dataReference);
+    m_pageClient->didFinishLoadingDataForCustomRepresentation(suggestedFilename, dataReference);
 }
 
 #if PLATFORM(MAC)
