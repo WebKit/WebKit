@@ -5338,6 +5338,7 @@
 		C5EBDD84105EDDEC0056816F /* StorageEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
+		C6F41047130C6E8900393DE4 /* EntryBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F41046130C6E8900393DE4 /* EntryBase.cpp */; };
 		CA3BF67C10D99BAE00E6CE53 /* ScrollAnimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */; };
 		CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */; };
 		CDEA7C841276230400B846DD /* RenderFullScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEA7C821276230400B846DD /* RenderFullScreen.h */; };
@@ -11717,6 +11718,7 @@
 		C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageEventDispatcher.h; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
+		C6F41046130C6E8900393DE4 /* EntryBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntryBase.cpp; path = fileapi/EntryBase.cpp; sourceTree = "<group>"; };
 		CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollAnimator.cpp; sourceTree = "<group>"; };
 		CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimator.h; sourceTree = "<group>"; };
 		CD4E0AFA11F7BC27009D3811 /* fullscreen.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = fullscreen.css; sourceTree = "<group>"; };
@@ -15868,6 +15870,7 @@
 				89878545122CA064003AABDA /* EntryArray.h */,
 				893C47F81248BD39002B3D86 /* EntryArraySync.cpp */,
 				893C47F91248BD39002B3D86 /* EntryArraySync.h */,
+				C6F41046130C6E8900393DE4 /* EntryBase.cpp */,
 				893C47FB1248BD39002B3D86 /* EntryBase.h */,
 				89878546122CA064003AABDA /* EntryCallback.h */,
 				893C47FC1248BD39002B3D86 /* EntrySync.cpp */,
@@ -23376,6 +23379,7 @@
 				8987855B122CA064003AABDA /* Entry.cpp in Sources */,
 				8987855D122CA064003AABDA /* EntryArray.cpp in Sources */,
 				893C48081248BD3A002B3D86 /* EntryArraySync.cpp in Sources */,
+				C6F41047130C6E8900393DE4 /* EntryBase.cpp in Sources */,
 				893C480C1248BD3A002B3D86 /* EntrySync.cpp in Sources */,
 				FD31609212B026F700C1A359 /* EqualPowerPanner.cpp in Sources */,
 				2ECF7AE110162B5800427DE7 /* ErrorEvent.cpp in Sources */,

@@ -33,7 +33,6 @@
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "DOMFilePath.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -46,7 +45,7 @@ class EntrySync;
 // A common base class for Entry and EntrySync.
 class EntryBase : public RefCounted<EntryBase> {
 public:
-    virtual ~EntryBase() { }
+    virtual ~EntryBase();
 
     DOMFileSystemBase* filesystem() const { return m_fileSystem.get(); }
 
@@ -56,14 +55,10 @@ public:
     const String& fullPath() const { return m_fullPath; }
     const String& name() const { return m_name; }
 
-protected:
-    EntryBase(PassRefPtr<DOMFileSystemBase> fileSystem, const String& fullPath)
-        : m_fileSystem(fileSystem)
-        , m_fullPath(fullPath)
-        , m_name(DOMFilePath::getName(fullPath))
-    {
-    }
+    String toURI();
 
+protected:
+    EntryBase(PassRefPtr<DOMFileSystemBase>, const String& fullPath);
     friend class EntrySync;
 
     RefPtr<DOMFileSystemBase> m_fileSystem;

@@ -50,7 +50,7 @@
 namespace WebCore {
 
 DOMFileSystem::DOMFileSystem(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
-    : DOMFileSystemBase(name, asyncFileSystem)
+    : DOMFileSystemBase(context, name, asyncFileSystem)
     , ActiveDOMObject(context, this)
 {
 }

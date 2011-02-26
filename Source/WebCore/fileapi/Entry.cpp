@@ -86,17 +86,6 @@ void Entry::getParent(PassRefPtr<EntryCallback> successCallback, PassRefPtr<Erro
         filesystem()->scheduleCallback(errorCallback.release(), FileError::create(FileError::INVALID_MODIFICATION_ERR));
 }
 
-String Entry::toURI()
-{
-    StringBuilder uriBuilder;
-    uriBuilder.append("filesystem:");
-    uriBuilder.append(filesystem()->scriptExecutionContext()->securityOrigin()->toString());
-    uriBuilder.append("/");
-    uriBuilder.append(m_fileSystem->asyncFileSystem()->type() == AsyncFileSystem::Temporary ? "temporary" : "persistent");
-    uriBuilder.append(m_fullPath);
-    return uriBuilder.toString();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(FILE_SYSTEM)

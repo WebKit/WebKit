@@ -1,3 +1,14 @@
+2011-02-26  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [fileapi] Implement EntrySync.toURI by moving Entry::toURI to EntryBase
+        https://bugs.webkit.org/show_bug.cgi?id=54585
+
+        * fast/filesystem/resources/file-entry-to-uri-sync.js: Added.
+        * fast/filesystem/workers/file-entry-to-uri-sync-expected.txt: Added.
+        * fast/filesystem/workers/file-entry-to-uri-sync.html: Added.
+
 2011-02-26  Alice Boxhall  <aboxhall@chromium.org>
 
         Reviewed by Ojan Vafai.

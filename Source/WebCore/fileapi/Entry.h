@@ -57,8 +57,6 @@ public:
     void remove(PassRefPtr<VoidCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0) const;
     void getParent(PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0) const;
 
-    String toURI();
-
 protected:
     Entry(PassRefPtr<DOMFileSystemBase>, const String& fullPath);
 };

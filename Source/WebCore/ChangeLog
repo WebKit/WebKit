@@ -1,3 +1,39 @@
+2011-02-26  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [fileapi] Implement EntrySync.toURI by moving Entry::toURI to EntryBase
+        https://bugs.webkit.org/show_bug.cgi?id=54585
+
+        In order to move toURI to EntryBase, it needed access to
+        SecurityOrigin. Most of the changes below were to pass a
+        ScriptExecutionContext to DOMFileSystemBase to enable this.
+
+        Test: fast/filesystem/workers/file-entry-to-uri-sync.html
+
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * fileapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::DOMFileSystem):
+        * fileapi/DOMFileSystemBase.cpp:
+        (WebCore::DOMFileSystemBase::DOMFileSystemBase):
+        (WebCore::DOMFileSystemBase::securityOrigin):
+        * fileapi/DOMFileSystemBase.h:
+        (WebCore::DOMFileSystemBase::create):
+        * fileapi/DOMFileSystemSync.cpp:
+        (WebCore::DOMFileSystemSync::create):
+        (WebCore::DOMFileSystemSync::DOMFileSystemSync):
+        * fileapi/DOMFileSystemSync.h:
+        (WebCore::DOMFileSystemSync::create):
+        * fileapi/Entry.cpp:
+        * fileapi/Entry.h:
+        * fileapi/EntryBase.cpp: Added.
+        (WebCore::EntryBase::EntryBase):
+        (WebCore::EntryBase::~EntryBase):
+        (WebCore::EntryBase::toURI):
+        * fileapi/EntryBase.h:
+        * fileapi/EntrySync.idl:
+
 2011-02-26  Alice Boxhall  <aboxhall@chromium.org>
 
         Reviewed by Ojan Vafai.

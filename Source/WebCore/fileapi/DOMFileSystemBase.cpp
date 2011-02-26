@@ -44,19 +44,26 @@
 #include "FileError.h"
 #include "FileSystemCallbacks.h"
 #include "MetadataCallback.h"
+#include "ScriptExecutionContext.h"
 #include "VoidCallback.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-DOMFileSystemBase::DOMFileSystemBase(const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
-    : m_name(name)
+DOMFileSystemBase::DOMFileSystemBase(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+    : m_context(context)
+    , m_name(name)
     , m_asyncFileSystem(asyncFileSystem)
 {
 }
 
 DOMFileSystemBase::~DOMFileSystemBase()
 {
+}
+
+SecurityOrigin* DOMFileSystemBase::securityOrigin() const
+{
+    return m_context->securityOrigin();
 }
 
 bool DOMFileSystemBase::getMetadata(const EntryBase* entry, PassRefPtr<MetadataCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)

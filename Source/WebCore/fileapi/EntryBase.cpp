@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,44 +28,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMFileSystemSync_h
-#define DOMFileSystemSync_h
+#include "config.h"
+#include "EntryBase.h"
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "AsyncFileSystem.h"
+#include "DOMFilePath.h"
 #include "DOMFileSystemBase.h"
+#include "PlatformString.h"
+#include "SecurityOrigin.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-class DirectoryEntrySync;
-class File;
-class FileEntrySync;
-class FileWriterSync;
-
-typedef int ExceptionCode;
-
-class DOMFileSystemSync : public DOMFileSystemBase {
-public:
-    static PassRefPtr<DOMFileSystemSync> create(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
-    {
-        return adoptRef(new DOMFileSystemSync(context, name, asyncFileSystem));
-    }
-
-    static PassRefPtr<DOMFileSystemSync> create(DOMFileSystemBase*);
-
-    virtual ~DOMFileSystemSync();
-
-    PassRefPtr<DirectoryEntrySync> root();
-
-    PassRefPtr<File> createFile(const FileEntrySync*, ExceptionCode&);
-    PassRefPtr<FileWriterSync> createWriter(const FileEntrySync*, ExceptionCode&);
-
-private:
-    DOMFileSystemSync(ScriptExecutionContext*, const String& name, PassOwnPtr<AsyncFileSystem>);
-};
-
+EntryBase::EntryBase(PassRefPtr<DOMFileSystemBase> fileSystem, const String& fullPath)
+    : m_fileSystem(fileSystem)
+    , m_fullPath(fullPath)
+    , m_name(DOMFilePath::getName(fullPath))
+{
 }
 
-#endif // ENABLE(FILE_SYSTEM)
+EntryBase::~EntryBase()
+{
+}
 
-#endif // DOMFileSystemSync_h
+String EntryBase::toURI()
+{
+    StringBuilder result;
+    result.append("filesystem:");
+    result.append(m_fileSystem->securityOrigin()->toString());
+    result.append("/");
+    result.append(m_fileSystem->asyncFileSystem()->type() == AsyncFileSystem::Temporary ? "temporary" : "persistent");
+    result.append(m_fullPath);
+    return result.toString();
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(FILE_SYSTEM)

@@ -50,11 +50,11 @@ class FileWriterBase;
 
 PassRefPtr<DOMFileSystemSync> DOMFileSystemSync::create(DOMFileSystemBase* fileSystem)
 {
-    return adoptRef(new DOMFileSystemSync(fileSystem->m_name, fileSystem->m_asyncFileSystem.release()));
+    return adoptRef(new DOMFileSystemSync(fileSystem->m_context, fileSystem->m_name, fileSystem->m_asyncFileSystem.release()));
 }
 
-DOMFileSystemSync::DOMFileSystemSync(const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
-    : DOMFileSystemBase(name, asyncFileSystem)
+DOMFileSystemSync::DOMFileSystemSync(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+    : DOMFileSystemBase(context, name, asyncFileSystem)
 {
 }
 
