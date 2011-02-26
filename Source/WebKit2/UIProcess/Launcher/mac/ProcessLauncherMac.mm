@@ -194,7 +194,7 @@ void ProcessLauncher::launchProcess()
     mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
 
     NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];
-    const char* frameworksPath = [[[webKit2Bundle bundlePath] stringByDeletingLastPathComponent] fileSystemRepresentation];
+    NSString *frameworksPath = [[webKit2Bundle bundlePath] stringByDeletingLastPathComponent];
     const char* frameworkExecutablePath = [[webKit2Bundle executablePath] fileSystemRepresentation];
 
     NSString *webProcessAppPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
@@ -245,7 +245,11 @@ void ProcessLauncher::launchProcess()
 
     EnvironmentVariables environmentVariables;
 
-    environmentVariables.appendValue("DYLD_FRAMEWORK_PATH", frameworksPath, ':');
+    // To make engineering builds work, if the path is outside of /System set up
+    // DYLD_FRAMEWORK_PATH to pick up other frameworks, but don't do it for the
+    // production configuration because it involves extra file system access.
+    if ([frameworksPath hasPrefix:@"/System/"])
+        environmentVariables.appendValue("DYLD_FRAMEWORK_PATH", [frameworksPath fileSystemRepresentation], ':');
 
     if (m_launchOptions.processType == ProcessLauncher::PluginProcess) {
         // We need to insert the plug-in process shim.

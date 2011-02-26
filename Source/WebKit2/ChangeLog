@@ -1,5 +1,13 @@
 2011-02-25  Darin Adler  <darin@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess): Fixed performance problem in production
+        builds by only setting DYLD_FRAMEWORK_PATH in engineering configurations.
+
+2011-02-25  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders Carlsson.
 
         <rdar://problem/8036034> WebKit2 should work even if DYLD_FRAMEWORK_PATH is not set
