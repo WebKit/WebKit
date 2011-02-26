@@ -363,7 +363,7 @@ private:
     // This variable keeps a cumulative total of matches found so far for ALL the
     // frames on the page, and is only incremented by calling IncreaseMatchCount
     // (on the main frame only). It should be -1 for all other frames.
-    size_t m_totalMatchCount;
+    int m_totalMatchCount;
 
     // This variable keeps a cumulative total of how many frames are currently
     // scoping, and is incremented/decremented on the main frame only.

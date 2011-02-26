@@ -1,3 +1,14 @@
+2011-02-26  John Mellor  <johnme@chromium.org>
+
+        Reviewed by Antonio Gomes.
+
+        [chromium] WebFrameImpl::m_totalMatchCount should be an int
+        https://bugs.webkit.org/show_bug.cgi?id=55134
+
+        WebFrameImpl::m_totalMatchCount should be an int instead of a size_t since it can be -1.
+
+        * src/WebFrameImpl.h:
+
 2011-02-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
