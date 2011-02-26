@@ -60,7 +60,6 @@ public:
         : m_resourceResponseAllocation(*p->m_resourceResponse)
     {
         m_resourceResponse = &m_resourceResponseAllocation;
-        m_downloadFilePath = p->m_downloadFilePath;
     }
 
     virtual void dispose() { delete this; }
@@ -376,12 +375,12 @@ void WebURLResponse::setIsMultipartPayload(bool value)
 
 WebString WebURLResponse::downloadFilePath() const
 {
-    return m_private->m_downloadFilePath;
+    return m_private->m_resourceResponse->downloadFilePath();
 }
 
 void WebURLResponse::setDownloadFilePath(const WebString& downloadFilePath)
 {
-    m_private->m_downloadFilePath = downloadFilePath;
+    m_private->m_resourceResponse->setDownloadFilePath(downloadFilePath.utf8().data());
 }
 
 WebString WebURLResponse::remoteIPAddress() const
