@@ -1,3 +1,14 @@
+2011-02-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations change. 
+        
+        Remove failing Snow Leopard expectations for tests that were fixed by 
+        r79754.
+        
+        Skip more viewport tests added by r79783.
+        
+        * platform/chromium/test_expectations.txt:
+
 2011-02-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.
