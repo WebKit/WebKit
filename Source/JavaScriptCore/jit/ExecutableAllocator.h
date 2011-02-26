@@ -47,6 +47,13 @@
 #include <sys/cachectl.h>
 #endif
 
+#if CPU(SH4) && OS(LINUX)
+#include <asm/cachectl.h>
+#include <asm/unistd.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+#endif
+
 #if OS(WINCE)
 // From pkfuncs.h (private header file from the Platform Builder)
 #define CACHE_SYNC_ALL 0x07F
@@ -309,6 +316,15 @@ public:
         RefPtr<IMemCache1> memCache = createRefPtrInstance<IMemCache1>(AEECLSID_MemCache1);
         IMemCache1_ClearCache(memCache.get(), reinterpret_cast<uint32>(code), size, MEMSPACE_CACHE_FLUSH, MEMSPACE_DATACACHE);
         IMemCache1_ClearCache(memCache.get(), reinterpret_cast<uint32>(code), size, MEMSPACE_CACHE_INVALIDATE, MEMSPACE_INSTCACHE);
+    }
+#elif CPU(SH4) && OS(LINUX)
+    static void cacheFlush(void* code, size_t size)
+    {
+#ifdef CACHEFLUSH_D_L2
+        syscall(__NR_cacheflush, reinterpret_cast<unsigned>(code), size, CACHEFLUSH_D_WB | CACHEFLUSH_I | CACHEFLUSH_D_L2);
+#else
+        syscall(__NR_cacheflush, reinterpret_cast<unsigned>(code), size, CACHEFLUSH_D_WB | CACHEFLUSH_I);
+#endif
     }
 #else
     #error "The cacheFlush support is missing on this platform."
