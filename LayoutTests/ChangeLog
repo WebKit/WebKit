@@ -1,5 +1,13 @@
 2011-02-26  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed Chromium expectations update.
+        
+        Add failing expectation for fast/images/support-broken-image-delegate.html
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-26  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed update of the Chromium html5lib expectations after r79765
         (diff matches the base expectations change).
 
