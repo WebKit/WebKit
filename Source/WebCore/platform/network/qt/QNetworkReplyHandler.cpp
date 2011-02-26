@@ -51,6 +51,10 @@
 #define SIGNAL_CONN Qt::QueuedConnection
 #endif
 
+// In Qt 4.8, the attribute for sending a request synchronously will be made public,
+// for now, use this hackish solution for setting the internal attribute.
+const QNetworkRequest::Attribute gSynchronousNetworkRequestAttribute = static_cast<QNetworkRequest::Attribute>(QNetworkRequest::HttpPipeliningWasUsedAttribute + 7);
+
 static const int gMaxRecursionLimit = 10;
 
 namespace WebCore {
@@ -218,8 +222,14 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
 
     m_request = r.toNetworkRequest(originatingObject);
 
-    if (m_loadMode == LoadNormal)
+    if (m_loadMode == LoadSynchronously)
+        m_request.setAttribute(gSynchronousNetworkRequestAttribute, true);
+
+    if (m_loadMode == LoadNormal || m_loadMode == LoadSynchronously)
         start();
+
+    if (m_loadMode == LoadSynchronously)
+        m_loadMode = LoadNormal;
 }
 
 void QNetworkReplyHandler::setLoadMode(LoadMode mode)
@@ -547,6 +557,11 @@ void QNetworkReplyHandler::start()
     }
 
     m_reply->setParent(this);
+
+    if (m_loadMode == LoadSynchronously && m_reply->isFinished()) {
+        // If supported, a synchronous request will be finished at this point, no need to hook up the signals.
+        return;
+    }
 
     connect(m_reply, SIGNAL(finished()),
             this, SLOT(finish()), SIGNAL_CONN);
