@@ -79,6 +79,7 @@
 #include "WebPopupMenuInfo.h"
 #include "WebPopupType.h"
 #include "WebRect.h"
+#include "WebSettings.h"
 #include "WebTextDirection.h"
 #include "WebURLRequest.h"
 #include "WebViewClient.h"
@@ -859,6 +860,32 @@ void ChromeClientImpl::exitFullscreenForNode(WebCore::Node* node)
     if (m_webView->client())
         m_webView->client()->exitFullscreenForNode(WebNode(node));
 }
+
+#if ENABLE(FULLSCREEN_API)
+bool ChromeClientImpl::supportsFullScreenForElement(const WebCore::Element* element)
+{
+    return m_webView->page()->settings()->fullScreenEnabled();
+}
+
+void ChromeClientImpl::enterFullScreenForElement(WebCore::Element* element)
+{
+    // FIXME: We may need to call these someplace else when window resizes.
+    element->document()->webkitWillEnterFullScreenForElement(element);
+    element->document()->webkitDidEnterFullScreenForElement(element);
+}
+
+void ChromeClientImpl::exitFullScreenForElement(WebCore::Element* element)
+{
+    // FIXME: We may need to call these someplace else when window resizes.
+    element->document()->webkitWillExitFullScreenForElement(element);
+    element->document()->webkitDidExitFullScreenForElement(element);
+}
+
+void ChromeClientImpl::fullScreenRendererChanged(RenderBox*)
+{
+    notImplemented();
+}
+#endif
 
 bool ChromeClientImpl::selectItemWritingDirectionIsNatural()
 {

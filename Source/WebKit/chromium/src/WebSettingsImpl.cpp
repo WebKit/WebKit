@@ -35,6 +35,7 @@
 #include "Settings.h"
 #include "WebString.h"
 #include "WebURL.h"
+#include <wtf/UnusedParam.h>
 
 #if defined(OS_WIN)
 #include "RenderThemeChromiumWin.h"
@@ -358,6 +359,15 @@ void WebSettingsImpl::setInteractiveFormValidationEnabled(bool enabled)
 void WebSettingsImpl::setMinimumTimerInterval(double interval)
 {
     m_settings->setMinDOMTimerInterval(interval);
+}
+
+void WebSettingsImpl::setFullScreenEnabled(bool enabled)
+{
+#if ENABLE(FULLSCREEN_API)
+    m_settings->setFullScreenEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 } // namespace WebKit

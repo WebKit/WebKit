@@ -104,6 +104,7 @@ public:
     virtual void setCaretBrowsingEnabled(bool);
     virtual void setInteractiveFormValidationEnabled(bool);
     virtual void setMinimumTimerInterval(double);
+    virtual void setFullScreenEnabled(bool);
 
 private:
     WebCore::Settings* m_settings;

@@ -111,6 +111,7 @@ public:
     virtual void setCaretBrowsingEnabled(bool) = 0;
     virtual void setInteractiveFormValidationEnabled(bool) = 0;
     virtual void setMinimumTimerInterval(double) = 0;
+    virtual void setFullScreenEnabled(bool) = 0;
 
 protected:
     ~WebSettings() { }
