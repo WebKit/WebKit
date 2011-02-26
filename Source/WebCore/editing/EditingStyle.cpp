@@ -31,6 +31,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSValueKeywords.h"
+#include "CSSValueList.h"
 #include "Frame.h"
 #include "HTMLFontElement.h"
 #include "HTMLNames.h"

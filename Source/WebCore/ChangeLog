@@ -1,5 +1,11 @@
 2011-02-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed Qt build fix; included CSSValueList.h in EditingStyle.cpp.
+
+        * editing/EditingStyle.cpp:
+
+2011-02-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Darin Adler.
 
         Move HTMLEquivalent and its subclasses to EditingStyle
