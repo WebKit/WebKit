@@ -1,3 +1,13 @@
+2011-02-26  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        Skip the test on QT, GTK until we can figure out the plugin load problem.
+        https://bugs.webkit.org/show_bug.cgi?id=55307
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2011-02-26  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Darin Adler.
