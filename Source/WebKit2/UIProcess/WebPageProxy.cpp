@@ -1614,8 +1614,8 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t op
     m_inDecidePolicyForNavigationAction = false;
 
     // Check if we received a policy decision already. If we did, we can just pass it back.
+    receivedPolicyAction = m_syncNavigationActionPolicyActionIsValid;
     if (m_syncNavigationActionPolicyActionIsValid) {
-        receivedPolicyAction = true;
         policyAction = m_syncNavigationActionPolicyAction;
         downloadID = m_syncNavigationActionPolicyDownloadID;
     }
@@ -1663,8 +1663,8 @@ void WebPageProxy::decidePolicyForMIMEType(uint64_t frameID, const String& MIMET
     m_inDecidePolicyForMIMEType = false;
 
     // Check if we received a policy decision already. If we did, we can just pass it back.
+    receivedPolicyAction = m_syncMimeTypePolicyActionIsValid;
     if (m_syncMimeTypePolicyActionIsValid) {
-        receivedPolicyAction = true;
         policyAction = m_syncMimeTypePolicyAction;
         downloadID = m_syncMimeTypePolicyDownloadID;
     }

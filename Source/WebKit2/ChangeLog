@@ -1,5 +1,19 @@
 2011-02-26  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Asynchronous response to FramePolicyListener is not finishing the load
+        https://bugs.webkit.org/show_bug.cgi?id=55305
+        <rdar://problem/9044356>
+
+        Always initialize the receivedPolicyAction reply parameter.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForMIMEType):
+
+2011-02-26  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         DidFinishLoadingDataForCustomRepresentation should pass along the suggested filename
