@@ -1,3 +1,15 @@
+2011-02-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55276
+        WebPage::close() accesses "this" after it is destroyed.
+
+        This was making many tests crash with GuardMalloc.
+
+        * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::close): Access "this" before it can be
+        destroyed, not after.
+
 2011-02-25  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed.

@@ -369,12 +369,14 @@ void WebPage::close()
     m_drawingArea->onPageClose();
     m_drawingArea.clear();
 
+    bool isRunningModal = m_isRunningModal;
+    m_isRunningModal = false;
+
+    // The WebPage can be destroyed by this call.
     WebProcess::shared().removeWebPage(m_pageID);
 
-    if (m_isRunningModal) {
-        m_isRunningModal = false;
+    if (isRunningModal)
         WebProcess::shared().runLoop()->stop();
-    }
 }
 
 void WebPage::tryClose()
