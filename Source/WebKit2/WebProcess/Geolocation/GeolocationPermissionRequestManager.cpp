@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GeolocationPermissionRequestManager.h"
 
+#include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"

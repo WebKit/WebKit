@@ -587,10 +587,6 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
     graphicsContext.clip(rect);
     m_mainFrame->coreFrame()->view()->paint(&graphicsContext, rect);
     graphicsContext.restore();
-
-    // FIXME: Remove this code once we're using the new drawing area on mac and windows.
-    if (m_pageOverlay && m_drawingArea->info().type != DrawingAreaInfo::Impl)
-        drawPageOverlay(graphicsContext, rect);
 }
 
 void WebPage::drawPageOverlay(GraphicsContext& graphicsContext, const IntRect& rect)

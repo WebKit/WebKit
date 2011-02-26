@@ -45,9 +45,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<DrawingAreaImpl> DrawingAreaImpl::create(WebPage* webPage, const WebPageCreationParameters& parameters)
+PassOwnPtr<DrawingAreaImpl> DrawingAreaImpl::create(WebPage* webPage, const WebPageCreationParameters& parameters)
 {
-    return adoptRef(new DrawingAreaImpl(webPage, parameters));
+    return adoptPtr(new DrawingAreaImpl(webPage, parameters));
 }
 
 DrawingAreaImpl::~DrawingAreaImpl()
@@ -57,7 +57,7 @@ DrawingAreaImpl::~DrawingAreaImpl()
 }
 
 DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParameters& parameters)
-    : DrawingArea(DrawingAreaInfo::Impl, parameters.drawingAreaInfo.identifier, webPage)
+    : DrawingArea(DrawingAreaTypeImpl, webPage)
     , m_stateID(0)
     , m_inUpdateState(false)
     , m_isWaitingForDidUpdate(false)

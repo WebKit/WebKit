@@ -37,7 +37,7 @@ class UpdateInfo;
 
 class DrawingAreaImpl : public DrawingArea {
 public:
-    static PassRefPtr<DrawingAreaImpl> create(WebPage*, const WebPageCreationParameters&);
+    static PassOwnPtr<DrawingAreaImpl> create(WebPage*, const WebPageCreationParameters&);
     virtual ~DrawingAreaImpl();
 
     void layerHostDidFlushLayers();

@@ -43,8 +43,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-TiledDrawingArea::TiledDrawingArea(DrawingAreaInfo::Identifier identifier, WebPage* webPage)
-    : DrawingArea(DrawingAreaInfo::Tiled, identifier, webPage)
+TiledDrawingArea::TiledDrawingArea(WebPage* webPage)
+    : DrawingArea(DrawingAreaTypeTiled, webPage)
     , m_isWaitingForUpdate(false)
     , m_shouldPaint(true)
     , m_displayTimer(WebProcess::shared().runLoop(), this, &TiledDrawingArea::display)

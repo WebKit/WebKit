@@ -41,33 +41,29 @@
 
 namespace WebKit {
 
-PassRefPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
+PassOwnPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
 {
-    switch (parameters.drawingAreaInfo.type) {
-        case DrawingAreaInfo::None:
-            ASSERT_NOT_REACHED();
-            break;
-
-        case DrawingAreaInfo::Impl:
+    switch (parameters.drawingAreaType) {
+    case DrawingAreaTypeImpl:
 #if PLATFORM(MAC) || PLATFORM(WIN)
-            return DrawingAreaImpl::create(webPage, parameters);
+        return DrawingAreaImpl::create(webPage, parameters);
 #else
-            return 0;
+        return 0;
 #endif
-        case DrawingAreaInfo::ChunkedUpdate:
-            return adoptRef(new ChunkedUpdateDrawingArea(parameters.drawingAreaInfo.identifier, webPage));
+    case DrawingAreaTypeChunkedUpdate:
+        return adoptPtr(new ChunkedUpdateDrawingArea(webPage));
 
 #if ENABLE(TILED_BACKING_STORE)
-        case DrawingAreaInfo::Tiled:
-            return adoptRef(new TiledDrawingArea(parameters.drawingAreaInfo.identifier, webPage));
+    case DrawingAreaTypeTiled:
+        return adoptPtr(new TiledDrawingArea(webPage));
 #endif
     }
 
     return 0;
 }
 
-DrawingArea::DrawingArea(DrawingAreaInfo::Type type, DrawingAreaInfo::Identifier identifier, WebPage* webPage)
-    : m_info(type, identifier)
+DrawingArea::DrawingArea(DrawingAreaType type, WebPage* webPage)
+    : m_type(type)
     , m_webPage(webPage)
 {
 }

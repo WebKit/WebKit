@@ -30,6 +30,8 @@
 
 #include "DrawingAreaProxy.h"
 #include <WebCore/IntSize.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/OwnPtr.h>
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>

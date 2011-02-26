@@ -32,8 +32,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-DrawingAreaProxy::DrawingAreaProxy(DrawingAreaInfo::Type type, WebPageProxy* webPageProxy)
-    : m_info(type, nextIdentifier())
+DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy* webPageProxy)
+    : m_type(type)
     , m_webPageProxy(webPageProxy)
     , m_size(webPageProxy->viewSize())
 {
@@ -41,12 +41,6 @@ DrawingAreaProxy::DrawingAreaProxy(DrawingAreaInfo::Type type, WebPageProxy* web
 
 DrawingAreaProxy::~DrawingAreaProxy()
 {
-}
-
-DrawingAreaInfo::Identifier DrawingAreaProxy::nextIdentifier()
-{
-    static DrawingAreaInfo::Identifier nextID = 1;
-    return ++nextID;
 }
 
 void DrawingAreaProxy::setSize(const IntSize& size, const IntSize& scrollOffset)

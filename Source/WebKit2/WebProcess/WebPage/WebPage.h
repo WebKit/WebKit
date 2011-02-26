@@ -471,7 +471,7 @@ private:
     String m_userAgent;
 
     WebCore::IntSize m_viewSize;
-    RefPtr<DrawingArea> m_drawingArea;
+    OwnPtr<DrawingArea> m_drawingArea;
 
     bool m_drawsBackground;
     bool m_drawsTransparentBackground;

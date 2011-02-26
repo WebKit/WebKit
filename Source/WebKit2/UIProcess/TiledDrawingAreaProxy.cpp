@@ -48,7 +48,7 @@ PassOwnPtr<TiledDrawingAreaProxy> TiledDrawingAreaProxy::create(PlatformWebView*
 }
 
 TiledDrawingAreaProxy::TiledDrawingAreaProxy(PlatformWebView* webView, WebPageProxy* webPageProxy)
-    : DrawingAreaProxy(DrawingAreaInfo::Tiled, webPageProxy)
+    : DrawingAreaProxy(DrawingAreaTypeTiled, webPageProxy)
     , m_isWaitingForDidSetFrameNotification(false)
     , m_isVisible(true)
     , m_webView(webView)
@@ -169,11 +169,6 @@ void TiledDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::Mes
     default:
         ASSERT_NOT_REACHED();
     }
-}
-
-void TiledDrawingAreaProxy::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder&)
-{
-    ASSERT_NOT_REACHED();
 }
 
 void TiledDrawingAreaProxy::requestTileUpdate(int tileID, const IntRect& dirtyRect)

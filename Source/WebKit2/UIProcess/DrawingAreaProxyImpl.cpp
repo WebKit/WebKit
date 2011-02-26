@@ -48,7 +48,7 @@ PassOwnPtr<DrawingAreaProxyImpl> DrawingAreaProxyImpl::create(WebPageProxy* webP
 }
 
 DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
-    : DrawingAreaProxy(DrawingAreaInfo::Impl, webPageProxy)
+    : DrawingAreaProxy(DrawingAreaTypeImpl, webPageProxy)
     , m_currentStateID(0)
     , m_requestedStateID(0)
     , m_isWaitingForDidUpdateState(false)

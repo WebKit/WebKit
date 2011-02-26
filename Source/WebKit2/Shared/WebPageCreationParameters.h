@@ -52,7 +52,7 @@ struct WebPageCreationParameters {
     bool isInWindow;
     
     WebPreferencesStore store;
-    DrawingAreaInfo drawingAreaInfo;
+    DrawingAreaType drawingAreaType;
     WebPageGroupData pageGroupData;
 
     bool drawsBackground;

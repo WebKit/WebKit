@@ -1244,11 +1244,6 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
 
 void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
 {
-    if (messageID.is<CoreIPC::MessageClassDrawingAreaProxyLegacy>()) {
-        m_drawingArea->didReceiveSyncMessage(connection, messageID, arguments, reply);
-        return;
-    }
-
 #if ENABLE(INSPECTOR)
     if (messageID.is<CoreIPC::MessageClassWebInspectorProxy>()) {
         if (WebInspectorProxy* inspector = this->inspector())
@@ -2576,7 +2571,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.isFocused = m_pageClient->isViewFocused();
     parameters.isVisible = m_pageClient->isViewVisible();
     parameters.isInWindow = m_pageClient->isViewInWindow();
-    parameters.drawingAreaInfo = m_drawingArea->info();
+    parameters.drawingAreaType = m_drawingArea->type();
     parameters.store = m_pageGroup->preferences()->store();
     parameters.pageGroupData = m_pageGroup->data();
     parameters.drawsBackground = m_drawsBackground;

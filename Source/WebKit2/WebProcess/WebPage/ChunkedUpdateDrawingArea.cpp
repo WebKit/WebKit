@@ -38,8 +38,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea(DrawingAreaInfo::Identifier identifier, WebPage* webPage)
-    : DrawingArea(DrawingAreaInfo::ChunkedUpdate, identifier, webPage)
+ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea(WebPage* webPage)
+    : DrawingArea(DrawingAreaTypeChunkedUpdate, webPage)
     , m_isWaitingForUpdate(false)
     , m_paintingIsSuspended(false)
     , m_displayTimer(WebProcess::shared().runLoop(), this, &ChunkedUpdateDrawingArea::display)
@@ -74,15 +74,9 @@ void ChunkedUpdateDrawingArea::display()
     if (m_dirtyRect.isEmpty())
         return;
 
-    // Laying out the page can cause the drawing area to change so we keep an extra reference.
-    RefPtr<ChunkedUpdateDrawingArea> protect(this);
-
     // Layout if necessary.
     m_webPage->layoutIfNeeded();
  
-    if (m_webPage->drawingArea() != this)
-        return;
-    
     IntRect dirtyRect = m_dirtyRect;
     m_dirtyRect = IntRect();
 
@@ -126,14 +120,8 @@ void ChunkedUpdateDrawingArea::setSize(const IntSize& viewSize)
     // We don't want to wait for an update until we display.
     m_isWaitingForUpdate = false;
     
-    // Laying out the page can cause the drawing area to change so we keep an extra reference.
-    RefPtr<ChunkedUpdateDrawingArea> protect(this);
-
     m_webPage->setSize(viewSize);
     m_webPage->layoutIfNeeded();
-
-    if (m_webPage->drawingArea() != this)
-        return;
 
     if (m_paintingIsSuspended) {
         ASSERT(!m_displayTimer.isActive());
@@ -185,14 +173,6 @@ void ChunkedUpdateDrawingArea::didUpdate()
 
 void ChunkedUpdateDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
-    DrawingAreaInfo::Identifier targetIdentifier;
-    if (!arguments->decode(CoreIPC::Out(targetIdentifier)))
-        return;
-
-    // We can switch drawing areas on the fly, so if this message was targetted at an obsolete drawing area, ignore it.
-    if (targetIdentifier != info().identifier)
-        return;
-
     switch (messageID.get<DrawingAreaLegacyMessage::Kind>()) {
         case DrawingAreaLegacyMessage::SetSize: {
             IntSize size;

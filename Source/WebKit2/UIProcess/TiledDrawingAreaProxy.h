@@ -30,7 +30,6 @@
 
 #include "DrawingAreaProxy.h"
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/IntSize.h>
 #include <WebCore/IntRect.h>
 #include <wtf/HashSet.h>
 
@@ -114,7 +113,6 @@ private:
 
     // DrawingAreaProxy
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder&);
     virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext);
     virtual void sizeDidChange();
     virtual void setPageIsVisible(bool isVisible);

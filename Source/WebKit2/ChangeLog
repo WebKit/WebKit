@@ -1,3 +1,56 @@
+2011-02-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        DrawingArea should not be reference counted
+        https://bugs.webkit.org/show_bug.cgi?id=55284
+
+        * Shared/DrawingAreaInfo.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ChunkedUpdateDrawingAreaProxy):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::setPageIsVisible):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::update):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::sendSetSize):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::type):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::TiledDrawingAreaProxy):
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp:
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::ChunkedUpdateDrawingArea):
+        (WebKit::ChunkedUpdateDrawingArea::display):
+        (WebKit::ChunkedUpdateDrawingArea::setSize):
+        (WebKit::ChunkedUpdateDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        (WebKit::DrawingArea::DrawingArea):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::create):
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        (WebKit::TiledDrawingArea::TiledDrawingArea):
+        * WebProcess/WebPage/TiledDrawingArea.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRect):
+        * WebProcess/WebPage/WebPage.h:
+
 2011-02-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

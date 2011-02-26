@@ -23,51 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaInfo_h
-#define DrawingAreaInfo_h
-
-#include "ArgumentCoders.h"
-#include "Connection.h"
-
-namespace WebCore {
-    class IntRect;
-    class IntSize;
-}
+#ifndef DrawingAreaType_h
+#define DrawingAreaType_h
 
 namespace WebKit {
 
-struct DrawingAreaInfo {
-    enum Type {
-        None,
-        Impl,
-        ChunkedUpdate,
+enum DrawingAreaType {
+    DrawingAreaTypeImpl,
+    DrawingAreaTypeChunkedUpdate,
 #if ENABLE(TILED_BACKING_STORE)
-        Tiled,
+    DrawingAreaTypeTiled,
 #endif
-    };
-    
-    typedef uint64_t Identifier;
-
-    DrawingAreaInfo()
-        : type(None)
-        , identifier(0)
-    {
-    }
-
-    DrawingAreaInfo(Type type, Identifier identifier)
-        : type(type)
-        , identifier(identifier)
-    {
-    }
-    
-    Type type;
-    Identifier identifier;
 };
 
 } // namespace WebKit
 
-namespace CoreIPC {
-template<> struct ArgumentCoder<WebKit::DrawingAreaInfo> : SimpleArgumentCoder<WebKit::DrawingAreaInfo> { };
-}
-
-#endif // DrawingAreaInfo_h
+#endif // DrawingAreaType_h

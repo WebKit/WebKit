@@ -30,7 +30,6 @@
 
 #include "DrawingArea.h"
 #include "RunLoop.h"
-#include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>
 #include <wtf/Vector.h>
 
@@ -40,7 +39,7 @@ class UpdateChunk;
 
 class TiledDrawingArea : public DrawingArea {
 public:
-    TiledDrawingArea(DrawingAreaInfo::Identifier, WebPage*);
+    explicit TiledDrawingArea(WebPage*);
     virtual ~TiledDrawingArea();
 
     virtual void setNeedsDisplay(const WebCore::IntRect&);
