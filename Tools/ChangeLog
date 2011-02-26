@@ -1,3 +1,16 @@
+2011-02-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Adam Barth.
+
+        [EFL] Add coding style exceptions for EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=54733
+
+        The EFL APIs use EFL naming style, which includes both lower-cased and camel-cased,
+        underscore-sparated values. But, style checking rule have found parameter_name errors
+        in efl directories so far.
+
+        * Scripts/webkitpy/style/checker.py: Add prameter_name rule's exception and efl directories.
+
 2011-02-26  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.

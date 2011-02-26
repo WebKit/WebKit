@@ -127,11 +127,7 @@ _PATH_RULES_SPECIFIER = [
       "Source/WebKit/qt/tests/qdeclarativewebview"],
      ["-build/include",
       "-readability/naming"]),
-    ([# The EFL APIs use EFL naming style, which includes
-      # both lower-cased and camel-cased, underscore-sparated
-      # values.
-      "Source/WebKit/efl/ewk/",
-      # There is no clean way to avoid "yy_*" names used by flex.
+    ([# There is no clean way to avoid "yy_*" names used by flex.
       "Source/WebCore/css/CSSParser.cpp",
       # Qt code uses '_' in some places (such as private slots
       # and on test xxx_data methos on tests)
@@ -167,6 +163,16 @@ _PATH_RULES_SPECIFIER = [
       "JavaScriptCore/jit/JITStubs.cpp"],
      ["-readability/parameter_name",
       "-whitespace/parens"]),
+
+    ([# The EFL APIs use EFL naming style, which includes
+      # both lower-cased and camel-cased, underscore-sparated
+      # values.
+      "Source/WebCore/platform/efl",
+      "Source/WebCore/platform/graphics/efl",
+      "Source/WebKit/efl/ewk/",
+      "Source/JavaScriptCore/wtf/efl/"],
+     ["-readability/naming",
+      "-readability/parameter_name"]),
 
     # WebKit2 rules:
     # WebKit2 and certain directories have idiosyncracies.
