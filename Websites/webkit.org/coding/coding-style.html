@@ -971,6 +971,42 @@ public:
 </li>
 </ol>
 
+<h3>Comments</h3>
+<ol>
+<li>Use only <i>one</i> space before end of line comments and in between sentences in comments.
+<h4 class="right">Right:</h4>
+<pre class="code">
+f(a, b); // This explains why the function call was done. This is another sentence.
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+int i;    // This is a comment with several spaces before it, which is a non-conforming style.
+double f; // This is another comment.  There are two spaces before this sentence which is a non-conforming style.
+</pre>
+</li>
+
+<li>
+Make comments look like sentences by starting with a capital letter and ending with a period (punctation). One exception may be end of line comments like this "if (x == y) // false for NaN".
+</li>
+
+<li>
+Use FIXME: (without attribution) to denote items that need to be addressed in the future.
+</li>
+<h4 class="right">Right:</h4>
+<pre class="code">
+drawJpg(); // FIXME: Make this code handle jpg in addition to the png support.
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+drawJpg(); // FIXME(joe): Make this code handle jpg in addition to the png support.
+</pre>
+<pre class="code">
+drawJpg(); // TODO: Make this code handle jpg in addition to the png support.
+</pre>
+</ol>
+
 <?php
     include("../footer.inc");
 ?>
