@@ -1,3 +1,18 @@
+2011-02-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make positioned elements work with vertical text
+        https://bugs.webkit.org/show_bug.cgi?id=46500
+
+        Rebaseline fast/table/fixed-with-auto-with-colspan-vertical.html for r79725.
+
+        * platform/gtk/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt:
+        * platform/mac/fast/table/fixed-with-auto-with-colspan-vertical-expected.checksum:
+        * platform/mac/fast/table/fixed-with-auto-with-colspan-vertical-expected.png:
+        * platform/mac/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt:
+        * platform/qt/fast/table/fixed-with-auto-with-colspan-vertical-expected.txt:
+
 2011-02-25  James Robinson  <jamesr@chromium.org>
 
         Update chromium expectations and add new chromium and mac-leopard baselines for new tests.
