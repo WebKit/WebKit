@@ -289,7 +289,8 @@ void DocumentLoader::commitLoad(const char* data, int length)
 {
     // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
     // by starting a new load, so retain temporarily.
-    RefPtr<DocumentLoader> protect(this);
+    RefPtr<Frame> protectFrame(m_frame);
+    RefPtr<DocumentLoader> protectLoader(this);
 
     commitIfReady();
     FrameLoader* frameLoader = DocumentLoader::frameLoader();

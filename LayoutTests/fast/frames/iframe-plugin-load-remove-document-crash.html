@@ -1,0 +1,21 @@
+<html>
+<body onload="runTest()">
+<script>
+    if (window.layoutTestController)
+    {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    function runTest()
+    {
+        document.body.innerHTML = 'PASS';
+        
+        if (layoutTestController)
+            layoutTestController.notifyDone();
+    }
+</script>
+<iframe src="data:application/x-webkit-test-netscape,foo"></iframe>
+</body>
+</html>
+
