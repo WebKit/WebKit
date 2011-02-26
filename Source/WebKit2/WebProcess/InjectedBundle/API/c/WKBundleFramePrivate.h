@@ -47,6 +47,7 @@ WK_EXPORT void WKBundleFrameSuspendAnimations(WKBundleFrameRef frame);
 WK_EXPORT void WKBundleFrameResumeAnimations(WKBundleFrameRef frame);
 WK_EXPORT unsigned WKBundleFrameGetPendingUnloadCount(WKBundleFrameRef frame);
 WK_EXPORT WKStringRef WKBundleFrameCopyLayerTreeAsText(WKBundleFrameRef frame);
+WK_EXPORT void WKBundleFrameClearOpener(WKBundleFrameRef frame);
 
 #ifdef __cplusplus
 }

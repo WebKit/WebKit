@@ -256,6 +256,8 @@ void InjectedBundlePage::reset()
     WKBundlePageSetTextZoomFactor(m_page, 1);
 
     m_previousTestBackForwardListItem = adoptWK(WKBundleBackForwardListCopyItemAtIndex(WKBundlePageGetBackForwardList(m_page), 0));
+
+    WKBundleFrameClearOpener(WKBundlePageGetMainFrame(m_page));
 }
 
 // Loader Client Callbacks

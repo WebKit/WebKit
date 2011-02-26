@@ -164,6 +164,13 @@ WKBundlePageRef WKBundleFrameGetPage(WKBundleFrameRef frameRef)
     return toAPI(toImpl(frameRef)->page());
 }
 
+void WKBundleFrameClearOpener(WKBundleFrameRef frameRef)
+{
+    Frame* coreFrame = toImpl(frameRef)->coreFrame();
+    if (coreFrame)
+        coreFrame->loader()->setOpener(0);
+}
+
 WKStringRef WKBundleFrameCopyLayerTreeAsText(WKBundleFrameRef frameRef)
 {
     return toCopiedAPI(toImpl(frameRef)->layerTreeAsText());

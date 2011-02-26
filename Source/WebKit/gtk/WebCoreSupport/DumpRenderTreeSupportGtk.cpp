@@ -632,6 +632,13 @@ void DumpRenderTreeSupportGtk::dumpConfigurationForViewport(WebKitWebView* webVi
     fprintf(stdout, "viewport size %dx%d scale %f with limits [%f, %f]\n", attrs.layoutSize.width(), attrs.layoutSize.height(), attrs.initialScale, attrs.minimumScale, attrs.maximumScale);
 }
 
+void DumpRenderTreeSupportGtk::clearOpener(WebKitWebFrame* frame)
+{
+    Frame* coreFrame = core(frame);
+    if (coreFrame)
+        coreFrame->loader()->setOpener(0);
+}
+
 unsigned int DumpRenderTreeSupportGtk::workerThreadCount()
 {
 #if ENABLE(WORKERS)
