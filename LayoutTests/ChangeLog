@@ -1,3 +1,14 @@
+2011-02-26  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        [Web Timing] loadEvent timing should refer to first load event if there are many
+        https://bugs.webkit.org/show_bug.cgi?id=55201
+
+        * fast/dom/script-tests/webtiming-document-open.js:
+        (testTimingWithDocumentOpen): Fire via setTimeout to match w3c test and reveal loadEventEnd.
+        (finishTest): Fire via setTimeout to match w3c test.
+
 2011-02-26  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Reviewed by David Kilzer.

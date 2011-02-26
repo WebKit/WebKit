@@ -3,7 +3,7 @@ var navigation = performance.navigation || {};
 var timing = performance.timing || {};
 var originalTiming = {};
 
-window.addEventListener("load", testTimingWithDocumentOpen, false);
+window.addEventListener("load", function() { setTimeout(testTimingWithDocumentOpen, 0); }, false);
 
 function testTimingWithDocumentOpen()
 {
@@ -27,6 +27,10 @@ function testTimingWithDocumentOpen()
 
     description("This test verifies that the NavigationTimings don't change after a document.open().");
 
+    setTimeout(finishTest, 0);
+}
+
+function finishTest() {
     keys = Object.keys(timing).sort();
     for (var i = 0; i < keys.length; ++i) {
         shouldBe("timing." + keys[i], "originalTiming." + keys[i]);
