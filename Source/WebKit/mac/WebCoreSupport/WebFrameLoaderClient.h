@@ -239,8 +239,10 @@ private:
     NSDictionary *actionDictionary(const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>) const;
     
     virtual bool canCachePage() const;
-    
+
     virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
+
+    virtual bool shouldPaintBrokenImage(const WebCore::KURL&) const;
 
     RetainPtr<WebFrame> m_webFrame;
 

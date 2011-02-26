@@ -1,3 +1,25 @@
+2011-02-26  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48781
+
+        Add a resource load delegate method to query if WebCore should paint the default broken image for failed images.
+
+        Add a new resource load client method (shouldPaintBrokenImage).  WebKit client can decide if WebCore
+        should paint the default broken image when an image fails to load or decode.  The method also passes the
+        URL of the failed image.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::shouldPaintBrokenImage):
+        * WebView/WebDelegateImplementationCaching.h:
+        * WebView/WebDelegateImplementationCaching.mm: Added case for passing one object.
+        (CallResourceLoadDelegateReturningBoolean):
+        * WebView/WebResourceLoadDelegatePrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _cacheResourceLoadDelegateImplementations]):
+
 2011-02-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

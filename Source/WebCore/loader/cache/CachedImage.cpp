@@ -31,6 +31,7 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
 #include "Settings.h"
@@ -55,6 +56,7 @@ CachedImage::CachedImage(const String& url)
     : CachedResource(url, ImageResource)
     , m_image(0)
     , m_decodedDataDeletionTimer(this, &CachedImage::decodedDataDeletionTimerFired)
+    , m_shouldPaintBrokenImage(true)
 {
     setStatus(Unknown);
 }
@@ -63,6 +65,7 @@ CachedImage::CachedImage(Image* image)
     : CachedResource(String(), ImageResource)
     , m_image(image)
     , m_decodedDataDeletionTimer(this, &CachedImage::decodedDataDeletionTimerFired)
+    , m_shouldPaintBrokenImage(true)
 {
     setStatus(Cached);
     setLoading(false);
@@ -120,7 +123,7 @@ Image* CachedImage::image() const
 {
     ASSERT(!isPurgeable());
 
-    if (errorOccurred())
+    if (errorOccurred() && m_shouldPaintBrokenImage)
         return brokenImage();
 
     if (m_image)
@@ -216,6 +219,15 @@ void CachedImage::notifyObservers(const IntRect* changeRect)
         c->imageChanged(this, changeRect);
 }
 
+void CachedImage::checkShouldPaintBrokenImage()
+{
+    Frame* frame = m_request ? m_request->cachedResourceLoader()->frame() : 0;
+    if (!frame)
+        return;
+
+    m_shouldPaintBrokenImage = frame->loader()->client()->shouldPaintBrokenImage(KURL(ParsedURLString, m_url));
+}
+
 void CachedImage::clear()
 {
     destroyDecodedData();
@@ -296,6 +308,7 @@ void CachedImage::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 
 void CachedImage::error(CachedResource::Status status)
 {
+    checkShouldPaintBrokenImage();
     clear();
     setStatus(status);
     ASSERT(errorOccurred());

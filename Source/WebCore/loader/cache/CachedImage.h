@@ -95,9 +95,11 @@ private:
     void notifyObservers(const IntRect* changeRect = 0);
     void decodedDataDeletionTimerFired(Timer<CachedImage>*);
     virtual PurgePriority purgePriority() const { return PurgeFirst; }
+    void checkShouldPaintBrokenImage();
 
     RefPtr<Image> m_image;
     Timer<CachedImage> m_decodedDataDeletionTimer;
+    bool m_shouldPaintBrokenImage;
 };
 
 }

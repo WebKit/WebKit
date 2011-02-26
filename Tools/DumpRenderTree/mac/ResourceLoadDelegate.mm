@@ -245,4 +245,15 @@ using namespace std;
     return response;
 }
 
+-(BOOL)webView: (WebView*)webView shouldPaintBrokenImageForURL:(NSURL*)imageURL
+{
+    // Only log the message when shouldPaintBrokenImage() returns NO; this avoids changing results of layout tests with failed
+    // images, e.g., security/block-test-no-port.html.
+    if (!done && gLayoutTestController->dumpResourceLoadCallbacks() && !gLayoutTestController->shouldPaintBrokenImage()) {
+        NSString *string = [NSString stringWithFormat:@"%@ - shouldPaintBrokenImage: NO", [imageURL _drt_descriptionSuitableForTestResult]];
+        printf("%s\n", [string UTF8String]);
+    }
+
+    return gLayoutTestController->shouldPaintBrokenImage();
+}
 @end

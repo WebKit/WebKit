@@ -1,3 +1,15 @@
+2011-02-26  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48781
+
+        Add a resource load delegate method to query if WebCore should paint the default broken image for failed images.
+
+        * fast/images/resources/broken-image-with-invalid-format.png: Added.
+        * fast/images/support-broken-image-delegate.html: Added.
+        * platform/mac/fast/images/support-broken-image-delegate-expected.txt: Added.
+
 2011-02-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

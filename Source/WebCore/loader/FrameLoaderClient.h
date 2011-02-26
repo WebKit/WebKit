@@ -305,6 +305,8 @@ namespace WebCore {
         virtual void didNotAllowPlugins() { }
 
         virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() = 0;
+
+        virtual bool shouldPaintBrokenImage(const KURL&) const { return true; }
     };
 
 } // namespace WebCore

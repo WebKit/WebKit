@@ -307,6 +307,9 @@ public:
 
     JSRetainPtr<JSStringRef> markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const;
 
+    void setShouldPaintBrokenImage(bool);
+    bool shouldPaintBrokenImage() const { return m_shouldPaintBrokenImage; }
+
     static const unsigned maxViewWidth;
     static const unsigned maxViewHeight;
 
@@ -358,6 +361,7 @@ private:
     bool m_handlesAuthenticationChallenges;
     bool m_isPrinting;
     bool m_deferMainResourceDataLoad;
+    bool m_shouldPaintBrokenImage;
 
     std::string m_authenticationUsername;
     std::string m_authenticationPassword; 

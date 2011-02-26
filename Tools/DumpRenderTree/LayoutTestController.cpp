@@ -83,6 +83,7 @@ LayoutTestController::LayoutTestController(const std::string& testPathOrURL, con
     , m_handlesAuthenticationChallenges(false)
     , m_isPrinting(false)
     , m_deferMainResourceDataLoad(true)
+    , m_shouldPaintBrokenImage(true)
     , m_testPathOrURL(testPathOrURL)
     , m_expectedPixelHash(expectedPixelHash)
 {
@@ -1780,6 +1781,18 @@ static JSValueRef addUserStyleSheetCallback(JSContextRef context, JSObjectRef, J
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef setShouldPaintBrokenImageCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // Has Mac implementation
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->setShouldPaintBrokenImage(JSValueToBoolean(context, arguments[0]));
+
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef apiTestNewWindowDataLoadBaseURLCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount != 2)
@@ -2127,6 +2140,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "addOriginAccessWhitelistEntry", addOriginAccessWhitelistEntryCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setScrollbarPolicy", setScrollbarPolicyCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "authenticateSession", authenticateSessionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setShouldPaintBrokenImage", setShouldPaintBrokenImageCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 
@@ -2214,6 +2228,11 @@ void LayoutTestController::addURLToRedirect(std::string origin, std::string dest
 const std::string& LayoutTestController::redirectionDestinationForURL(std::string origin)
 {
     return m_URLsToRedirect[origin];
+}
+
+void LayoutTestController::setShouldPaintBrokenImage(bool shouldPaintBrokenImage)
+{
+    m_shouldPaintBrokenImage = shouldPaintBrokenImage;
 }
 
 const unsigned LayoutTestController::maxViewWidth = 800;
