@@ -1,3 +1,13 @@
+2011-02-26  Alice Boxhall  <aboxhall@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Tests that typing enter in the input element does not fire textInput.
+        https://bugs.webkit.org/show_bug.cgi?id=54152
+
+        * fast/forms/textinput-not-fired-on-enter-in-input-expected.txt: Added.
+        * fast/forms/textinput-not-fired-on-enter-in-input.html: Added.
+
 2011-02-26  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Tony Gentilcore.

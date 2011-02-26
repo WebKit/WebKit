@@ -1,3 +1,17 @@
+2011-02-26  Alice Boxhall  <aboxhall@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        typing enter in the input element should not fire textInput
+        https://bugs.webkit.org/show_bug.cgi?id=54152
+
+        Stop textInput event propagation in HTMLInputElement::preDispatchEventHandler if the event target should submit implicitly.
+
+        Test: fast/forms/textinput-not-fired-on-enter-in-input.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::preDispatchEventHandler): Check m_inputType->shouldSubmitImplicitly for textInputEvents and stop propagation if true.
+
 2011-02-26  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Tony Gentilcore.
