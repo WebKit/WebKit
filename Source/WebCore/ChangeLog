@@ -4,6 +4,24 @@
 
         Add API to enumerate/delete files downloaded for <audio> and <video>
         https://bugs.webkit.org/show_bug.cgi?id=55267
+
+        Add review changes missed in r79737.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::clearMediaCacheForSite): Pass string by reference.
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::clearMediaCacheForSite): Ditto.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::clearMediaCacheForSite): Ditto.
+
+2011-02-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add API to enumerate/delete files downloaded for <audio> and <video>
+        https://bugs.webkit.org/show_bug.cgi?id=55267
         <rdar://problem/9049280>
 
         No new tests, this is just the plumbing.

@@ -290,7 +290,7 @@ public:
     // Media cache management.
     void getSitesInMediaCache(Vector<String>&);
     void clearMediaCache();
-    void clearMediaCacheForSite(const String);
+    void clearMediaCacheForSite(const String&);
     
 private:
     MediaPlayer(MediaPlayerClient*);

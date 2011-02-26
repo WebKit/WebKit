@@ -728,7 +728,7 @@ void MediaPlayer::clearMediaCache()
     m_private->clearMediaCache();
 }
 
-void MediaPlayer::clearMediaCacheForSite(const String site)
+void MediaPlayer::clearMediaCacheForSite(const String& site)
 {
     m_private->clearMediaCacheForSite(site);
 }

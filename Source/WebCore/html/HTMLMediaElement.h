@@ -179,7 +179,7 @@ public:
     // Media cache management.
     void getSitesInMediaCache(Vector<String>&);
     void clearMediaCache();
-    void clearMediaCacheForSite(const String);
+    void clearMediaCacheForSite(const String&);
     
 protected:
     HTMLMediaElement(const QualifiedName&, Document*);

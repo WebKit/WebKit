@@ -2546,7 +2546,7 @@ void HTMLMediaElement::clearMediaCache()
         m_player->clearMediaCache();
 }
 
-void HTMLMediaElement::clearMediaCacheForSite(const String site)
+void HTMLMediaElement::clearMediaCacheForSite(const String& site)
 {
     if (m_player)
         m_player->clearMediaCacheForSite(site);

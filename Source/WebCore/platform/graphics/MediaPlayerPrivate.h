@@ -143,7 +143,7 @@ public:
 
     void getSitesInMediaCache(Vector<String>&) { }
     void clearMediaCache() { }
-    void clearMediaCacheForSite(const String) { }
+    void clearMediaCacheForSite(const String&) { }
 };
 
 }
