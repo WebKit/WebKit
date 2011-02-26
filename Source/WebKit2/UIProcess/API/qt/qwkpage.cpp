@@ -165,20 +165,17 @@ WebCore::IntSize QWKPagePrivate::viewSize()
 
 bool QWKPagePrivate::isViewWindowActive()
 {
-    // FIXME: Implement.
-    return true;
+    return view && view->isActive();
 }
 
 bool QWKPagePrivate::isViewFocused()
 {
-    // FIXME: Implement.
-    return true;
+    return view && view->hasFocus();
 }
 
 bool QWKPagePrivate::isViewVisible()
 {
-    // FIXME: Implement.
-    return true;
+    return view && view->isVisible();
 }
 
 bool QWKPagePrivate::isViewInWindow()

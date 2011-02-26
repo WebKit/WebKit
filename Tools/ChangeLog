@@ -1,3 +1,15 @@
+2011-02-26  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix the focus in MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=55288
+
+        Give focus to the web view when a load starts.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::urlChanged):
+
 2011-02-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Adam Barth.

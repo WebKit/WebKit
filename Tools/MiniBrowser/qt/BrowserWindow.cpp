@@ -197,6 +197,8 @@ void BrowserWindow::loadProgress(int progress)
 void BrowserWindow::urlChanged(const QUrl& url)
 {
     m_addressBar->setText(url.toString());
+    m_browser->setFocus();
+    m_browser->view()->setFocus();
 }
 
 void BrowserWindow::openFile()
