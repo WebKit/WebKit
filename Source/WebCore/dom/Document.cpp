@@ -328,11 +328,13 @@ static bool acceptsEditingFocus(Node* node)
 
 static bool disableRangeMutation(Page* page)
 {
-#if PLATFORM(MAC)
+    // This check is made on super-hot code paths, so we only want this on Tiger and Leopard.
+#if defined(TARGETING_TIGER) || defined(TARGETING_LEOPARD)
     // Disable Range mutation on document modifications in Tiger and Leopard Mail
     // See <rdar://problem/5865171>
     return page && (page->settings()->needsLeopardMailQuirks() || page->settings()->needsTigerMailQuirks());
 #else
+    UNUSED_PARAM(page);
     return false;
 #endif
 }

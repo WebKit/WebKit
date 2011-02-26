@@ -1,3 +1,32 @@
+2011-02-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        disableRangeMutation quirk for mail slows down peacekeeper domDynamicCreationCreateElement
+        https://bugs.webkit.org/show_bug.cgi?id=55127
+
+        Before:
+        avg 513.4
+        median 515
+        stdev 7.234638899074368
+        min 490
+        max 528
+
+        After:
+        avg 508.15
+        median 510
+        stdev 6.966168243733426
+        min 485
+        max 515
+
+        Yes, the stdev is a bit high to actually support my conclusions.  But looking
+        at the profile, this change makes a lot of sense.  I'll up the iterations
+        for future testing.
+
+        * dom/Document.cpp:
+        (WebCore::disableRangeMutation):
+         - This check should only be compiled in if we're planning to run on Tiger or Leopard.
+
 2011-02-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
