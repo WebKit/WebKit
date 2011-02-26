@@ -1768,8 +1768,11 @@ void Editor::learnSpelling()
     if (!client())
         return;
         
-    // FIXME: We don't call this on the Mac, and it should remove misspelling markers around the 
-    // learned word, see <rdar://problem/5396072>.
+    // FIXME: On Mac OS X, when use "learn" button on "Spelling and Grammar" panel, we don't call this function. It should remove misspelling markers around the learned word, see <rdar://problem/5396072>.
+
+    RefPtr<Range> selectedRange = frame()->selection()->toNormalizedRange();
+    if (selectedRange)
+        frame()->document()->markers()->removeMarkers(selectedRange.get(), DocumentMarker::Spelling);
 
     String text = selectedText();
     ASSERT(text.length());
