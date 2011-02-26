@@ -1,3 +1,25 @@
+2011-02-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Replace WTF_USE_SOUP macro with USE(SOUP)
+        https://bugs.webkit.org/show_bug.cgi?id=55296
+
+        ewk_cookies.cpp and ewk_main.cpp are using WTF_USE_SOUP macro. 
+        So, according to policy decision macro usage, the macro needs to 
+        be changed with USE(SOUP).
+
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_file_set):
+        (ewk_cookies_clear):
+        (ewk_cookies_get_all):
+        (ewk_cookies_cookie_del):
+        (ewk_cookies_cookie_free):
+        (ewk_cookies_policy_set):
+        (ewk_cookies_policy_get):
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+
 2011-02-24  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

@@ -21,7 +21,7 @@
 #include "config.h"
 #include "ewk_cookies.h"
 
-#ifdef WTF_USE_SOUP
+#if USE(SOUP)
 #include "CookieJarSoup.h"
 #endif
 #include "EWebKit.h"
@@ -29,7 +29,7 @@
 
 #include <Eina.h>
 #include <eina_safety_checks.h>
-#ifdef WTF_USE_SOUP
+#if USE(SOUP)
 #include <glib.h>
 #include <libsoup/soup.h>
 #endif
@@ -47,7 +47,7 @@
  */
 EAPI Eina_Bool ewk_cookies_file_set(const char *filename)
 {
-#ifdef WTF_USE_SOUP
+#if USE(SOUP)
     SoupCookieJar* cookieJar = 0;
     if (filename)
         cookieJar = soup_cookie_jar_text_new(filename, FALSE);
@@ -78,7 +78,7 @@ EAPI Eina_Bool ewk_cookies_file_set(const char *filename)
  */
 EAPI void ewk_cookies_clear()
 {
-#ifdef WTF_USE_SOUP
+#if USE(SOUP)
     GSList* l;
     GSList* p;
     SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
@@ -99,7 +99,7 @@ EAPI void ewk_cookies_clear()
 EAPI Eina_List* ewk_cookies_get_all(void)
 {
     Eina_List* el = 0;
-#ifdef WTF_USE_SOUP
+#if USE(SOUP)
     GSList* l;
     GSList* p;
     SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
@@ -133,7 +133,7 @@ EAPI Eina_List* ewk_cookies_get_all(void)
  */
 EAPI void ewk_cookies_cookie_del(Ewk_Cookie *cookie)
 {
-#ifdef WTF_USE_SOUP
+#if USE(SOUP)
     EINA_SAFETY_ON_NULL_RETURN(cookie);
     GSList* l;
     GSList* p;
@@ -162,7 +162,7 @@ EAPI void ewk_cookies_cookie_del(Ewk_Cookie *cookie)
  */
 EAPI void ewk_cookies_cookie_free(Ewk_Cookie *cookie)
 {
-#ifdef WTF_USE_SOUP
+#if USE(SOUP)
     EINA_SAFETY_ON_NULL_RETURN(cookie);
     free(cookie->name);
     free(cookie->value);
@@ -180,7 +180,7 @@ EAPI void ewk_cookies_cookie_free(Ewk_Cookie *cookie)
  */
 EAPI void ewk_cookies_policy_set(Ewk_Cookie_Policy p)
 {
-#ifdef WTF_USE_SOUP
+#if USE(SOUP)
     SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
     SoupCookieJarAcceptPolicy policy;
 
@@ -210,7 +210,7 @@ EAPI void ewk_cookies_policy_set(Ewk_Cookie_Policy p)
 EAPI Ewk_Cookie_Policy ewk_cookies_policy_get()
 {
     Ewk_Cookie_Policy ewk_policy = EWK_COOKIE_JAR_ACCEPT_ALWAYS;
-#ifdef WTF_USE_SOUP
+#if USE(SOUP)
     SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
     SoupCookieJarAcceptPolicy policy;
 

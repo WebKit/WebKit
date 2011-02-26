@@ -50,7 +50,7 @@
 
 #endif
 
-#ifdef WTF_USE_SOUP
+#if USE(SOUP)
 // REMOVE-ME: see todo below
 #include "ResourceHandle.h"
 #include <libsoup/soup.h>
@@ -179,7 +179,7 @@ Eina_Bool _ewk_init_body(void)
     }
 
     // TODO: this should move to WebCore, already reported to webkit-gtk folks:
-#ifdef WTF_USE_SOUP
+#if USE(SOUP)
     if (1) {
         SoupSession* session = WebCore::ResourceHandle::defaultSession();
         soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_SNIFFER);
