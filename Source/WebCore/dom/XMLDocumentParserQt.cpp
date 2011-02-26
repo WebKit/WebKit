@@ -91,7 +91,6 @@ XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
     , m_wroteText(false)
     , m_currentNode(document)
     , m_sawError(false)
-    , m_sawCSS(false)
     , m_sawXSLTransform(false)
     , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
@@ -118,7 +117,6 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     , m_wroteText(false)
     , m_currentNode(fragment)
     , m_sawError(false)
-    , m_sawCSS(false)
     , m_sawXSLTransform(false)
     , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
@@ -207,7 +205,6 @@ void XMLDocumentParser::initializeParserContext(const char*)
 {
     DocumentParser::startParsing();
     m_sawError = false;
-    m_sawCSS = false;
     m_sawXSLTransform = false;
     m_sawFirstElement = false;
 }
@@ -643,8 +640,6 @@ void XMLDocumentParser::parseProcessingInstruction()
 
     pi->finishParsingChildren();
 
-    if (pi->isCSS())
-        m_sawCSS = true;
 #if ENABLE(XSLT)
     m_sawXSLTransform = !m_sawFirstElement && pi->isXSL();
     if (m_sawXSLTransform && !document()->transformSourceDocument())

@@ -4642,8 +4642,6 @@
             'xml/XMLHttpRequestProgressEventThrottle.h',
             'xml/XMLHttpRequestUpload.cpp',
             'xml/XMLHttpRequestUpload.h',
-            'xml/XMLTreeViewer.cpp',
-            'xml/XMLTreeViewer.h',
             'xml/XMLSerializer.cpp',
             'xml/XMLSerializer.h',
             'xml/XPathEvaluator.cpp',

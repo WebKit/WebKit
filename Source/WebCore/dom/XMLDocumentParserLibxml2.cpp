@@ -63,14 +63,13 @@
 #include <wtf/Vector.h>
 
 #if ENABLE(XSLT)
-#include "XMLTreeViewer.h"
 #include <libxslt/xslt.h>
 #endif
 
 #if ENABLE(XHTMLMP)
+#include "HTMLNames.h"
 #include "HTMLScriptElement.h"
 #endif
-
 
 using namespace std;
 
@@ -549,7 +548,6 @@ XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
     , m_pendingCallbacks(new PendingCallbacks)
     , m_currentNode(document)
     , m_sawError(false)
-    , m_sawCSS(false)
     , m_sawXSLTransform(false)
     , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
@@ -576,7 +574,6 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     , m_pendingCallbacks(new PendingCallbacks)
     , m_currentNode(fragment)
     , m_sawError(false)
-    , m_sawCSS(false)
     , m_sawXSLTransform(false)
     , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
@@ -970,10 +967,10 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
     exitText();
 
     // ### handle exceptions
-    ExceptionCode ec = 0;
+    int exception = 0;
     RefPtr<ProcessingInstruction> pi = document()->createProcessingInstruction(
-        toString(target), toString(data), ec);
-    if (ec)
+        toString(target), toString(data), exception);
+    if (exception)
         return;
 
     pi->setCreatedByParser(true);
@@ -984,8 +981,6 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
 
     pi->finishParsingChildren();
 
-    if (pi->isCSS())
-        m_sawCSS = true;
 #if ENABLE(XSLT)
     m_sawXSLTransform = !m_sawFirstElement && pi->isXSL();
     if (m_sawXSLTransform && !document()->transformSourceDocument())
@@ -1312,7 +1307,6 @@ void XMLDocumentParser::initializeParserContext(const char* chunk)
     sax.initialized = XML_SAX2_MAGIC;
     DocumentParser::startParsing();
     m_sawError = false;
-    m_sawCSS = false;
     m_sawXSLTransform = false;
     m_sawFirstElement = false;
 
@@ -1328,22 +1322,13 @@ void XMLDocumentParser::initializeParserContext(const char* chunk)
 void XMLDocumentParser::doEnd()
 {
 #if ENABLE(XSLT)
-    XMLTreeViewer xmlTreeViewer(document());
-
-    bool xmlViewerMode = !m_sawError && !m_sawCSS && !m_sawXSLTransform && xmlTreeViewer.hasNoStyleInformation();
-
-    if (xmlViewerMode || m_sawXSLTransform) {
+    if (m_sawXSLTransform) {
         void* doc = xmlDocPtrForString(document()->cachedResourceLoader(), m_originalSourceForTransform, document()->url().string());
         document()->setTransformSource(new TransformSource(doc));
 
-        if (xmlViewerMode)
-            xmlTreeViewer.transformDocumentToTreeView();
-        else {
-            document()->setParsing(false); // Make the document think it's done, so it will apply XSL stylesheets.
-            document()->styleSelectorChanged(RecalcStyleImmediately);
-            document()->setParsing(true);
-        }
-
+        document()->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
+        document()->styleSelectorChanged(RecalcStyleImmediately);
+        document()->setParsing(true);
         DocumentParser::stopParsing();
     }
 #endif
