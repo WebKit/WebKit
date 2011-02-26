@@ -1,3 +1,26 @@
+2011-02-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove disabled xmlhttprequest/web-apps tests
+        https://bugs.webkit.org/show_bug.cgi?id=55181
+
+        Per ap's suggestion in:
+        https://bugs.webkit.org/show_bug.cgi?id=55164#c15
+
+        I don't think we've ever run these tests.  Some of them
+        depend on 10 minute timeouts and another nonsense. :)
+
+        * http/tests/xmlhttprequest/web-apps/006-test.cgi: Removed.
+        * http/tests/xmlhttprequest/web-apps/006.html-disabled: Removed.
+        * http/tests/xmlhttprequest/web-apps/009-test.cgi: Removed.
+        * http/tests/xmlhttprequest/web-apps/009.html-disabled: Removed.
+        * http/tests/xmlhttprequest/web-apps/016-test.cgi: Removed.
+        * http/tests/xmlhttprequest/web-apps/016.html-disabled: Removed.
+        * http/tests/xmlhttprequest/web-apps/017.html-disabled: Removed.
+        * http/tests/xmlhttprequest/web-apps/recursion/001.html-disabled: Removed.
+        * http/tests/xmlhttprequest/web-apps/recursion/README: Removed.
+
 2011-02-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
