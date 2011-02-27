@@ -25462,18 +25462,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\DeprecatedPtrList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\DeprecatedPtrListImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\DeprecatedPtrListImpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\DragData.cpp"
 				>
 			</File>

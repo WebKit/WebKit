@@ -459,7 +459,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/Arena.cpp \
 	platform/ContentType.cpp \
 	platform/CrossThreadCopier.cpp \
-	platform/DeprecatedPtrListImpl.cpp \
 	platform/DragData.cpp \
 	platform/DragImage.cpp \
 	platform/FileChooser.cpp \

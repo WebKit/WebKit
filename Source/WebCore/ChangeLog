@@ -1,3 +1,25 @@
+2011-02-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Eliminate DeprecatedPtrList
+        https://bugs.webkit.org/show_bug.cgi?id=17425
+
+        Remove the implementation of DeprecatedPtrList and all its references
+        from the build systems.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/DeprecatedPtrList.h: Removed.
+        * platform/DeprecatedPtrListImpl.cpp: Removed.
+        * platform/DeprecatedPtrListImpl.h: Removed.
+
 2011-02-27  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

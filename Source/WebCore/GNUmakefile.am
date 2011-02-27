@@ -2319,9 +2319,6 @@ webcore_sources += \
 	Source/WebCore/platform/CrossThreadCopier.h \
 	Source/WebCore/platform/Cursor.cpp \
 	Source/WebCore/platform/Cursor.h \
-	Source/WebCore/platform/DeprecatedPtrList.h \
-	Source/WebCore/platform/DeprecatedPtrListImpl.cpp \
-	Source/WebCore/platform/DeprecatedPtrListImpl.h \
 	Source/WebCore/platform/DragData.cpp \
 	Source/WebCore/platform/DragData.h \
 	Source/WebCore/platform/DragImage.cpp \
