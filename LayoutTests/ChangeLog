@@ -1,5 +1,13 @@
 2011-02-27  Adam Roben  <aroben@apple.com>
 
+        Add Windows expected failure results for fast/images/support-broken-image-delegate.html
+
+        <http://webkit.org/b/55324> tracks the failure.
+
+        * platform/win/fast/images/support-broken-image-delegate-expected.txt: Added.
+
+2011-02-27  Adam Roben  <aroben@apple.com>
+
         Remove Windows-specific html5lib results
 
         I suspect these haven't been needed since r77781.
