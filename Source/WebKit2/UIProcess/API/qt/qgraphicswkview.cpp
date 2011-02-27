@@ -327,6 +327,13 @@ void QGraphicsWKView::focusOutEvent(QFocusEvent*)
     page()->d->page->viewStateDidChange(WebPageProxy::ViewIsFocused | WebPageProxy::ViewWindowIsActive);
 }
 
+
+/*!
+    This slot is called when the engine require a context sensitive menu to be displayed.
+
+    The \a menu passed as a parameter is the menu to be displayed. It is populated with the
+    actions possible for its current position. The menu is empty if there is no action for the position.
+*/
 void QGraphicsWKView::showContextMenu(QSharedPointer<QMenu> menu)
 {
     // Remove the active menu in case this function is called twice.

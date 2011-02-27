@@ -68,6 +68,7 @@ public Q_SLOTS:
     void forward();
     void reload();
     void stop();
+    void showContextMenu(QSharedPointer<QMenu>);
 
 protected:
     virtual void keyPressEvent(QKeyEvent*);
@@ -87,9 +88,6 @@ protected:
     virtual bool focusNextPrevChild(bool next);
     virtual void focusInEvent(QFocusEvent*);
     virtual void focusOutEvent(QFocusEvent*);
-
-private Q_SLOTS:
-    void showContextMenu(QSharedPointer<QMenu>);
 
 private:
     Q_PRIVATE_SLOT(d, void onScaleChanged());

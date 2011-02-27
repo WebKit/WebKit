@@ -1,3 +1,16 @@
+2011-02-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] [WK2] QGraphicsWKView::showContextMenu() should be public
+        https://bugs.webkit.org/show_bug.cgi?id=55330
+
+        Move QGraphicsWKView::showContextMenu() to the public API. Add documentation
+        on its use.
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        * UIProcess/API/qt/qgraphicswkview.h:
+
 2011-02-27  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, fixed GTK compilation after r79806.
