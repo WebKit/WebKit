@@ -1,3 +1,29 @@
+2011-02-27  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Use WTF ref counting for FontPlatformDataPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=55303
+
+        Make FontPlatformDataPrivate a RefCounted<FPDP>.
+        Incidentally fixes an uninitialized member bug in FontPlatformData().
+
+        * platform/graphics/qt/FontPlatformData.h:
+        (WebCore::FontPlatformDataPrivate::FontPlatformDataPrivate):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::isHashTableDeletedValue):
+        (WebCore::FontPlatformData::font):
+        (WebCore::FontPlatformData::size):
+        (WebCore::FontPlatformData::family):
+        (WebCore::FontPlatformData::bold):
+        (WebCore::FontPlatformData::italic):
+        (WebCore::FontPlatformData::smallCaps):
+        (WebCore::FontPlatformData::pixelSize):
+        * platform/graphics/qt/FontPlatformDataQt.cpp:
+        (WebCore::toQFontWeight):
+        (WebCore::FontPlatformData::operator==):
+        (WebCore::FontPlatformData::hash):
+
 2011-02-27  Benjamin Poulain  <ikipou@gmail.com>
 
         Reviewed by Darin Adler.

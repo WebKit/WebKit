@@ -24,142 +24,120 @@
 #ifndef FontPlatformData_h
 #define FontPlatformData_h
 
-#include <wtf/Forward.h>
 #include "FontDescription.h"
 #include "FontOrientation.h"
 #include <QFont>
 #include <QHash>
+#include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class FontPlatformDataPrivate {
+class FontPlatformDataPrivate : public RefCounted<FontPlatformDataPrivate> {
     WTF_MAKE_NONCOPYABLE(FontPlatformDataPrivate); WTF_MAKE_FAST_ALLOCATED;
 public:
     FontPlatformDataPrivate()
-        : refCount(1)
-        , size(font.pixelSize())
+        : size(font.pixelSize())
         , bold(font.bold())
         , oblique(false)
-    {}
+        , isDeletedValue(false)
+    { }
     FontPlatformDataPrivate(const float size, const bool bold, const bool oblique)
-        : refCount(1)
-        , size(size)
+        : size(size)
         , bold(bold)
         , oblique(oblique)
-    {}
+        , isDeletedValue(false)
+    { }
     FontPlatformDataPrivate(const QFont& font)
-        : refCount(1)
-        , font(font)
+        : font(font)
         , size(font.pixelSize())
         , bold(font.bold())
         , oblique(false)
-    {}
-    unsigned refCount;
+        , isDeletedValue(false)
+    { }
+    FontPlatformDataPrivate(WTF::HashTableDeletedValueType)
+        : isDeletedValue(true)
+    { }
+
     QFont font;
     float size;
     bool bold : 1;
     bool oblique : 1;
+    bool isDeletedValue : 1;
 };
-
-
 
 class FontPlatformData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FontPlatformData() { }
     FontPlatformData(float size, bool bold, bool oblique);
-    FontPlatformData(const FontPlatformData &);
     FontPlatformData(const FontDescription&, const AtomicString& familyName, int wordSpacing = 0, int letterSpacing = 0);
     FontPlatformData(const QFont& font)
-        : m_data(new FontPlatformDataPrivate(font))
-    {}
+        : m_data(adoptRef(new FontPlatformDataPrivate(font)))
+    { }
     FontPlatformData(WTF::HashTableDeletedValueType)
-        : m_data(reinterpret_cast<FontPlatformDataPrivate*>(-1))
-    {}
+        : m_data(adoptRef(new FontPlatformDataPrivate()))
+    {
+        m_data->isDeletedValue = true;
+    }
 
-    ~FontPlatformData();
-
-    FontPlatformData& operator=(const FontPlatformData&);
     bool operator==(const FontPlatformData&) const;
 
     bool isHashTableDeletedValue() const
     {
-        return m_data == reinterpret_cast<FontPlatformDataPrivate*>(-1);
-    }
-
-    static inline QFont::Weight toQFontWeight(FontWeight fontWeight)
-    {
-        switch (fontWeight) {
-        case FontWeight100:
-        case FontWeight200:
-            return QFont::Light;  // QFont::Light == Weight of 25
-        case FontWeight600:
-            return QFont::DemiBold;  // QFont::DemiBold == Weight of 63
-        case FontWeight700:
-        case FontWeight800:
-            return QFont::Bold;  // QFont::Bold == Weight of 75
-        case FontWeight900:
-            return QFont::Black;  // QFont::Black == Weight of 87
-        case FontWeight300:
-        case FontWeight400:
-        case FontWeight500:
-        default:
-            return QFont::Normal;  // QFont::Normal == Weight of 50
-        }
+        return m_data && m_data->isDeletedValue;
     }
 
     QFont font() const
     {
-        Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
-        if (m_data)
-            return m_data->font;
-        return QFont();
+        Q_ASSERT(!isHashTableDeletedValue());
+        if (!m_data)
+            return QFont();
+        return m_data->font;
     }
     float size() const
     {
-        Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
-        if (m_data)
-            return m_data->size;
-        return 0.0f;
+        Q_ASSERT(!isHashTableDeletedValue());
+        if (!m_data)
+            return 0;
+        return m_data->size;
     }
     QString family() const
     {
-        Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
-        if (m_data)
-            return m_data->font.family();
-        return QString();
+        Q_ASSERT(!isHashTableDeletedValue());
+        if (!m_data)
+            return QString();
+        return m_data->font.family();
     }
     bool bold() const
     {
-        Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
-        if (m_data)
-            return m_data->bold;
-        return false;
+        Q_ASSERT(!isHashTableDeletedValue());
+        if (!m_data)
+            return false;
+        return m_data->bold;
     }
     bool italic() const
     {
-        Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
-        if (m_data)
-            return m_data->font.italic();
-        return false;
+        Q_ASSERT(!isHashTableDeletedValue());
+        if (!m_data)
+            return false;
+        return m_data->font.italic();
     }
     bool smallCaps() const
     {
-        Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
-        if (m_data)
-            return m_data->font.capitalization() == QFont::SmallCaps;
-        return false;
+        Q_ASSERT(!isHashTableDeletedValue());
+        if (!m_data)
+            return false;
+        return m_data->font.capitalization() == QFont::SmallCaps;
     }
     int pixelSize() const
     {
-        Q_ASSERT(m_data != reinterpret_cast<FontPlatformDataPrivate*>(-1));
-        if (m_data) {
-            // WebKit allows font size zero but QFont does not.
-            if (!m_data->size)
-                return m_data->size;
-            return m_data->font.pixelSize();
-        }
-        return 0;
+        Q_ASSERT(!isHashTableDeletedValue());
+        if (!m_data)
+            return 0;
+        // WebCore allows a font size of zero, but QFont does not.
+        if (!m_data->size)
+            return 0;
+        return m_data->font.pixelSize();
     }
     
     FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
@@ -170,7 +148,7 @@ public:
     String description() const;
 #endif
 private:
-    FontPlatformDataPrivate* m_data;
+    RefPtr<FontPlatformDataPrivate> m_data;
 };
 
 } // namespace WebCore
