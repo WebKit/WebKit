@@ -1,3 +1,17 @@
+2011-02-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove registerBaseEncodingNames and registerBaseCodecs from TextCodecBrew
+        https://bugs.webkit.org/show_bug.cgi?id=55309
+
+        This functions are obsolete, since r78499 added TextCodecUTF8.
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::buildBaseTextCodecMaps):
+        * platform/text/brew/TextCodecBrew.cpp:
+        * platform/text/brew/TextCodecBrew.h:
+
 2011-02-26  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Darin Adler.

@@ -240,12 +240,6 @@ static void buildBaseTextCodecMaps()
     TextCodecGtk::registerBaseCodecs(addToTextCodecMap);
 #endif
 
-#if USE(BREWMP_UNICODE)
-    // FIXME: This is not needed. The code above covers all the base codecs.
-    TextCodecBrew::registerBaseEncodingNames(addToTextEncodingNameMap);
-    TextCodecBrew::registerBaseCodecs(addToTextCodecMap);
-#endif
-
 #if OS(WINCE) && !PLATFORM(QT)
     // FIXME: This is not needed. The code above covers all the base codecs.
     TextCodecWinCE::registerBaseEncodingNames(addToTextEncodingNameMap);

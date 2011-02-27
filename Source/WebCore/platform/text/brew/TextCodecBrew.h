@@ -35,9 +35,6 @@ namespace WebCore {
 
 class TextCodecBrew : public TextCodec {
 public:
-    static void registerBaseEncodingNames(EncodingNameRegistrar);
-    static void registerBaseCodecs(TextCodecRegistrar);
-
     static void registerExtendedEncodingNames(EncodingNameRegistrar);
     static void registerExtendedCodecs(TextCodecRegistrar);
 
