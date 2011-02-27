@@ -23,7 +23,6 @@
 #ifndef RenderBlock_h
 #define RenderBlock_h
 
-#include "DeprecatedPtrList.h"
 #include "GapRects.h"
 #include "RenderBox.h"
 #include "RenderLineBoxList.h"
@@ -96,7 +95,7 @@ public:
     virtual void markForPaginationRelayoutIfNeeded();
     
     bool containsFloats() { return m_floatingObjects && !m_floatingObjects->isEmpty(); }
-    bool containsFloat(RenderObject*);
+    bool containsFloat(RenderBox*);
 
     int availableLogicalWidthForLine(int position, bool firstLine) const;
     int logicalRightOffsetForLine(int position, bool firstLine) const { return logicalRightOffsetForLine(position, logicalRightOffsetForContent(), firstLine); }
@@ -702,9 +701,20 @@ private:
     int adjustForUnsplittableChild(RenderBox* child, int logicalOffset, bool includeMargins = false); // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.
     void adjustLinePositionForPagination(RootInlineBox*, int& deltaOffset); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
 
-    typedef PositionedObjectsListHashSet::const_iterator Iterator;
-    DeprecatedPtrList<FloatingObject>* m_floatingObjects;
+    struct FloatingObjectHashFunctions {
+        static unsigned hash(FloatingObject* key) { return DefaultHash<RenderBox*>::Hash::hash(key->m_renderer); }
+        static bool equal(FloatingObject* a, FloatingObject* b) { return a->m_renderer == b->m_renderer; }
+        static const bool safeToCompareToEmptyOrDeleted = true;
+    };
+    struct FloatingObjectHashTranslator {
+        static unsigned hash(RenderBox* key) { return DefaultHash<RenderBox*>::Hash::hash(key); }
+        static bool equal(FloatingObject* a, RenderBox* b) { return a->m_renderer == b; }
+    };
+    typedef ListHashSet<FloatingObject*, 4, FloatingObjectHashFunctions> FloatingObjectSet;
+    typedef FloatingObjectSet::const_iterator FloatingObjectSetIterator;
+    FloatingObjectSet* m_floatingObjects;
     
+    typedef PositionedObjectsListHashSet::const_iterator Iterator;
     PositionedObjectsListHashSet* m_positionedObjects;
 
     // Allocated only when some of these fields have non-default values

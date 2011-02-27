@@ -618,7 +618,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
             }
         }
 
-        FloatingObject* lastFloat = m_floatingObjects ? m_floatingObjects->last() : 0;
+        FloatingObject* lastFloat = (m_floatingObjects && !m_floatingObjects->isEmpty()) ? m_floatingObjects->last() : 0;
 
         LineMidpointState& lineMidpointState = resolver.midpointState();
 
@@ -688,7 +688,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
             bool hyphenated;
             
             InlineIterator oldEnd = end;
-            FloatingObject* lastFloatFromPreviousLine = m_floatingObjects ? m_floatingObjects->last() : 0;
+            FloatingObject* lastFloatFromPreviousLine = (m_floatingObjects && !m_floatingObjects->isEmpty()) ? m_floatingObjects->last() : 0;
             end = findNextLineBreak(resolver, firstLine, isLineEmpty, lineBreakIteratorInfo, previousLineBrokeCleanly, hyphenated, &clear, lastFloatFromPreviousLine);
             if (resolver.position().atEnd()) {
                 resolver.deleteRuns();
@@ -839,13 +839,16 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
             }
 
             if (m_floatingObjects && lastRootBox()) {
+                FloatingObjectSetIterator it = m_floatingObjects->begin();
+                FloatingObjectSetIterator end = m_floatingObjects->end();
                 if (lastFloat) {
-                    for (FloatingObject* f = m_floatingObjects->last(); f != lastFloat; f = m_floatingObjects->prev()) {
-                    }
-                    m_floatingObjects->next();
-                } else
-                    m_floatingObjects->first();
-                for (FloatingObject* f = m_floatingObjects->current(); f; f = m_floatingObjects->next()) {
+                    FloatingObjectSetIterator lastFloatIterator = m_floatingObjects->find(lastFloat);
+                    ASSERT(lastFloatIterator != end);
+                    ++lastFloatIterator;
+                    it = lastFloatIterator;
+                }
+                for (; it != end; ++it) {
+                    FloatingObject* f = *it;
                     lastRootBox()->floats().append(f->m_renderer);
                     ASSERT(f->m_renderer == floats[floatIndex].object);
                     // If a float's geometry has changed, give up on syncing with clean lines.
@@ -853,7 +856,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                         checkForEndLineMatch = false;
                     floatIndex++;
                 }
-                lastFloat = m_floatingObjects->last();
+                lastFloat = !m_floatingObjects->isEmpty() ? m_floatingObjects->last() : 0;
             }
 
             lineMidpointState.reset();
@@ -916,15 +919,18 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                 trailingFloatsLineBox->setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow);
                 trailingFloatsLineBox->setBlockLogicalHeight(logicalHeight());
             }
+
+            FloatingObjectSetIterator it = m_floatingObjects->begin();
+            FloatingObjectSetIterator end = m_floatingObjects->end();
             if (lastFloat) {
-                for (FloatingObject* f = m_floatingObjects->last(); f != lastFloat; f = m_floatingObjects->prev()) {
-                }
-                m_floatingObjects->next();
-            } else
-                m_floatingObjects->first();
-            for (FloatingObject* f = m_floatingObjects->current(); f; f = m_floatingObjects->next())
-                lastRootBox()->floats().append(f->m_renderer);
-            lastFloat = m_floatingObjects->last();
+                FloatingObjectSetIterator lastFloatIterator = m_floatingObjects->find(lastFloat);
+                ASSERT(lastFloatIterator != end);
+                ++lastFloatIterator;
+                it = lastFloatIterator;
+            }
+            for (; it != end; ++it)
+                lastRootBox()->floats().append((*it)->m_renderer);
+            lastFloat = !m_floatingObjects->isEmpty() ? m_floatingObjects->last() : 0;
         }
         size_t floatCount = floats.size();
         // Floats that did not have layout did not repaint when we laid them out. They would have
@@ -1161,7 +1167,9 @@ bool RenderBlock::matchedEndLine(const InlineBidiResolver& resolver, const Inlin
 
         int logicalBottom = lastLine->blockLogicalHeight() + abs(delta);
 
-        for (FloatingObject* f = m_floatingObjects->first(); f; f = m_floatingObjects->next()) {
+        FloatingObjectSetIterator end = m_floatingObjects->end();
+        for (FloatingObjectSetIterator it = m_floatingObjects->begin(); it != end; ++it) {
+            FloatingObject* f = *it;
             if (logicalBottomForFloat(f) >= logicalTop && logicalBottomForFloat(f) < logicalBottom)
                 return false;
         }
@@ -1195,7 +1203,9 @@ bool RenderBlock::matchedEndLine(const InlineBidiResolver& resolver, const Inlin
 
                 int logicalBottom = lastLine->blockLogicalHeight() + abs(delta);
 
-                for (FloatingObject* f = m_floatingObjects->first(); f; f = m_floatingObjects->next()) {
+                FloatingObjectSetIterator end = m_floatingObjects->end();
+                for (FloatingObjectSetIterator it = m_floatingObjects->begin(); it != end; ++it) {
+                    FloatingObject* f = *it;
                     if (logicalBottomForFloat(f) >= logicalTop && logicalBottomForFloat(f) < logicalBottom)
                         return false;
                 }

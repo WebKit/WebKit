@@ -1,3 +1,45 @@
+2011-02-27  Benjamin Poulain  <ikipou@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Eliminate DeprecatedPtrList from RenderBlock
+        https://bugs.webkit.org/show_bug.cgi?id=54972
+
+        Refactor RenderBlock to get rid of the DeprecatedPtrList.
+        The floating objects are stored in a ListHashSet.
+
+        Refactoring covered by existing test.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::~RenderBlock):
+        (WebCore::RenderBlock::addOverflowFromFloats):
+        (WebCore::RenderBlock::repaintOverhangingFloats):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObjectsBelow):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::positionNewFloatOnLine):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::nextFloatLogicalBottomBelow):
+        (WebCore::RenderBlock::lowestFloatLogicalBottom):
+        (WebCore::RenderBlock::clearFloats):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        (WebCore::RenderBlock::containsFloat):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatingObjectHashFunctions::hash):
+        (WebCore::RenderBlock::FloatingObjectHashFunctions::equal):
+        (WebCore::RenderBlock::FloatingObjectHashTranslator::hash):
+        (WebCore::RenderBlock::FloatingObjectHashTranslator::equal):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::matchedEndLine):
+
 2011-02-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
