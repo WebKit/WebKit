@@ -1,3 +1,11 @@
+2011-02-27  Adam Roben  <aroben@apple.com>
+
+        Change the order of Chang Shu's email addresses so the first one is their Bugzilla username
+
+        This makes Bugzilla autocompletion work correctly.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-02-27  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.
