@@ -2806,16 +2806,6 @@ void HTMLTreeBuilder::finished()
 
 void HTMLTreeBuilder::parseError(AtomicHTMLToken&)
 {
-    DEFINE_STATIC_LOCAL(String, parseErrorMessage, ("HTML parse error (recovered gracefully)"));
-
-    if (!m_reportErrors)
-        return;
-
-    DOMWindow* domWindow = m_document->domWindow();
-    if (!domWindow)
-        return;
-
-    domWindow->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, parseErrorMessage, m_parser->lineNumber(), m_document->url().string());
 }
 
 bool HTMLTreeBuilder::scriptEnabled(Frame* frame)

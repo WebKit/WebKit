@@ -1,3 +1,18 @@
+2011-02-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        <input value="type=submit"> throws a warning (“HTML parse error”)
+        https://bugs.webkit.org/show_bug.cgi?id=55120
+
+        This patch removes parse error messages from the HTML parser.  These
+        messages are displayed at the wrong times, aren't tested, and aren't
+        helpful.  We'll try again with some more informative messages and
+        better testing.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::parseError):
+
 2011-02-26  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
