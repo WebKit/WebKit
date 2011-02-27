@@ -90,6 +90,9 @@ valgrind {
     JAVASCRIPTCORE_JIT = no
 }
 
+# Disable dependency to a specific version of a Qt package for non-production builds
+symbian:!CONFIG(production):default_deployment.pkg_prerules -= pkg_depends_qt
+
 ##### Defaults for some mobile platforms
 symbian|maemo5|maemo6 {
     CONFIG += disable_uitools
