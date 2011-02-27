@@ -1,3 +1,11 @@
+2011-02-27  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, fixed GTK compilation after r79806.
+
+        * UIProcess/gtk/WebView.cpp:
+        (WebKit::WebView::didFinishLoadingDataForCustomRepresentation):
+        * UIProcess/gtk/WebView.h:
+
 2011-02-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

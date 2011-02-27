@@ -269,7 +269,7 @@ void WebView::didCommitLoadForMainFrame(bool useCustomRepresentation)
 {
 }
 
-void WebView::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&)
+void WebView::didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&)
 {
 }
 
