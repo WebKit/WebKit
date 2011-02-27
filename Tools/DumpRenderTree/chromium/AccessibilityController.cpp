@@ -41,7 +41,8 @@
 using namespace WebKit;
 
 AccessibilityController::AccessibilityController(TestShell* shell)
-    : m_shell(shell)
+    : m_dumpAccessibilityNotifications(false)
+    , m_shell(shell)
 {
 
     bindMethod("dumpAccessibilityNotifications", &AccessibilityController::dumpAccessibilityNotifications);

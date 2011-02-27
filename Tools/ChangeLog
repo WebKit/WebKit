@@ -1,3 +1,13 @@
+2011-02-26  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Reviewed by Adam Barth.
+
+        m_dumpAccessibilityNotifications should be initialized.
+        https://bugs.webkit.org/show_bug.cgi?id=54874
+
+        * DumpRenderTree/chromium/AccessibilityController.cpp:
+        (AccessibilityController::AccessibilityController):
+
 2011-02-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
