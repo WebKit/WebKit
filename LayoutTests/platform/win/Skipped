@@ -409,6 +409,9 @@ media/video-controls-in-media-document.html
 # Sometimes fails http://webkit.org/b/54974
 inspector/extensions/extensions-events.html
 
+# Crashes http://webkit.org/b/55307
+fast/frames/iframe-plugin-load-remove-document-crash.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
