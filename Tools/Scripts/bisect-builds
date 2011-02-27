@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
+# Copyright (C) 2007, 2008, 2011 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -57,6 +57,7 @@ sub max($$) { return $_[0] > $_[1] ? $_[0] : $_[1]; }
 sub mountAndRunNightly($$$$);
 sub parseRevisions($$;$);
 sub printStatus($$$);
+sub printTracLink($$);
 sub promptForTest($);
 
 loadSettings();
@@ -196,6 +197,8 @@ while (abs($endIndex - $startIndex) > 1) {
         if scalar keys %brokenRevisions > 0;
     printStatus($nightlies[$startIndex]->{rev}, $nightlies[$endIndex]->{rev}, $isProgression);
 }
+
+printTracLink($nightlies[$startIndex]->{rev}, $nightlies[$endIndex]->{rev});
 
 unlink $tempFile if $tempFile;
 
@@ -418,6 +421,12 @@ sub printStatus($$$)
     printf "\n%s: r%s  %s: r%s\n",
         $isProgression ? "Fails" : "Works", $startRevision,
         $isProgression ? "Works" : "Fails", $endRevision;
+}
+
+sub printTracLink($$)
+{
+    my ($startRevision, $endRevision) = @_;
+    printf("http://trac.webkit.org/log/trunk/?rev=%s&stop_rev=%s\n", $endRevision, $startRevision + 1);
 }
 
 sub promptForTest($)

@@ -1,3 +1,12 @@
+2011-02-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Make bisect-builds print a trac link for the regression range
+        https://bugs.webkit.org/show_bug.cgi?id=55331
+
+        * Scripts/bisect-builds:
+
 2011-02-27  Adam Roben  <aroben@apple.com>
 
         Use iswalpha instead of isalpha when dealing with wchar_ts in EditingDelegate
