@@ -711,14 +711,6 @@ static bool resolveCygwinPath(const wstring& cygwinPath, wstring& windowsPath)
     return true;
 }
 
-static wstring cfStringRefToWString(CFStringRef cfStr)
-{
-    Vector<wchar_t> v(CFStringGetLength(cfStr));
-    CFStringGetCharacters(cfStr, CFRangeMake(0, CFStringGetLength(cfStr)), (UniChar *)v.data());
-
-    return wstring(v.data(), v.size());
-}
-
 void LayoutTestController::setUserStyleSheetLocation(JSStringRef jsURL)
 {
     COMPtr<IWebView> webView;

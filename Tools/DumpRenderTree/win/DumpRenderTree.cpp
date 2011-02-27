@@ -40,6 +40,7 @@
 #include "WorkQueueItem.h"
 #include "WorkQueue.h"
 
+#include <comutil.h>
 #include <fcntl.h>
 #include <io.h>
 #include <math.h>
@@ -131,12 +132,40 @@ bool setAlwaysAcceptCookies(bool alwaysAcceptCookies)
 #endif
 }
 
-wstring urlSuitableForTestResult(const wstring& url)
+static RetainPtr<CFStringRef> substringFromIndex(CFStringRef string, CFIndex index)
 {
-    if (url.find(L"file://") == wstring::npos)
-        return url;
+    return RetainPtr<CFStringRef>(AdoptCF, CFStringCreateWithSubstring(kCFAllocatorDefault, string, CFRangeMake(index, CFStringGetLength(string) - index)));
+}
 
-    return lastPathComponent(url);
+wstring urlSuitableForTestResult(const wstring& urlString)
+{
+    RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(urlString.c_str()), urlString.length() * sizeof(wstring::value_type), kCFStringEncodingUTF16, 0));
+
+    RetainPtr<CFStringRef> scheme(AdoptCF, CFURLCopyScheme(url.get()));
+    if (scheme && CFStringCompare(scheme.get(), CFSTR("file"), kCFCompareCaseInsensitive) != kCFCompareEqualTo)
+        return urlString;
+
+    COMPtr<IWebDataSource> dataSource;
+    if (FAILED(frame->dataSource(&dataSource))) {
+        if (FAILED(frame->provisionalDataSource(&dataSource)))
+            return urlString;
+    }
+
+    COMPtr<IWebMutableURLRequest> request;
+    if (FAILED(dataSource->request(&request)))
+        return urlString;
+
+    _bstr_t requestURLString;
+    if (FAILED(request->URL(requestURLString.GetAddress())))
+        return urlString;
+
+    RetainPtr<CFURLRef> requestURL(AdoptCF, CFURLCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(requestURLString.GetBSTR()), requestURLString.length() * sizeof(OLECHAR), kCFStringEncodingUTF16, 0));
+    RetainPtr<CFURLRef> baseURL(AdoptCF, CFURLCreateCopyDeletingLastPathComponent(kCFAllocatorDefault, requestURL.get()));
+
+    RetainPtr<CFStringRef> basePath(AdoptCF, CFURLCopyPath(baseURL.get()));
+    RetainPtr<CFStringRef> path(AdoptCF, CFURLCopyPath(url.get()));
+
+    return cfStringRefToWString(substringFromIndex(path.get(), CFStringGetLength(basePath.get())).get());
 }
 
 wstring lastPathComponent(const wstring& url)
@@ -166,6 +195,14 @@ string toUTF8(BSTR bstr)
 string toUTF8(const wstring& wideString)
 {
     return toUTF8(wideString.c_str(), wideString.length());
+}
+
+wstring cfStringRefToWString(CFStringRef cfStr)
+{
+    Vector<wchar_t> v(CFStringGetLength(cfStr));
+    CFStringGetCharacters(cfStr, CFRangeMake(0, CFStringGetLength(cfStr)), (UniChar *)v.data());
+
+    return wstring(v.data(), v.size());
 }
 
 static LRESULT CALLBACK DumpRenderTreeWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)

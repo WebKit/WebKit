@@ -1,5 +1,27 @@
 2011-02-27  Adam Roben  <aroben@apple.com>
 
+        Make ResourceLoadDelegate print URLs relative to the main resource on Windows
+
+        This matches Mac. (In fact, the code was ported from Mac!)
+
+        Fixes <http://webkit.org/b/55328> URLs printed by ResourceLoadDelegate on Windows don't
+        match Mac
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (substringFromIndex): Added. Emulates -[NSString substringFromIndex:].
+        (urlSuitableForTestResult): Ported code from -[NSURL(DRTExtras)
+        _drt_descriptionSuitableForTestResult].
+        (cfStringRefToWString): Moved here from LayoutTestControllerWin.cpp.
+
+        * DumpRenderTree/win/DumpRenderTreeWin.h: Added declaration of cfStringRefToWString.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp: Moved cfStringRefToWString to
+        DumpRenderTree.cpp.
+
+2011-02-27  Adam Roben  <aroben@apple.com>
+
         Change the order of Chang Shu's email addresses so the first one is their Bugzilla username
 
         This makes Bugzilla autocompletion work correctly.

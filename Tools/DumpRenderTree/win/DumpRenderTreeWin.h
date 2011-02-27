@@ -52,6 +52,8 @@ std::wstring urlSuitableForTestResult(const std::wstring& url);
 std::wstring lastPathComponent(const std::wstring&);
 std::string toUTF8(BSTR);
 std::string toUTF8(const std::wstring&);
+std::wstring cfStringRefToWString(CFStringRef);
+
 IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow = 0);
 Vector<HWND>& openWindows();
 typedef HashMap<HWND, COMPtr<IWebView> > WindowToWebViewMap;
