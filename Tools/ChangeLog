@@ -1,3 +1,11 @@
+2011-02-27  Adam Roben  <aroben@apple.com>
+
+        Followup fix to r79827
+
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::webViewAddMessageToConsole): Replaced call to urlSuitableForTestResult with
+        lastPathComponent. This matches what we did here before r79827, and matches Mac.
+
 2011-02-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
