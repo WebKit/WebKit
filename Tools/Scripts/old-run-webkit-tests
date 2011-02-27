@@ -403,8 +403,6 @@ $testMedia = 0 if $shouldCheckLeaks && isTiger();
 # Generating remote links causes a lot of unnecessary spew on GTK build bot
 $useRemoteLinksToTests = 0 if isGtk();
 
-setUpWindowsCrashLogSaving() if isCygwin();
-
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 my $productDir = productDir();
 $productDir .= "/bin" if isQt();
@@ -464,8 +462,9 @@ if (isAppleMacWebKit()) {
     if (system("/usr/bin/make", "-C", "$javaTestsDirectory")) {
         exit 1;
     }
+} elsif (isCygwin()) {
+    setUpWindowsCrashLogSaving();
 }
-
 
 print "Running tests from $testDirectory\n";
 if ($pixelTests) {

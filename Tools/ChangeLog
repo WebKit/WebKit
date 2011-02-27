@@ -1,3 +1,20 @@
+2011-02-27  Adam Roben  <aroben@apple.com>
+
+        Ensure $testResultsDirectory is an absolute path before setting up Windows crash log saving
+
+        Windows 7 (and maybe Vista?) launches the post-mortem debugger with a working directory that
+        is different from old-run-webkit-test's. Because of this, the path to the crash log file
+        (which is relative to $testResultsDirectory) must be an absolute path. See the bug for more
+        details.
+
+        Fixes <http://webkit.org/b/55318> Crash logs aren't saved on Windows 7 when a relative
+        --results-directory path is used (like on the test slaves)
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/old-run-webkit-tests: Moved the call to setUpWindowsCrashLogSaving after we've
+        made $testResultsDirectory an absolute path.
+
 2011-02-26  Dominic Mazzoni  <dmazzoni@google.com>
 
         Reviewed by Adam Barth.
