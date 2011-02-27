@@ -1,5 +1,20 @@
 2011-02-27  Adam Roben  <aroben@apple.com>
 
+        Use iswalpha instead of isalpha when dealing with wchar_ts in EditingDelegate
+
+        Fixes <http://webkit.org/b/55062> <rdar://problem/9059907> Crash beneath
+        EditingDelegate::checkSpellingOfString when running fast/forms/input-text-maxlength.html or
+        fast/forms/input-text-paste-maxlength.html on Windows with full page heap enabled
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/EditingDelegate.cpp:
+        (indexOfFirstWordCharacter):
+        (wordLength):
+        Use iswalpha instead of isalpha, since TCHAR is really just wchar_t.
+
+2011-02-27  Adam Roben  <aroben@apple.com>
+
         Make ResourceLoadDelegate print URLs relative to the main resource on Windows
 
         This matches Mac. (In fact, the code was ported from Mac!)

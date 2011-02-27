@@ -357,7 +357,7 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::webViewDidChangeSelection(
 static int indexOfFirstWordCharacter(const TCHAR* text)
 {
     const TCHAR* cursor = text;
-    while (*cursor && !isalpha(*cursor))
+    while (*cursor && !iswalpha(*cursor))
         ++cursor;
     return *cursor ? (cursor - text) : -1;
 };
@@ -365,7 +365,7 @@ static int indexOfFirstWordCharacter(const TCHAR* text)
 static int wordLength(const TCHAR* text)
 {
     const TCHAR* cursor = text;
-    while (*cursor && isalpha(*cursor))
+    while (*cursor && iswalpha(*cursor))
         ++cursor;
     return cursor - text;
 };
