@@ -3517,10 +3517,6 @@ plugins/refcount-leaks.html
 editing/selection/click-left-of-rtl-wrapping-text.html
 editing/selection/modify-up-on-rtl-wrapping-text.html
 
-# [Qt] fast/loader/user-stylesheet-fast-path.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=50911
-fast/loader/user-stylesheet-fast-path.html
-
 # For https://bugs.webkit.org/show_bug.cgi?id=50758
 # These require DRT setSerializeHTTPLoads implementation to be reliable.
 http/tests/local/link-stylesheet-load-order.html

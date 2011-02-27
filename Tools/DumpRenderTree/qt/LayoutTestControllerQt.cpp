@@ -620,7 +620,7 @@ void LayoutTestController::overridePreference(const QString& name, const QVarian
 
 void LayoutTestController::setUserStyleSheetLocation(const QString& url)
 {
-    m_userStyleSheetLocation = QUrl(url);
+    m_userStyleSheetLocation = QUrl::fromEncoded(url.toAscii(), QUrl::StrictMode);
 
     if (m_userStyleSheetEnabled)
         setUserStyleSheetEnabled(true);

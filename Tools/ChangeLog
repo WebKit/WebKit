@@ -1,3 +1,14 @@
+2011-02-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] fast/loader/user-stylesheet-fast-path.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=50911
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setUserStyleSheetLocation):
+        Use QUrl::fromEncoded since the passed string is already encoded.
+
 2011-02-27  Adam Roben  <aroben@apple.com>
 
         Ensure $testResultsDirectory is an absolute path before setting up Windows crash log saving
