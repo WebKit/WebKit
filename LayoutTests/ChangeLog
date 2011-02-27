@@ -1,5 +1,13 @@
 2011-02-27  Adam Roben  <aroben@apple.com>
 
+        Remove Windows-specific html5lib results
+
+        I suspect these haven't been needed since r77781.
+
+        * platform/win/html5lib/runner-expected.txt: Removed.
+
+2011-02-27  Adam Roben  <aroben@apple.com>
+
         Skip fast/frames/iframe-plugin-load-remove-document-crash.html on Windows
 
         It's been crashing since it was added in r79808. <http://webkit.org/b/55307> tracks the
