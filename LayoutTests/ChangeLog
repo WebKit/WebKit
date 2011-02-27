@@ -1,5 +1,13 @@
 2011-02-27  Adam Roben  <aroben@apple.com>
 
+        Add Windows expected failure results for fast/events/pageshow-pagehide-on-back-cached.html
+
+        <http://webkit.org/b/55329> tracks the failure.
+
+        * platform/win/fast/events/pageshow-pagehide-on-back-cached-expected.txt: Added.
+
+2011-02-27  Adam Roben  <aroben@apple.com>
+
         Add Windows expected failure results for fast/images/support-broken-image-delegate.html
 
         <http://webkit.org/b/55324> tracks the failure.
