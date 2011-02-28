@@ -45,6 +45,8 @@ WK_EXPORT void WKBundlePageSetTextZoomFactor(WKBundlePageRef page, double zoomFa
 WK_EXPORT double WKBundlePageGetPageZoomFactor(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageSetPageZoomFactor(WKBundlePageRef page, double zoomFactor);
 
+WK_EXPORT void WKBundlePageForceRepaint(WKBundlePageRef page);
+
 #ifdef __cplusplus
 }
 #endif

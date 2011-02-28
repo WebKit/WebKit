@@ -1281,9 +1281,14 @@ void WebPage::getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
     send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
 }
 
-void WebPage::forceRepaint(uint64_t callbackID)
+void WebPage::forceRepaintWithoutCallback()
 {
     m_drawingArea->forceRepaint();
+}
+
+void WebPage::forceRepaint(uint64_t callbackID)
+{
+    forceRepaintWithoutCallback();
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 

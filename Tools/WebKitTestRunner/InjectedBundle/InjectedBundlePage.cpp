@@ -534,6 +534,8 @@ void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
         return;
     InjectedBundle::shared().setTopLoadingFrame(0);
 
+    WKBundlePageForceRepaint(m_page);
+
     if (InjectedBundle::shared().layoutTestController()->waitToDump())
         return;
 

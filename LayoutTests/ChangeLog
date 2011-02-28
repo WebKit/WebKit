@@ -1,3 +1,17 @@
+2011-02-28  Adam Roben  <aroben@apple.com>
+
+        Add a test for the paint rect passed via WM_PAINT to windowless plugins
+
+        Test for <http://webkit.org/b/55365> <rdar://problem/9031089> REGRESSION (r79040): WebKit2:
+        Large portions of pages with plugins paint black
+
+        Reviewed by Anders Carlsson.
+
+        * platform/win-wk2/platform/win/plugins/windowless-paint-rect-coordinates-expected.txt: Added.
+        * platform/win/plugins/windowless-paint-rect-coordinates-expected.txt: Added. WebKit1
+        doesn't pass a paint rect via WM_PAINT, so we have different results there.
+        * platform/win/plugins/windowless-paint-rect-coordinates.html: Added.
+
 2011-02-28  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

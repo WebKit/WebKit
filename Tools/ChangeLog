@@ -1,5 +1,41 @@
 2011-02-28  Adam Roben  <aroben@apple.com>
 
+        Add a test for the paint rect passed via WM_PAINT to windowless plugins
+
+        Test for <http://webkit.org/b/55365> <rdar://problem/9031089> REGRESSION (r79040): WebKit2:
+        Large portions of pages with plugins paint black
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::NPP_HandleEvent):
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        Added NPP_HandleEvent. Just returns 0 at this level.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/win/WindowlessPaintRectCoordinates.cpp: Added.
+        (WindowlessPaintRectCoordinates::WindowlessPaintRectCoordinates): Call up to the base class.
+        (WindowlessPaintRectCoordinates::NPP_New): Mark ourselves as windowless.
+        (WindowlessPaintRectCoordinates::NPP_HandleEvent): Check that the paint rect passed via
+        WM_PAINT has the expected coordinates.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_HandleEvent): Give the PluginTest a chance to handle the event before doing anything
+        else.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj: Added new file, let VS
+        resort things.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didFinishLoadForFrame): Added a call to WKBundlePageForceRepaint.
+        This is roughly equivalent to the call to -[WebView displayIfNeeded] in -[FrameLoadDelegate
+        webView:didFinishLoadForFrame:] in DumpRenderTree.
+
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::PlatformWebView): Tell the WKView it's in a window so that plugins
+        can start running.
+
+2011-02-28  Adam Roben  <aroben@apple.com>
+
         Tell MiniBrowser's WKViews that they're in a window
 
         Fixes <http://webkit.org/b/55364> Plugins don't work in MiniBrowser on Windows

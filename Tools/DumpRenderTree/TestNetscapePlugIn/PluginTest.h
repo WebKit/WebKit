@@ -60,6 +60,7 @@ public:
     virtual NPError NPP_DestroyStream(NPStream* stream, NPReason reason);
     virtual NPError NPP_GetValue(NPPVariable, void* value);
     virtual NPError NPP_SetWindow(NPP, NPWindow*);
+    virtual int16_t NPP_HandleEvent(void* event);
 
     // NPN functions.
     NPError NPN_GetURL(const char* url, const char* target);

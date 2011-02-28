@@ -533,7 +533,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
         IntPoint documentOriginInWindowCoordinates = parent()->contentsToWindow(IntPoint());
         context->save();
         context->translate(-documentOriginInWindowCoordinates.x(), -documentOriginInWindowCoordinates.y());
-        m_plugin->paint(context, dirtyRect);
+        m_plugin->paint(context, paintRectInWindowCoordinates);
         context->restore();
     }
 }

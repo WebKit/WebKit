@@ -339,6 +339,8 @@ public:
 
     void setMemoryCacheMessagesEnabled(bool);
 
+    void forceRepaintWithoutCallback();
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

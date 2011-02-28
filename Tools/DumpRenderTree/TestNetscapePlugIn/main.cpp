@@ -697,6 +697,9 @@ int16_t NPP_HandleEvent(NPP instance, void *event)
 {
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
 
+    if (obj->pluginTest->NPP_HandleEvent(event) == 1)
+        return 1;
+
 #ifdef XP_MACOSX
 #ifndef NP_NO_CARBON
     if (obj->eventModel == NPEventModelCarbon)

@@ -398,11 +398,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Tests\GetUserAgentWithNullNPPFromNPPNew.cpp"
+				RelativePath="..\Tests\GetURLWithJavaScriptURLDestroyingPlugin.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\Tests\GetURLWithJavaScriptURLDestroyingPlugin.cpp"
+				RelativePath="..\Tests\GetUserAgentWithNullNPPFromNPPNew.cpp"
 				>
 			</File>
 			<File
@@ -442,6 +442,10 @@
 				</File>
 				<File
 					RelativePath="..\Tests\win\WindowGeometryInitializedBeforeSetWindow.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Tests\win\WindowlessPaintRectCoordinates.cpp"
 					>
 				</File>
 				<File

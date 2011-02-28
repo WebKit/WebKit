@@ -212,3 +212,8 @@ WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef pageRef)
     return toAPI(toImpl(pageRef)->inspector());
 }
 #endif
+
+void WKBundlePageForceRepaint(WKBundlePageRef page)
+{
+    toImpl(page)->forceRepaintWithoutCallback();
+}

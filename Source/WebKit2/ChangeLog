@@ -1,3 +1,30 @@
+2011-02-28  Adam Roben  <aroben@apple.com>
+
+        Pass the right dirty rect to Plugin::paint
+
+        A typo in r79040 broke this. Much of this patch is just support for testing the fix.
+
+        Fixes <http://webkit.org/b/55365> <rdar://problem/9031089> REGRESSION (r79040): WebKit2:
+        Large portions of pages with plugins paint black
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::paint): Pass the dirty rect we calculated earlier to Plugin::paint,
+        rather than just passing along the dirty rect that was passed into this function. This is
+        the bug fix.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageForceRepaint):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        Added new SPI. Just calls through to WebPage::forceRepaintWithoutCallback.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::forceRepaintWithoutCallback): Moved code to force a repaint here...
+        (WebKit::WebPage::forceRepaint): ...from here.
+
+        * WebProcess/WebPage/WebPage.h: Added forceRepaintWithoutCallback.
+
 2011-02-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
