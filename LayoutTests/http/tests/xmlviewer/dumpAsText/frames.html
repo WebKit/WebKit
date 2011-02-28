@@ -1,19 +1,27 @@
 <html>
 <head>
-  <script type="text/javascript">
-    function onload() {
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpChildFramesAsText();
-      }
+<script>
+
+var iframesOpened = 0;
+
+function iframeLoaded()
+{
+    if (++iframesOpened === 2) {
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.dumpChildFramesAsText();
+        }
     }
-  </script>
+}
+
+</script>
 </head>
+
 <body onload="onload()">
 <div>
 This tests that XML Viewer is not used when XML is opened in frame.
 </div>
-<iframe name="iframeFrame" style="border:10px solid gray;padding:25px" width="300" height="200" src="resources/frames-helper.xml"></iframe>
-<object name="objectFrame" style="border:10px solid gray;padding:25px; width:300px; height:200px" data="resources/frames-helper.xml"></object>
+<iframe name="iframeFrame" onload="iframeLoaded()" style="border:10px solid gray;padding:25px" width="300" height="200" src="resources/frames-helper.xml"></iframe>
+<object name="objectFrame" onload="iframeLoaded()" style="border:10px solid gray;padding:25px; width:300px; height:200px" data="resources/frames-helper.xml"></object>
 </body>
 </html>

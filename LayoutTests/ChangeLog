@@ -1,3 +1,10 @@
+2011-02-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: follow up to r79861, moved utf-16-no-bom to its new home, fixed flaky frames.html.
+
+        * fast/encoding/dumpAsText/utf-16-no-bom.xml: Renamed from LayoutTests/fast/encoding/utf-16-no-bom.xml.
+        * http/tests/xmlviewer/dumpAsText/frames.html:
+
 2011-02-28  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
