@@ -416,6 +416,9 @@ inspector/extensions/extensions-events.html
 # Crashes http://webkit.org/b/55307
 fast/frames/iframe-plugin-load-remove-document-crash.html
 
+# Sometimes crashes http://webkit.org/b/55375
+http/tests/websocket/tests/reload-crash.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

@@ -1,5 +1,13 @@
 2011-02-28  Adam Roben  <aroben@apple.com>
 
+        Skip a sometimes-crashing test on Windows
+
+        The failure is tracked by <http://webkit.org/b/55375>.
+
+        * platform/win/Skipped: Added http/tests/websocket/tests/reload-crash.html.
+
+2011-02-28  Adam Roben  <aroben@apple.com>
+
         Add a test for the paint rect passed via WM_PAINT to windowless plugins
 
         Test for <http://webkit.org/b/55365> <rdar://problem/9031089> REGRESSION (r79040): WebKit2:
