@@ -233,18 +233,18 @@ static RetainPtr<CFDataRef> convertPostScriptDataSourceToPDF(const CoreIPC::Data
 
 void PDFViewController::setPDFDocumentData(const String& mimeType, const String& suggestedFilename, const CoreIPC::DataReference& dataReference)
 {
-    RetainPtr<CFDataRef> data;
-    
     if (equalIgnoringCase(mimeType, "application/postscript")) {
-        data = convertPostScriptDataSourceToPDF(dataReference);
-        if (!data)
+        m_pdfData = convertPostScriptDataSourceToPDF(dataReference);
+        if (!m_pdfData)
             return;
     } else {
         // Make sure to copy the data.
-        data.adoptCF(CFDataCreate(0, dataReference.data(), dataReference.size()));
+        m_pdfData.adoptCF(CFDataCreate(0, dataReference.data(), dataReference.size()));
     }
 
-    RetainPtr<PDFDocument> pdfDocument(AdoptNS, [[pdfDocumentClass() alloc] initWithData:(NSData *)data.get()]);
+    m_suggestedFilename = suggestedFilename;
+
+    RetainPtr<PDFDocument> pdfDocument(AdoptNS, [[pdfDocumentClass() alloc] initWithData:(NSData *)m_pdfData.get()]);
     [m_wkPDFView.get() setDocument:pdfDocument.get()];
 }
 

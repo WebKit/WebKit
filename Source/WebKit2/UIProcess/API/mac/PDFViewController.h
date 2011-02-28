@@ -65,8 +65,12 @@ private:
     static NSBundle* pdfKitBundle();
 
     WKView* m_wkView;
+
     RetainPtr<WKPDFView> m_wkPDFView;
     PDFView* m_pdfView;
+
+    RetainPtr<NSString> m_suggestedFilename;
+    RetainPtr<CFDataRef> m_pdfData;
 };
 
 } // namespace WebKit

@@ -1,3 +1,14 @@
+2011-02-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        PDFViewController should hold a reference to the PDF data
+        https://bugs.webkit.org/show_bug.cgi?id=55394
+
+        * UIProcess/API/mac/PDFViewController.h:
+        * UIProcess/API/mac/PDFViewController.mm:
+        (WebKit::PDFViewController::setPDFDocumentData):
+
 2011-02-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
