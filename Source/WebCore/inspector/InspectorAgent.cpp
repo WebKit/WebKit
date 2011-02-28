@@ -177,8 +177,8 @@ void InspectorAgent::inspectedPageDestroyed()
     hideHighlight(&error);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_debuggerAgent.clear();
     m_browserDebuggerAgent.clear();
+    m_debuggerAgent.clear();
 #endif
 
     ASSERT(m_inspectedPage);

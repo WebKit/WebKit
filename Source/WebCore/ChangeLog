@@ -1,3 +1,10 @@
+2011-02-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Chromium tests failures due to r79858.
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::inspectedPageDestroyed):
+
 2011-02-28  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
