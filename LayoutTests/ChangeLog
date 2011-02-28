@@ -1,3 +1,18 @@
+2011-02-28  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        REGRESSION (r79762): Items in <select multiple> have focus rings, but shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=55323
+
+        Added test case that draws focus rings on selected items when spatial navigation is enabled.        
+
+        * fast/spatial-navigation/snav-multiple-select-focusring.html: Added.
+        * platform/mac/fast/spatial-navigation: Added.
+        * platform/mac/fast/spatial-navigation/snav-multiple-select-focusring-expected.checksum: Added.
+        * platform/mac/fast/spatial-navigation/snav-multiple-select-focusring-expected.png: Added.
+        * platform/mac/fast/spatial-navigation/snav-multiple-select-focusring-expected.txt: Added.
+
 2011-02-28  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
