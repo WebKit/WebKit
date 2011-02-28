@@ -1,3 +1,14 @@
+2011-02-25  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [codereviewtool] fix expand links on git diffs
+        https://bugs.webkit.org/show_bug.cgi?id=55208
+
+        In git diffs, we don't have a "revision" span at the end
+        of each FileDiff.
+        * code-review.js:
+
 2011-02-23  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.

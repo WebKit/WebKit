@@ -646,11 +646,12 @@ var CODE_REVIEW_UNITTEST;
 
     $('br', file_diff).replaceWith(expandBarHtml());
 
+    // jquery doesn't support :last-of-type, so use querySelector instead.
     var last_line = file_diff.querySelector('.LineContainer:last-of-type');
     // Some patches for new files somehow end up with an empty context line at the end
     // with a from line number of 0. Don't show expand links in that case either.
     if (!$(last_line).hasClass('add') && !$(last_line).hasClass('remove') && fromLineNumber(last_line) != 0)
-      $('.revision', file_diff).before(expandBarHtml(ABOVE));
+      $(file_diff.querySelector('.DiffSection:last-of-type')).after(expandBarHtml(ABOVE));
   }
 
   function expandBarHtml(opt_direction) {
