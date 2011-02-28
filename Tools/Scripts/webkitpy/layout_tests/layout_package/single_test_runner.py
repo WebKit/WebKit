@@ -39,9 +39,8 @@ from webkitpy.layout_tests.layout_package.test_results import TestResult
 _log = logging.getLogger(__name__)
 
 
-def run_single_test(port, options, test_input, driver, worker_name, test_types):
-    # FIXME: Pull this into TestShellThread._run().
-    runner = SingleTestRunner(options, port, driver, test_input, worker_name, test_types)
+def run_single_test(port, options, test_input, driver, worker_name):
+    runner = SingleTestRunner(options, port, driver, test_input, worker_name)
     return runner.run()
 
 
@@ -55,14 +54,13 @@ class ExpectedDriverOutput:
 
 class SingleTestRunner:
 
-    def __init__(self, options, port, driver, test_input, worker_name, test_types):
+    def __init__(self, options, port, driver, test_input, worker_name):
         self._options = options
         self._port = port
         self._driver = driver
         self._filename = test_input.filename
         self._timeout = test_input.timeout
         self._worker_name = worker_name
-        self._test_types = test_types
         self._testname = port.relative_test_filename(test_input.filename)
 
     def _expected_driver_output(self):
@@ -91,7 +89,11 @@ class SingleTestRunner:
 
     def _run_compare_test(self):
         driver_output = self._driver.run_test(self._driver_input())
-        return self._process_output(driver_output)
+        expected_driver_output = self._expected_driver_output()
+        test_result = self._compare_output(driver_output, expected_driver_output)
+        test_result_writer.write_test_result(self._port, self._options.results_directory, self._filename,
+                                             driver_output, expected_driver_output, test_result.failures)
+        return test_result
 
     def _run_rebaseline(self):
         driver_output = self._driver.run_test(self._driver_input())
@@ -152,6 +154,7 @@ class SingleTestRunner:
             failures.append(test_failures.FailureCrash())
             _log.debug("%s Stacktrace for %s:\n%s" % (self._worker_name, self._testname,
                                                       driver_output.error))
+            # FIXME: Use test_result_writer module.
             stack_filename = fs.join(self._options.results_directory, self._testname)
             stack_filename = fs.splitext(stack_filename)[0] + "-stack.txt"
             fs.maybe_make_directory(fs.dirname(stack_filename))
@@ -161,37 +164,49 @@ class SingleTestRunner:
                                                            driver_output.error))
         return failures
 
-    def _process_output(self, driver_output):
-        """Receives the output from a DumpRenderTree process, subjects it to a
-        number of tests, and returns a list of failure types the test produced.
-        Args:
-          driver_output: a DriverOutput object containing the output from the driver
+    def _compare_output(self, driver_output, expected_driver_output):
+        failures = []
+        failures.extend(self._handle_error(driver_output))
 
-        Returns: a TestResult object
-        """
-        fs = self._port._filesystem
-        failures = self._handle_error(driver_output)
-        expected_driver_output = self._expected_driver_output()
+        if driver_output.crash:
+            # Don't continue any more if we already have a crash.
+            # In case of timeouts, we continue since we still want to see the text and image output.
+            return TestResult(self._filename, failures, driver_output.test_time)
 
-        # Check the output and save the results.
-        start_time = time.time()
-        time_for_diffs = {}
-        for test_type in self._test_types:
-            start_diff_time = time.time()
-            new_failures = test_type.compare_output(
-                self._port, self._filename, self._options, driver_output,
-                expected_driver_output)
-            # Don't add any more failures if we already have a crash, so we don't
-            # double-report those tests. We do double-report for timeouts since
-            # we still want to see the text and image output.
-            if not driver_output.crash:
-                failures.extend(new_failures)
-            test_result_writer.write_test_result(
-                self._port, self._options.results_directory, self._filename,
-                driver_output, expected_driver_output, new_failures)
-            time_for_diffs[test_type.__class__.__name__] = (
-                time.time() - start_diff_time)
+        failures.extend(self._compare_text(driver_output.text, expected_driver_output.text))
+        if self._options.pixel_tests:
+            failures.extend(self._compare_image(driver_output, expected_driver_output))
+        return TestResult(self._filename, failures, driver_output.test_time)
 
-        total_time_for_all_diffs = time.time() - start_diff_time
-        return TestResult(self._filename, failures, driver_output.test_time,
-                          total_time_for_all_diffs, time_for_diffs)
+    def _compare_text(self, actual_text, expected_text):
+        failures = []
+        if self._port.compare_text(self._get_normalized_output_text(actual_text),
+                                   # Assuming expected_text is already normalized.
+                                   expected_text):
+            if expected_text == '':
+                failures.append(test_failures.FailureMissingResult())
+            else:
+                failures.append(test_failures.FailureTextMismatch())
+        return failures
+
+    def _get_normalized_output_text(self, output):
+        """Returns the normalized text output, i.e. the output in which
+        the end-of-line characters are normalized to "\n"."""
+        # Running tests on Windows produces "\r\n".  The "\n" part is helpfully
+        # changed to "\r\n" by our system (Python/Cygwin), resulting in
+        # "\r\r\n", when, in fact, we wanted to compare the text output with
+        # the normalized text expectation files.
+        return output.replace("\r\r\n", "\r\n").replace("\r\n", "\n")
+
+    def _compare_image(self, driver_output, expected_driver_outputs):
+        failures = []
+        # If we didn't produce a hash file, this test must be text-only.
+        if driver_output.image_hash is None:
+            return failures
+        if not expected_driver_outputs.image:
+            failures.append(test_failures.FailureMissingImage())
+        elif not expected_driver_outputs.image_hash:
+            failures.append(test_failures.FailureMissingImageHash())
+        elif driver_output.image_hash != expected_driver_outputs.image_hash:
+            failures.append(test_failures.FailureImageHashMismatch())
+        return failures

@@ -31,9 +31,6 @@ import sys
 import threading
 import time
 
-from webkitpy.layout_tests.test_types import text_diff
-from webkitpy.layout_tests.test_types import image_diff
-
 from webkitpy.layout_tests.layout_package import single_test_runner
 from webkitpy.layout_tests.layout_package import test_results
 
@@ -57,11 +54,7 @@ class WorkerMixin(object):
         self._filesystem = port._filesystem
         self._batch_count = 0
         self._batch_size = self._options.batch_size
-        self._test_types = []
         self._driver = None
-        for cls in self._get_test_type_classes():
-            self._test_types.append(cls(self._port,
-                                        self._options.results_directory))
         tests_run_filename = self._filesystem.join(self._options.results_directory,
                                                    "tests_run%d.txt" % self._worker_number)
         self._tests_run_file = self._filesystem.open_text_file_for_writing(tests_run_filename)
@@ -71,12 +64,6 @@ class WorkerMixin(object):
         # file, we should rewrite this code so that caller keeps track of whether
         # the lock is held.
         self._has_http_lock = False
-
-    def _get_test_type_classes(self):
-        classes = [text_diff.TestTextDiff]
-        if self._options.pixel_tests:
-            classes.append(image_diff.ImageDiff)
-        return classes
 
     def cleanup(self):
         if self._driver:
@@ -198,8 +185,7 @@ class WorkerMixin(object):
         driver.stop()
 
         if not result:
-            result = test_results.TestResult(test_input.filename, failures=[],
-                test_run_time=0, total_time_for_all_diffs=0, time_for_diffs={})
+            result = test_results.TestResult(test_input.filename, failures=[], test_run_time=0)
         return result
 
     def _run_test_in_this_thread(self, test_input):
@@ -219,4 +205,4 @@ class WorkerMixin(object):
 
     def _run_single_test(self, driver, test_input):
         return single_test_runner.run_single_test(self._port, self._options,
-            test_input, driver, self._name, self._test_types)
+            test_input, driver, self._name)

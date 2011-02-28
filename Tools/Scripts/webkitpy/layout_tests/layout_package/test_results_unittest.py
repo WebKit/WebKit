@@ -37,15 +37,11 @@ class Test(unittest.TestCase):
         self.assertEqual(result.filename, 'foo')
         self.assertEqual(result.failures, [])
         self.assertEqual(result.test_run_time, 0)
-        self.assertEqual(result.total_time_for_all_diffs, 0)
-        self.assertEqual(result.time_for_diffs, {})
 
     def test_loads(self):
         result = TestResult(filename='foo',
                             failures=[],
-                            test_run_time=1.1,
-                            total_time_for_all_diffs=0.5,
-                            time_for_diffs={})
+                            test_run_time=1.1)
         s = result.dumps()
         new_result = TestResult.loads(s)
         self.assertTrue(isinstance(new_result, TestResult))

@@ -1,3 +1,27 @@
+2011-02-24  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [NRWT] Remove test_types/* classes.
+
+        This is the last patch in the series of efforts which tried to remove test_types classes.
+        A single_test_runner module will take over responsibilities of test_type classes.
+
+        From this patch, we won't display statistics per test_type even if a '--verbose' option is given.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55123
+
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_results.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_results_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/worker_mixin.py:
+        * Scripts/webkitpy/layout_tests/test_types/__init__.py: Removed.
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py: Removed.
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py: Removed.
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py: Removed.
+
 2011-02-25  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.

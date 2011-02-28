@@ -38,22 +38,17 @@ class TestResult(object):
     def loads(str):
         return cPickle.loads(str)
 
-    def __init__(self, filename, failures=None, test_run_time=None, total_time_for_all_diffs=None, time_for_diffs=None):
+    def __init__(self, filename, failures=None, test_run_time=None):
         self.filename = filename
         self.failures = failures or []
         self.test_run_time = test_run_time or 0
-        self.total_time_for_all_diffs = total_time_for_all_diffs or 0
-        self.time_for_diffs = time_for_diffs or {}  # FIXME: Why is this a dictionary?
-
         # FIXME: Setting this in the constructor makes this class hard to mutate.
         self.type = test_failures.determine_result_type(failures)
 
     def __eq__(self, other):
         return (self.filename == other.filename and
                 self.failures == other.failures and
-                self.test_run_time == other.test_run_time and
-                self.time_for_diffs == other.time_for_diffs and
-                self.total_time_for_all_diffs == other.total_time_for_all_diffs)
+                self.test_run_time == other.test_run_time)
 
     def __ne__(self, other):
         return not (self == other)

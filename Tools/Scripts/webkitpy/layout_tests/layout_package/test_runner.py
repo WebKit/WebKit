@@ -985,34 +985,9 @@ class TestRunner:
         Args:
           individual_test_timings: List of TestResults for all tests.
         """
-        test_types = []  # Unit tests don't actually produce any timings.
-        if individual_test_timings:
-            test_types = individual_test_timings[0].time_for_diffs.keys()
-        times_for_dump_render_tree = []
-        times_for_diff_processing = []
-        times_per_test_type = {}
-        for test_type in test_types:
-            times_per_test_type[test_type] = []
-
-        for test_stats in individual_test_timings:
-            times_for_dump_render_tree.append(test_stats.test_run_time)
-            times_for_diff_processing.append(
-                test_stats.total_time_for_all_diffs)
-            time_for_diffs = test_stats.time_for_diffs
-            for test_type in test_types:
-                times_per_test_type[test_type].append(
-                    time_for_diffs[test_type])
-
-        self._print_statistics_for_test_timings(
-            "PER TEST TIME IN TESTSHELL (seconds):",
-            times_for_dump_render_tree)
-        self._print_statistics_for_test_timings(
-            "PER TEST DIFF PROCESSING TIMES (seconds):",
-            times_for_diff_processing)
-        for test_type in test_types:
-            self._print_statistics_for_test_timings(
-                "PER TEST TIMES BY TEST TYPE: %s" % test_type,
-                times_per_test_type[test_type])
+        times_for_dump_render_tree = [test_stats.test_run_time for test_stats in individual_test_timings]
+        self._print_statistics_for_test_timings("PER TEST TIME IN TESTSHELL (seconds):",
+                                                times_for_dump_render_tree)
 
     def _print_individual_test_times(self, individual_test_timings,
                                   result_summary):
