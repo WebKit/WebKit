@@ -1,3 +1,16 @@
+2011-02-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Force dictionary popup to use overlay type
+        <rdar://problem/9052483>
+        https://bugs.webkit.org/show_bug.cgi?id=55337
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didPerformDictionaryLookup): As this is only
+        used for the hot key version of the dictionary popup, force the overlay
+        style.
+
 2011-02-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

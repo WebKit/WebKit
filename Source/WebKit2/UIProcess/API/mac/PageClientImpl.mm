@@ -421,7 +421,10 @@ void PageClientImpl::didPerformDictionaryLookup(const String& text, const TextIn
     RetainPtr<NSMutableAttributedString> attributedString(AdoptNS, [[NSMutableAttributedString alloc] initWithString:nsStringFromWebCoreString(text)]);
     [attributedString.get() addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, [attributedString.get() length])];
 
-    [m_wkView showDefinitionForAttributedString:attributedString.get() atPoint:textInfo.baselineOrigin];
+    NSPoint textBaselineOrigin = textInfo.baselineOrigin;
+
+    NSDictionary *options = [NSDictionary dictionaryWithObject:NSDefinitionPresentationTypeOverlay forKey:NSDefinitionPresentationTypeKey];
+    [m_wkView showDefinitionForAttributedString:attributedString.get() range:NSMakeRange(0, [attributedString.get() length]) options:options baselineOriginProvider:^(NSRange adjustedRange) { return (NSPoint)textBaselineOrigin; }];
 }
 
 } // namespace WebKit
