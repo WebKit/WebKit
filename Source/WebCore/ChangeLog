@@ -1,3 +1,16 @@
+2011-02-28  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Bug 55355 - TextIterator should not be a friend of RenderTextControl
+        https://bugs.webkit.org/show_bug.cgi?id=55355
+
+        Remove need for 'friend' clause by making innerTextElement() public.
+
+        No new tests. (simple refactoring)
+
+        * rendering/RenderTextControl.h:
+
 2011-02-27  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

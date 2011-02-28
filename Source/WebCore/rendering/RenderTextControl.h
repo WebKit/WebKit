@@ -34,6 +34,8 @@ class RenderTextControl : public RenderBlock {
 public:
     virtual ~RenderTextControl();
 
+    HTMLElement* innerTextElement() const;
+
     bool wasChangedSinceLastChangeEvent() const { return m_wasChangedSinceLastChangeEvent; }
     void setChangedSinceLastChangeEvent(bool wasChangedSinceLastChangeEvent) { m_wasChangedSinceLastChangeEvent = wasChangedSinceLastChangeEvent; }
 
@@ -82,9 +84,6 @@ protected:
 
     virtual void updateFromElement();
     virtual void computeLogicalHeight();
-
-    friend class TextIterator;
-    HTMLElement* innerTextElement() const;
 
     bool m_placeholderVisible;
 
