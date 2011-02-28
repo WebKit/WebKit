@@ -1483,7 +1483,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         if (loader->triggeringAction().isEmpty())
             loader->setTriggeringAction(NavigationAction(newURL, policyChecker()->loadType(), isFormSubmission));
 
-        if (Element* ownerElement = m_frame->document()->ownerElement()) {
+        if (Element* ownerElement = m_frame->ownerElement()) {
             if (!ownerElement->dispatchBeforeLoadEvent(loader->request().url().string())) {
                 continueLoadAfterNavigationPolicy(loader->request(), formState, false);
                 return;

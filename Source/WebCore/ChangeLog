@@ -1,3 +1,31 @@
+2011-02-28  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Use Frame::ownerElement() directly where appropriate.
+        https://bugs.webkit.org/show_bug.cgi?id=55385
+
+        Don't take the roundabout way through frame->document->ownerElement
+        which just checks that the document->frame is non-null.
+
+        No new test, refactoring only.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::selectFrameElementInParentIfFullySelected):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchLoadEvent):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::scrollRecursively):
+        (WebCore::EventHandler::logicalScrollRecursively):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::init):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::windowClipRect):
+        (WebCore::FrameView::paintContents):
+
 2011-02-28  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

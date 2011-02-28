@@ -260,7 +260,7 @@ void FrameView::init()
     m_size = IntSize();
 
     // Propagate the marginwidth/height and scrolling modes to the view.
-    Element* ownerElement = m_frame && m_frame->document() ? m_frame->document()->ownerElement() : 0;
+    Element* ownerElement = m_frame ? m_frame->ownerElement() : 0;
     if (ownerElement && (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag))) {
         HTMLFrameElement* frameElt = static_cast<HTMLFrameElement*>(ownerElement);
         if (frameElt->scrollingMode() == ScrollbarAlwaysOff)
@@ -828,7 +828,7 @@ void FrameView::layout(bool allowSubtree)
         }
         
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-        if (m_firstLayout && !document->ownerElement())
+        if (m_firstLayout && !m_frame->ownerElement())
             printf("Elapsed time before first layout: %d\n", document->elapsedTime());
 #endif        
     }
@@ -1429,7 +1429,7 @@ const unsigned cRepaintRectUnionThreshold = 25;
 
 void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
 {
-    ASSERT(!m_frame->document()->ownerElement());
+    ASSERT(!m_frame->ownerElement());
 
     double delay = adjustedDeferredRepaintDelay();
     if ((m_deferringRepaints || m_deferredRepaintTimer.isActive() || delay) && !immediate) {
@@ -2018,11 +2018,11 @@ IntRect FrameView::windowClipRect(bool clipToContents) const
 
     // Set our clip rect to be our contents.
     IntRect clipRect = contentsToWindow(visibleContentRect(!clipToContents));
-    if (!m_frame || !m_frame->document() || !m_frame->document()->ownerElement())
+    if (!m_frame || !m_frame->ownerElement())
         return clipRect;
 
     // Take our owner element and get the clip rect from the enclosing layer.
-    Element* elt = m_frame->document()->ownerElement();
+    Element* elt = m_frame->ownerElement();
     RenderLayer* layer = elt->renderer()->enclosingLayer();
     // FIXME: layer should never be null, but sometimes seems to be anyway.
     if (!layer)
@@ -2243,13 +2243,13 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willPaint(m_frame.get(), rect);
 
-    Document* document = frame()->document();
+    Document* document = m_frame->document();
 
 #ifndef NDEBUG
     bool fillWithRed;
     if (document->printing())
         fillWithRed = false; // Printing, don't fill with red (can't remember why).
-    else if (document->ownerElement())
+    else if (m_frame->ownerElement())
         fillWithRed = false; // Subframe, don't fill with red.
     else if (isTransparent())
         fillWithRed = false; // Transparent, don't fill with red.
@@ -2297,7 +2297,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
         m_paintBehavior |= PaintBehaviorFlattenCompositingLayers;
 
     bool flatteningPaint = m_paintBehavior & PaintBehaviorFlattenCompositingLayers;
-    bool isRootFrame = !document->ownerElement();
+    bool isRootFrame = !m_frame->ownerElement();
     if (flatteningPaint && isRootFrame)
         notifyWidgetsInAllFrames(WillPaintFlattened);
 

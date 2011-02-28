@@ -1038,7 +1038,7 @@ bool EventHandler::scrollRecursively(ScrollDirection direction, ScrollGranularit
     frame = frame->tree()->parent();
     if (!frame)
         return false;
-    return frame->eventHandler()->scrollRecursively(direction, granularity, m_frame->document()->ownerElement());
+    return frame->eventHandler()->scrollRecursively(direction, granularity, m_frame->ownerElement());
 }
 
 bool EventHandler::logicalScrollRecursively(ScrollLogicalDirection direction, ScrollGranularity granularity, Node* startingNode)
@@ -1067,7 +1067,7 @@ bool EventHandler::logicalScrollRecursively(ScrollLogicalDirection direction, Sc
     if (!frame)
         return false;
 
-    return frame->eventHandler()->logicalScrollRecursively(direction, granularity, m_frame->document()->ownerElement());
+    return frame->eventHandler()->logicalScrollRecursively(direction, granularity, m_frame->ownerElement());
 }
 
 IntPoint EventHandler::currentMousePosition() const

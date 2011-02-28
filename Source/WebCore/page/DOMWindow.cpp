@@ -1529,7 +1529,7 @@ void DOMWindow::dispatchLoadEvent()
     // For load events, send a separate load event to the enclosing frame only.
     // This is a DOM extension and is independent of bubbling/capturing rules of
     // the DOM.
-    Element* ownerElement = document()->ownerElement();
+    Element* ownerElement = m_frame ? m_frame->ownerElement() : 0;
     if (ownerElement) {
         RefPtr<Event> ownerEvent = Event::create(eventNames().loadEvent, false, false);
         ownerEvent->setTarget(ownerElement);

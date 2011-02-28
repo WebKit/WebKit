@@ -1345,7 +1345,7 @@ void SelectionController::selectFrameElementInParentIfFullySelected()
         return;
 
     // Get to the <iframe> or <frame> (or even <object>) element in the parent frame.
-    Element* ownerElement = m_frame->document()->ownerElement();
+    Element* ownerElement = m_frame->ownerElement();
     if (!ownerElement)
         return;
     ContainerNode* ownerElementParent = ownerElement->parentNode();
