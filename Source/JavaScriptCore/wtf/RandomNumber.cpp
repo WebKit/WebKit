@@ -27,6 +27,7 @@
 #include "config.h"
 #include "RandomNumber.h"
 
+#include "CryptographicallyRandomNumber.h"
 #include "RandomNumberSeed.h"
 
 #include <limits>
@@ -52,6 +53,14 @@ namespace WTF {
 
 double randomNumber()
 {
+#if USE(OS_RANDOMNESS)
+    uint32_t bits = cryptographicallyRandomNumber();
+    return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);
+#else
+    // Without OS_RANDOMNESS, we fall back to other random number generators
+    // that might not be cryptographically secure. Ideally, most ports would
+    // define USE(OS_RANDOMNESS).
+
 #if !ENABLE(JSC_MULTIPLE_THREADS)
     static bool s_initialized = false;
     if (!s_initialized) {
@@ -59,46 +68,16 @@ double randomNumber()
         s_initialized = true;
     }
 #endif
-    
-#if COMPILER(MSVC) && defined(_CRT_RAND_S)
-    uint32_t bits;
-    rand_s(&bits);
-    return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);
-#elif OS(DARWIN)
-    uint32_t bits = arc4random();
-    return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);
-#elif OS(UNIX)
-    uint32_t part1 = random() & (RAND_MAX - 1);
-    uint32_t part2 = random() & (RAND_MAX - 1);
-    // random only provides 31 bits
-    uint64_t fullRandom = part1;
-    fullRandom <<= 31;
-    fullRandom |= part2;
 
-    // Mask off the low 53bits
-    fullRandom &= (1LL << 53) - 1;
-    return static_cast<double>(fullRandom)/static_cast<double>(1LL << 53);
-#elif USE(MERSENNE_TWISTER_19937)
+#if USE(MERSENNE_TWISTER_19937)
     return genrand_res53();
-#elif OS(WINDOWS)
-    uint32_t part1 = rand() & (RAND_MAX - 1);
-    uint32_t part2 = rand() & (RAND_MAX - 1);
-    uint32_t part3 = rand() & (RAND_MAX - 1);
-    uint32_t part4 = rand() & (RAND_MAX - 1);
-    // rand only provides 15 bits on Win32
-    uint64_t fullRandom = part1;
-    fullRandom <<= 15;
-    fullRandom |= part2;
-    fullRandom <<= 15;
-    fullRandom |= part3;
-    fullRandom <<= 15;
-    fullRandom |= part4;
-
-    // Mask off the low 53bits
-    fullRandom &= (1LL << 53) - 1;
-    return static_cast<double>(fullRandom)/static_cast<double>(1LL << 53);
 #elif PLATFORM(BREWMP)
     uint32_t bits;
+    // Is this a cryptographically strong source of random numbers? If so, we
+    // should move this into OSRandomSource.
+    // http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp851.pdf
+    // is slightly unclear on this point, although it seems to imply that it is
+    // secure.
     RefPtr<ISource> randomSource = createRefPtrInstance<ISource>(AEECLSID_RANDOM);
     ISOURCE_Read(randomSource.get(), reinterpret_cast<char*>(&bits), 4);
 
@@ -117,6 +96,7 @@ double randomNumber()
     // Mask off the low 53bits
     fullRandom &= (1LL << 53) - 1;
     return static_cast<double>(fullRandom)/static_cast<double>(1LL << 53);
+#endif
 #endif
 }
 

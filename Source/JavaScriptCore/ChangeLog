@@ -1,3 +1,20 @@
+2011-02-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement WTF::randomNumber in terms of WTF::cryptographicallyRandomNumber when possible
+        https://bugs.webkit.org/show_bug.cgi?id=55326
+
+        Currently, randomNumber does a bunch of platform-specific work that to
+        get a cryptographic randomness when available.  Instead, we should use
+        cryptographicallyRandomNumber, which abstracts this work.
+        Unfortunately, we can't remove all of the WTF::randomNumber
+        implementation because not every port has access to cryptographically
+        random numbers.
+
+        * wtf/RandomNumber.cpp:
+        (WTF::randomNumber):
+
 2011-02-27  Benjamin Poulain  <ikipou@gmail.com>
 
         Reviewed by Darin Adler.
