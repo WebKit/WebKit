@@ -35,7 +35,6 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "LayerChromium.h"
-#include "PlatformCanvas.h"
 #include "TextureManager.h"
 
 namespace WebCore {
@@ -65,18 +64,25 @@ protected:
     virtual void cleanupResources();
     bool requiresClippedUpdateRect() const;
     void resizeUploadBuffer(const IntSize&);
+    void resizeUploadBufferForImage(const IntSize&);
 
     OwnPtr<LayerTexture> m_contentsTexture;
     bool m_skipsDraw;
 
+    // The size of the upload buffer (also the size of our backing texture).
+    IntSize m_uploadBufferSize;
     // The portion of the upload buffer that has a pending update, in the coordinates of the texture.
     IntRect m_uploadUpdateRect;
-
-    virtual void updateTextureIfNeeded();
-    void updateTexture(const uint8_t* pixels, const IntSize&);
+    // On platforms using Skia, we use the skia::PlatformCanvas for content layers
+    // and the m_uploadPixelData buffer for image layers.
+    // FIXME: We should be using memory we control for all uploads.
+#if USE(SKIA)
+    OwnPtr<skia::PlatformCanvas> m_uploadPixelCanvas;
+#endif
+    OwnPtr<Vector<uint8_t> > m_uploadPixelData;
 
 private:
-    PlatformCanvas m_canvas;
+    void updateTextureIfNeeded();
 
     IntRect m_visibleRectInLayerCoords;
     FloatPoint m_layerCenterInSurfaceCoords;

@@ -31,7 +31,6 @@
 
 #include "LayerChromium.h"
 #include "LayerTexture.h"
-#include "PlatformCanvas.h"
 #include "TilingData.h"
 #include <wtf/OwnArrayPtr.h>
 
@@ -57,7 +56,6 @@ public:
     void invalidateRect(const IntRect& contentRect);
     void invalidateEntireLayer();
     void update(TilePaintInterface& painter, const IntRect& contentRect);
-    void updateFromPixels(const IntRect& paintRect, const uint8_t* pixels);
     void draw(const IntRect& contentRect);
 
     // Set position of this tiled layer in content space.
@@ -126,8 +124,6 @@ private:
     Vector<OwnPtr<Tile> > m_tiles;
     // Linear array of unused tiles.
     Vector<OwnPtr<Tile> > m_unusedTiles;
-
-    PlatformCanvas m_canvas;
 
     // Cache a tile-sized pixel buffer to draw into.
     OwnArrayPtr<uint8_t> m_tilePixels;

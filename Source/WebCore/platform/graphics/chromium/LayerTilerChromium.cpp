@@ -35,6 +35,13 @@
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
 
+#if USE(SKIA)
+#include "NativeImageSkia.h"
+#include "PlatformContextSkia.h"
+#elif PLATFORM(CG)
+#include <CoreGraphics/CGBitmapContext.h>
+#endif
+
 #include <wtf/PassOwnArrayPtr.h>
 
 using namespace std;
@@ -141,8 +148,8 @@ void LayerTilerChromium::contentRectToTileIndices(const IntRect& contentRect, in
 
     left = m_tilingData.tileXIndexFromSrcCoord(layerRect.x());
     top = m_tilingData.tileYIndexFromSrcCoord(layerRect.y());
-    right = m_tilingData.tileXIndexFromSrcCoord(layerRect.maxX() - 1);
-    bottom = m_tilingData.tileYIndexFromSrcCoord(layerRect.maxY() - 1);
+    right = m_tilingData.tileXIndexFromSrcCoord(layerRect.maxX());
+    bottom = m_tilingData.tileYIndexFromSrcCoord(layerRect.maxY());
 }
 
 IntRect LayerTilerChromium::contentRectToLayerRect(const IntRect& contentRect) const
@@ -263,26 +270,55 @@ void LayerTilerChromium::update(TilePaintInterface& painter, const IntRect& cont
         return;
 
     const IntRect paintRect = layerRectToContentRect(dirtyLayerRect);
+    GraphicsContext3D* context = layerRendererContext();
+#if USE(SKIA)
+    OwnPtr<skia::PlatformCanvas> canvas(new skia::PlatformCanvas(paintRect.width(), paintRect.height(), false));
+    OwnPtr<PlatformContextSkia> skiaContext(new PlatformContextSkia(canvas.get()));
+    OwnPtr<GraphicsContext> graphicsContext(new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(skiaContext.get())));
 
-    m_canvas.resize(paintRect.size());
-    PlatformCanvas::Painter canvasPainter(&m_canvas);
-    canvasPainter.context()->translate(-paintRect.x(), -paintRect.y());
-    painter.paint(*canvasPainter.context(), paintRect);
+    // Bring the canvas into the coordinate system of the paint rect.
+    canvas->translate(static_cast<SkScalar>(-paintRect.x()), static_cast<SkScalar>(-paintRect.y()));
 
-    PlatformCanvas::AutoLocker locker(&m_canvas);
-    updateFromPixels(paintRect, locker.pixels());
-}
+    painter.paint(*graphicsContext, paintRect);
 
-void LayerTilerChromium::updateFromPixels(const IntRect& paintRect, const uint8_t* paintPixels)
-{
+    // Get the contents of the updated rect.
+    const SkBitmap& bitmap = canvas->getDevice()->accessBitmap(false);
+    ASSERT(bitmap.width() == paintRect.width() && bitmap.height() == paintRect.height());
+    if (bitmap.width() != paintRect.width() || bitmap.height() != paintRect.height())
+        CRASH();
+    uint8_t* paintPixels = static_cast<uint8_t*>(bitmap.getPixels());
+    if (!paintPixels)
+        CRASH();
+#elif PLATFORM(CG)
+    Vector<uint8_t> canvasPixels;
+    int rowBytes = 4 * paintRect.width();
+    canvasPixels.resize(rowBytes * paintRect.height());
+    memset(canvasPixels.data(), 0, canvasPixels.size());
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGContextRef> m_cgContext;
+    m_cgContext.adoptCF(CGBitmapContextCreate(canvasPixels.data(),
+                                                       paintRect.width(), paintRect.height(), 8, rowBytes,
+                                                       colorSpace.get(),
+                                                       kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+    CGContextTranslateCTM(m_cgContext.get(), 0, paintRect.height());
+    CGContextScaleCTM(m_cgContext.get(), 1, -1);
+    OwnPtr<GraphicsContext> m_graphicsContext(new GraphicsContext(m_cgContext.get()));
+
+    // Bring the CoreGraphics context into the coordinate system of the paint rect.
+    CGContextTranslateCTM(m_cgContext.get(), -paintRect.x(), -paintRect.y());
+    painter.paint(*m_graphicsContext, paintRect);
+
+    // Get the contents of the updated rect.
+    ASSERT(static_cast<int>(CGBitmapContextGetWidth(m_cgContext.get())) == paintRect.width() && static_cast<int>(CGBitmapContextGetHeight(m_cgContext.get())) == paintRect.height());
+    uint8_t* paintPixels = static_cast<uint8_t*>(canvasPixels.data());
+#else
+#error "Need to implement for your platform."
+#endif
+
     // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
     if (!m_tiles.size())
         return;
 
-    GraphicsContext3D* context = layerRendererContext();
-
-    int left, top, right, bottom;
-    contentRectToTileIndices(paintRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             Tile* tile = m_tiles[tileIndex(i, j)].get();
@@ -322,7 +358,7 @@ void LayerTilerChromium::updateFromPixels(const IntRect& paintRect, const uint8_
             if (paintOffset.y() + destRect.height() > paintRect.height())
                 CRASH();
 
-            const uint8_t* pixelSource;
+            uint8_t* pixelSource;
             if (paintRect.width() == sourceRect.width() && !paintOffset.x())
                 pixelSource = &paintPixels[4 * paintOffset.y() * paintRect.width()];
             else {

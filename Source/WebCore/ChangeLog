@@ -1,3 +1,34 @@
+2011-02-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r79877.
+        http://trac.webkit.org/changeset/79877
+        https://bugs.webkit.org/show_bug.cgi?id=55388
+
+        Breaks chromium build (Requested by antonm_ on #webkit).
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::updateContentsIfDirty):
+        (WebCore::ContentLayerChromium::resizeUploadBufferForImage):
+        (WebCore::ContentLayerChromium::resizeUploadBuffer):
+        (WebCore::SkBitmapConditionalAutoLockerPixels::SkBitmapConditionalAutoLockerPixels):
+        (WebCore::SkBitmapConditionalAutoLockerPixels::~SkBitmapConditionalAutoLockerPixels):
+        (WebCore::SkBitmapConditionalAutoLockerPixels::lockPixels):
+        (WebCore::ContentLayerChromium::updateTextureIfNeeded):
+        (WebCore::ContentLayerChromium::draw):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::updateContentsIfDirty):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::contentRectToTileIndices):
+        (WebCore::LayerTilerChromium::update):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        * platform/graphics/chromium/PlatformCanvas.cpp: Removed.
+        * platform/graphics/chromium/PlatformCanvas.h: Removed.
+        * platform/graphics/chromium/PlatformImage.cpp: Removed.
+        * platform/graphics/chromium/PlatformImage.h: Removed.
+
 2011-02-28  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
