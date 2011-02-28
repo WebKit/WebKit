@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x224
+  RenderBlock {HTML} at (0,0) size 800x224
+    RenderBody {BODY} at (8,16) size 784x200
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {I} at (0,0) size 745x42
+          RenderInline {A} at (0,0) size 154x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 154x21
+              text run at (57,0) width 154: "rdar://problem/5862634"
+          RenderText {#text} at (211,0) size 745x42
+            text run at (211,0) width 4: " "
+            text run at (215,0) width 530: "REGRESSION (3.1.1): In iChat, inline image not resizable past current size after"
+            text run at (0,21) width 146: "another IM is received"
+        RenderText {#text} at (146,21) size 4x21
+          text run at (146,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 330x21
+          text run at (0,0) width 330: "The blue square below should be 100\x{D7}100 pixels."
+      RenderBlock {DIV} at (0,95) size 200x105
+        RenderBlock {DIV} at (0,0) size 100x105
+          RenderImage {IMG} at (0,0) size 100x100
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

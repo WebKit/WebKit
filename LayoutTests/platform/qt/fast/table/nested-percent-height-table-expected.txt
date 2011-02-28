@@ -3,20 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {H3} at (0,0) size 784x23
-        RenderText {#text} at (0,0) size 173x22
-          text run at (0,0) width 173: "Height:100% Problems"
-      RenderBlock {P} at (0,39) size 784x19
-        RenderText {#text} at (0,0) size 746x19
-          text run at (0,0) width 398: "In the example below, the inner table should be 300 pixels tall. "
-          text run at (398,0) width 348: "Instead the height:100% on the table cell isn't honored."
-      RenderTable {TABLE} at (355,72) size 74x300 [bgcolor=#FF0000]
-        RenderTableSection {TBODY} at (0,0) size 74x300
-          RenderTableRow {TR} at (0,0) size 74x300
-            RenderTableCell {TD} at (0,0) size 74x300 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 74x300 [bgcolor=#008000]
-                RenderTableSection {TBODY} at (0,0) size 74x300
-                  RenderTableRow {TR} at (0,2) size 74x296
-                    RenderTableCell {TD} at (2,139) size 70x21 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 68x19
-                        text run at (1,1) width 68: "Inner table"
+      RenderBlock {H3} at (0,0) size 784x25
+        RenderText {#text} at (0,0) size 192x25
+          text run at (0,0) width 192: "Height:100% Problems"
+      RenderBlock {P} at (0,43) size 784x42
+        RenderText {#text} at (0,0) size 729x42
+          text run at (0,0) width 422: "In the example below, the inner table should be 300 pixels tall. "
+          text run at (422,0) width 307: "Instead the height:100% on the table cell isn't"
+          text run at (0,21) width 61: "honored."
+      RenderTable {TABLE} at (351,101) size 81x300 [bgcolor=#FF0000]
+        RenderTableSection {TBODY} at (0,0) size 81x300
+          RenderTableRow {TR} at (0,0) size 81x300
+            RenderTableCell {TD} at (0,0) size 81x300 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 81x300 [bgcolor=#008000]
+                RenderTableSection {TBODY} at (0,0) size 81x300
+                  RenderTableRow {TR} at (0,2) size 81x296
+                    RenderTableCell {TD} at (2,138) size 77x23 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 75x21
+                        text run at (1,1) width 75: "Inner table"

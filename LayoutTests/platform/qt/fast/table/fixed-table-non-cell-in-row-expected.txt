@@ -3,20 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 65x19
-          text run at (0,0) width 65: "This tests "
-        RenderInline {A} at (0,0) size 60x19 [color=#0000EE]
-          RenderText {#text} at (65,0) size 60x19
-            text run at (65,0) width 60: "bug 6960"
-        RenderText {#text} at (125,0) size 753x38
-          text run at (125,0) width 628: ", which was an assertion that failed for fixed-layout tables with non-cells in them. This can arise with"
-          text run at (0,19) width 94: "forms, at least."
-      RenderBlock {P} at (0,52) size 784x19
-        RenderText {#text} at (0,0) size 437x19
-          text run at (0,0) width 437: "The test is simply that the empty table below does not cause a crash."
-      RenderTable {TABLE} at (0,85) size 100x100 [border: (3px solid #FF0000)]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 67x21
+          text run at (0,0) width 67: "This tests "
+        RenderInline {A} at (0,0) size 62x21 [color=#0000EE]
+          RenderText {#text} at (67,0) size 62x21
+            text run at (67,0) width 62: "bug 6960"
+        RenderText {#text} at (129,0) size 770x42
+          text run at (129,0) width 641: ", which was an assertion that failed for fixed-layout tables with non-cells in them. This can arise"
+          text run at (0,21) width 132: "with forms, at least."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 457x21
+          text run at (0,0) width 457: "The test is simply that the empty table below does not cause a crash."
+      RenderTable {TABLE} at (0,95) size 100x100 [border: (3px solid #FF0000)]
         RenderTableSection {TBODY} at (3,3) size 94x94
           RenderTableRow {TR} at (0,2) size 94x90
-            RenderBlock {FORM} at (0,0) size 0x0
             RenderTableCell {TD} at (2,46) size 90x2 [r=0 c=0 rs=1 cs=1]

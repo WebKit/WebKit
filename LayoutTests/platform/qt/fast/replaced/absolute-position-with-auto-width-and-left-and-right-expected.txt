@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 636x19
-          text run at (0,0) width 636: "The blue box should be horizontally centered in the black box with 25px of white on the left and right."
-layer at (8,41) size 154x104
-  RenderBlock (relative positioned) {DIV} at (0,33) size 154x104 [border: (2px solid #000000)]
-layer at (35,43) size 100x100
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 688x21
+          text run at (0,0) width 688: "The blue box should be horizontally centered in the black box with 25px of white on the left and right."
+layer at (8,45) size 154x104
+  RenderBlock (relative positioned) {DIV} at (0,37) size 154x104 [border: (2px solid #000000)]
+layer at (35,47) size 100x100
   RenderImage {IMG} at (27,2) size 100x100

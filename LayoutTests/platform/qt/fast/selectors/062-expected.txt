@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x35
-  RenderBlock {HTML} at (0,0) size 800x35
-    RenderBody {BODY} at (8,8) size 784x19
-      RenderBlock {DIV} at (0,0) size 784x19
-        RenderInline {A} at (0,0) size 288x19 [color=#0000EE] [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 288x19
-            text run at (0,0) width 288: "This anchor should have a green background"
-        RenderText {#text} at (288,0) size 142x19
-          text run at (288,0) width 142: " (Don't follow this link.)"
+layer at (0,0) size 800x37
+  RenderBlock {HTML} at (0,0) size 800x37
+    RenderBody {BODY} at (8,8) size 784x21
+      RenderBlock {DIV} at (0,0) size 784x21
+        RenderInline {A} at (0,0) size 308x21 [color=#0000EE] [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 308x21
+            text run at (0,0) width 308: "This anchor should have a green background"
+        RenderText {#text} at (308,0) size 159x21
+          text run at (308,0) width 159: " (Don't follow this link.)"

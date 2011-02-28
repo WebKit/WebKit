@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x180
-  RenderBlock {HTML} at (0,0) size 800x180
-    RenderBody {BODY} at (8,14) size 784x152
-      RenderBlock {DIV} at (0,0) size 784x152
-        RenderBlock {P} at (0,0) size 784x19
-          RenderText {#text} at (0,0) size 224x19
-            text run at (0,0) width 224: "This paragraph should be unstyled."
-        RenderBlock {P} at (0,33) size 784x19 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 292x19
-            text run at (0,0) width 292: "But this one should have a green background."
-        RenderBlock {P} at (0,66) size 784x19 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 326x19
-            text run at (0,0) width 326: "And this one should also have a green background."
-        RenderBlock {ADDRESS} at (0,99) size 784x20
-          RenderText {#text} at (0,0) size 438x19
-            text run at (0,0) width 438: "This address is only here to fill some space between two paragraphs."
-        RenderBlock {P} at (0,133) size 784x19
-          RenderText {#text} at (0,0) size 224x19
-            text run at (0,0) width 224: "This paragraph should be unstyled."
+layer at (0,0) size 800x201
+  RenderBlock {HTML} at (0,0) size 800x201
+    RenderBody {BODY} at (8,16) size 784x169
+      RenderBlock {DIV} at (0,0) size 784x169
+        RenderBlock {P} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 241x21
+            text run at (0,0) width 241: "This paragraph should be unstyled."
+        RenderBlock {P} at (0,37) size 784x21 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 311x21
+            text run at (0,0) width 311: "But this one should have a green background."
+        RenderBlock {P} at (0,74) size 784x21 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 346x21
+            text run at (0,0) width 346: "And this one should also have a green background."
+        RenderBlock {ADDRESS} at (0,111) size 784x21
+          RenderText {#text} at (0,0) size 442x21
+            text run at (0,0) width 442: "This address is only here to fill some space between two paragraphs."
+        RenderBlock {P} at (0,148) size 784x21
+          RenderText {#text} at (0,0) size 241x21
+            text run at (0,0) width 241: "This paragraph should be unstyled."

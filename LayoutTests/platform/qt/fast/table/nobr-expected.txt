@@ -6,32 +6,33 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {NOBR} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,0) size 784x371
-        RenderTable {TABLE} at (0,0) size 70x371 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 68x369
-            RenderTableRow {TR} at (0,2) size 68x365
-              RenderTableCell {TD} at (2,2) size 64x365 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 60x361
-                  text run at (2,2) width 53: "This is a"
-                  text run at (2,21) width 57: "test case"
-                  text run at (2,40) width 17: "for"
-                  text run at (2,59) width 60: "3190580."
-                  text run at (2,78) width 32: "Even"
-                  text run at (2,97) width 44: "though"
-                  text run at (2,116) width 57: "this table"
-                  text run at (2,135) width 10: "is"
-                  text run at (2,154) width 57: "enclosed"
-                  text run at (2,173) width 56: "in a nobr"
-                  text run at (2,192) width 50: "tag, this"
-                  text run at (2,211) width 23: "text"
-                  text run at (2,230) width 42: "should"
-                  text run at (2,249) width 31: "wrap"
-                  text run at (2,268) width 52: "anyway."
-                  text run at (2,287) width 60: "The table"
-                  text run at (2,306) width 60: "is only 50"
-                  text run at (2,325) width 36: "pixels"
-                  text run at (2,344) width 33: "wide."
-      RenderBlock (anonymous) at (0,371) size 784x0
+      RenderBlock (anonymous) at (0,0) size 784x451
+        RenderTable {TABLE} at (0,0) size 70x451 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 68x449
+            RenderTableRow {TR} at (0,2) size 68x445
+              RenderTableCell {TD} at (2,2) size 64x445 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 60x441
+                  text run at (2,2) width 56: "This is a"
+                  text run at (2,23) width 55: "test case"
+                  text run at (2,44) width 20: "for"
+                  text run at (2,65) width 60: "3190580."
+                  text run at (2,86) width 35: "Even"
+                  text run at (2,107) width 48: "though"
+                  text run at (2,128) width 24: "this"
+                  text run at (2,149) width 47: "table is"
+                  text run at (2,170) width 57: "enclosed"
+                  text run at (2,191) width 25: "in a"
+                  text run at (2,212) width 33: "nobr"
+                  text run at (2,233) width 53: "tag, this"
+                  text run at (2,254) width 25: "text"
+                  text run at (2,275) width 45: "should"
+                  text run at (2,296) width 36: "wrap"
+                  text run at (2,317) width 57: "anyway."
+                  text run at (2,338) width 27: "The"
+                  text run at (2,359) width 47: "table is"
+                  text run at (2,380) width 49: "only 50"
+                  text run at (2,401) width 38: "pixels"
+                  text run at (2,422) width 36: "wide."
+      RenderBlock (anonymous) at (0,451) size 784x0
         RenderInline {NOBR} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

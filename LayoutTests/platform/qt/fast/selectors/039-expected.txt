@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x65
-  RenderBlock {HTML} at (0,0) size 800x65
-    RenderBody {BODY} at (8,14) size 784x37
-      RenderBlock {P} at (0,0) size 784x37
-        RenderInline (generated) at (0,0) size 17x36 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 17x36
-            text run at (0,0) width 17: "T"
-        RenderText {#text} at (17,13) size 482x19
-          text run at (17,13) width 333: "his very long paragraph should have a big first letter "
-          text run at (350,13) width 149: "with green background."
+layer at (0,0) size 800x74
+  RenderBlock {HTML} at (0,0) size 800x74
+    RenderBody {BODY} at (8,16) size 784x42
+      RenderBlock {P} at (0,0) size 784x42
+        RenderInline (generated) at (0,0) size 21x41 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 21x41
+            text run at (0,0) width 21: "T"
+        RenderText {#text} at (21,15) size 522x21
+          text run at (21,15) width 359: "his very long paragraph should have a big first letter "
+          text run at (380,15) width 163: "with green background."

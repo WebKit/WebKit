@@ -2,9 +2,9 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
+    RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x128
         RenderImage {IMG} at (0,0) size 128x128
-      RenderBlock {P} at (0,142) size 784x19
-        RenderText {#text} at (0,0) size 63x19
-          text run at (0,0) width 63: "not empty"
+      RenderBlock {P} at (0,144) size 784x21
+        RenderText {#text} at (0,0) size 68x21
+          text run at (0,0) width 68: "not empty"

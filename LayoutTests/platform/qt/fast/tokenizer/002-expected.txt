@@ -4,5 +4,5 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 326x19
-        text run at (0,0) width 326: "you shouldn't see a random chinese character here"
+      RenderText {#text} at (0,0) size 342x21
+        text run at (0,0) width 342: "you shouldn't see a random chinese character here"

@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (717,0) size 67x31
-        RenderTableSection {TBODY} at (0,0) size 67x31
-          RenderTableRow {TR} at (0,2) size 67x27
-            RenderTableCell {TD} at (2,2) size 63x27 [r=0 c=0 rs=1 cs=1]
-              RenderBlock (floating) {DIV} at (1,1) size 61x25
-                RenderTable {TABLE} at (0,0) size 61x25
-                  RenderTableSection {TBODY} at (0,0) size 61x25
-                    RenderTableRow {TR} at (0,2) size 61x21
-                      RenderTableCell {TD} at (2,2) size 10x21 [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (1,1) size 8x19
+      RenderTable {TABLE} at (714,0) size 70x33
+        RenderTableSection {TBODY} at (0,0) size 70x33
+          RenderTableRow {TR} at (0,2) size 70x29
+            RenderTableCell {TD} at (2,2) size 66x29 [r=0 c=0 rs=1 cs=1]
+              RenderBlock (floating) {DIV} at (1,1) size 64x27
+                RenderTable {TABLE} at (0,0) size 64x27
+                  RenderTableSection {TBODY} at (0,0) size 64x27
+                    RenderTableRow {TR} at (0,2) size 64x23
+                      RenderTableCell {TD} at (2,2) size 10x23 [r=0 c=0 rs=1 cs=1]
+                        RenderText {#text} at (1,1) size 8x21
                           text run at (1,1) width 8: "a"
-                      RenderTableCell {TD} at (14,2) size 34x21 [r=0 c=1 rs=1 cs=1]
-                        RenderText {#text} at (1,1) size 32x19
-                          text run at (1,1) width 32: "Hello"
-                      RenderTableCell {TD} at (50,2) size 9x21 [r=0 c=2 rs=1 cs=1]
-                        RenderText {#text} at (1,1) size 7x19
+                      RenderTableCell {TD} at (14,2) size 37x23 [r=0 c=1 rs=1 cs=1]
+                        RenderText {#text} at (1,1) size 35x21
+                          text run at (1,1) width 35: "Hello"
+                      RenderTableCell {TD} at (53,2) size 9x23 [r=0 c=2 rs=1 cs=1]
+                        RenderText {#text} at (1,1) size 7x21
                           text run at (1,1) width 7: "c"

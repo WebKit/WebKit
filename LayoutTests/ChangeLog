@@ -1,3 +1,18 @@
+2011-02-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Add Qt specific expected results for passing fast tests.
+
+        * platform/qt/Skipped: Unskip passing tests.
+        * platform/qt/fast/transforms [...] : Added.
+        * platform/qt/fast/tokenizer [...] : Added.
+        * platform/qt/fast/replaced [...] : Added.
+        * platform/qt/fast/runin [...] : Added.
+        * platform/qt/fast/selectors [...] : Added.
+        * platform/qt/fast/table [...] : Added.
+        * ChangeLog : Remove duplicated ChangeLog entry.
+
 2011-02-28  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations change.
@@ -79,16 +94,6 @@
         [Qt] Remove non-existent tests from Skipped list after r79861.
 
         * platform/qt/Skipped:
-
-2011-02-28  Csaba Osztrogonác  <ossy@webkit.org>
-
-        Unreviewed.
-
-        [Qt] Add Qt specific expected results for passing fast/css tests.
-
-        * platform/qt/Skipped:
-        * platform/qt/fast/css [...] : Added.
-
 
 2011-02-28  Csaba Osztrogonác  <ossy@webkit.org>
 

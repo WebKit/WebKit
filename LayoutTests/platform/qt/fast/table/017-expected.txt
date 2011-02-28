@@ -3,23 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 744x54 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 742x52
-          RenderTableRow {TR} at (0,2) size 742x48
-            RenderTableCell {TD} at (2,2) size 235x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 231x44
-                RenderTableSection {TBODY} at (0,0) size 231x44
-                  RenderTableRow {TR} at (0,2) size 231x40
-                    RenderTableCell {TD} at (2,2) size 227x40 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 224x38
-                        text run at (1,1) width 224: "This is the first column. It has some"
-                        text run at (1,20) width 53: "text in it."
-            RenderTableCell {TD} at (239,2) size 501x48 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 497x44
-                RenderTableSection {TBODY} at (0,0) size 497x44
-                  RenderTableRow {TR} at (0,2) size 497x40
-                    RenderTableCell {TD} at (2,2) size 493x40 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 464x38
-                        text run at (1,1) width 173: "This is the second column. "
-                        text run at (174,1) width 291: "It has a lot more content than the first column."
-                        text run at (1,20) width 139: "That shouldn't matter."
+      RenderTable {TABLE} at (0,0) size 744x58 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 742x56
+          RenderTableRow {TR} at (0,2) size 742x52
+            RenderTableCell {TD} at (2,2) size 235x52 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 231x48
+                RenderTableSection {TBODY} at (0,0) size 231x48
+                  RenderTableRow {TR} at (0,2) size 231x44
+                    RenderTableCell {TD} at (2,2) size 227x44 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 200x42
+                        text run at (1,1) width 200: "This is the first column. It has"
+                        text run at (1,22) width 97: "some text in it."
+            RenderTableCell {TD} at (239,2) size 501x52 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 497x48
+                RenderTableSection {TBODY} at (0,0) size 497x48
+                  RenderTableRow {TR} at (0,2) size 497x44
+                    RenderTableCell {TD} at (2,2) size 493x44 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 436x42
+                        text run at (1,1) width 181: "This is the second column. "
+                        text run at (182,1) width 255: "It has a lot more content than the first"
+                        text run at (1,22) width 58: "column. "
+                        text run at (59,22) width 153: "That shouldn't matter."

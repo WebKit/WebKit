@@ -4,5 +4,5 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderInline {SPAN} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 289x19
-        text run at (0,0) width 289: "This should be a span: [object HTMLElement]"
+      RenderText {#text} at (0,0) size 316x21
+        text run at (0,0) width 316: "This should be a span: [object HTMLElement]"

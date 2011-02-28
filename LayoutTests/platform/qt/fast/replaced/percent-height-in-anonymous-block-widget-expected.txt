@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 720x42
+          text run at (0,0) width 482: "This tests for a crash when removing a widget whose height is specified "
+          text run at (482,0) width 238: "as a percentage of a non-immediate"
+          text run at (0,21) width 118: "ancestor\x{2019}s height."
+      RenderBlock {DIV} at (0,58) size 100x50 [bgcolor=#0000FF]
+        RenderBlock {DIV} at (0,0) size 100x0
+        RenderBlock (anonymous) at (0,0) size 100x0
+          RenderText {#text} at (0,0) size 0x0

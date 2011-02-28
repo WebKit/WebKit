@@ -1,24 +1,24 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x47
-  RenderBlock {HTML} at (0,0) size 800x47
-    RenderBody {BODY} at (8,14) size 784x19
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 177x19
-          text run at (0,0) width 177: "The background color of all "
-        RenderInline {A} at (0,0) size 51x19 [color=#0000EE]
-          RenderText {#text} at (177,0) size 51x19
-            text run at (177,0) width 51: "anchors"
-        RenderText {#text} at (228,0) size 105x19
-          text run at (228,0) width 4: " "
-          text run at (232,0) width 101: "should become "
-        RenderInline {A} at (0,0) size 37x19 [color=#0000EE]
-          RenderText {#text} at (333,0) size 37x19
-            text run at (333,0) width 37: "green"
-        RenderText {#text} at (370,0) size 132x19
-          text run at (370,0) width 132: " when they have the "
-        RenderInline {A} at (0,0) size 34x19 [color=#0000EE]
-          RenderText {#text} at (502,0) size 34x19
-            text run at (502,0) width 34: "focus"
-        RenderText {#text} at (536,0) size 4x19
-          text run at (536,0) width 4: "."
+layer at (0,0) size 800x53
+  RenderBlock {HTML} at (0,0) size 800x53
+    RenderBody {BODY} at (8,16) size 784x21
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 193x21
+          text run at (0,0) width 193: "The background color of all "
+        RenderInline {A} at (0,0) size 54x21 [color=#0000EE]
+          RenderText {#text} at (193,0) size 54x21
+            text run at (193,0) width 54: "anchors"
+        RenderText {#text} at (247,0) size 108x21
+          text run at (247,0) width 4: " "
+          text run at (251,0) width 104: "should become "
+        RenderInline {A} at (0,0) size 38x21 [color=#0000EE]
+          RenderText {#text} at (355,0) size 38x21
+            text run at (355,0) width 38: "green"
+        RenderText {#text} at (393,0) size 139x21
+          text run at (393,0) width 139: " when they have the "
+        RenderInline {A} at (0,0) size 35x21 [color=#0000EE]
+          RenderText {#text} at (532,0) size 35x21
+            text run at (532,0) width 35: "focus"
+        RenderText {#text} at (567,0) size 4x21
+          text run at (567,0) width 4: "."

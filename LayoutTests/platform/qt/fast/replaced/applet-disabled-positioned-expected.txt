@@ -2,24 +2,24 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 629x19
-          RenderInline {A} at (0,0) size 294x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 294x19
-              text run at (53,0) width 294: "http://bugs.webkit.org/show_bug.cgi?id=15091"
-          RenderText {#text} at (347,0) size 335x19
-            text run at (347,0) width 4: " "
-            text run at (351,0) width 249: "Crash in RenderBlock::skipWhitespace "
-            text run at (600,0) width 82: "during layout"
-        RenderText {#text} at (682,0) size 4x19
-          text run at (682,0) width 4: "."
-      RenderBlock {P} at (0,34) size 784x19
-        RenderText {#text} at (0,0) size 606x19
-          text run at (0,0) width 606: "If Java is enabled, disable it and reload this page. You should see the word PASS at the bottom."
-layer at (8,581) size 36x19
-  RenderBlock (positioned) {APPLET} at (8,581) size 36x19
-    RenderText {#text} at (0,0) size 36x19
-      text run at (0,0) width 36: "PASS"
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {I} at (0,0) size 657x21
+          RenderInline {A} at (0,0) size 304x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 304x21
+              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=15091"
+          RenderText {#text} at (361,0) size 353x21
+            text run at (361,0) width 4: " "
+            text run at (365,0) width 261: "Crash in RenderBlock::skipWhitespace "
+            text run at (626,0) width 88: "during layout"
+        RenderText {#text} at (714,0) size 4x21
+          text run at (714,0) width 4: "."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 644x21
+          text run at (0,0) width 644: "If Java is enabled, disable it and reload this page. You should see the word PASS at the bottom."
+layer at (8,579) size 40x21
+  RenderBlock (positioned) {APPLET} at (8,579) size 40x21
+    RenderText {#text} at (0,0) size 40x21
+      text run at (0,0) width 40: "PASS"

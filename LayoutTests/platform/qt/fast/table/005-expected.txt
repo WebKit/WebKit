@@ -3,70 +3,70 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 770x95
-        RenderTableSection {TBODY} at (0,0) size 770x95
-          RenderTableRow {TR} at (0,0) size 770x19
-            RenderTableCell {TD} at (0,38) size 130x19 [bgcolor=#008000] [r=0 c=0 rs=5 cs=1]
-              RenderTable {TABLE} at (0,0) size 130x19
-                RenderTableSection {TBODY} at (0,0) size 130x19
-                  RenderTableRow {TR} at (0,0) size 130x19
-                    RenderTableCell {TD} at (0,0) size 130x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 770x105
+        RenderTableSection {TBODY} at (0,0) size 770x105
+          RenderTableRow {TR} at (0,0) size 770x21
+            RenderTableCell {TD} at (0,42) size 130x21 [bgcolor=#008000] [r=0 c=0 rs=5 cs=1]
+              RenderTable {TABLE} at (0,0) size 130x21
+                RenderTableSection {TBODY} at (0,0) size 130x21
+                  RenderTableRow {TR} at (0,0) size 130x21
+                    RenderTableCell {TD} at (0,0) size 130x21 [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 130x0
                       RenderBR {BR} at (130,0) size 0x0
-                      RenderText {#text} at (0,0) size 8x19
+                      RenderText {#text} at (0,0) size 8x21
                         text run at (0,0) width 8: "1"
-            RenderTableCell {TD} at (130,44) size 1x7 [bgcolor=#FF0000] [r=0 c=1 rs=5 cs=1]
+            RenderTableCell {TD} at (130,49) size 1x7 [bgcolor=#FF0000] [r=0 c=1 rs=5 cs=1]
               RenderImage {IMG} at (0,0) size 1x7
-            RenderTableCell {TD} at (131,0) size 280x19 [bgcolor=#800080] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 8x19
+            RenderTableCell {TD} at (131,0) size 280x21 [bgcolor=#800080] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x21
                 text run at (0,0) width 8: "3"
-            RenderTableCell {TD} at (411,0) size 9x19 [bgcolor=#0000FF] [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 8x19
+            RenderTableCell {TD} at (411,0) size 9x21 [bgcolor=#0000FF] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x21
                 text run at (0,0) width 8: "4"
-            RenderTableCell {TD} at (420,0) size 350x19 [bgcolor=#FFA500] [r=0 c=4 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 8x19
+            RenderTableCell {TD} at (420,0) size 350x21 [bgcolor=#FFA500] [r=0 c=4 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x21
                 text run at (0,0) width 8: "5"
-          RenderTableRow {TR} at (0,19) size 770x19
-            RenderTableCell {TD} at (131,28) size 280x19 [bgcolor=#800080] [r=1 c=2 rs=2 cs=1]
+          RenderTableRow {TR} at (0,21) size 770x21
+            RenderTableCell {TD} at (131,31) size 280x21 [bgcolor=#800080] [r=1 c=2 rs=2 cs=1]
               RenderImage {IMG} at (0,0) size 280x0
               RenderBR {BR} at (280,0) size 0x0
-              RenderText {#text} at (0,0) size 8x19
+              RenderText {#text} at (0,0) size 8x21
                 text run at (0,0) width 8: "3"
-            RenderTableCell {TD} at (411,28) size 9x19 [bgcolor=#0000FF] [r=1 c=3 rs=2 cs=1]
-              RenderText {#text} at (0,0) size 8x19
+            RenderTableCell {TD} at (411,31) size 9x21 [bgcolor=#0000FF] [r=1 c=3 rs=2 cs=1]
+              RenderText {#text} at (0,0) size 8x21
                 text run at (0,0) width 8: "4"
-            RenderTableCell {TD} at (420,19) size 350x19 [bgcolor=#FFA500] [r=1 c=4 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 8x19
+            RenderTableCell {TD} at (420,21) size 350x21 [bgcolor=#FFA500] [r=1 c=4 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x21
                 text run at (0,0) width 8: "5"
-          RenderTableRow {TR} at (0,38) size 770x19
-            RenderTableCell {TD} at (420,38) size 350x19 [r=2 c=4 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 350x19 [bgcolor=#FFA500]
-                RenderTableSection {TBODY} at (0,0) size 350x19
-                  RenderTableRow {TR} at (0,0) size 350x19
-                    RenderTableCell {TD} at (0,0) size 273x19 [r=0 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,42) size 770x21
+            RenderTableCell {TD} at (420,42) size 350x21 [r=2 c=4 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 350x21 [bgcolor=#FFA500]
+                RenderTableSection {TBODY} at (0,0) size 350x21
+                  RenderTableRow {TR} at (0,0) size 350x21
+                    RenderTableCell {TD} at (0,0) size 273x21 [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 267x0
                       RenderBR {BR} at (267,0) size 0x0
-                      RenderText {#text} at (0,0) size 8x19
+                      RenderText {#text} at (0,0) size 8x21
                         text run at (0,0) width 8: "5"
-                    RenderTableCell {TD} at (273,9) size 77x0 [r=0 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (273,10) size 77x0 [r=0 c=1 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 77x0
-          RenderTableRow {TR} at (0,57) size 770x19
-            RenderTableCell {TD} at (131,57) size 280x19 [bgcolor=#800080] [r=3 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 8x19
+          RenderTableRow {TR} at (0,63) size 770x21
+            RenderTableCell {TD} at (131,63) size 280x21 [bgcolor=#800080] [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x21
                 text run at (0,0) width 8: "3"
-            RenderTableCell {TD} at (411,57) size 9x19 [bgcolor=#0000FF] [r=3 c=3 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 8x19
+            RenderTableCell {TD} at (411,63) size 9x21 [bgcolor=#0000FF] [r=3 c=3 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x21
                 text run at (0,0) width 8: "4"
-            RenderTableCell {TD} at (420,57) size 350x19 [bgcolor=#FFA500] [r=3 c=4 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 8x19
+            RenderTableCell {TD} at (420,63) size 350x21 [bgcolor=#FFA500] [r=3 c=4 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x21
                 text run at (0,0) width 8: "5"
-          RenderTableRow {TR} at (0,76) size 770x19
-            RenderTableCell {TD} at (131,76) size 280x19 [bgcolor=#800080] [r=4 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 8x19
+          RenderTableRow {TR} at (0,84) size 770x21
+            RenderTableCell {TD} at (131,84) size 280x21 [bgcolor=#800080] [r=4 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x21
                 text run at (0,0) width 8: "3"
-            RenderTableCell {TD} at (411,76) size 9x19 [bgcolor=#0000FF] [r=4 c=3 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 8x19
+            RenderTableCell {TD} at (411,84) size 9x21 [bgcolor=#0000FF] [r=4 c=3 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x21
                 text run at (0,0) width 8: "4"
-            RenderTableCell {TD} at (420,76) size 350x19 [bgcolor=#FFA500] [r=4 c=4 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 8x19
+            RenderTableCell {TD} at (420,84) size 350x21 [bgcolor=#FFA500] [r=4 c=4 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 8x21
                 text run at (0,0) width 8: "5"

@@ -1,42 +1,43 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x284
-  RenderBlock {HTML} at (0,0) size 800x284
-    RenderBody {BODY} at (8,14) size 784x256
-      RenderBlock {DIV} at (0,0) size 784x256
-        RenderBlock {P} at (0,0) size 784x39
-          RenderText {#text} at (0,0) size 749x19
-            text run at (0,0) width 749: "The background color of this paragraph should turn to green when the mouse pointer hovers over any of the following:"
-          RenderBR {BR} at (749,0) size 0x19
-          RenderInline {STRONG} at (0,0) size 64x20
-            RenderText {#text} at (0,19) size 64x20
-              text run at (0,19) width 64: "This text."
-        RenderBlock {P} at (0,53) size 784x19
-          RenderText {#text} at (0,0) size 58x19
-            text run at (0,0) width 58: "This text."
-        RenderTable {TABLE} at (0,86) size 110x101
-          RenderTableSection {TBODY} at (0,0) size 110x101
-            RenderTableRow {TR} at (0,2) size 110x74
-              RenderTableCell {TD} at (2,2) size 106x74 [r=0 c=0 rs=1 cs=1]
-                RenderTable {TABLE} at (1,1) size 104x72
-                  RenderTableSection {TBODY} at (0,0) size 104x72
-                    RenderTableRow {TR} at (0,2) size 104x68
-                      RenderTableCell {TD} at (2,2) size 100x68 [r=0 c=0 rs=1 cs=1]
-                        RenderBlock {DL} at (1,15) size 98x38
-                          RenderBlock {DT} at (0,0) size 98x19
-                            RenderText {#text} at (0,0) size 58x19
-                              text run at (0,0) width 58: "This text."
-                          RenderBlock {DD} at (40,19) size 58x19
-                            RenderText {#text} at (0,0) size 58x19
-                              text run at (0,0) width 58: "This text."
-            RenderTableRow {TR} at (0,78) size 110x21
-              RenderTableCell {TD} at (2,78) size 106x21 [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 58x19
-                  text run at (1,1) width 58: "This text."
-        RenderBlock {P} at (0,201) size 784x22
-          RenderInline {SUB} at (0,0) size 48x17
-            RenderText {#text} at (0,5) size 48x17
-              text run at (0,5) width 48: "This text."
-        RenderBlock {P} at (0,237) size 784x19
-          RenderText {#text} at (0,0) size 583x19
-            text run at (0,0) width 583: "...and anything else between the top of the first paragraph and the bottom of this paragraph."
+layer at (0,0) size 800x336
+  RenderBlock {HTML} at (0,0) size 800x336
+    RenderBody {BODY} at (8,16) size 784x304
+      RenderBlock {DIV} at (0,0) size 784x304
+        RenderBlock {P} at (0,0) size 784x63
+          RenderText {#text} at (0,0) size 736x42
+            text run at (0,0) width 736: "The background color of this paragraph should turn to green when the mouse pointer hovers over any of the"
+            text run at (0,21) width 67: "following:"
+          RenderBR {BR} at (67,21) size 0x21
+          RenderInline {STRONG} at (0,0) size 63x21
+            RenderText {#text} at (0,42) size 63x21
+              text run at (0,42) width 63: "This text."
+        RenderBlock {P} at (0,79) size 784x21
+          RenderText {#text} at (0,0) size 63x21
+            text run at (0,0) width 63: "This text."
+        RenderTable {TABLE} at (0,116) size 115x111
+          RenderTableSection {TBODY} at (0,0) size 115x111
+            RenderTableRow {TR} at (0,2) size 115x82
+              RenderTableCell {TD} at (2,2) size 111x82 [r=0 c=0 rs=1 cs=1]
+                RenderTable {TABLE} at (1,1) size 109x80
+                  RenderTableSection {TBODY} at (0,0) size 109x80
+                    RenderTableRow {TR} at (0,2) size 109x76
+                      RenderTableCell {TD} at (2,2) size 105x76 [r=0 c=0 rs=1 cs=1]
+                        RenderBlock {DL} at (1,17) size 103x42
+                          RenderBlock {DT} at (0,0) size 103x21
+                            RenderText {#text} at (0,0) size 63x21
+                              text run at (0,0) width 63: "This text."
+                          RenderBlock {DD} at (40,21) size 63x21
+                            RenderText {#text} at (0,0) size 63x21
+                              text run at (0,0) width 63: "This text."
+            RenderTableRow {TR} at (0,86) size 115x23
+              RenderTableCell {TD} at (2,86) size 111x23 [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 63x21
+                  text run at (1,1) width 63: "This text."
+        RenderBlock {P} at (0,243) size 784x24
+          RenderInline {SUB} at (0,0) size 52x17
+            RenderText {#text} at (0,7) size 52x17
+              text run at (0,7) width 52: "This text."
+        RenderBlock {P} at (0,283) size 784x21
+          RenderText {#text} at (0,0) size 624x21
+            text run at (0,0) width 624: "...and anything else between the top of the first paragraph and the bottom of this paragraph."

@@ -1,52 +1,53 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x185
-  RenderBlock {HTML} at (0,0) size 800x185
-    RenderBody {BODY} at (8,8) size 784x169
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 111x19
-          text run at (0,0) width 111: "Testcase for bug "
-        RenderInline {A} at (0,0) size 32x19 [color=#0000EE]
-          RenderText {#text} at (111,0) size 32x19
-            text run at (111,0) width 32: "4874"
-        RenderText {#text} at (143,0) size 412x19
-          text run at (143,0) width 412: " - Table with absolute bottom positioning is positioned incorrectly."
-      RenderBlock {H1} at (0,37) size 784x38
-        RenderText {#text} at (0,0) size 160x38
-          text run at (0,0) width 160: "Look Down!"
-      RenderBlock {P} at (0,93) size 784x76
-        RenderText {#text} at (0,0) size 773x76
-          text run at (0,0) width 495: "At the bottom of the window you should see the word \"Paragraph\" followed by "
-          text run at (495,0) width 269: "three boxes containing text. The entire red"
-          text run at (0,19) width 203: "border around each box should "
-          text run at (203,19) width 445: "be visible without scrolling (the window should not be scrollable at all). "
-          text run at (648,19) width 104: "The three boxes"
-          text run at (0,38) width 345: "should be aligned at the bottom with the bottom of the "
-          text run at (345,38) width 428: "window. The text \"Tall table\" should be vertically centered in its box,"
-          text run at (0,57) width 480: "which should be 50px tall. The other two boxes should both be shorter than "
-          text run at (480,57) width 208: "50px, and have the same height."
+layer at (0,0) size 800x226
+  RenderBlock {HTML} at (0,0) size 800x226
+    RenderBody {BODY} at (8,8) size 784x210
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 115x21
+          text run at (0,0) width 115: "Testcase for bug "
+        RenderInline {A} at (0,0) size 32x21 [color=#0000EE]
+          RenderText {#text} at (115,0) size 32x21
+            text run at (115,0) width 32: "4874"
+        RenderText {#text} at (147,0) size 444x21
+          text run at (147,0) width 444: " - Table with absolute bottom positioning is positioned incorrectly."
+      RenderBlock {H1} at (0,42) size 784x42
+        RenderText {#text} at (0,0) size 170x41
+          text run at (0,0) width 170: "Look Down!"
+      RenderBlock {P} at (0,105) size 784x105
+        RenderText {#text} at (0,0) size 778x105
+          text run at (0,0) width 543: "At the bottom of the window you should see the word \"Paragraph\" followed by "
+          text run at (543,0) width 216: "three boxes containing text. The"
+          text run at (0,21) width 288: "entire red border around each box should "
+          text run at (288,21) width 476: "be visible without scrolling (the window should not be scrollable at all)."
+          text run at (0,42) width 481: "The three boxes should be aligned at the bottom with the bottom of the "
+          text run at (481,42) width 273: "window. The text \"Tall table\" should be"
+          text run at (0,63) width 197: "vertically centered in its box, "
+          text run at (197,63) width 514: "which should be 50px tall. The other two boxes should both be shorter than "
+          text run at (711,63) width 67: "50px, and"
+          text run at (0,84) width 145: "have the same height."
 layer at (120,550) size 120x50
   RenderTable {TABLE} at (120,550) size 120x50 [border: (1px solid #FF0000)]
     RenderTableSection {TBODY} at (1,1) size 118x48
       RenderTableRow {TR} at (0,2) size 118x44
-        RenderTableCell {TD} at (2,13) size 114x21 [r=0 c=0 rs=1 cs=1]
-          RenderText {#text} at (1,1) size 58x19
-            text run at (1,1) width 58: "Tall table"
-layer at (240,573) size 120x27
-  RenderTable {TABLE} at (240,573) size 120x27 [border: (1px solid #FF0000)]
-    RenderTableSection {TBODY} at (1,1) size 118x25
-      RenderTableRow {TR} at (0,2) size 118x21
-        RenderTableCell {TD} at (2,2) size 114x21 [r=0 c=0 rs=1 cs=1]
-          RenderText {#text} at (1,1) size 81x19
-            text run at (1,1) width 81: "Normal table"
-layer at (360,573) size 120x27
-  RenderTable {TABLE} at (360,573) size 120x27 [border: (1px solid #FF0000)]
-    RenderTableSection {TBODY} at (1,1) size 118x25
-      RenderTableRow {TR} at (0,2) size 118x21
-        RenderTableCell {TD} at (2,2) size 114x21 [r=0 c=0 rs=1 cs=1]
-          RenderText {#text} at (1,1) size 69x19
-            text run at (1,1) width 69: "Short table"
-layer at (0,581) size 67x19
-  RenderBlock (positioned) {P} at (0,581) size 67x19
-    RenderText {#text} at (0,0) size 67x19
-      text run at (0,0) width 67: "Paragraph"
+        RenderTableCell {TD} at (2,12) size 114x23 [r=0 c=0 rs=1 cs=1]
+          RenderText {#text} at (1,1) size 64x21
+            text run at (1,1) width 64: "Tall table"
+layer at (240,571) size 120x29
+  RenderTable {TABLE} at (240,571) size 120x29 [border: (1px solid #FF0000)]
+    RenderTableSection {TBODY} at (1,1) size 118x27
+      RenderTableRow {TR} at (0,2) size 118x23
+        RenderTableCell {TD} at (2,2) size 114x23 [r=0 c=0 rs=1 cs=1]
+          RenderText {#text} at (1,1) size 89x21
+            text run at (1,1) width 89: "Normal table"
+layer at (360,571) size 120x29
+  RenderTable {TABLE} at (360,571) size 120x29 [border: (1px solid #FF0000)]
+    RenderTableSection {TBODY} at (1,1) size 118x27
+      RenderTableRow {TR} at (0,2) size 118x23
+        RenderTableCell {TD} at (2,2) size 114x23 [r=0 c=0 rs=1 cs=1]
+          RenderText {#text} at (1,1) size 75x21
+            text run at (1,1) width 75: "Short table"
+layer at (0,579) size 74x21
+  RenderBlock (positioned) {P} at (0,579) size 74x21
+    RenderText {#text} at (0,0) size 74x21
+      text run at (0,0) width 74: "Paragraph"

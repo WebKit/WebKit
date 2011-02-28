@@ -1,11 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x35
-  RenderBlock {HTML} at (0,0) size 800x35
-    RenderBody {BODY} at (8,8) size 784x19
-      RenderBlock {DIV} at (0,0) size 784x19
-        RenderInline {A} at (0,0) size 288x19 [color=#0000EE] [bgcolor=#FF0000]
-          RenderText {#text} at (0,0) size 288x19
-            text run at (0,0) width 288: "This anchor should have a green background"
-        RenderText {#text} at (288,0) size 459x19
-          text run at (288,0) width 459: " (Note: You must have visited http://www.w3.org/ for this test to be valid.)"
+layer at (0,0) size 800x58
+  RenderBlock {HTML} at (0,0) size 800x58
+    RenderBody {BODY} at (8,8) size 784x42
+      RenderBlock {DIV} at (0,0) size 784x42
+        RenderInline {A} at (0,0) size 308x21 [color=#0000EE] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 308x21
+            text run at (0,0) width 308: "This anchor should have a green background"
+        RenderText {#text} at (308,0) size 759x42
+          text run at (308,0) width 451: " (Note: You must have visited http://www.w3.org/ for this test to be"
+          text run at (0,21) width 42: "valid.)"

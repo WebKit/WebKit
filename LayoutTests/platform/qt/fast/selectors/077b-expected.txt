@@ -1,46 +1,46 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x134
-  RenderBlock {HTML} at (0,0) size 800x134
-    RenderBody {BODY} at (8,8) size 784x112
-      RenderBlock {DIV} at (0,0) size 784x79
-        RenderTable {TABLE} at (309,0) size 166x79 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 164x77
-            RenderTableRow {TR} at (0,2) size 164x23
-              RenderTableCell {TD} at (2,2) size 24x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+layer at (0,0) size 800x146
+  RenderBlock {HTML} at (0,0) size 800x146
+    RenderBody {BODY} at (8,8) size 784x122
+      RenderBlock {DIV} at (0,0) size 784x85
+        RenderTable {TABLE} at (307,0) size 170x85 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 168x83
+            RenderTableRow {TR} at (0,2) size 168x25
+              RenderTableCell {TD} at (2,2) size 24x25 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 20x21
                   text run at (2,2) width 20: "1.1"
-              RenderTableCell {TD} at (28,2) size 66x23 [bgcolor=#00FF00] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 62x19
-                  text run at (2,2) width 62: "green cell"
-              RenderTableCell {TD} at (96,2) size 66x23 [bgcolor=#00FF00] [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 62x19
-                  text run at (2,2) width 62: "green cell"
-            RenderTableRow {TR} at (0,27) size 164x23
-              RenderTableCell {TD} at (2,27) size 24x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+              RenderTableCell {TD} at (28,2) size 68x25 [bgcolor=#00FF00] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 64x21
+                  text run at (2,2) width 64: "green cell"
+              RenderTableCell {TD} at (98,2) size 68x25 [bgcolor=#00FF00] [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 64x21
+                  text run at (2,2) width 64: "green cell"
+            RenderTableRow {TR} at (0,29) size 168x25
+              RenderTableCell {TD} at (2,29) size 24x25 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 20x21
                   text run at (2,2) width 20: "2.1"
-              RenderTableCell {TD} at (28,27) size 66x23 [bgcolor=#00FF00] [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 62x19
-                  text run at (2,2) width 62: "green cell"
-              RenderTableCell {TD} at (96,27) size 66x23 [bgcolor=#00FF00] [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 62x19
-                  text run at (2,2) width 62: "green cell"
-            RenderTableRow {TR} at (0,52) size 164x23
-              RenderTableCell {TD} at (2,52) size 24x23 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+              RenderTableCell {TD} at (28,29) size 68x25 [bgcolor=#00FF00] [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 64x21
+                  text run at (2,2) width 64: "green cell"
+              RenderTableCell {TD} at (98,29) size 68x25 [bgcolor=#00FF00] [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 64x21
+                  text run at (2,2) width 64: "green cell"
+            RenderTableRow {TR} at (0,56) size 168x25
+              RenderTableCell {TD} at (2,56) size 24x25 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 20x21
                   text run at (2,2) width 20: "3.1"
-              RenderTableCell {TD} at (28,52) size 66x23 [bgcolor=#00FF00] [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 62x19
-                  text run at (2,2) width 62: "green cell"
-              RenderTableCell {TD} at (96,52) size 66x23 [bgcolor=#00FF00] [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 62x19
-                  text run at (2,2) width 62: "green cell"
-      RenderBlock {P} at (0,93) size 784x19
-        RenderText {#text} at (0,0) size 101x19
-          text run at (0,0) width 101: "This paragraph "
-        RenderInline {SPAN} at (0,0) size 62x19
-          RenderText {#text} at (101,0) size 62x19
-            text run at (101,0) width 62: "should be"
-        RenderText {#text} at (163,0) size 61x19
-          text run at (163,0) width 61: " unstyled."
+              RenderTableCell {TD} at (28,56) size 68x25 [bgcolor=#00FF00] [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 64x21
+                  text run at (2,2) width 64: "green cell"
+              RenderTableCell {TD} at (98,56) size 68x25 [bgcolor=#00FF00] [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 64x21
+                  text run at (2,2) width 64: "green cell"
+      RenderBlock {P} at (0,101) size 784x21
+        RenderText {#text} at (0,0) size 111x21
+          text run at (0,0) width 111: "This paragraph "
+        RenderInline {SPAN} at (0,0) size 65x21
+          RenderText {#text} at (111,0) size 65x21
+            text run at (111,0) width 65: "should be"
+        RenderText {#text} at (176,0) size 65x21
+          text run at (176,0) width 65: " unstyled."

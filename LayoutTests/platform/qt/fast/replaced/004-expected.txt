@@ -1,21 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x275
-  RenderBlock {HTML} at (0,0) size 800x275
-    RenderBody {BODY} at (8,14) size 784x247
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 763x19
-          text run at (0,0) width 384: "There should be no red below, just two 300\x{D7}100 pixel green "
-          text run at (384,0) width 379: "rectangles of different shades, seperated by 1em of margin."
-      RenderBlock {DIV} at (0,33) size 300x100 [bgcolor=#FF0000]
+layer at (0,0) size 800x306
+  RenderBlock {HTML} at (0,0) size 800x306
+    RenderBody {BODY} at (8,16) size 784x274
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 746x42
+          text run at (0,0) width 407: "There should be no red below, just two 300\x{D7}100 pixel green "
+          text run at (407,0) width 339: "rectangles of different shades, seperated by 1em of"
+          text run at (0,21) width 53: "margin."
+      RenderBlock {DIV} at (0,58) size 300x100 [bgcolor=#FF0000]
         RenderBlock {P} at (0,0) size 600x100
           RenderImage {IMG} at (0,0) size 300x100
           RenderText {#text} at (0,0) size 0x0
-layer at (8,161) size 600x100
-  RenderBlock (relative positioned) {DIV} at (0,147) size 300x100
+layer at (8,190) size 300x100
+  RenderBlock (relative positioned) {DIV} at (0,174) size 300x100
     RenderBlock {P} at (0,0) size 600x100
       RenderImage {IMG} at (0,0) size 300x100
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (8,161) size 300x100
+layer at (8,190) size 300x100
   RenderBlock (positioned) {SPAN} at (0,0) size 300x100 [bgcolor=#008000]

@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x420
+  RenderBlock {HTML} at (0,0) size 800x420
+    RenderBody {BODY} at (8,16) size 784x324
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 395x21
+          text run at (0,0) width 395: "The caret should render correctly in transformed elements"
+        RenderBR {BR} at (395,16) size 0x0
+        RenderInline {A} at (0,0) size 322x21 [color=#0000EE]
+          RenderText {#text} at (0,21) size 322x21
+            text run at (0,21) width 322: "https://bugs.webkit.org/show_bug.cgi?id=15671"
+layer at (88,138) size 302x202
+  RenderBlock {DIV} at (80,122) size 302x202 [border: (1px solid #000000)]
+    RenderText {#text} at (1,1) size 197x104
+      text run at (1,1) width 197: "Caret"
+caret: position 6 of child 0 {#text} of child 3 {DIV} of body

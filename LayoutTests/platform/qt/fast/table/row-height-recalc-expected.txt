@@ -1,22 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x165
-  RenderBlock {HTML} at (0,0) size 800x165
-    RenderBody {BODY} at (8,14) size 784x143
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 656x19
-          RenderInline {A} at (0,0) size 337x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 337x19
-              text run at (53,0) width 337: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9012"
-          RenderText {#text} at (390,0) size 319x19
-            text run at (390,0) width 4: " "
-            text run at (394,0) width 315: "Row height not updated when cell heights change"
-        RenderText {#text} at (709,0) size 4x19
-          text run at (709,0) width 4: "."
-      RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,43) size 100x100
+layer at (0,0) size 800x171
+  RenderBlock {HTML} at (0,0) size 800x171
+    RenderBody {BODY} at (8,16) size 784x147
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {I} at (0,0) size 681x21
+          RenderInline {A} at (0,0) size 352x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 352x21
+              text run at (57,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9012"
+          RenderText {#text} at (409,0) size 329x21
+            text run at (409,0) width 4: " "
+            text run at (413,0) width 325: "Row height not updated when cell heights change"
+        RenderText {#text} at (738,0) size 4x21
+          text run at (738,0) width 4: "."
+      RenderBlock {HR} at (0,37) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,47) size 100x100
         RenderTableSection {TBODY} at (0,0) size 100x100
           RenderTableRow {TR} at (0,0) size 100x0 [bgcolor=#FF0000]
             RenderTableCell {TD} at (0,0) size 50x0 [r=0 c=0 rs=1 cs=1]

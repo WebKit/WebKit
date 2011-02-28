@@ -6,9 +6,9 @@ layer at (0,0) size 800x38
       RenderTable {TABLE} at (0,0) size 784x22
         RenderTableSection {TBODY} at (0,0) size 784x22
           RenderTableRow {TR} at (0,0) size 784x22
-            RenderTableCell {TD} at (0,1) size 716x19 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 213x19
-                text run at (0,0) width 213: "Post to Confessions of a Mozillian"
-            RenderTableCell {TD} at (716,1) size 68x19 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 20x19
-                text run at (0,0) width 20: "foo"
+            RenderTableCell {TD} at (0,0) size 717x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 226x21
+                text run at (0,0) width 226: "Post to Confessions of a Mozillian"
+            RenderTableCell {TD} at (717,0) size 67x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 21x21
+                text run at (0,0) width 21: "foo"

@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x296
-  RenderBlock {HTML} at (0,0) size 800x296
-    RenderBody {BODY} at (8,14) size 784x268
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 403x19
-          text run at (0,0) width 403: "These images should all look the same, square not rectangular."
-      RenderBlock {P} at (0,33) size 784x69
+layer at (0,0) size 800x308
+  RenderBlock {HTML} at (0,0) size 800x308
+    RenderBody {BODY} at (8,16) size 784x276
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 422x21
+          text run at (0,0) width 422: "These images should all look the same, square not rectangular."
+      RenderBlock {P} at (0,37) size 784x69
         RenderImage {IMG} at (0,0) size 64x64
-      RenderBlock {P} at (0,116) size 784x69
+      RenderBlock {P} at (0,122) size 784x69
         RenderImage {IMG} at (0,0) size 64x64
-      RenderBlock {P} at (0,199) size 784x69
+      RenderBlock {P} at (0,207) size 784x69
         RenderImage {IMG} at (0,0) size 64x64

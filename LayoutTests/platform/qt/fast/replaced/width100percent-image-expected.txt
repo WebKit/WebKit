@@ -1,37 +1,36 @@
-layer at (0,0) size 800x650
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x650
-  RenderBlock {HTML} at (0,0) size 800x650
-    RenderBody {BODY} at (8,8) size 784x634
-      RenderBlock (anonymous) at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 754x38
-          text run at (0,0) width 712: "The following elements behave differently in different browsers. Our current behavior will cause them to overlap, "
-          text run at (712,0) width 42: "but we"
-          text run at (0,19) width 240: "may need to change this in the future."
-      RenderTable {TABLE} at (0,38) size 784x279
-        RenderTableSection {TBODY} at (0,0) size 784x279
-          RenderTableRow {TR} at (0,1) size 784x277
+layer at (0,0) size 784x658
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x658
+  RenderBlock {HTML} at (0,0) size 784x658
+    RenderBody {BODY} at (8,8) size 768x642
+      RenderBlock (anonymous) at (0,0) size 768x42
+        RenderText {#text} at (0,0) size 764x42
+          text run at (0,0) width 764: "The following elements behave differently in different browsers. Our current behavior will cause them to overlap,"
+          text run at (0,21) width 304: "but we may need to change this in the future."
+      RenderTable {TABLE} at (0,42) size 768x279
+        RenderTableSection {TBODY} at (0,0) size 768x279
+          RenderTableRow {TR} at (0,1) size 768x277
             RenderTableCell {TD} at (1,1) size 216x277 [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 214x275
             RenderTableCell {TD} at (218,1) size 2x277 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 214x275
             RenderTableCell {TD} at (221,1) size 2x277 [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 214x275
-            RenderTableCell {TD} at (224,129) size 559x21 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x19
+            RenderTableCell {TD} at (224,128) size 543x23 [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 4x21
                 text run at (1,1) width 4: " "
-      RenderBlock (anonymous) at (0,317) size 784x38
-        RenderBR {BR} at (0,0) size 0x19
-        RenderBR {BR} at (0,19) size 0x19
-      RenderTable {TABLE} at (0,355) size 784x279
-        RenderTableSection {TBODY} at (0,0) size 784x279
-          RenderTableRow {TR} at (0,1) size 784x277
+      RenderBlock (anonymous) at (0,321) size 768x42
+        RenderBR {BR} at (0,0) size 0x21
+        RenderBR {BR} at (0,21) size 0x21
+      RenderTable {TABLE} at (0,363) size 768x279
+        RenderTableSection {TBODY} at (0,0) size 768x279
+          RenderTableRow {TR} at (0,1) size 768x277
             RenderTableCell {TD} at (1,1) size 216x277 [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 214x275
             RenderTableCell {TD} at (218,1) size 2x277 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 214x275
             RenderTableCell {TD} at (221,1) size 2x277 [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 214x275
-            RenderTableCell {TD} at (224,129) size 559x21 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x19
+            RenderTableCell {TD} at (224,128) size 543x23 [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 4x21
                 text run at (1,1) width 4: " "

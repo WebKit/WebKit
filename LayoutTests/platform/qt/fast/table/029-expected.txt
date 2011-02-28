@@ -3,19 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x41
-        RenderTableSection {TBODY} at (0,0) size 784x41
-          RenderTableRow {TR} at (0,0) size 784x41
-layer at (8,8) size 150x41
-  RenderTableCell {TD} at (0,0) size 150x41 [r=0 c=0 rs=1 cs=1]
-    RenderTable {TABLE} at (0,0) size 150x41 [border: (10px outset #808080)]
-      RenderTableSection {TBODY} at (10,10) size 130x21
-        RenderTableRow {TR} at (0,0) size 130x21
-layer at (18,18) size 130x21 clip at (19,19) size 128x19
-  RenderTableCell {TD} at (0,0) size 130x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-    RenderText {#text} at (1,1) size 120x19
-      text run at (1,1) width 120: "left column content"
-layer at (158,8) size 634x41
-  RenderTableCell {TD} at (150,11) size 634x19 [r=0 c=1 rs=1 cs=1]
-    RenderText {#text} at (0,0) size 71x19
-      text run at (0,0) width 71: "second cell"
+      RenderTable {TABLE} at (0,0) size 784x64
+        RenderTableSection {TBODY} at (0,0) size 784x64
+          RenderTableRow {TR} at (0,0) size 784x64
+layer at (8,8) size 150x64
+  RenderTableCell {TD} at (0,0) size 150x64 [r=0 c=0 rs=1 cs=1]
+    RenderTable {TABLE} at (0,0) size 150x64 [border: (10px outset #808080)]
+      RenderTableSection {TBODY} at (10,10) size 130x44
+        RenderTableRow {TR} at (0,0) size 130x44
+layer at (18,18) size 130x44 clip at (19,19) size 128x42
+  RenderTableCell {TD} at (0,0) size 130x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+    RenderText {#text} at (1,1) size 75x42
+      text run at (1,1) width 75: "left column"
+      text run at (1,22) width 50: "content"
+layer at (158,8) size 634x64
+  RenderTableCell {TD} at (150,21) size 634x21 [r=0 c=1 rs=1 cs=1]
+    RenderText {#text} at (0,0) size 72x21
+      text run at (0,0) width 72: "second cell"

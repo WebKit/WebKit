@@ -4,7 +4,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 264x19
-        text run at (0,0) width 103: "TEST PASSED. "
-        text run at (103,0) width 161: "This text should show up."
-      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 290x21
+        text run at (0,0) width 117: "TEST PASSED. "
+        text run at (117,0) width 173: "This text should show up."

@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 721x42
+          text run at (0,0) width 721: "In the example below you should see three blocks right next to one another, and they should all be partially"
+          text run at (0,21) width 84: "transparent."
+layer at (8,50) size 120x120
+  RenderBlock {DIV} at (0,42) size 120x120 [bgcolor=#87CEEB] [border: (10px solid #000000)]
+layer at (18,60) size 120x120
+  RenderBlock {DIV} at (10,10) size 120x120 [border: (10px solid #000000)]
+layer at (28,70) size 120x120
+  RenderBlock {DIV} at (10,10) size 120x120 [border: (10px solid #000000)]

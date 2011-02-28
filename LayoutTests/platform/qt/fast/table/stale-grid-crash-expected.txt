@@ -3,25 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 699x19
-          RenderInline {A} at (0,0) size 294x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 294x19
-              text run at (53,0) width 294: "http://bugs.webkit.org/show_bug.cgi?id=13774"
-          RenderText {#text} at (347,0) size 405x19
-            text run at (347,0) width 4: " "
-            text run at (351,0) width 401: "REGRESSION: Crash emailing blog entry using Google Reader"
-        RenderText {#text} at (752,0) size 4x19
-          text run at (752,0) width 4: "."
-      RenderBlock {P} at (0,34) size 784x19
-        RenderText {#text} at (0,0) size 66x19
-          text run at (0,0) width 66: "SUCCESS"
-      RenderBlock (anonymous) at (0,67) size 784x1
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {I} at (0,0) size 738x42
+          RenderInline {A} at (0,0) size 304x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 304x21
+              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=13774"
+          RenderText {#text} at (361,0) size 738x42
+            text run at (361,0) width 4: " "
+            text run at (365,0) width 373: "REGRESSION: Crash emailing blog entry using Google"
+            text run at (0,21) width 47: "Reader"
+        RenderText {#text} at (47,21) size 4x21
+          text run at (47,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 74x21
+          text run at (0,0) width 74: "SUCCESS"
+      RenderBlock (anonymous) at (0,95) size 784x1
         RenderImage {IMG} at (0,0) size 1x1
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,68) size 2x2
+      RenderTable {TABLE} at (0,96) size 2x2
         RenderTableSection {TBODY} at (0,0) size 2x2
           RenderTableRow {TR} at (0,0) size 2x0
           RenderTableRow {TR} at (0,0) size 2x2

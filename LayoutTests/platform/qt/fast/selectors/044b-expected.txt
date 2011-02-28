@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x141
-  RenderBlock {HTML} at (0,0) size 800x141
-    RenderBody {BODY} at (8,14) size 784x119
-      RenderBlock {DIV} at (0,0) size 784x52
-        RenderBlock {P} at (0,0) size 784x19
-          RenderText {#text} at (0,0) size 224x19
-            text run at (0,0) width 224: "This paragraph should be unstyled."
-        RenderBlock {DIV} at (0,33) size 784x19
-          RenderBlock {P} at (0,0) size 784x19
-            RenderText {#text} at (0,0) size 224x19
-              text run at (0,0) width 224: "This paragraph should be unstyled."
-      RenderTable {TABLE} at (0,66) size 320x53
-        RenderTableSection {TBODY} at (0,0) size 320x53
-          RenderTableRow {TR} at (0,2) size 320x49
-            RenderTableCell {TD} at (2,2) size 316x49 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {P} at (1,15) size 314x19 [bgcolor=#00FF00]
-                RenderText {#text} at (0,0) size 314x19
-                  text run at (0,0) width 314: "This paragraph should have a green background."
+layer at (0,0) size 800x157
+  RenderBlock {HTML} at (0,0) size 800x157
+    RenderBody {BODY} at (8,16) size 784x133
+      RenderBlock {DIV} at (0,0) size 784x58
+        RenderBlock {P} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 241x21
+            text run at (0,0) width 241: "This paragraph should be unstyled."
+        RenderBlock {DIV} at (0,37) size 784x21
+          RenderBlock {P} at (0,0) size 784x21
+            RenderText {#text} at (0,0) size 241x21
+              text run at (0,0) width 241: "This paragraph should be unstyled."
+      RenderTable {TABLE} at (0,74) size 343x59
+        RenderTableSection {TBODY} at (0,0) size 343x59
+          RenderTableRow {TR} at (0,2) size 343x55
+            RenderTableCell {TD} at (2,2) size 339x55 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (1,17) size 337x21 [bgcolor=#00FF00]
+                RenderText {#text} at (0,0) size 337x21
+                  text run at (0,0) width 337: "This paragraph should have a green background."
