@@ -3612,3 +3612,14 @@ media/media-document-audio-repaint.html
 # [Qt] New fails caused by change(s) between r79317-r79320.
 http/tests/inspector-enabled/open-close-open.html
 http/tests/inspector/change-iframe-src.html
+
+# [Qt] XML Viewer fails due to specifics in the parser implementation
+# https://bugs.webkit.org/show_bug.cgi?id=55302
+http/tests/xmlviewer/dumpAsText/svg.xml
+http/tests/xmlviewer/dumpAsText/wml.xml
+http/tests/xmlviewer/dumpAsText/xlink.xml
+http/tests/xmlviewer/dumpAsText/xmlviewer-charset-cp1251.xml
+http/tests/xmlviewer/dumpAsText/xmlviewer-charset-utf8.xml
+http/tests/xmlviewer/dumpAsText/xmlviewer.xml
+http/tests/xmlviewer/dumpAsText/xsl-stylesheet.xml
+http/tests/xmlviewer/dumpAsText/xul.xml

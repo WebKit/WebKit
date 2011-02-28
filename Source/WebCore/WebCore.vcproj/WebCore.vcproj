@@ -23038,6 +23038,10 @@
 				>
 			</File>
 			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\XMLViewerXSL.h"
+				>
+			</File>
+			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\XPathGrammar.cpp"
 				>
 				<FileConfiguration
@@ -40981,6 +40985,14 @@
 			</File>
 			<File
 				RelativePath="..\xml\XMLHttpRequestUpload.h"
+				>
+			</File>
+			<File
+				RelativePath="..\xml\XMLTreeViewer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\xml\XMLTreeViewer.h"
 				>
 			</File>
 			<File

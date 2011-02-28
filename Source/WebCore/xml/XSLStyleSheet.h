@@ -63,6 +63,14 @@ public:
         return adoptRef(new XSLStyleSheet(parentNode, originalURL, finalURL, false));
     }
 
+    static PassRefPtr<XSLStyleSheet> createForXMLTreeViewer(Node* node, const String& sheetString)
+    {
+        RefPtr<XSLStyleSheet> sheet = adoptRef(new XSLStyleSheet(node, String(), KURL(), false));
+        sheet->parseString(sheetString);
+
+        return sheet.release();
+    }
+
     virtual ~XSLStyleSheet();
     
     virtual bool isXSLStyleSheet() const { return true; }

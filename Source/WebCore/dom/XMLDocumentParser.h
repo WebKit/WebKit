@@ -194,6 +194,7 @@ public:
         Vector<Node*> m_currentNodeStack;
 
         bool m_sawError;
+        bool m_sawCSS;
         bool m_sawXSLTransform;
         bool m_sawFirstElement;
         bool m_isXHTMLDocument;

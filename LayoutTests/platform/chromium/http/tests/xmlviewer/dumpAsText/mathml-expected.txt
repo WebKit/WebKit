@@ -1,0 +1,15 @@
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<!--
+If you can see this, this test has failed, except if you are not using a MathML-aware client.
+-->
+<FAIL>
+<header>
+This tests that xml viewer is not used when there is a tag in MATHML namespace.
+</header>
+<a:math>
+<a:mrow>
+<a:mi>SUCCESS</a:mi>
+</a:mrow>
+</a:math>
+</FAIL>
+

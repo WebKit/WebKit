@@ -409,6 +409,8 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_useSecureKeyboardEntryWhenActive(false)
     , m_isXHTML(isXHTML)
     , m_isHTML(isHTML)
+    , m_usesViewSourceStyles(false)
+    , m_sawElementsInKnownNamespaces(false)
     , m_numNodeListCaches(0)
 #if USE(JSC)
     , m_normalWorldWrapperCache(0)
@@ -959,7 +961,9 @@ PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool cre
         e = MathMLElementFactory::createMathMLElement(qName, this, createdByParser);
 #endif
 
-    if (!e)
+    if (e)
+        m_sawElementsInKnownNamespaces = true;
+    else
         e = Element::create(qName, document());
 
     // <image> uses imgTag so we need a special rule.

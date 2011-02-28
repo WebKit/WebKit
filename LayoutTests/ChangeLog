@@ -1,3 +1,114 @@
+2011-02-28  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        XML without style should render as syntax-highlighted source.
+        https://bugs.webkit.org/show_bug.cgi?id=13807
+
+        Added tests for XML tree view mode. Testing both logic for entering
+        XML tree view mode and rendering itself.
+        Tests are disabled for QT since this logic is not yet implemented, see
+        https://bugs.webkit.org/show_bug.cgi?id=55302
+
+        * fast/css/dumpAsText/xml-stylesheet-pi-not-in-prolog-expected.txt: Copied from LayoutTests/fast/css/xml-stylesheet-pi-not-in-prolog.xml.
+        * fast/css/dumpAsText/xml-stylesheet-pi-not-in-prolog.xml: Renamed from LayoutTests/fast/css/xml-stylesheet-pi-not-in-prolog.xml.
+        * fast/encoding/dumpAsText/utf-16-no-bom-expected.txt: Added.
+        * fast/encoding/dumpAsText/utf-16-no-bom.xml: Renamed from LayoutTests/fast/encoding/utf-16-no-bom.xml.
+        * http/tests/xmlviewer/dumpAsText/css-stylesheet-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/css-stylesheet.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/frames-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/frames.html: Added.
+        * http/tests/xmlviewer/dumpAsText/mathml-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/mathml.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/resources/css-stylesheet.css: Added.
+        (assertion):
+        * http/tests/xmlviewer/dumpAsText/resources/frames-helper.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/resources/xsl.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/svg-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/svg.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/wml-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/wml.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/xhtml-tag-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/xhtml-tag.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/xlink-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/xlink.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-charset-cp1251-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-charset-cp1251.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-charset-utf8-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-charset-utf8.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/xmlviewer.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/xsl-stylesheet-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/xsl-stylesheet.xml: Added.
+        * http/tests/xmlviewer/dumpAsText/xul-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/xul.xml: Added.
+        * platform/chromium-linux/fast/css/xml-stylesheet-pi-not-in-prolog-expected.checksum: Removed.
+        * platform/chromium-linux/fast/css/xml-stylesheet-pi-not-in-prolog-expected.png: Removed.
+        * platform/chromium-linux/fast/encoding/utf-16-no-bom-expected.checksum: Removed.
+        * platform/chromium-linux/fast/encoding/utf-16-no-bom-expected.png: Removed.
+        * platform/chromium-linux/svg/hixie/error/004-expected.checksum: Removed.
+        * platform/chromium-linux/svg/hixie/error/004-expected.png: Removed.
+        * platform/chromium-linux/svg/hixie/error/005-expected.checksum: Removed.
+        * platform/chromium-linux/svg/hixie/error/005-expected.png: Removed.
+        * platform/chromium-win/fast/css/xml-stylesheet-pi-not-in-prolog-expected.checksum: Removed.
+        * platform/chromium-win/fast/css/xml-stylesheet-pi-not-in-prolog-expected.png: Removed.
+        * platform/chromium-win/fast/css/xml-stylesheet-pi-not-in-prolog-expected.txt: Removed.
+        * platform/chromium-win/fast/encoding/utf-16-no-bom-expected.checksum: Removed.
+        * platform/chromium-win/fast/encoding/utf-16-no-bom-expected.png: Removed.
+        * platform/chromium-win/fast/encoding/utf-16-no-bom-expected.txt: Removed.
+        * platform/chromium-win/svg/hixie/error/004-expected.checksum: Removed.
+        * platform/chromium-win/svg/hixie/error/004-expected.png: Removed.
+        * platform/chromium-win/svg/hixie/error/004-expected.txt: Removed.
+        * platform/chromium-win/svg/hixie/error/005-expected.checksum: Removed.
+        * platform/chromium-win/svg/hixie/error/005-expected.png: Removed.
+        * platform/chromium-win/svg/hixie/error/005-expected.txt: Removed.
+        * platform/chromium/http/tests/xmlviewer/dumpAsText/mathml-expected.txt: Added.
+        * platform/gtk/fast/css/xml-stylesheet-pi-not-in-prolog-expected.checksum: Removed.
+        * platform/gtk/fast/css/xml-stylesheet-pi-not-in-prolog-expected.png: Removed.
+        * platform/gtk/fast/css/xml-stylesheet-pi-not-in-prolog-expected.txt: Removed.
+        * platform/gtk/fast/encoding/utf-16-no-bom-expected.checksum: Removed.
+        * platform/gtk/fast/encoding/utf-16-no-bom-expected.png: Removed.
+        * platform/gtk/fast/encoding/utf-16-no-bom-expected.txt: Removed.
+        * platform/gtk/svg/hixie/error/004-expected.checksum: Removed.
+        * platform/gtk/svg/hixie/error/004-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/004-expected.txt: Removed.
+        * platform/gtk/svg/hixie/error/005-expected.checksum: Removed.
+        * platform/gtk/svg/hixie/error/005-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/005-expected.txt: Removed.
+        * platform/mac-leopard/fast/css/xml-stylesheet-pi-not-in-prolog-expected.checksum: Removed.
+        * platform/mac-leopard/fast/css/xml-stylesheet-pi-not-in-prolog-expected.png: Removed.
+        * platform/mac-leopard/fast/encoding/utf-16-no-bom-expected.checksum: Removed.
+        * platform/mac-leopard/fast/encoding/utf-16-no-bom-expected.png: Removed.
+        * platform/mac-leopard/svg/hixie/error/004-expected.checksum: Removed.
+        * platform/mac-leopard/svg/hixie/error/004-expected.png: Removed.
+        * platform/mac-leopard/svg/hixie/error/005-expected.checksum: Removed.
+        * platform/mac-leopard/svg/hixie/error/005-expected.png: Removed.
+        * platform/mac/fast/css/xml-stylesheet-pi-not-in-prolog-expected.checksum: Removed.
+        * platform/mac/fast/css/xml-stylesheet-pi-not-in-prolog-expected.png: Removed.
+        * platform/mac/fast/css/xml-stylesheet-pi-not-in-prolog-expected.txt: Removed.
+        * platform/mac/fast/encoding/utf-16-no-bom-expected.checksum: Removed.
+        * platform/mac/fast/encoding/utf-16-no-bom-expected.png: Removed.
+        * platform/mac/fast/encoding/utf-16-no-bom-expected.txt: Removed.
+        * platform/mac/svg/hixie/error/004-expected.checksum: Removed.
+        * platform/mac/svg/hixie/error/004-expected.png: Removed.
+        * platform/mac/svg/hixie/error/004-expected.txt: Removed.
+        * platform/mac/svg/hixie/error/005-expected.checksum: Removed.
+        * platform/mac/svg/hixie/error/005-expected.png: Removed.
+        * platform/mac/svg/hixie/error/005-expected.txt: Removed.
+        * platform/qt/Skipped:
+        * platform/qt/fast/css/dumpAsText/xml-stylesheet-pi-not-in-prolog-expected.txt: Added.
+        * platform/qt/fast/css/xml-stylesheet-pi-not-in-prolog-expected.txt: Removed.
+        * platform/qt/fast/encoding/dumpAsText/utf-16-no-bom-expected.txt: Added.
+        * platform/qt/fast/encoding/utf-16-no-bom-expected.txt: Removed.
+        * platform/qt/svg/hixie/error/004-expected.txt: Removed.
+        * platform/qt/svg/hixie/error/005-expected.txt: Removed.
+        * platform/qt/svg/hixie/error/dumpAsText/004-expected.txt: Added.
+        * platform/qt/svg/hixie/error/dumpAsText/005-expected.txt: Added.
+        * svg/hixie/error/dumpAsText/004-expected.txt: Added.
+        * svg/hixie/error/dumpAsText/004.xml: Renamed from LayoutTests/svg/hixie/error/004.xml.
+        * svg/hixie/error/dumpAsText/005-expected.txt: Added.
+        * svg/hixie/error/dumpAsText/005.xml: Renamed from LayoutTests/svg/hixie/error/005.xml.
+
 2011-02-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: skipping new inspector network tests on win.

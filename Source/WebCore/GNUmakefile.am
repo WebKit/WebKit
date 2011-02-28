@@ -646,7 +646,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/XMLNames.cpp \
 	DerivedSources/WebCore/XMLNames.h \
 	DerivedSources/WebCore/XMLNSNames.cpp \
-	DerivedSources/WebCore/XMLNSNames.h
+	DerivedSources/WebCore/XMLNSNames.h \
+	DerivedSources/WebCore/XMLViewerXSL.h 
 
 webcore_sources += \
 	Source/WebCore/accessibility/AccessibilityARIAGridCell.cpp \
@@ -3624,6 +3625,8 @@ webcore_sources += \
 	Source/WebCore/xml/XMLHttpRequestProgressEventThrottle.h \
 	Source/WebCore/xml/XMLHttpRequestUpload.cpp \
 	Source/WebCore/xml/XMLHttpRequestUpload.h \
+	Source/WebCore/xml/XMLTreeViewer.cpp \
+	Source/WebCore/xml/XMLTreeViewer.h \
 	Source/WebCore/xml/XMLSerializer.cpp \
 	Source/WebCore/xml/XMLSerializer.h \
 	Source/WebCore/xml/XPathEvaluator.cpp \
@@ -4856,6 +4859,10 @@ DerivedSources/WebCore/CSSValueKeywords.h: $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCo
 DerivedSources/WebCore/HashTools.h: DerivedSources/WebCore/DocTypeStrings.cpp
 DerivedSources/WebCore/DocTypeStrings.cpp: $(WebCore)/html/DocTypeStrings.gperf $(WebCore)/make-hash-tools.pl
 	$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES_WEBCORE) $(WebCore)/html/DocTypeStrings.gperf
+
+# XML Viewer XSL
+DerivedSources/WebCore/XMLViewerXSL.h: $(WebCore)/xml/XMLViewer.xsl
+	$(PERL) $(WebCore)/inspector/xxd.pl XMLViewer_xsl $(WebCore)/xml/XMLViewer.xsl $(GENSOURCES_WEBCORE)/XMLViewerXSL.h
 
 # HTML entity names
 DerivedSources/WebCore/HTMLEntityTable.cpp: $(WebCore)/html/parser/HTMLEntityNames.in $(WebCore)/html/parser/create-html-entity-table

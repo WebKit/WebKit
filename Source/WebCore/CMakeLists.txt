@@ -1504,6 +1504,7 @@ SET(WebCore_SOURCES
     xml/XMLHttpRequest.cpp
     xml/XMLHttpRequestProgressEventThrottle.cpp
     xml/XMLHttpRequestUpload.cpp
+    xml/XMLTreeViewer.cpp
     xml/XMLSerializer.cpp
     xml/XPathEvaluator.cpp
     xml/XPathExpression.cpp
@@ -2137,6 +2138,15 @@ LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/ColorData.cpp)
 
 MAKE_HASH_TOOLS(${WEBCORE_DIR}/html/DocTypeStrings)
 LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/DocTypeStrings.cpp)
+
+
+# Generate XMLViewerXSL.h
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${DERIVED_SOURCES_DIR}/XMLViewerXSL.h
+    MAIN_DEPENDENCY xml/XMLViewer.xsl
+    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl XMLViewer_xsl ${WEBCORE_DIR}/xml/XMLViewer.xsl ${DERIVED_SOURCES_DIR}/XMLViewerXSL.h
+    VERBATIM)
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/XMLViewerXSL.h)
 
 
 # Generate HTML entity table
