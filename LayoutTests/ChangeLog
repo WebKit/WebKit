@@ -1,3 +1,14 @@
+2011-02-28  Jungshik Shin  <jshin@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=55121
+
+        [chromium] Unreviewed change of test_expectations.txt
+        With the platform-specific expectation file landed in r79912,
+        fast/xsl/sort-locale-expected.txt should pass now on chromium.
+        So, remove it from the failure list.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r78789.

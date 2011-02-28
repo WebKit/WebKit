@@ -3374,7 +3374,6 @@ BUGWK54882 WIN : inspector/styles/styles-update-from-js.html = TEXT TIMEOUT
 BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
 
 BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
-BUGWK55118 : fast/xsl/sort-locale.xml = TEXT
 
 BUGJAMESR DEBUG : html5lib/runner.html = PASS TIMEOUT
 
