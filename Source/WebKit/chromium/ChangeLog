@@ -1,3 +1,14 @@
+2011-02-27  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Pass frame history state in the context menu parameters.
+        https://bugs.webkit.org/show_bug.cgi?id=55232
+
+        * public/WebContextMenuData.h:
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
 2011-02-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
