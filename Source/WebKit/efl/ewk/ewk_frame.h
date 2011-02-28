@@ -151,78 +151,78 @@ struct _Ewk_Touch_Point {
     Ewk_Touch_Point_Type state;
 };
 
-EAPI Evas_Object *ewk_frame_view_get(const Evas_Object*);
-EAPI void         ewk_frame_theme_set(Evas_Object*, const char *path);
-EAPI const char  *ewk_frame_theme_get(Evas_Object*);
+EAPI Evas_Object *ewk_frame_view_get(const Evas_Object *o);
+EAPI void         ewk_frame_theme_set(Evas_Object *o, const char *path);
+EAPI const char  *ewk_frame_theme_get(Evas_Object *o);
 
-EAPI Eina_Iterator *ewk_frame_children_iterator_new(Evas_Object*);
-EAPI Evas_Object   *ewk_frame_child_find(Evas_Object*, const char *name);
+EAPI Eina_Iterator *ewk_frame_children_iterator_new(Evas_Object *o);
+EAPI Evas_Object   *ewk_frame_child_find(Evas_Object *o, const char *name);
 
-EAPI Eina_Bool    ewk_frame_uri_set(Evas_Object*, const char *uri);
-EAPI const char  *ewk_frame_uri_get(const Evas_Object*);
-EAPI const char  *ewk_frame_title_get(const Evas_Object*);
-EAPI const char  *ewk_frame_name_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_frame_contents_size_get(const Evas_Object*, Evas_Coord *w, Evas_Coord *h);
+EAPI Eina_Bool    ewk_frame_uri_set(Evas_Object *o, const char *uri);
+EAPI const char  *ewk_frame_uri_get(const Evas_Object *o);
+EAPI const char  *ewk_frame_title_get(const Evas_Object *o);
+EAPI const char  *ewk_frame_name_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_frame_contents_size_get(const Evas_Object *o, Evas_Coord *w, Evas_Coord *h);
 
-EAPI Eina_Bool    ewk_frame_contents_set(Evas_Object*, const char *contents, size_t contents_size, const char *mime_type, const char *encoding, const char *base_uri);
-EAPI Eina_Bool    ewk_frame_contents_alternate_set(Evas_Object*, const char *contents, size_t contents_size, const char *mime_type, const char *encoding, const char *base_uri, const char *unreachable_uri);
+EAPI Eina_Bool    ewk_frame_contents_set(Evas_Object *o, const char *contents, size_t contents_size, const char *mime_type, const char *encoding, const char *base_uri);
+EAPI Eina_Bool    ewk_frame_contents_alternate_set(Evas_Object *o, const char *contents, size_t contents_size, const char *mime_type, const char *encoding, const char *base_uri, const char *unreachable_uri);
 
-EAPI Eina_Bool    ewk_frame_script_execute(Evas_Object*, const char *script);
+EAPI Eina_Bool    ewk_frame_script_execute(Evas_Object *o, const char *script);
 
-EAPI Eina_Bool    ewk_frame_editable_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_frame_editable_set(Evas_Object*, Eina_Bool editable);
+EAPI Eina_Bool    ewk_frame_editable_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_frame_editable_set(Evas_Object *o, Eina_Bool editable);
 
-EAPI char        *ewk_frame_selection_get(const Evas_Object*);
+EAPI char        *ewk_frame_selection_get(const Evas_Object *o);
 
-EAPI Eina_Bool    ewk_frame_text_search(const Evas_Object*, const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap);
+EAPI Eina_Bool    ewk_frame_text_search(const Evas_Object *o, const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap);
 
-EAPI unsigned int ewk_frame_text_matches_mark(Evas_Object*, const char *string, Eina_Bool case_sensitive, Eina_Bool highlight, unsigned int limit);
-EAPI Eina_Bool    ewk_frame_text_matches_unmark_all(Evas_Object*);
-EAPI Eina_Bool    ewk_frame_text_matches_highlight_set(Evas_Object*, Eina_Bool highlight);
-EAPI Eina_Bool    ewk_frame_text_matches_highlight_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_frame_text_matches_nth_pos_get(Evas_Object*, size_t n, int *x, int *y);
+EAPI unsigned int ewk_frame_text_matches_mark(Evas_Object *o, const char *string, Eina_Bool case_sensitive, Eina_Bool highlight, unsigned int limit);
+EAPI Eina_Bool    ewk_frame_text_matches_unmark_all(Evas_Object *o);
+EAPI Eina_Bool    ewk_frame_text_matches_highlight_set(Evas_Object *o, Eina_Bool highlight);
+EAPI Eina_Bool    ewk_frame_text_matches_highlight_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_frame_text_matches_nth_pos_get(Evas_Object *o, size_t n, int *x, int *y);
 
-EAPI Eina_Bool    ewk_frame_stop(Evas_Object*);
-EAPI Eina_Bool    ewk_frame_reload(Evas_Object*);
-EAPI Eina_Bool    ewk_frame_reload_full(Evas_Object*);
+EAPI Eina_Bool    ewk_frame_stop(Evas_Object *o);
+EAPI Eina_Bool    ewk_frame_reload(Evas_Object *o);
+EAPI Eina_Bool    ewk_frame_reload_full(Evas_Object *o);
 
-EAPI Eina_Bool    ewk_frame_back(Evas_Object*);
-EAPI Eina_Bool    ewk_frame_forward(Evas_Object*);
-EAPI Eina_Bool    ewk_frame_navigate(Evas_Object*, int steps);
+EAPI Eina_Bool    ewk_frame_back(Evas_Object *o);
+EAPI Eina_Bool    ewk_frame_forward(Evas_Object *o);
+EAPI Eina_Bool    ewk_frame_navigate(Evas_Object *o, int steps);
 
-EAPI Eina_Bool    ewk_frame_back_possible(Evas_Object*);
-EAPI Eina_Bool    ewk_frame_forward_possible(Evas_Object*);
-EAPI Eina_Bool    ewk_frame_navigate_possible(Evas_Object*, int steps);
+EAPI Eina_Bool    ewk_frame_back_possible(Evas_Object *o);
+EAPI Eina_Bool    ewk_frame_forward_possible(Evas_Object *o);
+EAPI Eina_Bool    ewk_frame_navigate_possible(Evas_Object *o, int steps);
 
-EAPI float        ewk_frame_zoom_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_frame_zoom_set(Evas_Object*, float zoom);
-EAPI Eina_Bool    ewk_frame_zoom_text_only_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_frame_zoom_text_only_set(Evas_Object*, Eina_Bool setting);
+EAPI float        ewk_frame_zoom_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_frame_zoom_set(Evas_Object *o, float zoom);
+EAPI Eina_Bool    ewk_frame_zoom_text_only_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_frame_zoom_text_only_set(Evas_Object *o, Eina_Bool setting);
 
-EAPI void         ewk_frame_hit_test_free(Ewk_Hit_Test*);
-EAPI Ewk_Hit_Test *ewk_frame_hit_test_new(const Evas_Object*, int x, int y);
+EAPI void          ewk_frame_hit_test_free(Ewk_Hit_Test *hit_test);
+EAPI Ewk_Hit_Test *ewk_frame_hit_test_new(const Evas_Object *o, int x, int y);
 
-EAPI Eina_Bool    ewk_frame_scroll_add(Evas_Object*, int dx, int dy);
-EAPI Eina_Bool    ewk_frame_scroll_set(Evas_Object*, int x, int y);
+EAPI Eina_Bool    ewk_frame_scroll_add(Evas_Object *o, int dx, int dy);
+EAPI Eina_Bool    ewk_frame_scroll_set(Evas_Object *o, int x, int y);
 
-EAPI Eina_Bool    ewk_frame_scroll_size_get(const Evas_Object*, int *w, int *h);
-EAPI Eina_Bool    ewk_frame_scroll_pos_get(const Evas_Object*, int *x, int *y);
+EAPI Eina_Bool    ewk_frame_scroll_size_get(const Evas_Object *o, int *w, int *h);
+EAPI Eina_Bool    ewk_frame_scroll_pos_get(const Evas_Object *o, int *x, int *y);
 
-EAPI Eina_Bool    ewk_frame_visible_content_geometry_get(const Evas_Object*, Eina_Bool include_scrollbars, int *x, int *y, int *w, int *h);
+EAPI Eina_Bool    ewk_frame_visible_content_geometry_get(const Evas_Object *o, Eina_Bool include_scrollbars, int *x, int *y, int *w, int *h);
 
-EAPI Eina_Bool    ewk_frame_paint_full_get(const Evas_Object*);
-EAPI void         ewk_frame_paint_full_set(Evas_Object*, Eina_Bool flag);
+EAPI Eina_Bool    ewk_frame_paint_full_get(const Evas_Object *o);
+EAPI void         ewk_frame_paint_full_set(Evas_Object *o, Eina_Bool flag);
 
-EAPI Eina_Bool    ewk_frame_feed_focus_in(Evas_Object*);
-EAPI Eina_Bool    ewk_frame_feed_focus_out(Evas_Object*);
+EAPI Eina_Bool    ewk_frame_feed_focus_in(Evas_Object *o);
+EAPI Eina_Bool    ewk_frame_feed_focus_out(Evas_Object *o);
 
-EAPI Eina_Bool    ewk_frame_feed_mouse_wheel(Evas_Object*, const Evas_Event_Mouse_Wheel*);
-EAPI Eina_Bool    ewk_frame_feed_mouse_down(Evas_Object*, const Evas_Event_Mouse_Down*);
-EAPI Eina_Bool    ewk_frame_feed_mouse_up(Evas_Object*, const Evas_Event_Mouse_Up*);
-EAPI Eina_Bool    ewk_frame_feed_mouse_move(Evas_Object*, const Evas_Event_Mouse_Move*);
-EAPI Eina_Bool    ewk_frame_feed_touch_event(Evas_Object*, Ewk_Touch_Event_Type action, Eina_List* points, int metaState);
-EAPI Eina_Bool    ewk_frame_feed_key_down(Evas_Object*, const Evas_Event_Key_Down*);
-EAPI Eina_Bool    ewk_frame_feed_key_up(Evas_Object*, const Evas_Event_Key_Up*);
+EAPI Eina_Bool    ewk_frame_feed_mouse_wheel(Evas_Object *o, const Evas_Event_Mouse_Wheel *ev);
+EAPI Eina_Bool    ewk_frame_feed_mouse_down(Evas_Object *o, const Evas_Event_Mouse_Down *ev);
+EAPI Eina_Bool    ewk_frame_feed_mouse_up(Evas_Object *o, const Evas_Event_Mouse_Up *ev);
+EAPI Eina_Bool    ewk_frame_feed_mouse_move(Evas_Object *o, const Evas_Event_Mouse_Move *ev);
+EAPI Eina_Bool    ewk_frame_feed_touch_event(Evas_Object* o, Ewk_Touch_Event_Type action, Eina_List* points, int metaState);
+EAPI Eina_Bool    ewk_frame_feed_key_down(Evas_Object *o, const Evas_Event_Key_Down *ev);
+EAPI Eina_Bool    ewk_frame_feed_key_up(Evas_Object *o, const Evas_Event_Key_Up *ev);
 
 
 #ifdef __cplusplus

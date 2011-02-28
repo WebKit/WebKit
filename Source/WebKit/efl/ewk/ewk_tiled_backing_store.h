@@ -93,38 +93,38 @@ struct _Ewk_Tile {
 #include "ewk_tiled_model.h"
 
 /* view */
-EAPI Evas_Object *ewk_tiled_backing_store_add(Evas*);
+EAPI Evas_Object *ewk_tiled_backing_store_add(Evas *e);
 
-EAPI void ewk_tiled_backing_store_render_cb_set(Evas_Object*, Eina_Bool (*cb)(void *data, Ewk_Tile*, const Eina_Rectangle*), const void *data);
+EAPI void ewk_tiled_backing_store_render_cb_set(Evas_Object *o, Eina_Bool (*cb)(void *data, Ewk_Tile *t, const Eina_Rectangle *area), const void *data);
 
-EAPI Eina_Bool    ewk_tiled_backing_store_scroll_full_offset_set(Evas_Object*, Evas_Coord x, Evas_Coord y);
-EAPI Eina_Bool    ewk_tiled_backing_store_scroll_full_offset_add(Evas_Object*, Evas_Coord dx, Evas_Coord dy);
-EAPI Eina_Bool    ewk_tiled_backing_store_scroll_inner_offset_add(Evas_Object*, Evas_Coord dx, Evas_Coord dy, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+EAPI Eina_Bool    ewk_tiled_backing_store_scroll_full_offset_set(Evas_Object *o, Evas_Coord x, Evas_Coord y);
+EAPI Eina_Bool    ewk_tiled_backing_store_scroll_full_offset_add(Evas_Object *o, Evas_Coord dx, Evas_Coord dy);
+EAPI Eina_Bool    ewk_tiled_backing_store_scroll_inner_offset_add(Evas_Object *o, Evas_Coord dx, Evas_Coord dy, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 
-EAPI Eina_Bool    ewk_tiled_backing_store_zoom_set(Evas_Object*, float *zoom, Evas_Coord cx, Evas_Coord cy, Evas_Coord *offx, Evas_Coord *offy);
-EAPI Eina_Bool    ewk_tiled_backing_store_zoom_weak_set(Evas_Object*, float zoom, Evas_Coord cx, Evas_Coord cy);
-EAPI void ewk_tiled_backing_store_fix_offsets(Evas_Object*, Evas_Coord w, Evas_Coord h);
-EAPI void ewk_tiled_backing_store_zoom_weak_smooth_scale_set(Evas_Object*, Eina_Bool smooth_scale);
-EAPI Eina_Bool    ewk_tiled_backing_store_update(Evas_Object*, const Eina_Rectangle*);
-EAPI void ewk_tiled_backing_store_updates_process_pre_set(Evas_Object*, void *(*cb)(void *data, Evas_Object*), const void *data);
-EAPI void ewk_tiled_backing_store_updates_process_post_set(Evas_Object*, void *(*cb)(void *data, void *pre_data, Evas_Object*), const void *data);
-EAPI void ewk_tiled_backing_store_process_entire_queue_set(Evas_Object*, Eina_Bool value);
-EAPI void ewk_tiled_backing_store_updates_process(Evas_Object*);
-EAPI void ewk_tiled_backing_store_updates_clear(Evas_Object*);
-EAPI void ewk_tiled_backing_store_contents_resize(Evas_Object*, Evas_Coord width, Evas_Coord height);
-EAPI void ewk_tiled_backing_store_disabled_update_set(Evas_Object*, Eina_Bool value);
-EAPI void ewk_tiled_backing_store_flush(Evas_Object*);
-EAPI void ewk_tiled_backing_store_enable_scale_set(Evas_Object*, Eina_Bool value);
+EAPI Eina_Bool    ewk_tiled_backing_store_zoom_set(Evas_Object *o, float *zoom, Evas_Coord cx, Evas_Coord cy, Evas_Coord *offx, Evas_Coord *offy);
+EAPI Eina_Bool    ewk_tiled_backing_store_zoom_weak_set(Evas_Object *o, float zoom, Evas_Coord cx, Evas_Coord cy);
+EAPI void ewk_tiled_backing_store_fix_offsets(Evas_Object *o, Evas_Coord w, Evas_Coord h);
+EAPI void ewk_tiled_backing_store_zoom_weak_smooth_scale_set(Evas_Object *o, Eina_Bool smooth_scale);
+EAPI Eina_Bool    ewk_tiled_backing_store_update(Evas_Object *o, const Eina_Rectangle *update);
+EAPI void ewk_tiled_backing_store_updates_process_pre_set(Evas_Object *o, void *(*cb)(void *data, Evas_Object *o), const void *data);
+EAPI void ewk_tiled_backing_store_updates_process_post_set(Evas_Object *o, void *(*cb)(void *data, void *pre_data, Evas_Object *o), const void *data);
+EAPI void ewk_tiled_backing_store_process_entire_queue_set(Evas_Object *o, Eina_Bool value);
+EAPI void ewk_tiled_backing_store_updates_process(Evas_Object *o);
+EAPI void ewk_tiled_backing_store_updates_clear(Evas_Object *o);
+EAPI void ewk_tiled_backing_store_contents_resize(Evas_Object *o, Evas_Coord width, Evas_Coord height);
+EAPI void ewk_tiled_backing_store_disabled_update_set(Evas_Object *o, Eina_Bool value);
+EAPI void ewk_tiled_backing_store_flush(Evas_Object *o);
+EAPI void ewk_tiled_backing_store_enable_scale_set(Evas_Object *o, Eina_Bool value);
 
-EAPI Ewk_Tile_Unused_Cache *ewk_tiled_backing_store_tile_unused_cache_get(const Evas_Object*);
-EAPI void                   ewk_tiled_backing_store_tile_unused_cache_set(Evas_Object*, Ewk_Tile_Unused_Cache*);
+EAPI Ewk_Tile_Unused_Cache *ewk_tiled_backing_store_tile_unused_cache_get(const Evas_Object *o);
+EAPI void                   ewk_tiled_backing_store_tile_unused_cache_set(Evas_Object *o, Ewk_Tile_Unused_Cache *tuc);
 
-EAPI Eina_Bool ewk_tiled_backing_store_pre_render_region(Evas_Object*, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
-EAPI Eina_Bool ewk_tiled_backing_store_pre_render_relative_radius(Evas_Object*, unsigned int number, float zoom);
-EAPI void ewk_tiled_backing_store_pre_render_cancel(Evas_Object*);
+EAPI Eina_Bool ewk_tiled_backing_store_pre_render_region(Evas_Object *o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
+EAPI Eina_Bool ewk_tiled_backing_store_pre_render_relative_radius(Evas_Object *o, unsigned int n, float zoom);
+EAPI void ewk_tiled_backing_store_pre_render_cancel(Evas_Object *o);
 
-EAPI Eina_Bool ewk_tiled_backing_store_disable_render(Evas_Object*);
-EAPI Eina_Bool ewk_tiled_backing_store_enable_render(Evas_Object*);
+EAPI Eina_Bool ewk_tiled_backing_store_disable_render(Evas_Object *o);
+EAPI Eina_Bool ewk_tiled_backing_store_enable_render(Evas_Object *o);
 #ifdef __cplusplus
 }
 #endif

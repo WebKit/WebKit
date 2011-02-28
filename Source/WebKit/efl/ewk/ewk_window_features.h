@@ -31,11 +31,11 @@ extern "C" {
 
 typedef struct _Ewk_Window_Features Ewk_Window_Features;
 
-EAPI void         ewk_window_features_unref(Ewk_Window_Features*);
-EAPI void         ewk_window_features_ref(Ewk_Window_Features*);
+EAPI void         ewk_window_features_unref(Ewk_Window_Features* window_features);
+EAPI void         ewk_window_features_ref(Ewk_Window_Features* window_features);
 
-EAPI void         ewk_window_features_bool_property_get(Ewk_Window_Features*, Eina_Bool* toolbar_visible, Eina_Bool* statusbar_visible, Eina_Bool* scrollbars_visible, Eina_Bool* menubar_visible, Eina_Bool* locationbar_visible, Eina_Bool* fullscreen);
-EAPI void         ewk_window_features_int_property_get(Ewk_Window_Features*, int* x, int* y, int* w, int* h);
+EAPI void         ewk_window_features_bool_property_get(Ewk_Window_Features* window_features, Eina_Bool* toolbar_visible, Eina_Bool* statusbar_visible, Eina_Bool* scrollbars_visible, Eina_Bool* menubar_visible, Eina_Bool* locationbar_visible, Eina_Bool* fullscreen);
+EAPI void         ewk_window_features_int_property_get(Ewk_Window_Features* window_features, int* x, int* y, int* w, int* h);
 
 #ifdef __cplusplus
 }

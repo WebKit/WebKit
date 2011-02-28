@@ -318,191 +318,191 @@ EAPI Eina_Bool    ewk_view_base_smart_set(Ewk_View_Smart_Class *api);
 EAPI Eina_Bool    ewk_view_single_smart_set(Ewk_View_Smart_Class *api);
 EAPI Eina_Bool    ewk_view_tiled_smart_set(Ewk_View_Smart_Class *api);
 
-EAPI Evas_Object *ewk_view_single_add(Evas*);
-EAPI Evas_Object *ewk_view_tiled_add(Evas*);
+EAPI Evas_Object *ewk_view_single_add(Evas *e);
+EAPI Evas_Object *ewk_view_tiled_add(Evas *e);
 
-EAPI Ewk_Tile_Unused_Cache *ewk_view_tiled_unused_cache_get(const Evas_Object*);
-EAPI void                   ewk_view_tiled_unused_cache_set(Evas_Object*, Ewk_Tile_Unused_Cache*);
+EAPI Ewk_Tile_Unused_Cache *ewk_view_tiled_unused_cache_get(const Evas_Object *o);
+EAPI void                   ewk_view_tiled_unused_cache_set(Evas_Object *o, Ewk_Tile_Unused_Cache *cache);
 
 // FIXME: this function should be removed later, when we find the best flag to use.
-EAPI void                   ewk_view_tiled_process_entire_queue_set(Evas_Object*, Eina_Bool flag);
+EAPI void                   ewk_view_tiled_process_entire_queue_set(Evas_Object *o, Eina_Bool flag);
 
-EAPI void         ewk_view_fixed_layout_size_set(Evas_Object*, Evas_Coord w, Evas_Coord h);
-EAPI void         ewk_view_fixed_layout_size_get(Evas_Object*, Evas_Coord *w, Evas_Coord *h);
+EAPI void         ewk_view_fixed_layout_size_set(Evas_Object *o, Evas_Coord w, Evas_Coord h);
+EAPI void         ewk_view_fixed_layout_size_get(Evas_Object *o, Evas_Coord *w, Evas_Coord *h);
 
-EAPI void         ewk_view_theme_set(Evas_Object*, const char *path);
-EAPI const char  *ewk_view_theme_get(Evas_Object*);
+EAPI void         ewk_view_theme_set(Evas_Object *o, const char *path);
+EAPI const char  *ewk_view_theme_get(Evas_Object *o);
 
-EAPI Evas_Object *ewk_view_frame_main_get(const Evas_Object*);
-EAPI Evas_Object *ewk_view_frame_focused_get(const Evas_Object*);
+EAPI Evas_Object *ewk_view_frame_main_get(const Evas_Object *o);
+EAPI Evas_Object *ewk_view_frame_focused_get(const Evas_Object *o);
 
-EAPI Eina_Bool    ewk_view_uri_set(Evas_Object*, const char *uri);
-EAPI const char  *ewk_view_uri_get(const Evas_Object*);
-EAPI const char  *ewk_view_title_get(const Evas_Object*);
+EAPI Eina_Bool    ewk_view_uri_set(Evas_Object *o, const char *uri);
+EAPI const char  *ewk_view_uri_get(const Evas_Object *o);
+EAPI const char  *ewk_view_title_get(const Evas_Object *o);
 
-EAPI Eina_Bool    ewk_view_editable_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_editable_set(Evas_Object*, Eina_Bool editable);
+EAPI Eina_Bool    ewk_view_editable_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_editable_set(Evas_Object *o, Eina_Bool editable);
 
-EAPI void         ewk_view_bg_color_set(Evas_Object*, int r, int g, int b, int a);
-EAPI void         ewk_view_bg_color_get(const Evas_Object*, int *r, int *g, int *b, int *a);
+EAPI void         ewk_view_bg_color_set(Evas_Object *o, int r, int g, int b, int a);
+EAPI void         ewk_view_bg_color_get(const Evas_Object *o, int *r, int *g, int *b, int *a);
 
-EAPI char        *ewk_view_selection_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_select_none(Evas_Object*);
-EAPI Eina_Bool    ewk_view_select_all(Evas_Object*);
-EAPI Eina_Bool    ewk_view_select_paragraph(Evas_Object*);
-EAPI Eina_Bool    ewk_view_select_sentence(Evas_Object*);
-EAPI Eina_Bool    ewk_view_select_line(Evas_Object*);
-EAPI Eina_Bool    ewk_view_select_word(Evas_Object*);
+EAPI char        *ewk_view_selection_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_select_none(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_select_all(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_select_paragraph(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_select_sentence(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_select_line(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_select_word(Evas_Object *o);
 
-EAPI Eina_Bool    ewk_view_context_menu_forward_event(Evas_Object*, const Evas_Event_Mouse_Down*);
+EAPI Eina_Bool    ewk_view_context_menu_forward_event(Evas_Object *o, const Evas_Event_Mouse_Down *ev);
 
-EAPI void         ewk_view_popup_selected_set(Evas_Object*, int index);
-EAPI Eina_Bool    ewk_view_popup_destroy(Evas_Object*);
+EAPI void         ewk_view_popup_selected_set(Evas_Object *o, int index);
+EAPI Eina_Bool    ewk_view_popup_destroy(Evas_Object *o);
 
-EAPI Eina_Bool    ewk_view_text_search(const Evas_Object*, const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap);
+EAPI Eina_Bool    ewk_view_text_search(const Evas_Object *o, const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap);
 
-EAPI unsigned int ewk_view_text_matches_mark(Evas_Object*, const char *string, Eina_Bool case_sensitive, Eina_Bool highlight, unsigned int limit);
-EAPI Eina_Bool    ewk_view_text_matches_unmark_all(Evas_Object*);
-EAPI Eina_Bool    ewk_view_text_matches_highlight_set(Evas_Object*, Eina_Bool highlight);
-EAPI Eina_Bool    ewk_view_text_matches_highlight_get(const Evas_Object*);
+EAPI unsigned int ewk_view_text_matches_mark(Evas_Object *o, const char *string, Eina_Bool case_sensitive, Eina_Bool highlight, unsigned int limit);
+EAPI Eina_Bool    ewk_view_text_matches_unmark_all(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_text_matches_highlight_set(Evas_Object *o, Eina_Bool highlight);
+EAPI Eina_Bool    ewk_view_text_matches_highlight_get(const Evas_Object *o);
 
-EAPI double       ewk_view_load_progress_get(const Evas_Object*);
+EAPI double       ewk_view_load_progress_get(const Evas_Object *o);
 
-EAPI Eina_Bool    ewk_view_stop(Evas_Object*);
-EAPI Eina_Bool    ewk_view_reload(Evas_Object*);
-EAPI Eina_Bool    ewk_view_reload_full(Evas_Object*);
+EAPI Eina_Bool    ewk_view_stop(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_reload(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_reload_full(Evas_Object *o);
 
-EAPI Eina_Bool    ewk_view_back(Evas_Object*);
-EAPI Eina_Bool    ewk_view_forward(Evas_Object*);
-EAPI Eina_Bool    ewk_view_navigate(Evas_Object*, int steps);
+EAPI Eina_Bool    ewk_view_back(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_forward(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_navigate(Evas_Object *o, int steps);
 
-EAPI Eina_Bool    ewk_view_back_possible(Evas_Object*);
-EAPI Eina_Bool    ewk_view_forward_possible(Evas_Object*);
-EAPI Eina_Bool    ewk_view_navigate_possible(Evas_Object*, int steps);
+EAPI Eina_Bool    ewk_view_back_possible(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_forward_possible(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_navigate_possible(Evas_Object *o, int steps);
 
-EAPI Eina_Bool    ewk_view_history_enable_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_history_enable_set(Evas_Object*, Eina_Bool enable);
-EAPI Ewk_History *ewk_view_history_get(const Evas_Object*);
+EAPI Eina_Bool    ewk_view_history_enable_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_history_enable_set(Evas_Object *o, Eina_Bool enable);
+EAPI Ewk_History *ewk_view_history_get(const Evas_Object *o);
 
-EAPI float        ewk_view_zoom_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_zoom_set(Evas_Object*, float zoom, Evas_Coord cx, Evas_Coord cy);
+EAPI float        ewk_view_zoom_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_zoom_set(Evas_Object *o, float zoom, Evas_Coord cx, Evas_Coord cy);
 
-EAPI Eina_Bool    ewk_view_zoom_weak_smooth_scale_get(const Evas_Object*);
-EAPI void         ewk_view_zoom_weak_smooth_scale_set(Evas_Object*, Eina_Bool smooth_scale);
+EAPI Eina_Bool    ewk_view_zoom_weak_smooth_scale_get(const Evas_Object *o);
+EAPI void         ewk_view_zoom_weak_smooth_scale_set(Evas_Object *o, Eina_Bool smooth_scale);
 
-EAPI Eina_Bool    ewk_view_zoom_weak_set(Evas_Object*, float zoom, Evas_Coord cx, Evas_Coord cy);
-EAPI Eina_Bool    ewk_view_zoom_animated_mark_start(Evas_Object*, float zoom);
-EAPI Eina_Bool    ewk_view_zoom_animated_mark_end(Evas_Object*, float zoom);
-EAPI Eina_Bool    ewk_view_zoom_animated_mark_current(Evas_Object*, float zoom);
-EAPI Eina_Bool    ewk_view_zoom_animated_mark_stop(Evas_Object*);
+EAPI Eina_Bool    ewk_view_zoom_weak_set(Evas_Object *o, float zoom, Evas_Coord cx, Evas_Coord cy);
+EAPI Eina_Bool    ewk_view_zoom_animated_mark_start(Evas_Object *o, float zoom);
+EAPI Eina_Bool    ewk_view_zoom_animated_mark_end(Evas_Object *o, float zoom);
+EAPI Eina_Bool    ewk_view_zoom_animated_mark_current(Evas_Object *o, float zoom);
+EAPI Eina_Bool    ewk_view_zoom_animated_mark_stop(Evas_Object *o);
 
-EAPI Eina_Bool    ewk_view_zoom_animated_set(Evas_Object*, float zoom, float duration, Evas_Coord cx, Evas_Coord cy);
-EAPI Eina_Bool    ewk_view_zoom_text_only_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_zoom_text_only_set(Evas_Object*, Eina_Bool setting);
+EAPI Eina_Bool    ewk_view_zoom_animated_set(Evas_Object *o, float zoom, float duration, Evas_Coord cx, Evas_Coord cy);
+EAPI Eina_Bool    ewk_view_zoom_text_only_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_zoom_text_only_set(Evas_Object *o, Eina_Bool setting);
 
-EAPI Eina_Bool    ewk_view_pre_render_region(Evas_Object*, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
-EAPI Eina_Bool    ewk_view_pre_render_relative_radius(Evas_Object*, unsigned int number);
-EAPI void         ewk_view_pre_render_cancel(Evas_Object*);
-EAPI Eina_Bool    ewk_view_enable_render(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_disable_render(const Evas_Object*);
+EAPI Eina_Bool    ewk_view_pre_render_region(Evas_Object *o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
+EAPI Eina_Bool    ewk_view_pre_render_relative_radius(Evas_Object *o, unsigned int n);
+EAPI void         ewk_view_pre_render_cancel(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_enable_render(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_disable_render(const Evas_Object *o);
 
-EAPI unsigned int ewk_view_imh_get(Evas_Object*);
+EAPI unsigned int ewk_view_imh_get(Evas_Object *o);
 
 /* settings */
-EAPI const char  *ewk_view_setting_user_agent_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_user_agent_set(Evas_Object*, const char *user_agent);
+EAPI const char  *ewk_view_setting_user_agent_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_user_agent_set(Evas_Object *o, const char *user_agent);
 
-EAPI Eina_Bool    ewk_view_setting_auto_load_images_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_auto_load_images_set(Evas_Object*, Eina_Bool automatic);
+EAPI Eina_Bool    ewk_view_setting_auto_load_images_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_auto_load_images_set(Evas_Object *o, Eina_Bool automatic);
 
-EAPI Eina_Bool    ewk_view_setting_auto_shrink_images_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_auto_shrink_images_set(Evas_Object*, Eina_Bool automatic);
+EAPI Eina_Bool    ewk_view_setting_auto_shrink_images_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_auto_shrink_images_set(Evas_Object *o, Eina_Bool automatic);
 
-EAPI Eina_Bool    ewk_view_setting_enable_auto_resize_window_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_enable_auto_resize_window_set(Evas_Object*, Eina_Bool resizable);
-EAPI Eina_Bool    ewk_view_setting_enable_scripts_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_enable_scripts_set(Evas_Object*, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_enable_auto_resize_window_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_enable_auto_resize_window_set(Evas_Object *o, Eina_Bool resizable);
+EAPI Eina_Bool    ewk_view_setting_enable_scripts_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_enable_scripts_set(Evas_Object *o, Eina_Bool enable);
 
-EAPI Eina_Bool    ewk_view_setting_enable_plugins_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_enable_plugins_set(Evas_Object*, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_enable_plugins_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_enable_plugins_set(Evas_Object *o, Eina_Bool enable);
 
-EAPI Eina_Bool    ewk_view_setting_enable_frame_flattening_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_enable_frame_flattening_set(Evas_Object*, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_enable_frame_flattening_get(const Evas_Object* o);
+EAPI Eina_Bool    ewk_view_setting_enable_frame_flattening_set(Evas_Object* o, Eina_Bool enable);
 
-EAPI Eina_Bool    ewk_view_setting_scripts_window_open_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_scripts_window_open_set(Evas_Object*, Eina_Bool allow);
+EAPI Eina_Bool    ewk_view_setting_scripts_window_open_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_scripts_window_open_set(Evas_Object *o, Eina_Bool allow);
 
-EAPI Eina_Bool    ewk_view_setting_resizable_textareas_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_resizable_textareas_set(Evas_Object*, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_resizable_textareas_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_resizable_textareas_set(Evas_Object *o, Eina_Bool enable);
 
-EAPI const char  *ewk_view_setting_user_stylesheet_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_user_stylesheet_set(Evas_Object*, const char *uri);
+EAPI const char  *ewk_view_setting_user_stylesheet_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_user_stylesheet_set(Evas_Object *o, const char *uri);
 
-EAPI Eina_Bool    ewk_view_setting_private_browsing_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_private_browsing_set(Evas_Object*, Eina_Bool enable);
-EAPI Eina_Bool    ewk_view_setting_offline_app_cache_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_offline_app_cache_set(Evas_Object*, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_private_browsing_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_private_browsing_set(Evas_Object *o, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_offline_app_cache_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_offline_app_cache_set(Evas_Object *o, Eina_Bool enable);
 
-EAPI Eina_Bool    ewk_view_setting_caret_browsing_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_caret_browsing_set(Evas_Object*, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_caret_browsing_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_caret_browsing_set(Evas_Object *o, Eina_Bool enable);
 
-EAPI const char  *ewk_view_setting_encoding_custom_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_encoding_custom_set(Evas_Object*, const char *encoding);
-EAPI const char  *ewk_view_setting_encoding_default_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_encoding_default_set(Evas_Object*, const char *encoding);
-EAPI const char  *ewk_view_setting_cache_directory_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_cache_directory_set(Evas_Object*, const char *path);
+EAPI const char  *ewk_view_setting_encoding_custom_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_encoding_custom_set(Evas_Object *o, const char *encoding);
+EAPI const char  *ewk_view_setting_encoding_default_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_encoding_default_set(Evas_Object *o, const char *encoding);
+EAPI const char  *ewk_view_setting_cache_directory_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_cache_directory_set(Evas_Object *o, const char *path);
 
-EAPI int          ewk_view_setting_font_minimum_size_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_font_minimum_size_set(Evas_Object*, int size);
-EAPI int          ewk_view_setting_font_minimum_logical_size_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_font_minimum_logical_size_set(Evas_Object*, int size);
-EAPI int          ewk_view_setting_font_default_size_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_font_default_size_set(Evas_Object*, int size);
-EAPI int          ewk_view_setting_font_monospace_size_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_font_monospace_size_set(Evas_Object*, int size);
+EAPI int          ewk_view_setting_font_minimum_size_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_font_minimum_size_set(Evas_Object *o, int size);
+EAPI int          ewk_view_setting_font_minimum_logical_size_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_font_minimum_logical_size_set(Evas_Object *o, int size);
+EAPI int          ewk_view_setting_font_default_size_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_font_default_size_set(Evas_Object *o, int size);
+EAPI int          ewk_view_setting_font_monospace_size_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_font_monospace_size_set(Evas_Object *o, int size);
 
-EAPI const char  *ewk_view_setting_font_standard_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_font_standard_set(Evas_Object*, const char *family);
+EAPI const char  *ewk_view_setting_font_standard_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_font_standard_set(Evas_Object *o, const char *family);
 
-EAPI const char  *ewk_view_setting_font_cursive_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_font_cursive_set(Evas_Object*, const char *family);
+EAPI const char  *ewk_view_setting_font_cursive_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_font_cursive_set(Evas_Object *o, const char *family);
 
-EAPI const char  *ewk_view_setting_font_monospace_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_font_monospace_set(Evas_Object*, const char *family);
+EAPI const char  *ewk_view_setting_font_monospace_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_font_monospace_set(Evas_Object *o, const char *family);
 
-EAPI const char  *ewk_view_setting_font_fantasy_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_font_fantasy_set(Evas_Object*, const char *family);
+EAPI const char  *ewk_view_setting_font_fantasy_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_font_fantasy_set(Evas_Object *o, const char *family);
 
-EAPI const char  *ewk_view_setting_font_serif_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_font_serif_set(Evas_Object*, const char *family);
+EAPI const char  *ewk_view_setting_font_serif_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_font_serif_set(Evas_Object *o, const char *family);
 
-EAPI const char  *ewk_view_setting_font_sans_serif_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_font_sans_serif_set(Evas_Object*, const char *family);
+EAPI const char  *ewk_view_setting_font_sans_serif_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_font_sans_serif_set(Evas_Object *o, const char *family);
 
-EAPI Eina_Bool    ewk_view_setting_spatial_navigation_get(Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_spatial_navigation_set(Evas_Object*, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_spatial_navigation_get(Evas_Object* o);
+EAPI Eina_Bool    ewk_view_setting_spatial_navigation_set(Evas_Object* o, Eina_Bool enable);
 
-EAPI Eina_Bool    ewk_view_setting_local_storage_get(Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_local_storage_set(Evas_Object*, Eina_Bool enable);
-EAPI const char  *ewk_view_setting_local_storage_database_path_get(const Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_local_storage_database_path_set(Evas_Object*, const char *path);
+EAPI Eina_Bool    ewk_view_setting_local_storage_get(Evas_Object* o);
+EAPI Eina_Bool    ewk_view_setting_local_storage_set(Evas_Object* o, Eina_Bool enable);
+EAPI const char  *ewk_view_setting_local_storage_database_path_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_local_storage_database_path_set(Evas_Object *o, const char *path);
 
-EAPI Eina_Bool    ewk_view_setting_page_cache_get(Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_page_cache_set(Evas_Object*, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_page_cache_get(Evas_Object* o);
+EAPI Eina_Bool    ewk_view_setting_page_cache_set(Evas_Object* o, Eina_Bool enable);
 
-EAPI Eina_Bool    ewk_view_setting_encoding_detector_get(Evas_Object*);
-EAPI Eina_Bool    ewk_view_setting_encoding_detector_set(Evas_Object*, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_encoding_detector_get(Evas_Object* o);
+EAPI Eina_Bool    ewk_view_setting_encoding_detector_set(Evas_Object* o, Eina_Bool enable);
 
 /* to be used by subclass implementations */
-EAPI Ewk_View_Smart_Data *ewk_view_smart_data_get(const Evas_Object*);
+EAPI Ewk_View_Smart_Data *ewk_view_smart_data_get(const Evas_Object *o);
 
-EAPI const Eina_Rectangle *ewk_view_repaints_get(const Ewk_View_Private_Data*, size_t *count);
-EAPI const Ewk_Scroll_Request *ewk_view_scroll_requests_get(const Ewk_View_Private_Data*, size_t *count);
+EAPI const Eina_Rectangle *ewk_view_repaints_get(const Ewk_View_Private_Data *priv, size_t *count);
+EAPI const Ewk_Scroll_Request *ewk_view_scroll_requests_get(const Ewk_View_Private_Data *priv, size_t *count);
 
-EAPI void ewk_view_repaint_add(Ewk_View_Private_Data*, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+EAPI void ewk_view_repaint_add(Ewk_View_Private_Data *priv, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 
-EAPI void ewk_view_layout_if_needed_recursive(Ewk_View_Private_Data*);
+EAPI void ewk_view_layout_if_needed_recursive(Ewk_View_Private_Data *priv);
 
 EAPI void ewk_view_scrolls_process(Ewk_View_Smart_Data *sd);
 
@@ -514,7 +514,7 @@ EAPI void ewk_view_scrolls_process(Ewk_View_Smart_Data *sd);
  */
 typedef struct _Ewk_View_Paint_Context Ewk_View_Paint_Context;
 
-EAPI Ewk_View_Paint_Context *ewk_view_paint_context_new(Ewk_View_Private_Data*, cairo_t *cr);
+EAPI Ewk_View_Paint_Context *ewk_view_paint_context_new(Ewk_View_Private_Data *priv, cairo_t *cr);
 EAPI void ewk_view_paint_context_free(Ewk_View_Paint_Context *ctxt);
 
 EAPI void ewk_view_paint_context_save(Ewk_View_Paint_Context *ctxt);
@@ -525,16 +525,16 @@ EAPI void ewk_view_paint_context_paint_contents(Ewk_View_Paint_Context *ctxt, co
 EAPI void ewk_view_paint_context_scale(Ewk_View_Paint_Context *ctxt, float scale_x, float scale_y);
 EAPI void ewk_view_paint_context_translate(Ewk_View_Paint_Context *ctxt, float x, float y);
 
-EAPI Eina_Bool ewk_view_paint(Ewk_View_Private_Data*, cairo_t *cr, const Eina_Rectangle *area);
-EAPI Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data*, cairo_t *cr, const Eina_Rectangle *area);
+EAPI Eina_Bool ewk_view_paint(Ewk_View_Private_Data *priv, cairo_t *cr, const Eina_Rectangle *area);
+EAPI Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data *priv, cairo_t *cr, const Eina_Rectangle *area);
 
-EAPI void ewk_view_viewport_attributes_get(Evas_Object*, float* w, float* h, float* init_scale, float* max_scale, float* min_scale, float* device_pixel_ratio , Eina_Bool* user_scalable);
-EAPI Eina_Bool ewk_view_zoom_range_set(Evas_Object*, float min_scale, float max_scale);
-EAPI float ewk_view_zoom_range_min_get(Evas_Object*);
-EAPI float ewk_view_zoom_range_max_get(Evas_Object*);
-EAPI void ewk_view_user_scalable_set(Evas_Object*, Eina_Bool user_scalable);
-EAPI Eina_Bool ewk_view_user_scalable_get(Evas_Object*);
-EAPI float ewk_view_device_pixel_ratio_get(Evas_Object*);
+EAPI void ewk_view_viewport_attributes_get(Evas_Object *o, float* w, float* h, float* init_scale, float* max_scale, float* min_scale, float* device_pixel_ratio , Eina_Bool* user_scalable);
+EAPI Eina_Bool ewk_view_zoom_range_set(Evas_Object* o, float min_scale, float max_scale);
+EAPI float ewk_view_zoom_range_min_get(Evas_Object* o);
+EAPI float ewk_view_zoom_range_max_get(Evas_Object* o);
+EAPI void ewk_view_user_scalable_set(Evas_Object* o, Eina_Bool user_scalable);
+EAPI Eina_Bool ewk_view_user_scalable_get(Evas_Object* o);
+EAPI float ewk_view_device_pixel_ratio_get(Evas_Object* o);
 
 #ifdef __cplusplus
 }

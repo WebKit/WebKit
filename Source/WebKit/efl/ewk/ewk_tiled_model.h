@@ -27,32 +27,32 @@
 #include <Evas.h>
 
 /* model */
-EAPI Ewk_Tile *ewk_tile_new(Evas*, Evas_Coord w, Evas_Coord h, float zoom, Evas_Colorspace cspace);
-EAPI void ewk_tile_free(Ewk_Tile*);
-EAPI void ewk_tile_unused_cache_clear(Ewk_Tile_Unused_Cache*);
-EAPI void ewk_tile_show(Ewk_Tile*);
-EAPI void ewk_tile_hide(Ewk_Tile*);
-Eina_Bool ewk_tile_visible_get(Ewk_Tile*);
-EAPI void ewk_tile_update_full(Ewk_Tile*);
-EAPI void ewk_tile_update_area(Ewk_Tile*, const Eina_Rectangle*);
-EAPI void ewk_tile_updates_process(Ewk_Tile*, void (*cb)(void *data, Ewk_Tile*, const Eina_Rectangle*), const void *data);
-EAPI void ewk_tile_updates_clear(Ewk_Tile*);
+EAPI Ewk_Tile *ewk_tile_new(Evas *evas, Evas_Coord w, Evas_Coord h, float zoom, Evas_Colorspace cspace);
+EAPI void ewk_tile_free(Ewk_Tile *t);
+EAPI void ewk_tile_unused_cache_clear(Ewk_Tile_Unused_Cache *tuc);
+EAPI void ewk_tile_show(Ewk_Tile *t);
+EAPI void ewk_tile_hide(Ewk_Tile *t);
+Eina_Bool ewk_tile_visible_get(Ewk_Tile *t);
+EAPI void ewk_tile_update_full(Ewk_Tile *t);
+EAPI void ewk_tile_update_area(Ewk_Tile *t, const Eina_Rectangle *r);
+EAPI void ewk_tile_updates_process(Ewk_Tile *t, void (*cb)(void *data, Ewk_Tile *t, const Eina_Rectangle *update), const void *data);
+EAPI void ewk_tile_updates_clear(Ewk_Tile *t);
 
 /* cache of unused tiles */
 EAPI Ewk_Tile_Unused_Cache *ewk_tile_unused_cache_new(size_t max);
-EAPI void ewk_tile_unused_cache_lock_area(Ewk_Tile_Unused_Cache*, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
-EAPI void ewk_tile_unused_cache_unlock_area(Ewk_Tile_Unused_Cache*);
-EAPI void ewk_tile_unused_cache_free(Ewk_Tile_Unused_Cache*);
-EAPI Ewk_Tile_Unused_Cache *ewk_tile_unused_cache_ref(Ewk_Tile_Unused_Cache*);
-EAPI void ewk_tile_unused_cache_unref(Ewk_Tile_Unused_Cache*);
+EAPI void ewk_tile_unused_cache_lock_area(Ewk_Tile_Unused_Cache *tuc, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
+EAPI void ewk_tile_unused_cache_unlock_area(Ewk_Tile_Unused_Cache *tuc);
+EAPI void ewk_tile_unused_cache_free(Ewk_Tile_Unused_Cache *tuc);
+EAPI Ewk_Tile_Unused_Cache *ewk_tile_unused_cache_ref(Ewk_Tile_Unused_Cache *tuc);
+EAPI void ewk_tile_unused_cache_unref(Ewk_Tile_Unused_Cache *tuc);
 
-EAPI void ewk_tile_unused_cache_dirty(Ewk_Tile_Unused_Cache*);
+EAPI void ewk_tile_unused_cache_dirty(Ewk_Tile_Unused_Cache *tuc);
 
-EAPI void ewk_tile_unused_cache_freeze(Ewk_Tile_Unused_Cache*);
-EAPI void ewk_tile_unused_cache_thaw(Ewk_Tile_Unused_Cache*);
+EAPI void ewk_tile_unused_cache_freeze(Ewk_Tile_Unused_Cache *tuc);
+EAPI void ewk_tile_unused_cache_thaw(Ewk_Tile_Unused_Cache *tuc);
 
-EAPI Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache*, Ewk_Tile*);
-EAPI Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache*, Ewk_Tile*, void (*tile_free_cb)(void *data, Ewk_Tile*), const void *data);
+EAPI Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache *tuc, Ewk_Tile *t);
+EAPI Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache *tuc, Ewk_Tile *t, void (*tile_free_cb)(void *data, Ewk_Tile *t), const void *data);
 
 #endif // ewk_tiled_model_h
 
