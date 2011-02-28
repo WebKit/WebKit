@@ -280,6 +280,9 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
 {
+    if (!isSpatialNavigationEnabled(frame()))
+        return RenderBlock::addFocusRingRects(rects, tx, ty);
+
     SelectElement* select = toSelectElement(static_cast<Element*>(node()));
 
     // Focus the last selected item.

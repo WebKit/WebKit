@@ -1,3 +1,17 @@
+2011-02-28  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION (r79762): Items in <select multiple> have focus rings, but shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=55323
+
+        Added test case to make sure no focus ring is drawn on selected items.
+
+        * fast/forms/select-listbox-multiple-no-focusring.html: Added.
+        * platform/mac/fast/forms/select-listbox-multiple-no-focusring-expected.checksum: Added.
+        * platform/mac/fast/forms/select-listbox-multiple-no-focusring-expected.png: Added.
+        * platform/mac/fast/forms/select-listbox-multiple-no-focusring-expected.txt: Added.
+
 2011-02-28  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Anders Carlsson.

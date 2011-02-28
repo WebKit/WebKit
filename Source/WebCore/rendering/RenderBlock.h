@@ -302,6 +302,8 @@ protected:
     void addOverflowFromBlockChildren();
     void addOverflowFromInlineChildren();
 
+    virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
+
 #if ENABLE(SVG)
 protected:
 
@@ -586,8 +588,6 @@ private:
     void paintContinuationOutlines(PaintInfo&, int tx, int ty);
 
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
-
-    virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
 
     void adjustPointToColumnContents(IntPoint&) const;
     void adjustForBorderFit(int x, int& left, int& right) const; // Helper function for borderFitAdjust
