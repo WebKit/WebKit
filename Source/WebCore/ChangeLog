@@ -1,3 +1,16 @@
+2011-02-28  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add live edit test.
+        https://bugs.webkit.org/show_bug.cgi?id=55360
+
+        Test: inspector/debugger/live-edit.html
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._doubleClick):
+        (WebInspector.SourceFrame.prototype._didEditLine):
+
 2011-02-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Follow up to r79858, removing optimistic assertion that fails on debug bot.

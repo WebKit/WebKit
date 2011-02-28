@@ -1,3 +1,21 @@
+2011-02-28  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add live edit test.
+        https://bugs.webkit.org/show_bug.cgi?id=55360
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector/debugger/debug-inlined-scripts.html:
+        * inspector/debugger/live-edit-expected.txt: Added.
+        * inspector/debugger/live-edit.html: Added.
+        * inspector/debugger/resources/edit-me.js: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-02-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. More follow ups to XML Viewer tests commit.

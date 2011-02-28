@@ -1,0 +1,14 @@
+Tests live edit feature.
+
+Debugger was enabled.
+
+Running: testLiveEdit
+==Source frame contents start==
+function f()
+{
+    return "live-edited string";
+}
+
+==Source frame contents end==
+Debugger was disabled.
+

@@ -811,24 +811,21 @@ WebInspector.SourceFrame.prototype = {
         if (!lineRow)
             return;  // Do not trigger editing from line numbers.
 
-        var lineNumber = lineRow.lineNumber;
-        var location = this._content.sourceFrameLineNumberToActualLocation(lineNumber);
-        if (!location.sourceID)
-            return;
+        this._textViewer.editLine(lineRow, this._didEditLine.bind(this, lineRow.lineNumber));
+    },
 
-        function didEditLine(newContent)
-        {
-            var lines = [];
-            var oldLines = this._content.text.split('\n');
-            for (var i = 0; i < oldLines.length; ++i) {
-                if (i === lineNumber)
-                    lines.push(newContent);
-                else
-                    lines.push(oldLines[i]);
-            }
-            WebInspector.debuggerModel.editScriptSource(location.sourceID, lines.join("\n"));
+    _didEditLine: function(lineNumber, newContent)
+    {
+        var lines = [];
+        var oldLines = this._content.text.split('\n');
+        for (var i = 0; i < oldLines.length; ++i) {
+            if (i === lineNumber)
+                lines.push(newContent);
+            else
+                lines.push(oldLines[i]);
         }
-        this._textViewer.editLine(lineRow, didEditLine.bind(this));
+        var location = this._content.sourceFrameLineNumberToActualLocation(lineNumber);
+        WebInspector.debuggerModel.editScriptSource(location.sourceID, lines.join("\n"));
     },
 
     _setBreakpoint: function(lineNumber, condition, enabled)

@@ -126,6 +126,15 @@ InspectorTest.captureStackTrace = function(callFrames)
     }
 };
 
+InspectorTest.dumpSourceFrameContents = function(sourceFrame)
+{
+    InspectorTest.addResult("==Source frame contents start==");
+    var textModel = sourceFrame._textModel;
+    for (var i = 0; i < textModel.linesCount; ++i)
+        InspectorTest.addResult(textModel.line(i));
+    InspectorTest.addResult("==Source frame contents end==");
+};
+
 InspectorTest._pausedScript = function(details)
 {
     if (!InspectorTest._quiet)
@@ -161,7 +170,7 @@ InspectorTest.showScriptSource = function(scriptName, callback)
             if (sourceFrame.loaded)
                 callback(sourceFrame);
             else
-                InspectorTest.addSniffer(sourceFrame._textModel, "setText", callback.bind(null, sourceFrame));
+                sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, callback.bind(null, sourceFrame));
             return;
         }
     }

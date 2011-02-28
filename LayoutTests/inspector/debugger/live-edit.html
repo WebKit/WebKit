@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script src="resources/edit-me.js"></script>
+
+<script>
+
+function test()
+{
+    var panel = WebInspector.panels.scripts;
+
+    InspectorTest.runDebuggerTestSuite([
+        function testLiveEdit(next)
+        {
+            InspectorTest.showScriptSource("edit-me.js", didShowScriptSource);
+
+            function didShowScriptSource(sourceFrame)
+            {
+                InspectorTest.addSniffer(WebInspector.debuggerModel, "_updateScriptSource", didEditScriptSource);
+                sourceFrame._didEditLine(2, "    return \"live-edited string\";");
+            }
+
+            function didEditScriptSource()
+            {
+                InspectorTest.evaluateInPage("f()", didEvaluateInPage)
+            }
+
+            function didEvaluateInPage(result)
+            {
+                InspectorTest.assertEquals("live-edited string", result.description, "edited function returns wrong result");
+                InspectorTest.dumpSourceFrameContents(panel.visibleView);
+                next();
+            }
+        }
+    ]);
+};
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests live edit feature.</p>
+
+</body>
+</html>
