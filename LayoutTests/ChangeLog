@@ -1,3 +1,21 @@
+2011-02-28  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Tony Chang
+
+        https://bugs.webkit.org/show_bug.cgi?id=55121
+
+	[chromium] Recently, French Academy changed the sorting
+	rules for French in such a way that accents are not weighted
+	from the end of a word any more. ICU 4.6 / CLDR 1.9
+	incorporated the change. Canadian French hasn't adopted the
+	change, yet.
+
+        Chrome is the only port that uses new rules with ICU 4.6. So, 
+        for now, I'm changing the expectation file for Chrome only.
+
+        * platform/chromium/fast/xsl: Added.
+        * platform/chromium/fast/xsl/sort-locale-expected.txt: Copied from LayoutTests/fast/xsl/sort-locale-expected.txt.
+
 2011-02-28  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Adele Peterson.
