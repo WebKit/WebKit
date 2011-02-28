@@ -87,6 +87,7 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
         [self addSubview:_pdfPreviewView.get()];
 
         _pdfView = [_pdfPreviewView.get() performSelector:@selector(pdfView)];
+        [_pdfView setDelegate:self];
     }
 
     return self;
@@ -179,6 +180,13 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
     [notificationCenter removeObserver:self name:_webkit_PDFViewPageChangedNotification object:_pdfView];
 }
 
+// PDFView delegate methods
+
+- (void)PDFViewOpenPDFInNativeApplication:(PDFView *)sender
+{
+    _pdfViewController->openPDFInFinder();
+}
+
 @end
 
 namespace WebKit {
@@ -192,6 +200,7 @@ PDFViewController::PDFViewController(WKView *wkView)
     : m_wkView(wkView)
     , m_wkPDFView(AdoptNS, [[WKPDFView alloc] initWithFrame:[m_wkView bounds] PDFViewController:this])
     , m_pdfView([m_wkPDFView.get() pdfView])
+    , m_hasWrittenPDFToDisk(false)
 {
     [m_wkView addSubview:m_wkPDFView.get()];
 }
@@ -293,6 +302,76 @@ NSBundle* PDFViewController::pdfKitBundle()
 NSPrintOperation *PDFViewController::makePrintOperation(NSPrintInfo *printInfo)
 {
     return [[m_pdfView document] getPrintOperationForPrintInfo:printInfo autoRotate:YES];
+}
+
+void PDFViewController::openPDFInFinder()
+{
+    // We don't want to open the PDF until we have a document to write. (see 4892525).
+    if (![m_pdfView document]) {
+        NSBeep();
+        return;
+    }
+
+    NSString *path = pathToPDFOnDisk();
+    if (!path)
+        return;
+
+    if (!m_hasWrittenPDFToDisk) {
+        // Create a PDF file with the minimal permissions (only accessible to the current user, see 4145714).
+        RetainPtr<NSNumber> permissions(AdoptNS, [[NSNumber alloc] initWithInt:S_IRUSR]);
+        RetainPtr<NSDictionary> fileAttributes(AdoptNS, [[NSDictionary alloc] initWithObjectsAndKeys:permissions.get(), NSFilePosixPermissions, nil]);
+
+        if (![[NSFileManager defaultManager] createFileAtPath:path contents:(NSData *)m_pdfData.get() attributes:fileAttributes.get()])
+            return;
+
+        m_hasWrittenPDFToDisk = true;
+    }
+
+    [[NSWorkspace sharedWorkspace] openFile:path];
+}
+
+static NSString *temporaryPDFDirectoryPath()
+{
+    static NSString *temporaryPDFDirectoryPath;
+
+    if (!temporaryPDFDirectoryPath) {
+        NSString *temporaryDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitPDFs-XXXXXX"];
+        CString templateRepresentation = [temporaryDirectoryTemplate fileSystemRepresentation];
+
+        if (mkdtemp(templateRepresentation.mutableData()))
+            temporaryPDFDirectoryPath = [[[NSFileManager defaultManager] stringWithFileSystemRepresentation:templateRepresentation.data() length:templateRepresentation.length()] copy];
+    }
+
+    return temporaryPDFDirectoryPath;
+}
+
+NSString *PDFViewController::pathToPDFOnDisk()
+{
+    if (m_pathToPDFOnDisk)
+        return m_pathToPDFOnDisk.get();
+
+    NSString *pdfDirectoryPath = temporaryPDFDirectoryPath();
+    if (!pdfDirectoryPath)
+        return nil;
+
+    NSString *path = [pdfDirectoryPath stringByAppendingPathComponent:m_suggestedFilename.get()];
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:path]) {
+        NSString *pathTemplatePrefix = [pdfDirectoryPath stringByAppendingString:@"XXXXXX-"];
+        NSString *pathTemplate = [pathTemplatePrefix stringByAppendingPathComponent:m_suggestedFilename.get()];
+        CString pathTemplateRepresentation = [pathTemplate fileSystemRepresentation];
+
+        int fd = mkstemps(pathTemplateRepresentation.mutableData(), pathTemplateRepresentation.length() - strlen([pathTemplatePrefix fileSystemRepresentation]) + 1);
+        if (fd < 0)
+            return nil;
+
+        close(fd);
+        path = [fileManager stringWithFileSystemRepresentation:pathTemplateRepresentation.data() length:pathTemplateRepresentation.length()];
+    }
+
+    m_pathToPDFOnDisk.adoptNS([path copy]);
+    return path;
 }
 
 } // namespace WebKit

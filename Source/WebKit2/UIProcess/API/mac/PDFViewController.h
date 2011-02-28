@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,12 +57,15 @@ public:
     static Class pdfPreviewViewClass();
 
     NSPrintOperation *makePrintOperation(NSPrintInfo *);
-    
+    void openPDFInFinder();
+
 private:
     explicit PDFViewController(WKView *wkView);
 
     static Class pdfDocumentClass();
     static NSBundle* pdfKitBundle();
+
+    NSString *pathToPDFOnDisk();
 
     WKView* m_wkView;
 
@@ -71,6 +74,9 @@ private:
 
     RetainPtr<NSString> m_suggestedFilename;
     RetainPtr<CFDataRef> m_pdfData;
+
+    RetainPtr<NSString> m_pathToPDFOnDisk;
+    bool m_hasWrittenPDFToDisk;
 };
 
 } // namespace WebKit
