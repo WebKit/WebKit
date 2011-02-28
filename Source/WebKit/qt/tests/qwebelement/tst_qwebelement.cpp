@@ -939,7 +939,7 @@ void tst_QWebElement::render()
 {
     QString html( "<html>"
                     "<head><style>"
-                       "body, iframe { margin: 0px; border: none; }"
+                       "body, iframe { margin: 0px; border: none; background: white; }"
                     "</style></head>"
                     "<body><table width='300px' height='300px' border='1'>"
                            "<tr>"
@@ -1012,6 +1012,21 @@ void tst_QWebElement::render()
     painter4.end();
 
     QVERIFY(image3 == image4);
+
+    // Chunked render test reuses page rendered in image4 in previous test
+    const int chunkHeight = tableRect.height();
+    const int chunkWidth = tableRect.width() / 3;
+    QImage chunk(chunkWidth, chunkHeight, QImage::Format_ARGB32);
+    QRect chunkRect(0, 0, chunkWidth, chunkHeight);
+    for (int x = 0; x < tableRect.width(); x += chunkWidth) {
+        QPainter painter(&chunk);
+        painter.fillRect(chunkRect, Qt::white);
+        QRect chunkPaintRect(x, 0, chunkWidth, chunkHeight);
+        tables[0].render(&painter, chunkPaintRect);
+        painter.end();
+
+        QVERIFY(chunk == image4.copy(chunkPaintRect));
+    }
 }
 
 void tst_QWebElement::addElementToHead()

@@ -1487,6 +1487,14 @@ QWebElement QWebElement::enclosingElement(WebCore::Node* node)
 */
 void QWebElement::render(QPainter* painter)
 {
+    render(painter, QRect());
+}
+
+/*!
+  Render the element into \a painter clipping to \a clip.
+*/
+void QWebElement::render(QPainter* painter, const QRect& clip)
+{
     WebCore::Element* e = m_element;
     Document* doc = e ? e->document() : 0;
     if (!doc)
@@ -1505,12 +1513,17 @@ void QWebElement::render(QPainter* painter)
     if (rect.size().isEmpty())
         return;
 
+    QRect finalClipRect = rect;
+    if (!clip.isEmpty())
+        rect.intersect(clip.translated(rect.location()));
+
     GraphicsContext context(painter);
 
     context.save();
     context.translate(-rect.x(), -rect.y());
+    painter->setClipRect(finalClipRect, Qt::IntersectClip);
     view->setNodeToDraw(e);
-    view->paintContents(&context, rect);
+    view->paintContents(&context, finalClipRect);
     view->setNodeToDraw(0);
     context.restore();
 }

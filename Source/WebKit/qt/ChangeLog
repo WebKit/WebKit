@@ -1,3 +1,17 @@
+2011-02-28  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Add clipped version of QWebElement::render method.
+        Allows faster rendering of web element part.
+        https://bugs.webkit.org/show_bug.cgi?id=50311
+
+        * Api/qwebelement.cpp:
+        (QWebElement::render):
+        * Api/qwebelement.h:
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::render):
+
 2011-02-28  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Andreas Kling.

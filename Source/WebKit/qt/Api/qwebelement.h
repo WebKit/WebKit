@@ -156,6 +156,7 @@ public:
     void setStyleProperty(const QString& name, const QString& value);
 
     void render(QPainter* painter);
+    void render(QPainter* painter, const QRect& clipRect);
 
 private:
     explicit QWebElement(WebCore::Element*);
