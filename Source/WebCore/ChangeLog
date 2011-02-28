@@ -1,3 +1,10 @@
+2011-02-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Follow up to r79858, removing optimistic assertion that fails on debug bot.
+
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        (WebCore::InspectorBrowserDebuggerAgent::inspectedURLChanged):
+
 2011-02-25  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

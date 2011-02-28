@@ -126,7 +126,6 @@ void InspectorBrowserDebuggerAgent::setAllBrowserBreakpoints(ErrorString*, PassR
 
 void InspectorBrowserDebuggerAgent::inspectedURLChanged(const String& url)
 {
-    ASSERT(m_instrumentingAgents->inspectorBrowserDebuggerAgent());
     m_eventListenerBreakpoints.clear();
     m_XHRBreakpoints.clear();
     m_hasXHRBreakpointWithEmptyURL = false;
