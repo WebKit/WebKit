@@ -1,3 +1,21 @@
+2011-02-25  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Change results.json format to the one used by unexpected_results.json
+        https://bugs.webkit.org/show_bug.cgi?id=52267
+
+        Also add runtimes in milliseconds to the JSON and make the output format more compact.
+        Named the file full_results.json to avoid conflicting with the results.json
+        file the test-results server currently serves up.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        * Scripts/webkitpy/layout_tests/layout_package/result_summary.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+
 2011-02-27  Adam Roben  <aroben@apple.com>
 
         Followup fix to r79827

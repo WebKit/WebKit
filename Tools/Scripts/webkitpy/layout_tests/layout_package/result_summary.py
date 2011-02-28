@@ -81,7 +81,7 @@ class ResultSummary(object):
         if expected:
             self.expected += 1
         else:
-            self.unexpected_results[result.filename] = result.type
+            self.unexpected_results[result.filename] = result
             self.unexpected += 1
             if len(result.failures):
                 self.unexpected_failures += 1

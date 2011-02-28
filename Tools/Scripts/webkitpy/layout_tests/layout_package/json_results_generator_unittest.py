@@ -106,6 +106,10 @@ class JSONGeneratorTest(unittest.TestCase):
             incremental_json,
             1)
 
+        # We don't verify the results here, but at least we make sure the code runs without errors.
+        generator.generate_json_output()
+        generator.generate_full_results_file()
+
     def _verify_json_results(self, tests_set, test_timings, failed_count_map,
                              PASS_count, DISABLED_count, FLAKY_count,
                              fixable_count,

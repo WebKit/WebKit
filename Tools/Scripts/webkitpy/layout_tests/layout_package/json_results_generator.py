@@ -109,6 +109,7 @@ class JSONResultsGeneratorBase(object):
     ALL_FIXABLE_COUNT = "allFixableCount"
 
     RESULTS_FILENAME = "results.json"
+    FULL_RESULTS_FILENAME = "full_results.json"
     INCREMENTAL_RESULTS_FILENAME = "incremental_results.json"
 
     URL_FOR_TEST_LIST_JSON = \
@@ -151,10 +152,6 @@ class JSONResultsGeneratorBase(object):
         self._build_number = build_number
         self._builder_base_url = builder_base_url
         self._results_directory = results_file_base_path
-        self._results_file_path = self._fs.join(results_file_base_path,
-            self.RESULTS_FILENAME)
-        self._incremental_results_file_path = self._fs.join(
-            results_file_base_path, self.INCREMENTAL_RESULTS_FILENAME)
 
         self._test_results_map = test_results_map
         self._test_results = test_results_map.values()
@@ -172,8 +169,24 @@ class JSONResultsGeneratorBase(object):
     def generate_json_output(self):
         json = self.get_json()
         if json:
-            self._generate_json_file(
-                json, self._incremental_results_file_path)
+            self._generate_json_file(json, self.INCREMENTAL_RESULTS_FILENAME)
+
+    def generate_full_results_file(self):
+        # Use the same structure as the compacted version of TestRunner.summarize_results.
+        # For now we only include the times as this is only used for treemaps and
+        # expected/actual don't make sense for gtests.
+        results = {}
+        results['version'] = 1
+
+        tests = {}
+
+        for test in self._test_results_map:
+            time_seconds = self._test_results_map[test].time
+            tests[test] = {}
+            tests[test]['t'] = int(1000 * time_seconds)
+
+        results['tests'] = tests
+        self._generate_json_file(results, self.FULL_RESULTS_FILENAME)
 
     def get_json(self):
         """Gets the results for the results.json file."""
@@ -249,10 +262,11 @@ class JSONResultsGeneratorBase(object):
 
         _log.info("JSON files uploaded.")
 
-    def _generate_json_file(self, json, file_path):
+    def _generate_json_file(self, json, filename):
         # Specify separators in order to get compact encoding.
         json_data = simplejson.dumps(json, separators=(',', ':'))
         json_string = self.JSON_PREFIX + json_data + self.JSON_SUFFIX
+        file_path = self._fs.join(self._results_directory, filename)
         self._fs.write_text_file(file_path, json_string)
 
     def _get_test_timing(self, test_name):

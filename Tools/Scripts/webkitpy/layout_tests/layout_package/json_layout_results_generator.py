@@ -42,10 +42,10 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
     # Additional JSON fields.
     WONTFIX = "wontfixCounts"
 
-    # Note that we omit test_expectations.FAIL from this list because
-    # it should never show up (it's a legacy input expectation, never
-    # an output expectation).
-    FAILURE_TO_CHAR = {test_expectations.CRASH: "C",
+    FAILURE_TO_CHAR = {test_expectations.PASS: json_results_generator.JSONResultsGeneratorBase.PASS_RESULT,
+                       test_expectations.SKIP: json_results_generator.JSONResultsGeneratorBase.SKIP_RESULT,
+                       test_expectations.FAIL: "Y",
+                       test_expectations.CRASH: "C",
                        test_expectations.TIMEOUT: "T",
                        test_expectations.IMAGE: "I",
                        test_expectations.TEXT: "F",
