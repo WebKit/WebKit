@@ -1,3 +1,14 @@
+2011-02-28  Adam Roben  <aroben@apple.com>
+
+        Tell MiniBrowser's WKViews that they're in a window
+
+        Fixes <http://webkit.org/b/55364> Plugins don't work in MiniBrowser on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create): Call WKViewSetIsInWindow after creating the view.
+
 2011-02-28  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Csaba Osztrogonác.

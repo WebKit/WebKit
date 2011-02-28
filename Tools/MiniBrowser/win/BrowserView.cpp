@@ -123,6 +123,8 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
     };
 
     WKPageSetPageUIClient(WKViewGetPage(m_webView), &uiClient);
+
+    WKViewSetIsInWindow(m_webView, true);
 }
 
 void BrowserView::setFrame(RECT rect)
