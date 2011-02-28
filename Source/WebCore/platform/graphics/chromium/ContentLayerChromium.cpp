@@ -40,15 +40,6 @@
 #include "LayerTexture.h"
 #include "RenderLayerBacking.h"
 
-#if USE(SKIA)
-#include "NativeImageSkia.h"
-#include "PlatformContextSkia.h"
-#include "SkColorPriv.h"
-#include "skia/ext/platform_canvas.h"
-#elif PLATFORM(CG)
-#include <CoreGraphics/CGBitmapContext.h>
-#endif
-
 namespace WebCore {
 
 PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(GraphicsLayerChromium* owner)
@@ -136,7 +127,7 @@ void ContentLayerChromium::updateContentsIfDirty()
         }
 
         // If we need to resize the upload buffer we have to repaint everything.
-        if (m_uploadBufferSize != visibleRectInLayerCoords.size()) {
+        if (m_canvas.size() != visibleRectInLayerCoords.size()) {
             resizeUploadBuffer(visibleRectInLayerCoords.size());
             m_dirtyRect = boundsRect;
         }
@@ -161,7 +152,7 @@ void ContentLayerChromium::updateContentsIfDirty()
         dirtyRect = IntRect(m_dirtyRect);
         // If the texture needs to be reallocated then we must redraw the entire
         // contents of the layer.
-        if (m_uploadBufferSize != bounds()) {
+        if (m_canvas.size() != bounds()) {
             resizeUploadBuffer(bounds());
             dirtyRect = boundsRect;
         } else {
@@ -175,106 +166,29 @@ void ContentLayerChromium::updateContentsIfDirty()
     if (dirtyRect.isEmpty())
         return;
 
-#if USE(SKIA)
-    OwnPtr<PlatformContextSkia> skiaContext;
+    PlatformCanvas::Painter painter(&m_canvas);
+    painter.context()->save();
+    painter.context()->translate(-paintingOffset.x(), -paintingOffset.y());
+    painter.context()->clearRect(dirtyRect);
+    painter.context()->clip(dirtyRect);
 
-    skiaContext.set(new PlatformContextSkia(m_uploadPixelCanvas.get()));
-
-    // This is needed to get text to show up correctly.
-    skiaContext->setDrawingToImageBuffer(true);
-
-    GraphicsContext graphicsContext(reinterpret_cast<PlatformGraphicsContext*>(skiaContext.get()));
-
-#elif PLATFORM(CG)
-    // FIXME: Do we need to clear the dirty rectangle in the upload buffer?
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    size_t rowBytes = m_uploadBufferSize.width() * 4;
-    RetainPtr<CGContextRef> contextCG(AdoptCF, CGBitmapContextCreate(m_uploadPixelData->data(),
-                                                                     m_uploadBufferSize.width(), m_uploadBufferSize.height(), 8, rowBytes,
-                                                                     colorSpace.get(),
-                                                                     kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
-    CGContextTranslateCTM(contextCG.get(), 0, m_uploadBufferSize.height());
-    CGContextScaleCTM(contextCG.get(), 1, -1);
-
-    GraphicsContext graphicsContext(contextCG.get());
-#else
-#error "Need to implement for your platform."
-#endif
-
-    graphicsContext.save();
-    graphicsContext.translate(-paintingOffset.x(), -paintingOffset.y());
-    graphicsContext.clearRect(dirtyRect);
-    graphicsContext.clip(dirtyRect);
-
-    m_owner->paintGraphicsLayerContents(graphicsContext, dirtyRect);
-    graphicsContext.restore();
+    m_owner->paintGraphicsLayerContents(*painter.context(), dirtyRect);
+    painter.context()->restore();
 }
 
-void ContentLayerChromium::resizeUploadBufferForImage(const IntSize& size)
-{
-    size_t bufferSize = size.width() * size.height() * 4;
-    m_uploadPixelData = new Vector<uint8_t>(bufferSize);
-#if PLATFORM(CG)
-    memset(m_uploadPixelData->data(), 0, bufferSize);
-#endif
-    m_uploadBufferSize = size;
-}
 void ContentLayerChromium::resizeUploadBuffer(const IntSize& size)
 {
-#if USE(SKIA)
-    m_uploadPixelCanvas = new skia::PlatformCanvas(size.width(), size.height(), false);
-    m_uploadBufferSize = size;
-#else
-    resizeUploadBufferForImage(size);
-#endif
+    m_canvas.resize(size);
 }
-
-#if USE(SKIA)
-class SkBitmapConditionalAutoLockerPixels {
-    WTF_MAKE_NONCOPYABLE(SkBitmapConditionalAutoLockerPixels);
-public:
-    SkBitmapConditionalAutoLockerPixels()
-        : m_bitmap(0)
-    {
-    }
-
-    ~SkBitmapConditionalAutoLockerPixels()
-    {
-        if (m_bitmap)
-            m_bitmap->unlockPixels();
-    }
-
-    void lockPixels(const SkBitmap* bitmap)
-    {
-        bitmap->lockPixels();
-        m_bitmap = bitmap;
-    }
-
-private:
-    const SkBitmap* m_bitmap;
-};
-#endif
 
 void ContentLayerChromium::updateTextureIfNeeded()
 {
-    uint8_t* pixels = 0;
-#if USE(SKIA)
-    SkBitmapConditionalAutoLockerPixels locker;
-#endif
-    if (!m_uploadUpdateRect.isEmpty()) {
-#if USE(SKIA)
-        if (m_uploadPixelCanvas) {
-            const SkBitmap& bitmap = m_uploadPixelCanvas->getDevice()->accessBitmap(false);
-            locker.lockPixels(&bitmap);
-            // FIXME: do we need to support more image configurations?
-            if (bitmap.config() == SkBitmap::kARGB_8888_Config)
-                pixels = static_cast<uint8_t*>(bitmap.getPixels());
-        }
-#endif
-        if (m_uploadPixelData)
-            pixels = m_uploadPixelData->data();
-    }
+    PlatformCanvas::AutoLocker locker(&m_canvas);
+    updateTexture(locker.pixels(), m_canvas.size());
+}
 
+void ContentLayerChromium::updateTexture(const uint8_t* pixels, const IntSize& size)
+{
     if (!pixels)
         return;
 
@@ -283,28 +197,28 @@ void ContentLayerChromium::updateTextureIfNeeded()
         m_contentsTexture = LayerTexture::create(context, layerRenderer()->textureManager());
 
     // If we have to allocate a new texture we have to upload the full contents.
-    if (!m_contentsTexture->isValid(m_uploadBufferSize, GraphicsContext3D::RGBA))
-        m_uploadUpdateRect = IntRect(IntPoint(0, 0), m_uploadBufferSize);
+    if (!m_contentsTexture->isValid(size, GraphicsContext3D::RGBA))
+        m_uploadUpdateRect = IntRect(IntPoint(0, 0), size);
 
-    if (!m_contentsTexture->reserve(m_uploadBufferSize, GraphicsContext3D::RGBA)) {
+    if (!m_contentsTexture->reserve(size, GraphicsContext3D::RGBA)) {
         m_skipsDraw = true;
         return;
     }
 
-    IntRect srcRect = IntRect(IntPoint(0, 0), m_uploadBufferSize);
+    IntRect srcRect = IntRect(IntPoint(0, 0), size);
     if (requiresClippedUpdateRect())
         srcRect = m_visibleRectInLayerCoords;
 
-    const size_t destStride = m_uploadUpdateRect.width() * 4;
+    const size_t destStride = size.width() * 4;
     const size_t srcStride = srcRect.width() * 4;
 
-    uint8_t* uploadPixels = pixels + srcStride * m_uploadUpdateRect.x();
+    const uint8_t* uploadPixels = pixels + srcStride * m_uploadUpdateRect.x();
     Vector<uint8_t> uploadBuffer;
     if (srcStride != destStride) {
         uploadBuffer.resize(m_uploadUpdateRect.height() * destStride);
         for (int row = 0; row < m_uploadUpdateRect.height(); ++row) {
             size_t srcOffset = (m_uploadUpdateRect.y() + row) * srcStride + m_uploadUpdateRect.x() * 4;
-            ASSERT(srcOffset + destStride <= static_cast<size_t>(m_uploadBufferSize.width() * m_uploadBufferSize.height() * 4));
+            ASSERT(srcOffset + destStride <= static_cast<size_t>(size.width() * size.height() * 4));
             size_t destOffset = row * destStride;
             ASSERT(destOffset  + destStride <= uploadBuffer.size());
             memcpy(uploadBuffer.data() + destOffset, pixels + srcOffset, destStride);
@@ -326,8 +240,6 @@ void ContentLayerChromium::updateTextureIfNeeded()
 
 void ContentLayerChromium::draw()
 {
-    updateTextureIfNeeded();
-
     if (m_skipsDraw)
         return;
 
