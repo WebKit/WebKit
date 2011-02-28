@@ -1,3 +1,10 @@
+2011-02-28  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        Add symbol to export.
+
 2011-02-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

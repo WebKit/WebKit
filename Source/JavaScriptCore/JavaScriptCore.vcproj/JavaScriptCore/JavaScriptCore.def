@@ -230,6 +230,7 @@ EXPORTS
     ?markChildren@JSGlobalObject@JSC@@UAEXAAVMarkStack@2@@Z
     ?markChildren@JSObject@JSC@@UAEXAAVMarkStack@2@@Z
     ?markChildren@JSWrapperObject@JSC@@EAEXAAVMarkStack@2@@Z
+    ?markChildren@ScopeChainNode@JSC@@UAEXAAVMarkStack@2@@Z
     ?materializePropertyMap@Structure@JSC@@AAEXXZ
     ?monthFromDayInYear@WTF@@YAHH_N@Z
     ?msToYear@WTF@@YAHN@Z
