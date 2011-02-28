@@ -1,3 +1,10 @@
+2011-02-28  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix for !ENABLE(SVG_ANIMATION) after r79569.
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::removeAllAnimationElementsFromTarget):
+
 2011-02-28  Renata Hodovan  <reni@webkit.org>
 
         Reviewed by Andreas Kling.

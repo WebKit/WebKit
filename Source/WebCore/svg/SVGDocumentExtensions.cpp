@@ -176,11 +176,15 @@ void SVGDocumentExtensions::removeAllAnimationElementsFromTarget(SVGElement* tar
     HashSet<SVGSMILElement*>* animationElementsForTarget = m_animatedElements.take(targetElement);
     if (!animationElementsForTarget)
         return;
+#if ENABLE(SVG_ANIMATION)
     HashSet<SVGSMILElement*>::iterator it = animationElementsForTarget->begin();
     HashSet<SVGSMILElement*>::iterator end = animationElementsForTarget->end();
     for (; it != end; ++it)
         (*it)->resetTargetElement();
     delete animationElementsForTarget;
+#else
+    ASSERT_NOT_REACHED();
+#endif
 }
 
 // FIXME: Callers should probably use ScriptController::eventHandlerLineNumber()
