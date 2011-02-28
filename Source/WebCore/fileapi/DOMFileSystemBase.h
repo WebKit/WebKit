@@ -47,6 +47,7 @@ class EntriesCallback;
 class EntryBase;
 class EntryCallback;
 class ErrorCallback;
+class KURL;
 class MetadataCallback;
 class ScriptExecutionContext;
 class SecurityOrigin;
@@ -60,6 +61,12 @@ public:
         return adoptRef(new DOMFileSystemBase(context, name, asyncFileSystem));
     }
     virtual ~DOMFileSystemBase();
+
+    static const char kPersistentPathPrefix[];
+    static const size_t kPersistentPathPrefixLength;
+    static const char kTemporaryPathPrefix[];
+    static const size_t kTemporaryPathPrefixLength;
+    static bool crackFileSystemURL(const KURL&, AsyncFileSystem::Type&, String& filePath);
 
     const String& name() const { return m_name; }
     AsyncFileSystem* asyncFileSystem() const { return m_asyncFileSystem.get(); }

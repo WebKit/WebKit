@@ -192,6 +192,65 @@ void FileSystemCallbacks::didOpenFileSystem(const String& name, PassOwnPtr<Async
     m_successCallback.clear();
 }
 
+// ResolveURICallbacks --------------------------------------------------------
+
+namespace {
+
+class ErrorCallbackWrapper : public ErrorCallback {
+public:
+    static PassRefPtr<ErrorCallbackWrapper> create(PassRefPtr<DOMFileSystem> fileSystem, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback, const String& filePath)
+    {
+        return adoptRef(new ErrorCallbackWrapper(fileSystem, successCallback, errorCallback, filePath));
+    }
+
+    virtual bool handleEvent(FileError* error)
+    {
+        ASSERT(error);
+        // FIXME: Only check for TYPE_MISMATCH_ERR once Chromium is fixed to return that as required by the spec.
+        if (error->code() == FileError::TYPE_MISMATCH_ERR || error->code() == FileError::INVALID_STATE_ERR)
+            m_fileSystem->getFile(m_fileSystem->root().get(), m_filePath, 0, m_successCallback, m_errorCallback);
+        else if (m_errorCallback)
+            m_errorCallback->handleEvent(error);
+        return true;
+    }
+
+private:
+    ErrorCallbackWrapper(PassRefPtr<DOMFileSystem> fileSystem, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback, const String& filePath)
+        : m_fileSystem(fileSystem)
+        , m_successCallback(successCallback)
+        , m_errorCallback(errorCallback)
+        , m_filePath(filePath)
+    {
+    }
+
+    RefPtr<DOMFileSystem> m_fileSystem;
+    RefPtr<EntryCallback> m_successCallback;
+    RefPtr<ErrorCallback> m_errorCallback;
+    String m_filePath;
+};
+
+} // namespace
+
+PassOwnPtr<ResolveURICallbacks> ResolveURICallbacks::create(PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback, ScriptExecutionContext* scriptExecutionContext, const String& filePath)
+{
+    return adoptPtr(new ResolveURICallbacks(successCallback, errorCallback, scriptExecutionContext, filePath));
+}
+
+ResolveURICallbacks::ResolveURICallbacks(PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback, ScriptExecutionContext* context, const String& filePath)
+    : FileSystemCallbacksBase(errorCallback)
+    , m_successCallback(successCallback)
+    , m_scriptExecutionContext(context)
+    , m_filePath(filePath)
+{
+}
+
+void ResolveURICallbacks::didOpenFileSystem(const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+{
+    ASSERT(asyncFileSystem);
+    RefPtr<DOMFileSystem> fileSystem = DOMFileSystem::create(m_scriptExecutionContext.get(), name, asyncFileSystem.leakPtr());
+    fileSystem->getDirectory(fileSystem->root().get(), m_filePath, 0, m_successCallback, ErrorCallbackWrapper::create(fileSystem, m_successCallback, m_errorCallback, m_filePath));
+}
+
 // MetadataCallbacks ----------------------------------------------------------
 
 PassOwnPtr<MetadataCallbacks> MetadataCallbacks::create(PassRefPtr<MetadataCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)

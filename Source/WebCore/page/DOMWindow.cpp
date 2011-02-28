@@ -99,6 +99,8 @@
 #if ENABLE(FILE_SYSTEM)
 #include "AsyncFileSystem.h"
 #include "DOMFileSystem.h"
+#include "DOMFileSystemBase.h"
+#include "EntryCallback.h"
 #include "ErrorCallback.h"
 #include "FileError.h"
 #include "FileSystemCallback.h"
@@ -751,6 +753,29 @@ void DOMWindow::requestFileSystem(int type, long long size, PassRefPtr<FileSyste
     }
 
     LocalFileSystem::localFileSystem().requestFileSystem(document, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, document), false);
+}
+
+void DOMWindow::resolveLocalFileSystemURI(const String& uri, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+{
+    Document* document = this->document();
+    if (!document)
+        return;
+
+    SecurityOrigin* securityOrigin = document->securityOrigin();
+    KURL completedURL = document->completeURL(uri);
+    if (!AsyncFileSystem::isAvailable() || !securityOrigin->canAccessFileSystem() || !securityOrigin->canRequest(completedURL)) {
+        DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::SECURITY_ERR));
+        return;
+    }
+
+    AsyncFileSystem::Type type;
+    String filePath;
+    if (!completedURL.isValid() || !DOMFileSystemBase::crackFileSystemURL(completedURL, type, filePath)) {
+        DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::SYNTAX_ERR));
+        return;
+    }
+
+    LocalFileSystem::localFileSystem().readFileSystem(document, type, ResolveURICallbacks::create(successCallback, errorCallback, document, filePath));
 }
 
 COMPILE_ASSERT(static_cast<int>(DOMWindow::TEMPORARY) == static_cast<int>(AsyncFileSystem::Temporary), enum_mismatch);

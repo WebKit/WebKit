@@ -1,3 +1,16 @@
+2011-02-28  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [fileapi] Implement LocalFileSystem.resolveLocalFileSystemURI
+        https://bugs.webkit.org/show_bug.cgi?id=54774
+
+        Tests for resolveLocalFileSystemURI.
+
+        * fast/filesystem/resolve-uri-expected.txt: Added.
+        * fast/filesystem/resolve-uri.html: Added.
+        * fast/filesystem/script-tests/resolve-uri.js: Added.
+
 2011-02-28  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium rebaseline.

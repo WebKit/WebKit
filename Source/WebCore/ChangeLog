@@ -1,3 +1,36 @@
+2011-02-28  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [fileapi] Implement LocalFileSystem.resolveLocalFileSystemURI
+        https://bugs.webkit.org/show_bug.cgi?id=54774
+
+        See http://dev.w3.org/2009/dap/file-system/file-dir-sys.html#methods
+        for the spec implemented by this patch.
+
+        Test: fast/filesystem/resolve-uri.html
+
+        * fileapi/DOMFileSystemBase.cpp:
+        (WebCore::DOMFileSystemBase::crackFileSystemURL):
+        * fileapi/DOMFileSystemBase.h:
+        Added constants for "temporary" and "persistent".
+        * fileapi/EntryBase.cpp:
+        Replace hardcoded strings with aforementioned constants.
+        * fileapi/FileSystemCallbacks.cpp:
+        (WebCore::ResolveURICallbacks::create):
+        (WebCore::ResolveURICallbacks::ResolveURICallbacks):
+        (WebCore::ResolveURICallbacks::didOpenFileSystem):
+        Chains a call of openFileSystem to calls to getDirectory/getFile.
+        * fileapi/FileSystemCallbacks.h:
+        * fileapi/LocalFileSystem.cpp:
+        (WebCore::LocalFileSystem::readFileSystem):
+        * fileapi/LocalFileSystem.h:
+        Remove size argument from readFileSystem()
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::resolveLocalFileSystemURI):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2011-02-28  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Oliver Hunt.

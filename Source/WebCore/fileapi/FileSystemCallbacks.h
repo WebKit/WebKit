@@ -43,10 +43,10 @@ namespace WebCore {
 class AsyncFileWriter;
 class DOMFileSystemBase;
 class DirectoryReaderBase;
-class ErrorCallback;
 class EntriesCallback;
 class EntryArray;
 class EntryCallback;
+class ErrorCallback;
 struct FileMetadata;
 class FileSystemCallback;
 class FileWriterBase;
@@ -121,6 +121,18 @@ private:
     FileSystemCallbacks(PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*);
     RefPtr<FileSystemCallback> m_successCallback;
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
+};
+
+class ResolveURICallbacks : public FileSystemCallbacksBase {
+public:
+    static PassOwnPtr<ResolveURICallbacks> create(PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*, const String& filePath);
+    virtual void didOpenFileSystem(const String& name, PassOwnPtr<AsyncFileSystem>);
+
+private:
+    ResolveURICallbacks(PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*, const String& filePath);
+    RefPtr<EntryCallback> m_successCallback;
+    RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
+    String m_filePath;
 };
 
 class MetadataCallbacks : public FileSystemCallbacksBase {

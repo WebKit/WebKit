@@ -60,7 +60,7 @@ String EntryBase::toURI()
     result.append("filesystem:");
     result.append(m_fileSystem->securityOrigin()->toString());
     result.append("/");
-    result.append(m_fileSystem->asyncFileSystem()->type() == AsyncFileSystem::Temporary ? "temporary" : "persistent");
+    result.append(m_fileSystem->asyncFileSystem()->type() == AsyncFileSystem::Temporary ? DOMFileSystemBase::kTemporaryPathPrefix : DOMFileSystemBase::kPersistentPathPrefix);
     result.append(m_fullPath);
     return result.toString();
 }
