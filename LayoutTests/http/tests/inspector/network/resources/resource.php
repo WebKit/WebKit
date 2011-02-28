@@ -60,14 +60,14 @@ __foo(<?php echo($jsdelay)?>);
                 echo("/");
         }
     } else if ($type == "image") {
-        # Generate image.
-        $im = ImageCreate(10, 10);
-        $black = ImageColorAllocate($im, 0, 0, 0);
-        $red = ImageColorAllocate($im, 255, 0, 0);
-        ImageFilledRectangle($im, 2, 2, 7, 7, $red);
-        ImagePng($im);
+        $base64data = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAYCAYAAACbU/80AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9kICQsw" . 
+            "ARCJCogAAABFSURBVEjH7ZLBCQAwCAONdP+V0xVqq0gx9w+Gi2ZCTAcXGWbe8G4Dq9DekS" .
+            "kPaGeFgfYJVODlCTnWADILoEg3vplACLEBN9UGG9+mxboAAAAASUVORK5CYII=";
+        $data = base64_decode($base64data);
+        $data_len = strlen($data);
+        print($data);
         if ($size) {
-            for ($i = 0; $size && $i < $size - 90; ++$i)
+            for ($i = 0; $size && $i < $size - $data_len; ++$i)
                 echo("=");
         }
     } else {

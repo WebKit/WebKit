@@ -3378,6 +3378,7 @@ inspector/elements/elements-delete-inline-style.html
 inspector/elements/mutate-unknown-node.html
 inspector/extensions/extensions.html
 inspector/styles/styles-update-from-js.html
+http/tests/inspector/network/network-size.html
 
 # Directory upload is not enabled.
 fast/forms/input-file-directory-upload.html

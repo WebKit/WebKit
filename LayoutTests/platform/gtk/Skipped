@@ -1181,6 +1181,9 @@ sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 # https://bugs.webkit.org/show_bug.cgi?id=43332
 inspector/debugger/dom-breakpoints.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=55363
+http/tests/inspector/network/network-size.html
+
 # [GTK] r65681 broke a couple GTK+ a11y tests
 # https://bugs.webkit.org/show_bug.cgi?id=44316
 platform/gtk/accessibility/object-attributes.html

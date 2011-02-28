@@ -18,9 +18,8 @@ function loadScripts()
 var loadedResourceCount = 0;
 function resourceLoaded()
 {
-    if (++loadedResourceCount === 2) {
-        setTimeout(function() { console.log("Done."); }, 1000);
-    }
+    if (++loadedResourceCount === 2)
+        console.log("Done.");
 }
 
 function test()

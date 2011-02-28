@@ -1,5 +1,16 @@
 2011-02-28  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: updated inspector test harness and chromium expectations.
+
+        * http/tests/inspector/network/network-size-expected.txt:
+        * http/tests/inspector/network/network-timing.html:
+        * http/tests/inspector/network/resources/resource.php:
+        * platform/chromium/http/tests/inspector/network/network-size-expected.txt: Copied from LayoutTests/http/tests/inspector/network/network-size-expected.txt.
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
+2011-02-28  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: add first network test, improve harness.
