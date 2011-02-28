@@ -1,3 +1,11 @@
+2011-02-28  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Unreviewed, fix spelling mistake.
+
+        hardware-accelated => hardware-accelerated.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-02-28  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Andreas Kling.

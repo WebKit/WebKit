@@ -234,7 +234,7 @@ def parse_args(args=None):
             help="Don't check the system dependencies (themes)"),
         optparse.make_option("--accelerated-compositing",
             action="store_true",
-            help="Use hardware-accelated compositing for rendering"),
+            help="Use hardware-accelerated compositing for rendering"),
         optparse.make_option("--no-accelerated-compositing",
             action="store_false",
             dest="accelerated_compositing",
