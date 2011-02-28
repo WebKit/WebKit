@@ -1,3 +1,14 @@
+2011-02-28  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Remove "PASS TEXT" expectation for fast/filesystem/op-get-entry.html
+        https://bugs.webkit.org/show_bug.cgi?id=55262
+
+        Test now passes as Chromium has rolled past r76098.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-28  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.

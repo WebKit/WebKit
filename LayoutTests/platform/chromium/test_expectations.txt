@@ -3385,8 +3385,6 @@ BUGWK46500 : fast/table/fixed-with-auto-with-colspan-vertical.html = IMAGE+TEXT
 
 BUGWK54910 : media/video-replaces-poster.html = PASS IMAGE
 
-BUGWK55262 : fast/filesystem/op-get-entry.html = PASS TEXT
-
 BUG_ANTONM : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
 
 BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT
