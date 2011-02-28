@@ -124,8 +124,6 @@ RenderBlock::~RenderBlock()
 {
     if (m_floatingObjects)
         deleteAllValues(*m_floatingObjects);
-    delete m_floatingObjects;
-    delete m_positionedObjects;
     
     if (hasColumns())
         delete gColumnInfoMap->take(this);
@@ -2752,10 +2750,10 @@ GapRects RenderBlock::selectionGaps(RenderBlock* rootBlock, const IntPoint& root
         IntRect flippedBlockRect = IntRect(offsetFromRootBlock.width(), offsetFromRootBlock.height(), width(), height());
         rootBlock->flipForWritingMode(flippedBlockRect);
         flippedBlockRect.move(rootBlockPhysicalPosition.x(), rootBlockPhysicalPosition.y());
-        clipOutPositionedObjects(paintInfo, flippedBlockRect.location(), m_positionedObjects);
+        clipOutPositionedObjects(paintInfo, flippedBlockRect.location(), m_positionedObjects.get());
         if (isBody() || isRoot()) // The <body> must make sure to examine its containingBlock's positioned objects.
             for (RenderBlock* cb = containingBlock(); cb && !cb->isRenderView(); cb = cb->containingBlock())
-                clipOutPositionedObjects(paintInfo, IntPoint(cb->x(), cb->y()), cb->m_positionedObjects); // FIXME: Not right for flipped writing modes.
+                clipOutPositionedObjects(paintInfo, IntPoint(cb->x(), cb->y()), cb->m_positionedObjects.get()); // FIXME: Not right for flipped writing modes.
         if (m_floatingObjects) {
             FloatingObjectSetIterator end = m_floatingObjects->end();
             for (FloatingObjectSetIterator it = m_floatingObjects->begin(); it != end; ++it) {
@@ -3017,7 +3015,7 @@ void RenderBlock::insertPositionedObject(RenderBox* o)
 {
     // Create the list of special objects if we don't aleady have one
     if (!m_positionedObjects)
-        m_positionedObjects = new PositionedObjectsListHashSet;
+        m_positionedObjects = adoptPtr(new PositionedObjectsListHashSet);
 
     m_positionedObjects->add(o);
 }
@@ -3067,7 +3065,7 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
 
     // Create the list of special objects if we don't aleady have one
     if (!m_floatingObjects)
-        m_floatingObjects = new FloatingObjectSet;
+        m_floatingObjects = adoptPtr(new FloatingObjectSet);
     else {
         // Don't insert the object again if it's already in the list
         FloatingObjectSetIterator it = m_floatingObjects->find<RenderBox*, FloatingObjectHashTranslator>(o);
@@ -3648,7 +3646,7 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int logicalLeftOffset,
 
                 // We create the floating object list lazily.
                 if (!m_floatingObjects)
-                    m_floatingObjects = new FloatingObjectSet;
+                    m_floatingObjects = adoptPtr(new FloatingObjectSet);
 
                 m_floatingObjects->add(floatingObj);
             }
@@ -3707,7 +3705,7 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, int logicalLeftOffset, i
                 
                 // We create the floating object list lazily.
                 if (!m_floatingObjects)
-                    m_floatingObjects = new FloatingObjectSet;
+                    m_floatingObjects = adoptPtr(new FloatingObjectSet);
                 m_floatingObjects->add(floatingObj);
             }
         }

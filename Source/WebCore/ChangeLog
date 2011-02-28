@@ -1,5 +1,25 @@
 2011-02-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
+        Reviewed by Sam Weinig.
+
+        Use OwnPtr to handle the memory of RenderBlock::m_floatingObjects and RenderBlock::m_positionedObjects
+        https://bugs.webkit.org/show_bug.cgi?id=55327
+
+        Refactor RenderBlock to use OwnPtr for m_floatingObjects and m_positionedObjects so we do not have
+        to release the memory manually.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::~RenderBlock):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::insertPositionedObject):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::positionedObjects):
+
+2011-02-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
         Reviewed by Andreas Kling.
 
         Eliminate DeprecatedPtrList

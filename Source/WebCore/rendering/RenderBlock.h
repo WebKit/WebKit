@@ -27,6 +27,7 @@
 #include "RenderBox.h"
 #include "RenderLineBoxList.h"
 #include "RootInlineBox.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/ListHashSet.h>
 
 namespace WebCore {
@@ -80,7 +81,7 @@ public:
     void removePositionedObjects(RenderBlock*);
 
     typedef ListHashSet<RenderBox*, 4> PositionedObjectsListHashSet;
-    PositionedObjectsListHashSet* positionedObjects() const { return m_positionedObjects; }
+    PositionedObjectsListHashSet* positionedObjects() const { return m_positionedObjects.get(); }
 
     void addPercentHeightDescendant(RenderBox*);
     static void removePercentHeightDescendant(RenderBox*);
@@ -712,10 +713,10 @@ private:
     };
     typedef ListHashSet<FloatingObject*, 4, FloatingObjectHashFunctions> FloatingObjectSet;
     typedef FloatingObjectSet::const_iterator FloatingObjectSetIterator;
-    FloatingObjectSet* m_floatingObjects;
+    OwnPtr<FloatingObjectSet> m_floatingObjects;
     
     typedef PositionedObjectsListHashSet::const_iterator Iterator;
-    PositionedObjectsListHashSet* m_positionedObjects;
+    OwnPtr<PositionedObjectsListHashSet> m_positionedObjects;
 
     // Allocated only when some of these fields have non-default values
     struct RenderBlockRareData {
