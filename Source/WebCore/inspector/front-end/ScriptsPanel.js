@@ -284,8 +284,11 @@ WebInspector.ScriptsPanel.prototype = {
         if (resource) {
             if (resource.finished) {
                 // Resource is finished, bind the script right away.
-                resource._scriptsPendingResourceLoad = [script];
-                this._resourceLoadingFinished({ target: resource });
+                script.resource = resource;
+
+                // Add resource url to files select if not already added while debugging inlined scripts.
+                if (!(resource.url in this._sourceNameToFilesSelectOption))
+                    this._addOptionToFilesSelectAndShowSourceFrameIfNeeded(resource.url);
             } else {
                 // Resource is not finished, bind the script later.
                 if (!resource._scriptsPendingResourceLoad) {
@@ -583,9 +586,11 @@ WebInspector.ScriptsPanel.prototype = {
     _sourceFrameForSourceName: function(sourceName)
     {
         var sourceFrame = this._sourceNameToSourceFrame[sourceName];
-        if (sourceFrame)
-            return sourceFrame;
+        return sourceFrame || this._createSourceFrame(sourceName);
+    },
 
+    _createSourceFrame: function(sourceName)
+    {
         var script = this._scriptForSourceName(sourceName);
         var contentProvider;
         var isScript;
@@ -614,7 +619,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (this.visibleView !== oldSourceFrame)
             return;
 
-        var newSourceFrame = this._sourceFrameForSourceName(sourceName)
+        var newSourceFrame = this._createSourceFrame(sourceName)
         newSourceFrame.scrollTop = oldSourceFrame.scrollTop;
         this.visibleView = newSourceFrame;
     },

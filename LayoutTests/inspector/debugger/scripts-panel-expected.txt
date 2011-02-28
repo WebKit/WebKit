@@ -5,5 +5,8 @@ Debugger was enabled.
 Running: testInitialLoad
 
 Running: testHistory
+
+Running: testSourceFramesCount
+Page reloaded.
 Debugger was disabled.
 

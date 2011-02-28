@@ -1,3 +1,16 @@
+2011-02-28  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [REGRESSION] source frame is recreated for each inlined script in document.
+        https://bugs.webkit.org/show_bug.cgi?id=55377
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._resourceLoadingFinished):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameForSourceName):
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._recreateSourceFrame):
+
 2011-02-28  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix for !ENABLE(SVG_ANIMATION) after r79569.

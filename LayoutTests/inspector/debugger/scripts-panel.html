@@ -97,10 +97,56 @@ function test()
             checkCurrentlySelectedFileName("debugger-test.js");
 
             next();
+        },
+
+        function testSourceFramesCount(next)
+        {
+            var sourceFrameCount = 0;
+
+            InspectorTest.showScriptSource("scripts-panel.html", didShowScriptSource);
+
+            function didShowScriptSource()
+            {
+                function didCreateSourceFrame()
+                {
+                    sourceFrameCount += 1;
+                }
+                InspectorTest.addSniffer(panel, "_createSourceFrame", didCreateSourceFrame, true);
+                InspectorTest.reloadPage(didReload);
+            }
+
+            function didReload()
+            {
+                InspectorTest.assertEquals("scripts-panel.html", select[select.selectedIndex].text);
+                // There should be maximum 2 source frames: first one is the first shown, second one is the last viewed ("scripts-panel.html").
+                InspectorTest.assertEquals(true, sourceFrameCount <= 2, "too many source frames created after page reload");
+                next();
+            }
         }
     ]);
 };
 
+</script>
+
+<script>
+function secondInlinedScriptInPage()
+{
+    return 0;
+}
+</script>
+
+<script>
+function thirdInlinedScriptInPage()
+{
+    return 0;
+}
+</script>
+
+<script>
+function fourthInlinedScriptInPage()
+{
+    return 0;
+}
 </script>
 
 </head>

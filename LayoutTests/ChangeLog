@@ -1,3 +1,13 @@
+2011-02-28  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [REGRESSION] source frame is recreated for each inlined script in document.
+        https://bugs.webkit.org/show_bug.cgi?id=55377
+
+        * inspector/debugger/scripts-panel-expected.txt:
+        * inspector/debugger/scripts-panel.html:
+
 2011-02-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
