@@ -1,3 +1,18 @@
+2011-02-28  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        [Qt][WK2] Plugin initialization
+        https://bugs.webkit.org/show_bug.cgi?id=48127
+
+        Specialize the way of initializing the plugin for X11.
+        Introduce PLUGIN_ARCHITECTURE macros to allow code sharing
+        across platforms.
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad):
+        * config.h:
+
 2011-02-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.

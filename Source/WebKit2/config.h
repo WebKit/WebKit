@@ -136,3 +136,12 @@ static const type& name() \
 
 #endif /* defined(WIN32) || defined(_WIN32) */
 
+#if PLATFORM(MAC) || (OS(MAC_OS_X) && PLATFORM(QT))
+#define PLUGIN_ARCHITECTURE_MAC 1
+#elif PLATFORM(WIN) || (OS(WIN) && PLATFORM(QT))
+#define PLUGIN_ARCHITECTURE_WIN 1
+#elif (PLATFORM(QT) && defined(Q_WS_X11)) || (PLATFORM(GTK) && OS(UNIX) && !OS(MAC_OS_X))
+#define PLUGIN_ARCHITECTURE_X11 1
+#endif
+
+#define PLUGIN_ARCHITECTURE(ARCH) (defined(PLUGIN_ARCHITECTURE_##ARCH) && PLUGIN_ARCHITECTURE_##ARCH)

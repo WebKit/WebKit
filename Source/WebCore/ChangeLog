@@ -1,3 +1,15 @@
+2011-02-28  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        [Qt][WK2] Plugin initialization
+        https://bugs.webkit.org/show_bug.cgi?id=48127
+
+        No function change so no new tests.
+
+        * WebCore.pri: Lift the definition of the XP_UNIX macro
+        from WebCore.pri to WebKit.pri to apply it to WebKit2 as well.
+
 2011-02-28  Dean Jackson  <dino@apple.com>
 
         Reviewed by Eric Carlson.

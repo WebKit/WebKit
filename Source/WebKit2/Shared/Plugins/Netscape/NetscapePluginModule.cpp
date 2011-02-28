@@ -218,9 +218,11 @@ bool NetscapePluginModule::tryLoad()
     if (!initializeFuncPtr)
         return false;
 
+#if !PLUGIN_ARCHITECTURE(X11)
     NP_GetEntryPointsFuncPtr getEntryPointsFuncPtr = m_module->functionPointer<NP_GetEntryPointsFuncPtr>("NP_GetEntryPoints");
     if (!getEntryPointsFuncPtr)
         return false;
+#endif
 
     m_shutdownProcPtr = m_module->functionPointer<NPP_ShutdownProcPtr>("NP_Shutdown");
     if (!m_shutdownProcPtr)
@@ -232,11 +234,14 @@ bool NetscapePluginModule::tryLoad()
     // On Mac, NP_Initialize must be called first, then NP_GetEntryPoints. On Windows, the order is
     // reversed. Failing to follow this order results in crashes (e.g., in Silverlight on Mac and
     // in Flash and QuickTime on Windows).
-#if PLATFORM(MAC)
+#if PLUGIN_ARCHITECTURE(MAC)
     if (initializeFuncPtr(netscapeBrowserFuncs()) != NPERR_NO_ERROR || getEntryPointsFuncPtr(&m_pluginFuncs) != NPERR_NO_ERROR)
         return false;
-#elif PLATFORM(WIN)
+#elif PLUGIN_ARCHITECTURE(WIN)
     if (getEntryPointsFuncPtr(&m_pluginFuncs) != NPERR_NO_ERROR || initializeFuncPtr(netscapeBrowserFuncs()) != NPERR_NO_ERROR)
+        return false;
+#elif PLUGIN_ARCHITECTURE(X11)
+    if (initializeFuncPtr(netscapeBrowserFuncs(), &m_pluginFuncs) != NPERR_NO_ERROR)
         return false;
 #endif
 
