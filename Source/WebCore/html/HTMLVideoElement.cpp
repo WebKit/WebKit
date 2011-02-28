@@ -232,7 +232,7 @@ void HTMLVideoElement::webkitEnterFullscreen(bool isUserGesture, ExceptionCode& 
 
     // Generate an exception if this isn't called in response to a user gesture, or if the 
     // element does not support fullscreen.
-    if (!isUserGesture || !supportsFullscreen()) {
+    if ((requireUserGestureForFullScreen() && !isUserGesture) || !supportsFullscreen()) {
         ec = INVALID_STATE_ERR;
         return;
     }

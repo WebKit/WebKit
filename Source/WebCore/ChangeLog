@@ -1,3 +1,31 @@
+2011-02-28  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55239
+
+        Allow webkitEnterFullScreen to be called from outside
+        a user gesture, but only when the correct restrictions
+        have been lifted in WebCore. Add a new restriction type
+        for this situation. Meanwhile, expose the current
+        restrictions externally from HTMLMediaElement, so that
+        clients can easily set restrictions on their port.
+
+        No new tests. This doesn't change existing behavior. Some
+        WebKit clients may lift the restriction.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        - ensure restrictions initialize with fullscreen restricted
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::requireUserGestureForLoad):
+        (WebCore::HTMLMediaElement::requireUserGestureForRateChange):
+        (WebCore::HTMLMediaElement::requireUserGestureForFullScreen):
+        (WebCore::HTMLMediaElement::setBehaviorRestrictions):
+        - new methods to expose the current restrictions
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitEnterFullscreen):
+
 2011-02-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r78789.

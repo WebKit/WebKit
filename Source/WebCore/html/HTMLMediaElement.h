@@ -180,7 +180,21 @@ public:
     void getSitesInMediaCache(Vector<String>&);
     void clearMediaCache();
     void clearMediaCacheForSite(const String&);
-    
+
+    // Restrictions to change default behaviors.
+    enum BehaviorRestrictions {
+        NoRestrictions = 0,
+        RequireUserGestureForLoadRestriction = 1 << 0,
+        RequireUserGestureForRateChangeRestriction = 1 << 1,
+        RequireUserGestureForFullScreenRestriction = 1 << 2
+    };
+
+    bool requireUserGestureForLoad() const { return m_restrictions & RequireUserGestureForLoadRestriction; }
+    bool requireUserGestureForRateChange() const { return m_restrictions & RequireUserGestureForRateChangeRestriction; }
+    bool requireUserGestureForFullScreen() const { return m_restrictions & RequireUserGestureForFullScreenRestriction; }
+
+    void setBehaviorRestrictions(BehaviorRestrictions restrictions) { m_restrictions = restrictions; }
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document*);
     virtual ~HTMLMediaElement();
@@ -302,14 +316,6 @@ private:
 
     void invalidateCachedTime();
     void refreshCachedTime() const;
-
-    // Restrictions to change default behaviors. This is effectively a compile time choice at the moment
-    // because there are no accessor functions.
-    enum BehaviorRestrictions {
-        NoRestrictions = 0,
-        RequireUserGestureForLoadRestriction = 1 << 0,
-        RequireUserGestureForRateChangeRestriction = 1 << 1,
-    };
 
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_asyncEventTimer;
