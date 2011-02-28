@@ -1,3 +1,23 @@
+2011-02-28  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium rebaseline.
+
+        Fix 3 tests for Snow Leopard by removing out of date chromium-mac
+        baselines (there are already chromium-mac-leopard results).
+
+        Revert rebaseline done by r79881 since the behavior was reverted by
+        r79900.
+
+        * platform/chromium-mac/fast/blockflow/japanese-ruby-vertical-lr-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/japanese-ruby-vertical-lr-expected.png: Removed.
+        * platform/chromium-mac/fast/blockflow/japanese-ruby-vertical-rl-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/japanese-ruby-vertical-rl-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/placeholder-position-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/placeholder-position-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/forms/listbox-hit-test-zoomed-expected.checksum:
+        * platform/mac/fast/forms/listbox-hit-test-zoomed-expected.png:
+
 2011-02-28  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Tony Chang
