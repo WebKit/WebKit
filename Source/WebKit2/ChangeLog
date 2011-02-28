@@ -1,3 +1,10 @@
+2011-02-28  Dan Bernstein  <mitz@apple.com>
+
+        LLVM Compiler build fix.
+
+        * Scripts/webkit2/messages.py:
+        * UIProcess/WebPageProxy.h:
+
 2011-02-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein, Sam Weinig, Alexey Proskuryakov and Darin Adler.

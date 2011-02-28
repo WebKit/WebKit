@@ -258,6 +258,7 @@ def struct_or_class(namespace, type):
         'WebCore::ViewportArguments',
         'WebCore::WindowFeatures',
         'WebKit::ContextMenuState',
+        'WebKit::DictionaryPopupInfo',
         'WebKit::DrawingAreaInfo',
         'WebKit::PlatformPopupMenuData',
         'WebKit::PluginProcessCreationParameters',

@@ -83,7 +83,6 @@ namespace WebCore {
 
 namespace WebKit {
 
-class DictionaryPopupInfo;
 class DrawingAreaProxy;
 class NativeWebKeyboardEvent;
 class PageClient;
@@ -103,6 +102,7 @@ class WebProcessProxy;
 class WebURLRequest;
 class WebWheelEvent;
 struct ContextMenuState;
+struct DictionaryPopupInfo;
 struct PlatformPopupMenuData;
 struct PrintInfo;
 struct WebPageCreationParameters;
