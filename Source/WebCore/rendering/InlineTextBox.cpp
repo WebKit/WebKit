@@ -1058,6 +1058,7 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& 
             case DocumentMarker::Grammar:
             case DocumentMarker::Spelling:
             case DocumentMarker::CorrectionIndicator:
+            case DocumentMarker::Replacement:
                 if (background)
                     continue;
                 break;
@@ -1090,8 +1091,10 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& 
                 paintTextMatchMarker(pt, boxOrigin, marker, style, font);
                 break;
             case DocumentMarker::CorrectionIndicator:
-                computeRectForReplacementMarker(marker, style, font);
                 paintSpellingOrGrammarMarker(pt, boxOrigin, marker, style, font, false);
+                break;
+            case DocumentMarker::Replacement:
+                computeRectForReplacementMarker(marker, style, font);
                 break;
             default:
                 ASSERT_NOT_REACHED();

@@ -1,3 +1,23 @@
+2011-02-28  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        [Mac] Make "Change back to …" contextual menu item work with new autocorrection.
+        https://bugs.webkit.org/show_bug.cgi?id=55396
+        <rdar://problem/8836093>
+
+        The change in InlineTextBox.cpp fixes a bug, where the rectangle of Replacement marker isn't
+        calculated. We need this to do hit test when deciding whether to show "Change back to ..." on
+        contextual menu.
+
+        The change in Editor.cpp is for notifying spellchecker about the reversion whenever "Change
+        back to ..." is clicked.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::changeBackToReplacedString):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+
 2011-02-28  Victoria Kirst  <vrk@google.com>
 
         Reviewed by Kenneth Russell.

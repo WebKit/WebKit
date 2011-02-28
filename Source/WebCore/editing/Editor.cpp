@@ -2494,10 +2494,17 @@ void Editor::changeBackToReplacedString(const String& replacedString)
     if (!shouldInsertText(replacedString, selection.get(), EditorInsertActionPasted))
         return;
     
+#if SUPPORT_AUTOCORRECTION_PANEL
+    String replacement = plainText(selection.get());
+    client()->recordAutocorrectionResponse(EditorClient::AutocorrectionReverted, replacedString, replacement);
+#endif
     TextCheckingParagraph paragraph(selection);
     replaceSelectionWithText(replacedString, false, false);
     RefPtr<Range> changedRange = paragraph.subrange(paragraph.checkingStart(), replacedString.length());
     changedRange->startContainer()->document()->markers()->addMarker(changedRange.get(), DocumentMarker::Replacement, String());
+#if SUPPORT_AUTOCORRECTION_PANEL
+    changedRange->startContainer()->document()->markers()->addMarker(changedRange.get(), DocumentMarker::SpellCheckingExemption);
+#endif
 }
 
 #endif
