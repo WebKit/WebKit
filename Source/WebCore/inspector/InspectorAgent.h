@@ -194,7 +194,7 @@ public:
 
     void drawNodeHighlight(GraphicsContext&) const;
     void openInInspectedWindow(ErrorString* error, const String& url);
-    void drawElementTitle(GraphicsContext&, const IntRect& boundingBox, const FloatRect& overlayRect, WebCore::Settings*) const;
+    void drawElementTitle(GraphicsContext&, const IntRect& boundingBox, const IntRect& anchorBox, const FloatRect& overlayRect, WebCore::Settings*) const;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     bool isRecordingUserInitiatedProfile() const;

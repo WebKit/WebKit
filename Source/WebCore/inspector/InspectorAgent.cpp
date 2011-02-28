@@ -991,7 +991,7 @@ void InspectorAgent::drawNodeHighlight(GraphicsContext& context) const
     IntRect boundingBox = renderer->absoluteBoundingBoxRect(true);
     boundingBox.move(mainFrameOffset);
 
-    IntRect titleReferenceBox = boundingBox;
+    IntRect titleAnchorBox = boundingBox;
 
     ASSERT(m_inspectedPage);
 
@@ -1031,7 +1031,7 @@ void InspectorAgent::drawNodeHighlight(GraphicsContext& context) const
         absBorderQuad.move(mainFrameOffset);
         absMarginQuad.move(mainFrameOffset);
 
-        titleReferenceBox = absMarginQuad.enclosingBoundingBox();
+        titleAnchorBox = absMarginQuad.enclosingBoundingBox();
 
         drawHighlightForBox(context, absContentQuad, absPaddingQuad, absBorderQuad, absMarginQuad);
     } else if (renderer->isRenderInline() || isSVGRenderer) {
@@ -1050,10 +1050,10 @@ void InspectorAgent::drawNodeHighlight(GraphicsContext& context) const
         return;
 
     WebCore::Settings* settings = containingFrame->settings();
-    drawElementTitle(context, titleReferenceBox, overlayRect, settings);
+    drawElementTitle(context, boundingBox, titleAnchorBox, overlayRect, settings);
 }
 
-void InspectorAgent::drawElementTitle(GraphicsContext& context, const IntRect& boundingBox, const FloatRect& overlayRect, WebCore::Settings* settings) const
+void InspectorAgent::drawElementTitle(GraphicsContext& context, const IntRect& boundingBox, const IntRect& anchorBox, const FloatRect& overlayRect, WebCore::Settings* settings) const
 {
     static const int rectInflatePx = 4;
     static const int fontHeightPx = 12;
@@ -1086,11 +1086,10 @@ void InspectorAgent::drawElementTitle(GraphicsContext& context, const IntRect& b
         }
     }
 
-    Element* highlightedElement = m_highlightedNode->isElementNode() ? static_cast<Element*>(m_highlightedNode.get()) : 0;
     nodeTitle += " [";
-    nodeTitle += String::number(highlightedElement ? highlightedElement->offsetWidth() : boundingBox.width());
+    nodeTitle += String::number(boundingBox.width());
     nodeTitle.append(static_cast<UChar>(0x00D7)); // &times;
-    nodeTitle += String::number(highlightedElement ? highlightedElement->offsetHeight() : boundingBox.height());
+    nodeTitle += String::number(boundingBox.height());
     nodeTitle += "]";
 
     FontDescription desc;
@@ -1102,7 +1101,7 @@ void InspectorAgent::drawElementTitle(GraphicsContext& context, const IntRect& b
     font.update(0);
 
     TextRun nodeTitleRun(nodeTitle);
-    IntPoint titleBasePoint = IntPoint(boundingBox.x(), boundingBox.maxY() - 1);
+    IntPoint titleBasePoint = IntPoint(anchorBox.x(), anchorBox.maxY() - 1);
     titleBasePoint.move(rectInflatePx, rectInflatePx);
     IntRect titleRect = enclosingIntRect(font.selectionRectForText(nodeTitleRun, titleBasePoint, fontHeightPx));
     titleRect.inflate(rectInflatePx);
@@ -1121,7 +1120,7 @@ void InspectorAgent::drawElementTitle(GraphicsContext& context, const IntRect& b
 
     // If the tip sticks beyond the bottom of overlayRect, show the tip at top of bounding box.
     if (titleRect.maxY() > overlayRect.maxY()) {
-        dy = boundingBox.y() - titleRect.maxY() - borderWidthPx;
+        dy = anchorBox.y() - titleRect.maxY() - borderWidthPx;
         // If the tip still sticks beyond the bottom of overlayRect, bottom-align the tip with the said boundary.
         if (titleRect.maxY() + dy > overlayRect.maxY())
             dy = overlayRect.maxY() - titleRect.maxY();
