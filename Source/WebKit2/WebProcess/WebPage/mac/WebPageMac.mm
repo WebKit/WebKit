@@ -28,7 +28,6 @@
 
 #import "AccessibilityWebPageObject.h"
 #import "DataReference.h"
-#import "DictionaryPopupInfo.h"
 #import "PluginView.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebEvent.h"
@@ -286,28 +285,38 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     if (!finalRange)
         return;
 
-    RenderObject* renderer = finalRange->startContainer()->renderer();
+    performDictionaryLookupForRange(DictionaryPopupInfo::HotKey, frame, finalRange.get());
+}
+
+void WebPage::performDictionaryLookupForRange(DictionaryPopupInfo::Type type, Frame* frame, Range* range)
+{
+    String rangeText = range->text();
+    if (rangeText.stripWhiteSpace().isEmpty())
+        return;
+    
+    RenderObject* renderer = range->startContainer()->renderer();
     RenderStyle* style = renderer->style();
     NSFont *font = style->font().primaryFont()->getNSFont();
     if (!font)
         return;
-
+    
     CFDictionaryRef fontDescriptorAttributes = (CFDictionaryRef)[[font fontDescriptor] fontAttributes];
     if (!fontDescriptorAttributes)
         return;
 
     Vector<FloatQuad> quads;
-    finalRange->textQuads(quads);
+    range->textQuads(quads);
     if (quads.isEmpty())
         return;
-
-    IntRect finalRangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
-
+    
+    IntRect rangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
+    
     DictionaryPopupInfo dictionaryPopupInfo;
-    dictionaryPopupInfo.origin = FloatPoint(finalRangeRect.x(), finalRangeRect.y());
+    dictionaryPopupInfo.type = type;
+    dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y());
     dictionaryPopupInfo.fontInfo.fontAttributeDictionary = fontDescriptorAttributes;
 
-    send(Messages::WebPageProxy::DidPerformDictionaryLookup(finalRange->text(), dictionaryPopupInfo));
+    send(Messages::WebPageProxy::DidPerformDictionaryLookup(rangeText, dictionaryPopupInfo));
 }
 
 static inline void scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)

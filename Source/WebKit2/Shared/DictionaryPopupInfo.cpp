@@ -34,6 +34,7 @@ void DictionaryPopupInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(origin);
     encoder->encode(fontInfo);
+    encoder->encodeEnum(type);
 }
 
 bool DictionaryPopupInfo::decode(CoreIPC::ArgumentDecoder* decoder, DictionaryPopupInfo& result)
@@ -41,6 +42,8 @@ bool DictionaryPopupInfo::decode(CoreIPC::ArgumentDecoder* decoder, DictionaryPo
     if (!decoder->decode(result.origin))
         return false;
     if (!decoder->decode(result.fontInfo))
+        return false;
+    if (!decoder->decodeEnum(result.type))
         return false;
     return true;
 }

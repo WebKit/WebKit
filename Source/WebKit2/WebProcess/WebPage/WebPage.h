@@ -57,6 +57,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#include "DictionaryPopupInfo.h"
 #include <wtf/RetainPtr.h>
 OBJC_CLASS AccessibilityWebPageObject;
 #endif
@@ -307,6 +308,8 @@ public:
     void dummy(bool&);
 
 #if PLATFORM(MAC)
+    void performDictionaryLookupForRange(DictionaryPopupInfo::Type, WebCore::Frame*, WebCore::Range*);
+
     bool isSpeaking();
     void speak(const String&);
     void stopSpeaking();

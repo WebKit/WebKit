@@ -1,3 +1,32 @@
+2011-02-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        WK2 Context Menus - Implement LookUpInDictionary
+        https://bugs.webkit.org/show_bug.cgi?id=55405
+
+        * Shared/DictionaryPopupInfo.cpp:
+        (WebKit::DictionaryPopupInfo::encode):
+        (WebKit::DictionaryPopupInfo::decode):
+        * Shared/DictionaryPopupInfo.h:
+        Add type to differentiate between HotKey and ContextMenu triggered
+        dictionary popups. This is necessary since HotKey triggered ones want
+        to override the style to always be overlay.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didPerformDictionaryLookup):
+        Only force the overlay style for HotKey triggered dictionary lookups.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        (WebKit::WebPage::performDictionaryLookupForRange):
+        Factor out shared functionality into performDictionaryLookupForRange.
+
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        (WebKit::WebContextMenuClient::lookUpInDictionary):
+        Get selected range and call newly factored out performDictionaryLookupForRange.
+
 2011-02-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

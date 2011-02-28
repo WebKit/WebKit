@@ -26,9 +26,12 @@
 #import "config.h"
 #import "WebContextMenuClient.h"
 
+#import "DictionaryPopupInfo.h"
+#import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
+#import "WebPageProxyMessages.h"
 #import <WebCore/Frame.h>
-#include <WebCore/NotImplemented.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/Page.h>
 #import <wtf/text/WTFString.h>
 
@@ -36,10 +39,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebContextMenuClient::lookUpInDictionary(Frame*)
+void WebContextMenuClient::lookUpInDictionary(Frame* frame)
 {
-    // FIXME: <rdar://problem/8750610> - Implement
-    notImplemented();
+    RefPtr<Range> selectedRange = frame->selection()->selection().toNormalizedRange();
+    if (!selectedRange)
+        return;
+
+    m_page->performDictionaryLookupForRange(DictionaryPopupInfo::ContextMenu, frame, selectedRange.get());
 }
 
 bool WebContextMenuClient::isSpeaking()

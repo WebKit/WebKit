@@ -40,8 +40,14 @@ struct DictionaryPopupInfo {
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, DictionaryPopupInfo&);
 
+    enum Type {
+        ContextMenu,
+        HotKey
+    };
+
     WebCore::FloatPoint origin;
     FontInfo fontInfo;
+    Type type;
 };
 
 } // namespace WebKit

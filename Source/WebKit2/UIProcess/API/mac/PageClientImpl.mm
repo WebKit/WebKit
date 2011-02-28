@@ -424,7 +424,8 @@ void PageClientImpl::didPerformDictionaryLookup(const String& text, double scale
     NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
     textBaselineOrigin.y += [font ascender];
     
-    NSDictionary *options = [NSDictionary dictionaryWithObject:NSDefinitionPresentationTypeOverlay forKey:NSDefinitionPresentationTypeKey];
+    // If the dictionary lookup is being triggered by a hot key, force the overlay style.
+    NSDictionary *options = (dictionaryPopupInfo.type == DictionaryPopupInfo::HotKey) ? [NSDictionary dictionaryWithObject:NSDefinitionPresentationTypeOverlay forKey:NSDefinitionPresentationTypeKey] : 0;
     [m_wkView showDefinitionForAttributedString:attributedString.get() range:NSMakeRange(0, [attributedString.get() length]) options:options baselineOriginProvider:^(NSRange adjustedRange) { return (NSPoint)textBaselineOrigin; }];
 }
 
