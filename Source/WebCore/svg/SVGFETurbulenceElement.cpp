@@ -89,16 +89,34 @@ void SVGFETurbulenceElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
+bool SVGFETurbulenceElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+{
+    FETurbulence* turbulence = static_cast<FETurbulence*>(effect);
+    if (attrName == SVGNames::typeAttr)
+        return turbulence->setType(static_cast<TurbulenceType>(type()));
+    if (attrName == SVGNames::stitchTilesAttr)
+        return turbulence->setStitchTiles(stitchTiles());
+    if (attrName == SVGNames::baseFrequencyAttr)
+        return (turbulence->setBaseFrequencyX(baseFrequencyX()) || turbulence->setBaseFrequencyY(baseFrequencyY()));
+    if (attrName == SVGNames::seedAttr)
+        return turbulence->setSeed(seed());
+    if (attrName == SVGNames::numOctavesAttr)
+       return turbulence->setNumOctaves(numOctaves());
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 void SVGFETurbulenceElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
-    
+
     if (attrName == SVGNames::baseFrequencyAttr
         || attrName == SVGNames::numOctavesAttr
         || attrName == SVGNames::seedAttr
         || attrName == SVGNames::stitchTilesAttr
         || attrName == SVGNames::typeAttr)
-        invalidate();
+        primitiveAttributeChanged(attrName);
 }
 
 void SVGFETurbulenceElement::synchronizeProperty(const QualifiedName& attrName)
@@ -151,7 +169,7 @@ PassRefPtr<FilterEffect> SVGFETurbulenceElement::build(SVGFilterBuilder*, Filter
     if (baseFrequencyX() < 0 || baseFrequencyY() < 0)
         return 0;
 
-    return FETurbulence::create(filter, static_cast<TurbulanceType>(type()), baseFrequencyX(), 
+    return FETurbulence::create(filter, static_cast<TurbulenceType>(type()), baseFrequencyX(), 
                 baseFrequencyY(), numOctaves(), seed(), stitchTiles() == SVG_STITCHTYPE_STITCH);
 }
 

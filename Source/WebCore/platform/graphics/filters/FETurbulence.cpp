@@ -49,7 +49,7 @@ static const int s_randAmplitude = 16807; // 7**5; primitive root of m
 static const int s_randQ = 127773; // m / a
 static const int s_randR = 2836; // m % a
 
-FETurbulence::FETurbulence(Filter* filter, TurbulanceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles)
+FETurbulence::FETurbulence(Filter* filter, TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles)
     : FilterEffect(filter)
     , m_type(type)
     , m_baseFrequencyX(baseFrequencyX)
@@ -60,19 +60,22 @@ FETurbulence::FETurbulence(Filter* filter, TurbulanceType type, float baseFreque
 {
 }
 
-PassRefPtr<FETurbulence> FETurbulence::create(Filter* filter, TurbulanceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles)
+PassRefPtr<FETurbulence> FETurbulence::create(Filter* filter, TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles)
 {
     return adoptRef(new FETurbulence(filter, type, baseFrequencyX, baseFrequencyY, numOctaves, seed, stitchTiles));
 }
 
-TurbulanceType FETurbulence::type() const
+TurbulenceType FETurbulence::type() const
 {
     return m_type;
 }
 
-void FETurbulence::setType(TurbulanceType type)
+bool FETurbulence::setType(TurbulenceType type)
 {
+    if (m_type == type)
+        return false;
     m_type = type;
+    return true;
 }
 
 float FETurbulence::baseFrequencyY() const
@@ -80,9 +83,12 @@ float FETurbulence::baseFrequencyY() const
     return m_baseFrequencyY;
 }
 
-void FETurbulence::setBaseFrequencyY(float baseFrequencyY)
+bool FETurbulence::setBaseFrequencyY(float baseFrequencyY)
 {
+    if (m_baseFrequencyY == baseFrequencyY)
+        return false;
     m_baseFrequencyY = baseFrequencyY;
+    return true;
 }
 
 float FETurbulence::baseFrequencyX() const
@@ -90,9 +96,12 @@ float FETurbulence::baseFrequencyX() const
     return m_baseFrequencyX;
 }
 
-void FETurbulence::setBaseFrequencyX(float baseFrequencyX)
+bool FETurbulence::setBaseFrequencyX(float baseFrequencyX)
 {
-       m_baseFrequencyX = baseFrequencyX;
+    if (m_baseFrequencyX == baseFrequencyX)
+        return false;
+    m_baseFrequencyX = baseFrequencyX;
+    return true;
 }
 
 float FETurbulence::seed() const
@@ -100,9 +109,12 @@ float FETurbulence::seed() const
     return m_seed; 
 }
 
-void FETurbulence::setSeed(float seed)
+bool FETurbulence::setSeed(float seed)
 {
+    if (m_seed == seed)
+        return false;
     m_seed = seed;
+    return true;
 }
 
 int FETurbulence::numOctaves() const
@@ -110,9 +122,12 @@ int FETurbulence::numOctaves() const
     return m_numOctaves;
 }
 
-void FETurbulence::setNumOctaves(bool numOctaves)
+bool FETurbulence::setNumOctaves(int numOctaves)
 {
+    if (m_numOctaves == numOctaves)
+        return false;
     m_numOctaves = numOctaves;
+    return true;
 }
 
 bool FETurbulence::stitchTiles() const
@@ -120,9 +135,12 @@ bool FETurbulence::stitchTiles() const
     return m_stitchTiles;
 }
 
-void FETurbulence::setStitchTiles(bool stitch)
+bool FETurbulence::setStitchTiles(bool stitch)
 {
+    if (m_stitchTiles == stitch)
+        return false;
     m_stitchTiles = stitch;
+    return true;
 }
 
 // The turbulence calculation code is an adapted version of what appears in the SVG 1.1 specification:
@@ -353,7 +371,7 @@ void FETurbulence::dump()
 {
 }
 
-static TextStream& operator<<(TextStream& ts, const TurbulanceType& type)
+static TextStream& operator<<(TextStream& ts, const TurbulenceType& type)
 {
     switch (type) {
     case FETURBULENCE_TYPE_UNKNOWN:

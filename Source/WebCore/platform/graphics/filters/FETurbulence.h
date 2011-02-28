@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-enum TurbulanceType {
+enum TurbulenceType {
     FETURBULENCE_TYPE_UNKNOWN = 0,
     FETURBULENCE_TYPE_FRACTALNOISE = 1,
     FETURBULENCE_TYPE_TURBULENCE = 2
@@ -38,25 +38,25 @@ enum TurbulanceType {
 
 class FETurbulence : public FilterEffect {
 public:
-    static PassRefPtr<FETurbulence> create(Filter*, TurbulanceType, float, float, int, float, bool);
+    static PassRefPtr<FETurbulence> create(Filter*, TurbulenceType, float, float, int, float, bool);
 
-    TurbulanceType type() const;
-    void setType(TurbulanceType);
+    TurbulenceType type() const;
+    bool setType(TurbulenceType);
 
     float baseFrequencyY() const;
-    void setBaseFrequencyY(float);
+    bool setBaseFrequencyY(float);
 
     float baseFrequencyX() const;
-    void setBaseFrequencyX(float);
+    bool setBaseFrequencyX(float);
 
     float seed() const;
-    void setSeed(float);
+    bool setSeed(float);
 
     int numOctaves() const;
-    void setNumOctaves(bool);
+    bool setNumOctaves(int);
 
     bool stitchTiles() const;
-    void setStitchTiles(bool);
+    bool setStitchTiles(bool);
 
     virtual void apply();
     virtual void dump();
@@ -84,13 +84,13 @@ private:
         inline long random();
     };
 
-    FETurbulence(Filter*, TurbulanceType, float, float, int, float, bool);
+    FETurbulence(Filter*, TurbulenceType, float, float, int, float, bool);
 
     inline void initPaint(PaintingData&);
     float noise2D(PaintingData&, const FloatPoint&);
     unsigned char calculateTurbulenceValueForPoint(PaintingData&, const FloatPoint&);
 
-    TurbulanceType m_type;
+    TurbulenceType m_type;
     float m_baseFrequencyX;
     float m_baseFrequencyY;
     int m_numOctaves;
