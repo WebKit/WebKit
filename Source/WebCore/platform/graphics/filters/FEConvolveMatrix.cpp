@@ -63,7 +63,7 @@ IntSize FEConvolveMatrix::kernelSize() const
     return m_kernelSize;
 }
 
-void FEConvolveMatrix::setKernelSize(IntSize kernelSize)
+void FEConvolveMatrix::setKernelSize(const IntSize& kernelSize)
 {
     m_kernelSize = kernelSize; 
 }
@@ -109,7 +109,7 @@ IntPoint FEConvolveMatrix::targetOffset() const
     return m_targetOffset; 
 }
 
-bool FEConvolveMatrix::setTargetOffset(IntPoint targetOffset)
+bool FEConvolveMatrix::setTargetOffset(const IntPoint& targetOffset)
 {
     if (m_targetOffset == targetOffset)
         return false;
@@ -135,7 +135,7 @@ FloatPoint FEConvolveMatrix::kernelUnitLength() const
     return m_kernelUnitLength; 
 }
 
-bool FEConvolveMatrix::setKernelUnitLength(FloatPoint kernelUnitLength)
+bool FEConvolveMatrix::setKernelUnitLength(const FloatPoint& kernelUnitLength)
 {
     if (m_kernelUnitLength == kernelUnitLength)
         return false;

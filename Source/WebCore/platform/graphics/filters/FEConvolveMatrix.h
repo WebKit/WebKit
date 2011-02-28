@@ -49,7 +49,7 @@ public:
             bool, const Vector<float>&);
 
     IntSize kernelSize() const;
-    void setKernelSize(IntSize);
+    void setKernelSize(const IntSize&);
 
     const Vector<float>& kernel() const;
     void setKernel(const Vector<float>&);
@@ -61,13 +61,13 @@ public:
     bool setBias(float);
 
     IntPoint targetOffset() const;
-    bool setTargetOffset(IntPoint);
+    bool setTargetOffset(const IntPoint&);
 
     EdgeModeType edgeMode() const;
     bool setEdgeMode(EdgeModeType);
 
     FloatPoint kernelUnitLength() const;
-    bool setKernelUnitLength(FloatPoint);
+    bool setKernelUnitLength(const FloatPoint&);
 
     bool preserveAlpha() const;
     bool setPreserveAlpha(bool);

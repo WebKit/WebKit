@@ -1,3 +1,20 @@
+2011-02-28  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Optimize parameter transmissions in FEConvolveMatrix.
+        https://bugs.webkit.org/show_bug.cgi?id=55381
+
+        Parameter transmission via reference is more efficient than with copy. So they are substituted.
+
+        No new tests are needed since this is a refactoring.
+
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::setKernelSize):
+        (WebCore::FEConvolveMatrix::setTargetOffset):
+        (WebCore::FEConvolveMatrix::setKernelUnitLength):
+        * platform/graphics/filters/FEConvolveMatrix.h:
+
 2011-02-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix Chromium tests failures due to r79858.
