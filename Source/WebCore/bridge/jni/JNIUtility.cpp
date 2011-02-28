@@ -90,7 +90,11 @@ JNIEnv* getJNIEnv()
     } u;
     jint jniError = 0;
 
+#if OS(ANDROID)
+    jniError = getJavaVM()->AttachCurrentThread(&u.env, 0);
+#else
     jniError = getJavaVM()->AttachCurrentThread(&u.dummy, 0);
+#endif
     if (jniError == JNI_OK)
         return u.env;
     LOG_ERROR("AttachCurrentThread failed, returned %ld", static_cast<long>(jniError));
