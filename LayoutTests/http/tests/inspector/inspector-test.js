@@ -74,6 +74,8 @@ InspectorTest.addResult = function(text)
     }
 }
 
+console.error = InspectorTest.addResult;
+
 InspectorTest.addResults = function(textArray)
 {
     if (!textArray)
@@ -104,6 +106,12 @@ InspectorTest.addObject = function(object, nondeterministicProps, prefix, firstL
             InspectorTest.addResult(prefixWithName + propValue);
     }
     InspectorTest.addResult(prefix + "}");
+}
+
+InspectorTest.assertGreaterOrEqual = function(expected, actual, message)
+{
+    if (actual < expected)
+        InspectorTest.addResult("FAILED: " + (message ? message + ": " : "") + actual + " < " + expected);
 }
 
 InspectorTest.reloadPage = function(callback)
@@ -257,11 +265,17 @@ function runTest()
                 initializationFunctions[i]();
             } catch (e) {
                 console.error("Exception in test initialization: " + e);
+                InspectorTest.completeTest();
             }
         }
 
         WebInspector.showPanel("elements");
-        testFunction();
+        try {
+            testFunction();
+        } catch (e) {
+            console.error("Exception during test execution: " + e);
+            InspectorTest.completeTest();
+        }
     }
 
     var initializationFunctions = [];
@@ -272,12 +286,28 @@ function runTest()
     var parameters = ["[" + initializationFunctions + "]", test, completeTestCallId];
     var toEvaluate = "(" + runTestInFrontend + ")(" + parameters.join(", ") + ");";
     layoutTestController.evaluateInWebInspector(runTestCallId, toEvaluate);
+
+    function watchDog()
+    {
+        console.log("Internal watchdog triggered at 10 seconds. Test timed out.");
+        closeInspectorAndNotifyDone();
+    }
+    window._watchDogTimer = setTimeout(watchDog, 10000);
 }
 
 function didEvaluateForTestInFrontend(callId)
 {
     if (callId !== completeTestCallId)
         return;
+    delete window.completeTestCallId;
+    closeInspectorAndNotifyDone();
+}
+
+function closeInspectorAndNotifyDone()
+{
+    if (window._watchDogTimer)
+        clearTimeout(window._watchDogTimer);
+
     layoutTestController.closeWebInspector();
     setTimeout(function() {
         layoutTestController.notifyDone();

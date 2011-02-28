@@ -1,0 +1,51 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script>
+function loadScripts()
+{
+    // Wait 100 ms, then serve for 200ms file containing 300ms loop.
+    var script = document.createElement("script");
+    script.setAttribute("src", "resources/resource.php?type=js&wait=100&send=200&jsdelay=300&jscontent=resourceLoaded()");
+    document.head.appendChild(script);
+
+    // Wait 100 ms, then serve for 100ms and call console.log in content.
+    script = document.createElement("script");
+    script.setAttribute("src", "resources/resource.php?type=js&wait=100&send=100&jscontent=resourceLoaded()");
+    document.head.appendChild(script);
+}
+
+var loadedResourceCount = 0;
+function resourceLoaded()
+{
+    if (++loadedResourceCount === 2) {
+        setTimeout(function() { console.log("Done."); }, 1000);
+    }
+}
+
+function test()
+{
+    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+    InspectorTest.evaluateInPage("loadScripts()");
+
+    function step2()
+    {
+        var resource1 = WebInspector.panels.network.resources[0];
+        InspectorTest.addResult(resource1.url);
+        InspectorTest.assertGreaterOrEqual(100, resource1.latency * 1000, "Latency of the first resource");
+        InspectorTest.assertGreaterOrEqual(300, resource1.duration * 1000, "Duration of the first resource");
+        
+
+        var resource2 = WebInspector.panels.network.resources[1];
+        InspectorTest.addResult(resource2.url);
+        InspectorTest.assertGreaterOrEqual(100, resource2.latency * 1000, "Latency of the second resource");
+        InspectorTest.assertGreaterOrEqual(100, resource2.duration * 1000, "Duration of the second resource");
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests network panel timing.</p>
+</body>
+</html>

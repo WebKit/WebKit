@@ -1,3 +1,18 @@
+2011-02-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add first network test, improve harness.
+        https://bugs.webkit.org/show_bug.cgi?id=55306
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.assertGreaterOrEqual):
+        * http/tests/inspector/network/network-size-expected.txt: Added.
+        * http/tests/inspector/network/network-size.html: Added.
+        * http/tests/inspector/network/network-timing-expected.txt: Added.
+        * http/tests/inspector/network/network-timing.html: Added.
+        * http/tests/inspector/network/resources/resource.php: Added.
+
 2011-02-27  Aparna Nandyal  <aparna.nand@wipro.com>
 
         Reviewed by Antonio Gomes.
