@@ -5,7 +5,9 @@
 #include <QDeclarativeProperty>
 #include <QDeclarativeView>
 #include <QDir>
-#include <qtest.h>
+#include <QGraphicsWebView>
+#include <QTest>
+#include <QWebFrame>
 
 QT_BEGIN_NAMESPACE
 
@@ -37,6 +39,7 @@ void tst_QDeclarativeWebView::preferredWidthTest()
     checkNoErrors(component);
     QObject* wv = component.create();
     QVERIFY(wv);
+    wv->setProperty("testUrl", QUrl("qrc:///resources/sample.html"));
     QCOMPARE(wv->property("prefWidth").toInt(), 600);
 }
 
@@ -47,27 +50,36 @@ void tst_QDeclarativeWebView::preferredHeightTest()
     checkNoErrors(component);
     QObject* wv = component.create();
     QVERIFY(wv);
+    wv->setProperty("testUrl", QUrl("qrc:///resources/sample.html"));
     QCOMPARE(wv->property("prefHeight").toInt(), 500);
 }
 
 void tst_QDeclarativeWebView::preferredWidthDefaultTest()
 {
+    QGraphicsWebView view;
+    view.load(QUrl("qrc:///resources/sample.html"));
+
     QDeclarativeEngine engine;
     QDeclarativeComponent component(&engine, QUrl("qrc:///resources/webviewtestdefault.qml"));
     checkNoErrors(component);
     QObject* wv = component.create();
     QVERIFY(wv);
-    QCOMPARE(wv->property("prefWidth").toInt(), 0);
+    wv->setProperty("testUrl", QUrl("qrc:///resources/sample.html"));
+    QCOMPARE(wv->property("prefWidth").toDouble(), view.preferredWidth());
 }
 
 void tst_QDeclarativeWebView::preferredHeightDefaultTest()
 {
+    QGraphicsWebView view;
+    view.load(QUrl("qrc:///resources/sample.html"));
+
     QDeclarativeEngine engine;
     QDeclarativeComponent component(&engine, QUrl("qrc:///resources/webviewtestdefault.qml"));
     checkNoErrors(component);
     QObject* wv = component.create();
     QVERIFY(wv);
-    QCOMPARE(wv->property("prefHeight").toInt(), 0);
+    wv->setProperty("testUrl", QUrl("qrc:///resources/sample.html"));
+    QCOMPARE(wv->property("prefHeight").toDouble(), view.preferredHeight());
 }
 
 void tst_QDeclarativeWebView::checkNoErrors(const QDeclarativeComponent& component)

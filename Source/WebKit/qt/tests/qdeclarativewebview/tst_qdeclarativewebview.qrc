@@ -1,7 +1,7 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-    <file>resources/webviewtestdefault.qml</file>
-    <file>resources/webviewtest.qml</file>
-</qresource>
+<RCC>
+    <qresource prefix="/">
+        <file>resources/webviewtestdefault.qml</file>
+        <file>resources/webviewtest.qml</file>
+        <file>resources/sample.html</file>
+    </qresource>
 </RCC>
-

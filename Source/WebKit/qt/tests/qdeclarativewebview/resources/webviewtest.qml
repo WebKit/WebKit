@@ -10,10 +10,10 @@ Flickable {
     property alias myurl: myweb.url
     property alias prefHeight: myweb.preferredHeight
     property alias prefWidth: myweb.preferredWidth
-
+    property url testUrl;
     WebView {
         id: myweb
-        url: "http://qt.nokia.com"
+        url: testUrl
         smooth: false
         scale: 1.0
         preferredHeight: 500
