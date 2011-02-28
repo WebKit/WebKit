@@ -1,3 +1,26 @@
+2011-02-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Use more xcconfig files in JavaScriptCore gyp build
+        https://bugs.webkit.org/show_bug.cgi?id=55391
+
+        The GYP experts tell me that we have have a total of two xcconfig
+        files: one for the xcodeproj as a whole and one for each target.  This
+        patch uses that technique to re-use the existing xcconfig files and
+        eliminate the duplication.
+
+        Technically, this patch introduces some build errors because the
+        xcconfig files assume that the xcodeproj file is one level higher in
+        the directory hierarchy.  Specifically, the xcodeproj file can no
+        longer find the Info.plist or the prefix header.  I plan to fix that in
+        a subsequent patch.
+
+        Also, this patch introduces the Release and Production configurations,
+        which should work correctly now.
+
+        * gyp/JavaScriptCore.gyp:
+
 2011-02-28  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Windows build fix.
