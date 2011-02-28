@@ -50,7 +50,7 @@ void JIT::compileOpCallInitializeCallFrame()
 {
     // regT0 holds callee, regT1 holds argCount
     store32(regT1, Address(callFrameRegister, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))));
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain) + OBJECT_OFFSETOF(ScopeChain, m_node)), regT3); // scopeChain
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT3); // scopeChain
     storePtr(regT0, Address(callFrameRegister, RegisterFile::Callee * static_cast<int>(sizeof(Register)))); // callee
     storePtr(regT3, Address(callFrameRegister, RegisterFile::ScopeChain * static_cast<int>(sizeof(Register)))); // scopeChain
 }
@@ -107,12 +107,6 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
 {
     unsigned dst = currentInstruction[1].u.operand;
 
-    // We could JIT generate the deref, only calling out to C when the refcount hits zero.
-    if (m_codeBlock->needsFullScopeChain()) {
-        Jump activationNotCreated = branch32(Equal, tagFor(m_codeBlock->activationRegister()), Imm32(JSValue::EmptyValueTag));
-        JITStubCall(this, cti_op_ret_scopeChain).call();
-        activationNotCreated.link(this);
-    }
     emitLoad(dst, regT1, regT0);
     emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT2);
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
@@ -125,13 +119,6 @@ void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
 {
     unsigned result = currentInstruction[1].u.operand;
     unsigned thisReg = currentInstruction[2].u.operand;
-
-    // We could JIT generate the deref, only calling out to C when the refcount hits zero.
-    if (m_codeBlock->needsFullScopeChain()) {
-        Jump activationNotCreated = branch32(Equal, tagFor(m_codeBlock->activationRegister()), Imm32(JSValue::EmptyValueTag));
-        JITStubCall(this, cti_op_ret_scopeChain).call();
-        activationNotCreated.link(this);
-    }
 
     emitLoad(result, regT1, regT0);
     Jump notJSCell = branch32(NotEqual, regT1, Imm32(JSValue::CellTag));
@@ -291,7 +278,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
 
     // Fast version of stack frame initialization, directly relative to edi.
     // Note that this omits to set up RegisterFile::CodeBlock, which is set in the callee
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain) + OBJECT_OFFSETOF(ScopeChain, m_node)), regT2);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT2);
 
     store32(Imm32(argCount), Address(callFrameRegister, (registerOffset + RegisterFile::ArgumentCount) * static_cast<int>(sizeof(Register))));
     storePtr(callFrameRegister, Address(callFrameRegister, (registerOffset + RegisterFile::CallerFrame) * static_cast<int>(sizeof(Register))));

@@ -38,10 +38,10 @@ namespace JSC {
         CachedCall(CallFrame* callFrame, JSFunction* function, int argCount)
             : m_valid(false)
             , m_interpreter(callFrame->interpreter())
-            , m_globalObjectScope(callFrame, function->scope().globalObject())
+            , m_globalObjectScope(callFrame, function->scope()->globalObject.get())
         {
             ASSERT(!function->isHostFunction());
-            m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, function, argCount, function->scope().node());
+            m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, function, argCount, function->scope());
             m_valid = !callFrame->hadException();
         }
         

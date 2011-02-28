@@ -28,7 +28,7 @@
 namespace JSC {
 
     class ExecState;
-    class ScopeChain;
+    class ScopeChainNode;
     class SourceCode;
 
     enum ComplType { Normal, Break, Continue, ReturnValue, Throw, Interrupted, Terminated };
@@ -56,7 +56,7 @@ namespace JSC {
     };
 
     Completion checkSyntax(ExecState*, const SourceCode&);
-    Completion evaluate(ExecState*, ScopeChain&, const SourceCode&, JSValue thisValue = JSValue());
+    Completion evaluate(ExecState*, ScopeChainNode*, const SourceCode&, JSValue thisValue = JSValue());
 
 } // namespace JSC
 

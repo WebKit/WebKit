@@ -1,3 +1,122 @@
+2011-02-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make ScopeChainNode GC allocated
+        https://bugs.webkit.org/show_bug.cgi?id=55283
+
+        Simplify lifetime and other issues with the scopechain
+        by making it gc allocated.  This allows us to simplify
+        function exit and unwinding, as well as making the
+        current iterative refcounting go away.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::createActivation):
+        * bytecode/StructureStubInfo.cpp:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionCall):
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionApply):
+        * bytecompiler/BytecodeGenerator.h:
+        * debugger/Debugger.cpp:
+        (JSC::Recompiler::operator()):
+        * debugger/DebuggerCallFrame.h:
+        (JSC::DebuggerCallFrame::scopeChain):
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        * interpreter/CallFrame.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::depth):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        (JSC::JIT::compileOpCall):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_end):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        * runtime/ArgList.cpp:
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+        * runtime/Completion.h:
+        * runtime/DateConversion.cpp:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/GCActivityCallbackCF.cpp:
+        * runtime/Identifier.cpp:
+        * runtime/JSCell.h:
+        * runtime/JSChunk.cpp: Added.
+        * runtime/JSChunk.h: Added.
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::markChildren):
+        (JSC::JSFunction::getCallData):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getConstructData):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::scope):
+        (JSC::JSFunction::setScope):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::markChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObjectData::JSGlobalObjectData):
+        (JSC::JSGlobalObject::globalScopeChain):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/JSLock.cpp:
+        * runtime/JSNumberCell.cpp:
+        * runtime/JSZombie.cpp:
+        * runtime/MarkedBlock.cpp:
+        * runtime/MarkedSpace.cpp:
+        * runtime/PropertyNameArray.cpp:
+        * runtime/ScopeChain.cpp:
+        (JSC::ScopeChainNode::print):
+        (JSC::ScopeChainNode::localDepth):
+        (JSC::ScopeChainNode::markChildren):
+        * runtime/ScopeChain.h:
+        (JSC::ScopeChainNode::ScopeChainNode):
+        (JSC::ScopeChainNode::createStructure):
+        (JSC::ScopeChainNode::push):
+        (JSC::ScopeChainNode::pop):
+        (JSC::ScopeChainIterator::ScopeChainIterator):
+        (JSC::ScopeChainIterator::operator*):
+        (JSC::ScopeChainIterator::operator->):
+        (JSC::ScopeChainIterator::operator++):
+        (JSC::ScopeChainNode::begin):
+        (JSC::ScopeChainNode::end):
+        (JSC::ExecState::globalData):
+        (JSC::ExecState::lexicalGlobalObject):
+        (JSC::ExecState::globalThisValue):
+        * runtime/ScopeChainMark.h:
+        * wtf/DateMath.cpp:
+
 2011-02-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

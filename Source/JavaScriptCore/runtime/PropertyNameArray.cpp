@@ -21,6 +21,7 @@
 #include "config.h"
 #include "PropertyNameArray.h"
 
+#include "ScopeChain.h"
 #include "Structure.h"
 #include "StructureChain.h"
 

@@ -106,8 +106,8 @@ JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifi
         return throwError(exec, exception);
     }
 
-    ScopeChain scopeChain(globalObject, &globalData, globalObject, exec->globalThisValue());
-    return new (exec) JSFunction(exec, function, scopeChain.node());
+    ScopeChainNode* scopeChain = new (exec) ScopeChainNode(0, globalObject, &globalData, globalObject, exec->globalThisValue());
+    return new (exec) JSFunction(exec, function, scopeChain);
 }
 
 // ECMA 15.3.2 The Function Constructor

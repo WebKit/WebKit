@@ -23,6 +23,7 @@
 
 #include "Heap.h"
 #include "CallFrame.h"
+#include "ScopeChain.h"
 
 #if USE(PTHREADS)
 #include <pthread.h>

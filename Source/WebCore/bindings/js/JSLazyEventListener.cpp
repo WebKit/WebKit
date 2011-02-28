@@ -120,9 +120,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
 
         // Add the event's home element to the scope
         // (and the document, and the form - see JSHTMLElement::eventHandlerScope)
-        ScopeChain scope = listenerAsFunction->scope();
-        static_cast<JSNode*>(wrapper())->pushEventHandlerScope(exec, scope);
-        listenerAsFunction->setScope(scope);
+        listenerAsFunction->setScope(exec->globalData(), static_cast<JSNode*>(wrapper())->pushEventHandlerScope(exec, listenerAsFunction->scope()));
     }
 
     // Since we only parse once, there's no need to keep data used for parsing around anymore.

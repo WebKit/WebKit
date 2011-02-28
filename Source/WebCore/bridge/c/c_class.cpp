@@ -32,6 +32,7 @@
 #include "c_instance.h"
 #include "c_runtime.h"
 #include "npruntime_impl.h"
+#include <runtime/ScopeChain.h>
 #include <runtime/Identifier.h>
 #include <runtime/JSLock.h>
 #include <wtf/text/StringHash.h>

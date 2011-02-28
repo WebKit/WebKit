@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSZombie.h"
 #include "ClassInfo.h"
+#include "ScopeChain.h"
 
 #if ENABLE(JSC_ZOMBIES)
 

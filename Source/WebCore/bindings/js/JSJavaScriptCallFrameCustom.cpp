@@ -70,7 +70,7 @@ JSValue JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
     if (!impl()->scopeChain())
         return jsNull();
 
-    const ScopeChainNode* scopeChain = impl()->scopeChain();
+    ScopeChainNode* scopeChain = impl()->scopeChain();
     ScopeChainIterator iter = scopeChain->begin();
     ScopeChainIterator end = scopeChain->end();
 
@@ -95,12 +95,12 @@ JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)
         return jsUndefined();
     int index = exec->argument(0).asInt32();
 
-    const ScopeChainNode* scopeChain = impl()->scopeChain();
+    ScopeChainNode* scopeChain = impl()->scopeChain();
     ScopeChainIterator end = scopeChain->end();
 
     bool foundLocalScope = false;
     for (ScopeChainIterator iter = scopeChain->begin(); iter != end; ++iter) {
-        JSC::DeprecatedPtr<JSObject> scope = *iter;
+        JSObject* scope = iter->get();
         if (scope->isActivationObject()) {
             if (!foundLocalScope) {
                 // First activation object is local scope, each successive activation object is closure.

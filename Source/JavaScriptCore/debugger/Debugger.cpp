@@ -76,9 +76,9 @@ inline void Recompiler::operator()(JSCell* cell)
     if (!m_functionExecutables.add(executable).second)
         return;
 
-    ExecState* exec = function->scope().globalObject()->JSGlobalObject::globalExec();
+    ExecState* exec = function->scope()->globalObject->JSGlobalObject::globalExec();
     executable->discardCode();
-    if (m_debugger == function->scope().globalObject()->debugger())
+    if (m_debugger == function->scope()->globalObject->debugger())
         m_sourceProviders.add(executable->source().provider(), exec);
 }
 

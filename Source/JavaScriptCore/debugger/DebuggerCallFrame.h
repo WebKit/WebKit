@@ -49,7 +49,7 @@ namespace JSC {
         }
 
         JSGlobalObject* dynamicGlobalObject() const { return m_callFrame->dynamicGlobalObject(); }
-        const ScopeChainNode* scopeChain() const { return m_callFrame->scopeChain(); }
+        ScopeChainNode* scopeChain() const { return m_callFrame->scopeChain(); }
         const UString* functionName() const;
         UString calculatedFunctionName() const;
         Type type() const;

@@ -101,12 +101,11 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     }
     recordParse(evalNode->features(), evalNode->hasCapturedVariables(), evalNode->lineNo(), evalNode->lastLine());
 
-    ScopeChain scopeChain(scopeChainNode);
-    JSGlobalObject* globalObject = scopeChain.globalObject();
+    JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
 
     ASSERT(!m_evalCodeBlock);
-    m_evalCodeBlock = adoptPtr(new EvalCodeBlock(this, globalObject, source().provider(), scopeChain.localDepth()));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(evalNode.get(), scopeChain, m_evalCodeBlock->symbolTable(), m_evalCodeBlock.get())));
+    m_evalCodeBlock = adoptPtr(new EvalCodeBlock(this, globalObject, source().provider(), scopeChainNode->localDepth()));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(evalNode.get(), scopeChainNode, m_evalCodeBlock->symbolTable(), m_evalCodeBlock.get())));
     if ((exception = generator->generate())) {
         m_evalCodeBlock.clear();
         evalNode->destroyData();
@@ -154,11 +153,10 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     }
     recordParse(programNode->features(), programNode->hasCapturedVariables(), programNode->lineNo(), programNode->lastLine());
 
-    ScopeChain scopeChain(scopeChainNode);
-    JSGlobalObject* globalObject = scopeChain.globalObject();
+    JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
     
     m_programCodeBlock = adoptPtr(new ProgramCodeBlock(this, GlobalCode, globalObject, source().provider()));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(programNode.get(), scopeChain, &globalObject->symbolTable(), m_programCodeBlock.get())));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(programNode.get(), scopeChainNode, &globalObject->symbolTable(), m_programCodeBlock.get())));
     if ((exception = generator->generate())) {
         m_programCodeBlock.clear();
         programNode->destroyData();
@@ -194,12 +192,11 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     body->finishParsing(m_parameters, m_name);
     recordParse(body->features(), body->hasCapturedVariables(), body->lineNo(), body->lastLine());
 
-    ScopeChain scopeChain(scopeChainNode);
-    JSGlobalObject* globalObject = scopeChain.globalObject();
+    JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
 
     ASSERT(!m_codeBlockForCall);
     m_codeBlockForCall = adoptPtr(new FunctionCodeBlock(this, FunctionCode, globalObject, source().provider(), source().startOffset(), false));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), scopeChain, m_codeBlockForCall->symbolTable(), m_codeBlockForCall.get())));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), scopeChainNode, m_codeBlockForCall->symbolTable(), m_codeBlockForCall.get())));
     if ((exception = generator->generate())) {
         m_codeBlockForCall.clear();
         body->destroyData();
@@ -240,12 +237,11 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     body->finishParsing(m_parameters, m_name);
     recordParse(body->features(), body->hasCapturedVariables(), body->lineNo(), body->lastLine());
 
-    ScopeChain scopeChain(scopeChainNode);
-    JSGlobalObject* globalObject = scopeChain.globalObject();
+    JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
 
     ASSERT(!m_codeBlockForConstruct);
     m_codeBlockForConstruct = adoptPtr(new FunctionCodeBlock(this, FunctionCode, globalObject, source().provider(), source().startOffset(), true));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), scopeChain, m_codeBlockForConstruct->symbolTable(), m_codeBlockForConstruct.get())));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), scopeChainNode, m_codeBlockForConstruct->symbolTable(), m_codeBlockForConstruct.get())));
     if ((exception = generator->generate())) {
         m_codeBlockForConstruct.clear();
         body->destroyData();

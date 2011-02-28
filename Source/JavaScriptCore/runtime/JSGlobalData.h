@@ -153,6 +153,7 @@ namespace JSC {
         RefPtr<Structure> propertyNameIteratorStructure;
         RefPtr<Structure> getterSetterStructure;
         RefPtr<Structure> apiWrapperStructure;
+        RefPtr<Structure> scopeChainNodeStructure;
         RefPtr<Structure> dummyMarkableCellStructure;
 
         static void storeVPtrs();

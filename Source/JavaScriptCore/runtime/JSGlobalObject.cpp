@@ -112,9 +112,9 @@ void JSGlobalObject::init(JSObject* thisValue)
     structure()->disableSpecificFunctionTracking();
 
     d()->globalData = Heap::heap(this)->globalData();
-    d()->globalScopeChain = ScopeChain(this, d()->globalData.get(), this, thisValue);
+    d()->globalScopeChain.set(*d()->globalData, this, new (d()->globalData.get()) ScopeChainNode(0, this, d()->globalData.get(), this, thisValue));
 
-    JSGlobalObject::globalExec()->init(0, 0, d()->globalScopeChain.node(), CallFrame::noCaller(), 0, 0);
+    JSGlobalObject::globalExec()->init(0, 0, d()->globalScopeChain.get(), CallFrame::noCaller(), 0, 0);
 
     d()->debugger = 0;
 
@@ -319,6 +319,8 @@ void JSGlobalObject::markChildren(MarkStack& markStack)
 {
     JSVariableObject::markChildren(markStack);
     
+    markIfNeeded(markStack, &d()->globalScopeChain);
+
     markIfNeeded(markStack, &d()->regExpConstructor);
     markIfNeeded(markStack, &d()->errorConstructor);
     markIfNeeded(markStack, &d()->evalErrorConstructor);

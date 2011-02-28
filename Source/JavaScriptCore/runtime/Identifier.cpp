@@ -23,6 +23,7 @@
 
 #include "CallFrame.h"
 #include "NumericStrings.h"
+#include "ScopeChain.h"
 #include <new> // for placement new
 #include <string.h> // for strlen
 #include <wtf/Assertions.h>

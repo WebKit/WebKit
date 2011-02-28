@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StructureStubInfo.h"
 
+#include "ScopeChain.h"
+
 namespace JSC {
 
 #if ENABLE(JIT)

@@ -22,6 +22,7 @@
 
 #include "config.h"
 #include "JSNumberCell.h"
+#include "ScopeChain.h"
 
 // Keep our exported symbols lists happy.
 namespace JSC {

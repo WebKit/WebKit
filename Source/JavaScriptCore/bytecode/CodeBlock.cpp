@@ -1697,7 +1697,7 @@ void CodeBlock::createActivation(CallFrame* callFrame)
     ASSERT(!callFrame->uncheckedR(activationRegister()).jsValue());
     JSActivation* activation = new (callFrame) JSActivation(callFrame, static_cast<FunctionExecutable*>(ownerExecutable()));
     callFrame->uncheckedR(activationRegister()) = JSValue(activation);
-    callFrame->setScopeChain(callFrame->scopeChain()->copy()->push(activation));
+    callFrame->setScopeChain(callFrame->scopeChain()->push(activation));
 }
 
 } // namespace JSC

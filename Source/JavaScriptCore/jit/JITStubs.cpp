@@ -1174,7 +1174,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_create_this)
     if (proto.isObject())
         structure = asObject(proto)->inheritorID();
     else
-        structure = constructor->scope().node()->globalObject->emptyObjectStructure();
+        structure = constructor->scope()->globalObject->emptyObjectStructure();
     JSValue result = constructEmptyObject(callFrame, structure);
 
     return JSValue::encode(result);
@@ -1202,15 +1202,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_convert_this_strict)
     JSValue result = v1.toStrictThisObject(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
-}
-
-DEFINE_STUB_FUNCTION(void, op_end)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    ScopeChainNode* scopeChain = stackFrame.callFrame->scopeChain();
-    ASSERT(scopeChain->refCount > 1);
-    scopeChain->deref();
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_add)
@@ -1847,7 +1838,7 @@ DEFINE_STUB_FUNCTION(void*, op_call_jitCompile)
     JSFunction* function = asFunction(stackFrame.callFrame->callee());
     ASSERT(!function->isHostFunction());
     FunctionExecutable* executable = function->jsExecutable();
-    ScopeChainNode* callDataScopeChain = function->scope().node();
+    ScopeChainNode* callDataScopeChain = function->scope();
     JSObject* error = executable->compileForCall(stackFrame.callFrame, callDataScopeChain);
     if (error) {
         stackFrame.callFrame->globalData().exception = error;
@@ -1868,7 +1859,7 @@ DEFINE_STUB_FUNCTION(void*, op_construct_jitCompile)
     JSFunction* function = asFunction(stackFrame.callFrame->callee());
     ASSERT(!function->isHostFunction());
     FunctionExecutable* executable = function->jsExecutable();
-    ScopeChainNode* callDataScopeChain = function->scope().node();
+    ScopeChainNode* callDataScopeChain = function->scope();
     JSObject* error = executable->compileForConstruct(stackFrame.callFrame, callDataScopeChain);
     if (error) {
         stackFrame.callFrame->globalData().exception = error;
@@ -1929,7 +1920,7 @@ DEFINE_STUB_FUNCTION(void*, op_call_arityCheck)
     callFrame->setCallerFrame(oldCallFrame);
     callFrame->setArgumentCountIncludingThis(argCount);
     callFrame->setCallee(callee);
-    callFrame->setScopeChain(callee->scope().node());
+    callFrame->setScopeChain(callee->scope());
     callFrame->setReturnPC(pc.value());
 
     ASSERT((void*)callFrame <= stackFrame.registerFile->end());
@@ -1988,7 +1979,7 @@ DEFINE_STUB_FUNCTION(void*, op_construct_arityCheck)
     callFrame->setCallerFrame(oldCallFrame);
     callFrame->setArgumentCountIncludingThis(argCount);
     callFrame->setCallee(callee);
-    callFrame->setScopeChain(callee->scope().node());
+    callFrame->setScopeChain(callee->scope());
     callFrame->setReturnPC(pc.value());
 
     ASSERT((void*)callFrame <= stackFrame.registerFile->end());
@@ -2009,7 +2000,7 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkCall)
         codePtr = executable->generatedJITCodeForCall().addressForCall();
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-        JSObject* error = functionExecutable->compileForCall(callFrame, callee->scope().node());
+        JSObject* error = functionExecutable->compileForCall(callFrame, callee->scope());
         if (error) {
             callFrame->globalData().exception = createStackOverflowError(callFrame);
             return 0;
@@ -2043,7 +2034,7 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkConstruct)
         codePtr = executable->generatedJITCodeForConstruct().addressForCall();
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-        JSObject* error = functionExecutable->compileForConstruct(callFrame, callee->scope().node());
+        JSObject* error = functionExecutable->compileForConstruct(callFrame, callee->scope());
         if (error) {
             throwStackOverflowError(callFrame, stackFrame.globalData, ReturnAddressPtr(callFrame->returnPC()), STUB_RETURN_ADDRESS);
             return 0;
@@ -2070,7 +2061,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_push_activation)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     JSActivation* activation = new (stackFrame.globalData) JSActivation(stackFrame.callFrame, static_cast<FunctionExecutable*>(stackFrame.callFrame->codeBlock()->ownerExecutable()));
-    stackFrame.callFrame->setScopeChain(stackFrame.callFrame->scopeChain()->copy()->push(activation));
+    stackFrame.callFrame->setScopeChain(stackFrame.callFrame->scopeChain()->push(activation));
     return activation;
 }
 
@@ -2172,14 +2163,6 @@ DEFINE_STUB_FUNCTION(void, op_profile_did_call)
 
     ASSERT(*stackFrame.enabledProfilerReference);
     (*stackFrame.enabledProfilerReference)->didExecute(stackFrame.callFrame, stackFrame.args[0].jsValue());
-}
-
-DEFINE_STUB_FUNCTION(void, op_ret_scopeChain)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    ASSERT(stackFrame.callFrame->codeBlock()->needsFullScopeChain());
-    stackFrame.callFrame->scopeChain()->deref();
 }
 
 DEFINE_STUB_FUNCTION(JSObject*, op_new_array)
@@ -3008,7 +2991,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_func_exp)
      */
     if (!function->name().isNull()) {
         JSStaticScopeObject* functionScopeObject = new (callFrame) JSStaticScopeObject(callFrame, function->name(), func, ReadOnly | DontDelete);
-        func->scope().push(functionScopeObject);
+        func->setScope(callFrame->globalData(), func->scope()->push(functionScopeObject));
     }
 
     return func;
@@ -3118,7 +3101,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_call_eval)
     Register* newCallFrame = callFrame->registers() + registerOffset;
     Register* argv = newCallFrame - RegisterFile::CallFrameHeaderSize - argCount;
     JSValue baseValue = argv[0].jsValue();
-    JSGlobalObject* globalObject = callFrame->scopeChain()->globalObject;
+    JSGlobalObject* globalObject = callFrame->scopeChain()->globalObject.get();
 
     if (baseValue == globalObject && funcVal == globalObject->evalFunction()) {
         JSValue result = interpreter->callEval(callFrame, registerFile, argv, argCount, registerOffset);

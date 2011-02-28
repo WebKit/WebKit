@@ -76,6 +76,9 @@
 #include "ASCIICType.h"
 #include "CurrentTime.h"
 #include "MathExtras.h"
+#if USE(JSC)
+#include "ScopeChain.h"
+#endif
 #include "StdLibExtras.h"
 #include "StringExtras.h"
 

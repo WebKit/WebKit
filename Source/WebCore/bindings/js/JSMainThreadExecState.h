@@ -48,7 +48,7 @@ public:
         return JSC::call(exec, functionObject, callType, callData, thisValue, args);
     };
 
-    static JSC::Completion evaluate(JSC::ExecState* exec, JSC::ScopeChain& chain, const JSC::SourceCode& source, JSC::JSValue thisValue)
+    static JSC::Completion evaluate(JSC::ExecState* exec, JSC::ScopeChainNode* chain, const JSC::SourceCode& source, JSC::JSValue thisValue)
     {
         JSMainThreadExecState currentState(exec);
         return JSC::evaluate(exec, chain, source, thisValue);

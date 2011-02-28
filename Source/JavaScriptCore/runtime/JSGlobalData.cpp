@@ -132,6 +132,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , propertyNameIteratorStructure(JSPropertyNameIterator::createStructure(jsNull()))
     , getterSetterStructure(GetterSetter::createStructure(jsNull()))
     , apiWrapperStructure(JSAPIValueWrapper::createStructure(jsNull()))
+    , scopeChainNodeStructure(ScopeChainNode::createStructure(jsNull()))
     , dummyMarkableCellStructure(JSCell::createDummyStructure())
     , identifierTable(globalDataType == Default ? wtfThreadData().currentIdentifierTable() : createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))

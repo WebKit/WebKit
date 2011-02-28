@@ -448,8 +448,6 @@ void JIT::emit_op_mov(Instruction* currentInstruction)
 
 void JIT::emit_op_end(Instruction* currentInstruction)
 {
-    if (m_codeBlock->needsFullScopeChain())
-        JITStubCall(this, cti_op_end).call();
     ASSERT(returnValueRegister != callFrameRegister);
     emitLoad(currentInstruction[1].u.operand, regT1, regT0);
     restoreReturnAddressBeforeReturn(Address(callFrameRegister, RegisterFile::ReturnPC * static_cast<int>(sizeof(Register))));

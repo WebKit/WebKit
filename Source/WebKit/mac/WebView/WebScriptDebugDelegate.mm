@@ -176,7 +176,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
     JSLock lock(SilenceAssertionsOnly);
 
-    const ScopeChainNode* scopeChain = _private->debuggerCallFrame->scopeChain();
+    ScopeChainNode* scopeChain = _private->debuggerCallFrame->scopeChain();
     if (!scopeChain->next)  // global frame
         return [NSArray arrayWithObject:_private->globalObject];
 

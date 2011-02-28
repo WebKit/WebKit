@@ -76,11 +76,11 @@ using namespace std;
 namespace JSC {
 
 // Returns the depth of the scope chain within a given call frame.
-static int depth(CodeBlock* codeBlock, ScopeChain& sc)
+static int depth(CodeBlock* codeBlock, ScopeChainNode* sc)
 {
     if (!codeBlock->needsFullScopeChain())
         return 0;
-    return sc.localDepth();
+    return sc->localDepth();
 }
 
 #if ENABLE(INTERPRETER) 
@@ -579,9 +579,6 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
             asArguments(arguments)->copyRegisters();
     }
 
-    if (oldCodeBlock->needsFullScopeChain())
-        scopeChain->deref();
-
     CallFrame* callerFrame = callFrame->callerFrame();
     if (callerFrame->hasHostCallFrameFlag())
         return false;
@@ -710,11 +707,10 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
 
     // Unwind the scope chain within the exception handler's call frame.
     ScopeChainNode* scopeChain = callFrame->scopeChain();
-    ScopeChain sc(scopeChain);
     int scopeDelta = 0;
     if (!codeBlock->needsFullScopeChain() || codeBlock->codeType() != FunctionCode 
         || callFrame->uncheckedR(codeBlock->activationRegister()).jsValue())
-        scopeDelta = depth(codeBlock, sc) - handler->scopeDepth;
+        scopeDelta = depth(codeBlock, scopeChain) - handler->scopeDepth;
     ASSERT(scopeDelta >= 0);
     while (scopeDelta--)
         scopeChain = scopeChain->pop();
@@ -761,10 +757,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
     newCallFrame->init(codeBlock, 0, scopeChain, CallFrame::noCaller(), codeBlock->m_numParameters, 0);
     newCallFrame->uncheckedR(newCallFrame->hostThisRegister()) = JSValue(thisObj);
 
-    if (codeBlock->needsFullScopeChain())
-        scopeChain->ref();
-
-    DynamicGlobalObjectScope globalObjectScope(callFrame, scopeChain->globalObject);
+    DynamicGlobalObjectScope globalObjectScope(callFrame, scopeChain->globalObject.get());
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -835,7 +828,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
         newCallFrame->init(newCodeBlock, 0, callDataScopeChain, callFrame->addHostCallFrameFlag(), argCount, function);
 
-        DynamicGlobalObjectScope globalObjectScope(newCallFrame, callDataScopeChain->globalObject);
+        DynamicGlobalObjectScope globalObjectScope(newCallFrame, callDataScopeChain->globalObject.get());
 
         Profiler** profiler = Profiler::enabledProfilerReference();
         if (*profiler)
@@ -867,7 +860,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     newCallFrame = CallFrame::create(newCallFrame->registers() + registerOffset);
     newCallFrame->init(0, 0, scopeChain, callFrame->addHostCallFrameFlag(), argCount, function);
 
-    DynamicGlobalObjectScope globalObjectScope(newCallFrame, scopeChain->globalObject);
+    DynamicGlobalObjectScope globalObjectScope(newCallFrame, scopeChain->globalObject.get());
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -924,7 +917,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
         newCallFrame->init(newCodeBlock, 0, constructDataScopeChain, callFrame->addHostCallFrameFlag(), argCount, constructor);
 
-        DynamicGlobalObjectScope globalObjectScope(newCallFrame, constructDataScopeChain->globalObject);
+        DynamicGlobalObjectScope globalObjectScope(newCallFrame, constructDataScopeChain->globalObject.get());
 
         Profiler** profiler = Profiler::enabledProfilerReference();
         if (*profiler)
@@ -959,7 +952,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     newCallFrame = CallFrame::create(newCallFrame->registers() + registerOffset);
     newCallFrame->init(0, 0, scopeChain, callFrame->addHostCallFrameFlag(), argCount, constructor);
 
-    DynamicGlobalObjectScope globalObjectScope(newCallFrame, scopeChain->globalObject);
+    DynamicGlobalObjectScope globalObjectScope(newCallFrame, scopeChain->globalObject.get());
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -1076,7 +1069,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
     if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
         return checkedReturn(throwStackOverflowError(callFrame));
 
-    DynamicGlobalObjectScope globalObjectScope(callFrame, scopeChain->globalObject);
+    DynamicGlobalObjectScope globalObjectScope(callFrame, scopeChain->globalObject.get());
 
     JSObject* compileError = eval->compile(callFrame, scopeChain);
     if (UNLIKELY(!!compileError))
@@ -1084,7 +1077,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
     EvalCodeBlock* codeBlock = &eval->generatedBytecode();
 
     JSObject* variableObject;
-    for (ScopeChainNode* node = scopeChain; ; node = node->next) {
+    for (ScopeChainNode* node = scopeChain; ; node = node->next.get()) {
         ASSERT(node);
         if (node->object->isVariableObject()) {
             variableObject = static_cast<JSVariableObject*>(node->object.get());
@@ -1132,9 +1125,6 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
     ASSERT(codeBlock->m_numParameters == 1); // 1 parameter for 'this'.
     newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), codeBlock->m_numParameters, 0);
     newCallFrame->uncheckedR(newCallFrame->hostThisRegister()) = JSValue(thisObj);
-
-    if (codeBlock->needsFullScopeChain())
-        scopeChain->ref();
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -3805,7 +3795,7 @@ skip_id_custom_self:
          */
         if (!function->name().isNull()) {
             JSStaticScopeObject* functionScopeObject = new (callFrame) JSStaticScopeObject(callFrame, function->name(), func, ReadOnly | DontDelete);
-            func->scope().push(functionScopeObject);
+            func->setScope(*globalData, func->scope()->push(functionScopeObject));
         }
 
         callFrame->uncheckedR(dst) = JSValue(func);
@@ -3835,7 +3825,7 @@ skip_id_custom_self:
         Register* newCallFrame = callFrame->registers() + registerOffset;
         Register* argv = newCallFrame - RegisterFile::CallFrameHeaderSize - argCount;
         JSValue thisValue = argv[0].jsValue();
-        JSGlobalObject* globalObject = callFrame->scopeChain()->globalObject;
+        JSGlobalObject* globalObject = callFrame->scopeChain()->globalObject.get();
 
         if (thisValue == globalObject && funcVal == globalObject->evalFunction()) {
             JSValue result = callEval(callFrame, registerFile, argv, argCount, registerOffset);
@@ -4150,9 +4140,6 @@ skip_id_custom_self:
 
         int result = vPC[1].u.operand;
 
-        if (callFrame->codeBlock()->needsFullScopeChain() && callFrame->r(codeBlock->activationRegister()).jsValue())
-            callFrame->scopeChain()->deref();
-
         JSValue returnValue = callFrame->r(result).jsValue();
 
         vPC = callFrame->returnVPC();
@@ -4190,9 +4177,6 @@ skip_id_custom_self:
         */
 
         int result = vPC[1].u.operand;
-
-        if (codeBlock->needsFullScopeChain() && callFrame->r(codeBlock->activationRegister()).jsValue())
-            callFrame->scopeChain()->deref();
 
         JSValue returnValue = callFrame->r(result).jsValue();
 
@@ -4238,7 +4222,7 @@ skip_id_custom_self:
         if (!callFrame->r(activationReg).jsValue()) {
             JSActivation* activation = new (globalData) JSActivation(callFrame, static_cast<FunctionExecutable*>(codeBlock->ownerExecutable()));
             callFrame->r(activationReg) = JSValue(activation);
-            callFrame->setScopeChain(callFrame->scopeChain()->copy()->push(activation));
+            callFrame->setScopeChain(callFrame->scopeChain()->push(activation));
         }
         vPC += OPCODE_LENGTH(op_create_activation);
         NEXT_INSTRUCTION();
@@ -4277,7 +4261,7 @@ skip_id_custom_self:
         if (proto.isObject())
             structure = asObject(proto)->inheritorID();
         else
-            structure = constructor->scope().node()->globalObject->emptyObjectStructure();
+            structure = constructor->scope()->globalObject->emptyObjectStructure();
         callFrame->uncheckedR(thisRegister) = constructEmptyObject(callFrame, structure);
 
         vPC += OPCODE_LENGTH(op_create_this);
@@ -4643,11 +4627,6 @@ skip_id_custom_self:
            program. Return control to the calling native code.
         */
 
-        if (codeBlock->needsFullScopeChain()) {
-            ScopeChainNode* scopeChain = callFrame->scopeChain();
-            ASSERT(scopeChain->refCount > 1);
-            scopeChain->deref();
-        }
         int result = vPC[1].u.operand;
         return callFrame->r(result).jsValue();
     }

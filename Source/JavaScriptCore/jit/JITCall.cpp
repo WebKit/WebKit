@@ -49,7 +49,7 @@ namespace JSC {
 void JIT::compileOpCallInitializeCallFrame()
 {
     store32(regT1, Address(callFrameRegister, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))));
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain) + OBJECT_OFFSETOF(ScopeChain, m_node)), regT3); // newScopeChain
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT3); // newScopeChain
     storePtr(regT0, Address(callFrameRegister, RegisterFile::Callee * static_cast<int>(sizeof(Register))));
     storePtr(regT3, Address(callFrameRegister, RegisterFile::ScopeChain * static_cast<int>(sizeof(Register))));
 }
@@ -198,7 +198,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     // Fast version of stack frame initialization, directly relative to edi.
     // Note that this omits to set up RegisterFile::CodeBlock, which is set in the callee
 
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain) + OBJECT_OFFSETOF(ScopeChain, m_node)), regT1); // newScopeChain
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1); // newScopeChain
 
     store32(Imm32(argCount), Address(callFrameRegister, (registerOffset + RegisterFile::ArgumentCount) * static_cast<int>(sizeof(Register))));
     storePtr(callFrameRegister, Address(callFrameRegister, (registerOffset + RegisterFile::CallerFrame) * static_cast<int>(sizeof(Register))));

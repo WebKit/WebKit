@@ -69,7 +69,7 @@ namespace JSC {
                 : JSVariableObjectData(&symbolTable, 0)
                 , destructor(destructor)
                 , registerArraySize(0)
-                , globalScopeChain(NoScopeChain())
+                , globalScopeChain()
                 , weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
             {
             }
@@ -83,7 +83,7 @@ namespace JSC {
 
             Debugger* debugger;
             
-            ScopeChain globalScopeChain;
+            WriteBarrier<ScopeChainNode> globalScopeChain;
             Register globalCallFrame[RegisterFile::CallFrameHeaderSize];
 
             WriteBarrier<RegExpConstructor> regExpConstructor;
@@ -228,7 +228,7 @@ namespace JSC {
         virtual bool supportsProfiling() const { return false; }
         virtual bool supportsRichSourceInfo() const { return true; }
 
-        ScopeChain& globalScopeChain() { return d()->globalScopeChain; }
+        ScopeChainNode* globalScopeChain() { return d()->globalScopeChain.get(); }
 
         virtual bool isGlobalObject() const { return true; }
 

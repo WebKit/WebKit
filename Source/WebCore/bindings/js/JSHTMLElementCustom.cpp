@@ -33,19 +33,19 @@ namespace WebCore {
 
 using namespace JSC;
 
-void JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChain& scope) const
+ScopeChainNode* JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChainNode* scope) const
 {
     HTMLElement* element = impl();
 
     // The document is put on first, fall back to searching it only after the element and form.
-    scope.push(asObject(toJS(exec, globalObject(), element->ownerDocument())));
+    scope = scope->push(asObject(toJS(exec, globalObject(), element->ownerDocument())));
 
     // The form is next, searched before the document, but after the element itself.
     if (HTMLFormElement* form = element->form())
-        scope.push(asObject(toJS(exec, globalObject(), form)));
+        scope = scope->push(asObject(toJS(exec, globalObject(), form)));
 
     // The element is on top, searched first.
-    scope.push(asObject(toJS(exec, globalObject(), element)));
+    return scope->push(asObject(toJS(exec, globalObject(), element)));
 }
 
 } // namespace WebCore

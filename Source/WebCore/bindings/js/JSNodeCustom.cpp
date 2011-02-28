@@ -112,8 +112,9 @@ JSValue JSNode::appendChild(ExecState* exec)
     return jsNull();
 }
 
-void JSNode::pushEventHandlerScope(ExecState*, ScopeChain&) const
+ScopeChainNode* JSNode::pushEventHandlerScope(ExecState*, ScopeChainNode* node) const
 {
+    return node;
 }
 
 void JSNode::markChildren(MarkStack& markStack)

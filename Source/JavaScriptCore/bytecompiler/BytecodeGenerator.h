@@ -47,8 +47,7 @@
 namespace JSC {
 
     class Identifier;
-    class ScopeChain;
-    class ScopeNode;
+    class ScopeChainNode;
 
     class CallArguments {
     public:
@@ -93,9 +92,9 @@ namespace JSC {
         static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
         static bool dumpsGeneratedCode();
 
-        BytecodeGenerator(ProgramNode*, const ScopeChain&, SymbolTable*, ProgramCodeBlock*);
-        BytecodeGenerator(FunctionBodyNode*, const ScopeChain&, SymbolTable*, CodeBlock*);
-        BytecodeGenerator(EvalNode*, const ScopeChain&, SymbolTable*, EvalCodeBlock*);
+        BytecodeGenerator(ProgramNode*, ScopeChainNode*, SymbolTable*, ProgramCodeBlock*);
+        BytecodeGenerator(FunctionBodyNode*, ScopeChainNode*, SymbolTable*, CodeBlock*);
+        BytecodeGenerator(EvalNode*, ScopeChainNode*, SymbolTable*, EvalCodeBlock*);
 
         JSGlobalData* globalData() const { return m_globalData; }
         const CommonIdentifiers& propertyNames() const { return *m_globalData->propertyNames; }
@@ -520,7 +519,7 @@ namespace JSC {
         bool m_shouldEmitProfileHooks;
         bool m_shouldEmitRichSourceInfo;
 
-        const ScopeChain* m_scopeChain;
+        Global<ScopeChainNode> m_scopeChain;
         SymbolTable* m_symbolTable;
 
         ScopeNode* m_scopeNode;

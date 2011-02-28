@@ -26,13 +26,13 @@
 #include "JSGlobalData.h"
 #include "MacroAssemblerCodeRef.h"
 #include "RegisterFile.h"
-#include "ScopeChain.h"
 
 namespace JSC  {
 
     class Arguments;
     class JSActivation;
     class Interpreter;
+    class ScopeChainNode;
 
     // Represents the current state of script execution.
     // Passed as the first argument to most functions.
@@ -51,23 +51,13 @@ namespace JSC  {
 
         // Global object in which the currently executing code was defined.
         // Differs from dynamicGlobalObject() during function calls across web browser frames.
-        JSGlobalObject* lexicalGlobalObject() const
-        {
-            return scopeChain()->globalObject;
-        }
+        inline JSGlobalObject* lexicalGlobalObject() const;
 
         // Differs from lexicalGlobalObject because this will have DOM window shell rather than
         // the actual DOM window, which can't be "this" for security reasons.
-        JSObject* globalThisValue() const
-        {
-            return scopeChain()->globalThis;
-        }
+        inline JSObject* globalThisValue() const;
 
-        JSGlobalData& globalData() const
-        {
-            ASSERT(scopeChain()->globalData);
-            return *scopeChain()->globalData;
-        }
+        inline JSGlobalData& globalData() const;
 
         // Convenience functions for access to global data.
         // It takes a few memory references to get from a call frame to the global data

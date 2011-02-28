@@ -56,7 +56,7 @@ JavaScriptCallFrame* JavaScriptCallFrame::caller()
     return m_caller.get();
 }
 
-const JSC::ScopeChainNode* JavaScriptCallFrame::scopeChain() const
+JSC::ScopeChainNode* JavaScriptCallFrame::scopeChain() const
 {
     ASSERT(m_isValid);
     if (!m_isValid)

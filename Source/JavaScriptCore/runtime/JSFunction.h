@@ -53,15 +53,15 @@ namespace JSC {
         const UString displayName(ExecState*);
         const UString calculatedDisplayName(ExecState*);
 
-        ScopeChain& scope()
+        ScopeChainNode* scope()
         {
             ASSERT(!isHostFunctionNonInline());
-            return m_scopeChain;
+            return m_scopeChain.get();
         }
-        void setScope(const ScopeChain& scopeChain)
+        void setScope(JSGlobalData& globalData, ScopeChainNode* scopeChain)
         {
             ASSERT(!isHostFunctionNonInline());
-            m_scopeChain = scopeChain;
+            m_scopeChain.set(globalData, this, scopeChain);
         }
 
         ExecutableBase* executable() const { return m_executable.get(); }
@@ -103,7 +103,7 @@ namespace JSC {
         static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
 
         RefPtr<ExecutableBase> m_executable;
-        ScopeChain m_scopeChain;
+        WriteBarrier<ScopeChainNode> m_scopeChain;
     };
 
     JSFunction* asFunction(JSValue);

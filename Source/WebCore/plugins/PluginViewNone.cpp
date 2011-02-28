@@ -28,6 +28,7 @@
 
 #if USE(JSC)
 #include "Bridge.h"
+#include <runtime/ScopeChain.h>
 #endif
 
 using namespace WTF;
