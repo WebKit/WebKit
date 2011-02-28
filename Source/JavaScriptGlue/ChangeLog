@@ -1,3 +1,16 @@
+2011-02-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Use more xcconfig files in JavaScriptGlue gyp build
+        https://bugs.webkit.org/show_bug.cgi?id=55395
+
+        Technically this patch breaks the build because the generated project
+        can't find the Info.plist file or the list of exported symbols.  I'll
+        fix that in a follow-up patch.
+
+        * gyp/JavaScriptGlue.gyp:
+
 2011-02-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.
