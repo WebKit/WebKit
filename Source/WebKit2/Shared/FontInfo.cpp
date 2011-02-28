@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,30 +24,31 @@
  */
 
 #include "config.h"
-#include "WebPopupMenuProxyQt.h"
+#include "FontInfo.h"
 
-#include "PlatformPopupMenuData.h"
-#include "WebPopupItem.h"
+#include "WebCoreArgumentCoders.h"
 
-using namespace WebCore;
+#if PLATFORM(MAC)
+#include "ArgumentCodersCF.h"
+#endif
 
 namespace WebKit {
 
-WebPopupMenuProxyQt::WebPopupMenuProxyQt()
-    : WebPopupMenuProxy(0)
+void FontInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
+#if PLATFORM(MAC)
+    CoreIPC::encode(encoder, fontAttributeDictionary.get());
+#endif
 }
 
-WebPopupMenuProxyQt::~WebPopupMenuProxyQt()
-{
-}
-
-void WebPopupMenuProxyQt::showPopupMenu(const IntRect& rect, WebCore::TextDirection, double, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
-{
-}
-
-void WebPopupMenuProxyQt::hidePopupMenu()
-{
+bool FontInfo::decode(CoreIPC::ArgumentDecoder* decoder, FontInfo& fontInfo)
+{    
+#if PLATFORM(MAC)
+    if (!CoreIPC::decode(decoder, fontInfo.fontAttributeDictionary))
+        return false;
+#endif
+    
+    return true;
 }
 
 } // namespace WebKit

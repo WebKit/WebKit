@@ -83,12 +83,12 @@ namespace WebCore {
 
 namespace WebKit {
 
+class DictionaryPopupInfo;
 class DrawingAreaProxy;
 class NativeWebKeyboardEvent;
 class PageClient;
 class PlatformCertificateInfo;
 class StringPairVector;
-class TextInfo;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebContextMenuProxy;
@@ -542,14 +542,14 @@ private:
     // Context Menu.
     void showContextMenu(const WebCore::IntPoint& menuLocation, const ContextMenuState&, const Vector<WebContextMenuItemData>&, CoreIPC::ArgumentDecoder*);
 
-    // Speech.
 #if PLATFORM(MAC)
+    // Speech.
     void getIsSpeaking(bool&);
     void speak(const String&);
     void stopSpeaking();
 
     // Dictionary.
-    void didPerformDictionaryLookup(const String&, const TextInfo&);
+    void didPerformDictionaryLookup(const String&, const DictionaryPopupInfo&);
 #endif
 
     // Spelling and grammar.

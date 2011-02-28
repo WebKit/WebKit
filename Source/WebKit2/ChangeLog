@@ -1,3 +1,69 @@
+2011-02-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Size of text in popup menu doesn't match size of text in <select> itself in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=48234
+
+        * Shared/TextInfo.cpp: Removed.
+        * Shared/TextInfo.h: Removed.
+        Replace this with the more appropriately DictionaryPopupInfo.
+
+        * Shared/DictionaryPopupInfo.cpp: Copied from Source/WebKit2/Shared/TextInfo.cpp.
+        (WebKit::DictionaryPopupInfo::encode):
+        (WebKit::DictionaryPopupInfo::decode):
+        * Shared/DictionaryPopupInfo.h: Copied from Source/WebKit2/Shared/TextInfo.h.
+        (WebKit::DictionaryPopupInfo::DictionaryPopupInfo):
+        Replace individual font related fields with FontInfo.
+
+        * Shared/FontInfo.cpp: Added.
+        (WebKit::FontInfo::FontInfo):
+        (WebKit::FontInfo::encode):
+        (WebKit::FontInfo::decode):
+        * Shared/FontInfo.h: Added.
+        Add class to encapsulate passing a font description over the wire.
+
+        * Shared/PlatformPopupMenuData.cpp:
+        (WebKit::PlatformPopupMenuData::encode):
+        (WebKit::PlatformPopupMenuData::decode):
+        * Shared/PlatformPopupMenuData.h:
+        Add FontInfo as extra data for the Mac.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didPerformDictionaryLookup):
+        * UIProcess/PageClient.h:
+        Add scaleFactor and use it to construct a font at the right size.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showPopupMenu):
+        (WebKit::WebPageProxy::didPerformDictionaryLookup):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPopupMenuProxy.h:
+        * UIProcess/mac/WebPopupMenuProxyMac.h:
+        (WebKit::WebPopupMenuProxyMac::create):
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::WebPopupMenuProxyMac):
+        (WebKit::WebPopupMenuProxyMac::populate):
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+        * UIProcess/qt/WebPopupMenuProxyQt.cpp:
+        (WebKit::WebPopupMenuProxyQt::showPopupMenu):
+        * UIProcess/qt/WebPopupMenuProxyQt.h:
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::showPopupMenu):
+        * UIProcess/win/WebPopupMenuProxyWin.h:
+        * WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        Pass scale factor through and rename TextInfo -> DictionaryPopupInfo.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2011-02-28  Adam Roben  <aroben@apple.com>
 
         One more rename as a followup to r79868

@@ -125,7 +125,7 @@ messages -> WebPageProxy {
 
 #if PLATFORM(MAC)
     # Dictionary support.
-    DidPerformDictionaryLookup(WTF::String text, WebKit::TextInfo textInfo)
+    DidPerformDictionaryLookup(WTF::String text, WebKit::DictionaryPopupInfo dictionaryPopupInfo)
 
     # Keyboard support messages
     InterpretKeyEvent(uint32_t type) -> (Vector<WebCore::KeypressCommand> commandName, uint32_t selectionStart, uint32_t selectionEnd, Vector<WebCore::CompositionUnderline> underlines)

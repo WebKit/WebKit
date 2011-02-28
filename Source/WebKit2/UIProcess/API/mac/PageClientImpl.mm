@@ -27,9 +27,9 @@
 #import "PageClientImpl.h"
 
 #import "DataReference.h"
+#import "DictionaryPopupInfo.h"
 #import "FindIndicator.h"
 #import "NativeWebKeyboardEvent.h"
-#import "TextInfo.h"
 #import "WKAPICast.h"
 #import "WKStringCF.h"
 #import "WKViewInternal.h"
@@ -413,16 +413,17 @@ void PageClientImpl::flashBackingStoreUpdates(const Vector<IntRect>&)
     notImplemented();
 }
 
-void PageClientImpl::didPerformDictionaryLookup(const String& text, const TextInfo& textInfo)
+void PageClientImpl::didPerformDictionaryLookup(const String& text, double scaleFactor, const DictionaryPopupInfo& dictionaryPopupInfo)
 {
-    NSFontDescriptor *fontDescriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:(NSDictionary *)textInfo.fontAttributeDictionary.get()];
-    NSFont *font = [NSFont fontWithDescriptor:fontDescriptor size:textInfo.fontOverrideSize];
+    NSFontDescriptor *fontDescriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:(NSDictionary *)dictionaryPopupInfo.fontInfo.fontAttributeDictionary.get()];
+    NSFont *font = [NSFont fontWithDescriptor:fontDescriptor size:((scaleFactor != 1) ? [fontDescriptor pointSize] * scaleFactor : 0)];
 
     RetainPtr<NSMutableAttributedString> attributedString(AdoptNS, [[NSMutableAttributedString alloc] initWithString:nsStringFromWebCoreString(text)]);
     [attributedString.get() addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, [attributedString.get() length])];
 
-    NSPoint textBaselineOrigin = textInfo.baselineOrigin;
-
+    NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
+    textBaselineOrigin.y += [font ascender];
+    
     NSDictionary *options = [NSDictionary dictionaryWithObject:NSDefinitionPresentationTypeOverlay forKey:NSDefinitionPresentationTypeKey];
     [m_wkView showDefinitionForAttributedString:attributedString.get() range:NSMakeRange(0, [attributedString.get() length]) options:options baselineOriginProvider:^(NSRange adjustedRange) { return (NSPoint)textBaselineOrigin; }];
 }

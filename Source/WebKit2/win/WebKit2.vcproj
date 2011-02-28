@@ -419,7 +419,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\DictionaryPopupInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\DictionaryPopupInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\DrawingAreaInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\FontInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\FontInfo.h"
 				>
 			</File>
 			<File
@@ -528,14 +544,6 @@
 			</File>
 			<File
 				RelativePath="..\Shared\TextCheckerState.h"
-				>
-			</File>
-			<File
-				RelativePath="..\Shared\TextInfo.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\Shared\TextInfo.h"
 				>
 			</File>
 			<File

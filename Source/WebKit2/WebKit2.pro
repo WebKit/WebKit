@@ -105,6 +105,8 @@ HEADERS += \
     Shared/ChildProcess.h \
     Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
     Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
+    Shared/DictionaryPopupInfo.h \
+    Shared/FontInfo.h \
     Shared/ImageOptions.h \
     Shared/ImmutableArray.h \
     Shared/ImmutableDictionary.h \
@@ -118,7 +120,6 @@ HEADERS += \
     Shared/SecurityOriginData.h \
     Shared/SessionState.h \
     Shared/StringPairVector.h \
-    Shared/TextInfo.h \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
     Shared/WebCoreArgumentCoders.h \
@@ -284,6 +285,8 @@ SOURCES += \
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
     Shared/ShareableBitmap.cpp \
     Shared/ChildProcess.cpp \
+    Shared/DictionaryPopupInfo.cpp \
+    Shared/FontInfo.cpp \
     Shared/ImmutableArray.cpp \
     Shared/ImmutableDictionary.cpp \
     Shared/MutableArray.cpp \
@@ -293,7 +296,6 @@ SOURCES += \
     Shared/PrintInfo.cpp \
     Shared/SecurityOriginData.cpp \
     Shared/SessionState.cpp \
-    Shared/TextInfo.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebBackForwardListItem.cpp \
     Shared/WebContextMenuItem.cpp \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,30 +24,25 @@
  */
 
 #include "config.h"
-#include "WebPopupMenuProxyQt.h"
+#include "DictionaryPopupInfo.h"
 
-#include "PlatformPopupMenuData.h"
-#include "WebPopupItem.h"
-
-using namespace WebCore;
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 
-WebPopupMenuProxyQt::WebPopupMenuProxyQt()
-    : WebPopupMenuProxy(0)
+void DictionaryPopupInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
+    encoder->encode(origin);
+    encoder->encode(fontInfo);
 }
 
-WebPopupMenuProxyQt::~WebPopupMenuProxyQt()
+bool DictionaryPopupInfo::decode(CoreIPC::ArgumentDecoder* decoder, DictionaryPopupInfo& result)
 {
-}
-
-void WebPopupMenuProxyQt::showPopupMenu(const IntRect& rect, WebCore::TextDirection, double, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
-{
-}
-
-void WebPopupMenuProxyQt::hidePopupMenu()
-{
+    if (!decoder->decode(result.origin))
+        return false;
+    if (!decoder->decode(result.fontInfo))
+        return false;
+    return true;
 }
 
 } // namespace WebKit

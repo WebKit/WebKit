@@ -23,11 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextInfo_h
-#define TextInfo_h
+#ifndef FontInfo_h
+#define FontInfo_h
 
-#include <WebCore/FloatPoint.h>
+#if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
+#endif
 
 namespace CoreIPC {
     class ArgumentDecoder;
@@ -35,21 +36,16 @@ namespace CoreIPC {
 }
 
 namespace WebKit {
-
-class TextInfo {
-public:
-    TextInfo() { }
-
+    
+struct FontInfo {
     void encode(CoreIPC::ArgumentEncoder*) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, TextInfo&);
-
-    WebCore::FloatPoint baselineOrigin;
+    static bool decode(CoreIPC::ArgumentDecoder*, FontInfo&);
+    
 #if PLATFORM(MAC)
     RetainPtr<CFDictionaryRef> fontAttributeDictionary;
-    double fontOverrideSize;
 #endif
 };
-
+    
 } // namespace WebKit
 
-#endif // TextInfo_h
+#endif // FontInfo_h

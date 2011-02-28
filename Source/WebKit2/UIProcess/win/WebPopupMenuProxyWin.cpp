@@ -188,7 +188,7 @@ WebPopupMenuProxyWin::~WebPopupMenuProxyWin()
         m_scrollbar->setParent(0);
 }
 
-void WebPopupMenuProxyWin::showPopupMenu(const IntRect& rect, TextDirection, const Vector<WebPopupItem>& items, const PlatformPopupMenuData& data, int32_t selectedIndex)
+void WebPopupMenuProxyWin::showPopupMenu(const IntRect& rect, TextDirection, double, const Vector<WebPopupItem>& items, const PlatformPopupMenuData& data, int32_t selectedIndex)
 {
     m_items = items;
     m_data = data;

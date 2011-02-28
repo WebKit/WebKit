@@ -28,8 +28,8 @@
 
 #import "AccessibilityWebPageObject.h"
 #import "DataReference.h"
+#import "DictionaryPopupInfo.h"
 #import "PluginView.h"
-#import "TextInfo.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebEvent.h"
 #import "WebFrame.h"
@@ -302,14 +302,12 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
         return;
 
     IntRect finalRangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
-    FloatPoint baselineOrigin(finalRangeRect.x(), (finalRangeRect.y() + ([font ascender] * frame->pageScaleFactor())));
-    
-    TextInfo textInfo;
-    textInfo.baselineOrigin = baselineOrigin;
-    textInfo.fontAttributeDictionary = fontDescriptorAttributes;
-    textInfo.fontOverrideSize = frame->pageScaleFactor() == 1 ? 0 : ([[font fontDescriptor] pointSize] * frame->pageScaleFactor());
 
-    send(Messages::WebPageProxy::DidPerformDictionaryLookup(finalRange->text(), textInfo));
+    DictionaryPopupInfo dictionaryPopupInfo;
+    dictionaryPopupInfo.origin = FloatPoint(finalRangeRect.x(), finalRangeRect.y());
+    dictionaryPopupInfo.fontInfo.fontAttributeDictionary = fontDescriptorAttributes;
+
+    send(Messages::WebPageProxy::DidPerformDictionaryLookup(finalRange->text(), dictionaryPopupInfo));
 }
 
 static inline void scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)

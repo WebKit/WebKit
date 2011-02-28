@@ -36,7 +36,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebPopupMenuProxyMac::WebPopupMenuProxyMac(WKView* webView, WebPopupMenuProxy::Client* client)
+WebPopupMenuProxyMac::WebPopupMenuProxyMac(WKView *webView, WebPopupMenuProxy::Client* client)
     : WebPopupMenuProxy(client)
     , m_webView(webView)
 {
@@ -48,7 +48,7 @@ WebPopupMenuProxyMac::~WebPopupMenuProxyMac()
         [m_popup.get() setControlView:nil];
 }
 
-void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, TextDirection menuTextDirection)
+void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *font, TextDirection menuTextDirection)
 {
     if (m_popup)
         [m_popup.get() removeAllItems];
@@ -73,7 +73,7 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, TextDirec
             [paragraphStyle.get() setAlignment:menuTextDirection == LTR ? NSLeftTextAlignment : NSRightTextAlignment];
             RetainPtr<NSMutableDictionary> attributes(AdoptNS, [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                 paragraphStyle.get(), NSParagraphStyleAttributeName,
-                [m_popup.get() font], NSFontAttributeName,
+                font, NSFontAttributeName,
             nil]);
             if (items[i].m_hasTextDirectionOverride) {
                 RetainPtr<NSNumber> writingDirectionValue(AdoptNS, [[NSNumber alloc] initWithInteger:writingDirection + NSTextWritingDirectionOverride]);
@@ -89,15 +89,22 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, TextDirec
     }
 }
 
-void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection textDirection, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
+void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection textDirection, double scaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData& data, int32_t selectedIndex)
 {
-    populate(items, textDirection);
+    NSFont *font;
+    if (data.fontInfo.fontAttributeDictionary) {
+        NSFontDescriptor *fontDescriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:(NSDictionary *)data.fontInfo.fontAttributeDictionary.get()];
+        font = [NSFont fontWithDescriptor:fontDescriptor size:((scaleFactor != 1) ? [fontDescriptor pointSize] * scaleFactor : 0)];
+    } else
+        font = [NSFont menuFontOfSize:0];
+
+    populate(items, font, textDirection);
 
     [m_popup.get() attachPopUpWithFrame:rect inView:m_webView];
     [m_popup.get() selectItemAtIndex:selectedIndex];
     [m_popup.get() setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 
-    NSMenu* menu = [m_popup.get() menu];
+    NSMenu *menu = [m_popup.get() menu];
 
     // These values were borrowed from AppKit to match their placement of the menu.
     const int popOverHorizontalAdjust = -10;
@@ -111,7 +118,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     [m_webView addSubview:dummyView.get()];
     location = [dummyView.get() convertPoint:location fromView:m_webView];
 
-    WKPopupMenu(menu, location, roundf(NSWidth(rect)), dummyView.get(), selectedIndex, [NSFont menuFontOfSize:0]);
+    WKPopupMenu(menu, location, roundf(NSWidth(rect)), dummyView.get(), selectedIndex, font);
 
     [m_popup.get() dismissPopUp];
     [dummyView.get() removeFromSuperview];

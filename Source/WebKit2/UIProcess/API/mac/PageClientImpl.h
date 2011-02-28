@@ -102,7 +102,7 @@ private:
 
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
 
-    virtual void didPerformDictionaryLookup(const String&, const TextInfo&);
+    virtual void didPerformDictionaryLookup(const String&, double scaleFactor, const DictionaryPopupInfo&);
 
     WKView* m_wkView;
     RetainPtr<WebEditorUndoTargetObjC> m_undoTarget;

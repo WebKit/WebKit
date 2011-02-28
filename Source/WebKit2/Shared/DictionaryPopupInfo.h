@@ -23,37 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "TextInfo.h"
+#ifndef DictionaryPopupInfo_h
+#define DictionaryPopupInfo_h
 
-#include "WebCoreArgumentCoders.h"
+#include "FontInfo.h"
+#include <WebCore/FloatPoint.h>
 
-#if PLATFORM(MAC)
-#include "ArgumentCodersCF.h"
-#endif
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class ArgumentEncoder;
+}
 
 namespace WebKit {
 
-void TextInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
-{
-    encoder->encode(baselineOrigin);
-#if PLATFORM(MAC)
-    CoreIPC::encode(encoder, fontAttributeDictionary.get());
-    encoder->encode(fontOverrideSize);
-#endif
-}
+struct DictionaryPopupInfo {
+    void encode(CoreIPC::ArgumentEncoder*) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, DictionaryPopupInfo&);
 
-bool TextInfo::decode(CoreIPC::ArgumentDecoder* decoder, TextInfo& result)
-{
-    if (!decoder->decode(result.baselineOrigin))
-        return false;
-#if PLATFORM(MAC)
-    if (!CoreIPC::decode(decoder, result.fontAttributeDictionary))
-        return false;
-    if (!decoder->decode(result.fontOverrideSize))
-        return false;
-#endif
-    return true;
-}
+    WebCore::FloatPoint origin;
+    FontInfo fontInfo;
+};
 
 } // namespace WebKit
+
+#endif // DictionaryPopupInfo_h

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,40 +60,43 @@ void PlatformPopupMenuData::encode(CoreIPC::ArgumentEncoder* encoder) const
     SharedMemory::Handle selectedBackingStoreHandle;
     m_selectedBackingStore->createHandle(selectedBackingStoreHandle);
     encoder->encode(selectedBackingStoreHandle);
+#elif PLATFORM(MAC)
+    encoder->encode(fontInfo);
 #endif
 }
 
 bool PlatformPopupMenuData::decode(CoreIPC::ArgumentDecoder* decoder, PlatformPopupMenuData& data)
 {
 #if PLATFORM(WIN)
-    PlatformPopupMenuData d;
-    if (!decoder->decode(d.m_clientPaddingLeft))
+    if (!decoder->decode(data.m_clientPaddingLeft))
         return false;
-    if (!decoder->decode(d.m_clientPaddingRight))
+    if (!decoder->decode(data.m_clientPaddingRight))
         return false;
-    if (!decoder->decode(d.m_clientInsetLeft))
+    if (!decoder->decode(data.m_clientInsetLeft))
         return false;
-    if (!decoder->decode(d.m_clientInsetRight))
+    if (!decoder->decode(data.m_clientInsetRight))
         return false;
-    if (!decoder->decode(d.m_popupWidth))
+    if (!decoder->decode(data.m_popupWidth))
         return false;
-    if (!decoder->decode(d.m_itemHeight))
+    if (!decoder->decode(data.m_itemHeight))
         return false;
-    if (!decoder->decode(d.m_backingStoreSize))
+    if (!decoder->decode(data.m_backingStoreSize))
         return false;
 
     SharedMemory::Handle notSelectedBackingStoreHandle;
     if (!decoder->decode(notSelectedBackingStoreHandle))
         return false;
-    d.m_notSelectedBackingStore = ShareableBitmap::create(d.m_backingStoreSize, notSelectedBackingStoreHandle);
+    data.m_notSelectedBackingStore = ShareableBitmap::create(data.m_backingStoreSize, notSelectedBackingStoreHandle);
 
     SharedMemory::Handle selectedBackingStoreHandle;
     if (!decoder->decode(selectedBackingStoreHandle))
         return false;
-    d.m_selectedBackingStore = ShareableBitmap::create(d.m_backingStoreSize, selectedBackingStoreHandle);
-
-    data = d;
+    data.m_selectedBackingStore = ShareableBitmap::create(data.m_backingStoreSize, selectedBackingStoreHandle);
+#elif PLATFORM(MAC)
+    if (!decoder->decode(data.fontInfo))
+        return false;
 #endif
+    
     return true;
 }
 

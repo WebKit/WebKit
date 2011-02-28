@@ -27,13 +27,25 @@
 #import "WebPopupMenu.h"
 
 #import "PlatformPopupMenuData.h"
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
+#import <WebCore/PopupMenuClient.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData&)
+void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData& data)
 {
+    NSFont *font = m_popupClient->menuStyle().font().primaryFont()->getNSFont();
+    if (!font)
+        return;
+    
+    CFDictionaryRef fontDescriptorAttributes = (CFDictionaryRef)[[font fontDescriptor] fontAttributes];
+    if (!fontDescriptorAttributes)
+        return;
+    
+    data.fontInfo.fontAttributeDictionary = fontDescriptorAttributes;
 }
 
 } // namespace WebKit

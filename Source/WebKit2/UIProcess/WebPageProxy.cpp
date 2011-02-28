@@ -39,7 +39,6 @@
 #include "StringPairVector.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
-#include "TextInfo.h"
 #include "WKContextPrivate.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
@@ -66,6 +65,16 @@
 #include "WebProtectionSpace.h"
 #include "WebSecurityOrigin.h"
 #include "WebURLRequest.h"
+#include <WebCore/DragData.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/WindowFeatures.h>
+#include <stdio.h>
+
+#if PLATFORM(MAC)
+#include "DictionaryPopupInfo.h"
+#endif
+
 #if PLATFORM(WIN)
 #include "WebDragSource.h"
 #include <WebCore/BitmapInfo.h>
@@ -73,11 +82,6 @@
 #include <WebCore/WCDataObject.h>
 #include <shlobj.h>
 #endif
-#include <WebCore/DragData.h>
-#include <WebCore/FloatRect.h>
-#include <WebCore/MIMETypeRegistry.h>
-#include <WebCore/WindowFeatures.h>
-#include <stdio.h>
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
@@ -2076,7 +2080,7 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, co
 
     RefPtr<WebPopupMenuProxy> protectedActivePopupMenu = m_activePopupMenu;
 
-    protectedActivePopupMenu->showPopupMenu(rect, static_cast<TextDirection>(textDirection), items, data, selectedIndex);
+    protectedActivePopupMenu->showPopupMenu(rect, static_cast<TextDirection>(textDirection), m_viewScaleFactor, items, data, selectedIndex);
     protectedActivePopupMenu->invalidate();
     protectedActivePopupMenu = 0;
 }
@@ -2450,9 +2454,9 @@ void WebPageProxy::computedPagesCallback(const Vector<WebCore::IntRect>& pageRec
 }
 
 #if PLATFORM(MAC)
-void WebPageProxy::didPerformDictionaryLookup(const String& text, const TextInfo& textInfo)
+void WebPageProxy::didPerformDictionaryLookup(const String& text, const DictionaryPopupInfo& dictionaryPopupInfo)
 {
-    m_pageClient->didPerformDictionaryLookup(text, textInfo);
+    m_pageClient->didPerformDictionaryLookup(text, m_viewScaleFactor, dictionaryPopupInfo);
 }
     
 void WebPageProxy::registerWebProcessAccessibilityToken(const CoreIPC::DataReference& data)

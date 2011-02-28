@@ -38,22 +38,22 @@ class WebPageProxy;
 
 class WebPopupMenuProxyMac : public WebPopupMenuProxy {
 public:
-    static PassRefPtr<WebPopupMenuProxyMac> create(WKView* webView, WebPopupMenuProxy::Client* client)
+    static PassRefPtr<WebPopupMenuProxyMac> create(WKView *webView, WebPopupMenuProxy::Client* client)
     {
         return adoptRef(new WebPopupMenuProxyMac(webView, client));
     }
     ~WebPopupMenuProxyMac();
 
-    virtual void showPopupMenu(const WebCore::IntRect&, WebCore::TextDirection, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex);
+    virtual void showPopupMenu(const WebCore::IntRect&, WebCore::TextDirection, double scaleFactor, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex);
     virtual void hidePopupMenu();
 
 private:
-    WebPopupMenuProxyMac(WKView*, WebPopupMenuProxy::Client* client);
+    WebPopupMenuProxyMac(WKView *, WebPopupMenuProxy::Client*);
 
-    void populate(const Vector<WebPopupItem>&, WebCore::TextDirection);
+    void populate(const Vector<WebPopupItem>&, NSFont *, WebCore::TextDirection);
 
     RetainPtr<NSPopUpButtonCell> m_popup;
-    WKView* m_webView;
+    WKView *m_webView;
 };
 
 } // namespace WebKit

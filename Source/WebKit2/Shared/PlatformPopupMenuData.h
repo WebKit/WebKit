@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef PlatformPopupMenuData_h
 #define PlatformPopupMenuData_h
 
+#include "FontInfo.h"
 #include "ShareableBitmap.h"
 #include <wtf/text/WTFString.h>
 
@@ -38,7 +39,7 @@ namespace WebKit {
 
 struct PlatformPopupMenuData {
     PlatformPopupMenuData();
-    
+
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, PlatformPopupMenuData&);
 
@@ -52,6 +53,8 @@ struct PlatformPopupMenuData {
     WebCore::IntSize m_backingStoreSize;
     RefPtr<ShareableBitmap> m_notSelectedBackingStore;
     RefPtr<ShareableBitmap> m_selectedBackingStore;
+#elif PLATFORM(MAC)
+    FontInfo fontInfo;
 #endif
 };
 
