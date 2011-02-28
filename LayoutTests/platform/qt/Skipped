@@ -2021,7 +2021,7 @@ fast/encoding/invalid-UTF-8.html
 fast/encoding/preload-encoding.html
 fast/encoding/utf-16-big-endian.html
 fast/encoding/utf-16-little-endian.html
-fast/encoding/utf-16-no-bom.xml
+fast/encoding/dumpAsText/utf-16-no-bom.xml
 fast/events/context-no-deselect.html
 fast/events/event-listener-on-link.html
 fast/events/event-sender-mouse-moved.html
