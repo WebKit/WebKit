@@ -1,3 +1,55 @@
+2011-02-28  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46500, make positioned elements work with vertical text.  Change staticX and staticY
+        to be staticInlinePosition and staticBlockPosition.  Patch all of the computations involving these variables to be writing
+        mode aware.  Mixed writing modes are not yet supported.
+
+        Added new tests in fast/block/positioning/auto.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustPositionedBlock):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::startOffsetForLine):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::appendRunsForObject):
+        (WebCore::setStaticPositions):
+        (WebCore::RenderBlock::skipTrailingWhitespace):
+        (WebCore::RenderBlock::skipLeadingWhitespace):
+        (WebCore::RenderBlock::findNextLineBreak):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionLineBox):
+        (WebCore::computeInlineStaticDistance):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::computeBlockStaticDistance):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::borderAndPaddingLogicalLeft):
+        (WebCore::RenderBoxModelObject::borderAndPaddingStart):
+        (WebCore::RenderBoxModelObject::borderLogicalLeft):
+        (WebCore::RenderBoxModelObject::borderLogicalRight):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::relativePositionedInlineOffset):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::staticInlinePosition):
+        (WebCore::RenderLayer::staticBlockPosition):
+        (WebCore::RenderLayer::setStaticInlinePosition):
+        (WebCore::RenderLayer::setStaticBlockPosition):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::hasAutoLeftAndRight):
+        (WebCore::InheritedFlags::hasAutoTopAndBottom):
+        (WebCore::InheritedFlags::hasStaticInlinePosition):
+        (WebCore::InheritedFlags::hasStaticBlockPosition):
+
 2011-02-28  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Anders Carlsson.

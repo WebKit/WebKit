@@ -380,8 +380,10 @@ public:
 
     // Whether or not a positioned element requires normal flow x/y to be computed
     // to determine its position.
-    bool hasStaticX() const { return left().isAuto() && right().isAuto(); }
-    bool hasStaticY() const { return top().isAuto() && bottom().isAuto(); }
+    bool hasAutoLeftAndRight() const { return left().isAuto() && right().isAuto(); }
+    bool hasAutoTopAndBottom() const { return top().isAuto() && bottom().isAuto(); }
+    bool hasStaticInlinePosition(bool horizontal) const { return horizontal ? hasAutoLeftAndRight() : hasAutoTopAndBottom(); }
+    bool hasStaticBlockPosition(bool horizontal) const { return horizontal ? hasAutoTopAndBottom() : hasAutoLeftAndRight(); }
 
     EPosition position() const { return static_cast<EPosition>(noninherited_flags._position); }
     EFloat floating() const { return static_cast<EFloat>(noninherited_flags._floating); }

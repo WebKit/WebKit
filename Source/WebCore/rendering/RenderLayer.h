@@ -397,10 +397,10 @@ public:
     void updateRepaintRectsAfterScroll(bool fixed = false);
     void setNeedsFullRepaint(bool f = true) { m_needsFullRepaint = f; }
     
-    int staticX() const { return m_staticX; }
-    int staticY() const { return m_staticY; }
-    void setStaticX(int staticX) { m_staticX = staticX; }
-    void setStaticY(int staticY) { m_staticY = staticY; }
+    int staticInlinePosition() const { return m_staticInlinePosition; }
+    int staticBlockPosition() const { return m_staticBlockPosition; }
+    void setStaticInlinePosition(int position) { m_staticInlinePosition = position; }
+    void setStaticBlockPosition(int position) { m_staticBlockPosition = position; }
 
     bool hasTransform() const { return renderer()->hasTransform(); }
     // Note that this transform has the transform-origin baked in.
@@ -694,8 +694,8 @@ protected:
     RenderMarquee* m_marquee; // Used by layers with overflow:marquee
     
     // Cached normal flow values for absolute positioned elements with static left/top values.
-    int m_staticX;
-    int m_staticY;
+    int m_staticInlinePosition;
+    int m_staticBlockPosition;
     
     OwnPtr<TransformationMatrix> m_transform;
     

@@ -928,6 +928,8 @@ int RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, Li
 
 IntSize RenderInline::relativePositionedInlineOffset(const RenderBox* child) const
 {
+    // FIXME: This function isn't right with mixed writing modes.
+
     ASSERT(isRelPositioned());
     if (!isRelPositioned())
         return IntSize();
@@ -936,31 +938,32 @@ IntSize RenderInline::relativePositionedInlineOffset(const RenderBox* child) con
     // box from the rest of the content, but only in the cases where we know we're positioned
     // relative to the inline itself.
 
-    IntSize offset;
-    int sx;
-    int sy;
+    IntSize logicalOffset;
+    int inlinePosition;
+    int blockPosition;
     if (firstLineBox()) {
-        sx = firstLineBox()->x();
-        sy = firstLineBox()->y();
+        inlinePosition = lroundf(firstLineBox()->logicalLeft());
+        blockPosition = firstLineBox()->logicalTop();
     } else {
-        sx = layer()->staticX();
-        sy = layer()->staticY();
+        inlinePosition = layer()->staticInlinePosition();
+        blockPosition = layer()->staticBlockPosition();
     }
 
-    if (!child->style()->hasStaticX())
-        offset.setWidth(sx);
+    if (!child->style()->hasStaticInlinePosition(style()->isHorizontalWritingMode()))
+        logicalOffset.setWidth(inlinePosition);
+
     // This is not terribly intuitive, but we have to match other browsers.  Despite being a block display type inside
     // an inline, we still keep our x locked to the left of the relative positioned inline.  Arguably the correct
     // behavior would be to go flush left to the block that contains the inline, but that isn't what other browsers
     // do.
     else if (!child->style()->isOriginalDisplayInlineType())
         // Avoid adding in the left border/padding of the containing block twice.  Subtract it out.
-        offset.setWidth(sx - (child->containingBlock()->borderLeft() + child->containingBlock()->paddingLeft()));
+        logicalOffset.setWidth(inlinePosition - child->containingBlock()->borderAndPaddingLogicalLeft());
 
-    if (!child->style()->hasStaticY())
-        offset.setHeight(sy);
+    if (!child->style()->hasStaticBlockPosition(style()->isHorizontalWritingMode()))
+        logicalOffset.setHeight(blockPosition);
 
-    return offset;
+    return style()->isHorizontalWritingMode() ? logicalOffset : logicalOffset.transposedSize();
 }
 
 void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)

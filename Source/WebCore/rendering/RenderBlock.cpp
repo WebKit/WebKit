@@ -1413,32 +1413,32 @@ bool RenderBlock::expandsToEncloseOverhangingFloats() const
 
 void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marginInfo)
 {
-    if (child->style()->hasStaticX()) {
-        if (style()->isLeftToRightDirection())
-            child->layer()->setStaticX(borderLeft() + paddingLeft());
-        else
-            child->layer()->setStaticX(borderRight() + paddingRight());
-    }
+    bool isHorizontal = style()->isHorizontalWritingMode();
+    bool hasStaticInlinePosition = child->style()->hasStaticInlinePosition(isHorizontal);
+    bool hasStaticBlockPosition = child->style()->hasStaticBlockPosition(isHorizontal);
+    RenderLayer* childLayer = child->layer();
+        
+    if (hasStaticInlinePosition)
+        childLayer->setStaticInlinePosition(borderAndPaddingStart());
 
-    if (child->style()->hasStaticY()) {
-        int y = height();
+    if (hasStaticBlockPosition) {
+        int logicalTop = logicalHeight();
         if (!marginInfo.canCollapseWithMarginBefore()) {
             child->computeBlockDirectionMargins(this);
-            int marginTop = child->marginTop();
-            int collapsedTopPos = marginInfo.positiveMargin();
-            int collapsedTopNeg = marginInfo.negativeMargin();
-            if (marginTop > 0) {
-                if (marginTop > collapsedTopPos)
-                    collapsedTopPos = marginTop;
+            int marginBefore = marginBeforeForChild(child);
+            int collapsedBeforePos = marginInfo.positiveMargin();
+            int collapsedBeforeNeg = marginInfo.negativeMargin();
+            if (marginBefore > 0) {
+                if (marginBefore > collapsedBeforePos)
+                    collapsedBeforePos = marginBefore;
             } else {
-                if (-marginTop > collapsedTopNeg)
-                    collapsedTopNeg = -marginTop;
+                if (-marginBefore > collapsedBeforeNeg)
+                    collapsedBeforeNeg = -marginBefore;
             }
-            y += (collapsedTopPos - collapsedTopNeg) - marginTop;
+            logicalTop += (collapsedBeforePos - collapsedBeforeNeg) - marginBefore;
         }
-        RenderLayer* childLayer = child->layer();
-        if (childLayer->staticY() != y) {
-            child->layer()->setStaticY(y);
+        if (childLayer->staticBlockPosition() != logicalTop) {
+            childLayer->setStaticBlockPosition(logicalTop);
             child->setChildNeedsLayout(true, false);
         }
     }
@@ -2121,7 +2121,7 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
         // non-positioned block.  Rather than trying to detect all of these movement cases, we just always lay out positioned
         // objects that are positioned implicitly like this.  Such objects are rare, and so in typical DHTML menu usage (where everything is
         // positioned explicitly) this should not incur a performance penalty.
-        if (relayoutChildren || (r->style()->hasStaticY() && r->parent() != this && r->parent()->isBlockFlow()))
+        if (relayoutChildren || (r->style()->hasStaticBlockPosition(style()->isHorizontalWritingMode()) && r->parent() != this && r->parent()->isBlockFlow()))
             r->setChildNeedsLayout(true, false);
             
         // If relayoutChildren is set and we have percentage padding, we also need to invalidate the child's pref widths.

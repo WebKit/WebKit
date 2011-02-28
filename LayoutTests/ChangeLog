@@ -1,3 +1,74 @@
+2011-02-28  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46500, make positioned elements work with vertical text.  Change staticX and staticY
+        to be staticInlinePosition and staticBlockPosition.  Patch all of the computations involving these variables to be writing
+        mode aware.  Mixed writing modes are not yet supported.
+
+        Added new tests in fast/block/positioning/auto.
+
+        * fast/block/positioning/auto/vertical-lr: Added.
+        * fast/block/positioning/auto/vertical-lr/001.html: Added.
+        * fast/block/positioning/auto/vertical-lr/002.html: Added.
+        * fast/block/positioning/auto/vertical-lr/003.html: Added.
+        * fast/block/positioning/auto/vertical-lr/004.html: Added.
+        * fast/block/positioning/auto/vertical-lr/005.html: Added.
+        * fast/block/positioning/auto/vertical-lr/006.html: Added.
+        * fast/block/positioning/auto/vertical-lr/007.html: Added.
+        * fast/block/positioning/auto/vertical-rl: Added.
+        * fast/block/positioning/auto/vertical-rl/001.html: Added.
+        * fast/block/positioning/auto/vertical-rl/002.html: Added.
+        * fast/block/positioning/auto/vertical-rl/003.html: Added.
+        * fast/block/positioning/auto/vertical-rl/004.html: Added.
+        * fast/block/positioning/auto/vertical-rl/005.html: Added.
+        * fast/block/positioning/auto/vertical-rl/006.html: Added.
+        * fast/block/positioning/auto/vertical-rl/007.html: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/001-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/001-expected.png: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/001-expected.txt: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/002-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/002-expected.png: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/002-expected.txt: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/003-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/003-expected.png: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/003-expected.txt: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/004-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/004-expected.png: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/004-expected.txt: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/005-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/005-expected.png: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/005-expected.txt: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/006-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/006-expected.png: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/006-expected.txt: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/007-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/007-expected.png: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-lr/007-expected.txt: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/001-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/001-expected.png: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/001-expected.txt: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/002-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/002-expected.png: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/002-expected.txt: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/003-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/003-expected.png: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/003-expected.txt: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/004-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/004-expected.png: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/004-expected.txt: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/005-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/005-expected.png: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/005-expected.txt: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/006-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/006-expected.png: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/006-expected.txt: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/007-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/007-expected.png: Added.
+        * platform/mac/fast/block/positioning/auto/vertical-rl/007-expected.txt: Added.
+
 2011-02-28  Jungshik Shin  <jshin@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=55121

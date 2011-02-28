@@ -115,7 +115,7 @@ static void addMidpoint(LineMidpointState& lineMidpointState, const InlineIterat
 void RenderBlock::appendRunsForObject(int start, int end, RenderObject* obj, InlineBidiResolver& resolver)
 {
     if (start > end || obj->isFloating() ||
-        (obj->isPositioned() && !obj->style()->hasStaticX() && !obj->style()->hasStaticY() && !obj->container()->isRenderInline()))
+        (obj->isPositioned() && !obj->style()->hasAutoLeftAndRight() && !obj->style()->hasAutoTopAndBottom() && !obj->container()->isRenderInline()))
         return;
 
     LineMidpointState& lineMidpointState = resolver.midpointState();
@@ -1296,6 +1296,34 @@ bool RenderBlock::generatesLineBoxesForInlineChild(RenderObject* inlineObj, bool
     return !it.atEnd();
 }
 
+static void setStaticPositions(RenderBlock* block, RenderBox* child)
+{
+    // FIXME: The math here is actually not really right. It's a best-guess approximation that
+    // will work for the common cases
+    RenderObject* containerBlock = child->container();
+    if (containerBlock->isRenderInline()) {
+        // A relative positioned inline encloses us. In this case, we also have to determine our
+        // position as though we were an inline. Set |staticInlinePosition| and |staticBlockPosition| on the relative positioned
+        // inline so that we can obtain the value later.
+        toRenderInline(containerBlock)->layer()->setStaticInlinePosition(block->startOffsetForLine(block->logicalHeight(), false));
+        toRenderInline(containerBlock)->layer()->setStaticBlockPosition(block->logicalHeight());
+    }
+
+    bool isHorizontal = block->style()->isHorizontalWritingMode();
+    bool hasStaticInlinePosition = child->style()->hasStaticInlinePosition(isHorizontal);
+    bool hasStaticBlockPosition = child->style()->hasStaticBlockPosition(isHorizontal);
+
+    if (hasStaticInlinePosition) {
+        if (child->style()->isOriginalDisplayInlineType())
+            child->layer()->setStaticInlinePosition(block->startOffsetForLine(block->logicalHeight(), false));
+        else
+            child->layer()->setStaticInlinePosition(block->borderAndPaddingStart());
+    }
+
+    if (hasStaticBlockPosition)
+        child->layer()->setStaticBlockPosition(block->logicalHeight());
+}
+
 // FIXME: The entire concept of the skipTrailingWhitespace function is flawed, since we really need to be building
 // line boxes even for containers that may ultimately collapse away.  Otherwise we'll never get positioned
 // elements quite right.  In other words, we need to build this function's work into the normal line
@@ -1308,29 +1336,8 @@ void RenderBlock::skipTrailingWhitespace(InlineIterator& iterator, bool isLineEm
         RenderObject* object = iterator.obj;
         if (object->isFloating()) {
             insertFloatingObject(toRenderBox(object));
-        } else if (object->isPositioned()) {
-            // FIXME: The math here is actually not really right.  It's a best-guess approximation that
-            // will work for the common cases
-            RenderObject* c = object->container();
-            if (c->isRenderInline()) {
-                // A relative positioned inline encloses us.  In this case, we also have to determine our
-                // position as though we were an inline.  Set |staticX| and |staticY| on the relative positioned
-                // inline so that we can obtain the value later.
-                toRenderInline(c)->layer()->setStaticX(style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(height(), false) : logicalRightOffsetForLine(height(), false));
-                toRenderInline(c)->layer()->setStaticY(height());
-            }
-    
-            RenderBox* box = toRenderBox(object);
-            if (box->style()->hasStaticX()) {
-                if (box->style()->isOriginalDisplayInlineType())
-                    box->layer()->setStaticX(style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(height(), false) : width() - logicalRightOffsetForLine(height(), false));
-                else
-                    box->layer()->setStaticX(style()->isLeftToRightDirection() ? borderLeft() + paddingLeft() : borderRight() + paddingRight());
-            }
-    
-            if (box->style()->hasStaticY())
-                box->layer()->setStaticY(height());
-        }
+        } else if (object->isPositioned())
+            setStaticPositions(this, toRenderBox(object));
         iterator.increment();
     }
 }
@@ -1344,29 +1351,8 @@ int RenderBlock::skipLeadingWhitespace(InlineBidiResolver& resolver, bool firstL
         if (object->isFloating()) {
             positionNewFloatOnLine(insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine);
             availableWidth = availableLogicalWidthForLine(logicalHeight(), firstLine);
-        } else if (object->isPositioned()) {
-            // FIXME: The math here is actually not really right.  It's a best-guess approximation that
-            // will work for the common cases
-            RenderObject* c = object->container();
-            if (c->isRenderInline()) {
-                // A relative positioned inline encloses us.  In this case, we also have to determine our
-                // position as though we were an inline.  Set |staticX| and |staticY| on the relative positioned
-                // inline so that we can obtain the value later.
-                toRenderInline(c)->layer()->setStaticX(style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(height(), firstLine) : logicalRightOffsetForLine(height(), firstLine));
-                toRenderInline(c)->layer()->setStaticY(height());
-            }
-    
-            RenderBox* box = toRenderBox(object);
-            if (box->style()->hasStaticX()) {
-                if (box->style()->isOriginalDisplayInlineType())
-                    box->layer()->setStaticX(style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(height(), firstLine) : width() - logicalRightOffsetForLine(height(), firstLine));
-                else
-                    box->layer()->setStaticX(style()->isLeftToRightDirection() ? borderLeft() + paddingLeft() : borderRight() + paddingRight());
-            }
-    
-            if (box->style()->hasStaticY())
-                box->layer()->setStaticY(height());
-        }
+        } else if (object->isPositioned())
+            setStaticPositions(this, toRenderBox(object));
         resolver.increment();
     }
     resolver.commitExplicitEmbedding();
@@ -1557,28 +1543,26 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     floatsFitOnLine = false;
             } else if (o->isPositioned()) {
                 // If our original display wasn't an inline type, then we can
-                // go ahead and determine our static x position now.
+                // go ahead and determine our static inline position now.
                 RenderBox* box = toRenderBox(o);
                 bool isInlineType = box->style()->isOriginalDisplayInlineType();
-                bool needToSetStaticX = box->style()->hasStaticX();
-                if (box->style()->hasStaticX() && !isInlineType) {
-                    box->layer()->setStaticX(o->parent()->style()->isLeftToRightDirection() ?
-                                  borderLeft() + paddingLeft() :
-                                  borderRight() + paddingRight());
-                    needToSetStaticX = false;
+                bool needToSetStaticInlinePosition = box->style()->hasStaticInlinePosition(style()->isHorizontalWritingMode());
+                if (needToSetStaticInlinePosition && !isInlineType) {
+                    box->layer()->setStaticInlinePosition(borderAndPaddingStart());
+                    needToSetStaticInlinePosition = false;
                 }
 
                 // If our original display was an INLINE type, then we can go ahead
                 // and determine our static y position now.
-                bool needToSetStaticY = box->style()->hasStaticY();
-                if (box->style()->hasStaticY() && isInlineType) {
-                    box->layer()->setStaticY(height());
-                    needToSetStaticY = false;
+                bool needToSetStaticBlockPosition = box->style()->hasStaticBlockPosition(style()->isHorizontalWritingMode());
+                if (needToSetStaticBlockPosition && isInlineType) {
+                    box->layer()->setStaticBlockPosition(logicalHeight());
+                    needToSetStaticBlockPosition = false;
                 }
                 
-                bool needToCreateLineBox = needToSetStaticX || needToSetStaticY;
+                bool needToCreateLineBox = needToSetStaticInlinePosition || needToSetStaticBlockPosition;
                 RenderObject* c = o->container();
-                if (c->isRenderInline() && (!needToSetStaticX || !needToSetStaticY))
+                if (c->isRenderInline() && (!needToSetStaticInlinePosition || !needToSetStaticBlockPosition))
                     needToCreateLineBox = true;
 
                 // If we're ignoring spaces, we have to stop and include this object and
