@@ -218,9 +218,10 @@ void VideoLayerChromium::updateTexture(GraphicsContext3D* context, unsigned text
         memcpy(mem, data, dimensions.width() * dimensions.height());
         GLC(context, static_cast<Extensions3DChromium*>(context->getExtensions())->unmapTexSubImage2DCHROMIUM(mem));
     } else {
-        // FIXME: We should have some sort of code to handle the case when
-        // mapTexSubImage2D fails.
-        m_skipsDraw = true;
+        // If mapTexSubImage2DCHROMIUM fails, then do the slower texSubImage2D
+        // upload. This does twice the copies as mapTexSubImage2DCHROMIUM, one
+        // in the command buffer and another to the texture.
+        GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, 0, 0, dimensions.width(), dimensions.height(), format, GraphicsContext3D::UNSIGNED_BYTE, data));
     }
 }
 

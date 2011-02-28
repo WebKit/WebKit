@@ -1,3 +1,16 @@
+2011-02-28  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Fall back to texSubImage2D when mapTexSubImage2D fails in VideoLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=55269
+
+        Mesa does not support mapTexSubImage2D, so this change lets
+        GPU-accelerated video work with DRT layout tests.
+
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::updateTexture):
+
 2011-02-28  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
