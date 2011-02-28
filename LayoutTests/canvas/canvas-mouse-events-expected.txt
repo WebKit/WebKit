@@ -1,4 +1,0 @@
-  
-Clicked in canvas 1.
-Clicked in canvas 2.
-

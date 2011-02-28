@@ -60,7 +60,6 @@ svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop.html
 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop.html
 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop.html
 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop.html
-canvas/canvas-mouse-events.html
 fast/forms/file-input-hit-test.html
 fast/repaint/slider-thumb-drag-release.html
 editing/pasteboard/emacs-ctrl-k-y-001.html

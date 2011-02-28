@@ -102,21 +102,15 @@ void RenderHTMLCanvas::layout()
     RenderReplaced::layout();
 }
 
-bool RenderHTMLCanvas::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int xPos, int yPos, int tx, int ty, HitTestAction action)
+bool RenderHTMLCanvas::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction action)
 {
     UNUSED_PARAM(request);
-    tx += x();
-    ty += y();
-
-    // Ignore children (accessible fallback content that might be focusable but not clickable)
-    // but do test our own bounds for a hit.
-    IntRect boundsRect = IntRect(tx, ty, width(), height());
-    if (visibleToHitTesting() && action == HitTestForeground && boundsRect.intersects(result.rectForPoint(xPos, yPos))) {
-        updateHitTestResult(result, IntPoint(xPos - tx, yPos - ty));
-        if (!result.addNodeToRectBasedTestResult(node(), xPos, yPos, boundsRect))
-            return true;
-    }
-
+    UNUSED_PARAM(result);
+    UNUSED_PARAM(x);
+    UNUSED_PARAM(y);
+    UNUSED_PARAM(tx);
+    UNUSED_PARAM(ty);
+    UNUSED_PARAM(action);
     return false;
 }
 

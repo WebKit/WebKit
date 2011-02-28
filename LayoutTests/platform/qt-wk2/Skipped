@@ -113,7 +113,6 @@ svg/dynamic-updates/SVGFEPointLightElement-dom-z-attr.html
 svg/dynamic-updates/SVGFEPointLightElement-svgdom-x-prop.html
 svg/dynamic-updates/SVGFEPointLightElement-svgdom-y-prop.html
 svg/dynamic-updates/SVGFEPointLightElement-svgdom-z-prop.html
-canvas/canvas-mouse-events.html
 compositing/iframes/layout-on-compositing-change.html
 editing/deleting/5390681-2.html
 editing/deleting/5729680.html
