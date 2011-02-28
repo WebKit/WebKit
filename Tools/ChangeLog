@@ -1,5 +1,37 @@
 2011-02-28  Adam Roben  <aroben@apple.com>
 
+        Start running InjectedBundle API tests on Windows
+
+        A new project, TestWebKitAPIInjectedBundle, builds the injected bundle DLL.
+
+        Fixes <http://webkit.org/b/55420> run-api-tests doesn't run injected bundle tests on Windows
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPIDebug.vsprops: Added.
+        * TestWebKitAPI/Configurations/TestWebKitAPIDebugAll.vsprops: Added.
+        * TestWebKitAPI/Configurations/TestWebKitAPIDebugCairoCFLite.vsprops: Added.
+        * TestWebKitAPI/Configurations/TestWebKitAPIRelease.vsprops: Added.
+        * TestWebKitAPI/Configurations/TestWebKitAPIReleaseCairoCFLite.vsprops: Added.
+        These are just extracted from TestWebKitAPI.vcproj.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPIInjectedBundleCommon.vsprops: Added. Just sets
+        up the DLL's filename.
+
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp: Fixed DLL name.
+        (TestWebKitAPI::Util::createInjectedBundlePath): Changed to use kCFAllocatorNull instead of
+        0 (== kCFAllocatorDefault) so that CF won't try to deallocate our C string.
+
+        * TestWebKitAPI/win/TestWebKitAPI.sln: Added TestWebKitAPIInjectedBundle. Removed the bogus
+        "all" configuration.
+
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj: Changed to use the new .vsprops files. Added
+        injected bundle tests. Let VS resort things.
+
+        * TestWebKitAPI/win/TestWebKitAPIInjectedBundle.vcproj: Copied from Tools/TestWebKitAPI/win/TestWebKitAPI.vcproj.
+
+2011-02-28  Adam Roben  <aroben@apple.com>
+
         Add a test for the paint rect passed via WM_PAINT to windowless plugins
 
         Test for <http://webkit.org/b/55365> <rdar://problem/9031089> REGRESSION (r79040): WebKit2:
