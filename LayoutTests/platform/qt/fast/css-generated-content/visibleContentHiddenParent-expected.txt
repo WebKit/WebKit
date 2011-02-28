@@ -3,12 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {A} at (0,0) size 553x19
-        RenderInline (generated) at (0,0) size 368x19
-          RenderText at (0,0) size 368x19
-            text run at (0,0) width 368: "This test passes if it does not crash, and this text appears."
-        RenderText {#text} at (368,0) size 185x19
-          text run at (368,0) width 185: "But it fails if this text appears."
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
+      RenderInline {A} at (0,0) size 584x21
+        RenderInline (generated) at (0,0) size 383x21
+          RenderText at (0,0) size 383x21
+            text run at (0,0) width 383: "This test passes if it does not crash, and this text appears."
+        RenderText {#text} at (383,0) size 201x21
+          text run at (383,0) width 201: "But it fails if this text appears."
       RenderText {#text} at (0,0) size 0x0

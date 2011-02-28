@@ -2,26 +2,26 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 611x19
-          RenderInline {A} at (0,0) size 294x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 294x19
-              text run at (53,0) width 294: "http://bugs.webkit.org/show_bug.cgi?id=11930"
-          RenderText {#text} at (347,0) size 317x19
-            text run at (347,0) width 4: " "
-            text run at (351,0) width 313: "Specifying border-radius makes the outline shrink"
-        RenderText {#text} at (664,0) size 4x19
-          text run at (664,0) width 4: "."
-      RenderBlock {P} at (0,34) size 784x19
-        RenderText {#text} at (0,0) size 283x19
-          text run at (0,0) width 283: "These two squares should be the same size:"
-      RenderBlock (anonymous) at (0,67) size 784x19
-        RenderBlock {DIV} at (0,4) size 10x10
-        RenderText {#text} at (10,0) size 4x19
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {I} at (0,0) size 633x21
+          RenderInline {A} at (0,0) size 304x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 304x21
+              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=11930"
+          RenderText {#text} at (361,0) size 329x21
+            text run at (361,0) width 4: " "
+            text run at (365,0) width 325: "Specifying border-radius makes the outline shrink"
+        RenderText {#text} at (690,0) size 4x21
+          text run at (690,0) width 4: "."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 290x21
+          text run at (0,0) width 290: "These two squares should be the same size:"
+      RenderBlock (anonymous) at (0,74) size 784x21
+        RenderBlock {DIV} at (0,6) size 10x10
+        RenderText {#text} at (10,0) size 4x21
           text run at (10,0) width 4: " "
-        RenderBlock {DIV} at (14,4) size 10x10
+        RenderBlock {DIV} at (14,6) size 10x10
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,100) size 784x0
+      RenderBlock {P} at (0,111) size 784x0

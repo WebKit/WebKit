@@ -1,38 +1,38 @@
-layer at (0,0) size 800x618
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x618
-  RenderBlock {HTML} at (0,0) size 800x618
-    RenderBody {BODY} at (8,14) size 784x590
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 453x19
-          text run at (0,0) width 453: "Fails indicate that the font property specification is invalid in strict mode."
-      RenderBlock {P} at (0,51) size 784x42
-        RenderText {#text} at (0,0) size 236x42
+layer at (0,0) size 784x630
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x630
+  RenderBlock {HTML} at (0,0) size 784x630
+    RenderBody {BODY} at (8,16) size 768x598
+      RenderBlock {P} at (0,0) size 768x21
+        RenderText {#text} at (0,0) size 491x21
+          text run at (0,0) width 491: "Fails indicate that the font property specification is invalid in strict mode."
+      RenderBlock {P} at (0,53) size 768x40
+        RenderText {#text} at (0,0) size 236x40
           text run at (0,0) width 236: "24pt italic = 24pt"
-      RenderBlock {P} at (0,125) size 784x42
-        RenderText {#text} at (0,0) size 309x42
+      RenderBlock {P} at (0,125) size 768x40
+        RenderText {#text} at (0,0) size 309x40
           text run at (0,0) width 309: "24pt italic Arial = 24pt"
-      RenderBlock {P} at (0,199) size 784x42
-        RenderText {#text} at (0,0) size 394x42
+      RenderBlock {P} at (0,197) size 768x40
+        RenderText {#text} at (0,0) size 394x40
           text run at (0,0) width 394: "24pt italic 'Arial' = 24pt Arial"
-      RenderBlock {P} at (0,273) size 784x19
-        RenderText {#text} at (0,0) size 101x19
-          text run at (0,0) width 101: "italic 24pt = fails"
-      RenderBlock {P} at (0,324) size 784x42
-        RenderText {#text} at (0,0) size 457x43
+      RenderBlock {P} at (0,269) size 768x21
+        RenderText {#text} at (0,0) size 110x21
+          text run at (0,0) width 110: "italic 24pt = fails"
+      RenderBlock {P} at (0,322) size 768x40
+        RenderText {#text} at (0,0) size 457x41
           text run at (0,0) width 457: "italic 24pt Arial = 24pt Arial Italic"
-      RenderBlock {P} at (0,398) size 784x42
-        RenderText {#text} at (0,0) size 469x43
+      RenderBlock {P} at (0,394) size 768x40
+        RenderText {#text} at (0,0) size 469x41
           text run at (0,0) width 469: "italic 24pt 'Arial' = 24pt Arial Italic"
-      RenderBlock {P} at (0,472) size 784x19
-        RenderText {#text} at (0,0) size 133x19
-          text run at (0,0) width 133: "Arial 24pt italic = fails"
-      RenderBlock {P} at (0,505) size 784x19
-        RenderText {#text} at (0,0) size 139x19
-          text run at (0,0) width 139: "'Arial' 24pt italic = fails"
-      RenderBlock {P} at (0,538) size 784x19
-        RenderText {#text} at (0,0) size 133x19
-          text run at (0,0) width 133: "Arial italic 24pt = fails"
-      RenderBlock {P} at (0,571) size 784x19
-        RenderText {#text} at (0,0) size 139x19
-          text run at (0,0) width 139: "'Arial' italic 24pt = fails"
+      RenderBlock {P} at (0,466) size 768x21
+        RenderText {#text} at (0,0) size 149x21
+          text run at (0,0) width 149: "Arial 24pt italic = fails"
+      RenderBlock {P} at (0,503) size 768x21
+        RenderText {#text} at (0,0) size 157x21
+          text run at (0,0) width 157: "'Arial' 24pt italic = fails"
+      RenderBlock {P} at (0,540) size 768x21
+        RenderText {#text} at (0,0) size 149x21
+          text run at (0,0) width 149: "Arial italic 24pt = fails"
+      RenderBlock {P} at (0,577) size 768x21
+        RenderText {#text} at (0,0) size 157x21
+          text run at (0,0) width 157: "'Arial' italic 24pt = fails"

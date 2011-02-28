@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x542
-      RenderBlock {P} at (0,0) size 784x19
-        RenderInline {A} at (0,0) size 60x19 [color=#0000EE]
-          RenderText {#text} at (0,0) size 60x19
-            text run at (0,0) width 60: "bug 7118"
-        RenderText {#text} at (60,0) size 354x19
-          text run at (60,0) width 354: ": Wrong property values do not get invalidated correctly."
-      RenderBlock {P} at (0,33) size 784x19
-        RenderText {#text} at (0,0) size 372x19
-          text run at (0,0) width 372: "The two words \"test\" should look the same, with no outline:"
-      RenderBlock {DIV} at (0,102) size 784x64
-        RenderBlock {P} at (0,0) size 100x64
-          RenderText {#text} at (0,0) size 81x64
-            text run at (0,0) width 81: "test"
-      RenderBlock {P} at (0,216) size 784x64
-        RenderText {#text} at (0,0) size 81x64
-          text run at (0,0) width 81: "test"
+      RenderBlock {P} at (0,0) size 784x21
+        RenderInline {A} at (0,0) size 62x21 [color=#0000EE]
+          RenderText {#text} at (0,0) size 62x21
+            text run at (0,0) width 62: "bug 7118"
+        RenderText {#text} at (62,0) size 385x21
+          text run at (62,0) width 385: ": Wrong property values do not get invalidated correctly."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 406x21
+          text run at (0,0) width 406: "The two words \"test\" should look the same, with no outline:"
+      RenderBlock {DIV} at (0,108) size 784x65
+        RenderBlock {P} at (0,0) size 100x65
+          RenderText {#text} at (0,0) size 75x65
+            text run at (0,0) width 75: "test"
+      RenderBlock {P} at (0,223) size 784x65
+        RenderText {#text} at (0,0) size 75x65
+          text run at (0,0) width 75: "test"

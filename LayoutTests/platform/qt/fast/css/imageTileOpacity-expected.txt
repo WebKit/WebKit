@@ -8,5 +8,5 @@ layer at (7,75) size 284x212
 layer at (101,237) size 40x24
   RenderBlock (positioned) {DIV} at (94,162) size 40x24 [color=#FFFFFF]
     RenderBlock {DIV} at (0,0) size 40x24
-      RenderText {#text} at (0,3) size 40x17
-        text run at (0,3) width 40: "Cancel"
+      RenderText {#text} at (0,4) size 40x15
+        text run at (0,4) width 40: "Cancel"

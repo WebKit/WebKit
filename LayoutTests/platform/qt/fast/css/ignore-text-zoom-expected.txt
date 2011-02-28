@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 254x21
+          text run at (0,0) width 254: "This text should have default font size"
+      RenderBlock {DIV} at (0,21) size 784x30
+        RenderText {#text} at (0,0) size 494x30
+          text run at (0,0) width 494: "This text should have larger than default font size"

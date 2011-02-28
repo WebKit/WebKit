@@ -6,10 +6,10 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x0
         RenderBlock {UL} at (0,0) size 784x0
           RenderListItem {LI} at (40,0) size 744x0
-            RenderBlock (floating) {A} at (9,0) size 94x19
-              RenderText {#text} at (0,0) size 94x19
-                text run at (0,0) width 94: "This is link one"
+            RenderBlock (floating) {A} at (9,0) size 102x21
+              RenderText {#text} at (0,0) size 102x21
+                text run at (0,0) width 102: "This is link one"
           RenderListItem {LI} at (40,0) size 744x0
-            RenderBlock (floating) {A} at (103,0) size 296x19
-              RenderText {#text} at (0,0) size 296x19
-                text run at (0,0) width 296: "This is link two and it shouldn't overlap link one"
+            RenderBlock (floating) {A} at (111,0) size 326x21
+              RenderText {#text} at (0,0) size 326x21
+                text run at (0,0) width 326: "This is link two and it shouldn't overlap link one"

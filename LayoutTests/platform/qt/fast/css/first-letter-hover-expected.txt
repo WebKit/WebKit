@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {A} at (0,0) size 290x19 [color=#0000EE]
-          RenderText {#text} at (53,0) size 290x19
-            text run at (53,0) width 290: "http://bugs.webkit.org/show_bug.cgi?id=4104 "
-        RenderText {#text} at (343,0) size 245x19
-          text run at (343,0) width 245: "first-letter not updating style with hover"
-      RenderBlock {P} at (0,33) size 784x19
-        RenderText {#text} at (0,0) size 388x19
-          text run at (0,0) width 388: "The next line of text should turn green when we hover over it."
-      RenderBlock {DIV} at (0,66) size 784x38 [color=#008000]
-        RenderInline (generated) at (0,0) size 9x19 [color=#0000FF]
-          RenderText {#text} at (0,0) size 9x19
-            text run at (0,0) width 9: "T"
-        RenderText {#text} at (9,0) size 780x38
-          text run at (9,0) width 771: "he first letter of this paragraph should be larger than the rest. If you hover over this paragraph, all of the text (including the"
-          text run at (0,19) width 506: "first letter) should turn green. If the first letter remains black, then there is a bug!"
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {A} at (0,0) size 312x21 [color=#0000EE]
+          RenderText {#text} at (57,0) size 312x21
+            text run at (57,0) width 312: "http://bugs.webkit.org/show_bug.cgi?id=4104 "
+        RenderText {#text} at (369,0) size 269x21
+          text run at (369,0) width 269: "first-letter not updating style with hover"
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 417x21
+          text run at (0,0) width 417: "The next line of text should turn green when we hover over it."
+      RenderBlock {DIV} at (0,74) size 784x42 [color=#008000]
+        RenderInline (generated) at (0,0) size 11x21 [color=#0000FF]
+          RenderText {#text} at (0,0) size 11x21
+            text run at (0,0) width 11: "T"
+        RenderText {#text} at (11,0) size 747x42
+          text run at (11,0) width 736: "he first letter of this paragraph should be larger than the rest. If you hover over this paragraph, all of the text"
+          text run at (0,21) width 644: "(including the first letter) should turn green. If the first letter remains black, then there is a bug!"

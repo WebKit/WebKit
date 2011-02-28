@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 228x21
+          text run at (0,0) width 228: "All text below should be 32px tall."
+      RenderBlock {DIV} at (0,21) size 784x42
+        RenderText {#text} at (0,0) size 394x41
+          text run at (0,0) width 394: "This text should be 32px tall."
+      RenderBlock {DIV} at (0,63) size 784x42
+        RenderText {#text} at (0,0) size 394x41
+          text run at (0,0) width 394: "This text should be 32px tall."
+      RenderBlock {DIV} at (0,105) size 784x42
+        RenderText {#text} at (0,0) size 394x41
+          text run at (0,0) width 394: "This text should be 32px tall."
+      RenderBlock {DIV} at (0,147) size 784x42
+        RenderText {#text} at (0,0) size 394x41
+          text run at (0,0) width 394: "This text should be 32px tall."

@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 641x39
-          RenderInline {A} at (0,0) size 294x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 294x19
-              text run at (53,0) width 294: "http://bugs.webkit.org/show_bug.cgi?id=14221"
-          RenderText {#text} at (347,0) size 641x39
-            text run at (347,0) width 4: " "
-            text run at (351,0) width 290: "Repro crash (ASSERTION FAILED: oldText in"
-            text run at (0,20) width 554: "RenderBlock::updateFirstLetter() during relayout of :before content with first-letter style)"
-        RenderText {#text} at (554,20) size 4x19
-          text run at (554,20) width 4: "."
-      RenderBlock {DIV} at (0,54) size 784x38
-        RenderInline (generated) at (0,0) size 51x31
-          RenderInline (generated) at (0,0) size 18x38 [color=#008000]
-            RenderText at (0,0) size 18x38
-              text run at (0,0) width 18: "T"
-          RenderText at (18,5) size 33x31
-            text run at (18,5) width 33: "he "
-        RenderText {#text} at (51,5) size 450x31
-          text run at (51,5) width 450: "first letter is green and larger than the rest."
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {I} at (0,0) size 685x42
+          RenderInline {A} at (0,0) size 304x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 304x21
+              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=14221"
+          RenderText {#text} at (361,0) size 685x42
+            text run at (361,0) width 4: " "
+            text run at (365,0) width 320: "Repro crash (ASSERTION FAILED: oldText in"
+            text run at (0,21) width 578: "RenderBlock::updateFirstLetter() during relayout of :before content with first-letter style)"
+        RenderText {#text} at (578,21) size 4x21
+          text run at (578,21) width 4: "."
+      RenderBlock {DIV} at (0,58) size 784x38
+        RenderInline (generated) at (0,0) size 49x32
+          RenderInline (generated) at (0,0) size 19x37 [color=#008000]
+            RenderText at (0,0) size 19x37
+              text run at (0,0) width 19: "T"
+          RenderText at (19,4) size 30x32
+            text run at (19,4) width 30: "he "
+        RenderText {#text} at (49,4) size 446x32
+          text run at (49,4) width 446: "first letter is green and larger than the rest."

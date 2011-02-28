@@ -1,24 +1,24 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x263
-  RenderBlock {HTML} at (0,0) size 800x263
-    RenderBody {BODY} at (8,18) size 784x231
-      RenderBlock {H1} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 407x38
-          text run at (0,0) width 407: "Shorthand border properties 2"
-      RenderBlock {P} at (0,56) size 784x19
-        RenderText {#text} at (0,0) size 499x19
-          text run at (0,0) width 401: "This test was written to test a point I mentioned to Tantek \x{C7}elik "
-          text run at (401,0) width 98: "on 2000-07-13."
-      RenderBlock {P} at (0,89) size 784x25 [color=#008000] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 281x19
-          text run at (3,3) width 281: "This paragraph should have a green border."
-      RenderBlock {P} at (0,128) size 784x25 [color=#008000] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 281x19
-          text run at (3,3) width 281: "This paragraph should have a green border."
-      RenderBlock {P} at (0,167) size 784x25 [color=#008000] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 281x19
-          text run at (3,3) width 281: "This paragraph should have a green border."
-      RenderBlock {P} at (0,206) size 784x25 [color=#008000] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 281x19
-          text run at (3,3) width 281: "This paragraph should have a green border."
+layer at (0,0) size 800x293
+  RenderBlock {HTML} at (0,0) size 800x293
+    RenderBody {BODY} at (8,21) size 784x256
+      RenderBlock {H1} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 421x41
+          text run at (0,0) width 421: "Shorthand border properties 2"
+      RenderBlock {P} at (0,63) size 784x21
+        RenderText {#text} at (0,0) size 533x21
+          text run at (0,0) width 434: "This test was written to test a point I mentioned to Tantek \x{C7}elik "
+          text run at (434,0) width 99: "on 2000-07-13."
+      RenderBlock {P} at (0,100) size 784x27 [color=#008000] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 301x21
+          text run at (3,3) width 301: "This paragraph should have a green border."
+      RenderBlock {P} at (0,143) size 784x27 [color=#008000] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 301x21
+          text run at (3,3) width 301: "This paragraph should have a green border."
+      RenderBlock {P} at (0,186) size 784x27 [color=#008000] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 301x21
+          text run at (3,3) width 301: "This paragraph should have a green border."
+      RenderBlock {P} at (0,229) size 784x27 [color=#008000] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 301x21
+          text run at (3,3) width 301: "This paragraph should have a green border."

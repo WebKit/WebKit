@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x584
+layer at (8,308) size 784x21
+  RenderBlock (relative positioned) {DIV} at (0,0) size 784x21
+    RenderText {#text} at (0,0) size 424x21
+      text run at (0,0) width 424: "This test passes if the text is rendered in the middle of the page."

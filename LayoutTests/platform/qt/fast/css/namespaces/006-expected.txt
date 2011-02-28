@@ -1,32 +1,32 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x35
-  RenderBlock {html} at (0,0) size 800x35
-    RenderBody {body} at (8,8) size 784x19 [color=#008000]
-      RenderInline {tests} at (0,0) size 544x19
+layer at (0,0) size 800x37
+  RenderBlock {html} at (0,0) size 800x37
+    RenderBody {body} at (8,8) size 784x21 [color=#008000]
+      RenderInline {tests} at (0,0) size 576x21
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {first-child} at (0,0) size 80x19
-          RenderText {#text} at (0,0) size 80x19
-            text run at (0,0) width 80: "None of this "
+        RenderInline {first-child} at (0,0) size 85x21
+          RenderText {#text} at (0,0) size 85x21
+            text run at (0,0) width 85: "None of this "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {element} at (0,0) size 93x19
-          RenderText {#text} at (80,0) size 93x19
-            text run at (80,0) width 93: "text should be "
+        RenderInline {element} at (0,0) size 98x21
+          RenderText {#text} at (85,0) size 98x21
+            text run at (85,0) width 98: "text should be "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {attribute} at (0,0) size 119x19
-          RenderText {#text} at (173,0) size 119x19
-            text run at (173,0) width 119: "matching the style "
+        RenderInline {attribute} at (0,0) size 126x21
+          RenderText {#text} at (183,0) size 126x21
+            text run at (183,0) width 126: "matching the style "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {span} at (0,0) size 98x19
-          RenderText {#text} at (292,0) size 98x19
-            text run at (292,0) width 98: "rules, and thus "
+        RenderInline {span} at (0,0) size 104x21
+          RenderText {#text} at (309,0) size 104x21
+            text run at (309,0) width 104: "rules, and thus "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {universal} at (0,0) size 63x19
-          RenderText {#text} at (390,0) size 63x19
-            text run at (390,0) width 63: "none of it "
+        RenderInline {universal} at (0,0) size 67x21
+          RenderText {#text} at (413,0) size 67x21
+            text run at (413,0) width 67: "none of it "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {span} at (0,0) size 91x19
-          RenderText {#text} at (453,0) size 91x19
-            text run at (453,0) width 91: "should be red."
+        RenderInline {span} at (0,0) size 96x21
+          RenderText {#text} at (480,0) size 96x21
+            text run at (480,0) width 96: "should be red."
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

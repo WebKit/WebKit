@@ -2,67 +2,65 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
+    RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {H4} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 83x20
-          text run at (0,0) width 83: "Instructions"
-      RenderBlock {P} at (0,38) size 784x19
-        RenderText {#text} at (0,0) size 168x19
-          text run at (0,0) width 168: "Click the following buttons."
-      RenderBlock {OL} at (0,71) size 784x184
-        RenderListItem {LI} at (40,0) size 744x19
-          RenderListMarker at (-20,0) size 16x19: "1"
-          RenderText {#text} at (0,0) size 193x19
-            text run at (0,0) width 193: "Start with the outmost left one."
-          RenderText {#text} at (0,0) size 0x0
-        RenderListItem {LI} at (40,19) size 744x19
-          RenderListMarker at (-20,0) size 16x19: "2"
-          RenderText {#text} at (0,0) size 132x19
-            text run at (0,0) width 132: "Click the middle one."
-        RenderListItem {LI} at (40,38) size 744x19
-          RenderListMarker at (-20,0) size 16x19: "3"
-          RenderText {#text} at (0,0) size 262x19
-            text run at (0,0) width 262: "(The ouline will not be updated correctly.)"
-        RenderListItem {LI} at (40,57) size 744x19
-          RenderListMarker at (-20,0) size 16x19: "4"
-          RenderText {#text} at (0,0) size 134x19
-            text run at (0,0) width 134: "Click the right button."
-        RenderListItem {LI} at (40,76) size 744x19
-          RenderListMarker at (-20,0) size 16x19: "5"
-          RenderText {#text} at (0,0) size 463x19
-            text run at (0,0) width 463: "This will crash Safari 1.3 (v176 and v170, no other configurations tested)."
-        RenderListItem {LI} at (40,95) size 744x19
-          RenderListMarker at (-20,0) size 16x19: "6"
-          RenderText {#text} at (0,0) size 291x19
-            text run at (0,0) width 291: "The combination 2. 1. 3. will also crash Safari."
-        RenderListItem {LI} at (40,114) size 744x19
-          RenderListMarker at (-20,0) size 16x19: "7"
-          RenderText {#text} at (0,0) size 441x19
-            text run at (0,0) width 441: "1. 3. will not crash Safari. (But the outline should vanish. Shouldn't it?)"
-        RenderListItem {LI} at (40,133) size 744x19
-          RenderListMarker at (-20,0) size 16x19: "8"
-          RenderText {#text} at (0,0) size 199x19
-            text run at (0,0) width 199: "2. 3. will not crash Safari either."
-        RenderBlock (anonymous) at (40,152) size 744x32
-          RenderButton {INPUT} at (2,2) size 131x28 [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (6,6) size 119x17
-              RenderText at (0,0) size 119x17
-                text run at (0,0) width 119: "1. Set outline property"
-          RenderText {#text} at (135,6) size 4x19
-            text run at (135,6) width 4: " "
-          RenderButton {INPUT} at (141,2) size 133x28 [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (6,6) size 121x17
-              RenderText at (0,0) size 121x17
-                text run at (0,0) width 121: "2. Set display property"
-          RenderText {#text} at (276,6) size 4x19
-            text run at (276,6) width 4: " "
-          RenderButton {INPUT} at (282,2) size 149x28 [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (6,6) size 137x17
-              RenderText at (0,0) size 137x17
-                text run at (0,0) width 137: "3. Replace span-element"
-          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {H4} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 81x21
+          text run at (0,0) width 81: "Instructions"
+      RenderBlock {P} at (0,42) size 784x21
+        RenderText {#text} at (0,0) size 186x21
+          text run at (0,0) width 186: "Click the following buttons."
+      RenderBlock {OL} at (0,79) size 784x203
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-21,0) size 16x21: "1"
+          RenderText {#text} at (0,0) size 208x21
+            text run at (0,0) width 208: "Start with the outmost left one."
+        RenderListItem {LI} at (40,21) size 744x21
+          RenderListMarker at (-21,0) size 16x21: "2"
+          RenderText {#text} at (0,0) size 143x21
+            text run at (0,0) width 143: "Click the middle one."
+        RenderListItem {LI} at (40,42) size 744x21
+          RenderListMarker at (-21,0) size 16x21: "3"
+          RenderText {#text} at (0,0) size 284x21
+            text run at (0,0) width 284: "(The ouline will not be updated correctly.)"
+        RenderListItem {LI} at (40,63) size 744x21
+          RenderListMarker at (-21,0) size 16x21: "4"
+          RenderText {#text} at (0,0) size 151x21
+            text run at (0,0) width 151: "Click the right button."
+        RenderListItem {LI} at (40,84) size 744x21
+          RenderListMarker at (-21,0) size 16x21: "5"
+          RenderText {#text} at (0,0) size 493x21
+            text run at (0,0) width 493: "This will crash Safari 1.3 (v176 and v170, no other configurations tested)."
+        RenderListItem {LI} at (40,105) size 744x21
+          RenderListMarker at (-21,0) size 16x21: "6"
+          RenderText {#text} at (0,0) size 311x21
+            text run at (0,0) width 311: "The combination 2. 1. 3. will also crash Safari."
+        RenderListItem {LI} at (40,126) size 744x21
+          RenderListMarker at (-21,0) size 16x21: "7"
+          RenderText {#text} at (0,0) size 478x21
+            text run at (0,0) width 478: "1. 3. will not crash Safari. (But the outline should vanish. Shouldn't it?)"
+        RenderListItem {LI} at (40,147) size 744x21
+          RenderListMarker at (-21,0) size 16x21: "8"
+          RenderText {#text} at (0,0) size 215x21
+            text run at (0,0) width 215: "2. 3. will not crash Safari either."
+        RenderBlock (anonymous) at (40,168) size 744x35
+          RenderButton {INPUT} at (2,2) size 167x31 [bgcolor=#C0C0C0]
+            RenderBlock (anonymous) at (6,6) size 155x20
+              RenderText at (0,0) size 155x20
+                text run at (0,0) width 155: "1. Set outline property"
+          RenderText {#text} at (171,8) size 4x21
+            text run at (171,8) width 4: " "
+          RenderButton {INPUT} at (177,2) size 170x31 [bgcolor=#C0C0C0]
+            RenderBlock (anonymous) at (6,6) size 158x20
+              RenderText at (0,0) size 158x20
+                text run at (0,0) width 158: "2. Set display property"
+          RenderText {#text} at (349,8) size 4x21
+            text run at (349,8) width 4: " "
+          RenderButton {INPUT} at (355,2) size 190x31 [bgcolor=#C0C0C0]
+            RenderBlock (anonymous) at (6,6) size 178x20
+              RenderText at (0,0) size 178x20
+                text run at (0,0) width 178: "3. Replace span-element"
           RenderText {#text} at (0,0) size 0x0

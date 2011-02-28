@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,20) size 784x560
-      RenderBlock {DIV} at (20,0) size 744x52 [bgcolor=#ADD8E6]
-        RenderBlock {P} at (0,0) size 744x19
-          RenderText {#text} at (0,0) size 314x19
-            text run at (0,0) width 314: "There should be one outline around the whole div"
-        RenderBlock {P} at (-20,33) size 764x19
-          RenderText {#text} at (0,0) size 161x19
-            text run at (0,0) width 161: "Not around each element"
-      RenderBlock {DIV} at (20,72) size 744x52 [bgcolor=#ADD8E6]
-        RenderBlock {P} at (0,0) size 744x19
-          RenderText {#text} at (0,0) size 314x19
-            text run at (0,0) width 314: "There should be one outline around the whole div"
-        RenderBlock {P} at (-20,33) size 764x19
-          RenderText {#text} at (0,0) size 161x19
-            text run at (0,0) width 161: "Not around each element"
+      RenderBlock {DIV} at (20,0) size 744x58 [bgcolor=#ADD8E6]
+        RenderBlock {P} at (0,0) size 744x21
+          RenderText {#text} at (0,0) size 336x21
+            text run at (0,0) width 336: "There should be one outline around the whole div"
+        RenderBlock {P} at (-20,37) size 764x21
+          RenderText {#text} at (0,0) size 170x21
+            text run at (0,0) width 170: "Not around each element"
+      RenderBlock {DIV} at (20,78) size 744x58 [bgcolor=#ADD8E6]
+        RenderBlock {P} at (0,0) size 744x21
+          RenderText {#text} at (0,0) size 336x21
+            text run at (0,0) width 336: "There should be one outline around the whole div"
+        RenderBlock {P} at (-20,37) size 764x21
+          RenderText {#text} at (0,0) size 170x21
+            text run at (0,0) width 170: "Not around each element"

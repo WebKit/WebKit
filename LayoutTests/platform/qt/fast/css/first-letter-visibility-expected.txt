@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {A} at (0,0) size 298x19 [color=#0000EE]
-          RenderText {#text} at (53,0) size 298x19
-            text run at (53,0) width 298: "http://bugs.webkit.org/show_bug.cgi?id=13169 "
-        RenderText {#text} at (351,0) size 296x19
-          text run at (351,0) width 296: "css-formatted first letter won't hide dynamically"
-      RenderBlock {P} at (0,33) size 784x19
-        RenderText {#text} at (0,0) size 411x19
-          text run at (0,0) width 411: "The next line of text should become invisible, including first letter."
-      RenderBlock {DIV} at (0,66) size 784x19
-        RenderInline (generated) at (0,0) size 10x19 [color=#0000FF]
-          RenderText {#text} at (0,0) size 10x19
-            text run at (0,0) width 10: "C"
-        RenderText {#text} at (10,0) size 67x19
-          text run at (10,0) width 67: "lick to hide"
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {A} at (0,0) size 320x21 [color=#0000EE]
+          RenderText {#text} at (57,0) size 320x21
+            text run at (57,0) width 320: "http://bugs.webkit.org/show_bug.cgi?id=13169 "
+        RenderText {#text} at (377,0) size 322x21
+          text run at (377,0) width 322: "css-formatted first letter won't hide dynamically"
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 442x21
+          text run at (0,0) width 442: "The next line of text should become invisible, including first letter."
+      RenderBlock {DIV} at (0,74) size 784x21
+        RenderInline (generated) at (0,0) size 12x21 [color=#0000FF]
+          RenderText {#text} at (0,0) size 12x21
+            text run at (0,0) width 12: "C"
+        RenderText {#text} at (12,0) size 74x21
+          text run at (12,0) width 74: "lick to hide"

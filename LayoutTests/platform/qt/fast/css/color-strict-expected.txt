@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x80
-  RenderBlock {HTML} at (0,0) size 800x80
-    RenderBody {BODY} at (8,14) size 784x52
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 137x19
-          text run at (0,0) width 137: "this should not be red"
-      RenderBlock {P} at (0,33) size 784x19
-        RenderText {#text} at (0,0) size 143x19
-          text run at (0,0) width 143: "this should not be blue"
+layer at (0,0) size 800x90
+  RenderBlock {HTML} at (0,0) size 800x90
+    RenderBody {BODY} at (8,16) size 784x58
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 146x21
+          text run at (0,0) width 146: "this should not be red"
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 152x21
+          text run at (0,0) width 152: "this should not be blue"

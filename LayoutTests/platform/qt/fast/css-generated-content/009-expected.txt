@@ -3,28 +3,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 61x19
-          text run at (0,0) width 61: "All of this "
-        RenderInline {SPAN} at (0,0) size 89x19
-          RenderText {#text} at (61,0) size 89x19
-            text run at (61,0) width 89: "text should be"
-        RenderText {#text} at (150,0) size 45x19
-          text run at (150,0) width 45: " green."
-      RenderBlock {UL} at (0,33) size 784x19
-        RenderListItem {LI} at (40,0) size 744x19
-          RenderListMarker at (-17,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 369x19
-            text run at (0,0) width 369: "All of this text should be green. The bullet should be black."
-      RenderBlock {DIV} at (0,66) size 784x54 [color=#FF0000]
-        RenderInline {SPAN} at (0,0) size 412x19 [color=#008000]
-          RenderInline (generated) at (0,0) size 28x54
-            RenderText {#text} at (0,0) size 28x54
-              text run at (0,0) width 28: "A"
-          RenderText {#text} at (28,27) size 384x19
-            text run at (28,27) width 384: "ll of this text should be green, including the big \"A\" first-letter."
-      RenderBlock {P} at (0,134) size 784x0
-      RenderBlock {DIV} at (0,134) size 784x19
-        RenderBlock {DIV} at (0,0) size 165x19 [color=#FF0000]
-          RenderText {#text} at (0,0) size 165x19
-            text run at (0,0) width 165: "This text should be green."
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 69x21
+          text run at (0,0) width 69: "All of this "
+        RenderInline {SPAN} at (0,0) size 94x21
+          RenderText {#text} at (69,0) size 94x21
+            text run at (69,0) width 94: "text should be"
+        RenderText {#text} at (163,0) size 46x21
+          text run at (163,0) width 46: " green."
+      RenderBlock {UL} at (0,37) size 784x21
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 396x21
+            text run at (0,0) width 396: "All of this text should be green. The bullet should be black."
+      RenderBlock {DIV} at (0,74) size 784x62 [color=#FF0000]
+        RenderInline {SPAN} at (0,0) size 458x21 [color=#008000]
+          RenderInline (generated) at (0,0) size 35x63
+            RenderText {#text} at (0,0) size 35x63
+              text run at (0,0) width 35: "A"
+          RenderText {#text} at (35,31) size 423x21
+            text run at (35,31) width 423: "ll of this text should be green, including the big \"A\" first-letter."
+      RenderBlock {P} at (0,152) size 784x0
+      RenderBlock {DIV} at (0,152) size 784x21
+        RenderBlock {DIV} at (0,0) size 174x21 [color=#FF0000]
+          RenderText {#text} at (0,0) size 174x21
+            text run at (0,0) width 174: "This text should be green."

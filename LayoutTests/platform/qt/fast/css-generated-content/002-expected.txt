@@ -2,17 +2,17 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x19
-        RenderInline (generated) at (0,0) size 54x19
-          RenderInline (generated) at (0,0) size 9x19 [color=#FFD800]
-            RenderText at (0,0) size 9x19
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x21
+        RenderInline (generated) at (0,0) size 57x21
+          RenderInline (generated) at (0,0) size 9x21 [color=#FFD800]
+            RenderText at (0,0) size 9x21
               text run at (0,0) width 9: "S"
-          RenderText at (9,0) size 45x19
-            text run at (9,0) width 45: "pecial: "
-        RenderText {#text} at (54,0) size 583x19
-          text run at (54,0) width 216: "The \"S\" to the left should be gold. "
-          text run at (270,0) width 367: "This is testing :before used in conjunction with :first-letter. "
-        RenderInline (generated) at (0,0) size 62x19
-          RenderText at (637,0) size 62x19
-            text run at (637,0) width 62: "[The End]"
+          RenderText at (9,0) size 48x21
+            text run at (9,0) width 48: "pecial: "
+        RenderText {#text} at (57,0) size 633x21
+          text run at (57,0) width 235: "The \"S\" to the left should be gold. "
+          text run at (292,0) width 398: "This is testing :before used in conjunction with :first-letter. "
+        RenderInline (generated) at (0,0) size 70x21
+          RenderText at (690,0) size 70x21
+            text run at (690,0) width 70: "[The End]"

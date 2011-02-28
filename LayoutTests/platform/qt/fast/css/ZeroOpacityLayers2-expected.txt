@@ -9,22 +9,19 @@ layer at (20,20) size 180x180
   RenderBlock (positioned) {DIV} at (10,10) size 180x180 [bgcolor=#00FF00]
 layer at (30,30) size 160x160
   RenderBlock (positioned) {DIV} at (10,10) size 160x160 [bgcolor=#FF0000]
-    RenderText {#text} at (0,0) size 152x19
-      text run at (0,0) width 152: "Should not see this text."
+    RenderText {#text} at (0,0) size 159x21
+      text run at (0,0) width 159: "Should not see this text."
     RenderText {#text} at (0,0) size 0x0
 layer at (40,40) size 140x140
   RenderBlock (positioned) {DIV} at (10,10) size 140x140 [bgcolor=#FFFFFF]
-    RenderText {#text} at (0,0) size 121x38
-      text run at (0,0) width 121: "Should not see this"
-      text run at (0,19) width 27: "text."
+    RenderText {#text} at (0,0) size 126x42
+      text run at (0,0) width 126: "Should not see this"
+      text run at (0,21) width 29: "text."
 layer at (100,100) size 200x200
   RenderBlock (positioned) {DIV} at (80,80) size 200x200 [bgcolor=#FFFF00]
-layer at (10,314) size 790x57
-  RenderBlock (positioned) {P} at (10,314) size 790x57
-    RenderText {#text} at (0,0) size 788x57
-      text run at (0,0) width 788: "Below are four boxes all within each other, and a box overlaping other boxes. The 3rd inner box is red, and has an opacity of"
-      text run at (0,19) width 778: "zero, and the box within it is black and has an opacity of 0.5. As the third box has opacity zero, the inner black is not visible."
-      text run at (0,38) width 622: "The yellow block has opacity of 0.5, and is as the same level in the DOM tree as the 3rd inner box."
-    RenderText {#text} at (0,0) size 0x0
-    RenderText {#text} at (0,0) size 0x0
-    RenderText {#text} at (0,0) size 0x0
+layer at (10,316) size 790x63
+  RenderBlock (positioned) {P} at (10,316) size 790x63
+    RenderText {#text} at (0,0) size 789x63
+      text run at (0,0) width 773: "Below are four boxes all within each other, and a box overlaping other boxes. The 3rd inner box is red, and has an"
+      text run at (0,21) width 774: "opacity of zero, and the box within it is black and has an opacity of 0.5. As the third box has opacity zero, the inner"
+      text run at (0,42) width 789: "black is not visible. The yellow block has opacity of 0.5, and is as the same level in the DOM tree as the 3rd inner box."

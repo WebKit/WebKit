@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 464x21
+          text run at (0,0) width 237: "There should be only green below. "
+          text run at (237,0) width 227: "If you see RED the test has failed."
+      RenderBlock {DIV} at (0,21) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,37) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,53) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,69) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,85) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,101) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,117) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,133) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,149) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,165) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,181) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,197) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,213) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,229) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,245) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,261) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,277) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,293) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,309) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,325) size 784x16 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,341) size 784x16 [bgcolor=#008000]

@@ -1,0 +1,128 @@
+layer at (0,0) size 784x1545
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1545
+  RenderBlock {HTML} at (0,0) size 784x1545
+    RenderBody {BODY} at (8,16) size 768x1481 [bgcolor=#FFFFFF]
+      RenderBlock {P} at (0,0) size 768x20
+        RenderText {#text} at (0,0) size 165x20
+          text run at (0,0) width 165: "This page is part of the "
+        RenderInline {A} at (0,0) size 73x20 [color=#0000EE]
+          RenderText {#text} at (165,0) size 73x20
+            text run at (165,0) width 73: "CSS3.info"
+        RenderText {#text} at (238,0) size 4x20
+          text run at (238,0) width 4: " "
+        RenderInline {A} at (0,0) size 131x20 [color=#0000EE]
+          RenderText {#text} at (242,0) size 131x20
+            text run at (242,0) width 131: "CSS selectors test"
+        RenderText {#text} at (373,0) size 133x20
+          text run at (373,0) width 133: ". See more info on "
+        RenderInline {A} at (0,0) size 111x20 [color=#0000EE]
+          RenderText {#text} at (506,0) size 111x20
+            text run at (506,0) width 111: "CSS3 selectors"
+        RenderText {#text} at (617,0) size 4x20
+          text run at (617,0) width 4: "."
+      RenderBlock {DIV} at (0,36) size 768x0 [bgcolor=#009900]
+      RenderBlock {OL} at (0,36) size 768x1445
+        RenderListItem {LI} at (40,0) size 614x221 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 582x24 [bgcolor=#990000]
+            RenderBlock {DIV} at (0,0) size 582x24 [bgcolor=#009900]
+          RenderBlock {PRE} at (16,53) size 582x80 [bgcolor=#FFFFFF]
+            RenderListMarker at (-38,6) size 17x20: "1"
+            RenderText {#text} at (6,9) size 222x65
+              text run at (6,9) width 97: "div:only-of-type {"
+              text run at (103,9) width 0: " "
+              text run at (6,26) width 4: "}"
+              text run at (10,26) width 0: " "
+              text run at (6,42) width 0: " "
+              text run at (6,58) width 222: "<div>Does this element match?</div>"
+          RenderBlock {P} at (16,149) size 582x40
+            RenderText {#text} at (0,0) size 551x40
+              text run at (0,0) width 551: "The CSS selector should match the marked div element, because it is the only"
+              text run at (0,20) width 137: "element of this type"
+        RenderListItem {LI} at (40,269) size 614x237 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 582x24 [bgcolor=#990000]
+            RenderBlock {DIV} at (0,0) size 582x24 [bgcolor=#009900]
+            RenderBlock {BLOCKQUOTE} at (0,24) size 582x0 [bgcolor=#009900]
+          RenderBlock {PRE} at (16,53) size 582x96 [bgcolor=#FFFFFF]
+            RenderListMarker at (-38,6) size 17x20: "2"
+            RenderText {#text} at (6,9) size 222x81
+              text run at (6,9) width 97: "div:only-of-type {"
+              text run at (103,9) width 0: " "
+              text run at (6,26) width 4: "}"
+              text run at (10,26) width 0: " "
+              text run at (6,42) width 0: " "
+              text run at (6,58) width 222: "<div>Does this element match?</div>"
+              text run at (228,58) width 0: " "
+              text run at (6,74) width 162: "<blockquote></blockquote>"
+          RenderBlock {P} at (16,165) size 582x40
+            RenderText {#text} at (0,0) size 551x40
+              text run at (0,0) width 551: "The CSS selector should match the marked div element, because it is the only"
+              text run at (0,20) width 137: "element of this type"
+        RenderListItem {LI} at (40,554) size 614x269 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 582x24 [bgcolor=#990000]
+            RenderBlock {DIV} at (0,0) size 582x24 [bgcolor=#009900]
+            RenderBlock {BLOCKQUOTE} at (0,24) size 582x0 [bgcolor=#009900]
+              RenderBlock {DIV} at (0,0) size 582x0
+          RenderBlock {PRE} at (16,53) size 582x128 [bgcolor=#FFFFFF]
+            RenderListMarker at (-38,6) size 17x20: "3"
+            RenderText {#text} at (6,9) size 222x113
+              text run at (6,9) width 97: "div:only-of-type {"
+              text run at (103,9) width 0: " "
+              text run at (6,26) width 4: "}"
+              text run at (10,26) width 0: " "
+              text run at (6,42) width 0: " "
+              text run at (6,58) width 222: "<div>Does this element match?</div>"
+              text run at (228,58) width 0: " "
+              text run at (6,74) width 79: "<blockquote>"
+              text run at (85,74) width 0: " "
+              text run at (6,90) width 82: "   <div></div>"
+              text run at (88,90) width 0: " "
+              text run at (6,106) width 83: "</blockquote>"
+          RenderBlock {P} at (16,197) size 582x40
+            RenderText {#text} at (0,0) size 551x40
+              text run at (0,0) width 551: "The CSS selector should match the marked div element, because it is the only"
+              text run at (0,20) width 230: "element of this type in this scope"
+        RenderListItem {LI} at (40,871) size 614x237 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 582x24 [bgcolor=#009900]
+            RenderBlock {DIV} at (0,0) size 582x24
+            RenderBlock {DIV} at (0,24) size 582x0
+          RenderBlock {PRE} at (16,53) size 582x96 [bgcolor=#FFFFFF]
+            RenderListMarker at (-38,6) size 17x20: "4"
+            RenderText {#text} at (6,9) size 222x81
+              text run at (6,9) width 97: "div:only-of-type {"
+              text run at (103,9) width 0: " "
+              text run at (6,26) width 4: "}"
+              text run at (10,26) width 0: " "
+              text run at (6,42) width 0: " "
+              text run at (6,58) width 222: "<div>Does this element match?</div>"
+              text run at (228,58) width 0: " "
+              text run at (6,74) width 70: "<div></div>"
+          RenderBlock {P} at (16,165) size 582x40
+            RenderText {#text} at (0,0) size 569x40
+              text run at (0,0) width 569: "The CSS selector should not match the marked div element, because it is not the"
+              text run at (0,20) width 171: "only element of this type"
+        RenderListItem {LI} at (40,1156) size 614x289 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 582x24 [bgcolor=#009900]
+            RenderBlock {DIV} at (0,0) size 582x24
+            RenderBlock {DIV} at (0,24) size 582x0
+          RenderBlock {PRE} at (16,53) size 582x128 [bgcolor=#FFFFFF]
+            RenderListMarker at (-38,6) size 17x20: "5"
+            RenderText {#text} at (6,9) size 365x113
+              text run at (6,9) width 97: "div:only-of-type {"
+              text run at (103,9) width 0: " "
+              text run at (6,26) width 4: "}"
+              text run at (10,26) width 0: " "
+              text run at (6,42) width 0: " "
+              text run at (6,58) width 167: "<div id='appendChild'></div>"
+              text run at (173,58) width 0: " "
+              text run at (6,74) width 0: " "
+              text run at (6,90) width 289: "var ib = document.getElementById('appendChild');"
+              text run at (295,90) width 0: " "
+              text run at (6,106) width 365: "ib.parentElement.appendChild(document.createElement(\"div\"));"
+          RenderBlock {P} at (16,197) size 582x60
+            RenderText {#text} at (0,0) size 569x60
+              text run at (0,0) width 521: "The CSS selector should not match the original div element, because it is "
+              text run at (521,0) width 48: "not the"
+              text run at (0,20) width 512: "only of its type anymore after another child with the same type is append "
+              text run at (512,20) width 43: "by the"
+              text run at (0,40) width 115: "Javascript code."

@@ -2,14 +2,14 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x19
-        RenderInline (generated) at (0,0) size 5x19
-          RenderText at (0,0) size 5x19
-            text run at (0,0) width 5: "*"
-        RenderText {#text} at (5,0) size 431x19
-          text run at (5,0) width 115: "This is some text. "
-          text run at (120,0) width 316: "It should have a single asterisk before and after it."
-        RenderInline (generated) at (0,0) size 5x19
-          RenderText at (436,0) size 5x19
-            text run at (436,0) width 5: "*"
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x21
+        RenderInline (generated) at (0,0) size 8x21
+          RenderText at (0,0) size 8x21
+            text run at (0,0) width 8: "*"
+        RenderText {#text} at (8,0) size 455x21
+          text run at (8,0) width 119: "This is some text. "
+          text run at (127,0) width 336: "It should have a single asterisk before and after it."
+        RenderInline (generated) at (0,0) size 8x21
+          RenderText at (463,0) size 8x21
+            text run at (463,0) width 8: "*"

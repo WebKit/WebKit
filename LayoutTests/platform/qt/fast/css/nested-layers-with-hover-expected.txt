@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,42) size 784x21
+        RenderText {#text} at (0,0) size 233x21
+          text run at (0,0) width 233: "PASSED: The hover effect works!"
+layer at (8,8) size 784x42
+  RenderBlock {DIV} at (0,0) size 784x42
+    RenderTable at (0,0) size 784x42
+      RenderTableSection (anonymous) at (0,0) size 784x42
+layer at (8,8) size 784x42
+  RenderTableRow {DIV} at (0,0) size 784x42 [bgcolor=#0000FF]
+    RenderTableCell (anonymous) at (0,0) size 784x42 [r=0 c=0 rs=1 cs=1]
+      RenderText {#text} at (0,0) size 712x42
+        text run at (0,0) width 712: "To test this manually, first make sure you can see this text at all, and then hover over it and make sure the"
+        text run at (0,21) width 160: "background turns blue."

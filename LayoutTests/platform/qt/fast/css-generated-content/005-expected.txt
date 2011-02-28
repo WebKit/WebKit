@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
-        RenderInline {Q} at (0,0) size 158x19
-          RenderInline (generated) at (0,0) size 5x19
-            RenderText at (0,0) size 5x19
-              text run at (0,0) width 5: "\""
-          RenderText {#text} at (5,0) size 153x19
-            text run at (5,0) width 153: "Quotes should surround"
-      RenderBlock (anonymous) at (0,33) size 784x0
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderInline {Q} at (0,0) size 173x21
+          RenderInline (generated) at (0,0) size 9x21
+            RenderText at (0,0) size 9x21
+              text run at (0,0) width 9: "\""
+          RenderText {#text} at (9,0) size 164x21
+            text run at (9,0) width 164: "Quotes should surround"
+      RenderBlock (anonymous) at (0,37) size 784x0
         RenderBlock {P} at (0,0) size 784x0
-      RenderBlock (anonymous) at (0,33) size 784x19
-        RenderInline {Q} at (0,0) size 58x19
-          RenderText {#text} at (0,0) size 53x19
-            text run at (0,0) width 53: "this text."
-          RenderInline (generated) at (0,0) size 5x19
-            RenderText at (53,0) size 5x19
-              text run at (53,0) width 5: "\""
+      RenderBlock (anonymous) at (0,37) size 784x21
+        RenderInline {Q} at (0,0) size 66x21
+          RenderText {#text} at (0,0) size 57x21
+            text run at (0,0) width 57: "this text."
+          RenderInline (generated) at (0,0) size 9x21
+            RenderText at (57,0) size 9x21
+              text run at (57,0) width 9: "\""
         RenderText {#text} at (0,0) size 0x0

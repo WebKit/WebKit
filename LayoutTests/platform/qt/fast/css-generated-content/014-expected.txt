@@ -1,106 +1,107 @@
-layer at (0,0) size 800x885
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x885
-  RenderBlock {HTML} at (0,0) size 800x885
-    RenderBody {BODY} at (8,18) size 784x842
-      RenderBlock {H1} at (0,0) size 784x76
-        RenderText {#text} at (0,0) size 763x76
-          text run at (0,0) width 763: "Problem: Safari improperly handles generated content in"
-          text run at (0,38) width 693: "certain cases when used with multiple class names"
-      RenderBlock {P} at (0,94) size 784x40
-        RenderInline {EM} at (0,0) size 759x39
-          RenderText {#text} at (0,0) size 759x39
-            text run at (0,0) width 759: "When referencing an element by two class names simultaneously, Safari won't generate content (using :before or :after)"
-            text run at (0,20) width 119: "within the element."
-      RenderBlock {P} at (0,148) size 784x39
-        RenderText {#text} at (0,0) size 124x19
-          text run at (0,0) width 124: "Assume we have a "
-        RenderInline {CODE} at (0,0) size 21x20
-          RenderText {#text} at (124,0) size 21x20
-            text run at (124,0) width 21: "div"
-        RenderText {#text} at (145,0) size 146x19
-          text run at (145,0) width 146: " with two class names: "
-        RenderInline {CODE} at (0,0) size 26x20
-          RenderText {#text} at (291,0) size 26x20
-            text run at (291,0) width 26: "box"
-        RenderText {#text} at (317,0) size 32x19
-          text run at (317,0) width 32: " and "
-        RenderInline {CODE} at (0,0) size 26x20
-          RenderText {#text} at (349,0) size 26x20
-            text run at (349,0) width 26: "one"
-        RenderText {#text} at (375,0) size 79x19
-          text run at (375,0) width 79: ". Within that "
-        RenderInline {CODE} at (0,0) size 21x20
-          RenderText {#text} at (454,0) size 21x20
-            text run at (454,0) width 21: "div"
-        RenderText {#text} at (475,0) size 77x19
-          text run at (475,0) width 77: ", we have a "
-        RenderInline {CODE} at (0,0) size 9x20
-          RenderText {#text} at (552,0) size 9x20
-            text run at (552,0) width 9: "p"
-        RenderText {#text} at (561,0) size 775x39
-          text run at (561,0) width 214: " (paragraph) tag, after which we'd"
-          text run at (0,20) width 463: "like to insert generated content. One way to do so would be the following:"
-      RenderBlock {PRE} at (20,201) size 764x20 [color=#FF0000]
-        RenderInline {CODE} at (0,0) size 382x20
-          RenderText {#text} at (0,0) size 382x20
-            text run at (0,0) width 382: "div.box.one p:after{ content:'generated content here!'; }"
-      RenderBlock {P} at (0,235) size 784x19
-        RenderText {#text} at (0,0) size 729x19
-          text run at (0,0) width 729: "But that doesn't work in Safari. However, if you drop one of the class names, as shown below, it works as expected:"
-      RenderBlock {PRE} at (20,268) size 764x20 [color=#008000]
-        RenderInline {CODE} at (0,0) size 352x20
-          RenderText {#text} at (0,0) size 352x20
-            text run at (0,0) width 352: "div.box p:after{ content:'generated content here!'; }"
-      RenderBlock {P} at (0,302) size 784x40
-        RenderText {#text} at (0,0) size 290x19
-          text run at (0,0) width 290: "Note also that the bug only applies to content "
-        RenderInline {EM} at (0,0) size 36x19
-          RenderText {#text} at (290,0) size 36x19
-            text run at (290,0) width 36: "within"
-        RenderText {#text} at (326,0) size 276x19
-          text run at (326,0) width 276: " the classed element \x{2014} generating content "
-        RenderInline {EM} at (0,0) size 772x39
-          RenderText {#text} at (602,0) size 772x39
-            text run at (602,0) width 170: "before or after the element"
-            text run at (0,20) width 29: "itself"
-        RenderText {#text} at (29,20) size 72x19
-          text run at (29,20) width 72: " works fine:"
-      RenderBlock {PRE} at (20,356) size 764x20 [color=#008000]
-        RenderInline {CODE} at (0,0) size 369x20
-          RenderText {#text} at (0,0) size 369x20
-            text run at (0,0) width 369: "div.box.one:after{ content:'generated content here!'; }"
-      RenderBlock {HR} at (0,390) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {H2} at (0,409) size 784x29
-        RenderText {#text} at (0,0) size 463x29
-          text run at (0,0) width 463: "Example (view source to see CSS and HTML):"
-      RenderBlock {P} at (0,455) size 784x19
-        RenderText {#text} at (0,0) size 337x19
-          text run at (0,0) width 337: "Both boxes below should contain generated content ("
-        RenderInline {SPAN} at (0,0) size 52x19 [color=#008000]
-          RenderText {#text} at (337,0) size 52x19
-            text run at (337,0) width 52: "in green"
-        RenderText {#text} at (389,0) size 9x19
-          text run at (389,0) width 9: "):"
-      RenderBlock {DIV} at (0,499) size 784x159 [border: (1px solid #000000)]
-        RenderBlock {H3} at (26,42) size 732x23
-          RenderText {#text} at (0,0) size 44x22
-            text run at (0,0) width 44: "Box 1"
-        RenderBlock {P} at (26,81) size 732x38
-          RenderBlock (anonymous) at (0,0) size 732x19
-            RenderText {#text} at (0,0) size 645x19
-              text run at (0,0) width 645: "This box should contain the text \"generated content\" in CSS2-compliant browsers (but won't in Safari)."
-          RenderBlock (generated) at (0,19) size 732x19 [color=#008000]
-            RenderText at (0,0) size 116x19
-              text run at (0,0) width 116: "generated content"
-      RenderBlock {DIV} at (0,683) size 784x159 [border: (1px solid #000000)]
-        RenderBlock {H3} at (26,42) size 732x23
-          RenderText {#text} at (0,0) size 44x22
-            text run at (0,0) width 44: "Box 2"
-        RenderBlock {P} at (26,81) size 732x38
-          RenderBlock (anonymous) at (0,0) size 732x19
-            RenderText {#text} at (0,0) size 623x19
-              text run at (0,0) width 623: "This box should contain the text \"generated content\" in CSS2-compliant browsers, including Safari."
-          RenderBlock (generated) at (0,19) size 732x19 [color=#008000]
-            RenderText at (0,0) size 116x19
-              text run at (0,0) width 116: "generated content"
+layer at (0,0) size 784x963
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x963
+  RenderBlock {HTML} at (0,0) size 784x963
+    RenderBody {BODY} at (8,21) size 768x917
+      RenderBlock {H1} at (0,0) size 768x84
+        RenderText {#text} at (0,0) size 750x83
+          text run at (0,0) width 750: "Problem: Safari improperly handles generated content"
+          text run at (0,42) width 716: "in certain cases when used with multiple class names"
+      RenderBlock {P} at (0,105) size 768x42
+        RenderInline {EM} at (0,0) size 734x42
+          RenderText {#text} at (0,0) size 734x42
+            text run at (0,0) width 734: "When referencing an element by two class names simultaneously, Safari won't generate content (using :before or"
+            text run at (0,21) width 167: ":after) within the element."
+      RenderBlock {P} at (0,163) size 768x42
+        RenderText {#text} at (0,0) size 128x21
+          text run at (0,0) width 128: "Assume we have a "
+        RenderInline {CODE} at (0,0) size 19x16
+          RenderText {#text} at (128,3) size 19x16
+            text run at (128,3) width 19: "div"
+        RenderText {#text} at (147,0) size 154x21
+          text run at (147,0) width 154: " with two class names: "
+        RenderInline {CODE} at (0,0) size 23x16
+          RenderText {#text} at (301,3) size 23x16
+            text run at (301,3) width 23: "box"
+        RenderText {#text} at (324,0) size 34x21
+          text run at (324,0) width 34: " and "
+        RenderInline {CODE} at (0,0) size 23x16
+          RenderText {#text} at (358,3) size 23x16
+            text run at (358,3) width 23: "one"
+        RenderText {#text} at (381,0) size 90x21
+          text run at (381,0) width 90: ". Within that "
+        RenderInline {CODE} at (0,0) size 19x16
+          RenderText {#text} at (471,3) size 19x16
+            text run at (471,3) width 19: "div"
+        RenderText {#text} at (490,0) size 79x21
+          text run at (490,0) width 79: ", we have a "
+        RenderInline {CODE} at (0,0) size 8x16
+          RenderText {#text} at (569,3) size 8x16
+            text run at (569,3) width 8: "p"
+        RenderText {#text} at (577,0) size 729x42
+          text run at (577,0) width 152: " (paragraph) tag, after"
+          text run at (0,21) width 575: "which we'd like to insert generated content. One way to do so would be the following:"
+      RenderBlock {PRE} at (20,221) size 748x17 [color=#FF0000]
+        RenderInline {CODE} at (0,0) size 340x16
+          RenderText {#text} at (0,0) size 340x16
+            text run at (0,0) width 340: "div.box.one p:after{ content:'generated content here!'; }"
+      RenderBlock {P} at (0,254) size 768x42
+        RenderText {#text} at (0,0) size 709x42
+          text run at (0,0) width 709: "But that doesn't work in Safari. However, if you drop one of the class names, as shown below, it works as"
+          text run at (0,21) width 64: "expected:"
+      RenderBlock {PRE} at (20,312) size 748x17 [color=#008000]
+        RenderInline {CODE} at (0,0) size 313x16
+          RenderText {#text} at (0,0) size 313x16
+            text run at (0,0) width 313: "div.box p:after{ content:'generated content here!'; }"
+      RenderBlock {P} at (0,345) size 768x42
+        RenderText {#text} at (0,0) size 307x21
+          text run at (0,0) width 307: "Note also that the bug only applies to content "
+        RenderInline {EM} at (0,0) size 41x21
+          RenderText {#text} at (307,0) size 41x21
+            text run at (307,0) width 41: "within"
+        RenderText {#text} at (348,0) size 286x21
+          text run at (348,0) width 286: " the classed element \x{2014} generating content "
+        RenderInline {EM} at (0,0) size 751x42
+          RenderText {#text} at (634,0) size 751x42
+            text run at (634,0) width 117: "before or after the"
+            text run at (0,21) width 84: "element itself"
+        RenderText {#text} at (84,21) size 80x21
+          text run at (84,21) width 80: " works fine:"
+      RenderBlock {PRE} at (20,403) size 748x17 [color=#008000]
+        RenderInline {CODE} at (0,0) size 328x16
+          RenderText {#text} at (0,0) size 328x16
+            text run at (0,0) width 328: "div.box.one:after{ content:'generated content here!'; }"
+      RenderBlock {HR} at (0,433) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {H2} at (0,454) size 768x31
+        RenderText {#text} at (0,0) size 477x32
+          text run at (0,0) width 477: "Example (view source to see CSS and HTML):"
+      RenderBlock {P} at (0,504) size 768x21
+        RenderText {#text} at (0,0) size 356x21
+          text run at (0,0) width 356: "Both boxes below should contain generated content ("
+        RenderInline {SPAN} at (0,0) size 55x21 [color=#008000]
+          RenderText {#text} at (356,0) size 55x21
+            text run at (356,0) width 55: "in green"
+        RenderText {#text} at (411,0) size 10x21
+          text run at (411,0) width 10: "):"
+      RenderBlock {DIV} at (0,550) size 768x171 [border: (1px solid #000000)]
+        RenderBlock {H3} at (26,44) size 716x25
+          RenderText {#text} at (0,0) size 48x25
+            text run at (0,0) width 48: "Box 1"
+        RenderBlock {P} at (26,87) size 716x42
+          RenderBlock (anonymous) at (0,0) size 716x21
+            RenderText {#text} at (0,0) size 701x21
+              text run at (0,0) width 701: "This box should contain the text \"generated content\" in CSS2-compliant browsers (but won't in Safari)."
+          RenderBlock (generated) at (0,21) size 716x21 [color=#008000]
+            RenderText at (0,0) size 121x21
+              text run at (0,0) width 121: "generated content"
+      RenderBlock {DIV} at (0,746) size 768x171 [border: (1px solid #000000)]
+        RenderBlock {H3} at (26,44) size 716x25
+          RenderText {#text} at (0,0) size 48x25
+            text run at (0,0) width 48: "Box 2"
+        RenderBlock {P} at (26,87) size 716x42
+          RenderBlock (anonymous) at (0,0) size 716x21
+            RenderText {#text} at (0,0) size 676x21
+              text run at (0,0) width 676: "This box should contain the text \"generated content\" in CSS2-compliant browsers, including Safari."
+          RenderBlock (generated) at (0,21) size 716x21 [color=#008000]
+            RenderText at (0,0) size 121x21
+              text run at (0,0) width 121: "generated content"

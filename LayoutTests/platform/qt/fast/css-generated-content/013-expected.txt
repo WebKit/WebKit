@@ -3,40 +3,39 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {H1} at (0,0) size 784x38
-        RenderInline (generated) at (0,0) size 192x38
-          RenderText at (0,0) size 192x38
-            text run at (0,0) width 192: "First Chapter: "
-        RenderText {#text} at (192,0) size 96x38
-          text run at (192,0) width 96: "TEST 1"
-      RenderBlock (anonymous) at (0,56) size 784x19
-        RenderText {#text} at (0,0) size 234x19
-          text run at (0,0) width 234: "Should read: \"First Chapter: TEST 1\""
-      RenderBlock {H2} at (0,92) size 784x29
-        RenderInline (generated) at (0,0) size 93x29
-          RenderText at (0,0) size 93x29
-            text run at (0,0) width 93: "Chapter: "
-        RenderText {#text} at (93,0) size 72x29
-          text run at (93,0) width 72: "TEST 2"
-      RenderBlock (anonymous) at (0,138) size 784x19
-        RenderText {#text} at (0,0) size 202x19
-          text run at (0,0) width 202: "Should read: \"Chapter: TEST 2\""
-      RenderBlock {H3} at (0,173) size 784x23
-        RenderInline (generated) at (0,0) size 105x22
-          RenderText at (0,0) size 105x22
-            text run at (0,0) width 105: "Chapter One: "
-        RenderText {#text} at (105,0) size 55x22
-          text run at (105,0) width 55: "TEST 3"
-      RenderBlock (anonymous) at (0,212) size 784x19
-        RenderText {#text} at (0,0) size 233x19
-          text run at (0,0) width 233: "Should read: \"Chapter One: TEST 3\""
-      RenderBlock {H4} at (0,249) size 784x20
-        RenderInline (generated) at (0,0) size 63x20
-          RenderText at (0,0) size 63x20
-            text run at (0,0) width 63: "Chapter: "
-        RenderText {#text} at (63,0) size 48x20
-          text run at (63,0) width 48: "TEST 4"
-      RenderBlock (anonymous) at (0,287) size 784x19
-        RenderText {#text} at (0,0) size 202x19
-          text run at (0,0) width 202: "Should read: \"Chapter: TEST 4\""
-        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {H1} at (0,0) size 784x42
+        RenderInline (generated) at (0,0) size 207x41
+          RenderText at (0,0) size 207x41
+            text run at (0,0) width 207: "First Chapter: "
+        RenderText {#text} at (207,0) size 105x41
+          text run at (207,0) width 105: "TEST 1"
+      RenderBlock (anonymous) at (0,63) size 784x21
+        RenderText {#text} at (0,0) size 266x21
+          text run at (0,0) width 266: "Should read: \"First Chapter: TEST 1\""
+      RenderBlock {H2} at (0,103) size 784x31
+        RenderInline (generated) at (0,0) size 99x32
+          RenderText at (0,0) size 99x32
+            text run at (0,0) width 99: "Chapter: "
+        RenderText {#text} at (99,0) size 79x32
+          text run at (99,0) width 79: "TEST 2"
+      RenderBlock (anonymous) at (0,153) size 784x21
+        RenderText {#text} at (0,0) size 230x21
+          text run at (0,0) width 230: "Should read: \"Chapter: TEST 2\""
+      RenderBlock {H3} at (0,192) size 784x25
+        RenderInline (generated) at (0,0) size 118x25
+          RenderText at (0,0) size 118x25
+            text run at (0,0) width 118: "Chapter One: "
+        RenderText {#text} at (118,0) size 65x25
+          text run at (118,0) width 65: "TEST 3"
+      RenderBlock (anonymous) at (0,235) size 784x21
+        RenderText {#text} at (0,0) size 262x21
+          text run at (0,0) width 262: "Should read: \"Chapter One: TEST 3\""
+      RenderBlock {H4} at (0,277) size 784x21
+        RenderInline (generated) at (0,0) size 66x21
+          RenderText at (0,0) size 66x21
+            text run at (0,0) width 66: "Chapter: "
+        RenderText {#text} at (66,0) size 54x21
+          text run at (66,0) width 54: "TEST 4"
+      RenderBlock (anonymous) at (0,319) size 784x21
+        RenderText {#text} at (0,0) size 230x21
+          text run at (0,0) width 230: "Should read: \"Chapter: TEST 4\""

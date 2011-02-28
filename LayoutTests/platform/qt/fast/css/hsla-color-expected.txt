@@ -2,22 +2,22 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x574 [bgcolor=#FFFF00]
-      RenderBlock {H1} at (0,0) size 784x38 [color=#FF00007F]
-        RenderText {#text} at (0,0) size 389x38
-          text run at (0,0) width 389: "This should be red, alpha 0.5"
-      RenderBlock {H1} at (0,56) size 784x38 [color=#FF00007F]
-        RenderText {#text} at (0,0) size 454x38
-          text run at (0,0) width 454: "This should also be red, alpha 0.5"
-      RenderBlock {H1} at (0,112) size 784x38 [color=#00FF0000]
-        RenderText {#text} at (0,0) size 422x38
-          text run at (0,0) width 422: "This should be green, alpha 0.0"
-      RenderBlock {H1} at (0,168) size 784x38 [color=#00FF0000]
-        RenderText {#text} at (0,0) size 487x38
-          text run at (0,0) width 487: "This should also be green, alpha 0.0"
-      RenderBlock {H1} at (0,224) size 784x38 [color=#00FF00]
-        RenderText {#text} at (0,0) size 422x38
-          text run at (0,0) width 422: "This should be green, alpha 1.0"
-      RenderBlock {H1} at (0,280) size 784x38 [color=#00FF00]
-        RenderText {#text} at (0,0) size 487x38
-          text run at (0,0) width 487: "This should also be green, alpha 1.0"
+    RenderBody {BODY} at (8,8) size 784x571 [bgcolor=#FFFF00]
+      RenderBlock {H1} at (0,0) size 784x42 [color=#FF00007F]
+        RenderText {#text} at (0,0) size 394x41
+          text run at (0,0) width 394: "This should be red, alpha 0.5"
+      RenderBlock {H1} at (0,63) size 784x42 [color=#FF00007F]
+        RenderText {#text} at (0,0) size 455x41
+          text run at (0,0) width 455: "This should also be red, alpha 0.5"
+      RenderBlock {H1} at (0,126) size 784x42 [color=#00FF0000]
+        RenderText {#text} at (0,0) size 424x41
+          text run at (0,0) width 424: "This should be green, alpha 0.0"
+      RenderBlock {H1} at (0,189) size 784x42 [color=#00FF0000]
+        RenderText {#text} at (0,0) size 485x41
+          text run at (0,0) width 485: "This should also be green, alpha 0.0"
+      RenderBlock {H1} at (0,252) size 784x42 [color=#00FF00]
+        RenderText {#text} at (0,0) size 424x41
+          text run at (0,0) width 424: "This should be green, alpha 1.0"
+      RenderBlock {H1} at (0,315) size 784x42 [color=#00FF00]
+        RenderText {#text} at (0,0) size 485x41
+          text run at (0,0) width 485: "This should also be green, alpha 1.0"

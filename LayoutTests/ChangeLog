@@ -1,3 +1,23 @@
+2011-02-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Add Qt specific expected results for passing fast/css tests.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/css [...] : Added.
+
+
+2011-02-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Add Qt specific expected results for passing fast/css tests.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/css [...] : Added.
+
+
 2011-02-28  Adam Roben  <aroben@apple.com>
 
         Skip a sometimes-crashing test on Windows

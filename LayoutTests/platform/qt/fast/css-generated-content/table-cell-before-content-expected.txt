@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x35
-  RenderBlock {HTML} at (0,0) size 800x35
-    RenderBody {BODY} at (8,8) size 784x19 [color=#0000FF]
-      RenderBlock {DIV} at (0,0) size 784x19
-        RenderTable at (0,0) size 281x19 [color=#000000]
-          RenderTableSection (anonymous) at (0,0) size 281x19
-            RenderTableRow (anonymous) at (0,0) size 281x19
-              RenderTableCell (anonymous) at (0,0) size 203x19 [color=#0000FF] [r=0 c=0 rs=1 cs=1]
-                RenderText at (0,0) size 203x19
-                  text run at (0,0) width 203: "You should just see a single line"
-              RenderTableCell {DIV} at (203,0) size 4x19 [color=#0000FF] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 4x19
+layer at (0,0) size 800x37
+  RenderBlock {HTML} at (0,0) size 800x37
+    RenderBody {BODY} at (8,8) size 784x21 [color=#0000FF]
+      RenderBlock {DIV} at (0,0) size 784x21
+        RenderTable at (0,0) size 296x21 [color=#000000]
+          RenderTableSection (anonymous) at (0,0) size 296x21
+            RenderTableRow (anonymous) at (0,0) size 296x21
+              RenderTableCell (anonymous) at (0,0) size 213x21 [color=#0000FF] [r=0 c=0 rs=1 cs=1]
+                RenderText at (0,0) size 213x21
+                  text run at (0,0) width 213: "You should just see a single line"
+              RenderTableCell {DIV} at (213,0) size 4x21 [color=#0000FF] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 4x21
                   text run at (0,0) width 4: " "
-              RenderTableCell (anonymous) at (207,0) size 74x19 [color=#0000FF] [r=0 c=2 rs=1 cs=1]
-                RenderText at (0,0) size 74x19
-                  text run at (0,0) width 74: "of blue text."
+              RenderTableCell (anonymous) at (217,0) size 79x21 [color=#0000FF] [r=0 c=2 rs=1 cs=1]
+                RenderText at (0,0) size 79x21
+                  text run at (0,0) width 79: "of blue text."

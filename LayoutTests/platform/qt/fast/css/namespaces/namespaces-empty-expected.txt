@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x42
+  RenderBlock {root} at (0,0) size 800x42
+    RenderBlock {t} at (0,0) size 800x21 [bgcolor=#00FF00]
+      RenderText {#text} at (0,0) size 321x21
+        text run at (0,0) width 321: "This sentence should have a green background."
+    RenderBlock {t} at (0,21) size 800x21 [bgcolor=#00FF00]
+      RenderText {#text} at (0,0) size 321x21
+        text run at (0,0) width 321: "This sentence should have a green background."
