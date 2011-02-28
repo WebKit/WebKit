@@ -384,10 +384,6 @@ http/tests/plugins/plugin-document-has-focus.html
 # Need to set the X11 keycode in EventSender. Also needs to work on a
 # headless display (like the buildbot), so XKeysymToKeycode doesn't work.
 plugins/keyboard-events.html
-
-# plugin crash in PluginView
-# https://bugs.webkit.org/show_bug.cgi?id=55307
-fast/frames/iframe-plugin-load-remove-document-crash.html
 # =========================================================================== #
 #       Failing execCommand tests.                                            #
 # =========================================================================== #

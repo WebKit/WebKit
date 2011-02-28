@@ -1,3 +1,16 @@
+2011-02-28  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Anders Carlsson.
+
+        We can cancel the plugin load and fail with error before m_manualStream
+        got a chance to initialize in PluginView::didReceiveResponse. This can
+        happen when we run pending document onload events during plugin load that
+        remove the frame from underneath. So, change the assert into a null check. 
+        https://bugs.webkit.org/show_bug.cgi?id=55307
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::didFail):
+
 2011-02-28  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Alexey Proskuryakov.

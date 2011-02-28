@@ -1308,5 +1308,3 @@ http/tests/misc/generated-content-inside-table.html
 canvas/philip/tests/2d.imageData.object.round.html
 canvas/philip/tests/2d.imageData.object.wrap.html
 
-# plugin crash - https://bugs.webkit.org/show_bug.cgi?id=55307
-fast/frames/iframe-plugin-load-remove-document-crash.html

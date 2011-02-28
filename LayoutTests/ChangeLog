@@ -1,3 +1,14 @@
+2011-02-28  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Anders Carlsson.
+
+        Unskip crashing test fast/frames/iframe-plugin-load-remove-document-crash.html.
+        https://bugs.webkit.org/show_bug.cgi?id=55307
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-02-28  Adam Klein  <adamk@chromium.org>
 
         Reviewed by James Robinson.

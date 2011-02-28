@@ -956,9 +956,9 @@ void PluginView::didFail(const ResourceError& error)
         return;
 
     ASSERT(m_loadManually);
-    ASSERT(m_manualStream);
-
-    m_manualStream->didFail(0, error);
+    
+    if (m_manualStream)
+        m_manualStream->didFail(0, error);
 }
 
 void PluginView::setCallingPlugin(bool b) const
