@@ -1,6 +1,15 @@
 2011-02-28  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations change.
+
+        Skip over fast/overflow/horizontal-scroll-after-back.html added by
+        r79844, since it's page cache-specific.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-28  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations change.
         
         Rebaseline fast/forms/listbox-hit-test-zoomed.html after r79762.
         Also make a new other expectations more specific.

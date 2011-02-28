@@ -159,6 +159,7 @@ WONTFIX SKIP BUGCR19635 : media/restore-from-page-cache.html = TIMEOUT
 WONTFIX SKIP BUGCR19635 : loader/go-back-to-different-window-size.html = TIMEOUT TEXT
 WONTFIX SKIP BUGCR19635 : fast/loader/crash-copying-backforwardlist.html = TEXT
 WONTFIX SKIP BUGCR19635 : fast/harness/page-cache-crash-on-data-urls.html = TEXT
+WONTFIX SKIP BUGCR19635 : fast/overflow/horizontal-scroll-after-back.html = TIMEOUT
 
 // Tests that rely on cross-process MessagePorts.  No point in running them in
 // test_shell, since we'd have to use a completely different implementation from
