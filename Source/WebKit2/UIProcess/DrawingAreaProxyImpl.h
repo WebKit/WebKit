@@ -62,7 +62,7 @@ private:
 
     void incorporateUpdate(const UpdateInfo&);
 
-    void stateDidChange();
+    void backingStoreStateDidChange();
     void sendUpdateBackingStoreState();
     void waitForAndDispatchDidUpdateBackingStoreState();
 

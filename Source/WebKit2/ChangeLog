@@ -1,5 +1,15 @@
 2011-02-28  Adam Roben  <aroben@apple.com>
 
+        One more rename as a followup to r79868
+
+        Rubber-stamped by Anders Carlsson.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/DrawingAreaProxyImpl.h:
+        Rename stateDidChange to backingStoreStateDidChange.
+
+2011-02-28  Adam Roben  <aroben@apple.com>
+
         Rename DrawingArea[Proxy]Impl's "state ID" concept to "backing store state ID"
 
         Rubber-stamped (and suggested) by Anders Carlsson.

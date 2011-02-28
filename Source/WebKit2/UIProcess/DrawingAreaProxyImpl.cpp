@@ -103,7 +103,7 @@ bool DrawingAreaProxyImpl::paint(const WebCore::IntRect&, PlatformDrawingContext
 
 void DrawingAreaProxyImpl::sizeDidChange()
 {
-    stateDidChange();
+    backingStoreStateDidChange();
 }
 
 void DrawingAreaProxyImpl::visibilityDidChange()
@@ -214,7 +214,7 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
         m_webPageProxy->displayView();
 }
 
-void DrawingAreaProxyImpl::stateDidChange()
+void DrawingAreaProxyImpl::backingStoreStateDidChange()
 {
     ++m_nextBackingStoreStateID;
     sendUpdateBackingStoreState();
