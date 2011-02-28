@@ -1,3 +1,22 @@
+2011-02-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] Resource size is incorrectly reported to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=53228
+
+        When calling didReceiveData we are sending an invalid value for
+        lengthReceived. Sometimes we were even passing a boolean value instead of the
+        expected integer. We should pass the size of the received data instead of the
+        total amount of data received.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::gotChunkCallback):
+        (WebCore::sendRequestCallback):
+        (WebCore::readCallback):
+
 2011-02-28  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Dan Bernstein.
