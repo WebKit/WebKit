@@ -1,3 +1,15 @@
+2011-02-28  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        FrameLoader: Reorder early-returns in checkCompleted()
+        https://bugs.webkit.org/show_bug.cgi?id=55366
+
+        Check allChildrenAreComplete() last, since it's the most expensive.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkCompleted):
+
 2011-02-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.

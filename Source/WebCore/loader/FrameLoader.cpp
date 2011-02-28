@@ -815,10 +815,6 @@ void FrameLoader::checkCompleted()
     if (m_frame->view())
         m_frame->view()->checkStopDelayingDeferredRepaints();
 
-    // Any frame that hasn't completed yet?
-    if (!allChildrenAreComplete())
-        return;
-
     // Have we completed before?
     if (m_isComplete)
         return;
@@ -833,6 +829,10 @@ void FrameLoader::checkCompleted()
 
     // Still waiting for elements that don't go through a FrameLoader?
     if (m_frame->document()->isDelayingLoadEvent())
+        return;
+
+    // Any frame that hasn't completed yet?
+    if (!allChildrenAreComplete())
         return;
 
     // OK, completed.
