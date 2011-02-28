@@ -39,26 +39,12 @@ public:
     virtual bool isCanvas() const { return true; }
     virtual bool requiresLayer() const;
 
-    const RenderObjectChildList* children() const { return &m_children; }
-    RenderObjectChildList* children() { return &m_children; }
-
-    virtual bool canHaveChildren() const { return true; }
-    virtual void layout();
-
     void canvasSizeChanged();
     
 private:
     virtual const char* renderName() const { return "RenderHTMLCanvas"; }
     virtual void paintReplaced(PaintInfo&, int tx, int ty);
     virtual void intrinsicSizeChanged() { canvasSizeChanged(); }
-
-    virtual RenderObjectChildList* virtualChildren() { return children(); }
-    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-
-    void recursiveSetNoNeedsLayout(RenderObject*);
-
-    RenderObjectChildList m_children;
 };
 
 inline RenderHTMLCanvas* toRenderHTMLCanvas(RenderObject* object)

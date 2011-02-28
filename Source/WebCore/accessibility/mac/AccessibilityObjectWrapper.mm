@@ -1286,8 +1286,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { TabPanelRole, NSAccessibilityGroupRole },
         { TreeRole, NSAccessibilityOutlineRole },
         { TreeItemRole, NSAccessibilityRowRole },
-        { ListItemRole, NSAccessibilityGroupRole },
-        { CanvasRole, NSAccessibilityGroupRole }
+        { ListItemRole, NSAccessibilityGroupRole }
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     

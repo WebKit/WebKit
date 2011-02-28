@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "HitTestResult.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLNames.h"
 #include "PaintInfo.h"
@@ -86,32 +85,6 @@ void RenderHTMLCanvas::canvasSizeChanged()
 
     if (!selfNeedsLayout())
         setNeedsLayout(true);
-}
-
-void RenderHTMLCanvas::recursiveSetNoNeedsLayout(RenderObject* obj)
-{
-    obj->setNeedsLayout(false);
-    for (RenderObject* child = obj->firstChild(); child; child = child->nextSibling())
-        recursiveSetNoNeedsLayout(child);
-}
-
-void RenderHTMLCanvas::layout()
-{
-    recursiveSetNoNeedsLayout(this);
-    setNeedsLayout(true);
-    RenderReplaced::layout();
-}
-
-bool RenderHTMLCanvas::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction action)
-{
-    UNUSED_PARAM(request);
-    UNUSED_PARAM(result);
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(tx);
-    UNUSED_PARAM(ty);
-    UNUSED_PARAM(action);
-    return false;
 }
 
 } // namespace WebCore

@@ -471,8 +471,6 @@ static AtkRole atkRole(AccessibilityRole role)
     case ListItemRole:
     case ListBoxOptionRole:
         return ATK_ROLE_LIST_ITEM;
-    case CanvasRole:
-        return ATK_ROLE_PANEL;
     default:
         return ATK_ROLE_UNKNOWN;
     }

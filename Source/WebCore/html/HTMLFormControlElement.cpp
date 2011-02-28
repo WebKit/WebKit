@@ -239,24 +239,9 @@ bool HTMLFormControlElement::supportsFocus() const
 
 bool HTMLFormControlElement::isFocusable() const
 {
-    if (!renderer() || !renderer()->isBox())
+    if (!renderer() || 
+        !renderer()->isBox() || toRenderBox(renderer())->size().isEmpty())
         return false;
-
-    if (toRenderBox(renderer())->size().isEmpty()) {
-        // An empty render box shouldn't be focusable unless it's part of canvas fallback content.
-        bool isCanvasFallbackContent = false;
-        const Element* e = this;
-        while (e) {
-            if (e->hasLocalName(canvasTag)) {
-                isCanvasFallbackContent = true;
-                break;
-            }
-            e = e->parentElement();
-        }
-        if (!isCanvasFallbackContent)
-            return false;
-    }
-
     // HTMLElement::isFocusable handles visibility and calls suportsFocus which
     // will cover the disabled case.
     return HTMLElement::isFocusable();

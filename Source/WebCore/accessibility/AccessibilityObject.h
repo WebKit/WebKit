@@ -142,7 +142,6 @@ enum AccessibilityRole {
     CellRole, 
     ColumnHeaderRole,
     RowHeaderRole,
-    CanvasRole,
     // AppKit includes SortButtonRole but it is misnamed and really a subrole of ButtonRole so we do not include it here.
 
     // WebCore-specific roles

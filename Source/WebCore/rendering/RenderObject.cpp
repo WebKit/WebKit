@@ -1311,9 +1311,6 @@ void RenderObject::repaint(bool immediate)
     if (view->printing())
         return; // Don't repaint if we're printing.
 
-    if (!containingBlock())
-        return; // Don't repaint if there's no containing block; currently this only happens for canvas fallback content.
-
     RenderBoxModelObject* repaintContainer = containerForRepaint();
     repaintUsingContainer(repaintContainer ? repaintContainer : view, clippedOverflowRectForRepaint(repaintContainer), immediate);
 }

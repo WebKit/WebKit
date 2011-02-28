@@ -1,5 +1,18 @@
 2011-02-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r78789.
+        http://trac.webkit.org/changeset/78789
+        https://bugs.webkit.org/show_bug.cgi?id=55409
+
+        Incorrect canvas fallback implementation (Requested by
+        inferno-sec on #webkit).
+
+        * accessibility/canvas-fallback-content-expected.txt: Removed.
+        * accessibility/canvas-fallback-content.html: Removed.
+        * accessibility/canvas.html:
+
+2011-02-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r79425.
         http://trac.webkit.org/changeset/79425
         https://bugs.webkit.org/show_bug.cgi?id=55406

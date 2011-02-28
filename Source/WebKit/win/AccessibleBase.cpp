@@ -660,8 +660,6 @@ static long MSAARole(AccessibilityRole role)
         case WebCore::ImageMapRole:
         case WebCore::ImageRole:
             return ROLE_SYSTEM_GRAPHIC;
-        case WebCore::CanvasRole:
-            return ROLE_SYSTEM_GROUPING;
         case WebCore::MenuListOptionRole:
         case WebCore::ListItemRole:
         case WebCore::ListBoxOptionRole:

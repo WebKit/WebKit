@@ -1,3 +1,15 @@
+2011-02-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r78789.
+        http://trac.webkit.org/changeset/78789
+        https://bugs.webkit.org/show_bug.cgi?id=55409
+
+        Incorrect canvas fallback implementation (Requested by
+        inferno-sec on #webkit).
+
+        * public/WebAccessibilityRole.h:
+        * src/AssertMatchingEnums.cpp:
+
 2011-02-28  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Adam Barth.

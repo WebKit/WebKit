@@ -34,9 +34,11 @@
 </script>
 <body id="body" onload="_onload()">
 
-    <!-- This test makes sure that a canvas element shows up as a grouping (because it can have fallback content) -->
+<html>
  
-    <canvas title="myCanvasTitle" id="myCanvas" style="width:300px;height:300px;"  width='300' height='300' alt="canvas 1"></canvas>
+    <!-- This test makes sure that a canvas element shows up as an image -->
+ 
+    <canvas id="myCanvas" style="width:300px;height:300px;"  width='300' height='300' alt="canvas 1"></canvas>
 
     <div id="result"></div>
      
@@ -48,9 +50,8 @@
             body.focus();
             var canvasElement = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
             
-            var pattern = "AXRole: AXGroup";
-            var pattern2 = "AXTitle: myCanvasTitle";
-            if (canvasElement.allAttributes().indexOf(pattern) != -1 && canvasElement.allAttributes().indexOf(pattern2) != -1) {
+            var pattern = "AXRole: AXImage";
+            if (canvasElement.allAttributes().indexOf(pattern) != -1) {
                 result.innerText += "Test passed\n";
             }
             else {
