@@ -1,3 +1,18 @@
+2011-02-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove registerBaseEncodingNames and registerBaseCodecs from TextCodecWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=55317
+
+        This functions are obsolete, since r78499 added TextCodecUTF8.
+        Also remove the "fast path" for UTF-8 data, because we now have a separate TextCodec.
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::buildBaseTextCodecMaps):
+        * platform/text/wince/TextCodecWinCE.cpp:
+        * platform/text/wince/TextCodecWinCE.h:
+
 2011-02-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Sam Weinig.

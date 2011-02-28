@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2009 Torch Mobile, Inc. All rights reserved.
- * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
+ * Copyright (C) 2010-2011 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/text/StringHash.h>
-#include <wtf/unicode/UTF8.h>
 
 namespace WebCore {
 
@@ -122,9 +121,6 @@ LanguageManager::LanguageManager()
 
 static UINT getCodePage(const char* name)
 {
-    if (!strcmp(name, "UTF-8"))
-        return CP_UTF8;
-
     // Explicitly use a "const" reference to fix the silly VS build error
     // saying "==" is not found for const_iterator and iterator
     const HashMap<String, CharsetInfo>& charsets = knownCharsets();
@@ -144,16 +140,6 @@ TextCodecWinCE::TextCodecWinCE(UINT codePage)
 
 TextCodecWinCE::~TextCodecWinCE()
 {
-}
-
-void TextCodecWinCE::registerBaseEncodingNames(EncodingNameRegistrar registrar)
-{
-    registrar("UTF-8", "UTF-8");
-}
-
-void TextCodecWinCE::registerBaseCodecs(TextCodecRegistrar registrar)
-{
-    registrar("UTF-8", newTextCodecWinCE, 0);
 }
 
 void TextCodecWinCE::registerExtendedEncodingNames(EncodingNameRegistrar registrar)
@@ -181,9 +167,6 @@ void TextCodecWinCE::registerExtendedCodecs(TextCodecRegistrar registrar)
 
 static DWORD getCodePageFlags(UINT codePage)
 {
-    if (codePage == CP_UTF8)
-        return MB_ERR_INVALID_CHARS;
-
     if (codePage == 42) // Symbol
         return 0;
 
@@ -213,7 +196,7 @@ static inline const char* findFirstNonAsciiCharacter(const char* bytes, size_t l
     return bytes;
 }
 
-static void decode(Vector<UChar, 8192>& result, UINT codePage, const char* bytes, size_t length, size_t* left, bool canBeFirstTime, bool& sawInvalidChar)
+static void decodeInternal(Vector<UChar, 8192>& result, UINT codePage, const char* bytes, size_t length, size_t* left)
 {
     *left = length;
     if (!bytes || !length)
@@ -221,93 +204,32 @@ static void decode(Vector<UChar, 8192>& result, UINT codePage, const char* bytes
 
     DWORD flags = getCodePageFlags(codePage);
 
-    if (codePage == CP_UTF8) {
-        if (canBeFirstTime) {
-            // Handle BOM.
-            if (length > 3) {
-                if (bytes[0] == (char)0xEF && bytes[1] == (char)0xBB && bytes[2] == (char)0xBF) {
-                    // BOM found!
-                    length -= 3;
-                    bytes += 3;
-                    *left = length;
-                }
-            } else if (bytes[0] == 0xEF && (length < 2 || bytes[1] == (char)0xBB) && (length < 3 || bytes[2] == (char)0xBF)) {
-                if (length == 3)
-                    *left = 0;
-                return;
+    int testLength = length;
+    int untestedLength = length;
+    for (;;) {
+        int resultLength = MultiByteToWideChar(codePage, flags, bytes, testLength, 0, 0);
+
+        if (resultLength > 0) {
+            int oldSize = result.size();
+            result.resize(oldSize + resultLength);
+
+            MultiByteToWideChar(codePage, flags, bytes, testLength, result.data() + oldSize, resultLength);
+
+            if (testLength == untestedLength) {
+                *left = length - testLength;
+                break;
+            }
+            untestedLength -= testLength;
+            length -= testLength;
+            bytes += testLength;
+        } else {
+            untestedLength = testLength - 1;
+            if (!untestedLength) {
+                *left = length;
+                break;
             }
         }
-
-        // Process ASCII characters at beginning.
-        const char* firstNonAsciiChar = findFirstNonAsciiCharacter(bytes, length);
-        int numAsciiCharacters = firstNonAsciiChar - bytes;
-        if (numAsciiCharacters) {
-            result.append(bytes, numAsciiCharacters);
-            length -= numAsciiCharacters;
-            if (!length) {
-                *left = 0;
-                return;
-            }
-            bytes = firstNonAsciiChar;
-        }
-
-        int oldSize = result.size();
-        result.resize(oldSize + length);
-        UChar* resultStart = result.data() + oldSize;
-        const char* sourceStart = bytes;
-        const char* const sourceEnd = bytes + length;
-        for (;;) {
-            using namespace WTF::Unicode;
-            ConversionResult convRes = convertUTF8ToUTF16(&sourceStart
-                , sourceEnd
-                , &resultStart
-                , result.data() + result.size()
-                , true);
-
-            // FIXME: is it possible?
-            if (convRes == targetExhausted && sourceStart < sourceEnd) {
-                oldSize = result.size();
-                result.resize(oldSize + 256);
-                resultStart = result.data() + oldSize;
-                continue;
-            }
-
-            if (convRes != conversionOK)
-                sawInvalidChar = true;
-
-            break;
-        }
-
-        *left = sourceEnd - sourceStart;
-        result.resize(resultStart - result.data());
-    } else {
-        int testLength = length;
-        int untestedLength = length;
-        for (;;) {
-            int resultLength = MultiByteToWideChar(codePage, flags, bytes, testLength, 0, 0);
-
-            if (resultLength > 0) {
-                int oldSize = result.size();
-                result.resize(oldSize + resultLength);
-
-                MultiByteToWideChar(codePage, flags, bytes, testLength, result.data() + oldSize, resultLength);
-
-                if (testLength == untestedLength) {
-                    *left = length - testLength;
-                    break;
-                }
-                untestedLength -= testLength;
-                length -= testLength;
-                bytes += testLength;
-            } else {
-                untestedLength = testLength - 1;
-                if (!untestedLength) {
-                    *left = length;
-                    break;
-                }
-            }
-            testLength = (untestedLength + 1) / 2;
-        }
+        testLength = (untestedLength + 1) / 2;
     }
 }
 
@@ -322,12 +244,11 @@ String TextCodecWinCE::decode(const char* bytes, size_t length, bool flush, bool
     size_t left;
     Vector<UChar, 8192> result;
     for (;;) {
-        bool sawInvalidChar = false;
-        WebCore::decode(result, m_codePage, bytes, length, &left, m_decodeBuffer.isEmpty(), sawInvalidChar);
+        decodeInternal(result, m_codePage, bytes, length, &left);
         if (!left)
             break;
 
-        if (!sawInvalidChar && !flush && left < 16)
+        if (!flush && left < 16)
             break;
 
         result.append(L'?');
@@ -359,9 +280,7 @@ CString TextCodecWinCE::encode(const UChar* characters, size_t length, Unencodab
     if (!characters || !length)
         return CString();
 
-    DWORD flags = m_codePage == CP_UTF8 ? 0 : WC_COMPOSITECHECK;
-
-    int resultLength = WideCharToMultiByte(m_codePage, flags, characters, length, 0, 0, 0, 0);
+    int resultLength = WideCharToMultiByte(m_codePage, WC_COMPOSITECHECK, characters, length, 0, 0, 0, 0);
 
     // FIXME: We need to implement UnencodableHandling: QuestionMarksForUnencodables, EntitiesForUnencodables, and URLEncodedEntitiesForUnencodables.
 
@@ -371,7 +290,7 @@ CString TextCodecWinCE::encode(const UChar* characters, size_t length, Unencodab
     char* characterBuffer;
     CString result = CString::newUninitialized(resultLength, characterBuffer);
 
-    WideCharToMultiByte(m_codePage, flags, characters, length, characterBuffer, resultLength, 0, 0);
+    WideCharToMultiByte(m_codePage, WC_COMPOSITECHECK, characters, length, characterBuffer, resultLength, 0, 0);
 
     return result;
 }

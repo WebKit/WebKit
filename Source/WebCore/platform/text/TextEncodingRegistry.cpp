@@ -239,12 +239,6 @@ static void buildBaseTextCodecMaps()
     TextCodecGtk::registerBaseEncodingNames(addToTextEncodingNameMap);
     TextCodecGtk::registerBaseCodecs(addToTextCodecMap);
 #endif
-
-#if OS(WINCE) && !PLATFORM(QT)
-    // FIXME: This is not needed. The code above covers all the base codecs.
-    TextCodecWinCE::registerBaseEncodingNames(addToTextEncodingNameMap);
-    TextCodecWinCE::registerBaseCodecs(addToTextCodecMap);
-#endif
 }
 
 static void addEncodingName(HashSet<const char*>* set, const char* name)
