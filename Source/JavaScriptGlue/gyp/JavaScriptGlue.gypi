@@ -101,6 +101,7 @@
             '../JSUtils.h',
             '../JSValueWrapper.h',
             '../UserObjectImp.h',
+            '../Info.plist',
         ],
         'testjsglue_files': [
             '../testjsglue.cpp',

@@ -1,3 +1,16 @@
+2011-02-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add necessary build steps to JavaScriptGlue GYP project.
+        https://bugs.webkit.org/show_bug.cgi?id=55196
+
+        * gyp/JavaScriptGlue.gyp: Added pre- and post- build steps.
+        * gyp/JavaScriptGlue.gypi: Added Info.plist.
+        * gyp/remove-headers-if-needed.sh: Added.
+        * gyp/run-if-exists.sh: Added.
+        * gyp/update-info-plist.sh: Added.
+
 2011-02-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
