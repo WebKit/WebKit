@@ -40,6 +40,8 @@ public:
         DoNotClearList
     };
 
+    virtual ~SVGTransformable();
+
     static bool parseTransformAttribute(SVGTransformList&, const AtomicString& transform);
     static bool parseTransformAttribute(SVGTransformList&, const UChar*& ptr, const UChar* end, TransformParsingMode mode = ClearList);
     static bool parseTransformValue(unsigned type, const UChar*& ptr, const UChar* end, SVGTransform&);

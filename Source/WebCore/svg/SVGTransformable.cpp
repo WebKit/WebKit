@@ -89,6 +89,11 @@ static int parseTransformParamList(const UChar*& ptr, const UChar* end, float* v
 static const int requiredValuesForType[] =  {0, 6, 1, 1, 1, 1, 1};
 static const int optionalValuesForType[] =  {0, 0, 1, 1, 2, 0, 0};
 
+// This destructor is needed in order to link correctly with Intel ICC.
+SVGTransformable::~SVGTransformable()
+{
+}
+
 bool SVGTransformable::parseTransformValue(unsigned type, const UChar*& ptr, const UChar* end, SVGTransform& transform)
 {
     if (type == SVGTransform::SVG_TRANSFORM_UNKNOWN)

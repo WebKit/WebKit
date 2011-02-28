@@ -1,3 +1,17 @@
+2011-02-28  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Build fix for Intel ICC Compiler.
+        https://bugs.webkit.org/show_bug.cgi?id=55221
+
+        The virtual inheritance seems to confuse ICC.
+        Anything that links with webkit has an undefined reference otherwise.
+
+        * svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::~SVGTransformable):
+        * svg/SVGTransformable.h:
+
 2011-02-28  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.
