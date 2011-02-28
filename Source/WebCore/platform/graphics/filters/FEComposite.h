@@ -45,19 +45,19 @@ public:
     static PassRefPtr<FEComposite> create(Filter*, const CompositeOperationType&, float, float, float, float);
 
     CompositeOperationType operation() const;
-    void setOperation(CompositeOperationType);
+    bool setOperation(CompositeOperationType);
 
     float k1() const;
-    void setK1(float);
+    bool setK1(float);
 
     float k2() const;
-    void setK2(float);
+    bool setK2(float);
 
     float k3() const;
-    void setK3(float);
+    bool setK3(float);
 
     float k4() const;
-    void setK4(float);
+    bool setK4(float);
 
     virtual void apply();
     virtual void dump();

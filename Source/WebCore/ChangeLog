@@ -1,3 +1,27 @@
+2011-02-28  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        FECompositeElement changes doesn't require relayout.
+        https://bugs.webkit.org/show_bug.cgi?id=55367
+
+        When the FECompositeElement receives an update message but the given value remains the same we don't need
+        to relayout the filter.
+
+        No new tests are needed because this modification is covered by the dynamic update tests of FEComposite.
+
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::setOperation):
+        (WebCore::FEComposite::setK1):
+        (WebCore::FEComposite::setK2):
+        (WebCore::FEComposite::setK3):
+        (WebCore::FEComposite::setK4):
+        * platform/graphics/filters/FEComposite.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::setFilterEffectAttribute):
+        (WebCore::SVGFECompositeElement::svgAttributeChanged):
+        * svg/SVGFECompositeElement.h:
+
 2011-02-28  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

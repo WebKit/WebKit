@@ -82,17 +82,38 @@ void SVGFECompositeElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
+bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+{
+    FEComposite* composite = static_cast<FEComposite*>(effect);
+    if (attrName == SVGNames::operatorAttr)
+        return composite->setOperation(static_cast<CompositeOperationType>(_operator()));
+    if (attrName == SVGNames::k1Attr)
+        return composite->setK1(k1());
+    if (attrName == SVGNames::k2Attr)
+        return composite->setK2(k2());
+    if (attrName == SVGNames::k3Attr)
+        return composite->setK3(k3());
+    if (attrName == SVGNames::k4Attr)
+        return composite->setK4(k4());
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+
 void SVGFECompositeElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 
-    if (attrName == SVGNames::inAttr
-        || attrName == SVGNames::in2Attr
-        || attrName == SVGNames::operatorAttr
+    if (attrName == SVGNames::operatorAttr
         || attrName == SVGNames::k1Attr
         || attrName == SVGNames::k2Attr
         || attrName == SVGNames::k3Attr
         || attrName == SVGNames::k4Attr)
+        primitiveAttributeChanged(attrName);
+
+    if (attrName == SVGNames::inAttr
+        || attrName == SVGNames::in2Attr)
         invalidate();
 }
 

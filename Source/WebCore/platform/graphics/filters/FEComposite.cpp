@@ -55,9 +55,12 @@ CompositeOperationType FEComposite::operation() const
     return m_type;
 }
 
-void FEComposite::setOperation(CompositeOperationType type)
+bool FEComposite::setOperation(CompositeOperationType type)
 {
+    if (m_type == type)
+        return false;
     m_type = type;
+    return true;
 }
 
 float FEComposite::k1() const
@@ -65,9 +68,12 @@ float FEComposite::k1() const
     return m_k1;
 }
 
-void FEComposite::setK1(float k1)
+bool FEComposite::setK1(float k1)
 {
+    if (m_k1 == k1)
+        return false;
     m_k1 = k1;
+    return true;
 }
 
 float FEComposite::k2() const
@@ -75,9 +81,12 @@ float FEComposite::k2() const
     return m_k2;
 }
 
-void FEComposite::setK2(float k2)
+bool FEComposite::setK2(float k2)
 {
+    if (m_k2 == k2)
+        return false;
     m_k2 = k2;
+    return true;
 }
 
 float FEComposite::k3() const
@@ -85,9 +94,12 @@ float FEComposite::k3() const
     return m_k3;
 }
 
-void FEComposite::setK3(float k3)
+bool FEComposite::setK3(float k3)
 {
+    if (m_k3 == k3)
+        return false;
     m_k3 = k3;
+    return true;
 }
 
 float FEComposite::k4() const
@@ -95,9 +107,12 @@ float FEComposite::k4() const
     return m_k4;
 }
 
-void FEComposite::setK4(float k4)
+bool FEComposite::setK4(float k4)
 {
+    if (m_k4 == k4)
+        return false;
     m_k4 = k4;
+    return true;
 }
 
 template <int b1, int b2, int b3, int b4>
