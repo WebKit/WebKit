@@ -1,3 +1,34 @@
+2011-02-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r79784.
+        http://trac.webkit.org/changeset/79784
+        https://bugs.webkit.org/show_bug.cgi?id=55386
+
+        This change causes lots of assertion failures in Debug builds
+        (Requested by aroben on #webkit).
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::convertToLength):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::createTransformOperations):
+        * platform/Length.h:
+        (WebCore::Length::Length):
+        (WebCore::Length::operator==):
+        (WebCore::Length::operator!=):
+        (WebCore::Length::rawValue):
+        (WebCore::Length::type):
+        (WebCore::Length::quirk):
+        (WebCore::Length::setValue):
+        (WebCore::Length::setRawValue):
+        (WebCore::Length::calcFloatValue):
+        (WebCore::Length::isZero):
+        (WebCore::Length::blend):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::calcEffectiveLogicalWidth):
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+
 2011-02-28  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Darin Adler.

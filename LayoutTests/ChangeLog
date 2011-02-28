@@ -1,3 +1,15 @@
+2011-02-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r79784.
+        http://trac.webkit.org/changeset/79784
+        https://bugs.webkit.org/show_bug.cgi?id=55386
+
+        This change causes lots of assertion failures in Debug builds
+        (Requested by aroben on #webkit).
+
+        * transitions/matched-transform-functions.html:
+        * transitions/retargetted-transition.html:
+
 2011-02-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: follow up to r79861, moved utf-16-no-bom to its new home, fixed flaky frames.html.

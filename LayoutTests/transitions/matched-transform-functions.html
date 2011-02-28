@@ -24,9 +24,12 @@
 
     function test()
     {
-	  var c = new WebKitCSSMatrix(window.getComputedStyle(document.getElementById('box')).webkitTransform);      
-      var result = (c.f < 200) ? 'PASS' : 'FAIL: transition should still be running, so y < 200';
-
+      var t = window.getComputedStyle(document.getElementById('box')).webkitTransform;
+      // grab the last value from the matrix()
+      var lastValueRE = /(\d+)\)$/;
+      var yTranslate = parseInt(lastValueRE.exec(t));
+      
+      var result = (yTranslate < 200) ? 'PASS' : 'FAIL: transition should still be running, so y < 200';
       document.getElementById('result').innerHTML = result;
 
       if (window.layoutTestController)
