@@ -1,3 +1,14 @@
+2011-02-28  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations change.
+        
+        Rebaseline fast/forms/listbox-hit-test-zoomed.html after r79762.
+        Also make a new other expectations more specific.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/forms/listbox-hit-test-zoomed-expected.checksum:
+        * platform/mac/fast/forms/listbox-hit-test-zoomed-expected.png:
+
 2011-02-28  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
