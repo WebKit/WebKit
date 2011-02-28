@@ -1,3 +1,9 @@
+2011-02-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: skipping new inspector network tests on win.
+
+        * platform/win/Skipped:
+
 2011-02-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

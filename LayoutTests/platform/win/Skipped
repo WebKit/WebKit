@@ -44,6 +44,10 @@ http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
 http/tests/inspector/console-websocket-error.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=55372
+http/tests/inspector/network/network-size.html
+http/tests/inspector/network/network-timing.html
+
 # Fails <rdar://problem/5674289>
 media/video-seek-past-end-paused.html
 
