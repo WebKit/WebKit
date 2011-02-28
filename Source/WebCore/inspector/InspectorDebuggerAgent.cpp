@@ -128,6 +128,10 @@ void InspectorDebuggerAgent::restore()
 void InspectorDebuggerAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend;
+}
+
+void InspectorDebuggerAgent::enableDebuggerAfterShown()
+{
     // Erase sticky breakpoints. If we are restoring from a cookie setFrontend msut be called
     // before the state is loaded from the cookie.
     m_inspectorState->setObject(DebuggerAgentState::javaScriptBreakpoints, InspectorObject::create());

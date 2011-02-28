@@ -464,6 +464,7 @@ void InspectorAgent::populateScriptObjects(ErrorString*)
         m_showPanelAfterVisible = "";
     }
 
+    m_debuggerAgent->enableDebuggerAfterShown();
     restoreProfiler(ProfilerRestoreNoAction);
 
     // Dispatch pending frontend commands
