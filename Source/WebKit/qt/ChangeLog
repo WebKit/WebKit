@@ -1,3 +1,16 @@
+2011-02-28  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Added full webkit module profile and a syncqt profile.
+
+        This is for modularized Qt.
+
+        [Qt] WebKit patches required to work with a modularized version of Qt
+        https://bugs.webkit.org/show_bug.cgi?id=53916
+
+        * qt_webkit_version.pri:
+
 2011-02-27  Aparna Nandyal  <aparna.nand@wipro.com>
 
         Reviewed by Antonio Gomes.
