@@ -1,5 +1,14 @@
 2011-02-28  Alexis Menard  <alexis.menard@openbossa.org>
 
+        Reviewed by Oliver Hunt.
+
+        Build fix for Qt port after API changes of http://trac.webkit.org/changeset/79904.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::evaluateJavaScript):
+
+2011-02-28  Alexis Menard  <alexis.menard@openbossa.org>
+
         Reviewed by Andreas Kling.
 
         [Qt]tst_QDeclarativeWebView - 8 test cases fail

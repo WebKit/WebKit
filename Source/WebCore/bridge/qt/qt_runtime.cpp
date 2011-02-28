@@ -1836,7 +1836,7 @@ void QtConnectionObject::execute(void **argv)
                         PutPropertySlot slot;
                         wrapper->put(exec, Identifier(exec, "__qt_sender__"), qt_sender, slot);
                         oldsc = fimp->scope();
-                        fimp->setScope(oldsc->push(wrapper));
+                        fimp->setScope(exec->globalData(), oldsc->push(wrapper));
                     }
 
                     CallData callData;
@@ -1844,7 +1844,7 @@ void QtConnectionObject::execute(void **argv)
                     call(exec, m_funcObject.get(), callType, callData, m_thisObject.get(), l);
 
                     if (fimp)
-                        fimp->setScope(oldsc);
+                        fimp->setScope(exec->globalData(), oldsc);
                 }
             }
         }

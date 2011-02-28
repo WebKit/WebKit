@@ -1,3 +1,12 @@
+2011-02-28  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Oliver Hunt.
+
+        Build fix for Qt port after API changes of http://trac.webkit.org/changeset/79904.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtConnectionObject::execute):
+
 2011-02-25  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.

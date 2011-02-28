@@ -786,7 +786,7 @@ QVariant QWebElement::evaluateJavaScript(const QString& scriptSource)
     if (!setupScriptContext(m_element, thisValue, state, scriptController))
         return QVariant();
 #if USE(JSC)
-    JSC::ScopeChain& scopeChain = state->dynamicGlobalObject()->globalScopeChain();
+    JSC::ScopeChainNode* scopeChain = state->dynamicGlobalObject()->globalScopeChain();
     JSC::UString script(reinterpret_cast_ptr<const UChar*>(scriptSource.data()), scriptSource.length());
     JSC::Completion completion = JSC::evaluate(state, scopeChain, JSC::makeSource(script), thisValue);
     if ((completion.complType() != JSC::ReturnValue) && (completion.complType() != JSC::Normal))
