@@ -1,3 +1,37 @@
+2011-02-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Range::processContents needs cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=51006
+
+        Refactored Range::processContents.  Extracted childOfCommonRootBeforeOffset from processContents
+        which is used to find processStart and processEnd respectively.  In the case of processStart,
+        we use the next sibling of the node returned by childOfCommonRootBeforeOffset when m_start is not
+        the common root because copying m_start's ancestors will result in processing too much contents.
+
+        Also extracted processNodes and deleteCharacterData from processContents and processContentsBetweenOffsets.
+
+        In addition, lengthOfContentsInNode was modified to return the correct length instead of
+        numeric_limits<unsigned>::max() because the convention that processContentsBetweenOffsets automatically
+        corrects the length when endOffset is numeric_limits<unsigned>::max() seemed more confusing than
+        having two switch statements that need to be consistent.
+
+        Historically, lengthOfContentsInNode was introduced in r78413 as a build fix because unsigned const
+        LengthOfContentsInNode added in r78409 violated WebKit C++ rules and caused build failures on Mac and
+        other ports.
+
+        * dom/Range.cpp:
+        (WebCore::childOfCommonRootBeforeOffset): Extracted from processContents.
+        (WebCore::lengthOfContentsInNode): Added.
+        (WebCore::Range::processContents): Calls childOfCommonRootBeforeOffset, lengthOfContentsInNode,
+        and processNodes.
+        (WebCore::deleteCharacterData): Added.
+        (WebCore::Range::processContentsBetweenOffsets): Calls deleteCharacterData and processNodes.
+        (WebCore::Range::processNodes): Extracted from processContents and processContentsBetweenOffsets.
+        (WebCore::Range::processAncestorsAndTheirSiblings):
+        * dom/Range.h:
+
 2011-02-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Test harness change follow up.

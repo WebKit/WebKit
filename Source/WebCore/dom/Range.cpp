@@ -607,7 +607,48 @@ static inline Node* highestAncestorUnderCommonRoot(Node* node, Node* commonRoot)
     return node;
 }
 
-static inline unsigned lengthOfContentsInNode() { return numeric_limits<unsigned>::max(); }
+static inline Node* childOfCommonRootBeforeOffset(Node* container, unsigned offset, Node* commonRoot)
+{
+    ASSERT(container);
+    ASSERT(commonRoot);
+    ASSERT(commonRoot->contains(container));
+
+    if (container == commonRoot) {
+        container = container->firstChild();
+        for (unsigned i = 0; container && i < offset; i++)
+            container = container->nextSibling();
+    } else {
+        while (container->parentNode() != commonRoot)
+            container = container->parentNode();
+    }
+
+    return container;
+}
+
+static inline unsigned lengthOfContentsInNode(Node* node)
+{
+    // This switch statement must be consistent with that of Range::processContentsBetweenOffsets.
+    switch (node->nodeType()) {
+    case Node::TEXT_NODE:
+    case Node::CDATA_SECTION_NODE:
+    case Node::COMMENT_NODE:
+        return static_cast<CharacterData*>(node)->length();
+    case Node::PROCESSING_INSTRUCTION_NODE:
+        return static_cast<ProcessingInstruction*>(node)->data().length();
+    case Node::ELEMENT_NODE:
+    case Node::ATTRIBUTE_NODE:
+    case Node::ENTITY_REFERENCE_NODE:
+    case Node::ENTITY_NODE:
+    case Node::DOCUMENT_NODE:
+    case Node::DOCUMENT_TYPE_NODE:
+    case Node::DOCUMENT_FRAGMENT_NODE:
+    case Node::NOTATION_NODE:
+    case Node::XPATH_NAMESPACE_NODE:
+        return node->childNodeCount();
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
 
 PassRefPtr<DocumentFragment> Range::processContents(ActionType action, ExceptionCode& ec)
 {
@@ -656,7 +697,7 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
 
     RefPtr<Node> leftContents;
     if (m_start.container() != commonRoot) {
-        leftContents = processContentsBetweenOffsets(action, 0, m_start.container(), m_start.offset(), lengthOfContentsInNode(), ec);
+        leftContents = processContentsBetweenOffsets(action, 0, m_start.container(), m_start.offset(), lengthOfContentsInNode(m_start.container()), ec);
         leftContents = processAncestorsAndTheirSiblings(action, m_start.container(), ProcessContentsForward, leftContents, commonRoot, ec);
     }
 
@@ -667,27 +708,10 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
     }
 
     // delete all children of commonRoot between the start and end container
-    Node* processStart; // child of commonRoot
-    if (m_start.container() == commonRoot) {
-        processStart = m_start.container()->firstChild();
-        for (int i = 0; i < m_start.offset(); i++)
-            processStart = processStart->nextSibling();
-    } else {
-        processStart = m_start.container();
-        while (processStart->parentNode() != commonRoot)
-            processStart = processStart->parentNode();
+    Node* processStart = childOfCommonRootBeforeOffset(m_start.container(), m_start.offset(), commonRoot);
+    if (m_start.container() != commonRoot) // processStart contains nodes before m_start.
         processStart = processStart->nextSibling();
-    }
-    Node* processEnd; // child of commonRoot
-    if (m_end.container() == commonRoot) {
-        processEnd = m_end.container()->firstChild();
-        for (int i = 0; i < m_end.offset(); i++)
-            processEnd = processEnd->nextSibling();
-    } else {
-        processEnd = m_end.container();
-        while (processEnd->parentNode() != commonRoot)
-            processEnd = processEnd->parentNode();
-    }
+    Node* processEnd = childOfCommonRootBeforeOffset(m_end.container(), m_end.offset(), commonRoot);
 
     // Collapse the range, making sure that the result is not within a node that was partially selected.
     if (action == EXTRACT_CONTENTS || action == DELETE_CONTENTS) {
@@ -710,15 +734,7 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
         NodeVector nodes;
         for (Node* n = processStart; n && n != processEnd; n = n->nextSibling())
             nodes.append(n);
-        for (NodeVector::const_iterator it = nodes.begin(); it != nodes.end(); it++) {
-            Node* n = it->get();
-            if (action == EXTRACT_CONTENTS)
-                fragment->appendChild(n, ec); // will remove from commonRoot
-            else if (action == CLONE_CONTENTS)
-                fragment->appendChild(n->cloneNode(true), ec);
-            else
-                commonRoot->removeChild(n, ec);
-        }
+        processNodes(action, nodes, commonRoot, fragment, ec);
     }
 
     if ((action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) && rightContents)
@@ -727,26 +743,30 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
     return fragment.release();
 }
 
+static inline void deleteCharacterData(PassRefPtr<CharacterData> data, unsigned startOffset, unsigned endOffset, ExceptionCode& ec)
+{
+    if (data->length() - endOffset)
+        data->deleteData(endOffset, data->length() - endOffset, ec);
+    if (startOffset)
+        data->deleteData(0, startOffset, ec);
+}
+
 PassRefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<DocumentFragment> fragment,
     Node* container, unsigned startOffset, unsigned endOffset, ExceptionCode& ec)
 {
     ASSERT(container);
     ASSERT(startOffset <= endOffset);
-    
-    RefPtr<Node> result;
+
+    // This switch statement must be consistent with that of lengthOfContentsInNode.
+    RefPtr<Node> result;   
     switch (container->nodeType()) {
     case Node::TEXT_NODE:
     case Node::CDATA_SECTION_NODE:
     case Node::COMMENT_NODE:
-        ASSERT(endOffset <= static_cast<CharacterData*>(container)->length() || endOffset == lengthOfContentsInNode());
-        if (endOffset == lengthOfContentsInNode())
-            endOffset = static_cast<CharacterData*>(container)->length();
+        ASSERT(endOffset <= static_cast<CharacterData*>(container)->length());
         if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
             RefPtr<CharacterData> c = static_pointer_cast<CharacterData>(container->cloneNode(true));
-            if (c->length() - endOffset)
-                c->deleteData(endOffset, c->length() - endOffset, ec);
-            if (startOffset)
-                c->deleteData(0, startOffset, ec);
+            deleteCharacterData(c, startOffset, endOffset, ec);
             if (fragment) {
                 result = fragment;
                 result->appendChild(c.release(), ec);
@@ -757,9 +777,7 @@ PassRefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRef
             static_cast<CharacterData*>(container)->deleteData(startOffset, endOffset - startOffset, ec);
         break;
     case Node::PROCESSING_INSTRUCTION_NODE:
-        ASSERT(endOffset <= static_cast<ProcessingInstruction*>(container)->data().length() || endOffset == lengthOfContentsInNode());
-        if (endOffset == lengthOfContentsInNode())
-            endOffset = static_cast<ProcessingInstruction*>(container)->data().length();
+        ASSERT(endOffset <= static_cast<ProcessingInstruction*>(container)->data().length());
         if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
             RefPtr<ProcessingInstruction> c = static_pointer_cast<ProcessingInstruction>(container->cloneNode(true));
             c->setData(c->data().substring(startOffset, endOffset - startOffset), ec);
@@ -800,23 +818,28 @@ PassRefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRef
         for (unsigned i = startOffset; n && i < endOffset; i++, n = n->nextSibling())
             nodes.append(n);
 
-        for (unsigned i = 0; i < nodes.size(); i++) {
-            switch (action) {
-            case DELETE_CONTENTS:
-                container->removeChild(nodes[i].get(), ec);
-                break;
-            case EXTRACT_CONTENTS:
-                result->appendChild(nodes[i].release(), ec); // will remove n from its parent
-                break;
-            case CLONE_CONTENTS:
-                result->appendChild(nodes[i]->cloneNode(true), ec);
-                break;
-            }
-        }
+        processNodes(action, nodes, container, result, ec);
         break;
     }
 
     return result;
+}
+
+void Range::processNodes(ActionType action, Vector<RefPtr<Node> >& nodes, PassRefPtr<Node> oldContainer, PassRefPtr<Node> newContainer, ExceptionCode& ec)
+{
+    for (unsigned i = 0; i < nodes.size(); i++) {
+        switch (action) {
+        case DELETE_CONTENTS:
+            oldContainer->removeChild(nodes[i].get(), ec);
+            break;
+        case EXTRACT_CONTENTS:
+            newContainer->appendChild(nodes[i].release(), ec); // will remove n from its parent
+            break;
+        case CLONE_CONTENTS:
+            newContainer->appendChild(nodes[i]->cloneNode(true), ec);
+            break;
+        }
+    }
 }
 
 PassRefPtr<Node> Range::processAncestorsAndTheirSiblings(ActionType action, Node* container, ContentsProcessDirection direction, PassRefPtr<Node> passedClonedContainer, Node* commonRoot, ExceptionCode& ec)
@@ -838,6 +861,7 @@ PassRefPtr<Node> Range::processAncestorsAndTheirSiblings(ActionType action, Node
 
         // Copy siblings of an ancestor of start/end containers
         // FIXME: This assertion may fail if DOM is modified during mutation event
+        // FIXME: Share code with Range::processNodes
         ASSERT(!firstChildInAncestorToProcess || firstChildInAncestorToProcess->parentNode() == ancestor);
         RefPtr<Node> next;
         for (Node* child = firstChildInAncestorToProcess.get(); child; child = next.get()) {
