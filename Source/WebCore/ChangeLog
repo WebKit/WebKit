@@ -1,3 +1,18 @@
+2011-02-28  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Dan Bernstein.
+
+        Cleanup the include guard form an Objective-C files
+        https://bugs.webkit.org/show_bug.cgi?id=55379
+
+        Normally Objective-C files do not need include guard.
+        r76916 introduced an include guard in EmptyProtocolDefinitions.h.
+        The guard is no longer needed after r76991.
+
+        No new tests as there is no new functionality. 
+
+        * platform/mac/EmptyProtocolDefinitions.h:
+
 2011-02-28  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

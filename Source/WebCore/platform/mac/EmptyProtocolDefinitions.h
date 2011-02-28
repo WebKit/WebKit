@@ -23,9 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EmptyProtocolDefinitions_h
-#define EmptyProtocolDefinitions_h
-
 #if defined(__OBJC__)
 
 #define EMPTY_PROTOCOL(NAME) \
@@ -50,5 +47,3 @@ EMPTY_PROTOCOL(NSURLDownloadDelegate)
 #undef EMPTY_PROTOCOL
 
 #endif /* defined(__OBJC__) */
-
-#endif /* EmptyProtocolDefinitions_h */
