@@ -50,7 +50,7 @@ PassOwnPtr<DrawingAreaProxyImpl> DrawingAreaProxyImpl::create(WebPageProxy* webP
 DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeImpl, webPageProxy)
     , m_currentStateID(0)
-    , m_requestedStateID(0)
+    , m_nextStateID(0)
     , m_isWaitingForDidUpdateState(false)
 {
 }
@@ -103,7 +103,7 @@ bool DrawingAreaProxyImpl::paint(const WebCore::IntRect&, PlatformDrawingContext
 
 void DrawingAreaProxyImpl::sizeDidChange()
 {
-    sendUpdateState();
+    stateDidChange();
 }
 
 void DrawingAreaProxyImpl::visibilityDidChange()
@@ -136,14 +136,14 @@ void DrawingAreaProxyImpl::update(uint64_t stateID, const UpdateInfo& updateInfo
 
 void DrawingAreaProxyImpl::didUpdateState(uint64_t stateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)
 {
-    ASSERT_ARG(stateID, stateID <= m_requestedStateID);
+    ASSERT_ARG(stateID, stateID <= m_nextStateID);
     ASSERT_ARG(stateID, stateID > m_currentStateID);
     m_currentStateID = stateID;
 
     ASSERT(m_isWaitingForDidUpdateState);
     m_isWaitingForDidUpdateState = false;
 
-    if (m_size != updateInfo.viewSize)
+    if (m_nextStateID != m_currentStateID)
         sendUpdateState();
 
     if (layerTreeContext != m_layerTreeContext) {
@@ -214,8 +214,16 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
         m_webPageProxy->displayView();
 }
 
+void DrawingAreaProxyImpl::stateDidChange()
+{
+    ++m_nextStateID;
+    sendUpdateState();
+}
+
 void DrawingAreaProxyImpl::sendUpdateState()
 {
+    ASSERT(m_currentStateID < m_nextStateID);
+
     if (!m_webPageProxy->isValid())
         return;
 
@@ -223,7 +231,7 @@ void DrawingAreaProxyImpl::sendUpdateState()
         return;
 
     m_isWaitingForDidUpdateState = true;
-    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateState(++m_requestedStateID, m_size, m_scrollOffset), m_webPageProxy->pageID());
+    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateState(m_nextStateID, m_size, m_scrollOffset), m_webPageProxy->pageID());
     m_scrollOffset = IntSize();
 
     if (!m_layerTreeContext.isEmpty()) {

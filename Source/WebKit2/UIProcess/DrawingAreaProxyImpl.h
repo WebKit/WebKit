@@ -61,6 +61,8 @@ private:
     virtual void exitAcceleratedCompositingMode(uint64_t stateID, const UpdateInfo&);
 
     void incorporateUpdate(const UpdateInfo&);
+
+    void stateDidChange();
     void sendUpdateState();
     void waitForAndDispatchDidUpdateState();
 
@@ -74,10 +76,9 @@ private:
     // as they don't apply to our current backing store.
     uint64_t m_currentStateID;
 
-    // The state ID we most recently requested the web process update to. Incremented whenever we
-    // send an UpdateState message to the web process to tell it we need to allocate a new backing
-    // store.
-    uint64_t m_requestedStateID;
+    // The next state ID we will request the web process update to. Incremented whenever our state
+    // changes in a way that will require a new backing store to be allocated.
+    uint64_t m_nextStateID;
 
     // The current layer tree context.
     LayerTreeContext m_layerTreeContext;

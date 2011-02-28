@@ -1,5 +1,37 @@
 2011-02-28  Adam Roben  <aroben@apple.com>
 
+        Decouple state changes from sending of UpdateState messages in DrawingAreaProxyImpl
+
+        The new DrawingAreaProxyImpl::stateDidChange function should be called whenever
+        DrawingAreaProxyImpl's state changes in a way that will require allocating a new backing
+        store. (Currently, this is just when the size changes.) This function will sometimes (but
+        not always, as when we're waiting for a DidUpdateState message) send an UpdateState message
+        to the web process. This means it's now possible for the state IDs sent in consecutive
+        UpdateState messages to increase by more than one, but that's OK.
+
+        This should cause no change in behavior.
+
+        Fixes <http://webkit.org/b/55382> DrawingAreaProxyImpl's state ID should be updated whenever
+        its state changes, not just when we send an UpdateState message
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl): Updated for rename.
+        (WebKit::DrawingAreaProxyImpl::sizeDidChange): Changed to call stateDidChange.
+        (WebKit::DrawingAreaProxyImpl::didUpdateState): Updated for rename, and changed to call
+        sendUpdateState whenever our state has changed for any reason since the last UpdateState
+        message was sent.
+        (WebKit::DrawingAreaProxyImpl::stateDidChange): Added. Increments m_nextStateID and calls
+        through to sendUpdateState.
+        (WebKit::DrawingAreaProxyImpl::sendUpdateState): Updated for rename, moved incrementing of
+        the state ID we send to the web process from here to stateDidChange, and added an assertion.
+
+        * UIProcess/DrawingAreaProxyImpl.h: Renamed m_requestedStateID to m_nextStateID, and updated
+        the comment explaining its meaning.
+
+2011-02-28  Adam Roben  <aroben@apple.com>
+
         Pass the right dirty rect to Plugin::paint
 
         A typo in r79040 broke this. Much of this patch is just support for testing the fix.
