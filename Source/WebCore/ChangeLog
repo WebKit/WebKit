@@ -1,3 +1,20 @@
+2011-02-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove some duplicate code from KURLGoogle.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=55266
+
+        No change in functionality so no new tests.
+
+        * WebCore.gyp/WebCore.gyp: Make KURL.cpp get built by Chromium.
+        * platform/KURL.cpp:
+        Simply moved #include's and some code that was identical (i.e.
+        had been copied) to KURLGoogle.cpp outside of ifdef !USE(GOOGLEURL)
+        to reduce duplication.
+        * platform/KURLGoogle.cpp:
+        Removed the duplicate code.
+
 2011-02-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

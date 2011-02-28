@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if !USE(GOOGLEURL)
-
 #include "KURL.h"
 
 #include "TextEncoding.h"
@@ -53,6 +51,11 @@ namespace WebCore {
 
 typedef Vector<char, 512> CharBuffer;
 typedef Vector<UChar, 512> UCharBuffer;
+
+static const unsigned maximumValidPortNumber = 0xFFFE;
+static const unsigned invalidPortNumber = 0xFFFF;
+
+#if !USE(GOOGLEURL)
 
 // FIXME: This file makes too much use of the + operator on String.
 // We either have to optimize that operator so it doesn't involve
@@ -214,9 +217,6 @@ static const unsigned char characterClassTable[256] = {
     /* 248 */ BadChar, /* 249 */ BadChar, /* 250 */ BadChar, /* 251 */ BadChar,
     /* 252 */ BadChar, /* 253 */ BadChar, /* 254 */ BadChar, /* 255 */ BadChar
 };
-
-static const unsigned maximumValidPortNumber = 0xFFFE;
-static const unsigned invalidPortNumber = 0xFFFF;
 
 static int copyPathRemovingDots(char* dst, const char* src, int srcStart, int srcEnd);
 static void encodeRelativeString(const String& rel, const TextEncoding&, CharBuffer& ouput);
@@ -965,15 +965,6 @@ String decodeURLEscapeSequences(const String& str, const TextEncoding& encoding)
     result.append(str.characters() + decodedPosition, length - decodedPosition);
 
     return String::adopt(result);
-}
-
-bool KURL::isLocalFile() const
-{
-    // Including feed here might be a bad idea since drag and drop uses this check
-    // and including feed would allow feeds to potentially let someone's blog
-    // read the contents of the clipboard on a drag, even without a drop.
-    // Likewise with using the FrameLoader::shouldTreatURLAsLocal() function.
-    return protocolIs("file");
 }
 
 // Caution: This function does not bounds check.
@@ -1754,11 +1745,6 @@ bool protocolIs(const String& url, const char* protocol)
     }
 }
 
-bool protocolIsJavaScript(const String& url)
-{
-    return protocolIs(url, "javascript");
-}
-
 bool isValidProtocol(const String& protocol)
 {
     // RFC3986: ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
@@ -1772,6 +1758,35 @@ bool isValidProtocol(const String& protocol)
             return false;
     }
     return true;
+}
+
+#ifndef NDEBUG
+void KURL::print() const
+{
+    printf("%s\n", m_string.utf8().data());
+}
+#endif
+
+#endif // !USE(GOOGLEURL)
+
+bool KURL::isLocalFile() const
+{
+    // Including feed here might be a bad idea since drag and drop uses this check
+    // and including feed would allow feeds to potentially let someone's blog
+    // read the contents of the clipboard on a drag, even without a drop.
+    // Likewise with using the FrameLoader::shouldTreatURLAsLocal() function.
+    return protocolIs("file");
+}
+
+bool protocolIsJavaScript(const String& url)
+{
+    return protocolIs(url, "javascript");
+}
+
+const KURL& blankURL()
+{
+    DEFINE_STATIC_LOCAL(KURL, staticBlankURL, (ParsedURLString, "about:blank"));
+    return staticBlankURL;
 }
 
 bool isDefaultPortForProtocol(unsigned short port, const String& protocol)
@@ -1908,19 +1923,4 @@ String mimeTypeFromDataURL(const String& url)
     return "";
 }
 
-const KURL& blankURL()
-{
-    DEFINE_STATIC_LOCAL(KURL, staticBlankURL, (ParsedURLString, "about:blank"));
-    return staticBlankURL;
 }
-
-#ifndef NDEBUG
-void KURL::print() const
-{
-    printf("%s\n", m_string.utf8().data());
-}
-#endif
-
-}
-
-#endif  // !USE(GOOGLEURL)

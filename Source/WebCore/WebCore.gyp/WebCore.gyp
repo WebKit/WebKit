@@ -1181,9 +1181,6 @@
         # Exclude some DB-related files.
         ['exclude', 'platform/sql/SQLiteFileSystem\\.cpp$'],
 
-        # Use platform/KURLGoogle.cpp instead.
-        ['exclude', 'platform/KURL\\.cpp$'],
-
         # Use platform/MIMETypeRegistryChromium.cpp instead.
         ['exclude', 'platform/MIMETypeRegistry\\.cpp$'],
 
