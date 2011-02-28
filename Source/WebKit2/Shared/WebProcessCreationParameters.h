@@ -79,10 +79,12 @@ struct WebProcessCreationParameters {
     String parentProcessName;
 
     pid_t presenterApplicationPid;
-    CString nsURLCachePath;
 
+    // FIXME: These should be merged with CFURLCache counterparts below.
+    CString nsURLCachePath;
     uint64_t nsURLCacheMemoryCapacity;
     uint64_t nsURLCacheDiskCapacity;
+
     CoreIPC::MachPort acceleratedCompositingPort;
 
     CString uiProcessBundleResourcePath;

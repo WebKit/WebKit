@@ -1,3 +1,28 @@
+2011-02-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Frequent crashes in CFURLCache code on Snow Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=55412
+        <rdar://problem/9063922>
+
+        CString is evil, it has two lengths which can be different - specifically, fileSystemRepresentation()
+        creates a string with maximum possible buffer size. A path with garbage at the end confused
+        CFURLCache into corrupting its data structures.
+
+        * Shared/WebProcessCreationParameters.h: Added a FIXME about merging Mac and Windows code.
+        This problem wouldn't have occured if we didn't use CString in the first place.
+
+        * UIProcess/mac/WebContextMac.mm: (WebKit::WebContext::platformInitializeWebProcess):
+        Added an assertion matching Windows behavior (seems likely that NSURLCache also wouldn't
+        have liked trailing slash).
+
+        * UIProcess/win/WebContextWin.cpp: (WebKit::WebContext::platformInitializeWebProcess):
+        Made slash removal conditional for robustness.
+
+        * WebProcess/mac/WebProcessMac.mm: (WebKit::WebProcess::platformInitializeWebProcess):
+        Use actual string length, not CString::length().
+
 2011-02-28  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Anders Carlsson.

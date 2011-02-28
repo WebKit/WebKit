@@ -82,6 +82,9 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
     parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];
 
+    ASSERT(strlen(parameters.nsURLCachePath.data()));
+    ASSERT(parameters.nsURLCachePath.data()[strlen(parameters.nsURLCachePath.data()) - 1] != '/'); // Necessary for NSURLCache to find the cache file.
+
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
     mach_port_t renderServerPort = WKInitializeRenderServer();
     if (renderServerPort != MACH_PORT_NULL)

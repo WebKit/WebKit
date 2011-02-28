@@ -65,7 +65,9 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     RetainPtr<CFStringRef> cfURLCachePath(AdoptCF, wkCopyFoundationCacheDirectory());
     parameters.cfURLCachePath = String(cfURLCachePath.get());
     // Remove the ending '/' (necessary to have CFNetwork find the Cache file).
-    parameters.cfURLCachePath.remove(parameters.cfURLCachePath.length() - 1);
+    ASSERT(parameters.cfURLCachePath.length());
+    if (parameters.cfURLCachePath[parameters.cfURLCachePath.length() - 1] == '/')
+        parameters.cfURLCachePath.remove(parameters.cfURLCachePath.length() - 1);
 #endif
 }
 
