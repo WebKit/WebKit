@@ -22,10 +22,10 @@
 
 messages -> DrawingAreaProxy {
     Update(uint64_t stateID, WebKit::UpdateInfo updateInfo)
-    DidUpdateState(uint64_t stateID, WebKit::UpdateInfo updateInfo, WebKit::LayerTreeContext context)
+    DidUpdateBackingStoreState(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo, WebKit::LayerTreeContext context)
 
 #if USE(ACCELERATED_COMPOSITING)
-    EnterAcceleratedCompositingMode(uint64_t stateID, WebKit::LayerTreeContext context)
-    ExitAcceleratedCompositingMode(uint64_t stateID, WebKit::UpdateInfo updateInfo)
+    EnterAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
+    ExitAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo)
 #endif
 }

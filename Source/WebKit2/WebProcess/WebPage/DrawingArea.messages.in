@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> DrawingArea {
-    UpdateState(uint64_t stateID, WebCore::IntSize size, WebCore::IntSize scrollOffset)
+    UpdateBackingStoreState(uint64_t backingStoreStateID, WebCore::IntSize size, WebCore::IntSize scrollOffset)
     DidUpdate()
     SuspendPainting()
     ResumePainting()

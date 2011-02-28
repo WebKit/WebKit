@@ -55,16 +55,16 @@ private:
     virtual void setPageIsVisible(bool);
 
     // CoreIPC message handlers
-    virtual void update(uint64_t stateID, const UpdateInfo&);
-    virtual void didUpdateState(uint64_t stateID, const UpdateInfo&, const LayerTreeContext&);
-    virtual void enterAcceleratedCompositingMode(uint64_t stateID, const LayerTreeContext&);
-    virtual void exitAcceleratedCompositingMode(uint64_t stateID, const UpdateInfo&);
+    virtual void update(uint64_t backingStoreStateID, const UpdateInfo&);
+    virtual void didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo&, const LayerTreeContext&);
+    virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&);
+    virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&);
 
     void incorporateUpdate(const UpdateInfo&);
 
     void stateDidChange();
-    void sendUpdateState();
-    void waitForAndDispatchDidUpdateState();
+    void sendUpdateBackingStoreState();
+    void waitForAndDispatchDidUpdateBackingStoreState();
 
     void enterAcceleratedCompositingMode(const LayerTreeContext&);
     void exitAcceleratedCompositingMode();
@@ -74,18 +74,18 @@ private:
     // The state ID corresponding to our current backing store. Updated whenever we allocate
     // a new backing store. Any messages received that correspond to an earlier state are ignored,
     // as they don't apply to our current backing store.
-    uint64_t m_currentStateID;
+    uint64_t m_currentBackingStoreStateID;
 
-    // The next state ID we will request the web process update to. Incremented whenever our state
-    // changes in a way that will require a new backing store to be allocated.
-    uint64_t m_nextStateID;
+    // The next backing store state ID we will request the web process update to. Incremented
+    // whenever our state changes in a way that will require a new backing store to be allocated.
+    uint64_t m_nextBackingStoreStateID;
 
     // The current layer tree context.
     LayerTreeContext m_layerTreeContext;
     
-    // Whether we've sent a UpdateState message and are now waiting for a DidUpdateState message.
-    // Used to throttle UpdateState messages so we don't send them faster than the Web process can handle.
-    bool m_isWaitingForDidUpdateState;
+    // Whether we've sent a UpdateBackingStoreState message and are now waiting for a DidUpdateBackingStoreState message.
+    // Used to throttle UpdateBackingStoreState messages so we don't send them faster than the Web process can handle.
+    bool m_isWaitingForDidUpdateBackingStoreState;
 
     OwnPtr<BackingStore> m_backingStore;
 };

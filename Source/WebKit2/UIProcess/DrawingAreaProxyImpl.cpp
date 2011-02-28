@@ -49,9 +49,9 @@ PassOwnPtr<DrawingAreaProxyImpl> DrawingAreaProxyImpl::create(WebPageProxy* webP
 
 DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeImpl, webPageProxy)
-    , m_currentStateID(0)
-    , m_nextStateID(0)
-    , m_isWaitingForDidUpdateState(false)
+    , m_currentBackingStoreStateID(0)
+    , m_nextBackingStoreStateID(0)
+    , m_isWaitingForDidUpdateBackingStoreState(false)
 {
 }
 
@@ -71,12 +71,12 @@ void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, 
 
     ASSERT(!isInAcceleratedCompositingMode());
 
-    if (m_isWaitingForDidUpdateState) {
-        // Wait for a DidUpdateState message that contains the new bits before we paint
+    if (m_isWaitingForDidUpdateBackingStoreState) {
+        // Wait for a DidUpdateBackingStoreState message that contains the new bits before we paint
         // what's currently in the backing store.
-        waitForAndDispatchDidUpdateState();
+        waitForAndDispatchDidUpdateBackingStoreState();
 
-        // Dispatching DidUpdateState could destroy our backing store or change the compositing mode.
+        // Dispatching DidUpdateBackingStoreState could destroy our backing store or change the compositing mode.
         if (!m_backingStore || isInAcceleratedCompositingMode())
             return;
     }
@@ -122,10 +122,10 @@ void DrawingAreaProxyImpl::setPageIsVisible(bool)
 {
 }
 
-void DrawingAreaProxyImpl::update(uint64_t stateID, const UpdateInfo& updateInfo)
+void DrawingAreaProxyImpl::update(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
 {
-    ASSERT_ARG(stateID, stateID <= m_currentStateID);
-    if (stateID < m_currentStateID)
+    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
+    if (backingStoreStateID < m_currentBackingStoreStateID)
         return;
 
     // FIXME: Handle the case where the view is hidden.
@@ -134,17 +134,17 @@ void DrawingAreaProxyImpl::update(uint64_t stateID, const UpdateInfo& updateInfo
     m_webPageProxy->process()->send(Messages::DrawingArea::DidUpdate(), m_webPageProxy->pageID());
 }
 
-void DrawingAreaProxyImpl::didUpdateState(uint64_t stateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)
+void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)
 {
-    ASSERT_ARG(stateID, stateID <= m_nextStateID);
-    ASSERT_ARG(stateID, stateID > m_currentStateID);
-    m_currentStateID = stateID;
+    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_nextBackingStoreStateID);
+    ASSERT_ARG(backingStoreStateID, backingStoreStateID > m_currentBackingStoreStateID);
+    m_currentBackingStoreStateID = backingStoreStateID;
 
-    ASSERT(m_isWaitingForDidUpdateState);
-    m_isWaitingForDidUpdateState = false;
+    ASSERT(m_isWaitingForDidUpdateBackingStoreState);
+    m_isWaitingForDidUpdateBackingStoreState = false;
 
-    if (m_nextStateID != m_currentStateID)
-        sendUpdateState();
+    if (m_nextBackingStoreStateID != m_currentBackingStoreStateID)
+        sendUpdateBackingStoreState();
 
     if (layerTreeContext != m_layerTreeContext) {
         if (!m_layerTreeContext.isEmpty()) {
@@ -167,19 +167,19 @@ void DrawingAreaProxyImpl::didUpdateState(uint64_t stateID, const UpdateInfo& up
     incorporateUpdate(updateInfo);
 }
 
-void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(uint64_t stateID, const LayerTreeContext& layerTreeContext)
+void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
 {
-    ASSERT_ARG(stateID, stateID <= m_currentStateID);
-    if (stateID < m_currentStateID)
+    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
+    if (backingStoreStateID < m_currentBackingStoreStateID)
         return;
 
     enterAcceleratedCompositingMode(layerTreeContext);
 }
 
-void DrawingAreaProxyImpl::exitAcceleratedCompositingMode(uint64_t stateID, const UpdateInfo& updateInfo)
+void DrawingAreaProxyImpl::exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
 {
-    ASSERT_ARG(stateID, stateID <= m_currentStateID);
-    if (stateID < m_currentStateID)
+    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
+    if (backingStoreStateID < m_currentBackingStoreStateID)
         return;
 
     exitAcceleratedCompositingMode();
@@ -216,48 +216,48 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
 
 void DrawingAreaProxyImpl::stateDidChange()
 {
-    ++m_nextStateID;
-    sendUpdateState();
+    ++m_nextBackingStoreStateID;
+    sendUpdateBackingStoreState();
 }
 
-void DrawingAreaProxyImpl::sendUpdateState()
+void DrawingAreaProxyImpl::sendUpdateBackingStoreState()
 {
-    ASSERT(m_currentStateID < m_nextStateID);
+    ASSERT(m_currentBackingStoreStateID < m_nextBackingStoreStateID);
 
     if (!m_webPageProxy->isValid())
         return;
 
-    if (m_isWaitingForDidUpdateState)
+    if (m_isWaitingForDidUpdateBackingStoreState)
         return;
 
-    m_isWaitingForDidUpdateState = true;
-    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateState(m_nextStateID, m_size, m_scrollOffset), m_webPageProxy->pageID());
+    m_isWaitingForDidUpdateBackingStoreState = true;
+    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, m_size, m_scrollOffset), m_webPageProxy->pageID());
     m_scrollOffset = IntSize();
 
     if (!m_layerTreeContext.isEmpty()) {
-        // Wait for the DidUpdateState message. Normally we don this in DrawingAreaProxyImpl::paint, but that
+        // Wait for the DidUpdateBackingStoreState message. Normally we don this in DrawingAreaProxyImpl::paint, but that
         // function is never called when in accelerated compositing mode.
-        waitForAndDispatchDidUpdateState();
+        waitForAndDispatchDidUpdateBackingStoreState();
     }
 }
 
-void DrawingAreaProxyImpl::waitForAndDispatchDidUpdateState()
+void DrawingAreaProxyImpl::waitForAndDispatchDidUpdateBackingStoreState()
 {
-    ASSERT(m_isWaitingForDidUpdateState);
+    ASSERT(m_isWaitingForDidUpdateBackingStoreState);
 
     if (!m_webPageProxy->isValid())
         return;
     if (m_webPageProxy->process()->isLaunching())
         return;
     
-    // FIXME: waitForAndDispatchImmediately will always return the oldest DidUpdateState message that
-    // hasn't yet been processed. But it might be better to skip ahead to some other DidUpdateState
-    // message, if multiple DidUpdateState messages are waiting to be processed. For instance, we could
+    // FIXME: waitForAndDispatchImmediately will always return the oldest DidUpdateBackingStoreState message that
+    // hasn't yet been processed. But it might be better to skip ahead to some other DidUpdateBackingStoreState
+    // message, if multiple DidUpdateBackingStoreState messages are waiting to be processed. For instance, we could
     // choose the most recent one, or the one that is closest to our current size.
 
-    // The timeout, in seconds, we use when waiting for a DidUpdateState message when we're asked to paint.
-    static const double didUpdateStateTimeout = 0.5;
-    m_webPageProxy->process()->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateState>(m_webPageProxy->pageID(), didUpdateStateTimeout);
+    // The timeout, in seconds, we use when waiting for a DidUpdateBackingStoreState message when we're asked to paint.
+    static const double didUpdateBackingStoreStateTimeout = 0.5;
+    m_webPageProxy->process()->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_webPageProxy->pageID(), didUpdateBackingStoreStateTimeout);
 }
 
 void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)

@@ -58,8 +58,8 @@ DrawingAreaImpl::~DrawingAreaImpl()
 
 DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaTypeImpl, webPage)
-    , m_stateID(0)
-    , m_inUpdateState(false)
+    , m_backingStoreStateID(0)
+    , m_inUpdateBackingStoreState(false)
     , m_isWaitingForDidUpdate(false)
     , m_isPaintingSuspended(!parameters.isVisible)
     , m_alwaysUseCompositing(false)
@@ -191,7 +191,7 @@ void DrawingAreaImpl::layerHostDidFlushLayers()
     if (!m_layerTreeHost)
         return;
 
-    m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_stateID, m_layerTreeHost->layerTreeContext()));
+    m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_backingStoreStateID, m_layerTreeHost->layerTreeContext()));
 }
 
 void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
@@ -213,7 +213,7 @@ void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
                 // compositing code via display() and layout.
                 // If we're leaving compositing mode because of a setSize, it is safe to
                 // exit accelerated compositing mode right away.
-                if (m_inUpdateState)
+                if (m_inUpdateBackingStoreState)
                     exitAcceleratedCompositingMode();
                 else
                     exitAcceleratedCompositingModeSoon();
@@ -237,13 +237,13 @@ void DrawingAreaImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID
 {
 }
 
-void DrawingAreaImpl::updateState(uint64_t stateID, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
+void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
 {
-    ASSERT(!m_inUpdateState);
-    m_inUpdateState = true;
+    ASSERT(!m_inUpdateBackingStoreState);
+    m_inUpdateBackingStoreState = true;
 
-    ASSERT_ARG(stateID, stateID > m_stateID);
-    m_stateID = stateID;
+    ASSERT_ARG(stateID, stateID > m_backingStoreStateID);
+    m_backingStoreStateID = stateID;
 
     // Set this to false since we're about to call display().
     m_isWaitingForDidUpdate = false;
@@ -262,7 +262,7 @@ void DrawingAreaImpl::updateState(uint64_t stateID, const WebCore::IntSize& size
         // We don't want the layer tree host to notify after the next scheduled
         // layer flush because that might end up sending an EnterAcceleratedCompositingMode
         // message back to the UI process, but the updated layer tree context
-        // will be sent back in the DidUpdateState message.
+        // will be sent back in the DidUpdateBackingStoreState message.
         m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(false);
     }
 
@@ -276,9 +276,9 @@ void DrawingAreaImpl::updateState(uint64_t stateID, const WebCore::IntSize& size
         ASSERT(!m_layerTreeHost);
     }
 
-    m_webPage->send(Messages::DrawingAreaProxy::DidUpdateState(m_stateID, updateInfo, layerTreeContext));
+    m_webPage->send(Messages::DrawingAreaProxy::DidUpdateBackingStoreState(m_backingStoreStateID, updateInfo, layerTreeContext));
 
-    m_inUpdateState = false;
+    m_inUpdateBackingStoreState = false;
 }
 
 void DrawingAreaImpl::didUpdate()
@@ -319,7 +319,7 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
     ASSERT(!m_layerTreeHost);
 
     m_layerTreeHost = LayerTreeHost::create(m_webPage);
-    if (!m_inUpdateState)
+    if (!m_inUpdateBackingStoreState)
         m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(true);
 
     m_layerTreeHost->setRootCompositingLayer(graphicsLayer);
@@ -344,7 +344,7 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     m_layerTreeHost->invalidate();
     m_layerTreeHost = nullptr;
 
-    if (m_inUpdateState)
+    if (m_inUpdateBackingStoreState)
         return;
 
     UpdateInfo updateInfo;
@@ -357,8 +357,8 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
 
     // Send along a complete update of the page so we can paint the contents right after we exit the
     // accelerated compositing mode, eliminiating flicker.
-    if (!m_inUpdateState)
-        m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(m_stateID, updateInfo));
+    if (!m_inUpdateBackingStoreState)
+        m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(m_backingStoreStateID, updateInfo));
 }
 
 void DrawingAreaImpl::exitAcceleratedCompositingModeSoon()
@@ -406,7 +406,7 @@ void DrawingAreaImpl::display()
         return;
     }
 
-    m_webPage->send(Messages::DrawingAreaProxy::Update(m_stateID, updateInfo));
+    m_webPage->send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, updateInfo));
     m_isWaitingForDidUpdate = true;
 }
 

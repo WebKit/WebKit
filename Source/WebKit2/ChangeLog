@@ -1,5 +1,21 @@
 2011-02-28  Adam Roben  <aroben@apple.com>
 
+        Rename DrawingArea[Proxy]Impl's "state ID" concept to "backing store state ID"
+
+        Rubber-stamped (and suggested) by Anders Carlsson.
+
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.messages.in:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        Perform the rename.
+
+2011-02-28  Adam Roben  <aroben@apple.com>
+
         Decouple state changes from sending of UpdateState messages in DrawingAreaProxyImpl
 
         The new DrawingAreaProxyImpl::stateDidChange function should be called whenever
