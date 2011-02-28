@@ -1,3 +1,20 @@
+2011-02-28  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Made sure that the build-webkit --qmake argument is always respected.
+
+        Previously, it would be respected during the build, but not during
+        the early feature detection. The build would also fail if qmake was
+        not in your path, even if you specified --qmake with a valid qmake
+        binary.
+
+        [Qt] WebKit patches required to work with a modularized version of Qt
+        https://bugs.webkit.org/show_bug.cgi?id=53916
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+
 2011-02-27  Ojan Vafai  <ojan@chromium.org>
 
         Fix failing tests from http://trac.webkit.org/changeset/79837.

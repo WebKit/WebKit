@@ -60,6 +60,7 @@ my $sourceDir;
 my $currentSVNRevision;
 my $osXVersion;
 my $isQt;
+my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
 my $isSymbian;
 my %qtFeatureDefaults;
 my $isGtk;
@@ -105,6 +106,11 @@ sub currentPerlPath()
         $thisPerl .= $Config{_exe} unless $thisPerl =~ m/$Config{_exe}$/i;
     }
     return $thisPerl;
+}
+
+sub setQmakeBinaryPath($)
+{
+    ($qmakebin) = @_;
 }
 
 # used for scripts which are stored in a non-standard location
@@ -588,7 +594,7 @@ sub builtDylibPathForName
                 $libraryName .= "d";
             }
 
-            my $mkspec = `qmake -query QMAKE_MKSPECS`;
+            my $mkspec = `$qmakebin -query QMAKE_MKSPECS`;
             $mkspec =~ s/[\n|\r]$//g;
             my $qtMajorVersion = retrieveQMakespecVar("$mkspec/qconfig.pri", "QT_MAJOR_VERSION");
             if (not $qtMajorVersion) {
@@ -682,10 +688,10 @@ sub commandExists($)
 sub determineQtFeatureDefaults()
 {
     return if %qtFeatureDefaults;
-    die "ERROR: qmake missing but required to build WebKit.\n" if not commandExists("qmake");
+    die "ERROR: qmake missing but required to build WebKit.\n" if not commandExists($qmakebin);
     my $originalCwd = getcwd();
     chdir File::Spec->catfile(sourceDir(), "Source", "WebCore");
-    my $defaults = `qmake CONFIG+=compute_defaults 2>&1`;
+    my $defaults = `$qmakebin CONFIG+=compute_defaults 2>&1`;
     chdir $originalCwd;
 
     while ($defaults =~ m/(\S+?)=(\S+?)/gi) {
@@ -1562,7 +1568,6 @@ sub buildQMakeProject($@)
 
     my @buildArgs = ("-r");
 
-    my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
     my $makeargs = "";
     my $installHeaders;
     my $installLibs;
@@ -1836,7 +1841,7 @@ sub setPathForRunningWebKitApp
     if (isAppleWinWebKit()) {
         $env->{PATH} = join(':', productDir(), dirname(installedSafariPath()), appleApplicationSupportPath(), $env->{PATH} || "");
     } elsif (isQt()) {
-        my $qtLibs = `qmake -query QT_INSTALL_LIBS`;
+        my $qtLibs = `$qmakebin -query QT_INSTALL_LIBS`;
         $qtLibs =~ s/[\n|\r]$//g;
         $env->{PATH} = join(';', $qtLibs, productDir() . "/lib", $env->{PATH} || "");
     }

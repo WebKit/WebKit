@@ -286,6 +286,13 @@ my @features = (
 
 # Update defaults from Qt's project file
 if (isQt()) {
+    # Take a sneek peek at the arguments, since we will need the qmake binary early
+    # on to do profile parsing.
+    foreach (@ARGV) {
+        if (/^--qmake=(.*)/) {
+            setQmakeBinaryPath($1);
+        }
+    }
     my %qtDefaults = qtFeatureDefaults();
     foreach (@features) {
         $_->{default} = $qtDefaults{$_->{define}} || 0;
