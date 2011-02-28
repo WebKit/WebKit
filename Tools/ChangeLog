@@ -1,3 +1,12 @@
+2011-02-27  Ojan Vafai  <ojan@chromium.org>
+
+        Fix failing tests from http://trac.webkit.org/changeset/79837.
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        This was just a mistake that would break if someone tried printing with this configuration.
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+        Method signature changed. Didn't notice that this method was being calling in a unittest.
+
 2011-02-24  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -423,7 +423,7 @@ class Printer(object):
             else:
                 self._current_progress_str += "."
 
-            if (next_test in result_summary.unexpected_results.type and
+            if (next_test in result_summary.unexpected_results and
                 self.enabled('unexpected')):
                 self._meter.write("%s\n" % self._current_progress_str)
                 test_result = result_summary.results[next_test]

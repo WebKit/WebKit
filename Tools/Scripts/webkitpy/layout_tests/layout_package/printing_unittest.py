@@ -513,8 +513,7 @@ class  Testprinter(unittest.TestCase):
                 retry.add(self.get_result('passes/text.html'), True)
                 retry.add(self.get_result('failures/expected/timeout.html'), True)
                 retry.add(self.get_result('failures/expected/crash.html'), True)
-            unexpected_results = test_runner.summarize_unexpected_results(
-                self._port, exp, rs, retry)
+            unexpected_results = test_runner.summarize_results(self._port, exp, rs, retry, test_timings={}, only_unexpected=True)
             return unexpected_results
 
         tests = ['passes/text.html', 'failures/expected/timeout.html',
