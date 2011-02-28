@@ -1,3 +1,15 @@
+2011-02-27  Aparna Nandyal  <aparna.nand@wipro.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] QtTestBrowser - Horizontal scrollbar disappears on navigating pages using Back/Forward
+        https://bugs.webkit.org/show_bug.cgi?id=53917
+
+        Adding test case to check the scenario to avoid regressions in the
+        future. 
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2011-02-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.

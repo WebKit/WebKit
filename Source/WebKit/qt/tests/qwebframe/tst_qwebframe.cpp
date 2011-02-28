@@ -590,6 +590,7 @@ public slots:
     void cleanup();
 
 private slots:
+    void horizontalScrollAfterBack();
     void getSetStaticProperty();
     void getSetDynamicProperty();
     void getSetChildren();
@@ -3100,6 +3101,29 @@ void tst_QWebFrame::scrollbarsOff()
 
     mainFrame->evaluateJavaScript("checkScrollbar();");
     QCOMPARE(mainFrame->documentElement().findAll("span").at(0).toPlainText(), QString("SUCCESS"));
+}
+
+void tst_QWebFrame::horizontalScrollAfterBack()
+{
+    QWebView view;
+    QWebFrame* frame = view.page()->mainFrame();
+    QSignalSpy loadSpy(view.page(), SIGNAL(loadFinished(bool))); 
+
+    view.page()->settings()->setMaximumPagesInCache(2);
+    frame->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAsNeeded);
+    frame->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAsNeeded);
+
+    view.load(QUrl("qrc:/testiframe2.html"));
+    view.resize(200, 200);
+    QTRY_COMPARE(loadSpy.count(), 1);
+    QTRY_VERIFY((frame->scrollBarGeometry(Qt::Horizontal)).height());
+
+    view.load(QUrl("qrc:/testiframe.html"));
+    QTRY_COMPARE(loadSpy.count(), 2);
+
+    view.page()->triggerAction(QWebPage::Back);
+    QTRY_COMPARE(loadSpy.count(), 3);
+    QTRY_VERIFY((frame->scrollBarGeometry(Qt::Horizontal)).height());
 }
 
 void tst_QWebFrame::evaluateWillCauseRepaint()

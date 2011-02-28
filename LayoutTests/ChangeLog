@@ -1,3 +1,16 @@
+2011-02-27  Aparna Nandyal  <aparna.nand@wipro.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] QtTestBrowser - Horizontal scrollbar disappears on navigating pages using Back/Forward
+        https://bugs.webkit.org/show_bug.cgi?id=53917
+
+        The bug got fixed by other changes. Adding test case to avoid
+        regressions in the future.
+
+        * fast/overflow/horizontal-scroll-after-back-expected.txt: Added.
+        * fast/overflow/horizontal-scroll-after-back.html: Added.
+
 2011-02-27  Adam Roben  <aroben@apple.com>
 
         Add Windows expected failure results for fast/events/pageshow-pagehide-on-back-cached.html
