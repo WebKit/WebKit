@@ -206,11 +206,7 @@ public:
     void disableProfiler(ErrorString* error);
     bool profilerEnabled() const;
 
-    void startUserInitiatedDebugging();
-    void enableDebugger(ErrorString*) { enableDebugger(false); }
-    void enableDebugger(bool eraseStickyBreakpoints);
-    void disableDebugger(ErrorString* error);
-    bool debuggerEnabled() const { return m_debuggerAgent; }
+    void showScriptsPanel();
 #endif
 
     // Generic code called from custom implementations.
@@ -236,7 +232,6 @@ public:
 private:
     void showPanel(const String& panel);
     void pushDataCollectedOffline();
-    void restoreDebugger(bool eraseStickyBreakpoints);
     enum ProfilerRestoreAction {
         ProfilerRestoreNoAction = 0,
         ProfilerRestoreResetAgent = 1

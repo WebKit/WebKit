@@ -52,7 +52,7 @@ WebInspector.DebuggerModel.Events = {
 WebInspector.DebuggerModel.prototype = {
     enableDebugger: function()
     {
-        InspectorAgent.enableDebugger();
+        DebuggerAgent.enable();
         if (this._breakpointsPushedToBackend)
             return;
         var breakpoints = WebInspector.settings.breakpoints;
@@ -68,7 +68,7 @@ WebInspector.DebuggerModel.prototype = {
 
     disableDebugger: function()
     {
-        InspectorAgent.disableDebugger();
+        DebuggerAgent.disable();
     },
 
     continueToLocation: function(sourceID, lineNumber, columnNumber)

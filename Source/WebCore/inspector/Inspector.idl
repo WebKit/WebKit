@@ -65,8 +65,6 @@ module core {
 
         // FIXME: dispatch on agents.
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        void enableDebugger();
-        void disableDebugger();
         void enableProfiler();
         void disableProfiler();
         void startProfiling();
@@ -201,6 +199,8 @@ module core {
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
     interface [Conditional=INSPECTOR] Debugger {
+        void enable();
+        void disable();
         [event] void debuggerWasEnabled();
         [event] void debuggerWasDisabled();
 

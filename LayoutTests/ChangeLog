@@ -1,3 +1,13 @@
+2011-02-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: debugger agents should have same livetime as InspectorAgent
+        https://bugs.webkit.org/show_bug.cgi?id=55369
+
+        * inspector/report-protocol-errors-expected.txt:
+        * inspector/report-protocol-errors.html:
+
 2011-02-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: updated inspector test harness and chromium expectations.

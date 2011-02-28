@@ -33,8 +33,8 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
+#include "InspectorDebuggerAgent.h"
 #include "PlatformString.h"
-
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassOwnPtr.h>
@@ -45,17 +45,25 @@ namespace WebCore {
 
 class Element;
 class InspectorAgent;
+class InspectorDOMAgent;
+class InspectorDebuggerAgent;
+class InspectorFrontend;
 class InspectorObject;
+class InspectorState;
+class InstrumentingAgents;
 class Node;
 
 typedef String ErrorString;
 
-class InspectorBrowserDebuggerAgent {
+class InspectorBrowserDebuggerAgent : public InspectorDebuggerAgent::Listener {
     WTF_MAKE_NONCOPYABLE(InspectorBrowserDebuggerAgent);
 public:
-    static PassOwnPtr<InspectorBrowserDebuggerAgent> create(InspectorAgent*, bool eraseStickyBreakpoints);
+    static PassOwnPtr<InspectorBrowserDebuggerAgent> create(InstrumentingAgents*, InspectorState*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
 
     virtual ~InspectorBrowserDebuggerAgent();
+
+    void setFrontend(InspectorFrontend*);
+    void clearFrontend();
 
     void setAllBrowserBreakpoints(ErrorString* error, PassRefPtr<InspectorObject>);
     void inspectedURLChanged(const String& url);
@@ -78,7 +86,12 @@ public:
     void pauseOnNativeEventIfNeeded(const String& categoryType, const String& eventName, bool synchronous);
 
 private:
-    InspectorBrowserDebuggerAgent(InspectorAgent*, bool eraseStickyBreakpoints);
+    InspectorBrowserDebuggerAgent(InstrumentingAgents*, InspectorState*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
+
+    // InspectorDebuggerAgent::Listener implementation.
+    virtual void debuggerWasEnabled();
+    virtual void debuggerWasDisabled();
+    void disable();
 
     void restoreStickyBreakpoint(PassRefPtr<InspectorObject> breakpoint);
 
@@ -87,6 +100,12 @@ private:
     bool hasBreakpoint(Node*, long type);
     void discardBindings();
 
+    void clear();
+
+    InstrumentingAgents* m_instrumentingAgents;
+    InspectorState* m_inspectorState;
+    InspectorDOMAgent* m_domAgent;
+    InspectorDebuggerAgent* m_debuggerAgent;
     InspectorAgent* m_inspectorAgent;
     HashMap<Node*, uint32_t> m_domBreakpoints;
     HashSet<String> m_eventListenerBreakpoints;

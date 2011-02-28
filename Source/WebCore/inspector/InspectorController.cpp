@@ -38,6 +38,7 @@
 #include "InjectedScriptHost.h"
 #include "InspectorAgent.h"
 #include "InspectorBackendDispatcher.h"
+#include "InspectorBrowserDebuggerAgent.h"
 #include "InspectorDebuggerAgent.h"
 #include "InspectorClient.h"
 #include "InspectorFrontend.h"
@@ -231,7 +232,7 @@ bool InspectorController::profilerEnabled()
 
 bool InspectorController::debuggerEnabled()
 {
-    return m_inspectorAgent->debuggerEnabled();
+    return m_inspectorAgent->debuggerAgent()->enabled();
 }
 
 void InspectorController::showAndEnableDebugger()
@@ -239,13 +240,13 @@ void InspectorController::showAndEnableDebugger()
     if (!enabled())
         return;
     show();
-    m_inspectorAgent->startUserInitiatedDebugging();
+    m_inspectorAgent->showScriptsPanel();
+    m_inspectorAgent->debuggerAgent()->startUserInitiatedDebugging();
 }
 
 void InspectorController::disableDebugger()
 {
-    ErrorString error;
-    m_inspectorAgent->disableDebugger(&error);
+    m_inspectorAgent->debuggerAgent()->disable();
 }
 
 void InspectorController::startUserInitiatedProfiling()

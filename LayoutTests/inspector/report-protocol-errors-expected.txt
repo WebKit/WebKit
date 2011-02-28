@@ -78,21 +78,4 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
         2 : "Protocol Error: Argument 'base64Encode' with type 'Boolean' was not found."
     }
 }
-{
-    seq : 6
-    domain : "Debugger"
-    success : false
-    errors : {
-        0 : "Protocol Error: Debugger handler is not available."
-        1 : "Protocol Error: Argument 'breakpointId' with type 'String' was not found."
-    }
-}
-{
-    seq : 7
-    domain : "Debugger"
-    success : false
-    errors : {
-        0 : "Protocol Error: Debugger handler is not available."
-    }
-}
 

@@ -44,10 +44,12 @@
 namespace WebCore {
 
 class InjectedScriptHost;
-class InspectorAgent;
 class InspectorFrontend;
 class InspectorObject;
+class InspectorState;
 class InspectorValue;
+class InstrumentingAgents;
+class Page;
 
 typedef String ErrorString;
 
@@ -60,8 +62,17 @@ enum DebuggerEventType {
 class InspectorDebuggerAgent : public ScriptDebugListener {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<InspectorDebuggerAgent> create(InspectorAgent*, InspectorFrontend*, bool eraseStickyBreakpoints);
+    static PassOwnPtr<InspectorDebuggerAgent> create(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptHost*);
     virtual ~InspectorDebuggerAgent();
+
+    void startUserInitiatedDebugging();
+    void enable(ErrorString*) { enable(false); }
+    void disable(ErrorString*) { disable(); }
+    void disable();
+    bool enabled();
+    void restore();
+    void setFrontend(InspectorFrontend*);
+    void clearFrontend();
 
     void inspectedURLChanged(const String& url);
 
@@ -88,8 +99,18 @@ public:
     void evaluateOnCallFrame(ErrorString* error, PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
     void getCompletionsOnCallFrame(ErrorString* error, PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
 
+    class Listener {
+    public:
+        virtual ~Listener() { }
+        virtual void debuggerWasEnabled() = 0;
+        virtual void debuggerWasDisabled() = 0;
+    };
+    void setListener(Listener* listener) { m_listener = listener; }
+
 private:
-    InspectorDebuggerAgent(InspectorAgent*, InspectorFrontend*, bool eraseStickyBreakpoints);
+    InspectorDebuggerAgent(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptHost*);
+
+    void enable(bool restoringFromState);
 
     PassRefPtr<InspectorValue> currentCallFrames();
 
@@ -99,6 +120,7 @@ private:
     virtual void didContinue();
 
     bool resolveBreakpoint(const String& breakpointId, const String& sourceId, const ScriptBreakpoint&, int* actualLineNumber, int* actualColumnNumber);
+    void clear();
 
     class Script {
     public:
@@ -128,7 +150,10 @@ private:
     typedef HashMap<String, Script> ScriptsMap;
     typedef HashMap<String, Vector<String> > BreakpointIdToDebugServerBreakpointIdsMap;
 
-    InspectorAgent* m_inspectorAgent;
+    InstrumentingAgents* m_instrumentingAgents;
+    InspectorState* m_inspectorState;
+    Page* m_inspectedPage;
+    InjectedScriptHost* m_injectedScriptHost;
     InspectorFrontend* m_frontend;
     ScriptState* m_pausedScriptState;
     ScriptsMap m_scripts;
@@ -136,6 +161,7 @@ private:
     String m_continueToLocationBreakpointId;
     RefPtr<InspectorObject> m_breakProgramDetails;
     bool m_javaScriptPauseScheduled;
+    Listener* m_listener;
 };
 
 } // namespace WebCore

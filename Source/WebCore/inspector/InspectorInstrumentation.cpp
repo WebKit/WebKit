@@ -102,7 +102,7 @@ void InspectorInstrumentation::inspectedPageDestroyedImpl(InspectorAgent* inspec
 void InspectorInstrumentation::willInsertDOMNodeImpl(InspectorAgent* inspectorAgent, Node* node, Node* parent)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorAgent->browserDebuggerAgent())
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorAgent->instrumentingAgents()->inspectorBrowserDebuggerAgent())
         browserDebuggerAgent->willInsertDOMNode(node, parent);
 #endif
 }
@@ -112,7 +112,7 @@ void InspectorInstrumentation::didInsertDOMNodeImpl(InspectorAgent* inspectorAge
     if (InspectorDOMAgent* domAgent = inspectorAgent->domAgent())
         domAgent->didInsertDOMNode(node);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorAgent->browserDebuggerAgent())
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorAgent->instrumentingAgents()->inspectorBrowserDebuggerAgent())
         browserDebuggerAgent->didInsertDOMNode(node);
 #endif
 }
@@ -120,7 +120,7 @@ void InspectorInstrumentation::didInsertDOMNodeImpl(InspectorAgent* inspectorAge
 void InspectorInstrumentation::willRemoveDOMNodeImpl(InspectorAgent* inspectorAgent, Node* node)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorAgent->browserDebuggerAgent())
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorAgent->instrumentingAgents()->inspectorBrowserDebuggerAgent())
         browserDebuggerAgent->willRemoveDOMNode(node);
 #endif
 }
@@ -128,7 +128,7 @@ void InspectorInstrumentation::willRemoveDOMNodeImpl(InspectorAgent* inspectorAg
 void InspectorInstrumentation::didRemoveDOMNodeImpl(InspectorAgent* inspectorAgent, Node* node)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorAgent->browserDebuggerAgent())
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorAgent->instrumentingAgents()->inspectorBrowserDebuggerAgent())
         browserDebuggerAgent->didRemoveDOMNode(node);
 #endif
     if (InspectorDOMAgent* domAgent = inspectorAgent->domAgent())
@@ -138,7 +138,7 @@ void InspectorInstrumentation::didRemoveDOMNodeImpl(InspectorAgent* inspectorAge
 void InspectorInstrumentation::willModifyDOMAttrImpl(InspectorAgent* inspectorAgent, Element* element)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorAgent->browserDebuggerAgent())
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorAgent->instrumentingAgents()->inspectorBrowserDebuggerAgent())
         browserDebuggerAgent->willModifyDOMAttr(element);
 #endif
 }
@@ -174,7 +174,7 @@ void InspectorInstrumentation::characterDataModifiedImpl(InspectorAgent* inspect
 void InspectorInstrumentation::willSendXMLHttpRequestImpl(InspectorAgent* inspectorAgent, const String& url)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorAgent->browserDebuggerAgent())
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorAgent->instrumentingAgents()->inspectorBrowserDebuggerAgent())
         browserDebuggerAgent->willSendXMLHttpRequest(url);
 #endif
 }
@@ -667,7 +667,7 @@ bool InspectorInstrumentation::hasFrontend(InspectorAgent* inspectorAgent)
 void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InspectorAgent* inspectorAgent, const String& categoryType, const String& eventName, bool synchronous)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorAgent->browserDebuggerAgent())
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorAgent->instrumentingAgents()->inspectorBrowserDebuggerAgent())
         browserDebuggerAgent->pauseOnNativeEventIfNeeded(categoryType, eventName, synchronous);
 #endif
 }

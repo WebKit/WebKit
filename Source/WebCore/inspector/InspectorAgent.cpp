@@ -150,6 +150,8 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client)
     , m_timelineAgent(InspectorTimelineAgent::create(m_instrumentingAgents.get(), m_state.get()))
     , m_consoleAgent(new InspectorConsoleAgent(m_instrumentingAgents.get(), this, m_state.get(), m_injectedScriptHost.get(), m_domAgent.get()))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+    , m_debuggerAgent(InspectorDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, m_injectedScriptHost.get()))
+    , m_browserDebuggerAgent(InspectorBrowserDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent.get(), m_debuggerAgent.get(), this))
     , m_profilerAgent(InspectorProfilerAgent::create(this))
 #endif
 {
@@ -207,7 +209,7 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
     m_timelineAgent->restore(m_state.get(), m_frontend);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    restoreDebugger(false);
+    m_debuggerAgent->restore();
     restoreProfiler(ProfilerRestoreResetAgent);
     if (m_state->getBoolean(InspectorAgentState::userInitiatedProfiling))
         startUserInitiatedProfiling();
@@ -363,6 +365,10 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
     m_domAgent->setFrontend(m_frontend);
     m_consoleAgent->setFrontend(m_frontend);
     m_timelineAgent->setFrontend(m_frontend);
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    m_debuggerAgent->setFrontend(m_frontend);
+    m_browserDebuggerAgent->setFrontend(m_frontend);
+#endif
 #if ENABLE(DATABASE)
     m_databaseAgent->setFrontend(m_frontend);
 #endif
@@ -386,10 +392,8 @@ void InspectorAgent::disconnectFrontend()
 
     ErrorString error;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    // If the window is being closed with the debugger enabled,
-    // remember this state to re-enable debugger on the next window
-    // opening.
-    disableDebugger(&error);
+    m_debuggerAgent->clearFrontend();
+    m_browserDebuggerAgent->clearFrontend();
 #endif
     setSearchingForNode(false);
 
@@ -460,7 +464,6 @@ void InspectorAgent::populateScriptObjects(ErrorString*)
         m_showPanelAfterVisible = "";
     }
 
-    restoreDebugger(true);
     restoreProfiler(ProfilerRestoreNoAction);
 
     // Dispatch pending frontend commands
@@ -479,15 +482,6 @@ void InspectorAgent::pushDataCollectedOffline()
         InspectorWorkerResource* worker = it->second.get();
         m_frontend->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
     }
-#endif
-}
-
-void InspectorAgent::restoreDebugger(bool eraseStickyBreakpoints)
-{
-    ASSERT(m_frontend);
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (m_state->getBoolean(InspectorAgentState::debuggerEnabled))
-        enableDebugger(eraseStickyBreakpoints);
 #endif
 }
 
@@ -531,11 +525,11 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
 #endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-        if (m_debuggerAgent) {
+        if (InspectorDebuggerAgent* debuggerAgent = m_instrumentingAgents->inspectorDebuggerAgent()) {
             KURL url = inspectedURLWithoutFragment();
-            m_debuggerAgent->inspectedURLChanged(url);
-            if (m_browserDebuggerAgent)
-                m_browserDebuggerAgent->inspectedURLChanged(url);
+            debuggerAgent->inspectedURLChanged(url);
+            if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = m_instrumentingAgents->inspectorBrowserDebuggerAgent())
+                browserDebuggerAgent->inspectedURLChanged(url);
         }
 #endif
 
@@ -835,45 +829,9 @@ void InspectorAgent::disableProfiler(ErrorString*)
 #endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-void InspectorAgent::startUserInitiatedDebugging()
+void InspectorAgent::showScriptsPanel()
 {
-    if (debuggerEnabled())
-        return;
-
     showPanel(scriptsPanelName);
-    if (!m_frontend) {
-        // We are called after show(), set the debuggerEnabled flag so that it was enabled
-        // upon frontend opening.
-        m_state->setBoolean(InspectorAgentState::debuggerEnabled, true);
-    } else
-        enableDebugger(true);
-}
-
-void InspectorAgent::enableDebugger(bool eraseStickyBreakpoints)
-{
-    if (debuggerEnabled())
-        return;
-    m_state->setBoolean(InspectorAgentState::debuggerEnabled, true);
-    ASSERT(m_inspectedPage);
-
-    m_debuggerAgent = InspectorDebuggerAgent::create(this, m_frontend, eraseStickyBreakpoints);
-    m_browserDebuggerAgent = InspectorBrowserDebuggerAgent::create(this, eraseStickyBreakpoints);
-
-    m_frontend->debuggerWasEnabled();
-}
-
-void InspectorAgent::disableDebugger(ErrorString*)
-{
-    if (!enabled())
-        return;
-    ASSERT(m_inspectedPage);
-    m_debuggerAgent.clear();
-    m_browserDebuggerAgent.clear();
-
-    if (m_frontend) {
-        m_frontend->debuggerWasDisabled();
-        m_state->setBoolean(InspectorAgentState::debuggerEnabled, false);
-    }
 }
 #endif
 

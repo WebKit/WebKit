@@ -1,3 +1,83 @@
+2011-02-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: debugger agents should have same livetime as InspectorAgent
+        https://bugs.webkit.org/show_bug.cgi?id=55369
+
+        DOM and JS debugger agents are now created in InspectorAgent's constructor and owned
+        by the agent. Debugger state is cleared on frontend disconnect.
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        (WebCore::InspectorAgent::setFrontend):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        (WebCore::InspectorAgent::populateScriptObjects):
+        (WebCore::InspectorAgent::didCommitLoad):
+        (WebCore::InspectorAgent::showScriptsPanel):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        (WebCore::InspectorBrowserDebuggerAgent::create):
+        (WebCore::InspectorBrowserDebuggerAgent::InspectorBrowserDebuggerAgent):
+        (WebCore::InspectorBrowserDebuggerAgent::~InspectorBrowserDebuggerAgent):
+        (WebCore::InspectorBrowserDebuggerAgent::debuggerWasEnabled):
+        (WebCore::InspectorBrowserDebuggerAgent::debuggerWasDisabled):
+        (WebCore::InspectorBrowserDebuggerAgent::disable):
+        (WebCore::InspectorBrowserDebuggerAgent::setFrontend):
+        (WebCore::InspectorBrowserDebuggerAgent::clearFrontend):
+        (WebCore::InspectorBrowserDebuggerAgent::setAllBrowserBreakpoints):
+        (WebCore::InspectorBrowserDebuggerAgent::inspectedURLChanged):
+        (WebCore::InspectorBrowserDebuggerAgent::setDOMBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::removeDOMBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::willInsertDOMNode):
+        (WebCore::InspectorBrowserDebuggerAgent::willRemoveDOMNode):
+        (WebCore::InspectorBrowserDebuggerAgent::willModifyDOMAttr):
+        (WebCore::InspectorBrowserDebuggerAgent::descriptionForDOMEvent):
+        (WebCore::InspectorBrowserDebuggerAgent::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorBrowserDebuggerAgent::willSendXMLHttpRequest):
+        (WebCore::InspectorBrowserDebuggerAgent::clear):
+        * inspector/InspectorBrowserDebuggerAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::debuggerEnabled):
+        (WebCore::InspectorController::showAndEnableDebugger):
+        (WebCore::InspectorController::disableDebugger):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::create):
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::~InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::startUserInitiatedDebugging):
+        (WebCore::InspectorDebuggerAgent::enable):
+        (WebCore::InspectorDebuggerAgent::disable):
+        (WebCore::InspectorDebuggerAgent::enabled):
+        (WebCore::InspectorDebuggerAgent::restore):
+        (WebCore::InspectorDebuggerAgent::setFrontend):
+        (WebCore::InspectorDebuggerAgent::clearFrontend):
+        (WebCore::InspectorDebuggerAgent::setJavaScriptBreakpoint):
+        (WebCore::InspectorDebuggerAgent::removeJavaScriptBreakpoint):
+        (WebCore::InspectorDebuggerAgent::evaluateOnCallFrame):
+        (WebCore::InspectorDebuggerAgent::getCompletionsOnCallFrame):
+        (WebCore::InspectorDebuggerAgent::currentCallFrames):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        (WebCore::InspectorDebuggerAgent::clear):
+        * inspector/InspectorDebuggerAgent.h:
+        (WebCore::InspectorDebuggerAgent::enable):
+        (WebCore::InspectorDebuggerAgent::disable):
+        (WebCore::InspectorDebuggerAgent::Listener::~Listener):
+        (WebCore::InspectorDebuggerAgent::setListener):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willModifyDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::willSendXMLHttpRequestImpl):
+        (WebCore::InspectorInstrumentation::pauseOnNativeEventIfNeeded):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.enableDebugger):
+        (WebInspector.DebuggerModel.prototype.disableDebugger):
+
 2011-02-28  Renata Hodovan  <reni@webkit.org>
 
         Reviewed by Andreas Kling.
