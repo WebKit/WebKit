@@ -1,3 +1,12 @@
+2011-02-28  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        The new QML tests require QML_IMPORT_PATH variable to be set in order to
+        load the proper plugin.
+
+        * Scripts/run-qtwebkit-tests:
+
 2011-02-28  Joone Hur  <joone.hur@collabora.co.uk>
 
         Unreviewed, fix spelling mistake.

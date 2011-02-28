@@ -207,6 +207,8 @@ class Main(Log):
         self._Pool = Pool
 
     def run(self):
+        """ We need to set this system variable in order to load the proper plugin for the qml tests """
+        os.putenv("QML_IMPORT_PATH", self._options.path + "../../../imports")
         """ Find && execute && publish results of all test. "All in one" function. """
         self.debug("Searching executables...")
         tests_executables = self.find_tests_paths(self._options.path)
