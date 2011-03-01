@@ -203,10 +203,13 @@ void ProcessLauncher::launchProcess()
     NSString *webProcessAppPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
     NSString *webProcessAppExecutablePath = [[NSBundle bundleWithPath:webProcessAppPath] executablePath];
 
+    RetainPtr<CFStringRef> cfLocalization(AdoptCF, WKCopyCFLocalizationPreferredName(NULL));
+    CString localization = String(cfLocalization.get()).utf8();
+    
     // Make a unique, per pid, per process launcher web process service name.
     CString serviceName = String::format("com.apple.WebKit.WebProcess-%d-%p", getpid(), this).utf8();
 
-    const char* args[] = { [webProcessAppExecutablePath fileSystemRepresentation], frameworkExecutablePath, "-type", processTypeAsString(m_launchOptions.processType), "-servicename", serviceName.data(), 0 };
+    const char* args[] = { [webProcessAppExecutablePath fileSystemRepresentation], frameworkExecutablePath, "-type", processTypeAsString(m_launchOptions.processType), "-servicename", serviceName.data(), "-localization", localization.data(), 0 };
 
     // Register ourselves.
     kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.data()), listeningPort, 0);

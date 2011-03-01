@@ -4817,6 +4817,7 @@
 		BC23EE920DAED2BC009FDC91 /* CSSImageGeneratorValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC23EE910DAED2BC009FDC91 /* CSSImageGeneratorValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC23F0DB0DAFF4A4009FDC91 /* GeneratedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BC23F0DA0DAFF4A4009FDC91 /* GeneratedImage.h */; };
 		BC2441C40E8B65D00055320F /* ScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2441C30E8B65D00055320F /* ScrollView.cpp */; };
+		BC25B52A131C6D3900180E10 /* LocalizedStringsMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC25B528131C6D3900180E10 /* LocalizedStringsMac.mm */; };
 		BC275B7911C5D1C300C9206C /* JSWebKitPointCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC275B7811C5D1C300C9206C /* JSWebKitPointCustom.cpp */; };
 		BC275B7D11C5D23500C9206C /* JSWebKitCSSMatrixCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC275B7C11C5D23500C9206C /* JSWebKitCSSMatrixCustom.cpp */; };
 		BC275B8111C5D2B400C9206C /* JSEventSourceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC275B8011C5D2B400C9206C /* JSEventSourceCustom.cpp */; };
@@ -5085,6 +5086,7 @@
 		BCAA90C30A7EBA60008B1229 /* Scrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */; };
 		BCACF3BC1072921A00C0C8A3 /* UserContentURLPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */; };
 		BCACF3BD1072921A00C0C8A3 /* UserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = BCACF3BB1072921A00C0C8A3 /* UserContentURLPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCAD180A131C7A0D00990406 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BCAD1808131C7A0D00990406 /* Localizable.strings */; };
 		BCAE1FA712939DB7004CB026 /* ScrollAnimatorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */; };
 		BCAEFCAE1016CE4A0040D34E /* DOMRGBColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAEFCAD1016CE4A0040D34E /* DOMRGBColor.mm */; };
 		BCB16C170979C3BD00467741 /* MemoryCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16BFE0979C3BD00467741 /* MemoryCache.cpp */; };
@@ -11158,6 +11160,7 @@
 		BC23EE910DAED2BC009FDC91 /* CSSImageGeneratorValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSImageGeneratorValue.h; sourceTree = "<group>"; };
 		BC23F0DA0DAFF4A4009FDC91 /* GeneratedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratedImage.h; sourceTree = "<group>"; };
 		BC2441C30E8B65D00055320F /* ScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollView.cpp; sourceTree = "<group>"; };
+		BC25B528131C6D3900180E10 /* LocalizedStringsMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalizedStringsMac.mm; sourceTree = "<group>"; };
 		BC275B7811C5D1C300C9206C /* JSWebKitPointCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitPointCustom.cpp; sourceTree = "<group>"; };
 		BC275B7C11C5D23500C9206C /* JSWebKitCSSMatrixCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSMatrixCustom.cpp; sourceTree = "<group>"; };
 		BC275B8011C5D2B400C9206C /* JSEventSourceCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventSourceCustom.cpp; sourceTree = "<group>"; };
@@ -11446,6 +11449,7 @@
 		BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Scrollbar.cpp; sourceTree = "<group>"; };
 		BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserContentURLPattern.cpp; sourceTree = "<group>"; };
 		BCACF3BB1072921A00C0C8A3 /* UserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentURLPattern.h; sourceTree = "<group>"; };
+		BCAD1809131C7A0D00990406 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = SOURCE_ROOT; };
 		BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimatorMac.h; sourceTree = "<group>"; };
 		BCAEFCAD1016CE4A0040D34E /* DOMRGBColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMRGBColor.mm; sourceTree = "<group>"; };
 		BCB16BFE0979C3BD00467741 /* MemoryCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryCache.cpp; sourceTree = "<group>"; };
@@ -12575,6 +12579,7 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BCAD1808131C7A0D00990406 /* Localizable.strings */,
 				46F9D5DA0B0D60170028EE36 /* aliasCursor.png */,
 				46D4F2460AF97E810035385A /* cellCursor.png */,
 				46D4F2470AF97E810035385A /* contextMenuCursor.png */,
@@ -13906,6 +13911,7 @@
 				9352084409BD43B900F2038D /* Language.mm */,
 				06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */,
 				06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */,
+				BC25B528131C6D3900180E10 /* LocalizedStringsMac.mm */,
 				1402645D0AFDC19B005919E2 /* LoggingMac.mm */,
 				BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */,
 				A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */,
@@ -22575,6 +22581,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */,
+				BCAD180A131C7A0D00990406 /* Localizable.strings in Resources */,
 				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
 				46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */,
 				4614A1FE0B23A8D600446E1C /* copyCursor.png in Resources */,
@@ -25130,6 +25137,7 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
+				BC25B52A131C6D3900180E10 /* LocalizedStringsMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25154,6 +25162,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		BCAD1808131C7A0D00990406 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BCAD1809131C7A0D00990406 /* English */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		BCC64F5F0DCFB84E0081EF3B /* localizedStrings.js */ = {
 			isa = PBXVariantGroup;
 			children = (

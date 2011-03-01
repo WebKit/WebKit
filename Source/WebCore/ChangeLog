@@ -1,4 +1,22 @@
-2011-02-23  Joseph Pecoraro  <joepeck@webkit.org>
+2011-03-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebKit2 needs to be made localizable
+        https://bugs.webkit.org/show_bug.cgi?id=55483
+
+        * English.lproj/Localizable.strings: Copied from Source/WebKit/English.lproj/Localizable.strings.
+        * WebCore.xcodeproj/project.pbxproj:
+        Move Localizable.strings to WebCore.
+
+        * WebCore.exp.in:
+        Add export for localizedString function.
+
+        * platform/LocalizedStrings.h:
+        * platform/mac/LocalizedStringsMac.mm: Added.
+        Add function to get localized version of a string from the WebCore bundle.
+
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
 

@@ -1,3 +1,26 @@
+2011-03-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebKit2 needs to be made localizable
+        https://bugs.webkit.org/show_bug.cgi?id=55483
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        * WebProcess/mac/WebProcessMainMac.mm:
+        Set the default localization from the passed in parameter.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        Add the preferred localization as a parameter when launching processes
+        so that they can set their localization to match the launching app.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        Use WebCore's localizedString function on the mac, to actually localize
+        these strings.
+
+        (WebKit::WebPlatformStrategies::imageTitle):
+        Switch to using replace, instead of concatenation, to give localizers a chance
+        to rearrange the wording.
+
 2011-03-01  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Anders Carlsson.

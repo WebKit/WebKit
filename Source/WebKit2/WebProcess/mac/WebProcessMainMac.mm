@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,6 +71,11 @@ int WebProcessMain(const CommandLine& commandLine)
         printf("bootstrap_look_up2 result: %x", kr);
         return 2;
     }
+
+    String localization = commandLine["localization"];
+    RetainPtr<CFStringRef> cfLocalization(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(localization.characters()), localization.length()));
+    if (cfLocalization)
+        WKSetDefaultLocalization(cfLocalization.get());
 
 #if !SHOW_CRASH_REPORTER
     // Installs signal handlers that exit on a crash so that CrashReporter does not show up.

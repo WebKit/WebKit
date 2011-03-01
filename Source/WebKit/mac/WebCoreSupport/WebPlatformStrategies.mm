@@ -25,18 +25,17 @@
 
 #import "WebPlatformStrategies.h"
 
-#import "WebLocalizableStrings.h"
 #import "WebPluginDatabase.h"
 #import "WebPluginPackage.h"
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/IntSize.h>
+#import <WebCore/LocalizedStrings.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageGroup.h>
 #import <wtf/StdLibExtras.h>
 
-#ifdef BUILDING_ON_TIGER
-typedef unsigned NSUInteger;
-#endif
+#define UI_STRING(string, description) localizedString(string)
+#define UI_STRING_KEY(string, key, description) localizedString(key)
 
 using namespace WebCore;
 

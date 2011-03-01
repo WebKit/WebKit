@@ -1,3 +1,15 @@
+2011-03-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebKit2 needs to be made localizable
+        https://bugs.webkit.org/show_bug.cgi?id=55483
+
+        * StringsNotToBeLocalized.txt: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+        Copied Localizable.strings to WebCore, it can't be removed entirely
+        yet since Windows is still using it.
+
 2011-02-24  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

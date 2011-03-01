@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include <WebCore/LocalizedStrings.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
@@ -42,9 +43,17 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-// FIXME (WebKit2) <rdar://problem/8728860> WebKit2 needs to be localized
+#if PLATFORM(MAC)
+
+#define UI_STRING(string, description) localizedString(string)
+#define UI_STRING_KEY(string, key, description) localizedString(key)
+
+#else
+
 #define UI_STRING(string, description) String::fromUTF8(string, strlen(string))
 #define UI_STRING_KEY(string, key, description) String::fromUTF8(string, strlen(string))
+
+#endif
 
 using namespace WebCore;
 
@@ -753,8 +762,8 @@ String WebPlatformStrategies::allFilesText()
 
 String WebPlatformStrategies::imageTitle(const String& filename, const IntSize& size)
 {
-    // FIXME: It would be nice to have the filename inside the format string, but it's not easy to do that in a way that works with non-ASCII characters in the filename.
-    return filename + formatLocalizedString(UI_STRING(" %d×%d pixels", "window title suffix for a standalone image (uses multiplication symbol, not x)"), size.width(), size.height());
+    // FIXME: This should format the numbers correctly. In Mac WebKit, we used +[NSNumberFormatter localizedStringFromNumber:numberStyle:].
+    return formatLocalizedString(UI_STRING("<filename> %d×%d pixels", "window title suffix for a standalone image (uses multiplication symbol, not x)"), size.width(), size.height()).replace("<filename>", filename);
 }
 
 String WebPlatformStrategies::mediaElementLoadingStateText()

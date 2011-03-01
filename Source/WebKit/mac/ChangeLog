@@ -1,3 +1,14 @@
+2011-03-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebKit2 needs to be made localizable
+        https://bugs.webkit.org/show_bug.cgi?id=55483
+
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        Use WebCore's localizedString function instead of WebLocalizableStrings
+        since WebCore is now responsible for localization.
+
 2011-02-25 Steve Block <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
