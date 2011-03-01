@@ -992,7 +992,11 @@ const char* YarrPattern::compile(const UString& patternString)
     constructor.optimizeBOL();
         
     constructor.setupOffsets();
-    constructor.setupBeginChars();
+    // TODO: Disabling the begin characters optimization due to problems found
+    //    in https://bugs.webkit.org/show_bug.cgi?id=54978.
+    //    A new defect was filed to track this issue: 
+    //        https://bugs.webkit.org/show_bug.cgi?id=55479
+    // constructor.setupBeginChars();
 
     return 0;
 }

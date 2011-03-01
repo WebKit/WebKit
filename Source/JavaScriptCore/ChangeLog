@@ -1,3 +1,17 @@
+2011-03-01  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Darin Adler.
+
+        TinyMCE not working in nightlies
+        https://bugs.webkit.org/show_bug.cgi?id=54978
+
+        Disabling setupBeginChars() to temporarily work arround the test 
+        failure.  Filed https://bugs.webkit.org/show_bug.cgi?id=55479
+        to track fixing the issue.
+
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPattern::compile):
+
 2011-02-23  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
