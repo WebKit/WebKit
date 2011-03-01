@@ -1020,52 +1020,91 @@ function isEnterKey(event) {
     return event.keyCode !== 229 && event.keyIdentifier === "Enter";
 }
 
-
 function highlightSearchResult(element, offset, length)
 {
-    var lineText = element.textContent;
-    var endOffset = offset + length;
-    var highlightNode = document.createElement("span");
-    highlightNode.className = "webkit-search-result";
-    highlightNode.textContent = lineText.substring(offset, endOffset);
-
-    var boundary = element.rangeBoundaryForOffset(offset);
-    var textNode = boundary.container;
-    var text = textNode.textContent;
-
-    if (boundary.offset + length < text.length) {
-        // Selection belong to a single split mode.
-        textNode.textContent = text.substring(boundary.offset + length);
-        textNode.parentElement.insertBefore(highlightNode, textNode);
-        var prefixNode = document.createTextNode(text.substring(0, boundary.offset));
-        textNode.parentElement.insertBefore(prefixNode, highlightNode);
-        return highlightNode;
-    }
-
-    var parentElement = textNode.parentElement;
-    var anchorElement = textNode.nextSibling;
-
-    length -= text.length - boundary.offset;
-    textNode.textContent = text.substring(0, boundary.offset);
-    textNode = textNode.traverseNextTextNode(element);
-
-    while (textNode) {
-        var text = textNode.textContent;
-        if (length < text.length) {
-            textNode.textContent = text.substring(length);
-            break;
-        }
-
-        length -= text.length;
-        textNode.textContent = "";
-        textNode = textNode.traverseNextTextNode(element);
-    }
-
-    parentElement.insertBefore(highlightNode, anchorElement);
-    return highlightNode;
+    var result = highlightSearchResults(element, [{offset: offset, length: length }]);
+    return result.length ? result[0] : null;
 }
 
-function createSearchRegex(query)
+function highlightSearchResults(element, resultRanges)
+{
+    var highlightNodes = [];
+    var lineText = element.textContent;
+    var textNodeSnapshot = document.evaluate(".//text()", element, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+
+    var snapshotLength = textNodeSnapshot.snapshotLength;
+    var snapshotNodeOffset = 0;
+    var currentSnapshotItem = 0;
+
+    for (var i = 0; i < resultRanges.length; ++i) {
+        var resultLength = resultRanges[i].length;
+        var startOffset = resultRanges[i].offset;
+        var endOffset = startOffset + resultLength;
+        var length = resultLength;
+        var textNode;
+        var textNodeOffset;
+        var found;
+
+        while (currentSnapshotItem < snapshotLength) {
+            textNode = textNodeSnapshot.snapshotItem(currentSnapshotItem++);
+            var textNodeLength = textNode.nodeValue.length;
+            if (snapshotNodeOffset + textNodeLength >= startOffset) {
+                textNodeOffset = startOffset - snapshotNodeOffset;
+                snapshotNodeOffset += textNodeLength;
+                found = true;
+                break;
+            }
+            snapshotNodeOffset += textNodeLength;
+        }
+
+        if (!found) {
+            textNode = element;
+            textNodeOffset = 0;
+        }
+
+        var highlightNode = document.createElement("span");
+        highlightNode.className = "webkit-search-result";
+        highlightNode.textContent = lineText.substring(startOffset, endOffset);
+
+        var text = textNode.textContent;
+        if (textNodeOffset + resultLength < text.length) {
+            // Selection belongs to a single split mode.
+            textNode.textContent = text.substring(textNodeOffset + resultLength);
+            textNode.parentElement.insertBefore(highlightNode, textNode);
+            var prefixNode = document.createTextNode(text.substring(0, textNodeOffset));
+            textNode.parentElement.insertBefore(prefixNode, highlightNode);
+
+            highlightNodes.push(highlightNode);
+            continue;
+        }
+
+        var parentElement = textNode.parentElement;
+        var anchorElement = textNode.nextSibling;
+
+        length -= text.length - textNodeOffset;
+        textNode.textContent = text.substring(0, textNodeOffset);
+
+        while (currentSnapshotItem < snapshotLength) {
+            textNode = textNodeSnapshot.snapshotItem(currentSnapshotItem++);
+            snapshotNodeOffset += textNode.nodeValue.length;
+            var text = textNode.textContent;
+            if (length < text.length) {
+                textNode.textContent = text.substring(length);
+                break;
+            }
+
+            length -= text.length;
+            textNode.textContent = "";
+        }
+
+        parentElement.insertBefore(highlightNode, anchorElement);
+        highlightNodes.push(highlightNode);
+    }
+
+    return highlightNodes;
+}
+
+function createSearchRegex(query, extraFlags)
 {
     var regex = "";
     for (var i = 0; i < query.length; ++i) {
@@ -1074,7 +1113,7 @@ function createSearchRegex(query)
             char = "\\]";
         regex += "[" + char + "]";
     }
-    return new RegExp(regex, "i");
+    return new RegExp(regex, "i" + (extraFlags || ""));
 }
 
 function offerFileForDownload(contents)

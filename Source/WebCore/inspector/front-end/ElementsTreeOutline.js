@@ -329,8 +329,11 @@ WebInspector.ElementsTreeElement.prototype = {
         if (this._searchQuery === searchQuery)
             return;
 
+        if (searchQuery)
+            delete this._searchHighlightedHTML; // A new search query (not clear-the-current-highlighting).
+
         this._searchQuery = searchQuery;
-        this.updateTitle();
+        this.updateTitle(true);
     },
 
     get hovered()
@@ -1198,14 +1201,20 @@ WebInspector.ElementsTreeElement.prototype = {
         return (tags.length === 1 ? null : tags[tags.length-1]);
     },
 
-    updateTitle: function()
+    updateTitle: function(onlySearchQueryChanged)
     {
         // If we are editing, return early to prevent canceling the edit.
         // After editing is committed updateTitle will be called.
         if (this._editing)
             return;
 
-        this.titleHTML = "<span class=\"highlight\">" + this._nodeTitleInfo(WebInspector.linkifyURL).titleHTML + "</span>";
+        if (onlySearchQueryChanged && this._normalHTML)
+            this.titleHTML = this._normalHTML;
+        else {
+            delete this._normalHTML;
+            this.titleHTML = "<span class=\"highlight\">" + this._nodeTitleInfo(WebInspector.linkifyURL).titleHTML + "</span>";
+        }
+
         delete this.selectionElement;
         this.updateSelection();
         this._preventFollowingLinksOnDoubleClick();
@@ -1423,17 +1432,26 @@ WebInspector.ElementsTreeElement.prototype = {
     {
         if (!this._searchQuery)
             return;
+        if (this._searchHighlightedHTML) {
+            this.listItemElement.innerHTML = this._searchHighlightedHTML;
+            return;
+        }
+
+        if (!this._normalHTML)
+            this._normalHTML = this.titleHTML;
+
         var text = this.listItemElement.textContent;
-        var regexObject = createSearchRegex(this._searchQuery);
+        var regexObject = createSearchRegex(this._searchQuery, "g");
 
         var offset = 0;
         var match = regexObject.exec(text);
+        var matchRanges = [];
         while (match) {
-            highlightSearchResult(this.listItemElement, offset + match.index, match[0].length);
-            offset += match.index + 1;
-            text = text.substring(match.index + 1);
+            matchRanges.push({ offset: match.index, length: match[0].length });
             match = regexObject.exec(text);
         }
+        highlightSearchResults(this.listItemElement, matchRanges);
+        this._searchHighlightedHTML = this.listItemElement.innerHTML;
     }
 }
 

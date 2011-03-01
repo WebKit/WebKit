@@ -1,3 +1,25 @@
+2011-03-01  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Extremely slow DOM search in GMail
+        https://bugs.webkit.org/show_bug.cgi?id=55456
+
+        The solution comprises three major parts:
+        - avoid multiple invocations of highlightSearchResults(), one per each nodeIds chunk.
+        - cache highlighted node's innerHTML so that no extra _nodeTitleInfo() calls will be needed.
+        - replace hand-written Text nodes iteration with a snapshot-based ".//text()" XPathResult.
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.searchCanceled):
+        (WebInspector.ElementsPanel.prototype.addNodesToSearchResult):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype.highlightSearchResults):
+        (WebInspector.ElementsTreeElement.prototype.updateTitle):
+        ():
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-03-01  Adam Roben  <aroben@apple.com>
 
         Fix multiple-definition linker warnings introduced by r79978 on Windows

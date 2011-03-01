@@ -224,7 +224,7 @@ WebInspector.ElementsPanel.prototype = {
 
         WebInspector.updateSearchMatchesCount(0, this);
 
-        this._currentSearchResultIndex = 0;
+        delete this._currentSearchResultIndex;
         this._searchResults = [];
         DOMAgent.searchCanceled();
     },
@@ -291,6 +291,7 @@ WebInspector.ElementsPanel.prototype = {
         if (!nodeIds.length)
             return;
 
+        var oldSearchResultIndex = this._currentSearchResultIndex;
         for (var i = 0; i < nodeIds.length; ++i) {
             var nodeId = nodeIds[i];
             var node = WebInspector.domAgent.nodeForId(nodeId);
@@ -300,7 +301,10 @@ WebInspector.ElementsPanel.prototype = {
             this._currentSearchResultIndex = 0;
             this._searchResults.push(node);
         }
-        this._highlightCurrentSearchResult();
+
+        // Avoid invocations of highlighting for every chunk of nodeIds.
+        if (oldSearchResultIndex !== this._currentSearchResultIndex)
+            this._highlightCurrentSearchResult();
         this._updateMatchesCountSoon();
     },
 
