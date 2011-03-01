@@ -1,3 +1,9 @@
+2011-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Windows rebaseline. The bug 55451 tracks this rebaseline.
+
+        * platform/win/fast/forms/select-listbox-multiple-no-focusring-expected.txt: Added.
+
 2011-02-28  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Adler.
