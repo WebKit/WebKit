@@ -634,11 +634,7 @@ void FrameLoader::receivedFirstData()
 
 void FrameLoader::setOutgoingReferrer(const KURL& url)
 {
-    KURL outgoingReferrer(url);
-    outgoingReferrer.setUser(String());
-    outgoingReferrer.setPass(String());
-    outgoingReferrer.removeFragmentIdentifier();
-    m_outgoingReferrer = outgoingReferrer.string();
+    m_outgoingReferrer = url.strippedForUseAsReferrer();
 }
 
 void FrameLoader::didBeginDocument(bool dispatch)

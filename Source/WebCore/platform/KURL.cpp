@@ -1769,6 +1769,15 @@ void KURL::print() const
 
 #endif // !USE(GOOGLEURL)
 
+String KURL::strippedForUseAsReferrer() const
+{
+    KURL referrer(*this);
+    referrer.setUser(String());
+    referrer.setPass(String());
+    referrer.removeFragmentIdentifier();
+    return referrer.string();
+}
+
 bool KURL::isLocalFile() const
 {
     // Including feed here might be a bad idea since drag and drop uses this check

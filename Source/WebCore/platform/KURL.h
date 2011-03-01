@@ -96,6 +96,8 @@ public:
          const url_parse::Parsed& parsed, bool isValid);
 #endif
 
+    String strippedForUseAsReferrer() const;
+
     // FIXME: The above functions should be harmonized so that passing a
     // base of null or the empty string gives the same result as the
     // standard String constructor.
