@@ -1,3 +1,23 @@
+2011-03-01  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by David Hyatt  <hyatt@apple.com>
+
+        content property doesn't support quotes
+        https://bugs.webkit.org/show_bug.cgi?id=6503
+
+        Added new tests for quotes.
+
+        * fast/css/content/content-quotes-01-expected.txt: Added.
+        * fast/css/content/content-quotes-01.html: Added.
+        * fast/css/content/content-quotes-02-expected.txt: Added.
+        * fast/css/content/content-quotes-02.html: Added.
+        * fast/css/content/content-quotes-03-expected.txt: Added.
+        * fast/css/content/content-quotes-03.html: Added.
+        * fast/css/content/content-quotes-04-expected.txt: Added.
+        * fast/css/content/content-quotes-04.html: Added.
+        * fast/css/content/content-quotes-05-expected.txt: Added.
+        * fast/css/content/content-quotes-05.html: Added.
+
 2011-03-01  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Alexey Proskuryakov.

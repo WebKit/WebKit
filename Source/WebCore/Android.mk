@@ -702,6 +702,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/RenderObject.cpp \
 	rendering/RenderObjectChildList.cpp \
 	rendering/RenderPart.cpp \
+	rendering/RenderQuote.cpp \
 	rendering/RenderReplaced.cpp \
 	rendering/RenderReplica.cpp \
 
@@ -791,6 +792,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/style/FillLayer.cpp \
 	rendering/style/KeyframeList.cpp \
 	rendering/style/NinePieceImage.cpp \
+	rendering/style/QuotesData.cpp \
 	rendering/style/RenderStyle.cpp \
 
 ifeq ($(ENABLE_SVG), true)

@@ -2828,6 +2828,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderPart.h \
 	Source/WebCore/rendering/RenderProgress.cpp \
 	Source/WebCore/rendering/RenderProgress.h \
+	Source/WebCore/rendering/RenderQuote.cpp \
+	Source/WebCore/rendering/RenderQuote.h \
 	Source/WebCore/rendering/RenderReplaced.cpp \
 	Source/WebCore/rendering/RenderReplaced.h \
 	Source/WebCore/rendering/RenderReplica.cpp \
@@ -2930,6 +2932,8 @@ webcore_sources += \
 	Source/WebCore/rendering/style/NinePieceImage.cpp \
 	Source/WebCore/rendering/style/NinePieceImage.h \
 	Source/WebCore/rendering/style/OutlineValue.h \
+	Source/WebCore/rendering/style/QuotesData.cpp \
+	Source/WebCore/rendering/style/QuotesData.h \
 	Source/WebCore/rendering/style/RenderStyleConstants.h \
 	Source/WebCore/rendering/style/RenderStyle.cpp \
 	Source/WebCore/rendering/style/RenderStyle.h \
