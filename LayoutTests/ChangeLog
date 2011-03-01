@@ -1,3 +1,13 @@
+2011-03-01  Adam Roben  <aroben@apple.com>
+
+        Check in Windows pixel results to match text results added in r79979
+
+        Fixes <http://webkit.org/b/55451> [Win] select-listbox-multiple-no-focusring.html needs
+        rebaseline
+
+        * platform/win/fast/forms/select-listbox-multiple-no-focusring-expected.checksum: Added.
+        * platform/win/fast/forms/select-listbox-multiple-no-focusring-expected.png: Added.
+
 2011-03-01  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip one crashing tests on GTK. See also
