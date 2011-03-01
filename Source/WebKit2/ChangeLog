@@ -1,3 +1,21 @@
+2011-03-01  Adam Roben  <aroben@apple.com>
+
+        Make the PLUGIN_ARCHITECTURE() macro work with MSVC
+
+        Fixes <http://webkit.org/b/55513> <rdar://problem/9069189> REGRESSION (r79925): Lots of
+        plugins tests crashing in NetscapePlugin::initialize on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp: Added a compile-time check to make sure
+        PLUGIN_ARCHITECTURE() is defined for some platform.
+
+        * config.h: Removed the parentheses from the use of "defined" in the PLUGIN_ARCHITECTURE()
+        macro. This matches PLATFORM(), OS(), etc., and makes the macro work on Windows. Also
+        replaced the nonsense OS(WIN) with OS(WINDOWS).
+
+        * win/WebKit2.vcproj: Added config.h for editing convenience. Let VS do its thang.
+
 2011-03-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Timothy Hatcher.
