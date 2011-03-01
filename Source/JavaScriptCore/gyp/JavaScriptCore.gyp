@@ -2,29 +2,29 @@
   'includes': [
     '../JavaScriptCore.gypi',
   ],
-  'xcode_config_file': '../Configurations/DebugRelease.xcconfig',
+  'xcode_config_file': '<(DEPTH)/JavaScriptCore/Configurations/DebugRelease.xcconfig',
   'targets': [
     {
       'target_name': 'JavaScriptCore',
       'type': 'shared_library',
       'include_dirs': [
-        '../..', # Some paths in API include JavaScriptCore/
-        '..',
-        '../ForwardingHeaders',
-        '../API',
-        '../assembler',
-        '../collector/handles',
-        '../bytecode',
-        '../bytecompiler',
-        '../debugger',
-        '../icu',
-        '../interpreter',
-        '../jit',
-        '../parser',
-        '../profiler',
-        '../runtime',
-        '../wtf',
-        '../wtf/unicode',
+        '<(DEPTH)', # Some paths in API include JavaScriptCore/
+        '<(DEPTH)/JavaScriptCore',
+        '<(DEPTH)/JavaScriptCore/ForwardingHeaders',
+        '<(DEPTH)/JavaScriptCore/API',
+        '<(DEPTH)/JavaScriptCore/assembler',
+        '<(DEPTH)/JavaScriptCore/collector/handles',
+        '<(DEPTH)/JavaScriptCore/bytecode',
+        '<(DEPTH)/JavaScriptCore/bytecompiler',
+        '<(DEPTH)/JavaScriptCore/debugger',
+        '<(DEPTH)/JavaScriptCore/icu',
+        '<(DEPTH)/JavaScriptCore/interpreter',
+        '<(DEPTH)/JavaScriptCore/jit',
+        '<(DEPTH)/JavaScriptCore/parser',
+        '<(DEPTH)/JavaScriptCore/profiler',
+        '<(DEPTH)/JavaScriptCore/runtime',
+        '<(DEPTH)/JavaScriptCore/wtf',
+        '<(DEPTH)/JavaScriptCore/wtf/unicode',
         '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore',
       ],
       'sources': [
@@ -35,7 +35,7 @@
         'libicucore.dylib',
         'libobjc.dylib',
       ],
-      'xcode_config_file': '../Configurations/JavaScriptCore.xcconfig',
+      'xcode_config_file': '<(DEPTH)/JavaScriptCore/Configurations/JavaScriptCore.xcconfig',
       'sources/': [
         ['exclude', 'qt'],
         ['exclude', 'os-win32'],
@@ -79,8 +79,33 @@
         ['OS=="mac"', {
           'mac_bundle': 1,
           'xcode_settings': {
-            'USE_HEADERMAP': 'NO', # FIXME: Do we need this?
-          }
+            'USE_HEADERMAP': 'NO',
+            # FIXME: Remove these overrides once JavaScriptCore.xcconfig is
+            # used only by this project.
+            'GCC_PREFIX_HEADER': '<(DEPTH)/JavaScriptCore/JavaScriptCorePrefix.h',
+            'INFOPLIST_FILE': '<(DEPTH)/JavaScriptCore/Info.plist',
+            # This setting mirrors the setting in Base.xcconfig, with
+            # one difference noted below.
+            'WARNING_CFLAGS_BASE': [
+              '-Wall',
+              '-Wextra',
+              '-Wcast-qual',
+              '-Wchar-subscripts',
+              '-Wextra-tokens',
+              '-Wformat=2',
+              '-Winit-self',
+              # FIXME: For some reason, -Wmissing-format-attribute causes a
+              # build error in Assertions.cpp in the GYP build but not in the
+              # non-GYP build.
+              # '-Wmissing-format-attribute',
+              '-Wmissing-noreturn',
+              '-Wpacked',
+              '-Wpointer-arith',
+              '-Wredundant-decls',
+              '-Wundef',
+              '-Wwrite-strings',
+            ],
+          },
         }],
       ],
     },

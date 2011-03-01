@@ -1,3 +1,17 @@
+2011-03-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Teach JavaScriptCore GYP build about DEPTH
+        https://bugs.webkit.org/show_bug.cgi?id=55425
+
+        In addition to teaching the JavaScriptCore GYP build about DEPTH, this
+        change overrides the GCC warning configuration to disable a warning
+        that's causing probems in Assertions.cpp.  With that warning disabled,
+        JavaScriptCore builds again.
+
+        * gyp/JavaScriptCore.gyp:
+
 2011-02-28  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix.
