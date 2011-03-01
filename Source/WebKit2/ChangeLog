@@ -1,3 +1,14 @@
+2011-02-28  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55442
+        Webarchives don't contain subframe content
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getWebArchiveOfFrame):
+        Pass the frame's document instead of just the frame, to use a different LegacyWebArchive::create function.
+
 2011-02-28  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

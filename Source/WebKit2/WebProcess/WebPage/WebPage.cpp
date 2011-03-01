@@ -1271,7 +1271,7 @@ void WebPage::getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
 #if PLATFORM(MAC) || PLATFORM(WIN)
     RetainPtr<CFDataRef> data;
     if (WebFrame* frame = WebProcess::shared().webFrame(frameID)) {
-        if (RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(frame->coreFrame())) {
+        if (RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(frame->coreFrame()->document())) {
             if ((data = archive->rawDataRepresentation()))
                 dataReference = CoreIPC::DataReference(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
         }
