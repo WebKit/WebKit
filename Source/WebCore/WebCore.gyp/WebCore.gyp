@@ -393,14 +393,13 @@
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLViewerXSL.h',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLViewerXSL.cpp',
           ],
           'action': [
             'perl',
             '../inspector/xxd.pl',
             'XMLViewer_xsl',
-            '../xml/XMLViewer.xsl',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLViewerXSL.h'
+            '<@(_inputs)',
+            '<@(_outputs)'
           ],
         },
         {

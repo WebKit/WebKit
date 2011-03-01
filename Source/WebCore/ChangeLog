@@ -1,3 +1,9 @@
+2011-02-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: chromium rebuilds XMLViewer after noop. Fixed gyp file.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-02-28  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.
