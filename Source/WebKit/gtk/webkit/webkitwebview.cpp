@@ -708,9 +708,8 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
     if (frame->contentRenderer() && frame->view()) {
         frame->view()->updateLayoutAndStyleIfNeededRecursive();
 
-        cairo_t* cr = gdk_cairo_create(event->window);
-        GraphicsContext ctx(cr);
-        cairo_destroy(cr);
+        RefPtr<cairo_t> cr = adoptRef(gdk_cairo_create(event->window));
+        GraphicsContext ctx(cr.get());
         ctx.setGdkExposeEvent(event);
 
         int rectCount;

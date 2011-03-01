@@ -1,3 +1,13 @@
+2011-03-01  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Convert use of cairo_t to RefPtr<cairo_t> in webkitwebiew.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=55437
+
+        * webkit/webkitwebview.cpp: Convert use of cairo_t to RefPtr<cairo_t>.
+        (webkit_web_view_expose_event): 
+
 2011-02-28  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Ryosuke Niwa.
