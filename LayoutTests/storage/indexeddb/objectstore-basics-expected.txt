@@ -74,6 +74,7 @@ event.preventDefault()
 db.transaction([], webkitIDBTransaction.READ_WRITE)
 store = transaction.objectStore('storeName')
 store.add({x: null}, 'validkey')
+PASS event.cancelable is true
 addWithNullIndexFailure():
 PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
 event.preventDefault()

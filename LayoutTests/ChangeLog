@@ -1,3 +1,15 @@
+2011-02-28  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Only IndexedDB's error event should be cancelable
+        https://bugs.webkit.org/show_bug.cgi?id=55413
+
+        Add checks to existing tests.
+
+        * storage/indexeddb/objectstore-basics.html:
+        * storage/indexeddb/transaction-basics.html:
+
 2011-03-01  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

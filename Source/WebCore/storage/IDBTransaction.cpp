@@ -105,12 +105,12 @@ void IDBTransaction::abort()
 
 void IDBTransaction::onAbort()
 {
-    enqueueEvent(Event::create(eventNames().abortEvent, true, true));
+    enqueueEvent(Event::create(eventNames().abortEvent, true, false));
 }
 
 void IDBTransaction::onComplete()
 {
-    enqueueEvent(Event::create(eventNames().completeEvent, false, true));
+    enqueueEvent(Event::create(eventNames().completeEvent, false, false));
 }
 
 bool IDBTransaction::hasPendingActivity() const

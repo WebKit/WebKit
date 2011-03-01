@@ -92,6 +92,7 @@ function addRemoveAddIDBObjects()
 
 function testSetVersionAbort3()
 {
+    shouldBeFalse("event.cancelable");
     checkMetadataEmpty();
     request = evalAndLog("request = startSetVersion('version fail')");
     request.onsuccess = addIDBObjects;
@@ -99,6 +100,7 @@ function testSetVersionAbort3()
 
 function addIDBObjects()
 {
+    shouldBeFalse("event.cancelable");
     debug("addIDBObjects():");
     var trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
@@ -212,6 +214,7 @@ function setVersionSuccess()
 
 function completeCallback()
 {
+    shouldBeFalse("event.cancelable");
     testPassed("complete event fired");
     window.completeEventFired = true;
 }

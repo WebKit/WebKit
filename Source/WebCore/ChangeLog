@@ -1,3 +1,16 @@
+2011-02-28  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Only IndexedDB's error event should be cancelable
+        https://bugs.webkit.org/show_bug.cgi?id=55413
+
+        * storage/IDBRequest.cpp:
+        (WebCore::createSuccessEvent):
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::onAbort):
+        (WebCore::IDBTransaction::onComplete):
+
 2011-03-01  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

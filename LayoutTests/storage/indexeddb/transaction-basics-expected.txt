@@ -34,6 +34,7 @@ db.deleteObjectStore('storeFail')
 store.deleteIndex('indexFail')
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x', false)
+PASS event.cancelable is false
 PASS window.db.objectStoreNames is []
 PASS window.db.objectStoreNames.length is 0
 PASS window.db.objectStoreNames.contains('storeFail') is false
@@ -66,6 +67,7 @@ db.transaction({mode: webkitIDBTransaction.READ_WRITE})
 store = transaction.objectStore('storeName')
 PASS store.name is "storeName"
 PASS complete event fired
+PASS event.cancelable is false
 PASS complete event fired
 PASS oncomplete event had fired
 PASS successfullyParsed is true

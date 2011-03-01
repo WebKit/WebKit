@@ -136,7 +136,7 @@ void IDBRequest::onError(PassRefPtr<IDBDatabaseError> error)
 
 static PassRefPtr<Event> createSuccessEvent()
 {
-    return Event::create(eventNames().successEvent, false, true);
+    return Event::create(eventNames().successEvent, false, false);
 }
 
 void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend)

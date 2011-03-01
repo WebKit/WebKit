@@ -208,6 +208,7 @@ function addWithNullKeyFailure()
 
 function addWithNullIndexFailure()
 {
+    shouldBeTrue("event.cancelable");
     debug("addWithNullIndexFailure():");
     shouldBe("event.target.errorCode", "webkitIDBDatabaseException.DATA_ERR");
 
