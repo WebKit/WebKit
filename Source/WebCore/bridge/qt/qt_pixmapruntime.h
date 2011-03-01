@@ -20,7 +20,7 @@
 #ifndef qt_pixmapruntime_h
 #define qt_pixmapruntime_h
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include <QVariant>
 
 namespace JSC {

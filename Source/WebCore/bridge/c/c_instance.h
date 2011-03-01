@@ -28,7 +28,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include "runtime_root.h"
 #include <wtf/PassRefPtr.h>
 

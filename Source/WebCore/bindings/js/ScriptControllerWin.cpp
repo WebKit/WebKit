@@ -27,7 +27,7 @@
 #include "config.h"
 #include "ScriptController.h"
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include "PluginView.h"
 
 using namespace JSC::Bindings;

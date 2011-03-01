@@ -27,7 +27,7 @@
 #include "config.h"
 #include "ScriptController.h"
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include "PluginView.h"
 #include "runtime_root.h"
 
@@ -43,4 +43,3 @@ PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWid
 }
 
 } // namespace WebCore
-

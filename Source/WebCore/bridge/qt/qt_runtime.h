@@ -20,7 +20,7 @@
 #ifndef BINDINGS_QT_RUNTIME_H_
 #define BINDINGS_QT_RUNTIME_H_
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include "Completion.h"
 #include "Global.h"
 #include "runtime_method.h"

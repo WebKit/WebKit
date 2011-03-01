@@ -26,7 +26,7 @@
 #ifndef RUNTIME_ARRAY_H_
 #define RUNTIME_ARRAY_H_
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include <runtime/ArrayPrototype.h>
 
 namespace JSC {

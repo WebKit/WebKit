@@ -30,7 +30,7 @@
 
 #import "NetscapePluginInstanceProxy.h"
 #import "WebKitPluginHostTypes.h"
-#import <WebCore/Bridge.h>
+#import <WebCore/BridgeJSC.h>
 #import <WebCore/runtime_root.h>
 #import <wtf/OwnPtr.h>
 

@@ -28,7 +28,7 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include "JNIUtility.h"
 #include "runtime_root.h"
 

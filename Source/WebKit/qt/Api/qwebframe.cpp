@@ -22,7 +22,7 @@
 #include "qwebframe.h"
 
 #if USE(JSC)
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include "CallFrame.h"
 #elif USE(V8)
 #include "V8Binding.h"

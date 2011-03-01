@@ -26,7 +26,7 @@
 #ifndef KJS_BINDINGS_OBJC_RUNTIME_H
 #define KJS_BINDINGS_OBJC_RUNTIME_H
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include "objc_header.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSObjectWithGlobalObject.h>

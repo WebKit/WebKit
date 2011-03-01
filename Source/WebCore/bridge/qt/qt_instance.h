@@ -20,7 +20,7 @@
 #ifndef qt_instance_h
 #define qt_instance_h
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include "runtime_root.h"
 #include <QtScript/qscriptengine.h>
 #include <qhash.h>

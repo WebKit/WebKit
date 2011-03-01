@@ -29,7 +29,7 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include "JNIBridge.h"
 #include "JNIUtility.h"
 

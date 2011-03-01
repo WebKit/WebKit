@@ -27,7 +27,7 @@
 #include "PluginView.h"
 
 #if USE(JSC)
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include <runtime/ScopeChain.h>
 #endif
 

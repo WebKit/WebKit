@@ -31,7 +31,7 @@
 #ifndef ScriptInstance_h
 #define ScriptInstance_h
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

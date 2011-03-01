@@ -1,3 +1,57 @@
+2011-03-01  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Bridge.h should not include BridgeJSC.h
+        https://bugs.webkit.org/show_bug.cgi?id=55212
+
+        Instead, BridgeJSC.h should include Bridge.h and code should include
+        BridgeJSC.h as appropriate.
+
+        This prevents ports that use V8 from having to include JSC-specific
+        files, even if the contents of those files are guarded.
+
+        No new tests, cleanup only.
+
+        * bindings/js/JSPluginElementFunctions.cpp:
+        * bindings/js/ScriptControllerBrew.cpp:
+        * bindings/js/ScriptControllerGtk.cpp:
+        * bindings/js/ScriptControllerHaiku.cpp:
+        * bindings/js/ScriptControllerQt.cpp:
+        * bindings/js/ScriptControllerMac.mm:
+        * bindings/js/ScriptControllerWin.cpp:
+        * bindings/js/ScriptControllerWx.cpp:
+        * bindings/js/ScriptInstance.h:
+        * bindings/objc/WebScriptObject.mm:
+        * bridge/Bridge.h:
+        * bridge/c/c_class.h:
+        * bridge/c/c_instance.h:
+        * bridge/c/c_runtime.h:
+        * bridge/jni/jsc/JNIBridgeJSC.h:
+        * bridge/jni/jsc/JavaInstanceJSC.h:
+        * bridge/jsc/BridgeJSC.h:
+        * bridge/objc/objc_runtime.h:
+        * bridge/qt/qt_class.h:
+        * bridge/qt/qt_instance.h:
+        * bridge/qt/qt_pixmapruntime.h:
+        * bridge/qt/qt_runtime.h:
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.h:
+        * bridge/runtime_root.cpp:
+        * bridge/testbindings.cpp:
+        * bridge/testbindings.mm:
+        * bridge/testqtbindings.cpp:
+        * page/win/FrameWin.cpp:
+        * platform/graphics/wince/MediaPlayerProxy.cpp:
+        * plugins/PluginView.cpp:
+        * plugins/PluginViewNone.cpp:
+        * plugins/gtk/PluginViewGtk.cpp:
+        * plugins/mac/PluginViewMac.mm:
+        * plugins/qt/PluginViewQt.cpp:
+        * plugins/symbian/PluginViewSymbian.cpp:
+        * plugins/win/PluginViewWin.cpp:
+
 2011-03-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Antti Koivisto.

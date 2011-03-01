@@ -38,7 +38,7 @@
 #import "WebUIDelegate.h"
 
 #import <CoreFoundation/CoreFoundation.h>
-#import <WebCore/Bridge.h>
+#import <WebCore/BridgeJSC.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameView.h>

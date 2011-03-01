@@ -1,3 +1,15 @@
+2011-02-25 Steve Block <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Bridge.h should not include BridgeJSC.h
+        https://bugs.webkit.org/show_bug.cgi?id=55212
+
+        Include BridgeJSC.h directly instead.
+
+        * Plugins/Hosted/ProxyInstance.h:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+
 2011-02-28  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Ryosuke Niwa.

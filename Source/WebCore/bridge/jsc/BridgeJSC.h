@@ -29,6 +29,7 @@
 
 #if USE(JSC)
 
+#include "Bridge.h"
 #include <runtime/JSString.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>

@@ -26,7 +26,7 @@
 #ifndef KJS_RUNTIME_OBJECT_H
 #define KJS_RUNTIME_OBJECT_H
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSObjectWithGlobalObject.h>
 

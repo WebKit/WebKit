@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include <Foundation/Foundation.h>
 #include "JSObject.h"
 #include "JSValue.h"

@@ -29,7 +29,7 @@
 #include "config.h"
 #include "PluginView.h"
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -908,4 +908,3 @@ void PluginView::restart()
 }
 
 } // namespace WebCore
-

@@ -29,7 +29,7 @@
 #import "config.h"
 #import "ScriptController.h"
 
-#import "Bridge.h"
+#import "BridgeJSC.h"
 #import "DOMAbstractViewFrame.h"
 #import "DOMWindow.h"
 #import "Frame.h"

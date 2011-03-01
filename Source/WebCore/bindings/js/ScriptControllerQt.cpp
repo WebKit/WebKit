@@ -36,7 +36,7 @@
 #include "config.h"
 #include "ScriptController.h"
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include "DOMWindow.h"
 #include "PluginView.h"
 #include "qt_instance.h"

@@ -22,7 +22,7 @@
 #include "config.h"
 #include "MediaPlayerProxy.h"
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include "DocumentLoader.h"
 #include "HTMLPlugInElement.h"
 #include "HTMLVideoElement.h"

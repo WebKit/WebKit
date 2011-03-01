@@ -27,7 +27,8 @@
 #ifndef Bridge_h
 #define Bridge_h
 
-#include "BridgeJSC.h"
+#include <wtf/FastAllocBase.h>
+#include <wtf/Noncopyable.h>
 
 namespace JSC  {
 

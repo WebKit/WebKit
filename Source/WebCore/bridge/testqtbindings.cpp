@@ -24,7 +24,7 @@
  */
 #include "config.h"
 
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #include "JSObject.h"
 #include "JSValue.h"
 #include "interpreter.h"

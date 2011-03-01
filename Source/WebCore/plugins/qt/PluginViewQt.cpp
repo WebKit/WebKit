@@ -29,7 +29,7 @@
 #include "PluginView.h"
 
 #if USE(JSC)
-#include "Bridge.h"
+#include "BridgeJSC.h"
 #endif
 #include "Chrome.h"
 #include "ChromeClient.h"
