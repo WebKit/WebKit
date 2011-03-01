@@ -1,3 +1,14 @@
+2011-03-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 needs to be made localizable
+        <rdar://problem/8728860>
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2011-02-25  Brian Weinstein  <bweinstein@apple.com>
 
         Fix linking of Chromium Mac build. 

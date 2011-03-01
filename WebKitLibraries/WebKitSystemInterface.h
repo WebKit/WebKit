@@ -22,6 +22,8 @@ typedef enum {
 } WKCertificateParseResult;
 
 CFStringRef WKCopyCFLocalizationPreferredName(CFStringRef localization);
+void WKSetDefaultLocalization(CFStringRef localization);
+
 CFStringRef WKSignedPublicKeyAndChallengeString(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription);
 WKCertificateParseResult WKAddCertificatesToKeychainFromData(const void *bytes, unsigned length);
 
