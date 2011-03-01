@@ -1,4 +1,40 @@
-2011-02-18  Jeremy Orlow  <jorlow@chromium.org>
+2011-03-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        <audio> and <video> should respect private browsing mode
+        https://bugs.webkit.org/show_bug.cgi?id=55287
+        <rdar://problem/9057699>
+
+        No new tests, this is just the plumbing.
+
+        * dom/Document.cpp:
+        (WebCore::Document::privateBrowsingStateDidChange): New.
+        (WebCore::Document::registerForPrivateBrowsingStateChangedCallbacks): Ditto.
+        (WebCore::Document::unregisterForPrivateBrowsingStateChangedCallbacks): Ditto.
+        * dom/Document.h:
+
+        * dom/Element.h:
+        (WebCore::Element::privateBrowsingStateDidChange): New.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Register for privacy mode changes.
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Unregister for privacy mode changes.
+        (WebCore::HTMLMediaElement::loadResource): Tell player current privacy mode.
+        (WebCore::HTMLMediaElement::privateBrowsingStateDidChange):  New, call through to MediaPlayer.
+        * html/HTMLMediaElement.h:
+
+        * page/Page.cpp:
+        (WebCore::Page::privateBrowsingStateChanged): Call document()->privateBrowsingStateDidChange.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setPrivateBrowsingMode): New, call through to media engine.
+        * platform/graphics/MediaPlayer.h:
+
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setPrivateBrowsingMode):  Declare new interface.
+
+2011-03-01  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
 
@@ -58,7 +94,7 @@
         (WebCore::IDBTransaction::onAbort):
         * storage/IDBTransaction.h:
 
-2011-02-28  Jeremy Orlow  <jorlow@chromium.org>
+2011-03-01  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
 

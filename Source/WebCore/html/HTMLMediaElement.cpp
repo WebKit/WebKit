@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -171,6 +171,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     LOG(Media, "HTMLMediaElement::HTMLMediaElement");
     document->registerForDocumentActivationCallbacks(this);
     document->registerForMediaVolumeCallbacks(this);
+    document->registerForPrivateBrowsingStateChangedCallbacks(this);
 }
 
 HTMLMediaElement::~HTMLMediaElement()
@@ -181,6 +182,7 @@ HTMLMediaElement::~HTMLMediaElement()
     setShouldDelayLoadEvent(false);
     document()->unregisterForDocumentActivationCallbacks(this);
     document()->unregisterForMediaVolumeCallbacks(this);
+    document()->unregisterForPrivateBrowsingStateChangedCallbacks(this);
 }
 
 void HTMLMediaElement::willMoveToNewOwnerDocument()
@@ -695,6 +697,10 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
 
     if (m_sendProgressEvents) 
         startProgressEventTimer();
+
+    Settings* settings = document()->settings();
+    bool privateMode = !settings || settings->privateBrowsingEnabled();
+    m_player->setPrivateBrowsingMode(privateMode);
 
     if (!autoplay())
         m_player->setPreload(m_preload);
@@ -2554,6 +2560,16 @@ void HTMLMediaElement::clearMediaCacheForSite(const String& site)
 {
     if (m_player)
         m_player->clearMediaCacheForSite(site);
+}
+
+void HTMLMediaElement::privateBrowsingStateDidChange()
+{
+    if (!m_player)
+        return;
+
+    Settings* settings = document()->settings();
+    bool privateMode = !settings || settings->privateBrowsingEnabled();
+    m_player->setPrivateBrowsingMode(privateMode);
 }
 
 }

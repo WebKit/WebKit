@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All Rights Reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -852,6 +852,9 @@ void Page::dnsPrefetchingStateChanged()
 void Page::privateBrowsingStateChanged()
 {
     bool privateBrowsingEnabled = m_settings->privateBrowsingEnabled();
+
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frame->document()->privateBrowsingStateDidChange();
 
     // Collect the PluginViews in to a vector to ensure that action the plug-in takes
     // from below privateBrowsingStateChanged does not affect their lifetime.

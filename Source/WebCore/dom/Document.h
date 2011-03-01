@@ -991,6 +991,10 @@ public:
     void unregisterForMediaVolumeCallbacks(Element*);
     void mediaVolumeDidChange();
 
+    void registerForPrivateBrowsingStateChangedCallbacks(Element*);
+    void unregisterForPrivateBrowsingStateChangedCallbacks(Element*);
+    void privateBrowsingStateDidChange();
+
     void setShouldCreateRenderers(bool);
     bool shouldCreateRenderers();
 
@@ -1370,6 +1374,7 @@ private:
     
     HashSet<Element*> m_documentActivationCallbackElements;
     HashSet<Element*> m_mediaVolumeCallbackElements;
+    HashSet<Element*> m_privateBrowsingStateChangedElements;
 
     bool m_useSecureKeyboardEntryWhenActive;
 

@@ -181,6 +181,8 @@ public:
     void clearMediaCache();
     void clearMediaCacheForSite(const String&);
 
+    void privateBrowsingStateDidChange();
+
     // Restrictions to change default behaviors.
     enum BehaviorRestrictions {
         NoRestrictions = 0,
