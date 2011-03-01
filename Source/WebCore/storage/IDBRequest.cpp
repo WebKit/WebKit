@@ -42,6 +42,7 @@
 #include "IDBIndex.h"
 #include "IDBObjectStore.h"
 #include "IDBPendingTransactionMonitor.h"
+#include "IDBTransaction.h"
 
 namespace WebCore {
 
@@ -58,12 +59,17 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_readyState(LOADING)
     , m_finished(false)
 {
-    if (m_transaction)
+    if (m_transaction) {
+        m_transaction->registerRequest(this);
         IDBPendingTransactionMonitor::removePendingTransaction(m_transaction->backend());
+    }
 }
 
 IDBRequest::~IDBRequest()
 {
+    ASSERT(m_readyState == DONE || m_readyState == EarlyDeath);
+    if (m_transaction)
+        m_transaction->unregisterRequest(this);
 }
 
 PassRefPtr<IDBAny> IDBRequest::result(ExceptionCode& ec) const
@@ -105,7 +111,14 @@ PassRefPtr<IDBTransaction> IDBRequest::transaction() const
 
 unsigned short IDBRequest::readyState() const
 {
+    ASSERT(m_readyState == LOADING || m_readyState == DONE);
     return m_readyState;
+}
+
+void IDBRequest::markEarlyDeath()
+{
+    ASSERT(m_readyState == LOADING);
+    m_readyState = EarlyDeath;
 }
 
 bool IDBRequest::resetReadyState(IDBTransaction* transaction)
@@ -124,6 +137,32 @@ bool IDBRequest::resetReadyState(IDBTransaction* transaction)
     IDBPendingTransactionMonitor::removePendingTransaction(m_transaction->backend());
 
     return true;
+}
+
+IDBAny* IDBRequest::source()
+{
+    return m_source.get();
+}
+
+void IDBRequest::abort()
+{
+    if (m_readyState != LOADING) {
+        ASSERT(m_readyState == DONE);
+        return;
+    }
+
+    ASSERT(scriptExecutionContext()->isDocument());
+    EventQueue* eventQueue = static_cast<Document*>(scriptExecutionContext())->eventQueue();
+    for (size_t i = 0; i < m_enqueuedEvents.size(); ++i) {
+        bool removed = eventQueue->cancelEvent(m_enqueuedEvents[i].get());
+        ASSERT_UNUSED(removed, removed);
+    }
+    m_enqueuedEvents.clear();
+
+    m_errorCode = 0;
+    m_errorMessage = String();
+    m_result.clear();
+    onError(IDBDatabaseError::create(IDBDatabaseException::ABORT_ERR, "The transaction was aborted, so the request cannot be fulfilled."));
 }
 
 void IDBRequest::onError(PassRefPtr<IDBDatabaseError> error)
@@ -218,11 +257,17 @@ ScriptExecutionContext* IDBRequest::scriptExecutionContext() const
 bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 {
     ASSERT(!m_finished);
+    ASSERT(m_enqueuedEvents.size());
     ASSERT(scriptExecutionContext());
     ASSERT(event->target() == this);
     ASSERT(m_readyState < DONE);
     if (event->type() != eventNames().blockedEvent)
         m_readyState = DONE;
+
+    for (size_t i = 0; i < m_enqueuedEvents.size(); ++i) {
+        if (m_enqueuedEvents[i].get() == event.get())
+            m_enqueuedEvents.remove(i);
+    }
 
     Vector<RefPtr<EventTarget> > targets;
     targets.append(this);
@@ -240,7 +285,6 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     bool dontPreventDefault = IDBEventDispatcher::dispatch(event.get(), targets);
 
     // If the result was of type IDBCursor, then we'll fire again.
-//    if (m_result && m_result->type() != IDBAny::IDBCursorType && event->type() != eventNames.blockedEvent)
     if (m_result && m_result->type() != IDBAny::IDBCursorType)
         m_finished = true;
 
@@ -269,12 +313,8 @@ void IDBRequest::enqueueEvent(PassRefPtr<Event> event)
     ASSERT(scriptExecutionContext()->isDocument());
     EventQueue* eventQueue = static_cast<Document*>(scriptExecutionContext())->eventQueue();
     event->setTarget(this);
-    eventQueue->enqueueEvent(event);
-}
-
-IDBAny* IDBRequest::source()
-{
-    return m_source.get();
+    eventQueue->enqueueEvent(event.get());
+    m_enqueuedEvents.append(event);
 }
 
 EventTargetData* IDBRequest::eventTargetData()

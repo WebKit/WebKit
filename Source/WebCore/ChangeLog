@@ -1,5 +1,65 @@
 2011-03-01  Jeremy Orlow  <jorlow@chromium.org>
 
+       Reviewed by Steve Block.
+
+       When an IDBTransaction is aborted, all requests that have not yet fired should fire an ABORT_ERR
+       https://bugs.webkit.org/show_bug.cgi?id=54785
+
+       This patch adds in a lot of sanity checks/ASSERTs to make sure we're doing
+       the right thing and continue to do the right thing. It also modifies EventQueue
+       so that we can cancel an event. To do this efficiently, the vector is now a
+       ListHashSet.
+
+       Cancelling the event is harder/messier, but the most deterministic thing to do.
+       To the user, the work isn't done until we fire the onsuccess/onerror handler.
+       So the event (which does fire that) needs to be cancelable.
+
+       transaction-abort.html tests this.
+
+       * dom/EventQueue.cpp:
+       (WebCore::EventQueue::enqueueEvent):
+       (WebCore::EventQueue::cancelEvent):
+       (WebCore::EventQueue::pendingEventTimerFired):
+       (WebCore::EventQueue::dispatchEvent):
+       * dom/EventQueue.h:
+       * dom/ExceptionCode.cpp:
+       * storage/IDBCursor.cpp:
+       (WebCore::IDBCursor::update):
+       (WebCore::IDBCursor::deleteFunction):
+       * storage/IDBDatabaseBackendImpl.cpp:
+       (WebCore::IDBDatabaseBackendImpl::close):
+       * storage/IDBDatabaseException.h:
+       * storage/IDBIndex.cpp:
+       (WebCore::IDBIndex::openCursor):
+       (WebCore::IDBIndex::openKeyCursor):
+       (WebCore::IDBIndex::get):
+       (WebCore::IDBIndex::getKey):
+       * storage/IDBObjectStore.cpp:
+       (WebCore::IDBObjectStore::get):
+       (WebCore::IDBObjectStore::add):
+       (WebCore::IDBObjectStore::put):
+       (WebCore::IDBObjectStore::deleteFunction):
+       (WebCore::IDBObjectStore::clear):
+       (WebCore::IDBObjectStore::openCursor):
+       * storage/IDBRequest.cpp:
+       (WebCore::IDBRequest::IDBRequest):
+       (WebCore::IDBRequest::~IDBRequest):
+       (WebCore::IDBRequest::readyState):
+       (WebCore::IDBRequest::markEarlyDeath):
+       (WebCore::IDBRequest::source):
+       (WebCore::IDBRequest::abort):
+       (WebCore::IDBRequest::onSuccess):
+       (WebCore::IDBRequest::dispatchEvent):
+       (WebCore::IDBRequest::enqueueEvent):
+       * storage/IDBRequest.h:
+       * storage/IDBTransaction.cpp:
+       (WebCore::IDBTransaction::registerRequest):
+       (WebCore::IDBTransaction::unregisterRequest):
+       (WebCore::IDBTransaction::onAbort):
+       * storage/IDBTransaction.h:
+
+2011-03-01  Jeremy Orlow  <jorlow@chromium.org>
+
         Reviewed by Mihai Parparita.
 
         EventQueue needs to be ref counted

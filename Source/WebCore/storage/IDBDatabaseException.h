@@ -55,7 +55,8 @@ public:
         TRANSIENT_ERR = IDBDatabaseExceptionOffset + 9,
         TIMEOUT_ERR = IDBDatabaseExceptionOffset + 10,
         DEADLOCK_ERR = IDBDatabaseExceptionOffset + 11,
-        READ_ONLY_ERR = IDBDatabaseExceptionOffset + 12
+        READ_ONLY_ERR = IDBDatabaseExceptionOffset + 12,
+        ABORT_ERR = IDBDatabaseExceptionOffset + 13
     };
 
     static int ErrorCodeToExceptionCode(int errorCode)

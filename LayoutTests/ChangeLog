@@ -1,3 +1,13 @@
+2011-03-01  Jeremy Orlow  <jorlow@chromium.org>
+
+       Reviewed by Steve Block.
+
+       When an IDBTransaction is aborted, all requests that have not yet fired should fire an ABORT_ERR
+       https://bugs.webkit.org/show_bug.cgi?id=54785
+
+       * storage/indexeddb/transaction-abort.html: Added
+       * storage/indexeddb/transaction-abort-expected.txt: Added
+
 2011-03-01  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed new baseline

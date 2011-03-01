@@ -64,7 +64,8 @@ EventQueue::~EventQueue()
 void EventQueue::enqueueEvent(PassRefPtr<Event> event)
 {
     ASSERT(event->target());
-    m_queuedEvents.append(event);
+    bool wasAdded = m_queuedEvents.add(event).second;
+    ASSERT_UNUSED(wasAdded, wasAdded); // It should not have already been in the list.
     
     if (!m_pendingEventTimer->isActive())
         m_pendingEventTimer->startOneShot(0);
@@ -82,27 +83,43 @@ void EventQueue::enqueueScrollEvent(PassRefPtr<Node> target, ScrollEventTargetTy
     enqueueEvent(scrollEvent.release());
 }
 
+bool EventQueue::cancelEvent(Event* event)
+{
+    bool found = m_queuedEvents.contains(event);
+    m_queuedEvents.remove(event);
+    if (m_queuedEvents.isEmpty())
+        m_pendingEventTimer->stop();
+    return found;
+}
+
 void EventQueue::pendingEventTimerFired()
 {
     ASSERT(!m_pendingEventTimer->isActive());
+    ASSERT(!m_queuedEvents.isEmpty());
 
-    Vector<RefPtr<Event> > queuedEvents;
-    queuedEvents.swap(m_queuedEvents);
-    
     m_nodesWithQueuedScrollEvents.clear();
+
+    // Insert a marker for where we should stop.
+    ASSERT(!m_queuedEvents.contains(0));
+    bool wasAdded = m_queuedEvents.add(0).second;
+    ASSERT_UNUSED(wasAdded, wasAdded); // It should not have already been in the list.
 
     RefPtr<EventQueue> protector(this);
 
-    for (size_t i = 0; i < queuedEvents.size(); i++)
-        dispatchEvent(queuedEvents[i].release());
+    while (!m_queuedEvents.isEmpty()) {
+        ListHashSet<RefPtr<Event> >::iterator iter = m_queuedEvents.begin();
+        RefPtr<Event> event = *iter;
+        m_queuedEvents.remove(iter);
+        if (!event)
+            break;
+        dispatchEvent(event.get());
+    }
 }
 
 void EventQueue::dispatchEvent(PassRefPtr<Event> event)
 {
     EventTarget* eventTarget = event->target();
-    if (eventTarget->toNode())
-        eventTarget->dispatchEvent(event);
-    else if (eventTarget->toDOMWindow())
+    if (eventTarget->toDOMWindow())
         eventTarget->toDOMWindow()->dispatchEvent(event, 0);
     else
         eventTarget->dispatchEvent(event);

@@ -28,10 +28,10 @@
 #define EventQueue_h
 
 #include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -52,6 +52,7 @@ public:
 
     void enqueueEvent(PassRefPtr<Event>);
     void enqueueScrollEvent(PassRefPtr<Node>, ScrollEventTargetType);
+    bool cancelEvent(Event*);
 
 private:
     explicit EventQueue(ScriptExecutionContext*);
@@ -60,7 +61,7 @@ private:
     void dispatchEvent(PassRefPtr<Event>);
 
     OwnPtr<EventQueueTimer> m_pendingEventTimer;
-    Vector<RefPtr<Event> > m_queuedEvents;
+    ListHashSet<RefPtr<Event> > m_queuedEvents;
     HashSet<Node*> m_nodesWithQueuedScrollEvents;
     
     friend class EventQueueTimer;    
