@@ -123,6 +123,7 @@ committers_unable_to_review = [
     Committer("Gyuyoung Kim", ["gyuyoung.kim@samsung.com", "gyuyoung@gmail.com", "gyuyoung@webkit.org"], "gyuyoung"),
     Committer("Hans Wennborg", "hans@chromium.org", "hwennborg"),
     Committer("Hayato Ito", "hayato@chromium.org", "hayato"),
+    Committer("Helder Correia", "helder@sencha.com", "helder"),
     Committer("Hin-Chung Lam", ["hclam@google.com", "hclam@chromium.org"]),
     Committer("Ilya Tikhonovsky", "loislo@chromium.org", "loislo"),
     Committer("Ivan Krsti\u0107", "ike@apple.com"),
