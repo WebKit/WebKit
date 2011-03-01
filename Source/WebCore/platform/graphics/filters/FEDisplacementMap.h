@@ -42,13 +42,13 @@ public:
     static PassRefPtr<FEDisplacementMap> create(Filter*, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
     ChannelSelectorType xChannelSelector() const;
-    void setXChannelSelector(const ChannelSelectorType);
+    bool setXChannelSelector(const ChannelSelectorType);
 
     ChannelSelectorType yChannelSelector() const;
-    void setYChannelSelector(const ChannelSelectorType);
+    bool setYChannelSelector(const ChannelSelectorType);
 
     float scale() const;
-    void setScale(float scale);
+    bool setScale(float);
 
     virtual void apply();
     virtual void dump();

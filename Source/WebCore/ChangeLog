@@ -1,3 +1,25 @@
+2011-03-01  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        FEDisplacementMapElement changes doesn't require relayout
+        https://bugs.webkit.org/show_bug.cgi?id=55454
+
+        When the FEDisplacementMapElement receives an update message but the given value remains the same we don't need
+        to relayout the filter.
+
+        No new tests are needed because this modification is covered by the dynamic update tests of FEDisplacementMap.
+
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::setXChannelSelector):
+        (WebCore::FEDisplacementMap::setYChannelSelector):
+        (WebCore::FEDisplacementMap::setScale):
+        * platform/graphics/filters/FEDisplacementMap.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::setFilterEffectAttribute):
+        (WebCore::SVGFEDisplacementMapElement::svgAttributeChanged):
+        * svg/SVGFEDisplacementMapElement.h:
+
 2011-03-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -79,15 +79,31 @@ void SVGFEDisplacementMapElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
+bool SVGFEDisplacementMapElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+{
+    FEDisplacementMap* displacementMap = static_cast<FEDisplacementMap*>(effect);
+    if (attrName == SVGNames::xChannelSelectorAttr)
+        return displacementMap->setXChannelSelector(static_cast<ChannelSelectorType>(xChannelSelector()));
+    if (attrName == SVGNames::yChannelSelectorAttr)
+        return displacementMap->setYChannelSelector(static_cast<ChannelSelectorType>(yChannelSelector()));
+    if (attrName == SVGNames::scaleAttr)
+        return displacementMap->setScale(scale());
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 void SVGFEDisplacementMapElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 
     if (attrName == SVGNames::xChannelSelectorAttr
         || attrName == SVGNames::yChannelSelectorAttr
-        || attrName == SVGNames::inAttr
-        || attrName == SVGNames::in2Attr
         || attrName == SVGNames::scaleAttr)
+        primitiveAttributeChanged(attrName);
+
+    if (attrName == SVGNames::inAttr
+        || attrName == SVGNames::in2Attr)
         invalidate();
 }
 

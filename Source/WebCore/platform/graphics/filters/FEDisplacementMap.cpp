@@ -54,9 +54,12 @@ ChannelSelectorType FEDisplacementMap::xChannelSelector() const
     return m_xChannelSelector;
 }
 
-void FEDisplacementMap::setXChannelSelector(const ChannelSelectorType xChannelSelector)
+bool FEDisplacementMap::setXChannelSelector(const ChannelSelectorType xChannelSelector)
 {
+    if (m_xChannelSelector == xChannelSelector)
+        return false;
     m_xChannelSelector = xChannelSelector;
+    return true;
 }
 
 ChannelSelectorType FEDisplacementMap::yChannelSelector() const
@@ -64,9 +67,12 @@ ChannelSelectorType FEDisplacementMap::yChannelSelector() const
     return m_yChannelSelector;
 }
 
-void FEDisplacementMap::setYChannelSelector(const ChannelSelectorType yChannelSelector)
+bool FEDisplacementMap::setYChannelSelector(const ChannelSelectorType yChannelSelector)
 {
+    if (m_yChannelSelector == yChannelSelector)
+        return false;
     m_yChannelSelector = yChannelSelector;
+    return true;
 }
 
 float FEDisplacementMap::scale() const
@@ -74,9 +80,12 @@ float FEDisplacementMap::scale() const
     return m_scale;
 }
 
-void FEDisplacementMap::setScale(float scale)
+bool FEDisplacementMap::setScale(float scale)
 {
+    if (m_scale == scale)
+        return false;
     m_scale = scale;
+    return true;
 }
 
 void FEDisplacementMap::apply()

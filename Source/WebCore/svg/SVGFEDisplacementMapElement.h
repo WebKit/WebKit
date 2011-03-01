@@ -38,6 +38,7 @@ private:
     SVGFEDisplacementMapElement(const QualifiedName& tagName, Document*);
     
     virtual void parseMappedAttribute(Attribute*);
+    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual void fillAttributeToPropertyTypeMap();
