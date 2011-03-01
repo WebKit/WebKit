@@ -206,7 +206,7 @@ namespace JSC {
         Terminator terminator;
         Heap heap;
 
-        GCRootPtr<Unknown> exception;
+        DeprecatedPtr<Unknown> exception;
 #if ENABLE(JIT)
         ReturnAddressPtr exceptionLocation;
 #endif

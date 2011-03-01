@@ -151,44 +151,6 @@ public:
     }
 };
 
-template <typename T> class GCRootPtr : public WriteBarrierBase<T> {
-public:
-    GCRootPtr() { }
-    GCRootPtr(T* value)
-    {
-        this->setWithoutWriteBarrier(value);
-    }
-
-    GCRootPtr& operator=(T* value)
-    {
-        this->setWithoutWriteBarrier(value);
-        return *this;
-    }
-
-private:
-    using WriteBarrier<T>::set;
-    using WriteBarrier<T>::setWithoutWriteBarrier;
-};
-
-template <> class GCRootPtr<Unknown> : public WriteBarrierBase<Unknown> {
-public:
-    GCRootPtr() { }
-    GCRootPtr(JSValue value)
-    {
-        this->setWithoutWriteBarrier(value);
-    }
-    
-    GCRootPtr& operator=(JSValue value)
-    {
-        this->setWithoutWriteBarrier(value);
-        return *this;
-    }
-    
-private:
-    using WriteBarrierBase<Unknown>::set;
-    using WriteBarrierBase<Unknown>::setWithoutWriteBarrier;
-};
-    
 template <typename U, typename V> inline bool operator==(const DeprecatedPtr<U>& lhs, const DeprecatedPtr<V>& rhs)
 {
     return lhs.get() == rhs.get();
