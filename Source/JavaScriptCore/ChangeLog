@@ -1,3 +1,89 @@
+2011-02-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig & Darin Adler.
+
+        Bug 55423 - Clean up property tables in Structure
+
+        Encapsulate, reduce duplication of table search code,
+        and reduce the size of the tables (remove the index,
+        just maintain the tables in the correct order).
+
+        Shows a 0.5% - 1% progression on sunspider.
+
+        * JavaScriptCore.exp:
+        * runtime/PropertyMapHashTable.h:
+        (JSC::isPowerOf2):
+        (JSC::nextPowerOf2):
+            bit ops used to calculate table size.
+        (JSC::PropertyMapEntry::PropertyMapEntry):
+        (JSC::PropertyTable::ordered_iterator::operator++):
+        (JSC::PropertyTable::ordered_iterator::operator==):
+        (JSC::PropertyTable::ordered_iterator::operator!=):
+        (JSC::PropertyTable::ordered_iterator::operator*):
+        (JSC::PropertyTable::ordered_iterator::operator->):
+        (JSC::PropertyTable::ordered_iterator::ordered_iterator):
+            implementation of the iterator types
+        (JSC::PropertyTable::PropertyTable):
+        (JSC::PropertyTable::~PropertyTable):
+            constructors take an initial capacity for the table,
+            a table to copy, or both.
+        (JSC::PropertyTable::begin):
+        (JSC::PropertyTable::end):
+            create in-order iterators.
+        (JSC::PropertyTable::find):
+            search the hash table
+        (JSC::PropertyTable::add):
+            add a value to the hash table
+        (JSC::PropertyTable::remove):
+            remove a value from the hash table
+        (JSC::PropertyTable::size):
+        (JSC::PropertyTable::isEmpty):
+            accessors.
+        (JSC::PropertyTable::propertyStorageSize):
+        (JSC::PropertyTable::clearDeletedOffsets):
+        (JSC::PropertyTable::hasDeletedOffset):
+        (JSC::PropertyTable::getDeletedOffset):
+        (JSC::PropertyTable::addDeletedOffset):
+            cache deleted (available) offsets in the property storage array.
+        (JSC::PropertyTable::copy):
+            take a copy of the PropertyTable, potentially expanding the capacity.
+        (JSC::PropertyTable::sizeInMemory):
+            used for DEBUG build statistics
+        (JSC::PropertyTable::reinsert):
+        (JSC::PropertyTable::rehash):
+        (JSC::PropertyTable::tableCapacity):
+        (JSC::PropertyTable::deletedEntryIndex):
+        (JSC::PropertyTable::skipDeletedEntries):
+        (JSC::PropertyTable::table):
+        (JSC::PropertyTable::usedCount):
+        (JSC::PropertyTable::dataSize):
+        (JSC::PropertyTable::sizeForCapacity):
+        (JSC::PropertyTable::canInsert):
+            these methods provide internal implementation.
+        * runtime/Structure.cpp:
+        (JSC::Structure::dumpStatistics):
+        (JSC::Structure::~Structure):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::despecifyDictionaryFunction):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::copyPropertyTable):
+        (JSC::Structure::get):
+        (JSC::Structure::despecifyFunction):
+        (JSC::Structure::despecifyAllFunctions):
+        (JSC::Structure::put):
+        (JSC::Structure::remove):
+        (JSC::Structure::createPropertyMap):
+        (JSC::Structure::getPropertyNames):
+        (JSC::PropertyTable::checkConsistency):
+        (JSC::Structure::checkConsistency):
+            factored out code to PropertyMapHashTable.h
+        * runtime/Structure.h:
+        (JSC::Structure::propertyStorageSize):
+        (JSC::Structure::isEmpty):
+        (JSC::Structure::get):
+            factored out code to PropertyMapHashTable.h
+
 2011-02-28  Xan Lopez  <xlopez@igalia.com>
 
         Another fix build :(

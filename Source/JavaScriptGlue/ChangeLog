@@ -1,3 +1,17 @@
+2011-02-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig & Darin Adler.
+
+        Bug 55423 - Clean up property tables in Structure
+
+        Encapsulate, reduce duplication of table search code,
+        and reduce the size of the tables (remove the index,
+        just maintain the tables in the correct order).
+
+        Shows a 0.5% - 1% progression on sunspider.
+
+        * ForwardingHeaders/wtf/HashTable.h: Added.
+
 2011-02-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

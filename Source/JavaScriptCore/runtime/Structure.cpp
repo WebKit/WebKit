@@ -50,17 +50,16 @@
 using namespace std;
 using namespace WTF;
 
+#if DUMP_PROPERTYMAP_STATS
+
+int numProbes;
+int numCollisions;
+int numRehashes;
+int numRemoves;
+
+#endif
+
 namespace JSC {
-
-// Choose a number for the following so that most property maps are smaller,
-// but it's not going to blow out the stack to allocate this number of pointers.
-static const int smallMapThreshold = 1024;
-
-// The point at which the function call overhead of the qsort implementation
-// becomes small compared to the inefficiency of insertion sort.
-static const unsigned tinyMapThreshold = 20;
-
-static const unsigned newTableSize = 16;
 
 #ifndef NDEBUG
 static WTF::RefCountedLeakCounter structureCounter("Structure");
@@ -80,8 +79,6 @@ static HashSet<Structure*>& ignoreSet = *(new HashSet<Structure*>);
 #if DUMP_STRUCTURE_ID_STATISTICS
 static HashSet<Structure*>& liveStructureSet = *(new HashSet<Structure*>);
 #endif
-
-static int comparePropertyMapEntryIndices(const void* a, const void* b);
 
 bool StructureTransitionTable::contains(StringImpl* rep, unsigned attributes) const
 {
@@ -159,21 +156,22 @@ void Structure::dumpStatistics()
     HashSet<Structure*>::const_iterator end = liveStructureSet.end();
     for (HashSet<Structure*>::const_iterator it = liveStructureSet.begin(); it != end; ++it) {
         Structure* structure = *it;
-        if (structure->m_usingSingleTransitionSlot) {
-            if (!structure->m_transitionTable.singleTransition())
-                ++numberLeaf;
-            else
-                ++numberUsingSingleSlot;
 
-           if (!structure->m_previous && !structure->m_transitionTable.singleTransition())
-                ++numberSingletons;
+        switch (structure->m_transitionTable.size()) {
+            case 0:
+                ++numberLeaf;
+               if (!structure->m_previous)
+                    ++numberSingletons;
+                break;
+
+            case 1:
+                ++numberUsingSingleSlot;
+                break;
         }
 
         if (structure->m_propertyTable) {
             ++numberWithPropertyMaps;
-            totalPropertyMapsSize += PropertyMapHashTable::allocationSize(structure->m_propertyTable->size);
-            if (structure->m_propertyTable->deletedOffsets)
-                totalPropertyMapsSize += (structure->m_propertyTable->deletedOffsets->capacity() * sizeof(unsigned)); 
+            totalPropertyMapsSize += structure->m_propertyTable->sizeInMemory();
         }
     }
 
@@ -196,7 +194,6 @@ Structure::Structure(JSValue prototype, const TypeInfo& typeInfo, unsigned anony
     , m_prototype(prototype)
     , m_specificValueInPrevious(0)
     , m_classInfo(classInfo)
-    , m_propertyTable(0)
     , m_propertyStorageCapacity(typeInfo.isFinal() ? JSFinalObject_inlineStorageCapacity : JSNonFinalObject_inlineStorageCapacity)
     , m_offset(noOffset)
     , m_dictionaryKind(NoneDictionaryKind)
@@ -230,7 +227,6 @@ Structure::Structure(const Structure* previous)
     , m_prototype(previous->storedPrototype())
     , m_specificValueInPrevious(0)
     , m_classInfo(previous->m_classInfo)
-    , m_propertyTable(0)
     , m_propertyStorageCapacity(previous->m_propertyStorageCapacity)
     , m_offset(noOffset)
     , m_dictionaryKind(NoneDictionaryKind)
@@ -266,17 +262,6 @@ Structure::~Structure()
         m_previous->m_transitionTable.remove(this);
     }
 
-    if (m_propertyTable) {
-        unsigned entryCount = m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount;
-        for (unsigned i = 1; i <= entryCount; i++) {
-            if (StringImpl* key = m_propertyTable->entries()[i].key)
-                key->deref();
-        }
-
-        delete m_propertyTable->deletedOffsets;
-        fastFree(m_propertyTable);
-    }
-
 #ifndef NDEBUG
 #if ENABLE(JSC_MULTIPLE_THREADS)
     MutexLocker protect(ignoreSetMutex());
@@ -307,43 +292,6 @@ void Structure::stopIgnoringLeaks()
 #endif
 }
 
-static bool isPowerOf2(unsigned v)
-{
-    // Taken from http://www.cs.utk.edu/~vose/c-stuff/bithacks.html
-    
-    return !(v & (v - 1)) && v;
-}
-
-static unsigned nextPowerOf2(unsigned v)
-{
-    // Taken from http://www.cs.utk.edu/~vose/c-stuff/bithacks.html
-    // Devised by Sean Anderson, Sepember 14, 2001
-
-    v--;
-    v |= v >> 1;
-    v |= v >> 2;
-    v |= v >> 4;
-    v |= v >> 8;
-    v |= v >> 16;
-    v++;
-
-    return v;
-}
-
-static unsigned sizeForKeyCount(size_t keyCount)
-{
-    if (keyCount == notFound)
-        return newTableSize;
-
-    if (keyCount < 8)
-        return newTableSize;
-
-    if (isPowerOf2(keyCount))
-        return keyCount * 4;
-
-    return nextPowerOf2(keyCount) * 2;
-}
-
 void Structure::materializePropertyMap()
 {
     ASSERT(!m_propertyTable);
@@ -353,13 +301,13 @@ void Structure::materializePropertyMap()
 
     Structure* structure = this;
 
-    // Search for the last Structure with a property table. 
+    // Search for the last Structure with a property table.
     while ((structure = structure->previousID())) {
         if (structure->m_isPinnedPropertyTable) {
             ASSERT(structure->m_propertyTable);
             ASSERT(!structure->m_previous);
 
-            m_propertyTable = structure->copyPropertyTable();
+            m_propertyTable = structure->m_propertyTable->copy(m_offset + 1);
             break;
         }
 
@@ -367,17 +315,12 @@ void Structure::materializePropertyMap()
     }
 
     if (!m_propertyTable)
-        createPropertyMapHashTable(sizeForKeyCount(m_offset + 1));
-    else {
-        if (sizeForKeyCount(m_offset + 1) > m_propertyTable->size)
-            rehashPropertyMapHashTable(sizeForKeyCount(m_offset + 1)); // This could be made more efficient by combining with the copy above. 
-    }
+        createPropertyMap(m_offset + 1);
 
     for (ptrdiff_t i = structures.size() - 2; i >= 0; --i) {
         structure = structures[i];
-        structure->m_nameInPrevious->ref();
-        PropertyMapEntry entry(structure->m_nameInPrevious.get(), m_anonymousSlotCount + structure->m_offset, structure->m_attributesInPrevious, structure->m_specificValueInPrevious, ++m_propertyTable->lastIndexUsed);
-        insertIntoPropertyMapHashTable(entry);
+        PropertyMapEntry entry(structure->m_nameInPrevious.get(), m_anonymousSlotCount + structure->m_offset, structure->m_attributesInPrevious, structure->m_specificValueInPrevious);
+        m_propertyTable->add(entry);
     }
 }
 
@@ -391,48 +334,16 @@ void Structure::growPropertyStorageCapacity()
 
 void Structure::despecifyDictionaryFunction(const Identifier& propertyName)
 {
-    const StringImpl* rep = propertyName.impl();
+    StringImpl* rep = propertyName.impl();
 
     materializePropertyMapIfNecessary();
 
     ASSERT(isDictionary());
     ASSERT(m_propertyTable);
 
-    unsigned i = rep->existingHash();
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
-#endif
-
-    unsigned entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
-    ASSERT(entryIndex != emptyEntryIndex);
-
-    if (rep == m_propertyTable->entries()[entryIndex - 1].key) {
-        m_propertyTable->entries()[entryIndex - 1].specificValue = 0;
-        return;
-    }
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numCollisions;
-#endif
-
-    unsigned k = 1 | doubleHash(rep->existingHash());
-
-    while (1) {
-        i += k;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
-#endif
-
-        entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
-        ASSERT(entryIndex != emptyEntryIndex);
-
-        if (rep == m_propertyTable->entries()[entryIndex - 1].key) {
-            m_propertyTable->entries()[entryIndex - 1].specificValue = 0;
-            return;
-        }
-    }
+    PropertyMapEntry* entry = m_propertyTable->find(rep).first;
+    ASSERT(entry);
+    entry->specificValue = 0;
 }
 
 PassRefPtr<Structure> Structure::addPropertyTransitionToExistingStructure(Structure* structure, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset)
@@ -494,16 +405,14 @@ PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, con
 
     if (structure->m_propertyTable) {
         if (structure->m_isPinnedPropertyTable)
-            transition->m_propertyTable = structure->copyPropertyTable();
-        else {
-            transition->m_propertyTable = structure->m_propertyTable;
-            structure->m_propertyTable = 0;
-        }
+            transition->m_propertyTable = structure->m_propertyTable->copy(structure->m_propertyTable->size() + 1);
+        else
+            transition->m_propertyTable = structure->m_propertyTable.release();
     } else {
         if (structure->m_previous)
             transition->materializePropertyMap();
         else
-            transition->createPropertyMapHashTable();
+            transition->createPropertyMap();
     }
 
     offset = transition->put(propertyName, attributes, specificValue);
@@ -615,38 +524,24 @@ PassRefPtr<Structure> Structure::flattenDictionaryStructure(JSGlobalData& global
     ASSERT(isDictionary());
     if (isUncacheableDictionary()) {
         ASSERT(m_propertyTable);
-        Vector<PropertyMapEntry*> sortedPropertyEntries(m_propertyTable->keyCount);
-        PropertyMapEntry** p = sortedPropertyEntries.data();
-        unsigned entryCount = m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount;
-        for (unsigned i = 1; i <= entryCount; i++) {
-            if (m_propertyTable->entries()[i].key)
-                *p++ = &m_propertyTable->entries()[i];
-        }
-        size_t propertyCount = p - sortedPropertyEntries.data();
-        qsort(sortedPropertyEntries.data(), propertyCount, sizeof(PropertyMapEntry*), comparePropertyMapEntryIndices);
-        sortedPropertyEntries.resize(propertyCount);
 
-        // We now have the properties currently defined on this object
-        // in the order that they are expected to be in, but we need to
-        // reorder the storage, so we have to copy the current values out
-        Vector<JSValue> values(propertyCount);
         unsigned anonymousSlotCount = m_anonymousSlotCount;
-        for (unsigned i = 0; i < propertyCount; i++) {
-            PropertyMapEntry* entry = sortedPropertyEntries[i];
-            values[i] = object->getDirectOffset(entry->offset);
+        size_t propertyCount = m_propertyTable->size();
+        Vector<JSValue> values(propertyCount);
+
+        unsigned i = 0;
+        PropertyTable::iterator end = m_propertyTable->end();
+        for (PropertyTable::iterator iter = m_propertyTable->begin(); iter != end; ++iter, ++i) {
+            values[i] = object->getDirectOffset(iter->offset);
             // Update property table to have the new property offsets
-            entry->offset = anonymousSlotCount + i;
-            entry->index = i;
+            iter->offset = anonymousSlotCount + i;
         }
         
         // Copy the original property values into their final locations
         for (unsigned i = 0; i < propertyCount; i++)
             object->putDirectOffset(globalData, anonymousSlotCount + i, values[i]);
 
-        if (m_propertyTable->deletedOffsets) {
-            delete m_propertyTable->deletedOffsets;
-            m_propertyTable->deletedOffsets = 0;
-        }
+        m_propertyTable->clearDeletedOffsets();
     }
 
     m_dictionaryKind = NoneDictionaryKind;
@@ -686,11 +581,6 @@ size_t Structure::removePropertyWithoutTransition(const Identifier& propertyName
 
 #if DUMP_PROPERTYMAP_STATS
 
-static int numProbes;
-static int numCollisions;
-static int numRehashes;
-static int numRemoves;
-
 struct PropertyMapStatisticsExitLogger {
     ~PropertyMapStatisticsExitLogger();
 };
@@ -708,8 +598,6 @@ PropertyMapStatisticsExitLogger::~PropertyMapStatisticsExitLogger()
 
 #endif
 
-static const unsigned deletedSentinelIndex = 1;
-
 #if !DO_PROPERTYMAP_CONSTENCY_CHECK
 
 inline void Structure::checkConsistency()
@@ -718,126 +606,41 @@ inline void Structure::checkConsistency()
 
 #endif
 
-PropertyMapHashTable* Structure::copyPropertyTable()
+PropertyTable* Structure::copyPropertyTable()
 {
-    if (!m_propertyTable)
-        return 0;
-
-    size_t tableSize = PropertyMapHashTable::allocationSize(m_propertyTable->size);
-    PropertyMapHashTable* newTable = static_cast<PropertyMapHashTable*>(fastMalloc(tableSize));
-    memcpy(newTable, m_propertyTable, tableSize);
-
-    unsigned entryCount = m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount;
-    for (unsigned i = 1; i <= entryCount; ++i) {
-        if (StringImpl* key = newTable->entries()[i].key)
-            key->ref();
-    }
-
-    // Copy the deletedOffsets vector.
-    if (m_propertyTable->deletedOffsets)
-        newTable->deletedOffsets = new Vector<unsigned>(*m_propertyTable->deletedOffsets);
-
-    return newTable;
+    return m_propertyTable ? new PropertyTable(*m_propertyTable) : 0;
 }
 
-size_t Structure::get(const StringImpl* rep, unsigned& attributes, JSCell*& specificValue)
+size_t Structure::get(StringImpl* propertyName, unsigned& attributes, JSCell*& specificValue)
 {
     materializePropertyMapIfNecessary();
     if (!m_propertyTable)
-        return notFound;
+        return WTF::notFound;
 
-    unsigned i = rep->existingHash();
+    PropertyMapEntry* entry = m_propertyTable->find(propertyName).first;
+    if (!entry)
+        return WTF::notFound;
 
-#if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
-#endif
-
-    unsigned entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
-    if (entryIndex == emptyEntryIndex)
-        return notFound;
-
-    if (rep == m_propertyTable->entries()[entryIndex - 1].key) {
-        attributes = m_propertyTable->entries()[entryIndex - 1].attributes;
-        specificValue = m_propertyTable->entries()[entryIndex - 1].specificValue;
-        ASSERT(m_propertyTable->entries()[entryIndex - 1].offset >= m_anonymousSlotCount);
-        return m_propertyTable->entries()[entryIndex - 1].offset;
-    }
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numCollisions;
-#endif
-
-    unsigned k = 1 | doubleHash(rep->existingHash());
-
-    while (1) {
-        i += k;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
-#endif
-
-        entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
-        if (entryIndex == emptyEntryIndex)
-            return notFound;
-
-        if (rep == m_propertyTable->entries()[entryIndex - 1].key) {
-            attributes = m_propertyTable->entries()[entryIndex - 1].attributes;
-            specificValue = m_propertyTable->entries()[entryIndex - 1].specificValue;
-            ASSERT(m_propertyTable->entries()[entryIndex - 1].offset >= m_anonymousSlotCount);
-            return m_propertyTable->entries()[entryIndex - 1].offset;
-        }
-    }
+    attributes = entry->attributes;
+    specificValue = entry->specificValue;
+    ASSERT(entry->offset >= m_anonymousSlotCount);
+    return entry->offset;
 }
 
 bool Structure::despecifyFunction(const Identifier& propertyName)
 {
-    ASSERT(!propertyName.isNull());
-
     materializePropertyMapIfNecessary();
     if (!m_propertyTable)
         return false;
 
-    StringImpl* rep = propertyName.impl();
-
-    unsigned i = rep->existingHash();
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
-#endif
-
-    unsigned entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
-    if (entryIndex == emptyEntryIndex)
+    ASSERT(!propertyName.isNull());
+    PropertyMapEntry* entry = m_propertyTable->find(propertyName.impl()).first;
+    if (!entry)
         return false;
 
-    if (rep == m_propertyTable->entries()[entryIndex - 1].key) {
-        ASSERT(m_propertyTable->entries()[entryIndex - 1].specificValue);
-        m_propertyTable->entries()[entryIndex - 1].specificValue = 0;
-        return true;
-    }
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numCollisions;
-#endif
-
-    unsigned k = 1 | doubleHash(rep->existingHash());
-
-    while (1) {
-        i += k;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
-#endif
-
-        entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
-        if (entryIndex == emptyEntryIndex)
-            return false;
-
-        if (rep == m_propertyTable->entries()[entryIndex - 1].key) {
-            ASSERT(m_propertyTable->entries()[entryIndex - 1].specificValue);
-            m_propertyTable->entries()[entryIndex - 1].specificValue = 0;
-            return true;
-        }
-    }
+    ASSERT(entry->specificValue);
+    entry->specificValue = 0;
+    return true;
 }
 
 void Structure::despecifyAllFunctions()
@@ -845,10 +648,10 @@ void Structure::despecifyAllFunctions()
     materializePropertyMapIfNecessary();
     if (!m_propertyTable)
         return;
-    
-    unsigned entryCount = m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount;
-    for (unsigned i = 1; i <= entryCount; ++i)
-        m_propertyTable->entries()[i].specificValue = 0;
+
+    PropertyTable::iterator end = m_propertyTable->end();
+    for (PropertyTable::iterator iter = m_propertyTable->begin(); iter != end; ++iter)
+        iter->specificValue = 0;
 }
 
 size_t Structure::put(const Identifier& propertyName, unsigned attributes, JSCell* specificValue)
@@ -857,89 +660,23 @@ size_t Structure::put(const Identifier& propertyName, unsigned attributes, JSCel
     ASSERT(get(propertyName) == notFound);
 
     checkConsistency();
-
     if (attributes & DontEnum)
         m_hasNonEnumerableProperties = true;
 
     StringImpl* rep = propertyName.impl();
 
     if (!m_propertyTable)
-        createPropertyMapHashTable();
-
-    // FIXME: Consider a fast case for tables with no deleted sentinels.
-
-    unsigned i = rep->existingHash();
-    unsigned k = 0;
-    bool foundDeletedElement = false;
-    unsigned deletedElementIndex = 0; // initialize to make the compiler happy
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
-#endif
-
-    while (1) {
-        unsigned entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
-        if (entryIndex == emptyEntryIndex)
-            break;
-
-        if (entryIndex == deletedSentinelIndex) {
-            // If we find a deleted-element sentinel, remember it for use later.
-            if (!foundDeletedElement) {
-                foundDeletedElement = true;
-                deletedElementIndex = i;
-            }
-        }
-
-        if (k == 0) {
-            k = 1 | doubleHash(rep->existingHash());
-#if DUMP_PROPERTYMAP_STATS
-            ++numCollisions;
-#endif
-        }
-
-        i += k;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
-#endif
-    }
-
-    // Figure out which entry to use.
-    unsigned entryIndex = m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount + 2;
-    if (foundDeletedElement) {
-        i = deletedElementIndex;
-        --m_propertyTable->deletedSentinelCount;
-
-        // Since we're not making the table bigger, we can't use the entry one past
-        // the end that we were planning on using, so search backwards for the empty
-        // slot that we can use. We know it will be there because we did at least one
-        // deletion in the past that left an entry empty.
-        while (m_propertyTable->entries()[--entryIndex - 1].key) { }
-    }
-
-    // Create a new hash table entry.
-    m_propertyTable->entryIndices[i & m_propertyTable->sizeMask] = entryIndex;
-
-    // Create a new hash table entry.
-    rep->ref();
-    m_propertyTable->entries()[entryIndex - 1].key = rep;
-    m_propertyTable->entries()[entryIndex - 1].attributes = attributes;
-    m_propertyTable->entries()[entryIndex - 1].specificValue = specificValue;
-    m_propertyTable->entries()[entryIndex - 1].index = ++m_propertyTable->lastIndexUsed;
+        createPropertyMap();
 
     unsigned newOffset;
-    if (m_propertyTable->deletedOffsets && !m_propertyTable->deletedOffsets->isEmpty()) {
-        newOffset = m_propertyTable->deletedOffsets->last();
-        m_propertyTable->deletedOffsets->removeLast();
-    } else
-        newOffset = m_propertyTable->keyCount + m_anonymousSlotCount;
-    m_propertyTable->entries()[entryIndex - 1].offset = newOffset;
-    
-    ASSERT(newOffset >= m_anonymousSlotCount);
-    ++m_propertyTable->keyCount;
 
-    if ((m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount) * 2 >= m_propertyTable->size)
-        expandPropertyMapHashTable();
+    if (m_propertyTable->hasDeletedOffset())
+        newOffset = m_propertyTable->getDeletedOffset();
+    else
+        newOffset = m_propertyTable->size() + m_anonymousSlotCount;
+    ASSERT(newOffset >= m_anonymousSlotCount);
+
+    m_propertyTable->add(PropertyMapEntry(rep, newOffset, attributes, specificValue));
 
     checkConsistency();
     return newOffset;
@@ -956,175 +693,27 @@ size_t Structure::remove(const Identifier& propertyName)
     if (!m_propertyTable)
         return notFound;
 
-#if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
-    ++numRemoves;
-#endif
+    PropertyTable::find_iterator position = m_propertyTable->find(rep);
+    if (!position.first)
+        return notFound;
 
-    // Find the thing to remove.
-    unsigned i = rep->existingHash();
-    unsigned k = 0;
-    unsigned entryIndex;
-    StringImpl* key = 0;
-    while (1) {
-        entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
-        if (entryIndex == emptyEntryIndex)
-            return notFound;
-
-        key = m_propertyTable->entries()[entryIndex - 1].key;
-        if (rep == key)
-            break;
-
-        if (k == 0) {
-            k = 1 | doubleHash(rep->existingHash());
-#if DUMP_PROPERTYMAP_STATS
-            ++numCollisions;
-#endif
-        }
-
-        i += k;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
-#endif
-    }
-
-    // Replace this one element with the deleted sentinel. Also clear out
-    // the entry so we can iterate all the entries as needed.
-    m_propertyTable->entryIndices[i & m_propertyTable->sizeMask] = deletedSentinelIndex;
-
-    size_t offset = m_propertyTable->entries()[entryIndex - 1].offset;
+    size_t offset = position.first->offset;
     ASSERT(offset >= m_anonymousSlotCount);
 
-    key->deref();
-    m_propertyTable->entries()[entryIndex - 1].key = 0;
-    m_propertyTable->entries()[entryIndex - 1].attributes = 0;
-    m_propertyTable->entries()[entryIndex - 1].specificValue = 0;
-    m_propertyTable->entries()[entryIndex - 1].offset = 0;
-
-    if (!m_propertyTable->deletedOffsets)
-        m_propertyTable->deletedOffsets = new Vector<unsigned>;
-    m_propertyTable->deletedOffsets->append(offset);
-
-    ASSERT(m_propertyTable->keyCount >= 1);
-    --m_propertyTable->keyCount;
-    ++m_propertyTable->deletedSentinelCount;
-
-    if (m_propertyTable->deletedSentinelCount * 4 >= m_propertyTable->size)
-        rehashPropertyMapHashTable();
+    m_propertyTable->remove(position);
+    m_propertyTable->addDeletedOffset(offset);
 
     checkConsistency();
     return offset;
 }
 
-void Structure::insertIntoPropertyMapHashTable(const PropertyMapEntry& entry)
-{
-    ASSERT(m_propertyTable);
-    ASSERT(entry.offset >= m_anonymousSlotCount);
-    unsigned i = entry.key->existingHash();
-    unsigned k = 0;
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
-#endif
-
-    while (1) {
-        unsigned entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
-        if (entryIndex == emptyEntryIndex)
-            break;
-
-        if (k == 0) {
-            k = 1 | doubleHash(entry.key->existingHash());
-#if DUMP_PROPERTYMAP_STATS
-            ++numCollisions;
-#endif
-        }
-
-        i += k;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
-#endif
-    }
-
-    unsigned entryIndex = m_propertyTable->keyCount + 2;
-    m_propertyTable->entryIndices[i & m_propertyTable->sizeMask] = entryIndex;
-    m_propertyTable->entries()[entryIndex - 1] = entry;
-
-    ++m_propertyTable->keyCount;
-}
-
-void Structure::createPropertyMapHashTable()
-{
-    ASSERT(sizeForKeyCount(7) == newTableSize);
-    createPropertyMapHashTable(newTableSize);
-}
-
-void Structure::createPropertyMapHashTable(unsigned newTableSize)
+void Structure::createPropertyMap(unsigned capacity)
 {
     ASSERT(!m_propertyTable);
-    ASSERT(isPowerOf2(newTableSize));
 
     checkConsistency();
-
-    m_propertyTable = static_cast<PropertyMapHashTable*>(fastZeroedMalloc(PropertyMapHashTable::allocationSize(newTableSize)));
-    m_propertyTable->size = newTableSize;
-    m_propertyTable->sizeMask = newTableSize - 1;
-
+    m_propertyTable = new PropertyTable(capacity);
     checkConsistency();
-}
-
-void Structure::expandPropertyMapHashTable()
-{
-    ASSERT(m_propertyTable);
-    rehashPropertyMapHashTable(m_propertyTable->size * 2);
-}
-
-void Structure::rehashPropertyMapHashTable()
-{
-    ASSERT(m_propertyTable);
-    ASSERT(m_propertyTable->size);
-    rehashPropertyMapHashTable(m_propertyTable->size);
-}
-
-void Structure::rehashPropertyMapHashTable(unsigned newTableSize)
-{
-    ASSERT(m_propertyTable);
-    ASSERT(isPowerOf2(newTableSize));
-
-    checkConsistency();
-
-    PropertyMapHashTable* oldTable = m_propertyTable;
-
-    m_propertyTable = static_cast<PropertyMapHashTable*>(fastZeroedMalloc(PropertyMapHashTable::allocationSize(newTableSize)));
-    m_propertyTable->size = newTableSize;
-    m_propertyTable->sizeMask = newTableSize - 1;
-
-    unsigned lastIndexUsed = 0;
-    unsigned entryCount = oldTable->keyCount + oldTable->deletedSentinelCount;
-    for (unsigned i = 1; i <= entryCount; ++i) {
-        if (oldTable->entries()[i].key) {
-            lastIndexUsed = max(oldTable->entries()[i].index, lastIndexUsed);
-            insertIntoPropertyMapHashTable(oldTable->entries()[i]);
-        }
-    }
-    m_propertyTable->lastIndexUsed = lastIndexUsed;
-    m_propertyTable->deletedOffsets = oldTable->deletedOffsets;
-
-    fastFree(oldTable);
-
-    checkConsistency();
-}
-
-int comparePropertyMapEntryIndices(const void* a, const void* b)
-{
-    unsigned ia = static_cast<PropertyMapEntry* const*>(a)[0]->index;
-    unsigned ib = static_cast<PropertyMapEntry* const*>(b)[0]->index;
-    if (ia < ib)
-        return -1;
-    if (ia > ib)
-        return +1;
-    return 0;
 }
 
 void Structure::getPropertyNames(PropertyNameArray& propertyNames, EnumerationMode mode)
@@ -1133,55 +722,17 @@ void Structure::getPropertyNames(PropertyNameArray& propertyNames, EnumerationMo
     if (!m_propertyTable)
         return;
 
-    if (m_propertyTable->keyCount < tinyMapThreshold) {
-        PropertyMapEntry* a[tinyMapThreshold];
-        int i = 0;
-        unsigned entryCount = m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount;
-        for (unsigned k = 1; k <= entryCount; k++) {
-            ASSERT(m_hasNonEnumerableProperties || !(m_propertyTable->entries()[k].attributes & DontEnum));
-            if (m_propertyTable->entries()[k].key && (!(m_propertyTable->entries()[k].attributes & DontEnum) || (mode == IncludeDontEnumProperties))) {
-                PropertyMapEntry* value = &m_propertyTable->entries()[k];
-                int j;
-                for (j = i - 1; j >= 0 && a[j]->index > value->index; --j)
-                    a[j + 1] = a[j];
-                a[j + 1] = value;
-                ++i;
-            }
+    bool knownUnique = !propertyNames.size();
+
+    PropertyTable::iterator end = m_propertyTable->end();
+    for (PropertyTable::iterator iter = m_propertyTable->begin(); iter != end; ++iter) {
+        ASSERT(m_hasNonEnumerableProperties || !(iter->attributes & DontEnum));
+        if (!(iter->attributes & DontEnum) || (mode == IncludeDontEnumProperties)) {
+            if (knownUnique)
+                propertyNames.addKnownUnique(iter->key);
+            else
+                propertyNames.add(iter->key);
         }
-        if (!propertyNames.size()) {
-            for (int k = 0; k < i; ++k)
-                propertyNames.addKnownUnique(a[k]->key);
-        } else {
-            for (int k = 0; k < i; ++k)
-                propertyNames.add(a[k]->key);
-        }
-
-        return;
-    }
-
-    // Allocate a buffer to use to sort the keys.
-    Vector<PropertyMapEntry*, smallMapThreshold> sortedEnumerables(m_propertyTable->keyCount);
-
-    // Get pointers to the enumerable entries in the buffer.
-    PropertyMapEntry** p = sortedEnumerables.data();
-    unsigned entryCount = m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount;
-    for (unsigned i = 1; i <= entryCount; i++) {
-        if (m_propertyTable->entries()[i].key && (!(m_propertyTable->entries()[i].attributes & DontEnum) || (mode == IncludeDontEnumProperties)))
-            *p++ = &m_propertyTable->entries()[i];
-    }
-
-    size_t enumerableCount = p - sortedEnumerables.data();
-    // Sort the entries by index.
-    qsort(sortedEnumerables.data(), enumerableCount, sizeof(PropertyMapEntry*), comparePropertyMapEntryIndices);
-    sortedEnumerables.resize(enumerableCount);
-
-    // Put the keys of the sorted entries into the list.
-    if (!propertyNames.size()) {
-        for (size_t i = 0; i < sortedEnumerables.size(); ++i)
-            propertyNames.addKnownUnique(sortedEnumerables[i]->key);
-    } else {
-        for (size_t i = 0; i < sortedEnumerables.size(); ++i)
-            propertyNames.add(sortedEnumerables[i]->key);
     }
 }
 
@@ -1194,58 +745,52 @@ void Structure::initializeThreading()
 
 #if DO_PROPERTYMAP_CONSTENCY_CHECK
 
-void Structure::checkConsistency()
+void PropertyTable::checkConsistency()
 {
-    if (!m_propertyTable)
-        return;
+    ASSERT(m_indexSize >= PropertyTable::MinimumTableSize);
+    ASSERT(m_indexMask);
+    ASSERT(m_indexSize == m_indexMask + 1);
+    ASSERT(!(m_indexSize & m_indexMask));
 
-    ASSERT(m_propertyTable->size >= newTableSize);
-    ASSERT(m_propertyTable->sizeMask);
-    ASSERT(m_propertyTable->size == m_propertyTable->sizeMask + 1);
-    ASSERT(!(m_propertyTable->size & m_propertyTable->sizeMask));
-
-    ASSERT(m_propertyTable->keyCount <= m_propertyTable->size / 2);
-    ASSERT(m_propertyTable->deletedSentinelCount <= m_propertyTable->size / 4);
-
-    ASSERT(m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount <= m_propertyTable->size / 2);
+    ASSERT(m_keyCount <= m_indexSize / 2);
+    ASSERT(m_keyCount + m_deletedCount <= m_indexSize / 2);
+    ASSERT(m_deletedCount <= m_indexSize / 4);
 
     unsigned indexCount = 0;
     unsigned deletedIndexCount = 0;
-    for (unsigned a = 0; a != m_propertyTable->size; ++a) {
-        unsigned entryIndex = m_propertyTable->entryIndices[a];
-        if (entryIndex == emptyEntryIndex)
+    for (unsigned a = 0; a != m_indexSize; ++a) {
+        unsigned entryIndex = m_index[a];
+        if (entryIndex == PropertyTable::EmptyEntryIndex)
             continue;
-        if (entryIndex == deletedSentinelIndex) {
+        if (entryIndex == deletedEntryIndex()) {
             ++deletedIndexCount;
             continue;
         }
-        ASSERT(entryIndex > deletedSentinelIndex);
-        ASSERT(entryIndex - 1 <= m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount);
+        ASSERT(entryIndex < deletedEntryIndex());
+        ASSERT(entryIndex - 1 <= usedCount());
         ++indexCount;
 
-        for (unsigned b = a + 1; b != m_propertyTable->size; ++b)
-            ASSERT(m_propertyTable->entryIndices[b] != entryIndex);
+        for (unsigned b = a + 1; b != m_indexSize; ++b)
+            ASSERT(m_index[b] != entryIndex);
     }
-    ASSERT(indexCount == m_propertyTable->keyCount);
-    ASSERT(deletedIndexCount == m_propertyTable->deletedSentinelCount);
+    ASSERT(indexCount == m_keyCount);
+    ASSERT(deletedIndexCount == m_deletedCount);
 
-    ASSERT(m_propertyTable->entries()[0].key == 0);
+    ASSERT(!table()[deletedEntryIndex() - 1].key);
 
     unsigned nonEmptyEntryCount = 0;
-    for (unsigned c = 1; c <= m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount; ++c) {
-        ASSERT(m_hasNonEnumerableProperties || !(m_propertyTable->entries()[c].attributes & DontEnum));
-        StringImpl* rep = m_propertyTable->entries()[c].key;
-        ASSERT(m_propertyTable->entries()[c].offset >= m_anonymousSlotCount);
-        if (!rep)
+    for (unsigned c = 0; c < usedCount(); ++c) {
+        StringImpl* rep = table()[c].key;
+        if (rep == PROPERTY_MAP_DELETED_ENTRY_KEY)
             continue;
         ++nonEmptyEntryCount;
         unsigned i = rep->existingHash();
         unsigned k = 0;
         unsigned entryIndex;
         while (1) {
-            entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
-            ASSERT(entryIndex != emptyEntryIndex);
-            if (rep == m_propertyTable->entries()[entryIndex - 1].key)
+            entryIndex = m_index[i & m_indexMask];
+            ASSERT(entryIndex != PropertyTable::EmptyEntryIndex);
+            if (rep == table()[entryIndex - 1].key)
                 break;
             if (k == 0)
                 k = 1 | doubleHash(rep->existingHash());
@@ -1254,7 +799,23 @@ void Structure::checkConsistency()
         ASSERT(entryIndex == c + 1);
     }
 
-    ASSERT(nonEmptyEntryCount == m_propertyTable->keyCount);
+    ASSERT(nonEmptyEntryCount == m_keyCount);
+}
+
+void Structure::checkConsistency()
+{
+    if (!m_propertyTable)
+        return;
+
+    if (!m_hasNonEnumerableProperties) {
+        PropertyTable::iterator end = m_propertyTable->end();
+        for (PropertyTable::iterator iter = m_propertyTable->begin(); iter != end; ++iter) {
+            ASSERT(!(iter->attributes & DontEnum));
+            ASSERT(iter->offset >= m_anonymousSlotCount);
+        }
+    }
+
+    m_propertyTable->checkConsistency();
 }
 
 #endif // DO_PROPERTYMAP_CONSTENCY_CHECK

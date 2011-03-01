@@ -40,11 +40,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#ifndef NDEBUG
-#define DUMP_PROPERTYMAP_STATS 0
-#else
-#define DUMP_PROPERTYMAP_STATS 0
-#endif
 
 namespace JSC {
 
@@ -105,11 +100,11 @@ namespace JSC {
 
         void growPropertyStorageCapacity();
         unsigned propertyStorageCapacity() const { return m_propertyStorageCapacity; }
-        unsigned propertyStorageSize() const { return m_anonymousSlotCount + (m_propertyTable ? m_propertyTable->keyCount + (m_propertyTable->deletedOffsets ? m_propertyTable->deletedOffsets->size() : 0) : static_cast<unsigned>(m_offset + 1)); }
+        unsigned propertyStorageSize() const { return m_anonymousSlotCount + (m_propertyTable ? m_propertyTable->propertyStorageSize() : static_cast<unsigned>(m_offset + 1)); }
         bool isUsingInlineStorage() const;
 
         size_t get(const Identifier& propertyName);
-        size_t get(const StringImpl* rep, unsigned& attributes, JSCell*& specificValue);
+        size_t get(StringImpl* propertyName, unsigned& attributes, JSCell*& specificValue);
         size_t get(const Identifier& propertyName, unsigned& attributes, JSCell*& specificValue)
         {
             ASSERT(!propertyName.isNull());
@@ -124,7 +119,7 @@ namespace JSC {
         bool hasAnonymousSlots() const { return !!m_anonymousSlotCount; }
         unsigned anonymousSlotCount() const { return m_anonymousSlotCount; }
         
-        bool isEmpty() const { return m_propertyTable ? !m_propertyTable->keyCount : m_offset == noOffset; }
+        bool isEmpty() const { return m_propertyTable ? m_propertyTable->isEmpty() : m_offset == noOffset; }
 
         void despecifyDictionaryFunction(const Identifier& propertyName);
         void disableSpecificFunctionTracking() { m_specificFunctionThrashCount = maxSpecificFunctionThrashCount; }
@@ -157,24 +152,18 @@ namespace JSC {
         size_t put(const Identifier& propertyName, unsigned attributes, JSCell* specificValue);
         size_t remove(const Identifier& propertyName);
 
-        void expandPropertyMapHashTable();
-        void rehashPropertyMapHashTable();
-        void rehashPropertyMapHashTable(unsigned newTableSize);
-        void createPropertyMapHashTable();
-        void createPropertyMapHashTable(unsigned newTableSize);
-        void insertIntoPropertyMapHashTable(const PropertyMapEntry&);
+        void createPropertyMap(unsigned keyCount = 0);
         void checkConsistency();
 
         bool despecifyFunction(const Identifier&);
         void despecifyAllFunctions();
 
-        PropertyMapHashTable* copyPropertyTable();
+        PropertyTable* copyPropertyTable();
         void materializePropertyMap();
         void materializePropertyMapIfNecessary()
         {
-            if (m_propertyTable || !m_previous)             
-                return;
-            materializePropertyMap();
+            if (!m_propertyTable && m_previous)
+                materializePropertyMap();
         }
 
         signed char transitionCount() const
@@ -185,8 +174,6 @@ namespace JSC {
 
         bool isValid(ExecState*, StructureChain* cachedPrototypeChain) const;
 
-        static const unsigned emptyEntryIndex = 0;
-    
         static const signed char s_maxTransitionLength = 64;
 
         static const signed char noOffset = -1;
@@ -208,7 +195,7 @@ namespace JSC {
 
         WeakGCPtr<JSPropertyNameIterator> m_enumerationCache;
 
-        PropertyMapHashTable* m_propertyTable;
+        OwnPtr<PropertyTable> m_propertyTable;
 
         uint32_t m_propertyStorageCapacity;
 
@@ -234,47 +221,13 @@ namespace JSC {
 
     inline size_t Structure::get(const Identifier& propertyName)
     {
-        ASSERT(!propertyName.isNull());
-
         materializePropertyMapIfNecessary();
         if (!m_propertyTable)
-            return WTF::notFound;
+            return notFound;
 
-        StringImpl* rep = propertyName.impl();
-
-        unsigned i = rep->existingHash();
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numProbes;
-#endif
-
-        unsigned entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
-        if (entryIndex == emptyEntryIndex)
-            return WTF::notFound;
-
-        if (rep == m_propertyTable->entries()[entryIndex - 1].key)
-            return m_propertyTable->entries()[entryIndex - 1].offset;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numCollisions;
-#endif
-
-        unsigned k = 1 | WTF::doubleHash(rep->existingHash());
-
-        while (1) {
-            i += k;
-
-#if DUMP_PROPERTYMAP_STATS
-            ++numRehashes;
-#endif
-
-            entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
-            if (entryIndex == emptyEntryIndex)
-                return WTF::notFound;
-
-            if (rep == m_propertyTable->entries()[entryIndex - 1].key)
-                return m_propertyTable->entries()[entryIndex - 1].offset;
-        }
+        PropertyMapEntry* entry = m_propertyTable->find(propertyName.impl()).first;
+        ASSERT(!entry || entry->offset >= m_anonymousSlotCount);
+        return entry ? entry->offset : notFound;
     }
 
 } // namespace JSC
