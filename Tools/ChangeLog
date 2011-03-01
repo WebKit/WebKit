@@ -1,3 +1,13 @@
+2011-03-01  Adam Roben  <aroben@apple.com>
+
+        Skip another multiprocessing test on Windows
+
+        It is sometimes failing (and may be leaving child Python processes around).
+        <http://webkit.org/b/55087> tracks the failure.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker_unittest.py:
+        (FuncitonTests.test_get__processes): Skip this test on Windows.
+
 2011-03-01  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

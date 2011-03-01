@@ -119,6 +119,10 @@ class FunctionTests(unittest.TestCase):
         self.assertTrue(make_broker(self, 'threads') is not None)
 
     def test_get__processes(self):
+        # This test sometimes fails on Windows. See <http://webkit.org/b/55087>.
+        if sys.platform in ('cygwin', 'win32'):
+            return
+
         if multiprocessing:
             self.assertTrue(make_broker(self, 'processes') is not None)
         else:
