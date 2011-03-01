@@ -1,3 +1,21 @@
+2011-02-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Past-the-end writes in VM exceptions (caused crashes in r79627)
+        https://bugs.webkit.org/show_bug.cgi?id=55448
+        
+        Some exceptions had the wrong structures, so they misoverestimated their
+        inline storage sizes.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData): Use the right structure.
+
+        * runtime/JSObject.h:
+        (JSC::JSNonFinalObject::JSNonFinalObject):
+        (JSC::JSFinalObject::JSFinalObject): ASSERT that our structure capacity
+        is correct to verify this doesn't happen again.
+
 2011-03-01  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

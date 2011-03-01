@@ -323,6 +323,7 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
             : JSObject(structure, m_inlineStorage)
         {
             ASSERT(!(OBJECT_OFFSETOF(JSNonFinalObject, m_inlineStorage) % sizeof(double)));
+            ASSERT(this->structure()->propertyStorageCapacity() == JSNonFinalObject_inlineStorageCapacity);
         }
 
     private:
@@ -350,6 +351,7 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
             : JSObject(structure, m_inlineStorage)
         {
             ASSERT(OBJECT_OFFSETOF(JSFinalObject, m_inlineStorage) % sizeof(double) == 0);
+            ASSERT(this->structure()->propertyStorageCapacity() == JSFinalObject_inlineStorageCapacity);
         }
 
         static const unsigned StructureFlags = JSObject::StructureFlags | IsJSFinalObject;
