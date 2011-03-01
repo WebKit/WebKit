@@ -1,3 +1,20 @@
+2011-03-01  Aparna Nandyal  <aparna.nand@wipro.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt]tst_QWebPage::backActionUpdate fails when there is not network connection
+        https://bugs.webkit.org/show_bug.cgi?id=55319
+
+        The test case required internet connection to be able to connect to
+        google.com. Added new html file which refers to local html file.
+
+        * tests/qwebpage/resources/content.html: Added.
+        * tests/qwebpage/resources/frame_c.html: Added.
+        * tests/qwebpage/resources/framedindex.html: Added.
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::backActionUpdate):
+        * tests/qwebpage/tst_qwebpage.qrc:
+
 2011-02-25 Steve Block <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
