@@ -1,3 +1,14 @@
+2011-03-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add a handler class for Win32 HANDLE
+        https://bugs.webkit.org/show_bug.cgi?id=55334
+
+        This class will call CloseHandle in the destructor for valid handles.
+
+        * platform/win/Win32Handle.h: Added.
+
 2011-03-01  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Chris Marrin.
