@@ -1,3 +1,14 @@
+2011-03-01  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        [Web Timing] Handle the case where no responseEnd time is available.
+        https://bugs.webkit.org/show_bug.cgi?id=55444
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::MainResourceLoader): Initialize to 0.
+        (WebCore::MainResourceLoader::didFinishLoading): Fall back to current time if no other time is available.
+
 2011-03-01  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed, adding missing change for r80034.

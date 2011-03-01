@@ -59,6 +59,7 @@ MainResourceLoader::MainResourceLoader(Frame* frame)
     , m_dataLoadTimer(this, &MainResourceLoader::handleDataLoadNow)
     , m_loadingMultipartContent(false)
     , m_waitingForContentPolicy(false)
+    , m_timeOfLastDataReceived(0.0)
 {
 }
 
@@ -460,7 +461,7 @@ void MainResourceLoader::didFinishLoading(double finishTime)
 #endif
 
     ASSERT(!documentLoader()->timing()->responseEnd);
-    documentLoader()->timing()->responseEnd = finishTime ? finishTime : m_timeOfLastDataReceived;
+    documentLoader()->timing()->responseEnd = finishTime ? finishTime : (m_timeOfLastDataReceived ? m_timeOfLastDataReceived : currentTime());
     frameLoader()->finishedLoading();
     ResourceLoader::didFinishLoading(finishTime);
     
