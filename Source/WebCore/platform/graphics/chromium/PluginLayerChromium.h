@@ -43,7 +43,7 @@ public:
     
     void setTextureId(unsigned textureId);
         
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlpha> Program;
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> Program;
 
 private:
     PluginLayerChromium(GraphicsLayerChromium* owner);

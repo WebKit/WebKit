@@ -1,3 +1,14 @@
+2011-02-28  Nebojsa Sabovic  <neb@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Pepper plugins render upside down
+        https://bugs.webkit.org/show_bug.cgi?id=55101
+
+        No layout tests for pepper plugins (yet).
+
+        * platform/graphics/chromium/PluginLayerChromium.h:
+
 2011-02-28  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.
