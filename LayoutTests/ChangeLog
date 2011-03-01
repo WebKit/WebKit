@@ -1,3 +1,16 @@
+2011-03-01  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed new baseline
+
+        [chromium] Add win baseline for fast/table/table-and-parts-outline.html
+        https://bugs.webkit.org/show_bug.cgi?id=55517
+
+        Test was added by r80040
+
+        * platform/chromium-win/fast/table/table-and-parts-outline-expected.checksum: Added.
+        * platform/chromium-win/fast/table/table-and-parts-outline-expected.png: Added.
+        * platform/chromium-win/fast/table/table-and-parts-outline-expected.txt: Added.
+
 2011-03-01  Helder Correia  <helder@sencha.com>
 
         Reviewed by Simon Fraser.
