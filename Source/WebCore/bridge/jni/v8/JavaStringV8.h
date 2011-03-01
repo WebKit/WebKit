@@ -47,7 +47,6 @@ public:
     }
 
     const char* utf8() const { return m_utf8String.data(); }
-    const jchar* uchars() const { return 0; } // Not implemented
     int length() const { return m_utf8String.length(); }
 
 private:

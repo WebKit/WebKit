@@ -62,7 +62,6 @@ public:
     }
 
     const char* utf8() const { return m_impl.utf8(); }
-    const jchar* uchars() const { return m_impl.uchars(); }
     int length() const { return m_impl.length(); }
 #if USE(JSC)
     operator UString() const { return m_impl.uString(); }
