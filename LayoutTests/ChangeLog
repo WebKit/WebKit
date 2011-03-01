@@ -14,6 +14,16 @@
 
         Reviewed by Darin Adler.
 
+        Number type input cannot be set to empty string if it has an initial value
+        https://bugs.webkit.org/show_bug.cgi?id=53744
+
+        * fast/forms/input-value-sanitization-expected.txt:
+        * fast/forms/script-tests/input-value-sanitization.js: Add some tests.
+
+2011-02-28  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
         Number type input should not handle mouse wheel events if it has no focus.
         https://bugs.webkit.org/show_bug.cgi?id=53638
 

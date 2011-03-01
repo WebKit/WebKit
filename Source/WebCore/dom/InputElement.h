@@ -116,6 +116,8 @@ public:
     const AtomicString& name() const;
     void setName(const AtomicString& value) { m_name = value; }
 
+    // The null String represents "use the default value," and the empty String
+    // represents the empty value.
     String value() const { return m_value; }
     void setValue(const String& value) { m_value = value; }
 

@@ -150,6 +150,7 @@ public:
     virtual bool canSetStringValue() const;
     virtual String visibleValue() const;
     virtual bool isAcceptableValue(const String&);
+    // Returing the null string means "use the default value."
     virtual String sanitizeValue(const String&);
     virtual bool hasUnacceptableValue();
 

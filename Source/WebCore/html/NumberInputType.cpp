@@ -271,12 +271,14 @@ bool NumberInputType::isAcceptableValue(const String& proposedValue)
 
 String NumberInputType::sanitizeValue(const String& proposedValue)
 {
+    if (proposedValue.isEmpty())
+        return proposedValue;
     // Try to parse the value as a localized number, then try to parse it as
     // the standard format.
     double parsedValue = parseLocalizedNumber(proposedValue);
     if (isfinite(parsedValue))
         return serializeForNumberType(parsedValue);
-    return parseToDoubleForNumberType(proposedValue, 0) ? proposedValue : String();
+    return parseToDoubleForNumberType(proposedValue, 0) ? proposedValue : emptyAtom.string();
 }
 
 bool NumberInputType::hasUnacceptableValue()
