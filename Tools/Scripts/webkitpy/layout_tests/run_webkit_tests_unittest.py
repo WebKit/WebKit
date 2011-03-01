@@ -352,6 +352,18 @@ class MainTest(unittest.TestCase):
         self.assertFalse(err.empty())
         self.assertEqual(user.opened_urls, ['/tmp/layout-test-results/results.html'])
 
+    def test_exit_after_n_failures_upload(self):
+        fs = port.unit_test_filesystem()
+        (res, buildbot_output, regular_output, user) = logging_run([
+                'failures/unexpected/text-image-checksum.html',
+                'passes/text.html',
+                '--exit-after-n-failures', '1',
+            ],
+            tests_included=True,
+            record_results=True,
+            filesystem=fs)
+        self.assertTrue('/tmp/layout-test-results/incremental_results.json' in fs.files)
+
     def test_exit_after_n_failures(self):
         # Unexpected failures should result in tests stopping.
         tests_run = get_tests_run([

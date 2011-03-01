@@ -703,7 +703,7 @@ class TestRunner:
         # FIXME: remove record_results. It's just used for testing. There's no need
         # for it to be a commandline argument.
         if (self._options.record_results and not self._options.dry_run and
-            not interrupted):
+            not keyboard_interrupted):
             # Write the same data to log files and upload generated JSON files
             # to appengine server.
             summarized_results = summarize_results(self._port,
