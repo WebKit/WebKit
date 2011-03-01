@@ -45,6 +45,10 @@ public:
     virtual bool isRubyText() const { return true; }
 
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
+
+private:
+    virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
+    virtual void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const;
 };
 
 } // namespace WebCore

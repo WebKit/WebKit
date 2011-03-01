@@ -1,3 +1,23 @@
+2011-03-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8902714> Expand ruby text when it is shorter than the ruby base
+        https://bugs.webkit.org/show_bug.cgi?id=55487
+
+        * platform/mac/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum:
+        * platform/mac/fast/blockflow/Kusa-Makura-background-canvas-expected.png:
+        * platform/mac/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
+        * platform/mac/fast/blockflow/japanese-ruby-horizontal-bt-expected.checksum:
+        * platform/mac/fast/blockflow/japanese-ruby-horizontal-bt-expected.png:
+        * platform/mac/fast/blockflow/japanese-ruby-horizontal-bt-expected.txt:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-lr-expected.checksum:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-lr-expected.png:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-lr-expected.txt:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-rl-expected.checksum:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-rl-expected.png:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-rl-expected.txt:
+
 2011-03-01  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed.

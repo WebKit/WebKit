@@ -832,7 +832,7 @@ rt {
 ruby > rt {
     display: block;
     font-size: 50%;
-    text-align: center;
+    text-align: -webkit-auto;
 }
 
 ruby > rp {

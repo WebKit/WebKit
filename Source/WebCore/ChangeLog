@@ -1,3 +1,25 @@
+2011-03-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8902714> Expand ruby text when it is shorter than the ruby base
+        https://bugs.webkit.org/show_bug.cgi?id=55487
+
+        * css/html.css:
+        (ruby > rt): Changed the default text-align value to -webkit-auto to signal
+        the default expansion behavior.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderRubyText::textAlignmentForLine): Made protected.
+        (WebCore::RenderBlock::adjustInlineDirectionLineBounds): Made protected.
+        * rendering/RenderRubyText.cpp:
+        (WebCore::RenderRubyText::textAlignmentForLine): Added. If text-align is
+        -webkit-auto, returns JUSTIFY to allow expansion.
+        (WebCore::RenderRubyText::adjustInlineDirectionLineBounds): Added. If
+        text-align is -webkit-auto, insets the line such that the inset on each side
+        is the half the inter-ideograph expansion, or one ruby character wide,
+        whichever is smaller.
+        * rendering/RenderRubyText.h:
+
 2011-03-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Timothy Hatcher.
