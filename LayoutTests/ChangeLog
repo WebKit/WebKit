@@ -1,3 +1,11 @@
+2011-02-28  James Robinson  <jamesr@chromium.org>
+
+        Chromium baseline updates.
+
+        * platform/chromium-linux/svg/text/font-size-below-point-five-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/svg/text/font-size-below-point-five-expected.txt:
+
 2011-02-28  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations change.

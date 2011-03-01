@@ -28,8 +28,8 @@ layer at (0,0) size 800x600
           chunk 1 text run 1 at (35.00,10.00) startOffset 0 endOffset 1 width 0.31: "5"
       RenderSVGInlineText {#text} at (25,0) size 5x19
         chunk 1 text run 1 at (35.31,10.00) startOffset 0 endOffset 1 width 4.06: " "
-      RenderSVGTSpan {tspan} at (0,0) size 0x0
-        RenderSVGInlineText {#text} at (-10,5) size 0x0
+      RenderSVGTSpan {tspan} at (0,0) size 1x1
+        RenderSVGInlineText {#text} at (29,15) size 1x1
           chunk 1 text run 1 at (39.38,10.00) startOffset 0 endOffset 1 width 0.31: "6"
       RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGText {text} at (63,42) size 124x10 contains 1 chunk(s)

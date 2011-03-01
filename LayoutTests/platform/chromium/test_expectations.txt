@@ -626,7 +626,6 @@ BUGCR26734 MAC SKIP : inspector = PASS
 BUGCR26734 MAC SKIP : http/tests/inspector = PASS
 BUGCR26734 MAC SKIP : http/tests/inspector-enabled = PASS
 
-BUGCR66087 WIN LINUX SLOW : inspector/styles/styles-disable-then-enable.html = PASS TEXT
 BUGCR66087 WIN LINUX : inspector/timeline/timeline-layout.html = CRASH TIMEOUT PASS TEXT
 BUGCR66087 WIN LINUX DEBUG SLOW : inspector/timeline/timeline-parse-html.html = PASS
 // WebKit roll 74708:74711
@@ -2834,7 +2833,6 @@ BUGCR67139 WIN MAC LINUX DEBUG : storage/close-during-stress-test.html = CRASH P
 BUGCR67209 WIN LINUX DEBUG : inspector/console/console-uncaught-exception-in-eval.html = CRASH TIMEOUT PASS
 BUGCR67209 WIN LINUX DEBUG : inspector/timeline/timeline-enum-stability.html = CRASH TIMEOUT PASS
 BUGCR67209 WIN LINUX DEBUG : inspector/console/console-clear.html = CRASH TIMEOUT PASS
-BUGCR67209 WIN LINUX DEBUG : inspector/styles/styles-disable-then-delete.html = CRASH TIMEOUT PASS
 
 // WebKit roll 74255:74308
 BUGCR67416 : fast/text/emphasis.html = FAIL
@@ -3329,8 +3327,6 @@ BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
 
 BUGCR72861 : fast/css/test-setting-canvas-color.html = TEXT
 
-BUG_LOISLO LINUX : svg/text/font-size-below-point-five.svg = TEXT
-
 // Release definitely renders wrong; debug differences from reference may just
 // need rebaseline.
 BUGWK54499 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
@@ -3365,7 +3361,7 @@ BUGV8_1168 : fast/js/mozilla/strict/this-for-function-expression-recursion.html 
 
 BUGWK54634 SKIP : media/video-controls-in-media-document.html = TIMEOUT
 
-BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH TIMEOUT
+BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = TEXT CRASH TIMEOUT
 
 BUGWK54794 GPU MAC : compositing/geometry/object-clip-rects-assertion.html = TIMEOUT
 
@@ -3385,5 +3381,7 @@ BUGWK54910 : media/video-replaces-poster.html = PASS IMAGE
 
 BUG_ANTONM : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
 
+BUGJAMESR : inspector/styles/styles-disable-then-delete.html = TIMEOUT PASS
+BUGCR74497 : platform/win/plugins/windowless-paint-rect-coordinates.html = CRASH
 
 BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT
