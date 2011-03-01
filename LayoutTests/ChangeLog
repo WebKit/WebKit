@@ -1,3 +1,14 @@
+2011-03-01  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed build fix.
+
+        [chromium] Skip test added w/o expectations
+        https://bugs.webkit.org/show_bug.cgi?id=55496
+
+        Added by r80012 without expectations
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-01  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations change. Remove failing expectations for
