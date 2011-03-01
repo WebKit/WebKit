@@ -1,5 +1,11 @@
 2011-02-28  Gavin Barraclough  <barraclough@apple.com>
 
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2011-02-28  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig & Darin Adler.
 
         Bug 55423 - Clean up property tables in Structure
