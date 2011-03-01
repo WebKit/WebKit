@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ *  Copyright (C) 2009 Acision BV. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -70,6 +71,13 @@
 #include <errno.h>
 #endif
 
+#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+#include <signal.h>
+#ifndef SA_RESTART
+#error MachineStackMarker requires SA_RESTART
+#endif
+#endif
+
 #endif
 
 namespace JSC {
@@ -92,6 +100,17 @@ UNUSED_PARAM(end);
 typedef mach_port_t PlatformThread;
 #elif OS(WINDOWS)
 typedef HANDLE PlatformThread;
+#elif USE(PTHREADS)
+typedef pthread_t PlatformThread;
+static const int SigThreadSuspendResume = SIGUSR2;
+
+static void pthreadSignalHandlerSuspendResume(int signo)
+{
+    sigset_t signalSet;
+    sigemptyset(&signalSet);
+    sigaddset(&signalSet, SigThreadSuspendResume);
+    sigsuspend(&signalSet);
+}
 #endif
 
 class MachineStackMarker::Thread {
@@ -101,6 +120,18 @@ public:
         , platformThread(platThread)
         , stackBase(base)
     {
+#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+        struct sigaction action;
+        action.sa_handler = pthreadSignalHandlerSuspendResume;
+        sigemptyset(&action.sa_mask);
+        action.sa_flags = SA_RESTART;
+        sigaction(SigThreadSuspendResume, &action, 0);
+
+        sigset_t mask;
+        sigemptyset(&mask);
+        sigaddset(&mask, SigThreadSuspendResume);
+        pthread_sigmask(SIG_UNBLOCK, &mask, 0);
+#endif
     }
 
     Thread* next;
@@ -145,6 +176,8 @@ static inline PlatformThread getCurrentPlatformThread()
     return pthread_mach_thread_np(pthread_self());
 #elif OS(WINDOWS)
     return pthread_getw32threadhandle_np(pthread_self());
+#elif USE(PTHREADS)
+    return pthread_self();
 #endif
 }
 
@@ -245,6 +278,8 @@ static inline void suspendThread(const PlatformThread& platformThread)
     thread_suspend(platformThread);
 #elif OS(WINDOWS)
     SuspendThread(platformThread);
+#elif USE(PTHREADS)
+    pthread_kill(platformThread, SigThreadSuspendResume);
 #else
 #error Need a way to suspend threads on this platform
 #endif
@@ -256,6 +291,8 @@ static inline void resumeThread(const PlatformThread& platformThread)
     thread_resume(platformThread);
 #elif OS(WINDOWS)
     ResumeThread(platformThread);
+#elif USE(PTHREADS)
+    pthread_kill(platformThread, SigThreadSuspendResume);
 #else
 #error Need a way to resume threads on this platform
 #endif
@@ -281,6 +318,8 @@ typedef arm_thread_state_t PlatformThreadRegisters;
 
 #elif OS(WINDOWS) && CPU(X86)
 typedef CONTEXT PlatformThreadRegisters;
+#elif USE(PTHREADS)
+typedef pthread_attr_t PlatformThreadRegisters;
 #else
 #error Need a thread register struct for this platform
 #endif
@@ -321,6 +360,16 @@ static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, P
     regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL | CONTEXT_SEGMENTS;
     GetThreadContext(platformThread, &regs);
     return sizeof(CONTEXT);
+#elif USE(PTHREADS)
+    pthread_attr_init(&regs);
+#if HAVE(PTHREAD_NP_H) || OS(NETBSD)
+    // e.g. on FreeBSD 5.4, neundorf@kde.org
+    pthread_attr_get_np(platformThread, &regs);
+#else
+    // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
+    pthread_getattr_np(platformThread, &regs);
+#endif
+    return 0;
 #else
 #error Need a way to get thread registers on this platform
 #endif
@@ -361,8 +410,22 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 // end OS(DARWIN)
 #elif CPU(X86) && OS(WINDOWS)
     return reinterpret_cast<void*>((uintptr_t) regs.Esp);
+#elif USE(PTHREADS)
+    void* stackBase = 0;
+    size_t stackSize = 0;
+    int rc = pthread_attr_getstack(&regs, &stackBase, &stackSize);
+    (void)rc; // FIXME: Deal with error code somehow? Seems fatal.
+    ASSERT(stackBase);
+    return static_cast<char*>(stackBase) + stackSize;
 #else
 #error Need a way to get the stack pointer for another thread on this platform
+#endif
+}
+
+static void freePlatformThreadRegisters(PlatformThreadRegisters& regs)
+{
+#if USE(PTHREADS)
+    pthread_attr_destroy(&regs);
 #endif
 }
 
@@ -382,6 +445,8 @@ void MachineStackMarker::markOtherThreadConservatively(ConservativeSet& conserva
     conservativeSet.add(stackPointer, stackBase);
 
     resumeThread(thread->platformThread);
+
+    freePlatformThreadRegisters(regs);
 }
 
 #endif

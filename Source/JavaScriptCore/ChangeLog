@@ -1,3 +1,26 @@
+2011-02-28  Martin Zoubek  <martin.zoubek@acision.com> and Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Multithread support for JSC on UNIX
+        https://bugs.webkit.org/show_bug.cgi?id=26838
+
+        Implement suspendThread() and resumeThread() for systems with
+        pthread.h using thread signal handler.
+
+        * runtime/MachineStackMarker.cpp:
+        (JSC::pthreadSignalHandlerSuspendResume):
+        (JSC::MachineStackMarker::Thread::Thread):
+        (JSC::getCurrentPlatformThread):
+        (JSC::suspendThread):
+        (JSC::resumeThread):
+        (JSC::getPlatformThreadRegisters):
+        (JSC::otherThreadStackPointer):
+        (JSC::freePlatformThreadRegisters):
+        (JSC::MachineStackMarker::markOtherThreadConservatively):
+        * wtf/Platform.h: Added Gtk port to use
+        ENABLE_JSC_MULTIPLE_THREADS.
+
 2011-02-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.
