@@ -132,7 +132,7 @@ void InjectedScript::getNodePrototypes(long nodeId, RefPtr<InspectorValue>* resu
 
 void InjectedScript::setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result)
 {
-    ScriptFunctionCall function(m_injectedScriptObject, "getNodeProperties");
+    ScriptFunctionCall function(m_injectedScriptObject, "setPropertyValue");
     function.appendArgument(objectId->toJSONString());
     function.appendArgument(propertyName);
     function.appendArgument(expression);

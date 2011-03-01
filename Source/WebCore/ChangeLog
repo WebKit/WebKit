@@ -1,3 +1,13 @@
+2011-03-01  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: InjectedScript.setPropertyValue doesn't work.
+        https://bugs.webkit.org/show_bug.cgi?id=55475
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::setPropertyValue):
+
 2011-03-01  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
