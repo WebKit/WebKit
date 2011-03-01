@@ -88,6 +88,8 @@ struct WebCursorInfo {
         TypeNotAllowed,
         TypeZoomIn,
         TypeZoomOut,
+        TypeGrab,
+        TypeGrabbing,
         TypeCustom
     };
 

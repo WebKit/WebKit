@@ -31,6 +31,8 @@
 #include "config.h"
 #include "Cursor.h"
 
+#include <wtf/Assertions.h>
+
 namespace WebCore {
 
 Cursor::Cursor(const Cursor& other)
@@ -306,12 +308,62 @@ const Cursor& zoomOutCursor()
 
 const Cursor& grabCursor()
 {
-    return pointerCursor();
+    static const Cursor c(PlatformCursor::TypeGrab);
+    return c;
 }
 
 const Cursor& grabbingCursor()
 {
-    return pointerCursor();
+    static const Cursor c(PlatformCursor::TypeGrabbing);
+    return c;
 }
 
 } // namespace WebCore
+
+#define COMPILE_ASSERT_MATCHING_ENUM(cursor_name, platform_cursor_name) \
+    COMPILE_ASSERT(int(WebCore::Cursor::cursor_name) == int(WebCore::PlatformCursor::platform_cursor_name), mismatching_enums)
+
+COMPILE_ASSERT_MATCHING_ENUM(Pointer, TypePointer);
+COMPILE_ASSERT_MATCHING_ENUM(Cross, TypeCross);
+COMPILE_ASSERT_MATCHING_ENUM(Hand, TypeHand);
+COMPILE_ASSERT_MATCHING_ENUM(IBeam, TypeIBeam);
+COMPILE_ASSERT_MATCHING_ENUM(Wait, TypeWait);
+COMPILE_ASSERT_MATCHING_ENUM(Help, TypeHelp);
+COMPILE_ASSERT_MATCHING_ENUM(EastResize, TypeEastResize);
+COMPILE_ASSERT_MATCHING_ENUM(NorthResize, TypeNorthResize);
+COMPILE_ASSERT_MATCHING_ENUM(NorthEastResize, TypeNorthEastResize);
+COMPILE_ASSERT_MATCHING_ENUM(NorthWestResize, TypeNorthWestResize);
+COMPILE_ASSERT_MATCHING_ENUM(SouthResize, TypeSouthResize);
+COMPILE_ASSERT_MATCHING_ENUM(SouthEastResize, TypeSouthEastResize);
+COMPILE_ASSERT_MATCHING_ENUM(SouthWestResize, TypeSouthWestResize);
+COMPILE_ASSERT_MATCHING_ENUM(WestResize, TypeWestResize);
+COMPILE_ASSERT_MATCHING_ENUM(NorthSouthResize, TypeNorthSouthResize);
+COMPILE_ASSERT_MATCHING_ENUM(EastWestResize, TypeEastWestResize);
+COMPILE_ASSERT_MATCHING_ENUM(NorthEastSouthWestResize, TypeNorthEastSouthWestResize);
+COMPILE_ASSERT_MATCHING_ENUM(NorthWestSouthEastResize, TypeNorthWestSouthEastResize);
+COMPILE_ASSERT_MATCHING_ENUM(ColumnResize, TypeColumnResize);
+COMPILE_ASSERT_MATCHING_ENUM(RowResize, TypeRowResize);
+COMPILE_ASSERT_MATCHING_ENUM(MiddlePanning, TypeMiddlePanning);
+COMPILE_ASSERT_MATCHING_ENUM(EastPanning, TypeEastPanning);
+COMPILE_ASSERT_MATCHING_ENUM(NorthPanning, TypeNorthPanning);
+COMPILE_ASSERT_MATCHING_ENUM(NorthEastPanning, TypeNorthEastPanning);
+COMPILE_ASSERT_MATCHING_ENUM(NorthWestPanning, TypeNorthWestPanning);
+COMPILE_ASSERT_MATCHING_ENUM(SouthPanning, TypeSouthPanning);
+COMPILE_ASSERT_MATCHING_ENUM(SouthEastPanning, TypeSouthEastPanning);
+COMPILE_ASSERT_MATCHING_ENUM(SouthWestPanning, TypeSouthWestPanning);
+COMPILE_ASSERT_MATCHING_ENUM(WestPanning, TypeWestPanning);
+COMPILE_ASSERT_MATCHING_ENUM(Move, TypeMove);
+COMPILE_ASSERT_MATCHING_ENUM(VerticalText, TypeVerticalText);
+COMPILE_ASSERT_MATCHING_ENUM(Cell, TypeCell);
+COMPILE_ASSERT_MATCHING_ENUM(ContextMenu, TypeContextMenu);
+COMPILE_ASSERT_MATCHING_ENUM(Alias, TypeAlias);
+COMPILE_ASSERT_MATCHING_ENUM(Progress, TypeProgress);
+COMPILE_ASSERT_MATCHING_ENUM(NoDrop, TypeNoDrop);
+COMPILE_ASSERT_MATCHING_ENUM(Copy, TypeCopy);
+COMPILE_ASSERT_MATCHING_ENUM(None, TypeNone);
+COMPILE_ASSERT_MATCHING_ENUM(NotAllowed, TypeNotAllowed);
+COMPILE_ASSERT_MATCHING_ENUM(ZoomIn, TypeZoomIn);
+COMPILE_ASSERT_MATCHING_ENUM(ZoomOut, TypeZoomOut);
+COMPILE_ASSERT_MATCHING_ENUM(Grab, TypeGrab);
+COMPILE_ASSERT_MATCHING_ENUM(Grabbing, TypeGrabbing);
+COMPILE_ASSERT_MATCHING_ENUM(Custom, TypeCustom);

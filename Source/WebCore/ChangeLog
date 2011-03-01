@@ -1,3 +1,15 @@
+2011-02-28  Avi Drissman  <avi@google.com>
+
+        Reviewed by James Robinson.
+
+        WebCursorInfo needs to match enums in platform/Cursor.h
+        https://bugs.webkit.org/show_bug.cgi?id=55094
+
+        * platform/chromium/CursorChromium.cpp:
+        (WebCore::grabCursor):
+        (WebCore::grabbingCursor):
+        * platform/chromium/PlatformCursor.h:
+
 2011-02-28  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

@@ -81,6 +81,8 @@ namespace WebCore {
             TypeNotAllowed,
             TypeZoomIn,
             TypeZoomOut,
+            TypeGrab,
+            TypeGrabbing,
             TypeCustom
         };
 
