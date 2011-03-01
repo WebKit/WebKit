@@ -1,5 +1,13 @@
 2011-02-28  Dan Bernstein  <mitz@apple.com>
 
+        Rubber-stamped by Anders Carlsson.
+
+        Do not copy config.h into WebKit2.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2011-02-28  Dan Bernstein  <mitz@apple.com>
+
         LLVM Compiler build fix.
 
         * Scripts/webkit2/messages.py:
