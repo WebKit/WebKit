@@ -249,7 +249,6 @@ private:
     DECLARE_DYNAMIC_CLASS(wxWebView)
 #endif
     float m_textMagnifier;
-    bool m_isEditable;
     bool m_isInitialized;
     bool m_beingDestroyed;
     bool m_mouseWheelZooms;

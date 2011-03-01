@@ -87,8 +87,6 @@ public:
     virtual bool isGrammarCheckingEnabled() = 0;
     virtual void toggleGrammarChecking() = 0;
     virtual int spellCheckerDocumentTag() = 0;
-    
-    virtual bool isEditable() = 0;
 
     virtual bool shouldBeginEditing(Range*) = 0;
     virtual bool shouldEndEditing(Range*) = 0;

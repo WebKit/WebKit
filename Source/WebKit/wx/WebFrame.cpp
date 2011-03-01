@@ -77,7 +77,6 @@
 
 wxWebFrame::wxWebFrame(wxWebView* container, wxWebFrame* parent, WebViewFrameData* data) :
     m_textMagnifier(1.0),
-    m_isEditable(false),
     m_isInitialized(false),
     m_beingDestroyed(false)
 {
@@ -403,10 +402,16 @@ void wxWebFrame::ResetTextSize()
 
 void wxWebFrame::MakeEditable(bool enable)
 {
-    m_isEditable = enable;
+    if (enable != IsEditable() && m_impl->frame && m_impl->frame->document())
+        m_impl->frame->document()->setDesignMode(enable ? WebCore::Document::on : WebCore::Document::off);
 }
 
-
+bool wxWebFrame::IsEditable()
+{
+    if (m_impl->frame && m_impl->frame->document())
+        return m_impl->frame->document()->inDesignMode();
+    return false;
+}
 
 bool wxWebFrame::CanCopy()
 {

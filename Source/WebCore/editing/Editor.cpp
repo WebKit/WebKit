@@ -955,11 +955,6 @@ void Editor::applyParagraphStyleToSelection(CSSStyleDeclaration* style, EditActi
         applyParagraphStyle(style, editingAction);
 }
 
-bool Editor::clientIsEditable() const
-{
-    return client() && client()->isEditable();
-}
-
 // CSS properties that only has a visual difference when applied to text.
 static const int textOnlyProperties[] = {
     CSSPropertyTextDecoration,

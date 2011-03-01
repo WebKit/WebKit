@@ -246,11 +246,6 @@ int WebEditorClient::spellCheckerDocumentTag()
     return [m_webView spellCheckerDocumentTag];
 }
 
-bool WebEditorClient::isEditable()
-{
-    return [m_webView isEditable];
-}
-
 bool WebEditorClient::shouldDeleteRange(Range* range)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView

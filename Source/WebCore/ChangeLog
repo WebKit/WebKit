@@ -1,3 +1,30 @@
+2011-02-28  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove the support of Frame::isContentEditable and its dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=54292
+
+        Frame::isContentEditable is currently based on two things: Editor::clientIsEditable and
+        Document::inDesignMode. In fact, it should only rely on Document::inDesignMode. As a result,
+        Editor::clientIsEditable and its client-side implementation can be removed.
+
+        * WebCore.exp.in:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isReadOnly):
+        * editing/Editor.cpp:
+        * editing/Editor.h:
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelectionFromNone):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isContentEditable):
+        (WebCore::HTMLElement::isContentRichlyEditable):
+        * page/DragController.cpp:
+        (WebCore::DragController::operationForLoad):
+        * page/EditorClient.h:
+        * page/Frame.cpp:
+        * page/Frame.h:
+
 2011-02-28  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

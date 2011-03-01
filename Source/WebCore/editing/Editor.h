@@ -172,8 +172,6 @@ public:
 
     bool selectionStartHasStyle(CSSStyleDeclaration*) const;
 
-    bool clientIsEditable() const;
-    
     void setShouldStyleWithCSS(bool flag) { m_shouldStyleWithCSS = flag; }
     bool shouldStyleWithCSS() const { return m_shouldStyleWithCSS; }
 

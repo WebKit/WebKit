@@ -51,7 +51,6 @@ public:
 
     virtual bool smartInsertDeleteEnabled();
     virtual bool isSelectTrailingWhitespaceEnabled();
-    virtual bool isEditable();
 
     virtual bool shouldDeleteRange(WebCore::Range*);    
     virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*);

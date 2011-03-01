@@ -58,8 +58,6 @@ class EditorClientHaiku : public EditorClient, public TextCheckerClient {
         virtual void toggleGrammarChecking();
         virtual int spellCheckerDocumentTag();
 
-        virtual bool isEditable();
-
         virtual bool shouldBeginEditing(Range*);
         virtual bool shouldEndEditing(Range*);
         virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction);

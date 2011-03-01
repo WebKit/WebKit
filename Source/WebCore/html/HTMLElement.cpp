@@ -659,7 +659,7 @@ bool HTMLElement::supportsFocus() const
 
 bool HTMLElement::isContentEditable() const 
 {
-    if (document()->frame() && document()->frame()->isContentEditable())
+    if (document()->inDesignMode())
         return true;
 
     // Ideally we'd call ASSERT!needsStyleRecalc()) here, but
@@ -678,7 +678,7 @@ bool HTMLElement::isContentEditable() const
 
 bool HTMLElement::isContentRichlyEditable() const
 {
-    if (document()->frame() && document()->frame()->isContentEditable())
+    if (document()->inDesignMode())
         return true;
 
     if (!renderer()) {

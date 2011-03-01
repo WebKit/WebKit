@@ -49,8 +49,6 @@ public:
     virtual void toggleGrammarChecking();
     virtual int spellCheckerDocumentTag();
 
-    virtual bool isEditable();
-
     virtual bool shouldBeginEditing(WebCore::Range*);
     virtual bool shouldEndEditing(WebCore::Range*);
     virtual bool shouldInsertNode(WebCore::Node*, WebCore::Range*, WebCore::EditorInsertAction);

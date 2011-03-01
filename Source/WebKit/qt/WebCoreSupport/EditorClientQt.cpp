@@ -238,11 +238,6 @@ bool EditorClientQt::selectWordBeforeMenuEvent()
     return false;
 }
 
-bool EditorClientQt::isEditable()
-{ 
-    return m_page->isContentEditable();
-}
-
 void EditorClientQt::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand> cmd)
 {
 #ifndef QT_NO_UNDOSTACK

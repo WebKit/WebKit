@@ -50,8 +50,6 @@ public:
     virtual void toggleContinuousSpellChecking();
     virtual int spellCheckerDocumentTag();
 
-    virtual bool isEditable();
-
     virtual bool shouldBeginEditing(WebCore::Range*);
     virtual bool shouldEndEditing(WebCore::Range*);
     virtual bool shouldInsertText(const WTF::String&, WebCore::Range*, WebCore::EditorInsertAction);

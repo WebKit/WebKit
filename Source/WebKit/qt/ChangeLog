@@ -1,3 +1,20 @@
+2011-02-28  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove the support of Frame::isContentEditable and its dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=54292
+
+        Remove the WebKit side implementation. Make WebKit support depend on Document::inDesignMode.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPage::setContentEditable):
+        (QWebPage::isContentEditable):
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        * WebCoreSupport/EditorClientQt.h:
+
 2011-02-28  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Oliver Hunt.

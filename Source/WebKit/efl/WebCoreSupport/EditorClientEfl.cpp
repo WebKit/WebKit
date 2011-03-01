@@ -145,12 +145,6 @@ void EditorClientEfl::didSetSelectionTypesForPasteboard()
     notImplemented();
 }
 
-bool EditorClientEfl::isEditable()
-{
-    notImplemented();
-    return false;
-}
-
 void EditorClientEfl::registerCommandForUndo(WTF::PassRefPtr<EditCommand>)
 {
     notImplemented();

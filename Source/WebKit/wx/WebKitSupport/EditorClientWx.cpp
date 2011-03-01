@@ -197,18 +197,6 @@ bool EditorClientWx::selectWordBeforeMenuEvent()
     return false;
 }
 
-bool EditorClientWx::isEditable()
-{
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
-
-    if (frame) {
-        wxWebView* webKitWin = dynamic_cast<wxWebView*>(frame->view()->hostWindow()->platformPageClient());
-        if (webKitWin) 
-            return webKitWin->IsEditable();
-    }
-    return false;
-}
-
 bool EditorClientWx::shouldBeginEditing(Range*)
 {
     notImplemented();

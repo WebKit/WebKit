@@ -353,7 +353,7 @@ DragOperation DragController::operationForLoad(DragData* dragData)
 {
     ASSERT(dragData);
     Document* doc = m_page->mainFrame()->documentAtPoint(dragData->clientPosition());
-    if (doc && (m_didInitiateDrag || doc->isPluginDocument() || (doc->frame() && doc->frame()->editor()->clientIsEditable())))
+    if (doc && (m_didInitiateDrag || doc->isPluginDocument() || doc->inDesignMode()))
         return DragOperationNone;
     return dragOperation(dragData);
 }

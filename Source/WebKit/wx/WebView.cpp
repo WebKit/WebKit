@@ -327,7 +327,6 @@ const wxChar* wxWebViewNameStr = wxT("webView");
 
 wxWebView::wxWebView() :
     m_textMagnifier(1.0),
-    m_isEditable(false),
     m_isInitialized(false),
     m_beingDestroyed(false),
     m_mouseWheelZooms(false),
@@ -338,7 +337,6 @@ wxWebView::wxWebView() :
 wxWebView::wxWebView(wxWindow* parent, int id, const wxPoint& position, 
                      const wxSize& size, long style, const wxString& name) :
     m_textMagnifier(1.0),
-    m_isEditable(false),
     m_isInitialized(false),
     m_beingDestroyed(false),
     m_mouseWheelZooms(false),

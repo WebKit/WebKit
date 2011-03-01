@@ -3545,7 +3545,6 @@ static void webkit_web_view_init(WebKitWebView* webView)
     gtk_widget_set_can_focus(GTK_WIDGET(webView), TRUE);
     priv->mainFrame = WEBKIT_WEB_FRAME(webkit_web_frame_new(webView));
     priv->lastPopupXPosition = priv->lastPopupYPosition = -1;
-    priv->editable = false;
 
     priv->backForwardList = adoptGRef(webkit_web_back_forward_list_new_with_web_view(webView));
 
@@ -4339,9 +4338,8 @@ gboolean webkit_web_view_get_editable(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    WebKitWebViewPrivate* priv = webView->priv;
-
-    return priv->editable;
+    Frame* frame = core(webView)->mainFrame();
+    return frame && frame->document()->inDesignMode();
 }
 
 /**
@@ -4366,17 +4364,15 @@ void webkit_web_view_set_editable(WebKitWebView* webView, gboolean flag)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    WebKitWebViewPrivate* priv = webView->priv;
-
     Frame* frame = core(webView)->mainFrame();
     g_return_if_fail(frame);
 
     // TODO: What happens when the frame is replaced?
     flag = flag != FALSE;
-    if (flag == priv->editable)
+    if (flag == webkit_web_view_get_editable(webView))
         return;
 
-    priv->editable = flag;
+    frame->document()->setDesignMode(flag ? WebCore::Document::on : WebCore::Document::off);
 
     if (flag) {
         frame->editor()->applyEditingStyleToBodyElement();

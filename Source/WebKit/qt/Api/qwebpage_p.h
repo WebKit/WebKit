@@ -200,7 +200,6 @@ public:
 #endif
     QWebSettings *settings;
     QPalette palette;
-    bool editable;
     bool useFixedLayout;
 
     QAction *actions[QWebPage::WebActionCount];

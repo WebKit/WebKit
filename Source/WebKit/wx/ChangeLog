@@ -1,3 +1,23 @@
+2011-02-28  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove the support of Frame::isContentEditable and its dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=54292
+
+        Remove the WebKit side implementation. Make WebKit support depend on Document::inDesignMode.
+
+        * WebFrame.cpp:
+        (wxWebFrame::wxWebFrame):
+        (wxWebFrame::MakeEditable):
+        (wxWebFrame::IsEditable):
+        * WebFrame.h:
+        * WebKitSupport/EditorClientWx.cpp:
+        * WebKitSupport/EditorClientWx.h:
+        * WebView.cpp:
+        (wxWebView::wxWebView):
+        * WebView.h:
+
 2011-02-24  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

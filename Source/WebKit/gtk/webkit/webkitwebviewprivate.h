@@ -65,7 +65,6 @@ struct _WebKitWebViewPrivate {
     gint lastPopupYPosition;
 
     HashSet<GtkWidget*> children;
-    bool editable;
     GRefPtr<GtkIMContext> imContext;
 
     gboolean transparent;

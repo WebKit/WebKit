@@ -301,7 +301,6 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     , currentContextMenu(0)
 #endif
     , settings(0)
-    , editable(false)
     , useFixedLayout(false)
     , pluginFactory(0)
     , inspectorFrontend(0)
@@ -3160,11 +3159,11 @@ bool QWebPage::focusNextPrevChild(bool next)
 */
 void QWebPage::setContentEditable(bool editable)
 {
-    if (d->editable != editable) {
-        d->editable = editable;
+    if (isContentEditable() != editable) {
         d->page->setTabKeyCyclesThroughElements(!editable);
         if (d->mainFrame) {
             WebCore::Frame* frame = d->mainFrame->d->frame;
+            frame->document()->setDesignMode(editable ? WebCore::Document::on : WebCore::Document::off);
             if (editable) {
                 frame->editor()->applyEditingStyleToBodyElement();
                 // FIXME: mac port calls this if there is no selectedDOMRange
@@ -3178,7 +3177,7 @@ void QWebPage::setContentEditable(bool editable)
 
 bool QWebPage::isContentEditable() const
 {
-    return d->editable;
+    return d->mainFrame && d->mainFrame->d->frame->document()->inDesignMode();
 }
 
 /*!

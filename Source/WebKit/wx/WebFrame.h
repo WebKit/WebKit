@@ -159,7 +159,7 @@ public:
     void DecreaseTextSize();
     void ResetTextSize();
     void MakeEditable(bool enable);
-    bool IsEditable() const { return m_isEditable; }
+    bool IsEditable() const;
     
     WebCore::Frame* GetFrame();
 
@@ -173,7 +173,6 @@ public:
     
 private:
     float m_textMagnifier;
-    bool m_isEditable;
     bool m_isInitialized;
     bool m_beingDestroyed;
     WebFramePrivate* m_impl;

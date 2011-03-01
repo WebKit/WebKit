@@ -187,11 +187,6 @@ int EditorClientImpl::spellCheckerDocumentTag()
     return 0;
 }
 
-bool EditorClientImpl::isEditable()
-{
-    return false;
-}
-
 bool EditorClientImpl::shouldBeginEditing(Range* range)
 {
     if (m_webView->client())

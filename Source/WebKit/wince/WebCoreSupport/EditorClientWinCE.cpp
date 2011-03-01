@@ -144,12 +144,6 @@ void EditorClientWinCE::didSetSelectionTypesForPasteboard()
     notImplemented();
 }
 
-bool EditorClientWinCE::isEditable()
-{
-    notImplemented();
-    return false;
-}
-
 void EditorClientWinCE::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand> command)
 {
     notImplemented();

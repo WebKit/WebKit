@@ -629,11 +629,6 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* )
 {
 }
 
-bool WebEditorClient::isEditable()
-{
-    return false;
-}
-
 void WebEditorClient::ignoreWordInSpellDocument(const String& word)
 {
     COMPtr<IWebEditingDelegate> ed;

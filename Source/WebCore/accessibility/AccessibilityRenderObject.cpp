@@ -663,12 +663,8 @@ bool AccessibilityRenderObject::isReadOnly() const
         HTMLElement* body = document->body();
         if (body && body->isContentEditable())
             return false;
-        
-        Frame* frame = document->frame();
-        if (!frame)
-            return true;
-        
-        return !frame->isContentEditable();
+
+        return !document->inDesignMode();
     }
 
     if (m_renderer->isBoxModelObject()) {

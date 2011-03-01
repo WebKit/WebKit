@@ -1,3 +1,15 @@
+2011-02-28  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove the support of Frame::isContentEditable and its dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=54292
+
+        Remove the WebKit side implementation.
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        * WebCoreSupport/EditorClientWinCE.h:
+
 2011-02-19  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Mihai Parparita.

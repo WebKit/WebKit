@@ -105,7 +105,6 @@ extern int pluginDatabaseClientCount;
     BOOL shouldCloseWithWindow;
     BOOL mainFrameDocumentReady;
     BOOL drawsBackground;
-    BOOL editable;
     BOOL tabKeyCyclesThroughElementsChanged;
     BOOL becomingFirstResponder;
     BOOL becomingFirstResponderFromOutside;

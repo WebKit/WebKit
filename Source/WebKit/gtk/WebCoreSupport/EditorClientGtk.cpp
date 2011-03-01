@@ -481,11 +481,6 @@ void EditorClient::didSetSelectionTypesForPasteboard()
     notImplemented();
 }
 
-bool EditorClient::isEditable()
-{
-    return webkit_web_view_get_editable(m_webView);
-}
-
 void EditorClient::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand> command)
 {
     if (undoStack.size() == maximumUndoStackDepth)

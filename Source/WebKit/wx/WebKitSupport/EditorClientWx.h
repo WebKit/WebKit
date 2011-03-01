@@ -57,7 +57,6 @@ public:
     virtual int spellCheckerDocumentTag();
 
     virtual bool selectWordBeforeMenuEvent();
-    virtual bool isEditable();
 
     virtual bool shouldBeginEditing(Range*);
     virtual bool shouldEndEditing(Range*);

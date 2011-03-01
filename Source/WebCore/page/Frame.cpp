@@ -551,13 +551,6 @@ void Frame::injectUserScriptsForWorld(DOMWrapperWorld* world, const UserScriptVe
     }
 }
 
-bool Frame::isContentEditable() const
-{
-    if (m_editor.clientIsEditable())
-        return true;
-    return m_doc->inDesignMode();
-}
-
 #ifndef NDEBUG
 static HashSet<Frame*>& keepAliveSet()
 {

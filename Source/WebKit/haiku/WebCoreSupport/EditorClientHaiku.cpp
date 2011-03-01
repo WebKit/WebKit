@@ -113,12 +113,6 @@ int EditorClientHaiku::spellCheckerDocumentTag()
     return 0;
 }
 
-bool EditorClientHaiku::isEditable()
-{
-    // FIXME: should be controllable
-    return false;
-}
-
 bool EditorClientHaiku::shouldBeginEditing(WebCore::Range*)
 {
     notImplemented();

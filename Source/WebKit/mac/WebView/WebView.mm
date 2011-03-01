@@ -4988,12 +4988,12 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (void)setEditable:(BOOL)flag
 {
-    if (_private->editable != flag) {
-        _private->editable = flag;
+    if ([self isEditable] != flag) {
         if (!_private->tabKeyCyclesThroughElementsChanged && _private->page)
             _private->page->setTabKeyCyclesThroughElements(!flag);
         Frame* mainFrame = [self _mainCoreFrame];
         if (mainFrame) {
+            mainFrame->document()->setDesignMode(flag ? WebCore::Document::on : WebCore::Document::off);
             if (flag) {
                 mainFrame->editor()->applyEditingStyleToBodyElement();
                 // If the WebView is made editable and the selection is empty, set it to something.
@@ -5006,7 +5006,10 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (BOOL)isEditable
 {
-    return _private->editable;
+    Frame* mainFrame = [self _mainCoreFrame];
+    if (mainFrame)
+        return mainFrame->document()->inDesignMode();
+    return false;
 }
 
 - (void)setTypingStyle:(DOMCSSStyleDeclaration *)style
