@@ -1,5 +1,17 @@
 2011-03-01  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        Tragically, we stopped running the python unit tests
+        on Chromium Win just as I was getting them to be green.
+        This patch turns them back on.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55521
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
+2011-03-01  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Adam Roben.
 
         Disable
