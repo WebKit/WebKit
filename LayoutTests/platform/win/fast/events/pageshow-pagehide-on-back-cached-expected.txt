@@ -1,8 +1,0 @@
-ALERT: window.onload
-ALERT: window.onpageshow, target = [object HTMLDocument], persisted = false
-ALERT: window.onpagehide, target = [object HTMLDocument], persisted = true
-ALERT: window.onload
-ALERT: window.onpageshow, target = [object HTMLDocument], persisted = false
-ALERT: window.onpagehide, target = [object HTMLDocument], persisted = true
-ALERT: window.onpageshow, target = [object HTMLDocument], persisted = true
-Test pageshow/pagehide event behavior when navigating back to an cached page.

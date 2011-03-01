@@ -1,5 +1,14 @@
 2011-03-01  Adam Roben  <aroben@apple.com>
 
+        Skip fast/events/pageshow-pagehide-on-back-cached.html on Windows
+
+        It is flaky. The failure is tracked by <http://webkit.org/b/55329>.
+
+        * platform/win/Skipped:
+        * platform/win/fast/events/pageshow-pagehide-on-back-cached-expected.txt: Removed.
+
+2011-03-01  Adam Roben  <aroben@apple.com>
+
         Check in Windows pixel results to match text results added in r79979
 
         Fixes <http://webkit.org/b/55451> [Win] select-listbox-multiple-no-focusring.html needs

@@ -416,6 +416,9 @@ inspector/extensions/extensions-events.html
 # Sometimes crashes http://webkit.org/b/55375
 http/tests/websocket/tests/reload-crash.html
 
+# Sometimes fails http://webkit.org/b/55329
+fast/events/pageshow-pagehide-on-back-cached.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
