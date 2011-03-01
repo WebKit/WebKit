@@ -152,15 +152,12 @@ static inline String targetReferenceFromResource(SVGElement* element)
     return SVGURIReference::getTarget(target);
 }
 
-static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document* document, SVGPaint* paint, AtomicString& id, bool& hasPendingResource)
+static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document* document, const SVGPaint::SVGPaintType& paintType, const String& paintUri, AtomicString& id, bool& hasPendingResource)
 {
-    ASSERT(paint);
-
-    SVGPaint::SVGPaintType paintType = paint->paintType();
     if (paintType != SVGPaint::SVG_PAINTTYPE_URI && paintType != SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR)
         return 0;
 
-    id = SVGURIReference::getTarget(paint->uri());
+    id = SVGURIReference::getTarget(paintUri);
     RenderSVGResourceContainer* container = getRenderSVGResourceContainerById(document, id);
     if (!container) {
         hasPendingResource = true;
@@ -259,7 +256,7 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
         if (style->hasFill()) {
             bool hasPendingResource = false;
             AtomicString id;
-            if (setFill(paintingResourceFromSVGPaint(document, style->fillPaint(), id, hasPendingResource)))
+            if (setFill(paintingResourceFromSVGPaint(document, style->fillPaintType(), style->fillPaintUri(), id, hasPendingResource)))
                 foundResources = true;
             else if (hasPendingResource)
                 registerPendingResource(extensions, id, element);
@@ -268,7 +265,7 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
         if (style->hasStroke()) {
             bool hasPendingResource = false;
             AtomicString id;
-            if (setStroke(paintingResourceFromSVGPaint(document, style->strokePaint(), id, hasPendingResource)))
+            if (setStroke(paintingResourceFromSVGPaint(document, style->strokePaintType(), style->strokePaintUri(), id, hasPendingResource)))
                 foundResources = true;
             else if (hasPendingResource)
                 registerPendingResource(extensions, id, element);

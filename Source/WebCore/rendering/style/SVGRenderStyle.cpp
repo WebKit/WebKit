@@ -169,7 +169,9 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
     // Some stroke properties, requires relayouts, as the cached stroke boundaries need to be recalculated.
     if (stroke != other->stroke) {
         if (stroke->width != other->stroke->width
-            || stroke->paint != other->stroke->paint
+            || stroke->paintType != other->stroke->paintType
+            || stroke->paintColor != other->stroke->paintColor
+            || stroke->paintUri != other->stroke->paintUri
             || stroke->miterLimit != other->stroke->miterLimit
             || stroke->dashArray != other->stroke->dashArray
             || stroke->dashOffset != other->stroke->dashOffset)
@@ -191,7 +193,7 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
     }
 
     // If fill changes, we just need to repaint. Fill boundaries are not influenced by this, only by the Path, that RenderSVGPath contains.
-    if (fill != other->fill)
+    if (fill->paintType != other->fill->paintType || fill->paintColor != other->fill->paintColor || fill->paintUri != other->fill->paintUri)
         return StyleDifferenceRepaint;
 
     // If gradient stops change, we just need to repaint. Style updates are already handled through RenderSVGGradientSTop.

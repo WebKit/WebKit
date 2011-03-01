@@ -22,9 +22,9 @@
 #define CSSComputedStyleDeclaration_h
 
 #include "CSSStyleDeclaration.h"
-#include "PlatformString.h"
 #include "RenderStyleConstants.h"
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -34,6 +34,7 @@ class CSSPrimitiveValue;
 class Node;
 class RenderStyle;
 class ShadowData;
+class SVGPaint;
 
 enum EUpdateLayout { DoNotUpdateLayout = false, UpdateLayout = true };
 
@@ -76,7 +77,10 @@ private:
 
     PassRefPtr<CSSValue> valueForShadow(const ShadowData*, int, RenderStyle*) const;
     PassRefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle*, const Color&) const;
-    
+#if ENABLE(SVG)
+    PassRefPtr<SVGPaint> adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint>, RenderStyle*) const;
+#endif
+
     RefPtr<Node> m_node;
     PseudoId m_pseudoElementSpecifier;
     bool m_allowVisitedStyle;

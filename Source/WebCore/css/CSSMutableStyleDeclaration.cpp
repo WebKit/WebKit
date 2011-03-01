@@ -22,6 +22,7 @@
 #include "CSSMutableStyleDeclaration.h"
 
 #include "CSSImageValue.h"
+#include "CSSMutableValue.h"
 #include "CSSParser.h"
 #include "CSSPropertyLonghand.h"
 #include "CSSPropertyNames.h"
@@ -91,6 +92,17 @@ CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const CS
     }
 }
 
+CSSMutableStyleDeclaration::~CSSMutableStyleDeclaration()
+{
+    const CSSMutableStyleDeclarationConstIterator end = this->end();
+    for (CSSMutableStyleDeclarationConstIterator it = begin(); it != end; ++it) {
+        CSSValue* value = it->value();
+        if (!value || !value->isMutableValue())
+            continue;
+        static_cast<CSSMutableValue*>(value)->setNode(0);
+    }
+}
+ 
 CSSMutableStyleDeclaration& CSSMutableStyleDeclaration::operator=(const CSSMutableStyleDeclaration& other)
 {
     ASSERT(!m_iteratorCount);

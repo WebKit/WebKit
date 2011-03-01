@@ -27,6 +27,7 @@
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "RenderStyle.h"
+#include "SVGPaint.h"
 
 namespace WebCore {
 
@@ -57,6 +58,14 @@ static PassRefPtr<CSSValue> strokeDashArrayToCSSValueList(const Vector<SVGLength
         list->append(SVGLength::toCSSPrimitiveValue(*it));
 
     return list.release();
+}
+
+PassRefPtr<SVGPaint> CSSComputedStyleDeclaration::adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint> newPaint, RenderStyle* style) const
+{
+    RefPtr<SVGPaint> paint = newPaint;
+    if (paint->paintType() == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR || paint->paintType() == SVGPaint::SVG_PAINTTYPE_URI_CURRENTCOLOR)
+        paint->setColor(style->color());
+    return paint.release();
 }
 
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getSVGPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const
@@ -127,13 +136,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getSVGPropertyCSSValue(int pro
                 return CSSPrimitiveValue::create(svgStyle->filterResource(), CSSPrimitiveValue::CSS_URI);
             return CSSPrimitiveValue::createIdentifier(CSSValueNone);
         case CSSPropertyFloodColor:
-            return CSSPrimitiveValue::createColor(svgStyle->floodColor().rgb());
+            return currentColorOrValidColor(style, svgStyle->floodColor());
         case CSSPropertyLightingColor:
-            return CSSPrimitiveValue::createColor(svgStyle->lightingColor().rgb());
+            return currentColorOrValidColor(style, svgStyle->lightingColor());
         case CSSPropertyStopColor:
-            return CSSPrimitiveValue::createColor(svgStyle->stopColor().rgb());
+            return currentColorOrValidColor(style, svgStyle->stopColor());
         case CSSPropertyFill:
-            return svgStyle->fillPaint();
+            return adjustSVGPaintForCurrentColor(SVGPaint::create(svgStyle->fillPaintType(), svgStyle->fillPaintUri(), svgStyle->fillPaintColor()), style);
         case CSSPropertyKerning:
             return SVGLength::toCSSPrimitiveValue(svgStyle->kerning());
         case CSSPropertyMarkerEnd:
@@ -149,7 +158,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getSVGPropertyCSSValue(int pro
                 return CSSPrimitiveValue::create(svgStyle->markerStartResource(), CSSPrimitiveValue::CSS_URI);
             return CSSPrimitiveValue::createIdentifier(CSSValueNone);
         case CSSPropertyStroke:
-            return svgStyle->strokePaint();
+            return adjustSVGPaintForCurrentColor(SVGPaint::create(svgStyle->strokePaintType(), svgStyle->strokePaintUri(), svgStyle->strokePaintColor()), style);
         case CSSPropertyStrokeDasharray:
             return strokeDashArrayToCSSValueList(svgStyle->strokeDashArray());
         case CSSPropertyStrokeDashoffset:

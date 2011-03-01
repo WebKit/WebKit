@@ -87,9 +87,6 @@ public:
 
     bool matchesTargetURI(const String& referenceId);
 
-    static SVGPaint* defaultFill();
-    static SVGPaint* defaultStroke();
-
 private:
     friend class CSSComputedStyleDeclaration;
 

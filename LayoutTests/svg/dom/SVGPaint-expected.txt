@@ -165,7 +165,7 @@ PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS rectElement.style.fill is "url(#foo) currentColor"
-FAIL document.defaultView.getComputedStyle(rectElement).fill should be url(#foo) #00ff00. Was url(#foo) currentColor.
+PASS document.defaultView.getComputedStyle(rectElement).fill is "url(#foo) #00ff00"
 
 Test using setPaint() and SVG_PAINTTYPE_URI_RGBCOLOR
 PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI_RGBCOLOR, 'url(#test)', 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
@@ -213,7 +213,7 @@ PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS rectElement.style.fill is "currentColor"
-FAIL document.defaultView.getComputedStyle(rectElement).fill should be #00ff00. Was currentColor.
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#00ff00"
 
 Test using setPaint() and SVG_PAINTTYPE_RGBCOLOR
 PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR, 'url(#test)', 'rgb(0,77,0)', 'icc-color(myRGB, 0, 1, 2)') is undefined.

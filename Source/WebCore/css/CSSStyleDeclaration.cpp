@@ -22,10 +22,13 @@
 #include "CSSStyleDeclaration.h"
 
 #include "CSSMutableStyleDeclaration.h"
+#include "CSSMutableValue.h"
 #include "CSSParser.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSRule.h"
+#include "Node.h"
+#include "SVGElement.h"
 #include <wtf/ASCIICType.h>
 
 using namespace WTF;
@@ -42,7 +45,28 @@ PassRefPtr<CSSValue> CSSStyleDeclaration::getPropertyCSSValue(const String& prop
     int propID = cssPropertyID(propertyName);
     if (!propID)
         return 0;
-    return getPropertyCSSValue(propID);
+
+    // Short-cut, not involving any change to the refcount.
+    if (!isMutableStyleDeclaration())
+        return getPropertyCSSValue(propID);
+
+    // Slow path.
+    RefPtr<CSSValue> value = getPropertyCSSValue(propID);
+    if (!value || !value->isMutableValue())
+        return value.release();
+
+    Node* node = static_cast<CSSMutableStyleDeclaration*>(this)->node();
+    if (!node || !node->isStyledElement())
+        return value.release();
+
+    Node* associatedNode = static_cast<CSSMutableValue*>(value.get())->node();
+    if (associatedNode) {
+        ASSERT(associatedNode == node);
+        return value.release();
+    }
+
+    static_cast<CSSMutableValue*>(value.get())->setNode(node);
+    return value.release();
 }
 
 String CSSStyleDeclaration::getPropertyValue(const String &propertyName)

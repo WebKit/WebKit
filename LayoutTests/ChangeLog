@@ -1,3 +1,32 @@
+2011-03-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Antti Koivisto.
+
+        SVG 1.1 2nd Edition color-prop-05-t.svg exposes bug in 'currentColor' handling
+        https://bugs.webkit.org/show_bug.cgi?id=54800
+
+        Add new layout test from the SVG 1.1 2nd Edition test suite, covering currentColor handling.
+        Add tests ensuring that mutating a previously shared SVGPaint object makes it unique, so that
+        mutations take affect, but don't affect other renderers which shared the SVGPaint object before.
+
+        * platform/mac/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.checksum: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.txt: Added.
+        * platform/mac/svg/custom/SVGPaint-mutate-attribute-expected.checksum: Added.
+        * platform/mac/svg/custom/SVGPaint-mutate-attribute-expected.png: Added.
+        * platform/mac/svg/custom/SVGPaint-mutate-attribute-expected.txt: Added.
+        * platform/mac/svg/custom/SVGPaint-mutate-inline-style-expected.checksum: Added.
+        * platform/mac/svg/custom/SVGPaint-mutate-inline-style-expected.png: Added.
+        * platform/mac/svg/custom/SVGPaint-mutate-inline-style-expected.txt: Added.
+        * svg/W3C-SVG-1.1-SE/color-prop-05-t.svg: Added.
+        * svg/animations/animate-color-fill-currentColor-expected.txt: Added.
+        * svg/animations/animate-color-fill-currentColor.html: Added.
+        * svg/animations/script-tests/animate-color-fill-currentColor.js: Added.
+        * svg/custom/SVGPaint-mutate-attribute.svg: Added.
+        * svg/custom/SVGPaint-mutate-inline-style.svg: Added.
+        * svg/dom/SVGColor-expected.txt: SVGColor mutations now reflected in style/computed style.
+        * svg/dom/SVGPaint-expected.txt: Same for SVGPaint.
+
 2011-03-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: fixing flaky snow XMLViewer test on snow leopard.
@@ -407,11 +436,11 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=55121
 
-	[chromium] Recently, French Academy changed the sorting
-	rules for French in such a way that accents are not weighted
-	from the end of a word any more. ICU 4.6 / CLDR 1.9
-	incorporated the change. Canadian French hasn't adopted the
-	change, yet.
+        [chromium] Recently, French Academy changed the sorting
+        rules for French in such a way that accents are not weighted
+        from the end of a word any more. ICU 4.6 / CLDR 1.9
+        incorporated the change. Canadian French hasn't adopted the
+        change, yet.
 
         Chrome is the only port that uses new rules with ICU 4.6. So, 
         for now, I'm changing the expectation file for Chrome only.

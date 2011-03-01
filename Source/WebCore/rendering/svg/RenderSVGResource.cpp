@@ -51,33 +51,36 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
             return 0;
     }
 
-    SVGPaint* paint = mode == ApplyToFillMode ? svgStyle->fillPaint() : svgStyle->strokePaint();
-    ASSERT(paint);
-
-    SVGPaint::SVGPaintType paintType = paint->paintType();
+    bool applyToFill = mode == ApplyToFillMode;
+    SVGPaint::SVGPaintType paintType = applyToFill ? svgStyle->fillPaintType() : svgStyle->strokePaintType();
     if (paintType == SVGPaint::SVG_PAINTTYPE_NONE)
         return 0;
 
     Color color;
-    if (paintType == SVGPaint::SVG_PAINTTYPE_RGBCOLOR
-        || paintType == SVGPaint::SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR
-        || paintType == SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR
-        || paintType == SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR)
-        color = paint->color();
-    else if (paintType == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR || paintType == SVGPaint::SVG_PAINTTYPE_URI_CURRENTCOLOR)
-        color = style->visitedDependentColor(CSSPropertyColor);
+    switch (paintType) {
+    case SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR:
+    case SVGPaint::SVG_PAINTTYPE_RGBCOLOR:
+    case SVGPaint::SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR:
+    case SVGPaint::SVG_PAINTTYPE_URI_CURRENTCOLOR:
+    case SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR:
+    case SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR:
+        color = applyToFill ? svgStyle->fillPaintColor() : svgStyle->strokePaintColor();
+    default:
+        break;
+    }
 
     if (style->insideLink() == InsideVisitedLink) {
         RenderStyle* visitedStyle = style->getCachedPseudoStyle(VISITED_LINK);
         ASSERT(visitedStyle);
 
-        if (SVGPaint* visitedPaint = mode == ApplyToFillMode ? visitedStyle->svgStyle()->fillPaint() : visitedStyle->svgStyle()->strokePaint()) {
-            // For SVG_PAINTTYPE_CURRENTCOLOR, 'color' already contains the 'visitedColor'.
-            if (visitedPaint->paintType() < SVGPaint::SVG_PAINTTYPE_URI_NONE && visitedPaint->paintType() != SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR) {
-                const Color& visitedColor = visitedPaint->color();
-                if (visitedColor.isValid())
-                    color = Color(visitedColor.red(), visitedColor.green(), visitedColor.blue(), color.alpha());
-            }
+        const SVGRenderStyle* svgVisitedStyle = visitedStyle->svgStyle();
+        SVGPaint::SVGPaintType visitedPaintType = applyToFill ? svgVisitedStyle->fillPaintType() : svgVisitedStyle->strokePaintType();
+
+        // For SVG_PAINTTYPE_CURRENTCOLOR, 'color' already contains the 'visitedColor'.
+        if (visitedPaintType < SVGPaint::SVG_PAINTTYPE_URI_NONE && visitedPaintType != SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR) {
+            const Color& visitedColor = applyToFill ? svgVisitedStyle->fillPaintColor() : svgVisitedStyle->strokePaintColor();
+            if (visitedColor.isValid())
+                color = Color(visitedColor.red(), visitedColor.green(), visitedColor.blue(), color.alpha());
         }
     }
 

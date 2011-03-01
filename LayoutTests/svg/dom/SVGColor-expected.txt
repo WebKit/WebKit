@@ -43,7 +43,7 @@ PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 77
 PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 77
 PASS stopElement.style.stopColor is "#4d004d"
-FAIL document.defaultView.getComputedStyle(stopElement).stopColor should be rgb(77, 0, 77). Was rgb(255, 0, 0).
+PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(77, 0, 77)"
 
 Test using setColor() and SVG_COLORTYPE_CURRENTCOLOR
 PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_CURRENTCOLOR, 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
@@ -54,7 +54,7 @@ PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS stopElement.style.stopColor is "currentColor"
-FAIL document.defaultView.getComputedStyle(stopElement).stopColor should be rgb(0, 128, 0). Was rgb(255, 0, 0).
+PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(0, 128, 0)"
 
 Test using setColor() and SVG_COLORTYPE_RGBCOLOR
 PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, 'rgb(0,77,0)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
@@ -64,7 +64,7 @@ PASS (rgbColor = stopColor.rgbColor).toString() is "[object RGBColor]"
 PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 77
 PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-FAIL document.defaultView.getComputedStyle(stopElement).stopColor should be rgb(0, 77, 0). Was rgb(255, 0, 0).
+PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(0, 77, 0)"
 PASS successfullyParsed is true
 
 TEST COMPLETE

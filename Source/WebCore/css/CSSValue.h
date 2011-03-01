@@ -50,6 +50,8 @@ public:
     virtual String cssText() const = 0;
     void setCssText(const String&, ExceptionCode&) { } // FIXME: Not implemented.
 
+    virtual bool isMutableValue() const { return false; }
+
     virtual bool isBorderImageValue() const { return false; }
     virtual bool isCursorImageValue() const { return false; }
     virtual bool isFontFamilyValue() const { return false; }

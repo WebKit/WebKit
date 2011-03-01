@@ -50,7 +50,7 @@ void SVGColor::setRGBColor(const String& rgbColor, ExceptionCode& ec)
 
     m_color = color;
     m_colorType = SVG_COLORTYPE_RGBCOLOR;
-    // FIXME: A follow up patch will call valueChanged() here.
+    setNeedsStyleRecalc();
 }
 
 Color SVGColor::colorFromRGBColorString(const String& colorString)
@@ -75,7 +75,7 @@ void SVGColor::setRGBColorICCColor(const String& rgbColor, const String& iccColo
         return;
 
     m_colorType = SVG_COLORTYPE_RGBCOLOR_ICCCOLOR;
-    // FIXME: A follow up patch will call valueChanged() here.
+    setNeedsStyleRecalc();
 }
 
 void SVGColor::setColor(unsigned short colorType, const String& rgbColor, const String& iccColor, ExceptionCode& ec)
@@ -115,7 +115,7 @@ void SVGColor::setColor(unsigned short colorType, const String& rgbColor, const 
         return;
     }
 
-    // FIXME: A follow up patch will call valueChanged() here.
+    setNeedsStyleRecalc();
     m_colorType = type;
     if (!requiresRGBColor) {
         ASSERT(!requiresICCColor);

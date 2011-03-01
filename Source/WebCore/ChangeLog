@@ -1,3 +1,110 @@
+2011-03-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Antti Koivisto.
+
+        SVG 1.1 2nd Edition color-prop-05-t.svg exposes bug in 'currentColor' handling
+        https://bugs.webkit.org/show_bug.cgi?id=54800
+
+        Wrong handling of currentColor on inherit
+        https://bugs.webkit.org/show_bug.cgi?id=38102
+
+        Stop storing RefPtr<SVGPaint> objects in the SVGRenderStyle for fill/stroke. These are the last
+        two objects that held references to CSSValues, they're all gone now, aligning better with RenderStyle.
+        It's also dangerous, as a SVGPaint object can be shared by multiple SVGRenderStyles (MappedAttribute will
+        once create a CSSStyleDeclaration for fill="red" and reuse it where possible), and it was easy to
+        accidently mutate the object, affecting multiple styles. Instead store a Color, an URI and a paint
+        type in SVGRenderStyle, enough to create a SVGPaint object, if needed (eg for computed styles).
+
+        <g color="green"><rect fill="currentColor"/> already worked fine in trunk, but
+        <g fill="currentColor" color="green"><rect color="red"/> procuded a red rectangle.
+
+        In order to fix to bug we have to resolve all currentColor values for SVGPaint objects, in SVGCSSStyleSelector,
+        as it's already done for SVGColor objects (stop-color, flood-color, etc.) instead of in RenderSVGResource::fill/strokePaintingResource,
+        when trying to use the paint server. The correct "color" value that should be used from the RenderStyle, is directly
+        available in CSSStyleSelector: in applyProperty m_style->color() gives the desired value. In CSSStyleSelector it's handled
+        exactly this way for non-SVG currentColor properties. Also fix computed styles, which did not resolve currentColor for SVGPaint/SVGColor.
+
+        A previous patch implemented the SVGPaint/SVGColor API. SVG demands these CSSValues to be mutable. Introduce
+        CSSMutableValue, which extends CSSValue by a Node pointer, and let SVGPaint/SVGColor inherit from it.
+        Mutating a SVGPaint/SVGColor object now takes immediate effect, which is reflected in the inline style / computed style.
+        (Note that getPresentationAttribute() already takes care of removing the CSSValue from the mapped attribute cache, so that it's no longer shared.)
+
+        Add several new tests covering the patch.
+
+        Tests: svg/W3C-SVG-1.1-SE/color-prop-05-t.svg
+               svg/animations/animate-color-fill-currentColor.html
+               svg/custom/SVGPaint-mutate-attribute.svg
+               svg/custom/SVGPaint-mutate-inline-style.svg
+
+        * GNUMakefile.am: Add CSSMutableValue.h
+        * WebCore.gypi: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * css/CSSMutableStyleDeclaration.cpp: Reset the Node pointer in all CSSMutableValues belonging to this style declaration.
+        (WebCore::CSSMutableStyleDeclaration::~CSSMutableStyleDeclaration):
+        * css/CSSMutableStyleDeclaration.h: Add destructor.
+        * css/CSSMutableValue.h: Added.
+        (WebCore::CSSMutableValue::CSSMutableValue):
+        (WebCore::CSSMutableValue::~CSSMutableValue):
+        (WebCore::CSSMutableValue::isMutableValue):
+        (WebCore::CSSMutableValue::node):
+        (WebCore::CSSMutableValue::setNode):
+        (WebCore::CSSMutableValue::setNeedsStyleRecalc):
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::getPropertyCSSValue): Set the Node object of a CSSMutableValue to the Node, this style declaration belongs to.
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isMutableValue): Return false, default.
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::adjustSVGPaintForCurrentColor): Add helper function, resolving currentColor values for SVGPaint objects.
+        (WebCore::CSSComputedStyleDeclaration::getSVGPropertyCSSValue): Use currentColorOrValidColor/adjustSVGPaintForCurrentColor to resolve SVGColor/SVGPaint values.
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty): Store fill/stroke uri, color, paint type seperated in SVGRenderStyle, don't store the full SVGPaint object anymore.
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::diff): Adapt to SVGPaint changes.
+        * rendering/style/SVGRenderStyle.h: Ditto.
+        (WebCore::SVGRenderStyle::initialFillOpacity):
+        (WebCore::SVGRenderStyle::initialFillPaintType):
+        (WebCore::SVGRenderStyle::initialFillPaintColor):
+        (WebCore::SVGRenderStyle::initialFillPaintUri):
+        (WebCore::SVGRenderStyle::initialStrokeOpacity):
+        (WebCore::SVGRenderStyle::initialStrokePaintType):
+        (WebCore::SVGRenderStyle::initialStrokePaintColor):
+        (WebCore::SVGRenderStyle::initialStrokePaintUri):
+        (WebCore::SVGRenderStyle::initialStrokeMiterLimit):
+        (WebCore::SVGRenderStyle::initialStopOpacity):
+        (WebCore::SVGRenderStyle::initialFloodOpacity):
+        (WebCore::SVGRenderStyle::setFillPaint):
+        (WebCore::SVGRenderStyle::setStrokePaint):
+        (WebCore::SVGRenderStyle::fillPaintType):
+        (WebCore::SVGRenderStyle::fillPaintColor):
+        (WebCore::SVGRenderStyle::fillPaintUri):
+        (WebCore::SVGRenderStyle::strokePaintType):
+        (WebCore::SVGRenderStyle::strokePaintColor):
+        (WebCore::SVGRenderStyle::strokePaintUri):
+        (WebCore::SVGRenderStyle::hasStroke):
+        (WebCore::SVGRenderStyle::hasFill):
+        * rendering/style/SVGRenderStyleDefs.cpp: Ditto.
+        (WebCore::StyleFillData::StyleFillData):
+        (WebCore::StyleFillData::operator==):
+        (WebCore::StyleStrokeData::StyleStrokeData):
+        (WebCore::StyleStrokeData::operator==):
+        * rendering/style/SVGRenderStyleDefs.h: Ditto.
+        * rendering/svg/RenderSVGResource.cpp: Ditto.
+        (WebCore::requestPaintingResource):
+        * rendering/svg/RenderSVGResourceClipper.cpp: Ditto.
+        (WebCore::RenderSVGResourceClipper::drawContentIntoMaskImage):
+        * rendering/svg/SVGResources.cpp: Ditto.
+        (WebCore::paintingResourceFromSVGPaint):
+        (WebCore::SVGResources::buildCachedResources):
+        * svg/SVGColor.cpp: Call setNeedsStyleRecalc() after mutating the object.
+        (WebCore::SVGColor::setRGBColor):
+        (WebCore::SVGColor::setRGBColorICCColor):
+        (WebCore::SVGColor::setColor):
+        * svg/SVGColor.h:
+        * svg/SVGPaint.cpp: Ditto.
+        (WebCore::SVGPaint::setUri):
+        (WebCore::SVGPaint::setPaint):
+        * svg/SVGPaint.h:
+
 2011-03-01  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

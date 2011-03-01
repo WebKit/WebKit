@@ -29,9 +29,8 @@
 #define SVGRenderStyleDefs_h
 
 #if ENABLE(SVG)
-#include "Color.h"
-#include "PlatformString.h"
 #include "SVGLength.h"
+#include "SVGPaint.h"
 #include "ShadowData.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -98,7 +97,7 @@ namespace WebCore {
     public:
         static PassRefPtr<StyleFillData> create() { return adoptRef(new StyleFillData); }
         PassRefPtr<StyleFillData> copy() const { return adoptRef(new StyleFillData(*this)); }
-        
+
         bool operator==(const StyleFillData&) const;
         bool operator!=(const StyleFillData& other) const
         {
@@ -106,7 +105,9 @@ namespace WebCore {
         }
 
         float opacity;
-        RefPtr<SVGPaint> paint;
+        SVGPaint::SVGPaintType paintType;
+        Color paintColor;
+        String paintUri;
 
     private:
         StyleFillData();
@@ -131,7 +132,9 @@ namespace WebCore {
         SVGLength dashOffset;
         Vector<SVGLength> dashArray;
 
-        RefPtr<SVGPaint> paint;
+        SVGPaint::SVGPaintType paintType;
+        Color paintColor;
+        String paintUri;
 
     private:        
         StyleStrokeData();
@@ -262,5 +265,4 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
-
 #endif // SVGRenderStyleDefs_h

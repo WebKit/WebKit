@@ -254,8 +254,8 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
         RefPtr<RenderStyle> oldRenderStyle = renderer->style();
         RefPtr<RenderStyle> newRenderStyle = RenderStyle::clone(oldRenderStyle.get());
         SVGRenderStyle* svgStyle = newRenderStyle.get()->accessSVGStyle();
-        svgStyle->setFillPaint(SVGPaint::defaultFill());
-        svgStyle->setStrokePaint(SVGPaint::defaultStroke());
+        svgStyle->setFillPaint(SVGRenderStyle::initialFillPaintType(), SVGRenderStyle::initialFillPaintColor(), SVGRenderStyle::initialFillPaintUri());
+        svgStyle->setStrokePaint(SVGRenderStyle::initialStrokePaintType(), SVGRenderStyle::initialStrokePaintColor(), SVGRenderStyle::initialStrokePaintUri());
         svgStyle->setFillRule(newClipRule);
         newRenderStyle.get()->setOpacity(1.0f);
         svgStyle->setFillOpacity(1.0f);
