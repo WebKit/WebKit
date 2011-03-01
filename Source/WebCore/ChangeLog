@@ -1,3 +1,12 @@
+2011-03-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix Font::spaceWidth() to be a float instead of an int.
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::spaceWidth):
+
 2011-02-28  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

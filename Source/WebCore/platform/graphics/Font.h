@@ -128,7 +128,7 @@ public:
 
     // Metrics that we query the FontFallbackList for.
     const FontMetrics& fontMetrics() const { return primaryFont()->fontMetrics(); }
-    int spaceWidth() const { return primaryFont()->spaceWidth() + m_letterSpacing; }
+    float spaceWidth() const { return primaryFont()->spaceWidth() + m_letterSpacing; }
     float tabWidth(const SimpleFontData& fontData) const { return 8 * fontData.spaceWidth() + letterSpacing(); }
     int emphasisMarkAscent(const AtomicString&) const;
     int emphasisMarkDescent(const AtomicString&) const;
