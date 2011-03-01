@@ -2,6 +2,42 @@
 
         Unreviewed Chromium expectations change.
         
+        Rebaseline editing/ tests for Snow Leopard (mac/ baselines can't be used
+        due to spell checking differences).
+
+        * platform/chromium-mac-leopard/editing/deleting/delete-ws-fixup-002-expected.checksum: Added.
+        * platform/chromium-mac-leopard/editing/deleting/delete-ws-fixup-002-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/inserting/typing-around-br-001-expected.checksum: Added.
+        * platform/chromium-mac-leopard/editing/inserting/typing-around-br-001-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/pasteboard/paste-blockquote-3-expected.checksum: Added.
+        * platform/chromium-mac-leopard/editing/pasteboard/paste-blockquote-3-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/4932260-3-expected.checksum: Added.
+        * platform/chromium-mac-leopard/editing/selection/4932260-3-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/5234383-1-expected.checksum: Added.
+        * platform/chromium-mac-leopard/editing/selection/5234383-1-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/5234383-2-expected.checksum: Added.
+        * platform/chromium-mac-leopard/editing/selection/5234383-2-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/drag-in-iframe-expected.checksum: Added.
+        * platform/chromium-mac-leopard/editing/selection/drag-in-iframe-expected.png: Added.
+        * platform/chromium-mac/editing/deleting/delete-ws-fixup-002-expected.checksum: Added.
+        * platform/chromium-mac/editing/deleting/delete-ws-fixup-002-expected.png: Added.
+        * platform/chromium-mac/editing/inserting/typing-around-br-001-expected.checksum: Added.
+        * platform/chromium-mac/editing/inserting/typing-around-br-001-expected.png: Added.
+        * platform/chromium-mac/editing/pasteboard/paste-blockquote-3-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/paste-blockquote-3-expected.png: Added.
+        * platform/chromium-mac/editing/selection/4932260-3-expected.checksum: Added.
+        * platform/chromium-mac/editing/selection/4932260-3-expected.png: Added.
+        * platform/chromium-mac/editing/selection/5234383-1-expected.checksum: Added.
+        * platform/chromium-mac/editing/selection/5234383-1-expected.png: Added.
+        * platform/chromium-mac/editing/selection/5234383-2-expected.checksum: Added.
+        * platform/chromium-mac/editing/selection/5234383-2-expected.png: Added.
+        * platform/chromium-mac/editing/selection/drag-in-iframe-expected.checksum: Added.
+        * platform/chromium-mac/editing/selection/drag-in-iframe-expected.png: Added.
+
+2011-02-28  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations change.
+        
         Update Snow Leopard expectations.
 
         * platform/chromium/test_expectations.txt:
