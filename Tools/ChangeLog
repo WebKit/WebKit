@@ -1,3 +1,15 @@
+2011-03-01  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Disable
+        webkitpy.common.system.executive_unittest.ExecutiveTest.\
+           test_kill_all fails on win until it can be properly triaged.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54790
+
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+
     2011-03-01  Helder Correia  <helder@sencha.com>
 
             Unreviewed. Add myself to committers.py.
