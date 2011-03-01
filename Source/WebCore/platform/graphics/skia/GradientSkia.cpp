@@ -110,23 +110,13 @@ static void fillStops(const Gradient::ColorStop* stopData,
     }
 }
 
-static inline bool compareStops(const Gradient::ColorStop& a, const Gradient::ColorStop& b)
-{
-    return a.stop < b.stop;
-}
-
 SkShader* Gradient::platformGradient()
 {
     if (m_gradient)
         return m_gradient;
 
-    // FIXME: This and compareStops() are also in Gradient.cpp and
-    // CSSGradientValue.cpp; probably should refactor in WebKit.
-    if (!m_stopsSorted) {
-        if (m_stops.size())
-            std::stable_sort(m_stops.begin(), m_stops.end(), compareStops);
-        m_stopsSorted = true;
-    }
+    sortStopsIfNecessary();
+    ASSERT(m_stopsSorted);
 
     size_t countUsed = totalStopsNeeded(m_stops.data(), m_stops.size());
     ASSERT(countUsed >= 2);

@@ -1,3 +1,17 @@
+2011-02-28  Noel Gordon  <noel.gordon@gmail.com>
+        Reviewed by James Robinson.
+
+        [chromium] GradientSkia: use the common Gradient stop sorting methods.
+        https://bugs.webkit.org/show_bug.cgi?id=54625
+
+        Remove a FIXME: call the Gradient.cpp stop storting routines, no need
+        to duplicate that code herein.
+
+        No change in behavior, so no new tests.
+
+        * platform/graphics/skia/GradientSkia.cpp:
+        (WebCore::Gradient::platformGradient):
+
 2011-02-28  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
