@@ -1,3 +1,13 @@
+2011-03-01  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Clean up the project files and move common options to WebKit.pri.
+
+        * JavaScriptCore.pri: Move options also needed in WebCore into WebKit.pri.
+        * JavaScriptCore.pro: Deduplicate options.
+        * jsc.pro: Ditto.
+
 2011-03-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

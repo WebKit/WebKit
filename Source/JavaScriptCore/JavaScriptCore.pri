@@ -18,8 +18,6 @@ CONFIG(standalone_package) {
     isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = generated
 }
 
-CONFIG(standalone_package): DEFINES *= NDEBUG
-
 JAVASCRIPTCORE_INCLUDEPATH = \
     $$PWD \
     $$PWD/.. \

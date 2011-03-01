@@ -15,13 +15,6 @@ CONFIG += staticlib
 TARGET = $$WEBKIT2_TARGET
 DESTDIR = $$WEBKIT2_DESTDIR
 
-!CONFIG(release, debug|release) {
-    OBJECTS_DIR = obj/debug
-} else { # Release
-    OBJECTS_DIR = obj/release
-    DEFINES += NDEBUG
-}
-
 # Build both debug and release configurations
 mac: CONFIG += build_all
 

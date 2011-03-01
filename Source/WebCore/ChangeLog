@@ -1,3 +1,14 @@
+2011-03-01  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Clean up the project files and move common options to WebKit.pri.
+
+        No new tests needed.
+
+        * WebCore.pri: Move common options to WebKit.pri.
+        * WebCore.pro: Ditto.
+
 2011-03-01  Steve Block  <steveblock@google.com>
 
         Reviewed by Pavel Feldman.

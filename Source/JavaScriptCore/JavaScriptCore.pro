@@ -16,20 +16,6 @@ CONFIG += depend_includepath
 
 contains(QT_CONFIG, embedded):CONFIG += embedded
 
-CONFIG(QTDIR_build) {
-    # Make sure we compile both debug and release on mac when inside Qt.
-    # This line was extracted from qbase.pri instead of including the whole file
-    win32|mac:!macx-xcode:CONFIG += debug_and_release
-} else {
-    !CONFIG(release, debug|release) {
-        OBJECTS_DIR = obj/debug
-    } else { # Release
-        OBJECTS_DIR = obj/release
-    }
-    # Make sure that build_all follows the build_all config in WebCore
-    mac:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework):!build_pass:CONFIG += build_all
-}
-
 # WebCore adds these config only when in a standalone build.
 # qbase.pri takes care of that when in a QTDIR_build
 # Here we add the config for both cases since we don't include qbase.pri
@@ -40,14 +26,6 @@ CONFIG(QTDIR_build) {
     # Remove the following 2 lines if you want debug information in JavaScriptCore
     CONFIG -= separate_debug_info
     CONFIG += no_debug_info
-}
-
-# Pick up 3rdparty libraries from INCLUDE/LIB just like with MSVC
-win32-g++* {
-    TMPPATH            = $$quote($$(INCLUDE))
-    QMAKE_INCDIR_POST += $$split(TMPPATH,";")
-    TMPPATH            = $$quote($$(LIB))
-    QMAKE_LIBDIR_POST += $$split(TMPPATH,";")
 }
 
 *-g++*:QMAKE_CXXFLAGS_RELEASE -= -O2

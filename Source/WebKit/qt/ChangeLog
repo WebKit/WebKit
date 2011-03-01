@@ -1,3 +1,11 @@
+2011-03-01  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Clean up the project files and move common options to WebKit.pri.
+
+        * QtWebKit.pro: Move common options to WebKit.pri.
+
 2011-03-01  Aparna Nandyal  <aparna.nand@wipro.com>
 
         Reviewed by Simon Hausmann.

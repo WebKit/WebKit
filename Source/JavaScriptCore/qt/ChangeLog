@@ -1,3 +1,11 @@
+2011-03-01  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Clean up the project files and move common options to WebKit.pri.
+
+        * api/QtScript.pro: Deduplicate options.
+
 2011-02-24  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Laszlo Gombos.

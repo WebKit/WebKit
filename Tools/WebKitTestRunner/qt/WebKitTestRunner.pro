@@ -8,12 +8,6 @@ GENERATED_SOURCES_DIR = ../generated
 
 include(../../../Source/WebKit.pri)
 
-!CONFIG(release, debug|release) {
-    OBJECTS_DIR = obj/debug
-} else { # Release
-    OBJECTS_DIR = obj/release
-}
-
 DEFINES += USE_SYSTEM_MALLOC=1
 
 INCLUDEPATH += \

@@ -3,8 +3,8 @@ CONFIG += building-libs
 CONFIG += depend_includepath
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ..
-include($$PWD/WebCore.pri)
 include($$PWD/../WebKit.pri)
+include($$PWD/WebCore.pri)
 include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 
 TEMPLATE = lib

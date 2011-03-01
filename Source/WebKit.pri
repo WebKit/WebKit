@@ -3,8 +3,24 @@
 # Detect that we are building as a standalone package by the presence of
 # either the generated files directory or as part of the Qt package through
 # QTDIR_build
-CONFIG(QTDIR_build): CONFIG += standalone_package
-else:exists($$PWD/WebCore/generated): CONFIG += standalone_package
+CONFIG(QTDIR_build) {
+    CONFIG += standalone_package
+    # Make sure we compile both debug and release on mac when inside Qt.
+    # This line was extracted from qbase.pri instead of including the whole file
+    win32|mac:!macx-xcode:CONFIG += debug_and_release
+} else {
+    !CONFIG(release, debug|release) {
+        OBJECTS_DIR = obj/debug
+    } else { # Release
+        OBJECTS_DIR = obj/release
+        DEFINES *= NDEBUG
+    }
+    exists($$PWD/WebCore/generated):CONFIG += standalone_package
+    # Make sure that build_all follows the build_all config in WebCore
+    mac:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework):!build_pass:CONFIG += build_all
+}
+
+CONFIG(standalone_package): DEFINES *= NDEBUG
 
 CONFIG += depend_includepath
 DEPENDPATH += $$OUT_PWD
@@ -62,6 +78,14 @@ webkit2 {
     INCLUDEPATH += $$PWD/WebKit2/
 }
 
+# Pick up 3rdparty libraries from INCLUDE/LIB just like with MSVC
+win32-g++* {
+    TMPPATH            = $$quote($$(INCLUDE))
+    QMAKE_INCDIR_POST += $$split(TMPPATH,";")
+    TMPPATH            = $$quote($$(LIB))
+    QMAKE_LIBDIR_POST += $$split(TMPPATH,";")
+}
+
 CONFIG -= warn_on
 *-g++*:QMAKE_CXXFLAGS += -Wall -Wextra -Wreturn-type -fno-strict-aliasing -Wcast-align -Wchar-subscripts -Wformat-security -Wreturn-type -Wno-unused-parameter -Wno-sign-compare -Wno-switch -Wno-switch-enum -Wundef -Wmissing-noreturn -Winit-self
 
@@ -114,8 +138,8 @@ symbian|maemo5|maemo6 {
 contains(QT_CONFIG, modular):!contains(QT_CONFIG, uitools)|disable_uitools: DEFINES *= QT_NO_UITOOLS
 
 !contains(QT_CONFIG, modular) {
-    $$QT.phonon.includes = $QMAKE_INCDIR_QT/phonon
-    $$QT.phonon.libs = $$QMAKE_LIBDIR_QT
+    QT.phonon.includes = $$QMAKE_INCDIR_QT/phonon
+    QT.phonon.libs = $$QMAKE_LIBDIR_QT
 }
 
 # Disable a few warnings on Windows. The warnings are also

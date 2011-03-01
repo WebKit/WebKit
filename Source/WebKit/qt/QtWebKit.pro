@@ -23,12 +23,6 @@ CONFIG(standalone_package) {
     isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = ../../JavaScriptCore/generated
     isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../../WebCore/generated
     isEmpty(WC_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = ../../WebKit2/generated
-
-    !CONFIG(release, debug|release) {
-        OBJECTS_DIR = obj/debug
-    } else { # Release
-        OBJECTS_DIR = obj/release
-    }
 }
 
 include($$PWD/Api/headers.pri)

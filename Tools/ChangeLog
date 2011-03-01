@@ -1,3 +1,12 @@
+2011-03-01  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Clean up the project files and move common options to WebKit.pri.
+
+        * WebKitTestRunner/qt/WebKitTestRunner.pro: Deduplicate.
+
+
 2011-03-01  Adam Roben  <aroben@apple.com>
 
         Skip another multiprocessing test on Windows

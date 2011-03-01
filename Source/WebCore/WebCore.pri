@@ -26,12 +26,6 @@ CONFIG(standalone_package) {
 } else {
     isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../WebCore/generated
     isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = ../JavaScriptCore/generated
-
-    !CONFIG(release, debug|release) {
-        OBJECTS_DIR = obj/debug
-    } else { # Release
-        OBJECTS_DIR = obj/release
-    }
 }
 
 V8_DIR = "$$[QT_INSTALL_PREFIX]/src/3rdparty/v8"
@@ -315,14 +309,6 @@ win32-* {
     LIBS += -lgdi32
     LIBS += -lole32
     LIBS += -luser32
-
-    # Pick up 3rdparty libraries from INCLUDE/LIB just like with MSVC
-    win32-g++* {
-        TMPPATH            = $$quote($$(INCLUDE))
-        QMAKE_INCDIR_POST += $$split(TMPPATH,";")
-        TMPPATH            = $$quote($$(LIB))
-        QMAKE_LIBDIR_POST += $$split(TMPPATH,";")
-    }
 }
 
 # Remove whole program optimizations due to miscompilations
