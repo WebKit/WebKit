@@ -608,12 +608,42 @@ void GraphicsContext::strokePath(const Path& path)
     CGContextAddPath(context, path.platformPath());
 
     if (m_state.strokeGradient) {
-        CGContextSaveGState(context);
-        CGContextReplacePathWithStrokedPath(context);
-        CGContextClip(context);
-        CGContextConcatCTM(context, m_state.strokeGradient->gradientSpaceTransform());
-        m_state.strokeGradient->paint(this);
-        CGContextRestoreGState(context);
+        if (hasShadow()) {
+            FloatRect rect = path.boundingRect();
+            float lineWidth = strokeThickness();
+            float doubleLineWidth = lineWidth * 2;
+            float layerWidth = ceilf(rect.width() + doubleLineWidth);
+            float layerHeight = ceilf(rect.height() + doubleLineWidth);
+
+            CGLayerRef layer = CGLayerCreateWithContext(context, CGSizeMake(layerWidth, layerHeight), 0);
+            CGContextRef layerContext = CGLayerGetContext(layer);
+            CGContextSetLineWidth(layerContext, lineWidth);
+
+            // Compensate for the line width, otherwise the layer's top-left corner would be
+            // aligned with the rect's top-left corner. This would result in leaving pixels out of
+            // the layer on the left and top sides.
+            float translationX = lineWidth - rect.x();
+            float translationY = lineWidth - rect.y();
+            CGContextTranslateCTM(layerContext, translationX, translationY);
+
+            CGContextAddPath(layerContext, path.platformPath());
+            CGContextReplacePathWithStrokedPath(layerContext);
+            CGContextClip(layerContext);
+            CGContextConcatCTM(layerContext, m_state.strokeGradient->gradientSpaceTransform());
+            m_state.strokeGradient->paint(layerContext);
+
+            float destinationX = roundf(rect.x() - lineWidth);
+            float destinationY = roundf(rect.y() - lineWidth);
+            CGContextDrawLayerAtPoint(context, CGPointMake(destinationX, destinationY), layer);
+            CGLayerRelease(layer);
+        } else {
+            CGContextSaveGState(context);
+            CGContextReplacePathWithStrokedPath(context);
+            CGContextClip(context);
+            CGContextConcatCTM(context, m_state.strokeGradient->gradientSpaceTransform());
+            m_state.strokeGradient->paint(this);
+            CGContextRestoreGState(context);
+        }
         return;
     }
 

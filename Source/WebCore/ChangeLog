@@ -1,3 +1,21 @@
+2011-03-01  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Simon Fraser.
+
+        No shadow when stroking a path with a gradient
+        https://bugs.webkit.org/show_bug.cgi?id=55436
+
+        This happens in CG and is related to bug 52509, this time to be fixed
+        in GraphicsContext::strokePath(). The gradient needs to be drawn
+        clipped to the stroke on a CGLayer first, then the layer drawn on the
+        GraphicsContext.
+
+        Tests: fast/canvas/canvas-strokePath-gradient-shadow.html
+               svg/css/path-gradient-stroke-shadow.svg
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::strokePath):
+
 2011-03-01  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
