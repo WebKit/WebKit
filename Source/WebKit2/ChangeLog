@@ -1,3 +1,25 @@
+2011-02-28  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt][WK2] Add a way to test the WebKit 2 APIs
+        https://bugs.webkit.org/show_bug.cgi?id=55408
+
+        Add an initial test for the WebKit 2 APIs of Qt.
+
+        * UIProcess/API/qt/tests/html/basic_page.html: Added.
+        * UIProcess/API/qt/tests/qgraphicswkview/qgraphicswkview.pro: Added.
+        * UIProcess/API/qt/tests/qgraphicswkview/tst_qgraphicswkview.cpp: Added.
+        (View::View):
+        (View::resizeEvent):
+        (tst_QGraphicsWKView::init):
+        (tst_QGraphicsWKView::cleanup):
+        (tst_QGraphicsWKView::loadEmptyPage):
+        * UIProcess/API/qt/tests/tests.pri: Added.
+        * UIProcess/API/qt/tests/tests.pro: Added.
+        * UIProcess/API/qt/tests/util.h: Added.
+        (waitForSignal):
+
 2011-02-28  Anders Carlsson  <andersca@apple.com>
 
         Fix clang build.

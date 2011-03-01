@@ -13,7 +13,10 @@ webkit2:exists($$PWD/WebKit2/WebKit2.pro): SUBDIRS += WebKit2/WebKit2.pro
 SUBDIRS += WebCore
 SUBDIRS += WebKit/qt/QtWebKit.pro
 
-webkit2:exists($$PWD/WebKit2/WebProcess.pro): SUBDIRS += WebKit2/WebProcess.pro
+webkit2 {
+    exists($$PWD/WebKit2/WebProcess.pro): SUBDIRS += WebKit2/WebProcess.pro
+    exists($$PWD/WebKit2/UIProcess/API/qt/tests): SUBDIRS += WebKit2/UIProcess/API/qt/tests
+}
 
 contains(QT_CONFIG, declarative) {
     exists($$PWD/WebKit/qt/declarative): SUBDIRS += WebKit/qt/declarative
