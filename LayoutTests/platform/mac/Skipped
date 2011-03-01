@@ -44,10 +44,6 @@ fast/repaint/body-background-image.html
 # <rdar://problem/6710625> Test media/video-error-abort.html doesn't work
 http/tests/media/video-error-abort.html
 
-# MediaPlayerPrivateQTKit doesn't return to NETWORK_IDLE and hence doesn't fire a suspend event
-# https://bugs.webkit.org/show_bug.cgi?id=37036
-http/tests/media/video-play-suspend.html
-
 # This port doesn't support Notifications.
 fast/notifications
 http/tests/notifications

@@ -749,10 +749,6 @@ fast/dom/Geolocation
 fast/notifications
 http/tests/notifications
 
-# MediaPlayerPrivateQuickTimeWin doesn't return to NETWORK_IDLE and hence doesn't fire a suspend event
-# https://bugs.webkit.org/show_bug.cgi?id=37035
-http/tests/media/video-play-suspend.html
-
 # These media tests regressed on the bots.  Skipping to make the bots green again.
 # https://bugs.webkit.org/show_bug.cgi?id=28281
 http/tests/media/video-play-stall.html

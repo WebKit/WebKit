@@ -777,10 +777,6 @@ fast/loader/stateobjects/replacestate-in-iframe.html
 # for a real fix.
 editing/selection/extend-after-mouse-selection.html
 
-# MediaPlayerPrivateGStreamer doesn't return to NETWORK_IDLE and hence doesn't fire a suspend event
-# https://bugs.webkit.org/show_bug.cgi?id=37034
-http/tests/media/video-play-suspend.html
-
 # Need to add functionality to DumpRenderTree to handle scrollbar police changes
 fast/overflow/scrollbar-restored-and-then-locked.html
 

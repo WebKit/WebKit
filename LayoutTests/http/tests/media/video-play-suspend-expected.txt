@@ -1,8 +1,0 @@
-Test that timeupdate events are sent when media loading suspends itself.
-
-RUN(video.play())
-EVENT(loadstart)
-EVENT(suspend)
-EVENT(timeupdate)
-END OF TEST
-
