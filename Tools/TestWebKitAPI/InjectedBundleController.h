@@ -46,6 +46,8 @@ public:
     typedef InjectedBundleTest* (*CreateInjectedBundleTestFunction)(const std::string&);
     void registerCreateInjectedBundleTestFunction(const std::string&, CreateInjectedBundleTestFunction);
 
+    WKBundleRef bundle() const { return m_bundle; }
+    
 private:
     InjectedBundleController();
     ~InjectedBundleController();

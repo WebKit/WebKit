@@ -101,6 +101,14 @@ void PlatformWebView::simulateAltKeyPress()
     ::SendMessageW(window, WM_SYSKEYUP, VK_MENU, (1 << repeatCountBitOffset) | (38 << scanCodeBitOffset) | (1 << previousStateBitOffset) | (1 << transitionStateBitOffset));
 }
 
+void PlatformWebView::simulateRightClick(unsigned x, unsigned y)
+{
+    HWND window = WKViewGetWindow(m_view);
+
+    ::SendMessageW(window, WM_RBUTTONDOWN, 0, MAKELPARAM(x, y));
+    ::SendMessageW(window, WM_RBUTTONUP, 0, MAKELPARAM(x, y));
+}
+
 LRESULT PlatformWebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     PlatformWebView* webView;

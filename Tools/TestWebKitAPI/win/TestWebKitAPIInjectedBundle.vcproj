@@ -404,6 +404,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\HitTestResultNodeHandle_Bundle.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\InjectedBundleBasic_Bundle.cpp"
 					>
 				</File>

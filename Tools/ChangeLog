@@ -1,3 +1,32 @@
+2011-02-28  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adam Roben and Gavin Barraclough.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=54898
+        InjectedBundleNodeHandle dies too early in WKBundleHitTestResultGetNodeHandle.
+
+        * TestWebKitAPI/InjectedBundleController.h:
+        (TestWebKitAPI::InjectedBundleController::bundle):
+        * TestWebKitAPI/PlatformWebView.h:
+        * TestWebKitAPI/Tests/WebKit2/HitTestResultNodeHandle.cpp: Added.
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/HitTestResultNodeHandle_Bundle.cpp: Added.
+        (TestWebKitAPI::HitTestResultNodeHandleTest::HitTestResultNodeHandleTest):
+        (TestWebKitAPI::HitTestResultNodeHandleTest::getContextMenuFromDefaultMenu):
+        (TestWebKitAPI::HitTestResultNodeHandleTest::didCreatePage):
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        (TestWebKitAPI::PlatformWebView::simulateRightClick):
+        * TestWebKitAPI/win/PlatformWebViewWin.cpp:
+        (TestWebKitAPI::PlatformWebView::simulateRightClick):
+        
+        Added files to:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        * TestWebKitAPI/win/TestWebKitAPIInjectedBundle.vcproj:
+
 2011-02-28  Adam Roben  <aroben@apple.com>
 
         Start running InjectedBundle API tests on Windows

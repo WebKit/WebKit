@@ -94,4 +94,33 @@ void PlatformWebView::simulateSpacebarKeyPress()
     [m_view keyUp:event];
 }
 
+void PlatformWebView::simulateRightClick(unsigned x, unsigned y)
+{
+    NSEvent *event = [NSEvent mouseEventWithType:NSRightMouseDown
+                                        location:NSMakePoint(x, y)
+                                   modifierFlags:0
+                                       timestamp:GetCurrentEventTime()
+                                    windowNumber:[m_window windowNumber]
+                                         context:[NSGraphicsContext currentContext]
+                                     eventNumber:0
+                                      clickCount:0
+                                        pressure:0];
+
+
+    [m_view rightMouseDown:event];
+
+    event = [NSEvent mouseEventWithType:NSRightMouseUp
+                               location:NSMakePoint(x, y)
+                          modifierFlags:0
+                              timestamp:GetCurrentEventTime()
+                           windowNumber:[m_window windowNumber]
+                                context:[NSGraphicsContext currentContext]
+                            eventNumber:0
+                             clickCount:0
+                               pressure:0];
+
+    [m_view rightMouseUp:event];
+
+}
+
 } // namespace TestWebKitAPI

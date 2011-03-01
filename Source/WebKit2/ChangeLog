@@ -1,5 +1,18 @@
 2011-02-28  Alice Liu  <alice.liu@apple.com>
 
+        Reviewed by Adam Roben and Gavin Barraclough.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54898
+        InjectedBundleNodeHandle dies too early in WKBundleHitTestResultGetNodeHandle
+
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp:
+        (WKBundleHitTestResultCopyNodeHandle): 
+        Instead of .get(), call .release.leakRef() like other functions that return WKBundleNodeHandleRef.
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h:
+        Renamed from "get" to "copy", because it leaksRef.
+
+2011-02-28  Alice Liu  <alice.liu@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         https://bugs.webkit.org/show_bug.cgi?id=55442

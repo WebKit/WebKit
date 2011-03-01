@@ -38,10 +38,10 @@ WKTypeID WKBundleHitTestResultGetTypeID()
     return toAPI(InjectedBundleHitTestResult::APIType);
 }
 
-WKBundleNodeHandleRef WKBundleHitTestResultGetNodeHandle(WKBundleHitTestResultRef hitTestResultRef)
+WKBundleNodeHandleRef WKBundleHitTestResultCopyNodeHandle(WKBundleHitTestResultRef hitTestResultRef)
 {
     RefPtr<InjectedBundleNodeHandle> nodeHandle = toImpl(hitTestResultRef)->nodeHandle();
-    return toAPI(nodeHandle.get());
+    return toAPI(nodeHandle.release().leakRef());
 }
 
 WKBundleFrameRef WKBundleHitTestResultGetFrame(WKBundleHitTestResultRef hitTestResultRef)
