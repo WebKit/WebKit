@@ -27,6 +27,8 @@
 #include "config.h"
 #include "JavaInstanceV8.h"
 
+#if ENABLE(JAVA_BRIDGE)
+
 #include "JNIBridge.h"
 #include "JNIUtilityPrivate.h"
 #include "JavaClassV8.h"
@@ -171,3 +173,5 @@ JObjectWrapper::~JObjectWrapper()
 {
     m_env->DeleteGlobalRef(m_instance);
 }
+
+#endif // ENABLE(JAVA_BRIDGE)

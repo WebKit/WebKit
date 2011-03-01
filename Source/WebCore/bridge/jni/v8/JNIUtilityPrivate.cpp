@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JNIUtilityPrivate.h"
 
+#if ENABLE(JAVA_BRIDGE)
+
 #include "JavaInstanceV8.h"
 #include "JavaNPObjectV8.h"
 
@@ -256,6 +258,8 @@ void convertJValueToNPVariant(jvalue value, JNIType jniType, const char* javaTyp
     }
 }
 
-} // end of namespace Bindings
+} // namespace Bindings
 
-} // end of namespace JSC
+} // namespace JSC
+
+#endif // ENABLE(JAVA_BRIDGE)

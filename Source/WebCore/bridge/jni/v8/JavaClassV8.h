@@ -26,6 +26,8 @@
 #ifndef JavaClassV8_h
 #define JavaClassV8_h
 
+#if ENABLE(JAVA_BRIDGE)
+
 #include "JNIBridgeV8.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
@@ -56,5 +58,7 @@ private:
 } // namespace Bindings
 
 } // namespace JSC
+
+#endif // ENABLE(JAVA_BRIDGE)
 
 #endif // JavaClassV8_h

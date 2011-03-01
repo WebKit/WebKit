@@ -27,6 +27,8 @@
 #ifndef JavaInstanceV8_h
 #define JavaInstanceV8_h
 
+#if ENABLE(JAVA_BRIDGE)
+
 #include "JNIUtility.h"
 #include "npruntime.h"
 
@@ -96,5 +98,7 @@ protected:
 } // namespace Bindings
 
 } // namespace JSC
+
+#endif // ENABLE(JAVA_BRIDGE)
 
 #endif // JavaInstanceV8_h

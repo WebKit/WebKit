@@ -1,5 +1,25 @@
 2011-03-01  Steve Block  <steveblock@google.com>
 
+        Reviewed by Pavel Feldman.
+
+        JNI code in Java bridge is not correctly guarded
+        https://bugs.webkit.org/show_bug.cgi?id=55459
+
+        No new tests, build fix only.
+
+        * bridge/jni/v8/JNIBridgeV8.cpp:
+        * bridge/jni/v8/JNIBridgeV8.h:
+        * bridge/jni/v8/JNIUtilityPrivate.cpp:
+        * bridge/jni/v8/JNIUtilityPrivate.h:
+        * bridge/jni/v8/JavaClassV8.cpp:
+        * bridge/jni/v8/JavaClassV8.h:
+        * bridge/jni/v8/JavaInstanceV8.cpp:
+        * bridge/jni/v8/JavaInstanceV8.h:
+        * bridge/jni/v8/JavaNPObjectV8.cpp:
+        * bridge/jni/v8/JavaNPObjectV8.h:
+
+2011-03-01  Steve Block  <steveblock@google.com>
+
         Reviewed by Jeremy Orlow.
 
         Bridge.h should not include BridgeJSC.h

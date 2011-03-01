@@ -26,6 +26,8 @@
 #ifndef JNIBridgeV8_h
 #define JNIBridgeV8_h
 
+#if ENABLE(JAVA_BRIDGE)
+
 #include "JNIBridge.h" // For JavaString
 #include "JavaInstanceV8.h" // For JObjectWrapper
 
@@ -52,5 +54,7 @@ private:
 } // namespace Bindings
 
 } // namespace JSC
+
+#endif // ENABLE(JAVA_BRIDGE)
 
 #endif // JNIBridgeV8_h

@@ -26,6 +26,8 @@
 #ifndef JavaNPObjectV8_h
 #define JavaNPObjectV8_h
 
+#if ENABLE(JAVA_BRIDGE)
+
 #include "npruntime.h"
 #include <wtf/RefPtr.h>
 
@@ -52,5 +54,7 @@ bool JavaNPObjectGetProperty(NPObject*, NPIdentifier name, NPVariant* result);
 } // namespace Bindings
 
 } // namespace JSC
+
+#endif // ENABLE(JAVA_BRIDGE)
 
 #endif // JavaNPObjectV8_h

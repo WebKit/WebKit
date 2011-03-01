@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JNIBridgeV8.h"
 
+#if ENABLE(JAVA_BRIDGE)
+
 using namespace JSC::Bindings;
 
 JavaField::JavaField(JNIEnv* env, jobject aField)
@@ -42,3 +44,5 @@ JavaField::JavaField(JNIEnv* env, jobject aField)
 
     m_field = new JObjectWrapper(aField);
 }
+
+#endif // ENABLE(JAVA_BRIDGE)

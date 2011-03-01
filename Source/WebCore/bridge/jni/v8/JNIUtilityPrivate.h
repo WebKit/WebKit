@@ -26,6 +26,8 @@
 #ifndef JNIUtilityPrivate_h
 #define JNIUtilityPrivate_h
 
+#if ENABLE(JAVA_BRIDGE)
+
 #include "JNIUtility.h"
 #include "npruntime.h"
 
@@ -39,5 +41,7 @@ void convertJValueToNPVariant(jvalue, JNIType, const char* javaClassName, NPVari
 } // namespace Bindings
 
 } // namespace JSC
+
+#endif // ENABLE(JAVA_BRIDGE)
 
 #endif // JNIUtilityPrivate_h
