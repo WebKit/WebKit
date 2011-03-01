@@ -1,3 +1,11 @@
+2011-02-28  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations change.
+        
+        Update Snow Leopard expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-28  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Ryosuke Niwa.
