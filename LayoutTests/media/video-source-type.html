@@ -6,15 +6,11 @@
     <script src=media-file.js></script>
     <script src=video-test.js></script>
     <script>
-        function setup()
-        {
+        waitForEvent("loadstart", function () {
             video = mediaElement = document.getElementsByTagName('video')[0];
-        
-            waitForEvent("loadstart", function () {
-                testExpected("stripExtension(relativeURL(video.currentSrc))", stripExtension(findMediaFile("video", "content/test")));
-                endTest();
-            });
-        }
+            testExpected("stripExtension(relativeURL(video.currentSrc))", stripExtension(findMediaFile("video", "content/test")));
+            endTest();
+        });
     </script>
 </head>
 <body>
@@ -26,6 +22,5 @@
         <source src=content/test.ogv type=video/ogg>
         <source src=content/error2.mpeg type=video/mpeg>
     </video>
-    <script>setup();</script>
 </body>
 </html>

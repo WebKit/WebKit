@@ -1,5 +1,29 @@
 2011-02-28  Tony Gentilcore  <tonyg@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        Fix race condition in 4 media tests
+        https://bugs.webkit.org/show_bug.cgi?id=55414
+
+        The parser may yield and give events a chance to dispatch between any two tokens. So
+        it is possible that the loadstart event fires immediately after the video tag is
+        inserted into the document but before the subsequent script is parsed. This is very
+        rare in the layout test environment since these small files are loaded from disk.
+
+        This patch eliminates that race condition by allowing waitForEvent to register for
+        events that bubble up to the document from any element. Then the registration can
+        happen before before the element is inserted into the document.
+
+        * media/video-source-media.html:
+        * media/video-source-none-supported.html:
+        * media/video-source-type-params.html:
+        * media/video-source-type.html:
+        * media/video-test.js:
+        (waitForEvent):
+        (waitForEventAndTest):
+
+2011-02-28  Tony Gentilcore  <tonyg@chromium.org>
+
         Reviewed by Adam Barth.
 
         Follow HTML5 spec for document.open() a little more closely

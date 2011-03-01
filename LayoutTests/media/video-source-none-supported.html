@@ -4,15 +4,11 @@
     <title>no usable &lt;source&gt; test</title>
     <script src=video-test.js></script>
     <script>
-
-        function setup()
-        {
-            findMediaElement();
-            document.addEventListener("error", errorEvent, true);
-        }
+        document.addEventListener("error", errorEvent, true);
 
         function errorEvent(evt)
         {
+            findMediaElement();
             consoleWrite("++ ERROR, src = " + relativeURL(event.target.src) + ", type = \"" + event.target.type + "\"");
             testExpected("event.target.tagName", "SOURCE", "==");
             
@@ -48,7 +44,5 @@
 
     <p>1. Test that no usable &lt;source&gt; element leaves the media element with 
     networkState == NETWORK_NO_SOURCE</p>
-
-    <script>setup();</script>
 </body>
 </html>
