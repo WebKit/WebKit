@@ -1,3 +1,12 @@
+2011-03-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Added new GTK test expectations.
+
+        * platform/gtk/fast/block/positioning/auto/vertical-lr/: 7 tests.
+        * platform/gtk/fast/block/positioning/auto/vertical-rl/: 7 tests.
+
 2011-02-23  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
