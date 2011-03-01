@@ -1,3 +1,12 @@
+2011-03-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: remove manual watchdog from the inspector tests.
+        https://bugs.webkit.org/show_bug.cgi?id=55447
+
+        * http/tests/inspector/inspector-test.js:
+
 2011-03-01  Adam Roben  <aroben@apple.com>
 
         Skip another timing-out test on Windows XP

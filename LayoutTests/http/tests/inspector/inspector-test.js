@@ -242,7 +242,7 @@ function runAfterIframeIsLoaded()
     setTimeout(step, 100);
 }
 
-function runTest()
+function runTest(enableWatchDogWhileDebugging)
 {
     if (!window.layoutTestController)
         return;
@@ -287,12 +287,14 @@ function runTest()
     var toEvaluate = "(" + runTestInFrontend + ")(" + parameters.join(", ") + ");";
     layoutTestController.evaluateInWebInspector(runTestCallId, toEvaluate);
 
-    function watchDog()
-    {
-        console.log("Internal watchdog triggered at 10 seconds. Test timed out.");
-        closeInspectorAndNotifyDone();
+    if (enableWatchDogWhileDebugging) {
+        function watchDog()
+        {
+            console.log("Internal watchdog triggered at 10 seconds. Test timed out.");
+            closeInspectorAndNotifyDone();
+        }
+        window._watchDogTimer = setTimeout(watchDog, 10000);
     }
-    window._watchDogTimer = setTimeout(watchDog, 10000);
 }
 
 function didEvaluateForTestInFrontend(callId)
