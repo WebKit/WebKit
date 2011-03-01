@@ -1,5 +1,14 @@
 2011-02-28  Xan Lopez  <xlopez@igalia.com>
 
+        Another fix build :(
+
+        Fix typo.
+
+        * runtime/MachineStackMarker.cpp:
+        (JSC::freePlatformThreadRegisters):
+
+2011-02-28  Xan Lopez  <xlopez@igalia.com>
+
         Unreviewed build fix for Snow Leopard.
 
         * runtime/MachineStackMarker.cpp:

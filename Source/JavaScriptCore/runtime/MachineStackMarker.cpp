@@ -427,7 +427,7 @@ static void freePlatformThreadRegisters(PlatformThreadRegisters& regs)
 #if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
     pthread_attr_destroy(&regs);
 #else
-    UNUSED_PARAMS(regs);
+    UNUSED_PARAM(regs);
 #endif
 }
 
