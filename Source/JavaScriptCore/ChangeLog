@@ -1,3 +1,12 @@
+2011-02-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <http://webkit.org/b/55430> OwnArrayPtr.h's LOOSE_OWN_ARRAY_PTR results in link errors.
+
+        * wtf/OwnArrayPtr.h:
+        (WTF::::set): Implement OwnArrayPtr::set.
+
 2011-02-28  Martin Zoubek  <martin.zoubek@acision.com> and Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

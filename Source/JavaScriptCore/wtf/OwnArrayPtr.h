@@ -111,6 +111,16 @@ template<typename T> inline typename OwnArrayPtr<T>::PtrType OwnArrayPtr<T>::lea
     return ptr;
 }
 
+#ifdef LOOSE_OWN_ARRAY_PTR
+template<typename T> inline void OwnArrayPtr<T>::set(PtrType ptr)
+{
+    ASSERT(!ptr || m_ptr != ptr);
+    PtrType oldPtr = m_ptr;
+    m_ptr = ptr;
+    deleteOwnedArrayPtr(oldPtr);
+}
+#endif
+
 template<typename T> inline OwnArrayPtr<T>& OwnArrayPtr<T>::operator=(const PassOwnArrayPtr<T>& o)
 {
     PtrType ptr = m_ptr;
