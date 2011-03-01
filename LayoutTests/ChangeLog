@@ -1,3 +1,14 @@
+2011-03-01  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed build fix.
+
+        [chromium] pass fast/table/fixed-with-auto-with-colspan-vertical.html
+        https://bugs.webkit.org/show_bug.cgi?id=55491
+
+        Fixed by r79760.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-01  Steve Lacey  <sjl@chromium.org>
 
         Reviewed by Eric Carlson.

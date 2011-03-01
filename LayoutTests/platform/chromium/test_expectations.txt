@@ -3374,8 +3374,6 @@ BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 
 BUGJAMESR DEBUG : html5lib/runner.html = PASS TIMEOUT
 
-BUGWK46500 : fast/table/fixed-with-auto-with-colspan-vertical.html = IMAGE+TEXT
-
 BUGWK54910 : media/video-replaces-poster.html = PASS IMAGE
 
 BUG_ANTONM : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
