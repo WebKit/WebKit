@@ -40,6 +40,10 @@ namespace WTR {
 
 static HANDLE webProcessCrashingEvent;
 static const char webProcessCrashingEventName[] = "WebKitTestRunner.WebProcessCrashing";
+// This is the longest we'll wait (in seconds) for the web process to finish crashing and a crash
+// log to be saved. This interval should be just a tiny bit longer than it will ever reasonably
+// take to save a crash log.
+static const double maximumWaitForWebProcessToCrash = 60;
 
 #ifdef DEBUG_ALL
 const LPWSTR testPluginDirectoryName = L"TestNetscapePlugin_Debug";
@@ -134,41 +138,26 @@ void TestController::initializeTestPluginDirectory()
     m_testPluginDirectory.adopt(WKStringCreateWithCFString(testPluginDirectoryPath.get()));
 }
 
-void TestController::platformRunUntil(bool& done, double timeout)
+enum RunLoopResult { TimedOut, ObjectSignaled, ConditionSatisfied };
+
+static RunLoopResult runRunLoopUntil(bool& condition, HANDLE object, double timeout)
 {
     DWORD end = ::GetTickCount() + timeout * 1000;
-    while (!done) {
+    while (!condition) {
         DWORD now = ::GetTickCount();
         if (now > end)
-            return;
+            return TimedOut;
 
-        DWORD result = ::MsgWaitForMultipleObjectsEx(1, &webProcessCrashingEvent, end - now, QS_ALLINPUT, MWMO_INPUTAVAILABLE);
+        DWORD objectCount = object ? 1 : 0;
+        const HANDLE* objects = object ? &object : 0;
+        DWORD result = ::MsgWaitForMultipleObjectsEx(objectCount, objects, end - now, QS_ALLINPUT, MWMO_INPUTAVAILABLE);
         if (result == WAIT_TIMEOUT)
-            return;
+            return TimedOut;
 
-        if (result == WAIT_OBJECT_0) {
-            // The web process is crashing. A crash log might be being saved, which can take a long
-            // time, and we don't want to time out while that happens.
+        if (objectCount && result >= WAIT_OBJECT_0 && result < WAIT_OBJECT_0 + objectCount)
+            return ObjectSignaled;
 
-            // First, let the test harness know this happened so it won't think we've hung. But
-            // make sure we don't exit just yet!
-            m_shouldExitWhenWebProcessCrashes = false;
-            processDidCrash();
-            m_shouldExitWhenWebProcessCrashes = true;
-
-            // Then spin a run loop until it finishes crashing to give time for a crash log to be saved.
-            MSG msg;
-            while (BOOL bRet = ::GetMessageW(&msg, 0, 0, 0)) {
-                if (bRet == -1)
-                    break;
-                ::TranslateMessage(&msg);
-                ::DispatchMessageW(&msg);
-            }
-
-            exit(1);
-        }
-
-        ASSERT(result == WAIT_OBJECT_0 + 1);
+        ASSERT(result == WAIT_OBJECT_0 + objectCount);
         // There are messages in the queue. Process them.
         MSG msg;
         while (::PeekMessageW(&msg, 0, 0, 0, PM_REMOVE)) {
@@ -176,6 +165,32 @@ void TestController::platformRunUntil(bool& done, double timeout)
             ::DispatchMessageW(&msg);
         }
     }
+
+    return ConditionSatisfied;
+}
+
+void TestController::platformRunUntil(bool& done, double timeout)
+{
+    RunLoopResult result = runRunLoopUntil(done, webProcessCrashingEvent, timeout);
+    if (result == TimedOut || result == ConditionSatisfied)
+        return;
+    ASSERT(result == ObjectSignaled);
+
+    // The web process is crashing. A crash log might be being saved, which can take a long
+    // time, and we don't want to time out while that happens.
+
+    // First, let the test harness know this happened so it won't think we've hung. But
+    // make sure we don't exit just yet!
+    m_shouldExitWhenWebProcessCrashes = false;
+    processDidCrash();
+    m_shouldExitWhenWebProcessCrashes = true;
+
+    // Then spin a run loop until it finishes crashing to give time for a crash log to be saved. If
+    // it takes too long for a crash log to be saved, we'll just give up.
+    bool neverSetCondition = false;
+    result = runRunLoopUntil(neverSetCondition, 0, maximumWaitForWebProcessToCrash);
+    ASSERT_UNUSED(result, result == TimedOut);
+    exit(1);
 }
 
 static WKRetainPtr<WKStringRef> toWK(const char* string)

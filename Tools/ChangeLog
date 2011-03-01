@@ -1,5 +1,24 @@
 2011-03-01  Adam Roben  <aroben@apple.com>
 
+        Give up if a crash log for the web process is taking too long to be saved on Windows
+
+        This should keep the bots from getting stuck while waiting for a crash log, if writing a
+        crash log ever hangs or the UI process for some reason doesn't notice it's finished.
+
+        Fixes <http://webkit.org/b/55499> WebKitTestRunner can hang forever waiting for a crash log
+        to be saved for the web process
+
+        Reviewed by Steve Falkenburg.
+
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::runRunLoopUntil): Moved code to run the run loop here here from platformRunUntil.
+        Generalized the code slightly to handle the optional object to wait on.
+        (WTR::TestController::platformRunUntil): Use the new runRunLoopUntil function, and also use
+        it (with a timeout) when waiting for a crash log for the web process to be saved. This will
+        prevent us from waiting forever.
+
+2011-03-01  Adam Roben  <aroben@apple.com>
+
         Give WebKitLauncherWin's PDB file a name different from WebKit's
 
         WebKitLauncherWin (which builds WebKit.exe) and WebKit (which builds WebKit.dll) were
