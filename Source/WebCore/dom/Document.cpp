@@ -1892,9 +1892,16 @@ void Document::open(Document* ownerDocument)
     }
 
     if (m_frame) {
-        ScriptableDocumentParser* parser = scriptableDocumentParser();
-        if (m_frame->loader()->isLoadingMainResource() || (parser && parser->isParsing() && parser->isExecutingScript()))
-            return;
+        if (ScriptableDocumentParser* parser = scriptableDocumentParser()) {
+            if (parser->isParsing()) {
+                // FIXME: HTML5 doesn't tell us to check this, it might not be correct.
+                if (parser->isExecutingScript())
+                    return;
+
+                if (!parser->wasCreatedByScript() && parser->hasInsertionPoint())
+                    return;
+            }
+        }
 
         if (m_frame->loader()->state() == FrameStateProvisional)
             m_frame->loader()->stopAllLoaders();

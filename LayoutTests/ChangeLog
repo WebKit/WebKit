@@ -1,3 +1,15 @@
+2011-02-28  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Follow HTML5 spec for document.open() a little more closely
+        https://bugs.webkit.org/show_bug.cgi?id=55392
+
+        * fast/parser/double-write-from-closed-iframe-expected.txt: Added.
+        * fast/parser/double-write-from-closed-iframe.html: Added. Prior to this patch, the second write of 'PASS' could fail indeterminately.
+        * fast/parser/script-tests/double-write-from-closed-iframe.js: Added.
+        * fast/regex/script-tests/cross-frame-callable.js: Necessary to close late writes.
+
 2011-02-28  James Robinson  <jamesr@chromium.org>
 
         Update chromium expectations and baselines.
