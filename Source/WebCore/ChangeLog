@@ -1,3 +1,15 @@
+2011-03-01  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Paint outline for tables.
+        https://bugs.webkit.org/show_bug.cgi?id=55474
+
+        Test: fast/table/table-and-parts-outline.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+
 2011-03-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80028.
