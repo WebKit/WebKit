@@ -1,3 +1,28 @@
+2011-03-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rolled back in r79627 now that the underlying cause for it crashing is fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=55159
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/Heap.cpp:
+        (JSC::Heap::allocateSlowCase):
+        * runtime/Heap.h:
+        * runtime/JSCell.h:
+        (JSC::JSCell::MarkedSpace::sizeClassFor):
+        (JSC::JSCell::Heap::allocate):
+        (JSC::JSCell::JSCell::operator new):
+        * runtime/MarkedBlock.h:
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::allocateBlock):
+        (JSC::MarkedSpace::reset):
+        * runtime/MarkedSpace.h:
+        (JSC::MarkedSpace::SizeClass::SizeClass):
+
 2011-03-01  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

@@ -35,6 +35,8 @@ MarkedSpace::MarkedSpace(JSGlobalData* globalData)
     , m_highWaterMark(0)
     , m_globalData(globalData)
 {
+    for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep)
+        sizeClassFor(cellSize).cellSize = cellSize;
 }
 
 void MarkedSpace::destroy()
@@ -46,7 +48,7 @@ void MarkedSpace::destroy()
 
 MarkedBlock* MarkedSpace::allocateBlock(SizeClass& sizeClass)
 {
-    MarkedBlock* block = MarkedBlock::create(globalData(), cellSize);
+    MarkedBlock* block = MarkedBlock::create(globalData(), sizeClass.cellSize);
     sizeClass.blockList.append(block);
     sizeClass.nextBlock = block;
     m_blocks.add(block);
@@ -144,8 +146,10 @@ size_t MarkedSpace::capacity() const
 
 void MarkedSpace::reset()
 {
-    m_sizeClass.reset();
     m_waterMark = 0;
+
+    for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep)
+        sizeClassFor(cellSize).reset();
 
     BlockIterator end = m_blocks.end();
     for (BlockIterator it = m_blocks.begin(); it != end; ++it)

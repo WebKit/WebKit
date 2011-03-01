@@ -27,6 +27,7 @@
 #include "ConstructData.h"
 #include "Heap.h"
 #include "JSImmediate.h"
+#include "JSLock.h"
 #include "JSValue.h"
 #include "MarkStack.h"
 #include "Structure.h"
@@ -173,16 +174,6 @@ namespace JSC {
 
     inline void JSCell::markChildren(MarkStack&)
     {
-    }
-
-    inline void* JSCell::operator new(size_t size, JSGlobalData* globalData)
-    {
-        return globalData->heap.allocate(size);
-    }
-
-    inline void* JSCell::operator new(size_t size, ExecState* exec)
-    {
-        return exec->heap()->allocate(size);
     }
 
     // --- JSValue inlines ----------------------------
@@ -418,15 +409,43 @@ namespace JSC {
         return 0;
     }
     
-    inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t)
+    inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t bytes)
     {
-        return m_sizeClass;
+        ASSERT(bytes && bytes <= preciseCutoff);
+        return m_preciseSizeClasses[(bytes - 1) / preciseStep];
     }
 
     inline void* MarkedSpace::allocate(size_t bytes)
     {
         SizeClass& sizeClass = sizeClassFor(bytes);
         return allocateFromSizeClass(sizeClass);
+    }
+    
+    inline void* Heap::allocate(size_t bytes)
+    {
+        ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
+        ASSERT(JSLock::lockCount() > 0);
+        ASSERT(JSLock::currentThreadIsHoldingLock());
+        ASSERT(bytes <= MarkedSpace::maxCellSize);
+        ASSERT(m_operationInProgress == NoOperation);
+
+        m_operationInProgress = Allocation;
+        void* result = m_markedSpace.allocate(bytes);
+        m_operationInProgress = NoOperation;
+        if (result)
+            return result;
+
+        return allocateSlowCase(bytes);
+    }
+
+    inline void* JSCell::operator new(size_t size, JSGlobalData* globalData)
+    {
+        return globalData->heap.allocate(size);
+    }
+
+    inline void* JSCell::operator new(size_t size, ExecState* exec)
+    {
+        return exec->heap()->allocate(size);
     }
 
 } // namespace JSC
