@@ -2,6 +2,12 @@
 <head>
 <script>
 
+function onload()
+{
+    if (window.layoutTestController)
+        window.layoutTestController.waitUntilDone();
+}
+
 var iframesOpened = 0;
 
 function iframeLoaded()
@@ -10,6 +16,7 @@ function iframeLoaded()
         if (window.layoutTestController) {
             layoutTestController.dumpAsText();
             layoutTestController.dumpChildFramesAsText();
+            layoutTestController.notifyDone();
         }
     }
 }

@@ -1,3 +1,9 @@
+2011-03-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: fixing flaky snow XMLViewer test on snow leopard.
+
+        * http/tests/xmlviewer/dumpAsText/frames.html:
+
 2011-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Windows rebaseline. The bug 55451 tracks this rebaseline.
