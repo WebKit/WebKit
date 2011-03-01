@@ -1,3 +1,15 @@
+2011-03-01  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: reduce inspector tests flakiness.
+        https://bugs.webkit.org/show_bug.cgi?id=55401
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::runFileTest):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+
 2011-02-28  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by James Robinson.

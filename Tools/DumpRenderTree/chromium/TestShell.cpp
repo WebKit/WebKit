@@ -173,9 +173,6 @@ void TestShell::runFileTest(const TestParams& params)
     m_params = params;
     string testUrl = m_params.testUrl.spec();
 
-    m_prefs.developerExtrasEnabled = true;
-    applyPreferences();
-
     if (testUrl.find("loading/") != string::npos
         || testUrl.find("loading\\") != string::npos)
         m_layoutTestController->setShouldDumpFrameLoadCallbacks(true);

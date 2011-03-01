@@ -73,7 +73,7 @@ void WebPreferences::reset()
     allowFileAccessFromFileURLs = true;
     authorAndUserStylesEnabled = true;
     defaultTextEncodingName = WebString::fromUTF8("ISO-8859-1");
-    developerExtrasEnabled = false;
+    developerExtrasEnabled = true;
     experimentalWebGLEnabled = false;
     javaEnabled = false;
     javaScriptCanAccessClipboard = true;
