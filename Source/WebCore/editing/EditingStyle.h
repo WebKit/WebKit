@@ -36,6 +36,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -94,14 +95,14 @@ public:
     void removeStyleConflictingWithStyleOfNode(Node*);
     void removeNonEditingProperties();
     void collapseTextDecorationProperties();
-    bool conflictsWithInlineStyleOfElement(StyledElement* element) const { return conflictsWithInlineStyleOfElement(element, 0); }
-    bool conflictsWithInlineStyleOfElement(StyledElement* element, Vector<CSSPropertyID>& conflictingProperties) const
+    bool conflictsWithInlineStyleOfElement(StyledElement* element) const { return conflictsWithInlineStyleOfElement(element, 0, 0); }
+    bool conflictsWithInlineStyleOfElement(StyledElement* element, EditingStyle* extractedStyle, Vector<CSSPropertyID>& conflictingProperties) const
     {
-        return conflictsWithInlineStyleOfElement(element, &conflictingProperties);
+        return conflictsWithInlineStyleOfElement(element, extractedStyle, &conflictingProperties);
     }
-    bool conflictsWithImplicitStyleOfElement(HTMLElement*, CSSMutableStyleDeclaration* extractedStyle = 0, ShouldExtractMatchingStyle = DoNotExtractMatchingStyle) const;
+    bool conflictsWithImplicitStyleOfElement(HTMLElement*, EditingStyle* extractedStyle = 0, ShouldExtractMatchingStyle = DoNotExtractMatchingStyle) const;
     bool conflictsWithImplicitStyleOfAttributes(HTMLElement*) const;
-    bool extractConflictingImplicitStyleOfAttributes(HTMLElement*, ShouldPreserveWritingDirection, CSSMutableStyleDeclaration* extractedStyle,
+    bool extractConflictingImplicitStyleOfAttributes(HTMLElement*, ShouldPreserveWritingDirection, EditingStyle* extractedStyle,
             Vector<QualifiedName>& conflictingAttributes, ShouldExtractMatchingStyle) const;
     void prepareToApplyAt(const Position&, ShouldPreserveWritingDirection = DoNotPreserveWritingDirection);
     void mergeTypingStyle(Document*);
@@ -117,13 +118,17 @@ private:
     EditingStyle(const CSSStyleDeclaration*);
     void init(Node*, PropertiesToInclude);
     void removeTextFillAndStrokeColorsIfNeeded(RenderStyle*);
+    void setProperty(int propertyID, const String& value, bool important = false);
     void replaceFontSizeByKeywordIfPossible(RenderStyle*, CSSComputedStyleDeclaration*);
     void extractFontSizeDelta();
-    bool conflictsWithInlineStyleOfElement(StyledElement*, Vector<CSSPropertyID>* conflictingProperties) const;
+    bool conflictsWithInlineStyleOfElement(StyledElement*, EditingStyle* extractedStyle, Vector<CSSPropertyID>* conflictingProperties) const;
 
     RefPtr<CSSMutableStyleDeclaration> m_mutableStyle;
     bool m_shouldUseFixedDefaultFontSize;
     float m_fontSizeDelta;
+
+    friend class HTMLElementEquivalent;
+    friend class HTMLAttributeEquivalent;
 };
 
 } // namespace WebCore

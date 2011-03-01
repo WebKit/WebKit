@@ -26,19 +26,13 @@
 #include "config.h"
 #include "InsertTextCommand.h"
 
-#include "CSSComputedStyleDeclaration.h"
-#include "CSSMutableStyleDeclaration.h"
-#include "CSSPropertyNames.h"
 #include "Document.h"
 #include "Element.h"
 #include "EditingText.h"
 #include "Editor.h"
 #include "Frame.h"
-#include "Logging.h"
 #include "HTMLInterchange.h"
 #include "htmlediting.h"
-#include "TextIterator.h"
-#include "TypingCommand.h"
 #include "visible_units.h"
 #include <wtf/unicode/CharacterNames.h>
 

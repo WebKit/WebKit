@@ -99,7 +99,7 @@ public:
     virtual bool hasAttribute() const { return false; }
     bool propertyExistsInStyle(CSSStyleDeclaration* style) const { return style->getPropertyCSSValue(m_propertyID); }
     virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
-    virtual void addToStyle(Element*, CSSMutableStyleDeclaration*) const;
+    virtual void addToStyle(Element*, EditingStyle*) const;
 
 protected:
     HTMLElementEquivalent(CSSPropertyID);
@@ -136,7 +136,7 @@ bool HTMLElementEquivalent::valueIsPresentInStyle(Element* element, CSSStyleDecl
     return matches(element) && value && value->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(value.get())->getIdent() == m_primitiveValue->getIdent();
 }
 
-void HTMLElementEquivalent::addToStyle(Element*, CSSMutableStyleDeclaration* style) const
+void HTMLElementEquivalent::addToStyle(Element*, EditingStyle* style) const
 {
     style->setProperty(m_propertyID, m_primitiveValue->cssText());
 }
@@ -178,7 +178,7 @@ public:
     bool matches(Element* elem) const { return HTMLElementEquivalent::matches(elem) && elem->hasAttribute(m_attrName); }
     virtual bool hasAttribute() const { return true; }
     virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
-    virtual void addToStyle(Element*, CSSMutableStyleDeclaration*) const;
+    virtual void addToStyle(Element*, EditingStyle*) const;
     virtual PassRefPtr<CSSValue> attributeValueAsCSSValue(Element*) const;
     inline const QualifiedName& attributeName() const { return m_attrName; }
 
@@ -210,7 +210,7 @@ bool HTMLAttributeEquivalent::valueIsPresentInStyle(Element* element, CSSStyleDe
     return value && styleValue && value->cssText() == styleValue->cssText();
 }
 
-void HTMLAttributeEquivalent::addToStyle(Element* element, CSSMutableStyleDeclaration* style) const
+void HTMLAttributeEquivalent::addToStyle(Element* element, EditingStyle* style) const
 {
     if (RefPtr<CSSValue> value = attributeValueAsCSSValue(element))
         style->setProperty(m_propertyID, value->cssText());
@@ -316,6 +316,15 @@ void EditingStyle::removeTextFillAndStrokeColorsIfNeeded(RenderStyle* renderStyl
     if (!renderStyle->textStrokeColor().isValid())
         m_mutableStyle->removeProperty(CSSPropertyWebkitTextStrokeColor, ec);
     ASSERT(!ec);
+}
+
+void EditingStyle::setProperty(int propertyID, const String& value, bool important)
+{
+    if (!m_mutableStyle)
+        m_mutableStyle = CSSMutableStyleDeclaration::create();
+
+    ExceptionCode ec;
+    m_mutableStyle->setProperty(propertyID, value, important, ec);
 }
 
 void EditingStyle::replaceFontSizeByKeywordIfPossible(RenderStyle* renderStyle, CSSComputedStyleDeclaration* computedStyle)
@@ -496,7 +505,7 @@ void EditingStyle::collapseTextDecorationProperties()
     m_mutableStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
 }
 
-bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Vector<CSSPropertyID>* conflictingProperties) const
+bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, EditingStyle* extractedStyle, Vector<CSSPropertyID>* conflictingProperties) const
 {
     ASSERT(element);
     ASSERT(!conflictingProperties || conflictingProperties->isEmpty());
@@ -527,16 +536,21 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Vec
         if ((propertyID == CSSPropertyWhiteSpace && isTabSpanNode(element)) || !inlineStyle->getPropertyCSSValue(propertyID))
             continue;
 
-        if (propertyID == CSSPropertyUnicodeBidi && inlineStyle->getPropertyCSSValue(CSSPropertyDirection))
+        if (propertyID == CSSPropertyUnicodeBidi && inlineStyle->getPropertyCSSValue(CSSPropertyDirection)) {
+            if (extractedStyle)
+                extractedStyle->setProperty(propertyID, inlineStyle->getPropertyValue(propertyID), inlineStyle->getPropertyPriority(propertyID));
             conflictingProperties->append(CSSPropertyDirection);
+        }
 
         conflictingProperties->append(propertyID);
+        if (extractedStyle)
+            extractedStyle->setProperty(propertyID, inlineStyle->getPropertyValue(propertyID), inlineStyle->getPropertyPriority(propertyID));
     }
 
     return !conflictingProperties->isEmpty();
 }
 
-bool EditingStyle::conflictsWithImplicitStyleOfElement(HTMLElement* element, CSSMutableStyleDeclaration* extractedStyle, ShouldExtractMatchingStyle shouldExtractMatchingStyle) const
+bool EditingStyle::conflictsWithImplicitStyleOfElement(HTMLElement* element, EditingStyle* extractedStyle, ShouldExtractMatchingStyle shouldExtractMatchingStyle) const
 {
     if (!m_mutableStyle)
         return false;
@@ -599,7 +613,7 @@ bool EditingStyle::conflictsWithImplicitStyleOfAttributes(HTMLElement* element) 
 }
 
 bool EditingStyle::extractConflictingImplicitStyleOfAttributes(HTMLElement* element, ShouldPreserveWritingDirection shouldPreserveWritingDirection,
-    CSSMutableStyleDeclaration* extractedStyle, Vector<QualifiedName>& conflictingAttributes, ShouldExtractMatchingStyle shouldExtractMatchingStyle) const
+    EditingStyle* extractedStyle, Vector<QualifiedName>& conflictingAttributes, ShouldExtractMatchingStyle shouldExtractMatchingStyle) const
 {
     ASSERT(element);
     // HTMLAttributeEquivalent::addToStyle doesn't support unicode-bidi and direction properties

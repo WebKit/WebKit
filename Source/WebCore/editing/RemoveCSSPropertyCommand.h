@@ -27,7 +27,6 @@
 #define RemoveCSSPropertyCommand_h
 
 #include "EditCommand.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "StyledElement.h"
 

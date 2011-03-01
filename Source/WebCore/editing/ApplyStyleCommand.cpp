@@ -1130,7 +1130,7 @@ bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(EditingStyle* styl
     return true;
 }
 
-bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle* style, PassRefPtr<HTMLElement> element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
+bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle* style, PassRefPtr<HTMLElement> element, InlineStyleRemovalMode mode, EditingStyle* extractedStyle)
 {
     ASSERT(element);
 
@@ -1141,8 +1141,12 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle* style, PassRe
         if (mode == RemoveNone)
             return true;
         ASSERT(extractedStyle);
-        if (element->inlineStyleDecl())
-            extractedStyle->merge(element->inlineStyleDecl());
+        if (element->inlineStyleDecl()) {
+            if (extractedStyle->style())
+                extractedStyle->style()->merge(element->inlineStyleDecl());
+            else
+                extractedStyle->setStyle(element->inlineStyleDecl()->copy());
+        }
         removeNodePreservingChildren(element);
         return true;
     }
@@ -1189,7 +1193,7 @@ void ApplyStyleCommand::replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&
     }
 }
     
-bool ApplyStyleCommand::removeImplicitlyStyledElement(EditingStyle* style, HTMLElement* element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
+bool ApplyStyleCommand::removeImplicitlyStyledElement(EditingStyle* style, HTMLElement* element, InlineStyleRemovalMode mode, EditingStyle* extractedStyle)
 {
     ASSERT(style);
     if (mode == RemoveNone) {
@@ -1217,29 +1221,24 @@ bool ApplyStyleCommand::removeImplicitlyStyledElement(EditingStyle* style, HTMLE
 
     return true;
 }
-    
-bool ApplyStyleCommand::removeCSSStyle(EditingStyle* style, HTMLElement* element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
+
+bool ApplyStyleCommand::removeCSSStyle(EditingStyle* style, HTMLElement* element, InlineStyleRemovalMode mode, EditingStyle* extractedStyle)
 {
     ASSERT(style);
     ASSERT(element);
-    
+
     if (mode == RemoveNone)
         return style->conflictsWithInlineStyleOfElement(element);
 
     Vector<CSSPropertyID> properties;
-    if (!style->conflictsWithInlineStyleOfElement(element, properties))
+    if (!style->conflictsWithInlineStyleOfElement(element, extractedStyle, properties))
         return false;
 
     CSSMutableStyleDeclaration* inlineStyle = element->inlineStyleDecl();
     ASSERT(inlineStyle);
-    for (size_t i = 0; i < properties.size(); i++) {
-        CSSPropertyID id = properties[i];
-        if (extractedStyle) {
-            ExceptionCode ec = 0;
-            extractedStyle->setProperty(id, inlineStyle->getPropertyValue(id), inlineStyle->getPropertyPriority(id), ec);
-        }
-        removeCSSProperty(element, id);
-    }
+    // FIXME: We should use a mass-removal function here but we don't have an undoable one yet.
+    for (size_t i = 0; i < properties.size(); i++)
+        removeCSSProperty(element, properties[i]);
 
     // No need to serialize <foo style=""> if we just removed the last css property
     if (inlineStyle->isEmpty())
@@ -1351,7 +1350,7 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
             styledElement = static_cast<StyledElement*>(current);
             elementsToPushDown.append(styledElement);
         }
-        RefPtr<CSSMutableStyleDeclaration> styleToPushDown = CSSMutableStyleDeclaration::create();
+        RefPtr<EditingStyle> styleToPushDown = EditingStyle::create();
         removeInlineStyleFromElement(style, toHTMLElement(current), RemoveIfNeeded, styleToPushDown.get());
 
         // The inner loop will go through children on each level
@@ -1372,7 +1371,7 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
             // Apply text decoration to all nodes containing targetNode and their siblings but NOT to targetNode
             // But if we've removed styledElement then go ahead and always apply the style.
             if (child != targetNode || styledElement)
-                applyInlineStyleToPushDown(child, styleToPushDown.get());
+                applyInlineStyleToPushDown(child, styleToPushDown->style());
 
             // We found the next node for the outer loop (contains targetNode)
             // When reached targetNode, stop the outer loop upon the completion of the current inner loop
@@ -1422,10 +1421,10 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position &s
             RefPtr<HTMLElement> elem = toHTMLElement(node);
             RefPtr<Node> prev = elem->traversePreviousNodePostOrder();
             RefPtr<Node> next = elem->traverseNextNode();
-            RefPtr<CSSMutableStyleDeclaration> styleToPushDown;
+            RefPtr<EditingStyle> styleToPushDown;
             PassRefPtr<Node> childNode = 0;
             if (isStyledInlineElementToRemove(elem.get())) {
-                styleToPushDown = CSSMutableStyleDeclaration::create();
+                styleToPushDown = EditingStyle::create();
                 childNode = elem->firstChild();
             }
 
@@ -1449,7 +1448,7 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position &s
 
             if (styleToPushDown) {
                 for (; childNode; childNode = childNode->nextSibling())
-                    applyInlineStyleToPushDown(childNode.get(), styleToPushDown.get());
+                    applyInlineStyleToPushDown(childNode.get(), styleToPushDown->style());
             }
         }
         if (node == end.deprecatedNode())

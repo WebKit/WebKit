@@ -1,3 +1,35 @@
+2011-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        applyInlineStyleToPushDown and removeInlineStyleFromElement should take EditingStyle
+        https://bugs.webkit.org/show_bug.cgi?id=55338
+
+        Deployed EditingStyle in applyInlineStyleToPushDown and removeInlineStyleFromElement.
+
+        Also added a convenience function EditingStyle::setProperty, which lazily instantiates
+        new CSSMutableStyleDeclaration for m_mutableStyle.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement): Takes EditingStyle*.
+        (WebCore::ApplyStyleCommand::removeImplicitlyStyledElement): Ditto.
+        (WebCore::ApplyStyleCommand::removeCSSStyle): Ditto.
+        (WebCore::ApplyStyleCommand::pushDownInlineStyleAroundNode): Calls the above three functions.
+        (WebCore::ApplyStyleCommand::removeInlineStyle): Calls pushDownInlineStyleAroundNode.
+        * editing/ApplyStyleCommand.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::HTMLElementEquivalent::addToStyle): Takes EditingStyle*; calls EditingStyle::setProperty.
+        (WebCore::HTMLAttributeEquivalent::addToStyle): Ditto.
+        (WebCore::EditingStyle::setProperty): Added.  This member function lazily instantiates
+        new CSSMutableStyleDeclaration for m_mutableStyle.
+        (WebCore::EditingStyle::conflictsWithInlineStyleOfElement): Takes EditingStyle*.
+        (WebCore::EditingStyle::conflictsWithImplicitStyleOfElement): Ditto.
+        (WebCore::EditingStyle::extractConflictingImplicitStyleOfAttributes): Ditto.
+        * editing/EditingStyle.h: Added HTMLElementEquivalent and HTMLAttributeEquivalent as friends.
+        (WebCore::EditingStyle::conflictsWithInlineStyleOfElement): Ditto.
+        * editing/InsertTextCommand.cpp: Removed unnecessary includes.
+        * editing/RemoveCSSPropertyCommand.h: Ditto.
+
 2011-02-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium rebuilds XMLViewer after noop. Fixed gyp file.
