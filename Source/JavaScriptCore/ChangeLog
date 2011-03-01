@@ -1,3 +1,10 @@
+2011-02-28  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed build fix for Snow Leopard.
+
+        * runtime/MachineStackMarker.cpp:
+        (JSC::freePlatformThreadRegisters):
+
 2011-02-28  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, fix SnowLeopard compilation after r79952.
