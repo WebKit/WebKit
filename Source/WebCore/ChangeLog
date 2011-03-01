@@ -1,3 +1,10 @@
+2011-03-01  Adam Roben  <aroben@apple.com>
+
+        Fix multiple-definition linker warnings introduced by r79978 on Windows
+
+        * rendering/RenderingAllInOne.cpp: Removed TextControlInnerElements.cpp, as it is now being
+        compiled separately.
+
 2011-03-01  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

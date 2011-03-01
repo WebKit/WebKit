@@ -110,6 +110,5 @@
 #include "RootInlineBox.cpp"
 #include "ScrollBehavior.cpp"
 #include "ShadowElement.cpp"
-#include "TextControlInnerElements.cpp"
 #include "TransformState.cpp"
 #include "break_lines.cpp"
