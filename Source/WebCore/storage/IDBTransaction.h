@@ -62,9 +62,6 @@ public:
     PassRefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&);
     void abort();
 
-    void registerRequest(IDBRequest*);
-    void unregisterRequest(IDBRequest*);
-
     DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
@@ -102,8 +99,6 @@ private:
     RefPtr<IDBDatabase> m_database;
     unsigned short m_mode;
     bool m_finished; // Is it possible that we'll fire any more events or allow any new transactions? If not, we're finished.
-
-    ListHashSet<IDBRequest*> m_childRequests;
 
     EventTargetData m_eventTargetData;
 };

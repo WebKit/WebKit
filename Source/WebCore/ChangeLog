@@ -1,3 +1,47 @@
+2011-03-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80028.
+        http://trac.webkit.org/changeset/80028
+        https://bugs.webkit.org/show_bug.cgi?id=55502
+
+        'caused crashes; rolling out while investigating' (Requested
+        by jorlow on #webkit).
+
+        * dom/EventQueue.cpp:
+        (WebCore::EventQueue::enqueueEvent):
+        (WebCore::EventQueue::pendingEventTimerFired):
+        (WebCore::EventQueue::dispatchEvent):
+        * dom/EventQueue.h:
+        * dom/ExceptionCode.cpp:
+        * storage/IDBCursor.cpp:
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::deleteFunction):
+        * storage/IDBDatabaseException.h:
+        * storage/IDBDatabaseException.idl:
+        * storage/IDBIndex.cpp:
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::openKeyCursor):
+        (WebCore::IDBIndex::get):
+        (WebCore::IDBIndex::getKey):
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::get):
+        (WebCore::IDBObjectStore::add):
+        (WebCore::IDBObjectStore::put):
+        (WebCore::IDBObjectStore::deleteFunction):
+        (WebCore::IDBObjectStore::clear):
+        (WebCore::IDBObjectStore::openCursor):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::~IDBRequest):
+        (WebCore::IDBRequest::readyState):
+        (WebCore::IDBRequest::dispatchEvent):
+        (WebCore::IDBRequest::enqueueEvent):
+        (WebCore::IDBRequest::source):
+        * storage/IDBRequest.h:
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::onAbort):
+        * storage/IDBTransaction.h:
+
 2011-03-01  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt  <hyatt@apple.com>

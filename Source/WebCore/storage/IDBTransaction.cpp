@@ -103,25 +103,8 @@ void IDBTransaction::abort()
         m_backend->abort();
 }
 
-void IDBTransaction::registerRequest(IDBRequest* request)
-{
-    m_childRequests.add(request);
-}
-
-void IDBTransaction::unregisterRequest(IDBRequest* request)
-{
-    // If we aborted the request, it will already have been removed.
-    m_childRequests.remove(request);
-}
-
 void IDBTransaction::onAbort()
 {
-    while (!m_childRequests.isEmpty()) {
-        IDBRequest* request = *m_childRequests.begin();
-        m_childRequests.remove(request);
-        request->abort();
-    }
-
     enqueueEvent(Event::create(eventNames().abortEvent, true, false));
 }
 

@@ -62,10 +62,8 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, Pas
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->openCursor(keyRange, direction, request, m_transaction->backend(), ec);
-    if (ec) {
-        request->markEarlyDeath();
+    if (ec)
         return 0;
-    }
     return request;
 }
 
@@ -79,10 +77,8 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->openKeyCursor(keyRange, direction, request, m_transaction->backend(), ec);
-    if (ec) {
-        request->markEarlyDeath();
+    if (ec)
         return 0;
-    }
     return request;
 }
 
@@ -90,10 +86,8 @@ PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, PassRefPtr
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->get(key, request, m_transaction->backend(), ec);
-    if (ec) {
-        request->markEarlyDeath();
+    if (ec)
         return 0;
-    }
     return request;
 }
 
@@ -101,10 +95,8 @@ PassRefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, PassRef
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->getKey(key, request, m_transaction->backend(), ec);
-    if (ec) {
-        request->markEarlyDeath();
+    if (ec)
         return 0;
-    }
     return request;
 }
 
