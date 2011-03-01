@@ -1,3 +1,19 @@
+2011-02-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Stop using DeprecatedPtr for the global exception slot
+        https://bugs.webkit.org/show_bug.cgi?id=55424
+
+        Create GCRootPtr to signify that the exception slot is
+        a gcroot, and so is exempt from the usual writebarrier
+        restrictions.
+
+        * runtime/JSGlobalData.h:
+        * runtime/WriteBarrier.h:
+        (JSC::GCRootPtr::GCRootPtr):
+        (JSC::GCRootPtr::operator=):
+
 2011-02-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
