@@ -1,5 +1,18 @@
 2011-03-01  Adam Roben  <aroben@apple.com>
 
+        Count web process crashes toward the --exit-after-n-crashes-or-timeouts limit
+
+        Fixes <http://webkit.org/b/55492> Web process crashes aren't counted toward the
+        --exit-after-n-crashes-or-timeouts limit
+
+        Reviewed by David Kilzer.
+
+        * Scripts/old-run-webkit-tests:
+        (stopRunningTestsEarlyIfNeeded): Include web process crashes in the computation, and print
+        the number of tests that caused the web process to crash when exiting early.
+
+2011-03-01  Adam Roben  <aroben@apple.com>
+
         Save a crash log when the web process crashes
 
         On Windows, WebKitTestRunner now detects when the web process is crashing and waits to exit

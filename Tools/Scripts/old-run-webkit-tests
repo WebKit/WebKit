@@ -2562,9 +2562,10 @@ sub stopRunningTestsEarlyIfNeeded()
     }
 
     my $crashCount = $counts{crash} || 0;
+    my $webProcessCrashCount = $counts{webProcessCrash} || 0;
     my $timeoutCount = $counts{timedout} || 0;
-    if ($exitAfterNCrashesOrTimeouts && $crashCount + $timeoutCount >= $exitAfterNCrashesOrTimeouts) {
-        print "\nExiting early after $crashCount crashes and $timeoutCount timeouts. $count tests run.";
+    if ($exitAfterNCrashesOrTimeouts && $crashCount + $webProcessCrashCount + $timeoutCount >= $exitAfterNCrashesOrTimeouts) {
+        print "\nExiting early after $crashCount crashes, $webProcessCrashCount web process crashes, and $timeoutCount timeouts. $count tests run.";
         closeDumpTool();
         return 1;
     }
