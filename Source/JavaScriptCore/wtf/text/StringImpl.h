@@ -281,8 +281,8 @@ public:
     uint64_t toUInt64(bool* ok = 0); // ignores trailing garbage
     intptr_t toIntPtr(bool* ok = 0); // ignores trailing garbage
 
-    double toDouble(bool* ok = 0);
-    float toFloat(bool* ok = 0);
+    double toDouble(bool* ok = 0, bool* didReadNumber = 0);
+    float toFloat(bool* ok = 0, bool* didReadNumber = 0);
 
     PassRefPtr<StringImpl> lower();
     PassRefPtr<StringImpl> upper();

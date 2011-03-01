@@ -79,8 +79,8 @@ int64_t charactersToInt64(const UChar*, size_t, bool* ok = 0); // ignores traili
 uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 intptr_t charactersToIntPtr(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 
-double charactersToDouble(const UChar*, size_t, bool* ok = 0);
-float charactersToFloat(const UChar*, size_t, bool* ok = 0);
+double charactersToDouble(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
+float charactersToFloat(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
 
 template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters(const UChar*, size_t);
 
@@ -269,8 +269,8 @@ public:
     int64_t toInt64(bool* ok = 0) const;
     uint64_t toUInt64(bool* ok = 0) const;
     intptr_t toIntPtr(bool* ok = 0) const;
-    double toDouble(bool* ok = 0) const;
-    float toFloat(bool* ok = 0) const;
+    double toDouble(bool* ok = 0, bool* didReadNumber = 0) const;
+    float toFloat(bool* ok = 0, bool* didReadNumber = 0) const;
 
     bool percentage(int& percentage) const;
 

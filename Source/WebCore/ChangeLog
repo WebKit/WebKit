@@ -1,3 +1,39 @@
+2011-02-23  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Viewport parsing no longer accepts "1.0;" value as valid.
+        https://bugs.webkit.org/show_bug.cgi?id=53705
+
+        When parsing numeric values, the "css-viewport" spec says
+        to use the number prefix, and the non numeric part of the
+        string can be ignored. This matches our behavior before
+        r67376. The change was that checking the error out condition
+        of String::toFloat doesn't necessarily mean that there
+        was a non-numeric prefix. This patch checks if there was
+        or wasn't a non-numeric prefix.
+
+        There is a console warning in any case where a numeric
+        value is not parsed cleanly. There is an error warning
+        when it is not a number at all, and a tip warning when
+        it has been truncated.
+
+        Error messages are slightly improved to provide more
+        context, both the key and value, when an error happens.
+
+        Test: fast/viewport/viewport-129.html
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::numericPrefix):
+        (WebCore::findSizeValue):
+        (WebCore::findScaleValue):
+        (WebCore::findUserScalableValue):
+        (WebCore::findTargetDensityDPIValue):
+        (WebCore::viewportErrorMessageTemplate):
+        (WebCore::viewportErrorMessageLevel):
+        (WebCore::reportViewportWarning):
+        * dom/ViewportArguments.h:
+
 2011-03-01  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

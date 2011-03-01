@@ -458,14 +458,14 @@ intptr_t StringImpl::toIntPtr(bool* ok)
     return charactersToIntPtr(m_data, m_length, ok);
 }
 
-double StringImpl::toDouble(bool* ok)
+double StringImpl::toDouble(bool* ok, bool* didReadNumber)
 {
-    return charactersToDouble(m_data, m_length, ok);
+    return charactersToDouble(m_data, m_length, ok, didReadNumber);
 }
 
-float StringImpl::toFloat(bool* ok)
+float StringImpl::toFloat(bool* ok, bool* didReadNumber)
 {
-    return charactersToFloat(m_data, m_length, ok);
+    return charactersToFloat(m_data, m_length, ok, didReadNumber);
 }
 
 static bool equal(const UChar* a, const char* b, int length)

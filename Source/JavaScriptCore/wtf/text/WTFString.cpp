@@ -561,24 +561,28 @@ intptr_t String::toIntPtr(bool* ok) const
     return m_impl->toIntPtr(ok);
 }
 
-double String::toDouble(bool* ok) const
+double String::toDouble(bool* ok, bool* didReadNumber) const
 {
     if (!m_impl) {
         if (ok)
             *ok = false;
+        if (didReadNumber)
+            *didReadNumber = false;
         return 0.0;
     }
-    return m_impl->toDouble(ok);
+    return m_impl->toDouble(ok, didReadNumber);
 }
 
-float String::toFloat(bool* ok) const
+float String::toFloat(bool* ok, bool* didReadNumber) const
 {
     if (!m_impl) {
         if (ok)
             *ok = false;
+        if (didReadNumber)
+            *didReadNumber = false;
         return 0.0f;
     }
-    return m_impl->toFloat(ok);
+    return m_impl->toFloat(ok, didReadNumber);
 }
 
 String String::threadsafeCopy() const
@@ -937,11 +941,13 @@ intptr_t charactersToIntPtr(const UChar* data, size_t length, bool* ok)
     return toIntegralType<intptr_t>(data, lengthOfCharactersAsInteger(data, length), ok, 10);
 }
 
-double charactersToDouble(const UChar* data, size_t length, bool* ok)
+double charactersToDouble(const UChar* data, size_t length, bool* ok, bool* didReadNumber)
 {
     if (!length) {
         if (ok)
             *ok = false;
+        if (didReadNumber)
+            *didReadNumber = false;
         return 0.0;
     }
 
@@ -949,17 +955,20 @@ double charactersToDouble(const UChar* data, size_t length, bool* ok)
     for (unsigned i = 0; i < length; ++i)
         bytes[i] = data[i] < 0x7F ? data[i] : '?';
     bytes[length] = '\0';
+    char* start = bytes.data();
     char* end;
-    double val = WTF::strtod(bytes.data(), &end);
+    double val = WTF::strtod(start, &end);
     if (ok)
         *ok = (end == 0 || *end == '\0');
+    if (didReadNumber)
+        *didReadNumber = end - start;
     return val;
 }
 
-float charactersToFloat(const UChar* data, size_t length, bool* ok)
+float charactersToFloat(const UChar* data, size_t length, bool* ok, bool* didReadNumber)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
-    return static_cast<float>(charactersToDouble(data, length, ok));
+    return static_cast<float>(charactersToDouble(data, length, ok, didReadNumber));
 }
 
 } // namespace WTF

@@ -1,3 +1,18 @@
+2011-02-23  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Viewport parsing no longer accepts "1.0;" value as valid.
+        https://bugs.webkit.org/show_bug.cgi?id=53705
+
+        Add a new test to check viewport argument parsing of
+        value "123x456", which although not completely a number
+        should return the numeric prefix "123" as the value.
+        Note that this affects "semicolons as separators" even
+        though semicolons are not valid separators.
+
+        * fast/viewport/viewport-129.html: Added.
+
 2011-03-01  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed.

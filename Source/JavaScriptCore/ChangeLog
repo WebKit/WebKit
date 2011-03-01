@@ -1,3 +1,29 @@
+2011-02-23  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Viewport parsing no longer accepts "1.0;" value as valid.
+        https://bugs.webkit.org/show_bug.cgi?id=53705
+
+        Include a didReadNumber parameter to String -> float / double
+        conversion functions. This way, if the "ok" boolean out
+        parameter is false, you can check to see if there in fact
+        was a valid number parsed with garbage at the end. Examples
+        of that would be parsing "123x456" would have ok = false,
+        but didReadNumber = true.
+
+        * JavaScriptCore.exp:
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::toDouble):
+        (WTF::StringImpl::toFloat):
+        * wtf/text/StringImpl.h:
+        * wtf/text/WTFString.cpp:
+        (WTF::String::toDouble):
+        (WTF::String::toFloat):
+        (WTF::charactersToDouble):
+        (WTF::charactersToFloat):
+        * wtf/text/WTFString.h:
+
 2011-02-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Gavin Barraclough.
