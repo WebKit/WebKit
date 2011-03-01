@@ -326,7 +326,6 @@ accessibility/aria-text-role.html
 accessibility/aria-used-on-image-maps.html
 accessibility/button-press-action.html
 accessibility/canvas.html
-accessibility/canvas-fallback-content.html
 accessibility/editable-webarea-context-menu-point.html
 accessibility/ellipsis-text.html
 accessibility/iframe-bastardization.html

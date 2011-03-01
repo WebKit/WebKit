@@ -1,3 +1,12 @@
+2011-03-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Removed accessibility/canvas-fallback-content.html from Skipped
+        list as it was removed in 79920
+
+        * platform/gtk/Skipped:
+
 2011-03-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
