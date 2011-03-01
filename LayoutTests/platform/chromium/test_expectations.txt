@@ -3358,8 +3358,6 @@ BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = TEXT CRASH TI
 
 BUGWK54794 GPU MAC : compositing/geometry/object-clip-rects-assertion.html = TIMEOUT
 
-BUGCR73510 MAC LEOPARD : fast/text/font-size-zero.html = TEXT
-
 BUGWK54882 WIN : inspector/styles/styles-update-from-js.html = TEXT TIMEOUT
 
 BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
