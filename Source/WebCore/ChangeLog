@@ -1,3 +1,102 @@
+2011-03-01  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Remove CorrectionIndicator markers sooner.
+        https://bugs.webkit.org/show_bug.cgi?id=54893
+        <rdar://problem/8997524>
+
+        Test: platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation.html
+
+        This patch changes the autocorrection behavior on Mac OS X. We want to remove CorrectionIndicator
+        marker after any editing command if the command:
+        1. is not a SpellingCorrectionCommand itself.
+        2. is not the command that triggers the autocorrection.
+        This is achieved by adding shouldRetainAutocorrectionIndicator() function to EditCommand. This function returns
+        false for all commands derived from EditCommand, except SpellingCorrectionCommand and TypingCommand. This function
+        always returns true for SpellingCorrectionCommand. For TypingCommand, the return value is determined by member
+        variable m_shouldRetainAutocorrectionIndicator, which can be modified by passing option into the TypingCommand's
+        public functions.
+        
+        To avoid constantly searching marker list, we use variable DocumentMarkerController::m_absentMarkerTypeCache
+        to cache whether there is any marker of a particular type.
+
+        This patch also fixes two minor existing bugs.
+        
+        1. We used to show reversion panel for word with CorrectionIndicator marker. This is incorrect because
+        CorrectionIndicator marker can be removed from corrected words. Since all autocorrected words have Replacement
+        marker unless the whole word is deleted, the correct behavior is to show reversion panel for word with Replacement
+        marker, since all autocorrected words have such marker. However, since we don't want to show the reversion panel
+        if an autocorrected word has been edited, we also check to see if the Replacement marker's description is null.
+        
+        This works as following:
+        When we apply an autocorrection, we add Replacement marker to corrected word, and store original word
+        as the marker's description. If the user edited the corrected word afterward, we set description to null.
+        So when we decide whether to show a reversion panel, we not only check for the existence of Replacement
+        marker, but also check if description is null.
+        
+        2. Fixed an assertion violation in Editor::removeSpellAndCorrectionMarkersFromWordsToBeEdited(), which would
+        occur when deleting the first character in an editable area.
+
+        * dom/DocumentMarker.h: Added m_possiblyExistingMarkerTypes to allow quickly checking whether a marker type is
+           completely in from the document.
+
+        * dom/DocumentMarkerController.cpp: Most of the functions listed here are optimized for early return by checking
+           the return value of possiblyHasMarkers() at beginning.
+        (WebCore::DocumentMarkerController::possiblyHasMarkers):
+        (WebCore::DocumentMarkerController::DocumentMarkerController):
+        (WebCore::DocumentMarkerController::detach):
+        (WebCore::DocumentMarkerController::removeMarkers):
+        (WebCore::DocumentMarkerController::addMarker):
+        (WebCore::DocumentMarkerController::copyMarkers):
+        (WebCore::DocumentMarkerController::markerContainingPoint):
+        (WebCore::DocumentMarkerController::renderedRectsForMarkers):
+        (WebCore::DocumentMarkerController::removeMarkersFromMarkerMapVectorPair):
+        (WebCore::DocumentMarkerController::repaintMarkers):
+        (WebCore::DocumentMarkerController::shiftMarkers):
+        (WebCore::DocumentMarkerController::setMarkersActive):
+        (WebCore::DocumentMarkerController::hasMarkers):
+        (WebCore::DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange):
+        * dom/DocumentMarkerController.h:
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply):
+        (WebCore::EditCommand::shouldRetainAutocorrectionIndicator):
+        (WebCore::EditCommand::setShouldRetainAutocorrectionIndicator):
+        * editing/EditCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedSelection):
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::insertLineBreak):
+        (WebCore::Editor::insertParagraphSeparator):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::removeSpellAndCorrectionMarkersFromWordsToBeEdited):
+        (WebCore::Editor::applyAutocorrectionBeforeTypingIfAppropriate):
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::executeInsertLineBreak):
+        (WebCore::executeInsertParagraph):
+        (WebCore::executeInsertText):
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::shouldRetainAutocorrectionIndicator):
+        * editing/SpellingCorrectionCommand.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::TypingCommand):
+        (WebCore::TypingCommand::deleteSelection):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::updateSelectionIfDifferentFromCurrentSelection):
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::insertLineBreak):
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContent):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        * editing/TypingCommand.h:
+        (WebCore::TypingCommand::create):
+        (WebCore::TypingCommand::shouldRetainAutocorrectionIndicator):
+        (WebCore::TypingCommand::setShouldRetainAutocorrectionIndicator):
+        * manual-tests/autocorrection/type-whitespace-to-dismiss-reversion.html:
+
 2011-03-01  Renata Hodovan  <reni@webkit.org>
 
         Reviewed by Andreas Kling.

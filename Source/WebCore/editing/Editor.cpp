@@ -85,11 +85,14 @@
 #include "visible_units.h"
 #include <wtf/UnusedParam.h>
 #include <wtf/unicode/CharacterNames.h>
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
 using namespace std;
 using namespace HTMLNames;
+using namespace WTF;
+using namespace Unicode;
 
 static inline bool isAmbiguousBoundaryCharacter(UChar character)
 {
@@ -553,7 +556,7 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection)
     size_t markerCount = markers.size();
     for (size_t i = 0; i < markerCount; ++i) {
         const DocumentMarker& marker = markers[i];
-        if (((marker.type == DocumentMarker::CorrectionIndicator && marker.description.length()) || marker.type == DocumentMarker::Spelling) && static_cast<int>(marker.endOffset) == endOffset) {
+        if (((marker.type == DocumentMarker::Replacement && !marker.description.isNull()) || marker.type == DocumentMarker::Spelling) && static_cast<int>(marker.endOffset) == endOffset) {
             RefPtr<Range> wordRange = Range::create(frame()->document(), node, marker.startOffset, node, marker.endOffset);
             String currentWord = plainText(wordRange.get());
             if (currentWord.length()) {
@@ -1097,8 +1100,7 @@ void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
     VisibleSelection newSelection(cmd->endingSelection());
 
 #if SUPPORT_AUTOCORRECTION_PANEL
-    // Check to see if the command introduced paragraph separator. If it did, we remove existing autocorrection underlines. This is in consistency with the behavior in AppKit.
-    if (cmd->isTopLevelCommand() && !inSameParagraph(cmd->startingSelection().start(), newSelection.end()))
+    if (cmd->isTopLevelCommand() && !cmd->shouldRetainAutocorrectionIndicator())
         m_frame->document()->markers()->removeMarkers(DocumentMarker::CorrectionIndicator);
 #endif
 
@@ -1202,8 +1204,19 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
     if (!shouldInsertText(text, range.get(), EditorInsertActionTyped))
         return true;
 
+#if REMOVE_MARKERS_UPON_EDITING
+    if (!text.isEmpty())
+        removeSpellAndCorrectionMarkersFromWordsToBeEdited(isSpaceOrNewline(text[0]));
+#endif
+
+    bool shouldConsiderApplyingAutocorrection = false;
     if (text == " " || text == "\t")
-        applyAutocorrectionBeforeTypingIfAppropriate();
+        shouldConsiderApplyingAutocorrection = true;
+
+    if (text.length() == 1 && isPunct(text[0]) && !isAmbiguousBoundaryCharacter(text[0]))
+        shouldConsiderApplyingAutocorrection = true;
+
+    bool autocorrectionWasApplied = shouldConsiderApplyingAutocorrection && applyAutocorrectionBeforeTypingIfAppropriate();
 
     // Get the selection to use for the event that triggered this insertText.
     // If the event handler changed the selection, we may want to use a different selection
@@ -1212,12 +1225,16 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
     if (selection.isContentEditable()) {
         if (Node* selectionStart = selection.start().deprecatedNode()) {
             RefPtr<Document> document = selectionStart->document();
-            
-            // Insert the text
-            TypingCommand::insertText(document.get(), text, selection, selectInsertedText, 
-                                      triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionConfirm : TypingCommand::TextCompositionNone);
 
-            // Reveal the current selection 
+            // Insert the text
+            TypingCommand::TypingCommandOptions options = 0;
+            if (selectInsertedText)
+                options |= TypingCommand::SelectInsertedText;
+            if (autocorrectionWasApplied)
+                options |= TypingCommand::RetainAutocorrectionIndicator;
+            TypingCommand::insertText(document.get(), text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionConfirm : TypingCommand::TextCompositionNone);
+
+            // Reveal the current selection
             if (Frame* editedFrame = document->frame())
                 if (Page* page = editedFrame->page())
                     page->focusController()->focusedOrMainFrame()->selection()->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
@@ -1235,10 +1252,10 @@ bool Editor::insertLineBreak()
     if (!shouldInsertText("\n", m_frame->selection()->toNormalizedRange().get(), EditorInsertActionTyped))
         return true;
 
-    applyAutocorrectionBeforeTypingIfAppropriate();
-
-    TypingCommand::insertLineBreak(m_frame->document());
+    bool autocorrectionIsApplied = applyAutocorrectionBeforeTypingIfAppropriate();
+    TypingCommand::insertLineBreak(m_frame->document(), autocorrectionIsApplied ? TypingCommand::RetainAutocorrectionIndicator : 0);
     revealSelectionAfterEditingOperation();
+
     return true;
 }
 
@@ -1253,10 +1270,10 @@ bool Editor::insertParagraphSeparator()
     if (!shouldInsertText("\n", m_frame->selection()->toNormalizedRange().get(), EditorInsertActionTyped))
         return true;
 
-    applyAutocorrectionBeforeTypingIfAppropriate();
-
-    TypingCommand::insertParagraphSeparator(m_frame->document());
+    bool autocorrectionIsApplied = applyAutocorrectionBeforeTypingIfAppropriate();
+    TypingCommand::insertParagraphSeparator(m_frame->document(), autocorrectionIsApplied ? TypingCommand::RetainAutocorrectionIndicator : 0);
     revealSelectionAfterEditingOperation();
+
     return true;
 }
 
@@ -2122,6 +2139,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
     } else {
         markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWords.toNormalizedRange().get(), adjacentWords.toNormalizedRange().get());
     }
+
 #else
     UNUSED_PARAM(selectionAfterTyping);
     if (!isContinuousSpellCheckingEnabled())
@@ -2457,7 +2475,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
                     // Add a marker so that corrections can easily be undone and won't be re-corrected.
                     RefPtr<Range> replacedRange = paragraph.subrange(resultLocation, replacementLength);
                     replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::Replacement, replacedString);
-                    replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::CorrectionIndicator, replacedString);
+                    replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::CorrectionIndicator);
                     replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::SpellCheckingExemption);
                 }
             }
@@ -2685,7 +2703,7 @@ void Editor::removeSpellAndCorrectionMarkersFromWordsToBeEdited(bool doNotRemove
     // we choose next word as the first word.
     if (doNotRemoveIfSelectionAtWordBoundary && endOfFirstWord == startOfSelection) {
         startOfFirstWord = nextWordPosition(startOfFirstWord);
-        if (startOfFirstWord == endOfSelection)
+        if (startOfFirstWord.isNull() || startOfFirstWord == endOfSelection)
             return;
         endOfFirstWord = endOfWord(startOfFirstWord, RightWordIfOnBoundary);
         if (endOfFirstWord.deepEquivalent().anchorType() != Position::PositionIsOffsetInAnchor)
@@ -2711,6 +2729,7 @@ void Editor::removeSpellAndCorrectionMarkersFromWordsToBeEdited(bool doNotRemove
     RefPtr<Range> wordRange = Range::create(document, startOfFirstWord.deepEquivalent(), endOfLastWord.deepEquivalent());
 
     document->markers()->removeMarkers(wordRange.get(), DocumentMarker::Spelling | DocumentMarker::CorrectionIndicator | DocumentMarker::SpellCheckingExemption, DocumentMarkerController::RemovePartiallyOverlappingMarker);
+    document->markers()->clearDescriptionOnMarkersIntersectingRange(wordRange.get(), DocumentMarker::Replacement);
 }
 
 void Editor::applyCorrectionPanelInfo(const Vector<DocumentMarker::MarkerType>& markerTypesToAdd)
@@ -2769,19 +2788,25 @@ void Editor::applyCorrectionPanelInfo(const Vector<DocumentMarker::MarkerType>& 
 #endif // SUPPORT_AUTOCORRECTION_PANEL
 }
 
-void Editor::applyAutocorrectionBeforeTypingIfAppropriate()
+bool Editor::applyAutocorrectionBeforeTypingIfAppropriate()
 {
     if (!m_correctionPanelInfo.rangeToBeReplaced || !m_correctionPanelInfo.isActive)
-        return;
+        return false;
 
     if (m_correctionPanelInfo.panelType != CorrectionPanelInfo::PanelTypeCorrection)
-        return;
+        return false;
 
     Position caretPosition = m_frame->selection()->selection().start();
 
+    if (m_correctionPanelInfo.rangeToBeReplaced->endPosition() == caretPosition) {
+        dismissCorrectionPanel(ReasonForDismissingCorrectionPanelAccepted);
+        return true;
+    } 
+    
     // Pending correction should always be where caret is. But in case this is not always true, we still want to dismiss the panel without accepting the correction.
     ASSERT(m_correctionPanelInfo.rangeToBeReplaced->endPosition() == caretPosition);
-    dismissCorrectionPanel(m_correctionPanelInfo.rangeToBeReplaced->endPosition() == caretPosition ? ReasonForDismissingCorrectionPanelAccepted : ReasonForDismissingCorrectionPanelIgnored);
+    dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
+    return false;
 }
 
 void Editor::unappliedSpellCorrection(const VisibleSelection& selectionOfCorrected, const String& corrected, const String& correction)

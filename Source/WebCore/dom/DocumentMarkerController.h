@@ -41,7 +41,7 @@ class Range;
 class DocumentMarkerController {
     WTF_MAKE_NONCOPYABLE(DocumentMarkerController); WTF_MAKE_FAST_ALLOCATED;
 public:
-    DocumentMarkerController() { }
+    DocumentMarkerController();
     ~DocumentMarkerController() { detach(); }
 
     void detach();
@@ -69,6 +69,7 @@ public:
     DocumentMarker* markerContainingPoint(const IntPoint&, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
     Vector<DocumentMarker> markersForNode(Node*);
     Vector<IntRect> renderedRectsForMarkers(DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
+    void clearDescriptionOnMarkersIntersectingRange(Range*, DocumentMarker::MarkerTypes);
 
 #ifndef NDEBUG
     void showMarkers() const;
@@ -77,8 +78,12 @@ public:
 private:
     typedef std::pair<Vector<DocumentMarker>, Vector<IntRect> > MarkerMapVectorPair;
     typedef HashMap<RefPtr<Node>, MarkerMapVectorPair*> MarkerMap;
-    MarkerMap m_markers;
+    bool possiblyHasMarkers(DocumentMarker::MarkerTypes);
     void removeMarkersFromMarkerMapVectorPair(Node*, MarkerMapVectorPair*, DocumentMarker::MarkerTypes);
+
+    MarkerMap m_markers;
+    // Provide a quick way to determine whether a particular marker type is absent without going through the map.
+    DocumentMarker::MarkerTypes m_possiblyExistingMarkerTypes;
 };
 
 } // namespace WebCore

@@ -99,6 +99,8 @@ void EditCommand::apply()
         if (!isTypingCommand())
             frame->editor()->appliedEditing(this);
     }
+
+    setShouldRetainAutocorrectionIndicator(false);
 }
 
 void EditCommand::unapply()
@@ -192,6 +194,14 @@ bool EditCommand::isTypingCommand() const
     return false;
 }
 
+bool EditCommand::shouldRetainAutocorrectionIndicator() const
+{
+    return false;
+}
+
+void EditCommand::setShouldRetainAutocorrectionIndicator(bool)
+{
+}
 
 void EditCommand::updateLayout() const
 {

@@ -1,3 +1,28 @@
+2011-03-01  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Remove CorrectionIndicator markers sooner.
+        https://bugs.webkit.org/show_bug.cgi?id=54893
+        <rdar://problem/8997524>
+
+        See WebCore/ChangeLog for detail.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/editing/spelling/autocorrection-simple-expected.checksum:
+        * platform/mac/editing/spelling/autocorrection-simple-expected.png:
+        * platform/mac/editing/spelling/autocorrection-simple-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-simple.html:
+        * platform/mac/editing/spelling/delete-into-autocorrected-word-expected.checksum:
+        * platform/mac/editing/spelling/delete-into-autocorrected-word-expected.png:
+        * platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation-expected.checksum: Added.
+        * platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation-expected.png: Added.
+        * platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation-expected.txt: Copied from LayoutTests/platform/mac/editing/spelling/autocorrection-simple-expected.txt.
+        * platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation.html: Copied from LayoutTests/platform/mac/editing/spelling/autocorrection-simple.html.
+
 2011-03-01  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed build fix.

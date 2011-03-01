@@ -428,7 +428,8 @@ private:
     void stopCorrectionPanelTimer();
     void dismissCorrectionPanel(ReasonForDismissingCorrectionPanel);
     void applyCorrectionPanelInfo(const Vector<DocumentMarker::MarkerType>& markerTypesToAdd);
-    void applyAutocorrectionBeforeTypingIfAppropriate();
+    // Return true if correction was applied, false otherwise.
+    bool applyAutocorrectionBeforeTypingIfAppropriate();
 };
 
 inline void Editor::setStartNewKillRingSequence(bool flag)

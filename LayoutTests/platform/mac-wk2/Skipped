@@ -560,6 +560,7 @@ platform/mac/editing/spelling/forward-delete-into-autocorrected-word.html
 platform/mac/editing/spelling/move-cursor-around-misspelled-word.html
 platform/mac/editing/spelling/move-cursor-to-autocorrected-word.html
 platform/mac/editing/spelling/move-cursor-to-beginning-of-autocorrected-word.html
+platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation.html
 platform/mac/fast/forms/input-appearance-spinbutton-up.html
 platform/mac/fast/forms/input-number-click.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html

@@ -38,7 +38,8 @@ struct DocumentMarker {
         Grammar = 1 << 1,
         TextMatch = 1 << 2,
         // Text has been modified by spell correction. On some platforms, this prevents the text
-        // to be autocorrected again.
+        // to be autocorrected again. On post Snow Leopard Mac OS X, if a Replacement marker contains
+        // non-empty description, a reversion UI will be shown.
         Replacement = 1 << 3,
         // Renderer needs to add underline indicating that the text has been modified by spell
         // correction. Text with Replacement marker doesn't necessarily has CorrectionIndicator

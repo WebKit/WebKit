@@ -47,18 +47,18 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, const String &textToInsert, bool selectInsertedText, TextGranularity granularity, TextCompositionType compositionType,
-                             bool killRing)
-    : CompositeEditCommand(document), 
-      m_commandType(commandType), 
-      m_textToInsert(textToInsert), 
-      m_openForMoreTyping(true), 
-      m_selectInsertedText(selectInsertedText),
-      m_smartDelete(false),
-      m_granularity(granularity),
-      m_compositionType(compositionType),
-      m_killRing(killRing),
-      m_openedByBackwardDelete(false)
+TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, const String &textToInsert, TypingCommandOptions options, TextGranularity granularity, TextCompositionType compositionType)
+    : CompositeEditCommand(document)
+    , m_commandType(commandType)
+    , m_textToInsert(textToInsert)
+    , m_openForMoreTyping(true)
+    , m_selectInsertedText(options & SelectInsertedText)
+    , m_smartDelete(false)
+    , m_granularity(granularity)
+    , m_compositionType(compositionType)
+    , m_killRing(options & KillRing)
+    , m_openedByBackwardDelete(false)
+    , m_shouldRetainAutocorrectionIndicator(options & RetainAutocorrectionIndicator)
 {
     updatePreservesTypingStyle(m_commandType);
 }
@@ -78,8 +78,8 @@ void TypingCommand::deleteSelection(Document* document, bool smartDelete)
         static_cast<TypingCommand*>(lastEditCommand)->deleteSelection(smartDelete);
         return;
     }
-    
-    RefPtr<TypingCommand> typingCommand = TypingCommand::create(document, DeleteSelection, "", false);
+
+    RefPtr<TypingCommand> typingCommand = TypingCommand::create(document, DeleteSelection, "", 0);
     typingCommand->setSmartDelete(smartDelete);
     typingCommand->apply();
 }
@@ -97,8 +97,9 @@ void TypingCommand::deleteKeyPressed(Document *document, bool smartDelete, TextG
         static_cast<TypingCommand*>(lastEditCommand)->deleteKeyPressed(granularity, killRing);
         return;
     }
-    
-    RefPtr<TypingCommand> typingCommand = TypingCommand::create(document, DeleteKey, "", false, granularity, killRing);
+
+    TypingCommandOptions options = killRing ? KillRing : 0;
+    RefPtr<TypingCommand> typingCommand = TypingCommand::create(document, DeleteKey, "", options, granularity);
     typingCommand->setSmartDelete(smartDelete);
     typingCommand->apply();
 }
@@ -118,7 +119,8 @@ void TypingCommand::forwardDeleteKeyPressed(Document *document, bool smartDelete
         return;
     }
 
-    RefPtr<TypingCommand> typingCommand = TypingCommand::create(document, ForwardDeleteKey, "", false, granularity, killRing);
+    TypingCommandOptions options = killRing ? KillRing : 0;
+    RefPtr<TypingCommand> typingCommand = TypingCommand::create(document, ForwardDeleteKey, "", options, granularity);
     typingCommand->setSmartDelete(smartDelete);
     typingCommand->apply();
 }
@@ -129,30 +131,29 @@ void TypingCommand::updateSelectionIfDifferentFromCurrentSelection(TypingCommand
     VisibleSelection currentSelection = frame->selection()->selection();
     if (currentSelection == typingCommand->endingSelection())
         return;
-    
+
     typingCommand->setStartingSelection(currentSelection);
     typingCommand->setEndingSelection(currentSelection);
 }
-    
 
-void TypingCommand::insertText(Document* document, const String& text, bool selectInsertedText, TextCompositionType composition)
+void TypingCommand::insertText(Document* document, const String& text, TypingCommandOptions options, TextCompositionType composition)
 {
     ASSERT(document);
-    
+
     Frame* frame = document->frame();
     ASSERT(frame);
 
-    insertText(document, text, frame->selection()->selection(), selectInsertedText, composition);
-}
-
-// FIXME: We shouldn't need to take selectionForInsertion. It should be identical to SelectionController's current selection.
-void TypingCommand::insertText(Document* document, const String& text, const VisibleSelection& selectionForInsertion, bool selectInsertedText, TextCompositionType compositionType)
-{
 #if REMOVE_MARKERS_UPON_EDITING
     if (!text.isEmpty())
         document->frame()->editor()->removeSpellAndCorrectionMarkersFromWordsToBeEdited(isSpaceOrNewline(text.characters()[0]));
 #endif
 
+    insertText(document, text, frame->selection()->selection(), options, composition);
+}
+
+// FIXME: We shouldn't need to take selectionForInsertion. It should be identical to SelectionController's current selection.
+void TypingCommand::insertText(Document* document, const String& text, const VisibleSelection& selectionForInsertion, TypingCommandOptions options, TextCompositionType compositionType)
+{
     ASSERT(document);
 
     RefPtr<Frame> frame = document->frame();
@@ -184,13 +185,14 @@ void TypingCommand::insertText(Document* document, const String& text, const Vis
             lastTypingCommand->setStartingSelection(selectionForInsertion);
             lastTypingCommand->setEndingSelection(selectionForInsertion);
         }
-        
+
         lastTypingCommand->setCompositionType(compositionType);
-        lastTypingCommand->insertText(newText, selectInsertedText);
+        lastTypingCommand->setShouldRetainAutocorrectionIndicator(options & RetainAutocorrectionIndicator);
+        lastTypingCommand->insertText(newText, options & SelectInsertedText);
         return;
     }
 
-    RefPtr<TypingCommand> cmd = TypingCommand::create(document, InsertText, newText, selectInsertedText, compositionType);
+    RefPtr<TypingCommand> cmd = TypingCommand::create(document, InsertText, newText, options, compositionType);
     if (changeSelection)  {
         cmd->setStartingSelection(selectionForInsertion);
         cmd->setEndingSelection(selectionForInsertion);
@@ -202,29 +204,31 @@ void TypingCommand::insertText(Document* document, const String& text, const Vis
     }
 }
 
-void TypingCommand::insertLineBreak(Document *document)
+void TypingCommand::insertLineBreak(Document *document, TypingCommandOptions options)
 {
     ASSERT(document);
-    
+
     Frame* frame = document->frame();
     ASSERT(frame);
-    
+
     EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
-        static_cast<TypingCommand*>(lastEditCommand)->insertLineBreak();
+        TypingCommand* lastTypingCommand = static_cast<TypingCommand*>(lastEditCommand);
+        lastTypingCommand->setShouldRetainAutocorrectionIndicator(options & RetainAutocorrectionIndicator);
+        lastTypingCommand->insertLineBreak();
         return;
     }
 
-    applyCommand(TypingCommand::create(document, InsertLineBreak));
+    applyCommand(TypingCommand::create(document, InsertLineBreak, "", options));
 }
 
 void TypingCommand::insertParagraphSeparatorInQuotedContent(Document *document)
 {
     ASSERT(document);
-    
+
     Frame* frame = document->frame();
     ASSERT(frame);
-    
+
     EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
         static_cast<TypingCommand*>(lastEditCommand)->insertParagraphSeparatorInQuotedContent();
@@ -234,20 +238,22 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent(Document *document)
     applyCommand(TypingCommand::create(document, InsertParagraphSeparatorInQuotedContent));
 }
 
-void TypingCommand::insertParagraphSeparator(Document *document)
+void TypingCommand::insertParagraphSeparator(Document *document, TypingCommandOptions options)
 {
     ASSERT(document);
-    
+
     Frame* frame = document->frame();
     ASSERT(frame);
-    
+
     EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
-        static_cast<TypingCommand*>(lastEditCommand)->insertParagraphSeparator();
+        TypingCommand* lastTypingCommand = static_cast<TypingCommand*>(lastEditCommand);
+        lastTypingCommand->setShouldRetainAutocorrectionIndicator(options & RetainAutocorrectionIndicator);
+        lastTypingCommand->insertParagraphSeparator();
         return;
     }
 
-    applyCommand(TypingCommand::create(document, InsertParagraphSeparator));
+    applyCommand(TypingCommand::create(document, InsertParagraphSeparator, "", options));
 }
 
 bool TypingCommand::isOpenForMoreTypingCommand(const EditCommand* cmd)

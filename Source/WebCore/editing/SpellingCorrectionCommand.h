@@ -40,6 +40,7 @@ public:
 private:
     SpellingCorrectionCommand(PassRefPtr<Range> rangeToBeCorrected, const String& correction);
     virtual void doApply();
+    virtual bool shouldRetainAutocorrectionIndicator() const;
 
     RefPtr<Range> m_rangeToBeCorrected;
     VisibleSelection m_selectionToBeCorrected;

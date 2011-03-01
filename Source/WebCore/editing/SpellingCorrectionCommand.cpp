@@ -101,4 +101,9 @@ void SpellingCorrectionCommand::doApply()
     applyCommandToComposite(ReplaceSelectionCommand::create(document(), fragment, ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting, EditActionPaste));
 }
 
+bool SpellingCorrectionCommand::shouldRetainAutocorrectionIndicator() const
+{
+    return true;
+}
+
 } // namespace WebCore

@@ -48,13 +48,20 @@ public:
         TextCompositionConfirm
     };
 
+    enum TypingCommandOption {
+        SelectInsertedText = 1 << 0,
+        KillRing = 1 << 1,
+        RetainAutocorrectionIndicator = 1 << 2
+    };
+    typedef unsigned TypingCommandOptions;
+
     static void deleteSelection(Document*, bool smartDelete = false);
     static void deleteKeyPressed(Document*, bool smartDelete = false, TextGranularity = CharacterGranularity, bool killRing = false);
     static void forwardDeleteKeyPressed(Document*, bool smartDelete = false, TextGranularity = CharacterGranularity, bool killRing = false);
-    static void insertText(Document*, const String&, bool selectInsertedText = false, TextCompositionType = TextCompositionNone);
-    static void insertText(Document*, const String&, const VisibleSelection&, bool selectInsertedText = false, TextCompositionType = TextCompositionNone);
-    static void insertLineBreak(Document*);
-    static void insertParagraphSeparator(Document*);
+    static void insertText(Document*, const String&, TypingCommandOptions, TextCompositionType = TextCompositionNone);
+    static void insertText(Document*, const String&, const VisibleSelection&, TypingCommandOptions, TextCompositionType = TextCompositionNone);
+    static void insertLineBreak(Document*, TypingCommandOptions);
+    static void insertParagraphSeparator(Document*, TypingCommandOptions);
     static void insertParagraphSeparatorInQuotedContent(Document*);
     static bool isOpenForMoreTypingCommand(const EditCommand*);
     static void closeTyping(EditCommand*);
@@ -73,17 +80,17 @@ public:
     void setCompositionType(TextCompositionType type) { m_compositionType = type; }
 
 private:
-    static PassRefPtr<TypingCommand> create(Document* document, ETypingCommand command, const String& text = "", bool selectInsertedText = false, TextGranularity granularity = CharacterGranularity, bool killRing = false)
+    static PassRefPtr<TypingCommand> create(Document* document, ETypingCommand command, const String& text = "", TypingCommandOptions options = 0, TextGranularity granularity = CharacterGranularity)
     {
-        return adoptRef(new TypingCommand(document, command, text, selectInsertedText, granularity, TextCompositionNone, killRing));
+        return adoptRef(new TypingCommand(document, command, text, options, granularity, TextCompositionNone));
     }
 
-    static PassRefPtr<TypingCommand> create(Document* document, ETypingCommand command, const String& text, bool selectInsertedText, TextCompositionType compositionType)
+    static PassRefPtr<TypingCommand> create(Document* document, ETypingCommand command, const String& text, TypingCommandOptions options, TextCompositionType compositionType)
     {
-        return adoptRef(new TypingCommand(document, command, text, selectInsertedText, CharacterGranularity, compositionType, false));
+        return adoptRef(new TypingCommand(document, command, text, options, CharacterGranularity, compositionType));
     }
 
-    TypingCommand(Document*, ETypingCommand, const String& text, bool selectInsertedText, TextGranularity, TextCompositionType, bool killRing);
+    TypingCommand(Document*, ETypingCommand, const String& text, TypingCommandOptions, TextGranularity, TextCompositionType);
 
     bool smartDelete() const { return m_smartDelete; }
     void setSmartDelete(bool smartDelete) { m_smartDelete = smartDelete; }
@@ -92,6 +99,8 @@ private:
     virtual EditAction editingAction() const;
     virtual bool isTypingCommand() const;
     virtual bool preservesTypingStyle() const { return m_preservesTypingStyle; }
+    virtual bool shouldRetainAutocorrectionIndicator() const { return m_shouldRetainAutocorrectionIndicator; }
+    virtual void setShouldRetainAutocorrectionIndicator(bool retain) { m_shouldRetainAutocorrectionIndicator = retain; }
 
     static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Frame*);
 
@@ -114,6 +123,8 @@ private:
     // characters that were deleted, but only if the typing command being undone
     // was opened with a backward delete.
     bool m_openedByBackwardDelete;
+
+    bool m_shouldRetainAutocorrectionIndicator;
 };
 
 } // namespace WebCore

@@ -509,7 +509,7 @@ static bool executeInsertLineBreak(Frame* frame, Event* event, EditorCommandSour
         // Doesn't scroll to make the selection visible, or modify the kill ring.
         // InsertLineBreak is not implemented in IE or Firefox, so this behavior is only needed for
         // backward compatibility with ourselves, and for consistency with other commands.
-        TypingCommand::insertLineBreak(frame->document());
+        TypingCommand::insertLineBreak(frame->document(), 0);
         return true;
     }
     ASSERT_NOT_REACHED();
@@ -536,7 +536,7 @@ static bool executeInsertOrderedList(Frame* frame, Event*, EditorCommandSource, 
 
 static bool executeInsertParagraph(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    TypingCommand::insertParagraphSeparator(frame->document());
+    TypingCommand::insertParagraphSeparator(frame->document(), 0);
     return true;
 }
 
@@ -547,7 +547,7 @@ static bool executeInsertTab(Frame* frame, Event* event, EditorCommandSource, co
 
 static bool executeInsertText(Frame* frame, Event*, EditorCommandSource, const String& value)
 {
-    TypingCommand::insertText(frame->document(), value);
+    TypingCommand::insertText(frame->document(), value, 0);
     return true;
 }
 

@@ -122,6 +122,7 @@ platform/mac/editing/spelling/forward-delete-into-autocorrected-word.html
 platform/mac/editing/spelling/move-cursor-around-misspelled-word.html
 platform/mac/editing/spelling/move-cursor-to-autocorrected-word.html
 platform/mac/editing/spelling/move-cursor-to-beginning-of-autocorrected-word.html
+platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation.html
 
 # Skipping failing philip canvas tests from http://philip.html5.org/tests/canvas/suite/tests/
 canvas/philip/tests/2d.drawImage.broken.html

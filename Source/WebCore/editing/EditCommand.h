@@ -56,8 +56,11 @@ public:
     virtual bool isTypingCommand() const;
     
     virtual bool preservesTypingStyle() const;
-    
+
     bool isTopLevelCommand() const { return !m_parent; }
+
+    virtual bool shouldRetainAutocorrectionIndicator() const;
+    virtual void setShouldRetainAutocorrectionIndicator(bool);
 
 protected:
     EditCommand(Document*);
