@@ -1,3 +1,15 @@
+2011-02-28  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix a race condition in editing/selection/4975120
+        https://bugs.webkit.org/show_bug.cgi?id=55429
+
+        If the parser yields between the iframe and the script, it would have been
+        possible for step2() to be called before runTest() and the test would hang.
+
+        * editing/selection/4975120.html:
+
 2011-02-28  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ryosuke Niwa.
