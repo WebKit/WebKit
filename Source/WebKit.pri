@@ -152,6 +152,3 @@ CONFIG(qt_minimal) {
 }
 
 contains(DEFINES, QT_NO_UITOOLS): CONFIG -= uitools
-
-# Needed by npapi.h.
-unix:!mac:!symbian: DEFINES += XP_UNIX

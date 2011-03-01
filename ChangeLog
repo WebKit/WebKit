@@ -1,3 +1,11 @@
+2011-03-01  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed build fix.
+
+        [Qt] Fix minimal build.
+
+        * Source/WebKit.pri: Move the XP_UNIX define back to WebCore.pri.
+
 2011-02-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

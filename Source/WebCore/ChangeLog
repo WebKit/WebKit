@@ -1,3 +1,13 @@
+2011-03-01  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed build fix.
+
+        [Qt] Fix minimal build.
+
+        No new tests needed.
+
+        * WebCore.pri: Is included in WebKit2.pro, so XP_UNIX can remain here.
+
 2011-03-01  anthony taranto  <anthony.taranto@gmail.com>
 
         Return undefined value from ScriptController::evaluate(), allowing the
