@@ -1,3 +1,10 @@
+2011-02-28  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, fix SnowLeopard compilation after r79952.
+
+        * runtime/MachineStackMarker.cpp:
+        (JSC::freePlatformThreadRegisters):
+
 2011-02-28  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.
