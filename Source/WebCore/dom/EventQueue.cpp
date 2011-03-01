@@ -47,6 +47,11 @@ private:
     EventQueue* m_eventQueue;    
 };
 
+PassRefPtr<EventQueue> EventQueue::create(ScriptExecutionContext* context)
+{
+    return adoptRef(new EventQueue(context));
+}
+
 EventQueue::EventQueue(ScriptExecutionContext* context)
     : m_pendingEventTimer(adoptPtr(new EventQueueTimer(this, context)))
 {
@@ -85,6 +90,8 @@ void EventQueue::pendingEventTimerFired()
     queuedEvents.swap(m_queuedEvents);
     
     m_nodesWithQueuedScrollEvents.clear();
+
+    RefPtr<EventQueue> protector(this);
 
     for (size_t i = 0; i < queuedEvents.size(); i++)
         dispatchEvent(queuedEvents[i].release());

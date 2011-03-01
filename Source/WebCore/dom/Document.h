@@ -1393,7 +1393,7 @@ private:
 
     bool m_usingGeolocation;
     
-    OwnPtr<EventQueue> m_eventQueue;
+    RefPtr<EventQueue> m_eventQueue;
 
 #if ENABLE(WML)
     bool m_containsWMLContent;

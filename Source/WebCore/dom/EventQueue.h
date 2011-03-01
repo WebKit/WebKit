@@ -28,9 +28,8 @@
 #define EventQueue_h
 
 #include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -41,21 +40,14 @@ class EventQueueTimer;
 class Node;
 class ScriptExecutionContext;
 
-class EventQueue {
-    WTF_MAKE_NONCOPYABLE(EventQueue);
-
-    
+class EventQueue : public RefCounted<EventQueue> {
 public:
     enum ScrollEventTargetType {
         ScrollEventDocumentTarget,
         ScrollEventElementTarget
     };
 
-    static PassOwnPtr<EventQueue> create(ScriptExecutionContext* context)
-    {
-        return adoptPtr(new EventQueue(context));
-    }
-
+    static PassRefPtr<EventQueue> create(ScriptExecutionContext*);
     ~EventQueue();
 
     void enqueueEvent(PassRefPtr<Event>);

@@ -1,3 +1,21 @@
+2011-03-01  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        EventQueue needs to be ref counted
+        https://bugs.webkit.org/show_bug.cgi?id=55512
+
+        EventQueue needs to be ref counted because it's possible for its instance
+        to be deleted while it's dispatching events. This is the reason why
+        https://bugs.webkit.org/show_bug.cgi?id=54785 had to be reverted.
+
+        No change of behavior, so no tests.
+
+        * dom/Document.h:
+        * dom/EventQueue.cpp:
+        (WebCore::EventQueue::create):
+        * dom/EventQueue.h:
+
 2011-03-01  Helder Correia  <helder@sencha.com>
 
         Reviewed by Simon Fraser.
