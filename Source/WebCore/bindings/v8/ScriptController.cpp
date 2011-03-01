@@ -240,7 +240,7 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
 
     m_sourceURL = savedSourceURL;
 
-    if (object.IsEmpty() || object->IsUndefined())
+    if (object.IsEmpty())
         return ScriptValue();
 
     return ScriptValue(object);
