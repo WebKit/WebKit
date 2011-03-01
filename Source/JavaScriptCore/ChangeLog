@@ -1,3 +1,9 @@
+2011-02-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2011-02-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r79948.
