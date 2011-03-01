@@ -1,3 +1,17 @@
+2011-03-01  Juha Savolainen  <juha.savolainen@weego.fi>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] WebKit2 needs to support font size changing and getting default font size
+        https://bugs.webkit.org/show_bug.cgi?id=53671
+
+        Added new enum for font size type and added methods to set and get default font sizes.
+
+        * UIProcess/API/qt/qwkpreferences.cpp:
+        (QWKPreferences::setFontSize): Added.
+        (QWKPreferences::fontSize): Added.
+        * UIProcess/API/qt/qwkpreferences.h:
+
 2011-02-28  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adam Roben and Gavin Barraclough.

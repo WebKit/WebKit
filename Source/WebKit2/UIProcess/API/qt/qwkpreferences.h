@@ -49,6 +49,12 @@ public:
         DnsPrefetchEnabled
     };
 
+    enum FontSize {
+        MinimumFontSize,
+        DefaultFontSize,
+        DefaultFixedFontSize
+    };
+
     static QWKPreferences* sharedPreferences();
 
     void setFontFamily(FontFamily which, const QString& family);
@@ -56,6 +62,9 @@ public:
 
     void setAttribute(WebAttribute attr, bool on);
     bool testAttribute(WebAttribute attr) const;
+
+    void setFontSize(FontSize type, int size);
+    int fontSize(FontSize type) const;
 
 private:
     Q_DISABLE_COPY(QWKPreferences)

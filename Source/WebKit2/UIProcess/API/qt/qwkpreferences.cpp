@@ -184,3 +184,36 @@ void QWKPreferences::setAttribute(WebAttribute attr, bool on)
         ASSERT_NOT_REACHED();
     }
 }
+
+void QWKPreferences::setFontSize(FontSize type, int size)
+{
+    switch (type) {
+    case MinimumFontSize:
+         WKPreferencesSetMinimumFontSize(d->ref, size);
+         break;
+    case DefaultFontSize:
+         WKPreferencesSetDefaultFontSize(d->ref, size);
+         break;
+    case DefaultFixedFontSize:
+         WKPreferencesSetDefaultFixedFontSize(d->ref, size);
+         break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+int QWKPreferences::fontSize(FontSize type) const
+{
+    switch (type) {
+    case MinimumFontSize:
+         return WKPreferencesGetMinimumFontSize(d->ref);
+    case DefaultFontSize:
+         return WKPreferencesGetDefaultFontSize(d->ref);
+    case DefaultFixedFontSize:
+         return WKPreferencesGetDefaultFixedFontSize(d->ref);
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+}
+
