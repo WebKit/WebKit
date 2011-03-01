@@ -1,3 +1,10 @@
+2011-03-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations change. Remove failing expectations for
+        editing/ tests that pass after r79961.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-28  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
