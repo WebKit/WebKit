@@ -1034,6 +1034,7 @@ SET(WebCore_SOURCES
 
     html/shadow/MediaControls.cpp
     html/shadow/SliderThumbElement.cpp
+    html/shadow/TextControlInnerElements.cpp
 
     inspector/ConsoleMessage.cpp
     inspector/InjectedScript.cpp
@@ -1405,7 +1406,6 @@ SET(WebCore_SOURCES
     rendering/RootInlineBox.cpp
     rendering/ScrollBehavior.cpp
     rendering/ShadowElement.cpp
-    rendering/TextControlInnerElements.cpp
     rendering/TransformState.cpp
     rendering/break_lines.cpp
 

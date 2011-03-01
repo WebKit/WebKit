@@ -1,3 +1,33 @@
+2011-03-01  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Bug 54853 - Move TextControlInnerElements from WebCore/rendering to WebCore/html/shadow
+        https://bugs.webkit.org/show_bug.cgi?id=54853
+        
+        Moving the files from rendering to html/shadow, with the exception of
+        the class RenderTextControlInnerBlock, which I moved to RenderTextControlSingleLine
+        (this place is not ideal, but only a temporary state during the larger refactoring
+        for <input>).
+
+        No new tests. (refactoring)
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/shadow/TextControlInnerElements.cpp: Copied from Source/WebCore/rendering/TextControlInnerElements.cpp.
+        * html/shadow/TextControlInnerElements.h: Copied from Source/WebCore/rendering/TextControlInnerElements.h.
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlInnerBlock::positionForPoint):
+        * rendering/RenderTextControlSingleLine.h:
+        (WebCore::RenderTextControlInnerBlock::RenderTextControlInnerBlock):
+        (WebCore::RenderTextControlInnerBlock::hasLineIfEmpty):
+        * rendering/TextControlInnerElements.cpp: Removed.
+        * rendering/TextControlInnerElements.h: Removed.
+
 2011-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

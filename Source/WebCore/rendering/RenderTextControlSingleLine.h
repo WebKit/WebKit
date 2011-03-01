@@ -174,6 +174,19 @@ inline RenderTextControlSingleLine* toRenderTextControlSingleLine(RenderObject* 
 // This will catch anyone doing an unnecessary cast.
 void toRenderTextControlSingleLine(const RenderTextControlSingleLine*);
 
+// ----------------------------
+
+class RenderTextControlInnerBlock : public RenderBlock {
+public:
+    RenderTextControlInnerBlock(Node* node, bool isMultiLine) : RenderBlock(node), m_multiLine(isMultiLine) { }
+
+private:
+    virtual bool hasLineIfEmpty() const { return true; }
+    virtual VisiblePosition positionForPoint(const IntPoint&);
+
+    bool m_multiLine;
+};
+
 }
 
 #endif

@@ -788,6 +788,7 @@ SOURCES += \
     html/parser/XSSFilter.cpp \
     html/shadow/MediaControls.cpp \
     html/shadow/SliderThumbElement.cpp \
+    html/shadow/TextControlInnerElements.cpp \
     inspector/ConsoleMessage.cpp \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptHost.cpp \
@@ -1116,7 +1117,6 @@ SOURCES += \
     rendering/RootInlineBox.cpp \
     rendering/ScrollBehavior.cpp \
     rendering/ShadowElement.cpp \
-    rendering/TextControlInnerElements.cpp \
     rendering/TransformState.cpp \
     rendering/style/ContentData.cpp \
     rendering/style/CounterDirectives.cpp \
@@ -2181,7 +2181,6 @@ HEADERS += \
     rendering/svg/SVGTextLayoutEngineSpacing.h \
     rendering/svg/SVGTextMetrics.h \
     rendering/svg/SVGTextQuery.h \
-    rendering/TextControlInnerElements.h \
     rendering/TransformState.h \
     svg/animation/SMILTimeContainer.h \
     svg/animation/SMILTime.h \

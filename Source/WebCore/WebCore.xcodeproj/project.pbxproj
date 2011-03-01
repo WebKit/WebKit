@@ -283,6 +283,8 @@
 		1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 1419D2C40CEA6F6100FF507A /* TreeShared.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142011B60A003133008303F9 /* JSCSSStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142011B40A003133008303F9 /* JSCSSStyleDeclaration.cpp */; };
 		142011B70A003133008303F9 /* JSCSSStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = 142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		142B97C913138943008BEF4B /* TextControlInnerElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142B97C713138943008BEF4B /* TextControlInnerElements.cpp */; };
+		142B97CA13138943008BEF4B /* TextControlInnerElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 142B97C813138943008BEF4B /* TextControlInnerElements.h */; };
 		1432E8470C51493800B1500F /* GCController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1432E8460C51493800B1500F /* GCController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1432E8490C51493F00B1500F /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1432E8480C51493F00B1500F /* GCController.cpp */; };
 		1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1449E24A107D4A8400B5793F /* JSCallbackData.h */; };
@@ -4008,8 +4010,6 @@
 		AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AA4C3A760B2B1679002334A2 /* StyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4C3A740B2B1679002334A2 /* StyleElement.cpp */; };
 		AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4C3A750B2B1679002334A2 /* StyleElement.h */; };
-		AB014DE30E689A4300E10445 /* TextControlInnerElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB014DE10E689A4300E10445 /* TextControlInnerElements.cpp */; };
-		AB014DE40E689A4300E10445 /* TextControlInnerElements.h in Headers */ = {isa = PBXBuildFile; fileRef = AB014DE20E689A4300E10445 /* TextControlInnerElements.h */; };
 		AB23A32709BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */; };
 		AB23A32809BBA7D00067CC53 /* BeforeTextInsertedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */; };
 		AB247A6C0AFD6383003FA5FD /* RenderSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */; };
@@ -6580,6 +6580,8 @@
 		142011AE0A003117008303F9 /* CSSStyleDeclaration.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSStyleDeclaration.idl; sourceTree = "<group>"; };
 		142011B40A003133008303F9 /* JSCSSStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSStyleDeclaration.cpp; sourceTree = "<group>"; };
 		142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSStyleDeclaration.h; sourceTree = "<group>"; };
+		142B97C713138943008BEF4B /* TextControlInnerElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextControlInnerElements.cpp; sourceTree = "<group>"; };
+		142B97C813138943008BEF4B /* TextControlInnerElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextControlInnerElements.h; sourceTree = "<group>"; };
 		1432E8460C51493800B1500F /* GCController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GCController.h; sourceTree = "<group>"; };
 		1432E8480C51493F00B1500F /* GCController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GCController.cpp; sourceTree = "<group>"; };
 		1449E24A107D4A8400B5793F /* JSCallbackData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackData.h; sourceTree = "<group>"; };
@@ -10188,8 +10190,6 @@
 		AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSCursorImageValue.h; sourceTree = "<group>"; };
 		AA4C3A740B2B1679002334A2 /* StyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StyleElement.cpp; sourceTree = "<group>"; };
 		AA4C3A750B2B1679002334A2 /* StyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StyleElement.h; sourceTree = "<group>"; };
-		AB014DE10E689A4300E10445 /* TextControlInnerElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextControlInnerElements.cpp; sourceTree = "<group>"; };
-		AB014DE20E689A4300E10445 /* TextControlInnerElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextControlInnerElements.h; sourceTree = "<group>"; };
 		AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BeforeTextInsertedEvent.cpp; sourceTree = "<group>"; };
 		AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BeforeTextInsertedEvent.h; sourceTree = "<group>"; };
 		AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSlider.cpp; sourceTree = "<group>"; };
@@ -13221,6 +13221,8 @@
 				A7FE819B12FA677700850C1E /* ProgressBarValueElement.h */,
 				4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */,
 				4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */,
+				142B97C713138943008BEF4B /* TextControlInnerElements.cpp */,
+				142B97C813138943008BEF4B /* TextControlInnerElements.h */,
 			);
 			path = shadow;
 			sourceTree = "<group>";
@@ -18897,8 +18899,6 @@
 				A7F338A111C0EFCA00A320A7 /* ShadowElement.cpp */,
 				A7F338A211C0EFCA00A320A7 /* ShadowElement.h */,
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
-				AB014DE10E689A4300E10445 /* TextControlInnerElements.cpp */,
-				AB014DE20E689A4300E10445 /* TextControlInnerElements.h */,
 				37FC96DA1104ED71003E1FAD /* TrailingFloatsRootInlineBox.h */,
 				0F500AB00F54DB3100EEF928 /* TransformState.cpp */,
 				0F500AAE0F54DB1B00EEF928 /* TransformState.h */,
@@ -22256,7 +22256,7 @@
 				B2C3DA400D006C1D00EF6F26 /* TextCodecUserDefined.h in Headers */,
 				B2C3DA420D006C1D00EF6F26 /* TextCodecUTF16.h in Headers */,
 				9343CB8212F25E510033C5EE /* TextCodecUTF8.h in Headers */,
-				AB014DE40E689A4300E10445 /* TextControlInnerElements.h in Headers */,
+				142B97CA13138943008BEF4B /* TextControlInnerElements.h in Headers */,
 				B2C3DA450D006C1D00EF6F26 /* TextDirection.h in Headers */,
 				97BC84B412371180000C6161 /* TextDocument.h in Headers */,
 				97BC84841236FD93000C6161 /* TextDocumentParser.h in Headers */,
@@ -24938,7 +24938,7 @@
 				B2C3DA3F0D006C1D00EF6F26 /* TextCodecUserDefined.cpp in Sources */,
 				B2C3DA410D006C1D00EF6F26 /* TextCodecUTF16.cpp in Sources */,
 				9343CB8112F25E510033C5EE /* TextCodecUTF8.cpp in Sources */,
-				AB014DE30E689A4300E10445 /* TextControlInnerElements.cpp in Sources */,
+				142B97C913138943008BEF4B /* TextControlInnerElements.cpp in Sources */,
 				97BC84B312371180000C6161 /* TextDocument.cpp in Sources */,
 				97BC84831236FD93000C6161 /* TextDocumentParser.cpp in Sources */,
 				B2C3DA460D006C1D00EF6F26 /* TextEncoding.cpp in Sources */,

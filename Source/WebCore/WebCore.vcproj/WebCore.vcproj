@@ -38480,62 +38480,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\TextControlInnerElements.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_LTCG|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\rendering\TextControlInnerElements.h"
-				>
-			</File>
-			<File
 				RelativePath="..\rendering\TrailingFloatsRootInlineBox.h"
 				>
 			</File>
@@ -55804,6 +55748,14 @@
 					RelativePath="..\html\shadow\SliderThumbElement.h"
 					>
 				</File>
+                <File
+                    RelativePath="..\html\shadow\TextControlInnerElements.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath="..\html\shadow\TextControlInnerElements.h"
+                    >
+                </File>
 			</Filter>
 		</Filter>
 		<Filter

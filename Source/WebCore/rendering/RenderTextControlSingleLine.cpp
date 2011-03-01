@@ -51,6 +51,23 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+VisiblePosition RenderTextControlInnerBlock::positionForPoint(const IntPoint& point)
+{
+    IntPoint contentsPoint(point);
+
+    // Multiline text controls have the scroll on shadowAncestorNode, so we need to take that
+    // into account here.
+    if (m_multiLine) {
+        RenderTextControl* renderer = toRenderTextControl(node()->shadowAncestorNode()->renderer());
+        if (renderer->hasOverflowClip())
+            contentsPoint += renderer->layer()->scrolledContentOffset();
+    }
+
+    return RenderBlock::positionForPoint(contentsPoint);
+}
+
+// ----------------------------
+
 RenderTextControlSingleLine::RenderTextControlSingleLine(Node* node, bool placeholderVisible)
     : RenderTextControl(node, placeholderVisible)
     , m_searchPopupIsVisible(false)

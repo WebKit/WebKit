@@ -47,34 +47,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class RenderTextControlInnerBlock : public RenderBlock {
-public:
-    RenderTextControlInnerBlock(Node* node, bool isMultiLine) : RenderBlock(node), m_multiLine(isMultiLine) { }
-
-private:
-    virtual bool hasLineIfEmpty() const { return true; }
-    virtual VisiblePosition positionForPoint(const IntPoint&);
-
-    bool m_multiLine;
-};
-
-VisiblePosition RenderTextControlInnerBlock::positionForPoint(const IntPoint& point)
-{
-    IntPoint contentsPoint(point);
-
-    // Multiline text controls have the scroll on shadowAncestorNode, so we need to take that
-    // into account here.
-    if (m_multiLine) {
-        RenderTextControl* renderer = toRenderTextControl(node()->shadowAncestorNode()->renderer());
-        if (renderer->hasOverflowClip())
-            contentsPoint += renderer->layer()->scrolledContentOffset();
-    }
-
-    return RenderBlock::positionForPoint(contentsPoint);
-}
-
-// ----------------------------
-
 TextControlInnerElement::TextControlInnerElement(Document* document, HTMLElement* shadowParent)
     : HTMLDivElement(divTag, document)
 {

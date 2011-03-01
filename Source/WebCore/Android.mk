@@ -351,6 +351,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	\
 	html/shadow/MediaControls.cpp \
 	html/shadow/SliderThumbElement.cpp \
+	html/shadow/TextControlInnerElements.cpp \
 	\
 	loader/cache/CachedCSSStyleSheet.cpp \
 	loader/cache/CachedFont.cpp \
@@ -782,7 +783,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 
 LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/ScrollBehavior.cpp \
-	rendering/TextControlInnerElements.cpp \
 	rendering/TransformState.cpp \
 	rendering/break_lines.cpp \
 	\
