@@ -85,7 +85,7 @@ void TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent* event)
 
 void TextFieldInputType::handleWheelEventForSpinButton(WheelEvent* event)
 {
-    if (element()->disabled() || element()->readOnly())
+    if (element()->disabled() || element()->readOnly() || !element()->focused())
         return;
     int step = 0;
     if (event->wheelDeltaY() > 0)

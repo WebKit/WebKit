@@ -1,3 +1,13 @@
+2011-02-28  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Number type input should not handle mouse wheel events if it has no focus.
+        https://bugs.webkit.org/show_bug.cgi?id=53638
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleWheelEventForSpinButton): Check focused().
+
 2011-02-28  Noel Gordon  <noel.gordon@gmail.com>
         Reviewed by James Robinson.
 
