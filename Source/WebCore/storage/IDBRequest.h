@@ -58,15 +58,18 @@ public:
     // Defined in the IDL
     enum ReadyState {
         LOADING = 1,
-        DONE = 2
+        DONE = 2,
+        EarlyDeath = 3
     };
     unsigned short readyState() const;
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(success);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
 
+    void markEarlyDeath();
     bool resetReadyState(IDBTransaction*);
     IDBAny* source();
+    void abort();
 
     // IDBCallbacks
     virtual void onError(PassRefPtr<IDBDatabaseError>);
@@ -111,6 +114,7 @@ private:
 
     ReadyState m_readyState;
     bool m_finished; // Is it possible that we'll fire any more events? If not, we're finished.
+    Vector<RefPtr<Event> > m_enqueuedEvents;
 
     EventTargetData m_eventTargetData;
 };

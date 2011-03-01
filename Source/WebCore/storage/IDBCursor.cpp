@@ -72,8 +72,10 @@ PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRe
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->update(value, request, ec);
-    if (ec)
+    if (ec) {
+        request->markEarlyDeath();
         return 0;
+    }
     return request.release();
 }
 
@@ -91,8 +93,10 @@ PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->deleteFunction(request, ec);
-    if (ec)
+    if (ec) {
+        request->markEarlyDeath();
         return 0;
+    }
     return request.release();
 }
 

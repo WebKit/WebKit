@@ -223,7 +223,8 @@ static const char* const idbDatabaseExceptionNames[] = {
     "TRANSIENT_ERR",
     "TIMEOUT_ERR",
     "DEADLOCK_ERR",
-    "READ_ONLY_ERR"
+    "READ_ONLY_ERR",
+    "ABORT_ERR"
 };
 
 static const char* const idbDatabaseExceptionDescriptions[] = {
@@ -238,7 +239,8 @@ static const char* const idbDatabaseExceptionDescriptions[] = {
     "TRANSIENT_ERR", // FIXME: This isn't even used.
     "TIMEOUT_ERR", // This can't be thrown.
     "DEADLOCK_ERR", // This can't be thrown.
-    "Write operations cannot be preformed on a read-only transaction."
+    "Write operations cannot be preformed on a read-only transaction.",
+    "The transaction was aborted, so the request cannot be fulfilled."
 };
 #endif
 
