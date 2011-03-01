@@ -1,5 +1,11 @@
 2011-03-01  Adam Roben  <aroben@apple.com>
 
+        Incorporate a review comment I missed in r80051
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp: Clarified error message.
+
+2011-03-01  Adam Roben  <aroben@apple.com>
+
         Make the PLUGIN_ARCHITECTURE() macro work with MSVC
 
         Fixes <http://webkit.org/b/55513> <rdar://problem/9069189> REGRESSION (r79925): Lots of
