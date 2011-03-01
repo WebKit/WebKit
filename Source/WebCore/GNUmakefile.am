@@ -1891,6 +1891,8 @@ webcore_sources += \
 	Source/WebCore/html/shadow/ProgressBarValueElement.h \
 	Source/WebCore/html/shadow/SliderThumbElement.cpp \
 	Source/WebCore/html/shadow/SliderThumbElement.h \
+	Source/WebCore/html/shadow/TextControlInnerElements.cpp \
+	Source/WebCore/html/shadow/TextControlInnerElements.h \
 	Source/WebCore/html/PasswordInputType.cpp \
 	Source/WebCore/html/PasswordInputType.h \
 	Source/WebCore/html/PluginDocument.cpp \
@@ -3067,8 +3069,6 @@ webcore_sources += \
 	Source/WebCore/rendering/svg/SVGTextQuery.cpp \
 	Source/WebCore/rendering/svg/SVGTextQuery.h \
 	Source/WebCore/rendering/TableLayout.h \
-	Source/WebCore/rendering/TextControlInnerElements.cpp \
-	Source/WebCore/rendering/TextControlInnerElements.h \
 	Source/WebCore/rendering/TrailingFloatsRootInlineBox.h \
 	Source/WebCore/rendering/TransformState.cpp \
 	Source/WebCore/rendering/TransformState.h \
