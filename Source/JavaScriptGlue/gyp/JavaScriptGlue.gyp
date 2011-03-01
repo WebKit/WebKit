@@ -2,7 +2,7 @@
   'includes': [
     'JavaScriptGlue.gypi',
   ],
-  'xcode_config_file': '../Configurations/DebugRelease.xcconfig',
+  'xcode_config_file': '<(DEPTH)/JavaScriptGlue/Configurations/DebugRelease.xcconfig',
   'targets': [
     {
       'target_name': 'JavaScriptGlue',
@@ -11,9 +11,9 @@
         'Update Version'
       ],
       'include_dirs': [
-        '..',
-        '../ForwardingHeaders',
-        '../icu',
+        '<(DEPTH)/JavaScriptGlue',
+        '<(DEPTH)/JavaScriptGlue/ForwardingHeaders',
+        '<(DEPTH)/JavaScriptGlue/icu',
         '<(PRODUCT_DIR)/include',
       ],
       'sources': [
@@ -35,25 +35,31 @@
         {
           'postbuild_name': 'Check For Global Initializers',
           'action': [
-            'sh', 'run-if-exists.sh', 'check-for-global-initializers'
+            'sh', '<(DEPTH)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-global-initializers'
           ],
         },
         {
           'postbuild_name': 'Check For Weak VTables and Externals',
           'action': [
-            'sh', 'run-if-exists.sh', 'check-for-weak-vtables-and-externals'
+            'sh', '<(DEPTH)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-weak-vtables-and-externals'
           ],
         },
         {
           'postbuild_name': 'Remove Headers If Needed',
           'action': [
-            'sh', 'remove-headers-if-needed.sh'
+            'sh', '<(DEPTH)/gyp/remove-headers-if-needed.sh'
           ],
         },
       ],
       'conditions': [
         ['OS=="mac"', {
           'mac_bundle': 1,
+          'xcode_settings': {
+            # FIXME: Remove these overrides once JavaScriptGlue.xcconfig is
+            # used only by this project.
+            'INFOPLIST_FILE': '<(DEPTH)/JavaScriptGlue/Info.plist',
+            'EXPORTED_SYMBOLS_FILE': '<(DEPTH)/JavaScriptGlue/JavaScriptGlue.exp', 
+          },
         }],
       ],
     },
@@ -66,7 +72,7 @@
           'inputs': [],
           'outputs': [],
           'action': [
-            'sh', 'update-info-plist.sh'
+            'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(DEPTH)/JavaScriptGlue/Info.plist'
           ],
         },
       ], # actions

@@ -16,6 +16,23 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Teach JavaScriptGlue gyp build about DEPTH
+        https://bugs.webkit.org/show_bug.cgi?id=55421
+
+        After this path, we should set DEPTH to the Source directory, which is
+        a common point for all the frameworks that make up WebKit.  These
+        changes to the GYP teach JavaScriptGlue how to find various files based
+        on DEPTH rather than based on the location of the xcodeproj file.
+
+        * gyp/JavaScriptGlue.gyp:
+        * gyp/remove-headers-if-needed.sh: Removed.
+        * gyp/run-if-exists.sh: Removed.
+        * gyp/update-info-plist.sh: Removed.
+
+2011-02-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Use more xcconfig files in JavaScriptGlue gyp build
         https://bugs.webkit.org/show_bug.cgi?id=55395
 

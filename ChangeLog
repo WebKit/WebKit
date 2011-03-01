@@ -1,3 +1,19 @@
+2011-02-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Teach JavaScriptGlue gyp build about DEPTH
+        https://bugs.webkit.org/show_bug.cgi?id=55421
+
+        Moves the previously JavaScriptGlue-specific GYP helper shell scripts
+        to the gyp directory in Source, where they can be shared by multiple
+        frameworks.
+
+        * Source/gyp: Added.
+        * Source/gyp/remove-headers-if-needed.sh: Copied from Source/JavaScriptGlue/gyp/remove-headers-if-needed.sh.
+        * Source/gyp/run-if-exists.sh: Copied from Source/JavaScriptGlue/gyp/run-if-exists.sh.
+        * Source/gyp/update-info-plist.sh: Copied from Source/JavaScriptGlue/gyp/update-info-plist.sh.
+
 2011-02-28  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
