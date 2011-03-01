@@ -141,12 +141,6 @@ WebInspector.SourceFrame.prototype = {
             this._textViewer.resize();
     },
 
-    sizeToFitContentHeight: function()
-    {
-        if (this._textViewer)
-            this._textViewer.revalidateDecorationsAndPaint();
-    },
-
     get textModel()
     {
         return this._textModel;
@@ -180,12 +174,26 @@ WebInspector.SourceFrame.prototype = {
             delete this._lineToHighlight;
     },
 
+    _startEditing: function()
+    {
+        WebInspector.cancelSearch();
+        this.clearMessages();
+    },
+
+    _endEditing: function(oldRange, newRange)
+    {
+        // FIXME: Implement this.
+    },
+
     _createTextViewer: function(mimeType, content)
     {
         this._content = content;
         this._textModel.setText(null, content.text);
 
         this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url);
+        this._textViewer.startEditingListener = this._startEditing.bind(this);
+        this._textViewer.endEditingListener = this._endEditing.bind(this);
+
         var element = this._textViewer.element;
         element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
         element.addEventListener("mousedown", this._mouseDown.bind(this), true);

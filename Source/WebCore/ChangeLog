@@ -1,3 +1,31 @@
+2011-03-01  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Text editor] Handle decorated lines in the editor
+        https://bugs.webkit.org/show_bug.cgi?id=55373
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._startEditing):
+        (WebInspector.SourceFrame.prototype._endEditing):
+        (WebInspector.SourceFrame.prototype._createTextViewer):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorGutterPanel.prototype.textChanged):
+        (WebInspector.TextEditorGutterChunk.prototype.addDecoration):
+        (WebInspector.TextEditorGutterChunk.prototype.removeDecoration):
+        (WebInspector.TextEditorMainPanel.prototype.set readOnly):
+        (WebInspector.TextEditorMainPanel.prototype._handleDOMUpdates):
+        (WebInspector.TextEditorMainPanel.prototype._handleDOMSubtreeModified):
+        (WebInspector.TextEditorMainPanel.prototype._markDirtyLines):
+        (WebInspector.TextEditorMainPanel.prototype._applyDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype._removeDecorationsInRange):
+        (WebInspector.TextEditorMainPanel.prototype._updateChunksForRanges):
+        (WebInspector.TextEditorMainPanel.prototype._collectLinesFromDiv):
+        (WebInspector.TextEditorMainChunk.prototype.addDecoration):
+        (WebInspector.TextEditorMainChunk.prototype.removeDecoration):
+        (WebInspector.TextEditorMainChunk.prototype.removeAllDecorations):
+        (WebInspector.TextEditorMainChunk.prototype.get decorated):
+
 2011-03-01  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed GTK build fix after r79978

@@ -526,6 +526,15 @@ WebInspector.TextEditorGutterPanel.prototype = {
                 this.element.appendChild(chunk.element);
             }
             this._repaintAll();
+        } else {
+            // Decorations may have been removed, so we may have to sync those lines.
+            var chunkNumber = this._chunkNumberForLine(newRange.startLine);
+            var chunk = this._textChunks[chunkNumber];
+            while (chunk && chunk.startLine <= newRange.endLine) {
+                if (chunk.linesCount === 1)
+                    this._syncDecorationsForLineListener(chunk.startLine);
+                chunk = this._textChunks[++chunkNumber];
+            }
         }
     }
 }
@@ -568,14 +577,18 @@ WebInspector.TextEditorGutterChunk = function(textViewer, startLine, endLine)
 WebInspector.TextEditorGutterChunk.prototype = {
     addDecoration: function(decoration)
     {
+        this._textViewer.beginDomUpdates();
         if (typeof decoration === "string")
             this.element.addStyleClass(decoration);
+        this._textViewer.endDomUpdates();
     },
 
     removeDecoration: function(decoration)
     {
+        this._textViewer.beginDomUpdates();
         if (typeof decoration === "string")
             this.element.removeStyleClass(decoration);
+        this._textViewer.endDomUpdates();
     },
 
     get expanded()
@@ -691,11 +704,13 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (!Preferences.sourceEditorEnabled)
             return;
 
+        this.beginDomUpdates();
         this._readOnly = readOnly;
         if (this._readOnly)
             this.element.removeStyleClass("text-editor-editable");
         else
             this.element.addStyleClass("text-editor-editable");
+        this.endDomUpdates();
     },
 
     markAndRevealRange: function(range)
@@ -1138,13 +1153,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             }
         }
 
-        if (this._dirtyLines) {
-            this._dirtyLines.start = Math.min(this._dirtyLines.start, startLine);
-            this._dirtyLines.end = Math.max(this._dirtyLines.end, endLine);
-        } else {
-            this._dirtyLines = { start: startLine, end: endLine };
-            setTimeout(this._applyDomUpdates.bind(this), 0);
-        }
+        this._markDirtyLines(startLine, endLine);
     },
 
     _handleDOMSubtreeModified: function(e)
@@ -1164,8 +1173,20 @@ WebInspector.TextEditorMainPanel.prototype = {
         var endLine = Math.max(selection.startLine, selection.endLine) + 1;
         endLine = Math.min(this._textModel.linesCount, endLine);
 
-        this._dirtyLines = { start: startLine, end: endLine };
-        setTimeout(this._applyDomUpdates.bind(this), 0);
+        this._markDirtyLines(startLine, endLine);
+    },
+
+    _markDirtyLines: function(startLine, endLine)
+    {
+        if (this._dirtyLines) {
+            this._dirtyLines.start = Math.min(this._dirtyLines.start, startLine);
+            this._dirtyLines.end = Math.max(this._dirtyLines.end, endLine);
+        } else {
+            this._dirtyLines = { start: startLine, end: endLine };
+            setTimeout(this._applyDomUpdates.bind(this), 0);
+            // Remove marked ranges, if any.
+            this.markAndRevealRange(null);
+        }
     },
 
     _applyDomUpdates: function()
@@ -1173,19 +1194,18 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (!this._dirtyLines)
             return;
 
+        // Check if the editor had been set readOnly by the moment when this async callback got executed.
+        if (this._readOnly) {
+            delete this._dirtyLines;
+            return;
+        }
+
+        // This is a "foreign" call outside of this class. Should be before we delete the dirty lines flag.
+        this._enterTextChangeMode();
+
         var dirtyLines = this._dirtyLines;
         delete this._dirtyLines;
 
-        // Check if the editor had been set readOnly by the moment when this async callback got executed.
-        if (this._readOnly)
-            return;
-
-        this._enterTextChangeMode();
-
-        // FIXME: DELETE DECORATIONS IN THE INVOLVED CHUNKS IF ANY! SYNC THE GUTTER ALSO.
-
-        // FIXME: DELETE MARKED AND HIGHLIGHTED LINES (INVALIDATE SEARCH RESULTS)! this._markedRangeElement
-        
         var firstChunkNumber = this._chunkNumberForLine(dirtyLines.start);
         var startLine = this._textChunks[firstChunkNumber].startLine;
         var endLine = this._textModel.linesCount;
@@ -1240,6 +1260,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         }
 
         this.beginDomUpdates();
+        this._removeDecorationsInRange(oldRange);
         this._updateChunksForRanges(oldRange, newRange);
         this._updateHighlightsForRange(newRange);
         this._paintSkippedLines();
@@ -1248,6 +1269,16 @@ WebInspector.TextEditorMainPanel.prototype = {
         this._restoreSelection(selection);
 
         this._exitTextChangeMode(oldRange, newRange);
+    },
+
+    _removeDecorationsInRange: function(range)
+    {
+        for (var i = this._chunkNumberForLine(range.startLine); i < this._textChunks.length; ++i) {
+            var chunk = this._textChunks[i];
+            if (chunk.startLine > range.endLine)
+                break;
+            chunk.removeAllDecorations();
+        }
     },
 
     _updateChunksForRanges: function(oldRange, newRange)
@@ -1304,7 +1335,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         // Maybe merge with the next chunk, so that we should not create 1-sized chunks when appending new lines one by one.
         var chunk = this._textChunks[lastChunkNumber + 1];
         var linesInLastChunk = linesCount % this._defaultChunkSize;
-        if (chunk && linesInLastChunk > 0 && linesInLastChunk + chunk.linesCount <= this._defaultChunkSize) {
+        if (chunk && !chunk.decorated && linesInLastChunk > 0 && linesInLastChunk + chunk.linesCount <= this._defaultChunkSize) {
             ++lastChunkNumber;
             linesCount += chunk.linesCount;
         }
@@ -1378,6 +1409,10 @@ WebInspector.TextEditorMainPanel.prototype = {
         var textContents = [];
         var node = element.traverseNextNode(element);
         while (node) {
+            if (element.decorationsElement === node) {
+                node = node.nextSibling;
+                continue;
+            }
             if (node.nodeName.toLowerCase() === "br")
                 textContents.push("\n");
             else if (node.nodeType === Node.TEXT_NODE)
@@ -1418,31 +1453,44 @@ WebInspector.TextEditorMainChunk = function(textViewer, startLine, endLine)
 WebInspector.TextEditorMainChunk.prototype = {
     addDecoration: function(decoration)
     {
-        if (typeof decoration === "string") {
-            this.element.addStyleClass(decoration);
-            return;
-        }
         this._textViewer.beginDomUpdates();
-        if (!this.element.decorationsElement) {
-            this.element.decorationsElement = document.createElement("div");
-            this.element.decorationsElement.className = "webkit-line-decorations";
-            this.element.appendChild(this.element.decorationsElement);
+        if (typeof decoration === "string")
+            this.element.addStyleClass(decoration);
+        else {
+            if (!this.element.decorationsElement) {
+                this.element.decorationsElement = document.createElement("div");
+                this.element.decorationsElement.className = "webkit-line-decorations";
+                this.element.appendChild(this.element.decorationsElement);
+            }
+            this.element.decorationsElement.appendChild(decoration);
         }
-        this.element.decorationsElement.appendChild(decoration);
         this._textViewer.endDomUpdates();
     },
 
     removeDecoration: function(decoration)
     {
-        if (typeof decoration === "string") {
-            this.element.removeStyleClass(decoration);
-            return;
-        }
-        if (!this.element.decorationsElement)
-            return;
         this._textViewer.beginDomUpdates();
-        this.element.decorationsElement.removeChild(decoration);
+        if (typeof decoration === "string")
+            this.element.removeStyleClass(decoration);
+        else if (this.element.decorationsElement)
+            this.element.decorationsElement.removeChild(decoration);
         this._textViewer.endDomUpdates();
+    },
+
+    removeAllDecorations: function()
+    {
+        this._textViewer.beginDomUpdates();
+        this.element.className = "webkit-line-content";
+        if (this.element.decorationsElement) {
+            this.element.removeChild(this.element.decorationsElement);
+            delete this.element.decorationsElement;
+        }
+        this._textViewer.endDomUpdates();
+    },
+
+    get decorated()
+    {
+        return this.element.className !== "webkit-line-content" || !!(this.element.decorationsElement && this.element.decorationsElement.firstChild);
     },
 
     get startLine()
