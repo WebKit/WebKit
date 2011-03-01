@@ -29,9 +29,8 @@
 #if ENABLE(JAVA_BRIDGE)
 
 #include "Bridge.h"
+#include "JNIUtility.h"
 #include "runtime_root.h"
-
-#include <JavaVM/jni.h>
 
 namespace JSC {
 

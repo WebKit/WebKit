@@ -27,9 +27,9 @@
 #ifndef JavaInstanceV8_h
 #define JavaInstanceV8_h
 
+#include "JNIUtility.h"
 #include "npruntime.h"
 
-#include <JavaVM/jni.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

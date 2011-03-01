@@ -1,3 +1,23 @@
+2011-02-28  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        JNI code should include <jni.h> on non-OSX platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=55219
+
+        On Mac we need to include <JavaVM/jni.h> as this is a framework
+        include. We include jni.h through JNIUtility.h to minimize the
+        number of ifdefs.
+
+        No new tests, build fix only.
+
+        * WebCore.xcodeproj/project.pbxproj
+        * bridge/jni/JNIUtility.h:
+        * bridge/jni/jni_jsobject.h:
+        * bridge/jni/jsc/JNIBridgeJSC.h:
+        * bridge/jni/jsc/JavaInstanceJSC.h:
+        * bridge/jni/v8/JavaInstanceV8.h:
+
 2011-02-28  Nebojsa Sabovic  <neb@chromium.org>
 
         Reviewed by James Robinson.

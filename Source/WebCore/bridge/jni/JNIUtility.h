@@ -28,7 +28,11 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
+#if OS(MAC_OS_X)
 #include <JavaVM/jni.h>
+#else
+#include <jni.h>
+#endif
 
 // The order of these items can not be modified as they are tightly
 // bound with the JVM on Mac OSX. If new types need to be added, they

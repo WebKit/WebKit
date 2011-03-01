@@ -28,7 +28,7 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include <JavaVM/jni.h>
+#include "JNIUtility.h"
 #include <runtime/JSValue.h>
 #include <wtf/RefPtr.h>
 

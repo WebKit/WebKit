@@ -31,7 +31,7 @@
 
 #include "Bridge.h"
 #include "JNIBridge.h"
-#include <JavaVM/jni.h>
+#include "JNIUtility.h"
 
 namespace JSC {
 
