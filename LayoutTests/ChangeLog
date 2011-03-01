@@ -1,3 +1,15 @@
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed, fix GTK DumpRenderTree crash.
+
+        Viewport parsing no longer accepts "1.0;" value as valid.
+        https://bugs.webkit.org/show_bug.cgi?id=53705
+
+        Follow-up fix. Pass the correct number of arguments
+        into layoutTestController.dumpConfigurationForViewport.
+
+        * fast/viewport/viewport-129.html:
+
 2011-02-18  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
