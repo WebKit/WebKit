@@ -1134,13 +1134,9 @@ public:
     void setContent(PassRefPtr<StringImpl>, bool add = false);
     void setContent(PassRefPtr<StyleImage>, bool add = false);
     void setContent(PassOwnPtr<CounterContent>, bool add = false);
-    void setContent(QuoteType, bool add = false);
 
     const CounterDirectiveMap* counterDirectives() const;
     CounterDirectiveMap& accessCounterDirectives();
-
-    QuotesData* quotes() const { return rareInheritedData->quotes.get(); }
-    void setQuotes(PassRefPtr<QuotesData>);
 
     const AtomicString& hyphenString() const;
 

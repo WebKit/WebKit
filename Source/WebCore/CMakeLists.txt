@@ -1377,7 +1377,6 @@ SET(WebCore_SOURCES
     rendering/RenderObjectChildList.cpp
     rendering/RenderPart.cpp
     rendering/RenderProgress.cpp
-    rendering/RenderQuote.cpp
     rendering/RenderReplaced.cpp
     rendering/RenderReplica.cpp
     rendering/RenderRuby.cpp
@@ -1415,7 +1414,6 @@ SET(WebCore_SOURCES
     rendering/style/FillLayer.cpp
     rendering/style/KeyframeList.cpp
     rendering/style/NinePieceImage.cpp
-    rendering/style/QuotesData.cpp
     rendering/style/RenderStyle.cpp
     rendering/style/ShadowData.cpp
     rendering/style/StyleBackgroundData.cpp

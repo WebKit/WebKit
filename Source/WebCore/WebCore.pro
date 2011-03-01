@@ -1088,7 +1088,6 @@ SOURCES += \
     rendering/RenderObjectChildList.cpp \
     rendering/RenderPart.cpp \
     rendering/RenderProgress.cpp \
-    rendering/RenderQuote.cpp \
     rendering/RenderReplaced.cpp \
     rendering/RenderReplica.cpp \
     rendering/RenderRuby.cpp \
@@ -1124,7 +1123,6 @@ SOURCES += \
     rendering/style/FillLayer.cpp \
     rendering/style/KeyframeList.cpp \
     rendering/style/NinePieceImage.cpp \
-    rendering/style/QuotesData.cpp \
     rendering/style/RenderStyle.cpp \
     rendering/style/ShadowData.cpp \
     rendering/style/StyleBackgroundData.cpp \
@@ -2077,7 +2075,6 @@ HEADERS += \
     rendering/RenderObject.h \
     rendering/RenderPart.h \
     rendering/RenderProgress.h \
-    rendering/RenderQuote.h \
     rendering/RenderReplaced.h \
     rendering/RenderReplica.h \
     rendering/RenderRuby.h \
@@ -2115,7 +2112,6 @@ HEADERS += \
     rendering/style/FillLayer.h \
     rendering/style/KeyframeList.h \
     rendering/style/NinePieceImage.h \
-    rendering/style/QuotesData.h \
     rendering/style/RenderStyle.h \
     rendering/style/ShadowData.h \
     rendering/style/StyleBackgroundData.h \

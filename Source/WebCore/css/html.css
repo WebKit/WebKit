@@ -113,11 +113,13 @@ q {
 }
 
 q:before {
-    content: open-quote;
+    content: '"'
+    /* FIXME: content: open-quote; */
 }
 
 q:after {
-    content: close-quote;
+    content: '"'
+    /* FIXME: content: close-quote; */
 }
 
 center {

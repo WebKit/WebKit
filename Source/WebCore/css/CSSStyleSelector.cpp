@@ -71,7 +71,6 @@
 #include "PageGroup.h"
 #include "Pair.h"
 #include "PerspectiveTransformOperation.h"
-#include "QuotesData.h"
 #include "Rect.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarTheme.h"
@@ -4727,59 +4726,36 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             
             CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(item);
             switch (contentValue->primitiveType()) {
-            case CSSPrimitiveValue::CSS_STRING:
-                m_style->setContent(contentValue->getStringValue().impl(), didSet);
-                didSet = true;
-                break;
-            case CSSPrimitiveValue::CSS_ATTR: {
-                // FIXME: Can a namespace be specified for an attr(foo)?
-                if (m_style->styleType() == NOPSEUDO)
-                    m_style->setUnique();
-                else
-                    m_parentStyle->setUnique();
-                QualifiedName attr(nullAtom, contentValue->getStringValue().impl(), nullAtom);
-                m_style->setContent(m_element->getAttribute(attr).impl(), didSet);
-                didSet = true;
-                // register the fact that the attribute value affects the style
-                m_selectorAttrs.add(attr.localName().impl());
-                break;
-            }
-            case CSSPrimitiveValue::CSS_URI: {
-                if (!contentValue->isImageValue())
-                    break;
-                m_style->setContent(cachedOrPendingFromValue(CSSPropertyContent, static_cast<CSSImageValue*>(contentValue)), didSet);
-                didSet = true;
-                break;
-            }
-            case CSSPrimitiveValue::CSS_COUNTER: {
-                Counter* counterValue = contentValue->getCounterValue();
-                OwnPtr<CounterContent> counter = adoptPtr(new CounterContent(counterValue->identifier(),
-                    (EListStyleType)counterValue->listStyleNumber(), counterValue->separator()));
-                m_style->setContent(counter.release(), didSet);
-                didSet = true;
-                break;
-            }
-            case CSSPrimitiveValue::CSS_IDENT:
-                switch (contentValue->getIdent()) {
-                case CSSValueOpenQuote:
-                    m_style->setContent(OPEN_QUOTE, didSet);
+                case CSSPrimitiveValue::CSS_STRING:
+                    m_style->setContent(contentValue->getStringValue().impl(), didSet);
                     didSet = true;
                     break;
-                case CSSValueCloseQuote:
-                    m_style->setContent(CLOSE_QUOTE, didSet);
+                case CSSPrimitiveValue::CSS_ATTR: {
+                    // FIXME: Can a namespace be specified for an attr(foo)?
+                    if (m_style->styleType() == NOPSEUDO)
+                        m_style->setUnique();
+                    else
+                        m_parentStyle->setUnique();
+                    QualifiedName attr(nullAtom, contentValue->getStringValue().impl(), nullAtom);
+                    m_style->setContent(m_element->getAttribute(attr).impl(), didSet);
+                    didSet = true;
+                    // register the fact that the attribute value affects the style
+                    m_selectorAttrs.add(attr.localName().impl());
+                    break;
+                }
+                case CSSPrimitiveValue::CSS_URI: {
+                    if (!contentValue->isImageValue())
+                        break;
+                    m_style->setContent(cachedOrPendingFromValue(CSSPropertyContent, static_cast<CSSImageValue*>(contentValue)), didSet);
                     didSet = true;
                     break;
-                case CSSValueNoOpenQuote:
-                    m_style->setContent(NO_OPEN_QUOTE, didSet);
+                }
+                case CSSPrimitiveValue::CSS_COUNTER: {
+                    Counter* counterValue = contentValue->getCounterValue();
+                    OwnPtr<CounterContent> counter = adoptPtr(new CounterContent(counterValue->identifier(),
+                        (EListStyleType)counterValue->listStyleNumber(), counterValue->separator()));
+                    m_style->setContent(counter.release(), didSet);
                     didSet = true;
-                    break;
-                case CSSValueNoCloseQuote:
-                    m_style->setContent(NO_CLOSE_QUOTE, didSet);
-                    didSet = true;
-                    break;
-                default:
-                    // normal and none do not have any effect.
-                    {}
                 }
             }
         }
@@ -4787,37 +4763,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->clearContent();
         return;
     }
-    case CSSPropertyQuotes:
-        if (isInherit) {
-            if (m_parentStyle)
-                m_style->setQuotes(m_parentStyle->quotes());
-            return;
-        }
-        if (isInitial) {
-            m_style->setQuotes(0);
-            return;
-        }
-        if (value->isValueList()) {
-            CSSValueList* list = static_cast<CSSValueList*>(value);
-            size_t length = list->length();
-            QuotesData* data = QuotesData::create(length);
-            if (!data)
-                return; // Out of memory
-            String* quotes = data->data();
-            for (size_t i = 0; i < length; i++) {
-                CSSValue* item = list->itemWithoutBoundsCheck(i);
-                ASSERT(item->isPrimitiveValue());
-                primitiveValue = static_cast<CSSPrimitiveValue*>(item);
-                ASSERT(primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_STRING);
-                quotes[i] = primitiveValue->getStringValue();
-            }
-            m_style->setQuotes(adoptRef(data));
-        } else if (primitiveValue) {
-            ASSERT(primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_IDENT);
-            if (primitiveValue->getIdent() == CSSValueNone)
-                m_style->setQuotes(adoptRef(QuotesData::create(0)));
-        }
-        return;
 
     case CSSPropertyCounterIncrement:
         applyCounterList(style(), value->isValueList() ? static_cast<CSSValueList*>(value) : 0, false);
@@ -6059,6 +6004,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
     case CSSPropertyFontStretch:
     case CSSPropertyPage:
+    case CSSPropertyQuotes:
     case CSSPropertyTextLineThrough:
     case CSSPropertyTextLineThroughColor:
     case CSSPropertyTextLineThroughMode:

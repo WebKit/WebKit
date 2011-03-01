@@ -23,7 +23,6 @@
 #include "StyleRareInheritedData.h"
 
 #include "CursorList.h"
-#include "QuotesData.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "ShadowData.h"
@@ -133,8 +132,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textEmphasisPosition == o.textEmphasisPosition
         && hyphenationString == o.hyphenationString
         && hyphenationLocale == o.hyphenationLocale
-        && textEmphasisCustomMark == o.textEmphasisCustomMark
-        && *quotes == *o.quotes;
+        && textEmphasisCustomMark == o.textEmphasisCustomMark;
 }
 
 bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& o) const

@@ -1,3 +1,51 @@
+2011-03-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80037.
+        http://trac.webkit.org/changeset/80037
+        https://bugs.webkit.org/show_bug.cgi?id=55508
+
+        broke compile on SL (Requested by tonyg-cr on #webkit).
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSParser.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/html.css:
+        (q:before):
+        (q:after):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::dirtyLineBoxesForRenderer):
+        * rendering/RenderObject.h:
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        (WebCore::RenderObjectChildList::appendChildNode):
+        (WebCore::RenderObjectChildList::insertChildNode):
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+        * rendering/RenderQuote.cpp: Removed.
+        * rendering/RenderQuote.h: Removed.
+        * rendering/RenderingAllInOne.cpp:
+        * rendering/style/ContentData.cpp:
+        (WebCore::ContentData::dataEquivalent):
+        (WebCore::ContentData::deleteContent):
+        * rendering/style/ContentData.h:
+        * rendering/style/QuotesData.cpp: Removed.
+        * rendering/style/QuotesData.h: Removed.
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleAllInOne.cpp:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+
 2011-03-01  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

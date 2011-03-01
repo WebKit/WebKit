@@ -30,7 +30,6 @@
 #include "FillLayer.cpp"
 #include "KeyframeList.cpp"
 #include "NinePieceImage.cpp"
-#include "QuotesData.cpp"
 #include "RenderStyle.cpp"
 #include "SVGRenderStyle.cpp"
 #include "SVGRenderStyleDefs.cpp"

@@ -178,7 +178,7 @@ static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRo
 static inline void dirtyLineBoxesForRenderer(RenderObject* o, bool fullLayout)
 {
     if (o->isText()) {
-        if (o->preferredLogicalWidthsDirty() && (o->isCounter() || o->isQuote()))
+        if (o->preferredLogicalWidthsDirty() && o->isCounter())
             toRenderText(o)->computePreferredLogicalWidths(0); // FIXME: Counters depend on this hack. No clue why. Should be investigated and removed.
         toRenderText(o)->dirtyLineBoxes(fullLayout);
     } else

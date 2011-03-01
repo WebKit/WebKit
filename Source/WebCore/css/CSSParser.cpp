@@ -634,8 +634,6 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyQuotes:               // [<string> <string>]+ | none | inherit
         if (id)
             validPrimitive = true;
-        else
-            return parseQuotes(propId, important);
         break;
     case CSSPropertyUnicodeBidi:         // normal | embed | bidi-override | inherit
         if (id == CSSValueNormal ||
@@ -2354,28 +2352,6 @@ CSSParser::SizeParameterType CSSParser::parseSizeParameter(CSSValueList* parsedV
     default:
         return None;
     }
-}
-
-// [ <string> <string> ]+ | inherit | none
-// inherit and none are handled in parseValue.
-bool CSSParser::parseQuotes(int propId, bool important)
-{
-    RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
-    while (CSSParserValue* val = m_valueList->current()) {
-        RefPtr<CSSValue> parsedValue;
-        if (val->unit == CSSPrimitiveValue::CSS_STRING)
-            parsedValue = CSSPrimitiveValue::create(val->string, CSSPrimitiveValue::CSS_STRING);
-        else
-            break;
-        values->append(parsedValue.release());
-        m_valueList->next();
-    }
-    if (values->length()) {
-        addProperty(propId, values.release(), important);
-        m_valueList->next();
-        return true;
-    }
-    return false;
 }
 
 // [ <string> | <uri> | <counter> | attr(X) | open-quote | close-quote | no-open-quote | no-close-quote ]+ | inherit
