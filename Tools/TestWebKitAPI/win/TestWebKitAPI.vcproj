@@ -472,6 +472,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\ResponsivenessTimerDoesntFireEarly.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\RestoreSessionStateContainingFormData.cpp"
 					>
 				</File>

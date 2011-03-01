@@ -39,6 +39,11 @@ void run(bool* done)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
 }
 
+void sleep(double seconds)
+{
+    usleep(seconds * 1000000);
+}
+
 WKStringRef createInjectedBundlePath()
 {
     NSString *nsString = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"InjectedBundleTestWebKitAPI.bundle"];

@@ -1,3 +1,43 @@
+2011-03-01  Adam Roben  <aroben@apple.com>
+
+        Test that the WebKit2 responsiveness timer doesn't fire too early
+
+        Test for <http://webkit.org/b/55417> <rdar://problem/9065287> RunLoop::Timer fires 1000x too
+        early on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/PlatformUtilities.h: Added sleep().
+
+        * TestWebKitAPI/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly.cpp: Added.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::processDidBecomeUnresponsive):
+        (TestWebKitAPI::setInjectedBundleClient):
+        (TestWebKitAPI::setPageLoaderClient):
+        Simple helper functions.
+
+        (TestWebKitAPI::TEST): Load an HTML file to make sure the web process is initialized. Then
+        tell the web process to pause and press the spacebar key. The spacebar keypress should cause
+        the responsiveness timer to start, but the web process should unpause before it has a chance
+        to fire. Run until the web process has unpaused, and assert that the timer didn't fire.
+
+        * TestWebKitAPI/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly_Bundle.cpp: Added.
+        (TestWebKitAPI::ResponsivenessTimerDoesntFireEarlyTest::ResponsivenessTimerDoesntFireEarlyTest):
+        Call up to the base class.
+        (TestWebKitAPI::ResponsivenessTimerDoesntFireEarlyTest::didReceiveMessage): When asked to
+        pause, sleep for 0.5 seconds, then send back a message saying we paused.
+
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        (TestWebKitAPI::Util::sleep): Added. Calls through to usleep.
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp:
+        (TestWebKitAPI::Util::sleep): Added. Calls through to ::Sleep.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        * TestWebKitAPI/win/TestWebKitAPIInjectedBundle.vcproj:
+        Added new files.
+
 2011-03-01  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

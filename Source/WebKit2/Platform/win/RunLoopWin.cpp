@@ -156,7 +156,7 @@ void RunLoop::TimerBase::start(double nextFireInterval, bool repeat)
 {
     m_isRepeating = repeat;
     m_runLoop->m_activeTimers.set(m_ID, this);
-    ::SetTimer(m_runLoop->m_runLoopMessageWindow, m_ID, nextFireInterval, 0);
+    ::SetTimer(m_runLoop->m_runLoopMessageWindow, m_ID, nextFireInterval * 1000, 0);
 }
 
 void RunLoop::TimerBase::stop()

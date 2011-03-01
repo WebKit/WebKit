@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
+#include "InjectedBundleTest.h"
 
-#include <WebKit2/WebKit2.h>
-#include <WebKit2/WKRetainPtr.h>
-#include <string>
+#include "PlatformUtilities.h"
 
 namespace TestWebKitAPI {
-namespace Util {
 
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
+class ResponsivenessTimerDoesntFireEarlyTest : public InjectedBundleTest {
+public:
+    ResponsivenessTimerDoesntFireEarlyTest(const std::string& identifier);
 
-void sleep(double seconds);
+private:
+    virtual void didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody);
+};
 
-WKContextRef createContextForInjectedBundleTest(const std::string&, WKTypeRef userData = 0);
+static InjectedBundleTest::Register<ResponsivenessTimerDoesntFireEarlyTest> registrar("ResponsivenessTimerDoesntFireEarlyTest");
 
-WKStringRef createInjectedBundlePath();
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
-
-bool isKeyDown(WKNativeEventPtr);
-
-std::string toSTD(WKStringRef string);
-WKRetainPtr<WKStringRef> toWK(const char* utf8String);
-
-template<typename T> static inline WKRetainPtr<T> adoptWK(T item)
+ResponsivenessTimerDoesntFireEarlyTest::ResponsivenessTimerDoesntFireEarlyTest(const std::string& identifier)
+    : InjectedBundleTest(identifier)
 {
-    return WKRetainPtr<T>(AdoptWK, item);
 }
 
-} // namespace Util
-} // namespace TestWebKitAPI
+void ResponsivenessTimerDoesntFireEarlyTest::didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef)
+{
+    if (!WKStringIsEqualToUTF8CString(messageName, "BrieflyPause"))
+        return;
 
-#endif // PlatformUtilities_h
+    // The responsiveness timer is a 3-second timer. Pausing for 0.5 seconds should not cause it to fire.
+    Util::sleep(0.5);
+
+    WKBundlePostMessage(bundle, Util::toWK("DidBrieflyPause").get(), 0);
+}
+
+} // namespace TestWebKitAPI

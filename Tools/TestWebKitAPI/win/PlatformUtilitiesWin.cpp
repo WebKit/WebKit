@@ -50,6 +50,11 @@ void run(bool* done)
     }
 }
 
+void sleep(double seconds)
+{
+    ::Sleep(seconds * 1000);
+}
+
 RetainPtr<CFStringRef> cf(const char* utf8String)
 {
     return RetainPtr<CFStringRef>(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, utf8String, kCFStringEncodingUTF8));

@@ -1,3 +1,16 @@
+2011-03-01  Adam Roben  <aroben@apple.com>
+
+        Convert seconds to milliseconds before calling ::SetTimer
+
+        Fixes <http://webkit.org/b/55417> <rdar://problem/9065287> RunLoop::Timer fires 1000x too
+        early on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/win/RunLoopWin.cpp:
+        (RunLoop::TimerBase::start): Convert the timeout interval to milliseconds, since that's what
+        ::SetTimer expects.
+
 2011-03-01  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
