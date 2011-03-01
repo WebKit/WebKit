@@ -27,6 +27,7 @@
 #import "FindIndicatorWindow.h"
 
 #import "FindIndicator.h"
+#import "WKView.h"
 #import <WebCore/GraphicsContext.h>
 
 static const double bounceAnimationDuration = 0.12;

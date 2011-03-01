@@ -1,3 +1,17 @@
+2011-02-28  Anders Carlsson  <andersca@apple.com>
+
+        Fix clang build.
+
+        * UIProcess/API/mac/FindIndicatorWindow.mm:
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::deprecatedUpdate):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::didReceiveMessage):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h:
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::deprecatedResumePainting):
+        (WebKit::ChunkedUpdateDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.h:
+
 2011-02-28  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Anders Carlsson.

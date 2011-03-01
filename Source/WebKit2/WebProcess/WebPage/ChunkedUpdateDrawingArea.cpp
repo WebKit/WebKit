@@ -148,7 +148,7 @@ void ChunkedUpdateDrawingArea::suspendPainting()
     m_displayTimer.stop();
 }
 
-void ChunkedUpdateDrawingArea::resumePainting(bool forceRepaint)
+void ChunkedUpdateDrawingArea::deprecatedResumePainting(bool forceRepaint)
 {
     ASSERT(m_paintingIsSuspended);
     
@@ -192,7 +192,7 @@ void ChunkedUpdateDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::
             if (!arguments->decode(CoreIPC::Out(forceRepaint)))
                 return;
             
-            resumePainting(forceRepaint);
+            deprecatedResumePainting(forceRepaint);
             break;
         }
         case DrawingAreaLegacyMessage::DidUpdate:

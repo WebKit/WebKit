@@ -58,7 +58,7 @@ private:
     // CoreIPC message handlers.
     void setSize(const WebCore::IntSize& viewSize);
     void suspendPainting();
-    void resumePainting(bool forceRepaint);
+    void deprecatedResumePainting(bool forceRepaint);
     void didUpdate();
 
     // Platform overrides

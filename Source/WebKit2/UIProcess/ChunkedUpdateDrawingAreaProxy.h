@@ -82,7 +82,7 @@ private:
     bool platformPaint(const WebCore::IntRect&, PlatformDrawingContext);
     void drawUpdateChunkIntoBackingStore(UpdateChunk*);
     void didSetSize(UpdateChunk*);
-    void update(UpdateChunk*);
+    void deprecatedUpdate(UpdateChunk*);
 
     void sendSetSize();
 

@@ -120,7 +120,7 @@ void ChunkedUpdateDrawingAreaProxy::didSetSize(UpdateChunk* updateChunk)
         drawUpdateChunkIntoBackingStore(updateChunk);
 }
 
-void ChunkedUpdateDrawingAreaProxy::update(UpdateChunk* updateChunk)
+void ChunkedUpdateDrawingAreaProxy::deprecatedUpdate(UpdateChunk* updateChunk)
 {
     if (!m_isVisible) {
         // We got an update request that must have been sent before we told the web process to suspend painting.
@@ -156,7 +156,7 @@ void ChunkedUpdateDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, Core
             if (!arguments->decode(updateChunk))
                 return;
 
-            update(&updateChunk);
+            deprecatedUpdate(&updateChunk);
             break;
         }
         case DrawingAreaProxyLegacyMessage::DidSetSize: {
