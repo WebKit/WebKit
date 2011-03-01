@@ -50,6 +50,11 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return WebIDBKey::createInvalid();
     }
+    virtual WebIDBKey primaryKey() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return WebIDBKey::createInvalid();
+    }
     // One or the other will set, depending on what type of cursor this is.
     virtual void value(WebSerializedScriptValue& serializedScriptValue, WebIDBKey& idbKey) const { WEBKIT_ASSERT_NOT_REACHED(); }
 
