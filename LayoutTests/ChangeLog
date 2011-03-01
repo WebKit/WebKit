@@ -1,3 +1,16 @@
+2011-03-01  Martin Robinson  <mrobinson@igalia.com>
+
+        REGRESSION (r79762): Items in <select multiple> have focus rings, but shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=55323
+
+        Add new GTK+ test results.
+
+        * platform/gtk/fast/forms/select-listbox-multiple-no-focusring-expected.checksum: Added.
+        * platform/gtk/fast/forms/select-listbox-multiple-no-focusring-expected.png: Added.
+        * platform/gtk/fast/forms/select-listbox-multiple-no-focusring-expected.txt: Added.
+        * platform/gtk/fast/spatial-navigation/snav-multiple-select-focusring-expected.checksum: Added.
+        * platform/gtk/fast/spatial-navigation/snav-multiple-select-focusring-expected.png: Added.
+
 2011-03-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
