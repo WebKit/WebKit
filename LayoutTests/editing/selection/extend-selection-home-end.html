@@ -8,31 +8,7 @@
 <body>
 <pre id="console"></pre>
 <script>
-function testExtendingLineBoundary(testNodes)
-{
-    function extendToEndAndBack(node)
-    {
-        getSelection().setPosition(node, 0);
-        log("  Extending forward:  ");
-        extendAndLogSelectionToEnd("forward", "lineBoundary");
-        log("  Extending backward: ");
-        extendAndLogSelectionToEnd("backward", "lineBoundary");
-    }
-
-    for (var i = 0; i < testNodes.length; ++i) {
-        var node = testNodes[i];
-
-        log("Test " + (i + 1) + ", LTR:\n");
-        node.style.direction = "ltr";
-        extendToEndAndBack(node);
-
-        log("Test " + (i + 1) + ", RTL:\n");
-        node.style.direction = "rtl";
-        extendToEndAndBack(node);
-    }
-}
-
-log("\n\n\nExtending by lineBoundary\n");
-testExtendingLineBoundary(createAllNodes());
+log("\n\n\nExtending by lineboundary\n");
+runSelectionTestsWithGranularity(createAllNodes(), "lineBoundary");
 </script>
 </body>

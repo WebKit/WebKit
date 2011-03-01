@@ -1,3 +1,19 @@
+2011-02-28  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Make editing/selection/extend-selection-home-end test match other extend-selection with granularity tests
+        https://bugs.webkit.org/show_bug.cgi?id=55422
+
+        The other extend-selection tests which test a granularity just call into resources/extend-selection.js with the
+        granularity they're testing.  The lineboundary test didn't due to RTL bugs in lineboundary, but these have now
+        been fixed.
+
+        * editing/selection/extend-selection-home-end-expected.txt:
+        * editing/selection/extend-selection-home-end.html:
+        * platform/mac/editing/selection/extend-selection-home-end-expected.txt:
+        * platform/win/editing/selection/extend-selection-home-end-expected.txt:
+
 2011-02-28  James Robinson  <jamesr@chromium.org>
 
         Chromium baseline updates.
