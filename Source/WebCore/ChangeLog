@@ -1,3 +1,23 @@
+2011-03-01  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Alter the relative priorities of network vs fallback namespaces in the appcache.
+        If a resource url is in an appcache's network namespace and fallback namespace, the network
+        namespace wins (with the exception of the special '*' network namespace which does not take
+        priority over the fallback namespace.
+        https://bugs.webkit.org/show_bug.cgi?id=49292
+
+        Test: http/tests/appcache/online-fallback-layering.html
+
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::isURLInOnlineWhitelist):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::shouldLoadResourceFromApplicationCache):
+        (WebCore::ApplicationCacheHost::getApplicationCacheFallbackResource):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL):
+
 2011-03-01  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

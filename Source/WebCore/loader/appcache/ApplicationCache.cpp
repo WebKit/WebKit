@@ -148,9 +148,6 @@ void ApplicationCache::setOnlineWhitelist(const Vector<KURL>& onlineWhitelist)
 
 bool ApplicationCache::isURLInOnlineWhitelist(const KURL& url)
 {
-    if (m_allowAllNetworkRequests)
-        return true;
-
     size_t whitelistSize = m_onlineWhitelist.size();
     for (size_t i = 0; i < whitelistSize; ++i) {
         if (protocolHostAndPortAreEqual(url, m_onlineWhitelist[i]) && url.string().startsWith(m_onlineWhitelist[i].string()))

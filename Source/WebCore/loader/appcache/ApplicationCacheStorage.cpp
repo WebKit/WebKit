@@ -267,6 +267,8 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const K
 
         if (ApplicationCache* cache = group->newestCache()) {
             KURL fallbackURL;
+            if (cache->isURLInOnlineWhitelist(url))
+                continue;
             if (!cache->urlMatchesFallbackNamespace(url, &fallbackURL))
                 continue;
             if (cache->resourceForURL(fallbackURL)->type() & ApplicationCacheResource::Foreign)
@@ -300,6 +302,8 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const K
         RefPtr<ApplicationCache> cache = loadCache(newestCacheID);
 
         KURL fallbackURL;
+        if (cache->isURLInOnlineWhitelist(url))
+            continue;
         if (!cache->urlMatchesFallbackNamespace(url, &fallbackURL))
             continue;
         if (cache->resourceForURL(fallbackURL)->type() & ApplicationCacheResource::Foreign)
