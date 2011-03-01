@@ -1,3 +1,70 @@
+2011-03-01  Adam Roben  <aroben@apple.com>
+
+        Save a crash log when the web process crashes
+
+        On Windows, WebKitTestRunner now detects when the web process is crashing and waits to exit
+        until it has finished crashing, which guarantees that the crash log will have had time to be
+        saved, too. On Mac, we always wait until ReportCrash has exited before capturing the crash
+        log, so all we have to do is choose the right crash log out of the CrashReporter directory.
+
+        Fixes <http://webkit.org/b/44121> <rdar://problem/8320759> When the web process crashes and
+        a crash log is being saved, WebKitTestRunner thinks the web process has become unresponsive
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/old-run-webkit-tests:
+        (testCrashedOrTimedOut): Don't kill WebKitTestRunner when the web process crashes. It will
+        kill itself. On Windows, this will cause us to wait until the crash log has been saved. On
+        Mac, it should have no effect. Capture saved crash logs for web process crashes, too.
+        (captureSavedCrashLog): Added $webProcessCrashed argument. On Mac, look for
+        WebProces_*.crash files when the web process crashes.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::initialize): Added an initializationUserData argument. Updated for
+        initializePlatformDefaults -> platformInitialize rename. Pass the initializationUserData
+        along to platformInitialize.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h: See above.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp:
+        (WKBundleInitialize): Pass along the initializationUserData to the InjectedBundle.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize):
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundleQt.cpp:
+        (WTR::InjectedBundle::platformInitialize):
+        Updated function signature.
+
+        * WebKitTestRunner/InjectedBundle/win/InjectedBundleWin.cpp:
+        (WTR::exceptionFilter): Added. Tells the UI process we're crashing by signaling the
+        webProcessCrashingEvent, then lets the crash continue as normal.
+
+        (WTR::InjectedBundle::platformInitialize): Hook up exceptionFilter. Retrieve the name of the
+        event we should use to tell the UI process we're crashing from the initializationUserData,
+        and get a handle to that event.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController): Initialize new members.
+        (WTR::TestController::processDidCrash): Removed unnecessary WKPageRef argument. Changed to
+        only print the "#CRASHED - WebProcess" message once, since this can be called more than once
+        when a crash log is being saved on Windows. Exit right away if specified. (This is the
+        default.)
+
+        * WebKitTestRunner/TestController.h: Added new members.
+
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::platformInitialize): Set up the event the web process will use to tell
+        us it's crashing.
+        (WTR::TestController::platformRunUntil): Pass MWMO_INPUTAVAILABLE to
+        ::MsgWaitForMultipleObjectsEx so we'll process messages that have already been seen by
+        ::PeekMessage. (This is unrelated to the bug fix.) Notice when the webProcessCrashingEvent
+        has been signaled. When this happens, print the "#CRASHED - WebProcess" message right away
+        so the test harness will know the web process has crashed and not try to kill us, then wait
+        for the web process to finish crashing so a crash log will have time to be saved.
+        (WTR::toWK): Simple hepler function.
+        (WTR::TestController::platformInitializeContext): Pass along the name of the event the web
+        process should use to tell us it is crashing in the context's initialization user data.
+
 2011-03-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Tony Gentilcore.

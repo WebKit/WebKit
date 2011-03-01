@@ -63,6 +63,8 @@ TestController::TestController(int argc, const char* argv[])
     , m_doneResetting(false)
     , m_longTimeout(defaultLongTimeout)
     , m_shortTimeout(defaultShortTimeout)
+    , m_didPrintWebProcessCrashedMessage(false)
+    , m_shouldExitWhenWebProcessCrashes(true)
 {
     initialize(argc, argv);
     controller = this;
@@ -470,7 +472,7 @@ void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKT
 
 void TestController::processDidCrash(WKPageRef page, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->processDidCrash(page);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->processDidCrash();
 }
 
 void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame)
@@ -489,10 +491,18 @@ void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame)
     shared().notifyDone();
 }
 
-void TestController::processDidCrash(WKPageRef page)
+void TestController::processDidCrash()
 {
-    fputs("#CRASHED - WebProcess\n", stderr);
-    fflush(stderr);
+    // This function can be called multiple times when crash logs are being saved on Windows, so
+    // ensure we only print the crashed message once.
+    if (!m_didPrintWebProcessCrashedMessage) {
+        fputs("#CRASHED - WebProcess\n", stderr);
+        fflush(stderr);
+        m_didPrintWebProcessCrashedMessage = true;
+    }
+
+    if (m_shouldExitWhenWebProcessCrashes)
+        exit(1);
 }
 
 } // namespace WTR

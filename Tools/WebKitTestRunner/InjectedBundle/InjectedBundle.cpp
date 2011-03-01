@@ -72,7 +72,7 @@ void InjectedBundle::didReceiveMessage(WKBundleRef bundle, WKStringRef messageNa
     static_cast<InjectedBundle*>(const_cast<void*>(clientInfo))->didReceiveMessage(messageName, messageBody);
 }
 
-void InjectedBundle::initialize(WKBundleRef bundle)
+void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUserData)
 {
     m_bundle = bundle;
 
@@ -86,7 +86,7 @@ void InjectedBundle::initialize(WKBundleRef bundle)
     };
     WKBundleSetClient(m_bundle, &client);
 
-    initializePlatformDefaults();
+    platformInitialize(initializationUserData);
 
     activateFonts();
     WKBundleActivateMacFontAscentHack(m_bundle);

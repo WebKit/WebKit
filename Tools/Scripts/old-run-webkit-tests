@@ -77,7 +77,7 @@ use POSIX;
 
 sub buildPlatformResultHierarchy();
 sub buildPlatformTestHierarchy(@);
-sub captureSavedCrashLog($);
+sub captureSavedCrashLog($$);
 sub checkPythonVersion();
 sub closeCygpaths();
 sub closeDumpTool();
@@ -1735,11 +1735,13 @@ sub testCrashedOrTimedOut($$$$$$)
 
     recordActualResultsAndDiff($base, $actual);
 
-    kill 9, $dumpToolPID unless $didCrash;
+    # There's no point in killing the dump tool when it's crashed. And it will kill itself when the
+    # web process crashes.
+    kill 9, $dumpToolPID unless $didCrash || $webProcessCrashed;
 
     closeDumpTool();
 
-    captureSavedCrashLog($base) if $didCrash;
+    captureSavedCrashLog($base, $webProcessCrashed) if $didCrash || $webProcessCrashed;
 
     return unless isCygwin() && !$didCrash && $base =~ /^http/;
     # On Cygwin, http tests timing out can be a symptom of a non-responsive httpd.
@@ -1748,9 +1750,9 @@ sub testCrashedOrTimedOut($$$$$$)
     configureAndOpenHTTPDIfNeeded();
 }
 
-sub captureSavedCrashLog($)
+sub captureSavedCrashLog($$)
 {
-    my ($base) = @_;
+    my ($base, $webProcessCrashed) = @_;
 
     my $crashLog;
 
@@ -1758,7 +1760,7 @@ sub captureSavedCrashLog($)
     if (isCygwin()) {
         $glob = File::Spec->catfile($testResultsDirectory, $windowsCrashLogFilePrefix . "*.txt");
     } elsif (isAppleMacWebKit()) {
-        $glob = File::Spec->catfile("~", "Library", "Logs", "CrashReporter", $dumpToolName . "_*.crash");
+        $glob = File::Spec->catfile("~", "Library", "Logs", "CrashReporter", ($webProcessCrashed ? "WebProcess" : $dumpToolName) . "_*.crash");
 
         # Even though the dump tool has exited, CrashReporter might still be running. We need to
         # wait for it to exit to ensure it has saved its crash log to disk. For simplicitly, we'll

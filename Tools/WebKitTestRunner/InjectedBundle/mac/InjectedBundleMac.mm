@@ -27,7 +27,7 @@
 
 namespace WTR {
 
-void InjectedBundle::initializePlatformDefaults()
+void InjectedBundle::platformInitialize(WKTypeRef)
 {
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithInteger:4],   @"AppleAntiAliasingThreshold",

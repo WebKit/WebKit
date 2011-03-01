@@ -38,6 +38,9 @@ using namespace std;
 
 namespace WTR {
 
+static HANDLE webProcessCrashingEvent;
+static const char webProcessCrashingEventName[] = "WebKitTestRunner.WebProcessCrashing";
+
 #ifdef DEBUG_ALL
 const LPWSTR testPluginDirectoryName = L"TestNetscapePlugin_Debug";
 const char* injectedBundleDLL = "\\InjectedBundle_debug.dll";
@@ -109,6 +112,8 @@ void TestController::platformInitialize()
     // Add the QuickTime dll directory to PATH or QT 7.6 will fail to initialize on systems
     // linked with older versions of qtmlclientlib.dll.
     addQTDirToPATH();
+
+    webProcessCrashingEvent = ::CreateEventA(0, FALSE, FALSE, webProcessCrashingEventName);
 }
 
 void TestController::initializeInjectedBundlePath()
@@ -137,11 +142,33 @@ void TestController::platformRunUntil(bool& done, double timeout)
         if (now > end)
             return;
 
-        DWORD result = ::MsgWaitForMultipleObjectsEx(0, 0, end - now, QS_ALLINPUT, 0);
+        DWORD result = ::MsgWaitForMultipleObjectsEx(1, &webProcessCrashingEvent, end - now, QS_ALLINPUT, MWMO_INPUTAVAILABLE);
         if (result == WAIT_TIMEOUT)
             return;
 
-        ASSERT(result == WAIT_OBJECT_0);
+        if (result == WAIT_OBJECT_0) {
+            // The web process is crashing. A crash log might be being saved, which can take a long
+            // time, and we don't want to time out while that happens.
+
+            // First, let the test harness know this happened so it won't think we've hung. But
+            // make sure we don't exit just yet!
+            m_shouldExitWhenWebProcessCrashes = false;
+            processDidCrash();
+            m_shouldExitWhenWebProcessCrashes = true;
+
+            // Then spin a run loop until it finishes crashing to give time for a crash log to be saved.
+            MSG msg;
+            while (BOOL bRet = ::GetMessageW(&msg, 0, 0, 0)) {
+                if (bRet == -1)
+                    break;
+                ::TranslateMessage(&msg);
+                ::DispatchMessageW(&msg);
+            }
+
+            exit(1);
+        }
+
+        ASSERT(result == WAIT_OBJECT_0 + 1);
         // There are messages in the queue. Process them.
         MSG msg;
         while (::PeekMessageW(&msg, 0, 0, 0, PM_REMOVE)) {
@@ -151,10 +178,17 @@ void TestController::platformRunUntil(bool& done, double timeout)
     }
 }
 
+static WKRetainPtr<WKStringRef> toWK(const char* string)
+{
+    return WKRetainPtr<WKStringRef>(AdoptWK, WKStringCreateWithUTF8CString(string));
+}
+
 void TestController::platformInitializeContext()
 {
     // FIXME: Make DRT pass with Windows native controls. <http://webkit.org/b/25592>
     WKContextSetShouldPaintNativeControls(m_context.get(), false);
+
+    WKContextSetInitializationUserDataForInjectedBundle(m_context.get(), toWK(webProcessCrashingEventName).get());
 }
 
 void TestController::runModal(PlatformWebView*)

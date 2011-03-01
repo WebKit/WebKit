@@ -45,7 +45,7 @@ public:
     static InjectedBundle& shared();
 
     // Initialize the InjectedBundle.
-    void initialize(WKBundleRef);
+    void initialize(WKBundleRef, WKTypeRef initializationUserData);
 
     WKBundleRef bundle() const { return m_bundle; }
     WKBundlePageGroupRef pageGroup() const { return m_pageGroup; }
@@ -82,7 +82,7 @@ private:
     void didInitializePageGroup(WKBundlePageGroupRef);
     void didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody);
 
-    void initializePlatformDefaults();
+    void platformInitialize(WKTypeRef initializationUserData);
     void resetLocalSettings();
 
     void beginTesting();

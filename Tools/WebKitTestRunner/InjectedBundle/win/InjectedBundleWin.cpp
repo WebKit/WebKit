@@ -27,8 +27,31 @@
 
 namespace WTR {
 
-void InjectedBundle::initializePlatformDefaults()
+static HANDLE webProcessCrashingEvent;
+
+static LONG WINAPI exceptionFilter(EXCEPTION_POINTERS*)
 {
+    // Let the UI process know right away that we crashed. It might take a long time for us to
+    // finish crashing if a crash log is being saved.
+    ::SetEvent(webProcessCrashingEvent);
+
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+
+void InjectedBundle::platformInitialize(WKTypeRef initializationUserData)
+{
+    ::SetUnhandledExceptionFilter(exceptionFilter);
+
+    ASSERT_ARG(initializationUserData, initializationUserData);
+    ASSERT_ARG(initializationUserData, WKGetTypeID(initializationUserData) == WKStringGetTypeID());
+
+    WKStringRef string = static_cast<WKStringRef>(initializationUserData);
+    Vector<char> buffer(WKStringGetMaximumUTF8CStringSize(string));
+    WKStringGetUTF8CString(string, buffer.data(), buffer.size());
+
+    // The UI process should already have created this event. We're just getting another HANDLE to it.
+    webProcessCrashingEvent = ::CreateEventA(0, FALSE, FALSE, buffer.data());
+    ASSERT(webProcessCrashingEvent);
 }
 
 } // namespace WTR

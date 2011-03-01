@@ -83,7 +83,7 @@ private:
     void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame);
 
     static void processDidCrash(WKPageRef, const void* clientInfo);
-    void processDidCrash(WKPageRef);
+    void processDidCrash();
 
     static WKPageRef createOtherPage(WKPageRef oldPage, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*);
 
@@ -117,6 +117,9 @@ private:
 
     double m_longTimeout;
     double m_shortTimeout;
+
+    bool m_didPrintWebProcessCrashedMessage;
+    bool m_shouldExitWhenWebProcessCrashes;
 };
 
 } // namespace WTR
