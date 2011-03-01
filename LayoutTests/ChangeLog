@@ -1,5 +1,12 @@
 2011-03-01  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip one crashing tests on GTK. See also
+        https://bugs.webkit.org/show_bug.cgi?id=53146
+
+        * platform/gtk/Skipped:
+
+2011-03-01  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skip 2 crashing tests on GTK. See also
         https://bugs.webkit.org/show_bug.cgi?id=53146
 

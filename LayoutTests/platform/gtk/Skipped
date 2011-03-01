@@ -187,6 +187,7 @@ http/tests/incremental/slow-utf8-html.pl
 # those 2 tests are flaky crashing, patch in bug 53146 fixes them.
 fast/forms/select-listbox-multiple-no-focusring.html
 fast/spatial-navigation/snav-multiple-select.html
+fast/spatial-navigation/snav-single-select-list.html
 
 
 ###############################################################################
