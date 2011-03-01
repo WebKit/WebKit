@@ -1,3 +1,14 @@
+2011-03-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Move the checks to exclude Python/Perl tests for Chromium Win build to the right place.
+        https://bugs.webkit.org/show_bug.cgi?id=55476
+
+        Chromium Win uses BuildAndTestFactory, not TestFactory.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Moved to the right place.
+
 2011-03-01  Adam Roben  <aroben@apple.com>
 
         Test that the WebKit2 responsiveness timer doesn't fire too early
