@@ -29,9 +29,37 @@
 #include "PluginDatabase.h"
 #include "PluginPackage.h"
 
+#if PLATFORM(QT)
+#include <QLibrary>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
+
+#if PLATFORM(QT)
+static void initializeGTK()
+{
+    QLibrary library("libgtk-x11-2.0.so.0");
+    if (library.load()) {
+        typedef void *(*gtk_init_check_ptr)(int*, char***);
+        gtk_init_check_ptr gtkInitCheck = reinterpret_cast<gtk_init_check_ptr>(library.resolve("gtk_init_check"));
+        // NOTE: We're using gtk_init_check() since gtk_init() calls exit() on failure.
+        if (gtkInitCheck)
+            (void) gtkInitCheck(0, 0);
+    }
+}
+#endif
+
+void NetscapePluginModule::applyX11QuirksBeforeLoad()
+{
+#if PLATFORM(QT)
+    if (m_pluginPath.contains("npwrapper") || m_pluginPath.contains("flashplayer")) {
+        initializeGTK();
+        m_pluginQuirks.add(PluginQuirks::RequiresGTKToolKit);
+    }
+#endif
+}
 
 bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginInfoStore::Plugin& plugin)
 {

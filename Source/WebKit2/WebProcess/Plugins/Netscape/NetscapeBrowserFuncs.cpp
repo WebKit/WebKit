@@ -483,6 +483,18 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
        case NPNVSupportsWindowless:
            *(NPBool*)value = true;
            break;
+#elif PLUGIN_ARCHITECTURE(X11)
+       case NPNVToolkit: {
+           const uint32_t expectedGTKToolKitVersion = 2;
+
+           RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+           if (plugin->quirks().contains(PluginQuirks::RequiresGTKToolKit)) {
+               *reinterpret_cast<uint32_t*>(value) = expectedGTKToolKitVersion;
+               break;
+           }
+
+           return NPERR_GENERIC_ERROR;
+       }
 #endif
         default:
             notImplemented();

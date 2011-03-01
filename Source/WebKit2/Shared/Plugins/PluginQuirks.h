@@ -32,12 +32,17 @@ class PluginQuirks {
 public:
     enum PluginQuirk {
         // Mac specific quirks:
-#if PLATFORM(MAC)
+#if PLUGIN_ARCHITECTURE(MAC)
         // The plug-in wants the call to getprogame() to return "WebKitPluginHost".
         // Adobe Flash Will not handle key down events otherwise.
         PrognameShouldBeWebKitPluginHost,
         // Supports receiving a paint event, even when using CoreAnimation rendering.
         SupportsSnapshotting,
+#elif PLUGIN_ARCHITECTURE(X11)
+        // Flash and npwrapper ask the browser about which GTK version does it use
+        // and refuse to load and work if it is not GTK 2 so we need to fake it in
+        // NPN_GetValue even when it is a lie.
+        RequiresGTKToolKit,
 #endif
         NumPluginQuirks
     };

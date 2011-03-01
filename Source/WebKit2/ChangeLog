@@ -1,3 +1,33 @@
+2011-03-01  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        [Qt][WK2] Plugin initialization
+        https://bugs.webkit.org/show_bug.cgi?id=48127
+
+        Apply the quirks that are necessary for the flash plugin
+        to not crash on X11.
+
+        * Platform/qt/ModuleQt.cpp:
+        (WebKit::Module::load): Use the ResolveAllSymbols hint as we do in WebCore.
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad): Call applyX11QuirksBeforeLoad
+        if PLUGIN_ARCHITECTURE is X11.
+        * Shared/Plugins/Netscape/NetscapePluginModule.h:
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::initializeGTK):  The same hack that we do in WebCore.
+        Call gtk_init because flash don't do it for itself.
+        (WebKit::NetscapePluginModule::applyX11QuirksBeforeLoad): Added for X11.
+        Do the hacks that we need to do before calling NP_Initialize on the
+        flash plugin to save it form crashing.
+        * Shared/Plugins/PluginQuirks.h: Use PLUGIN_ARCHITECTURE macros.
+        Added RequiresGTKToolKit quirk for X11.
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue): Handle the RequiresGTKToolKit quirk on X11.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (WebKit::NetscapePlugin::quirks): Added getter for the PluginModule's
+        quirks to be available in NPN_GetValue.
+
 2011-03-01  Adam Roben  <aroben@apple.com>
 
         Convert seconds to milliseconds before calling ::SetTimer

@@ -32,6 +32,7 @@ namespace WebKit {
 bool Module::load()
 {
     m_lib.setFileName(static_cast<QString>(m_path));
+    m_lib.setLoadHints(QLibrary::ResolveAllSymbolsHint);
     return m_lib.load();
 }
 

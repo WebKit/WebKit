@@ -70,6 +70,8 @@ public:
     HWND containingWindow() const;
 #endif
 
+    PluginQuirks quirks() const { return m_pluginModule->pluginQuirks(); }
+
     void invalidate(const NPRect*);
     static const char* userAgent(NPP);
     void loadURL(const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields,

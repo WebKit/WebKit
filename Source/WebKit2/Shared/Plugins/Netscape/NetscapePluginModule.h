@@ -64,6 +64,10 @@ private:
 
     void determineQuirks();
 
+#if PLUGIN_ARCHITECTURE(X11)
+    void applyX11QuirksBeforeLoad();
+#endif
+
     void incrementLoadCount();
     void decrementLoadCount();
 
