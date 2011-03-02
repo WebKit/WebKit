@@ -1,3 +1,14 @@
+2011-03-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80078.
+        http://trac.webkit.org/changeset/80078
+        https://bugs.webkit.org/show_bug.cgi?id=55545
+
+        underlying change was rolled out (Requested by tonyg-cr on
+        #webkit).
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-01  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed new baselines
