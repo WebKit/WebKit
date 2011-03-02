@@ -1089,7 +1089,7 @@ BUGCR10350 LINUX : fast/replaced/width100percent-radio.html = FAIL
 // These tests are marked as failing on Linux because they depend on QuickTime.
 // See the bug for more discussion.
 BUGCR15797 LINUX : fast/dom/object-embed-plugin-scripting.html = FAIL
-BUGCR15797 LINUX : plugins/embed-attributes-setting.html = FAIL
+BUGCR15797 LINUX : plugins/embed-attributes-setting.html = FAIL CRASH
 
 // Skip because we throw an exception before we get to dumpAsText.
 BUGCR10351 SKIP MAC : http/tests/plugins/geturlnotify-from-npp-destroystream.html = FAIL
