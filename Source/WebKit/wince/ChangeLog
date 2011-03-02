@@ -1,3 +1,13 @@
+2011-03-02  Brian Weinstein  <bweinstein@apple.com>
+
+        WinCE build fix. Have PlatformStrategiesWinCE inherit from CookiesStrategy,
+        and implement the needed methods.
+
+        * WebCoreSupport/PlatformStrategiesWinCE.cpp:
+        (PlatformStrategiesWinCE::createCookiesStrategy):
+        (PlatformStrategiesWinCE::notifyCookiesChanged):
+        * WebCoreSupport/PlatformStrategiesWinCE.h:
+
 2011-02-28  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Ryosuke Niwa.

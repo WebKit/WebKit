@@ -30,7 +30,7 @@
 #include "PluginStrategy.h"
 #include "VisitedLinkStrategy.h"
 
-class PlatformStrategiesWinCE : public WebCore::PlatformStrategies, private WebCore::PluginStrategy, private WebCore::LocalizationStrategy, private WebCore::VisitedLinkStrategy {
+class PlatformStrategiesWinCE : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::PluginStrategy, private WebCore::LocalizationStrategy, private WebCore::VisitedLinkStrategy {
 public:
     static void initialize();
 
@@ -38,9 +38,13 @@ private:
     PlatformStrategiesWinCE();
 
     // WebCore::PlatformStrategies
+    virtual WebCore::CookiesStrategy* createCookiesStrategy();
     virtual WebCore::PluginStrategy* createPluginStrategy();
     virtual WebCore::LocalizationStrategy* createLocalizationStrategy();
     virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy();
+    
+    // WebCore::CookiesStrategy
+    virtual void notifyCookiesChanged();
 
     // WebCore::PluginStrategy
     virtual void refreshPlugins();

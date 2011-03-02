@@ -50,7 +50,10 @@ PlatformStrategiesWinCE::PlatformStrategiesWinCE()
     setPlatformStrategies(this);
 }
 
-// PluginStrategy
+CookiesStrategy* PlatformStrategiesWinCE::createCookiesStrategy()
+{
+    return this;
+}
 
 PluginStrategy* PlatformStrategiesWinCE::createPluginStrategy()
 {
@@ -65,6 +68,10 @@ LocalizationStrategy* PlatformStrategiesWinCE::createLocalizationStrategy()
 VisitedLinkStrategy* PlatformStrategiesWinCE::createVisitedLinkStrategy()
 {
     return this;
+}
+
+void PlatformStrategiesWinCE::notifyCookiesChanged()
+{
 }
 
 void PlatformStrategiesWinCE::refreshPlugins()
