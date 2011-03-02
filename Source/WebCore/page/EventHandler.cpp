@@ -2728,23 +2728,33 @@ bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEve
     return event->defaultHandled();
 }
     
-#if !PLATFORM(MAC) && !PLATFORM(QT) && !PLATFORM(HAIKU) && !PLATFORM(EFL)
-bool EventHandler::invertSenseOfTabsToLinks(KeyboardEvent*) const
+bool EventHandler::isKeyboardOptionTab(KeyboardEvent* event)
 {
-    return false;
+    return event
+        && (event->type() == eventNames().keydownEvent || event->type() == eventNames().keypressEvent)
+        && event->altKey()
+        && event->keyIdentifier() == "U+0009";    
 }
+
+static bool eventInvertsTabsToLinksClientCallResult(KeyboardEvent* event)
+{
+#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(HAIKU) || PLATFORM(EFL)
+    return EventHandler::isKeyboardOptionTab(event);
+#else
+    return false;
 #endif
+}
 
 bool EventHandler::tabsToLinks(KeyboardEvent* event) const
 {
+    ASSERT(!event || event->keyIdentifier() == "U+0009");
+
     Page* page = m_frame->page();
     if (!page)
         return false;
 
-    if (page->chrome()->client()->tabsToLinks())
-        return !invertSenseOfTabsToLinks(event);
-
-    return invertSenseOfTabsToLinks(event);
+    bool tabsToLinksClientCallResult = page->chrome()->client()->tabsToLinks();
+    return eventInvertsTabsToLinksClientCallResult(event) ? !tabsToLinksClientCallResult : tabsToLinksClientCallResult;
 }
 
 void EventHandler::defaultTextInputEventHandler(TextEvent* event)

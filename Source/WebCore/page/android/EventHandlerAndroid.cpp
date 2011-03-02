@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-bool EventHandler::tabsToAllControls(KeyboardEvent*) const
+bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const
 {
     return true;
 }

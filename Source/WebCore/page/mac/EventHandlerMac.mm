@@ -718,20 +718,7 @@ PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 
 #endif
 
-static inline bool isKeyboardOptionTab(KeyboardEvent* event)
-{
-    return event
-        && (event->type() == eventNames().keydownEvent || event->type() == eventNames().keypressEvent)
-        && event->altKey()
-        && event->keyIdentifier() == "U+0009";    
-}
-
-bool EventHandler::invertSenseOfTabsToLinks(KeyboardEvent* event) const
-{
-    return isKeyboardOptionTab(event);
-}
-
-bool EventHandler::tabsToAllControls(KeyboardEvent* event) const
+bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
 {
     Page* page = m_frame->page();
     if (!page)

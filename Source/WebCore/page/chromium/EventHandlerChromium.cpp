@@ -114,7 +114,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
     return false;
 }
 
-bool EventHandler::tabsToAllControls(KeyboardEvent*) const
+bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const
 {
     return true;
 }

@@ -1,3 +1,38 @@
+2011-03-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Clean up WebCore tabsToLinks code a little
+        https://bugs.webkit.org/show_bug.cgi?id=55606
+
+        No change in behavior, so no tests.
+
+        * html/HTMLFormControlElement.cpp: (WebCore::HTMLFormControlElement::isKeyboardFocusable):
+        This is the only caller of tabsToAllControls(). Renamed this function to tabsToAllFormControls().
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::isKeyboardOptionTab): Moved from platform specific files. This
+        function cannot be file static, because EventHandlerMac.mm uses it.
+        (WebCore::eventInvertsTabsToLinksClientCallResult): Merged implementations from platform
+        specific files. We can just as well have #if here. Renamed for clarity.
+        (WebCore::EventHandler::tabsToLinks): Rewrote in a way that makes it clearer how "invert"
+        works.
+        
+        * page/EventHandler.h: We no longer need invertSenseOfTabsToLinks() here, it's only used
+        in EventHandler.cpp.
+
+        * page/android/EventHandlerAndroid.cpp: (WebCore::EventHandler::tabsToAllFormControls):
+        * page/brew/EventHandlerBrew.cpp: (WebCore::EventHandler::tabsToAllFormControls):
+        * page/chromium/EventHandlerChromium.cpp: (WebCore::EventHandler::tabsToAllFormControls):
+        * page/efl/EventHandlerEfl.cpp: (WebCore::EventHandler::tabsToAllFormControls):
+        * page/gtk/EventHandlerGtk.cpp: (WebCore::EventHandler::tabsToAllFormControls):
+        * page/haiku/EventHandlerHaiku.cpp: (WebCore::EventHandler::tabsToAllFormControls):
+        * page/mac/EventHandlerMac.mm: (WebCore::EventHandler::tabsToAllFormControls):
+        * page/qt/EventHandlerQt.cpp: (WebCore::EventHandler::tabsToAllFormControls):
+        * page/win/EventHandlerWin.cpp: (WebCore::EventHandler::tabsToAllFormControls):
+        * page/wx/EventHandlerWx.cpp: (WebCore::EventHandler::tabsToAllFormControls):
+        Updating all port files.
+
 2011-02-28  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by James Robinson.
