@@ -63,9 +63,7 @@ public:
 
     const char* utf8() const { return m_impl.utf8(); }
     int length() const { return m_impl.length(); }
-#if USE(JSC)
-    operator UString() const { return m_impl.uString(); }
-#endif
+    StringImpl* impl() const { return m_impl.impl(); }
 
 private:
     JavaStringImpl m_impl;
