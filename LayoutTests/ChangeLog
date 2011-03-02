@@ -1,3 +1,13 @@
+2011-03-02  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed expectations update
+
+        [chromium] Expectations to match r80157
+        https://bugs.webkit.org/show_bug.cgi?id=55613
+
+        * platform/chromium-linux/fast/invalid/residual-style-expected.txt:
+        * platform/chromium-win/fast/invalid/residual-style-expected.txt:
+
 2011-03-02  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update.

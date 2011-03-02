@@ -614,11 +614,11 @@ layer at (0,0) size 785x3617
           text run at (0,0) width 19: "Q: "
         RenderInline {Q} at (0,0) size 10x19
           RenderInline (generated) at (0,0) size 5x19
-            RenderText at (19,0) size 5x19
+            RenderQuote at (19,0) size 5x19
               text run at (19,0) width 5: "\""
           RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
           RenderInline (generated) at (0,0) size 5x19
-            RenderText at (24,0) size 5x19
+            RenderQuote at (24,0) size 5x19
               text run at (24,0) width 5: "\""
         RenderInline {FONT} at (0,0) size 160x19 [color=#008000]
           RenderText {#text} at (29,0) size 160x19
