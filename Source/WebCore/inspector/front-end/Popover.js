@@ -40,6 +40,7 @@ WebInspector.Popover = function(contentElement)
     this.contentElement = contentElement;
     this._contentDiv = document.createElement("div");
     this._contentDiv.className = "content";
+    this._visible = false;
 }
 
 WebInspector.Popover.prototype = {
@@ -60,6 +61,7 @@ WebInspector.Popover.prototype = {
         this.element.appendChild(this._contentDiv);
         document.body.appendChild(this.element);
         this._positionElement(anchor, preferredWidth, preferredHeight);
+        this._visible = true;
     },
 
     hide: function()
@@ -68,6 +70,12 @@ WebInspector.Popover.prototype = {
             delete WebInspector.Popover._popoverElement;
             document.body.removeChild(this.element);
         }
+        this._visible = false;
+    },
+
+    get visible()
+    {
+        return this._visible;
     },
 
     _positionElement: function(anchorElement, preferredWidth, preferredHeight)

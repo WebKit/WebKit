@@ -80,6 +80,11 @@ WebInspector.HeapSnapshotEdge.prototype = {
         return this._type() === this._snapshot._edgeInternalType;
     },
 
+    get isInvisible()
+    {
+        return this._type() === this._snapshot._edgeInvisibleType;
+    },
+
     get isShortcut()
     {
         return this._type() === this._snapshot._edgeShortcutType;
@@ -123,6 +128,7 @@ WebInspector.HeapSnapshotEdge.prototype = {
                 return "[" + this.name + "]";
         case "internal":
         case "hidden":
+        case "invisible":
             return "{" + this.name + "}";
         };
         return "?" + this.name + "?";
@@ -377,6 +383,10 @@ WebInspector.HeapSnapshot.prototype = {
         this._edgeHiddenType = this._edgeTypes.indexOf("hidden");
         this._edgeInternalType = this._edgeTypes.indexOf("internal");
         this._edgeShortcutType = this._edgeTypes.indexOf("shortcut");
+        this._edgeInvisibleType = this._edgeTypes.length;
+        this._edgeTypes.push("invisible");
+
+        this._markInvisibleEdges();
     },
 
     dispose: function()
@@ -549,6 +559,33 @@ WebInspector.HeapSnapshot.prototype = {
                 });
 
         this._aggregatesWithIndexes = true;
+    },
+
+    _markInvisibleEdges: function()
+    {
+        // Mark hidden edges of global objects as invisible.
+        // FIXME: This is a temporary measure. Normally, we should
+        // really hide all hidden nodes.
+        for (var iter = this.rootNode.edges; iter.hasNext(); iter.next()) {
+            var edge = iter.edge;
+            if (!edge.isShortcut)
+                continue;
+            var node = edge.node;
+            var propNames = {};
+            for (var innerIter = node.edges; innerIter.hasNext(); innerIter.next()) {
+                var globalObjEdge = innerIter.edge;
+                if (globalObjEdge.isShortcut)
+                    propNames[globalObjEdge._nameOrIndex] = true;
+            }
+            for (innerIter.first(); innerIter.hasNext(); innerIter.next()) {
+                var globalObjEdge = innerIter.edge;
+                if (!globalObjEdge.isShortcut
+                    && globalObjEdge.node.isHidden
+                    && globalObjEdge._hasStringName
+                    && (globalObjEdge._nameOrIndex in propNames))
+                    this._nodes[globalObjEdge._edges._start + globalObjEdge.edgeIndex + this._edgeTypeOffset] = this._edgeInvisibleType;
+            }
+        }
     }
 };
 
@@ -849,7 +886,8 @@ WebInspector.HeapSnapshotPathFinder.prototype = {
 
     _skipEdge: function(edge)
     {
-        return (this._skipHidden && (edge.isHidden || edge.node.isHidden))
+        return edge.isInvisible
+            || (this._skipHidden && (edge.isHidden || edge.node.isHidden))
             || this._hasInPath(edge.nodeIndex);
     },
 

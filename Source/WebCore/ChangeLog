@@ -1,3 +1,61 @@
+2011-03-02  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Landing detailed heap snapshots, part 4.
+        https://bugs.webkit.org/show_bug.cgi?id=55563
+
+        This part adds implementations for data grids used to display
+        different heap snapshots projections. We are almost done.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * bindings/v8/ScriptHeapSnapshot.cpp:
+        (WebCore::ScriptHeapSnapshot::getExactRetainedSize):
+        * bindings/v8/ScriptHeapSnapshot.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::getExactHeapSnapshotNodeRetainedSize):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotObjectNode):
+        (WebInspector.HeapSnapshotObjectNode.prototype._createProvider):
+        (WebInspector.HeapSnapshotInstanceNode):
+        (WebInspector.HeapSnapshotInstanceNode.prototype._createProvider):
+        (WebInspector.HeapSnapshotDominatorObjectNode):
+        (WebInspector.HeapSnapshotDominatorObjectNode.prototype._createProvider):
+        (MixInSnapshotNodeFunctions):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotContainmentDataGrid):
+        (WebInspector.HeapSnapshotSortableDataGrid):
+        (WebInspector.HeapSnapshotConstructorsDataGrid):
+        (WebInspector.HeapSnapshotDiffDataGrid):
+        (WebInspector.HeapSnapshotDominatorsDataGrid):
+        (WebInspector.HeapSnapshotRetainingPathsList):
+        (WebInspector.DetailedHeapshotView.profileCallback):
+        (WebInspector.DetailedHeapshotView):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotEdge.prototype.get isInvisible):
+        (WebInspector.HeapSnapshotEdge.prototype.toString):
+        (WebInspector.HeapSnapshot.prototype._init):
+        (WebInspector.HeapSnapshot.prototype._buildAggregatesIndexes):
+        (WebInspector.HeapSnapshot.prototype._markInvisibleEdges):
+        (WebInspector.HeapSnapshotPathFinder.prototype._skipEdge):
+        * inspector/front-end/Images/helpButtonGlyph.png: Added.
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.reset):
+        * inspector/front-end/Popover.js:
+        (WebInspector.Popover):
+        (WebInspector.Popover.prototype.show):
+        (WebInspector.Popover.prototype.hide):
+        (WebInspector.Popover.prototype.get visible):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._reset):
+        (WebInspector.ProfilesPanel.prototype.getProfile):
+        * inspector/front-end/heapProfiler.css:
+        * inspector/front-end/inspector.js:
+        (WebInspector.resetFocusElement):
+
 2011-03-02  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/55534> Clean up macros in Extensions3DOpenGL.cpp

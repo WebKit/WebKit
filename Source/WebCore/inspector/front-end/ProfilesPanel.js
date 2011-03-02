@@ -185,8 +185,19 @@ WebInspector.ProfilesPanel.prototype = {
 
     _reset: function()
     {
-        for (var i = 0; i < this._profiles.length; ++i)
+        WebInspector.Panel.prototype.reset.call(this);
+
+        for (var i = 0; i < this._profiles.length; ++i) {
+            var view = this._profiles[i]._profileView;
+            if (view && ("dispose" in view))
+                view.dispose();
             delete this._profiles[i]._profileView;
+            var profile = this._profiles[i];
+            if (profile.nodes) {
+                delete profile.nodes;
+                delete profile.strings;
+            }
+        }
         delete this.visibleView;
 
         delete this.currentQuery;
@@ -407,6 +418,11 @@ WebInspector.ProfilesPanel.prototype = {
     hasProfile: function(profile)
     {
         return !!this._profilesIdMap[this._makeKey(profile.uid, profile.typeId)];
+    },
+
+    getProfile: function(typeId, uid)
+    {
+        return this._profilesIdMap[this._makeKey(uid, typeId)];
     },
 
     loadHeapSnapshot: function(uid, callback)

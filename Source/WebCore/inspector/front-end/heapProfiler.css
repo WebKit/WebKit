@@ -134,3 +134,108 @@
     width: 50%;
     left: 25%;
 }
+
+.detailed-heapshot-view {
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    -webkit-box-orient: vertical;
+}
+
+.detailed-heapshot-view.visible {
+    display: -webkit-box;
+}
+
+.detailed-heapshot-view .view {
+    display: none;
+    -webkit-box-flex: 3;
+    -webkit-box-orient: vertical;
+}
+
+.detailed-heapshot-view .view.visible {
+    display: -webkit-box;
+}
+
+.detailed-heapshot-view .data-grid {
+    border: none;
+    position: relative;
+    -webkit-box-flex: 1;
+}
+
+.detailed-heapshot-view .data-grid td.count-column {
+    text-align: right;
+}
+
+.detailed-heapshot-view .data-grid td.addedCount-column {
+    text-align: right;
+}
+
+.detailed-heapshot-view .data-grid td.removedCount-column {
+    text-align: right;
+}
+
+.detailed-heapshot-view .data-grid td.countDelta-column {
+    text-align: right;
+}
+
+.detailed-heapshot-view .data-grid td.addedSize-column {
+    text-align: right;
+}
+
+.detailed-heapshot-view .data-grid td.removedSize-column {
+    text-align: right;
+}
+
+.detailed-heapshot-view .data-grid td.sizeDelta-column {
+    text-align: right;
+}
+
+.detailed-heapshot-view .data-grid td.shallowSize-column {
+    text-align: right;
+}
+
+.detailed-heapshot-view .data-grid td.retainedSize-column {
+    text-align: right;
+}
+
+.detailed-heapshot-view .console-formatted-object, .console-formatted-node {
+    display: inline;
+    position: static;
+}
+
+.detailed-heapshot-view .delimiter {
+    height: 24px;
+    background-color: #d6dde5;
+}
+
+.detailed-heapshot-view .retaining-paths-view {
+    -webkit-box-flex: 1;
+}
+
+.detailed-heapshot-view .retaining-paths-view .title {
+    background-color: rgb(235, 235, 235);
+    background-image: url(Images/statusbarBackground.png);
+    background-repeat: repeat-x;
+    height: 23px;
+    font: -webkit-small-control;
+    font-weight: bold;
+    color: rgb(48, 48, 48);
+    text-shadow: rgba(255, 255, 255, 0.75) 0 1px 0;
+}
+
+.detailed-heapshot-view .retaining-paths-view .title > span {
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.heapshot-help-status-bar-item .glyph {
+    -webkit-mask-image: url(Images/helpButtonGlyph.png);
+}
+
+table.heapshot-help {
+    border-spacing: 12px 2px;
+}

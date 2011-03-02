@@ -264,6 +264,7 @@ module core {
 
         // FIXME: split into Profiler and HeapProfiler.
         void takeHeapSnapshot(in boolean detailed);
+        void getExactHeapSnapshotNodeRetainedSize(in unsigned long uid, in unsigned long nodeId, out long size);
         [event] void addProfileHeader(out Object header);
         [event] void addHeapSnapshotChunk(out unsigned long uid, out String chunk);
         [event] void finishHeapSnapshot(out unsigned long uid);

@@ -59,6 +59,7 @@ public:
     String title() const;
     unsigned int uid() const;
     void writeJSON(OutputStream* stream);
+    int exactRetainedSize(uint64_t nodeId);
 
 private:
     ScriptHeapSnapshot(const v8::HeapSnapshot* snapshot)

@@ -88,6 +88,12 @@ WebInspector.Panel.prototype = {
             this._toolbarItem.removeStyleClass("toggled-on");
     },
 
+    reset: function()
+    {
+        this.searchCanceled();
+        WebInspector.resetFocusElement();
+    },
+
     get defaultFocusedElement()
     {
         return this.sidebarTreeElement || this.element;

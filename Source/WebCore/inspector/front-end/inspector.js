@@ -138,6 +138,12 @@ var WebInspector = {
             this._previousFocusElement.blur();
     },
 
+    resetFocusElement: function()
+    {
+        this.currentFocusElement = null;
+        this._previousFocusElement = null;        
+    },
+
     get currentPanel()
     {
         return this._currentPanel;

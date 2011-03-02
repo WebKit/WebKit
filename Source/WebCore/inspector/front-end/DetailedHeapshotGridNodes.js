@@ -232,7 +232,7 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype.__proto__ = WebInspector.He
 WebInspector.HeapSnapshotObjectNode = function(tree, edge)
 {
     var node = edge.node;
-    var provider = this._createEdgesProvider(tree.snapshot, node.rawEdges);
+    var provider = this._createProvider(tree.snapshot, node.rawEdges);
     WebInspector.HeapSnapshotGenericObjectNode.call(this, tree, node, !provider.isEmpty, 100);
     this._referenceName = edge.name;
     this._referenceType = edge.type;
@@ -245,7 +245,7 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
         return new WebInspector.HeapSnapshotObjectNode(this.dataGrid, provider.item);
     },
 
-    _createEdgesProvider: function(snapshot, rawEdges)
+    _createProvider: function(snapshot, rawEdges)
     {
         var showHiddenData = WebInspector.DetailedHeapshotView.prototype.showHiddenData;
         return new WebInspector.HeapSnapshotEdgesProvider(
@@ -321,7 +321,7 @@ WebInspector.HeapSnapshotObjectNode.prototype.__proto__ = WebInspector.HeapSnaps
 
 WebInspector.HeapSnapshotInstanceNode = function(tree, baseSnapshot, snapshot, node)
 {
-    var provider = this._createEdgesProvider(baseSnapshot || snapshot, node.rawEdges);  
+    var provider = this._createProvider(baseSnapshot || snapshot, node.rawEdges);  
     WebInspector.HeapSnapshotGenericObjectNode.call(this, tree, node, !provider.isEmpty, 100);
     this._isDeletedNode = !!baseSnapshot;
     this._provider = provider;    
@@ -333,7 +333,7 @@ WebInspector.HeapSnapshotInstanceNode.prototype = {
         return new WebInspector.HeapSnapshotObjectNode(this.dataGrid, provider.item);
     },
 
-    _createEdgesProvider: function(snapshot, rawEdges)
+    _createProvider: function(snapshot, rawEdges)
     {
         var showHiddenData = WebInspector.DetailedHeapshotView.prototype.showHiddenData;
         return new WebInspector.HeapSnapshotEdgesProvider(
@@ -639,7 +639,7 @@ WebInspector.HeapSnapshotDiffNode.prototype.__proto__ = WebInspector.HeapSnapsho
 
 WebInspector.HeapSnapshotDominatorObjectNode = function(tree, node)
 {
-    var provider = this._createNodesProvider(tree.snapshot, node.nodeIndex);
+    var provider = this._createProvider(tree.snapshot, node.nodeIndex);
     WebInspector.HeapSnapshotGenericObjectNode.call(this, tree, node, !provider.isEmpty, 25);
     this._provider = provider;
 };
@@ -650,7 +650,7 @@ WebInspector.HeapSnapshotDominatorObjectNode.prototype = {
         return new WebInspector.HeapSnapshotDominatorObjectNode(this.dataGrid, provider.item);
     },
 
-    _createNodesProvider: function(snapshot, nodeIndex)
+    _createProvider: function(snapshot, nodeIndex)
     {
         var showHiddenData = WebInspector.DetailedHeapshotView.prototype.showHiddenData;
         return new WebInspector.HeapSnapshotNodesProvider(
@@ -693,3 +693,15 @@ WebInspector.HeapSnapshotDominatorObjectNode.prototype = {
 };
 
 WebInspector.HeapSnapshotDominatorObjectNode.prototype.__proto__ = WebInspector.HeapSnapshotGenericObjectNode.prototype;
+
+function MixInSnapshotNodeFunctions(sourcePrototype, targetPrototype)
+{
+    targetPrototype._childHashForEntity = sourcePrototype._childHashForEntity;
+    targetPrototype._childHashForNode = sourcePrototype._childHashForNode;
+    targetPrototype.comparator = sourcePrototype.comparator;
+    targetPrototype._createChildNode = sourcePrototype._createChildNode;
+    targetPrototype._createProvider = sourcePrototype._createProvider;
+    targetPrototype.populateChildren = sourcePrototype.populateChildren;
+    targetPrototype._saveChildren = sourcePrototype._saveChildren;
+    targetPrototype.sort = sourcePrototype.sort;
+}
