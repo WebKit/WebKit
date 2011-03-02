@@ -17,6 +17,15 @@
     -webkit-user-select: none;
 }
 
+.inner-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: auto;
+    bottom: auto;
+    min-width: 100%;
+}
+
 .text-editor-contents {
     position: absolute;
     top: 0;

@@ -1,3 +1,27 @@
+2011-03-02  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: highlighted line does not span horizonally in scripts panel while debugging.
+        https://bugs.webkit.org/show_bug.cgi?id=54675
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._syncScroll):
+        (WebInspector.TextEditorChunkedPanel.prototype._buildChunks):
+        (WebInspector.TextEditorChunkedPanel.prototype.makeLineAChunk):
+        (WebInspector.TextEditorGutterPanel):
+        (WebInspector.TextEditorGutterPanel.prototype._expandChunks):
+        (WebInspector.TextEditorGutterPanel.prototype.textChanged):
+        (WebInspector.TextEditorMainPanel):
+        (WebInspector.TextEditorMainPanel.prototype.set readOnly):
+        (WebInspector.TextEditorMainPanel.prototype._getSelection):
+        (WebInspector.TextEditorMainPanel.prototype._selectionToPosition):
+        (WebInspector.TextEditorMainPanel.prototype._handleDOMSubtreeModified):
+        (WebInspector.TextEditorMainPanel.prototype._applyDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype._updateChunksForRanges):
+        * inspector/front-end/textViewer.css:
+        (.inner-container):
+
 2011-03-02  Oleg Romashin  <romaxa@gmail.com>
 
         Reviewed by Andreas Kling.
