@@ -1,3 +1,14 @@
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed, missed updating a call to WebCore::computeViewportAttributes
+        who's prototype changed.
+
+        Viewport Warning/Error Messages Are Now Inaccurate
+        https://bugs.webkit.org/show_bug.cgi?id=53707
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::viewportAttributesForSize): pass in a value for the document argument.
+
 2011-03-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
