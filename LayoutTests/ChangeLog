@@ -1,3 +1,71 @@
+2011-03-01  Victoria Kirst  <vrk@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [Chromium] videos are not painted for compositing/ tests
+        https://bugs.webkit.org/show_bug.cgi?id=54694
+
+        Videos are now painted for compositing tests. This patch uploads the
+        expected layout results and enables the tests again.
+
+        * platform/chromium-gpu-linux/compositing/geometry/clipped-video-controller-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/clipped-video-controller-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/video-fixed-scrolling-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/video-fixed-scrolling-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/video-opacity-overlay-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/video-opacity-overlay-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/layers-inside-overflow-scroll-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/layers-inside-overflow-scroll-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/overflow/overflow-compositing-descendant-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/overflow/overflow-compositing-descendant-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/overflow/scroll-ancestor-update-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/overflow/scroll-ancestor-update-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/load-video-in-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/load-video-in-reflection-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/self-painting-layers-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/self-painting-layers-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/clipped-video-controller-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/clipped-video-controller-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/video-fixed-scrolling-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/video-fixed-scrolling-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/video-opacity-overlay-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/video-opacity-overlay-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/layers-inside-overflow-scroll-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/layers-inside-overflow-scroll-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/overflow-compositing-descendant-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/overflow-compositing-descendant-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/scroll-ancestor-update-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/scroll-ancestor-update-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/load-video-in-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/load-video-in-reflection-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/self-painting-layers-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/self-painting-layers-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/geometry/clipped-video-controller-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/geometry/clipped-video-controller-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/geometry/clipped-video-controller-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/geometry/video-fixed-scrolling-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/geometry/video-fixed-scrolling-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/geometry/video-fixed-scrolling-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/geometry/video-opacity-overlay-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/geometry/video-opacity-overlay-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/geometry/video-opacity-overlay-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/layers-inside-overflow-scroll-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/layers-inside-overflow-scroll-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/layers-inside-overflow-scroll-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/overflow/overflow-compositing-descendant-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/overflow/overflow-compositing-descendant-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/overflow/overflow-compositing-descendant-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/overflow/scroll-ancestor-update-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/overflow/scroll-ancestor-update-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/overflow/scroll-ancestor-update-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/load-video-in-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/load-video-in-reflection-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/load-video-in-reflection-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/self-painting-layers-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/self-painting-layers-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/self-painting-layers-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed expectations update. This is a follow-up to r80061.
