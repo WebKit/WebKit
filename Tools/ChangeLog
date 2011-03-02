@@ -1,3 +1,12 @@
+2011-03-01  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] clean up temp files on chromium-mac builder too
+        https://bugs.webkit.org/show_bug.cgi?id=55525
+
+        * BuildSlaveSupport/chromium/remove-crash-logs:
+
 2011-02-28  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.

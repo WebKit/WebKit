@@ -33,5 +33,9 @@ import sys
 if __name__ == '__main__':
     if sys.platform == 'linux2':
         os.system('rm -rf /tmp/.org.chromium.*')
+    elif sys.platform == 'darwin':
+        import Foundation
+        os.system('rm -rf %s' % os.path.join(Foundation.NSTemporaryDirectory(),
+                                             '.org.chromium.*'))
     elif 'win' in sys.platform:
         os.system('for /d %d in (%TEMP%\scoped_dir*) do rd /s /q "%d"')
