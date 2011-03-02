@@ -633,7 +633,7 @@ void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(Range*
     Node* pastLastNode = range->pastLastNode();
     for (Node* node = range->firstNode(); node != pastLastNode; node = node->traverseNextNode()) {
         unsigned startOffset = node == startContainer ? range->startOffset() : 0;
-        unsigned endOffset = node == endContainer ? range->endOffset() : std::numeric_limits<unsigned>::max();
+        unsigned endOffset = node == endContainer ? static_cast<unsigned>(range->endOffset()) : std::numeric_limits<unsigned>::max();
         MarkerMapVectorPair* vectorPair = m_markers.get(node);
         if (!vectorPair)
             continue;

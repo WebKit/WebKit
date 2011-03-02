@@ -1,3 +1,10 @@
+2011-03-01  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange):
+
 2011-03-01  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed. Apply sort-Xcode-project-file.
