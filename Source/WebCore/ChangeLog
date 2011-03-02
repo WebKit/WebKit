@@ -1,3 +1,14 @@
+2011-03-02  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, a trivial fix for r80096.
+
+        REGRESSION (r80096): [Chromium] fast/forms/input-number-unacceptable-style.html failure
+        https://bugs.webkit.org/show_bug.cgi?id=55562
+
+        * platform/text/LocalizedNumberICU.cpp:
+        (WebCore::parseLocalizedNumber): Check the ParsePosition after NumberFormat::parse()
+          to reject strings with a valid number + extra letters.
+
 2011-03-02  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

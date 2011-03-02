@@ -1,5 +1,14 @@
 2011-03-02  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, a trivial fix for r80096.
+
+        REGRESSION (r80096): [Chromium] fast/forms/input-number-unacceptable-style.html failure
+        https://bugs.webkit.org/show_bug.cgi?id=55562
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-02  Kent Tamura  <tkent@chromium.org>
+
         Unreviewed, test expectation update.
 
         * platform/chromium/test_expectations.txt:

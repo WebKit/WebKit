@@ -33,6 +33,7 @@
 
 #include <limits>
 #include <unicode/numfmt.h>
+#include <unicode/parsepos.h>
 #include <wtf/PassOwnPtr.h>
 
 using namespace std;
@@ -53,11 +54,12 @@ double parseLocalizedNumber(const String& numberString)
     if (!formatter)
         return numeric_limits<double>::quiet_NaN();
     UnicodeString numberUnicodeString(numberString.characters(), numberString.length());
-    UErrorCode status = U_ZERO_ERROR;
     Formattable result;
-    formatter->parse(numberUnicodeString, result, status);
-    if (status != U_ZERO_ERROR)
+    ParsePosition position(0);
+    formatter->parse(numberUnicodeString, result, position);
+    if (position.getIndex() != numberUnicodeString.length())
         return numeric_limits<double>::quiet_NaN();
+    UErrorCode status = U_ZERO_ERROR;
     double numericResult = result.getDouble(status);
     return status == U_ZERO_ERROR ? numericResult : numeric_limits<double>::quiet_NaN();
 }
