@@ -1,3 +1,9 @@
+2011-03-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Update location of media-file.js, which was moved in r79630.
+
+        * manual-tests/media-controls.html: Updated location.
+
 2011-03-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80156.
