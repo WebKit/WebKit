@@ -19,11 +19,12 @@
 */
 
 #include "config.h"
-#include "V8TestInterface.h"
+#include "V8TestSerializedScriptValueInterface.h"
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
 #include "RuntimeEnabledFeatures.h"
+#include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8DOMWrapper.h"
@@ -33,26 +34,20 @@
 
 namespace WebCore {
 
-WrapperTypeInfo V8TestInterface::info = { V8TestInterface::GetTemplate, V8TestInterface::derefObject, 0 };
+WrapperTypeInfo V8TestSerializedScriptValueInterface::info = { V8TestSerializedScriptValueInterface::GetTemplate, V8TestSerializedScriptValueInterface::derefObject, 0 };
 
-namespace TestInterfaceInternal {
+namespace TestSerializedScriptValueInterfaceInternal {
 
 template <typename T> void V8_USE(T) { }
 
-} // namespace TestInterfaceInternal
+} // namespace TestSerializedScriptValueInterfaceInternal
 
-v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& args)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestSerializedScriptValueInterfaceTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {
-    INC_STATS("DOM.TestInterface.Contructor");
-    return V8Proxy::constructDOMObjectWithScriptExecutionContext<TestInterface>(args, &info);
-}
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8::Persistent<v8::FunctionTemplate> desc)
-{
-    v8::Local<v8::Signature> defaultSignature = configureTemplate(desc, "TestInterface", v8::Persistent<v8::FunctionTemplate>(), V8TestInterface::internalFieldCount,
+    v8::Local<v8::Signature> defaultSignature = configureTemplate(desc, "TestSerializedScriptValueInterface", v8::Persistent<v8::FunctionTemplate>(), V8TestSerializedScriptValueInterface::internalFieldCount,
         0, 0,
         0, 0);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
-        desc->SetCallHandler(V8TestInterface::constructorCallback);
     
 
     // Custom toString template
@@ -60,25 +55,25 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
     return desc;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestInterface::GetRawTemplate()
+v8::Persistent<v8::FunctionTemplate> V8TestSerializedScriptValueInterface::GetRawTemplate()
 {
-    static v8::Persistent<v8::FunctionTemplate> V8TestInterfaceRawCache = createRawTemplate();
-    return V8TestInterfaceRawCache;
+    static v8::Persistent<v8::FunctionTemplate> V8TestSerializedScriptValueInterfaceRawCache = createRawTemplate();
+    return V8TestSerializedScriptValueInterfaceRawCache;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestInterface::GetTemplate()
+v8::Persistent<v8::FunctionTemplate> V8TestSerializedScriptValueInterface::GetTemplate()
 {
-    static v8::Persistent<v8::FunctionTemplate> V8TestInterfaceCache = ConfigureV8TestInterfaceTemplate(GetRawTemplate());
-    return V8TestInterfaceCache;
+    static v8::Persistent<v8::FunctionTemplate> V8TestSerializedScriptValueInterfaceCache = ConfigureV8TestSerializedScriptValueInterfaceTemplate(GetRawTemplate());
+    return V8TestSerializedScriptValueInterfaceCache;
 }
 
-bool V8TestInterface::HasInstance(v8::Handle<v8::Value> value)
+bool V8TestSerializedScriptValueInterface::HasInstance(v8::Handle<v8::Value> value)
 {
     return GetRawTemplate()->HasInstance(value);
 }
 
 
-v8::Handle<v8::Object> V8TestInterface::wrapSlow(TestInterface* impl)
+v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrapSlow(TestSerializedScriptValueInterface* impl)
 {
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;
@@ -87,13 +82,14 @@ v8::Handle<v8::Object> V8TestInterface::wrapSlow(TestInterface* impl)
         return wrapper;
 
     impl->ref();
+    SerializedScriptValue::deserializeAndSetProperty(wrapper, "value", static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly), impl->value());
     getDOMObjectMap().set(impl, v8::Persistent<v8::Object>::New(wrapper));
     return wrapper;
 }
 
-void V8TestInterface::derefObject(void* object)
+void V8TestSerializedScriptValueInterface::derefObject(void* object)
 {
-    static_cast<TestInterface*>(object)->deref();
+    static_cast<TestSerializedScriptValueInterface*>(object)->deref();
 }
 
 } // namespace WebCore

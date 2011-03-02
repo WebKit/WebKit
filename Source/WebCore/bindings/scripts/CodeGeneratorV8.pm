@@ -247,7 +247,11 @@ sub GenerateHeader
     my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($implClassName);
 
     foreach my $headerInclude (sort keys(%headerIncludes)) {
-        push(@headerContent, "#include \"${headerInclude}\"\n");
+        if ($headerInclude =~ /wtf/) {
+            push(@headerContent, "#include \<${headerInclude}\>\n");
+        } else {
+            push(@headerContent, "#include \"${headerInclude}\"\n");
+        }
     }
 
     push(@headerContent, "#include <v8.h>\n");
@@ -1830,7 +1834,7 @@ sub GenerateImplementation
     }
 
     my $has_attributes = 0;
-    if (@$attributes) {
+    if (@$attributes && (@$attributes > 1 || $$attributes[0]->signature->type ne "SerializedScriptValue")) {
         $has_attributes = 1;
         push(@implContent, "static const BatchedAttribute ${interfaceName}Attrs[] = {\n");
         GenerateBatchedAttributeData($dataNode, $attributes);
@@ -1974,7 +1978,9 @@ END
     } else {
         push(@implContent, <<END);
         0, 0);
+    UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
 END
+        $implIncludes{"wtf/UnusedParam.h"} = 1;
     }
 
     if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CanBeConstructed"}) {

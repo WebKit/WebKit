@@ -18,8 +18,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestInterface_h
-#define JSTestInterface_h
+#ifndef JSTestSerializedScriptValueInterface_h
+#define JSTestSerializedScriptValueInterface_h
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-class TestInterface;
+class TestSerializedScriptValueInterface;
 
-class JSTestInterface : public DOMObjectWithGlobalPointer {
+class JSTestSerializedScriptValueInterface : public DOMObjectWithGlobalPointer {
     typedef DOMObjectWithGlobalPointer Base;
 public:
-    JSTestInterface(NonNullPassRefPtr<JSC::Structure>, JSDOMGlobalObject*, PassRefPtr<TestInterface>);
+    JSTestSerializedScriptValueInterface(NonNullPassRefPtr<JSC::Structure>, JSDOMGlobalObject*, PassRefPtr<TestSerializedScriptValueInterface>);
     static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
@@ -47,18 +47,18 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
-    TestInterface* impl() const { return m_impl.get(); }
+    TestSerializedScriptValueInterface* impl() const { return m_impl.get(); }
 
 private:
-    RefPtr<TestInterface> m_impl;
+    RefPtr<TestSerializedScriptValueInterface> m_impl;
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestInterface*);
-TestInterface* toTestInterface(JSC::JSValue);
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestSerializedScriptValueInterface*);
+TestSerializedScriptValueInterface* toTestSerializedScriptValueInterface(JSC::JSValue);
 
-class JSTestInterfacePrototype : public JSC::JSObjectWithGlobalObject {
+class JSTestSerializedScriptValueInterfacePrototype : public JSC::JSObjectWithGlobalObject {
     typedef JSC::JSObjectWithGlobalObject Base;
 public:
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
@@ -67,14 +67,15 @@ public:
     {
         return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
-    JSTestInterfacePrototype(JSC::JSGlobalObject* globalObject, NonNullPassRefPtr<JSC::Structure> structure) : JSC::JSObjectWithGlobalObject(globalObject, structure) { }
+    JSTestSerializedScriptValueInterfacePrototype(JSC::JSGlobalObject* globalObject, NonNullPassRefPtr<JSC::Structure> structure) : JSC::JSObjectWithGlobalObject(globalObject, structure) { }
 protected:
     static const unsigned StructureFlags = Base::StructureFlags;
 };
 
 // Attributes
 
-JSC::JSValue jsTestInterfaceConstructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+JSC::JSValue jsTestSerializedScriptValueInterfaceValue(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+JSC::JSValue jsTestSerializedScriptValueInterfaceConstructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 
 } // namespace WebCore
 

@@ -34,7 +34,6 @@ class JSTestMediaQueryListListener : public DOMObjectWithGlobalPointer {
     typedef DOMObjectWithGlobalPointer Base;
 public:
     JSTestMediaQueryListListener(NonNullPassRefPtr<JSC::Structure>, JSDOMGlobalObject*, PassRefPtr<TestMediaQueryListListener>);
-    virtual ~JSTestMediaQueryListListener();
     static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);

@@ -79,12 +79,13 @@ protected:
     virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
 };
 
-const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterfaceConstructor", 0, &JSTestInterfaceConstructorTable, 0 };
+const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterfaceConstructor", &DOMConstructorObject::s_info, &JSTestInterfaceConstructorTable, 0 };
 
 JSTestInterfaceConstructor::JSTestInterfaceConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(JSTestInterfaceConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
-    putDirect(exec->propertyNames().prototype, JSTestInterfacePrototype::self(exec, globalObject), DontDelete | ReadOnly);
+    ASSERT(inherits(&s_info));
+    putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestInterfacePrototype::self(exec, globalObject), DontDelete | ReadOnly);
 }
 
 bool JSTestInterfaceConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -125,24 +126,20 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[1] =
 
 #undef THUNK_GENERATOR
 static JSC_CONST_HASHTABLE HashTable JSTestInterfacePrototypeTable = { 1, 0, JSTestInterfacePrototypeTableValues, 0 };
-const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", 0, &JSTestInterfacePrototypeTable, 0 };
+const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &JSC::JSObjectWithGlobalObject::s_info, &JSTestInterfacePrototypeTable, 0 };
 
 JSObject* JSTestInterfacePrototype::self(ExecState* exec, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestInterface>(exec, globalObject);
 }
 
-const ClassInfo JSTestInterface::s_info = { "TestInterface", 0, &JSTestInterfaceTable, 0 };
+const ClassInfo JSTestInterface::s_info = { "TestInterface", &DOMObjectWithGlobalPointer::s_info, &JSTestInterfaceTable, 0 };
 
 JSTestInterface::JSTestInterface(NonNullPassRefPtr<Structure> structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestInterface> impl)
     : DOMObjectWithGlobalPointer(structure, globalObject)
     , m_impl(impl)
 {
-}
-
-JSTestInterface::~JSTestInterface()
-{
-    forgetDOMObject(this, impl());
+    ASSERT(inherits(&s_info));
 }
 
 JSObject* JSTestInterface::createPrototype(ExecState* exec, JSGlobalObject* globalObject)

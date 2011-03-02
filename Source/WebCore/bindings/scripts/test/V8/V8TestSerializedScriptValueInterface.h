@@ -18,10 +18,12 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef V8TestObj_h
-#define V8TestObj_h
+#if ENABLE(Condition1) || ENABLE(Condition2)
 
-#include "TestObj.h"
+#ifndef V8TestSerializedScriptValueInterface_h
+#define V8TestSerializedScriptValueInterface_h
+
+#include "TestSerializedScriptValueInterface.h"
 #include "V8DOMWrapper.h"
 #include "WrapperTypeInfo.h"
 #include <wtf/text/StringHash.h>
@@ -30,47 +32,45 @@
 
 namespace WebCore {
 
-class V8TestObj {
+class V8TestSerializedScriptValueInterface {
 
 public:
     static bool HasInstance(v8::Handle<v8::Value> value);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
-    static TestObj* toNative(v8::Handle<v8::Object> object)
+    static TestSerializedScriptValueInterface* toNative(v8::Handle<v8::Object> object)
     {
-        return reinterpret_cast<TestObj*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        return reinterpret_cast<TestSerializedScriptValueInterface*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestObj*);
+    inline static v8::Handle<v8::Object> wrap(TestSerializedScriptValueInterface*);
     static void derefObject(void*);
     static WrapperTypeInfo info;
-    static v8::Handle<v8::Value> customMethodCallback(const v8::Arguments&);
-    static v8::Handle<v8::Value> customMethodWithArgsCallback(const v8::Arguments&);
-    static v8::Handle<v8::Value> customAttrAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info);
-    static void customAttrAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
 private:
-    static v8::Handle<v8::Object> wrapSlow(TestObj*);
+    static v8::Handle<v8::Object> wrapSlow(TestSerializedScriptValueInterface*);
 };
 
 
-v8::Handle<v8::Object> V8TestObj::wrap(TestObj* impl)
+v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrap(TestSerializedScriptValueInterface* impl)
 {
         v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
-    return V8TestObj::wrapSlow(impl);
+    return V8TestSerializedScriptValueInterface::wrapSlow(impl);
 }
 
-inline v8::Handle<v8::Value> toV8(TestObj* impl)
+inline v8::Handle<v8::Value> toV8(TestSerializedScriptValueInterface* impl)
 {
     if (!impl)
         return v8::Null();
-    return V8TestObj::wrap(impl);
+    return V8TestSerializedScriptValueInterface::wrap(impl);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestObj > impl)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestSerializedScriptValueInterface > impl)
 {
     return toV8(impl.get());
 }
 }
 
-#endif // V8TestObj_h
+#endif // V8TestSerializedScriptValueInterface_h
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
+

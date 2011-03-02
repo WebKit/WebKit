@@ -1,3 +1,115 @@
+2011-03-01  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by James Robinson.
+
+        V8 code generator doesn't properly support a single SerializedScriptValue attribute
+        https://bugs.webkit.org/show_bug.cgi?id=55530
+
+        This is tested by the bindings tests changes.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/CPP/WebDOMTestSerializedScriptValueInterface.cpp: Added.
+        (WebDOMTestSerializedScriptValueInterface::WebDOMTestSerializedScriptValueInterfacePrivate::WebDOMTestSerializedScriptValueInterfacePrivate):
+        (WebDOMTestSerializedScriptValueInterface::WebDOMTestSerializedScriptValueInterface):
+        (WebDOMTestSerializedScriptValueInterface::operator=):
+        (WebDOMTestSerializedScriptValueInterface::impl):
+        (WebDOMTestSerializedScriptValueInterface::~WebDOMTestSerializedScriptValueInterface):
+        (WebDOMTestSerializedScriptValueInterface::value):
+        (toWebCore):
+        (toWebKit):
+        * bindings/scripts/test/CPP/WebDOMTestSerializedScriptValueInterface.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp: Added.
+        (WebKit::kit):
+        (webkit_dom_test_serialized_script_value_interface_get_value):
+        (WebKit::core):
+        (webkit_dom_test_serialized_script_value_interface_finalize):
+        (webkit_dom_test_serialized_script_value_interface_set_property):
+        (webkit_dom_test_serialized_script_value_interface_get_property):
+        (webkit_dom_test_serialized_script_value_interface_constructed):
+        (webkit_dom_test_serialized_script_value_interface_class_init):
+        (webkit_dom_test_serialized_script_value_interface_init):
+        (WebKit::wrapTestSerializedScriptValueInterface):
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterfacePrivate.h: Added.
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::JSTestInterfaceConstructor):
+        (WebCore::JSTestInterface::JSTestInterface):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListenerConstructor::JSTestMediaQueryListListenerConstructor):
+        (WebCore::JSTestMediaQueryListListener::JSTestMediaQueryListListener):
+        (WebCore::jsTestMediaQueryListListenerPrototypeFunctionMethod):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::JSTestObjConstructor):
+        (WebCore::JSTestObj::JSTestObj):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionIntMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionSerializedValue):
+        (WebCore::jsTestObjPrototypeFunctionIdbKey):
+        (WebCore::jsTestObjPrototypeFunctionOptionsObject):
+        (WebCore::jsTestObjPrototypeFunctionCustomArgsAndException):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGesture):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod3):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod4):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithOptional):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp: Added.
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::createStructure):
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::JSTestSerializedScriptValueInterfaceConstructor):
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertySlot):
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertyDescriptor):
+        (WebCore::JSTestSerializedScriptValueInterfacePrototype::self):
+        (WebCore::JSTestSerializedScriptValueInterface::JSTestSerializedScriptValueInterface):
+        (WebCore::JSTestSerializedScriptValueInterface::createPrototype):
+        (WebCore::JSTestSerializedScriptValueInterface::getOwnPropertySlot):
+        (WebCore::JSTestSerializedScriptValueInterface::getOwnPropertyDescriptor):
+        (WebCore::jsTestSerializedScriptValueInterfaceValue):
+        (WebCore::jsTestSerializedScriptValueInterfaceConstructor):
+        (WebCore::JSTestSerializedScriptValueInterface::getConstructor):
+        (WebCore::toJS):
+        (WebCore::toTestSerializedScriptValueInterface):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h: Copied from Source/WebCore/bindings/scripts/test/JS/JSTestInterface.h.
+        (WebCore::JSTestSerializedScriptValueInterface::createStructure):
+        (WebCore::JSTestSerializedScriptValueInterface::impl):
+        (WebCore::JSTestSerializedScriptValueInterfacePrototype::createStructure):
+        (WebCore::JSTestSerializedScriptValueInterfacePrototype::JSTestSerializedScriptValueInterfacePrototype):
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterface.h: Added.
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterface.mm: Added.
+        (-[DOMTestSerializedScriptValueInterface dealloc]):
+        (-[DOMTestSerializedScriptValueInterface finalize]):
+        (-[DOMTestSerializedScriptValueInterface value]):
+        (core):
+        (kit):
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterfaceInternal.h: Added.
+        * bindings/scripts/test/TestSerializedScriptValueInterface.idl: Added.
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::ConfigureV8TestInterfaceTemplate):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp: Copied from Source/WebCore/bindings/scripts/test/V8/V8TestInterface.cpp.
+        (WebCore::TestSerializedScriptValueInterfaceInternal::V8_USE):
+        (WebCore::ConfigureV8TestSerializedScriptValueInterfaceTemplate):
+        (WebCore::V8TestSerializedScriptValueInterface::GetRawTemplate):
+        (WebCore::V8TestSerializedScriptValueInterface::GetTemplate):
+        (WebCore::V8TestSerializedScriptValueInterface::HasInstance):
+        (WebCore::V8TestSerializedScriptValueInterface::wrapSlow):
+        (WebCore::V8TestSerializedScriptValueInterface::derefObject):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h: Added.
+        (WebCore::V8TestSerializedScriptValueInterface::toNative):
+        (WebCore::V8TestSerializedScriptValueInterface::wrap):
+        (WebCore::toV8):
+
 2011-03-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Joseph Pecoraro.

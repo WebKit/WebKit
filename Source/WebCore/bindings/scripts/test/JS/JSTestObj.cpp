@@ -157,12 +157,13 @@ protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;
 };
 
-const ClassInfo JSTestObjConstructor::s_info = { "TestObjConstructor", 0, &JSTestObjConstructorTable, 0 };
+const ClassInfo JSTestObjConstructor::s_info = { "TestObjConstructor", &DOMConstructorObject::s_info, &JSTestObjConstructorTable, 0 };
 
 JSTestObjConstructor::JSTestObjConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(JSTestObjConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
-    putDirect(exec->propertyNames().prototype, JSTestObjPrototype::self(exec, globalObject), DontDelete | ReadOnly);
+    ASSERT(inherits(&s_info));
+    putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestObjPrototype::self(exec, globalObject), DontDelete | ReadOnly);
 }
 
 bool JSTestObjConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -236,7 +237,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[48] =
 
 #undef THUNK_GENERATOR
 static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable = { 136, 127, JSTestObjPrototypeTableValues, 0 };
-const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", 0, &JSTestObjPrototypeTable, 0 };
+const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", &JSC::JSObjectWithGlobalObject::s_info, &JSTestObjPrototypeTable, 0 };
 
 JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
 {
@@ -253,17 +254,13 @@ bool JSTestObjPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identif
     return getStaticPropertyDescriptor<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, this, propertyName, descriptor);
 }
 
-const ClassInfo JSTestObj::s_info = { "TestObj", 0, &JSTestObjTable, 0 };
+const ClassInfo JSTestObj::s_info = { "TestObj", &DOMObjectWithGlobalPointer::s_info, &JSTestObjTable, 0 };
 
 JSTestObj::JSTestObj(NonNullPassRefPtr<Structure> structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestObj> impl)
     : DOMObjectWithGlobalPointer(structure, globalObject)
     , m_impl(impl)
 {
-}
-
-JSTestObj::~JSTestObj()
-{
-    forgetDOMObject(this, impl());
+    ASSERT(inherits(&s_info));
 }
 
 JSObject* JSTestObj::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
@@ -851,13 +848,13 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecSt
         return throwVMTypeError(exec);
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    int intArg = exec->argument(0).toInt32(exec);
+    int intArg(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    const String& strArg = ustringToString(exec->argument(1).toString(exec));
+    const String& strArg(ustringToString(exec->argument(1).toString(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    TestObj* objArg = toTestObj(exec->argument(2));
+    TestObj* objArg(toTestObj(exec->argument(2)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -885,13 +882,13 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIntMethodWithArgs(ExecSta
         return throwVMTypeError(exec);
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    int intArg = exec->argument(0).toInt32(exec);
+    int intArg(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    const String& strArg = ustringToString(exec->argument(1).toString(exec));
+    const String& strArg(ustringToString(exec->argument(1).toString(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    TestObj* objArg = toTestObj(exec->argument(2));
+    TestObj* objArg(toTestObj(exec->argument(2)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -920,13 +917,13 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecSta
         return throwVMTypeError(exec);
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    int intArg = exec->argument(0).toInt32(exec);
+    int intArg(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    const String& strArg = ustringToString(exec->argument(1).toString(exec));
+    const String& strArg(ustringToString(exec->argument(1).toString(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    TestObj* objArg = toTestObj(exec->argument(2));
+    TestObj* objArg(toTestObj(exec->argument(2)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -944,10 +941,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
     if (exec->argumentCount() < 2)
         return JSValue::encode(jsUndefined());
-    const String& strArg = ustringToString(exec->argument(0).toString(exec));
+    const String& strArg(ustringToString(exec->argument(0).toString(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    TestObj* objArg = toTestObj(exec->argument(1));
+    TestObj* objArg(toTestObj(exec->argument(1)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -966,10 +963,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
     if (exec->argumentCount() < 2)
         return throwVMError(exec, createSyntaxError(exec, "Not enough arguments"));
     ExceptionCode ec = 0;
-    const String& strArg = ustringToString(exec->argument(0).toString(exec));
+    const String& strArg(ustringToString(exec->argument(0).toString(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    TestObj* objArg = toTestObj(exec->argument(1));
+    TestObj* objArg(toTestObj(exec->argument(1)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -986,7 +983,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState
         return throwVMTypeError(exec);
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    RefPtr<SerializedScriptValue> serializedArg = SerializedScriptValue::create(exec, exec->argument(0));
+    RefPtr<SerializedScriptValue> serializedArg(SerializedScriptValue::create(exec, exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1001,7 +998,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIdbKey(ExecState* exec)
         return throwVMTypeError(exec);
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    RefPtr<IDBKey> key = createIDBKeyFromValue(exec, exec->argument(0));
+    RefPtr<IDBKey> key(createIDBKeyFromValue(exec, exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1016,7 +1013,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* 
         return throwVMTypeError(exec);
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    OptionsObject* oo = toOptionsObject(exec->argument(0));
+    OptionsObject* oo(toOptionsObject(exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1026,7 +1023,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* 
         return JSValue::encode(jsUndefined());
     }
 
-    OptionsObject* ooo = toOptionsObject(exec->argument(1));
+    OptionsObject* ooo(toOptionsObject(exec->argument(1)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1077,7 +1074,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomArgsAndException(Ex
     RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, 1));
     size_t maxStackSize = imp->shouldCaptureFullStackTrace() ? ScriptCallStack::maxCallStackSizeToCapture : 1;
     RefPtr<ScriptCallStack> callStack(createScriptCallStack(exec, maxStackSize));
-    log* intArg = tolog(exec->argument(0));
+    log* intArg(tolog(exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1139,7 +1136,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndArg(Ex
     Frame* dynamicFrame = toDynamicFrame(exec);
     if (!dynamicFrame)
         return JSValue::encode(jsUndefined());
-    int intArg = exec->argument(0).toInt32(exec);
+    int intArg(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1157,7 +1154,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndOption
     Frame* dynamicFrame = toDynamicFrame(exec);
     if (!dynamicFrame)
         return JSValue::encode(jsUndefined());
-    int intArg = exec->argument(0).toInt32(exec);
+    int intArg(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1167,7 +1164,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndOption
         return JSValue::encode(jsUndefined());
     }
 
-    int optionalArg = exec->argument(1).toInt32(exec);
+    int optionalArg(exec->argument(1).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1185,7 +1182,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndUserGe
     Frame* dynamicFrame = toDynamicFrame(exec);
     if (!dynamicFrame)
         return JSValue::encode(jsUndefined());
-    int intArg = exec->argument(0).toInt32(exec);
+    int intArg(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1203,7 +1200,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndUserGe
     Frame* dynamicFrame = toDynamicFrame(exec);
     if (!dynamicFrame)
         return JSValue::encode(jsUndefined());
-    int intArg = exec->argument(0).toInt32(exec);
+    int intArg(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1213,7 +1210,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndUserGe
         return JSValue::encode(jsUndefined());
     }
 
-    int optionalArg = exec->argument(1).toInt32(exec);
+    int optionalArg(exec->argument(1).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1308,7 +1305,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(Exe
         return JSValue::encode(jsUndefined());
     }
 
-    int opt = exec->argument(0).toInt32(exec);
+    int opt(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1323,7 +1320,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
         return throwVMTypeError(exec);
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    int nonOpt = exec->argument(0).toInt32(exec);
+    int nonOpt(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1333,7 +1330,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
         return JSValue::encode(jsUndefined());
     }
 
-    int opt = exec->argument(1).toInt32(exec);
+    int opt(exec->argument(1).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1348,7 +1345,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
         return throwVMTypeError(exec);
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    int nonOpt = exec->argument(0).toInt32(exec);
+    int nonOpt(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1358,10 +1355,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
         return JSValue::encode(jsUndefined());
     }
 
-    int opt1 = exec->argument(1).toInt32(exec);
+    int opt1(exec->argument(1).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    int opt2 = exec->argument(2).toInt32(exec);
+    int opt2(exec->argument(2).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1393,7 +1390,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
         return throwVMTypeError(exec);
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    int nonCallback = exec->argument(0).toInt32(exec);
+    int nonCallback(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     if (exec->argumentCount() <= 1 || !exec->argument(1).isObject()) {
@@ -1433,10 +1430,10 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod1(
         return throwVMTypeError(exec);
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    TestObj* objArg = toTestObj(exec->argument(0));
+    TestObj* objArg(toTestObj(exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    const String& strArg = ustringToString(exec->argument(1).toString(exec));
+    const String& strArg(ustringToString(exec->argument(1).toString(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1451,7 +1448,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod2(
         return throwVMTypeError(exec);
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    TestObj* objArg = toTestObj(exec->argument(0));
+    TestObj* objArg(toTestObj(exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1461,7 +1458,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod2(
         return JSValue::encode(jsUndefined());
     }
 
-    int intArg = exec->argument(1).toInt32(exec);
+    int intArg(exec->argument(1).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1476,7 +1473,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod3(
         return throwVMTypeError(exec);
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    const String& strArg = ustringToString(exec->argument(0).toString(exec));
+    const String& strArg(ustringToString(exec->argument(0).toString(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1491,7 +1488,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod4(
         return throwVMTypeError(exec);
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    int intArg = exec->argument(0).toInt32(exec);
+    int intArg(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1558,7 +1555,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithOptional(E
         return JSValue::encode(result);
     }
 
-    int arg = exec->argument(0).toInt32(exec);
+    int arg(exec->argument(0).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
