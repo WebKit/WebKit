@@ -1,5 +1,19 @@
 2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Unreviewed expectations update. This is a follow-up to r80061.
+        
+        Leopard has a slightly different error message, so
+        platform/mac-leopard needs its own expected results for the
+        websocket test. Added platform specific expected results for
+        the other tests which are consistently failing with an extra
+        console message on the bots.
+
+        * platform/mac-leopard/http/tests/inspector/console-websocket-error-expected.txt:
+        * platform/mac-leopard/http/tests/security/xss-DENIED-xml-external-entity-expected.txt: Added.
+        * platform/mac-leopard/http/tests/security/xss-DENIED-xsl-external-entity-expected.txt: Added.
+
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
+
         Unreviewed expectations update. This is expected
         behavior after r80061, which enabled printing
         of more console messages.
