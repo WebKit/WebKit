@@ -2656,6 +2656,7 @@ BUGCR63921 GPU LINUX WIN : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT 
 BUGCR63921 GPU LINUX WIN : fast/canvas/canvas-strokeRect-alpha-shadow.html = TEXT TIMEOUT
 BUGCR63921 GPU LINUX WIN : fast/canvas/canvas-strokePath-alpha-shadow.html = TEXT TIMEOUT
 BUGWK55436 LINUX WIN : fast/canvas/canvas-strokePath-gradient-shadow.html = TEXT
+BUGCR75684 GPU LINUX WIN : fast/canvas/canvas-strokePath-gradient-shadow.html = TIMEOUT
 
 // Mainly flaky with mac debug, but also intermittent crashes seen on linux release
 BUGCR64129 MAC LINUX : fast/files/revoke-blob-url.html = CRASH PASS
