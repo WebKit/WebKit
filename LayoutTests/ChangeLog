@@ -1,5 +1,16 @@
 2011-03-02  Tony Gentilcore  <tonyg@chromium.org>
 
+        Unreviewed expectations update.
+
+        [chromium] Update expectations to match those in r80151
+        https://bugs.webkit.org/show_bug.cgi?id=55610
+
+        * platform/chromium-win/fast/css-generated-content/005-expected.txt:
+        * platform/chromium-win/fast/css-generated-content/beforeAfter-interdocument-expected.txt:
+        * platform/chromium-win/fast/css-generated-content/no-openclose-quote-expected.txt:
+
+2011-03-02  Tony Gentilcore  <tonyg@chromium.org>
+
         Unreviewed expectations
 
         Updating expectations after r80151
