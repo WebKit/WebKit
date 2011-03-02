@@ -495,6 +495,10 @@ void InjectedBundlePage::dump()
 
     InjectedBundle::shared().layoutTestController()->invalidateWaitToDumpWatchdogTimer();
 
+    // Force a paint before dumping. This matches DumpRenderTree on Windows. (DumpRenderTree on Mac
+    // does this at a slightly different time.) See <http://webkit.org/b/55469> for details.
+    WKBundlePageForceRepaint(m_page);
+
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
     string url = toSTD(adoptWK(WKURLCopyString(adoptWK(WKBundleFrameCopyURL(frame)).get())));
     if (strstr(url.c_str(), "dumpAsText/"))
@@ -533,8 +537,6 @@ void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
     if (frame != InjectedBundle::shared().topLoadingFrame())
         return;
     InjectedBundle::shared().setTopLoadingFrame(0);
-
-    WKBundlePageForceRepaint(m_page);
 
     if (InjectedBundle::shared().layoutTestController()->waitToDump())
         return;

@@ -1,3 +1,19 @@
+2011-03-02  Adam Roben  <aroben@apple.com>
+
+        Wait for force a paint in WebKitTestRunner until we're actually ready to dump the output
+
+        This matches DumpRenderTree on Windows.
+
+        Fixes <http://webkit.org/b/55469> <rdar://problem/9068539> REGRESSION (r79863): Lots of
+        dom/html/level2/html/HTMLFrameElement*.html tests crashing in FrameView::paintOverhangAreas
+        in WebKit2
+
+        Reviewed by Beth Dakin.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump): Moved code to force a paint here...
+        (WTR::InjectedBundlePage::didFinishLoadForFrame): ...from here.
+
 2011-03-02  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by David Levin.
