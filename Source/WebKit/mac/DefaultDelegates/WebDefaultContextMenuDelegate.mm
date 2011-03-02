@@ -34,7 +34,7 @@
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebHTMLViewPrivate.h"
-#import "WebLocalizableStrings.h"
+#import "WebLocalizableStringsInternal.h"
 #import "WebNSPasteboardExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebPolicyDelegate.h"
@@ -64,39 +64,39 @@
     
     switch(tag) {
         case WebMenuItemTagCopy:
-            title = UI_STRING("Copy", "Copy context menu item");
+            title = UI_STRING_INTERNAL("Copy", "Copy context menu item");
             action = @selector(copy:);
             break;
         case WebMenuItemTagGoBack:
-            title = UI_STRING("Back", "Back context menu item");
+            title = UI_STRING_INTERNAL("Back", "Back context menu item");
             action = @selector(goBack:);
             break;
         case WebMenuItemTagGoForward:
-            title = UI_STRING("Forward", "Forward context menu item");
+            title = UI_STRING_INTERNAL("Forward", "Forward context menu item");
             action = @selector(goForward:);
             break;
         case WebMenuItemTagStop:
-            title = UI_STRING("Stop", "Stop context menu item");
+            title = UI_STRING_INTERNAL("Stop", "Stop context menu item");
             action = @selector(stopLoading:);
             break;
         case WebMenuItemTagReload:
-            title = UI_STRING("Reload", "Reload context menu item");
+            title = UI_STRING_INTERNAL("Reload", "Reload context menu item");
             action = @selector(reload:);
             break;
         case WebMenuItemTagSearchInSpotlight:
-            title = UI_STRING("Search in Spotlight", "Search in Spotlight context menu item");
+            title = UI_STRING_INTERNAL("Search in Spotlight", "Search in Spotlight context menu item");
             action = @selector(_searchWithSpotlightFromMenu:);
             break;
         case WebMenuItemTagSearchWeb:
-            title = UI_STRING("Search in Google", "Search in Google context menu item");
+            title = UI_STRING_INTERNAL("Search in Google", "Search in Google context menu item");
             action = @selector(_searchWithGoogleFromMenu:);
             break;
         case WebMenuItemTagLookUpInDictionary:
-            title = UI_STRING("Look Up in Dictionary", "Look Up in Dictionary context menu item");
+            title = UI_STRING_INTERNAL("Look Up in Dictionary", "Look Up in Dictionary context menu item");
             action = @selector(_lookUpInDictionaryFromMenu:);
             break;
         case WebMenuItemTagOpenFrameInNewWindow:
-            title = UI_STRING("Open Frame in New Window", "Open Frame in New Window context menu item");
+            title = UI_STRING_INTERNAL("Open Frame in New Window", "Open Frame in New Window context menu item");
             action = @selector(_openFrameInNewWindowFromMenu:);
             break;
         default:

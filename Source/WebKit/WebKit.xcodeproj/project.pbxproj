@@ -343,6 +343,8 @@
 		BC26C6A510B7447A00B687ED /* WebSerializedJSValue.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC26C6A410B7447A00B687ED /* WebSerializedJSValue.mm */; };
 		BC2E464D0FD8A96800A9D9DE /* WebViewData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2E464B0FD8A96800A9D9DE /* WebViewData.h */; };
 		BC2E464E0FD8A96800A9D9DE /* WebViewData.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC2E464C0FD8A96800A9D9DE /* WebViewData.mm */; };
+		BC42D324131ED1E00075FA4B /* WebLocalizableStringsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC42D322131ED1E00075FA4B /* WebLocalizableStringsInternal.h */; };
+		BC42D34D131ED3880075FA4B /* WebLocalizableStringsInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC42D34C131ED3880075FA4B /* WebLocalizableStringsInternal.mm */; };
 		BC542C420FD7766F00D8AB5D /* WebDelegateImplementationCaching.h in Headers */ = {isa = PBXBuildFile; fileRef = BC542C400FD7766F00D8AB5D /* WebDelegateImplementationCaching.h */; };
 		BC542C430FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC542C410FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm */; };
 		BC7F884B10C8775A00D6133D /* WebGeolocationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F884910C8775A00D6133D /* WebGeolocationClient.h */; };
@@ -652,6 +654,8 @@
 		BC26C6A410B7447A00B687ED /* WebSerializedJSValue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSerializedJSValue.mm; sourceTree = "<group>"; };
 		BC2E464B0FD8A96800A9D9DE /* WebViewData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewData.h; sourceTree = "<group>"; };
 		BC2E464C0FD8A96800A9D9DE /* WebViewData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewData.mm; sourceTree = "<group>"; };
+		BC42D322131ED1E00075FA4B /* WebLocalizableStringsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebLocalizableStringsInternal.h; sourceTree = "<group>"; };
+		BC42D34C131ED3880075FA4B /* WebLocalizableStringsInternal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebLocalizableStringsInternal.mm; sourceTree = "<group>"; };
 		BC542C400FD7766F00D8AB5D /* WebDelegateImplementationCaching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDelegateImplementationCaching.h; sourceTree = "<group>"; };
 		BC542C410FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDelegateImplementationCaching.mm; sourceTree = "<group>"; };
 		BC7F884910C8775A00D6133D /* WebGeolocationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationClient.h; sourceTree = "<group>"; };
@@ -959,6 +963,8 @@
 				1C0D40860AC1C8F40009C113 /* WebKitVersionChecks.m */,
 				BEE18F990472B73200CA289C /* WebLocalizableStrings.h */,
 				ED5B9523111B725A00472298 /* WebLocalizableStrings.mm */,
+				BC42D322131ED1E00075FA4B /* WebLocalizableStringsInternal.h */,
+				BC42D34C131ED3880075FA4B /* WebLocalizableStringsInternal.mm */,
 				EDE9837E0BCDF5FE00FDAE28 /* WebNSArrayExtras.h */,
 				EDE9837F0BCDF5FE00FDAE28 /* WebNSArrayExtras.m */,
 				ED6BE2E5088C32B50044DEDC /* WebNSAttributedStringExtras.h */,
@@ -1620,6 +1626,7 @@
 				598ADA461202275000ABAE4E /* WebDeviceOrientationProvider.h in Headers */,
 				93E2A1A4123B0B3C009FE12A /* WebDashboardRegion.h in Headers */,
 				CDA62AE2125F87C2007FD118 /* WebFullScreenController.h in Headers */,
+				BC42D324131ED1E00075FA4B /* WebLocalizableStringsInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1987,6 +1994,7 @@
 				598AD9281201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm in Sources */,
 				93E2A1A5123B0B3C009FE12A /* WebDashboardRegion.mm in Sources */,
 				CDA62AE3125F87C2007FD118 /* WebFullScreenController.mm in Sources */,
+				BC42D34D131ED3880075FA4B /* WebLocalizableStringsInternal.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

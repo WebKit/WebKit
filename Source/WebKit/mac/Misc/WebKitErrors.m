@@ -28,8 +28,8 @@
 
 #import <WebKit/WebKitErrors.h>
 
+#import "WebLocalizableStringsInternal.h"
 #import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSURLExtras.h>
 
 #import <pthread.h>
@@ -41,21 +41,21 @@ NSString * const WebKitErrorPlugInNameKey =             @"WebKitErrorPlugInNameK
 NSString * const WebKitErrorPlugInPageURLStringKey =    @"WebKitErrorPlugInPageURLStringKey";
 
 // Policy errors
-#define WebKitErrorDescriptionCannotShowMIMEType UI_STRING("Content with specified MIME type can’t be shown", "WebKitErrorCannotShowMIMEType description")
-#define WebKitErrorDescriptionCannotShowURL UI_STRING("The URL can’t be shown", "WebKitErrorCannotShowURL description")
-#define WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange UI_STRING("Frame load interrupted", "WebKitErrorFrameLoadInterruptedByPolicyChange description")
-#define WebKitErrorDescriptionCannotUseRestrictedPort UI_STRING("Not allowed to use restricted network port", "WebKitErrorCannotUseRestrictedPort description")
+#define WebKitErrorDescriptionCannotShowMIMEType UI_STRING_INTERNAL("Content with specified MIME type can’t be shown", "WebKitErrorCannotShowMIMEType description")
+#define WebKitErrorDescriptionCannotShowURL UI_STRING_INTERNAL("The URL can’t be shown", "WebKitErrorCannotShowURL description")
+#define WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange UI_STRING_INTERNAL("Frame load interrupted", "WebKitErrorFrameLoadInterruptedByPolicyChange description")
+#define WebKitErrorDescriptionCannotUseRestrictedPort UI_STRING_INTERNAL("Not allowed to use restricted network port", "WebKitErrorCannotUseRestrictedPort description")
 
 // Plug-in and java errors
-#define WebKitErrorDescriptionCannotFindPlugin UI_STRING("The plug-in can’t be found", "WebKitErrorCannotFindPlugin description")
-#define WebKitErrorDescriptionCannotLoadPlugin UI_STRING("The plug-in can’t be loaded", "WebKitErrorCannotLoadPlugin description")
-#define WebKitErrorDescriptionJavaUnavailable UI_STRING("Java is unavailable", "WebKitErrorJavaUnavailable description")
-#define WebKitErrorDescriptionPlugInCancelledConnection UI_STRING("Plug-in cancelled", "WebKitErrorPlugInCancelledConnection description")
-#define WebKitErrorDescriptionPlugInWillHandleLoad UI_STRING("Plug-in handled load", "WebKitErrorPlugInWillHandleLoad description")
+#define WebKitErrorDescriptionCannotFindPlugin UI_STRING_INTERNAL("The plug-in can’t be found", "WebKitErrorCannotFindPlugin description")
+#define WebKitErrorDescriptionCannotLoadPlugin UI_STRING_INTERNAL("The plug-in can’t be loaded", "WebKitErrorCannotLoadPlugin description")
+#define WebKitErrorDescriptionJavaUnavailable UI_STRING_INTERNAL("Java is unavailable", "WebKitErrorJavaUnavailable description")
+#define WebKitErrorDescriptionPlugInCancelledConnection UI_STRING_INTERNAL("Plug-in cancelled", "WebKitErrorPlugInCancelledConnection description")
+#define WebKitErrorDescriptionPlugInWillHandleLoad UI_STRING_INTERNAL("Plug-in handled load", "WebKitErrorPlugInWillHandleLoad description")
 
 // Geolocations errors
 
-#define WebKitErrorDescriptionGeolocationLocationUnknown UI_STRING("The current location cannot be found.", "WebKitErrorGeolocationLocationUnknown description")
+#define WebKitErrorDescriptionGeolocationLocationUnknown UI_STRING_INTERNAL("The current location cannot be found.", "WebKitErrorGeolocationLocationUnknown description")
 
 static pthread_once_t registerErrorsControl = PTHREAD_ONCE_INIT;
 static void registerErrors(void);

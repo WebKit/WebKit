@@ -52,7 +52,7 @@
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitVersionChecks.h"
-#import "WebLocalizableStrings.h"
+#import "WebLocalizableStringsInternal.h"
 #import "WebNSAttributedStringExtras.h"
 #import "WebNSEventExtras.h"
 #import "WebNSFileManagerExtras.h"
@@ -2683,8 +2683,8 @@ WEBCORE_COMMAND(yankAndSelect)
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             BOOL panelShowing = [[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible];
             [menuItem setTitle:panelShowing
-                ? UI_STRING("Hide Spelling and Grammar", "menu item title")
-                : UI_STRING("Show Spelling and Grammar", "menu item title")];
+                ? UI_STRING_INTERNAL("Hide Spelling and Grammar", "menu item title")
+                : UI_STRING_INTERNAL("Show Spelling and Grammar", "menu item title")];
         }
 #endif
         return [self _canEdit];
@@ -2730,8 +2730,8 @@ WEBCORE_COMMAND(yankAndSelect)
             // Take control of the title of the menu item instead of just checking/unchecking it because
             // a check would be ambiguous.
             [menuItem setTitle:frame->editor()->selectionHasStyle(style.get())
-                ? UI_STRING("Left to Right", "Left to Right context menu item")
-                : UI_STRING("Right to Left", "Right to Left context menu item")];
+                ? UI_STRING_INTERNAL("Left to Right", "Left to Right context menu item")
+                : UI_STRING_INTERNAL("Right to Left", "Right to Left context menu item")];
         }
         return [self _canEdit];
     } 
@@ -2793,8 +2793,8 @@ WEBCORE_COMMAND(yankAndSelect)
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             BOOL panelShowing = [[[NSSpellChecker sharedSpellChecker] substitutionsPanel] isVisible];
             [menuItem setTitle:panelShowing
-                ? UI_STRING("Hide Substitutions", "menu item title")
-                : UI_STRING("Show Substitutions", "menu item title")];
+                ? UI_STRING_INTERNAL("Hide Substitutions", "menu item title")
+                : UI_STRING_INTERNAL("Show Substitutions", "menu item title")];
         }
         return [self _canEdit];
     }

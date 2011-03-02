@@ -37,7 +37,7 @@
 #import "WebFrame.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
-#import "WebLocalizableStrings.h"
+#import "WebLocalizableStringsInternal.h"
 #import "WebNSArrayExtras.h"
 #import "WebNSAttributedStringExtras.h"
 #import "WebNSPasteboardExtras.h"
@@ -355,11 +355,11 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     
     _applicationInfoForMIMEType([dataSource _responseMIMEType], &appName, &appIcon);
     if (!appName)
-        appName = UI_STRING("Finder", "Default application name for Open With context menu");
+        appName = UI_STRING_INTERNAL("Finder", "Default application name for Open With context menu");
     
     // To match the PDFKit style, we'll add Open with Preview even when there's no document yet to view, and
     // disable it using validateUserInterfaceItem.
-    NSString *title = [NSString stringWithFormat:UI_STRING("Open with %@", "context menu item for PDF"), appName];
+    NSString *title = [NSString stringWithFormat:UI_STRING_INTERNAL("Open with %@", "context menu item for PDF"), appName];
     NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(_openWithFinder:) keyEquivalent:@""];
     [item setTag:WebMenuItemTagOpenWithDefaultApplication];
     if (appIcon)

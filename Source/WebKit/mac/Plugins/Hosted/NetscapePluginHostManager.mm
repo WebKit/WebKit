@@ -29,7 +29,7 @@
 
 #import "NetscapePluginHostProxy.h"
 #import "NetscapePluginInstanceProxy.h"
-#import "WebLocalizableStrings.h"
+#import "WebLocalizableStringsInternal.h"
 #import "WebKitSystemInterface.h"
 #import "WebNetscapePluginPackage.h"
 #import <mach/mach_port.h>
@@ -145,7 +145,7 @@ bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_ty
         return false;
     }
     
-    NSString *visibleName = [NSString stringWithFormat:UI_STRING("%@ (%@ Internet plug-in)",
+    NSString *visibleName = [NSString stringWithFormat:UI_STRING_INTERNAL("%@ (%@ Internet plug-in)",
                                                                  "visible name of the plug-in host process. The first argument is the plug-in name "
                                                                  "and the second argument is the application name."),
                              [[(NSString*)pluginPath lastPathComponent] stringByDeletingPathExtension], [[NSProcessInfo processInfo] processName]];

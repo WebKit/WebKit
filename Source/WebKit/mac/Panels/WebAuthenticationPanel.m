@@ -28,11 +28,11 @@
 
 #import <WebKit/WebAuthenticationPanel.h>
 
+#import "WebLocalizableStringsInternal.h"
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLProtectionSpace.h>
 #import <Foundation/NSURLCredential.h>
 #import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <wtf/Assertions.h>
 
@@ -140,28 +140,28 @@
     
     if ([chall previousFailureCount] == 0) {
         if ([space isProxy]) {
-            message = [NSString stringWithFormat:UI_STRING("To view this page, you must log in to the %@ proxy server %@.",
+            message = [NSString stringWithFormat:UI_STRING_INTERNAL("To view this page, you must log in to the %@ proxy server %@.",
                                                            "prompt string in authentication panel"),
                 [space proxyType], host];
         } else {
             if (realmNameIsSimple)
-                message = [NSString stringWithFormat:UI_STRING("To view this page, you must log in to area “%@” on %@.",
+                message = [NSString stringWithFormat:UI_STRING_INTERNAL("To view this page, you must log in to area “%@” on %@.",
                                                                "prompt string in authentication panel"), realm, host];
             else
-                message = [NSString stringWithFormat:UI_STRING("To view this page, you must log in to this area on %@:",
+                message = [NSString stringWithFormat:UI_STRING_INTERNAL("To view this page, you must log in to this area on %@:",
                                                                "prompt string in authentication panel"), host];
         }
     } else {
         if ([space isProxy]) {
-            message = [NSString stringWithFormat:UI_STRING("The user name or password you entered for the %@ proxy server %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
+            message = [NSString stringWithFormat:UI_STRING_INTERNAL("The user name or password you entered for the %@ proxy server %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
                                                            "prompt string in authentication panel"),
                 [space proxyType], host];
         } else {
             if (realmNameIsSimple)
-                message = [NSString stringWithFormat:UI_STRING("The user name or password you entered for area “%@” on %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
+                message = [NSString stringWithFormat:UI_STRING_INTERNAL("The user name or password you entered for area “%@” on %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
                                                                "prompt string in authentication panel"), realm, host];
             else
-                message = [NSString stringWithFormat:UI_STRING("The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
+                message = [NSString stringWithFormat:UI_STRING_INTERNAL("The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
                                                                "prompt string in authentication panel"), host];
         }
     }
@@ -197,13 +197,13 @@
 
     if ([space receivesCredentialSecurely] || [[space protocol] _webkit_isCaseInsensitiveEqualToString:@"https"]) {
         [smallLabel setStringValue:
-            UI_STRING("Your login information will be sent securely.",
+            UI_STRING_INTERNAL("Your login information will be sent securely.",
                 "message in authentication panel")];
     } else {
         // Use this scary-sounding phrase only when using basic auth with non-https servers. In this case the password
         // could be sniffed by intercepting the network traffic.
         [smallLabel setStringValue:
-            UI_STRING("Your password will be sent unencrypted.",
+            UI_STRING_INTERNAL("Your password will be sent unencrypted.",
                 "message in authentication panel")];
     }
 

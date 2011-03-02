@@ -35,7 +35,7 @@
 #import "WebInspector.h"
 #import "WebInspectorPrivate.h"
 #import "WebInspectorFrontend.h"
-#import "WebLocalizableStrings.h"
+#import "WebLocalizableStringsInternal.h"
 #import "WebNodeHighlight.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
@@ -203,7 +203,7 @@ void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
 
 void WebInspectorFrontendClient::updateWindowTitle() const
 {
-    NSString *title = [NSString stringWithFormat:UI_STRING("Web Inspector — %@", "Web Inspector window title"), (NSString *)m_inspectedURL];
+    NSString *title = [NSString stringWithFormat:UI_STRING_INTERNAL("Web Inspector — %@", "Web Inspector window title"), (NSString *)m_inspectedURL];
     [[m_windowController.get() window] setTitle:title];
 }
 
@@ -513,15 +513,15 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     if ([item action] == @selector(toggleDebuggingJavaScript:) && isMenuItem) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([[_inspectedWebView inspector] isDebuggingJavaScript])
-            [menuItem setTitle:UI_STRING("Stop Debugging JavaScript", "title for Stop Debugging JavaScript menu item")];
+            [menuItem setTitle:UI_STRING_INTERNAL("Stop Debugging JavaScript", "title for Stop Debugging JavaScript menu item")];
         else
-            [menuItem setTitle:UI_STRING("Start Debugging JavaScript", "title for Start Debugging JavaScript menu item")];
+            [menuItem setTitle:UI_STRING_INTERNAL("Start Debugging JavaScript", "title for Start Debugging JavaScript menu item")];
     } else if ([item action] == @selector(toggleProfilingJavaScript:) && isMenuItem) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([[_inspectedWebView inspector] isProfilingJavaScript])
-            [menuItem setTitle:UI_STRING("Stop Profiling JavaScript", "title for Stop Profiling JavaScript menu item")];
+            [menuItem setTitle:UI_STRING_INTERNAL("Stop Profiling JavaScript", "title for Stop Profiling JavaScript menu item")];
         else
-            [menuItem setTitle:UI_STRING("Start Profiling JavaScript", "title for Start Profiling JavaScript menu item")];
+            [menuItem setTitle:UI_STRING_INTERNAL("Start Profiling JavaScript", "title for Start Profiling JavaScript menu item")];
     }
 
     return YES;
