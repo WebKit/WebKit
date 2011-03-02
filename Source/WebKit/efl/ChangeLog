@@ -1,3 +1,13 @@
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Viewport Warning/Error Messages Are Now Inaccurate
+        https://bugs.webkit.org/show_bug.cgi?id=53707
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute): pass a Document into computeViewportAttributes for warnings to be reported to.
+
 2011-02-28  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Ryosuke Niwa.

@@ -1,3 +1,24 @@
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Viewport Warning/Error Messages Are Now Inaccurate
+        https://bugs.webkit.org/show_bug.cgi?id=53707
+
+        Correct and improve the error messages for viewport
+        parsing. Clarify the difference between incorrect
+        keys, values, and when to use the device-width or
+        device-height constants.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::computeViewportAttributes): suggest using keywords if fixed input matches device width or height.
+        (WebCore::numericPrefix):
+        (WebCore::findSizeValue): remove incorrect warnings about fixed numbers because we don't know the device width or height.
+        (WebCore::setViewportFeature): report a warning for an unrecognized key.
+        (WebCore::viewportErrorMessageTemplate): added template for unrecognized key.
+        (WebCore::viewportErrorMessageLevel):
+        * dom/ViewportArguments.h:
+
 2011-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

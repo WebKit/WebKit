@@ -2523,7 +2523,8 @@ QWebPage::ViewportAttributes QWebPage::viewportAttributesForSize(const QSize& av
         deviceHeight = size.height();
     }
 
-    WebCore::ViewportAttributes conf = WebCore::computeViewportAttributes(d->viewportArguments(), desktopWidth, deviceWidth, deviceHeight, qt_defaultDpi(), availableSize);
+    WebCore::Document* document = d->page->mainFrame()->document();
+    WebCore::ViewportAttributes conf = WebCore::computeViewportAttributes(document, d->viewportArguments(), desktopWidth, deviceWidth, deviceHeight, qt_defaultDpi(), availableSize);
 
     result.m_isValid = true;
     result.m_size = conf.layoutSize;

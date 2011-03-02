@@ -1,3 +1,15 @@
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Viewport Warning/Error Messages Are Now Inaccurate
+        https://bugs.webkit.org/show_bug.cgi?id=53707
+
+        * Api/qwebpage.cpp:
+        (QWebPage::viewportAttributesForSize): pass a Document into computeViewportAttributes for warnings to be reported to.
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::viewportAsText): pass a Document into computeViewportAttributes for warnings to be reported to.
+
 2011-03-01  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

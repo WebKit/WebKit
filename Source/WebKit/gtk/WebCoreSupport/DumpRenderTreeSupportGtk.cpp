@@ -626,8 +626,9 @@ void DumpRenderTreeSupportGtk::dumpConfigurationForViewport(WebKitWebView* webVi
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    ViewportArguments arguments = webView->priv->corePage->mainFrame()->document()->viewportArguments();
-    ViewportAttributes attrs = computeViewportAttributes(arguments, /* default layout width for non-mobile pages */ 980, deviceWidth, deviceHeight, deviceDPI, IntSize(availableWidth, availableHeight));
+    Document* document = webView->priv->corePage->mainFrame()->document();
+    ViewportArguments arguments = document->viewportArguments();
+    ViewportAttributes attrs = computeViewportAttributes(document, arguments, /* default layout width for non-mobile pages */ 980, deviceWidth, deviceHeight, deviceDPI, IntSize(availableWidth, availableHeight));
 
     fprintf(stdout, "viewport size %dx%d scale %f with limits [%f, %f]\n", attrs.layoutSize.width(), attrs.layoutSize.height(), attrs.initialScale, attrs.minimumScale, attrs.maximumScale);
 }

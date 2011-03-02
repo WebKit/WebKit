@@ -532,9 +532,10 @@ void webkitViewportAttributesRecompute(WebKitViewportAttributes* viewportAttribu
     // First of all, we give the application an opportunity to override some of the values.
     g_signal_emit_by_name(webView, "viewport-attributes-recompute-requested", viewportAttributes);
 
-    ViewportArguments arguments = webView->priv->corePage->mainFrame()->document()->viewportArguments();
+    Document* document = webView->priv->corePage->mainFrame()->document();
+    ViewportArguments arguments = document->viewportArguments();
 
-    ViewportAttributes attributes = computeViewportAttributes(arguments, priv->desktopWidth, priv->deviceWidth, priv->deviceHeight, priv->deviceDPI, IntSize(priv->availableWidth, priv->availableHeight));
+    ViewportAttributes attributes = computeViewportAttributes(document, arguments, priv->desktopWidth, priv->deviceWidth, priv->deviceHeight, priv->deviceDPI, IntSize(priv->availableWidth, priv->availableHeight));
 
     priv->width = attributes.layoutSize.width();
     priv->height = attributes.layoutSize.height();

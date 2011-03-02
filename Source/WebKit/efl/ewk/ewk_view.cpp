@@ -1023,8 +1023,10 @@ static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(Evas_Ob
     int device_width = (int) priv->page->chrome()->client()->windowRect().width();
     int device_height = (int) priv->page->chrome()->client()->windowRect().height();
 
+    WebCore::Document* document = priv->page->mainFrame()->document();
+
     WebCore::IntSize available_size = WebCore::IntSize(available_width, available_height);
-    WebCore::ViewportAttributes attributes = WebCore::computeViewportAttributes(priv->viewport_arguments, desktop_width, device_width, device_height, device_dpi, available_size);
+    WebCore::ViewportAttributes attributes = WebCore::computeViewportAttributes(document, priv->viewport_arguments, desktop_width, device_width, device_height, device_dpi, available_size);
 
     return attributes;
 }
