@@ -33,11 +33,17 @@
       ],
       'sources': [
         '<@(javascriptcore_files)',
+        '<@(javascriptcore_publicheader_files)',
+        '<@(javascriptcore_privateheader_files)',
         '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
         '$(SDKROOT)/System/Library/Frameworks/Foundation.framework',
         'libedit.dylib',
         'libicucore.dylib',
         'libobjc.dylib',
+      ],
+      'mac_framework_headers': [
+        '<@(javascriptcore_publicheader_files)',
+        '<@(javascriptcore_privateheader_files)', # FIXME: These should be private headers.
       ],
       'xcode_config_file': '<(DEPTH)/JavaScriptCore/Configurations/JavaScriptCore.xcconfig',
       'sources/': [
@@ -49,6 +55,7 @@
         ['exclude', 'wtf/gtk'],
         ['exclude', 'wtf/qt'],
         ['exclude', 'wtf/haiku'],
+        ['exclude', 'API/tests'],
         ['exclude', 'wtf/url'],
         ['exclude', 'wtf/wince'],
         ['exclude', 'wtf/wx'],
@@ -57,7 +64,7 @@
         ['exclude', 'wtf/unicode/glib'],
         ['exclude', 'wtf/unicode/qt4'],
         ['exclude', '/(gtk|glib|gobject)/.*\\.(cpp|h)$'],
-        ['exclude', '(Default|Gtk|Chromium|None|Qt|Win|Wx|Symbian)\\.(cpp|mm)$'],
+        ['exclude', '(Default|Gtk|Chromium|None|Qt|Win|Wx|Symbian)\\.(cpp|mm|h)$'],
         ['exclude', 'GCActivityCallback\.cpp'],
         ['exclude', '.*BSTR.*$'],
         ['exclude', 'jsc.cpp$'],

@@ -106,6 +106,8 @@
         '../wtf/unicode',
       ],
       'sources': [
+        '<@(javascriptcore_publicheader_files)',
+        '<@(javascriptcore_privateheader_files)',
         '<@(javascriptcore_files)',
       ],
       'sources/': [
