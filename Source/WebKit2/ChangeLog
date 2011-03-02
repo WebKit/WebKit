@@ -1,3 +1,19 @@
+2011-03-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WKPluginSiteDataManagerClearAllSiteData is not working
+        https://bugs.webkit.org/show_bug.cgi?id=55528
+        <rdar://problem/9071823>
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryGetSitesWithData):
+        Remove version checks, checking that the function pointer is not null is enough.
+
+        (WebKit::NetscapePluginModule::tryClearSiteData):
+        Remove version checks, checking that the function pointer is not null is enough.
+        Also, correctly convert a null String to a null CString.
+
 2011-03-01  Adam Roben  <aroben@apple.com>
 
         Incorporate a review comment I missed in r80051

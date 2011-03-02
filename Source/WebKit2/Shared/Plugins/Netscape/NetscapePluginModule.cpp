@@ -94,12 +94,6 @@ bool NetscapePluginModule::tryGetSitesWithData(Vector<String>& sites)
         return false;
 
     // Check if the plug-in supports NPP_GetSitesWithData.
-    if (m_pluginFuncs.size < sizeof(NPPluginFuncs))
-        return false;
-
-    if ((m_pluginFuncs.version & 0xff) < NPVERS_HAS_CLEAR_SITE_DATA)
-        return false;
-
     if (!m_pluginFuncs.getsiteswithdata)
         return false;
 
@@ -123,17 +117,15 @@ bool NetscapePluginModule::tryClearSiteData(const String& site, uint64_t flags, 
     if (!m_isInitialized)
         return false;
 
-    // Check if the plug-in supports NPP_GetSitesWithData.
-    if (m_pluginFuncs.size < sizeof(NPPluginFuncs))
-        return false;
-    
-    if ((m_pluginFuncs.version & 0xff) < NPVERS_HAS_CLEAR_SITE_DATA)
-        return false;
-    
+    // Check if the plug-in supports NPP_ClearSiteData.
     if (!m_pluginFuncs.clearsitedata)
         return false;
 
-    return m_pluginFuncs.clearsitedata(site.utf8().data(), flags, maxAge) != NPERR_NO_ERROR;
+    CString siteString;
+    if (!site.isNull())
+        siteString = site.utf8();
+
+    return m_pluginFuncs.clearsitedata(siteString.data(), flags, maxAge) == NPERR_NO_ERROR;
 }
 
 void NetscapePluginModule::shutdown()
