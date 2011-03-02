@@ -1,3 +1,11 @@
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed expectations update. This is expected
+        behavior after r80061, which enabled printing
+        of more console messages.
+
+        * http/tests/xmlviewer/dumpAsText/wml-expected.txt:
+
 2011-03-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80078.

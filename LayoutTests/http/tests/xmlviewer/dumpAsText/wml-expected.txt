@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 1: Unsafe attempt to load URL http://www.wapforum.org/DTD/wml_1.1.xml from frame with URL http://127.0.0.1:8000/xmlviewer/dumpAsText/wml.xml. Domains, protocols and ports must match.
+
 This XML file does not appear to have any style information associated with it. The document tree is shown below.
 <!--
 If you can see this, this test has failed, except if you are not using a WML-aware client.
