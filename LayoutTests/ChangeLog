@@ -1,3 +1,12 @@
+2011-03-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed GTK rebaselines for r80121; Also skip editing/input/setting-input-value-cancel-ime-composition.html
+        because GTK port doesn't implement textInputController.hasMarkedText().
+
+        * platform/gtk/Skipped:
+        * platform/gtk/editing/ [...]: Updated.
+        * platform/gtk/fast/dom/delete-contents-expected.txt: Ditto.
+
 2011-03-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

@@ -665,6 +665,7 @@ http/tests/globalhistory
 fast/history/back-forward-reset-after-error-handling.html
 
 # Missing textInputController
+editing/input/setting-input-value-cancel-ime-composition.html
 editing/selection/mixed-editability-10.html
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html
