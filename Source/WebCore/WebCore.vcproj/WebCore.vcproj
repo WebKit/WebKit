@@ -25450,6 +25450,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\CookiesStrategy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\CrossThreadCopier.cpp"
 				>
 			</File>

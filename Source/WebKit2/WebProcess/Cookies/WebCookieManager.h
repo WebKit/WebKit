@@ -37,14 +37,14 @@ namespace CoreIPC {
 
 namespace WebKit {
 
-struct SecurityOriginData;
-
 class WebCookieManager {
     WTF_MAKE_NONCOPYABLE(WebCookieManager);
 public:
     static WebCookieManager& shared();
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    
+    void dispatchDidModifyCookies();
 
 private:
     WebCookieManager();

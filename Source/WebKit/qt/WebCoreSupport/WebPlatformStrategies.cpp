@@ -57,7 +57,10 @@ WebPlatformStrategies::WebPlatformStrategies()
 }
 
 
-// PluginStrategy
+CookiesStrategy* WebPlatformStrategies::createCookiesStrategy()
+{
+    return this;
+}
 
 PluginStrategy* WebPlatformStrategies::createPluginStrategy()
 {
@@ -72,6 +75,10 @@ LocalizationStrategy* WebPlatformStrategies::createLocalizationStrategy()
 VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
 {
     return this;
+}
+
+void WebPlatformStrategies::notifyCookiesChanged()
+{
 }
 
 void WebPlatformStrategies::refreshPlugins()

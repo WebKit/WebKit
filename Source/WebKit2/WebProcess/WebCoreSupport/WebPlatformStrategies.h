@@ -28,6 +28,7 @@
 
 #if USE(PLATFORM_STRATEGIES)
 
+#include <WebCore/CookiesStrategy.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/PluginStrategy.h>
 #include <WebCore/LocalizationStrategy.h>
@@ -35,7 +36,7 @@
 
 namespace WebKit {
 
-class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::PluginStrategy, private WebCore::LocalizationStrategy, private WebCore::VisitedLinkStrategy {
+class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::PluginStrategy, private WebCore::LocalizationStrategy, private WebCore::VisitedLinkStrategy {
 public:
     static void initialize();
     
@@ -43,9 +44,13 @@ private:
     WebPlatformStrategies();
     
     // WebCore::PlatformStrategies
+    virtual WebCore::CookiesStrategy* createCookiesStrategy();
     virtual WebCore::PluginStrategy* createPluginStrategy();
     virtual WebCore::LocalizationStrategy* createLocalizationStrategy();
     virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy();
+
+    // WebCore::CookiesStrategy
+    virtual void notifyCookiesChanged();
 
     // WebCore::PluginStrategy
     virtual void refreshPlugins();

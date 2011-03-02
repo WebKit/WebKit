@@ -30,12 +30,20 @@
 
 namespace WebCore {
 
+class CookiesStrategy;
 class PluginStrategy;
 class LocalizationStrategy;
 class VisitedLinkStrategy;
 
 class PlatformStrategies {
 public:
+    CookiesStrategy* cookiesStrategy()
+    {
+        if (!m_cookiesStrategy)
+            m_cookiesStrategy = createCookiesStrategy();
+        return m_cookiesStrategy;
+    }
+
     PluginStrategy* pluginStrategy()
     {
         if (!m_pluginStrategy)
@@ -59,7 +67,8 @@ public:
 
 protected:
     PlatformStrategies()
-        : m_pluginStrategy(0)
+        : m_cookiesStrategy(0)
+        , m_pluginStrategy(0)
         , m_localizationStrategy(0)
         , m_visitedLinkStrategy(0)
     {
@@ -70,10 +79,12 @@ protected:
     }
 
 private:
+    virtual CookiesStrategy* createCookiesStrategy() = 0;
     virtual PluginStrategy* createPluginStrategy() = 0;
     virtual LocalizationStrategy* createLocalizationStrategy() = 0;
     virtual VisitedLinkStrategy* createVisitedLinkStrategy() = 0;
 
+    CookiesStrategy* m_cookiesStrategy;
     PluginStrategy* m_pluginStrategy;
     LocalizationStrategy* m_localizationStrategy;
     VisitedLinkStrategy* m_visitedLinkStrategy;

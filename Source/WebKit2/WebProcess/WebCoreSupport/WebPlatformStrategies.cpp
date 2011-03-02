@@ -30,6 +30,7 @@
 
 #include "PluginInfoStore.h"
 #include "WebContextMessages.h"
+#include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/LocalizedStrings.h>
@@ -98,7 +99,10 @@ WebPlatformStrategies::WebPlatformStrategies()
 {
 }
 
-// PluginStrategy
+CookiesStrategy* WebPlatformStrategies::createCookiesStrategy()
+{
+    return this;
+}
 
 PluginStrategy* WebPlatformStrategies::createPluginStrategy()
 {
@@ -113,6 +117,13 @@ LocalizationStrategy* WebPlatformStrategies::createLocalizationStrategy()
 VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
 {
     return this;
+}
+
+// CookiesStrategy
+
+void WebPlatformStrategies::notifyCookiesChanged()
+{
+    WebCookieManager::shared().dispatchDidModifyCookies();
 }
 
 // PluginStrategy

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CookieStorage_h
-#define CookieStorage_h
+#ifndef CookiesStrategy_h
+#define CookiesStrategy_h
+
+#if USE(PLATFORM_STRATEGIES)
 
 namespace WebCore {
 
-void setCookieStoragePrivateBrowsingEnabled(bool);
-void startObservingCookieChanges();
-void stopObservingCookieChanges();
+class CookiesStrategy {
+public:
+    virtual void notifyCookiesChanged() = 0;
 
-}
+protected:
+    virtual ~CookiesStrategy() { }
+};
 
-#endif
+} // namespace WebCore
+
+#endif // USE(PLATFORM_STRATEGIES)
+
+#endif // CookiesStrategy_h

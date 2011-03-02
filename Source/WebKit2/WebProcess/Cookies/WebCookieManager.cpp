@@ -27,13 +27,11 @@
 #include "WebCookieManager.h"
 
 #include "MessageID.h"
-#include "SecurityOriginData.h"
 #include "WebCookieManagerProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/CookieJar.h>
+#include <WebCore/CookieStorage.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/SecurityOrigin.h>
-#include <WebCore/SecurityOriginHash.h>
 
 using namespace WebCore;
 
@@ -74,6 +72,11 @@ void WebCookieManager::deleteCookiesForHostname(const String& hostname)
 void WebCookieManager::deleteAllCookies()
 {
     WebCore::deleteAllCookies();
+}
+
+void WebCookieManager::dispatchDidModifyCookies()
+{
+    // FIXME <http://webkit.org/b/55427>: Send a message to the UIProcess that the cookies have changed.
 }
 
 } // namespace WebKit

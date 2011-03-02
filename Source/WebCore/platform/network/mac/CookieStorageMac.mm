@@ -27,12 +27,71 @@
 #include "CookieStorage.h"
 
 #import "WebCoreSystemInterface.h"
+#import <wtf/RetainPtr.h>
+#import <wtf/UnusedParam.h>
+
+#if USE(PLATFORM_STRATEGIES)
+#include "CookiesStrategy.h"
+#include "PlatformStrategies.h"
+#endif
+
+using namespace WebCore;
+
+@interface CookieStorageObjCAdapter : NSObject
+-(void)notifyCookiesChangedOnMainThread;
+-(void)cookiesChangedNotificationHandler:(NSNotification *)notification;
+-(void)startListeningForCookieChangeNotifications;
+-(void)stopListeningForCookieChangeNotifications;
+@end
+
+@implementation CookieStorageObjCAdapter
+
+-(void)notifyCookiesChangedOnMainThread
+{
+#if USE(PLATFORM_STRATEGIES)
+    platformStrategies()->cookiesStrategy()->notifyCookiesChanged();
+#endif
+}
+
+-(void)cookiesChangedNotificationHandler:(NSNotification *)notification
+{
+    UNUSED_PARAM(notification);
+
+    [self performSelectorOnMainThread:@selector(notifyCookiesChangedOnMainThread) withObject:nil waitUntilDone:FALSE];
+}
+
+-(void)startListeningForCookieChangeNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cookiesChangedNotificationHandler:) name:NSHTTPCookieManagerCookiesChangedNotification object:[NSHTTPCookieStorage sharedHTTPCookieStorage]];
+}
+
+-(void)stopListeningForCookieChangeNotifications
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSHTTPCookieManagerCookiesChangedNotification object:nil];
+}
+
+@end
 
 namespace WebCore {
 
 void setCookieStoragePrivateBrowsingEnabled(bool enabled)
 {
     wkSetCookieStoragePrivateBrowsingEnabled(enabled);
+}
+
+static CookieStorageObjCAdapter *cookieStorageAdapter;
+
+void startObservingCookieChanges()
+{
+    if (!cookieStorageAdapter)
+        cookieStorageAdapter = [[CookieStorageObjCAdapter alloc] init];
+    [cookieStorageAdapter startListeningForCookieChangeNotifications];
+}
+
+void stopObservingCookieChanges()
+{
+    ASSERT(cookieStorageAdapter);
+    [cookieStorageAdapter stopListeningForCookieChangeNotifications];
 }
 
 }

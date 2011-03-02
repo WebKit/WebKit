@@ -1,3 +1,21 @@
+2011-03-01  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Part of WebKit2: Need a way to send notifications to client when cookies change
+        https://bugs.webkit.org/show_bug.cgi?id=55427
+        <rdar://problem/9056027>
+
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::dispatchDidModifyCookies): Add a stub with a FIXME to send a 
+            message to the UI process.
+
+        * WebProcess/Cookies/WebCookieManager.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createCookiesStrategy):
+        (WebKit::WebPlatformStrategies::notifyCookiesChanged): Call WebCookieManager::dispatchDidModifyCookies.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2011-03-02  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Laszlo Gombos.

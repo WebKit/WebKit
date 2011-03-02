@@ -805,8 +805,10 @@
 		3390CA550FFC157B00921962 /* NotificationCenter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3390CA510FFC157B00921962 /* NotificationCenter.cpp */; };
 		3390CA560FFC157B00921962 /* NotificationCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3390CA520FFC157B00921962 /* NotificationCenter.h */; };
 		3390CA580FFC157B00921962 /* NotificationContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 3390CA540FFC157B00921962 /* NotificationContents.h */; };
+		339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 339B5B62131DAA3200F48D02 /* CookiesStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33C0CCD4112C5E6200CE057D /* SecureTextInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33C0CCD2112C5E6200CE057D /* SecureTextInput.cpp */; };
 		33C0CCD5112C5E6200CE057D /* SecureTextInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 33C0CCD3112C5E6200CE057D /* SecureTextInput.h */; };
+		33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E13F01EA1270E10D00DFBA71 /* CookieStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		371A67CB11C6C7DB00047B8B /* HyphenationCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371A67CA11C6C7DB00047B8B /* HyphenationCF.cpp */; };
 		371F4F400D25B9AF00ECE0D5 /* FontData.h in Headers */ = {isa = PBXBuildFile; fileRef = 371F4F3E0D25B9AF00ECE0D5 /* FontData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		371F4F410D25B9AF00ECE0D5 /* FontData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371F4F3F0D25B9AF00ECE0D5 /* FontData.cpp */; };
@@ -7171,6 +7173,7 @@
 		3390CA520FFC157B00921962 /* NotificationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationCenter.h; path = notifications/NotificationCenter.h; sourceTree = "<group>"; };
 		3390CA530FFC157B00921962 /* NotificationCenter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NotificationCenter.idl; path = notifications/NotificationCenter.idl; sourceTree = "<group>"; };
 		3390CA540FFC157B00921962 /* NotificationContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationContents.h; path = notifications/NotificationContents.h; sourceTree = "<group>"; };
+		339B5B62131DAA3200F48D02 /* CookiesStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookiesStrategy.h; sourceTree = "<group>"; };
 		33C0CCD2112C5E6200CE057D /* SecureTextInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecureTextInput.cpp; sourceTree = "<group>"; };
 		33C0CCD3112C5E6200CE057D /* SecureTextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecureTextInput.h; sourceTree = "<group>"; };
 		371A67CA11C6C7DB00047B8B /* HyphenationCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HyphenationCF.cpp; sourceTree = "<group>"; };
@@ -18284,6 +18287,7 @@
 				06027CAC0B1CBFC000884B2D /* ContextMenuItem.h */,
 				D8B6152E1032495100C8554A /* Cookie.h */,
 				9352088109BD45E900F2038D /* CookieJar.h */,
+				339B5B62131DAA3200F48D02 /* CookiesStrategy.h */,
 				2E4346560F546A9900B0F1BA /* CrossThreadCopier.cpp */,
 				2E4346570F546A9900B0F1BA /* CrossThreadCopier.h */,
 				E11AF15011B9A1A300805103 /* Cursor.cpp */,
@@ -22492,6 +22496,8 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
+				339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */,
+				33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
