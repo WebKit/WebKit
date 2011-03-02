@@ -1,3 +1,17 @@
+2011-03-02  Adam Roben  <aroben@apple.com>
+
+        Don't try to capture crash logs on platforms that haven't implemented that feature
+
+        Fixes <http://webkit.org/b/55504> Use of uninitialized value in numeric lt (<) at
+        Tools/Scripts/old-run-webkit-tests line 1778 seen on Qt bots after a crash
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/old-run-webkit-tests:
+        (captureSavedCrashLog): Bail if we don't have a crash log glob.
+        (findNewestFileMatchingGlob): Fix a buggy test for when no paths match the glob. This isn't
+        strictly required to fix bug 55504, but seems worthwhile.
+
 2011-01-26  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Dmitry Titov.

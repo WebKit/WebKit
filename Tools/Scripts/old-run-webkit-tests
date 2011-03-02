@@ -1772,6 +1772,8 @@ sub captureSavedCrashLog($$)
         }
     }
 
+    return unless $glob;
+
     # We assume that the newest crash log in matching the glob is the one that corresponds to the crash that just occurred.
     if (my $newestCrashLog = findNewestFileMatchingGlob($glob)) {
         # The crash log must have been created after this script started running.
@@ -1788,7 +1790,7 @@ sub findNewestFileMatchingGlob($)
     my ($glob) = @_;
 
     my @paths = glob $glob;
-    return unless @paths;
+    return unless scalar(@paths);
 
     my @pathsAndTimes = map { [$_, -M $_] } @paths;
     @pathsAndTimes = sort { $b->[1] <=> $a->[1] } @pathsAndTimes;
