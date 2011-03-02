@@ -1,5 +1,12 @@
 2011-03-02  Alexey Proskuryakov  <ap@apple.com>
 
+        Build fix.
+
+        * page/ChromeClient.h: (WebCore::ChromeClient::keyboardUIMode): I didn't mean to commit these
+        changes yet.
+
+2011-03-02  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by John Sullivan.
 
         Clean up WebCore tabsToLinks code a little

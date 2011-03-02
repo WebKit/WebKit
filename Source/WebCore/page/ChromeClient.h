@@ -277,7 +277,7 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(MAC)
-        virtual KeyboardUIMode keyboardUIMode() = 0;
+        virtual KeyboardUIMode keyboardUIMode() { return KeyboardAccessDefault; }
 
         virtual NSResponder *firstResponder() { return 0; }
         virtual void makeFirstResponder(NSResponder *) { }
