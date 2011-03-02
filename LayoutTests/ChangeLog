@@ -1,3 +1,14 @@
+2011-03-01  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed expectations
+
+        [chromium] Skip new viewport tests added by r80068
+        https://bugs.webkit.org/show_bug.cgi?id=55539
+
+        LayoutTestController doesn't implement dumpConfigurationForViewport() which is needed for this test.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed. Roll out r80068 and r80073 due to breaking WebKit2 Qt port.

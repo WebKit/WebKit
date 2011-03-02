@@ -2421,6 +2421,13 @@ BUGWK45652 SKIP : fast/viewport/viewport-126.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-127.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-128.html = TIMEOUT TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-129.html = MISSING
+BUGWK45652 SKIP : fast/viewport/viewport-warnings-1.html = MISSING
+BUGWK45652 SKIP : fast/viewport/viewport-warnings-2.html = MISSING
+BUGWK45652 SKIP : fast/viewport/viewport-warnings-3.html = MISSING
+BUGWK45652 SKIP : fast/viewport/viewport-warnings-4.html = MISSING
+BUGWK45652 SKIP : fast/viewport/viewport-warnings-5.html = MISSING
+BUGWK45652 SKIP : fast/viewport/viewport-warnings-6.html = MISSING
+BUGWK45652 SKIP : fast/viewport/viewport-warnings-7.html = MISSING
 
 BUGWK45667 : fast/files/read-file-async.html = CRASH PASS
 BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
