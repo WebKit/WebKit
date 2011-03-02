@@ -3367,3 +3367,5 @@ BUGCR74519 : svg/custom/SVGPaint-mutate-attribute.svg = IMAGE+TEXT
 BUGCR74519 : svg/custom/SVGPaint-mutate-inline-style.svg = IMAGE+TEXT
 BUGCR74519 : svg/dom/SVGColor-expected.txt = IMAGE+TEXT
 BUGCR74519 : svg/dom/SVGPaint-expected.txt = IMAGE+TEXT
+
+BUGCR74684 : fast/canvas/canvas-strokePath-gradient-shadow.html = TEXT
