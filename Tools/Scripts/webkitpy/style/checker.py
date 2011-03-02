@@ -167,10 +167,7 @@ _PATH_RULES_SPECIFIER = [
     ([# The EFL APIs use EFL naming style, which includes
       # both lower-cased and camel-cased, underscore-sparated
       # values.
-      "Source/WebCore/platform/efl",
-      "Source/WebCore/platform/graphics/efl",
-      "Source/WebKit/efl/ewk/",
-      "Source/JavaScriptCore/wtf/efl/"],
+      "Source/WebKit/efl/ewk/"],
      ["-readability/naming",
       "-readability/parameter_name"]),
 

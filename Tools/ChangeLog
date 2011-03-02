@@ -1,3 +1,14 @@
+2011-03-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        Remove efl port style exception of Webcore/JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=55549
+
+        WebCore and JavaScriptCore need to adhere WebKit coding style.
+
+        * Scripts/webkitpy/style/checker.py:
+
 2011-03-01  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.
