@@ -1,3 +1,175 @@
+2011-03-02  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+        
+        Rebaseline Chromium GPU results for Snow Leopard.
+
+        * platform/chromium-gpu-mac/compositing/animation/state-at-end-event-transform-layer-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/animation/state-at-end-event-transform-layer-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/color-matching/image-color-matching-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-gpu-mac/compositing/compositing-visible-descendant-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/compositing-visible-descendant-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/direct-image-compositing-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/direct-image-compositing-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/generated-content-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/generated-content-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/abs-position-inside-opacity-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/geometry/abs-position-inside-opacity-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/clipped-video-controller-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/geometry/clipped-video-controller-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/clipped-video-controller-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/clipping-foreground-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/clipping-foreground-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/fixed-in-composited-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/fixed-in-composited-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/fixed-position-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/fixed-position-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/horizontal-scroll-composited-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/horizontal-scroll-composited-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/layer-due-to-layer-children-deep-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/layer-due-to-layer-children-deep-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/layer-due-to-layer-children-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/layer-due-to-layer-children-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/outline-change-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/outline-change-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/partial-layout-update-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/partial-layout-update-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/root-layer-update-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/root-layer-update-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/tall-page-composited-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/tall-page-composited-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/vertical-scroll-composited-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/vertical-scroll-composited-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/video-fixed-scrolling-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/geometry/video-fixed-scrolling-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/video-fixed-scrolling-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/video-opacity-overlay-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/geometry/video-opacity-overlay-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/video-opacity-overlay-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/iframes/composited-iframe-scroll-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/iframes/composited-iframe-scroll-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/iframes/iframe-content-flipping-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/iframes/iframe-content-flipping-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/iframes/iframe-copy-on-scroll-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/iframes/iframe-copy-on-scroll-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/iframes/iframe-in-composited-layer-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/iframes/iframe-in-composited-layer-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/images/direct-image-background-color-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/images/direct-image-background-color-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/images/direct-svg-image-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/images/direct-svg-image-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/layers-inside-overflow-scroll-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/layers-inside-overflow-scroll-expected.png:
+        * platform/chromium-gpu-mac/compositing/layers-inside-overflow-scroll-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/masks/direct-image-mask-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/masks/direct-image-mask-expected.png:
+        * platform/chromium-gpu-mac/compositing/masks/masked-ancestor-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-gpu-mac/compositing/masks/multiple-masks-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/masks/multiple-masks-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/masks/simple-composited-mask-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/masks/simple-composited-mask-expected.png:
+        * platform/chromium-gpu-mac/compositing/overflow/ancestor-overflow-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/ancestor-overflow-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/fixed-position-ancestor-clip-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-mac/compositing/overflow/overflow-compositing-descendant-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/overflow/overflow-compositing-descendant-expected.png:
+        * platform/chromium-gpu-mac/compositing/overflow/overflow-compositing-descendant-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/overflow-positioning-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/overflow-positioning-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/overflow-scroll-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/overflow/overflow-scroll-expected.png:
+        * platform/chromium-gpu-mac/compositing/overflow/parent-overflow-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/parent-overflow-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/scroll-ancestor-update-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/chromium-gpu-mac/compositing/overflow/scroll-ancestor-update-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/scrollbar-painting-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/scrollbar-painting-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/zero-size-overflow-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/zero-size-overflow-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/animation-inside-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/animation-inside-reflection-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/backface-hidden-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/backface-hidden-reflection-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/compositing-change-inside-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/compositing-change-inside-reflection-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/deeply-nested-reflections-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/reflections/deeply-nested-reflections-expected.png:
+        * platform/chromium-gpu-mac/compositing/reflections/load-video-in-reflection-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/reflections/load-video-in-reflection-expected.png:
+        * platform/chromium-gpu-mac/compositing/reflections/load-video-in-reflection-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/masked-reflection-on-composited-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/masked-reflection-on-composited-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-animated-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-animated-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-mask-change-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-mask-change-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-on-overflow-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-on-overflow-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-opacity-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-opacity-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-size-change-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-size-change-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-transformed-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-transformed-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-transformed2-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-transformed2-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-transition-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-transition-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/reflection-in-composited-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/reflection-in-composited-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/reflection-on-composited-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/reflection-on-composited-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/reflection-ordering-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/reflection-ordering-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/reflection-positioning-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/reflection-positioning-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/reflection-positioning2-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/reflection-positioning2-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/remove-add-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/remove-add-reflection-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/simple-composited-reflections-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/simple-composited-reflections-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/transform-inside-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/transform-inside-reflection-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/repaint/composited-document-element-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/repaint/composited-document-element-expected.png:
+        * platform/chromium-gpu-mac/compositing/repaint/content-into-overflow-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/repaint/content-into-overflow-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/repaint/layer-repaint-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/repaint/layer-repaint-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/repaint/opacity-between-absolute-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/repaint/opacity-between-absolute-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/repaint/opacity-between-absolute2-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/repaint/opacity-between-absolute2-expected.png:
+        * platform/chromium-gpu-mac/compositing/repaint/overflow-into-content-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/repaint/overflow-into-content-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/self-painting-layers-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/self-painting-layers-expected.png:
+        * platform/chromium-gpu-mac/compositing/self-painting-layers-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/shadows/shadow-drawing-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-gpu-mac/compositing/sibling-positioning-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/sibling-positioning-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/text-on-large-layer-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/text-on-large-layer-expected.png:
+        * platform/chromium-gpu-mac/compositing/transitions/scale-transition-no-start-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/transitions/scale-transition-no-start-expected.png:
+        * platform/chromium-gpu-mac/compositing/transitions/singular-scale-transition-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/transitions/singular-scale-transition-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/webgl/webgl-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/webgl/webgl-reflection-expected.png: Added.
+        * platform/chromium-gpu-mac/platform/chromium/compositing/layout-width-change-expected.checksum:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-02  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed expectations update.
