@@ -1,5 +1,12 @@
 2011-03-02  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+          Mark fast/forms/input-number-unacceptable-style.html as TEXT.
+
+2011-03-02  Kent Tamura  <tkent@chromium.org>
+
         Unreviewed.
 
         Update a test and test expectation for r80096.
