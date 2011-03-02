@@ -1,3 +1,15 @@
+2011-02-23  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        All Console Messages should be passed to ChromeClients.
+        https://bugs.webkit.org/show_bug.cgi?id=54926
+
+        Update DumpRenderTree's UIDelegate to use the new console message delegate.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:addMessageToConsole:withSource:]):
+
 2011-03-01  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.

@@ -92,6 +92,32 @@ enum {
     WebMenuItemTagBaseApplication = 10000
 };
 
+// Message Sources.
+extern NSString *WebConsoleMessageHTMLMessageSource;
+extern NSString *WebConsoleMessageWMLMessageSource;
+extern NSString *WebConsoleMessageXMLMessageSource;
+extern NSString *WebConsoleMessageJSMessageSource;
+extern NSString *WebConsoleMessageCSSMessageSource;
+extern NSString *WebConsoleMessageOtherMessageSource;
+
+// Message Types.
+extern NSString *WebConsoleMessageLogMessageType;
+extern NSString *WebConsoleMessageObjectMessageType;
+extern NSString *WebConsoleMessageTraceMessageType;
+extern NSString *WebConsoleMessageStartGroupMessageType;
+extern NSString *WebConsoleMessageStartGroupCollapsedMessageType;
+extern NSString *WebConsoleMessageEndGroupMessageType;
+extern NSString *WebConsoleMessageAssertMessageType;
+extern NSString *WebConsoleMessageUncaughtExceptionMessageType;
+extern NSString *WebConsoleMessageNetworkErrorMessageType;
+
+// Message Levels.
+extern NSString *WebConsoleMessageTipMessageLevel;
+extern NSString *WebConsoleMessageLogMessageLevel;
+extern NSString *WebConsoleMessageWarningMessageLevel;
+extern NSString *WebConsoleMessageErrorMessageLevel;
+extern NSString *WebConsoleMessageDebugMessageLevel;
+
 @class WebSecurityOrigin;
 
 @protocol WebGeolocationPolicyListener <NSObject>
@@ -111,6 +137,39 @@ enum {
 @interface NSObject (WebUIDelegatePrivate)
 
 - (void)webView:(WebView *)webView addMessageToConsole:(NSDictionary *)message;
+
+/*!
+    @method webView:addMessageToConsole:withSource:
+    @param webView The WebView sending the delegate method.
+    @param message A dictionary representation of the console message.
+    @param source Where the message came from. See WebConsoleMessageHTMLMessageSource and other source types.
+    @discussion The dictionary contains the following keys:
+
+    <dl>
+        <dt>message</dt>
+        <dd>The message itself.</dd>
+        <dt>lineNumber</dt>
+        <dd>If this came from a file, this is the line number in the file this message originates from.</dd>
+        <dt>sourceURL</dt>
+        <dd>If this came from a file, this is the URL to the file this message originates from.</dd>
+        <dt>MessageSource</dt>
+        <dd>
+            Where the message came from. HTML, XML, JavaScript, CSS, etc.
+            See WebConsoleMessageHTMLMessageSource and similar constants.
+        </dd>
+        <dt>MessageType</dt>
+        <dd>
+            Class of message. Start / End of a Group, a Log, Network related, etc.
+            See WebConsoleMessageLogMessageType and similar constants.
+        </dd>
+        <dt>MessageLevel</dt>
+        <dd>
+            Severity level of the message. Tip, Log, Warning, etc.
+            See WebConsoleMessageTipMessageLevel and similar constants.
+        </dd>
+    </dl>
+*/
+- (void)webView:(WebView *)webView addMessageToConsole:(NSDictionary *)message withSource:(NSString *)source;
 
 - (NSView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments;
 

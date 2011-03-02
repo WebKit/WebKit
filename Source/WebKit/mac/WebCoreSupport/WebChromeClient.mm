@@ -80,6 +80,29 @@
 #import "NetscapePluginHostManager.h"
 #endif
 
+NSString *WebConsoleMessageHTMLMessageSource = @"HTMLMessageSource";
+NSString *WebConsoleMessageWMLMessageSource = @"WMLMessageSource";
+NSString *WebConsoleMessageXMLMessageSource = @"XMLMessageSource";
+NSString *WebConsoleMessageJSMessageSource = @"JSMessageSource";
+NSString *WebConsoleMessageCSSMessageSource = @"CSSMessageSource";
+NSString *WebConsoleMessageOtherMessageSource = @"OtherMessageSource";
+
+NSString *WebConsoleMessageLogMessageType = @"LogMessageType";
+NSString *WebConsoleMessageObjectMessageType = @"ObjectMessageType";
+NSString *WebConsoleMessageTraceMessageType = @"TraceMessageType";
+NSString *WebConsoleMessageStartGroupMessageType = @"StartGroupMessageType";
+NSString *WebConsoleMessageStartGroupCollapsedMessageType = @"StartGroupCollapsedMessageType";
+NSString *WebConsoleMessageEndGroupMessageType = @"EndGroupMessageType";
+NSString *WebConsoleMessageAssertMessageType = @"AssertMessageType";
+NSString *WebConsoleMessageUncaughtExceptionMessageType = @"UncaughtExceptionMessageType";
+NSString *WebConsoleMessageNetworkErrorMessageType = @"NetworkErrorMessageType";
+
+NSString *WebConsoleMessageTipMessageLevel = @"TipMessageLevel";
+NSString *WebConsoleMessageLogMessageLevel = @"LogMessageLevel";
+NSString *WebConsoleMessageWarningMessageLevel = @"WarningMessageLevel";
+NSString *WebConsoleMessageErrorMessageLevel = @"ErrorMessageLevel";
+NSString *WebConsoleMessageDebugMessageLevel = @"DebugMessageLevel";
+
 @interface NSApplication (WebNSApplicationDetails)
 - (NSCursor *)_cursorRectCursor;
 @end
@@ -328,18 +351,101 @@ void WebChromeClient::setResizable(bool b)
     [[m_webView _UIDelegateForwarder] webView:m_webView setResizable:b];
 }
 
+inline static NSString *stringForMessageSource(MessageSource source)
+{
+    switch (source) {
+    case HTMLMessageSource:
+        return WebConsoleMessageHTMLMessageSource;
+    case WMLMessageSource:
+        return WebConsoleMessageWMLMessageSource;
+    case XMLMessageSource:
+        return WebConsoleMessageXMLMessageSource;
+    case JSMessageSource:
+        return WebConsoleMessageJSMessageSource;
+    case CSSMessageSource:
+        return WebConsoleMessageCSSMessageSource;
+    case OtherMessageSource:
+        return WebConsoleMessageOtherMessageSource;
+    }
+    ASSERT_NOT_REACHED();
+    return @"";
+}
+
+inline static NSString *stringForMessageType(MessageType type)
+{
+    switch (type) {
+    case LogMessageType:
+        return WebConsoleMessageLogMessageType;
+    case ObjectMessageType:
+        return WebConsoleMessageObjectMessageType;
+    case TraceMessageType:
+        return WebConsoleMessageTraceMessageType;
+    case StartGroupMessageType:
+        return WebConsoleMessageStartGroupMessageType;
+    case StartGroupCollapsedMessageType:
+        return WebConsoleMessageStartGroupCollapsedMessageType;
+    case EndGroupMessageType:
+        return WebConsoleMessageEndGroupMessageType;
+    case AssertMessageType:
+        return WebConsoleMessageAssertMessageType;
+    case UncaughtExceptionMessageType:
+        return WebConsoleMessageUncaughtExceptionMessageType;
+    case NetworkErrorMessageType:
+        return WebConsoleMessageNetworkErrorMessageType;
+    }
+    ASSERT_NOT_REACHED();
+    return @"";
+}
+
+inline static NSString *stringForMessageLevel(MessageLevel level)
+{
+    switch (level) {
+    case TipMessageLevel:
+        return WebConsoleMessageTipMessageLevel;
+    case LogMessageLevel:
+        return WebConsoleMessageLogMessageLevel;
+    case WarningMessageLevel:
+        return WebConsoleMessageWarningMessageLevel;
+    case ErrorMessageLevel:
+        return WebConsoleMessageErrorMessageLevel;
+    case DebugMessageLevel:
+        return WebConsoleMessageDebugMessageLevel;
+    }
+    ASSERT_NOT_REACHED();
+    return @"";
+}
+
 void WebChromeClient::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned int lineNumber, const String& sourceURL)
 {
     id delegate = [m_webView UIDelegate];
-    SEL selector = @selector(webView:addMessageToConsole:);
-    if (![delegate respondsToSelector:selector])
-        return;
+    BOOL respondsToNewSelector = NO;
 
+    SEL selector = @selector(webView:addMessageToConsole:withSource:);
+    if ([delegate respondsToSelector:selector])
+        respondsToNewSelector = YES;
+    else {
+        // The old selector only takes JSMessageSource messages.
+        if (source != JSMessageSource)
+            return;
+        selector = @selector(webView:addMessageToConsole:);
+        if (![delegate respondsToSelector:selector])
+            return;
+    }
+
+    NSString *messageSource = stringForMessageSource(source);
     NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
-        (NSString *)message, @"message", [NSNumber numberWithUnsignedInt:lineNumber], @"lineNumber",
-        (NSString *)sourceURL, @"sourceURL", NULL];
+        (NSString *)message, @"message",
+        [NSNumber numberWithUnsignedInt:lineNumber], @"lineNumber",
+        (NSString *)sourceURL, @"sourceURL",
+        messageSource, @"MessageSource",
+        stringForMessageType(type), @"MessageType",
+        stringForMessageLevel(level), @"MessageLevel",
+        NULL];
 
-    CallUIDelegate(m_webView, selector, dictionary);
+    if (respondsToNewSelector)
+        CallUIDelegate(m_webView, selector, dictionary, messageSource);
+    else
+        CallUIDelegate(m_webView, selector, dictionary);
 
     [dictionary release];
 }

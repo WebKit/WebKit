@@ -1,3 +1,26 @@
+2011-02-23  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        All Console Messages should be passed to ChromeClients.
+        https://bugs.webkit.org/show_bug.cgi?id=54926
+
+        Add a new private UIDelegate method, -webView:addMessageToConsole:withSource:,
+        which supersedes -webView:addMessageToConsole if it exists. The new delegate
+        does not filter to only JavaScript originated console messages. The old
+        delegate is left around for clients that expect filtered messages, like
+        DashCode and older versions of Safari.
+
+        The dictionary message passed to the delegate now includes more information
+        about the message source, type, and level.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (stringForMessageSource):
+        (stringForMessageType):
+        (stringForMessageLevel):
+        (WebChromeClient::addMessageToConsole):
+        * WebView/WebUIDelegatePrivate.h:
+
 2011-03-01  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.

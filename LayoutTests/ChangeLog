@@ -337,6 +337,34 @@
 
 2011-02-23  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Reviewed by Timothy Hatcher.
+
+        All Console Messages should be passed to ChromeClients.
+        https://bugs.webkit.org/show_bug.cgi?id=54926
+
+        Passing more message types to the ChromeClient allows
+        some more messages to get output during tests. Specifically
+        HTML, XML, and Other message types.
+
+        * inspector/audits/audits-panel-functional.html: correct a legitimate HTML parse error.
+        * http/tests/security/cross-origin-xsl-BLOCKED-expected.txt:
+        * http/tests/security/mixedContent/insecure-css-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/insecure-iframe-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/insecure-image-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/insecure-plugin-in-iframe-expected.txt:
+        * http/tests/security/mixedContent/insecure-script-in-iframe-expected.txt:
+        * http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe-expected.txt:
+        * http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame-expected.txt:
+        * http/tests/security/xss-DENIED-xml-external-entity-expected.txt:
+        * http/tests/security/xss-DENIED-xsl-document-expected.txt:
+        * http/tests/security/xss-DENIED-xsl-external-entity-expected.txt:
+        * platform/mac/fast/xsl/xslt-mismatched-tags-in-xslt-expected.txt:
+        * platform/mac/fast/xsl/xslt-missing-namespace-in-xslt-expected.txt:
+        * platform/mac/http/tests/inspector/console-websocket-error-expected.txt:
+
+2011-02-23  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         Viewport parsing no longer accepts "1.0;" value as valid.

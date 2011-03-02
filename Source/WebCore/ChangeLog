@@ -743,6 +743,19 @@
 
 2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Reviewed by Timothy Hatcher.
+
+        All Console Messages should be passed to ChromeClients.
+        https://bugs.webkit.org/show_bug.cgi?id=54926
+
+        Do not filter the message type here, allow clients
+        to filter and deal with the different message types.
+
+        * page/Console.cpp:
+        (WebCore::Console::addMessage):
+
+2011-02-23  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         Viewport parsing no longer accepts "1.0;" value as valid.

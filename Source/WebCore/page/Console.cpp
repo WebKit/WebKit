@@ -143,8 +143,7 @@ void Console::addMessage(MessageSource source, MessageType type, MessageLevel le
     if (!page)
         return;
 
-    if (source == JSMessageSource)
-        page->chrome()->client()->addMessageToConsole(source, type, level, message, lineNumber, sourceURL);
+    page->chrome()->client()->addMessageToConsole(source, type, level, message, lineNumber, sourceURL);
 
     if (callStack)
         InspectorInstrumentation::addMessageToConsole(page, source, type, level, message, 0, callStack);
