@@ -1,5 +1,11 @@
 2011-03-02  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Yet another unreviewed Chromium rebaselines for r80121.
+
+        * platform/chromium-win/editing/pasteboard/subframe-dragndrop-1-expected.txt:
+
+2011-03-02  Ryosuke Niwa  <rniwa@webkit.org>
+
         Another unreviewed Chromium rebaselines for r80121.
 
         * platform/chromium-mac/editing/pasteboard/paste-xml-expected.txt: Added.
