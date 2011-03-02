@@ -1,3 +1,13 @@
+2011-03-01  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed baseline
+
+        [chromium] Add baseline for test added by r80040
+        https://bugs.webkit.org/show_bug.cgi?id=55529
+
+        * platform/chromium-mac/fast/table/table-and-parts-outline-expected.checksum: Added.
+        * platform/chromium-mac/fast/table/table-and-parts-outline-expected.png: Added.
+
 2011-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
