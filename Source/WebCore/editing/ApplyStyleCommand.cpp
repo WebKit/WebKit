@@ -1270,52 +1270,23 @@ HTMLElement* ApplyStyleCommand::highestAncestorWithConflictingInlineStyle(Editin
     return result;
 }
 
-void ApplyStyleCommand::applyInlineStyleToPushDown(Node* node, CSSMutableStyleDeclaration* style)
+void ApplyStyleCommand::applyInlineStyleToPushDown(Node* node, EditingStyle* style)
 {
     ASSERT(node);
 
-    if (!style || !style->length() || !node->renderer())
+    if (!style || style->isEmpty() || !node->renderer())
         return;
 
-    RefPtr<CSSMutableStyleDeclaration> newInlineStyle = style;
-    if (node->isHTMLElement()) {
-        HTMLElement* element = toHTMLElement(node);
-        CSSMutableStyleDeclaration* existingInlineStyle = element->inlineStyleDecl();
-
-        // Avoid overriding existing styles of node
-        if (existingInlineStyle) {
-            newInlineStyle = existingInlineStyle->copy();
-            CSSMutableStyleDeclaration::const_iterator end = style->end();
-            for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
-                ExceptionCode ec;
-                if (!existingInlineStyle->getPropertyCSSValue(it->id()))
-                    newInlineStyle->setProperty(it->id(), it->value()->cssText(), it->isImportant(), ec);
-
-                // text-decorations adds up
-                if (it->id() == CSSPropertyTextDecoration && it->value()->isValueList()) {
-                    RefPtr<CSSValue> textDecoration = newInlineStyle->getPropertyCSSValue(CSSPropertyTextDecoration);
-                    if (textDecoration && textDecoration->isValueList()) {
-                        CSSValueList* textDecorationOfInlineStyle = static_cast<CSSValueList*>(textDecoration.get());
-                        CSSValueList* textDecorationOfStyleApplied = static_cast<CSSValueList*>(it->value());
-
-                        DEFINE_STATIC_LOCAL(RefPtr<CSSPrimitiveValue>, underline, (CSSPrimitiveValue::createIdentifier(CSSValueUnderline)));
-                        DEFINE_STATIC_LOCAL(RefPtr<CSSPrimitiveValue>, lineThrough, (CSSPrimitiveValue::createIdentifier(CSSValueLineThrough)));
-                        
-                        if (textDecorationOfStyleApplied->hasValue(underline.get()) && !textDecorationOfInlineStyle->hasValue(underline.get()))
-                            textDecorationOfInlineStyle->append(underline.get());
-
-                        if (textDecorationOfStyleApplied->hasValue(lineThrough.get()) && !textDecorationOfInlineStyle->hasValue(lineThrough.get()))
-                            textDecorationOfInlineStyle->append(lineThrough.get());
-                    }
-                }
-            }
-        }
+    RefPtr<EditingStyle> newInlineStyle = style;
+    if (node->isHTMLElement() && static_cast<HTMLElement*>(node)->inlineStyleDecl()) {
+        newInlineStyle = style->copy();
+        newInlineStyle->mergeInlineStyleOfElement(static_cast<HTMLElement*>(node));
     }
 
     // Since addInlineStyleIfNeeded can't add styles to block-flow render objects, add style attribute instead.
     // FIXME: applyInlineStyleToRange should be used here instead.
     if ((node->renderer()->isBlockFlow() || node->childNodeCount()) && node->isHTMLElement()) {
-        setNodeAttribute(toHTMLElement(node), styleAttr, newInlineStyle->cssText());
+        setNodeAttribute(toHTMLElement(node), styleAttr, newInlineStyle->style()->cssText());
         return;
     }
 
@@ -1325,7 +1296,7 @@ void ApplyStyleCommand::applyInlineStyleToPushDown(Node* node, CSSMutableStyleDe
     // We can't wrap node with the styled element here because new styled element will never be removed if we did.
     // If we modified the child pointer in pushDownInlineStyleAroundNode to point to new style element
     // then we fall into an infinite loop where we keep removing and adding styled element wrapping node.
-    addInlineStyleIfNeeded(newInlineStyle.get(), node, node, DoNotAddStyledElement);
+    addInlineStyleIfNeeded(newInlineStyle->style(), node, node, DoNotAddStyledElement);
 }
 
 void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node* targetNode)
@@ -1371,7 +1342,7 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
             // Apply text decoration to all nodes containing targetNode and their siblings but NOT to targetNode
             // But if we've removed styledElement then go ahead and always apply the style.
             if (child != targetNode || styledElement)
-                applyInlineStyleToPushDown(child, styleToPushDown->style());
+                applyInlineStyleToPushDown(child, styleToPushDown.get());
 
             // We found the next node for the outer loop (contains targetNode)
             // When reached targetNode, stop the outer loop upon the completion of the current inner loop
@@ -1448,7 +1419,7 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position &s
 
             if (styleToPushDown) {
                 for (; childNode; childNode = childNode->nextSibling())
-                    applyInlineStyleToPushDown(childNode.get(), styleToPushDown->style());
+                    applyInlineStyleToPushDown(childNode.get(), styleToPushDown.get());
             }
         }
         if (node == end.deprecatedNode())

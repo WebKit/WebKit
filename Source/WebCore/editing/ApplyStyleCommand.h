@@ -84,7 +84,7 @@ private:
     bool removeImplicitlyStyledElement(EditingStyle*, HTMLElement*, InlineStyleRemovalMode, EditingStyle* extractedStyle);
     bool removeCSSStyle(EditingStyle*, HTMLElement*, InlineStyleRemovalMode = RemoveIfNeeded, EditingStyle* extractedStyle = 0);
     HTMLElement* highestAncestorWithConflictingInlineStyle(EditingStyle*, Node*);
-    void applyInlineStyleToPushDown(Node*, CSSMutableStyleDeclaration*);
+    void applyInlineStyleToPushDown(Node*, EditingStyle*);
     void pushDownInlineStyleAroundNode(EditingStyle*, Node*);
     void removeInlineStyle(EditingStyle* , const Position& start, const Position& end);
     bool nodeFullySelected(Node*, const Position& start, const Position& end) const;

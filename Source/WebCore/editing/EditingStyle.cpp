@@ -685,13 +685,55 @@ void EditingStyle::mergeTypingStyle(Document* document)
     ASSERT(document);
 
     RefPtr<EditingStyle> typingStyle = document->frame()->selection()->typingStyle();
-    if (!typingStyle || !typingStyle->style() || typingStyle == this)
+    if (!typingStyle || typingStyle == this)
         return;
 
-    if (m_mutableStyle)
-        m_mutableStyle->merge(typingStyle->style(), true);
-    else
-        m_mutableStyle = typingStyle->style()->copy();
+    mergeStyle(typingStyle->style());
 }
-    
+
+void EditingStyle::mergeInlineStyleOfElement(StyledElement* element)
+{
+    ASSERT(element);
+    mergeStyle(element->inlineStyleDecl());
+}
+
+void EditingStyle::mergeStyle(CSSMutableStyleDeclaration* style)
+{
+    if (!style)
+        return;
+
+    if (!m_mutableStyle) {
+        m_mutableStyle = style->copy();
+        return;
+    }
+
+    CSSMutableStyleDeclaration::const_iterator end = style->end();
+    for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
+        RefPtr<CSSValue> value;
+        if ((it->id() == CSSPropertyTextDecoration || it->id() == CSSPropertyWebkitTextDecorationsInEffect) && it->value()->isValueList()) {
+            value = m_mutableStyle->getPropertyCSSValue(it->id());
+            if (value && !value->isValueList())
+                value = 0;
+        }
+
+        if (!value) {
+            ExceptionCode ec;
+            m_mutableStyle->setProperty(it->id(), it->value()->cssText(), it->isImportant(), ec);
+            continue;
+        }
+
+        CSSValueList* newTextDecorations = static_cast<CSSValueList*>(it->value());
+        CSSValueList* textDecorations = static_cast<CSSValueList*>(value.get());
+
+        DEFINE_STATIC_LOCAL(const RefPtr<CSSPrimitiveValue>, underline, (CSSPrimitiveValue::createIdentifier(CSSValueUnderline)));
+        DEFINE_STATIC_LOCAL(const RefPtr<CSSPrimitiveValue>, lineThrough, (CSSPrimitiveValue::createIdentifier(CSSValueLineThrough)));
+
+        if (newTextDecorations->hasValue(underline.get()) && !textDecorations->hasValue(underline.get()))
+            textDecorations->append(underline.get());
+
+        if (newTextDecorations->hasValue(lineThrough.get()) && !textDecorations->hasValue(lineThrough.get()))
+            textDecorations->append(lineThrough.get());
+    }
+}
+
 }

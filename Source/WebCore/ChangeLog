@@ -1,3 +1,28 @@
+2011-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKit does not merge text decorations in the typing style and the selected element properly
+        https://bugs.webkit.org/show_bug.cgi?id=55349
+
+        The bug was caused by EditingStyle::mergeTypingStyle's not properly merging text decoration property.
+        Fixed the bug by extracting a function from ApplyStyleCommand::pushDownInlineStyleAroundNode and
+        calling it in pushDownInlineStyleAroundNode and in mergeTypingStyle.
+
+        Test: editing/execCommand/merge-text-decoration-with-typing-style.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown): Takes EditingStyle*;
+        calls mergeInlineStyleOfElement.
+        (WebCore::ApplyStyleCommand::pushDownInlineStyleAroundNode): Calls applyInlineStyleToPushDown.
+        (WebCore::ApplyStyleCommand::removeInlineStyle): Ditto.
+        * editing/ApplyStyleCommand.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::mergeTypingStyle): Added; calls mergeStyle.
+        (WebCore::EditingStyle::mergeInlineStyleOfElement): Ditto.
+        (WebCore::EditingStyle::mergeStyle): Extracted from applyInlineStyleToPushDown.
+        * editing/EditingStyle.h:
+
 2011-03-01  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.

@@ -40,8 +40,8 @@ testSingleToggle("underline", '<span style="text-decoration: underline;">hello<d
 testSingleToggle("underline",
     '<div style="text-decoration: underline;"><div>hello</span></div><div id="test">webkit</div><span style="font-style: italic;">rocks</span>',
     '<div><div style="text-decoration: underline; ">hello</span></div><div id="test">webkit</div><u><span style="font-style: italic;">rocks</span></u></div>');
-testSingleToggle("underline", '<span style="text-decoration: underline;"><div style="text-decoration: line-through;">hello</div><div id="test">world</div></span>', '<div style="text-decoration: line-through underline; ">hello</div><div id="test">world</div>');
-testSingleToggle("strikeThrough", '<span style="text-decoration: line-through;"><div id="test">hello</div><div style="text-decoration: underline;">world</div></span>', '<div id="test">hello</div><div style="text-decoration: underline line-through; ">world</div>');
+testSingleToggle("underline", '<span style="text-decoration: underline;"><div style="text-decoration: line-through;">hello</div><div id="test">world</div></span>', '<div style="text-decoration: underline line-through; ">hello</div><div id="test">world</div>');
+testSingleToggle("strikeThrough", '<span style="text-decoration: line-through;"><div id="test">hello</div><div style="text-decoration: underline;">world</div></span>', '<div id="test">hello</div><div style="text-decoration: line-through underline; ">world</div>');
 
 document.body.removeChild(testContainer);
 
