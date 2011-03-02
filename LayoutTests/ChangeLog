@@ -1,3 +1,16 @@
+2011-03-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        REGRESSION (r79762): Items in <select multiple> have focus rings, but shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=55323
+
+        Add Qt specific expected result for test introduced in r79934.
+
+        * platform/qt/fast/spatial-navigation/snav-multiple-select-focusring-expected.checksum: Added.
+        * platform/qt/fast/spatial-navigation/snav-multiple-select-focusring-expected.png: Added.
+        * platform/qt/fast/spatial-navigation/snav-multiple-select-focusring-expected.txt: Added.
+
 2011-03-02  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed expectations update. This is a follow-up to r80061.
