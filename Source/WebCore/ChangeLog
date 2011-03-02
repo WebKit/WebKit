@@ -1,3 +1,21 @@
+2011-03-02  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/55534> Clean up macros in Extensions3DOpenGL.cpp
+
+        Reviewed by Darin Adler.
+
+        Change "#if GL_APPLE_vertex_array_object" macros to check that
+        GL_APPLE_vertex_array_object is both defined and non-zero.
+
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::createVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::deleteVertexArrayOES): Remove
+        empty #else clause.
+        (WebCore::Extensions3DOpenGL::isVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::bindVertexArrayOES): Add early
+        return check.  Remove #else clause that would never have
+        compiled (since array is not a WTF::String).
+
 2011-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
