@@ -56,9 +56,12 @@ MorphologyOperatorType FEMorphology::morphologyOperator() const
     return m_type;
 }
 
-void FEMorphology::setMorphologyOperator(MorphologyOperatorType type)
+bool FEMorphology::setMorphologyOperator(MorphologyOperatorType type)
 {
+    if (m_type == type)
+        return false;
     m_type = type;
+    return true;
 }
 
 float FEMorphology::radiusX() const
@@ -66,9 +69,12 @@ float FEMorphology::radiusX() const
     return m_radiusX;
 }
 
-void FEMorphology::setRadiusX(float radiusX)
+bool FEMorphology::setRadiusX(float radiusX)
 {
+    if (m_radiusX == radiusX)
+        return false;
     m_radiusX = radiusX;
+    return true;
 }
 
 float FEMorphology::radiusY() const
@@ -86,9 +92,12 @@ void FEMorphology::determineAbsolutePaintRect()
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
-void FEMorphology::setRadiusY(float radiusY)
+bool FEMorphology::setRadiusY(float radiusY)
 {
+    if (m_radiusY == radiusY)
+        return false;
     m_radiusY = radiusY;
+    return true;
 }
 
 void FEMorphology::apply()

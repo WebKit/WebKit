@@ -1,3 +1,25 @@
+2011-03-02  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        FEMorphologyElement changes doesn't require relayout
+        https://bugs.webkit.org/show_bug.cgi?id=55462
+
+        When the FEMorphologyElement receives an update message but the given value remains the same we don't need
+        to relayout the filter.
+
+        No new tests are needed because this modification is covered by the dynamic update tests of FEMorphology.
+
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::setMorphologyOperator):
+        (WebCore::FEMorphology::setRadiusX):
+        (WebCore::FEMorphology::setRadiusY):
+        * platform/graphics/filters/FEMorphology.h:
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::setFilterEffectAttribute):
+        (WebCore::SVGFEMorphologyElement::svgAttributeChanged):
+        * svg/SVGFEMorphologyElement.h:
+
 2011-03-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

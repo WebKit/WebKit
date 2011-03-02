@@ -86,13 +86,27 @@ void SVGFEMorphologyElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
+bool SVGFEMorphologyElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+{
+    FEMorphology* morphology = static_cast<FEMorphology*>(effect);
+    if (attrName == SVGNames::operatorAttr)
+        return morphology->setMorphologyOperator(static_cast<MorphologyOperatorType>(_operator()));
+    if (attrName == SVGNames::radiusAttr)
+        return (morphology->setRadiusX(radiusX()) || morphology->setRadiusY(radiusY()));
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 void SVGFEMorphologyElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 
-    if (attrName == SVGNames::inAttr
-        || attrName == SVGNames::operatorAttr
+    if (attrName == SVGNames::operatorAttr
         || attrName == SVGNames::radiusAttr)
+        primitiveAttributeChanged(attrName);
+
+    if (attrName == SVGNames::inAttr)
         invalidate();
 }
 

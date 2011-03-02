@@ -38,13 +38,13 @@ class FEMorphology : public FilterEffect {
 public:
     static PassRefPtr<FEMorphology> create(Filter*, MorphologyOperatorType, float radiusX, float radiusY);  
     MorphologyOperatorType morphologyOperator() const;
-    void setMorphologyOperator(MorphologyOperatorType);
+    bool setMorphologyOperator(MorphologyOperatorType);
 
     float radiusX() const;
-    void setRadiusX(float);
+    bool setRadiusX(float);
 
     float radiusY() const;
-    void setRadiusY(float);
+    bool setRadiusY(float);
 
     virtual void apply();
     virtual void dump();
