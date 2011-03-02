@@ -10,7 +10,7 @@ PASS colorOf(number) is invalidStyleColor
 PASS number.validity.valid is true
 Type '1' additionally. The renderer value becomes acceptable.
 PASS colorOf(number) != invalidStyleColor is true
-Type '+' additionally. The renderer value becomes unacceptable again.
+Type 'a' additionally. The renderer value becomes unacceptable again.
 PASS colorOf(number) is invalidStyleColor
 The element losts focus. The unacceptable value should be purged and the style should be normal.
 PASS colorOf(number) != invalidStyleColor is true

@@ -1,3 +1,22 @@
+2011-03-02  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed.
+
+        Update a test and test expectation for r80096.
+
+        * fast/forms/input-number-unacceptable-style-expected.txt:
+        * fast/forms/input-number-unacceptable-style.html:
+          ICU seems to accept "-1+" as a number.  So change it to "-1a".
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.checksum:
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.checksum:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.checksum:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.txt:
+
 2011-03-01  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Eric Carlson.

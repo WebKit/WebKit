@@ -161,131 +161,131 @@ layer at (0,0) size 800x600
                     RenderBlock {DIV} at (217,2) size 0x29
                     RenderBlock {DIV} at (221,3) size 19x27
                   RenderBR {BR} at (247,270) size 0x0
-layer at (14,48) size 76x10 scrollWidth 154
+layer at (14,48) size 76x10 scrollWidth 172
   RenderBlock {DIV} at (3,3) size 76x10
-    RenderText {#text} at (1,0) size 152x10
-      text run at (1,0) width 152: "012345678901234567890123456789"
-layer at (14,64) size 66x10 scrollWidth 154
+    RenderText {#text} at (1,0) size 170x10
+      text run at (1,0) width 170: "12,345,678,901,234,600,000,000,000,000"
+layer at (14,64) size 66x10 scrollWidth 172
   RenderBlock {DIV} at (3,3) size 66x10
-    RenderText {#text} at (1,0) size 152x10
-      text run at (1,0) width 152: "012345678901234567890123456789"
-layer at (14,80) size 78x11 scrollWidth 173
+    RenderText {#text} at (1,0) size 170x10
+      text run at (1,0) width 170: "12,345,678,901,234,600,000,000,000,000"
+layer at (14,80) size 78x11 scrollWidth 193
   RenderBlock {DIV} at (3,3) size 78x11
-    RenderText {#text} at (1,0) size 171x11
-      text run at (1,0) width 171: "012345678901234567890123456789"
-layer at (14,97) size 67x11 scrollWidth 173
+    RenderText {#text} at (1,0) size 191x11
+      text run at (1,0) width 191: "12,345,678,901,234,600,000,000,000,000"
+layer at (14,97) size 67x11 scrollWidth 193
   RenderBlock {DIV} at (3,3) size 67x11
-    RenderText {#text} at (1,0) size 171x11
-      text run at (1,0) width 171: "012345678901234567890123456789"
-layer at (14,114) size 80x12 scrollWidth 192
+    RenderText {#text} at (1,0) size 191x11
+      text run at (1,0) width 191: "12,345,678,901,234,600,000,000,000,000"
+layer at (14,114) size 80x12 scrollWidth 214
   RenderBlock {DIV} at (3,3) size 80x12
-    RenderText {#text} at (1,0) size 190x12
-      text run at (1,0) width 190: "012345678901234567890123456789"
-layer at (14,132) size 68x12 scrollWidth 192
+    RenderText {#text} at (1,0) size 212x12
+      text run at (1,0) width 212: "12,345,678,901,234,600,000,000,000,000"
+layer at (14,132) size 68x12 scrollWidth 214
   RenderBlock {DIV} at (3,3) size 68x12
-    RenderText {#text} at (1,0) size 190x12
-      text run at (1,0) width 190: "012345678901234567890123456789"
-layer at (16,152) size 101x13 scrollWidth 211
+    RenderText {#text} at (1,0) size 212x12
+      text run at (1,0) width 212: "12,345,678,901,234,600,000,000,000,000"
+layer at (16,152) size 101x13 scrollWidth 236
   RenderBlock {DIV} at (3,3) size 101x13
-    RenderText {#text} at (1,0) size 209x13
-      text run at (1,0) width 209: "012345678901234567890123456789"
-layer at (16,175) size 87x13 scrollWidth 211
+    RenderText {#text} at (1,0) size 234x13
+      text run at (1,0) width 234: "12,345,678,901,234,600,000,000,000,000"
+layer at (16,175) size 87x13 scrollWidth 236
   RenderBlock {DIV} at (3,3) size 87x13
-    RenderText {#text} at (1,0) size 209x13
-      text run at (1,0) width 209: "012345678901234567890123456789"
-layer at (16,198) size 103x15 scrollWidth 230
+    RenderText {#text} at (1,0) size 234x13
+      text run at (1,0) width 234: "12,345,678,901,234,600,000,000,000,000"
+layer at (16,198) size 103x15 scrollWidth 257
   RenderBlock {DIV} at (3,3) size 103x15
-    RenderText {#text} at (1,0) size 228x15
-      text run at (1,0) width 228: "012345678901234567890123456789"
-layer at (16,223) size 88x15 scrollWidth 230
+    RenderText {#text} at (1,0) size 255x15
+      text run at (1,0) width 255: "12,345,678,901,234,600,000,000,000,000"
+layer at (16,223) size 88x15 scrollWidth 257
   RenderBlock {DIV} at (3,3) size 88x15
-    RenderText {#text} at (1,0) size 228x15
-      text run at (1,0) width 228: "012345678901234567890123456789"
-layer at (16,248) size 122x16 scrollWidth 249
+    RenderText {#text} at (1,0) size 255x15
+      text run at (1,0) width 255: "12,345,678,901,234,600,000,000,000,000"
+layer at (16,248) size 122x16 scrollWidth 278
   RenderBlock {DIV} at (3,3) size 122x16
-    RenderText {#text} at (1,0) size 247x16
-      text run at (1,0) width 247: "012345678901234567890123456789"
-layer at (16,274) size 106x16 scrollWidth 249
+    RenderText {#text} at (1,0) size 276x16
+      text run at (1,0) width 276: "12,345,678,901,234,600,000,000,000,000"
+layer at (16,274) size 106x16 scrollWidth 278
   RenderBlock {DIV} at (3,3) size 106x16
-    RenderText {#text} at (1,0) size 247x16
-      text run at (1,0) width 247: "012345678901234567890123456789"
-layer at (16,300) size 124x17 scrollWidth 268
+    RenderText {#text} at (1,0) size 276x16
+      text run at (1,0) width 276: "12,345,678,901,234,600,000,000,000,000"
+layer at (16,300) size 124x17 scrollWidth 299
   RenderBlock {DIV} at (3,3) size 124x17
-    RenderText {#text} at (1,0) size 266x17
-      text run at (1,0) width 266: "012345678901234567890123456789"
-layer at (16,327) size 107x17 scrollWidth 268
+    RenderText {#text} at (1,0) size 297x17
+      text run at (1,0) width 297: "12,345,678,901,234,600,000,000,000,000"
+layer at (16,327) size 107x17 scrollWidth 299
   RenderBlock {DIV} at (3,3) size 107x17
-    RenderText {#text} at (1,0) size 266x17
-      text run at (1,0) width 266: "012345678901234567890123456789"
-layer at (174,53) size 144x18 scrollWidth 287
+    RenderText {#text} at (1,0) size 297x17
+      text run at (1,0) width 297: "12,345,678,901,234,600,000,000,000,000"
+layer at (174,53) size 144x18 scrollWidth 320
   RenderBlock {DIV} at (3,3) size 144x18
-    RenderText {#text} at (1,0) size 285x18
-      text run at (1,0) width 285: "012345678901234567890123456789"
-layer at (174,81) size 126x18 scrollWidth 287
+    RenderText {#text} at (1,0) size 318x18
+      text run at (1,0) width 318: "12,345,678,901,234,600,000,000,000,000"
+layer at (174,81) size 126x18 scrollWidth 320
   RenderBlock {DIV} at (3,3) size 126x18
-    RenderText {#text} at (1,0) size 285x18
-      text run at (1,0) width 285: "012345678901234567890123456789"
-layer at (174,109) size 146x18 scrollWidth 306
+    RenderText {#text} at (1,0) size 318x18
+      text run at (1,0) width 318: "12,345,678,901,234,600,000,000,000,000"
+layer at (174,109) size 146x18 scrollWidth 341
   RenderBlock {DIV} at (3,3) size 146x18
-    RenderText {#text} at (1,0) size 304x18
-      text run at (1,0) width 304: "012345678901234567890123456789"
-layer at (174,137) size 126x18 scrollWidth 306
+    RenderText {#text} at (1,0) size 339x18
+      text run at (1,0) width 339: "12,345,678,901,234,600,000,000,000,000"
+layer at (174,137) size 126x18 scrollWidth 341
   RenderBlock {DIV} at (3,3) size 126x18
-    RenderText {#text} at (1,0) size 304x18
-      text run at (1,0) width 304: "012345678901234567890123456789"
-layer at (174,165) size 148x20 scrollWidth 325
+    RenderText {#text} at (1,0) size 339x18
+      text run at (1,0) width 339: "12,345,678,901,234,600,000,000,000,000"
+layer at (174,165) size 148x20 scrollWidth 363
   RenderBlock {DIV} at (3,3) size 148x20
-    RenderText {#text} at (1,0) size 323x20
-      text run at (1,0) width 323: "012345678901234567890123456789"
-layer at (174,195) size 127x20 scrollWidth 325
+    RenderText {#text} at (1,0) size 361x20
+      text run at (1,0) width 361: "12,345,678,901,234,600,000,000,000,000"
+layer at (174,195) size 127x20 scrollWidth 363
   RenderBlock {DIV} at (3,3) size 127x20
-    RenderText {#text} at (1,0) size 323x20
-      text run at (1,0) width 323: "012345678901234567890123456789"
-layer at (174,225) size 165x21 scrollWidth 344
+    RenderText {#text} at (1,0) size 361x20
+      text run at (1,0) width 361: "12,345,678,901,234,600,000,000,000,000"
+layer at (174,225) size 165x21 scrollWidth 384
   RenderBlock {DIV} at (3,3) size 165x21
-    RenderText {#text} at (1,0) size 342x21
-      text run at (1,0) width 342: "012345678901234567890123456789"
-layer at (174,256) size 143x21 scrollWidth 344
+    RenderText {#text} at (1,0) size 382x21
+      text run at (1,0) width 382: "12,345,678,901,234,600,000,000,000,000"
+layer at (174,256) size 143x21 scrollWidth 384
   RenderBlock {DIV} at (3,3) size 143x21
-    RenderText {#text} at (1,0) size 342x21
-      text run at (1,0) width 342: "012345678901234567890123456789"
-layer at (174,287) size 167x22 scrollWidth 363
+    RenderText {#text} at (1,0) size 382x21
+      text run at (1,0) width 382: "12,345,678,901,234,600,000,000,000,000"
+layer at (174,287) size 167x22 scrollWidth 405
   RenderBlock {DIV} at (3,3) size 167x22
-    RenderText {#text} at (1,0) size 361x22
-      text run at (1,0) width 361: "012345678901234567890123456789"
-layer at (174,319) size 144x22 scrollWidth 363
+    RenderText {#text} at (1,0) size 403x22
+      text run at (1,0) width 403: "12,345,678,901,234,600,000,000,000,000"
+layer at (174,319) size 144x22 scrollWidth 405
   RenderBlock {DIV} at (3,3) size 144x22
-    RenderText {#text} at (1,0) size 361x22
-      text run at (1,0) width 361: "012345678901234567890123456789"
-layer at (379,62) size 188x23 scrollWidth 382
+    RenderText {#text} at (1,0) size 403x22
+      text run at (1,0) width 403: "12,345,678,901,234,600,000,000,000,000"
+layer at (379,62) size 188x23 scrollWidth 426
   RenderBlock {DIV} at (3,3) size 188x23
-    RenderText {#text} at (1,0) size 380x23
-      text run at (1,0) width 380: "012345678901234567890123456789"
-layer at (379,95) size 163x23 scrollWidth 382
+    RenderText {#text} at (1,0) size 424x23
+      text run at (1,0) width 424: "12,345,678,901,234,600,000,000,000,000"
+layer at (379,95) size 163x23 scrollWidth 426
   RenderBlock {DIV} at (3,3) size 163x23
-    RenderText {#text} at (1,0) size 380x23
-      text run at (1,0) width 380: "012345678901234567890123456789"
-layer at (379,128) size 190x24 scrollWidth 401
+    RenderText {#text} at (1,0) size 424x23
+      text run at (1,0) width 424: "12,345,678,901,234,600,000,000,000,000"
+layer at (379,128) size 190x24 scrollWidth 447
   RenderBlock {DIV} at (3,3) size 190x24
-    RenderText {#text} at (1,0) size 399x24
-      text run at (1,0) width 399: "012345678901234567890123456789"
-layer at (379,162) size 164x24 scrollWidth 401
+    RenderText {#text} at (1,0) size 445x24
+      text run at (1,0) width 445: "12,345,678,901,234,600,000,000,000,000"
+layer at (379,162) size 164x24 scrollWidth 447
   RenderBlock {DIV} at (3,3) size 164x24
-    RenderText {#text} at (1,0) size 399x24
-      text run at (1,0) width 399: "012345678901234567890123456789"
-layer at (379,196) size 211x26 scrollWidth 420
+    RenderText {#text} at (1,0) size 445x24
+      text run at (1,0) width 445: "12,345,678,901,234,600,000,000,000,000"
+layer at (379,196) size 211x26 scrollWidth 469
   RenderBlock {DIV} at (3,3) size 211x26
-    RenderText {#text} at (1,0) size 418x26
-      text run at (1,0) width 418: "012345678901234567890123456789"
-layer at (379,232) size 184x26 scrollWidth 420
+    RenderText {#text} at (1,0) size 467x26
+      text run at (1,0) width 467: "12,345,678,901,234,600,000,000,000,000"
+layer at (379,232) size 184x26 scrollWidth 469
   RenderBlock {DIV} at (3,3) size 184x26
-    RenderText {#text} at (1,0) size 418x26
-      text run at (1,0) width 418: "012345678901234567890123456789"
-layer at (379,268) size 213x27 scrollWidth 439
+    RenderText {#text} at (1,0) size 467x26
+      text run at (1,0) width 467: "12,345,678,901,234,600,000,000,000,000"
+layer at (379,268) size 213x27 scrollWidth 490
   RenderBlock {DIV} at (3,3) size 213x27
-    RenderText {#text} at (1,0) size 437x27
-      text run at (1,0) width 437: "012345678901234567890123456789"
-layer at (379,305) size 185x27 scrollWidth 439
+    RenderText {#text} at (1,0) size 488x27
+      text run at (1,0) width 488: "12,345,678,901,234,600,000,000,000,000"
+layer at (379,305) size 185x27 scrollWidth 490
   RenderBlock {DIV} at (3,3) size 185x27
-    RenderText {#text} at (1,0) size 437x27
-      text run at (1,0) width 437: "012345678901234567890123456789"
+    RenderText {#text} at (1,0) size 488x27
+      text run at (1,0) width 488: "12,345,678,901,234,600,000,000,000,000"
