@@ -1,3 +1,12 @@
+2011-03-02  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Replaced 2 tests in GTK Skipped list that were skipped by mistake
+        by the ones that are actually failing.
+
+        * platform/gtk/Skipped:
+
 2011-03-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed; added the missing blank line at the end.
