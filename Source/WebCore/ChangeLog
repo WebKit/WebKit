@@ -1,3 +1,17 @@
+2011-03-02  Aravind Akella  <aravind.akella@nokia.com>
+
+         Reviewed by Csaba Osztrogonác.
+
+         [Qt][WK2] Memory exhausted when building qtwebkit2 on linux
+         https://bugs.webkit.org/show_bug.cgi?id=55484
+
+         Using AllInOne files to avoid memory exhaustion for debug 
+         builds on 32 bit linux machines.
+
+         No new tests. Fixing a build issue.
+
+         * WebCore.pro:
+
 2011-03-02  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by David Levin.
