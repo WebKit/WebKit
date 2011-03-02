@@ -1,3 +1,13 @@
+2011-03-02  Oleg Romashin  <romaxa@gmail.com>
+
+        Reviewed by Andreas Kling.
+
+        Fixing inspector compilation with JAVASCRIPT_DEBUGGER disabled
+        https://bugs.webkit.org/show_bug.cgi?id=55477
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::populateScriptObjects):
+
 2011-03-02  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, a trivial fix for r80096.
