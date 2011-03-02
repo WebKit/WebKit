@@ -1,3 +1,16 @@
+2011-03-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Assertion fails when a form validation bubble appears
+        https://bugs.webkit.org/show_bug.cgi?id=55550
+
+        Test: fast/forms/interactive-validation-attach-assertion.html
+
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::applyTo): Enable the interactive validation feature by
+          default. This matches to Chromium browser.
+
 2011-03-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kent Tamura.

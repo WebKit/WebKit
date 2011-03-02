@@ -1116,6 +1116,7 @@ editing/pasteboard/files-during-page-drags.html
 # https://bugs.webkit.org/show_bug.cgi?id=40520
 fast/forms/interactive-validation-lost-focusable.html
 fast/forms/interactive-validation-prevented.html
+fast/forms/interactive-validation-attach-assertion.html
 
 # Tests that seem to be Mac only, assume that smart drag-and-drop
 # is enabled or assume platform-dependent sizing.

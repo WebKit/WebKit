@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<form>
+<input required>
+<input type=submit>
+</form>
+
+<div id=console></div>
+
+<script>
+function check() {
+    testPassed('Not crashed.');
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+// Make sure the text field is rendered.
+document.getElementsByTagName('input')[0].offsetLeft;
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    setTimeout(check, 10);
+    document.getElementsByTagName('input')[1].click();
+} else {
+    debug('Click the submit button.  The test passes if the browser doesn\'t crash.');
+}
+
+</script>
+</body>
+</html>

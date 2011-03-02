@@ -2,6 +2,19 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Assertion fails when a form validation bubble appears
+        https://bugs.webkit.org/show_bug.cgi?id=55550
+
+        Test: fast/forms/interactive-validation-attach-assertion.html
+
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::buildBubbleTree):
+         Just remove unnecessary attach().
+
+2011-03-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Support localized numbers in <input type=number>
         https://bugs.webkit.org/show_bug.cgi?id=42484
 

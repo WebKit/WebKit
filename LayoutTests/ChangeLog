@@ -2,6 +2,20 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Assertion fails when a form validation bubble appears
+        https://bugs.webkit.org/show_bug.cgi?id=55550
+
+        * fast/forms/interactive-validation-attach-assertion-expected.txt: Added.
+        * fast/forms/interactive-validation-attach-assertion.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
+2011-03-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Support localized numbers in <input type=number>
         https://bugs.webkit.org/show_bug.cgi?id=42484
 

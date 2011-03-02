@@ -148,6 +148,8 @@ void WebPreferences::applyTo(WebView* webView)
     // tabbing to links by default.
     webView->setTabsToLinks(tabsToLinks);
     settings->setCaretBrowsingEnabled(caretBrowsingEnabled);
+    settings->setAcceleratedCompositingEnabled(acceleratedCompositingEnabled);
+    settings->setAccelerated2dCanvasEnabled(accelerated2dCanvasEnabled);
 
     // Fixed values.
     settings->setShouldPaintCustomScrollbars(true);
@@ -160,7 +162,6 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setTextDirectionSubmenuInclusionBehaviorNeverIncluded();
     settings->setUsesEncodingDetector(false);
     settings->setImagesEnabled(true);
-    settings->setAcceleratedCompositingEnabled(acceleratedCompositingEnabled);
-    settings->setAccelerated2dCanvasEnabled(accelerated2dCanvasEnabled);
+    settings->setInteractiveFormValidationEnabled(true);
 }
 

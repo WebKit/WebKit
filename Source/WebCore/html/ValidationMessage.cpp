@@ -121,11 +121,8 @@ void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
     // to inherit an existing shadow tree.
     if (host->shadowRoot())
         host->shadowRoot()->appendChild(m_bubble.get(), ec);
-    else {
+    else
         host->setShadowRoot(m_bubble);
-        // FIXME: The following attach() should be unnecessary.
-        m_bubble->attach();
-    }
 
     m_bubble->appendChild(ElementWithPseudoId::create(doc, "-webkit-validation-bubble-top-outer-arrow"), ec);
     m_bubble->appendChild(ElementWithPseudoId::create(doc, "-webkit-validation-bubble-top-inner-arrow"), ec);
