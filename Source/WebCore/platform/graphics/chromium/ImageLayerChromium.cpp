@@ -38,18 +38,6 @@
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
 
-#if USE(SKIA)
-#include "NativeImageSkia.h"
-#include "PlatformContextSkia.h"
-#endif
-
-#if PLATFORM(CG)
-#include <CoreGraphics/CGBitmapContext.h>
-#include <CoreGraphics/CGContext.h>
-#include <CoreGraphics/CGImage.h>
-#include <wtf/RetainPtr.h>
-#endif
-
 namespace WebCore {
 
 PassRefPtr<ImageLayerChromium> ImageLayerChromium::create(GraphicsLayerChromium* owner)
@@ -84,63 +72,12 @@ void ImageLayerChromium::updateContentsIfDirty()
         return;
     }
 
-    NativeImagePtr nativeImage = m_contents->nativeImageForCurrentFrame();
+    m_decodedImage.updateFromImage(m_contents->nativeImageForCurrentFrame());
+}
 
-#if USE(SKIA)
-    // The layer contains an Image.
-    NativeImageSkia* skiaImage = static_cast<NativeImageSkia*>(nativeImage);
-    const SkBitmap* skiaBitmap = skiaImage;
-    IntSize bitmapSize(skiaBitmap->width(), skiaBitmap->height());
-    ASSERT(skiaBitmap);
-#elif PLATFORM(CG)
-    // NativeImagePtr is a CGImageRef on Mac OS X.
-    int width = CGImageGetWidth(nativeImage);
-    int height = CGImageGetHeight(nativeImage);
-    IntSize bitmapSize(width, height);
-#endif
-
-    if (m_uploadBufferSize != bitmapSize)
-        resizeUploadBufferForImage(bitmapSize);
-    m_uploadUpdateRect = IntRect(IntPoint(0, 0), bitmapSize);
-
-#if USE(SKIA)
-    SkAutoLockPixels lock(*skiaBitmap);
-    // FIXME: do we need to support more image configurations?
-    ASSERT(skiaBitmap->config()== SkBitmap::kARGB_8888_Config);
-    skiaBitmap->copyPixelsTo(m_uploadPixelData->data(), m_uploadPixelData->size());
-#elif PLATFORM(CG)
-    // FIXME: we should get rid of this temporary copy where possible.
-    int tempRowBytes = width * 4;
-    // Note we do not zero this vector since we are going to
-    // completely overwrite its contents with the image below.
-    // Try to reuse the color space from the image to preserve its colors.
-    // Some images use a color space (such as indexed) unsupported by the bitmap context.
-    RetainPtr<CGColorSpaceRef> colorSpaceReleaser;
-    CGColorSpaceRef colorSpace = CGImageGetColorSpace(nativeImage);
-    CGColorSpaceModel colorSpaceModel = CGColorSpaceGetModel(colorSpace);
-    switch (colorSpaceModel) {
-    case kCGColorSpaceModelMonochrome:
-    case kCGColorSpaceModelRGB:
-    case kCGColorSpaceModelCMYK:
-    case kCGColorSpaceModelLab:
-    case kCGColorSpaceModelDeviceN:
-        break;
-    default:
-        colorSpaceReleaser.adoptCF(CGColorSpaceCreateDeviceRGB());
-        colorSpace = colorSpaceReleaser.get();
-        break;
-    }
-    RetainPtr<CGContextRef> tempContext(AdoptCF, CGBitmapContextCreate(m_uploadPixelData->data(),
-                                                                       width, height, 8, tempRowBytes,
-                                                                       colorSpace,
-                                                                       kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
-    CGContextSetBlendMode(tempContext.get(), kCGBlendModeCopy);
-    CGContextDrawImage(tempContext.get(),
-                       CGRectMake(0, 0, static_cast<CGFloat>(width), static_cast<CGFloat>(height)),
-                       nativeImage);
-#else
-#error "Need to implement for your platform."
-#endif
+void ImageLayerChromium::updateTextureIfNeeded()
+{
+    updateTexture(m_decodedImage.pixels(), m_decodedImage.size());
 }
 
 }

@@ -35,6 +35,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "ContentLayerChromium.h"
+#include "PlatformImage.h"
 
 #if PLATFORM(CG)
 #include <wtf/RetainPtr.h>
@@ -55,8 +56,11 @@ public:
     void setContents(Image* image);
 
 private:
+    virtual void updateTextureIfNeeded();
+
     ImageLayerChromium(GraphicsLayerChromium* owner);
 
+    PlatformImage m_decodedImage;
     RefPtr<Image> m_contents;
 };
 
