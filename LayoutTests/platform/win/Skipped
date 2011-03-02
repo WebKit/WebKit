@@ -419,6 +419,9 @@ http/tests/websocket/tests/reload-crash.html
 # Sometimes fails http://webkit.org/b/55329
 fast/events/pageshow-pagehide-on-back-cached.html
 
+# Crashes http://webkit.org/b/55069
+fast/text/international/text-combine-parser-test.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

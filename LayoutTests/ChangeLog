@@ -1,3 +1,11 @@
+2011-03-02  Adam Roben  <aroben@apple.com>
+
+        Skip a crashing test on Windows
+
+        <http://webkit.org/b/55069> tracks the failure.
+
+        * platform/win/Skipped: Added fast/text/international/text-combine-parser-test.html.
+
 2011-03-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
