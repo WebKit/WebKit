@@ -1,3 +1,14 @@
+2011-03-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add pre- and post-build actions for JavaScriptCore GYP build
+        https://bugs.webkit.org/show_bug.cgi?id=55507
+
+        Remove the portion of this file that was split out into common.gypi.
+
+        * gyp/JavaScriptGlue.gyp:
+
 2011-02-28  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig & Darin Adler.

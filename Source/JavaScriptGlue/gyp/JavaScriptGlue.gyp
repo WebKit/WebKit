@@ -66,16 +66,14 @@
     {
       'target_name': 'Update Version',
       'type': 'none',
-      'actions': [
-        {
-          'action_name': 'Update Info.plist with version information',
-          'inputs': [],
-          'outputs': [],
-          'action': [
-            'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(DEPTH)/JavaScriptGlue/Info.plist'
-          ],
-        },
-      ], # actions
+      'actions': [{
+        'action_name': 'Update Info.plist with version information',
+        'inputs': [],
+         'outputs': [],
+         'action': [
+           'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(DEPTH)/JavaScriptGlue/Info.plist'
+          ]
+      }],
     },
   ], # targets
 }

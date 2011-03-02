@@ -7,6 +7,10 @@
     {
       'target_name': 'JavaScriptCore',
       'type': 'shared_library',
+      'dependencies': [
+        'Derived Sources',
+        'Update Version',
+      ],
       'include_dirs': [
         '<(DEPTH)', # Some paths in API include JavaScriptCore/
         '<(DEPTH)/JavaScriptCore',
@@ -58,14 +62,6 @@
         ['exclude', '.*BSTR.*$'],
         ['exclude', 'jsc.cpp$'],
       ],
-      'actions': [{
-        'action_name': 'generate_derived_sources',
-        'inputs': [],
-        'outputs': [],
-        'action': [
-          'sh', 'generate-derived-sources.sh',
-        ],
-      }],
       'configurations': {
         'Debug': {},
         'Relase': {},
@@ -74,6 +70,26 @@
       'default_configuration': 'Debug',
       'defines': [
         'WEBKIT_VERSION_MIN_REQUIRED=WEBKIT_VERSION_LATEST',
+      ],
+      'postbuilds': [
+        {
+          'postbuild_name': 'Check For Global Initializers',
+          'action': [
+            'sh', '<(DEPTH)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-global-initializers'
+          ],
+        },
+        {
+          'postbuild_name': 'Check For Exit Time Destructors',
+          'action': [
+            'sh', '<(DEPTH)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-exit-time-destructors'
+          ],
+        },
+        {
+          'postbuild_name': 'Check For Weak VTables and Externals',
+          'action': [
+            'sh', '<(DEPTH)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-weak-vtables-and-externals'
+          ],
+        },
       ],
       'conditions': [
         ['OS=="mac"', {
@@ -108,6 +124,30 @@
           },
         }],
       ],
+    },
+    {
+      'target_name': 'Derived Sources',
+      'type': 'none',
+      'actions': [{
+        'action_name': 'generate_derived_sources',
+        'inputs': [],
+        'outputs': [],
+        'action': [
+          'sh', 'generate-derived-sources.sh',
+        ],
+      }],
+    },
+    {
+      'target_name': 'Update Version',
+      'type': 'none',
+      'actions': [{
+        'action_name': 'Update Info.plist with version information',
+        'inputs': [],
+         'outputs': [],
+         'action': [
+           'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(DEPTH)/JavaScriptCore/Info.plist'
+          ]
+      }],
     },
   ], # targets
 }
