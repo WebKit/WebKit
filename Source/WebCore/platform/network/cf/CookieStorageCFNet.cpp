@@ -101,7 +101,7 @@ static inline CFRunLoopRef cookieStorageObserverRunLoop()
     return loaderRunLoop();
 }
 
-void beginObservingCookieChanges()
+void startObservingCookieChanges()
 {
     ASSERT(isMainThread());
 
@@ -115,7 +115,7 @@ void beginObservingCookieChanges()
     CFHTTPCookieStorageAddObserver(cookieStorage, runLoop, kCFRunLoopDefaultMode, notifyCookiesChanged, 0);
 }
 
-void finishObservingCookieChanges()
+void stopObservingCookieChanges()
 {
     ASSERT(isMainThread());
 

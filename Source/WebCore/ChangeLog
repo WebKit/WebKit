@@ -1,3 +1,11 @@
+2011-03-02  Brian Weinstein  <bweinstein@apple.com>
+
+        Fix fallout from a last minute renaming.
+
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        (WebCore::startObservingCookieChanges):
+        (WebCore::stopObservingCookieChanges):
+
 2011-03-01  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
