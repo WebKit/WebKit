@@ -1,3 +1,13 @@
+2011-03-02  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        A WebKitCSSKeyframesRule object should set itself as the parent for inserted rules
+        https://bugs.webkit.org/show_bug.cgi?id=55488
+
+        * fast/css/css-keyframe-parent-expected.txt: Added.
+        * fast/css/css-keyframe-parent.html: Added.
+
 2011-03-02  Adam Roben  <aroben@apple.com>
 
         Add some new tests to the WebKit2 Skipped file

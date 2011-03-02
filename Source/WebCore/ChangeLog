@@ -1,3 +1,15 @@
+2011-03-02  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        A WebKitCSSKeyframesRule object should set itself as the parent for inserted rules
+        https://bugs.webkit.org/show_bug.cgi?id=55488
+
+        Test: fast/css/css-keyframe-parent.html
+
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::append):
+
 2011-03-02  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.

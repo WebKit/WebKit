@@ -88,7 +88,14 @@ const WebKitCSSKeyframeRule* WebKitCSSKeyframesRule::item(unsigned index) const
 
 void WebKitCSSKeyframesRule::append(WebKitCSSKeyframeRule* rule)
 {
-    m_lstCSSRules.get()->append(rule);
+    if (!rule)
+        return;
+
+    m_lstCSSRules->append(rule);
+    rule->setParent(this);
+    
+    if (CSSMutableStyleDeclaration* style = rule->style())
+        style->setParent(this);
 }
 
 void WebKitCSSKeyframesRule::insertRule(const String& rule)

@@ -1,0 +1,23 @@
+<html>
+<head>
+    <script language="javascript">
+    function runTest()
+    {
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        rule = document.styleSheets[0].cssRules[0];
+        if (rule[0].parentRule == rule)
+            document.body.innerHTML = "SUCCESS";
+    }
+    </script>
+    <style type="text/css">
+    @-webkit-keyframes anim {
+        from {
+            color: green;
+        }
+    }
+    </style>
+</head>
+<body onload="runTest()">FAILURE</body>
+</html>
