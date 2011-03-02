@@ -1,3 +1,14 @@
+2011-03-01  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add feature define for data transfer items
+        https://bugs.webkit.org/show_bug.cgi?id=55510
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * features.pri:
+
 2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed. Roll out r80068 and r80073 due to breaking WebKit2 Qt port.

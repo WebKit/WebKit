@@ -70,6 +70,7 @@ my (
     $databaseSupport,
     $datagridSupport,
     $datalistSupport,
+    $dataTransferItemsSupport,
     $deviceOrientationSupport,
     $directoryUploadSupport,
     $domStorageSupport,
@@ -147,6 +148,9 @@ my @features = (
 
     { option => "datalist", desc => "Toggle HTML5 datalist support",
       define => "ENABLE_DATALIST", default => 1, value => \$datalistSupport },
+
+    { option => "data-transfer-items", desc => "Toggle HTML5 data transfer items support",
+      define => "ENABLE_DATA_TRANSFER_ITEMS", default => 0, value => \$dataTransferItemsSupport },
 
     { option => "device-orientation", desc => "Toggle DeviceOrientation support",
       define => "ENABLE_DEVICE_ORIENTATION", default => 0, value => \$deviceOrientationSupport },
