@@ -1,3 +1,10 @@
+2011-03-01  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after removal of Frame::isContentEditable.
+
+        * WebFrame.cpp:
+        (wxWebFrame::IsEditable):
+
 2011-02-28  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Ryosuke Niwa.

@@ -406,7 +406,7 @@ void wxWebFrame::MakeEditable(bool enable)
         m_impl->frame->document()->setDesignMode(enable ? WebCore::Document::on : WebCore::Document::off);
 }
 
-bool wxWebFrame::IsEditable()
+bool wxWebFrame::IsEditable() const
 {
     if (m_impl->frame && m_impl->frame->document())
         return m_impl->frame->document()->inDesignMode();
