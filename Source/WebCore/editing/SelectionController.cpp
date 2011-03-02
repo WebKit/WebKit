@@ -280,12 +280,16 @@ static bool shouldRemovePositionAfterAdoptingTextReplacement(Position& position,
     if (!position.anchorNode() || position.anchorNode() != node || position.anchorType() != Position::PositionIsOffsetInAnchor)
         return false;
 
-    if (static_cast<unsigned>(position.offsetInContainerNode()) > offset && static_cast<unsigned>(position.offsetInContainerNode()) < offset + oldLength)
+    ASSERT(position.offsetInContainerNode() >= 0);
+    unsigned positionOffset = static_cast<unsigned>(position.offsetInContainerNode());
+    if (positionOffset > offset && positionOffset < offset + oldLength)
         return true;
 
-    if ((type == EndPointIsStart && static_cast<unsigned>(position.offsetInContainerNode()) >= offset + oldLength)
-        || (type == EndPointIsEnd && static_cast<unsigned>(position.offsetInContainerNode()) > offset + oldLength))
-        position.moveToOffset(position.offsetInContainerNode() - oldLength + newLength);
+    // Adjust the offset if the position is after or at the end of the deleted contents (positionOffset >= offset + oldLength)
+    // to avoid having a stale offset except when the position is the end of selection and nothing is deleted, in which case,
+    // adjusting offset results in incorrectly extending the selection until the end of newly inserted contents.
+    if ((positionOffset > offset + oldLength) || (positionOffset == offset + oldLength && (type == EndPointIsStart || oldLength)))
+        position.moveToOffset(positionOffset - oldLength + newLength);
 
     return false;
 }
@@ -307,14 +311,18 @@ void SelectionController::textWillBeReplaced(CharacterData* node, unsigned offse
 
     if ((base != m_selection.base() || extent != m_selection.extent() || start != m_selection.start() || end != m_selection.end())
         && !shouldRemoveStart && !shouldRemoveEnd) {
+        VisibleSelection newSelection;
         if (!shouldRemoveBase && !shouldRemoveExtent)
-            m_selection.setWithoutValidation(base, extent);
+            newSelection.setWithoutValidation(base, extent);
         else {
-            if (m_selection.isBaseFirst())
-                m_selection.setWithoutValidation(m_selection.start(), m_selection.end());
+            if (newSelection.isBaseFirst())
+                newSelection.setWithoutValidation(start, end);
             else
-                m_selection.setWithoutValidation(m_selection.end(), m_selection.start());
+                newSelection.setWithoutValidation(end, start);
         }
+        m_frame->document()->updateLayout();
+        setSelection(newSelection, 0);
+        return;
     }
 
     respondToNodeModification(node, shouldRemoveBase, shouldRemoveExtent, shouldRemoveStart, shouldRemoveEnd);

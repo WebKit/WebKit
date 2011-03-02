@@ -2,6 +2,7 @@ ALERT: Successfully received AXSelectedTextChanged
 ALERT: Successfully received AXSelectedTextChanged
 ALERT: Successfully received AXSelectedTextChanged
 ALERT: Successfully received AXSelectedTextChanged
+ALERT: Successfully received AXSelectedTextChanged
 ALERT: Successfully received AXValueChanged
 conhello tent inside
 This tests that ARIA removing an element from a live region sends the correct notification.

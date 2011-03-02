@@ -6,22 +6,26 @@ PASS: Replacing nodeValue of startContainer cleared selection
 PASS: Replacing nodeValue of endContainer cleared selection
 PASS: Appending " WebKit" to startContainer did not move selection
 PASS: Appending " WebKit" to endContainer did not move selection
-PASS: Inserting " WebKit" to startContainer before the end point moved the start offset from 2 to 9
-PASS: Inserting " WebKit" to endContainer before the end point moved the start offset from 3 to 10
+PASS: Inserting " WebKit" to startContainer before the end point moved the offset from 2 to 9
+PASS: Inserting " WebKit" to endContainer before the end point moved the offset from 3 to 10
 PASS: Inserting " WebKit" to startContainer after the end point did not move selection
 PASS: Inserting " WebKit" to endContainer after the end point did not move selection
 PASS: Removing text in startContainer containing the end point cleared selection
 PASS: Removing text in endContainer containing the end point cleared selection
-PASS: Removing 2 characters in startContainer before the end point moved the start offset from 2 to 0
-PASS: Removing 2 characters in endContainer before the end point moved the start offset from 3 to 1
+PASS: Removing text in startContainer containing the start point cleared selection
+PASS: Removing text in endContainer containing the start point moved the offset from 3 to 0
+PASS: Removing 2 characters in startContainer before the end point moved the offset from 2 to 0
+PASS: Removing 2 characters in endContainer before the end point moved the offset from 3 to 1
+PASS: Removing 3 characters at the beginning of startContainer cleared selection
+PASS: Removing 3 characters at the beginning of endContainer moved the offset from 3 to 0
 PASS: Removing text in startContainer after the end point did not move selection
 PASS: Removing text in endContainer after the end point did not move selection
 PASS: Replacing text in startContainer containing the end point cleared selection
 PASS: Replacing text in endContainer containing the end point cleared selection
 PASS: Replacing 2 characters in startContainer by 2 characters before the end point did not move selection
 PASS: Replacing 2 characters in endContainer by 2 characters before the end point did not move selection
-PASS: Replacing 2 characters in startContainer by 1 characters before the end point moved the start offset from 2 to 1
-PASS: Replacing 2 characters in endContainer by 1 characters before the end point moved the start offset from 3 to 2
+PASS: Replacing 2 characters in startContainer by 1 characters before the end point moved the offset from 2 to 1
+PASS: Replacing 2 characters in endContainer by 1 characters before the end point moved the offset from 3 to 2
 PASS: Replacing 2 characters in startContainer by 2 characters after the end point did not move selection
 PASS: Replacing 2 characters in endContainer by 2 characters after the end point did not move selection
 
@@ -31,22 +35,26 @@ PASS: Replacing nodeValue of startContainer cleared selection
 PASS: Replacing nodeValue of endContainer cleared selection
 PASS: Appending " WebKit" to startContainer did not move selection
 PASS: Appending " WebKit" to endContainer did not move selection
-PASS: Inserting " WebKit" to startContainer before the end point moved the start offset from 2 to 9
-PASS: Inserting " WebKit" to endContainer before the end point moved the start offset from 3 to 10
+PASS: Inserting " WebKit" to startContainer before the end point moved the offset from 2 to 9
+PASS: Inserting " WebKit" to endContainer before the end point moved the offset from 3 to 10
 PASS: Inserting " WebKit" to startContainer after the end point did not move selection
 PASS: Inserting " WebKit" to endContainer after the end point did not move selection
 PASS: Removing text in startContainer containing the end point cleared selection
 PASS: Removing text in endContainer containing the end point cleared selection
-PASS: Removing 2 characters in startContainer before the end point moved the start offset from 2 to 0
-PASS: Removing 2 characters in endContainer before the end point moved the start offset from 3 to 1
+PASS: Removing text in startContainer containing the start point cleared selection
+PASS: Removing text in endContainer containing the start point moved the offset from 3 to 0
+PASS: Removing 2 characters in startContainer before the end point moved the offset from 2 to 0
+PASS: Removing 2 characters in endContainer before the end point moved the offset from 3 to 1
+PASS: Removing 3 characters at the beginning of startContainer cleared selection
+PASS: Removing 3 characters at the beginning of endContainer moved the offset from 3 to 0
 PASS: Removing text in startContainer after the end point did not move selection
 PASS: Removing text in endContainer after the end point did not move selection
 PASS: Replacing text in startContainer containing the end point cleared selection
 PASS: Replacing text in endContainer containing the end point cleared selection
 PASS: Replacing 2 characters in startContainer by 2 characters before the end point did not move selection
 PASS: Replacing 2 characters in endContainer by 2 characters before the end point did not move selection
-PASS: Replacing 2 characters in startContainer by 1 characters before the end point moved the start offset from 2 to 1
-PASS: Replacing 2 characters in endContainer by 1 characters before the end point moved the start offset from 3 to 2
+PASS: Replacing 2 characters in startContainer by 1 characters before the end point moved the offset from 2 to 1
+PASS: Replacing 2 characters in endContainer by 1 characters before the end point moved the offset from 3 to 2
 PASS: Replacing 2 characters in startContainer by 2 characters after the end point did not move selection
 PASS: Replacing 2 characters in endContainer by 2 characters after the end point did not move selection
 

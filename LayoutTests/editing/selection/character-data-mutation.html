@@ -41,7 +41,7 @@ function runSingleTest(actor, isStart, expectedOffset) {
         message = 'exchanged base and extent';
     else {
         var actualOffset = isStart ? selection.getRangeAt(0).startOffset : selection.getRangeAt(0).endOffset;
-        message = actualOffset == originalOffset ? 'did not move selection' : 'moved the start offset from ' +
+        message = actualOffset == originalOffset ? 'did not move selection' : 'moved the offset from ' +
             originalOffset + ' to ' + actualOffset;
 
         if (actualOffset != expectedOffset)
@@ -71,8 +71,12 @@ function runTests() {
 
     runTestPairs(function(node, nodeName) { node.deleteData(1, 4);
         return 'Removing text in ' + nodeName + ' containing the end point'; }, undefined, undefined);
+    runTestPairs(function(node, nodeName) { node.deleteData(0, 3);
+        return 'Removing text in ' + nodeName + ' containing the start point'; }, undefined, 0);
     runTestPairs(function(node, nodeName) { node.deleteData(0, 2);
         return 'Removing 2 characters in ' + nodeName + ' before the end point'; }, 0, 1);
+    runTestPairs(function(node, nodeName) { node.deleteData(0, 3);
+        return 'Removing 3 characters at the beginning of ' + nodeName; }, undefined, 0);
     runTestPairs(function(node, nodeName) { node.deleteData(3, 2);
         return 'Removing text in ' + nodeName + ' after the end point'; }, 2, 3);
 
@@ -94,9 +98,6 @@ baseIsFirst = false;
 document.write('\nExtent is first:\n');
 runTests();
 
-/*
-runTestPairs(function(node, nodeName) { node.splitText(3); return 'Splitting ' + nodeName; });
-*/
 test.style.display = 'none';
 
 document.write('\nDONE');
