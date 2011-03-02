@@ -4,21 +4,28 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 8 of #text > SPAN > DIV > BODY > HTML > #document to 9 of #text > SPAN > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of #text > SPAN > DIV > BODY > HTML > #document to 9 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 8 of #text > SPAN > DIV > BODY > HTML > #document to 8 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 7 of #text > SPAN > DIV > BODY > HTML > #document to 8 of #text > SPAN > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > SPAN > DIV > BODY > HTML > #document to 8 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > SPAN > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 6 of #text > SPAN > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > SPAN > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 6 of #text > SPAN > DIV > BODY > HTML > #document to 6 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 5 of #text > SPAN > DIV > BODY > HTML > #document to 6 of #text > SPAN > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > SPAN > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > SPAN > DIV > BODY > HTML > #document to 5 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > SPAN > DIV > BODY > HTML > #document to 6 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > SPAN > DIV > BODY > HTML > #document to 5 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 9 of #text > SPAN > DIV > BODY > HTML > #document to 10 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > SPAN > DIV > BODY > HTML > #document to 9 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification

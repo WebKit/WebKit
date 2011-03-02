@@ -1,5 +1,15 @@
 2011-03-02  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed Chromium rebaselines for r80121; Added the failing expectation for
+        editing/input/setting-input-value-cancel-ime-composition.html due to the bug 55560.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/chromium-linux/editing/pasteboard/smart-paste-003-expected.txt: Updated.
+        * platform/chromium-linux/editing/pasteboard/smart-paste-004-expected.txt: Ditto.
+        * platform/chromium-win/editing/ [...]: Ditto.
+
+2011-03-02  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed GTK rebaselines for r80121; Also skip editing/input/setting-input-value-cancel-ime-composition.html
         because GTK port doesn't implement textInputController.hasMarkedText().
 
