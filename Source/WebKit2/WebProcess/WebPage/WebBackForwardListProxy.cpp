@@ -51,13 +51,13 @@ typedef HashMap<RefPtr<HistoryItem>, uint64_t> HistoryItemToIDMap;
 
 static IDToHistoryItemMap& idToHistoryItemMap()
 {
-    static IDToHistoryItemMap map;
+    DEFINE_STATIC_LOCAL(IDToHistoryItemMap, map, ());
     return map;
 } 
 
 static HistoryItemToIDMap& historyItemToIDMap()
 {
-    static HistoryItemToIDMap map;
+    DEFINE_STATIC_LOCAL(HistoryItemToIDMap, map, ());
     return map;
 } 
 

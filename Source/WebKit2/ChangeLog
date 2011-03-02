@@ -1,3 +1,27 @@
+2011-03-01  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add verification scripts to WebKit2 project and fix the issues they reveal.
+
+        * Configurations/Base.xcconfig: Add linker flags to prevent C++ standard
+        library functions from being exported as weak externals.
+        * Configurations/WebKit2.xcconfig: Inherit linker flags from the project level.
+        * Shared/WebContextMenuItem.cpp:
+        (WebKit::WebContextMenuItem::separatorItem): Use DEFINE_STATIC_LOCAL.
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::webPageGroupMap): Ditto.
+        * WebKit2.xcodeproj/project.pbxproj: Don't copy .in files in to the framework.
+        Run verification scripts at the appropriate times.
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::didBeginEditing): Use DEFINE_STATIC_LOCAL.
+        (WebKit::WebEditorClient::respondToChangedContents): Ditto.
+        (WebKit::WebEditorClient::respondToChangedSelection): Ditto.
+        (WebKit::WebEditorClient::didEndEditing): Ditto.
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::idToHistoryItemMap): Ditto.
+        (WebKit::historyItemToIDMap): Ditto.
+
 2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed. Roll out r80068 and r80073 due to breaking WebKit2 Qt port.

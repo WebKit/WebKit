@@ -124,6 +124,12 @@ for my $file (sort @files) {
                 next if $shortName eq "HostedNetscapePluginStream.o";
                 next if $shortName eq "NetscapePluginInstanceProxy.o";
             }
+            if ($target eq "WebKit2") {
+                next if $shortName eq "WebContext.o";
+                next if $shortName eq "WebFrame.o";
+                next if $shortName eq "WebPage.o";
+                next if $shortName eq "WebPageProxy.o";
+            }
         }
 
         print "ERROR: $shortName has one or more global initializers in it! ($file), near @globals\n";

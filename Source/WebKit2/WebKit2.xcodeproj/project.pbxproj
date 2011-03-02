@@ -277,15 +277,12 @@
 		512E3525130B550600ABD19A /* WebApplicationCacheManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 512E3521130B550100ABD19A /* WebApplicationCacheManagerProxy.h */; };
 		512E352E130B55AF00ABD19A /* WebApplicationCacheManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512E352B130B55AF00ABD19A /* WebApplicationCacheManager.cpp */; };
 		512E352F130B55AF00ABD19A /* WebApplicationCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 512E352C130B55AF00ABD19A /* WebApplicationCacheManager.h */; };
-		512E3530130B55AF00ABD19A /* WebApplicationCacheManager.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 512E352D130B55AF00ABD19A /* WebApplicationCacheManager.messages.in */; };
 		512E356A130B57F000ABD19A /* WebApplicationCacheManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512E3568130B57F000ABD19A /* WebApplicationCacheManagerMessageReceiver.cpp */; };
 		512E356B130B57F000ABD19A /* WebApplicationCacheManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 512E3569130B57F000ABD19A /* WebApplicationCacheManagerMessages.h */; };
-		512E35F1130B638C00ABD19A /* WebApplicationCacheManagerProxy.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 512E35F0130B638C00ABD19A /* WebApplicationCacheManagerProxy.messages.in */; };
 		512E35F8130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512E35F6130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp */; };
 		512E35F9130B642E00ABD19A /* WebApplicationCacheManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 512E35F7130B642E00ABD19A /* WebApplicationCacheManagerProxyMessages.h */; };
 		512F588A12A8836600629530 /* AuthenticationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F588712A8836600629530 /* AuthenticationManager.cpp */; };
 		512F588B12A8836600629530 /* AuthenticationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F588812A8836600629530 /* AuthenticationManager.h */; };
-		512F588C12A8836600629530 /* AuthenticationManager.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 512F588912A8836600629530 /* AuthenticationManager.messages.in */; };
 		512F589612A8838800629530 /* AuthenticationChallengeProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F588E12A8838800629530 /* AuthenticationChallengeProxy.cpp */; };
 		512F589712A8838800629530 /* AuthenticationChallengeProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F588F12A8838800629530 /* AuthenticationChallengeProxy.h */; };
 		512F589812A8838800629530 /* AuthenticationDecisionListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F589012A8838800629530 /* AuthenticationDecisionListener.cpp */; };
@@ -324,10 +321,8 @@
 		51A84CE3127F386B00CA6EA4 /* WebContextMenuProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A84CE2127F386B00CA6EA4 /* WebContextMenuProxy.cpp */; };
 		51A9E0FF1315CCDE009E7031 /* WebKeyValueStorageManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A9E0FC1315CCDE009E7031 /* WebKeyValueStorageManager.cpp */; };
 		51A9E1001315CCDE009E7031 /* WebKeyValueStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A9E0FD1315CCDE009E7031 /* WebKeyValueStorageManager.h */; };
-		51A9E1011315CCDE009E7031 /* WebKeyValueStorageManager.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 51A9E0FE1315CCDE009E7031 /* WebKeyValueStorageManager.messages.in */; };
 		51A9E1051315CCFC009E7031 /* WebKeyValueStorageManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A9E1021315CCFC009E7031 /* WebKeyValueStorageManagerProxy.cpp */; };
 		51A9E1061315CCFC009E7031 /* WebKeyValueStorageManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A9E1031315CCFC009E7031 /* WebKeyValueStorageManagerProxy.h */; };
-		51A9E1071315CCFC009E7031 /* WebKeyValueStorageManagerProxy.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 51A9E1041315CCFC009E7031 /* WebKeyValueStorageManagerProxy.messages.in */; };
 		51A9E10A1315CD18009E7031 /* WKKeyValueStorageManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A9E1081315CD18009E7031 /* WKKeyValueStorageManager.cpp */; };
 		51A9E10B1315CD18009E7031 /* WKKeyValueStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A9E1091315CD18009E7031 /* WKKeyValueStorageManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51A9E1281315ED35009E7031 /* WebKeyValueStorageManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A9E1241315ED35009E7031 /* WebKeyValueStorageManagerMessageReceiver.cpp */; };
@@ -3438,6 +3433,11 @@
 				8DC2EF520486A6940098B216 /* Resources */,
 				8DC2EF540486A6940098B216 /* Sources */,
 				8DC2EF560486A6940098B216 /* Frameworks */,
+				5DF408C0131DD37C00130071 /* Check For Global Initializers */,
+				5DF408C4131DD3DB00130071 /* Check For Exit Time Destructors */,
+				5DF408C5131DD46700130071 /* Check For Weak VTables and Externals */,
+				5DF408C6131DD49700130071 /* Check For Framework Include Consistency */,
+				5DF408D1131DDBEC00130071 /* Check For Inappropriate Files In Framework */,
 			);
 			buildRules = (
 			);
@@ -3493,17 +3493,85 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
-				512F588C12A8836600629530 /* AuthenticationManager.messages.in in Resources */,
-				512E3530130B55AF00ABD19A /* WebApplicationCacheManager.messages.in in Resources */,
-				512E35F1130B638C00ABD19A /* WebApplicationCacheManagerProxy.messages.in in Resources */,
-				51A9E1011315CCDE009E7031 /* WebKeyValueStorageManager.messages.in in Resources */,
-				51A9E1071315CCFC009E7031 /* WebKeyValueStorageManagerProxy.messages.in in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		5DF408C0131DD37C00130071 /* Check For Global Initializers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "Check For Global Initializers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-global-initializers ]; then\n    ../../Tools/Scripts/check-for-global-initializers || exit $?\nfi";
+		};
+		5DF408C4131DD3DB00130071 /* Check For Exit Time Destructors */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "Check For Exit Time Destructors";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-exit-time-destructors ]; then\n    ../../Tools/Scripts/check-for-exit-time-destructors || exit $?\nfi";
+		};
+		5DF408C5131DD46700130071 /* Check For Weak VTables and Externals */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "Check For Weak VTables and Externals";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi";
+		};
+		5DF408C6131DD49700130071 /* Check For Framework Include Consistency */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check For Framework Include Consistency";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-webkit-framework-include-consistency ]; then\n    ../../Tools/Scripts/check-for-webkit-framework-include-consistency || exit $?\nfi\n";
+		};
+		5DF408D1131DDBEC00130071 /* Check For Inappropriate Files In Framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check For Inappropriate Files In Framework";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n";
+		};
 		C0CE72841247E66800BC0EC4 /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

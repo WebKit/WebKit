@@ -54,8 +54,8 @@ PassRefPtr<WebContextMenuItem> WebContextMenuItem::create(const String& title, b
 
 WebContextMenuItem* WebContextMenuItem::separatorItem()
 {
-    static RefPtr<WebContextMenuItem> separatorItem = adoptRef(new WebContextMenuItem(WebContextMenuItemData(WebCore::SeparatorType, WebCore::ContextMenuItemTagNoAction, String(), true, false)));
-    return separatorItem.get();
+    DEFINE_STATIC_LOCAL(WebContextMenuItem*, separatorItem, (adoptRef(new WebContextMenuItem(WebContextMenuItemData(WebCore::SeparatorType, WebCore::ContextMenuItemTagNoAction, String(), true, false))).leakRef()));
+    return separatorItem;
 }
 
 PassRefPtr<ImmutableArray> WebContextMenuItem::submenuItemsAsImmutableArray() const

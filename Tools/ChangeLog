@@ -1,3 +1,13 @@
+2011-03-01  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Update verification scripts to handle WebKit2.
+
+        * Scripts/check-for-global-initializers: Skip object files that use RefCountedLeakChecker.
+        * Scripts/check-for-inappropriate-files-in-framework: Add some inappropriate file types for
+        WebKit2.
+
 2011-03-01  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by David Levin.

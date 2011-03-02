@@ -43,7 +43,7 @@ typedef HashMap<uint64_t, WebPageGroup*> WebPageGroupMap;
 
 static WebPageGroupMap& webPageGroupMap()
 {
-    static WebPageGroupMap map;
+    DEFINE_STATIC_LOCAL(WebPageGroupMap, map, ());
     return map;
 }
 
