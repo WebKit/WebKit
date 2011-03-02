@@ -1,3 +1,17 @@
+2011-03-02  Adam Roben  <aroben@apple.com>
+
+        Delete old .res files whenever any .vsprops file changes
+
+        Prospective fix for <http://webkit.org/b/55599> r80079 caused incremental Windows builds to
+        fail
+
+        Reviewed by Tony Chang.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/react-to-vsprops-changes.py:
+        (main): Restructured code to loop over a set of file extensions, deleting any old files that
+        have that extension. Now deletes .res files, too. (We previously deleted any file matching
+        *.manifest*, but that turned out to just be the union of *.manifest and *.res.)
+
 2011-03-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

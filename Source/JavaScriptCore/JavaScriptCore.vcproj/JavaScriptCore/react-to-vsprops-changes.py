@@ -16,17 +16,14 @@ def main():
     assert len(vsprops_files), "Couldn't find any .vsprops files in %s" % vsprops_directory
     newest_vsprops_time = max(map(os.path.getmtime, vsprops_files))
 
-    # Delete any manifest-related files because Visual Studio isn't smart
-    # enough to figure out that it might need to rebuild them.
     obj_directory = os.path.join(os.environ['CONFIGURATIONBUILDDIR'], 'obj')
-    for manifest_file in glob.iglob(os.path.join(obj_directory, '*', '*.manifest*')):
-        delete_if_older_than(manifest_file, newest_vsprops_time)
 
-    # Delete any precompiled headers because Visual Studio isn't smart enough
-    # to figure out that it might need to rebuild them, even if we touch
-    # wtf/Platform.h below.
-    for precompiled_header in glob.iglob(os.path.join(obj_directory, '*', '*.pch')):
-        delete_if_older_than(precompiled_header, newest_vsprops_time)
+    # Visual Studio isn't smart enough to figure out it needs to rebuild these file types when
+    # .vsprops files change (even if we touch wtf/Platform.h below), so we delete them to force them
+    # to be rebuilt.
+    for extension in ('manifest', 'pch', 'res'):
+        for filepath in glob.iglob(os.path.join(obj_directory, '*', '*.%s' % extension)):
+            delete_if_older_than(filepath, newest_vsprops_time)
 
     # Touch wtf/Platform.h so all files will be recompiled. This is necessary
     # to pick up changes to preprocessor macros (e.g., ENABLE_*).
