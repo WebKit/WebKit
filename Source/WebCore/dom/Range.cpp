@@ -1568,7 +1568,7 @@ Position Range::editingStartPosition() const
     // It is important to skip certain irrelevant content at the start of the selection, so we do not wind up 
     // with a spurious "mixed" style.
     
-    VisiblePosition visiblePosition(m_start.container(), m_start.offset(), VP_DEFAULT_AFFINITY);
+    VisiblePosition visiblePosition = Position(m_start.container(), m_start.offset(), Position::PositionIsOffsetInAnchor);
     if (visiblePosition.isNull())
         return Position();
 

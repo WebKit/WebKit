@@ -54,7 +54,6 @@ public:
     // NOTE: UPSTREAM affinity will be used only if pos is at end of a wrapped line,
     // otherwise it will be converted to DOWNSTREAM
     VisiblePosition() : m_affinity(VP_DEFAULT_AFFINITY) { }
-    VisiblePosition(Node*, int offset, EAffinity);
     VisiblePosition(const Position&, EAffinity = VP_DEFAULT_AFFINITY);
 
     void clear() { m_deepPosition.clear(); }

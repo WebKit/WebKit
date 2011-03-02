@@ -1358,8 +1358,8 @@ void SelectionController::selectFrameElementInParentIfFullySelected()
 
     // Create compute positions before and after the element.
     unsigned ownerElementNodeIndex = ownerElement->nodeIndex();
-    VisiblePosition beforeOwnerElement(VisiblePosition(ownerElementParent, ownerElementNodeIndex, SEL_DEFAULT_AFFINITY));
-    VisiblePosition afterOwnerElement(VisiblePosition(ownerElementParent, ownerElementNodeIndex + 1, VP_UPSTREAM_IF_POSSIBLE));
+    VisiblePosition beforeOwnerElement(VisiblePosition(Position(ownerElementParent, ownerElementNodeIndex, Position::PositionIsOffsetInAnchor)));
+    VisiblePosition afterOwnerElement(VisiblePosition(Position(ownerElementParent, ownerElementNodeIndex + 1, Position::PositionIsOffsetInAnchor), VP_UPSTREAM_IF_POSSIBLE));
 
     // Focus on the parent frame, and then select from before this element to after.
     VisibleSelection newSelection(beforeOwnerElement, afterOwnerElement);
@@ -1430,8 +1430,8 @@ bool SelectionController::setSelectedRange(Range* range, EAffinity affinity, boo
         return false;
     
     // FIXME: Can we provide extentAffinity?
-    VisiblePosition visibleStart(startContainer, startOffset, collapsed ? affinity : DOWNSTREAM);
-    VisiblePosition visibleEnd(endContainer, endOffset, SEL_DEFAULT_AFFINITY);
+    VisiblePosition visibleStart(Position(startContainer, startOffset, Position::PositionIsOffsetInAnchor), collapsed ? affinity : DOWNSTREAM);
+    VisiblePosition visibleEnd(Position(endContainer, endOffset, Position::PositionIsOffsetInAnchor), SEL_DEFAULT_AFFINITY);
     SetSelectionOptions options = ClearTypingStyle;
     if (closeTyping)
         options |= CloseTyping;

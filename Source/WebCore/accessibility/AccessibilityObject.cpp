@@ -336,7 +336,7 @@ static VisiblePosition startOfStyleRange(const VisiblePosition visiblePos)
         startRenderer = r;
     }
 
-    return VisiblePosition(startRenderer->node(), 0, VP_DEFAULT_AFFINITY);
+    return firstPositionInOrBeforeNode(startRenderer->node());
 }
 
 static VisiblePosition endOfStyleRange(const VisiblePosition& visiblePos)
@@ -359,7 +359,7 @@ static VisiblePosition endOfStyleRange(const VisiblePosition& visiblePos)
         endRenderer = r;
     }
 
-    return lastDeepEditingPositionForNode(endRenderer->node());
+    return lastPositionInOrAfterNode(endRenderer->node());
 }
 
 VisiblePositionRange AccessibilityObject::styleRangeForPosition(const VisiblePosition& visiblePos) const

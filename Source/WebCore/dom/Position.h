@@ -107,6 +107,8 @@ public:
     // will be treated as before ignoredNode (thus node() is really after the position, not containing it).
     Node* deprecatedNode() const { return m_anchorNode.get(); }
 
+    Document* document() const { return m_anchorNode ? m_anchorNode->document() : 0; }
+
     // These should only be used for PositionIsOffsetInAnchor positions, unless
     // the position is a legacy editing position.
     void moveToPosition(PassRefPtr<Node> anchorNode, int offset);

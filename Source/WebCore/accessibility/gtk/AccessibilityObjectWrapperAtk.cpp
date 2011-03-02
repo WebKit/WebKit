@@ -2537,7 +2537,7 @@ AccessibilityObject* objectAndOffsetUnignored(AccessibilityObject* coreObject, i
 
     Node* node = realObject->node();
     if (node) {
-        VisiblePosition startPosition = VisiblePosition(node, 0, DOWNSTREAM);
+        VisiblePosition startPosition = VisiblePosition(positionBeforeNode(node), DOWNSTREAM);
         VisiblePosition endPosition = realObject->selection().visibleEnd();
 
         if (startPosition == endPosition)

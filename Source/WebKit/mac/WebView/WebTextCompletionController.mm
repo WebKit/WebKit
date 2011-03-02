@@ -28,6 +28,7 @@
 
 #import "WebTextCompletionController.h"
 
+#import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebFrameInternal.h"
 #import "WebHTMLViewInternal.h"
@@ -204,7 +205,7 @@ using namespace std;
             ASSERT(!_originalString);       // this should only be set IFF we have a popup window
             _originalString = [[frame _stringForRange:selection] retain];
             [self _buildUI];
-            NSRect wordRect = [frame _caretRectAtNode:[wholeWord startContainer] offset:[wholeWord startOffset] affinity:NSSelectionAffinityDownstream];
+            NSRect wordRect = [frame _caretRectAtPosition:Position(core([wholeWord startContainer]), [wholeWord startOffset], Position::PositionIsOffsetInAnchor) affinity:NSSelectionAffinityDownstream];
             // +1 to be under the word, not the caret
             // FIXME - 3769652 - Wrong positioning for right to left languages.  We should line up the upper
             // right corner with the caret instead of upper left, and the +1 would be a -1.

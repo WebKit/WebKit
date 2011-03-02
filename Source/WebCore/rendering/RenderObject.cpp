@@ -2654,7 +2654,8 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
             if (candidate.deprecatedNode()->isContentEditable())
                 return VisiblePosition(candidate, affinity);
         }
-        return VisiblePosition(node, offset, affinity);
+        // FIXME: Eliminate legacy editing positions
+        return VisiblePosition(Position(node, offset), affinity);
     }
 
     // We don't want to cross the boundary between editable and non-editable
@@ -2669,7 +2670,7 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
         RenderObject* renderer = child;
         while ((renderer = renderer->nextInPreOrder(parent))) {
             if (Node* node = renderer->node())
-                return VisiblePosition(node, 0, DOWNSTREAM);
+                return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
         }
 
         // Find non-anonymous content before.
@@ -2678,12 +2679,12 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
             if (renderer == parent)
                 break;
             if (Node* node = renderer->node())
-                return VisiblePosition(lastDeepEditingPositionForNode(node), DOWNSTREAM);
+                return VisiblePosition(lastPositionInOrAfterNode(node), DOWNSTREAM);
         }
 
         // Use the parent itself unless it too is anonymous.
         if (Node* node = parent->node())
-            return VisiblePosition(node, 0, DOWNSTREAM);
+            return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
 
         // Repeat at the next level up.
         child = parent;

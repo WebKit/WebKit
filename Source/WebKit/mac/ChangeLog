@@ -1,3 +1,19 @@
+2011-03-01  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Stop instantiating legacy editing Positions in VisiblePosition
+        https://bugs.webkit.org/show_bug.cgi?id=52919
+
+        Changing usage of legacy VisiblePosition constructor. Since we were dealing
+        with positions from DOM Ranges, we're guaranteed a parent-anchored position.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _caretRectAtPosition:affinity:]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebTextCompletionController.mm:
+        (-[WebTextCompletionController doCompletion]):
+
 2011-03-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Timothy Hatcher.

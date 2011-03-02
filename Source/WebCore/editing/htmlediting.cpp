@@ -426,7 +426,7 @@ static Node* firstInSpecialElement(const Position& pos)
     for (Node* n = pos.deprecatedNode(); n && n->rootEditableElement() == rootEditableElement; n = n->parentNode())
         if (isSpecialElement(n)) {
             VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
-            VisiblePosition firstInElement = VisiblePosition(n, 0, DOWNSTREAM);
+            VisiblePosition firstInElement = VisiblePosition(firstPositionInOrBeforeNode(n), DOWNSTREAM);
             if (isTableElement(n) && vPos == firstInElement.next())
                 return n;
             if (vPos == firstInElement)
@@ -442,7 +442,7 @@ static Node* lastInSpecialElement(const Position& pos)
     for (Node* n = pos.deprecatedNode(); n && n->rootEditableElement() == rootEditableElement; n = n->parentNode())
         if (isSpecialElement(n)) {
             VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
-            VisiblePosition lastInElement = VisiblePosition(n, n->childNodeCount(), DOWNSTREAM);
+            VisiblePosition lastInElement = VisiblePosition(Position(n, n->childNodeCount(), Position::PositionIsOffsetInAnchor), DOWNSTREAM);
             if (isTableElement(n) && vPos == lastInElement.previous())
                 return n;
             if (vPos == lastInElement)
@@ -519,7 +519,7 @@ VisiblePosition visiblePositionBeforeNode(Node* node)
 {
     ASSERT(node);
     if (node->childNodeCount())
-        return VisiblePosition(node, 0, DOWNSTREAM);
+        return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
     ASSERT(node->parentNode());
     return positionInParentBeforeNode(node);
 }
@@ -529,7 +529,7 @@ VisiblePosition visiblePositionAfterNode(Node* node)
 {
     ASSERT(node);
     if (node->childNodeCount())
-        return VisiblePosition(node, node->childNodeCount(), DOWNSTREAM);
+        return VisiblePosition(lastPositionInOrAfterNode(node), DOWNSTREAM);
     ASSERT(node->parentNode());
     return positionInParentAfterNode(node);
 }

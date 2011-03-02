@@ -321,7 +321,7 @@ PassRefPtr<Range> RenderTextControl::selection(int start, int end) const
 VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
 {
     if (index <= 0)
-        return VisiblePosition(m_innerText.get(), 0, DOWNSTREAM);
+        return VisiblePosition(Position(m_innerText.get(), 0, Position::PositionIsOffsetInAnchor), DOWNSTREAM);
     ExceptionCode ec = 0;
     RefPtr<Range> range = Range::create(document());
     range->selectNodeContents(m_innerText.get(), ec);
@@ -332,7 +332,7 @@ VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
     ASSERT(!ec);
     int endOffset = it.range()->endOffset(ec);
     ASSERT(!ec);
-    return VisiblePosition(endContainer, endOffset, UPSTREAM);
+    return VisiblePosition(Position(endContainer, endOffset, Position::PositionIsOffsetInAnchor), UPSTREAM);
 }
 
 int RenderTextControl::indexForVisiblePosition(const VisiblePosition& pos) const

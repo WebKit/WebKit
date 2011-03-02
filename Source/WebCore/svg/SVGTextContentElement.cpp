@@ -145,7 +145,7 @@ void SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars, E
         return;
 
     // Find selection start
-    VisiblePosition start(const_cast<SVGTextContentElement*>(this), 0, SEL_DEFAULT_AFFINITY);
+    VisiblePosition start(firstPositionInNode(const_cast<SVGTextContentElement*>(this)));
     for (unsigned i = 0; i < charnum; ++i)
         start = start.next();
 

@@ -1,3 +1,90 @@
+2011-03-01  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Stop instantiating legacy editing Positions in VisiblePosition
+        https://bugs.webkit.org/show_bug.cgi?id=52919
+
+        Changing VisiblePosition completely away from legacy positions.
+
+        No new tests since this is functionaly equivalent.
+
+        * WebCore.exp.in: Removing the legacy VisiblePosition constructor and
+        adding the PositionIsOffsetInAnchor symbol. If we must create VisiblePositions
+        outside of WebCore, they should be parent anchored.
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::visiblePositionForTextMarkerData):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::startOfStyleRange):
+        (WebCore::endOfStyleRange):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionForIndex):
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (objectAndOffsetUnignored):
+        * dom/Position.cpp:
+        (WebCore::Position::document): Added this inline function to avoid the necessity
+        of calling anchorNode to assure a document from a Position.
+        (WebCore::Position::upstream): Fixed to correctly respect PositionIsAfterAnchor
+        (WebCore::Position::downstream): ditto
+        * dom/Range.cpp:
+        (WebCore::Range::editingStartPosition):
+        * editing/Editor.cpp:
+        (WebCore::Editor::canDeleteRange):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::selectFrameElementInParentIfFullySelected):
+        (WebCore::SelectionController::setSelectedRange):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::shouldRepresentNodeOffsetZero):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate):
+        (WebCore::VisiblePosition::canonicalPosition):
+        (WebCore::VisiblePosition::characterAfter):
+        (WebCore::VisiblePosition::localCaretRect):
+        (WebCore::makeRange):
+        (WebCore::startVisiblePosition):
+        (WebCore::endVisiblePosition):
+        (WebCore::setStart):
+        (WebCore::setEnd):
+        (WebCore::isFirstVisiblePositionInNode):
+        (WebCore::isLastVisiblePositionInNode):
+        * editing/VisiblePosition.h:
+        (WebCore::VisiblePosition::VisiblePosition):
+        * editing/htmlediting.cpp:
+        (WebCore::firstInSpecialElement):
+        (WebCore::lastInSpecialElement):
+        (WebCore::visiblePositionBeforeNode):
+        (WebCore::visiblePositionAfterNode):
+        * editing/visible_units.cpp:
+        (WebCore::startPositionForLine):
+        (WebCore::endPositionForLine):
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        (WebCore::startOfParagraph):
+        (WebCore::endOfParagraph):
+        (WebCore::endOfBlock):
+        (WebCore::startOfDocument):
+        (WebCore::endOfDocument):
+        (WebCore::logicalStartPositionForLine):
+        (WebCore::logicalEndPositionForLine):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::collapse):
+        (WebCore::DOMSelection::setBaseAndExtent):
+        (WebCore::DOMSelection::setPosition):
+        (WebCore::DOMSelection::extend):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createVisiblePosition):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::visiblePositionForIndex):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::selectSubString):
+
 2011-03-01  Jeremy Orlow  <jorlow@chromium.org>
 
        Reviewed by Steve Block.
