@@ -3365,3 +3365,5 @@ BUGCR74519 : svg/dom/SVGColor-expected.txt = IMAGE+TEXT
 BUGCR74519 : svg/dom/SVGPaint-expected.txt = IMAGE+TEXT
 
 BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEXT
+
+BUGCR74710 MAC RELEASE : svg/text/font-size-below-point-five.svg = TEXT 
