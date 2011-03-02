@@ -753,6 +753,8 @@ namespace WebCore {
 
 void Geolocation::clearWatch(int) {}
 
+void Geolocation::reset() {}
+
 void Geolocation::disconnectFrame() {}
 
 Geolocation::Geolocation(Frame*) {}
