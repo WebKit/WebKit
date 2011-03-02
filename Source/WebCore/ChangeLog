@@ -1,3 +1,15 @@
+2011-03-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80079.
+        http://trac.webkit.org/changeset/80079
+        https://bugs.webkit.org/show_bug.cgi?id=55547
+
+        "Broke the Win debug build?" (Requested by dcheng on #webkit).
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * features.pri:
+
 2011-02-25  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

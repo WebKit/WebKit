@@ -4005,14 +4005,6 @@ webcore_cppflags += -DENABLE_DATALIST=1
 endif # END ENABLE_DATALIST
 
 # ----
-# HTML5 data transfer items support
-#-----
-if ENABLE_DATA_TRANSFER_ITEMS
-FEATURE_DEFINES += ENABLE_DATA_TRANSFER_ITEMS=1
-webcore_cppflags += -DENABLE_DATA_TRANSFER_ITEMS=1
-endif # END ENABLE_DATA_TRANSFER_ITEMS
-
-# ----
 # HTML5 server-sent events
 # ----
 if !ENABLE_EVENTSOURCE
