@@ -419,6 +419,14 @@ AC_ARG_ENABLE(datagrid,
               [],[enable_datagrid="no"])
 AC_MSG_RESULT([$enable_datagrid])
 
+# check whether to build with data transfer items support
+AC_MSG_CHECKING([whether to enable HTML5 data transfer items support])
+AC_ARG_ENABLE(data_transfer_items,
+              AC_HELP_STRING([--enable-data-transfer-items],
+                             [enable HTML5 data transfer items support [default=no]]),
+              [],[enable_data_transfer_items="no"])
+AC_MSG_RESULT([$enable_data_transfer_items])
+
 # check whether to enable HTML5 Offline Web Applications support
 AC_MSG_CHECKING([whether to enable HTML5 offline web applications support])
 AC_ARG_ENABLE(offline_web_applications,
@@ -1009,6 +1017,7 @@ AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" 
 AM_CONDITIONAL([ENABLE_OFFLINE_WEB_APPLICATIONS],[test "$enable_offline_web_applications" = "yes"])
 AM_CONDITIONAL([ENABLE_DIRECTORY_UPLOAD],[test "$enable_directory_upload" = "yes"])
 AM_CONDITIONAL([ENABLE_DATAGRID],[test "$enable_datagrid" = "yes"])
+AM_CONDITIONAL([ENABLE_DATA_TRANSFER_ITEMS],[test "$enable_data_transfer_items" = "yes"])
 AM_CONDITIONAL([ENABLE_DOM_STORAGE],[test "$enable_dom_storage" = "yes"])
 AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
 AM_CONDITIONAL([ENABLE_DATALIST],[test "$enable_datalist" = "yes"])
@@ -1114,6 +1123,7 @@ Features:
  HTML5 client-side session and persistent storage support : $enable_dom_storage
  HTML5 client-side database storage support               : $enable_database
  HTML5 datagrid support                                   : $enable_datagrid
+ HTML5 data transfer items support                        : $enable_data_transfer_items
  HTML5 FileSystem API support                             : $enable_file_system
  HTML5 sandboxed iframe support                           : $enable_sandbox
  HTML5 server-sent events support                         : $enable_eventsource

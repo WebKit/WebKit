@@ -1,3 +1,13 @@
+2011-03-02  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add feature define for data transfer items
+        https://bugs.webkit.org/show_bug.cgi?id=55510
+
+        * Configurations/FeatureDefines.xcconfig:
+        * wtf/Platform.h:
+
 2011-03-02  Adam Roben  <aroben@apple.com>
 
         Delete old .res files whenever any .vsprops file changes

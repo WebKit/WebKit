@@ -1,3 +1,14 @@
+2011-03-02  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add feature define for data transfer items
+        https://bugs.webkit.org/show_bug.cgi?id=55510
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * features.pri:
+
 2011-03-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Update location of media-file.js, which was moved in r79630.
