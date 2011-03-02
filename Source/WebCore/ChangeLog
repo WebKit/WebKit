@@ -1,3 +1,19 @@
+2011-03-02  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add CRASH() for CSSSelector double frees
+        https://bugs.webkit.org/show_bug.cgi?id=55596
+        
+        To help track down bug 53045, add a CRASH call when the CSSSelector
+        destructor is invoked more than once.
+
+        Just a check, no new tests necessary.
+
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::~CSSSelector):
+
 2011-03-02  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt  <hyatt@apple.com>

@@ -43,6 +43,7 @@ namespace WebCore {
             , m_isLastInTagHistory(true)
             , m_hasRareData(false)
             , m_isForPage(false)
+            , m_deleted(false)
             , m_tag(anyQName())
         {
         }
@@ -56,12 +57,16 @@ namespace WebCore {
             , m_isLastInTagHistory(true)
             , m_hasRareData(false)
             , m_isForPage(false)
+            , m_deleted(false)
             , m_tag(qName)
         {
         }
 
         ~CSSSelector()
         {
+            if (m_deleted)
+                CRASH();
+            m_deleted = true;
             if (m_hasRareData)
                 delete m_data.m_rareData;
             else if (m_data.m_value)
@@ -279,6 +284,8 @@ namespace WebCore {
         bool m_isLastInTagHistory     : 1;
         bool m_hasRareData            : 1;
         bool m_isForPage              : 1;
+        // FIXME: Remove once http://webkit.org/b/53045 is fixed.
+        bool m_deleted                : 1;
 
         unsigned specificityForOneSelector() const;
         unsigned specificityForPage() const;
