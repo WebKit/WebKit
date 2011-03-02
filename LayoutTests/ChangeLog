@@ -1,3 +1,9 @@
+2011-03-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; added the missing blank line at the end.
+
+        * platform/qt/http/tests/security/xss-DENIED-xml-external-entity-expected.txt:
+
 2011-03-02  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed.
