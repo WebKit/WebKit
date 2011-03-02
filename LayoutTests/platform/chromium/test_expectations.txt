@@ -3281,8 +3281,10 @@ BUGWK54322 MAC SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
 
 // Snow Leopard-only flakiness
 BUGWK54322 MAC SNOWLEOPARD : dom/html/level1/core/hc_textwithnomarkup.html = TIMEOUT PASS
+BUGWK54322 MAC SNOWLEOPARD : fast/canvas/translate-text.html = PASS TIMEOUT
 BUGWK54322 MAC SNOWLEOPARD : fast/css/font-face-in-shadow-DOM.html = IMAGE+TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : fast/history/history-back-within-subframe-hash.html = TIMEOUT PASS
+BUGWK54322 MAC SNOWLEOPARD : fast/loader/loadInProgress.html = PASS TIMEOUT
 BUGWK54322 MAC SNOWLEOPARD : http/tests/loading/location-hash-reload-cycle.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : http/tests/loading/slow-parsing-subframe.html = CRASH PASS
 BUGWK54322 MAC SNOWLEOPARD : http/tests/navigation/image-load-in-unload-handler.html = TEXT PASS
@@ -3290,9 +3292,12 @@ BUGWK54322 MAC SNOWLEOPARD : http/tests/navigation/ping-cookie.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : http/tests/navigation/ping-same-origin.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-properties.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : http/tests/security/isolatedWorld/all-window-prototypes.html = TEXT PASS
+BUGWK54322 MAC SNOWLEOPARD : http/tests/xmlhttprequest/small-chunks-response-text.html = PASS TIMEOUT
 BUGWK54322 MAC SNOWLEOPARD : scrollbars/hidden-iframe-scrollbar-crash2.html = TEXT PASS
 BUGWK54322 MAC SNOWLEOPARD : storage/indexeddb/data-corruption.html = TIMEOUT PASS
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/acid3-test-77.html = TIMEOUT PASS
+BUGWK54322 MAC SNOWLEOPARD : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
+BUGWK54322 MAC SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS TEXT
 
 BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
 

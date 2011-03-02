@@ -1,3 +1,11 @@
+2011-03-02  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed expectations update.
+        
+        Add more Snow Leopard-only flakiness.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-02  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt  <hyatt@apple.com>
