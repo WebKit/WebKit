@@ -1,3 +1,19 @@
+2011-03-02  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+        
+        Remove chromium-gpu-mac/ text expectations mistakenly added by r80163
+        (tests should pass with mac/ expectations).
+
+        * platform/chromium-gpu-mac/compositing/geometry/clipped-video-controller-expected.txt: Removed.
+        * platform/chromium-gpu-mac/compositing/geometry/video-fixed-scrolling-expected.txt: Removed.
+        * platform/chromium-gpu-mac/compositing/geometry/video-opacity-overlay-expected.txt: Removed.
+        * platform/chromium-gpu-mac/compositing/layers-inside-overflow-scroll-expected.txt: Removed.
+        * platform/chromium-gpu-mac/compositing/overflow/overflow-compositing-descendant-expected.txt: Removed.
+        * platform/chromium-gpu-mac/compositing/overflow/scroll-ancestor-update-expected.txt: Removed.
+        * platform/chromium-gpu-mac/compositing/reflections/load-video-in-reflection-expected.txt: Removed.
+        * platform/chromium-gpu-mac/compositing/self-painting-layers-expected.txt: Removed.
+
 2011-03-02  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed expectations update
