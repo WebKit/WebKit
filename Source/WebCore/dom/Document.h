@@ -488,16 +488,13 @@ public:
     void styleSelectorChanged(StyleSelectorUpdateFlag);
     void recalcStyleSelector();
 
-    bool usesDescendantRules() const { return m_usesDescendantRules; }
-    void setUsesDescendantRules(bool b) { m_usesDescendantRules = b; }
-    bool usesSiblingRules() const { return m_usesSiblingRules; }
-    void setUsesSiblingRules(bool b) { m_usesSiblingRules = b; }
+    bool usesSiblingRules() const { return m_usesSiblingRules || m_usesSiblingRulesOverride; }
+    void setUsesSiblingRules(bool b) { m_usesSiblingRulesOverride = b; }
     bool usesFirstLineRules() const { return m_usesFirstLineRules; }
-    void setUsesFirstLineRules(bool b) { m_usesFirstLineRules = b; }
     bool usesFirstLetterRules() const { return m_usesFirstLetterRules; }
     void setUsesFirstLetterRules(bool b) { m_usesFirstLetterRules = b; }
-    bool usesBeforeAfterRules() const { return m_usesBeforeAfterRules; }
-    void setUsesBeforeAfterRules(bool b) { m_usesBeforeAfterRules = b; }
+    bool usesBeforeAfterRules() const { return m_usesBeforeAfterRules || m_usesBeforeAfterRulesOverride; }
+    void setUsesBeforeAfterRules(bool b) { m_usesBeforeAfterRulesOverride = b; }
     bool usesRemUnits() const { return m_usesRemUnits; }
     void setUsesRemUnits(bool b) { m_usesRemUnits = b; }
     bool usesLinkRules() const { return linkColor() != visitedLinkColor() || m_usesLinkRules; }
@@ -1272,11 +1269,12 @@ private:
     bool m_inStyleRecalc;
     bool m_closeAfterStyleRecalc;
 
-    bool m_usesDescendantRules;
     bool m_usesSiblingRules;
+    bool m_usesSiblingRulesOverride;
     bool m_usesFirstLineRules;
     bool m_usesFirstLetterRules;
     bool m_usesBeforeAfterRules;
+    bool m_usesBeforeAfterRulesOverride;
     bool m_usesRemUnits;
     bool m_usesLinkRules;
     bool m_gotoAnchorNeededAfterStylesheetsLoad;

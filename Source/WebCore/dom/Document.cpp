@@ -471,11 +471,12 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     m_inStyleRecalc = false;
     m_closeAfterStyleRecalc = false;
 
-    m_usesDescendantRules = false;
     m_usesSiblingRules = false;
+    m_usesSiblingRulesOverride = false;
     m_usesFirstLineRules = false;
     m_usesFirstLetterRules = false;
     m_usesBeforeAfterRules = false;
+    m_usesBeforeAfterRulesOverride = false;
     m_usesRemUnits = false;
     m_usesLinkRules = false;
 
@@ -1530,6 +1531,14 @@ bail_out:
     clearNeedsStyleRecalc();
     clearChildNeedsStyleRecalc();
     unscheduleStyleRecalc();
+    
+    // Pseudo element removal and similar may only work with these flags still set. Reset them after the style recalc.
+    if (m_styleSelector) {
+        m_usesSiblingRules = m_styleSelector->usesSiblingRules();
+        m_usesFirstLineRules = m_styleSelector->usesFirstLineRules();
+        m_usesBeforeAfterRules = m_styleSelector->usesBeforeAfterRules();
+        m_usesLinkRules = m_styleSelector->usesLinkRules();
+    }
 
     if (view())
         view()->resumeScheduledEvents();
@@ -1693,6 +1702,11 @@ void Document::createStyleSelector()
         matchAuthorAndUserStyles = docSettings->authorAndUserStylesEnabled();
     m_styleSelector.set(new CSSStyleSelector(this, m_styleSheets.get(), m_mappedElementSheet.get(), pageUserSheet(), pageGroupUserSheets(), 
                                              !inQuirksMode(), matchAuthorAndUserStyles));
+    // Delay resetting the flags until after next style recalc since unapplying the style may not work without these set (this is true at least with before/after).
+    m_usesSiblingRules = m_usesSiblingRules || m_styleSelector->usesSiblingRules();
+    m_usesFirstLineRules = m_usesFirstLineRules || m_styleSelector->usesFirstLineRules();
+    m_usesBeforeAfterRules = m_usesBeforeAfterRules || m_styleSelector->usesBeforeAfterRules();
+    m_usesLinkRules = m_usesLinkRules || m_styleSelector->usesLinkRules();
 }
 
 void Document::attach()

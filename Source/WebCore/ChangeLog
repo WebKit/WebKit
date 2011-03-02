@@ -1,3 +1,54 @@
+2011-03-02  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Selector usage flags should not be set by the CSS parser
+        https://bugs.webkit.org/show_bug.cgi?id=55573
+        
+        Currently flags like Document::usesSiblingRules() are set directly by the CSS parser. This is wrong as 
+        we may parse stylesheets that are not actually used for document rendering. This is especially bad when
+        the page uses querySelectorAll(). As a result we may end up in various performance penalty boxes 
+        triggered by complex selectors for no good reason.
+        
+        - Use the selector traversal in style selector constructor to figure out which flags
+          are actually needed for the currently active style sheets.
+        - Remove the selector flag related code from the CSS parser/grammar.
+        - Remove the usesDescendantRules flag completely. We have descendant rules in the default
+          style sheet, every document uses them.
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::updateSpecifiersWithElementName):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::collectSiblingRulesInDefaultStyle):
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::Features::Features):
+        (WebCore::CSSStyleSelector::Features::~Features):
+        (WebCore::CSSStyleSelector::locateCousinList):
+        (WebCore::CSSStyleSelector::matchesSiblingRules):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::locateSharedStyle):
+        (WebCore::collectFeaturesFromSelector):
+        (WebCore::collectFeaturesFromList):
+        (WebCore::RuleSet::collectFeatures):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::usesSiblingRules):
+        (WebCore::CSSStyleSelector::usesFirstLineRules):
+        (WebCore::CSSStyleSelector::usesBeforeAfterRules):
+        (WebCore::CSSStyleSelector::usesLinkRules):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::createStyleSelector):
+        * dom/Document.h:
+        (WebCore::Document::usesSiblingRules):
+        (WebCore::Document::setUsesSiblingRules):
+        (WebCore::Document::usesFirstLineRules):
+        (WebCore::Document::usesBeforeAfterRules):
+        (WebCore::Document::setUsesBeforeAfterRules):
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+
 2011-03-02  Brian Weinstein  <bweinstein@apple.com>
 
         Fix fallout from a last minute renaming.

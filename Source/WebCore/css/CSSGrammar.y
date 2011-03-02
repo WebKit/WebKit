@@ -857,8 +857,6 @@ selector:
                 end = end->tagHistory();
             end->setRelation(CSSSelector::Descendant);
             end->setTagHistory(p->sinkFloatingSelector($1));
-            if (Document* doc = p->document())
-                doc->setUsesDescendantRules(true);
         }
     }
     | selector combinator simple_selector {
@@ -872,13 +870,6 @@ selector:
                 end = end->tagHistory();
             end->setRelation($2);
             end->setTagHistory(p->sinkFloatingSelector($1));
-            if ($2 == CSSSelector::Child) {
-                if (Document* doc = p->document())
-                    doc->setUsesDescendantRules(true);
-            } else if ($2 == CSSSelector::DirectAdjacent || $2 == CSSSelector::IndirectAdjacent) {
-                if (Document* doc = p->document())
-                    doc->setUsesSiblingRules(true);
-            }
         }
     }
     | selector error {
@@ -1102,48 +1093,14 @@ pseudo:
         CSSSelector::PseudoType type = $$->pseudoType();
         if (type == CSSSelector::PseudoUnknown)
             $$ = 0;
-        else if (type == CSSSelector::PseudoEmpty ||
-                 type == CSSSelector::PseudoFirstChild ||
-                 type == CSSSelector::PseudoFirstOfType ||
-                 type == CSSSelector::PseudoLastChild ||
-                 type == CSSSelector::PseudoLastOfType ||
-                 type == CSSSelector::PseudoOnlyChild ||
-                 type == CSSSelector::PseudoOnlyOfType) {
-            CSSParser* p = static_cast<CSSParser*>(parser);
-            Document* doc = p->document();
-            if (doc)
-                doc->setUsesSiblingRules(true);
-        } else if (type == CSSSelector::PseudoFirstLine) {
-            CSSParser* p = static_cast<CSSParser*>(parser);
-            if (Document* doc = p->document())
-                doc->setUsesFirstLineRules(true);
-        } else if (type == CSSSelector::PseudoBefore ||
-                   type == CSSSelector::PseudoAfter) {
-            CSSParser* p = static_cast<CSSParser*>(parser);
-            if (Document* doc = p->document())
-                doc->setUsesBeforeAfterRules(true);
-        } else if (type == CSSSelector::PseudoLink || type == CSSSelector::PseudoVisited) {
-            CSSParser* p = static_cast<CSSParser*>(parser);
-            if (Document* doc = p->document())
-                doc->setUsesLinkRules(true);
-        }
     }
     | ':' ':' IDENT {
         $$ = static_cast<CSSParser*>(parser)->createFloatingSelector();
         $$->setMatch(CSSSelector::PseudoElement);
         $3.lower();
         $$->setValue($3);
-        CSSSelector::PseudoType type = $$->pseudoType();
-        if (type == CSSSelector::PseudoFirstLine) {
-            CSSParser* p = static_cast<CSSParser*>(parser);
-            if (Document* doc = p->document())
-                doc->setUsesFirstLineRules(true);
-        } else if (type == CSSSelector::PseudoBefore ||
-                   type == CSSSelector::PseudoAfter) {
-            CSSParser* p = static_cast<CSSParser*>(parser);
-            if (Document* doc = p->document())
-                doc->setUsesBeforeAfterRules(true);
-        }
+        // FIXME: This call is needed to force selector to compute the pseudoType early enough.
+        $$->pseudoType();
     }
     // used by :nth-*(ax+b)
     | ':' FUNCTION maybe_space NTH maybe_space ')' {
@@ -1155,13 +1112,6 @@ pseudo:
         CSSSelector::PseudoType type = $$->pseudoType();
         if (type == CSSSelector::PseudoUnknown)
             $$ = 0;
-        else if (type == CSSSelector::PseudoNthChild ||
-                 type == CSSSelector::PseudoNthOfType ||
-                 type == CSSSelector::PseudoNthLastChild ||
-                 type == CSSSelector::PseudoNthLastOfType) {
-            if (p->document())
-                p->document()->setUsesSiblingRules(true);
-        }
     }
     // used by :nth-*
     | ':' FUNCTION maybe_space maybe_unary_operator INTEGER maybe_space ')' {
@@ -1173,13 +1123,6 @@ pseudo:
         CSSSelector::PseudoType type = $$->pseudoType();
         if (type == CSSSelector::PseudoUnknown)
             $$ = 0;
-        else if (type == CSSSelector::PseudoNthChild ||
-                 type == CSSSelector::PseudoNthOfType ||
-                 type == CSSSelector::PseudoNthLastChild ||
-                 type == CSSSelector::PseudoNthLastOfType) {
-            if (p->document())
-                p->document()->setUsesSiblingRules(true);
-        }
     }
     // used by :nth-*(odd/even) and :lang
     | ':' FUNCTION maybe_space IDENT maybe_space ')' {
@@ -1196,10 +1139,7 @@ pseudo:
                  type == CSSSelector::PseudoNthOfType ||
                  type == CSSSelector::PseudoNthLastChild ||
                  type == CSSSelector::PseudoNthLastOfType) {
-            if (isValidNthToken($4)) {
-                if (p->document())
-                    p->document()->setUsesSiblingRules(true);
-            } else
+            if (!isValidNthToken($4))
                 $$ = 0;
         }
     }

@@ -1027,7 +1027,6 @@ void Element::recalcStyle(StyleChange change)
     // Ref currentStyle in case it would otherwise be deleted when setRenderStyle() is called.
     RefPtr<RenderStyle> currentStyle(renderStyle());
     bool hasParentStyle = parentOrHostNode() ? parentOrHostNode()->renderStyle() : false;
-    bool hasPositionalRules = needsStyleRecalc() && currentStyle && currentStyle->childrenAffectedByPositionalRules();
     bool hasDirectAdjacentRules = currentStyle && currentStyle->childrenAffectedByDirectAdjacentRules();
 
     if ((change > NoChange || needsStyleRecalc())) {
@@ -1070,11 +1069,9 @@ void Element::recalcStyle(StyleChange change)
 
         if (ch != NoChange || pseudoStyleCacheIsInvalid(currentStyle.get(), newStyle.get()) || (change == Force && renderer() && renderer()->requiresForcedStyleRecalcPropagation())) {
             setRenderStyle(newStyle);
-        } else if (needsStyleRecalc() && (styleChangeType() != SyntheticStyleChange) && (document()->usesSiblingRules() || document()->usesDescendantRules())) {
+        } else if (needsStyleRecalc() && styleChangeType() != SyntheticStyleChange) {
             // Although no change occurred, we use the new style so that the cousin style sharing code won't get
-            // fooled into believing this style is the same.  This is only necessary if the document actually uses
-            // sibling/descendant rules, since otherwise it isn't possible for ancestor styles to affect sharing of
-            // descendants.
+            // fooled into believing this style is the same.
             if (renderer())
                 renderer()->setStyleInternal(newStyle.get());
             else
@@ -1087,7 +1084,7 @@ void Element::recalcStyle(StyleChange change)
             // all the way down the tree.  This is simpler than having to maintain a cache of objects (and such font size changes should be rare anyway).
             if (document()->usesRemUnits() && ch != NoChange && currentStyle && newStyle && currentStyle->fontSize() != newStyle->fontSize() && document()->documentElement() == this)
                 change = Force;
-            else if ((document()->usesDescendantRules() || hasPositionalRules) && styleChangeType() >= FullStyleChange)
+            else if (styleChangeType() >= FullStyleChange)
                 change = Force;
             else
                 change = ch;

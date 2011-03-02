@@ -5948,9 +5948,6 @@ void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePre
         return;
     }
 
-    if (Document* doc = document())
-        doc->setUsesDescendantRules(true);
-
     specifiers->setRelation(CSSSelector::ShadowDescendant);
     if (CSSParserSelector* history = specifiers->tagHistory()) {
         history->setTag(tag);

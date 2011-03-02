@@ -402,8 +402,8 @@ public:
                       CSSStyleRule* rule, CSSSelector* sel);
     void shrinkToFit();
     void disableAutoShrinkToFit() { m_autoShrinkToFitEnabled = false; }
-    
-    void collectIdsAndSiblingRules(HashSet<AtomicStringImpl*>& ids, OwnPtr<RuleSet>& siblingRules) const;
+
+    void collectFeatures(CSSStyleSelector::Features&) const;
     
     const Vector<RuleData>* getIDRules(AtomicStringImpl* key) const { return m_idRules.get(key); }
     const Vector<RuleData>* getClassRules(AtomicStringImpl* key) const { return m_classRules.get(key); }
@@ -448,12 +448,11 @@ static inline bool elementCanUseSimpleDefaultStyle(Element* e)
 
 static inline void collectSiblingRulesInDefaultStyle()
 {
-    OwnPtr<RuleSet> siblingRules;
-    HashSet<AtomicStringImpl*> ids;
-    defaultStyle->collectIdsAndSiblingRules(ids, siblingRules);
-    ASSERT(ids.isEmpty());
+    CSSStyleSelector::Features features;
+    defaultStyle->collectFeatures(features);
+    ASSERT(features.idsInRules.isEmpty());
     delete siblingRulesInDefaultStyle;
-    siblingRulesInDefaultStyle = siblingRules.leakPtr();
+    siblingRulesInDefaultStyle = features.siblingRules.leakPtr();
 }
 
 static inline void assertNoSiblingRulesInDefaultStyle()
@@ -578,14 +577,14 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
     // sharing candidates.
     // Usually there are no sibling rules in the default style but the MathML sheet has some.
     if (siblingRulesInDefaultStyle)
-        siblingRulesInDefaultStyle->collectIdsAndSiblingRules(m_idsInRules, m_siblingRules);
-    m_authorStyle->collectIdsAndSiblingRules(m_idsInRules, m_siblingRules);
+        siblingRulesInDefaultStyle->collectFeatures(m_features);
+    m_authorStyle->collectFeatures(m_features);
     if (m_userStyle)
-        m_userStyle->collectIdsAndSiblingRules(m_idsInRules, m_siblingRules);
+        m_userStyle->collectFeatures(m_features);
 
     m_authorStyle->shrinkToFit();
-    if (m_siblingRules)
-        m_siblingRules->shrinkToFit();
+    if (m_features.siblingRules)
+        m_features.siblingRules->shrinkToFit();
 
     if (document->renderer() && document->renderer()->style())
         document->renderer()->style()->font().update(fontSelector());
@@ -602,6 +601,17 @@ CSSStyleSelector::~CSSStyleSelector()
 {
     m_fontSelector->clearDocument();
     deleteAllValues(m_viewportDependentMediaQueryResults);
+}
+    
+CSSStyleSelector::Features::Features() 
+    : usesFirstLineRules(false)
+    , usesBeforeAfterRules(false)
+    , usesLinkRules(false)
+{
+}
+
+CSSStyleSelector::Features::~Features()
+{
 }
 
 static CSSStyleSheet* parseUASheet(const String& str)
@@ -1024,7 +1034,7 @@ Node* CSSStyleSelector::locateCousinList(Element* parent, unsigned& visitedNodeC
     StyledElement* p = static_cast<StyledElement*>(parent);
     if (p->inlineStyleDecl())
         return 0;
-    if (p->hasID() && m_idsInRules.contains(p->idForStyleResolution().impl()))
+    if (p->hasID() && m_features.idsInRules.contains(p->idForStyleResolution().impl()))
         return 0;
 
     RenderStyle* parentStyle = p->renderStyle();
@@ -1057,7 +1067,7 @@ Node* CSSStyleSelector::locateCousinList(Element* parent, unsigned& visitedNodeC
 bool CSSStyleSelector::matchesSiblingRules()
 {
     int firstSiblingRule = -1, lastSiblingRule = -1;
-    matchRules(m_siblingRules.get(), firstSiblingRule, lastSiblingRule, false);
+    matchRules(m_features.siblingRules.get(), firstSiblingRule, lastSiblingRule, false);
     if (m_matchedDecls.isEmpty())
         return false;
     m_matchedDecls.clear();
@@ -1111,7 +1121,7 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* node) const
     if (element->fastGetAttribute(cellpaddingAttr) != m_element->fastGetAttribute(cellpaddingAttr))
         return false;
 
-    if (element->hasID() && m_idsInRules.contains(element->idForStyleResolution().impl()))
+    if (element->hasID() && m_features.idsInRules.contains(element->idForStyleResolution().impl()))
         return false;
 
     bool isControl = element->isFormControlElement();
@@ -1211,7 +1221,7 @@ ALWAYS_INLINE RenderStyle* CSSStyleSelector::locateSharedStyle()
     if (m_styledElement->inlineStyleDecl())
         return 0;
     // Ids stop style sharing if they show up in the stylesheets.
-    if (m_styledElement->hasID() && m_idsInRules.contains(m_styledElement->idForStyleResolution().impl()))
+    if (m_styledElement->hasID() && m_features.idsInRules.contains(m_styledElement->idForStyleResolution().impl()))
         return 0;
     if (parentStylePreventsSharing(m_parentStyle))
         return 0;
@@ -3272,47 +3282,64 @@ void RuleSet::addStyleRule(CSSStyleRule* rule)
             addRule(rule, s);
     }
 }
+    
+static inline void collectFeaturesFromSelector(CSSStyleSelector::Features& features, const CSSSelector* selector)
+{
+    if (selector->m_match == CSSSelector::Id && !selector->value().isEmpty())
+        features.idsInRules.add(selector->value().impl());
+    switch (selector->pseudoType()) {
+    case CSSSelector::PseudoFirstLine:
+        features.usesFirstLineRules = true;
+        break;
+    case CSSSelector::PseudoBefore:
+    case CSSSelector::PseudoAfter:
+        features.usesBeforeAfterRules = true;
+        break;
+    case CSSSelector::PseudoLink:
+    case CSSSelector::PseudoVisited:
+        features.usesLinkRules = true;
+        break;
+    default:
+        break;
+    }
+}
 
-static void collectIdsAndSiblingRulesFromList(HashSet<AtomicStringImpl*>& ids, OwnPtr<RuleSet>& siblingRules, const Vector<RuleData>& rules)
+static void collectFeaturesFromList(CSSStyleSelector::Features& features, const Vector<RuleData>& rules)
 {
     unsigned size = rules.size();
     for (unsigned i = 0; i < size; ++i) {
         const RuleData& ruleData = rules[i];
         bool foundSiblingSelector = false;
         for (CSSSelector* selector = ruleData.selector(); selector; selector = selector->tagHistory()) {
-            if (selector->m_match == CSSSelector::Id && !selector->value().isEmpty())
-                ids.add(selector->value().impl());
-            if (CSSSelector* simpleSelector = selector->simpleSelector()) {
-                ASSERT(!simpleSelector->simpleSelector());
-                if (simpleSelector->m_match == CSSSelector::Id && !simpleSelector->value().isEmpty())
-                    ids.add(simpleSelector->value().impl());
-            }
+            collectFeaturesFromSelector(features, selector);
+            if (CSSSelector* simpleSelector = selector->simpleSelector())
+                collectFeaturesFromSelector(features, simpleSelector);
             if (selector->isSiblingSelector())
                 foundSiblingSelector = true;
         }
         if (foundSiblingSelector) {
-            if (!siblingRules)
-                siblingRules = adoptPtr(new RuleSet);
-            siblingRules->addRule(ruleData.rule(), ruleData.selector());   
+            if (!features.siblingRules)
+                features.siblingRules = adoptPtr(new RuleSet);
+            features.siblingRules->addRule(ruleData.rule(), ruleData.selector());   
         }
     }
 }
 
-void RuleSet::collectIdsAndSiblingRules(HashSet<AtomicStringImpl*>& ids, OwnPtr<RuleSet>& siblingRules) const
+void RuleSet::collectFeatures(CSSStyleSelector::Features& features) const
 {
     AtomRuleMap::const_iterator end = m_idRules.end();
     for (AtomRuleMap::const_iterator it = m_idRules.begin(); it != end; ++it)
-        collectIdsAndSiblingRulesFromList(ids, siblingRules, *it->second);
+        collectFeaturesFromList(features, *it->second);
     end = m_classRules.end();
     for (AtomRuleMap::const_iterator it = m_classRules.begin(); it != end; ++it)
-        collectIdsAndSiblingRulesFromList(ids, siblingRules, *it->second);
+        collectFeaturesFromList(features, *it->second);
     end = m_tagRules.end();
     for (AtomRuleMap::const_iterator it = m_tagRules.begin(); it != end; ++it)
-        collectIdsAndSiblingRulesFromList(ids, siblingRules, *it->second);
+        collectFeaturesFromList(features, *it->second);
     end = m_pseudoRules.end();
     for (AtomRuleMap::const_iterator it = m_pseudoRules.begin(); it != end; ++it)
-        collectIdsAndSiblingRulesFromList(ids, siblingRules, *it->second);
-    collectIdsAndSiblingRulesFromList(ids, siblingRules, m_universalRules);
+        collectFeaturesFromList(features, *it->second);
+    collectFeaturesFromList(features, m_universalRules);
 }
     
 static inline void shrinkMapVectorsToFit(RuleSet::AtomRuleMap& map)

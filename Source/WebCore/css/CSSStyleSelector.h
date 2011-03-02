@@ -174,7 +174,22 @@ public:
         void addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule> rule);
         void addPageStyle(PassRefPtr<CSSPageRule>);
 
+        bool usesSiblingRules() const { return m_features.siblingRules; }
+        bool usesFirstLineRules() const { return m_features.usesFirstLineRules; }
+        bool usesBeforeAfterRules() const { return m_features.usesBeforeAfterRules; }
+        bool usesLinkRules() const { return m_features.usesLinkRules; }
+
         static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, TransformOperations& outOperations);
+
+        struct Features {
+            Features();
+            ~Features();
+            HashSet<AtomicStringImpl*> idsInRules;
+            OwnPtr<RuleSet> siblingRules;
+            bool usesFirstLineRules;
+            bool usesBeforeAfterRules;
+            bool usesLinkRules;
+        };
 
     private:
         enum SelectorMatch { SelectorMatches, SelectorFailsLocally, SelectorFailsCompletely };
@@ -208,10 +223,9 @@ public:
         
         OwnPtr<RuleSet> m_authorStyle;
         OwnPtr<RuleSet> m_userStyle;
-        
-        OwnPtr<RuleSet> m_siblingRules;
-        HashSet<AtomicStringImpl*> m_idsInRules;
-        
+
+        Features m_features;
+
         struct ParentStackFrame {
             ParentStackFrame() {}
             ParentStackFrame(Element* element) : element(element) {}
