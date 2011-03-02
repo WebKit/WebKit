@@ -1,3 +1,16 @@
+2011-03-01  Anna Cavender  <annacc@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Remove playing of video in media/video-replaces-poster.html and update text results.
+        https://bugs.webkit.org/show_bug.cgi?id=54910
+
+        * media/video-replaces-poster-expected.txt: Added.
+        * media/video-replaces-poster.html:
+        * platform/chromium-win/media/video-replaces-poster-expected.txt: Removed.
+        * platform/gtk/media/video-replaces-poster-expected.txt: Removed.
+        * platform/mac/media/video-replaces-poster-expected.txt: Removed.
+
 2011-03-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

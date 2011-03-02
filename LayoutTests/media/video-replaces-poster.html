@@ -2,18 +2,17 @@
 <html>
 <head>
     <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
     <script type="text/javascript" charset="utf-8">
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
         function doSetup()
         {
-            var video = document.getElementsByTagName('video')[0];
+            findMediaElement();
             video.src = findMediaFile('video', 'content/test');
             video.addEventListener("canplaythrough", function () {
-                video.pause();
                 video.currentTime = 1;  // so the snapshot always has the same frame.
             });
             video.addEventListener("seeked", function() {
+                testExpected(video.currentTime, 1);
                 if (window.layoutTestController)
                     layoutTestController.notifyDone();
             });
@@ -23,8 +22,8 @@
 </head>
 <body>
     <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=34966">https://bugs.webkit.org/show_bug.cgi?id=34966</a>. <br>
-    You should see the video play below.</p>
+    You should see the video below.</p>
 
-    <video width="480" height="270" poster="content/abe.png" autoplay></video>
+    <video width="480" height="270" poster="content/abe.png"></video>
 </body>
 </html>
