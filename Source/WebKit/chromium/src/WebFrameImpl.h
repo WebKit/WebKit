@@ -211,7 +211,7 @@ public:
     void paintWithContext(WebCore::GraphicsContext&, const WebRect&);
     void createFrameView();
 
-    static WebFrameImpl* fromFrame(const WebCore::Frame*);
+    static WebFrameImpl* fromFrame(WebCore::Frame* frame);
     static WebFrameImpl* fromFrameOwnerElement(WebCore::Element* element);
 
     // If the frame hosts a PluginDocument, this method returns the WebPluginContainerImpl

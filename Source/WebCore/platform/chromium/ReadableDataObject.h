@@ -44,7 +44,7 @@ namespace WebCore {
 // browser to the renderer.
 class ReadableDataObject : public RefCounted<ReadableDataObject> {
 public:
-    static PassRefPtr<ReadableDataObject> create(const Frame*, Clipboard::ClipboardType);
+    static PassRefPtr<ReadableDataObject> create(Clipboard::ClipboardType);
 
     bool hasData() const;
     HashSet<String> types() const;
@@ -57,13 +57,10 @@ public:
     Vector<String> filenames() const;
 
 private:
-    explicit ReadableDataObject(const Frame*, Clipboard::ClipboardType);
+    explicit ReadableDataObject(Clipboard::ClipboardType);
 
     // This isn't always const... but most of the time it is.
     void ensureTypeCacheInitialized() const;
-
-    // The owner frame. Used to send IPCs back to the correspdonging view via WebFrameClient.
-    const Frame* m_frame;
 
     Clipboard::ClipboardType m_clipboardType;
 

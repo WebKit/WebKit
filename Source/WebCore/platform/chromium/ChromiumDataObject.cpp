@@ -56,9 +56,9 @@ PassRefPtr<ChromiumDataObject> ChromiumDataObject::create(PassRefPtr<ChromiumDat
     return adoptRef(new ChromiumDataObject(data));
 }
 
-PassRefPtr<ChromiumDataObject> ChromiumDataObject::createReadable(const Frame* frame, Clipboard::ClipboardType clipboardType)
+PassRefPtr<ChromiumDataObject> ChromiumDataObject::createReadable(Clipboard::ClipboardType clipboardType)
 {
-    return adoptRef(new ChromiumDataObject(ReadableDataObject::create(frame, clipboardType)));
+    return adoptRef(new ChromiumDataObject(ReadableDataObject::create(clipboardType)));
 }
 
 PassRefPtr<ChromiumDataObject> ChromiumDataObject::createWritable(Clipboard::ClipboardType clipboardType)

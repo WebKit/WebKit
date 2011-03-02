@@ -43,14 +43,13 @@ static PasteboardPrivate::ClipboardBuffer clipboardBuffer(Clipboard::ClipboardTy
     return clipboardType == Clipboard::DragAndDrop ? PasteboardPrivate::DragBuffer : PasteboardPrivate::StandardBuffer;
 }
 
-PassRefPtr<ReadableDataObject> ReadableDataObject::create(const Frame* frame, Clipboard::ClipboardType clipboardType)
+PassRefPtr<ReadableDataObject> ReadableDataObject::create(Clipboard::ClipboardType clipboardType)
 {
-    return adoptRef(new ReadableDataObject(frame, clipboardType));
+    return adoptRef(new ReadableDataObject(clipboardType));
 }
 
-ReadableDataObject::ReadableDataObject(const Frame* frame, Clipboard::ClipboardType clipboardType)
-    : m_frame(frame)
-    , m_clipboardType(clipboardType)
+ReadableDataObject::ReadableDataObject(Clipboard::ClipboardType clipboardType)
+    : m_clipboardType(clipboardType)
     , m_containsFilenames(false)
     , m_isTypeCacheInitialized(false)
 {
@@ -94,7 +93,7 @@ String ReadableDataObject::getData(const String& type, bool& succeeded) const
         return data;
     }
     succeeded = PlatformBridge::clipboardReadData(
-        m_frame, clipboardBuffer(m_clipboardType), type, data, ignoredMetadata);
+        clipboardBuffer(m_clipboardType), type, data, ignoredMetadata);
     return data;
 }
 
@@ -103,7 +102,7 @@ String ReadableDataObject::urlTitle() const
     String ignoredData;
     String urlTitle;
     PlatformBridge::clipboardReadData(
-        m_frame, clipboardBuffer(m_clipboardType), mimeTypeTextURIList, ignoredData, urlTitle);
+        clipboardBuffer(m_clipboardType), mimeTypeTextURIList, ignoredData, urlTitle);
     return urlTitle;
 }
 
@@ -112,7 +111,7 @@ KURL ReadableDataObject::htmlBaseUrl() const
     String ignoredData;
     String htmlBaseUrl;
     PlatformBridge::clipboardReadData(
-        m_frame, clipboardBuffer(m_clipboardType), mimeTypeTextHTML, ignoredData, htmlBaseUrl);
+        clipboardBuffer(m_clipboardType), mimeTypeTextHTML, ignoredData, htmlBaseUrl);
     return KURL(ParsedURLString, htmlBaseUrl);
 }
 
@@ -124,7 +123,7 @@ bool ReadableDataObject::containsFilenames() const
 
 Vector<String> ReadableDataObject::filenames() const
 {
-    return PlatformBridge::clipboardReadFilenames(m_frame, clipboardBuffer(m_clipboardType));
+    return PlatformBridge::clipboardReadFilenames(clipboardBuffer(m_clipboardType));
 }
 
 void ReadableDataObject::ensureTypeCacheInitialized() const
@@ -133,7 +132,7 @@ void ReadableDataObject::ensureTypeCacheInitialized() const
         return;
 
     m_types = PlatformBridge::clipboardReadAvailableTypes(
-        m_frame, clipboardBuffer(m_clipboardType), &m_containsFilenames);
+        clipboardBuffer(m_clipboardType), &m_containsFilenames);
     m_isTypeCacheInitialized = true;
 }
 

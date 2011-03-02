@@ -1963,7 +1963,7 @@ void WebFrameImpl::createFrameView()
         view->setParentVisible(true);
 }
 
-WebFrameImpl* WebFrameImpl::fromFrame(const Frame* frame)
+WebFrameImpl* WebFrameImpl::fromFrame(Frame* frame)
 {
     if (!frame)
         return 0;

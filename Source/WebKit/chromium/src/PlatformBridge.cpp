@@ -132,14 +132,6 @@ static WebWidgetClient* toWebWidgetClient(Widget* widget)
     return chromeClientImpl->webView()->client();
 }
 
-static WebClipboard* getClipboard(const Frame* frame)
-{
-    WebFrameImpl* frameImpl = WebFrameImpl::fromFrame(frame);
-    if (!frameImpl || !frameImpl->client())
-        return 0;
-    return frameImpl->client()->clipboard();
-}
-
 static WebCookieJar* getCookieJar(const Document* document)
 {
     WebFrameImpl* frameImpl = WebFrameImpl::fromFrame(document->frame());
@@ -225,15 +217,9 @@ void PlatformBridge::clipboardWriteData(const String& type,
 }
 
 HashSet<String> PlatformBridge::clipboardReadAvailableTypes(
-    const Frame* frame,
-    PasteboardPrivate::ClipboardBuffer buffer,
-    bool* containsFilenames)
+    PasteboardPrivate::ClipboardBuffer buffer, bool* containsFilenames)
 {
-    WebClipboard* clipboard = getClipboard(frame);
-    if (!clipboard)
-        return HashSet<String>();
-
-    WebVector<WebString> result = clipboard->readAvailableTypes(
+    WebVector<WebString> result = webKitClient()->clipboard()->readAvailableTypes(
         static_cast<WebClipboard::Buffer>(buffer), containsFilenames);
     HashSet<String> types;
     for (size_t i = 0; i < result.size(); ++i)
@@ -241,19 +227,12 @@ HashSet<String> PlatformBridge::clipboardReadAvailableTypes(
     return types;
 }
 
-bool PlatformBridge::clipboardReadData(const Frame* frame,
-                                       PasteboardPrivate::ClipboardBuffer buffer,
-                                       const String& type,
-                                       String& data,
-                                       String& metadata)
+bool PlatformBridge::clipboardReadData(PasteboardPrivate::ClipboardBuffer buffer,
+                                       const String& type, String& data, String& metadata)
 {
-    WebClipboard* clipboard = getClipboard(frame);
-    if (!clipboard)
-        return false;
-
     WebString resultData;
     WebString resultMetadata;
-    bool succeeded = clipboard->readData(
+    bool succeeded = webKitClient()->clipboard()->readData(
         static_cast<WebClipboard::Buffer>(buffer), type, &resultData, &resultMetadata);
     if (succeeded) {
         data = resultData;
@@ -262,14 +241,9 @@ bool PlatformBridge::clipboardReadData(const Frame* frame,
     return succeeded;
 }
 
-Vector<String> PlatformBridge::clipboardReadFilenames(const Frame* frame,
-                                                      PasteboardPrivate::ClipboardBuffer buffer)
+Vector<String> PlatformBridge::clipboardReadFilenames(PasteboardPrivate::ClipboardBuffer buffer)
 {
-    WebClipboard* clipboard = getClipboard(frame);
-    if (!clipboard)
-        return Vector<String>();
-
-    WebVector<WebString> result = clipboard->readFilenames(
+    WebVector<WebString> result = webKitClient()->clipboard()->readFilenames(
         static_cast<WebClipboard::Buffer>(buffer));
     Vector<String> convertedResult;
     for (size_t i = 0; i < result.size(); ++i)

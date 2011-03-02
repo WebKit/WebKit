@@ -1,3 +1,22 @@
+2011-03-02  Daniel Cheng  <dcheng@chromium.org>
+
+        Revert frame-specific WebClipboard changes
+        https://bugs.webkit.org/show_bug.cgi?id=55617
+
+        This code is no longer needed since we've decided to use the original
+        approach to copy/paste drag/drop handling in ClipboardChromium.
+
+        * public/WebFrameClient.h:
+        * src/PlatformBridge.cpp:
+        (WebCore::PlatformBridge::clipboardReadAvailableTypes):
+        (WebCore::PlatformBridge::clipboardReadData):
+        (WebCore::PlatformBridge::clipboardReadFilenames):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::fromFrame):
+        * src/WebFrameImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::dragTargetDragEnterNew):
+
 2011-03-02  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling chromium DEPS to r76362.

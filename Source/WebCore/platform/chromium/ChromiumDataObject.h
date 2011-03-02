@@ -41,7 +41,7 @@ namespace WebCore {
 class ChromiumDataObject : public RefCounted<ChromiumDataObject> {
 public:
     static PassRefPtr<ChromiumDataObject> create(PassRefPtr<ChromiumDataObjectLegacy> data);
-    static PassRefPtr<ChromiumDataObject> createReadable(const Frame*, Clipboard::ClipboardType);
+    static PassRefPtr<ChromiumDataObject> createReadable(Clipboard::ClipboardType);
     static PassRefPtr<ChromiumDataObject> createWritable(Clipboard::ClipboardType);
 
     void clearData(const String& type);

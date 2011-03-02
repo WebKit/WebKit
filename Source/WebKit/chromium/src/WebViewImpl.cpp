@@ -1779,7 +1779,7 @@ WebDragOperation WebViewImpl::dragTargetDragEnterNew(
 {
     ASSERT(!m_currentDragData.get());
 
-    m_currentDragData = ChromiumDataObject::createReadable(m_page->mainFrame(), Clipboard::DragAndDrop);
+    m_currentDragData = ChromiumDataObject::createReadable(Clipboard::DragAndDrop);
     m_dragIdentity = identity;
     m_operationsAllowed = operationsAllowed;
 
