@@ -1,3 +1,45 @@
+2011-02-25  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: factor search logic out of inspector.js
+        https://bugs.webkit.org/show_bug.cgi?id=54965
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.searchCanceled):
+        (WebInspector.ElementsPanel.prototype.switchToAndFocus):
+        (WebInspector.ElementsPanel.prototype._updateMatchesCount):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.searchCanceled):
+        (WebInspector.Panel.prototype.performSearch.updateMatchesCount):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.searchCanceled):
+        (WebInspector.ScriptsPanel.prototype.performSearch.finishedCallback):
+        (WebInspector.ScriptsPanel.prototype.performSearch):
+        * inspector/front-end/SearchController.js: Added.
+        (WebInspector.SearchController):
+        (WebInspector.SearchController.prototype.updateSearchMatchesCount):
+        (WebInspector.SearchController.prototype.updateSearchLabel):
+        (WebInspector.SearchController.prototype.cancelSearch):
+        (WebInspector.SearchController.prototype.handleShortcut):
+        (WebInspector.SearchController.prototype.activePanelChanged.performPanelSearch):
+        (WebInspector.SearchController.prototype.activePanelChanged):
+        (WebInspector.SearchController.prototype._updateSearchMatchesCount):
+        (WebInspector.SearchController.prototype._focusSearchField):
+        (WebInspector.SearchController.prototype._onSearchFieldManualFocus):
+        (WebInspector.SearchController.prototype._onKeyDown):
+        (WebInspector.SearchController.prototype._onSearch):
+        (WebInspector.SearchController.prototype._performSearch):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.set currentPanel):
+        (WebInspector.set attached):
+        (WebInspector.doLoadedDone):
+        (WebInspector.documentKeyDown):
+
 2011-03-02  Renata Hodovan  <reni@webkit.org>
 
         Reviewed by Andreas Kling.

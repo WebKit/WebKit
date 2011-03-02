@@ -110,7 +110,7 @@ WebInspector.Panel.prototype = {
             }
         }
 
-        WebInspector.updateSearchMatchesCount(0, this);
+        WebInspector.searchController.updateSearchMatchesCount(0, this);
 
         if (this._currentSearchChunkIntervalIdentifier) {
             clearInterval(this._currentSearchChunkIntervalIdentifier);
@@ -139,7 +139,7 @@ WebInspector.Panel.prototype = {
 
         function updateMatchesCount()
         {
-            WebInspector.updateSearchMatchesCount(this._totalSearchMatches, this);
+            WebInspector.searchController.updateSearchMatchesCount(this._totalSearchMatches, this);
             matchesCountUpdateTimeout = null;
         }
 

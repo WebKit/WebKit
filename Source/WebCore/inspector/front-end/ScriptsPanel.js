@@ -984,8 +984,6 @@ WebInspector.ScriptsPanel.prototype = {
 
     searchCanceled: function()
     {
-        WebInspector.updateSearchMatchesCount(0, this);
-
         if (this._searchView)
             this._searchView.searchCanceled();
 
@@ -995,6 +993,8 @@ WebInspector.ScriptsPanel.prototype = {
 
     performSearch: function(query)
     {
+        WebInspector.searchController.updateSearchMatchesCount(0, this);
+
         if (!this.visibleView)
             return;
 
@@ -1009,7 +1009,7 @@ WebInspector.ScriptsPanel.prototype = {
             if (!searchMatches)
                 return;
 
-            WebInspector.updateSearchMatchesCount(searchMatches, this);
+            WebInspector.searchController.updateSearchMatchesCount(searchMatches, this);
             view.jumpToFirstSearchResult();
         }
 

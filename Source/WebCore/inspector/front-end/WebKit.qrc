@@ -87,6 +87,7 @@
     <file>ScriptFormatter.js</file>
     <file>ScriptFormatterWorker.js</file>
     <file>ScriptsPanel.js</file>
+    <file>SearchController.js</file>
     <file>Section.js</file>
     <file>Settings.js</file>
     <file>ShortcutsHelp.js</file>

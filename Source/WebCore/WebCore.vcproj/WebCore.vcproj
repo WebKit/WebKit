@@ -66001,6 +66001,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\SearchController.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\Section.js"
 					>
 				</File>

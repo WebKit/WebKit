@@ -4796,6 +4796,7 @@
             'inspector/front-end/ScriptFormatter.js',
             'inspector/front-end/ScriptFormatterWorker.js',
             'inspector/front-end/ScriptsPanel.js',
+            'inspector/front-end/SearchController.js',
             'inspector/front-end/ShortcutsHelp.js',
             'inspector/front-end/ShowMoreDataGridNode.js',
             'inspector/front-end/Section.js',

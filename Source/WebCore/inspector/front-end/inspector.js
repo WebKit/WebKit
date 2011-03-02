@@ -153,30 +153,10 @@ var WebInspector = {
 
         this._currentPanel = x;
 
-        this.updateSearchLabel();
-
         if (x) {
             x.show();
-
-            if (this.currentQuery) {
-                if (x.performSearch) {
-                    function performPanelSearch()
-                    {
-                        this.updateSearchMatchesCount();
-
-                        x.currentQuery = this.currentQuery;
-                        x.performSearch(this.currentQuery);
-                    }
-
-                    // Perform the search on a timeout so the panel switches fast.
-                    setTimeout(performPanelSearch.bind(this), 0);
-                } else {
-                    // Update to show Not found for panels that can't be searched.
-                    this.updateSearchMatchesCount();
-                }
-            }
+            WebInspector.searchController.activePanelChanged();
         }
-
         for (var panelName in WebInspector.panels) {
             if (WebInspector.panels[panelName] === x) {
                 WebInspector.settings.lastActivePanel = panelName;
@@ -248,8 +228,6 @@ var WebInspector = {
 
         this._attached = x;
 
-        this.updateSearchLabel();
-
         var dockToggleButton = document.getElementById("dock-status-bar-item");
         var body = document.body;
 
@@ -262,10 +240,11 @@ var WebInspector = {
             body.addStyleClass("detached");
             dockToggleButton.title = WebInspector.UIString("Dock to main window.");
         }
-        if (this.drawer)
-            this.drawer.resize();
-        if (this.toolbar)
-            this.toolbar.resize();
+
+        // This may be called before onLoadedDone, hence the bulk of inspector objects may 
+        // not be created yet.
+        if (WebInspector.searchController)
+            WebInspector.searchController.updateSearchLabel();
     },
 
     get errors()
@@ -494,6 +473,7 @@ WebInspector.doLoadedDone = function()
     this.debuggerModel = new WebInspector.DebuggerModel();
 
     this.breakpointManager = new WebInspector.BreakpointManager();
+    this.searchController = new WebInspector.SearchController();
 
     this.panels = {};
     this._createPanels();
@@ -533,11 +513,6 @@ WebInspector.doLoadedDone = function()
     var errorWarningCount = document.getElementById("error-warning-count");
     errorWarningCount.addEventListener("click", this.showConsole.bind(this), false);
     this._updateErrorAndWarningCounts();
-
-    var searchField = document.getElementById("search");
-    searchField.addEventListener("search", this.performSearch.bind(this), false); // when the search is emptied
-    searchField.addEventListener("mousedown", this._searchFieldManualFocus.bind(this), false); // when the search field is manually selected
-    searchField.addEventListener("keydown", this._searchKeyDown.bind(this), true);
 
     this.extensionServer.initExtensions();
 
@@ -768,6 +743,12 @@ WebInspector.documentKeyDown = function(event)
         }
     }
 
+    WebInspector.searchController.handleShortcut(event);
+    if (event.handled) {
+        event.preventDefault();
+        return;
+    }
+
     var isMac = WebInspector.isMac();
     switch (event.keyIdentifier) {
         case "Left":
@@ -792,36 +773,6 @@ WebInspector.documentKeyDown = function(event)
                 return;
 
             this.drawer.visible = !this.drawer.visible;
-            break;
-
-        case "U+0046": // F key
-            if (isMac)
-                var isFindKey = event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey;
-            else
-                var isFindKey = event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey;
-
-            if (isFindKey) {
-                WebInspector.focusSearchField();
-                event.preventDefault();
-            }
-            break;
-
-        case "F3":
-            if (!isMac) {
-                WebInspector.focusSearchField();
-                event.preventDefault();
-            }
-            break;
-
-        case "U+0047": // G key
-            if (isMac && event.metaKey && !event.ctrlKey && !event.altKey) {
-                if (event.shiftKey) {
-                    if (this.currentPanel.jumpToPreviousSearchResult)
-                        this.currentPanel.jumpToPreviousSearchResult();
-                } else if (this.currentPanel.jumpToNextSearchResult)
-                    this.currentPanel.jumpToNextSearchResult();
-                event.preventDefault();
-            }
             break;
 
         // Windows and Mac have two different definitions of [, so accept both.
@@ -988,27 +939,6 @@ WebInspector.animateStyle = function(animations, duration, callback)
         cancel: cancel,
         forceComplete: forceComplete
     };
-}
-
-WebInspector.updateSearchLabel = function()
-{
-    if (!this.currentPanel)
-        return;
-
-    var newLabel = WebInspector.UIString("Search %s", this.currentPanel.toolbarItemLabel);
-    if (this.attached)
-        document.getElementById("search").setAttribute("placeholder", newLabel);
-    else {
-        document.getElementById("search").removeAttribute("placeholder");
-        document.getElementById("search-toolbar-label").textContent = newLabel;
-    }
-}
-
-WebInspector.focusSearchField = function()
-{
-    var searchField = document.getElementById("search");
-    searchField.focus();
-    searchField.select();
 }
 
 WebInspector.toggleAttach = function()
@@ -1468,117 +1398,6 @@ WebInspector.addMainEventListeners = function(doc)
     doc.addEventListener("click", this.documentClick.bind(this), true);
 }
 
-WebInspector._searchFieldManualFocus = function(event)
-{
-    this.currentFocusElement = event.target;
-    this._previousFocusElement = event.target;
-}
-
-WebInspector._searchKeyDown = function(event)
-{
-    // Escape Key will clear the field and clear the search results
-    if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code) {
-        // If focus belongs here and text is empty - nothing to do, return unhandled.
-        if (event.target.value === "" && this.currentFocusElement === this.previousFocusElement)
-            return;
-        event.preventDefault();
-        event.stopPropagation();
-        // When search was selected manually and is currently blank, we'd like Esc stay unhandled
-        // and hit console drawer handler.
-        event.target.value = "";
-
-        this.performSearch(event);
-        this.currentFocusElement = this.previousFocusElement;
-        if (this.currentFocusElement === event.target)
-            this.currentFocusElement.select();
-        return false;
-    }
-
-    if (!isEnterKey(event))
-        return false;
-
-    // Select all of the text so the user can easily type an entirely new query.
-    event.target.select();
-
-    // Only call performSearch if the Enter key was pressed. Otherwise the search
-    // performance is poor because of searching on every key. The search field has
-    // the incremental attribute set, so we still get incremental searches.
-    this.performSearch(event);
-
-    // Call preventDefault since this was the Enter key. This prevents a "search" event
-    // from firing for key down. This stops performSearch from being called twice in a row.
-    event.preventDefault();
-}
-
-WebInspector.performSearch = function(event)
-{
-    var forceSearch = event.keyIdentifier === "Enter";
-    this.doPerformSearch(event.target.value, forceSearch, event.shiftKey, false);
-}
-
-WebInspector.cancelSearch = function()
-{
-    document.getElementById("search").value = "";
-    this.doPerformSearch("");
-}
-
-WebInspector.doPerformSearch = function(query, forceSearch, isBackwardSearch, repeatSearch)
-{
-    var isShortSearch = (query.length < 3);
-
-    // Clear a leftover short search flag due to a non-conflicting forced search.
-    if (isShortSearch && this.shortSearchWasForcedByKeyEvent && this.currentQuery !== query)
-        delete this.shortSearchWasForcedByKeyEvent;
-
-    // Indicate this was a forced search on a short query.
-    if (isShortSearch && forceSearch)
-        this.shortSearchWasForcedByKeyEvent = true;
-
-    if (!query || !query.length || (!forceSearch && isShortSearch)) {
-        // Prevent clobbering a short search forced by the user.
-        if (this.shortSearchWasForcedByKeyEvent) {
-            delete this.shortSearchWasForcedByKeyEvent;
-            return;
-        }
-
-        delete this.currentQuery;
-
-        for (var panelName in this.panels) {
-            var panel = this.panels[panelName];
-            var hadCurrentQuery = !!panel.currentQuery;
-            delete panel.currentQuery;
-            if (hadCurrentQuery && panel.searchCanceled)
-                panel.searchCanceled();
-        }
-
-        this.updateSearchMatchesCount();
-
-        return;
-    }
-
-    if (!repeatSearch && query === this.currentPanel.currentQuery && this.currentPanel.currentQuery === this.currentQuery) {
-        // When this is the same query and a forced search, jump to the next
-        // search result for a good user experience.
-        if (forceSearch) {
-            if (!isBackwardSearch && this.currentPanel.jumpToNextSearchResult)
-                this.currentPanel.jumpToNextSearchResult();
-            else if (isBackwardSearch && this.currentPanel.jumpToPreviousSearchResult)
-                this.currentPanel.jumpToPreviousSearchResult();
-        }
-        return;
-    }
-
-    this.currentQuery = query;
-
-    this.updateSearchMatchesCount();
-
-    if (!this.currentPanel.performSearch)
-        return;
-
-    this.currentPanel.currentQuery = query;
-    this.currentPanel.performSearch(query);
-}
-
 WebInspector.frontendReused = function()
 {
     this.networkManager.reset();
@@ -1588,34 +1407,6 @@ WebInspector.frontendReused = function()
 WebInspector.addNodesToSearchResult = function(nodeIds)
 {
     WebInspector.panels.elements.addNodesToSearchResult(nodeIds);
-}
-
-WebInspector.updateSearchMatchesCount = function(matches, panel)
-{
-    if (!panel)
-        panel = this.currentPanel;
-
-    panel.currentSearchMatches = matches;
-
-    if (panel !== this.currentPanel)
-        return;
-
-    if (!this.currentPanel.currentQuery) {
-        document.getElementById("search-results-matches").addStyleClass("hidden");
-        return;
-    }
-
-    if (matches) {
-        if (matches === 1)
-            var matchesString = WebInspector.UIString("1 match");
-        else
-            var matchesString = WebInspector.UIString("%d matches", matches);
-    } else
-        var matchesString = WebInspector.UIString("Not Found");
-
-    var matchesToolbarElement = document.getElementById("search-results-matches");
-    matchesToolbarElement.removeStyleClass("hidden");
-    matchesToolbarElement.textContent = matchesString;
 }
 
 WebInspector.UIString = function(string)

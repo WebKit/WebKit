@@ -222,7 +222,7 @@ WebInspector.ElementsPanel.prototype = {
         delete this._searchQuery;
         this._hideSearchHighlights();
 
-        WebInspector.updateSearchMatchesCount(0, this);
+        WebInspector.searchController.updateSearchMatchesCount(0, this);
 
         delete this._currentSearchResultIndex;
         this._searchResults = [];
@@ -264,14 +264,14 @@ WebInspector.ElementsPanel.prototype = {
     switchToAndFocus: function(node)
     {
         // Reset search restore.
-        WebInspector.cancelSearch();
+        WebInspector.searchController.cancelSearch();
         WebInspector.currentPanel = this;
         this.focusedDOMNode = node;
     },
 
     _updateMatchesCount: function()
     {
-        WebInspector.updateSearchMatchesCount(this._searchResults.length, this);
+        WebInspector.searchController.updateSearchMatchesCount(this._searchResults.length, this);
         this._matchesCountUpdateTimeout = null;
         this._updatedMatchCountOnce = true;
     },
