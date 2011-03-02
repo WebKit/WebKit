@@ -1,3 +1,15 @@
+2011-03-01  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed expectations update
+
+        [chromium] Rebaseline fast/ruby/base-shorter-than-text.html
+        https://bugs.webkit.org/show_bug.cgi?id=55522
+
+        This changed as a result of r80015.
+
+        * platform/chromium-mac/fast/ruby/base-shorter-than-text-expected.checksum: Added.
+        * platform/chromium-mac/fast/ruby/base-shorter-than-text-expected.png: Added.
+
 2011-03-01  Jeremy Orlow  <jorlow@chromium.org>
 
        Reviewed by Steve Block.
