@@ -135,16 +135,13 @@ JSValue JSInjectedScriptHost::currentCallFrame(ExecState* exec)
 #endif
 }
 
-JSValue JSInjectedScriptHost::nodeForId(ExecState* exec)
+JSValue JSInjectedScriptHost::inspectedNode(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return jsUndefined();
 
-    Node* node = impl()->nodeForId(exec->argument(0).toInt32(exec));
+    Node* node = impl()->inspectedNode(exec->argument(0).toInt32(exec));
     if (!node)
-        return jsUndefined();
-
-    if (!impl()->inspectorAgent())
         return jsUndefined();
 
     JSLock lock(SilenceAssertionsOnly);

@@ -1,3 +1,55 @@
+2011-03-02  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: remove InjectedScriptHost -> DOMAgent dependency.
+        https://bugs.webkit.org/show_bug.cgi?id=55575
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::inspectedNode):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::inspectedNodeCallback):
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToFrontend):
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::evaluateOn):
+        (WebCore::InjectedScript::wrapObject):
+        (WebCore::InjectedScript::wrapNode):
+        (WebCore::InjectedScript::inspectNode):
+        (WebCore::InjectedScript::nodeAsScriptValue):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::addInspectedNode):
+        (WebCore::InjectedScriptHost::clearInspectedNodes):
+        (WebCore::InjectedScriptHost::copyText):
+        (WebCore::InjectedScriptHost::inspectedNode):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InjectedScriptSource.js:
+        * inspector/Inspector.idl:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::discardBindings):
+        (WebCore::InspectorDOMAgent::addInspectedNode):
+        (WebCore::InspectorDOMAgent::resolveNode):
+        (WebCore::InspectorDOMAgent::injectedScriptForNode):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::evaluateOn):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode.setTooltip):
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode.resolvedNode):
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode):
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update.nodeResolved):
+        (WebInspector.PropertiesSidebarPane.prototype.update.nodePrototypesReady):
+        (WebInspector.PropertiesSidebarPane.prototype.update.fillSection):
+        (WebInspector.PropertiesSidebarPane.prototype.update):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.resolveNode):
+        (WebInspector.RemoteObject.prototype.pushNodeToFrontend):
+        (WebInspector.RemoteObject.prototype.evaluate):
+
 2011-01-21  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Dmitry Titov.

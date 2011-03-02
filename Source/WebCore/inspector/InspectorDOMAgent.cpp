@@ -397,20 +397,13 @@ void InspectorDOMAgent::pushChildNodesToFrontend(long nodeId)
     m_frontend->setChildNodes(nodeId, children.release());
 }
 
-long InspectorDOMAgent::inspectedNode(unsigned long num)
-{
-    if (num < m_inspectedNodes.size())
-        return m_inspectedNodes[num];
-    return 0;
-}
-
 void InspectorDOMAgent::discardBindings()
 {
     m_documentNodeToIdMap.clear();
     m_idToNode.clear();
     releaseDanglingNodes();
     m_childrenRequested.clear();
-    m_inspectedNodes.clear();
+    m_injectedScriptHost->clearInspectedNodes();
 }
 
 Node* InspectorDOMAgent::nodeForId(long id)
@@ -704,9 +697,10 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString*, long nodeId, long
 
 void InspectorDOMAgent::addInspectedNode(ErrorString*, long nodeId)
 {
-    m_inspectedNodes.prepend(nodeId);
-    while (m_inspectedNodes.size() > 5)
-        m_inspectedNodes.removeLast();
+    Node* node = nodeForId(nodeId);
+    if (!node)
+        return;
+    m_injectedScriptHost->addInspectedNode(node);
 }
 
 void InspectorDOMAgent::performSearch(ErrorString* error, const String& whitespaceTrimmedQuery, bool runSynchronously)
@@ -805,25 +799,12 @@ void InspectorDOMAgent::searchCanceled(ErrorString*)
     m_searchResults.clear();
 }
 
-void InspectorDOMAgent::resolveNode(ErrorString*, long nodeId, RefPtr<InspectorValue>* result)
+void InspectorDOMAgent::resolveNode(ErrorString* error, long nodeId, const String& objectGroup, RefPtr<InspectorValue>* result)
 {
-    InjectedScript injectedScript = injectedScriptForNodeId(nodeId);
-    if (!injectedScript.hasNoValue())
-        injectedScript.resolveNode(nodeId, result);
-}
-
-void InspectorDOMAgent::getNodeProperties(ErrorString*, long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result)
-{
-    InjectedScript injectedScript = injectedScriptForNodeId(nodeId);
-    if (!injectedScript.hasNoValue())
-        injectedScript.getNodeProperties(nodeId, propertiesArray, result);
-}
-
-void InspectorDOMAgent::getNodePrototypes(ErrorString*, long nodeId, RefPtr<InspectorValue>* result)
-{
-    InjectedScript injectedScript = injectedScriptForNodeId(nodeId);
-    if (!injectedScript.hasNoValue())
-        injectedScript.getNodePrototypes(nodeId, result);
+    Node* node = nodeForId(nodeId);
+    InjectedScript injectedScript = injectedScriptForNode(error, node);
+    if (error->isEmpty())
+        *result = injectedScript.wrapNode(node, objectGroup);
 }
 
 void InspectorDOMAgent::pushNodeToFrontend(ErrorString*, PassRefPtr<InspectorObject> objectId, long* nodeId)
@@ -1218,25 +1199,24 @@ void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString*, const String& pat
         *nodeId = pushNodePathToFrontend(node);
 }
 
-InjectedScript InspectorDOMAgent::injectedScriptForNodeId(long nodeId)
+InjectedScript InspectorDOMAgent::injectedScriptForNode(ErrorString* error, Node* node)
 {
-    Frame* frame = 0;
-    if (nodeId) {
-        Node* node = nodeForId(nodeId);
-        if (node) {
-            Document* document = node->ownerDocument();
-            if (document)
-                frame = document->frame();
-        }
-    } else
-        frame = m_document->frame();
+    if (!node) {
+        *error = "No node with given id found.";
+        return InjectedScript();
+    }
 
-    if (frame)
-        return m_injectedScriptHost->injectedScriptFor(mainWorldScriptState(frame));
+    Document* document = node->ownerDocument();
+    Frame* frame = document->frame();
 
-    return InjectedScript();
+    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptFor(mainWorldScriptState(frame));
+    if (injectedScript.hasNoValue()) {
+        *error = "No JavaScript world found for node with given id.";
+        return InjectedScript();
+    }
+
+    return injectedScript;
 }
-
 
 } // namespace WebCore
 

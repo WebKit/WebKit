@@ -151,19 +151,16 @@ void InjectedScriptHost::discardInjectedScript(ScriptState* inspectedScriptState
     global->DeleteHiddenValue(key);
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::nodeForIdCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::inspectedNodeCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.nodeForId()");
+    INC_STATS("InjectedScriptHost.inspectedNode()");
     if (args.Length() < 1)
         return v8::Undefined();
 
     InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
     
-    Node* node = host->nodeForId(args[0]->ToInt32()->Value());
+    Node* node = host->inspectedNode(args[0]->ToInt32()->Value());
     if (!node)
-        return v8::Undefined();
-
-    if (!host->inspectorAgent())
         return v8::Undefined();
 
     return toV8(node);

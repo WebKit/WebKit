@@ -52,14 +52,13 @@ public:
     bool hasNoValue() const { return m_injectedScriptObject.hasNoValue(); }
 
     void evaluate(const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
+    void evaluateOn(PassRefPtr<InspectorObject> objectId, const String& expression, RefPtr<InspectorValue>* result);
     void evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
     void getCompletions(const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
     void getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
     void getProperties(PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result);
     Node* nodeForObjectId(PassRefPtr<InspectorObject> objectId);
     void resolveNode(long nodeId, RefPtr<InspectorValue>* result);
-    void getNodeProperties(long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result);
-    void getNodePrototypes(long nodeId, RefPtr<InspectorValue>* result);
     void setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result);
     void releaseObject(PassRefPtr<InspectorObject> objectId);
     
@@ -67,7 +66,8 @@ public:
     PassRefPtr<InspectorValue> callFrames();
 #endif
 
-    PassRefPtr<InspectorObject> wrapForConsole(ScriptValue);
+    PassRefPtr<InspectorObject> wrapObject(ScriptValue, const String& groupName);
+    PassRefPtr<InspectorObject> wrapNode(Node*, const String& groupName);
     void inspectNode(Node*);
     void releaseWrapperObjectGroup(const String&);
     ScriptState* scriptState() const { return m_injectedScriptObject.scriptState(); }
@@ -78,6 +78,7 @@ private:
 
     bool canAccessInspectedWindow();
     void makeCall(ScriptFunctionCall&, RefPtr<InspectorValue>* result);
+    ScriptValue nodeAsScriptValue(Node*);
 
     ScriptObject m_injectedScriptObject;
 };

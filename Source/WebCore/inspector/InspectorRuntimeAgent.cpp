@@ -52,6 +52,13 @@ void InspectorRuntimeAgent::evaluate(ErrorString*, const String& expression, con
         injectedScript.evaluate(expression, objectGroup, includeCommandLineAPI, result);
 }
 
+void InspectorRuntimeAgent::evaluateOn(ErrorString*, PassRefPtr<InspectorObject> objectId, const String& expression, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptForObjectId(objectId.get());
+    if (!injectedScript.hasNoValue())
+        injectedScript.evaluateOn(objectId, expression, result);
+}
+
 void InspectorRuntimeAgent::getCompletions(ErrorString*, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
 {
     InjectedScript injectedScript = m_injectedScriptHost->injectedScriptForMainFrame();

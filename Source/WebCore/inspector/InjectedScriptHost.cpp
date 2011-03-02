@@ -42,10 +42,10 @@
 #include "InspectorAgent.h"
 #include "InspectorClient.h"
 #include "InspectorConsoleAgent.h"
-#include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
 #include "InspectorFrontend.h"
+#include "InspectorValues.h"
 #include "Pasteboard.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -94,25 +94,28 @@ void InjectedScriptHost::clearConsoleMessages()
     }
 }
 
+void InjectedScriptHost::addInspectedNode(Node* node)
+{
+    m_inspectedNodes.prepend(node);
+    while (m_inspectedNodes.size() > 5)
+        m_inspectedNodes.removeLast();
+}
+
+void InjectedScriptHost::clearInspectedNodes()
+{
+    m_inspectedNodes.clear();
+}
+
 void InjectedScriptHost::copyText(const String& text)
 {
     Pasteboard::generalPasteboard()->writePlainText(text);
 }
 
-Node* InjectedScriptHost::nodeForId(long nodeId)
+Node* InjectedScriptHost::inspectedNode(unsigned long num)
 {
-    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
-        return domAgent->nodeForId(nodeId);
+    if (num < m_inspectedNodes.size())
+        return m_inspectedNodes[num].get();
     return 0;
-}
-
-long InjectedScriptHost::inspectedNode(unsigned long num)
-{
-    InspectorDOMAgent* domAgent = inspectorDOMAgent();
-    if (!domAgent)
-        return 0;
-
-    return domAgent->inspectedNode(num);
 }
 
 #if ENABLE(DATABASE)
@@ -171,13 +174,6 @@ void InjectedScriptHost::releaseWrapperObjectGroup(long injectedScriptId, const 
          for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != m_idToInjectedScript.end(); ++it)
               it->second.releaseWrapperObjectGroup(objectGroup);
     }
-}
-
-InspectorDOMAgent* InjectedScriptHost::inspectorDOMAgent()
-{
-    if (!m_inspectorAgent)
-        return 0;
-    return m_inspectorAgent->domAgent();
 }
 
 InspectorFrontend* InjectedScriptHost::frontend()

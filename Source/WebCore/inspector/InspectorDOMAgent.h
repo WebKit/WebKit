@@ -59,6 +59,7 @@ class NameNodeMap;
 class Node;
 class Page;
 class RevalidateStyleAttributeTask;
+class ScriptValue;
 
 typedef String ErrorString;
 
@@ -116,9 +117,7 @@ public:
     void addInspectedNode(ErrorString*, long nodeId);
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, bool runSynchronously);
     void searchCanceled(ErrorString*);
-    void resolveNode(ErrorString*, long nodeId, RefPtr<InspectorValue>* result);
-    void getNodeProperties(ErrorString*, long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result);
-    void getNodePrototypes(ErrorString*, long nodeId, RefPtr<InspectorValue>* result);
+    void resolveNode(ErrorString*, long nodeId, const String& objectGroup, RefPtr<InspectorValue>* result);
     void pushNodeToFrontend(ErrorString*, PassRefPtr<InspectorObject> objectId, long* nodeId);
 
     // Methods called from the InspectorInstrumentation.
@@ -138,7 +137,6 @@ public:
     long pushNodePathToFrontend(Node*);
     void pushChildNodesToFrontend(long nodeId);
     void pushNodeByPathToFrontend(ErrorString*, const String& path, long* nodeId);
-    long inspectedNode(unsigned long num);
     void copyNode(ErrorString*, long nodeId);
     void setDOMListener(DOMListener*);
 
@@ -182,7 +180,7 @@ private:
 
     void discardBindings();
 
-    InjectedScript injectedScriptForNodeId(long nodeId);
+    InjectedScript injectedScriptForNode(ErrorString*, Node*);
 
     InstrumentingAgents* m_instrumentingAgents;
     InjectedScriptHost* m_injectedScriptHost;
@@ -199,7 +197,6 @@ private:
     Deque<MatchJob*> m_pendingMatchJobs;
     Timer<InspectorDOMAgent> m_matchJobsTimer;
     HashSet<RefPtr<Node> > m_searchResults;
-    Vector<long> m_inspectedNodes;
     OwnPtr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
 };
 

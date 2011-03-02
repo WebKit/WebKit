@@ -42,15 +42,40 @@ WebInspector.PropertiesSidebarPane.prototype = {
             return;
         }
 
-        function callback(prototypes)
+        RuntimeAgent.releaseWrapperObjectGroup(0, "dom-selection");
+        WebInspector.RemoteObject.resolveNode(node, nodeResolved.bind(this));
+
+        function nodeResolved(objectPayload)
         {
+            if (!objectPayload)
+                return;
+            var object = WebInspector.RemoteObject.fromPayload(objectPayload);
+            object.evaluate("var proto = this; result = {}; var counter = 1; while (proto) { result[counter++] = proto; proto = proto.__proto__ }; return result;", nodePrototypesReady.bind(this));
+        }
+
+        function nodePrototypesReady(objectPayload)
+        {
+            if (!objectPayload)
+                return;
+            var object = WebInspector.RemoteObject.fromPayload(objectPayload);
+            object.getOwnProperties(false, fillSection.bind(this));
+        }
+
+        function fillSection(prototypes)
+        {
+            if (!prototypes)
+                return;
+
             var body = this.bodyElement;
             body.removeChildren();
             this.sections = [];
 
             // Get array of prototype user-friendly names.
             for (var i = 0; i < prototypes.length; ++i) {
-                var prototype = WebInspector.RemoteObject.fromPayload(prototypes[i]);
+                if (!parseInt(prototypes[i].name))
+                    continue;
+
+                var prototype = prototypes[i].value;
                 var title = prototype.description;
                 if (title.match(/Prototype$/))
                     title = title.replace(/Prototype$/, "");
@@ -59,7 +84,6 @@ WebInspector.PropertiesSidebarPane.prototype = {
                 body.appendChild(section.element);
             }
         }
-        DOMAgent.getNodePrototypes(node.id, callback.bind(this));
     }
 }
 

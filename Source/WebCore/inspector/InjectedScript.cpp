@@ -56,6 +56,14 @@ void InjectedScript::evaluate(const String& expression, const String& objectGrou
     makeCall(function, result);
 }
 
+void InjectedScript::evaluateOn(PassRefPtr<InspectorObject> objectId, const String& expression, RefPtr<InspectorValue>* result)
+{
+    ScriptFunctionCall function(m_injectedScriptObject, "evaluateOn");
+    function.appendArgument(objectId->toJSONString());
+    function.appendArgument(expression);
+    makeCall(function, result);
+}
+
 void InjectedScript::evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "evaluateOnCallFrame");
@@ -115,21 +123,6 @@ void InjectedScript::resolveNode(long nodeId, RefPtr<InspectorValue>* result)
     makeCall(function, result);
 }
 
-void InjectedScript::getNodeProperties(long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result)
-{
-    ScriptFunctionCall function(m_injectedScriptObject, "getNodeProperties");
-    function.appendArgument(nodeId);
-    function.appendArgument(propertiesArray->toJSONString());
-    makeCall(function, result);
-}
-
-void InjectedScript::getNodePrototypes(long nodeId, RefPtr<InspectorValue>* result)
-{
-    ScriptFunctionCall function(m_injectedScriptObject, "getNodePrototypes");
-    function.appendArgument(nodeId);
-    makeCall(function, result);
-}
-
 void InjectedScript::setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "setPropertyValue");
@@ -157,11 +150,12 @@ PassRefPtr<InspectorValue> InjectedScript::callFrames()
 }
 #endif
 
-PassRefPtr<InspectorObject> InjectedScript::wrapForConsole(ScriptValue value)
+PassRefPtr<InspectorObject> InjectedScript::wrapObject(ScriptValue value, const String& groupName)
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall wrapFunction(m_injectedScriptObject, "wrapForConsole");
+    ScriptFunctionCall wrapFunction(m_injectedScriptObject, "wrapObject");
     wrapFunction.appendArgument(value);
+    wrapFunction.appendArgument(groupName);
     wrapFunction.appendArgument(canAccessInspectedWindow());
     bool hadException = false;
     ScriptValue r = wrapFunction.call(hadException);
@@ -173,11 +167,16 @@ PassRefPtr<InspectorObject> InjectedScript::wrapForConsole(ScriptValue value)
     return r.toInspectorValue(m_injectedScriptObject.scriptState())->asObject();
 }
 
+PassRefPtr<InspectorObject> InjectedScript::wrapNode(Node* node, const String& groupName)
+{
+    return wrapObject(nodeAsScriptValue(node), groupName);
+}
+
 void InjectedScript::inspectNode(Node* node)
 {
     ASSERT(!hasNoValue());
     ScriptFunctionCall function(m_injectedScriptObject, "inspectNode");
-    function.appendArgument(InjectedScriptHost::nodeAsScriptValue(m_injectedScriptObject.scriptState(), node));
+    function.appendArgument(nodeAsScriptValue(node));
     RefPtr<InspectorValue> result;
     makeCall(function, &result);
 }
@@ -210,6 +209,11 @@ void InjectedScript::makeCall(ScriptFunctionCall& function, RefPtr<InspectorValu
         *result = resultValue.toInspectorValue(m_injectedScriptObject.scriptState());
     else
         *result = InspectorValue::null();
+}
+
+ScriptValue InjectedScript::nodeAsScriptValue(Node* node)
+{
+    return InjectedScriptHost::nodeAsScriptValue(m_injectedScriptObject.scriptState(), node);
 }
 
 } // namespace WebCore

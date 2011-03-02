@@ -52,7 +52,7 @@ WebInspector.RemoteObject.resolveNode = function(node, callback)
     {
         callback(object ? WebInspector.RemoteObject.fromPayload(object) : null);
     }
-    DOMAgent.resolveNode(node.id, mycallback);
+    DOMAgent.resolveNode(node.id, "dom-selection", mycallback);
 }
 
 WebInspector.RemoteObject.fromPayload = function(payload)
@@ -136,6 +136,11 @@ WebInspector.RemoteObject.prototype = {
             DOMAgent.pushNodeToFrontend(this._objectId, callback);
         else
             callback(0);
+    },
+
+    evaluate: function(expression, callback)
+    {
+        RuntimeAgent.evaluateOn(this._objectId, expression, callback);
     }
 }
 

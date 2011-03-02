@@ -37,12 +37,12 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Database;
 class InjectedScript;
-class InspectorDOMAgent;
 class InspectorFrontend;
 class InspectorObject;
 class Node;
@@ -69,9 +69,11 @@ public:
     void inspectImpl(PassRefPtr<InspectorValue> objectId, PassRefPtr<InspectorValue> hints);
     void clearConsoleMessages();
 
+    void addInspectedNode(Node*);
+    void clearInspectedNodes();
+
     void copyText(const String& text);
-    Node* nodeForId(long nodeId);
-    long inspectedNode(unsigned long num);
+    Node* inspectedNode(unsigned long num);
 
 #if ENABLE(DATABASE)
     long databaseIdImpl(Database*);
@@ -97,7 +99,6 @@ public:
 
 private:
     InjectedScriptHost(InspectorAgent*);
-    InspectorDOMAgent* inspectorDOMAgent();
     InspectorFrontend* frontend();
     String injectedScriptSource();
     ScriptObject createInjectedScript(const String& source, ScriptState* scriptState, long id);
@@ -108,6 +109,7 @@ private:
     long m_lastWorkerId;
     typedef HashMap<long, InjectedScript> IdToInjectedScriptMap;
     IdToInjectedScriptMap m_idToInjectedScript;
+    Vector<RefPtr<Node> > m_inspectedNodes;
 };
 
 } // namespace WebCore

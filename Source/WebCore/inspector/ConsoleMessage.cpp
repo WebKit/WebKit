@@ -103,7 +103,7 @@ void ConsoleMessage::addToFrontend(InspectorFrontend* frontend, InjectedScriptHo
         if (!injectedScript.hasNoValue()) {
             RefPtr<InspectorArray> jsonArgs = InspectorArray::create();
             for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {
-                RefPtr<InspectorValue> inspectorValue = injectedScript.wrapForConsole(m_arguments->argumentAt(i));
+                RefPtr<InspectorValue> inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console");
                 if (!inspectorValue) {
                     ASSERT_NOT_REACHED();
                     return;

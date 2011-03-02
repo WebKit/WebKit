@@ -74,6 +74,7 @@ module core {
 
     interface [Conditional=INSPECTOR] Runtime {
         void evaluate(in String expression, in String objectGroup, in boolean includeCommandLineAPI, out Value result);
+        void evaluateOn(in Object objectId, in String expression, out Value result);
         void getCompletions(in String expression, in boolean includeCommandLineAPI, out Value result);
         void getProperties(in Object objectId, in boolean ignoreHasOwnProperty, in boolean abbreviate, out Value result);
         void setPropertyValue(in Object objectId, in String propertyName, in String expression, out Value result);
@@ -159,9 +160,7 @@ module core {
         void performSearch(in String query, in boolean runSynchronously);
         void searchCanceled();
         void pushNodeByPathToFrontend(in String path, out long nodeId);
-        void resolveNode(in long nodeId, out Value result);
-        void getNodeProperties(in long nodeId, in Array propertiesArray, out Value result);
-        void getNodePrototypes(in long nodeId, out Value result);
+        void resolveNode(in long nodeId, in String objectGroup, out Value result);
         void pushNodeToFrontend(in Object objectId, out long nodeId);
 
         [event] void setDocument(out Value root); // FIXME: should be requested from the front-end as getDocument.

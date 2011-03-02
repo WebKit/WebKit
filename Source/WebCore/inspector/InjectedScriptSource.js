@@ -50,10 +50,10 @@ var InjectedScript = function()
 }
 
 InjectedScript.prototype = {
-    wrapForConsole: function(object, canAccessInspectedWindow)
+    wrapObject: function(object, groupName, canAccessInspectedWindow)
     {
         if (canAccessInspectedWindow)
-            return this._wrapObject(object, "console");
+            return this._wrapObject(object, groupName);
         var result = {};
         result.type = typeof object;
         result.description = this._toString(object);
@@ -288,6 +288,20 @@ InjectedScript.prototype = {
         return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup, false, injectCommandLineAPI);
     },
 
+    evaluateOn: function(objectId, expression)
+    {
+        var parsedObjectId = this._parseObjectId(objectId);
+        var object = this._objectForId(parsedObjectId);
+        if (!object)
+            return false;
+        try {
+            inspectedWindow.console._objectToEvaluateOn = object;
+            return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, "(function() {" + expression + "}).call(window.console._objectToEvaluateOn)", parsedObjectId.objectGroup, false, false);
+        } finally {
+            delete inspectedWindow.console._objectToEvaluateOn;
+        }
+    },
+
     _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, injectCommandLineAPI)
     {
         try {
@@ -356,13 +370,6 @@ InjectedScript.prototype = {
         return callFrame;
     },
 
-    _nodeForId: function(nodeId)
-    {
-        if (!nodeId)
-            return null;
-        return InjectedScriptHost.nodeForId(nodeId);
-    },
-
     _objectForId: function(objectId)
     {
         return this._idToWrappedObject[objectId.id];
@@ -377,41 +384,9 @@ InjectedScript.prototype = {
         return object;
     },
 
-    resolveNode: function(nodeId)
+    resolveNode: function(node)
     {
-        var node = this._nodeForId(nodeId);
-        if (!node)
-            return false;
-        // FIXME: receive the object group from client.
-        return this._wrapObject(node, "prototype");
-    },
-
-    getNodeProperties: function(nodeId, properties)
-    {
-        var node = this._nodeForId(nodeId);
-        if (!node)
-            return false;
-        properties = eval("(" + properties + ")");
-        var result = {};
-        for (var i = 0; i < properties.length; ++i)
-            result[properties[i]] = node[properties[i]];
-        return result;
-    },
-
-    getNodePrototypes: function(nodeId)
-    {
-        this.releaseWrapperObjectGroup("prototypes");
-        var node = this._nodeForId(nodeId);
-        if (!node)
-            return false;
-
-        var result = [];
-        var prototype = node;
-        do {
-            result.push(this._wrapObject(prototype, "prototypes"));
-            prototype = prototype.__proto__;
-        } while (prototype)
-        return result;
+        return this._wrapObject(node);
     },
 
     _isDefined: function(object)
@@ -738,8 +713,7 @@ CommandLineAPIImpl.prototype = {
 
     _inspectedNode: function(num)
     {
-        var nodeId = InjectedScriptHost.inspectedNode(num);
-        return injectedScript._nodeForId(nodeId);
+        return InjectedScriptHost.inspectedNode(num);
     },
 
     _normalizeEventTypes: function(types)

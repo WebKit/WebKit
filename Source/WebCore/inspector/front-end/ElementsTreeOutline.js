@@ -403,17 +403,35 @@ WebInspector.ElementsTreeElement.prototype = {
         if (!node.nodeName || node.nodeName.toLowerCase() !== "img")
             return;
 
-        function setTooltip(properties)
+        function setTooltip(result)
         {
-            if (!properties)
+            if (!result || result.type !== "string")
                 return;
 
-            if (properties.offsetHeight === properties.naturalHeight && properties.offsetWidth === properties.naturalWidth)
-                this.tooltip = WebInspector.UIString("%d × %d pixels", properties.offsetWidth, properties.offsetHeight);
-            else
-                this.tooltip = WebInspector.UIString("%d × %d pixels (Natural: %d × %d pixels)", properties.offsetWidth, properties.offsetHeight, properties.naturalWidth, properties.naturalHeight);
+            try {
+                var properties = JSON.parse(result.description);
+                var offsetWidth = properties[0];
+                var offsetHeight = properties[1];
+                var naturalWidth = properties[2];
+                var naturalHeight = properties[3];
+                if (offsetHeight === naturalHeight && offsetWidth === naturalWidth)
+                    this.tooltip = WebInspector.UIString("%d \xd7 %d pixels", offsetWidth, offsetHeight);
+                else
+                    this.tooltip = WebInspector.UIString("%d \xd7 %d pixels (Natural: %d \xd7 %d pixels)", offsetWidth, offsetHeight, naturalWidth, naturalHeight);
+            } catch (e) {
+                console.error(e);
+            }
         }
-        DOMAgent.getNodeProperties(node.id, ["naturalHeight", "naturalWidth", "offsetHeight", "offsetWidth"], setTooltip.bind(this));
+
+        function resolvedNode(objectPayload)
+        {
+            if (!objectPayload)
+                return;
+
+            var object = WebInspector.RemoteObject.fromPayload(objectPayload);
+            object.evaluate("return '[' + this.offsetWidth + ',' + this.offsetHeight + ',' + this.naturalWidth + ',' + this.naturalHeight + ']'", setTooltip.bind(this));
+        }
+        DOMAgent.resolveNode(node.id, "", resolvedNode.bind(this));
     },
 
     updateSelection: function()
