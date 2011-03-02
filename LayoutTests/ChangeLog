@@ -1,3 +1,15 @@
+2011-03-02  Martin Maly  <mmaly@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Expectation updates for strict mode V8 features.
+        https://bugs.webkit.org/show_bug.cgi?id=55538
+
+        * platform/chromium/fast/js/mozilla/strict/15.10.7-expected.txt: Added.
+        * platform/chromium/fast/js/mozilla/strict/15.3.5.1-expected.txt: Added.
+        * platform/chromium/fast/js/mozilla/strict/15.5.5.1-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Yet another unreviewed Chromium rebaselines for r80121.

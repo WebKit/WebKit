@@ -1,0 +1,35 @@
+PASS 'use strict'; var r = /foo/; r.source = "bar"; r.source threw exception of type TypeError.
+PASS var r = /foo/; r.source = "bar"; r.source is "foo"
+PASS true === true
+PASS 'use strict'; var r = /foo/; delete r.source threw exception of type TypeError.
+PASS var r = /foo/; delete r.source is false
+PASS true === true
+PASS 'use strict'; var r = /foo/; r.global = true; r.global threw exception of type TypeError.
+PASS var r = /foo/; r.global = true; r.global is false
+PASS true === true
+PASS 'use strict'; var r = /foo/; delete r.global threw exception of type TypeError.
+PASS var r = /foo/; delete r.global is false
+PASS true === true
+PASS 'use strict'; var r = /foo/; r.ignoreCase = true; r.ignoreCase threw exception of type TypeError.
+PASS var r = /foo/; r.ignoreCase = true; r.ignoreCase is false
+PASS true === true
+PASS 'use strict'; var r = /foo/; delete r.ignoreCase threw exception of type TypeError.
+PASS var r = /foo/; delete r.ignoreCase is false
+PASS true === true
+PASS 'use strict'; var r = /foo/; r.multiline = true; r.multiline threw exception of type TypeError.
+PASS var r = /foo/; r.multiline = true; r.multiline is false
+PASS true === true
+PASS 'use strict'; var r = /foo/; delete r.multiline threw exception of type TypeError.
+PASS var r = /foo/; delete r.multiline is false
+PASS true === true
+PASS 'use strict'; var r = /foo/; r.lastIndex = 42; r.lastIndex is 42
+PASS var r = /foo/; r.lastIndex = 42; r.lastIndex is 42
+PASS true === true
+PASS 'use strict'; var r = /foo/; delete r.lastIndex threw exception of type TypeError.
+PASS var r = /foo/; delete r.lastIndex is false
+PASS true === true
+ PASSED! 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

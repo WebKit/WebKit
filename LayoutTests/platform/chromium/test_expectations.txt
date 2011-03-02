@@ -3327,7 +3327,6 @@ BUGV8_1168 : fast/js/mozilla/strict/8.12.5.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/8.7.2.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/B.1.2.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/eval-variable-environment.html = TEXT
-BUGV8_1168 : fast/js/mozilla/strict/function-name-arity.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/this-for-function-expression-recursion.html = TEXT
 
 BUGWK54634 SKIP : media/video-controls-in-media-document.html = TIMEOUT
