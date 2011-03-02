@@ -1,3 +1,9 @@
+2011-03-01  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Apply sort-Xcode-project-file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-03-01  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by James Robinson.

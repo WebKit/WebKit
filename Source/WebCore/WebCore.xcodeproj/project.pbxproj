@@ -12579,7 +12579,6 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				BCAD1808131C7A0D00990406 /* Localizable.strings */,
 				46F9D5DA0B0D60170028EE36 /* aliasCursor.png */,
 				46D4F2460AF97E810035385A /* cellCursor.png */,
 				46D4F2470AF97E810035385A /* contextMenuCursor.png */,
@@ -12592,6 +12591,7 @@
 				85136C8B0AED665800F90A3D /* helpCursor.png */,
 				750D02C011D0EE7D00BD1B27 /* inputSpeech.tiff */,
 				85136C8C0AED665800F90A3D /* linkCursor.png */,
+				BCAD1808131C7A0D00990406 /* Localizable.strings */,
 				AB4261D70A2F6C9700BDD17D /* missingImage.tiff */,
 				85136C8D0AED665800F90A3D /* moveCursor.png */,
 				46F9D5DB0B0D60170028EE36 /* noDropCursor.png */,
@@ -18430,11 +18430,11 @@
 				BCDFD48D0E305290009D10AD /* XMLHttpRequestUpload.cpp */,
 				BCDFD48C0E305290009D10AD /* XMLHttpRequestUpload.h */,
 				BCDFD4900E305644009D10AD /* XMLHttpRequestUpload.idl */,
-				5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */,
-				5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */,
 				1ACE53E40A8D18E70022947D /* XMLSerializer.cpp */,
 				1ACE53E50A8D18E70022947D /* XMLSerializer.h */,
 				1ACE53E60A8D18E70022947D /* XMLSerializer.idl */,
+				5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */,
+				5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */,
 				5980B03312EF3D8400DF5F85 /* XMLViewer.xsl */,
 				1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */,
 				1AB7FC480A8B92EC00D9D37B /* XPathEvaluator.h */,
@@ -19714,6 +19714,7 @@
 				A8C4A80909D563270003AC8D /* CSSMappedAttributeDeclaration.h in Headers */,
 				A80E6D030A1989CA007FB8C5 /* CSSMediaRule.h in Headers */,
 				A80E6DFC0A199067007FB8C5 /* CSSMutableStyleDeclaration.h in Headers */,
+				089F0D511316CE93005877AD /* CSSMutableValue.h in Headers */,
 				A80E734E0A199C77007FB8C5 /* CSSNamespace.h in Headers */,
 				F98FFF4511A2676200F548E8 /* CSSOMUtils.h in Headers */,
 				A80E6D000A1989CA007FB8C5 /* CSSPageRule.h in Headers */,
@@ -22491,7 +22492,6 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
-				089F0D511316CE93005877AD /* CSSMutableValue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22581,7 +22581,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */,
-				BCAD180A131C7A0D00990406 /* Localizable.strings in Resources */,
 				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
 				46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */,
 				4614A1FE0B23A8D600446E1C /* copyCursor.png in Resources */,
@@ -22593,6 +22592,7 @@
 				85136C9B0AED665900F90A3D /* helpCursor.png in Resources */,
 				750D02C111D0EE7D00BD1B27 /* inputSpeech.tiff in Resources */,
 				85136C9C0AED665900F90A3D /* linkCursor.png in Resources */,
+				BCAD180A131C7A0D00990406 /* Localizable.strings in Resources */,
 				1CDC14050DD3934C006EACD3 /* localizedStrings.js in Resources */,
 				AB4261D80A2F6C9700BDD17D /* missingImage.tiff in Resources */,
 				85136C9D0AED665900F90A3D /* moveCursor.png in Resources */,
@@ -24363,6 +24363,7 @@
 				89878567122CA064003AABDA /* LocalFileSystem.cpp in Sources */,
 				F5142C6B123F12C500F5BD4C /* LocalizedNumberNone.cpp in Sources */,
 				C046E1AC1208A9FE00BA2CF7 /* LocalizedStrings.cpp in Sources */,
+				BC25B52A131C6D3900180E10 /* LocalizedStringsMac.mm in Sources */,
 				511F23170DC160DA004F0032 /* LocalStorageTask.cpp in Sources */,
 				511F23190DC160DA004F0032 /* LocalStorageThread.cpp in Sources */,
 				BCE1C41C0D982981003B02F2 /* Location.cpp in Sources */,
@@ -25137,7 +25138,6 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
-				BC25B52A131C6D3900180E10 /* LocalizedStringsMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
