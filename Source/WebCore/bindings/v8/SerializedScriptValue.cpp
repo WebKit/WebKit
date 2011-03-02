@@ -1146,6 +1146,12 @@ void SerializedScriptValue::deserializeAndSetProperty(v8::Handle<v8::Object> obj
     object->ForceSet(v8::String::NewSymbol(propertyName), deserialized, attribute);
 }
 
+void SerializedScriptValue::deserializeAndSetProperty(v8::Handle<v8::Object> object, const char* propertyName,
+                                                      v8::PropertyAttribute attribute, PassRefPtr<SerializedScriptValue> value)
+{
+    deserializeAndSetProperty(object, propertyName, attribute, value.get());
+}
+
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value, bool& didThrow)
 {
     return adoptRef(new SerializedScriptValue(value, didThrow));

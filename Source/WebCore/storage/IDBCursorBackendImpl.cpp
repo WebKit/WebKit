@@ -45,12 +45,12 @@
 
 namespace WebCore {
 
-IDBCursorBackendImpl::IDBCursorBackendImpl(IDBBackingStore* backingStore, PassRefPtr<IDBKeyRange> keyRange, IDBCursor::Direction direction, PassOwnPtr<SQLiteStatement> query, bool isSerializedScriptValueCursor, IDBTransactionBackendInterface* transaction, IDBObjectStoreBackendInterface* objectStore)
+IDBCursorBackendImpl::IDBCursorBackendImpl(IDBBackingStore* backingStore, PassRefPtr<IDBKeyRange> keyRange, IDBCursor::Direction direction, PassOwnPtr<SQLiteStatement> query, CursorType cursorType, IDBTransactionBackendInterface* transaction, IDBObjectStoreBackendInterface* objectStore)
     : m_backingStore(backingStore)
     , m_keyRange(keyRange)
     , m_direction(direction)
     , m_query(query)
-    , m_isSerializedScriptValueCursor(isSerializedScriptValueCursor)
+    , m_cursorType(cursorType)
     , m_transaction(transaction)
     , m_objectStore(objectStore)
 {
@@ -71,22 +71,25 @@ PassRefPtr<IDBKey> IDBCursorBackendImpl::key() const
     return m_currentKey;
 }
 
-PassRefPtr<IDBAny> IDBCursorBackendImpl::value() const
+PassRefPtr<IDBKey> IDBCursorBackendImpl::primaryKey() const
 {
-    if (m_isSerializedScriptValueCursor)
-        return IDBAny::create(m_currentSerializedScriptValue.get());
-    return IDBAny::create(m_currentIDBKeyValue.get());
+    return m_currentPrimaryKey;
+}
+
+PassRefPtr<SerializedScriptValue> IDBCursorBackendImpl::value() const
+{
+    ASSERT(m_cursorType != IndexKeyCursor);
+    return m_currentValue;
 }
 
 void IDBCursorBackendImpl::update(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)
 {
-    if (!m_query || m_currentId == InvalidId || !m_isSerializedScriptValueCursor) {
+    if (!m_query || m_currentId == InvalidId || m_cursorType == IndexKeyCursor) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return;
     }
 
-    RefPtr<IDBKey> key = m_currentIDBKeyValue ? m_currentIDBKeyValue : m_currentKey;
-    m_objectStore->put(value, key.release(), IDBObjectStoreBackendInterface::CursorUpdate, callbacks, m_transaction.get(), ec);
+    m_objectStore->put(value, m_currentPrimaryKey, IDBObjectStoreBackendInterface::CursorUpdate, callbacks, m_transaction.get(), ec);
 }
 
 void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
@@ -100,7 +103,7 @@ void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPt
 
 bool IDBCursorBackendImpl::currentRowExists()
 {
-    String sql = m_currentIDBKeyValue ? "SELECT id FROM IndexData WHERE id = ?" : "SELECT id FROM ObjectStoreData WHERE id = ?";
+    String sql = m_cursorType == ObjectStoreCursor ? "SELECT id FROM ObjectStoreData WHERE id = ?" : "SELECT id FROM IndexData WHERE id = ?";
     SQLiteStatement statement(m_backingStore->db(), sql);
 
     bool ok = statement.prepare() == SQLResultOk;
@@ -121,8 +124,8 @@ void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, Pas
             cursor->m_query = 0;
             cursor->m_currentId = InvalidId;
             cursor->m_currentKey = 0;
-            cursor->m_currentSerializedScriptValue = 0;
-            cursor->m_currentIDBKeyValue = 0;
+            cursor->m_currentPrimaryKey = 0;
+            cursor->m_currentValue = 0;
             callbacks->onSuccess(SerializedScriptValue::nullValue());
             return;
         }
@@ -150,26 +153,22 @@ void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, Pas
 
 void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
 {
-    if (!m_query || m_currentId == InvalidId || !m_isSerializedScriptValueCursor) {
+    if (!m_query || m_currentId == InvalidId || m_cursorType == IndexKeyCursor) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return;
     }
 
-    RefPtr<IDBKey> key = m_currentIDBKeyValue ? m_currentIDBKeyValue : m_currentKey;
-    m_objectStore->deleteFunction(key.release(), prpCallbacks, m_transaction.get(), ec);
+    m_objectStore->deleteFunction(m_currentPrimaryKey, prpCallbacks, m_transaction.get(), ec);
 }
 
 
 void IDBCursorBackendImpl::loadCurrentRow()
 {
-    // The column numbers depend on the query in IDBObjectStoreBackendImpl::openCursorInternal or
-    // IDBIndexBackendImpl::openCursorInternal.
+    // The column numbers depend on the query in IDBObjectStoreBackendImpl::openCursorInternal and/or IDBIndexBackendImpl::openCursorInternal.
     m_currentId = m_query->getColumnInt64(0);
     m_currentKey = IDBKey::fromQuery(*m_query, 1);
-    if (m_isSerializedScriptValueCursor)
-        m_currentSerializedScriptValue = SerializedScriptValue::createFromWire(m_query->getColumnBlobAsString(4));
-
-    m_currentIDBKeyValue = IDBKey::fromQuery(*m_query, 5);
+    m_currentValue = SerializedScriptValue::createFromWire(m_query->getColumnBlobAsString(4));
+    m_currentPrimaryKey = IDBKey::fromQuery(*m_query, 5);
 }
 
 SQLiteDatabase& IDBCursorBackendImpl::database() const

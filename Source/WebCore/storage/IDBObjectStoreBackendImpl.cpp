@@ -488,7 +488,7 @@ void IDBObjectStoreBackendImpl::openCursorInternal(ScriptExecutionContext*, Pass
     bool upperBound = range && range->upper();
 
     // Several files depend on this order of selects.
-    String sql = "SELECT id, keyString, keyDate, keyNumber, value FROM ObjectStoreData WHERE ";
+    String sql = "SELECT id, keyString, keyDate, keyNumber, value, keyString, keyDate, keyNumber FROM ObjectStoreData WHERE ";
     if (lowerBound)
         sql += range->lower()->lowerCursorWhereFragment(range->lowerWhereClauseComparisonOperator());
     if (upperBound)
@@ -517,7 +517,7 @@ void IDBObjectStoreBackendImpl::openCursorInternal(ScriptExecutionContext*, Pass
         return;
     }
 
-    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(objectStore->m_backingStore.get(), range, direction, query.release(), true, transaction.get(), objectStore.get());
+    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(objectStore->m_backingStore.get(), range, direction, query.release(), IDBCursorBackendInterface::ObjectStoreCursor, transaction.get(), objectStore.get());
     callbacks->onSuccess(cursor.release());
 }
 

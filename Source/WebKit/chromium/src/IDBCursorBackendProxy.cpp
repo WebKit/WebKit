@@ -62,17 +62,14 @@ PassRefPtr<IDBKey> IDBCursorBackendProxy::key() const
     return m_idbCursor->key();
 }
 
-PassRefPtr<IDBAny> IDBCursorBackendProxy::value() const
+PassRefPtr<IDBKey> IDBCursorBackendProxy::primaryKey() const
 {
-    WebKit::WebSerializedScriptValue webScriptValue;
-    WebKit::WebIDBKey webKey;
-    m_idbCursor->value(webScriptValue, webKey);
-    if (!webScriptValue.isNull()) {
-        ASSERT(webKey.type() == WebKit::WebIDBKey::InvalidType);
-        return IDBAny::create<SerializedScriptValue>(webScriptValue);
-    }
-    ASSERT(webKey.type() != WebKit::WebIDBKey::InvalidType);
-    return IDBAny::create<IDBKey>(webKey);
+    return m_idbCursor->primaryKey();
+}
+
+PassRefPtr<SerializedScriptValue> IDBCursorBackendProxy::value() const
+{
+    return m_idbCursor->value();
 }
 
 void IDBCursorBackendProxy::update(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)

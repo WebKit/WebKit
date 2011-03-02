@@ -38,7 +38,7 @@ objectStore = trans.objectStore('test')
 objectStore.add('myValue1', 'myKey1')
 openCursor2
 objectStore.openCursor(keyRange)
-PASS [object IDBCursor] is non-null.
+PASS [object IDBCursorWithValue] is non-null.
 event.target.result.delete()
 objectStore.get('myKey1')
 PASS event.target.result is undefined

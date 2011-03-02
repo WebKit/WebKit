@@ -206,7 +206,7 @@ function keyCursor()
     }
 
     shouldBe("event.target.result.key", "counter + 100");
-    shouldBe("event.target.result.value", "counter");
+    shouldBe("event.target.result.primaryKey", "counter");
 
     try {
         debug("event.target.result.update({id: counter, number: counter + 200})");

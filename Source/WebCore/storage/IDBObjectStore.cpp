@@ -157,6 +157,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
     }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
+    request->setCursorType(IDBCursorBackendInterface::ObjectStoreCursor);
     m_objectStore->openCursor(range, direction, request, m_transaction->backend(), ec);
     if (ec) {
         request->markEarlyDeath();

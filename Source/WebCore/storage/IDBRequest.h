@@ -68,6 +68,7 @@ public:
 
     void markEarlyDeath();
     bool resetReadyState(IDBTransaction*);
+    void setCursorType(IDBCursorBackendInterface::CursorType);
     IDBAny* source();
     void abort();
 
@@ -115,6 +116,9 @@ private:
     ReadyState m_readyState;
     bool m_finished; // Is it possible that we'll fire any more events? If not, we're finished.
     Vector<RefPtr<Event> > m_enqueuedEvents;
+
+    // Only used if the result type will be a cursor.
+    IDBCursorBackendInterface::CursorType m_cursorType;
 
     EventTargetData m_eventTargetData;
 };

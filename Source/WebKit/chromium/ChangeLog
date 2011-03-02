@@ -1,3 +1,23 @@
+2011-02-28  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Split IDBCursor.value into IDBCursor.primaryKey and IDBCursor.value
+        https://bugs.webkit.org/show_bug.cgi?id=55443
+
+        * public/WebIDBCursor.h:
+        (WebKit::WebIDBCursor::primaryKey):
+        (WebKit::WebIDBCursor::value):
+        * src/IDBCursorBackendProxy.cpp:
+        (WebCore::IDBCursorBackendProxy::primaryKey):
+        (WebCore::IDBCursorBackendProxy::value):
+        * src/IDBCursorBackendProxy.h:
+        * src/WebIDBCursorImpl.cpp:
+        (WebKit::WebIDBCursorImpl::key):
+        (WebKit::WebIDBCursorImpl::primaryKey):
+        (WebKit::WebIDBCursorImpl::value):
+        * src/WebIDBCursorImpl.h:
+
 2011-03-02  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by David Levin.

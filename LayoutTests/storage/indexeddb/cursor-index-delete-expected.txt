@@ -40,7 +40,7 @@ objectStore.add({x: 1}, 'myKey1')
 openCursor2
 index = event.target.source.index('testIndex')
 index.openCursor(keyRange)
-PASS [object IDBCursor] is non-null.
+PASS [object IDBCursorWithValue] is non-null.
 event.target.result.delete()
 index.get(1)
 event.preventDefault()

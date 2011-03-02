@@ -114,7 +114,7 @@ function cursor1Continue()
 {
     shouldBeFalse("event.target.result === null");
     shouldBeEqualToString("event.target.result.key", "value");
-    shouldBeEqualToString("event.target.result.value", "key");
+    shouldBeEqualToString("event.target.result.primaryKey", "key");
 
     // We re-use the last request object.
     evalAndLog("event.target.result.continue()");
@@ -125,7 +125,7 @@ function cursor1Continue2()
 {
     shouldBeFalse("event.target.result === null");
     shouldBeEqualToString("event.target.result.key", "value2");
-    shouldBeEqualToString("event.target.result.value", "key2");
+    shouldBeEqualToString("event.target.result.primaryKey", "key2");
 
     // We re-use the last request object.
     evalAndLog("event.target.result.continue()");

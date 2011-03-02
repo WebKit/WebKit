@@ -39,8 +39,10 @@ namespace WebCore {
 
 class SerializedScriptValue : public ThreadSafeShared<SerializedScriptValue> {
 public:
-    static void deserializeAndSetProperty(v8::Handle<v8::Object> object, const char* propertyName,
+    static void deserializeAndSetProperty(v8::Handle<v8::Object>, const char* propertyName,
                                           v8::PropertyAttribute, SerializedScriptValue*);
+    static void deserializeAndSetProperty(v8::Handle<v8::Object>, const char* propertyName,
+                                          v8::PropertyAttribute, PassRefPtr<SerializedScriptValue>);
 
     // If a serialization error occurs (e.g., cyclic input value) this
     // function returns an empty representation, schedules a V8 exception to

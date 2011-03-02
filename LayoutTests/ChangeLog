@@ -1,3 +1,21 @@
+2011-02-28  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Split IDBCursor.value into IDBCursor.primaryKey and IDBCursor.value
+        https://bugs.webkit.org/show_bug.cgi?id=55443
+
+        * storage/indexeddb/cursor-delete-expected.txt:
+        * storage/indexeddb/cursor-index-delete-expected.txt:
+        * storage/indexeddb/cursor-update-expected.txt:
+        * storage/indexeddb/cursor-update.html:
+        * storage/indexeddb/duplicates-expected.txt:
+        * storage/indexeddb/duplicates.html:
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/index-basics.html:
+        * storage/indexeddb/index-cursor-expected.txt:
+        * storage/indexeddb/index-cursor.html:
+
 2011-03-02  Martin Robinson  <mrobinson@igalia.com>
 
         Update GTK+ baselines after r80151.

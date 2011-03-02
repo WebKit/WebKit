@@ -1,3 +1,74 @@
+2011-02-28  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Split IDBCursor.value into IDBCursor.primaryKey and IDBCursor.value
+        https://bugs.webkit.org/show_bug.cgi?id=55443
+
+        Implement http://www.w3.org/Bugs/Public/show_bug.cgi?id=11948
+
+        The idea is to have an IDBCursor and an IDBCursorWithValue interface which
+        inherits from the former.  index.openKeyCursor will return the former and
+        index/objectStore.openCursor will return the latter.  We'll add a primaryKey
+        attribute to IDBCursor.  It will always be the key of the associated object
+        store entry.  For index.openCursor cursors, the key attribute will be the key
+        of the index.  For objectStore.openCursors, it'll be the same as the
+        primaryKey.  The value will be the value of the objectStore entry.
+
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::deserializeAndSetProperty):
+        * bindings/v8/SerializedScriptValue.h:
+        * bindings/v8/custom/V8IDBAnyCustom.cpp:
+        (WebCore::toV8):
+        * storage/IDBAny.cpp:
+        (WebCore::IDBAny::idbCursorWithValue):
+        (WebCore::IDBAny::set):
+        * storage/IDBAny.h:
+        * storage/IDBCursor.cpp:
+        (WebCore::IDBCursor::create):
+        (WebCore::IDBCursor::primaryKey):
+        (WebCore::IDBCursor::value):
+        * storage/IDBCursor.h:
+        * storage/IDBCursor.idl:
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::IDBCursorBackendImpl):
+        (WebCore::IDBCursorBackendImpl::primaryKey):
+        (WebCore::IDBCursorBackendImpl::value):
+        (WebCore::IDBCursorBackendImpl::update):
+        (WebCore::IDBCursorBackendImpl::currentRowExists):
+        (WebCore::IDBCursorBackendImpl::continueFunctionInternal):
+        (WebCore::IDBCursorBackendImpl::deleteFunction):
+        (WebCore::IDBCursorBackendImpl::loadCurrentRow):
+        * storage/IDBCursorBackendImpl.h:
+        (WebCore::IDBCursorBackendImpl::create):
+        * storage/IDBCursorBackendInterface.h:
+        * storage/IDBCursorWithValue.cpp: Copied from Source/WebCore/storage/IDBCursor.idl.
+        (WebCore::IDBCursorWithValue::create):
+        (WebCore::IDBCursorWithValue::IDBCursorWithValue):
+        (WebCore::IDBCursorWithValue::~IDBCursorWithValue):
+        * storage/IDBCursorWithValue.h: Copied from Source/WebCore/storage/IDBCursorBackendInterface.h.
+        * storage/IDBCursorWithValue.idl: Copied from Source/WebCore/storage/IDBCursor.idl.
+        * storage/IDBIndex.cpp:
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::openKeyCursor):
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::openCursorInternal):
+        (WebCore::IDBIndexBackendImpl::openCursor):
+        (WebCore::IDBIndexBackendImpl::openKeyCursor):
+        * storage/IDBIndexBackendImpl.h:
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::openCursor):
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::openCursorInternal):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::setCursorType):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::dispatchEvent):
+        * storage/IDBRequest.h:
+
 2011-03-02  Aravind Akella  <aravind.akella@nokia.com>
 
          Reviewed by Csaba Osztrogonác.

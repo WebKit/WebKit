@@ -26,9 +26,10 @@
 #ifndef IDBIndexBackendImpl_h
 #define IDBIndexBackendImpl_h
 
-#include "IDBIndexBackendInterface.h"
-
 #if ENABLE(INDEXED_DATABASE)
+
+#include "IDBCursorBackendInterface.h"
+#include "IDBIndexBackendInterface.h"
 
 namespace WebCore {
 
@@ -77,7 +78,7 @@ private:
 
     SQLiteDatabase& sqliteDatabase() const;
 
-    static void openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, unsigned short direction, bool objectCursor, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
+    static void openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, unsigned short direction, IDBCursorBackendInterface::CursorType, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
     static void getInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKey>, bool getObject, PassRefPtr<IDBCallbacks>);
 
     static const int64_t InvalidId = 0;

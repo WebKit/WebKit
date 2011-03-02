@@ -52,22 +52,17 @@ unsigned short WebIDBCursorImpl::direction() const
 
 WebIDBKey WebIDBCursorImpl::key() const
 {
-    return WebIDBKey(m_idbCursorBackend->key());
+    return m_idbCursorBackend->key();
 }
 
-void WebIDBCursorImpl::value(WebSerializedScriptValue& serializedScriptValue, WebIDBKey& idbKey) const
+WebIDBKey WebIDBCursorImpl::primaryKey() const
 {
-    // Verify we're starting off with blank slates.
-    ASSERT(serializedScriptValue.isNull());
-    ASSERT(idbKey.type() == WebIDBKey::InvalidType);
+    return m_idbCursorBackend->primaryKey();
+}
 
-    RefPtr<IDBAny> any = m_idbCursorBackend->value();
-    if (any->type() == IDBAny::SerializedScriptValueType)
-        serializedScriptValue.assign(any->serializedScriptValue());
-    else if (any->type() == IDBAny::IDBKeyType)
-        idbKey.assign(any->idbKey());
-    else
-        ASSERT_NOT_REACHED();
+WebSerializedScriptValue WebIDBCursorImpl::value() const
+{
+    return m_idbCursorBackend->value();
 }
 
 void WebIDBCursorImpl::update(const WebSerializedScriptValue& value, WebIDBCallbacks* callbacks, WebExceptionCode& ec)

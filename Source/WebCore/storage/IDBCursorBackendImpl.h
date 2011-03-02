@@ -49,21 +49,22 @@ class SerializedScriptValue;
 
 class IDBCursorBackendImpl : public IDBCursorBackendInterface {
 public:
-    static PassRefPtr<IDBCursorBackendImpl> create(IDBBackingStore* backingStore, PassRefPtr<IDBKeyRange> keyRange, IDBCursor::Direction direction, PassOwnPtr<SQLiteStatement> query, bool isSerializedScriptValueCursor, IDBTransactionBackendInterface* transaction, IDBObjectStoreBackendInterface* objectStore)
+    static PassRefPtr<IDBCursorBackendImpl> create(IDBBackingStore* backingStore, PassRefPtr<IDBKeyRange> keyRange, IDBCursor::Direction direction, PassOwnPtr<SQLiteStatement> query, CursorType cursorType, IDBTransactionBackendInterface* transaction, IDBObjectStoreBackendInterface* objectStore)
     {
-        return adoptRef(new IDBCursorBackendImpl(backingStore, keyRange, direction, query, isSerializedScriptValueCursor, transaction, objectStore));
+        return adoptRef(new IDBCursorBackendImpl(backingStore, keyRange, direction, query, cursorType, transaction, objectStore));
     }
     virtual ~IDBCursorBackendImpl();
 
     virtual unsigned short direction() const;
     virtual PassRefPtr<IDBKey> key() const;
-    virtual PassRefPtr<IDBAny> value() const;
+    virtual PassRefPtr<IDBKey> primaryKey() const;
+    virtual PassRefPtr<SerializedScriptValue> value() const;
     virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
     virtual void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
     virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);
 
 private:
-    IDBCursorBackendImpl(IDBBackingStore*, PassRefPtr<IDBKeyRange>, IDBCursor::Direction, PassOwnPtr<SQLiteStatement> query, bool isSerializedScriptValueCursor, IDBTransactionBackendInterface*, IDBObjectStoreBackendInterface*);
+    IDBCursorBackendImpl(IDBBackingStore*, PassRefPtr<IDBKeyRange>, IDBCursor::Direction, PassOwnPtr<SQLiteStatement> query, CursorType, IDBTransactionBackendInterface*, IDBObjectStoreBackendInterface*);
 
     bool currentRowExists();
     void loadCurrentRow();
@@ -78,18 +79,12 @@ private:
     RefPtr<IDBKeyRange> m_keyRange;
     IDBCursor::Direction m_direction;
     OwnPtr<SQLiteStatement> m_query;
-    bool m_isSerializedScriptValueCursor;
+    CursorType m_cursorType;
     int64_t m_currentId;
 
-    // The key in the objectStore or index that this cursor iterates over.
     RefPtr<IDBKey> m_currentKey;
-
-    // m_isSerializedScriptValueCursor will only be available for object cursors.
-    RefPtr<SerializedScriptValue> m_currentSerializedScriptValue;
-
-    // FIXME: make the primary key available via script for all types of cursors.
-    // For cursors on indices, this is the key in the objectstore that corresponds to the current entry in the index.
-    RefPtr<IDBKey> m_currentIDBKeyValue;
+    RefPtr<IDBKey> m_currentPrimaryKey;
+    RefPtr<SerializedScriptValue> m_currentValue;
 
     RefPtr<IDBTransactionBackendInterface> m_transaction;
     RefPtr<IDBObjectStoreBackendInterface> m_objectStore;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,30 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBCursorBackendProxy_h
-#define IDBCursorBackendProxy_h
+#include "config.h"
+#include "IDBCursorWithValue.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCursorBackendInterface.h"
-#include "WebIDBCursor.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "IDBKey.h"
 
 namespace WebCore {
 
-class IDBCursorBackendProxy : public IDBCursorBackendInterface {
-public:
-    static PassRefPtr<IDBCursorBackendInterface> create(PassOwnPtr<WebKit::WebIDBCursor>);
-    virtual ~IDBCursorBackendProxy();
+PassRefPtr<IDBCursorWithValue> IDBCursorWithValue::create(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBTransaction* transaction)
+{
+    return adoptRef(new IDBCursorWithValue(backend, request, transaction));
+}
 
-    virtual unsigned short direction() const;
-    virtual PassRefPtr<IDBKey> key() const;
-    virtual PassRefPtr<IDBKey> primaryKey() const;
-    virtual PassRefPtr<SerializedScriptValue> value() const;
-    virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    virtual void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);
+IDBCursorWithValue::IDBCursorWithValue(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBTransaction* transaction)
+    : IDBCursor(backend, request, transaction)
+{
+}
 
-private:
-    IDBCursorBackendProxy(PassOwnPtr<WebKit::WebIDBCursor>);
-
-    OwnPtr<WebKit::WebIDBCursor> m_idbCursor;
-};
+IDBCursorWithValue::~IDBCursorWithValue()
+{
+}
 
 } // namespace WebCore
 
-#endif
-
-#endif // IDBCursorBackendProxy_h
+#endif // ENABLE(INDEXED_DATABASE)

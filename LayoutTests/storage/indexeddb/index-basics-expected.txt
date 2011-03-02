@@ -49,11 +49,11 @@ PASS event.target.result is "key2"
 indexObject.openKeyCursor()
 PASS event.target.result === null is false
 PASS event.target.result.key is "value"
-PASS event.target.result.value is "key"
+PASS event.target.result.primaryKey is "key"
 event.target.result.continue()
 PASS event.target.result === null is false
 PASS event.target.result.key is "value2"
-PASS event.target.result.value is "key2"
+PASS event.target.result.primaryKey is "key2"
 event.target.result.continue()
 PASS event.target.result === null is true
 indexObject.openCursor()

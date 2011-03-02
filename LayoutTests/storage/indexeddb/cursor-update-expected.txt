@@ -149,22 +149,22 @@ PASS counter is 5
 trans.objectStore('keyPathStore').index('numberIndex').openKeyCursor(keyRange)
 keyCursor()
 PASS event.target.result.key is counter + 100
-PASS event.target.result.value is counter
+PASS event.target.result.primaryKey is counter
 event.target.result.update({id: counter, number: counter + 200})
 PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
 keyCursor()
 PASS event.target.result.key is counter + 100
-PASS event.target.result.value is counter
+PASS event.target.result.primaryKey is counter
 event.target.result.update({id: counter, number: counter + 200})
 PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
 keyCursor()
 PASS event.target.result.key is counter + 100
-PASS event.target.result.value is counter
+PASS event.target.result.primaryKey is counter
 event.target.result.update({id: counter, number: counter + 200})
 PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
 keyCursor()
 PASS event.target.result.key is counter + 100
-PASS event.target.result.value is counter
+PASS event.target.result.primaryKey is counter
 event.target.result.update({id: counter, number: counter + 200})
 PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
 keyCursor()

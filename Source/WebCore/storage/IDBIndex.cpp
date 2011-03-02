@@ -61,6 +61,7 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, Pas
     }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
+    request->setCursorType(IDBCursorBackendInterface::IndexCursor);
     m_backend->openCursor(keyRange, direction, request, m_transaction->backend(), ec);
     if (ec) {
         request->markEarlyDeath();
@@ -78,6 +79,7 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
     }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
+    request->setCursorType(IDBCursorBackendInterface::IndexKeyCursor);
     m_backend->openKeyCursor(keyRange, direction, request, m_transaction->backend(), ec);
     if (ec) {
         request->markEarlyDeath();

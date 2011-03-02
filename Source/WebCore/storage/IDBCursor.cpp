@@ -39,6 +39,11 @@
 
 namespace WebCore {
 
+PassRefPtr<IDBCursor> IDBCursor::create(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBTransaction* transaction)
+{
+    return adoptRef(new IDBCursor(backend, request, transaction));
+}
+
 IDBCursor::IDBCursor(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBTransaction* transaction)
     : m_backend(backend)
     , m_request(request)
@@ -63,7 +68,12 @@ PassRefPtr<IDBKey> IDBCursor::key() const
     return m_backend->key();
 }
 
-PassRefPtr<IDBAny> IDBCursor::value() const
+PassRefPtr<IDBKey> IDBCursor::primaryKey() const
+{
+    return m_backend->primaryKey();
+}
+
+PassRefPtr<SerializedScriptValue> IDBCursor::value() const
 {
     return m_backend->value();
 }

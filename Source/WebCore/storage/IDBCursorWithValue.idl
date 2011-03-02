@@ -23,41 +23,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBCursorBackendProxy_h
-#define IDBCursorBackendProxy_h
+module storage {
 
-#if ENABLE(INDEXED_DATABASE)
-
-#include "IDBCursorBackendInterface.h"
-#include "WebIDBCursor.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-
-namespace WebCore {
-
-class IDBCursorBackendProxy : public IDBCursorBackendInterface {
-public:
-    static PassRefPtr<IDBCursorBackendInterface> create(PassOwnPtr<WebKit::WebIDBCursor>);
-    virtual ~IDBCursorBackendProxy();
-
-    virtual unsigned short direction() const;
-    virtual PassRefPtr<IDBKey> key() const;
-    virtual PassRefPtr<IDBKey> primaryKey() const;
-    virtual PassRefPtr<SerializedScriptValue> value() const;
-    virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    virtual void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);
-
-private:
-    IDBCursorBackendProxy(PassOwnPtr<WebKit::WebIDBCursor>);
-
-    OwnPtr<WebKit::WebIDBCursor> m_idbCursor;
-};
-
-} // namespace WebCore
-
-#endif
-
-#endif // IDBCursorBackendProxy_h
+    interface [
+        Conditional=INDEXED_DATABASE
+    ] IDBCursorWithValue : IDBCursor {
+        readonly attribute SerializedScriptValue value;
+    };
+}

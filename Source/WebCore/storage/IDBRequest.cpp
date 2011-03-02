@@ -36,7 +36,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventQueue.h"
-#include "IDBCursor.h"
+#include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"
 #include "IDBEventDispatcher.h"
 #include "IDBIndex.h"
@@ -58,6 +58,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_transaction(transaction)
     , m_readyState(LOADING)
     , m_finished(false)
+    , m_cursorType(IDBCursorBackendInterface::InvalidCursorType)
 {
     if (m_transaction) {
         m_transaction->registerRequest(this);
@@ -165,6 +166,12 @@ void IDBRequest::abort()
     onError(IDBDatabaseError::create(IDBDatabaseException::ABORT_ERR, "The transaction was aborted, so the request cannot be fulfilled."));
 }
 
+void IDBRequest::setCursorType(IDBCursorBackendInterface::CursorType cursorType)
+{
+    ASSERT(m_cursorType == IDBCursorBackendInterface::InvalidCursorType);
+    m_cursorType = cursorType;
+}
+
 void IDBRequest::onError(PassRefPtr<IDBDatabaseError> error)
 {
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
@@ -181,7 +188,11 @@ static PassRefPtr<Event> createSuccessEvent()
 void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend)
 {
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
-    m_result = IDBAny::create(IDBCursor::create(backend, this, m_transaction.get()));
+    ASSERT(m_cursorType != IDBCursorBackendInterface::InvalidCursorType);
+    if (m_cursorType == IDBCursorBackendInterface::IndexKeyCursor)
+        m_result = IDBAny::create(IDBCursor::create(backend, this, m_transaction.get()));
+    else
+        m_result = IDBAny::create(IDBCursorWithValue::create(backend, this, m_transaction.get()));
     enqueueEvent(createSuccessEvent());
 }
 
@@ -285,7 +296,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     bool dontPreventDefault = IDBEventDispatcher::dispatch(event.get(), targets);
 
     // If the result was of type IDBCursor, then we'll fire again.
-    if (m_result && m_result->type() != IDBAny::IDBCursorType)
+    if (m_result && m_result->type() != IDBAny::IDBCursorType && m_result->type() != IDBAny::IDBCursorWithValueType)
         m_finished = true;
 
     if (m_transaction) {

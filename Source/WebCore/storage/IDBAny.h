@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class IDBCursor;
+class IDBCursorWithValue;
 class IDBDatabase;
 class IDBFactory;
 class IDBIndex;
@@ -67,6 +68,7 @@ public:
         UndefinedType = 0,
         NullType,
         IDBCursorType,
+        IDBCursorWithValueType,
         IDBDatabaseType,
         IDBFactoryType,
         IDBIndexType,
@@ -79,6 +81,7 @@ public:
     Type type() const { return m_type; }
     // Use type() to figure out which one of these you're allowed to call.
     PassRefPtr<IDBCursor> idbCursor();
+    PassRefPtr<IDBCursorWithValue> idbCursorWithValue();
     PassRefPtr<IDBDatabase> idbDatabase();
     PassRefPtr<IDBFactory> idbFactory();
     PassRefPtr<IDBIndex> idbIndex();
@@ -90,6 +93,7 @@ public:
     // Set can only be called once.
     void setNull();
     void set(PassRefPtr<IDBCursor>);
+    void set(PassRefPtr<IDBCursorWithValue>);
     void set(PassRefPtr<IDBDatabase>);
     void set(PassRefPtr<IDBFactory>);
     void set(PassRefPtr<IDBIndex>);
@@ -105,6 +109,7 @@ private:
 
     // Only one of the following should ever be in use at any given time.
     RefPtr<IDBCursor> m_idbCursor;
+    RefPtr<IDBCursorWithValue> m_idbCursorWithValue;
     RefPtr<IDBDatabase> m_idbDatabase;
     RefPtr<IDBFactory> m_idbFactory;
     RefPtr<IDBIndex> m_idbIndex;

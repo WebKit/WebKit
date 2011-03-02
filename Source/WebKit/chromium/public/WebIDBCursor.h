@@ -55,8 +55,23 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return WebIDBKey::createInvalid();
     }
-    // One or the other will set, depending on what type of cursor this is.
-    virtual void value(WebSerializedScriptValue& serializedScriptValue, WebIDBKey& idbKey) const { WEBKIT_ASSERT_NOT_REACHED(); }
+    // FIXME: Remove the following 2 methods and uncomment third after roll.
+    virtual WebSerializedScriptValue value() const
+    {
+        WebSerializedScriptValue serializedScriptValue;
+        WebIDBKey key;
+        value(serializedScriptValue, key);
+        return serializedScriptValue;        
+    }
+    virtual void value(WebSerializedScriptValue& serializedScriptValue, WebIDBKey& key) const
+    {
+        serializedScriptValue = value();
+    }
+    // virtual WebSerializedScriptValue value() const
+    // {
+    //     WEBKIT_ASSERT_NOT_REACHED();
+    //     return WebSerializedScriptValue();
+    // }
 
     virtual void update(const WebSerializedScriptValue&, WebIDBCallbacks*, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void continueFunction(const WebIDBKey&, WebIDBCallbacks*, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }

@@ -208,7 +208,7 @@ function cursorIteration()
         return;
     }
  
-    shouldBe("event.target.result.value", "expectedIndex");
+    shouldBe("event.target.result.primaryKey", "expectedIndex");
     shouldBe("event.target.result.key", "testData[" + expectedIndex + "]");
     window.expectedIndex = ascending ? expectedIndex + 1 : expectedIndex - 1;
     testWithinBounds();

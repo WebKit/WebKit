@@ -44,7 +44,8 @@ public:
 
     virtual unsigned short direction() const;
     virtual WebIDBKey key() const;
-    virtual void value(WebSerializedScriptValue&, WebIDBKey&) const;
+    virtual WebIDBKey primaryKey() const;
+    virtual WebSerializedScriptValue value() const;
     virtual void update(const WebSerializedScriptValue&, WebIDBCallbacks*, WebExceptionCode&);
     virtual void continueFunction(const WebIDBKey&, WebIDBCallbacks*, WebExceptionCode&);
     virtual void deleteFunction(WebIDBCallbacks*, WebExceptionCode&);

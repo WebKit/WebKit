@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,29 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBCursorBackendProxy_h
-#define IDBCursorBackendProxy_h
+#ifndef IDBCursorWithValue_h
+#define IDBCursorWithValue_h
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBCursorBackendInterface.h"
-#include "WebIDBCursor.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "IDBCursor.h"
 
 namespace WebCore {
 
-class IDBCursorBackendProxy : public IDBCursorBackendInterface {
+class IDBCursorWithValue : public IDBCursor {
 public:
-    static PassRefPtr<IDBCursorBackendInterface> create(PassOwnPtr<WebKit::WebIDBCursor>);
-    virtual ~IDBCursorBackendProxy();
+    static PassRefPtr<IDBCursorWithValue> create(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBTransaction*);
+    virtual ~IDBCursorWithValue();
 
-    virtual unsigned short direction() const;
-    virtual PassRefPtr<IDBKey> key() const;
-    virtual PassRefPtr<IDBKey> primaryKey() const;
-    virtual PassRefPtr<SerializedScriptValue> value() const;
-    virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    virtual void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);
+    // The value attribute defined in the IDL is simply implemented in IDBCursor (but not exposed via
+    // its IDL). This is to make the implementation more simple while matching what the spec says.
 
 private:
-    IDBCursorBackendProxy(PassOwnPtr<WebKit::WebIDBCursor>);
-
-    OwnPtr<WebKit::WebIDBCursor> m_idbCursor;
+    explicit IDBCursorWithValue(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBTransaction*);
 };
 
 } // namespace WebCore
 
 #endif
 
-#endif // IDBCursorBackendProxy_h
+#endif // IDBCursorWithValue_h

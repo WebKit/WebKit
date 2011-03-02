@@ -45,9 +45,17 @@ class IDBCursorBackendInterface : public ThreadSafeShared<IDBCursorBackendInterf
 public:
     virtual ~IDBCursorBackendInterface() {}
 
+    enum CursorType {
+        InvalidCursorType = 0,
+        IndexCursor,
+        IndexKeyCursor,
+        ObjectStoreCursor
+    };
+
     virtual unsigned short direction() const = 0;
     virtual PassRefPtr<IDBKey> key() const = 0;
-    virtual PassRefPtr<IDBAny> value() const = 0;
+    virtual PassRefPtr<IDBKey> primaryKey() const = 0;
+    virtual PassRefPtr<SerializedScriptValue> value() const = 0;
 
     virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>, ExceptionCode&) = 0;
     virtual void continueFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>, ExceptionCode&) = 0;
