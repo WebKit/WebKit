@@ -1,3 +1,13 @@
+2011-03-02  Adam Roben  <aroben@apple.com>
+
+        Try to force a clean build on the Windows bots
+
+        Some of the bots are running into bogus linker errors due to MSVC's "minimal rebuild"
+        feature not rebuilding files it should. See <http://queues.webkit.org/results/8076907> for
+        an example.
+
+        * win/tools/vsprops/common.vsprops: Touched to force a rebuild.
+
 2011-03-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80079.
