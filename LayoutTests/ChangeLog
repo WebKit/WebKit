@@ -1,3 +1,14 @@
+2011-03-01  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed expectations
+
+        [chromium] Add expectations for new tests in r80049
+        https://bugs.webkit.org/show_bug.cgi?id=55526
+
+        * platform/chromium-linux/svg/css/path-gradient-stroke-shadow-expected.checksum: Added.
+        * platform/chromium-linux/svg/css/path-gradient-stroke-shadow-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
