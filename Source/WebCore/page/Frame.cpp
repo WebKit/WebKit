@@ -681,11 +681,20 @@ void Frame::clearFormerDOMWindow(DOMWindow* window)
     m_liveFormerWindows.remove(window);
 }
 
+void Frame::detachFromPage()
+{
+    if (m_domWindow)
+        m_domWindow->resetGeolocationPermissions();
+
+    m_page = 0;
+}
+
 void Frame::pageDestroyed()
 {
     if (Frame* parent = tree()->parent())
         parent->loader()->checkLoadComplete();
 
+    // FIXME: Should this pageDestroyed code path be renamed and moved into detachFromPage?
     if (m_domWindow)
         m_domWindow->pageDestroyed();
 
@@ -732,6 +741,7 @@ void Frame::transferChildFrameToNewDocument()
              m_page->decrementFrameCount();
         }
 
+        detachFromPage();
         m_page = newPage;
 
         if (newPage)

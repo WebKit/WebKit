@@ -222,6 +222,7 @@ namespace WebCore {
         String crossDomainAccessErrorMessage(DOMWindow* activeWindow);
 
         void pageDestroyed();
+        void resetGeolocationPermissions();
 
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
         // FIXME: remove this when we update the ObjC bindings (bug #28774).

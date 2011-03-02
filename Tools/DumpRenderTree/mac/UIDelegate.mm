@@ -205,6 +205,14 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
         m_timer = [NSTimer scheduledTimerWithTimeInterval:0 target:self selector:@selector(timerFired) userInfo:0 repeats:NO];
 }
 
+- (int)numberOfPendingGeolocationPermissionRequests
+{
+    if (!m_pendingGeolocationPermissionListeners)
+        return 0;
+    return [m_pendingGeolocationPermissionListeners count];
+}
+
+
 - (void)timerFired
 {
     ASSERT(gLayoutTestController->isGeolocationPermissionSet());

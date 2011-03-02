@@ -1,3 +1,32 @@
+2011-02-16  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Detach Geolocation from Frame when Page destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=52877
+
+        Ensure that all geolocation permission requests are cancelled
+        when the page is detached from its frame.
+
+        * fast/dom/Geolocation/iframe-reparent-expected.txt: Added.
+        * fast/dom/Geolocation/iframe-reparent.html: Added.
+        * fast/dom/Geolocation/page-reload-cancel-permission-requests-expected.txt: Added.
+        * fast/dom/Geolocation/page-reload-cancel-permission-requests.html: Added.
+        * fast/dom/Geolocation/resources/iframe-reparent-page-iframe.html: Added.
+        * fast/dom/Geolocation/resources/iframe-reparent-page.html: Added.
+        * fast/dom/Geolocation/resources/page-reload-cancel-permission-requests-inner.html: Added.
+        * fast/dom/Geolocation/script-tests/iframe-reparent.js: Added.
+        (window2Loaded):
+        (firstWatchUpdate):
+        (secondWatchUpdate):
+        (firstWatchError):
+        (secondWatchError):
+        (maybeFinish):
+        * fast/dom/Geolocation/script-tests/page-reload-cancel-permission-requests.js: Added.
+        * platform/gtk/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/qt/Skipped:
+
 2011-03-02  Martin Maly  <mmaly@chromium.org>
 
         Reviewed by Dimitri Glazkov.

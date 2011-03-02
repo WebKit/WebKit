@@ -305,6 +305,8 @@ public:
     // Gets the number of pages to be printed.
     void numberOfPages(const CppArgumentList&, CppVariant*);
 
+    // Gets the number of geolocation permissions requests pending.
+    void numberOfPendingGeolocationPermissionRequests(const CppArgumentList&, CppVariant*);
 
     // Allows layout tests to start Timeline profiling.
     void setTimelineProfilingEnabled(const CppArgumentList&, CppVariant*);

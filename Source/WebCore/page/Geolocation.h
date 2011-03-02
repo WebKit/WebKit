@@ -58,6 +58,7 @@ public:
 
     ~Geolocation();
 
+    void reset();
     void disconnectFrame();
     
     void getCurrentPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
@@ -85,6 +86,8 @@ private:
     bool isDenied() const { return m_allowGeolocation == No; }
     
     Geolocation(Frame*);
+
+    Page* page() const;
 
     class GeoNotifier : public RefCounted<GeoNotifier> {
     public:

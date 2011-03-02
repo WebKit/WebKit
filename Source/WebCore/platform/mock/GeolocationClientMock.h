@@ -59,6 +59,7 @@ public:
     void setError(PassRefPtr<GeolocationError>);
     void setPosition(PassRefPtr<GeolocationPosition>);
     void setPermission(bool allowed);
+    int numberOfPendingPermissionRequests() const;
 
     // GeolocationClient
     virtual void geolocationDestroyed();

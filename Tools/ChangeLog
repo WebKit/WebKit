@@ -1,3 +1,38 @@
+2011-01-26  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Detach Geolocation from Frame when Page destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=52877
+
+        Extend the layout test controller to expose the number of pending
+        geolocation requests, so that we can test that the requests have
+        been cancelled on page close.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (numberOfPendingGeolocationPermissionRequestsCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::numberOfPendingGeolocationPermissionRequests):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::numberOfPendingGeolocationPermissionRequests):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::numberOfPendingGeolocationPermissionRequests):
+        * DumpRenderTree/mac/UIDelegate.h:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate numberOfPendingGeolocationPermissionRequests]):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::numberOfPendingGeolocationPermissionRequests):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::numberOfPendingGeolocationPermissionRequests):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::numberOfPendingGeolocationPermissionRequests):
+
+
 2011-03-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
