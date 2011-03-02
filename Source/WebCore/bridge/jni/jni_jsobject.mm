@@ -286,7 +286,7 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     ExecState* exec = rootObject->globalObject()->globalExec();
     JSLock lock(SilenceAssertionsOnly);
     
-    Identifier identifier(exec, JavaString(methodName).impl());
+    Identifier identifier(exec, JavaString(methodName));
     JSValue function = _imp->get(exec, identifier);
     CallData callData;
     CallType callType = getCallData(function, callData);
@@ -316,7 +316,7 @@ jobject JavaJSObject::eval(jstring script) const
         return 0;
 
     rootObject->globalObject()->globalData().timeoutChecker.start();
-    Completion completion = JSC::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(JavaString(script).impl()), JSC::JSValue());
+    Completion completion = JSC::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(JavaString(script)), JSC::JSValue());
     rootObject->globalObject()->globalData().timeoutChecker.stop();
     ComplType type = completion.complType();
     
@@ -341,7 +341,7 @@ jobject JavaJSObject::getMember(jstring memberName) const
     ExecState* exec = rootObject->globalObject()->globalExec();
     
     JSLock lock(SilenceAssertionsOnly);
-    JSValue result = _imp->get(exec, Identifier(exec, JavaString(memberName).impl()));
+    JSValue result = _imp->get(exec, Identifier(exec, JavaString(memberName)));
 
     return convertValueToJObject(result);
 }
@@ -358,7 +358,7 @@ void JavaJSObject::setMember(jstring memberName, jobject value) const
 
     JSLock lock(SilenceAssertionsOnly);
     PutPropertySlot slot;
-    _imp->put(exec, Identifier(exec, JavaString(memberName).impl()), convertJObjectToValue(exec, value), slot);
+    _imp->put(exec, Identifier(exec, JavaString(memberName)), convertJObjectToValue(exec, value), slot);
 }
 
 
@@ -372,7 +372,7 @@ void JavaJSObject::removeMember(jstring memberName) const
 
     ExecState* exec = rootObject->globalObject()->globalExec();
     JSLock lock(SilenceAssertionsOnly);
-    _imp->deleteProperty(exec, Identifier(exec, JavaString(memberName).impl()));
+    _imp->deleteProperty(exec, Identifier(exec, JavaString(memberName)));
 }
 
 

@@ -27,13 +27,7 @@
 #define JavaStringV8_h
 
 #include "JNIUtility.h"
-
-#include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
-
-namespace WTF {
-class StringImpl;
-}
 
 
 namespace JSC {
@@ -54,7 +48,6 @@ public:
 
     const char* utf8() const { return m_utf8String.data(); }
     int length() const { return m_utf8String.length(); }
-    StringImpl* impl() const { ASSERT_NOT_REACHED(); return 0; }
 
 private:
     WTF::CString m_utf8String;

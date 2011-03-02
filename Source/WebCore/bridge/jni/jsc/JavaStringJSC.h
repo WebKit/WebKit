@@ -69,7 +69,7 @@ public:
         return m_utf8String.data();
     }
     int length() const { return m_impl->length(); }
-    StringImpl* impl() const { return m_impl.get(); }
+    UString uString() const { return UString(m_impl); }
 
 private:
     RefPtr<StringImpl> m_impl;
