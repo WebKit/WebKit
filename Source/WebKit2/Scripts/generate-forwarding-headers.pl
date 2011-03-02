@@ -93,7 +93,7 @@ sub createForwardingHeadersForFramework {
         # If we found more headers with the same name, only generate a forwarding header for the current platform
         if(grep($_ =~ "/$headerName\$", @frameworkHeaders) == 1 || $header =~ "/$platform/" ) {
             my $forwardingHeaderPath = File::Spec->catfile($targetDirectory, $headerName);
-            my $expectedIncludeStatement = "#include \"$header\"";
+            my $expectedIncludeStatement = "#include \"$framework/$header\"";
             my $foundIncludeStatement = 0;
 
             $foundIncludeStatement = <EXISTING_HEADER> if open(EXISTING_HEADER, "<$forwardingHeaderPath");

@@ -68,15 +68,12 @@ CONFIG(release, debug|release) {
 }
 
 INCLUDEPATH += \
+    $$PWD \
     $$OUTPUT_DIR/include/QtWebKit \
-    $$OUTPUT_DIR/include
-INCLUDEPATH += $$QT.script.includes
+    $$OUTPUT_DIR/include \
+    $$QT.script.includes
 
-webkit2 {
-    INCLUDEPATH += $$OUTPUT_DIR/include/WebKit2
-    # FIXME: Once the public header are well defined for WebKit2, this must go away.
-    INCLUDEPATH += $$PWD/WebKit2/
-}
+webkit2:INCLUDEPATH *= $$OUTPUT_DIR/include/WebKit2
 
 # Pick up 3rdparty libraries from INCLUDE/LIB just like with MSVC
 win32-g++* {
