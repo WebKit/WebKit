@@ -1,3 +1,15 @@
+2011-03-01  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by James Robinson.
+
+        IDBKeyRange.bound() should not use the optional options object
+        https://bugs.webkit.org/show_bug.cgi?id=55419
+
+        * storage/indexeddb/index-cursor.html:
+        * storage/indexeddb/keyrange-expected.txt:
+        * storage/indexeddb/keyrange.html:
+        * storage/indexeddb/objectstore-cursor.html:
+
 2011-03-01  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed expectations update

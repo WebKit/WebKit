@@ -47,7 +47,7 @@ function checkUpperBoundKeyRange(value, open)
 
 function checkBoundKeyRange(lower, upper, lowerOpen, upperOpen)
 {
-    keyRange = evalAndLog("webkitIDBKeyRange.bound(" + lower + "," + upper + ", {lowerOpen: " + lowerOpen + ", upperOpen:" + upperOpen + "})");
+    keyRange = evalAndLog("webkitIDBKeyRange.bound(" + lower + "," + upper + ", " + lowerOpen + ", " + upperOpen + ")");
     shouldBe("keyRange.lower", "" + lower);
     shouldBe("keyRange.upper", "" + upper);
     if (lowerOpen === undefined)

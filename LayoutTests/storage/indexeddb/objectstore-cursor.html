@@ -148,7 +148,7 @@ function runNextTest()
  
     var keyRange;
     if (lower !== null && upper !== null)
-        keyRange = webkitIDBKeyRange.bound(testData[lower], testData[upper], {lowerOpen: lowerIsOpen, upperOpen: upperIsOpen});
+        keyRange = webkitIDBKeyRange.bound(testData[lower], testData[upper], lowerIsOpen, upperIsOpen);
     else if (lower !== null)
         keyRange = webkitIDBKeyRange.lowerBound(testData[lower], lowerIsOpen);
     else

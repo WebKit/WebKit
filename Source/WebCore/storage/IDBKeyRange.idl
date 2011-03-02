@@ -37,7 +37,7 @@ module storage {
         [ClassMethod] IDBKeyRange only(in IDBKey value);
         [ClassMethod] IDBKeyRange lowerBound(in IDBKey bound, in [Optional] boolean open);
         [ClassMethod] IDBKeyRange upperBound(in IDBKey bound, in [Optional] boolean open);
-        [ClassMethod] IDBKeyRange bound(in IDBKey lower, in IDBKey upper, in [Optional] OptionsObject options);
+        [ClassMethod] IDBKeyRange bound(in IDBKey lower, in IDBKey upper, in [Optional] boolean lowerOpen, in [Optional] boolean upperOpen);
     };
 
 }

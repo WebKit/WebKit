@@ -1,3 +1,19 @@
+2011-03-01  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by James Robinson.
+
+        IDBKeyRange.bound() should not use the optional options object
+        https://bugs.webkit.org/show_bug.cgi?id=55419
+
+        http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html#range-concept
+
+        Added some code to existing tests to cover these cases.
+
+        * storage/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::bound):
+        * storage/IDBKeyRange.h:
+        * storage/IDBKeyRange.idl:
+
 2011-03-01  Dan Bernstein  <mitz@apple.com>
 
         Build fix.
