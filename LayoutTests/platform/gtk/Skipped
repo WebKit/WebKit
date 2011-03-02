@@ -1311,3 +1311,8 @@ http/tests/misc/generated-content-inside-table.html
 canvas/philip/tests/2d.imageData.object.round.html
 canvas/philip/tests/2d.imageData.object.wrap.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=54926
+# https://bugs.webkit.org/show_bug.cgi?id=53707
+fast/viewport/viewport-128.html
+fast/xsl/xslt-mismatched-tags-in-xslt.xml
+fast/xsl/xslt-missing-namespace-in-xslt.xml
