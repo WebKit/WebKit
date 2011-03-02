@@ -1,3 +1,29 @@
+2011-03-01  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r78383): Failure to connect on websocketstest.com
+        https://bugs.webkit.org/show_bug.cgi?id=54811
+
+        After r78383, KURL::setPort() no longer appends ":port" part
+        if that port is the default port for URL scheme. This broke
+        SocketStreamHandleCFNet, whose code was based on an assumption
+        that KURL::setPort() always inserts ":port" part.
+
+        To fix this, KURL::port() call is removed from SocketStreamHandle
+        and the port number is calculated on-the-fly.
+
+        Unfortunately it is impossible to write a test; this bug only
+        affects WebSockets connecting to the default port (port 80
+        for ws, port 443 for wss), while we use different ports to test
+        WebSockets in LayoutTests.
+
+        * platform/network/cf/SocketStreamHandle.h:
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+        (WebCore::SocketStreamHandle::createStreams):
+        (WebCore::SocketStreamHandle::port):
+
 2011-03-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80079.

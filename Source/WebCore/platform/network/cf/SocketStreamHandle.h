@@ -72,6 +72,7 @@ private:
 #endif
 
     bool shouldUseSSL() const { return m_url.protocolIs("wss"); }
+    unsigned short port() const;
 
     void addCONNECTCredentials(CFHTTPMessageRef response);
 

@@ -69,9 +69,6 @@ SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient
 
     ASSERT(url.protocolIs("ws") || url.protocolIs("wss"));
 
-    if (!m_url.port())
-        m_url.setPort(shouldUseSSL() ? 443 : 80);
-
     KURL httpsURL(KURL(), "https://" + m_url.host());
     m_httpsURL.adoptCF(httpsURL.createCFURL());
 
@@ -318,7 +315,7 @@ void SocketStreamHandle::createStreams()
     // Creating streams to final destination, not to proxy.
     CFReadStreamRef readStream = 0;
     CFWriteStreamRef writeStream = 0;
-    CFStreamCreatePairWithSocketToHost(0, host.get(), m_url.port(), &readStream, &writeStream);
+    CFStreamCreatePairWithSocketToHost(0, host.get(), port(), &readStream, &writeStream);
 
     m_readStream.adoptCF(readStream);
     m_writeStream.adoptCF(writeStream);
@@ -671,6 +668,15 @@ void SocketStreamHandle::receivedRequestToContinueWithoutCredential(const Authen
 
 void SocketStreamHandle::receivedCancellation(const AuthenticationChallenge&)
 {
+}
+
+unsigned short SocketStreamHandle::port() const
+{
+    if (unsigned short urlPort = m_url.port())
+        return urlPort;
+    if (shouldUseSSL())
+        return 443;
+    return 80;
 }
 
 }  // namespace WebCore
