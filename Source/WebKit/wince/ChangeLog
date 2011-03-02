@@ -1,5 +1,11 @@
 2011-03-02  Brian Weinstein  <bweinstein@apple.com>
 
+        WinCE build fix.
+
+        * WebCoreSupport/PlatformStrategiesWinCE.h: Add a needed include.
+
+2011-03-02  Brian Weinstein  <bweinstein@apple.com>
+
         WinCE build fix. Have PlatformStrategiesWinCE inherit from CookiesStrategy,
         and implement the needed methods.
 
