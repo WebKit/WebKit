@@ -1,3 +1,12 @@
+2011-03-02  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed expectations
+
+        Updating expectations after r80151
+        https://bugs.webkit.org/show_bug.cgi?id=55601
+
+        * platform/mac/fast/invalid/residual-style-expected.txt:
+
 2011-03-02  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed expectations update.
