@@ -34,6 +34,7 @@ namespace WebCore {
 @protocol WebVideoFullscreenControllerDelegate;
 @class WebVideoFullscreenHUDWindowController;
 @class WebWindowFadeAnimation;
+@class QTMovieLayer;
 
 @interface WebVideoFullscreenController : NSWindowController {
 @private
@@ -58,6 +59,7 @@ namespace WebCore {
 - (id <WebVideoFullscreenControllerDelegate>)delegate;
 - (void)setDelegate:(id <WebVideoFullscreenControllerDelegate>)delegate;
 
+- (void)setupVideoOverlay:(QTMovieLayer*)layer;
 - (void)setMediaElement:(WebCore::HTMLMediaElement*)mediaElement;
 - (WebCore::HTMLMediaElement*)mediaElement;
 

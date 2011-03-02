@@ -38,6 +38,10 @@
 #import <objc/objc-runtime.h>
 #import <wtf/UnusedParam.h>
 
+#if USE(GSTREAMER)
+#import <WebCore/GStreamerGWorld.h>
+#endif
+
 SOFT_LINK_FRAMEWORK(QTKit)
 SOFT_LINK_CLASS(QTKit, QTMovieLayer)
 
@@ -96,6 +100,23 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
     return (WebVideoFullscreenWindow *)[super window];
 }
 
+- (void)setupVideoOverlay:(QTMovieLayer*)layer
+{
+    WebVideoFullscreenWindow *window = [self fullscreenWindow];
+#if USE(GSTREAMER)
+    if (_mediaElement && _mediaElement->platformMedia().type == WebCore::PlatformMedia::GStreamerGWorldType) {
+        WebCore::GStreamerGWorld* gstGworld = _mediaElement->platformMedia().media.gstreamerGWorld;
+        if (gstGworld->enterFullscreen())
+            [window setContentView:gstGworld->platformVideoWindow()->window()];
+    }
+#else
+    [[window contentView] setLayer:layer];
+    [[window contentView] setWantsLayer:YES];
+    if (_mediaElement && _mediaElement->platformMedia().type == WebCore::PlatformMedia::QTMovieType)
+        [layer setMovie:_mediaElement->platformMedia().media.qtMovie];
+#endif
+}
+
 - (void)windowDidLoad
 {
 #ifdef BUILDING_ON_TIGER
@@ -103,17 +124,17 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
     ASSERT_NOT_REACHED();
 #else
     WebVideoFullscreenWindow *window = [self fullscreenWindow];
-    QTMovieLayer *layer = [[getQTMovieLayerClass() alloc] init];
-    [[window contentView] setLayer:layer];
-    [[window contentView] setWantsLayer:YES];
-    if (_mediaElement && _mediaElement->platformMedia().type == WebCore::PlatformMedia::QTMovieType)
-        [layer setMovie:_mediaElement->platformMedia().media.qtMovie];
     [window setHasShadow:YES]; // This is nicer with a shadow.
     [window setLevel:NSPopUpMenuWindowLevel-1];
+
+    QTMovieLayer *layer = [[getQTMovieLayerClass() alloc] init];
+    [self setupVideoOverlay:layer];
     [layer release];
-    
+
+#if !USE(GSTREAMER)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidResignActive:) name:NSApplicationDidResignActiveNotification object:NSApp];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidChangeScreenParameters:) name:NSApplicationDidChangeScreenParametersNotification object:NSApp];
+#endif
 #endif
 }
 
@@ -130,16 +151,17 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
 #else
     _mediaElement = mediaElement;
     if ([self isWindowLoaded]) {
-        QTMovie *movie = _mediaElement->platformMedia().type == WebCore::PlatformMedia::QTMovieType ? _mediaElement->platformMedia().media.qtMovie : 0;
         QTMovieLayer *movieLayer = (QTMovieLayer *)[[[self fullscreenWindow] contentView] layer];
 
         ASSERT(movieLayer && [movieLayer isKindOfClass:[getQTMovieLayerClass() class]]);
-        ASSERT(movie);
-        [movieLayer setMovie:movie];
+        [self setupVideoOverlay:movieLayer];
+#if !USE(GSTREAMER)
+        ASSERT([movieLayer movie]);
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(rateChanged:) 
                                                      name:QTMovieRateDidChangeNotification 
-                                                   object:movie];
+                                                   object:[movieLayer movie]];
+#endif
     }
 #endif
 }
@@ -166,6 +188,10 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
 
 - (void)windowDidExitFullscreen
 {
+#if USE(GSTREAMER)
+    if (_mediaElement && _mediaElement->platformMedia().type == WebCore::PlatformMedia::GStreamerGWorldType)
+        _mediaElement->platformMedia().media.gstreamerGWorld->exitFullscreen();
+#endif
     [self clearFadeAnimation];
     [[self window] close];
     [self setWindow:nil];

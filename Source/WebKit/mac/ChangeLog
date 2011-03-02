@@ -1,3 +1,20 @@
+2011-03-01  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GStreamer] support in mac video fullscreen controller
+        https://bugs.webkit.org/show_bug.cgi?id=52280
+
+        Factored the code to configure the video overlay in a new private
+        method of the controller and added GStreamer support to it.
+
+        * WebView/WebVideoFullscreenController.h:
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController setupVideoOverlay:]):
+        (-[WebVideoFullscreenController windowDidLoad]):
+        (-[WebVideoFullscreenController setMediaElement:WebCore::]):
+        (-[WebVideoFullscreenController windowDidExitFullscreen]):
+
 2011-02-23  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.
