@@ -1,3 +1,14 @@
+2011-03-01  Helder Correia  <helder@sencha.com>
+
+        Unreviewed Qt skipped tests update.
+
+        The manually committed patch didn't include the update to
+        fast/canvas/canvas-strokePath-gradient-shadow.html by mistake:
+        No shadow when stroking a path with a gradient
+        https://bugs.webkit.org/show_bug.cgi?id=55436
+
+        * platform/qt/Skipped: Skip new test since it fails.
+
 2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
