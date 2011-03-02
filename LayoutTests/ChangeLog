@@ -1,3 +1,9 @@
+2011-03-02  Adam Roben  <aroben@apple.com>
+
+        Add some new tests to the WebKit2 Skipped file
+
+        * platform/mac-wk2/Skipped:
+
 2011-02-16  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Dmitry Titov.

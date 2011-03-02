@@ -52,10 +52,14 @@ compositing/iframes/iframe-src-change.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+fast/forms/select-listbox-multiple-no-focusring.html
+fast/forms/textinput-not-fired-on-enter-in-input.html
+svg/animations/animate-color-fill-currentColor.html
 svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr.html
 svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr.html
 svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr.html
 svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr.html
+svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html
 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop.html
 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop.html
 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop.html
@@ -1018,6 +1022,7 @@ fast/canvas/webgl/gl-vertex-attrib-zero-issues.html
 fast/events/pagehide-timeout.html
 fast/canvas/webgl/gl-getshadersource.html
 fast/canvas/webgl/tex-sub-image-2d-bad-args.html
+fast/overflow/horizontal-scroll-after-back.html
 http/tests/navigation/go-back-to-error-page.html
 http/tests/navigation/ping-cookie.html
 plugins/application-plugin-plugins-disabled.html
@@ -1271,6 +1276,7 @@ webarchive/loading/missing-data.html
 
 # WebKitTestRunner needs layoutTestController.dumpResourceLoadCallbacks
 # <https://bugs.webkit.org/show_bug.cgi?id=42332>
+fast/images/support-broken-image-delegate.html
 fast/loader/main-document-url-for-non-http-loads.html
 fast/loader/user-style-sheet-resource-load-callbacks.html
 http/tests/loading/307-after-303-after-post.html
@@ -1321,6 +1327,7 @@ http/tests/loading/state-object-security-exception.html
 
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
+editing/input/setting-input-value-cancel-ime-composition.html
 editing/inserting/insert-composition-whitespace.html
 svg/text/caret-in-svg-text.xhtml
 editing/input/ime-composition-clearpreedit.html
