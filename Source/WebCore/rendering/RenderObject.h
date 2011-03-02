@@ -252,6 +252,7 @@ public:
     virtual bool isBlockFlow() const { return false; }
     virtual bool isBoxModelObject() const { return false; }
     virtual bool isCounter() const { return false; }
+    virtual bool isQuote() const { return false; }
     virtual bool isDetails() const { return false; }
     virtual bool isDetailsMarker() const { return false; }
     virtual bool isEmbeddedObject() const { return false; }

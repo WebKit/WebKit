@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class CursorList;
+class QuotesData;
 class ShadowData;
 
 // This struct is for rarely used inherited CSS3, CSS2, and WebKit-specific properties.
@@ -88,6 +89,7 @@ public:
     AtomicString hyphenationLocale;
 
     AtomicString textEmphasisCustomMark;
+    RefPtr<QuotesData> quotes;
 
 private:
     StyleRareInheritedData();

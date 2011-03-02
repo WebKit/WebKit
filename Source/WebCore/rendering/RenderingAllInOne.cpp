@@ -79,6 +79,7 @@
 #include "RenderObjectChildList.cpp"
 #include "RenderPart.cpp"
 #include "RenderProgress.cpp"
+#include "RenderQuote.cpp"
 #include "RenderReplaced.cpp"
 #include "RenderReplica.cpp"
 #include "RenderRuby.cpp"

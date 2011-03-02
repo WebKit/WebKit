@@ -51,6 +51,8 @@ bool ContentData::dataEquivalent(const ContentData& other) const
         return StyleImage::imagesEquivalent(image(), other.image());
     case CONTENT_COUNTER:
         return *counter() == *other.counter();
+    case CONTENT_QUOTE:
+        return quote() == other.quote();
     }
 
     ASSERT_NOT_REACHED();
@@ -70,6 +72,8 @@ void ContentData::deleteContent()
         break;
     case CONTENT_COUNTER:
         delete m_content.m_counter;
+        break;
+    case CONTENT_QUOTE:
         break;
     }
 

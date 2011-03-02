@@ -51,6 +51,7 @@ public:
     bool isCounter() const { return m_type == CONTENT_COUNTER; }
     bool isImage() const { return m_type == CONTENT_OBJECT; }
     bool isNone() const { return m_type == CONTENT_NONE; }
+    bool isQuote() const { return m_type == CONTENT_QUOTE; }
     bool isText() const { return m_type == CONTENT_TEXT; }
 
     StyleContentType type() const { return m_type; }
@@ -93,6 +94,18 @@ public:
         m_content.m_counter = counter.leakPtr();
     }
 
+    QuoteType quote() const
+    {
+        ASSERT(isQuote());
+        return m_content.m_quote;
+    }
+    void setQuote(QuoteType type)
+    {
+        deleteContent();
+        m_type = CONTENT_QUOTE;
+        m_content.m_quote = type;
+    }
+
     ContentData* next() const { return m_next.get(); }
     void setNext(PassOwnPtr<ContentData> next) { m_next = next; }
 
@@ -104,6 +117,7 @@ private:
         StyleImage* m_image;
         StringImpl* m_text;
         CounterContent* m_counter;
+        QuoteType m_quote;
     } m_content;
     OwnPtr<ContentData> m_next;
 };

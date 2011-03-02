@@ -1,3 +1,111 @@
+2011-03-02  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by David Hyatt  <hyatt@apple.com>
+
+        content property doesn't support quotes
+        https://bugs.webkit.org/show_bug.cgi?id=6503
+
+        Added full support for quotes as defined by CSS 2.1.
+
+        Tests: fast/css/content/content-quotes-01.html
+               fast/css/content/content-quotes-02.html
+               fast/css/content/content-quotes-03.html
+               fast/css/content/content-quotes-04.html
+               fast/css/content/content-quotes-05.html
+               fast/css/content/content-quotes-06.html
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added RenderQuote.cpp/h and QuotesData.cpp/h to the dependency lists
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseQuotes):
+        * css/CSSParser.h:
+        Added needed stylesheet parsing support for quotes,
+        (no-)open-quote and (no-)close-quote
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Handled setting of the new quotes RenderStyle property and added
+        handling of quotes for the content property.
+        * css/html.css:
+        (q:before):
+        (q:after):
+        replaced the '"' workaround with open/close-quote
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::dirtyLineBoxesForRenderer):
+        Made RenderQuote behave like RenderCounter.
+        Needed to ensure that the Quote text is calculated before layout,
+        just as it is for RenderCounter.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isQuote):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        (WebCore::RenderObjectChildList::appendChildNode):
+        (WebCore::RenderObjectChildList::insertChildNode):
+        Handled updating of quote depth when renderers are added and removed
+        from the tree.
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+        Added support for Quote content.
+        * rendering/RenderQuote.cpp: Added.
+        (WebCore::adjustDepth):
+        (WebCore::RenderQuote::RenderQuote):
+        (WebCore::RenderQuote::~RenderQuote):
+        (WebCore::RenderQuote::renderName):
+        (WebCore::RenderQuote::placeQuote):
+        (WebCore::LanguageData::operator<):
+        (WebCore::defaultLanguageQuotes):
+        (WebCore::quotesMap):
+        (WebCore::quotesForLanguage):
+        (WebCore::defaultQuotes):
+        (WebCore::RenderQuote::originalText):
+        (WebCore::RenderQuote::computePreferredLogicalWidths):
+        (WebCore::RenderQuote::rendererSubtreeAttached):
+        (WebCore::RenderQuote::rendererRemovedFromTree):
+        (WebCore::RenderQuote::styleDidChange):
+        * rendering/RenderQuote.h: Added.
+        (WebCore::RenderQuote::isQuote):
+        (WebCore::toRenderQuote):
+        * rendering/RenderingAllInOne.cpp:
+        Included RenderQuote.cpp
+        * rendering/style/StyleAllInOne.cpp:
+        Included QuotesData.cpp
+        * rendering/style/ContentData.cpp:
+        (WebCore::ContentData::dataEquivalent):
+        Checked for quotetype identity.
+        (WebCore::ContentData::deleteContent):
+        Accounted for the new QUOTE_TYPE.
+        * rendering/style/ContentData.h:
+        (WebCore::ContentData::isQuote):
+        (WebCore::ContentData::quote):
+        (WebCore::ContentData::setQuote):
+        * rendering/style/QuotesData.cpp: Added.
+        (WebCore::QuotesData::create):
+        (WebCore::QuotesData::operator==):
+        (WebCore::QuotesData::~QuotesData):
+        * rendering/style/QuotesData.h: Added.
+        (WebCore::QuotesData::data):
+        (WebCore::QuotesData::operator delete):
+        (WebCore::QuotesData::QuotesData):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setContent):
+        (WebCore::RenderStyle::setQuotes):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::quotes):
+        (WebCore::InheritedFlags::setQuotes):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleAllInOne.cpp:
+        Added QuotesData.cpp to the included files list.
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::operator==):
+        Included quotes in equality check.
+        * rendering/style/StyleRareInheritedData.h:
+        Added quotes
+
 2011-03-02  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.

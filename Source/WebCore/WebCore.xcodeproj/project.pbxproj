@@ -1403,6 +1403,10 @@
 		59EE122E1106080F00885116 /* JNIUtilityPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 59EE122D1106080F00885116 /* JNIUtilityPrivate.h */; };
 		59EE12301106081F00885116 /* JNIUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59EE122F1106081F00885116 /* JNIUtility.cpp */; };
 		59EE12321106082900885116 /* JNIUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 59EE12311106082900885116 /* JNIUtility.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5A574F24131DB93900471B88 /* RenderQuote.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A574F22131DB93900471B88 /* RenderQuote.cpp */; };
+		5A574F25131DB93900471B88 /* RenderQuote.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A574F23131DB93900471B88 /* RenderQuote.h */; };
+		5A574F28131DB96D00471B88 /* QuotesData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A574F26131DB96D00471B88 /* QuotesData.cpp */; };
+		5A574F29131DB96D00471B88 /* QuotesData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A574F27131DB96D00471B88 /* QuotesData.h */; };
 		5D15E3AB0F9E6AC1009E0E3F /* XMLDocumentParserScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D15E3A90F9E6AC1009E0E3F /* XMLDocumentParserScope.cpp */; };
 		5D15E3AC0F9E6AC1009E0E3F /* XMLDocumentParserScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D15E3AA0F9E6AC1009E0E3F /* XMLDocumentParserScope.h */; };
 		5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */; };
@@ -7862,6 +7866,10 @@
 		59EE122D1106080F00885116 /* JNIUtilityPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JNIUtilityPrivate.h; path = jsc/JNIUtilityPrivate.h; sourceTree = "<group>"; };
 		59EE122F1106081F00885116 /* JNIUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JNIUtility.cpp; sourceTree = "<group>"; };
 		59EE12311106082900885116 /* JNIUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JNIUtility.h; sourceTree = "<group>"; };
+		5A574F22131DB93900471B88 /* RenderQuote.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderQuote.cpp; sourceTree = "<group>"; };
+		5A574F23131DB93900471B88 /* RenderQuote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderQuote.h; sourceTree = "<group>"; };
+		5A574F26131DB96D00471B88 /* QuotesData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = QuotesData.cpp; path = style/QuotesData.cpp; sourceTree = "<group>"; };
+		5A574F27131DB96D00471B88 /* QuotesData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuotesData.h; path = style/QuotesData.h; sourceTree = "<group>"; };
 		5D15E3A90F9E6AC1009E0E3F /* XMLDocumentParserScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDocumentParserScope.cpp; sourceTree = "<group>"; };
 		5D15E3AA0F9E6AC1009E0E3F /* XMLDocumentParserScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLDocumentParserScope.h; sourceTree = "<group>"; };
 		5D4B8C5211E52C8B00BBB62F /* WebCore.exp.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCore.exp.in; sourceTree = "<group>"; };
@@ -18004,6 +18012,8 @@
 		BC8C8FAA0DDCD2F200B592F4 /* style */ = {
 			isa = PBXGroup;
 			children = (
+				5A574F26131DB96D00471B88 /* QuotesData.cpp */,
+				5A574F27131DB96D00471B88 /* QuotesData.h */,
 				BC5EB5E00E81BE8700B25965 /* BorderData.h */,
 				BC5EB5DA0E81B7EA00B25965 /* BorderValue.h */,
 				BC5EB5DE0E81B9AB00B25965 /* CollapsedBorderValue.h */,
@@ -18848,6 +18858,8 @@
 				A871DECF0A1530C700B12A68 /* RenderPart.h */,
 				A43BF59A1149292800C643CA /* RenderProgress.cpp */,
 				A43BF59B1149292800C643CA /* RenderProgress.h */,
+				5A574F22131DB93900471B88 /* RenderQuote.cpp */,
+				5A574F23131DB93900471B88 /* RenderQuote.h */,
 				A871DFDE0A15376B00B12A68 /* RenderReplaced.cpp */,
 				A871DFDF0A15376B00B12A68 /* RenderReplaced.h */,
 				BCA846D40DC67A350026C309 /* RenderReplica.cpp */,
@@ -22496,6 +22508,8 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
+				5A574F25131DB93900471B88 /* RenderQuote.h in Headers */,
+				5A574F29131DB96D00471B88 /* QuotesData.h in Headers */,
 				339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */,
 				33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */,
 			);
@@ -25144,6 +25158,8 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
+				5A574F24131DB93900471B88 /* RenderQuote.cpp in Sources */,
+				5A574F28131DB96D00471B88 /* QuotesData.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -36,6 +36,7 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
+#include "RenderQuote.h"
 #include "RenderStyle.h"
 #include "RenderTextFragment.h"
 #include "RenderView.h"
@@ -130,6 +131,7 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
 
     if (oldChild->m_hasCounterNodeMap)
         RenderCounter::destroyCounterNodes(oldChild);
+    RenderQuote::rendererRemovedFromTree(oldChild);
 
     if (AXObjectCache::accessibilityEnabled())
         owner->document()->axObjectCache()->childrenChanged(owner);
@@ -177,8 +179,8 @@ void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* n
         if (!newChild->isFloatingOrPositioned() && owner->childrenInline())
             owner->dirtyLinesFromChangedChild(newChild);
     }
-
     RenderCounter::rendererSubtreeAttached(newChild);
+    RenderQuote::rendererSubtreeAttached(newChild);
     newChild->setNeedsLayoutAndPrefWidthsRecalc(); // Goes up the containing block hierarchy.
     if (!owner->normalChildNeedsLayout())
         owner->setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
@@ -239,6 +241,7 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
     }
 
     RenderCounter::rendererSubtreeAttached(child);
+    RenderQuote::rendererSubtreeAttached(child);
     child->setNeedsLayoutAndPrefWidthsRecalc();
     if (!owner->normalChildNeedsLayout())
         owner->setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
@@ -460,10 +463,14 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
                 renderer = image;
                 break;
             }
-            case CONTENT_COUNTER:
-                renderer = new (owner->renderArena()) RenderCounter(owner->document(), *content->counter());
-                renderer->setStyle(pseudoElementStyle);
-                break;
+        case CONTENT_COUNTER:
+            renderer = new (owner->renderArena()) RenderCounter(owner->document(), *content->counter());
+            renderer->setStyle(pseudoElementStyle);
+            break;
+        case CONTENT_QUOTE:
+            renderer = new (owner->renderArena()) RenderQuote(owner->document(), content->quote());
+            renderer->setStyle(pseudoElementStyle);
+            break;
         }
 
         if (renderer) {
