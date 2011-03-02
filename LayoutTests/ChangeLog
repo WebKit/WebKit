@@ -1,3 +1,14 @@
+2011-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix a bug in platform/mac/editing/input/selection-change-closes-typing.html
+        https://bugs.webkit.org/show_bug.cgi?id=55523
+
+        The marked text is at offset 0 with length 1, not at offset 1 with length 0.
+
+        * platform/mac/editing/input/selection-change-closes-typing.html:
+
 2011-03-01  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed expectations
