@@ -349,7 +349,9 @@
 
 #endif /* ARM */
 
-
+#if CPU(ARM) || CPU(MIPS)
+#define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
+#endif
 
 /* ==== OS() - underlying operating system; only to be used for mandated low-level services like 
    virtual memory, not to choose a GUI toolkit ==== */
