@@ -5,5 +5,4 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x0
         RenderBlock {DIV} at (0,0) size 784x0
-selection start: position 0 of child 0 {#text} of child 0 {DIV} of body
-selection end:   position 5 of child 0 {#text} of child 0 {DIV} of body
+caret: position 0 of child 0 {#text} of child 0 {DIV} of body

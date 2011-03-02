@@ -1181,6 +1181,9 @@ editing/spelling/spelling-linebreak.html
 editing/spelling/spellcheck-attribute.html
 editing/spelling/spelling.html
 
+# textInputController.hasMarkedText() is not implemented.
+editing/input/setting-input-value-cancel-ime-composition.html
+
 # textInputController.hasSpellingMarkers() is not implemented.
 editing/spelling/spelling-hasspellingmarker.html
 
