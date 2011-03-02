@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '76163'
+  'chromium_rev': '76362'
 }
 
 deps = {
@@ -121,6 +121,8 @@ deps = {
     From('chromium_deps', 'src/third_party/ots'),
   'third_party/yasm/source/patched-yasm':
     From('chromium_deps', 'src/third_party/yasm/source/patched-yasm'),
+  'third_party/libjpeg_turbo':
+    From('chromium_deps', 'src/third_party/libjpeg_turbo'),
   'third_party':
     Var('chromium_svn')+'/third_party@'+Var('chromium_rev'),
 }
@@ -135,6 +137,9 @@ deps_os = {
       From('chromium_deps', 'src/third_party/lighttpd'),
     'third_party/nss':
       From('chromium_deps', 'src/third_party/nss'),
+    # Dependencies used by libjpeg-turbo
+    'third_party/yasm/binaries':
+      From('chromium_deps', 'src/third_party/yasm/binaries'),
   },
   'mac': {
     'third_party/nss':

@@ -41,7 +41,7 @@
       # Webkit is being built outside of the full chromium project.
       'variables': {
         'chromium_src_dir': '../../../Source/WebKit/chromium',
-        'libjpeg_gyp_path': '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp',
+        'libjpeg_gyp_path': '<(chromium_src_dir)/third_party/libjpeg_turbo/libjpeg.gyp',
       },
     },{
       # WebKit is checked out in src/chromium/third_party/WebKit
