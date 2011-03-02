@@ -1,3 +1,11 @@
+2011-03-02  Adam Roben  <aroben@apple.com>
+
+        Skip new test added in r80121 on Windows
+
+        It depends on textInputController, which DRT doesn't have on Windows.
+
+        * platform/win/Skipped: Added editing/input/setting-input-value-cancel-ime-composition.html.
+
 2011-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
