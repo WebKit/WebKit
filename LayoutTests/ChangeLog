@@ -1,3 +1,14 @@
+2011-03-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        Assertion failure after removing a selection in keydown handler
+        https://bugs.webkit.org/show_bug.cgi?id=51389
+
+        Remove unnecessary Qt specific expected result.
+
+        * platform/qt/editing/style/remove-underline-from-stylesheet-expected.txt: Removed.
+
 2011-03-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium rebaselines for r80121; Added the failing expectation for
