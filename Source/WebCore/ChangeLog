@@ -1,3 +1,17 @@
+2011-03-02  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add support for external protocol handlers
+        https://bugs.webkit.org/show_bug.cgi?id=55473
+
+        Do not unconditionally create and replace the SoupRequester of the
+        SoupSession if there is already one. No new tests needed as we
+        just allow clients to create their our SoupRequesters.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ensureSessionIsInitialized):
+
 2011-03-02  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by jknotten@chromium.org.

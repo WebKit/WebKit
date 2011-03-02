@@ -171,9 +171,11 @@ static void ensureSessionIsInitialized(SoupSession* session)
         g_object_unref(logger);
     }
 
-    SoupRequester* requester = soup_requester_new();
-    soup_session_add_feature(session, SOUP_SESSION_FEATURE(requester));
-    g_object_unref(requester);
+    if (!soup_session_get_feature(session, SOUP_TYPE_REQUESTER)) {
+        SoupRequester* requester = soup_requester_new();
+        soup_session_add_feature(session, SOUP_SESSION_FEATURE(requester));
+        g_object_unref(requester);
+    }
 
     g_object_set(session,
                  SOUP_SESSION_MAX_CONNS, maxConnections,
