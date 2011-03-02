@@ -1760,7 +1760,14 @@ sub captureSavedCrashLog($$)
     if (isCygwin()) {
         $glob = File::Spec->catfile($testResultsDirectory, $windowsCrashLogFilePrefix . "*.txt");
     } elsif (isAppleMacWebKit()) {
-        $glob = File::Spec->catfile("~", "Library", "Logs", "CrashReporter", ($webProcessCrashed ? "WebProcess" : $dumpToolName) . "_*.crash");
+        my $crashLogDirectoryName;
+        if (isTiger() || isLeopard()) {
+            $crashLogDirectoryName = "CrashReporter";
+        } else {
+            $crashLogDirectoryName = "DiagnosticReports";
+        }
+
+        $glob = File::Spec->catfile("~", "Library", "Logs", $crashLogDirectoryName, ($webProcessCrashed ? "WebProcess" : $dumpToolName) . "_*.crash");
 
         # Even though the dump tool has exited, CrashReporter might still be running. We need to
         # wait for it to exit to ensure it has saved its crash log to disk. For simplicitly, we'll

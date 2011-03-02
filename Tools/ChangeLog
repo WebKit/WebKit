@@ -1,5 +1,23 @@
 2011-03-02  Adam Roben  <aroben@apple.com>
 
+        Look in the new-to-SnowLeopard location for crash logs on SnowLeopard and newer
+
+        ReportCrash saves logs to ~/Library/Logs/CrashReporter on Leopard, but to
+        ~/Library/Logs/DiagnosticReports on SnowLeopard. old-run-webkit-tests was only looking in
+        the former location, but was getting lucky on some SnowLeopard machines because symlinks
+        were being created there pointing into DiagnosticReports. For machines without these
+        symlinks, crash logs were not getting captured.
+
+        Fixes <http://webkit.org/b/55607> old-run-webkit-tests doesn't capture crash logs on some
+        SnowLeopard machines
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/old-run-webkit-tests:
+        (captureSavedCrashLog): Look in ~/Library/Logs/DiagnosticReports on SnowLeopard and newer.
+
+2011-03-02  Adam Roben  <aroben@apple.com>
+
         Don't try to capture crash logs on platforms that haven't implemented that feature
 
         Fixes <http://webkit.org/b/55504> Use of uninitialized value in numeric lt (<) at
