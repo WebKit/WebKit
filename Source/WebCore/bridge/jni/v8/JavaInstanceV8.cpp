@@ -33,13 +33,11 @@
 #include "JNIUtilityPrivate.h"
 #include "JavaClassV8.h"
 
-#include <assert.h>
-
 using namespace JSC::Bindings;
 
 JavaInstance::JavaInstance(jobject instance)
 {
-    m_instance = new JObjectWrapper(instance);
+    m_instance = new JobjectWrapper(instance);
     m_class = 0;
 }
 
@@ -152,26 +150,6 @@ bool JavaInstance::invokeMethod(const char* methodName, const NPVariant* args, i
     free(jArgs);
 
     return true;
-}
-
-JObjectWrapper::JObjectWrapper(jobject instance)
-    : m_refCount(0)
-{
-    assert(instance);
-
-    // Cache the JNIEnv used to get the global ref for this java instanace.
-    // It'll be used to delete the reference.
-    m_env = getJNIEnv();
-
-    m_instance = m_env->NewGlobalRef(instance);
-
-    if (!m_instance)
-        fprintf(stderr, "%s:  could not get GlobalRef for %p\n", __PRETTY_FUNCTION__, instance);
-}
-
-JObjectWrapper::~JObjectWrapper()
-{
-    m_env->DeleteGlobalRef(m_instance);
 }
 
 #endif // ENABLE(JAVA_BRIDGE)

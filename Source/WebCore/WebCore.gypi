@@ -1021,6 +1021,8 @@
             'bridge/jni/v8/JavaNPObjectV8.cpp',
             'bridge/jni/v8/JavaNPObjectV8.h',
             'bridge/jni/v8/JavaStringV8.h',
+            'bridge/jni/v8/JobjectWrapper.cpp',
+            'bridge/jni/v8/JobjectWrapper.h',
             'css/CSSBorderImageValue.cpp',
             'css/CSSBorderImageValue.h',
             'css/CSSCanvasValue.cpp',

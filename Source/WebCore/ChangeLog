@@ -1,3 +1,29 @@
+2011-03-02  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        JObjectWrapper should be moved to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=55384
+
+        No new tests, refactoring only.
+
+        * Android.v8bindings.mk:
+        * WebCore.gypi:
+        * bridge/jni/v8/JNIBridgeV8.cpp:
+        (JavaField::JavaField):
+        * bridge/jni/v8/JNIBridgeV8.h:
+        * bridge/jni/v8/JavaInstanceV8.cpp:
+        (JavaInstance::JavaInstance):
+        * bridge/jni/v8/JavaInstanceV8.h:
+        * bridge/jni/v8/JobjectWrapper.cpp: Copied from Source/WebCore/bridge/jni/v8/JNIBridgeV8.h.
+        (JobjectWrapper::JobjectWrapper):
+        (JobjectWrapper::~JobjectWrapper):
+        * bridge/jni/v8/JobjectWrapper.h: Copied from Source/WebCore/bridge/jni/v8/JNIBridgeV8.h.
+        (JSC::Bindings::JobjectWrapper::instance):
+        (JSC::Bindings::JobjectWrapper::setInstance):
+        (JSC::Bindings::JobjectWrapper::ref):
+        (JSC::Bindings::JobjectWrapper::deref):
+
 2011-02-25  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

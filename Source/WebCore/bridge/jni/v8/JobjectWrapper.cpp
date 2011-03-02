@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, The Android Open Source Project
+ * Copyright 2011, The Android Open Source Project
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JNIBridgeV8_h
-#define JNIBridgeV8_h
+#include "config.h"
+#include "JobjectWrapper.h"
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JNIBridge.h" // For JavaString
-#include "JobjectWrapper.h"
+#include <assert.h>
 
-namespace JSC {
+using namespace JSC::Bindings;
 
-namespace Bindings {
+JobjectWrapper::JobjectWrapper(jobject instance)
+    : m_refCount(0)
+{
+    assert(instance);
 
-class JavaField {
-public:
-    JavaField(JNIEnv*, jobject aField);
+    // Cache the JNIEnv used to get the global ref for this java instanace.
+    // It'll be used to delete the reference.
+    m_env = getJNIEnv();
 
-    const JavaString& name() const { return m_name; }
-    const char* type() const { return m_type.utf8(); }
+    m_instance = m_env->NewGlobalRef(instance);
 
-    JNIType getJNIType() const { return m_JNIType; }
+    if (!m_instance)
+        fprintf(stderr, "%s:  could not get GlobalRef for %p\n", __PRETTY_FUNCTION__, instance);
+}
 
-private:
-    JavaString m_name;
-    JavaString m_type;
-    JNIType m_JNIType;
-    RefPtr<JobjectWrapper> m_field;
-};
-
-} // namespace Bindings
-
-} // namespace JSC
+JobjectWrapper::~JobjectWrapper()
+{
+    m_env->DeleteGlobalRef(m_instance);
+}
 
 #endif // ENABLE(JAVA_BRIDGE)
-
-#endif // JNIBridgeV8_h

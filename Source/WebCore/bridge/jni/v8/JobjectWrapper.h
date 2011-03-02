@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, The Android Open Source Project
+ * Copyright 2011, The Android Open Source Project
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JNIBridgeV8_h
-#define JNIBridgeV8_h
+#ifndef JobjectWrapper_h
+#define JobjectWrapper_h
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JNIBridge.h" // For JavaString
-#include "JobjectWrapper.h"
+#include "JNIUtility.h"
 
 namespace JSC {
 
 namespace Bindings {
 
-class JavaField {
+class JobjectWrapper {
+friend class JavaField;
+friend class JavaInstance;
+
 public:
-    JavaField(JNIEnv*, jobject aField);
+    jobject instance() const { return m_instance; }
+    void setInstance(jobject instance) { m_instance = instance; }
 
-    const JavaString& name() const { return m_name; }
-    const char* type() const { return m_type.utf8(); }
+    void ref() { m_refCount++; }
+    void deref()
+    {
+        if (!(--m_refCount))
+            delete this;
+    }
 
-    JNIType getJNIType() const { return m_JNIType; }
+protected:
+    JobjectWrapper(jobject);
+    ~JobjectWrapper();
+
+    jobject m_instance;
 
 private:
-    JavaString m_name;
-    JavaString m_type;
-    JNIType m_JNIType;
-    RefPtr<JobjectWrapper> m_field;
+    JNIEnv* m_env;
+    unsigned int m_refCount;
 };
 
 } // namespace Bindings
@@ -56,5 +65,4 @@ private:
 } // namespace JSC
 
 #endif // ENABLE(JAVA_BRIDGE)
-
-#endif // JNIBridgeV8_h
+#endif // JobjectWrapper_h
