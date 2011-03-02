@@ -34,6 +34,7 @@ namespace WebKit {
 
 class WebFrame;
 class WebIDBCallbacks;
+class WebIDBDatabaseCallbacks;
 class WebIDBObjectStore;
 class WebIDBTransaction;
 
@@ -58,7 +59,7 @@ public:
         return WebDOMStringList();
     }
     virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction&, WebExceptionCode&)
-    { 
+    {
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;
     }
@@ -75,6 +76,8 @@ public:
         return transaction(names, mode, ec);
     }
     virtual void close() { WEBKIT_ASSERT_NOT_REACHED(); }
+
+    virtual void open(WebIDBDatabaseCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
 
 protected:
     WebIDBDatabase() { }

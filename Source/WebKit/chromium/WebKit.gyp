@@ -194,6 +194,7 @@
                 'public/WebIDBCallbacks.h',
                 'public/WebIDBCursor.h',
                 'public/WebIDBDatabase.h',
+                'public/WebIDBDatabaseCallbacks.h',
                 'public/WebIDBDatabaseError.h',
                 'public/WebIDBFactory.h',
                 'public/WebIDBKeyRange.h',
