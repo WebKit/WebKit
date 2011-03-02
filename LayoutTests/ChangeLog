@@ -1,3 +1,17 @@
+2011-03-02  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed expectations update.
+        
+        Promote expectations for fast/table/table-and-parts-outline.html and
+        svg/css/path-gradient-stroke-shadow.svg from chromium-mac/ to
+        mac-leopard/ so that 1) the test passes on mac-leopard 2) the test
+        on chromium-mac-snowlopard (which will now use the mac/ baselines).
+
+        * platform/mac-leopard/fast/table/table-and-parts-outline-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/table/table-and-parts-outline-expected.checksum.
+        * platform/mac-leopard/fast/table/table-and-parts-outline-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/table/table-and-parts-outline-expected.png.
+        * platform/mac-leopard/svg/css/path-gradient-stroke-shadow-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/css/path-gradient-stroke-shadow-expected.checksum.
+        * platform/mac-leopard/svg/css/path-gradient-stroke-shadow-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/css/path-gradient-stroke-shadow-expected.png.
+
 2011-02-28  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by James Robinson.
