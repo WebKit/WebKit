@@ -1,5 +1,11 @@
 2011-03-01  Mark Rowe  <mrowe@apple.com>
 
+        Hide the typeinfo name symbols for std::exception and std::bad_alloc too.
+
+        * Configurations/Base.xcconfig:
+
+2011-03-01  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add verification scripts to WebKit2 project and fix the issues they reveal.
