@@ -1,2 +1,3 @@
+CONSOLE MESSAGE: line 3: Viewport argument value "device-width" for key "width" not recognized. Content ignored.
 viewport size 64x70 scale 5.000000 with limits [5.000000, 5.000000]
 

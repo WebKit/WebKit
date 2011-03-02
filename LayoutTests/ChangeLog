@@ -1,3 +1,90 @@
+2011-03-02  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed expectations update. This is a follow-up to r80061.
+
+        Viewport tests were expected to produce new error, warning,
+        and tip console messages. The current output is correct,
+        but many of the warnings are wrong. Fixing the incorrect
+        warnings will be handled by:
+        https://bugs.webkit.org/show_bug.cgi?id=53707
+
+        There are also a number of xsl tests that have extra warnings
+        in qt when "Running an XSL-T 1.0 stylesheet with a 2.0 processor".
+        These tests now have qt platform specific results.
+
+        * fast/viewport/viewport-100-expected.txt:
+        * fast/viewport/viewport-101-expected.txt:
+        * fast/viewport/viewport-102-expected.txt:
+        * fast/viewport/viewport-103-expected.txt:
+        * fast/viewport/viewport-112-expected.txt:
+        * fast/viewport/viewport-115-expected.txt:
+        * fast/viewport/viewport-116-expected.txt:
+        * fast/viewport/viewport-117-expected.txt:
+        * fast/viewport/viewport-121-expected.txt:
+        * fast/viewport/viewport-122-expected.txt:
+        * fast/viewport/viewport-125-expected.txt:
+        * fast/viewport/viewport-129-expected.txt:
+        * fast/viewport/viewport-29-expected.txt:
+        * fast/viewport/viewport-30-expected.txt:
+        * fast/viewport/viewport-31-expected.txt:
+        * fast/viewport/viewport-32-expected.txt:
+        * fast/viewport/viewport-35-expected.txt:
+        * fast/viewport/viewport-36-expected.txt:
+        * fast/viewport/viewport-38-expected.txt:
+        * fast/viewport/viewport-39-expected.txt:
+        * fast/viewport/viewport-40-expected.txt:
+        * fast/viewport/viewport-41-expected.txt:
+        * fast/viewport/viewport-42-expected.txt:
+        * fast/viewport/viewport-43-expected.txt:
+        * fast/viewport/viewport-44-expected.txt:
+        * fast/viewport/viewport-46-expected.txt:
+        * fast/viewport/viewport-47-expected.txt:
+        * fast/viewport/viewport-48-expected.txt:
+        * fast/viewport/viewport-49-expected.txt:
+        * fast/viewport/viewport-52-expected.txt:
+        * fast/viewport/viewport-53-expected.txt:
+        * fast/viewport/viewport-54-expected.txt:
+        * fast/viewport/viewport-55-expected.txt:
+        * fast/viewport/viewport-61-expected.txt:
+        * fast/viewport/viewport-62-expected.txt:
+        * fast/viewport/viewport-63-expected.txt:
+        * fast/viewport/viewport-64-expected.txt:
+        * fast/viewport/viewport-66-expected.txt:
+        * fast/viewport/viewport-67-expected.txt:
+        * fast/viewport/viewport-68-expected.txt:
+        * fast/viewport/viewport-69-expected.txt:
+        * fast/viewport/viewport-70-expected.txt:
+        * fast/viewport/viewport-71-expected.txt:
+        * fast/viewport/viewport-72-expected.txt:
+        * fast/viewport/viewport-73-expected.txt:
+        * fast/viewport/viewport-74-expected.txt:
+        * fast/viewport/viewport-75-expected.txt:
+        * fast/viewport/viewport-76-expected.txt:
+        * fast/viewport/viewport-77-expected.txt:
+        * fast/viewport/viewport-78-expected.txt:
+        * fast/viewport/viewport-79-expected.txt:
+        * fast/viewport/viewport-80-expected.txt:
+        * fast/viewport/viewport-81-expected.txt:
+        * fast/viewport/viewport-83-expected.txt:
+        * fast/viewport/viewport-85-expected.txt:
+        * fast/viewport/viewport-90-expected.txt:
+        * platform/qt/fast/events/xsl-onload-expected.txt: Added.
+        * platform/qt/fast/parser/xslt-with-html-expected.txt: Added.
+        * platform/qt/fast/xsl/document-function-expected.txt:
+        * platform/qt/fast/xsl/subframe-location-expected.txt: Added.
+        * platform/qt/fast/xsl/transform-to-html-expected.txt: Added.
+        * platform/qt/fast/xsl/utf8-chunks-expected.txt: Added.
+        * platform/qt/fast/xsl/xslt-bad-import-uri-expected.txt: Added.
+        * platform/qt/fast/xsl/xslt-doc-noenc-expected.txt: Added.
+        * platform/qt/fast/xsl/xslt-entity-enc-expected.txt: Added.
+        * platform/qt/fast/xsl/xslt-mismatched-tags-in-xslt-expected.txt:
+        * platform/qt/fast/xsl/xslt-recursion-expected.txt: Added.
+        * platform/qt/http/tests/misc/location-test-xsl-style-sheet-expected.txt: Added.
+        * platform/qt/http/tests/security/xss-DENIED-xsl-document-expected.txt:
+        * platform/qt/http/tests/security/xss-DENIED-xsl-document-redirect-expected.txt:
+        * platform/qt/http/tests/security/xss-DENIED-xsl-external-entity-expected.txt: Added.
+        * platform/qt/http/tests/security/xss-DENIED-xsl-external-entity-redirect-expected.txt: Added.
+
 2011-03-02  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, a trivial fix for r80096.

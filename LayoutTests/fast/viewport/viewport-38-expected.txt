@@ -1,2 +1,3 @@
+CONSOLE MESSAGE: line 3: Viewport height or height set to physical device height, try using "device-height" constant instead for future compatibility.
 viewport size 640x704 scale 0.500000 with limits [0.500000, 5.000000]
 

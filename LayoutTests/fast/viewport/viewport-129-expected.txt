@@ -1,2 +1,4 @@
+CONSOLE MESSAGE: line 3: Viewport argument value "123x456" for key "width" was truncated to its numeric prefix.
+CONSOLE MESSAGE: line 3: Viewport width or height set to physical device width, try using "device-width" constant instead for future compatibility.
 viewport size 123x135 scale 2.601626 with limits [2.601626, 5.000000]
 
