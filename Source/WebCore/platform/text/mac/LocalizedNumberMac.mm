@@ -32,19 +32,35 @@
 #include "LocalizedNumber.h"
 
 #include <limits>
+#import <Foundation/NSNumberFormatter.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/text/CString.h>
 
 using namespace std;
 
 namespace WebCore {
 
-double parseLocalizedNumber(const String&)
+double parseLocalizedNumber(const String& numberString)
 {
-    return numeric_limits<double>::quiet_NaN();
+    if (numberString.isEmpty())
+        return numeric_limits<double>::quiet_NaN();
+    RetainPtr<NSNumberFormatter> formatter(AdoptNS, [[NSNumberFormatter alloc] init]);
+    [formatter.get() setLocalizesFormat:YES];
+    [formatter.get() setNumberStyle:NSNumberFormatterDecimalStyle];
+    NSNumber *number = [formatter.get() numberFromString:numberString];
+    if (!number)
+        return numeric_limits<double>::quiet_NaN();
+    return [number doubleValue];
 }
 
-String formatLocalizedNumber(double)
+String formatLocalizedNumber(double inputNumber)
 {
-    return String();
+    RetainPtr<NSNumber> number(AdoptNS, [[NSNumber alloc] initWithDouble:inputNumber]);
+    RetainPtr<NSNumberFormatter> formatter(AdoptNS, [[NSNumberFormatter alloc] init]);
+    [formatter.get() setLocalizesFormat:YES];
+    [formatter.get() setNumberStyle:NSNumberFormatterDecimalStyle];
+    return String([formatter.get() stringFromNumber:number.get()]);
 }
 
 } // namespace WebCore
+

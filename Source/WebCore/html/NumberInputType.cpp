@@ -53,18 +53,6 @@ using namespace std;
 static const double numberDefaultStep = 1.0;
 static const double numberStepScaleFactor = 1.0;
 
-// Returns true if the specified character can be a part of 'valid floating
-// point number' of HTML5.
-static bool isHTMLNumberCharacter(UChar ch)
-{
-    return ch == '+' || ch == '-' || ch == '.' || ch == 'e' || ch == 'E' || isASCIIDigit(ch);
-}
-
-static bool isNumberCharacter(UChar ch)
-{
-    return isLocalizedNumberCharacter(ch) || isHTMLNumberCharacter(ch);
-}
-
 PassOwnPtr<InputType> NumberInputType::create(HTMLInputElement* element)
 {
     return adoptPtr(new NumberInputType(element));
@@ -183,30 +171,6 @@ void NumberInputType::handleKeydownEvent(KeyboardEvent* event)
         TextFieldInputType::handleKeydownEvent(event);
 }
 
-void NumberInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* event)
-{
-    unsigned length = event->text().length();
-    bool hasInvalidChar = false;
-    for (unsigned i = 0; i < length; ++i) {
-        if (!isNumberCharacter(event->text()[i])) {
-            hasInvalidChar = true;
-            break;
-        }
-    }
-    if (hasInvalidChar) {
-        Vector<UChar> stripped;
-        stripped.reserveCapacity(length);
-        for (unsigned i = 0; i < length; ++i) {
-            UChar ch = event->text()[i];
-            if (!isNumberCharacter(ch))
-                continue;
-            stripped.append(ch);
-        }
-        event->setText(String::adopt(stripped));
-    }
-    TextFieldInputType::handleBeforeTextInsertedEvent(event);
-}
-
 void NumberInputType::handleWheelEvent(WheelEvent* event)
 {
     handleWheelEventForSpinButton(event);
@@ -264,6 +228,14 @@ String NumberInputType::visibleValue() const
     return localized.isEmpty() ? currentValue : localized;
 }
 
+String NumberInputType::convertFromVisibleValue(const String& visibleValue) const
+{
+    if (visibleValue.isEmpty())
+        return visibleValue;
+    double parsedNumber = parseLocalizedNumber(visibleValue);
+    return isfinite(parsedNumber) ? serializeForNumberType(parsedNumber) : visibleValue;
+}
+
 bool NumberInputType::isAcceptableValue(const String& proposedValue)
 {
     return proposedValue.isEmpty() || isfinite(parseLocalizedNumber(proposedValue)) || parseToDoubleForNumberType(proposedValue, 0);
@@ -273,11 +245,6 @@ String NumberInputType::sanitizeValue(const String& proposedValue)
 {
     if (proposedValue.isEmpty())
         return proposedValue;
-    // Try to parse the value as a localized number, then try to parse it as
-    // the standard format.
-    double parsedValue = parseLocalizedNumber(proposedValue);
-    if (isfinite(parsedValue))
-        return serializeForNumberType(parsedValue);
     return parseToDoubleForNumberType(proposedValue, 0) ? proposedValue : emptyAtom.string();
 }
 

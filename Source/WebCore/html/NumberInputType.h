@@ -57,7 +57,6 @@ private:
     virtual double defaultStep() const;
     virtual double stepScaleFactor() const;
     virtual void handleKeydownEvent(KeyboardEvent*);
-    virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*);
     virtual void handleWheelEvent(WheelEvent*);
     virtual double parseToDouble(const String&, double) const;
     virtual double parseToDoubleWithDecimalPlaces(const String&, double, unsigned*) const;
@@ -65,6 +64,7 @@ private:
     virtual double acceptableError(double) const;
     virtual void handleBlurEvent();
     virtual String visibleValue() const;
+    virtual String convertFromVisibleValue(const String&) const;
     virtual bool isAcceptableValue(const String&);
     virtual String sanitizeValue(const String&);
     virtual bool hasUnacceptableValue();

@@ -61,6 +61,7 @@ public:
     virtual void setValueForUser(const String&) = 0;
     // The value which is drawn by a renderer.
     virtual String visibleValue() const = 0;
+    virtual String convertFromVisibleValue(const String&) const = 0;
 
     // Returns true if the specified string can be set as the value of InputElement.
     virtual bool isAcceptableValue(const String&) const = 0;

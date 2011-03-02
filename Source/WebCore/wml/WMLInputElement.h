@@ -64,6 +64,7 @@ public:
     virtual void setValue(const String&, bool sendChangeEvent = false);
     virtual void setValueForUser(const String&);
     virtual String visibleValue() const { return value(); }
+    virtual String convertFromVisibleValue(const String& value) const { return value; }
     virtual void setValueFromRenderer(const String&);
 
     virtual bool saveFormControlState(String& value) const;

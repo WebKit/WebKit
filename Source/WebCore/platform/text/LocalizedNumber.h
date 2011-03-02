@@ -49,11 +49,6 @@ double parseLocalizedNumber(const String&);
 // return an empty string.
 String formatLocalizedNumber(double);
 
-// Returns true if the input character can be used to represent a
-// number in the browser locale. For example, this should return true for 0-9 .
-// , + - for en-US locale.
-bool isLocalizedNumberCharacter(UChar32);
-
 } // namespace WebCore
 
 #endif // LocalizedNumber_h

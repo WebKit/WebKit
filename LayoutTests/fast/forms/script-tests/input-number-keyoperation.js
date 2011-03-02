@@ -7,9 +7,10 @@ var input = document.getElementById('number');
 input.focus();
 debug('Inserting "ab123cd":');
 document.execCommand('InsertText', false, 'ab123cd');
-shouldBe('input.value', '"123"');
+shouldBe('input.value', '""');
 
 debug('Press the up arrow key:');
+input.valueAsNumber = 123;
 eventSender.keyDown('upArrow');
 shouldBe('input.value', '"124"');
 

@@ -1,3 +1,60 @@
+2011-03-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Support localized numbers in <input type=number>
+        https://bugs.webkit.org/show_bug.cgi?id=42484
+
+        This change adds support of localized numbers in <input type=number>.
+        This affects only the UI, and not HTMLInputElement::value.
+
+        - Remove the keyboard input restriction feature because it is hard to
+          retrieve characters usable for localized numbers in ICU.
+
+        - Separate convertFromVisibleValue() from sanitizeValue().
+          sanitizeValue() is used for not only converting a renderer value to a
+          DOM value.
+
+        - Implement LocalizedNumber functions for ICU and NSNumberFormatter.
+          It is used only in Chromium for now.
+
+        Test: manual-tests/input-number-localization.html
+
+        * WebCore.gypi: Use LocalizedNumberICU.cpp.
+        * WebCore.xcodeproj/project.pbxproj:
+          Add LocalizedNumberMac.mm and remove LocalizedNumberNone.cpp.
+        * dom/InputElement.h: Introduce convertFromVisibleValue().
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::convertFromVisibleValue):
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::convertFromVisibleValue):
+        * html/InputType.h:
+        * html/NumberInputType.cpp: Remove isHTMLNumberCharacter(),
+          isNumberCharacter(), and handleBeforeTextInsertedEvent() because we
+          remove the keyboard input restriction feature for type=number.
+        (WebCore::NumberInputType::convertFromVisibleValue):
+        (WebCore::NumberInputType::sanitizeValue):
+        * html/NumberInputType.h:
+        * manual-tests/input-number-localization.html: Add a manual test because
+          the behavior depends on the current locale.
+        * platform/text/LocalizedNumber.h: Remove isLocalizedNumberCharacter().
+        * platform/text/LocalizedNumberICU.cpp:
+          Implement LocalizedNumber functions with ICU NumberFormat.
+        (WebCore::createFormatterForCurrentLocale):
+        (WebCore::parseLocalizedNumber):
+        (WebCore::formatLocalizedNumber):
+        * platform/text/LocalizedNumberNone.cpp: Remove isLocalizedNumberCharacter().
+        * platform/text/mac/LocalizedNumberMac.mm:
+          Implement LocalizedNumber functions with NSNumberFormatter.
+        (WebCore::parseLocalizedNumber):
+        (WebCore::formatLocalizedNumber):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::subtreeHasChanged):
+        * wml/WMLInputElement.h:
+        (WebCore::WMLInputElement::convertFromVisibleValue):
+          Implemented as a function doing nothing.
+
 2011-03-01  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Darin Adler.

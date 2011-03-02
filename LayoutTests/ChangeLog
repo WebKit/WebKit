@@ -1,3 +1,16 @@
+2011-03-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Support localized numbers in <input type=number>
+        https://bugs.webkit.org/show_bug.cgi?id=42484
+
+        Update an existing test because of removing the keyboard input
+        restriction feature.
+
+        * fast/forms/input-number-keyoperation-expected.txt:
+        * fast/forms/script-tests/input-number-keyoperation.js:
+
 2011-03-01  Victoria Kirst  <vrk@chromium.org>
 
         Reviewed by Kenneth Russell.

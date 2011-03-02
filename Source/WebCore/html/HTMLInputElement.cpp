@@ -1150,6 +1150,11 @@ String HTMLInputElement::visibleValue() const
     return m_inputType->visibleValue();
 }
 
+String HTMLInputElement::convertFromVisibleValue(const String& visibleValue) const
+{
+    return m_inputType->convertFromVisibleValue(visibleValue);
+}
+
 bool HTMLInputElement::isAcceptableValue(const String& proposedValue) const
 {
     return m_inputType->isAcceptableValue(proposedValue);

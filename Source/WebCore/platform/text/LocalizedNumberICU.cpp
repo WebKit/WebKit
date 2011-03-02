@@ -32,19 +32,44 @@
 #include "LocalizedNumber.h"
 
 #include <limits>
+#include <unicode/numfmt.h>
+#include <wtf/PassOwnPtr.h>
 
 using namespace std;
 
 namespace WebCore {
 
-double parseLocalizedNumber(const String&)
+static inline PassOwnPtr<NumberFormat> createFormatterForCurrentLocale()
 {
-    return numeric_limits<double>::quiet_NaN();
+    UErrorCode status = U_ZERO_ERROR;
+    return adoptPtr(NumberFormat::createInstance(status));
 }
 
-String formatLocalizedNumber(double)
+double parseLocalizedNumber(const String& numberString)
 {
-    return String();
+    if (numberString.isEmpty())
+        return numeric_limits<double>::quiet_NaN();
+    OwnPtr<NumberFormat> formatter = createFormatterForCurrentLocale();
+    if (!formatter)
+        return numeric_limits<double>::quiet_NaN();
+    UnicodeString numberUnicodeString(numberString.characters(), numberString.length());
+    UErrorCode status = U_ZERO_ERROR;
+    Formattable result;
+    formatter->parse(numberUnicodeString, result, status);
+    if (status != U_ZERO_ERROR)
+        return numeric_limits<double>::quiet_NaN();
+    double numericResult = result.getDouble(status);
+    return status == U_ZERO_ERROR ? numericResult : numeric_limits<double>::quiet_NaN();
+}
+
+String formatLocalizedNumber(double number)
+{
+    OwnPtr<NumberFormat> formatter = createFormatterForCurrentLocale();
+    if (!formatter)
+        return String();
+    UnicodeString result;
+    formatter->format(number, result);
+    return String(result.getBuffer(), result.length());
 }
 
 } // namespace WebCore

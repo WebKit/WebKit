@@ -191,7 +191,7 @@ void RenderTextControlSingleLine::subtreeHasChanged()
     // sanitizeValue() is needed because IME input doesn't dispatch BeforeTextInsertedEvent.
     String value = text();
     if (input->isAcceptableValue(value))
-        input->setValueFromRenderer(input->sanitizeValue(value));
+        input->setValueFromRenderer(input->sanitizeValue(input->convertFromVisibleValue(value)));
     if (node()->isHTMLElement()) {
         // Recalc for :invalid and hasUnacceptableValue() change.
         static_cast<HTMLInputElement*>(input)->setNeedsStyleRecalc();

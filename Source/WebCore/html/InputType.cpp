@@ -515,6 +515,11 @@ String InputType::visibleValue() const
     return element()->value();
 }
 
+String InputType::convertFromVisibleValue(const String& visibleValue) const
+{
+    return visibleValue;
+}
+
 bool InputType::isAcceptableValue(const String&)
 {
     return true;
