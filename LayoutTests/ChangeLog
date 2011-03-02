@@ -1,5 +1,14 @@
 2011-03-02  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed Chromium expectations update.
+        
+        compositing/geometry/object-clip-rects-assertion.html no longer times
+        out on the Mac (was just a bad bot).
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-02  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed expectations update.
         
         Promote expectations for fast/table/table-and-parts-outline.html and

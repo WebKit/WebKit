@@ -3338,8 +3338,6 @@ BUGWK54634 SKIP : media/video-controls-in-media-document.html = TIMEOUT
 
 BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = TEXT CRASH TIMEOUT
 
-BUGWK54794 GPU MAC : compositing/geometry/object-clip-rects-assertion.html = TIMEOUT
-
 BUGWK54882 WIN : inspector/styles/styles-update-from-js.html = TEXT TIMEOUT
 
 BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
