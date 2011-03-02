@@ -46,17 +46,17 @@ import random
 import sys
 import time
 
-from result_summary import ResultSummary
-from test_input import TestInput
-
-import dump_render_tree_thread
-import json_layout_results_generator
-import message_broker
-import printing
-import test_expectations
-import test_failures
-import test_results
-import test_results_uploader
+from webkitpy.layout_tests.layout_package import dump_render_tree_thread
+from webkitpy.layout_tests.layout_package import json_layout_results_generator
+from webkitpy.layout_tests.layout_package import json_results_generator
+from webkitpy.layout_tests.layout_package import message_broker
+from webkitpy.layout_tests.layout_package import printing
+from webkitpy.layout_tests.layout_package import test_expectations
+from webkitpy.layout_tests.layout_package import test_failures
+from webkitpy.layout_tests.layout_package import test_results
+from webkitpy.layout_tests.layout_package import test_results_uploader
+from webkitpy.layout_tests.layout_package.result_summary import ResultSummary
+from webkitpy.layout_tests.layout_package.test_input import TestInput
 
 from webkitpy.thirdparty import simplejson
 from webkitpy.tool import grammar
@@ -812,38 +812,6 @@ class TestRunner:
             result_enum_value = TestExpectationsFile.MODIFIERS[result]
         return json_layout_results_generator.JSONLayoutResultsGenerator.FAILURE_TO_CHAR[result_enum_value]
 
-    def _dump_summarized_result(self, filename, results):
-        """Compacts the results and dumps them to a file as JSON.
-        
-        Args:
-          filename: filename to dump the JSON to
-          results: dict of results as returned by the summarize_results function
-        """
-        new_results = copy.deepcopy(results)
-
-        # Compact the results since we'll be uploading this to the test-results server.
-        # This shrinks the file size by ~20%.
-        # actual --> a
-        # expected --> e
-        # time --> t
-        # The results are shrunken as per the FAILURE_TO_CHAR map, e.g., "PASS CRASH" --> "PC"
-        for test in new_results['tests']:
-            result = new_results['tests'][test]
-
-            result['a'] = ''.join([self._char_for_result(actual) for actual in result['actual'].split(' ')])
-            del(result['actual'])
-
-            result['e'] = ''.join([self._char_for_result(expected) for expected in result['expected'].split(' ')])
-            del(result['expected'])
-
-            if 'time_ms' in result:
-                result['t'] = result['time_ms']
-                del(result['time_ms'])
-
-        unexpected_json_path = self._fs.join(self._options.results_directory, filename)
-        with self._fs.open_text_file_for_writing(unexpected_json_path) as file:
-            simplejson.dump(new_results, file, sort_keys=True, separators=(',', ':'))
-
     def _upload_json_files(self, unexpected_results, summarized_results, result_summary,
                            individual_test_timings):
         """Writes the results of the test run as JSON files into the results
@@ -865,8 +833,11 @@ class TestRunner:
         """
         _log.debug("Writing JSON files in %s." % self._options.results_directory)
 
-        self._dump_summarized_result("unexpected_results.json", unexpected_results)
-        self._dump_summarized_result("full_results.json", summarized_results)
+        unexpected_json_path = self._fs.join(self._options.results_directory, "unexpected_results.json")
+        json_results_generator.write_json(self._fs, unexpected_results, unexpected_json_path)
+
+        full_results_path = self._fs.join(self._options.results_directory, "full_results.json")
+        json_results_generator.write_json(self._fs, summarized_results, full_results_path)
 
         # Write a json file of the test_expectations.txt file for the layout
         # tests dashboard.

@@ -37,6 +37,7 @@ import os
 import signal
 import sys
 
+from layout_package import json_results_generator
 from layout_package import printing
 from layout_package import test_runner
 from layout_package import test_runner2
@@ -171,11 +172,9 @@ def _gather_unexpected_results(filesystem, options):
     """Returns the unexpected results from the previous run, if any."""
     last_unexpected_results = []
     if options.print_last_failures or options.retest_last_failures:
-        unexpected_results_filename = filesystem.join(
-            options.results_directory, "unexpected_results.json")
+        unexpected_results_filename = filesystem.join(options.results_directory, "unexpected_results.json")
         if filesystem.exists(unexpected_results_filename):
-            content = filesystem.read_text_file(unexpected_results_filename)
-            results = simplejson.loads(content)
+            results = json_results_generator.load_json(filesystem, unexpected_results_filename)
             last_unexpected_results = results['tests'].keys()
     return last_unexpected_results
 

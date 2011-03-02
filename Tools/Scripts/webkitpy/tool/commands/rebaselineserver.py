@@ -47,6 +47,7 @@ from optparse import make_option
 from wsgiref.handlers import format_date_time
 
 from webkitpy.common import system
+from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.port.webkit import WebKitPort
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
@@ -414,11 +415,8 @@ class RebaselineServer(AbstractDeclarativeCommand):
             scm.add = no_op_add
 
         print 'Parsing unexpected_results.json...'
-        results_json_path = filesystem.join(
-            results_directory, 'unexpected_results.json')
-        with codecs.open(results_json_path, "r") as results_json_file:
-            results_json_file = file(results_json_path)
-            results_json = simplejson.load(results_json_file)
+        results_json_path = filesystem.join(results_directory, 'unexpected_results.json')
+        results_json = json_results_generator.load_json(filesystem, results_json_path)
 
         port = factory.get()
         layout_tests_directory = port.layout_tests_dir()
