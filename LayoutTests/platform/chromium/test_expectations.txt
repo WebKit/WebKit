@@ -674,9 +674,6 @@ BUGCR14832 : editing/selection/user-drag-element-and-user-select-none.html = FAI
 BUGCR19665 MAC : platform/mac/editing/input/hangul-enter-confirms-and-sends-keypress.html = FAIL
 BUGCR19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline.html = FAIL
 
-// New failures from merge 51412:51455.
-BUGCR28916 MAC : editing/pasteboard/paste-xml.xhtml = TEXT TIMEOUT
-
 // Flaky
 BUGCR31803 MAC LINUX : editing/inserting/12882.html = IMAGE PASS
 

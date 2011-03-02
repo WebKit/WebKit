@@ -1,3 +1,11 @@
+2011-03-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another unreviewed Chromium rebaselines for r80121.
+
+        * platform/chromium-mac/editing/pasteboard/paste-xml-expected.txt: Added.
+        * platform/chromium-win/editing/pasteboard/paste-xml-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-02  Adam Roben  <aroben@apple.com>
 
         Skip a crashing test on Windows
