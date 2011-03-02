@@ -1,3 +1,13 @@
+2011-03-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Teach JavaScriptCore GYP build how to build minidom
+        https://bugs.webkit.org/show_bug.cgi?id=55536
+
+        * JavaScriptCore.gypi:
+        * gyp/JavaScriptCore.gyp:
+
 2011-03-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

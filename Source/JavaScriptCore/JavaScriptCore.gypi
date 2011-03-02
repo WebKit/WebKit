@@ -249,10 +249,6 @@
             'API/JSValueRef.cpp',
             'API/JSWeakObjectMapRefPrivate.cpp',
             'API/OpaqueJSString.cpp',
-            'API/tests/JSNode.h',
-            'API/tests/JSNodeList.h',
-            'API/tests/Node.h',
-            'API/tests/NodeList.h',
             'AllInOneFile.cpp',
             'ForwardingHeaders/JavaScriptCore/APICast.h',
             'ForwardingHeaders/JavaScriptCore/JSBase.h',
@@ -660,6 +656,17 @@
             'yarr/YarrPattern.cpp',
             'yarr/YarrSyntaxChecker.cpp',
             'yarr/YarrSyntaxChecker.h',
-        ]
+        ],
+        'minidom_files': [
+            'API/tests/JSNode.c',
+            'API/tests/JSNode.h',
+            'API/tests/JSNodeList.c',
+            'API/tests/JSNodeList.h',
+            'API/tests/Node.c',
+            'API/tests/Node.h',
+            'API/tests/NodeList.c',
+            'API/tests/NodeList.h',
+            'API/tests/minidom.c',
+        ],
     }
 }

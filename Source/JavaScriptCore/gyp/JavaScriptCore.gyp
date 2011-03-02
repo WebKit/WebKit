@@ -3,6 +3,29 @@
     '../JavaScriptCore.gypi',
   ],
   'xcode_config_file': '<(DEPTH)/JavaScriptCore/Configurations/DebugRelease.xcconfig',
+  'variables': {
+    # FIXME: We should use a header map instead of listing these explicitly.
+    'javascriptcore_include_dirs': [
+      '<(DEPTH)', # Some paths in API include JavaScriptCore/
+      '<(DEPTH)/JavaScriptCore',
+      '<(DEPTH)/JavaScriptCore/ForwardingHeaders',
+      '<(DEPTH)/JavaScriptCore/API',
+      '<(DEPTH)/JavaScriptCore/assembler',
+      '<(DEPTH)/JavaScriptCore/collector/handles',
+      '<(DEPTH)/JavaScriptCore/bytecode',
+      '<(DEPTH)/JavaScriptCore/bytecompiler',
+      '<(DEPTH)/JavaScriptCore/debugger',
+      '<(DEPTH)/JavaScriptCore/icu',
+      '<(DEPTH)/JavaScriptCore/interpreter',
+      '<(DEPTH)/JavaScriptCore/jit',
+      '<(DEPTH)/JavaScriptCore/parser',
+      '<(DEPTH)/JavaScriptCore/profiler',
+      '<(DEPTH)/JavaScriptCore/runtime',
+      '<(DEPTH)/JavaScriptCore/wtf',
+      '<(DEPTH)/JavaScriptCore/wtf/unicode',
+      '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore',
+    ],
+  },
   'targets': [
     {
       'target_name': 'JavaScriptCore',
@@ -12,24 +35,7 @@
         'Update Version',
       ],
       'include_dirs': [
-        '<(DEPTH)', # Some paths in API include JavaScriptCore/
-        '<(DEPTH)/JavaScriptCore',
-        '<(DEPTH)/JavaScriptCore/ForwardingHeaders',
-        '<(DEPTH)/JavaScriptCore/API',
-        '<(DEPTH)/JavaScriptCore/assembler',
-        '<(DEPTH)/JavaScriptCore/collector/handles',
-        '<(DEPTH)/JavaScriptCore/bytecode',
-        '<(DEPTH)/JavaScriptCore/bytecompiler',
-        '<(DEPTH)/JavaScriptCore/debugger',
-        '<(DEPTH)/JavaScriptCore/icu',
-        '<(DEPTH)/JavaScriptCore/interpreter',
-        '<(DEPTH)/JavaScriptCore/jit',
-        '<(DEPTH)/JavaScriptCore/parser',
-        '<(DEPTH)/JavaScriptCore/profiler',
-        '<(DEPTH)/JavaScriptCore/runtime',
-        '<(DEPTH)/JavaScriptCore/wtf',
-        '<(DEPTH)/JavaScriptCore/wtf/unicode',
-        '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore',
+        '<@(javascriptcore_include_dirs)',
       ],
       'sources': [
         '<@(javascriptcore_files)',
@@ -155,6 +161,29 @@
            'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(DEPTH)/JavaScriptCore/Info.plist'
           ]
       }],
+    },
+    {
+      'target_name': 'minidom',
+      'type': 'executable',
+      'dependencies': [
+        'JavaScriptCore',
+      ],
+      # FIXME: We should use a header map instead of listing these explicitly.
+      'include_dirs': [
+        '<@(javascriptcore_include_dirs)',
+      ],
+      'sources': [
+        '<@(minidom_files)',
+        '<(PRODUCT_DIR)/JavaScriptCore.framework',
+        '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
+      ],
+      'conditions': [
+        ['OS=="mac"', {
+          'xcode_settings': {
+            'USE_HEADERMAP': 'NO',
+          }
+        }],
+      ],
     },
   ], # targets
 }
