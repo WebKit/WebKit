@@ -1,5 +1,12 @@
 2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Unreviewed. Roll out r80068 and r80073 due to breaking WebKit2 Qt port.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::viewportAttributesForSize):
+
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
+
         Unreviewed, missed updating a call to WebCore::computeViewportAttributes
         who's prototype changed.
 

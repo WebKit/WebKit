@@ -557,8 +557,7 @@ QWKPage::ViewportAttributes QWKPage::viewportAttributesForSize(const QSize& avai
     int deviceWidth = 480;
     int deviceHeight = 864;
 
-    WebCore::Document* document = d->page->mainFrame()->document();
-    WebCore::ViewportAttributes conf = WebCore::computeViewportAttributes(document, d->viewportArguments, desktopWidth, deviceWidth, deviceHeight, deviceDPI, availableSize);
+    WebCore::ViewportAttributes conf = WebCore::computeViewportAttributes(d->viewportArguments, desktopWidth, deviceWidth, deviceHeight, deviceDPI, availableSize);
 
     result.m_isValid = true;
     result.m_size = conf.layoutSize;

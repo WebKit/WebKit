@@ -1,3 +1,15 @@
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed. Roll out r80068 and r80073 due to breaking WebKit2 Qt port.
+
+        * fast/viewport/viewport-warnings-1.html: Removed.
+        * fast/viewport/viewport-warnings-2.html: Removed.
+        * fast/viewport/viewport-warnings-3.html: Removed.
+        * fast/viewport/viewport-warnings-4.html: Removed.
+        * fast/viewport/viewport-warnings-5.html: Removed.
+        * fast/viewport/viewport-warnings-6.html: Removed.
+        * fast/viewport/viewport-warnings-7.html: Removed.
+
 2011-03-01  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by James Robinson.

@@ -1,5 +1,14 @@
 2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Unreviewed. Roll out r80068 and r80073 due to breaking WebKit2 Qt port.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::viewportAttributesForSize):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::viewportAsText):
+
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         Viewport Warning/Error Messages Are Now Inaccurate

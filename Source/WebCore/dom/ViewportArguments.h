@@ -37,8 +37,7 @@ class Document;
 enum ViewportErrorCode {
     DeviceWidthShouldBeUsedWarning,
     DeviceHeightShouldBeUsedWarning,
-    UnrecognizedViewportArgumentKeyError,
-    UnrecognizedViewportArgumentValueError,
+    UnrecognizedViewportArgumentError,
     TruncatedViewportArgumentValueError,
     MaximumScaleTooLargeError,
     TargetDensityDpiTooSmallOrLargeError
@@ -101,7 +100,7 @@ struct ViewportArguments {
     }
 };
 
-ViewportAttributes computeViewportAttributes(Document*, ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, int deviceDPI, IntSize visibleViewport);
+ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, int deviceDPI, IntSize visibleViewport);
 
 void setViewportFeature(const String& keyString, const String& valueString, Document*, void* data);
 void reportViewportWarning(Document*, ViewportErrorCode, const String& replacement1, const String& replacement2);

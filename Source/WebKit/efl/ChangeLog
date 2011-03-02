@@ -1,5 +1,12 @@
 2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Unreviewed. Roll out r80068 and r80073 due to breaking WebKit2 Qt port.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute):
+
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         Viewport Warning/Error Messages Are Now Inaccurate

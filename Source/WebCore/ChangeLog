@@ -1,3 +1,16 @@
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed. Roll out r80068 and r80073 due to breaking WebKit2 Qt port.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::computeViewportAttributes):
+        (WebCore::numericPrefix):
+        (WebCore::findSizeValue):
+        (WebCore::setViewportFeature):
+        (WebCore::viewportErrorMessageTemplate):
+        (WebCore::viewportErrorMessageLevel):
+        * dom/ViewportArguments.h:
+
 2011-03-01  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by James Robinson.
