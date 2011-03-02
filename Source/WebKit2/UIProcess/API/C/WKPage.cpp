@@ -316,6 +316,21 @@ bool WKPageIsPinnedToRightSide(WKPageRef pageRef)
     return toImpl(pageRef)->isPinnedToRightSide();
 }
 
+bool WKPageCanDelete(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->canDelete();
+}
+
+bool WKPageHasSelectedRange(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->hasSelectedRange();
+}
+
+bool WKPageIsContentEditable(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->isContentEditable();
+}
+
 void WKPageFindString(WKPageRef pageRef, WKStringRef string, WKFindOptions options, unsigned maxMatchCount)
 {
     toImpl(pageRef)->findString(toImpl(string)->string(), toFindOptions(options), maxMatchCount);

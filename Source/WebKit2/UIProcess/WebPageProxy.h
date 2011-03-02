@@ -202,6 +202,9 @@ public:
     void validateMenuItem(const String& commandName);
 
     const SelectionState& selectionState() const { return m_selectionState; }
+    bool canDelete() const { return hasSelectedRange() && isContentEditable(); }
+    bool hasSelectedRange() const { return m_selectionState.selectedRangeLength; }
+    bool isContentEditable() const { return m_selectionState.isContentEditable; }
 
 #if PLATFORM(MAC)
     void updateWindowIsVisible(bool windowIsVisible);

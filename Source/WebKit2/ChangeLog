@@ -1,3 +1,23 @@
+2011-03-01  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Expose some selection state fields in WKPage
+        https://bugs.webkit.org/show_bug.cgi?id=55541
+        
+        Added WKPageCanDelete(), WKPageHasSelectedRange(), and WKPageIsContentEditable() so we can enable some
+        Edit menu items properly on Windows when using WebKit2.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCanDelete): Added.
+        (WKPageHasSelectedRange): Added.
+        (WKPageIsContentEditable): Added.
+        * UIProcess/API/C/WKPage.h: Added new functions.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::canDelete): Added.
+        (WebKit::WebPageProxy::hasSelectedRange): Added.
+        (WebKit::WebPageProxy::isContentEditable): Added.
+
 2011-03-01  Mark Rowe  <mrowe@apple.com>
 
         Hide the typeinfo name symbols for std::exception and std::bad_alloc too.
