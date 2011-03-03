@@ -82,7 +82,6 @@ private:
     IDBObjectStoreBackendImpl(IDBBackingStore*, const String& name, const String& keyPath, bool autoIncrement);
 
     void loadIndexes();
-    SQLiteDatabase& sqliteDatabase() const;
     PassRefPtr<IDBKey> genAutoIncrementKey();
     void resetAutoIncrementKeyCache() { m_autoIncrementNumber = -1; }
     static PassRefPtr<IDBKey> selectKeyForPut(IDBObjectStoreBackendImpl*, IDBKey*, PutMode, IDBCallbacks*, RefPtr<SerializedScriptValue>&);

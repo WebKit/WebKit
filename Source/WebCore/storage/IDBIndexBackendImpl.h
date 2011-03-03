@@ -76,8 +76,6 @@ private:
     IDBIndexBackendImpl(IDBBackingStore*, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique);
     IDBIndexBackendImpl(IDBBackingStore*, const String& name, const String& storeName, const String& keyPath, bool unique);
 
-    SQLiteDatabase& sqliteDatabase() const;
-
     static void openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, unsigned short direction, IDBCursorBackendInterface::CursorType, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
     static void getInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKey>, bool getObject, PassRefPtr<IDBCallbacks>);
 

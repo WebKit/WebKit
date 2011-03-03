@@ -29,6 +29,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBBackingStore.h"
 #include "IDBCursor.h"
 #include "IDBCursorBackendInterface.h"
 #include <wtf/OwnPtr.h>
@@ -49,9 +50,9 @@ class SerializedScriptValue;
 
 class IDBCursorBackendImpl : public IDBCursorBackendInterface {
 public:
-    static PassRefPtr<IDBCursorBackendImpl> create(IDBBackingStore* backingStore, PassRefPtr<IDBKeyRange> keyRange, IDBCursor::Direction direction, PassOwnPtr<SQLiteStatement> query, CursorType cursorType, IDBTransactionBackendInterface* transaction, IDBObjectStoreBackendInterface* objectStore)
+    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, IDBCursor::Direction direction, CursorType cursorType, IDBTransactionBackendInterface* transaction, IDBObjectStoreBackendInterface* objectStore)
     {
-        return adoptRef(new IDBCursorBackendImpl(backingStore, keyRange, direction, query, cursorType, transaction, objectStore));
+        return adoptRef(new IDBCursorBackendImpl(cursor, direction, cursorType, transaction, objectStore));
     }
     virtual ~IDBCursorBackendImpl();
 
@@ -64,28 +65,13 @@ public:
     virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);
 
 private:
-    IDBCursorBackendImpl(IDBBackingStore*, PassRefPtr<IDBKeyRange>, IDBCursor::Direction, PassOwnPtr<SQLiteStatement> query, CursorType, IDBTransactionBackendInterface*, IDBObjectStoreBackendInterface*);
-
-    bool currentRowExists();
-    void loadCurrentRow();
-    SQLiteDatabase& database() const;
+    IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor>, IDBCursor::Direction, CursorType, IDBTransactionBackendInterface*, IDBObjectStoreBackendInterface*);
 
     static void continueFunctionInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl>, PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>);
 
-    static const int64_t InvalidId = -1;
-
-    RefPtr<IDBBackingStore> m_backingStore;
-
-    RefPtr<IDBKeyRange> m_keyRange;
+    RefPtr<IDBBackingStore::Cursor> m_cursor;
     IDBCursor::Direction m_direction;
-    OwnPtr<SQLiteStatement> m_query;
     CursorType m_cursorType;
-    int64_t m_currentId;
-
-    RefPtr<IDBKey> m_currentKey;
-    RefPtr<IDBKey> m_currentPrimaryKey;
-    RefPtr<SerializedScriptValue> m_currentValue;
-
     RefPtr<IDBTransactionBackendInterface> m_transaction;
     RefPtr<IDBObjectStoreBackendInterface> m_objectStore;
 };

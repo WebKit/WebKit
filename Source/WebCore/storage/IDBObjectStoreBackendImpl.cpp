@@ -43,9 +43,6 @@
 #include "IDBKeyRange.h"
 #include "IDBTransactionBackendInterface.h"
 #include "ScriptExecutionContext.h"
-#include "SQLiteDatabase.h"
-#include "SQLiteStatement.h"
-#include "SQLiteTransaction.h"
 
 namespace WebCore {
 
@@ -80,17 +77,6 @@ PassRefPtr<DOMStringList> IDBObjectStoreBackendImpl::indexNames() const
     for (IndexMap::const_iterator it = m_indexes.begin(); it != m_indexes.end(); ++it)
         indexNames->append(it->first);
     return indexNames.release();
-}
-
-static String whereClause(IDBKey* key)
-{
-    return "WHERE objectStoreId = ?  AND  " + key->whereSyntax();
-}
-
-static void bindWhereClause(SQLiteStatement& query, int64_t id, IDBKey* key)
-{
-    query.bindInt64(1, id);
-    key->bind(query, 2);
 }
 
 void IDBObjectStoreBackendImpl::get(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
@@ -241,12 +227,9 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         indexKeys.append(key.release());
     }
 
-    SQLiteStatement getQuery(objectStore->sqliteDatabase(), "SELECT id FROM ObjectStoreData " + whereClause(key.get()));
-    bool ok = getQuery.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+    int64_t dataRowId = InvalidId;
+    bool isExistingValue = objectStore->m_backingStore->keyExistsInObjectStore(objectStore->id(), *key, dataRowId);
 
-    bindWhereClause(getQuery, objectStore->id(), key.get());
-    bool isExistingValue = getQuery.step() == SQLResultRow;
     if (putMode == AddOnly && isExistingValue) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Key already exists in the object store."));
         return;
@@ -254,7 +237,6 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
 
     // Before this point, don't do any mutation.  After this point, rollback the transaction in case of error.
 
-    int64_t dataRowId = isExistingValue ? getQuery.getColumnInt(0) : InvalidId;
     if (!objectStore->m_backingStore->putObjectStoreRecord(objectStore->id(), *key, value->toWireString(), dataRowId, dataRowId == InvalidId)) {
         // FIXME: The Indexed Database specification does not have an error code dedicated to I/O errors.
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
@@ -301,35 +283,13 @@ void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKey> prpKey, PassRe
 
 void IDBObjectStoreBackendImpl::deleteInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
 {
-    SQLiteStatement idQuery(objectStore->sqliteDatabase(), "SELECT id FROM ObjectStoreData " + whereClause(key.get()));
-    bool ok = idQuery.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
-    bindWhereClause(idQuery, objectStore->id(), key.get());
-    if (idQuery.step() != SQLResultRow) {
+    int64_t id;
+    if (!objectStore->m_backingStore->keyExistsInObjectStore(objectStore->id(), *key, id)) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Key does not exist in the object store."));
         return;
     }
 
-    int64_t id = idQuery.getColumnInt64(0);
-
-    SQLiteStatement osQuery(objectStore->sqliteDatabase(), "DELETE FROM ObjectStoreData WHERE id = ?");
-    ok = osQuery.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
-
-    osQuery.bindInt64(1, id);
-
-    ok = osQuery.step() == SQLResultDone;
-    ASSERT_UNUSED(ok, ok);
-
-    SQLiteStatement indexQuery(objectStore->sqliteDatabase(), "DELETE FROM IndexData WHERE objectStoreDataId = ?");
-    ok = indexQuery.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
-
-    indexQuery.bindInt64(1, id);
-
-    ok = indexQuery.step() == SQLResultDone;
-    ASSERT_UNUSED(ok, ok);
-
+    objectStore->m_backingStore->deleteObjectStoreRecord(objectStore->id(), id);
     callbacks->onSuccess(SerializedScriptValue::nullValue());
 }
 
@@ -484,40 +444,15 @@ void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpRange, uns
 
 void IDBObjectStoreBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> range, unsigned short tmpDirection, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
-    bool lowerBound = range && range->lower();
-    bool upperBound = range && range->upper();
-
-    // Several files depend on this order of selects.
-    String sql = "SELECT id, keyString, keyDate, keyNumber, value, keyString, keyDate, keyNumber FROM ObjectStoreData WHERE ";
-    if (lowerBound)
-        sql += range->lower()->lowerCursorWhereFragment(range->lowerWhereClauseComparisonOperator());
-    if (upperBound)
-        sql += range->upper()->upperCursorWhereFragment(range->upperWhereClauseComparisonOperator());
-    sql += "objectStoreId = ? ORDER BY ";
-
     IDBCursor::Direction direction = static_cast<IDBCursor::Direction>(tmpDirection);
-    if (direction == IDBCursor::NEXT || direction == IDBCursor::NEXT_NO_DUPLICATE)
-        sql += "keyString, keyDate, keyNumber";
-    else
-        sql += "keyString DESC, keyDate DESC, keyNumber DESC";
 
-    OwnPtr<SQLiteStatement> query = adoptPtr(new SQLiteStatement(objectStore->sqliteDatabase(), sql));
-    bool ok = query->prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
-
-    int currentColumn = 1;
-    if (lowerBound)
-        currentColumn += range->lower()->bind(*query, currentColumn);
-    if (upperBound)
-        currentColumn += range->upper()->bind(*query, currentColumn);
-    query->bindInt64(currentColumn, objectStore->id());
-
-    if (query->step() != SQLResultRow) {
+    RefPtr<IDBBackingStore::Cursor> backingStoreCursor = objectStore->m_backingStore->openObjectStoreCursor(objectStore->id(), range.get(), direction);
+    if (!backingStoreCursor) {
         callbacks->onSuccess(SerializedScriptValue::nullValue());
         return;
     }
 
-    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(objectStore->m_backingStore.get(), range, direction, query.release(), IDBCursorBackendInterface::ObjectStoreCursor, transaction.get(), objectStore.get());
+    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(backingStoreCursor.release(), direction, IDBCursorBackendInterface::ObjectStoreCursor, transaction.get(), objectStore.get());
     callbacks->onSuccess(cursor.release());
 }
 
@@ -535,11 +470,6 @@ void IDBObjectStoreBackendImpl::loadIndexes()
 
     for (size_t i = 0; i < ids.size(); i++)
         m_indexes.set(names[i], IDBIndexBackendImpl::create(m_backingStore.get(), ids[i], names[i], m_name, keyPaths[i], uniqueFlags[i]));
-}
-
-SQLiteDatabase& IDBObjectStoreBackendImpl::sqliteDatabase() const 
-{
-    return m_backingStore->db();
 }
 
 void IDBObjectStoreBackendImpl::removeIndexFromMap(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index)

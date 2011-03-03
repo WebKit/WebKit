@@ -37,8 +37,6 @@
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendImpl.h"
-#include "SQLiteDatabase.h"
-#include "SQLiteStatement.h"
 
 namespace WebCore {
 
@@ -68,38 +66,24 @@ IDBIndexBackendImpl::~IDBIndexBackendImpl()
 
 void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> range, unsigned short untypedDirection, IDBCursorBackendInterface::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
-    // Several files depend on this order of selects.
-    String sql = String("SELECT IndexData.id, IndexData.keyString, IndexData.keyDate, IndexData.keyNumber, ")
-                 + ("ObjectStoreData.value, ObjectStoreData.keyString, ObjectStoreData.keyDate, ObjectStoreData.keyNumber ")
-                 + "FROM IndexData INNER JOIN ObjectStoreData ON IndexData.objectStoreDataId = ObjectStoreData.id WHERE ";
-
-    bool lowerBound = range && range->lower();
-    bool upperBound = range && range->upper();
-    
-    if (lowerBound)
-        sql += range->lower()->lowerCursorWhereFragment(range->lowerWhereClauseComparisonOperator(), "IndexData.");
-    if (upperBound)
-        sql += range->upper()->upperCursorWhereFragment(range->upperWhereClauseComparisonOperator(), "IndexData.");
-    sql += "IndexData.indexId = ? ORDER BY ";
-
     IDBCursor::Direction direction = static_cast<IDBCursor::Direction>(untypedDirection);
-    if (direction == IDBCursor::NEXT || direction == IDBCursor::NEXT_NO_DUPLICATE)
-        sql += "IndexData.keyString, IndexData.keyDate, IndexData.keyNumber, IndexData.id";
-    else
-        sql += "IndexData.keyString DESC, IndexData.keyDate DESC, IndexData.keyNumber DESC, IndexData.id DESC";
 
-    OwnPtr<SQLiteStatement> query = adoptPtr(new SQLiteStatement(index->sqliteDatabase(), sql));
-    bool ok = query->prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+    RefPtr<IDBBackingStore::Cursor> backingStoreCursor;
 
-    int indexColumn = 1;
-    if (lowerBound)
-        indexColumn += range->lower()->bind(*query, indexColumn);
-    if (upperBound)
-        indexColumn += range->upper()->bind(*query, indexColumn);
-    query->bindInt64(indexColumn, index->id());
+    switch (cursorType) {
+    case IDBCursorBackendInterface::IndexKeyCursor:
+        backingStoreCursor = index->m_backingStore->openIndexKeyCursor(index->id(), range.get(), direction);
+        break;
+    case IDBCursorBackendInterface::IndexCursor:
+        backingStoreCursor = index->m_backingStore->openIndexCursor(index->id(), range.get(), direction);
+        break;
+    case IDBCursorBackendInterface::ObjectStoreCursor:
+    case IDBCursorBackendInterface::InvalidCursorType:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 
-    if (query->step() != SQLResultRow) {
+    if (!backingStoreCursor) {
         callbacks->onSuccess(SerializedScriptValue::nullValue());
         return;
     }
@@ -108,7 +92,7 @@ void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr
     RefPtr<IDBObjectStoreBackendInterface> objectStore = transaction->objectStore(index->m_storeName, ec);
     ASSERT(objectStore && !ec);
 
-    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(index->m_backingStore.get(), range, direction, query.release(), cursorType, transaction.get(), objectStore.get());
+    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(backingStoreCursor.get(), direction, cursorType, transaction.get(), objectStore.get());
     callbacks->onSuccess(cursor.release());
 }
 
@@ -134,27 +118,22 @@ void IDBIndexBackendImpl::openKeyCursor(PassRefPtr<IDBKeyRange> prpKeyRange, uns
 
 void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKey> key, bool getObject, PassRefPtr<IDBCallbacks> callbacks)
 {
-    String sql = String("SELECT ")
-                 + (getObject ? "ObjectStoreData.value " : "ObjectStoreData.keyString, ObjectStoreData.keyDate, ObjectStoreData.keyNumber ")
-                 + "FROM IndexData INNER JOIN ObjectStoreData ON IndexData.objectStoreDataId = ObjectStoreData.id "
-                 + "WHERE IndexData.indexId = ?  AND  " + key->whereSyntax("IndexData.")
-                 + "ORDER BY IndexData.id LIMIT 1"; // Order by insertion order when all else fails.
-    SQLiteStatement query(index->sqliteDatabase(), sql);
-    bool ok = query.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
-
-    query.bindInt64(1, index->id());
-    key->bind(query, 2);
-    if (query.step() != SQLResultRow) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Key does not exist in the index."));
-        return;
+    // FIXME: Split getInternal into two functions, getting rid off |getObject|.
+    if (getObject) {
+        String value = index->m_backingStore->getObjectViaIndex(index->id(), *key);
+        if (value.isNull()) {
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Key does not exist in the index."));
+            return;
+        }
+        callbacks->onSuccess(SerializedScriptValue::createFromWire(value));
+    } else {
+        RefPtr<IDBKey> keyResult = index->m_backingStore->getPrimaryKeyViaIndex(index->id(), *key);
+        if (!keyResult) {
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Key does not exist in the index."));
+            return;
+        }
+        callbacks->onSuccess(keyResult.get());
     }
-
-    if (getObject)
-        callbacks->onSuccess(SerializedScriptValue::createFromWire(query.getColumnText(0)));
-    else
-        callbacks->onSuccess(IDBKey::fromQuery(query, 0));
-    ASSERT(query.step() != SQLResultRow);
 }
 
 void IDBIndexBackendImpl::get(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
@@ -175,34 +154,12 @@ void IDBIndexBackendImpl::getKey(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallba
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
 }
 
-static String whereClause(IDBKey* key)
-{
-    return "WHERE indexId = ?  AND  " + key->whereSyntax();
-}
-
-static void bindWhereClause(SQLiteStatement& query, int64_t id, IDBKey* key)
-{
-    query.bindInt64(1, id);
-    key->bind(query, 2);
-}
-
 bool IDBIndexBackendImpl::addingKeyAllowed(IDBKey* key)
 {
     if (!m_unique)
         return true;
 
-    SQLiteStatement query(sqliteDatabase(), "SELECT id FROM IndexData " + whereClause(key));
-    bool ok = query.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
-    bindWhereClause(query, m_id, key);
-    bool existingValue = query.step() == SQLResultRow;
-
-    return !existingValue;
-}
-
-SQLiteDatabase& IDBIndexBackendImpl::sqliteDatabase() const
-{
-    return m_backingStore->db();
+    return !m_backingStore->keyExistsInIndex(m_id, *key);
 }
 
 } // namespace WebCore

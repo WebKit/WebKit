@@ -61,22 +61,6 @@ PassRefPtr<IDBKeyRange> IDBKeyRange::bound(PassRefPtr<IDBKey> lower, PassRefPtr<
     return IDBKeyRange::create(lower, upper, lowerOpen, upperOpen);
 }
 
-String IDBKeyRange::lowerWhereClauseComparisonOperator() const
-{
-    ASSERT(m_lower);
-    if (m_lowerOpen)
-        return "<";
-    return "<=";
-}
-
-String IDBKeyRange::upperWhereClauseComparisonOperator() const
-{
-    ASSERT(m_upper);
-    if (m_upperOpen)
-        return "<";
-    return "<=";
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

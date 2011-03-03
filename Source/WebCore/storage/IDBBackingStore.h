@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBCursor.h"
 #include "SQLiteDatabase.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -38,6 +39,7 @@ namespace WebCore {
 
 class IDBFactoryBackendImpl;
 class IDBKey;
+class IDBKeyRange;
 class SecurityOrigin;
 
 class IDBBackingStore : public RefCounted<IDBBackingStore> {
@@ -54,7 +56,9 @@ public:
     String getObjectStoreRecord(int64_t objectStoreId, const IDBKey&);
     bool putObjectStoreRecord(int64_t objectStoreId, const IDBKey&, const String& value, int64_t& rowId, bool invalidRowId);
     void clearObjectStore(int64_t objectStoreId);
+    void deleteObjectStoreRecord(int64_t objectStoreId, int64_t objectStoreDataId);
     double nextAutoIncrementNumber(int64_t objectStoreId);
+    bool keyExistsInObjectStore(int64_t objectStoreId, const IDBKey&, int64_t& foundObjectStoreDataId);
 
     class ObjectStoreRecordCallback {
     public:
@@ -68,6 +72,24 @@ public:
     void deleteIndex(int64_t indexId);
     bool putIndexDataForRecord(int64_t indexId, const IDBKey&, int64_t objectStoreDataId);
     bool deleteIndexDataForRecord(int64_t objectStoreDataId);
+    String getObjectViaIndex(int64_t indexId, const IDBKey&);
+    PassRefPtr<IDBKey> getPrimaryKeyViaIndex(int64_t indexId, const IDBKey&);
+    bool keyExistsInIndex(int64_t indexId, const IDBKey&);
+
+    class Cursor : public RefCounted<Cursor> {
+    public:
+        virtual bool continueFunction(const IDBKey* = 0) = 0;
+        virtual PassRefPtr<IDBKey> key() = 0;
+        virtual PassRefPtr<IDBKey> primaryKey() = 0;
+        virtual String value() = 0;
+        virtual int64_t objectStoreDataId() = 0;
+        virtual int64_t indexDataId() = 0;
+        virtual ~Cursor() {};
+    };
+
+    PassRefPtr<Cursor> openObjectStoreCursor(int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction);
+    PassRefPtr<Cursor> openIndexKeyCursor(int64_t indexId, const IDBKeyRange*, IDBCursor::Direction);
+    PassRefPtr<Cursor> openIndexCursor(int64_t indexId, const IDBKeyRange*, IDBCursor::Direction);
 
     SQLiteDatabase& db() { return m_db; }
 

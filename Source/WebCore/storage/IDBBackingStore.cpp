@@ -31,6 +31,7 @@
 #include "FileSystem.h"
 #include "IDBFactoryBackendImpl.h"
 #include "IDBKey.h"
+#include "IDBKeyRange.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
@@ -336,6 +337,42 @@ static int bindKeyToQuery(SQLiteStatement& query, int column, const IDBKey& key)
     return 0;
 }
 
+static String lowerCursorWhereFragment(const IDBKey& key, String comparisonOperator, String qualifiedTableName = "")
+{
+    switch (key.type()) {
+    case IDBKey::StringType:
+        return "? " + comparisonOperator + " " + qualifiedTableName + "keyString  AND  ";
+    case IDBKey::DateType:
+        return "(? " + comparisonOperator + " " + qualifiedTableName + "keyDate  OR NOT " + qualifiedTableName + "keyString IS NULL)  AND  ";
+    case IDBKey::NumberType:
+        return "(? " + comparisonOperator + " " + qualifiedTableName + "keyNumber  OR  NOT " + qualifiedTableName + "keyString IS NULL  OR  NOT " + qualifiedTableName + "keyDate IS NULL)  AND  ";
+    case IDBKey::NullType:
+        if (comparisonOperator == "<")
+            return "NOT(" + qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate IS NULL  AND  " + qualifiedTableName + "keyNumber IS NULL)  AND  ";
+        return ""; // If it's =, the upper bound half will do the constraining. If it's <=, then that's a no-op.
+    }
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
+static String upperCursorWhereFragment(const IDBKey& key, String comparisonOperator, String qualifiedTableName = "")
+{
+    switch (key.type()) {
+    case IDBKey::StringType:
+        return "(" + qualifiedTableName + "keyString " + comparisonOperator + " ?  OR  " + qualifiedTableName + "keyString IS NULL)  AND  ";
+    case IDBKey::DateType:
+        return "(" + qualifiedTableName + "keyDate " + comparisonOperator + " ? OR " + qualifiedTableName + "keyDate IS NULL)  AND  " + qualifiedTableName + "keyString IS NULL  AND  ";
+    case IDBKey::NumberType:
+        return "(" + qualifiedTableName + "keyNumber " + comparisonOperator + " ? OR " + qualifiedTableName + "keyNumber IS NULL)  AND  " + qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate IS NULL  AND  ";
+    case IDBKey::NullType:
+        if (comparisonOperator == "<")
+            return "0 != 0  AND  ";
+        return qualifiedTableName + "keyString IS NULL  AND  " + qualifiedTableName + "keyDate IS NULL  AND  " + qualifiedTableName + "keyNumber IS NULL  AND  ";
+    }
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
 String IDBBackingStore::getObjectStoreRecord(int64_t objectStoreId, const IDBKey& key)
 {
     SQLiteStatement query(m_db, "SELECT keyString, keyDate, keyNumber, value FROM ObjectStoreData WHERE objectStoreId = ? AND " + whereSyntaxForKey(key));
@@ -415,6 +452,27 @@ void IDBBackingStore::clearObjectStore(int64_t objectStoreId)
     doDelete(m_db, "DELETE FROM ObjectStoreData WHERE objectStoreId = ?", objectStoreId);
 }
 
+void IDBBackingStore::deleteObjectStoreRecord(int64_t, int64_t objectStoreDataId)
+{
+    SQLiteStatement osQuery(m_db, "DELETE FROM ObjectStoreData WHERE id = ?");
+    bool ok = osQuery.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+
+    osQuery.bindInt64(1, objectStoreDataId);
+
+    ok = osQuery.step() == SQLResultDone;
+    ASSERT_UNUSED(ok, ok);
+
+    SQLiteStatement indexQuery(m_db, "DELETE FROM IndexData WHERE objectStoreDataId = ?");
+    ok = indexQuery.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+
+    indexQuery.bindInt64(1, objectStoreDataId);
+
+    ok = indexQuery.step() == SQLResultDone;
+    ASSERT_UNUSED(ok, ok);
+}
+
 double IDBBackingStore::nextAutoIncrementNumber(int64_t objectStoreId)
 {
     SQLiteStatement query(m_db, "SELECT max(keyNumber) + 1 FROM ObjectStoreData WHERE objectStoreId = ? AND keyString IS NULL AND keyDate IS NULL");
@@ -427,6 +485,23 @@ double IDBBackingStore::nextAutoIncrementNumber(int64_t objectStoreId)
         return 1;
 
     return query.getColumnDouble(0);
+}
+
+bool IDBBackingStore::keyExistsInObjectStore(int64_t objectStoreId, const IDBKey& key, int64_t& foundObjectStoreDataId)
+{
+    String sql = String("SELECT id FROM ObjectStoreData WHERE objectStoreId = ? AND ") + whereSyntaxForKey(key);
+    SQLiteStatement query(m_db, sql);
+    bool ok = query.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+
+    query.bindInt64(1, objectStoreId);
+    bindKeyToQuery(query, 2, key);
+
+    if (query.step() != SQLResultRow)
+        return false;
+
+    foundObjectStoreDataId = query.getColumnInt64(0);
+    return true;
 }
 
 bool IDBBackingStore::forEachObjectStoreRecord(int64_t objectStoreId, ObjectStoreRecordCallback& callback)
@@ -513,6 +588,370 @@ bool IDBBackingStore::deleteIndexDataForRecord(int64_t objectStoreDataId)
 
     query.bindInt64(1, objectStoreDataId);
     return query.step() == SQLResultDone;
+}
+
+String IDBBackingStore::getObjectViaIndex(int64_t indexId, const IDBKey& key)
+{
+    String sql = String("SELECT ")
+                 + "ObjectStoreData.value "
+                 + "FROM IndexData INNER JOIN ObjectStoreData ON IndexData.objectStoreDataId = ObjectStoreData.id "
+                 + "WHERE IndexData.indexId = ?  AND  " + whereSyntaxForKey(key, "IndexData.")
+                 + "ORDER BY IndexData.id LIMIT 1"; // Order by insertion order when all else fails.
+    SQLiteStatement query(m_db, sql);
+    bool ok = query.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+
+    query.bindInt64(1, indexId);
+    bindKeyToQuery(query, 2, key);
+
+    if (query.step() != SQLResultRow)
+        return String();
+
+    String foundValue = query.getColumnBlobAsString(0);
+    ASSERT(query.step() != SQLResultRow);
+    return foundValue;
+}
+
+static PassRefPtr<IDBKey> keyFromQuery(SQLiteStatement& query, int baseColumn)
+{
+    if (query.columnCount() <= baseColumn)
+        return 0;
+
+    if (!query.isColumnNull(baseColumn))
+        return IDBKey::createString(query.getColumnText(baseColumn));
+
+    if (!query.isColumnNull(baseColumn + 1))
+        return IDBKey::createDate(query.getColumnDouble(baseColumn + 1));
+
+    if (!query.isColumnNull(baseColumn + 2))
+        return IDBKey::createNumber(query.getColumnDouble(baseColumn + 2));
+
+    return IDBKey::createNull();
+}
+
+PassRefPtr<IDBKey> IDBBackingStore::getPrimaryKeyViaIndex(int64_t indexId, const IDBKey& key)
+{
+    String sql = String("SELECT ")
+                 + "ObjectStoreData.keyString, ObjectStoreData.keyDate, ObjectStoreData.keyNumber "
+                 + "FROM IndexData INNER JOIN ObjectStoreData ON IndexData.objectStoreDataId = ObjectStoreData.id "
+                 + "WHERE IndexData.indexId = ?  AND  " + whereSyntaxForKey(key, "IndexData.")
+                 + "ORDER BY IndexData.id LIMIT 1"; // Order by insertion order when all else fails.
+    SQLiteStatement query(m_db, sql);
+    bool ok = query.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+
+    query.bindInt64(1, indexId);
+    bindKeyToQuery(query, 2, key);
+
+    if (query.step() != SQLResultRow)
+        return false;
+
+    RefPtr<IDBKey> foundKey = keyFromQuery(query, 0);
+    ASSERT(query.step() != SQLResultRow);
+    return foundKey.release();
+}
+
+bool IDBBackingStore::keyExistsInIndex(int64_t indexId, const IDBKey& key)
+{
+    String sql = String("SELECT id FROM IndexData WHERE indexId = ? AND ") + whereSyntaxForKey(key);
+    SQLiteStatement query(m_db, sql);
+    bool ok = query.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+
+    query.bindInt64(1, indexId);
+    bindKeyToQuery(query, 2, key);
+
+    return query.step() == SQLResultRow;
+}
+
+namespace {
+
+class CursorImplCommon : public IDBBackingStore::Cursor {
+public:
+    CursorImplCommon(SQLiteDatabase& sqliteDatabase, String query, bool uniquenessConstraint)
+        : m_query(sqliteDatabase, query)
+        , m_db(sqliteDatabase)
+        , m_uniquenessConstraint(uniquenessConstraint)
+    {
+    }
+    virtual ~CursorImplCommon() {}
+
+    // IDBBackingStore::Cursor
+    virtual bool continueFunction(const IDBKey*);
+    virtual PassRefPtr<IDBKey> key() { return m_currentKey; }
+    virtual PassRefPtr<IDBKey> primaryKey() { return m_currentKey; }
+    virtual String value() = 0;
+    virtual int64_t objectStoreDataId() = 0;
+    virtual int64_t indexDataId() = 0;
+
+    virtual void loadCurrentRow() = 0;
+    virtual bool currentRowExists() = 0;
+
+    SQLiteStatement m_query;
+
+protected:
+    SQLiteDatabase& m_db;
+    bool m_uniquenessConstraint;
+    int64_t m_currentId;
+    RefPtr<IDBKey> m_currentKey;
+};
+
+bool CursorImplCommon::continueFunction(const IDBKey* key)
+{
+    while (true) {
+        if (m_query.step() != SQLResultRow)
+            return false;
+
+        RefPtr<IDBKey> oldKey = m_currentKey;
+        loadCurrentRow();
+
+        // Skip if this entry has been deleted from the object store.
+        if (!currentRowExists())
+            continue;
+
+        // If a key was supplied, we must loop until we find that key (or hit the end).
+        if (key && !key->isEqual(m_currentKey.get()))
+            continue;
+
+        // If we don't have a uniqueness constraint, we can stop now.
+        if (!m_uniquenessConstraint)
+            break;
+        if (!m_currentKey->isEqual(oldKey.get()))
+            break;
+    }
+
+    return true;
+}
+
+class ObjectStoreCursorImpl : public CursorImplCommon {
+public:
+    ObjectStoreCursorImpl(SQLiteDatabase& sqliteDatabase, String query, bool uniquenessConstraint)
+        : CursorImplCommon(sqliteDatabase, query, uniquenessConstraint)
+    {
+    }
+
+    // CursorImplCommon.
+    virtual String value() { return m_currentValue; }
+    virtual int64_t objectStoreDataId() { return m_currentId; }
+    virtual int64_t indexDataId() { ASSERT_NOT_REACHED(); return 0; }
+    virtual void loadCurrentRow();
+    virtual bool currentRowExists();
+
+private:
+    String m_currentValue;
+};
+
+void ObjectStoreCursorImpl::loadCurrentRow()
+{
+    m_currentId = m_query.getColumnInt64(0);
+    m_currentKey = keyFromQuery(m_query, 1);
+    m_currentValue = m_query.getColumnBlobAsString(4);
+}
+
+bool ObjectStoreCursorImpl::currentRowExists()
+{
+    String sql = "SELECT id FROM ObjectStoreData WHERE id = ?";
+    SQLiteStatement statement(m_db, sql);
+
+    bool ok = statement.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok);
+
+    statement.bindInt64(1, m_currentId);
+    return statement.step() == SQLResultRow;
+}
+
+class IndexKeyCursorImpl : public CursorImplCommon {
+public:
+    IndexKeyCursorImpl(SQLiteDatabase& sqliteDatabase, String query, bool uniquenessConstraint)
+        : CursorImplCommon(sqliteDatabase, query, uniquenessConstraint)
+    {
+    }
+
+    // CursorImplCommon
+    virtual PassRefPtr<IDBKey> primaryKey() { return m_currentPrimaryKey; }
+    virtual String value() { ASSERT_NOT_REACHED(); return String(); }
+    virtual int64_t objectStoreDataId() { ASSERT_NOT_REACHED(); return 0; }
+    virtual int64_t indexDataId() { return m_currentId; }
+    virtual void loadCurrentRow();
+    virtual bool currentRowExists();
+
+private:
+    RefPtr<IDBKey> m_currentPrimaryKey;
+};
+
+void IndexKeyCursorImpl::loadCurrentRow()
+{
+    m_currentId = m_query.getColumnInt64(0);
+    m_currentKey = keyFromQuery(m_query, 1);
+    m_currentPrimaryKey = keyFromQuery(m_query, 4);
+}
+
+bool IndexKeyCursorImpl::currentRowExists()
+{
+    String sql = "SELECT id FROM IndexData WHERE id = ?";
+    SQLiteStatement statement(m_db, sql);
+
+    bool ok = statement.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok);
+
+    statement.bindInt64(1, m_currentId);
+    return statement.step() == SQLResultRow;
+}
+
+class IndexCursorImpl : public CursorImplCommon {
+public:
+    IndexCursorImpl(SQLiteDatabase& sqliteDatabase, String query, bool uniquenessConstraint)
+        : CursorImplCommon(sqliteDatabase, query, uniquenessConstraint)
+    {
+    }
+
+    // CursorImplCommon
+    virtual PassRefPtr<IDBKey> primaryKey() { return m_currentPrimaryKey; }
+    virtual String value() { return m_currentValue; }
+    virtual int64_t objectStoreDataId() { ASSERT_NOT_REACHED(); return 0; }
+    virtual int64_t indexDataId() { return m_currentId; }
+    virtual void loadCurrentRow();
+    virtual bool currentRowExists();
+
+private:
+    RefPtr<IDBKey> m_currentPrimaryKey;
+    String m_currentValue;
+};
+
+void IndexCursorImpl::loadCurrentRow()
+{
+    m_currentId = m_query.getColumnInt64(0);
+    m_currentKey = keyFromQuery(m_query, 1);
+    m_currentValue = m_query.getColumnBlobAsString(4);
+    m_currentPrimaryKey = keyFromQuery(m_query, 5);
+}
+
+bool IndexCursorImpl::currentRowExists()
+{
+    String sql = "SELECT id FROM IndexData WHERE id = ?";
+    SQLiteStatement statement(m_db, sql);
+
+    bool ok = statement.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok);
+
+    statement.bindInt64(1, m_currentId);
+    return statement.step() == SQLResultRow;
+}
+
+} // namespace
+
+PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openObjectStoreCursor(int64_t objectStoreId, const IDBKeyRange* range, IDBCursor::Direction direction)
+{
+    bool lowerBound = range && range->lower();
+    bool upperBound = range && range->upper();
+
+    String sql = "SELECT id, keyString, keyDate, keyNumber, value FROM ObjectStoreData WHERE ";
+    if (lowerBound)
+        sql += lowerCursorWhereFragment(*range->lower(), range->lowerOpen() ? "<" : "<=");
+    if (upperBound)
+        sql += upperCursorWhereFragment(*range->upper(), range->upperOpen() ? "<" : "<=");
+    sql += "objectStoreId = ? ORDER BY ";
+
+    if (direction == IDBCursor::NEXT || direction == IDBCursor::NEXT_NO_DUPLICATE)
+        sql += "keyString, keyDate, keyNumber";
+    else
+        sql += "keyString DESC, keyDate DESC, keyNumber DESC";
+
+    RefPtr<ObjectStoreCursorImpl> cursor = adoptRef(new ObjectStoreCursorImpl(m_db, sql, direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE));
+
+    bool ok = cursor->m_query.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+
+    int currentColumn = 1;
+    if (lowerBound)
+        currentColumn += bindKeyToQuery(cursor->m_query, currentColumn, *range->lower());
+    if (upperBound)
+        currentColumn += bindKeyToQuery(cursor->m_query, currentColumn, *range->upper());
+    cursor->m_query.bindInt64(currentColumn, objectStoreId);
+
+    if (cursor->m_query.step() != SQLResultRow)
+        return 0;
+
+    cursor->loadCurrentRow();
+    return cursor.release();
+}
+
+PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openIndexKeyCursor(int64_t indexId, const IDBKeyRange* range, IDBCursor::Direction direction)
+{
+    String sql = String("SELECT IndexData.id, IndexData.keyString, IndexData.keyDate, IndexData.keyNumber, ")
+                 + ("ObjectStoreData.keyString, ObjectStoreData.keyDate, ObjectStoreData.keyNumber ")
+                 + "FROM IndexData INNER JOIN ObjectStoreData ON IndexData.objectStoreDataId = ObjectStoreData.id WHERE ";
+
+    bool lowerBound = range && range->lower();
+    bool upperBound = range && range->upper();
+
+    if (lowerBound)
+        sql += lowerCursorWhereFragment(*range->lower(), range->lowerOpen() ? "<" : "<=", "IndexData.");
+    if (upperBound)
+        sql += upperCursorWhereFragment(*range->upper(), range->upperOpen() ? "<" : "<=", "IndexData.");
+    sql += "IndexData.indexId = ? ORDER BY ";
+
+    if (direction == IDBCursor::NEXT || direction == IDBCursor::NEXT_NO_DUPLICATE)
+        sql += "IndexData.keyString, IndexData.keyDate, IndexData.keyNumber, IndexData.id";
+    else
+        sql += "IndexData.keyString DESC, IndexData.keyDate DESC, IndexData.keyNumber DESC, IndexData.id DESC";
+
+    RefPtr<IndexKeyCursorImpl> cursor = adoptRef(new IndexKeyCursorImpl(m_db, sql, direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE));
+
+    bool ok = cursor->m_query.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+
+    int indexColumn = 1;
+    if (lowerBound)
+        indexColumn += bindKeyToQuery(cursor->m_query, indexColumn, *range->lower());
+    if (upperBound)
+        indexColumn += bindKeyToQuery(cursor->m_query, indexColumn, *range->upper());
+    cursor->m_query.bindInt64(indexColumn, indexId);
+
+    if (cursor->m_query.step() != SQLResultRow)
+        return 0;
+
+    cursor->loadCurrentRow();
+    return cursor.release();
+}
+
+PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openIndexCursor(int64_t indexId, const IDBKeyRange* range, IDBCursor::Direction direction)
+{
+    String sql = String("SELECT IndexData.id, IndexData.keyString, IndexData.keyDate, IndexData.keyNumber, ")
+                 + ("ObjectStoreData.value, ObjectStoreData.keyString, ObjectStoreData.keyDate, ObjectStoreData.keyNumber ")
+                 + "FROM IndexData INNER JOIN ObjectStoreData ON IndexData.objectStoreDataId = ObjectStoreData.id WHERE ";
+
+    bool lowerBound = range && range->lower();
+    bool upperBound = range && range->upper();
+
+    if (lowerBound)
+        sql += lowerCursorWhereFragment(*range->lower(), range->lowerOpen() ? "<" : "<=", "IndexData.");
+    if (upperBound)
+        sql += upperCursorWhereFragment(*range->upper(), range->upperOpen() ? "<" : "<=", "IndexData.");
+    sql += "IndexData.indexId = ? ORDER BY ";
+
+    if (direction == IDBCursor::NEXT || direction == IDBCursor::NEXT_NO_DUPLICATE)
+        sql += "IndexData.keyString, IndexData.keyDate, IndexData.keyNumber, IndexData.id";
+    else
+        sql += "IndexData.keyString DESC, IndexData.keyDate DESC, IndexData.keyNumber DESC, IndexData.id DESC";
+
+    RefPtr<IndexCursorImpl> cursor = adoptRef(new IndexCursorImpl(m_db, sql, direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE));
+
+    bool ok = cursor->m_query.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+
+    int indexColumn = 1;
+    if (lowerBound)
+        indexColumn += bindKeyToQuery(cursor->m_query, indexColumn, *range->lower());
+    if (upperBound)
+        indexColumn += bindKeyToQuery(cursor->m_query, indexColumn, *range->upper());
+    cursor->m_query.bindInt64(indexColumn, indexId);
+
+    if (cursor->m_query.step() != SQLResultRow)
+        return 0;
+
+    cursor->loadCurrentRow();
+    return cursor.release();
 }
 
 } // namespace WebCore

@@ -1,3 +1,77 @@
+2011-03-03  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Move SQL code, especially for cursors, to IDBBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=55376
+
+        Move SQL code from IDBKey, IDBKeyRange, IDBIndexBackendImpl,
+        IDBObjectStoreBackendImpl, and especially IDBCursorBackendImpl.
+
+        No new functionality, so no new tests.
+
+        * storage/IDBBackingStore.cpp:
+        (WebCore::lowerCursorWhereFragment):
+        (WebCore::upperCursorWhereFragment):
+        (WebCore::IDBBackingStore::deleteObjectStoreRecord):
+        (WebCore::IDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBBackingStore::getObjectViaIndex):
+        (WebCore::keyFromQuery):
+        (WebCore::IDBBackingStore::getPrimaryKeyViaIndex):
+        (WebCore::IDBBackingStore::keyExistsInIndex):
+        (WebCore::CursorImplCommon::CursorImplCommon::continueInternal):
+        (WebCore::CursorImplCommon::ObjectStoreCursorImpl::ObjectStoreCursorImpl):
+        (WebCore::CursorImplCommon::ObjectStoreCursorImpl::objectStoreDataId):
+        (WebCore::CursorImplCommon::ObjectStoreCursorImpl::key):
+        (WebCore::CursorImplCommon::ObjectStoreCursorImpl::value):
+        (WebCore::CursorImplCommon::ObjectStoreCursorImpl::continueFunction):
+        (WebCore::IDBBackingStore::openObjectStoreCursor):
+        (WebCore::ObjectStoreCursorImpl::loadCurrentRow):
+        (WebCore::ObjectStoreCursorImpl::currentRowExists):
+        (WebCore::IndexKeyCursorImpl::IndexKeyCursorImpl):
+        (WebCore::IndexKeyCursorImpl::indexDataId):
+        (WebCore::IndexKeyCursorImpl::key):
+        (WebCore::IndexKeyCursorImpl::primaryKey):
+        (WebCore::IndexKeyCursorImpl::continueFunction):
+        (WebCore::IDBBackingStore::openIndexKeyCursor):
+        (WebCore::IndexKeyCursorImpl::loadCurrentRow):
+        (WebCore::IndexKeyCursorImpl::currentRowExists):
+        (WebCore::IndexCursorImpl::IndexCursorImpl):
+        (WebCore::IndexCursorImpl::indexDataId):
+        (WebCore::IndexCursorImpl::key):
+        (WebCore::IndexCursorImpl::primaryKey):
+        (WebCore::IndexCursorImpl::value):
+        (WebCore::IndexCursorImpl::continueFunction):
+        (WebCore::IDBBackingStore::openIndexCursor):
+        (WebCore::IndexCursorImpl::loadCurrentRow):
+        (WebCore::IndexCursorImpl::currentRowExists):
+        * storage/IDBBackingStore.h:
+        (WebCore::IDBBackingStore::Cursor::~Cursor):
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::IDBCursorBackendImpl):
+        (WebCore::IDBCursorBackendImpl::key):
+        (WebCore::IDBCursorBackendImpl::value):
+        (WebCore::IDBCursorBackendImpl::update):
+        (WebCore::IDBCursorBackendImpl::continueFunctionInternal):
+        (WebCore::IDBCursorBackendImpl::deleteFunction):
+        * storage/IDBCursorBackendImpl.h:
+        (WebCore::IDBCursorBackendImpl::create):
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::openCursorInternal):
+        (WebCore::IDBIndexBackendImpl::getInternal):
+        (WebCore::IDBIndexBackendImpl::addingKeyAllowed):
+        * storage/IDBIndexBackendImpl.h:
+        * storage/IDBKey.cpp:
+        (WebCore::IDBKey::isEqual):
+        * storage/IDBKey.h:
+        * storage/IDBKeyRange.cpp:
+        * storage/IDBKeyRange.h:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::deleteInternal):
+        (WebCore::IDBObjectStoreBackendImpl::openCursorInternal):
+        * storage/IDBObjectStoreBackendImpl.h:
+
 2011-03-03  Peter Kasting  <pkasting@google.com>
 
         Reviewed by James Robinson.
