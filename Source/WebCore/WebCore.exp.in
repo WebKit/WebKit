@@ -1336,6 +1336,7 @@ _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError
 _wkSignalCFReadStreamHasBytes
 _wkCreatePrivateStorageSession
+_wkCopyRequestWithStorageSession
 
 #if !defined(NDEBUG)
 __ZN7WebCore20LogNotYetImplementedE

@@ -167,6 +167,7 @@ void InitWebCoreSystemInterface(void)
     INIT(CreateAXUIElementRef);
     INIT(UnregisterUniqueIdForElement);
     INIT(CreatePrivateStorageSession);
+    INIT(CopyRequestWithStorageSession);
 
     didInit = true;
 }

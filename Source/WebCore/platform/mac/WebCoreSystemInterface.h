@@ -237,6 +237,7 @@ extern AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 extern CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
+extern NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
 
 }
 

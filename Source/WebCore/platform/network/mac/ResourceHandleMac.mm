@@ -239,6 +239,9 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     static bool supportsSettingConnectionProperties = [NSURLConnection instancesRespondToSelector:@selector(_initWithRequest:delegate:usesCache:maxContentLength:startImmediately:connectionProperties:)];
 #endif
 
+    if (CFURLStorageSessionRef storageSession = privateBrowsingStorageSession())
+        nsRequest = [wkCopyRequestWithStorageSession(storageSession, nsRequest) autorelease];
+
     if (supportsSettingConnectionProperties) {
         NSDictionary *sessionID = shouldUseCredentialStorage ? [NSDictionary dictionary] : [NSDictionary dictionaryWithObject:@"WebKitPrivateSession" forKey:@"_kCFURLConnectionSessionID"];
         NSDictionary *propertyDictionary = [NSDictionary dictionaryWithObject:sessionID forKey:@"kCFURLConnectionSocketStreamProperties"];
@@ -551,6 +554,9 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
     request.removeCredentials();
     if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url()))
         request.clearHTTPAuthorization();
+
+    if (CFURLStorageSessionRef storageSession = privateBrowsingStorageSession())
+        request.setStorageSession(storageSession);
 
     client()->willSendRequest(this, request, redirectResponse);
 }

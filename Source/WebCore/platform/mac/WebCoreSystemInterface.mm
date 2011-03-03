@@ -173,4 +173,4 @@ BOOL (*wkGetBytesFromAXTextMarker)(CFTypeRef textMarker, void *bytes, size_t len
 AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 
 CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
-
+NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);

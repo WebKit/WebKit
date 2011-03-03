@@ -195,6 +195,13 @@ void ResourceRequest::doUpdateResourceRequest()
     m_httpBody = httpBodyFromRequest(m_cfRequest.get());
 }
 
+void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
+{
+    CFMutableURLRequestRef cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
+    wkSetRequestStorageSession(storageSession, cfRequest);
+    m_cfRequest.adoptCF(cfRequest);
+}
+
 #endif // USE(CFNETWORK)
 
 unsigned initializeMaximumHTTPConnectionCountPerHost()

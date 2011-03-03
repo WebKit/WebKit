@@ -334,6 +334,9 @@ CFArrayRef arrayFromFormData(const FormData& d)
 static CFURLRequestRef makeFinalRequest(const ResourceRequest& request, bool shouldContentSniff)
 {
     CFMutableURLRequestRef newRequest = CFURLRequestCreateMutableCopy(kCFAllocatorDefault, request.cfURLRequest());
+
+    if (CFURLStorageSessionRef storageSession = ResourceHandle::privateBrowsingStorageSession())
+        wkSetRequestStorageSession(storageSession, newRequest);
     
     if (!shouldContentSniff)
         wkSetCFURLRequestShouldContentSniff(newRequest, false);
@@ -480,6 +483,9 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
     request.removeCredentials();
     if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url()))
         request.clearHTTPAuthorization();
+
+    if (CFURLStorageSessionRef storageSession = privateBrowsingStorageSession())
+        request.setStorageSession(storageSession);
 
     client()->willSendRequest(this, request, redirectResponse);
 }

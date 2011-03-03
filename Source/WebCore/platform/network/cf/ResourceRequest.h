@@ -40,6 +40,10 @@ class NSURLRequest;
 #endif
 #endif
 
+#if USE(CFURLSTORAGESESSIONS)
+typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
+#endif
+
 namespace WebCore {
 
     class ResourceRequest : public ResourceRequestBase {
@@ -78,6 +82,10 @@ namespace WebCore {
 
         void applyWebArchiveHackForMail();
         NSURLRequest* nsURLRequest() const;
+#endif
+
+#if USE(CFURLSTORAGESESSIONS)
+        void setStorageSession(CFURLStorageSessionRef);
 #endif
 
     private:

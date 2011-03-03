@@ -97,6 +97,7 @@ CFArrayRef wkCFURLRequestCopyHTTPRequestBodyParts(CFURLRequestRef);
 void wkCFURLRequestSetHTTPRequestBodyParts(CFMutableURLRequestRef, CFArrayRef bodyParts);
 
 CFURLStorageSessionRef wkCreatePrivateStorageSession(CFStringRef identifier);
+void wkSetRequestStorageSession(CFURLStorageSessionRef, CFMutableURLRequestRef);
 
 CFArrayRef wkCFURLCacheCopyAllHostNamesInPersistentStore();
 void wkCFURLCacheDeleteHostNamesInPersistentStore(CFArrayRef hostNames);

@@ -1,3 +1,38 @@
+2011-03-03  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Use CFNetwork Sessions API.
+        https://bugs.webkit.org/show_bug.cgi?id=55435
+
+        Set the Private Browsing Storage Session on requests when Private Browsing is enabled.
+
+        * WebCore.exp.in:
+        Support using WKCopyRequestWithStorageSession in WebCore.
+        * platform/mac/WebCoreSystemInterface.h:
+        Ditto.
+        * platform/mac/WebCoreSystemInterface.mm:
+        Ditto.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::makeFinalRequest):
+        If Private Browsing is enabled, set the Private Browsing Storage Session on the request.
+        (WebCore::ResourceHandle::willSendRequest):
+        Ditto.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection):
+        Ditto.
+        (WebCore::ResourceHandle::willSendRequest):
+        Ditto.
+
+        * platform/network/cf/ResourceRequest.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::setStorageSession):
+        Call through to WKSI.
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::setStorageSession):
+        Ditto.
+
 2011-03-03  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

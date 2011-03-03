@@ -174,6 +174,11 @@ void ResourceRequest::applyWebArchiveHackForMail()
     [NSURLProtocol setProperty:@"" forKey:@"WebDataRequest" inRequest:(NSMutableURLRequest *)nsURLRequest()];
 }
 
+void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
+{
+    m_nsRequest = wkCopyRequestWithStorageSession(storageSession, m_nsRequest.get());
+}
+
 } // namespace WebCore
 
 #endif // !USE(CFNETWORK)
