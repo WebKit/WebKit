@@ -1,5 +1,12 @@
 2011-03-02  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, build fix.
+
+        * platform/text/LocalizedNumberICU.cpp:
+        (WebCore::createFormatterForCurrentLocale): Fix a typo.
+
+2011-03-02  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Darin Adler.
 
         Caching number formatter instances in LocalizedNumber* implementations
