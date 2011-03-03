@@ -1,3 +1,22 @@
+2011-03-03  David Holloway  <dhollowa@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Changes HTMLTextFormControlElement::placeholderShouldBeVisible to account
+        for non-empty suggestion text.  The visibility of the placeholder text
+        now turned off when suggestion text is set.
+        https://bugs.webkit.org/show_bug.cgi?id=55245
+
+        No new tests because, by design, the suggestion text is not accessible
+        through the DOM.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::placeholderShouldBeVisible):
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLTextFormControlElement::isEmptySuggestedValue):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isEmptySuggestedValue):
+
 2011-03-03  Andy Estes  <aestes@apple.com>
 
         Reviewed by Eric Seidel.

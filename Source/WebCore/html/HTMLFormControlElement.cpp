@@ -130,7 +130,7 @@ void HTMLFormControlElement::attach()
     // on the renderer.
     if (renderer())
         renderer()->updateFromElement();
-        
+
     // Focus the element if it should honour its autofocus attribute.
     // We have to determine if the element is a TextArea/Input/Button/Select,
     // if input type hidden ignore autofocus. So if disabled or readonly.
@@ -451,13 +451,13 @@ PassRefPtr<NodeList> HTMLFormControlElement::labels()
         return 0;
     if (!document())
         return 0;
-    
+
     NodeRareData* data = Node::ensureRareData();
     if (!data->nodeLists()) {
         data->setNodeLists(NodeListsNodeData::create());
         document()->addNodeListCache();
     }
-    
+
     return LabelsNodeList::create(this);
 }
 
@@ -582,6 +582,7 @@ bool HTMLTextFormControlElement::placeholderShouldBeVisible() const
 {
     return supportsPlaceholder()
         && isEmptyValue()
+        && isEmptySuggestedValue()
         && !isPlaceholderEmpty()
         && (document()->focusedNode() != this || (renderer() && renderer()->theme()->shouldShowPlaceholderWhenFocused()));
 }

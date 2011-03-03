@@ -196,7 +196,7 @@ public:
     CheckedRadioButtons& checkedRadioButtons() const;
     void handleBeforeTextInsertedEvent(Event*);
     void updateCheckedRadioButtons();
-    
+
 protected:
     HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
 
@@ -217,11 +217,11 @@ private:
     virtual bool shouldUseInputMethod() const;
 
     virtual const AtomicString& formControlName() const;
- 
+
     // isChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
     virtual bool isChecked() const;
     virtual bool isIndeterminate() const { return indeterminate(); }
-    
+
     virtual bool isTextFormControl() const { return isTextField(); }
 
     virtual bool hasSpinButton() const;
@@ -235,7 +235,7 @@ private:
     virtual void restoreFormControlState(const String&);
 
     virtual bool canStartSelection() const;
-    
+
     virtual void accessKeyAction(bool sendToAnyElement);
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
@@ -281,6 +281,7 @@ private:
 
     virtual bool supportsPlaceholder() const;
     virtual bool isEmptyValue() const { return value().isEmpty(); }
+    virtual bool isEmptySuggestedValue() const { return suggestedValue().isEmpty(); }
     virtual void handleFocusEvent();
     virtual void handleBlurEvent();
     virtual int cachedSelectionStart() const { return m_data.cachedSelectionStart(); }
