@@ -555,8 +555,17 @@ void GraphicsContext::strokePath(const Path& path)
             boundingRect.inflate(pen.miterLimit() + pen.widthF());
             QPainter* shadowPainter = shadow->beginShadowLayer(this, boundingRect);
             if (shadowPainter) {
-                shadowPainter->setOpacity(static_cast<qreal>(m_data->shadow.m_color.alpha()) / 255);
-                shadowPainter->strokePath(platformPath, pen);
+                if (m_state.strokeGradient) {
+                    QBrush brush(*m_state.strokeGradient->platformGradient());
+                    brush.setTransform(m_state.strokeGradient->gradientSpaceTransform());
+                    QPen shadowPen(pen);
+                    shadowPen.setBrush(brush);
+                    shadowPainter->setOpacity(static_cast<qreal>(shadow->m_color.alpha()) / 255);
+                    shadowPainter->strokePath(platformPath, shadowPen);
+                } else {
+                    shadowPainter->setOpacity(static_cast<qreal>(m_data->shadow.m_color.alpha()) / 255);
+                    shadowPainter->strokePath(platformPath, pen);
+                }
                 shadow->endShadowLayer(this);
             }
         } else {

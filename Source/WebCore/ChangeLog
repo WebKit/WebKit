@@ -1,3 +1,16 @@
+2011-03-03  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] fast/canvas/canvas-strokePath-gradient-shadow.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=55651
+
+        When relying on ContextShadow and using a gradient stroke for a path,
+        the alpha of the shadow is incorrect.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::strokePath):
+
 2011-03-03  Martin Robinson  <mrobinson@igalia.com>
 
         XHTMLMP build broken after r78342

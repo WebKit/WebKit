@@ -1584,7 +1584,6 @@ fast/text/whitespace/tab-character-basics.html
 fast/text/word-break.html
 fast/text/word-break-run-rounding.html
 fast/transforms/transform-positioned-ancestor.html
-fast/canvas/canvas-strokePath-gradient-shadow.html
 
 # -- timedout with --platform mac --ignore-metrics
 fast/events/5056619.html
