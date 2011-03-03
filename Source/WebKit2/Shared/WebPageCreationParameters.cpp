@@ -43,6 +43,7 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(pageGroupData);
     encoder->encode(drawsBackground);
     encoder->encode(drawsTransparentBackground);
+    encoder->encode(areMemoryCacheClientCallsEnabled);
     encoder->encode(useFixedLayout);
     encoder->encode(fixedLayoutSize);
     encoder->encode(userAgent);
@@ -79,6 +80,8 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPag
     if (!decoder->decode(parameters.drawsBackground))
         return false;
     if (!decoder->decode(parameters.drawsTransparentBackground))
+        return false;
+    if (!decoder->decode(parameters.areMemoryCacheClientCallsEnabled))
         return false;
     if (!decoder->decode(parameters.useFixedLayout))
         return false;

@@ -1,3 +1,32 @@
+2011-03-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WKPageSetMemoryCacheClientCallsEnabled doesn't persist if web process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=55635
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        Encode and decode areMemoryCacheClientCallsEnabled.
+
+        * Shared/WebPageCreationParameters.h:
+        Add areMemoryCacheClientCallsEnabled member variable.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Initialize m_areMemoryCacheClientCallsEnabled.
+
+        (WebKit::WebPageProxy::setMemoryCacheClientCallsEnabled):
+        Update m_areMemoryCacheClientCallsEnabled. Send a message if necessary.
+
+        (WebKit::WebPageProxy::creationParameters):
+        Set areMemoryCacheClientCallsEnabled.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        Call WebPage::setMemoryCacheMessagesEnabled.
+
 2011-03-02  Timothy Hatcher  <timothy@apple.com>
 
         Make the runJavaScriptInMainFrame callback send a WKSerializedScriptValueRef.

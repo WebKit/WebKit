@@ -198,6 +198,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     setDrawsBackground(parameters.drawsBackground);
     setDrawsTransparentBackground(parameters.drawsTransparentBackground);
 
+    setMemoryCacheMessagesEnabled(parameters.areMemoryCacheClientCallsEnabled);
+
     setActive(parameters.isActive);
     setFocused(parameters.isFocused);
     setIsInWindow(parameters.isInWindow);

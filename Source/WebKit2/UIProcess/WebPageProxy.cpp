@@ -123,6 +123,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, WebContext* context, WebPageG
     , m_viewScaleFactor(1)
     , m_drawsBackground(true)
     , m_drawsTransparentBackground(false)
+    , m_areMemoryCacheClientCallsEnabled(true)
     , m_useFixedLayout(false)
     , m_isValid(true)
     , m_isClosed(false)
@@ -1096,6 +1097,10 @@ void WebPageProxy::viewScaleFactorDidChange(double scaleFactor)
 
 void WebPageProxy::setMemoryCacheClientCallsEnabled(bool memoryCacheClientCallsEnabled)
 {
+    if (m_areMemoryCacheClientCallsEnabled == memoryCacheClientCallsEnabled)
+        return;
+
+    m_areMemoryCacheClientCallsEnabled = memoryCacheClientCallsEnabled;
     process()->send(Messages::WebPage::SetMemoryCacheMessagesEnabled(memoryCacheClientCallsEnabled), m_pageID);
 }
 
@@ -2597,6 +2602,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.pageGroupData = m_pageGroup->data();
     parameters.drawsBackground = m_drawsBackground;
     parameters.drawsTransparentBackground = m_drawsTransparentBackground;
+    parameters.areMemoryCacheClientCallsEnabled = m_areMemoryCacheClientCallsEnabled;
     parameters.useFixedLayout = m_useFixedLayout;
     parameters.fixedLayoutSize = m_fixedLayoutSize;
     parameters.userAgent = userAgent();

@@ -662,6 +662,8 @@ private:
     bool m_drawsBackground;
     bool m_drawsTransparentBackground;
 
+    bool m_areMemoryCacheClientCallsEnabled;
+
     bool m_useFixedLayout;
     WebCore::IntSize m_fixedLayoutSize;
 
