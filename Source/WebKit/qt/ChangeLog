@@ -1,3 +1,19 @@
+2011-03-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QGraphicsWebView should use updateMicroFocus() of QGraphicsItem
+        https://bugs.webkit.org/show_bug.cgi?id=55568
+
+        We should use updateMicroFocus() from QGraphicsItem rather than the implementation
+        in QGraphicsWebView. _q_updateMicroFocus was added when QGraphicsItem didn't have the feature.
+        In Qt 4.7, updateMicroFocus was added, let's use it, then we can benefit of all bug fixing done
+        in QGraphicsItem.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::setPage):
+        * Api/qgraphicswebview.h:
+
 2011-03-03  Peter Kasting  <pkasting@google.com>
 
         Reviewed by James Robinson.

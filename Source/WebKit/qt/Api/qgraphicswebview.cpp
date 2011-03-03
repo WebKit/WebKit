@@ -69,9 +69,6 @@ public:
     void _q_contentsSizeChanged(const QSize&);
     void _q_scaleChanged();
 
-#if !defined(QT_NO_IM) && (defined(Q_WS_X11) || defined(Q_WS_QWS) || defined(Q_OS_SYMBIAN))
-    void _q_updateMicroFocus();
-#endif
     void _q_pageDestroyed();
 
     QGraphicsWebView* q;
@@ -111,20 +108,6 @@ void QGraphicsWebViewPrivate::_q_doLoadFinished(bool success)
 
     emit q->loadFinished(success);
 }
-
-#if !defined(QT_NO_IM) && (defined(Q_WS_X11) || defined(Q_WS_QWS) || defined(Q_OS_SYMBIAN))
-void QGraphicsWebViewPrivate::_q_updateMicroFocus()
-{
-    // Ideally, this should be handled by a common call to an updateMicroFocus function
-    // in QGraphicsItem. See http://bugreports.qt.nokia.com/browse/QTBUG-7578.
-    QList<QGraphicsView*> views = q->scene()->views();
-    for (int c = 0; c < views.size(); ++c) {
-        QInputContext* ic = views.at(c)->inputContext();
-        if (ic)
-            ic->update();
-    }
-}
-#endif
 
 void QGraphicsWebViewPrivate::_q_pageDestroyed()
 {
@@ -489,7 +472,7 @@ void QGraphicsWebView::setPage(QWebPage* page)
             this, SLOT(_q_pageDestroyed()));
 #if !defined(QT_NO_IM) && (defined(Q_WS_X11) || defined(Q_WS_QWS) || defined(Q_OS_SYMBIAN))
     connect(d->page, SIGNAL(microFocusChanged()),
-            this, SLOT(_q_updateMicroFocus()));
+            this, SLOT(updateMicroFocus()));
 #endif
 }
 
