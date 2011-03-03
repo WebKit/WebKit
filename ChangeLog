@@ -1,3 +1,10 @@
+2011-03-03  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix. Ensure the ICU include dir comes before JavaScriptCore/wtf on Win
+        to make sure the proper unicode/utf8.h header is included.
+
+        * wscript:
+
 2011-03-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, don't use LocalizedNumberICU.cpp yet, headers that it needs are not

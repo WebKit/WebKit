@@ -1,3 +1,11 @@
+2011-03-03  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix. Alter order of headers included to make sure windows.h
+        is configured by wx, and skip Posix implementation file we don't use on Win.
+
+        * wscript:
+        * wtf/wx/StringWx.cpp:
+
 2011-03-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

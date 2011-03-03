@@ -79,7 +79,7 @@ void drawTextWithSpacing(GraphicsContext* graphicsContext, const SimpleFontData*
 
     // get the native HDC handle to draw using native APIs
     HDC hdc = 0;
-    float y = point.y() - font->ascent();
+    float y = point.y() - font->fontMetrics().ascent();
     float x = point.x();
 
 #if USE(WXGC)

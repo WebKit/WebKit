@@ -237,6 +237,12 @@ def build(bld):
     cxxflags = []
     if building_on_win32:
         cxxflags.append('/FIWebCorePrefix.h')
+        # FIXME: We do this because in waf, local include dirs take precedence
+        # over global ones. This makes sense, but because unicode/utf8.h is both
+        # an ICU header name and a WebKit header name (in Source/JavaScriptCore/wtf)
+        # we have to make sure <unicode/utf8.h> picks up the ICU one first.
+        global msvclibs_dir
+        wk_includes.append(os.path.join(msvclibs_dir, 'include'))
     else:
         cxxflags.extend(['-include', 'WebCorePrefix.h'])
 

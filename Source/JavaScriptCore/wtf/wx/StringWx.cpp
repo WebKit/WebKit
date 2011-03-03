@@ -25,11 +25,14 @@
 
 #include "config.h"
 
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
-
+// The wx headers must come first in this case, because the wtf/text headers
+// import windows.h, and we need to allow the wx headers to set its configuration
+// first.
 #include <wx/defs.h>
 #include <wx/string.h>
+
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
 

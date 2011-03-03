@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "Range.h"
 
 namespace WebCore {
 
