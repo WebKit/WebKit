@@ -814,20 +814,6 @@ public:
         }
     }
 
-    bool addBeginTerm(PatternTerm term, Vector<TermChain>* beginTerms, PatternAlternative* alternative, unsigned numTerms, unsigned termIndex, unsigned depth)
-    {
-        if (term.quantityType == QuantifierFixedCount) {
-            beginTerms->append(TermChain(term));
-            if (depth < 2 && termIndex < numTerms - 1 && term.quantityCount == 1)
-                setupAlternativeBeginTerms(alternative, &beginTerms->last().hotTerms, termIndex + 1, depth + 1);
-        } else if (termIndex != numTerms - 1) {
-            beginTerms->append(TermChain(term));
-            return true;
-        }
-
-        return false;
-    }
-
     // This function collects the terms which are potentially matching the first number of depth characters in the result.
     // If this function returns false then it found at least one term which makes the beginning character
     // look-up optimization inefficient.
@@ -863,10 +849,17 @@ public:
                 return false;
 
             case PatternTerm::TypePatternCharacter:
-                if (addBeginTerm(term, beginTerms, alternative, numTerms, termIndex, depth)) {
+                if (termIndex != numTerms - 1) {
+                    beginTerms->append(TermChain(term));
                     termIndex++;
                     checkNext = true;
+                } else if (term.quantityType == QuantifierFixedCount) {
+                    beginTerms->append(TermChain(term));
+                    if (depth < 2 && termIndex < numTerms - 1 && term.quantityCount == 1)
+                        if (!setupAlternativeBeginTerms(alternative, &beginTerms->last().hotTerms, termIndex + 1, depth + 1))
+                            return false;
                 }
+
                 break;
 
             case PatternTerm::TypeCharacterClass:
@@ -883,7 +876,6 @@ public:
 
                     termIndex++;
                     checkNext = true;
-
                 }
 
                 if (!setupDisjunctionBeginTerms(term.parentheses.disjunction, beginTerms, depth))
@@ -992,11 +984,7 @@ const char* YarrPattern::compile(const UString& patternString)
     constructor.optimizeBOL();
         
     constructor.setupOffsets();
-    // TODO: Disabling the begin characters optimization due to problems found
-    //    in https://bugs.webkit.org/show_bug.cgi?id=54978.
-    //    A new defect was filed to track this issue: 
-    //        https://bugs.webkit.org/show_bug.cgi?id=55479
-    // constructor.setupBeginChars();
+    constructor.setupBeginChars();
 
     return 0;
 }

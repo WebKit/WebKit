@@ -1,3 +1,22 @@
+2011-03-03  Peter Varga  <pvarga@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Begin Characters Optimization Causes YARR Interpreter Errors
+        https://bugs.webkit.org/show_bug.cgi?id=55479
+
+        The addBeginTerm function is removed because it doesn't correctly handle those
+        cases when an "invalid" term has been
+        collected (e.g. CharacterClass). Move the removed function to the
+        setupAlternativeBeginTerms method's switch-case
+        where the non-allowed cases are correctly handled.
+
+        Reenable the Beginning Character Optimization in the YARR Interpreter again.
+
+        * fast/js/regexp-alternatives-expected.txt: Added.
+        * fast/js/regexp-alternatives.html: Added.
+        * fast/js/script-tests/regexp-alternatives.js: Added.
+
 2011-03-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, unskip tests fixed by r80214 on GTK.
