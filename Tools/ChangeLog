@@ -1,3 +1,11 @@
+2011-03-03  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Adding myself as a reviewer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-03-03  Lukasz Slachciak  <l.slachciak@samsung.com>
 
         Reviewed by Xan Lopez.
