@@ -122,6 +122,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/debugger/Debugger.cpp \
 	Source/JavaScriptCore/debugger/Debugger.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/APICast.h \
+	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/APIShims.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/JavaScriptCore.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/JavaScript.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/JSBase.h \

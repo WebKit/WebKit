@@ -1,3 +1,16 @@
+2011-03-03  Timothy Hatcher  <timothy@apple.com>
+
+        Make APIShims usable from WebCore.
+
+        Reviewed by Oliver Hunt.
+
+        * ForwardingHeaders/JavaScriptCore/APIShims.h: Added.
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2011-03-03  Peter Varga  <pvarga@webkit.org>
 
         Reviewed by Oliver Hunt.

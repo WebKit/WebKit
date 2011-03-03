@@ -1,3 +1,16 @@
+2011-03-03  Timothy Hatcher  <timothy@apple.com>
+
+        Use APIEntryShim instead of JSLock in SerializedScriptValue to allow it to be used
+        by contexts not created by WebCore.
+
+        https://webkit.org/b/55642
+
+        Reviewed by Oliver Hunt.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::create): Use APIEntryShim instead of JSLock.
+        (WebCore::SerializedScriptValue::deserialize): Ditto.
+
 2011-03-03  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

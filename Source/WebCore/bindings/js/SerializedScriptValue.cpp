@@ -39,10 +39,10 @@
 #include "SharedBuffer.h"
 #include <limits>
 #include <JavaScriptCore/APICast.h>
+#include <JavaScriptCore/APIShims.h>
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
 #include <runtime/ExceptionHelpers.h>
-#include <runtime/JSLock.h>
 #include <runtime/PropertyNameArray.h>
 #include <runtime/RegExp.h>
 #include <runtime/RegExpObject.h>
@@ -1381,8 +1381,8 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(String string)
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef originContext, JSValueRef apiValue, JSValueRef* exception)
 {
-    JSLock lock(SilenceAssertionsOnly);
     ExecState* exec = toJS(originContext);
+    APIEntryShim entryShim(exec);
     JSValue value = toJS(exec, apiValue);
     PassRefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(exec, value);
     if (exec->hadException()) {
@@ -1407,8 +1407,8 @@ JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* glob
 
 JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, JSValueRef* exception)
 {
-    JSLock lock(SilenceAssertionsOnly);
     ExecState* exec = toJS(destinationContext);
+    APIEntryShim entryShim(exec);
     JSValue value = deserialize(exec, exec->lexicalGlobalObject());
     if (exec->hadException()) {
         if (exception)

@@ -15,6 +15,7 @@
         # These headers are part of JavaScriptCore's private API in the Apple Mac build.
         'javascriptcore_privateheader_files': [
             'API/APICast.h',
+            'API/APIShims.h',
             'API/JSBasePrivate.h',
             'API/JSContextRefPrivate.h',
             'API/JSObjectRefPrivate.h',
@@ -251,6 +252,7 @@
             'API/OpaqueJSString.cpp',
             'AllInOneFile.cpp',
             'ForwardingHeaders/JavaScriptCore/APICast.h',
+            'ForwardingHeaders/JavaScriptCore/APIShims.h',
             'ForwardingHeaders/JavaScriptCore/JSBase.h',
             'ForwardingHeaders/JavaScriptCore/JSContextRef.h',
             'ForwardingHeaders/JavaScriptCore/JSObjectRef.h',

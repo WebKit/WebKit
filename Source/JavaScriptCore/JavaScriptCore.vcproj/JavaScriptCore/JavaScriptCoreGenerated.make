@@ -6,6 +6,7 @@ all:
 !ENDIF
     -mkdir 2>NUL "%ConfigurationBuildDir%\include\JavaScriptCore"
     xcopy /y /d "..\..\API\APICast.h" "%ConfigurationBuildDir%\include\JavaScriptCore"
+    xcopy /y /d "..\..\API\APIShims.h" "%ConfigurationBuildDir%\include\JavaScriptCore"
     xcopy /y /d "..\..\API\JavaScript.h" "%ConfigurationBuildDir%\include\JavaScriptCore"
     xcopy /y /d "..\..\API\JSBase.h" "%ConfigurationBuildDir%\include\JavaScriptCore"
     xcopy /y /d "..\..\API\JSContextRef.h" "%ConfigurationBuildDir%\include\JavaScriptCore"
