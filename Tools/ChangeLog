@@ -1,3 +1,14 @@
+2011-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] DRT needs implementation of EventSender.scheduleAsynchronousClick
+        https://bugs.webkit.org/show_bug.cgi?id=53960
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (sendClick):
+        (scheduleAsynchronousClickCallback):
+
 2011-03-03  Adam Roben  <aroben@apple.com>
 
         Look for Windows-style paths when checking whether a test is an Inspector test

@@ -398,10 +398,6 @@ fast/encoding/mailto-always-utf-8.html
 # Missing output when page icon changes. We need some API exposing this event.
 fast/dom/icon-url-property.html
 
-# EventSender.scheduleAsynchronousClick unimplemented
-# https://bugs.webkit.org/show_bug.cgi?id=53960 
-fast/events/popup-blocking-click-in-iframe.html
-
 # Looks like a bug in the LayoutTestController global history support due to missing API.
 fast/history/window-open.html
 

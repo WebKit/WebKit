@@ -1,3 +1,13 @@
+2011-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] DRT needs implementation of EventSender.scheduleAsynchronousClick
+        https://bugs.webkit.org/show_bug.cgi?id=53960
+
+        * platform/gtk/Skipped: Unskip
+        fast/events/popup-blocking-click-in-iframe.html that passes now.
+
 2011-03-03  Martin Robinson  <mrobinson@igalia.com>
 
         Unskipped one test that just needs platform-independent results (it
