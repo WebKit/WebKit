@@ -13,6 +13,7 @@ EXPORTS
     ??0JSArray@JSC@@QAE@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@@Z
     ??0JSByteArray@JSC@@QAE@PAVExecState@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@PAVByteArray@4@@Z
     ??0JSFunction@JSC@@QAE@PAVExecState@1@PAVJSGlobalObject@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@HABVIdentifier@1@P6I_J0@Z@Z
+    ??0JSLock@JSC@@QAE@PAVExecState@1@@Z
     ??0JSObjectWithGlobalObject@JSC@@IAE@PAVJSGlobalObject@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@@Z
     ??0MD5@WTF@@QAE@XZ
     ??0Mutex@WTF@@QAE@XZ
@@ -44,6 +45,7 @@ EXPORTS
     ??8WTF@@YA_NABVCString@0@0@Z
     ?NaN@JSC@@3NB
     ?absoluteTimeToWaitTimeoutInterval@WTF@@YAKN@Z
+    ?activityCallback@Heap@JSC@@QAEPAVGCActivityCallback@2@XZ
     ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PBD@Z
     ?add@PropertyNameArray@JSC@@QAEXPAVStringImpl@WTF@@@Z
     ?addBytes@MD5@WTF@@QAEXPBEI@Z
@@ -272,6 +274,7 @@ EXPORTS
     ?putWithAttributes@JSObject@JSC@@UAEXPAVJSGlobalData@2@IVJSValue@2@I@Z
     ?randomNumber@WTF@@YANXZ
     ?recompileAllJSFunctions@Debugger@JSC@@QAEXPAVJSGlobalData@2@@Z
+    ?registerThread@MachineStackMarker@JSC@@QAEXXZ
     ?reifyString@StringBuilder@WTF@@AAEXXZ
     ?releaseDecommitted@OSAllocator@WTF@@SAXPAXI@Z
     ?releaseStack@MarkStack@JSC@@CAXPAXI@Z
