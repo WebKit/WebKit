@@ -442,10 +442,6 @@ fast/overflow/scrollbar-restored.html
 # asynchronous scrollbar behavior.
 fast/css/font-weight-1.html
 
-# Opened windows not properly passed statusbar, locationbar and toolbar properties
-# https://bugs.webkit.org/show_bug.cgi?id=53956 
-fast/dom/Window/new-window-opener.html
-
 # Probably failing because resizing is asynchronous.
 # https://bugs.webkit.org/show_bug.cgi?id=53959 
 fast/dom/Window/window-resize-and-move-arguments.html
@@ -808,7 +804,6 @@ fast/repaint/moving-shadow-on-container.html
 fast/repaint/moving-shadow-on-path.html
 fast/text/emphasis.html
 fast/text/international/hindi-whitespace.html
-inspector/extensions/extensions-events.html
 svg/css/composite-shadow-example.html
 svg/css/composite-shadow-with-opacity.html
 svg/css/stars-with-shadow.html

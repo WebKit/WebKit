@@ -1,3 +1,9 @@
+2011-03-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Unskipped one test that just needs platform-independent results (it
+        does not fail on GTK+) and one failure so that we can get a test diff
+        from it (not failing locally or when run manually on the bots).
+
 2011-03-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip failing test on GTK.
