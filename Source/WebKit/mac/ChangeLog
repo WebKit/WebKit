@@ -1,5 +1,17 @@
 2011-03-02  Jessie Berlin  <jberlin@apple.com>
 
+        Rubber-stamped by Dan Bernstein.
+
+        Fix crashes in private browsing tests in WK1 on Snow Leopard.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        Put the INIT call for wkCreatePrivateStorageSession outside of the
+        #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        guards.
+
+2011-03-02  Jessie Berlin  <jberlin@apple.com>
+
         Reviewed by Adam Roben.
 
         WebKit2: Use CFNetwork Sessions API.
