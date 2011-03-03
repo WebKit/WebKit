@@ -487,13 +487,6 @@ inline MediaControlMuteButtonElement::MediaControlMuteButtonElement(HTMLMediaEle
 {
 }
 
-PassRefPtr<MediaControlMuteButtonElement> MediaControlMuteButtonElement::create(HTMLMediaElement* mediaElement)
-{
-    RefPtr<MediaControlMuteButtonElement> button = adoptRef(new MediaControlMuteButtonElement(mediaElement, MediaMuteButton));
-    button->setType("button");
-    return button.release();
-}
-
 void MediaControlMuteButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
@@ -503,16 +496,32 @@ void MediaControlMuteButtonElement::defaultEventHandler(Event* event)
     HTMLInputElement::defaultEventHandler(event);
 }
 
-const AtomicString& MediaControlMuteButtonElement::shadowPseudoId() const
+void MediaControlMuteButtonElement::updateDisplayType()
+{
+    setDisplayType(mediaElement()->muted() ? MediaUnMuteButton : MediaMuteButton);
+}
+
+// ----------------------------
+
+inline MediaControlPanelMuteButtonElement::MediaControlPanelMuteButtonElement(HTMLMediaElement* mediaElement)
+    : MediaControlMuteButtonElement(mediaElement, MediaMuteButton)
+{
+}
+
+PassRefPtr<MediaControlPanelMuteButtonElement> MediaControlPanelMuteButtonElement::create(HTMLMediaElement* mediaElement)
+{
+    RefPtr<MediaControlPanelMuteButtonElement> button = adoptRef(new MediaControlPanelMuteButtonElement(mediaElement));
+    button->setType("button");
+    return button.release();
+}
+
+const AtomicString& MediaControlPanelMuteButtonElement::shadowPseudoId() const
 {
     DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-mute-button"));
     return id;
 }
 
-void MediaControlMuteButtonElement::updateDisplayType()
-{
-    setDisplayType(mediaElement()->muted() ? MediaUnMuteButton : MediaMuteButton);
-}
+// ----------------------------
 
 inline MediaControlVolumeSliderMuteButtonElement::MediaControlVolumeSliderMuteButtonElement(HTMLMediaElement* mediaElement)
     : MediaControlMuteButtonElement(mediaElement, MediaVolumeSliderMuteButton)

@@ -246,7 +246,7 @@ void MediaControls::createPanel()
 void MediaControls::createMuteButton()
 {
     ASSERT(!m_muteButton);
-    m_muteButton = MediaControlMuteButtonElement::create(m_mediaElement);
+    m_muteButton = MediaControlPanelMuteButtonElement::create(m_mediaElement);
     m_muteButton->attachToParent(m_panel.get());
 }
 

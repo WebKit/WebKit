@@ -1,3 +1,24 @@
+2011-03-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Tweak MediaControlMuteButtonElement class hierarchy.
+        https://bugs.webkit.org/show_bug.cgi?id=55614
+
+        This allows the mute button on the panel to have event handlers that are
+        different from the mute button in the volume slider.
+
+        No change in behavior, covered by existing tests.
+
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::createMuteButton): Changed to use MediaControlPanelMuteButtonElement.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlMuteButtonElement::updateDisplayType):
+        (WebCore::MediaControlPanelMuteButtonElement::MediaControlPanelMuteButtonElement): Added.
+        (WebCore::MediaControlPanelMuteButtonElement::create): Added.
+        (WebCore::MediaControlPanelMuteButtonElement::shadowPseudoId): Moved.
+        * rendering/MediaControlElements.h: Added defs.
+
 2011-03-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

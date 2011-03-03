@@ -210,8 +210,6 @@ private:
 
 class MediaControlMuteButtonElement : public MediaControlInputElement {
 public:
-    static PassRefPtr<MediaControlMuteButtonElement> create(HTMLMediaElement*);
-
     virtual void defaultEventHandler(Event*);
 
 protected:
@@ -219,6 +217,17 @@ protected:
 
 private:
     virtual void updateDisplayType();
+};
+
+// ----------------------------
+
+class MediaControlPanelMuteButtonElement : public MediaControlMuteButtonElement {
+public:
+    static PassRefPtr<MediaControlPanelMuteButtonElement> create(HTMLMediaElement*);
+
+private:
+    MediaControlPanelMuteButtonElement(HTMLMediaElement*);
+
     virtual const AtomicString& shadowPseudoId() const;
 };
 
