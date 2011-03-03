@@ -32,7 +32,6 @@
 #include "ChromeClient.h"
 #include "FloatRect.h"
 #include "RefCounted.h"
-#include "WebCoreKeyboardUIMode.h"
 
 namespace WebCore {
 

@@ -26,7 +26,6 @@
 #define ChromeClientWinCE_h
 
 #include "ChromeClient.h"
-#include "WebCoreKeyboardUIMode.h"
 
 class WebView;
 

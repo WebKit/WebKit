@@ -35,7 +35,6 @@
 #include "ChromeClientChromium.h"
 #include "PopupMenu.h"
 #include "SearchPopupMenu.h"
-#include "WebCoreKeyboardUIMode.h"
 
 namespace WebCore {
 class AccessibilityObject;

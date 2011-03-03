@@ -25,7 +25,6 @@
 #include "KURL.h"
 #include "PopupMenu.h"
 #include "SearchPopupMenu.h"
-#include "WebCoreKeyboardUIMode.h"
 
 typedef struct _WebKitWebView WebKitWebView;
 

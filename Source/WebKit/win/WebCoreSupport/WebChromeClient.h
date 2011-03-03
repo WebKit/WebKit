@@ -29,7 +29,6 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/ScrollTypes.h>
-#include <WebCore/WebCoreKeyboardUIMode.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 

@@ -27,7 +27,6 @@
 #include "ChromeClient.h"
 #include "KURL.h"
 #include "PopupMenu.h"
-#include "WebCoreKeyboardUIMode.h"
 
 typedef struct _Evas_Object Evas_Object;
 

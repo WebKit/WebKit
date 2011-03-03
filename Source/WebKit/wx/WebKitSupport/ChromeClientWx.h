@@ -32,7 +32,6 @@
 #include "ChromeClient.h"
 #include "FocusDirection.h"
 #include "IntRect.h"
-#include "WebCoreKeyboardUIMode.h"
 #include "WebView.h"
 
 namespace WebCore {

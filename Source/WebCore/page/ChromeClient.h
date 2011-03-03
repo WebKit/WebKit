@@ -31,13 +31,10 @@
 #include "PopupMenuClient.h"
 #include "ScrollTypes.h"
 #include "SearchPopupMenu.h"
+#include "WebCoreKeyboardUIMode.h"
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
-
-#if PLATFORM(MAC)
-#include "WebCoreKeyboardUIMode.h"
-#endif
 
 #ifndef __OBJC__
 class NSMenu;

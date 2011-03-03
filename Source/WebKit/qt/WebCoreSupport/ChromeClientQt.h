@@ -35,7 +35,6 @@
 #include "KURL.h"
 #include "PlatformString.h"
 #include "QtPlatformPlugin.h"
-#include "WebCoreKeyboardUIMode.h"
 
 QT_BEGIN_NAMESPACE
 class QEventLoop;
