@@ -3004,8 +3004,8 @@ BUGWK50528 MAC : svg/custom/image-small-width-height.svg = IMAGE
 BUGNONE GPU : media = PASS FAIL
 
 // We only maintain pixel GPU baselines for Snow Leopard
-BUGNONE GPU MAC LEOPARD : compositing = IMAGE PASS
-BUGNONE GPU MAC LEOPARD : platform/chromium/compositing = IMAGE PASS
+WONTFIX GPU MAC LEOPARD : compositing = IMAGE PASS
+WONTFIX GPU MAC LEOPARD : platform/chromium/compositing = IMAGE PASS
 
 // The picture does not match the video in the test.
 BUGWK55519 GPU WIN LINUX : compositing/video/video-background-color.html = IMAGE+TEXT
@@ -3206,28 +3206,6 @@ BUGWK54322 MAC SNOWLEOPARD : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : tables/mozilla_expected_failures/bugs/bug6933.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : tables/mozilla_expected_failures/other/test4.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug625.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug1188.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug1296.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug1318.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug1430.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug2981-2.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug4093.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug4284.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug4427.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug4527.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug5797.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug6404.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug10565.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug11026.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug12908-1.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug14929.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug15544.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug17138.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug56563.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug86708.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug97383.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug101674.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/core/bloomberg.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/core/col_widths_auto_autoFix.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/core/misc.html = IMAGE
@@ -3315,7 +3293,7 @@ BUGCR74497 : platform/win/plugins/windowless-paint-rect-coordinates.html = CRASH
 
 BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT
 
-BUGCR74519 : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = IMAGE+TEXT
+BUGCR74519 WIN LINUX : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = IMAGE+TEXT
 
 BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEXT
 

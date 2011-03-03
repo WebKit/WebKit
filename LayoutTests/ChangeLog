@@ -1,3 +1,99 @@
+2011-03-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium Snow Leopard rebaseline.
+        
+        Rebaseline tables/mozilla/bugs/ tests for Snow Leopard. The current
+        expectations were just checksums, I also added their corresponding PNGs.
+        
+        We can't use the mac/ baselines since we scale the images differently
+        (most likely due to CG i386 vs. x86_64 differences, see bug 52335).
+
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug101674-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug101674-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug101674-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug101674-expected.png.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug10565-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug10565-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug10565-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug11026-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug11026-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug11026-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug12908-1-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug12908-1-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug12908-1-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug12910-2-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1296-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug1296-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1296-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug1296-expected.png.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1430-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug1430-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1430-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug1430-expected.png.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug14929-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug14929-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug14929-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug14929-expected.png.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug15544-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug15544-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug15544-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug17138-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug17138-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug17138-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug2981-2-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug2981-2-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug2981-2-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4093-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug4093-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4093-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4284-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug4284-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4284-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4427-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug4427-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4427-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug4427-expected.png.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4523-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug56563-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug56563-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug56563-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug5797-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug5797-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug5797-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug5797-expected.png.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug625-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug625-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug625-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug625-expected.png.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug6404-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug6404-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug6404-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug86708-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug86708-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug86708-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug97383-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug97383-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug97383-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug97383-expected.png.
+        * platform/chromium-mac/tables/mozilla/bugs/bug101674-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug101674-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug10565-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug10565-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug11026-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug11026-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1188-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1188-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug12908-1-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug12908-1-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1296-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1296-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1430-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1430-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug14929-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug14929-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug15544-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug15544-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug17138-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug17138-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2981-2-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2981-2-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug4093-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4093-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug4284-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4284-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug4427-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug56563-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug56563-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug5797-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug5797-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug625-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug625-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug6404-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug6404-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug86708-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug86708-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug97383-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug97383-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
