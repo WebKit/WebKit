@@ -42,34 +42,67 @@ void AXObjectCache::attachWrapper(AccessibilityObject* obj)
     g_object_unref(atkObj);
 }
 
+static AccessibilityObject* getListObject(AccessibilityObject* object)
+{
+    // Only list boxes and menu lists supported so far.
+    if (!object->isListBox() && !object->isMenuList())
+        return 0;
+
+    // For list boxes the list object is just itself.
+    if (object->isListBox())
+        return object;
+
+    // For menu lists we need to return the first accessible child,
+    // with role MenuListPopupRole, since that's the one holding the list
+    // of items with role MenuListOptionRole.
+    AccessibilityObject::AccessibilityChildrenVector children = object->children();
+    if (!children.size())
+        return 0;
+
+    AccessibilityObject* listObject = children.at(0).get();
+    if (!listObject->isMenuListPopup())
+        return 0;
+
+    return listObject;
+}
+
 static void notifyChildrenSelectionChange(AccessibilityObject* object)
 {
-    // This static variable is needed to keep track of the old focused
-    // object as per previous calls to this function, in order to
-    // properly decide whether to emit some signals or not.
-    static RefPtr<AccessibilityObject> oldFocusedObject = 0;
+    // This static variables are needed to keep track of the old
+    // focused object and its associated list object, as per previous
+    // calls to this function, in order to properly decide whether to
+    // emit some signals or not.
+    DEFINE_STATIC_LOCAL(RefPtr<AccessibilityObject>, oldListObject, ());
+    DEFINE_STATIC_LOCAL(RefPtr<AccessibilityObject>, oldFocusedObject, ());
 
-    // Only list boxes supported so far.
-    if (!object || !object->isListBox())
+    // Only list boxes and menu lists supported so far.
+    if (!object || !(object->isListBox() || object->isMenuList()))
         return;
 
     // Emit signal from the listbox's point of view first.
     g_signal_emit_by_name(object->wrapper(), "selection-changed");
 
     // Find the item where the selection change was triggered from.
-    AccessibilityObject::AccessibilityChildrenVector items = object->children();
     SelectElement* select = toSelectElement(static_cast<Element*>(object->node()));
     if (!select)
         return;
     int changedItemIndex = select->activeSelectionStartListIndex();
+
+    AccessibilityObject* listObject = getListObject(object);
+    if (!listObject) {
+        oldListObject = 0;
+        return;
+    }
+
+    AccessibilityObject::AccessibilityChildrenVector items = listObject->children();
     if (changedItemIndex < 0 || changedItemIndex >= static_cast<int>(items.size()))
         return;
     AccessibilityObject* item = items.at(changedItemIndex).get();
 
-    // Ensure the oldFocusedObject belongs to the same document that
-    // the current item so further comparisons make sense. Otherwise,
-    // just reset oldFocusedObject so it won't be taken into account.
-    if (item && oldFocusedObject && item->document() != oldFocusedObject->document())
+    // Ensure the current list object is the same than the old one so
+    // further comparisons make sense. Otherwise, just reset
+    // oldFocusedObject so it won't be taken into account.
+    if (oldListObject != listObject)
         oldFocusedObject = 0;
 
     AtkObject* axItem = item ? item->wrapper() : 0;
@@ -89,7 +122,8 @@ static void notifyChildrenSelectionChange(AccessibilityObject* object)
         g_signal_emit_by_name(axItem, "state-change", "focused", isSelected);
     }
 
-    // Update pointer to the previously focused object.
+    // Update pointers to the previously involved objects.
+    oldListObject = listObject;
     oldFocusedObject = item;
 }
 
@@ -103,13 +137,13 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
         if (!coreObject->isCheckboxOrRadio())
             return;
         g_signal_emit_by_name(axObject, "state-change", "checked", coreObject->isChecked());
-    } else if (notification == AXMenuListValueChanged) {
-        if (!coreObject->isMenuList())
-            return;
-        g_signal_emit_by_name(axObject, "focus-event", true);
-        g_signal_emit_by_name(axObject, "state-change", "focused", true);
-    } else if (notification == AXSelectedChildrenChanged)
+    } else if (notification == AXSelectedChildrenChanged || notification == AXMenuListValueChanged) {
+        if (notification == AXMenuListValueChanged && coreObject->isMenuList()) {
+            g_signal_emit_by_name(axObject, "focus-event", true);
+            g_signal_emit_by_name(axObject, "state-change", "focused", true);
+        }
         notifyChildrenSelectionChange(coreObject);
+    }
 }
 
 static void emitTextChanged(AccessibilityRenderObject* object, AXObjectCache::AXTextChange textChange, unsigned offset, unsigned count)
