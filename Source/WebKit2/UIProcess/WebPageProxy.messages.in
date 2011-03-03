@@ -49,7 +49,6 @@ messages -> WebPageProxy {
     GetIsResizable() -> (bool isResizable)
     SetWindowFrame(WebCore::FloatRect windowFrame)
     GetWindowFrame() -> (WebCore::FloatRect windowFrame)
-    CanRunBeforeUnloadConfirmPanel() -> (bool canRun)
     RunBeforeUnloadConfirmPanel(WTF::String message, uint64_t frameID) -> (bool shouldClose)
     PageDidScroll()
     RunOpenPanel(uint64_t frameID, WebKit::WebOpenPanelParameters::Data parameters)

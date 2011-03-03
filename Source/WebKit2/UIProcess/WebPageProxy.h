@@ -487,7 +487,6 @@ private:
     void getIsResizable(bool& isResizable);
     void setWindowFrame(const WebCore::FloatRect&);
     void getWindowFrame(WebCore::FloatRect&);
-    void canRunBeforeUnloadConfirmPanel(bool& canRun);
     void runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose);
     void didChangeViewportData(const WebCore::ViewportArguments&);
     void pageDidScroll();

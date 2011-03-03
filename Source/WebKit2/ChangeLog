@@ -1,3 +1,53 @@
+2011-03-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Remove CanRunBeforeUnloadConfirmPanel sync message
+        https://bugs.webkit.org/show_bug.cgi?id=55689
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        Encode and decode canRunBeforeUnloadConfirmPanel, as well as canRunModal, which wasn't
+        being encoded/decoded.
+
+        * Shared/WebPageCreationParameters.h:
+        Add canRunBeforeUnloadConfirmPanel.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeUIClient):
+        Send SetCanRunBeforeUnloadConfirmPanel and SetCanRunModal messages.
+
+        (WebKit::WebPageProxy::creationParameters):
+        Initialize parameters.canRunBeforeUnloadConfirmPanel.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Remove CanRunBeforeUnloadConfirmPanel message.
+
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::canRunBeforeUnloadConfirmPanel):
+        * UIProcess/WebUIClient.h:
+        Make canRunBeforeUnloadConfirmPanel const.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::canRunBeforeUnloadConfirmPanel):
+        Ask the web page instead of sending a synchronous message.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        Initialize m_canRunBeforeUnloadConfirmPanel.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::canRunBeforeUnloadConfirmPanel):
+        (WebKit::WebPage::setCanRunBeforeUnloadConfirmPanel):
+        Add getter and setter for m_canRunBeforeUnloadConfirmPanel.
+
+        (WebKit::WebPage::setCanRunModal):
+        Add setter for m_canRunModal.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add SetCanRunBeforeUnloadConfirmPanel and SetCanRunModal messages.
+
 2011-03-03  Adam Roben  <aroben@apple.com>
 
         Create the CFBundleRef for WebKit.dll on Windows if needed

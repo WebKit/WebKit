@@ -68,6 +68,7 @@ struct WebPageCreationParameters {
     SessionState sessionState;
     uint64_t highestUsedBackForwardItemID;
 
+    bool canRunBeforeUnloadConfirmPanel;
     bool canRunModal;
 
 #if PLATFORM(MAC)

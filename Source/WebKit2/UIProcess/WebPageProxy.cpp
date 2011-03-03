@@ -221,6 +221,9 @@ void WebPageProxy::initializeResourceLoadClient(const WKPageResourceLoadClient* 
 void WebPageProxy::initializeUIClient(const WKPageUIClient* client)
 {
     m_uiClient.initialize(client);
+
+    process()->send(Messages::WebPage::SetCanRunBeforeUnloadConfirmPanel(m_uiClient.canRunBeforeUnloadConfirmPanel()), m_pageID);
+    process()->send(Messages::WebPage::SetCanRunModal(m_uiClient.canRunModal()), m_pageID);
 }
 
 void WebPageProxy::initializeFindClient(const WKPageFindClient* client)
@@ -1867,11 +1870,6 @@ void WebPageProxy::getWindowFrame(FloatRect& newWindowFrame)
     newWindowFrame = m_pageClient->convertToUserSpace(m_uiClient.windowFrame(this));
 }
 
-void WebPageProxy::canRunBeforeUnloadConfirmPanel(bool& canRun)
-{
-    canRun = m_uiClient.canRunBeforeUnloadConfirmPanel();
-}
-
 void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose)
 {
     WebFrameProxy* frame = process()->webFrame(frameID);
@@ -2591,6 +2589,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.userAgent = userAgent();
     parameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
+    parameters.canRunBeforeUnloadConfirmPanel = m_uiClient.canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_uiClient.canRunModal();
 
 #if PLATFORM(MAC)

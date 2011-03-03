@@ -167,6 +167,9 @@ messages -> WebPage {
     // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
     Dummy() -> (bool dummyReturn)
 
+    SetCanRunBeforeUnloadConfirmPanel(bool canRunBeforeUnloadConfirmPanel)
+    SetCanRunModal(bool canRunModal)
+
 #if PLATFORM(MAC)
     # Complex text input support for plug-ins.
     SendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, String textInput)

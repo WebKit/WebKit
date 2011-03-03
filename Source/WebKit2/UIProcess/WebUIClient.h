@@ -76,7 +76,7 @@ public:
     void setWindowFrame(WebPageProxy*, const WebCore::FloatRect&);
     WebCore::FloatRect windowFrame(WebPageProxy*);
 
-    bool canRunBeforeUnloadConfirmPanel();
+    bool canRunBeforeUnloadConfirmPanel() const;
     bool runBeforeUnloadConfirmPanel(WebPageProxy*, const String&, WebFrameProxy*);
 
     void didDraw(WebPageProxy*);

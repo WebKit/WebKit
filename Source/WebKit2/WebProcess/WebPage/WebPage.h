@@ -337,7 +337,12 @@ public:
 
     void didChangeScrollOffsetForMainFrame();
 
+    bool canRunBeforeUnloadConfirmPanel() const { return m_canRunBeforeUnloadConfirmPanel; }
+    void setCanRunBeforeUnloadConfirmPanel(bool canRunBeforeUnloadConfirmPanel) { m_canRunBeforeUnloadConfirmPanel = canRunBeforeUnloadConfirmPanel; }
+
     bool canRunModal() const { return m_canRunModal; }
+    void setCanRunModal(bool canRunModal) { m_canRunModal = canRunModal; }
+
     void runModal();
 
     void setMemoryCacheMessagesEnabled(bool);
@@ -542,6 +547,8 @@ private:
 
     SandboxExtensionTracker m_sandboxExtensionTracker;
     uint64_t m_pageID;
+
+    bool m_canRunBeforeUnloadConfirmPanel;
 
     bool m_canRunModal;
     bool m_isRunningModal;

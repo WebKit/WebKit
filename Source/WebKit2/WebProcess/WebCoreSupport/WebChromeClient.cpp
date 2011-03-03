@@ -252,11 +252,7 @@ void WebChromeClient::addMessageToConsole(MessageSource, MessageType, MessageLev
 
 bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
 {
-    bool canRun = false;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::CanRunBeforeUnloadConfirmPanel(), Messages::WebPageProxy::CanRunBeforeUnloadConfirmPanel::Reply(canRun), m_page->pageID()))
-        return false;
-
-    return canRun;
+    return m_page->canRunBeforeUnloadConfirmPanel();
 }
 
 bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
