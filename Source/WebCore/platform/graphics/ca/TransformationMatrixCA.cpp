@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
+#include "TransformationMatrix.h"
 
 #if PLATFORM(CA)
 
-#include "TransformationMatrix.h"
-
 #include "FloatConversion.h"
+#include <QuartzCore/CATransform3D.h>
 
 namespace WebCore {
 

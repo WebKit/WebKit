@@ -32,10 +32,10 @@
 #include <wtf/FastAllocBase.h>
 
 #if PLATFORM(CA)
-#include <QuartzCore/CATransform3D.h>
+typedef struct CATransform3D CATransform3D;
 #endif
 #if PLATFORM(CG)
-#include <CoreGraphics/CGAffineTransform.h>
+typedef struct CGAffineTransform CGAffineTransform;
 #elif PLATFORM(CAIRO)
 #include <cairo.h>
 #elif PLATFORM(OPENVG)

@@ -38,6 +38,7 @@
 #include "ScaleTransformOperation.h"
 #include "SystemTime.h"
 #include "TranslateTransformOperation.h"
+#include <QuartzCore/CATransform3D.h>
 #include <limits.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/StringConcatenate.h>

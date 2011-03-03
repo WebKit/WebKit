@@ -1,3 +1,19 @@
+2011-03-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Improve WebCore build time by ~5%
+        https://bugs.webkit.org/show_bug.cgi?id=55688
+
+        Forward declare the CATransform3D and CGAffineTransform structs instead of including
+        large chunks of QuartzCore and Core Graphics.
+
+        On an 8 core Mac Pro, this sped up building WebCore by about 5%.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/ca/TransformationMatrixCA.cpp:
+        * platform/graphics/transforms/TransformationMatrix.h:
+
 2011-03-03  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Adjusted call to a method renamed in r80102.
