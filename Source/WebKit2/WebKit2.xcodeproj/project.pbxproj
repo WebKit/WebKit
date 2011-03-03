@@ -261,6 +261,8 @@
 		33367656130C9ECA006C9DE2 /* WebResourceCacheManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 33367652130C9ECA006C9DE2 /* WebResourceCacheManagerMessages.h */; };
 		33367657130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33367653130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp */; };
 		33367658130C9ECB006C9DE2 /* WebResourceCacheManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 33367654130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessages.h */; };
+		33AA1066131F060000D4A575 /* WebCookieManagerProxyClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33AA1064131F060000D4A575 /* WebCookieManagerProxyClient.cpp */; };
+		33AA1067131F060000D4A575 /* WebCookieManagerProxyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 33AA1065131F060000D4A575 /* WebCookieManagerProxyClient.h */; };
 		33F9D5B91312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33F9D5B81312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp */; };
 		37C4E9F6131C6E7E0029BD5A /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = B396EA5512E0ED2D00F4FEB7 /* config.h */; };
 		37F623B812A57B6200E3FDF6 /* WKFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F623B712A57B6200E3FDF6 /* WKFindOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1080,6 +1082,8 @@
 		33367652130C9ECA006C9DE2 /* WebResourceCacheManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceCacheManagerMessages.h; sourceTree = "<group>"; };
 		33367653130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceCacheManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		33367654130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceCacheManagerProxyMessages.h; sourceTree = "<group>"; };
+		33AA1064131F060000D4A575 /* WebCookieManagerProxyClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieManagerProxyClient.cpp; sourceTree = "<group>"; };
+		33AA1065131F060000D4A575 /* WebCookieManagerProxyClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCookieManagerProxyClient.h; sourceTree = "<group>"; };
 		33F9D5B81312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = WebResourceCacheManagerCFNet.cpp; path = ResourceCache/cf/WebResourceCacheManagerCFNet.cpp; sourceTree = "<group>"; };
 		37F623B712A57B6200E3FDF6 /* WKFindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFindOptions.h; sourceTree = "<group>"; };
 		51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClientMac.mm; sourceTree = "<group>"; };
@@ -2351,6 +2355,8 @@
 				330934521315B9750097A7BC /* WebCookieManagerProxy.cpp */,
 				330934531315B9750097A7BC /* WebCookieManagerProxy.h */,
 				330934541315B9750097A7BC /* WebCookieManagerProxy.messages.in */,
+				33AA1064131F060000D4A575 /* WebCookieManagerProxyClient.cpp */,
+				33AA1065131F060000D4A575 /* WebCookieManagerProxyClient.h */,
 				F62A765912B1ABC30005F1B6 /* WebDatabaseManagerProxy.cpp */,
 				F62A765A12B1ABC30005F1B6 /* WebDatabaseManagerProxy.h */,
 				F62A765B12B1ABC30005F1B6 /* WebDatabaseManagerProxy.messages.in */,
@@ -3383,6 +3389,7 @@
 				BCE81D8D1319F7EF00241910 /* FontInfo.h in Headers */,
 				BCE81D99131AE02100241910 /* DictionaryPopupInfo.h in Headers */,
 				37C4E9F6131C6E7E0029BD5A /* config.h in Headers */,
+				33AA1067131F060000D4A575 /* WebCookieManagerProxyClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3960,6 +3967,7 @@
 				3309345A1315B9980097A7BC /* WKCookieManager.cpp in Sources */,
 				BCE81D8C1319F7EF00241910 /* FontInfo.cpp in Sources */,
 				BCE81D98131AE02100241910 /* DictionaryPopupInfo.cpp in Sources */,
+				33AA1066131F060000D4A575 /* WebCookieManagerProxyClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

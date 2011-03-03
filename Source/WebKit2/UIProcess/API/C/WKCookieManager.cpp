@@ -36,6 +36,13 @@ WKTypeID WKCookieManagerGetTypeID()
     return toAPI(WebCookieManagerProxy::APIType);
 }
 
+void WKCookieManagerSetClient(WKCookieManagerRef cookieManagerRef, const WKCookieManagerClient* wkClient)
+{
+    if (wkClient && wkClient->version)
+        return;
+    toImpl(cookieManagerRef)->initializeClient(wkClient);
+}
+
 void WKCookieManagerGetHostnamesWithCookies(WKCookieManagerRef cookieManagerRef, void* context, WKCookieManagerGetCookieHostnamesFunction callback)
 {
     toImpl(cookieManagerRef)->getHostnamesWithCookies(ArrayCallback::create(context, callback));
@@ -49,4 +56,14 @@ void WKCookieManagerDeleteCookiesForHostname(WKCookieManagerRef cookieManagerRef
 void WKCookieManagerDeleteAllCookies(WKCookieManagerRef cookieManagerRef)
 {
     toImpl(cookieManagerRef)->deleteAllCookies();
+}
+
+void WKCookieManagerStartObservingCookieChanges(WKCookieManagerRef cookieManager)
+{
+    toImpl(cookieManager)->startObservingCookieChanges();
+}
+
+void WKCookieManagerStopObservingCookieChanges(WKCookieManagerRef cookieManager)
+{
+    toImpl(cookieManager)->stopObservingCookieChanges();
 }

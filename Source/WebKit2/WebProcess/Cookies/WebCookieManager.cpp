@@ -74,9 +74,23 @@ void WebCookieManager::deleteAllCookies()
     WebCore::deleteAllCookies();
 }
 
-void WebCookieManager::dispatchDidModifyCookies()
+void WebCookieManager::startObservingCookieChanges()
 {
-    // FIXME <http://webkit.org/b/55427>: Send a message to the UIProcess that the cookies have changed.
+#if USE(CFNETWORK) || PLATFORM(MAC)
+    WebCore::startObservingCookieChanges();
+#endif
+}
+
+void WebCookieManager::stopObservingCookieChanges()
+{
+#if USE(CFNETWORK) || PLATFORM(MAC)
+    WebCore::stopObservingCookieChanges();
+#endif
+}
+
+void WebCookieManager::dispatchCookiesDidChange()
+{
+    WebProcess::shared().connection()->send(Messages::WebCookieManagerProxy::CookiesDidChange(), 0);
 }
 
 } // namespace WebKit

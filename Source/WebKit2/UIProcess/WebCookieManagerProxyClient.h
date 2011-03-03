@@ -22,12 +22,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
- messages -> WebCookieManager {
-    void GetHostnamesWithCookies(uint64_t callbackID)
-    void DeleteCookiesForHostname(WTF::String hostname)
-    void DeleteAllCookies()
-    
-    void StartObservingCookieChanges()
-    void StopObservingCookieChanges()
-}
+
+#ifndef WebCookieManagerProxyClient_h
+#define WebCookieManagerProxyClient_h
+
+#include "APIClient.h"
+#include "WKCookieManager.h"
+#include <wtf/Forward.h>
+
+namespace WebKit {
+
+class WebCookieManagerProxy;
+
+class WebCookieManagerProxyClient : public APIClient<WKCookieManagerClient> {
+public:
+    void cookiesDidChange(WebCookieManagerProxy*);
+};
+
+} // namespace WebKit
+
+#endif // WebCookieManagerProxyClient_h

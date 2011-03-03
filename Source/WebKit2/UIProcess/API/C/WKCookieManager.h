@@ -32,13 +32,28 @@
 extern "C" {
 #endif
 
+// Cookie Manager Client
+typedef void (*WKCookieManagerCookiesDidChangeCallback)(WKCookieManagerRef cookieManager, const void *clientInfo);
+
+struct WKCookieManagerClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKCookieManagerCookiesDidChangeCallback                             cookiesDidChange;
+};
+typedef struct WKCookieManagerClient WKCookieManagerClient;
+
 WK_EXPORT WKTypeID WKCookieManagerGetTypeID();
+
+WK_EXPORT void WKCookieManagerSetClient(WKCookieManagerRef cookieManager, const WKCookieManagerClient* client);
 
 typedef void (*WKCookieManagerGetCookieHostnamesFunction)(WKArrayRef, WKErrorRef, void*);
 WK_EXPORT void WKCookieManagerGetHostnamesWithCookies(WKCookieManagerRef cookieManager, void* context, WKCookieManagerGetCookieHostnamesFunction function);
 
 WK_EXPORT void WKCookieManagerDeleteCookiesForHostname(WKCookieManagerRef cookieManager, WKStringRef hostname);
 WK_EXPORT void WKCookieManagerDeleteAllCookies(WKCookieManagerRef cookieManager);
+
+WK_EXPORT void WKCookieManagerStartObservingCookieChanges(WKCookieManagerRef cookieManager);
+WK_EXPORT void WKCookieManagerStopObservingCookieChanges(WKCookieManagerRef cookieManager);
 
 #ifdef __cplusplus
 }

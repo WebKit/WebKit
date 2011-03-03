@@ -22,4 +22,6 @@
 
 messages -> WebCookieManagerProxy {
     DidGetHostnamesWithCookies(Vector<WTF::String> hostnames, uint64_t callbackID);
+    
+    CookiesDidChange()
 }

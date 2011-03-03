@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "GenericCallback.h"
 #include "ImmutableArray.h"
+#include "WebCookieManagerProxyClient.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -54,10 +55,15 @@ public:
 
     void invalidate();
     void clearContext() { m_webContext = 0; }
+
+    void initializeClient(const WKCookieManagerClient*);
     
     void getHostnamesWithCookies(PassRefPtr<ArrayCallback>);
     void deleteCookiesForHostname(const String& hostname);
     void deleteAllCookies();
+
+    void startObservingCookieChanges();
+    void stopObservingCookieChanges();
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
@@ -67,11 +73,15 @@ private:
     virtual Type type() const { return APIType; }
 
     void didGetHostnamesWithCookies(const Vector<String>&, uint64_t callbackID);
+
+    void cookiesDidChange();
     
     void didReceiveWebCookieManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     WebContext* m_webContext;
     HashMap<uint64_t, RefPtr<ArrayCallback> > m_arrayCallbacks;
+
+    WebCookieManagerProxyClient m_client;
 };
 
 } // namespace WebKit

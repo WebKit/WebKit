@@ -2419,6 +2419,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebCookieManagerProxyClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebCookieManagerProxyClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebDatabaseManagerProxy.cpp"
 				>
 			</File>

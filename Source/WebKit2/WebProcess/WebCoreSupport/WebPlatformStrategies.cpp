@@ -123,7 +123,7 @@ VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
 
 void WebPlatformStrategies::notifyCookiesChanged()
 {
-    WebCookieManager::shared().dispatchDidModifyCookies();
+    WebCookieManager::shared().dispatchCookiesDidChange();
 }
 
 // PluginStrategy

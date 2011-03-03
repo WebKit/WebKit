@@ -416,6 +416,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/WebContextUserMessageCoders.h \
 	Source/WebKit2/UIProcess/WebCookieManagerProxy.h \
 	Source/WebKit2/UIProcess/WebCookieManagerProxy.cpp \
+	Source/WebKit2/UIProcess/WebCookieManagerProxyClient.cpp \
+	Source/WebKit2/UIProcess/WebCookieManagerProxyClient.h \
 	Source/WebKit2/UIProcess/WebDatabaseManagerProxyClient.cpp \
 	Source/WebKit2/UIProcess/WebDatabaseManagerProxyClient.h \
 	Source/WebKit2/UIProcess/WebDatabaseManagerProxy.cpp \

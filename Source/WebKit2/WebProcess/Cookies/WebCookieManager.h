@@ -44,7 +44,7 @@ public:
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     
-    void dispatchDidModifyCookies();
+    void dispatchCookiesDidChange();
 
 private:
     WebCookieManager();
@@ -52,6 +52,9 @@ private:
     void getHostnamesWithCookies(uint64_t callbackID);
     void deleteCookiesForHostname(const String&);
     void deleteAllCookies();
+
+    void startObservingCookieChanges();
+    void stopObservingCookieChanges();
 
     void didReceiveWebCookieManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 };

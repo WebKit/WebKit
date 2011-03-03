@@ -52,6 +52,11 @@ void WebCookieManagerProxy::invalidate()
     invalidateCallbackMap(m_arrayCallbacks);
 }
 
+void WebCookieManagerProxy::initializeClient(const WKCookieManagerClient* client)
+{
+    m_client.initialize(client);
+}
+
 void WebCookieManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     didReceiveWebCookieManagerProxyMessage(connection, messageID, arguments);
@@ -103,6 +108,27 @@ void WebCookieManagerProxy::deleteAllCookies()
     if (!m_webContext->hasValidProcess())
         return;
     m_webContext->process()->send(Messages::WebCookieManager::DeleteAllCookies(), 0);
+}
+
+void WebCookieManagerProxy::startObservingCookieChanges()
+{
+    ASSERT(m_webContext);
+    if (!m_webContext->hasValidProcess())
+        return;
+    m_webContext->process()->send(Messages::WebCookieManager::StartObservingCookieChanges(), 0);
+}
+
+void WebCookieManagerProxy::stopObservingCookieChanges()
+{
+    ASSERT(m_webContext);
+    if (!m_webContext->hasValidProcess())
+        return;
+    m_webContext->process()->send(Messages::WebCookieManager::StopObservingCookieChanges(), 0);
+}
+
+void WebCookieManagerProxy::cookiesDidChange()
+{
+    m_client.cookiesDidChange(this);
 }
 
 } // namespace WebKit
