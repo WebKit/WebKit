@@ -1540,12 +1540,6 @@ BUGCR11613 LINUX : fast/forms/tabbing-input-iframe.html = FAIL
 BUGCR11613 LINUX RELEASE : fast/overflow/scrollRevealButton.html = FAIL
 BUGCR11613 LINUX DEBUG : fast/overflow/scrollRevealButton.html = FAIL
 
-// WebKit merge 42738:45840
-// New tests, need baseline.
-BUGCR16240 WIN DEBUG : http/tests/cache/subresource-expiration.html = TIMEOUT
-BUGCR16240 MAC WIN RELEASE : http/tests/cache/subresource-expiration.html = TIMEOUT
-BUGCR14752 LINUX SLOW : http/tests/cache/subresource-expiration.html = PASS
-
 // New tests with WebKit merge 46288:46363
 BUGCR18116 : fast/dom/constructed-objects-prototypes.html = TEXT
 BUGCR18116 : fast/dom/prototype-inheritance-2.html = TEXT

@@ -1,3 +1,27 @@
+2011-03-02  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Split up http/tests/cache/subresource-expiration.html so it stops timing out
+        https://bugs.webkit.org/show_bug.cgi?id=55639
+        
+        http/tests/cache/subresource-expiration.html does a lot of sequential
+        loads, some with delays in between them. This seems unavoidable, so
+        to make the test less likely to time out (especially on debug bots),
+        the test cases are split across two tests.
+
+        * http/tests/cache/subresource-expiration-1-expected.txt: Added.
+        * http/tests/cache/subresource-expiration-1.html: Added.
+        * http/tests/cache/subresource-expiration-2-expected.txt: Added.
+        * http/tests/cache/subresource-expiration-2.html: Added.
+        * http/tests/cache/subresource-expiration-expected.txt: Removed.
+        * http/tests/cache/subresource-expiration.html: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/test_expectations.txt:
+        * platform/qt-wk2/Skipped:
+        * platform/win/Skipped:
+
 2011-03-02  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed expectations update
