@@ -1,3 +1,15 @@
+2011-03-03  Kenji Imasaki  <imasaki@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        [Chromium] Snow Leopard rebaseline of media/video-layer-crash
+        http://code.google.com/p/chromium/issues/detail?id=60744
+
+        * platform/chromium-mac-leopard/media/video-layer-crash-expected.checksum: Copied from LayoutTests/platform/chromium-mac/media/video-layer-crash-expected.checksum.
+        * platform/chromium-mac-leopard/media/video-layer-crash-expected.png: Copied from LayoutTests/platform/chromium-mac/media/video-layer-crash-expected.png.
+        * platform/chromium-mac/media/video-layer-crash-expected.checksum:
+        * platform/chromium-mac/media/video-layer-crash-expected.png:
+
 2011-03-03  Victoria Kirst  <vrk@google.com>
 
         Reviewed by Eric Carlson.
