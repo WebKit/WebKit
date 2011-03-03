@@ -1,3 +1,10 @@
+2011-03-03  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Adjusted call to a method renamed in r80102.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._startEditing):
+
 2011-03-03  Timothy Hatcher  <timothy@apple.com>
 
         Use APIEntryShim instead of JSLock in SerializedScriptValue to allow it to be used

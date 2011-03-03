@@ -176,7 +176,7 @@ WebInspector.SourceFrame.prototype = {
 
     _startEditing: function()
     {
-        WebInspector.cancelSearch();
+        WebInspector.searchController.cancelSearch();
         this.clearMessages();
     },
 
