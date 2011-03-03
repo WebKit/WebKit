@@ -1,3 +1,14 @@
+2011-03-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        applyInlineStyleToPushDown and removeInlineStyleFromElement should take EditingStyle
+        https://bugs.webkit.org/show_bug.cgi?id=55338
+
+        Include wtf/Forward.h instead of wtf/text/String.h
+
+        * editing/EditingStyle.h:
+
 2011-03-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial fix after r80169.
