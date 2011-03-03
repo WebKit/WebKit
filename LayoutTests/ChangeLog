@@ -1,3 +1,11 @@
+2011-03-02  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+        
+        Mark the other compositing/ directory as expected to fail on Leopard.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-02  David Grogan  <dgrogan@chromium.org>
 
         Reviewed by Jeremy Orlow.
