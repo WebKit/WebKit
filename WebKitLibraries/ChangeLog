@@ -1,5 +1,11 @@
 2011-03-02  Jessie Berlin  <jberlin@apple.com>
 
+        Windows build fix. Unreviewed.
+
+        * win/lib/WebKitSystemInterface.lib:
+
+2011-03-02  Jessie Berlin  <jberlin@apple.com>
+
         Rubber-stamped by Adam Roben.
 
         WebKit2: Use CFNetwork Sessions API.
