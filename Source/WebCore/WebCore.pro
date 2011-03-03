@@ -2884,6 +2884,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
     contains(DEFINES, USE_GSTREAMER=1) {
         HEADERS += \
             platform/graphics/gstreamer/GOwnPtrGStreamer.h \
+            platform/graphics/gstreamer/GRefPtrGStreamer.h \
             platform/graphics/gstreamer/GStreamerGWorld.h \
             platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h \
             platform/graphics/gstreamer/VideoSinkGStreamer.h \
@@ -2893,6 +2894,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             platform/graphics/gstreamer/ImageGStreamer.h
         SOURCES += \
             platform/graphics/gstreamer/GOwnPtrGStreamer.cpp \
+            platform/graphics/gstreamer/GRefPtrGStreamer.cpp \
             platform/graphics/gstreamer/GStreamerGWorld.cpp \
             platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp \
             platform/graphics/gstreamer/VideoSinkGStreamer.cpp \

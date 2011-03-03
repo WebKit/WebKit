@@ -1,3 +1,14 @@
+2011-03-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        When building with DEFINES+=USE_GSTREAMER=1 we don't want to define ENABLE_QT_MULTIMEDIA to 1.
+        Also add the new files added after https://bugs.webkit.org/show_bug.cgi?id=54870 to support GRefPtr
+        for GstElement.
+
+        * WebCore.pro:
+        * features.pri:
+
 2011-03-03  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Windows build again.

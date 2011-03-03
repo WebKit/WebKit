@@ -151,7 +151,12 @@ contains(MOBILITY_CONFIG, sensors) {
     DEFINES -= ENABLE_VIDEO=1
     DEFINES += ENABLE_VIDEO=0
 
-    contains(MOBILITY_CONFIG, multimedia) {
+    contains(DEFINES, USE_GSTREAMER=1) {
+        DEFINES -= ENABLE_VIDEO=0
+        DEFINES += ENABLE_VIDEO=1
+        DEFINES -= ENABLE_QT_MULTIMEDIA=1
+        DEFINES += ENABLE_QT_MULTIMEDIA=0
+    } else:contains(MOBILITY_CONFIG, multimedia) {
         DEFINES -= ENABLE_VIDEO=0
         DEFINES += ENABLE_VIDEO=1
         DEFINES -= ENABLE_QT_MULTIMEDIA=0
