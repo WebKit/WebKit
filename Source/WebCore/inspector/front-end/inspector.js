@@ -1406,7 +1406,7 @@ WebInspector.addMainEventListeners = function(doc)
 
 WebInspector.frontendReused = function()
 {
-    this.networkManager.reset();
+    this.networkManager.frontendReused();
     this.reset();
 }
 

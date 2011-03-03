@@ -68,8 +68,7 @@ InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentin
 
 InspectorDebuggerAgent::~InspectorDebuggerAgent()
 {
-    ScriptDebugServer::shared().removeListener(this, m_inspectedPage);
-    m_pausedScriptState = 0;
+    ASSERT(!m_instrumentingAgents->inspectorDebuggerAgent());
 }
 
 void InspectorDebuggerAgent::startUserInitiatedDebugging()

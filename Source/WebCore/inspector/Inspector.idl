@@ -92,7 +92,8 @@ module core {
     };
 
     interface [Conditional=INSPECTOR] Network {
-        void cachedResources(out Object resources);
+        void enable(out Object resources);
+        void disable();
         void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out boolean success, out String content);
         void setExtraHeaders(in Object headers);
 

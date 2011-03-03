@@ -624,24 +624,30 @@ void InspectorInstrumentation::didDestroyWorkerImpl(InspectorAgent* inspectorAge
 #endif
 
 #if ENABLE(WEB_SOCKETS)
-void InspectorInstrumentation::didCreateWebSocketImpl(InspectorAgent* inspectorAgent, unsigned long identifier, const KURL& requestURL, const KURL& documentURL)
+void InspectorInstrumentation::didCreateWebSocketImpl(InspectorAgent* inspectorAgent, unsigned long identifier, const KURL& requestURL, const KURL&)
 {
-    inspectorAgent->didCreateWebSocket(identifier, requestURL, documentURL);
+    if (!inspectorAgent->enabled())
+        return;
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
+        resourceAgent->didCreateWebSocket(identifier, requestURL);
 }
 
 void InspectorInstrumentation::willSendWebSocketHandshakeRequestImpl(InspectorAgent* inspectorAgent, unsigned long identifier, const WebSocketHandshakeRequest& request)
 {
-    inspectorAgent->willSendWebSocketHandshakeRequest(identifier, request);
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
+        resourceAgent->willSendWebSocketHandshakeRequest(identifier, request);
 }
 
 void InspectorInstrumentation::didReceiveWebSocketHandshakeResponseImpl(InspectorAgent* inspectorAgent, unsigned long identifier, const WebSocketHandshakeResponse& response)
 {
-    inspectorAgent->didReceiveWebSocketHandshakeResponse(identifier, response);
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
+        resourceAgent->didReceiveWebSocketHandshakeResponse(identifier, response);
 }
 
 void InspectorInstrumentation::didCloseWebSocketImpl(InspectorAgent* inspectorAgent, unsigned long identifier)
 {
-    inspectorAgent->didCloseWebSocket(identifier);
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
+        resourceAgent->didCloseWebSocket(identifier);
 }
 #endif
 
@@ -695,7 +701,7 @@ InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const In
 
 InspectorResourceAgent* InspectorInstrumentation::retrieveResourceAgent(InspectorAgent* inspectorAgent)
 {
-    return inspectorAgent->resourceAgent();
+    return inspectorAgent->instrumentingAgents()->inspectorResourceAgent();
 }
 
 } // namespace WebCore

@@ -94,11 +94,6 @@ class StorageArea;
 class InspectorApplicationCacheAgent;
 #endif
 
-#if ENABLE(WEB_SOCKETS)
-class WebSocketHandshakeRequest;
-class WebSocketHandshakeResponse;
-#endif
-
 typedef String ErrorString;
 
 class InspectorAgent {
@@ -136,8 +131,6 @@ public:
     InspectorFrontend* frontend() const { return m_frontend; }
     void disconnectFrontend();
 
-    InspectorResourceAgent* resourceAgent();
-
     InstrumentingAgents* instrumentingAgents() const { return m_instrumentingAgents.get(); }
 
     InspectorAgent* inspectorAgent() { return this; }
@@ -146,6 +139,7 @@ public:
     InspectorDOMAgent* domAgent() { return m_domAgent.get(); }
     InspectorRuntimeAgent* runtimeAgent() { return m_runtimeAgent.get(); }
     InspectorTimelineAgent* timelineAgent() { return m_timelineAgent.get(); }
+    InspectorResourceAgent* resourceAgent() { return m_resourceAgent.get(); }
 #if ENABLE(DATABASE)
     InspectorDatabaseAgent* databaseAgent() { return m_databaseAgent.get(); }
 #endif
@@ -181,13 +175,6 @@ public:
     void postWorkerNotificationToFrontend(const InspectorWorkerResource&, WorkerAction);
     void didCreateWorker(intptr_t, const String& url, bool isSharedWorker);
     void didDestroyWorker(intptr_t);
-#endif
-
-#if ENABLE(WEB_SOCKETS)
-    void didCreateWebSocket(unsigned long identifier, const KURL& requestURL, const KURL& documentURL);
-    void willSendWebSocketHandshakeRequest(unsigned long identifier, const WebSocketHandshakeRequest&);
-    void didReceiveWebSocketHandshakeResponse(unsigned long identifier, const WebSocketHandshakeResponse&);
-    void didCloseWebSocket(unsigned long identifier);
 #endif
 
     bool hasFrontend() const { return m_frontend; }

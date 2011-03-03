@@ -53,6 +53,7 @@ class InspectorArray;
 class InspectorFrontend;
 class InspectorObject;
 class InspectorState;
+class InstrumentingAgents;
 class KURL;
 class Page;
 class ResourceError;
@@ -69,10 +70,14 @@ typedef String ErrorString;
 
 class InspectorResourceAgent : public RefCounted<InspectorResourceAgent> {
 public:
-    static PassRefPtr<InspectorResourceAgent> create(Page* page, InspectorState* state, InspectorFrontend* frontend)
+    static PassRefPtr<InspectorResourceAgent> create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* state)
     {
-        return adoptRef(new InspectorResourceAgent(page, state, frontend));
+        return adoptRef(new InspectorResourceAgent(instrumentingAgents, page, state));
     }
+
+    void setFrontend(InspectorFrontend*);
+    void clearFrontend();
+    void restore();
 
     static PassRefPtr<InspectorResourceAgent> restore(Page*, InspectorState*, InspectorFrontend*);
 
@@ -105,13 +110,17 @@ public:
     Frame* frameForId(unsigned long);
 
     // Called from frontend 
-    void cachedResources(ErrorString*, RefPtr<InspectorObject>*);
+    void enable(ErrorString*, RefPtr<InspectorObject>*);
+    void disable(ErrorString*);
     void resourceContent(ErrorString*, unsigned long frameId, const String& url, bool base64Encode, bool* resourceFound, String* content);
     void setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject>);
 
 private:
-    InspectorResourceAgent(Page* page, InspectorState*, InspectorFrontend* frontend);
+    InspectorResourceAgent(InstrumentingAgents*, Page*, InspectorState*);
 
+    void enable();
+
+    InstrumentingAgents* m_instrumentingAgents;
     Page* m_page;
     InspectorState* m_state;
     InspectorFrontend::Network* m_frontend;

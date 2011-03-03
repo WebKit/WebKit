@@ -1,3 +1,51 @@
+2011-03-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Resource agent should have same lifetime as Inspector agent
+        https://bugs.webkit.org/show_bug.cgi?id=55461
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::inspectedPageDestroyed): disconnectFrontend is called before the agent is destroyed
+        to clear frontend reference in all agents.
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        (WebCore::InspectorAgent::setFrontend):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        (WebCore::InspectorAgent::releaseFrontendLifetimeAgents):
+        (WebCore::InspectorAgent::didCommitLoad):
+        * inspector/InspectorAgent.h:
+        (WebCore::InspectorAgent::resourceAgent):
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        (WebCore::InspectorBrowserDebuggerAgent::~InspectorBrowserDebuggerAgent):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::~InspectorDebuggerAgent):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCreateWebSocketImpl):
+        (WebCore::InspectorInstrumentation::willSendWebSocketHandshakeRequestImpl):
+        (WebCore::InspectorInstrumentation::didReceiveWebSocketHandshakeResponseImpl):
+        (WebCore::InspectorInstrumentation::didCloseWebSocketImpl):
+        (WebCore::InspectorInstrumentation::retrieveResourceAgent):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::setFrontend):
+        (WebCore::InspectorResourceAgent::clearFrontend):
+        (WebCore::InspectorResourceAgent::restore):
+        (WebCore::InspectorResourceAgent::~InspectorResourceAgent):
+        (WebCore::InspectorResourceAgent::enable):
+        (WebCore::InspectorResourceAgent::disable):
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent):
+        * inspector/InspectorResourceAgent.h:
+        (WebCore::InspectorResourceAgent::create):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::restore):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager):
+        (WebInspector.NetworkManager.prototype.frontendReused):
+        * inspector/front-end/inspector.js:
+        (WebInspector.frontendReused):
+
 2011-03-03  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Andreas Kling.

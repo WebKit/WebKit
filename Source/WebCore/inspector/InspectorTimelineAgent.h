@@ -88,8 +88,7 @@ public:
 
     void setFrontend(InspectorFrontend*);
     void clearFrontend();
-
-    void restore(InspectorState*, InspectorFrontend*);
+    void restore();
 
     void start(ErrorString* error);
     void stop(ErrorString* error);

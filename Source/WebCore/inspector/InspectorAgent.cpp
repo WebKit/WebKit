@@ -148,6 +148,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client)
 #endif
     , m_state(new InspectorState(client))
     , m_timelineAgent(InspectorTimelineAgent::create(m_instrumentingAgents.get(), m_state.get()))
+    , m_resourceAgent(InspectorResourceAgent::create(m_instrumentingAgents.get(), page, m_state.get()))
     , m_consoleAgent(new InspectorConsoleAgent(m_instrumentingAgents.get(), this, m_state.get(), m_injectedScriptHost.get(), m_domAgent.get()))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerAgent(InspectorDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, m_injectedScriptHost.get()))
@@ -170,8 +171,10 @@ InspectorAgent::~InspectorAgent()
 
 void InspectorAgent::inspectedPageDestroyed()
 {
-    if (m_frontend)
+    if (m_frontend) {
         m_frontend->inspector()->disconnectFromBackend();
+        disconnectFrontend();
+    }
 
     ErrorString error;
     hideHighlight(&error);
@@ -205,8 +208,8 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
     m_frontend->inspector()->inspectedURLChanged(inspectedURL().string());
     pushDataCollectedOffline();
 
-    m_resourceAgent = InspectorResourceAgent::restore(m_inspectedPage, m_state.get(), m_frontend);
-    m_timelineAgent->restore(m_state.get(), m_frontend);
+    m_resourceAgent->restore();
+    m_timelineAgent->restore();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_debuggerAgent->restore();
@@ -365,6 +368,7 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
     m_domAgent->setFrontend(m_frontend);
     m_consoleAgent->setFrontend(m_frontend);
     m_timelineAgent->setFrontend(m_frontend);
+    m_resourceAgent->setFrontend(m_frontend);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_debuggerAgent->setFrontend(m_frontend);
     m_browserDebuggerAgent->setFrontend(m_frontend);
@@ -407,6 +411,7 @@ void InspectorAgent::disconnectFrontend()
     m_consoleAgent->clearFrontend();
     m_domAgent->clearFrontend();
     m_timelineAgent->clearFrontend();
+    m_resourceAgent->clearFrontend();
 #if ENABLE(DATABASE)
     m_databaseAgent->clearFrontend();
 #endif
@@ -416,13 +421,6 @@ void InspectorAgent::disconnectFrontend()
 
     releaseFrontendLifetimeAgents();
     m_userAgentOverride = "";
-}
-
-InspectorResourceAgent* InspectorAgent::resourceAgent()
-{
-    if (!m_resourceAgent && m_frontend)
-        m_resourceAgent = InspectorResourceAgent::create(m_inspectedPage, m_state.get(), m_frontend);
-    return m_resourceAgent.get();
 }
 
 void InspectorAgent::createFrontendLifetimeAgents()
@@ -436,7 +434,6 @@ void InspectorAgent::createFrontendLifetimeAgents()
 
 void InspectorAgent::releaseFrontendLifetimeAgents()
 {
-    m_resourceAgent.clear();
     m_runtimeAgent.clear();
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheAgent.clear();
@@ -507,8 +504,8 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
     if (!enabled())
         return;
 
-    if (m_resourceAgent)
-        m_resourceAgent->didCommitLoad(loader);
+    if (InspectorResourceAgent* resourceAgent = m_instrumentingAgents->inspectorResourceAgent())
+        resourceAgent->didCommitLoad(loader);
 
     ASSERT(m_inspectedPage);
 
@@ -758,37 +755,6 @@ void InspectorAgent::deleteCookie(ErrorString*, const String& cookieName, const 
             WebCore::deleteCookie(document, KURL(ParsedURLString, it->second->url()), cookieName);
     }
 }
-
-#if ENABLE(WEB_SOCKETS)
-void InspectorAgent::didCreateWebSocket(unsigned long identifier, const KURL& requestURL, const KURL& documentURL)
-{
-    if (!enabled())
-        return;
-    ASSERT(m_inspectedPage);
-
-    if (m_resourceAgent)
-        m_resourceAgent->didCreateWebSocket(identifier, requestURL);
-    UNUSED_PARAM(documentURL);
-}
-
-void InspectorAgent::willSendWebSocketHandshakeRequest(unsigned long identifier, const WebSocketHandshakeRequest& request)
-{
-    if (m_resourceAgent)
-        m_resourceAgent->willSendWebSocketHandshakeRequest(identifier, request);
-}
-
-void InspectorAgent::didReceiveWebSocketHandshakeResponse(unsigned long identifier, const WebSocketHandshakeResponse& response)
-{
-    if (m_resourceAgent)
-        m_resourceAgent->didReceiveWebSocketHandshakeResponse(identifier, response);
-}
-
-void InspectorAgent::didCloseWebSocket(unsigned long identifier)
-{
-    if (m_resourceAgent)
-        m_resourceAgent->didCloseWebSocket(identifier);
-}
-#endif // ENABLE(WEB_SOCKETS)
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 bool InspectorAgent::isRecordingUserInitiatedProfile() const

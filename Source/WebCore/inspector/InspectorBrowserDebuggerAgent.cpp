@@ -85,7 +85,7 @@ InspectorBrowserDebuggerAgent::InspectorBrowserDebuggerAgent(InstrumentingAgents
 InspectorBrowserDebuggerAgent::~InspectorBrowserDebuggerAgent()
 {
     m_debuggerAgent->setListener(0);
-    clearFrontend();
+    ASSERT(!m_instrumentingAgents->inspectorBrowserDebuggerAgent());
 }
 
 // Browser debugger agent enabled only when JS debugger is enabled.

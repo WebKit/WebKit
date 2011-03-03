@@ -87,10 +87,9 @@ void InspectorTimelineAgent::clearFrontend()
     m_frontend = 0;
 }
 
-void InspectorTimelineAgent::restore(InspectorState* state, InspectorFrontend* frontend)
+void InspectorTimelineAgent::restore()
 {
-    setFrontend(frontend);
-    if (state->getBoolean(TimelineAgentState::timelineAgentEnabled)) {
+    if (m_state->getBoolean(TimelineAgentState::timelineAgentEnabled)) {
         ErrorString error;
         start(&error);
     }
