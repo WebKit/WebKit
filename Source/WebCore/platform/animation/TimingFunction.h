@@ -104,8 +104,8 @@ public:
     
     static const CubicBezierTimingFunction* defaultTimingFunction()
     {
-        DEFINE_STATIC_LOCAL(const CubicBezierTimingFunction, dtf, ());
-        return &dtf;
+        static const CubicBezierTimingFunction* dtf = create().leakRef();
+        return dtf;
     }
     
 private:

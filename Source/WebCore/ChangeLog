@@ -1,3 +1,16 @@
+2011-03-03  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION: Accelerated transitions are jumpy
+        https://bugs.webkit.org/show_bug.cgi?id=55022
+
+        Changed the way default TimingFunction is stored according to Adam Roben's
+        suggestion.
+
+        * platform/animation/TimingFunction.h:
+        (WebCore::CubicBezierTimingFunction::defaultTimingFunction):
+
 2011-03-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
