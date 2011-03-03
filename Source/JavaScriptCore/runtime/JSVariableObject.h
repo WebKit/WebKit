@@ -105,7 +105,7 @@ namespace JSC {
     {
         SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
         if (!entry.isNull()) {
-            slot.setRegisterSlot(&registerAt(entry.getIndex()));
+            slot.setValue(registerAt(entry.getIndex()).jsValue());
             return true;
         }
         return false;
@@ -115,7 +115,7 @@ namespace JSC {
     {
         SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
         if (!entry.isNull()) {
-            slot.setRegisterSlot(&registerAt(entry.getIndex()));
+            slot.setValue(registerAt(entry.getIndex()).jsValue());
             slotIsWriteable = !entry.isReadOnly();
             return true;
         }

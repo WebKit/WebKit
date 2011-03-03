@@ -75,7 +75,7 @@ inline bool JSActivation::symbolTableGet(const Identifier& propertyName, Propert
     SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
     if (!entry.isNull()) {
         ASSERT(entry.getIndex() < static_cast<int>(d()->functionExecutable->capturedVariableCount()));
-        slot.setRegisterSlot(&registerAt(entry.getIndex()));
+        slot.setValue(registerAt(entry.getIndex()).jsValue());
         return true;
     }
     return false;

@@ -123,15 +123,6 @@ namespace JSC {
             m_value = value;
         }
 
-        void setRegisterSlot(Register* registerSlot)
-        {
-            ASSERT(registerSlot);
-            clearBase();
-            clearOffset();
-            m_getValue = JSC_VALUE_MARKER;
-            m_value = registerSlot->jsValue();
-        }
-
         void setCustom(JSValue slotBase, GetValueFunc getValue)
         {
             ASSERT(slotBase);

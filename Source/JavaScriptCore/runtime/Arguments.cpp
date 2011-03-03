@@ -145,7 +145,7 @@ bool Arguments::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& sl
 {
     if (i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
         if (i < d->numParameters) {
-            slot.setRegisterSlot(&d->registers[d->firstParameterIndex + i]);
+            slot.setValue(d->registers[d->firstParameterIndex + i].jsValue());
         } else
             slot.setValue(d->extraArguments[i - d->numParameters].jsValue());
         return true;
@@ -184,7 +184,7 @@ bool Arguments::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNa
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
         if (i < d->numParameters) {
-            slot.setRegisterSlot(&d->registers[d->firstParameterIndex + i]);
+            slot.setValue(d->registers[d->firstParameterIndex + i].jsValue());
         } else
             slot.setValue(d->extraArguments[i - d->numParameters].jsValue());
         return true;

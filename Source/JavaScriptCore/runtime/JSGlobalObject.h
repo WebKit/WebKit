@@ -177,6 +177,10 @@ namespace JSC {
         virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunc, unsigned attributes);
         virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunc, unsigned attributes);
 
+        // We use this in the code generator as we perform symbol table
+        // lookups prior to initializing the properties
+        bool symbolTableHasProperty(const Identifier& propertyName);
+
         // The following accessors return pristine values, even if a script 
         // replaces the global object's associated property.
 
@@ -349,6 +353,12 @@ namespace JSC {
             return true;
         bool slotIsWriteable;
         return symbolTableGet(propertyName, slot, slotIsWriteable);
+    }
+
+    inline bool JSGlobalObject::symbolTableHasProperty(const Identifier& propertyName)
+    {
+        SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
+        return !entry.isNull();
     }
 
     inline JSValue Structure::prototypeForLookup(ExecState* exec) const

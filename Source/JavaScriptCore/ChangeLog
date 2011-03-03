@@ -1,3 +1,38 @@
+2011-03-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Remove "register slot" concept from PropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=55621
+
+        PropertySlot had already stopped storing Register "slots"
+        so this patch is simply removing that api entirely.
+        This exposed a problem in the ProgramNode constructor for
+        BytecodeGenerator where it reads from the registerfile
+        before it has initialised it.
+
+        This bug wasn't a problem before as we were merely testing
+        for property existence rather than the actual value, and
+        used to work because setRegisterSlot didn't check that the
+        provided slot contained an initialised value.
+
+        To get around this issue we now use symbolTableHasProperty
+        to do the symbol table check without trying to read the
+        RegisterFile.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertySlot):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::symbolTableGet):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::symbolTableHasProperty):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::symbolTableGet):
+        * runtime/PropertySlot.h:
+
 2011-03-02  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by David Levin.
