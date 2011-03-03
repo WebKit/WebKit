@@ -1,3 +1,19 @@
+2011-03-03  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        CSS RGBA fast-path color parsing should clamp of out-of-range alpha values
+        https://bugs.webkit.org/show_bug.cgi?id=55661
+
+        Test case originally written by Andreas Kling <andreas.kling@nokia.com>
+
+        Add a test of rgba() color parsing for the edge cases.
+
+        * fast/canvas/rgba-parsing-expected.txt: Added.
+        * fast/canvas/rgba-parsing.html: Added.
+        * fast/canvas/script-tests/rgba-parsing.js: Added.
+        (parse):
+
 2011-03-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -3881,10 +3881,31 @@ static inline bool isTenthAlpha(const UChar* string, const int length)
     return false;
 }
 
+static inline bool isValidDouble(const UChar* string, const int length)
+{
+    bool decimalMarkSeen = false;
+    for (int i = 0; i < length; ++i) {
+        if (!isASCIIDigit(string[i])) {
+            if (!decimalMarkSeen && string[i] == '.')
+                decimalMarkSeen = true;
+            else
+                return false;
+        }
+    }
+    return true;
+}
+
 static inline bool parseAlphaValue(const UChar*& string, const UChar* end, UChar terminator, int& value)
 {
     while (string != end && isHTMLSpace(*string))
         string++;
+
+    bool negative = false;
+
+    if (string != end && *string == '-') {
+        negative = true;
+        string++;
+    }
 
     value = 0;
 
@@ -3892,35 +3913,43 @@ static inline bool parseAlphaValue(const UChar*& string, const UChar* end, UChar
     if (length < 2)
         return false;
 
-    if (string[0] != '0' && string[0] != '1' && string[0] != '.')
-        return false;
-
     if (string[length - 1] != terminator)
         return false;
 
+    if (string[0] != '0' && string[0] != '1' && string[0] != '.') {
+        if (isValidDouble(string, length - 1)) {
+            value = negative ? 0 : 255;
+            string = end;
+            return true;
+        }
+        return false;
+    }
+
     if (length == 2 && string[0] != '.') {
-        value = string[0] == '1' ? 255 : 0;
+        value = !negative && string[0] == '1' ? 255 : 0;
         string = end;
         return true;
     }
 
     if (isTenthAlpha(string, length - 1)) {
         static const int tenthAlphaValues[] = { 0, 25, 51, 76, 102, 127, 153, 179, 204, 230 };
-        value = tenthAlphaValues[string[length - 2] - '0'];
+        value = negative ? 0 : tenthAlphaValues[string[length - 2] - '0'];
         string = end;
         return true;
     }
 
+    if (!isValidDouble(string, length - 1))
+       return false;
+
     Vector<char, 8> bytes(length + 1);
-    for (int i = 0; i < length; ++i) {
-        if (!isASCIIDigit(string[i]) && string[i] != '.' && string[i] != terminator)
-            return false;
+
+    for (int i = 0; i < length; ++i)
         bytes[i] = string[i];
-    }
+
     bytes[length] = '\0';
     char* foundTerminator;
     double d = WTF::strtod(bytes.data(), &foundTerminator);
-    value = static_cast<int>(d * nextafter(256.0, 0.0));
+    value = negative ? 0 : static_cast<int>(d * nextafter(256.0, 0.0));
     string += (foundTerminator - bytes.data()) + 1;
     return *foundTerminator == terminator;
 }

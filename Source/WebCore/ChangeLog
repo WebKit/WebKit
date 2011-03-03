@@ -1,3 +1,18 @@
+2011-03-03  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        CSS RGBA fast-path color parsing should clamp of out-of-range alpha values
+        https://bugs.webkit.org/show_bug.cgi?id=55661
+
+        Test case originally written by Andreas Kling <andreas.kling@nokia.com>
+
+        Test: fast/canvas/rgba-parsing.html
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidDouble): Check whether the given string is a valid double.
+        (WebCore::parseAlphaValue): Out-of-range alpha values should be clamped to the (0.0, 1.0) range.
+
 2011-03-03  David Holloway  <dhollowa@chromium.org>
 
         Reviewed by Dimitri Glazkov.
