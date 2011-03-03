@@ -1,3 +1,9 @@
+2011-03-02  Dan Bernstein  <mitz@apple.com>
+
+        Let Xcode know that Localizable.strings is UTF-16-encoded.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-03-02  Andy Estes  <aestes@apple.com>
 
         Reviewed by Eric Seidel.
