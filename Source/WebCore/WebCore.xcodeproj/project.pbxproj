@@ -14121,6 +14121,7 @@
 				BCA2B08A10505BCD0043BD1C /* UserScriptTypes.h */,
 				BC8BF150105813BF00A40A07 /* UserStyleSheet.h */,
 				BC8BF1591058141800A40A07 /* UserStyleSheetTypes.h */,
+				BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */,
 				494BD7930F55C8EE00747828 /* WebKitPoint.h */,
 				494BD7940F55C8EE00747828 /* WebKitPoint.idl */,
 				BC8243E60D0CFD7500460C8F /* WindowFeatures.cpp */,
@@ -15459,7 +15460,6 @@
 				65BF023C0974819000C43196 /* FrameMac.mm */,
 				1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */,
 				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
-				BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */,
 				F587855402DE375901EA4122 /* WebCoreViewFactory.h */,
 				F587855502DE375901EA4122 /* WebCoreViewFactory.m */,
 			);

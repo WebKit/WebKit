@@ -1,5 +1,13 @@
 2011-03-03  Alexey Proskuryakov  <ap@apple.com>
 
+        More build fixing. Move WebCoreKeyboardUIMode.h to a cross-platform location.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/WebCoreKeyboardUIMode.h: Copied from WebCore/page/mac/WebCoreKeyboardUIMode.h.
+        * page/mac/WebCoreKeyboardUIMode.h: Removed.
+
+2011-03-03  Alexey Proskuryakov  <ap@apple.com>
+
         Build fix. Should include WebCoreKeyboardUIMode.h on all platforms now.
 
         * page/ChromeClient.h:
