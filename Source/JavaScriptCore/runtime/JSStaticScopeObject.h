@@ -31,25 +31,14 @@
 namespace JSC{
     
     class JSStaticScopeObject : public JSVariableObject {
-    protected:
-        using JSVariableObject::JSVariableObjectData;
-        struct JSStaticScopeObjectData : public JSVariableObjectData {
-            JSStaticScopeObjectData()
-                : JSVariableObjectData(&symbolTable, &registerStore + 1)
-            {
-            }
-            SymbolTable symbolTable;
-            Register registerStore;
-        };
-        
     public:
         JSStaticScopeObject(ExecState* exec, const Identifier& ident, JSValue value, unsigned attributes)
-            : JSVariableObject(exec->globalData().staticScopeStructure, new JSStaticScopeObjectData())
+            : JSVariableObject(exec->globalData().staticScopeStructure, &m_symbolTable, &m_registerStore + 1)
         {
-            d()->registerStore = value;
+            m_registerStore = value;
             symbolTable().add(ident.impl(), SymbolTableEntry(-1, attributes));
         }
-        virtual ~JSStaticScopeObject();
+
         virtual void markChildren(MarkStack&);
         bool isDynamicScope(bool& requiresDynamicChecks) const;
         virtual JSObject* toThisObject(ExecState*) const;
@@ -64,7 +53,8 @@ namespace JSC{
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NeedsThisConversion | OverridesMarkChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
 
     private:
-        JSStaticScopeObjectData* d() { return static_cast<JSStaticScopeObjectData*>(JSVariableObject::d); }
+        SymbolTable m_symbolTable;
+        Register m_registerStore;
     };
 
 }

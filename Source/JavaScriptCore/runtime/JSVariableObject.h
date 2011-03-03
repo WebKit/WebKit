@@ -44,7 +44,7 @@ namespace JSC {
         friend class JIT;
 
     public:
-        SymbolTable& symbolTable() const { return *d->symbolTable; }
+        SymbolTable& symbolTable() const { return *m_symbolTable; }
 
         virtual void putWithAttributes(ExecState*, const Identifier&, JSValue, unsigned attributes) = 0;
 
@@ -54,7 +54,7 @@ namespace JSC {
         virtual bool isVariableObject() const;
         virtual bool isDynamicScope(bool& requiresDynamicChecks) const = 0;
 
-        Register& registerAt(int index) const { return d->registers[index]; }
+        Register& registerAt(int index) const { return m_registers[index]; }
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
@@ -63,30 +63,13 @@ namespace JSC {
         
     protected:
         static const unsigned StructureFlags = OverridesGetPropertyNames | JSObject::StructureFlags;
-        // Subclasses of JSVariableObject can subclass this struct to add data
-        // without increasing their own size (since there's a hard limit on the
-        // size of a JSCell).
-        struct JSVariableObjectData {
-            JSVariableObjectData(SymbolTable* symbolTable, Register* registers)
-                : symbolTable(symbolTable)
-                , registers(registers)
-            {
-                ASSERT(symbolTable);
-            }
 
-            SymbolTable* symbolTable; // Maps name -> offset from "r" in register file.
-            Register* registers; // "r" in the register file.
-            OwnArrayPtr<Register> registerArray; // Independent copy of registers, used when a variable object copies its registers out of the register file.
-
-        private:
-            JSVariableObjectData(const JSVariableObjectData&);
-            JSVariableObjectData& operator=(const JSVariableObjectData&);
-        };
-
-        JSVariableObject(NonNullPassRefPtr<Structure> structure, JSVariableObjectData* data)
+        JSVariableObject(NonNullPassRefPtr<Structure> structure, SymbolTable* symbolTable, Register* registers)
             : JSNonFinalObject(structure)
-            , d(data) // Subclass owns this pointer.
+            , m_symbolTable(symbolTable)
+            , m_registers(registers)
         {
+            ASSERT(m_symbolTable);
         }
 
         PassOwnArrayPtr<Register> copyRegisterArray(Register* src, size_t count);
@@ -98,7 +81,9 @@ namespace JSC {
         bool symbolTablePut(const Identifier&, JSValue);
         bool symbolTablePutWithAttributes(const Identifier&, JSValue, unsigned attributes);
 
-        JSVariableObjectData* d;
+        SymbolTable* m_symbolTable; // Maps name -> offset from "r" in register file.
+        Register* m_registers; // "r" in the register file.
+        OwnArrayPtr<Register> m_registerArray; // Independent copy of registers, used when a variable object copies its registers out of the register file.
     };
 
     inline bool JSVariableObject::symbolTableGet(const Identifier& propertyName, PropertySlot& slot)
@@ -159,9 +144,9 @@ namespace JSC {
 
     inline void JSVariableObject::setRegisters(Register* registers, PassOwnArrayPtr<Register> registerArray)
     {
-        ASSERT(registerArray != d->registerArray);
-        d->registerArray = registerArray;
-        d->registers = registers;
+        ASSERT(registerArray != m_registerArray);
+        m_registerArray = registerArray;
+        m_registers = registers;
     }
 
 } // namespace JSC

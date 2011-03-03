@@ -40,14 +40,19 @@ ASSERT_CLASS_FITS_IN_CELL(JSActivation);
 const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, 0 };
 
 JSActivation::JSActivation(CallFrame* callFrame, NonNullPassRefPtr<FunctionExecutable> functionExecutable)
-    : Base(callFrame->globalData().activationStructure, new JSActivationData(functionExecutable, callFrame->registers()))
+    : Base(callFrame->globalData().activationStructure, functionExecutable->symbolTable(), callFrame->registers())
+    , m_functionExecutable(functionExecutable)
 {
     ASSERT(inherits(&s_info));
+
+    // We have to manually ref and deref the symbol table as JSVariableObjectData
+    // doesn't know about SharedSymbolTable
+    static_cast<SharedSymbolTable*>(m_symbolTable)->ref();
 }
 
 JSActivation::~JSActivation()
 {
-    delete d();
+    static_cast<SharedSymbolTable*>(m_symbolTable)->deref();
 }
 
 void JSActivation::markChildren(MarkStack& markStack)
@@ -55,16 +60,16 @@ void JSActivation::markChildren(MarkStack& markStack)
     Base::markChildren(markStack);
 
     // No need to mark our registers if they're still in the RegisterFile.
-    Register* registerArray = d()->registerArray.get();
+    Register* registerArray = m_registerArray.get();
     if (!registerArray)
         return;
 
-    size_t numParametersMinusThis = d()->functionExecutable->parameterCount();
+    size_t numParametersMinusThis = m_functionExecutable->parameterCount();
 
     size_t count = numParametersMinusThis;
     markStack.deprecatedAppendValues(registerArray, count);
 
-    size_t numVars = d()->functionExecutable->capturedVariableCount();
+    size_t numVars = m_functionExecutable->capturedVariableCount();
 
     // Skip the call frame, which sits between the parameters and vars.
     markStack.deprecatedAppendValues(registerArray + count + RegisterFile::CallFrameHeaderSize, numVars, MayContainNullValues);
@@ -74,7 +79,7 @@ inline bool JSActivation::symbolTableGet(const Identifier& propertyName, Propert
 {
     SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
     if (!entry.isNull()) {
-        ASSERT(entry.getIndex() < static_cast<int>(d()->functionExecutable->capturedVariableCount()));
+        ASSERT(entry.getIndex() < static_cast<int>(m_functionExecutable->capturedVariableCount()));
         slot.setValue(registerAt(entry.getIndex()).jsValue());
         return true;
     }
@@ -90,7 +95,7 @@ inline bool JSActivation::symbolTablePut(const Identifier& propertyName, JSValue
         return false;
     if (entry.isReadOnly())
         return true;
-    ASSERT(entry.getIndex() < static_cast<int>(d()->functionExecutable->capturedVariableCount()));
+    ASSERT(entry.getIndex() < static_cast<int>(m_functionExecutable->capturedVariableCount()));
     registerAt(entry.getIndex()) = value;
     return true;
 }
@@ -99,7 +104,7 @@ void JSActivation::getOwnPropertyNames(ExecState* exec, PropertyNameArray& prope
 {
     SymbolTable::const_iterator end = symbolTable().end();
     for (SymbolTable::const_iterator it = symbolTable().begin(); it != end; ++it) {
-        ASSERT(it->second.getIndex() < static_cast<int>(d()->functionExecutable->capturedVariableCount()));
+        ASSERT(it->second.getIndex() < static_cast<int>(m_functionExecutable->capturedVariableCount()));
         if (!(it->second.getAttributes() & DontEnum) || (mode == IncludeDontEnumProperties))
             propertyNames.add(Identifier(exec, it->first.get()));
     }
@@ -116,7 +121,7 @@ inline bool JSActivation::symbolTablePutWithAttributes(const Identifier& propert
         return false;
     SymbolTableEntry& entry = iter->second;
     ASSERT(!entry.isNull());
-    if (entry.getIndex() >= static_cast<int>(d()->functionExecutable->capturedVariableCount()))
+    if (entry.getIndex() >= static_cast<int>(m_functionExecutable->capturedVariableCount()))
         return false;
     entry.setAttributes(attributes);
     registerAt(entry.getIndex()) = value;
@@ -195,15 +200,15 @@ JSValue JSActivation::toStrictThisObject(ExecState*) const
     
 bool JSActivation::isDynamicScope(bool& requiresDynamicChecks) const
 {
-    requiresDynamicChecks = d()->functionExecutable->usesEval();
+    requiresDynamicChecks = m_functionExecutable->usesEval();
     return false;
 }
 
 JSValue JSActivation::argumentsGetter(ExecState*, JSValue slotBase, const Identifier&)
 {
     JSActivation* activation = asActivation(slotBase);
-    CallFrame* callFrame = CallFrame::create(activation->d()->registers);
-    int argumentsRegister = activation->d()->functionExecutable->generatedBytecode().argumentsRegister();
+    CallFrame* callFrame = CallFrame::create(activation->m_registers);
+    int argumentsRegister = activation->m_functionExecutable->generatedBytecode().argumentsRegister();
     if (JSValue arguments = callFrame->uncheckedR(argumentsRegister).jsValue())
         return arguments;
     int realArgumentsRegister = unmodifiedArgumentsRegister(argumentsRegister);

@@ -1,3 +1,35 @@
+2011-03-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Moved all variable object storage inline -- upping the object size limit to 1K
+        https://bugs.webkit.org/show_bug.cgi?id=55653
+
+        * JavaScriptCore.exp:
+        * bytecompiler/BytecodeGenerator.cpp:
+        * jit/JITOpcodes.cpp:
+        * runtime/Arguments.h:
+        * runtime/JSActivation.h: Removed out-of-line storage. Changed d-> to m_.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::MarkedSpace::sizeClassFor): Added an imprecise size class
+        to accomodate objects up to 1K.
+
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h: Removed out-of-line storage. Changed d-> to m_.
+
+        * runtime/JSObject.cpp: Don't ASSERT that JSFinalObject fills the maximum
+        object size, since it doesn't anymore.
+
+        * runtime/JSStaticScopeObject.cpp:
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSVariableObject.h: Removed out-of-line storage. Changed d-> to m_.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::reset):
+        * runtime/MarkedSpace.h: Added an imprecise size class to accomodate objects up to 1K.
+
 2011-03-03  Timothy Hatcher  <timothy@apple.com>
 
         Make APIShims usable from WebCore.

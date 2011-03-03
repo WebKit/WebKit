@@ -235,10 +235,10 @@ namespace JSC {
     // This JSActivation function is defined here so it can get at Arguments::setRegisters.
     inline void JSActivation::copyRegisters()
     {
-        ASSERT(!d()->registerArray);
+        ASSERT(!m_registerArray);
 
-        size_t numParametersMinusThis = d()->functionExecutable->parameterCount();
-        size_t numVars = d()->functionExecutable->capturedVariableCount();
+        size_t numParametersMinusThis = m_functionExecutable->parameterCount();
+        size_t numVars = m_functionExecutable->capturedVariableCount();
         size_t numLocals = numVars + numParametersMinusThis;
 
         if (!numLocals)
@@ -247,7 +247,7 @@ namespace JSC {
         int registerOffset = numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
         size_t registerArraySize = numLocals + RegisterFile::CallFrameHeaderSize;
 
-        OwnArrayPtr<Register> registerArray = copyRegisterArray(d()->registers - registerOffset, registerArraySize);
+        OwnArrayPtr<Register> registerArray = copyRegisterArray(m_registers - registerOffset, registerArraySize);
         Register* registers = registerArray.get() + registerOffset;
         setRegisters(registers, registerArray.release());
     }

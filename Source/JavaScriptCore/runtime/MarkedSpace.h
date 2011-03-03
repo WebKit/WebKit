@@ -32,8 +32,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
-#define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) <= MarkedSpace::maxCellSize, class_fits_in_cell)
-#define ASSERT_CLASS_FILLS_CELL(class) COMPILE_ASSERT(sizeof(class) == MarkedSpace::maxCellSize, class_fills_cell)
+#define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) < MarkedSpace::maxCellSize, class_fits_in_cell)
 
 namespace JSC {
 
@@ -48,7 +47,7 @@ namespace JSC {
         WTF_MAKE_NONCOPYABLE(MarkedSpace);
     public:
         // Currently public for use in assertions.
-        static const size_t maxCellSize = 64;
+        static const size_t maxCellSize = 1024;
 
         static Heap* heap(JSCell*);
 
@@ -81,10 +80,15 @@ namespace JSC {
         template<typename Functor> void forEach(Functor&);
 
     private:
-        // [ 8, 16... 64 ]
+        // [ 8, 16... 128 )
         static const size_t preciseStep = MarkedBlock::atomSize;
-        static const size_t preciseCutoff = maxCellSize;
-        static const size_t preciseCount = preciseCutoff / preciseStep;
+        static const size_t preciseCutoff = 128;
+        static const size_t preciseCount = preciseCutoff / preciseStep - 1;
+
+        // [ 128, 256... 1024 )
+        static const size_t impreciseStep = preciseCutoff;
+        static const size_t impreciseCutoff = maxCellSize;
+        static const size_t impreciseCount = impreciseCutoff / impreciseStep - 1;
 
         typedef HashSet<MarkedBlock*>::iterator BlockIterator;
 
@@ -106,6 +110,7 @@ namespace JSC {
         void clearMarks(MarkedBlock*);
 
         SizeClass m_preciseSizeClasses[preciseCount];
+        SizeClass m_impreciseSizeClasses[impreciseCount];
         HashSet<MarkedBlock*> m_blocks;
         size_t m_waterMark;
         size_t m_highWaterMark;

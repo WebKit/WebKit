@@ -43,7 +43,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSObject);
 ASSERT_CLASS_FITS_IN_CELL(JSNonFinalObject);
-ASSERT_CLASS_FILLS_CELL(JSFinalObject);
+ASSERT_CLASS_FITS_IN_CELL(JSFinalObject);
 
 const char* StrictModeReadonlyPropertyWriteError = "Attempted to assign to readonly property.";
 

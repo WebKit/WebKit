@@ -46,11 +46,11 @@ namespace WebCore {
     protected:
         struct JSDOMGlobalObjectData;
 
-        JSDOMGlobalObject(NonNullPassRefPtr<JSC::Structure>, JSDOMGlobalObjectData*, JSC::JSObject* thisValue);
+        JSDOMGlobalObject(NonNullPassRefPtr<JSC::Structure>, PassRefPtr<DOMWrapperWorld>, JSC::JSObject* thisValue);
 
     public:
-        JSDOMStructureMap& structures() { return d()->structures; }
-        JSDOMConstructorMap& constructors() const { return d()->constructors; }
+        JSDOMStructureMap& structures() { return m_structures; }
+        JSDOMConstructorMap& constructors() { return m_constructors; }
 
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
@@ -65,7 +65,7 @@ namespace WebCore {
 
         virtual void markChildren(JSC::MarkStack&);
 
-        DOMWrapperWorld* world() { return d()->m_world.get(); }
+        DOMWrapperWorld* world() { return m_world.get(); }
 
         static const JSC::ClassInfo s_info;
 
@@ -75,37 +75,23 @@ namespace WebCore {
         }
 
     protected:
-        struct JSDOMGlobalObjectData : public JSC::JSGlobalObject::JSGlobalObjectData {
-            JSDOMGlobalObjectData(DOMWrapperWorld* world, Destructor destructor = destroyJSDOMGlobalObjectData)
-                : JSGlobalObjectData(destructor)
-                , evt(0)
-                , m_world(world)
-            {
-            }
+        JSDOMStructureMap m_structures;
+        JSDOMConstructorMap m_constructors;
 
-            JSDOMStructureMap structures;
-            JSDOMConstructorMap constructors;
-
-            Event* evt;
-            RefPtr<DOMWrapperWorld> m_world;
-            JSC::WriteBarrier<JSObject> m_injectedScript;
-        };
-
-    private:
-        static void destroyJSDOMGlobalObjectData(void*);
-
-        JSDOMGlobalObjectData* d() const { return static_cast<JSDOMGlobalObjectData*>(JSC::JSVariableObject::d); }
+        Event* m_currentEvent;
+        RefPtr<DOMWrapperWorld> m_world;
+        JSC::WriteBarrier<JSObject> m_injectedScript;
     };
 
     template<class ConstructorClass>
     inline JSC::JSObject* getDOMConstructor(JSC::ExecState* exec, const JSDOMGlobalObject* globalObject)
     {
-        if (JSC::JSObject* constructor = globalObject->constructors().get(&ConstructorClass::s_info).get())
+        if (JSC::JSObject* constructor = const_cast<JSDOMGlobalObject*>(globalObject)->constructors().get(&ConstructorClass::s_info).get())
             return constructor;
         JSC::JSObject* constructor = new (exec) ConstructorClass(exec, const_cast<JSDOMGlobalObject*>(globalObject));
-        ASSERT(!globalObject->constructors().contains(&ConstructorClass::s_info));
+        ASSERT(!const_cast<JSDOMGlobalObject*>(globalObject)->constructors().contains(&ConstructorClass::s_info));
         JSC::WriteBarrier<JSC::JSObject> temp;
-        globalObject->constructors().add(&ConstructorClass::s_info, temp).first->second.set(exec->globalData(), globalObject, constructor);
+        const_cast<JSDOMGlobalObject*>(globalObject)->constructors().add(&ConstructorClass::s_info, temp).first->second.set(exec->globalData(), globalObject, constructor);
         return constructor;
     }
 
