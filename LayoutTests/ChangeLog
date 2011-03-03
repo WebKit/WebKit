@@ -1,5 +1,11 @@
 2011-03-03  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip failing test on GTK. See bug 55682.
+
+        * platform/gtk/Skipped: Skip fast/images/support-broken-image-delegate.html
+
+2011-03-03  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skip svg test failing on 32-bits Release, likely due
         to a rounding error, see bug 39022.
         * platform/gtk/Skipped:

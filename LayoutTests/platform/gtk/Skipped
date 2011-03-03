@@ -658,6 +658,9 @@ editing/selection/5825350-2.html
 # Missing layoutTestController.removeOriginAccessWhitelistEntry()
 http/tests/xmlhttprequest/origin-whitelisting-removal.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=55682
+fast/images/support-broken-image-delegate.html
+
 # Fails because of new behaviour enforced by libsoup
 # See: https://bugzilla.gnome.org/show_bug.cgi?id=603825
 fast/cookies/local-file-can-set-cookies.html
