@@ -1,3 +1,112 @@
+2011-03-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium Snow Leopard rebaseline.
+        
+        Rebaseline tables/mozilla/marvin/ tests for Snow Leopard. The current
+        expectations were just checksums, I also added their corresponding PNGs.
+        
+        We can't use the mac/ baselines since we scale the raptor image
+        differently (most likely due to CG i386 vs. x86_64 differences, see
+        bug 52335).
+
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tbody_valign_baseline-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/tbody_valign_baseline-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tbody_valign_baseline-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tbody_valign_bottom-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/tbody_valign_bottom-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tbody_valign_bottom-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tbody_valign_middle-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/tbody_valign_middle-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tbody_valign_middle-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tbody_valign_top-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/tbody_valign_top-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tbody_valign_top-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/td_valign_baseline-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/td_valign_baseline-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/td_valign_baseline-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/td_valign_bottom-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/td_valign_bottom-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/td_valign_bottom-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/td_valign_middle-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/td_valign_middle-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/td_valign_middle-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/td_valign_top-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/td_valign_top-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/td_valign_top-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tfoot_valign_baseline-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_baseline-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tfoot_valign_baseline-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tfoot_valign_bottom-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_bottom-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tfoot_valign_bottom-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tfoot_valign_middle-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_middle-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tfoot_valign_middle-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tfoot_valign_top-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_top-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tfoot_valign_top-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/th_valign_baseline-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/th_valign_baseline-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/th_valign_baseline-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/th_valign_bottom-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/th_valign_bottom-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/th_valign_bottom-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/th_valign_middle-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/th_valign_middle-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/th_valign_middle-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/th_valign_top-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/th_valign_top-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/th_valign_top-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/thead_valign_baseline-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/thead_valign_baseline-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/thead_valign_baseline-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/thead_valign_bottom-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/thead_valign_bottom-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/thead_valign_bottom-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/thead_valign_middle-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/thead_valign_middle-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/thead_valign_middle-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/thead_valign_top-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/thead_valign_top-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/thead_valign_top-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tr_valign_baseline-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/tr_valign_baseline-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tr_valign_baseline-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tr_valign_bottom-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/tr_valign_bottom-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tr_valign_bottom-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tr_valign_middle-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/tr_valign_middle-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tr_valign_middle-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tr_valign_top-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/marvin/tr_valign_top-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tr_valign_top-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_baseline-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_baseline-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_bottom-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_bottom-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_middle-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_middle-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_top-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_top-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/td_valign_baseline-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/td_valign_baseline-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/td_valign_bottom-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/td_valign_bottom-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/td_valign_middle-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/td_valign_middle-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/td_valign_top-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/td_valign_top-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_baseline-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_baseline-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_bottom-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_bottom-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_middle-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_middle-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_top-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_top-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/th_valign_baseline-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/th_valign_baseline-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/th_valign_bottom-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/th_valign_bottom-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/th_valign_middle-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/th_valign_middle-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/th_valign_top-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/th_valign_top-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_baseline-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_baseline-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_bottom-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_bottom-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_middle-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_middle-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_top-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_top-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/tr_valign_baseline-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/tr_valign_baseline-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/tr_valign_bottom-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/tr_valign_bottom-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/tr_valign_middle-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/tr_valign_middle-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/tr_valign_top-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/marvin/tr_valign_top-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-03  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
