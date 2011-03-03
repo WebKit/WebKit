@@ -105,6 +105,22 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return sourceFileId + ":" + lineNumber;
     },
 
+    set selectedCallFrame(callFrame)
+    {
+        this._selectedCallFrame = callFrame;
+        if (!callFrame)
+            return;
+
+        var script = WebInspector.debuggerModel.scriptForSourceID(callFrame.sourceID);
+        callFrame.sourceLocation = this._actualLocationToSourceLocation(script.sourceURL || script.sourceID, callFrame.line, callFrame.column);
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, callFrame);
+    },
+
+    get selectedCallFrame()
+    {
+        return this._selectedCallFrame;
+    },
+
     _actualLocationToSourceLocation: function(sourceID, lineNumber, columnNumber)
     {
         // TODO: use source mapping to obtain source location.

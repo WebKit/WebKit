@@ -140,7 +140,7 @@ WebInspector.ScriptsPanel = function()
 
     this.sidebarPanes = {};
     this.sidebarPanes.watchExpressions = new WebInspector.WatchExpressionsSidebarPane();
-    this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane();
+    this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane(this._presentationModel);
     this.sidebarPanes.scopechain = new WebInspector.ScopeChainSidebarPane();
     this.sidebarPanes.jsBreakpoints = new WebInspector.JavaScriptBreakpointsSidebarPane();
     if (Preferences.nativeInstrumentationEnabled) {
@@ -155,7 +155,6 @@ WebInspector.ScriptsPanel = function()
         this.sidebarElement.appendChild(this.sidebarPanes[pane].element);
 
     this.sidebarPanes.callstack.expanded = true;
-    this.sidebarPanes.callstack.addEventListener("call frame selected", this._callFrameSelected, this);
 
     this.sidebarPanes.scopechain.expanded = true;
     this.sidebarPanes.jsBreakpoints.expanded = true;
@@ -193,6 +192,7 @@ WebInspector.ScriptsPanel = function()
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, this._breakpointAdded, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, this._breakpointRemoved, this);
+    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, this._callFrameSelected, this);
 }
 
 // Keep these in sync with WebCore::ScriptDebugServer
@@ -403,17 +403,18 @@ WebInspector.ScriptsPanel.prototype = {
             sourceFrame.removeBreakpoint(breakpoint.lineNumber);
     },
 
-    selectedCallFrameId: function()
+    getCompletionsOnCallFrame: function(expressionString, includeCommandLineAPI, callback)
     {
-        var selectedCallFrame = this.sidebarPanes.callstack.selectedCallFrame;
-        if (!selectedCallFrame)
-            return null;
-        return selectedCallFrame.id;
+        var selectedCallFrame = this._presentationModel.selectedCallFrame;
+        if (!this._paused || !selectedCallFrame)
+            return;
+
+        DebuggerAgent.getCompletionsOnCallFrame(selectedCallFrame.id, expressionString, includeCommandLineAPI, callback);
     },
 
     evaluateInSelectedCallFrame: function(code, updateInterface, objectGroup, includeCommandLineAPI, callback)
     {
-        var selectedCallFrame = this.sidebarPanes.callstack.selectedCallFrame;
+        var selectedCallFrame = this._presentationModel.selectedCallFrame;
         if (!this._paused || !selectedCallFrame)
             return;
 
@@ -452,6 +453,8 @@ WebInspector.ScriptsPanel.prototype = {
 
     _debuggerResumed: function()
     {
+        this._presentationModel.selectedCallFrame = null;
+
         this._paused = false;
         this._waitingToPause = false;
         this._stepping = false;
@@ -641,11 +644,10 @@ WebInspector.ScriptsPanel.prototype = {
             sourceFrame.addBreakpoint(breakpoint.lineNumber, breakpoint.resolved, breakpoint.condition, breakpoint.enabled);
         }
 
-        var selectedCallFrame = this.sidebarPanes.callstack.selectedCallFrame;
+        var selectedCallFrame = this._presentationModel.selectedCallFrame;
         if (selectedCallFrame) {
-            var script = WebInspector.debuggerModel.scriptForSourceID(selectedCallFrame.sourceID);
-            if (this._sourceFileIdForScript(script) === sourceFileId) {
-                sourceFrame.setExecutionLine(selectedCallFrame.line);
+            if (selectedCallFrame.sourceLocation.sourceFileId === sourceFileId) {
+                sourceFrame.setExecutionLine(selectedCallFrame.sourceLocation.lineNumber);
                 this._executionSourceFrame = sourceFrame;
             }
         }
@@ -672,20 +674,19 @@ WebInspector.ScriptsPanel.prototype = {
         delete this._executionSourceFrame;
     },
 
-    _callFrameSelected: function()
+    _callFrameSelected: function(event)
     {
+        var callFrame = event.data;
+
         this._clearCurrentExecutionLine();
 
-        var callStackPane = this.sidebarPanes.callstack;
-        var currentFrame = callStackPane.selectedCallFrame;
-        if (!currentFrame)
+        if (!callFrame)
             return;
 
-        this.sidebarPanes.scopechain.update(currentFrame);
+        this.sidebarPanes.scopechain.update(callFrame);
         this.sidebarPanes.watchExpressions.refreshExpressions();
 
-        var script = WebInspector.debuggerModel.scriptForSourceID(currentFrame.sourceID);
-        var sourceFileId = this._sourceFileIdForScript(script);
+        var sourceFileId = callFrame.sourceLocation.sourceFileId;
         if (!(sourceFileId in this._sourceFileIdToFilesSelectOption)) {
             // This happens in two cases:
             // 1) Current call frame function is defined in anonymous script (anonymous scripts aren't added to files select by default)
@@ -694,7 +695,7 @@ WebInspector.ScriptsPanel.prototype = {
         }
         var sourceFrame = this._showSourceFrameAndAddToHistory(sourceFileId);
         if (sourceFrame.loaded) {
-            sourceFrame.setExecutionLine(currentFrame.line);
+            sourceFrame.setExecutionLine(callFrame.sourceLocation.lineNumber);
             this._executionSourceFrame = sourceFrame;
         }
     },

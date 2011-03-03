@@ -357,8 +357,8 @@ WebInspector.ConsoleView.prototype = {
         // Collect comma separated object properties for the completion.
 
         var includeCommandLineAPI = (!dotNotation && !bracketNotation);
-        if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused)
-            DebuggerAgent.getCompletionsOnCallFrame(WebInspector.panels.scripts.selectedCallFrameId(), expressionString, includeCommandLineAPI, reportCompletions);
+        if (WebInspector.panels.scripts.paused)
+            WebInspector.panels.scripts.getCompletionsOnCallFrame(expressionString, includeCommandLineAPI, reportCompletions);
         else
             RuntimeAgent.getCompletions(expressionString, includeCommandLineAPI, reportCompletions);
     },

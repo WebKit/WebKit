@@ -1,3 +1,27 @@
+2011-03-02  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: make selected call frame debugger presentation model property.
+        https://bugs.webkit.org/show_bug.cgi?id=55582
+
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane):
+        (WebInspector.CallStackSidebarPane.prototype.update):
+        (WebInspector.CallStackSidebarPane.prototype.set selectedCallFrame):
+        (WebInspector.CallStackSidebarPane.prototype._selectedCallFrameIndex):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.completions):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.set selectedCallFrame):
+        (WebInspector.DebuggerPresentationModel.prototype.get selectedCallFrame):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.getCompletionsOnCallFrame):
+        (WebInspector.ScriptsPanel.prototype._debuggerResumed):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameLoaded):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected):
+
 2011-03-03  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

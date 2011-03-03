@@ -23,9 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CallStackSidebarPane = function()
+WebInspector.CallStackSidebarPane = function(model)
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Call Stack"));
+    this._model = model;
 }
 
 WebInspector.CallStackSidebarPane.prototype = {
@@ -34,7 +35,6 @@ WebInspector.CallStackSidebarPane.prototype = {
         this.bodyElement.removeChildren();
 
         this.placards = [];
-        delete this._selectedCallFrame;
 
         if (!details) {
             var infoElement = document.createElement("div");
@@ -66,12 +66,10 @@ WebInspector.CallStackSidebarPane.prototype = {
             else
                 subtitle = WebInspector.UIString("(internal script)");
 
-            if (callFrame.line > 0) {
-                if (subtitle)
-                    subtitle += ":" + callFrame.line;
-                else
-                    subtitle = WebInspector.UIString("line %d", callFrame.line);
-            }
+            if (subtitle)
+                subtitle += ":" + (callFrame.line + 1);
+            else
+                subtitle = WebInspector.UIString("line %d", callFrame.line + 1);
 
             var placard = new WebInspector.Placard(title, subtitle);
             placard.callFrame = callFrame;
@@ -88,21 +86,14 @@ WebInspector.CallStackSidebarPane.prototype = {
             this._nativeBreakpointHit(details.eventData);
     },
 
-    get selectedCallFrame()
-    {
-        return this._selectedCallFrame;
-    },
-
     set selectedCallFrame(x)
     {
-        this._selectedCallFrame = x;
+        this._model.selectedCallFrame = x;
 
         for (var i = 0; i < this.placards.length; ++i) {
             var placard = this.placards[i];
-            placard.selected = (placard.callFrame === this._selectedCallFrame);
+            placard.selected = (placard.callFrame === x);
         }
-
-        this.dispatchEventToListeners("call frame selected");
     },
 
     handleShortcut: function(event)
@@ -141,11 +132,11 @@ WebInspector.CallStackSidebarPane.prototype = {
 
     _selectedCallFrameIndex: function()
     {
-        if (!this._selectedCallFrame)
+        if (!this._model.selectedCallFrame)
             return -1;
         for (var i = 0; i < this.placards.length; ++i) {
             var placard = this.placards[i];
-            if (placard.callFrame === this._selectedCallFrame)
+            if (placard.callFrame === this._model.selectedCallFrame)
                 return i;
         }
         return -1;

@@ -454,7 +454,7 @@ TestSuite.prototype.testPauseWhenLoadingDevTools = function()
 
     // Script execution can already be paused.
     if (WebInspector.currentPanel.paused) {
-        var callFrame = WebInspector.currentPanel.sidebarPanes.callstack.selectedCallFrame;
+        var callFrame = WebInspector.currentPanel._presentationModel.selectedCallFrame;
         this.assertEquals(expectations.functionsOnStack[0], callFrame.functionName);
         var callbackInvoked = false;
         this._checkSourceFrameWhenLoaded(expectations, function() {
