@@ -644,7 +644,7 @@ PassRefPtr<IDBKey> IDBBackingStore::getPrimaryKeyViaIndex(int64_t indexId, const
     bindKeyToQuery(query, 2, key);
 
     if (query.step() != SQLResultRow)
-        return false;
+        return 0;
 
     RefPtr<IDBKey> foundKey = keyFromQuery(query, 0);
     ASSERT(query.step() != SQLResultRow);
