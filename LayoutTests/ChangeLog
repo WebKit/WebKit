@@ -1,3 +1,12 @@
+2011-03-03  Kenji Imasaki  <imasaki@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+ 
+        [Chromium] Revert the change in http/tests/media/video-referer.html
+        in rev80227
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-03  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium Snow Leopard rebaseline.

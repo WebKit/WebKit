@@ -3316,3 +3316,4 @@ BUGCR74710 MAC RELEASE : svg/text/font-size-below-point-five.svg = TEXT
 
 BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
 
+BUGCR74099 : http/tests/media/video-referer.html = TEXT PASS 
