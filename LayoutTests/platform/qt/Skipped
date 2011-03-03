@@ -2888,8 +2888,6 @@ media/video-delay-load-event.html
 # new skipped tests yet to be sorted
 # ============================================================================= #
 fast/dom/Geolocation/callback-to-remote-context2.html
-fast/dom/Geolocation/page-reload-cancel-permission-requests.html
-fast/dom/Geolocation/iframe-reparent.html
 
 # Link prefetch is disabled by default
 fast/dom/HTMLLinkElement/link-and-subresource-test.html

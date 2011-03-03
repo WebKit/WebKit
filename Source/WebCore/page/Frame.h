@@ -356,6 +356,11 @@ namespace WebCore {
         return m_page;
     }
 
+    inline void Frame::detachFromPage()
+    {
+        m_page = 0;
+    }
+
     inline EventHandler* Frame::eventHandler() const
     {
         return &m_eventHandler;

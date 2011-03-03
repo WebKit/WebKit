@@ -82,11 +82,6 @@ void WebGeolocationClientMock::setPermission(bool allowed)
     m_clientMock->setPermission(allowed);
 }
 
-int WebGeolocationClientMock::numberOfPendingPermissionRequests() const
-{
-    return m_clientMock->numberOfPendingPermissionRequests();
-}
-
 void WebGeolocationClientMock::resetMock()
 {
     m_clientMock->reset();

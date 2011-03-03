@@ -228,35 +228,19 @@ Geolocation::Geolocation(Frame* frame)
 
 Geolocation::~Geolocation()
 {
-    ASSERT(m_allowGeolocation != InProgress);
-    ASSERT(!m_frame);
-}
-
-Page* Geolocation::page() const
-{
-    return m_frame ? m_frame->page() : 0;
-}
-
-void Geolocation::reset()
-{
-    Page* page = this->page();
-    if (page && m_allowGeolocation == InProgress) {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
-        page->geolocationController()->cancelPermissionRequest(this);
-#else
-        page->chrome()->cancelGeolocationPermissionRequestForFrame(m_frame, this);
-#endif
-    }
-    // The frame may be moving to a new page and we want to get the permissions from the new page's client.
-    m_allowGeolocation = Unknown;
-    cancelAllRequests();
-    stopUpdating();
 }
 
 void Geolocation::disconnectFrame()
 {
-    // Once we are disconnected from the Frame, it is no longer possible to perform any operations.
-    reset();
+    if (m_frame && m_frame->page() && m_allowGeolocation == InProgress) {
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+        m_frame->page()->geolocationController()->cancelPermissionRequest(this);
+#else
+        m_frame->page()->chrome()->cancelGeolocationPermissionRequestForFrame(m_frame, this);
+#endif
+    }
+    cancelAllRequests();
+    stopUpdating();
     if (m_frame && m_frame->document())
         m_frame->document()->setUsingGeolocation(false);
     m_frame = 0;
@@ -265,7 +249,10 @@ void Geolocation::disconnectFrame()
 Geoposition* Geolocation::lastPosition()
 {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
-    Page* page = this->page();
+    if (!m_frame)
+        return 0;
+
+    Page* page = m_frame->page();
     if (!page)
         return 0;
 
@@ -604,7 +591,10 @@ void Geolocation::requestPermission()
     if (m_allowGeolocation > Unknown)
         return;
 
-    Page* page = this->page();
+    if (!m_frame)
+        return;
+
+    Page* page = m_frame->page();
     if (!page)
         return;
 
@@ -698,7 +688,10 @@ void Geolocation::geolocationServiceErrorOccurred(GeolocationService* service)
 bool Geolocation::startUpdating(GeoNotifier* notifier)
 {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
-    Page* page = this->page();
+    if (!m_frame)
+        return false;
+
+    Page* page = m_frame->page();
     if (!page)
         return false;
 
@@ -712,7 +705,10 @@ bool Geolocation::startUpdating(GeoNotifier* notifier)
 void Geolocation::stopUpdating()
 {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
-    Page* page = this->page();
+    if (!m_frame)
+        return;
+
+    Page* page = m_frame->page();
     if (!page)
         return;
 
@@ -752,8 +748,6 @@ void Geolocation::handlePendingPermissionNotifiers()
 namespace WebCore {
 
 void Geolocation::clearWatch(int) {}
-
-void Geolocation::reset() {}
 
 void Geolocation::disconnectFrame() {}
 

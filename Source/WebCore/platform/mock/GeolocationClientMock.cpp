@@ -79,11 +79,6 @@ void GeolocationClientMock::setPermission(bool allowed)
     asyncUpdatePermission();
 }
 
-int GeolocationClientMock::numberOfPendingPermissionRequests() const
-{
-    return m_pendingPermission.size();
-}
-
 void GeolocationClientMock::requestPermission(Geolocation* geolocation)
 {
     m_pendingPermission.add(geolocation);

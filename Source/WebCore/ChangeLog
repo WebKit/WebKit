@@ -1,3 +1,34 @@
+2011-03-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80139.
+        http://trac.webkit.org/changeset/80139
+        https://bugs.webkit.org/show_bug.cgi?id=55620
+
+        failing and crashing tests on Snow Leopard bot (Requested by
+        mihaip1 on #webkit).
+
+        * page/DOMWindow.cpp:
+        * page/DOMWindow.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::pageDestroyed):
+        (WebCore::Frame::transferChildFrameToNewDocument):
+        * page/Frame.h:
+        (WebCore::Frame::detachFromPage):
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::~Geolocation):
+        (WebCore::Geolocation::disconnectFrame):
+        (WebCore::Geolocation::lastPosition):
+        (WebCore::Geolocation::requestPermission):
+        (WebCore::Geolocation::startUpdating):
+        (WebCore::Geolocation::stopUpdating):
+        * page/Geolocation.h:
+        * page/GeolocationController.cpp:
+        (WebCore::GeolocationController::~GeolocationController):
+        * page/Navigator.cpp:
+        * page/Navigator.h:
+        * platform/mock/GeolocationClientMock.cpp:
+        * platform/mock/GeolocationClientMock.h:
+
 2011-03-02  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.

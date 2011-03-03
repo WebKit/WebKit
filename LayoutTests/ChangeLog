@@ -1,3 +1,25 @@
+2011-03-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80139.
+        http://trac.webkit.org/changeset/80139
+        https://bugs.webkit.org/show_bug.cgi?id=55620
+
+        failing and crashing tests on Snow Leopard bot (Requested by
+        mihaip1 on #webkit).
+
+        * fast/dom/Geolocation/iframe-reparent-expected.txt: Removed.
+        * fast/dom/Geolocation/iframe-reparent.html: Removed.
+        * fast/dom/Geolocation/page-reload-cancel-permission-requests-expected.txt: Removed.
+        * fast/dom/Geolocation/page-reload-cancel-permission-requests.html: Removed.
+        * fast/dom/Geolocation/resources/iframe-reparent-page-iframe.html: Removed.
+        * fast/dom/Geolocation/resources/iframe-reparent-page.html: Removed.
+        * fast/dom/Geolocation/resources/page-reload-cancel-permission-requests-inner.html: Removed.
+        * fast/dom/Geolocation/script-tests/iframe-reparent.js: Removed.
+        * fast/dom/Geolocation/script-tests/page-reload-cancel-permission-requests.js: Removed.
+        * platform/gtk/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/qt/Skipped:
+
 2011-03-02  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update.

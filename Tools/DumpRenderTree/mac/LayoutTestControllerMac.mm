@@ -254,11 +254,6 @@ int LayoutTestController::numberOfPages(float pageWidthInPixels, float pageHeigh
     return [mainFrame numberOfPages:pageWidthInPixels:pageHeightInPixels];
 }
 
-int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
-{
-    return [[[mainFrame webView] UIDelegate] numberOfPendingGeolocationPermissionRequests];
-}
-
 size_t LayoutTestController::webHistoryItemCount()
 {
     return [[[WebHistory optionalSharedHistory] allItems] count];

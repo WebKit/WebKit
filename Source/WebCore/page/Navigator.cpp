@@ -55,12 +55,6 @@ Navigator::~Navigator()
     disconnectFrame();
 }
 
-void Navigator::resetGeolocationPermissions()
-{
-    if (m_geolocation)
-        m_geolocation->reset();
-}
-
 void Navigator::disconnectFrame()
 {
     if (m_plugins) {
