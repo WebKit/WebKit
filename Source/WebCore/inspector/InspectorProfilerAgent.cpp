@@ -175,12 +175,12 @@ namespace {
 
 class OutputStream : public ScriptHeapSnapshot::OutputStream {
 public:
-    OutputStream(InspectorFrontend* frontend, unsigned long uid)
+    OutputStream(InspectorFrontend::Profiler* frontend, unsigned long uid)
         : m_frontend(frontend), m_uid(uid) { }
     void Write(const String& chunk) { m_frontend->addHeapSnapshotChunk(m_uid, chunk); }
     void Close() { m_frontend->finishHeapSnapshot(m_uid); }
 private:
-    InspectorFrontend* m_frontend;
+    InspectorFrontend::Profiler* m_frontend;
     unsigned long m_uid;
 };
 
@@ -283,7 +283,7 @@ namespace {
 
 class HeapSnapshotProgress: public ScriptProfiler::HeapSnapshotProgress {
 public:
-    explicit HeapSnapshotProgress(InspectorFrontend* frontend)
+    explicit HeapSnapshotProgress(InspectorFrontend::Profiler* frontend)
         : m_frontend(frontend) { }
     void Start(int totalWork)
     {
@@ -297,7 +297,7 @@ public:
     void Done() { }
     bool isCanceled() { return false; }
 private:
-    InspectorFrontend* m_frontend;
+    InspectorFrontend::Profiler* m_frontend;
     int m_totalWork;
 };
 

@@ -32,6 +32,7 @@
 #define ConsoleMessage_h
 
 #include "Console.h"
+#include "InspectorFrontend.h"
 #include "ScriptState.h"
 
 #include <wtf/Forward.h>
@@ -54,8 +55,8 @@ public:
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, const String& responseUrl, unsigned long identifier);
     ~ConsoleMessage();
 
-    void addToFrontend(InspectorFrontend*, InjectedScriptHost*);
-    void updateRepeatCountInConsole(InspectorFrontend* frontend);
+    void addToFrontend(InspectorFrontend::Console*, InjectedScriptHost*);
+    void updateRepeatCountInConsole(InspectorFrontend::Console*);
     void incrementCount() { ++m_repeatCount; }
     bool isEqual(ConsoleMessage* msg) const;
 

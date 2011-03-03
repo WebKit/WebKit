@@ -171,7 +171,7 @@ InspectorAgent::~InspectorAgent()
 void InspectorAgent::inspectedPageDestroyed()
 {
     if (m_frontend)
-        m_frontend->disconnectFromBackend();
+        m_frontend->inspector()->disconnectFromBackend();
 
     ErrorString error;
     hideHighlight(&error);
@@ -201,8 +201,8 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
 {
     m_state->loadFromCookie(inspectorStateCookie);
 
-    m_frontend->frontendReused();
-    m_frontend->inspectedURLChanged(inspectedURL().string());
+    m_frontend->inspector()->frontendReused();
+    m_frontend->inspector()->inspectedURLChanged(inspectedURL().string());
     pushDataCollectedOffline();
 
     m_resourceAgent = InspectorResourceAgent::restore(m_inspectedPage, m_state.get(), m_frontend);
@@ -376,7 +376,7 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
     m_domStorageAgent->setFrontend(m_frontend);
 #endif
     // Initialize Web Inspector title.
-    m_frontend->inspectedURLChanged(inspectedURL().string());
+    m_frontend->inspector()->inspectedURLChanged(inspectedURL().string());
 }
 
 void InspectorAgent::disconnectFrontend()
@@ -400,7 +400,7 @@ void InspectorAgent::disconnectFrontend()
     hideHighlight(&error);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_profilerAgent->setFrontend(0);
+    m_profilerAgent->clearFrontend();
     m_profilerAgent->stopUserInitiatedProfiling(true);
 #endif
 
@@ -451,7 +451,7 @@ void InspectorAgent::populateScriptObjects(ErrorString*)
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (m_profilerAgent->enabled())
-        m_frontend->profilerWasEnabled();
+        m_frontend->profiler()->profilerWasEnabled();
 #endif
 
     pushDataCollectedOffline();
@@ -460,7 +460,7 @@ void InspectorAgent::populateScriptObjects(ErrorString*)
         focusNode();
 
     if (!m_showPanelAfterVisible.isEmpty()) {
-        m_frontend->showPanel(m_showPanelAfterVisible);
+        m_frontend->inspector()->showPanel(m_showPanelAfterVisible);
         m_showPanelAfterVisible = "";
     }
 
@@ -471,7 +471,7 @@ void InspectorAgent::populateScriptObjects(ErrorString*)
 
     // Dispatch pending frontend commands
     for (Vector<pair<long, String> >::iterator it = m_pendingEvaluateTestCommands.begin(); it != m_pendingEvaluateTestCommands.end(); ++it)
-        m_frontend->evaluateForTestInFrontend((*it).first, (*it).second);
+        m_frontend->inspector()->evaluateForTestInFrontend((*it).first, (*it).second);
     m_pendingEvaluateTestCommands.clear();
 }
 
@@ -483,7 +483,7 @@ void InspectorAgent::pushDataCollectedOffline()
     WorkersMap::iterator workersEnd = m_workers.end();
     for (WorkersMap::iterator it = m_workers.begin(); it != workersEnd; ++it) {
         InspectorWorkerResource* worker = it->second.get();
-        m_frontend->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
+        m_frontend->debugger()->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
     }
 #endif
 }
@@ -514,7 +514,7 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
 
     if (loader->frame() == m_inspectedPage->mainFrame()) {
         if (m_frontend)
-            m_frontend->inspectedURLChanged(loader->url().string());
+            m_frontend->inspector()->inspectedURLChanged(loader->url().string());
 
         m_injectedScriptHost->discardInjectedScripts();
         m_consoleAgent->reset();
@@ -542,7 +542,7 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
 #endif
 
         if (m_frontend) {
-            m_frontend->reset();
+            m_frontend->inspector()->reset();
             m_domAgent->reset();
             m_cssAgent->reset();
         }
@@ -570,7 +570,7 @@ void InspectorAgent::domContentLoadedEventFired(DocumentLoader* loader, const KU
     if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didMarkDOMContentEvent();
     if (m_frontend)
-        m_frontend->domContentEventFired(currentTime());
+        m_frontend->inspector()->domContentEventFired(currentTime());
 }
 
 void InspectorAgent::loadEventFired(DocumentLoader* loader, const KURL& url)
@@ -587,7 +587,7 @@ void InspectorAgent::loadEventFired(DocumentLoader* loader, const KURL& url)
     if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didMarkLoadEvent();
     if (m_frontend)
-        m_frontend->loadEventFired(currentTime());
+        m_frontend->inspector()->loadEventFired(currentTime());
 }
 
 bool InspectorAgent::isMainResourceLoader(DocumentLoader* loader, const KURL& requestUrl)
@@ -641,10 +641,10 @@ void InspectorAgent::postWorkerNotificationToFrontend(const InspectorWorkerResou
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     switch (action) {
     case InspectorAgent::WorkerCreated:
-        m_frontend->didCreateWorker(worker.id(), worker.url(), worker.isSharedWorker());
+        m_frontend->debugger()->didCreateWorker(worker.id(), worker.url(), worker.isSharedWorker());
         break;
     case InspectorAgent::WorkerDestroyed:
-        m_frontend->didDestroyWorker(worker.id());
+        m_frontend->debugger()->didDestroyWorker(worker.id());
         break;
     }
 #endif
@@ -841,7 +841,7 @@ void InspectorAgent::showScriptsPanel()
 void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script)
 {
     if (m_frontend)
-        m_frontend->evaluateForTestInFrontend(callId, script);
+        m_frontend->inspector()->evaluateForTestInFrontend(callId, script);
     else
         m_pendingEvaluateTestCommands.append(pair<long, String>(callId, script));
 }
@@ -1168,7 +1168,7 @@ void InspectorAgent::showPanel(const String& panel)
         m_showPanelAfterVisible = panel;
         return;
     }
-    m_frontend->showPanel(panel);
+    m_frontend->inspector()->showPanel(panel);
 }
 
 } // namespace WebCore

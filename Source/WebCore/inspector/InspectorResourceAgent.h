@@ -31,6 +31,7 @@
 #ifndef InspectorResourceAgent_h
 #define InspectorResourceAgent_h
 
+#include "InspectorFrontend.h"
 #include "PlatformString.h"
 
 #include <wtf/PassRefPtr.h>
@@ -113,7 +114,7 @@ private:
 
     Page* m_page;
     InspectorState* m_state;
-    InspectorFrontend* m_frontend;
+    InspectorFrontend::Network* m_frontend;
 };
 
 } // namespace WebCore

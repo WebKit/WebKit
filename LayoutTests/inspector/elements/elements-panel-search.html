@@ -18,7 +18,7 @@ function test()
         searchResults.push(markupValue);
     }
 
-    WebInspector.addNodesToSearchResult = function(nodeIds)
+    WebInspector.panels.elements.addNodesToSearchResult = function(nodeIds)
     {
         for (var i = 0; i < nodeIds.length; ++i) {
             var node = WebInspector.domAgent.nodeForId(nodeIds[i]);

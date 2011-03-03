@@ -106,7 +106,7 @@ void InspectorConsoleAgent::reset()
 
 void InspectorConsoleAgent::setFrontend(InspectorFrontend* frontend)
 {
-    m_frontend = frontend;
+    m_frontend = frontend->console();
 }
 
 void InspectorConsoleAgent::clearFrontend()

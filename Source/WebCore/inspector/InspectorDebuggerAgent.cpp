@@ -127,7 +127,7 @@ void InspectorDebuggerAgent::restore()
 
 void InspectorDebuggerAgent::setFrontend(InspectorFrontend* frontend)
 {
-    m_frontend = frontend;
+    m_frontend = frontend->debugger();
 }
 
 void InspectorDebuggerAgent::enableDebuggerAfterShown()

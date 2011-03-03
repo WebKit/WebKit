@@ -32,6 +32,7 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 #include "InjectedScript.h"
+#include "InspectorFrontend.h"
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
 #include "ScriptState.h"
@@ -155,7 +156,7 @@ private:
     InspectorState* m_inspectorState;
     Page* m_inspectedPage;
     InjectedScriptHost* m_injectedScriptHost;
-    InspectorFrontend* m_frontend;
+    InspectorFrontend::Debugger* m_frontend;
     ScriptState* m_pausedScriptState;
     ScriptsMap m_scripts;
     BreakpointIdToDebugServerBreakpointIdsMap m_breakpointIdToDebugServerBreakpointIds;

@@ -61,18 +61,18 @@ public:
 
     virtual ~FrontendProvider() { }
 
-    InspectorFrontend* frontend() { return m_inspectorFrontend; }
+    InspectorFrontend::Database* frontend() { return m_inspectorFrontend; }
     void clearFrontend() { m_inspectorFrontend = 0; }
 private:
-    FrontendProvider(InspectorFrontend* inspectorFrontend) : m_inspectorFrontend(inspectorFrontend) { }
-    InspectorFrontend* m_inspectorFrontend;
+    FrontendProvider(InspectorFrontend* inspectorFrontend) : m_inspectorFrontend(inspectorFrontend->database()) { }
+    InspectorFrontend::Database* m_inspectorFrontend;
 };
 
 namespace {
 
 long lastTransactionId = 0;
 
-void reportTransactionFailed(InspectorFrontend* frontend, long transactionId, SQLError* error)
+void reportTransactionFailed(InspectorFrontend::Database* frontend, long transactionId, SQLError* error)
 {
     if (!frontend)
         return;
@@ -250,7 +250,7 @@ void InspectorDatabaseAgent::setFrontend(InspectorFrontend* frontend)
     m_frontendProvider = FrontendProvider::create(frontend);
     DatabaseResourcesMap::iterator databasesEnd = m_resources.end();
     for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != databasesEnd; ++it)
-        it->second->bind(frontend);
+        it->second->bind(m_frontendProvider->frontend());
 }
 
 void InspectorDatabaseAgent::clearFrontend()

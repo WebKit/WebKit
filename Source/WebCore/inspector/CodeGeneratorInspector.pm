@@ -221,12 +221,13 @@ my @backendJSStubs;
 my $frontendClassName;
 my %frontendTypes;
 my @frontendMethods;
+my @frontendAgentFields;
 my @frontendMethodsImpl;
 my %frontendMethodSignatures;
 my $frontendConstructor;
 my @frontendConstantDeclarations;
 my @frontendConstantDefinitions;
-my $frontendFooter;
+my @frontendFooter;
 
 my @documentationToc;
 my @documentationLines;
@@ -257,20 +258,11 @@ sub GenerateModule
 
     $namespace = $dataNode->module;
     $namespace =~ s/core/WebCore/;
-}
-
-# Params: 'idlDocument' struct
-sub GenerateInterface
-{
-    my $object = shift;
-    my $interface = shift;
-    my $defines = shift;
-
-    my $className = $interface->name;
 
     $frontendClassName = "InspectorFrontend";
-    $frontendConstructor = "    ${frontendClassName}(InspectorClient* inspectorClient) : m_inspectorClient(inspectorClient) { }";
-    $frontendFooter = "  private:\n    InspectorClient* m_inspectorClient;";
+    $frontendConstructor = "    ${frontendClassName}(InspectorClient*);";
+    push(@frontendFooter, "private:");
+    push(@frontendFooter, "    InspectorClient* m_inspectorClient;");
     $frontendTypes{"String"} = 1;
     $frontendTypes{"InspectorClient"} = 1;
     $frontendTypes{"PassRefPtr"} = 1;
@@ -288,17 +280,69 @@ sub GenerateInterface
     $backendTypes{"InspectorClient"} = 1;
     $backendTypes{"PassRefPtr"} = 1;
     $backendTypes{"Object"} = 1;
+}
 
-    generateFunctions($interface);
+# Params: 'idlDocument' struct
+sub GenerateInterface
+{
+    my $object = shift;
+    my $interface = shift;
+    my $defines = shift;
+
+    my %agent = (
+        methodDeclarations => [],
+        methodSignatures => {}
+    );
+    generateFunctions($interface, \%agent);
+    if (@{%agent->{methodDeclarations}}) {
+        generateAgentDeclaration($interface, \%agent);
+    }
+}
+
+sub generateAgentDeclaration
+{
+    my $interface = shift;
+    my $agent = shift;
+    my $agentName = $interface->name;
+    push(@frontendMethods, "    class ${agentName} {");
+    push(@frontendMethods, "    public:");
+    push(@frontendMethods, "        ${agentName}(InspectorClient* inspectorClient) : m_inspectorClient(inspectorClient) { }");
+    push(@frontendMethods, @{$agent->{methodDeclarations}});
+    push(@frontendMethods, "    private:");
+    push(@frontendMethods, "        InspectorClient* m_inspectorClient;");
+    push(@frontendMethods, "    };");
+    push(@frontendMethods, "");
+
+    my $getterName = lc($agentName);
+    push(@frontendMethods, "    ${agentName}* ${getterName}() { return &m_${getterName}; }");
+    push(@frontendMethods, "");
+
+    push(@frontendFooter, "    ${agentName} m_${getterName};");
+
+    push(@frontendAgentFields, "m_${getterName}");
+}
+
+sub generateFrontendConstructorImpl
+{
+    my @frontendConstructorImpl;
+    push(@frontendConstructorImpl, "${frontendClassName}::${frontendClassName}(InspectorClient* inspectorClient)");
+    push(@frontendConstructorImpl, "    : m_inspectorClient(inspectorClient)");
+    foreach my $agentField (@frontendAgentFields) {
+        push(@frontendConstructorImpl, "    , ${agentField}(inspectorClient)");
+    }
+    push(@frontendConstructorImpl, "{");
+    push(@frontendConstructorImpl, "}");
+    return @frontendConstructorImpl;
 }
 
 sub generateFunctions
 {
     my $interface = shift;
+    my $agent = shift;
 
     foreach my $function (@{$interface->functions}) {
         if ($function->signature->extendedAttributes->{"event"}) {
-            generateFrontendFunction($interface, $function);
+            generateFrontendFunction($interface, $function, $agent);
         } else {
             generateBackendFunction($interface, $function);
         }
@@ -324,6 +368,7 @@ sub generateFrontendFunction
 {
     my $interface = shift;
     my $function = shift;
+    my $agent = shift;
 
     my $functionName = $function->signature->name;
 
@@ -332,13 +377,13 @@ sub generateFrontendFunction
     map($frontendTypes{$_->type} = 1, @argsFiltered); # register required types.
     my $arguments = join(", ", map(typeTraits($_->type, "param") . " " . $_->name, @argsFiltered)); # prepare arguments for function signature.
 
-    my $signature = "    void ${functionName}(${arguments});";
-    !$frontendMethodSignatures{${signature}} || die "Duplicate frontend function was detected for signature '$signature'.";
-    $frontendMethodSignatures{${signature}} = 1;
-    push(@frontendMethods, $signature);
+    my $signature = "        void ${functionName}(${arguments});";
+    !$agent->{methodSignatures}->{$signature} || die "Duplicate frontend function was detected for signature '$signature'.";
+    $agent->{methodSignatures}->{$signature} = 1;
+    push(@{$agent->{methodDeclarations}}, $signature);
 
     my @function;
-    push(@function, "void ${frontendClassName}::${functionName}(${arguments})");
+    push(@function, "void ${frontendClassName}::${domain}::${functionName}(${arguments})");
     push(@function, "{");
     push(@function, "    RefPtr<InspectorObject> ${functionName}Message = InspectorObject::create();");
     push(@function, "    ${functionName}Message->setString(\"type\", \"event\");");
@@ -349,7 +394,6 @@ sub generateFrontendFunction
     push(@function, @pushArguments);
     push(@function, "    ${functionName}Message->setObject(\"body\", bodyObject);");
     push(@function, "    m_inspectorClient->sendMessageToFrontend(${functionName}Message->toJSONString());");
-
     push(@function, "}");
     push(@function, "");
     push(@frontendMethodsImpl, @function);
@@ -974,6 +1018,7 @@ sub finish
 
     push(@backendMethodsImpl, generateBackendDispatcher());
     push(@backendMethodsImpl, generateBackendReportProtocolError());
+    unshift(@frontendMethodsImpl, generateFrontendConstructorImpl(), "");
 
     open(my $SOURCE, ">$outputDir/$frontendClassName.cpp") || die "Couldn't open file $outputDir/$frontendClassName.cpp";
     print $SOURCE join("\n", generateSource($frontendClassName, \%frontendTypes, \@frontendConstantDefinitions, \@frontendMethodsImpl));
@@ -981,7 +1026,7 @@ sub finish
     undef($SOURCE);
 
     open(my $HEADER, ">$outputHeadersDir/$frontendClassName.h") || die "Couldn't open file $outputHeadersDir/$frontendClassName.h";
-    print $HEADER generateHeader($frontendClassName, \%frontendTypes, $frontendConstructor, \@frontendConstantDeclarations, \@frontendMethods, $frontendFooter);
+    print $HEADER generateHeader($frontendClassName, \%frontendTypes, $frontendConstructor, \@frontendConstantDeclarations, \@frontendMethods, join("\n", @frontendFooter));
     close($HEADER);
     undef($HEADER);
 

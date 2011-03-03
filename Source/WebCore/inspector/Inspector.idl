@@ -39,7 +39,6 @@ module core {
         void openInInspectedWindow(in String url);
         void setSearchingForNode(in boolean enabled, out boolean newState);
         [event] void frontendReused();
-        [event] void addNodesToSearchResult(out Array nodeIds);
         [event] void bringToFront();
         [event] void disconnectFromBackend();
         [event] void inspectedURLChanged(out String url);
@@ -163,6 +162,7 @@ module core {
         void resolveNode(in long nodeId, in String objectGroup, out Value result);
         void pushNodeToFrontend(in Object objectId, out long nodeId);
 
+        [event] void addNodesToSearchResult(out Array nodeIds);
         [event] void setDocument(out Value root); // FIXME: should be requested from the front-end as getDocument.
         [event] void attributesUpdated(out long id, out Array attributes);
         [event] void characterDataModified(out long id, out String newValue);

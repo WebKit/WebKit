@@ -77,7 +77,7 @@ InspectorTimelineAgent::~InspectorTimelineAgent()
 
 void InspectorTimelineAgent::setFrontend(InspectorFrontend* frontend)
 {
-    m_frontend = frontend;
+    m_frontend = frontend->timeline();
 }
 
 void InspectorTimelineAgent::clearFrontend()

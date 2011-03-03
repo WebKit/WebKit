@@ -131,7 +131,7 @@ void InspectorController::show()
         return;
 
     if (m_inspectorFrontend)
-        m_inspectorFrontend->bringToFront();
+        m_inspectorFrontend->inspector()->bringToFront();
     else {
         m_openingFrontend = true;
         m_inspectorClient->openInspectorFrontend(this);
@@ -142,7 +142,7 @@ void InspectorController::close()
 {
     if (!m_inspectorFrontend)
         return;
-    m_inspectorFrontend->disconnectFromBackend();
+    m_inspectorFrontend->inspector()->disconnectFromBackend();
     disconnectFrontend();
 }
 

@@ -500,6 +500,11 @@ WebInspector.DOMDispatcher.prototype = {
     inspectElementRequested: function(nodeId)
     {
         WebInspector.updateFocusedNode(nodeId);
+    },
+
+    addNodesToSearchResult: function(nodeIds)
+    {
+        WebInspector.panels.elements.addNodesToSearchResult(nodeIds);
     }
 }
 

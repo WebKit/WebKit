@@ -1,3 +1,72 @@
+2011-03-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: break down InspectorFrontend into domain-specific classes
+        https://bugs.webkit.org/show_bug.cgi?id=55584
+
+        * inspector/CodeGeneratorInspector.pm: InspectorFrontend now contains nested classes for
+        all domains that have event notifications.
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToFrontend):
+        (WebCore::ConsoleMessage::updateRepeatCountInConsole):
+        * inspector/ConsoleMessage.h:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::inspectImpl):
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::inspectedPageDestroyed):
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        (WebCore::InspectorAgent::setFrontend):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        (WebCore::InspectorAgent::populateScriptObjects):
+        (WebCore::InspectorAgent::pushDataCollectedOffline):
+        (WebCore::InspectorAgent::didCommitLoad):
+        (WebCore::InspectorAgent::domContentLoadedEventFired):
+        (WebCore::InspectorAgent::loadEventFired):
+        (WebCore::InspectorAgent::postWorkerNotificationToFrontend):
+        (WebCore::InspectorAgent::evaluateForTestInFrontend):
+        (WebCore::InspectorAgent::showPanel):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::InspectorApplicationCacheAgent):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::setFrontend):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::show):
+        (WebCore::InspectorController::close):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setFrontend):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::bind):
+        * inspector/InspectorDOMStorageResource.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::FrontendProvider::frontend):
+        (WebCore::InspectorDatabaseAgent::FrontendProvider::FrontendProvider):
+        (WebCore::InspectorDatabaseAgent::setFrontend):
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/InspectorDatabaseResource.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setFrontend):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        * inspector/InspectorProfilerAgent.h:
+        (WebCore::InspectorProfilerAgent::setFrontend):
+        (WebCore::InspectorProfilerAgent::clearFrontend):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::setFrontend):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMDispatcher.prototype.inspectElementRequested):
+        (WebInspector.DOMDispatcher.prototype.addNodesToSearchResult):
+        * inspector/front-end/inspector.js:
+
 2011-03-02  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, a trivial regression fix.

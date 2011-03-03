@@ -32,6 +32,7 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
+#include "InspectorFrontend.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -70,7 +71,8 @@ public:
     void removeProfile(ErrorString* error, const String& type, unsigned uid);
     void resetState();
     void resetFrontendProfiles();
-    void setFrontend(InspectorFrontend* frontend) { m_frontend = frontend; }
+    void setFrontend(InspectorFrontend* frontend) { m_frontend = frontend->profiler(); }
+    void clearFrontend() { m_frontend = 0; }
     void startUserInitiatedProfiling();
     void stopUserInitiatedProfiling(bool ignoreProfile = false);
     void takeHeapSnapshot(ErrorString* error, bool detailed);
@@ -85,7 +87,7 @@ private:
     PassRefPtr<InspectorObject> createSnapshotHeader(const ScriptHeapSnapshot& snapshot);
 
     InspectorAgent* m_inspectorAgent;
-    InspectorFrontend* m_frontend;
+    InspectorFrontend::Profiler* m_frontend;
     bool m_enabled;
     bool m_recordingUserInitiatedProfile;
     int m_currentUserInitiatedProfileNumber;

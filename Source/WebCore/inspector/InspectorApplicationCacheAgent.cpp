@@ -43,7 +43,7 @@ namespace WebCore {
 
 InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(DocumentLoader* documentLoader, InspectorFrontend* frontend)
     : m_documentLoader(documentLoader)
-    , m_frontend(frontend)
+    , m_frontend(frontend->applicationcache())
 {
 }
 

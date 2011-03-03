@@ -54,7 +54,7 @@ InspectorDatabaseResource::InspectorDatabaseResource(PassRefPtr<Database> databa
 {
 }
 
-void InspectorDatabaseResource::bind(InspectorFrontend* frontend)
+void InspectorDatabaseResource::bind(InspectorFrontend::Database* frontend)
 {
     RefPtr<InspectorObject> jsonObject = InspectorObject::create();
     jsonObject->setNumber("id", m_id);

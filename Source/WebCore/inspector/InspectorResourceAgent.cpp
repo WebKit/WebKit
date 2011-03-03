@@ -519,7 +519,7 @@ void InspectorResourceAgent::resourceContent(ErrorString*, unsigned long frameId
 InspectorResourceAgent::InspectorResourceAgent(Page* page, InspectorState* state, InspectorFrontend* frontend)
     : m_page(page)
     , m_state(state)
-    , m_frontend(frontend)
+    , m_frontend(frontend->network())
 {
     m_state->setBoolean(ResourceAgentState::resourceAgentEnabled, true);
 }

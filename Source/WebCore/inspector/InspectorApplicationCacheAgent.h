@@ -28,6 +28,7 @@
 #if ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #include "ApplicationCacheHost.h"
+#include "InspectorFrontend.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
@@ -65,7 +66,7 @@ private:
     PassRefPtr<InspectorObject> buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);
 
     DocumentLoader* m_documentLoader;
-    InspectorFrontend* m_frontend;
+    InspectorFrontend::ApplicationCache* m_frontend;
 };
 
 } // namespace WebCore

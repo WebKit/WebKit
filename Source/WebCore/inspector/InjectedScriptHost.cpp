@@ -83,7 +83,7 @@ InjectedScriptHost::~InjectedScriptHost()
 void InjectedScriptHost::inspectImpl(PassRefPtr<InspectorValue> objectId, PassRefPtr<InspectorValue> hints)
 {
     if (InspectorFrontend* fe = frontend())
-        fe->inspect(objectId->asObject(), hints->asObject());
+        fe->inspector()->inspect(objectId->asObject(), hints->asObject());
 }
 
 void InjectedScriptHost::clearConsoleMessages()

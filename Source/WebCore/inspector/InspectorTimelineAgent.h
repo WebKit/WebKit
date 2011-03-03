@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "ScriptGCEvent.h"
 #include "ScriptGCEventListener.h"
@@ -172,7 +173,7 @@ private:
 
     InstrumentingAgents* m_instrumentingAgents;
     InspectorState* m_state;
-    InspectorFrontend* m_frontend;
+    InspectorFrontend::Timeline* m_frontend;
 
     Vector<TimelineRecordEntry> m_recordStack;
 

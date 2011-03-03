@@ -1410,11 +1410,6 @@ WebInspector.frontendReused = function()
     this.reset();
 }
 
-WebInspector.addNodesToSearchResult = function(nodeIds)
-{
-    WebInspector.panels.elements.addNodesToSearchResult(nodeIds);
-}
-
 WebInspector.UIString = function(string)
 {
     if (window.localizedStrings && string in window.localizedStrings)

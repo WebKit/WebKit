@@ -34,6 +34,7 @@
 #if ENABLE(DOM_STORAGE)
 
 #include "EventListener.h"
+#include "InspectorFrontend.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -75,7 +76,7 @@ namespace WebCore {
         RefPtr<Storage> m_domStorage;
         bool m_isLocalStorage;
         RefPtr<Frame> m_frame;
-        InspectorFrontend* m_frontend;
+        InspectorFrontend::DOMStorage* m_frontend;
         long m_id;
         bool m_reportingChangesToFrontend;
 

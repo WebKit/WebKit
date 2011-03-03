@@ -32,6 +32,7 @@
 
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
+#include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "Timer.h"
 
@@ -184,7 +185,7 @@ private:
 
     InstrumentingAgents* m_instrumentingAgents;
     InjectedScriptHost* m_injectedScriptHost;
-    InspectorFrontend* m_frontend;
+    InspectorFrontend::DOM* m_frontend;
     DOMListener* m_domListener;
     NodeToIdMap m_documentNodeToIdMap;
     // Owns node mappings for dangling nodes.

@@ -26,6 +26,7 @@
 #define InspectorConsoleAgent_h
 
 #include "Console.h"
+#include "InspectorFrontend.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -88,7 +89,7 @@ private:
     InspectorState* m_inspectorState;
     InjectedScriptHost* m_injectedScriptHost;
     InspectorDOMAgent* m_inspectorDOMAgent;
-    InspectorFrontend* m_frontend;
+    InspectorFrontend::Console* m_frontend;
     ConsoleMessage* m_previousMessage;
     Vector<OwnPtr<ConsoleMessage> > m_consoleMessages;
     unsigned m_expiredConsoleMessageCount;

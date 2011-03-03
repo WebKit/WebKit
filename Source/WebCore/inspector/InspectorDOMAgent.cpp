@@ -261,7 +261,7 @@ InspectorDOMAgent::~InspectorDOMAgent()
 void InspectorDOMAgent::setFrontend(InspectorFrontend* frontend)
 {
     ASSERT(!m_frontend);
-    m_frontend = frontend;
+    m_frontend = frontend->dom();
     m_instrumentingAgents->setInspectorDOMAgent(this);
 }
 
