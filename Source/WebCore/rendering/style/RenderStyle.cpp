@@ -406,7 +406,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             rareInheritedData->textSecurity != other->rareInheritedData->textSecurity ||
             rareInheritedData->hyphens != other->rareInheritedData->hyphens ||
             rareInheritedData->hyphenationString != other->rareInheritedData->hyphenationString ||
-            rareInheritedData->hyphenationLocale != other->rareInheritedData->hyphenationLocale ||
+            rareInheritedData->locale != other->rareInheritedData->locale ||
             rareInheritedData->textEmphasisMark != other->rareInheritedData->textEmphasisMark ||
             rareInheritedData->textEmphasisPosition != other->rareInheritedData->textEmphasisPosition ||
             rareInheritedData->textEmphasisCustomMark != other->rareInheritedData->textEmphasisCustomMark)

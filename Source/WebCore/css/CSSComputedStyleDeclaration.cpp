@@ -1116,10 +1116,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->hyphenationString().isNull())
                 return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
             return CSSPrimitiveValue::create(style->hyphenationString(), CSSPrimitiveValue::CSS_STRING);
-        case CSSPropertyWebkitHyphenateLocale:
-            if (style->hyphenationLocale().isNull())
-                return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
-            return CSSPrimitiveValue::create(style->hyphenationLocale(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitBorderFit:
             if (style->borderFit() == BorderFitBorder)
                 return CSSPrimitiveValue::createIdentifier(CSSValueBorder);
@@ -1154,6 +1150,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->listStylePosition());
         case CSSPropertyListStyleType:
             return CSSPrimitiveValue::create(style->listStyleType());
+        case CSSPropertyWebkitLocale:
+            if (style->locale().isNull())
+                return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
+            return CSSPrimitiveValue::create(style->locale(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyMarginTop: {
             Length marginTop = style->marginTop();
             if (marginTop.isPercent())

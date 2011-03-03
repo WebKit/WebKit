@@ -227,10 +227,10 @@ z-index
 -webkit-font-size-delta
 -webkit-highlight
 -webkit-hyphenate-character
--webkit-hyphenate-locale
 -webkit-hyphens
 -webkit-line-break
 -webkit-line-clamp
+-webkit-locale
 -webkit-logical-width
 -webkit-logical-height
 -webkit-margin-after-collapse

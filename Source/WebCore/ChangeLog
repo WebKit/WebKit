@@ -1,3 +1,31 @@
+2011-03-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename -webkit-hyphenate-locale to -webkit-locale
+        https://bugs.webkit.org/show_bug.cgi?id=55709
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::cssPropertyID):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::locale):
+        (WebCore::InheritedFlags::setLocale):
+        (WebCore::InheritedFlags::initialLocale):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+
 2011-03-03  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fixes. Use Font::textMetrics to get ascent value, and add missing include.

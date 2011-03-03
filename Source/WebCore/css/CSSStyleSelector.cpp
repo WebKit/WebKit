@@ -5759,12 +5759,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setHyphenationString(primitiveValue->getStringValue());
         return;
     }
-    case CSSPropertyWebkitHyphenateLocale: {
-        HANDLE_INHERIT_AND_INITIAL(hyphenationLocale, HyphenationLocale);
+    case CSSPropertyWebkitLocale: {
+        HANDLE_INHERIT_AND_INITIAL(locale, Locale);
         if (primitiveValue->getIdent() == CSSValueAuto)
-            m_style->setHyphenationLocale(nullAtom);
+            m_style->setLocale(nullAtom);
         else
-            m_style->setHyphenationLocale(primitiveValue->getStringValue());
+            m_style->setLocale(primitiveValue->getStringValue());
         return;
     }
     case CSSPropertyWebkitBorderFit: {

@@ -86,7 +86,7 @@ public:
     unsigned textEmphasisPosition : 1; // TextEmphasisPosition
 
     AtomicString hyphenationString;
-    AtomicString hyphenationLocale;
+    AtomicString locale;
 
     AtomicString textEmphasisCustomMark;
     RefPtr<QuotesData> quotes;

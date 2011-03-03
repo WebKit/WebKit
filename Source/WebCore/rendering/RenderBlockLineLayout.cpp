@@ -1662,7 +1662,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 
             const Font& f = style->font();
             bool isFixedPitch = f.isFixedPitch();
-            bool canHyphenate = style->hyphens() == HyphensAuto && WebCore::canHyphenate(style->hyphenationLocale());
+            bool canHyphenate = style->hyphens() == HyphensAuto && WebCore::canHyphenate(style->locale());
 
             int lastSpace = pos;
             float wordSpacing = o->style()->wordSpacing();
@@ -1791,7 +1791,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                         }
                         if (lineWasTooWide || w + tmpW > width) {
                             if (canHyphenate && w + tmpW > width) {
-                                tryHyphenating(t, f, style->hyphenationLocale(), lastSpace, pos, w + tmpW - additionalTmpW, width, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
+                                tryHyphenating(t, f, style->locale(), lastSpace, pos, w + tmpW - additionalTmpW, width, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
                                 if (hyphenated)
                                     goto end;
                             }
@@ -1909,7 +1909,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             tmpW += inlineLogicalWidth(o, !appliedStartWidth, true);
 
             if (canHyphenate && w + tmpW > width) {
-                tryHyphenating(t, f, style->hyphenationLocale(), lastSpace, pos, w + tmpW - additionalTmpW, width, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
+                tryHyphenating(t, f, style->locale(), lastSpace, pos, w + tmpW - additionalTmpW, width, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
                 if (hyphenated)
                     goto end;
             }

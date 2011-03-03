@@ -695,7 +695,7 @@ public:
     const AtomicString& highlight() const { return rareInheritedData->highlight; }
     Hyphens hyphens() const { return static_cast<Hyphens>(rareInheritedData->hyphens); }
     const AtomicString& hyphenationString() const { return rareInheritedData->hyphenationString; }
-    const AtomicString& hyphenationLocale() const { return rareInheritedData->hyphenationLocale; }
+    const AtomicString& locale() const { return rareInheritedData->locale; }
     EBorderFit borderFit() const { return static_cast<EBorderFit>(rareNonInheritedData->m_borderFit); }
     EResize resize() const { return static_cast<EResize>(rareInheritedData->resize); }
     float columnWidth() const { return rareNonInheritedData->m_multiCol->m_width; }
@@ -1048,7 +1048,7 @@ public:
     void setHighlight(const AtomicString& h) { SET_VAR(rareInheritedData, highlight, h); }
     void setHyphens(Hyphens h) { SET_VAR(rareInheritedData, hyphens, h); }
     void setHyphenationString(const AtomicString& h) { SET_VAR(rareInheritedData, hyphenationString, h); }
-    void setHyphenationLocale(const AtomicString& h) { SET_VAR(rareInheritedData, hyphenationLocale, h); }
+    void setLocale(const AtomicString& locale) { SET_VAR(rareInheritedData, locale, locale); }
     void setBorderFit(EBorderFit b) { SET_VAR(rareNonInheritedData, m_borderFit, b); }
     void setResize(EResize r) { SET_VAR(rareInheritedData, resize, r); }
     void setColumnWidth(float f) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_autoWidth, false); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_width, f); }
@@ -1274,7 +1274,7 @@ public:
     static ESpeak initialSpeak() { return SpeakNormal; }
     static Hyphens initialHyphens() { return HyphensManual; }
     static const AtomicString& initialHyphenationString() { return nullAtom; }
-    static const AtomicString& initialHyphenationLocale() { return nullAtom; }
+    static const AtomicString& initialLocale() { return nullAtom; }
     static EBorderFit initialBorderFit() { return BorderFitBorder; }
     static EResize initialResize() { return RESIZE_NONE; }
     static ControlPart initialAppearance() { return NoControlPart; }

@@ -84,7 +84,7 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , textEmphasisMark(o.textEmphasisMark)
     , textEmphasisPosition(o.textEmphasisPosition)
     , hyphenationString(o.hyphenationString)
-    , hyphenationLocale(o.hyphenationLocale)
+    , locale(o.locale)
     , textEmphasisCustomMark(o.textEmphasisCustomMark)
 {
 }
@@ -132,7 +132,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textEmphasisMark == o.textEmphasisMark
         && textEmphasisPosition == o.textEmphasisPosition
         && hyphenationString == o.hyphenationString
-        && hyphenationLocale == o.hyphenationLocale
+        && locale == o.locale
         && textEmphasisCustomMark == o.textEmphasisCustomMark
         && *quotes == *o.quotes;
 }

@@ -1599,7 +1599,7 @@ bool CSSParser::parseValue(int propId, bool important)
             validPrimitive = true;
         break;
 
-    case CSSPropertyWebkitHyphenateLocale:
+    case CSSPropertyWebkitLocale:
         if (id == CSSValueAuto || value->unit == CSSPrimitiveValue::CSS_STRING)
             validPrimitive = true;
         break;
@@ -6223,6 +6223,13 @@ static int cssPropertyID(const UChar* propertyName, unsigned length)
                 const char* const opacity = "opacity";
                 name = opacity;
                 length = strlen(opacity);
+#if PLATFORM(IOS)
+            } else if (!strcmp(buffer, "-webkit-hyphenate-locale")) {
+                // Worked in iOS 4.2.
+                const char* const webkitLocale = "-webkit-locale";
+                name = webkitLocale;
+                length = strlen(webkitLocale);
+#endif
             } else if (hasPrefix(buffer + 7, length - 7, "-border-")) {
                 // -webkit-border-*-*-radius worked in Safari 4 and earlier. -webkit-border-radius syntax
                 // differs from border-radius, so it is remains as a distinct property.

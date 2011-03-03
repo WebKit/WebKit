@@ -1,3 +1,15 @@
+2011-03-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename -webkit-hyphenate-locale to -webkit-locale
+        https://bugs.webkit.org/show_bug.cgi?id=55709
+
+        * fast/text/hyphenate-character.html:
+        * fast/text/hyphenate-first-word.html:
+        * fast/text/hyphenate-locale.html:
+        * fast/text/hyphens.html:
+
 2011-03-03  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update.
