@@ -450,6 +450,34 @@ MediaPlayer::MovieLoadType WebMediaPlayerClientImpl::movieLoadType() const
     return MediaPlayer::Unknown;
 }
 
+unsigned WebMediaPlayerClientImpl::decodedFrameCount() const
+{
+    if (m_webMediaPlayer.get())
+        return m_webMediaPlayer->decodedFrameCount();
+    return 0;
+}
+
+unsigned WebMediaPlayerClientImpl::droppedFrameCount() const
+{
+    if (m_webMediaPlayer.get())
+        return m_webMediaPlayer->droppedFrameCount();
+    return 0;
+}
+
+unsigned WebMediaPlayerClientImpl::audioDecodedByteCount() const
+{
+    if (m_webMediaPlayer.get())
+        return m_webMediaPlayer->audioDecodedByteCount();
+    return 0;
+}
+
+unsigned WebMediaPlayerClientImpl::videoDecodedByteCount() const
+{
+    if (m_webMediaPlayer.get())
+        return m_webMediaPlayer->videoDecodedByteCount();
+    return 0;
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 bool WebMediaPlayerClientImpl::supportsAcceleratedRendering() const
 {

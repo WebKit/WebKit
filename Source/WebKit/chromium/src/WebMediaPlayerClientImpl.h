@@ -114,6 +114,10 @@ public:
     virtual void paintCurrentFrameInContext(WebCore::GraphicsContext*, const WebCore::IntRect&);
     virtual bool hasSingleSecurityOrigin() const;
     virtual WebCore::MediaPlayer::MovieLoadType movieLoadType() const;
+    virtual unsigned decodedFrameCount() const;
+    virtual unsigned droppedFrameCount() const;
+    virtual unsigned audioDecodedByteCount() const;
+    virtual unsigned videoDecodedByteCount() const;
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool supportsAcceleratedRendering() const;
 

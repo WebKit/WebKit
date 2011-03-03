@@ -129,6 +129,11 @@ public:
     virtual bool hasSingleSecurityOrigin() const = 0;
     virtual MovieLoadType movieLoadType() const = 0;
 
+    virtual unsigned decodedFrameCount() const = 0;
+    virtual unsigned droppedFrameCount() const = 0;
+    virtual unsigned audioDecodedByteCount() const = 0;
+    virtual unsigned videoDecodedByteCount() const = 0;
+
     // This function returns a pointer to a WebVideoFrame, which is
     // a WebKit wrapper for a video frame in chromium. This places a lock
     // on the frame in chromium, and calls to this method should always be
