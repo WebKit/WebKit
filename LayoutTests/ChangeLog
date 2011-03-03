@@ -1,5 +1,11 @@
 2011-03-03  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip failing test on GTK.
+
+        * platform/gtk/Skipped: Skip fast/canvas/rgba-parsing.html
+
+2011-03-03  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK baselines for new tests.
 
         * platform/gtk/fast/block/positioning/differing-writing-modes-expected.checksum: Added.
