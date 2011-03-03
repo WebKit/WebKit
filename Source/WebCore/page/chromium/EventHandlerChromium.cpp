@@ -128,8 +128,8 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 {
-    RefPtr<ChromiumDataObjectLegacy> dataObject = ChromiumDataObjectLegacy::create(Clipboard::DragAndDrop);
-    return ClipboardChromium::create(Clipboard::DragAndDrop, ChromiumDataObject::create(dataObject), ClipboardWritable, m_frame);
+    RefPtr<ChromiumDataObject> dataObject = ChromiumDataObject::create(Clipboard::DragAndDrop);
+    return ClipboardChromium::create(Clipboard::DragAndDrop, dataObject.get(), ClipboardWritable, m_frame);
 }
 
 void EventHandler::focusDocumentView()

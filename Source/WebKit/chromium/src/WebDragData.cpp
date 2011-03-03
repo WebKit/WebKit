@@ -50,7 +50,7 @@ class WebDragDataPrivate : public ChromiumDataObject {
 
 void WebDragData::initialize()
 {
-    assign(static_cast<WebDragDataPrivate*>(ChromiumDataObject::create(ChromiumDataObjectLegacy::create(Clipboard::DragAndDrop)).releaseRef()));
+    assign(static_cast<WebDragDataPrivate*>(ChromiumDataObject::create(Clipboard::DragAndDrop).releaseRef()));
 }
 
 void WebDragData::reset()

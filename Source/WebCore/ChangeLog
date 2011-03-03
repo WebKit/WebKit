@@ -1,3 +1,45 @@
+2011-03-02  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by David Levin.
+
+        Manually revert ChromiumDataObject changes.
+        https://bugs.webkit.org/show_bug.cgi?id=55627
+
+        No new tests since no functionality should change.
+
+        * WebCore.gypi:
+        * editing/chromium/EditorChromium.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::clearData):
+        (WebCore::ChromiumDataObject::clearAll):
+        (WebCore::ChromiumDataObject::clearAllExceptFiles):
+        (WebCore::ChromiumDataObject::hasData):
+        (WebCore::ChromiumDataObject::types):
+        (WebCore::ChromiumDataObject::getData):
+        (WebCore::ChromiumDataObject::setData):
+        (WebCore::ChromiumDataObject::ChromiumDataObject):
+        * platform/chromium/ChromiumDataObject.h:
+        (WebCore::ChromiumDataObject::create):
+        (WebCore::ChromiumDataObject::copy):
+        (WebCore::ChromiumDataObject::urlTitle):
+        (WebCore::ChromiumDataObject::setUrlTitle):
+        (WebCore::ChromiumDataObject::htmlBaseUrl):
+        (WebCore::ChromiumDataObject::setHtmlBaseUrl):
+        (WebCore::ChromiumDataObject::containsFilenames):
+        (WebCore::ChromiumDataObject::filenames):
+        (WebCore::ChromiumDataObject::setFilenames):
+        (WebCore::ChromiumDataObject::fileExtension):
+        (WebCore::ChromiumDataObject::setFileExtension):
+        (WebCore::ChromiumDataObject::fileContentFilename):
+        (WebCore::ChromiumDataObject::setFileContentFilename):
+        (WebCore::ChromiumDataObject::fileContent):
+        (WebCore::ChromiumDataObject::setFileContent):
+        * platform/chromium/ClipboardChromium.cpp:
+        * platform/chromium/ClipboardChromium.h:
+
 2011-03-02  David Grogan  <dgrogan@chromium.org>
 
         Reviewed by Jeremy Orlow.

@@ -232,9 +232,6 @@ public:
         const WebDragData&, int identity,
         const WebPoint& clientPoint, const WebPoint& screenPoint,
         WebDragOperationsMask operationsAllowed) = 0;
-    virtual WebDragOperation dragTargetDragEnterNew(
-        int identity, const WebPoint& clientPoint, const WebPoint& screenPoint,
-        WebDragOperationsMask operationsAllowed) = 0;
     virtual WebDragOperation dragTargetDragOver(
         const WebPoint& clientPoint, const WebPoint& screenPoint,
         WebDragOperationsMask operationsAllowed) = 0;

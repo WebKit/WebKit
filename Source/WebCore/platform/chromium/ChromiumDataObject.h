@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Google Inc. All rights reserved.
+ * Copyright (c) 2008, 2009, Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,18 +31,31 @@
 #ifndef ChromiumDataObject_h
 #define ChromiumDataObject_h
 
-#include "ChromiumDataObjectLegacy.h"
-#include "ReadableDataObject.h"
-#include "WritableDataObject.h"
+#include "Clipboard.h"
+#include "KURL.h"
+#include "PlatformString.h"
+#include "SharedBuffer.h"
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
+// A data object for holding data that would be in a clipboard or moved
+// during a drag-n-drop operation.  This is the data that WebCore is aware
+// of and is not specific to a platform.
 class ChromiumDataObject : public RefCounted<ChromiumDataObject> {
 public:
-    static PassRefPtr<ChromiumDataObject> create(PassRefPtr<ChromiumDataObjectLegacy> data);
-    static PassRefPtr<ChromiumDataObject> createReadable(Clipboard::ClipboardType);
-    static PassRefPtr<ChromiumDataObject> createWritable(Clipboard::ClipboardType);
+    static PassRefPtr<ChromiumDataObject> create(Clipboard::ClipboardType clipboardType)
+    {
+        return adoptRef(new ChromiumDataObject(clipboardType));
+    }
+
+    PassRefPtr<ChromiumDataObject> copy() const
+    {
+        return adoptRef(new ChromiumDataObject(*this));
+    }
 
     void clearData(const String& type);
     void clearAll();
@@ -55,34 +68,53 @@ public:
     bool setData(const String& type, const String& data);
 
     // Special handlers for URL/HTML metadata.
-    String urlTitle() const;
-    void setUrlTitle(const String& urlTitle);
-    KURL htmlBaseUrl() const;
-    void setHtmlBaseUrl(const KURL& url);
+    String urlTitle() const { return m_urlTitle; }
+    void setUrlTitle(const String& urlTitle) { m_urlTitle = urlTitle; }
+    KURL htmlBaseUrl() const { return m_htmlBaseUrl; }
+    void setHtmlBaseUrl(const KURL& url) { m_htmlBaseUrl = url; }
 
     // Used to handle files being dragged in.
-    bool containsFilenames() const;
-    Vector<String> filenames() const;
-    void setFilenames(const Vector<String>& filenames);
+    bool containsFilenames() const { return !m_filenames.isEmpty(); }
+    Vector<String> filenames() const { return m_filenames; }
+    void setFilenames(const Vector<String>& filenames) { m_filenames = filenames; }
 
     // Used to handle files (images) being dragged out.
-    String fileExtension() const;
-    void setFileExtension(const String& fileExtension);
-    String fileContentFilename() const;
-    void setFileContentFilename(const String& fileContentFilename);
-    PassRefPtr<SharedBuffer> fileContent() const;
-    void setFileContent(PassRefPtr<SharedBuffer> fileContent);
+    String fileExtension() const { return m_fileExtension; }
+    void setFileExtension(const String& fileExtension) { m_fileExtension = fileExtension; }
+    String fileContentFilename() const { return m_fileContentFilename; }
+    void setFileContentFilename(const String& fileContentFilename) { m_fileContentFilename = fileContentFilename; }
+    PassRefPtr<SharedBuffer> fileContent() const { return m_fileContent; }
+    void setFileContent(PassRefPtr<SharedBuffer> fileContent) { m_fileContent = fileContent; }
 
 private:
-    ChromiumDataObject(PassRefPtr<ChromiumDataObjectLegacy>);
-    ChromiumDataObject(PassRefPtr<ReadableDataObject>);
-    ChromiumDataObject(PassRefPtr<WritableDataObject>);
+    ChromiumDataObject(Clipboard::ClipboardType);
+    ChromiumDataObject(const ChromiumDataObject&);
 
-    RefPtr<ChromiumDataObjectLegacy> m_legacyData;
-    RefPtr<ReadableDataObject> m_readableData;
-    RefPtr<WritableDataObject> m_writableData;
+    Clipboard::ClipboardType m_clipboardType;
+
+    String m_urlTitle;
+
+    String m_downloadMetadata;
+
+    String m_fileExtension;
+    Vector<String> m_filenames;
+
+    String m_plainText;
+
+    String m_textHtml;
+    KURL m_htmlBaseUrl;
+
+    String m_fileContentFilename;
+    RefPtr<SharedBuffer> m_fileContent;
+
+    // These two are linked. Setting m_url will set m_uriList to the same
+    // string value; setting m_uriList will cause its contents to be parsed
+    // according to RFC 2483 and the first URL found will be set in m_url.
+    KURL m_url;
+    String m_uriList;
 };
 
-}
+} // namespace WebCore
 
 #endif
+
