@@ -236,6 +236,11 @@ class MainTest(unittest.TestCase):
         self.assertRaises(KeyboardInterrupt, logging_run,
             ['failures/expected/keyboard.html'], tests_included=True)
 
+    def test_keyboard_interrupt_inline_worker_model(self):
+        self.assertRaises(KeyboardInterrupt, logging_run,
+            ['failures/expected/keyboard.html', '--worker-model', 'inline'],
+            tests_included=True)
+
     def test_last_results(self):
         fs = port.unit_test_filesystem()
         # We do a logging run here instead of a passing run in order to
@@ -415,6 +420,17 @@ class MainTest(unittest.TestCase):
             tests_included=True,
             flatten_batches=True)
         self.assertEquals(['failures/expected/crash.html', 'passes/text.html'], tests_run)
+
+    def test_exit_after_n_crashes_inline_worker_model(self):
+        tests_run = get_tests_run([
+                'failures/unexpected/timeout.html',
+                'passes/text.html',
+                '--exit-after-n-crashes-or-timeouts', '1',
+                '--worker-model', 'inline',
+            ],
+            tests_included=True,
+            flatten_batches=True)
+        self.assertEquals(['failures/unexpected/timeout.html'], tests_run)
 
     def test_results_directory_absolute(self):
         # We run a configuration that should fail, to generate output, then

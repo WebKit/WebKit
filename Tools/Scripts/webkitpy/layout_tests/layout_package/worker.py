@@ -82,11 +82,11 @@ class Worker(manager_worker_broker.AbstractWorker, worker_mixin.WorkerMixin):
         finally:
             _log.debug("%s done%s" % (self._name, exception_msg))
             if exception_msg:
-                exc_info = sys.exc_info()
-                stack_utils.log_traceback(_log.error, exc_info[2])
+                exception_type, exception_value, exception_traceback = sys.exc_info()
+                stack_utils.log_traceback(_log.error, exception_traceback)
                 # FIXME: Figure out how to send a message with a traceback.
                 self._worker_connection.post_message('exception',
-                    (exc_info[0], exc_info[1], None))
+                    (exception_type, exception_value, None))
             self._worker_connection.post_message('done')
 
     def handle_test_list(self, src, list_name, test_list):

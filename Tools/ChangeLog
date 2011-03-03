@@ -1,3 +1,23 @@
+2011-03-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        NRWT: AttributeError: TestRunner2 instance has no attribute '_cancel_workers'
+        https://bugs.webkit.org/show_bug.cgi?id=55694
+        
+        Fixes for interruptions in NRWT:
+        - Make TestRunInterruptedException be pickleable correctly (the base
+          Exception class defines a __reduce__ that does not include the reason)
+        - Fix ordering of returned arguments from TestRunner2._run_tests
+          (interrupted and keyboard_interrupted were reversed)
+        - Fix cancel_workers callsites (was using old name).
+        - In handle_exception re-raise actual exception instance that was thrown
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner2.py:
+        * Scripts/webkitpy/layout_tests/layout_package/worker.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-03-03  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Unreviewed.

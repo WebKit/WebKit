@@ -163,6 +163,9 @@ class TestRunInterruptedException(Exception):
     def __init__(self, reason):
         self.reason = reason
 
+    def __reduce__(self):
+        return self.__class__, (self.reason,)
+
 
 class TestRunner:
     """A class for managing running a series of tests on a series of layout

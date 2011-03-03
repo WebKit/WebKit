@@ -100,8 +100,9 @@ class TestRunner2(test_runner.TestRunner):
     def _run_tests(self, file_list, result_summary):
         """Runs the tests in the file_list.
 
-        Return: A tuple (keyboard_interrupted, thread_timings, test_timings,
-            individual_test_timings)
+        Return: A tuple (interrupted, keyboard_interrupted, thread_timings,
+            test_timings, individual_test_timings)
+            interrupted is whether the run was interrupted
             keyboard_interrupted is whether someone typed Ctrl^C
             thread_timings is a list of dicts with the total runtime
               of each thread with 'name', 'num_tests', 'total_time' properties
@@ -177,11 +178,11 @@ class TestRunner2(test_runner.TestRunner):
 
         except KeyboardInterrupt:
             _log.info("Interrupted, exiting")
-            self._cancel_workers()
+            self.cancel_workers()
             keyboard_interrupted = True
         except test_runner.TestRunInterruptedException, e:
             _log.info(e.reason)
-            self._cancel_workers()
+            self.cancel_workers()
             interrupted = True
         except:
             # Unexpected exception; don't try to clean up workers.
@@ -191,7 +192,7 @@ class TestRunner2(test_runner.TestRunner):
         thread_timings = [worker_state.stats for worker_state in self._worker_states.values()]
 
         # FIXME: should this be a class instead of a tuple?
-        return (keyboard_interrupted, interrupted, thread_timings,
+        return (interrupted, keyboard_interrupted, thread_timings,
                 self._group_stats, self._all_results)
 
     def cancel_workers(self):
@@ -208,7 +209,8 @@ class TestRunner2(test_runner.TestRunner):
         worker_state.done = True
 
     def handle_exception(self, source, exception_info):
-        raise exception_info
+        exception_type, exception_value, exception_traceback = exception_info
+        raise exception_type, exception_value, exception_traceback
 
     def handle_finished_list(self, source, list_name, num_tests, elapsed_time):
         self._group_stats[list_name] = (num_tests, elapsed_time)
