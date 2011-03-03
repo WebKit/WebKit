@@ -1,5 +1,13 @@
 2011-03-03  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed Chromium Snow Leopard expectations update.
+        
+        Add another media/ crash.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-03  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed Chromium Snow Leopard rebaseline.
         
         Rebaseline tables/mozilla/bugs/ tests for Snow Leopard. The current
