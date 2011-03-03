@@ -64,6 +64,7 @@ class PrepareChangeLog(AbstractStep):
         args = [self._tool.port().script_path("prepare-ChangeLog")]
         if state.get("bug_id"):
             args.append("--bug=%s" % state["bug_id"])
+            args.append("--description=%s" % self._tool.bugs.fetch_bug(state["bug_id"]).title())
         if self._options.email:
             args.append("--email=%s" % self._options.email)
 

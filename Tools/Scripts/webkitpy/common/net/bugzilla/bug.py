@@ -44,6 +44,7 @@ class Bug(object):
         return self.bug_dictionary["id"]
 
     def title(self):
+        # FIXME: Do we need to HTML unescape the title?
         return self.bug_dictionary["title"]
 
     def reporter_email(self):

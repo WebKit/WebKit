@@ -1,3 +1,19 @@
+2011-03-02  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        make webkit-patch upload work for security bugs
+        https://bugs.webkit.org/show_bug.cgi?id=55655
+
+        The problem is that we shell out to prepare-ChangeLog,
+        which does not authenticate with bugzilla. All it needs from
+        bugzilla is the bug title though. We just pass it through from
+        webkit-patch instead.
+
+        * Scripts/prepare-ChangeLog:
+        * Scripts/webkitpy/common/net/bugzilla/bug.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+
 2011-03-01  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.

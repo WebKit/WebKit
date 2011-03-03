@@ -99,6 +99,7 @@ sub decodeEntities($);
 # Project time zone for Cupertino, CA, US
 my $changeLogTimeZone = "PST8PDT";
 
+my $bugDescription;
 my $bugNumber;
 my $name;
 my $emailAddress;
@@ -114,6 +115,7 @@ my $updateChangeLogs = 1;
 my $parseOptionsResult =
     GetOptions("diff|d!" => \$spewDiff,
                "bug|b:i" => \$bugNumber,
+               "description:s" => \$bugDescription,
                "name:s" => \$name,
                "email:s" => \$emailAddress,
                "merge-base:s" => \$mergeBase,
@@ -127,6 +129,7 @@ my $parseOptionsResult =
 if (!$parseOptionsResult || $showHelp) {
     print STDERR basename($0) . " [-b|--bug=<bugid>] [-d|--diff] [-h|--help] [-o|--open] [-g|--git-commit=<committish>] [--git-reviewer=<name>] [svndir1 [svndir2 ...]]\n";
     print STDERR "  -b|--bug        Fill in the ChangeLog bug information from the given bug.\n";
+    print STDERR "  --description   One-line description that matches the bug title.\n";
     print STDERR "  -d|--diff       Spew diff to stdout when running\n";
     print STDERR "  --merge-base    Populate the ChangeLogs with the diff to this branch\n";
     print STDERR "  -g|--git-commit Populate the ChangeLogs from the specified git commit\n";
@@ -254,10 +257,12 @@ $emailAddress = changeLogEmailAddressFromArgs($emailAddress);
 
 print STDERR "  Change author: $name <$emailAddress>.\n";
 
-my $bugDescription;
 my $bugURL;
 if ($bugNumber) {
     $bugURL = "https://bugs.webkit.org/show_bug.cgi?id=$bugNumber";
+}
+
+if ($bugNumber && !$bugDescription) {
     my $bugXMLURL = "$bugURL&ctype=xml";
     # Perl has no built in XML processing, so we'll fetch and parse with curl and grep
     # Pass --insecure because some cygwin installs have no certs we don't
