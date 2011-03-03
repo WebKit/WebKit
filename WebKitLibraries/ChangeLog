@@ -1,5 +1,12 @@
 2011-03-02  Jessie Berlin  <jberlin@apple.com>
 
+        Update WebKitSystemInterface libraries. Library changes reviewed by Darin Adler.
+
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
+2011-03-02  Jessie Berlin  <jberlin@apple.com>
+
         Windows build fix. Unreviewed.
 
         * win/lib/WebKitSystemInterface.lib:
