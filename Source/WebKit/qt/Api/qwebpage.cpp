@@ -3682,14 +3682,15 @@ QWebPluginFactory *QWebPage::pluginFactory() const
 
     The default implementation returns the following value:
 
-    "Mozilla/5.0 (%Platform%; %Security%%Subplatform%) AppleWebKit/%WebKitVersion% (KHTML, like Gecko) %AppVersion Safari/%WebKitVersion%"
+    "Mozilla/5.0 (%Platform%%Security%%Subplatform%) AppleWebKit/%WebKitVersion% (KHTML, like Gecko) %AppVersion Safari/%WebKitVersion%"
 
     On mobile platforms such as Symbian S60 and Maemo, "Mobile Safari" is used instead of "Safari".
 
     In this string the following values are replaced at run-time:
     \list
-    \o %Platform% and %Subplatform% are expanded to the windowing system and the operation system.
+    \o %Platform% expands to the windowing system followed by "; " if it is not Windows (e.g. "X11; ").
     \o %Security% expands to "N; " if SSL is disabled.
+    \o %Subplatform% expands to the operating system version (e.g. "Windows NT 6.1" or "Intel Mac OS X 10.5").
     \o %WebKitVersion% is the version of WebKit the application was compiled against.
     \o %AppVersion% expands to QCoreApplication::applicationName()/QCoreApplication::applicationVersion() if they're set; otherwise defaulting to Qt and the current Qt version.
     \endlist
@@ -3708,17 +3709,17 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
 
     // Platform
 #ifdef Q_WS_MAC
-        "Macintosh"
+        "Macintosh; "
 #elif defined Q_WS_QWS
-        "QtEmbedded"
+        "QtEmbedded; "
 #elif defined Q_WS_WIN
-        "Windows"
+        // Nothing
 #elif defined Q_WS_X11
-        "X11"
+        "X11; "
 #elif defined Q_OS_SYMBIAN
         "Symbian"
 #else
-        "Unknown"
+        "Unknown; "
 #endif
     );
 
@@ -3726,28 +3727,28 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
         QSysInfo::SymbianVersion symbianVersion = QSysInfo::symbianVersion();
         switch (symbianVersion) {
         case QSysInfo::SV_9_2:
-            firstPartTemp += QString::fromLatin1("OS/9.2");
+            firstPartTemp += QString::fromLatin1("OS/9.2; ");
             break;
         case QSysInfo::SV_9_3:
-            firstPartTemp += QString::fromLatin1("OS/9.3");
+            firstPartTemp += QString::fromLatin1("OS/9.3; ");
             break;                
         case QSysInfo::SV_9_4:
-            firstPartTemp += QString::fromLatin1("OS/9.4");
+            firstPartTemp += QString::fromLatin1("OS/9.4; ");
             break;
         case QSysInfo::SV_SF_2:
-            firstPartTemp += QString::fromLatin1("/2");
+            firstPartTemp += QString::fromLatin1("/2; ");
             break;
         case QSysInfo::SV_SF_3:
-            firstPartTemp += QString::fromLatin1("/3");
+            firstPartTemp += QString::fromLatin1("/3; ");
             break;
         case QSysInfo::SV_SF_4:
-            firstPartTemp += QString::fromLatin1("/4");
+            firstPartTemp += QString::fromLatin1("/4; ");
+            break;
         default:
+            firstPartTemp += QString::fromLatin1("; ");
             break;
         }
 #endif
-
-        firstPartTemp += QString::fromLatin1("; ");
 
 #if defined(QT_NO_OPENSSL)
         // No SSL support

@@ -171,15 +171,15 @@ enum {
 static String webkitPlatform()
 {
 #if PLATFORM(X11)
-    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("X11")));
+    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("X11; ")));
 #elif OS(WINDOWS)
-    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("Windows")));
+    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("")));
 #elif PLATFORM(MAC)
-    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("Macintosh")));
+    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("Macintosh; ")));
 #elif defined(GDK_WINDOWING_DIRECTFB)
-    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("DirectFB")));
+    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("DirectFB; ")));
 #else
-    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("Unknown")));
+    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("Unknown; ")));
 #endif
 
     return uaPlatform;
@@ -222,7 +222,7 @@ String webkitUserAgent()
     // We re-use the WebKit version, though it doesn't seem to matter much in practice
 
     DEFINE_STATIC_LOCAL(const String, uaVersion, (makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+')));
-    DEFINE_STATIC_LOCAL(const String, staticUA, (makeString("Mozilla/5.0 (", webkitPlatform(), "; ", webkitOSVersion(), ") AppleWebKit/", uaVersion) +
+    DEFINE_STATIC_LOCAL(const String, staticUA, (makeString("Mozilla/5.0 (", webkitPlatform(), webkitOSVersion(), ") AppleWebKit/", uaVersion) +
                                                  makeString(" (KHTML, like Gecko) Version/5.0 Safari/", uaVersion)));
 
     return staticUA;

@@ -270,7 +270,7 @@
 "MoveWordRight"
 "MoveWordRightAndModifySelection"
 "Mozilla/5.0 (Macintosh; "
-"Mozilla/5.0 (Windows; "
+"Mozilla/5.0 ("
 "MuteButton"
 "NP_GetEntryPoints"
 "NP_Initialize"

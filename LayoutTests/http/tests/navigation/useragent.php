@@ -11,8 +11,8 @@
     var userAgent = navigator.userAgent;
 
     // Validate the user agent string using the following template:
-    var userAgentTemplate = "Mozilla/5.0 (%Platform%; %Subplatform%) AppleWebKit/%WebKitVersion% (KHTML, like Gecko)"
-    var userAgentTemplateRegExp = /^Mozilla\/5\.0 \(.+; [^;]+\) AppleWebKit\/[0-9\.]+(\+)? \(KHTML, like Gecko\).*$/;
+    var userAgentTemplate = "Mozilla/5.0 (%Platform%%Subplatform%) AppleWebKit/%WebKitVersion% (KHTML, like Gecko)"
+    var userAgentTemplateRegExp = /^Mozilla\/5\.0 \(([^;]+; )*[^;]+\) AppleWebKit\/[0-9\.]+(\+)? \(KHTML, like Gecko\).*$/;
     document.write("UserAgent should match the " + userAgentTemplate + " template: " + !!userAgent.match(userAgentTemplateRegExp) + "<br>");
 
     // Validate navigator.appVersion and navigator.appCodeName

@@ -1,3 +1,13 @@
+2011-03-03  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by James Robinson.
+
+        Drop redundant "Windows; " from the Windows-specific User Agent string.
+        https://bugs.webkit.org/show_bug.cgi?id=54567
+
+        * Api/qwebpage.cpp:
+        (QWebPage::userAgentForUrl):
+
 2011-03-01  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

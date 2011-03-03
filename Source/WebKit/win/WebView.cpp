@@ -1244,8 +1244,8 @@ bool WebView::canHandleRequest(const WebCore::ResourceRequest& request)
 String WebView::standardUserAgentWithApplicationName(const String& applicationName)
 {
     if (applicationName.isEmpty())
-        return makeString("Mozilla/5.0 (Windows; ", osVersion(), ") AppleWebKit/", webKitVersion(), " (KHTML, like Gecko)");
-    return makeString("Mozilla/5.0 (Windows; ", osVersion(), ") AppleWebKit/", webKitVersion(), " (KHTML, like Gecko) ", applicationName);
+        return makeString("Mozilla/5.0 (", osVersion(), ") AppleWebKit/", webKitVersion(), " (KHTML, like Gecko)");
+    return makeString("Mozilla/5.0 (", osVersion(), ") AppleWebKit/", webKitVersion(), " (KHTML, like Gecko) ", applicationName);
 }
 
 Page* WebView::page()

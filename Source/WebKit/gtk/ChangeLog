@@ -1,3 +1,14 @@
+2011-03-03  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by James Robinson.
+
+        Drop redundant "Windows; " from the Windows-specific User Agent string.
+        https://bugs.webkit.org/show_bug.cgi?id=54567
+
+        * webkit/webkitwebsettings.cpp:
+        (webkitPlatform):
+        (webkitUserAgent):
+
 2011-03-02  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
