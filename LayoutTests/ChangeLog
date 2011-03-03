@@ -1,3 +1,47 @@
+2011-03-02  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium Snow Leopard baseline update
+
+        With the exception of fast/repaint/select-option-background-color.html
+        and fast/repaint/slider-thumb-drag-release.html (which didn't have any
+        SL baselines at all), this was updating of baselines after r78846.
+
+        * platform/chromium-mac-leopard/fast/repaint/select-option-background-color-expected.checksum: Copied from LayoutTests/platform/chromium-mac/fast/repaint/select-option-background-color-expected.checksum.
+        * platform/chromium-mac-leopard/fast/repaint/select-option-background-color-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/repaint/select-option-background-color-expected.png.
+        * platform/chromium-mac-leopard/fast/repaint/slider-thumb-drag-release-expected.checksum: Copied from LayoutTests/platform/chromium-mac/fast/repaint/slider-thumb-drag-release-expected.checksum.
+        * platform/chromium-mac-leopard/fast/repaint/slider-thumb-drag-release-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/repaint/slider-thumb-drag-release-expected.png.
+        * platform/chromium-mac/fast/repaint/japanese-rl-selection-clear-expected.checksum:
+        * platform/chromium-mac/fast/repaint/japanese-rl-selection-clear-expected.png:
+        * platform/chromium-mac/fast/repaint/japanese-rl-selection-repaint-expected.checksum:
+        * platform/chromium-mac/fast/repaint/japanese-rl-selection-repaint-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-1-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-10-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-2-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-3-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-4-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-5-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-6-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-7-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-8-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-9-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-9-expected.png:
+        * platform/chromium-mac/fast/repaint/repaint-across-writing-mode-boundary-expected.checksum:
+        * platform/chromium-mac/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-mac/fast/repaint/select-option-background-color-expected.checksum:
+        * platform/chromium-mac/fast/repaint/select-option-background-color-expected.png:
+        * platform/chromium-mac/fast/repaint/slider-thumb-drag-release-expected.checksum:
+        * platform/chromium-mac/fast/repaint/slider-thumb-drag-release-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-02  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed Chromium expectations update
