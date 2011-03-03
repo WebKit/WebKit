@@ -1,3 +1,30 @@
+2011-03-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium Snow Leopard rebaseline.
+        
+        Rebaseline remaining editing/ tests for Snow Leopard. The current
+        expectations were just checksums, I also added their corresponding PNGs.
+        
+        We can't use the mac/ baselines since we render selections differently.
+
+        * platform/chromium-mac-leopard/editing/selection/4402375-expected.checksum: Copied from LayoutTests/platform/chromium-mac/editing/selection/4402375-expected.checksum.
+        * platform/chromium-mac-leopard/editing/selection/4402375-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/image-before-linebreak-expected.checksum: Copied from LayoutTests/platform/chromium-mac/editing/selection/image-before-linebreak-expected.checksum.
+        * platform/chromium-mac-leopard/editing/selection/image-before-linebreak-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/replaced-boundaries-1-expected.checksum: Copied from LayoutTests/platform/chromium-mac/editing/selection/replaced-boundaries-1-expected.checksum.
+        * platform/chromium-mac-leopard/editing/selection/replaced-boundaries-1-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/replaced-boundaries-2-expected.checksum: Copied from LayoutTests/platform/chromium-mac/editing/selection/replaced-boundaries-2-expected.checksum.
+        * platform/chromium-mac-leopard/editing/selection/replaced-boundaries-2-expected.png: Added.
+        * platform/chromium-mac/editing/selection/4402375-expected.checksum:
+        * platform/chromium-mac/editing/selection/4402375-expected.png: Added.
+        * platform/chromium-mac/editing/selection/image-before-linebreak-expected.checksum:
+        * platform/chromium-mac/editing/selection/image-before-linebreak-expected.png: Added.
+        * platform/chromium-mac/editing/selection/replaced-boundaries-1-expected.checksum:
+        * platform/chromium-mac/editing/selection/replaced-boundaries-1-expected.png: Added.
+        * platform/chromium-mac/editing/selection/replaced-boundaries-2-expected.checksum:
+        * platform/chromium-mac/editing/selection/replaced-boundaries-2-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-03  Helder Correia  <helder@sencha.com>
 
         Reviewed by Andreas Kling.
