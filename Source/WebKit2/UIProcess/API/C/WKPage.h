@@ -339,10 +339,10 @@ WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, const WKPagePolicyClien
 WK_EXPORT void WKPageSetPageResourceLoadClient(WKPageRef page, const WKPageResourceLoadClient* client);
 WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, const WKPageUIClient* client);
 
-typedef void (*WKPageRunJavaScriptFunction)(WKStringRef, WKErrorRef, void*);
+typedef void (*WKPageRunJavaScriptFunction)(WKSerializedScriptValueRef, WKErrorRef, void*);
 WK_EXPORT void WKPageRunJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void* context, WKPageRunJavaScriptFunction function);
 #ifdef __BLOCKS__
-typedef void (^WKPageRunJavaScriptBlock)(WKStringRef, WKErrorRef);
+typedef void (^WKPageRunJavaScriptBlock)(WKSerializedScriptValueRef, WKErrorRef);
 WK_EXPORT void WKPageRunJavaScriptInMainFrame_b(WKPageRef page, WKStringRef script, WKPageRunJavaScriptBlock block);
 #endif
 

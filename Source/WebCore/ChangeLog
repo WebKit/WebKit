@@ -1,3 +1,11 @@
+2011-03-02  Timothy Hatcher  <timothy@apple.com>
+
+        Export SerializedScriptValue::create(JSC::ExecState* exec, JSC::JSValue value).
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in: Added __ZN7WebCore21SerializedScriptValue6createEPN3JSC9ExecStateENS1_7JSValueE.
+
 2011-03-02  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by David Levin.

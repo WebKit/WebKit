@@ -311,6 +311,7 @@ void WebPageProxy::close()
     invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
     invalidateCallbackMap(m_stringCallbacks);
+    invalidateCallbackMap(m_scriptValueCallbacks);
     invalidateCallbackMap(m_computedPagesCallbacks);
 
     Vector<WebEditCommandProxy*> editCommandVector;
@@ -1112,12 +1113,12 @@ void WebPageProxy::countStringMatches(const String& string, FindOptions options,
 {
     process()->send(Messages::WebPage::CountStringMatches(string, options, maxMatchCount), m_pageID);
 }
-    
-void WebPageProxy::runJavaScriptInMainFrame(const String& script, PassRefPtr<StringCallback> prpCallback)
+
+void WebPageProxy::runJavaScriptInMainFrame(const String& script, PassRefPtr<ScriptValueCallback> prpCallback)
 {
-    RefPtr<StringCallback> callback = prpCallback;
+    RefPtr<ScriptValueCallback> callback = prpCallback;
     uint64_t callbackID = callback->callbackID();
-    m_stringCallbacks.set(callbackID, callback.get());
+    m_scriptValueCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::RunJavaScriptInMainFrame(script, callbackID), m_pageID);
 }
 
@@ -2442,6 +2443,21 @@ void WebPageProxy::stringCallback(const String& resultString, uint64_t callbackI
     callback->performCallbackWithReturnValue(resultString.impl());
 }
 
+void WebPageProxy::scriptValueCallback(const CoreIPC::DataReference& dataReference, uint64_t callbackID)
+{
+    RefPtr<ScriptValueCallback> callback = m_scriptValueCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    Vector<uint8_t> data;
+    data.reserveInitialCapacity(dataReference.size());
+    data.append(dataReference.data(), dataReference.size());
+
+    callback->performCallbackWithReturnValue(WebSerializedScriptValue::adopt(data).get());
+}
+
 void WebPageProxy::computedPagesCallback(const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
 {
     RefPtr<ComputedPagesCallback> callback = m_computedPagesCallbacks.take(callbackID);
@@ -2547,6 +2563,7 @@ void WebPageProxy::processDidCrash()
     invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
     invalidateCallbackMap(m_stringCallbacks);
+    invalidateCallbackMap(m_scriptValueCallbacks);
     invalidateCallbackMap(m_computedPagesCallbacks);
 
     Vector<WebEditCommandProxy*> editCommandVector;
