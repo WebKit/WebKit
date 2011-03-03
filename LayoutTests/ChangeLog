@@ -1,3 +1,9 @@
+2011-03-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip svg test failing on 32-bits Release, likely due
+        to a rounding error, see bug 39022.
+        * platform/gtk/Skipped:
+
 2011-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
