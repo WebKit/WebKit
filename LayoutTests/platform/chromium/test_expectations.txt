@@ -101,6 +101,9 @@ BUGCR69513 DEBUG SLOW : html5lib/webkit-resumer.html = PASS
 
 BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector/change-iframe-src.html = PASS
 
+BUGUKAI WIN SLOW : http/tests/cache/subresource-expiration-1.html = PASS
+BUGUKAI WIN SLOW : http/tests/cache/subresource-expiration-2.html = PASS
+
 // -----------------------------------------------------------------
 // SKIPPED TESTS
 // -----------------------------------------------------------------
@@ -3360,3 +3363,4 @@ BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEX
 BUGCR74710 MAC RELEASE : svg/text/font-size-below-point-five.svg = TEXT
 
 BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
+

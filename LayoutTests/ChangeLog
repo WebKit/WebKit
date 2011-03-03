@@ -1,3 +1,11 @@
+2011-03-02  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed Chromium expectations update
+
+        Mark http/tests/cache/subresource-expiration-*.html as SLOW on Win
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-02  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update
