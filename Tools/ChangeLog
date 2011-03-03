@@ -1,3 +1,11 @@
+2011-03-03  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Unreviewed.
+
+        Adding myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-03-03  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Mihai Parparita.
