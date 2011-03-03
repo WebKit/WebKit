@@ -70,7 +70,7 @@ if sys.platform.startswith("darwin"):
     wx_root = "/usr/local/lib/wxPython-unicode-%s" % wx.__version__
     sp_root = "%s/lib/python%s/site-packages" % (wx_root, py_version)
 sitepackages = "%s/wx-%s-mac-unicode/wx" % (sp_root, wx_version[:3])
-prefix = sitepackages
+prefix = wxroot + "/lib"
 
 def mac_update_dependencies(dylib, prefix):
     """
@@ -120,10 +120,15 @@ try:
     if not os.path.exists(wxpythonroot):
         os.makedirs(wxpythonroot)
     
-    for wildcard in ["*.py", "*.so", "*.dylib"]:
+    for wildcard in ["*.py", "*.so"]:
         files = glob.glob(os.path.join(wxwebkit_dir, wildcard))
         for afile in files:
             shutil.copy(afile, wxpythonroot)
+    
+    for wildcard in ["*.dylib"]:
+        files = glob.glob(os.path.join(wxwebkit_dir, wildcard))
+        for afile in files:
+            shutil.copy(afile, wxroot)
     
     if sys.platform.startswith("darwin"):
         dylib_path = os.path.join(wxpythonroot, "libwxwebkit.dylib")

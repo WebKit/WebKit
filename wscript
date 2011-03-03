@@ -303,6 +303,9 @@ def build(bld):
         excludes.append('WebDOMScriptProfileNode.cpp')
         excludes.append('WebNativeEventListener.cpp')
         
+        # This file appears not to build with older versions of ICU
+        excludes.append('LocalizedNumberICU.cpp')
+        
         if building_on_win32:
             excludes.append('SharedTimerWx.cpp')
             excludes.append('RenderThemeWin.cpp')

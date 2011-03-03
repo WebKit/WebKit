@@ -1,3 +1,10 @@
+2011-03-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, don't use LocalizedNumberICU.cpp yet, headers that it needs are not
+        included in the ICU headers used by WebKit.
+
+        * wscript:
+
 2011-03-02  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by David Levin.
@@ -10,6 +17,7 @@
         * Source/cmakeconfig.h.cmake:
         * configure.ac:
 
+>>>>>>> .r80188
 2011-03-02  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Laszlo Gombos.
