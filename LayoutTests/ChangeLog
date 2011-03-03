@@ -1,3 +1,38 @@
+2011-03-03  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        On Mac OS X, spelling suggestion panel stops showing up after change set 80121
+        https://bugs.webkit.org/show_bug.cgi?id=55628
+
+        Rebaselined tests affected by changeset 80121.
+
+        * platform/mac/editing/spelling/autocorrection-contraction-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-delete-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-removing-underline-after-paste-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-removing-underline-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-simple-expected.txt:
+        * platform/mac/editing/spelling/click-autocorrected-word-expected.txt:
+        * platform/mac/editing/spelling/click-autocorrected-word.html:
+        * platform/mac/editing/spelling/delete-autocorrected-word-1-expected.txt:
+        * platform/mac/editing/spelling/delete-into-autocorrected-word-expected.checksum:
+        * platform/mac/editing/spelling/delete-into-autocorrected-word-expected.png:
+        * platform/mac/editing/spelling/delete-into-autocorrected-word-expected.txt:
+        * platform/mac/editing/spelling/delete-into-autocorrected-word.html:
+        * platform/mac/editing/spelling/forward-delete-into-autocorrected-word-expected.checksum:
+        * platform/mac/editing/spelling/forward-delete-into-autocorrected-word-expected.png:
+        * platform/mac/editing/spelling/forward-delete-into-autocorrected-word-expected.txt:
+        * platform/mac/editing/spelling/forward-delete-into-autocorrected-word.html:
+        * platform/mac/editing/spelling/move-cursor-to-autocorrected-word-expected.checksum:
+        * platform/mac/editing/spelling/move-cursor-to-autocorrected-word-expected.png:
+        * platform/mac/editing/spelling/move-cursor-to-autocorrected-word-expected.txt:
+        * platform/mac/editing/spelling/move-cursor-to-autocorrected-word.html:
+        * platform/mac/editing/spelling/move-cursor-to-beginning-of-autocorrected-word-expected.checksum:
+        * platform/mac/editing/spelling/move-cursor-to-beginning-of-autocorrected-word-expected.png:
+        * platform/mac/editing/spelling/move-cursor-to-beginning-of-autocorrected-word-expected.txt:
+        * platform/mac/editing/spelling/move-cursor-to-beginning-of-autocorrected-word.html:
+        * platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation-expected.txt:
+
 2011-03-03  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

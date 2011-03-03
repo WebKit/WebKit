@@ -1091,9 +1091,6 @@ static void dispatchEditableContentChangedEvents(const EditCommand& command)
 
 void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
 {
-    // We may start reversion panel timer in respondToChangedSelection().
-    // So we stop the timer for current panel before calling changeSelectionAfterCommand() later in this method.
-    stopCorrectionPanelTimer();
     m_frame->document()->updateLayout();
 
     dispatchEditableContentChangedEvents(*cmd);

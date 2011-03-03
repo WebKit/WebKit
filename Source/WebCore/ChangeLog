@@ -1,3 +1,16 @@
+2011-03-03  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        On Mac OS X, spelling suggestion panel stops showing up after change set 80121
+        https://bugs.webkit.org/show_bug.cgi?id=55628
+
+        Removed a call to stopCorrectionPanelTimer() to fix a regression introduced by changeset 80121.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing):
+        * manual-tests/autocorrection/autocorrection-contraction.html:
+
 2011-03-03  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

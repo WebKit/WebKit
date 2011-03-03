@@ -26,12 +26,11 @@ function editingTest() {
 }
 
 </script>
-<title>Editing Test</title> 
+<title>Testing forward deleting into autocorrected word</title> 
 </head> 
 <body>
-<p>The test verified that if user use forward delete to move to the beginning of a word that is marked as autocorrected, 
-the autocorrection underline will remain. You should see phrase "it's a message", in which the word 
-'message' has blue underline.</p>
+<p>You should see phrase "it's amessage", in which the word 
+'message' doesn't have blue underline.</p>
 <p  style="color:green">Note, this test can fail due to user specific spell checking data. 
 If the user has previously dismissed 'message' as the correct spelling of 'mesage' several times, 
 the spell checker will not provide 'message' as a suggestion anymore. To fix this,
