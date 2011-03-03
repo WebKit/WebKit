@@ -3088,6 +3088,9 @@ BUGWK52341 GPU : fast/canvas/canvas-large-dimensions.html = TEXT
 
 BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH
 
+BUGWK55708 GPU MAC SNOWLEOPARD: media/video-controls-rendering.html = CRASH
+BUGWK55708 GPU MAC SNOWLEOPARD: media/video-zoom.html = CRASH
+
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE
 
 BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT
