@@ -3508,8 +3508,10 @@ void RenderBlock::clearFloats()
 {
     // Inline blocks are covered by the isReplaced() check in the avoidFloats method.
     if (avoidsFloats() || isRoot() || isRenderView() || isFloatingOrPositioned() || isTableCell()) {
-        if (m_floatingObjects)
+        if (m_floatingObjects) {
+            deleteAllValues(*m_floatingObjects);
             m_floatingObjects->clear();
+        }
         return;
     }
 
