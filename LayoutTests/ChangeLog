@@ -1,3 +1,14 @@
+2011-03-03  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by Eric Carlson.
+
+        Enable media tests in chromium-gpu/test_expectations
+        https://bugs.webkit.org/show_bug.cgi?id=53608
+
+        Suppressing the test failures until baselines are added.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-03  Kenji Imasaki  <imasaki@chromium.org>
 
         Reviewed by Tony Gentilcore.

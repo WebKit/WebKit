@@ -2999,6 +2999,10 @@ BUGWK50528 MAC : svg/custom/image-small-width-height.svg = IMAGE
 // GPU
 //
 
+// FIXME: Once media tests are running on the bots, upload expected test results
+// and remove this line.
+BUGNONE GPU : media = PASS FAIL
+
 // We only maintain pixel GPU baselines for Snow Leopard
 BUGNONE GPU MAC LEOPARD : compositing = IMAGE PASS
 BUGNONE GPU MAC LEOPARD : platform/chromium/compositing = IMAGE PASS

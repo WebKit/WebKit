@@ -1,3 +1,14 @@
+2011-03-03  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by Eric Carlson.
+
+        Enable media tests in chromium-gpu/test_expectations
+        https://bugs.webkit.org/show_bug.cgi?id=53608
+
+        Add media folder to the list of GPU test paths.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+
 2011-03-03  Adam Roben  <aroben@apple.com>
 
         Work around a bug in KURL's parsing of Windows-style absolute file: URLs
