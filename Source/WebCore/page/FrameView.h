@@ -37,6 +37,7 @@ namespace WebCore {
 
 class Color;
 class Event;
+class FrameActionScheduler;
 class FrameViewPrivate;
 class IntRect;
 class Node;
@@ -45,8 +46,6 @@ class RenderLayer;
 class RenderObject;
 class RenderEmbeddedObject;
 class RenderScrollbarPart;
-
-struct ScheduledEvent;
 
 template <typename T> class Timer;
 
@@ -297,7 +296,6 @@ private:
 
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
 
-    void dispatchScheduledEvents();
     void performPostLayoutTasks();
 
     virtual void repaintContentRectangle(const IntRect&, bool immediate);
@@ -381,9 +379,8 @@ private:
     String m_mediaType;
     String m_mediaTypeWhenNotPrinting;
 
-    unsigned m_enqueueEvents;
-    Vector<ScheduledEvent*> m_scheduledEvents;
-    
+    OwnPtr<FrameActionScheduler> m_actionScheduler;
+
     bool m_overflowStatusDirty;
     bool m_horizontalOverflow;
     bool m_verticalOverflow;    

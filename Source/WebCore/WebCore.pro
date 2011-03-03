@@ -883,6 +883,7 @@ SOURCES += \
     page/EventSource.cpp \
     page/FocusController.cpp \
     page/Frame.cpp \
+    page/FrameActionScheduler.cpp \
     page/FrameTree.cpp \
     page/FrameView.cpp \
     page/Geolocation.cpp \

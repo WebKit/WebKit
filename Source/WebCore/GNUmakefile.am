@@ -2215,6 +2215,8 @@ webcore_sources += \
 	Source/WebCore/page/FocusDirection.h \
 	Source/WebCore/page/Frame.cpp \
 	Source/WebCore/page/Frame.h \
+	Source/WebCore/page/FrameActionScheduler.cpp \
+	Source/WebCore/page/FrameActionScheduler.h \
 	Source/WebCore/page/FrameLoadRequest.h \
 	Source/WebCore/page/FrameTree.cpp \
 	Source/WebCore/page/FrameTree.h \

@@ -2337,6 +2337,8 @@
             'page/FrameLoadRequest.h',
             'page/FrameTree.cpp',
             'page/FrameTree.h',
+            'page/FrameActionScheduler.cpp',
+            'page/FrameActionScheduler.h',
             'page/FrameView.cpp',
             'page/FrameView.h',
             'page/Geolocation.cpp',

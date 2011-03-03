@@ -24460,6 +24460,14 @@
 			<File
 				RelativePath="..\page\Frame.h"
 				>
+			<File
+				RelativePath="..\page\FrameActionScheduler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\FrameActionScheduler.h"
+				>
+			</File>
 			</File>
 			<File
 				RelativePath="..\page\FrameLoadRequest.h"

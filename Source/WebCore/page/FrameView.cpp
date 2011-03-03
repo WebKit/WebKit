@@ -37,6 +37,7 @@
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "FrameActionScheduler.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameTree.h"
@@ -109,14 +110,6 @@ double FrameView::s_deferredRepaintDelayIncrementDuringLoading = 0;
 // The maximum number of updateWidgets iterations that should be done before returning.
 static const unsigned maxUpdateWidgetsIterations = 2;
 
-struct ScheduledEvent {
-    WTF_MAKE_NONCOPYABLE(ScheduledEvent); WTF_MAKE_FAST_ALLOCATED;
-public:
-    ScheduledEvent() { }
-    RefPtr<Event> m_event;
-    RefPtr<Node> m_eventTarget;
-};
-
 FrameView::FrameView(Frame* frame)
     : m_frame(frame)
     , m_canHaveScrollbars(true)
@@ -130,7 +123,7 @@ FrameView::FrameView(Frame* frame)
     , m_isTransparent(false)
     , m_baseBackgroundColor(Color::white)
     , m_mediaType("screen")
-    , m_enqueueEvents(0)
+    , m_actionScheduler(new FrameActionScheduler())
     , m_overflowStatusDirty(true)
     , m_viewportRenderer(0)
     , m_wasScrolledByUser(false)
@@ -165,8 +158,7 @@ FrameView::~FrameView()
 {
     if (m_hasPendingPostLayoutTasks) {
         m_postLayoutTasksTimer.stop();
-        m_scheduledEvents.clear();
-        m_enqueueEvents = 0;
+        m_actionScheduler->clear();
     }
     
     if (AXObjectCache::accessibilityEnabled() && axObjectCache())
@@ -182,8 +174,7 @@ FrameView::~FrameView()
     setHasVerticalScrollbar(false);
     
     ASSERT(!m_scrollCorner);
-    ASSERT(m_scheduledEvents.isEmpty());
-    ASSERT(!m_enqueueEvents);
+    ASSERT(m_actionScheduler->isEmpty());
 
     if (m_frame) {
         ASSERT(m_frame->view() != this || !m_frame->contentRenderer());
@@ -890,7 +881,7 @@ void FrameView::layout(bool allowSubtree)
 
     RenderLayer* layer = root->enclosingLayer();
 
-    pauseScheduledEvents();
+    m_actionScheduler->pause();
 
     bool disableLayoutState = false;
     if (subtree) {
@@ -968,13 +959,12 @@ void FrameView::layout(bool allowSubtree)
             m_hasPendingPostLayoutTasks = true;
             m_postLayoutTasksTimer.startOneShot(0);
             if (needsLayout()) {
-                pauseScheduledEvents();
+                m_actionScheduler->pause();
                 layout();
             }
         }
     } else {
-        resumeScheduledEvents();
-        ASSERT(m_enqueueEvents);
+        m_actionScheduler->resume();
     }
 
     InspectorInstrumentation::didLayout(cookie);
@@ -1794,30 +1784,17 @@ bool FrameView::shouldUpdate(bool immediateRequested) const
 
 void FrameView::scheduleEvent(PassRefPtr<Event> event, PassRefPtr<Node> eventTarget)
 {
-    if (!m_enqueueEvents) {
-        ExceptionCode ec = 0;
-        eventTarget->dispatchEvent(event, ec);
-        return;
-    }
-
-    ScheduledEvent* scheduledEvent = new ScheduledEvent;
-    scheduledEvent->m_event = event;
-    scheduledEvent->m_eventTarget = eventTarget;
-    m_scheduledEvents.append(scheduledEvent);
+    m_actionScheduler->scheduleEvent(event, eventTarget);
 }
 
 void FrameView::pauseScheduledEvents()
 {
-    ASSERT(m_scheduledEvents.isEmpty() || m_enqueueEvents);
-    m_enqueueEvents++;
+    m_actionScheduler->pause();
 }
 
 void FrameView::resumeScheduledEvents()
 {
-    m_enqueueEvents--;
-    if (!m_enqueueEvents)
-        dispatchScheduledEvents();
-    ASSERT(m_scheduledEvents.isEmpty() || m_enqueueEvents);
+    m_actionScheduler->resume();
 }
 
 void FrameView::scrollToAnchor()
@@ -1943,7 +1920,7 @@ void FrameView::performPostLayoutTasks()
 
     scrollToAnchor();
 
-    resumeScheduledEvents();
+    m_actionScheduler->resume();
 
     if (!root->printing()) {
         IntSize currentSize = IntSize(width(), height());
@@ -1980,33 +1957,11 @@ void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverf
         m_horizontalOverflow = horizontalOverflow;
         m_verticalOverflow = verticalOverflow;
         
-        scheduleEvent(OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow,
+        m_actionScheduler->scheduleEvent(OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow,
             verticalOverflowChanged, verticalOverflow),
             m_viewportRenderer->node());
     }
     
-}
-
-void FrameView::dispatchScheduledEvents()
-{
-    if (m_scheduledEvents.isEmpty())
-        return;
-
-    Vector<ScheduledEvent*> scheduledEventsCopy = m_scheduledEvents;
-    m_scheduledEvents.clear();
-    
-    Vector<ScheduledEvent*>::iterator end = scheduledEventsCopy.end();
-    for (Vector<ScheduledEvent*>::iterator it = scheduledEventsCopy.begin(); it != end; ++it) {
-        ScheduledEvent* scheduledEvent = *it;
-        
-        ExceptionCode ec = 0;
-        
-        // Only dispatch events to nodes that are in the document
-        if (scheduledEvent->m_eventTarget->inDocument())
-            scheduledEvent->m_eventTarget->dispatchEvent(scheduledEvent->m_event, ec);
-        
-        delete scheduledEvent;
-    }
 }
 
 IntRect FrameView::windowClipRect(bool clipToContents) const
