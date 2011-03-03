@@ -1,3 +1,19 @@
+2011-03-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Do a bit of cleanup in ChromeClientGtk. Instead of always fetching the
+        WebKitWebView from the frame, simply get it from the member variable of
+        the ChromeClientGtk instance itself.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::scrollbarsVisible):
+        (WebKit::ChromeClient::exceededDatabaseQuota):
+        (WebKit::ChromeClient::requestGeolocationPermissionForFrame):
+        (WebKit::ChromeClient::cancelGeolocationPermissionRequestForFrame):
+        (WebKit::ChromeClient::enterFullscreenForNode):
+        (WebKit::ChromeClient::exitFullscreenForNode):
+
 2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed. Roll out r80068 and r80073 due to breaking WebKit2 Qt port.

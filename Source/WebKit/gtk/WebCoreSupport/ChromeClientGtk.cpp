@@ -219,7 +219,8 @@ void ChromeClient::setScrollbarsVisible(bool visible)
     g_object_set(webWindowFeatures, "scrollbar-visible", visible, NULL);
 }
 
-bool ChromeClient::scrollbarsVisible() {
+bool ChromeClient::scrollbarsVisible()
+{
     WebKitWebWindowFeatures* webWindowFeatures = webkit_web_view_get_window_features(m_webView);
     gboolean visible;
 
@@ -585,11 +586,9 @@ void ChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseNam
     DatabaseTracker::tracker().setQuota(frame->document()->securityOrigin(), defaultQuota);
 
     WebKitWebFrame* webFrame = kit(frame);
-    WebKitWebView* webView = getViewFromFrame(webFrame);
-
     WebKitSecurityOrigin* origin = webkit_web_frame_get_security_origin(webFrame);
     WebKitWebDatabase* webDatabase = webkit_security_origin_get_web_database(origin, databaseName.utf8().data());
-    g_signal_emit_by_name(webView, "database-quota-exceeded", webFrame, webDatabase);
+    g_signal_emit_by_name(m_webView, "database-quota-exceeded", webFrame, webDatabase);
 }
 #endif
 
@@ -611,7 +610,7 @@ void ChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
     RefPtr<FileChooser> chooser = prpFileChooser;
 
     GtkWidget* dialog = gtk_file_chooser_dialog_new(_("Upload File"),
-                                                    GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(platformPageClient()))),
+                                                    GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(m_webView))),
                                                     GTK_FILE_CHOOSER_ACTION_OPEN,
                                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                                     GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
@@ -660,21 +659,17 @@ void ChromeClient::setCursor(const Cursor&)
 void ChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
     WebKitWebFrame* webFrame = kit(frame);
-    WebKitWebView* webView = getViewFromFrame(webFrame);
-
     GRefPtr<WebKitGeolocationPolicyDecision> policyDecision(adoptGRef(webkit_geolocation_policy_decision_new(webFrame, geolocation)));
 
     gboolean isHandled = FALSE;
-    g_signal_emit_by_name(webView, "geolocation-policy-decision-requested", webFrame, policyDecision.get(), &isHandled);
+    g_signal_emit_by_name(m_webView, "geolocation-policy-decision-requested", webFrame, policyDecision.get(), &isHandled);
     if (!isHandled)
         webkit_geolocation_policy_deny(policyDecision.get());
 }
 
 void ChromeClient::cancelGeolocationPermissionRequestForFrame(WebCore::Frame* frame, WebCore::Geolocation*)
 {
-    WebKitWebFrame* webFrame = kit(frame);
-    WebKitWebView* webView = getViewFromFrame(webFrame);
-    g_signal_emit_by_name(webView, "geolocation-policy-decision-cancelled", webFrame);
+    g_signal_emit_by_name(m_webView, "geolocation-policy-decision-cancelled", kit(frame));
 }
 
 bool ChromeClient::selectItemWritingDirectionIsNatural()
@@ -706,18 +701,12 @@ bool ChromeClient::supportsFullscreenForNode(const Node* node)
 
 void ChromeClient::enterFullscreenForNode(Node* node)
 {
-    WebCore::Frame* frame = node->document()->frame();
-    WebKitWebFrame* webFrame = kit(frame);
-    WebKitWebView* webView = getViewFromFrame(webFrame);
-    webViewEnterFullscreen(webView, node);
+    webViewEnterFullscreen(m_webView, node);
 }
 
 void ChromeClient::exitFullscreenForNode(Node* node)
 {
-    WebCore::Frame* frame = node->document()->frame();
-    WebKitWebFrame* webFrame = kit(frame);
-    WebKitWebView* webView = getViewFromFrame(webFrame);
-    webViewExitFullscreen(webView);
+    webViewExitFullscreen(m_webView);
 }
 #endif
 
