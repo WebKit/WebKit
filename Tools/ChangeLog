@@ -1,3 +1,16 @@
+2011-03-03  Adam Roben  <aroben@apple.com>
+
+        Work around a bug in KURL's parsing of Windows-style absolute file: URLs
+
+        Fixes <http://webkit.org/b/55674> Many tests fail in WebKit2 mode on Windows due to
+        incorrect parsing of absolute Windows-style file: URLs
+
+        Reviewed by Tim Hatcher.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::createWKURL): Add a "localhost" host to file: URLs we create to work around
+        <http://webkit.org/b/55683>.
+
 2011-03-03  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.
