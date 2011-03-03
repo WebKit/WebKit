@@ -2747,7 +2747,7 @@ static bool eventInvertsTabsToLinksClientCallResult(KeyboardEvent* event)
 
 bool EventHandler::tabsToLinks(KeyboardEvent* event) const
 {
-    ASSERT(!event || event->keyIdentifier() == "U+0009");
+    // FIXME: This function needs a better name. It can be called for keypresses other than Tab when spatial navigation is enabled.
 
     Page* page = m_frame->page();
     if (!page)

@@ -1,3 +1,10 @@
+2011-03-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix assertion failures on Gtk bot.
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::tabsToLinks): Removed an overzealous
+        assertion. We can get here with non-Tab key events when spatial navigation is enabled.
+
 2011-03-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80139.
