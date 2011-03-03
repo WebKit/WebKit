@@ -1,3 +1,30 @@
+2011-03-03  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Convert offsetLeft-offsetTop-borders.html to dumpAsText()
+        https://bugs.webkit.org/show_bug.cgi?id=55612
+
+        This test outputs the values of offsetLeft/offsetTop for portions
+        of the DOM. It appears it would do just as well as a text-based test.
+
+        * fast/block/positioning/offsetLeft-offsetTop-borders-expected.txt: Added.
+        * fast/block/positioning/offsetLeft-offsetTop-borders.html:
+        * platform/chromium-linux/fast/block/positioning/offsetLeft-offsetTop-borders-expected.checksum: Removed.
+        * platform/chromium-linux/fast/block/positioning/offsetLeft-offsetTop-borders-expected.png: Removed.
+        * platform/chromium-win/fast/block/positioning/offsetLeft-offsetTop-borders-expected.checksum: Removed.
+        * platform/chromium-win/fast/block/positioning/offsetLeft-offsetTop-borders-expected.png: Removed.
+        * platform/chromium-win/fast/block/positioning/offsetLeft-offsetTop-borders-expected.txt: Removed.
+        * platform/gtk/fast/block/positioning/offsetLeft-offsetTop-borders-expected.checksum: Removed.
+        * platform/gtk/fast/block/positioning/offsetLeft-offsetTop-borders-expected.png: Removed.
+        * platform/gtk/fast/block/positioning/offsetLeft-offsetTop-borders-expected.txt: Removed.
+        * platform/mac-leopard/fast/block/positioning/offsetLeft-offsetTop-borders-expected.checksum: Removed.
+        * platform/mac-leopard/fast/block/positioning/offsetLeft-offsetTop-borders-expected.png: Removed.
+        * platform/mac/fast/block/positioning/offsetLeft-offsetTop-borders-expected.checksum: Removed.
+        * platform/mac/fast/block/positioning/offsetLeft-offsetTop-borders-expected.png: Removed.
+        * platform/mac/fast/block/positioning/offsetLeft-offsetTop-borders-expected.txt: Removed.
+        * platform/qt/fast/block/positioning/offsetLeft-offsetTop-borders-expected.txt: Removed.
+
 2011-03-03  Peter Kasting  <pkasting@google.com>
 
         Reviewed by James Robinson.

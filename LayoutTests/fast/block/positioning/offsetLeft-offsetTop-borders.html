@@ -1,6 +1,4 @@
 <html>
-<head>
-
 <body style='margin:8px'>
 <div>
 <div style="position: absolute; width: 150px; height: 150px; border: 5px solid green;">
@@ -11,6 +9,9 @@ jee
 </div>
 </div>
 <script>
+if (window.layoutTestController)
+  layoutTestController.dumpAsText();
+
 var el = document.getElementById('x');
 while (el) {
 document.write('<br>-------------------------------------------------offsetLeft:'+el.offsetLeft);
@@ -22,3 +23,5 @@ document.write('<br>-------------------------------------------------offsetTop:'
 el = el.offsetParent;
 }
 </script>
+</body>
+</html>
