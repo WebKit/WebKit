@@ -1,3 +1,26 @@
+2011-03-02  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION: Accelerated transitions are jumpy
+        https://bugs.webkit.org/show_bug.cgi?id=55022
+
+        Got rid of default TimingFunction values from PlatformCAAnimation*. A TimingFunction
+        is now always passed in. The TimingFunction class now has a static method to get
+        a default object which has the 'ease' values in it. I now assert in both Mac and
+        Win implementations if a null TimingFunction pointer is seen.
+
+        * platform/animation/TimingFunction.h:
+        (WebCore::CubicBezierTimingFunction::create):
+        (WebCore::CubicBezierTimingFunction::defaultTimingFunction):
+        (WebCore::CubicBezierTimingFunction::CubicBezierTimingFunction):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::timingFunctionForAnimationValue):
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        (toCAMediaTimingFunction):
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        (toCACFTimingFunction):
+
 2011-03-03  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed build fix.

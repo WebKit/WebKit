@@ -124,9 +124,7 @@ static PlatformCAAnimation::ValueFunctionType fromCACFValueFunctionType(CFString
 
 static RetainPtr<CACFTimingFunctionRef> toCACFTimingFunction(const TimingFunction* timingFunction)
 {
-    if (!timingFunction)
-        return RetainPtr<CACFTimingFunctionRef>(AdoptCF, CACFTimingFunctionCreate(0.25f, 0.1f, 0.25f, 0.1f));
-            
+    ASSERT(timingFunction);
     if (timingFunction->isCubicBezierTimingFunction()) {
         const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(timingFunction);
         return RetainPtr<CACFTimingFunctionRef>(AdoptCF, CACFTimingFunctionCreate(static_cast<float>(ctf->x1()), static_cast<float>(ctf->y1()), static_cast<float>(ctf->x2()), static_cast<float>(ctf->y2())));

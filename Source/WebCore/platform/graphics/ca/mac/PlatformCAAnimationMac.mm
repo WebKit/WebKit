@@ -135,9 +135,7 @@ static PlatformCAAnimation::ValueFunctionType fromCAValueFunctionType(NSString* 
 
 static CAMediaTimingFunction* toCAMediaTimingFunction(const TimingFunction* timingFunction)
 {
-    if (!timingFunction)
-        return [CAMediaTimingFunction functionWithControlPoints:0.25f :0.1f :0.25f :1]; // Default is 'ease' function.
-            
+    ASSERT(timingFunction);
     if (timingFunction->isCubicBezierTimingFunction()) {
         const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(timingFunction);
         return [CAMediaTimingFunction functionWithControlPoints:static_cast<float>(ctf->x1()) :static_cast<float>(ctf->y1())

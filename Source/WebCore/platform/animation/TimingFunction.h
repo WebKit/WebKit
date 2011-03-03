@@ -76,9 +76,14 @@ private:
     
 class CubicBezierTimingFunction : public TimingFunction {
 public:
-    static PassRefPtr<CubicBezierTimingFunction> create(double x1 = 0.25, double y1 = 0.1, double x2 = 0.25, double y2 = 1.0)
+    static PassRefPtr<CubicBezierTimingFunction> create(double x1, double y1, double x2, double y2)
     {
         return adoptRef(new CubicBezierTimingFunction(x1, y1, x2, y2));
+    }
+
+    static PassRefPtr<CubicBezierTimingFunction> create()
+    {
+        return adoptRef(new CubicBezierTimingFunction());
     }
 
     ~CubicBezierTimingFunction() { }
@@ -97,8 +102,14 @@ public:
     double x2() const { return m_x2; }
     double y2() const { return m_y2; }
     
+    static const CubicBezierTimingFunction* defaultTimingFunction()
+    {
+        DEFINE_STATIC_LOCAL(const CubicBezierTimingFunction, dtf, ());
+        return &dtf;
+    }
+    
 private:
-    CubicBezierTimingFunction(double x1, double y1, double x2, double y2)
+    CubicBezierTimingFunction(double x1 = 0.25, double y1 = 0.1, double x2 = 0.25, double y2 = 1.0)
         : TimingFunction(CubicBezierFunction)
         , m_x1(x1)
         , m_y1(y1)

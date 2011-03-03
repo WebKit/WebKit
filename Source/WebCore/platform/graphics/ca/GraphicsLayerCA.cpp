@@ -1681,8 +1681,8 @@ const TimingFunction* GraphicsLayerCA::timingFunctionForAnimationValue(const Ani
         return animValue->timingFunction();
     if (anim->isTimingFunctionSet())
         return anim->timingFunction().get();
-        
-    return 0;
+    
+    return CubicBezierTimingFunction::defaultTimingFunction();
 }
 
 bool GraphicsLayerCA::setAnimationEndpoints(const KeyframeValueList& valueList, const Animation* anim, PlatformCAAnimation* basicAnim)
