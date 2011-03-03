@@ -1,3 +1,27 @@
+2011-03-03  Adam Roben  <aroben@apple.com>
+
+        Create the CFBundleRef for WebKit.dll on Windows if needed
+
+        WebKit part of <http://webkit.org/b/55672> <rdar://problem/9080867> All inspector tests time
+        out or crash on Windows 7 Release (WebKit2 Tests)
+
+        Reviewed by Darin Adler.
+
+        * Shared/win/WebKitBundle.cpp: Added.
+        (WebKit::createWebKitBundle): Returns a pre-existing bundle, if possible, otherwise creates
+        and returns a new bundle.
+        (WebKit::webKitBundle): Creates and caches a bundle, and returns it.
+
+        * Shared/win/WebKitBundle.h: Added.
+
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        * WebProcess/WebPage/win/WebInspectorWin.cpp:
+        (WebKit::WebInspector::localizedStringsURL):
+        Changed to use webKitBundle() to ensure that the bundle has been created.
+
+        * win/WebKit2.vcproj: Added new files.
+
 2011-03-03  Peter Kasting  <pkasting@google.com>
 
         Reviewed by James Robinson.

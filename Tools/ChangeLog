@@ -1,5 +1,18 @@
 2011-03-03  Adam Roben  <aroben@apple.com>
 
+        Look for Windows-style paths when checking whether a test is an Inspector test
+
+        WTR part of <http://webkit.org/b/55672> <rdar://problem/9080867> All inspector tests time
+        out or crash on Windows 7 Release (WebKit2 Tests)
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::shouldOpenWebInspector): Also look for backslashes, since that's what we'll get on
+        Windows.
+
+2011-03-03  Adam Roben  <aroben@apple.com>
+
         Make Windows 7 Release (Tests) a core builder
 
         We can probably make Windows XP Debug (Tests) a core builder, too, but we should probably

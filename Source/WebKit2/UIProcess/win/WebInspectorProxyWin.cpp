@@ -28,6 +28,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "WebKitBundle.h"
 #include "WebPageProxy.h"
 #include "WebView.h"
 #include <WebCore/WebCoreInstanceHandle.h>
@@ -194,7 +195,7 @@ void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
 
 String WebInspectorProxy::inspectorPageURL() const
 {
-    RetainPtr<CFURLRef> htmlURLRef(AdoptCF, CFBundleCopyResourceURL(CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit")), CFSTR("inspector"), CFSTR("html"), CFSTR("inspector")));
+    RetainPtr<CFURLRef> htmlURLRef(AdoptCF, CFBundleCopyResourceURL(webKitBundle(), CFSTR("inspector"), CFSTR("html"), CFSTR("inspector")));
     if (!htmlURLRef)
         return String();
 

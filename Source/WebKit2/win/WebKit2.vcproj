@@ -1174,6 +1174,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Shared\win\WebKitBundle.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\win\WebKitBundle.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\win\WebURLRequestWin.cpp"
 					>
 					<FileConfiguration

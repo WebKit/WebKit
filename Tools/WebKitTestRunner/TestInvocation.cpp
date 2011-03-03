@@ -124,7 +124,7 @@ static void sizeWebViewForCurrentTest(const char* pathOrURL)
 
 static bool shouldOpenWebInspector(const char* pathOrURL)
 {
-    return strstr(pathOrURL, "inspector/");
+    return strstr(pathOrURL, "inspector/") || strstr(pathOrURL, "inspector\\");
 }
 
 void TestInvocation::invoke()

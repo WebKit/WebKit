@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebInspector.h"
+#ifndef WebKitBundle_h
+#define WebKitBundle_h
 
-#if ENABLE(INSPECTOR)
-
-#include "WebKitBundle.h"
-#include <wtf/RetainPtr.h>
-#include <wtf/text/WTFString.h>
+typedef struct __CFBundle* CFBundleRef;
 
 namespace WebKit {
 
-String WebInspector::localizedStringsURL() const
-{
-    RetainPtr<CFURLRef> localizedStringsURLRef(AdoptCF, CFBundleCopyResourceURL(webKitBundle(), CFSTR("localizedStrings"), CFSTR("js"), 0));
-    if (!localizedStringsURLRef)
-        return String();
-
-    return String(CFURLGetString(localizedStringsURLRef.get()));
-}
+CFBundleRef webKitBundle();
 
 } // namespace WebKit
 
-#endif // ENABLE(INSPECTOR)
+#endif // WebKitBundle_h

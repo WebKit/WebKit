@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,25 +24,40 @@
  */
 
 #include "config.h"
-#include "WebInspector.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "WebKitBundle.h"
+
+#include <CoreFoundation/CFBundle.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/StdLibExtras.h>
+
+extern "C" HINSTANCE gInstance;
 
 namespace WebKit {
 
-String WebInspector::localizedStringsURL() const
+static CFBundleRef createWebKitBundle()
 {
-    RetainPtr<CFURLRef> localizedStringsURLRef(AdoptCF, CFBundleCopyResourceURL(webKitBundle(), CFSTR("localizedStrings"), CFSTR("js"), 0));
-    if (!localizedStringsURLRef)
-        return String();
+    if (CFBundleRef existingBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"))) {
+        CFRetain(existingBundle);
+        return existingBundle;
+    }
 
-    return String(CFURLGetString(localizedStringsURLRef.get()));
+    wchar_t dllPathBuffer[MAX_PATH];
+    DWORD length = ::GetModuleFileNameW(gInstance, dllPathBuffer, WTF_ARRAY_LENGTH(dllPathBuffer));
+    ASSERT(length && length < WTF_ARRAY_LENGTH(dllPathBuffer));
+
+    RetainPtr<CFStringRef> dllPath(AdoptCF, CFStringCreateWithCharactersNoCopy(0, reinterpret_cast<const UniChar*>(dllPathBuffer), length, kCFAllocatorNull));
+    RetainPtr<CFURLRef> dllURL(AdoptCF, CFURLCreateWithFileSystemPath(0, dllPath.get(), kCFURLWindowsPathStyle, false));
+    RetainPtr<CFURLRef> dllDirectoryURL(AdoptCF, CFURLCreateCopyDeletingLastPathComponent(0, dllURL.get()));
+    RetainPtr<CFURLRef> resourcesDirectoryURL(AdoptCF, CFURLCreateCopyAppendingPathComponent(0, dllDirectoryURL.get(), CFSTR("WebKit.resources"), true));
+
+    return CFBundleCreate(0, resourcesDirectoryURL.get());
+}
+
+CFBundleRef webKitBundle()
+{
+    static CFBundleRef bundle = createWebKitBundle();
+    ASSERT(bundle);
+    return bundle;
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(INSPECTOR)
