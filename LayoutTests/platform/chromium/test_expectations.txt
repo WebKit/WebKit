@@ -792,7 +792,7 @@ BUGCR59675 BUGCR59263 SKIP : media/event-attributes.html = PASS FAIL TIMEOUT
 BUGCR60744 LINUX : media/video-layer-crash.html = IMAGE PASS
 
 // These tests are failing because they use position-dependent mouse clicks.
-// TESTISSUE 
+// might be hard to fix
 BUGCR25375 : media/video-controls-transformed.html = FAIL
 
 // We haven't implemented the WebKit fullscreen extension.
@@ -2719,15 +2719,12 @@ BUGCR57950 WIN : svg/batik/text/verticalText.svg = CRASH PASS
 
 // media/video-* flakyness
 BUGCR59665 MAC : media/video-layer-crash.html = CRASH TIMEOUT PASS IMAGE
-// BUGCR59415 : setting SLOW in test_expectations.txt may fix the problem
-BUGCR59665 BUGCR59415 : media/video-loop.html = CRASH TIMEOUT PASS FAIL
+// BUGCR59415 : cannot repro the flakiness
+BUGCR59415 WIN : media/video-loop.html = TIMEOUT TEXT PASS
 // This test needs enhanced eventSender.contextMenu() return value.
 // See https://bugs.webkit.org/show_bug.cgi?id=45021 for more info.
 // UNIMPLEMENTED for chrome
 BUGCR59665 BUGWK45021 SKIP : media/context-menu-actions.html = CRASH TIMEOUT PASS
-
-// Also fails on the mac port; see http://webkit.org/b/34331
-BUGCR16751 : http/tests/media/video-referer.html = TEXT PASS
 
 // Occasionally times out with, only under the DRT for Linux
 BUGCR58212 LINUX : http/tests/appcache/main-resource-redirect.html = PASS TIMEOUT
@@ -3138,7 +3135,7 @@ BUGWK54322 MAC SNOWLEOPARD : fast/forms/search-transformed.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/slider-padding.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/images/favicon-as-image.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/inline/inline-box-background-long-image.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/layers/video-layer.html = TEXT
+BUGCR74719 MAC SNOWLEOPARD : fast/layers/video-layer.html = TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/media/mq-transform-02.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/media/mq-transform-03.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
@@ -3328,8 +3325,6 @@ BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
 BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 
 BUGJAMESR DEBUG : html5lib/runner.html = PASS TIMEOUT
-
-BUGWK54910 : media/video-replaces-poster.html = PASS IMAGE
 
 BUG_ANTONM : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
 

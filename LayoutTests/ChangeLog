@@ -1,3 +1,12 @@
+2011-03-03  Kenji Imasaki  <imasaki@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Remove non-flaky tests and update bugs/comments in
+        media related layout tests in test expectation
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-03  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.
