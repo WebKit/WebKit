@@ -36,3 +36,16 @@ class IRCCommandTest(unittest.TestCase):
         eliza = Eliza()
         eliza.execute("tom", "hi", None, None)
         eliza.execute("tom", "bye", None, None)
+
+    def test_whois(self):
+        whois = Whois()
+        self.assertEquals("tom: Usage: BUGZILLA_EMAIL",
+                          whois.execute("tom", [], None, None))
+        self.assertEquals("tom: Usage: BUGZILLA_EMAIL",
+                          whois.execute("tom", ["Adam", "Barth"], None, None))
+        self.assertEquals("tom: Sorry, I don't know unknown@example.com. Maybe you could introduce me?",
+                          whois.execute("tom", ["unknown@example.com"], None, None))
+        self.assertEquals("tom: tonyg@chromium.org is tonyg-cr. Why do you ask?",
+                          whois.execute("tom", ["tonyg@chromium.org"], None, None))
+        self.assertEquals("tom: vicki@apple.com hasn't told me their nick. Boo hoo :-(",
+                          whois.execute("tom", ["vicki@apple.com"], None, None))

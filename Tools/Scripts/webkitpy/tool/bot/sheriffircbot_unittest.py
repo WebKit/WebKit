@@ -51,7 +51,7 @@ class SheriffIRCBotTest(unittest.TestCase):
         OutputCapture().assert_outputs(self, run, args=["hi"], expected_stderr=expected_stderr)
 
     def test_help(self):
-        expected_stderr = "MOCK: irc.post: mock_nick: Available commands: rollout, hi, help, restart, last-green-revision\n"
+        expected_stderr = "MOCK: irc.post: mock_nick: Available commands: whois, hi, last-green-revision, rollout, restart, help\n"
         OutputCapture().assert_outputs(self, run, args=["help"], expected_stderr=expected_stderr)
 
     def test_lgr(self):

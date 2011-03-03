@@ -1,3 +1,14 @@
+2011-03-03  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Teach sheriffbot to answer whois commands
+        https://bugs.webkit.org/show_bug.cgi?id=55687
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+
 2011-03-03  Victoria Kirst  <vrk@google.com>
 
         Reviewed by Eric Carlson.

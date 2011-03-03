@@ -30,6 +30,7 @@ import random
 from webkitpy.common.config import irc as config_irc
 
 from webkitpy.common.config import urls
+from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.net.bugzilla import parse_bug_id
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.queueengine import TerminateQueue
@@ -109,6 +110,19 @@ class Hi(IRCCommand):
         return random.choice(quips)
 
 
+class Whois(IRCCommand):
+    def execute(self, nick, args, tool, sheriff):
+        if len(args) != 1:
+            return "%s: Usage: BUGZILLA_EMAIL" % nick
+        email = args[0]
+        committer = CommitterList().committer_by_email(email)
+        if not committer:
+            return "%s: Sorry, I don't know %s. Maybe you could introduce me?" % (nick, email)
+        if not committer.irc_nickname:
+            return "%s: %s hasn't told me their nick. Boo hoo :-(" % (nick, email)
+        return "%s: %s is %s. Why do you ask?" % (nick, email, committer.irc_nickname)
+
+
 class Eliza(IRCCommand):
     therapist = None
 
@@ -123,9 +137,10 @@ class Eliza(IRCCommand):
 
 # FIXME: Lame.  We should have an auto-registering CommandCenter.
 commands = {
+    "help": Help,
+    "hi": Hi,
     "last-green-revision": LastGreenRevision,
     "restart": Restart,
     "rollout": Rollout,
-    "help": Help,
-    "hi": Hi,
+    "whois": Whois,
 }
