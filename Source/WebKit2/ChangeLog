@@ -1,3 +1,24 @@
+2011-03-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80188.
+        http://trac.webkit.org/changeset/80188
+        https://bugs.webkit.org/show_bug.cgi?id=55647
+
+        Broke the WebKit API tests. (Requested by xenon on #webkit).
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRunJavaScriptInMainFrame):
+        (callRunJavaScriptBlockAndRelease):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::processDidCrash):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInMainFrame):
+
 2011-03-02  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Darin Adler.

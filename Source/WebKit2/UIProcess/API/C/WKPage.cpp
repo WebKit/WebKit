@@ -397,11 +397,11 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClient* wkClient)
 
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)
 {
-    toImpl(pageRef)->runJavaScriptInMainFrame(toImpl(scriptRef)->string(), ScriptValueCallback::create(context, callback));
+    toImpl(pageRef)->runJavaScriptInMainFrame(toImpl(scriptRef)->string(), StringCallback::create(context, callback));
 }
 
 #ifdef __BLOCKS__
-static void callRunJavaScriptBlockAndRelease(WKSerializedScriptValueRef resultValue, WKErrorRef error, void* context)
+static void callRunJavaScriptBlockAndRelease(WKStringRef resultValue, WKErrorRef error, void* context)
 {
     WKPageRunJavaScriptBlock block = (WKPageRunJavaScriptBlock)context;
     block(resultValue, error);

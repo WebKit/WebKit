@@ -91,7 +91,6 @@
 #include <WebCore/RenderView.h>
 #include <WebCore/ReplaceSelectionCommand.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/SerializedScriptValue.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SubstituteData.h>
@@ -1197,15 +1196,13 @@ void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID
     // NOTE: We need to be careful when running scripts that the objects we depend on don't
     // disappear during script execution.
 
-    CoreIPC::DataReference dataReference;
-
     JSLock lock(SilenceAssertionsOnly);
-    if (JSValue resultValue = m_mainFrame->coreFrame()->script()->executeScript(script, true).jsValue()) {
-        if (RefPtr<SerializedScriptValue> serializedResultValue = SerializedScriptValue::create(m_mainFrame->coreFrame()->script()->globalObject(mainThreadNormalWorld())->globalExec(), resultValue))
-           dataReference = CoreIPC::DataReference(serializedResultValue->data().data(), serializedResultValue->data().size());
-    }
+    JSValue resultValue = m_mainFrame->coreFrame()->script()->executeScript(script, true).jsValue();
+    String resultString;
+    if (resultValue)
+        resultString = ustringToString(resultValue.toString(m_mainFrame->coreFrame()->script()->globalObject(mainThreadNormalWorld())->globalExec()));
 
-    send(Messages::WebPageProxy::ScriptValueCallback(dataReference, callbackID));
+    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
 }
 
 void WebPage::getContentsAsString(uint64_t callbackID)

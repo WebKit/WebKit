@@ -119,7 +119,6 @@ messages -> WebPageProxy {
     VoidCallback(uint64_t callbackID)
     DataCallback(CoreIPC::DataReference resultData, uint64_t callbackID)
     StringCallback(WTF::String resultString, uint64_t callbackID)
-    ScriptValueCallback(CoreIPC::DataReference resultData, uint64_t callbackID)
     ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
 
     ViewScaleFactorDidChange(double scaleFactor)
