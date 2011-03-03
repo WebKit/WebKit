@@ -667,8 +667,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
         // If we are not already awaiting validation for this command, start the asynchronous validation process.
         // FIXME: Theoretically, there is a race here; when we get the answer it might be old, from a previous time
         // we asked for the same command; there is no guarantee the answer is still valid.
-        // FIXME: The function called here should be renamed validateCommand because it is not specific to menu items.
-        _data->_page->validateMenuItem(commandName);
+        _data->_page->validateCommand(commandName);
     }
 
     // Treat as enabled until we get the result back from the web process and _setUserInterfaceItemState is called.

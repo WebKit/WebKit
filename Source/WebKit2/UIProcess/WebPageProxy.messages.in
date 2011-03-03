@@ -32,7 +32,7 @@ messages -> WebPageProxy {
     MissingPluginButtonClicked(WTF::String mimeType, WTF::String url)
     DidChangeViewportData(WebCore::ViewportArguments arguments)
     DidReceiveEvent(uint32_t type, bool handled)
-    DidValidateMenuItem(WTF::String commandName, bool isEnabled, int32_t state)
+    DidValidateCommand(WTF::String commandName, bool isEnabled, int32_t state)
     SetCursor(WebCore::Cursor cursor)
     SetStatusText(WTF::String statusText)
     SetToolTip(WTF::String toolTip)

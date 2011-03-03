@@ -610,11 +610,11 @@ void WebPageProxy::setWindowResizerSize(const IntSize& windowResizerSize)
     process()->send(Messages::WebPage::SetWindowResizerSize(windowResizerSize), m_pageID);
 }
 
-void WebPageProxy::validateMenuItem(const String& commandName)
+void WebPageProxy::validateCommand(const String& commandName)
 {
     if (!isValid())
         return;
-    process()->send(Messages::WebPage::ValidateMenuItem(commandName), m_pageID);
+    process()->send(Messages::WebPage::ValidateCommand(commandName), m_pageID);
 }
     
 void WebPageProxy::executeEditCommand(const String& commandName)
@@ -2342,7 +2342,7 @@ void WebPageProxy::setCursor(const WebCore::Cursor& cursor)
     m_pageClient->setCursor(cursor);
 }
 
-void WebPageProxy::didValidateMenuItem(const String& commandName, bool isEnabled, int32_t state)
+void WebPageProxy::didValidateCommand(const String& commandName, bool isEnabled, int32_t state)
 {
     m_pageClient->setEditCommandState(commandName, isEnabled, state);
 }

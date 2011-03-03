@@ -379,7 +379,7 @@ private:
     void setInitialFocus(bool);
     void setWindowResizerSize(const WebCore::IntSize&);
     void setIsInWindow(bool);
-    void validateMenuItem(const String&);
+    void validateCommand(const String&);
     void executeEditCommand(const String&);
 
     void mouseEvent(const WebMouseEvent&);

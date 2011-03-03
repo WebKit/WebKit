@@ -1,3 +1,24 @@
+2011-03-02  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Rename WebKit::WebPage::validateMenuItem() to validateCommand()
+        https://bugs.webkit.org/show_bug.cgi?id=55636
+        
+        Since this method can validate more than menu items, validateCommand() is a better name.  Also rename various messages and WebKit::WebPageProxy::didValidateMenuItem() to didValidateCommand().
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]): Call validateCommand() instead of validateMenuItem().
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::validateCommand): Renamed from validateMenuItem().
+        (WebKit::WebPageProxy::didValidateCommand): Renamed from didValidateMenuItem().
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: Renamed DidValidateMenuItem to DidValidateCommand.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::validateCommand): Renamed from validateMenuItem().
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Renamed ValidateMenuItem to ValidateCommand.
+
 2011-03-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

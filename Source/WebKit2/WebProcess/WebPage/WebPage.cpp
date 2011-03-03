@@ -982,7 +982,7 @@ void WebPage::gestureEvent(const WebGestureEvent& gestureEvent)
 }
 #endif
 
-void WebPage::validateMenuItem(const String& commandName)
+void WebPage::validateCommand(const String& commandName)
 {
     bool isEnabled = false;
     int32_t state = 0;
@@ -993,7 +993,7 @@ void WebPage::validateMenuItem(const String& commandName)
         isEnabled = command.isSupported() && command.isEnabled();
     }
 
-    send(Messages::WebPageProxy::DidValidateMenuItem(commandName, isEnabled, state));
+    send(Messages::WebPageProxy::DidValidateCommand(commandName, isEnabled, state));
 }
 
 void WebPage::executeEditCommand(const String& commandName)

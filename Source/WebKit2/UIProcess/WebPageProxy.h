@@ -200,7 +200,7 @@ public:
     bool isViewVisible() const { return m_isVisible; }
 
     void executeEditCommand(const String& commandName);
-    void validateMenuItem(const String& commandName);
+    void validateCommand(const String& commandName);
 
     const SelectionState& selectionState() const { return m_selectionState; }
     bool canDelete() const { return hasSelectedRange() && isContentEditable(); }
@@ -568,7 +568,7 @@ private:
     void takeFocus(bool direction);
     void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);
-    void didValidateMenuItem(const String& commandName, bool isEnabled, int32_t state);
+    void didValidateCommand(const String& commandName, bool isEnabled, int32_t state);
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
 
