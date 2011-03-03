@@ -44,7 +44,7 @@ static PassOwnPtr<NumberFormat> createFormatterForCurrentLocale()
 {
     UErrorCode status = U_ZERO_ERROR;
     OwnPtr<NumberFormat> formatter = adoptPtr(NumberFormat::createInstance(status));
-    return status == U_ZERO_ERROR ? formatter.release() : 0;
+    return U_SUCCESS(status) ? formatter.release() : 0;
 }
 
 // This might return 0.
@@ -70,7 +70,7 @@ double parseLocalizedNumber(const String& numberString)
         return numeric_limits<double>::quiet_NaN();
     UErrorCode status = U_ZERO_ERROR;
     double numericResult = result.getDouble(status);
-    return status == U_ZERO_ERROR ? numericResult : numeric_limits<double>::quiet_NaN();
+    return U_SUCCESS(status) ? numericResult : numeric_limits<double>::quiet_NaN();
 }
 
 String formatLocalizedNumber(double number)
