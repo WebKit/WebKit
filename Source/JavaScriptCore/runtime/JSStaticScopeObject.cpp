@@ -67,7 +67,7 @@ bool JSStaticScopeObject::isDynamicScope(bool&) const
     return false;
 }
 
-inline bool JSStaticScopeObject::getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot& slot)
+bool JSStaticScopeObject::getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot& slot)
 {
     return symbolTableGet(propertyName, slot);
 }
