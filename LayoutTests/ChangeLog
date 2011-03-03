@@ -1,3 +1,17 @@
+2011-03-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80272.
+        http://trac.webkit.org/changeset/80272
+        https://bugs.webkit.org/show_bug.cgi?id=55700
+
+        the test are flaky (Requested by loislo_ on #webkit).
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.addObject):
+        * http/tests/inspector/protocol-test.js: Removed.
+        * inspector/protocol/runtime-agent-expected.txt: Removed.
+        * inspector/protocol/runtime-agent.html: Removed.
+
 2011-03-03  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

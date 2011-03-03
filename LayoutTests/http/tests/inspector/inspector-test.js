@@ -90,7 +90,7 @@ InspectorTest.addObject = function(object, nondeterministicProps, prefix, firstL
     firstLinePrefix = firstLinePrefix || prefix;
     InspectorTest.addResult(firstLinePrefix + "{");
     for (var prop in object) {
-        if (typeof object.hasOwnProperty === "function" && !object.hasOwnProperty(prop))
+        if (!object.hasOwnProperty(prop))
             continue;
         var prefixWithName = prefix + "    " + prop + " : ";
         var propValue = object[prop];
