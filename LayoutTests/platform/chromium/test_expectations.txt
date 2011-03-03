@@ -3354,13 +3354,6 @@ BUGCR74497 : platform/win/plugins/windowless-paint-rect-coordinates.html = CRASH
 BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT
 
 BUGCR74519 : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = IMAGE+TEXT
-BUGCR74519 : svg/animations/animate-color-fill-currentColor-expected.txt = IMAGE+TEXT
-BUGCR74519 : svg/animations/animate-color-fill-currentColor.html = IMAGE+TEXT
-BUGCR74519 : svg/animations/script-tests/animate-color-fill-currentColor.js = IMAGE+TEXT
-BUGCR74519 : svg/custom/SVGPaint-mutate-attribute.svg = IMAGE+TEXT
-BUGCR74519 : svg/custom/SVGPaint-mutate-inline-style.svg = IMAGE+TEXT
-BUGCR74519 : svg/dom/SVGColor-expected.txt = IMAGE+TEXT
-BUGCR74519 : svg/dom/SVGPaint-expected.txt = IMAGE+TEXT
 
 BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEXT
 
