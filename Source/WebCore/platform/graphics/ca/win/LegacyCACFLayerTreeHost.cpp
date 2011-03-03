@@ -29,6 +29,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "PlatformCALayer.h"
+#include <QuartzCore/CABase.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 
 #ifndef NDEBUG

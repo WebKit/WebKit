@@ -1,3 +1,12 @@
+2011-03-03  Anders Carlsson  <andersca@apple.com>
+
+        Yet another attempt at fixing the Windows build.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        * platform/graphics/ca/win/LegacyCACFLayerTreeHost.cpp:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+
 2011-03-02  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

@@ -41,6 +41,7 @@
 #include "TimeRanges.h"
 #include "Timer.h"
 #include <CoreGraphics/CGColorSpace.h>
+#include <CoreGraphics/CGImage.h>
 #include <Wininet.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>

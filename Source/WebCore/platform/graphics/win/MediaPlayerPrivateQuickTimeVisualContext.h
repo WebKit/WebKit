@@ -30,6 +30,7 @@
 
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
+#include <CoreGraphics/CGAffineTransform.h>
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RetainPtr.h>

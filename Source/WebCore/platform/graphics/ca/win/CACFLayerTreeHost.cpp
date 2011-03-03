@@ -35,6 +35,7 @@
 #include "WKCACFViewLayerTreeHost.h"
 #include "WebCoreInstanceHandle.h"
 #include <limits.h>
+#include <QuartzCore/CABase.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/OwnArrayPtr.h>
 
