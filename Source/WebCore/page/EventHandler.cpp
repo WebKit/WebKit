@@ -2753,7 +2753,7 @@ bool EventHandler::tabsToLinks(KeyboardEvent* event) const
     if (!page)
         return false;
 
-    bool tabsToLinksClientCallResult = page->chrome()->client()->tabsToLinks();
+    bool tabsToLinksClientCallResult = page->chrome()->client()->keyboardUIMode() & KeyboardAccessTabsToLinks;
     return eventInvertsTabsToLinksClientCallResult(event) ? !tabsToLinksClientCallResult : tabsToLinksClientCallResult;
 }
 

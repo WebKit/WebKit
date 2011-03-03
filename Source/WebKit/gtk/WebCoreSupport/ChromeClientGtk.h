@@ -25,6 +25,7 @@
 #include "KURL.h"
 #include "PopupMenu.h"
 #include "SearchPopupMenu.h"
+#include "WebCoreKeyboardUIMode.h"
 
 typedef struct _WebKitWebView WebKitWebView;
 
@@ -91,7 +92,7 @@ namespace WebKit {
         virtual bool runJavaScriptPrompt(WebCore::Frame*, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result);
         virtual void setStatusbarText(const WTF::String&);
         virtual bool shouldInterruptJavaScript();
-        virtual bool tabsToLinks() const;
+        virtual WebCore::KeyboardUIMode keyboardUIMode();
 
         virtual WebCore::IntRect windowResizerRect() const;
 

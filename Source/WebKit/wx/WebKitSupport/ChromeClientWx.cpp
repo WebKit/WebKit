@@ -333,10 +333,10 @@ bool ChromeClientWx::shouldInterruptJavaScript()
     return false;
 }
 
-bool ChromeClientWx::tabsToLinks() const
+KeyboardUIMode ChromeClientWx::keyboardUIMode()
 {
     notImplemented();
-    return false;
+    return KeyboardAccessDefault;
 }
 
 IntRect ChromeClientWx::windowResizerRect() const

@@ -1,3 +1,17 @@
+2011-03-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (WebKit2): Tab keys no longer observe Full Keyboard Access
+        https://bugs.webkit.org/show_bug.cgi?id=55633
+        <rdar://problem/8963023>
+
+        * loader/EmptyClients.h: (WebCore::EmptyChromeClient::keyboardUIMode):
+        * page/ChromeClient.h:
+        * page/EventHandler.cpp: (WebCore::EventHandler::tabsToLinks):
+        Merged tabsToLinks() and keyboardUIMode(). The latter returned a superset of information
+        returned by former.
+
 2011-03-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Fix Win compile break, caused by r80276.

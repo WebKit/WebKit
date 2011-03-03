@@ -219,9 +219,9 @@ bool ChromeClientWinCE::shouldInterruptJavaScript()
     return false;
 }
 
-bool ChromeClientWinCE::tabsToLinks() const
+KeyboardUIMode ChromeClientWinCE::keyboardUIMode()
 {
-    return true;
+    return KeyboardAccessTabsToLinks;
 }
 
 IntRect ChromeClientWinCE::windowResizerRect() const

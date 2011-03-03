@@ -46,6 +46,7 @@
 #include <WebCore/Editor.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/WebCoreKeyboardUIMode.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -153,7 +154,7 @@ public:
     void show();
     String userAgent() const { return m_userAgent; }
     WebCore::IntRect windowResizerRect() const;
-    bool tabsToLinks() const { return m_tabToLinks; }
+    WebCore::KeyboardUIMode keyboardUIMode();
 
     WebEditCommand* webEditCommand(uint64_t);
     void addWebEditCommand(uint64_t, WebEditCommand*);

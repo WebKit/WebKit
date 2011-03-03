@@ -1192,6 +1192,12 @@ IntRect WebPage::windowResizerRect() const
                    m_windowResizerSize.width(), m_windowResizerSize.height());
 }
 
+KeyboardUIMode WebPage::keyboardUIMode()
+{
+    bool fullKeyboardAccessEnabled = WebProcess::shared().fullKeyboardAccessEnabled();
+    return static_cast<KeyboardUIMode>((fullKeyboardAccessEnabled ? KeyboardAccessFull : KeyboardAccessDefault) | (m_tabToLinks ? KeyboardAccessTabsToLinks : 0));
+}
+
 void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID)
 {
     // NOTE: We need to be careful when running scripts that the objects we depend on don't

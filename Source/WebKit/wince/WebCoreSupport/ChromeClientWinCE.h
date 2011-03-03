@@ -26,6 +26,7 @@
 #define ChromeClientWinCE_h
 
 #include "ChromeClient.h"
+#include "WebCoreKeyboardUIMode.h"
 
 class WebView;
 
@@ -89,7 +90,7 @@ public:
     virtual bool runJavaScriptPrompt(WebCore::Frame*, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result);
     virtual void setStatusbarText(const WTF::String&);
     virtual bool shouldInterruptJavaScript();
-    virtual bool tabsToLinks() const;
+    virtual WebCore::KeyboardUIMode keyboardUIMode();
 
     virtual WebCore::IntRect windowResizerRect() const;
 

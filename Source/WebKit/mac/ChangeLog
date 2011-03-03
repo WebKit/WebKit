@@ -1,3 +1,20 @@
+2011-03-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (WebKit2): Tab keys no longer observe Full Keyboard Access
+        https://bugs.webkit.org/show_bug.cgi?id=55633
+        <rdar://problem/8963023>
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        Removed tabsToLinks(). Mac WebKit already implements keyboardUIMode().
+
+        * WebView/WebView.mm: (-[WebView _retrieveKeyboardUIModeFromPreferences:]):
+        Removed an incorrect comment. We actually get a value of 2 on Snow Leopard, and we don't
+        require both bits to be set. The rest of the comment might be wrong too, but I'm not sure,
+        so I've preserved it.
+
 2011-03-02  Jessie Berlin  <jberlin@apple.com>
 
         Rubber-stamped by Dan Bernstein.

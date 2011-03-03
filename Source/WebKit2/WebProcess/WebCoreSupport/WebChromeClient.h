@@ -102,8 +102,9 @@ private:
     virtual bool runJavaScriptPrompt(WebCore::Frame*, const String& message, const String& defaultValue, String& result);
     virtual void setStatusbarText(const String&);
     virtual bool shouldInterruptJavaScript();
-    virtual bool tabsToLinks() const;
-    
+
+    virtual WebCore::KeyboardUIMode keyboardUIMode();
+
     virtual WebCore::IntRect windowResizerRect() const;
     
     // Methods used by HostWindow.

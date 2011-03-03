@@ -35,6 +35,7 @@
 #include "KURL.h"
 #include "PlatformString.h"
 #include "QtPlatformPlugin.h"
+#include "WebCoreKeyboardUIMode.h"
 
 QT_BEGIN_NAMESPACE
 class QEventLoop;
@@ -112,7 +113,7 @@ namespace WebCore {
 
         virtual void setStatusbarText(const String&);
 
-        virtual bool tabsToLinks() const;
+        virtual WebCore::KeyboardUIMode keyboardUIMode();
         virtual IntRect windowResizerRect() const;
 
         virtual void invalidateWindow(const IntRect&, bool);

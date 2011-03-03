@@ -27,6 +27,7 @@
 #include "ChromeClient.h"
 #include "KURL.h"
 #include "PopupMenu.h"
+#include "WebCoreKeyboardUIMode.h"
 
 typedef struct _Evas_Object Evas_Object;
 
@@ -91,7 +92,7 @@ public:
     virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);
     virtual void setStatusbarText(const String&);
     virtual bool shouldInterruptJavaScript();
-    virtual bool tabsToLinks() const;
+    virtual WebCore::KeyboardUIMode keyboardUIMode();
 
     virtual IntRect windowResizerRect() const;
 

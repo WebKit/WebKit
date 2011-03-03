@@ -32,6 +32,7 @@
 #include "ChromeClient.h"
 #include "FocusDirection.h"
 #include "IntRect.h"
+#include "WebCoreKeyboardUIMode.h"
 #include "WebView.h"
 
 namespace WebCore {
@@ -98,7 +99,7 @@ public:
     virtual void setStatusbarText(const String&);
     virtual bool shouldInterruptJavaScript();
     
-    virtual bool tabsToLinks() const;
+    virtual WebCore::KeyboardUIMode keyboardUIMode();
 
     virtual IntRect windowResizerRect() const;
     virtual void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);

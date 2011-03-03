@@ -355,12 +355,13 @@ bool ChromeClient::shouldInterruptJavaScript()
     return false;
 }
 
-bool ChromeClient::tabsToLinks() const
+KeyboardUIMode ChromeClient::keyboardUIMode()
 {
+    bool tabsToLinks = true;
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled())
-        return DumpRenderTreeSupportGtk::linksIncludedInFocusChain();
+        tabsToLinks = DumpRenderTreeSupportGtk::linksIncludedInFocusChain();
 
-    return true;
+    return tabsToLinks ? KeyboardAccessTabsToLinks : KeyboardAccessDefault;
 }
 
 IntRect ChromeClient::windowResizerRect() const

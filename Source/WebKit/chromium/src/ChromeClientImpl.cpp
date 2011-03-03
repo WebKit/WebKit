@@ -485,14 +485,9 @@ bool ChromeClientImpl::shouldInterruptJavaScript()
     return false;
 }
 
-bool ChromeClientImpl::tabsToLinks() const
+KeyboardUIMode ChromeClientImpl::keyboardUIMode()
 {
-    // Returns true if anchors should accept keyboard focus with the tab key.
-    // This method is used in a convoluted fashion by EventHandler::tabsToLinks.
-    // It's a twisted path (self-evident, but more complicated than seems
-    // necessary), but the net result is that returning true from here, on a
-    // platform other than MAC or QT, lets anchors get keyboard focus.
-    return m_webView->tabsToLinks();
+    return m_webView->tabsToLinks() ? KeyboardAccessTabsToLinks : KeyboardAccessDefault;
 }
 
 IntRect ChromeClientImpl::windowResizerRect() const

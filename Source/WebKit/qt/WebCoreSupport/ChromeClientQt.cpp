@@ -354,9 +354,10 @@ bool ChromeClientQt::shouldInterruptJavaScript()
     return shouldInterrupt;
 }
 
-bool ChromeClientQt::tabsToLinks() const
+KeyboardUIMode ChromeClientQt::keyboardUIMode()
 {
-    return m_webPage->settings()->testAttribute(QWebSettings::LinksIncludedInFocusChain);
+    return m_webPage->settings()->testAttribute(QWebSettings::LinksIncludedInFocusChain)
+        ? KeyboardAccessTabsToLinks : KeyboardAccessDefault;
 }
 
 IntRect ChromeClientQt::windowResizerRect() const

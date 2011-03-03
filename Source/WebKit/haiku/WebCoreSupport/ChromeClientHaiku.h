@@ -32,6 +32,7 @@
 #include "ChromeClient.h"
 #include "FloatRect.h"
 #include "RefCounted.h"
+#include "WebCoreKeyboardUIMode.h"
 
 namespace WebCore {
 
@@ -101,7 +102,7 @@ namespace WebCore {
         virtual bool shouldInterruptJavaScript();
 
         virtual void setStatusbarText(const WTF::String&);
-        virtual bool tabsToLinks() const;
+        virtual WebCore::KeyboardUIMode keyboardUIMode();
         virtual IntRect windowResizerRect() const;
 
         virtual void invalidateWindow(const IntRect&, bool);

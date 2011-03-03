@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebProcess.h"
 
+#import "FullKeyboardAccessWatcher.h"
 #import "SandboxExtension.h"
 #import "WebProcessCreationParameters.h"
 #import <WebCore/MemoryCache.h>
@@ -108,6 +109,11 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 void WebProcess::platformClearResourceCaches()
 {
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
+}
+
+bool WebProcess::fullKeyboardAccessEnabled()
+{
+    return [FullKeyboardAccessWatcher fullKeyboardAccessEnabled];
 }
 
 #if ENABLE(WEB_PROCESS_SANDBOX)

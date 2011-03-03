@@ -336,9 +336,9 @@ bool WebChromeClient::shouldInterruptJavaScript()
     return false;
 }
 
-bool WebChromeClient::tabsToLinks() const
+KeyboardUIMode WebChromeClient::keyboardUIMode()
 {
-    return m_page->tabsToLinks();
+    return m_page->keyboardUIMode();
 }
 
 IntRect WebChromeClient::windowResizerRect() const

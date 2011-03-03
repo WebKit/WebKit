@@ -448,14 +448,14 @@ bool WebChromeClient::shouldInterruptJavaScript()
     return false;
 }
 
-bool WebChromeClient::tabsToLinks() const
+KeyboardUIMode WebChromeClient::keyboardUIMode()
 {
     BOOL enabled = FALSE;
     IWebPreferences* preferences;
     if (SUCCEEDED(m_webView->preferences(&preferences)))
         preferences->tabsToLinks(&enabled);
 
-    return !!enabled;
+    return enabled ? KeyboardAccessTabsToLinks : KeyboardAccessDefault;
 }
 
 IntRect WebChromeClient::windowResizerRect() const

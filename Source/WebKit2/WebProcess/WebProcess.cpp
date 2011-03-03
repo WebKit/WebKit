@@ -291,6 +291,13 @@ void WebProcess::addVisitedLink(WebCore::LinkHash linkHash)
     m_connection->send(Messages::WebContext::AddVisitedLinkHash(linkHash), 0);
 }
 
+#if !PLATFORM(MAC)
+bool WebProcess::fullKeyboardAccessEnabled()
+{
+    return false;
+}
+#endif
+
 void WebProcess::setCacheModel(uint32_t cm)
 {
     CacheModel cacheModel = static_cast<CacheModel>(cm);

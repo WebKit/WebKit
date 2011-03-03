@@ -5895,10 +5895,6 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     // The keyboard access mode is reported by two bits:
     // Bit 0 is set if feature is on
     // Bit 1 is set if full keyboard access works for any control, not just text boxes and lists
-    // We require both bits to be on.
-    // I do not know that we would ever get one bit on and the other off since
-    // checking the checkbox in system preferences which is marked as "Turn on full keyboard access"
-    // turns on both bits.
     _private->_keyboardUIMode = (mode & 0x2) ? KeyboardAccessFull : KeyboardAccessDefault;
     
     // check for tabbing to links

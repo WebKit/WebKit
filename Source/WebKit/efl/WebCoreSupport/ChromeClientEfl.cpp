@@ -305,9 +305,9 @@ bool ChromeClientEfl::shouldInterruptJavaScript()
     return ewk_view_should_interrupt_javascript(m_view);
 }
 
-bool ChromeClientEfl::tabsToLinks() const
+KeyboardUIMode ChromeClientEfl::keyboardUIMode()
 {
-    return true;
+    return KeyboardAccessTabsToLinks;
 }
 
 IntRect ChromeClientEfl::windowResizerRect() const

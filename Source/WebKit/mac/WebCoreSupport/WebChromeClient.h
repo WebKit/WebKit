@@ -88,8 +88,6 @@ public:
     virtual bool runJavaScriptPrompt(WebCore::Frame*, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result);
     virtual bool shouldInterruptJavaScript();
 
-    virtual bool tabsToLinks() const;
-    
     virtual WebCore::IntRect windowResizerRect() const;
 
     virtual void invalidateWindow(const WebCore::IntRect&, bool);

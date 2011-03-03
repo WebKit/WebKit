@@ -253,9 +253,9 @@ bool ChromeClientHaiku::shouldInterruptJavaScript()
     return false;
 }
 
-bool ChromeClientHaiku::tabsToLinks() const
+KeyboardUIMode ChromeClientHaiku::keyboardUIMode()
 {
-    return false;
+    return KeyboardAccessDefault;
 }
 
 IntRect ChromeClientHaiku::windowResizerRect() const

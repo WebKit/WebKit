@@ -546,11 +546,6 @@ void WebChromeClient::setStatusbarText(const String& status)
     [localPool drain];
 }
 
-bool WebChromeClient::tabsToLinks() const
-{
-    return [[m_webView preferences] tabsToLinks];
-}
-
 IntRect WebChromeClient::windowResizerRect() const
 {
     NSRect rect = [[m_webView window] _growBoxRect];

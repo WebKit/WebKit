@@ -1,3 +1,35 @@
+2011-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (WebKit2): Tab keys no longer observe Full Keyboard Access
+        https://bugs.webkit.org/show_bug.cgi?id=55633
+        <rdar://problem/8963023>
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/mac/FullKeyboardAccessWatcher.h: Added.
+        * WebProcess/mac/FullKeyboardAccessWatcher.mm: Added.
+        (-[FullKeyboardAccessWatcher retrieveKeyboardUIModeFromPreferences:]):
+        (-[FullKeyboardAccessWatcher init]):
+        (+[FullKeyboardAccessWatcher fullKeyboardAccessEnabled]):
+        Get the current state of full keyboard access, listening for change notifications.
+
+        * WebProcess/WebProcess.h:  Added fullKeyboardAccessEnabled().
+
+        * WebProcess/WebProcess.cpp: (WebKit::WebProcess::fullKeyboardAccessEnabled):
+        WebKit1 also doesn't implement this on platforms other than Mac.
+
+        * WebProcess/mac/WebProcessMac.mm: (WebKit::WebProcess::fullKeyboardAccessEnabled):
+        Just ask FullKeyboardAccessWatcher.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp: (WebKit::WebChromeClient::keyboardUIMode):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Added keyboardUIMode(), removed tabsToLinks().
+
+        * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::keyboardUIMode):
+        * WebProcess/WebPage/WebPage.h:
+        Generate keyboard UI mode from tabToLinks preference and current state of FKA.
+
 2011-03-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

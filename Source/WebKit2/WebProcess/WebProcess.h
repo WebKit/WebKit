@@ -88,6 +88,8 @@ public:
     void addVisitedLink(WebCore::LinkHash);
     bool isLinkVisited(WebCore::LinkHash) const;
 
+    bool fullKeyboardAccessEnabled();
+
     WebFrame* webFrame(uint64_t) const;
     void addWebFrame(uint64_t, WebFrame*);
     void removeWebFrame(uint64_t);

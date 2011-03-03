@@ -29,6 +29,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/ScrollTypes.h>
+#include <WebCore/WebCoreKeyboardUIMode.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
@@ -92,7 +93,7 @@ public:
     virtual void setStatusbarText(const WTF::String&);
     virtual bool shouldInterruptJavaScript();
 
-    virtual bool tabsToLinks() const;
+    virtual WebCore::KeyboardUIMode keyboardUIMode();
     virtual WebCore::IntRect windowResizerRect() const;
 
     virtual void invalidateWindow(const WebCore::IntRect&, bool);
