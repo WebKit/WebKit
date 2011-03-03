@@ -59,6 +59,9 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(languageCode);
     encoder->encode(textCheckerState);
     encoder->encode(defaultRequestTimeoutInterval);
+#if USE(CFURLSTORAGESESSIONS)
+    encoder->encode(uiProcessBundleIdentifier);
+#endif
 #if PLATFORM(MAC)
     encoder->encode(parentProcessName);
     encoder->encode(presenterApplicationPid);
@@ -105,6 +108,10 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.defaultRequestTimeoutInterval))
         return false;
+#if USE(CFURLSTORAGESESSIONS)
+    if (!decoder->decode(parameters.uiProcessBundleIdentifier))
+        return false;
+#endif
 
 #if PLATFORM(MAC)
     if (!decoder->decode(parameters.parentProcessName))

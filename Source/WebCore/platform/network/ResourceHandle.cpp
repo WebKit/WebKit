@@ -33,6 +33,7 @@
 #include "ResourceHandleClient.h"
 #include "Timer.h"
 #include <algorithm>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -184,5 +185,47 @@ void ResourceHandle::cacheMetadata(const ResourceResponse&, const Vector<char>&)
 {
     // Optionally implemented by platform.
 }
+
+#if USE(CFURLSTORAGESESSIONS)
+
+static RetainPtr<CFURLStorageSessionRef>& privateStorageSession()
+{
+    DEFINE_STATIC_LOCAL(RetainPtr<CFURLStorageSessionRef>, storageSession, ());
+    return storageSession;
+}
+
+static String& privateBrowsingStorageSessionIdentifierBase()
+{
+    DEFINE_STATIC_LOCAL(String, base, ());
+    return base;
+}
+
+void ResourceHandle::setPrivateBrowsingEnabled(bool enabled)
+{
+    if (!enabled) {
+        privateStorageSession() = nullptr;
+        return;
+    }
+
+    if (privateStorageSession())
+        return;
+
+    String base = privateBrowsingStorageSessionIdentifierBase().isNull() ? privateBrowsingStorageSessionIdentifierDefaultBase() : privateBrowsingStorageSessionIdentifierBase();
+    RetainPtr<CFStringRef> cfIdentifier(AdoptCF, String::format("%s.PrivateBrowsing", base.utf8().data()).createCFString());
+
+    privateStorageSession() = createPrivateBrowsingStorageSession(cfIdentifier.get());
+}
+
+CFURLStorageSessionRef ResourceHandle::privateBrowsingStorageSession()
+{
+    return privateStorageSession().get();
+}
+
+void ResourceHandle::setPrivateBrowsingStorageSessionIdentifierBase(const String& identifier)
+{
+    privateBrowsingStorageSessionIdentifierBase() = identifier;
+}
+
+#endif // USE(CFURLSTORAGESESSIONS)
 
 } // namespace WebCore

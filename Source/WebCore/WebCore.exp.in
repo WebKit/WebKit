@@ -1333,6 +1333,7 @@ _wkSetUpFontCache
 _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError
 _wkSignalCFReadStreamHasBytes
+_wkCreatePrivateStorageSession
 
 #if !defined(NDEBUG)
 __ZN7WebCore20LogNotYetImplementedE
@@ -1780,4 +1781,8 @@ __ZN7WebCore6Editor14capitalizeWordEv
 
 #if ENABLE(GESTURE_EVENTS)
 __ZN7WebCore12EventHandler18handleGestureEventERKNS_20PlatformGestureEventE
+#endif
+
+#if USE(CFURLSTORAGESESSIONS)
+__ZN7WebCore14ResourceHandle46setPrivateBrowsingStorageSessionIdentifierBaseERKN3WTF6StringE
 #endif

@@ -37,6 +37,7 @@
 #include "HistoryItem.h"
 #include "Page.h"
 #include "PageCache.h"
+#include "ResourceHandle.h"
 #include "StorageMap.h"
 #include <limits>
 
@@ -336,6 +337,10 @@ void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
 {
     if (m_privateBrowsingEnabled == privateBrowsingEnabled)
         return;
+
+#if USE(CFURLSTORAGESESSIONS)
+    ResourceHandle::setPrivateBrowsingEnabled(privateBrowsingEnabled);
+#endif
 
     // FIXME: We can only enable cookie private browsing mode globally, so it's misleading to have it as a per-page setting.
     setCookieStoragePrivateBrowsingEnabled(privateBrowsingEnabled);

@@ -93,6 +93,8 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     // FIXME: This should really be configurable; we shouldn't just blindly allow read access to the UI process bundle.
     parameters.uiProcessBundleResourcePath = fileSystemRepresentation([[NSBundle mainBundle] resourcePath]);
+
+    parameters.uiProcessBundleIdentifier = String([[NSBundle mainBundle] bundleIdentifier]);
 }
 
 String WebContext::platformDefaultDatabaseDirectory() const

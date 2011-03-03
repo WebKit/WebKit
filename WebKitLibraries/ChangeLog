@@ -1,3 +1,20 @@
+2011-03-02  Jessie Berlin  <jberlin@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        WebKit2: Use CFNetwork Sessions API.
+        https://bugs.webkit.org/show_bug.cgi?id=55435
+
+        Add the ability to create a Private Browsing Storage Session.
+
+        Update WebKitSystemInterface headers and libraries with the new functions.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+
 2011-03-02  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by David Levin.

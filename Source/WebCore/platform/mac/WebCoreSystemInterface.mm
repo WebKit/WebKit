@@ -172,3 +172,5 @@ CFTypeRef (*wkCreateAXTextMarker)(const void *bytes, size_t len);
 BOOL (*wkGetBytesFromAXTextMarker)(CFTypeRef textMarker, void *bytes, size_t length);
 AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 
+CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
+

@@ -64,6 +64,7 @@ typedef CVImageBufferRef CVPixelBufferRef;
 typedef struct _CAImageQueue *CAImageQueueRef;
 typedef unsigned long CFTypeID;
 typedef struct _CFURLCredential* WKCFURLCredentialRef;
+typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 
 void wkSetFontSmoothingLevel(int type);
 int wkGetFontSmoothingLevel();
@@ -94,6 +95,8 @@ void wkSetClientCertificateInSSLProperties(CFMutableDictionaryRef, CFDataRef);
 
 CFArrayRef wkCFURLRequestCopyHTTPRequestBodyParts(CFURLRequestRef);
 void wkCFURLRequestSetHTTPRequestBodyParts(CFMutableURLRequestRef, CFArrayRef bodyParts);
+
+CFURLStorageSessionRef wkCreatePrivateStorageSession(CFStringRef identifier);
 
 CFArrayRef wkCFURLCacheCopyAllHostNamesInPersistentStore();
 void wkCFURLCacheDeleteHostNamesInPersistentStore(CFArrayRef hostNames);

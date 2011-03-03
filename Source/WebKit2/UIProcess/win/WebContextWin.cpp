@@ -68,6 +68,8 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     ASSERT(parameters.cfURLCachePath.length());
     if (parameters.cfURLCachePath[parameters.cfURLCachePath.length() - 1] == '/')
         parameters.cfURLCachePath.remove(parameters.cfURLCachePath.length() - 1);
+
+    parameters.uiProcessBundleIdentifier = String(reinterpret_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleIdentifierKey)));
 #endif
 }
 

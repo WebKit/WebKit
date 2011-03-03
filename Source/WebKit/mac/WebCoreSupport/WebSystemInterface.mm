@@ -154,6 +154,7 @@ void InitWebCoreSystemInterface(void)
     INIT(ContentAreaDidShow);
     INIT(ContentAreaDidHide);
     INIT(ScrollbarPainterUsesOverlayScrollers);
+    INIT(CreatePrivateStorageSession);
 #endif
 
     INIT(GetAXTextMarkerTypeID);

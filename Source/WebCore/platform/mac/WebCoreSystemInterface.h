@@ -235,6 +235,9 @@ extern CFTypeRef (*wkCreateAXTextMarker)(const void *bytes, size_t len);
 extern BOOL (*wkGetBytesFromAXTextMarker)(CFTypeRef textMarker, void *bytes, size_t length);
 extern AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 
+typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
+extern CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
+
 }
 
 #endif

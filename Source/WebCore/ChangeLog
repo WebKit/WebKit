@@ -1,3 +1,48 @@
+2011-03-02  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Use CFNetwork Sessions API.
+        https://bugs.webkit.org/show_bug.cgi?id=55435
+
+        Add the ability to create a Private Browsing Storage Session.
+
+        * WebCore.exp.in:
+        Export the symbol for ResourceHandle::setPrivateBrowsingStorageSessionIdentifierBase.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setPrivateBrowsingEnabled):
+        Propagate the private browsing state to the ResourceHandle.
+
+        * platform/mac/WebCoreSystemInterface.h:
+        Add the function declaration for wkCreatePrivateStorageSession.
+        * platform/mac/WebCoreSystemInterface.mm:
+
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::privateStorageSession):
+        Since the same Private Browsing Storage Session will need to be accessed throughout the loading
+        code and will need to be used by all web pages and page groups, make it a global static.
+        (WebCore::privateBrowsingStorageSessionIdentifierBase):
+        Ditto, since the identifier is needed to create the Private Browsing Storage Session.
+        (WebCore::ResourceHandle::setPrivateBrowsingEnabled):
+        If enabled, create and store the Private Browsing Storage Session.
+        (WebCore::ResourceHandle::privateBrowsingStorageSession):
+        (WebCore::ResourceHandle::setPrivateBrowsingStorageSessionIdentifierBase):
+        * platform/network/ResourceHandle.h:
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createPrivateBrowsingStorageSession):
+        The call to wkCreatePrivateStorageSession needs to be in a file including the correct
+        version of WKSI.
+        (WebCore::ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase):
+        Return the bundle identifier.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createPrivateBrowsingStorageSession):
+        The call to wkCreatePrivateStorageSession needs to be in a file importing the correct
+        version of WKSI.
+        (WebCore::ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase):
+        Return the bundle identifier.
+
 2011-03-02  Daniel Cheng  <dcheng@chromium.org>
 
         Revert frame-specific WebClipboard changes

@@ -93,6 +93,7 @@ void InitWebCoreSystemInterface(void)
         INIT(SignalCFReadStreamEnd);
         INIT(SignalCFReadStreamError);
         INIT(SignalCFReadStreamHasBytes);
+        INIT(CreatePrivateStorageSession);
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
         INIT(IOSurfaceContextCreate);

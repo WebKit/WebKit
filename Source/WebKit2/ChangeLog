@@ -1,3 +1,36 @@
+2011-03-02  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Use CFNetwork Sessions API.
+        https://bugs.webkit.org/show_bug.cgi?id=55435
+
+        Add the ability to create a Private Browsing Storage Session.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        Encode the UI Process bundle identifier.
+        (WebKit::WebProcessCreationParameters::decode):
+        Decode the UI Process bundle identifier.
+        * Shared/WebProcessCreationParameters.h:
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        Grab the bundle identifier and use it to set the WebProcessCreationParameter.
+        * UIProcess/win/WebContextWin.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        Ditto.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        Support using the wkCreatePrivateStorageSession WKSI in WebCore.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        Set the base for the Private Browsing Storage Session identifier to be the bundle identifier
+        from the UI Process so that WebKit1 would create a Private Browsing Storage Session with the
+        same identifier as WebKit2.
+
 2011-03-01  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

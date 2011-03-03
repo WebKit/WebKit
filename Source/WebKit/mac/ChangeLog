@@ -1,3 +1,16 @@
+2011-03-02  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Use CFNetwork Sessions API.
+        https://bugs.webkit.org/show_bug.cgi?id=55435.
+
+        Add the ability to create a Private Browsing Storage Session.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        Support calling wkCreatePrivateStorageSession from WebCore.
+
 2011-03-02  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by David Levin.

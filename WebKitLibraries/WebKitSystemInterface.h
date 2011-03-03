@@ -233,6 +233,9 @@ void WKQTMovieDisableComponent(uint32_t[5]);
 
 CFStringRef WKCopyFoundationCacheDirectory(void);
 
+typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
+CFURLStorageSessionRef WKCreatePrivateStorageSession(CFStringRef);
+
 void WKSetVisibleApplicationName(CFStringRef);
 
 typedef enum {

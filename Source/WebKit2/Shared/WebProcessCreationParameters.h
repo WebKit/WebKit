@@ -75,6 +75,10 @@ struct WebProcessCreationParameters {
 
     double defaultRequestTimeoutInterval;
 
+#if USE(CFURLSTORAGESESSIONS)
+    String uiProcessBundleIdentifier;
+#endif
+
 #if PLATFORM(MAC)
     String parentProcessName;
 
