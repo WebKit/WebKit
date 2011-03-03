@@ -1,3 +1,61 @@
+2011-03-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for new tests.
+
+        * platform/gtk/fast/block/positioning/differing-writing-modes-expected.checksum: Added.
+        * platform/gtk/fast/block/positioning/differing-writing-modes-expected.png: Added.
+        * platform/gtk/fast/block/positioning/differing-writing-modes-expected.txt: Added.
+        * platform/gtk/fast/block/positioning/differing-writing-modes-replaced-expected.checksum: Added.
+        * platform/gtk/fast/block/positioning/differing-writing-modes-replaced-expected.png: Added.
+        * platform/gtk/fast/block/positioning/differing-writing-modes-replaced-expected.txt: Added.
+        * platform/gtk/fast/replaced/vertical-lr/absolute-position-percentage-width-expected.checksum: Added.
+        * platform/gtk/fast/replaced/vertical-lr/absolute-position-percentage-width-expected.png: Added.
+        * platform/gtk/fast/replaced/vertical-lr/absolute-position-percentage-width-expected.txt: Added.
+        * platform/gtk/fast/replaced/vertical-lr/absolute-position-with-auto-height-and-top-and-bottom-expected.checksum: Added.
+        * platform/gtk/fast/replaced/vertical-lr/absolute-position-with-auto-height-and-top-and-bottom-expected.png: Added.
+        * platform/gtk/fast/replaced/vertical-lr/absolute-position-with-auto-height-and-top-and-bottom-expected.txt: Added.
+        * platform/gtk/fast/replaced/vertical-lr/absolute-position-with-auto-width-and-left-and-right-expected.checksum: Added.
+        * platform/gtk/fast/replaced/vertical-lr/absolute-position-with-auto-width-and-left-and-right-expected.png: Added.
+        * platform/gtk/fast/replaced/vertical-lr/absolute-position-with-auto-width-and-left-and-right-expected.txt: Added.
+        * platform/gtk/fast/replaced/vertical-rl/absolute-position-percentage-width-expected.checksum: Added.
+        * platform/gtk/fast/replaced/vertical-rl/absolute-position-percentage-width-expected.png: Added.
+        * platform/gtk/fast/replaced/vertical-rl/absolute-position-percentage-width-expected.txt: Added.
+        * platform/gtk/fast/replaced/vertical-rl/absolute-position-with-auto-height-and-top-and-bottom-expected.checksum: Added.
+        * platform/gtk/fast/replaced/vertical-rl/absolute-position-with-auto-height-and-top-and-bottom-expected.png: Added.
+        * platform/gtk/fast/replaced/vertical-rl/absolute-position-with-auto-height-and-top-and-bottom-expected.txt: Added.
+        * platform/gtk/fast/replaced/vertical-rl/absolute-position-with-auto-width-and-left-and-right-expected.checksum: Added.
+        * platform/gtk/fast/replaced/vertical-rl/absolute-position-with-auto-width-and-left-and-right-expected.png: Added.
+        * platform/gtk/fast/replaced/vertical-rl/absolute-position-with-auto-width-and-left-and-right-expected.txt: Added.
+        * platform/gtk/fast/ruby/base-shorter-than-text-expected.checksum: Added.
+        * platform/gtk/fast/ruby/base-shorter-than-text-expected.png: Added.
+        * platform/gtk/fast/ruby/base-shorter-than-text-expected.txt: Added.
+        * platform/gtk/fast/spatial-navigation/snav-multiple-select-focusring-expected.png:
+        * platform/gtk/fast/spatial-navigation/snav-multiple-select-focusring-expected.txt: Added.
+        * platform/gtk/fast/table/table-and-parts-outline-expected.checksum: Added.
+        * platform/gtk/fast/table/table-and-parts-outline-expected.png: Added.
+        * platform/gtk/fast/table/table-and-parts-outline-expected.txt: Added.
+        * platform/gtk/fast/table/table-continuation-outline-paint-crash-expected.checksum: Added.
+        * platform/gtk/fast/table/table-continuation-outline-paint-crash-expected.png: Added.
+        * platform/gtk/fast/table/table-continuation-outline-paint-crash-expected.txt: Added.
+        * platform/gtk/fast/viewport/viewport-91-expected.txt: Added.
+        * platform/gtk/fast/viewport/viewport-92-expected.txt: Added.
+        * platform/gtk/fast/viewport/viewport-93-expected.txt: Added.
+        * platform/gtk/fast/viewport/viewport-94-expected.txt: Added.
+        * platform/gtk/fast/viewport/viewport-95-expected.txt: Added.
+        * platform/gtk/fast/viewport/viewport-96-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.checksum: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.png: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.txt: Added.
+        * platform/gtk/svg/css/path-gradient-stroke-shadow-expected.checksum: Added.
+        * platform/gtk/svg/css/path-gradient-stroke-shadow-expected.png: Added.
+        * platform/gtk/svg/css/path-gradient-stroke-shadow-expected.txt: Added.
+        * platform/gtk/svg/custom/SVGPaint-mutate-attribute-expected.checksum: Added.
+        * platform/gtk/svg/custom/SVGPaint-mutate-attribute-expected.png: Added.
+        * platform/gtk/svg/custom/SVGPaint-mutate-attribute-expected.txt: Added.
+        * platform/gtk/svg/custom/SVGPaint-mutate-inline-style-expected.checksum: Added.
+        * platform/gtk/svg/custom/SVGPaint-mutate-inline-style-expected.png: Added.
+        * platform/gtk/svg/custom/SVGPaint-mutate-inline-style-expected.txt: Added.
+
 2011-03-03  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Andreas Kling.
