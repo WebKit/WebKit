@@ -42,12 +42,12 @@ namespace JSC {
         ptrdiff_t firstParameterIndex;
         unsigned numArguments;
 
-        Register* registers;
-        OwnArrayPtr<Register> registerArray;
+        WriteBarrier<Unknown>* registers;
+        OwnArrayPtr<WriteBarrier<Unknown> > registerArray;
 
-        Register* extraArguments;
+        WriteBarrier<Unknown>* extraArguments;
         OwnArrayPtr<bool> deletedArguments;
-        Register extraArgumentsFixedBuffer[4];
+        WriteBarrier<Unknown> extraArgumentsFixedBuffer[4];
 
         WriteBarrier<JSFunction> callee;
         bool overrodeLength : 1;
@@ -83,10 +83,11 @@ namespace JSC {
         }
         
         void copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxSize);
-        void copyRegisters();
+        void copyRegisters(JSGlobalData&);
         bool isTornOff() const { return d->registerArray; }
         void setActivation(JSGlobalData& globalData, JSActivation* activation)
         {
+            ASSERT(!d->registerArray);
             d->activation.set(globalData, this, activation);
             d->registers = &activation->registerAt(0);
         }
@@ -157,19 +158,19 @@ namespace JSC {
         d->firstParameterIndex = firstParameterIndex;
         d->numArguments = numArguments;
 
-        d->registers = callFrame->registers();
+        d->registers = reinterpret_cast<WriteBarrier<Unknown>*>(callFrame->registers());
 
-        Register* extraArguments;
+        WriteBarrier<Unknown>* extraArguments;
         if (d->numArguments <= d->numParameters)
             extraArguments = 0;
         else {
             unsigned numExtraArguments = d->numArguments - d->numParameters;
-            if (numExtraArguments > sizeof(d->extraArgumentsFixedBuffer) / sizeof(Register))
-                extraArguments = new Register[numExtraArguments];
+            if (numExtraArguments > sizeof(d->extraArgumentsFixedBuffer) / sizeof(WriteBarrier<Unknown>))
+                extraArguments = new WriteBarrier<Unknown>[numExtraArguments];
             else
                 extraArguments = d->extraArgumentsFixedBuffer;
             for (unsigned i = 0; i < numExtraArguments; ++i)
-                extraArguments[i] = argv[d->numParameters + i];
+                extraArguments[i].set(callFrame->globalData(), this, argv[d->numParameters + i].jsValue());
         }
 
         d->extraArguments = extraArguments;
@@ -180,7 +181,7 @@ namespace JSC {
         d->overrodeCaller = false;
         d->isStrictMode = callFrame->codeBlock()->isStrictMode();
         if (d->isStrictMode)
-            copyRegisters();
+            copyRegisters(callFrame->globalData());
     }
 
     inline Arguments::Arguments(CallFrame* callFrame, NoParametersType)
@@ -195,15 +196,15 @@ namespace JSC {
         d->numParameters = 0;
         d->numArguments = numArguments;
 
-        Register* extraArguments;
+        WriteBarrier<Unknown>* extraArguments;
         if (numArguments > sizeof(d->extraArgumentsFixedBuffer) / sizeof(Register))
-            extraArguments = new Register[numArguments];
+            extraArguments = new WriteBarrier<Unknown>[numArguments];
         else
             extraArguments = d->extraArgumentsFixedBuffer;
 
         Register* argv = callFrame->registers() - RegisterFile::CallFrameHeaderSize - numArguments - 1;
         for (unsigned i = 0; i < numArguments; ++i)
-            extraArguments[i] = argv[i];
+            extraArguments[i].set(callFrame->globalData(), this, argv[i].jsValue());
 
         d->extraArguments = extraArguments;
 
@@ -213,10 +214,10 @@ namespace JSC {
         d->overrodeCaller = false;
         d->isStrictMode = callFrame->codeBlock()->isStrictMode();
         if (d->isStrictMode)
-            copyRegisters();
+            copyRegisters(callFrame->globalData());
     }
 
-    inline void Arguments::copyRegisters()
+    inline void Arguments::copyRegisters(JSGlobalData& globalData)
     {
         ASSERT(!isTornOff());
 
@@ -226,14 +227,15 @@ namespace JSC {
         int registerOffset = d->numParameters + RegisterFile::CallFrameHeaderSize;
         size_t registerArraySize = d->numParameters;
 
-        OwnArrayPtr<Register> registerArray = adoptArrayPtr(new Register[registerArraySize]);
-        memcpy(registerArray.get(), d->registers - registerOffset, registerArraySize * sizeof(Register));
+        OwnArrayPtr<WriteBarrier<Unknown> > registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[registerArraySize]);
+        for (size_t i = 0; i < registerArraySize; i++)
+            registerArray[i].set(globalData, this, d->registers[i - registerOffset].get());
         d->registers = registerArray.get() + registerOffset;
         d->registerArray = registerArray.release();
     }
 
     // This JSActivation function is defined here so it can get at Arguments::setRegisters.
-    inline void JSActivation::copyRegisters()
+    inline void JSActivation::copyRegisters(JSGlobalData& globalData)
     {
         ASSERT(!m_registerArray);
 
@@ -247,8 +249,8 @@ namespace JSC {
         int registerOffset = numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
         size_t registerArraySize = numLocals + RegisterFile::CallFrameHeaderSize;
 
-        OwnArrayPtr<Register> registerArray = copyRegisterArray(m_registers - registerOffset, registerArraySize);
-        Register* registers = registerArray.get() + registerOffset;
+        OwnArrayPtr<WriteBarrier<Unknown> > registerArray = copyRegisterArray(globalData, m_registers - registerOffset, registerArraySize);
+        WriteBarrier<Unknown>* registers = registerArray.get() + registerOffset;
         setRegisters(registers, registerArray.release());
     }
 

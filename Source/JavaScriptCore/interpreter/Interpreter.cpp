@@ -569,14 +569,14 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
 
         callFrame->setScopeChain(scopeChain);
         JSActivation* activation = asActivation(scopeChain->object.get());
-        activation->copyRegisters();
+        activation->copyRegisters(*scopeChain->globalData);
         if (JSValue arguments = callFrame->uncheckedR(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue()) {
             if (!oldCodeBlock->isStrictMode())
                 asArguments(arguments)->setActivation(callFrame->globalData(), activation);
         }
     } else if (oldCodeBlock->usesArguments() && !oldCodeBlock->isStrictMode()) {
         if (JSValue arguments = callFrame->uncheckedR(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue())
-            asArguments(arguments)->copyRegisters();
+            asArguments(arguments)->copyRegisters(callFrame->globalData());
     }
 
     CallFrame* callerFrame = callFrame->callerFrame();
@@ -2356,7 +2356,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         ASSERT(scope->isGlobalObject());
         int index = vPC[2].u.operand;
 
-        callFrame->uncheckedR(dst) = scope->registerAt(index);
+        callFrame->uncheckedR(dst) = scope->registerAt(index).get();
         vPC += OPCODE_LENGTH(op_get_global_var);
         NEXT_INSTRUCTION();
     }
@@ -2370,7 +2370,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int index = vPC[1].u.operand;
         int value = vPC[2].u.operand;
         
-        scope->registerAt(index) = JSValue(callFrame->r(value).jsValue());
+        scope->registerAt(index).set(*globalData, scope, callFrame->r(value).jsValue());
         vPC += OPCODE_LENGTH(op_put_global_var);
         NEXT_INSTRUCTION();
     }
@@ -2401,7 +2401,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         }
         ASSERT((*iter)->isVariableObject());
         JSVariableObject* scope = static_cast<JSVariableObject*>(iter->get());
-        callFrame->uncheckedR(dst) = scope->registerAt(index);
+        callFrame->uncheckedR(dst) = scope->registerAt(index).get();
         ASSERT(callFrame->r(dst).jsValue());
         vPC += OPCODE_LENGTH(op_get_scoped_var);
         NEXT_INSTRUCTION();
@@ -2433,7 +2433,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         ASSERT((*iter)->isVariableObject());
         JSVariableObject* scope = static_cast<JSVariableObject*>(iter->get());
         ASSERT(callFrame->r(value).jsValue());
-        scope->registerAt(index) = JSValue(callFrame->r(value).jsValue());
+        scope->registerAt(index).set(*globalData, scope, callFrame->r(value).jsValue());
         vPC += OPCODE_LENGTH(op_put_scoped_var);
         NEXT_INSTRUCTION();
     }
@@ -4093,7 +4093,7 @@ skip_id_custom_self:
         ASSERT(codeBlock->needsFullScopeChain());
         JSValue activationValue = callFrame->r(activation).jsValue();
         if (activationValue) {
-            asActivation(activationValue)->copyRegisters();
+            asActivation(activationValue)->copyRegisters(*globalData);
 
             if (JSValue argumentsValue = callFrame->r(unmodifiedArgumentsRegister(arguments)).jsValue()) {
                 if (!codeBlock->isStrictMode())
@@ -4101,7 +4101,7 @@ skip_id_custom_self:
             }
         } else if (JSValue argumentsValue = callFrame->r(unmodifiedArgumentsRegister(arguments)).jsValue()) {
             if (!codeBlock->isStrictMode())
-                asArguments(argumentsValue)->copyRegisters();
+                asArguments(argumentsValue)->copyRegisters(*globalData);
         }
 
         vPC += OPCODE_LENGTH(op_tear_off_activation);
@@ -4123,7 +4123,7 @@ skip_id_custom_self:
         ASSERT(!codeBlock->needsFullScopeChain() && codeBlock->ownerExecutable()->usesArguments());
 
         if (JSValue arguments = callFrame->r(unmodifiedArgumentsRegister(src1)).jsValue())
-            asArguments(arguments)->copyRegisters();
+            asArguments(arguments)->copyRegisters(*globalData);
 
         vPC += OPCODE_LENGTH(op_tear_off_arguments);
         NEXT_INSTRUCTION();
@@ -4799,7 +4799,7 @@ JSValue Interpreter::retrieveArguments(CallFrame* callFrame, JSFunction* functio
     }
 
     Arguments* arguments = new (functionCallFrame) Arguments(functionCallFrame);
-    arguments->copyRegisters();
+    arguments->copyRegisters(functionCallFrame->globalData());
     return arguments;
 }
 

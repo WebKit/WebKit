@@ -48,11 +48,11 @@ void Arguments::markChildren(MarkStack& markStack)
     JSObject::markChildren(markStack);
 
     if (d->registerArray)
-        markStack.deprecatedAppendValues(d->registerArray.get(), d->numParameters);
+        markStack.appendValues(d->registerArray.get(), d->numParameters);
 
     if (d->extraArguments) {
         unsigned numExtraArguments = d->numArguments - d->numParameters;
-        markStack.deprecatedAppendValues(d->extraArguments, numExtraArguments);
+        markStack.appendValues(d->extraArguments, numExtraArguments);
     }
 
     markStack.append(&d->callee);
@@ -74,9 +74,9 @@ void Arguments::copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxS
         unsigned parametersLength = min(min(d->numParameters, d->numArguments), maxSize);
         unsigned i = 0;
         for (; i < parametersLength; ++i)
-            buffer[i] = d->registers[d->firstParameterIndex + i].jsValue();
+            buffer[i] = d->registers[d->firstParameterIndex + i].get();
         for (; i < d->numArguments; ++i)
-            buffer[i] = d->extraArguments[i - d->numParameters].jsValue();
+            buffer[i] = d->extraArguments[i - d->numParameters].get();
         return;
     }
     
@@ -84,13 +84,13 @@ void Arguments::copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxS
     unsigned i = 0;
     for (; i < parametersLength; ++i) {
         if (!d->deletedArguments[i])
-            buffer[i] = d->registers[d->firstParameterIndex + i].jsValue();
+            buffer[i] = d->registers[d->firstParameterIndex + i].get();
         else
             buffer[i] = get(exec, i);
     }
     for (; i < d->numArguments; ++i) {
         if (!d->deletedArguments[i])
-            buffer[i] = d->extraArguments[i - d->numParameters].jsValue();
+            buffer[i] = d->extraArguments[i - d->numParameters].get();
         else
             buffer[i] = get(exec, i);
     }
@@ -119,9 +119,9 @@ void Arguments::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
         unsigned parametersLength = min(d->numParameters, d->numArguments);
         unsigned i = 0;
         for (; i < parametersLength; ++i)
-            args.append(d->registers[d->firstParameterIndex + i].jsValue());
+            args.append(d->registers[d->firstParameterIndex + i].get());
         for (; i < d->numArguments; ++i)
-            args.append(d->extraArguments[i - d->numParameters].jsValue());
+            args.append(d->extraArguments[i - d->numParameters].get());
         return;
     }
 
@@ -129,13 +129,13 @@ void Arguments::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
     unsigned i = 0;
     for (; i < parametersLength; ++i) {
         if (!d->deletedArguments[i])
-            args.append(d->registers[d->firstParameterIndex + i].jsValue());
+            args.append(d->registers[d->firstParameterIndex + i].get());
         else
             args.append(get(exec, i));
     }
     for (; i < d->numArguments; ++i) {
         if (!d->deletedArguments[i])
-            args.append(d->extraArguments[i - d->numParameters].jsValue());
+            args.append(d->extraArguments[i - d->numParameters].get());
         else
             args.append(get(exec, i));
     }
@@ -145,9 +145,9 @@ bool Arguments::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& sl
 {
     if (i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
         if (i < d->numParameters) {
-            slot.setValue(d->registers[d->firstParameterIndex + i].jsValue());
+            slot.setValue(d->registers[d->firstParameterIndex + i].get());
         } else
-            slot.setValue(d->extraArguments[i - d->numParameters].jsValue());
+            slot.setValue(d->extraArguments[i - d->numParameters].get());
         return true;
     }
 
@@ -184,9 +184,9 @@ bool Arguments::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNa
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
         if (i < d->numParameters) {
-            slot.setValue(d->registers[d->firstParameterIndex + i].jsValue());
+            slot.setValue(d->registers[d->firstParameterIndex + i].get());
         } else
-            slot.setValue(d->extraArguments[i - d->numParameters].jsValue());
+            slot.setValue(d->extraArguments[i - d->numParameters].get());
         return true;
     }
 
@@ -215,9 +215,9 @@ bool Arguments::getOwnPropertyDescriptor(ExecState* exec, const Identifier& prop
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
         if (i < d->numParameters) {
-            descriptor.setDescriptor(d->registers[d->firstParameterIndex + i].jsValue(), DontEnum);
+            descriptor.setDescriptor(d->registers[d->firstParameterIndex + i].get(), DontEnum);
         } else
-            descriptor.setDescriptor(d->extraArguments[i - d->numParameters].jsValue(), DontEnum);
+            descriptor.setDescriptor(d->extraArguments[i - d->numParameters].get(), DontEnum);
         return true;
     }
     
@@ -257,9 +257,9 @@ void Arguments::put(ExecState* exec, unsigned i, JSValue value)
 {
     if (i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
         if (i < d->numParameters)
-            d->registers[d->firstParameterIndex + i] = JSValue(value);
+            d->registers[d->firstParameterIndex + i].set(exec->globalData(), d->activation ? static_cast<JSCell*>(d->activation.get()) : static_cast<JSCell*>(this), value);
         else
-            d->extraArguments[i - d->numParameters] = JSValue(value);
+            d->extraArguments[i - d->numParameters].set(exec->globalData(), this, value);
         return;
     }
 
@@ -273,9 +273,9 @@ void Arguments::put(ExecState* exec, const Identifier& propertyName, JSValue val
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
         if (i < d->numParameters)
-            d->registers[d->firstParameterIndex + i] = JSValue(value);
+            d->registers[d->firstParameterIndex + i].set(exec->globalData(), d->activation ? static_cast<JSCell*>(d->activation.get()) : static_cast<JSCell*>(this), value);
         else
-            d->extraArguments[i - d->numParameters] = JSValue(value);
+            d->extraArguments[i - d->numParameters].set(exec->globalData(), this, value);
         return;
     }
 

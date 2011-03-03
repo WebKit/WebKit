@@ -125,7 +125,7 @@ void JSGlobalObject::put(ExecState* exec, const Identifier& propertyName, JSValu
 {
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
 
-    if (symbolTablePut(propertyName, value))
+    if (symbolTablePut(exec->globalData(), propertyName, value))
         return;
     JSVariableObject::put(exec, propertyName, value, slot);
 }
@@ -134,7 +134,7 @@ void JSGlobalObject::putWithAttributes(ExecState* exec, const Identifier& proper
 {
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
 
-    if (symbolTablePutWithAttributes(propertyName, value, attributes))
+    if (symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
         return;
 
     JSValue valueBefore = getDirect(propertyName);
@@ -365,12 +365,12 @@ void JSGlobalObject::markChildren(MarkStack& markStack)
     if (m_registerArray) {
         // Outside the execution of global code, when our variables are torn off,
         // we can mark the torn-off array.
-        markStack.deprecatedAppendValues(m_registerArray.get(), m_registerArraySize);
+        markStack.appendValues(m_registerArray.get(), m_registerArraySize);
     } else if (m_registers) {
         // During execution of global code, when our variables are in the register file,
         // the symbol table tells us how many variables there are, and registers
         // points to where they end, and the registers used for execution begin.
-        markStack.deprecatedAppendValues(m_registers - symbolTable().size(), symbolTable().size());
+        markStack.appendValues(m_registers - symbolTable().size(), symbolTable().size());
     }
 }
 
@@ -395,8 +395,8 @@ void JSGlobalObject::copyGlobalsFrom(RegisterFile& registerFile)
         return;
     }
 
-    OwnArrayPtr<Register> registerArray = copyRegisterArray(registerFile.lastGlobal(), numGlobals);
-    Register* registers = registerArray.get() + numGlobals;
+    OwnArrayPtr<WriteBarrier<Unknown> > registerArray = copyRegisterArray(globalData(), reinterpret_cast<WriteBarrier<Unknown>*>(registerFile.lastGlobal()), numGlobals);
+    WriteBarrier<Unknown>* registers = registerArray.get() + numGlobals;
     setRegisters(registers, registerArray.release(), numGlobals);
 }
 
@@ -410,8 +410,9 @@ void JSGlobalObject::copyGlobalsTo(RegisterFile& registerFile)
     registerFile.setNumGlobals(symbolTable().size());
 
     if (m_registerArray) {
-        memcpy(registerFile.start() - m_registerArraySize, m_registerArray.get(), m_registerArraySize * sizeof(Register));
-        setRegisters(registerFile.start(), 0, 0);
+        // The register file is always a gc root so no barrier is needed here
+        memcpy(registerFile.start() - m_registerArraySize, m_registerArray.get(), m_registerArraySize * sizeof(WriteBarrier<Unknown>));
+        setRegisters(reinterpret_cast<WriteBarrier<Unknown>*>(registerFile.start()), 0, 0);
     }
 }
 
@@ -421,11 +422,11 @@ void JSGlobalObject::resizeRegisters(int oldSize, int newSize)
     if (newSize == oldSize)
         return;
     ASSERT(newSize && newSize > oldSize);
-
     if (m_registerArray || !m_registers) {
         ASSERT(static_cast<size_t>(oldSize) == m_registerArraySize);
-        Register* registerArray = new Register[newSize];
-        memcpy(registerArray + newSize - oldSize, m_registerArray.get(), oldSize * sizeof(Register));
+        WriteBarrier<Unknown>* registerArray = new WriteBarrier<Unknown>[newSize];
+        for (int i = 0; i < oldSize; i++)
+            registerArray[newSize - oldSize + i].set(globalData(), this, m_registerArray[i].get());
         setRegisters(registerArray + newSize, registerArray, newSize);
     } else {
         ASSERT(static_cast<size_t>(newSize) < globalData().interpreter->registerFile().maxGlobals());
@@ -433,7 +434,7 @@ void JSGlobalObject::resizeRegisters(int oldSize, int newSize)
     }
 
     for (int i = -newSize; i < -oldSize; ++i)
-        m_registers[i] = jsUndefined();
+        m_registers[i].setUndefined();
 }
 
 void* JSGlobalObject::operator new(size_t size, JSGlobalData* globalData)

@@ -67,12 +67,12 @@ namespace JSC {
         {
         }
 
-        void initialize(Register* buffer, size_t size)
+        void initialize(WriteBarrier<Unknown>* buffer, size_t size)
         {
             ASSERT(!m_markSet);
             ASSERT(isEmpty());
 
-            m_buffer = buffer;
+            m_buffer = reinterpret_cast<Register*>(buffer);
             m_size = size;
 #ifndef NDEBUG
             m_isReadOnly = true;

@@ -46,17 +46,17 @@ JSValue JSStaticScopeObject::toStrictThisObject(ExecState*) const
     return jsNull();
 }
 
-void JSStaticScopeObject::put(ExecState*, const Identifier& propertyName, JSValue value, PutPropertySlot&)
+void JSStaticScopeObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
 {
-    if (symbolTablePut(propertyName, value))
+    if (symbolTablePut(exec->globalData(), propertyName, value))
         return;
     
     ASSERT_NOT_REACHED();
 }
 
-void JSStaticScopeObject::putWithAttributes(ExecState*, const Identifier& propertyName, JSValue value, unsigned attributes)
+void JSStaticScopeObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
-    if (symbolTablePutWithAttributes(propertyName, value, attributes))
+    if (symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
         return;
     
     ASSERT_NOT_REACHED();

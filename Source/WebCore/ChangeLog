@@ -1,3 +1,16 @@
+2011-03-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        JSVariableObject needs to use WriteBarrier for symboltable property storage
+        https://bugs.webkit.org/show_bug.cgi?id=55698
+
+        Update to pass JSGlobalData for the symbol table write used
+        to set the document property.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::updateDocument):
+
 2011-03-03  Alexey Proskuryakov  <ap@apple.com>
 
         More build fixing. Move WebCoreKeyboardUIMode.h to a cross-platform location.

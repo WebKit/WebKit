@@ -1,3 +1,67 @@
+2011-03-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        JSVariableObject needs to use WriteBarrier for symboltable property storage
+        https://bugs.webkit.org/show_bug.cgi?id=55698
+
+        Replace the direct usage of Register in JSVariableObject (and descendents)
+        with WriteBarrier.  This requires updating the Arguments object to use
+        WriteBarrier as well.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveArguments):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::initialize):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::markChildren):
+        (JSC::Arguments::copyToRegisters):
+        (JSC::Arguments::fillArgList):
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::Arguments::getOwnPropertyDescriptor):
+        (JSC::Arguments::put):
+        * runtime/Arguments.h:
+        (JSC::Arguments::setActivation):
+        (JSC::Arguments::Arguments):
+        (JSC::Arguments::copyRegisters):
+        (JSC::JSActivation::copyRegisters):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::markChildren):
+        (JSC::JSActivation::symbolTableGet):
+        (JSC::JSActivation::symbolTablePut):
+        (JSC::JSActivation::symbolTablePutWithAttributes):
+        (JSC::JSActivation::put):
+        (JSC::JSActivation::putWithAttributes):
+        (JSC::JSActivation::argumentsGetter):
+        * runtime/JSActivation.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::put):
+        (JSC::JSGlobalObject::putWithAttributes):
+        (JSC::JSGlobalObject::markChildren):
+        (JSC::JSGlobalObject::copyGlobalsFrom):
+        (JSC::JSGlobalObject::copyGlobalsTo):
+        (JSC::JSGlobalObject::resizeRegisters):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::setRegisters):
+        (JSC::JSGlobalObject::addStaticGlobals):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::put):
+        (JSC::JSStaticScopeObject::putWithAttributes):
+        * runtime/JSVariableObject.cpp:
+        (JSC::JSVariableObject::symbolTableGet):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::registerAt):
+        (JSC::JSVariableObject::JSVariableObjectData::JSVariableObjectData):
+        (JSC::JSVariableObject::symbolTableGet):
+        (JSC::JSVariableObject::symbolTablePut):
+        (JSC::JSVariableObject::symbolTablePutWithAttributes):
+        (JSC::JSVariableObject::copyRegisterArray):
+        (JSC::JSVariableObject::setRegisters):
+
 2011-03-03  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix Windows build.

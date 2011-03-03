@@ -64,7 +64,7 @@ void JSDOMWindowBase::updateDocument()
 {
     ASSERT(m_impl->document());
     ExecState* exec = globalExec();
-    symbolTablePutWithAttributes(Identifier(exec, "document"), toJS(exec, this, m_impl->document()), DontDelete | ReadOnly);
+    symbolTablePutWithAttributes(exec->globalData(), Identifier(exec, "document"), toJS(exec, this, m_impl->document()), DontDelete | ReadOnly);
 }
 
 ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const

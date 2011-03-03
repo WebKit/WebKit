@@ -282,7 +282,7 @@ namespace JSC {
         void init(JSObject* thisValue);
         void reset(JSValue prototype);
 
-        void setRegisters(Register* registers, PassOwnArrayPtr<Register> registerArray, size_t count);
+        void setRegisters(WriteBarrier<Unknown>* registers, PassOwnArrayPtr<WriteBarrier<Unknown> > registerArray, size_t count);
 
         void* operator new(size_t); // can only be allocated with JSGlobalData
     };
@@ -295,7 +295,7 @@ namespace JSC {
         return static_cast<JSGlobalObject*>(asObject(value));
     }
 
-    inline void JSGlobalObject::setRegisters(Register* registers, PassOwnArrayPtr<Register> registerArray, size_t count)
+    inline void JSGlobalObject::setRegisters(WriteBarrier<Unknown>* registers, PassOwnArrayPtr<WriteBarrier<Unknown> > registerArray, size_t count)
     {
         JSVariableObject::setRegisters(registers, registerArray);
         m_registerArraySize = count;
@@ -305,9 +305,12 @@ namespace JSC {
     {
         size_t oldSize = m_registerArraySize;
         size_t newSize = oldSize + count;
-        Register* registerArray = new Register[newSize];
-        if (m_registerArray)
+        WriteBarrier<Unknown>* registerArray = new WriteBarrier<Unknown>[newSize];
+        if (m_registerArray) {
+            // memcpy is safe here as we're copying barriers we already own from the existing array
             memcpy(registerArray + count, m_registerArray.get(), oldSize * sizeof(Register));
+        }
+
         setRegisters(registerArray + newSize, registerArray, newSize);
 
         for (int i = 0, index = -static_cast<int>(oldSize) - 1; i < count; ++i, --index) {
@@ -315,7 +318,7 @@ namespace JSC {
             ASSERT(global.attributes & DontDelete);
             SymbolTableEntry newEntry(index, global.attributes);
             symbolTable().add(global.identifier.impl(), newEntry);
-            registerAt(index) = global.value;
+            registerAt(index).set(globalData(), this, global.value);
         }
     }
 
