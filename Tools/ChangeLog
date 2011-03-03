@@ -1,3 +1,29 @@
+2011-03-02  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        NRWT - implement Linux Hardy 64-bit port support. This involves
+        adding support for non-'x86' architectures and updating the
+        "deduplicate_tests" script to correctly understand that
+        port.name() is not always equal to basename(port.baseline_path()).
+
+        This change introduces two new port names: 'chromium-linux-x86'
+        and 'chromium-linux-x86_64'. Using the prior 'chromium-linux'
+        flag will cause the code to determine which one to use at
+        runtime, just like we currently do with 'chromium-win'.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55535
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+          Handle 'return_stderr' keyword arg to run_command()
+        * Scripts/webkitpy/layout_tests/deduplicate_tests.py:
+        * Scripts/webkitpy/layout_tests/deduplicate_tests_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/google_chrome.py:
+
 2011-03-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, make sure we put the wxWebKit dylib in the right directory and

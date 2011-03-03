@@ -118,6 +118,15 @@ def cluster_file_hashes(glob_pattern):
     return parse_git_output(git_output, glob_pattern)
 
 
+def dirname_to_platform(dirname):
+    if dirname == 'chromium-linux':
+        return 'chromium-linux-x86'
+    elif dirname == 'chromium-win':
+        return 'chromium-win-win7'
+    elif dirname == 'chromium-mac':
+        return 'chromium-mac-snowleopard'
+    return dirname
+
 def extract_platforms(paths):
     """Extracts the platforms from a list of paths matching ^platform/(.*?)/.
     Args:
@@ -129,7 +138,7 @@ def extract_platforms(paths):
     for path in paths:
         match = re.match(r'^platform/(.*?)/', path)
         if match:
-            platform = match.group(1)
+            platform = dirname_to_platform(match.group(1))
         else:
             platform = _BASE_PLATFORM
         platforms[platform] = path
@@ -153,10 +162,11 @@ def has_intermediate_results(test, fallbacks, matching_platform,
         path_exists: Optional parameter that allows us to stub out
             os.path.exists for testing.
     """
-    for platform in fallbacks:
+    for dirname in fallbacks:
+        platform = dirname_to_platform(dirname)
         if platform == matching_platform:
             return False
-        test_path = os.path.join('LayoutTests', 'platform', platform, test)
+        test_path = os.path.join('LayoutTests', 'platform', dirname, test)
         if path_exists(test_path):
             return True
     return False
@@ -200,7 +210,8 @@ def find_dups(hashes, port_fallbacks, relative_to):
         for platform in platforms.keys():
             if platform not in port_factory.all_port_names():
                 continue
-            for fallback in port_fallbacks[platform]:
+            for dirname in port_fallbacks[platform]:
+                fallback = dirname_to_platform(dirname)
                 if fallback not in platforms.keys():
                     continue
                 # We have to verify that there isn't an intermediate result
@@ -216,7 +227,7 @@ def find_dups(hashes, port_fallbacks, relative_to):
                 yield {
                     'test': test,
                     'platform': platform,
-                    'fallback': fallback,
+                    'fallback': dirname,
                     'path': path,
                 }
 

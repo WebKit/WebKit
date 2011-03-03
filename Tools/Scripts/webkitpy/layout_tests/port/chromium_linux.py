@@ -40,13 +40,62 @@ _log = logging.getLogger("webkitpy.layout_tests.port.chromium_linux")
 
 class ChromiumLinuxPort(chromium.ChromiumPort):
     """Chromium Linux implementation of the Port class."""
+    SUPPORTED_ARCHITECTURES = ('x86', 'x86_64')
 
-    def __init__(self, **kwargs):
-        kwargs.setdefault('port_name', 'chromium-linux')
-        chromium.ChromiumPort.__init__(self, **kwargs)
+    FALLBACK_PATHS = {
+        'x86_64': ['chromium-linux-x86_64', 'chromium-linux', 'chromium-win', 'chromium', 'win', 'mac'],
+        'x86': ['chromium-linux', 'chromium-win', 'chromium', 'win', 'mac'],
+    }
+
+    def __init__(self, port_name=None, rebaselining=False, **kwargs):
+        port_name = port_name or 'chromium-linux'
+        chromium.ChromiumPort.__init__(self, port_name=port_name, **kwargs)
+
+        # We re-set the port name once the base object is fully initialized
+        # in order to be able to find the DRT binary properly.
+        if port_name.endswith('-linux') and not rebaselining:
+            self._architecture = self._determine_architecture()
+            # FIXME: this is an ugly hack to avoid renaming the GPU port.
+            if port_name == 'chromium-linux':
+                port_name = port_name + '-' + self._architecture
+        elif rebaselining:
+            self._architecture = 'x86'
+        else:
+            base, arch = port_name.rsplit('-', 1)
+            assert base in ('chromium-linux', 'chromium-gpu-linux')
+            self._architecture = arch
+        assert self._architecture in self.SUPPORTED_ARCHITECTURES
+        assert port_name in ('chromium-linux', 'chromium-gpu-linux',
+                             'chromium-linux-x86', 'chromium-linux-x86_64')
+        self._name = port_name
+
+    def _determine_architecture(self):
+        driver_path = self._path_to_driver()
+        file_output = ''
+        if self._filesystem.exists(driver_path):
+            file_output = self._executive.run_command(['file', driver_path],
+                                                      return_stderr=True)
+
+        if 'ELF 32-bit LSB executable' in file_output:
+            return 'x86'
+        if 'ELF 64-bit LSB executable' in file_output:
+            return 'x86_64'
+        if file_output:
+            _log.warning('Could not determine architecture from "file" output: %s' % file_output)
+
+        # We don't know what the architecture is; default to 'x86' because
+        # maybe we're rebaselining and the binary doesn't actually exist,
+        # or something else weird is going on. It's okay to do this because
+        # if we actually try to use the binary, check_build() should fail.
+        return 'x86'
+
+    def baseline_path(self):
+        if self._architecture == 'x86_64':
+            return self._webkit_baseline_path(self._name)
+        return self._webkit_baseline_path('chromium-linux')
 
     def baseline_search_path(self):
-        port_names = ["chromium-linux", "chromium-win", "chromium", "win", "mac"]
+        port_names = self.FALLBACK_PATHS[self._architecture]
         return map(self._webkit_baseline_path, port_names)
 
     def check_build(self, needs_http):
@@ -75,8 +124,8 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         return 'linux'
 
     def version(self):
-        # We don't have different versions on linux.
-        return ''
+        # FIXME: add support for Lucid.
+        return 'hardy'
 
     #
     # PROTECTED METHODS

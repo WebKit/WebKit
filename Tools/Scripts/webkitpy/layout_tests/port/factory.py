@@ -36,16 +36,14 @@ import sys
 def all_port_names():
     """Return a list of all valid, fully-specified, "real" port names.
 
-    This is the list of names that can be specified directly and can be
-    returned as a value from port.name(). This does not include any
-    "fake" names like "test" or "mock-mac", and it does not include any
-    shortcut names like "chromium-win" that would get expanded to
-    "chromium-win-xp"."""
+    This is the list of directories that are used as actual baseline_paths()
+    by real ports. This does not include any "fake" names like "test"
+    or "mock-mac", and it does not include any directories that are not ."""
     # FIXME: There's probably a better way to generate this list ...
     return ['chromium-gpu-linux',
             'chromium-gpu-mac-snowleopard', 'chromium-gpu-mac-leopard',
             'chromium-gpu-win-xp', 'chromium-gpu-win-vista', 'chromium-gpu-win-win7',
-            'chromium-linux',
+            'chromium-linux-x86_64', 'chromium-linux-x86',
             'chromium-mac-leopard', 'chromium-mac-snowleopard',
             'chromium-win-xp', 'chromium-win-vista', 'chromium-win-win7',
             'google-chrome-linux32', 'google-chrome-linux64',

@@ -35,8 +35,9 @@ from webkitpy.common.system import executive
 
 class MockExecutive2(object):
     def __init__(self, output='', exit_code=0, exception=None,
-                 run_command_fn=None):
+                 run_command_fn=None, stderr=''):
         self._output = output
+        self._stderr = stderr
         self._exit_code = exit_code
         self._exception = exception
         self._run_command_fn = run_command_fn
@@ -51,7 +52,7 @@ class MockExecutive2(object):
         pass
 
     def run_command(self, arg_list, error_handler=None, return_exit_code=False,
-                    decode_output=False):
+                    decode_output=False, return_stderr=False):
         if self._exception:
             raise self._exception
         if return_exit_code:
@@ -63,5 +64,6 @@ class MockExecutive2(object):
                                                  exit_code=self._exit_code,
                                                  output=self._output)
             error_handler(script_error)
-
+        if return_stderr:
+            return self._output + self._stderr
         return self._output

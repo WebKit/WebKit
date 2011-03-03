@@ -95,7 +95,7 @@ class ListDuplicatesTest(unittest.TestCase):
             # intermediate results.
             (False, ('fast/foo-expected.txt',
                      ['chromium-win', 'chromium', 'base'],
-                     'chromium-win',
+                     'chromium-win-win7',
                      lambda path: True)),
             # Since chromium-win has a result, we have an intermediate result.
             (True,  ('fast/foo-expected.txt',
@@ -159,12 +159,12 @@ class ListDuplicatesTest(unittest.TestCase):
         self.assertEquals({'test': 'animage.png',
                            'path': 'LayoutTests/platform/chromium-linux/animage.png',
                            'fallback': 'chromium-win',
-                           'platform': 'chromium-linux'},
+                           'platform': 'chromium-linux-x86'},
                           result[0])
         self.assertEquals({'test': 'foo-expected.txt',
                            'path': 'LayoutTests/platform/chromium-linux/foo-expected.txt',
                            'fallback': 'chromium-win',
-                           'platform': 'chromium-linux'},
+                           'platform': 'chromium-linux-x86'},
                           result[1])
 
         result = deduplicate_tests.deduplicate('*.txt')
@@ -174,7 +174,7 @@ class ListDuplicatesTest(unittest.TestCase):
         self.assertEquals({'test': 'foo-expected.txt',
                            'path': 'LayoutTests/platform/chromium-linux/foo-expected.txt',
                            'fallback': 'chromium-win',
-                           'platform': 'chromium-linux'},
+                           'platform': 'chromium-linux-x86'},
                           result[0])
 
         result = deduplicate_tests.deduplicate('*.png')
@@ -184,7 +184,7 @@ class ListDuplicatesTest(unittest.TestCase):
         self.assertEquals({'test': 'animage.png',
                            'path': 'LayoutTests/platform/chromium-linux/animage.png',
                            'fallback': 'chromium-win',
-                           'platform': 'chromium-linux'},
+                           'platform': 'chromium-linux-x86'},
                           result[0])
 
     def test_get_relative_test_path(self):

@@ -45,6 +45,8 @@ def GetGoogleChromePort(**kwargs):
     """Some tests have slightly different results when compiled as Google
     Chrome vs Chromium.  In those cases, we prepend an additional directory to
     to the baseline paths."""
+    # FIXME: This whole routine is a tremendous hack that needs to be cleaned up.
+
     port_name = kwargs['port_name']
     del kwargs['port_name']
     if port_name == 'google-chrome-linux32':
@@ -62,7 +64,10 @@ def GetGoogleChromePort(**kwargs):
                 return _test_expectations_overrides(self,
                     chromium_linux.ChromiumLinuxPort)
 
-        return GoogleChromeLinux32Port(**kwargs)
+            def architecture(self):
+                return 'x86'
+
+        return GoogleChromeLinux32Port(port_name='chromium-linux-x86', **kwargs)
     elif port_name == 'google-chrome-linux64':
         import chromium_linux
 
@@ -78,7 +83,12 @@ def GetGoogleChromePort(**kwargs):
                 return _test_expectations_overrides(self,
                     chromium_linux.ChromiumLinuxPort)
 
-        return GoogleChromeLinux64Port(**kwargs)
+            def architecture(self):
+                return 'x86_64'
+
+        # We use chromium-linux-x86 here in order to skip over the linux-x86_64
+        # baselines.
+        return GoogleChromeLinux64Port(port_name='chromium-linux-x86', **kwargs)
     elif port_name.startswith('google-chrome-mac'):
         import chromium_mac
 
