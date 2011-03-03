@@ -1,3 +1,10 @@
+2011-03-03  Anders Carlsson  <andersca@apple.com>
+
+        Attempt to fix the Windows build.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+
 2011-03-02  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
