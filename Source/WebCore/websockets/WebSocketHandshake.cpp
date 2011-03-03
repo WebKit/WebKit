@@ -304,12 +304,6 @@ WebSocketHandshakeRequest WebSocketHandshake::clientHandshakeRequest() const
 void WebSocketHandshake::reset()
 {
     m_mode = Incomplete;
-
-    m_wsOrigin = String();
-    m_wsLocation = String();
-    m_wsProtocol = String();
-    m_setCookie = String();
-    m_setCookie2 = String();
 }
 
 void WebSocketHandshake::clearScriptExecutionContext()
@@ -349,7 +343,6 @@ int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
         m_mode = Failed;
         return len;
     }
-    processHeaders();
     if (!checkResponseHeaders()) {
         LOG(Network, "header process failed");
         m_mode = Failed;
@@ -374,54 +367,39 @@ WebSocketHandshake::Mode WebSocketHandshake::mode() const
     return m_mode;
 }
 
-const String& WebSocketHandshake::serverWebSocketOrigin() const
+String WebSocketHandshake::serverWebSocketOrigin() const
 {
-    return m_wsOrigin;
+    return m_response.headerFields().get("sec-websocket-origin");
 }
 
-void WebSocketHandshake::setServerWebSocketOrigin(const String& webSocketOrigin)
+String WebSocketHandshake::serverWebSocketLocation() const
 {
-    m_wsOrigin = webSocketOrigin;
+    return m_response.headerFields().get("sec-websocket-location");
 }
 
-const String& WebSocketHandshake::serverWebSocketLocation() const
+String WebSocketHandshake::serverWebSocketProtocol() const
 {
-    return m_wsLocation;
+    return m_response.headerFields().get("sec-websocket-protocol");
 }
 
-void WebSocketHandshake::setServerWebSocketLocation(const String& webSocketLocation)
+String WebSocketHandshake::serverSetCookie() const
 {
-    m_wsLocation = webSocketLocation;
+    return m_response.headerFields().get("set-cookie");
 }
 
-const String& WebSocketHandshake::serverWebSocketProtocol() const
+String WebSocketHandshake::serverSetCookie2() const
 {
-    return m_wsProtocol;
+    return m_response.headerFields().get("set-cookie2");
 }
 
-void WebSocketHandshake::setServerWebSocketProtocol(const String& webSocketProtocol)
+String WebSocketHandshake::serverUpgrade() const
 {
-    m_wsProtocol = webSocketProtocol;
+    return m_response.headerFields().get("upgrade");
 }
 
-const String& WebSocketHandshake::serverSetCookie() const
+String WebSocketHandshake::serverConnection() const
 {
-    return m_setCookie;
-}
-
-void WebSocketHandshake::setServerSetCookie(const String& setCookie)
-{
-    m_setCookie = setCookie;
-}
-
-const String& WebSocketHandshake::serverSetCookie2() const
-{
-    return m_setCookie2;
-}
-
-void WebSocketHandshake::setServerSetCookie2(const String& setCookie2)
-{
-    m_setCookie2 = setCookie2;
+    return m_response.headerFields().get("connection");
 }
 
 const WebSocketHandshakeResponse& WebSocketHandshake::serverHandshakeResponse() const
@@ -581,38 +559,50 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
     return 0;
 }
 
-void WebSocketHandshake::processHeaders()
-{
-    ASSERT(m_mode == Normal);
-    const HTTPHeaderMap& headers = m_response.headerFields();
-    m_wsOrigin = headers.get("sec-websocket-origin");
-    m_wsLocation = headers.get("sec-websocket-location");
-    m_wsProtocol = headers.get("sec-websocket-protocol");
-    m_setCookie = headers.get("set-cookie");
-    m_setCookie2 = headers.get("set-cookie2");
-}
-
 bool WebSocketHandshake::checkResponseHeaders()
 {
-    if (m_wsOrigin.isNull()) {
-        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error during WebSocket handshake: 'sec-websocket-origin' header is missing", 0, clientOrigin(), 0);
+    const String& serverWebSocketLocation = this->serverWebSocketLocation();
+    const String& serverWebSocketOrigin = this->serverWebSocketOrigin();
+    const String& serverWebSocketProtocol = this->serverWebSocketProtocol();
+    const String& serverUpgrade = this->serverUpgrade();
+    const String& serverConnection = this->serverConnection();
+
+    if (serverUpgrade.isNull()) {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error during WebSocket handshake: 'Upgrade' header is missing", 0, clientOrigin(), 0);
         return false;
     }
-    if (m_wsLocation.isNull()) {
-        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error during WebSocket handshake: 'sec-websocket-location' header is missing", 0, clientOrigin(), 0);
+    if (serverConnection.isNull()) {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error during WebSocket handshake: 'Connection' header is missing", 0, clientOrigin(), 0);
+        return false;
+    }
+    if (serverWebSocketOrigin.isNull()) {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error during WebSocket handshake: 'Sec-WebSocket-Origin' header is missing", 0, clientOrigin(), 0);
+        return false;
+    }
+    if (serverWebSocketLocation.isNull()) {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error during WebSocket handshake: 'Sec-WebSocket-Location' header is missing", 0, clientOrigin(), 0);
         return false;
     }
 
-    if (clientOrigin() != m_wsOrigin) {
-        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error during WebSocket handshake: origin mismatch: " + clientOrigin() + " != " + m_wsOrigin, 0, clientOrigin(), 0);
+    if (!equalIgnoringCase(serverUpgrade, "websocket")) {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error during WebSocket handshake: 'Upgrade' header value is not 'WebSocket'", 0, clientOrigin(), 0);
         return false;
     }
-    if (clientLocation() != m_wsLocation) {
-        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error during WebSocket handshake: location mismatch: " + clientLocation() + " != " + m_wsLocation, 0, clientOrigin(), 0);
+    if (!equalIgnoringCase(serverConnection, "upgrade")) {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error during WebSocket handshake: 'Connection' header value is not 'Upgrade'", 0, clientOrigin(), 0);
         return false;
     }
-    if (!m_clientProtocol.isEmpty() && m_clientProtocol != m_wsProtocol) {
-        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error during WebSocket handshake: protocol mismatch: " + m_clientProtocol + " != " + m_wsProtocol, 0, clientOrigin(), 0);
+
+    if (clientOrigin() != serverWebSocketOrigin) {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error during WebSocket handshake: origin mismatch: " + clientOrigin() + " != " + serverWebSocketOrigin, 0, clientOrigin(), 0);
+        return false;
+    }
+    if (clientLocation() != serverWebSocketLocation) {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error during WebSocket handshake: location mismatch: " + clientLocation() + " != " + serverWebSocketLocation, 0, clientOrigin(), 0);
+        return false;
+    }
+    if (!m_clientProtocol.isEmpty() && m_clientProtocol != serverWebSocketProtocol) {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error during WebSocket handshake: protocol mismatch: " + m_clientProtocol + " != " + serverWebSocketProtocol, 0, clientOrigin(), 0);
         return false;
     }
     return true;

@@ -1,3 +1,32 @@
+2011-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebCore should check for "Upgrade" and "Connection" header fields in WebSockets handshake
+        https://bugs.webkit.org/show_bug.cgi?id=55498
+        <rdar://problem/8752706>
+
+        Tests: http/tests/websocket/tests/handshake-fail-by-no-connection-header.html
+               http/tests/websocket/tests/handshake-fail-by-no-upgrade-header.html
+
+        * websockets/WebSocketHandshake.h: Removed unused and meaningless setters for response
+        header fields. Removed separate member variables for those, as they were duplicating data
+        available in response, and there is no reason to squeeze microsecods here.
+
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::reset): There are no longer member variables for header field
+        values to reset here.
+        (WebCore::WebSocketHandshake::readServerHandshake): Removed a call for processHeaders().
+        (WebCore::WebSocketHandshake::serverWebSocketOrigin): Changed to get the value from response.
+        (WebCore::WebSocketHandshake::serverWebSocketLocation): Ditto.
+        (WebCore::WebSocketHandshake::serverWebSocketProtocol): Ditto.
+        (WebCore::WebSocketHandshake::serverSetCookie): Ditto.
+        (WebCore::WebSocketHandshake::serverSetCookie2): Ditto.
+        (WebCore::WebSocketHandshake::serverUpgrade): Added.
+        (WebCore::WebSocketHandshake::serverConnection): Added.
+        (WebCore::WebSocketHandshake::checkResponseHeaders): Added checks for Upgrade and Connection
+        header field presence and values.
+
 2011-03-03  Helder Correia  <helder@sencha.com>
 
         Reviewed by Andreas Kling.

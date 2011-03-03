@@ -1,3 +1,18 @@
+2011-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebCore should check for "Upgrade" and "Connection" header fields in WebSockets handshake
+        https://bugs.webkit.org/show_bug.cgi?id=55498
+        <rdar://problem/8752706>
+
+        * http/tests/websocket/tests/handshake-fail-by-no-connection-header-expected.txt: Added.
+        * http/tests/websocket/tests/handshake-fail-by-no-connection-header.html: Added.
+        * http/tests/websocket/tests/handshake-fail-by-no-connection-header_wsh.py: Added.
+        * http/tests/websocket/tests/handshake-fail-by-no-upgrade-header-expected.txt: Added.
+        * http/tests/websocket/tests/handshake-fail-by-no-upgrade-header.html: Added.
+        * http/tests/websocket/tests/handshake-fail-by-no-upgrade-header_wsh.py: Added.
+
 2011-03-03  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium Snow Leopard rebaseline.

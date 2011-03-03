@@ -72,19 +72,13 @@ namespace WebCore {
         int readServerHandshake(const char* header, size_t len);
         Mode mode() const;
 
-        const String& serverWebSocketOrigin() const;
-        void setServerWebSocketOrigin(const String& webSocketOrigin);
-
-        const String& serverWebSocketLocation() const;
-        void setServerWebSocketLocation(const String& webSocketLocation);
-
-        const String& serverWebSocketProtocol() const;
-        void setServerWebSocketProtocol(const String& webSocketProtocol);
-
-        const String& serverSetCookie() const;
-        void setServerSetCookie(const String& setCookie);
-        const String& serverSetCookie2() const;
-        void setServerSetCookie2(const String& setCookie2);
+        String serverWebSocketOrigin() const;
+        String serverWebSocketLocation() const;
+        String serverWebSocketProtocol() const;
+        String serverSetCookie() const;
+        String serverSetCookie2() const;
+        String serverUpgrade() const;
+        String serverConnection() const;
 
         const WebSocketHandshakeResponse& serverHandshakeResponse() const;
 
@@ -104,12 +98,6 @@ namespace WebCore {
         ScriptExecutionContext* m_context;
 
         Mode m_mode;
-
-        String m_wsOrigin;
-        String m_wsLocation;
-        String m_wsProtocol;
-        String m_setCookie;
-        String m_setCookie2;
 
         String m_secWebSocketKey1;
         String m_secWebSocketKey2;
