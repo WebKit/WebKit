@@ -202,7 +202,7 @@ class JSONResultsGeneratorBase(object):
         for test in self._test_results_map:
             time_seconds = self._test_results_map[test].time
             tests[test] = {}
-            tests[test]['t'] = int(1000 * time_seconds)
+            tests[test]['time_ms'] = int(1000 * time_seconds)
 
         results['tests'] = tests
         file_path = self._fs.join(self._results_directory, self.FULL_RESULTS_FILENAME)
