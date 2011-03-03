@@ -44,12 +44,12 @@ WebInspector.DebuggerPresentationModel.Events = {
 }
 
 WebInspector.DebuggerPresentationModel.prototype = {
-    breakpointsForSourceName: function(sourceName)
+    breakpointsForSourceFileId: function(sourceFileId)
     {
         var breakpoints = [];
         for (var id in this._breakpoints) {
             var breakpoint = this._breakpoints[id];
-            if (breakpoint.sourceName === sourceName)
+            if (breakpoint.sourceFileId === sourceFileId)
                 breakpoints.push(breakpoint);
         }
         return breakpoints;
@@ -61,7 +61,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         var location = breakpoint.locations.length ? breakpoint.locations[0] : breakpoint;
         var sourceLocation = this._actualLocationToSourceLocation(breakpoint.url || breakpoint.sourceID, location.lineNumber, location.columnNumber);
 
-        var encodedSourceLocation = this._encodeSourceLocation(sourceLocation.sourceName, sourceLocation.lineNumber);
+        var encodedSourceLocation = this._encodeSourceLocation(sourceLocation.sourceFileId, sourceLocation.lineNumber);
         if (encodedSourceLocation in this._sourceLocationToBreakpointId) {
             // We can't show more than one breakpoint on a single source frame line. Remove newly added breakpoint.
             WebInspector.debuggerModel.removeBreakpoint(breakpoint.id);
@@ -69,7 +69,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         }
 
         var presentationBreakpoint = {
-            sourceName: sourceLocation.sourceName,
+            sourceFileId: sourceLocation.sourceFileId,
             lineNumber: sourceLocation.lineNumber,
             url: breakpoint.url,
             resolved: !!breakpoint.locations.length,
@@ -87,7 +87,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     {
         var breakpointId = event.data;
         var breakpoint = this._breakpoints[breakpointId];
-        var encodedSourceLocation = this._encodeSourceLocation(breakpoint.sourceName, breakpoint.lineNumber);
+        var encodedSourceLocation = this._encodeSourceLocation(breakpoint.sourceFileId, breakpoint.lineNumber);
         delete this._breakpoints[breakpointId];
         delete this._sourceLocationToBreakpointId[encodedSourceLocation];
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, breakpoint);
@@ -100,15 +100,15 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._breakpointAdded({ data: breakpoint });
     },
 
-    _encodeSourceLocation: function(sourceName, lineNumber)
+    _encodeSourceLocation: function(sourceFileId, lineNumber)
     {
-        return sourceName + ":" + lineNumber;
+        return sourceFileId + ":" + lineNumber;
     },
 
-    _actualLocationToSourceLocation: function(sourceName, lineNumber, columnNumber)
+    _actualLocationToSourceLocation: function(sourceID, lineNumber, columnNumber)
     {
         // TODO: use source mapping to obtain source location.
-        return { sourceName: sourceName, lineNumber: lineNumber, columnNumber: columnNumber };
+        return { sourceFileId: sourceID, lineNumber: lineNumber, columnNumber: columnNumber };
     }
 }
 

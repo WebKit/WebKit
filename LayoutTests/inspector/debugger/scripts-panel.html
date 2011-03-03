@@ -34,7 +34,7 @@ function test()
                 }
 
                 var sourceFrameCount = 0;
-                for (var sourceName in panel._sourceNameToSourceFrame)
+                for (var sourceFileId in panel._sourceFileIdToSourceFrame)
                     sourceFrameCount += 1;
                 InspectorTest.assertEquals(1, sourceFrameCount, "wrong number of source frames created during initial load");
 

@@ -1,3 +1,15 @@
+2011-03-03  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: rename "sourceName" to "sourceFileId" in ScriptsPanel.js.
+        https://bugs.webkit.org/show_bug.cgi?id=55569
+
+        sourceFileId better reflects the intention to have unique identifier for each source that is shown in scripts panel.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        * inspector/front-end/ScriptsPanel.js:
+
 2011-03-03  Steve Block  <steveblock@google.com>
 
         Reviewed by David Levin.
