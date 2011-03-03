@@ -1,3 +1,9 @@
+2011-03-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, unskip tests fixed by r80214 on GTK.
+
+        * platform/gtk/Skipped:
+
 2011-03-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.
