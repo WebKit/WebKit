@@ -40,17 +40,26 @@ using namespace std;
 
 namespace WebCore {
 
-static inline PassOwnPtr<NumberFormat> createFormatterForCurrentLocale()
+static PassOwnPtr<NumberFormat> createFormatterForCurrentLocale()
 {
     UErrorCode status = U_ZERO_ERROR;
-    return adoptPtr(NumberFormat::createInstance(status));
+    OwnPtr<NumberFormat> formatter = adoptPtr(NumberFormat::createInstance(status));
+    return satus == U_ZERO_ERROR ? formatter.release() : 0;
+}
+
+// This might return 0.
+static NumberFormat* numberFormatter()
+{
+    ASSERT(isMainThread());
+    static NumberFormat* formatter = createFormatterForCurrentLocale().leakPtr();
+    return formatter;
 }
 
 double parseLocalizedNumber(const String& numberString)
 {
     if (numberString.isEmpty())
         return numeric_limits<double>::quiet_NaN();
-    OwnPtr<NumberFormat> formatter = createFormatterForCurrentLocale();
+    NumberFormat* formatter = numberFormatter();
     if (!formatter)
         return numeric_limits<double>::quiet_NaN();
     UnicodeString numberUnicodeString(numberString.characters(), numberString.length());
@@ -66,7 +75,7 @@ double parseLocalizedNumber(const String& numberString)
 
 String formatLocalizedNumber(double number)
 {
-    OwnPtr<NumberFormat> formatter = createFormatterForCurrentLocale();
+    NumberFormat* formatter = numberFormatter();
     if (!formatter)
         return String();
     UnicodeString result;

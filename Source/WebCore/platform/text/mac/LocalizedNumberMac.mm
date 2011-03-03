@@ -40,14 +40,26 @@ using namespace std;
 
 namespace WebCore {
 
+static RetainPtr<NSNumberFormatter> createFormatterForCurrentLocale()
+{
+    RetainPtr<NSNumberFormatter> formatter(AdoptNS, [[NSNumberFormatter alloc] init]);
+    [formatter.get() setLocalizesFormat:YES];
+    [formatter.get() setNumberStyle:NSNumberFormatterDecimalStyle];
+    return formatter;
+}
+
+static NSNumberFormatter *numberFormatter()
+{
+    ASSERT(isMainThread());
+    static NSNumberFormatter *formatter = createFormatterForCurrentLocale().leakRef();
+    return formatter;
+}
+
 double parseLocalizedNumber(const String& numberString)
 {
     if (numberString.isEmpty())
         return numeric_limits<double>::quiet_NaN();
-    RetainPtr<NSNumberFormatter> formatter(AdoptNS, [[NSNumberFormatter alloc] init]);
-    [formatter.get() setLocalizesFormat:YES];
-    [formatter.get() setNumberStyle:NSNumberFormatterDecimalStyle];
-    NSNumber *number = [formatter.get() numberFromString:numberString];
+    NSNumber *number = [numberFormatter() numberFromString:numberString];
     if (!number)
         return numeric_limits<double>::quiet_NaN();
     return [number doubleValue];
@@ -56,10 +68,7 @@ double parseLocalizedNumber(const String& numberString)
 String formatLocalizedNumber(double inputNumber)
 {
     RetainPtr<NSNumber> number(AdoptNS, [[NSNumber alloc] initWithDouble:inputNumber]);
-    RetainPtr<NSNumberFormatter> formatter(AdoptNS, [[NSNumberFormatter alloc] init]);
-    [formatter.get() setLocalizesFormat:YES];
-    [formatter.get() setNumberStyle:NSNumberFormatterDecimalStyle];
-    return String([formatter.get() stringFromNumber:number.get()]);
+    return String([numberFormatter() stringFromNumber:number.get()]);
 }
 
 } // namespace WebCore

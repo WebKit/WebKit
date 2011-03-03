@@ -1,3 +1,26 @@
+2011-03-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Caching number formatter instances in LocalizedNumber* implementations
+        https://bugs.webkit.org/show_bug.cgi?id=55629
+
+        No new tests. This change doesn't change existing behavior, and is
+        covered by existing tests.
+
+        * platform/text/LocalizedNumberICU.cpp:
+        (WebCore::createFormatterForCurrentLocale):
+        (WebCore::numberFormatter): Introduce a function to return a static
+          instance of NumberFormat.
+        (WebCore::parseLocalizedNumber): Use numberFormatter().
+        (WebCore::formatLocalizedNumber): Use numberFormatter().
+        * platform/text/mac/LocalizedNumberMac.mm:
+        (WebCore::createFormatterForCurrentLocale):
+        (WebCore::numberFormatter): Introduce a function to return a static
+          instance of NSNumberFormatter.
+        (WebCore::parseLocalizedNumber): Use numberFormatter().
+        (WebCore::formatLocalizedNumber): Use numberFormatter().
+
 2011-03-02  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.
