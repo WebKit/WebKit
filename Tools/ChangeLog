@@ -1,3 +1,22 @@
+2011-03-03  Adam Roben  <aroben@apple.com>
+
+        Make Windows 7 Release (Tests) a core builder
+
+        We can probably make Windows XP Debug (Tests) a core builder, too, but we should probably
+        give it a few more days of greenness first.
+
+        Fixes <http://webkit.org/b/55665> Windows 7 Release (Tests) should be a core builder
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (BuildBot): Added a regexp to match Windows 7 Release (Tests).
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        (BuildBotTest): Updated the list of builders to match the current list on build.webkit.org.
+        Updated the core regexps to match the buildbot module. Updated the expected results to match
+        the current set of core builders.
+
 2011-03-03  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.
