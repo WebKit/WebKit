@@ -1,3 +1,21 @@
+2011-03-02  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        deprecatedEditingOffset should actually return the expected deprecated value for "after" positions
+        https://bugs.webkit.org/show_bug.cgi?id=54986
+
+        Calls to deprecatedEditingOffset needs to return the expected value for new Before/After positions
+        until we can update all the call sites to consider the new position types.
+
+        No tests. This is intended to simplify the transition to new Positions, not to change behavior.
+
+        * dom/Position.cpp:
+        (WebCore::Position::deprecatedEditingOffset):
+        (WebCore::Position::offsetForPositionAfterAnchor): Added to do the right thing while ensuring
+        inline-speed for most calls to deprecatedEditingOffset.
+        * dom/Position.h:
+
 2011-03-02  Timothy Hatcher  <timothy@apple.com>
 
         Export SerializedScriptValue::create(JSC::ExecState* exec, JSC::JSValue value).

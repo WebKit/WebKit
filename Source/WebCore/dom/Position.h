@@ -92,8 +92,9 @@ public:
     // New code should not use this function.
     int deprecatedEditingOffset() const
     {
-        // This should probably ASSERT(m_isLegacyEditingPosition);
-        return m_offset;
+        if (m_isLegacyEditingPosition || m_anchorType != PositionIsAfterAnchor)
+            return m_offset;
+        return offsetForPositionAfterAnchor();
     }
 
     // These are convenience methods which are smart about whether the position is neighbor anchored or parent anchored
@@ -173,6 +174,8 @@ public:
 #endif
     
 private:
+    int offsetForPositionAfterAnchor() const;
+
     int renderedOffset() const;
 
     Position previousCharacterPosition(EAffinity) const;

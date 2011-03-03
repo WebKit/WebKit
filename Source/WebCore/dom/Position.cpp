@@ -146,6 +146,13 @@ int Position::computeOffsetInContainerNode() const
     return 0;
 }
 
+int Position::offsetForPositionAfterAnchor() const
+{
+    ASSERT(m_anchorType == PositionIsAfterAnchor);
+    ASSERT(!m_isLegacyEditingPosition);
+    return lastOffsetForEditing(m_anchorNode.get());
+}
+
 // Neighbor-anchored positions are invalid DOM positions, so they need to be
 // fixed up before handing them off to the Range object.
 Position Position::parentAnchoredEquivalent() const
