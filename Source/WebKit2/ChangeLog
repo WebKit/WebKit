@@ -1,3 +1,27 @@
+2011-03-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Give the Bundle's policy client the option of deciding the policy
+        https://bugs.webkit.org/show_bug.cgi?id=55699
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        Add WKBundlePagePolicyAction enum and make it the return value of
+        the WKBundlePagePolicyClient functions.
+
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.cpp:
+        (WebKit::InjectedBundlePagePolicyClient::decidePolicyForNavigationAction):
+        (WebKit::InjectedBundlePagePolicyClient::decidePolicyForNewWindowAction):
+        (WebKit::InjectedBundlePagePolicyClient::decidePolicyForMIMEType):
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.h:
+        Pass the return value back to the caller. For unimplemented functions, return WKBundlePagePolicyActionPassThrough.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForMIMEType):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        Call the policy function early if the bundle handles it.
+
 2011-03-02  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

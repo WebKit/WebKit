@@ -114,10 +114,17 @@ struct WKBundlePageLoaderClient {
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
+enum {
+    WKBundlePagePolicyActionPassThrough,
+    WKBundlePagePolicyActionUse
+};
+typedef uint32_t WKBundlePagePolicyAction;
+
+    
 // Policy Client
-typedef void (*WKBundlePageDecidePolicyForNavigationActionCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleNavigationActionRef navigationAction, WKURLRequestRef request, WKTypeRef* userData, const void* clientInfo);
-typedef void (*WKBundlePageDecidePolicyForNewWindowActionCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleNavigationActionRef navigationAction, WKURLRequestRef request, WKStringRef frameName, WKTypeRef* userData, const void* clientInfo);
-typedef void (*WKBundlePageDecidePolicyForMIMETypeCallback)(WKBundlePageRef page, WKBundleFrameRef frame,  WKStringRef MIMEType, WKURLRequestRef request, WKTypeRef* userData, const void* clientInfo);
+typedef WKBundlePagePolicyAction (*WKBundlePageDecidePolicyForNavigationActionCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleNavigationActionRef navigationAction, WKURLRequestRef request, WKTypeRef* userData, const void* clientInfo);
+typedef WKBundlePagePolicyAction (*WKBundlePageDecidePolicyForNewWindowActionCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleNavigationActionRef navigationAction, WKURLRequestRef request, WKStringRef frameName, WKTypeRef* userData, const void* clientInfo);
+typedef WKBundlePagePolicyAction (*WKBundlePageDecidePolicyForMIMETypeCallback)(WKBundlePageRef page, WKBundleFrameRef frame,  WKStringRef MIMEType, WKURLRequestRef request, WKTypeRef* userData, const void* clientInfo);
 
 struct WKBundlePagePolicyClient {
     int                                                                 version;

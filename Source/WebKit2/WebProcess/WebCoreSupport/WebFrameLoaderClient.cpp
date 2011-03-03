@@ -587,7 +587,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction f
     RefPtr<APIObject> userData;
 
     // Notify the bundle client.
-    webPage->injectedBundlePolicyClient().decidePolicyForMIMEType(webPage, m_frame, MIMEType, request, userData);
+    WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForMIMEType(webPage, m_frame, MIMEType, request, userData);
+    if (policy == WKBundlePagePolicyActionUse) {
+        (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyUse);
+        return;
+    }
 
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
     bool receivedPolicyAction;
@@ -614,7 +618,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFun
     RefPtr<InjectedBundleNavigationAction> action = InjectedBundleNavigationAction::create(m_frame, navigationAction, formState);
 
     // Notify the bundle client.
-    webPage->injectedBundlePolicyClient().decidePolicyForNewWindowAction(webPage, m_frame, action.get(), request, frameName, userData);
+    WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForNewWindowAction(webPage, m_frame, action.get(), request, frameName, userData);
+    if (policy == WKBundlePagePolicyActionUse) {
+        (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyUse);
+        return;
+    }
 
 
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
@@ -640,7 +648,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     RefPtr<InjectedBundleNavigationAction> action = InjectedBundleNavigationAction::create(m_frame, navigationAction, formState);
 
     // Notify the bundle client.
-    webPage->injectedBundlePolicyClient().decidePolicyForNavigationAction(webPage, m_frame, action.get(), request, userData);
+    WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForNavigationAction(webPage, m_frame, action.get(), request, userData);
+    if (policy == WKBundlePagePolicyActionUse) {
+        (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyUse);
+        return;
+    }
 
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
     bool receivedPolicyAction;

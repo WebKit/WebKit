@@ -43,9 +43,9 @@ class WebPage;
 
 class InjectedBundlePagePolicyClient : public APIClient<WKBundlePagePolicyClient> {
 public:
-    void decidePolicyForNavigationAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, RefPtr<APIObject>& userData);
-    void decidePolicyForNewWindowAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, const String& frameName, RefPtr<APIObject>& userData);
-    void decidePolicyForMIMEType(WebPage*, WebFrame*, const String& MIMEType, const WebCore::ResourceRequest&, RefPtr<APIObject>& userData);
+    WKBundlePagePolicyAction decidePolicyForNavigationAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, RefPtr<APIObject>& userData);
+    WKBundlePagePolicyAction decidePolicyForNewWindowAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, const String& frameName, RefPtr<APIObject>& userData);
+    WKBundlePagePolicyAction decidePolicyForMIMEType(WebPage*, WebFrame*, const String& MIMEType, const WebCore::ResourceRequest&, RefPtr<APIObject>& userData);
 };
 
 } // namespace WebKit
