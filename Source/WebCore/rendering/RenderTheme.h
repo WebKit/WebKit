@@ -188,7 +188,7 @@ public:
     virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
     
     // Returns the media volume slider container's offset from the mute button.
-    virtual IntPoint volumeSliderOffsetFromMuteButton(Node*, const IntSize&) const;
+    virtual IntPoint volumeSliderOffsetFromMuteButton(RenderBox*, const IntSize&) const;
 #endif
 
 #if ENABLE(METER_TAG)

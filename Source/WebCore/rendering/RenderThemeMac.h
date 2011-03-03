@@ -166,7 +166,7 @@ protected:
     virtual bool shouldRenderMediaControlPart(ControlPart, Element*);
     virtual bool usesMediaControlStatusDisplay();
     virtual void adjustMediaSliderThumbSize(RenderObject*) const;
-    virtual IntPoint volumeSliderOffsetFromMuteButton(Node*, const IntSize&) const;
+    virtual IntPoint volumeSliderOffsetFromMuteButton(RenderBox*, const IntSize&) const;
 #endif
     
     virtual bool shouldShowPlaceholderWhenFocused() const;

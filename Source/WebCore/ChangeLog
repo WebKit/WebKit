@@ -1,3 +1,31 @@
+2011-03-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Use RenderBox in volumeSliderOffsetFromMuteButton, since that's what is actually being used.
+        https://bugs.webkit.org/show_bug.cgi?id=55099
+
+        Cleanup, no behavior change.
+
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::updateVolumeSliderContainer): Changed to pass RenderBox
+            instead of Node.
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::volumeSliderOffsetFromMuteButton): Changed
+            to use RenderBox as argument.
+        * rendering/RenderMediaControls.h: Ditto.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::volumeSliderOffsetFromMuteButton): Ditto.
+        * rendering/RenderTheme.h: Ditto.
+        * rendering/RenderThemeChromiumMac.h: Ditto.
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::volumeSliderOffsetFromMuteButton): Ditto.
+        * rendering/RenderThemeMac.h: Ditto.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::volumeSliderOffsetFromMuteButton): Ditto.
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::volumeSliderOffsetFromMuteButton): Ditto.
+
 2011-03-03  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.
