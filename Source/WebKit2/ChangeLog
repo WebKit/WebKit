@@ -1,3 +1,17 @@
+2011-03-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        WebProcess is calling CFURLCacheRemoveAllCachedResponses when loading, results in origin-load for all resources
+        https://bugs.webkit.org/show_bug.cgi?id=55701
+        <rdar://problem/9074017>
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters): Initialize cache-clearing
+        flag parameters to false.
+        (WebKit::WebProcessCreationParameters::encode): Serialize them properly.
+        (WebKit::WebProcessCreationParameters::decode): And deserialize.
+
 2011-03-03  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
