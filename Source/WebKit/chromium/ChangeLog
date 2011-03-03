@@ -1,3 +1,14 @@
+2011-03-03  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add an equals() method to WebAccessibilityObject.
+        https://bugs.webkit.org/show_bug.cgi?id=55631
+
+        * public/WebAccessibilityObject.h:
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::equals):
+
 2011-03-03  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
