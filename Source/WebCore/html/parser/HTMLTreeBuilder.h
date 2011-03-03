@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -178,7 +179,7 @@ private:
 
     void closeTheCell();
 
-    template <bool shouldClose(const Element*)>
+    template <bool shouldClose(const ContainerNode*)>
     void processCloseWhenNestedTag(AtomicHTMLToken&);
 
     bool m_framesetOk;
@@ -214,8 +215,6 @@ private:
         DocumentFragment* fragment() const { return m_fragment; }
         Element* contextElement() const { ASSERT(m_fragment); return m_contextElement; }
         FragmentScriptingPermission scriptingPermission() const { ASSERT(m_fragment); return m_scriptingPermission; }
-
-        void finished();
 
     private:
         DocumentFragment* m_fragment;

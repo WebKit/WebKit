@@ -1,3 +1,96 @@
+2011-03-03  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        HTML5 TreeBuilder regressed a Peacekeeper DOM test by 25% (was 40%)
+        https://bugs.webkit.org/show_bug.cgi?id=48719
+        
+        Instead of pushing a fake HTMLHtmlElement onto the open element stack
+        during fragment parsing only to later remove it and reparent its
+        children to the DocumentFragment, push the DocumentFragment directly
+        onto the open element stack as the root node. This requires refactoring
+        HTMLElementStack to hold ContainerNode pointers rather than Element
+        pointers, which has implications for HTMLConstructionSite and
+        HTMLTreeBuilder as well.
+        
+        With this patch, the regression in Peacekeeper from Safari 5.0.3 to ToT
+        is ~14%. However, if you discount the 'domDynamicCreationCreateElement'
+        test, ToT is now ~4% faster than Safari 5.0.3. This indicates that the
+        regression no longer lies in fragment parsing.
+
+        No new tests. No change in behavior.
+
+        * dom/Element.h:
+        (WebCore::Node::hasLocalName):
+        * dom/Node.h:
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLNames::hasImpliedEndTag):
+        (WebCore::HTMLConstructionSite::HTMLConstructionSite):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagInBody):
+        (WebCore::HTMLConstructionSite::insertComment):
+        (WebCore::HTMLConstructionSite::insertCommentOnHTMLHtmlElement):
+        (WebCore::HTMLConstructionSite::attachToCurrent):
+        (WebCore::HTMLConstructionSite::insertScriptElement):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        (WebCore::HTMLConstructionSite::createElement):
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+        (WebCore::HTMLConstructionSite::generateImpliedEndTagsWithExclusion):
+        (WebCore::HTMLConstructionSite::generateImpliedEndTags):
+        (WebCore::HTMLConstructionSite::findFosterSite):
+        (WebCore::HTMLConstructionSite::shouldFosterParent):
+        * html/parser/HTMLConstructionSite.h:
+        (WebCore::HTMLConstructionSite::currentNode):
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isNumberedHeaderElement):
+        (WebCore::HTMLNames::isScopeMarker):
+        (WebCore::HTMLNames::isListItemScopeMarker):
+        (WebCore::HTMLNames::isTableScopeMarker):
+        (WebCore::HTMLNames::isTableBodyScopeMarker):
+        (WebCore::HTMLNames::isTableRowScopeMarker):
+        (WebCore::HTMLNames::isButtonScopeMarker):
+        (WebCore::HTMLNames::isSelectScopeMarker):
+        (WebCore::HTMLElementStack::ElementRecord::ElementRecord):
+        (WebCore::HTMLElementStack::ElementRecord::replaceElement):
+        (WebCore::HTMLElementStack::HTMLElementStack):
+        (WebCore::HTMLElementStack::secondElementIsHTMLBodyElement):
+        (WebCore::HTMLElementStack::popAll):
+        (WebCore::HTMLElementStack::popUntilNumberedHeaderElementPopped):
+        (WebCore::HTMLElementStack::popUntil):
+        (WebCore::HTMLElementStack::popUntilPopped):
+        (WebCore::HTMLElementStack::popUntilTableScopeMarker):
+        (WebCore::HTMLElementStack::popUntilTableBodyScopeMarker):
+        (WebCore::HTMLElementStack::popUntilTableRowScopeMarker):
+        (WebCore::HTMLElementStack::pushHTMLHtmlElement):
+        (WebCore::HTMLElementStack::push):
+        (WebCore::HTMLElementStack::insertAbove):
+        (WebCore::HTMLElementStack::find):
+        (WebCore::HTMLElementStack::topmost):
+        (WebCore::HTMLElementStack::contains):
+        (WebCore::inScopeCommon):
+        (WebCore::HTMLElementStack::hasNumberedHeaderElementInScope):
+        (WebCore::HTMLElementStack::htmlElement):
+        (WebCore::HTMLElementStack::rootNode):
+        (WebCore::HTMLElementStack::pushCommon):
+        * html/parser/HTMLElementStack.h:
+        (WebCore::HTMLElementStack::ElementRecord::element):
+        (WebCore::HTMLElementStack::ElementRecord::node):
+        (WebCore::HTMLElementStack::topNode):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::processCloseWhenNestedTag):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processColgroupEndTagForInColumnGroup):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processAnyOtherEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately):
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell):
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        (WebCore::HTMLTreeBuilder::finished):
+        * html/parser/HTMLTreeBuilder.h:
+
 2011-03-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
