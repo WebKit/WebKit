@@ -1,3 +1,78 @@
+2011-03-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80201.
+        http://trac.webkit.org/changeset/80201
+        https://bugs.webkit.org/show_bug.cgi?id=55648
+
+        "caused tests to crash on several bots" (Requested by rniwa on
+        #webkit).
+
+        * dom/Element.h:
+        (WebCore::Node::hasTagName):
+        * dom/Node.h:
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLNames::hasImpliedEndTag):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagInBody):
+        (WebCore::HTMLConstructionSite::insertComment):
+        (WebCore::HTMLConstructionSite::insertCommentOnHTMLHtmlElement):
+        (WebCore::HTMLConstructionSite::attachToCurrent):
+        (WebCore::HTMLConstructionSite::insertScriptElement):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        (WebCore::HTMLConstructionSite::createElement):
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+        (WebCore::HTMLConstructionSite::generateImpliedEndTagsWithExclusion):
+        (WebCore::HTMLConstructionSite::generateImpliedEndTags):
+        (WebCore::HTMLConstructionSite::findFosterSite):
+        (WebCore::HTMLConstructionSite::shouldFosterParent):
+        * html/parser/HTMLConstructionSite.h:
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isNumberedHeaderElement):
+        (WebCore::HTMLNames::isScopeMarker):
+        (WebCore::HTMLNames::isListItemScopeMarker):
+        (WebCore::HTMLNames::isTableScopeMarker):
+        (WebCore::HTMLNames::isTableBodyScopeMarker):
+        (WebCore::HTMLNames::isTableRowScopeMarker):
+        (WebCore::HTMLNames::isButtonScopeMarker):
+        (WebCore::HTMLNames::isSelectScopeMarker):
+        (WebCore::HTMLElementStack::ElementRecord::ElementRecord):
+        (WebCore::HTMLElementStack::ElementRecord::replaceElement):
+        (WebCore::HTMLElementStack::HTMLElementStack):
+        (WebCore::HTMLElementStack::secondElementIsHTMLBodyElement):
+        (WebCore::HTMLElementStack::popAll):
+        (WebCore::HTMLElementStack::popUntilTableScopeMarker):
+        (WebCore::HTMLElementStack::popUntilTableBodyScopeMarker):
+        (WebCore::HTMLElementStack::popUntilTableRowScopeMarker):
+        (WebCore::HTMLElementStack::popUntilForeignContentScopeMarker):
+        (WebCore::HTMLElementStack::pushHTMLHtmlElement):
+        (WebCore::HTMLElementStack::push):
+        (WebCore::HTMLElementStack::insertAbove):
+        (WebCore::HTMLElementStack::find):
+        (WebCore::HTMLElementStack::topmost):
+        (WebCore::inScopeCommon):
+        (WebCore::HTMLElementStack::hasNumberedHeaderElementInScope):
+        (WebCore::HTMLElementStack::htmlElement):
+        (WebCore::HTMLElementStack::bodyElement):
+        (WebCore::HTMLElementStack::pushCommon):
+        * html/parser/HTMLElementStack.h:
+        (WebCore::HTMLElementStack::ElementRecord::element):
+        (WebCore::HTMLElementStack::top):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::finished):
+        (WebCore::HTMLTreeBuilder::processCloseWhenNestedTag):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processColgroupEndTagForInColumnGroup):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processAnyOtherEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately):
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell):
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        (WebCore::HTMLTreeBuilder::finished):
+        * html/parser/HTMLTreeBuilder.h:
+
 2011-03-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

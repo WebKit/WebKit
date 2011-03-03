@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +26,6 @@
 #ifndef HTMLElementStack_h
 #define HTMLElementStack_h
 
-#include "Element.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -36,8 +34,6 @@
 
 namespace WebCore {
 
-class ContainerNode;
-class DocumentFragment;
 class Element;
 class QualifiedName;
 
@@ -54,8 +50,7 @@ public:
     public:
         ~ElementRecord(); // Public for ~PassOwnPtr()
     
-        Element* element() const { return toElement(m_node.get()); }
-        ContainerNode* node() const { return m_node.get(); }
+        Element* element() const { return m_element.get(); }
         void replaceElement(PassRefPtr<Element>);
 
         bool isAbove(ElementRecord*) const;
@@ -65,12 +60,12 @@ public:
     private:
         friend class HTMLElementStack;
 
-        ElementRecord(PassRefPtr<ContainerNode>, PassOwnPtr<ElementRecord>);
+        ElementRecord(PassRefPtr<Element>, PassOwnPtr<ElementRecord>);
 
         PassOwnPtr<ElementRecord> releaseNext() { return m_next.release(); }
         void setNext(PassOwnPtr<ElementRecord> next) { m_next = next; }
 
-        RefPtr<ContainerNode> m_node;
+        RefPtr<Element> m_element;
         OwnPtr<ElementRecord> m_next;
     };
 
@@ -80,12 +75,6 @@ public:
     {
         ASSERT(m_top->element());
         return m_top->element();
-    }
-    
-    ContainerNode* topNode() const
-    {
-        ASSERT(m_top->node());
-        return m_top->node();
     }
 
     Element* oneBelowTop() const;
@@ -97,7 +86,6 @@ public:
     void insertAbove(PassRefPtr<Element>, ElementRecord*);
 
     void push(PassRefPtr<Element>);
-    void pushRootNode(PassRefPtr<ContainerNode>);
     void pushHTMLHtmlElement(PassRefPtr<Element>);
     void pushHTMLHeadElement(PassRefPtr<Element>);
     void pushHTMLBodyElement(PassRefPtr<Element>);
@@ -143,27 +131,24 @@ public:
     Element* htmlElement() const;
     Element* headElement() const;
     Element* bodyElement() const;
-    
-    ContainerNode* rootNode() const;
 
 #ifndef NDEBUG
     void show();
 #endif
 
 private:
-    void pushCommon(PassRefPtr<ContainerNode>);
-    void pushRootNodeCommon(PassRefPtr<ContainerNode>);
+    void pushCommon(PassRefPtr<Element>);
     void popCommon();
     void removeNonTopCommon(Element*);
 
     OwnPtr<ElementRecord> m_top;
 
-    // We remember the root node, <head> and <body> as they are pushed. Their
-    // ElementRecords keep them alive. The root node is never popped.
+    // We remember <html>, <head> and <body> as they are pushed.  Their
+    // ElementRecords keep them alive.  <html> is never popped.
     // FIXME: We don't currently require type-specific information about
     // these elements so we haven't yet bothered to plumb the types all the
     // way down through createElement, etc.
-    ContainerNode* m_rootNode;
+    Element* m_htmlElement;
     Element* m_headElement;
     Element* m_bodyElement;
 };

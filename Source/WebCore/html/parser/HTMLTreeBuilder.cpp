@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -122,8 +121,6 @@ bool isSpecialNode(Node* node)
         || node->hasTagName(SVGNames::foreignObjectTag)
         || node->hasTagName(SVGNames::descTag)
         || node->hasTagName(SVGNames::titleTag))
-        return true;
-    if (node->nodeType() == Node::DOCUMENT_FRAGMENT_NODE)
         return true;
     if (node->namespaceURI() != xhtmlNamespaceURI)
         return false;
@@ -378,9 +375,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* f
     if (contextElement) {
         // Steps 4.2-4.6 of the HTML5 Fragment Case parsing algorithm:
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#fragment-case
-        // For efficiency, we skip step 4.2 ("Let root be a new html element with no attributes")
-        // and instead use the DocumentFragment as a root node.
-        m_tree.openElements()->pushRootNode(fragment);
+        processFakeStartTag(htmlTag);
         resetInsertionModeAppropriately();
         m_tree.setForm(closestFormAncestor(contextElement));
     }
@@ -413,6 +408,19 @@ HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext(DocumentFragment
     , m_scriptingPermission(scriptingPermission)
 {
     ASSERT(!fragment->hasChildNodes());
+}
+
+void HTMLTreeBuilder::FragmentParsingContext::finished()
+{
+    if (!m_contextElement)
+        return;
+    
+    // The HTML5 spec says to return the children of the fragment's document
+    // element when there is a context element (10.4.7).
+    RefPtr<ContainerNode> documentElement = firstElementChild(m_fragment);
+    m_fragment->removeChildren();
+    ASSERT(documentElement);
+    m_fragment->takeAllChildrenFrom(documentElement.get());
 }
 
 HTMLTreeBuilder::FragmentParsingContext::~FragmentParsingContext()
@@ -566,12 +574,12 @@ void HTMLTreeBuilder::processIsindexStartTagForInBody(AtomicHTMLToken& token)
 
 namespace {
 
-bool isLi(const ContainerNode* element)
+bool isLi(const Element* element)
 {
     return element->hasTagName(liTag);
 }
 
-bool isDdOrDt(const ContainerNode* element)
+bool isDdOrDt(const Element* element)
 {
     return element->hasTagName(ddTag)
         || element->hasTagName(dtTag);
@@ -579,16 +587,15 @@ bool isDdOrDt(const ContainerNode* element)
 
 }
 
-template <bool shouldClose(const ContainerNode*)>
+template <bool shouldClose(const Element*)>
 void HTMLTreeBuilder::processCloseWhenNestedTag(AtomicHTMLToken& token)
 {
     m_framesetOk = false;
     HTMLElementStack::ElementRecord* nodeRecord = m_tree.openElements()->topRecord();
     while (1) {
-        ContainerNode* node = nodeRecord->node();
+        Element* node = nodeRecord->element();
         if (shouldClose(node)) {
-            ASSERT(node->isElementNode());
-            processFakeEndTag(toElement(node)->tagQName());
+            processFakeEndTag(node->tagQName());
             break;
         }
         if (isSpecialNode(node) && !node->hasTagName(addressTag) && !node->hasTagName(divTag) && !node->hasTagName(pTag))
@@ -779,7 +786,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
     }
     if (isNumberedHeaderTag(token.name())) {
         processFakePEndTagIfPInButtonScope();
-        if (isNumberedHeaderTag(m_tree.currentNode()->localName())) {
+        if (isNumberedHeaderTag(m_tree.currentElement()->localName())) {
             parseError(token);
             m_tree.openElements()->pop();
         }
@@ -971,7 +978,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
     if (token.name() == rpTag || token.name() == rtTag) {
         if (m_tree.openElements()->inScope(rubyTag.localName())) {
             m_tree.generateImpliedEndTags();
-            if (!m_tree.currentNode()->hasTagName(rubyTag)) {
+            if (!m_tree.currentElement()->hasTagName(rubyTag)) {
                 parseError(token);
                 m_tree.openElements()->popUntil(rubyTag.localName());
             }
@@ -1012,7 +1019,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
 
 bool HTMLTreeBuilder::processColgroupEndTagForInColumnGroup()
 {
-    if (m_tree.currentNode() == m_tree.openElements()->rootNode()) {
+    if (m_tree.currentElement() == m_tree.openElements()->htmlElement()) {
         ASSERT(isParsingFragment());
         // FIXME: parse error
         return false;
@@ -1108,7 +1115,7 @@ void HTMLTreeBuilder::processStartTagForInTable(AtomicHTMLToken& token)
 
 namespace {
 
-bool shouldProcessForeignContentUsingInBodyInsertionMode(AtomicHTMLToken& token, ContainerNode* currentElement)
+bool shouldProcessForeignContentUsingInBodyInsertionMode(AtomicHTMLToken& token, Element* currentElement)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
     if (currentElement->hasTagName(MathMLNames::miTag)
@@ -1402,7 +1409,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == optionTag) {
-            if (m_tree.currentNode()->hasTagName(optionTag)) {
+            if (m_tree.currentElement()->hasTagName(optionTag)) {
                 AtomicHTMLToken endOption(HTMLToken::EndTag, optionTag.localName());
                 processEndTag(endOption);
             }
@@ -1410,11 +1417,11 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             return;
         }
         if (token.name() == optgroupTag) {
-            if (m_tree.currentNode()->hasTagName(optionTag)) {
+            if (m_tree.currentElement()->hasTagName(optionTag)) {
                 AtomicHTMLToken endOption(HTMLToken::EndTag, optionTag.localName());
                 processEndTag(endOption);
             }
-            if (m_tree.currentNode()->hasTagName(optgroupTag)) {
+            if (m_tree.currentElement()->hasTagName(optgroupTag)) {
                 AtomicHTMLToken endOptgroup(HTMLToken::EndTag, optgroupTag.localName());
                 processEndTag(endOptgroup);
             }
@@ -1536,20 +1543,20 @@ void HTMLTreeBuilder::processAnyOtherEndTagForInBody(AtomicHTMLToken& token)
     ASSERT(token.type() == HTMLToken::EndTag);
     HTMLElementStack::ElementRecord* record = m_tree.openElements()->topRecord();
     while (1) {
-        ContainerNode* node = record->node();
+        Element* node = record->element();
         if (node->hasLocalName(token.name())) {
             m_tree.generateImpliedEndTags();
-            if (!m_tree.currentNode()->hasLocalName(token.name())) {
+            if (!m_tree.currentElement()->hasLocalName(token.name())) {
                 parseError(token);
                 // FIXME: This is either a bug in the spec, or a bug in our
                 // implementation.  Filed a bug with HTML5:
                 // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10080
                 // We might have already popped the node for the token in
                 // generateImpliedEndTags, just abort.
-                if (!m_tree.openElements()->contains(record->element()))
+                if (!m_tree.openElements()->contains(node))
                     return;
             }
-            m_tree.openElements()->popUntilPopped(record->element());
+            m_tree.openElements()->popUntilPopped(node);
             return;
         }
         if (isSpecialNode(node)) {
@@ -1609,7 +1616,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
         }
         // 4.
         ASSERT(furthestBlock->isAbove(formattingElementRecord));
-        ContainerNode* commonAncestor = formattingElementRecord->next()->node();
+        Element* commonAncestor = formattingElementRecord->next()->element();
         // 5.
         HTMLFormattingElementList::Bookmark bookmark = m_tree.activeFormattingElements()->bookmarkFor(formattingElement);
         // 6.
@@ -1661,9 +1668,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
             m_tree.fosterParent(lastNode->element());
         else {
             commonAncestor->parserAddChild(lastNode->element());
-            ASSERT(lastNode->node()->isElementNode());
-            ASSERT(lastNode->element()->parentNode());
-            if (lastNode->element()->parentNode()->attached() && !lastNode->element()->attached())
+            if (lastNode->element()->parentElement()->attached() && !lastNode->element()->attached())
                 lastNode->element()->lazyAttach();
         }
         // 8
@@ -1695,8 +1700,8 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
     bool last = false;
     HTMLElementStack::ElementRecord* nodeRecord = m_tree.openElements()->topRecord();
     while (1) {
-        ContainerNode* node = nodeRecord->node();
-        if (node == m_tree.openElements()->rootNode()) {
+        Element* node = nodeRecord->element();
+        if (node == m_tree.openElements()->bottom()) {
             ASSERT(isParsingFragment());
             last = true;
             node = m_fragmentContext.contextElement();
@@ -1826,7 +1831,7 @@ void HTMLTreeBuilder::processEndTagForInCell(AtomicHTMLToken& token)
             return;
         }
         m_tree.generateImpliedEndTags();
-        if (!m_tree.currentNode()->hasLocalName(token.name()))
+        if (!m_tree.currentElement()->hasLocalName(token.name()))
             parseError(token);
         m_tree.openElements()->popUntilPopped(token.name());
         m_tree.activeFormattingElements()->clearToLastMarker();
@@ -1896,7 +1901,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
             return;
         }
         m_tree.generateImpliedEndTags();
-        if (!m_tree.currentNode()->hasLocalName(token.name()))
+        if (!m_tree.currentElement()->hasLocalName(token.name()))
             parseError(token);
         m_tree.openElements()->popUntilPopped(token.name());
         return;
@@ -1921,7 +1926,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
             return;
         }
         m_tree.generateImpliedEndTagsWithExclusion(token.name());
-        if (!m_tree.currentNode()->hasLocalName(token.name()))
+        if (!m_tree.currentElement()->hasLocalName(token.name()))
             parseError(token);
         m_tree.openElements()->popUntilPopped(token.name());
         return;
@@ -1932,7 +1937,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
             return;
         }
         m_tree.generateImpliedEndTagsWithExclusion(token.name());
-        if (!m_tree.currentNode()->hasLocalName(token.name()))
+        if (!m_tree.currentElement()->hasLocalName(token.name()))
             parseError(token);
         m_tree.openElements()->popUntilPopped(token.name());
         return;
@@ -1944,7 +1949,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
             return;
         }
         m_tree.generateImpliedEndTagsWithExclusion(token.name());
-        if (!m_tree.currentNode()->hasLocalName(token.name()))
+        if (!m_tree.currentElement()->hasLocalName(token.name()))
             parseError(token);
         m_tree.openElements()->popUntilPopped(token.name());
         return;
@@ -1955,7 +1960,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
             return;
         }
         m_tree.generateImpliedEndTags();
-        if (!m_tree.currentNode()->hasLocalName(token.name()))
+        if (!m_tree.currentElement()->hasLocalName(token.name()))
             parseError(token);
         m_tree.openElements()->popUntilNumberedHeaderElementPopped();
         return;
@@ -1972,7 +1977,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
             return;
         }
         m_tree.generateImpliedEndTags();
-        if (!m_tree.currentNode()->hasLocalName(token.name()))
+        if (!m_tree.currentElement()->hasLocalName(token.name()))
             parseError(token);
         m_tree.openElements()->popUntilPopped(token.name());
         m_tree.activeFormattingElements()->clearToLastMarker();
@@ -2216,7 +2221,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
     case InFramesetMode:
         ASSERT(insertionMode() == InFramesetMode);
         if (token.name() == framesetTag) {
-            if (m_tree.currentNode() == m_tree.openElements()->rootNode()) {
+            if (m_tree.currentElement() == m_tree.openElements()->htmlElement()) {
                 parseError(token);
                 return;
             }
@@ -2256,9 +2261,9 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
     case InSelectMode:
         ASSERT(insertionMode() == InSelectMode || insertionMode() == InSelectInTableMode);
         if (token.name() == optgroupTag) {
-            if (m_tree.currentNode()->hasTagName(optionTag) && m_tree.oneBelowTop()->hasTagName(optgroupTag))
+            if (m_tree.currentElement()->hasTagName(optionTag) && m_tree.oneBelowTop()->hasTagName(optgroupTag))
                 processFakeEndTag(optionTag);
-            if (m_tree.currentNode()->hasTagName(optgroupTag)) {
+            if (m_tree.currentElement()->hasTagName(optgroupTag)) {
                 m_tree.openElements()->pop();
                 return;
             }
@@ -2289,32 +2294,23 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         processEndTag(token);
         break;
     case InForeignContentMode:
-        if (token.name() == SVGNames::scriptTag && m_tree.currentNode()->hasTagName(SVGNames::scriptTag)) {
+        if (token.name() == SVGNames::scriptTag && m_tree.currentElement()->hasTagName(SVGNames::scriptTag)) {
             notImplemented();
             return;
         }
-        if (m_tree.currentNode()->namespaceURI() != xhtmlNamespaceURI) {
+        if (m_tree.currentElement()->namespaceURI() != xhtmlNamespaceURI) {
             // FIXME: This code just wants an Element* iterator, instead of an ElementRecord*
             HTMLElementStack::ElementRecord* nodeRecord = m_tree.openElements()->topRecord();
-            if (!nodeRecord->node()->hasLocalName(token.name()))
+            if (!nodeRecord->element()->hasLocalName(token.name()))
                 parseError(token);
             while (1) {
-                if (nodeRecord->node()->hasLocalName(token.name())) {
+                if (nodeRecord->element()->hasLocalName(token.name())) {
                     m_tree.openElements()->popUntilPopped(nodeRecord->element());
                     resetForeignInsertionMode();
                     return;
                 }
                 nodeRecord = nodeRecord->next();
-                
-                // Fragments containing only foreign content will not have a
-                // node with the XHTML namespace URI, so we should stop walking
-                // the element stack when we encounter the DocumentFragment itself.
-                if (nodeRecord->node()->nodeType() == Node::DOCUMENT_FRAGMENT_NODE) {
-                    ASSERT(isParsingFragment());
-                    break;
-                }
-                
-                if (nodeRecord->node()->namespaceURI() == xhtmlNamespaceURI)
+                if (nodeRecord->element()->namespaceURI() == xhtmlNamespaceURI)
                     break;
             }
         }
@@ -2613,11 +2609,11 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
     case InSelectInTableMode:
     case InSelectMode:
         ASSERT(insertionMode() == InSelectMode || insertionMode() == InSelectInTableMode || insertionMode() == InTableMode || insertionMode() == InFramesetMode || insertionMode() == InTableBodyMode);
-        if (m_tree.currentNode() != m_tree.openElements()->rootNode())
+        if (m_tree.currentElement() != m_tree.openElements()->htmlElement())
             parseError(token);
         break;
     case InColumnGroupMode:
-        if (m_tree.currentNode() == m_tree.openElements()->rootNode()) {
+        if (m_tree.currentElement() == m_tree.openElements()->htmlElement()) {
             ASSERT(isParsingFragment());
             return; // FIXME: Should we break here instead of returning?
         }
@@ -2646,7 +2642,7 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         processEndOfFile(token);
         return;
     }
-    ASSERT(m_tree.currentNode());
+    ASSERT(m_tree.openElements()->top());
     m_tree.openElements()->popAll();
 }
 
@@ -2798,10 +2794,12 @@ void HTMLTreeBuilder::processScriptStartTag(AtomicHTMLToken& token)
 
 void HTMLTreeBuilder::finished()
 {
-    if (isParsingFragment())
-        return;
-    
     ASSERT(m_document);
+    if (isParsingFragment()) {
+        m_fragmentContext.finished();
+        return;
+    }
+
     // Warning, this may detach the parser. Do not do anything else after this.
     m_document->finishedParsing();
 }

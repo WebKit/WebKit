@@ -427,11 +427,6 @@ inline bool Node::hasTagName(const QualifiedName& name) const
 {
     return isElementNode() && toElement(this)->hasTagName(name);
 }
-    
-inline bool Node::hasLocalName(const AtomicString& name) const
-{
-    return isElementNode() && toElement(this)->hasLocalName(name);
-}
 
 inline bool Node::hasAttributes() const
 {
