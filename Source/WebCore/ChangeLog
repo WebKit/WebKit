@@ -1,3 +1,13 @@
+2011-03-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix after r80169.
+
+        [Qt][WK2] Memory exhausted when building qtwebkit2 on linux
+        https://bugs.webkit.org/show_bug.cgi?id=55484
+
+        * WebCore.pro: Typo fix. We have to use linux-g++* instead of linux-g++.
+
+
 2011-03-02  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

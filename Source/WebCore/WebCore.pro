@@ -3083,7 +3083,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/SVGImage.cpp \
         svg/properties/SVGPathSegListPropertyTearOff.cpp
 
-    linux-g++:CONFIG(debug, debug|release):isEqual(QT_ARCH,i386) {
+    linux-g++*:CONFIG(debug, debug|release):isEqual(QT_ARCH,i386) {
          # Using all in one files to avoid memory exhaustion
          # during the linking phase.
          SOURCES += \
