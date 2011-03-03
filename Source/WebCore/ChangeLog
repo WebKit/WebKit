@@ -1,3 +1,18 @@
+2011-03-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add another CRASH() for CSSSelector double frees
+        https://bugs.webkit.org/show_bug.cgi?id=55693
+
+        To help track down bug 53045, add a CRASH call when the the array and/or
+        CSSSelector member in CSSSelectorList is disposed of more than once.
+
+        Just a check, no new tests necessary.
+        
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::deleteSelectors):
+
 2011-03-03  Anders Carlsson  <andersca@apple.com>
 
         Yet another attempt at fixing the Windows build.

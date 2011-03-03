@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+static CSSSelector* const freedSelectorArrayMarker = reinterpret_cast<CSSSelector*>(0xbbadbeef);
+
 CSSSelectorList::~CSSSelectorList() 
 {
     deleteSelectors();
@@ -85,6 +87,10 @@ void CSSSelectorList::deleteSelectors()
     if (!m_selectorArray)
         return;
 
+    // FIXME: Remove once http://webkit.org/b/53045 is fixed.
+    if (m_selectorArray == freedSelectorArrayMarker)
+        CRASH();
+
     // We had two cases in adoptSelectVector. The fast case of a 1 element
     // vector took the CSSSelector directly, which was allocated with new.
     // The second case we allocated a new fastMalloc buffer, which should be
@@ -103,6 +109,8 @@ void CSSSelectorList::deleteSelectors()
         }
         fastFree(m_selectorArray);
     }
+
+    m_selectorArray = freedSelectorArrayMarker;
 }
 
 
