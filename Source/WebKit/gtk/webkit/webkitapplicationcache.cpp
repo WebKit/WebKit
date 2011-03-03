@@ -23,19 +23,52 @@
 
 #include "ApplicationCacheStorage.h"
 #include "FileSystem.h"
-#include "webkitapplicationcacheprivate.h"
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
 // keeps current directory path to offline web applications cache database
 static WTF::CString cacheDirectoryPath = "";
+// web application cache maximum storage size
+static unsigned long long cacheMaxSize = UINT_MAX;
 
+/**
+ * webkit_application_cache_get_maximum_size:
+ *
+ * Returns the maximum size of the cache storage.
+ * By default it is set to UINT_MAX i.e. no quota.
+ *
+ * Returns: the current application cache maximum storage size
+ *
+ * Since: 1.3.13
+ **/
+unsigned long long webkit_application_cache_get_maximum_size()
+{
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    return (cacheMaxSize = WebCore::cacheStorage().maximumSize());
+#else
+    return 0;
+#endif
+}
+
+/**
+ * webkit_application_cache_set_maximum_size:
+ * @size: the new web application cache maximum storage size
+ *
+ * Sets new application cache maximum storage size.
+ * Changing the application cache storage size will clear the cache
+ * and rebuild cache storage.
+ *
+ * Since: 1.3.13
+ **/
 void webkit_application_cache_set_maximum_size(unsigned long long size)
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    WebCore::cacheStorage().empty();
-    WebCore::cacheStorage().vacuumDatabaseFile();
-    WebCore::cacheStorage().setMaximumSize(size);
+    if (size != cacheMaxSize) {
+        WebCore::cacheStorage().empty();
+        WebCore::cacheStorage().vacuumDatabaseFile();
+        WebCore::cacheStorage().setMaximumSize(size);
+        cacheMaxSize = size;
+    }
 #else
     UNUSED_PARAM(size);
 #endif

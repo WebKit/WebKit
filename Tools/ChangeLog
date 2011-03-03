@@ -1,3 +1,13 @@
+2011-03-03  Lukasz Slachciak  <l.slachciak@samsung.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Extended application cache database API and added unit tests file.
+        https://bugs.webkit.org/show_bug.cgi?id=55335
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp: removed external declaration
+        of webkit_application_cache_set_maximum_size due to API exposal.
+
 2011-03-02  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

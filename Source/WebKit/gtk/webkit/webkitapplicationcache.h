@@ -24,6 +24,12 @@
 
 G_BEGIN_DECLS
 
+WEBKIT_API unsigned long long
+webkit_application_cache_get_maximum_size();
+
+WEBKIT_API void
+webkit_application_cache_set_maximum_size(unsigned long long size);
+
 WEBKIT_API G_CONST_RETURN gchar*
 webkit_application_cache_get_database_directory_path  (void);
 

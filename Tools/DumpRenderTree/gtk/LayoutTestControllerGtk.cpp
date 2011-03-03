@@ -50,7 +50,6 @@
 #include <wtf/gobject/GOwnPtr.h>
 
 extern "C" {
-void webkit_application_cache_set_maximum_size(unsigned long long size);
 void webkit_web_inspector_execute_script(WebKitWebInspector* inspector, long callId, const gchar* script);
 }
 

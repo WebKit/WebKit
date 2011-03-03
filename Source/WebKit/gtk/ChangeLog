@@ -1,3 +1,19 @@
+2011-03-03  Lukasz Slachciak  <l.slachciak@samsung.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Extended application cache database API and added unit tests file.
+        https://bugs.webkit.org/show_bug.cgi?id=55335
+
+        * GNUmakefile.am: Add testapplicationcache.c and remove webkitapplicationcacheprivate.h.
+        * tests/testapplicationcache.c: Added.
+        (test_applicationcache_maximum_size): Tests if application cache storage is set/get correctly.
+        (test_applicationcache_database_directory_path): Tests if application cache directory path is set/get correctly.
+        (main):
+        * webkit/webkitapplicationcache.cpp:
+        (webkit_application_cache_get_maximum_size): New API for getting application cache maximum storage size.
+        * webkit/webkitapplicationcache.h: Declaration of API for getting/setting application cache maximum storage size.
+        * webkit/webkitapplicationcacheprivate.h: Removed.
 2011-03-03  Peter Kasting  <pkasting@google.com>
 
         Reviewed by James Robinson.
