@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,20 +32,37 @@
 #define AssociatedURLLoader_h
 
 #include "WebURLLoader.h"
-#include "WebURLLoaderClient.h"
+#include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
+
+namespace WebCore { class DocumentThreadableLoader; }
 
 namespace WebKit {
 
 class WebFrameImpl;
 
+enum CrossOriginRequestPolicy {
+    DenyCrossOriginRequests,
+    UseAccessControl,
+    AllowCrossOriginRequests
+};
+
+struct AssociatedURLLoaderOptions {
+    AssociatedURLLoaderOptions() : sendLoadCallbacks(false), sniffContent(false), allowCredentials(false), forcePreflight(false), crossOriginRequestPolicy(DenyCrossOriginRequests) { }
+    bool sendLoadCallbacks;
+    bool sniffContent;
+    bool allowCredentials; // Whether to send HTTP credentials and cookies with the request.
+    bool forcePreflight; // If AccessControl is used, whether to force a preflight.
+    CrossOriginRequestPolicy crossOriginRequestPolicy;
+};
+
 // This class is used to implement WebFrame::createAssociatedURLLoader.
-// FIXME: Implement in terms of WebCore::SubresourceLoader.
-class AssociatedURLLoader : public WebURLLoader,
-                            public WebURLLoaderClient {
+class AssociatedURLLoader : public WebURLLoader {
+    WTF_MAKE_NONCOPYABLE(AssociatedURLLoader);
 public:
     AssociatedURLLoader(PassRefPtr<WebFrameImpl>);
+    AssociatedURLLoader(PassRefPtr<WebFrameImpl>, const AssociatedURLLoaderOptions&);
     ~AssociatedURLLoader();
 
     // WebURLLoader methods:
@@ -54,22 +71,14 @@ public:
     virtual void cancel();
     virtual void setDefersLoading(bool);
 
-    // WebURLLoaderClient methods:
-    virtual void willSendRequest(WebURLLoader*, WebURLRequest& newRequest, const WebURLResponse& redirectResponse);
-    virtual void didSendData(WebURLLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
-    virtual void didReceiveResponse(WebURLLoader*, const WebURLResponse&);
-    virtual void didDownloadData(WebURLLoader*, int dataLength);
-    virtual void didReceiveData(WebURLLoader*, const char* data, int dataLength);
-    virtual void didReceiveCachedMetadata(WebURLLoader*, const char* data, int dataLength);
-    virtual void didFinishLoading(WebURLLoader*, double finishTime);
-    virtual void didFail(WebURLLoader*, const WebURLError&);
-
 private:
-    void prepareRequest(WebURLRequest&);
+    class ClientAdapter;
 
     RefPtr<WebFrameImpl> m_frameImpl;
-    OwnPtr<WebURLLoader> m_realLoader;
-    WebURLLoaderClient* m_realClient;
+    AssociatedURLLoaderOptions m_options;
+    WebURLLoaderClient* m_client;
+    OwnPtr<ClientAdapter> m_clientAdapter;
+    RefPtr<WebCore::DocumentThreadableLoader> m_loader;
 };
 
 } // namespace WebKit
