@@ -3272,7 +3272,7 @@ BUGV8_1168 : fast/js/mozilla/strict/B.1.2.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/eval-variable-environment.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/this-for-function-expression-recursion.html = TEXT
 
-BUGWK54634 SKIP : media/video-controls-in-media-document.html = TIMEOUT
+BUGWK54634 : media/video-controls-in-media-document.html = IMAGE+TEXT
 
 BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = TEXT CRASH TIMEOUT
 
@@ -3301,5 +3301,3 @@ BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEX
 BUGCR74710 MAC RELEASE : svg/text/font-size-below-point-five.svg = TEXT
 
 BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
-
-BUGCR74099 : http/tests/media/video-referer.html = TEXT PASS 

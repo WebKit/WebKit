@@ -2,6 +2,14 @@
 
         Unreviewed Chromium Snow Leopard expectations update.
         
+        Fix a couple more media/ expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium Snow Leopard expectations update.
+        
         Add another media/ crash.
 
         * platform/chromium/test_expectations.txt:
