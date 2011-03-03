@@ -455,7 +455,7 @@ sub generateBackendFunction
     my $fullQualifiedFunctionName = $interface->name . "_" . $function->signature->name;
 
     push(@backendConstantDeclarations, "    static const char* ${fullQualifiedFunctionName}Cmd;");
-    push(@backendConstantDefinitions, "const char* ${backendClassName}::${fullQualifiedFunctionName}Cmd = \"${functionName}\";");
+    push(@backendConstantDefinitions, "const char* ${backendClassName}::${fullQualifiedFunctionName}Cmd = \"${fullQualifiedFunctionName}\";");
 
     map($backendTypes{$_->type} = 1, @{$function->parameters}); # register required types
     my @inArgs = grep($_->direction eq "in" && !($_->name eq "callId") , @{$function->parameters});
@@ -686,6 +686,18 @@ $mapEntries
         return;
     }
 
+    RefPtr<InspectorValue> domainValue = messageObject->get("domain");
+    if (!domainValue) {
+        reportProtocolError(callId, "Protocol Error: Invalid message format. 'domain' property wasn't found.");
+        return;
+    }
+
+    String domain;
+    if (!domainValue->asString(&domain)) {
+        reportProtocolError(callId, "Protocol Error: Invalid message format. The type of 'domain' property should be string.");
+        return;
+    }
+
     RefPtr<InspectorValue> callIdValue = messageObject->get("seq");
     if (!callIdValue) {
         reportProtocolError(callId, "Protocol Error: Invalid message format. 'seq' property was not found in the request.");
@@ -697,9 +709,9 @@ $mapEntries
         return;
     }
 
-    HashMap<String, CallHandler>::iterator it = dispatchMap.find(command);
+    HashMap<String, CallHandler>::iterator it = dispatchMap.find(makeString(domain, "_", command));
     if (it == dispatchMap.end()) {
-        reportProtocolError(callId, makeString("Protocol Error: Invalid command was received. '", command, "' wasn't found."));
+        reportProtocolError(callId, makeString("Protocol Error: Invalid command was received. '", command, "' wasn't found in domain ", domain, "."));
         return;
     }
 

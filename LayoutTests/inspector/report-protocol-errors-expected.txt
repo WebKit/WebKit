@@ -39,7 +39,7 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
     seq : 1
     success : false
     errors : {
-        0 : "Protocol Error: Invalid command was received. 'test' wasn't found."
+        0 : "Protocol Error: Invalid command was received. 'test' wasn't found in domain DOM."
     }
 }
 {

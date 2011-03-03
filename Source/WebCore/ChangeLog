@@ -1,3 +1,12 @@
+2011-03-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: inspector protocol should allow different domains to have methods with same name
+        https://bugs.webkit.org/show_bug.cgi?id=55558
+
+        * inspector/CodeGeneratorInspector.pm: each command is now identified by domain + command-name(was command-name only).
+
 2011-03-02  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

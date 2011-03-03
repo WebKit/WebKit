@@ -1,3 +1,13 @@
+2011-03-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: inspector protocol should allow different domains to have methods with same name
+        https://bugs.webkit.org/show_bug.cgi?id=55558
+
+        * inspector/report-protocol-errors-expected.txt:
+        * inspector/report-protocol-errors.html:
+
 2011-03-03  Kenji Imasaki  <imasaki@chromium.org>
 
         Reviewed by David Levin.
