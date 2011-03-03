@@ -264,13 +264,12 @@ void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, const WebCore::I
         // message back to the UI process, but the updated layer tree context
         // will be sent back in the DidUpdateBackingStoreState message.
         m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(false);
-    }
+    } else
+        m_dirtyRegion = m_webPage->bounds();
 
     if (m_isPaintingSuspended || m_layerTreeHost)
         updateInfo.viewSize = m_webPage->size();
     else {
-        m_dirtyRegion.unite(m_webPage->bounds());
-
         // The display here should not cause layout to happen, so we can't enter accelerated compositing mode here.
         display(updateInfo);
         ASSERT(!m_layerTreeHost);
@@ -449,6 +448,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         return;
 
     IntRect bounds = m_dirtyRegion.bounds();
+    ASSERT(m_webPage->bounds().contains(bounds));
 
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bounds.size());
     if (!bitmap->createHandle(updateInfo.bitmapHandle))

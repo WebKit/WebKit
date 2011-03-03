@@ -1,3 +1,27 @@
+2011-03-03  Adam Roben  <aroben@apple.com>
+
+        Don't try to paint outside the page's bounds
+
+        When the page is resized smaller, we would allocate a ShareableBitmap at the old, larger
+        size, even though we only needed to paint at the new, smaller size.
+
+        The assertion added in this patch will fire during the WebKit2/ResizeViewWhileHidden API
+        test if this fix gets broken in the future.
+
+        Fixes <http://webkit.org/b/55715> DrawingAreaImpl allocates more memory than necessary when
+        the page is resized smaller
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::updateBackingStoreState): Update our dirty region even if painting
+        is suspended (but still refrain from updating it when in accelerated compositing mode).
+        Rather than unite our existing dirty region with the page's new bounds, overwrite our dirty
+        region with the page's new bounds. This prevents us from accumulating a dirty region that is
+        larger than the page in the case where the page is being resized smaller.
+        (WebKit::DrawingAreaImpl::display): Added an assertion that we're not trying to paint
+        outside of the page's bounds.
+
 2011-03-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady Eidson.
