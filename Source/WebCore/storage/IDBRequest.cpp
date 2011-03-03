@@ -199,7 +199,10 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend)
 void IDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
 {
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
-    m_result = IDBAny::create(IDBDatabase::create(scriptExecutionContext(), backend));
+    RefPtr<IDBDatabase> idbDatabase = IDBDatabase::create(scriptExecutionContext(), backend);
+    idbDatabase->open();
+
+    m_result = IDBAny::create(idbDatabase.release());
     enqueueEvent(createSuccessEvent());
 }
 

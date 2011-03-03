@@ -41,20 +41,24 @@ namespace WebCore {
 
 class IDBDatabaseBackendImpl::PendingSetVersionCall : public RefCounted<PendingSetVersionCall> {
 public:
-    static PassRefPtr<PendingSetVersionCall> create(const String& version, PassRefPtr<IDBCallbacks> callbacks)
+    static PassRefPtr<PendingSetVersionCall> create(const String& version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
     {
-        return adoptRef(new PendingSetVersionCall(version, callbacks));
+        return adoptRef(new PendingSetVersionCall(version, callbacks, databaseCallbacks));
     }
     String version() { return m_version; }
     PassRefPtr<IDBCallbacks> callbacks() { return m_callbacks; }
+    PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks() { return m_databaseCallbacks; }
+
 private:
-    PendingSetVersionCall(const String& version, PassRefPtr<IDBCallbacks> callbacks)
+    PendingSetVersionCall(const String& version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
         : m_version(version)
         , m_callbacks(callbacks)
+        , m_databaseCallbacks(databaseCallbacks)
     {
     }
     String m_version;
     RefPtr<IDBCallbacks> m_callbacks;
+    RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
 };
 
 IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingStore* backingStore, IDBTransactionCoordinator* coordinator, IDBFactoryBackendImpl* factory, const String& uniqueIdentifier)
@@ -65,7 +69,6 @@ IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingSto
     , m_identifier(uniqueIdentifier)
     , m_factory(factory)
     , m_transactionCoordinator(coordinator)
-    , m_openConnectionCount(0)
 {
     ASSERT(!m_name.isNull());
 
@@ -159,20 +162,27 @@ void IDBDatabaseBackendImpl::deleteObjectStoreInternal(ScriptExecutionContext*, 
     transaction->didCompleteTaskEvents();
 }
 
-void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
+void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, ExceptionCode& ec)
 {
-    RefPtr<IDBDatabaseBackendImpl> database = this;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-
-    // FIXME: Only continue if the connection is still open.
-    if (m_openConnectionCount > 1) {
+    RefPtr<IDBDatabaseCallbacks> databaseCallbacks = prpDatabaseCallbacks;
+    if (!m_databaseCallbacksSet.contains(databaseCallbacks)) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::ABORT_ERR, "Connection was closed before set version transaction was created"));
+        return;
+    }
+    for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
+        if (*it != databaseCallbacks)
+            (*it)->onVersionChange(version);
+    }
+    if (m_databaseCallbacksSet.size() > 1) {
         callbacks->onBlocked();
-        RefPtr<PendingSetVersionCall> pendingSetVersionCall = PendingSetVersionCall::create(version, callbacks);
+        RefPtr<PendingSetVersionCall> pendingSetVersionCall = PendingSetVersionCall::create(version, callbacks, databaseCallbacks);
         m_pendingSetVersionCalls.append(pendingSetVersionCall);
         return;
     }
 
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
+    RefPtr<IDBDatabaseBackendImpl> database = this;
     RefPtr<IDBTransactionBackendInterface> transaction = IDBTransactionBackendImpl::create(objectStoreNames.get(), IDBTransaction::VERSION_CHANGE, this);
     if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::setVersionInternal, database, version, callbacks, transaction),
                                    createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version))) {
@@ -206,22 +216,23 @@ PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(D
     return IDBTransactionBackendImpl::create(objectStoreNames, mode, this);
 }
 
-void IDBDatabaseBackendImpl::open()
+void IDBDatabaseBackendImpl::open(PassRefPtr<IDBDatabaseCallbacks> callbacks)
 {
-    m_openConnectionCount++;
+    m_databaseCallbacksSet.add(RefPtr<IDBDatabaseCallbacks>(callbacks));
 }
 
-void IDBDatabaseBackendImpl::close()
+void IDBDatabaseBackendImpl::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks)
 {
-    m_openConnectionCount--;
-    ASSERT(m_openConnectionCount >= 0);
-    if (m_openConnectionCount > 1)
+    RefPtr<IDBDatabaseCallbacks> callbacks = prpCallbacks;
+    ASSERT(m_databaseCallbacksSet.contains(callbacks));
+    m_databaseCallbacksSet.remove(callbacks);
+    if (m_databaseCallbacksSet.size() > 1)
         return;
 
     while (!m_pendingSetVersionCalls.isEmpty()) {
         ExceptionCode ec = 0;
         RefPtr<PendingSetVersionCall> pendingSetVersionCall = m_pendingSetVersionCalls.takeFirst();
-        setVersion(pendingSetVersionCall->version(), pendingSetVersionCall->callbacks(), ec);
+        setVersion(pendingSetVersionCall->version(), pendingSetVersionCall->callbacks(), pendingSetVersionCall->databaseCallbacks(), ec);
         ASSERT(!ec);
     }
 }

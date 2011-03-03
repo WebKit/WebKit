@@ -35,6 +35,7 @@ module storage {
 
         attribute EventListener onabort;
         attribute EventListener onerror;
+        attribute EventListener onversionchange;
 
         IDBObjectStore createObjectStore(in DOMString name, in [Optional] OptionsObject options)
             raises (IDBDatabaseException);
@@ -53,7 +54,7 @@ module storage {
         void removeEventListener(in DOMString type,
                                  in EventListener listener,
                                  in boolean useCapture);
-        boolean dispatchEvent(in Event evt) 
+        boolean dispatchEvent(in Event evt)
             raises(EventException);
     };
 

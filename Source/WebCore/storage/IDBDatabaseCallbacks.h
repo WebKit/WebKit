@@ -23,36 +23,25 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "IDBVersionChangeEvent.h"
+#ifndef IDBDatabaseCallbacks_h
+#define IDBDatabaseCallbacks_h
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "EventNames.h"
-#include "IDBAny.h"
+#include "PlatformString.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-PassRefPtr<IDBVersionChangeEvent> IDBVersionChangeEvent::create(const String& version, const AtomicString& eventType)
-{
-    return adoptRef(new IDBVersionChangeEvent(version, eventType));
-}
+class IDBDatabaseCallbacks : public RefCounted<IDBDatabaseCallbacks> {
+public:
+    virtual ~IDBDatabaseCallbacks() { }
 
-IDBVersionChangeEvent::IDBVersionChangeEvent(const String& version, const AtomicString& eventType)
-    : Event(eventType, false /*canBubble*/, false /*cancelable*/)
-    , m_version(version)
-{
-}
-
-IDBVersionChangeEvent::~IDBVersionChangeEvent()
-{
-}
-
-String IDBVersionChangeEvent::version()
-{
-    return m_version;
-}
+    virtual void onVersionChange(const String& version) = 0;
+};
 
 } // namespace WebCore
 
 #endif
+
+#endif // IDBDatabaseCallbacks_h

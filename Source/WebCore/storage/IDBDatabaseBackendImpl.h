@@ -30,13 +30,14 @@
 #include "IDBDatabase.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
+#include <wtf/ListHashSet.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
 class IDBBackingStore;
+class IDBDatabase;
 class IDBFactoryBackendImpl;
 class IDBObjectStoreBackendImpl;
 class IDBTransactionCoordinator;
@@ -54,7 +55,7 @@ public:
 
     static const int64_t InvalidId = 0;
     int64_t id() const { return m_id; }
-    void open();
+    void open(PassRefPtr<IDBDatabaseCallbacks>);
 
     virtual String name() const { return m_name; }
     virtual String version() const { return m_version; }
@@ -62,9 +63,9 @@ public:
 
     virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void deleteObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>, ExceptionCode&);
+    virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, ExceptionCode&);
     virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* objectStoreNames, unsigned short mode, ExceptionCode&);
-    virtual void close();
+    virtual void close(PassRefPtr<IDBDatabaseCallbacks>);
 
     PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name);
     IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
@@ -97,10 +98,11 @@ private:
 
     RefPtr<IDBTransactionCoordinator> m_transactionCoordinator;
 
-    int m_openConnectionCount;
-
     class PendingSetVersionCall;
     Deque<RefPtr<PendingSetVersionCall> > m_pendingSetVersionCalls;
+
+    typedef ListHashSet<RefPtr<IDBDatabaseCallbacks> > DatabaseCallbacksSet;
+    DatabaseCallbacksSet m_databaseCallbacksSet;
 };
 
 } // namespace WebCore

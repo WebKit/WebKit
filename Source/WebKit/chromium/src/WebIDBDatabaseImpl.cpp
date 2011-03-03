@@ -29,8 +29,10 @@
 #include "DOMStringList.h"
 #include "IDBCallbacksProxy.h"
 #include "IDBDatabaseBackendInterface.h"
+#include "IDBDatabaseCallbacksProxy.h"
 #include "IDBTransactionBackendInterface.h"
 #include "WebIDBCallbacks.h"
+#include "WebIDBDatabaseCallbacks.h"
 #include "WebIDBObjectStoreImpl.h"
 #include "WebIDBTransactionImpl.h"
 
@@ -81,7 +83,7 @@ void WebIDBDatabaseImpl::deleteObjectStore(const WebString& name, const WebIDBTr
 
 void WebIDBDatabaseImpl::setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode& ec)
 {
-    m_databaseBackend->setVersion(version, IDBCallbacksProxy::create(callbacks), ec);
+    m_databaseBackend->setVersion(version, IDBCallbacksProxy::create(callbacks), m_databaseCallbacks, ec);
 }
 
 WebIDBTransaction* WebIDBDatabaseImpl::transaction(const WebDOMStringList& names, unsigned short mode, WebExceptionCode& ec)
@@ -97,7 +99,17 @@ WebIDBTransaction* WebIDBDatabaseImpl::transaction(const WebDOMStringList& names
 
 void WebIDBDatabaseImpl::close()
 {
-    m_databaseBackend->close();
+    // Use the callbacks that ::open gave us so that the backend in
+    // multi-process chromium knows which database connection is closing.
+    ASSERT(m_databaseCallbacks);
+    m_databaseBackend->close(m_databaseCallbacks);
+}
+
+void WebIDBDatabaseImpl::open(WebIDBDatabaseCallbacks* callbacks)
+{
+    ASSERT(!m_databaseCallbacks);
+    m_databaseCallbacks = IDBDatabaseCallbacksProxy::create(callbacks);
+    m_databaseBackend->open(m_databaseCallbacks);
 }
 
 } // namespace WebCore

@@ -51,7 +51,7 @@ IDBVersionChangeRequest::~IDBVersionChangeRequest()
 void IDBVersionChangeRequest::onBlocked()
 {
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
-    enqueueEvent(IDBVersionChangeEvent::create(m_version));
+    enqueueEvent(IDBVersionChangeEvent::create(m_version, eventNames().blockedEvent));
 }
 
 } // namespace WebCore

@@ -32,10 +32,14 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore { class IDBDatabaseBackendInterface; }
+namespace WebCore {
+class IDBDatabaseBackendInterface;
+class IDBDatabaseCallbacksProxy;
+}
 
 namespace WebKit {
 
+class WebIDBDatabaseCallbacks;
 class WebIDBObjectStore;
 class WebIDBTransaction;
 
@@ -51,12 +55,15 @@ public:
 
     virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction&, WebExceptionCode&);
     virtual void deleteObjectStore(const WebString& name, const WebIDBTransaction&, WebExceptionCode&);
-    virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode&);
+    virtual void setVersion(const WebString& version, WebIDBCallbacks*, WebExceptionCode&);
     virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, WebExceptionCode&);
     virtual void close();
 
+    virtual void open(WebIDBDatabaseCallbacks*);
+
 private:
     WTF::RefPtr<WebCore::IDBDatabaseBackendInterface> m_databaseBackend;
+    WTF::RefPtr<WebCore::IDBDatabaseCallbacksProxy> m_databaseCallbacks;
 };
 
 } // namespace WebKit

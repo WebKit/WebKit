@@ -28,12 +28,14 @@
 
 #include "DOMStringList.h"
 #include "IDBCallbacks.h"
+#include "IDBDatabaseCallbacks.h"
 #include "IDBObjectStoreProxy.h"
 #include "IDBTransactionBackendProxy.h"
 #include "WebDOMStringList.h"
 #include "WebFrameImpl.h"
 #include "WebIDBCallbacksImpl.h"
 #include "WebIDBDatabase.h"
+#include "WebIDBDatabaseCallbacksImpl.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBObjectStore.h"
 #include "WebIDBTransaction.h"
@@ -90,7 +92,7 @@ void IDBDatabaseProxy::deleteObjectStore(const String& name, IDBTransactionBacke
     m_webIDBDatabase->deleteObjectStore(name, *transactionProxy->getWebIDBTransaction(), ec);
 }
 
-void IDBDatabaseProxy::setVersion(const String& version, PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)
+void IDBDatabaseProxy::setVersion(const String& version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, ExceptionCode& ec)
 {
     m_webIDBDatabase->setVersion(version, new WebIDBCallbacksImpl(callbacks), ec);
 }
@@ -106,9 +108,14 @@ PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseProxy::transaction(DOMStri
     return IDBTransactionBackendProxy::create(transaction);
 }
 
-void IDBDatabaseProxy::close()
+void IDBDatabaseProxy::close(PassRefPtr<IDBDatabaseCallbacks>)
 {
     m_webIDBDatabase->close();
+}
+
+void IDBDatabaseProxy::open(PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
+{
+    m_webIDBDatabase->open(new WebIDBDatabaseCallbacksImpl(databaseCallbacks));
 }
 
 } // namespace WebCore

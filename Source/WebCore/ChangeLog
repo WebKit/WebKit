@@ -1,3 +1,44 @@
+2011-03-02  David Grogan  <dgrogan@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: fire versionchange events when calling setVersion
+        https://bugs.webkit.org/show_bug.cgi?id=55095
+
+        * dom/EventNames.h:
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::setVersion):
+        (WebCore::IDBDatabase::close):
+        (WebCore::IDBDatabase::onVersionChange):
+        (WebCore::IDBDatabase::open):
+        (WebCore::IDBDatabase::enqueueEvent):
+        (WebCore::IDBDatabase::dispatchEvent):
+        * storage/IDBDatabase.h:
+        (WebCore::IDBDatabase::dispatchEvent):
+        * storage/IDBDatabase.idl:
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::PendingSetVersionCall::create):
+        (WebCore::IDBDatabaseBackendImpl::PendingSetVersionCall::databaseCallbacks):
+        (WebCore::IDBDatabaseBackendImpl::PendingSetVersionCall::PendingSetVersionCall):
+        (WebCore::IDBDatabaseBackendImpl::IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        (WebCore::IDBDatabaseBackendImpl::open):
+        (WebCore::IDBDatabaseBackendImpl::close):
+        * storage/IDBDatabaseBackendImpl.h:
+        * storage/IDBDatabaseBackendInterface.h:
+        * storage/IDBDatabaseCallbacks.h: Copied from Source/WebCore/storage/IDBVersionChangeEvent.cpp.
+        (WebCore::IDBDatabaseCallbacks::~IDBDatabaseCallbacks):
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::open):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        * storage/IDBVersionChangeEvent.cpp:
+        (WebCore::IDBVersionChangeEvent::create):
+        (WebCore::IDBVersionChangeEvent::IDBVersionChangeEvent):
+        * storage/IDBVersionChangeEvent.h:
+        * storage/IDBVersionChangeRequest.cpp:
+        (WebCore::IDBVersionChangeRequest::onBlocked):
+
 2011-03-02  Alexey Proskuryakov  <ap@apple.com>
 
         Fix assertion failures on Gtk bot.

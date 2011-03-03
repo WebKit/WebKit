@@ -107,6 +107,7 @@ namespace WebCore {
     macro(textInput) \
     macro(unload) \
     macro(updateready) \
+    macro(versionchange) \
     macro(write) \
     macro(writeend) \
     macro(writestart) \

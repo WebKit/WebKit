@@ -23,36 +23,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "IDBVersionChangeEvent.h"
+#ifndef WebIDBDatabaseCallbacksImpl_h
+#define WebIDBDatabaseCallbacksImpl_h
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "EventNames.h"
-#include "IDBAny.h"
+#include "WebDOMStringList.h"
+#include "WebIDBDatabaseCallbacks.h"
+#include "WebString.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-PassRefPtr<IDBVersionChangeEvent> IDBVersionChangeEvent::create(const String& version, const AtomicString& eventType)
-{
-    return adoptRef(new IDBVersionChangeEvent(version, eventType));
-}
+class IDBDatabaseCallbacks;
 
-IDBVersionChangeEvent::IDBVersionChangeEvent(const String& version, const AtomicString& eventType)
-    : Event(eventType, false /*canBubble*/, false /*cancelable*/)
-    , m_version(version)
-{
-}
+class WebIDBDatabaseCallbacksImpl : public WebKit::WebIDBDatabaseCallbacks {
+public:
+    WebIDBDatabaseCallbacksImpl(PassRefPtr<IDBDatabaseCallbacks>);
+    virtual ~WebIDBDatabaseCallbacksImpl();
 
-IDBVersionChangeEvent::~IDBVersionChangeEvent()
-{
-}
+    virtual void onVersionChange(const WebKit::WebString& version);
 
-String IDBVersionChangeEvent::version()
-{
-    return m_version;
-}
+private:
+    RefPtr<IDBDatabaseCallbacks> m_callbacks;
+};
 
 } // namespace WebCore
 
 #endif
+
+#endif // WebIDBDatabaseCallbacksImpl_h

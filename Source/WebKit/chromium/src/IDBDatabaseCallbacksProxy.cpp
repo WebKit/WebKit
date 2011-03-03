@@ -24,35 +24,33 @@
  */
 
 #include "config.h"
-#include "IDBVersionChangeEvent.h"
+#include "IDBDatabaseCallbacksProxy.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "EventNames.h"
-#include "IDBAny.h"
+#include "WebIDBDatabaseCallbacks.h"
 
 namespace WebCore {
 
-PassRefPtr<IDBVersionChangeEvent> IDBVersionChangeEvent::create(const String& version, const AtomicString& eventType)
+PassRefPtr<IDBDatabaseCallbacksProxy> IDBDatabaseCallbacksProxy::create(PassOwnPtr<WebKit::WebIDBDatabaseCallbacks> callbacks)
 {
-    return adoptRef(new IDBVersionChangeEvent(version, eventType));
+    return adoptRef(new IDBDatabaseCallbacksProxy(callbacks));
 }
 
-IDBVersionChangeEvent::IDBVersionChangeEvent(const String& version, const AtomicString& eventType)
-    : Event(eventType, false /*canBubble*/, false /*cancelable*/)
-    , m_version(version)
-{
-}
-
-IDBVersionChangeEvent::~IDBVersionChangeEvent()
+IDBDatabaseCallbacksProxy::IDBDatabaseCallbacksProxy(PassOwnPtr<WebKit::WebIDBDatabaseCallbacks> callbacks)
+    : m_callbacks(callbacks)
 {
 }
 
-String IDBVersionChangeEvent::version()
+IDBDatabaseCallbacksProxy::~IDBDatabaseCallbacksProxy()
 {
-    return m_version;
+}
+
+void IDBDatabaseCallbacksProxy::onVersionChange(const String& requestedVersion)
+{
+    m_callbacks->onVersionChange(requestedVersion);
 }
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE)

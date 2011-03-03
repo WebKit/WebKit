@@ -23,36 +23,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "IDBVersionChangeEvent.h"
+#ifndef IDBDatabaseCallbacksProxy_h
+#define IDBDatabaseCallbacksProxy_h
+
+#include "IDBDatabaseCallbacks.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "EventNames.h"
-#include "IDBAny.h"
+#include <wtf/PassOwnPtr.h>
+
+namespace WebKit { class WebIDBDatabaseCallbacks; }
 
 namespace WebCore {
 
-PassRefPtr<IDBVersionChangeEvent> IDBVersionChangeEvent::create(const String& version, const AtomicString& eventType)
-{
-    return adoptRef(new IDBVersionChangeEvent(version, eventType));
-}
+class IDBDatabaseCallbacksProxy : public IDBDatabaseCallbacks {
+public:
+    static PassRefPtr<IDBDatabaseCallbacksProxy> create(PassOwnPtr<WebKit::WebIDBDatabaseCallbacks>);
+    virtual ~IDBDatabaseCallbacksProxy();
 
-IDBVersionChangeEvent::IDBVersionChangeEvent(const String& version, const AtomicString& eventType)
-    : Event(eventType, false /*canBubble*/, false /*cancelable*/)
-    , m_version(version)
-{
-}
+    virtual void onVersionChange(const String& requestedVersion);
 
-IDBVersionChangeEvent::~IDBVersionChangeEvent()
-{
-}
+private:
+    IDBDatabaseCallbacksProxy(PassOwnPtr<WebKit::WebIDBDatabaseCallbacks>);
 
-String IDBVersionChangeEvent::version()
-{
-    return m_version;
-}
+    OwnPtr<WebKit::WebIDBDatabaseCallbacks> m_callbacks;
+};
 
 } // namespace WebCore
 
 #endif
+
+#endif // IDBDatabaseCallbacksProxy_h
