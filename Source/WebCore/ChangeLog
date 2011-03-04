@@ -1,3 +1,16 @@
+2011-03-04  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Text editor] DOMNodeRemoved events are missing
+        https://bugs.webkit.org/show_bug.cgi?id=55769
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorMainPanel):
+        (WebInspector.TextEditorMainPanel.prototype._handleDOMUpdates):
+        (WebInspector.TextEditorMainChunk):
+        (WebInspector.TextEditorMainChunk.prototype._createRow):
+
 2011-03-04  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
