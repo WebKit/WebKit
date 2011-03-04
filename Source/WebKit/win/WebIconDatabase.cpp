@@ -71,7 +71,7 @@ void WebIconDatabase::init()
         enabled = FALSE;
         LOG_ERROR("Unable to get icon database enabled preference");
     }
-    iconDatabase()->setEnabled(!!enabled);
+    iconDatabase().setEnabled(!!enabled);
     if (!(!!enabled))
         return;
 
@@ -82,7 +82,7 @@ void WebIconDatabase::startUpIconDatabase()
 {
     WebPreferences* standardPrefs = WebPreferences::sharedStandardPreferences();
 
-    iconDatabase()->setClient(this);
+    iconDatabase().setClient(this);
 
     BSTR prefDatabasePath = 0;
     if (FAILED(standardPrefs->iconDatabaseLocation(&prefDatabasePath)))
@@ -97,7 +97,7 @@ void WebIconDatabase::startUpIconDatabase()
             LOG_ERROR("Failed to construct default icon database path");
     }
 
-    if (!iconDatabase()->open(databasePath))
+    if (!iconDatabase().open(databasePath))
             LOG_ERROR("Failed to open icon database path");
 }
 
@@ -172,7 +172,7 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::iconForURL(
 
     Image* icon = 0;
     if (url)
-        icon = iconDatabase()->iconForPageURL(String(url, SysStringLen(url)), intSize);
+        icon = iconDatabase().iconForPageURL(String(url, SysStringLen(url)), intSize);
 
     // Make sure we check for the case of an "empty image"
     if (icon && icon->width()) {
@@ -199,20 +199,20 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::defaultIconWithSize(
 HRESULT STDMETHODCALLTYPE WebIconDatabase::retainIconForURL(
         /* [in] */ BSTR url)
 {
-    iconDatabase()->retainIconForPageURL(String(url, SysStringLen(url)));
+    iconDatabase().retainIconForPageURL(String(url, SysStringLen(url)));
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebIconDatabase::releaseIconForURL(
         /* [in] */ BSTR url)
 {
-    iconDatabase()->releaseIconForPageURL(String(url, SysStringLen(url)));
+    iconDatabase().releaseIconForPageURL(String(url, SysStringLen(url)));
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebIconDatabase::removeAllIcons(void)
 {
-    iconDatabase()->removeAllIcons();
+    iconDatabase().removeAllIcons();
     return S_OK;
 }
 
@@ -234,7 +234,7 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::iconURLForURL(
 {
     if (!url || !iconURL)
         return E_POINTER;
-    BString iconURLBSTR(iconDatabase()->iconURLForPageURL(String(url, SysStringLen(url))));
+    BString iconURLBSTR(iconDatabase().iconURLForPageURL(String(url, SysStringLen(url))));
     *iconURL = iconURLBSTR.release();
     return S_OK;
 }
@@ -242,7 +242,7 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::iconURLForURL(
 HRESULT STDMETHODCALLTYPE WebIconDatabase::isEnabled( 
         /* [retval][out] */ BOOL *result)
 {
-    *result = iconDatabase()->isEnabled();
+    *result = iconDatabase().isEnabled();
     return S_OK;
 }
 
@@ -252,10 +252,10 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::setEnabled(
     BOOL currentlyEnabled;
     isEnabled(&currentlyEnabled);
     if (currentlyEnabled && !flag) {
-        iconDatabase()->setEnabled(false);
+        iconDatabase().setEnabled(false);
         shutDownIconDatabase();
     } else if (!currentlyEnabled && flag) {
-        iconDatabase()->setEnabled(true);
+        iconDatabase().setEnabled(true);
         startUpIconDatabase();
     }
     return S_OK;
@@ -272,11 +272,11 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::hasIconForURL(
 
     // Passing a size parameter of 0, 0 means we don't care about the result of the image, we just
     // want to make sure the read from disk to load the icon is kicked off.
-    iconDatabase()->iconForPageURL(urlString, IntSize(0, 0));
+    iconDatabase().iconForPageURL(urlString, IntSize(0, 0));
 
     // Check to see if we have a non-empty icon URL for the page, and if we do, we have an icon for
     // the page.
-    *result = !(iconDatabase()->iconURLForPageURL(urlString).isEmpty());
+    *result = !(iconDatabase().iconURLForPageURL(urlString).isEmpty());
 
     return S_OK;
 }
@@ -311,7 +311,7 @@ HBITMAP WebIconDatabase::getOrCreateDefaultIconBitmap(LPSIZE size)
     result = createDIB(size);
 
     m_defaultIconMap.set(*size, result);
-    if (!iconDatabase()->defaultIcon(*size)->getHBITMAPOfSize(result, size)) {
+    if (!iconDatabase().defaultIcon(*size)->getHBITMAPOfSize(result, size)) {
         LOG_ERROR("Failed to draw Image to HBITMAP");
         return 0;
     }

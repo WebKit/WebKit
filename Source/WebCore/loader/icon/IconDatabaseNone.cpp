@@ -56,11 +56,11 @@ String IconDatabase::defaultDatabaseFilename()
     return defaultDatabaseFilename.threadsafeCopy();
 }
 
-IconDatabase* iconDatabase()
+IconDatabase& iconDatabase()
 {
     if (!sharedIconDatabase)
         sharedIconDatabase = new IconDatabase;
-    return sharedIconDatabase;
+    return *sharedIconDatabase;
 }
 
 IconDatabase::IconDatabase()

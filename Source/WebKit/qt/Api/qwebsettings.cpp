@@ -645,16 +645,16 @@ QString QWebSettings::defaultTextEncoding() const
 */
 void QWebSettings::setIconDatabasePath(const QString& path)
 {
-    WebCore::iconDatabase()->delayDatabaseCleanup();
+    WebCore::iconDatabase().delayDatabaseCleanup();
 
     if (!path.isEmpty()) {
-        WebCore::iconDatabase()->setEnabled(true);
+        WebCore::iconDatabase().setEnabled(true);
         QFileInfo info(path);
         if (info.isDir() && info.isWritable())
-            WebCore::iconDatabase()->open(path);
+            WebCore::iconDatabase().open(path);
     } else {
-        WebCore::iconDatabase()->setEnabled(false);
-        WebCore::iconDatabase()->close();
+        WebCore::iconDatabase().setEnabled(false);
+        WebCore::iconDatabase().close();
     }
 }
 
@@ -666,8 +666,8 @@ void QWebSettings::setIconDatabasePath(const QString& path)
 */
 QString QWebSettings::iconDatabasePath()
 {
-    if (WebCore::iconDatabase()->isEnabled() && WebCore::iconDatabase()->isOpen())
-        return WebCore::iconDatabase()->databasePath();
+    if (WebCore::iconDatabase().isEnabled() && WebCore::iconDatabase().isOpen())
+        return WebCore::iconDatabase().databasePath();
     else
         return QString();
 }
@@ -677,8 +677,8 @@ QString QWebSettings::iconDatabasePath()
 */
 void QWebSettings::clearIconDatabase()
 {
-    if (WebCore::iconDatabase()->isEnabled() && WebCore::iconDatabase()->isOpen())
-        WebCore::iconDatabase()->removeAllIcons();
+    if (WebCore::iconDatabase().isEnabled() && WebCore::iconDatabase().isOpen())
+        WebCore::iconDatabase().removeAllIcons();
 }
 
 /*!
@@ -693,7 +693,7 @@ void QWebSettings::clearIconDatabase()
 */
 QIcon QWebSettings::iconForUrl(const QUrl& url)
 {
-    WebCore::Image* image = WebCore::iconDatabase()->iconForPageURL(WebCore::KURL(url).string(),
+    WebCore::Image* image = WebCore::iconDatabase().iconForPageURL(WebCore::KURL(url).string(),
                                 WebCore::IntSize(16, 16));
     if (!image)
         return QPixmap();

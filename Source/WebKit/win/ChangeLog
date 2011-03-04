@@ -1,3 +1,30 @@
+2011-03-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55721
+        Global IconDatabase should be returned by reference, not as a pointer
+
+        * WebCoreStatistics.cpp:
+        (WebCoreStatistics::iconPageURLMappingCount):
+        (WebCoreStatistics::iconRetainedPageURLCount):
+        (WebCoreStatistics::iconRecordCount):
+        (WebCoreStatistics::iconsWithDataCount):
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::init):
+        (WebIconDatabase::startUpIconDatabase):
+        (WebIconDatabase::iconForURL):
+        (WebIconDatabase::retainIconForURL):
+        (WebIconDatabase::releaseIconForURL):
+        (WebIconDatabase::removeAllIcons):
+        (WebIconDatabase::iconURLForURL):
+        (WebIconDatabase::isEnabled):
+        (WebIconDatabase::setEnabled):
+        (WebIconDatabase::hasIconForURL):
+        (WebIconDatabase::getOrCreateDefaultIconBitmap):
+        * WebKitDLL.cpp:
+        (shutDownWebKit):
+
 2011-03-03  Alexey Proskuryakov  <ap@apple.com>
 
         Removing an include of WebCoreKeyboardUIMode.h that Ive just added. It's already included

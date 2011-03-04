@@ -119,7 +119,7 @@ static WebIconDatabaseClient* defaultClient()
     [defaults registerDefaults:initialDefaults];
     [initialDefaults release];
     BOOL enabled = [defaults boolForKey:WebIconDatabaseEnabledDefaultsKey];
-    iconDatabase()->setEnabled(enabled);
+    iconDatabase().setEnabled(enabled);
     if (enabled)
         [self _startUpIconDatabase];
     return self;
@@ -138,7 +138,7 @@ static WebIconDatabaseClient* defaultClient()
     if ([URL _webkit_isFileURL])
         return [self _iconForFileURL:URL withSize:size];
       
-    if (Image* image = iconDatabase()->iconForPageURL(URL, IntSize(size)))
+    if (Image* image = iconDatabase().iconForPageURL(URL, IntSize(size)))
         if (NSImage *icon = webGetNSImage(image, size))
             return icon;
     return [self defaultIconForURL:URL withSize:size];
@@ -155,7 +155,7 @@ static WebIconDatabaseClient* defaultClient()
         return nil;
     ASSERT_MAIN_THREAD();
 
-    return iconDatabase()->iconURLForPageURL(URL);
+    return iconDatabase().iconURLForPageURL(URL);
 }
 
 - (NSImage *)defaultIconWithSize:(NSSize)size
@@ -164,7 +164,7 @@ static WebIconDatabaseClient* defaultClient()
     ASSERT(size.width);
     ASSERT(size.height);
     
-    Image* image = iconDatabase()->defaultIcon(IntSize(size));
+    Image* image = iconDatabase().defaultIcon(IntSize(size));
     return image ? image->getNSImage() : nil;
 }
 
@@ -182,7 +182,7 @@ static WebIconDatabaseClient* defaultClient()
     if (![self isEnabled])
         return;
 
-    iconDatabase()->retainIconForPageURL(URL);
+    iconDatabase().retainIconForPageURL(URL);
 }
 
 - (void)releaseIconForURL:(NSString *)pageURL
@@ -192,7 +192,7 @@ static WebIconDatabaseClient* defaultClient()
     if (![self isEnabled])
         return;
 
-    iconDatabase()->releaseIconForPageURL(pageURL);
+    iconDatabase().releaseIconForPageURL(pageURL);
 }
 
 + (void)delayDatabaseCleanup
@@ -227,17 +227,17 @@ static WebIconDatabaseClient* defaultClient()
 
 - (BOOL)isEnabled
 {
-    return iconDatabase()->isEnabled();
+    return iconDatabase().isEnabled();
 }
 
 - (void)setEnabled:(BOOL)flag
 {
     BOOL currentlyEnabled = [self isEnabled];
     if (currentlyEnabled && !flag) {
-        iconDatabase()->setEnabled(false);
+        iconDatabase().setEnabled(false);
         [self _shutDownIconDatabase];
     } else if (!currentlyEnabled && flag) {
-        iconDatabase()->setEnabled(true);
+        iconDatabase().setEnabled(true);
         [self _startUpIconDatabase];
     }
 }
@@ -249,7 +249,7 @@ static WebIconDatabaseClient* defaultClient()
         return;
 
     // Via the IconDatabaseClient interface, removeAllIcons() will send the WebIconDatabaseDidRemoveAllIconsNotification
-    iconDatabase()->removeAllIcons();
+    iconDatabase().removeAllIcons();
 }
 
 @end
@@ -258,7 +258,7 @@ static WebIconDatabaseClient* defaultClient()
 
 + (void)_checkIntegrityBeforeOpening
 {
-    iconDatabase()->checkIntegrityBeforeOpening();
+    iconDatabase().checkIntegrityBeforeOpening();
 }
 
 @end
@@ -286,7 +286,7 @@ static WebIconDatabaseClient* defaultClient()
 
 - (void)_startUpIconDatabase
 {
-    iconDatabase()->setClient(defaultClient());
+    iconDatabase().setClient(defaultClient());
     
     // Figure out the directory we should be using for the icon.db
     NSString *databaseDirectory = [self _databaseDirectory];
@@ -296,14 +296,14 @@ static WebIconDatabaseClient* defaultClient()
     NSString *legacyDB = [databaseDirectory stringByAppendingPathComponent:@"icon.db"];
     NSFileManager *defaultManager = [NSFileManager defaultManager];
     if ([defaultManager fileExistsAtPath:legacyDB isDirectory:&isDirectory] && !isDirectory) {
-        NSString *newDB = [databaseDirectory stringByAppendingPathComponent:iconDatabase()->defaultDatabaseFilename()];
+        NSString *newDB = [databaseDirectory stringByAppendingPathComponent:iconDatabase().defaultDatabaseFilename()];
         if (![defaultManager fileExistsAtPath:newDB])
             rename([legacyDB fileSystemRepresentation], [newDB fileSystemRepresentation]);
     }
     
     // Set the private browsing pref then open the WebCore icon database
-    iconDatabase()->setPrivateBrowsingEnabled([[WebPreferences standardPreferences] privateBrowsingEnabled]);
-    if (!iconDatabase()->open(databaseDirectory))
+    iconDatabase().setPrivateBrowsingEnabled([[WebPreferences standardPreferences] privateBrowsingEnabled]);
+    if (!iconDatabase().open(databaseDirectory))
         LOG_ERROR("Unable to open icon database");
     
     // Register for important notifications
@@ -330,7 +330,7 @@ static WebIconDatabaseClient* defaultClient()
 
 - (void)_applicationWillTerminate:(NSNotification *)notification
 {
-    iconDatabase()->close();
+    iconDatabase().close();
 }
 
 - (NSImage *)_iconForFileURL:(NSString *)file withSize:(NSSize)size
@@ -366,7 +366,7 @@ static WebIconDatabaseClient* defaultClient()
 - (void)_resetCachedWebPreferences:(NSNotification *)notification
 {
     BOOL privateBrowsingEnabledNow = [[WebPreferences standardPreferences] privateBrowsingEnabled];
-    iconDatabase()->setPrivateBrowsingEnabled(privateBrowsingEnabledNow);
+    iconDatabase().setPrivateBrowsingEnabled(privateBrowsingEnabledNow);
 }
 
 - (NSImage *)_largestIconFromDictionary:(NSMutableDictionary *)icons
@@ -626,8 +626,8 @@ bool importToWebCoreFormat()
         iconURL = [pageURLToIconURL objectForKey:url];
         if (!iconURL)
             continue;
-        iconDatabase()->importIconURLForPageURL(iconURL, url);
-        if (iconDatabase()->shouldStopThreadActivity())
+        iconDatabase().importIconURLForPageURL(iconURL, url);
+        if (iconDatabase().shouldStopThreadActivity())
             return false;
     }    
 
@@ -640,14 +640,14 @@ bool importToWebCoreFormat()
     while ((url = [enumerator nextObject]) != nil) {
         iconData = iconDataFromPathForIconURL(databaseDirectory, url);
         if (iconData)
-            iconDatabase()->importIconDataForIconURL(SharedBuffer::wrapNSData(iconData), url);
+            iconDatabase().importIconDataForIconURL(SharedBuffer::wrapNSData(iconData), url);
         else {
             // This really *shouldn't* happen, so it'd be good to track down why it might happen in a debug build
             // however, we do know how to handle it gracefully in release
             LOG_ERROR("%@ is marked as having an icon on disk, but we couldn't get the data for it", url);
-            iconDatabase()->importIconDataForIconURL(0, url);
+            iconDatabase().importIconDataForIconURL(0, url);
         }
-        if (iconDatabase()->shouldStopThreadActivity())
+        if (iconDatabase().shouldStopThreadActivity())
             return false;
     }
     
@@ -656,7 +656,7 @@ bool importToWebCoreFormat()
     NSFileManager *fileManager = [NSFileManager defaultManager];
     enumerator = [[fileManager contentsOfDirectoryAtPath:databaseDirectory error:NULL] objectEnumerator];
 
-    NSString *databaseFilename = iconDatabase()->defaultDatabaseFilename();
+    NSString *databaseFilename = iconDatabase().defaultDatabaseFilename();
 
     BOOL foundIconDB = NO;
     NSString *file;

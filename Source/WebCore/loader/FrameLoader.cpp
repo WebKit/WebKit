@@ -692,7 +692,7 @@ void FrameLoader::startIconLoader()
     if (!isLoadingMainFrame())
         return;
 
-    if (!iconDatabase() || !iconDatabase()->isEnabled())
+    if (!iconDatabase().isEnabled())
         return;
     
     KURL url(iconURL());
@@ -702,7 +702,7 @@ void FrameLoader::startIconLoader()
 
     // If we're not reloading and the icon database doesn't say to load now then bail before we actually start the load
     if (loadType() != FrameLoadTypeReload && loadType() != FrameLoadTypeReloadFromOrigin) {
-        IconLoadDecision decision = iconDatabase()->loadDecisionForIconURL(urlString, m_documentLoader.get());
+        IconLoadDecision decision = iconDatabase().loadDecisionForIconURL(urlString, m_documentLoader.get());
         if (decision == IconLoadNo) {
             LOG(IconDatabase, "FrameLoader::startIconLoader() - Told not to load this icon, committing iconURL %s to database for pageURL mapping", urlString.ascii().data());
             commitIconURLToIconDatabase(url);
@@ -711,11 +711,11 @@ void FrameLoader::startIconLoader()
             // If the icon data hasn't been read in from disk yet, kick off the read of the icon from the database to make sure someone
             // has done it.  This is after registering for the notification so the WebView can call the appropriate delegate method.
             // Otherwise if the icon data *is* available, notify the delegate
-            if (!iconDatabase()->iconDataKnownForIconURL(urlString)) {
+            if (!iconDatabase().iconDataKnownForIconURL(urlString)) {
                 LOG(IconDatabase, "Told not to load icon %s but icon data is not yet available - registering for notification and requesting load from disk", urlString.ascii().data());
                 m_client->registerForIconNotification();
-                iconDatabase()->iconForPageURL(m_frame->document()->url().string(), IntSize(0, 0));
-                iconDatabase()->iconForPageURL(originalRequestURL().string(), IntSize(0, 0));
+                iconDatabase().iconForPageURL(m_frame->document()->url().string(), IntSize(0, 0));
+                iconDatabase().iconForPageURL(originalRequestURL().string(), IntSize(0, 0));
             } else
                 m_client->dispatchDidReceiveIcon();
                 
@@ -750,10 +750,9 @@ void FrameLoader::startIconLoader()
 
 void FrameLoader::commitIconURLToIconDatabase(const KURL& icon)
 {
-    ASSERT(iconDatabase());
     LOG(IconDatabase, "Committing iconURL %s to database for pageURLs %s and %s", icon.string().ascii().data(), m_frame->document()->url().string().ascii().data(), originalRequestURL().string().ascii().data());
-    iconDatabase()->setIconURLForPageURL(icon.string(), m_frame->document()->url().string());
-    iconDatabase()->setIconURLForPageURL(icon.string(), originalRequestURL().string());
+    iconDatabase().setIconURLForPageURL(icon.string(), m_frame->document()->url().string());
+    iconDatabase().setIconURLForPageURL(icon.string(), originalRequestURL().string());
 }
 
 void FrameLoader::finishedParsing()

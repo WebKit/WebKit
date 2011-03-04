@@ -122,22 +122,22 @@ using namespace WebCore;
 
 + (size_t)iconPageURLMappingCount
 {
-    return iconDatabase()->pageURLMappingCount();
+    return iconDatabase().pageURLMappingCount();
 }
 
 + (size_t)iconRetainedPageURLCount
 {
-    return iconDatabase()->retainedPageURLCount();
+    return iconDatabase().retainedPageURLCount();
 }
 
 + (size_t)iconRecordCount
 {
-    return iconDatabase()->iconRecordCount();
+    return iconDatabase().iconRecordCount();
 }
 
 + (size_t)iconsWithDataCount
 {
-    return iconDatabase()->iconRecordCountWithData();
+    return iconDatabase().iconRecordCountWithData();
 }
 
 + (size_t)cachedFontDataCount

@@ -133,7 +133,7 @@ STDAPI LocalServerDidDie()
 
 void shutDownWebKit()
 {
-    WebCore::iconDatabase()->close();
+    WebCore::iconDatabase().close();
     WebCore::PageGroup::closeLocalStorage();
 }
 

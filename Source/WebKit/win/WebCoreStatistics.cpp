@@ -156,7 +156,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::iconPageURLMappingCount(
 {
     if (!count)
         return E_POINTER;
-    *count = (UINT) iconDatabase()->pageURLMappingCount();
+    *count = (UINT) iconDatabase().pageURLMappingCount();
     return S_OK;
 }
 
@@ -165,7 +165,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::iconRetainedPageURLCount(
 {
     if (!count)
         return E_POINTER;
-    *count = (UINT) iconDatabase()->retainedPageURLCount();
+    *count = (UINT) iconDatabase().retainedPageURLCount();
     return S_OK;
 }
 
@@ -174,7 +174,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::iconRecordCount(
 {
     if (!count)
         return E_POINTER;
-    *count = (UINT) iconDatabase()->iconRecordCount();
+    *count = (UINT) iconDatabase().iconRecordCount();
     return S_OK;
 }
 
@@ -183,7 +183,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::iconsWithDataCount(
 {
     if (!count)
         return E_POINTER;
-    *count = (UINT) iconDatabase()->iconRecordCountWithData();
+    *count = (UINT) iconDatabase().iconRecordCountWithData();
     return S_OK;
 }
 

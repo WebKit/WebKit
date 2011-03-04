@@ -1,3 +1,16 @@
+2011-03-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55721
+        Global IconDatabase should be returned by reference, not as a pointer
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::setIconDatabasePath):
+        (QWebSettings::iconDatabasePath):
+        (QWebSettings::clearIconDatabase):
+        (QWebSettings::iconForUrl):
+
 2011-03-03  Alexey Proskuryakov  <ap@apple.com>
 
         Removing an include of WebCoreKeyboardUIMode.h that Ive just added. It's already included

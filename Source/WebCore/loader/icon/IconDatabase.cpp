@@ -91,13 +91,13 @@ static IconDatabaseClient* defaultClient()
     return defaultClient;
 }
 
-IconDatabase* iconDatabase()
+IconDatabase& iconDatabase()
 {
     if (!sharedIconDatabase) {
         ScriptController::initializeThreading();
         sharedIconDatabase = new IconDatabase;
     }
-    return sharedIconDatabase;
+    return *sharedIconDatabase;
 }
 
 // ************************

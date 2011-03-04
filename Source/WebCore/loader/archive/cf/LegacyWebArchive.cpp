@@ -545,10 +545,10 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
     }
 
     // Add favicon if one exists for this page, if we are archiving the entire page.
-    if (nodesSize && nodes[0]->isDocumentNode() && iconDatabase() && iconDatabase()->isEnabled()) {
-        const String& iconURL = iconDatabase()->iconURLForPageURL(responseURL);
-        if (!iconURL.isEmpty() && iconDatabase()->iconDataKnownForIconURL(iconURL)) {
-            if (Image* iconImage = iconDatabase()->iconForPageURL(responseURL, IntSize(16, 16))) {
+    if (nodesSize && nodes[0]->isDocumentNode() && iconDatabase().isEnabled()) {
+        const String& iconURL = iconDatabase().iconURLForPageURL(responseURL);
+        if (!iconURL.isEmpty() && iconDatabase().iconDataKnownForIconURL(iconURL)) {
+            if (Image* iconImage = iconDatabase().iconForPageURL(responseURL, IntSize(16, 16))) {
                 if (RefPtr<ArchiveResource> resource = ArchiveResource::create(iconImage->data(), KURL(ParsedURLString, iconURL), "image/x-icon", "", ""))
                     subresources.append(resource.release());
             }

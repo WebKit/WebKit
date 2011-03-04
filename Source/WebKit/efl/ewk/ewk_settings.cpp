@@ -134,7 +134,7 @@ const char *ewk_settings_web_database_path_get()
  */
 Eina_Bool ewk_settings_icon_database_path_set(const char *directory)
 {
-    WebCore::iconDatabase()->delayDatabaseCleanup();
+    WebCore::iconDatabase().delayDatabaseCleanup();
 
     if (directory) {
         struct stat st;
@@ -155,15 +155,15 @@ Eina_Bool ewk_settings_icon_database_path_set(const char *directory)
             return EINA_FALSE;
         }
 
-        WebCore::iconDatabase()->setEnabled(true);
-        WebCore::iconDatabase()->open(WTF::String::fromUTF8(directory));
+        WebCore::iconDatabase().setEnabled(true);
+        WebCore::iconDatabase().open(WTF::String::fromUTF8(directory));
         if (!_ewk_icon_database_path)
             _ewk_icon_database_path = eina_stringshare_add(directory);
         else
             eina_stringshare_replace(&_ewk_icon_database_path, directory);
     } else {
-        WebCore::iconDatabase()->setEnabled(false);
-        WebCore::iconDatabase()->close();
+        WebCore::iconDatabase().setEnabled(false);
+        WebCore::iconDatabase().close();
         if (_ewk_icon_database_path) {
             eina_stringshare_del(_ewk_icon_database_path);
             _ewk_icon_database_path = 0;
@@ -183,9 +183,9 @@ Eina_Bool ewk_settings_icon_database_path_set(const char *directory)
  */
 const char* ewk_settings_icon_database_path_get(void)
 {
-    if (!WebCore::iconDatabase()->isEnabled())
+    if (!WebCore::iconDatabase().isEnabled())
         return 0;
-    if (!WebCore::iconDatabase()->isOpen())
+    if (!WebCore::iconDatabase().isOpen())
         return 0;
 
     return _ewk_icon_database_path;
@@ -202,12 +202,12 @@ const char* ewk_settings_icon_database_path_get(void)
  */
 Eina_Bool ewk_settings_icon_database_clear(void)
 {
-    if (!WebCore::iconDatabase()->isEnabled())
+    if (!WebCore::iconDatabase().isEnabled())
         return EINA_FALSE;
-    if (!WebCore::iconDatabase()->isOpen())
+    if (!WebCore::iconDatabase().isOpen())
         return EINA_FALSE;
 
-    WebCore::iconDatabase()->removeAllIcons();
+    WebCore::iconDatabase().removeAllIcons();
     return EINA_TRUE;
 }
 
@@ -226,7 +226,7 @@ cairo_surface_t* ewk_settings_icon_database_icon_surface_get(const char *url)
     EINA_SAFETY_ON_NULL_RETURN_VAL(url, 0);
 
     WebCore::KURL kurl(WebCore::KURL(), WTF::String::fromUTF8(url));
-    WebCore::Image *icon = WebCore::iconDatabase()->iconForPageURL(kurl.string(), WebCore::IntSize(16, 16));
+    WebCore::Image *icon = WebCore::iconDatabase().iconForPageURL(kurl.string(), WebCore::IntSize(16, 16));
 
     if (!icon) {
         ERR("no icon for url %s", url);
@@ -258,7 +258,7 @@ Evas_Object* ewk_settings_icon_database_icon_object_add(const char* url, Evas* c
     EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
 
     WebCore::KURL kurl(WebCore::KURL(), WTF::String::fromUTF8(url));
-    WebCore::Image* icon = WebCore::iconDatabase()->iconForPageURL(kurl.string(), WebCore::IntSize(16, 16));
+    WebCore::Image* icon = WebCore::iconDatabase().iconForPageURL(kurl.string(), WebCore::IntSize(16, 16));
     cairo_surface_t* surface;
 
     if (!icon) {

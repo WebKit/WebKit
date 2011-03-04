@@ -106,7 +106,7 @@ public:
 private:
     IconDatabase();
     ~IconDatabase();
-    friend IconDatabase* iconDatabase();
+    friend IconDatabase& iconDatabase();
 
 #if ENABLE(ICONDATABASE)
     static void notifyPendingLoadDecisionsOnMainThread(void*);
@@ -240,7 +240,7 @@ private:
 };
 
 // Function to obtain the global icon database.
-IconDatabase* iconDatabase();
+IconDatabase& iconDatabase();
 
 } // namespace WebCore
 

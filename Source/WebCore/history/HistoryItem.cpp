@@ -85,7 +85,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, double ti
     , m_next(0)
     , m_prev(0)
 {    
-    iconDatabase()->retainIconForPageURL(m_urlString);
+    iconDatabase().retainIconForPageURL(m_urlString);
 }
 
 HistoryItem::HistoryItem(const String& urlString, const String& title, const String& alternateTitle, double time)
@@ -104,7 +104,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, const Str
     , m_next(0)
     , m_prev(0)
 {
-    iconDatabase()->retainIconForPageURL(m_urlString);
+    iconDatabase().retainIconForPageURL(m_urlString);
 }
 
 HistoryItem::HistoryItem(const KURL& url, const String& target, const String& parent, const String& title)
@@ -124,13 +124,13 @@ HistoryItem::HistoryItem(const KURL& url, const String& target, const String& pa
     , m_next(0)
     , m_prev(0)
 {    
-    iconDatabase()->retainIconForPageURL(m_urlString);
+    iconDatabase().retainIconForPageURL(m_urlString);
 }
 
 HistoryItem::~HistoryItem()
 {
     ASSERT(!m_cachedPage);
-    iconDatabase()->releaseIconForPageURL(m_urlString);
+    iconDatabase().releaseIconForPageURL(m_urlString);
 #if PLATFORM(ANDROID)
     if (m_bridge)
         m_bridge->detachHistoryItem();
@@ -178,7 +178,7 @@ PassRefPtr<HistoryItem> HistoryItem::copy() const
 
 void HistoryItem::reset()
 {
-    iconDatabase()->releaseIconForPageURL(m_urlString);
+    iconDatabase().releaseIconForPageURL(m_urlString);
 
     m_urlString = String();
     m_originalURLString = String();
@@ -232,8 +232,8 @@ const String& HistoryItem::alternateTitle() const
 
 Image* HistoryItem::icon() const
 {
-    Image* result = iconDatabase()->iconForPageURL(m_urlString, IntSize(16, 16));
-    return result ? result : iconDatabase()->defaultIcon(IntSize(16, 16));
+    Image* result = iconDatabase().iconForPageURL(m_urlString, IntSize(16, 16));
+    return result ? result : iconDatabase().defaultIcon(IntSize(16, 16));
 }
 
 double HistoryItem::lastVisitedTime() const
@@ -275,9 +275,9 @@ void HistoryItem::setAlternateTitle(const String& alternateTitle)
 void HistoryItem::setURLString(const String& urlString)
 {
     if (m_urlString != urlString) {
-        iconDatabase()->releaseIconForPageURL(m_urlString);
+        iconDatabase().releaseIconForPageURL(m_urlString);
         m_urlString = urlString;
-        iconDatabase()->retainIconForPageURL(m_urlString);
+        iconDatabase().retainIconForPageURL(m_urlString);
     }
     
     notifyHistoryItemChanged(this);

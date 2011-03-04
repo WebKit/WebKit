@@ -225,7 +225,7 @@ static GtkWidget* currentToplevelCallback(WebKitSoupAuthDialog* feature, SoupMes
 
 static void closeIconDatabaseOnExit()
 {
-    iconDatabase()->close();
+    iconDatabase().close();
 }
 
 void webkitInit()
@@ -289,14 +289,14 @@ void setIconDatabaseEnabled(bool enabled)
     }
 
     if (enabled) {
-        iconDatabase()->setEnabled(true);
+        iconDatabase().setEnabled(true);
         GOwnPtr<gchar> iconDatabasePath(g_build_filename(g_get_user_data_dir(), "webkit", "icondatabase", NULL));
-        iconDatabase()->open(iconDatabasePath.get());
+        iconDatabase().open(iconDatabasePath.get());
         return;
     }
 
-    iconDatabase()->setEnabled(false);
-    iconDatabase()->close();
+    iconDatabase().setEnabled(false);
+    iconDatabase().close();
 }
 
 
