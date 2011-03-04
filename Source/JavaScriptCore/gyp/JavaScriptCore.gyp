@@ -49,7 +49,9 @@
       ],
       'mac_framework_headers': [
         '<@(javascriptcore_publicheader_files)',
-        '<@(javascriptcore_privateheader_files)', # FIXME: These should be private headers.
+      ],
+      'mac_framework_private_headers': [
+        '<@(javascriptcore_privateheader_files)',
       ],
       'xcode_config_file': '<(DEPTH)/JavaScriptCore/Configurations/JavaScriptCore.xcconfig',
       'sources/': [

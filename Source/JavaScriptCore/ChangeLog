@@ -1,3 +1,16 @@
+2011-03-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Teach JavaScriptCore GYP build about private headers
+        https://bugs.webkit.org/show_bug.cgi?id=55532
+
+        This patch distinguishes between public and private framework headers
+        so that public headers are copied into the Headers directory and
+        private headers are copied into the PrivateHeaders directory.
+
+        * gyp/JavaScriptCore.gyp:
+
 2011-03-03  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled out 80277 and 80280 because they caused event handler layout test
