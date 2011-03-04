@@ -414,7 +414,7 @@ void JSGlobalObject::copyGlobalsTo(RegisterFile& registerFile)
     if (d()->registerArray) {
         // The register file is always a gc root so no barrier is needed here
         memcpy(registerFile.start() - d()->registerArraySize, d()->registerArray.get(), d()->registerArraySize * sizeof(WriteBarrier<Unknown>));
-        setRegisters(reinterpret_cast<WriteBarrier<Unknown>*>(registerFile.start()), 0, 0);
+        setRegisters(reinterpret_cast<WriteBarrier<Unknown>*>(registerFile.start()), nullptr, 0);
     }
 }
 
@@ -426,10 +426,11 @@ void JSGlobalObject::resizeRegisters(int oldSize, int newSize)
     ASSERT(newSize && newSize > oldSize);
     if (d()->registerArray || !d()->registers) {
         ASSERT(static_cast<size_t>(oldSize) == d()->registerArraySize);
-        WriteBarrier<Unknown>* registerArray = new WriteBarrier<Unknown>[newSize];
+        OwnArrayPtr<WriteBarrier<Unknown> > registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[newSize]);
         for (int i = 0; i < oldSize; i++)
             registerArray[newSize - oldSize + i].set(globalData(), this, d()->registerArray[i].get());
-        setRegisters(registerArray + newSize, registerArray, newSize);
+        WriteBarrier<Unknown>* registers = registerArray.get() + newSize;
+        setRegisters(registers, registerArray.release(), newSize);
     } else {
         ASSERT(static_cast<size_t>(newSize) < globalData().interpreter->registerFile().maxGlobals());
         globalData().interpreter->registerFile().setNumGlobals(newSize);

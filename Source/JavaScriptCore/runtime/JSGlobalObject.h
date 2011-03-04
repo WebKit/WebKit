@@ -318,13 +318,14 @@ namespace JSC {
     {
         size_t oldSize = d()->registerArraySize;
         size_t newSize = oldSize + count;
-        WriteBarrier<Unknown>* registerArray = new WriteBarrier<Unknown>[newSize];
+        OwnArrayPtr<WriteBarrier<Unknown> > registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[newSize]);
         if (d()->registerArray) {
             // memcpy is safe here as we're copying barriers we already own from the existing array
-            memcpy(registerArray + count, d()->registerArray.get(), oldSize * sizeof(Register));
+            memcpy(registerArray.get() + count, d()->registerArray.get(), oldSize * sizeof(Register));
         }
 
-        setRegisters(registerArray + newSize, registerArray, newSize);
+        WriteBarrier<Unknown>* registers = registerArray.get() + newSize;
+        setRegisters(registers, registerArray.release(), newSize);
 
         for (int i = 0, index = -static_cast<int>(oldSize) - 1; i < count; ++i, --index) {
             GlobalPropertyInfo& global = globals[i];

@@ -1,3 +1,13 @@
+2011-03-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove LOOSE_PASS_OWN_ARRAY_PTR from PassOwnArrayPtr.h
+        https://bugs.webkit.org/show_bug.cgi?id=55554
+
+        * platform/Length.cpp:
+        (WebCore::newLengthArray): Pass nullptr instead of 0.
+
 2011-03-03  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.

@@ -30,9 +30,6 @@
 #include "NullPtr.h"
 #include "TypeTraits.h"
 
-// Remove this once we make all WebKit code compatible with stricter rules about PassOwnArrayPtr.
-#define LOOSE_PASS_OWN_ARRAY_PTR
-
 namespace WTF {
 
 template<typename T> class OwnArrayPtr;
@@ -45,6 +42,10 @@ public:
     typedef T* PtrType;
 
     PassOwnArrayPtr() : m_ptr(0) { }
+
+#if !defined(LOOSE_PASS_OWN_PTR) || !HAVE(NULLPTR)
+    PassOwnArrayPtr(std::nullptr_t) : m_ptr(0) { }
+#endif
 
     // It somewhat breaks the type system to allow transfer of ownership out of
     // a const PassOwnArrayPtr. However, it makes it much easier to work with PassOwnArrayPtr

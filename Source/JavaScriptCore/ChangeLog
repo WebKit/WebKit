@@ -1,3 +1,18 @@
+2011-03-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove LOOSE_PASS_OWN_ARRAY_PTR from PassOwnArrayPtr.h
+        https://bugs.webkit.org/show_bug.cgi?id=55554
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::copyGlobalsTo): Pass nullptr instead of 0.
+        (JSC::JSGlobalObject::resizeRegisters): Ditto; also use OwnArrayPtr instead of a raw pointer.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::addStaticGlobals): Ditto.
+        * wtf/PassOwnArrayPtr.h: Removed #define LOOSE_PASS_OWN_ARRAY_PTR
+        (WTF::PassOwnArrayPtr::PassOwnArrayPtr): Added a constructor that takes nullptr_t.
+
 2011-03-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

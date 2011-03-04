@@ -123,7 +123,7 @@ PassOwnArrayPtr<Length> newLengthArray(const String& string, int& len)
     RefPtr<StringImpl> str = string.impl()->simplifyWhiteSpace();
     if (!str->length()) {
         len = 1;
-        return 0;
+        return nullptr;
     }
 
     len = countCharacter(str->characters(), str->length(), ',') + 1;
