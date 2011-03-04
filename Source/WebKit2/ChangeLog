@@ -1,3 +1,10 @@
+2011-03-04  Dan Bernstein  <mitz@apple.com>
+
+        LLVM Compiler build fix.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInMainFrame):
+
 2011-03-03  Timothy Hatcher  <timothy@apple.com>
 
         Make the WKPageRunJavaScriptFunction callback take a WKSerializedScriptValueRef.

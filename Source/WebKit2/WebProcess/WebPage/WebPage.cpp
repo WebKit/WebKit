@@ -1211,7 +1211,7 @@ void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID
 
     JSLock lock(SilenceAssertionsOnly);
     if (JSValue resultValue = m_mainFrame->coreFrame()->script()->executeScript(script, true).jsValue()) {
-        if (serializedResultValue = SerializedScriptValue::create(m_mainFrame->coreFrame()->script()->globalObject(mainThreadNormalWorld())->globalExec(), resultValue))
+        if ((serializedResultValue = SerializedScriptValue::create(m_mainFrame->coreFrame()->script()->globalObject(mainThreadNormalWorld())->globalExec(), resultValue)))
             dataReference = CoreIPC::DataReference(serializedResultValue->data().data(), serializedResultValue->data().size());
     }
 
