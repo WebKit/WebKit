@@ -4,7 +4,7 @@
  * Copyright (C) 2008 Collabora Ltd.
  * Copyright (C) 2008 INdT - Instituto Nokia de Tecnologia
  * Copyright (C) 2009-2010 ProFUSION embedded systems
- * Copyright (C) 2009-2010 Samsung Electronics
+ * Copyright (C) 2009-2011 Samsung Electronics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -68,19 +68,19 @@ void RenderThemeEfl::adjustSizeConstraints(RenderStyle* style, FormType type) co
     style->setPaddingRight(desc->padding.right());
 }
 
-bool RenderThemeEfl::themePartCacheEntryReset(struct ThemePartCacheEntry* ce, FormType type)
+bool RenderThemeEfl::themePartCacheEntryReset(struct ThemePartCacheEntry* entry, FormType type)
 {
     const char *file, *group;
 
-    ASSERT(ce);
+    ASSERT(entry);
 
     edje_object_file_get(m_edje, &file, 0);
     group = edjeGroupFromFormType(type);
     ASSERT(file);
     ASSERT(group);
 
-    if (!edje_object_file_set(ce->o, file, group)) {
-        Edje_Load_Error err = edje_object_load_error_get(ce->o);
+    if (!edje_object_file_set(entry->o, file, group)) {
+        Edje_Load_Error err = edje_object_load_error_get(entry->o);
         const char *errmsg = edje_load_error_str(err);
         EINA_LOG_ERR("Could not load '%s' from theme %s: %s",
                      group, file, errmsg);
@@ -89,21 +89,21 @@ bool RenderThemeEfl::themePartCacheEntryReset(struct ThemePartCacheEntry* ce, Fo
     return true;
 }
 
-bool RenderThemeEfl::themePartCacheEntrySurfaceCreate(struct ThemePartCacheEntry* ce)
+bool RenderThemeEfl::themePartCacheEntrySurfaceCreate(struct ThemePartCacheEntry* entry)
 {
     int w, h;
     cairo_status_t status;
 
     ASSERT(ce);
-    ASSERT(ce->ee);
+    ASSERT(entry->ee);
 
-    ecore_evas_geometry_get(ce->ee, 0, 0, &w, &h);
+    ecore_evas_geometry_get(entry->ee, 0, 0, &w, &h);
     ASSERT(w > 0);
     ASSERT(h > 0);
 
-    ce->surface = cairo_image_surface_create_for_data((unsigned char *)ecore_evas_buffer_pixels_get(ce->ee),
+    entry->surface = cairo_image_surface_create_for_data((unsigned char *)ecore_evas_buffer_pixels_get(entry->ee),
                                                       CAIRO_FORMAT_ARGB32, w, h, w * 4);
-    status = cairo_surface_status(ce->surface);
+    status = cairo_surface_status(entry->surface);
     if (status != CAIRO_STATUS_SUCCESS) {
         EINA_LOG_ERR("Could not create cairo surface: %s",
                      cairo_status_to_string(status));
@@ -116,75 +116,75 @@ bool RenderThemeEfl::themePartCacheEntrySurfaceCreate(struct ThemePartCacheEntry
 // allocate a new entry and fill it with edje group
 struct RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::cacheThemePartNew(FormType type, const IntSize& size)
 {
-    struct ThemePartCacheEntry *ce = new struct ThemePartCacheEntry;
+    struct ThemePartCacheEntry *entry = new struct ThemePartCacheEntry;
 
-    if (!ce) {
+    if (!entry) {
         EINA_LOG_ERR("could not allocate ThemePartCacheEntry.");
         return 0;
     }
 
-    ce->ee = ecore_evas_buffer_new(size.width(), size.height());
-    if (!ce->ee) {
+    entry->ee = ecore_evas_buffer_new(size.width(), size.height());
+    if (!entry->ee) {
         EINA_LOG_ERR("ecore_evas_buffer_new(%d, %d) failed.",
                      size.width(), size.height());
-        delete ce;
+        delete entry;
         return 0;
     }
 
-    ce->o = edje_object_add(ecore_evas_get(ce->ee));
-    ASSERT(ce->o);
-    if (!themePartCacheEntryReset(ce, type)) {
-        evas_object_del(ce->o);
-        ecore_evas_free(ce->ee);
-        delete ce;
+    entry->o = edje_object_add(ecore_evas_get(entry->ee));
+    ASSERT(entry->o);
+    if (!themePartCacheEntryReset(entry, type)) {
+        evas_object_del(entry->o);
+        ecore_evas_free(entry->ee);
+        delete entry;
         return 0;
     }
 
-    if (!themePartCacheEntrySurfaceCreate(ce)) {
-        evas_object_del(ce->o);
-        ecore_evas_free(ce->ee);
-        delete ce;
+    if (!themePartCacheEntrySurfaceCreate(entry)) {
+        evas_object_del(entry->o);
+        ecore_evas_free(entry->ee);
+        delete entry;
         return 0;
     }
 
-    evas_object_resize(ce->o, size.width(), size.height());
-    evas_object_show(ce->o);
+    evas_object_resize(entry->o, size.width(), size.height());
+    evas_object_show(entry->o);
 
-    ce->type = type;
-    ce->size = size;
+    entry->type = type;
+    entry->size = size;
 
-    m_partCache.prepend(ce);
-    return ce;
+    m_partCache.prepend(entry);
+    return entry;
 }
 
 // just change the edje group and return the same entry
-struct RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::cacheThemePartReset(FormType type, struct RenderThemeEfl::ThemePartCacheEntry* ce)
+struct RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::cacheThemePartReset(FormType type, struct RenderThemeEfl::ThemePartCacheEntry* entry)
 {
-    if (!themePartCacheEntryReset(ce, type)) {
-        ce->type = FormTypeLast; // invalidate
-        m_partCache.append(ce);
+    if (!themePartCacheEntryReset(entry, type)) {
+        entry->type = FormTypeLast; // invalidate
+        m_partCache.append(entry);
         return 0;
     }
-    ce->type = type;
-    m_partCache.prepend(ce);
-    return ce;
+    entry->type = type;
+    m_partCache.prepend(entry);
+    return entry;
 }
 
 // resize entry and reset it
-struct RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::cacheThemePartResizeAndReset(FormType type, const IntSize& size, struct RenderThemeEfl::ThemePartCacheEntry* ce)
+struct RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::cacheThemePartResizeAndReset(FormType type, const IntSize& size, struct RenderThemeEfl::ThemePartCacheEntry* entry)
 {
-    cairo_surface_finish(ce->surface);
-    ecore_evas_resize(ce->ee, size.width(), size.height());
-    evas_object_resize(ce->o, size.width(), size.height());
+    cairo_surface_finish(entry->surface);
+    ecore_evas_resize(entry->ee, size.width(), size.height());
+    evas_object_resize(entry->o, size.width(), size.height());
 
-    if (!themePartCacheEntrySurfaceCreate(ce)) {
-        evas_object_del(ce->o);
-        ecore_evas_free(ce->ee);
-        delete ce;
+    if (!themePartCacheEntrySurfaceCreate(entry)) {
+        evas_object_del(entry->o);
+        ecore_evas_free(entry->ee);
+        delete entry;
         return 0;
     }
 
-    return cacheThemePartReset(type, ce);
+    return cacheThemePartReset(type, entry);
 }
 
 // general purpose get (will create, reuse and all)
@@ -197,11 +197,11 @@ struct RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::cacheThemePartGet(Fo
     itr = m_partCache.begin();
     end = m_partCache.end();
     for (i = 0; itr != end; i++, itr++) {
-        struct ThemePartCacheEntry *ce = *itr;
-        if (ce->size == size) {
-            if (ce->type == type)
-                return ce;
-            ce_last_size = ce;
+        struct ThemePartCacheEntry *entry = *itr;
+        if (entry->size == size) {
+            if (entry->type == type)
+                return entry;
+            ce_last_size = entry;
             idxLastSize = i;
         }
     }
@@ -214,9 +214,9 @@ struct RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::cacheThemePartGet(Fo
         return cacheThemePartReset(type, ce_last_size);
     }
 
-    ThemePartCacheEntry* ce = m_partCache.last();
+    ThemePartCacheEntry* entry = m_partCache.last();
     m_partCache.removeLast();
-    return cacheThemePartResizeAndReset(type, size, ce);
+    return cacheThemePartResizeAndReset(type, size, entry);
 }
 
 void RenderThemeEfl::cacheThemePartFlush()
@@ -226,16 +226,16 @@ void RenderThemeEfl::cacheThemePartFlush()
     itr = m_partCache.begin();
     end = m_partCache.end();
     for (; itr != end; itr++) {
-        struct ThemePartCacheEntry *ce = *itr;
-        cairo_surface_finish(ce->surface);
-        evas_object_del(ce->o);
-        ecore_evas_free(ce->ee);
-        delete ce;
+        struct ThemePartCacheEntry *entry = *itr;
+        cairo_surface_finish(entry->surface);
+        evas_object_del(entry->o);
+        ecore_evas_free(entry->ee);
+        delete entry;
     }
     m_partCache.clear();
 }
 
-void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* o, ControlStates states)
+void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* object, ControlStates states)
 {
     const char *signals[] = { // keep in sync with WebCore/platform/ThemeTypes.h
         "hovered",
@@ -249,37 +249,37 @@ void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* o, ControlStates states
         "indeterminate"
     };
 
-    edje_object_signal_emit(o, "reset", "");
+    edje_object_signal_emit(object, "reset", "");
 
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(signals); ++i) {
         if (states & (1 << i))
-            edje_object_signal_emit(o, signals[i], "");
+            edje_object_signal_emit(object, signals[i], "");
     }
 }
 
-bool RenderThemeEfl::paintThemePart(RenderObject* o, FormType type, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const PaintInfo& info, const IntRect& rect)
 {
-    ThemePartCacheEntry* ce;
+    ThemePartCacheEntry* entry;
     Eina_List* updates;
     cairo_t* cairo;
 
     ASSERT(m_canvas);
     ASSERT(m_edje);
 
-    ce = cacheThemePartGet(type, rect.size());
-    ASSERT(ce);
-    if (!ce)
+    entry = cacheThemePartGet(type, rect.size());
+    ASSERT(entry);
+    if (!entry)
         return false;
 
-    applyEdjeStateFromForm(ce->o, controlStatesForRenderer(o));
+    applyEdjeStateFromForm(entry->o, controlStatesForRenderer(object));
 
-    cairo = i.context->platformContext();
+    cairo = info.context->platformContext();
     ASSERT(cairo);
 
     // Currently, only sliders needs this message; if other widget ever needs special
     // treatment, move them to special functions.
     if (type == SliderVertical || type == SliderHorizontal) {
-        RenderSlider* renderSlider = toRenderSlider(o);
+        RenderSlider* renderSlider = toRenderSlider(object);
         Edje_Message_Float_Set* msg;
         int max, value;
 
@@ -296,7 +296,7 @@ bool RenderThemeEfl::paintThemePart(RenderObject* o, FormType type, const PaintI
         msg->count = 2;
         msg->val[0] = static_cast<float>(value) / static_cast<float>(max);
         msg->val[1] = 0.1;
-        edje_object_message_send(ce->o, EDJE_MESSAGE_FLOAT_SET, 0, msg);
+        edje_object_message_send(entry->o, EDJE_MESSAGE_FLOAT_SET, 0, msg);
 #if ENABLE(PROGRESS_TAG)
     } else if (type == ProgressBar) {
         RenderProgress* renderProgress = toRenderProgress(o);
@@ -314,17 +314,17 @@ bool RenderThemeEfl::paintThemePart(RenderObject* o, FormType type, const PaintI
         else
             msg->val[0] = 0;
         msg->val[1] = value;
-        edje_object_message_send(ce->o, EDJE_MESSAGE_FLOAT_SET, 0, msg);
+        edje_object_message_send(entry->o, EDJE_MESSAGE_FLOAT_SET, 0, msg);
 #endif
     }
 
-    edje_object_calc_force(ce->o);
-    edje_object_message_signal_process(ce->o);
-    updates = evas_render_updates(ecore_evas_get(ce->ee));
+    edje_object_calc_force(entry->o);
+    edje_object_message_signal_process(entry->o);
+    updates = evas_render_updates(ecore_evas_get(entry->ee));
     evas_render_updates_free(updates);
 
     cairo_save(cairo);
-    cairo_set_source_surface(cairo, ce->surface, rect.x(), rect.y());
+    cairo_set_source_surface(cairo, entry->surface, rect.x(), rect.y());
     cairo_paint_with_alpha(cairo, 1.0);
     cairo_restore(cairo);
 
@@ -345,77 +345,77 @@ PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
     return fallback;
 }
 
-static void renderThemeEflColorClassSelectionActive(void* data, Evas_Object* o, const char* signal, const char* source)
+static void renderThemeEflColorClassSelectionActive(void* data, Evas_Object* object, const char* signal, const char* source)
 {
     RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
     int fr, fg, fb, fa, br, bg, bb, ba;
 
-    if (!edje_object_color_class_get(o, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
+    if (!edje_object_color_class_get(object, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
         return;
 
     that->setActiveSelectionColor(fr, fg, fb, fa, br, bg, bb, ba);
 }
 
-static void renderThemeEflColorClassSelectionInactive(void* data, Evas_Object* o, const char* signal, const char* source)
+static void renderThemeEflColorClassSelectionInactive(void* data, Evas_Object* object, const char* signal, const char* source)
 {
     RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
     int fr, fg, fb, fa, br, bg, bb, ba;
 
-    if (!edje_object_color_class_get(o, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
+    if (!edje_object_color_class_get(object, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
         return;
 
     that->setInactiveSelectionColor(fr, fg, fb, fa, br, bg, bb, ba);
 }
 
-static void renderThemeEflColorClassFocusRing(void* data, Evas_Object* o, const char* signal, const char* source)
+static void renderThemeEflColorClassFocusRing(void* data, Evas_Object* object, const char* signal, const char* source)
 {
     RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
     int fr, fg, fb, fa;
 
-    if (!edje_object_color_class_get(o, source, &fr, &fg, &fb, &fa, 0, 0, 0, 0, 0, 0, 0, 0))
+    if (!edje_object_color_class_get(object, source, &fr, &fg, &fb, &fa, 0, 0, 0, 0, 0, 0, 0, 0))
         return;
 
     that->setFocusRingColor(fr, fg, fb, fa);
 }
 
-static void renderThemeEflColorClassButtonText(void* data, Evas_Object* o, const char* signal, const char* source)
+static void renderThemeEflColorClassButtonText(void* data, Evas_Object* object, const char* signal, const char* source)
 {
     RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
     int fr, fg, fb, fa, br, bg, bb, ba;
 
-    if (!edje_object_color_class_get(o, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
+    if (!edje_object_color_class_get(object, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
         return;
 
     that->setButtonTextColor(fr, fg, fb, fa, br, bg, bb, ba);
 }
 
-static void renderThemeEflColorClassComboText(void* data, Evas_Object* o, const char* signal, const char* source)
+static void renderThemeEflColorClassComboText(void* data, Evas_Object* object, const char* signal, const char* source)
 {
     RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
     int fr, fg, fb, fa, br, bg, bb, ba;
 
-    if (!edje_object_color_class_get(o, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
+    if (!edje_object_color_class_get(object, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
         return;
 
     that->setComboTextColor(fr, fg, fb, fa, br, bg, bb, ba);
 }
 
-static void renderThemeEflColorClassEntryText(void* data, Evas_Object* o, const char* signal, const char* source)
+static void renderThemeEflColorClassEntryText(void* data, Evas_Object* object, const char* signal, const char* source)
 {
     RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
     int fr, fg, fb, fa, br, bg, bb, ba;
 
-    if (!edje_object_color_class_get(o, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
+    if (!edje_object_color_class_get(object, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
         return;
 
     that->setEntryTextColor(fr, fg, fb, fa, br, bg, bb, ba);
 }
 
-static void renderThemeEflColorClassSearchText(void* data, Evas_Object* o, const char* signal, const char* source)
+static void renderThemeEflColorClassSearchText(void* data, Evas_Object* object, const char* signal, const char* source)
 {
     RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
     int fr, fg, fb, fa, br, bg, bb, ba;
-    if (!edje_object_color_class_get(o, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
+    if (!edje_object_color_class_get(object, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
         return;
 
     that->setSearchTextColor(fr, fg, fb, fa, br, bg, bb, ba);
@@ -522,22 +522,22 @@ void RenderThemeEfl::applyPartDescriptionFallback(struct ThemePartDesc* desc)
     desc->padding = LengthBox(0, 0, 0, 0);
 }
 
-void RenderThemeEfl::applyPartDescription(Evas_Object* o, struct ThemePartDesc* desc)
+void RenderThemeEfl::applyPartDescription(Evas_Object* object, struct ThemePartDesc* desc)
 {
     Evas_Coord minw, minh, maxw, maxh;
 
-    edje_object_size_min_get(o, &minw, &minh);
+    edje_object_size_min_get(object, &minw, &minh);
     if (!minw && !minh)
-        edje_object_size_min_calc(o, &minw, &minh);
+        edje_object_size_min_calc(object, &minw, &minh);
 
     desc->min.setWidth(Length(minw, Fixed));
     desc->min.setHeight(Length(minh, Fixed));
 
-    edje_object_size_max_get(o, &maxw, &maxh);
+    edje_object_size_max_get(object, &maxw, &maxh);
     desc->max.setWidth(Length(maxw, Fixed));
     desc->max.setHeight(Length(maxh, Fixed));
 
-    if (!edje_object_part_exists(o, "text_confinement"))
+    if (!edje_object_part_exists(object, "text_confinement"))
         desc->padding = LengthBox(0, 0, 0, 0);
     else {
         Evas_Coord px, py, pw, ph;
@@ -557,11 +557,11 @@ void RenderThemeEfl::applyPartDescription(Evas_Object* o, struct ThemePartDesc* 
         if (maxh > 0 && oh > maxh)
             oh = maxh;
 
-        evas_object_move(o, ox, oy);
-        evas_object_resize(o, ow, oh);
-        edje_object_calc_force(o);
-        edje_object_message_signal_process(o);
-        edje_object_part_geometry_get(o, "text_confinement", &px, &py, &pw, &ph);
+        evas_object_move(object, ox, oy);
+        evas_object_resize(object, ow, oh);
+        edje_object_calc_force(object);
+        edje_object_message_signal_process(object);
+        edje_object_part_geometry_get(object, "text_confinement", &px, &py, &pw, &ph);
 
         t = py - oy;
         b = (oh + oy) - (ph + py);
@@ -602,7 +602,7 @@ const char* RenderThemeEfl::edjeGroupFromFormType(FormType type) const
 
 void RenderThemeEfl::applyPartDescriptions()
 {
-    Evas_Object* o;
+    Evas_Object* object;
     unsigned int i;
     const char* file;
 
@@ -612,8 +612,8 @@ void RenderThemeEfl::applyPartDescriptions()
     edje_object_file_get(m_edje, &file, 0);
     ASSERT(file);
 
-    o = edje_object_add(ecore_evas_get(m_canvas));
-    if (!o) {
+    object = edje_object_add(ecore_evas_get(m_canvas));
+    if (!object) {
         EINA_LOG_ERR("Could not create Edje object.");
         return;
     }
@@ -622,17 +622,17 @@ void RenderThemeEfl::applyPartDescriptions()
         FormType type = static_cast<FormType>(i);
         const char* group = edjeGroupFromFormType(type);
         m_partDescs[i].type = type;
-        if (!edje_object_file_set(o, file, group)) {
-            Edje_Load_Error err = edje_object_load_error_get(o);
+        if (!edje_object_file_set(object, file, group)) {
+            Edje_Load_Error err = edje_object_load_error_get(object);
             const char* errmsg = edje_load_error_str(err);
             EINA_LOG_ERR("Could not set theme group '%s' of file '%s': %s",
                          group, file, errmsg);
 
             applyPartDescriptionFallback(m_partDescs + i);
         } else
-            applyPartDescription(o, m_partDescs + i);
+            applyPartDescription(object, m_partDescs + i);
     }
-    evas_object_del(o);
+    evas_object_del(object);
 }
 
 void RenderThemeEfl::themeChanged()
@@ -767,34 +767,34 @@ bool RenderThemeEfl::supportsFocusRing(const RenderStyle* style) const
     return supportsFocus(style->appearance());
 }
 
-bool RenderThemeEfl::controlSupportsTints(const RenderObject* o) const
+bool RenderThemeEfl::controlSupportsTints(const RenderObject* object) const
 {
-    return isEnabled(o);
+    return isEnabled(object);
 }
 
-int RenderThemeEfl::baselinePosition(const RenderObject* o) const
+int RenderThemeEfl::baselinePosition(const RenderObject* object) const
 {
-    if (!o->isBox())
+    if (!object->isBox())
         return 0;
 
-    if (o->style()->appearance() == CheckboxPart
-    ||  o->style()->appearance() == RadioPart)
-        return toRenderBox(o)->marginTop() + toRenderBox(o)->height() - 3;
+    if (object->style()->appearance() == CheckboxPart
+    ||  object->style()->appearance() == RadioPart)
+        return toRenderBox(object)->marginTop() + toRenderBox(object)->height() - 3;
 
-    return RenderTheme::baselinePosition(o);
+    return RenderTheme::baselinePosition(object);
 }
 
-bool RenderThemeEfl::paintSliderTrack(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeEfl::paintSliderTrack(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    if (o->style()->appearance() == SliderHorizontalPart)
-        return paintThemePart(o, SliderHorizontal, i, rect);
-    return paintThemePart(o, SliderVertical, i, rect);
+    if (object->style()->appearance() == SliderHorizontalPart)
+        return paintThemePart(object, SliderHorizontal, info, rect);
+    return paintThemePart(object, SliderVertical, info, rect);
 }
 
-void RenderThemeEfl::adjustSliderTrackStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeEfl::adjustSliderTrackStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustSliderTrackStyle(selector, style, e);
+    if (!m_page && element && element->document()->page()) {
+        static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustSliderTrackStyle(selector, style, element);
         return;
     }
 
@@ -808,20 +808,20 @@ void RenderThemeEfl::adjustSliderTrackStyle(CSSStyleSelector* selector, RenderSt
         style->setHeight(desc->min.height());
 }
 
-void RenderThemeEfl::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeEfl::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    adjustSliderTrackStyle(selector, style, e);
+    adjustSliderTrackStyle(selector, style, element);
 }
 
-bool RenderThemeEfl::paintSliderThumb(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeEfl::paintSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintSliderTrack(o, i, rect);
+    return paintSliderTrack(object, info, rect);
 }
 
-void RenderThemeEfl::adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeEfl::adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustCheckboxStyle(selector, style, e);
+    if (!m_page && element && element->document()->page()) {
+        static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustCheckboxStyle(selector, style, element);
         return;
     }
     adjustSizeConstraints(style, CheckBox);
@@ -834,15 +834,15 @@ void RenderThemeEfl::adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle
         style->setHeight(desc->min.height());
 }
 
-bool RenderThemeEfl::paintCheckbox(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeEfl::paintCheckbox(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintThemePart(o, CheckBox, i, rect);
+    return paintThemePart(object, CheckBox, info, rect);
 }
 
-void RenderThemeEfl::adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeEfl::adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustRadioStyle(selector, style, e);
+    if (!m_page && element && element->document()->page()) {
+        static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustRadioStyle(selector, style, element);
         return;
     }
     adjustSizeConstraints(style, RadioButton);
@@ -855,15 +855,15 @@ void RenderThemeEfl::adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* s
         style->setHeight(desc->min.height());
 }
 
-bool RenderThemeEfl::paintRadio(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeEfl::paintRadio(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintThemePart(o, RadioButton, i, rect);
+    return paintThemePart(object, RadioButton, info, rect);
 }
 
-void RenderThemeEfl::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeEfl::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustButtonStyle(selector, style, e);
+    if (!m_page && element && element->document()->page()) {
+        static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustButtonStyle(selector, style, element);
         return;
     }
 
@@ -878,15 +878,15 @@ void RenderThemeEfl::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* 
     }
 }
 
-bool RenderThemeEfl::paintButton(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeEfl::paintButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintThemePart(o, Button, i, rect);
+    return paintThemePart(object, Button, info, rect);
 }
 
-void RenderThemeEfl::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeEfl::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustMenuListStyle(selector, style, e);
+    if (!m_page && element && element->document()->page()) {
+        static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustMenuListStyle(selector, style, element);
         return;
     }
     adjustSizeConstraints(style, ComboBox);
@@ -896,15 +896,15 @@ void RenderThemeEfl::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle
     style->setBackgroundColor(m_comboTextBackgroundColor);
 }
 
-bool RenderThemeEfl::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeEfl::paintMenuList(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintThemePart(o, ComboBox, i, rect);
+    return paintThemePart(object, ComboBox, info, rect);
 }
 
-void RenderThemeEfl::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeEfl::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustTextFieldStyle(selector, style, e);
+    if (!m_page && element && element->document()->page()) {
+        static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustTextFieldStyle(selector, style, element);
         return;
     }
     adjustSizeConstraints(style, TextField);
@@ -914,25 +914,25 @@ void RenderThemeEfl::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyl
     style->setBackgroundColor(m_entryTextBackgroundColor);
 }
 
-bool RenderThemeEfl::paintTextField(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeEfl::paintTextField(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintThemePart(o, TextField, i, rect);
+    return paintThemePart(object, TextField, info, rect);
 }
 
-void RenderThemeEfl::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeEfl::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    adjustTextFieldStyle(selector, style, e);
+    adjustTextFieldStyle(selector, style, element);
 }
 
-bool RenderThemeEfl::paintTextArea(RenderObject* o, const PaintInfo& i, const IntRect& r)
+bool RenderThemeEfl::paintTextArea(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintTextField(o, i, r);
+    return paintTextField(object, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeEfl::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldDecorationStyle(selector, style, e);
+    if (!m_page && element && element->document()->page()) {
+        static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustSearchFieldDecorationStyle(selector, style, element);
         return;
     }
     adjustSizeConstraints(style, SearchFieldDecoration);
@@ -940,15 +940,15 @@ void RenderThemeEfl::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector
     style->setWhiteSpace(PRE);
 }
 
-bool RenderThemeEfl::paintSearchFieldDecoration(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeEfl::paintSearchFieldDecoration(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintThemePart(o, SearchFieldDecoration, i, rect);
+    return paintThemePart(object, SearchFieldDecoration, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeEfl::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldResultsButtonStyle(selector, style, e);
+    if (!m_page && element && element->document()->page()) {
+        static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustSearchFieldResultsButtonStyle(selector, style, element);
         return;
     }
     adjustSizeConstraints(style, SearchFieldResultsButton);
@@ -956,15 +956,15 @@ void RenderThemeEfl::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selec
     style->setWhiteSpace(PRE);
 }
 
-bool RenderThemeEfl::paintSearchFieldResultsButton(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeEfl::paintSearchFieldResultsButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintThemePart(o, SearchFieldResultsButton, i, rect);
+    return paintThemePart(object, SearchFieldResultsButton, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeEfl::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldResultsDecorationStyle(selector, style, e);
+    if (!m_page && element && element->document()->page()) {
+        static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustSearchFieldResultsDecorationStyle(selector, style, element);
         return;
     }
     adjustSizeConstraints(style, SearchFieldResultsDecoration);
@@ -972,15 +972,15 @@ void RenderThemeEfl::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* s
     style->setWhiteSpace(PRE);
 }
 
-bool RenderThemeEfl::paintSearchFieldResultsDecoration(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeEfl::paintSearchFieldResultsDecoration(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintThemePart(o, SearchFieldResultsDecoration, i, rect);
+    return paintThemePart(object, SearchFieldResultsDecoration, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeEfl::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldCancelButtonStyle(selector, style, e);
+    if (!m_page && element && element->document()->page()) {
+        static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustSearchFieldCancelButtonStyle(selector, style, element);
         return;
     }
     adjustSizeConstraints(style, SearchFieldCancelButton);
@@ -988,15 +988,15 @@ void RenderThemeEfl::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* select
     style->setWhiteSpace(PRE);
 }
 
-bool RenderThemeEfl::paintSearchFieldCancelButton(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeEfl::paintSearchFieldCancelButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintThemePart(o, SearchFieldCancelButton, i, rect);
+    return paintThemePart(object, SearchFieldCancelButton, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeEfl::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    if (!m_page && e && e->document()->page()) {
-        static_cast<RenderThemeEfl*>(e->document()->page()->theme())->adjustSearchFieldStyle(selector, style, e);
+    if (!m_page && element && element->document()->page()) {
+        static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustSearchFieldStyle(selector, style, element);
         return;
     }
     adjustSizeConstraints(style, SearchField);
@@ -1006,9 +1006,9 @@ void RenderThemeEfl::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderSt
     style->setBackgroundColor(m_searchTextBackgroundColor);
 }
 
-bool RenderThemeEfl::paintSearchField(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeEfl::paintSearchField(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintThemePart(o, SearchField, i, rect);
+    return paintThemePart(object, SearchField, info, rect);
 }
 
 void RenderThemeEfl::setDefaultFontSize(int size)
@@ -1032,14 +1032,14 @@ void RenderThemeEfl::systemFont(int propId, FontDescription& fontDescription) co
 }
 
 #if ENABLE(PROGRESS_TAG)
-void RenderThemeEfl::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeEfl::adjustProgressBarStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
     style->setBoxShadow(0);
 }
 
-bool RenderThemeEfl::paintProgressBar(RenderObject* o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeEfl::paintProgressBar(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintThemePart(o, ProgressBar, i, rect);
+    return paintThemePart(object, ProgressBar, info, rect);
 }
 #endif
 
@@ -1056,67 +1056,67 @@ String RenderThemeEfl::formatMediaControlsCurrentTime(float currentTime, float d
     return String();
 }
 
-bool RenderThemeEfl::paintMediaFullscreenButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeEfl::paintMediaFullscreenButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     notImplemented();
     return false;
 }
 
-bool RenderThemeEfl::paintMediaMuteButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeEfl::paintMediaMuteButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     notImplemented();
     return false;
 }
 
-bool RenderThemeEfl::paintMediaPlayButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeEfl::paintMediaPlayButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     notImplemented();
     return false;
 }
 
-bool RenderThemeEfl::paintMediaSeekBackButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeEfl::paintMediaSeekBackButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     notImplemented();
     return false;
 }
 
-bool RenderThemeEfl::paintMediaSeekForwardButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeEfl::paintMediaSeekForwardButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     notImplemented();
     return false;
 }
 
-bool RenderThemeEfl::paintMediaSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeEfl::paintMediaSliderTrack(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     notImplemented();
     return false;
 }
 
-bool RenderThemeEfl::paintMediaSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeEfl::paintMediaSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     notImplemented();
     return false;
 }
 
-bool RenderThemeEfl::paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeEfl::paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo& info, const IntRect& rect)
 {
     notImplemented();
     return false;
 }
 
-bool RenderThemeEfl::paintMediaVolumeSliderTrack(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeEfl::paintMediaVolumeSliderTrack(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     notImplemented();
     return false;
 }
 
-bool RenderThemeEfl::paintMediaVolumeSliderThumb(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeEfl::paintMediaVolumeSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     notImplemented();
     return false;
 }
 
-bool RenderThemeEfl::paintMediaCurrentTime(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeEfl::paintMediaCurrentTime(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     notImplemented();
     return false;

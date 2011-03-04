@@ -1,3 +1,74 @@
+2011-03-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Adjust functions of RenderThemeEfl.cpp to WebKit parameter style
+        https://bugs.webkit.org/show_bug.cgi?id=54392
+
+        Functions of RenderThemeEfl.cpp adhere efl coding style instead of WebKit coding style.
+        WebCore's functions should adhere WebKit coding style.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::themePartCacheEntryReset):
+        (WebCore::RenderThemeEfl::themePartCacheEntrySurfaceCreate):
+        (WebCore::RenderThemeEfl::cacheThemePartNew):
+        (WebCore::RenderThemeEfl::cacheThemePartReset):
+        (WebCore::RenderThemeEfl::cacheThemePartResizeAndReset):
+        (WebCore::RenderThemeEfl::cacheThemePartGet):
+        (WebCore::RenderThemeEfl::cacheThemePartFlush):
+        (WebCore::RenderThemeEfl::applyEdjeStateFromForm):
+        (WebCore::RenderThemeEfl::paintThemePart):
+        (WebCore::renderThemeEflColorClassSelectionActive):
+        (WebCore::renderThemeEflColorClassSelectionInactive):
+        (WebCore::renderThemeEflColorClassFocusRing):
+        (WebCore::renderThemeEflColorClassButtonText):
+        (WebCore::renderThemeEflColorClassComboText):
+        (WebCore::renderThemeEflColorClassEntryText):
+        (WebCore::renderThemeEflColorClassSearchText):
+        (WebCore::RenderThemeEfl::applyPartDescription):
+        (WebCore::RenderThemeEfl::applyPartDescriptions):
+        (WebCore::RenderThemeEfl::controlSupportsTints):
+        (WebCore::RenderThemeEfl::baselinePosition):
+        (WebCore::RenderThemeEfl::paintSliderTrack):
+        (WebCore::RenderThemeEfl::adjustSliderTrackStyle):
+        (WebCore::RenderThemeEfl::adjustSliderThumbStyle):
+        (WebCore::RenderThemeEfl::paintSliderThumb):
+        (WebCore::RenderThemeEfl::adjustCheckboxStyle):
+        (WebCore::RenderThemeEfl::paintCheckbox):
+        (WebCore::RenderThemeEfl::adjustRadioStyle):
+        (WebCore::RenderThemeEfl::paintRadio):
+        (WebCore::RenderThemeEfl::adjustButtonStyle):
+        (WebCore::RenderThemeEfl::paintButton):
+        (WebCore::RenderThemeEfl::adjustMenuListStyle):
+        (WebCore::RenderThemeEfl::paintMenuList):
+        (WebCore::RenderThemeEfl::adjustTextFieldStyle):
+        (WebCore::RenderThemeEfl::paintTextField):
+        (WebCore::RenderThemeEfl::adjustTextAreaStyle):
+        (WebCore::RenderThemeEfl::paintTextArea):
+        (WebCore::RenderThemeEfl::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeEfl::paintSearchFieldDecoration):
+        (WebCore::RenderThemeEfl::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeEfl::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeEfl::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeEfl::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeEfl::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeEfl::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeEfl::adjustSearchFieldStyle):
+        (WebCore::RenderThemeEfl::paintSearchField):
+        (WebCore::RenderThemeEfl::adjustProgressBarStyle):
+        (WebCore::RenderThemeEfl::paintProgressBar):
+        (WebCore::RenderThemeEfl::paintMediaFullscreenButton):
+        (WebCore::RenderThemeEfl::paintMediaMuteButton):
+        (WebCore::RenderThemeEfl::paintMediaPlayButton):
+        (WebCore::RenderThemeEfl::paintMediaSeekBackButton):
+        (WebCore::RenderThemeEfl::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeEfl::paintMediaSliderTrack):
+        (WebCore::RenderThemeEfl::paintMediaSliderThumb):
+        (WebCore::RenderThemeEfl::paintMediaVolumeSliderContainer):
+        (WebCore::RenderThemeEfl::paintMediaVolumeSliderTrack):
+        (WebCore::RenderThemeEfl::paintMediaVolumeSliderThumb):
+        (WebCore::RenderThemeEfl::paintMediaCurrentTime):
+
 2011-03-03  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adam Barth.
