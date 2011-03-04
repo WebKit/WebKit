@@ -117,9 +117,6 @@ public:
     WEBKIT_API double lastModifiedDate() const;
     WEBKIT_API void setLastModifiedDate(double);
 
-    WEBKIT_API bool isContentFiltered() const;
-    WEBKIT_API void setIsContentFiltered(bool);
-
     WEBKIT_API long long appCacheID() const;
     WEBKIT_API void setAppCacheID(long long);
 

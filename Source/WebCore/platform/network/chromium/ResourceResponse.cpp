@@ -32,7 +32,6 @@ PassOwnPtr<CrossThreadResourceResponseData> ResourceResponse::doPlatformCopyData
 {
     data->m_appCacheID = m_appCacheID;
     data->m_appCacheManifestURL = m_appCacheManifestURL.copy();
-    data->m_isContentFiltered = m_isContentFiltered;
     data->m_isMultipartPayload = m_isMultipartPayload;
     data->m_wasFetchedViaSPDY = m_wasFetchedViaSPDY;
     data->m_wasNpnNegotiated = m_wasNpnNegotiated;
@@ -49,7 +48,6 @@ void ResourceResponse::doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseDat
 {
     m_appCacheID = data->m_appCacheID;
     m_appCacheManifestURL = data->m_appCacheManifestURL.copy();
-    m_isContentFiltered = data->m_isContentFiltered;
     m_isMultipartPayload = data->m_isMultipartPayload;
     m_wasFetchedViaSPDY = data->m_wasFetchedViaSPDY;
     m_wasNpnNegotiated = data->m_wasNpnNegotiated;

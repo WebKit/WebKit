@@ -37,7 +37,6 @@ namespace WebCore {
     public:
         ResourceResponse()
             : m_appCacheID(0)
-            , m_isContentFiltered(false)
             , m_isMultipartPayload(false)
             , m_wasFetchedViaSPDY(false)
             , m_wasNpnNegotiated(false)
@@ -51,7 +50,6 @@ namespace WebCore {
         ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
             : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename)
             , m_appCacheID(0)
-            , m_isContentFiltered(false)
             , m_isMultipartPayload(false)
             , m_wasFetchedViaSPDY(false)
             , m_wasNpnNegotiated(false)
@@ -70,9 +68,6 @@ namespace WebCore {
 
         const KURL& appCacheManifestURL() const { return m_appCacheManifestURL; }
         void setAppCacheManifestURL(const KURL& url) { m_appCacheManifestURL = url; }
-
-        bool isContentFiltered() const { return m_isContentFiltered; }
-        void setIsContentFiltered(bool value) { m_isContentFiltered = value; }
 
         bool wasFetchedViaSPDY() const { return m_wasFetchedViaSPDY; }
         void setWasFetchedViaSPDY(bool value) { m_wasFetchedViaSPDY = value; }
@@ -131,10 +126,6 @@ namespace WebCore {
         // Note: only valid for main resource responses.
         KURL m_appCacheManifestURL;
 
-        // Whether the contents for this response has been altered/blocked (usually
-        // for security reasons.
-        bool m_isContentFiltered;
-
         // Set to true if this is part of a multipart response.
         bool m_isMultipartPayload;
 
@@ -168,7 +159,6 @@ namespace WebCore {
     struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {
         long long m_appCacheID;
         KURL m_appCacheManifestURL;
-        bool m_isContentFiltered;
         bool m_isMultipartPayload;
         bool m_wasFetchedViaSPDY;
         bool m_wasNpnNegotiated;

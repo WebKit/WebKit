@@ -256,16 +256,6 @@ void WebURLResponse::setLastModifiedDate(double lastModifiedDate)
     m_private->m_resourceResponse->setLastModifiedDate(static_cast<time_t>(lastModifiedDate));
 }
 
-bool WebURLResponse::isContentFiltered() const
-{
-    return m_private->m_resourceResponse->isContentFiltered();
-}
-
-void WebURLResponse::setIsContentFiltered(bool isContentFiltered)
-{
-    m_private->m_resourceResponse->setIsContentFiltered(isContentFiltered);
-}
-
 long long WebURLResponse::appCacheID() const
 {
     return m_private->m_resourceResponse->appCacheID();
