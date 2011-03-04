@@ -89,7 +89,11 @@ void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, 
             return;
     } else {
         ASSERT(!m_isWaitingForDidUpdateBackingStoreState);
-        ASSERT(m_backingStore);
+        if (!m_backingStore) {
+            // The view has asked us to paint before the web process has painted anything. There's
+            // nothing we can do.
+            return;
+        }
     }
 
     m_backingStore->paint(context, rect);

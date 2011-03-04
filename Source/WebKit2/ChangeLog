@@ -1,5 +1,18 @@
 2011-03-03  Adam Roben  <aroben@apple.com>
 
+        Don't assume the web process has had a chance to paint before the view has to paint
+
+        Fixes <http://webkit.org/b/55739> REGRESSION (r80307): Lots of tests crashing in
+        BackingStore::paint
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::paint): Bail if the web process hasn't had a chance to paint
+        yet.
+
+2011-03-03  Adam Roben  <aroben@apple.com>
+
         Throw away DrawingAreaProxyImpl's backing store after not painting for 5 seconds
 
         The intent is to save memory for views that aren't painting.
