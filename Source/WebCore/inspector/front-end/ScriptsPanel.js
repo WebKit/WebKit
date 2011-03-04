@@ -403,31 +403,16 @@ WebInspector.ScriptsPanel.prototype = {
             sourceFrame.removeBreakpoint(breakpoint.lineNumber);
     },
 
-    getCompletionsOnCallFrame: function(expressionString, includeCommandLineAPI, callback)
+    evaluateInSelectedCallFrame: function(code, objectGroup, includeCommandLineAPI, callback)
     {
         var selectedCallFrame = this._presentationModel.selectedCallFrame;
         if (!this._paused || !selectedCallFrame)
             return;
-
-        DebuggerAgent.getCompletionsOnCallFrame(selectedCallFrame.id, expressionString, includeCommandLineAPI, callback);
-    },
-
-    evaluateInSelectedCallFrame: function(code, updateInterface, objectGroup, includeCommandLineAPI, callback)
-    {
-        var selectedCallFrame = this._presentationModel.selectedCallFrame;
-        if (!this._paused || !selectedCallFrame)
-            return;
-
-        if (typeof updateInterface === "undefined")
-            updateInterface = true;
 
         function updatingCallbackWrapper(result)
         {
-            if (result) {
+            if (result)
                 callback(WebInspector.RemoteObject.fromPayload(result));
-                if (updateInterface)
-                    this.sidebarPanes.scopechain.update(selectedCallFrame);
-            }
         }
         DebuggerAgent.evaluateOnCallFrame(selectedCallFrame.id, code, objectGroup, includeCommandLineAPI, updatingCallbackWrapper.bind(this));
     },

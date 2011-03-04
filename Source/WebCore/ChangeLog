@@ -1,3 +1,30 @@
+2011-03-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: implement getCompletions via evaluate.
+        https://bugs.webkit.org/show_bug.cgi?id=55759
+
+        * inspector/InjectedScript.cpp:
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        * inspector/Inspector.idl:
+        * inspector/InspectorDebuggerAgent.cpp:
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.completions.evaluated):
+        (WebInspector.ConsoleView.prototype.completions.evaluatedProperties):
+        (WebInspector.ConsoleView.prototype.completions):
+        (WebInspector.ConsoleView.prototype._reportCompletions):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame.updatingCallbackWrapper):
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._showPopup):
+        (WebInspector.SourceFrame.prototype._evalSelectionInCallFrame):
+
 2011-03-04  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

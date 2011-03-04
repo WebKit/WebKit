@@ -99,7 +99,6 @@ public:
     void stepOut(ErrorString* error);
     void setPauseOnExceptionsState(ErrorString* error, long pauseState, long* newState);
     void evaluateOnCallFrame(ErrorString* error, PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
-    void getCompletionsOnCallFrame(ErrorString* error, PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
 
     class Listener {
     public:

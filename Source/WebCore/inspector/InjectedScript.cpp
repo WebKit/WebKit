@@ -74,23 +74,6 @@ void InjectedScript::evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId
     makeCall(function, result);
 }
 
-void InjectedScript::getCompletions(const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
-{
-    ScriptFunctionCall function(m_injectedScriptObject, "getCompletions");
-    function.appendArgument(expression);
-    function.appendArgument(includeCommandLineAPI);
-    makeCall(function, result);
-}
-
-void InjectedScript::getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
-{
-    ScriptFunctionCall function(m_injectedScriptObject, "getCompletionsOnCallFrame");
-    function.appendArgument(callFrameId->toJSONString());
-    function.appendArgument(expression);
-    function.appendArgument(includeCommandLineAPI);
-    makeCall(function, result);
-}
-
 void InjectedScript::getProperties(PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "getProperties");

@@ -353,20 +353,30 @@ WebInspector.ConsoleView.prototype = {
         if (!expressionString && !prefix)
             return;
 
-        var reportCompletions = this._reportCompletions.bind(this, bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix);
-        // Collect comma separated object properties for the completion.
+        this.evalInInspectedWindow(expressionString, "completion", true, evaluated.bind(this));
 
-        var includeCommandLineAPI = (!dotNotation && !bracketNotation);
-        if (WebInspector.panels.scripts.paused)
-            WebInspector.panels.scripts.getCompletionsOnCallFrame(expressionString, includeCommandLineAPI, reportCompletions);
-        else
-            RuntimeAgent.getCompletions(expressionString, includeCommandLineAPI, reportCompletions);
+        function evaluated(result)
+        {
+            if (!result)
+                return;
+            result.getProperties(true, false, evaluatedProperties.bind(this));
+        }
+
+        function evaluatedProperties(properties)
+        {
+            RuntimeAgent.releaseWrapperObjectGroup("completion");
+            var propertyNames = [];
+            for (var i = 0; properties && i < properties.length; ++i)
+                propertyNames.push(properties[i].name);
+
+            var includeCommandLineAPI = (!dotNotation && !bracketNotation);
+            if (includeCommandLineAPI)
+                propertyNames.splice(0, 0, "dir", "dirxml", "keys", "values", "profile", "profileEnd", "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear");
+            this._reportCompletions(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, propertyNames);
+        }
     },
 
-    _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, result, isException) {
-        if (isException)
-            return;
-
+    _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, properties) {
         if (bracketNotation) {
             if (prefix.length && prefix[0] === "'")
                 var quoteUsed = "'";
@@ -375,7 +385,7 @@ WebInspector.ConsoleView.prototype = {
         }
 
         var results = [];
-        var properties = Object.keys(result).sort();
+        properties.sort();
 
         for (var i = 0; i < properties.length; ++i) {
             var property = properties[i];
@@ -512,7 +522,7 @@ WebInspector.ConsoleView.prototype = {
     evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, callback)
     {
         if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
-            WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, objectGroup, includeCommandLineAPI, callback);
+            WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, callback);
             return;
         }
 

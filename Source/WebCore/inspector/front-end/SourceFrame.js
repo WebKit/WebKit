@@ -718,7 +718,7 @@ WebInspector.SourceFrame.prototype = {
                 return;
             showObjectPopup.call(this, result);
         }
-        WebInspector.panels.scripts.evaluateInSelectedCallFrame(element.textContent, false, this._popoverObjectGroup, false, evaluateCallback.bind(this));
+        WebInspector.panels.scripts.evaluateInSelectedCallFrame(element.textContent, this._popoverObjectGroup, false, evaluateCallback.bind(this));
     },
 
     _editBreakpointCondition: function(lineNumber, condition, callback)
@@ -774,7 +774,7 @@ WebInspector.SourceFrame.prototype = {
             return;
 
         var expression = selection.getRangeAt(0).toString().trim();
-        WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, "console", function(result) {
+        WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, "console", function(result) {
             WebInspector.showConsole();
             var commandMessage = new WebInspector.ConsoleCommand(expression);
             WebInspector.console.addMessage(commandMessage);

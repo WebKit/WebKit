@@ -59,13 +59,6 @@ void InspectorRuntimeAgent::evaluateOn(ErrorString*, PassRefPtr<InspectorObject>
         injectedScript.evaluateOn(objectId, expression, result);
 }
 
-void InspectorRuntimeAgent::getCompletions(ErrorString*, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
-{
-    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptForMainFrame();
-    if (!injectedScript.hasNoValue())
-        injectedScript.getCompletions(expression, includeCommandLineAPI, result);
-}
-
 void InspectorRuntimeAgent::getProperties(ErrorString*, PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result)
 {
     InjectedScript injectedScript = m_injectedScriptHost->injectedScriptForObjectId(objectId.get());

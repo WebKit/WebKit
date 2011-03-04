@@ -235,54 +235,6 @@ InjectedScript.prototype = {
         return Object.keys(propertyNameSet);
     },
 
-    getCompletions: function(expression, includeCommandLineAPI)
-    {
-        var props = {};
-        try {
-            if (!expression)
-                expression = "this";
-            var expressionResult = this._evaluateOn(inspectedWindow.eval, inspectedWindow, expression, false, false);
-
-            if (typeof expressionResult === "object")
-                this._populatePropertyNames(expressionResult, props);
-
-            if (includeCommandLineAPI) {
-                for (var prop in CommandLineAPI.members_)
-                    props[CommandLineAPI.members_[prop]] = true;
-            }
-        } catch(e) {
-        }
-        return props;
-    },
-
-    getCompletionsOnCallFrame: function(callFrameId, expression, includeCommandLineAPI)
-    {
-        var props = {};
-        try {
-            var callFrame = this._callFrameForId(callFrameId);
-            if (!callFrame)
-                return props;
-
-            if (expression) {
-                var expressionResult = this._evaluateOn(callFrame.evaluate, callFrame, expression, true, false);
-                if (typeof expressionResult === "object")
-                    this._populatePropertyNames(expressionResult, props);
-            } else {
-                // Evaluate into properties in scope of the selected call frame.
-                var scopeChain = callFrame.scopeChain;
-                for (var i = 0; i < scopeChain.length; ++i)
-                    this._populatePropertyNames(scopeChain[i], props);
-            }
-    
-            if (includeCommandLineAPI) {
-                for (var prop in CommandLineAPI.members_)
-                    props[CommandLineAPI.members_[prop]] = true;
-            }
-        } catch(e) {
-        }
-        return props;
-    },
-
     evaluate: function(expression, objectGroup, injectCommandLineAPI)
     {
         return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup, false, injectCommandLineAPI);

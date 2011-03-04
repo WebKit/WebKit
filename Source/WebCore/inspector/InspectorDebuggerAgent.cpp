@@ -334,13 +334,6 @@ void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString*, PassRefPtr<Inspec
         injectedScript.evaluateOnCallFrame(callFrameId, expression, objectGroup, includeCommandLineAPI, result);
 }
 
-void InspectorDebuggerAgent::getCompletionsOnCallFrame(ErrorString*, PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
-{
-    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptForObjectId(callFrameId.get());
-    if (!injectedScript.hasNoValue())
-        injectedScript.getCompletionsOnCallFrame(callFrameId, expression, includeCommandLineAPI, result);
-}
-
 PassRefPtr<InspectorValue> InspectorDebuggerAgent::currentCallFrames()
 {
     if (!m_pausedScriptState)

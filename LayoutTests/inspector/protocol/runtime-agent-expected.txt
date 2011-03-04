@@ -231,76 +231,11 @@ response:
     success : true
 }
 
------------------------------------------------------------
-RuntimeAgent.getCompletions("testProperty",false)
-
-request:
-{
-    seq : <number>
-    domain : "Runtime"
-    command : "getCompletions"
-    arguments : {
-        expression : "testProperty"
-        includeCommandLineAPI : false
-    }
-}
-
-response:
-{
-    seq : <number>
-    domain : "Runtime"
-    success : true
-    body : {
-        result : {
-        }
-    }
-}
-
------------------------------------------------------------
-RuntimeAgent.getCompletions("testProperty",true)
-
-request:
-{
-    seq : <number>
-    domain : "Runtime"
-    command : "getCompletions"
-    arguments : {
-        expression : "testProperty"
-        includeCommandLineAPI : true
-    }
-}
-
-response:
-{
-    seq : <number>
-    domain : "Runtime"
-    success : true
-    body : {
-        result : {
-            $ : true
-            $$ : true
-            $x : true
-            dir : true
-            dirxml : true
-            keys : true
-            values : true
-            profile : true
-            profileEnd : true
-            monitorEvents : true
-            unmonitorEvents : true
-            inspect : true
-            copy : true
-            clear : true
-        }
-    }
-}
-
 ===========================================================
 Coverage for RuntimeAgent
 {
     evaluate : "checked"
     evaluateOn : "checked"
-    getCompletions : "checked"
     getProperties : "checked"
     setPropertyValue : "checked"
     releaseObject : "checked"

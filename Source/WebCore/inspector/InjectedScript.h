@@ -54,8 +54,6 @@ public:
     void evaluate(const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
     void evaluateOn(PassRefPtr<InspectorObject> objectId, const String& expression, RefPtr<InspectorValue>* result);
     void evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
-    void getCompletions(const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
-    void getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
     void getProperties(PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result);
     Node* nodeForObjectId(PassRefPtr<InspectorObject> objectId);
     void resolveNode(long nodeId, RefPtr<InspectorValue>* result);
