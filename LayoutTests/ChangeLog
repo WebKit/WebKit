@@ -1,3 +1,16 @@
+2011-03-03  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Annotate bidi tests which we intentionally fail.
+        https://bugs.webkit.org/show_bug.cgi?id=48522
+
+        Add a readme file in fast/text/international detailing
+        a bunch of tests that we intentionally fail.  This
+        mimics a similar file in fast/block/positioning/.
+
+        * fast/text/international/readme.txt: Added.
+
 2011-03-03  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.
