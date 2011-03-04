@@ -1,3 +1,17 @@
+2011-03-02  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        crash in adoptNode with mutation events
+        https://bugs.webkit.org/show_bug.cgi?id=50046
+
+        If the DOM is modified during the removeChild call in adoptNode,
+        then the setDocument call that follows can leave the DOM in an
+        inconsistent state.
+
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode):
+
 2011-03-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

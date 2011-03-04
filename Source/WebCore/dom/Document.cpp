@@ -121,6 +121,7 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "ScopedEventQueue.h" 
 #include "ScriptCallStack.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"
@@ -886,6 +887,8 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return 0;
     }
+
+    EventQueueScope scope;
 
     switch (source->nodeType()) {
     case ENTITY_NODE:
