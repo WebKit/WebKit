@@ -4,8 +4,4 @@
 	Version="8.00"
 	Name="WebCoreMediaQT"
 	>
-	<Tool
-		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="$(ConfigurationBuildDir)\include\QTMovieWin"
-	/>
 </VisualStudioPropertySheet>

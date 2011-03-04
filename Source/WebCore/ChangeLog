@@ -1,3 +1,19 @@
+2011-03-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by NOBODY Jon Honeycutt.
+
+        Adopt VersionStamper tool for Windows WebKit DLLs
+        https://bugs.webkit.org/show_bug.cgi?id=55784
+        
+        We now use a tool to stamp the version number onto the Apple WebKit DLLs
+        during the post-build step.
+
+        * WebCore.vcproj/QTMovieWin.rc: Removed.
+        * WebCore.vcproj/QTMovieWin.vcproj:
+        * WebCore.vcproj/QTMovieWinPostBuild.cmd: Stamp version with VersionStamper.
+        * WebCore.vcproj/QTMovieWinPreBuild.cmd: Don't run auto-version.sh. We don't use autoversion.h in this project.
+        * WebCore.vcproj/WebCoreMediaQT.vsprops: Remove unnecessary include paths for resource files.
+
 2011-03-04  Cosmin Truta  <ctruta@chromium.org>
 
         Reviewed by Adam Barth.
