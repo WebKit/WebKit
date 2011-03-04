@@ -387,22 +387,33 @@ WebInspector.TextEditorChunkedPanel.prototype = {
 
     _chunkNumberForLine: function(lineNumber)
     {
-        // Bisect.
-        var from = 0;
-        var to = this._textChunks.length - 1;
-        while (from < to) {
-            var mid = Math.floor((from + to + 1) / 2);
-            if (this._textChunks[mid].startLine <= lineNumber)
-                from = mid;
-            else
-                to = mid - 1;
+        function compareLineNumbers(value, chunk)
+        {
+            return value < chunk.startLine ? -1 : 1;
         }
-        return from;
+        var insertBefore = insertionIndexForObjectInListSortedByFunction(lineNumber, this._textChunks, compareLineNumbers);
+        return insertBefore - 1;
     },
 
     chunkForLine: function(lineNumber)
     {
         return this._textChunks[this._chunkNumberForLine(lineNumber)];
+    },
+
+    _findVisibleChunks: function(visibleFrom, visibleTo)
+    {
+        function compareOffsetTops(value, chunk)
+        {
+            return value < chunk.offsetTop ? -1 : 1;
+        }
+        var insertBefore = insertionIndexForObjectInListSortedByFunction(visibleFrom, this._textChunks, compareOffsetTops);
+
+        var from = insertBefore - 1;
+        for (var to = from + 1; to < this._textChunks.length; ++to) {
+            if (this._textChunks[to].offsetTop >= visibleTo)
+                break;
+        }
+        return { start: from, end: to };
     },
 
     _repaintAll: function()
@@ -418,25 +429,10 @@ WebInspector.TextEditorChunkedPanel.prototype = {
         var visibleFrom = this.element.scrollTop;
         var visibleTo = this.element.scrollTop + this.element.clientHeight;
 
-        var offset = 0;
-        var fromIndex = -1;
-        var toIndex = 0;
-        for (var i = 0; i < this._textChunks.length; ++i) {
-            var chunk = this._textChunks[i];
-            var chunkHeight = chunk.height;
-            if (offset + chunkHeight > visibleFrom && offset < visibleTo) {
-                if (fromIndex === -1)
-                    fromIndex = i;
-                toIndex = i + 1;
-            } else {
-                if (offset >= visibleTo)
-                    break;
-            }
-            offset += chunkHeight;
+        if (visibleTo) {
+            var result = this._findVisibleChunks(visibleFrom, visibleTo);
+            this._expandChunks(result.start, result.end);
         }
-
-        if (toIndex)
-            this._expandChunks(fromIndex, toIndex);
     },
 
     _totalHeight: function(firstElement, lastElement)
@@ -650,6 +646,11 @@ WebInspector.TextEditorGutterChunk.prototype = {
         if (!this._expandedLineRows)
             return this._textViewer._totalHeight(this.element);
         return this._textViewer._totalHeight(this._expandedLineRows[0], this._expandedLineRows[this._expandedLineRows.length - 1]);
+    },
+
+    get offsetTop()
+    {
+        return this._expandedLineRows ? this._expandedLineRows[0].offsetTop : this.element.offsetTop;
     },
 
     _createRow: function(lineNumber)
@@ -1341,17 +1342,9 @@ WebInspector.TextEditorMainPanel.prototype = {
         var visibleFrom = this.element.scrollTop;
         var visibleTo = this.element.scrollTop + this.element.clientHeight;
 
-        var offset = 0;
-        var lastVisibleLine = 0;
-        for (var i = 0; i < this._textChunks.length; ++i) {
-            var chunk = this._textChunks[i];
-            var chunkHeight = chunk.height;
-            if (offset + chunkHeight > visibleFrom && offset < visibleTo)
-                lastVisibleLine = chunk.startLine + chunk.linesCount;
-            else if (offset >= visibleTo)
-                break;
-            offset += chunkHeight;
-        }
+        var result = this._findVisibleChunks(visibleFrom, visibleTo);
+        var chunk = this._textChunks[result.end - 1];
+        var lastVisibleLine = chunk.startLine + chunk.linesCount;
 
         lastVisibleLine = Math.max(lastVisibleLine, range.endLine);
 
@@ -1525,6 +1518,11 @@ WebInspector.TextEditorMainChunk.prototype = {
         if (!this._expandedLineRows)
             return this._textViewer._totalHeight(this.element);
         return this._textViewer._totalHeight(this._expandedLineRows[0], this._expandedLineRows[this._expandedLineRows.length - 1]);
+    },
+
+    get offsetTop()
+    {
+        return this._expandedLineRows ? this._expandedLineRows[0].offsetTop : this.element.offsetTop;
     },
 
     _createRow: function(lineNumber)
