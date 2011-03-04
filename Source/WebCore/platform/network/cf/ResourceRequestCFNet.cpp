@@ -195,12 +195,16 @@ void ResourceRequest::doUpdateResourceRequest()
     m_httpBody = httpBodyFromRequest(m_cfRequest.get());
 }
 
+#if USE(CFURLSTORAGESESSIONS)
+
 void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 {
     CFMutableURLRequestRef cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
     wkSetRequestStorageSession(storageSession, cfRequest);
     m_cfRequest.adoptCF(cfRequest);
 }
+
+#endif
 
 #endif // USE(CFNETWORK)
 

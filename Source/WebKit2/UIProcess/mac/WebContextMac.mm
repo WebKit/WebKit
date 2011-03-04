@@ -94,7 +94,9 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     // FIXME: This should really be configurable; we shouldn't just blindly allow read access to the UI process bundle.
     parameters.uiProcessBundleResourcePath = fileSystemRepresentation([[NSBundle mainBundle] resourcePath]);
 
+#if USE(CFURLSTORAGESESSIONS)
     parameters.uiProcessBundleIdentifier = String([[NSBundle mainBundle] bundleIdentifier]);
+#endif
 }
 
 String WebContext::platformDefaultDatabaseDirectory() const

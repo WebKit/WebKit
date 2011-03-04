@@ -239,8 +239,10 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     static bool supportsSettingConnectionProperties = [NSURLConnection instancesRespondToSelector:@selector(_initWithRequest:delegate:usesCache:maxContentLength:startImmediately:connectionProperties:)];
 #endif
 
+#if USE(CFURLSTORAGESESSIONS)
     if (CFURLStorageSessionRef storageSession = privateBrowsingStorageSession())
         nsRequest = [wkCopyRequestWithStorageSession(storageSession, nsRequest) autorelease];
+#endif
 
     if (supportsSettingConnectionProperties) {
         NSDictionary *sessionID = shouldUseCredentialStorage ? [NSDictionary dictionary] : [NSDictionary dictionaryWithObject:@"WebKitPrivateSession" forKey:@"_kCFURLConnectionSessionID"];
@@ -555,8 +557,10 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
     if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url()))
         request.clearHTTPAuthorization();
 
+#if USE(CFURLSTORAGESESSIONS)
     if (CFURLStorageSessionRef storageSession = privateBrowsingStorageSession())
         request.setStorageSession(storageSession);
+#endif
 
     client()->willSendRequest(this, request, redirectResponse);
 }
@@ -699,6 +703,8 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         client()->receivedCancellation(this, challenge);
 }
 
+#if USE(CFURLSTORAGESESSIONS)
+
 RetainPtr<CFURLStorageSessionRef> ResourceHandle::createPrivateBrowsingStorageSession(CFStringRef identifier)
 {
     return RetainPtr<CFURLStorageSessionRef>(AdoptCF, wkCreatePrivateStorageSession(identifier));
@@ -708,6 +714,8 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 {
     return String([[NSBundle mainBundle] bundleIdentifier]);
 }
+
+#endif
 
 } // namespace WebCore
 

@@ -69,8 +69,11 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (parameters.cfURLCachePath[parameters.cfURLCachePath.length() - 1] == '/')
         parameters.cfURLCachePath.remove(parameters.cfURLCachePath.length() - 1);
 
+#if USE(CFURLSTORAGESESSIONS)
     parameters.uiProcessBundleIdentifier = String(reinterpret_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleIdentifierKey)));
-#endif
+#endif // USE(CFURLSTORAGESESSIONS)
+
+#endif // USE(CFNETWORK)
 }
 
 String WebContext::platformDefaultDatabaseDirectory() const
