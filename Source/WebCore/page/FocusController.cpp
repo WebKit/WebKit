@@ -55,6 +55,7 @@
 #include "Settings.h"
 #include "SpatialNavigation.h"
 #include "Widget.h"
+#include "htmlediting.h" // For firstPositionInOrBeforeNode
 
 namespace WebCore {
 
@@ -287,7 +288,8 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         setFocusedFrame(newDocument->frame());
 
     if (caretBrowsing) {
-        VisibleSelection newSelection(Position(node, 0), Position(node, 0), DOWNSTREAM);
+        Position position = firstPositionInOrBeforeNode(node);
+        VisibleSelection newSelection(position, position, DOWNSTREAM);
         if (frame->selection()->shouldChangeSelection(newSelection))
             frame->selection()->setSelection(newSelection);
     }

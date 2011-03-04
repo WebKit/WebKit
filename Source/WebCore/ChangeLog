@@ -1,3 +1,15 @@
+2011-03-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Martin Robinson.
+
+        Stop instantiating legacy editing positions in FocusController::advanceFocusInDocumentOrder
+        https://bugs.webkit.org/show_bug.cgi?id=52742
+
+        Use firstPositionInOrBeforeNode to instantiate appropriate position.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+
 2011-03-03  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.
