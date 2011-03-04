@@ -123,7 +123,7 @@ RenderBlock::RenderBlock(Node* node)
 RenderBlock::~RenderBlock()
 {
     if (m_floatingObjects)
-        deleteAllValues(*m_floatingObjects);
+        deleteAllValues(m_floatingObjects->set());
     
     if (hasColumns())
         delete gColumnInfoMap->take(this);
@@ -1380,8 +1380,9 @@ void RenderBlock::addOverflowFromFloats()
     if (!m_floatingObjects)
         return;
 
-    FloatingObjectSetIterator end = m_floatingObjects->end();
-    for (FloatingObjectSetIterator it = m_floatingObjects->begin(); it != end; ++it) {
+    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    FloatingObjectSetIterator end = floatingObjectSet.end();
+    for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* r = *it;
         if (r->m_isDescendant)
             addOverflowFromChild(r->m_renderer, IntSize(xPositionForFloatIncludingMargin(r), yPositionForFloatIncludingMargin(r)));
@@ -2177,8 +2178,9 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
         // FIXME: Avoid disabling LayoutState. At the very least, don't disable it for floats originating
         // in this block. Better yet would be to push extra state for the containers of other floats.
         view()->disableLayoutState();
-        FloatingObjectSetIterator end = m_floatingObjects->end();
-        for (FloatingObjectSetIterator it = m_floatingObjects->begin(); it != end; ++it) {
+        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        FloatingObjectSetIterator end = floatingObjectSet.end();
+        for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
             FloatingObject* r = *it;
             // Only repaint the object if it is overhanging, is not in its own layer, and
             // is our responsibility to paint (m_shouldPaint is set). When paintAllDescendants is true, the latter
@@ -2503,8 +2505,9 @@ void RenderBlock::paintFloats(PaintInfo& paintInfo, int tx, int ty, bool preserv
     if (!m_floatingObjects)
         return;
 
-    FloatingObjectSetIterator end = m_floatingObjects->end();
-    for (FloatingObjectSetIterator it = m_floatingObjects->begin(); it != end; ++it) {
+    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    FloatingObjectSetIterator end = floatingObjectSet.end();
+    for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* r = *it;
         // Only paint the object if our m_shouldPaint flag is set.
         if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer()) {
@@ -2755,8 +2758,9 @@ GapRects RenderBlock::selectionGaps(RenderBlock* rootBlock, const IntPoint& root
             for (RenderBlock* cb = containingBlock(); cb && !cb->isRenderView(); cb = cb->containingBlock())
                 clipOutPositionedObjects(paintInfo, IntPoint(cb->x(), cb->y()), cb->m_positionedObjects.get()); // FIXME: Not right for flipped writing modes.
         if (m_floatingObjects) {
-            FloatingObjectSetIterator end = m_floatingObjects->end();
-            for (FloatingObjectSetIterator it = m_floatingObjects->begin(); it != end; ++it) {
+            FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+            FloatingObjectSetIterator end = floatingObjectSet.end();
+            for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
                 FloatingObject* r = *it;
                 IntRect floatBox = IntRect(offsetFromRootBlock.width() + xPositionForFloatIncludingMargin(r),
                                            offsetFromRootBlock.height() + yPositionForFloatIncludingMargin(r),
@@ -3065,11 +3069,12 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
 
     // Create the list of special objects if we don't aleady have one
     if (!m_floatingObjects)
-        m_floatingObjects = adoptPtr(new FloatingObjectSet);
+        m_floatingObjects = adoptPtr(new FloatingObjects);
     else {
         // Don't insert the object again if it's already in the list
-        FloatingObjectSetIterator it = m_floatingObjects->find<RenderBox*, FloatingObjectHashTranslator>(o);
-        if (it != m_floatingObjects->end())
+        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        FloatingObjectSetIterator it = floatingObjectSet.find<RenderBox*, FloatingObjectHashTranslator>(o);
+        if (it != floatingObjectSet.end())
             return *it;
     }
 
@@ -3096,7 +3101,8 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
     newObj->m_isDescendant = true;
     newObj->m_renderer = o;
 
-    m_floatingObjects->add(newObj);
+    m_floatingObjects->increaseObjectsCount(newObj->type());
+    m_floatingObjects->set().add(newObj);
     
     return newObj;
 }
@@ -3104,8 +3110,9 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
 void RenderBlock::removeFloatingObject(RenderBox* o)
 {
     if (m_floatingObjects) {
-        FloatingObjectSet::iterator it = m_floatingObjects->find<RenderBox*, FloatingObjectHashTranslator>(o);
-        if (it != m_floatingObjects->end()) {
+        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        FloatingObjectSet::iterator it = floatingObjectSet.find<RenderBox*, FloatingObjectHashTranslator>(o);
+        if (it != floatingObjectSet.end()) {
             FloatingObject* r = *it;
             if (childrenInline()) {
                 int logicalTop = logicalTopForFloat(r);
@@ -3122,7 +3129,8 @@ void RenderBlock::removeFloatingObject(RenderBox* o)
                 }
                 markLinesDirtyInBlockRange(0, logicalBottom);
             }
-            m_floatingObjects->remove(it);
+            m_floatingObjects->decreaseObjectsCount(r->type());
+            floatingObjectSet.remove(it);
             delete r;
         }
     }
@@ -3133,11 +3141,13 @@ void RenderBlock::removeFloatingObjectsBelow(FloatingObject* lastFloat, int logi
     if (!m_floatingObjects)
         return;
     
-    FloatingObject* curr = m_floatingObjects->last();
+    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    FloatingObject* curr = floatingObjectSet.last();
     while (curr != lastFloat && (!curr->isPlaced() || logicalTopForFloat(curr) >= logicalOffset)) {
-        m_floatingObjects->removeLast();
+        m_floatingObjects->decreaseObjectsCount(curr->type());
+        floatingObjectSet.removeLast();
         delete curr;
-        curr = m_floatingObjects->last();
+        curr = floatingObjectSet.last();
     }
 }
 
@@ -3146,19 +3156,20 @@ bool RenderBlock::positionNewFloats()
     if (!m_floatingObjects)
         return false;
 
-    if (m_floatingObjects->isEmpty())
+    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    if (floatingObjectSet.isEmpty())
         return false;
 
     // If all floats have already been positioned, then we have no work to do.
-    if (m_floatingObjects->last()->isPlaced())
+    if (floatingObjectSet.last()->isPlaced())
         return false;
 
     // Move backwards through our floating object list until we find a float that has
     // already been positioned.  Then we'll be able to move forward, positioning all of
     // the new floats that need it.
-    FloatingObjectSetIterator it = m_floatingObjects->end();
+    FloatingObjectSetIterator it = floatingObjectSet.end();
     --it; // Go to last item.
-    FloatingObjectSetIterator begin = m_floatingObjects->begin();
+    FloatingObjectSetIterator begin = floatingObjectSet.begin();
     FloatingObject* lastPlacedFloatingObject = 0;
     while (it != begin) {
         --it;
@@ -3175,7 +3186,7 @@ bool RenderBlock::positionNewFloats()
     if (lastPlacedFloatingObject)
         logicalTop = max(logicalTopForFloat(lastPlacedFloatingObject), logicalTop);
 
-    FloatingObjectSetIterator end = m_floatingObjects->end();
+    FloatingObjectSetIterator end = floatingObjectSet.end();
     // Now walk through the set of unpositioned floats and place them.
     for (; it != end; ++it) {
          FloatingObject* floatingObject = *it;
@@ -3274,7 +3285,8 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
     if (!didPosition || !newFloat->m_paginationStrut)
         return didPosition;
     
-    ASSERT(m_floatingObjects->last() == newFloat);
+    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    ASSERT(floatingObjectSet.last() == newFloat);
 
     int floatLogicalTop = logicalTopForFloat(newFloat);
     int paginationStrut = newFloat->m_paginationStrut;
@@ -3282,9 +3294,9 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
     if (floatLogicalTop - paginationStrut != logicalHeight())
         return didPosition;
 
-    FloatingObjectSetIterator it = m_floatingObjects->end();
+    FloatingObjectSetIterator it = floatingObjectSet.end();
     --it; // Last float is newFloat, skip that one.
-    FloatingObjectSetIterator begin = m_floatingObjects->begin();
+    FloatingObjectSetIterator begin = floatingObjectSet.begin();
     while (it != begin) {
         --it;
         FloatingObject* f = *it;
@@ -3392,12 +3404,13 @@ HashSet<RenderBox*>* RenderBlock::percentHeightDescendants() const
 int RenderBlock::logicalLeftOffsetForLine(int logicalTop, int fixedOffset, bool applyTextIndent, int* heightRemaining) const
 {
     int left = fixedOffset;
-    if (m_floatingObjects) {
+    if (m_floatingObjects && m_floatingObjects->hasLeftObjects()) {
         if (heightRemaining)
             *heightRemaining = 1;
 
-        FloatingObjectSetIterator end = m_floatingObjects->end();
-        for (FloatingObjectSetIterator it = m_floatingObjects->begin(); it != end; ++it) {
+        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        FloatingObjectSetIterator end = floatingObjectSet.end();
+        for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
             FloatingObject* r = *it;
             if (r->isPlaced() && logicalTopForFloat(r) <= logicalTop && logicalBottomForFloat(r) > logicalTop
                 && r->type() == FloatingObject::FloatLeft
@@ -3423,11 +3436,12 @@ int RenderBlock::logicalRightOffsetForLine(int logicalTop, int fixedOffset, bool
 {
     int right = fixedOffset;
 
-    if (m_floatingObjects) {
+    if (m_floatingObjects && m_floatingObjects->hasRightObjects()) {
         if (heightRemaining)
             *heightRemaining = 1;
-        FloatingObjectSetIterator end = m_floatingObjects->end();
-        for (FloatingObjectSetIterator it = m_floatingObjects->begin(); it != end; ++it) {
+        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        FloatingObjectSetIterator end = floatingObjectSet.end();
+        for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
             FloatingObject* r = *it;
             if (r->isPlaced() && logicalTopForFloat(r) <= logicalTop && logicalBottomForFloat(r) > logicalTop
                 && r->type() == FloatingObject::FloatRight
@@ -3461,8 +3475,9 @@ int RenderBlock::nextFloatLogicalBottomBelow(int logicalHeight) const
         return 0;
 
     int bottom = INT_MAX;
-    FloatingObjectSetIterator end = m_floatingObjects->end();
-    for (FloatingObjectSetIterator it = m_floatingObjects->begin(); it != end; ++it) {
+    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    FloatingObjectSetIterator end = floatingObjectSet.end();
+    for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* r = *it;
         int floatBottom = logicalBottomForFloat(r);
         if (floatBottom > logicalHeight)
@@ -3477,8 +3492,9 @@ int RenderBlock::lowestFloatLogicalBottom(FloatingObject::Type floatType) const
     if (!m_floatingObjects)
         return 0;
     int lowestFloatBottom = 0;
-    FloatingObjectSetIterator end = m_floatingObjects->end();
-    for (FloatingObjectSetIterator it = m_floatingObjects->begin(); it != end; ++it) {
+    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    FloatingObjectSetIterator end = floatingObjectSet.end();
+    for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* r = *it;
         if (r->isPlaced() && r->type() & floatType)
             lowestFloatBottom = max(lowestFloatBottom, logicalBottomForFloat(r));
@@ -3509,7 +3525,7 @@ void RenderBlock::clearFloats()
     // Inline blocks are covered by the isReplaced() check in the avoidFloats method.
     if (avoidsFloats() || isRoot() || isRenderView() || isFloatingOrPositioned() || isTableCell()) {
         if (m_floatingObjects) {
-            deleteAllValues(*m_floatingObjects);
+            deleteAllValues(m_floatingObjects->set());
             m_floatingObjects->clear();
         }
         return;
@@ -3519,14 +3535,15 @@ void RenderBlock::clearFloats()
     RendererToFloatInfoMap floatMap;
 
     if (m_floatingObjects) {
+        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
         if (childrenInline()) {
-            FloatingObjectSet::iterator end = m_floatingObjects->end();
-            for (FloatingObjectSet::iterator it = m_floatingObjects->begin(); it != end; ++it) {
+            FloatingObjectSet::iterator end = floatingObjectSet.end();
+            for (FloatingObjectSet::iterator it = floatingObjectSet.begin(); it != end; ++it) {
                 FloatingObject* f = *it;
                 floatMap.add(f->m_renderer, f);
             }
         } else
-            deleteAllValues(*m_floatingObjects);
+            deleteAllValues(floatingObjectSet);
         m_floatingObjects->clear();
     }
 
@@ -3573,8 +3590,9 @@ void RenderBlock::clearFloats()
         int changeLogicalTop = numeric_limits<int>::max();
         int changeLogicalBottom = numeric_limits<int>::min();
         if (m_floatingObjects) {
-            FloatingObjectSetIterator end = m_floatingObjects->end();
-            for (FloatingObjectSetIterator it = m_floatingObjects->begin(); it != end; ++it) {
+            FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+            FloatingObjectSetIterator end = floatingObjectSet.end();
+            for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
                 FloatingObject* f = *it;
                 FloatingObject* oldFloatingObject = floatMap.get(f->m_renderer);
                 int logicalBottom = logicalBottomForFloat(f);
@@ -3621,8 +3639,8 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int logicalLeftOffset,
 
     // Floats that will remain the child's responsibility to paint should factor into its
     // overflow.
-    FloatingObjectSetIterator childEnd = child->m_floatingObjects->end();
-    for (FloatingObjectSetIterator childIt = child->m_floatingObjects->begin(); childIt != childEnd; ++childIt) {
+    FloatingObjectSetIterator childEnd = child->m_floatingObjects->set().end();
+    for (FloatingObjectSetIterator childIt = child->m_floatingObjects->set().begin(); childIt != childEnd; ++childIt) {
         FloatingObject* r = *childIt;
         int logicalBottom = child->logicalTop() + logicalBottomForFloat(r);
         lowestFloatLogicalBottom = max(lowestFloatLogicalBottom, logicalBottom);
@@ -3648,9 +3666,10 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int logicalLeftOffset,
 
                 // We create the floating object list lazily.
                 if (!m_floatingObjects)
-                    m_floatingObjects = adoptPtr(new FloatingObjectSet);
+                    m_floatingObjects = adoptPtr(new FloatingObjects);
 
-                m_floatingObjects->add(floatingObj);
+                m_floatingObjects->increaseObjectsCount(floatingObj->type());
+                m_floatingObjects->set().add(floatingObj);
             }
         } else {
             if (makeChildPaintOtherFloats && !r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer() &&
@@ -3680,11 +3699,12 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, int logicalLeftOffset, i
 
     logicalLeftOffset += (style()->isHorizontalWritingMode() ? marginLeft() : marginTop());
 
-    FloatingObjectSetIterator prevEnd = prev->m_floatingObjects->end();
-    for (FloatingObjectSetIterator prevIt = prev->m_floatingObjects->begin(); prevIt != prevEnd; ++prevIt) {
+    FloatingObjectSet& prevSet = prev->m_floatingObjects->set();
+    FloatingObjectSetIterator prevEnd = prevSet.end();
+    for (FloatingObjectSetIterator prevIt = prevSet.begin(); prevIt != prevEnd; ++prevIt) {
         FloatingObject* r = *prevIt;
         if (logicalBottomForFloat(r) > logicalTopOffset) {
-            if (!m_floatingObjects || !m_floatingObjects->contains(r)) {
+            if (!m_floatingObjects || !m_floatingObjects->set().contains(r)) {
                 int leftOffset = style()->isHorizontalWritingMode() ? logicalLeftOffset : logicalTopOffset;
                 int topOffset = style()->isHorizontalWritingMode() ? logicalTopOffset : logicalLeftOffset;
                 
@@ -3707,8 +3727,9 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, int logicalLeftOffset, i
                 
                 // We create the floating object list lazily.
                 if (!m_floatingObjects)
-                    m_floatingObjects = adoptPtr(new FloatingObjectSet);
-                m_floatingObjects->add(floatingObj);
+                    m_floatingObjects = adoptPtr(new FloatingObjects);
+                m_floatingObjects->increaseObjectsCount(floatingObj->type());
+                m_floatingObjects->set().add(floatingObj);
             }
         }
     }
@@ -3722,7 +3743,7 @@ bool RenderBlock::avoidsFloats() const
 
 bool RenderBlock::containsFloat(RenderBox* renderer)
 {
-    return m_floatingObjects && m_floatingObjects->contains<RenderBox*, FloatingObjectHashTranslator>(renderer);
+    return m_floatingObjects && m_floatingObjects->set().contains<RenderBox*, FloatingObjectHashTranslator>(renderer);
 }
 
 void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove, bool inLayout)
@@ -3880,8 +3901,9 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
         ty += toRenderView(this)->frameView()->scrollY();
     }
 
-    FloatingObjectSetIterator begin = m_floatingObjects->begin();
-    for (FloatingObjectSetIterator it = m_floatingObjects->end(); it != begin;) {
+    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    FloatingObjectSetIterator begin = floatingObjectSet.begin();
+    for (FloatingObjectSetIterator it = floatingObjectSet.end(); it != begin;) {
         --it;
         FloatingObject* floatingObject = *it;
         if (floatingObject->m_shouldPaint && !floatingObject->m_renderer->hasSelfPaintingLayer()) {
@@ -5508,8 +5530,9 @@ void RenderBlock::adjustForBorderFit(int x, int& left, int& right) const
         }
         
         if (m_floatingObjects) {
-            FloatingObjectSetIterator end = m_floatingObjects->end();
-            for (FloatingObjectSetIterator it = m_floatingObjects->begin(); it != end; ++it) {
+            FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+            FloatingObjectSetIterator end = floatingObjectSet.end();
+            for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
                 FloatingObject* r = *it;
                 // Only examine the object if our m_shouldPaint flag is set.
                 if (r->m_shouldPaint) {
@@ -6215,6 +6238,29 @@ const char* RenderBlock::renderName() const
     if (isRunIn())
         return "RenderBlock (run-in)";
     return "RenderBlock";
+}
+
+inline void RenderBlock::FloatingObjects::clear()
+{
+    m_set.clear();
+    m_leftObjectsCount = 0;
+    m_rightObjectsCount = 0;
+}
+
+inline void RenderBlock::FloatingObjects::increaseObjectsCount(FloatingObject::Type type)
+{    
+    if (type == FloatingObject::FloatLeft)
+        m_leftObjectsCount++;
+    else
+        m_rightObjectsCount++;
+}
+
+inline void RenderBlock::FloatingObjects::decreaseObjectsCount(FloatingObject::Type type)
+{
+    if (type == FloatingObject::FloatLeft)
+        m_leftObjectsCount--;
+    else
+        m_rightObjectsCount--;
 }
 
 } // namespace WebCore

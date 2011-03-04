@@ -1,3 +1,62 @@
+2011-03-04  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Reviewed by Darin Adler.
+
+        improve layout performance by reducing the traversal time of the floating objects
+        https://bugs.webkit.org/show_bug.cgi?id=55440
+
+        We observered large overhead on traversing the floating objects list
+        in logicalLeftOffsetForLine() and logicalRightOffsetForLine() especially
+        when the list becomes enormous, for example in the default 30x30 maze test
+        from http://ie.microsoft.com/testdrive/Performance/MazeSolver/Default.html
+        there're >3700 floating objects. When placing a new floating object the
+        entire list (from begin to end) is traversed for multiple times.
+        There's a low hanging fruit to reduce the chances to do the traversal
+        which is especially applicable in logicalLeftOffsetForLine and logicalRightOffsetForLine.
+        As the two routines either cares about FloatLeft objects or FloatRight objects only,
+        if we know there's no corresponding type floating objects in the list
+        we can avoid the traversal actually. One thing we could do is to record
+        the number of FloatLeft objects and the number of FloatRight objects and
+        add a check before doing the traversal. This can reduce the time by 45%
+        to resolve the 30x30 Maze measured on N470 Netbook MeeGo using latest
+        Chromium browser 11 (from 503s to 269s).
+
+        No new tests, relying on existing layout tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::~RenderBlock):
+        (WebCore::RenderBlock::addOverflowFromFloats):
+        (WebCore::RenderBlock::repaintOverhangingFloats):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObjectsBelow):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::positionNewFloatOnLine):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::nextFloatLogicalBottomBelow):
+        (WebCore::RenderBlock::lowestFloatLogicalBottom):
+        (WebCore::RenderBlock::clearFloats):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        (WebCore::RenderBlock::containsFloat):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        (WebCore::RenderBlock::FloatingObjects::clear):
+        (WebCore::RenderBlock::FloatingObjects::increaseObjectsCount):
+        (WebCore::RenderBlock::FloatingObjects::decreaseObjectsCount):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::containsFloats):
+        (WebCore::RenderBlock::FloatingObjects::FloatingObjects):
+        (WebCore::RenderBlock::FloatingObjects::hasLeftObjects):
+        (WebCore::RenderBlock::FloatingObjects::hasRightObjects):
+        (WebCore::RenderBlock::FloatingObjects::set):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::matchedEndLine):
+
 2011-03-04  Rik Cabanier  <cabanier@gmail.com>
 
         Reviewed by David Hyatt.

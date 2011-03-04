@@ -95,7 +95,7 @@ public:
     void markPositionedObjectsForLayout();
     virtual void markForPaginationRelayoutIfNeeded();
     
-    bool containsFloats() { return m_floatingObjects && !m_floatingObjects->isEmpty(); }
+    bool containsFloats() { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
     bool containsFloat(RenderBox*);
 
     int availableLogicalWidthForLine(int position, bool firstLine) const;
@@ -712,7 +712,27 @@ private:
     };
     typedef ListHashSet<FloatingObject*, 4, FloatingObjectHashFunctions> FloatingObjectSet;
     typedef FloatingObjectSet::const_iterator FloatingObjectSetIterator;
-    OwnPtr<FloatingObjectSet> m_floatingObjects;
+    class FloatingObjects {
+    public:
+        FloatingObjects()
+            : m_leftObjectsCount(0)
+            , m_rightObjectsCount(0)
+        {
+        }
+
+        void clear();
+        void increaseObjectsCount(FloatingObject::Type);
+        void decreaseObjectsCount(FloatingObject::Type);
+        bool hasLeftObjects() const { return m_leftObjectsCount > 0; }
+        bool hasRightObjects() const { return m_rightObjectsCount > 0; }
+        FloatingObjectSet& set() { return m_set; }
+
+    private:
+        FloatingObjectSet m_set;
+        unsigned m_leftObjectsCount;
+        unsigned m_rightObjectsCount;
+    };
+    OwnPtr<FloatingObjects> m_floatingObjects;
     
     typedef PositionedObjectsListHashSet::const_iterator Iterator;
     OwnPtr<PositionedObjectsListHashSet> m_positionedObjects;
