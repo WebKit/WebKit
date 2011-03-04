@@ -1,3 +1,9 @@
+2011-03-03  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix. Need win/cURL DownloadBundle stub.
+
+        * platform/network/curl/DownloadBundle.h: Added.
+
 2011-03-03  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled out 80277 and 80280 because they caused event handler layout test
