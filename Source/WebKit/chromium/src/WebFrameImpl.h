@@ -109,6 +109,9 @@ public:
     virtual v8::Handle<v8::Value> executeScriptAndReturnValue(
         const WebScriptSource&);
     virtual v8::Local<v8::Context> mainWorldScriptContext() const;
+    virtual v8::Handle<v8::Value> createFileSystem(int type,
+                                                   const WebString& name,
+                                                   const WebString& path);
 #endif
     virtual bool insertStyleText(const WebString& css, const WebString& id);
     virtual void reload(bool ignoreCache);

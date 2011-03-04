@@ -255,6 +255,11 @@ public:
     // Returns the V8 context for this frame, or an empty handle if there
     // is none.
     virtual v8::Local<v8::Context> mainWorldScriptContext() const = 0;
+
+    // Creates an instance of file system object.
+    virtual v8::Handle<v8::Value> createFileSystem(int type,
+                                                   const WebString& name,
+                                                   const WebString& path) = 0;
 #endif
 
 

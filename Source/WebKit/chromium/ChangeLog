@@ -1,3 +1,15 @@
+2011-03-04  Zelidrag Hornung  <zelidrag@chromium.org>
+
+        Reviewed by David Levin
+
+        Expose ability to create instance of DOMFileSystem from Chromium side.
+        https://bugs.webkit.org/show_bug.cgi?id=55618
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFileSystem):
+        * src/WebFrameImpl.h:
+
 2011-03-03  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.

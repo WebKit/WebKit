@@ -158,6 +158,13 @@
 #include <gdk/gdk.h>
 #endif
 
+#if USE(V8)
+#include "AsyncFileSystem.h"
+#include "AsyncFileSystemChromium.h"
+#include "DOMFileSystem.h"
+#include "V8DOMFileSystem.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -832,6 +839,13 @@ v8::Local<v8::Context> WebFrameImpl::mainWorldScriptContext() const
         return v8::Local<v8::Context>();
 
     return V8Proxy::mainWorldContext(m_frame);
+}
+
+v8::Handle<v8::Value> WebFrameImpl::createFileSystem(int type,
+                                                     const WebString& name,
+                                                     const WebString& path)
+{
+    return toV8(DOMFileSystem::create(frame()->document(), name, AsyncFileSystemChromium::create(static_cast<AsyncFileSystem::Type>(type), path)));
 }
 #endif
 
