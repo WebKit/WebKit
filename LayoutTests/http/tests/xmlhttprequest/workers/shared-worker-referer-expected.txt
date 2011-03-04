@@ -1,0 +1,4 @@
+Referer should be set for XMLHttpRequest from SharedWorkers.
+
+FAIL: Sync. Expected referer: 'http://127.0.0.1:8000/xmlhttprequest/workers/resources/referer.js' Actual referer: 'http://127.0.0.1:8000/xmlhttprequest/workers/shared-worker-referer.html'
+FAIL: Async. Expected referer: 'http://127.0.0.1:8000/xmlhttprequest/workers/resources/referer.js' Actual referer: 'http://127.0.0.1:8000/xmlhttprequest/workers/shared-worker-referer.html'

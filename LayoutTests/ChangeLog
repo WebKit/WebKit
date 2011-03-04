@@ -1,3 +1,20 @@
+2011-03-03  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Need web worker referer layout test for xhr requests.
+        https://bugs.webkit.org/show_bug.cgi?id=55590
+
+        Verify that the referrer is set for sync and async XHR requests
+        from both workers and shared workers.
+
+        * http/tests/xmlhttprequest/workers/referer-expected.txt: Added.
+        * http/tests/xmlhttprequest/workers/referer.html: Added.
+        * http/tests/xmlhttprequest/workers/resources/referer-test.js: Added.
+        * http/tests/xmlhttprequest/workers/resources/referer.js: Added.
+        * http/tests/xmlhttprequest/workers/shared-worker-referer-expected.txt: Added.
+        * http/tests/xmlhttprequest/workers/shared-worker-referer.html: Added.
+
 2011-03-02  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
