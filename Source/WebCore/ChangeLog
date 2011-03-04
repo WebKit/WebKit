@@ -1,3 +1,17 @@
+2011-03-04  James Su <suzhe@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] keycode is always 0 when using non-Latin keyboard layout.
+        https://bugs.webkit.org/show_bug.cgi?id=54939
+
+        Add KeyEventCocoa.{h,mm}, so that we can reuse them in chromium.
+
+        No intended functionality change.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2011-03-04  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed EFL build fix for r80324.

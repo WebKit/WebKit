@@ -1,3 +1,16 @@
+2011-03-04  James Su <suzhe@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] keycode is always 0 when using non-Latin keyboard layout.
+        https://bugs.webkit.org/show_bug.cgi?id=54939
+
+        No intended functionality change.
+
+        * src/mac/WebInputEventFactory.mm:
+        (WebKit::windowsKeyCodeForKeyEvent): Use the same implementation
+        provided in WebCore/platform/mac/KeyEventMac.mm.
+
 2011-03-04  Zelidrag Hornung  <zelidrag@chromium.org>
 
         Reviewed by David Levin

@@ -265,6 +265,7 @@
           # related directories.
           # platform/graphics/cg may need to stick around, though.
           '../platform/audio/mac',
+          '../platform/cocoa',
           '../platform/graphics/mac',
           '../platform/mac',
           '../platform/text/mac',

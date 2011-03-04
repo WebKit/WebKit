@@ -2495,6 +2495,8 @@
             'platform/cf/SchedulePair.cpp',
             'platform/cf/SchedulePair.h',
             'platform/cf/SharedBufferCF.cpp',
+            'platform/cocoa/KeyEventCocoa.h',
+            'platform/cocoa/KeyEventCocoa.mm',
             'platform/chromium/ChromiumDataObject.cpp',
             'platform/chromium/ChromiumDataObject.h',
             'platform/chromium/ClipboardChromium.cpp',
