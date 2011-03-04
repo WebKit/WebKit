@@ -2,6 +2,22 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Add jsc to JavaScriptCore GYP build
+        https://bugs.webkit.org/show_bug.cgi?id=55711
+
+        * JavaScriptCore.gypi:
+            - Move jsc.cpp into jsc_files because it's really part of the jsc
+              target.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            - Remove extraneous files from the normal jsc build.  I probably
+              added these by mistake at some point.
+        * gyp/JavaScriptCore.gyp:
+            - Add the jsc target to the GYP file.
+
+2011-03-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Add testapi to JavaScriptCore GYP build
         https://bugs.webkit.org/show_bug.cgi?id=55707
 

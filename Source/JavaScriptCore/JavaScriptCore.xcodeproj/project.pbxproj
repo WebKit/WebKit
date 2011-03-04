@@ -328,8 +328,6 @@
 		9714AF5F122F32070092D9F5 /* ParsedURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 9714AF58122F31F50092D9F5 /* ParsedURL.h */; };
 		9714AF60122F32070092D9F5 /* URLString.h in Headers */ = {isa = PBXBuildFile; fileRef = 9714AF59122F31F50092D9F5 /* URLString.h */; };
 		971EDEA61169E0D3005E4262 /* Terminator.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F6903A1169DF7F00A6BB46 /* Terminator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		972A485F12661E0800F4514F /* URLCharacterTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 972A485D12661E0800F4514F /* URLCharacterTypes.cpp */; };
-		972A48771266256F00F4514F /* URLEscape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 972A48741266256F00F4514F /* URLEscape.cpp */; };
 		97941A5713029AAB004A3447 /* OSRandomSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97941A3F130299DB004A3447 /* OSRandomSource.cpp */; };
 		97941A5A13029ACC004A3447 /* OSRandomSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 97941A40130299DB004A3447 /* OSRandomSource.h */; };
 		97941A7E1302A098004A3447 /* CryptographicallyRandomNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97941A7C1302A098004A3447 /* CryptographicallyRandomNumber.cpp */; };
@@ -2889,8 +2887,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				932F5BDD0822A1C700736975 /* jsc.cpp in Sources */,
-				972A485F12661E0800F4514F /* URLCharacterTypes.cpp in Sources */,
-				972A48771266256F00F4514F /* URLEscape.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

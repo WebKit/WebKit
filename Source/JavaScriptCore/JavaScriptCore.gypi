@@ -351,7 +351,6 @@
             'jit/JSInterfaceJIT.h',
             'jit/SpecializedThunkJIT.h',
             'jit/ThunkGenerators.cpp',
-            'jsc.cpp',
             'os-win32/WinMain.cpp',
             'os-win32/inttypes.h',
             'os-win32/stdbool.h',
@@ -672,6 +671,9 @@
         ],
         'testapi_files': [
             'API/tests/testapi.c',
+        ],
+        'jsc_files': [
+            'jsc.cpp',
         ],
     }
 }

@@ -43,7 +43,6 @@
         '<@(javascriptcore_privateheader_files)',
         '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
         '$(SDKROOT)/System/Library/Frameworks/Foundation.framework',
-        'libedit.dylib',
         'libicucore.dylib',
         'libobjc.dylib',
       ],
@@ -217,6 +216,35 @@
       'sources': [
         '<@(testapi_files)',
         '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
+      ],
+      'configurations': {
+        'Debug': {},
+        'Release': {},
+        'Production': {},
+      },
+      'default_configuration': 'Debug',
+      'conditions': [
+        ['OS=="mac"', {
+          'xcode_settings': {
+            'USE_HEADERMAP': 'NO',
+          }
+        }],
+      ],
+    },
+    {
+      'target_name': 'jsc',
+      'type': 'executable',
+      'dependencies': [
+        'JavaScriptCore',
+      ],
+      # FIXME: We should use a header map instead of listing these explicitly.
+      'include_dirs': [
+        '<@(javascriptcore_include_dirs)',
+      ],
+      'sources': [
+        '<@(jsc_files)',
+        '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
+        'libedit.dylib',
       ],
       'configurations': {
         'Debug': {},
