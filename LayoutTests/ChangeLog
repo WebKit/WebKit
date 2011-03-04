@@ -1,3 +1,9 @@
+2011-03-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: follow up to 80355, fixing Qt tests.
+
+        * http/tests/inspector/inspector-test.js:
+
 2011-03-04  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium Snow Leopard rebaseline.

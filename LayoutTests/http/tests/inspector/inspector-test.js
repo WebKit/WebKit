@@ -10,7 +10,6 @@ function consoleOutputHook(messageType)
 
 console.log = consoleOutputHook.bind(InspectorTest, "log");
 console.error = consoleOutputHook.bind(InspectorTest, "error");
-console.warn = consoleOutputHook.bind(InspectorTest, "warn");
 console.info = consoleOutputHook.bind(InspectorTest, "info");
 
 InspectorTest.completeTest = function()
@@ -83,8 +82,6 @@ InspectorTest.addResult = function(text)
         InspectorTest.evaluateInPage("output(unescape('" + escape(text) + "'))");
     }
 }
-
-console.error = InspectorTest.addResult;
 
 InspectorTest.addResults = function(textArray)
 {
