@@ -1,3 +1,30 @@
+2011-03-03  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Move last bits of SQL into IDBBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=55668
+
+        After this, all SQL code for IndexedDB is in IDBBackingStore.cpp.
+
+        No new tests: refactoring only.
+
+        * storage/IDBBackingStore.cpp:
+        (WebCore::IDBBackingStore::createTransaction):
+        * storage/IDBBackingStore.h:
+        * storage/IDBCursorBackendImpl.h:
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::backingStore):
+        * storage/IDBDatabaseBackendImpl.h:
+        * storage/IDBIndexBackendImpl.h:
+        * storage/IDBKey.h:
+        * storage/IDBObjectStoreBackendImpl.h:
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl):
+        * storage/IDBTransactionBackendImpl.h:
+        * storage/IDBTransactionBackendInterface.h:
+        * storage/IDBTransactionCoordinator.cpp:
+
 2011-03-03  Adam Klein  <adamk@chromium.org>
 
         Reviewed by David Levin.

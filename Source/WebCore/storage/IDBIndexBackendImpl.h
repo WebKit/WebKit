@@ -36,7 +36,6 @@ namespace WebCore {
 class IDBBackingStore;
 class IDBKey;
 class IDBObjectStoreBackendImpl;
-class SQLiteDatabase;
 class ScriptExecutionContext;
 
 class IDBIndexBackendImpl : public IDBIndexBackendInterface {

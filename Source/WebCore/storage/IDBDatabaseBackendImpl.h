@@ -41,7 +41,6 @@ class IDBDatabase;
 class IDBFactoryBackendImpl;
 class IDBObjectStoreBackendImpl;
 class IDBTransactionCoordinator;
-class SQLiteDatabase;
 
 class IDBDatabaseBackendImpl : public IDBDatabaseBackendInterface {
 public:
@@ -51,7 +50,7 @@ public:
     }
     virtual ~IDBDatabaseBackendImpl();
 
-    SQLiteDatabase& sqliteDatabase() const;
+    PassRefPtr<IDBBackingStore> backingStore() const;
 
     static const int64_t InvalidId = 0;
     int64_t id() const { return m_id; }

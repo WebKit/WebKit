@@ -44,8 +44,6 @@ class IDBKeyRange;
 class IDBObjectStoreBackendInterface;
 class IDBBackingStore;
 class IDBTransactionBackendInterface;
-class SQLiteDatabase;
-class SQLiteStatement;
 class SerializedScriptValue;
 
 class IDBCursorBackendImpl : public IDBCursorBackendInterface {

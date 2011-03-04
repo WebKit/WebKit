@@ -966,6 +966,31 @@ PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openIndexCursor(int64_t ind
     return cursor.release();
 }
 
+namespace {
+
+class TransactionImpl : public IDBBackingStore::Transaction {
+public:
+    TransactionImpl(SQLiteDatabase& db)
+        : m_transaction(db)
+    {
+    }
+
+    // IDBBackingStore::Transaction
+    virtual void begin() { m_transaction.begin(); }
+    virtual void commit() { m_transaction.commit(); }
+    virtual void rollback() { m_transaction.rollback(); }
+
+private:
+    SQLiteTransaction m_transaction;
+};
+
+} // namespace
+
+PassRefPtr<IDBBackingStore::Transaction> IDBBackingStore::createTransaction()
+{
+    return adoptRef(new TransactionImpl(m_db));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

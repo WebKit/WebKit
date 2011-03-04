@@ -28,10 +28,10 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBBackingStore.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
 #include "IDBTransactionCoordinator.h"
-#include "SQLiteDatabase.h"
 
 namespace WebCore {
 
@@ -45,7 +45,7 @@ IDBTransactionBackendImpl::IDBTransactionBackendImpl(DOMStringList* objectStores
     , m_mode(mode)
     , m_state(Unused)
     , m_database(database)
-    , m_transaction(new SQLiteTransaction(database->sqliteDatabase()))
+    , m_transaction(database->backingStore()->createTransaction())
     , m_taskTimer(this, &IDBTransactionBackendImpl::taskTimerFired)
     , m_taskEventTimer(this, &IDBTransactionBackendImpl::taskEventTimerFired)
     , m_pendingEvents(0)

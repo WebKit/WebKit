@@ -29,9 +29,9 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "DOMStringList.h"
+#include "IDBBackingStore.h"
 #include "IDBTransactionBackendInterface.h"
 #include "IDBTransactionCallbacks.h"
-#include "SQLiteTransaction.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/RefPtr.h>
@@ -81,7 +81,7 @@ private:
     TaskQueue m_taskQueue;
     TaskQueue m_abortTaskQueue;
 
-    OwnPtr<SQLiteTransaction> m_transaction;
+    RefPtr<IDBBackingStore::Transaction> m_transaction;
 
     // FIXME: delete the timer once we have threads instead.
     Timer<IDBTransactionBackendImpl> m_taskTimer;

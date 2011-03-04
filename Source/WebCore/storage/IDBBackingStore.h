@@ -91,7 +91,13 @@ public:
     PassRefPtr<Cursor> openIndexKeyCursor(int64_t indexId, const IDBKeyRange*, IDBCursor::Direction);
     PassRefPtr<Cursor> openIndexCursor(int64_t indexId, const IDBKeyRange*, IDBCursor::Direction);
 
-    SQLiteDatabase& db() { return m_db; }
+    class Transaction : public RefCounted<Transaction> {
+    public:
+        virtual void begin() = 0;
+        virtual void commit() = 0;
+        virtual void rollback() = 0;
+    };
+    PassRefPtr<Transaction> createTransaction();
 
 private:
     IDBBackingStore(String identifier, IDBFactoryBackendImpl* factory);

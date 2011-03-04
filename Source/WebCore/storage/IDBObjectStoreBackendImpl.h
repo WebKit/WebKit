@@ -38,7 +38,6 @@ class IDBBackingStore;
 class IDBDatabaseBackendImpl;
 class IDBIndexBackendImpl;
 class IDBTransactionBackendInterface;
-class SQLiteDatabase;
 class ScriptExecutionContext;
 
 class IDBObjectStoreBackendImpl : public IDBObjectStoreBackendInterface {

@@ -38,7 +38,6 @@ namespace WebCore {
 
 class IDBObjectStoreBackendInterface;
 class IDBTransactionCallbacks;
-class SQLiteDatabase;
 
 // This class is shared by IDBTransaction (async) and IDBTransactionSync (sync).
 // This is implemented by IDBTransactionBackendImpl and optionally others (in order to proxy
@@ -61,4 +60,3 @@ public:
 #endif
 
 #endif // IDBTransactionBackendInterface_h
-

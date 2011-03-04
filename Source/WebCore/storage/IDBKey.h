@@ -34,8 +34,6 @@
 
 namespace WebCore {
 
-class SQLiteStatement;
-
 class IDBKey : public ThreadSafeShared<IDBKey> {
 public:
     static PassRefPtr<IDBKey> createNull()

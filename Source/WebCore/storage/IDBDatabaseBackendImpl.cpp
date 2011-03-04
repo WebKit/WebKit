@@ -84,9 +84,9 @@ IDBDatabaseBackendImpl::~IDBDatabaseBackendImpl()
     m_factory->removeIDBDatabaseBackend(m_identifier);
 }
 
-SQLiteDatabase& IDBDatabaseBackendImpl::sqliteDatabase() const
+PassRefPtr<IDBBackingStore> IDBDatabaseBackendImpl::backingStore() const
 {
-    return m_backingStore->db();
+    return m_backingStore;
 }
 
 PassRefPtr<DOMStringList> IDBDatabaseBackendImpl::objectStoreNames() const
