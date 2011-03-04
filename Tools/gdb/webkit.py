@@ -91,6 +91,15 @@ class WTFAtomicStringPrinter(StringPrinter):
         return self.val['m_string']
 
 
+class WTFCStringPrinter(StringPrinter):
+    "Print a WTF::CString"
+    def to_string(self):
+        # The CString holds a buffer, which is a refptr to a WTF::Vector of chars.
+        vector = self.val['m_buffer']['m_ptr']['m_vector']
+        # The vector has two more layers of buffer members.
+        return vector['m_buffer']['m_buffer']
+
+
 class WTFStringPrinter(StringPrinter):
     "Print a WTF::String"
     def get_length(self):
@@ -134,6 +143,12 @@ class JSCJSStringPrinter(StringPrinter):
             return ''
 
         return JSCUStringPrinter(self.val['m_value']).to_string()
+
+
+class WebCoreKURLGooglePrivatePrinter(StringPrinter):
+    "Print a WebCore::KURLGooglePrivate"
+    def to_string(self):
+        return WTFCStringPrinter(self.val['m_utf8']).to_string()
 
 
 class WebCoreQualifiedNamePrinter(StringPrinter):
@@ -238,7 +253,9 @@ def add_pretty_printers():
     pretty_printers = (
         (re.compile("^WTF::Vector<.*>$"), WTFVectorPrinter),
         (re.compile("^WTF::AtomicString$"), WTFAtomicStringPrinter),
+        (re.compile("^WTF::CString$"), WTFCStringPrinter),
         (re.compile("^WTF::String$"), WTFStringPrinter),
+        (re.compile("^WebCore::KURLGooglePrivate$"), WebCoreKURLGooglePrivatePrinter),
         (re.compile("^WebCore::QualifiedName$"), WebCoreQualifiedNamePrinter),
         (re.compile("^JSC::UString$"), JSCUStringPrinter),
         (re.compile("^JSC::Identifier$"), JSCIdentifierPrinter),

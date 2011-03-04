@@ -1,3 +1,14 @@
+2011-03-04  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [gdb] pretty-print KURL in gdb
+        https://bugs.webkit.org/show_bug.cgi?id=55788
+
+        * gdb/webkit.py: extend the pretty-printers to print WTF::CString
+        and KURLGooglePrivate.  As always, "p/r" can be used to sidestep
+        pretty-printing.
+
 2011-03-03  Timothy Hatcher  <timothy@apple.com>
 
         Update the tests that use WKPageRunJavaScriptInMainFrame use the WKSerializedScriptValueRef.
