@@ -1242,6 +1242,7 @@ void Node::attach()
     ASSERT(!attached());
     ASSERT(!renderer() || (renderer()->style() && renderer()->parent()));
 
+    // FIXME: This is O(N^2) for the innerHTML case, where all children are replaced at once (and not attached).
     // If this node got a renderer it may be the previousRenderer() of sibling text nodes and thus affect the
     // result of Text::rendererIsNeeded() for those nodes.
     if (renderer()) {
@@ -1285,23 +1286,25 @@ void Node::detach()
     clearFlag(InDetachFlag);
 }
 
-RenderObject * Node::previousRenderer()
+RenderObject* Node::previousRenderer()
 {
-    for (Node *n = previousSibling(); n; n = n->previousSibling()) {
+    // FIXME: We should have the same O(N^2) avoidance as nextRenderer does
+    // however, when I tried adding it, several tests failed.
+    for (Node* n = previousSibling(); n; n = n->previousSibling()) {
         if (n->renderer())
             return n->renderer();
     }
     return 0;
 }
 
-RenderObject * Node::nextRenderer()
+RenderObject* Node::nextRenderer()
 {
-    // Avoid an O(n^2) problem with this function by not checking for nextRenderer() when the parent element hasn't even 
-    // been attached yet.
+    // Avoid an O(n^2) problem with this function by not checking for
+    // nextRenderer() when the parent element hasn't attached yet.
     if (parentOrHostNode() && !parentOrHostNode()->attached())
         return 0;
 
-    for (Node *n = nextSibling(); n; n = n->nextSibling()) {
+    for (Node* n = nextSibling(); n; n = n->nextSibling()) {
         if (n->renderer())
             return n->renderer();
     }
@@ -1361,48 +1364,70 @@ Node *Node::nextLeafNode() const
     return 0;
 }
 
+RenderObject* Node::createRendererAndStyle()
+{
+    ASSERT(!renderer());
+    ASSERT(document()->shouldCreateRenderers());
+
+    ContainerNode* parent = parentOrHostNode();
+    ASSERT(parent);
+    RenderObject* parentRenderer = parent->renderer();
+
+    // FIXME: Ignoring canHaveChildren() in a case of isShadowRoot() might be wrong.
+    // See https://bugs.webkit.org/show_bug.cgi?id=52423
+    if (!parentRenderer || (!parentRenderer->canHaveChildren() && !isShadowRoot()) || !parent->childShouldCreateRenderer(this))
+        return 0;
+
+    RefPtr<RenderStyle> style = styleForRenderer();
+    if (!rendererIsNeeded(style.get()))
+        return 0;
+
+    RenderObject* newRenderer = createRenderer(document()->renderArena(), style.get());
+    if (!newRenderer)
+        return 0;
+
+    if (!parentRenderer->isChildAllowed(newRenderer, style.get())) {
+        newRenderer->destroy();
+        return 0;
+    }
+    setRenderer(newRenderer);
+    newRenderer->setAnimatableStyle(style.release()); // setAnimatableStyle() can depend on renderer() already being set.
+    return newRenderer;
+}
+
+#if ENABLE(FULLSCREEN_API)
+static RenderFullScreen* wrapWithRenderFullScreen(RenderObject* object, Document* document)
+{
+    RenderFullScreen* fullscreenRenderer = new (document->renderArena()) RenderFullScreen(document);
+    fullscreenRenderer->setStyle(RenderFullScreen::createFullScreenStyle());
+    // It's possible that we failed to create the new render and end up wrapping nothing.
+    // We'll end up displaying a black screen, but Jer says this is expected.
+    if (object)
+        fullscreenRenderer->addChild(object);
+    document->setFullScreenRenderer(fullscreenRenderer);
+    return fullscreenRenderer;
+}
+#endif
+
 void Node::createRendererIfNeeded()
 {
     if (!document()->shouldCreateRenderers())
         return;
 
     ASSERT(!renderer());
-    
-    ContainerNode* parent = parentOrHostNode();
-    ASSERT(parent);
-    
-    RenderObject* parentRenderer = parent->renderer();
-    RenderObject* nextRenderer = this->nextRenderer();
-    
+
+    RenderObject* newRenderer = createRendererAndStyle();
+
 #if ENABLE(FULLSCREEN_API)
-    // If this node is a fullscreen node, create a new anonymous full screen
-    // renderer.
-    if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == this) {
-        RenderFullScreen* fullscreenRenderer = new (document()->renderArena()) RenderFullScreen(document());
-        fullscreenRenderer->setStyle(RenderFullScreen::createFullScreenStyle());
-        parentRenderer->addChild(fullscreenRenderer, 0);
-        parentRenderer = fullscreenRenderer;
-        nextRenderer = 0;
-        document()->setFullScreenRenderer(fullscreenRenderer);
-    }
+    if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == this)
+        newRenderer = wrapWithRenderFullScreen(newRenderer, document());
 #endif
 
-    // FIXME: Ignoreing canHaveChildren() in a case of isShadowRoot() might be wrong.
-    // See https://bugs.webkit.org/show_bug.cgi?id=52423
-    if (parentRenderer && (parentRenderer->canHaveChildren() || isShadowRoot()) && parent->childShouldCreateRenderer(this)) {
-        RefPtr<RenderStyle> style = styleForRenderer();
-        if (rendererIsNeeded(style.get())) {
-            if (RenderObject* r = createRenderer(document()->renderArena(), style.get())) {
-                if (!parentRenderer->isChildAllowed(r, style.get()))
-                    r->destroy();
-                else {
-                    setRenderer(r);
-                    renderer()->setAnimatableStyle(style.release());
-                    parentRenderer->addChild(renderer(), nextRenderer);
-                }
-            }
-        }
-    }
+    if (!newRenderer)
+        return;
+
+    // Note: Adding newRenderer instead of renderer(). renderer() may be a child of newRenderer.
+    parentOrHostNode()->renderer()->addChild(newRenderer, nextRenderer());
 }
 
 PassRefPtr<RenderStyle> Node::styleForRenderer()

@@ -659,6 +659,8 @@ private:
     // Used to share code between lazyAttach and setNeedsStyleRecalc.
     void markAncestorsWithChildNeedsStyleRecalc();
 
+    RenderObject* createRendererAndStyle();
+
     virtual void refEventTarget();
     virtual void derefEventTarget();
 

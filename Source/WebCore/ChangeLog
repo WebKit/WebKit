@@ -1,3 +1,35 @@
+2011-03-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Refactor createRendererIfNeeded to avoid premature nextRenderer calculation
+        https://bugs.webkit.org/show_bug.cgi?id=55720
+
+        There are two thing going on here:
+        1. Delaying nextRenderer calculation until we actually use it,
+           previously we would always compute nextRenderer (expensive!)
+           even if no renderer insertion was to occur.
+        2. Fix fullscreen elements to be inserted into the right place
+           in the rendering tree.  Previously they would always be the last
+           child in their parent's list, even if that wasn't the right place.
+
+        I don't know of any way to trigger the fullscreen bug,
+        but I tested this with peacekeeper and saw no performance change.
+
+        Peacekeeper's domJQueryBasics is now possibly as much as 2% faster
+        but I don't really trust the stability of peacekeeper to begin with.
+
+        This paves the way for further improvement in our nextRenderer calculation.
+
+        * dom/Node.cpp:
+        (WebCore::Node::attach):
+        (WebCore::Node::previousRenderer):
+        (WebCore::Node::nextRenderer):
+        (WebCore::Node::createRendererAndStyle):
+        (WebCore::wrapWithRenderFullScreen):
+        (WebCore::Node::createRendererIfNeeded):
+        * dom/Node.h:
+
 2011-03-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
