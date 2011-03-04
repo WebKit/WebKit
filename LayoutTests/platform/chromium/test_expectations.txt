@@ -1634,23 +1634,12 @@ BUGCR25884 WIN LINUX : fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint
 // FIXME: Make this just be IMAGE after we move over to the new bots.
 BUGCR26344 LINUX DEBUG : fast/text/atsui-partial-selection.html = CRASH IMAGE
 
-BUGWK45957 : fast/multicol/column-rules-stacking.html = FAIL
+BUGWK45957 WIN LINUX : fast/multicol/column-rules-stacking.html = IMAGE+TEXT
+BUGWK45957 MAC LEOPARD : fast/multicol/column-rules-stacking.html = IMAGE
 
 // ==== WebKit roll 50258:50313 ====
 BUGCR26291 MAC LEOPARD : fast/text/atsui-multiple-renderers.html = IMAGE
 BUGCR26291 MAC : transforms/2d/hindi-rotated.html = IMAGE
-
-// Flaky since at least WebKit 50258.
-BUGCR32098 : fast/dom/defaultView.html = MISSING PASS
-
-// more test flakiness
-BUGCR27334 MAC : http/tests/security/xssAuditor/object-embed-tag.html = PASS
-
-// more test flakiness
-BUGCR27418 SLOW WIN RELEASE : http/tests/cookies/simple-cookies-max-age.html = PASS
-BUGCR27418 SLOW WIN RELEASE : http/tests/misc/url-in-utf16le.html = PASS
-BUGCR27418 MAC DEBUG : http/tests/plugins/interrupted-get-url.html = PASS TEXT
-BUGCR27418 MAC RELEASE SLOW : http/tests/plugins/interrupted-get-url.html = PASS
 
 // The following upstream patches add -Webkit-color-correction support:
 // http://trac.webkit.org/changeset/50760
@@ -1673,7 +1662,6 @@ BUGCR27551 WIN : fast/css/shadow-multiple.html = IMAGE
 BUGCR27553 WIN : fast/text/atsui-partial-selection.html = IMAGE
 
 BUGCR22700 WIN LINUX : fast/canvas/canvas-shadow.html = TEXT
-
 
 // Failures from merge 50972:51042
 // The test requires DRT/Test Shell to support error page handling.
@@ -2150,7 +2138,7 @@ BUGCR48239 : fast/js/function-apply-many-args.html = TEXT
 
 // The error gives a different line number than upstream.  Maybe a V8/JSC
 // difference?
-BUGCR48452 : svg/custom/use-font-face-crash.svg = FAIL
+BUGCR48452 : svg/custom/use-font-face-crash.svg = IMAGE+TEXT
 
 BUGCR48668 MAC : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
 
@@ -2868,8 +2856,10 @@ BUGWK51841 : fast/gradients/css3-radial-gradients3.html = IMAGE
 BUGWK51841 : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
 
 // This was introduced by r75077.
-BUGWK52082 LINUX MAC : fast/text/basic/014.html = IMAGE
-BUGWK52082 LINUX MAC : fast/text/midword-break-after-breakable-char.html = IMAGE
+BUGWK52082 LINUX : fast/text/basic/014.html = IMAGE
+BUGWK52082 MAC LEOPARD : fast/text/basic/014.html = IMAGE
+BUGWK52082 LINUX : fast/text/midword-break-after-breakable-char.html = IMAGE
+BUGWK52082 MAC LEOPARD: fast/text/midword-break-after-breakable-char.html = IMAGE
 BUGWK52082 WIN : fast/text/basic/014.html = IMAGE+TEXT
 BUGWK52082 WIN : fast/text/midword-break-after-breakable-char.html = IMAGE+TEXT
 
@@ -3115,6 +3105,7 @@ BUGWK54322 MAC SNOWLEOPARD : fast/backgrounds/svg-as-background-6.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/block/margin-collapse/103.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/block/positioning/auto/vertical-lr/007.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/block/positioning/auto/vertical-rl/007.html = IMAGE
+BUGWK54322 MAC SNOWLEOPARD : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/blockflow/border-vertical-lr.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/blockflow/english-lr-text.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/blockflow/japanese-lr-selection.html = IMAGE

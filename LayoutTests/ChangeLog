@@ -1,3 +1,13 @@
+2011-03-04  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+        
+        Add one expected failure for Snow Leopard, make other failure lines
+        more specific (since the tests pass on SL) and remove some flaky test
+        entries for tests that are no longer flaky.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-04  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed expectations update.
