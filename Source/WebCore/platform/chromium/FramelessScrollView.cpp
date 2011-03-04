@@ -32,6 +32,7 @@
 #include "FramelessScrollView.h"
 
 #include "FramelessScrollViewClient.h"
+#include "ScrollbarTheme.h"
 
 namespace WebCore {
 
@@ -72,8 +73,14 @@ IntRect FramelessScrollView::windowClipRect(bool clipToContents) const
     return contentsToWindow(visibleContentRect(!clipToContents));
 }
 
-void FramelessScrollView::paintContents(GraphicsContext*, const IntRect& damageRect)
+void FramelessScrollView::paintContents(GraphicsContext*, const IntRect&)
 {
+}
+
+void FramelessScrollView::paintScrollCorner(GraphicsContext* context, const IntRect& cornerRect)
+{
+    // ScrollbarThemeComposite::paintScrollCorner incorrectly assumes that the ScrollView is a FrameView.
+    ScrollbarTheme::defaultPaintScrollCorner(context, cornerRect);
 }
 
 void FramelessScrollView::contentsResized()

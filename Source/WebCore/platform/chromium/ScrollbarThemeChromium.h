@@ -48,8 +48,6 @@ namespace WebCore {
         virtual IntRect forwardButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
         virtual IntRect trackRect(Scrollbar*, bool painting = false);
 
-        virtual void paintScrollCorner(ScrollView*, GraphicsContext*, const IntRect&);
-
         virtual void paintTrackBackground(GraphicsContext*, Scrollbar*, const IntRect&);
         virtual void paintTickmarks(GraphicsContext*, Scrollbar*, const IntRect&);
 

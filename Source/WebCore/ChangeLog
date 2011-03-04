@@ -1,3 +1,26 @@
+2011-03-04  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Override paintScrollCorner() for FramelessScrollView to forego any custom scrollbar corner rendering.
+        This was previously done in ScrollbarThemeChromium, but we also need this on the Mac when the ScrollView
+        is a FramelessScrollView -- which is mostly just for Autofill.
+        In service of http://crbug.com/73772 (crash)
+        https://bugs.webkit.org/show_bug.cgi?id=55557
+
+        No tests added because this fix is Chromium-specific and the code is currently untestable from within WebKit.
+        In particular, DRT crashes when trying to render a FramelessScrollView.
+
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::paintScrollCorner): Body moved to static function defaultPaintScrollCorner().
+        (WebCore::ScrollbarTheme::defaultPaintScrollCorner): Added.
+        * platform/chromium/FramelessScrollView.cpp:
+        (WebCore::FramelessScrollView::paintContents):
+        (WebCore::FramelessScrollView::paintScrollCorner): Fix implementation moved to here from ScrollbarThemeChromium
+        * platform/chromium/FramelessScrollView.h:
+        * platform/chromium/ScrollbarThemeChromium.cpp:
+        * platform/chromium/ScrollbarThemeChromium.h:
+
 2011-03-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
