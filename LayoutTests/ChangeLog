@@ -1,3 +1,19 @@
+2011-03-03  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: introduce a protocol test for RuntimeAgent API.
+        https://bugs.webkit.org/show_bug.cgi?id=55482
+
+        * http/tests/inspector/protocol-test.js: Added.
+        (initialize_ProtocolTest.InspectorTest.filterProps):
+        (initialize_ProtocolTest.InspectorTest._dumpStepResult):
+        (initialize_ProtocolTest.InspectorTest._runNextStep):
+        (initialize_ProtocolTest.InspectorTest.runProtocolTestSuite):
+        (initialize_ProtocolTest):
+        * inspector/protocol/runtime-agent-expected.txt: Added.
+        * inspector/protocol/runtime-agent.html: Added.
+
 2011-03-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

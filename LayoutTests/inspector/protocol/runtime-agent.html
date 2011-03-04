@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/protocol-test.js"></script>
+<script>
+
+function TestObject()
+{
+    this.removedBySetPropertyValue = "doesn't work";
+}
+
+testObject = new TestObject();
+testProperty = true;
+
+function test()
+{
+    function callback(result)
+    {
+        var testSuite = [
+            ["evaluate", 'testObject', 'test', false],
+            ["evaluateOn", result.objectId, 'this.assignedByEvaluateOn = "evaluateOn function works fine";'],
+            ["setPropertyValue", result.objectId, 'assignedBySetPropertyValue', 'true'],
+            ["setPropertyValue", result.objectId, 'removedBySetPropertyValue', ''],
+            ["getProperties", result.objectId, false, false],
+            ["releaseObject", result.objectId],
+            ["releaseWrapperObjectGroup", result.objectId.injectedScriptId, 'test'],
+            ["getCompletions", 'testProperty', false],
+            ["getCompletions", 'testProperty', true]];
+
+        InspectorTest.runProtocolTestSuite("RuntimeAgent", testSuite, ['seq', 'id', 'injectedScriptId']);
+    }
+
+    RuntimeAgent.evaluate('window.testObject', 'test', false, callback);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Protocol stability test. It is dumping request/response pairs of RuntimeAgent functions.
+</p>
+
+</body>
+</html>

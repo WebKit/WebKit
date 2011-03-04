@@ -1,0 +1,309 @@
+Protocol stability test. It is dumping request/response pairs of RuntimeAgent functions.
+
+-----------------------------------------------------------
+RuntimeAgent.evaluate("testObject","test",false)
+
+request:
+{
+    seq : <number>
+    domain : "Runtime"
+    command : "evaluate"
+    arguments : {
+        expression : "testObject"
+        objectGroup : "test"
+        includeCommandLineAPI : false
+    }
+}
+
+response:
+{
+    seq : <number>
+    domain : "Runtime"
+    success : true
+    body : {
+        result : {
+            objectId : {
+                injectedScriptId : <number>
+                id : <number>
+                groupName : "test"
+            }
+            type : "object"
+            description : "TestObject"
+            hasChildren : true
+        }
+    }
+}
+
+-----------------------------------------------------------
+RuntimeAgent.evaluateOn({"injectedScriptId":<number>,"id":<number>,"groupName":"test"},"this.assignedByEvaluateOn = \"evaluateOn function works fine\";")
+
+request:
+{
+    seq : <number>
+    domain : "Runtime"
+    command : "evaluateOn"
+    arguments : {
+        objectId : {
+            injectedScriptId : <number>
+            id : <number>
+            groupName : "test"
+        }
+        expression : "this.assignedByEvaluateOn = "evaluateOn function works fine";"
+    }
+}
+
+response:
+{
+    seq : <number>
+    domain : "Runtime"
+    success : true
+    body : {
+        result : {
+            objectId : null
+            type : "undefined"
+            description : "undefined"
+            hasChildren : false
+        }
+    }
+}
+
+-----------------------------------------------------------
+RuntimeAgent.setPropertyValue({"injectedScriptId":<number>,"id":<number>,"groupName":"test"},"assignedBySetPropertyValue","true")
+
+request:
+{
+    seq : <number>
+    domain : "Runtime"
+    command : "setPropertyValue"
+    arguments : {
+        objectId : {
+            injectedScriptId : <number>
+            id : <number>
+            groupName : "test"
+        }
+        propertyName : "assignedBySetPropertyValue"
+        expression : "true"
+    }
+}
+
+response:
+{
+    seq : <number>
+    domain : "Runtime"
+    success : true
+    body : {
+        result : true
+    }
+}
+
+-----------------------------------------------------------
+RuntimeAgent.setPropertyValue({"injectedScriptId":<number>,"id":<number>,"groupName":"test"},"removedBySetPropertyValue","")
+
+request:
+{
+    seq : <number>
+    domain : "Runtime"
+    command : "setPropertyValue"
+    arguments : {
+        objectId : {
+            injectedScriptId : <number>
+            id : <number>
+            groupName : "test"
+        }
+        propertyName : "removedBySetPropertyValue"
+        expression : ""
+    }
+}
+
+response:
+{
+    seq : <number>
+    domain : "Runtime"
+    success : true
+    body : {
+        result : true
+    }
+}
+
+-----------------------------------------------------------
+RuntimeAgent.getProperties({"injectedScriptId":<number>,"id":<number>,"groupName":"test"},false,false)
+
+request:
+{
+    seq : <number>
+    domain : "Runtime"
+    command : "getProperties"
+    arguments : {
+        objectId : {
+            injectedScriptId : <number>
+            id : <number>
+            groupName : "test"
+        }
+        ignoreHasOwnProperty : false
+        abbreviate : false
+    }
+}
+
+response:
+{
+    seq : <number>
+    domain : "Runtime"
+    success : true
+    body : {
+        result : {
+            0 : {
+                name : "assignedByEvaluateOn"
+                value : {
+                    objectId : null
+                    type : "string"
+                    description : "evaluateOn function works fine"
+                    hasChildren : false
+                }
+            }
+            1 : {
+                name : "assignedBySetPropertyValue"
+                value : {
+                    objectId : null
+                    type : "boolean"
+                    description : "true"
+                    hasChildren : false
+                }
+            }
+            2 : {
+                name : "__proto__"
+                value : {
+                    objectId : {
+                        injectedScriptId : <number>
+                        id : <number>
+                        groupName : "test"
+                    }
+                    type : "object"
+                    description : "TestObject"
+                    hasChildren : true
+                }
+            }
+        }
+    }
+}
+
+-----------------------------------------------------------
+RuntimeAgent.releaseObject({"injectedScriptId":<number>,"id":<number>,"groupName":"test"})
+
+request:
+{
+    seq : <number>
+    domain : "Runtime"
+    command : "releaseObject"
+    arguments : {
+        objectId : {
+            injectedScriptId : <number>
+            id : <number>
+            groupName : "test"
+        }
+    }
+}
+
+response:
+{
+    seq : <number>
+    domain : "Runtime"
+    success : true
+}
+
+-----------------------------------------------------------
+RuntimeAgent.releaseWrapperObjectGroup(<number>,"test")
+
+request:
+{
+    seq : <number>
+    domain : "Runtime"
+    command : "releaseWrapperObjectGroup"
+    arguments : {
+        injectedScriptId : <number>
+        objectGroup : "test"
+    }
+}
+
+response:
+{
+    seq : <number>
+    domain : "Runtime"
+    success : true
+}
+
+-----------------------------------------------------------
+RuntimeAgent.getCompletions("testProperty",false)
+
+request:
+{
+    seq : <number>
+    domain : "Runtime"
+    command : "getCompletions"
+    arguments : {
+        expression : "testProperty"
+        includeCommandLineAPI : false
+    }
+}
+
+response:
+{
+    seq : <number>
+    domain : "Runtime"
+    success : true
+    body : {
+        result : {
+        }
+    }
+}
+
+-----------------------------------------------------------
+RuntimeAgent.getCompletions("testProperty",true)
+
+request:
+{
+    seq : <number>
+    domain : "Runtime"
+    command : "getCompletions"
+    arguments : {
+        expression : "testProperty"
+        includeCommandLineAPI : true
+    }
+}
+
+response:
+{
+    seq : <number>
+    domain : "Runtime"
+    success : true
+    body : {
+        result : {
+            $ : true
+            $$ : true
+            $x : true
+            dir : true
+            dirxml : true
+            keys : true
+            values : true
+            profile : true
+            profileEnd : true
+            monitorEvents : true
+            unmonitorEvents : true
+            inspect : true
+            copy : true
+            clear : true
+        }
+    }
+}
+
+===========================================================
+Coverage for RuntimeAgent
+{
+    evaluate : "checked"
+    evaluateOn : "checked"
+    getCompletions : "checked"
+    getProperties : "checked"
+    setPropertyValue : "checked"
+    releaseObject : "checked"
+    releaseWrapperObjectGroup : "checked"
+}
+
