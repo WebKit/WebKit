@@ -144,7 +144,7 @@
 			CharacterSet="1"
 			WholeProgramOptimization="2"
 			>
-      <Tool
+			<Tool
 				Name="VCPreBuildEventTool"
 			/>
 			<Tool
@@ -451,7 +451,7 @@
 			CharacterSet="1"
 			WholeProgramOptimization="4"
 			>
-      <Tool
+			<Tool
 				Name="VCPreBuildEventTool"
 			/>
 			<Tool
@@ -586,30 +586,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\Heap.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\Heap.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\MarkedBlock.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\MarkedBlock.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\MarkedSpace.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\MarkedSpace.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\CommonIdentifiers.cpp"
 				>
 			</File>
@@ -623,6 +599,14 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\Completion.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\ConservativeSet.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\ConservativeSet.h"
 				>
 			</File>
 			<File
@@ -755,6 +739,14 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\GetterSetter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\Heap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\Heap.h"
 				>
 			</File>
 			<File
@@ -990,11 +982,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\ConservativeSet.cpp"
+				RelativePath="..\..\runtime\MarkedBlock.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\ConservativeSet.h"
+				RelativePath="..\..\runtime\MarkedBlock.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\MarkedSpace.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\MarkedSpace.h"
 				>
 			</File>
 			<File
@@ -1747,14 +1747,6 @@
 			</File>
 			<File
 				RelativePath="..\..\jit\ThunkGenerators.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Resources"
-			>
-			<File
-				RelativePath=".\JavaScriptCore.rc"
 				>
 			</File>
 		</Filter>
