@@ -52,6 +52,7 @@ DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
     , m_currentBackingStoreStateID(0)
     , m_nextBackingStoreStateID(0)
     , m_isWaitingForDidUpdateBackingStoreState(false)
+    , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyImpl::discardBackingStore)
 {
 }
 
@@ -66,10 +67,8 @@ void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, 
 {
     unpaintedRegion = rect;
 
-    if (!m_backingStore)
+    if (isInAcceleratedCompositingMode())
         return;
-
-    ASSERT(!isInAcceleratedCompositingMode());
 
     ASSERT(m_currentBackingStoreStateID <= m_nextBackingStoreStateID);
     if (m_currentBackingStoreStateID < m_nextBackingStoreStateID) {
@@ -88,11 +87,15 @@ void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, 
         // change the compositing mode.
         if (!m_backingStore || isInAcceleratedCompositingMode())
             return;
-    } else
+    } else {
         ASSERT(!m_isWaitingForDidUpdateBackingStoreState);
+        ASSERT(m_backingStore);
+    }
 
     m_backingStore->paint(context, rect);
     unpaintedRegion.subtract(IntRect(IntPoint(), m_backingStore->size()));
+
+    discardBackingStoreSoon();
 }
 
 void DrawingAreaProxyImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*)
@@ -286,6 +289,21 @@ void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
 
     m_layerTreeContext = LayerTreeContext();    
     m_webPageProxy->exitAcceleratedCompositingMode();
+}
+
+void DrawingAreaProxyImpl::discardBackingStoreSoon()
+{
+    // We'll wait this many seconds after the last paint before throwing away our backing store to save memory.
+    // FIXME: It would be smarter to make this delay based on how expensive painting is. See <http://webkit.org/b/55733>.
+    static const double discardBackingStoreDelay = 5;
+
+    m_discardBackingStoreTimer.startOneShot(discardBackingStoreDelay);
+}
+
+void DrawingAreaProxyImpl::discardBackingStore()
+{
+    m_backingStore = nullptr;
+    backingStoreStateDidChange(DoNotRespondImmediately);
 }
 
 } // namespace WebKit

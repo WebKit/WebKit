@@ -1,5 +1,32 @@
 2011-03-03  Adam Roben  <aroben@apple.com>
 
+        Throw away DrawingAreaProxyImpl's backing store after not painting for 5 seconds
+
+        The intent is to save memory for views that aren't painting.
+
+        Fixes <http://webkit.org/b/51262> <rdar://problem/8782537> WebPageProxy should delete its
+        backing store after not painting for a while
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl): Initialize our timer.
+        (WebKit::DrawingAreaProxyImpl::paint): Don't bail if we don't have a backing store (but do
+        bail if we're in accelerated compositing mode); we might have thrown it away to save memory
+        but now are being asked to paint by the view. The existing code in this function will handle
+        getting a new backing store if possible by blocking for a little while to try to receive a
+        DidUpdateBackingStoreState message. Added an assertion that we do have a backing store if we
+        don't have any outstanding UpdateBackingStoreState requests. After painting, call
+        discardBackingStoreSoon to update our timer.
+        (WebKit::DrawingAreaProxyImpl::discardBackingStoreSoon): Set the timer for 5 seconds in the
+        future.
+        (WebKit::DrawingAreaProxyImpl::discardBackingStore): Throw away the backing store, and tell
+        the web process we'll need a full backing store update on the next paint.
+
+        * UIProcess/DrawingAreaProxyImpl.h: Added m_discardBackingStoreTimer.
+
+2011-03-03  Adam Roben  <aroben@apple.com>
+
         Add a way to tell the web process to perform a full backing store update on its next paint
 
         Messages::DrawingArea::UpdateBackingStoreState now takes a boolean specifying whether the
