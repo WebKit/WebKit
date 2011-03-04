@@ -503,4 +503,14 @@ void setCookieStoragePrivateBrowsingEnabled(bool)
     notImplemented();
 }
 
+void startObservingCookieChanges()
+{
+    notImplemented();
+}
+
+void stopObservingCookieChanges()
+{
+    notImplemented();
+}
+
 } // namespace WebCore

@@ -1,3 +1,24 @@
+2011-03-03  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Cleanup from https://bugs.webkit.org/show_bug.cgi?id=55427.
+        
+        Call WebCore::startObservingCookieChanges and WebCore::stopObservingCookieChanges
+        on all platforms, and stub the functions on platforms that don't implement them.
+        
+        Add startObservingCookieChanges and stopObservingCookieChanges to TemporaryLinkStubs
+        for platforms that don't implement them.
+
+        * platform/android/TemporaryLinkStubs.cpp:
+        * platform/brew/TemporaryLinkStubs.cpp:
+        * platform/chromium/TemporaryLinkStubs.cpp:
+        * platform/efl/TemporaryLinkStubs.cpp:
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        * platform/haiku/TemporaryLinkStubs.cpp:
+        * platform/qt/TemporaryLinkStubsQt.cpp:
+        * platform/win/TemporaryLinkStubs.cpp:
+
 2011-03-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dimitri Glazkov.

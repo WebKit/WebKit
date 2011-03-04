@@ -128,6 +128,16 @@ void setCookieStoragePrivateBrowsingEnabled(bool)
     notImplemented();
 }
 
+void startObservingCookieChanges()
+{
+    notImplemented();
+}
+
+void stopObservingCookieChanges()
+{
+    notImplemented();
+}
+
 }
 
 // vim: ts=4 sw=4 et

@@ -76,16 +76,12 @@ void WebCookieManager::deleteAllCookies()
 
 void WebCookieManager::startObservingCookieChanges()
 {
-#if USE(CFNETWORK) || PLATFORM(MAC)
     WebCore::startObservingCookieChanges();
-#endif
 }
 
 void WebCookieManager::stopObservingCookieChanges()
 {
-#if USE(CFNETWORK) || PLATFORM(MAC)
     WebCore::stopObservingCookieChanges();
-#endif
 }
 
 void WebCookieManager::dispatchCookiesDidChange()
