@@ -54,6 +54,9 @@ public:
     void cleanupResources();
     void draw();
 
+    String name() const;
+    void dumpSurface(TextStream&, int indent) const;
+
     FloatPoint contentRectCenter() const { return FloatRect(m_contentRect).center(); }
     IntRect contentRect() const { return m_contentRect; }
 
@@ -74,6 +77,7 @@ private:
 
     IntRect m_contentRect;
     bool m_skipsDraw;
+
     OwnPtr<LayerTexture> m_contentsTexture;
     float m_drawOpacity;
     TransformationMatrix m_drawTransform;

@@ -31,8 +31,11 @@
 
 #include "cc/CCLayerImpl.h"
 #include "GraphicsContext3D.h"
+#include "LayerChromium.h"
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
+#include "TextStream.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -162,6 +165,30 @@ void RenderSurfaceChromium::draw()
         drawSurface(replicaMaskLayer, m_replicaDrawTransform);
 
     drawSurface(m_maskLayer, m_drawTransform);
+}
+
+String RenderSurfaceChromium::name() const
+{
+#ifndef NDEBUG
+    return String::format("RenderSurface(id=%i,owner=%s)", m_owningLayer->debugID(), m_owningLayer->name().utf8().data());
+#else
+    return String::format("RenderSurface(owner=%s)", m_owningLayer->name().utf8().data());
+#endif
+}
+
+static void writeIndent(TextStream& ts, int indent)
+{
+    for (int i = 0; i != indent; ++i)
+        ts << "  ";
+}
+
+void RenderSurfaceChromium::dumpSurface(TextStream& ts, int indent) const
+{
+    writeIndent(ts, indent);
+    ts << name() << "\n";
+
+    writeIndent(ts, indent+1);
+    ts << "contentRect: (" << m_contentRect.x() << ", " << m_contentRect.y() << ", " << m_contentRect.width() << ", " << m_contentRect.height() << "\n";
 }
 
 }

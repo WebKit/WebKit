@@ -111,8 +111,20 @@ GraphicsLayerChromium::~GraphicsLayerChromium()
 
 void GraphicsLayerChromium::setName(const String& inName)
 {
+    m_nameBase = inName;
     String name = String::format("GraphicsLayerChromium(%p) GraphicsLayer(%p) ", m_layer.get(), this) + inName;
     GraphicsLayer::setName(name);
+    updateNames();
+}
+
+void GraphicsLayerChromium::updateNames()
+{
+    if (m_layer)
+        m_layer->setName("Layer for " + m_nameBase);
+    if (m_transformLayer)
+        m_transformLayer->setName("TransformLayer for " + m_nameBase);
+    if (m_contentsLayer)
+        m_contentsLayer->setName("ContentsLayer for " + m_nameBase);
 }
 
 bool GraphicsLayerChromium::setChildren(const Vector<GraphicsLayer*>& children)
@@ -590,6 +602,7 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
     }
 
     updateOpacityOnLayer();
+    updateNames();
 }
 
 void GraphicsLayerChromium::updateLayerDrawsContent()
@@ -653,6 +666,7 @@ void GraphicsLayerChromium::setupContentsLayer(LayerChromium* contentsLayer)
         }
     }
     updateDebugIndicators();
+    updateNames();
 }
 
 // This function simply mimics the operation of GraphicsLayerCA

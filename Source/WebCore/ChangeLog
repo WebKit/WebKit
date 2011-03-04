@@ -1,3 +1,89 @@
+2011-03-03  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Create a LayerChromium layerTreeAsText. Add HUD to
+        LayerRendererChromium that draws compositor FPS and, optionally,
+        the layer tree.
+        https://bugs.webkit.org/show_bug.cgi?id=54710
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        (WebCore::Canvas2DLayerChromium::drawsContent):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        (WebCore::CanvasLayerChromium::layerTypeAsString):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::writeIndent):
+        (WebCore::ContentLayerChromium::dumpLayerProperties):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (WebCore::ContentLayerChromium::drawsContent):
+        (WebCore::ContentLayerChromium::layerTypeAsString):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setName):
+        (WebCore::GraphicsLayerChromium::updateNames):
+        (WebCore::GraphicsLayerChromium::updateLayerPreserves3D):
+        (WebCore::GraphicsLayerChromium::setupContentsLayer):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        (WebCore::ImageLayerChromium::drawsContent):
+        (WebCore::ImageLayerChromium::layerTypeAsString):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::setName):
+        (WebCore::LayerChromium::layerTreeAsText):
+        (WebCore::writeIndent):
+        (WebCore::LayerChromium::dumpLayer):
+        (WebCore::LayerChromium::dumpLayerProperties):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::name):
+        (WebCore::LayerChromium::drawsContent):
+        (WebCore::LayerChromium::debugID):
+        (WebCore::LayerChromium::layerTypeAsString):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::~LayerRendererChromium):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::present):
+        (WebCore::LayerRendererChromium::layerTreeAsText):
+        (WebCore::LayerRendererChromium::dumpRenderSurfaces):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::getHeadsUpDisplay):
+        (WebCore::LayerRendererChromium::rootVisibleRect):
+        * platform/graphics/chromium/PluginLayerChromium.h:
+        (WebCore::PluginLayerChromium::drawsContent):
+        (WebCore::PluginLayerChromium::layerTypeAsString):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::name):
+        (WebCore::writeIndent):
+        (WebCore::RenderSurfaceChromium::dumpSurface):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        (WebCore::VideoLayerChromium::drawsContent):
+        (WebCore::VideoLayerChromium::layerTypeAsString):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+        (WebCore::WebGLLayerChromium::drawsContent):
+        (WebCore::WebGLLayerChromium::layerTypeAsString):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp: Added.
+        (WebCore::CCHeadsUpDisplay::CCHeadsUpDisplay):
+        (WebCore::CCHeadsUpDisplay::~CCHeadsUpDisplay):
+        (WebCore::CCHeadsUpDisplay::draw):
+        (WebCore::CCHeadsUpDisplay::drawHudContents):
+        (WebCore::CCHeadsUpDisplay::onPresent):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.h: Added.
+        (WebCore::CCHeadsUpDisplay::setShowFPSCounter):
+        (WebCore::CCHeadsUpDisplay::showFPSCounter):
+        (WebCore::CCHeadsUpDisplay::setShowPlatformLayerTree):
+        (WebCore::CCHeadsUpDisplay::showPlatformLayerTree):
+        (WebCore::CCHeadsUpDisplay::enabled):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        (WebCore::writeIndent):
+        (WebCore::CCLayerImpl::dumpLayerProperties):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::debugID):
+        (WebCore::CCLayerImpl::setName):
+        (WebCore::CCLayerImpl::name):
+
 2011-03-02  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.

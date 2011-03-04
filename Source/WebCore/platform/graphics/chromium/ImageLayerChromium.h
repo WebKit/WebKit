@@ -51,9 +51,12 @@ public:
     static PassRefPtr<ImageLayerChromium> create(GraphicsLayerChromium* owner = 0);
 
     virtual void updateContentsIfDirty();
-    virtual bool drawsContent() { return m_contents; }
+    virtual bool drawsContent() const { return m_contents; }
 
     void setContents(Image* image);
+
+protected:
+    virtual const char* layerTypeAsString() const { return "ImageLayer"; }
 
 private:
     virtual void updateTextureIfNeeded();

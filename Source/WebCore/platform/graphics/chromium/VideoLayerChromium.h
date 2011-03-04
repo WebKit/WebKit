@@ -46,7 +46,7 @@ public:
                                                  VideoFrameProvider* = 0);
     virtual ~VideoLayerChromium();
     virtual void updateContentsIfDirty();
-    virtual bool drawsContent() { return true; }
+    virtual bool drawsContent() const { return true; }
     virtual void draw();
 
     // This function is called by VideoFrameProvider. When this method is called
@@ -58,6 +58,7 @@ public:
 
 protected:
     virtual void cleanupResources();
+    virtual const char* layerTypeAsString() const { return "VideoLayer"; }
 
 private:
     VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameProvider*);

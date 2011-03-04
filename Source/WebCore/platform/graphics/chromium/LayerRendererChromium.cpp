@@ -40,6 +40,7 @@
 #include "LayerChromium.h"
 #include "LayerTexture.h"
 #include "NotImplemented.h"
+#include "TextStream.h"
 #include "TextureManager.h"
 #include "WebGLLayerChromium.h"
 #include "cc/CCLayerImpl.h"
@@ -116,10 +117,13 @@ LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> conte
     m_hardwareCompositing = initializeSharedObjects();
     m_rootLayerTiler = LayerTilerChromium::create(this, IntSize(256, 256), LayerTilerChromium::NoBorderTexels);
     ASSERT(m_rootLayerTiler);
+
+    m_headsUpDisplay = CCHeadsUpDisplay::create(this);
 }
 
 LayerRendererChromium::~LayerRendererChromium()
 {
+    m_headsUpDisplay.clear(); // Explicitly destroy the HUD before the TextureManager dies.
     cleanupSharedObjects();
 }
 
@@ -322,6 +326,14 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
         }
     }
 
+    if (m_headsUpDisplay->enabled()) {
+        GLC(m_context.get(), m_context->enable(GraphicsContext3D::BLEND));
+        GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
+        GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
+        useRenderSurface(m_defaultRenderSurface);
+        m_headsUpDisplay->draw();
+    }
+
     GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     GLC(m_context.get(), m_context->disable(GraphicsContext3D::BLEND));
 }
@@ -338,6 +350,8 @@ void LayerRendererChromium::present()
     // Note that currently this has the same effect as swapBuffers; we should
     // consider exposing a different entry point on GraphicsContext3D.
     m_context->prepareTexture();
+
+    m_headsUpDisplay->onPresent();
 }
 
 void LayerRendererChromium::setRootLayer(PassRefPtr<LayerChromium> layer)
@@ -875,6 +889,26 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_verticalScrollbarTiler.clear();
 
     m_textureManager.clear();
+}
+
+String LayerRendererChromium::layerTreeAsText() const
+{
+    TextStream ts;
+    if (m_rootLayer.get()) {
+        ts << m_rootLayer->layerTreeAsText();
+        ts << "RenderSurfaces:\n";
+        dumpRenderSurfaces(ts, 1, m_rootLayer.get());
+    }
+    return ts.release();
+}
+
+void LayerRendererChromium::dumpRenderSurfaces(TextStream& ts, int indent, LayerChromium* layer) const
+{
+    if (layer->ccLayerImpl()->renderSurface())
+        layer->ccLayerImpl()->renderSurface()->dumpSurface(ts, indent);
+
+    for (size_t i = 0; i < layer->getSublayers().size(); ++i)
+        dumpRenderSurfaces(ts, indent, layer->getSublayers()[i].get());
 }
 
 } // namespace WebCore

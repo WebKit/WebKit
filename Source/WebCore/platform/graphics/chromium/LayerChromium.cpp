@@ -42,12 +42,16 @@
 #include "PlatformContextSkia.h"
 #endif
 #include "RenderLayerBacking.h"
+#include "TextStream.h"
 #include "skia/ext/platform_canvas.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 using namespace std;
+
+#ifndef NDEBUG
+static int s_nextLayerDebugID = 1;
+#endif
 
 PassRefPtr<LayerChromium> LayerChromium::create(GraphicsLayerChromium* owner)
 {
@@ -59,6 +63,9 @@ LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
     , m_contentsDirty(false)
     , m_maskLayer(0)
     , m_superlayer(0)
+#ifndef NDEBUG
+    , m_debugID(s_nextLayerDebugID++)
+#endif
     , m_anchorPoint(0.5, 0.5)
     , m_backgroundColor(0, 0, 0, 0)
     , m_opacity(1.0)
@@ -230,6 +237,12 @@ LayerChromium* LayerChromium::superlayer() const
     return m_superlayer;
 }
 
+void LayerChromium::setName(const String& name)
+{
+    m_name = name;
+    m_ccLayerImpl->setName(name);
+}
+
 void LayerChromium::setNeedsDisplay(const FloatRect& dirtyRect)
 {
     // Simply mark the contents as dirty. For non-root layers, the call to
@@ -326,6 +339,50 @@ bool LayerChromium::descendantsDrawContentRecursive()
         if (sublayers[i]->descendantsDrawContentRecursive())
             return true;
     return false;
+}
+
+String LayerChromium::layerTreeAsText() const
+{
+    TextStream ts;
+    dumpLayer(ts, 0);
+    return ts.release();
+}
+
+static void writeIndent(TextStream& ts, int indent)
+{
+    for (int i = 0; i != indent; ++i)
+        ts << "  ";
+}
+
+void LayerChromium::dumpLayer(TextStream& ts, int indent) const
+{
+    writeIndent(ts, indent);
+    ts << layerTypeAsString() << "(" << m_name << ")\n";
+    dumpLayerProperties(ts, indent+2);
+    m_ccLayerImpl->dumpLayerProperties(ts, indent+2);
+    if (m_replicaLayer) {
+        writeIndent(ts, indent+2);
+        ts << "Replica:\n";
+        m_replicaLayer->dumpLayer(ts, indent+3);
+    }
+    if (m_maskLayer) {
+        writeIndent(ts, indent+2);
+        ts << "Mask:\n";
+        m_maskLayer->dumpLayer(ts, indent+3);
+    }
+    for (size_t i = 0; i < m_sublayers.size(); ++i)
+        m_sublayers[i]->dumpLayer(ts, indent+1);
+}
+
+void LayerChromium::dumpLayerProperties(TextStream& ts, int indent) const
+{
+    writeIndent(ts, indent);
+#ifndef NDEBUG
+    ts << "debugID: " << debugID() << ", ";
+#else
+#endif
+    ts << "drawsContent: " << drawsContent() << "\n";
+
 }
 
 // Begin calls that forward to the CCLayerImpl.

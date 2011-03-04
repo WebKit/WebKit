@@ -33,6 +33,7 @@
 #include "LayerChromium.h" // FIXME: temporary and bad
 #include "LayerRendererChromium.h"
 #include "RenderSurfaceChromium.h"
+#include <wtf/text/WTFString.h>
 
 namespace {
 void toGLMatrix(float* flattened, const WebCore::TransformationMatrix& m)
@@ -61,6 +62,9 @@ namespace WebCore {
 
 CCLayerImpl::CCLayerImpl(LayerChromium* owner)
     : m_owner(owner)
+#ifndef NDEBUG
+    , m_debugID(owner->debugID())
+#endif
     , m_targetRenderSurface(0)
     , m_drawDepth(0)
     , m_drawOpacity(0)
@@ -167,6 +171,30 @@ void CCLayerImpl::drawDebugBorder()
 
     // The indices for the line are stored in the same array as the triangle indices.
     GLC(context, context->drawElements(GraphicsContext3D::LINE_LOOP, 4, GraphicsContext3D::UNSIGNED_SHORT, 6 * sizeof(unsigned short)));
+}
+
+static void writeIndent(TextStream& ts, int indent)
+{
+    for (int i = 0; i != indent; ++i)
+        ts << "  ";
+}
+
+void CCLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
+{
+    writeIndent(ts, indent);
+    ts << "bounds: " << bounds().width() << ", " << bounds().height() << "\n";
+
+    if (m_targetRenderSurface) {
+        writeIndent(ts, indent);
+        ts << "targetRenderSurface: " << m_targetRenderSurface->name() << "\n";
+    }
+
+    writeIndent(ts, indent);
+    ts << "drawTransform: ";
+    ts << m_drawTransform.m11() << ", " << m_drawTransform.m12() << ", " << m_drawTransform.m13() << ", " << m_drawTransform.m14() << ", ";
+    ts << m_drawTransform.m21() << ", " << m_drawTransform.m22() << ", " << m_drawTransform.m23() << ", " << m_drawTransform.m24() << ", ";
+    ts << m_drawTransform.m31() << ", " << m_drawTransform.m32() << ", " << m_drawTransform.m33() << ", " << m_drawTransform.m34() << ", ";
+    ts << m_drawTransform.m41() << ", " << m_drawTransform.m42() << ", " << m_drawTransform.m43() << ", " << m_drawTransform.m44() << "\n";
 }
 
 }

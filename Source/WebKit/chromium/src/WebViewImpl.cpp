@@ -120,6 +120,7 @@
 #include "WebString.h"
 #include "WebVector.h"
 #include "WebViewClient.h"
+#include "cc/CCHeadsUpDisplay.h"
 #include <wtf/ByteArray.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/RefPtr.h>
@@ -2390,6 +2391,7 @@ void WebViewImpl::doComposite()
     ASSERT(isAcceleratedCompositingActive());
     if (!page())
         return;
+
     FrameView* view = page()->mainFrame()->view();
 
     // The visibleRect includes scrollbars whereas the contentRect doesn't.
@@ -2401,6 +2403,11 @@ void WebViewImpl::doComposite()
 
     WebViewImplScrollbarPaintInterface scrollbarPaint(this);
     m_layerRenderer->setCompositeOffscreen(settings()->compositeToTextureEnabled());
+
+    CCHeadsUpDisplay* hud = m_layerRenderer->headsUpDisplay();
+    hud->setShowFPSCounter(settings()->showFPSCounter());
+    hud->setShowPlatformLayerTree(settings()->showPlatformLayerTree());
+
     m_layerRenderer->drawLayers(visibleRect, contentRect, scroll, tilePaint, scrollbarPaint);
     if (m_layerRenderer->isCompositingOffscreen())
         m_layerRenderer->copyOffscreenTextureToDisplay();

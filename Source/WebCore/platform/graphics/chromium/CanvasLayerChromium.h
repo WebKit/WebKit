@@ -49,6 +49,9 @@ public:
 
 protected:
     explicit CanvasLayerChromium(GraphicsLayerChromium* owner);
+
+    virtual const char* layerTypeAsString() const { return "CanvasLayer"; }
+
     bool m_textureChanged;
     unsigned m_textureId;
 

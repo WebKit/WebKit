@@ -29,11 +29,12 @@
 #include "Color.h"
 #include "FloatRect.h"
 #include "IntRect.h"
+#include "TextStream.h"
 #include "TransformationMatrix.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -50,6 +51,10 @@ public:
     // When this class gets subclasses, remember to add 'virtual' here.
     ~CCLayerImpl();
 
+#ifndef NDEBUG
+    int debugID() const { return m_debugID; }
+#endif
+
     CCLayerImpl* superlayer() const;
     CCLayerImpl* maskLayer() const;
     CCLayerImpl* replicaLayer() const;
@@ -61,6 +66,9 @@ public:
     void bindContentsTexture();
 
     void cleanupResources();
+
+    void setName(const String& name) { m_name = name; }
+    const String& name() const { return m_name; }
 
     // Debug layer border - visual effect only, do not change geometry/clipping/etc.
     void setDebugBorderColor(Color c) { m_debugBorderColor = c; }
@@ -99,10 +107,19 @@ public:
     const IntRect& drawableContentRect() const { return m_drawableContentRect; }
     void setDrawableContentRect(const IntRect& rect) { m_drawableContentRect = rect; }
 
+    virtual void dumpLayerProperties(TextStream&, int indent) const;
+
 private:
     // For now, CCLayers are owned directly by a LayerChromium.
     LayerChromium* m_owner;
     explicit CCLayerImpl(LayerChromium*);
+
+    // Debugging.
+#ifndef NDEBUG
+    int m_debugID;
+#endif
+
+    String m_name;
 
     // Render surface this layer draws into. This is a surface that can belong
     // either to this layer (if m_targetRenderSurface == m_renderSurface) or

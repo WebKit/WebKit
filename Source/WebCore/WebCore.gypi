@@ -2670,6 +2670,8 @@
             'platform/graphics/chromium/VideoLayerChromium.h',
             'platform/graphics/chromium/WebGLLayerChromium.cpp',
             'platform/graphics/chromium/WebGLLayerChromium.h',
+            'platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp',
+            'platform/graphics/chromium/cc/CCHeadsUpDisplay.h',
             'platform/graphics/chromium/cc/CCLayerImpl.cpp',
             'platform/graphics/chromium/cc/CCLayerImpl.h',
             'platform/graphics/cocoa/FontPlatformData.h',

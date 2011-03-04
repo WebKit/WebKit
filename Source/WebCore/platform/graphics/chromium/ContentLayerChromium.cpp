@@ -39,6 +39,7 @@
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
 #include "RenderLayerBacking.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -285,6 +286,18 @@ void ContentLayerChromium::bindContentsTexture()
         m_contentsTexture->bindTexture();
 }
 
+static void writeIndent(TextStream& ts, int indent)
+{
+    for (int i = 0; i != indent; ++i)
+        ts << "  ";
+}
+
+void ContentLayerChromium::dumpLayerProperties(TextStream& ts, int indent) const
+{
+    LayerChromium::dumpLayerProperties(ts, indent);
+    writeIndent(ts, indent);
+    ts << "skipsDraw: " << m_skipsDraw << "\n";
+}
 
 }
 #endif // USE(ACCELERATED_COMPOSITING)

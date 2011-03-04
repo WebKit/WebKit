@@ -88,6 +88,10 @@ public:
     virtual void setExperimentalWebGLEnabled(bool);
     virtual void setOpenGLMultisamplingEnabled(bool);
     virtual void setShowDebugBorders(bool);
+    virtual void setShowFPSCounter(bool);
+    virtual bool showFPSCounter() const { return m_showFPSCounter; }
+    virtual void setShowPlatformLayerTree(bool);
+    virtual bool showPlatformLayerTree() const { return m_showPlatformLayerTree; }
     virtual void setEditingBehavior(EditingBehavior);
     virtual void setAcceleratedCompositingEnabled(bool);
     virtual void setCompositeToTextureEnabled(bool);
@@ -109,6 +113,8 @@ public:
 private:
     WebCore::Settings* m_settings;
     bool m_compositeToTextureEnabled;
+    bool m_showFPSCounter;
+    bool m_showPlatformLayerTree;
 };
 
 } // namespace WebKit

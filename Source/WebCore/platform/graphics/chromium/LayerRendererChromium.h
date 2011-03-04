@@ -43,6 +43,7 @@
 #include "RenderSurfaceChromium.h"
 #include "SkBitmap.h"
 #include "VideoLayerChromium.h"
+#include "cc/CCHeadsUpDisplay.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
@@ -60,6 +61,7 @@ namespace WebCore {
 class CCLayerImpl;
 class GeometryBinding;
 class GraphicsContext3D;
+class CCHeadsUpDisplay;
 
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium : public RefCounted<LayerRendererChromium> {
@@ -94,10 +96,6 @@ public:
     LayerTexture* getOffscreenLayerTexture();
     void copyOffscreenTextureToDisplay();
 
-    void setRootLayerCanvasSize(const IntSize&);
-
-    GraphicsContext* rootLayerGraphicsContext() const { return m_rootLayerGraphicsContext.get(); }
-
     unsigned createLayerTexture();
     void deleteLayerTexture(unsigned);
 
@@ -128,7 +126,12 @@ public:
 
     TextureManager* textureManager() const { return m_textureManager.get(); }
 
+    CCHeadsUpDisplay* headsUpDisplay() { return m_headsUpDisplay.get(); }
+    IntRect rootVisibleRect() const { return m_rootVisibleRect; }
+
     void setScissorToRect(const IntRect&);
+
+    String layerTreeAsText() const;
 
 private:
     explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D> graphicsContext3D);
@@ -147,6 +150,8 @@ private:
     bool makeContextCurrent();
 
     static bool compareLayerZ(const CCLayerImpl*, const CCLayerImpl*);
+
+    void dumpRenderSurfaces(TextStream&, int indent, LayerChromium*) const;
 
     bool initializeSharedObjects();
     void cleanupSharedObjects();
@@ -183,8 +188,6 @@ private:
     OwnPtr<GraphicsContext> m_rootLayerGraphicsContext;
 #endif
 
-    IntSize m_rootLayerCanvasSize;
-
     IntRect m_rootVisibleRect;
     IntRect m_rootContentRect;
 
@@ -207,6 +210,8 @@ private:
     OwnPtr<LayerTilerChromium::Program> m_tilerProgram;
 
     OwnPtr<TextureManager> m_textureManager;
+
+    OwnPtr<CCHeadsUpDisplay> m_headsUpDisplay;
 
     RefPtr<GraphicsContext3D> m_context;
 

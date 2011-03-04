@@ -48,6 +48,8 @@ namespace WebKit {
 WebSettingsImpl::WebSettingsImpl(Settings* settings)
     : m_settings(settings)
     , m_compositeToTextureEnabled(false)
+    , m_showFPSCounter(false)
+    , m_showPlatformLayerTree(false)
 {
     ASSERT(settings);
 }
@@ -284,6 +286,16 @@ void WebSettingsImpl::setOpenGLMultisamplingEnabled(bool enabled)
 void WebSettingsImpl::setShowDebugBorders(bool show)
 {
     m_settings->setShowDebugBorders(show);
+}
+
+void WebSettingsImpl::setShowFPSCounter(bool show)
+{
+    m_showFPSCounter = show;
+}
+
+void WebSettingsImpl::setShowPlatformLayerTree(bool show)
+{
+    m_showPlatformLayerTree = show;
 }
 
 void WebSettingsImpl::setEditingBehavior(EditingBehavior behavior)

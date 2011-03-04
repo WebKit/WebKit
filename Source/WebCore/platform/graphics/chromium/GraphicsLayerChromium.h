@@ -107,6 +107,7 @@ private:
     LayerChromium* hostLayerForSublayers() const;
     LayerChromium* layerForSuperlayer() const;
 
+    void updateNames();
     void updateSublayerList();
     void updateLayerPosition();
     void updateLayerSize();
@@ -126,6 +127,8 @@ private:
 
     void setupContentsLayer(LayerChromium*);
     LayerChromium* contentsLayer() const { return m_contentsLayer.get(); }
+
+    String m_nameBase;
 
     RefPtr<LayerChromium> m_layer;
     RefPtr<LayerChromium> m_transformLayer;

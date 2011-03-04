@@ -48,6 +48,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 
 namespace skia {
@@ -100,8 +101,8 @@ public:
     void setMasksToBounds(bool masksToBounds) { m_masksToBounds = masksToBounds; }
     bool masksToBounds() const { return m_masksToBounds; }
 
-    void setName(const String& name) { m_name = name; }
-    String name() const { return m_name; }
+    void setName(const String&);
+    const String& name() const { return m_name; }
 
     void setMaskLayer(LayerChromium* maskLayer) { m_maskLayer = maskLayer; }
     CCLayerImpl* maskDrawLayer() const { return m_maskLayer ? m_maskLayer->ccLayerImpl() : 0; }
@@ -151,7 +152,7 @@ public:
     LayerChromium* replicaLayer() { return m_replicaLayer; }
 
     // These methods typically need to be overwritten by derived classes.
-    virtual bool drawsContent() { return false; }
+    virtual bool drawsContent() const { return false; }
     virtual void updateContentsIfDirty() { }
     virtual void unreserveContentsTexture() { }
     virtual void bindContentsTexture() { }
@@ -160,6 +161,13 @@ public:
     // These exists just for debugging (via drawDebugBorder()).
     void setBorderColor(const Color&);
     Color borderColor() const;
+
+#ifndef NDEBUG
+    int debugID() const { return m_debugID; }
+#endif
+
+    void drawDebugBorder();
+    String layerTreeAsText() const;
 
     void setBorderWidth(float);
     float borderWidth() const;
@@ -193,6 +201,11 @@ protected:
 
     static void toGLMatrix(float*, const TransformationMatrix&);
 
+    void dumpLayer(TextStream&, int indent) const;
+
+    virtual const char* layerTypeAsString() const { return "LayerChromium"; }
+    virtual void dumpLayerProperties(TextStream&, int indent) const;
+
     FloatRect m_dirtyRect;
     bool m_contentsDirty;
 
@@ -224,6 +237,10 @@ private:
 
     Vector<RefPtr<LayerChromium> > m_sublayers;
     LayerChromium* m_superlayer;
+
+#ifndef NDEBUG
+    int m_debugID;
+#endif
 
     // Layer properties.
     FloatPoint m_position;

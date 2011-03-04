@@ -44,10 +44,13 @@ class GraphicsContext3D;
 class WebGLLayerChromium : public CanvasLayerChromium {
 public:
     static PassRefPtr<WebGLLayerChromium> create(GraphicsLayerChromium* owner = 0);
-    virtual bool drawsContent() { return m_context; }
+    virtual bool drawsContent() const { return m_context; }
     virtual void updateContentsIfDirty();
 
     void setContext(const GraphicsContext3D* context);
+
+protected:
+    virtual const char* layerTypeAsString() const { return "WebGLLayer"; }
 
 private:
     explicit WebGLLayerChromium(GraphicsLayerChromium* owner);

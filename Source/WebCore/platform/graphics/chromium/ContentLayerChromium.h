@@ -55,7 +55,7 @@ public:
     virtual void bindContentsTexture();
 
     virtual void draw();
-    virtual bool drawsContent() { return m_owner && m_owner->drawsContent(); }
+    virtual bool drawsContent() const { return m_owner && m_owner->drawsContent(); }
 
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderTexAlpha> Program;
 
@@ -65,6 +65,9 @@ protected:
     virtual void cleanupResources();
     bool requiresClippedUpdateRect() const;
     void resizeUploadBuffer(const IntSize&);
+
+    virtual const char* layerTypeAsString() const { return "ContentLayer"; }
+    virtual void dumpLayerProperties(TextStream&, int indent) const;
 
     OwnPtr<LayerTexture> m_contentsTexture;
     bool m_skipsDraw;
