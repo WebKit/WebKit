@@ -1,3 +1,20 @@
+2011-03-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        JavaScriptCore GYP build should use a header map
+        https://bugs.webkit.org/show_bug.cgi?id=55712
+
+        This patch moves the os-win32 files into their own variable so that we
+        can use a header map in the Apple Mac Xcode build.  The problem is that
+        the header map searches the whole project rather than just the files
+        included in a given target.  Another solution to this problem is to
+        make GYP smarter about filtering out what files are added to the
+        project file.
+
+        * JavaScriptCore.gypi:
+        * gyp/JavaScriptCore.gyp:
+
 2011-03-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

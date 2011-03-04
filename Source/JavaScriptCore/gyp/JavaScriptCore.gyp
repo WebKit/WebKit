@@ -109,7 +109,6 @@
         ['OS=="mac"', {
           'mac_bundle': 1,
           'xcode_settings': {
-            'USE_HEADERMAP': 'NO',
             # FIXME: Remove these overrides once JavaScriptCore.xcconfig is
             # used only by this project.
             'GCC_PREFIX_HEADER': '<(DEPTH)/JavaScriptCore/JavaScriptCorePrefix.h',
@@ -195,13 +194,6 @@
         'Production': {},
       },
       'default_configuration': 'Debug',
-      'conditions': [
-        ['OS=="mac"', {
-          'xcode_settings': {
-            'USE_HEADERMAP': 'NO',
-          }
-        }],
-      ],
     },
     {
       'target_name': 'testapi',
@@ -223,13 +215,6 @@
         'Production': {},
       },
       'default_configuration': 'Debug',
-      'conditions': [
-        ['OS=="mac"', {
-          'xcode_settings': {
-            'USE_HEADERMAP': 'NO',
-          }
-        }],
-      ],
     },
     {
       'target_name': 'jsc',
@@ -252,13 +237,6 @@
         'Production': {},
       },
       'default_configuration': 'Debug',
-      'conditions': [
-        ['OS=="mac"', {
-          'xcode_settings': {
-            'USE_HEADERMAP': 'NO',
-          }
-        }],
-      ],
     },
   ], # targets
 }

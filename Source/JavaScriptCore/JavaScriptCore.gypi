@@ -351,10 +351,6 @@
             'jit/JSInterfaceJIT.h',
             'jit/SpecializedThunkJIT.h',
             'jit/ThunkGenerators.cpp',
-            'os-win32/WinMain.cpp',
-            'os-win32/inttypes.h',
-            'os-win32/stdbool.h',
-            'os-win32/stdint.h',
             'parser/ASTBuilder.h',
             'parser/JSParser.cpp',
             'parser/JSParser.h',
@@ -657,6 +653,14 @@
             'yarr/YarrPattern.cpp',
             'yarr/YarrSyntaxChecker.cpp',
             'yarr/YarrSyntaxChecker.h',
+        ],
+        # These files are separate from javascriptcore_files so we can use a
+        # header map in the Apple Mac Xcode build.
+        'os_win32_files': [
+            'os-win32/WinMain.cpp',
+            'os-win32/inttypes.h',
+            'os-win32/stdbool.h',
+            'os-win32/stdint.h',
         ],
         'minidom_files': [
             'API/tests/JSNode.c',
