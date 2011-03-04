@@ -1,3 +1,15 @@
+2011-03-03  Timothy Hatcher  <timothy@apple.com>
+
+        Make run-api-tests show failed if a test fails.
+
+        https://webkit.org/b/55725
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/run-api-tests:
+        (runTest): Remove "my" from the nested $result assignment so the
+        check outside the condition sees the real result.
+
 2011-03-02  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

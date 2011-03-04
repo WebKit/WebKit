@@ -157,7 +157,7 @@ sub runTest($$)
         close(DEVNULL) unless ($verbose);
 
         waitpid($pid, 0);
-        my $result = $?;
+        $result = $?;
     } elsif (isAppleWinWebKit()) {
         my $apiTesterNameSuffix;
         if (configurationForVisualStudio() ne "Debug_All") {
@@ -177,7 +177,6 @@ sub runTest($$)
         print BOLD RED, "Failed", RESET, "\n";
     }
 }
-
 
 sub populateTests()
 {
