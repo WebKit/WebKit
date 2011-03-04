@@ -1,3 +1,17 @@
+2011-03-03  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Assertion failure in toElement(WebCore::Node*)
+        https://bugs.webkit.org/show_bug.cgi?id=55697
+
+        Test: fast/parser/fragment-foreign-content.html
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::constructTreeFromAtomicToken): The current
+        element in the HTMLElementStack might be a DocumentFragment if a
+        fragment is being parsed who's first node is foreign content.
+
 2011-03-03  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

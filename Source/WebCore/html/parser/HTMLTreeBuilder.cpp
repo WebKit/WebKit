@@ -445,7 +445,7 @@ void HTMLTreeBuilder::constructTreeFromAtomicToken(AtomicHTMLToken& token)
     // the U+0000 characters into replacement characters has compatibility
     // problems.
     m_parser->tokenizer()->setForceNullCharacterReplacement(m_insertionMode == TextMode || m_insertionMode == InForeignContentMode);
-    m_parser->tokenizer()->setShouldAllowCDATA(m_insertionMode == InForeignContentMode && m_tree.currentElement()->namespaceURI() != xhtmlNamespaceURI);
+    m_parser->tokenizer()->setShouldAllowCDATA(m_insertionMode == InForeignContentMode && m_tree.currentNode()->namespaceURI() != xhtmlNamespaceURI);
 }
 
 void HTMLTreeBuilder::processToken(AtomicHTMLToken& token)

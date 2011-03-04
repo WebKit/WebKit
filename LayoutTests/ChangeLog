@@ -1,3 +1,13 @@
+2011-03-03  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Assertion failure in toElement(WebCore::Node*)
+        https://bugs.webkit.org/show_bug.cgi?id=55697
+
+        * fast/parser/fragment-foreign-content-expected.txt: Added.
+        * fast/parser/fragment-foreign-content.html: Added.
+
 2011-03-03  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
