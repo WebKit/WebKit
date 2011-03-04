@@ -1,3 +1,38 @@
+2011-03-03  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Refactor classes in GenericCallback.h
+        https://bugs.webkit.org/show_bug.cgi?id=55732
+        
+        Since we're going to need to add additional callback classes, make a CallbackBase class that manages
+        the context and the callback ID.  The existing callback classes (VoidCallback, GenericCallback, and
+        ComputedPagesCallback) now all derive from CallbackBase.
+        
+        Fix bug in VoidCallback where we meant to implement the destructor, but we were implementing the default
+        constructor instead (we forgot the leading ~).
+ 
+        * UIProcess/GenericCallback.h:
+        (WebKit::CallbackBase::~CallbackBase):
+        (WebKit::CallbackBase::callbackID):
+        (WebKit::CallbackBase::CallbackBase):
+        (WebKit::CallbackBase::context):
+        (WebKit::CallbackBase::generateCallbackID):
+        (WebKit::VoidCallback::~VoidCallback):
+        (WebKit::VoidCallback::performCallback):
+        (WebKit::VoidCallback::invalidate):
+        (WebKit::VoidCallback::VoidCallback):
+        (WebKit::GenericCallback::create):
+        (WebKit::GenericCallback::~GenericCallback):
+        (WebKit::GenericCallback::performCallbackWithReturnValue):
+        (WebKit::GenericCallback::invalidate):
+        (WebKit::GenericCallback::GenericCallback):
+        (WebKit::ComputedPagesCallback::create):
+        (WebKit::ComputedPagesCallback::~ComputedPagesCallback):
+        (WebKit::ComputedPagesCallback::performCallbackWithReturnValue):
+        (WebKit::ComputedPagesCallback::invalidate):
+        (WebKit::ComputedPagesCallback::ComputedPagesCallback):
+
 2011-03-03  Adam Roben  <aroben@apple.com>
 
         Don't assume the web process has had a chance to paint before the view has to paint
