@@ -131,12 +131,12 @@ void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, WebEvent::Modifier
     m_client.mouseDidMoveOverElement(toAPI(page), toAPI(modifiers), toAPI(userData), m_client.clientInfo);
 }
 
-void WebUIClient::missingPluginButtonClicked(WebPageProxy* page, const String& mimeType, const String& url)
+void WebUIClient::missingPluginButtonClicked(WebPageProxy* page, const String& mimeType, const String& url, const String& pluginsPageURL)
 {
     if (!m_client.missingPluginButtonClicked)
         return;
 
-    m_client.missingPluginButtonClicked(toAPI(page), toAPI(mimeType.impl()), toAPI(url.impl()), m_client.clientInfo);
+    m_client.missingPluginButtonClicked(toAPI(page), toAPI(mimeType.impl()), toAPI(url.impl()), toAPI(pluginsPageURL.impl()), m_client.clientInfo);
 }
 
 void WebUIClient::didNotHandleKeyEvent(WebPageProxy* page, const NativeWebKeyboardEvent& event)

@@ -454,7 +454,7 @@ void WebChromeClient::missingPluginButtonClicked(Element* element) const
 
     HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(element);
 
-    m_page->send(Messages::WebPageProxy::MissingPluginButtonClicked(pluginElement->serviceType(), pluginElement->url()));
+    m_page->send(Messages::WebPageProxy::MissingPluginButtonClicked(pluginElement->serviceType(), pluginElement->url(), pluginElement->getAttribute(pluginspageAttr)));
 }
 
 void WebChromeClient::scrollbarsModeDidChange() const

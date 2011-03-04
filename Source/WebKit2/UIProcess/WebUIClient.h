@@ -61,7 +61,7 @@ public:
 
     void setStatusText(WebPageProxy*, const String&);
     void mouseDidMoveOverElement(WebPageProxy*, WebEvent::Modifiers, APIObject*);
-    void missingPluginButtonClicked(WebPageProxy*, const String& mimeType, const String& url);
+    void missingPluginButtonClicked(WebPageProxy*, const String& mimeType, const String& url, const String& pluginsPageURL);
     void didNotHandleKeyEvent(WebPageProxy*, const NativeWebKeyboardEvent&);
 
     bool toolbarsAreVisible(WebPageProxy*);

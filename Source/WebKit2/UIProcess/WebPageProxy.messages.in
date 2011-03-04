@@ -29,7 +29,7 @@ messages -> WebPageProxy {
     RunJavaScriptConfirm(uint64_t frameID, WTF::String message) -> (bool result)
     RunJavaScriptPrompt(uint64_t frameID, WTF::String message, WTF::String defaultValue) -> (WTF::String result)
     MouseDidMoveOverElement(uint32_t modifiers, WebKit::InjectedBundleUserMessageEncoder userData);
-    MissingPluginButtonClicked(WTF::String mimeType, WTF::String url)
+    MissingPluginButtonClicked(WTF::String mimeType, WTF::String url, WTF::String pluginsPageURL)
     DidChangeViewportData(WebCore::ViewportArguments arguments)
     DidReceiveEvent(uint32_t type, bool handled)
     DidValidateCommand(WTF::String commandName, bool isEnabled, int32_t state)

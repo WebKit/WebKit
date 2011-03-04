@@ -1,3 +1,24 @@
+2011-03-03  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        When displaying the missing plug-in sheet, pass the 'pluginspage'
+        attribute to the UI process.
+        https://bugs.webkit.org/show_bug.cgi?id=55553
+
+        * UIProcess/API/C/WKPage.h: Add pluginsPageURL as the third argument to
+        missingPluginButtonClicked.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::missingPluginButtonClicked): Ditto.
+        * UIProcess/WebPageProxy.h: Ditto.
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::missingPluginButtonClicked): Ditto.
+        * UIProcess/WebUIClient.h: Ditto.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::missingPluginButtonClicked): Get the value of
+        pluginspageAttr.
+
 2011-03-03  Alexey Proskuryakov  <ap@apple.com>
 
         Suggested by Dan Bernstein.

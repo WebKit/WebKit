@@ -1815,9 +1815,9 @@ void WebPageProxy::mouseDidMoveOverElement(uint32_t opaqueModifiers, CoreIPC::Ar
     m_uiClient.mouseDidMoveOverElement(this, modifiers, userData.get());
 }
 
-void WebPageProxy::missingPluginButtonClicked(const String& mimeType, const String& url)
+void WebPageProxy::missingPluginButtonClicked(const String& mimeType, const String& url, const String& pluginsPageURL)
 {
-    m_uiClient.missingPluginButtonClicked(this, mimeType, url);
+    m_uiClient.missingPluginButtonClicked(this, mimeType, url, pluginsPageURL);
 }
 
 void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)
