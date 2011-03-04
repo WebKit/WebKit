@@ -1,3 +1,33 @@
+2011-03-04  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium Snow Leopard rebaseline.
+
+        Rebaseline fast/blockflow.
+
+        * platform/chromium-mac-leopard/fast/blockflow/english-lr-text-expected.checksum: Copied from LayoutTests/platform/chromium-mac/fast/blockflow/english-lr-text-expected.checksum.
+        * platform/chromium-mac-leopard/fast/blockflow/english-lr-text-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-rl-text-with-broken-font-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-rl-text-with-broken-font-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum: Added.
+        * platform/chromium-mac/fast/blockflow/Kusa-Makura-background-canvas-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/border-vertical-lr-expected.checksum:
+        * platform/chromium-mac/fast/blockflow/border-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/blockflow/english-lr-text-expected.checksum:
+        * platform/chromium-mac/fast/blockflow/english-lr-text-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/japanese-lr-selection-expected.checksum:
+        * platform/chromium-mac/fast/blockflow/japanese-lr-selection-expected.png:
+        * platform/chromium-mac/fast/blockflow/japanese-lr-text-expected.checksum:
+        * platform/chromium-mac/fast/blockflow/japanese-lr-text-expected.png:
+        * platform/chromium-mac/fast/blockflow/japanese-rl-selection-expected.checksum:
+        * platform/chromium-mac/fast/blockflow/japanese-rl-selection-expected.png:
+        * platform/chromium-mac/fast/blockflow/japanese-rl-text-expected.checksum:
+        * platform/chromium-mac/fast/blockflow/japanese-rl-text-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/japanese-rl-text-with-broken-font-expected.checksum: Added.
+        * platform/chromium-mac/fast/blockflow/japanese-rl-text-with-broken-font-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/vertical-align-table-baseline-expected.checksum:
+        * platform/chromium-mac/fast/blockflow/vertical-align-table-baseline-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-03  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Darin Adler.
