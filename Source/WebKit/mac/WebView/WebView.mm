@@ -1871,7 +1871,13 @@ static inline IMP getMethod(id o, SEL s)
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [request _web_setHTTPUserAgent:[self userAgentForURL:URL]];
-    NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
+    NSCachedURLResponse *cachedResponse;
+#if USE(CFURLSTORAGESESSIONS)
+    if (CFURLStorageSessionRef storageSession = ResourceHandle::privateBrowsingStorageSession())
+        cachedResponse = WKCachedResponseForRequest(storageSession, request);
+    else
+#endif
+        cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
     [request release];
     return cachedResponse;
 }

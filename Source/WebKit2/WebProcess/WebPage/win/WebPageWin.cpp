@@ -36,6 +36,7 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
+#include <WebCore/ResourceHandle.h>
 #include <WebCore/Settings.h>
 #if PLATFORM(CG)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -253,7 +254,13 @@ bool WebPage::platformHasLocalDataForURL(const WebCore::KURL& url)
     RetainPtr<CFStringRef> userAgent(AdoptCF, userAgent().createCFString());
     CFURLRequestSetHTTPHeaderFieldValue(request.get(), CFSTR("User-Agent"), userAgent.get());
 
-    RetainPtr<CFURLCacheRef> cache(AdoptCF, CFURLCacheCopySharedURLCache());
+    RetainPtr<CFURLCacheRef> cache;
+#if USE(CFURLSTORAGESESSIONS)
+    if (CFURLStorageSessionRef storageSession = ResourceHandle::privateBrowsingStorageSession())
+        cache.adoptCF(wkCopyURLCache(storageSession));
+    else
+#endif
+        cache.adoptCF(CFURLCacheCopySharedURLCache());
 
     RetainPtr<CFCachedURLResponseRef> response(AdoptCF, CFURLCacheCopyResponseForRequest(cache.get(), request.get()));    
     return response;
@@ -271,7 +278,13 @@ String WebPage::cachedResponseMIMETypeForURL(const WebCore::KURL& url)
     RetainPtr<CFStringRef> userAgent(AdoptCF, userAgent().createCFString());
     CFURLRequestSetHTTPHeaderFieldValue(request.get(), CFSTR("User-Agent"), userAgent.get());
 
-    RetainPtr<CFURLCacheRef> cache(AdoptCF, CFURLCacheCopySharedURLCache());
+    RetainPtr<CFURLCacheRef> cache;
+#if USE(CFURLSTORAGESESSIONS)
+    if (CFURLStorageSessionRef storageSession = ResourceHandle::privateBrowsingStorageSession())
+        cache.adoptCF(wkCopyURLCache(storageSession));
+    else
+#endif
+        cache.adoptCF(CFURLCacheCopySharedURLCache());
 
     RetainPtr<CFCachedURLResponseRef> cachedResponse(AdoptCF, CFURLCacheCopyResponseForRequest(cache.get(), request.get()));
     

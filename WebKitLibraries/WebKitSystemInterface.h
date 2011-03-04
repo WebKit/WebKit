@@ -236,6 +236,7 @@ CFStringRef WKCopyFoundationCacheDirectory(void);
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 CFURLStorageSessionRef WKCreatePrivateStorageSession(CFStringRef);
 NSURLRequest *WKCopyRequestWithStorageSession(CFURLStorageSessionRef, NSURLRequest*);
+NSCachedURLResponse *WKCachedResponseForRequest(CFURLStorageSessionRef, NSURLRequest*);
 
 void WKSetVisibleApplicationName(CFStringRef);
 

@@ -65,6 +65,7 @@ typedef struct _CAImageQueue *CAImageQueueRef;
 typedef unsigned long CFTypeID;
 typedef struct _CFURLCredential* WKCFURLCredentialRef;
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
+typedef const struct _CFURLCache* CFURLCacheRef;
 
 void wkSetFontSmoothingLevel(int type);
 int wkGetFontSmoothingLevel();
@@ -98,6 +99,7 @@ void wkCFURLRequestSetHTTPRequestBodyParts(CFMutableURLRequestRef, CFArrayRef bo
 
 CFURLStorageSessionRef wkCreatePrivateStorageSession(CFStringRef identifier);
 void wkSetRequestStorageSession(CFURLStorageSessionRef, CFMutableURLRequestRef);
+CFURLCacheRef wkCopyURLCache(CFURLStorageSessionRef);
 
 CFArrayRef wkCFURLCacheCopyAllHostNamesInPersistentStore();
 void wkCFURLCacheDeleteHostNamesInPersistentStore(CFArrayRef hostNames);

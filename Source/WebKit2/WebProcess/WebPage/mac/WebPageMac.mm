@@ -42,6 +42,7 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
+#import <WebCore/ResourceHandle.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/WindowsKeyboardCodes.h>
@@ -443,7 +444,13 @@ bool WebPage::platformHasLocalDataForURL(const WebCore::KURL& url)
 {
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:url];
     [request setValue:(NSString*)userAgent() forHTTPHeaderField:@"User-Agent"];
-    NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
+    NSCachedURLResponse *cachedResponse;
+#if USE(CFURLSTORAGESESSIONS)
+    if (CFURLStorageSessionRef storageSession = ResourceHandle::privateBrowsingStorageSession())
+        cachedResponse = WKCachedResponseForRequest(storageSession, request);
+    else
+#endif
+        cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
     [request release];
     
     return cachedResponse;
@@ -453,7 +460,13 @@ String WebPage::cachedResponseMIMETypeForURL(const WebCore::KURL& url)
 {
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:url];
     [request setValue:(NSString*)userAgent() forHTTPHeaderField:@"User-Agent"];
-    NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
+    NSCachedURLResponse *cachedResponse;
+#if USE(CFURLSTORAGESESSIONS)
+    if (CFURLStorageSessionRef storageSession = ResourceHandle::privateBrowsingStorageSession())
+        cachedResponse = WKCachedResponseForRequest(storageSession, request);
+    else
+#endif
+        cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
     [request release];
     
     return [[cachedResponse response] MIMEType];

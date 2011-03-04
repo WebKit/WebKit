@@ -1,3 +1,16 @@
+2011-03-04  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Use CFNetwork Sessions API.
+        https://bugs.webkit.org/show_bug.cgi?id=55435.
+
+        When Private Browsing is enabled, get the cached url response from the cache associated with
+        the Private Browsing Storage Session.
+
+        * WebView/WebView.mm:
+        (-[WebView _cachedResponseForURL:]):
+
 2011-03-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
