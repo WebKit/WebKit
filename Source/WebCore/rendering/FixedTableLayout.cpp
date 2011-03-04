@@ -118,7 +118,7 @@ int FixedTableLayout::calcWidthArray(int)
                     spanInCurrentEffectiveColumn = m_table->spanOfEffCol(currentEffectiveColumn);
                 }
                 if ((w.isFixed() || w.isPercent()) && w.isPositive()) {
-                    m_width[currentEffectiveColumn].setRawValue(w.type(), w.rawValue() * spanInCurrentEffectiveColumn);
+                    m_width[currentEffectiveColumn].setValue(w.type(), w.rawValue() * spanInCurrentEffectiveColumn);
                     usedWidth += effWidth * spanInCurrentEffectiveColumn;
                 }
                 span -= spanInCurrentEffectiveColumn;
@@ -167,7 +167,7 @@ int FixedTableLayout::calcWidthArray(int)
                     int eSpan = m_table->spanOfEffCol(cCol + i);
                     // Only set if no col element has already set it.
                     if (m_width[cCol + i].isAuto() && w.type() != Auto) {
-                        m_width[cCol + i].setRawValue(w.type(), w.rawValue() * eSpan / span);
+                        m_width[cCol + i].setValue(w.type(), w.rawValue() * eSpan / span);
                         usedWidth += effWidth * eSpan / span;
                     }
                     usedSpan += eSpan;

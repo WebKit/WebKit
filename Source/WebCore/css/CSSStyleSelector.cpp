@@ -3363,7 +3363,7 @@ void RuleSet::shrinkToFit()
 // -------------------------------------------------------------------------------------
 // this is mostly boring stuff on how to apply a certain rule to the renderstyle...
 
-static Length convertToLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, double multiplier = 1, bool *ok = 0)
+static Length convertToLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, bool toFloat, double multiplier = 1, bool *ok = 0)
 {
     // This function is tolerant of a null style value. The only place style is used is in
     // length measurements, like 'ems' and 'px'. And in those cases style is only used
@@ -3378,8 +3378,12 @@ static Length convertToLength(CSSPrimitiveValue* primitiveValue, RenderStyle* st
         if (!style && (type == CSSPrimitiveValue::CSS_EMS || type == CSSPrimitiveValue::CSS_EXS || type == CSSPrimitiveValue::CSS_REMS)) {
             if (ok)
                 *ok = false;
-        } else if (CSSPrimitiveValue::isUnitTypeLength(type))
-            l = Length(primitiveValue->computeLengthIntForLength(style, rootStyle, multiplier), Fixed);
+        } else if (CSSPrimitiveValue::isUnitTypeLength(type)) {
+            if (toFloat)
+                l = Length(primitiveValue->computeLengthDouble(style, rootStyle, multiplier), Fixed);
+            else
+                l = Length(primitiveValue->computeLengthIntForLength(style, rootStyle, multiplier), Fixed);
+        }
         else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
             l = Length(primitiveValue->getDoubleValue(), Percent);
         else if (type == CSSPrimitiveValue::CSS_NUMBER)
@@ -3388,6 +3392,16 @@ static Length convertToLength(CSSPrimitiveValue* primitiveValue, RenderStyle* st
             *ok = false;
     }
     return l;
+}
+    
+static Length convertToIntLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, double multiplier = 1, bool *ok = 0)
+{
+    return convertToLength(primitiveValue, style, rootStyle, false, multiplier, ok);
+}
+
+static Length convertToFloatLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, double multiplier = 1, bool *ok = 0)
+{
+    return convertToLength(primitiveValue, style, rootStyle, true, multiplier, ok);
 }
 
 template <bool applyFirst>
@@ -4709,10 +4723,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             Rect* rect = primitiveValue->getRectValue();
             if (!rect)
                 return;
-            top = convertToLength(rect->top(), style(), m_rootElementStyle, zoomFactor);
-            right = convertToLength(rect->right(), style(), m_rootElementStyle, zoomFactor);
-            bottom = convertToLength(rect->bottom(), style(), m_rootElementStyle, zoomFactor);
-            left = convertToLength(rect->left(), style(), m_rootElementStyle, zoomFactor);
+            top = convertToIntLength(rect->top(), style(), m_rootElementStyle, zoomFactor);
+            right = convertToIntLength(rect->right(), style(), m_rootElementStyle, zoomFactor);
+            bottom = convertToIntLength(rect->bottom(), style(), m_rootElementStyle, zoomFactor);
+            left = convertToIntLength(rect->left(), style(), m_rootElementStyle, zoomFactor);
         } else if (primitiveValue->getIdent() != CSSValueAuto) {
             return;
         }
@@ -5655,9 +5669,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         else {
             bool ok = true;
-            Length l = convertToLength(primitiveValue, style(), m_rootElementStyle, 1, &ok);
+            Length marqueeLength = convertToIntLength(primitiveValue, style(), m_rootElementStyle, 1, &ok);
             if (ok)
-                m_style->setMarqueeIncrement(l);
+                m_style->setMarqueeIncrement(marqueeLength);
         }
         return;
     }
@@ -5803,10 +5817,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             
         DashboardRegion *first = region;
         while (region) {
-            Length top = convertToLength(region->top(), style(), m_rootElementStyle);
-            Length right = convertToLength(region->right(), style(), m_rootElementStyle);
-            Length bottom = convertToLength(region->bottom(), style(), m_rootElementStyle);
-            Length left = convertToLength(region->left(), style(), m_rootElementStyle);
+            Length top = convertToIntLength(region->top(), style(), m_rootElementStyle);
+            Length right = convertToIntLength(region->right(), style(), m_rootElementStyle);
+            Length bottom = convertToIntLength(region->bottom(), style(), m_rootElementStyle);
+            Length left = convertToIntLength(region->left(), style(), m_rootElementStyle);
             if (region->m_isCircle)
                 m_style->setDashboardRegion(StyleDashboardRegion::Circle, region->m_label, top, right, bottom, left, region == first ? false : true);
             else if (region->m_isRectangle)
@@ -7264,13 +7278,13 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                 Length tx = Length(0, Fixed);
                 Length ty = Length(0, Fixed);
                 if (transformValue->operationType() == WebKitCSSTransformValue::TranslateYTransformOperation)
-                    ty = convertToLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                    ty = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
                 else { 
-                    tx = convertToLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                    tx = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
                     if (transformValue->operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
                         if (transformValue->length() > 1) {
                             CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
-                            ty = convertToLength(secondValue, style, rootStyle, zoomFactor, &ok);
+                            ty = convertToFloatLength(secondValue, style, rootStyle, zoomFactor, &ok);
                         }
                     }
                 }
@@ -7288,19 +7302,19 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                 Length ty = Length(0, Fixed);
                 Length tz = Length(0, Fixed);
                 if (transformValue->operationType() == WebKitCSSTransformValue::TranslateZTransformOperation)
-                    tz = convertToLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                    tz = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
                 else if (transformValue->operationType() == WebKitCSSTransformValue::TranslateYTransformOperation)
-                    ty = convertToLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                    ty = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
                 else { 
-                    tx = convertToLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                    tx = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
                     if (transformValue->operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
                         if (transformValue->length() > 2) {
                             CSSPrimitiveValue* thirdValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2));
-                            tz = convertToLength(thirdValue, style, rootStyle, zoomFactor, &ok);
+                            tz = convertToFloatLength(thirdValue, style, rootStyle, zoomFactor, &ok);
                         }
                         if (transformValue->length() > 1) {
                             CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
-                            ty = convertToLength(secondValue, style, rootStyle, zoomFactor, &ok);
+                            ty = convertToFloatLength(secondValue, style, rootStyle, zoomFactor, &ok);
                         }
                     }
                 }
@@ -7431,7 +7445,7 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                 bool ok = true;
                 Length p = Length(0, Fixed);
                 if (CSSPrimitiveValue::isUnitTypeLength(firstValue->primitiveType()))
-                    p = convertToLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                    p = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
                 else {
                     // This is a quirk that should go away when 3d transforms are finalized.
                     double val = firstValue->getDoubleValue();
