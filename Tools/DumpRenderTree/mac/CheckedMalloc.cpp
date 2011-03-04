@@ -31,8 +31,10 @@
 #import "config.h" 
 #import "CheckedMalloc.h"
 
+#import <mach/mach_init.h>
+#import <mach/mach_vm.h>
+#import <mach/vm_region.h>
 #import <malloc/malloc.h>
-#import <sys/mman.h>
 
 static void* (*savedMalloc)(malloc_zone_t*, size_t);
 static void* (*savedRealloc)(malloc_zone_t*, void*, size_t);
@@ -51,14 +53,30 @@ static void* checkedRealloc(malloc_zone_t* zone, void* ptr, size_t size)
     return savedRealloc(zone, ptr, size);
 }
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+static vm_prot_t protectionOfRegion(mach_vm_address_t address)
+{
+    mach_vm_size_t regionSize = 0;
+    vm_region_basic_info_64 regionInfo;
+    mach_msg_type_number_t regionInfoCount = VM_REGION_BASIC_INFO_COUNT_64;
+    mach_port_t objectName;
+    if (mach_vm_region(mach_task_self(), &address, &regionSize, VM_REGION_BASIC_INFO_64, (vm_region_info_t)&regionInfo, &regionInfoCount, &objectName))
+        CRASH();
+    return regionInfo.protection;
+}
+#endif
+
 void makeLargeMallocFailSilently()
 {
     malloc_zone_t* zone = malloc_default_zone();
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    vm_address_t pageStart = reinterpret_cast<vm_address_t>(zone) & static_cast<vm_size_t>(~(getpagesize() - 1));
+    mach_vm_address_t pageStart = reinterpret_cast<vm_address_t>(zone) & static_cast<vm_size_t>(~(getpagesize() - 1));
+    vm_prot_t initialProtection = protectionOfRegion(pageStart);
+
     vm_size_t len = reinterpret_cast<vm_address_t>(zone) - pageStart + sizeof(malloc_zone_t);
-    mprotect(reinterpret_cast<void*>(pageStart), len, PROT_READ | PROT_WRITE);
+    if (mach_vm_protect(mach_task_self(), pageStart, len, 0, initialProtection | VM_PROT_WRITE))
+        CRASH();
 #endif
 
     savedMalloc = zone->malloc;
@@ -67,6 +85,7 @@ void makeLargeMallocFailSilently()
     zone->realloc = checkedRealloc;
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    mprotect(reinterpret_cast<void*>(pageStart), len, PROT_READ);
+    if (mach_vm_protect(mach_task_self(), pageStart, len, 0, initialProtection))
+        CRASH();
 #endif
 }

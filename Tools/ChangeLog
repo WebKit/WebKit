@@ -1,3 +1,16 @@
+2011-03-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/9055252> DumpRenderTree is crashing with GuardMalloc
+
+        GuardMalloc does not expect the memory containing its malloc_zone_t to ever be read-only.
+        
+        * DumpRenderTree/mac/CheckedMalloc.cpp:
+        (protectionOfRegion): Retrieve the protection flags for the VM region containing the given address.
+        (makeLargeMallocFailSilently): Save the initial protection flags, temporarily make the region writeable,
+        and then restore the initial protection flags when we're done.
+
 2011-03-04  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.
