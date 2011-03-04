@@ -909,7 +909,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionCall(RegisterID* cond,
 
     emitOpcode(op_jneq_ptr);
     instructions().append(cond->index());
-    instructions().append(m_scopeChain->globalObject->callFunction());
+    instructions().append(m_scopeChain->globalObject->d()->callFunction.get());
     instructions().append(target->bind(begin, instructions().size()));
     return target;
 }
@@ -920,7 +920,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond
 
     emitOpcode(op_jneq_ptr);
     instructions().append(cond->index());
-    instructions().append(m_scopeChain->globalObject->applyFunction());
+    instructions().append(m_scopeChain->globalObject->d()->applyFunction.get());
     instructions().append(target->bind(begin, instructions().size()));
     return target;
 }

@@ -411,10 +411,8 @@ namespace JSC {
     
     inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t bytes)
     {
-        ASSERT(bytes && bytes < maxCellSize);
-        if (bytes < preciseCutoff)
-            return m_preciseSizeClasses[(bytes - 1) / preciseStep];
-        return m_impreciseSizeClasses[(bytes - 1) / impreciseStep];
+        ASSERT(bytes && bytes <= preciseCutoff);
+        return m_preciseSizeClasses[(bytes - 1) / preciseStep];
     }
 
     inline void* MarkedSpace::allocate(size_t bytes)

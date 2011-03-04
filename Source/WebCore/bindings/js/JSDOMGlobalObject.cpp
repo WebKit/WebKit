@@ -42,10 +42,8 @@ namespace WebCore {
 
 const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject", &JSGlobalObject::s_info, 0, 0 };
 
-JSDOMGlobalObject::JSDOMGlobalObject(NonNullPassRefPtr<Structure> structure, PassRefPtr<DOMWrapperWorld> world, JSObject* thisValue)
-    : JSGlobalObject(structure, thisValue)
-    , m_currentEvent(0)
-    , m_world(world)
+JSDOMGlobalObject::JSDOMGlobalObject(NonNullPassRefPtr<Structure> structure, JSDOMGlobalObject::JSDOMGlobalObjectData* data, JSObject* thisValue)
+    : JSGlobalObject(structure, data, thisValue)
 {
     ASSERT(inherits(&s_info));
 }
@@ -62,28 +60,33 @@ void JSDOMGlobalObject::markChildren(MarkStack& markStack)
     for (JSDOMConstructorMap::iterator it2 = constructors().begin(); it2 != end2; ++it2)
         markStack.append(&it2->second);
 
-    if (m_injectedScript)
-        markStack.append(&m_injectedScript);
+    if (d()->m_injectedScript)
+        markStack.append(&d()->m_injectedScript);
 }
 
-void JSDOMGlobalObject::setCurrentEvent(Event* currentEvent)
+void JSDOMGlobalObject::setCurrentEvent(Event* evt)
 {
-    currentEvent = currentEvent;
+    d()->evt = evt;
 }
 
 Event* JSDOMGlobalObject::currentEvent() const
 {
-    return m_currentEvent;
+    return d()->evt;
 }
 
 void JSDOMGlobalObject::setInjectedScript(JSObject* injectedScript)
 {
-    m_injectedScript.set(globalData(), this, injectedScript);
+    d()->m_injectedScript.set(globalData(), this, injectedScript);
 }
 
 JSObject* JSDOMGlobalObject::injectedScript() const
 {
-    return m_injectedScript.get();
+    return d()->m_injectedScript.get();
+}
+
+void JSDOMGlobalObject::destroyJSDOMGlobalObjectData(void* jsDOMGlobalObjectData)
+{
+    delete static_cast<JSDOMGlobalObjectData*>(jsDOMGlobalObjectData);
 }
 
 JSDOMGlobalObject* toJSDOMGlobalObject(Document* document, JSC::ExecState* exec)

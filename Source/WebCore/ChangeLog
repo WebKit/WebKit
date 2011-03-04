@@ -1,3 +1,16 @@
+2011-03-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled out 80277 and 80280 because they caused event handler layout test
+        failures.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.h:
+        * bindings/js/JSWorkerContextBase.cpp:
+
 2011-03-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

@@ -609,7 +609,7 @@ void JIT::emit_op_get_global_var(Instruction* currentInstruction)
     ASSERT(globalObject->isGlobalObject());
     int index = currentInstruction[2].u.operand;
 
-    loadPtr(&globalObject->m_registers, regT2);
+    loadPtr(&globalObject->d()->registers, regT2);
 
     emitLoad(index, regT1, regT0, regT2);
     emitStore(dst, regT1, regT0);
@@ -625,7 +625,7 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
 
     emitLoad(value, regT1, regT0);
 
-    loadPtr(&globalObject->m_registers, regT2);
+    loadPtr(&globalObject->d()->registers, regT2);
     emitStore(index, regT1, regT0, regT2);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_put_global_var), value, regT1, regT0);
 }
@@ -650,7 +650,8 @@ void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
         loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, next)), regT2);
 
     loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, object)), regT2);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT2);
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSVariableObject, d)), regT2);
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSVariableObject::JSVariableObjectData, registers)), regT2);
 
     emitLoad(index, regT1, regT0, regT2);
     emitStore(dst, regT1, regT0);
@@ -679,7 +680,8 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
         loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, next)), regT2);
 
     loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, object)), regT2);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT2);
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSVariableObject, d)), regT2);
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSVariableObject::JSVariableObjectData, registers)), regT2);
 
     emitStore(index, regT1, regT0, regT2);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_put_scoped_var), value, regT1, regT0);

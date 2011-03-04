@@ -67,7 +67,7 @@ inline bool JSDOMWindowBase::allowsAccessFrom(JSC::ExecState* exec, String& mess
 ALWAYS_INLINE bool JSDOMWindowBase::allowsAccessFromPrivate(const JSGlobalObject* other) const
 {
     const JSDOMWindow* originWindow = asJSDOMWindow(other);
-    const JSDOMWindow* targetWindow = m_shell->window();
+    const JSDOMWindow* targetWindow = d()->shell->window();
 
     if (originWindow == targetWindow)
         return true;

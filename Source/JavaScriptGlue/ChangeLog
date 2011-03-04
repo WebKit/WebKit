@@ -1,15 +1,10 @@
-2011-03-02  Geoffrey Garen  <ggaren@apple.com>
+2011-03-03  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by Darin Adler.
-
-        Moved all variable object storage inline -- upping the object size limit to 1K
-        https://bugs.webkit.org/show_bug.cgi?id=55653
+        Rolled out 80277 and 80280 because they caused event handler layout test
+        failures.
 
         * JSRun.cpp:
-        (JSGlueGlobalObject::JSGlueGlobalObject):
         * JSRun.h:
-        (JSGlueGlobalObject::Flags):
-        (JSGlueGlobalObject::userObjectStructure): Removed out-of-line storage. Changed d-> to m_.
 
 2011-03-01  Adam Barth  <abarth@webkit.org>
 

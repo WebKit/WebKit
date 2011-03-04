@@ -54,74 +54,92 @@ namespace JSC {
     
     class JSGlobalObject : public JSVariableObject {
     protected:
+        using JSVariableObject::JSVariableObjectData;
         typedef HashSet<RefPtr<OpaqueJSWeakObjectMap> > WeakMapSet;
 
-        size_t m_registerArraySize;
+        struct JSGlobalObjectData : public JSVariableObjectData {
+            // We use an explicit destructor function pointer instead of a
+            // virtual destructor because we want to avoid adding a vtable
+            // pointer to this struct. Adding a vtable pointer would force the
+            // compiler to emit costly pointer fixup code when casting from
+            // JSVariableObjectData* to JSGlobalObjectData*.
+            typedef void (*Destructor)(void*);
 
-        JSGlobalObject* m_next;
-        JSGlobalObject* m_prev;
+            JSGlobalObjectData(Destructor destructor)
+                : JSVariableObjectData(&symbolTable, 0)
+                , destructor(destructor)
+                , registerArraySize(0)
+                , globalScopeChain()
+                , weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
+            {
+            }
+            
+            Destructor destructor;
+            
+            size_t registerArraySize;
 
-        Debugger* m_debugger;
-        
-        WriteBarrier<ScopeChainNode> m_globalScopeChain;
-        Register m_globalCallFrame[RegisterFile::CallFrameHeaderSize];
+            JSGlobalObject* next;
+            JSGlobalObject* prev;
 
-        WriteBarrier<RegExpConstructor> m_regExpConstructor;
-        WriteBarrier<ErrorConstructor> m_errorConstructor;
-        WriteBarrier<NativeErrorConstructor> m_evalErrorConstructor;
-        WriteBarrier<NativeErrorConstructor> m_rangeErrorConstructor;
-        WriteBarrier<NativeErrorConstructor> m_referenceErrorConstructor;
-        WriteBarrier<NativeErrorConstructor> m_syntaxErrorConstructor;
-        WriteBarrier<NativeErrorConstructor> m_typeErrorConstructor;
-        WriteBarrier<NativeErrorConstructor> m_URIErrorConstructor;
+            Debugger* debugger;
+            
+            WriteBarrier<ScopeChainNode> globalScopeChain;
+            Register globalCallFrame[RegisterFile::CallFrameHeaderSize];
 
-        WriteBarrier<JSFunction> m_evalFunction;
-        WriteBarrier<JSFunction> m_callFunction;
-        WriteBarrier<JSFunction> m_applyFunction;
+            WriteBarrier<RegExpConstructor> regExpConstructor;
+            WriteBarrier<ErrorConstructor> errorConstructor;
+            WriteBarrier<NativeErrorConstructor> evalErrorConstructor;
+            WriteBarrier<NativeErrorConstructor> rangeErrorConstructor;
+            WriteBarrier<NativeErrorConstructor> referenceErrorConstructor;
+            WriteBarrier<NativeErrorConstructor> syntaxErrorConstructor;
+            WriteBarrier<NativeErrorConstructor> typeErrorConstructor;
+            WriteBarrier<NativeErrorConstructor> URIErrorConstructor;
 
-        WriteBarrier<ObjectPrototype> m_objectPrototype;
-        WriteBarrier<FunctionPrototype> m_functionPrototype;
-        WriteBarrier<ArrayPrototype> m_arrayPrototype;
-        WriteBarrier<BooleanPrototype> m_booleanPrototype;
-        WriteBarrier<StringPrototype> m_stringPrototype;
-        WriteBarrier<NumberPrototype> m_numberPrototype;
-        WriteBarrier<DatePrototype> m_datePrototype;
-        WriteBarrier<RegExpPrototype> m_regExpPrototype;
+            WriteBarrier<JSFunction> evalFunction;
+            WriteBarrier<JSFunction> callFunction;
+            WriteBarrier<JSFunction> applyFunction;
 
-        WriteBarrier<JSObject> m_methodCallDummy;
+            WriteBarrier<ObjectPrototype> objectPrototype;
+            WriteBarrier<FunctionPrototype> functionPrototype;
+            WriteBarrier<ArrayPrototype> arrayPrototype;
+            WriteBarrier<BooleanPrototype> booleanPrototype;
+            WriteBarrier<StringPrototype> stringPrototype;
+            WriteBarrier<NumberPrototype> numberPrototype;
+            WriteBarrier<DatePrototype> datePrototype;
+            WriteBarrier<RegExpPrototype> regExpPrototype;
 
-        RefPtr<Structure> m_argumentsStructure;
-        RefPtr<Structure> m_arrayStructure;
-        RefPtr<Structure> m_booleanObjectStructure;
-        RefPtr<Structure> m_callbackConstructorStructure;
-        RefPtr<Structure> m_callbackFunctionStructure;
-        RefPtr<Structure> m_callbackObjectStructure;
-        RefPtr<Structure> m_dateStructure;
-        RefPtr<Structure> m_emptyObjectStructure;
-        RefPtr<Structure> m_errorStructure;
-        RefPtr<Structure> m_functionStructure;
-        RefPtr<Structure> m_numberObjectStructure;
-        RefPtr<Structure> m_regExpMatchesArrayStructure;
-        RefPtr<Structure> m_regExpStructure;
-        RefPtr<Structure> m_stringObjectStructure;
-        RefPtr<Structure> m_internalFunctionStructure;
+            WriteBarrier<JSObject> methodCallDummy;
 
-        SymbolTable m_symbolTable;
-        unsigned m_profileGroup;
+            RefPtr<Structure> argumentsStructure;
+            RefPtr<Structure> arrayStructure;
+            RefPtr<Structure> booleanObjectStructure;
+            RefPtr<Structure> callbackConstructorStructure;
+            RefPtr<Structure> callbackFunctionStructure;
+            RefPtr<Structure> callbackObjectStructure;
+            RefPtr<Structure> dateStructure;
+            RefPtr<Structure> emptyObjectStructure;
+            RefPtr<Structure> errorStructure;
+            RefPtr<Structure> functionStructure;
+            RefPtr<Structure> numberObjectStructure;
+            RefPtr<Structure> regExpMatchesArrayStructure;
+            RefPtr<Structure> regExpStructure;
+            RefPtr<Structure> stringObjectStructure;
+            RefPtr<Structure> internalFunctionStructure;
 
-        RefPtr<JSGlobalData> m_globalData;
+            SymbolTable symbolTable;
+            unsigned profileGroup;
 
-        WeakMapSet m_weakMaps;
-        WeakRandom m_weakRandom;
+            RefPtr<JSGlobalData> globalData;
+
+            WeakMapSet weakMaps;
+            WeakRandom weakRandom;
+        };
 
     public:
         void* operator new(size_t, JSGlobalData*);
         
         explicit JSGlobalObject()
-            : JSVariableObject(JSGlobalObject::createStructure(jsNull()), &m_symbolTable, 0)
-            , m_registerArraySize(0)
-            , m_globalScopeChain()
-            , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
+            : JSVariableObject(JSGlobalObject::createStructure(jsNull()), new JSGlobalObjectData(destroyJSGlobalObjectData))
         {
             COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
             putThisToAnonymousValue(0);
@@ -129,10 +147,7 @@ namespace JSC {
         }
         
         explicit JSGlobalObject(NonNullPassRefPtr<Structure> structure)
-            : JSVariableObject(structure, &m_symbolTable, 0)
-            , m_registerArraySize(0)
-            , m_globalScopeChain()
-            , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
+            : JSVariableObject(structure, new JSGlobalObjectData(destroyJSGlobalObjectData))
         {
             COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
             putThisToAnonymousValue(0);
@@ -140,11 +155,8 @@ namespace JSC {
         }
 
     protected:
-        JSGlobalObject(NonNullPassRefPtr<Structure> structure, JSObject* thisValue)
-            : JSVariableObject(structure, &m_symbolTable, 0)
-            , m_registerArraySize(0)
-            , m_globalScopeChain()
-            , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
+        JSGlobalObject(NonNullPassRefPtr<Structure> structure, JSGlobalObjectData* data, JSObject* thisValue)
+            : JSVariableObject(structure, data)
         {
             COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
             putThisToAnonymousValue(0);
@@ -172,57 +184,55 @@ namespace JSC {
         // The following accessors return pristine values, even if a script 
         // replaces the global object's associated property.
 
-        RegExpConstructor* regExpConstructor() const { return m_regExpConstructor.get(); }
+        RegExpConstructor* regExpConstructor() const { return d()->regExpConstructor.get(); }
 
-        ErrorConstructor* errorConstructor() const { return m_errorConstructor.get(); }
-        NativeErrorConstructor* evalErrorConstructor() const { return m_evalErrorConstructor.get(); }
-        NativeErrorConstructor* rangeErrorConstructor() const { return m_rangeErrorConstructor.get(); }
-        NativeErrorConstructor* referenceErrorConstructor() const { return m_referenceErrorConstructor.get(); }
-        NativeErrorConstructor* syntaxErrorConstructor() const { return m_syntaxErrorConstructor.get(); }
-        NativeErrorConstructor* typeErrorConstructor() const { return m_typeErrorConstructor.get(); }
-        NativeErrorConstructor* URIErrorConstructor() const { return m_URIErrorConstructor.get(); }
+        ErrorConstructor* errorConstructor() const { return d()->errorConstructor.get(); }
+        NativeErrorConstructor* evalErrorConstructor() const { return d()->evalErrorConstructor.get(); }
+        NativeErrorConstructor* rangeErrorConstructor() const { return d()->rangeErrorConstructor.get(); }
+        NativeErrorConstructor* referenceErrorConstructor() const { return d()->referenceErrorConstructor.get(); }
+        NativeErrorConstructor* syntaxErrorConstructor() const { return d()->syntaxErrorConstructor.get(); }
+        NativeErrorConstructor* typeErrorConstructor() const { return d()->typeErrorConstructor.get(); }
+        NativeErrorConstructor* URIErrorConstructor() const { return d()->URIErrorConstructor.get(); }
 
-        JSFunction* evalFunction() const { return m_evalFunction.get(); }
-        JSFunction* callFunction() const { return m_callFunction.get(); }
-        JSFunction* applyFunction() const { return m_applyFunction.get(); }
+        JSFunction* evalFunction() const { return d()->evalFunction.get(); }
 
-        ObjectPrototype* objectPrototype() const { return m_objectPrototype.get(); }
-        FunctionPrototype* functionPrototype() const { return m_functionPrototype.get(); }
-        ArrayPrototype* arrayPrototype() const { return m_arrayPrototype.get(); }
-        BooleanPrototype* booleanPrototype() const { return m_booleanPrototype.get(); }
-        StringPrototype* stringPrototype() const { return m_stringPrototype.get(); }
-        NumberPrototype* numberPrototype() const { return m_numberPrototype.get(); }
-        DatePrototype* datePrototype() const { return m_datePrototype.get(); }
-        RegExpPrototype* regExpPrototype() const { return m_regExpPrototype.get(); }
+        ObjectPrototype* objectPrototype() const { return d()->objectPrototype.get(); }
+        FunctionPrototype* functionPrototype() const { return d()->functionPrototype.get(); }
+        ArrayPrototype* arrayPrototype() const { return d()->arrayPrototype.get(); }
+        BooleanPrototype* booleanPrototype() const { return d()->booleanPrototype.get(); }
+        StringPrototype* stringPrototype() const { return d()->stringPrototype.get(); }
+        NumberPrototype* numberPrototype() const { return d()->numberPrototype.get(); }
+        DatePrototype* datePrototype() const { return d()->datePrototype.get(); }
+        RegExpPrototype* regExpPrototype() const { return d()->regExpPrototype.get(); }
 
-        JSObject* methodCallDummy() const { return m_methodCallDummy.get(); }
+        JSObject* methodCallDummy() const { return d()->methodCallDummy.get(); }
 
-        Structure* argumentsStructure() const { return m_argumentsStructure.get(); }
-        Structure* arrayStructure() const { return m_arrayStructure.get(); }
-        Structure* booleanObjectStructure() const { return m_booleanObjectStructure.get(); }
-        Structure* callbackConstructorStructure() const { return m_callbackConstructorStructure.get(); }
-        Structure* callbackFunctionStructure() const { return m_callbackFunctionStructure.get(); }
-        Structure* callbackObjectStructure() const { return m_callbackObjectStructure.get(); }
-        Structure* dateStructure() const { return m_dateStructure.get(); }
-        Structure* emptyObjectStructure() const { return m_emptyObjectStructure.get(); }
-        Structure* errorStructure() const { return m_errorStructure.get(); }
-        Structure* functionStructure() const { return m_functionStructure.get(); }
-        Structure* numberObjectStructure() const { return m_numberObjectStructure.get(); }
-        Structure* internalFunctionStructure() const { return m_internalFunctionStructure.get(); }
-        Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
-        Structure* regExpStructure() const { return m_regExpStructure.get(); }
-        Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
+        Structure* argumentsStructure() const { return d()->argumentsStructure.get(); }
+        Structure* arrayStructure() const { return d()->arrayStructure.get(); }
+        Structure* booleanObjectStructure() const { return d()->booleanObjectStructure.get(); }
+        Structure* callbackConstructorStructure() const { return d()->callbackConstructorStructure.get(); }
+        Structure* callbackFunctionStructure() const { return d()->callbackFunctionStructure.get(); }
+        Structure* callbackObjectStructure() const { return d()->callbackObjectStructure.get(); }
+        Structure* dateStructure() const { return d()->dateStructure.get(); }
+        Structure* emptyObjectStructure() const { return d()->emptyObjectStructure.get(); }
+        Structure* errorStructure() const { return d()->errorStructure.get(); }
+        Structure* functionStructure() const { return d()->functionStructure.get(); }
+        Structure* numberObjectStructure() const { return d()->numberObjectStructure.get(); }
+        Structure* internalFunctionStructure() const { return d()->internalFunctionStructure.get(); }
+        Structure* regExpMatchesArrayStructure() const { return d()->regExpMatchesArrayStructure.get(); }
+        Structure* regExpStructure() const { return d()->regExpStructure.get(); }
+        Structure* stringObjectStructure() const { return d()->stringObjectStructure.get(); }
 
-        void setProfileGroup(unsigned value) { m_profileGroup = value; }
-        unsigned profileGroup() const { return m_profileGroup; }
+        void setProfileGroup(unsigned value) { d()->profileGroup = value; }
+        unsigned profileGroup() const { return d()->profileGroup; }
 
-        Debugger* debugger() const { return m_debugger; }
-        void setDebugger(Debugger* debugger) { m_debugger = debugger; }
+        Debugger* debugger() const { return d()->debugger; }
+        void setDebugger(Debugger* debugger) { d()->debugger = debugger; }
 
         virtual bool supportsProfiling() const { return false; }
         virtual bool supportsRichSourceInfo() const { return true; }
 
-        ScopeChainNode* globalScopeChain() { return m_globalScopeChain.get(); }
+        ScopeChainNode* globalScopeChain() { return d()->globalScopeChain.get(); }
 
         virtual bool isGlobalObject() const { return true; }
 
@@ -240,7 +250,8 @@ namespace JSC {
 
         void resetPrototype(JSValue prototype);
 
-        JSGlobalData& globalData() const { return *m_globalData.get(); }
+        JSGlobalData& globalData() const { return *d()->globalData.get(); }
+        JSGlobalObjectData* d() const { return static_cast<JSGlobalObjectData*>(JSVariableObject::d); }
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
@@ -249,15 +260,15 @@ namespace JSC {
 
         void registerWeakMap(OpaqueJSWeakObjectMap* map)
         {
-            m_weakMaps.add(map);
+            d()->weakMaps.add(map);
         }
 
         void deregisterWeakMap(OpaqueJSWeakObjectMap* map)
         {
-            m_weakMaps.remove(map);
+            d()->weakMaps.remove(map);
         }
 
-        double weakRandomNumber() { return m_weakRandom.get(); }
+        double weakRandomNumber() { return d()->weakRandom.get(); }
     protected:
 
         static const unsigned AnonymousSlotCount = JSVariableObject::AnonymousSlotCount + 1;
@@ -278,6 +289,8 @@ namespace JSC {
         void addStaticGlobals(GlobalPropertyInfo*, int count);
 
     private:
+        static void destroyJSGlobalObjectData(void*);
+
         // FIXME: Fold reset into init.
         void init(JSObject* thisValue);
         void reset(JSValue prototype);
@@ -298,17 +311,17 @@ namespace JSC {
     inline void JSGlobalObject::setRegisters(WriteBarrier<Unknown>* registers, PassOwnArrayPtr<WriteBarrier<Unknown> > registerArray, size_t count)
     {
         JSVariableObject::setRegisters(registers, registerArray);
-        m_registerArraySize = count;
+        d()->registerArraySize = count;
     }
 
     inline void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
     {
-        size_t oldSize = m_registerArraySize;
+        size_t oldSize = d()->registerArraySize;
         size_t newSize = oldSize + count;
         WriteBarrier<Unknown>* registerArray = new WriteBarrier<Unknown>[newSize];
-        if (m_registerArray) {
+        if (d()->registerArray) {
             // memcpy is safe here as we're copying barriers we already own from the existing array
-            memcpy(registerArray + count, m_registerArray.get(), oldSize * sizeof(Register));
+            memcpy(registerArray + count, d()->registerArray.get(), oldSize * sizeof(Register));
         }
 
         setRegisters(registerArray + newSize, registerArray, newSize);

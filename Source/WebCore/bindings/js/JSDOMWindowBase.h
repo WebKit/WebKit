@@ -49,7 +49,7 @@ namespace WebCore {
     public:
         void updateDocument();
 
-        DOMWindow* impl() const { return m_impl.get(); }
+        DOMWindow* impl() const { return d()->impl.get(); }
         virtual ScriptExecutionContext* scriptExecutionContext() const;
 
         // Called just before removing this window from the JSDOMWindowShell.
@@ -82,11 +82,19 @@ namespace WebCore {
         static JSC::JSGlobalData* commonJSGlobalData();
 
     private:
-        RefPtr<DOMWindow> m_impl;
-        JSDOMWindowShell* m_shell;
+        struct JSDOMWindowBaseData : public JSDOMGlobalObjectData {
+            JSDOMWindowBaseData(PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell);
+
+            RefPtr<DOMWindow> impl;
+            JSDOMWindowShell* shell;
+        };
 
         bool allowsAccessFromPrivate(const JSC::JSGlobalObject*) const;
         String crossDomainAccessErrorMessage(const JSC::JSGlobalObject*) const;
+        
+        static void destroyJSDOMWindowBaseData(void*);
+
+        JSDOMWindowBaseData* d() const { return static_cast<JSDOMWindowBaseData*>(JSC::JSVariableObject::d); }
     };
 
     // Returns a JSDOMWindow or jsNull()

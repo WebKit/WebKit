@@ -34,10 +34,15 @@
 #include <JavaScriptCore/SourceCode.h>
 
 JSGlueGlobalObject::JSGlueGlobalObject(PassRefPtr<Structure> structure, JSFlags flags)
-    : JSGlobalObject(structure)
-    , m_flags(flags)
-    , m_userObjectStructure(UserObjectImp::createStructure(jsNull()))
+    : JSGlobalObject(structure, new Data, this)
 {
+    d()->flags = flags;
+    d()->userObjectStructure = UserObjectImp::createStructure(jsNull());
+}
+
+void JSGlueGlobalObject::destroyData(void* data)
+{
+    delete static_cast<Data*>(data);
 }
 
 JSRun::JSRun(CFStringRef source, JSFlags inFlags)

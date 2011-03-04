@@ -45,16 +45,21 @@ namespace WebCore {
 
 const ClassInfo JSDOMWindowBase::s_info = { "Window", &JSDOMGlobalObject::s_info, 0, 0 };
 
+JSDOMWindowBase::JSDOMWindowBaseData::JSDOMWindowBaseData(PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
+    : JSDOMGlobalObjectData(shell->world(), destroyJSDOMWindowBaseData)
+    , impl(window)
+    , shell(shell)
+{
+}
+
 JSDOMWindowBase::JSDOMWindowBase(NonNullPassRefPtr<Structure> structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
-    : JSDOMGlobalObject(structure, shell->world(), shell)
-    , m_impl(window)
-    , m_shell(shell)
+    : JSDOMGlobalObject(structure, new JSDOMWindowBaseData(window, shell), shell)
 {
     ASSERT(inherits(&s_info));
 
     GlobalPropertyInfo staticGlobals[] = {
         GlobalPropertyInfo(Identifier(globalExec(), "document"), jsNull(), DontDelete | ReadOnly),
-        GlobalPropertyInfo(Identifier(globalExec(), "window"), m_shell, DontDelete | ReadOnly)
+        GlobalPropertyInfo(Identifier(globalExec(), "window"), d()->shell, DontDelete | ReadOnly)
     };
     
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
@@ -62,19 +67,19 @@ JSDOMWindowBase::JSDOMWindowBase(NonNullPassRefPtr<Structure> structure, PassRef
 
 void JSDOMWindowBase::updateDocument()
 {
-    ASSERT(m_impl->document());
+    ASSERT(d()->impl->document());
     ExecState* exec = globalExec();
-    symbolTablePutWithAttributes(exec->globalData(), Identifier(exec, "document"), toJS(exec, this, m_impl->document()), DontDelete | ReadOnly);
+    symbolTablePutWithAttributes(exec->globalData(), Identifier(exec, "document"), toJS(exec, this, d()->impl->document()), DontDelete | ReadOnly);
 }
 
 ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
 {
-    return m_impl->document();
+    return d()->impl->document();
 }
 
 String JSDOMWindowBase::crossDomainAccessErrorMessage(const JSGlobalObject* other) const
 {
-    return m_shell->window()->impl()->crossDomainAccessErrorMessage(asJSDOMWindow(other)->impl());
+    return d()->shell->window()->impl()->crossDomainAccessErrorMessage(asJSDOMWindow(other)->impl());
 }
 
 void JSDOMWindowBase::printErrorMessage(const String& message) const
@@ -165,7 +170,7 @@ JSValue JSDOMWindowBase::toStrictThisObject(ExecState*) const
 
 JSDOMWindowShell* JSDOMWindowBase::shell() const
 {
-    return m_shell;
+    return d()->shell;
 }
 
 JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
@@ -183,6 +188,11 @@ JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
     }
 
     return globalData;
+}
+
+void JSDOMWindowBase::destroyJSDOMWindowBaseData(void* jsDOMWindowBaseData)
+{
+    delete static_cast<JSDOMWindowBaseData*>(jsDOMWindowBaseData);
 }
 
 // JSDOMGlobalObject* is ignored, accessing a window in any context will
