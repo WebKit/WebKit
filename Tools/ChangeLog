@@ -1,5 +1,20 @@
 2011-03-03  Timothy Hatcher  <timothy@apple.com>
 
+        Update the tests that use WKPageRunJavaScriptInMainFrame use the WKSerializedScriptValueRef.
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/JavaScriptTest.cpp:
+        (TestWebKitAPI::javaScriptCallback):
+        * TestWebKitAPI/Tests/WebKit2/EvaluateJavaScript.cpp:
+        (TestWebKitAPI::didRunJavaScript):
+        * TestWebKitAPI/Tests/WebKit2/PageLoadDidChangeLocationWithinPageForFrame.cpp:
+        (TestWebKitAPI::nullJavaScriptCallback):
+        * TestWebKitAPI/Tests/WebKit2/PreventEmptyUserAgent.cpp:
+        (TestWebKitAPI::didRunJavaScript):
+
+2011-03-03  Timothy Hatcher  <timothy@apple.com>
+
         Make run-api-tests show failed if a test fails.
 
         https://webkit.org/b/55725

@@ -32,7 +32,7 @@
 
 namespace TestWebKitAPI {
 
-static void nullJavaScriptCallback(WKStringRef, WKErrorRef error, void*)
+static void nullJavaScriptCallback(WKSerializedScriptValueRef, WKErrorRef error, void*)
 {
 }
 

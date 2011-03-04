@@ -27,17 +27,19 @@
 
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
+#include <JavaScriptCore/JavaScriptCore.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WebKit2.h>
+#include <WebKit2/WKSerializedScriptValue.h>
 
 namespace TestWebKitAPI {
 
 static bool testDone;
 
-static void didRunJavaScript(WKStringRef resultString, WKErrorRef error, void* context)
+static void didRunJavaScript(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* context)
 {
     TEST_ASSERT(context == reinterpret_cast<void*>(0x1234578));
-    TEST_ASSERT(WKStringIsEmpty(resultString));
+    TEST_ASSERT(!resultSerializedScriptValue);
 
     // FIXME: We should also check the error, but right now it's always null.
     // Assert that it's null so we can revisit when this changes.

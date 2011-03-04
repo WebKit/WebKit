@@ -1,3 +1,27 @@
+2011-03-03  Timothy Hatcher  <timothy@apple.com>
+
+        Make the WKPageRunJavaScriptFunction callback take a WKSerializedScriptValueRef.
+
+        https://webkit.org/b/55623
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRunJavaScriptInMainFrame): Use ScriptValueCallback.
+        (callRunJavaScriptBlockAndRelease): Use WKSerializedScriptValueRef.
+        * UIProcess/API/C/WKPage.h: Use WKSerializedScriptValueRef.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): Call invalidateCallbackMap for m_scriptValueCallbacks.
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame): Take a ScriptValueCallback.
+        (WebKit::WebPageProxy::scriptValueCallback): Added. Create a WebSerializedScriptValue
+        from the DataReference before calling the callback.
+        (WebKit::WebPageProxy::processDidCrash): Call invalidateCallbackMap for m_scriptValueCallbacks.
+        * UIProcess/WebPageProxy.h: Added ScriptValueCallback and m_scriptValueCallbacks.
+        * UIProcess/WebPageProxy.messages.in: Added ScriptValueCallback.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInMainFrame): Create a DataReference from a WebCore::SerializedScriptValue.
+        And use ScriptValueCallback to send the message back.
+
 2011-03-03  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

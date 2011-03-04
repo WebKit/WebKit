@@ -27,7 +27,9 @@
 
 #include "PlatformUtilities.h"
 #include "Test.h"
+#include <JavaScriptCore/JavaScriptCore.h>
 #include <WebKit2/WKRetainPtr.h>
+#include <WebKit2/WKSerializedScriptValue.h>
 
 namespace TestWebKitAPI {
 
@@ -39,12 +41,26 @@ struct JavaScriptCallbackContext {
     bool didMatchExpectedString;
 };
 
-static void javaScriptCallback(WKStringRef string, WKErrorRef error, void* ctx)
+static void javaScriptCallback(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* ctx)
 {
+    TEST_ASSERT(resultSerializedScriptValue);
+
     JavaScriptCallbackContext* context = static_cast<JavaScriptCallbackContext*>(ctx);
 
+    JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
+    TEST_ASSERT(scriptContext);
+
+    JSValueRef scriptValue = WKSerializedScriptValueDeserialize(resultSerializedScriptValue, scriptContext, 0);
+    TEST_ASSERT(scriptValue);
+
+    JSStringRef scriptString = JSValueToStringCopy(scriptContext, scriptValue, 0);
+    TEST_ASSERT(scriptString);
+
     context->didFinish = true;
-    context->didMatchExpectedString = WKStringIsEqualToUTF8CString(string, context->expectedString);
+    context->didMatchExpectedString = JSStringIsEqualToUTF8CString(scriptString, context->expectedString);
+
+    JSStringRelease(scriptString);
+    JSGlobalContextRelease(scriptContext);
 
     TEST_ASSERT(!error);
 }
