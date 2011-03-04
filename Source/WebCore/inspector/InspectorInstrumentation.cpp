@@ -41,6 +41,7 @@
 #include "InspectorAgent.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorBrowserDebuggerAgent.h"
+#include "InspectorCSSAgent.h"
 #include "InspectorConsoleAgent.h"
 #include "InspectorDatabaseAgent.h"
 #include "InspectorDOMAgent.h"
@@ -507,8 +508,47 @@ void InspectorInstrumentation::frameDetachedFromParentImpl(InspectorAgent* inspe
         resourceAgent->frameDetachedFromParent(frame);
 }
 
-void InspectorInstrumentation::didCommitLoadImpl(InspectorAgent* inspectorAgent, DocumentLoader* loader)
+void InspectorInstrumentation::didCommitLoadImpl(Page* page, InspectorAgent* inspectorAgent, DocumentLoader* loader)
 {
+    if (!inspectorAgent->enabled())
+        return;
+
+    InstrumentingAgents* instrumentingAgents = inspectorAgent->instrumentingAgents();
+    if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
+        resourceAgent->didCommitLoad(loader);
+
+    Frame* mainFrame = page->mainFrame();
+    if (loader->frame() != mainFrame)
+        return;
+
+    if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
+        consoleAgent->reset();
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent()) {
+        KURL url = inspectorAgent->inspectedURLWithoutFragment();
+        debuggerAgent->inspectedURLChanged(url);
+        if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = instrumentingAgents->inspectorBrowserDebuggerAgent())
+            browserDebuggerAgent->inspectedURLChanged(url);
+    }
+#endif
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+    if (InspectorProfilerAgent* profilerAgent = instrumentingAgents->inspectorProfilerAgent()) {
+        profilerAgent->stopUserInitiatedProfiling(true);
+        profilerAgent->resetState();
+    }
+#endif
+    if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
+        cssAgent->reset();
+#if ENABLE(DATABASE)
+    if (InspectorDatabaseAgent* databaseAgent = instrumentingAgents->inspectorDatabaseAgent())
+        databaseAgent->clearResources();
+#endif
+#if ENABLE(DOM_STORAGE)
+    if (InspectorDOMStorageAgent* domStorageAgent = instrumentingAgents->inspectorDOMStorageAgent())
+        domStorageAgent->clearResources();
+#endif
+    if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
+        domAgent->setDocument(mainFrame->document());
     inspectorAgent->didCommitLoad(loader);
 }
 

@@ -40,6 +40,7 @@
 #include "HTMLHeadElement.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorValues.h"
+#include "InstrumentingAgents.h"
 #include "Node.h"
 #include "NodeList.h"
 #include "StyleSheetList.h"
@@ -142,17 +143,20 @@ CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(StyleBase* styleBase)
     return static_cast<CSSStyleRule*>(rule);
 }
 
-InspectorCSSAgent::InspectorCSSAgent(InspectorDOMAgent* domAgent)
-    : m_domAgent(domAgent)
+InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, InspectorDOMAgent* domAgent)
+    : m_instrumentingAgents(instrumentingAgents)
+    , m_domAgent(domAgent)
     , m_lastStyleSheetId(1)
     , m_lastRuleId(1)
     , m_lastStyleId(1)
 {
     m_domAgent->setDOMListener(this);
+    m_instrumentingAgents->setInspectorCSSAgent(this);
 }
 
 InspectorCSSAgent::~InspectorCSSAgent()
 {
+    m_instrumentingAgents->setInspectorCSSAgent(0);
     // DOM agent should be destroyed after CSS agent.
     m_domAgent->setDOMListener(0);
     m_domAgent = 0;

@@ -1,3 +1,49 @@
+2011-03-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: move dispatching of didCommitLoad to agents into InspectorInstrumentation
+        https://bugs.webkit.org/show_bug.cgi?id=55770
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::didCommitLoad):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::InspectorCSSAgent):
+        (WebCore::InspectorCSSAgent::~InspectorCSSAgent):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::~InspectorDatabaseAgent):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didCommitLoad):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::create):
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        (WebCore::InspectorProfilerAgent::~InspectorProfilerAgent):
+        (WebCore::InspectorProfilerAgent::addProfileFinishedMessageToConsole):
+        (WebCore::InspectorProfilerAgent::addStartProfilingMessageToConsole):
+        (WebCore::InspectorProfilerAgent::startUserInitiatedProfiling):
+        (WebCore::InspectorProfilerAgent::stopUserInitiatedProfiling):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::inspectorCSSAgent):
+        (WebCore::InstrumentingAgents::setInspectorCSSAgent):
+        (WebCore::InstrumentingAgents::inspectorDOMStorageAgent):
+        (WebCore::InstrumentingAgents::setInspectorDOMStorageAgent):
+        (WebCore::InstrumentingAgents::inspectorDatabaseAgent):
+        (WebCore::InstrumentingAgents::setInspectorDatabaseAgent):
+        (WebCore::InstrumentingAgents::inspectorApplicationCacheAgent):
+        (WebCore::InstrumentingAgents::setInspectorApplicationCacheAgent):
+        (WebCore::InstrumentingAgents::inspectorDebuggerAgent):
+        (WebCore::InstrumentingAgents::setInspectorDebuggerAgent):
+        (WebCore::InstrumentingAgents::inspectorBrowserDebuggerAgent):
+        (WebCore::InstrumentingAgents::setInspectorBrowserDebuggerAgent):
+        (WebCore::InstrumentingAgents::inspectorProfilerAgent):
+        (WebCore::InstrumentingAgents::setInspectorProfilerAgent):
+
 2011-03-04  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

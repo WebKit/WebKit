@@ -44,6 +44,7 @@ class CSSStyleSheet;
 class Document;
 class Element;
 class InspectorFrontend;
+class InstrumentingAgents;
 class NameNodeMap;
 class Node;
 class StyleBase;
@@ -51,11 +52,12 @@ class StyleBase;
 #if ENABLE(INSPECTOR)
 
 class InspectorCSSAgent : public InspectorDOMAgent::DOMListener {
+    WTF_MAKE_NONCOPYABLE(InspectorCSSAgent);
 public:
     static CSSStyleSheet* parentStyleSheet(StyleBase*);
     static CSSStyleRule* asCSSStyleRule(StyleBase*);
 
-    explicit InspectorCSSAgent(InspectorDOMAgent*);
+    InspectorCSSAgent(InstrumentingAgents*, InspectorDOMAgent*);
     ~InspectorCSSAgent();
 
     void reset();
@@ -96,6 +98,7 @@ private:
     virtual void didRemoveDOMNode(Node*);
     virtual void didModifyDOMAttr(Element*);
 
+    InstrumentingAgents* m_instrumentingAgents;
     InspectorDOMAgent* m_domAgent;
 
     IdToInspectorStyleSheet m_idToInspectorStyleSheet;

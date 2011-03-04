@@ -240,8 +240,6 @@ InspectorDatabaseAgent::InspectorDatabaseAgent(InstrumentingAgents* instrumentin
 
 InspectorDatabaseAgent::~InspectorDatabaseAgent()
 {
-    if (m_frontendProvider)
-        clearFrontend();
     m_instrumentingAgents->setInspectorDatabaseAgent(0);
 }
 

@@ -38,6 +38,7 @@ namespace WebCore {
 
 class InspectorApplicationCacheAgent;
 class InspectorBrowserDebuggerAgent;
+class InspectorCSSAgent;
 class InspectorConsoleAgent;
 class InspectorDOMAgent;
 class InspectorDOMStorageAgent;
@@ -46,7 +47,6 @@ class InspectorDebuggerAgent;
 class InspectorProfilerAgent;
 class InspectorResourceAgent;
 class InspectorRuntimeAgent;
-class InspectorStorageAgent;
 class InspectorTimelineAgent;
 
 class InstrumentingAgents {
@@ -54,30 +54,31 @@ class InstrumentingAgents {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InstrumentingAgents()
-        : m_inspectorBrowserDebuggerAgent(0)
+        : m_inspectorCSSAgent(0)
+        , m_inspectorConsoleAgent(0)
+        , m_inspectorDOMAgent(0)
+        , m_inspectorResourceAgent(0)
+        , m_inspectorRuntimeAgent(0)
+        , m_inspectorTimelineAgent(0)
+#if ENABLE(DOM_STORAGE)
+        , m_inspectorDOMStorageAgent(0)
+#endif
+#if ENABLE(DATABASE)
+        , m_inspectorDatabaseAgent(0)
+#endif
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         , m_inspectorApplicationCacheAgent(0)
 #endif
-        , m_inspectorConsoleAgent(0)
-        , m_inspectorDOMAgent(0)
-        , m_inspectorDOMStorageAgent(0)
-        , m_inspectorDatabaseAgent(0)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
         , m_inspectorDebuggerAgent(0)
+        , m_inspectorBrowserDebuggerAgent(0)
         , m_inspectorProfilerAgent(0)
-        , m_inspectorResourceAgent(0)
-        , m_inspectorRuntimeAgent(0)
-        , m_inspectorStorageAgent(0)
-        , m_inspectorTimelineAgent(0)
+#endif
     { }
     ~InstrumentingAgents() { }
 
-    InspectorBrowserDebuggerAgent* inspectorBrowserDebuggerAgent() const { return m_inspectorBrowserDebuggerAgent; }
-    void setInspectorBrowserDebuggerAgent(InspectorBrowserDebuggerAgent* agent) { m_inspectorBrowserDebuggerAgent = agent; }
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    InspectorApplicationCacheAgent* inspectorApplicationCacheAgent() const { return m_inspectorApplicationCacheAgent; }
-    void setInspectorApplicationCacheAgent(InspectorApplicationCacheAgent* agent) { m_inspectorApplicationCacheAgent = agent; }
-#endif
+    InspectorCSSAgent* inspectorCSSAgent() const { return m_inspectorCSSAgent; }
+    void setInspectorCSSAgent(InspectorCSSAgent* agent) { m_inspectorCSSAgent = agent; }
 
     InspectorConsoleAgent* inspectorConsoleAgent() const { return m_inspectorConsoleAgent; }
     void setInspectorConsoleAgent(InspectorConsoleAgent* agent) { m_inspectorConsoleAgent = agent; }
@@ -85,45 +86,59 @@ public:
     InspectorDOMAgent* inspectorDOMAgent() const { return m_inspectorDOMAgent; }
     void setInspectorDOMAgent(InspectorDOMAgent* agent) { m_inspectorDOMAgent = agent; }
 
-    InspectorDOMStorageAgent* inspectorDOMStorageAgent() const { return m_inspectorDOMStorageAgent; }
-    void setInspectorDOMStorageAgent(InspectorDOMStorageAgent* agent) { m_inspectorDOMStorageAgent = agent; }
-
-    InspectorDatabaseAgent* inspectorDatabaseAgent() const { return m_inspectorDatabaseAgent; }
-    void setInspectorDatabaseAgent(InspectorDatabaseAgent* agent) { m_inspectorDatabaseAgent = agent; }
-
-    InspectorDebuggerAgent* inspectorDebuggerAgent() const { return m_inspectorDebuggerAgent; }
-    void setInspectorDebuggerAgent(InspectorDebuggerAgent* agent) { m_inspectorDebuggerAgent = agent; }
-
-    InspectorProfilerAgent* inspectorProfilerAgent() const { return m_inspectorProfilerAgent; }
-    void setInspectorProfilerAgent(InspectorProfilerAgent* agent) { m_inspectorProfilerAgent = agent; }
-
     InspectorResourceAgent* inspectorResourceAgent() const { return m_inspectorResourceAgent; }
     void setInspectorResourceAgent(InspectorResourceAgent* agent) { m_inspectorResourceAgent = agent; }
 
     InspectorRuntimeAgent* inspectorRuntimeAgent() const { return m_inspectorRuntimeAgent; }
     void setInspectorRuntimeAgent(InspectorRuntimeAgent* agent) { m_inspectorRuntimeAgent = agent; }
 
-    InspectorStorageAgent* inspectorStorageAgent() const { return m_inspectorStorageAgent; }
-    void setInspectorStorageAgent(InspectorStorageAgent* agent) { m_inspectorStorageAgent = agent; }
-
     InspectorTimelineAgent* inspectorTimelineAgent() const { return m_inspectorTimelineAgent; }
     void setInspectorTimelineAgent(InspectorTimelineAgent* agent) { m_inspectorTimelineAgent = agent; }
 
+#if ENABLE(DOM_STORAGE)
+    InspectorDOMStorageAgent* inspectorDOMStorageAgent() const { return m_inspectorDOMStorageAgent; }
+    void setInspectorDOMStorageAgent(InspectorDOMStorageAgent* agent) { m_inspectorDOMStorageAgent = agent; }
+#endif
+#if ENABLE(DATABASE)
+    InspectorDatabaseAgent* inspectorDatabaseAgent() const { return m_inspectorDatabaseAgent; }
+    void setInspectorDatabaseAgent(InspectorDatabaseAgent* agent) { m_inspectorDatabaseAgent = agent; }
+#endif
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    InspectorApplicationCacheAgent* inspectorApplicationCacheAgent() const { return m_inspectorApplicationCacheAgent; }
+    void setInspectorApplicationCacheAgent(InspectorApplicationCacheAgent* agent) { m_inspectorApplicationCacheAgent = agent; }
+#endif
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    InspectorDebuggerAgent* inspectorDebuggerAgent() const { return m_inspectorDebuggerAgent; }
+    void setInspectorDebuggerAgent(InspectorDebuggerAgent* agent) { m_inspectorDebuggerAgent = agent; }
+
+    InspectorBrowserDebuggerAgent* inspectorBrowserDebuggerAgent() const { return m_inspectorBrowserDebuggerAgent; }
+    void setInspectorBrowserDebuggerAgent(InspectorBrowserDebuggerAgent* agent) { m_inspectorBrowserDebuggerAgent = agent; }
+
+    InspectorProfilerAgent* inspectorProfilerAgent() const { return m_inspectorProfilerAgent; }
+    void setInspectorProfilerAgent(InspectorProfilerAgent* agent) { m_inspectorProfilerAgent = agent; }
+#endif
+
 private:
-    InspectorBrowserDebuggerAgent* m_inspectorBrowserDebuggerAgent;
+    InspectorCSSAgent* m_inspectorCSSAgent;
+    InspectorConsoleAgent* m_inspectorConsoleAgent;
+    InspectorDOMAgent* m_inspectorDOMAgent;
+    InspectorResourceAgent* m_inspectorResourceAgent;
+    InspectorRuntimeAgent* m_inspectorRuntimeAgent;
+    InspectorTimelineAgent* m_inspectorTimelineAgent;
+#if ENABLE(DOM_STORAGE)
+    InspectorDOMStorageAgent* m_inspectorDOMStorageAgent;
+#endif
+#if ENABLE(DATABASE)
+    InspectorDatabaseAgent* m_inspectorDatabaseAgent;
+#endif
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     InspectorApplicationCacheAgent* m_inspectorApplicationCacheAgent;
 #endif
-    InspectorConsoleAgent* m_inspectorConsoleAgent;
-    InspectorDOMAgent* m_inspectorDOMAgent;
-    InspectorDOMStorageAgent* m_inspectorDOMStorageAgent;
-    InspectorDatabaseAgent* m_inspectorDatabaseAgent;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     InspectorDebuggerAgent* m_inspectorDebuggerAgent;
+    InspectorBrowserDebuggerAgent* m_inspectorBrowserDebuggerAgent;
     InspectorProfilerAgent* m_inspectorProfilerAgent;
-    InspectorResourceAgent* m_inspectorResourceAgent;
-    InspectorRuntimeAgent* m_inspectorRuntimeAgent;
-    InspectorStorageAgent* m_inspectorStorageAgent;
-    InspectorTimelineAgent* m_inspectorTimelineAgent;
+#endif
 };
 
 }

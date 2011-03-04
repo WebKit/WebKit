@@ -243,7 +243,7 @@ private:
     static void domContentLoadedEventFiredImpl(InspectorAgent*, Frame*, const KURL&);
     static void loadEventFiredImpl(InspectorAgent*, Frame*, const KURL&);
     static void frameDetachedFromParentImpl(InspectorAgent*, Frame*);
-    static void didCommitLoadImpl(InspectorAgent*, DocumentLoader*);
+    static void didCommitLoadImpl(Page*, InspectorAgent*, DocumentLoader*);
 
     static InspectorInstrumentationCookie willWriteHTMLImpl(InspectorAgent*, unsigned int length, unsigned int startLine);
     static void didWriteHTMLImpl(const InspectorInstrumentationCookie&, unsigned int endLine);
@@ -743,8 +743,13 @@ inline void InspectorInstrumentation::frameDetachedFromParent(Frame* frame)
 inline void InspectorInstrumentation::didCommitLoad(Frame* frame, DocumentLoader* loader)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForFrame(frame))
-        didCommitLoadImpl(inspectorAgent, loader);
+    if (!frame)
+        return;
+    Page* page = frame->page();
+    if (!page)
+        return;
+    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
+        didCommitLoadImpl(page, inspectorAgent, loader);
 #endif
 }
 

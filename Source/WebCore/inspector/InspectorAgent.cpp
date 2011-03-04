@@ -140,7 +140,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client)
     , m_injectedScriptHost(InjectedScriptHost::create(this))
     , m_state(new InspectorState(client))
     , m_domAgent(InspectorDOMAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptHost.get()))
-    , m_cssAgent(new InspectorCSSAgent(m_domAgent.get()))
+    , m_cssAgent(new InspectorCSSAgent(m_instrumentingAgents.get(), m_domAgent.get()))
 #if ENABLE(DATABASE)
     , m_databaseAgent(InspectorDatabaseAgent::create(m_instrumentingAgents.get()))
 #endif
@@ -156,7 +156,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerAgent(InspectorDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, m_injectedScriptHost.get()))
     , m_browserDebuggerAgent(InspectorBrowserDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent.get(), m_debuggerAgent.get(), this))
-    , m_profilerAgent(InspectorProfilerAgent::create(this))
+    , m_profilerAgent(InspectorProfilerAgent::create(m_instrumentingAgents.get(), m_consoleAgent.get(), page))
 #endif
 {
     ASSERT_ARG(page, page);
@@ -503,55 +503,14 @@ void InspectorAgent::restoreProfiler(ProfilerRestoreAction action)
 
 void InspectorAgent::didCommitLoad(DocumentLoader* loader)
 {
-    if (!enabled())
-        return;
-
-    if (InspectorResourceAgent* resourceAgent = m_instrumentingAgents->inspectorResourceAgent())
-        resourceAgent->didCommitLoad(loader);
-
-    ASSERT(m_inspectedPage);
-
-    if (loader->frame() == m_inspectedPage->mainFrame()) {
-        if (m_frontend)
-            m_frontend->inspector()->inspectedURLChanged(loader->url().string());
-
-        m_injectedScriptHost->discardInjectedScripts();
-        m_consoleAgent->reset();
-
-        if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
-            timelineAgent->didCommitLoad();
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-        if (InspectorDebuggerAgent* debuggerAgent = m_instrumentingAgents->inspectorDebuggerAgent()) {
-            KURL url = inspectedURLWithoutFragment();
-            debuggerAgent->inspectedURLChanged(url);
-            if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = m_instrumentingAgents->inspectorBrowserDebuggerAgent())
-                browserDebuggerAgent->inspectedURLChanged(url);
-        }
-#endif
-
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
-        m_profilerAgent->stopUserInitiatedProfiling(true);
-        m_profilerAgent->resetState();
-#endif
-
-        if (m_frontend) {
-            m_frontend->inspector()->reset();
-            m_domAgent->reset();
-            m_cssAgent->reset();
-        }
-#if ENABLE(WORKERS)
-        m_workers.clear();
-#endif
-#if ENABLE(DATABASE)
-        m_databaseAgent->clearResources();
-#endif
-#if ENABLE(DOM_STORAGE)
-        m_domStorageAgent->clearResources();
-#endif
-        if (InspectorDOMAgent* domAgent = m_instrumentingAgents->inspectorDOMAgent())
-            domAgent->setDocument(m_inspectedPage->mainFrame()->document());
+    if (m_frontend) {
+        m_frontend->inspector()->inspectedURLChanged(loader->url().string());
+        m_frontend->inspector()->reset();
     }
+    m_injectedScriptHost->discardInjectedScripts();
+#if ENABLE(WORKERS)
+    m_workers.clear();
+#endif
 }
 
 void InspectorAgent::domContentLoadedEventFired(DocumentLoader* loader, const KURL& url)
