@@ -26,6 +26,7 @@
 #include "AffineTransform.h"
 #include "Attribute.h"
 #include "RenderSVGPath.h"
+#include "RenderSVGResource.h"
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -78,6 +79,21 @@ void SVGStyledTransformableElement::parseMappedAttribute(Attribute* attr)
         setTransformBaseValue(newList);
     } else 
         SVGStyledLocatableElement::parseMappedAttribute(attr);
+}
+
+void SVGStyledTransformableElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGStyledLocatableElement::svgAttributeChanged(attrName);
+
+    if (!SVGStyledTransformableElement::isKnownAttribute(attrName))
+        return;
+
+    RenderObject* object = renderer();
+    if (!object)
+        return;
+
+    object->setNeedsTransformUpdate();
+    RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
 }
 
 void SVGStyledTransformableElement::synchronizeProperty(const QualifiedName& attrName)

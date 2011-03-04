@@ -112,12 +112,6 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
     if (!renderer)
         return;
 
-    if (SVGStyledTransformableElement::isKnownAttribute(attrName)) {
-        renderer->setNeedsTransformUpdate();
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
-        return;
-    }
-
     if (isLengthAttribute) {
         renderer->updateFromElement();
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);

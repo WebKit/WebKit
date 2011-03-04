@@ -110,12 +110,6 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
     if (!renderer)
         return;
 
-    if (SVGStyledTransformableElement::isKnownAttribute(attrName)) {
-        renderer->setNeedsTransformUpdate();
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
-        return;
-    }
-
     if (isLengthAttribute) {
         renderer->setNeedsPathUpdate();
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
