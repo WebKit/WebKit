@@ -1,3 +1,16 @@
+2011-03-03  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Add WKViewRef API for executing edit commands
+        https://bugs.webkit.org/show_bug.cgi?id=49829
+
+        Added WKViewExecuteCommand() and documented some of the WebCore EditorCommand strings.
+
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewExecuteCommand): Added.
+        * UIProcess/API/C/win/WKView.h: Added WKViewExecuteCommand() and comment block with WebCore EditorCommand strings.
+
 2011-03-03  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.

@@ -50,6 +50,19 @@ typedef void (*WKViewFindIndicatorCallback)(WKViewRef, HBITMAP selectionBitmap, 
 WK_EXPORT void WKViewSetFindIndicatorCallback(WKViewRef view, WKViewFindIndicatorCallback callback, void* context);
 WK_EXPORT WKViewFindIndicatorCallback WKViewGetFindIndicatorCallback(WKViewRef view, void** context);
 
+/*
+    Valid command name strings include:
+    
+    "Cut"
+    "Copy"
+    "Paste"
+    "SelectAll"
+    "Undo"
+    "Redo"
+*/
+
+WK_EXPORT void WKViewExecuteCommand(WKViewRef view, WKStringRef command);
+
 #ifdef __cplusplus
 }
 #endif
