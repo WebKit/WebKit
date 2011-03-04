@@ -139,6 +139,7 @@ namespace JSC {
         const HashTable* jsonTable;
         const HashTable* mathTable;
         const HashTable* numberTable;
+        const HashTable* objectConstructorTable;
         const HashTable* regExpTable;
         const HashTable* regExpConstructorTable;
         const HashTable* stringTable;

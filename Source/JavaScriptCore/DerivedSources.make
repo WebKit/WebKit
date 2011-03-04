@@ -44,6 +44,7 @@ all : \
     Lexer.lut.h \
     MathObject.lut.h \
     NumberConstructor.lut.h \
+    ObjectConstructor.lut.h \
     RegExpConstructor.lut.h \
     RegExpJitTables.h \
     RegExpObject.lut.h \

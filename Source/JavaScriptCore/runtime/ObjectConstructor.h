@@ -29,7 +29,20 @@ namespace JSC {
 
     class ObjectConstructor : public InternalFunction {
     public:
-        ObjectConstructor(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, ObjectPrototype*, Structure* functionStructure);
+        ObjectConstructor(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, ObjectPrototype*);
+
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
+
+        static const ClassInfo s_info;
+
+        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        {
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        }
+
+    protected:
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
     private:
         virtual ConstructType getConstructData(ConstructData&);

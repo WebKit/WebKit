@@ -19,6 +19,7 @@ LUT_FILES += \
     runtime/JSONObject.cpp \
     runtime/MathObject.cpp \
     runtime/NumberConstructor.cpp \
+    runtime/ObjectConstructor.cpp \
     runtime/RegExpConstructor.cpp \
     runtime/RegExpObject.cpp \
     runtime/StringPrototype.cpp

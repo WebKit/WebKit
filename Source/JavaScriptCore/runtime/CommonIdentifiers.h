@@ -39,25 +39,18 @@
     macro(compile) \
     macro(configurable) \
     macro(constructor) \
-    macro(create) \
-    macro(defineProperty) \
-    macro(defineProperties) \
     macro(enumerable) \
     macro(eval) \
     macro(exec) \
     macro(fromCharCode) \
     macro(global) \
     macro(get) \
-    macro(getPrototypeOf) \
-    macro(getOwnPropertyDescriptor) \
-    macro(getOwnPropertyNames) \
     macro(hasOwnProperty) \
     macro(ignoreCase) \
     macro(index) \
     macro(input) \
     macro(isArray) \
     macro(isPrototypeOf) \
-    macro(keys) \
     macro(length) \
     macro(message) \
     macro(multiline) \

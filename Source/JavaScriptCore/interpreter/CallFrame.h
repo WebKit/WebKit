@@ -80,6 +80,7 @@ namespace JSC  {
         static const HashTable* jsonTable(CallFrame* callFrame) { return callFrame->globalData().jsonTable; }
         static const HashTable* mathTable(CallFrame* callFrame) { return callFrame->globalData().mathTable; }
         static const HashTable* numberTable(CallFrame* callFrame) { return callFrame->globalData().numberTable; }
+        static const HashTable* objectConstructorTable(CallFrame* callFrame) { return callFrame->globalData().objectConstructorTable; }
         static const HashTable* regExpTable(CallFrame* callFrame) { return callFrame->globalData().regExpTable; }
         static const HashTable* regExpConstructorTable(CallFrame* callFrame) { return callFrame->globalData().regExpConstructorTable; }
         static const HashTable* stringTable(CallFrame* callFrame) { return callFrame->globalData().stringTable; }

@@ -210,6 +210,13 @@ namespace JSC {
         virtual bool isStrictModeFunction() const { return false; }
         virtual bool isErrorInstance() const { return false; }
 
+        void seal();
+        void freeze();
+        void preventExtensions();
+        bool isSealed() { return m_structure->isSealed(); }
+        bool isFrozen() { return m_structure->isFrozen(); }
+        bool isExtensible() { return m_structure->isExtensible(); }
+
         virtual ComplType exceptionType() const { return Throw; }
 
         void allocatePropertyStorage(size_t oldSize, size_t newSize);
@@ -571,6 +578,9 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
             return true;
         }
 
+        if (!isExtensible())
+            return false;
+
         size_t currentCapacity = m_structure->propertyStorageCapacity();
         offset = m_structure->addPropertyWithoutTransition(propertyName, attributes, specificFunction);
         if (currentCapacity != m_structure->propertyStorageCapacity())
@@ -631,6 +641,9 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
         putDirectOffset(globalData, offset, value);
         return true;
     }
+
+    if (!isExtensible())
+        return false;
 
     RefPtr<Structure> structure = Structure::addPropertyTransition(m_structure, propertyName, attributes, specificFunction, offset);
 

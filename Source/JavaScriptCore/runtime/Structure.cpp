@@ -203,6 +203,7 @@ Structure::Structure(JSValue prototype, const TypeInfo& typeInfo, unsigned anony
     , m_attributesInPrevious(0)
     , m_specificFunctionThrashCount(0)
     , m_anonymousSlotCount(anonymousSlotCount)
+    , m_preventExtensions(false)
 {
     ASSERT(m_prototype);
     ASSERT(m_prototype->isObject() || m_prototype->isNull());
@@ -236,6 +237,7 @@ Structure::Structure(const Structure* previous)
     , m_attributesInPrevious(0)
     , m_specificFunctionThrashCount(previous->m_specificFunctionThrashCount)
     , m_anonymousSlotCount(previous->anonymousSlotCount())
+    , m_preventExtensions(previous->m_preventExtensions)
 {
     ASSERT(m_prototype);
     ASSERT(m_prototype->isObject() || m_prototype->isNull());
@@ -517,6 +519,86 @@ PassRefPtr<Structure> Structure::toCacheableDictionaryTransition(Structure* stru
 PassRefPtr<Structure> Structure::toUncacheableDictionaryTransition(Structure* structure)
 {
     return toDictionaryTransition(structure, UncachedDictionaryKind);
+}
+
+// In future we may want to cache this transition.
+PassRefPtr<Structure> Structure::sealTransition(Structure* structure)
+{
+    RefPtr<Structure> transition = preventExtensionsTransition(structure);
+
+    if (transition->m_propertyTable) {
+        PropertyTable::iterator end = transition->m_propertyTable->end();
+        for (PropertyTable::iterator iter = transition->m_propertyTable->begin(); iter != end; ++iter)
+            iter->attributes |= DontDelete;
+    }
+
+    return transition.release();
+}
+
+// In future we may want to cache this transition.
+PassRefPtr<Structure> Structure::freezeTransition(Structure* structure)
+{
+    RefPtr<Structure> transition = preventExtensionsTransition(structure);
+
+    if (transition->m_propertyTable) {
+        PropertyTable::iterator end = transition->m_propertyTable->end();
+        for (PropertyTable::iterator iter = transition->m_propertyTable->begin(); iter != end; ++iter)
+            iter->attributes |= (DontDelete | ReadOnly);
+    }
+
+    return transition.release();
+}
+
+// In future we may want to cache this transition.
+PassRefPtr<Structure> Structure::preventExtensionsTransition(Structure* structure)
+{
+    RefPtr<Structure> transition = create(structure);
+
+    // Don't set m_offset, as one can not transition to this.
+
+    structure->materializePropertyMapIfNecessary();
+    transition->m_propertyTable = structure->copyPropertyTable();
+    transition->m_isPinnedPropertyTable = true;
+    transition->m_preventExtensions = true;
+
+    ASSERT(structure->anonymousSlotCount() == transition->anonymousSlotCount());
+    return transition.release();
+}
+
+// In future we may want to cache this property.
+bool Structure::isSealed()
+{
+    if (isExtensible())
+        return false;
+
+    materializePropertyMapIfNecessary();
+    if (!m_propertyTable)
+        return true;
+
+    PropertyTable::iterator end = m_propertyTable->end();
+    for (PropertyTable::iterator iter = m_propertyTable->begin(); iter != end; ++iter) {
+        if ((iter->attributes & DontDelete) != DontDelete)
+            return false;
+    }
+    return true;
+}
+
+// In future we may want to cache this property.
+bool Structure::isFrozen()
+{
+    if (isExtensible())
+        return false;
+
+    materializePropertyMapIfNecessary();
+    if (!m_propertyTable)
+        return true;
+
+    PropertyTable::iterator end = m_propertyTable->end();
+    for (PropertyTable::iterator iter = m_propertyTable->begin(); iter != end; ++iter) {
+        if ((iter->attributes & (DontDelete | ReadOnly)) != (DontDelete | ReadOnly))
+            return false;
+    }
+    return true;
 }
 
 PassRefPtr<Structure> Structure::flattenDictionaryStructure(JSGlobalData& globalData, JSObject* object)

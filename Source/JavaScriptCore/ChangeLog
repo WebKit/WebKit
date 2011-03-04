@@ -1,3 +1,70 @@
+2011-03-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 55736 - Implement seal/freeze/preventExtensions for normal object types.
+        Provide basic functionallity from section 15.2.4 of ECMA-262.
+        This support will need expanding to cover arrays, too.
+
+        Shows a 0.5% progression on SunSpidey, this seems to be due to changing
+        ObjectConstructor to use a static table.
+
+        * DerivedSources.make:
+        * JavaScriptCore.exp:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::objectConstructorTable):
+            Add a static table for ObjectConstructor.
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData):
+            Add a static table for ObjectConstructor.
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+            Add a static table for ObjectConstructor.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::seal):
+        (JSC::JSObject::freeze):
+        (JSC::JSObject::preventExtensions):
+            Transition the object's structure.
+        (JSC::JSObject::defineOwnProperty):
+            Check isExtensible.
+        * runtime/JSObject.h:
+        (JSC::JSObject::isSealed):
+        (JSC::JSObject::isFrozen):
+        (JSC::JSObject::isExtensible):
+            These wrap method on structure.
+        (JSC::JSObject::putDirectInternal):
+            Check isExtensible.
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        (JSC::ObjectConstructor::getOwnPropertySlot):
+        (JSC::ObjectConstructor::getOwnPropertyDescriptor):
+            Change ObjectConstructor to use a static table.
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorPreventExtensions):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        (JSC::objectConstructorIsExtensible):
+            Add new methods on Object.
+        * runtime/ObjectConstructor.h:
+        (JSC::ObjectConstructor::createStructure):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+            init/propagate  m_preventExtensions
+        (JSC::Structure::sealTransition):
+        (JSC::Structure::freezeTransition):
+        (JSC::Structure::preventExtensionsTransition):
+            transition the structure, materializing the property map, setting m_preventExtensions & changing attributes.
+        (JSC::Structure::isSealed):
+        (JSC::Structure::isFrozen):
+            check attributes to detect if object is sealed/frozen.
+        * runtime/Structure.h:
+        (JSC::Structure::isExtensible):
+            checks the m_preventExtensions flag.
+
 2011-03-04  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Jon Honeycutt.

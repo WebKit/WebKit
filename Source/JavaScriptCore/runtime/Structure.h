@@ -76,6 +76,13 @@ namespace JSC {
         static PassRefPtr<Structure> getterSetterTransition(Structure*);
         static PassRefPtr<Structure> toCacheableDictionaryTransition(Structure*);
         static PassRefPtr<Structure> toUncacheableDictionaryTransition(Structure*);
+        static PassRefPtr<Structure> sealTransition(Structure*);
+        static PassRefPtr<Structure> freezeTransition(Structure*);
+        static PassRefPtr<Structure> preventExtensionsTransition(Structure*);
+
+        bool isSealed();
+        bool isFrozen();
+        bool isExtensible() const { return !m_preventExtensions; }
 
         PassRefPtr<Structure> flattenDictionaryStructure(JSGlobalData&, JSObject*);
 
@@ -216,7 +223,8 @@ namespace JSC {
 #endif
         unsigned m_specificFunctionThrashCount : 2;
         unsigned m_anonymousSlotCount : 5;
-        // 5 free bits
+        unsigned m_preventExtensions : 1;
+        // 4 free bits
     };
 
     inline size_t Structure::get(const Identifier& propertyName)

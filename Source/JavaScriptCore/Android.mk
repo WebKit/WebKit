@@ -200,6 +200,7 @@ JSC_OBJECTS := $(addprefix $(intermediates)/runtime/, \
 				JSONObject.lut.h \
 				MathObject.lut.h \
 				NumberConstructor.lut.h \
+				ObjectConstructor.lut.h \
 				RegExpConstructor.lut.h \
 				RegExpObject.lut.h \
 				StringPrototype.lut.h \

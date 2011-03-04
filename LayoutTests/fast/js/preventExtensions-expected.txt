@@ -1,0 +1,13 @@
+This test checks whether various seal/freeze/preventExtentions work on a regular object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test(obj()) is "(b:4)(c:3)E"
+PASS test(preventExtensions(obj())) is "(b:4)"
+PASS test(seal(obj())) is "(a:1)(b:4)S"
+PASS test(freeze(obj())) is "(a:1)(b:2)SF"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

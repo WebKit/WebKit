@@ -75,6 +75,7 @@ extern JSC_CONST_HASHTABLE HashTable jsonTable;
 extern JSC_CONST_HASHTABLE HashTable dateTable;
 extern JSC_CONST_HASHTABLE HashTable mathTable;
 extern JSC_CONST_HASHTABLE HashTable numberTable;
+extern JSC_CONST_HASHTABLE HashTable objectConstructorTable;
 extern JSC_CONST_HASHTABLE HashTable regExpTable;
 extern JSC_CONST_HASHTABLE HashTable regExpConstructorTable;
 extern JSC_CONST_HASHTABLE HashTable stringTable;
@@ -119,6 +120,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , jsonTable(fastNew<HashTable>(JSC::jsonTable))
     , mathTable(fastNew<HashTable>(JSC::mathTable))
     , numberTable(fastNew<HashTable>(JSC::numberTable))
+    , objectConstructorTable(fastNew<HashTable>(JSC::objectConstructorTable))
     , regExpTable(fastNew<HashTable>(JSC::regExpTable))
     , regExpConstructorTable(fastNew<HashTable>(JSC::regExpConstructorTable))
     , stringTable(fastNew<HashTable>(JSC::stringTable))
@@ -204,6 +206,7 @@ JSGlobalData::~JSGlobalData()
     jsonTable->deleteTable();
     mathTable->deleteTable();
     numberTable->deleteTable();
+    objectConstructorTable->deleteTable();
     regExpTable->deleteTable();
     regExpConstructorTable->deleteTable();
     stringTable->deleteTable();
@@ -213,6 +216,7 @@ JSGlobalData::~JSGlobalData()
     fastDelete(const_cast<HashTable*>(jsonTable));
     fastDelete(const_cast<HashTable*>(mathTable));
     fastDelete(const_cast<HashTable*>(numberTable));
+    fastDelete(const_cast<HashTable*>(objectConstructorTable));
     fastDelete(const_cast<HashTable*>(regExpTable));
     fastDelete(const_cast<HashTable*>(regExpConstructorTable));
     fastDelete(const_cast<HashTable*>(stringTable));

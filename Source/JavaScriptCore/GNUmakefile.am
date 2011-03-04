@@ -45,6 +45,7 @@ javascriptcore_built_nosources += \
 	Source/JavaScriptCore/runtime/JSONObject.lut.h \
 	Source/JavaScriptCore/runtime/MathObject.lut.h \
 	Source/JavaScriptCore/runtime/NumberConstructor.lut.h \
+	Source/JavaScriptCore/runtime/ObjectConstructor.lut.h \
 	Source/JavaScriptCore/runtime/RegExpConstructor.lut.h \
 	Source/JavaScriptCore/runtime/RegExpObject.lut.h \
 	Source/JavaScriptCore/runtime/StringPrototype.lut.h

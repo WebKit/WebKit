@@ -26,6 +26,7 @@
 #include "JSFunction.h"
 #include "JSArray.h"
 #include "JSGlobalObject.h"
+#include "Lookup.h"
 #include "ObjectPrototype.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
@@ -41,23 +42,56 @@ static EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState*);
+static EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState*);
+static EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(ExecState*);
+static EncodedJSValue JSC_HOST_CALL objectConstructorPreventExtensions(ExecState*);
+static EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState*);
+static EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState*);
+static EncodedJSValue JSC_HOST_CALL objectConstructorIsExtensible(ExecState*);
 
-ObjectConstructor::ObjectConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, ObjectPrototype* objectPrototype, Structure* functionStructure)
+}
+
+#include "ObjectConstructor.lut.h"
+
+namespace JSC {
+
+const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::objectConstructorTable };
+
+/* Source for ObjectConstructor.lut.h
+@begin objectConstructorTable
+  getPrototypeOf            objectConstructorGetPrototypeOf             DontEnum|Function 1
+  getOwnPropertyDescriptor  objectConstructorGetOwnPropertyDescriptor   DontEnum|Function 2
+  getOwnPropertyNames       objectConstructorGetOwnPropertyNames        DontEnum|Function 1
+  keys                      objectConstructorKeys                       DontEnum|Function 1
+  defineProperty            objectConstructorDefineProperty             DontEnum|Function 3
+  defineProperties          objectConstructorDefineProperties           DontEnum|Function 2
+  create                    objectConstructorCreate                     DontEnum|Function 2
+  seal                      objectConstructorSeal                       DontEnum|Function 1
+  freeze                    objectConstructorFreeze                     DontEnum|Function 1
+  preventExtensions         objectConstructorPreventExtensions          DontEnum|Function 1
+  isSealed                  objectConstructorIsSealed                   DontEnum|Function 1
+  isFrozen                  objectConstructorIsFrozen                   DontEnum|Function 1
+  isExtensible              objectConstructorIsExtensible               DontEnum|Function 1
+@end
+*/
+
+ObjectConstructor::ObjectConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, ObjectPrototype* objectPrototype)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, "Object"))
 {
     // ECMA 15.2.3.1
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, objectPrototype, DontEnum | DontDelete | ReadOnly);
-    
     // no. of arguments for constructor
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
-    
-    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().getPrototypeOf, objectConstructorGetPrototypeOf), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 2, exec->propertyNames().getOwnPropertyDescriptor, objectConstructorGetOwnPropertyDescriptor), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().getOwnPropertyNames, objectConstructorGetOwnPropertyNames), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().keys, objectConstructorKeys), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 3, exec->propertyNames().defineProperty, objectConstructorDefineProperty), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 2, exec->propertyNames().defineProperties, objectConstructorDefineProperties), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 2, exec->propertyNames().create, objectConstructorCreate), DontEnum);
+}
+
+bool ObjectConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+{
+    return getStaticFunctionSlot<JSObject>(exec, ExecState::objectConstructorTable(exec), this, propertyName, slot);
+}
+
+bool ObjectConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::objectConstructorTable(exec), this, propertyName, descriptor);
 }
 
 // ECMA 15.2.2
@@ -314,6 +348,57 @@ EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState* exec)
     if (!exec->argument(1).isObject())
         return throwVMError(exec, createTypeError(exec, "Property descriptor list must be an Object."));
     return JSValue::encode(defineProperties(exec, newObject, asObject(exec->argument(1))));
+}
+
+EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
+{
+    JSValue obj = exec->argument(0);
+    if (!obj.isObject())
+        return throwVMError(exec, createTypeError(exec, "Object.seal can only be called on Objects."));
+    asObject(obj)->seal();
+    return JSValue::encode(obj);
+}
+
+EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(ExecState* exec)
+{
+    JSValue obj = exec->argument(0);
+    if (!obj.isObject())
+        return throwVMError(exec, createTypeError(exec, "Object.freeze can only be called on Objects."));
+    asObject(obj)->freeze();
+    return JSValue::encode(obj);
+}
+
+EncodedJSValue JSC_HOST_CALL objectConstructorPreventExtensions(ExecState* exec)
+{
+    JSValue obj = exec->argument(0);
+    if (!obj.isObject())
+        return throwVMError(exec, createTypeError(exec, "Object.preventExtensions can only be called on Objects."));
+    asObject(obj)->preventExtensions();
+    return JSValue::encode(obj);
+}
+
+EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState* exec)
+{
+    JSValue obj = exec->argument(0);
+    if (!obj.isObject())
+        return throwVMError(exec, createTypeError(exec, "Object.isSealed can only be called on Objects."));
+    return JSValue::encode(jsBoolean(asObject(obj)->isSealed()));
+}
+
+EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState* exec)
+{
+    JSValue obj = exec->argument(0);
+    if (!obj.isObject())
+        return throwVMError(exec, createTypeError(exec, "Object.isFrozen can only be called on Objects."));
+    return JSValue::encode(jsBoolean(asObject(obj)->isFrozen()));
+}
+
+EncodedJSValue JSC_HOST_CALL objectConstructorIsExtensible(ExecState* exec)
+{
+    JSValue obj = exec->argument(0);
+    if (!obj.isObject())
+        return throwVMError(exec, createTypeError(exec, "Object.isExtensible can only be called on Objects."));
+    return JSValue::encode(jsBoolean(asObject(obj)->isExtensible()));
 }
 
 } // namespace JSC

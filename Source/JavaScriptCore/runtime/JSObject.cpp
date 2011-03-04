@@ -509,6 +509,22 @@ JSObject* JSObject::unwrappedObject()
     return this;
 }
 
+void JSObject::seal()
+{
+    setStructure(Structure::sealTransition(m_structure));
+}
+
+void JSObject::freeze()
+{
+    setStructure(Structure::freezeTransition(m_structure));
+}
+
+void JSObject::preventExtensions()
+{
+    if (isExtensible())
+        setStructure(Structure::preventExtensionsTransition(m_structure));
+}
+
 void JSObject::removeDirect(const Identifier& propertyName)
 {
     size_t offset;
@@ -645,6 +661,9 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
     // If we have a new property we can just put it on normally
     PropertyDescriptor current;
     if (!getOwnPropertyDescriptor(exec, propertyName, current)) {
+        // unless extensions are prevented!
+        if (!isExtensible())
+            return false;
         PropertyDescriptor oldDescriptor;
         oldDescriptor.setValue(jsUndefined());
         return putDescriptor(exec, this, propertyName, descriptor, descriptor.attributes(), oldDescriptor);
