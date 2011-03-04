@@ -1,6 +1,6 @@
 2011-03-04  Steve Falkenburg  <sfalken@apple.com>
 
-        Reviewed by NOBODY Jon Honeycutt.
+        Reviewed by Jon Honeycutt.
 
         Adopt VersionStamper tool for Windows WebKit DLLs
         https://bugs.webkit.org/show_bug.cgi?id=55784
