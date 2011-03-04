@@ -143,8 +143,10 @@ public:
     static void removeMockDeviceOrientation();
     static void setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
 
-    static void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
-    static void setMockGeolocationError(int errorCode, const QString& message);
+    static void resetGeolocationMock(QWebPage*);
+    static void setMockGeolocationPermission(QWebPage*, bool allowed);
+    static void setMockGeolocationPosition(QWebPage*, double latitude, double longitude, double accuracy);
+    static void setMockGeolocationError(QWebPage*, int errorCode, const QString& message);
 
     static int workerThreadCount();
 

@@ -2886,7 +2886,6 @@ media/video-delay-load-event.html
 # ============================================================================= #
 # new skipped tests yet to be sorted
 # ============================================================================= #
-fast/dom/Geolocation/callback-to-remote-context2.html
 
 # Link prefetch is disabled by default
 fast/dom/HTMLLinkElement/link-and-subresource-test.html
@@ -3163,10 +3162,6 @@ inspector/timeline/timeline-script-tag-1.html
 # https://bugs.webkit.org/show_bug.cgi?id=54725
 editing/selection/mixed-editability-10.html
 
-# ----- FIXME: QtWebkit supports client based and LayoutTest for the same is yet to be implemented. Tracked in #54334 ------ 
-fast/dom/Geolocation
-fast/dom/Window/window-properties-geolocation.html
-
 # [Qt] Generate results for media/audio-repaint.html and media/media-document-audio-repaint.html
 # https://bugs.webkit.org/show_bug.cgi?id=54984
 media/audio-repaint.html
@@ -3186,3 +3181,6 @@ http/tests/xmlviewer/dumpAsText/xmlviewer-charset-utf8.xml
 http/tests/xmlviewer/dumpAsText/xmlviewer.xml
 http/tests/xmlviewer/dumpAsText/xsl-stylesheet.xml
 http/tests/xmlviewer/dumpAsText/xul.xml
+
+# [Qt] geolocation case failing as needs implementation in DumpRenderTree : TODO bug
+fast/dom/Geolocation/window-close-crash.html

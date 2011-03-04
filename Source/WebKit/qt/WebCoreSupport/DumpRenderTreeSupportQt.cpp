@@ -45,9 +45,11 @@
 #include "V8GCController.h"
 #include "V8Proxy.h"
 #endif
-#include "Geolocation.h"
-#include "GeolocationServiceMock.h"
-#include "Geoposition.h"
+#include "GeolocationClient.h"
+#include "GeolocationClientMock.h"
+#include "GeolocationController.h"
+#include "GeolocationError.h"
+#include "GeolocationPosition.h"
 #include "HistoryItem.h"
 #include "HTMLInputElement.h"
 #include "InspectorController.h"
@@ -88,6 +90,14 @@
 using namespace WebCore;
 
 QMap<int, QWebScriptWorld*> m_worldMap;
+
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+GeolocationClientMock* toGeolocationClientMock(GeolocationClient* client)
+{
+     ASSERT(QWebPagePrivate::drtRun);
+     return static_cast<GeolocationClientMock*>(client);
+}
+#endif
 
 QDRTNode::QDRTNode()
     : m_node(0)
@@ -764,19 +774,50 @@ void DumpRenderTreeSupportQt::setMockDeviceOrientation(bool canProvideAlpha, dou
 #endif
 }
 
-void DumpRenderTreeSupportQt::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+void DumpRenderTreeSupportQt::resetGeolocationMock(QWebPage* page)
 {
-#if ENABLE(GEOLOCATION)
-    RefPtr<Geoposition> geoposition = Geoposition::create(Coordinates::create(latitude, longitude, false, 0, accuracy, true, 0, false, 0, false, 0), currentTime() * 1000.0);
-    GeolocationServiceMock::setPosition(geoposition);
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    Page* corePage = QWebPagePrivate::core(page);
+    GeolocationClientMock* mockClient = toGeolocationClientMock(corePage->geolocationController()->client());
+    mockClient->reset();
 #endif
 }
 
-void DumpRenderTreeSupportQt::setMockGeolocationError(int errorCode, const QString& message)
+void DumpRenderTreeSupportQt::setMockGeolocationPermission(QWebPage* page, bool allowed)
 {
-#if ENABLE(GEOLOCATION)
-    RefPtr<PositionError> positionError = PositionError::create(static_cast<PositionError::ErrorCode>(errorCode), message);
-    GeolocationServiceMock::setError(positionError);
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    Page* corePage = QWebPagePrivate::core(page);
+    GeolocationClientMock* mockClient = toGeolocationClientMock(corePage->geolocationController()->client());
+    mockClient->setPermission(allowed);
+#endif
+}
+
+void DumpRenderTreeSupportQt::setMockGeolocationPosition(QWebPage* page, double latitude, double longitude, double accuracy)
+{
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    Page* corePage = QWebPagePrivate::core(page);
+    GeolocationClientMock* mockClient = toGeolocationClientMock(corePage->geolocationController()->client());
+    mockClient->setPosition(GeolocationPosition::create(currentTime(), latitude, longitude, accuracy));
+#endif
+}
+
+void DumpRenderTreeSupportQt::setMockGeolocationError(QWebPage* page, int errorCode, const QString& message)
+{
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    Page* corePage = QWebPagePrivate::core(page);
+
+    GeolocationError::ErrorCode code = GeolocationError::PositionUnavailable;
+    switch (errorCode) {
+    case PositionError::PERMISSION_DENIED:
+        code = GeolocationError::PermissionDenied;
+        break;
+    case PositionError::POSITION_UNAVAILABLE:
+        code = GeolocationError::PositionUnavailable;
+        break;
+    }
+
+    GeolocationClientMock* mockClient = static_cast<GeolocationClientMock*>(corePage->geolocationController()->client());
+    mockClient->setError(GeolocationError::create(code, message));
 #endif
 }
 

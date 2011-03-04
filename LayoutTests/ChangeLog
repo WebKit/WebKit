@@ -1,3 +1,16 @@
+2011-03-03  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [QT] Implement mock client-based geolocation for layout testing
+        https://bugs.webkit.org/show_bug.cgi?id=54334
+
+        Re-enable geolocation layout testing for qt port. Also enable a long pending
+        failure with geolocation as it works with client-based geolocation. 
+        Skipped one last case related to multiple window which needs some code cleanup in qt DRT.
+
+        * platform/qt/Skipped:
+
 2011-03-03  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, update chromium test expectations.

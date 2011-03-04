@@ -1,3 +1,16 @@
+2011-03-03  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [QT] Implement mock client-based geolocation for layout testing
+        https://bugs.webkit.org/show_bug.cgi?id=54334
+
+        Implements client() to GeolocationController to re-use geolocationClientMock class
+        for layout testing purpose.
+
+        * page/GeolocationController.h:
+        (WebCore::GeolocationController::client):
+
 2011-03-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.

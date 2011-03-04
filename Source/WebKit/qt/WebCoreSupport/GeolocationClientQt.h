@@ -45,7 +45,7 @@ class GeolocationClientQt : public QObject, public GeolocationClient {
     Q_OBJECT
 
 public:
-    GeolocationClientQt(QWebPage*);
+    GeolocationClientQt(const QWebPage*);
     virtual ~GeolocationClientQt();
 
     virtual void geolocationDestroyed();
@@ -63,7 +63,7 @@ private Q_SLOTS:
     void positionUpdated(const QGeoPositionInfo&);
 
 private:
-    QWebPage* m_page;
+    const QWebPage* m_page;
     RefPtr<GeolocationPosition> m_lastPosition;
     QtMobility::QGeoPositionInfoSource* m_location;
 };

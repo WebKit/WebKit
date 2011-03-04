@@ -86,6 +86,7 @@ void LayoutTestController::reset()
     DumpRenderTreeSupportQt::setCustomPolicyDelegate(false, false);
     DumpRenderTreeSupportQt::dumpHistoryCallbacks(false);
     DumpRenderTreeSupportQt::dumpVisitedLinksCallbacks(false);
+    DumpRenderTreeSupportQt::resetGeolocationMock(m_drt->webPage());
     setIconDatabaseEnabled(false);
     clearAllDatabases();
 
@@ -762,7 +763,7 @@ void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double
 void LayoutTestController::setGeolocationPermission(bool allow)
 {
     setGeolocationPermissionCommon(allow);
-    emit geolocationPermissionSet();
+    DumpRenderTreeSupportQt::setMockGeolocationPermission(m_drt->webPage(), allow);
 }
 
 void LayoutTestController::setGeolocationPermissionCommon(bool allow)
@@ -773,12 +774,12 @@ void LayoutTestController::setGeolocationPermissionCommon(bool allow)
 
 void LayoutTestController::setMockGeolocationError(int code, const QString& message)
 {
-    DumpRenderTreeSupportQt::setMockGeolocationError(code, message);
+    DumpRenderTreeSupportQt::setMockGeolocationError(m_drt->webPage(), code, message);
 }
 
 void LayoutTestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
-    DumpRenderTreeSupportQt::setMockGeolocationPosition(latitude, longitude, accuracy);
+    DumpRenderTreeSupportQt::setMockGeolocationPosition(m_drt->webPage(), latitude, longitude, accuracy);
 }
 
 void LayoutTestController::addMockSpeechInputResult(const QString& result, double confidence, const QString& language)

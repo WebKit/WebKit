@@ -57,6 +57,8 @@ public:
 
     GeolocationPosition* lastPosition();
 
+    GeolocationClient* client() { return m_client; }
+
 private:
     Page* m_page;
     GeolocationClient* m_client;

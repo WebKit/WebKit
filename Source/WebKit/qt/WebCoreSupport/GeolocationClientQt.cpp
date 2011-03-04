@@ -43,7 +43,7 @@ namespace WebCore {
 
 static const char failedToStartServiceErrorMessage[] = "Failed to start Geolocation service";
 
-GeolocationClientQt::GeolocationClientQt(QWebPage* page)
+GeolocationClientQt::GeolocationClientQt(const QWebPage* page)
     : m_page(page)
     , m_lastPosition(0)
     , m_location(0)

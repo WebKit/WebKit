@@ -62,11 +62,10 @@
 #include "FrameLoaderClientQt.h"
 #include "FrameTree.h"
 #include "FrameView.h"
-
-#if ENABLE(GEOLOCATION)
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#include "GeolocationClientMock.h"
 #include "GeolocationClientQt.h"
-#endif
-
+#endif // CLIENT_BASED_GEOLOCATION
 #include "GeolocationPermissionClientQt.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -327,11 +326,19 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     pageClients.deviceOrientationClient = new DeviceOrientationClientQt(q);
     pageClients.deviceMotionClient = new DeviceMotionClientQt(q);
 #endif
-#if ENABLE(GEOLOCATION)
-    pageClients.geolocationClient = new GeolocationClientQt(q);
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    if (QWebPagePrivate::drtRun)
+        pageClients.geolocationClient = new GeolocationClientMock();
+    else
+        pageClients.geolocationClient = new GeolocationClientQt(q);
 #endif
     page = new Page(pageClients);
 
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    // In case running in DumpRenderTree mode set the controller to mock provider.
+    if (QWebPagePrivate::drtRun)
+        static_cast<GeolocationClientMock*>(pageClients.geolocationClient)->setController(page->geolocationController());
+#endif
     settings = new QWebSettings(page->settings());
 
     history.d = new QWebHistoryPrivate(static_cast<WebCore::BackForwardListImpl*>(page->backForwardList()));

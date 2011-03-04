@@ -418,11 +418,12 @@ DumpRenderTree::DumpRenderTree()
     , m_graphicsBased(false)
     , m_persistentStoragePath(QString(getenv("DUMPRENDERTREE_TEMP")))
 {
-
     QByteArray viewMode = getenv("QT_DRT_WEBVIEW_MODE");
     if (viewMode == "graphics")
         setGraphicsBased(true);
 
+    // Set running in DRT mode for qwebpage to create testable objects.
+    DumpRenderTreeSupportQt::setDumpRenderTreeModeEnabled(true);
     DumpRenderTreeSupportQt::overwritePluginDirectories();
     DumpRenderTreeSupportQt::activeMockDeviceOrientationClient(true);
     QWebSettings::enablePersistentStorage(m_persistentStoragePath);

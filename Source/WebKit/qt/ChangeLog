@@ -1,3 +1,25 @@
+2011-03-03  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [QT] Implement mock client-based geolocation for layout testing
+        https://bugs.webkit.org/show_bug.cgi?id=54334
+
+        Implement layout testing for Client-Based geolocation. If drt_run is set 
+        then create mock geolocationClient and update the same with controller.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::mockGeolocationReset):
+        (DumpRenderTreeSupportQt::setMockGeolocationPermission):
+        (DumpRenderTreeSupportQt::setMockGeolocationPosition):
+        (DumpRenderTreeSupportQt::setMockGeolocationError):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/GeolocationClientQt.cpp:
+        (WebCore::GeolocationClientQt::GeolocationClientQt):
+        * WebCoreSupport/GeolocationClientQt.h:
+
 2011-03-03  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
