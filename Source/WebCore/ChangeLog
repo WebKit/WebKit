@@ -1,3 +1,15 @@
+2011-03-04  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Clarify comment about potential memory leak in SVGImage
+        https://bugs.webkit.org/show_bug.cgi?id=55362
+
+        No functionality change. No new tests.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2011-03-04  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Maciej Stachowiak.
