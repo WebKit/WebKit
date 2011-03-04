@@ -1,3 +1,29 @@
+2011-03-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: summary bar may overlap content of the network item view
+        https://bugs.webkit.org/show_bug.cgi?id=55656
+
+        - drop custom summary bar placement logic, do it with CSS instead.
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype.resize):
+        (WebInspector.NetworkPanel.prototype._createSummaryBar):
+        (WebInspector.NetworkPanel.prototype._updateSummaryBar):
+        (WebInspector.NetworkPanel.prototype._updateFilter):
+        (WebInspector.NetworkPanel.prototype.show):
+        (WebInspector.NetworkPanel.prototype.refresh):
+        (WebInspector.NetworkPanel.prototype._reset):
+        (WebInspector.NetworkPanel.prototype._setLargerResources):
+        (WebInspector.NetworkPanel.prototype._updateOffscreenRows):
+        * inspector/front-end/networkPanel.css:
+        (.network-sidebar .data-grid td):
+        (.network-sidebar tr.filler td):
+        (.network-summary-bar):
+        (.network-sidebar .data-grid .network-summary-bar td):
+        (.network-summary-bar img):
+
 2011-03-04  James Su <suzhe@chromium.org>
 
         Reviewed by Dimitri Glazkov.
