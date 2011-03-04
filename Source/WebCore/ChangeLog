@@ -1,3 +1,29 @@
+2011-03-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: AppCache agent should have same lifetime as InspectorAgent
+        https://bugs.webkit.org/show_bug.cgi?id=55673
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::setFrontend):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        (WebCore::InspectorAgent::createFrontendLifetimeAgents):
+        (WebCore::InspectorAgent::releaseFrontendLifetimeAgents):
+        (WebCore::InspectorAgent::didCommitLoad):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::InspectorApplicationCacheAgent):
+        (WebCore::InspectorApplicationCacheAgent::setFrontend):
+        (WebCore::InspectorApplicationCacheAgent::clearFrontend):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::networkStateChangedImpl):
+        (WebCore::InspectorInstrumentation::updateApplicationCacheStatusImpl):
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::inspectorApplicationCacheAgent):
+        (WebCore::InstrumentingAgents::setInspectorApplicationCacheAgent):
+
 2011-03-03  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

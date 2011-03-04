@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class InspectorApplicationCacheAgent;
 class InspectorBrowserDebuggerAgent;
 class InspectorConsoleAgent;
 class InspectorDOMAgent;
@@ -54,6 +55,9 @@ class InstrumentingAgents {
 public:
     InstrumentingAgents()
         : m_inspectorBrowserDebuggerAgent(0)
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+        , m_inspectorApplicationCacheAgent(0)
+#endif
         , m_inspectorConsoleAgent(0)
         , m_inspectorDOMAgent(0)
         , m_inspectorDOMStorageAgent(0)
@@ -69,6 +73,11 @@ public:
 
     InspectorBrowserDebuggerAgent* inspectorBrowserDebuggerAgent() const { return m_inspectorBrowserDebuggerAgent; }
     void setInspectorBrowserDebuggerAgent(InspectorBrowserDebuggerAgent* agent) { m_inspectorBrowserDebuggerAgent = agent; }
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    InspectorApplicationCacheAgent* inspectorApplicationCacheAgent() const { return m_inspectorApplicationCacheAgent; }
+    void setInspectorApplicationCacheAgent(InspectorApplicationCacheAgent* agent) { m_inspectorApplicationCacheAgent = agent; }
+#endif
 
     InspectorConsoleAgent* inspectorConsoleAgent() const { return m_inspectorConsoleAgent; }
     void setInspectorConsoleAgent(InspectorConsoleAgent* agent) { m_inspectorConsoleAgent = agent; }
@@ -102,6 +111,9 @@ public:
 
 private:
     InspectorBrowserDebuggerAgent* m_inspectorBrowserDebuggerAgent;
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    InspectorApplicationCacheAgent* m_inspectorApplicationCacheAgent;
+#endif
     InspectorConsoleAgent* m_inspectorConsoleAgent;
     InspectorDOMAgent* m_inspectorDOMAgent;
     InspectorDOMStorageAgent* m_inspectorDOMStorageAgent;

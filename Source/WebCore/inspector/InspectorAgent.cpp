@@ -148,6 +148,9 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client)
 #endif
     , m_state(new InspectorState(client))
     , m_timelineAgent(InspectorTimelineAgent::create(m_instrumentingAgents.get(), m_state.get()))
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    , m_applicationCacheAgent(new InspectorApplicationCacheAgent(m_instrumentingAgents.get(), page))
+#endif
     , m_resourceAgent(InspectorResourceAgent::create(m_instrumentingAgents.get(), page, m_state.get()))
     , m_consoleAgent(new InspectorConsoleAgent(m_instrumentingAgents.get(), this, m_state.get(), m_injectedScriptHost.get(), m_domAgent.get()))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -365,6 +368,9 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
     m_frontend = inspectorFrontend;
     createFrontendLifetimeAgents();
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    m_applicationCacheAgent->setFrontend(m_frontend);
+#endif
     m_domAgent->setFrontend(m_frontend);
     m_consoleAgent->setFrontend(m_frontend);
     m_timelineAgent->setFrontend(m_frontend);
@@ -407,6 +413,9 @@ void InspectorAgent::disconnectFrontend()
     m_profilerAgent->clearFrontend();
     m_profilerAgent->stopUserInitiatedProfiling(true);
 #endif
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    m_applicationCacheAgent->clearFrontend();
+#endif
 
     m_consoleAgent->clearFrontend();
     m_domAgent->clearFrontend();
@@ -426,18 +435,11 @@ void InspectorAgent::disconnectFrontend()
 void InspectorAgent::createFrontendLifetimeAgents()
 {
     m_runtimeAgent = InspectorRuntimeAgent::create(m_injectedScriptHost.get());
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    m_applicationCacheAgent = new InspectorApplicationCacheAgent(m_inspectedPage->mainFrame()->loader()->documentLoader(), m_frontend);
-#endif
 }
 
 void InspectorAgent::releaseFrontendLifetimeAgents()
 {
     m_runtimeAgent.clear();
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    m_applicationCacheAgent.clear();
-#endif
 }
 
 void InspectorAgent::populateScriptObjects(ErrorString*)
@@ -518,11 +520,6 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
 
         if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
             timelineAgent->didCommitLoad();
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-        if (m_applicationCacheAgent)
-            m_applicationCacheAgent->didCommitLoad(loader);
-#endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         if (InspectorDebuggerAgent* debuggerAgent = m_instrumentingAgents->inspectorDebuggerAgent()) {

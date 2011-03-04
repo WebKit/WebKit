@@ -35,21 +35,30 @@
 #include "InspectorAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
+#include "InstrumentingAgents.h"
 #include "NetworkStateNotifier.h"
 #include "Page.h"
 #include "ResourceResponse.h"
 
 namespace WebCore {
 
-InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(DocumentLoader* documentLoader, InspectorFrontend* frontend)
-    : m_documentLoader(documentLoader)
-    , m_frontend(frontend->applicationcache())
+InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(InstrumentingAgents* instrumentingAgents, Page* inspectedPage)
+    : m_instrumentingAgents(instrumentingAgents)
+    , m_inspectedPage(inspectedPage)
+    , m_frontend(0)
 {
 }
 
-void InspectorApplicationCacheAgent::didCommitLoad(DocumentLoader* documentLoader)
+void InspectorApplicationCacheAgent::setFrontend(InspectorFrontend* frontend)
 {
-    m_documentLoader = documentLoader;
+    m_frontend = frontend->applicationcache();
+    m_instrumentingAgents->setInspectorApplicationCacheAgent(this);
+}
+
+void InspectorApplicationCacheAgent::clearFrontend()
+{
+    m_instrumentingAgents->setInspectorApplicationCacheAgent(0);
+    m_frontend = 0;
 }
 
 void InspectorApplicationCacheAgent::updateApplicationCacheStatus(Frame* frame)
@@ -66,14 +75,15 @@ void InspectorApplicationCacheAgent::networkStateChanged()
 
 void InspectorApplicationCacheAgent::getApplicationCaches(ErrorString*, RefPtr<InspectorValue>* applicationCaches)
 {
-    if (m_documentLoader) {
-        ApplicationCacheHost* host = m_documentLoader->applicationCacheHost();
-        ApplicationCacheHost::CacheInfo info = host->applicationCacheInfo();
+    DocumentLoader* documentLoader = m_inspectedPage->mainFrame()->loader()->documentLoader();
+    if (!documentLoader)
+        return;
+    ApplicationCacheHost* host = documentLoader->applicationCacheHost();
+    ApplicationCacheHost::CacheInfo info = host->applicationCacheInfo();
 
-        ApplicationCacheHost::ResourceInfoList resources;
-        host->fillResourceList(&resources);
-        *applicationCaches = buildObjectForApplicationCache(resources, info);
-    }
+    ApplicationCacheHost::ResourceInfoList resources;
+    host->fillResourceList(&resources);
+    *applicationCaches = buildObjectForApplicationCache(resources, info);
 }
 
 PassRefPtr<InspectorObject> InspectorApplicationCacheAgent::buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList& applicationCacheResources, const ApplicationCacheHost::CacheInfo& applicationCacheInfo)

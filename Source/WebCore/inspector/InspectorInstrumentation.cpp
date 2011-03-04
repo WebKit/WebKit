@@ -654,13 +654,13 @@ void InspectorInstrumentation::didCloseWebSocketImpl(InspectorAgent* inspectorAg
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 void InspectorInstrumentation::networkStateChangedImpl(InspectorAgent* inspectorAgent)
 {
-    if (InspectorApplicationCacheAgent* applicationCacheAgent = inspectorAgent->applicationCacheAgent())
+    if (InspectorApplicationCacheAgent* applicationCacheAgent = inspectorAgent->instrumentingAgents()->inspectorApplicationCacheAgent())
         applicationCacheAgent->networkStateChanged();
 }
 
 void InspectorInstrumentation::updateApplicationCacheStatusImpl(InspectorAgent* inspectorAgent, Frame* frame)
 {
-    if (InspectorApplicationCacheAgent* applicationCacheAgent = inspectorAgent->applicationCacheAgent())
+    if (InspectorApplicationCacheAgent* applicationCacheAgent = inspectorAgent->instrumentingAgents()->inspectorApplicationCacheAgent())
         applicationCacheAgent->updateApplicationCacheStatus(frame);
 }
 #endif
