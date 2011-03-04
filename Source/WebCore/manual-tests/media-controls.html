@@ -85,12 +85,36 @@ var TESTS = {
                  'of the timeline gliding smoothly along the track, updated every 200ms or so.</p>',
     html: '<video controls src={video}></video>',
 },
+'audio': {
+    title: 'Typical audio with controls',
+    description: '<p>Should have "Rewind", "Play", "Mute" buttons, timeline with time current and remaining shown.</p>' +
+                 '<p>You may see brief resize of the video when the metadata arrives and a brief flash of the "Loading..." status.</p>' +
+                 '<p>"Play" button should turn into "Pause" when playing, with current and remaining time should changing and the thumb ' +
+                 'of the timeline gliding smoothly along the track, updated every 200ms or so.</p>',
+    html: '<audio controls src={audio}></audio>',
+},
 'video-volume': {
-    title: 'Volume controls',
+    title: 'Video volume controls',
     description: '<p>When hovering over the "Mute" button, a volume control should appear, showing its own "Mute" button and a volume slider.</p>' +
                  '<p>You should be able to control the volume with the slider and mute/unmute using the "Mute" button</p>' +
                  '<p>Moving the mouse away from the volume control should make the control disappear.</p>',
     html: '<video controls src={video}></video>',
+},
+'audio-volume': {
+    title: 'Audio volume controls',
+    description: '<p>When hovering over the "Mute" button, a volume control should appear, showing its own "Mute" button and a volume slider.</p>' +
+                 '<p>You should be able to control the volume with the slider and mute/unmute using the "Mute" button</p>' +
+                 '<p>Moving the mouse away from the volume control should make the control disappear.</p>',
+    html: '<audio style="padding-top: 200px;" controls src={video}></audio>',
+},
+'audio-volume-neg': {
+    title: 'Audio volume controls (negative offset)',
+    description: '<p>When hovering over the "Mute" button, a volume control should appear, showing its own "Mute" button and a volume slider.</p>' +
+                 '<p>In this particular layout, the volume control should be positioned directly under the "Mute" button, showing two "Mute" buttons --' +
+                 'one on the main controls and another on the volume control.</p>' +
+                 '<p>You should be able to control the volume with the slider and mute/unmute using the "Mute" button</p>' +
+                 '<p>Moving the mouse away from the volume control or the "Mute" button should make the control disappear.</p>',
+    html: '<audio controls src={video}></audio>',
 },
 'video-zoomed': {
     title: 'Magnified video',
@@ -159,10 +183,15 @@ var TESTS = {
                  'if supported. Should blink "Loading...", but not twitch or flash other controls if reloaded',
     html: '<video controls src="foobar"></video>'
 },
-'no-source': {
+'video-no-source': {
     title: 'Video with no source',
     description: 'Should have "Rewind" and "Play" buttons. Should not blink/twitch if reloaded.',
     html: '<video controls></video>'
+},
+'audio-no-source': {
+    title: 'Audio with no source',
+    description: 'Should have "Rewind" and "Play" buttons. Should not blink/twitch if reloaded.',
+    html: '<audio controls></audio>'
 }
 
 };
