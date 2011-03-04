@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2003, 2008, 2010 Apple Inc. All rights reserved.
  * Copyright 2011, The Android Open Source Project
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,46 +24,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JobjectWrapper_h
-#define JobjectWrapper_h
+#include "config.h"
+#include "JobjectWrapper.h"
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JNIUtility.h"
+#include <assert.h>
 
-namespace JSC {
+using namespace JSC::Bindings;
 
-namespace Bindings {
+JobjectWrapper::JobjectWrapper(jobject instance)
+    : m_refCount(0)
+{
+    assert(instance);
 
-class JobjectWrapper {
-friend class JavaField;
-friend class JavaInstance;
+    // Cache the JNIEnv used to get the global ref for this java instanace.
+    // It'll be used to delete the reference.
+    m_env = getJNIEnv();
 
-public:
-    jobject instance() const { return m_instance; }
-    void setInstance(jobject instance) { m_instance = instance; }
+    m_instance = m_env->NewGlobalRef(instance);
 
-    void ref() { m_refCount++; }
-    void deref()
-    {
-        if (!(--m_refCount))
-            delete this;
-    }
+    if (!m_instance)
+        LOG_ERROR("Could not get GlobalRef for %p", instance);
+}
 
-protected:
-    JobjectWrapper(jobject);
-    ~JobjectWrapper();
-
-    jobject m_instance;
-
-private:
-    JNIEnv* m_env;
-    unsigned int m_refCount;
-};
-
-} // namespace Bindings
-
-} // namespace JSC
+JobjectWrapper::~JobjectWrapper()
+{
+    m_env->DeleteGlobalRef(m_instance);
+}
 
 #endif // ENABLE(JAVA_BRIDGE)
-#endif // JobjectWrapper_h

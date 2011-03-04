@@ -32,6 +32,7 @@
 #include "BridgeJSC.h"
 #include "JNIBridge.h"
 #include "JNIUtility.h"
+#include "JobjectWrapper.h"
 
 namespace JSC {
 
@@ -56,7 +57,7 @@ private:
     JavaString m_name;
     JavaString m_type;
     JNIType m_JNIType;
-    RefPtr<JObjectWrapper> m_field;
+    RefPtr<JobjectWrapper> m_field;
 };
 
 class JavaArray : public Array {
@@ -75,7 +76,7 @@ public:
     static JSValue convertJObjectToArray(ExecState*, jobject, const char* type, PassRefPtr<RootObject>);
 
 private:
-    RefPtr<JObjectWrapper> m_array;
+    RefPtr<JobjectWrapper> m_array;
     unsigned int m_length;
     const char* m_type;
 };

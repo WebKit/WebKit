@@ -1,3 +1,33 @@
+2011-03-04  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        JSC and V8 versions of Java bridge should share JobjectWrapper
+        https://bugs.webkit.org/show_bug.cgi?id=55763
+
+        No new tests, refactoring only.
+
+        * Android.jscbindings.mk:
+        * Android.v8bindings.mk:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/jni/JobjectWrapper.cpp:
+        (JobjectWrapper::JobjectWrapper):
+        (JobjectWrapper::~JobjectWrapper):
+        * bridge/jni/JobjectWrapper.h:
+        (JSC::Bindings::JobjectWrapper::instance):
+        (JSC::Bindings::JobjectWrapper::setInstance):
+        (JSC::Bindings::JobjectWrapper::ref):
+        (JSC::Bindings::JobjectWrapper::deref):
+        * bridge/jni/jsc/JNIBridgeJSC.cpp:
+        (JavaField::JavaField):
+        (JavaArray::JavaArray):
+        * bridge/jni/jsc/JNIBridgeJSC.h:
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::JavaInstance):
+        * bridge/jni/jsc/JavaInstanceJSC.h:
+
 2011-03-04  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

@@ -30,6 +30,7 @@
 
 #include "BridgeJSC.h"
 #include "JNIUtility.h"
+#include "JobjectWrapper.h"
 #include "runtime_root.h"
 
 namespace JSC {
@@ -37,35 +38,6 @@ namespace JSC {
 namespace Bindings {
 
 class JavaClass;
-
-class JObjectWrapper {
-friend class RefPtr<JObjectWrapper>;
-friend class JavaArray;
-friend class JavaField;
-friend class JavaInstance;
-friend class JavaMethod;
-
-public:
-    jobject instance() const { return m_instance; }
-    void setInstance(jobject instance) { m_instance = instance; }
-
-    void ref() { m_refCount++; }
-    void deref()
-    {
-        if (!(--m_refCount))
-            delete this;
-    }
-
-protected:
-    JObjectWrapper(jobject instance);
-    ~JObjectWrapper();
-
-    jobject m_instance;
-
-private:
-    JNIEnv* m_env;
-    unsigned int m_refCount;
-};
 
 class JavaInstance : public Instance {
 public:
@@ -98,7 +70,7 @@ protected:
     virtual void virtualBegin();
     virtual void virtualEnd();
 
-    RefPtr<JObjectWrapper> m_instance;
+    RefPtr<JobjectWrapper> m_instance;
     mutable JavaClass* m_class;
 };
 

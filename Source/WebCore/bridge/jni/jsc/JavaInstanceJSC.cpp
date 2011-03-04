@@ -51,7 +51,7 @@ using namespace WebCore;
 JavaInstance::JavaInstance(jobject instance, PassRefPtr<RootObject> rootObject)
     : Instance(rootObject)
 {
-    m_instance = new JObjectWrapper(instance);
+    m_instance = new JobjectWrapper(instance);
     m_class = 0;
 }
 
@@ -364,29 +364,6 @@ JSValue JavaInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint)
 JSValue JavaInstance::valueOf(ExecState* exec) const
 {
     return stringValue(exec);
-}
-
-JObjectWrapper::JObjectWrapper(jobject instance)
-    : m_refCount(0)
-{
-    ASSERT(instance);
-
-    // Cache the JNIEnv used to get the global ref for this java instance.
-    // It'll be used to delete the reference.
-    m_env = getJNIEnv();
-
-    m_instance = m_env->NewGlobalRef(instance);
-
-    LOG(LiveConnect, "JObjectWrapper ctor new global ref %p for %p", m_instance, instance);
-
-    if (!m_instance)
-        LOG_ERROR("Could not get GlobalRef for %p", instance);
-}
-
-JObjectWrapper::~JObjectWrapper()
-{
-    LOG(LiveConnect, "JObjectWrapper dtor deleting global ref %p", m_instance);
-    m_env->DeleteGlobalRef(m_instance);
 }
 
 #endif // ENABLE(JAVA_BRIDGE)

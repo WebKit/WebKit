@@ -30,6 +30,7 @@
 #if ENABLE(JAVA_BRIDGE)
 
 #include "JNIUtilityPrivate.h"
+#include "JobjectWrapper.h"
 #include "Logging.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
@@ -57,7 +58,7 @@ JavaField::JavaField(JNIEnv* env, jobject aField)
         fieldName = env->NewStringUTF("<Unknown>");
     m_name = JavaString(env, fieldName);
 
-    m_field = new JObjectWrapper(aField);
+    m_field = new JobjectWrapper(aField);
 }
 
 JSValue JavaArray::convertJObjectToArray(ExecState* exec, jobject anObject, const char* type, PassRefPtr<RootObject> rootObject)
@@ -251,7 +252,7 @@ void JavaField::setValueToInstance(ExecState* exec, const Instance* i, JSValue a
 JavaArray::JavaArray(jobject array, const char* type, PassRefPtr<RootObject> rootObject)
     : Array(rootObject)
 {
-    m_array = new JObjectWrapper(array);
+    m_array = new JobjectWrapper(array);
     // Java array are fixed length, so we can cache length.
     JNIEnv* env = getJNIEnv();
     m_length = env->GetArrayLength(static_cast<jarray>(m_array->m_instance));
