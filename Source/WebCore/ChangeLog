@@ -1,3 +1,21 @@
+2011-03-04  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        V8 version of JavaString should obtain string from JNI in UTF-16 encoding
+        https://bugs.webkit.org/show_bug.cgi?id=55566
+
+        We obtain the string from JNI in UTF-16 encoding and convert
+        to UTF-8 using our own routines as required. This matches the
+        behaviour of the JSC version of JavaString.
+
+        No new tests, no change in behaviour.
+
+        * bridge/jni/v8/JavaStringV8.h:
+        (JSC::Bindings::JavaStringImpl::init):
+        (JSC::Bindings::JavaStringImpl::utf8):
+        (JSC::Bindings::JavaStringImpl::impl):
+
 2011-03-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

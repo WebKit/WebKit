@@ -28,12 +28,8 @@
 
 #include "JNIUtility.h"
 
-#include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
-
-namespace WTF {
-class StringImpl;
-}
+#include <wtf/text/WTFString.h>
 
 
 namespace JSC {
@@ -44,20 +40,26 @@ class JavaStringImpl {
 public:
     void init() {}
 
-    void init(JNIEnv* e, jstring s)
+    void init(JNIEnv* env, jstring string)
     {
-        int size = e->GetStringLength(s);
-        const char* cs = getCharactersFromJStringInEnv(e, s);
-        m_utf8String = WTF::CString(cs, size);
-        releaseCharactersForJStringInEnv(e, s, cs);
+        int size = env->GetStringLength(string);
+        const jchar* jChars = getUCharactersFromJStringInEnv(env, string);
+        m_impl = StringImpl::create(jChars, size);
+        releaseUCharactersForJStringInEnv(env, string, jChars);
     }
 
-    const char* utf8() const { return m_utf8String.data(); }
+    const char* utf8() const
+    {
+        if (!m_utf8String.data())
+            m_utf8String = String(m_impl).utf8();
+        return m_utf8String.data();
+    }
     int length() const { return m_utf8String.length(); }
-    StringImpl* impl() const { ASSERT_NOT_REACHED(); return 0; }
+    StringImpl* impl() const { return m_impl.get(); }
 
 private:
-    WTF::CString m_utf8String;
+    RefPtr<StringImpl> m_impl;
+    mutable CString m_utf8String;
 };
 
 } // namespace Bindings
