@@ -5,6 +5,13 @@
         * platform/efl/RenderThemeEfl.cpp:
         (WebCore::RenderThemeEfl::paintThemePart):
 
+2011-03-04  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed EFL build fix for r80324.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintThemePart):
+
 2011-03-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
