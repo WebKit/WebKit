@@ -294,7 +294,7 @@ sub GenerateInterface
         methodSignatures => {}
     );
     generateFunctions($interface, \%agent);
-    if (@{%agent->{methodDeclarations}}) {
+    if (@{$agent{methodDeclarations}}) {
         generateAgentDeclaration($interface, \%agent);
     }
 }

@@ -163,16 +163,16 @@ void InjectedScriptHost::discardInjectedScripts()
     m_idToInjectedScript.clear();
 }
 
-void InjectedScriptHost::releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup)
+void InjectedScriptHost::releaseObjectGroup(long injectedScriptId, const String& objectGroup)
 {
     if (injectedScriptId) {
          InjectedScript injectedScript = m_idToInjectedScript.get(injectedScriptId);
          if (!injectedScript.hasNoValue())
-             injectedScript.releaseWrapperObjectGroup(objectGroup);
+             injectedScript.releaseObjectGroup(objectGroup);
     } else {
          // Iterate over all injected scripts if injectedScriptId is not specified.
          for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != m_idToInjectedScript.end(); ++it)
-              it->second.releaseWrapperObjectGroup(objectGroup);
+              it->second.releaseObjectGroup(objectGroup);
     }
 }
 

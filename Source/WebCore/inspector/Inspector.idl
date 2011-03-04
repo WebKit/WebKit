@@ -77,7 +77,7 @@ module core {
         void getProperties(in Object objectId, in boolean ignoreHasOwnProperty, in boolean abbreviate, out Value result);
         void setPropertyValue(in Object objectId, in String propertyName, in String expression, out Value result);
         void releaseObject(in Object objectId);
-        void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
+        void releaseObjectGroup(in long injectedScriptId, in String objectGroup);
     };
 
     interface [Conditional=INSPECTOR] Console {

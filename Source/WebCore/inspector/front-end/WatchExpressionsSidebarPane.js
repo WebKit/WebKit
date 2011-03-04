@@ -120,7 +120,7 @@ WebInspector.WatchExpressionsSection.prototype = {
         }
 
         // TODO: pass exact injected script id.
-        RuntimeAgent.releaseWrapperObjectGroup(0, this._watchObjectGroupId)
+        RuntimeAgent.releaseObjectGroup(0, this._watchObjectGroupId)
         var properties = [];
 
         // Count the properties, so we known when to call this.updateProperties()

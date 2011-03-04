@@ -80,9 +80,9 @@ void InspectorRuntimeAgent::releaseObject(ErrorString*, PassRefPtr<InspectorObje
         injectedScript.releaseObject(objectId);
 }
 
-void InspectorRuntimeAgent::releaseWrapperObjectGroup(ErrorString*, long injectedScriptId, const String& objectGroup)
+void InspectorRuntimeAgent::releaseObjectGroup(ErrorString*, long injectedScriptId, const String& objectGroup)
 {
-    m_injectedScriptHost->releaseWrapperObjectGroup(injectedScriptId, objectGroup);
+    m_injectedScriptHost->releaseObjectGroup(injectedScriptId, objectGroup);
 }
 
 } // namespace WebCore

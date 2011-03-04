@@ -1,3 +1,34 @@
+2011-03-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: rename RuntimeAgent's function from releaseWrapperObjectGroup to releaseObjectGroup.
+        https://bugs.webkit.org/show_bug.cgi?id=55773
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::releaseObjectGroup):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::releaseObjectGroup):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.idl:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::clearConsoleMessages):
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::releaseObjectGroup):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.completions.evaluatedProperties):
+        (WebInspector.ConsoleView.prototype.completions):
+        * inspector/front-end/PropertiesSidebarPane.js:
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._hidePopup):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.update):
+
 2011-03-02  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

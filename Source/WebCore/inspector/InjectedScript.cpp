@@ -164,10 +164,10 @@ void InjectedScript::inspectNode(Node* node)
     makeCall(function, &result);
 }
 
-void InjectedScript::releaseWrapperObjectGroup(const String& objectGroup)
+void InjectedScript::releaseObjectGroup(const String& objectGroup)
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall releaseFunction(m_injectedScriptObject, "releaseWrapperObjectGroup");
+    ScriptFunctionCall releaseFunction(m_injectedScriptObject, "releaseObjectGroup");
     releaseFunction.appendArgument(objectGroup);
     releaseFunction.call();
 }

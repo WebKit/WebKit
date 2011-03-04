@@ -23,7 +23,7 @@ function test()
             ["setPropertyValue", result.objectId, 'removedBySetPropertyValue', ''],
             ["getProperties", result.objectId, false, false],
             ["releaseObject", result.objectId],
-            ["releaseWrapperObjectGroup", result.objectId.injectedScriptId, 'test']];
+            ["releaseObjectGroup", result.objectId.injectedScriptId, 'test']];
 
         InspectorTest.runProtocolTestSuite("RuntimeAgent", testSuite, ['seq', 'id', 'injectedScriptId']);
     }

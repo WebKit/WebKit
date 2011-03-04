@@ -118,7 +118,7 @@ InjectedScript.prototype = {
         return eval("(" + objectId + ")");
     },
 
-    releaseWrapperObjectGroup: function(objectGroupName)
+    releaseObjectGroup: function(objectGroupName)
     {
         var group = this._objectGroups[objectGroupName];
         if (!group)
@@ -294,7 +294,7 @@ InjectedScript.prototype = {
         if (!callFrame)
             return false;
     
-        injectedScript.releaseWrapperObjectGroup("backtrace");
+        injectedScript.releaseObjectGroup("backtrace");
         var result = [];
         var depth = 0;
         do {

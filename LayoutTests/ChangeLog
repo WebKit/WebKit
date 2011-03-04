@@ -2,6 +2,16 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: rename RuntimeAgent's function from releaseWrapperObjectGroup to releaseObjectGroup.
+        https://bugs.webkit.org/show_bug.cgi?id=55773
+
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/protocol/runtime-agent.html:
+
+2011-03-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: Remove unnecessary domain and success flags from the response messages.
         https://bugs.webkit.org/show_bug.cgi?id=55768
 

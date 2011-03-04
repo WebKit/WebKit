@@ -199,13 +199,13 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.releaseWrapperObjectGroup(<number>,"test")
+RuntimeAgent.releaseObjectGroup(<number>,"test")
 
 request:
 {
     seq : <number>
     domain : "Runtime"
-    command : "releaseWrapperObjectGroup"
+    command : "releaseObjectGroup"
     arguments : {
         injectedScriptId : <number>
         objectGroup : "test"
@@ -225,6 +225,6 @@ Coverage for RuntimeAgent
     getProperties : "checked"
     setPropertyValue : "checked"
     releaseObject : "checked"
-    releaseWrapperObjectGroup : "checked"
+    releaseObjectGroup : "checked"
 }
 

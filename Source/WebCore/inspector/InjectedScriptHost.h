@@ -93,7 +93,7 @@ public:
     InjectedScript injectedScriptForObjectId(InspectorObject* objectId);
     InjectedScript injectedScriptForMainFrame();
     void discardInjectedScripts();
-    void releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup);
+    void releaseObjectGroup(long injectedScriptId, const String& objectGroup);
 
     static bool canAccessInspectedWindow(ScriptState*);
 
