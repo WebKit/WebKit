@@ -30,7 +30,12 @@ InspectorTest.nodeWithId = function(idValue, callback)
             callback(null);
     }
     pendingRequests++;
-    WebInspector.domAgent.getChildNodesAsync(WebInspector.domAgent.document, processChildren.bind(this, true));
+
+    WebInspector.domAgent.requestDocument(documentRequested.bind(this));
+    function documentRequested(doc)
+    {
+        WebInspector.domAgent.getChildNodesAsync(doc, processChildren.bind(this, true));
+    }
 };
 
 InspectorTest.expandedNodeWithId = function(idValue)
@@ -194,6 +199,9 @@ InspectorTest.expandElementsTree = function(callback)
 
 InspectorTest.dumpDOMAgentTree = function()
 {
+    if (!WebInspector.domAgent._document)
+        return;
+
     function dump(node, prefix, startIndex)
     {
         InspectorTest.addResult(prefix + node.nodeName + "[" + (node.id - startIndex)+ "]");
@@ -201,7 +209,7 @@ InspectorTest.dumpDOMAgentTree = function()
         for (var i = 0; children && i < children.length; ++i)
             dump(children[i], prefix + "    ", startIndex);
     }
-    dump(WebInspector.domAgent.document, "", WebInspector.domAgent.document.id - 1);
+    dump(WebInspector.domAgent._document, "", WebInspector.domAgent._document.id - 1);
 };
 
 };

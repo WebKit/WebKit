@@ -141,6 +141,9 @@ WebInspector.ElementsPanel.prototype = {
         this.treeOutline.updateSelection();
         if (this.recentlyModifiedNodes.length)
             this.updateModifiedNodes();
+
+        if (!this.rootDOMNode)
+            WebInspector.domAgent.requestDocument();
     },
 
     hide: function()
@@ -211,7 +214,7 @@ WebInspector.ElementsPanel.prototype = {
         }
 
         if (this._selectedPathOnReset)
-            DOMAgent.pushNodeByPathToFrontend(this._selectedPathOnReset, selectLastSelectedNode.bind(this));
+            WebInspector.domAgent.pushNodeByPathToFrontend(this._selectedPathOnReset, selectLastSelectedNode.bind(this));
         else
             selectNode.call(this);
         delete this._selectedPathOnReset;

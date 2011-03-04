@@ -31,12 +31,16 @@ function test()
         InspectorTest.addResult("DOMAgent event fired. Should only happen once for output node: " + type + " " + event.target.nodeName + "#" + event.target.getAttribute("id"));
     }
 
-    WebInspector.domAgent.document.addEventListener("DOMAttrModified", listener.bind(this, "DOMAttrModified"));
-    WebInspector.domAgent.document.addEventListener("DOMCharacterDataModified", listener.bind(this, "DOMCharacterDataModified"));
-    WebInspector.domAgent.document.addEventListener("DOMNodeInserted", listener.bind(this, "DOMNodeInserted"));
-    WebInspector.domAgent.document.addEventListener("DOMNodeRemoved", listener.bind(this, "DOMNodeRemoved"));
+    WebInspector.domAgent.requestDocument(step0.bind(this));
 
-    InspectorTest.evaluateInPage("appendChild()", step1);
+    function step0(doc)
+    {
+        doc.addEventListener("DOMAttrModified", listener.bind(this, "DOMAttrModified"));
+        doc.addEventListener("DOMCharacterDataModified", listener.bind(this, "DOMCharacterDataModified"));
+        doc.addEventListener("DOMNodeInserted", listener.bind(this, "DOMNodeInserted"));
+        doc.addEventListener("DOMNodeRemoved", listener.bind(this, "DOMNodeRemoved"));
+        InspectorTest.evaluateInPage("appendChild()", step1);
+    }
 
     function step1()
     {

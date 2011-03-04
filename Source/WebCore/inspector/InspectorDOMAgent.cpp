@@ -61,6 +61,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "InjectedScriptHost.h"
 #include "InspectorFrontend.h"
+#include "InspectorState.h"
 #include "InstrumentingAgents.h"
 #include "MutationEvent.h"
 #include "Node.h"
@@ -88,6 +89,10 @@
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
+
+namespace DOMAgentState {
+static const char documentRequested[] = "documentRequested";
+};
 
 class MatchJob {
 public:
@@ -243,8 +248,9 @@ void RevalidateStyleAttributeTask::onTimer(Timer<RevalidateStyleAttributeTask>*)
     m_elements.clear();
 }
 
-InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptHost* injectedScriptHost)
+InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InjectedScriptHost* injectedScriptHost)
     : m_instrumentingAgents(instrumentingAgents)
+    , m_inspectorState(inspectorState)
     , m_injectedScriptHost(injectedScriptHost)
     , m_frontend(0)
     , m_domListener(0)
@@ -270,6 +276,7 @@ void InspectorDOMAgent::clearFrontend()
     ASSERT(m_frontend);
     m_frontend = 0;
     m_instrumentingAgents->setInspectorDOMAgent(0);
+    m_inspectorState->setBoolean(DOMAgentState::documentRequested, false);
     reset();
 }
 
@@ -309,11 +316,8 @@ void InspectorDOMAgent::setDocument(Document* doc)
 
     m_document = doc;
 
-    if (doc) {
-        if (doc->documentElement())
-            pushDocumentToFrontend();
-    } else
-        m_frontend->setDocument(InspectorValue::null());
+    if (!doc && m_inspectorState->getBoolean(DOMAgentState::documentRequested))
+        m_frontend->documentUpdated();
 }
 
 void InspectorDOMAgent::releaseDanglingNodes()
@@ -374,13 +378,20 @@ Node* InspectorDOMAgent::nodeToSelectOn(long nodeId, bool documentWide)
     return node;
 }
 
-bool InspectorDOMAgent::pushDocumentToFrontend()
+void InspectorDOMAgent::getDocument(ErrorString*, RefPtr<InspectorObject>* root)
 {
+    m_inspectorState->setBoolean(DOMAgentState::documentRequested, true);
+
     if (!m_document)
-        return false;
+        return;
+
+    // Reset backend state.
+    RefPtr<Document> doc = m_document;
+    reset();
+    m_document = doc;
+
     if (!m_documentNodeToIdMap.contains(m_document))
-        m_frontend->setDocument(buildObjectForNode(m_document.get(), 2, &m_documentNodeToIdMap));
-    return true;
+        *root = buildObjectForNode(m_document.get(), 2, &m_documentNodeToIdMap);
 }
 
 void InspectorDOMAgent::pushChildNodesToFrontend(long nodeId)
@@ -457,8 +468,9 @@ long InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
 {
     ASSERT(nodeToPush);  // Invalid input
 
-    // If we are sending information to the client that is currently being created. Send root node first.
-    if (!pushDocumentToFrontend())
+    if (!m_document)
+        return 0;
+    if (!m_documentNodeToIdMap.contains(m_document))
         return 0;
 
     // Return id in case the node is known.
@@ -469,13 +481,16 @@ long InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
     Node* node = nodeToPush;
     Vector<Node*> path;
     NodeToIdMap* danglingMap = 0;
+
     while (true) {
         Node* parent = innerParentNode(node);
         if (!parent) {
             // Node being pushed is detached -> push subtree root.
             danglingMap = new NodeToIdMap();
             m_danglingNodeToIdMaps.append(danglingMap);
-            m_frontend->setDetachedRoot(buildObjectForNode(node, 0, danglingMap));
+            RefPtr<InspectorArray> children = InspectorArray::create();
+            children->pushObject(buildObjectForNode(node, 0, danglingMap));
+            m_frontend->setChildNodes(0, children);
             break;
         } else {
             path.append(parent);
@@ -493,6 +508,11 @@ long InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
         pushChildNodesToFrontend(nodeId);
     }
     return map->get(nodeToPush);
+}
+
+long InspectorDOMAgent::boundNodeId(Node* node)
+{
+    return m_documentNodeToIdMap.get(node);
 }
 
 void InspectorDOMAgent::setAttribute(ErrorString*, long elementId, const String& name, const String& value, bool* success)
@@ -802,9 +822,11 @@ void InspectorDOMAgent::searchCanceled(ErrorString*)
 void InspectorDOMAgent::resolveNode(ErrorString* error, long nodeId, const String& objectGroup, RefPtr<InspectorValue>* result)
 {
     Node* node = nodeForId(nodeId);
-    InjectedScript injectedScript = injectedScriptForNode(error, node);
-    if (error->isEmpty())
-        *result = injectedScript.wrapNode(node, objectGroup);
+    if (!node) {
+        *error = "No node with given id found.";
+        return;
+    }
+    *result = resolveNode(node, objectGroup);
 }
 
 void InspectorDOMAgent::pushNodeToFrontend(ErrorString*, PassRefPtr<InspectorObject> objectId, long* nodeId)
@@ -1004,7 +1026,8 @@ void InspectorDOMAgent::mainFrameDOMContentLoaded()
 {
     // Re-push document once it is loaded.
     discardBindings();
-    pushDocumentToFrontend();
+    if (m_inspectorState->getBoolean(DOMAgentState::documentRequested))
+        m_frontend->documentUpdated();
 }
 
 void InspectorDOMAgent::loadEventFired(Document* document)
@@ -1199,23 +1222,18 @@ void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString*, const String& pat
         *nodeId = pushNodePathToFrontend(node);
 }
 
-InjectedScript InspectorDOMAgent::injectedScriptForNode(ErrorString* error, Node* node)
+PassRefPtr<InspectorObject> InspectorDOMAgent::resolveNode(Node* node, const String& objectGroup)
 {
-    if (!node) {
-        *error = "No node with given id found.";
-        return InjectedScript();
-    }
-
     Document* document = node->ownerDocument();
-    Frame* frame = document->frame();
+    Frame* frame = document ? document->frame() : 0;
+    if (!frame)
+        return 0;
 
     InjectedScript injectedScript = m_injectedScriptHost->injectedScriptFor(mainWorldScriptState(frame));
-    if (injectedScript.hasNoValue()) {
-        *error = "No JavaScript world found for node with given id.";
-        return InjectedScript();
-    }
+    if (injectedScript.hasNoValue())
+        return 0;
 
-    return injectedScript;
+    return injectedScript.wrapNode(node, objectGroup);
 }
 
 } // namespace WebCore

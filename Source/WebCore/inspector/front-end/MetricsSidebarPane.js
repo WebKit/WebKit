@@ -40,7 +40,7 @@ WebInspector.MetricsSidebarPane.prototype = {
         else
             node = this.node;
 
-        if (!node || !node.ownerDocument.defaultView || node.nodeType !== Node.ELEMENT_NODE) {
+        if (!node || node.nodeType !== Node.ELEMENT_NODE) {
             this.bodyElement.removeChildren();
             return;
         }

@@ -91,6 +91,11 @@ InspectorTest.waitUntilPausedAndDumpStack = function(callback)
     function step1(callFrames)
     {
         InspectorTest.captureStackTrace(callFrames);
+        InspectorTest.runAfterPendingDispatches(step2);
+    }
+
+    function step2()
+    {
         InspectorTest.addResult(WebInspector.panels.scripts.sidebarPanes.callstack.bodyElement.lastChild.innerText);
         InspectorTest.resumeExecution(InspectorTest.safeWrap(callback));
     }

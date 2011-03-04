@@ -1,3 +1,23 @@
+2011-03-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: do not push document into front-end, make it request one.
+        https://bugs.webkit.org/show_bug.cgi?id=55664
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest.):
+        (initialize_DebuggerTest):
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.nodeWithId.documentRequested):
+        (initialize_ElementTest.InspectorTest.nodeWithId):
+        (initialize_ElementTest.InspectorTest.dumpDOMAgentTree):
+        (initialize_ElementTest):
+        * inspector/console/command-line-api-inspect.html:
+        * inspector/elements/dom-agent-query-selector.html:
+        * inspector/elements/mutate-unknown-node.html:
+        * inspector/styles/styles-new-API.html:
+
 2011-03-03  Adam Klein  <adamk@chromium.org>
 
         Reviewed by David Levin.

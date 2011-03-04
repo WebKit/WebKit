@@ -245,6 +245,7 @@ private:
     InspectorFrontend* m_frontend;
     OwnPtr<InstrumentingAgents> m_instrumentingAgents;
     RefPtr<InjectedScriptHost> m_injectedScriptHost;
+    OwnPtr<InspectorState> m_state;
     OwnPtr<InspectorDOMAgent> m_domAgent;
     OwnPtr<InspectorCSSAgent> m_cssAgent;
 
@@ -256,7 +257,6 @@ private:
     OwnPtr<InspectorDOMStorageAgent> m_domStorageAgent;
 #endif
 
-    OwnPtr<InspectorState> m_state;
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)

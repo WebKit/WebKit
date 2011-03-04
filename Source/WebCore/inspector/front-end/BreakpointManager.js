@@ -216,6 +216,9 @@ WebInspector.BreakpointManager.prototype = {
     {
         function didPushNodeByPathToFrontend(path, nodeId)
         {
+            if (!nodeId)
+                return;
+
             pathToNodeId[path] = nodeId;
             pendingCalls -= 1;
             if (pendingCalls)
@@ -243,7 +246,7 @@ WebInspector.BreakpointManager.prototype = {
                 continue;
             pathToNodeId[path] = 0;
             pendingCalls += 1;
-            DOMAgent.pushNodeByPathToFrontend(path, didPushNodeByPathToFrontend.bind(this, path));
+            WebInspector.domAgent.pushNodeByPathToFrontend(path, didPushNodeByPathToFrontend.bind(this, path));
         }
         if (!pendingCalls)
             this._domBreakpointsRestored = true;
@@ -490,14 +493,23 @@ WebInspector.DOMBreakpointView.prototype = {
             element.appendChild(b);
         }
         if (this._type === WebInspector.DOMBreakpointTypes.SubtreeModified) {
-            var targetNode = WebInspector.panels.elements.linkifyNodeById(eventData.targetNodeId);
-            if (eventData.insertion) {
-                if (eventData.targetNodeId !== this._nodeId)
-                    WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because a new child was added to its descendant %s.", substitutions.concat(targetNode), formatters, "", append);
-                else
-                    WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because a new child was added to that node.", substitutions, formatters, "", append);
-            } else
-                WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because its descendant %s was removed.", substitutions.concat(targetNode), formatters, "", append);
+            var targetNodeObject = WebInspector.RemoteObject.fromPayload(eventData.targetNode);
+            targetNodeObject.pushNodeToFrontend(decorateNode.bind(this));
+            function decorateNode(targetNodeId)
+            {
+                if (!targetNodeId)
+                    return;
+
+                RuntimeAgent.releaseObject(eventData.targetNode);
+                var targetNode = WebInspector.panels.elements.linkifyNodeById(targetNodeId);
+                if (eventData.insertion) {
+                    if (targetNodeId !== this._nodeId)
+                        WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because a new child was added to its descendant %s.", substitutions.concat(targetNode), formatters, "", append);
+                    else
+                        WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because a new child was added to that node.", substitutions, formatters, "", append);
+                } else
+                    WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because its descendant %s was removed.", substitutions.concat(targetNode), formatters, "", append);
+            }
         } else
             WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s.", substitutions, formatters, "", append);
     },

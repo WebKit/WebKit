@@ -11,6 +11,7 @@ function test()
 {
     test_styles();
 
+    var bodyId;
     function test_styles(node)
     {
         function callback(styles)
@@ -47,7 +48,8 @@ function test()
 
         function nodeCallback(node)
         {
-            CSSAgent.getStylesForNode(node.id, callback);
+            bodyId = node.id;
+            CSSAgent.getStylesForNode(bodyId, callback);
         }
         InspectorTest.selectNodeWithId("mainBody", nodeCallback);
     }
@@ -142,7 +144,7 @@ function test()
 
         function didSetStyleText(style)
         {
-            CSSAgent.getStylesForNode(WebInspector.domAgent.document.body.id, didGetStyles);
+            CSSAgent.getStylesForNode(bodyId, didGetStyles);
         }
 
         function ruleAdded(rule)
@@ -150,7 +152,7 @@ function test()
             CSSAgent.setPropertyText(rule.style.styleId, 0, "font-family: serif;", false, didSetStyleText);
         }
 
-        CSSAgent.addRule(WebInspector.domAgent.document.body.id, "body", ruleAdded);
+        CSSAgent.addRule(bodyId, "body", ruleAdded);
     }
 
     function test_disableProperty()

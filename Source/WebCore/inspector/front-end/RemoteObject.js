@@ -133,7 +133,7 @@ WebInspector.RemoteObject.prototype = {
     pushNodeToFrontend: function(callback)
     {
         if (this._objectId)
-            DOMAgent.pushNodeToFrontend(this._objectId, callback);
+            WebInspector.domAgent.pushNodeToFrontend(this._objectId, callback);
         else
             callback(0);
     },

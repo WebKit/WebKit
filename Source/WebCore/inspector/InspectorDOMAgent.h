@@ -55,6 +55,7 @@ class Event;
 class InspectorDOMAgent;
 class InspectorFrontend;
 class MatchJob;
+class InspectorState;
 class InstrumentingAgents;
 class NameNodeMap;
 class Node;
@@ -90,9 +91,9 @@ public:
         virtual void didModifyDOMAttr(Element*) = 0;
     };
 
-    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InjectedScriptHost* injectedScriptHost)
+    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InjectedScriptHost* injectedScriptHost)
     {
-        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, injectedScriptHost));
+        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, inspectorState, injectedScriptHost));
     }
 
     ~InspectorDOMAgent();
@@ -103,9 +104,10 @@ public:
     Vector<Document*> documents();
     void reset();
 
+    // Methods called from the frontend for DOM nodes inspection.
     void querySelector(ErrorString*, long nodeId, const String& selectors, bool documentWide, long* elementId);
     void querySelectorAll(ErrorString*, long nodeId, const String& selectors, bool documentWide, RefPtr<InspectorArray>* result);
-    // Methods called from the frontend for DOM nodes inspection.
+    void getDocument(ErrorString*, RefPtr<InspectorObject>* root);
     void getChildNodes(ErrorString*, long nodeId);
     void setAttribute(ErrorString*, long elementId, const String& name, const String& value, bool* success);
     void removeAttribute(ErrorString*, long elementId, const String& name, bool* success);
@@ -120,6 +122,7 @@ public:
     void searchCanceled(ErrorString*);
     void resolveNode(ErrorString*, long nodeId, const String& objectGroup, RefPtr<InspectorValue>* result);
     void pushNodeToFrontend(ErrorString*, PassRefPtr<InspectorObject> objectId, long* nodeId);
+    void pushNodeByPathToFrontend(ErrorString*, const String& path, long* nodeId);
 
     // Methods called from the InspectorInstrumentation.
     void setDocument(Document*);
@@ -135,13 +138,13 @@ public:
     void didInvalidateStyleAttr(Node*);
 
     Node* nodeForId(long nodeId);
-    long pushNodePathToFrontend(Node*);
-    void pushChildNodesToFrontend(long nodeId);
-    void pushNodeByPathToFrontend(ErrorString*, const String& path, long* nodeId);
+    long boundNodeId(Node*);
     void copyNode(ErrorString*, long nodeId);
     void setDOMListener(DOMListener*);
 
     String documentURLString(Document*) const;
+
+    PassRefPtr<InspectorObject> resolveNode(Node*, const String& objectGroup);
 
     // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
     // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.
@@ -153,7 +156,7 @@ public:
     static bool isWhitespace(Node*);
 
 private:
-    InspectorDOMAgent(InstrumentingAgents*, InjectedScriptHost*);
+    InspectorDOMAgent(InstrumentingAgents*, InspectorState*, InjectedScriptHost*);
 
     // Node-related methods.
     typedef HashMap<RefPtr<Node>, long> NodeToIdMap;
@@ -162,7 +165,8 @@ private:
 
     Node* nodeToSelectOn(long nodeId, bool documentWide);
 
-    bool pushDocumentToFrontend();
+    long pushNodePathToFrontend(Node*);
+    void pushChildNodesToFrontend(long nodeId);
 
     bool hasBreakpoint(Node*, long type);
     void updateSubtreeBreakpoints(Node* root, uint32_t rootMask, bool value);
@@ -181,9 +185,8 @@ private:
 
     void discardBindings();
 
-    InjectedScript injectedScriptForNode(ErrorString*, Node*);
-
     InstrumentingAgents* m_instrumentingAgents;
+    InspectorState* m_inspectorState;
     InjectedScriptHost* m_injectedScriptHost;
     InspectorFrontend::DOM* m_frontend;
     DOMListener* m_domListener;

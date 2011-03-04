@@ -1,3 +1,53 @@
+2011-03-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: do not push document into front-end, make it request one.
+        https://bugs.webkit.org/show_bug.cgi?id=55664
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        (WebCore::InspectorBrowserDebuggerAgent::descriptionForDOMEvent):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::clearFrontend):
+        (WebCore::InspectorDOMAgent::setDocument):
+        (WebCore::InspectorDOMAgent::getDocument):
+        (WebCore::InspectorDOMAgent::pushNodePathToFrontend):
+        (WebCore::InspectorDOMAgent::boundNodeId):
+        (WebCore::InspectorDOMAgent::resolveNode):
+        (WebCore::InspectorDOMAgent::mainFrameDOMContentLoaded):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::create):
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype.restoreDOMBreakpoints):
+        (WebInspector.DOMBreakpointView.prototype.populateStatusMessageElement.decorateNode):
+        (WebInspector.DOMBreakpointView.prototype.populateStatusMessageElement):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMDocument):
+        (WebInspector.DOMAgent):
+        (WebInspector.DOMAgent.prototype.requestDocument):
+        (WebInspector.DOMAgent.prototype.pushNodeToFrontend):
+        (WebInspector.DOMAgent.prototype.pushNodeByPathToFrontend):
+        (WebInspector.DOMAgent.prototype._attributesUpdated):
+        (WebInspector.DOMAgent.prototype._characterDataModified):
+        (WebInspector.DOMAgent.prototype._documentUpdated):
+        (WebInspector.DOMAgent.prototype._setDocument):
+        (WebInspector.DOMAgent.prototype._setDetachedRoot):
+        (WebInspector.DOMAgent.prototype._setChildNodes):
+        (WebInspector.DOMAgent.prototype._childNodeInserted):
+        (WebInspector.DOMAgent.prototype._childNodeRemoved):
+        (WebInspector.DOMDispatcher.prototype.documentUpdated):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.show):
+        (WebInspector.ElementsPanel.prototype.setDocument):
+        * inspector/front-end/MetricsSidebarPane.js:
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.pushNodeToFrontend):
+
 2011-03-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

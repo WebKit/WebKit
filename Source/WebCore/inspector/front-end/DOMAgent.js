@@ -223,12 +223,11 @@ WebInspector.DOMNode.prototype = {
     }
 }
 
-WebInspector.DOMDocument = function(domAgent, defaultView, payload)
+WebInspector.DOMDocument = function(domAgent, payload)
 {
     WebInspector.DOMNode.call(this, this, payload);
     this._listeners = {};
     this._domAgent = domAgent;
-    this.defaultView = defaultView;
 }
 
 WebInspector.DOMDocument.prototype = {
@@ -269,44 +268,48 @@ WebInspector.DOMDocument.prototype = {
 
 WebInspector.DOMDocument.prototype.__proto__ = WebInspector.DOMNode.prototype;
 
-
-WebInspector.DOMWindow = function(domAgent)
-{
-    this._domAgent = domAgent;
-}
-
-WebInspector.DOMWindow.prototype = {
-    get document()
-    {
-        return this._domAgent.document;
-    },
-
-    get Node()
-    {
-        return WebInspector.DOMNode;
-    },
-
-    get Element()
-    {
-        return WebInspector.DOMNode;
-    },
-
-    Object: function()
-    {
-    }
-}
-
 WebInspector.DOMAgent = function() {
-    this._window = new WebInspector.DOMWindow(this);
     this._idToDOMNode = null;
-    this.document = null;
+    this._document = null;
     InspectorBackend.registerDomainDispatcher("DOM", new WebInspector.DOMDispatcher(this));
 }
 
 WebInspector.DOMAgent.prototype = {
-    get domWindow()
+    requestDocument: function(callback)
     {
-        return this._window;
+        if (this._document) {
+            if (callback)
+                callback(this._document);
+        } else
+            this._documentUpdated(callback);
+    },
+
+    pushNodeToFrontend: function(objectId, callback)
+    {
+        function mycallback()
+        {
+            if (this._document)
+                DOMAgent.pushNodeToFrontend(objectId, callback);
+            else {
+                if (callback)
+                    callback(0);
+            }
+        }
+        this.requestDocument(mycallback.bind(this));
+    },
+
+    pushNodeByPathToFrontend: function(path, callback)
+    {
+        function mycallback()
+        {
+            if (this._document)
+                DOMAgent.pushNodeByPathToFrontend(path, callback);
+            else {
+                if (callback)
+                    callback(0);
+            }
+        }
+        this.requestDocument(mycallback.bind(this));
     },
 
     getChildNodesAsync: function(parent, callback)
@@ -356,7 +359,7 @@ WebInspector.DOMAgent.prototype = {
         var node = this._idToDOMNode[nodeId];
         node._setAttributesPayload(attrsArray);
         var event = {target: node};
-        this.document._fireDomEvent("DOMAttrModified", event);
+        this._document._fireDomEvent("DOMAttrModified", event);
     },
 
     _characterDataModified: function(nodeId, newValue)
@@ -365,7 +368,7 @@ WebInspector.DOMAgent.prototype = {
         node._nodeValue = newValue;
         node.textContent = newValue;
         var event = { target : node };
-        this.document._fireDomEvent("DOMCharacterDataModified", event);
+        this._document._fireDomEvent("DOMCharacterDataModified", event);
     },
 
     nodeForId: function(nodeId)
@@ -373,27 +376,43 @@ WebInspector.DOMAgent.prototype = {
         return this._idToDOMNode[nodeId];
     },
 
+    _documentUpdated: function(callback)
+    {
+        function mycallback(root)
+        {
+            this._setDocument(root);
+            if (callback)
+                callback(this._document);
+        }
+        DOMAgent.getDocument(mycallback.bind(this));
+    },
+
     _setDocument: function(payload)
     {
         this._idToDOMNode = {};
         if (payload && "id" in payload) {
-            this.document = new WebInspector.DOMDocument(this, this._window, payload);
-            this._idToDOMNode[payload.id] = this.document;
-            this._bindNodes(this.document.children);
+            this._document = new WebInspector.DOMDocument(this, payload);
+            this._idToDOMNode[payload.id] = this._document;
+            this._bindNodes(this._document.children);
             WebInspector.breakpointManager.restoreDOMBreakpoints();
         } else
-            this.document = null;
-        WebInspector.panels.elements.setDocument(this.document);
+            this._document = null;
+        WebInspector.panels.elements.setDocument(this._document);
     },
 
     _setDetachedRoot: function(payload)
     {
-        var root = new WebInspector.DOMNode(this.document, payload);
+        var root = new WebInspector.DOMNode(this._document, payload);
         this._idToDOMNode[payload.id] = root;
     },
 
     _setChildNodes: function(parentId, payloads)
     {
+        if (!parentId && payloads.length) {
+            this._setDetachedRoot(payloads[0]);
+            return;
+        }
+
         var parent = this._idToDOMNode[parentId];
         parent._setChildrenPayload(payloads);
         this._bindNodes(parent.children);
@@ -426,7 +445,7 @@ WebInspector.DOMAgent.prototype = {
         var node = parent._insertChild(prev, payload);
         this._idToDOMNode[node.id] = node;
         var event = { target : node, relatedNode : parent };
-        this.document._fireDomEvent("DOMNodeInserted", event);
+        this._document._fireDomEvent("DOMNodeInserted", event);
     },
 
     _childNodeRemoved: function(parentId, nodeId)
@@ -435,7 +454,7 @@ WebInspector.DOMAgent.prototype = {
         var node = this._idToDOMNode[nodeId];
         parent.removeChild_(node);
         var event = { target : node, relatedNode : parent };
-        this.document._fireDomEvent("DOMNodeRemoved", event);
+        this._document._fireDomEvent("DOMNodeRemoved", event);
         delete this._idToDOMNode[nodeId];
         this._removeBreakpoints(node);
     },
@@ -457,9 +476,9 @@ WebInspector.DOMDispatcher = function(domAgent)
 }
 
 WebInspector.DOMDispatcher.prototype = {
-    setDocument: function(payload)
+    documentUpdated: function()
     {
-        this._domAgent._setDocument(payload);
+        this._domAgent._documentUpdated();
     },
 
     attributesUpdated: function(nodeId, attrsArray)
@@ -475,11 +494,6 @@ WebInspector.DOMDispatcher.prototype = {
     setChildNodes: function(parentId, payloads)
     {
         this._domAgent._setChildNodes(parentId, payloads);
-    },
-
-    setDetachedRoot: function(payload)
-    {
-        this._domAgent._setDetachedRoot(payload);
     },
 
     childNodeCountUpdated: function(nodeId, newValue)

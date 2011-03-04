@@ -144,6 +144,7 @@ module core {
 #endif
 
     interface [Conditional=INSPECTOR] DOM {
+        void getDocument(out Object root);
         void getChildNodes(in long nodeId);
         void querySelector(in long nodeId, in String selectors, in boolean documentWide, out long elementId);
         void querySelectorAll(in long nodeId, in String selectors, in boolean documentWide, out Array result);
@@ -164,10 +165,10 @@ module core {
         void pushNodeToFrontend(in Object objectId, out long nodeId);
 
         [event] void addNodesToSearchResult(out Array nodeIds);
-        [event] void setDocument(out Value root); // FIXME: should be requested from the front-end as getDocument.
+        [event] void documentUpdated();
+        [event] void setChildNodes(out long parentId, out Array nodes);
         [event] void attributesUpdated(out long id, out Array attributes);
         [event] void characterDataModified(out long id, out String newValue);
-        [event] void setChildNodes(out long parentId, out Array nodes);
         [event] void setDetachedRoot(out Object root);
         [event] void childNodeCountUpdated(out long id, out int newValue);
         [event] void childNodeInserted(out long parentId, out long prevId, out Object node);

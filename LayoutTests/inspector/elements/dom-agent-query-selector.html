@@ -37,16 +37,16 @@ function test()
     }
 
     function dumpNodes(next, nodeIds)
-	{
-		if (!(nodeIds instanceof Array))
-		    nodeIds = [nodeIds];
+    {
+        if (!(nodeIds instanceof Array))
+            nodeIds = [nodeIds];
 
         for (var i = 0; i < nodeIds.length; ++i) {
             var node = WebInspector.domAgent.nodeForId(nodeIds[i]);
             InspectorTest.addResult("node id: " + node.getAttribute("id"));
         }
         next();
-	}
+    }
 }
 </script>
 </head>
