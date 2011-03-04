@@ -52,12 +52,12 @@ static bool getStartEndListChildren(const VisibleSelection& selection, Node*& st
         return false;
 
     // start must be in a list child
-    Node* startListChild = enclosingListChild(selection.start().deprecatedNode());
+    Node* startListChild = enclosingListChild(selection.start().anchorNode());
     if (!startListChild)
         return false;
-        
+
     // end must be in a list child
-    Node* endListChild = selection.isRange() ? enclosingListChild(selection.end().deprecatedNode()) : startListChild;
+    Node* endListChild = selection.isRange() ? enclosingListChild(selection.end().anchorNode()) : startListChild;
     if (!endListChild)
         return false;
     

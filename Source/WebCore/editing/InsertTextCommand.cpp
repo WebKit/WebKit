@@ -47,20 +47,20 @@ void InsertTextCommand::doApply()
 {
 }
 
-Position InsertTextCommand::prepareForTextInsertion(const Position& p)
+Position InsertTextCommand::positionInsideTextNode(const Position& p)
 {
     Position pos = p;
-    // Prepare for text input by looking at the specified position.
-    // It may be necessary to insert a text node to receive characters.
-    if (!pos.deprecatedNode()->isTextNode()) {
+    if (isTabSpanTextNode(pos.anchorNode())) {
         RefPtr<Node> textNode = document()->createEditingTextNode("");
-        insertNodeAt(textNode.get(), pos);
+        insertNodeAtTabSpanPosition(textNode.get(), pos);
         return firstPositionInNode(textNode.get());
     }
 
-    if (isTabSpanTextNode(pos.deprecatedNode())) {
+    // Prepare for text input by looking at the specified position.
+    // It may be necessary to insert a text node to receive characters.
+    if (!pos.containerNode()->isTextNode()) {
         RefPtr<Node> textNode = document()->createEditingTextNode("");
-        insertNodeAtTabSpanPosition(textNode.get(), pos);
+        insertNodeAt(textNode.get(), pos);
         return firstPositionInNode(textNode.get());
     }
 
@@ -141,7 +141,7 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText, Rebal
     
     // It is possible for the node that contains startPosition to contain only unrendered whitespace,
     // and so deleteInsignificantText could remove it.  Save the position before the node in case that happens.
-    Position positionBeforeStartNode(positionInParentBeforeNode(startPosition.deprecatedNode()));
+    Position positionBeforeStartNode(positionInParentBeforeNode(startPosition.containerNode()));
     deleteInsignificantText(startPosition.upstream(), startPosition.downstream());
     if (!startPosition.anchorNode()->inDocument())
         startPosition = positionBeforeStartNode;
@@ -159,11 +159,14 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText, Rebal
             removePlaceholderAt(placeholder);
     } else {
         // Make sure the document is set up to receive text
-        startPosition = prepareForTextInsertion(startPosition);
+        startPosition = positionInsideTextNode(startPosition);
+        ASSERT(startPosition.anchorType() == Position::PositionIsOffsetInAnchor);
+        ASSERT(startPosition.containerNode());
+        ASSERT(startPosition.containerNode()->isTextNode());
         if (placeholder.isNotNull())
             removePlaceholderAt(placeholder);
-        Text* textNode = static_cast<Text*>(startPosition.deprecatedNode());
-        int offset = startPosition.deprecatedEditingOffset();
+        Text* textNode = static_cast<Text*>(startPosition.containerNode());
+        const unsigned offset = startPosition.offsetInContainerNode();
 
         insertTextIntoNode(textNode, offset, text);
         endPosition = Position(textNode, offset + text.length(), Position::PositionIsOffsetInAnchor);
@@ -177,7 +180,7 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText, Rebal
         } else {
             ASSERT(whitespaceRebalance == RebalanceAllWhitespaces);
             if (canRebalance(startPosition) && canRebalance(endPosition))
-                rebalanceWhitespaceOnTextSubstring(textNode, startPosition.deprecatedEditingOffset(), endPosition.deprecatedEditingOffset());
+                rebalanceWhitespaceOnTextSubstring(textNode, startPosition.offsetInContainerNode(), endPosition.offsetInContainerNode());
         }
     }
 

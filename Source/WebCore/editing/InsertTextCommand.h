@@ -53,7 +53,7 @@ private:
     virtual void doApply();
     virtual bool isInsertTextCommand() const;
 
-    Position prepareForTextInsertion(const Position&);
+    Position positionInsideTextNode(const Position&);
     Position insertTab(const Position&);
     
     bool performTrivialReplace(const String&, bool selectInsertedText);

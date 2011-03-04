@@ -1,3 +1,25 @@
+2011-03-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Stop calling deprecatedNode and deprecatedEditingOffset in InsertTextCommand
+        https://bugs.webkit.org/show_bug.cgi?id=55352
+
+        Stopped calling deprecatedNode and deprecatedEditingOffset in the following functions:
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::positionOutsideTabSpan): Takes care of all types of positions and
+        no longer calls deprecated functions.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::positionInsideTextNode): Ditto; renamed from prepareForTextInsertion.
+        Check if the text node inside a tab span before checking if the container node is a text node
+        because the position before or after a text node can still be inside a tab span.
+        (WebCore::InsertTextCommand::input): No longer calls deprecated functions.
+        * editing/InsertTextCommand.h:
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::getStartEndListChildren): Call anchorNode() instead of deprecatedNode() because the start
+        or the end of selection could be an immediate child of a list node (e.g. br inside ul)
+
 2011-03-03  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.

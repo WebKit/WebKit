@@ -342,18 +342,23 @@ void CompositeEditCommand::replaceTextInNode(PassRefPtr<Text> node, unsigned off
 
 Position CompositeEditCommand::positionOutsideTabSpan(const Position& pos)
 {
-    if (!isTabSpanTextNode(pos.deprecatedNode()))
+    if (!isTabSpanTextNode(pos.anchorNode()))
         return pos;
-    
-    Node* tabSpan = tabSpanNode(pos.deprecatedNode());
-    
-    if (pos.deprecatedEditingOffset() <= caretMinOffset(pos.deprecatedNode()))
+
+    if (pos.anchorType() == Position::PositionIsAfterAnchor)
+        return positionInParentAfterNode(pos.anchorNode());
+    if (pos.anchorType() == Position::PositionIsBeforeAnchor)
+        return positionInParentBeforeNode(pos.anchorNode());
+
+    Node* tabSpan = tabSpanNode(pos.containerNode());
+
+    if (pos.offsetInContainerNode() <= caretMinOffset(pos.containerNode()))
         return positionInParentBeforeNode(tabSpan);
-        
-    if (pos.deprecatedEditingOffset() >= caretMaxOffset(pos.deprecatedNode()))
+
+    if (pos.offsetInContainerNode() >= caretMaxOffset(pos.containerNode()))
         return positionInParentAfterNode(tabSpan);
 
-    splitTextNodeContainingElement(static_cast<Text *>(pos.deprecatedNode()), pos.deprecatedEditingOffset());
+    splitTextNodeContainingElement(static_cast<Text *>(pos.containerNode()), pos.offsetInContainerNode());
     return positionInParentBeforeNode(tabSpan);
 }
 
