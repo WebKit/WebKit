@@ -4,7 +4,7 @@ Page reloaded.
 Started extension.
 Running tests...
 RUNNING TEST: extension_testGetRedirectResourceContent
-content: undefined, encoding: undefined
+content: null, encoding: base64
 RUNNING TEST: extension_testRedirectResourceFinished
 Finished resource: http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?status=302
 Finished resource: http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true

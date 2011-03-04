@@ -189,7 +189,6 @@ WebInspector.HAREntry._toMilliseconds = function(time)
 
 WebInspector.HARLog = function()
 {
-    this.includeResourceIds = false;
 }
 
 WebInspector.HARLog.prototype = {
@@ -230,10 +229,7 @@ WebInspector.HARLog.prototype = {
 
     _convertResource: function(resource)
     {
-        var entry = (new WebInspector.HAREntry(resource)).build();
-        if (this.includeResourceIds)
-            entry._resourceId = resource.identifier;
-        return entry;
+        return (new WebInspector.HAREntry(resource)).build();
     },
 
     _pageEventTime: function(time)

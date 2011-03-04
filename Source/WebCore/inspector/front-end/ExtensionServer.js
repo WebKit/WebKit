@@ -34,6 +34,8 @@ WebInspector.ExtensionServer = function()
     this._handlers = {};
     this._subscribers = {};
     this._extraHeaders = {};
+    this._resources = {};
+    this._lastResourceId = 0;
     this._status = new WebInspector.ExtensionStatus();
 
     this._registerHandler("addRequestHeaders", this._onAddRequestHeaders.bind(this));
@@ -108,10 +110,15 @@ WebInspector.ExtensionServer.prototype = {
         delete this._clientObjects[auditRun.id];
     },
 
+    resetResources: function()
+    {
+        this._resources = {};
+    },
+
     _notifyResourceFinished: function(event)
     {
         var resource = event.data;
-        this._postNotification("resource-finished", resource.identifier, (new WebInspector.HAREntry(resource)).build());
+        this._postNotification("resource-finished", this._resourceId(resource), (new WebInspector.HAREntry(resource)).build());
     },
 
     _postNotification: function(type, details)
@@ -288,7 +295,7 @@ WebInspector.ExtensionServer.prototype = {
         var id = message.id;
         var resource = null;
 
-        resource = WebInspector.networkResourceById(id) || WebInspector.resourceForURL(id);
+        resource = this._resourceById(id) || WebInspector.resourceForURL(id);
         if (!resource)
             return this._status.E_NOTFOUND(typeof id + ": " + id);
 
@@ -303,9 +310,10 @@ WebInspector.ExtensionServer.prototype = {
 
     _onGetHAR: function(request)
     {
-        var harLog = new WebInspector.HARLog();
-        harLog.includeResourceIds = true;
-        return harLog.build();
+        var harLog = (new WebInspector.HARLog()).build();
+        for (var i = 0; i < harLog.entries.length; ++i)
+            harLog.entries[i]._resourceId = this._resourceId(WebInspector.networkResources[i]);
+        return harLog;
     },
 
     _onGetResourceContent: function(message, port)
@@ -318,10 +326,24 @@ WebInspector.ExtensionServer.prototype = {
             };
             this._dispatchCallback(message.requestId, port, response);
         }
-        var resource = WebInspector.networkResourceById(message.id);
+        var resource = this._resourceById(message.id);
         if (!resource)
             return this._status.E_NOTFOUND(message.id);
         resource.requestContent(onContentAvailable.bind(this));
+    },
+
+    _resourceId: function(resource)
+    {
+        if (!resource._extensionResourceId) {
+            resource._extensionResourceId = ++this._lastResourceId;
+            this._resources[resource._extensionResourceId] = resource;
+        }
+        return resource._extensionResourceId;
+    },
+
+    _resourceById: function(id)
+    {
+        return this._resources[id];
     },
 
     _onAddAuditCategory: function(request)

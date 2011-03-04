@@ -732,6 +732,7 @@ WebInspector.NetworkPanel.prototype = {
         this._viewsContainerElement.removeChildren();
         this._viewsContainerElement.appendChild(this._closeButtonElement);
         this._updateSummaryBar();
+        WebInspector.extensionServer.resetResources();
     },
 
     get resources()

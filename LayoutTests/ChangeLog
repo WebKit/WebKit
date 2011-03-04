@@ -1,3 +1,16 @@
+2011-03-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Use internal ids for resources in extension server.
+        Log errors in inspector tests.
+
+        Web Inspector: [Extensions API] maintain own, unique & persistent identifiers for resources
+        https://bugs.webkit.org/show_bug.cgi?id=55686
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.consoleOutputHook):
+
 2011-03-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: fix inspector test flake.

@@ -2,6 +2,31 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: [Extensions API] maintain own, unique & persistent identifiers for resources.
+        https://bugs.webkit.org/show_bug.cgi?id=55686
+
+        - Use internal ids for resources in extension server.
+        - Log errors in inspector tests.
+
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer):
+        (WebInspector.ExtensionServer.prototype.resetResources):
+        (WebInspector.ExtensionServer.prototype._notifyResourceFinished):
+        (WebInspector.ExtensionServer.prototype._onRevealAndSelectResource):
+        (WebInspector.ExtensionServer.prototype._onGetHAR):
+        (WebInspector.ExtensionServer.prototype._onGetResourceContent):
+        (WebInspector.ExtensionServer.prototype._resourceId):
+        (WebInspector.ExtensionServer.prototype._resourceById):
+        * inspector/front-end/HAREntry.js:
+        (WebInspector.HARLog):
+        (WebInspector.HARLog.prototype._convertResource):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype._reset):
+
+2011-03-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector: exceptions when building context menu in network panel
         https://bugs.webkit.org/show_bug.cgi?id=55678
 

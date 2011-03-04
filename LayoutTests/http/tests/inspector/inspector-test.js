@@ -3,6 +3,16 @@ var initialize_InspectorTest = function() {
 var results = [];
 var resultsSynchronized = false;
 
+function consoleOutputHook(messageType)
+{
+    InspectorTest.addResult(messageType + ": " + Array.prototype.slice.call(arguments, 1));
+}
+
+console.log = consoleOutputHook.bind(InspectorTest, "log");
+console.error = consoleOutputHook.bind(InspectorTest, "error");
+console.warn = consoleOutputHook.bind(InspectorTest, "warn");
+console.info = consoleOutputHook.bind(InspectorTest, "info");
+
 InspectorTest.completeTest = function()
 {
     InspectorAgent.didEvaluateForTestInFrontend(InspectorTest.completeTestCallId, "");
