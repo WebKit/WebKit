@@ -40,41 +40,36 @@ struct Length {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Length()
-        :  m_intValue(0), m_quirk(false), m_type(Auto), m_isFloat(false)
+        : m_value(0)
     {
     }
 
     Length(LengthType t)
-        : m_intValue(0), m_quirk(false), m_type(t), m_isFloat(false)
+        : m_value(t)
     {
     }
 
     Length(int v, LengthType t, bool q = false)
-        : m_intValue(v), m_quirk(q), m_type(t), m_isFloat(false)
+        : m_value((v * 16) | (q << 3) | t) // FIXME: Doesn't work if the passed-in value is very large!
     {
         ASSERT(t != Percent);
     }
 
     Length(double v, LengthType t, bool q = false)
-        : m_quirk(q), m_type(t), m_isFloat(false)
+        : m_value(static_cast<int>(v * percentScaleFactor) * 16 | (q << 3) | t)
     {
-        if (m_type == Percent)
-            m_intValue = static_cast<int>(v*percentScaleFactor);
-        else {
-            m_isFloat = true;            
-            m_floatValue = static_cast<float>(v);
-       }
+        ASSERT(t == Percent);
     }
 
-    bool operator==(const Length& o) const { return (getFloatValue() == o.getFloatValue()) && (m_type == o.m_type) && (m_quirk == o.m_quirk); }
-    bool operator!=(const Length& o) const { return (getFloatValue() != o.getFloatValue()) || (m_type != o.m_type) || (m_quirk != o.m_quirk); }
+    bool operator==(const Length& o) const { return m_value == o.m_value; }
+    bool operator!=(const Length& o) const { return m_value != o.m_value; }
 
     int value() const {
         ASSERT(type() != Percent);
         return rawValue();
     }
 
-    int rawValue() const { return getIntValue(); }
+    int rawValue() const { return (m_value & ~0xF) / 16; }
 
     double percent() const
     {
@@ -82,32 +77,35 @@ public:
         return static_cast<double>(rawValue()) / percentScaleFactor;
     }
 
-    LengthType type() const { return static_cast<LengthType>(m_type); }
-    bool quirk() const { return m_quirk; }
+    LengthType type() const { return static_cast<LengthType>(m_value & 7); }
+    bool quirk() const { return (m_value >> 3) & 1; }
 
     void setValue(LengthType t, int value)
     {
-        m_type = t;
-        m_intValue = value;
-        m_isFloat = false;
+        ASSERT(t != Percent);
+        setRawValue(t, value);
     }
+
+    void setRawValue(LengthType t, int value) { m_value = value * 16 | (m_value & 0x8) | t; }
 
     void setValue(int value)
     {
         ASSERT(!value || type() != Percent);
-        setValue(Fixed, value);
+        setRawValue(value);
     }
+
+    void setRawValue(int value) { m_value = value * 16 | (m_value & 0xF); }
 
     void setValue(LengthType t, double value)
     {
-        m_type = t;
-        m_floatValue = value;
-        m_isFloat = true;    
+        ASSERT(t == Percent);
+        m_value = static_cast<int>(value * percentScaleFactor) * 16 | (m_value & 0x8) | t;
     }
 
     void setValue(double value)
     {
-        *this = Length(value, Fixed);
+        ASSERT(type() == Percent);
+        m_value = static_cast<int>(value * percentScaleFactor) * 16 | (m_value & 0xF);
     }
 
     // note: works only for certain types, returns undefinedLength otherwise
@@ -146,7 +144,7 @@ public:
     {
         switch (type()) {
             case Fixed:
-                return getFloatValue();
+                return static_cast<float>(value());
             case Percent:
                 return static_cast<float>(maxValue * percent() / 100.0);
             case Auto:
@@ -157,7 +155,7 @@ public:
     }
 
     bool isUndefined() const { return rawValue() == undefinedLength; }
-    bool isZero() const { return !getIntValue(); }
+    bool isZero() const { return !(m_value & ~0xF); }
     bool isPositive() const { return rawValue() > 0; }
     bool isNegative() const { return rawValue() < 0; }
 
@@ -186,33 +184,13 @@ public:
             return Length(fromPercent + (toPercent - fromPercent) * progress, Percent);
         } 
             
-        double fromValue = from.isZero() ? 0 : from.value();
-        double toValue = isZero() ? 0 : value();
-        return Length(fromValue + (toValue - fromValue) * progress, resultType);
+        int fromValue = from.isZero() ? 0 : from.value();
+        int toValue = isZero() ? 0 : value();
+        return Length(int(fromValue + (toValue - fromValue) * progress), resultType);
     }
 
 private:
-    int getIntValue() const
-    {
-        if (m_isFloat)
-            return static_cast<int>(m_floatValue);
-        return m_intValue;
-    }
-
-    float getFloatValue() const
-    {
-        if (m_isFloat)
-                return m_floatValue;
-        return m_intValue;
-    }
-
-    union {
-        int m_intValue;
-        float m_floatValue;
-    };
-    bool m_quirk;
-    unsigned char m_type;
-    bool m_isFloat;
+    int m_value;
 };
 
 PassOwnArrayPtr<Length> newCoordsArray(const String&, int& len);
