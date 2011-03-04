@@ -1,3 +1,15 @@
+2011-03-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80237.
+        http://trac.webkit.org/changeset/80237
+        https://bugs.webkit.org/show_bug.cgi?id=55714
+
+        Windows bots aren't ready to be core (Requested by aroben on
+        #webkit).
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
 2011-03-03  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.
