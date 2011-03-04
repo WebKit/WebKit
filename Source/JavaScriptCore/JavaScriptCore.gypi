@@ -670,5 +670,8 @@
             'API/tests/NodeList.h',
             'API/tests/minidom.c',
         ],
+        'testapi_files': [
+            'API/tests/testapi.c',
+        ],
     }
 }

@@ -1,5 +1,24 @@
 2011-03-03  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        Add testapi to JavaScriptCore GYP build
+        https://bugs.webkit.org/show_bug.cgi?id=55707
+
+        The new testapi target is slightly incomplete.  There's a resource
+        copying step that we don't quite have yet.
+
+        This patch also cleans up some of the configuration issues in
+        JavaScriptCore.xcodeproj.  It seems kind of wordy to repeat these for
+        each target.  I suspect there's a more compact way of defining the
+        configurations, but this removes the "Default" configuration, which is
+        progress.
+
+        * JavaScriptCore.gypi:
+        * gyp/JavaScriptCore.gyp:
+
+2011-03-03  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Teach JavaScriptCore GYP build about private headers

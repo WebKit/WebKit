@@ -79,7 +79,7 @@
       ],
       'configurations': {
         'Debug': {},
-        'Relase': {},
+        'Release': {},
         'Production': {},
       },
       'default_configuration': 'Debug',
@@ -151,6 +151,12 @@
           'sh', 'generate-derived-sources.sh',
         ],
       }],
+      'configurations': {
+        'Debug': {},
+        'Release': {},
+        'Production': {},
+      },
+      'default_configuration': 'Debug',
     },
     {
       'target_name': 'Update Version',
@@ -163,6 +169,12 @@
            'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(DEPTH)/JavaScriptCore/Info.plist'
           ]
       }],
+      'configurations': {
+        'Debug': {},
+        'Release': {},
+        'Production': {},
+      },
+      'default_configuration': 'Debug',
     },
     {
       'target_name': 'minidom',
@@ -176,9 +188,42 @@
       ],
       'sources': [
         '<@(minidom_files)',
-        '<(PRODUCT_DIR)/JavaScriptCore.framework',
         '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
       ],
+      'configurations': {
+        'Debug': {},
+        'Release': {},
+        'Production': {},
+      },
+      'default_configuration': 'Debug',
+      'conditions': [
+        ['OS=="mac"', {
+          'xcode_settings': {
+            'USE_HEADERMAP': 'NO',
+          }
+        }],
+      ],
+    },
+    {
+      'target_name': 'testapi',
+      'type': 'executable',
+      'dependencies': [
+        'JavaScriptCore',
+      ],
+      # FIXME: We should use a header map instead of listing these explicitly.
+      'include_dirs': [
+        '<@(javascriptcore_include_dirs)',
+      ],
+      'sources': [
+        '<@(testapi_files)',
+        '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
+      ],
+      'configurations': {
+        'Debug': {},
+        'Release': {},
+        'Production': {},
+      },
+      'default_configuration': 'Debug',
       'conditions': [
         ['OS=="mac"', {
           'xcode_settings': {
