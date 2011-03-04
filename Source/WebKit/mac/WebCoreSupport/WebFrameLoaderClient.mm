@@ -75,6 +75,7 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <WebCore/AuthenticationMac.h>
+#import <WebCore/BackForwardController.h>
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/CachedFrame.h>
 #import <WebCore/Chrome.h>
@@ -964,6 +965,19 @@ void WebFrameLoaderClient::dispatchDidRemoveBackForwardItem(HistoryItem*) const
 
 void WebFrameLoaderClient::dispatchDidChangeBackForwardIndex() const
 {
+}
+
+void WebFrameLoaderClient::updateGlobalHistoryItemForPage()
+{
+    HistoryItem* historyItem = 0;
+
+    if (Page* page = core(m_webFrame.get())->page()) {
+        if (!page->settings()->privateBrowsingEnabled())
+            historyItem = page->backForward()->currentItem();
+    }
+
+    WebView *webView = getWebView(m_webFrame.get());
+    [webView _setGlobalHistoryItem:historyItem];
 }
 
 void WebFrameLoaderClient::didDisplayInsecureContent()

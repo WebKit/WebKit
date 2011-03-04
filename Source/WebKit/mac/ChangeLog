@@ -1,3 +1,24 @@
+2011-03-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Get rid of Page::globalHistoryItem
+        https://bugs.webkit.org/show_bug.cgi?id=55738
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::updateGlobalHistoryItemForPage):
+        Get the current history item and update it using -[WebView _setGlobalHistoryItem:].
+    
+        * WebView/WebView.mm:
+        (-[WebView _globalHistoryItem]):
+        (-[WebView _setGlobalHistoryItem:]):
+        Set _globalHistoryItem ivar.
+
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        Add _globalHistoryItem ivar.
+
 2011-03-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

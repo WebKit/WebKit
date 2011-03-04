@@ -2391,8 +2391,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             if (shouldReset && item)
                 if (Page* page = m_frame->page()) {
                     page->backForward()->setCurrentItem(item.get());
-                    Settings* settings = m_frame->settings();
-                    page->setGlobalHistoryItem((!settings || settings->privateBrowsingEnabled()) ? 0 : item.get());
+                    m_frame->loader()->client()->updateGlobalHistoryItemForPage();
                 }
             return;
         }
@@ -2962,15 +2961,15 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
         // If the navigation request came from the back/forward menu, and we punt on it, we have the 
         // problem that we have optimistically moved the b/f cursor already, so move it back.  For sanity, 
         // we only do this when punting a navigation for the target frame or top-level frame.  
-        if ((isTargetItem || isLoadingMainFrame()) && isBackForwardLoadType(policyChecker()->loadType()))
+        if ((isTargetItem || isLoadingMainFrame()) && isBackForwardLoadType(policyChecker()->loadType())) {
             if (Page* page = m_frame->page()) {
                 Frame* mainFrame = page->mainFrame();
                 if (HistoryItem* resetItem = mainFrame->loader()->history()->currentItem()) {
                     page->backForward()->setCurrentItem(resetItem);
-                    Settings* settings = m_frame->settings();
-                    page->setGlobalHistoryItem((!settings || settings->privateBrowsingEnabled()) ? 0 : resetItem);
+                    m_frame->loader()->client()->updateGlobalHistoryItemForPage();
                 }
             }
+        }
         return;
     }
 

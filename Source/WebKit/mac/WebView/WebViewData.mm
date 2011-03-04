@@ -32,6 +32,7 @@
 #import "WebKitLogging.h"
 #import "WebPreferenceKeysPrivate.h"
 #import <WebCore/WebCoreObjCExtras.h>
+#import <WebCore/HistoryItem.h>
 #import <objc/objc-auto.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Threading.h>

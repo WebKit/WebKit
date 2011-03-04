@@ -50,6 +50,7 @@
 #include "WebURLResponse.h"
 #include "WebView.h"
 #pragma warning(push, 0)
+#include <WebCore/BackForwardController.h>
 #include <WebCore/CachedFrame.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameLoader.h>
@@ -67,6 +68,7 @@
 #include <WebCore/PluginView.h>
 #include <WebCore/RenderPart.h>
 #include <WebCore/ResourceHandle.h>
+#include <WebCore/Settings.h>
 #pragma warning(pop)
 
 using namespace WebCore;
@@ -617,6 +619,19 @@ void WebFrameLoaderClient::dispatchDidRemoveBackForwardItem(HistoryItem*) const
 
 void WebFrameLoaderClient::dispatchDidChangeBackForwardIndex() const
 {
+}
+
+void WebFrameLoaderClient::updateGlobalHistoryItemForPage()
+{
+    HistoryItem* historyItem = 0;
+    WebView* webView = m_webFrame->webView();
+
+    if (Page* page = webView->page()) {
+        if (!page->settings()->privateBrowsingEnabled())
+            historyItem = page->backForward()->currentItem();
+    }
+
+    webView->setGlobalHistoryItem(historyItem);
 }
 
 void WebFrameLoaderClient::didDisplayInsecureContent()

@@ -5892,12 +5892,12 @@ HRESULT STDMETHODCALLTYPE WebView::globalHistoryItem(IWebHistoryItem** item)
     if (!m_page)
         return E_FAIL;
 
-    if (!m_page->globalHistoryItem()) {
+    if (!m_globalHistoryItem) {
         *item = 0;
         return S_OK;
     }
 
-    *item = WebHistoryItem::createInstance(m_page->globalHistoryItem());
+    *item = WebHistoryItem::createInstance(m_globalHistoryItem);
     return S_OK;
 }
 
@@ -6632,4 +6632,9 @@ HRESULT WebView::setMinimumTimerInterval(double interval)
 {
     page()->settings()->setMinDOMTimerInterval(interval);
     return S_OK;
+}
+
+void WebView::setGlobalHistoryItem(HistoryItem* historyItem)
+{
+    m_globalHistoryItem = historyItem;
 }

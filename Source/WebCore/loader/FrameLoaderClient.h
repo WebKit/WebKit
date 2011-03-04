@@ -191,6 +191,7 @@ namespace WebCore {
         virtual void dispatchDidAddBackForwardItem(HistoryItem*) const = 0;
         virtual void dispatchDidRemoveBackForwardItem(HistoryItem*) const = 0;
         virtual void dispatchDidChangeBackForwardIndex() const = 0;
+        virtual void updateGlobalHistoryItemForPage() { }
 
         // This frame has displayed inactive content (such as an image) from an
         // insecure source.  Inactive content cannot spread to other frames.

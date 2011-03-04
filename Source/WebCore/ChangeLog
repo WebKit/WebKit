@@ -1,3 +1,29 @@
+2011-03-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Get rid of Page::globalHistoryItem
+        https://bugs.webkit.org/show_bug.cgi?id=55738
+
+        The m_globalHistoryItem is only used by Mac and Windows WebKit1.
+        Instead of having WebCore updating this member variable, just call out
+        to a FrameLoaderClient member function and let WebKit keep it up to date.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::dispatchDidRemoveBackForwardItem):
+        (WebCore::EmptyFrameLoaderClient::updateGlobalHistoryItemForPage):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::updateGlobalHistoryItemForPage):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::goToItem):
+        (WebCore::HistoryController::updateForStandardLoad):
+        (WebCore::HistoryController::updateForRedirectWithLockedBackForwardList):
+        * page/Page.cpp:
+        * page/Page.h:
+
 2011-03-02  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

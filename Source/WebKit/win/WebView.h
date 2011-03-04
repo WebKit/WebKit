@@ -48,6 +48,10 @@ namespace WebCore {
 }
 #endif
 
+namespace WebCore {
+    class HistoryItem;
+}
+
 class FullscreenVideoController;
 class WebBackForwardList;
 class WebFrame;
@@ -924,6 +928,8 @@ public:
 
     void setLastCursor(HCURSOR cursor) { m_lastSetCursor = cursor; }
 
+    void setGlobalHistoryItem(WebCore::HistoryItem*);
+
 private:
     void setZoomMultiplier(float multiplier, bool isTextOnly);
     float zoomMultiplier(bool isTextOnly);
@@ -1073,6 +1079,8 @@ protected:
     bool m_nextDisplayIsSynchronous;
 
     HCURSOR m_lastSetCursor;
+
+    RefPtr<WebCore::HistoryItem> m_globalHistoryItem;
 };
 
 #endif

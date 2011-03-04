@@ -2252,9 +2252,15 @@ static inline IMP getMethod(id o, SEL s)
 
 - (WebHistoryItem *)_globalHistoryItem
 {
-    if (!_private->page)
+    if (!_private)
         return nil;
-    return kit(_private->page->globalHistoryItem());
+
+    return kit(_private->_globalHistoryItem.get());
+}
+
+- (void)_setGlobalHistoryItem:(HistoryItem*)historyItem
+{
+    _private->_globalHistoryItem = historyItem;
 }
 
 - (WebTextIterator *)textIteratorForRect:(NSRect)rect

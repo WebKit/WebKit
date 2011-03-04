@@ -250,8 +250,7 @@ void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)
     // as opposed to happening for some/one of the page commits that might happen soon
     RefPtr<HistoryItem> currentItem = page->backForward()->currentItem();
     page->backForward()->setCurrentItem(targetItem);
-    Settings* settings = m_frame->settings();
-    page->setGlobalHistoryItem((!settings || settings->privateBrowsingEnabled()) ? 0 : targetItem);
+    m_frame->loader()->client()->updateGlobalHistoryItemForPage();
 
     // First set the provisional item of any frames that are not actually navigating.
     // This must be done before trying to navigate the desired frame, because some
@@ -323,8 +322,8 @@ void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
                 if (frameLoader->documentLoader()->unreachableURL().isEmpty())
                     frameLoader->client()->updateGlobalHistoryRedirectLinks();
             }
-            if (Page* page = m_frame->page())
-                page->setGlobalHistoryItem(needPrivacy ? 0 : page->backForward()->currentItem());
+
+            m_frame->loader()->client()->updateGlobalHistoryItemForPage();
         }
     } else {
         // The client redirect replaces the current history item.
@@ -361,8 +360,8 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
                     if (m_frame->loader()->documentLoader()->unreachableURL().isEmpty())
                         m_frame->loader()->client()->updateGlobalHistoryRedirectLinks();
                 }
-                if (Page* page = m_frame->page())
-                    page->setGlobalHistoryItem(needPrivacy ? 0 : page->backForward()->currentItem());
+
+                m_frame->loader()->client()->updateGlobalHistoryItemForPage();
             }
         }
         // The client redirect replaces the current history item.

@@ -41,6 +41,7 @@
 namespace WebCore {
     class Element;
     class Frame;
+    class HistoryItem;
     class KURL;
     class KeyboardEvent;
     class Page;
@@ -114,6 +115,7 @@ namespace WebCore {
 
 #ifdef __cplusplus
 - (WebCore::Page*)page;
+- (void)_setGlobalHistoryItem:(WebCore::HistoryItem*)historyItem;
 #endif
 
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;

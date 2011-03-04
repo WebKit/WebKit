@@ -343,11 +343,6 @@ int Page::getHistoryLength()
     return backForward()->backCount() + 1 + backForward()->forwardCount();
 }
 
-void Page::setGlobalHistoryItem(HistoryItem* item)
-{
-    m_globalHistoryItem = item;
-}
-
 void Page::setGroupName(const String& name)
 {
     if (m_group && !m_group->name().isEmpty()) {
