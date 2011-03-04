@@ -1,9 +1,10 @@
-Obtaining URI from FileEntry.
+[Worker] Obtaining URI from FileEntry.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS testFileURI is 'filesystem:file:///temporary/testFileEntry.txt'
+Starting worker: ../resources/file-entry-to-uri-sync.js
+PASS [Worker] testFileEntry.toURI() is 'filesystem:file:///temporary/testFileEntry.txt'
 PASS successfullyParsed is true
 
 TEST COMPLETE
