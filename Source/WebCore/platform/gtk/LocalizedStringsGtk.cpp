@@ -116,6 +116,11 @@ String contextMenuItemTagCopyImageToClipboard()
     return String::fromUTF8(_("Cop_y Image"));
 }
 
+String contextMenuItemTagCopyImageUrlToClipboard()
+{
+    return String::fromUTF8(_("Copy Image _Address"));
+}
+
 String contextMenuItemTagOpenVideoInNewWindow()
 {
     return String::fromUTF8(_("Open _Video in New Window"));

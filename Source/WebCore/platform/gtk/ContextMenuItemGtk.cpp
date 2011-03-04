@@ -107,6 +107,7 @@ static const char* gtkStockIDFromContextMenuAction(const ContextMenuAction& acti
         return GTK_STOCK_SELECT_COLOR;
     case ContextMenuItemTagToggleMediaControls:
     case ContextMenuItemTagToggleMediaLoop:
+    case ContextMenuItemTagCopyImageUrlToClipboard:
         // No icon for this.
         return 0;
     case ContextMenuItemTagEnterVideoFullscreen:

@@ -109,7 +109,7 @@ String contextMenuItemTagCopyImageToClipboard()
     return platformStrategies()->localizationStrategy()->contextMenuItemTagCopyImageToClipboard();
 }
 
-#if PLATFORM(QT)
+#if PLATFORM(QT) || PLATFORM(GTK)
 String contextMenuItemTagCopyImageUrlToClipboard()
 {
     return platformStrategies()->localizationStrategy()->contextMenuItemTagCopyImageUrlToClipboard();

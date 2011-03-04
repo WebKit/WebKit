@@ -1,3 +1,18 @@
+2011-03-04  Christian Dywan  <christian@lanedo.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Enable Copy Image Address context menu item in the Gtk port
+        https://bugs.webkit.org/show_bug.cgi?id=55136
+
+        * page/ContextMenuController.cpp:
+        * platform/ContextMenuItem.h:
+        * platform/LocalizationStrategy.h:
+        * platform/LocalizedStrings.cpp:
+        * platform/LocalizedStrings.h:
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        * platform/gtk/LocalizedStringsGtk.cpp:
+
 2011-03-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
