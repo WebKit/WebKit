@@ -649,6 +649,7 @@ private slots:
     void setContent();
     void setCacheLoadControlAttribute();
     void setUrlWithPendingLoads();
+    void setUrlWithFragment();
 
 private:
     QString  evalJS(const QString&s) {
@@ -3317,6 +3318,26 @@ void tst_QWebFrame::setUrlWithPendingLoads()
     QWebPage page;
     page.mainFrame()->setHtml("<img src='dummy:'/>");
     page.mainFrame()->setUrl(QUrl("about:blank"));
+}
+
+void tst_QWebFrame::setUrlWithFragment()
+{
+    QSKIP("Bug https://bugs.webkit.org/show_bug.cgi?id=32723", SkipAll);
+
+    // Based on bug report https://bugs.webkit.org/show_bug.cgi?id=32723
+    QWebPage page;
+    QSignalSpy spy(&page, SIGNAL(loadFinished(bool)));
+
+    const QUrl url("qrc:/test1.html#");
+    QVERIFY(!url.fragment().isNull());
+
+    page.mainFrame()->setUrl(url);
+    ::waitForSignal(&page, SIGNAL(loadFinished(bool)));
+
+    QCOMPARE(spy.count(), 1);
+    QVERIFY(!page.mainFrame()->toPlainText().isEmpty());
+    QCOMPARE(page.mainFrame()->requestedUrl(), url);
+    QCOMPARE(page.mainFrame()->url(), url);
 }
 
 QTEST_MAIN(tst_QWebFrame)
