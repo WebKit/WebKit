@@ -1,3 +1,14 @@
+2011-03-04  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Doxygen documentation for ewk_settings
+        https://bugs.webkit.org/show_bug.cgi?id=55667
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_default_user_agent_get): only style is fixed
+        * ewk/ewk_settings.h:
+
 2011-03-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

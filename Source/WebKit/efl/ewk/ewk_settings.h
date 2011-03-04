@@ -32,9 +32,9 @@ extern "C" {
 #endif
 
 /**
- * @file
+ * @file ewk_settings.h
  *
- * General purpose settings, not tied to any view object.
+ * @brief General purpose settings, not tied to any view object.
  */
 
 EAPI uint64_t         ewk_settings_web_database_default_quota_get();

@@ -80,7 +80,7 @@ static WTF::String _ewk_settings_webkit_os_version_get()
  * this value is 1MB.
  *
  * @return the current default database quota in bytes
- **/
+ */
 uint64_t ewk_settings_web_database_default_quota_get()
 {
     return _ewk_default_web_database_quota;
@@ -90,8 +90,7 @@ uint64_t ewk_settings_web_database_default_quota_get()
  * Sets the current path to the directory WebKit will write Web
  * Database databases.
  *
- * @path: the new database directory path
- *
+ * @param path the new database directory path
  */
 void ewk_settings_web_database_path_set(const char *path)
 {
@@ -107,13 +106,13 @@ void ewk_settings_web_database_path_set(const char *path)
 }
 
 /**
- * Return directory path where web database is stored.
+ * Returns directory path where web database is stored.
  *
- * @return database path or NULL if none or web database is not supported.
- *         This is guaranteed to be eina_stringshare, so whenever possible
- *         save yourself some cpu cycles and use
- *         eina_stringshare_ref() instead of eina_stringshare_add() or
- *         strdup().
+ * This is guaranteed to be eina_stringshare, so whenever possible
+ * save yourself some cpu cycles and use eina_stringshare_ref()
+ * instead of eina_stringshare_add() or strdup().
+ *
+ * @return database path or @c 0 if none or web database is not supported
  */
 const char *ewk_settings_web_database_path_get()
 {
@@ -125,12 +124,12 @@ const char *ewk_settings_web_database_path_get()
 }
 
 /**
- * Sets directory where to store icon database, opening database.
+ * Sets directory where to store icon database, opening or closing database.
  *
  * @param directory where to store icon database, must be
- *        write-able. If @c NULL is given, then database is closed.
+ *        write-able, if @c 0 is given, then database is closed
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on errors.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on errors
  */
 Eina_Bool ewk_settings_icon_database_path_set(const char *directory)
 {
@@ -173,13 +172,13 @@ Eina_Bool ewk_settings_icon_database_path_set(const char *directory)
 }
 
 /**
- * Return directory path where icon database is stored.
+ * Returns directory path where icon database is stored.
  *
- * @return database path or @c NULL if none is set or database is closed.
- *         This is guaranteed to be eina_stringshare, so whenever possible
- *         save yourself some cpu cycles and use
- *         eina_stringshare_ref() instead of eina_stringshare_add() or
- *         strdup().
+ * This is guaranteed to be eina_stringshare, so whenever possible
+ * save yourself some cpu cycles and use eina_stringshare_ref()
+ * instead of eina_stringshare_add() or strdup().
+ *
+ * @return database path or @c 0 if none is set or database is closed
  */
 const char* ewk_settings_icon_database_path_get(void)
 {
@@ -192,7 +191,7 @@ const char* ewk_settings_icon_database_path_get(void)
 }
 
 /**
- * Remove all known icons from database.
+ * Removes all known icons from database.
  *
  * Database must be opened with ewk_settings_icon_database_path_set()
  * in order to work.
@@ -212,14 +211,14 @@ Eina_Bool ewk_settings_icon_database_clear(void)
 }
 
 /**
- * Query icon for given URL, returning associated cairo surface.
+ * Queries icon for given URL, returning associated cairo surface.
  *
- * @note in order to have this working, one must open icon database
+ * @note In order to have this working, one must open icon database
  *       with ewk_settings_icon_database_path_set().
  *
- * @param url which url to query icon.
+ * @param url which url to query icon
  *
- * @return cairo surface if any, or NULL on failure.
+ * @return cairo surface if any, or @c 0 on failure
  */
 cairo_surface_t* ewk_settings_icon_database_icon_surface_get(const char *url)
 {
@@ -237,19 +236,19 @@ cairo_surface_t* ewk_settings_icon_database_icon_surface_get(const char *url)
 }
 
 /**
- * Create Evas_Object of type image representing the given URL.
+ * Creates Evas_Object of type image representing the given URL.
  *
  * This is an utility function that creates an Evas_Object of type
  * image set to have fill always match object size
  * (evas_object_image_filled_add()), saving some code to use it from Evas.
  *
- * @note in order to have this working, one must open icon database
+ * @note In order to have this working, one must open icon database
  *       with ewk_settings_icon_database_path_set().
  *
- * @param url which url to query icon.
- * @param canvas evas instance where to add resulting object.
+ * @param url which url to query icon
+ * @param canvas evas instance where to add resulting object
  *
- * @return newly allocated Evas_Object instance or @c NULL on
+ * @return newly allocated Evas_Object instance or @c 0 on
  *         errors. Delete the object with evas_object_del().
  */
 Evas_Object* ewk_settings_icon_database_icon_object_add(const char* url, Evas* canvas)
@@ -273,7 +272,7 @@ Evas_Object* ewk_settings_icon_database_icon_object_add(const char* url, Evas* c
 /**
  * Sets the given proxy URI to network backend.
  *
- * @param proxy URI.
+ * @param proxy URI to set
  */
 void ewk_settings_proxy_uri_set(const char* proxy)
 {
@@ -299,7 +298,7 @@ void ewk_settings_proxy_uri_set(const char* proxy)
 /**
  * Gets the proxy URI from the network backend.
  *
- * @return current proxy URI or @c 0 if it's not set. 
+ * @return current proxy URI or @c 0 if it's not set
  */
 const char* ewk_settings_proxy_uri_get()
 {
@@ -321,15 +320,16 @@ const char* ewk_settings_proxy_uri_get()
 }
 
 /**
-* @internal
-* Gets the default user agent string.
-*
-* @return A pointer to an eina_stringshare containing the user agent string.
-*/
+ * @internal
+ *
+ * Gets the default user agent string.
+ *
+ * @return a pointer to an eina_stringshare containing the user agent string
+ */
 const char* ewk_settings_default_user_agent_get()
 {
     WTF::String ua_version = makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+');
     WTF::String static_ua = makeString("Mozilla/5.0 (", _ewk_settings_webkit_platform_get(), "; ", _ewk_settings_webkit_os_version_get(), ") AppleWebKit/", ua_version) + makeString(" (KHTML, like Gecko) Version/5.0 Safari/", ua_version);
 
     return eina_stringshare_add(static_ua.utf8().data());
-} 
+}
