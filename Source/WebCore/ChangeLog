@@ -1,3 +1,16 @@
+2011-03-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: exceptions when building context menu in network panel
+        https://bugs.webkit.org/show_bug.cgi?id=55678
+
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.prototype.dataGridNodeFromNode):
+        (WebInspector.DataGrid.prototype.dataGridNodeFromPoint):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype._contextMenu):
+
 2011-03-04  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by James Robinson.

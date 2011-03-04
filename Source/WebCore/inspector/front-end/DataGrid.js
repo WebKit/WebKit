@@ -809,14 +809,14 @@ WebInspector.DataGrid.prototype = {
     dataGridNodeFromNode: function(target)
     {
         var rowElement = target.enclosingNodeOrSelfWithNodeName("tr");
-        return rowElement._dataGridNode;
+        return rowElement && rowElement._dataGridNode;
     },
 
     dataGridNodeFromPoint: function(x, y)
     {
         var node = this._dataTable.ownerDocument.elementFromPoint(x, y);
         var rowElement = node.enclosingNodeOrSelfWithNodeName("tr");
-        return rowElement._dataGridNode;
+        return rowElement && rowElement._dataGridNode;
     },
 
     _clickInHeaderCell: function(event)
