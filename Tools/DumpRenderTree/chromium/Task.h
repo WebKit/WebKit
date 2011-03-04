@@ -31,13 +31,15 @@
 #ifndef Task_h
 #define Task_h
 
+#include "webkit/support/webkit_support.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
 class TaskList;
 
 // WebTask represents a task which can run by postTask() or postDelayedTask().
 // it is named "WebTask", not "Task", to avoid conflist with base/task.h.
-class WebTask {
+class WebTask : public webkit_support::TaskAdaptor {
 public:
     WebTask(TaskList*);
     // The main code of this task.
@@ -45,6 +47,10 @@ public:
     virtual void run() = 0;
     virtual void cancel() = 0;
     virtual ~WebTask();
+
+private:
+    virtual void Run() { run(); }
+
 protected:
     TaskList* m_taskList;
 };

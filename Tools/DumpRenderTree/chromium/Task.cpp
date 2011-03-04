@@ -33,7 +33,6 @@
 
 #include "WebKit.h"
 #include "WebKitClient.h"
-#include "webkit/support/webkit_support.h"
 
 WebTask::WebTask(TaskList* list): m_taskList(list) { m_taskList->registerTask(this); }
 WebTask::~WebTask()
@@ -69,7 +68,7 @@ void postTask(WebTask* task)
 
 void postDelayedTask(WebTask* task, int64_t ms)
 {
-    webkit_support::PostDelayedTask(invokeTask, static_cast<void*>(task), ms);
+    webkit_support::PostDelayedTask(task, ms);
 }
 
 

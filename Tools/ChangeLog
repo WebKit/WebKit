@@ -1,3 +1,22 @@
+2011-03-02  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium][DRT] WebTask should use webkit_support::TaskAdaptor
+        https://bugs.webkit.org/show_bug.cgi?id=55434
+
+        Changed WebTask to be a subclass of webkit_support::TaskAdaptor
+        and passed the object webkit_support::PostDelayedTask directly.
+
+        Note that the change keeps postTask() as is because it has a
+        semantics taht webkit_support::PostDelayedTask() has; It jumps to
+        the main thread.
+
+        * DumpRenderTree/chromium/Task.cpp:
+        (postDelayedTask):
+        * DumpRenderTree/chromium/Task.h:
+        (WebTask::Run):
+
 2011-03-03  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
