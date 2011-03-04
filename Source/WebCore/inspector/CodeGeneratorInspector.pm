@@ -513,8 +513,6 @@ sub generateBackendFunction
     push(@function, "    if ((callId || protocolErrors->length()) && m_inspectorAgent->hasFrontend()) {");
     push(@function, "        RefPtr<InspectorObject> responseMessage = InspectorObject::create();");
     push(@function, "        responseMessage->setNumber(\"seq\", callId);");
-    push(@function, "        responseMessage->setString(\"domain\", \"$domain\");");
-    push(@function, "        responseMessage->setBoolean(\"success\", !protocolErrors->length());");
     push(@function, "");
     push(@function, "        if (protocolErrors->length())");
     push(@function, "            responseMessage->setArray(\"errors\", protocolErrors);");
@@ -600,7 +598,6 @@ void ${backendClassName}::reportProtocolError(const long callId, const String& e
 {
     RefPtr<InspectorObject> message = InspectorObject::create();
     message->setNumber("seq", callId);
-    message->setBoolean("success", false);
     RefPtr<InspectorArray> errors = InspectorArray::create();
     errors->pushString(errorText);
     message->setArray("errors", errors);
@@ -848,7 +845,7 @@ InspectorBackendStub.prototype = {
                 arguments.push(messageObject.body[key]);
 
         if ("seq" in messageObject) { // just a response for some request
-            if (messageObject.success)
+            if (!messageObject.errors)
                 this._callbacks[messageObject.seq].apply(null, arguments);
             else
                 this.reportProtocolError(messageObject);
