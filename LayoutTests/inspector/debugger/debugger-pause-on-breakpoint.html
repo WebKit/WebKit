@@ -22,7 +22,7 @@ var test = function()
     function step2(sourceFrame)
     {
         InspectorTest.addResult("Script source was shown.");
-        sourceFrame._setBreakpoint(8, "", true);
+        InspectorTest.setBreakpoint(sourceFrame, 8, "", true);
         InspectorTest.runTestFunctionAndWaitUntilPaused(step3);
     }
 

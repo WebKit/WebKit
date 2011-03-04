@@ -182,6 +182,12 @@ InspectorTest.showScriptSource = function(scriptName, callback)
     InspectorTest.addSniffer(WebInspector.panels.scripts, "_addOptionToFilesSelect", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
 };
 
+InspectorTest.setBreakpoint = function(sourceFrame, lineNumber, condition, enabled)
+{
+    sourceFrame._delegate.setBreakpoint(lineNumber, condition, enabled);
+};
+
+
 InspectorTest.expandProperties = function(properties, callback)
 {
     var index = 0;

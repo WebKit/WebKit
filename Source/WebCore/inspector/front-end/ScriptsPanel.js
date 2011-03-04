@@ -580,16 +580,8 @@ WebInspector.ScriptsPanel.prototype = {
     _createSourceFrame: function(sourceFileId)
     {
         var script = this._scriptForSourceFileId(sourceFileId);
-        var contentProvider;
-        var isScript;
-        if (script.resource) {
-            contentProvider = new WebInspector.SourceFrameContentProviderForResource(script.resource);
-            isScript = script.resource.type === WebInspector.Resource.Type.Script;
-        } else {
-            contentProvider = new WebInspector.SourceFrameContentProviderForScript(script);
-            isScript = !script.lineOffset && !script.columnOffset;
-        }
-        sourceFrame = new WebInspector.SourceFrame(contentProvider, script.sourceURL, isScript);
+        var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(script);
+        var sourceFrame = new WebInspector.SourceFrame(delegate, script.sourceURL);
         sourceFrame._sourceFileId = sourceFileId;
         sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
         this._sourceFileIdToSourceFrame[sourceFileId] = sourceFrame;
@@ -1047,20 +1039,49 @@ WebInspector.ScriptsPanel.prototype = {
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 
-WebInspector.SourceFrameContentProviderForScript = function(script)
+WebInspector.SourceFrameDelegateForScriptsPanel = function(script)
 {
-    WebInspector.SourceFrameContentProvider.call(this);
+    WebInspector.SourceFrameDelegate.call(this);
     this._script = script;
+    this._popoverObjectGroup = "popover";
 }
 
-WebInspector.SourceFrameContentProviderForScript.prototype = {
+WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
     requestContent: function(callback)
     {
-        var scripts = [this._script];
-        if (this._script.sourceURL)
-            scripts = WebInspector.debuggerModel.scriptsForURL(this._script.sourceURL);
-        scripts.sort(function(x, y) { return x.lineOffset - y.lineOffset || x.columnOffset - y.columnOffset; });
+        function didGetTextAndScriptRanges(mimeType, text, scriptRanges)
+        {
+            this._content = new WebInspector.SourceFrameContent(text, new WebInspector.IdenticalSourceMapping(), scriptRanges);
+            callback(mimeType, this._content);
+        }
 
+        if (this._script.resource)
+            this._loadResourceContent(this._script.resource, didGetTextAndScriptRanges.bind(this));
+        else
+            this._loadAndConcatenateScriptsContent(didGetTextAndScriptRanges.bind(this));
+    },
+
+    _loadResourceContent: function(resource, callback)
+    {
+        function didRequestContent(text)
+        {
+            var mimeType = "text/javascript";
+            if (resource.type !== WebInspector.Resource.Type.Script) {
+                mimeType = "text/html";
+                // WebKit html lexer normalizes line endings and scripts are passed to VM with "\n" line endings.
+                // However, resource content has original line endings, so we have to normalize line endings here.
+                text = text.replace(/\r\n/g, "\n");
+            }
+            var scripts = this._scripts();
+            var scriptRanges = WebInspector.ScriptFormatter.findScriptRanges(text.lineEndings(), scripts);
+            callback(mimeType, text, scriptRanges);
+        }
+        resource.requestContent(didRequestContent.bind(this));
+    },
+
+    _loadAndConcatenateScriptsContent: function(callback)
+    {
+        var scripts = this._scripts();
         var scriptsLeft = scripts.length;
         var sources = [];
         function didRequestSource(index, source)
@@ -1069,9 +1090,7 @@ WebInspector.SourceFrameContentProviderForScript.prototype = {
             if (--scriptsLeft)
                 return;
             var result = this._buildSource(scripts, sources);
-            var sourceMapping = new WebInspector.IdenticalSourceMapping();
-            callback(result.mimeType, new WebInspector.SourceFrameContent(result.source, sourceMapping, result.scriptRanges));
-
+            callback(result.mimeType, result.source, result.scriptRanges);
         }
         for (var i = 0; i < scripts.length; ++i)
             scripts[i].requestSource(didRequestSource.bind(this, i));
@@ -1124,7 +1143,101 @@ WebInspector.SourceFrameContentProviderForScript.prototype = {
             }
         }
         return { mimeType: mimeType, source: source, scriptRanges: scriptRanges };
+    },
+
+    _scripts: function()
+    {
+        var scripts = [this._script];
+        if (this._script.sourceURL)
+            scripts = WebInspector.debuggerModel.scriptsForURL(this._script.sourceURL);
+        scripts.sort(function(x, y) { return x.lineOffset - y.lineOffset || x.columnOffset - y.columnOffset; });
+        return scripts;
+    },
+
+    debuggingSupported: function()
+    {
+        return true;
+    },
+
+    setBreakpoint: function(lineNumber, condition, enabled)
+    {
+        var location = this._content.sourceFrameLineNumberToActualLocation(lineNumber);
+        if (this._script.sourceURL)
+            WebInspector.debuggerModel.setBreakpoint(this._script.sourceURL, location.lineNumber, location.columnNumber, condition, enabled);
+        else if (location.sourceID)
+            WebInspector.debuggerModel.setBreakpointBySourceId(location.sourceID, location.lineNumber, location.columnNumber, condition, enabled);
+        else
+            return;
+
+        if (!WebInspector.panels.scripts.breakpointsActivated)
+            WebInspector.panels.scripts.toggleBreakpointsClicked();
+    },
+
+    removeBreakpoint: function(breakpointId)
+    {
+        WebInspector.debuggerModel.removeBreakpoint(breakpointId);
+    },
+
+    updateBreakpoint: function(breakpointId, condition, enabled)
+    {
+        WebInspector.debuggerModel.updateBreakpoint(breakpointId, condition, enabled);
+    },
+
+    findBreakpoint: function(lineNumber)
+    {
+        var url = this._script.sourceURL;
+        var location = this._content.sourceFrameLineNumberToActualLocation(lineNumber);
+        function filter(breakpoint)
+        {
+            if (breakpoint.url) {
+                if (breakpoint.url !== url)
+                    return false;
+            } else {
+                if (breakpoint.sourceID !== location.sourceID)
+                    return false;
+            }
+            var lineNumber = breakpoint.locations.length ? breakpoint.locations[0].lineNumber : breakpoint.lineNumber;
+            return lineNumber === location.lineNumber;
+        }
+        return WebInspector.debuggerModel.queryBreakpoints(filter)[0];
+    },
+
+    continueToLine: function(lineNumber)
+    {
+        var location = this._content.sourceFrameLineNumberToActualLocation(lineNumber);
+        if (location.sourceID)
+            WebInspector.debuggerModel.continueToLocation(location.sourceID, location.lineNumber, location.columnNumber);
+    },
+
+    canEditScriptSource: function()
+    {
+        return Preferences.canEditScriptSource && !this._script.lineOffset && !this._script.columnOffset;
+    },
+
+    editScriptSource: function(text)
+    {
+        WebInspector.debuggerModel.editScriptSource(this._script.sourceID, text);
+    },
+
+    debuggerPaused: function()
+    {
+        return WebInspector.panels.scripts.paused;
+    },
+
+    evaluateInSelectedCallFrame: function(string, callback)
+    {
+        function didEvaluateInSelectedCallFrame(result)
+        {
+            if (!result.isError() && this.debuggerPaused())
+                callback(result);
+        }
+        WebInspector.panels.scripts.evaluateInSelectedCallFrame(string, this._popoverObjectGroup, false, didEvaluateInSelectedCallFrame.bind(this));
+    },
+
+    releaseEvaluationResult: function()
+    {
+        RuntimeAgent.releaseObjectGroup(0, this._popoverObjectGroup);
     }
 }
 
-WebInspector.SourceFrameContentProviderForScript.prototype.__proto__ = WebInspector.SourceFrameContentProvider.prototype;
+WebInspector.SourceFrameDelegateForScriptsPanel.prototype.__proto__ = WebInspector.SourceFrameDelegate.prototype;

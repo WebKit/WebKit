@@ -30,8 +30,8 @@ var test = function()
     {
         InspectorTest.addResult("Script source was shown.");
         WebInspector.panels.scripts._resourceForURL = function() { return new WebInspector.Resource(); };
-        sourceFrame._setBreakpoint(2, "", true);
-        sourceFrame._setBreakpoint(9, "", true);
+        InspectorTest.setBreakpoint(sourceFrame, 2, "", true);
+        InspectorTest.setBreakpoint(sourceFrame, 9, "", true);
         InspectorTest.waitUntilPaused(step3);
         InspectorTest.reloadPage(InspectorTest.completeDebuggerTest.bind(InspectorTest));
     }

@@ -1,3 +1,52 @@
+2011-03-04  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: extract all code that depends on source mapping from SourceFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=55464
+
+        Extract all dependencies on DebuggerModel and ScriptsPanel to a delegate class
+        to encapsulate source mapping aspects from SourceFrame.
+
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.createResourceView):
+        (WebInspector.SourceFrameDelegateForResourcesPanel):
+        (WebInspector.SourceFrameDelegateForResourcesPanel.prototype.requestContent):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        (WebInspector.SourceFrameDelegateForScriptsPanel):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.show):
+        (WebInspector.SourceFrame.prototype._createTextViewer):
+        (WebInspector.SourceFrame.prototype._contextMenu.addConditionalBreakpoint.didEditBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._contextMenu.addConditionalBreakpoint):
+        (WebInspector.SourceFrame.prototype._contextMenu.else.editBreakpointCondition.didEditBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._contextMenu.else.editBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._contextMenu.else.setBreakpointEnabled):
+        (WebInspector.SourceFrame.prototype._contextMenu):
+        (WebInspector.SourceFrame.prototype._mouseDown):
+        (WebInspector.SourceFrame.prototype._mouseMove):
+        (WebInspector.SourceFrame.prototype._hidePopup):
+        (WebInspector.SourceFrame.prototype._mouseHover):
+        (WebInspector.SourceFrame.prototype._showPopup.showObjectPopup):
+        (WebInspector.SourceFrame.prototype._showPopup):
+        (WebInspector.SourceFrame.prototype._doubleClick):
+        (WebInspector.SourceFrame.prototype._didEditLine):
+        (WebInspector.SourceFrameDelegate):
+        (WebInspector.SourceFrameDelegate.prototype.requestContent):
+        (WebInspector.SourceFrameDelegate.prototype.debuggingSupported):
+        (WebInspector.SourceFrameDelegate.prototype.setBreakpoint):
+        (WebInspector.SourceFrameDelegate.prototype.removeBreakpoint):
+        (WebInspector.SourceFrameDelegate.prototype.updateBreakpoint):
+        (WebInspector.SourceFrameDelegate.prototype.findBreakpoint):
+        (WebInspector.SourceFrameDelegate.prototype.continueToLine):
+        (WebInspector.SourceFrameDelegate.prototype.canEditScriptSource):
+        (WebInspector.SourceFrameDelegate.prototype.editScriptSource):
+        (WebInspector.SourceFrameDelegate.prototype.debuggerPaused):
+        (WebInspector.SourceFrameDelegate.prototype.evaluate):
+        (WebInspector.SourceFrameDelegate.prototype.releaseEvaluationResult):
+
 2011-03-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
