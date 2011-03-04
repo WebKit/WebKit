@@ -1,3 +1,11 @@
+2011-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Suggested by Dan Bernstein.
+
+        Move "const" around "NSString *", so that it suddenly begins to make sense.
+
+        * WebProcess/mac/FullKeyboardAccessWatcher.mm:
+
 2011-03-03  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Anders Carlsson.

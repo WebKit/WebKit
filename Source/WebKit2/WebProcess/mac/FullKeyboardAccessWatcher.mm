@@ -26,7 +26,7 @@
 #import "config.h"
 #import "FullKeyboardAccessWatcher.h"
 
-const NSString *KeyboardUIModeDidChangeNotification = @"com.apple.KeyboardUIModeDidChange";
+NSString * const KeyboardUIModeDidChangeNotification = @"com.apple.KeyboardUIModeDidChange";
 const CFStringRef AppleKeyboardUIMode = CFSTR("AppleKeyboardUIMode");
 const CFStringRef UniversalAccessDomain = CFSTR("com.apple.universalaccess");
 
