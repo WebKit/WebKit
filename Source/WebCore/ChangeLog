@@ -1,3 +1,20 @@
+2011-03-03  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by David Levin.
+
+        [fileapi] Tighten up ResolveURICallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=55638
+
+        Two changes:
+          - Retry only on TYPE_MISMATCH_ERR now that Chromium
+            properly sets that error code.
+          - Call DirectoryEntry instead of DOMFileSystem methods.
+
+        No change in behavior, so no new tests.
+
+        * fileapi/FileSystemCallbacks.cpp:
+        (WebCore::ResolveURICallbacks::didOpenFileSystem):
+
 2011-03-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
