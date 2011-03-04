@@ -1,3 +1,20 @@
+2011-03-04  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        Turn on pixel tests for huge-layer-img.html for better test coverage.
+        https://bugs.webkit.org/show_bug.cgi?id=55679
+
+        Also, modify this test to be more pixel test friendly.
+
+        * compositing/tiling/huge-layer-img-expected.checksum: Added.
+        * compositing/tiling/huge-layer-img-expected.png: Added.
+        * compositing/tiling/huge-layer-img-expected.txt: Added.
+        * compositing/tiling/huge-layer-img.html:
+        * platform/chromium-gpu-win/compositing/tiling/huge-layer-img-expected.txt: Removed.
+        * platform/chromium-gpu/compositing/tiling/huge-layer-img-expected.txt: Added.
+        * platform/mac/compositing/tiling/huge-layer-img-expected.txt: Removed.
+
 2011-03-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80379.

@@ -77,6 +77,11 @@ void ImageLayerChromium::updateContentsIfDirty()
 
 void ImageLayerChromium::updateTextureIfNeeded()
 {
+    // FIXME: Remove this test when tiled layers are implemented.
+    if (requiresClippedUpdateRect()) {
+        ContentLayerChromium::updateTextureIfNeeded();
+        return;
+    }
     updateTexture(m_decodedImage.pixels(), m_decodedImage.size());
 }
 

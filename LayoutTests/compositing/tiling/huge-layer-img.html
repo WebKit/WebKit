@@ -9,10 +9,13 @@
       height: 20000px;
       -webkit-transform:translateZ(0);
     }
+    body {
+      overflow:hidden;
+    }
     </style>
     <script type="text/javascript" charset="utf-8">
         if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
+            layoutTestController.dumpAsText(true);
             layoutTestController.waitUntilDone();
         }
 
@@ -27,8 +30,6 @@
             context.fillRect(0, 0, canvas.width, canvas.height);
             context.fillStyle = "red";
             context.fillRect(50, 50, 200, 200);
-            context.fillStyle = "blue";
-            context.fillRect(50, canvas.height - 250, 200, 200);
             img.src = canvas.toDataURL();
 
             window.setTimeout(function() {
@@ -43,12 +44,11 @@
     </script>
   </head>
   <body>
-      <p>
+      <!--
         The yellow box should be large enough to scroll off the bottom.
-        There should be a red box on the first page and a blue box
-        near the bottom of the yellow box. This tests that we can support
-        very large composited image layers.
-      </p>
+        There should be a red box within the yellow box.
+        This tests that we can support very large composited image layers.
+      -->
         <img id="container">
         <pre id="layers">Layer tree appears here in DRT.</pre>
   </body>

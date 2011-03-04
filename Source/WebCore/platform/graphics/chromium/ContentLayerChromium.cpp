@@ -210,12 +210,12 @@ void ContentLayerChromium::updateTexture(const uint8_t* pixels, const IntSize& s
     if (requiresClippedUpdateRect())
         srcRect = m_visibleRectInLayerCoords;
 
-    const size_t destStride = size.width() * 4;
+    const size_t destStride = m_uploadUpdateRect.width() * 4;
     const size_t srcStride = srcRect.width() * 4;
 
-    const uint8_t* uploadPixels = pixels + srcStride * m_uploadUpdateRect.x();
+    const uint8_t* uploadPixels = pixels + srcStride * m_uploadUpdateRect.y();
     Vector<uint8_t> uploadBuffer;
-    if (srcStride != destStride) {
+    if (srcStride != destStride || m_uploadUpdateRect.x()) {
         uploadBuffer.resize(m_uploadUpdateRect.height() * destStride);
         for (int row = 0; row < m_uploadUpdateRect.height(); ++row) {
             size_t srcOffset = (m_uploadUpdateRect.y() + row) * srcStride + m_uploadUpdateRect.x() * 4;
