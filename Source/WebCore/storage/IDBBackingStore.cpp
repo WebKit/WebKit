@@ -668,10 +668,11 @@ namespace {
 
 class CursorImplCommon : public IDBBackingStore::Cursor {
 public:
-    CursorImplCommon(SQLiteDatabase& sqliteDatabase, String query, bool uniquenessConstraint)
+    CursorImplCommon(SQLiteDatabase& sqliteDatabase, String query, bool uniquenessConstraint, bool iterateForward)
         : m_query(sqliteDatabase, query)
         , m_db(sqliteDatabase)
         , m_uniquenessConstraint(uniquenessConstraint)
+        , m_iterateForward(iterateForward)
     {
     }
     virtual ~CursorImplCommon() {}
@@ -692,6 +693,7 @@ public:
 protected:
     SQLiteDatabase& m_db;
     bool m_uniquenessConstraint;
+    bool m_iterateForward;
     int64_t m_currentId;
     RefPtr<IDBKey> m_currentKey;
 };
@@ -709,9 +711,16 @@ bool CursorImplCommon::continueFunction(const IDBKey* key)
         if (!currentRowExists())
             continue;
 
-        // If a key was supplied, we must loop until we find that key (or hit the end).
-        if (key && !key->isEqual(m_currentKey.get()))
-            continue;
+        // If a key was supplied, we must loop until we find a key greater than or equal to it (or hit the end).
+        if (key) {
+            if (m_iterateForward) {
+                if (m_currentKey->isLessThan(key))
+                    continue;
+            } else {
+                if (key->isLessThan(m_currentKey.get()))
+                    continue;
+            }
+        }
 
         // If we don't have a uniqueness constraint, we can stop now.
         if (!m_uniquenessConstraint)
@@ -725,8 +734,8 @@ bool CursorImplCommon::continueFunction(const IDBKey* key)
 
 class ObjectStoreCursorImpl : public CursorImplCommon {
 public:
-    ObjectStoreCursorImpl(SQLiteDatabase& sqliteDatabase, String query, bool uniquenessConstraint)
-        : CursorImplCommon(sqliteDatabase, query, uniquenessConstraint)
+    ObjectStoreCursorImpl(SQLiteDatabase& sqliteDatabase, String query, bool uniquenessConstraint, bool iterateForward)
+        : CursorImplCommon(sqliteDatabase, query, uniquenessConstraint, iterateForward)
     {
     }
 
@@ -762,8 +771,8 @@ bool ObjectStoreCursorImpl::currentRowExists()
 
 class IndexKeyCursorImpl : public CursorImplCommon {
 public:
-    IndexKeyCursorImpl(SQLiteDatabase& sqliteDatabase, String query, bool uniquenessConstraint)
-        : CursorImplCommon(sqliteDatabase, query, uniquenessConstraint)
+    IndexKeyCursorImpl(SQLiteDatabase& sqliteDatabase, String query, bool uniquenessConstraint, bool iterateForward)
+        : CursorImplCommon(sqliteDatabase, query, uniquenessConstraint, iterateForward)
     {
     }
 
@@ -800,8 +809,8 @@ bool IndexKeyCursorImpl::currentRowExists()
 
 class IndexCursorImpl : public CursorImplCommon {
 public:
-    IndexCursorImpl(SQLiteDatabase& sqliteDatabase, String query, bool uniquenessConstraint)
-        : CursorImplCommon(sqliteDatabase, query, uniquenessConstraint)
+    IndexCursorImpl(SQLiteDatabase& sqliteDatabase, String query, bool uniquenessConstraint, bool iterateForward)
+        : CursorImplCommon(sqliteDatabase, query, uniquenessConstraint, iterateForward)
     {
     }
 
@@ -857,7 +866,8 @@ PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openObjectStoreCursor(int64
     else
         sql += "keyString DESC, keyDate DESC, keyNumber DESC";
 
-    RefPtr<ObjectStoreCursorImpl> cursor = adoptRef(new ObjectStoreCursorImpl(m_db, sql, direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE));
+    RefPtr<ObjectStoreCursorImpl> cursor = adoptRef(new ObjectStoreCursorImpl(m_db, sql, direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE,
+                                                                              direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::NEXT));
 
     bool ok = cursor->m_query.prepare() == SQLResultOk;
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
@@ -896,7 +906,8 @@ PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openIndexKeyCursor(int64_t 
     else
         sql += "IndexData.keyString DESC, IndexData.keyDate DESC, IndexData.keyNumber DESC, IndexData.id DESC";
 
-    RefPtr<IndexKeyCursorImpl> cursor = adoptRef(new IndexKeyCursorImpl(m_db, sql, direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE));
+    RefPtr<IndexKeyCursorImpl> cursor = adoptRef(new IndexKeyCursorImpl(m_db, sql, direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE,
+                                                                        direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::NEXT));
 
     bool ok = cursor->m_query.prepare() == SQLResultOk;
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
@@ -935,7 +946,8 @@ PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openIndexCursor(int64_t ind
     else
         sql += "IndexData.keyString DESC, IndexData.keyDate DESC, IndexData.keyNumber DESC, IndexData.id DESC";
 
-    RefPtr<IndexCursorImpl> cursor = adoptRef(new IndexCursorImpl(m_db, sql, direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE));
+    RefPtr<IndexCursorImpl> cursor = adoptRef(new IndexCursorImpl(m_db, sql, direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE,
+                                                                  direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::NEXT));
 
     bool ok = cursor->m_query.prepare() == SQLResultOk;
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?

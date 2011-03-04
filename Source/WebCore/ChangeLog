@@ -1,3 +1,26 @@
+2011-03-02  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Cursor.continue with a key param should test less than, not equal to
+        https://bugs.webkit.org/show_bug.cgi?id=55640
+
+        If you supply a param to cursor.continue, we sould guarantee that
+        the item we continue to is greater than or equal to the parameter.
+        Right now, we only test equality.
+
+        http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html#widl-IDBCursor-continue
+        http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html#dfn-steps-for-iterating-a-cursor
+
+        Test: storage/indexeddb/cursor-continue.html
+
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::continueFunctionInternal):
+        * storage/IDBKey.cpp:
+        (WebCore::IDBKey::isLessThan):
+        (WebCore::IDBKey::isEqual):
+        * storage/IDBKey.h:
+
 2011-03-03  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix. Need win/cURL DownloadBundle stub.

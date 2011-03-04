@@ -99,7 +99,8 @@ public:
         return m_number;
     }
 
-    bool isEqual(IDBKey* other) const;
+    bool isLessThan(const IDBKey* other) const;
+    bool isEqual(const IDBKey* other) const;
 
     using ThreadSafeShared<IDBKey>::ref;
     using ThreadSafeShared<IDBKey>::deref;

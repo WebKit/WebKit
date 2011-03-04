@@ -1,3 +1,13 @@
+2011-03-02  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Cursor.continue with a key param should test less than, not equal to
+        https://bugs.webkit.org/show_bug.cgi?id=55640
+
+        * storage/indexeddb/cursor-continue-expected.txt: Added.
+        * storage/indexeddb/cursor-continue.html: Added.
+
 2011-03-03  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium Snow Leopard expectations update.
