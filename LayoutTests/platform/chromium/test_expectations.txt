@@ -3257,6 +3257,7 @@ BUGV8_1168 : fast/js/mozilla/strict/8.7.2.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/B.1.2.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/eval-variable-environment.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/this-for-function-expression-recursion.html = TEXT
+BUGV8_1228 : fast/js/preventExtensions.html = TEXT
 
 BUGWK54634 : media/video-controls-in-media-document.html = IMAGE+TEXT
 

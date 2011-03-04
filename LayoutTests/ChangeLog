@@ -1,3 +1,10 @@
+2011-03-04  Tony Gentilcore  <tonyg@chromium.org>
+
+        [chromium] Fail new test for JSC feature introduced by r80378
+        https://bugs.webkit.org/show_bug.cgi?id=55801
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-04  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
