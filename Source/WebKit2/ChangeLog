@@ -1,3 +1,75 @@
+2011-03-03  Adam Roben  <aroben@apple.com>
+
+        Add a way to tell the web process to perform a full backing store update on its next paint
+
+        Messages::DrawingArea::UpdateBackingStoreState now takes a boolean specifying whether the
+        full backing store update should happen immediately or should be deferred until the next
+        paint or compositing mode change occurs. The deferred update isn't used yet, but will be
+        used when we start throwing away backing stores to save memory.
+
+        Fixes <http://webkit.org/b/55730> UI process needs a way to tell the web process its backing
+        store needs a full update on the next paint
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::paint): If we have an outstanding backing store state change
+        request, tell the web process to perform the backing store update right away, in case we
+        previously told it it could defer the update.
+        (WebKit::DrawingAreaProxyImpl::sizeDidChange): Specify that we need an immediate backing
+        store update.
+        (WebKit::DrawingAreaProxyImpl::didUpdateBackingStoreState): We can no longer assert that we
+        were waiting for a DidUpdateBackingStoreState message when we receive one, as it's possible
+        for the web process to decide to send us this message on its own (if we asked it to do a
+        deferred backing store update and then it needed to paint some part of the page). Specify
+        that we need an immediate backing store update if the web process hasn't updated to our
+        latest state, as we're about to draw potentially out-of-date bits to the screen and want to
+        get the right bits as soon as possible. Also added a FIXME about a potential optimization.
+        (WebKit::DrawingAreaProxyImpl::backingStoreStateDidChange): Added a RespondImmediatelyOrNot
+        parameter, which is just passed through to sendUpdateBackingStoreState.
+        (WebKit::DrawingAreaProxyImpl::sendUpdateBackingStoreState): Added a RespondImmediatelyOrNot
+        parameter that is used to specify to the web process whether to perform the full backing
+        store update immediately. We now only wait for a DidUpdateBackingStoreState message (and
+        thus suppress any more UpdateBackingStoreState messages until one is received) when we ask
+        the web process for an immediate response; otherwise we could end up accidentally calling
+        waitForAndDispatchDidUpdateBackingStoreState when the web process hasn't been told to send
+        us such a message.
+
+        * UIProcess/DrawingAreaProxyImpl.h: Added RespondImmediatelyOrNot.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::updateBackingStoreState): Added respondImmediately argument.
+
+        * WebProcess/WebPage/DrawingArea.messages.in: Added respondImmediately argument to
+        UpdateBackingStoreState message.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl): Initialize new member that's used to track
+        whether we should send a DidUpdateBackingStoreState message instead of an Update or
+        compositing mode change message. This will be set to true when a deferred backing store
+        update is pending.
+        (WebKit::DrawingAreaImpl::layerHostDidFlushLayers): If a deferred update is pending, send a
+        DidUpdateBackingStoreState message instead of a compositing mode change message.
+        (WebKit::DrawingAreaImpl::updateBackingStoreState): Added respondImmediately argument. If
+        we've already been told about this state ID (as can happen when the UI process decides it
+        needs an immediate update to a state that it previously requested a deferred update to),
+        don't bother updating the page's size, etc. In addition, if we've already sent a
+        DidUpdateBackingStoreState message for this state, we don't have to do anything at all.
+        Moved code to send the DidUpdateBackingStoreState message from here...
+        (WebKit::DrawingAreaImpl::sendDidUpdateBackingStoreState): ...to here.
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode): Always update our dirty region,
+        even if painting is suspended or we're in the process of updating the backing store state.
+        It causes no harm and simplifies the code. If a deferred update is pending, send a
+        DidUpdateBackingStoreState message instead of a compositing mode change message. Also
+        removed a redundant if.
+        (WebKit::DrawingAreaImpl::display): Added an assertion that this isn't called while updating
+        backing store state, as otherwise we might end up sending two DidUpdateBackingStoreState
+        messages. If a deferred update is pending, send a DidUpdateBackingStoreState message instead
+        of an Update message.
+
+        * WebProcess/WebPage/DrawingAreaImpl.h: Updated updateBackingStoreState to match the base
+        class. Added sendDidUpdateBackingStoreState and m_shouldSendDidUpdateBackingStoreState.
+
 2011-03-03  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

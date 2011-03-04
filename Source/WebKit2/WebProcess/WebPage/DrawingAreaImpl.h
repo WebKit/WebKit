@@ -60,10 +60,12 @@ private:
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     // CoreIPC message handlers.
-    virtual void updateBackingStoreState(uint64_t backingStoreStateID, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
+    virtual void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
     virtual void didUpdate();
     virtual void suspendPainting();
     virtual void resumePainting();
+
+    void sendDidUpdateBackingStoreState();
 
     void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
     void exitAcceleratedCompositingModeSoon();
@@ -81,6 +83,10 @@ private:
 
     // Whether we're currently processing an UpdateBackingStoreState message.
     bool m_inUpdateBackingStoreState;
+
+    // When true, we should send an UpdateBackingStoreState message instead of any other messages
+    // we normally send to the UI process.
+    bool m_shouldSendDidUpdateBackingStoreState;
 
     // Whether we're waiting for a DidUpdate message. Used for throttling paints so that the 
     // web process won't paint more frequent than the UI process can handle.

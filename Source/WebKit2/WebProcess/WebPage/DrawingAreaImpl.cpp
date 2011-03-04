@@ -60,6 +60,7 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
     : DrawingArea(DrawingAreaTypeImpl, webPage)
     , m_backingStoreStateID(0)
     , m_inUpdateBackingStoreState(false)
+    , m_shouldSendDidUpdateBackingStoreState(false)
     , m_isWaitingForDidUpdate(false)
     , m_isPaintingSuspended(!parameters.isVisible)
     , m_alwaysUseCompositing(false)
@@ -188,6 +189,11 @@ void DrawingAreaImpl::layerHostDidFlushLayers()
 
     m_layerTreeHost->forceRepaint();
 
+    if (m_shouldSendDidUpdateBackingStoreState) {
+        sendDidUpdateBackingStoreState();
+        return;
+    }
+
     if (!m_layerTreeHost)
         return;
 
@@ -237,47 +243,74 @@ void DrawingAreaImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID
 {
 }
 
-void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
+void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImmediately, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
 {
     ASSERT(!m_inUpdateBackingStoreState);
     m_inUpdateBackingStoreState = true;
 
-    ASSERT_ARG(stateID, stateID > m_backingStoreStateID);
-    m_backingStoreStateID = stateID;
+    ASSERT_ARG(stateID, stateID >= m_backingStoreStateID);
+    if (stateID != m_backingStoreStateID) {
+        m_backingStoreStateID = stateID;
+        m_shouldSendDidUpdateBackingStoreState = true;
 
-    // Set this to false since we're about to call display().
+        m_webPage->setSize(size);
+        m_webPage->layoutIfNeeded();
+        m_webPage->scrollMainFrameIfNotAtMaxScrollPosition(scrollOffset);
+
+        if (m_layerTreeHost)
+            m_layerTreeHost->sizeDidChange(size);
+        else
+            m_dirtyRegion = m_webPage->bounds();
+    } else {
+        ASSERT(size == m_webPage->size());
+        if (!m_shouldSendDidUpdateBackingStoreState) {
+            // We've already sent a DidUpdateBackingStoreState message for this state. We have nothing more to do.
+            m_inUpdateBackingStoreState = false;
+            return;
+        }
+    }
+
+    // The UI process has updated to a new backing store state. Any Update messages we sent before
+    // this point will be ignored. We wait to set this to false until after updating the page's
+    // size so that any displays triggered by the relayout will be ignored. If we're supposed to
+    // respond to the UpdateBackingStoreState message immediately, we'll do a display anyway in
+    // sendDidUpdateBackingStoreState; otherwise we shouldn't do one right now.
     m_isWaitingForDidUpdate = false;
 
-    m_webPage->setSize(size);
-    m_webPage->layoutIfNeeded();
-    m_webPage->scrollMainFrameIfNotAtMaxScrollPosition(scrollOffset);
+    if (respondImmediately)
+        sendDidUpdateBackingStoreState();
+
+    m_inUpdateBackingStoreState = false;
+}
+
+void DrawingAreaImpl::sendDidUpdateBackingStoreState()
+{
+    ASSERT(!m_isWaitingForDidUpdate);
+    ASSERT(m_shouldSendDidUpdateBackingStoreState);
+
+    m_shouldSendDidUpdateBackingStoreState = false;
 
     UpdateInfo updateInfo;
     LayerTreeContext layerTreeContext;
 
-    if (m_layerTreeHost) {
-        m_layerTreeHost->sizeDidChange(size);
-        layerTreeContext = m_layerTreeHost->layerTreeContext();
-
-        // We don't want the layer tree host to notify after the next scheduled
-        // layer flush because that might end up sending an EnterAcceleratedCompositingMode
-        // message back to the UI process, but the updated layer tree context
-        // will be sent back in the DidUpdateBackingStoreState message.
-        m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(false);
-    } else
-        m_dirtyRegion = m_webPage->bounds();
-
-    if (m_isPaintingSuspended || m_layerTreeHost)
-        updateInfo.viewSize = m_webPage->size();
-    else {
-        // The display here should not cause layout to happen, so we can't enter accelerated compositing mode here.
+    if (!m_isPaintingSuspended && !m_layerTreeHost)
         display(updateInfo);
-        ASSERT(!m_layerTreeHost);
+
+    if (m_isPaintingSuspended || m_layerTreeHost) {
+        updateInfo.viewSize = m_webPage->size();
+
+        if (m_layerTreeHost) {
+            layerTreeContext = m_layerTreeHost->layerTreeContext();
+
+            // We don't want the layer tree host to notify after the next scheduled
+            // layer flush because that might end up sending an EnterAcceleratedCompositingMode
+            // message back to the UI process, but the updated layer tree context
+            // will be sent back in the DidUpdateBackingStoreState message.
+            m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(false);
+        }
     }
 
     m_webPage->send(Messages::DrawingAreaProxy::DidUpdateBackingStoreState(m_backingStoreStateID, updateInfo, layerTreeContext));
-
-    m_inUpdateBackingStoreState = false;
 }
 
 void DrawingAreaImpl::didUpdate()
@@ -342,22 +375,25 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
 
     m_layerTreeHost->invalidate();
     m_layerTreeHost = nullptr;
+    m_dirtyRegion = m_webPage->bounds();
 
     if (m_inUpdateBackingStoreState)
         return;
 
+    if (m_shouldSendDidUpdateBackingStoreState) {
+        sendDidUpdateBackingStoreState();
+        return;
+    }
+
     UpdateInfo updateInfo;
     if (m_isPaintingSuspended)
         updateInfo.viewSize = m_webPage->size();
-    else {
-        m_dirtyRegion = m_webPage->bounds();
+    else
         display(updateInfo);
-    }
 
     // Send along a complete update of the page so we can paint the contents right after we exit the
     // accelerated compositing mode, eliminiating flicker.
-    if (!m_inUpdateBackingStoreState)
-        m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(m_backingStoreStateID, updateInfo));
+    m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(m_backingStoreStateID, updateInfo));
 }
 
 void DrawingAreaImpl::exitAcceleratedCompositingModeSoon()
@@ -389,12 +425,18 @@ void DrawingAreaImpl::display()
 {
     ASSERT(!m_layerTreeHost);
     ASSERT(!m_isWaitingForDidUpdate);
+    ASSERT(!m_inUpdateBackingStoreState);
 
     if (m_isPaintingSuspended)
         return;
 
     if (m_dirtyRegion.isEmpty())
         return;
+
+    if (m_shouldSendDidUpdateBackingStoreState) {
+        sendDidUpdateBackingStoreState();
+        return;
+    }
 
     UpdateInfo updateInfo;
     display(updateInfo);

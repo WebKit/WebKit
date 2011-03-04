@@ -62,8 +62,9 @@ private:
 
     void incorporateUpdate(const UpdateInfo&);
 
-    void backingStoreStateDidChange();
-    void sendUpdateBackingStoreState();
+    enum RespondImmediatelyOrNot { DoNotRespondImmediately, RespondImmediately };
+    void backingStoreStateDidChange(RespondImmediatelyOrNot);
+    void sendUpdateBackingStoreState(RespondImmediatelyOrNot);
     void waitForAndDispatchDidUpdateBackingStoreState();
 
     void enterAcceleratedCompositingMode(const LayerTreeContext&);
