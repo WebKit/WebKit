@@ -81,8 +81,3 @@ WKViewFindIndicatorCallback WKViewGetFindIndicatorCallback(WKViewRef viewRef, vo
 {    
     return toImpl(viewRef)->getFindIndicatorCallback(context);
 }
-
-void WKViewExecuteCommand(WKViewRef viewRef, WKStringRef command)
-{
-    toImpl(viewRef)->page()->executeEditCommand(toImpl(command)->string());
-}

@@ -492,3 +492,8 @@ WKPageDebugPaintFlags WKPageGetDebugPaintFlags()
 {
     return WebPageProxy::debugPaintFlags();
 }
+
+void WKPageExecuteCommand(WKPageRef pageRef, WKStringRef command)
+{
+    toImpl(pageRef)->executeEditCommand(toImpl(command)->string());
+}

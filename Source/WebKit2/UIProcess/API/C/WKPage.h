@@ -363,6 +363,19 @@ WK_EXPORT void WKPageGetContentsAsString_b(WKPageRef page, WKPageGetContentsAsSt
 typedef void (*WKPageForceRepaintFunction)(WKErrorRef, void*);
 WK_EXPORT void WKPageForceRepaint(WKPageRef page, void* context, WKPageForceRepaintFunction function);
 
+/*
+    Some of the more common command name strings include the following, although any WebCore EditorCommand string is supported:
+    
+    "Cut"
+    "Copy"
+    "Paste"
+    "SelectAll"
+    "Undo"
+    "Redo"
+*/
+
+WK_EXPORT void WKPageExecuteCommand(WKPageRef page, WKStringRef command);
+
 #ifdef __cplusplus
 }
 #endif

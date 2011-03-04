@@ -1,3 +1,19 @@
+2011-03-04  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Move WKViewExecuteCommand() to WKPageExecuteCommand()
+        https://bugs.webkit.org/show_bug.cgi?id=55744
+        
+        Executing a command operates on a page, so it makes more sense for it to be in WKPage.
+        This also makes it available on all platforms, not just Windows.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageExecuteCommand): Added.
+        * UIProcess/API/C/WKPage.h: Add WKPageExecuteCommand().
+        * UIProcess/API/C/win/WKView.cpp: Remove WKViewExecuteCommand().
+        * UIProcess/API/C/win/WKView.h: Remove WKViewExecuteCommand().
+
 2011-03-04  Dan Bernstein  <mitz@apple.com>
 
         LLVM Compiler build fix.
