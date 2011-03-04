@@ -299,7 +299,7 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
         edje_object_message_send(entry->o, EDJE_MESSAGE_FLOAT_SET, 0, msg);
 #if ENABLE(PROGRESS_TAG)
     } else if (type == ProgressBar) {
-        RenderProgress* renderProgress = toRenderProgress(o);
+        RenderProgress* renderProgress = toRenderProgress(entry->o);
         Edje_Message_Float_Set* msg;
         int max;
         double value;
@@ -309,7 +309,7 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
         value = renderProgress->position();
 
         msg->count = 2;
-        if (o->style()->direction() == RTL)
+        if (entry->->style()->direction() == RTL)
             msg->val[0] = (1.0 - value) * max;
         else
             msg->val[0] = 0;
