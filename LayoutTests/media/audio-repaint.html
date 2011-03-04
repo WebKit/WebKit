@@ -20,11 +20,11 @@
             for (i = 0; i < count; ++i) {
                 var audio = audioElements[i];
                 audio.pause();
-                audio.currentTime = audio.duration * 0.50;
                 audio.addEventListener("seeked", function() {
                     if (!--count && window.layoutTestController)
                         layoutTestController.notifyDone();
                 }, true);
+                audio.currentTime = audio.duration * 0.50;
             }
         }, 100);
     }

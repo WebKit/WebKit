@@ -1,3 +1,13 @@
+2011-03-04  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] media/audio-repaint.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=55761
+
+        * media/audio-repaint.html: Register the seeked event listener
+        before performing the seek and thus avoid a timeout of the test.
+
 2011-03-04  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
