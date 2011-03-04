@@ -1,3 +1,14 @@
+2011-03-04  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows 7 WebKit2 Release Tests] fast/frames/iframe-plugin-load-remove-document-crash.html
+        and platform/win/plugins/get-value-netscape-window.html crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=55778
+        https://bugs.webkit.org/show_bug.cgi?id=55780
+
+        Unreviewed. Add these tests to the Windows WebKit2 Skipped list to get the bots green.
+
+        * platform/win-wk2/Skipped:
+
 2011-03-04  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
