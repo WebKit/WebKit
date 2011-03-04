@@ -2176,8 +2176,8 @@ static float scaleFactor(HDC printDC, const IntRect& marginRect, const IntRect& 
     IntRect adjustedRect = IntRect(
         printRect.x() + marginRect.x(),
         printRect.y() + marginRect.y(),
-        printRect.width() - marginRect.x() - marginRect.right(),
-        printRect.height() - marginRect.y() - marginRect.bottom());
+        printRect.width() - marginRect.x() - marginRect.maxX(),
+        printRect.height() - marginRect.y() - marginRect.maxY());
 
     float scale = static_cast<float>(adjustedRect.width()) / static_cast<float>(pageRect.width());
     if (!scale)

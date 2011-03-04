@@ -1,3 +1,11 @@
+2011-03-03  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction.
+
+        * WebFrame.cpp:
+        (scaleFactor): Update after 77286 to replace right/bottom
+        with new maxX/maxY terminology.
+
 2011-03-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
