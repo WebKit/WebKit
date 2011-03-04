@@ -3184,3 +3184,8 @@ http/tests/xmlviewer/dumpAsText/xul.xml
 
 # [Qt] geolocation case failing as needs implementation in DumpRenderTree : TODO bug
 fast/dom/Geolocation/window-close-crash.html
+
+# [Qt] Two http auth tests fail with Qt 4.7.2
+# https://bugs.webkit.org/show_bug.cgi?id=55767
+http/tests/appcache/auth.html
+http/tests/xmlhttprequest/basic-auth.html
