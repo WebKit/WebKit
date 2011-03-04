@@ -15,15 +15,9 @@
     bottom: 0;
     overflow: hidden;
     -webkit-user-select: none;
-}
-
-.inner-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: auto;
-    bottom: auto;
-    min-width: 100%;
+    background-color: rgb(240, 240, 240);
+    border-right: 1px solid rgb(187, 187, 187);
+    min-width: 19px;
 }
 
 .text-editor-contents {
@@ -34,6 +28,15 @@
     bottom: 0;
     overflow: auto;
     -webkit-user-select: text;
+}
+
+.text-editor-contents .inner-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: auto;
+    bottom: auto;
+    min-width: 100%;
 }
 
 .text-editor-editable {
@@ -89,8 +92,6 @@
 
 .webkit-line-number {
     color: rgb(128, 128, 128);
-    background-color: rgb(240, 240, 240);
-    border-right: 1px solid rgb(187, 187, 187);
     text-align: right;
     vertical-align: top;
     word-break: normal;

@@ -201,13 +201,8 @@ WebInspector.TextViewer.prototype = {
         setTimeout(function() {
             var mainElement = this._mainPanel.element;
             var gutterElement = this._gutterPanel.element;
-
             // Handle horizontal scroll bar at the bottom of the main panel.
-            if (gutterElement.offsetHeight > mainElement.clientHeight)
-                this._gutterPanel._container.style.setProperty("padding-bottom", (gutterElement.offsetHeight - mainElement.clientHeight) + "px");
-            else
-                this._gutterPanel._container.style.removeProperty("padding-bottom");
-
+            this._gutterPanel.syncClientHeight(mainElement.clientHeight);
             gutterElement.scrollTop = mainElement.scrollTop;
         }.bind(this), 0);
     },
@@ -493,7 +488,6 @@ WebInspector.TextEditorGutterPanel.prototype = {
     {
         for (var i = 0; i < this._textChunks.length; ++i)
             this._textChunks[i].expanded = (fromIndex <= i && i < toIndex);
-        this.element.style.setProperty("width", this._container.offsetWidth + "px");
     },
 
     textChanged: function(oldRange, newRange)
@@ -537,6 +531,14 @@ WebInspector.TextEditorGutterPanel.prototype = {
                 chunk = this._textChunks[++chunkNumber];
             }
         }
+    },
+
+    syncClientHeight: function(clientHeight)
+    {
+        if (this.element.offsetHeight > clientHeight)
+            this._container.style.setProperty("padding-bottom", (this.element.offsetHeight - clientHeight) + "px");
+        else
+            this._container.style.removeProperty("padding-bottom");
     }
 }
 

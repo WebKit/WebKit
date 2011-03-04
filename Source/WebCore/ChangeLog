@@ -1,3 +1,22 @@
+2011-03-02  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Gutter height should be 100% when few lines are displayed
+        https://bugs.webkit.org/show_bug.cgi?id=55574
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._startEditing):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._syncScroll):
+        (WebInspector.TextEditorGutterPanel.prototype._expandChunks):
+        (WebInspector.TextEditorGutterPanel.prototype.textChanged):
+        (WebInspector.TextEditorGutterPanel.prototype.syncClientHeight):
+        * inspector/front-end/textViewer.css:
+        (.text-editor-lines):
+        (.text-editor-contents .inner-container):
+        (.webkit-line-number):
+
 2011-03-04  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.
