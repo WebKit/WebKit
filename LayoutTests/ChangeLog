@@ -1,3 +1,10 @@
+2011-03-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: fix inspector test flake.
+
+        * inspector/timeline/timeline-network-resource-expected.txt:
+        * inspector/timeline/timeline-network-resource.html:
+
 2011-03-04  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
