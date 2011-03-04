@@ -3090,7 +3090,11 @@ BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH
 
 BUGWK55708 GPU MAC SNOWLEOPARD: media/video-controls-rendering.html = CRASH
 BUGWK55708 GPU MAC SNOWLEOPARD: media/video-zoom.html = CRASH
-BUGWK55718 GPU MAC LEOPARD : media/media-document-audio-repaint.html = CRASH
+BUGWK55718 GPU MAC LEOPARD : media/media-document-audio-repaint.html = CRASH IMAGE+TEXT
+BUGWK55718 GPU MAC SNOWLEOPARD : media/media-document-audio-repaint.html = IMAGE+TEXT
+
+BUGWK55718 GPU WIN : media/media-document-audio-repaint.html = CRASH PASS
+BUGWK55718 GPU LINUX : media/media-document-audio-repaint.html = IMAGE+TEXT
 
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE
 

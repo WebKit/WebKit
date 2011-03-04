@@ -1,3 +1,12 @@
+2011-03-03  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        Update GPU media/media-document-audio-repaint.html
+        http://test-results.appspot.com/dashboards/flakiness_dashboard.html#group=%40ToT%20GPU%20Mesa%20-%20chromium.org&tests=media%2Fmedia-document-audio-repaint.html
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-03  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Dimitri Glazkov.
