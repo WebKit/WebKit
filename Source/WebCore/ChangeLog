@@ -1,3 +1,14 @@
+2011-03-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: chromium rebaseline, flaky test fix.
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.DOMBreakpointView.prototype.populateStatusMessageElement.decorateNode):
+        (WebInspector.DOMBreakpointView.prototype.populateStatusMessageElement):
+        (WebInspector.DOMBreakpointView.prototype._format.formatters.s):
+        (WebInspector.DOMBreakpointView.prototype._format.append):
+        (WebInspector.DOMBreakpointView.prototype._format):
+
 2011-03-04  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

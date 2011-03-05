@@ -1,3 +1,11 @@
+2011-03-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: chromium rebaseline, flaky test fix.
+
+        * http/tests/inspector/debugger-test.js:
+        * inspector/debugger/dom-breakpoints.html:
+        * platform/chromium/inspector/console/console-uncaught-exception-expected.txt:
+
 2011-03-05  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

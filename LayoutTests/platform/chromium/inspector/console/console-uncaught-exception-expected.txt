@@ -3,7 +3,8 @@ CONSOLE MESSAGE: line 11: Uncaught Error: Exception in 'load' event listener.
 CONSOLE MESSAGE: line 6: Uncaught Error: Exception in setTimeout callback.
 Tests that uncaught exceptions are logged into console.Bug 47250.
 
-uncaught-iframe.html:18Uncaught Error: Exception in inline script.auncaught-iframe.html:18buncaught-iframe.html:23(anonymous function)uncaught-iframe.html:26
-uncaught-iframe.html:11Uncaught Error: Exception in 'load' event listener.funcaught-iframe.html:11(anonymous function)uncaught-iframe.html:13
-uncaught-iframe.html:6Uncaught Error: Exception in setTimeout callback.baruncaught-iframe.html:6(anonymous function)uncaught-iframe.html:8
+
+uncaught-in-iframe.html:18Uncaught Error: Exception in inline script.auncaught-in-iframe.html:18buncaught-in-iframe.html:23(anonymous function)uncaught-in-iframe.html:26
+uncaught-in-iframe.html:11Uncaught Error: Exception in 'load' event listener.funcaught-in-iframe.html:11(anonymous function)uncaught-in-iframe.html:13
+uncaught-in-iframe.html:6Uncaught Error: Exception in setTimeout callback.baruncaught-in-iframe.html:6(anonymous function)uncaught-in-iframe.html:8
 

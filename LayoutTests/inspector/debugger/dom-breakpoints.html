@@ -40,7 +40,7 @@ function test()
                 InspectorTest.addResult("Set 'Subtree Modified' DOM breakpoint on rootElement.");
                 InspectorTest.evaluateInPageWithTimeout("appendElement('rootElement', 'childElement')");
                 InspectorTest.addResult("Append childElement to rootElement.");
-                InspectorTest.waitUntilPausedAndDumpStack(next);
+                waitUntilPausedAndDumpStack(next);
             }
         },
 
@@ -49,7 +49,7 @@ function test()
             InspectorTest.addResult("Test that 'Subtree Modified' breakpoint is hit when appending a grandchild.");
             InspectorTest.evaluateInPageWithTimeout("appendElement('childElement', 'grandchildElement')");
             InspectorTest.addResult("Append grandchildElement to childElement.");
-            InspectorTest.waitUntilPausedAndDumpStack(next);
+            waitUntilPausedAndDumpStack(next);
         },
 
         function testRemoveChild(next)
@@ -57,7 +57,7 @@ function test()
             InspectorTest.addResult("Test that 'Subtree Modified' breakpoint is hit when removing a child.");
             InspectorTest.evaluateInPageWithTimeout("removeElement('grandchildElement')");
             InspectorTest.addResult("Remove grandchildElement.");
-            InspectorTest.waitUntilPausedAndDumpStack(step2);
+            waitUntilPausedAndDumpStack(step2);
 
             function step2()
             {
@@ -73,7 +73,7 @@ function test()
             InspectorTest.addResult("Set 'Attribute Modified' DOM breakpoint on rootElement.");
             InspectorTest.evaluateInPageWithTimeout("modifyAttribute('rootElement', 'className', 'foo')");
             InspectorTest.addResult("Modify rootElement className.");
-            InspectorTest.waitUntilPausedAndDumpStack(step2);
+            waitUntilPausedAndDumpStack(step2);
     
             function step2(callFrames)
             {
@@ -93,7 +93,7 @@ function test()
                 InspectorTest.addResult("Set 'Node Removed' DOM breakpoint on elementToRemove.");
                 InspectorTest.evaluateInPageWithTimeout("removeElement('elementToRemove')");
                 InspectorTest.addResult("Remove elementToRemove.");
-                InspectorTest.waitUntilPausedAndDumpStack(next);
+                waitUntilPausedAndDumpStack(next);
             }
         },
 
@@ -113,10 +113,46 @@ function test()
             {
                 InspectorTest.evaluateInPageWithTimeout("appendElement('rootElement', 'childElement')");
                 InspectorTest.addResult("Append childElement to rootElement.");
-                InspectorTest.waitUntilPausedAndDumpStack(next);
+                waitUntilPausedAndDumpStack(next);
             }
         }
     ]);
+
+    function waitUntilPausedAndDumpStack(callback)
+    {
+        InspectorTest.waitUntilPaused(paused);
+        InspectorTest.addSniffer(WebInspector.DOMBreakpointView.prototype, "_format", format);
+
+
+        var caption;
+        var callFrames;
+
+        function format(element)
+        {
+            caption = element.textContent;
+            if (callFrames)
+                step1();
+        }
+
+        function paused(frames)
+        {
+            callFrames = frames;
+            if (typeof caption === "string")
+                step1();
+        }
+
+        function step1()
+        {
+            InspectorTest.captureStackTrace(callFrames);
+            InspectorTest.addResult(caption);
+            InspectorTest.runAfterPendingDispatches(step2);
+        }
+
+        function step2()
+        {
+            InspectorTest.resumeExecution(InspectorTest.safeWrap(callback));
+        }
+    }
 }
 
 </script>

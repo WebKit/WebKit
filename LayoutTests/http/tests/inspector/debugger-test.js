@@ -84,23 +84,6 @@ InspectorTest.waitUntilPaused = function(callback)
         InspectorTest._waitUntilPausedCallback = callback;
 };
 
-InspectorTest.waitUntilPausedAndDumpStack = function(callback)
-{
-    InspectorTest.waitUntilPaused(step1);
-
-    function step1(callFrames)
-    {
-        InspectorTest.captureStackTrace(callFrames);
-        InspectorTest.runAfterPendingDispatches(step2);
-    }
-
-    function step2()
-    {
-        InspectorTest.addResult(WebInspector.panels.scripts.sidebarPanes.callstack.bodyElement.lastChild.innerText);
-        InspectorTest.resumeExecution(InspectorTest.safeWrap(callback));
-    }
-};
-
 InspectorTest.waitUntilResumed = function(callback)
 {
     callback = InspectorTest.safeWrap(callback);
