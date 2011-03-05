@@ -1,3 +1,22 @@
+2011-03-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Adopt VersionStamper tool for Windows WebKit DLLs
+        https://bugs.webkit.org/show_bug.cgi?id=55784
+
+        Calculate the WebKit version for the useragent via autoversion.h
+        instead of reading it back from the DLL.
+        
+        We now use a tool to stamp the version number onto the Apple WebKit DLLs
+        during the post-build step.
+
+        * WebKit.vcproj/WebKit.rc: Removed. This file wasn't used.
+        * WebKit.vcproj/WebKitLibCommon.vsprops: Fetch version from a string resource.
+        * WebView.cpp:
+        (WebView::standardUserAgentWithApplicationName): Use __BUILD_NUMBER_SHORT__ for the version.
+        (osVersion): Removed
+
 2011-03-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

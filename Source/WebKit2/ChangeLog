@@ -1,3 +1,25 @@
+2011-03-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Adopt VersionStamper tool for Windows WebKit DLLs
+        https://bugs.webkit.org/show_bug.cgi?id=55784
+        <rdar://problem/9021320>
+
+        We now use a tool to stamp the version number onto the Apple WebKit DLLs
+        during the post-build step.
+
+        Fetch the WebKit version from a string resource instead of the version resource.
+
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::userVisibleWebKitVersionString): Fetch version from a string resource.
+        * win/WebKit2.rc: Removed version, added stringtable.
+        * win/WebKit2WebProcess.rc: Removed.
+        * win/WebKit2WebProcess.vcproj:
+        * win/WebKit2WebProcessPostBuild.cmd: Don't run autoversion script. It isn't used in this project.
+        * win/WebKit2WebProcessPreBuild.cmd: Stamp version.
+        * win/WebKitPostBuild.cmd: Stamp version.
+
 2011-03-04  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Darin Adler.

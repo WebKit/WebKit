@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPageProxy.h"
 
+#include "resource.h"
 #include <tchar.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <wtf/StdLibExtras.h>
@@ -61,40 +62,11 @@ static String windowsVersion()
 
 static String userVisibleWebKitVersionString()
 {
-   String versionStr = "420+";
-   void* data = 0;
+    LPWSTR buildNumberStringPtr;
+    if (!::LoadStringW(instanceHandle(), BUILD_NUMBER, reinterpret_cast<LPWSTR>(&buildNumberStringPtr), 0) || !buildNumberStringPtr)
+        return "534+";
 
-   struct LANGANDCODEPAGE {
-       WORD wLanguage;
-       WORD wCodePage;
-   } *lpTranslate;
-
-   TCHAR path[MAX_PATH];
-   ::GetModuleFileName(instanceHandle(), path, WTF_ARRAY_LENGTH(path));
-   DWORD handle;
-   DWORD versionSize = ::GetFileVersionInfoSize(path, &handle);
-   if (!versionSize)
-       goto exit;
-   data = fastMalloc(versionSize);
-   if (!data)
-       goto exit;
-   if (!::GetFileVersionInfo(path, 0, versionSize, data))
-       goto exit;
-   UINT cbTranslate;
-   if (!::VerQueryValue(data, TEXT("\\VarFileInfo\\Translation"), (LPVOID*)&lpTranslate, &cbTranslate))
-       goto exit;
-   TCHAR key[256];
-   _stprintf_s(key, WTF_ARRAY_LENGTH(key), TEXT("\\StringFileInfo\\%04x%04x\\ProductVersion"), lpTranslate[0].wLanguage, lpTranslate[0].wCodePage);
-   LPCTSTR productVersion;
-   UINT productVersionLength;
-   if (!::VerQueryValue(data, (LPTSTR)(LPCTSTR)key, (void**)&productVersion, &productVersionLength))
-       goto exit;
-   versionStr = String(productVersion, productVersionLength - 1);
-
-exit:
-   if (data)
-       fastFree(data);
-   return versionStr;
+    return buildNumberStringPtr;
 }
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)

@@ -401,10 +401,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 		</Filter>
-		<File
-			RelativePath=".\WebKit2WebProcess.rc"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
