@@ -30,7 +30,7 @@
 
 {
     'includes': [
-        '../../../Source/WebCore/WebCore.gypi',
+        '../../WebCore/WebCore.gypi',
         '../../../Tools/DumpRenderTree/DumpRenderTree.gypi',
         'WebKit.gypi',
         'features.gypi',
@@ -42,7 +42,7 @@
             ['inside_chromium_build==0', {
                 # Webkit is being built outside of the full chromium project.
                 # e.g. via build-webkit --chromium
-                'chromium_src_dir': '../../../Source/WebKit/chromium',
+                'chromium_src_dir': '../../WebKit/chromium',
                 'webkit_target_type': 'static_library',
 
                 # List of DevTools source files, ordered by dependencies. It is used both
@@ -73,7 +73,7 @@
             'target_name': 'webkit',
             'msvs_guid': '5ECEC9E5-8F23-47B6-93E0-C3B328B3BE65',
             'dependencies': [
-                '../../../Source/WebCore/WebCore.gyp/WebCore.gyp:webcore',
+                '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
                 '<(chromium_src_dir)/app/app.gyp:app_base', # For GLContext
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
@@ -598,7 +598,7 @@
                                 'WEBKIT_DLL',
                             ],
                             'dependencies': [
-                                '../../../Source/WebCore/WebCore.gyp/WebCore.gyp:webcore_bindings',
+                                '../../WebCore/WebCore.gyp/WebCore.gyp:webcore_bindings',
                                 '<(chromium_src_dir)/base/base.gyp:test_support_base',
                                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
                                 '<(chromium_src_dir)/testing/gtest.gyp:gtest',
@@ -695,7 +695,7 @@
             'type': 'none',
             'dependencies': [
                 'devtools_html',
-                '../../../Source/WebCore/WebCore.gyp/WebCore.gyp:inspector_protocol_sources',
+                '../../WebCore/WebCore.gyp/WebCore.gyp:inspector_protocol_sources',
             ],
             'conditions': [
                 ['debug_devtools==0', {
@@ -736,7 +736,7 @@
                     'scripts/generate_devtools_html.py',
                     # See issue 29695: WebKit.gypi is a source file for devtools.html.
                     'WebKit.gypi',
-                    '../../../Source/WebCore/inspector/front-end/inspector.html',
+                    '../../WebCore/inspector/front-end/inspector.html',
                 ],
                 'outputs': ['<(PRODUCT_DIR)/resources/inspector/devtools.html'],
                 'action': ['python', '<@(_inputs)', '<@(_outputs)', '<@(debug_devtools)', '<@(devtools_files)'],
@@ -747,13 +747,13 @@
             'type': 'none',
             'dependencies': [
                 'devtools_html',
-                '../../../Source/WebCore/WebCore.gyp/WebCore.gyp:inspector_protocol_sources'
+                '../../WebCore/WebCore.gyp/WebCore.gyp:inspector_protocol_sources'
             ],
             'sources': ['<(PRODUCT_DIR)/resources/inspector/DevTools.js'],
             'actions': [{
                 'action_name': 'concatenate_devtools_js',
                 'script_name': 'scripts/concatenate_js_files.py',
-                'input_page': '../../../Source/WebCore/inspector/front-end/inspector.html',
+                'input_page': '../../WebCore/inspector/front-end/inspector.html',
                 'inputs': [
                     '<@(_script_name)',
                     '<@(_input_page)',
@@ -762,7 +762,7 @@
                     '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js'
                 ],
                 'search_path': [
-                    '../../../Source/WebCore/inspector/front-end',
+                    '../../WebCore/inspector/front-end',
                     'src/js',
                     '<(SHARED_INTERMEDIATE_DIR)/webcore',
                 ],
@@ -780,7 +780,7 @@
             'actions': [{
                 'action_name': 'concatenate_devtools_css',
                 'script_name': 'scripts/concatenate_css_files.py',
-                'input_page': '../../../Source/WebCore/inspector/front-end/inspector.html',
+                'input_page': '../../WebCore/inspector/front-end/inspector.html',
                 'inputs': [
                     '<@(_script_name)',
                     '<@(_input_page)',
@@ -788,7 +788,7 @@
                     '<@(devtools_files)'
                 ],
                 'search_path': [
-                    '../../../Source/WebCore/inspector/front-end',
+                    '../../WebCore/inspector/front-end',
                     'src/js',
                 ],
                 'outputs': ['<(PRODUCT_DIR)/resources/inspector/devTools.css'],
@@ -801,7 +801,7 @@
             'msvs_guid': '7CEFE800-8403-418A-AD6A-2D52C6FC3EAD',
             'dependencies': [
                 'webkit',
-                '../../../Source/WebCore/WebCore.gyp/WebCore.gyp:webcore',
+                '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
                 '<(chromium_src_dir)/testing/gtest.gyp:gtest',
                 '<(chromium_src_dir)/base/base.gyp:base',
                 '<(chromium_src_dir)/base/base.gyp:base_i18n',
@@ -872,11 +872,11 @@
             'type': 'executable',
             'dependencies': [
                 'webkit',
-                '../../../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+                '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
             ],
             'include_dirs': [
-                '../../../Source/JavaScriptCore',
+                '../../JavaScriptCore',
                 '<(DEPTH)',
             ],
             'sources': [
@@ -893,7 +893,7 @@
                 'TestNetscapePlugIn',
                 'copy_TestNetscapePlugIn',
                 'webkit',
-                '../../../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
+                '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                 '<(chromium_src_dir)/third_party/mesa/mesa.gyp:osmesa',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:blob',
@@ -902,8 +902,8 @@
             'include_dirs': [
                 '<(chromium_src_dir)',
                 'public',
-                '../../../Source/JavaScriptCore',
-                '../../../Source/JavaScriptCore/wtf', # wtf/text/*.h refers headers in wtf/ without wtf/.
+                '../../JavaScriptCore',
+                '../../JavaScriptCore/wtf', # wtf/text/*.h refers headers in wtf/ without wtf/.
                 '<(DEPTH)',
             ],
             'defines': [
@@ -939,7 +939,7 @@
                                 'public',
                             ],
                             'dependencies': [
-                                '../../../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+                                '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
                             ],
                         }],
                         ['inside_chromium_build==1', {

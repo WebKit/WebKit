@@ -1,3 +1,14 @@
+2011-03-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove unneeded round-trips through ../Source in the Chromium GYP build
+        https://bugs.webkit.org/show_bug.cgi?id=55795
+
+        This is just cleanup work, but it was bugging me.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-03-04  Mike Reed  <reed@google.com>
 
         Reviewed by James Robinson.

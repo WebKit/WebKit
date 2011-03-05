@@ -32,7 +32,7 @@
   'includes': [
     # FIXME: Sense whether upstream or downstream build, and
     # include the right features.gypi
-    '../../../Source/WebKit/chromium/features.gypi',
+    '../../WebKit/chromium/features.gypi',
     '../WebCore.gypi',
   ],
   # Location of the chromium src directory.
@@ -40,7 +40,7 @@
     ['inside_chromium_build==0', {
       # Webkit is being built outside of the full chromium project.
       'variables': {
-        'chromium_src_dir': '../../../Source/WebKit/chromium',
+        'chromium_src_dir': '../../WebKit/chromium',
         'libjpeg_gyp_path': '<(chromium_src_dir)/third_party/libjpeg_turbo/libjpeg.gyp',
       },
     },{
@@ -1164,7 +1164,7 @@
         '<@(webcore_files)',
 
         # For WebCoreSystemInterface, Mac-only.
-        '../../../Source/WebKit/mac/WebCoreSupport/WebSystemInterface.mm',
+        '../../WebKit/mac/WebCoreSupport/WebSystemInterface.mm',
       ],
       'sources/': [
         # Start by excluding everything then include platform files only.
@@ -1276,7 +1276,7 @@
             # Use USE_NEW_THEME on Mac.
             ['include', 'platform/Theme\\.cpp$'],
 
-            ['include', 'Source/WebKit/mac/WebCoreSupport/WebSystemInterface\\.mm$'],
+            ['include', 'WebKit/mac/WebCoreSupport/WebSystemInterface\\.mm$'],
 
             # Chromium Mac does not use skia.
             ['exclude', 'platform/graphics/skia/[^/]*Skia\\.(cpp|h)$'],
@@ -1602,7 +1602,7 @@
           'direct_dependent_settings': {
             'include_dirs': [
               '../../../WebKitLibraries',
-              '../../../Source/WebKit/mac/WebCoreSupport',
+              '../../WebKit/mac/WebCoreSupport',
             ],
           },
         }],
