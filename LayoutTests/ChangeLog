@@ -1,3 +1,19 @@
+2011-03-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: introduce protocol test for ConsoleAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=55819
+
+        * http/tests/inspector/protocol-test.js:
+        (initialize_ProtocolTest.InspectorTest._dumpEvent):
+        (initialize_ProtocolTest.InspectorTest._dumpCallArguments):
+        (initialize_ProtocolTest):
+        (initialize_ProtocolTest.):
+        * inspector/protocol/console-agent-expected.txt: Added.
+        * inspector/protocol/console-agent.html: Added.
+        * inspector/protocol/runtime-agent.html:
+
 2011-03-05  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

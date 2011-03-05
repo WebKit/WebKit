@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/protocol-test.js"></script>
+<script>
+
+function test()
+{
+    var testSuite = [
+        ["ConsoleAgent", "setConsoleMessagesEnabled", false],
+        ["ConsoleAgent", "setConsoleMessagesEnabled", true],
+        ["RuntimeAgent", "evaluate", "console.info('test'); console.info('test')", "test-group", false],
+        ["ConsoleAgent", "clearConsoleMessages"],
+        ["ConsoleAgent", "setMonitoringXHREnabled", false],
+        ["ConsoleAgent", "setMonitoringXHREnabled", true]];
+
+    InspectorTest.runProtocolTestSuite("ConsoleAgent", testSuite, ['seq', 'id', 'injectedScriptId', 'stackTrace']);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Protocol stability test. It is dumping request/response pairs of ConsoleAgent functions.
+</p>
+
+</body>
+</html>

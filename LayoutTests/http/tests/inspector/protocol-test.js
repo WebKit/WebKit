@@ -16,43 +16,62 @@ InspectorTest.filterProps = function(something, nondeterministicProps)
     return something;
 };
 
-InspectorTest._dumpTestResult = function(callArguments)
+InspectorTest._dumpEvent = function()
 {
-    var functionName = callArguments.shift();
-    this.filterProps(callArguments, this._nondeterministicProps);
-    var expression = JSON.stringify(callArguments);
-    expression = expression.slice(1, expression.length - 1).replace(/\"<number>\"/g, "<number>");;
-    var sentObject = JSON.parse(this._lastSentTestMessage);
-    var receivedObject = (typeof this._lastReceivedMessage === "string") ? JSON.parse(this._lastReceivedMessage) : this._lastReceivedMessage;
+    var args = Array.prototype.slice.call(arguments);
+    var eventName = args.shift();
+    InspectorTest._agentCoverage[eventName] = "checked";
+    InspectorTest.addResult("event " + InspectorTest._agentName + "." + eventName);
+    InspectorTest.addObject(InspectorTest._lastReceivedMessage, InspectorTest._nondeterministicProps);
+    InspectorTest.addResult("");
+
+    var originalEventHandler = args.shift();
+    originalEventHandler.apply(this, args);
+};
+
+
+InspectorTest._dumpCallArguments = function(callArguments)
+{
+    var callArgumentsCopy = JSON.parse(JSON.stringify(callArguments));
+    var agentName = callArgumentsCopy.shift();
+    var functionName = callArgumentsCopy.shift();
+    this.filterProps(callArgumentsCopy, this._nondeterministicProps);
+    var expression = JSON.stringify(callArgumentsCopy);
+    expression = expression.slice(1, expression.length - 1).replace(/\"<number>\"/g, "<number>");
 
     InspectorTest.addResult("-----------------------------------------------------------");
-    InspectorTest.addResult(this._agentName + "." + functionName + "(" + expression + ")");
-    InspectorTest.addResult("");
-    InspectorTest.addResult("request:");
-    InspectorTest.addObject(sentObject, this._nondeterministicProps);
-    InspectorTest.addResult("");
-    InspectorTest.addResult("response:");
-    InspectorTest.addObject(receivedObject, this._nondeterministicProps);
+    InspectorTest.addResult(agentName + "." + functionName + "(" + expression + ")");
     InspectorTest.addResult("");
 };
 
-InspectorTest._callback = function(callArguments, result)
+InspectorTest._callback = function(result)
 {
-    this._dumpTestResult(callArguments);
-    this._runNextStep(result);
+    InspectorTest.addResult("response:");
+    InspectorTest.addObject(InspectorTest._lastReceivedMessage, InspectorTest._nondeterministicProps);
+    InspectorTest.addResult("");
+    InspectorTest._runNextTest();
 };
 
-InspectorTest._runNextStep = function(result)
+InspectorTest._runNextTest = function()
 {
     var step = ++this._step;
     var nextTest = this._testSuite[step];
     if (nextTest) {
-        var nextTestCopy = JSON.parse(JSON.stringify(nextTest));
-        nextTest.push(this._callback.bind(this, nextTestCopy));
+        InspectorTest._dumpCallArguments(nextTest);
+
+        nextTest.push(this._callback.bind(this));
+
+        var agentName = nextTest.shift();
         var functionName = nextTest.shift();
-        this._agentCoverage[functionName] = "checked";
-        this._agent[functionName].apply(this._agent, nextTest);
-        this._lastSentTestMessage = this._lastSentMessage;
+        window[agentName][functionName].apply(window[agentName], nextTest);
+
+        var lastSentMessage = InspectorTest._lastSentMessage; // This is because the next call will override _lastSentMessage.
+        InspectorTest.addResult("request:");
+        InspectorTest.addObject(lastSentMessage, InspectorTest._nondeterministicProps);
+        InspectorTest.addResult("");
+
+        if (agentName === this._agentName)
+            this._agentCoverage[functionName] = "checked";
     }
     else {
         InspectorTest.addResult("===========================================================");
@@ -71,19 +90,36 @@ InspectorTest.runProtocolTestSuite = function(agentName, testSuite, nondetermini
     this._nondeterministicProps = {};
     for (var i = 0; i < nondeterministicProps.length; ++i)
         this._nondeterministicProps[nondeterministicProps[i]] = true;
-    this._agent = window[agentName];
+    var agent = window[agentName];
+
     this._agentCoverage = {};
-    for (var key in this._agent)
+    for (var key in agent)
         this._agentCoverage[key] = "not checked";
-    this._step = -1;
+
+    var domain = agentName.replace(/Agent$/,"");
+    var domainMessagesHandler = InspectorBackend._domainDispatchers[domain];
+    for (var eventName in domainMessagesHandler) {
+        this._agentCoverage[eventName] = "not checked";
+        domainMessagesHandler[eventName] = InspectorTest._dumpEvent.bind(domainMessagesHandler, eventName, domainMessagesHandler[eventName]);
+    }
 
     this._originalDispatch = InspectorBackend.dispatch;
-    InspectorBackend.dispatch = function(message) { InspectorTest._lastReceivedMessage = message; InspectorTest._originalDispatch.apply(InspectorBackend, [message]); }
+    InspectorBackend.dispatch = function(message)
+    {
+        InspectorTest._lastReceivedMessage = (typeof message === "string") ? JSON.parse(message) : message;
+        InspectorTest._originalDispatch.apply(InspectorBackend, [message]);
+    }
 
     this._originalSendMessageToBackend = InspectorFrontendHost.sendMessageToBackend;
-    InspectorFrontendHost.sendMessageToBackend = function(message) { InspectorTest._lastSentMessage = message; InspectorTest._originalSendMessageToBackend.apply(InspectorFrontendHost, [message]); }
+    InspectorFrontendHost.sendMessageToBackend = function(message)
+    {
+        InspectorTest._lastSentMessage = JSON.parse(message);
+        InspectorTest._originalSendMessageToBackend.apply(InspectorFrontendHost, [message]);
+    }
 
-    this._runNextStep();
+    this._step = -1;
+
+    this._runNextTest();
 };
 
 };

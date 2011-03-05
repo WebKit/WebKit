@@ -17,13 +17,13 @@ function test()
     function callback(result)
     {
         var testSuite = [
-            ["evaluate", 'testObject', 'test', false],
-            ["evaluateOn", result.objectId, 'this.assignedByEvaluateOn = "evaluateOn function works fine";'],
-            ["setPropertyValue", result.objectId, 'assignedBySetPropertyValue', 'true'],
-            ["setPropertyValue", result.objectId, 'removedBySetPropertyValue', ''],
-            ["getProperties", result.objectId, false, false],
-            ["releaseObject", result.objectId],
-            ["releaseObjectGroup", result.objectId.injectedScriptId, 'test']];
+            ["RuntimeAgent", "evaluate", 'testObject', 'test', false],
+            ["RuntimeAgent", "evaluateOn", result.objectId, 'this.assignedByEvaluateOn = "evaluateOn function works fine";'],
+            ["RuntimeAgent", "setPropertyValue", result.objectId, 'assignedBySetPropertyValue', 'true'],
+            ["RuntimeAgent", "setPropertyValue", result.objectId, 'removedBySetPropertyValue', ''],
+            ["RuntimeAgent", "getProperties", result.objectId, false, false],
+            ["RuntimeAgent", "releaseObject", result.objectId],
+            ["RuntimeAgent", "releaseObjectGroup", result.objectId.injectedScriptId, 'test']];
 
         InspectorTest.runProtocolTestSuite("RuntimeAgent", testSuite, ['seq', 'id', 'injectedScriptId']);
     }

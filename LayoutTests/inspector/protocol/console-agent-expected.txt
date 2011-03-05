@@ -1,0 +1,185 @@
+CONSOLE MESSAGE: line 1: test
+CONSOLE MESSAGE: line 1: test
+Protocol stability test. It is dumping request/response pairs of ConsoleAgent functions.
+
+-----------------------------------------------------------
+ConsoleAgent.setConsoleMessagesEnabled(false)
+
+request:
+{
+    seq : <number>
+    domain : "Console"
+    command : "setConsoleMessagesEnabled"
+    arguments : {
+        enabled : false
+    }
+}
+
+response:
+{
+    seq : <number>
+    body : {
+        newState : false
+    }
+}
+
+-----------------------------------------------------------
+ConsoleAgent.setConsoleMessagesEnabled(true)
+
+request:
+{
+    seq : <number>
+    domain : "Console"
+    command : "setConsoleMessagesEnabled"
+    arguments : {
+        enabled : true
+    }
+}
+
+response:
+{
+    seq : <number>
+    body : {
+        newState : true
+    }
+}
+
+-----------------------------------------------------------
+RuntimeAgent.evaluate("console.info('test'); console.info('test')","test-group",false)
+
+request:
+{
+    seq : <number>
+    domain : "Runtime"
+    command : "evaluate"
+    arguments : {
+        expression : "console.info('test'); console.info('test')"
+        objectGroup : "test-group"
+        includeCommandLineAPI : false
+    }
+}
+
+event ConsoleAgent.addConsoleMessage
+{
+    type : "event"
+    domain : "Console"
+    event : "addConsoleMessage"
+    body : {
+        messageObj : {
+            source : 3
+            type : 0
+            level : 1
+            line : 0
+            url : ""
+            repeatCount : 1
+            message : "test"
+            parameters : {
+                0 : {
+                    objectId : null
+                    type : "string"
+                    description : "test"
+                    hasChildren : false
+                }
+            }
+            stackTrace : <object>
+        }
+    }
+}
+
+event ConsoleAgent.updateConsoleMessageRepeatCount
+{
+    type : "event"
+    domain : "Console"
+    event : "updateConsoleMessageRepeatCount"
+    body : {
+        count : 2
+    }
+}
+
+response:
+{
+    seq : <number>
+    body : {
+        result : {
+            objectId : null
+            type : "undefined"
+            description : "undefined"
+            hasChildren : false
+        }
+    }
+}
+
+-----------------------------------------------------------
+ConsoleAgent.clearConsoleMessages()
+
+request:
+{
+    seq : <number>
+    domain : "Console"
+    command : "clearConsoleMessages"
+    arguments : {
+    }
+}
+
+event ConsoleAgent.consoleMessagesCleared
+{
+    type : "event"
+    domain : "Console"
+    event : "consoleMessagesCleared"
+    body : {
+    }
+}
+
+response:
+{
+    seq : <number>
+}
+
+-----------------------------------------------------------
+ConsoleAgent.setMonitoringXHREnabled(false)
+
+request:
+{
+    seq : <number>
+    domain : "Console"
+    command : "setMonitoringXHREnabled"
+    arguments : {
+        enabled : false
+    }
+}
+
+response:
+{
+    seq : <number>
+}
+
+-----------------------------------------------------------
+ConsoleAgent.setMonitoringXHREnabled(true)
+
+request:
+{
+    seq : <number>
+    domain : "Console"
+    command : "setMonitoringXHREnabled"
+    arguments : {
+        enabled : true
+    }
+}
+
+response:
+{
+    seq : <number>
+}
+
+===========================================================
+Coverage for ConsoleAgent
+{
+    setConsoleMessagesEnabled : "checked"
+    clearConsoleMessages : "checked"
+    setMonitoringXHREnabled : "checked"
+    addConsoleMessage : "checked"
+    updateConsoleMessageExpiredCount : "not checked"
+    updateConsoleMessageRepeatCount : "checked"
+    consoleMessagesCleared : "checked"
+}
+
