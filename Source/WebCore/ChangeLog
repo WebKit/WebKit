@@ -1,3 +1,18 @@
+2011-03-04  Xianzhu Wang  <wangxianzhu@google.com>
+
+        Reviewed by Adam Barth.
+
+        Remove fake request loading of SVGImage to avoid MainResourceLoader
+        leak. The frame->init() already ensures initialization of the
+        document loader.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55017
+
+        Test: fast/images/svg-image-leak-loader.html
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2011-03-04  Mike Reed  <reed@google.com>
 
         Reviewed by Mihai Parparita.

@@ -276,12 +276,9 @@ bool SVGImage::dataChanged(bool allDataReceived)
         RefPtr<Frame> frame = Frame::create(m_page.get(), 0, dummyFrameLoaderClient);
         frame->setView(FrameView::create(frame.get()));
         frame->init();
-        ResourceRequest fakeRequest(KURL(ParsedURLString, ""));
         FrameLoader* loader = frame->loader();
         loader->setForcedSandboxFlags(SandboxAll);
-        loader->load(fakeRequest, false); // Make sure the DocumentLoader is created
-        loader->policyChecker()->cancelCheck(); // cancel any policy checks
-        loader->commitProvisionalLoad();
+        ASSERT(loader->activeDocumentLoader()); // DocumentLoader should have been created by frame->init().
         loader->activeDocumentLoader()->writer()->setMIMEType("image/svg+xml");
         loader->activeDocumentLoader()->writer()->begin(KURL()); // create the empty document
         loader->activeDocumentLoader()->writer()->addData(data()->data(), data()->size());
