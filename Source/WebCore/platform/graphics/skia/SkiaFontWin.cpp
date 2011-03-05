@@ -38,9 +38,16 @@
 #include "SkCanvas.h"
 #include "SkPaint.h"
 #include "SkShader.h"
+#include "SkTemplates.h"
+#include "SkTypeface.h"
 
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
+
+#if ENABLE(SKIA_TEXT)
+// FIXME: a future role of skia will have this in a proper header
+extern SkTypeface* SkCreateTypefaceFromLOGFONT(const LOGFONT&);
+#endif
 
 namespace WebCore {
 
@@ -273,6 +280,23 @@ static bool skiaDrawText(HFONT hfont,
                          const GOFFSET* offsets,
                          int numGlyphs)
 {
+#if ENABLE(SKIA_TEXT)
+    SkASSERT(sizeof(WORD) == sizeof(uint16_t));
+
+    // Reserve space for 64 glyphs on the stack. If numGlyphs is larger, the array
+    // will dynamically allocate it space for numGlyph glyphs.
+    static const size_t kLocalGlyphMax = 64;
+    SkAutoSTArray<kLocalGlyphMax, SkPoint> posStorage(numGlyphs);
+    SkPoint* pos = posStorage.get();
+    SkScalar x = point.fX;
+    SkScalar y = point.fY;
+    for (int i = 0; i < numGlyphs; i++) {
+        pos[i].set(x + (offsets ? offsets[i].du : 0),
+                   y + (offsets ? offsets[i].dv : 0));
+        x += SkIntToScalar(advances[i]);
+    }
+    canvas->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, *paint);
+#else
     float x = point.fX, y = point.fY;
 
     for (int i = 0; i < numGlyphs; i++) {
@@ -292,9 +316,30 @@ static bool skiaDrawText(HFONT hfont,
 
         x += advances[i];
     }
-
+#endif
     return true;
 }
+
+#if ENABLE(SKIA_TEXT)
+static void setupPaintForFont(HFONT hfont, SkPaint* paint)
+{
+    //  FIXME:
+    //  Much of this logic could also happen in
+    //  FontCustomPlatformData::fontPlatformData and be cached,
+    //  allowing us to avoid talking to GDI at this point.
+    //
+    LOGFONT info;
+    GetObject(hfont, sizeof(info), &info);
+    int size = info.lfHeight;
+    if (size < 0)
+        size = -size; // We don't let GDI dpi-scale us (see SkFontHost_win.cpp).
+    paint->setTextSize(SkIntToScalar(size));
+
+    SkTypeface* face = SkCreateTypefaceFromLOGFONT(info);
+    paint->setTypeface(face);
+    SkSafeUnref(face);
+}
+#endif
 
 bool paintSkiaText(GraphicsContext* context,
                    HFONT hfont,
@@ -314,6 +359,10 @@ bool paintSkiaText(GraphicsContext* context,
     SkPaint paint;
     platformContext->setupPaintForFilling(&paint);
     paint.setFlags(SkPaint::kAntiAlias_Flag);
+#if ENABLE(SKIA_TEXT)
+    paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+    setupPaintForFont(hfont, &paint);
+#endif
     bool didFill = false;
 
     if ((textMode & TextModeFill) && SkColorGetA(paint.getColor())) {
