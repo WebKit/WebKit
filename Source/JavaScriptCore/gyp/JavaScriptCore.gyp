@@ -168,6 +168,12 @@
         '<@(minidom_files)',
         '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
       ],
+      'copies': [{
+        'destination': '<(PRODUCT_DIR)',
+        'files': [
+          '<@(minidom_support_files)',
+        ],
+      }],
     },
     {
       'target_name': 'testapi',
@@ -183,6 +189,12 @@
         '<@(testapi_files)',
         '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
       ],
+      'copies': [{
+        'destination': '<(PRODUCT_DIR)',
+        'files': [
+          '<@(testapi_support_files)',
+        ],
+      }],
     },
     {
       'target_name': 'jsc',

@@ -673,8 +673,14 @@
             'API/tests/NodeList.h',
             'API/tests/minidom.c',
         ],
+        'minidom_support_files': [
+            'API/tests/minidom.js',
+        ],
         'testapi_files': [
             'API/tests/testapi.c',
+        ],
+        'testapi_support_files': [
+            'API/tests/testapi.js',
         ],
         'jsc_files': [
             'jsc.cpp',

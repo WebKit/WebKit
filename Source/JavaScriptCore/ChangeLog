@@ -2,6 +2,16 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Add Copy Files step to JavaScriptCore GYP build for apitest and minidom
+        https://bugs.webkit.org/show_bug.cgi?id=55798
+
+        * JavaScriptCore.gypi:
+        * gyp/JavaScriptCore.gyp:
+
+2011-03-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Remove unneeded round-trips through ../Source in the Chromium GYP build
         https://bugs.webkit.org/show_bug.cgi?id=55795
 
