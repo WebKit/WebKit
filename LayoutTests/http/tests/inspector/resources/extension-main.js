@@ -1,3 +1,12 @@
+function onError(event)
+{
+    window.removeEventListener("error", onError);
+    output("Uncaught exception in extension context: " + event.message + " [" + event.filename + ":" + event.lineno + "]");
+    top.postMessage({ command: "extension-tests-done" }, "*");
+}
+
+window.addEventListener("error", onError);
+
 function fetchTests()
 {
     function callback(result)

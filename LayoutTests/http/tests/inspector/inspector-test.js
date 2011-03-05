@@ -91,6 +91,15 @@ InspectorTest.addResults = function(textArray)
         InspectorTest.addResult(textArray[i]);
 }
 
+function onError(event)
+{
+    window.removeEventListener("error", onError);
+    InspectorTest.addResult("Uncaught exception in inspector front-end: " + event.message + " [" + event.filename + ":" + event.lineno + "]");
+    InspectorTest.completeTest();
+}
+
+window.addEventListener("error", onError);
+
 InspectorTest.addObject = function(object, nondeterministicProps, prefix, firstLinePrefix)
 {
     prefix = prefix || "";
