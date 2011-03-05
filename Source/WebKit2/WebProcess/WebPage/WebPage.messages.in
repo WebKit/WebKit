@@ -90,7 +90,7 @@ messages -> WebPage {
     Close()
     TryClose()
 
-    ValidateCommand(WTF::String name)
+    ValidateCommand(WTF::String name, uint64_t callbackID)
     ExecuteEditCommand(WTF::String name)
 
     DidRemoveEditCommand(uint64_t commandID)

@@ -385,7 +385,7 @@ private:
     void setInitialFocus(bool);
     void setWindowResizerSize(const WebCore::IntSize&);
     void setIsInWindow(bool);
-    void validateCommand(const String&);
+    void validateCommand(const String&, uint64_t);
     void executeEditCommand(const String&);
 
     void mouseEvent(const WebMouseEvent&);

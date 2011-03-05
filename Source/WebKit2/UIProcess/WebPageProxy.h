@@ -115,6 +115,51 @@ class WebGestureEvent;
 typedef GenericCallback<WKStringRef, StringImpl*> StringCallback;
 typedef GenericCallback<WKSerializedScriptValueRef, WebSerializedScriptValue*> ScriptValueCallback;
 
+// FIXME: Make a version of CallbackBase with three arguments, and define ValidateCommandCallback as a specialization.
+class ValidateCommandCallback : public CallbackBase {
+public:
+    typedef void (*CallbackFunction)(WKStringRef, bool, int32_t, WKErrorRef, void*);
+
+    static PassRefPtr<ValidateCommandCallback> create(void* context, CallbackFunction callback)
+    {
+        return adoptRef(new ValidateCommandCallback(context, callback));
+    }
+
+    virtual ~ValidateCommandCallback()
+    {
+        ASSERT(!m_callback);
+    }
+
+    void performCallbackWithReturnValue(StringImpl* returnValue1, bool returnValue2, int returnValue3)
+    {
+        ASSERT(m_callback);
+
+        m_callback(toAPI(returnValue1), returnValue2, returnValue3, 0, context());
+
+        m_callback = 0;
+    }
+    
+    void invalidate()
+    {
+        ASSERT(m_callback);
+
+        RefPtr<WebError> error = WebError::create();
+        m_callback(0, 0, 0, toAPI(error.get()), context());
+        
+        m_callback = 0;
+    }
+
+private:
+
+    ValidateCommandCallback(void* context, CallbackFunction callback)
+        : CallbackBase(context)
+        , m_callback(callback)
+    {
+    }
+
+    CallbackFunction m_callback;
+};
+
 class WebPageProxy : public APIObject, public WebPopupMenuProxy::Client {
 public:
     static const Type APIType = TypePage;
@@ -200,7 +245,7 @@ public:
     bool isViewVisible() const { return m_isVisible; }
 
     void executeEditCommand(const String& commandName);
-    void validateCommand(const String& commandName);
+    void validateCommand(const String& commandName, PassRefPtr<ValidateCommandCallback>);
 
     const SelectionState& selectionState() const { return m_selectionState; }
     bool canDelete() const { return hasSelectedRange() && isContentEditable(); }
@@ -567,7 +612,6 @@ private:
     void takeFocus(bool direction);
     void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);
-    void didValidateCommand(const String& commandName, bool isEnabled, int32_t state);
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
 
@@ -576,6 +620,7 @@ private:
     void stringCallback(const String&, uint64_t);
     void scriptValueCallback(const CoreIPC::DataReference&, uint64_t);
     void computedPagesCallback(const Vector<WebCore::IntRect>&, double totalScaleFactorForPrinting, uint64_t);
+    void validateCommandCallback(const String&, bool, int, uint64_t);
 
     void focusedFrameChanged(uint64_t frameID);
     void frameSetLargestFrameChanged(uint64_t frameID);
@@ -626,6 +671,7 @@ private:
     HashMap<uint64_t, RefPtr<StringCallback> > m_stringCallbacks;
     HashMap<uint64_t, RefPtr<ScriptValueCallback> > m_scriptValueCallbacks;
     HashMap<uint64_t, RefPtr<ComputedPagesCallback> > m_computedPagesCallbacks;
+    HashMap<uint64_t, RefPtr<ValidateCommandCallback> > m_validateCommandCallbacks;
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;
 

@@ -572,6 +572,18 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
     return (NSToolbarItem *)item;
 }
 
+static void validateCommandCallback(WKStringRef commandName, bool isEnabled, int32_t state, WKErrorRef error, void* context)
+{
+    // If the process exits before the command can be validated, we'll be called back with an error.
+    if (error)
+        return;
+    
+    WKView* wkView = static_cast<WKView*>(context);
+    ASSERT(wkView);
+    
+    [wkView _setUserInterfaceItemState:nsStringFromWebCoreString(toImpl(commandName)->string()) enabled:isEnabled state:state];
+}
+
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
     SEL action = [item action];
@@ -667,7 +679,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
         // If we are not already awaiting validation for this command, start the asynchronous validation process.
         // FIXME: Theoretically, there is a race here; when we get the answer it might be old, from a previous time
         // we asked for the same command; there is no guarantee the answer is still valid.
-        _data->_page->validateCommand(commandName);
+        _data->_page->validateCommand(commandName, ValidateCommandCallback::create(self, validateCommandCallback));
     }
 
     // Treat as enabled until we get the result back from the web process and _setUserInterfaceItemState is called.

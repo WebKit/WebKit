@@ -329,10 +329,6 @@ void QWKPagePrivate::wheelEvent(QGraphicsSceneWheelEvent* ev)
     page->handleWheelEvent(wheelEvent);
 }
 
-void QWKPagePrivate::setEditCommandState(const WTF::String&, bool, int)
-{
-}
-
 void QWKPagePrivate::updateAction(QWKPage::WebAction action)
 {
 #ifdef QT_NO_ACTION

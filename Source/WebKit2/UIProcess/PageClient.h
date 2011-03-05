@@ -97,7 +97,6 @@ public:
 
     virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo) = 0;
     virtual void clearAllEditCommands() = 0;
-    virtual void setEditCommandState(const String& commandName, bool isEnabled, int state) = 0;
 #if PLATFORM(MAC)
     virtual void accessibilityWebProcessTokenReceived(const CoreIPC::DataReference&) = 0;
     virtual void interceptKeyEvent(const NativeWebKeyboardEvent&, Vector<WebCore::KeypressCommand>& commandName, uint32_t selectionStart, uint32_t selectionEnd, Vector<WebCore::CompositionUnderline>& underlines) = 0;

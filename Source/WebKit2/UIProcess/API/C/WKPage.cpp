@@ -493,6 +493,11 @@ WKPageDebugPaintFlags WKPageGetDebugPaintFlags()
     return WebPageProxy::debugPaintFlags();
 }
 
+void WKPageValidateCommand(WKPageRef pageRef, WKStringRef command, void* context, WKPageValidateCommandCallback callback)
+{
+    toImpl(pageRef)->validateCommand(toImpl(command)->string(), ValidateCommandCallback::create(context, callback)); 
+}
+
 void WKPageExecuteCommand(WKPageRef pageRef, WKStringRef command)
 {
     toImpl(pageRef)->executeEditCommand(toImpl(command)->string());

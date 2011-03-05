@@ -800,10 +800,6 @@ void WebView::clearAllEditCommands()
 {
 }
 
-void WebView::setEditCommandState(const String&, bool, int)
-{
-}
-
 FloatRect WebView::convertToDeviceSpace(const FloatRect& rect)
 {
     return rect;

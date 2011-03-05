@@ -281,11 +281,6 @@ void PageClientImpl::clearAllEditCommands()
     [[m_wkView undoManager] removeAllActionsWithTarget:m_undoTarget.get()];
 }
 
-void PageClientImpl::setEditCommandState(const String& commandName, bool isEnabled, int newState)
-{
-    [m_wkView _setUserInterfaceItemState:nsStringFromWebCoreString(commandName) enabled:isEnabled state:newState];
-}
-
 void PageClientImpl::interceptKeyEvent(const NativeWebKeyboardEvent& event, Vector<WebCore::KeypressCommand>& commandsList, uint32_t selectionStart, uint32_t selectionEnd, Vector<WebCore::CompositionUnderline>& underlines)
 {
     commandsList = [m_wkView _interceptKeyEvent:event.nativeEvent()];

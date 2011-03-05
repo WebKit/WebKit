@@ -613,11 +613,16 @@ void WebPageProxy::setWindowResizerSize(const IntSize& windowResizerSize)
     process()->send(Messages::WebPage::SetWindowResizerSize(windowResizerSize), m_pageID);
 }
 
-void WebPageProxy::validateCommand(const String& commandName)
+void WebPageProxy::validateCommand(const String& commandName, PassRefPtr<ValidateCommandCallback> callback)
 {
-    if (!isValid())
+    if (!isValid()) {
+        callback->invalidate();
         return;
-    process()->send(Messages::WebPage::ValidateCommand(commandName), m_pageID);
+    }
+
+    uint64_t callbackID = callback->callbackID();
+    m_validateCommandCallbacks.set(callbackID, callback.get());
+    process()->send(Messages::WebPage::ValidateCommand(commandName, callbackID), m_pageID);
 }
     
 void WebPageProxy::executeEditCommand(const String& commandName)
@@ -2340,11 +2345,6 @@ void WebPageProxy::setCursor(const WebCore::Cursor& cursor)
     m_pageClient->setCursor(cursor);
 }
 
-void WebPageProxy::didValidateCommand(const String& commandName, bool isEnabled, int32_t state)
-{
-    m_pageClient->setEditCommandState(commandName, isEnabled, state);
-}
-
 void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 {
     WebEvent::Type type = static_cast<WebEvent::Type>(opaqueType);
@@ -2472,6 +2472,17 @@ void WebPageProxy::computedPagesCallback(const Vector<WebCore::IntRect>& pageRec
     callback->performCallbackWithReturnValue(pageRects, totalScaleFactorForPrinting);
 }
 
+void WebPageProxy::validateCommandCallback(const String& commandName, bool isEnabled, int state, uint64_t callbackID)
+{
+    RefPtr<ValidateCommandCallback> callback = m_validateCommandCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    callback->performCallbackWithReturnValue(commandName.impl(), isEnabled, state);
+}
+
 #if PLATFORM(MAC)
 void WebPageProxy::didPerformDictionaryLookup(const String& text, const DictionaryPopupInfo& dictionaryPopupInfo)
 {
@@ -2568,6 +2579,7 @@ void WebPageProxy::processDidCrash()
     invalidateCallbackMap(m_stringCallbacks);
     invalidateCallbackMap(m_scriptValueCallbacks);
     invalidateCallbackMap(m_computedPagesCallbacks);
+    invalidateCallbackMap(m_validateCommandCallbacks);
 
     Vector<WebEditCommandProxy*> editCommandVector;
     copyToVector(m_editCommandSet, editCommandVector);

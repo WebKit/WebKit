@@ -32,7 +32,6 @@ messages -> WebPageProxy {
     MissingPluginButtonClicked(WTF::String mimeType, WTF::String url, WTF::String pluginsPageURL)
     DidChangeViewportData(WebCore::ViewportArguments arguments)
     DidReceiveEvent(uint32_t type, bool handled)
-    DidValidateCommand(WTF::String commandName, bool isEnabled, int32_t state)
     SetCursor(WebCore::Cursor cursor)
     SetStatusText(WTF::String statusText)
     SetToolTip(WTF::String toolTip)
@@ -120,6 +119,7 @@ messages -> WebPageProxy {
     StringCallback(WTF::String resultString, uint64_t callbackID)
     ScriptValueCallback(CoreIPC::DataReference resultData, uint64_t callbackID)
     ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
+    ValidateCommandCallback(WTF::String command, bool isEnabled, int32_t state, uint64_t callbackID)
 
     ViewScaleFactorDidChange(double scaleFactor)
 

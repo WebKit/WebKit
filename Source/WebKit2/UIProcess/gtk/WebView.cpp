@@ -209,11 +209,6 @@ void WebView::clearAllEditCommands()
     notImplemented();
 }
 
-void WebView::setEditCommandState(const String&, bool, int)
-{
-    notImplemented();
-}
-
 FloatRect WebView::convertToDeviceSpace(const FloatRect& viewRect)
 {
     notImplemented();

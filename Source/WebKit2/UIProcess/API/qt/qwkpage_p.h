@@ -105,7 +105,6 @@ public:
     void updateAction(QWKPage::WebAction action);
     void updateNavigationActions();
     void updateEditorActions();
-    void setEditCommandState(const WTF::String&, bool, int);
 
     void _q_webActionTriggered(bool checked);
 

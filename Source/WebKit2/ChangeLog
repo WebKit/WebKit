@@ -1,3 +1,50 @@
+2011-03-04  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add WKPageValidateCommand()
+        https://bugs.webkit.org/show_bug.cgi?id=55793
+        
+        On the Mac, validation of edit menu commands is handled within WebKit2 in WKView.mm.
+        However, on Windows we need to do this in the client, so expose this functionality
+        in the API via WKPageValidateCommand().
+        
+        Change the Mac implementation to call WebPageProxy::validateCommand() with a callback
+        to match this new API, so it no longer has to go through PageClient to get notified
+        when a command is validated.  This makes PageClient::setEditCommandState() obsolete,
+        so I removed the stub implementations in qt and gtk as well.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageValidateCommand): Added.
+        * UIProcess/API/C/WKPage.h: Added WKPageValidateCommand().
+        * UIProcess/API/mac/PageClientImpl.h: Removed setEditCommandState().
+        * UIProcess/API/mac/PageClientImpl.mm: Removed setEditCommandState().
+        * UIProcess/API/mac/WKView.mm:
+        (validateCommandCallback): Added.
+        (-[WKView validateUserInterfaceItem:]): Pass callback to validateCommand().
+        * UIProcess/API/qt/qwkpage.cpp: Removed setEditCommandState().
+        * UIProcess/API/qt/qwkpage_p.h: Removed setEditCommandState().
+        * UIProcess/PageClient.h: Removed setEditCommandState().
+        * UIProcess/WebPageProxy.cpp: Removed didValidateCommand().
+        (WebKit::WebPageProxy::validateCommand): This now takes a callback.
+        (WebKit::WebPageProxy::validateCommandCallback): Added.
+        (WebKit::WebPageProxy::processDidCrash): Invalidate m_validateCommandCallbacks.
+        * UIProcess/WebPageProxy.h: Removed didValidateCommand(), validateCommand() now takes a callback.
+        (WebKit::ValidateCommandCallback::create): Added.
+        (WebKit::ValidateCommandCallback::~ValidateCommandCallback): Added.
+        (WebKit::ValidateCommandCallback::performCallbackWithReturnValue): Added.
+        (WebKit::ValidateCommandCallback::invalidate): Added.
+        (WebKit::ValidateCommandCallback::ValidateCommandCallback): Added.
+        * UIProcess/WebPageProxy.messages.in: Removed DidValidateCommand, added ValidateCommandCallback.
+        * UIProcess/gtk/WebView.cpp: Removed setEditCommandState().
+        * UIProcess/gtk/WebView.h: Removed setEditCommandState().
+        * UIProcess/win/WebView.cpp: Removed setEditCommandState().
+        * UIProcess/win/WebView.h: Removed setEditCommandState().
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::validateCommand): This now takes a callbackID.
+        * WebProcess/WebPage/WebPage.h: validateCommand now takes a callbackID.
+        * WebProcess/WebPage/WebPage.messages.in: ValidateCommand now takes a callbackID.
+
 2011-03-04  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Darin Adler.

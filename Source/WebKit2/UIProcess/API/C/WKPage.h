@@ -374,6 +374,9 @@ WK_EXPORT void WKPageForceRepaint(WKPageRef page, void* context, WKPageForceRepa
     "Redo"
 */
 
+// state represents the state of the command in a menu (on is 1, off is 0, and mixed is -1), typically used to add a checkmark next to the menu item.
+typedef void (*WKPageValidateCommandCallback)(WKStringRef command, bool isEnabled, int32_t state, WKErrorRef, void* context);
+WK_EXPORT void WKPageValidateCommand(WKPageRef page, WKStringRef command, void* context, WKPageValidateCommandCallback callback);
 WK_EXPORT void WKPageExecuteCommand(WKPageRef page, WKStringRef command);
 
 #ifdef __cplusplus
