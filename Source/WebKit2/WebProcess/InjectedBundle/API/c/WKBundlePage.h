@@ -147,7 +147,10 @@ struct WKBundlePageResourceLoadClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKBundlePageDidInitiateLoadForResourceCallback                      didInitiateLoadForResource;
+
+    // willSendRequestForFrame is supposed to return a retained reference to the URL request.
     WKBundlePageWillSendRequestForFrameCallback                         willSendRequestForFrame;
+
     WKBundlePageDidReceiveResponseForResourceCallback                   didReceiveResponseForResource;
     WKBundlePageDidReceiveContentLengthForResourceCallback              didReceiveContentLengthForResource;
     WKBundlePageDidFinishLoadForResourceCallback                        didFinishLoadForResource;

@@ -1,3 +1,16 @@
+2011-03-04  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Reference-counting for WKBundlePageResourceLoadClient::willSendRequestForFrame seems unclear/wrong
+        https://bugs.webkit.org/show_bug.cgi?id=53919
+        <rdar://problem/8966020>
+        
+        Adopt the result of m_client.willSendRequestForFrame (which will be leaked by the client).
+
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp:
+        (WebKit::InjectedBundlePageResourceLoadClient::willSendRequestForFrame):
+
 2011-03-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

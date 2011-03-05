@@ -46,7 +46,7 @@ void InjectedBundlePageResourceLoadClient::willSendRequestForFrame(WebPage* page
     if (!m_client.willSendRequestForFrame)
         return;
 
-    RefPtr<WebURLRequest> returnedRequest = toImpl(m_client.willSendRequestForFrame(toAPI(page), toAPI(frame), identifier, toAPI(request), toAPI(redirectResponse), m_client.clientInfo));
+    RefPtr<WebURLRequest> returnedRequest = adoptRef(toImpl(m_client.willSendRequestForFrame(toAPI(page), toAPI(frame), identifier, toAPI(request), toAPI(redirectResponse), m_client.clientInfo)));
     if (returnedRequest)
         request = returnedRequest->resourceRequest();
     else
