@@ -42,21 +42,40 @@ using namespace WebCore;
 namespace WebKit {
 
 DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryKey, (CFSTR("SessionHistory")));
+DEFINE_STATIC_GETTER(CFStringRef, ProvisionalURLKey, (CFSTR("ProvisionalURL")));
 
 static const UInt32 CurrentSessionStateDataVersion = 2;
 
 PassRefPtr<WebData> WebPageProxy::sessionStateData(WebPageProxySessionStateFilterCallback filter, void* context) const
 {
+    const void* keys[2];
+    const void* values[2];
+    CFIndex numValues = 0;
+
     RetainPtr<CFDictionaryRef> sessionHistoryDictionary(AdoptCF, m_backForwardList->createCFDictionaryRepresentation(filter, context));
-    
-    // For now we're only serializing the back/forward list.  If that object is null, then the entire sessionState can be null.
-    if (!sessionHistoryDictionary)
+    if (sessionHistoryDictionary) {
+        keys[numValues] = SessionHistoryKey();
+        values[numValues] = sessionHistoryDictionary.get();
+        ++numValues;
+    }
+
+    RetainPtr<CFStringRef> provisionalURLString;
+    if (m_mainFrame) {
+        String provisionalURL = pendingAPIRequestURL();
+        if (provisionalURL.isEmpty())
+            provisionalURL = m_mainFrame->provisionalURL();
+        if (!provisionalURL.isEmpty()) {
+            provisionalURLString.adoptCF(provisionalURL.createCFString());
+            keys[numValues] = ProvisionalURLKey();
+            values[numValues] = provisionalURLString.get();
+            ++numValues;
+        }
+    }
+
+    if (!numValues)
         return 0;
-    
-    const void* keys[1] = { SessionHistoryKey() };
-    const void* values[1] = { sessionHistoryDictionary.get() };
-    
-    RetainPtr<CFDictionaryRef> stateDictionary(AdoptCF, CFDictionaryCreate(0, keys, values, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    RetainPtr<CFDictionaryRef> stateDictionary(AdoptCF, CFDictionaryCreate(0, keys, values, numValues, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     RetainPtr<CFWriteStreamRef> writeStream(AdoptCF, CFWriteStreamCreateWithAllocatedBuffers(0, 0));
     if (!writeStream)
@@ -115,29 +134,49 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
         LOG(SessionState, "SessionState property list is not a CFDictionaryRef (%i) - its CFTypeID is %i", (int)CFDictionaryGetTypeID(), (int)CFGetTypeID(propertyList.get()));
         return;
     }
-    
-    CFTypeRef sessionHistoryRef = CFDictionaryGetValue(static_cast<CFDictionaryRef>(propertyList.get()), SessionHistoryKey());
-    if (!sessionHistoryRef || CFGetTypeID(sessionHistoryRef) != CFDictionaryGetTypeID()) {
-        LOG(SessionState, "SessionState dictionary does not contain a SessionHistoryDictionary key, it is of the wrong type");
-        return;
-    }
-    
-    CFDictionaryRef sessionHistoryDictionary = static_cast<CFDictionaryRef>(sessionHistoryRef);
-    if (!m_backForwardList->restoreFromCFDictionaryRepresentation(sessionHistoryDictionary)) {
-        LOG(SessionState, "Failed to restore back/forward list from SessionHistoryDictionary");
-        return;
-    }
-    
-    const BackForwardListItemVector& entries = m_backForwardList->entries();
-    size_t size = entries.size();
-    for (size_t i = 0; i < size; ++i)
-        process()->registerNewWebBackForwardListItem(entries[i].get());
 
-    SandboxExtension::Handle sandboxExtensionHandle;
-    if (WebBackForwardListItem* item = m_backForwardList->currentItem())
-        initializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
+    CFDictionaryRef backForwardListDictionary = 0;
+    if (CFTypeRef value = CFDictionaryGetValue(static_cast<CFDictionaryRef>(propertyList.get()), SessionHistoryKey())) {
+        if (CFGetTypeID(value) != CFDictionaryGetTypeID())
+            LOG(SessionState, "SessionState dictionary has a SessionHistory key, but the value is not a dictionary");
+        else
+            backForwardListDictionary = static_cast<CFDictionaryRef>(value);
+    }
 
-    process()->send(Messages::WebPage::RestoreSessionAndNavigateToCurrentItem(SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex()), sandboxExtensionHandle), m_pageID);
+    CFStringRef provisionalURL = 0;
+    if (CFTypeRef value = CFDictionaryGetValue(static_cast<CFDictionaryRef>(propertyList.get()), ProvisionalURLKey())) {
+        if (CFGetTypeID(value) != CFStringGetTypeID())
+            LOG(SessionState, "SessionState dictionary has a ProvisionalValue key, but the value is not a string");
+        else
+            provisionalURL = static_cast<CFStringRef>(value);
+    }
+
+    bool restoredFromBackForwardList = false;
+    if (backForwardListDictionary) {
+        if (!m_backForwardList->restoreFromCFDictionaryRepresentation(backForwardListDictionary))
+            LOG(SessionState, "Failed to restore back/forward list from SessionHistory dictionary");
+        else {
+            const BackForwardListItemVector& entries = m_backForwardList->entries();
+            if (size_t size = entries.size()) {
+                for (size_t i = 0; i < size; ++i)
+                    process()->registerNewWebBackForwardListItem(entries[i].get());
+
+                SandboxExtension::Handle sandboxExtensionHandle;
+                if (WebBackForwardListItem* item = m_backForwardList->currentItem())
+                    initializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
+
+                process()->send(Messages::WebPage::RestoreSessionAndNavigateToCurrentItem(SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex()), sandboxExtensionHandle), m_pageID);
+
+                restoredFromBackForwardList = true;
+            }
+        }
+    }
+
+    // FIXME: It would be better to load the provisional URL even if the back/forward list is also present.
+    // But when we tried it, it overwrote the current item in the back/forward list instead of pushing a
+    // new item on. For now, just throw away the provisional URL if there is also a back/forward list.
+    if (provisionalURL && !restoredFromBackForwardList)
+        loadURL(provisionalURL);
 }
 
 } // namespace WebKit

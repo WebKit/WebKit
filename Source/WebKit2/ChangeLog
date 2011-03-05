@@ -1,3 +1,19 @@
+2011-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        WebKit2 session state should include even loads too new to be in the back/forward list
+        https://bugs.webkit.org/show_bug.cgi?id=55781
+        part of <rdar://problem/8968847>
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::sessionStateData): Save URLs that are early enough in the loading
+        process to not be included in the back/forward list yet: The pending API request URL and
+        the provisional URL.
+        (WebKit::WebPageProxy::restoreFromSessionStateData): Call loadURL if the back/forward
+        list is not restored and a URL is present. Later we can improve the way we handle the
+        case where we have both a back/forward list and a URL.
+
 2011-03-04  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Darin Adler.
