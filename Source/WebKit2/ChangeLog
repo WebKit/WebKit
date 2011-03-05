@@ -2,6 +2,16 @@
 
         WK2 Mac build fix.
 
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageComputePagesForPrinting):
+        (WKPageBeginPrinting):
+
+        * UIProcess/API/C/WKPagePrivate.h:
+
+2011-03-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        WK2 Mac build fix.
+
         * UIProcess/API/C/WKPagePrivate.h:
 
 2011-03-04  Jon Honeycutt  <jhoneycutt@apple.com>

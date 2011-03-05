@@ -58,10 +58,10 @@ struct WKPrintInfo {
 typedef struct WKPrintInfo WKPrintInfo;
 
 typedef void (*WKPageComputePagesForPrintingFunction)(WKRect* pageRects, uint32_t pageCount, double resultPageScaleFactor, WKErrorRef error, void* functionContext);
-WK_EXPORT void WKPageComputePagesForPrinting(WKPageRef page, WKFrameRef frame, const WKPrintInfo&, WKPageComputePagesForPrintingFunction, void* context);
+WK_EXPORT void WKPageComputePagesForPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo, WKPageComputePagesForPrintingFunction, void* context);
 
 typedef void (*WKPageDrawToPDFFunction)(WKDataRef data, WKErrorRef error, void* functionContext);
-WK_EXPORT void WKPageBeginPrinting(WKPageRef page, WKFrameRef frame, const WKPrintInfo&);
+WK_EXPORT void WKPageBeginPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo);
 WK_EXPORT void WKPageDrawPagesToPDF(WKPageRef page, WKFrameRef frame, uint32_t first, uint32_t count, WKPageDrawToPDFFunction callback, void* context);
 
 #ifdef __cplusplus

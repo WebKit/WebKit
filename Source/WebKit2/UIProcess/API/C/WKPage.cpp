@@ -533,12 +533,12 @@ static PrintInfo printInfoFromWKPrintInfo(const WKPrintInfo& printInfo)
     return result;
 }
 
-void WKPageComputePagesForPrinting(WKPageRef page, WKFrameRef frame, const WKPrintInfo& printInfo, WKPageComputePagesForPrintingFunction callback, void* context)
+void WKPageComputePagesForPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo, WKPageComputePagesForPrintingFunction callback, void* context)
 {
     toImpl(page)->computePagesForPrinting(toImpl(frame), printInfoFromWKPrintInfo(printInfo), ComputedPagesCallback::create(new ComputedPagesContext(callback, context), computedPagesCallback));
 }
 
-void WKPageBeginPrinting(WKPageRef page, WKFrameRef frame, const WKPrintInfo& printInfo)
+void WKPageBeginPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo)
 {
     toImpl(page)->beginPrinting(toImpl(frame), printInfoFromWKPrintInfo(printInfo));
 }
