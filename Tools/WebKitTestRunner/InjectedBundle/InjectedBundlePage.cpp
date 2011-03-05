@@ -646,6 +646,7 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKB
         return 0;
     }
 
+    WKRetain(request);
     return request;
 }
 

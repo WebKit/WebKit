@@ -1,3 +1,13 @@
+2011-03-05  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix Web Process crashes caused by https://bugs.webkit.org/show_bug.cgi?id=53919.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::willSendRequestForFrame): Retain the WKURLRequestRef returned
+            by willSendRequestForFrame. The API expects a retained reference to the URL request.
+
 2011-03-05  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Darin Adler.
