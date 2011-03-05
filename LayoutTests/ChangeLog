@@ -1,3 +1,41 @@
+2011-03-04  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by Eric Carlson.
+
+        [chromium] Baselines for media GPU layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=55796
+
+        Adding baselines for some of the media GPU layout tests.
+        Updates test_expectations with expected media GPU failures.
+
+        * platform/chromium-gpu-linux/media/video-display-toggle-expected.checksum: Added.
+        * platform/chromium-gpu-linux/media/video-display-toggle-expected.png: Added.
+        * platform/chromium-gpu-linux/media/video-no-audio-expected.checksum: Added.
+        * platform/chromium-gpu-linux/media/video-no-audio-expected.png: Added.
+        * platform/chromium-gpu-linux/media/video-volume-slider-expected.checksum: Added.
+        * platform/chromium-gpu-linux/media/video-volume-slider-expected.png: Added.
+        * platform/chromium-gpu-linux/media/video-zoom-expected.checksum: Added.
+        * platform/chromium-gpu-linux/media/video-zoom-expected.png: Added.
+        * platform/chromium-gpu-mac/media/video-display-toggle-expected.checksum: Added.
+        * platform/chromium-gpu-mac/media/video-display-toggle-expected.png: Added.
+        * platform/chromium-gpu-mac/media/video-no-audio-expected.checksum: Added.
+        * platform/chromium-gpu-mac/media/video-no-audio-expected.png: Added.
+        * platform/chromium-gpu-mac/media/video-volume-slider-expected.checksum: Added.
+        * platform/chromium-gpu-mac/media/video-volume-slider-expected.png: Added.
+        * platform/chromium-gpu-mac/media/video-zoom-expected.checksum: Added.
+        * platform/chromium-gpu-mac/media/video-zoom-expected.png: Added.
+        * platform/chromium-gpu-win/media/video-canvas-alpha-expected.checksum: Added.
+        * platform/chromium-gpu-win/media/video-canvas-alpha-expected.png: Added.
+        * platform/chromium-gpu-win/media/video-display-toggle-expected.checksum: Added.
+        * platform/chromium-gpu-win/media/video-display-toggle-expected.png: Added.
+        * platform/chromium-gpu-win/media/video-no-audio-expected.checksum: Added.
+        * platform/chromium-gpu-win/media/video-no-audio-expected.png: Added.
+        * platform/chromium-gpu-win/media/video-volume-slider-expected.checksum: Added.
+        * platform/chromium-gpu-win/media/video-volume-slider-expected.png: Added.
+        * platform/chromium-gpu-win/media/video-zoom-expected.checksum: Added.
+        * platform/chromium-gpu-win/media/video-zoom-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-04  Xianzhu Wang  <wangxianzhu@google.com>
 
         Reviewed by Adam Barth.
