@@ -1,3 +1,25 @@
+2011-03-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Windowless plugins override the view cursor
+        https://bugs.webkit.org/show_bug.cgi?id=55531
+
+        manual test: manual-tests/plugins/windowless.html
+
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::setCursor): Call into the ChromeClient implementation now.
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::initXEvent): Instead of setting the window for windowless
+        plugin events, set the window value to none. This method is also used to send
+        focus in / focus out events to windowed plugins, but this is not one of the plugin
+        types where the window parameter matters. This matches what Mozilla does. Also
+        pass in the display of the widget itself, not the default display.
+        (WebCore::PluginView::handleMouseEvent): When the cursor leaves the plugin area,
+        reset the cursor.
+        (WebCore::PluginView::platformGetValue): Clean up this section slightly. Give the
+        widget the top-level window explicitly. This matches Mozilla.
+
 2011-03-05  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

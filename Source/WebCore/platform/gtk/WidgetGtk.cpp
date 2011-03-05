@@ -67,19 +67,10 @@ static GdkWindow* gdkWindow(PlatformWidget widget)
     
 void Widget::setCursor(const Cursor& cursor)
 {
-    GdkCursor* platformCursor = cursor.platformCursor().get();
-
-    // http://bugs.webkit.org/show_bug.cgi?id=16388
-    // [GTK] Widget::setCursor() gets called frequently
-    //
-    // gdk_window_set_cursor() in certain GDK backends seems to be an
-    // expensive operation, so avoid it if possible.
-
-    if (platformCursor == lastSetCursor)
+    ScrollView* view = root();
+    if (!view)
         return;
-
-    gdk_window_set_cursor(gdkWindow(platformWidget()) ? gdkWindow(platformWidget()) : gtk_widget_get_window(GTK_WIDGET(root()->hostWindow()->platformPageClient())), platformCursor);
-    lastSetCursor = platformCursor;
+    view->hostWindow()->setCursor(cursor);
 }
 
 void Widget::show()

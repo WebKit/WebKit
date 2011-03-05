@@ -322,12 +322,14 @@ void PluginView::initXEvent(XEvent* xEvent)
 
     xEvent->xany.serial = 0; // we are unaware of the last request processed by X Server
     xEvent->xany.send_event = false;
-    xEvent->xany.display = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
-    // NOTE: event->xany.window doesn't always correspond to the .window property of other XEvent's
-    // but does in the case of KeyPress, KeyRelease, ButtonPress, ButtonRelease, and MotionNotify
-    // events; thus, this is right:
     GtkWidget* widget = m_parentFrame->view()->hostWindow()->platformPageClient();
-    xEvent->xany.window = widget ? GDK_WINDOW_XWINDOW(gtk_widget_get_window(widget)) : 0;
+    xEvent->xany.display = GDK_DISPLAY_XDISPLAY(gtk_widget_get_display(widget));
+
+    // Mozilla also sends None here for windowless plugins. See nsObjectFrame.cpp in the Mozilla sources.
+    // This method also sets up FocusIn and FocusOut events for windows plugins, but Mozilla doesn't
+    // even send these types of events to windowed plugins. In the future, it may be good to only
+    // send them to windowless plugins.
+    xEvent->xany.window = None;
 }
 
 static void setXButtonEventSpecificFields(XEvent* xEvent, MouseEvent* event, const IntPoint& postZoomPos, Frame* parentFrame)
@@ -415,8 +417,14 @@ void PluginView::handleMouseEvent(MouseEvent* event)
         setXButtonEventSpecificFields(&xEvent, event, postZoomPos, m_parentFrame.get());
     else if (event->type() == eventNames().mousemoveEvent)
         setXMotionEventSpecificFields(&xEvent, event, postZoomPos, m_parentFrame.get());
-    else if (event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mouseoverEvent)
+    else if (event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mouseoverEvent) {
         setXCrossingEventSpecificFields(&xEvent, event, postZoomPos, m_parentFrame.get());
+
+        // This is a work-around for plugins which change the cursor. When that happens we
+        // get out of sync with GDK somehow. Resetting the cursor here seems to fix the issue.
+        if (event->type() == eventNames().mouseoutEvent)
+            gdk_window_set_cursor(gtk_widget_get_window(m_parentFrame->view()->hostWindow()->platformPageClient()), 0);
+    }
     else
         return;
 #endif
@@ -649,15 +657,11 @@ bool PluginView::platformGetValue(NPNVariable variable, void* value, NPError* re
 #endif
 
         case NPNVnetscapeWindow: {
+            GdkWindow* gdkWindow = gtk_widget_get_window(m_parentFrame->view()->hostWindow()->platformPageClient());
 #if defined(XP_UNIX)
-            void* w = reinterpret_cast<void*>(value);
-            GtkWidget* widget = m_parentFrame->view()->hostWindow()->platformPageClient();
-            *((XID *)w) = GDK_WINDOW_XWINDOW(gtk_widget_get_window(widget));
-#endif
-#ifdef GDK_WINDOWING_WIN32
-            HGDIOBJ* w = reinterpret_cast<HGDIOBJ*>(value);
-            GtkWidget* widget = m_parentFrame->view()->hostWindow()->platformPageClient();
-            *w = GDK_WINDOW_HWND(gtk_widget_get_window(widget));
+            *static_cast<Window*>(value) = GDK_WINDOW_XWINDOW(gdk_window_get_toplevel(gdkWindow));
+#elif defined(GDK_WINDOWING_WIN32)
+            *static_cast<HGIOBJ*>(value) = GDK_WINDOW_HWND(gdkWindow);
 #endif
             *result = NPERR_NO_ERROR;
             return true;
