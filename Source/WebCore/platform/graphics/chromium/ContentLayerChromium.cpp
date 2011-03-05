@@ -253,6 +253,7 @@ void ContentLayerChromium::draw()
     bindContentsTexture();
     layerRenderer()->useShader(program->program());
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
+    GLC(context, context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
 
     if (requiresClippedUpdateRect()) {
         float m43 = ccLayerImpl()->drawTransform().m43();

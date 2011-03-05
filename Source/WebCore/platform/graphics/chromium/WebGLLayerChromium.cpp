@@ -82,6 +82,7 @@ void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
     if (textureId != m_textureId)
         m_textureChanged = true;
     m_textureId = textureId;
+    m_premultipliedAlpha = m_context->getContextAttributes().premultipliedAlpha;
 }
 
 }

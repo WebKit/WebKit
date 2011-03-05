@@ -293,10 +293,7 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
     m_defaultRenderSurface->m_layerList.clear();
     updateLayersRecursive(m_rootLayer.get(), identityMatrix, renderSurfaceLayerList, m_defaultRenderSurface->m_layerList);
 
-    // The shader used to render layers returns pre-multiplied alpha colors
-    // so we need to send the blending mode appropriately.
     GLC(m_context.get(), m_context->enable(GraphicsContext3D::BLEND));
-    GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
     GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
 
     // Update the contents of the render surfaces. We traverse the array from

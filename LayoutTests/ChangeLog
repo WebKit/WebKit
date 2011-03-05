@@ -1,3 +1,19 @@
+2011-03-04  John Bauman  <jbauman@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] premultipliedAlpha WebGL context attribute is ignored.
+        https://bugs.webkit.org/show_bug.cgi?id=55411
+
+        Add test case for (non-)premultiplied-alpha compositing.
+
+        * compositing/webgl/webgl-nonpremultiplied-blend.html: Added.
+        * platform/chromium-gpu/compositing/webgl/webgl-nonpremultiplied-blend-expected.checksum: Added.
+        * platform/chromium-gpu/compositing/webgl/webgl-nonpremultiplied-blend-expected.png: Added.
+        * platform/chromium-gpu/compositing/webgl/webgl-nonpremultiplied-blend-expected.txt: Added.
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+
 2011-03-04  Jessie Berlin  <jberlin@apple.com>
 
         [Snow Leopard Release Tests] accessibility/plugin.html,

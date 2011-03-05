@@ -1,3 +1,25 @@
+2011-03-04  John Bauman  <jbauman@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] premultipliedAlpha WebGL context attribute is ignored.
+        https://bugs.webkit.org/show_bug.cgi?id=55411
+
+        Update compositor to set the blending of each layer correctly.
+
+        Test: compositing/webgl/webgl-nonpremultiplied-blend.html
+
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::CanvasLayerChromium):
+        (WebCore::CanvasLayerChromium::draw):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::draw):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayers):
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::setContext):
+
 2011-03-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
