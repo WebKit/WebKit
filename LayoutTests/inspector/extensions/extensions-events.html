@@ -33,27 +33,30 @@ function extension_testOnResourceFinished(nextTest)
 
 function extension_testPageLoadEvents(nextTest)
 {
-    var callbackCount = 0;
-    var onLoadArgument;
-
-    webInspector.inspectedWindow.onDOMContentLoaded.addListener(function(time) {
-        output("onDOMContentLoaded fired: " + typeof time);
-    });
+    var queuedOutput = [];
 
     // Logging on onLoaded is tricky due to race conditions with output("Page reloaded") in page initialization code.
-    // So only log when we're sure both onLoaded fired and reload is done.
-    function reloadCallback()
+    // So only log when we're sure all handlers are called and reload is done.
+    function queueOutputAndContinue(message)
     {
-        if (++callbackCount < 2)
+        queuedOutput.push(message);
+        if (queuedOutput.length != 3)
             return;
-        output("onLoaded fired: " + typeof onLoadArgument);
-        nextTest();
+        for (i = 0; i < queuedOutput.length; ++i) {
+            if (queuedOutput[i])
+                output(queuedOutput[i]);
+        }
+	nextTest();
     }
-    webInspector.inspectedWindow.onLoaded.addListener(function(time) {
-        onLoadArgument = time;
-        reloadCallback();
+
+    webInspector.inspectedWindow.onDOMContentLoaded.addListener(function(time) {
+        queueOutputAndContinue("onDOMContentLoaded fired: " + typeof time);
     });
-    dispatchOnFrontend({ command: "reload" }, reloadCallback);
+
+    webInspector.inspectedWindow.onLoaded.addListener(function(time) {
+        queueOutputAndContinue("onLoaded fired: " + typeof time);
+    });
+    dispatchOnFrontend({ command: "reload" }, queueOutputAndContinue);
 }
 
 </script>

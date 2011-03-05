@@ -1,3 +1,9 @@
+2011-03-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Another shot at fixing flakiness of extension-events.html.
+
+        * inspector/extensions/extensions-events.html:
+
 2011-03-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium rebaseline, flaky test fix.
