@@ -1,3 +1,24 @@
+2011-03-05  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Allow dynamic enabling of detailed heap profiles.
+        https://bugs.webkit.org/show_bug.cgi?id=55824
+
+        Detailed heap profiles can be now enabled by typing "leakz" in Profiles tab.
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype.isDetailedSnapshot):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._finishHeapSnapshot.doParse):
+        (WebInspector.ProfilesPanel.prototype._finishHeapSnapshot):
+        (WebInspector.ProfilesPanel.prototype._reportHeapSnapshotProgress):
+        (WebInspector.ProfilesPanel.prototype.handleShortcut):
+        (WebInspector.ProfilesPanel.prototype._displayDetailedHeapProfilesEnabledHint.hideHint):
+        (WebInspector.ProfilesPanel.prototype._displayDetailedHeapProfilesEnabledHint):
+        (WebInspector.ProfilesPanel.prototype._enableDetailedHeapProfiles):
+        (WebInspector.ProfilesPanel.prototype._recognizeKeyboardCombo):
+
 2011-03-05  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Laszlo Gombos.

@@ -471,6 +471,12 @@ WebInspector.ProfilesPanel.prototype = {
             delete profile._is_loading;
             profile._loaded = true;
             profile.sideBarElement.subtitle = "";
+
+            if (!Preferences.detailedHeapProfiles && WebInspector.DetailedHeapshotView.prototype.isDetailedSnapshot(loadedSnapshot)) {
+                WebInspector.panels.profiles._enableDetailedHeapProfiles(false);
+                return;
+            }
+
             if (!Preferences.detailedHeapProfiles)
                 WebInspector.HeapSnapshotView.prototype.processLoadedSnapshot(profile, loadedSnapshot);
             else
@@ -684,6 +690,63 @@ WebInspector.ProfilesPanel.prototype = {
             if (done >= total)
                 this._removeProfileHeader(this._temporaryTakingSnapshot);
         }
+    },
+
+    handleShortcut: function(event)
+    {
+        if (!Preferences.heapProfilerPresent || Preferences.detailedHeapProfiles)
+            return;
+        var combo = ["U+004C", "U+0045", "U+0041", "U+004B", "U+005A"];  // "LEAKZ"
+        if (this._recognizeKeyboardCombo(combo, event)) {
+            this._displayDetailedHeapProfilesEnabledHint();          
+            this._enableDetailedHeapProfiles(true);
+        }
+    },
+
+    _recognizeKeyboardCombo: function(combo, event)
+    {
+        var isRecognized = false;
+        if (!this._comboPosition) {
+            if (event.keyIdentifier === combo[0])
+                this._comboPosition = 1;
+        } else if (event.keyIdentifier === combo[this._comboPosition]) {
+            if (++this._comboPosition === combo.length)
+                isRecognized = true;
+        } else
+            delete this._comboPosition;
+        if (this._comboPosition)
+            event.handled = true;
+        return isRecognized;
+    },
+    
+    _displayDetailedHeapProfilesEnabledHint: function()
+    {
+        var message = new WebInspector.HelpScreen("Congratulations!");
+        message.contentElement.addStyleClass("help-table");
+        message.contentElement.textContent = "Detailed Heap snapshots are now enabled.";
+        message.show();
+
+        function hideHint()
+        {
+            message._hide();
+        }
+
+        setTimeout(hideHint, 2000);
+    },
+
+    _enableDetailedHeapProfiles: function(resetAgent)
+    {
+        if (resetAgent)
+            this._clearProfiles();
+        else
+            this._reset();
+        var oldProfileType = this._profileTypesByIdMap[WebInspector.HeapSnapshotProfileType.TypeId];
+        var profileType = new WebInspector.DetailedHeapshotProfileType();
+        profileType.treeElement = oldProfileType.treeElement;
+        this._profileTypesByIdMap[profileType.id] = profileType;
+        Preferences.detailedHeapProfiles = true;
+        this.hide();
+        this.show();
     }
 }
 
