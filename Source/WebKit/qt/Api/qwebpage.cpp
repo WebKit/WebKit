@@ -140,7 +140,9 @@
 #if defined(Q_WS_X11)
 #include <QX11Info>
 #endif
-
+#if ENABLE(QT_USERAGENT_DEVICEMODEL)
+#include <qsysteminfo.h>
+#endif
 
 using namespace WebCore;
 
@@ -3719,6 +3721,10 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
         "Macintosh; "
 #elif defined Q_WS_QWS
         "QtEmbedded; "
+#elif defined Q_WS_MAEMO_5
+        "Maemo"
+#elif defined Q_WS_MAEMO_6
+        "MeeGo"
 #elif defined Q_WS_WIN
         // Nothing
 #elif defined Q_WS_X11
@@ -3838,6 +3844,7 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
 #elif defined Q_OS_IRIX
         firstPartTemp += QString::fromLatin1("SGI Irix");
 #elif defined Q_OS_LINUX
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
 
 #if defined(__x86_64__)
         firstPartTemp += QString::fromLatin1("Linux x86_64");
@@ -3845,6 +3852,7 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
         firstPartTemp += QString::fromLatin1("Linux i686");
 #else
         firstPartTemp += QString::fromLatin1("Linux");
+#endif
 #endif
 
 #elif defined Q_OS_LYNX
@@ -3895,6 +3903,17 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
         firstPartTemp += QString::fromLatin1("Unknown");
 #endif
 
+#if ENABLE(QT_USERAGENT_DEVICEMODEL)
+        // adding Model Number
+        QtMobility::QSystemDeviceInfo systemDeviceInfo;
+
+        QString model = systemDeviceInfo.model();
+        if (!model.isEmpty()) {
+            if (!firstPartTemp.endsWith("; "))
+                firstPartTemp += QString::fromLatin1("; ");
+            firstPartTemp += systemDeviceInfo.model();
+        }
+#endif
         firstPartTemp.squeeze();
         firstPart = firstPartTemp;
 
@@ -3914,7 +3933,7 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
 
         QString thirdPartTemp;
         thirdPartTemp.reserve(150);
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
         thirdPartTemp += QLatin1String(" Mobile Safari/");
 #else
         thirdPartTemp += QLatin1String(" Safari/");

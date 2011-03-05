@@ -131,6 +131,15 @@ contains(MOBILITY_CONFIG, sensors) {
    MOBILITY *= sensors
 }
 
+# systeminfo support if QtMobility systeminfo module exists, but only for symbian, maemo and meego
+symbian|maemo5|maemo6 {
+    !CONFIG(QTDIR_build):!contains(DEFINES, ENABLE_QT_USERAGENT_DEVICEMODEL=.) {
+        contains(MOBILITY_CONFIG, systeminfo) {
+            DEFINES += QT_USERAGENT_DEVICEMODEL=1
+        }
+    }
+}
+
 # Bearer management is part of Qt 4.7
 # for older version, check for mobility with bearer
 !contains(DEFINES, ENABLE_QT_BEARER=.) {

@@ -1,3 +1,15 @@
+2011-03-05  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Mobile Devices should include Model and Firmware Version in Webkit Generated User Agent String
+        https://bugs.webkit.org/show_bug.cgi?id=48636
+
+        Add model infomation into user agent string when qtmobility is available, but only for symbian, Maemo and MeeGo.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::userAgentForUrl):
+
 2011-03-03  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

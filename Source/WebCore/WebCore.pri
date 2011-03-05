@@ -229,6 +229,11 @@ contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
     MOBILITY *= sensors
 }
 
+contains(DEFINES, ENABLE_QT_USERAGENT_DEVICEMODEL=1) {
+     CONFIG *= mobility
+     MOBILITY *= systeminfo
+}
+
 contains(DEFINES, ENABLE_QT_BEARER=1) {
     # Bearer management is part of Qt 4.7, so don't accidentially
     # pull in Qt Mobility when building against >= 4.7
