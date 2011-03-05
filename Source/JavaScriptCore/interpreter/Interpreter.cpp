@@ -2468,6 +2468,8 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             exceptionValue = createErrorForInvalidGlobalAssignment(callFrame, ident.ustring());
             goto vm_throw;
         }
+
+        vPC += OPCODE_LENGTH(op_ensure_property_exists);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_resolve_with_base) {

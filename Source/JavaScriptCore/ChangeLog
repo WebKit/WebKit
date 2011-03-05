@@ -1,5 +1,16 @@
 2011-03-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by olliej.
+
+        Bug 54945 - The web page hangs towards the end of page load in Interpreter enabled javascript code in the latest webkit trunk.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+            (1) don't infinite loop.
+            (2) goto 1.
+
+2011-03-04  Gavin Barraclough  <barraclough@apple.com>
+
         cmake build fix.
 
         * CMakeLists.txt:
