@@ -34,18 +34,26 @@ function extension_testOnResourceFinished(nextTest)
 function extension_testPageLoadEvents(nextTest)
 {
     var callbackCount = 0;
+    var onLoadArgument;
+
     webInspector.inspectedWindow.onDOMContentLoaded.addListener(function(time) {
         output("onDOMContentLoaded fired: " + typeof time);
     });
+
+    // Logging on onLoaded is tricky due to race conditions with output("Page reloaded") in page initialization code.
+    // So only log when we're sure both onLoaded fired and reload is done.
+    function reloadCallback()
+    {
+        if (++callbackCount < 2)
+            return;
+        output("onLoaded fired: " + typeof onLoadArgument);
+        nextTest();
+    }
     webInspector.inspectedWindow.onLoaded.addListener(function(time) {
-        output("onLoaded fired: " + typeof time);
-        if (++callbackCount > 1)
-            nextTest();
+        onLoadArgument = time;
+        reloadCallback();
     });
-    dispatchOnFrontend({ command: "reload" }, function() {
-        if (++callbackCount > 1)
-            nextTest();
-    });
+    dispatchOnFrontend({ command: "reload" }, reloadCallback);
 }
 
 </script>

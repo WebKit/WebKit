@@ -1,3 +1,16 @@
+2011-03-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: inspector/extensions/extensions-events.html sometimes fails on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=54974
+
+        Properly serialize test output to fix flakiness due to race with output during page reload.
+
+        * inspector/extensions/extensions-events-expected.txt:
+        * inspector/extensions/extensions-events.html:
+        * platform/win/Skipped:
+
 2011-03-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

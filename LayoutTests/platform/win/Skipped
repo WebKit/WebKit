@@ -410,9 +410,6 @@ http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html
 # Needs windows-specific pixel results http://webkit.org/b/54757
 media/video-controls-in-media-document.html
 
-# Sometimes fails http://webkit.org/b/54974
-inspector/extensions/extensions-events.html
-
 # Sometimes crashes http://webkit.org/b/55375
 http/tests/websocket/tests/reload-crash.html
 
