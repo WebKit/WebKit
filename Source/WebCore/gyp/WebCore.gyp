@@ -34,6 +34,7 @@
         '<@(webcore_privateheader_files)',
       ],
       'xcode_config_file': '../Configurations/WebCore.xcconfig',
+      # FIXME: A number of these actions aren't supposed to run if "${ACTION}" = "installhdrs"
       'postbuilds': [
         {
           'postbuild_name': 'Check For Global Initializers',
@@ -53,7 +54,12 @@
             'sh', '<(DEPTH)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-weak-vtables-and-externals'
           ],
         },
-        # FIXME: Add "Check fo Inappropriate Files in Framework".
+        {
+          'postbuild_name': 'Check For Inappropriate Files in Framework',
+          'action': [
+            'sh', '<(DEPTH)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-inappropriate-files-in-framework'
+          ],
+        },
       ],
       'conditions': [
         ['OS=="mac"', {

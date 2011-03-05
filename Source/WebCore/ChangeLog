@@ -1,3 +1,12 @@
+2011-03-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebCore GYP build should Check For Inappropriate Files in Framework
+        https://bugs.webkit.org/show_bug.cgi?id=55806
+
+        * gyp/WebCore.gyp:
+
 2011-03-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.
