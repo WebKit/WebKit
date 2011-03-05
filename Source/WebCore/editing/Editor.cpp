@@ -2690,20 +2690,22 @@ void Editor::removeSpellAndCorrectionMarkersFromWordsToBeEdited(bool doNotRemove
     VisiblePosition startOfLastWord = startOfWord(endOfSelection, RightWordIfOnBoundary);
     VisiblePosition endOfLastWord = endOfWord(endOfSelection, RightWordIfOnBoundary);
 
-    // This can be the case if the end of selection is at the end of document.
-    if (endOfLastWord.deepEquivalent().anchorType() != Position::PositionIsOffsetInAnchor) {
-        startOfLastWord = startOfWord(frame()->selection()->selection().start(), LeftWordIfOnBoundary);
-        endOfLastWord = endOfWord(frame()->selection()->selection().start(), LeftWordIfOnBoundary);
+    if (startOfFirstWord.isNull()) {
+        startOfFirstWord = startOfWord(startOfSelection, RightWordIfOnBoundary);
+        endOfFirstWord = endOfWord(startOfSelection, RightWordIfOnBoundary);
+    }
+    
+    if (endOfLastWord.isNull()) {
+        startOfLastWord = startOfWord(endOfSelection, LeftWordIfOnBoundary);
+        endOfLastWord = endOfWord(endOfSelection, LeftWordIfOnBoundary);
     }
 
     // If doNotRemoveIfSelectionAtWordBoundary is true, and first word ends at the start of selection,
     // we choose next word as the first word.
     if (doNotRemoveIfSelectionAtWordBoundary && endOfFirstWord == startOfSelection) {
         startOfFirstWord = nextWordPosition(startOfFirstWord);
-        if (startOfFirstWord.isNull() || startOfFirstWord == endOfSelection)
-            return;
         endOfFirstWord = endOfWord(startOfFirstWord, RightWordIfOnBoundary);
-        if (endOfFirstWord.deepEquivalent().anchorType() != Position::PositionIsOffsetInAnchor)
+        if (startOfFirstWord == endOfSelection)
             return;
     }
 
@@ -2712,9 +2714,12 @@ void Editor::removeSpellAndCorrectionMarkersFromWordsToBeEdited(bool doNotRemove
     if (doNotRemoveIfSelectionAtWordBoundary && startOfLastWord == endOfSelection) {
         startOfLastWord = previousWordPosition(startOfLastWord);
         endOfLastWord = endOfWord(startOfLastWord, RightWordIfOnBoundary);
-        if (endOfLastWord == startOfFirstWord)
+        if (endOfLastWord == startOfSelection)
             return;
     }
+
+    if (startOfFirstWord.isNull() || endOfFirstWord.isNull() || startOfLastWord.isNull() || endOfLastWord.isNull())
+        return;
 
     // Now we remove markers on everything between startOfFirstWord and endOfLastWord.
     // However, if an autocorrection change a single word to multiple words, we want to remove correction mark from all the
