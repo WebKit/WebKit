@@ -1,3 +1,16 @@
+2011-03-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Use target_defaults to reduce boilerplate in GYP build system
+        https://bugs.webkit.org/show_bug.cgi?id=55790
+
+        Instead of setting up the configuration in each target, just defer to
+        target_defaults.  Also, removed a define that was redundant with the
+        xcconfig.
+
+        * gyp/JavaScriptGlue.gyp:
+
 2011-03-03  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled out 80277 and 80280 because they caused event handler layout test

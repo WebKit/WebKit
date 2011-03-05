@@ -1,5 +1,6 @@
 {
   'includes': [
+    '../../gyp/common.gypi',
     'JavaScriptGlue.gypi',
   ],
   'xcode_config_file': '<(DEPTH)/JavaScriptGlue/Configurations/DebugRelease.xcconfig',
@@ -24,13 +25,6 @@
         '$(SDKROOT)/System/Library/Frameworks/AppKit.framework',
       ],
       'xcode_config_file': '../Configurations/JavaScriptGlue.xcconfig',
-      'configurations': {
-        'Debug': {},
-      },
-      'default_configuration': 'Debug',
-      'defines': [
-        'WEBKIT_VERSION_MIN_REQUIRED=WEBKIT_VERSION_LATEST',
-      ],
       'postbuilds': [
         {
           'postbuild_name': 'Check For Global Initializers',

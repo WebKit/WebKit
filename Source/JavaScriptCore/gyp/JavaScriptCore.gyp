@@ -1,5 +1,6 @@
 {
   'includes': [
+    '../../gyp/common.gypi',
     '../JavaScriptCore.gypi',
   ],
   'xcode_config_file': '<(DEPTH)/JavaScriptCore/Configurations/DebugRelease.xcconfig',
@@ -76,15 +77,6 @@
         ['exclude', '.*BSTR.*$'],
         ['exclude', 'jsc.cpp$'],
       ],
-      'configurations': {
-        'Debug': {},
-        'Release': {},
-        'Production': {},
-      },
-      'default_configuration': 'Debug',
-      'defines': [
-        'WEBKIT_VERSION_MIN_REQUIRED=WEBKIT_VERSION_LATEST',
-      ],
       'postbuilds': [
         {
           'postbuild_name': 'Check For Global Initializers',
@@ -149,12 +141,6 @@
           'sh', 'generate-derived-sources.sh',
         ],
       }],
-      'configurations': {
-        'Debug': {},
-        'Release': {},
-        'Production': {},
-      },
-      'default_configuration': 'Debug',
     },
     {
       'target_name': 'Update Version',
@@ -167,12 +153,6 @@
            'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(DEPTH)/JavaScriptCore/Info.plist'
           ]
       }],
-      'configurations': {
-        'Debug': {},
-        'Release': {},
-        'Production': {},
-      },
-      'default_configuration': 'Debug',
     },
     {
       'target_name': 'minidom',
@@ -188,12 +168,6 @@
         '<@(minidom_files)',
         '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
       ],
-      'configurations': {
-        'Debug': {},
-        'Release': {},
-        'Production': {},
-      },
-      'default_configuration': 'Debug',
     },
     {
       'target_name': 'testapi',
@@ -209,12 +183,6 @@
         '<@(testapi_files)',
         '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
       ],
-      'configurations': {
-        'Debug': {},
-        'Release': {},
-        'Production': {},
-      },
-      'default_configuration': 'Debug',
     },
     {
       'target_name': 'jsc',
@@ -231,12 +199,6 @@
         '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
         'libedit.dylib',
       ],
-      'configurations': {
-        'Debug': {},
-        'Release': {},
-        'Production': {},
-      },
-      'default_configuration': 'Debug',
     },
   ], # targets
 }

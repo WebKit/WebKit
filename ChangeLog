@@ -1,3 +1,15 @@
+2011-03-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Use target_defaults to reduce boilerplate in GYP build system
+        https://bugs.webkit.org/show_bug.cgi?id=55790
+
+        This file contains GYP declarations that are shared by all the modules.
+        Currently, we use this to set up the configurations, albeit primitively.
+
+        * Source/gyp/common.gypi: Added.
+
 2011-03-03  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix. Ensure the ICU include dir comes before JavaScriptCore/wtf on Win
