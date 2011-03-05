@@ -894,10 +894,6 @@ void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammar
 void WebEditorClient::showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType panelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings, Editor* editor) {
     dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
 
-    NSRect boundingBoxAsNSRect = boundingBoxOfReplacedString;
-    NSRect webViewFrame = m_webView.frame;
-    boundingBoxAsNSRect.origin.y = webViewFrame.size.height-NSMaxY(boundingBoxAsNSRect);
-
     // Need to explicitly use these local NSString objects, because the C++ references may be invalidated by the time the block below is executed.
     NSString *replacedStringAsNSString = replacedString;
     NSString *replacementStringAsNSString = replacementString;
@@ -915,7 +911,7 @@ void WebEditorClient::showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelTyp
             [alternativeStrings addObject:(NSString*)alternativeReplacementStrings[i]];
     }
     NSSpellChecker *spellChecker = [NSSpellChecker sharedSpellChecker];
-    [[NSSpellChecker sharedSpellChecker] showCorrectionBubbleOfType:bubbleType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings forStringInRect:boundingBoxAsNSRect view:m_webView completionHandler:^(NSString *acceptedString) {
+    [[NSSpellChecker sharedSpellChecker] showCorrectionBubbleOfType:bubbleType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings forStringInRect:boundingBoxOfReplacedString view:m_webView completionHandler:^(NSString *acceptedString) {
         switch (bubbleType) {
         case NSCorrectionBubbleTypeCorrection:
             if (acceptedString)

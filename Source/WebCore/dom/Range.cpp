@@ -1903,22 +1903,8 @@ PassRefPtr<ClientRectList> Range::getClientRects() const
 
 PassRefPtr<ClientRect> Range::getBoundingClientRect() const
 {
-    if (!m_start.container())
-        return 0;
-
-    m_ownerDocument->updateLayoutIgnorePendingStylesheets();
-
-    Vector<FloatQuad> quads;
-    getBorderAndTextQuads(quads);
-
-    if (quads.isEmpty())
-        return ClientRect::create();
-
-    FloatRect result;
-    for (size_t i = 0; i < quads.size(); ++i)
-        result.unite(quads[i].boundingBox());
-
-    return ClientRect::create(result);
+    FloatRect rect = boundingRect();
+    return rect.isEmpty() ? 0 : ClientRect::create(rect);
 }
 
 static void adjustFloatQuadsForScrollAndAbsoluteZoom(Vector<FloatQuad>& quads, Document* document, RenderObject* renderer)
@@ -1971,6 +1957,26 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
             }
         }
     }
+}
+
+    
+FloatRect Range::boundingRect() const
+{
+    if (!m_start.container())
+        return FloatRect();
+
+    m_ownerDocument->updateLayoutIgnorePendingStylesheets();
+
+    Vector<FloatQuad> quads;
+    getBorderAndTextQuads(quads);
+    if (quads.isEmpty())
+        return FloatRect();
+
+    FloatRect result;
+    for (size_t i = 0; i < quads.size(); ++i)
+        result.unite(quads[i].boundingBox());
+
+    return result;
 }
 
 } // namespace WebCore

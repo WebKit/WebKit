@@ -102,19 +102,6 @@ static inline bool isAmbiguousBoundaryCharacter(UChar character)
     return character == '\'' || character == rightSingleQuotationMark || character == hebrewPunctuationGershayim;
 }
 
-#if SUPPORT_AUTOCORRECTION_PANEL
-static FloatRect boundingBoxForRange(Range* range)
-{
-    Vector<FloatQuad> textQuads;
-    range->getBorderAndTextQuads(textQuads);
-    FloatRect totalBoundingBox;
-    size_t size = textQuads.size();
-    for (size_t i = 0; i< size; ++i)
-        totalBoundingBox.unite(textQuads[i].boundingBox());
-    return totalBoundingBox;
-}
-#endif // SUPPORT_AUTOCORRECTION_PANEL
-
 static const Vector<DocumentMarker::MarkerType>& markerTypesForAutocorrection()
 {
     DEFINE_STATIC_LOCAL(Vector<DocumentMarker::MarkerType>, markerTypesForAutoCorrection, ());
@@ -2414,17 +2401,14 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
             if (shouldShowCorrectionPanel) {
                 if (resultLocation + resultLength == spellingRangeEndOffset) {
                     // We only show the correction panel on the last word.
-                    Vector<FloatQuad> textQuads;
-                    rangeToReplace->getBorderAndTextQuads(textQuads);
-                    Vector<FloatQuad>::const_iterator end = textQuads.end();
-                    FloatRect totalBoundingBox;
-                    for (Vector<FloatQuad>::const_iterator it = textQuads.begin(); it < end; ++it)
-                        totalBoundingBox.unite(it->boundingBox());
+                    FloatRect boundingBox = windowRectForRange(rangeToReplace.get());
+                    if (boundingBox.isEmpty())
+                        break;
                     m_correctionPanelInfo.rangeToBeReplaced = rangeToReplace;
                     m_correctionPanelInfo.replacedString = plainText(rangeToReplace.get());
                     m_correctionPanelInfo.replacementString = result->replacement;
                     m_correctionPanelInfo.isActive = true;
-                    client()->showCorrectionPanel(m_correctionPanelInfo.panelType, totalBoundingBox, m_correctionPanelInfo.replacedString, result->replacement, Vector<String>(), this);
+                    client()->showCorrectionPanel(m_correctionPanelInfo.panelType, boundingBox, m_correctionPanelInfo.replacedString, result->replacement, Vector<String>(), this);
                     break;
                 }
                 // If this function is called for showing correction panel, we ignore other correction or replacement.
@@ -2552,7 +2536,9 @@ void Editor::correctionPanelTimerFired(Timer<Editor>*)
     case CorrectionPanelInfo::PanelTypeReversion: {
         m_correctionPanelInfo.isActive = true;
         m_correctionPanelInfo.replacedString = plainText(m_correctionPanelInfo.rangeToBeReplaced.get());
-        client()->showCorrectionPanel(m_correctionPanelInfo.panelType, boundingBoxForRange(m_correctionPanelInfo.rangeToBeReplaced.get()), m_correctionPanelInfo.replacedString, m_correctionPanelInfo.replacementString, Vector<String>(), this);
+        FloatRect boundingBox = windowRectForRange(m_correctionPanelInfo.rangeToBeReplaced.get());
+        if (!boundingBox.isEmpty())
+            client()->showCorrectionPanel(m_correctionPanelInfo.panelType, boundingBox, m_correctionPanelInfo.replacedString, m_correctionPanelInfo.replacementString, Vector<String>(), this);
     }
         break;
     case CorrectionPanelInfo::PanelTypeSpellingSuggestions: {
@@ -2568,7 +2554,9 @@ void Editor::correctionPanelTimerFired(Timer<Editor>*)
         String topSuggestion = suggestions.first();
         suggestions.remove(0);
         m_correctionPanelInfo.isActive = true;
-        client()->showCorrectionPanel(m_correctionPanelInfo.panelType, boundingBoxForRange(m_correctionPanelInfo.rangeToBeReplaced.get()), m_correctionPanelInfo.replacedString, topSuggestion, suggestions, this);
+        FloatRect boundingBox = windowRectForRange(m_correctionPanelInfo.rangeToBeReplaced.get());
+        if (!boundingBox.isEmpty())
+            client()->showCorrectionPanel(m_correctionPanelInfo.panelType, boundingBox, m_correctionPanelInfo.replacedString, topSuggestion, suggestions, this);
     }
         break;
     }
@@ -3622,5 +3610,11 @@ bool Editor::selectionStartHasSpellingMarkerFor(int from, int length) const
 
     return false;
 }
+
+FloatRect Editor::windowRectForRange(const Range* range) const
+{
+    FrameView* view = frame()->view();
+    return view ? view->contentsToWindow(IntRect(range->boundingRect())) : FloatRect();
+}        
 
 } // namespace WebCore

@@ -430,6 +430,7 @@ private:
     void applyCorrectionPanelInfo(const Vector<DocumentMarker::MarkerType>& markerTypesToAdd);
     // Return true if correction was applied, false otherwise.
     bool applyAutocorrectionBeforeTypingIfAppropriate();
+    FloatRect windowRectForRange(const Range*) const;
 };
 
 inline void Editor::setStartNewKillRingSequence(bool flag)

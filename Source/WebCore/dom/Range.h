@@ -111,6 +111,7 @@ public:
     // Transform-friendly
     void textQuads(Vector<FloatQuad>&, bool useSelectionHeight = false);
     void getBorderAndTextQuads(Vector<FloatQuad>&) const;
+    FloatRect boundingRect() const;
 
     void nodeChildrenChanged(ContainerNode*);
     void nodeChildrenWillBeRemoved(ContainerNode*);

@@ -1,3 +1,17 @@
+2011-03-04  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        On Mac, the bounding box sent to EditorClient::showCorrectionPanel() is incorrect when the correction occurs in an iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=55717
+        <rdar://problem/9018127>
+
+        With the change in WebCore, the bounding box passed into EditorClient::showCorrectionPanel()
+        is already in window coordinate. We don't need to do further conversion anymore.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::showCorrectionPanel):
+
 2011-03-04  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Maciej Stachowiak.

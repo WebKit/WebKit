@@ -2,6 +2,32 @@
 
         Reviewed by Darin Adler.
 
+        On Mac, the bounding box sent to EditorClient::showCorrectionPanel() is incorrect when the correction occurs in an iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=55717
+        <rdar://problem/9018127>
+
+        manual-test: manual-tests/platforms/mac/autocorrection/autocorrection-in-iframe.html
+
+        Previously, the bounding box passed into EditorClient::showCorrectionPanel() is in the frame's
+        coordinate. This is incorrect when the correction occurs in an iframe. This patch added code
+        to convert the bounding box to window coordinate using ScrollView::contentToWindow().
+
+        * dom/Range.cpp:
+        (WebCore::Range::getBoundingClientRect):
+        (WebCore::Range::boundingRect):
+        * dom/Range.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::correctionPanelTimerFired):
+        (WebCore::Editor::windowRectForRange):
+        * editing/Editor.h:
+        * manual-tests/autocorrection/autocorrection-in-iframe.html: Added.
+        * manual-tests/autocorrection/document-for-iframe-test.html: Added.
+
+2011-03-04  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
         Those checking in Editor::removeSpellAndCorrectionMarkersFromWordsToBeEdited() should be done with VisiblePosition::isNull().
         https://bugs.webkit.org/show_bug.cgi?id=55731
 
