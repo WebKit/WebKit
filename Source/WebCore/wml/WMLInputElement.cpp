@@ -41,6 +41,7 @@ WMLInputElement::WMLInputElement(const QualifiedName& tagName, Document* doc)
     : WMLFormControlElement(tagName, doc)
     , m_isPasswordField(false)
     , m_isEmptyOk(false)
+    , m_wasChangedSinceLastChangeEvent(false)
     , m_numOfCharsAllowedByMask(0)
 {
 }
@@ -173,6 +174,16 @@ void WMLInputElement::setValueFromRenderer(const String& value)
     InputElement::setValueFromRenderer(m_data, this, this, value);
 }
 
+bool WMLInputElement::wasChangedSinceLastFormControlChangeEvent() const
+{
+    return m_wasChangedSinceLastChangeEvent;
+}
+
+void WMLInputElement::setChangedSinceLastFormControlChangeEvent(bool changed)
+{
+    m_wasChangedSinceLastChangeEvent = changed;
+}
+
 bool WMLInputElement::saveFormControlState(String& result) const
 {
     if (m_isPasswordField)
@@ -296,14 +307,9 @@ void WMLInputElement::defaultEventHandler(Event* evt)
 
     if (clickDefaultFormButton) {
         // Fire onChange for text fields.
-        RenderObject* r = renderer();
-        if (r && toRenderTextControl(r)->wasChangedSinceLastChangeEvent()) {
+        if (wasChangedSinceLastChangeEvent()) {
+            setChangedSinceLastChangeEvent(false);
             dispatchEvent(Event::create(eventNames().changeEvent, true, false));
-            
-            // Refetch the renderer since arbitrary JS code run during onchange can do anything, including destroying it.
-            r = renderer();
-            if (r)
-                toRenderTextControl(r)->setChangedSinceLastChangeEvent(false);
         }
 
         evt->setDefaultHandled();

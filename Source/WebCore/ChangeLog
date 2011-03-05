@@ -1,3 +1,51 @@
+2011-03-05  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::setValue() should schedule change event when the element is focused.
+        Refactored tracking of "changed since last change event" state from renderer to DOM.In service of https://code.google.com/p/chromium/issues
+        In service of https://code.google.com/p/chromium/issues/detail?id=42716
+        https://bugs.webkit.org/show_bug.cgi?id=53160
+
+        Test: fast/forms/onchange-change-type.html
+        Test: fast/forms/onchange-setvalueforuser.html
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * dom/Element.h:
+        (WebCore::Element::wasChangedSinceLastFormControlChangeEvent): Added.
+        (WebCore::Element::setChangedSinceLastFormControlChangeEvent): Added.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement):
+        (WebCore::HTMLFormControlElement::wasChangedSinceLastFormControlChangeEvent): Added.
+        (WebCore::HTMLFormControlElement::setChangedSinceLastFormControlChangeEvent): Added.
+        (WebCore::HTMLFormControlElement::dispatchFormControlChangeEvent): Also clear the "changed since last change event" flag.
+        (WebCore::HTMLFormControlElement::dispatchFormControlInputEvent): Also set the "changed since last change event" flag.
+        * html/HTMLFormControlElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType): Also clear the "changed since last change event" flag.
+        (WebCore::HTMLInputElement::setValue):
+            For a focused text field, dispatch an input event, but delay the change event until the field loses focus.
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        (WebCore::HTMLInputElement::stepUpFromRenderer):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldCancelButtonElement::defaultEventHandler):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl):
+        (WebCore::RenderTextControl::subtreeHasChanged):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::subtreeHasChanged):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::subtreeHasChanged):
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::WMLInputElement):
+        (WebCore::WMLInputElement::defaultEventHandler):
+        * wml/WMLInputElement.h:
+        (WebCore::WMLInputElement::wasChangedSinceLastFormControlChangeEvent): Added.
+        (WebCore::WMLInputElement::setChangedSinceLastFormControlChangeEvent): Added.
+
 2011-03-04  Xianzhu Wang  <wangxianzhu@google.com>
 
         Reviewed by Adam Barth.

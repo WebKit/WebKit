@@ -36,9 +36,6 @@ public:
 
     HTMLElement* innerTextElement() const;
 
-    bool wasChangedSinceLastChangeEvent() const { return m_wasChangedSinceLastChangeEvent; }
-    void setChangedSinceLastChangeEvent(bool wasChangedSinceLastChangeEvent) { m_wasChangedSinceLastChangeEvent = wasChangedSinceLastChangeEvent; }
-
     bool lastChangeWasUserEdit() const { return m_lastChangeWasUserEdit; }
     void setLastChangeWasUserEdit(bool lastChangeWasUserEdit);
 
@@ -115,7 +112,6 @@ private:
 
     void paintPlaceholder(PaintInfo&, int tx, int ty);
 
-    bool m_wasChangedSinceLastChangeEvent;
     bool m_lastChangeWasUserEdit;
     RefPtr<TextControlInnerTextElement> m_innerText;
 };

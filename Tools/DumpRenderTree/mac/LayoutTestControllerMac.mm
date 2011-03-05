@@ -479,6 +479,16 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
     [[WebPreferences standardPreferences] setUserStyleSheetLocation:url];
 }
 
+void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
+{
+    DOMElement *element = [DOMElement _DOMElementFromJSContext:context value:nodeObject];
+    if (!element || ![element isKindOfClass:[DOMHTMLInputElement class]])
+        return;
+    
+    RetainPtr<CFStringRef> valueCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, value));
+    [(DOMHTMLInputElement *)element _setValueForUser:(NSString *)valueCF.get()];
+}
+
 void LayoutTestController::setViewModeMediaFeature(JSStringRef mode)
 {
     // FIXME: implement

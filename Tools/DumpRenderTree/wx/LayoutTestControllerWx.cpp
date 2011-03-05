@@ -135,6 +135,11 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
 {
 }
 
+void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef element, JSStringRef value)
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::setViewModeMediaFeature(JSStringRef mode)
 {
     // FIXME: implement

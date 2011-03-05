@@ -326,6 +326,8 @@ public:
     virtual bool saveFormControlState(String&) const { return false; }
     virtual void restoreFormControlState(const String&) { }
 
+    virtual bool wasChangedSinceLastFormControlChangeEvent() const;
+    virtual void setChangedSinceLastFormControlChangeEvent(bool);
     virtual void dispatchFormControlChangeEvent() { }
 
 #if ENABLE(SVG)

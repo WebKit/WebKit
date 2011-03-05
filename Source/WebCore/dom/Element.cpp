@@ -888,6 +888,14 @@ RenderObject* Element::createRenderer(RenderArena* arena, RenderStyle* style)
     return RenderObject::createObject(this, style);
 }
 
+bool Element::wasChangedSinceLastFormControlChangeEvent() const
+{
+    return false;
+}
+
+void Element::setChangedSinceLastFormControlChangeEvent(bool)
+{
+}
 
 void Element::insertedIntoDocument()
 {

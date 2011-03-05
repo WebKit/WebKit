@@ -196,6 +196,4 @@ namespace WebCore {
 - (void)_fullScreenRendererChanged:(WebCore::RenderBox*)renderer;
 #endif
 
-- (JSValueRef)_computedStyleIncludingVisitedInfo:(JSContextRef)context forElement:(JSValueRef)value;
-
 @end

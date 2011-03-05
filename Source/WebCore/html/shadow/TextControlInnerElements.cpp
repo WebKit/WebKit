@@ -211,11 +211,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
             }
             if (hovered()) {
                 String oldValue = input->value();
-                input->setValue("");
-                if (!oldValue.isEmpty()) {
-                    toRenderTextControl(input->renderer())->setChangedSinceLastChangeEvent(true);
-                    input->dispatchFormControlInputEvent();
-                }
+                input->setValueForUser("");
                 input->onSearch();
                 event->setDefaultHandled();
             }

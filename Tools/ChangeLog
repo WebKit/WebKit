@@ -1,3 +1,26 @@
+2011-03-05  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::setValue() should schedule change event when the element is focused
+        In service of https://code.google.com/p/chromium/issues/detail?id=42716
+        https://bugs.webkit.org/show_bug.cgi?id=53160
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setValueForUserCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setValueForUser): Stubbed out; need real implementation.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setValueForUser): Expose HTMLInputElement::setValueForUser() to tests
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setValueForUser): Stubbed out; need real implementation.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setValueForUser): Stubbed out; need real implementation.
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setValueForUser): Stubbed out; need real implementation.
+
 2011-03-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -332,6 +332,11 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
         setUserStyleSheetEnabled(true);
 }
 
+void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef element, JSStringRef value)
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::setViewModeMediaFeature(JSStringRef mode)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);

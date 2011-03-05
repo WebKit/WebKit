@@ -38,6 +38,10 @@
 - (NSArray *)_focusableNodes;
 @end
 
+@interface DOMHTMLInputElement (WebDOMHTMLInputElementOperationsPrivate)
+- (void)_setValueForUser:(NSString *)value;
+@end
+
 @interface DOMNode (WebDOMNodeOperationsPendingPublic)
 - (NSString *)markupString;
 - (NSRect)_renderRect:(bool *)isReplaced;

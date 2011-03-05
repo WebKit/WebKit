@@ -181,8 +181,12 @@ void RenderTextControlSingleLine::hidePopup()
 
 void RenderTextControlSingleLine::subtreeHasChanged()
 {
-    bool wasChanged = wasChangedSinceLastChangeEvent();
     RenderTextControl::subtreeHasChanged();
+
+    ASSERT(node()->isElementNode());
+    Element* element = static_cast<Element*>(node());
+    bool wasChanged = element->wasChangedSinceLastFormControlChangeEvent();
+    element->setChangedSinceLastFormControlChangeEvent(true);
 
     InputElement* input = inputElement();
     // We don't need to call sanitizeUserInputValue() function here because

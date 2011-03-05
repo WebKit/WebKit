@@ -65,6 +65,7 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     , m_willValidateInitialized(false)
     , m_willValidate(true)
     , m_isValid(true)
+    , m_wasChangedSinceLastFormControlChangeEvent(false)
 {
     if (!this->form())
         setForm(findFormAncestor());
@@ -188,13 +189,25 @@ void HTMLFormControlElement::setName(const AtomicString& value)
     setAttribute(nameAttr, value);
 }
 
+bool HTMLFormControlElement::wasChangedSinceLastFormControlChangeEvent() const
+{
+    return m_wasChangedSinceLastFormControlChangeEvent;
+}
+
+void HTMLFormControlElement::setChangedSinceLastFormControlChangeEvent(bool changed)
+{
+    m_wasChangedSinceLastFormControlChangeEvent = changed;
+}
+
 void HTMLFormControlElement::dispatchFormControlChangeEvent()
 {
     HTMLElement::dispatchChangeEvents();
+    setChangedSinceLastFormControlChangeEvent(false);
 }
 
 void HTMLFormControlElement::dispatchFormControlInputEvent()
 {
+    setChangedSinceLastFormControlChangeEvent(true);
     HTMLElement::dispatchInputEvents();
 }
 

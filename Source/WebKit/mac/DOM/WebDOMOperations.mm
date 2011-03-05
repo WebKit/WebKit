@@ -39,6 +39,7 @@
 #import "WebKitNSStringExtras.h"
 #import <JavaScriptCore/APICast.h>
 #import <WebCore/Document.h>
+#import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/JSElement.h>
 #import <WebCore/LegacyWebArchive.h>
@@ -190,6 +191,15 @@ using namespace JSC;
 - (WebFrame *)contentFrame
 {
     return [[self contentDocument] webFrame];
+}
+
+@end
+
+@implementation DOMHTMLInputElement (WebDOMHTMLInputElementOperationsPrivate)
+
+- (void)_setValueForUser:(NSString *)value
+{
+    static_cast<HTMLInputElement*>(core(self))->setValueForUser(value);
 }
 
 @end

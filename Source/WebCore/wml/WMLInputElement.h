@@ -67,6 +67,9 @@ public:
     virtual String convertFromVisibleValue(const String& value) const { return value; }
     virtual void setValueFromRenderer(const String&);
 
+    virtual bool wasChangedSinceLastFormControlChangeEvent() const;
+    virtual void setChangedSinceLastFormControlChangeEvent(bool);
+
     virtual bool saveFormControlState(String& value) const;
     virtual void restoreFormControlState(const String&);
 
@@ -110,6 +113,7 @@ private:
     InputElementData m_data;
     bool m_isPasswordField;
     bool m_isEmptyOk;
+    bool m_wasChangedSinceLastChangeEvent;
     String m_formatMask;
     unsigned m_numOfCharsAllowedByMask;
 };

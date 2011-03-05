@@ -1,3 +1,16 @@
+2011-03-05  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::setValue() should schedule change event when the element is focused
+        In service of https://code.google.com/p/chromium/issues/detail?id=42716
+        https://bugs.webkit.org/show_bug.cgi?id=53160
+
+        * fast/forms/onchange-change-type-expected.txt: Added.
+        * fast/forms/onchange-change-type.html: Added.
+        * fast/forms/onchange-setvalueforuser-expected.txt: Added.
+        * fast/forms/onchange-setvalueforuser.html: Added.
+
 2011-03-04  Victoria Kirst  <vrk@google.com>
 
         Reviewed by Eric Carlson.

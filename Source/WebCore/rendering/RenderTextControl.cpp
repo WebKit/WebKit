@@ -74,7 +74,6 @@ static Color disabledTextColor(const Color& textColor, const Color& backgroundCo
 RenderTextControl::RenderTextControl(Node* node, bool placeholderVisible)
     : RenderBlock(node)
     , m_placeholderVisible(placeholderVisible)
-    , m_wasChangedSinceLastChangeEvent(false)
     , m_lastChangeWasUserEdit(false)
 {
 }
@@ -351,7 +350,6 @@ int RenderTextControl::indexForVisiblePosition(const VisiblePosition& pos) const
 
 void RenderTextControl::subtreeHasChanged()
 {
-    m_wasChangedSinceLastChangeEvent = true;
     m_lastChangeWasUserEdit = true;
 }
 
