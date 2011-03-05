@@ -1,3 +1,9 @@
+2011-03-04  Gavin Barraclough  <barraclough@apple.com>
+
+        cmake build fix.
+
+        * CMakeLists.txt:
+
 2011-03-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
