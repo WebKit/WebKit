@@ -741,6 +741,9 @@ http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.htm
 http/tests/xmlhttprequest/default-content-type-dashboard.html
 http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
 
+# Missing layoutTestController.setValueForUser()
+fast/forms/onchange-setvalueforuser.html
+
 # Missing layoutTestController.testRepaint()
 fast/repaint/table-writing-modes-h.html
 fast/repaint/table-writing-modes-v.html

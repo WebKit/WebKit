@@ -1,3 +1,13 @@
+2011-03-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Add fast/forms/onchange-setvalueforuser.html to the Skipped
+        list because of missing layoutTestController.setValueForUser()
+
+        * platform/qt/Skipped: 
+
+
 2011-03-05  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Darin Adler.
