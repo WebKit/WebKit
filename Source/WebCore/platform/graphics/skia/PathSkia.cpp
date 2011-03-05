@@ -144,7 +144,8 @@ void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool anticlo
         // Move to the start position (0 sweep means we add a single point).
         m_path->arcTo(oval, startDegrees, 0, false);
         // Draw the circle.
-        m_path->addOval(oval);
+        m_path->addOval(oval, anticlockwise ?
+            SkPath::kCCW_Direction : SkPath::kCW_Direction);
         // Force a moveTo the end position.
         m_path->arcTo(oval, startDegrees + sweepDegrees, 0, true);
     } else {

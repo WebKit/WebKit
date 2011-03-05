@@ -1,3 +1,12 @@
+2011-03-04  Mike Reed  <reed@google.com>
+
+        Reviewed by Mihai Parparita.
+
+        [Chromium] fast/canvas/canvas-arc-360-winding.html fails on Linux and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=49477
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-04  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Adam Barth.
