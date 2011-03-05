@@ -17,6 +17,7 @@
       ],
       'include_dirs': [
         '<@(webcore_include_dirs)',
+        '<(DEPTH)/WebCore/ForwardingHeaders',
       ],
       'sources': [
         '<@(webcore_files)',

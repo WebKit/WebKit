@@ -1,3 +1,18 @@
+2011-03-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        WebCore GYP build should generate fewer than 10,000 compile errors per file
+        https://bugs.webkit.org/show_bug.cgi?id=55810
+
+        This patch adds some missing include paths.  We need to figure out how
+        to handle separate include paths per port.  It's clear that
+        ForwardingHeaders are only useful for Mac, but it's less clear how to
+        handle the others.
+
+        * WebCore.gypi:
+        * gyp/WebCore.gyp:
+
 2011-03-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Cameron Zwarich.
