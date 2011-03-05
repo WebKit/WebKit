@@ -862,7 +862,16 @@ generator_script = perl $(addprefix -I $(WebCore)/, $(sort $(dir $(1)))) $(WebCo
 
 # JS bindings generator
 
-IDL_INCLUDES = dom fileapi html css page notifications xml svg
+IDL_INCLUDES = \
+    $(WebCore)/dom \
+    $(WebCore)/fileapi \
+    $(WebCore)/html \
+    $(WebCore)/css \
+    $(WebCore)/page \
+    $(WebCore)/notifications \
+    $(WebCore)/xml \
+    $(WebCore)/svg
+
 IDL_COMMON_ARGS = $(IDL_INCLUDES:%=--include %) --write-dependencies --outputDir .
 
 JS_BINDINGS_SCRIPTS = $(GENERATE_SCRIPTS) bindings/scripts/CodeGeneratorJS.pm

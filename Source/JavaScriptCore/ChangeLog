@@ -1,3 +1,14 @@
+2011-03-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add Derived Sources to WebCore GYP build
+        https://bugs.webkit.org/show_bug.cgi?id=55813
+
+        Rename the action to be friendlier.
+
+        * gyp/JavaScriptCore.gyp:
+
 2011-03-04  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         Reviewed by Laszlo Gombos.

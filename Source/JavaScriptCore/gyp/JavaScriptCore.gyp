@@ -134,7 +134,7 @@
       'target_name': 'Derived Sources',
       'type': 'none',
       'actions': [{
-        'action_name': 'generate_derived_sources',
+        'action_name': 'Generate Derived Sources',
         'inputs': [],
         'outputs': [],
         'action': [
