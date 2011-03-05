@@ -55,6 +55,8 @@ struct WKPrintInfo {
     float availablePaperWidth;
     float availablePaperHeight;
 };
+typedef struct WKPrintInfo WKPrintInfo;
+
 typedef void (*WKPageComputePagesForPrintingFunction)(WKRect* pageRects, uint32_t pageCount, double resultPageScaleFactor, WKErrorRef error, void* functionContext);
 WK_EXPORT void WKPageComputePagesForPrinting(WKPageRef page, WKFrameRef frame, const WKPrintInfo&, WKPageComputePagesForPrintingFunction, void* context);
 

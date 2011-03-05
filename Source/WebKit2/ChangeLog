@@ -1,5 +1,11 @@
 2011-03-04  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        WK2 Mac build fix.
+
+        * UIProcess/API/C/WKPagePrivate.h:
+
+2011-03-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
         WK2 needs printing support on Windows
         https://bugs.webkit.org/show_bug.cgi?id=55800
         <rdar://problem/8903808>
