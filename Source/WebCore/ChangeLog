@@ -1,3 +1,15 @@
+2011-03-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        <rdar://problem/9082946> Make the Core Text code path in GlyphPage::fill() more robust
+        https://bugs.webkit.org/show_bug.cgi?id=55817
+
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        (WebCore::GlyphPage::fill): When determining if a CTRun uses the primary font, compare against
+        a CGFont obtained from Core Text for the primary font. This CGFont may be different from
+        the CGFont stored in the FontPlatformData.
+
 2011-03-05  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Darin Adler.
