@@ -1,3 +1,12 @@
+2011-03-04  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [chromium] pause when script is running is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=55762
+
+        * inspector/CodeGeneratorInspector.pm:
+
 2011-03-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

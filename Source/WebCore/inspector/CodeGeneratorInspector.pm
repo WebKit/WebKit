@@ -648,6 +648,11 @@ sub generateBackendDispatcher
     my $mapEntries = join("\n", @mapEntries);
 
     my $backendDispatcherBody = << "EOF";
+static String commandName(const String& domain, const String& command)
+{
+    return makeString(domain, "_", command);
+}
+
 void ${backendClassName}::dispatch(const String& message)
 {
     typedef void (${backendClassName}::*CallHandler)(long callId, InspectorObject* messageObject);
@@ -706,7 +711,7 @@ $mapEntries
         return;
     }
 
-    HashMap<String, CallHandler>::iterator it = dispatchMap.find(makeString(domain, "_", command));
+    HashMap<String, CallHandler>::iterator it = dispatchMap.find(commandName(domain, command));
     if (it == dispatchMap.end()) {
         reportProtocolError(callId, makeString("Protocol Error: Invalid command was received. '", command, "' wasn't found in domain ", domain, "."));
         return;
@@ -731,11 +736,16 @@ bool ${backendClassName}::getCommandName(const String& message, String* result)
     if (!object)
         return false;
 
-    RefPtr<InspectorValue> commandValue = object->get("command");
-    if (!commandValue)
+    String domain;
+    if (!object->getString("domain", &domain))
         return false;
 
-    return commandValue->asString(result);
+    String command;
+    if (!object->getString("command", &command))
+        return false;
+
+    *result = commandName(domain, command);
+    return true;
 }
 EOF
     return split("\n", $messageParserBody);
