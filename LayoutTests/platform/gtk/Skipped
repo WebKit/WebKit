@@ -513,6 +513,7 @@ http/tests/multipart/invalid-image-data.html
 http/tests/multipart/invalid-image-data-standalone.html
 
 http/tests/plugins/npapi-response-headers.html
+http/tests/plugins/post-url-file.html
 http/tests/security/feed-urls-from-remote.html
 http/tests/security/mixedContent/insecure-css-in-main-frame.html
 http/tests/security/mixedContent/insecure-iframe-in-main-frame.html

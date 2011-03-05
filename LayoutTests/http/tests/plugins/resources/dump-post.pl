@@ -7,4 +7,4 @@ my $cgi = new CGI;
 # Just dump whatever was POSTed to us as text/plain.
 
 print $cgi->header('text/plain');
-print $cgi->param('POSTDATA');
+print $cgi->param('keywords');

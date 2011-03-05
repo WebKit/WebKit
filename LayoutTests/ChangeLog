@@ -1,3 +1,14 @@
+2011-03-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80428.
+        http://trac.webkit.org/changeset/80428
+        https://bugs.webkit.org/show_bug.cgi?id=55833
+
+        Broke SnowLeopard (Requested by xan_ on #webkit).
+
+        * http/tests/plugins/resources/dump-post.pl:
+        * platform/gtk/Skipped:
+
 2011-03-05  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
