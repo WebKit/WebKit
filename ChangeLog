@@ -2,6 +2,19 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Add a basic configure script for the GYP build
+        https://bugs.webkit.org/show_bug.cgi?id=55791
+
+        This script just calls GYP on the various gyp projects.  As we add more
+        build systems, this script should be able to select which of them you'd
+        like to generate the project for.
+
+        * Source/gyp/configure: Added.
+
+2011-03-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Use target_defaults to reduce boilerplate in GYP build system
         https://bugs.webkit.org/show_bug.cgi?id=55790
 
