@@ -1,3 +1,15 @@
+2011-03-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add skeletal WebCore.gyp
+        https://bugs.webkit.org/show_bug.cgi?id=55802
+
+        This doesn't yet build, but the basic structure is there.
+
+        * WebCore.gypi: Added headers and include directories variables.
+        * gyp/WebCore.gyp: Added.
+
 2011-03-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

@@ -35,6 +35,7 @@ import subprocess
 PROJECTS = [
     "JavaScriptGlue",
     "JavaScriptCore",
+    "WebCore",
 ]
 
 
