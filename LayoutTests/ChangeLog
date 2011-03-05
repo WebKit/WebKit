@@ -1,3 +1,13 @@
+2011-03-04  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Test that scripts with unknown types aren't loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=51760
+
+        * fast/dom/HTMLScriptElement/dont-load-unknown-type-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/dont-load-unknown-type.html: Added.
+
 2011-03-04  John Bauman  <jbauman@chromium.org>
 
         Reviewed by Kenneth Russell.
