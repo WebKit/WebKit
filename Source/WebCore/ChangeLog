@@ -1,5 +1,13 @@
 2011-03-05  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: adding null check to prevent inspector tests from failing.
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorGutterChunk.prototype.get offsetTop):
+        (WebInspector.TextEditorMainChunk.prototype.get offsetTop):
+
+2011-03-05  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: chromium rebaseline, flaky test fix.
 
         * inspector/front-end/BreakpointManager.js:

@@ -652,7 +652,7 @@ WebInspector.TextEditorGutterChunk.prototype = {
 
     get offsetTop()
     {
-        return this._expandedLineRows ? this._expandedLineRows[0].offsetTop : this.element.offsetTop;
+        return (this._expandedLineRows && this._expandedLineRows.length) ? this._expandedLineRows[0].offsetTop : this.element.offsetTop;
     },
 
     _createRow: function(lineNumber)
@@ -1524,7 +1524,7 @@ WebInspector.TextEditorMainChunk.prototype = {
 
     get offsetTop()
     {
-        return this._expandedLineRows ? this._expandedLineRows[0].offsetTop : this.element.offsetTop;
+        return (this._expandedLineRows && this._expandedLineRows.length) ? this._expandedLineRows[0].offsetTop : this.element.offsetTop;
     },
 
     _createRow: function(lineNumber)
