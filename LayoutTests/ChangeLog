@@ -1,3 +1,16 @@
+2011-03-05  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] http/tests/plugins/post-url-file.html fails on GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=55826
+
+        * http/tests/plugins/resources/dump-post.pl: Instead of printing out the "keywords" parameter,
+        print out the POSTDATA parameter. Printing "keywords" did not seem to work on the version of
+        Apache/Perl/CGI that existed on my machine. According to the Perl CGI module documentation
+        using 'POSTDATA' is the correct way to print the entire POSTDATA.
+        * platform/gtk/Skipped: Unskip the test which is now passing.
+
 2011-03-05  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Another shot at fixing flakiness of extension-events.html.

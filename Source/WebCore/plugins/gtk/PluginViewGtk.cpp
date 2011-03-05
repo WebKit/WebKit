@@ -551,30 +551,32 @@ void PluginView::setParentVisible(bool visible)
     }
 }
 
-NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32_t len, const char* buf)
+NPError PluginView::handlePostReadFile(Vector<char>& outputBuffer, uint32_t filenameLength, const char* filenameBuffer)
 {
-    WTF::String filename(buf, len);
+    // There doesn't seem to be any documentation about what encoding the filename
+    // is in, but most ports seem to assume UTF-8 here and the test plugin is definitely
+    // sending the path in UTF-8 encoding.
+    CString filename(filenameBuffer, filenameLength);
 
-    if (filename.startsWith("file:///"))
-        filename = filename.substring(8);
-
-    // Get file info
-    if (!g_file_test ((filename.utf8()).data(), (GFileTest)(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR)))
+    GRefPtr<GFile> file = adoptGRef(g_file_new_for_commandline_arg(filename.data()));
+    if (g_file_query_file_type(file.get(), G_FILE_QUERY_INFO_NONE, 0) != G_FILE_TYPE_REGULAR)
         return NPERR_FILE_NOT_FOUND;
 
-    //FIXME - read the file data into buffer
-    FILE* fileHandle = fopen((filename.utf8()).data(), "r");
-    
-    if (fileHandle == 0)
+    GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_info(file.get(),
+                                                              G_FILE_ATTRIBUTE_STANDARD_SIZE,
+                                                              G_FILE_QUERY_INFO_NONE,
+                                                              0, 0));
+    if (!fileInfo)
         return NPERR_FILE_NOT_FOUND;
 
-    //buffer.resize();
+    GRefPtr<GFileInputStream> inputStream = adoptGRef(g_file_read(file.get(), 0, 0));
+    if (!inputStream)
+        return NPERR_FILE_NOT_FOUND;
 
-    int bytesRead = fread(buffer.data(), 1, 0, fileHandle);
-
-    fclose(fileHandle);
-
-    if (bytesRead <= 0)
+    outputBuffer.resize(g_file_info_get_size(fileInfo.get()));
+    gsize bytesRead = 0;
+    if (!g_input_stream_read_all(G_INPUT_STREAM(inputStream.get()),
+                                 outputBuffer.data(), outputBuffer.size(), &bytesRead, 0, 0))
         return NPERR_FILE_NOT_FOUND;
 
     return NPERR_NO_ERROR;

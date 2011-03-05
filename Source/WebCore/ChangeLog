@@ -1,3 +1,17 @@
+2011-03-05  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] http/tests/plugins/post-url-file.html fails on GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=55826
+
+        Correct the implementation of handlePostReadFile which uses GIO APIs and
+        actually resizes the buffer to fit the entire size of the file data. This
+        was likely leading to memory corruption until now.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::handlePostReadFile): Fix this method.
+
 2011-03-05  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
