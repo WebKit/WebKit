@@ -1,3 +1,15 @@
+2011-03-04  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Need symbian version of cryptographicallyRandomValuesFromOS
+        https://bugs.webkit.org/show_bug.cgi?id=55782
+
+        Implement Symbian version of cryptographicallyRandomValuesFromOS
+
+        * wtf/OSRandomSource.cpp:
+        (WTF::cryptographicallyRandomValuesFromOS):
+
 2011-03-04  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by olliej.
