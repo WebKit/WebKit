@@ -1,3 +1,15 @@
+2011-03-04  Jessie Berlin  <jberlin@apple.com>
+
+        [Snow Leopard Release Tests] accessibility/plugin.html,
+        compositing/geometry/empty-embed-rects.html, and fast/loader/loadInProgress.html timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=55805
+        https://bugs.webkit.org/show_bug.cgi?id=55807
+        https://bugs.webkit.org/show_bug.cgi?id=55808
+
+        Unreviewed. Add these tests to the Snow Leopard skipped list to get the bots green.
+
+        * platform/mac-snowleopard/Skipped:
+
 2011-03-04  Tony Gentilcore  <tonyg@chromium.org>
 
         [chromium] Fail new test for JSC feature introduced by r80378

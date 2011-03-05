@@ -154,3 +154,12 @@ plugins/nested-plugin-objects.html
 
 # Very flaky: https://bugs.webkit.org/show_bug.cgi?id=50255
 compositing/iframes/overlapped-nested-iframes.html
+
+# Times out https://bugs.webkit.org/show_bug.cgi?id=55805
+accessibility/plugin.html
+
+# Times out https://bugs.webkit.org/show_bug.cgi?id=55807
+compositing/geometry/empty-embed-rects.html
+
+# Times out https://bugs.webkit.org/show_bug.cgi?id=55808
+fast/loader/loadInProgress.html
