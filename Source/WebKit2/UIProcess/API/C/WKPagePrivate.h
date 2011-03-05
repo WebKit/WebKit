@@ -50,6 +50,18 @@ typedef unsigned WKPageDebugPaintFlags;
 WK_EXPORT void WKPageSetDebugPaintFlags(WKPageDebugPaintFlags flags);
 WK_EXPORT WKPageDebugPaintFlags WKPageGetDebugPaintFlags(void);
 
+struct WKPrintInfo {
+    float pageSetupScaleFactor;
+    float availablePaperWidth;
+    float availablePaperHeight;
+};
+typedef void (*WKPageComputePagesForPrintingFunction)(WKRect* pageRects, uint32_t pageCount, double resultPageScaleFactor, WKErrorRef error, void* functionContext);
+WK_EXPORT void WKPageComputePagesForPrinting(WKPageRef page, WKFrameRef frame, const WKPrintInfo&, WKPageComputePagesForPrintingFunction, void* context);
+
+typedef void (*WKPageDrawToPDFFunction)(WKDataRef data, WKErrorRef error, void* functionContext);
+WK_EXPORT void WKPageBeginPrinting(WKPageRef page, WKFrameRef frame, const WKPrintInfo&);
+WK_EXPORT void WKPageDrawPagesToPDF(WKPageRef page, WKFrameRef frame, uint32_t first, uint32_t count, WKPageDrawToPDFFunction callback, void* context);
+
 #ifdef __cplusplus
 }
 #endif

@@ -156,7 +156,7 @@ messages -> WebPage {
     BeginPrinting(uint64_t frameID, WebKit::PrintInfo printInfo)
     EndPrinting();
     ComputePagesForPrinting(uint64_t frameID, WebKit::PrintInfo printInfo, uint64_t callbackID)
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(WIN)
     DrawRectToPDF(uint64_t frameID, WebCore::IntRect rect, uint64_t callbackID)
     DrawPagesToPDF(uint64_t frameID, uint32_t first, uint32_t count, uint64_t callbackID)
 #endif

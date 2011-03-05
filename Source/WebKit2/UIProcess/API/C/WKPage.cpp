@@ -27,6 +27,7 @@
 #include "WKPage.h"
 #include "WKPagePrivate.h"
 
+#include "PrintInfo.h"
 #include "WKAPICast.h"
 #include "WebBackForwardList.h"
 #include "WebData.h"
@@ -502,3 +503,49 @@ void WKPageExecuteCommand(WKPageRef pageRef, WKStringRef command)
 {
     toImpl(pageRef)->executeEditCommand(toImpl(command)->string());
 }
+
+#if PLATFORM(MAC) || PLATFORM(WIN)
+struct ComputedPagesContext {
+    ComputedPagesContext(WKPageComputePagesForPrintingFunction callback, void* context)
+        : callback(callback)
+        , context(context)
+    {
+    }
+    WKPageComputePagesForPrintingFunction callback;
+    void* context;
+};
+
+static void computedPagesCallback(const Vector<WebCore::IntRect>& rects, double scaleFactor, WKErrorRef error, void* untypedContext)
+{
+    OwnPtr<ComputedPagesContext> context = adoptPtr(static_cast<ComputedPagesContext*>(untypedContext));
+    Vector<WKRect> wkRects(rects.size());
+    for (size_t i = 0; i < rects.size(); ++i)
+        wkRects[i] = toAPI(rects[i]);
+    context->callback(wkRects.data(), wkRects.size(), scaleFactor, error, context->context);
+}
+
+static PrintInfo printInfoFromWKPrintInfo(const WKPrintInfo& printInfo)
+{
+    PrintInfo result;
+    result.pageSetupScaleFactor = printInfo.pageSetupScaleFactor;
+    result.availablePaperWidth = printInfo.availablePaperWidth;
+    result.availablePaperHeight = printInfo.availablePaperHeight;
+    return result;
+}
+
+void WKPageComputePagesForPrinting(WKPageRef page, WKFrameRef frame, const WKPrintInfo& printInfo, WKPageComputePagesForPrintingFunction callback, void* context)
+{
+    toImpl(page)->computePagesForPrinting(toImpl(frame), printInfoFromWKPrintInfo(printInfo), ComputedPagesCallback::create(new ComputedPagesContext(callback, context), computedPagesCallback));
+}
+
+void WKPageBeginPrinting(WKPageRef page, WKFrameRef frame, const WKPrintInfo& printInfo)
+{
+    toImpl(page)->beginPrinting(toImpl(frame), printInfoFromWKPrintInfo(printInfo));
+}
+
+void WKPageDrawPagesToPDF(WKPageRef page, WKFrameRef frame, uint32_t first, uint32_t count, WKPageDrawToPDFFunction callback, void* context)
+{
+    toImpl(page)->drawPagesToPDF(toImpl(frame), first, count, DataCallback::create(context, callback));
+}
+#endif
+

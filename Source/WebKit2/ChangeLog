@@ -1,3 +1,50 @@
+2011-03-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        WK2 needs printing support on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=55800
+        <rdar://problem/8903808>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (ComputedPagesContext::ComputedPagesContext):
+        (computedPagesCallback):
+        From the Vector of WebCore::IntRects, build up a Vector of WKRects.
+        Call the callback, passing these rects and the scale factor.
+        (printInfoFromWKPrintInfo):
+        Return a PrintInfo structure from the WKPrintInfo.
+        (WKPageComputePagesForPrinting):
+        Call WebPageProxy::computePagesForPrinting(). Pass
+        computedPagesCallback as the callback function, so that we can
+        translate the WebCore rect type to WKRect before calling the caller's
+        callback function.
+        (WKPageBeginPrinting):
+        Call WebPageProxy::beginPrinting().
+        (WKPageDrawPagesToPDF):
+        Call WebPageProxy::drawPagesToPDF().
+
+        * UIProcess/API/C/WKPagePrivate.h:
+        Declare the WKPrintInfo type and new functions.
+
+        * UIProcess/WebPageProxy.cpp:
+        Compile this code on Windows.
+
+        * UIProcess/WebPageProxy.h:
+        Ditto.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::paint):
+        We're painting the window; leave printing mode.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        Compile this code on Windows.
+
+        * WebProcess/WebPage/WebPage.h:
+        Ditto.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Ditto.
+
 2011-03-04  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.
