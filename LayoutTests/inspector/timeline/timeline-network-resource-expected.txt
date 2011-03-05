@@ -1,11 +1,7 @@
 CONSOLE MESSAGE: line 7: Script evaluated
 Tests the Timeline API instrumentation of a network resource load
 
-Start
-step0
-step1
-step2
-step3
+Script resource loaded
 
 ResourceSendRequest Properties:
 {
@@ -49,4 +45,4 @@ ResourceFinish Properties:
     usedHeapSize : <number>
     totalHeapSize : <number>
 }
-Script resource loaded
+

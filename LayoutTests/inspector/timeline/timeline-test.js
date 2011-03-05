@@ -15,9 +15,27 @@ InspectorTest.timelineNonDeterministicProps = {
     mimeType : 1
 };
 
+InspectorTest.startTimeline = function(callback)
+{
+    InspectorTest._timelineRecords = [];
+    TimelineAgent.start(callback);
+    function addRecord(record)
+    {
+        InspectorTest._timelineRecords.push(record);
+        for (var i = 0; record.children && i < record.children.length; ++i)
+            addRecord(record.children[i]);
+    }
+    InspectorTest.addSniffer(WebInspector.TimelineDispatcher.prototype, "addRecordToTimeline", addRecord, true);
+};
+
+InspectorTest.stopTimeline = function(callback)
+{
+    TimelineAgent.stop(callback);
+};
+
 InspectorTest.performActionsAndPrint = function(actions, typeName)
 {
-    TimelineAgent.start(step1);
+    InspectorTest.startTimeline(step1);
     function step1()
     {
         InspectorTest.evaluateInPage(actions, step2);
@@ -25,7 +43,7 @@ InspectorTest.performActionsAndPrint = function(actions, typeName)
 
     function step2()
     {
-        TimelineAgent.stop(step3);
+        InspectorTest.stopTimeline(step3);
     }
 
     function step3()
@@ -33,33 +51,17 @@ InspectorTest.performActionsAndPrint = function(actions, typeName)
         InspectorTest.printTimelineRecords(typeName);
         InspectorTest.completeTest();
     }
-}
+};
 
 InspectorTest.printTimelineRecords = function(typeName, formatter)
 {
-    var timelineRecords = InspectorTest._timelineResults();
-    for (var i = 0; i < timelineRecords.length; ++i) {
-        var record = timelineRecords[i];
+    for (var i = 0; i < InspectorTest._timelineRecords.length; ++i) {
+        var record = InspectorTest._timelineRecords[i];
         if (typeName && record.type === WebInspector.TimelineAgent.RecordType[typeName])
             InspectorTest.printTimelineRecordProperties(record);
         if (formatter)
             formatter(record);
     }
-};
-
-InspectorTest._timelineResults = function() {
-    var result = [];
-    function addRecords(records)
-    {
-        if (!records)
-            return;
-        for (var i = 0; i < records.length; ++i) {
-            result.push(records[i].originalRecordForTests);
-            addRecords(records[i].children);
-        }
-    }
-    addRecords(WebInspector.panels.timeline._rootRecord.children);
-    return result;
 };
 
 // Dump just the record name, indenting output on separate lines for subrecords

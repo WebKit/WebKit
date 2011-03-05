@@ -8,7 +8,7 @@ function modifyStyleAttribute()
     document.getElementById("container").setAttribute("style", "color: #daC0DE; border: 1px solid black;");
 }
 
-function modifyCssText()
+function modifyCSSText()
 {
     document.getElementById("container").style.cssText = "color: #C0FFEE";
 }
@@ -22,47 +22,54 @@ function modifyParsedAttributes()
 
 function test()
 {
-    InspectorTest.selectNodeWithId("container", step0);
+    InspectorTest.runTestSuite([
 
-    // Set style via "style" attribute.
-    function step0()
-    {
-        InspectorTest.evaluateInPage("modifyStyleAttribute()");
-        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1);
-    }
-
-    // Set style via cssText.
-    function step1()
-    {
-        InspectorTest.addResult("'style' attribute modified:");
-        dumpAttributeAndStyles();
-
-        // Inhibit the second Styles pane update from step0().
-        function callback()
+        function testInit(next)
         {
-            InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step2);
+            InspectorTest.selectNodeWithId("container", next);
+        },
+
+        function testSetStyleAttribute(next)
+        {
+            var updateCount = 0;
+            function callback()
+            {
+                // Expect two updates while setting attribute.
+                if (++updateCount === 2) {
+                    dumpAttributeAndStyles();
+                    next();
+                }
+            }
+            InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", callback, true);
+            InspectorTest.evaluateInPage("modifyStyleAttribute()");
+        },
+
+        function testSetStyleCSSText(next)
+        {
+            var updateCount = 0;
+            function callback()
+            {
+                // Expect two updates while setting css text.
+                if (++updateCount === 2) {
+                    dumpAttributeAndStyles();
+                    next();
+                }
+            }
+            InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", callback, true);
+            InspectorTest.evaluateInPage("modifyCSSText()", callback);
+        },
+
+        function testSetViaParsedAttributes(next)
+        {
+            function callback()
+            {
+                dumpAttributeAndStyles();
+                next();
+            }
+            InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", callback);
+            InspectorTest.evaluateInPage("modifyParsedAttributes()");
         }
-
-        InspectorTest.evaluateInPage("modifyCssText()", callback);
-    }
-
-    // Set style via parsed attributes.
-    function step2()
-    {
-        InspectorTest.addResult("cssText modified:");
-        dumpAttributeAndStyles();
-
-        InspectorTest.evaluateInPage("modifyParsedAttributes()");
-        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step3);
-    }
-
-    // Finish the test.
-    function step3()
-    {
-        InspectorTest.addResult("parsed attributes modified:");
-        dumpAttributeAndStyles();
-        InspectorTest.completeTest();
-    }
+    ]);
 
     function dumpAttributeAndStyles()
     {
@@ -77,6 +84,7 @@ function test()
 
     function findNodeTreeElement()
     {
+        WebInspector.panels.elements.updateModifiedNodes();
         var expandedNode = InspectorTest.expandedNodeWithId("container");
         if (!expandedNode) {
             InspectorTest.addResult("'container' node not found");

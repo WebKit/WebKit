@@ -1,6 +1,7 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
 <script>
 
 function test() {
@@ -10,7 +11,7 @@ function test() {
         InspectorTest.addResult("Timeline started");
         InspectorTest.completeTest();
     }
-    TimelineAgent.start(callback);
+    InspectorTest.startTimeline(callback);
 }
 
 

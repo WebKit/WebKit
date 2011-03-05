@@ -37,7 +37,7 @@ Tests that src and href element targets are rewritten properly.
               Show All Nodes (6 More)
           </div>
           <p>Tests that src and href element targets are rewritten properly.</p>
-        + <div class="output" style="white-space: pre; ">…</div>
+        + <div>…</div>
       </body>
   </html>
 =========== Loaded all children ===========
@@ -58,7 +58,7 @@ Tests that src and href element targets are rewritten properly.
               <a></a>
           </div>
           <p>Tests that src and href element targets are rewritten properly.</p>
-        + <div class="output" style="white-space: pre; ">…</div>
+        + <div>…</div>
       </body>
   </html>
 

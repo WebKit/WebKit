@@ -778,7 +778,6 @@ InspectorBackendStub.prototype = {
     _wrap: function(callback)
     {
         var callbackId = this._lastCallbackId++;
-        ++this._pendingResponsesCount;
         this._callbacks[callbackId] = callback || function() {};
         return callbackId;
     },
@@ -824,6 +823,8 @@ InspectorBackendStub.prototype = {
             console.log("frontend: " + JSON.stringify(request));
 
         var message = JSON.stringify(request);
+
+        ++this._pendingResponsesCount;
         InspectorFrontendHost.sendMessageToBackend(message);
     },
 

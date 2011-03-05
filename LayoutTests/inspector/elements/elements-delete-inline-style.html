@@ -6,29 +6,14 @@
 
 function test()
 {
-
+    WebInspector.showPanel("elements");
     InspectorTest.selectNodeWithId("inspected", step1);
 
-    function step1()
+    function step1(node)
     {
         InspectorTest.addResult("Before style property removal:");
         InspectorTest.dumpSelectedElementStyles(true);
-
-        var treeElement;
-        var innerMapping = WebInspector.domAgent._idToDOMNode;
-        for (var nodeId in innerMapping) {
-            if (innerMapping[nodeId].nodeName === "DIV") {
-                treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(innerMapping[nodeId]);
-                break;
-            }
-        }
-        var styleAttrElement = treeElement.listItemElement.getElementsByClassName("webkit-html-attribute")[1];
-        treeElement._startEditingTarget(styleAttrElement);
-        var editorElement = window.getSelection().anchorNode.parentElement;
-
-        // Remove the "style" attribute altogether (not just clear its value).
-        editorElement.textContent = "";
-        editorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        node.removeAttribute("style");
         InspectorTest.runAfterPendingDispatches(step2);
     }
 

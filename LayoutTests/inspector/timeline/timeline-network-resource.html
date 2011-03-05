@@ -18,31 +18,21 @@ function test()
     var resourceId;
     var scriptUrl = "timeline-network-resource.js";
 
-    InspectorTest.evaluateInPage("true", step0);
-    InspectorTest.addResult("Start");
-
-    function step0()
-	{
-	    InspectorTest.addResult("step0");
-	    TimelineAgent.start(step1);
-	}
+    InspectorTest.startTimeline(step1);
 
     function step1()
     {
-        InspectorTest.addResult("step1");
         InspectorTest.evaluateInPage("performActions()");
         InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
     }
 
     function step2()
     {
-        InspectorTest.addResult("step2");
-        TimelineAgent.stop(step3);
+        InspectorTest.stopTimeline(step3);
     }
 
     function step3()
     {
-        InspectorTest.addResult("step3");
         function format(record)
         {
             if (record.type === WebInspector.TimelineAgent.RecordType.ResourceSendRequest)

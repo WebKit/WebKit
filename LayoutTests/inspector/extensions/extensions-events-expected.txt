@@ -5,8 +5,8 @@ Running tests...
 RUNNING TEST: extension_testOnResourceFinished
 onFinished fired
 RUNNING TEST: extension_testPageLoadEvents
+Page reloaded.
 onDOMContentLoaded fired: number
 onLoaded fired: number
-Page reloaded.
 All tests done.
 

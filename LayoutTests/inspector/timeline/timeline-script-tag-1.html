@@ -13,16 +13,16 @@ function performActions()
 
 function test() 
 {
-    TimelineAgent.start(step1);
+    InspectorTest.startTimeline(step1);
     function step1()
     {
-        InspectorTest.evaluateInPage("performActions()");
         InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+        InspectorTest.evaluateInPage("performActions()");
     }
 
     function step2()
     {
-        TimelineAgent.stop(step3);
+        InspectorTest.stopTimeline(step3);
     }
 
     function step3()

@@ -1,13 +1,10 @@
-CONSOLE MESSAGE: line 35: Error: Exception in inline script.
-CONSOLE MESSAGE: line 19: Error: Exception in 'load' event listener.
-CONSOLE MESSAGE: line 27: Error: Exception in setTimeout callback.
-CONSOLE MESSAGE: line 35: Error: Exception in inline script.
-CONSOLE MESSAGE: line 19: Error: Exception in 'load' event listener.
-CONSOLE MESSAGE: line 27: Error: Exception in setTimeout callback.
+CONSOLE MESSAGE: line 18: Error: Exception in inline script.
+CONSOLE MESSAGE: line 11: Error: Exception in 'load' event listener.
+CONSOLE MESSAGE: line 6: Error: Exception in setTimeout callback.
 Tests that uncaught exceptions are logged into console.Bug 47250.
 
-Page reloaded.
-console-uncaught-exception.html:35Error: Exception in inline script.
-console-uncaught-exception.html:19Error: Exception in 'load' event listener.
-console-uncaught-exception.html:27Error: Exception in setTimeout callback.
+
+uncaught-in-iframe.html:18Error: Exception in inline script.
+uncaught-in-iframe.html:11Error: Exception in 'load' event listener.
+uncaught-in-iframe.html:6Error: Exception in setTimeout callback.
 

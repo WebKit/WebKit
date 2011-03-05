@@ -2,27 +2,31 @@
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/debugger-test.js"></script>
-<script src="resources/syntax-error.js"></script>
 <script>
+
+function loadIframe()
+{
+    var iframe = document.createElement("iframe");
+    iframe.src = "resources/syntax-error.html";
+    document.body.appendChild(iframe);
+}
 
 function test()
 {
     WebInspector.showPanel("scripts");
-    InspectorTest.startDebuggerTest(startDebuggerTestCallback);
+    InspectorTest.startDebuggerTest(step1);
 
-    function startDebuggerTestCallback()
+    function step1()
     {
         DebuggerAgent.setPauseOnExceptionsState(WebInspector.ScriptsPanel.PauseOnExceptionsState.PauseOnUncaughtExceptions);
-        InspectorTest.showScriptSource("debugger-autocontinue-on-syntax-error.html", reloadInspectedPage);
+        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+        InspectorTest.evaluateInPage("loadIframe()");
     }
 
-    function reloadInspectedPage()
+    function step2()
     {
-        InspectorTest.reloadPage(function() {
-            InspectorTest.completeDebuggerTest();
-        });
+        InspectorTest.completeDebuggerTest();
     }
-
 }
 
 </script>

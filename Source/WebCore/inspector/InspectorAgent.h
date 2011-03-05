@@ -239,6 +239,7 @@ private:
 
     void focusNode();
     bool isMainResourceLoader(DocumentLoader*, const KURL& requestUrl);
+    void issueEvaluateForTestCommands();
 
     Page* m_inspectedPage;
     InspectorClient* m_client;
@@ -282,9 +283,9 @@ private:
     String m_userAgentOverride;
 #if ENABLE(WORKERS)
     typedef HashMap<intptr_t, RefPtr<InspectorWorkerResource> > WorkersMap;
-
     WorkersMap m_workers;
 #endif
+    bool m_canIssueEvaluateForTestInFrontend;
 };
 
 } // namespace WebCore

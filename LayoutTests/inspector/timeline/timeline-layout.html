@@ -9,6 +9,8 @@ function performActions()
     var element = document.createElement("div");
     element.innerHTML = "Test data";
     document.body.appendChild(element);
+    // Force layout.
+    var foo = element.offsetHeight;
 }
 
 function test()

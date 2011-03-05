@@ -1,6 +1,9 @@
 Tests that changes to an inline style from JavaScript are reflected in the Styles pane and Elements tree.
 
-'style' attribute modified:
+
+Running: testInit
+
+Running: testSetStyleAttribute
 <div id="container" style="color: #daC0DE; border: 1px solid black;"></div>
 [expanded] element.style { ()
 color: #DAC0DE;
@@ -19,13 +22,15 @@ border: 1px solid black;
     border-left-color: black;
 
 
-cssText modified:
+
+Running: testSetStyleCSSText
 <div id="container" style="color: rgb(192, 255, 238); "></div>
 [expanded] element.style { ()
 color: #C0FFEE;
 
 
-parsed attributes modified:
+
+Running: testSetViaParsedAttributes
 <div id="container" style="color: rgb(192, 255, 238); border-top-style: dashed; border-right-style: dashed; border-bottom-style: dashed; border-left-style: dashed; border-top-color: green; border-right-color: green; border-bottom-color: green; border-left-color: green; border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; "></div>
 [expanded] element.style { ()
 color: #C0FFEE;

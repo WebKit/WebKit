@@ -158,6 +158,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client)
     , m_browserDebuggerAgent(InspectorBrowserDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent.get(), m_debuggerAgent.get(), this))
     , m_profilerAgent(InspectorProfilerAgent::create(m_instrumentingAgents.get(), m_consoleAgent.get(), page))
 #endif
+    , m_canIssueEvaluateForTestInFrontend(false)
 {
     ASSERT_ARG(page, page);
     ASSERT_ARG(client, client);
@@ -394,6 +395,9 @@ void InspectorAgent::disconnectFrontend()
     if (!m_frontend)
         return;
 
+    m_canIssueEvaluateForTestInFrontend = false;
+    m_pendingEvaluateTestCommands.clear();
+
     // Destroying agents would change the state, but we don't want that.
     // Pre-disconnect state will be used to restore inspector agents.
     m_state->mute();
@@ -469,9 +473,7 @@ void InspectorAgent::populateScriptObjects(ErrorString*)
     restoreProfiler(ProfilerRestoreNoAction);
 
     // Dispatch pending frontend commands
-    for (Vector<pair<long, String> >::iterator it = m_pendingEvaluateTestCommands.begin(); it != m_pendingEvaluateTestCommands.end(); ++it)
-        m_frontend->inspector()->evaluateForTestInFrontend((*it).first, (*it).second);
-    m_pendingEvaluateTestCommands.clear();
+    issueEvaluateForTestCommands();
 }
 
 void InspectorAgent::pushDataCollectedOffline()
@@ -762,10 +764,9 @@ void InspectorAgent::showScriptsPanel()
 
 void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script)
 {
-    if (m_frontend)
-        m_frontend->inspector()->evaluateForTestInFrontend(callId, script);
-    else
-        m_pendingEvaluateTestCommands.append(pair<long, String>(callId, script));
+    m_pendingEvaluateTestCommands.append(pair<long, String>(callId, script));
+    if (m_canIssueEvaluateForTestInFrontend)
+        issueEvaluateForTestCommands();
 }
 
 void InspectorAgent::didEvaluateForTestInFrontend(ErrorString*, long callId, const String& jsonResult)
@@ -1091,6 +1092,17 @@ void InspectorAgent::showPanel(const String& panel)
         return;
     }
     m_frontend->inspector()->showPanel(panel);
+}
+
+void InspectorAgent::issueEvaluateForTestCommands()
+{
+    if (m_frontend) {
+        Vector<pair<long, String> > copy = m_pendingEvaluateTestCommands;
+        m_pendingEvaluateTestCommands.clear();
+        for (Vector<pair<long, String> >::iterator it = copy.begin(); m_frontend && it != copy.end(); ++it)
+            m_frontend->inspector()->evaluateForTestInFrontend((*it).first, (*it).second);
+        m_canIssueEvaluateForTestInFrontend = true;
+    }
 }
 
 } // namespace WebCore

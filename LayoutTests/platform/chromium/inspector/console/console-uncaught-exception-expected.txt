@@ -1,13 +1,9 @@
-CONSOLE MESSAGE: line 35: Uncaught Error: Exception in inline script.
-CONSOLE MESSAGE: line 19: Uncaught Error: Exception in 'load' event listener.
-CONSOLE MESSAGE: line 27: Uncaught Error: Exception in setTimeout callback.
-CONSOLE MESSAGE: line 35: Uncaught Error: Exception in inline script.
-CONSOLE MESSAGE: line 19: Uncaught Error: Exception in 'load' event listener.
-CONSOLE MESSAGE: line 27: Uncaught Error: Exception in setTimeout callback.
+CONSOLE MESSAGE: line 18: Uncaught Error: Exception in inline script.
+CONSOLE MESSAGE: line 11: Uncaught Error: Exception in 'load' event listener.
+CONSOLE MESSAGE: line 6: Uncaught Error: Exception in setTimeout callback.
 Tests that uncaught exceptions are logged into console.Bug 47250.
 
-Page reloaded.
-console-uncaught-exception.html:35Uncaught Error: Exception in inline script.aconsole-uncaught-exception.html:35bconsole-uncaught-exception.html:40(anonymous function)console-uncaught-exception.html:43
-console-uncaught-exception.html:19Uncaught Error: Exception in 'load' event listener.fconsole-uncaught-exception.html:19(anonymous function)console-uncaught-exception.html:21
-console-uncaught-exception.html:27Uncaught Error: Exception in setTimeout callback.barconsole-uncaught-exception.html:27(anonymous function)console-uncaught-exception.html:29
+uncaught-iframe.html:18Uncaught Error: Exception in inline script.auncaught-iframe.html:18buncaught-iframe.html:23(anonymous function)uncaught-iframe.html:26
+uncaught-iframe.html:11Uncaught Error: Exception in 'load' event listener.funcaught-iframe.html:11(anonymous function)uncaught-iframe.html:13
+uncaught-iframe.html:6Uncaught Error: Exception in setTimeout callback.baruncaught-iframe.html:6(anonymous function)uncaught-iframe.html:8
 

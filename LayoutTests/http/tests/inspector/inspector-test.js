@@ -276,7 +276,7 @@ function runTest(enableWatchDogWhileDebugging)
             }
         }
 
-        WebInspector.showPanel("elements");
+        WebInspector.showPanel("console");
         try {
             testFunction();
         } catch (e) {
@@ -328,10 +328,16 @@ var outputElement;
 function output(text)
 {
     if (!outputElement) {
+        var intermediate = document.createElement("div");
+        document.body.appendChild(intermediate);
+
+        var intermediate2 = document.createElement("div");
+        intermediate.appendChild(intermediate2);
+
         outputElement = document.createElement("div");
         outputElement.className = "output";
         outputElement.style.whiteSpace = "pre";
-        document.body.appendChild(outputElement);
+        intermediate2.appendChild(outputElement);
     }
     outputElement.appendChild(document.createTextNode(text));
     outputElement.appendChild(document.createElement("br"));

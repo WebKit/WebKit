@@ -16,6 +16,8 @@
 <script>
 var test = function()
 {
+    WebInspector.showPanel("elements");
+
     InspectorTest.reloadPage(step1);
 
     function step1()
@@ -30,7 +32,7 @@ var test = function()
         launcherView._launchButtonClicked();
 
         InspectorTest.runAfterPendingDispatches(step2);
-    }    
+    }
 
     function step2()
     {
