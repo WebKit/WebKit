@@ -32,13 +32,13 @@
 #define WebClipboard_h
 
 #include "WebCommon.h"
+#include "WebImage.h"
 #include "WebString.h"
 #include "WebVector.h"
 
 namespace WebKit {
 
 class WebDragData;
-class WebImage;
 class WebURL;
 
 class WebClipboard {
@@ -62,6 +62,7 @@ public:
 
     virtual WebString readPlainText(Buffer) { return WebString(); }
     virtual WebString readHTML(Buffer, WebURL*) { return WebString(); }
+    virtual WebImage readImage(Buffer) { return WebImage(); }
 
     virtual void writePlainText(const WebString&) { }
     virtual void writeHTML(

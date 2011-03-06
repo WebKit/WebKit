@@ -1,3 +1,13 @@
+2011-03-05  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        [chromium] Add method to WebClipboard to read images from the clipboard.
+        https://bugs.webkit.org/show_bug.cgi?id=55814
+
+        * public/WebClipboard.h:
+        (WebKit::WebClipboard::readImage):
+
 2011-03-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
