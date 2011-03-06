@@ -370,7 +370,6 @@ void WebPage::close()
     m_mainFrame->coreFrame()->loader()->detachFromParent();
     m_page.clear();
 
-    m_drawingArea->onPageClose();
     m_drawingArea.clear();
 
     bool isRunningModal = m_isRunningModal;

@@ -1,3 +1,17 @@
+2011-03-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Remove unneeded onPageClose function from DrawingArea
+        https://bugs.webkit.org/show_bug.cgi?id=55836
+
+        * WebProcess/WebPage/DrawingArea.h:
+        Remove empty function.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        Remove only called
+
 2011-03-04  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WK2 Mac build fix.

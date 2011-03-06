@@ -62,7 +62,6 @@ public:
 
     // FIXME: These should be pure virtual.
     virtual void pageBackgroundTransparencyChanged() { }
-    virtual void onPageClose() { }
     virtual void forceRepaint() { }
 
     virtual void didInstallPageOverlay() { }
