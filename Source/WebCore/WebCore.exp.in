@@ -1340,6 +1340,11 @@ _wkSignalCFReadStreamError
 _wkSignalCFReadStreamHasBytes
 _wkCreatePrivateStorageSession
 _wkCopyRequestWithStorageSession
+_wkCreatePrivateInMemoryHTTPCookieStorage
+_wkGetHTTPCookieAcceptPolicy
+_wkHTTPCookiesForURL
+_wkSetHTTPCookiesForURL
+_wkDeleteHTTPCookie
 
 #if !defined(NDEBUG)
 __ZN7WebCore20LogNotYetImplementedE

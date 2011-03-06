@@ -33,6 +33,7 @@
 #import "Base64.h"
 #import "BlobRegistry.h"
 #import "BlockExceptions.h"
+#import "CookieStorage.h"
 #import "CredentialStorage.h"
 #import "CachedResourceLoader.h"
 #import "EmptyProtocolDefinitions.h"
@@ -186,6 +187,35 @@ bool ResourceHandle::didSendBodyDataDelegateExists()
     return NSFoundationVersionNumber > MaxFoundationVersionWithoutdidSendBodyDataDelegate;
 }
 
+static bool shouldRelaxThirdPartyCookiePolicy(const KURL& url)
+{
+    // If a URL already has cookies, then we'll relax the 3rd party cookie policy and accept new cookies.
+
+    NSHTTPCookieStorage *sharedStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+
+    NSHTTPCookieAcceptPolicy cookieAcceptPolicy;
+#if USE(CFURLSTORAGESESSIONS)
+    CFHTTPCookieStorageRef cfPrivateBrowsingStorage = privateBrowsingCookieStorage().get();
+    if (cfPrivateBrowsingStorage)
+        cookieAcceptPolicy =  wkGetHTTPCookieAcceptPolicy(cfPrivateBrowsingStorage);
+    else
+#endif
+        cookieAcceptPolicy = [sharedStorage cookieAcceptPolicy];
+
+    if (cookieAcceptPolicy != NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
+        return false;
+
+    NSArray *cookies;
+#if USE(CFURLSTORAGESESSIONS)
+    if (cfPrivateBrowsingStorage)
+        cookies = wkHTTPCookiesForURL(cfPrivateBrowsingStorage, url);
+    else
+#endif
+        cookies = [sharedStorage cookiesForURL:url];
+
+    return [cookies count];
+}
+
 void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff)
 {
     // Credentials for ftp can only be passed in URL, the connection:didReceiveAuthenticationChallenge: delegate call won't be made.
@@ -200,9 +230,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         firstRequest().setURL(urlWithCredentials);
     }
 
-    // If a URL already has cookies, then we'll relax the 3rd party cookie policy and accept new cookies.
-    NSHTTPCookieStorage *sharedStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    if ([sharedStorage cookieAcceptPolicy] == NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain && [[sharedStorage cookiesForURL:firstRequest().url()] count])
+    if (shouldRelaxThirdPartyCookiePolicy(firstRequest().url()))
         firstRequest().setFirstPartyForCookies(firstRequest().url());
 
 #if !defined(BUILDING_ON_TIGER)
@@ -511,9 +539,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     UNUSED_PARAM(context);
     NSURLRequest *firstRequest = request.nsURLRequest();
 
-    // If a URL already has cookies, then we'll relax the 3rd party cookie policy and accept new cookies.
-    NSHTTPCookieStorage *sharedStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    if ([sharedStorage cookieAcceptPolicy] == NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain && [[sharedStorage cookiesForURL:[firstRequest URL]] count]) {
+    if (shouldRelaxThirdPartyCookiePolicy([firstRequest URL])) {
         NSMutableURLRequest *mutableRequest = [[firstRequest mutableCopy] autorelease];
         [mutableRequest setMainDocumentURL:[mutableRequest URL]];
         firstRequest = mutableRequest;

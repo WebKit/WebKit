@@ -1,3 +1,17 @@
+2011-03-06  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2: Use CFNetwork Sessions API.
+        https://bugs.webkit.org/show_bug.cgi?id=55435.
+
+        When Private Browsing is enabled, use cookies from a in-memory cookie storage based on the
+        Private Browsing Storage Session.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        Add support for using the new WKSI functions in WebCore.
+
 2011-03-05  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Darin Adler.

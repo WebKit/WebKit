@@ -1,3 +1,63 @@
+2011-03-06  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2: Use CFNetwork Sessions API.
+        https://bugs.webkit.org/show_bug.cgi?id=55435.
+
+        When Private Browsing is enabled, use cookies from a in-memory cookie storage based on the
+        Private Browsing Storage Session.
+
+        * WebCore.exp.in:
+        Add the new WKSI functions.
+        * platform/mac/WebCoreSystemInterface.h:
+        Ditto.
+        * platform/mac/WebCoreSystemInterface.mm:
+        Ditto.
+
+        * platform/mac/CookieJar.mm:
+        (WebCore::cookies):
+        If USE(CFURLSTORAGESESSIONS) and there is a Private Browsing Cookie Storage, call into WKSI.
+        Otherwise, behave the same as before.
+        (WebCore::cookieRequestHeaderFieldValue):
+        Ditto.
+        (WebCore::setCookies):
+        Ditto.
+        (WebCore::cookiesEnabled):
+        Ditto
+        (WebCore::getRawCookies):
+        Ditto.
+        (WebCore::deleteCookie):
+        Ditto.
+
+        * platform/network/CookieStorage.h:
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        (WebCore::privateBrowsingCookieStorage):
+        Keep track of the Private Browsing Cookie Storage in a locally defined static inside a
+        function instead of at the global scope.
+        (WebCore::currentCookieStorage):
+        Use privateBrowsingCookieStorage.
+        (WebCore::setCurrentCookieStorage):
+        Ditto.
+        (WebCore::setCookieStoragePrivateBrowsingEnabled):
+        If USE(CFURLSTORAGESESSIONS), send the Private Browsing Storage Session to
+        wkCreatePrivateInMemoryHTTPCookieStorage.
+        * platform/network/mac/CookieStorageMac.mm:
+        (WebCore::privateBrowsingCookieStorage):
+        Keep track of the Private Browsing Cookie Storage.
+        (WebCore::setCookieStoragePrivateBrowsingEnabled):
+        If USE(CFURLSTORAGESESSIONS), then set or clear privateBrowsingCookieStorage().
+        Added a FIXME to observe changes to the Private Browsing Cookie Storage when it is defined.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::shouldRelaxThirdPartyCookiePolicy):
+        Refactor the logic to determine whether or not to relax the third party cookie policy here.
+        If USE(CFURLSTORAGESESSIONS), then get the information from the privateBrowsingCookieStorage.
+        (WebCore::ResourceHandle::createNSURLConnection):
+        Use shouldRelaxThirdPartyCookiePolicy.
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        Ditto.
+
 2011-03-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80428.

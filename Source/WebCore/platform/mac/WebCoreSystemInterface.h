@@ -50,11 +50,13 @@ typedef struct _NSRect NSRect;
 @class NSDate;
 @class NSEvent;
 @class NSFont;
+@class NSHTTPCookie;
 @class NSImage;
 @class NSMenu;
 @class NSMutableURLRequest;
 @class NSString;
 @class NSTextFieldCell;
+@class NSURL;
 @class NSURLConnection;
 @class NSURLRequest;
 @class NSURLResponse;
@@ -68,10 +70,12 @@ class NSData;
 class NSDate;
 class NSEvent;
 class NSFont;
+class NSHTTPCookie;
 class NSImage;
 class NSMenu;
 class NSMutableArray;
 class NSMutableURLRequest;
+class NSURL;
 class NSURLRequest;
 class NSString;
 class NSTextFieldCell;
@@ -238,6 +242,13 @@ extern AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 extern CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
 extern NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
+
+typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
+extern CFHTTPCookieStorageRef (*wkCreatePrivateInMemoryHTTPCookieStorage)(CFURLStorageSessionRef);
+extern unsigned (*wkGetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef);
+extern NSArray *(*wkHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSURL *);
+extern void (*wkSetHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
+extern void (*wkDeleteHTTPCookie)(CFHTTPCookieStorageRef, NSHTTPCookie *);
 
 }
 

@@ -95,6 +95,11 @@ void InitWebCoreSystemInterface(void)
         INIT(SignalCFReadStreamHasBytes);
         INIT(CreatePrivateStorageSession);
         INIT(CopyRequestWithStorageSession);
+        INIT(CreatePrivateInMemoryHTTPCookieStorage);
+        INIT(GetHTTPCookieAcceptPolicy);
+        INIT(HTTPCookiesForURL);
+        INIT(SetHTTPCookiesForURL);
+        INIT(DeleteHTTPCookie);
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
         INIT(IOSurfaceContextCreate);

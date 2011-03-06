@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CookieStorage.h"
 
+#import "ResourceHandle.h"
 #import "WebCoreSystemInterface.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/UnusedParam.h>
@@ -74,8 +75,33 @@ using namespace WebCore;
 
 namespace WebCore {
 
+#if USE(CFURLSTORAGESESSIONS)
+
+RetainPtr<CFHTTPCookieStorageRef>& privateBrowsingCookieStorage()
+{
+    DEFINE_STATIC_LOCAL(RetainPtr<CFHTTPCookieStorageRef>, cookieStorage, ());
+    return cookieStorage;
+}
+
+#endif
+
 void setCookieStoragePrivateBrowsingEnabled(bool enabled)
 {
+#if USE(CFURLSTORAGESESSIONS)
+    if (enabled && privateBrowsingCookieStorage())
+        return;
+
+    if (enabled && ResourceHandle::privateBrowsingStorageSession()) {
+        privateBrowsingCookieStorage().adoptCF(wkCreatePrivateInMemoryHTTPCookieStorage(ResourceHandle::privateBrowsingStorageSession()));
+
+        // FIXME: When Private Browsing is enabled, the Private Browsing Cookie Storage should be
+        // observed for changes, not the default Cookie Storage.
+
+        return;
+    }
+
+    privateBrowsingCookieStorage() = nullptr;
+#endif
     wkSetCookieStoragePrivateBrowsingEnabled(enabled);
 }
 

@@ -238,6 +238,13 @@ CFURLStorageSessionRef WKCreatePrivateStorageSession(CFStringRef);
 NSURLRequest *WKCopyRequestWithStorageSession(CFURLStorageSessionRef, NSURLRequest*);
 NSCachedURLResponse *WKCachedResponseForRequest(CFURLStorageSessionRef, NSURLRequest*);
 
+typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
+CFHTTPCookieStorageRef WKCreatePrivateInMemoryHTTPCookieStorage(CFURLStorageSessionRef);
+unsigned WKGetHTTPCookieAcceptPolicy(CFHTTPCookieStorageRef);
+NSArray *WKHTTPCookiesForURL(CFHTTPCookieStorageRef, NSURL *);
+void WKSetHTTPCookiesForURL(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
+void WKDeleteHTTPCookie(CFHTTPCookieStorageRef, NSHTTPCookie *);
+
 void WKSetVisibleApplicationName(CFStringRef);
 
 typedef enum {

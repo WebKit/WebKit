@@ -168,6 +168,11 @@ void InitWebCoreSystemInterface(void)
     INIT(UnregisterUniqueIdForElement);
     INIT(CreatePrivateStorageSession);
     INIT(CopyRequestWithStorageSession);
+    INIT(CreatePrivateInMemoryHTTPCookieStorage);
+    INIT(GetHTTPCookieAcceptPolicy);
+    INIT(HTTPCookiesForURL);
+    INIT(SetHTTPCookiesForURL);
+    INIT(DeleteHTTPCookie);
 
     didInit = true;
 }

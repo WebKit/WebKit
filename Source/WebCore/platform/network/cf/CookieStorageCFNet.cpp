@@ -29,6 +29,7 @@
 #if USE(CFNETWORK)
 
 #include "LoaderRunLoopCF.h"
+#include "ResourceHandle.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/MainThread.h>
@@ -41,14 +42,18 @@
 
 namespace WebCore {
 
-static CFHTTPCookieStorageRef s_cookieStorage;
+static RetainPtr<CFHTTPCookieStorageRef>& privateBrowsingCookieStorage()
+{
+    DEFINE_STATIC_LOCAL(RetainPtr<CFHTTPCookieStorageRef>, cookieStorage, ());
+    return cookieStorage;
+}
 
 CFHTTPCookieStorageRef currentCookieStorage()
 {
     ASSERT(isMainThread());
 
-    if (s_cookieStorage)
-        return s_cookieStorage;
+    if (CFHTTPCookieStorageRef privateCookieStorage = privateBrowsingCookieStorage().get())
+        return privateCookieStorage;
     return wkGetDefaultHTTPCookieStorage();
 }
 
@@ -56,24 +61,23 @@ void setCurrentCookieStorage(CFHTTPCookieStorageRef cookieStorage)
 {
     ASSERT(isMainThread());
 
-    CFRetain(cookieStorage);
-    if (s_cookieStorage)
-        CFRelease(s_cookieStorage);
-
-    s_cookieStorage = cookieStorage;
+    privateBrowsingCookieStorage().adoptCF(cookieStorage);
 }
 
 void setCookieStoragePrivateBrowsingEnabled(bool enabled)
 {
     ASSERT(isMainThread());
 
-    if (s_cookieStorage)
-        CFRelease(s_cookieStorage);
+    if (!enabled) {
+        privateBrowsingCookieStorage() = nullptr;
+        return;
+    }
 
-    if (enabled)
-        s_cookieStorage = wkCreatePrivateHTTPCookieStorage();
-    else
-        s_cookieStorage = 0;
+#if USE(CFURLSTORAGESESSIONS)
+    privateBrowsingCookieStorage().adoptCF(wkCreatePrivateInMemoryHTTPCookieStorage(ResourceHandle::privateBrowsingStorageSession()));
+#else
+    privateBrowsingCookieStorage().adoptCF(wkCreatePrivateInMemoryHTTPCookieStorage(0));
+#endif
 }
 
 static void notifyCookiesChangedOnMainThread(void* context)

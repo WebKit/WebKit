@@ -89,7 +89,7 @@ CFDictionaryRef wkGetSSLCertificateInfo(CFURLResponseRef);
 void* wkGetSSLPeerCertificateData(CFDictionaryRef);
 void* wkGetSSLCertificateChainContext(CFDictionaryRef);
 CFHTTPCookieStorageRef wkGetDefaultHTTPCookieStorage();
-CFHTTPCookieStorageRef wkCreatePrivateHTTPCookieStorage();
+CFHTTPCookieStorageRef wkCreatePrivateInMemoryHTTPCookieStorage(CFURLStorageSessionRef);
 void wkSetCFURLRequestShouldContentSniff(CFMutableURLRequestRef, bool);
 CFStringRef wkCopyFoundationCacheDirectory();
 void wkSetClientCertificateInSSLProperties(CFMutableDictionaryRef, CFDataRef);

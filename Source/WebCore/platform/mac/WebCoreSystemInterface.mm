@@ -174,3 +174,8 @@ AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 
 CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
 NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
+CFHTTPCookieStorageRef (*wkCreatePrivateInMemoryHTTPCookieStorage)(CFURLStorageSessionRef);
+unsigned (*wkGetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef);
+NSArray *(*wkHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSURL *);
+void (*wkSetHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
+void (*wkDeleteHTTPCookie)(CFHTTPCookieStorageRef, NSHTTPCookie *);
