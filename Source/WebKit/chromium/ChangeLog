@@ -1,3 +1,15 @@
+2011-03-06  Sreeram Ramachandran  <sreeram@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Expose page dismissal event status through the WebKit API for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=55844
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::pageDismissalEventBeingDispatched):
+        * src/WebFrameImpl.h:
+
 2011-03-05  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Dmitry Titov.
