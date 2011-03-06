@@ -52,6 +52,8 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textEmphasisFill(TextEmphasisFillFilled)
     , textEmphasisMark(TextEmphasisMarkNone)
     , textEmphasisPosition(TextEmphasisPositionOver)
+    , hyphenationLimitBefore(-1)
+    , hyphenationLimitAfter(-1)
 {
 }
 
@@ -84,6 +86,8 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , textEmphasisMark(o.textEmphasisMark)
     , textEmphasisPosition(o.textEmphasisPosition)
     , hyphenationString(o.hyphenationString)
+    , hyphenationLimitBefore(o.hyphenationLimitBefore)
+    , hyphenationLimitAfter(o.hyphenationLimitAfter)
     , locale(o.locale)
     , textEmphasisCustomMark(o.textEmphasisCustomMark)
 {
@@ -128,6 +132,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && colorSpace == o.colorSpace
         && speak == o.speak
         && hyphens == o.hyphens
+        && hyphenationLimitBefore == o.hyphenationLimitBefore
+        && hyphenationLimitAfter == o.hyphenationLimitAfter
         && textEmphasisFill == o.textEmphasisFill
         && textEmphasisMark == o.textEmphasisMark
         && textEmphasisPosition == o.textEmphasisPosition

@@ -5759,6 +5759,22 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setHyphenationString(primitiveValue->getStringValue());
         return;
     }
+    case CSSPropertyWebkitHyphenateLimitAfter: {
+        HANDLE_INHERIT_AND_INITIAL(hyphenationLimitAfter, HyphenationLimitAfter);
+        if (primitiveValue->getIdent() == CSSValueAuto)
+            m_style->setHyphenationLimitAfter(-1);
+        else
+            m_style->setHyphenationLimitAfter(min(primitiveValue->getIntValue(CSSPrimitiveValue::CSS_NUMBER), static_cast<int>(numeric_limits<short>::max())));
+        return;
+    }
+    case CSSPropertyWebkitHyphenateLimitBefore: {
+        HANDLE_INHERIT_AND_INITIAL(hyphenationLimitBefore, HyphenationLimitBefore);
+        if (primitiveValue->getIdent() == CSSValueAuto)
+            m_style->setHyphenationLimitBefore(-1);
+        else
+            m_style->setHyphenationLimitBefore(min(primitiveValue->getIntValue(CSSPrimitiveValue::CSS_NUMBER), static_cast<int>(numeric_limits<short>::max())));
+        return;
+    }
     case CSSPropertyWebkitLocale: {
         HANDLE_INHERIT_AND_INITIAL(locale, Locale);
         if (primitiveValue->getIdent() == CSSValueAuto)

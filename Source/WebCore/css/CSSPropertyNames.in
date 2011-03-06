@@ -227,6 +227,8 @@ z-index
 -webkit-font-size-delta
 -webkit-highlight
 -webkit-hyphenate-character
+-webkit-hyphenate-limit-after
+-webkit-hyphenate-limit-before
 -webkit-hyphens
 -webkit-line-break
 -webkit-line-clamp

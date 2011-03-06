@@ -272,10 +272,20 @@ rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-highlight) : none
 rect: style.getPropertyCSSValue(-webkit-highlight) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-hyphenate-character) : auto
+rect: style.getPropertyCSSValue(-webkit-hyphenate-character) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto
+rect: style.getPropertyCSSValue(-webkit-hyphenate-limit-after) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-hyphenate-limit-before) : auto
+rect: style.getPropertyCSSValue(-webkit-hyphenate-limit-before) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-hyphens) : manual
+rect: style.getPropertyCSSValue(-webkit-hyphens) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-line-break) : normal
 rect: style.getPropertyCSSValue(-webkit-line-break) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-line-clamp) : none
 rect: style.getPropertyCSSValue(-webkit-line-clamp) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-locale) : auto
+rect: style.getPropertyCSSValue(-webkit-locale) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-margin-before-collapse) : collapse
 rect: style.getPropertyCSSValue(-webkit-margin-before-collapse) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-margin-after-collapse) : collapse
@@ -318,6 +328,12 @@ rect: style.getPropertyValue(-webkit-text-combine) : none
 rect: style.getPropertyCSSValue(-webkit-text-combine) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-decorations-in-effect) : none
 rect: style.getPropertyCSSValue(-webkit-text-decorations-in-effect) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-text-emphasis-color) : rgb(0, 0, 0)
+rect: style.getPropertyCSSValue(-webkit-text-emphasis-color) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-text-emphasis-position) : over
+rect: style.getPropertyCSSValue(-webkit-text-emphasis-position) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-text-emphasis-style) : none
+rect: style.getPropertyCSSValue(-webkit-text-emphasis-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-fill-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(-webkit-text-fill-color) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-security) : none
@@ -698,10 +714,20 @@ g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-highlight) : none
 g: style.getPropertyCSSValue(-webkit-highlight) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-hyphenate-character) : auto
+g: style.getPropertyCSSValue(-webkit-hyphenate-character) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto
+g: style.getPropertyCSSValue(-webkit-hyphenate-limit-after) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-hyphenate-limit-before) : auto
+g: style.getPropertyCSSValue(-webkit-hyphenate-limit-before) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-hyphens) : manual
+g: style.getPropertyCSSValue(-webkit-hyphens) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-line-break) : normal
 g: style.getPropertyCSSValue(-webkit-line-break) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-line-clamp) : none
 g: style.getPropertyCSSValue(-webkit-line-clamp) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-locale) : auto
+g: style.getPropertyCSSValue(-webkit-locale) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-margin-before-collapse) : collapse
 g: style.getPropertyCSSValue(-webkit-margin-before-collapse) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-margin-after-collapse) : collapse
@@ -744,6 +770,12 @@ g: style.getPropertyValue(-webkit-text-combine) : none
 g: style.getPropertyCSSValue(-webkit-text-combine) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-decorations-in-effect) : none
 g: style.getPropertyCSSValue(-webkit-text-decorations-in-effect) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-text-emphasis-color) : rgb(0, 0, 0)
+g: style.getPropertyCSSValue(-webkit-text-emphasis-color) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-text-emphasis-position) : over
+g: style.getPropertyCSSValue(-webkit-text-emphasis-position) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-text-emphasis-style) : none
+g: style.getPropertyCSSValue(-webkit-text-emphasis-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-fill-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(-webkit-text-fill-color) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-security) : none

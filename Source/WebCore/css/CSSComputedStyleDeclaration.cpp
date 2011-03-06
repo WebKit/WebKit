@@ -195,8 +195,13 @@ static const int computedProperties[] = {
 #endif
     CSSPropertyWebkitFontSmoothing,
     CSSPropertyWebkitHighlight,
+    CSSPropertyWebkitHyphenateCharacter,
+    CSSPropertyWebkitHyphenateLimitAfter,
+    CSSPropertyWebkitHyphenateLimitBefore,
+    CSSPropertyWebkitHyphens,
     CSSPropertyWebkitLineBreak,
     CSSPropertyWebkitLineClamp,
+    CSSPropertyWebkitLocale,
     CSSPropertyWebkitMarginBeforeCollapse,
     CSSPropertyWebkitMarginAfterCollapse,
     CSSPropertyWebkitMarqueeDirection,
@@ -218,6 +223,9 @@ static const int computedProperties[] = {
     CSSPropertyWebkitRtlOrdering,
     CSSPropertyWebkitTextCombine,
     CSSPropertyWebkitTextDecorationsInEffect,
+    CSSPropertyWebkitTextEmphasisColor,
+    CSSPropertyWebkitTextEmphasisPosition,
+    CSSPropertyWebkitTextEmphasisStyle,
     CSSPropertyWebkitTextFillColor,
     CSSPropertyWebkitTextSecurity,
     CSSPropertyWebkitTextStrokeColor,
@@ -1116,6 +1124,14 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->hyphenationString().isNull())
                 return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
             return CSSPrimitiveValue::create(style->hyphenationString(), CSSPrimitiveValue::CSS_STRING);
+        case CSSPropertyWebkitHyphenateLimitAfter:
+            if (style->hyphenationLimitAfter() < 0)
+                return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
+            return CSSPrimitiveValue::create(style->hyphenationLimitAfter(), CSSPrimitiveValue::CSS_NUMBER);
+        case CSSPropertyWebkitHyphenateLimitBefore:
+            if (style->hyphenationLimitBefore() < 0)
+                return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
+            return CSSPrimitiveValue::create(style->hyphenationLimitBefore(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitBorderFit:
             if (style->borderFit() == BorderFitBorder)
                 return CSSPrimitiveValue::createIdentifier(CSSValueBorder);

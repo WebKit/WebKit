@@ -1,3 +1,50 @@
+2011-03-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/9093327> Implement -hyphenate-limit-{before,after}
+        https://bugs.webkit.org/show_bug.cgi?id=55850
+
+        Tests: fast/css/parsing-hyphenate-limit.html
+               fast/text/hyphenate-limit-before-after.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedProperties) Updated this array with the new properties and some old properties
+        that it was missing.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Added
+        CSSPropertyWebkitHyphenateLimit{Before,After}.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Parse -webkit-hyphenate-limit-{before,after}, allowing
+        'auto' and non-negative integers.
+
+        * css/CSSPropertyNames.in: Added -webkit-hyphenate-limit-{before,after}.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Handle CSSPropertyWebkitHyphenateLimit{Before,After}.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::tryHyphenating): Added minimum prefix and suffix length parameters and checks to only
+        allow hyphenation if the prefix and the suffix are sufficiently long.
+        (WebCore::RenderBlock::findNextLineBreak): Pass the limits to tryHyphenating().
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff): A difference in hyphenation limits is a layout difference.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::hyphenationLimitBefore): Added.
+        (WebCore::InheritedFlags::hyphenationLimitAfter): Added.
+        (WebCore::InheritedFlags::setHyphenationLimitBefore): Added.
+        (WebCore::InheritedFlags::setHyphenationLimitAfter): Added.
+        (WebCore::InheritedFlags::initialHyphenationLimitBefore): Added. Returns -1, which is the
+        representation of 'auto'.
+        (WebCore::InheritedFlags::initialHyphenationLimitAfter): Ditto.
+
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData): Initialize hyphenation limits.
+        (WebCore::StyleRareInheritedData::operator==): Compare hyphenation limits.
+        * rendering/style/StyleRareInheritedData.h:
+
 2011-03-06  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -405,6 +405,8 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             rareInheritedData->khtmlLineBreak != other->rareInheritedData->khtmlLineBreak ||
             rareInheritedData->textSecurity != other->rareInheritedData->textSecurity ||
             rareInheritedData->hyphens != other->rareInheritedData->hyphens ||
+            rareInheritedData->hyphenationLimitBefore != other->rareInheritedData->hyphenationLimitBefore ||
+            rareInheritedData->hyphenationLimitAfter != other->rareInheritedData->hyphenationLimitAfter ||
             rareInheritedData->hyphenationString != other->rareInheritedData->hyphenationString ||
             rareInheritedData->locale != other->rareInheritedData->locale ||
             rareInheritedData->textEmphasisMark != other->rareInheritedData->textEmphasisMark ||

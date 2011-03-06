@@ -1411,8 +1411,18 @@ static inline float textWidth(RenderText* text, unsigned from, unsigned len, con
     return font.width(TextRun(text->characters() + from, len, !collapseWhiteSpace, xPos));
 }
 
-static void tryHyphenating(RenderText* text, const Font& font, const AtomicString& localeIdentifier, int lastSpace, int pos, float xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, int nextBreakable, bool& hyphenated)
+static void tryHyphenating(RenderText* text, const Font& font, const AtomicString& localeIdentifier, int minimumPrefixLength, int minimumSuffixLength, int lastSpace, int pos, float xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, int nextBreakable, bool& hyphenated)
 {
+    // Map 'hyphenate-limit-{before,after}: auto;' to 2.
+    if (minimumPrefixLength < 0)
+        minimumPrefixLength = 2;
+
+    if (minimumSuffixLength < 0)
+        minimumSuffixLength = 2;
+
+    if (pos - lastSpace <= minimumSuffixLength)
+        return;
+
     const AtomicString& hyphenString = text->style()->hyphenString();
     int hyphenWidth = font.width(TextRun(hyphenString.characters(), hyphenString.length()));
 
@@ -1423,12 +1433,17 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
         return;
 
     unsigned prefixLength = font.offsetForPosition(TextRun(text->characters() + lastSpace, pos - lastSpace, !collapseWhiteSpace, xPos + lastSpaceWordSpacing), maxPrefixWidth, false);
-    if (!prefixLength)
+    if (prefixLength < static_cast<unsigned>(minimumPrefixLength))
         return;
 
-    prefixLength = lastHyphenLocation(text->characters() + lastSpace, pos - lastSpace, prefixLength + 1, localeIdentifier);
-    if (!prefixLength)
+    prefixLength = lastHyphenLocation(text->characters() + lastSpace, pos - lastSpace, min(prefixLength, static_cast<unsigned>(pos - lastSpace - minimumSuffixLength)) + 1, localeIdentifier);
+    // FIXME: The following assumes that the character at lastSpace is a space (and therefore should not factor
+    // into hyphenate-limit-before) unless lastSpace is 0. This is wrong in the rare case of hyphenating
+    // the first word in a text node which has leading whitespace.
+    if (prefixLength - (lastSpace ? 1 : 0) < static_cast<unsigned>(minimumPrefixLength))
         return;
+
+    ASSERT(pos - lastSpace - prefixLength >= static_cast<unsigned>(minimumSuffixLength));
 
 #if !ASSERT_DISABLED
     float prefixWidth = hyphenWidth + textWidth(text, lastSpace, prefixLength, font, xPos, isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
@@ -1795,7 +1810,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                         }
                         if (lineWasTooWide || w + tmpW > width) {
                             if (canHyphenate && w + tmpW > width) {
-                                tryHyphenating(t, f, style->locale(), lastSpace, pos, w + tmpW - additionalTmpW, width, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
+                                tryHyphenating(t, f, style->locale(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, pos, w + tmpW - additionalTmpW, width, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
                                 if (hyphenated)
                                     goto end;
                             }
@@ -1913,7 +1928,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             tmpW += inlineLogicalWidth(o, !appliedStartWidth, true);
 
             if (canHyphenate && w + tmpW > width) {
-                tryHyphenating(t, f, style->locale(), lastSpace, pos, w + tmpW - additionalTmpW, width, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
+                tryHyphenating(t, f, style->locale(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, pos, w + tmpW - additionalTmpW, width, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
                 if (hyphenated)
                     goto end;
             }

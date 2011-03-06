@@ -86,6 +86,9 @@ public:
     unsigned textEmphasisPosition : 1; // TextEmphasisPosition
 
     AtomicString hyphenationString;
+    short hyphenationLimitBefore;
+    short hyphenationLimitAfter;
+
     AtomicString locale;
 
     AtomicString textEmphasisCustomMark;
