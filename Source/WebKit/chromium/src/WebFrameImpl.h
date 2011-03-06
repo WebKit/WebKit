@@ -138,7 +138,6 @@ public:
     virtual unsigned unloadListenerCount() const;
     virtual bool isProcessingUserGesture() const;
     virtual bool willSuppressOpenerInNewFrame() const;
-    virtual bool pageDismissalEventBeingDispatched() const;
     virtual void replaceSelection(const WebString&);
     virtual void insertText(const WebString&);
     virtual void setMarkedText(const WebString&, unsigned location, unsigned length);

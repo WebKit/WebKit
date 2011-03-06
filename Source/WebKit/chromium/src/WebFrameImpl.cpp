@@ -1077,11 +1077,6 @@ bool WebFrameImpl::willSuppressOpenerInNewFrame() const
     return frame()->loader()->suppressOpenerInNewFrame();
 }
 
-bool WebFrameImpl::pageDismissalEventBeingDispatched() const
-{
-    return frame()->loader()->pageDismissalEventBeingDispatched();
-}
-
 void WebFrameImpl::replaceSelection(const WebString& text)
 {
     RefPtr<DocumentFragment> fragment = createFragmentFromText(
