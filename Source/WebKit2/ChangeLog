@@ -1,3 +1,30 @@
+2011-03-06  Oleg Romashin  <romaxa@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt][WK2] Make Qt port compiling with ENABLE_PLUGIN_PROCESS=1, part1
+        Adding dummy Qt files for Plugin Process implementation,
+        Adding missing sources into Qt pro files
+        https://bugs.webkit.org/show_bug.cgi?id=55719
+
+        * DerivedSources.pro:
+        * PluginProcess/qt: Added.
+        * PluginProcess/qt/PluginControllerProxyQt.cpp: Added.
+        (WebKit::PluginControllerProxy::platformInitialize):
+        (WebKit::PluginControllerProxy::platformDestroy):
+        (WebKit::PluginControllerProxy::platformGeometryDidChange):
+        * PluginProcess/qt/PluginProcessMainQt.cpp: Added.
+        (WebKit::PluginProcessMain):
+        * PluginProcess/qt/PluginProcessQt.cpp: Added.
+        (WebKit::PluginProcess::platformInitialize):
+        * UIProcess/Plugins/qt/PluginProcessProxyQt.cpp: Added.
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        * WebKit2.pri:
+        * WebKit2.pro:
+        * WebKit2API.pri:
+        * WebProcess/Plugins/Netscape/qt/PluginProxyQt.cpp: Added.
+        (WebKit::PluginProxy::needsBackingStore):
+
 2011-03-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

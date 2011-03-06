@@ -60,7 +60,12 @@ WEBKIT2_API_SOURCES = \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageGroup.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp \
-    \
+    $$SOURCE_DIR/WebKit2/PluginProcess/PluginControllerProxy.cpp \
+    $$SOURCE_DIR/WebKit2/PluginProcess/PluginProcess.cpp \
+    $$SOURCE_DIR/WebKit2/PluginProcess/WebProcessConnection.cpp \
+    $$SOURCE_DIR/WebKit2/PluginProcess/qt/PluginControllerProxyQt.cpp \
+    $$SOURCE_DIR/WebKit2/PluginProcess/qt/PluginProcessMainQt.cpp \
+    $$SOURCE_DIR/WebKit2/PluginProcess/qt/PluginProcessQt.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/qt/WebProcessMainQt.cpp
 
 

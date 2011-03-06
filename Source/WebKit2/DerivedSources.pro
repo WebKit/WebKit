@@ -87,7 +87,8 @@ VPATH = \
     WebProcess \
     UIProcess \
     UIProcess/Downloads \
-    UIProcess/Plugins
+    UIProcess/Plugins \
+    Shared/Plugins
 
 MESSAGE_RECEIVERS = \
     AuthenticationManager.messages.in \
@@ -115,7 +116,8 @@ MESSAGE_RECEIVERS = \
     WebProcessConnection.messages.in \
     WebProcessProxy.messages.in \
     WebResourceCacheManager.messages.in \
-    WebResourceCacheManagerProxy.messages.in
+    WebResourceCacheManagerProxy.messages.in \
+    NPObjectMessageReceiver.messages.in
 
 SCRIPTS = \
     $$PWD/Scripts/generate-message-receiver.py \

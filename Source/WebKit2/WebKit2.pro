@@ -21,6 +21,7 @@ mac: CONFIG += build_all
 WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/AuthenticationManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/NPObjectMessageReceiverMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginControllerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessProxyMessages.h \
@@ -49,6 +50,7 @@ WEBKIT2_GENERATED_HEADERS = \
 WEBKIT2_GENERATED_SOURCES = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/AuthenticationManagerMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/NPObjectMessageReceiverMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginControllerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessProxyMessageReceiver.cpp \
@@ -139,6 +141,13 @@ HEADERS += \
     Shared/WebURLResponse.h \
     Shared/WebUserContentURLPattern.h \
     Shared/Plugins/Netscape/NetscapePluginModule.h \
+    Shared/Plugins/NPRemoteObjectMap.h \
+    Shared/Plugins/NPIdentifierData.h \
+    Shared/Plugins/NPObjectMessageReceiver.h \
+    Shared/Plugins/NPObjectProxy.h \
+    Shared/Plugins/NPVariantData.h \
+    Shared/Plugins/PluginProcessCreationParameters.h \
+    Shared/Plugins/PluginQuirks.h \
     Shared/qt/PlatformCertificateInfo.h \
     Shared/qt/UpdateChunk.h \
     Shared/qt/WebEventFactoryQt.h \
@@ -157,6 +166,8 @@ HEADERS += \
     UIProcess/Launcher/ThreadLauncher.h \
     UIProcess/PageClient.h \
     UIProcess/Plugins/PluginInfoStore.h \
+    UIProcess/Plugins/PluginProcessProxy.h \
+    UIProcess/Plugins/PluginProcessManager.h \
     UIProcess/ProcessModel.h \
     UIProcess/ResponsivenessTimer.h \
     UIProcess/TextChecker.h \
@@ -230,6 +241,9 @@ HEADERS += \
     WebProcess/Plugins/Plugin.h \
     WebProcess/Plugins/PluginController.h \
     WebProcess/Plugins/PluginView.h \
+    WebProcess/Plugins/PluginProxy.h \
+    WebProcess/Plugins/PluginProcessConnection.h \
+    WebProcess/Plugins/PluginProcessConnectionManager.h \
     WebProcess/WebCoreSupport/WebChromeClient.h \
     WebProcess/WebCoreSupport/WebContextMenuClient.h \
     WebProcess/WebCoreSupport/WebDatabaseManager.h \
@@ -278,6 +292,12 @@ SOURCES += \
     Shared/Plugins/Netscape/NetscapePluginModule.cpp \
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
     Shared/ShareableBitmap.cpp \
+    Shared/Plugins/NPRemoteObjectMap.cpp \
+    Shared/Plugins/NPIdentifierData.cpp \
+    Shared/Plugins/NPObjectMessageReceiver.cpp \
+    Shared/Plugins/NPObjectProxy.cpp \
+    Shared/Plugins/NPVariantData.cpp \
+    Shared/Plugins/PluginProcessCreationParameters.cpp \
     Shared/ChildProcess.cpp \
     Shared/DictionaryPopupInfo.cpp \
     Shared/FontInfo.cpp \
@@ -335,8 +355,11 @@ SOURCES += \
     UIProcess/Launcher/qt/ProcessLauncherQt.cpp \
     UIProcess/Launcher/qt/ThreadLauncherQt.cpp \
     UIProcess/Plugins/PluginInfoStore.cpp \
+    UIProcess/Plugins/PluginProcessProxy.cpp \
+    UIProcess/Plugins/PluginProcessManager.cpp \
     UIProcess/Plugins/WebPluginSiteDataManager.cpp \
     UIProcess/Plugins/qt/PluginInfoStoreQt.cpp \
+    UIProcess/Plugins/qt/PluginProcessProxyQt.cpp \
     UIProcess/ResponsivenessTimer.cpp \
     UIProcess/TiledDrawingAreaProxy.cpp \
     UIProcess/VisitedLinkProvider.cpp \
@@ -420,8 +443,12 @@ SOURCES += \
     WebProcess/Plugins/Netscape/NetscapePlugin.cpp \
     WebProcess/Plugins/Netscape/NetscapePluginStream.cpp \
     WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp \
+    WebProcess/Plugins/Netscape/qt/PluginProxyQt.cpp \
     WebProcess/Plugins/Plugin.cpp \
     WebProcess/Plugins/PluginView.cpp \
+    WebProcess/Plugins/PluginProxy.cpp \
+    WebProcess/Plugins/PluginProcessConnection.cpp \
+    WebProcess/Plugins/PluginProcessConnectionManager.cpp \
     WebProcess/WebCoreSupport/WebChromeClient.cpp \
     WebProcess/WebCoreSupport/WebContextMenuClient.cpp \
     WebProcess/WebCoreSupport/WebDatabaseManager.cpp \

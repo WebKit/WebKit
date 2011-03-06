@@ -54,7 +54,8 @@ WEBKIT2_INCLUDEPATH = \
     $$SOURCE_DIR/WebKit2/WebProcess/WebCoreSupport \
     $$SOURCE_DIR/WebKit2/WebProcess/WebCoreSupport/qt \
     $$SOURCE_DIR/WebKit2/WebProcess/WebPage \
-    $$SOURCE_DIR/WebKit2/WebProcess/qt
+    $$SOURCE_DIR/WebKit2/WebProcess/qt \
+    $$SOURCE_DIR/WebKit2/PluginProcess
 
 # On Symbian PREPEND_INCLUDEPATH is the best way to make sure that WebKit headers
 # are included before platform headers.
