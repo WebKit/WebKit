@@ -117,6 +117,8 @@ public:
 
     long timeScale() const;
 
+    void setPrivateBrowsingMode(bool);
+
 private:
     QTMoviePrivate* m_private;
     friend class QTMoviePrivate;

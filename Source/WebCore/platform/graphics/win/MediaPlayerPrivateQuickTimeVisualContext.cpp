@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -177,6 +177,7 @@ MediaPlayerPrivateQuickTimeVisualContext::MediaPlayerPrivateQuickTimeVisualConte
 #endif
     , m_visualContextClient(new MediaPlayerPrivateQuickTimeVisualContext::VisualContextClient(this))
     , m_delayingLoad(false)
+    , m_privateBrowsing(false)
     , m_preload(MediaPlayer::Auto)
 {
 }
@@ -1246,6 +1247,13 @@ void MediaPlayerPrivateQuickTimeVisualContext::acceleratedRenderingStateChanged(
     setUpVideoRendering();
 }
 
+void MediaPlayerPrivateQuickTimeVisualContext::setPrivateBrowsingMode(bool privateBrowsing)
+{
+    m_privateBrowsing = privateBrowsing;
+    if (m_movie)
+        m_movie->setPrivateBrowsingMode(m_privateBrowsing);
+}
+    
 #endif
 
 

@@ -316,6 +316,7 @@ private:
     float m_volume;
     bool m_muted;
     bool m_preservesPitch;
+    bool m_privateBrowsing;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     WebMediaPlayerProxy* m_playerProxy;    // not owned or used, passed to m_private
 #endif

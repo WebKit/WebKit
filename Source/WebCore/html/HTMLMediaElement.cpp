@@ -2569,6 +2569,7 @@ void HTMLMediaElement::privateBrowsingStateDidChange()
 
     Settings* settings = document()->settings();
     bool privateMode = !settings || settings->privateBrowsingEnabled();
+    LOG(Media, "HTMLMediaElement::privateBrowsingStateDidChange(%s)", boolString(privateMode));
     m_player->setPrivateBrowsingMode(privateMode);
 }
 

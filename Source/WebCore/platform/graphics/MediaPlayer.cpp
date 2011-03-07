@@ -278,6 +278,7 @@ MediaPlayer::MediaPlayer(MediaPlayerClient* client)
     , m_volume(1.0f)
     , m_muted(false)
     , m_preservesPitch(true)
+    , m_privateBrowsing(false)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_playerProxy(0)
 #endif
@@ -348,6 +349,7 @@ void MediaPlayer::loadWithNextMediaEngine(MediaPlayerFactory* current)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
         m_private->setMediaPlayerProxy(m_playerProxy);
 #endif
+        m_private->setPrivateBrowsingMode(m_privateBrowsing);
         m_private->setPreload(m_preload);
         m_private->setPreservesPitch(preservesPitch());
     }
@@ -735,7 +737,8 @@ void MediaPlayer::clearMediaCacheForSite(const String& site)
 
 void MediaPlayer::setPrivateBrowsingMode(bool privateBrowsingMode)
 {
-    m_private->setPrivateBrowsingMode(privateBrowsingMode);
+    m_privateBrowsing = privateBrowsingMode;
+    m_private->setPrivateBrowsingMode(m_privateBrowsing);
 }
 
 // Client callbacks.

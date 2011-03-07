@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -224,6 +224,7 @@ MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit(MediaPlayer* player)
     , m_hasUnsupportedTracks(false)
     , m_videoFrameHasDrawn(false)
     , m_isAllowedToRender(false)
+    , m_privateBrowsing(false)
 #if DRAW_FRAME_RATE
     , m_frameCountWhilePlaying(0)
     , m_timeStartedPlaying(0)
@@ -250,6 +251,7 @@ void MediaPlayerPrivateQTKit::createQTMovie(const String& url)
                        [NSNumber numberWithBool:YES], QTSecurityPolicyNoCrossSiteAttribute,
                        [NSNumber numberWithBool:NO], QTMovieAskUnresolvedDataRefsAttribute,
                        [NSNumber numberWithBool:NO], QTMovieLoopsAttribute,
+                       [NSNumber numberWithBool:!m_privateBrowsing], @"QTMovieAllowPersistentCacheAttribute",
 #ifndef BUILDING_ON_TIGER
                        QTMovieApertureModeClean, QTMovieApertureModeAttribute,
 #endif
@@ -1574,6 +1576,15 @@ float MediaPlayerPrivateQTKit::mediaTimeForTimeValue(float timeValue) const
     QTTime qttime = createQTTime(timeValue);
     return static_cast<float>(qttime.timeValue) / qttime.timeScale;
 }
+
+void MediaPlayerPrivateQTKit::setPrivateBrowsingMode(bool privateBrowsing)
+{
+    m_privateBrowsing = privateBrowsing;
+    if (!m_qtMovie)
+        return;
+    [m_qtMovie.get() setAttribute:[NSNumber numberWithBool:!privateBrowsing] forKey:@"QTMovieAllowPersistentCacheAttribute"];
+}
+
 
 } // namespace WebCore
 

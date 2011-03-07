@@ -1,3 +1,46 @@
+2011-03-06  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        QuickTime based media engines should respect private browsing mode
+        https://bugs.webkit.org/show_bug.cgi?id=55848
+
+        No new tests, it is only possible to test this by manually deleting and monitoring the
+        the Quicktime caches.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::privateBrowsingStateDidChange): Add logging.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::MediaPlayer): Initialize m_privateBrowsing.
+        (WebCore::MediaPlayer::loadWithNextMediaEngine): Set privacy mode on new media engine.
+        (WebCore::MediaPlayer::setPrivateBrowsingMode): Stash setting in m_privateBrowsing.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setPrivateBrowsingMode):
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit): Initialize m_privateBrowsing.
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovie): Pass private browsing attribute when
+            creating new movie.
+        (WebCore::MediaPlayerPrivateQTKit::setPrivateBrowsingMode): New, store privacy setting in
+            m_privateBrowsing and set movie attribute.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::MediaPlayerPrivateQuickTimeVisualContext):
+            Initialize m_privateBrowsing.
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::setPrivateBrowsingMode): New, store 
+            privacy setting in m_privateBrowsing and call QTMovie.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h:
+
+        * platform/graphics/win/QTMovie.cpp:
+        (QTMoviePrivate::QTMoviePrivate): Initialize m_privateBrowsing.
+        (QTMovie::load):Pass private browsing property when creating new movie.
+        (QTMovie::setPrivateBrowsingMode):  New, store privacy setting in m_privateBrowsing and 
+            set movie property.
+        * platform/graphics/win/QTMovie.h:
+
 2011-03-06  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.

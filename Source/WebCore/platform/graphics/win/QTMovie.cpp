@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,6 +96,7 @@ public:
     CFURLRef m_currentURL;
     float m_timeToRestore;
     float m_rateToRestore;
+    bool m_privateBrowsing;
 #if !ASSERT_DISABLED
     bool m_scaleCached;
 #endif
@@ -121,6 +122,7 @@ QTMoviePrivate::QTMoviePrivate()
     , m_timeToRestore(-1.0f)
     , m_rateToRestore(-1.0f)
     , m_disabled(false)
+    , m_privateBrowsing(false)
 #if !ASSERT_DISABLED
     , m_scaleCached(false)
 #endif
@@ -466,8 +468,8 @@ void QTMovie::load(CFURLRef url, bool preservesPitch)
         m_private->m_loadState = 0;
     }  
 
-    // Define a property array for NewMovieFromProperties. 8 should be enough for our needs. 
-    QTNewMoviePropertyElement movieProps[8]; 
+    // Define a property array for NewMovieFromProperties.
+    QTNewMoviePropertyElement movieProps[9]; 
     ItemCount moviePropCount = 0; 
 
     bool boolTrue = true;
@@ -549,6 +551,14 @@ void QTMovie::load(CFURLRef url, bool preservesPitch)
     movieProps[moviePropCount].propValueAddress = &preservesPitch; 
     movieProps[moviePropCount].propStatus = 0; 
     moviePropCount++; 
+
+    bool allowCaching = !m_private->m_privateBrowsing;
+    movieProps[moviePropCount].propClass = kQTPropertyClass_MovieInstantiation; 
+    movieProps[moviePropCount].propID = 'pers';
+    movieProps[moviePropCount].propValueSize = sizeof(allowCaching); 
+    movieProps[moviePropCount].propValueAddress = &allowCaching; 
+    movieProps[moviePropCount].propStatus = 0; 
+    moviePropCount++;
 
     ASSERT(moviePropCount <= WTF_ARRAY_LENGTH(movieProps));
     m_private->m_loadError = NewMovieFromProperties(moviePropCount, movieProps, 0, 0, &m_private->m_movie);
@@ -846,6 +856,14 @@ void QTMovie::resetTransform()
     m_private->cacheMovieScale();
 }
 
+void QTMovie::setPrivateBrowsingMode(bool privateBrowsing)
+{
+    m_private->m_privateBrowsing = privateBrowsing;
+    if (m_private->m_movie) {
+        bool allowCaching = !m_private->m_privateBrowsing;
+        QTSetMovieProperty(m_private->m_movie, 'cach', 'pers', sizeof(allowCaching), &allowCaching);
+    }
+}
 
 bool QTMovie::initializeQuickTime() 
 {

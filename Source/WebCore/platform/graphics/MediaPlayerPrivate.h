@@ -145,7 +145,7 @@ public:
     void clearMediaCache() { }
     void clearMediaCacheForSite(const String&) { }
 
-    void setPrivateBrowsingMode(bool) { }
+    virtual void setPrivateBrowsingMode(bool) { }
 };
 
 }
