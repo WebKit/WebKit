@@ -30,13 +30,16 @@
 
 #include "JavaInstanceV8.h"
 #include "JavaNPObjectV8.h"
+#include <wtf/text/CString.h>
 
 namespace JSC {
 
 namespace Bindings {
 
-jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* javaClassName)
+jvalue convertNPVariantToJValue(NPVariant value, const WTF::String& javaType)
 {
+    CString javaClassName = javaType.utf8();
+    JNIType jniType = JNITypeFromClassName(javaClassName.data());
     jvalue result;
     NPVariantType type = value.type;
 
@@ -55,7 +58,7 @@ jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* ja
 
             // Now convert value to a string if the target type is a java.lang.string, and we're not
             // converting from a Null.
-            if (!result.l && !strcmp(javaClassName, "java.lang.String")) {
+            if (!result.l && !strcmp(javaClassName.data(), "java.lang.String")) {
 #ifdef CONVERT_NULL_TO_EMPTY_STRING
                 if (type == NPVariantType_Null) {
                     JNIEnv* env = getJNIEnv();

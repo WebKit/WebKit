@@ -39,6 +39,10 @@
 // should be added to the end. It is used in jni_obc.mm when calling
 // through to the JVM. Newly added items need to be made compatible
 // in that file.
+//
+// TODO: Strictly, these are not JNI types but simply Java types. The type
+// conversion logic used here needs improving and this enum will likely be
+// changed at that time. See https://bugs.webkit.org/show_bug.cgi?id=38745
 typedef enum {
     invalid_type = 0,
     void_type,
@@ -57,8 +61,6 @@ typedef enum {
 namespace JSC {
 
 namespace Bindings {
-
-class JavaParameter;
 
 const char* getCharactersFromJString(jstring);
 void releaseCharactersForJString(jstring, const char*);

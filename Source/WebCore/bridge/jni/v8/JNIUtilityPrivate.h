@@ -30,12 +30,13 @@
 
 #include "JNIUtility.h"
 #include "npruntime.h"
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
 namespace Bindings {
 
-jvalue convertNPVariantToJValue(NPVariant, JNIType, const char* javaClassName);
+jvalue convertNPVariantToJValue(NPVariant, const WTF::String& javaType);
 void convertJValueToNPVariant(jvalue, JNIType, const char* javaClassName, NPVariant*);
 
 } // namespace Bindings

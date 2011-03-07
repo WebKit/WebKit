@@ -36,12 +36,6 @@
 using namespace JSC;
 using namespace JSC::Bindings;
 
-JavaParameter::JavaParameter(JNIEnv* env, jstring type)
-{
-    m_type = JavaString(env, type);
-    m_JNIType = JNITypeFromClassName(m_type.utf8());
-}
-
 JavaMethod::JavaMethod(JNIEnv* env, jobject aMethod)
 {
     // Get return type name
@@ -65,22 +59,18 @@ JavaMethod::JavaMethod(JNIEnv* env, jobject aMethod)
 
     // Get parameters
     if (jarray jparameters = static_cast<jarray>(callJNIMethod<jobject>(aMethod, "getParameterTypes", "()[Ljava/lang/Class;"))) {
-        m_numParameters = env->GetArrayLength(jparameters);
-        m_parameters = new JavaParameter[m_numParameters];
+        unsigned int numParams = env->GetArrayLength(jparameters);
 
-        for (int i = 0; i < m_numParameters; i++) {
+        for (unsigned int i = 0; i < numParams; i++) {
             jobject aParameter = env->GetObjectArrayElement(static_cast<jobjectArray>(jparameters), i);
             jstring parameterName = static_cast<jstring>(callJNIMethod<jobject>(aParameter, "getName", "()Ljava/lang/String;"));
             if (!parameterName)
                 parameterName = env->NewStringUTF("<Unknown>");
-            m_parameters[i] = JavaParameter(env, parameterName);
+            m_parameters.append(JavaString(env, parameterName).impl());
             env->DeleteLocalRef(aParameter);
             env->DeleteLocalRef(parameterName);
         }
         env->DeleteLocalRef(jparameters);
-    } else {
-        m_numParameters = 0;
-        m_parameters = 0;
     }
 
     // Created lazily.
@@ -97,8 +87,7 @@ JavaMethod::~JavaMethod()
 {
     if (m_signature)
         fastFree(m_signature);
-    delete[] m_parameters;
-};
+}
 
 // JNI method signatures use '/' between components of a class name, but
 // we get '.' between components from the reflection API.
@@ -131,15 +120,15 @@ const char* JavaMethod::signature() const
 
         StringBuilder signatureBuilder;
         signatureBuilder.append('(');
-        for (int i = 0; i < m_numParameters; i++) {
-            JavaParameter* aParameter = parameterAt(i);
-            JNIType type = aParameter->getJNIType();
+        for (unsigned int i = 0; i < m_parameters.size(); i++) {
+            CString javaClassName = parameterAt(i).utf8();
+            JNIType type = JNITypeFromClassName(javaClassName.data());
             if (type == array_type)
-                appendClassName(signatureBuilder, aParameter->type());
+                appendClassName(signatureBuilder, javaClassName.data());
             else {
                 signatureBuilder.append(signatureFromPrimitiveType(type));
                 if (type == object_type) {
-                    appendClassName(signatureBuilder, aParameter->type());
+                    appendClassName(signatureBuilder, javaClassName.data());
                     signatureBuilder.append(';');
                 }
             }

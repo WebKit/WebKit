@@ -97,10 +97,8 @@ bool JavaInstance::invokeMethod(const char* methodName, const NPVariant* args, i
     if (count > 0)
         jArgs = static_cast<jvalue*>(malloc(count * sizeof(jvalue)));
 
-    for (int i = 0; i < count; i++) {
-        JavaParameter* aParameter = jMethod->parameterAt(i);
-        jArgs[i] = convertNPVariantToJValue(args[i], aParameter->getJNIType(), aParameter->type());
-    }
+    for (int i = 0; i < count; i++)
+        jArgs[i] = convertNPVariantToJValue(args[i], jMethod->parameterAt(i));
 
     jvalue result;
 

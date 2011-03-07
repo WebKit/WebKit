@@ -1,3 +1,28 @@
+2011-03-04  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        JavaParameter should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=55772
+
+        No new tests, refactoring only.
+
+        * bridge/jni/JNIBridge.cpp:
+        (JavaMethod::JavaMethod):
+        (JavaMethod::~JavaMethod):
+        (JavaMethod::signature):
+        * bridge/jni/JNIBridge.h:
+        (JSC::Bindings::JavaMethod::parameterAt):
+        (JSC::Bindings::JavaMethod::numParameters):
+        * bridge/jni/JNIUtility.h:
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::invokeMethod):
+        * bridge/jni/v8/JNIUtilityPrivate.cpp:
+        (JSC::Bindings::convertNPVariantToJValue):
+        * bridge/jni/v8/JNIUtilityPrivate.h:
+        * bridge/jni/v8/JavaInstanceV8.cpp:
+        (JavaInstance::invokeMethod):
+
 2011-03-07  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver Hunt.

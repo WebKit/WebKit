@@ -175,8 +175,8 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod
     Vector<jvalue> jArgs(count);
 
     for (i = 0; i < count; i++) {
-        JavaParameter* aParameter = jMethod->parameterAt(i);
-        jArgs[i] = convertValueToJValue(exec, m_rootObject.get(), exec->argument(i), aParameter->getJNIType(), aParameter->type());
+        CString javaClassName = jMethod->parameterAt(i).utf8();
+        jArgs[i] = convertValueToJValue(exec, m_rootObject.get(), exec->argument(i), JNITypeFromClassName(javaClassName.data()), javaClassName.data());
         LOG(LiveConnect, "JavaInstance::invokeMethod arg[%d] = %s", i, exec->argument(i).toString(exec).ascii().data());
     }
 

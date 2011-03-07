@@ -69,20 +69,6 @@ private:
     JavaStringImpl m_impl;
 };
 
-class JavaParameter {
-public:
-    JavaParameter() : m_JNIType(invalid_type) { }
-    JavaParameter(JNIEnv*, jstring type);
-    virtual ~JavaParameter() { }
-
-    RuntimeType type() const { return m_type.utf8(); }
-    JNIType getJNIType() const { return m_JNIType; }
-
-private:
-    JavaString m_type;
-    JNIType m_JNIType;
-};
-
 class JavaMethod : public Method {
 public:
     JavaMethod(JNIEnv*, jobject aMethod);
@@ -90,8 +76,8 @@ public:
 
     const JavaString& name() const { return m_name; }
     RuntimeType returnType() const { return m_returnType.utf8(); }
-    JavaParameter* parameterAt(int i) const { return &m_parameters[i]; }
-    int numParameters() const { return m_numParameters; }
+    const WTF::String& parameterAt(int i) const { return m_parameters[i]; }
+    int numParameters() const { return m_parameters.size(); }
 
     const char* signature() const;
     JNIType JNIReturnType() const;
@@ -101,8 +87,7 @@ public:
     bool isStatic() const { return m_isStatic; }
 
 private:
-    JavaParameter* m_parameters;
-    int m_numParameters;
+    Vector<WTF::String> m_parameters;
     JavaString m_name;
     mutable char* m_signature;
     JavaString m_returnType;
