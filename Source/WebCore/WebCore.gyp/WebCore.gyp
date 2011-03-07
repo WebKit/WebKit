@@ -1174,7 +1174,7 @@
         # Exclude things that don't apply to the Chromium platform on the basis
         # of their enclosing directories and tags at the ends of their
         # filenames.
-        ['exclude', '(android|cairo|cf|cg|curl|fftw|gtk|haiku|linux|mac|mkl|opentype|posix|qt|soup|svg|symbian|win|wx)/'],
+        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|fftw|gtk|haiku|linux|mac|mkl|opentype|posix|qt|soup|svg|symbian|win|wince|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
 
         # A few things can't be excluded by patterns.  List them individually.
@@ -1364,7 +1364,7 @@
         # Exclude things that don't apply to the Chromium platform on the basis
         # of their enclosing directories and tags at the ends of their
         # filenames.
-        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|html|linux|mac|opentype|platform|posix|qt|soup|svg|symbian|win|wx)/'],
+        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|gtk|haiku|html|linux|mac|opentype|platform|posix|qt|soup|svg|symbian|win|wince|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
 
         # Exclude most of SVG except css and javascript bindings.
@@ -1429,7 +1429,7 @@
         # Exclude things that don't apply to the Chromium platform on the basis
         # of their enclosing directories and tags at the ends of their
         # filenames.
-        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|html|linux|mac|opentype|platform|posix|qt|rendering|soup|svg|symbian|win|wx)/'],
+        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|gtk|haiku|html|linux|mac|opentype|platform|posix|qt|rendering|soup|svg|symbian|win|wince|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
 
         # JSC-only.

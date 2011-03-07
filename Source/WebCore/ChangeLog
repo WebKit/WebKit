@@ -1,3 +1,15 @@
+2011-03-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add some missing platform files to WebCore.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=55897
+
+        There are a bunch more, but this is a start.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2011-03-07  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
