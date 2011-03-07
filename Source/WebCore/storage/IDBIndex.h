@@ -37,17 +37,19 @@
 
 namespace WebCore {
 
+class IDBObjectStore;
+
 class IDBIndex : public RefCounted<IDBIndex> {
 public:
-    static PassRefPtr<IDBIndex> create(PassRefPtr<IDBIndexBackendInterface> backend, IDBTransaction* transaction)
+    static PassRefPtr<IDBIndex> create(PassRefPtr<IDBIndexBackendInterface> backend, IDBObjectStore* objectStore, IDBTransaction* transaction)
     {
-        return adoptRef(new IDBIndex(backend, transaction));
+        return adoptRef(new IDBIndex(backend, objectStore, transaction));
     }
     ~IDBIndex();
 
     // Implement the IDL
     String name() const { return m_backend->name(); }
-    String storeName() const { return m_backend->storeName(); }
+    IDBObjectStore* objectStore() const { return m_objectStore.get(); }
     String keyPath() const { return m_backend->keyPath(); }
     bool unique() const { return m_backend->unique(); }
 
@@ -64,9 +66,10 @@ public:
     PassRefPtr<IDBRequest> getKey(ScriptExecutionContext*, PassRefPtr<IDBKey>, ExceptionCode&);
 
 private:
-    IDBIndex(PassRefPtr<IDBIndexBackendInterface>, IDBTransaction*);
+    IDBIndex(PassRefPtr<IDBIndexBackendInterface>, IDBObjectStore*, IDBTransaction*);
 
     RefPtr<IDBIndexBackendInterface> m_backend;
+    RefPtr<IDBObjectStore> m_objectStore;
     RefPtr<IDBTransaction> m_transaction;
 };
 

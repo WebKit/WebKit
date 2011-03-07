@@ -50,8 +50,8 @@ function addData()
 {
     shouldBeTrue("'name' in indexObject");
     shouldBeEqualToString("indexObject.name", "indexName");
-    shouldBeTrue("'storeName' in indexObject");
-    shouldBeEqualToString("indexObject.storeName", "storeName");
+    shouldBeTrue("'objectStore' in indexObject");
+    shouldBeEqualToString("indexObject.objectStore.name", "storeName");
     shouldBeTrue("'keyPath' in indexObject");
     shouldBeEqualToString("indexObject.keyPath", "x");
     shouldBeTrue("'unique' in indexObject");
@@ -150,6 +150,7 @@ function openKeyCursor()
 
 function cursor1Continue()
 {
+    shouldBe("event.target.source", "indexObject");
     shouldBeFalse("event.target.result === null");
     shouldBeEqualToString("event.target.result.key", "value");
     shouldBeEqualToString("event.target.result.primaryKey", "key");
@@ -181,6 +182,7 @@ function openObjectCursor()
 
 function cursor2Continue()
 {
+    shouldBe("event.target.source", "indexObject");
     shouldBeFalse("event.target.result === null");
     shouldBeEqualToString("event.target.result.key", "value");
     shouldBeEqualToString("event.target.result.value.x", "value");

@@ -28,20 +28,26 @@ objectStore.add({number: 3, id: 3}).onerror = unexpectedErrorCallback
 objectStore.add({number: 4, id: 4}).onerror = unexpectedErrorCallback
 openBasicCursor()
 trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
-trans.objectStore('basicStore').openCursor(keyRange)
+trans.objectStore('basicStore')
+objectStore.openCursor(keyRange)
 basicUpdateCursor()
+PASS event.target.source is objectStore
 event.target.result.update('myUpdatedValue' + counter++)
 event.target.source.continue()
 basicUpdateCursor()
+PASS event.target.source is objectStore
 event.target.result.update('myUpdatedValue' + counter++)
 event.target.source.continue()
 basicUpdateCursor()
+PASS event.target.source is objectStore
 event.target.result.update('myUpdatedValue' + counter++)
 event.target.source.continue()
 basicUpdateCursor()
+PASS event.target.source is objectStore
 event.target.result.update('myUpdatedValue' + counter++)
 event.target.source.continue()
 basicUpdateCursor()
+PASS event.target.source is objectStore
 PASS counter is 5
 trans.objectStore('basicStore').openCursor(keyRange)
 basicCheckCursor()

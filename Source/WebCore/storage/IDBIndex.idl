@@ -29,7 +29,7 @@ module storage {
         Conditional=INDEXED_DATABASE
     ] IDBIndex {
         readonly attribute DOMString name;
-        readonly attribute DOMString storeName;
+        readonly attribute IDBObjectStore objectStore;
         readonly attribute DOMString keyPath;
         readonly attribute boolean unique;
 

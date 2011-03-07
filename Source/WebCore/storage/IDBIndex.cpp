@@ -33,6 +33,7 @@
 #include "IDBIndexBackendInterface.h"
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
+#include "IDBObjectStore.h"
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
 
@@ -40,11 +41,13 @@ namespace WebCore {
 
 static const unsigned short defaultDirection = IDBCursor::NEXT;
 
-IDBIndex::IDBIndex(PassRefPtr<IDBIndexBackendInterface> backend, IDBTransaction* transaction)
+IDBIndex::IDBIndex(PassRefPtr<IDBIndexBackendInterface> backend, IDBObjectStore* objectStore, IDBTransaction* transaction)
     : m_backend(backend)
+    , m_objectStore(objectStore)
     , m_transaction(transaction)
 {
     ASSERT(m_backend);
+    ASSERT(m_objectStore);
     ASSERT(m_transaction);
 }
 

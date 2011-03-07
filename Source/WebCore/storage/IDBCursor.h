@@ -52,7 +52,7 @@ public:
         PREV = 2,
         PREV_NO_DUPLICATE = 3,
     };
-    static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBTransaction*);
+    static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBAny* source, IDBTransaction*);
     virtual ~IDBCursor();
 
     // FIXME: Try to modify the code generator so this is unneeded.
@@ -63,16 +63,19 @@ public:
     PassRefPtr<IDBKey> key() const;
     PassRefPtr<IDBKey> primaryKey() const;
     PassRefPtr<SerializedScriptValue> value() const;
+    IDBAny* source() const;
+
     PassRefPtr<IDBRequest> update(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue>, ExceptionCode&);
     void continueFunction(PassRefPtr<IDBKey>, ExceptionCode&);
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&);
 
 protected:
-    explicit IDBCursor(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBTransaction*);
+    IDBCursor(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBAny* source, IDBTransaction*);
 
 private:
     RefPtr<IDBCursorBackendInterface> m_backend;
     RefPtr<IDBRequest> m_request;
+    RefPtr<IDBAny> m_source;
     RefPtr<IDBTransaction> m_transaction;
 };
 

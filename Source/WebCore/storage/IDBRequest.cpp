@@ -189,9 +189,9 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend)
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
     ASSERT(m_cursorType != IDBCursorBackendInterface::InvalidCursorType);
     if (m_cursorType == IDBCursorBackendInterface::IndexKeyCursor)
-        m_result = IDBAny::create(IDBCursor::create(backend, this, m_transaction.get()));
+        m_result = IDBAny::create(IDBCursor::create(backend, this, m_source.get(), m_transaction.get()));
     else
-        m_result = IDBAny::create(IDBCursorWithValue::create(backend, this, m_transaction.get()));
+        m_result = IDBAny::create(IDBCursorWithValue::create(backend, this, m_source.get(), m_transaction.get()));
     enqueueEvent(createSuccessEvent());
 }
 

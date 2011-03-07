@@ -34,14 +34,14 @@ namespace WebCore {
 
 class IDBCursorWithValue : public IDBCursor {
 public:
-    static PassRefPtr<IDBCursorWithValue> create(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBTransaction*);
+    static PassRefPtr<IDBCursorWithValue> create(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBAny* source, IDBTransaction*);
     virtual ~IDBCursorWithValue();
 
     // The value attribute defined in the IDL is simply implemented in IDBCursor (but not exposed via
     // its IDL). This is to make the implementation more simple while matching what the spec says.
 
 private:
-    explicit IDBCursorWithValue(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBTransaction*);
+    IDBCursorWithValue(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBAny* source, IDBTransaction*);
 };
 
 } // namespace WebCore

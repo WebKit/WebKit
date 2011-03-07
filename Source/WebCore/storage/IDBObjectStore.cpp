@@ -131,7 +131,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const Strin
     ASSERT(!index != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
     if (!index)
         return 0;
-    return IDBIndex::create(index.release(), m_transaction.get());
+    return IDBIndex::create(index.release(), this, m_transaction.get());
 }
 
 PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec)
@@ -140,7 +140,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec
     ASSERT(!index != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
     if (!index)
         return 0;
-    return IDBIndex::create(index.release(), m_transaction.get());
+    return IDBIndex::create(index.release(), this, m_transaction.get());
 }
 
 void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)

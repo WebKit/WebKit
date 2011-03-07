@@ -36,6 +36,7 @@ module storage {
         readonly attribute unsigned short direction;
         readonly attribute IDBKey key;
         readonly attribute IDBKey primaryKey;
+        readonly attribute IDBAny source;
 
         [CallWith=ScriptExecutionContext] IDBRequest update(in SerializedScriptValue value)
             raises (IDBDatabaseException);

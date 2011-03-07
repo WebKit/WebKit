@@ -70,7 +70,8 @@ function openBasicCursor()
     trans.oncomplete = transactionComplete;
 
     keyRange = webkitIDBKeyRange.lowerBound("myKey1");
-    request = evalAndLog("trans.objectStore('basicStore').openCursor(keyRange)");
+    window.objectStore = evalAndLog("trans.objectStore('basicStore')");
+    request = evalAndLog("objectStore.openCursor(keyRange)");
     request.onsuccess = basicUpdateCursor;
     request.onerror = unexpectedErrorCallback;
     counter = 1;
@@ -79,6 +80,7 @@ function openBasicCursor()
 function basicUpdateCursor()
 {
     debug("basicUpdateCursor()");
+    shouldBe("event.target.source", "objectStore");
     if (event.target.result == null) {
         shouldBe("counter", "5");
         counter = 1;

@@ -33,13 +33,13 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBCursorWithValue> IDBCursorWithValue::create(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBTransaction* transaction)
+PassRefPtr<IDBCursorWithValue> IDBCursorWithValue::create(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBAny* source, IDBTransaction* transaction)
 {
-    return adoptRef(new IDBCursorWithValue(backend, request, transaction));
+    return adoptRef(new IDBCursorWithValue(backend, request, source, transaction));
 }
 
-IDBCursorWithValue::IDBCursorWithValue(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBTransaction* transaction)
-    : IDBCursor(backend, request, transaction)
+IDBCursorWithValue::IDBCursorWithValue(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBAny* source, IDBTransaction* transaction)
+    : IDBCursor(backend, request, source, transaction)
 {
 }
 

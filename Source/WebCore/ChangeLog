@@ -1,3 +1,35 @@
+2011-03-07  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add source to IDBCursor, objectStore to IDBIndex, and remove storeName
+        https://bugs.webkit.org/show_bug.cgi?id=55812
+
+        This brings us in line with what's in the spec:
+        http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html
+
+        * storage/IDBCursor.cpp:
+        (WebCore::IDBCursor::create):
+        (WebCore::IDBCursor::IDBCursor):
+        (WebCore::IDBCursor::source):
+        * storage/IDBCursor.h:
+        * storage/IDBCursor.idl:
+        * storage/IDBCursorWithValue.cpp:
+        (WebCore::IDBCursorWithValue::create):
+        (WebCore::IDBCursorWithValue::IDBCursorWithValue):
+        * storage/IDBCursorWithValue.h:
+        * storage/IDBIndex.cpp:
+        (WebCore::IDBIndex::IDBIndex):
+        * storage/IDBIndex.h:
+        (WebCore::IDBIndex::create):
+        (WebCore::IDBIndex::objectStore):
+        * storage/IDBIndex.idl:
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::index):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+
 2011-03-07  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

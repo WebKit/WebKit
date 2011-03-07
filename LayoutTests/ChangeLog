@@ -1,3 +1,15 @@
+2011-03-07  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Add source to IDBIndex, objectStore to IDBIndex, and remove storeName
+        https://bugs.webkit.org/show_bug.cgi?id=55812
+
+        * storage/indexeddb/cursor-update-expected.txt:
+        * storage/indexeddb/cursor-update.html:
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/index-basics.html:
+
 2011-03-07  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

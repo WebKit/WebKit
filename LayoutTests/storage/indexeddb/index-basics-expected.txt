@@ -16,8 +16,8 @@ store.createIndex('indexName2', 'y', false)
 store.createIndex('zIndex', 'z', true)
 PASS 'name' in indexObject is true
 PASS indexObject.name is "indexName"
-PASS 'storeName' in indexObject is true
-PASS indexObject.storeName is "storeName"
+PASS 'objectStore' in indexObject is true
+PASS indexObject.objectStore.name is "storeName"
 PASS 'keyPath' in indexObject is true
 PASS indexObject.keyPath is "x"
 PASS 'unique' in indexObject is true
@@ -47,6 +47,7 @@ event.preventDefault()
 indexObject4.getKey('value2')
 PASS event.target.result is "key2"
 indexObject.openKeyCursor()
+PASS event.target.source is indexObject
 PASS event.target.result === null is false
 PASS event.target.result.key is "value"
 PASS event.target.result.primaryKey is "key"
@@ -57,6 +58,7 @@ PASS event.target.result.primaryKey is "key2"
 event.target.result.continue()
 PASS event.target.result === null is true
 indexObject.openCursor()
+PASS event.target.source is indexObject
 PASS event.target.result === null is false
 PASS event.target.result.key is "value"
 PASS event.target.result.value.x is "value"
