@@ -30,6 +30,10 @@
 
 #include "PlatformString.h"
 
+#if USE(SKIA)
+#include "SkColorPriv.h"
+#endif
+
 namespace WebCore {
 
 class GraphicsContext3D;
