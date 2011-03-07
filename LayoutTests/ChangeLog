@@ -1,3 +1,13 @@
+2011-03-06  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        Add a Mac expectation for a new test of r80449.
+
+        * platform/mac/fast/forms/input-appearance-spinbutton-visibility-expected.checksum: Added.
+        * platform/mac/fast/forms/input-appearance-spinbutton-visibility-expected.png: Added.
+        * platform/mac/fast/forms/input-appearance-spinbutton-visibility-expected.txt: Added.
+
 2011-03-06  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Kent Tamura.
