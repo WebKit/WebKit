@@ -1419,7 +1419,10 @@
       ],
       'sources/': [
         # Exclude JSC custom bindings.
+        ['exclude', 'bindings/cpp'],
+        ['exclude', 'bindings/gobject'],
         ['exclude', 'bindings/js'],
+        ['exclude', 'bindings/objc'],
 
         # Fortunately, many things can be excluded by using broad patterns.
 

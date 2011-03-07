@@ -1,3 +1,16 @@
+2011-03-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add gobject, cpp, and objc bindings to WebCore.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=55892
+
+        These are also excluded from the Chromium build but needed for various
+        other ports.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2011-03-07  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Reviewed by Dimitri Glazkov.
