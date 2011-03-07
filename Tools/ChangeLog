@@ -1,3 +1,17 @@
+2011-03-06  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel and David Kilzer.
+
+        Fix misspelled word in build-webkit's checkForJavaSDK() and sort forward declarations
+        https://bugs.webkit.org/show_bug.cgi?id=55503
+
+        Fix misspelled word "Dowloads" [sic] in the message printed to standard output
+        in checkForJavaSDK().
+
+        Also, remove extraneous space in function prototype for unlinkZeroFiles.
+
+        * Scripts/build-webkit:
+
 2011-03-05  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Sam Weinig.

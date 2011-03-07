@@ -41,9 +41,9 @@ use webkitdirs;
 use webkitperl::features;
 use POSIX;
 
+sub checkForJavaSDK();
 sub formatBuildTime($);
 sub writeCongrats();
-sub checkForJavaSDK();
 
 my $originalWorkingDirectory = getcwd();
 chdirWebKit();
@@ -390,7 +390,7 @@ File::Find::find(sub {unlink $File::Find::name if $File::Find::name =~ m/Makefil
 # Remove 0 byte sized files from productDir after slave lost for Qt buildbots.
 File::Find::find(\&unlinkZeroFiles, $productDir) if (isQt() && !isSymbian() && -e $productDir);
 
-sub unlinkZeroFiles ()
+sub unlinkZeroFiles()
 {
     my $file = $File::Find::name;
     if (! -s $file) {
@@ -621,7 +621,7 @@ sub checkForJavaSDK()
     }
     print "\nCan't find required $jniHeader, build will fail.\n\n";
     print "After installing \"Java for Mac OS X 10.6 Update 3\", the Java Developer Package is required to build WebKit.\n";
-    print "Please install the package from http://connect.apple.com (found under Dowloads > Java).\n\n";
+    print "Please install the package from http://connect.apple.com (found under Downloads > Java).\n\n";
     print "For more information, see:\n";
     print "https://lists.webkit.org/pipermail/webkit-dev/2010-October/014867.html\n";
     print "https://webkit.org/building/tools.html\n\n";
