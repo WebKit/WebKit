@@ -2,6 +2,22 @@
 
         Reviewed by Kent Tamura.
 
+        Input type=number spin buttons remain invisible but functional after div changed from hidden to visible.
+        https://bugs.webkit.org/show_bug.cgi?id=55839
+        http://crbug.com/73866
+        http://crbug.com/62527
+
+        We also need style change for m_innerSpinButton not only for m_outerSpinBuggon when styleDidChange() is called.
+
+        Test: fast/forms/input-appearance-spinbutton-visibility.html
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+
+2011-03-06  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kent Tamura.
+
         [Chromium] Autocomplete suggestion extends out of window (and onto second monitor)
         https://bugs.webkit.org/show_bug.cgi?id=54795
 
