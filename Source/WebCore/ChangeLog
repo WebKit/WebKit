@@ -1,3 +1,28 @@
+2011-03-06  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        style.borderSpacing always returns empty string
+        https://bugs.webkit.org/show_bug.cgi?id=54816
+
+        Teach CSSMutableStyleDeclaration::getPropertyValue() how to reconstitute
+        the value for border-spacing from the value of the WebKit internal CSS
+        property -webkit-border-horizontal-spacing and -webkit-border-vertical-spacing.
+
+        The CSS property border-spacing describes the horizontal and vertical border
+        spacing for an HTML Table element. Notice, WebKit internally represents the value
+        of this property as two properties: -webkit-border-horizontal-spacing and
+        -webkit-border-vertical-spacing, for the horizontal and vertical border spacing,
+        respectively. And WebKit doesn't know to reconstitute these internal properties.
+        Therefore style.borderSpacing always returns the empty string.
+
+        Test: fast/css/table-border-spacing.html
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue):
+        (WebCore::CSSMutableStyleDeclaration::borderSpacingValue): Added.
+        * css/CSSMutableStyleDeclaration.h:
+
 2011-03-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

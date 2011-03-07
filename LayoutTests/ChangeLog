@@ -1,3 +1,15 @@
+2011-03-06  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        style.borderSpacing always returns empty string
+        https://bugs.webkit.org/show_bug.cgi?id=54816
+
+        Tests that style.borderSpacing returns the correct result for valid, negative, and missing border-spacing values.
+
+        * fast/css/table-border-spacing-expected.txt: Added.
+        * fast/css/table-border-spacing.html: Added.
+
 2011-03-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

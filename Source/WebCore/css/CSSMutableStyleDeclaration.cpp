@@ -1,6 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,6 +35,7 @@
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "StyledElement.h"
+#include <wtf/text/StringConcatenate.h>
 
 using namespace std;
 
@@ -120,6 +122,10 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
 
     // Shorthand and 4-values properties
     switch (propertyID) {
+        case CSSPropertyBorderSpacing: {
+            const int properties[2] = { CSSPropertyWebkitBorderHorizontalSpacing, CSSPropertyWebkitBorderVerticalSpacing };
+            return borderSpacingValue(properties);
+        }
         case CSSPropertyBackgroundPosition: {
             // FIXME: Is this correct? The code in cssparser.cpp is confusing
             const int properties[2] = { CSSPropertyBackgroundPositionX, CSSPropertyBackgroundPositionY };
@@ -266,6 +272,22 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
 #endif
     }
     return String();
+}
+
+String CSSMutableStyleDeclaration::borderSpacingValue(const int properties[2]) const
+{
+    RefPtr<CSSValue> horizontalValue = getPropertyCSSValue(properties[0]);
+    RefPtr<CSSValue> verticalValue = getPropertyCSSValue(properties[1]);
+
+    if (!horizontalValue)
+        return String();
+    ASSERT(verticalValue); // By <http://www.w3.org/TR/CSS21/tables.html#separated-borders>.
+
+    String horizontalValueCSSText = horizontalValue->cssText();
+    String verticalValueCSSText = verticalValue->cssText();
+    if (horizontalValueCSSText == verticalValueCSSText)
+        return horizontalValueCSSText;
+    return makeString(horizontalValueCSSText, ' ', verticalValueCSSText);
 }
 
 String CSSMutableStyleDeclaration::get4Values(const int* properties) const

@@ -156,6 +156,7 @@ private:
     String getCommonValue(const int* properties, int number) const;
     String getLayeredShorthandValue(const int* properties, unsigned number) const;
     String get4Values(const int* properties) const;
+    String borderSpacingValue(const int properties[2]) const;
     
     void setPropertyInternal(const CSSProperty&, CSSProperty* slot = 0);
     bool removeShorthandProperty(int propertyID, bool notifyChanged);
