@@ -1,3 +1,21 @@
+2011-03-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Filter sources in WebCore GYP build for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=55857
+
+        This patch removes a large number of files that do not build as part of
+        the Mac build.  I'm not fully sold on this method of
+        including/excluding files, but it's the "gyp way" so we should probably
+        try it first.
+
+        This patch also sets xcode_list_excluded_files to 0, which removes the
+        excluded files from the Xcode project file, which is necessary in order
+        to prevent the header map feature from including the wrong header file.
+
+        * gyp/WebCore.gyp:
+
 2011-03-07  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed EFL build fix.

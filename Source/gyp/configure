@@ -43,6 +43,8 @@ def create_project(project):
     subprocess.call([
         'gyp',  # FIXME: gyp shouldn't need to be in the PATH.
         os.path.join(project, 'gyp', project + '.gyp'),
+        '-G',
+        'xcode_list_excluded_files=0',
         '--depth=.',
     ])
 
