@@ -1,3 +1,18 @@
+2011-03-06  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Autocomplete suggestion extends out of window (and onto second monitor)
+        https://bugs.webkit.org/show_bug.cgi?id=54795
+
+        Implement width clip logic according to browser screen width and popup window width. This fix is enough for Win and Mac, but there is a problem in Linux. Because WebScreenInfoFactory::screenInfo() can get only merged screen size, not the screen size where the browser exists.
+
+        Test: manual-tests/popup-width-restriction-within-screen.html
+
+        * manual-tests/popup-width-restriction-within-screen.html: Added.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::layoutAndCalculateWidgetRect): Implement the width clip logic according to screen width.
+
 2011-03-06  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.

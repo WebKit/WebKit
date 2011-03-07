@@ -351,6 +351,19 @@ IntRect PopupContainer::layoutAndCalculateWidgetRect(int targetControlHeight, co
         // Use popupInitialCoordinate.x() + rightOffset because RTL position
         // needs to be considered.
         widgetRect = chromeClient->windowToScreen(IntRect(popupInitialCoordinate.x() + rightOffset, popupInitialCoordinate.y(), targetSize.width(), targetSize.height()));
+
+        // If we have multiple screens and the browser rect is in one screen, we have
+        // to clip the window width to the screen width.
+        FloatRect windowRect = chromeClient->windowRect();
+        if (windowRect.x() >= screen.x() && windowRect.maxX() <= screen.maxX()) {
+            if (m_listBox->m_popupClient->menuStyle().textDirection() == RTL && widgetRect.x() < screen.x()) {
+                widgetRect.setWidth(widgetRect.maxX() - screen.x());
+                widgetRect.setX(screen.x());
+            } else if (widgetRect.maxX() > screen.maxX())
+                widgetRect.setWidth(screen.maxX() - widgetRect.x());
+        }
+
+        // Calculate Y axis size.
         if (widgetRect.maxY() > static_cast<int>(screen.maxY())) {
             if (widgetRect.y() - widgetRect.height() - targetControlHeight > 0) {
                 // There is enough room to open upwards.
@@ -365,8 +378,12 @@ IntRect PopupContainer::layoutAndCalculateWidgetRect(int targetControlHeight, co
                 else
                     m_listBox->setMaxHeight(spaceBelow);
                 layoutAndGetRightOffset();
-                // Our size has changed, recompute the widgetRect.
-                widgetRect = chromeClient->windowToScreen(frameRect());
+                // Our height has changed, so recompute only Y axis of widgetRect.
+                // We don't have to recompute X axis, so we only replace Y axis
+                // in widgetRect.
+                IntRect frameInScreen = chromeClient->windowToScreen(frameRect());
+                widgetRect.setY(frameInScreen.y());
+                widgetRect.setHeight(frameInScreen.height());
                 // And move upwards if necessary.
                 if (spaceAbove > spaceBelow)
                     widgetRect.move(0, -(widgetRect.height() + targetControlHeight));
