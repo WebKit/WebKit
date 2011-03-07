@@ -1,3 +1,12 @@
+2011-03-07  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+        
+        Clean up fast/viewport expectations and remove a test that no longer
+        crashes (the underlying V8 bug was fixed).
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-07  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Reviewed by Dimitri Glazkov.

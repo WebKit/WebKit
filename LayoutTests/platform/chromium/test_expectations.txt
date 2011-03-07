@@ -696,9 +696,6 @@ BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAG
 // Low priority, unclear if test expectations are correct (see bug)
 BUGCR6139 : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
 
-// This SVG test is occasionally crashing apparently for the same reason.
-BUGCR67732 MAC LINUX DEBUG : svg/W3C-SVG-1.1-SE/paths-dom-02-f.svg = PASS CRASH
-
 BUGCR67767 : http/tests/security/cross-frame-access-call.html = TEXT
 BUGCR67767 : http/tests/security/aboutBlank/xss-DENIED-set-opener.html = TEXT
 
@@ -2389,22 +2386,9 @@ BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-svgdom-eleva
 // Regression from r67285
 BUGWK45623 WIN LINUX : fast/dynamic/first-letter-display-change.html = IMAGE
 
-// New tests added in r67376
-BUGWK45652 : fast/viewport/ = TEXT
-BUGWK45652 SKIP : fast/viewport/viewport-65.html = TEXT
-BUGWK45652 SKIP : fast/viewport/viewport-82.html = TEXT
-BUGWK45652 SKIP : fast/viewport/viewport-84.html = TEXT
-BUGWK45652 SKIP : fast/viewport/viewport-87.html = TEXT
-BUGWK45652 SKIP : fast/viewport/viewport-91.html = MISSING
-BUGWK45652 SKIP : fast/viewport/viewport-92.html = MISSING
-BUGWK45652 SKIP : fast/viewport/viewport-93.html = MISSING
-BUGWK45652 SKIP : fast/viewport/viewport-94.html = MISSING
-BUGWK45652 SKIP : fast/viewport/viewport-95.html = MISSING
-BUGWK45652 SKIP : fast/viewport/viewport-96.html = MISSING
-BUGWK45652 SKIP : fast/viewport/viewport-126.html = TEXT
-BUGWK45652 SKIP : fast/viewport/viewport-127.html = TEXT
-BUGWK45652 SKIP : fast/viewport/viewport-128.html = TIMEOUT TEXT
-BUGWK45652 SKIP : fast/viewport/viewport-129.html = MISSING
+// We don't support LayoutTestController.dumpConfigurationForViewport
+BUGWK45652 : fast/viewport = TEXT
+BUGWK45652 : fast/viewport/viewport-128.html = TIMEOUT
 
 BUGWK45667 : fast/files/read-file-async.html = CRASH PASS
 BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
