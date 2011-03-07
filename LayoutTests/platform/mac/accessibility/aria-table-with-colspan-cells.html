@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table tabindex="0" id="grid" role="grid" class="am" aria-label="Morning schedule">
+<tr role="row"><th colspan="3" aria-label="ColspanCell">Fremont</th></tr>
+<tr role="row"><td role="columnheader">Leaves</td><td role="columnheader">Arrives</td><td role="columnheader">Route</td></tr>
+<tr role="row"><td aria-label="BART at">7:00 AM</td><td>8:00 AM</td><td aria-label="RowspanCell" rowspan="3">FB1</td></tr>
+<tr role="row"><td aria-label="BART at">7:00 AM</td><td>8:00 AM</td></tr>
+<tr role="row"><td aria-label="BART at">7:00 AM</td><td>8:00 AM</td></tr>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests if an ARIA grid has a table cell with colspans, then cellForRowAndColumn still returns the correct cell.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("grid").focus();
+        var grid = accessibilityController.focusedElement;
+
+        shouldBe("grid.cellForColumnAndRow(2, 0).role", "'AXRole: AXCell'");
+        shouldBe("grid.cellForColumnAndRow(2, 0).description", "'AXDescription: ColspanCell'");
+
+        shouldBe("grid.cellForColumnAndRow(2, 4).role", "'AXRole: AXCell'");
+        shouldBe("grid.cellForColumnAndRow(2, 4).description", "'AXDescription: RowspanCell'");
+
+        // Verify nothing funny happens when we ask for strange values. We'll crash if something went awry.
+        for (var k = -1; k < 10; k++) {
+            for (var j = -1; j < 10; j++) {
+                var test = grid.cellForColumnAndRow(k, j);
+            }
+        }
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

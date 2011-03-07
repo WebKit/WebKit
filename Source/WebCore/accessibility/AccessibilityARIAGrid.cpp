@@ -137,18 +137,40 @@ AccessibilityTableCell* AccessibilityARIAGrid::cellForColumnAndRow(unsigned colu
     if (column >= columnCount() || row >= rowCount())
         return 0;
     
-    AccessibilityObject* tableRow = m_rows[row].get();
-    if (!tableRow)
-        return 0;
-    
-    AccessibilityChildrenVector children = tableRow->children();
-    // in case this row had fewer columns than other rows
-    AccessibilityObject* tableCell = 0;
-    if (column >= children.size())
-        return 0;
+    int intRow = (int)row;
+    int intColumn = (int)column;
 
-    tableCell = children[column].get();
-    return static_cast<AccessibilityTableCell*>(tableCell);
+    pair<int, int> columnRange;
+    pair<int, int> rowRange;
+    
+    // Iterate backwards through the rows in case the desired cell has a rowspan and exists
+    // in a previous row.
+    for (; intRow >= 0; --intRow) {
+        AccessibilityObject* tableRow = m_rows[intRow].get();
+        if (!tableRow)
+            continue;
+        
+        AccessibilityChildrenVector children = tableRow->children();
+        unsigned childrenLength = children.size();
+        
+        // Since some cells may have colspans, we have to check the actual range of each
+        // cell to determine which is the right one.
+        for (unsigned k = 0; k < childrenLength; ++k) {
+            AccessibilityObject* child = children[k].get();
+            if (!child->isTableCell()) 
+                continue;
+            
+            AccessibilityTableCell* tableCellChild = static_cast<AccessibilityTableCell*>(child);
+            tableCellChild->columnIndexRange(columnRange);
+            tableCellChild->rowIndexRange(rowRange);
+            
+            if ((intColumn >= columnRange.first && intColumn < (columnRange.first + columnRange.second))
+                && (intRow >= rowRange.first && intRow < (rowRange.first + rowRange.second)))
+                return tableCellChild;
+        }
+    }
+
+    return 0;
 }
     
 } // namespace WebCore

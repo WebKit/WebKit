@@ -1,3 +1,18 @@
+2011-03-07  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: kAXCellForColumnAndRowParameterizedAttribute doesn't work ARIA grids with colspans
+        https://bugs.webkit.org/show_bug.cgi?id=55735
+
+        The ARIA grid implementation needed to verify the row/column range of a cell instead of 
+        assuming a 1-1 mapping between children and row/column.
+
+        Test: platform/mac/accessibility/aria-table-with-colspan-cells.html
+
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::cellForColumnAndRow):
+
 2011-03-07  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Steve Block.
