@@ -199,7 +199,7 @@ using namespace JSC;
 
 - (void)_setValueForUser:(NSString *)value
 {
-    static_cast<HTMLInputElement*>(core(self))->setValueForUser(value);
+    static_cast<HTMLInputElement*>(core((DOMElement *)self))->setValueForUser(value);
 }
 
 @end

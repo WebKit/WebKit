@@ -1,3 +1,10 @@
+2011-03-06  Dan Bernstein  <mitz@apple.com>
+
+        LLVM Compiler build fix.
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMHTMLInputElement _setValueForUser:]):
+
 2011-03-06  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.
