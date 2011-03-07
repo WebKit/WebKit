@@ -1,3 +1,10 @@
+2011-03-07  Dan Bernstein  <mitz@apple.com>
+
+        LLVM Compiler build fix.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::checkGrammarOfString):
+
 2011-03-07  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

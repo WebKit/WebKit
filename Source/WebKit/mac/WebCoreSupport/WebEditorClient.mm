@@ -772,7 +772,7 @@ void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector
     [textString release];
     if (badGrammarLocation)
         // WebCore expects -1 to represent "not found"
-        *badGrammarLocation = (range.location == NSNotFound) ? -1 : range.location;
+        *badGrammarLocation = (range.location == NSNotFound) ? -1 : static_cast<int>(range.location);
     if (badGrammarLength)
         *badGrammarLength = range.length;
     for (NSDictionary *detail in grammarDetails) {
