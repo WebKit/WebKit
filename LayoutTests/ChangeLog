@@ -1,3 +1,11 @@
+2011-03-07  Alejandro G. Castro  <alex@igalia.com>
+
+        Skipped failing test that requires a missing feature in
+        layoutTestController. Added bug:
+        https://bugs.webkit.org/show_bug.cgi?id=55862
+
+        * platform/gtk/Skipped:
+
 2011-03-07  Xianzhu Wang  <wangxianzhu@google.com>
 
         Reviewed by Tony Gentilcore.
