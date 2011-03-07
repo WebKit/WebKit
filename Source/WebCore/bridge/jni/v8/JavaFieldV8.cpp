@@ -23,38 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JNIBridgeV8_h
-#define JNIBridgeV8_h
+#include "config.h"
+#include "JavaFieldV8.h"
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JavaString.h"
-#include "JobjectWrapper.h"
+using namespace JSC::Bindings;
 
-namespace JSC {
+JavaField::JavaField(JNIEnv* env, jobject aField)
+{
+    // Get field type
+    jobject fieldType = callJNIMethod<jobject>(aField, "getType", "()Ljava/lang/Class;");
+    jstring fieldTypeName = static_cast<jstring>(callJNIMethod<jobject>(fieldType, "getName", "()Ljava/lang/String;"));
+    m_type = JavaString(env, fieldTypeName);
+    m_JNIType = JNITypeFromClassName(m_type.utf8());
 
-namespace Bindings {
+    // Get field name
+    jstring fieldName = static_cast<jstring>(callJNIMethod<jobject>(aField, "getName", "()Ljava/lang/String;"));
+    m_name = JavaString(env, fieldName);
 
-class JavaField {
-public:
-    JavaField(JNIEnv*, jobject aField);
-
-    const JavaString& name() const { return m_name; }
-    const char* type() const { return m_type.utf8(); }
-
-    JNIType getJNIType() const { return m_JNIType; }
-
-private:
-    JavaString m_name;
-    JavaString m_type;
-    JNIType m_JNIType;
-    RefPtr<JobjectWrapper> m_field;
-};
-
-} // namespace Bindings
-
-} // namespace JSC
+    m_field = new JobjectWrapper(aField);
+}
 
 #endif // ENABLE(JAVA_BRIDGE)
-
-#endif // JNIBridgeV8_h

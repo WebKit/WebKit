@@ -28,7 +28,7 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JNIBridgeV8.h"
+#include "JNIUtility.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -38,6 +38,7 @@ namespace JSC {
 
 namespace Bindings {
 
+class JavaField;
 class JavaMethod;
 
 typedef Vector<JavaMethod*> MethodList;
@@ -46,7 +47,7 @@ typedef HashMap<WTF::String, JavaField*> FieldMap;
 
 class JavaClass {
 public:
-    JavaClass(jobject anInstance);
+    JavaClass(jobject);
     ~JavaClass();
 
     MethodList methodsNamed(const char* name) const;

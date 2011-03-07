@@ -28,6 +28,7 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
+#include "JavaFieldV8.h"
 #include "JavaMethod.h"
 
 using namespace JSC::Bindings;

@@ -1,3 +1,25 @@
+2011-03-07  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Rename JNIBridgeV8.cpp/h to JavaFieldV8.cpp/h
+        https://bugs.webkit.org/show_bug.cgi?id=55879
+
+        No new tests, refactoring only.
+
+        * Android.v8bindings.mk:
+        * WebCore.gypi:
+        * bridge/jni/v8/JavaClassV8.cpp:
+        * bridge/jni/v8/JavaClassV8.h:
+        * bridge/jni/v8/JavaFieldV8.cpp: Renamed from Source/WebCore/bridge/jni/v8/JNIBridgeV8.cpp.
+        (JavaField::JavaField):
+        * bridge/jni/v8/JavaFieldV8.h: Renamed from Source/WebCore/bridge/jni/v8/JNIBridgeV8.h.
+        (JSC::Bindings::JavaField::name):
+        (JSC::Bindings::JavaField::type):
+        (JSC::Bindings::JavaField::getJNIType):
+        * bridge/jni/v8/JavaInstanceV8.cpp:
+        * bridge/jni/v8/JavaNPObjectV8.cpp:
+
 2011-03-07  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.

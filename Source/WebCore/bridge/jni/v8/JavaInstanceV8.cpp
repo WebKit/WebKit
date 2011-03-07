@@ -33,6 +33,8 @@
 #include "JNIUtilityPrivate.h"
 #include "JavaClassV8.h"
 
+#include <wtf/text/CString.h>
+
 using namespace JSC::Bindings;
 
 JavaInstance::JavaInstance(jobject instance)
