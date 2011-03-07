@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 3: Viewport argument value "device-width;" for key "width" not recognized. Content ignored.
+CONSOLE MESSAGE: line 3: Viewport argument value "1.0;" for key "initial-scale" was truncated to its numeric prefix.
+CONSOLE MESSAGE: line 3: Viewport argument value "1.0;" for key "maximum-scale" was truncated to its numeric prefix.
+CONSOLE MESSAGE: line 3: Viewport argument value "0;" for key "user-scalable" was truncated to its numeric prefix.
+viewport size 320x352 scale 1.000000 with limits [1.000000, 1.000000]
+

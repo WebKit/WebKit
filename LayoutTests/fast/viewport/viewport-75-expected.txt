@@ -1,3 +1,3 @@
-CONSOLE MESSAGE: line 3: Viewport width or height set to physical device width, try using "device-width" constant instead for future compatibility.
+CONSOLE MESSAGE: line 3: Viewport argument key "x;" not recognized and ignored.
 viewport size 64x70 scale 5.000000 with limits [5.000000, 5.000000]
 

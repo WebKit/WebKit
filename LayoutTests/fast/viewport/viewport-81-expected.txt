@@ -1,3 +1,2 @@
-CONSOLE MESSAGE: line 3: Viewport width or height set to physical device width, try using "device-width" constant instead for future compatibility.
 viewport size 3000x3300 scale 0.250000 with limits [0.250000, 5.000000]
 

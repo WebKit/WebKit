@@ -34,6 +34,80 @@
 
 2011-03-07  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Viewport Warning/Error Messages Are Now Inaccurate
+        https://bugs.webkit.org/show_bug.cgi?id=53707
+
+        Include expected results for r80483.
+
+        * fast/viewport/viewport-100-expected.txt:
+        * fast/viewport/viewport-101-expected.txt:
+        * fast/viewport/viewport-102-expected.txt:
+        * fast/viewport/viewport-103-expected.txt:
+        * fast/viewport/viewport-104-expected.txt:
+        * fast/viewport/viewport-105-expected.txt:
+        * fast/viewport/viewport-106-expected.txt:
+        * fast/viewport/viewport-107-expected.txt:
+        * fast/viewport/viewport-108-expected.txt:
+        * fast/viewport/viewport-109-expected.txt:
+        * fast/viewport/viewport-110-expected.txt:
+        * fast/viewport/viewport-111-expected.txt:
+        * fast/viewport/viewport-112-expected.txt:
+        * fast/viewport/viewport-113-expected.txt:
+        * fast/viewport/viewport-114-expected.txt:
+        * fast/viewport/viewport-115-expected.txt:
+        * fast/viewport/viewport-116-expected.txt:
+        * fast/viewport/viewport-117-expected.txt:
+        * fast/viewport/viewport-118-expected.txt:
+        * fast/viewport/viewport-129-expected.txt:
+        * fast/viewport/viewport-29-expected.txt:
+        * fast/viewport/viewport-30-expected.txt:
+        * fast/viewport/viewport-31-expected.txt:
+        * fast/viewport/viewport-32-expected.txt:
+        * fast/viewport/viewport-35-expected.txt:
+        * fast/viewport/viewport-36-expected.txt:
+        * fast/viewport/viewport-38-expected.txt:
+        * fast/viewport/viewport-39-expected.txt:
+        * fast/viewport/viewport-40-expected.txt:
+        * fast/viewport/viewport-41-expected.txt:
+        * fast/viewport/viewport-42-expected.txt:
+        * fast/viewport/viewport-43-expected.txt:
+        * fast/viewport/viewport-44-expected.txt:
+        * fast/viewport/viewport-47-expected.txt:
+        * fast/viewport/viewport-48-expected.txt:
+        * fast/viewport/viewport-49-expected.txt:
+        * fast/viewport/viewport-61-expected.txt:
+        * fast/viewport/viewport-62-expected.txt:
+        * fast/viewport/viewport-63-expected.txt:
+        * fast/viewport/viewport-64-expected.txt:
+        * fast/viewport/viewport-66-expected.txt:
+        * fast/viewport/viewport-67-expected.txt:
+        * fast/viewport/viewport-68-expected.txt:
+        * fast/viewport/viewport-69-expected.txt:
+        * fast/viewport/viewport-70-expected.txt:
+        * fast/viewport/viewport-71-expected.txt:
+        * fast/viewport/viewport-72-expected.txt:
+        * fast/viewport/viewport-73-expected.txt:
+        * fast/viewport/viewport-74-expected.txt:
+        * fast/viewport/viewport-75-expected.txt:
+        * fast/viewport/viewport-76-expected.txt:
+        * fast/viewport/viewport-77-expected.txt:
+        * fast/viewport/viewport-78-expected.txt:
+        * fast/viewport/viewport-79-expected.txt:
+        * fast/viewport/viewport-80-expected.txt:
+        * fast/viewport/viewport-81-expected.txt:
+        * fast/viewport/viewport-83-expected.txt:
+        * fast/viewport/viewport-85-expected.txt:
+        * fast/viewport/viewport-88-expected.txt:
+        * fast/viewport/viewport-90-expected.txt:
+        * fast/viewport/viewport-warnings-1-expected.txt: Added.
+        * fast/viewport/viewport-warnings-2-expected.txt: Added.
+        * fast/viewport/viewport-warnings-3-expected.txt: Added.
+        * fast/viewport/viewport-warnings-4-expected.txt: Added.
+        * fast/viewport/viewport-warnings-5-expected.txt: Added.
+        * fast/viewport/viewport-warnings-6-expected.txt: Added.
+
+2011-03-07  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         Viewport Warning/Error Messages Are Now Inaccurate
