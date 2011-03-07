@@ -1,0 +1,32 @@
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+    layoutTestController.waitUntilDone();
+}
+</script>
+<style>
+.a { width: 0px; }
+.a { width: 100px; }
+.a { width: 50%; }
+.a { width: 1; }
+.a { color: red; }
+.a { color: rgb(0,0,0); }
+.a { color: rgb(255,255,255); }
+.a { color: rgba(0,0,0,255); }
+.a { color: rgba(0,0,0,0); }
+</style>
+<script>
+primitives = new Array();
+var rules = document.getElementsByTagName('style')[0].sheet.cssRules;
+for(i = 0 ; i < rules.length; ++i) {
+    var val = rules[i].style.getPropertyCSSValue('color');
+    if (!val)
+        val =  rules[i].style.getPropertyCSSValue('width');
+    primitives.push(val);
+    val.foo = 1;
+}
+</script>
+Test that primitive value wrappers are not shared accross documents.<br>
+<iframe height=300 src="http://localhost:8000/security/resources/cross-origin-css-primitive-iframe.html"></iframe>
+

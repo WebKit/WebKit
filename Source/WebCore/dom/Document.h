@@ -60,6 +60,7 @@ class CachedResourceLoader;
 class CachedScript;
 class CanvasRenderingContext;
 class CharacterData;
+class CSSPrimitiveValueCache;
 class CSSStyleDeclaration;
 class CSSStyleSelector;
 class CSSStyleSheet;
@@ -433,6 +434,8 @@ public:
     void setShouldProcessNoscriptElement(bool shouldDo) { m_shouldProcessNoScriptElement = shouldDo; }
 #endif
     virtual bool isFrameSet() const { return false; }
+    
+    PassRefPtr<CSSPrimitiveValueCache> cssPrimitiveValueCache() const;
     
     CSSStyleSelector* styleSelectorIfExists() const { return m_styleSelector.get(); }
 
@@ -1168,6 +1171,8 @@ private:
     OwnPtr<CSSStyleSelector> m_styleSelector;
     bool m_didCalculateStyleSelector;
     bool m_hasDirtyStyleSelector;
+    
+    mutable RefPtr<CSSPrimitiveValueCache> m_cssPrimitiveValueCache;
 
     Frame* m_frame;
     DocumentLoader* m_documentLoader;

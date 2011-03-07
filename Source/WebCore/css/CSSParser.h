@@ -38,6 +38,7 @@ namespace WebCore {
 
     class CSSMutableStyleDeclaration;
     class CSSPrimitiveValue;
+    class CSSPrimitiveValueCache;
     class CSSProperty;
     class CSSRule;
     class CSSRuleList;
@@ -70,6 +71,8 @@ namespace WebCore {
         bool parseMediaQuery(MediaList*, const String&);
 
         Document* document() const;
+    
+        CSSPrimitiveValueCache* primitiveValueCache() const { return m_primitiveValueCache.get(); }
 
         void addProperty(int propId, PassRefPtr<CSSValue>, bool important);
         void rollbackLastProperties(int num);
@@ -226,6 +229,7 @@ namespace WebCore {
         CSSParserValueList* m_valueList;
         CSSProperty** m_parsedProperties;
         CSSSelectorList* m_selectorListForParseSelector;
+        RefPtr<CSSPrimitiveValueCache> m_primitiveValueCache;
         unsigned m_numParsedProperties;
         unsigned m_maxParsedProperties;
         unsigned m_numParsedPropertiesBeforeMarginBox;
@@ -262,6 +266,8 @@ namespace WebCore {
         int lex();
 
     private:
+        void setStyleSheet(CSSStyleSheet*);
+        
         void recheckAtKeyword(const UChar* str, int len);
 
         void setupParser(const char* prefix, const String&, const char* suffix);

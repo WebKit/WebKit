@@ -1,3 +1,125 @@
+2011-03-07  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION (r79574): fast/dom/global-constructors.html failing on Windows 7 Release (Tests) bots 
+        https://bugs.webkit.org/show_bug.cgi?id=55166
+        <rdar://problem/9050430>
+        
+        Make CSS primitive value cache per-document.
+        
+        Test: http/tests/security/cross-origin-css-primitive.html
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForNinePieceImage):
+        (WebCore::zoomAdjustedPixelValue):
+        (WebCore::zoomAdjustedNumberValue):
+        (WebCore::zoomAdjustedPixelValueForLength):
+        (WebCore::valueForReflection):
+        (WebCore::getPositionOffsetValue):
+        (WebCore::CSSComputedStyleDeclaration::currentColorOrValidColor):
+        (WebCore::getBorderRadiusCornerValue):
+        (WebCore::computedTransform):
+        (WebCore::getDelayValue):
+        (WebCore::getDurationValue):
+        (WebCore::CSSComputedStyleDeclaration::getFontSizeCSSValuePreferringKeyword):
+        (WebCore::CSSComputedStyleDeclaration::valueForShadow):
+        (WebCore::valueForFamily):
+        (WebCore::renderTextDecorationFlagsToCSSValue):
+        (WebCore::fillRepeatToCSSValue):
+        (WebCore::fillSizeToCSSValue):
+        (WebCore::contentToCSSValue):
+        (WebCore::counterToCSSValue):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseSheet):
+        (WebCore::CSSParser::parseRule):
+        (WebCore::CSSParser::parseKeyframeRule):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseSelector):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::setStyleSheet):
+        (WebCore::CSSParser::parseWCSSInputProperty):
+        (WebCore::parseBackgroundClip):
+        (WebCore::CSSParser::parseFillShorthand):
+        (WebCore::CSSParser::parsePage):
+        (WebCore::CSSParser::parseSizeParameter):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseAttr):
+        (WebCore::CSSParser::parseBackgroundColor):
+        (WebCore::CSSParser::parseFillPositionXY):
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parseFillRepeat):
+        (WebCore::CSSParser::parseFillSize):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseAnimationDelay):
+        (WebCore::CSSParser::parseAnimationDirection):
+        (WebCore::CSSParser::parseAnimationDuration):
+        (WebCore::CSSParser::parseAnimationFillMode):
+        (WebCore::CSSParser::parseAnimationIterationCount):
+        (WebCore::CSSParser::parseAnimationName):
+        (WebCore::CSSParser::parseAnimationPlayState):
+        (WebCore::CSSParser::parseAnimationProperty):
+        (WebCore::CSSParser::parseTransformOriginShorthand):
+        (WebCore::CSSParser::parseAnimationTimingFunction):
+        (WebCore::CSSParser::parseDashboardRegions):
+        (WebCore::CSSParser::parseCounterContent):
+        (WebCore::CSSParser::parseShape):
+        (WebCore::CSSParser::parseFont):
+        (WebCore::CSSParser::parseFontFamily):
+        (WebCore::CSSParser::parseFontStyle):
+        (WebCore::CSSParser::parseFontVariant):
+        (WebCore::CSSParser::parseFontWeight):
+        (WebCore::ShadowParseContext::ShadowParseContext):
+        (WebCore::ShadowParseContext::commitLength):
+        (WebCore::ShadowParseContext::commitStyle):
+        (WebCore::CSSParser::parseShadow):
+        (WebCore::CSSParser::parseReflect):
+        (WebCore::BorderImageParseContext::BorderImageParseContext):
+        (WebCore::BorderImageParseContext::commitNumber):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::CSSParser::parseBorderRadius):
+        (WebCore::CSSParser::parseCounter):
+        (WebCore::parseDeprecatedGradientPoint):
+        (WebCore::parseDeprecatedGradientColorStop):
+        (WebCore::CSSParser::parseDeprecatedGradient):
+        (WebCore::valueFromSideKeyword):
+        (WebCore::parseGradientColorOrKeyword):
+        (WebCore::CSSParser::parseLinearGradient):
+        (WebCore::CSSParser::parseRadialGradient):
+        (WebCore::CSSParser::parseGradientColorStops):
+        (WebCore::CSSParser::parseTransform):
+        (WebCore::CSSParser::parseTransformOrigin):
+        (WebCore::CSSParser::parseTextEmphasisStyle):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::primitiveValueCache):
+        * css/CSSPrimitiveValue.cpp:
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::createIdentifier):
+        (WebCore::CSSPrimitiveValue::createColor):
+        (WebCore::CSSPrimitiveValue::create):
+        * css/CSSPrimitiveValueCache.cpp: Added.
+        (WebCore::CSSPrimitiveValueCache::CSSPrimitiveValueCache):
+        (WebCore::CSSPrimitiveValueCache::~CSSPrimitiveValueCache):
+        (WebCore::CSSPrimitiveValueCache::createIdentifierValue):
+        (WebCore::CSSPrimitiveValueCache::createColorValue):
+        (WebCore::CSSPrimitiveValueCache::createValue):
+        * css/CSSPrimitiveValueCache.h: Added.
+        (WebCore::CSSPrimitiveValueCache::create):
+        (WebCore::CSSPrimitiveValueCache::createValue):
+        * dom/Document.cpp:
+        (WebCore::Document::cssPrimitiveValueCache):
+        * dom/Document.h:
+
 2011-03-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

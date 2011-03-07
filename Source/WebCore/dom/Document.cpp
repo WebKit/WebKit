@@ -33,6 +33,7 @@
 #include "Attr.h"
 #include "Attribute.h"
 #include "CDATASection.h"
+#include "CSSPrimitiveValueCache.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
@@ -1696,6 +1697,13 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
     marginRight = style->marginRight().isAuto() ? marginRight : style->marginRight().calcValue(width);
     marginBottom = style->marginBottom().isAuto() ? marginBottom : style->marginBottom().calcValue(width);
     marginLeft = style->marginLeft().isAuto() ? marginLeft : style->marginLeft().calcValue(width);
+}
+
+PassRefPtr<CSSPrimitiveValueCache> Document::cssPrimitiveValueCache() const
+{
+    if (!m_cssPrimitiveValueCache)
+        m_cssPrimitiveValueCache = CSSPrimitiveValueCache::create();
+    return m_cssPrimitiveValueCache;
 }
 
 void Document::createStyleSelector()

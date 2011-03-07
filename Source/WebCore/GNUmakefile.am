@@ -1015,6 +1015,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSParserValues.h \
 	Source/WebCore/css/CSSPrimitiveValue.cpp \
 	Source/WebCore/css/CSSPrimitiveValue.h \
+	Source/WebCore/css/CSSPrimitiveValueCache.cpp \
+	Source/WebCore/css/CSSPrimitiveValueCache.h \
 	Source/WebCore/css/CSSPrimitiveValueMappings.h \
 	Source/WebCore/css/CSSProperty.cpp \
 	Source/WebCore/css/CSSProperty.h \

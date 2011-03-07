@@ -1083,6 +1083,8 @@
             'css/CSSParserValues.h',
             'css/CSSPrimitiveValue.cpp',
             'css/CSSPrimitiveValue.h',
+            'css/CSSPrimitiveValueCache.cpp',
+            'css/CSSPrimitiveValueCache.h',
             'css/CSSPrimitiveValueMappings.h',
             'css/CSSProperty.cpp',
             'css/CSSProperty.h',
