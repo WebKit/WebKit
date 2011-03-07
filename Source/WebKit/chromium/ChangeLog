@@ -1,3 +1,25 @@
+2011-03-06  Sreeram Ramachandran  <sreeram@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Expose page dismissal event status through the WebKit API for chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=55844
+
+        Chromium will find it useful to know the page dismissal status (i.e.,
+        whether a frame is in the midst of executing a beforeunload or unload
+        handler), so expose that information through the chromium port in the
+        WebKit API.
+     
+        This is my second attempt at this patch. The previous one broke
+        downstream Chromium builds of some unit tests which had classes derived
+        from WebFrame (and thus became uninstantiable because of this new pure
+        virtual method). Those have now been fixed (http://crrev.com/77101).
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::pageDismissalEventBeingDispatched):
+        * src/WebFrameImpl.h:
+
 2011-03-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80436.

@@ -365,6 +365,10 @@ public:
     // with a suppressed opener.
     virtual bool willSuppressOpenerInNewFrame() const = 0;
 
+    // Returns true if this frame is in the midst of executing a beforeunload
+    // or unload event handler.
+    virtual bool pageDismissalEventBeingDispatched() const = 0;
+
 
     // Editing -------------------------------------------------------------
 
