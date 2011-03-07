@@ -1,3 +1,20 @@
+2011-03-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80484.
+        http://trac.webkit.org/changeset/80484
+        https://bugs.webkit.org/show_bug.cgi?id=55891
+
+        requires Chromium DEPS roll (Requested by dcheng on #webkit).
+
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::types):
+        * platform/chromium/ChromiumDataObject.h:
+        (WebCore::ChromiumDataObject::containsFilenames):
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::types):
+        * platform/chromium/ClipboardMimeTypes.cpp:
+        * platform/chromium/ClipboardMimeTypes.h:
+
 2011-03-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

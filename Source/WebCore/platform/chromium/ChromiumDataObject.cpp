@@ -101,12 +101,7 @@ bool ChromiumDataObject::hasData() const
 
 HashSet<String> ChromiumDataObject::types() const
 {
-    if (m_clipboardType == Clipboard::CopyAndPaste) {
-        bool ignoredContainsFilenames;
-        return PlatformBridge::clipboardReadAvailableTypes(PasteboardPrivate::StandardBuffer,
-                                                           &ignoredContainsFilenames);
-    }
-
+    // This is currently broken for pasteboard events, and always has been.
     HashSet<String> results;
 
     if (!m_plainText.isEmpty()) {
@@ -122,6 +117,9 @@ HashSet<String> ChromiumDataObject::types() const
 
     if (!m_textHtml.isEmpty())
         results.add(mimeTypeTextHTML);
+
+    if (!m_filenames.isEmpty())
+        results.add("Files");
 
     return results;
 }
@@ -224,18 +222,6 @@ bool ChromiumDataObject::setData(const String& type, const String& data)
     }
 
     return false;
-}
-
-bool ChromiumDataObject::containsFilenames() const
-{
-    bool containsFilenames;
-    if (m_clipboardType == Clipboard::CopyAndPaste) {
-        HashSet<String> ignoredResults =
-            PlatformBridge::clipboardReadAvailableTypes(PasteboardPrivate::StandardBuffer,
-                                                        &containsFilenames);
-    } else
-        containsFilenames = !m_filenames.isEmpty();
-    return containsFilenames;
 }
 
 ChromiumDataObject::ChromiumDataObject(Clipboard::ClipboardType clipboardType)
