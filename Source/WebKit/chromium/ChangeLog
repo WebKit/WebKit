@@ -1,3 +1,20 @@
+2011-03-07  Takayoshi Kochi  <kochi@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Use preferred locale information when choosing fallback font using
+        fontconfig on Linux platform.
+        https://bugs.webkit.org/show_bug.cgi?id=55453
+
+        Tests will be covered by Chromium side.
+
+        * public/gtk/WebFontInfo.h:
+        (WebKit::WebFontInfo::familyForChars): added 3rd parameter |preferredLocale|
+        * public/linux/WebSandboxSupport.h:
+        (WebKit::WebSandboxSupport::getFontFamilyForCharacters): added 3rd parameter |preferredLocale|
+        * src/PlatformBridge.cpp:
+        * src/gtk/WebFontInfo.cpp:
+
 2011-03-07  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

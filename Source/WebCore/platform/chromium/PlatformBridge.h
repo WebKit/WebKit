@@ -150,7 +150,7 @@ public:
 #endif
 #if OS(LINUX) || OS(FREEBSD)
     static void getRenderStyleForStrike(const char* family, int sizeAndStyle, FontRenderStyle* result);
-    static String getFontFamilyForCharacters(const UChar*, size_t numCharacters);
+    static String getFontFamilyForCharacters(const UChar*, size_t numCharacters, const char* preferredLocale);
 #endif
 #if OS(DARWIN)
     static bool loadFont(NSFont* srcFont, ATSFontContainerRef* out);

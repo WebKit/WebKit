@@ -437,12 +437,12 @@ bool PlatformBridge::ensureFontLoaded(HFONT font)
 #endif
 
 #if OS(LINUX) || OS(FREEBSD)
-String PlatformBridge::getFontFamilyForCharacters(const UChar* characters, size_t numCharacters)
+String PlatformBridge::getFontFamilyForCharacters(const UChar* characters, size_t numCharacters, const char* preferredLocale)
 {
     if (webKitClient()->sandboxSupport())
-        return webKitClient()->sandboxSupport()->getFontFamilyForCharacters(characters, numCharacters);
+        return webKitClient()->sandboxSupport()->getFontFamilyForCharacters(characters, numCharacters, preferredLocale);
 
-    WebCString family = WebFontInfo::familyForChars(characters, numCharacters);
+    WebCString family = WebFontInfo::familyForChars(characters, numCharacters, preferredLocale);
     if (family.data())
         return WebString::fromUTF8(family.data());
 

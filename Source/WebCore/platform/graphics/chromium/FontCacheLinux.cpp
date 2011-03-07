@@ -43,6 +43,7 @@
 #include "SkTypeface.h"
 #include "SkUtils.h"
 
+#include <unicode/locid.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
@@ -57,7 +58,8 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font,
                                                           const UChar* characters,
                                                           int length)
 {
-    String family = PlatformBridge::getFontFamilyForCharacters(characters, length);
+    icu::Locale locale = icu::Locale::getDefault();
+    String family = PlatformBridge::getFontFamilyForCharacters(characters, length, locale.getLanguage());
     if (family.isEmpty())
         return 0;
 

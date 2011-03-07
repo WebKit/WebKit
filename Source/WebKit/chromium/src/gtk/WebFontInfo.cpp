@@ -38,7 +38,7 @@
 
 namespace WebKit {
 
-WebCString WebFontInfo::familyForChars(const WebUChar* characters, size_t numCharacters)
+WebCString WebFontInfo::familyForChars(const WebUChar* characters, size_t numCharacters, const char* preferredLocale)
 {
     FcCharSet* cset = FcCharSetCreate();
     for (size_t i = 0; i < numCharacters; ++i) {
@@ -61,6 +61,13 @@ WebCString WebFontInfo::familyForChars(const WebUChar* characters, size_t numCha
     fcvalue.type = FcTypeBool;
     fcvalue.u.b = FcTrue;
     FcPatternAdd(pattern, FC_SCALABLE, fcvalue, FcFalse);
+
+    if (preferredLocale) {
+        FcLangSet* langset = FcLangSetCreate();
+        FcLangSetAdd(langset, reinterpret_cast<const FcChar8 *>(preferredLocale));
+        FcPatternAddLangSet(pattern, FC_LANG, langset);
+        FcLangSetDestroy(langset);
+    }
 
     FcConfigSubstitute(0, pattern, FcMatchPattern);
     FcDefaultSubstitute(pattern);

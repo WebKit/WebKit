@@ -47,10 +47,12 @@ public:
     // code-points.
     //   characters: a UTF-16 encoded string
     //   numCharacters: the number of 16-bit words in |characters|
+    //   preferredLocale: preferred locale identifier for the |characters|
+    //                    (e.g. "en", "ja", "zh-CN")
     //
     // Returns a string with the font family on an empty string if the
     // request cannot be satisfied.
-    virtual WebString getFontFamilyForCharacters(const WebUChar* characters, size_t numCharacters) = 0;
+    virtual WebString getFontFamilyForCharacters(const WebUChar* characters, size_t numCharacters, const char* preferredLocale)  = 0;
     virtual void getRenderStyleForStrike(const char* family, int sizeAndStyle, WebFontRenderStyle* style) = 0;
 };
 
