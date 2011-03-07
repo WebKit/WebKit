@@ -1,0 +1,96 @@
+#!/usr/bin/env python
+# Copyright (c) 2011 Google Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+"""Finds .png expectations without .checksums or .checksum expectations
+without .pngs."""
+
+import optparse
+import os
+
+from webkitpy.common.checkout import scm
+
+def parse_args():
+    """Returns a 2-tuple (options, paths) where options contains the
+    parsed arguments and paths is a list of directories to search."""
+    option_list = [
+        optparse.make_option("-p", "--missing-pngs", dest="missing_pngs",
+            action="store_true", default=False, help="Only list missing pngs."),
+        optparse.make_option("-c", "--missing-checksums",
+            dest="missing_checksums", action="store_true", default=False,
+            help="Only list missing checksums."),
+    ]
+
+    option_parser = optparse.OptionParser(option_list=option_list,
+                                          description=__doc__)
+    options, paths = option_parser.parse_args()
+    if not options.missing_pngs and not options.missing_checksums:
+        option_parser.error(
+            "Please specify either --missing-pngs or --missing-checksums.")
+
+    if not paths:
+        paths = [os.path.join(scm.find_checkout_root(), 'LayoutTests')]
+    return options, paths
+
+def find_mismatched_results(dirpath, filenames, options):
+    """Prints mismatched results to stdout.
+    dirpath is the directory we are searching
+    filenames is a list of the filenames in dirpath.
+    options is the parsed arguments."""
+    checksum_files = set()
+    png_files = set()
+
+    for filename in filenames:
+        name, extension = os.path.splitext(filename)
+        if not name.endswith("-expected"):
+            continue
+        if extension == ".checksum":
+            checksum_files.add(name)
+        elif extension == ".png":
+            png_files.add(name)
+
+    if options.missing_pngs:
+        missing_pngs = checksum_files.difference(png_files)
+        for missing_png in missing_pngs:
+            print os.path.normpath(os.path.join(dirpath, missing_png)
+                ) + '.checksum'
+
+    if options.missing_checksums:
+        missing_checksums = png_files.difference(checksum_files)
+        for missing_checksum in missing_checksums:
+            print os.path.normpath(os.path.join(dirpath, missing_checksum)
+                ) + '.png'
+
+def main():
+    options, paths = parse_args()
+
+    for path in paths:
+        for dirpath, dirnames, filenames in os.walk(path):
+            find_mismatched_results(dirpath, filenames, options)
+if __name__ == "__main__":
+    main()
