@@ -662,8 +662,11 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
     PropertyDescriptor current;
     if (!getOwnPropertyDescriptor(exec, propertyName, current)) {
         // unless extensions are prevented!
-        if (!isExtensible())
+        if (!isExtensible()) {
+            if (throwException)
+                throwError(exec, createTypeError(exec, "Attempting to define property on object that is not extensible."));
             return false;
+        }
         PropertyDescriptor oldDescriptor;
         oldDescriptor.setValue(jsUndefined());
         return putDescriptor(exec, this, propertyName, descriptor, descriptor.attributes(), oldDescriptor);
