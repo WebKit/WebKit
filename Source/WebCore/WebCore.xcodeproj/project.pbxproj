@@ -1384,6 +1384,10 @@
 		5962297A1133EFE200DC4CBB /* GeolocationPositionCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 596229791133EFE200DC4CBB /* GeolocationPositionCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		596950821321059900C3ED18 /* JobjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 596950811321059900C3ED18 /* JobjectWrapper.h */; };
 		59695084132105A500C3ED18 /* JobjectWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59695083132105A500C3ED18 /* JobjectWrapper.cpp */; };
+		598D77DD132541EE00761B22 /* JavaArrayJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598D77DC132541EE00761B22 /* JavaArrayJSC.cpp */; };
+		598D77DF132541FA00761B22 /* JavaArrayJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 598D77DE132541FA00761B22 /* JavaArrayJSC.h */; };
+		598D77E11325420400761B22 /* JavaFieldJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 598D77E01325420400761B22 /* JavaFieldJSC.cpp */; };
+		598D77E31325420E00761B22 /* JavaFieldJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 598D77E21325420E00761B22 /* JavaFieldJSC.h */; };
 		599E759011055A1F00D904FA /* Bridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 599E758F11055A1F00D904FA /* Bridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		59A85EA2119D68D900DEF1EF /* DeviceOrientationEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59A85EA1119D68D900DEF1EF /* DeviceOrientationEvent.cpp */; };
 		59A85EA4119D68EC00DEF1EF /* DeviceOrientationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 59A85EA3119D68EC00DEF1EF /* DeviceOrientationEvent.h */; };
@@ -1400,8 +1404,6 @@
 		59D1C10411EB5DCF00B638C8 /* DeviceOrientation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D1C10311EB5DCF00B638C8 /* DeviceOrientation.cpp */; };
 		59E560A71105336600AA1258 /* JavaClassJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59E560A61105336600AA1258 /* JavaClassJSC.h */; };
 		59E560A91105336F00AA1258 /* JavaClassJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59E560A81105336F00AA1258 /* JavaClassJSC.cpp */; };
-		59E842661109E5A2000305AD /* JNIBridgeJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59E842651109E5A2000305AD /* JNIBridgeJSC.h */; };
-		59E842681109E5AE000305AD /* JNIBridgeJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59E842671109E5AE000305AD /* JNIBridgeJSC.cpp */; };
 		59EE122C1106080500885116 /* JNIUtilityPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59EE122B1106080500885116 /* JNIUtilityPrivate.cpp */; };
 		59EE122E1106080F00885116 /* JNIUtilityPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 59EE122D1106080F00885116 /* JNIUtilityPrivate.h */; };
 		59EE12301106081F00885116 /* JNIUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59EE122F1106081F00885116 /* JNIUtility.cpp */; };
@@ -7853,6 +7855,10 @@
 		596950811321059900C3ED18 /* JobjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobjectWrapper.h; sourceTree = "<group>"; };
 		59695083132105A500C3ED18 /* JobjectWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JobjectWrapper.cpp; sourceTree = "<group>"; };
 		5980B03312EF3D8400DF5F85 /* XMLViewer.xsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = XMLViewer.xsl; sourceTree = "<group>"; };
+		598D77DC132541EE00761B22 /* JavaArrayJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaArrayJSC.cpp; path = jsc/JavaArrayJSC.cpp; sourceTree = "<group>"; };
+		598D77DE132541FA00761B22 /* JavaArrayJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaArrayJSC.h; path = jsc/JavaArrayJSC.h; sourceTree = "<group>"; };
+		598D77E01325420400761B22 /* JavaFieldJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaFieldJSC.cpp; path = jsc/JavaFieldJSC.cpp; sourceTree = "<group>"; };
+		598D77E21325420E00761B22 /* JavaFieldJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaFieldJSC.h; path = jsc/JavaFieldJSC.h; sourceTree = "<group>"; };
 		599E758F11055A1F00D904FA /* Bridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bridge.h; path = bridge/Bridge.h; sourceTree = "<group>"; };
 		59A85EA1119D68D900DEF1EF /* DeviceOrientationEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceOrientationEvent.cpp; sourceTree = "<group>"; };
 		59A85EA3119D68EC00DEF1EF /* DeviceOrientationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationEvent.h; sourceTree = "<group>"; };
@@ -7870,8 +7876,6 @@
 		59D1C10311EB5DCF00B638C8 /* DeviceOrientation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceOrientation.cpp; sourceTree = "<group>"; };
 		59E560A61105336600AA1258 /* JavaClassJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaClassJSC.h; path = jsc/JavaClassJSC.h; sourceTree = "<group>"; };
 		59E560A81105336F00AA1258 /* JavaClassJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaClassJSC.cpp; path = jsc/JavaClassJSC.cpp; sourceTree = "<group>"; };
-		59E842651109E5A2000305AD /* JNIBridgeJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JNIBridgeJSC.h; path = jsc/JNIBridgeJSC.h; sourceTree = "<group>"; };
-		59E842671109E5AE000305AD /* JNIBridgeJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JNIBridgeJSC.cpp; path = jsc/JNIBridgeJSC.cpp; sourceTree = "<group>"; };
 		59EE122B1106080500885116 /* JNIUtilityPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JNIUtilityPrivate.cpp; path = jsc/JNIUtilityPrivate.cpp; sourceTree = "<group>"; };
 		59EE122D1106080F00885116 /* JNIUtilityPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JNIUtilityPrivate.h; path = jsc/JNIUtilityPrivate.h; sourceTree = "<group>"; };
 		59EE122F1106081F00885116 /* JNIUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JNIUtility.cpp; sourceTree = "<group>"; };
@@ -13707,6 +13711,10 @@
 		599D1E2F10C97D4C00E0EF12 /* jsc */ = {
 			isa = PBXGroup;
 			children = (
+				598D77E21325420E00761B22 /* JavaFieldJSC.h */,
+				598D77E01325420400761B22 /* JavaFieldJSC.cpp */,
+				598D77DE132541FA00761B22 /* JavaArrayJSC.h */,
+				598D77DC132541EE00761B22 /* JavaArrayJSC.cpp */,
 				59E560A81105336F00AA1258 /* JavaClassJSC.cpp */,
 				59E560A61105336600AA1258 /* JavaClassJSC.h */,
 				59A9E7AF1104758800DFB4C1 /* JavaInstanceJSC.cpp */,
@@ -13714,8 +13722,6 @@
 				E1698263113467F300894115 /* JavaRuntimeObject.cpp */,
 				E16982671134680700894115 /* JavaRuntimeObject.h */,
 				59BC393E11054A1300FD85DB /* JavaStringJSC.h */,
-				59E842671109E5AE000305AD /* JNIBridgeJSC.cpp */,
-				59E842651109E5A2000305AD /* JNIBridgeJSC.h */,
 				59EE122B1106080500885116 /* JNIUtilityPrivate.cpp */,
 				59EE122D1106080F00885116 /* JNIUtilityPrivate.h */,
 			);
@@ -21028,7 +21034,6 @@
 				1C81BA0A0E97348300266E07 /* JavaScriptCallFrame.h in Headers */,
 				59BC393F11054A1300FD85DB /* JavaStringJSC.h in Headers */,
 				1A569D040D7E2B82007C3983 /* jni_jsobject.h in Headers */,
-				59E842661109E5A2000305AD /* JNIBridgeJSC.h in Headers */,
 				59EE12321106082900885116 /* JNIUtility.h in Headers */,
 				59EE122E1106080F00885116 /* JNIUtilityPrivate.h in Headers */,
 				93309DF4099E64920056E581 /* JoinTextNodesCommand.h in Headers */,
@@ -22537,6 +22542,8 @@
 				596950821321059900C3ED18 /* JobjectWrapper.h in Headers */,
 				593D3EAF1325328C0057E7EE /* JavaMethod.h in Headers */,
 				593D3EB1132532950057E7EE /* JavaString.h in Headers */,
+				598D77DF132541FA00761B22 /* JavaArrayJSC.h in Headers */,
+				598D77E31325420E00761B22 /* JavaFieldJSC.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23777,7 +23784,6 @@
 				1C81BA090E97348300266E07 /* JavaScriptCallFrame.cpp in Sources */,
 				1A569D030D7E2B82007C3983 /* jni_jsobject.mm in Sources */,
 				1A569D050D7E2B82007C3983 /* jni_objc.mm in Sources */,
-				59E842681109E5AE000305AD /* JNIBridgeJSC.cpp in Sources */,
 				59EE12301106081F00885116 /* JNIUtility.cpp in Sources */,
 				59EE122C1106080500885116 /* JNIUtilityPrivate.cpp in Sources */,
 				93309DF3099E64920056E581 /* JoinTextNodesCommand.cpp in Sources */,
@@ -25188,6 +25194,8 @@
 				5A574F28131DB96D00471B88 /* QuotesData.cpp in Sources */,
 				59695084132105A500C3ED18 /* JobjectWrapper.cpp in Sources */,
 				593D3EAD132532840057E7EE /* JavaMethod.cpp in Sources */,
+				598D77DD132541EE00761B22 /* JavaArrayJSC.cpp in Sources */,
+				598D77E11325420400761B22 /* JavaFieldJSC.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

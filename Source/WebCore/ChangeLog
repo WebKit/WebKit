@@ -1,3 +1,22 @@
+2011-03-07  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Split JNIBridgeJSC.cpp/h into JavaArrayJSC.cpp/h and JavaFieldJSC.cpp/h
+        https://bugs.webkit.org/show_bug.cgi?id=55881
+
+        No new tests, refactoring only.
+
+        * Android.jscbindings.mk:
+        * GNUmakefile.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/jni/jsc/JNIBridgeJSC.cpp: Removed.
+        * bridge/jni/jsc/JNIBridgeJSC.h: Removed.
+        * bridge/jni/jsc/JNIUtilityPrivate.cpp:
+        * bridge/jni/jsc/JavaClassJSC.cpp:
+        * bridge/jni/jsc/JavaClassJSC.h:
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+
 2011-03-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

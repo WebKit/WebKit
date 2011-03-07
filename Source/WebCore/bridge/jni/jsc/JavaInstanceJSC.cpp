@@ -29,11 +29,13 @@
 #if ENABLE(JAVA_BRIDGE)
 
 #include "JavaRuntimeObject.h"
-#include "JNIBridgeJSC.h"
 #include "JNIUtility.h"
 #include "JNIUtilityPrivate.h"
 #include "JSDOMBinding.h"
+#include "JavaArrayJSC.h"
 #include "JavaClassJSC.h"
+#include "JavaMethod.h"
+#include "JavaString.h"
 #include "Logging.h"
 #include "jni_jsobject.h"
 #include "runtime_method.h"

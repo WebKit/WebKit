@@ -941,9 +941,10 @@ webcore_sources += \
 	Source/WebCore/bridge/jni/JavaMethod.h \
 	Source/WebCore/bridge/jni/JavaString.h \
 	Source/WebCore/bridge/jni/jni_jsobject.h \
+	Source/WebCore/bridge/jni/jsc/JavaArrayJSC.h \
 	Source/WebCore/bridge/jni/jsc/JavaClassJSC.h \
+	Source/WebCore/bridge/jni/jsc/JavaFieldJSC.h \
 	Source/WebCore/bridge/jni/jsc/JavaInstanceJSC.h \
-	Source/WebCore/bridge/jni/jsc/JNIBridgeJSC.h \
 	Source/WebCore/bridge/jsc/BridgeJSC.cpp \
 	Source/WebCore/bridge/jsc/BridgeJSC.h \
 	Source/WebCore/bridge/npapi.h \

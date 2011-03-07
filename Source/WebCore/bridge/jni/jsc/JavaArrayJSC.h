@@ -24,42 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JNIBridgeJSC_h
-#define JNIBridgeJSC_h
+#ifndef JavaArrayJSC_h
+#define JavaArrayJSC_h
 
 #if ENABLE(JAVA_BRIDGE)
 
 #include "BridgeJSC.h"
 #include "JNIUtility.h"
-#include "JavaMethod.h"
-#include "JavaString.h"
 #include "JobjectWrapper.h"
 
 namespace JSC {
 
 namespace Bindings {
-
-class JavaField : public Field {
-public:
-    JavaField(JNIEnv*, jobject aField);
-
-    virtual JSValue valueFromInstance(ExecState*, const Instance*) const;
-    virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const;
-
-    const JavaString& name() const { return m_name; }
-    virtual RuntimeType type() const { return m_type.utf8(); }
-
-    JNIType getJNIType() const { return m_JNIType; }
-
-private:
-    void dispatchSetValueToInstance(ExecState*, const JavaInstance*, jvalue, const char* name, const char* sig) const;
-    jvalue dispatchValueFromInstance(ExecState*, const JavaInstance*, const char* name, const char* sig, JNIType returnType) const;
-
-    JavaString m_name;
-    JavaString m_type;
-    JNIType m_JNIType;
-    RefPtr<JobjectWrapper> m_field;
-};
 
 class JavaArray : public Array {
 public:
@@ -88,4 +64,4 @@ private:
 
 #endif // ENABLE(JAVA_BRIDGE)
 
-#endif // JNIBridgeJSC_h
+#endif // JavaArrayJSC_h

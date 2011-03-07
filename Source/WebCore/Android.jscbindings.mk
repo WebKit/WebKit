@@ -201,9 +201,10 @@ LOCAL_SRC_FILES += \
 	bridge/jni/JNIUtility.cpp \
 	bridge/jni/JavaMethod.cpp \
 	bridge/jni/JobjectWrapper.cpp \
-	bridge/jni/jsc/JNIBridgeJSC.cpp \
 	bridge/jni/jsc/JNIUtilityPrivate.cpp \
+	bridge/jni/jsc/JavaArrayJSC.cpp \
 	bridge/jni/jsc/JavaClassJSC.cpp \
+	bridge/jni/jsc/JavaFieldJSC.cpp \
 	bridge/jni/jsc/JavaInstanceJSC.cpp \
 	bridge/jsc/BridgeJSC.cpp \
 	bridge/npruntime.cpp \

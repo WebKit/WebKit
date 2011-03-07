@@ -30,6 +30,8 @@
 
 #include "JNIUtility.h"
 #include "JSDOMWindow.h"
+#include "JavaFieldJSC.h"
+#include "JavaMethod.h"
 #include <runtime/Identifier.h>
 #include <runtime/JSLock.h>
 

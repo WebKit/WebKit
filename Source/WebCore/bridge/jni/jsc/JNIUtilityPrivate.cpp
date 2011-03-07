@@ -29,11 +29,13 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
+#include "JavaArrayJSC.h"
+#include "JavaInstanceJSC.h"
 #include "JavaRuntimeObject.h"
-#include "JNIBridgeJSC.h"
 #include "jni_jsobject.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
+#include "runtime_root.h"
 #include <runtime/JSArray.h>
 #include <runtime/JSLock.h>
 

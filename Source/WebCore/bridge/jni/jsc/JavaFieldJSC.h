@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2003, 2004, 2005, 2007, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright 2010, The Android Open Source Project
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +24,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JavaClassJSC_h
-#define JavaClassJSC_h
+#ifndef JavaFieldJSC_h
+#define JavaFieldJSC_h
 
 #if ENABLE(JAVA_BRIDGE)
 
 #include "BridgeJSC.h"
 #include "JNIUtility.h"
-#include <wtf/HashMap.h>
+#include "JavaMethod.h"
+#include "JavaString.h"
+#include "JobjectWrapper.h"
 
 namespace JSC {
 
 namespace Bindings {
 
-class JavaClass : public Class {
+class JavaField : public Field {
 public:
-    JavaClass(jobject);
-    ~JavaClass();
+    JavaField(JNIEnv*, jobject aField);
 
-    virtual MethodList methodsNamed(const Identifier&, Instance*) const;
-    virtual Field* fieldNamed(const Identifier&, Instance*) const;
+    virtual JSValue valueFromInstance(ExecState*, const Instance*) const;
+    virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const;
 
-    bool isNumberClass() const;
-    bool isBooleanClass() const;
-    bool isStringClass() const;
+    const JavaString& name() const { return m_name; }
+    virtual RuntimeType type() const { return m_type.utf8(); }
+
+    JNIType getJNIType() const { return m_JNIType; }
 
 private:
-    const char* m_name;
-    FieldMap m_fields;
-    MethodListMap m_methods;
+    void dispatchSetValueToInstance(ExecState*, const JavaInstance*, jvalue, const char* name, const char* sig) const;
+    jvalue dispatchValueFromInstance(ExecState*, const JavaInstance*, const char* name, const char* sig, JNIType returnType) const;
+
+    JavaString m_name;
+    JavaString m_type;
+    JNIType m_JNIType;
+    RefPtr<JobjectWrapper> m_field;
 };
 
 } // namespace Bindings
@@ -60,4 +67,4 @@ private:
 
 #endif // ENABLE(JAVA_BRIDGE)
 
-#endif // JavaClassJSC_h
+#endif // JavaFieldJSC_h
