@@ -910,7 +910,7 @@ void WebViewImpl::hideAutoFillPopup()
     }
 }
 
-Frame* WebViewImpl::focusedWebCoreFrame()
+Frame* WebViewImpl::focusedWebCoreFrame() const
 {
     return m_page.get() ? m_page->focusController()->focusedOrMainFrame() : 0;
 }

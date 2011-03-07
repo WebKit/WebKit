@@ -1,3 +1,14 @@
+2011-03-07  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        WebViewImpl::focusedWebCoreFrame() should be const.
+        https://bugs.webkit.org/show_bug.cgi?id=55870
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::focusedWebCoreFrame):
+        * src/WebViewImpl.h:
+
 2011-03-07  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

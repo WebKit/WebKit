@@ -204,7 +204,7 @@ public:
         return m_lastMouseDownPoint;
     }
 
-    WebCore::Frame* focusedWebCoreFrame();
+    WebCore::Frame* focusedWebCoreFrame() const;
 
     // Returns the currently focused Node or null if no node has focus.
     WebCore::Node* focusedWebCoreNode();
