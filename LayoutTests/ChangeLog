@@ -1,5 +1,16 @@
 2011-03-07  Alejandro G. Castro  <alex@igalia.com>
 
+        Added new GTK+ test results.
+
+        * platform/gtk/fast/forms/input-appearance-spinbutton-visibility-expected.checksum: Added.
+        * platform/gtk/fast/forms/input-appearance-spinbutton-visibility-expected.png: Added.
+        * platform/gtk/fast/forms/input-appearance-spinbutton-visibility-expected.txt: Added.
+        * platform/gtk/fast/text/hyphenate-limit-before-after-expected.checksum: Added.
+        * platform/gtk/fast/text/hyphenate-limit-before-after-expected.png: Added.
+        * platform/gtk/fast/text/hyphenate-limit-before-after-expected.txt: Added.
+
+2011-03-07  Alejandro G. Castro  <alex@igalia.com>
+
         Skipped failing test that requires a missing feature in
         layoutTestController. Added bug:
         https://bugs.webkit.org/show_bug.cgi?id=55862
