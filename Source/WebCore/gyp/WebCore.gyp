@@ -23,6 +23,7 @@
         '<@(webcore_files)',
         '<@(webcore_publicheader_files)',
         '<@(webcore_privateheader_files)',
+        '<@(webcore_derived_source_files)',
         '$(SDKROOT)/System/Library/Frameworks/Accelerate.framework',
         '$(SDKROOT)/System/Library/Frameworks/ApplicationServices.framework',
         '$(SDKROOT)/System/Library/Frameworks/AudioToolbox.framework',
