@@ -1,5 +1,13 @@
 2011-03-06  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Unreviewed, update chromium test expectations.
+
+        inspector/styles/styles-add-blank-property.html becomes flaky.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-06  Fumitoshi Ukai  <ukai@chromium.org>
+
         Unreviewd, update chromium test expectations.
 
         Regression at WebKit r80438 (crbug.com/75109) on Mac

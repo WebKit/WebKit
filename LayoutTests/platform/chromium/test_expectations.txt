@@ -638,6 +638,8 @@ BUGCR66087 WIN LINUX SLOW : inspector/storage-panel-dom-storage.html = PASS TEXT
 BUGCR66087 WIN LINUX SLOW : http/tests/inspector/console-resource-errors.html = PASS
 BUGCR66087 WIN LINUX SLOW : http/tests/inspector/inspect-iframe-from-different-domain.html = PASS TEXT
 
+BUGCR75121 WIN LINUX : inspector/styles/styles-add-blank-property.html = PASS TEXT
+
 // -----------------------------------------------------------------
 // Other
 // -----------------------------------------------------------------
