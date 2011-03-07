@@ -1,3 +1,20 @@
+2011-03-07  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: WK1 needs to use ScrollView attachment for AXScrollArea, WK2 does not
+        https://bugs.webkit.org/show_bug.cgi?id=55706
+
+        Make sure WebDynamicScrollBarsView appear in the AX tree in WK1 (since this object
+        returns the scroll bar objects).
+        Make the accessibilityRoot object be the web area in WK1 because WebDynamicScrollBarsView
+        will expect that as its child, instead of the WebCore ScrollView object.
+
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView accessibilityIsIgnored]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame accessibilityRoot]):
+
 2011-03-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

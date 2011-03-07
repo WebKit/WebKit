@@ -1543,9 +1543,15 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         }
         
         AccessibilityObject* parent = m_object->parentObjectUnignored();
-        if (parent)
-            return parent->wrapper();
-        return nil;
+        if (!parent)
+            return nil;
+
+        // In WebKit1, the scroll view is provided by the system (the attachment view), so the parent
+        // should be reported directly as such.
+        if (m_object->isWebArea() && parent->isAttachment())
+            return [parent->wrapper() attachmentView];
+        
+        return parent->wrapper();
     }
 
     if ([attributeName isEqualToString: NSAccessibilityChildrenAttribute]) {

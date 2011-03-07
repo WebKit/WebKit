@@ -1365,10 +1365,16 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!_private->coreFrame || !_private->coreFrame->document())
         return nil;
     
-    AccessibilityObject* rootObject = _private->coreFrame->document()->axObjectCache()->rootObject();
-    if (rootObject)
-        return rootObject->wrapper();
-    return nil;
+    AccessibilityObject* rootObject = _private->coreFrame->document()->axObjectCache()->rootObjectForFrame(_private->coreFrame);
+    if (!rootObject)
+        return nil;
+    
+    // The root object will be a WebCore scroll view object. In WK1, scroll views are handled
+    // by the system and the root object should be the web area (instead of the scroll view).
+    if (rootObject->isAttachment() && rootObject->firstChild())
+        return rootObject->firstChild()->wrapper();
+    
+    return rootObject->wrapper();
 #else
     return nil;
 #endif

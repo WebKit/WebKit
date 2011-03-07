@@ -1,3 +1,18 @@
+2011-03-07  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: WK1 needs to use the ScrollView attachment for AXScrollArea, WK2 should not use this element.
+        https://bugs.webkit.org/show_bug.cgi?id=55706
+
+        The rootElement in DRT should point to the scroll view. In WK1, that will be the parent of the rootObject.
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::focusedElement):
+           Remove FIXME comment about caching the focusedElement. In fact, we shouldn't cache this 
+           because it could change at any time.
+        (AccessibilityController::rootElement):
+
 2011-03-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

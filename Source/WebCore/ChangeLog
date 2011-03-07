@@ -1,3 +1,22 @@
+2011-03-07  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: WK1 needs to use ScrollView attachment for AXScrollArea, WK2 does not
+        https://bugs.webkit.org/show_bug.cgi?id=55706
+
+        * WebCore.exp.in:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::rootObjectForFrame):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::isAttachment):
+        (WebCore::AccessibilityScrollView::widgetForAttachmentView):
+        * accessibility/AccessibilityScrollView.h:
+        (WebCore::AccessibilityScrollView::firstChild):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2011-03-07  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

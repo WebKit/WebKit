@@ -32,6 +32,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "RenderPart.h"
 #include "ScrollView.h"
+#include "Widget.h"
 
 namespace WebCore {
     
@@ -62,6 +63,19 @@ const AccessibilityObject::AccessibilityChildrenVector& AccessibilityScrollView:
     if (!m_haveChildren)
         addChildren();
     return m_children;
+}
+
+// If this is WebKit1 then the native scroll view needs to return the
+// AX information (because there are no scroll bar children in the ScrollView object in WK1).
+// In WebKit2, the ScrollView object will return the AX information (because there are no platform widgets).
+bool AccessibilityScrollView::isAttachment() const
+{
+    return m_scrollView->platformWidget();
+}
+
+Widget* AccessibilityScrollView::widgetForAttachmentView() const
+{
+    return m_scrollView.get();
 }
     
 void AccessibilityScrollView::updateChildrenIfNecessary()

@@ -50,7 +50,6 @@ AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
 
 AccessibilityUIElement AccessibilityController::focusedElement()
 {
-    // FIXME: we could do some caching here.
     id accessibilityObject = [[mainFrame accessibilityRoot] accessibilityFocusedUIElement];
     return AccessibilityUIElement(accessibilityObject);
 }
@@ -58,7 +57,11 @@ AccessibilityUIElement AccessibilityController::focusedElement()
 AccessibilityUIElement AccessibilityController::rootElement()
 {
     // FIXME: we could do some caching here.
-    id accessibilityObject = [mainFrame accessibilityRoot];
+    
+    // Layout tests expect that the root element will be the scroll area
+    // containing the web area object. That will be the parent of the accessibilityRoot on WK1.
+    
+    id accessibilityObject = [[mainFrame accessibilityRoot] accessibilityAttributeValue:NSAccessibilityParentAttribute];
     return AccessibilityUIElement(accessibilityObject);
 }
 

@@ -31,15 +31,16 @@ var successfullyParsed = false;
         shouldBe("scroll.role", "'AXRole: AXScrollArea'");
         shouldBe("web.role", "'AXRole: AXWebArea'");
 
-        var initialScrollY = scroll.y;
+        var initialWebY = web.y;
 
         // Cause focus to scroll down.
         document.getElementById("text2").focus();
 
-        // Since focus() should have scrolled down, the scroll.y should be greater than web.x
-        // and it should be greater than the initial scroll.y position.
-        shouldBeTrue("scroll.y > web.y");
-        shouldBeTrue("scroll.y > initialScrollY");
+        // Since focus() should have scrolled down, the web.y should be greater than scroll.y since
+        // the content (web area) has moved.
+        // The web position should also be greater than when it started.
+        shouldBeTrue("scroll.y < web.y");
+        shouldBeTrue("web.y > initialWebY");
     }
 
     successfullyParsed = true;

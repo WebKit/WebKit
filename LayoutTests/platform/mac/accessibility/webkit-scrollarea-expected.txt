@@ -8,7 +8,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS body.role is 'AXRole: AXWebArea'
 PASS body.parentElement().role is 'AXRole: AXScrollArea'
-PASS body.parentElement().childrenCount is 1
+PASS body.parentElement().childrenCount is 3
 PASS successfullyParsed is true
 
 TEST COMPLETE

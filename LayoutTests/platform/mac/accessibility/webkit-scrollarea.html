@@ -27,7 +27,7 @@ text
         var body = accessibilityController.focusedElement;
         shouldBe("body.role", "'AXRole: AXWebArea'");
         shouldBe("body.parentElement().role", "'AXRole: AXScrollArea'");
-        shouldBe("body.parentElement().childrenCount", "1");
+        shouldBe("body.parentElement().childrenCount", "3");
     }
 
     successfullyParsed = true;
