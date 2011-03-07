@@ -1,3 +1,21 @@
+2011-03-07  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Use HashMaps for caching primitive values
+        https://bugs.webkit.org/show_bug.cgi?id=55873
+        
+        Most documents use only small subset of cacheable primitive values. By replacing
+        fixed size cache arrays with HashMaps we can reduce the constant memory usage while also
+        expanding the range of cacheable values.
+
+        * css/CSSPrimitiveValueCache.cpp:
+        (WebCore::CSSPrimitiveValueCache::CSSPrimitiveValueCache):
+        (WebCore::CSSPrimitiveValueCache::createIdentifierValue):
+        (WebCore::CSSPrimitiveValueCache::createColorValue):
+        (WebCore::CSSPrimitiveValueCache::createValue):
+        * css/CSSPrimitiveValueCache.h:
+
 2011-03-07  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

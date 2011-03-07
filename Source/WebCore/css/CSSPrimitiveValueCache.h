@@ -49,7 +49,7 @@ public:
 private:
     CSSPrimitiveValueCache();
 
-    typedef RefPtr<CSSPrimitiveValue> IdentifierValueCache[numCSSValueKeywords];
+    typedef HashMap<int, RefPtr<CSSPrimitiveValue> > IdentifierValueCache;
     IdentifierValueCache m_identifierValueCache;
 
     typedef HashMap<unsigned, RefPtr<CSSPrimitiveValue> > ColorValueCache;
@@ -58,12 +58,13 @@ private:
     RefPtr<CSSPrimitiveValue> m_colorWhite;
     RefPtr<CSSPrimitiveValue> m_colorBlack;
     
-    // Small integers are very common. Share them.
-    static const int cachedIntegerCount = 128;
-    // Other common primitive types have UnitTypes smaller than this.
-    static const int maxCachedUnitType = CSSPrimitiveValue::CSS_PX;
-    typedef RefPtr<CSSPrimitiveValue> IntegerValueCache[cachedIntegerCount][maxCachedUnitType + 1];
-    IntegerValueCache m_integerValueCache;
+    typedef HashMap<int, RefPtr<CSSPrimitiveValue> > IntegerValueCache;
+    RefPtr<CSSPrimitiveValue> m_pixelZero;
+    RefPtr<CSSPrimitiveValue> m_percentZero;
+    RefPtr<CSSPrimitiveValue> m_numberZero;
+    IntegerValueCache m_pixelValueCache;
+    IntegerValueCache m_percentValueCache;
+    IntegerValueCache m_numberValueCache;
 };
 
 }
