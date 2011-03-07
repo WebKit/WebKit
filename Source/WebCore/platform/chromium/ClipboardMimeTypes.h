@@ -40,6 +40,7 @@ extern const char mimeTypeTextHTML[];
 extern const char mimeTypeURL[];
 extern const char mimeTypeTextURIList[];
 extern const char mimeTypeDownloadURL[];
+extern const char mimeTypeFiles[];
 
 } // namespace WebCore
 
