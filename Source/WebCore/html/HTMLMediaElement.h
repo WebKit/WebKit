@@ -176,11 +176,6 @@ public:
     void sourceWillBeRemoved(HTMLSourceElement*);
     void sourceWasAdded(HTMLSourceElement*);
 
-    // Media cache management.
-    void getSitesInMediaCache(Vector<String>&);
-    void clearMediaCache();
-    void clearMediaCacheForSite(const String&);
-
     void privateBrowsingStateDidChange();
 
     // Restrictions to change default behaviors.
@@ -196,6 +191,11 @@ public:
     bool requireUserGestureForFullScreen() const { return m_restrictions & RequireUserGestureForFullScreenRestriction; }
 
     void setBehaviorRestrictions(BehaviorRestrictions restrictions) { m_restrictions = restrictions; }
+
+    // Media cache management.
+    static void getSitesInMediaCache(Vector<String>&);
+    static void clearMediaCache();
+    static void clearMediaCacheForSite(const String&);
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document*);

@@ -78,7 +78,10 @@ void WebMediaPlayerClientImpl::registerSelf(MediaEngineRegistrar registrar)
     if (m_isEnabled) {
         registrar(WebMediaPlayerClientImpl::create,
                   WebMediaPlayerClientImpl::getSupportedTypes,
-                  WebMediaPlayerClientImpl::supportsType);
+                  WebMediaPlayerClientImpl::supportsType,
+                  0,
+                  0,
+                  0);
     }
 }
 

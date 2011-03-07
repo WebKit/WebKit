@@ -200,7 +200,7 @@ MediaPlayerPrivateInterface* MediaPlayerPrivateQTKit::create(MediaPlayer* player
 void MediaPlayerPrivateQTKit::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
-        registrar(create, getSupportedTypes, supportsType);
+        registrar(create, getSupportedTypes, supportsType, 0, 0, 0);
 }
 
 MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit(MediaPlayer* player)

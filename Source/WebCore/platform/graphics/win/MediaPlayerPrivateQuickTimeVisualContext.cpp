@@ -153,7 +153,7 @@ MediaPlayerPrivateInterface* MediaPlayerPrivateQuickTimeVisualContext::create(Me
 void MediaPlayerPrivateQuickTimeVisualContext::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
-        registrar(create, getSupportedTypes, supportsType);
+        registrar(create, getSupportedTypes, supportsType, 0, 0, 0);
 }
 
 MediaPlayerPrivateQuickTimeVisualContext::MediaPlayerPrivateQuickTimeVisualContext(MediaPlayer* player)

@@ -150,19 +150,27 @@ static MediaPlayerPrivateInterface* createNullMediaPlayer(MediaPlayer* player)
 struct MediaPlayerFactory {
     WTF_MAKE_NONCOPYABLE(MediaPlayerFactory); WTF_MAKE_FAST_ALLOCATED;
 public:
-    MediaPlayerFactory(CreateMediaEnginePlayer constructor, MediaEngineSupportedTypes getSupportedTypes, MediaEngineSupportsType supportsTypeAndCodecs) 
+    MediaPlayerFactory(CreateMediaEnginePlayer constructor, MediaEngineSupportedTypes getSupportedTypes, MediaEngineSupportsType supportsTypeAndCodecs,
+        MediaEngineGetSitesInMediaCache getSitesInMediaCache, MediaEngineClearMediaCache clearMediaCache, MediaEngineClearMediaCacheForSite clearMediaCacheForSite) 
         : constructor(constructor)
         , getSupportedTypes(getSupportedTypes)
-        , supportsTypeAndCodecs(supportsTypeAndCodecs)  
+        , supportsTypeAndCodecs(supportsTypeAndCodecs)
+        , getSitesInMediaCache(getSitesInMediaCache)
+        , clearMediaCache(clearMediaCache)
+        , clearMediaCacheForSite(clearMediaCacheForSite)
+
     { 
     }
 
     CreateMediaEnginePlayer constructor;
     MediaEngineSupportedTypes getSupportedTypes;
     MediaEngineSupportsType supportsTypeAndCodecs;
+    MediaEngineGetSitesInMediaCache getSitesInMediaCache;
+    MediaEngineClearMediaCache clearMediaCache;
+    MediaEngineClearMediaCacheForSite clearMediaCacheForSite;
 };
 
-static void addMediaEngine(CreateMediaEnginePlayer, MediaEngineSupportedTypes, MediaEngineSupportsType);
+static void addMediaEngine(CreateMediaEnginePlayer, MediaEngineSupportedTypes, MediaEngineSupportsType, MediaEngineGetSitesInMediaCache, MediaEngineClearMediaCache, MediaEngineClearMediaCacheForSite);
 static MediaPlayerFactory* bestMediaEngineForTypeAndCodecs(const String& type, const String& codecs, MediaPlayerFactory* current = 0);
 static MediaPlayerFactory* nextMediaEngine(MediaPlayerFactory* current);
 
@@ -186,12 +194,14 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines()
     return installedEngines;
 }
 
-static void addMediaEngine(CreateMediaEnginePlayer constructor, MediaEngineSupportedTypes getSupportedTypes, MediaEngineSupportsType supportsType)
+static void addMediaEngine(CreateMediaEnginePlayer constructor, MediaEngineSupportedTypes getSupportedTypes, MediaEngineSupportsType supportsType,
+    MediaEngineGetSitesInMediaCache getSitesInMediaCache, MediaEngineClearMediaCache clearMediaCache, MediaEngineClearMediaCacheForSite clearMediaCacheForSite)
 {
     ASSERT(constructor);
     ASSERT(getSupportedTypes);
     ASSERT(supportsType);
-    installedMediaEngines().append(new MediaPlayerFactory(constructor, getSupportedTypes, supportsType));
+
+    installedMediaEngines().append(new MediaPlayerFactory(constructor, getSupportedTypes, supportsType, getSitesInMediaCache, clearMediaCache, clearMediaCacheForSite));
 }
 
 static const AtomicString& applicationOctetStream()
@@ -722,17 +732,35 @@ void MediaPlayer::reloadTimerFired(Timer<MediaPlayer>*)
 
 void MediaPlayer::getSitesInMediaCache(Vector<String>& sites)
 {
-    m_private->getSitesInMediaCache(sites);
+    Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
+    unsigned size = engines.size();
+    for (unsigned i = 0; i < size; i++) {
+        if (!engines[i]->getSitesInMediaCache)
+            continue;
+        Vector<String> engineSites;
+        engines[i]->getSitesInMediaCache(engineSites);
+        sites.append(engineSites);
+    }
 }
 
 void MediaPlayer::clearMediaCache()
 {
-    m_private->clearMediaCache();
+    Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
+    unsigned size = engines.size();
+    for (unsigned i = 0; i < size; i++) {
+        if (engines[i]->clearMediaCache)
+            engines[i]->clearMediaCache();
+    }
 }
 
 void MediaPlayer::clearMediaCacheForSite(const String& site)
 {
-    m_private->clearMediaCacheForSite(site);
+    Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
+    unsigned size = engines.size();
+    for (unsigned i = 0; i < size; i++) {
+        if (engines[i]->clearMediaCacheForSite)
+            engines[i]->clearMediaCacheForSite(site);
+    }
 }
 
 void MediaPlayer::setPrivateBrowsingMode(bool privateBrowsingMode)

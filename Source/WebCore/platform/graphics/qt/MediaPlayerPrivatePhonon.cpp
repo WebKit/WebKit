@@ -126,7 +126,7 @@ MediaPlayerPrivateInterface* MediaPlayerPrivatePhonon::create(MediaPlayer* playe
 void MediaPlayerPrivatePhonon::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
-        registrar(create, getSupportedTypes, supportsType);
+        registrar(create, getSupportedTypes, supportsType, 0, 0, 0);
 }
 
 

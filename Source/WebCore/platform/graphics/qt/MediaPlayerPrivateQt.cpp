@@ -65,7 +65,7 @@ MediaPlayerPrivateInterface* MediaPlayerPrivateQt::create(MediaPlayer* player)
 
 void MediaPlayerPrivateQt::registerMediaEngine(MediaEngineRegistrar registrar)
 {
-    registrar(create, getSupportedTypes, supportsType);
+    registrar(create, getSupportedTypes, supportsType, 0, 0, 0);
 }
 
 void MediaPlayerPrivateQt::getSupportedTypes(HashSet<String> &supported)

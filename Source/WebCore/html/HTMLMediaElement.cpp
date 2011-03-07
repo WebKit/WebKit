@@ -2546,20 +2546,17 @@ void HTMLMediaElement::setShouldDelayLoadEvent(bool shouldDelay)
 
 void HTMLMediaElement::getSitesInMediaCache(Vector<String>& sites)
 {
-    if (m_player)
-        m_player->getSitesInMediaCache(sites);
+    MediaPlayer::getSitesInMediaCache(sites);
 }
 
 void HTMLMediaElement::clearMediaCache()
 {
-    if (m_player)
-        m_player->clearMediaCache();
+    MediaPlayer::clearMediaCache();
 }
 
 void HTMLMediaElement::clearMediaCacheForSite(const String& site)
 {
-    if (m_player)
-        m_player->clearMediaCacheForSite(site);
+    MediaPlayer::clearMediaCacheForSite(site);
 }
 
 void HTMLMediaElement::privateBrowsingStateDidChange()

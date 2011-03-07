@@ -1,3 +1,45 @@
+2011-03-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add API to enumerate/delete files downloaded for <audio> and <video>
+        https://bugs.webkit.org/show_bug.cgi?id=55267
+        <rdar://problem/9049280>
+
+        No new tests, this is just more plumbing.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::getSitesInMediaCache): Make static, call MediaPlayer static method.
+        (WebCore::HTMLMediaElement::clearMediaCache): Ditto.
+        (WebCore::HTMLMediaElement::clearMediaCacheForSite): Ditto.
+        * html/HTMLMediaElement.h:
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayerFactory::MediaPlayerFactory): Add new media engine factory functions.
+        (WebCore::addMediaEngine): Ditto.
+        (WebCore::MediaPlayer::getSitesInMediaCache): Call static method on all installed media engines.
+        (WebCore::MediaPlayer::clearMediaCache): Ditto.
+        (WebCore::MediaPlayer::clearMediaCacheForSite): Ditto.
+        * platform/graphics/MediaPlayer.h:
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::registerMediaEngine): Update for MediaEngineRegistrar change.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::registerMediaEngine): Ditto.
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivatePhonon::registerMediaEngine): Ditto.
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::registerMediaEngine): Ditto.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::registerMediaEngine): Ditto.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::registerMediaEngine): Ditto.
+
 2011-03-07  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

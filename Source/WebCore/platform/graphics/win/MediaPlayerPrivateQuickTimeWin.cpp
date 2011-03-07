@@ -79,7 +79,7 @@ MediaPlayerPrivateInterface* MediaPlayerPrivate::create(MediaPlayer* player)
 void MediaPlayerPrivate::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
-        registrar(create, getSupportedTypes, supportsType);
+        registrar(create, getSupportedTypes, supportsType, 0, 0, 0);
 }
 
 MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)

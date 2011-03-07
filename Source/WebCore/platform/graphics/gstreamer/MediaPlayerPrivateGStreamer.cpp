@@ -272,7 +272,7 @@ MediaPlayerPrivateInterface* MediaPlayerPrivateGStreamer::create(MediaPlayer* pl
 void MediaPlayerPrivateGStreamer::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
-        registrar(create, getSupportedTypes, supportsType);
+        registrar(create, getSupportedTypes, supportsType, 0, 0, 0);
 }
 
 static bool gstInitialized = false;

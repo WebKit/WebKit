@@ -159,11 +159,14 @@ public:
     }
     virtual ~MediaPlayer();
 
-    // media engine support
+    // Media engine support.
     enum SupportsType { IsNotSupported, IsSupported, MayBeSupported };
     static MediaPlayer::SupportsType supportsType(const ContentType&);
     static void getSupportedTypes(HashSet<String>&);
     static bool isAvailable();
+    static void getSitesInMediaCache(Vector<String>&);
+    static void clearMediaCache();
+    static void clearMediaCacheForSite(const String&);
 
     bool supportsFullscreen() const;
     bool supportsSave() const;
@@ -287,11 +290,6 @@ public:
     unsigned audioDecodedByteCount() const;
     unsigned videoDecodedByteCount() const;
 
-    // Media cache management.
-    void getSitesInMediaCache(Vector<String>&);
-    void clearMediaCache();
-    void clearMediaCacheForSite(const String&);
-
     void setPrivateBrowsingMode(bool);
 
 private:
@@ -325,8 +323,12 @@ private:
 typedef MediaPlayerPrivateInterface* (*CreateMediaEnginePlayer)(MediaPlayer*);
 typedef void (*MediaEngineSupportedTypes)(HashSet<String>& types);
 typedef MediaPlayer::SupportsType (*MediaEngineSupportsType)(const String& type, const String& codecs);
+typedef void (*MediaEngineGetSitesInMediaCache)(Vector<String>&);
+typedef void (*MediaEngineClearMediaCache)();
+typedef void (*MediaEngineClearMediaCacheForSite)(const String&);
 
-typedef void (*MediaEngineRegistrar)(CreateMediaEnginePlayer, MediaEngineSupportedTypes, MediaEngineSupportsType); 
+typedef void (*MediaEngineRegistrar)(CreateMediaEnginePlayer, MediaEngineSupportedTypes, MediaEngineSupportsType, 
+    MediaEngineGetSitesInMediaCache, MediaEngineClearMediaCache, MediaEngineClearMediaCacheForSite); 
 
 
 }
