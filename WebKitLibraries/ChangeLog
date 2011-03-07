@@ -1,3 +1,9 @@
+2011-03-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Bump version.
+
+        * win/tools/scripts/VERSION:
+
 2011-03-06  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.
