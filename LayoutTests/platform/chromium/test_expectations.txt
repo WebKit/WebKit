@@ -3298,7 +3298,7 @@ BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javasc
 
 BUGCR75109 WIN LINUX : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
 BUGCR75109 WIN LINUX : fast/css/getComputedStyle/computed-style.html = TEXT
-BUGCR75109 WIN LINUX : platform/chromium/fast/text/international/complex-text-rectangle.html = TEXT
+BUGCR75109 WIN LINUX MAC : platform/chromium/fast/text/international/complex-text-rectangle.html = TEXT
 BUGCR75109 WIN LINUX : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
