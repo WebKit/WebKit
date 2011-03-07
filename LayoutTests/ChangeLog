@@ -1,3 +1,20 @@
+2011-03-07  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Martin Robinson.
+
+        Make fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html less port-dependent.
+        Preiously, the test clicked at a specific pixel so different fonts result in slightly different positions.
+        Change the test to click on a specific character offset.
+        https://bugs.webkit.org/show_bug.cgi?id=30816
+
+        * fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll-expected.txt:
+        * fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/qt/Skipped:
+
 2011-03-07  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update.

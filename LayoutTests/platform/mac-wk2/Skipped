@@ -243,7 +243,6 @@ fast/css/resize-corner-tracking.html
 fast/css/resize-single-axis.html
 fast/css/universal-hover-quirk.html
 fast/css/user-drag-none.html
-fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html
 fast/dom/horizontal-scrollbar-in-rtl.html
 fast/dom/HTMLSelectElement/click-size-zero-no-crash.html
 fast/dom/HTMLTableColElement/resize-table-using-col-width.html

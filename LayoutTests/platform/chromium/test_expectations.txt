@@ -1625,10 +1625,6 @@ BUGCR26042 LINUX RELEASE : http/tests/security/mixedContent/insecure-plugin-in-i
 // Incorrect baseline removed.
 BUGCR25433 WIN LINUX : css2.1/t040103-ident-03-c.html = IMAGE
 
-// WebKit roll 49961:49992
-// Added in http://trac.webkit.org/changeset/49990
-BUGCR25884 WIN LINUX : fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html = FAIL
-
 // This only crashes on the old buildbot slave. It fails image, like the other slaves, on the new one.
 // FIXME: Make this just be IMAGE after we move over to the new bots.
 BUGCR26344 LINUX DEBUG : fast/text/atsui-partial-selection.html = CRASH IMAGE
