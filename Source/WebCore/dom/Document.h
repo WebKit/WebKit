@@ -1122,6 +1122,9 @@ public:
 
     ContentSecurityPolicy* contentSecurityPolicy() { return m_contentSecurityPolicy.get(); }
 
+    void suspendScheduledTasks();
+    void resumeScheduledTasks();
+
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 
@@ -1167,6 +1170,10 @@ private:
     PassRefPtr<NodeList> handleZeroPadding(const HitTestRequest&, HitTestResult&) const;
 
     void loadEventDelayTimerFired(Timer<Document>*);
+
+    void pendingTasksTimerFired(Timer<Document>*);
+
+    static void didReceiveTask(void*);
 
     OwnPtr<CSSStyleSelector> m_styleSelector;
     bool m_didCalculateStyleSelector;
@@ -1434,6 +1441,9 @@ private:
 #endif
 
     RefPtr<ContentSecurityPolicy> m_contentSecurityPolicy;
+
+    Timer<Document> m_pendingTasksTimer;
+    Vector<OwnPtr<Task> > m_pendingTasks;
 };
 
 inline bool Document::hasElementWithId(AtomicStringImpl* id) const

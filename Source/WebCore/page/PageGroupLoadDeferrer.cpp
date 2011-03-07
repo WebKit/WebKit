@@ -39,23 +39,8 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
     HashSet<Page*>::const_iterator end = pages.end();
     for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
         Page* otherPage = *it;
-        if ((deferSelf || otherPage != page)) {
-            if (!otherPage->defersLoading()) {
-                m_deferredFrames.append(otherPage->mainFrame());
-
-                // This code is not logically part of load deferring, but we do not want JS code executed beneath modal
-                // windows or sheets, which is exactly when PageGroupLoadDeferrer is used.
-                // NOTE: if PageGroupLoadDeferrer is ever used for tasks other than showing a modal window or sheet,
-                // the constructor will need to take a ActiveDOMObject::ReasonForSuspension.
-                for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-                    frame->document()->suspendScriptedAnimationControllerCallbacks();
-                    frame->document()->suspendActiveDOMObjects(ActiveDOMObject::WillShowDialog);
-                    frame->document()->asyncScriptRunner()->suspend();
-                    if (DocumentParser* parser = frame->document()->parser())
-                        parser->suspendScheduledTasks();
-                }
-            }
-        }
+        if ((deferSelf || otherPage != page) && !otherPage->defersLoading())
+            m_deferredFrames.append(otherPage->mainFrame());
     }
 
     size_t count = m_deferredFrames.size();
@@ -67,17 +52,8 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
 PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
 {
     for (size_t i = 0; i < m_deferredFrames.size(); ++i) {
-        if (Page* page = m_deferredFrames[i]->page()) {
+        if (Page* page = m_deferredFrames[i]->page())
             page->setDefersLoading(false);
-
-            for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-                frame->document()->resumeActiveDOMObjects();
-                frame->document()->resumeScriptedAnimationControllerCallbacks();
-                frame->document()->asyncScriptRunner()->resume();
-                if (DocumentParser* parser = frame->document()->parser())
-                    parser->resumeScheduledTasks();
-            }
-        }
     }
 }
 

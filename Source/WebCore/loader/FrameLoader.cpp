@@ -253,6 +253,13 @@ void FrameLoader::setDefersLoading(bool defers)
         m_frame->navigationScheduler()->startTimer();
         startCheckCompleteTimer();
     }
+
+    // This code is not logically part of load deferring, but we do not want JS code executed beneath modal
+    // windows or sheets, which is exactly when PageGroupLoadDeferrer is used.
+    if (defers)
+        m_frame->document()->suspendScheduledTasks();
+    else
+        m_frame->document()->resumeScheduledTasks();
 }
 
 bool FrameLoader::canHandleRequest(const ResourceRequest& request)
