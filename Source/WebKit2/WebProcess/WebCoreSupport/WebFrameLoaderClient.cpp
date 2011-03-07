@@ -673,9 +673,19 @@ void WebFrameLoaderClient::cancelPolicyCheck()
     m_frame->invalidatePolicyListener();
 }
 
-void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError&)
+void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError& error)
 {
-    notImplemented();
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    RefPtr<APIObject> userData;
+
+    // Notify the bundle client.
+    webPage->injectedBundlePolicyClient().unableToImplementPolicy(webPage, m_frame, error, userData);
+
+    // Notify the UIProcess.
+    webPage->send(Messages::WebPageProxy::UnableToImplementPolicy(m_frame->frameID(), error, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState> prpFormState)

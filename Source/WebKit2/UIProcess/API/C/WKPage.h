@@ -102,6 +102,7 @@ typedef struct WKPageLoaderClient WKPageLoaderClient;
 typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
 typedef void (*WKPageDecidePolicyForNewWindowActionCallback)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
 typedef void (*WKPageDecidePolicyForResponseCallback)(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
+typedef void (*WKPageUnableToImplementPolicyCallback)(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo);
 
 struct WKPagePolicyClient {
     int                                                                 version;
@@ -109,6 +110,7 @@ struct WKPagePolicyClient {
     WKPageDecidePolicyForNavigationActionCallback                       decidePolicyForNavigationAction;
     WKPageDecidePolicyForNewWindowActionCallback                        decidePolicyForNewWindowAction;
     WKPageDecidePolicyForResponseCallback                               decidePolicyForResponse;
+    WKPageUnableToImplementPolicyCallback                               unableToImplementPolicy;
 };
 typedef struct WKPagePolicyClient WKPagePolicyClient;
 

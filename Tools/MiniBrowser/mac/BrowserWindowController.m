@@ -607,7 +607,8 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         self,       /* clientInfo */
         decidePolicyForNavigationAction,
         decidePolicyForNewWindowAction,
-        decidePolicyForResponse
+        decidePolicyForResponse,
+        0           /* unableToImplementPolicy */
     };
     WKPageSetPagePolicyClient(_webView.pageRef, &policyClient);
 

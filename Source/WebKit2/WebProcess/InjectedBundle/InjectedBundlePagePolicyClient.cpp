@@ -27,6 +27,7 @@
 #include "InjectedBundlePagePolicyClient.h"
 
 #include "WKBundleAPICast.h"
+#include "WebError.h"
 #include "WebURLRequest.h"
 
 using namespace WebCore;
@@ -71,6 +72,16 @@ WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForResponse
     WKBundlePagePolicyAction policy = m_client.decidePolicyForResponse(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), &userDataToPass, m_client.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
     return policy;
+}
+
+void InjectedBundlePagePolicyClient::unableToImplementPolicy(WebPage* page, WebFrame* frame, const WebCore::ResourceError& error, RefPtr<APIObject>& userData)
+{
+    if (!m_client.unableToImplementPolicy)
+        return;
+
+    WKTypeRef userDataToPass = 0;
+    m_client.unableToImplementPolicy(toAPI(page), toAPI(frame), toAPI(error), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
 }
 
 } // namespace WebKit

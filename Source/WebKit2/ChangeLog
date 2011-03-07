@@ -2,6 +2,30 @@
 
         Reviewed by Anders Carlsson.
 
+        Add unableToImplementPolicy callback for WebKit2 policy client
+        <rdar://problem/9071902>
+        https://bugs.webkit.org/show_bug.cgi?id=55884
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::unableToImplementPolicy):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPolicyClient.cpp:
+        (WebKit::WebPolicyClient::unableToImplementPolicy):
+        * UIProcess/WebPolicyClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.cpp:
+        (WebKit::InjectedBundlePagePolicyClient::unableToImplementPolicy):
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchUnableToImplementPolicy):
+        Pipe unableToImplementPolicy through both the bundle and the main WebKit2 API.
+
+2011-03-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Replace WebKit2's decidePolicyForMIMEType with decidePolicyForResponse
         https://bugs.webkit.org/show_bug.cgi?id=55827
 

@@ -120,11 +120,11 @@ enum {
 };
 typedef uint32_t WKBundlePagePolicyAction;
 
-    
 // Policy Client
 typedef WKBundlePagePolicyAction (*WKBundlePageDecidePolicyForNavigationActionCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleNavigationActionRef navigationAction, WKURLRequestRef request, WKTypeRef* userData, const void* clientInfo);
 typedef WKBundlePagePolicyAction (*WKBundlePageDecidePolicyForNewWindowActionCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleNavigationActionRef navigationAction, WKURLRequestRef request, WKStringRef frameName, WKTypeRef* userData, const void* clientInfo);
-typedef WKBundlePagePolicyAction (*WKBundlePageDecidePolicyForResponseCallback)(WKBundlePageRef page, WKBundleFrameRef frame,  WKURLResponseRef response, WKURLRequestRef request, WKTypeRef* userData, const void* clientInfo);
+typedef WKBundlePagePolicyAction (*WKBundlePageDecidePolicyForResponseCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKTypeRef* userData, const void* clientInfo);
+typedef void (*WKBundlePageUnableToImplementPolicyCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKErrorRef error, WKTypeRef* userData, const void* clientInfo);
 
 struct WKBundlePagePolicyClient {
     int                                                                 version;
@@ -132,6 +132,7 @@ struct WKBundlePagePolicyClient {
     WKBundlePageDecidePolicyForNavigationActionCallback                 decidePolicyForNavigationAction;
     WKBundlePageDecidePolicyForNewWindowActionCallback                  decidePolicyForNewWindowAction;
     WKBundlePageDecidePolicyForResponseCallback                         decidePolicyForResponse;
+    WKBundlePageUnableToImplementPolicyCallback                         unableToImplementPolicy;
 };
 typedef struct WKBundlePagePolicyClient WKBundlePagePolicyClient;
 

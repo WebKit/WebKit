@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPolicyClient.h"
 
+#include "APIObject.h"
 #include "WKAPICast.h"
 #include "WebURLRequest.h"
 
@@ -65,6 +66,14 @@ bool WebPolicyClient::decidePolicyForResponse(WebPageProxy* page, WebFrameProxy*
 
     m_client.decidePolicyForResponse(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.clientInfo);
     return true;
+}
+
+void WebPolicyClient::unableToImplementPolicy(WebPageProxy* page, WebFrameProxy* frame, const ResourceError& error, APIObject* userData)
+{
+    if (!m_client.unableToImplementPolicy)
+        return;
+
+    m_client.unableToImplementPolicy(toAPI(page), toAPI(frame), toAPI(error), toAPI(userData), m_client.clientInfo);
 }
 
 } // namespace WebKit

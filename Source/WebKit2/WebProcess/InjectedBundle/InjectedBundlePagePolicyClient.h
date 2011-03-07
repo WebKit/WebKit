@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+    class ResourceError;
     class ResourceRequest;
     class ResourceResponse;
 }
@@ -47,6 +48,7 @@ public:
     WKBundlePagePolicyAction decidePolicyForNavigationAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, RefPtr<APIObject>& userData);
     WKBundlePagePolicyAction decidePolicyForNewWindowAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, const String& frameName, RefPtr<APIObject>& userData);
     WKBundlePagePolicyAction decidePolicyForResponse(WebPage*, WebFrame*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, RefPtr<APIObject>& userData);
+    void unableToImplementPolicy(WebPage*, WebFrame*, const WebCore::ResourceError&, RefPtr<APIObject>& userData);
 };
 
 } // namespace WebKit
