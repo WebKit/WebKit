@@ -94,7 +94,7 @@ bool RenderThemeEfl::themePartCacheEntrySurfaceCreate(struct ThemePartCacheEntry
     int w, h;
     cairo_status_t status;
 
-    ASSERT(ce);
+    ASSERT(entry);
     ASSERT(entry->ee);
 
     ecore_evas_geometry_get(entry->ee, 0, 0, &w, &h);

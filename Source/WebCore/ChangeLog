@@ -1,3 +1,13 @@
+2011-03-07  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL build fix.
+
+        [EFL] Build break on Debug build.
+        https://bugs.webkit.org/show_bug.cgi?id=55858
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::themePartCacheEntrySurfaceCreate):
+
 2011-03-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
