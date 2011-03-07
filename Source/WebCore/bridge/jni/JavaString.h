@@ -24,62 +24,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JNIBridgeJSC_h
-#define JNIBridgeJSC_h
+#ifndef JavaString_h
+#define JavaString_h
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "BridgeJSC.h"
-#include "JNIUtility.h"
-#include "JavaMethod.h"
-#include "JavaString.h"
-#include "JobjectWrapper.h"
+#include <wtf/text/WTFString.h>
+
+#if USE(JSC)
+#include "JavaStringJSC.h"
+#elif USE(V8)
+#include "JavaStringV8.h"
+#endif
 
 namespace JSC {
 
 namespace Bindings {
 
-class JavaField : public Field {
+class JavaString {
 public:
-    JavaField(JNIEnv*, jobject aField);
+    JavaString()
+    {
+        m_impl.init();
+    }
 
-    virtual JSValue valueFromInstance(ExecState*, const Instance*) const;
-    virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const;
+    JavaString(JNIEnv* e, jstring s)
+    {
+        m_impl.init(e, s);
+    }
 
-    const JavaString& name() const { return m_name; }
-    virtual RuntimeType type() const { return m_type.utf8(); }
+    JavaString(jstring s)
+    {
+        m_impl.init(getJNIEnv(), s);
+    }
 
-    JNIType getJNIType() const { return m_JNIType; }
+    const char* utf8() const { return m_impl.utf8(); }
+    int length() const { return m_impl.length(); }
+    StringImpl* impl() const { return m_impl.impl(); }
 
 private:
-    void dispatchSetValueToInstance(ExecState*, const JavaInstance*, jvalue, const char* name, const char* sig) const;
-    jvalue dispatchValueFromInstance(ExecState*, const JavaInstance*, const char* name, const char* sig, JNIType returnType) const;
-
-    JavaString m_name;
-    JavaString m_type;
-    JNIType m_JNIType;
-    RefPtr<JobjectWrapper> m_field;
-};
-
-class JavaArray : public Array {
-public:
-    JavaArray(jobject array, const char* type, PassRefPtr<RootObject>);
-    virtual ~JavaArray();
-
-    RootObject* rootObject() const;
-
-    virtual void setValueAt(ExecState*, unsigned int index, JSValue) const;
-    virtual JSValue valueAt(ExecState*, unsigned int index) const;
-    virtual unsigned int getLength() const;
-
-    jobject javaArray() const { return m_array->m_instance; }
-
-    static JSValue convertJObjectToArray(ExecState*, jobject, const char* type, PassRefPtr<RootObject>);
-
-private:
-    RefPtr<JobjectWrapper> m_array;
-    unsigned int m_length;
-    const char* m_type;
+    JavaStringImpl m_impl;
 };
 
 } // namespace Bindings
@@ -88,4 +72,4 @@ private:
 
 #endif // ENABLE(JAVA_BRIDGE)
 
-#endif // JNIBridgeJSC_h
+#endif // JavaString_h

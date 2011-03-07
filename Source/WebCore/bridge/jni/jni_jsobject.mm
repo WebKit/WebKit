@@ -29,11 +29,11 @@
 #if ENABLE(JAVA_BRIDGE)
 
 #include "Frame.h"
-#include "JavaRuntimeObject.h"
-#include "JNIBridge.h"
 #include "JNIUtility.h"
 #include "JNIUtilityPrivate.h"
 #include "JSDOMBinding.h"
+#include "JavaRuntimeObject.h"
+#include "JavaString.h"
 #include "Logging.h"
 #include "ScriptController.h"
 #include "StringSourceProvider.h"

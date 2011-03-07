@@ -29,7 +29,7 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JNIBridge.h"
+#include "JavaMethod.h"
 #include "JNIUtilityPrivate.h"
 #include "JavaClassV8.h"
 

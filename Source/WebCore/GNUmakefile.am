@@ -937,9 +937,10 @@ webcore_sources += \
 	Source/WebCore/bridge/c/c_utility.h \
 	Source/WebCore/bridge/IdentifierRep.cpp \
 	Source/WebCore/bridge/IdentifierRep.h \
-	Source/WebCore/bridge/jni/JNIBridge.h \
-	Source/WebCore/bridge/jni/jni_jsobject.h \
 	Source/WebCore/bridge/jni/JNIUtility.h \
+	Source/WebCore/bridge/jni/JavaMethod.h \
+	Source/WebCore/bridge/jni/JavaString.h \
+	Source/WebCore/bridge/jni/jni_jsobject.h \
 	Source/WebCore/bridge/jni/jsc/JavaClassJSC.h \
 	Source/WebCore/bridge/jni/jsc/JavaInstanceJSC.h \
 	Source/WebCore/bridge/jni/jsc/JNIBridgeJSC.h \

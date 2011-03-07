@@ -1,3 +1,42 @@
+2011-03-07  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Split JNIBridge.cpp/h into JavaString.h and JavaMethod.cpp/h
+        https://bugs.webkit.org/show_bug.cgi?id=55774
+
+        No new tests, refactoring only.
+
+        * Android.jscbindings.mk:
+        * Android.v8bindings.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/jni/JavaMethod.cpp:
+        (JavaMethod::JavaMethod):
+        (JavaMethod::~JavaMethod):
+        (appendClassName):
+        (JavaMethod::signature):
+        (JavaMethod::JNIReturnType):
+        (JavaMethod::methodID):
+        * bridge/jni/JavaMethod.h:
+        (JSC::Bindings::JavaMethod::name):
+        (JSC::Bindings::JavaMethod::returnType):
+        (JSC::Bindings::JavaMethod::parameterAt):
+        (JSC::Bindings::JavaMethod::numParameters):
+        (JSC::Bindings::JavaMethod::isStatic):
+        * bridge/jni/JavaString.h:
+        (JSC::Bindings::JavaString::JavaString):
+        (JSC::Bindings::JavaString::utf8):
+        (JSC::Bindings::JavaString::length):
+        (JSC::Bindings::JavaString::impl):
+        * bridge/jni/jni_jsobject.mm:
+        * bridge/jni/jsc/JNIBridgeJSC.h:
+        * bridge/jni/v8/JNIBridgeV8.h:
+        * bridge/jni/v8/JavaClassV8.cpp:
+        * bridge/jni/v8/JavaClassV8.h:
+        * bridge/jni/v8/JavaInstanceV8.cpp:
+
 2011-03-07  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

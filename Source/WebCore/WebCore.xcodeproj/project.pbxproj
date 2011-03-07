@@ -1375,10 +1375,11 @@
 		5905ADC01302F3CE00F116DF /* XMLTreeViewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */; };
 		590E1B4911E4EF4B0069F784 /* DeviceOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = 590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		590E1B4B11E4EF700069F784 /* JSDeviceOrientationEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 590E1B4A11E4EF700069F784 /* JSDeviceOrientationEventCustom.cpp */; };
-		5913953B110758450083EC55 /* JNIBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 5913953A110758450083EC55 /* JNIBridge.h */; };
-		5913953D1107584E0083EC55 /* JNIBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5913953C1107584E0083EC55 /* JNIBridge.cpp */; };
 		59309A1111F4AE5800250603 /* DeviceOrientationClientMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59309A1011F4AE5800250603 /* DeviceOrientationClientMock.cpp */; };
 		59309A1311F4AE6A00250603 /* DeviceOrientationClientMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 59309A1211F4AE6A00250603 /* DeviceOrientationClientMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		593D3EAD132532840057E7EE /* JavaMethod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 593D3EAC132532840057E7EE /* JavaMethod.cpp */; };
+		593D3EAF1325328C0057E7EE /* JavaMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 593D3EAE1325328C0057E7EE /* JavaMethod.h */; };
+		593D3EB1132532950057E7EE /* JavaString.h in Headers */ = {isa = PBXBuildFile; fileRef = 593D3EB0132532950057E7EE /* JavaString.h */; };
 		596229781133EFD700DC4CBB /* GeolocationPositionCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 596229771133EFD700DC4CBB /* GeolocationPositionCache.cpp */; };
 		5962297A1133EFE200DC4CBB /* GeolocationPositionCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 596229791133EFE200DC4CBB /* GeolocationPositionCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		596950821321059900C3ED18 /* JobjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 596950811321059900C3ED18 /* JobjectWrapper.h */; };
@@ -7842,10 +7843,11 @@
 		5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTreeViewer.h; sourceTree = "<group>"; };
 		590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientation.h; sourceTree = "<group>"; };
 		590E1B4A11E4EF700069F784 /* JSDeviceOrientationEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDeviceOrientationEventCustom.cpp; sourceTree = "<group>"; };
-		5913953A110758450083EC55 /* JNIBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JNIBridge.h; sourceTree = "<group>"; };
-		5913953C1107584E0083EC55 /* JNIBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JNIBridge.cpp; sourceTree = "<group>"; };
 		59309A1011F4AE5800250603 /* DeviceOrientationClientMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeviceOrientationClientMock.cpp; path = mock/DeviceOrientationClientMock.cpp; sourceTree = "<group>"; };
 		59309A1211F4AE6A00250603 /* DeviceOrientationClientMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeviceOrientationClientMock.h; path = mock/DeviceOrientationClientMock.h; sourceTree = "<group>"; };
+		593D3EAC132532840057E7EE /* JavaMethod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaMethod.cpp; sourceTree = "<group>"; };
+		593D3EAE1325328C0057E7EE /* JavaMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaMethod.h; sourceTree = "<group>"; };
+		593D3EB0132532950057E7EE /* JavaString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaString.h; sourceTree = "<group>"; };
 		596229771133EFD700DC4CBB /* GeolocationPositionCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationPositionCache.cpp; sourceTree = "<group>"; };
 		596229791133EFE200DC4CBB /* GeolocationPositionCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationPositionCache.h; sourceTree = "<group>"; };
 		596950811321059900C3ED18 /* JobjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobjectWrapper.h; sourceTree = "<group>"; };
@@ -12739,13 +12741,14 @@
 		1A569CCE0D7E2B82007C3983 /* jni */ = {
 			isa = PBXGroup;
 			children = (
+				593D3EB0132532950057E7EE /* JavaString.h */,
+				593D3EAE1325328C0057E7EE /* JavaMethod.h */,
+				593D3EAC132532840057E7EE /* JavaMethod.cpp */,
 				59695083132105A500C3ED18 /* JobjectWrapper.cpp */,
 				596950811321059900C3ED18 /* JobjectWrapper.h */,
 				1A569CD40D7E2B82007C3983 /* jni_jsobject.h */,
 				1A569CD30D7E2B82007C3983 /* jni_jsobject.mm */,
 				1A569CD50D7E2B82007C3983 /* jni_objc.mm */,
-				5913953C1107584E0083EC55 /* JNIBridge.cpp */,
-				5913953A110758450083EC55 /* JNIBridge.h */,
 				59EE122F1106081F00885116 /* JNIUtility.cpp */,
 				59EE12311106082900885116 /* JNIUtility.h */,
 				599D1E2F10C97D4C00E0EF12 /* jsc */,
@@ -21025,7 +21028,6 @@
 				1C81BA0A0E97348300266E07 /* JavaScriptCallFrame.h in Headers */,
 				59BC393F11054A1300FD85DB /* JavaStringJSC.h in Headers */,
 				1A569D040D7E2B82007C3983 /* jni_jsobject.h in Headers */,
-				5913953B110758450083EC55 /* JNIBridge.h in Headers */,
 				59E842661109E5A2000305AD /* JNIBridgeJSC.h in Headers */,
 				59EE12321106082900885116 /* JNIUtility.h in Headers */,
 				59EE122E1106080F00885116 /* JNIUtilityPrivate.h in Headers */,
@@ -22533,6 +22535,8 @@
 				339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */,
 				33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */,
 				596950821321059900C3ED18 /* JobjectWrapper.h in Headers */,
+				593D3EAF1325328C0057E7EE /* JavaMethod.h in Headers */,
+				593D3EB1132532950057E7EE /* JavaString.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23773,7 +23777,6 @@
 				1C81BA090E97348300266E07 /* JavaScriptCallFrame.cpp in Sources */,
 				1A569D030D7E2B82007C3983 /* jni_jsobject.mm in Sources */,
 				1A569D050D7E2B82007C3983 /* jni_objc.mm in Sources */,
-				5913953D1107584E0083EC55 /* JNIBridge.cpp in Sources */,
 				59E842681109E5AE000305AD /* JNIBridgeJSC.cpp in Sources */,
 				59EE12301106081F00885116 /* JNIUtility.cpp in Sources */,
 				59EE122C1106080500885116 /* JNIUtilityPrivate.cpp in Sources */,
@@ -25184,6 +25187,7 @@
 				5A574F24131DB93900471B88 /* RenderQuote.cpp in Sources */,
 				5A574F28131DB96D00471B88 /* QuotesData.cpp in Sources */,
 				59695084132105A500C3ED18 /* JobjectWrapper.cpp in Sources */,
+				593D3EAD132532840057E7EE /* JavaMethod.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

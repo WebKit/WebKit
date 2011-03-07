@@ -24,50 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JNIBridge_h
-#define JNIBridge_h
+#ifndef JavaMethod_h
+#define JavaMethod_h
 
 #if ENABLE(JAVA_BRIDGE)
 
 #include "Bridge.h"
 #include "JNIUtility.h"
 
-#if USE(JSC)
-#include "JavaStringJSC.h"
-#elif USE(V8)
-#include "JavaStringV8.h"
-#endif
+#include "JavaString.h"
 
 namespace JSC {
 
 namespace Bindings {
 
 typedef const char* RuntimeType;
-
-class JavaString {
-public:
-    JavaString()
-    {
-        m_impl.init();
-    }
-
-    JavaString(JNIEnv* e, jstring s)
-    {
-        m_impl.init(e, s);
-    }
-
-    JavaString(jstring s)
-    {
-        m_impl.init(getJNIEnv(), s);
-    }
-
-    const char* utf8() const { return m_impl.utf8(); }
-    int length() const { return m_impl.length(); }
-    StringImpl* impl() const { return m_impl.impl(); }
-
-private:
-    JavaStringImpl m_impl;
-};
 
 class JavaMethod : public Method {
 public:
@@ -102,4 +73,4 @@ private:
 
 #endif // ENABLE(JAVA_BRIDGE)
 
-#endif // JNIBridge_h
+#endif // JavaMethod_h

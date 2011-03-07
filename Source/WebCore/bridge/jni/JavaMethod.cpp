@@ -25,12 +25,13 @@
  */
 
 #include "config.h"
-#include "JNIBridge.h"
+#include "JavaMethod.h"
 
 #if ENABLE(JAVA_BRIDGE)
 
+#include "JavaString.h"
+
 #include <runtime/ScopeChain.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
 using namespace JSC;

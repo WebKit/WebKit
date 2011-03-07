@@ -28,6 +28,8 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
+#include "JavaMethod.h"
+
 using namespace JSC::Bindings;
 
 JavaClass::JavaClass(jobject anInstance)

@@ -38,6 +38,8 @@ namespace JSC {
 
 namespace Bindings {
 
+class JavaMethod;
+
 typedef Vector<JavaMethod*> MethodList;
 typedef HashMap<WTF::String, MethodList*> MethodListMap;
 typedef HashMap<WTF::String, JavaField*> FieldMap;

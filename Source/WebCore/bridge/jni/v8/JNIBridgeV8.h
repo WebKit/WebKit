@@ -28,7 +28,7 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JNIBridge.h" // For JavaString
+#include "JavaString.h"
 #include "JobjectWrapper.h"
 
 namespace JSC {
