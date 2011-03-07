@@ -565,6 +565,8 @@
             'wtf/RandomNumberSeed.h',
             'wtf/RefCountedLeakCounter.cpp',
             'wtf/SegmentedVector.h',
+            'wtf/SHA1.cpp',
+            'wtf/SHA1.h',
             'wtf/SizeLimits.cpp',
             'wtf/StackBounds.cpp',
             'wtf/StringExtras.cpp',

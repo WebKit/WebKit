@@ -203,6 +203,7 @@ static void MD5Transform(uint32_t buf[4], const uint32_t in[16])
 
 MD5::MD5()
 {
+    // FIXME: Move unit tests somewhere outside the constructor. See bug 55853.
     testMD5();
     m_buf[0] = 0x67452301;
     m_buf[1] = 0xefcdab89;

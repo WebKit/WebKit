@@ -1,3 +1,43 @@
+2011-03-06  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Add SHA-1 for new WebSocket protocol
+        https://bugs.webkit.org/show_bug.cgi?id=55039
+
+        The code is based on Chromium's portable SHA-1 implementation
+        (src/base/sha1_portable.cc). Modifications were made in order
+        to make the code comply with WebKit coding style.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/MD5.cpp:
+        (WTF::MD5::MD5):
+        * wtf/SHA1.cpp: Added.
+        (WTF::testSHA1): This function will be run the first time SHA1
+        constructor is called. This function computes a few hash values
+        and checks the results in debug builds. However, constructor is
+        probably not a good place to run these tests, so we need to find
+        a good place for it (bug 55853).
+        (WTF::expectSHA1):
+        (WTF::f):
+        (WTF::k):
+        (WTF::rotateLeft):
+        (WTF::SHA1::SHA1):
+        (WTF::SHA1::addBytes):
+        (WTF::SHA1::computeHash):
+        (WTF::SHA1::finalize):
+        (WTF::SHA1::processBlock):
+        (WTF::SHA1::reset):
+        * wtf/SHA1.h: Added.
+        (WTF::SHA1::addBytes):
+        * wtf/wtf.pri:
+
 2011-03-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

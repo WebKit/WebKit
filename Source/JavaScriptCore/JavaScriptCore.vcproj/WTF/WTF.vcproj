@@ -881,6 +881,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\SHA1.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\SHA1.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\SinglyLinkedList.h"
 			>
 		</File>

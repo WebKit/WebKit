@@ -511,6 +511,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/RetainPtr.h \
 	Source/JavaScriptCore/wtf/SegmentedVector.h \
 	Source/JavaScriptCore/wtf/SentinelLinkedList.h \
+	Source/JavaScriptCore/wtf/SHA1.cpp \
+	Source/JavaScriptCore/wtf/SHA1.h \
 	Source/JavaScriptCore/wtf/SinglyLinkedList.h \
 	Source/JavaScriptCore/wtf/StackBounds.cpp \
 	Source/JavaScriptCore/wtf/StackBounds.h \

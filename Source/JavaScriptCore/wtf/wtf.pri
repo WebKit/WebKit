@@ -23,6 +23,7 @@ SOURCES += \
     wtf/PageBlock.cpp \
     wtf/RandomNumber.cpp \
     wtf/RefCountedLeakCounter.cpp \
+    wtf/SHA1.cpp \
     wtf/StackBounds.cpp \
     wtf/TCSystemAlloc.cpp \
     wtf/ThreadingNone.cpp \
