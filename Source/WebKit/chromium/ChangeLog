@@ -1,3 +1,31 @@
+2011-03-07  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by David Levin.
+
+        AssociatedURLLoader does not support Cross Origin Requests
+        https://bugs.webkit.org/show_bug.cgi?id=53925
+
+        No tests needed. Exposes no new functionality.
+
+        * src/AssociatedURLLoader.cpp:
+        (WebKit::AssociatedURLLoader::ClientAdapter::create):
+        (WebKit::AssociatedURLLoader::ClientAdapter::ClientAdapter):
+        (WebKit::AssociatedURLLoader::ClientAdapter::willSendRequest):
+        (WebKit::AssociatedURLLoader::ClientAdapter::didSendData):
+        (WebKit::AssociatedURLLoader::ClientAdapter::didReceiveResponse):
+        (WebKit::AssociatedURLLoader::ClientAdapter::didReceiveData):
+        (WebKit::AssociatedURLLoader::ClientAdapter::didReceiveCachedMetadata):
+        (WebKit::AssociatedURLLoader::ClientAdapter::didFinishLoading):
+        (WebKit::AssociatedURLLoader::ClientAdapter::didFail):
+        (WebKit::AssociatedURLLoader::AssociatedURLLoader):
+        (WebKit::AssociatedURLLoader::~AssociatedURLLoader):
+        (WebKit::AssociatedURLLoader::loadSynchronously):
+        (WebKit::AssociatedURLLoader::loadAsynchronously):
+        (WebKit::AssociatedURLLoader::cancel):
+        (WebKit::AssociatedURLLoader::setDefersLoading):
+        * src/AssociatedURLLoader.h:
+        (WebKit::AssociatedURLLoaderOptions::AssociatedURLLoaderOptions):
+
 2011-03-06  Sreeram Ramachandran  <sreeram@google.com>
 
         Reviewed by Dimitri Glazkov.
