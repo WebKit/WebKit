@@ -358,6 +358,9 @@ public:
     // removed from its previous document.
     void setDocument(Document*);
 
+    // Used by the basic DOM methods (e.g., appendChild()).
+    void setDocumentRecursively(Document*);
+
     // Returns true if this node is associated with a document and is in its associated document's
     // node tree, false otherwise.
     bool inDocument() const 
@@ -653,7 +656,6 @@ private:
     void markCachedNodeListsSlow(JSC::MarkStack&, JSC::JSGlobalData&);
 #endif
 
-    void setDocumentRecursively(Document*);
     void setStyleChange(StyleChangeType);
 
     // Used to share code between lazyAttach and setNeedsStyleRecalc.

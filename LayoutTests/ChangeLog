@@ -1,3 +1,13 @@
+2011-03-07  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Node::checkAddChild and Node::checkReplaceChild shouldn't change the owner document of a node
+        https://bugs.webkit.org/show_bug.cgi?id=55803
+
+        * fast/dom/dom-method-document-change-expected.txt: Added.
+        * fast/dom/dom-method-document-change.html: Added.
+
 2011-03-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80484.

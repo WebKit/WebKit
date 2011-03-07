@@ -1189,8 +1189,6 @@ void Node::checkReplaceChild(Node* newChild, Node* oldChild, ExceptionCode& ec)
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }
-
-    newChild->setDocumentRecursively(document());
 }
 
 void Node::checkAddChild(Node *newChild, ExceptionCode& ec)
@@ -1203,8 +1201,6 @@ void Node::checkAddChild(Node *newChild, ExceptionCode& ec)
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }
-
-    newChild->setDocumentRecursively(document());
 }
 
 bool Node::isDescendantOf(const Node *other) const
