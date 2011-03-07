@@ -1,3 +1,12 @@
+2011-03-06  Dan Bernstein  <mitz@apple.com>
+
+        Updated platform-specific results after r80438.
+
+        * platform/mac-leopard/fast/text/hyphenate-limit-before-after-expected.txt: Added.
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2011-03-06  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.
