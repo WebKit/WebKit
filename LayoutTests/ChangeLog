@@ -2,6 +2,18 @@
 
         Unreviewed, test expectation update.
 
+        Chromium expectation files for r80449.
+
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-spinbutton-visibility-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-spinbutton-visibility-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-appearance-spinbutton-visibility-expected.checksum: Added.
+        * platform/chromium-win/fast/forms/input-appearance-spinbutton-visibility-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-appearance-spinbutton-visibility-expected.txt: Added.
+
+2011-03-06  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
         Add a Mac expectation for a new test of r80449.
 
         * platform/mac/fast/forms/input-appearance-spinbutton-visibility-expected.checksum: Added.
