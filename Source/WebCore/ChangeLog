@@ -1,3 +1,20 @@
+2011-03-07  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Steve Block.
+
+        IDBRequest::onSuccess(IDBObjectStore*) should be removed as it is unused.
+        IDBObjectStore objects used to be created asynchronously, so we needed
+        this method to be invoked, with the new object store as the parameter,
+        whenever the creation succeeded. The spec has changed so that IDBObjectStore
+        objects are created synchronously, so this method is no longer needed.
+        https://bugs.webkit.org/show_bug.cgi?id=55777
+
+        No new tests, just refactoring.
+
+        * storage/IDBCallbacks.h:
+        * storage/IDBRequest.cpp:
+        * storage/IDBRequest.h:
+
 2011-03-04  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
