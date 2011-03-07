@@ -45,9 +45,9 @@ function test() {
     win.postMessage('done', '*');
 }
 </script>
-<body>
+<body onload="test()">
 <div>window.location.href = <script>document.write(window.location.href);</script></div>
-<div><iframe src="http://localhost:8000/security/postMessage/resources/post-message-listener.html" onload="test()"
+<div><iframe src="http://localhost:8000/security/postMessage/resources/post-message-listener.html"
   id="child" width="800" height="300" style="border: 1px solid black;">
 </iframe></div>
 <div id="result">waiting...</div>

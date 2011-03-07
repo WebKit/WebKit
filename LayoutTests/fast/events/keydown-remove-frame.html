@@ -3,7 +3,6 @@
     event processing. To test manually, press any letter key. The iframe
     below should disappear and Safari should not crash.
 </p>
-<iframe onload="test()" id="iframe" src="resources/keydown-remove-frame-iframe.html"></iframe>
 <script>
     function test() {
         document.getElementById("iframe").focus();
@@ -13,3 +12,4 @@
         }
     }
 </script>
+<iframe onload="test()" id="iframe" src="resources/keydown-remove-frame-iframe.html"></iframe>

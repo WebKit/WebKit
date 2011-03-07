@@ -3,7 +3,6 @@ CONSOLE MESSAGE: line 0: Unable to post message to asdf://. Recipient has origin
 CONSOLE MESSAGE: line 0: Unable to post message to null. Recipient has origin http://localhost:8000.
 
 window.location.href = http://127.0.0.1:8000/security/postMessage/invalid-origin-throws-exception.html
-
 waiting...
 Encountered exception Error: SYNTAX_ERR: DOM Exception 12 while posting message to ''.
 Encountered exception Error: SYNTAX_ERR: DOM Exception 12 while posting message to 'asdf'.
@@ -12,3 +11,4 @@ Encountered exception Error: SYNTAX_ERR: DOM Exception 12 while posting message 
 Posted message to 'asdf:' without any exceptions.
 Posted message to 'http:' without any exceptions.
 Received message: data="Received message: data="done" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
+

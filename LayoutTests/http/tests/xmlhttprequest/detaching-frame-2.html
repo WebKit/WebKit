@@ -1,5 +1,5 @@
 <!doctype html>
-<body>
+<body onload="test()">
 <p><a href="https://bugs.webkit.org/show_bug.cgi?id=25420">bug 25240</a></p>
 <script>
   if (window.layoutTestController) {
@@ -29,6 +29,6 @@
    frames[0].location = frames[0].location.toString().replace("127.0.0.1", "localhost")
  }
 </script>
-<iframe src="resources/echo-host.php" onload="test()"></iframe>
+<iframe src="resources/echo-host.php"></iframe>
 <div id=result>FAIL: Script did not run.</div>
 </body>

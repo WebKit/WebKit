@@ -1,9 +1,10 @@
+<body onload="runTest()">
 <script>
 if (window.layoutTestController)
      layoutTestController.dumpEditingCallbacks();
 </script>
 <p>This tests find and replace inside an editable iframe.  You should see 'A B A B' below. With bug 4462420, you would see 'A B B A'.</p>
-<iframe onload="runTest()" src="../resources/contenteditable-iframe-src.html"></iframe>
+<iframe src="../resources/contenteditable-iframe-src.html"></iframe>
 
 <script>
 function runTest() {
@@ -22,3 +23,4 @@ function runTest() {
     doc.execCommand("Paste");
 }
 </script>
+</body>

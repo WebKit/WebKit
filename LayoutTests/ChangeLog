@@ -1,3 +1,58 @@
+2011-03-07  Xianzhu Wang  <wangxianzhu@google.com>
+
+        Reviewed by Tony Gentilcore.
+
+        In layout tests, iframe's onload handler should not use script function
+        defined after the iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=54942
+
+        Found and fixed more tests in addition to the first patch to bug 54942.
+        Tried best to avoid expectation changes.
+
+        * editing/execCommand/find-after-replace.html:
+        * editing/input/option-page-up-down.html:
+        * editing/input/scroll-viewport-page-up-down.html:
+        * editing/pasteboard/copy-standalone-image.html:
+        * editing/pasteboard/drag-image-to-contenteditable-in-iframe.html:
+        * editing/pasteboard/paste-noscript-xhtml.xhtml:
+        * editing/selection/drag-in-iframe.html:
+        * editing/undo/undo-iframe-location-change.html:
+        * fast/dom/DOMImplementation/createDocument-with-used-doctype-expected.txt:
+        * fast/dom/DOMImplementation/createDocument-with-used-doctype.html:
+        * fast/dom/Window/window-postmessage-clone-frames.html:
+        * fast/dynamic/paused-event-dispatch.html:
+        * fast/events/keydown-remove-frame.html:
+        * fast/events/mousedown-in-subframe-scrollbar.html:
+        * fast/frames/content-opacity-2.html:
+        * fast/frames/viewsource-plain-text-tags.html:
+        * fast/frames/viewsource-unfinished-tags.html:
+        * fast/history/form-submit-in-frame-via-onclick.html:
+        * fast/history/form-submit-in-frame.html:
+        * fast/xsl/xslt-text-expected.txt:
+        * fast/xsl/xslt-text.html:
+        * http/tests/messaging/cross-domain-message-send.html:
+        * http/tests/misc/cached-scripts-expected.txt:
+        * http/tests/misc/cached-scripts.html:
+        * http/tests/plugins/post-url-file-expected.txt:
+        * http/tests/plugins/post-url-file.html:
+        * http/tests/security/listener/xss-inactive-closure-expected.html:
+        * http/tests/security/listener/xss-inactive-closure.html:
+        * http/tests/security/postMessage/delivery-order.html:
+        * http/tests/security/postMessage/invalid-origin-throws-exception-expected.txt:
+        * http/tests/security/postMessage/invalid-origin-throws-exception.html:
+        * http/tests/security/postMessage/origin-unaffected-by-base-tag.html:
+        * http/tests/security/postMessage/target-origin.html:
+        * http/tests/security/xss-DENIED-getSVGDocument-iframe.html:
+        * http/tests/xmlhttprequest/detaching-frame-2.html:
+        * media/media-document-audio-repaint.html:
+        * media/media-document-audio-size.html:
+        * platform/mac/fast/dom/wrapper-classes-objc.html:
+        * platform/mac/fast/loader/non-html-load-event-expected.txt:
+        * platform/mac/fast/loader/non-html-load-event.html:
+        * scrollbars/hidden-iframe-scrollbar-crash2.html:
+        * storage/close-during-stress-test.html:
+        * svg/custom/js-update-transform-changes.svg:
+
 2011-03-06  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, update chromium test expectations.

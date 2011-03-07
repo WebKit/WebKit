@@ -1,10 +1,10 @@
 <html>
-<body contenteditable="true">
+<body contenteditable="true" onload="test()">
     <p>
         This is an automatic pixel test. To test interactively, drag selected text onto the iframe
         below and verify that a drag caret appears inside the frame.
     </p>
-    <iframe onload="test()" id="subframe" style="border: 1px solid black;"
+    <iframe id="subframe" style="border: 1px solid black;"
         src="data:text/html,<body contenteditable><span id='target'>There</span> should be a caret here --> <br>See it?</body>"></iframe>
     <script>
         function dragAndDrop()

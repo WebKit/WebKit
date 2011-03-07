@@ -7,14 +7,6 @@
 }
 </style>
 
-<body>
-<iframe id="iframe" src="resources/hidden-iframe-scrollbar-crash2.html" width="50px" onload="load()"></iframe>
-
-<p>This tests to make sure that an iframe with custom scrollbars that starts
-an image load and is hidden before the image load is complete doesn't crash
-when the image load completes.  The test passes if it does not crash.</p>
-</body>
-
 <script>
 function load()
 {
@@ -29,3 +21,11 @@ if (window.layoutTestController) {
     layoutTestController.dumpAsText();
 }
 </script>
+
+<body>
+<iframe id="iframe" src="resources/hidden-iframe-scrollbar-crash2.html" width="50px" onload="load()"></iframe>
+
+<p>This tests to make sure that an iframe with custom scrollbars that starts
+an image load and is hidden before the image load is complete doesn't crash
+when the image load completes.  The test passes if it does not crash.</p>
+</body>

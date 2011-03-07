@@ -4,7 +4,6 @@
 <div id="description"></div>
 <input type="file" id="fileInput">
 <div id="console"></div>
-<iframe src="resources/window-postmessage-clone-frames-frame.html" onload="startTest()"></iframe>
 <script>
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
@@ -117,5 +116,6 @@ function startTest() {
     tryPostMessage('"done"');
 }
 </script>
+<iframe src="resources/window-postmessage-clone-frames-frame.html" onload="startTest()"></iframe>
 </body>
 </html>

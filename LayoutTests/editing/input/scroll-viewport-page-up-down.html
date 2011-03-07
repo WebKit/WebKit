@@ -76,14 +76,14 @@ function runScrollingTest(testName, frame, offsets, scrollFunction) {
 }
 </script>
 </head>
-<body>
+<body onload="runTest()">
 <div>Page up/down (option+page up/down on Mac) should move the move cursor and scroll the content
 in contenteditable elements. This sample covers scroll position test of a) iframe element containing
 contenteditable body and b) content editable div element. Even though the cursor will move exactly to
 the same location on all platforms (covered by test option-page-up-down.html), please note that Mac will
 scroll the visible area by placing the cursor position in the middle. All other platforms will scroll by
 keeping the cursor aligned with the top edge of the visible area. </div>
-<iframe src="../resources/contenteditable-iframe-fixed-size-src.html" onload="runTest()" style="height:150px; padding: 0px;"></iframe>
+<iframe src="../resources/contenteditable-iframe-fixed-size-src.html" style="height:150px; padding: 0px;"></iframe>
 <div id="editable" contenteditable="true" class="ahem" style="height:150px; overflow:auto; padding: 0px; margin: 0px;"></div>
 <div id="results"></div>
 </body>

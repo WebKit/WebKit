@@ -41,11 +41,11 @@ function runTest() {
 </script>
 <title>Dragging an image to the end of a content editable div in an iframe</title> 
 </head> 
-<body>
+<body onload="runTest()">
     <p>This tests that we can drag an image into the last position of a content editable div in an iframe that already contains an image, without crashing.</p>
     
     <img id="dragme" src="../resources/abe.png"/>
-    <iframe id="drag_target" onload="runTest();" src="resources/drag-image-to-contenteditable-iframe.html"></iframe>
+    <iframe id="drag_target" src="resources/drag-image-to-contenteditable-iframe.html"></iframe>
     <ul id="console"></ul>
 </body>
 </html>

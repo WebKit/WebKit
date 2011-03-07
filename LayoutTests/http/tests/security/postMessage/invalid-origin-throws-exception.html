@@ -38,9 +38,9 @@ function test() {
 </script>
 <body>
 <div>window.location.href = <script>document.write(window.location.href);</script></div>
+<div id="result">waiting...</div>
 <div><iframe src="http://localhost:8000/security/postMessage/resources/post-message-listener.html" onload="test()"
   id="child" width="800" height="300" style="border: 1px solid black;">
 </iframe></div>
-<div id="result">waiting...</div>
 </body>
 </html>

@@ -1,3 +1,4 @@
+<body onload="test()">
 <script>
     function overflowChanged()
     {
@@ -36,10 +37,11 @@
     ASSERT in ~FrameView while viewing/reloading WICD test case</i>.
 </p>
 <div>
-    <iframe onload="test()" style="width: 100%;" src="resources/paused-event-dispatch-iframe.html"></iframe>
+    <iframe style="width: 100%;" src="resources/paused-event-dispatch-iframe.html"></iframe>
 </div>
 <div id="bottomBox" style="position: absolute; left: 0; top: 5000px; height: 10px; width: 10px;"></div>
 <div style="height: 100px; width: 100px; overflow: auto;" id="overflow">
     <div style="height: 200px;" id="tallBox"></div>
 </div>
 <div id="result">FAIL</div>
+</body>

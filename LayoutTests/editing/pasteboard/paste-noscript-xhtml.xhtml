@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+<body onload="foo()">
 <div id="description">
 This test copies the content of an iframe and pastes it
 in an editable area in an xhtml document and verifies that no script, handlers or javascript urls are copied.
 </div>
-<iframe id="iframe1" src="../resources/htmlcontent.html" onload="foo()"></iframe>
+<iframe id="iframe1" src="../resources/htmlcontent.html"></iframe>
 <div id="pastehere" contenteditable="true"></div>
 <ul id="console"></ul>
 <script>
@@ -40,4 +41,5 @@ function log(str) {
     console.appendChild(li);
 }
 </script>
+</body>
 </html>

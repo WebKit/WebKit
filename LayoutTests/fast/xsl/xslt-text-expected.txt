@@ -1,5 +1,4 @@
 
-
 <head xmlns="http://www.w3.org/1999/xhtml"><title></title></head>
 <body xmlns="http://www.w3.org/1999/xhtml">
 <pre>CHARACTERS IN XSLT: &lt;&lt;&lt;&amp;тест&amp;&gt;&gt;&gt;
