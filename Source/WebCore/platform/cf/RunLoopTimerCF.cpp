@@ -27,9 +27,10 @@
  */
 
 #include "config.h"
-#include "RunLoopTimer.h"
 
 #if PLATFORM(MAC) && HAVE(RUNLOOP_TIMER)
+
+#include "RunLoopTimer.h"
 
 namespace WebCore {
 

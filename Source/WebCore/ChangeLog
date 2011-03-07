@@ -1,5 +1,12 @@
 2011-03-07  Adam Barth  <abarth@webkit.org>
 
+        Fix Chromium Mac build.  This header should only be included when the
+        feature is enabled.
+
+        * platform/cf/RunLoopTimerCF.cpp:
+
+2011-03-07  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Dimitri Glazkov.
 
         Add WML files to WebCore.gypi
