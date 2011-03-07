@@ -1,3 +1,16 @@
+2011-03-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed.
+
+        Add expected results to the new viewport tests
+
+        * fast/viewport/viewport-91-expected.txt: Added.
+        * fast/viewport/viewport-92-expected.txt: Added.
+        * fast/viewport/viewport-93-expected.txt: Added.
+        * fast/viewport/viewport-94-expected.txt: Added.
+        * fast/viewport/viewport-95-expected.txt: Added.
+        * fast/viewport/viewport-96-expected.txt: Added.
+
 2011-03-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
