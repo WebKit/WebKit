@@ -1,3 +1,12 @@
+2011-03-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] http/tests/inspector/resource-parameters.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=55867
+
+        * platform/qt/Skipped: Add http/tests/inspector/resource-parameters.html to make buildbot happy.
+
 2011-03-07  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver Hunt.
