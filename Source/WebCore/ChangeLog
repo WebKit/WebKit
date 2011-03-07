@@ -1,3 +1,13 @@
+2011-03-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add WML files to WebCore.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=55905
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2011-03-07  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
