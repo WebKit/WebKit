@@ -4729,7 +4729,7 @@ void Document::didReceiveTask(void* untypedContext)
         return;
 
     Page* page = document->page();
-    if (page && page->defersLoading() || !document->m_pendingTasks.isEmpty()) {
+    if ((page && page->defersLoading()) || !document->m_pendingTasks.isEmpty()) {
         document->m_pendingTasks.append(context->task.release());
         return;
     }

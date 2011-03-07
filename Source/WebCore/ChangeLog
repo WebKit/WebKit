@@ -1,3 +1,10 @@
+2011-03-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r80478.
+
+        * dom/Document.cpp: Add suggested parentheses to make GCC happy.
+        (WebCore::Document::didReceiveTask):
+
 2011-03-07  Yong Li  <yoli@rim.com>
 
         Reviewed by Darin Adler.
