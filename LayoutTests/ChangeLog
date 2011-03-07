@@ -2,6 +2,15 @@
 
         Unreviewed, update chromium test expectations.
 
+        Regression at WebKit r80440 (bug 55854) also on mac.
+         fast/forms/onchange-setvalueforuser.html
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-06  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
         Regression at WebKit r80438 (crbug.com/75109)
          fast/css/getComputedStyle/computed-style-without-renderer.html
          fast/css/getComputedStyle/computed-style.html

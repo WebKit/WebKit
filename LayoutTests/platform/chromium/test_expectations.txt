@@ -3302,4 +3302,4 @@ BUGCR75109 WIN LINUX : platform/chromium/fast/text/international/complex-text-re
 BUGCR75109 WIN LINUX : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
-BUGWK55854 WIN LINUX : fast/forms/onchange-setvalueforuser.html = TEXT
+BUGWK55854 WIN LINUX MAC : fast/forms/onchange-setvalueforuser.html = TEXT
