@@ -1,3 +1,15 @@
+2011-03-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add missing bindings/js files to WebCore.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=55888
+
+        These files are excluded from the Chromium build but needed for the Mac
+        build.
+
+        * WebCore.gypi:
+
 2011-03-07  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.
