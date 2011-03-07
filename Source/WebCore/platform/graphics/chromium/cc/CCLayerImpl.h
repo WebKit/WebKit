@@ -59,7 +59,6 @@ public:
     CCLayerImpl* maskLayer() const;
     CCLayerImpl* replicaLayer() const;
 
-    void updateContentsIfDirty();
     void draw();
     bool drawsContent() const;
     void unreserveContentsTexture();

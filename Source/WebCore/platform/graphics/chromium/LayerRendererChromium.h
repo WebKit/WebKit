@@ -75,15 +75,16 @@ public:
     void invalidateRootLayerRect(const IntRect& dirtyRect, const IntRect& visibleRect, const IntRect& contentRect);
 
     // updates and draws the current layers onto the backbuffer
-    void drawLayers(const IntRect& visibleRect, const IntRect& contentRect,
-                    const IntPoint& scrollPosition, TilePaintInterface& tilePaint,
-                    TilePaintInterface& scrollbarPaint);
+    void updateAndDrawLayers(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition,
+                             TilePaintInterface&, TilePaintInterface& scrollbarPaint);
 
     // waits for rendering to finish
     void finish();
 
     // puts backbuffer onscreen
     void present();
+
+    IntSize visibleRectSize() const { return m_visibleRect.size(); }
 
     void setRootLayer(PassRefPtr<LayerChromium> layer);
     LayerChromium* rootLayer() { return m_rootLayer.get(); }
@@ -120,14 +121,11 @@ public:
 
     void resizeOnscreenContent(const IntSize&);
 
-    IntSize rootLayerTextureSize() const { return IntSize(m_rootLayerTextureWidth, m_rootLayerTextureHeight); }
-    IntRect rootLayerContentRect() const { return m_rootContentRect; }
     void getFramebufferPixels(void *pixels, const IntRect& rect);
 
     TextureManager* textureManager() const { return m_textureManager.get(); }
 
     CCHeadsUpDisplay* headsUpDisplay() { return m_headsUpDisplay.get(); }
-    IntRect rootVisibleRect() const { return m_rootVisibleRect; }
 
     void setScissorToRect(const IntRect&);
 
@@ -135,11 +133,18 @@ public:
 
 private:
     explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D> graphicsContext3D);
-    void updateLayersRecursive(LayerChromium*, const TransformationMatrix& parentMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList);
 
+    void updateLayers(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition,
+                     Vector<CCLayerImpl*>& renderSurfaceLayerList);
+    void updateRootLayerContents(TilePaintInterface&, const IntRect& visibleRect);
+    void updateRootLayerScrollbars(TilePaintInterface& scrollbarPaint, const IntRect& visibleRect, const IntRect& contentRect);
+    void updatePropertiesAndRenderSurfaces(LayerChromium*, const TransformationMatrix& parentMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList);
+    void updateContentsRecursive(LayerChromium*);
+
+    void drawLayers(const Vector<CCLayerImpl*>& renderSurfaceLayerList);
     void drawLayer(CCLayerImpl*, RenderSurfaceChromium*);
 
-    void updateAndDrawRootLayer(TilePaintInterface& tilePaint, TilePaintInterface& scrollbarPaint, const IntRect& visibleRect, const IntRect& contentRect);
+    void drawRootLayer();
 
     bool isLayerVisible(LayerChromium*, const TransformationMatrix&, const IntRect& visibleRect);
 
@@ -159,8 +164,7 @@ private:
     static IntRect verticalScrollbarRect(const IntRect& visibleRect, const IntRect& contentRect);
     static IntRect horizontalScrollbarRect(const IntRect& visibleRect, const IntRect& contentRect);
 
-    int m_rootLayerTextureWidth;
-    int m_rootLayerTextureHeight;
+    IntRect m_visibleRect;
 
     TransformationMatrix m_projectionMatrix;
 
@@ -187,9 +191,6 @@ private:
     RetainPtr<CGContextRef> m_rootLayerCGContext;
     OwnPtr<GraphicsContext> m_rootLayerGraphicsContext;
 #endif
-
-    IntRect m_rootVisibleRect;
-    IntRect m_rootContentRect;
 
     // Maximum texture dimensions supported.
     int m_maxTextureSize;

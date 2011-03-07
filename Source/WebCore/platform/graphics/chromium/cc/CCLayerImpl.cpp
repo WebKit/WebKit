@@ -107,12 +107,6 @@ RenderSurfaceChromium* CCLayerImpl::createRenderSurface()
     return m_renderSurface.get();
 }
 
-// This does not belong on CCLayerImpl.
-void CCLayerImpl::updateContentsIfDirty()
-{
-    m_owner->updateContentsIfDirty();
-}
-
 // These belong on CCLayerImpl, but should be subclased by each type and not defer to the LayerChromium subtypes.
 bool CCLayerImpl::drawsContent() const
 {

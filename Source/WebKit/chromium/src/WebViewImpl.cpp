@@ -1015,9 +1015,6 @@ void WebViewImpl::layout()
 #if USE(ACCELERATED_COMPOSITING)
 void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect)
 {
-    ASSERT(rect.maxX() <= m_layerRenderer->rootLayerTextureSize().width()
-           && rect.maxY() <= m_layerRenderer->rootLayerTextureSize().height());
-
 #if USE(SKIA)
     PlatformContextSkia context(canvas);
 
@@ -1060,7 +1057,7 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
         if (canvas) {
             // Clip rect to the confines of the rootLayerTexture.
             IntRect resizeRect(rect);
-            resizeRect.intersect(IntRect(IntPoint(), m_layerRenderer->rootLayerTextureSize()));
+            resizeRect.intersect(IntRect(IntPoint(), m_layerRenderer->visibleRectSize()));
             doPixelReadbackToCanvas(canvas, resizeRect);
         }
 #endif
@@ -2408,7 +2405,8 @@ void WebViewImpl::doComposite()
     hud->setShowFPSCounter(settings()->showFPSCounter());
     hud->setShowPlatformLayerTree(settings()->showPlatformLayerTree());
 
-    m_layerRenderer->drawLayers(visibleRect, contentRect, scroll, tilePaint, scrollbarPaint);
+    m_layerRenderer->updateAndDrawLayers(visibleRect, contentRect, scroll, tilePaint, scrollbarPaint);
+
     if (m_layerRenderer->isCompositingOffscreen())
         m_layerRenderer->copyOffscreenTextureToDisplay();
 }

@@ -1,3 +1,17 @@
+2011-03-07  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Separate the &quot;update&quot; and &quot;draw&quot; portions of LayerRendererChromium&apos;s drawLayers function
+        https://bugs.webkit.org/show_bug.cgi?id=54047
+
+        Call updated LayerRendererChromium APIs.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::doPixelReadbackToCanvas):
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::doComposite):
+
 2011-03-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

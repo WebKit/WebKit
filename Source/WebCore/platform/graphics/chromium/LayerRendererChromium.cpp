@@ -34,6 +34,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "LayerRendererChromium.h"
 
+#include "cc/CCLayerImpl.h"
 #include "Canvas2DLayerChromium.h"
 #include "GeometryBinding.h"
 #include "GraphicsContext3D.h"
@@ -103,9 +104,7 @@ PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(PassRefPtr<Graph
 }
 
 LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> context)
-    : m_rootLayerTextureWidth(0)
-    , m_rootLayerTextureHeight(0)
-    , m_rootLayer(0)
+    : m_rootLayer(0)
     , m_scrollPosition(IntPoint(-1, -1))
     , m_currentShader(0)
     , m_currentRenderSurface(0)
@@ -178,11 +177,13 @@ void LayerRendererChromium::invalidateRootLayerRect(const IntRect& dirtyRect, co
     }
 }
 
-void LayerRendererChromium::updateAndDrawRootLayer(TilePaintInterface& tilePaint, TilePaintInterface& scrollbarPaint, const IntRect& visibleRect, const IntRect& contentRect)
+void LayerRendererChromium::updateRootLayerContents(TilePaintInterface& tilePaint, const IntRect& visibleRect)
 {
     m_rootLayerTiler->update(tilePaint, visibleRect);
-    m_rootLayerTiler->draw(visibleRect);
+}
 
+void LayerRendererChromium::updateRootLayerScrollbars(TilePaintInterface& scrollbarPaint, const IntRect& visibleRect, const IntRect& contentRect)
+{
     if (visibleRect.width() > contentRect.width()) {
         IntRect verticalScrollbar = verticalScrollbarRect(visibleRect, contentRect);
         IntSize tileSize = verticalScrollbar.size().shrunkTo(IntSize(m_maxTextureSize, m_maxTextureSize));
@@ -192,8 +193,8 @@ void LayerRendererChromium::updateAndDrawRootLayer(TilePaintInterface& tilePaint
             m_verticalScrollbarTiler->setTileSize(tileSize);
         m_verticalScrollbarTiler->setLayerPosition(verticalScrollbar.location());
         m_verticalScrollbarTiler->update(scrollbarPaint, visibleRect);
-        m_verticalScrollbarTiler->draw(visibleRect);
-    }
+    } else
+        m_verticalScrollbarTiler.clear();
 
     if (visibleRect.height() > contentRect.height()) {
         IntRect horizontalScrollbar = horizontalScrollbarRect(visibleRect, contentRect);
@@ -204,42 +205,94 @@ void LayerRendererChromium::updateAndDrawRootLayer(TilePaintInterface& tilePaint
             m_horizontalScrollbarTiler->setTileSize(tileSize);
         m_horizontalScrollbarTiler->setLayerPosition(horizontalScrollbar.location());
         m_horizontalScrollbarTiler->update(scrollbarPaint, visibleRect);
-        m_horizontalScrollbarTiler->draw(visibleRect);
-    }
+    } else
+        m_horizontalScrollbarTiler.clear();
 }
 
-void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect& contentRect,
-                                       const IntPoint& scrollPosition, TilePaintInterface& tilePaint,
-                                       TilePaintInterface& scrollbarPaint)
+void LayerRendererChromium::drawRootLayer()
+{
+    m_rootLayerTiler->draw(m_visibleRect);
+
+    if (m_verticalScrollbarTiler)
+        m_verticalScrollbarTiler->draw(m_visibleRect);
+
+    if (m_horizontalScrollbarTiler)
+        m_horizontalScrollbarTiler->draw(m_visibleRect);
+}
+
+void LayerRendererChromium::updateAndDrawLayers(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition,
+                                                TilePaintInterface& tilePaint, TilePaintInterface& scrollbarPaint)
 {
     ASSERT(m_hardwareCompositing);
 
     if (!m_rootLayer)
         return;
 
-    makeContextCurrent();
+    updateRootLayerContents(tilePaint, visibleRect);
+    // Recheck that we still have a root layer. This may become null if
+    // compositing gets turned off during a paint operation.
+    if (!m_rootLayer)
+        return;
+
+    updateRootLayerScrollbars(scrollbarPaint, visibleRect, contentRect);
+
+    Vector<CCLayerImpl*> renderSurfaceLayerList;
+    updateLayers(visibleRect, contentRect, scrollPosition, renderSurfaceLayerList);
+
+    drawLayers(renderSurfaceLayerList);
+}
+
+void LayerRendererChromium::updateLayers(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition,
+                                         Vector<CCLayerImpl*>& renderSurfaceLayerList)
+{
+    CCLayerImpl* rootDrawLayer = m_rootLayer->ccLayerImpl();
+
+    if (!rootDrawLayer->renderSurface())
+        rootDrawLayer->createRenderSurface();
+    ASSERT(rootDrawLayer->renderSurface());
 
     // If the size of the visible area has changed then allocate a new texture
     // to store the contents of the root layer and adjust the projection matrix
     // and viewport.
-    int visibleRectWidth = visibleRect.width();
-    int visibleRectHeight = visibleRect.height();
 
-    if (!m_rootLayer->ccLayerImpl()->renderSurface())
-        m_rootLayer->ccLayerImpl()->createRenderSurface();
-    m_rootLayer->ccLayerImpl()->renderSurface()->m_contentRect = IntRect(0, 0, visibleRectWidth, visibleRectHeight);
+    rootDrawLayer->renderSurface()->m_contentRect = IntRect(IntPoint(0, 0), visibleRect.size());
 
-    if (visibleRectWidth != m_rootLayerTextureWidth || visibleRectHeight != m_rootLayerTextureHeight) {
-        m_rootLayerTextureWidth = visibleRectWidth;
-        m_rootLayerTextureHeight = visibleRectHeight;
-
+    if (visibleRect.size() != m_visibleRect.size()) {
         // Reset the current render surface to force an update of the viewport and
         // projection matrix next time useRenderSurface is called.
         m_currentRenderSurface = 0;
     }
+    m_visibleRect = visibleRect;
+
+    m_scrollPosition = scrollPosition;
+    // Scissor out the scrollbars to avoid rendering on top of them.
+    IntRect rootScissorRect(contentRect);
+    // The scissorRect should not include the scroll offset.
+    rootScissorRect.move(-m_scrollPosition.x(), -m_scrollPosition.y());
+    rootDrawLayer->setScissorRect(rootScissorRect);
+
+    m_defaultRenderSurface = rootDrawLayer->renderSurface();
+
+    renderSurfaceLayerList.append(rootDrawLayer);
+
+    TransformationMatrix identityMatrix;
+    m_defaultRenderSurface->m_layerList.clear();
+    // Unfortunately, updatePropertiesAndRenderSurfaces() currently both updates the layers and updates the draw state
+    // (transforms, etc). It'd be nicer if operations on the presentation layers happened later, but the draw
+    // transforms are needed by large layers to determine visibility. Tiling will fix this by eliminating the
+    // concept of a large content layer.
+    updatePropertiesAndRenderSurfaces(m_rootLayer.get(), identityMatrix, renderSurfaceLayerList, m_defaultRenderSurface->m_layerList);
+
+    updateContentsRecursive(m_rootLayer.get());
+}
+
+void LayerRendererChromium::drawLayers(const Vector<CCLayerImpl*>& renderSurfaceLayerList)
+{
+    CCLayerImpl* rootDrawLayer = m_rootLayer->ccLayerImpl();
+    makeContextCurrent();
 
     // The GL viewport covers the entire visible area, including the scrollbars.
-    GLC(m_context.get(), m_context->viewport(0, 0, visibleRectWidth, visibleRectHeight));
+    GLC(m_context.get(), m_context->viewport(0, 0, m_visibleRect.width(), m_visibleRect.height()));
 
     // Bind the common vertex attributes used for drawing all the layers.
     m_sharedGeometry->prepareForDraw();
@@ -251,11 +304,6 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
     // Blending disabled by default. Root layer alpha channel on Windows is incorrect when Skia uses ClearType.
     GLC(m_context.get(), m_context->disable(GraphicsContext3D::BLEND));
 
-    m_scrollPosition = scrollPosition;
-
-    ASSERT(m_rootLayer->ccLayerImpl()->renderSurface());
-    m_defaultRenderSurface = m_rootLayer->ccLayerImpl()->renderSurface();
-
     useRenderSurface(m_defaultRenderSurface);
 
     // Clear to blue to make it easier to spot unrendered regions.
@@ -266,32 +314,10 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
     // zero alpha values on text glyphs. The root layer is always opaque.
     m_context->colorMask(true, true, true, false);
 
-    updateAndDrawRootLayer(tilePaint, scrollbarPaint, visibleRect, contentRect);
+    drawRootLayer();
 
     // Re-enable color writes to layers, which may be partially transparent.
     m_context->colorMask(true, true, true, true);
-
-    // Recheck that we still have a root layer.  This may become null if
-    // compositing gets turned off during a paint operation.
-    if (!m_rootLayer)
-        return;
-
-    // Set the root visible/content rects --- used by subsequent drawLayers calls.
-    m_rootVisibleRect = visibleRect;
-    m_rootContentRect = contentRect;
-
-    // Scissor out the scrollbars to avoid rendering on top of them.
-    IntRect rootScissorRect(contentRect);
-    // The scissorRect should not include the scroll offset.
-    rootScissorRect.move(-m_scrollPosition.x(), -m_scrollPosition.y());
-    m_rootLayer->ccLayerImpl()->setScissorRect(rootScissorRect);
-
-    Vector<CCLayerImpl*> renderSurfaceLayerList;
-    renderSurfaceLayerList.append(m_rootLayer->ccLayerImpl());
-
-    TransformationMatrix identityMatrix;
-    m_defaultRenderSurface->m_layerList.clear();
-    updateLayersRecursive(m_rootLayer.get(), identityMatrix, renderSurfaceLayerList, m_defaultRenderSurface->m_layerList);
 
     GLC(m_context.get(), m_context->enable(GraphicsContext3D::BLEND));
     GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
@@ -309,7 +335,7 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
             continue;
 
         if (useRenderSurface(renderSurfaceLayer->renderSurface())) {
-            if (renderSurfaceLayer != m_rootLayer->ccLayerImpl()) {
+            if (renderSurfaceLayer != rootDrawLayer) {
                 GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
                 GLC(m_context.get(), m_context->clearColor(0, 0, 0, 0));
                 GLC(m_context.get(), m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT));
@@ -365,8 +391,7 @@ void LayerRendererChromium::setRootLayer(PassRefPtr<LayerChromium> layer)
 
 void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& rect)
 {
-    ASSERT(rect.maxX() <= rootLayerTextureSize().width()
-           && rect.maxY() <= rootLayerTextureSize().height());
+    ASSERT(rect.maxX() <= visibleRectSize().width() && rect.maxY() <= visibleRectSize().height());
 
     if (!pixels)
         return;
@@ -419,7 +444,7 @@ bool LayerRendererChromium::isLayerVisible(LayerChromium* layer, const Transform
 
 // Recursively walks the layer tree starting at the given node and computes all the
 // necessary transformations, scissor rectangles, render surfaces, etc.
-void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const TransformationMatrix& parentMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList)
+void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* layer, const TransformationMatrix& parentMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList)
 {
     layer->setLayerRenderer(this);
     CCLayerImpl* drawLayer = layer->ccLayerImpl();
@@ -475,7 +500,7 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
     // of their parent.
     bool useSurfaceForClipping = layer->masksToBounds() && !isScaleOrTranslation(combinedTransform);
     bool useSurfaceForOpacity = layer->opacity() != 1 && !layer->preserves3D();
-    bool useSurfaceForMasking = layer->maskLayer();
+    bool useSurfaceForMasking = layer->maskDrawLayer();
     bool useSurfaceForReflection = layer->replicaLayer();
     if (((useSurfaceForClipping || useSurfaceForOpacity) && layer->descendantsDrawContent())
         || useSurfaceForMasking || useSurfaceForReflection) {
@@ -484,7 +509,7 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
             renderSurface = drawLayer->createRenderSurface();
 
         // The origin of the new surface is the upper left corner of the layer.
-        TransformationMatrix drawTransform;;
+        TransformationMatrix drawTransform;
         drawTransform.translate3d(0.5 * bounds.width(), 0.5 * bounds.height(), 0);
         drawLayer->setDrawTransform(drawTransform);
 
@@ -492,7 +517,7 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
 
         // Layer's opacity will be applied when drawing the render surface.
         renderSurface->m_drawOpacity = layer->opacity();
-        if (layer->superlayer()->preserves3D())
+        if (layer->superlayer() && layer->superlayer()->preserves3D())
             renderSurface->m_drawOpacity *= drawLayer->superlayer()->drawOpacity();
         drawLayer->setDrawOpacity(1);
 
@@ -509,7 +534,7 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
         // The render surface scissor rect is the scissor rect that needs to
         // be applied before drawing the render surface onto its containing
         // surface and is therefore expressed in the superlayer's coordinate system.
-        renderSurface->m_scissorRect = drawLayer->superlayer()->scissorRect();
+        renderSurface->m_scissorRect = drawLayer->superlayer() ? drawLayer->superlayer()->scissorRect() : drawLayer->scissorRect();
 
         renderSurface->m_layerList.clear();
 
@@ -560,7 +585,7 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
         drawLayer->setTargetRenderSurface(drawLayer->superlayer()->targetRenderSurface());
     }
 
-    // m_drawableContentRect is always stored in the coordinate system of the
+    // drawableContentRect() is always stored in the coordinate system of the
     // RenderSurface the layer draws into.
     if (drawLayer->drawsContent())
         drawLayer->setDrawableContentRect(transformedLayerRect);
@@ -595,7 +620,7 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
     const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
     for (size_t i = 0; i < sublayers.size(); ++i) {
         CCLayerImpl* sublayer = sublayers[i]->ccLayerImpl();
-        updateLayersRecursive(sublayers[i].get(), sublayerMatrix, renderSurfaceLayerList, descendants);
+        updatePropertiesAndRenderSurfaces(sublayers[i].get(), sublayerMatrix, renderSurfaceLayerList, descendants);
 
         if (sublayer->renderSurface()) {
             RenderSurfaceChromium* sublayerRenderSurface = sublayer->renderSurface();
@@ -623,6 +648,7 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
 
         // Restrict the RenderSurface size to the portion that's visible.
         FloatSize centerOffsetDueToClipping;
+
         // Don't clip if the layer is reflected as the reflection shouldn't be
         // clipped.
         if (!layer->replicaLayer()) {
@@ -673,6 +699,22 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
     // skip the sorting as the superlayer will sort all the descendants anyway.
     if (layer->preserves3D() && (!layer->superlayer() || !layer->superlayer()->preserves3D()))
         std::stable_sort(&descendants.at(thisLayerIndex), descendants.end(), compareLayerZ);
+}
+
+void LayerRendererChromium::updateContentsRecursive(LayerChromium* layer)
+{
+    const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
+    for (size_t i = 0; i < sublayers.size(); ++i)
+        updateContentsRecursive(sublayers[i].get());
+
+    if (layer->drawsContent())
+        layer->updateContentsIfDirty();
+    if (layer->maskLayer() && layer->maskLayer()->drawsContent())
+        layer->maskLayer()->updateContentsIfDirty();
+    if (layer->replicaLayer() && layer->replicaLayer()->drawsContent())
+        layer->replicaLayer()->updateContentsIfDirty();
+    if (layer->replicaLayer() && layer->replicaLayer()->maskLayer() && layer->replicaLayer()->maskLayer()->drawsContent())
+        layer->replicaLayer()->maskLayer()->updateContentsIfDirty();
 }
 
 void LayerRendererChromium::setCompositeOffscreen(bool compositeOffscreen)
@@ -763,11 +805,8 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
     if (!layer->doubleSided() && combinedDrawMatrix.m33() < 0)
          return;
 
-    if (layer->drawsContent()) {
-        layer->updateContentsIfDirty();
-        m_context->makeContextCurrent();
+    if (layer->drawsContent())
         layer->draw();
-    }
 
     // Draw the debug border if there is one.
     layer->drawDebugBorder();

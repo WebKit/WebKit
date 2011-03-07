@@ -1,3 +1,55 @@
+2011-03-07  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Separate the update and draw portions of LayerRendererChromium's drawLayers function
+        https://bugs.webkit.org/show_bug.cgi?id=54047
+
+        This splits up LayerRendererChromium::drawLayers() into two phases,
+        one that updates layers and one that actually draws them.  Most of the
+        patch is moving the bodies of drawLayers() and updateLayersRecursive()
+        into smaller helper functions.
+
+        The main entry point is renamed updateAndDrawLayers(), but otherwise
+        has the same signature as drawLayers() did.  Internally it does the
+        following:
+
+        1.) Updates the root layer's contents
+        2.) Updates the root layer's scrollbars
+        3.) Updates the RenderSurface tree and the contents of all child
+        layers
+        4.) Draws the root layer and root layer scrollbars
+        5.) Draws all child layers using the previously updated
+        CCLayerImpl/RenderSurface data.
+
+        A few things still need to be done after this patch to complete the separation
+        of the update and draw step, but they can happen in later patches:
+        *) The root layer and root layer scrollbars contents should be
+        uploaded to textures at draw time, not update time.
+        *) The RenderSurface tree should be updated at draw time, not update
+        time.
+
+        Covered by the compositing/ tests.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::updateRootLayerContents):
+        (WebCore::LayerRendererChromium::updateRootLayerScrollbars):
+        (WebCore::LayerRendererChromium::drawRootLayer):
+        (WebCore::LayerRendererChromium::updateAndDrawLayers):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::getFramebufferPixels):
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+        (WebCore::LayerRendererChromium::updateContentsRecursive):
+        (WebCore::LayerRendererChromium::drawLayer):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::visibleRectSize):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::drawSurface):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+
 2011-03-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

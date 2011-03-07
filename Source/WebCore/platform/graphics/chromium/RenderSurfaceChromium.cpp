@@ -109,7 +109,6 @@ void RenderSurfaceChromium::drawSurface(CCLayerImpl* maskLayer, const Transforma
     ASSERT(program && program->initialized());
     bool useMask = false;
     if (maskLayer && maskLayer->drawsContent()) {
-        maskLayer->updateContentsIfDirty();
         if (!maskLayer->bounds().isEmpty()) {
             context3D->makeContextCurrent();
             layerRenderer()->useShader(maskProgram->program());
