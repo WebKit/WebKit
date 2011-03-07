@@ -74,7 +74,7 @@ public:
     void setHtmlBaseUrl(const KURL& url) { m_htmlBaseUrl = url; }
 
     // Used to handle files being dragged in.
-    bool containsFilenames() const { return !m_filenames.isEmpty(); }
+    bool containsFilenames() const;
     Vector<String> filenames() const { return m_filenames; }
     void setFilenames(const Vector<String>& filenames) { m_filenames = filenames; }
 

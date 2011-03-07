@@ -1,3 +1,16 @@
+2011-03-07  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Add plumbing for paste support to ChromiumDataObject::types()
+        https://bugs.webkit.org/show_bug.cgi?id=55792
+
+        Add a simple layout test to verify that event.clipboardData.types
+        reflects the types available in a paste.
+
+        * editing/pasteboard/onpaste-text-html-types-expected.txt: Added.
+        * editing/pasteboard/onpaste-text-html-types.html: Added.
+
 2011-03-07  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Martin Robinson.

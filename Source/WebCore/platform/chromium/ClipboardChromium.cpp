@@ -132,6 +132,9 @@ HashSet<String> ClipboardChromium::types() const
 
     results = m_dataObject->types();
 
+    if (m_dataObject->containsFilenames())
+        results.add(mimeTypeFiles);
+
     return results;
 }
 
