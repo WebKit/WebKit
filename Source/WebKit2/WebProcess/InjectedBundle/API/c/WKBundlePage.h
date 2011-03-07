@@ -124,14 +124,14 @@ typedef uint32_t WKBundlePagePolicyAction;
 // Policy Client
 typedef WKBundlePagePolicyAction (*WKBundlePageDecidePolicyForNavigationActionCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleNavigationActionRef navigationAction, WKURLRequestRef request, WKTypeRef* userData, const void* clientInfo);
 typedef WKBundlePagePolicyAction (*WKBundlePageDecidePolicyForNewWindowActionCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleNavigationActionRef navigationAction, WKURLRequestRef request, WKStringRef frameName, WKTypeRef* userData, const void* clientInfo);
-typedef WKBundlePagePolicyAction (*WKBundlePageDecidePolicyForMIMETypeCallback)(WKBundlePageRef page, WKBundleFrameRef frame,  WKStringRef MIMEType, WKURLRequestRef request, WKTypeRef* userData, const void* clientInfo);
+typedef WKBundlePagePolicyAction (*WKBundlePageDecidePolicyForResponseCallback)(WKBundlePageRef page, WKBundleFrameRef frame,  WKURLResponseRef response, WKURLRequestRef request, WKTypeRef* userData, const void* clientInfo);
 
 struct WKBundlePagePolicyClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKBundlePageDecidePolicyForNavigationActionCallback                 decidePolicyForNavigationAction;
     WKBundlePageDecidePolicyForNewWindowActionCallback                  decidePolicyForNewWindowAction;
-    WKBundlePageDecidePolicyForMIMETypeCallback                         decidePolicyForMIMEType;
+    WKBundlePageDecidePolicyForResponseCallback                         decidePolicyForResponse;
 };
 typedef struct WKBundlePagePolicyClient WKBundlePagePolicyClient;
 

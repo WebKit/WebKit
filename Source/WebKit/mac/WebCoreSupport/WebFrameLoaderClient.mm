@@ -742,13 +742,13 @@ void WebFrameLoaderClient::dispatchShow()
     [[webView _UIDelegateForwarder] webViewShow:webView];
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction function,
-    const String& MIMEType, const ResourceRequest& request)
+void WebFrameLoaderClient::dispatchDecidePolicyForResponse(FramePolicyFunction function,
+    const ResourceResponse& response, const ResourceRequest& request)
 {
     WebView *webView = getWebView(m_webFrame.get());
 
     [[webView _policyDelegateForwarder] webView:webView
-                        decidePolicyForMIMEType:MIMEType
+                        decidePolicyForMIMEType:response.mimeType()
                                         request:request.nsURLRequest()
                                           frame:m_webFrame.get()
                                decisionListener:setUpPolicyListener(function).get()];

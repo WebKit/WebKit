@@ -1764,7 +1764,7 @@ void WebFrame::receivedPolicyDecision(PolicyAction action)
     (coreFrame->loader()->policyChecker()->*function)(action);
 }
 
-void WebFrame::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const String& mimeType, const ResourceRequest& request)
+void WebFrame::dispatchDecidePolicyForResponse(FramePolicyFunction function, const ResourceResponse& response, const ResourceRequest& request)
 {
     Frame* coreFrame = core(this);
     ASSERT(coreFrame);
@@ -1775,7 +1775,7 @@ void WebFrame::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, con
 
     COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(request));
 
-    if (SUCCEEDED(policyDelegate->decidePolicyForMIMEType(d->webView, BString(mimeType), urlRequest.get(), this, setUpPolicyListener(function).get())))
+    if (SUCCEEDED(policyDelegate->decidePolicyForMIMEType(d->webView, BString(response.mimeType()), urlRequest.get(), this, setUpPolicyListener(function).get())))
         return;
 
     (coreFrame->loader()->policyChecker()->*function)(PolicyUse);

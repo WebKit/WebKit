@@ -1,3 +1,18 @@
+2011-03-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Replace WebKit2's decidePolicyForMIMEType with decidePolicyForResponse
+        https://bugs.webkit.org/show_bug.cgi?id=55827
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (decidePolicyForResponse):
+        (-[BrowserWindowController awakeFromNib]):
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+        (TestWebKitAPI::decidePolicyForResponse):
+        (TestWebKitAPI::TEST):
+        Update tools for new name.
+
 2011-03-06  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel and David Kilzer.

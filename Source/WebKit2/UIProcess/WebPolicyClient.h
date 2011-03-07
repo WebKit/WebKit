@@ -35,6 +35,7 @@
 
 namespace WebCore {
     class ResourceRequest;
+    class ResourceResponse;
 }
 
 namespace WebKit {
@@ -47,7 +48,7 @@ class WebPolicyClient : public APIClient<WKPagePolicyClient> {
 public:
     bool decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, APIObject* userData);
     bool decidePolicyForNewWindowAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const WebCore::ResourceRequest&, const String& frameName, WebFramePolicyListenerProxy*, APIObject* userData);
-    bool decidePolicyForMIMEType(WebPageProxy*, WebFrameProxy*, const String& MIMEType, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, APIObject* userData);
+    bool decidePolicyForResponse(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, APIObject* userData);
 };
 
 } // namespace WebKit

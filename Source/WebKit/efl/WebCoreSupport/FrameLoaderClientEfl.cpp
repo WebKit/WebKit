@@ -314,11 +314,11 @@ void FrameLoaderClientEfl::dispatchDidReceiveResponse(DocumentLoader*, unsigned 
     m_response = response;
 }
 
-void FrameLoaderClientEfl::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const String& MIMEType, const ResourceRequest&)
+void FrameLoaderClientEfl::dispatchDecidePolicyForResponse(FramePolicyFunction function, const ResourceResponse& response, const ResourceRequest&)
 {
     // we need to call directly here (currently callPolicyFunction does that!)
     ASSERT(function);
-    if (canShowMIMEType(MIMEType))
+    if (canShowMIMEType(response.mimeType()))
         callPolicyFunction(function, PolicyUse);
     else
         callPolicyFunction(function, PolicyDownload);

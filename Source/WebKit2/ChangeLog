@@ -1,3 +1,31 @@
+2011-03-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Replace WebKit2's decidePolicyForMIMEType with decidePolicyForResponse
+        https://bugs.webkit.org/show_bug.cgi?id=55827
+
+        - Renamed FrameLoaderClient::dispatchDecidePolicyForMIMEType to dispatchDecidePolicyForResponse
+          and pass the entire response, instead of just the MIMEType.
+        - Updated both UIProcess API and bundle API to also be based on the whole response, not just the
+          MIMEType.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPolicyClient.cpp:
+        (WebKit::WebPolicyClient::decidePolicyForResponse):
+        * UIProcess/WebPolicyClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.cpp:
+        (WebKit::InjectedBundlePagePolicyClient::decidePolicyForResponse):
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2011-03-06  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.

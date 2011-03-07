@@ -33,6 +33,7 @@
 
 namespace WebCore {
     class ResourceRequest;
+    class ResourceResponse;
 }
 
 namespace WebKit {
@@ -45,7 +46,7 @@ class InjectedBundlePagePolicyClient : public APIClient<WKBundlePagePolicyClient
 public:
     WKBundlePagePolicyAction decidePolicyForNavigationAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, RefPtr<APIObject>& userData);
     WKBundlePagePolicyAction decidePolicyForNewWindowAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, const String& frameName, RefPtr<APIObject>& userData);
-    WKBundlePagePolicyAction decidePolicyForMIMEType(WebPage*, WebFrame*, const String& MIMEType, const WebCore::ResourceRequest&, RefPtr<APIObject>& userData);
+    WKBundlePagePolicyAction decidePolicyForResponse(WebPage*, WebFrame*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, RefPtr<APIObject>& userData);
 };
 
 } // namespace WebKit

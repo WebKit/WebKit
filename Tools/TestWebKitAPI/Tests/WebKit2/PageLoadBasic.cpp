@@ -103,7 +103,7 @@ static void decidePolicyForNewWindowAction(WKPageRef page, WKFrameRef frame, WKF
     WKFramePolicyListenerUse(listener);
 }
 
-static void decidePolicyForMIMEType(WKPageRef page, WKFrameRef frame, WKStringRef MIMEType, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+static void decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     WKFramePolicyListenerUse(listener);
 }
@@ -132,7 +132,7 @@ TEST(WebKit2, PageLoadBasic)
     policyClient.clientInfo = &state;
     policyClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
     policyClient.decidePolicyForNewWindowAction = decidePolicyForNewWindowAction;
-    policyClient.decidePolicyForMIMEType = decidePolicyForMIMEType;
+    policyClient.decidePolicyForResponse = decidePolicyForResponse;
     WKPageSetPagePolicyClient(webView.page(), &policyClient);
 
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));

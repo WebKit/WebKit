@@ -775,7 +775,7 @@ Frame* FrameLoaderClientWx::dispatchCreatePage(const NavigationAction&)
     return false;
 }
 
-void FrameLoaderClientWx::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const String& mimetype, const ResourceRequest& request)
+void FrameLoaderClientWx::dispatchDecidePolicyForResponse(FramePolicyFunction function, const ResourceResponse& response, const ResourceRequest& request)
 {
     if (!m_webFrame)
         return;

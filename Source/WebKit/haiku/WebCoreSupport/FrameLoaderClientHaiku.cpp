@@ -656,8 +656,8 @@ Frame* FrameLoaderClientHaiku::dispatchCreatePage(const WebCore::NavigationActio
     return false;
 }
 
-void FrameLoaderClientHaiku::dispatchDecidePolicyForMIMEType(FramePolicyFunction function,
-                                                             const String& mimetype,
+void FrameLoaderClientHaiku::dispatchDecidePolicyForResponse(FramePolicyFunction function,
+                                                             const ResourceResponse& response,
                                                              const ResourceRequest& request)
 {
     if (!m_frame)

@@ -1658,7 +1658,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, uint32_t opa
         listener->use();
 }
 
-void WebPageProxy::decidePolicyForMIMEType(uint64_t frameID, const String& MIMEType, const ResourceRequest& request, uint64_t listenerID, CoreIPC::ArgumentDecoder* arguments, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
+void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, uint64_t listenerID, CoreIPC::ArgumentDecoder* arguments, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
 {
     RefPtr<APIObject> userData;
     WebContextUserMessageDecoder messageDecoder(userData, context());
@@ -1675,7 +1675,7 @@ void WebPageProxy::decidePolicyForMIMEType(uint64_t frameID, const String& MIMET
     m_inDecidePolicyForMIMEType = true;
     m_syncMimeTypePolicyActionIsValid = false;
 
-    if (!m_policyClient.decidePolicyForMIMEType(this, frame, MIMEType, request, listener.get(), 0 /*userData*/))
+    if (!m_policyClient.decidePolicyForResponse(this, frame, response, request, listener.get(), userData.get()))
         listener->use();
 
     m_inDecidePolicyForMIMEType = false;

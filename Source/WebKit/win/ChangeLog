@@ -1,3 +1,17 @@
+2011-03-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Replace WebKit2's decidePolicyForMIMEType with decidePolicyForResponse
+        https://bugs.webkit.org/show_bug.cgi?id=55827
+
+        Renamed FrameLoaderClient::dispatchDecidePolicyForMIMEType to dispatchDecidePolicyForResponse
+        and pass the entire response, instead of just the MIMEType.
+
+        * WebFrame.cpp:
+        (WebFrame::dispatchDecidePolicyForResponse):
+        * WebFrame.h:
+
 2011-03-04  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.

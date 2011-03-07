@@ -59,15 +59,16 @@ WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForNewWindo
     return policy;
 }
 
-WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForMIMEType(WebPage* page, WebFrame* frame, const String& MIMEType, const ResourceRequest& resourceRequest, RefPtr<APIObject>& userData)
+WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForResponse(WebPage* page, WebFrame* frame, const ResourceResponse& resourceResponse, const ResourceRequest& resourceRequest, RefPtr<APIObject>& userData)
 {
-    if (!m_client.decidePolicyForMIMEType)
+    if (!m_client.decidePolicyForResponse)
         return WKBundlePagePolicyActionPassThrough;
 
+    RefPtr<WebURLResponse> response = WebURLResponse::create(resourceResponse);
     RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
 
     WKTypeRef userDataToPass = 0;
-    WKBundlePagePolicyAction policy = m_client.decidePolicyForMIMEType(toAPI(page), toAPI(frame), toAPI(MIMEType.impl()), toAPI(request.get()), &userDataToPass, m_client.clientInfo);
+    WKBundlePagePolicyAction policy = m_client.decidePolicyForResponse(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), &userDataToPass, m_client.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
     return policy;
 }

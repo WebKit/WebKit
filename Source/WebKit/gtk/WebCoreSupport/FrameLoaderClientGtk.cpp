@@ -458,7 +458,7 @@ void FrameLoaderClient::dispatchDidReceiveResponse(WebCore::DocumentLoader* load
     m_response = response;
 }
 
-void FrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction policyFunction, const String& mimeType, const ResourceRequest& resourceRequest)
+void FrameLoaderClient::dispatchDecidePolicyForResponse(FramePolicyFunction policyFunction, const ResourceResponse& response, const ResourceRequest& resourceRequest)
 {
     ASSERT(policyFunction);
     if (!policyFunction)
@@ -476,6 +476,8 @@ void FrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction poli
     if (m_policyDecision)
         g_object_unref(m_policyDecision);
     m_policyDecision = policyDecision;
+
+    String mimeType = response.mimeType();
 
     gboolean isHandled = false;
     g_signal_emit_by_name(page, "mime-type-policy-decision-requested", m_frame, request.get(), mimeType.utf8().data(), policyDecision, &isHandled);
