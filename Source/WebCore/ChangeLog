@@ -1,3 +1,15 @@
+2011-03-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Sort WebCore.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=55887
+
+        These files should be in order.  This is preparation for adding in the
+        missing files.
+
+        * WebCore.gypi:
+
 2011-03-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix after r80478.
