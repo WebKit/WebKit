@@ -35,9 +35,8 @@ namespace WebCore {
 class Document;
 
 enum ViewportErrorCode {
-    DeviceWidthShouldBeUsedWarning,
-    DeviceHeightShouldBeUsedWarning,
-    UnrecognizedViewportArgumentError,
+    UnrecognizedViewportArgumentKeyError,
+    UnrecognizedViewportArgumentValueError,
     TruncatedViewportArgumentValueError,
     MaximumScaleTooLargeError,
     TargetDensityDpiTooSmallOrLargeError

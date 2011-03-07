@@ -1,3 +1,19 @@
+2011-03-07  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Viewport Warning/Error Messages Are Now Inaccurate
+        https://bugs.webkit.org/show_bug.cgi?id=53707
+
+        Added tests specifically to test Console warnings.
+
+        * fast/viewport/viewport-warnings-1.html: Added.
+        * fast/viewport/viewport-warnings-2.html: Added.
+        * fast/viewport/viewport-warnings-3.html: Added.
+        * fast/viewport/viewport-warnings-4.html: Added.
+        * fast/viewport/viewport-warnings-5.html: Added.
+        * fast/viewport/viewport-warnings-6.html: Added.
+
 2011-03-07  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

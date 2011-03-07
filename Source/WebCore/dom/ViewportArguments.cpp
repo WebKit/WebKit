@@ -190,7 +190,7 @@ static float numericPrefix(const String& keyString, const String& valueString, D
     if (!*ok) {
         if (!didReadNumber) {
             ASSERT(!value);
-            reportViewportWarning(document, UnrecognizedViewportArgumentError, valueString, keyString);
+            reportViewportWarning(document, UnrecognizedViewportArgumentValueError, valueString, keyString);
             return value;
         }
         *ok = true;
@@ -220,11 +220,6 @@ static float findSizeValue(const String& keyString, const String& valueString, D
 
     if (value < 0)
         return ViewportArguments::ValueAuto;
-
-    if (keyString == "width")
-        reportViewportWarning(document, DeviceWidthShouldBeUsedWarning, String(), String());
-    else if (keyString == "height")
-        reportViewportWarning(document, DeviceHeightShouldBeUsedWarning, String(), String());
 
     return value;
 }
@@ -332,13 +327,14 @@ void setViewportFeature(const String& keyString, const String& valueString, Docu
         arguments->userScalable = findUserScalableValue(keyString, valueString, document);
     else if (keyString == "target-densitydpi")
         arguments->targetDensityDpi = findTargetDensityDPIValue(keyString, valueString, document);
+    else
+        reportViewportWarning(document, UnrecognizedViewportArgumentKeyError, keyString, String());
 }
 
 static const char* viewportErrorMessageTemplate(ViewportErrorCode errorCode)
 {
     static const char* const errors[] = {
-        "Viewport width or height set to physical device width, try using \"device-width\" constant instead for future compatibility.",
-        "Viewport height or height set to physical device height, try using \"device-height\" constant instead for future compatibility.",
+        "Viewport argument key \"%replacement1\" not recognized and ignored.",
         "Viewport argument value \"%replacement1\" for key \"%replacement2\" not recognized. Content ignored.",
         "Viewport argument value \"%replacement1\" for key \"%replacement2\" was truncated to its numeric prefix.",
         "Viewport maximum-scale cannot be larger than 10.0. The maximum-scale will be set to 10.0.",
@@ -351,12 +347,11 @@ static const char* viewportErrorMessageTemplate(ViewportErrorCode errorCode)
 static MessageLevel viewportErrorMessageLevel(ViewportErrorCode errorCode)
 {
     switch (errorCode) {
-    case DeviceWidthShouldBeUsedWarning:
-    case DeviceHeightShouldBeUsedWarning:
     case TruncatedViewportArgumentValueError:
     case TargetDensityDpiTooSmallOrLargeError:
         return TipMessageLevel;
-    case UnrecognizedViewportArgumentError:
+    case UnrecognizedViewportArgumentKeyError:
+    case UnrecognizedViewportArgumentValueError:
     case MaximumScaleTooLargeError:
         return ErrorMessageLevel;
     }
