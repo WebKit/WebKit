@@ -13,4 +13,4 @@ include(../../../../../WebKit.pri)
 QT += testlib
 
 QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
-DEFINES += TESTDIR=\\\"$$PWD\\\"
+!symbian: DEFINES += TESTS_SOURCE_DIR=\\\"$$PWD\\\"

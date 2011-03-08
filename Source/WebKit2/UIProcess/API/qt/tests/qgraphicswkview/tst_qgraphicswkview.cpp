@@ -83,7 +83,7 @@ void tst_QGraphicsWKView::loadEmptyPage()
 {
     m_view->show();
 
-    m_view->m_webView-> load(QUrl::fromLocalFile(TESTDIR "/html/basic_page.html"));
+    m_view->m_webView-> load(QUrl::fromLocalFile(TESTS_SOURCE_DIR "/html/basic_page.html"));
     QVERIFY(waitForSignal(m_view->m_webView, SIGNAL(loadFinished(bool))));
 }
 
