@@ -1,3 +1,16 @@
+2011-03-07  Enrica Casucci  <enrica@apple.com>
+
+        Unreviewed build fix.
+
+        Rolling back  http://trac.webkit.org/changeset/80497 due to the
+        32-bit build failures.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/HTMLConverter.h: Removed.
+        * platform/mac/HTMLConverter.mm: Removed.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection):
+
 2011-03-07  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Benjamin Poulain.
