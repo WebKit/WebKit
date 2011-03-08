@@ -31,6 +31,8 @@
 #include "config.h"
 #include "DataTransferItemChromium.h"
 
+#if ENABLE(DATA_TRANSFER_ITEMS)
+
 #include "Clipboard.h"
 #include "StringCallback.h"
 
@@ -76,3 +78,5 @@ void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(DATA_TRANSFER_ITEMS)

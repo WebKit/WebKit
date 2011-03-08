@@ -31,6 +31,8 @@
 #include "config.h"
 #include "DataTransferItemsChromium.h"
 
+#if ENABLE(DATA_TRANSFER_ITEMS)
+
 #include "Clipboard.h"
 #include "DataTransferItemChromium.h"
 #include "ExceptionCode.h"
@@ -100,3 +102,5 @@ void DataTransferItemsChromium::add(const String& data, const String& type, Exce
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(DATA_TRANSFER_ITEMS)

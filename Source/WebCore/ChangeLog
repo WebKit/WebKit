@@ -1,5 +1,14 @@
 2011-03-07  Daniel Cheng  <dcheng@chromium.org>
 
+        Unreviewed.
+
+        Build fix for Chromium after r80536.
+
+        * platform/chromium/DataTransferItemChromium.cpp:
+        * platform/chromium/DataTransferItemsChromium.cpp:
+
+2011-03-07  Daniel Cheng  <dcheng@chromium.org>
+
         Reviewed by David Levin.
 
         Add support for DataTransferItems
