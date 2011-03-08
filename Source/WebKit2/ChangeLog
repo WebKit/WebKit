@@ -1,3 +1,18 @@
+2011-03-08  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55940
+        WebKit2 should support Ignore policy from injected bundle client
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        Added WKBundlePagePolicyActionIgnore.
+        
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        If the injected bundle client returns WKBundlePagePolicyActionIgnore, convert it
+        to the loader's PolicyIgnore.
+
 2011-03-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

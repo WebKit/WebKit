@@ -116,7 +116,8 @@ typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
 enum {
     WKBundlePagePolicyActionPassThrough,
-    WKBundlePagePolicyActionUse
+    WKBundlePagePolicyActionUse,
+    WKBundlePagePolicyActionIgnore
 };
 typedef uint32_t WKBundlePagePolicyAction;
 

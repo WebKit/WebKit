@@ -653,7 +653,12 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
         (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyUse);
         return;
     }
-
+    
+    if (policy == WKBundlePagePolicyActionIgnore) {
+        (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyIgnore);
+        return;
+    }
+    
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
     bool receivedPolicyAction;
     uint64_t policyAction;
