@@ -1,3 +1,13 @@
+2011-03-08  John Sullivan  <sullivan@apple.com>
+
+        Reverted the patch for https://bugs.webkit.org/show_bug.cgi?id=55940
+        
+        The patch was insufficient, and it wasn't useful for the intended client use either.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2011-03-08  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, fixed GTK+ compilation after r80569.
