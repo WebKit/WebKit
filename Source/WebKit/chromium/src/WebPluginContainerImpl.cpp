@@ -307,6 +307,22 @@ void WebPluginContainerImpl::reportGeometry()
     m_webPlugin->updateGeometry(windowRect, clipRect, cutOutRects, isVisible());
 }
 
+void WebPluginContainerImpl::setBackingTextureId(unsigned id)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    unsigned currId = m_platformLayer->getTextureId();
+    if (currId == id)
+        return;
+
+    m_platformLayer->setTextureId(id);
+    // If anyone of the IDs is zero we need to switch between hardware
+    // and software compositing. This is done by triggering a style recalc
+    // on the container element.
+    if (!(currId * id))
+        m_element->setNeedsStyleRecalc(WebCore::SyntheticStyleChange);
+#endif
+}
+
 void WebPluginContainerImpl::commitBackingTexture()
 {
 #if USE(ACCELERATED_COMPOSITING)

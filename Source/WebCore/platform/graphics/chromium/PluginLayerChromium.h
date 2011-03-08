@@ -42,7 +42,8 @@ public:
     virtual void draw();
     
     void setTextureId(unsigned textureId);
-        
+    unsigned getTextureId() const { return m_textureId; }
+
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> Program;
 
 protected:

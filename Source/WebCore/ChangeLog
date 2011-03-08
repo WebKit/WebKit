@@ -1,3 +1,15 @@
+2011-03-08  Alok priyadarshi  <alokp@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Plugins needs a way to trigger style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=55242
+
+        No test needed. A simple get function is added.
+
+        * platform/graphics/chromium/PluginLayerChromium.h:
+        (WebCore::PluginLayerChromium::getTextureId):
+
 2011-03-08  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

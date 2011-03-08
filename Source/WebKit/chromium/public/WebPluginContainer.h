@@ -55,6 +55,10 @@ public:
     // WebPlugin::updateGeometry.
     virtual void reportGeometry() = 0;
     
+    // Sets the id of the texture used for hw-accel compositing.
+    // The default value for id is zero which indicates software rendering.
+    // A non-zero value will trigger hw-accelerated compositing.
+    virtual void setBackingTextureId(unsigned) = 0;
     // Called when the backing texture is ready to be composited.
     virtual void commitBackingTexture() {}
     

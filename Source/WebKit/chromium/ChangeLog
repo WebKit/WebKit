@@ -1,3 +1,18 @@
+2011-03-08  Alok priyadarshi  <alokp@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Plugins needs a way to trigger style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=55242
+
+        It will be tested by Pepper2D and Pepper3D layout/smoke tests
+        on the Chromium side.
+        
+        * public/WebPluginContainer.h:
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::setBackingTextureId):
+        * src/WebPluginContainerImpl.h:
+
 2011-03-08  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Steve Block.
