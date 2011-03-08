@@ -113,6 +113,8 @@ BUGWK55913 DEBUG SLOW : jquery/manipulation.html = PASS
 BUGWK55913 DEBUG SLOW : jquery/offset.html = PASS
 BUGWK55913 DEBUG SLOW : jquery/traversing.html = PASS
 
+BUGCR75243 SLOW : editing/pasteboard/data-transfer-items.html = PASS
+
 // -----------------------------------------------------------------
 // SKIPPED TESTS
 // -----------------------------------------------------------------

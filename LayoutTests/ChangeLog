@@ -1,3 +1,11 @@
+2011-03-07  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        Looks editing/pasteboard/data-transfer-items.html is slow.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-07  Andy Estes  <aestes@apple.com>
 
         Reviewed by Dan Bernstein.
