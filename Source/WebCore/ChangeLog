@@ -1,3 +1,18 @@
+2011-03-08  James Kozianski  <koz@chromium.org>
+
+        Reviewed by David Levin.
+
+        Expose isValidProtocol() in KURL.h.
+        https://bugs.webkit.org/show_bug.cgi?id=54594
+
+        This is needed to validate protocols used in calls to
+        navigator.registerProtocolHandler().
+
+        * platform/KURL.cpp:
+        * platform/KURL.h:
+        * platform/KURLGoogle.cpp:
+        (WebCore::isValidProtocol):
+
 2011-03-08  Adam Roben  <aroben@apple.com>
 
         Set svn:mime-type to text/css for all Inspector CSS files

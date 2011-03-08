@@ -133,6 +133,22 @@ static inline bool isSchemeChar(char c)
     return isSchemeFirstChar(c) || (c >= '0' && c <= '9') || c == '.' || c == '-' || c == '*';
 }
 
+bool isValidProtocol(const String& protocol)
+{
+    // NOTE This is a copy of the function in KURL.cpp.
+    // RFC3986: ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+    if (protocol.isEmpty())
+        return false;
+    if (!isSchemeFirstChar(protocol[0]))
+        return false;
+    unsigned protocolLength = protocol.length();
+    for (unsigned i = 1; i < protocolLength; i++) {
+        if (!isSchemeChar(protocol[i]))
+            return false;
+    }
+    return true;
+}
+
 
 // KURLGooglePrivate -----------------------------------------------------------
 
