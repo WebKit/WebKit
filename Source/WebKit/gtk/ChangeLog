@@ -1,3 +1,16 @@
+2011-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add layoutTestController.setValueForUser() after r80412
+        https://bugs.webkit.org/show_bug.cgi?id=55862
+
+        Add setValueForUser method to DumpRenderTreeSupportGTK.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setValueForUser):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2011-03-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -332,9 +332,9 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
         setUserStyleSheetEnabled(true);
 }
 
-void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef element, JSStringRef value)
+void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
 {
-    // FIXME: implement
+    DumpRenderTreeSupportGtk::setValueForUser(context, nodeObject, value);
 }
 
 void LayoutTestController::setViewModeMediaFeature(JSStringRef mode)

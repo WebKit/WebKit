@@ -1308,9 +1308,5 @@ http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml
 # https://bugs.webkit.org/show_bug.cgi?id=55670
 fast/canvas/rgba-parsing.html
 
-# Missing layoutTestController.setValueForUser
-# https://bugs.webkit.org/show_bug.cgi?id=55862
-fast/forms/onchange-setvalueforuser.html
-
 # DataTransferItems is not yet implemented.
 editing/pasteboard/data-transfer-items.html
