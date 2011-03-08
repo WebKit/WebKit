@@ -105,6 +105,12 @@ BUGCR75226 WIN SLOW : http/tests/cache/subresource-expiration-1.html = PASS
 BUGCR75226 WIN SLOW : http/tests/cache/subresource-expiration-2.html = PASS
 
 BUGWK55913 SLOW : jquery/effects.html = PASS
+BUGWK55913 DEBUG SLOW : jquery/attributes.html = PASS
+BUGWK55913 DEBUG SLOW : jquery/core.html = PASS
+BUGWK55913 DEBUG SLOW : jquery/event.html = PASS
+BUGWK55913 DEBUG SLOW : jquery/manipulation.html = PASS
+BUGWK55913 DEBUG SLOW : jquery/offset.html = PASS
+BUGWK55913 DEBUG SLOW : jquery/traversing.html = PASS
 
 // -----------------------------------------------------------------
 // SKIPPED TESTS

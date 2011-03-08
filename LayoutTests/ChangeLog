@@ -1,3 +1,11 @@
+2011-03-07  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        Mark several jquery tests slow for debug build.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-07  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Reviewed by Eric Seidel.
