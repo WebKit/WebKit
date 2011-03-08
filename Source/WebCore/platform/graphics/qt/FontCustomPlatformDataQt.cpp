@@ -34,7 +34,7 @@ FontCustomPlatformData::~FontCustomPlatformData()
     QFontDatabase::removeApplicationFont(m_handle);
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation, FontWidthVariant, FontRenderingMode)
+FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation, TextOrientation, FontWidthVariant, FontRenderingMode)
 {
     QFont font;
     font.setFamily(QFontDatabase::applicationFontFamilies(m_handle)[0]);

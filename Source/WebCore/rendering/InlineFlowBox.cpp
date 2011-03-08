@@ -325,7 +325,8 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
     if (isHorizontal())
         return false;
     
-    if (renderer()->style(m_firstLine)->font().primaryFont()->orientation() == Vertical)
+    if (renderer()->style(m_firstLine)->fontDescription().textOrientation() == TextOrientationUpright
+        || renderer()->style(m_firstLine)->font().primaryFont()->hasVerticalGlyphs())
         return true;
 
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
@@ -336,7 +337,7 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
             if (static_cast<InlineFlowBox*>(curr)->requiresIdeographicBaseline(textBoxDataMap))
                 return true;
         } else {
-            if (curr->renderer()->style(m_firstLine)->font().primaryFont()->orientation() == Vertical)
+            if (curr->renderer()->style(m_firstLine)->font().primaryFont()->hasVerticalGlyphs())
                 return true;
             
             const Vector<const SimpleFontData*>* usedFonts = 0;
@@ -347,7 +348,7 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
 
             if (usedFonts) {
                 for (size_t i = 0; i < usedFonts->size(); ++i) {
-                    if (usedFonts->at(i)->orientation() == Vertical)
+                    if (usedFonts->at(i)->hasVerticalGlyphs())
                         return true;
                 }
             }

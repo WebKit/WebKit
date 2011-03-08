@@ -31,6 +31,7 @@
 #include "FontSmoothingMode.h"
 #include "FontTraitsMask.h"
 #include "FontWidthVariant.h"
+#include "TextOrientation.h"
 #include "TextRenderingMode.h"
 
 namespace WebCore {
@@ -58,6 +59,7 @@ public:
         : m_specifiedSize(0)
         , m_computedSize(0)
         , m_orientation(Horizontal)
+        , m_textOrientation(TextOrientationVerticalRight)
         , m_widthVariant(RegularWidth)
         , m_italic(false)
         , m_smallCaps(false)
@@ -99,6 +101,7 @@ public:
     FontTraitsMask traitsMask() const;
     bool isSpecifiedFont() const { return m_isSpecifiedFont; }
     FontOrientation orientation() const { return m_orientation; }
+    TextOrientation textOrientation() const { return m_textOrientation; }
     FontWidthVariant widthVariant() const { return m_widthVariant; }
 
     void setFamily(const FontFamily& family) { m_familyList = family; }
@@ -120,6 +123,7 @@ public:
     void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = rendering; }
     void setIsSpecifiedFont(bool isSpecifiedFont) { m_isSpecifiedFont = isSpecifiedFont; }
     void setOrientation(FontOrientation orientation) { m_orientation = orientation; }
+    void setTextOrientation(TextOrientation textOrientation) { m_textOrientation = textOrientation; }
     void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = widthVariant; }
 
 private:
@@ -129,8 +133,9 @@ private:
                              // rounding, minimum font sizes, and zooming.
     float m_computedSize;    // Computed size adjusted for the minimum font size and the zoom factor.  
 
-    FontOrientation m_orientation;
-    
+    FontOrientation m_orientation; // Whether the font is rendering on a horizontal line or a vertical line.
+    TextOrientation m_textOrientation; // Only used by vertical text. Determines the default orientation for non-ideograph glyphs.
+
     FontWidthVariant m_widthVariant;
 
     bool m_italic : 1;
@@ -169,6 +174,7 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_textRendering == other.m_textRendering
         && m_isSpecifiedFont == other.m_isSpecifiedFont
         && m_orientation == other.m_orientation
+        && m_textOrientation == other.m_textOrientation
         && m_widthVariant == other.m_widthVariant;
 }
 

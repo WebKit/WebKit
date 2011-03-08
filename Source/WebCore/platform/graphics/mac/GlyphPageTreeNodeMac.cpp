@@ -39,7 +39,7 @@ namespace WebCore {
 #ifndef BUILDING_ON_TIGER
 static bool shouldUseCoreText(UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
-    if (fontData->platformData().widthVariant() != RegularWidth || (fontData->orientation() == Vertical && !fontData->isBrokenIdeographFont())) {
+    if (fontData->platformData().widthVariant() != RegularWidth || fontData->hasVerticalGlyphs()) {
         // Ideographs don't have a vertical variant or width variants.
         for (unsigned i = 0; i < bufferLength; ++i) {
             if (!Font::isCJKIdeograph(buffer[i]))
@@ -70,7 +70,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
     } else {
         // We ask CoreText for possible vertical variant glyphs
         RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, buffer, bufferLength, kCFAllocatorNull));
-        RetainPtr<CFAttributedStringRef> attributedString(AdoptCF, CFAttributedStringCreate(kCFAllocatorDefault, string.get(), fontData->getCFStringAttributes(0)));
+        RetainPtr<CFAttributedStringRef> attributedString(AdoptCF, CFAttributedStringCreate(kCFAllocatorDefault, string.get(), fontData->getCFStringAttributes(0, fontData->hasVerticalGlyphs() ? Vertical : Horizontal)));
         RetainPtr<CTLineRef> line(AdoptCF, CTLineCreateWithAttributedString(attributedString.get()));
 
         CFArrayRef runArray = CTLineGetGlyphRuns(line.get());

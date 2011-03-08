@@ -5161,6 +5161,7 @@
 		BCD0E0FC0E972C3500265DEA /* SecurityOriginHash.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD0E0F90E972C3500265DEA /* SecurityOriginHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD0FBD00DBD625E00B2F630 /* DOMAbstractView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCD0FBCF0DBD625E00B2F630 /* DOMAbstractView.mm */; };
 		BCD0FC4F0DBD720B00B2F630 /* DOMRGBColorInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD0FC4E0DBD720B00B2F630 /* DOMRGBColorInternal.h */; };
+		BCD3F9831326C93700098A60 /* TextOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD3F9821326C93700098A60 /* TextOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD41ABB0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD41ABA0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp */; };
 		BCD533640ED6848900887468 /* CachedScriptSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */; };
 		BCD9C2620C17AA67005C90A2 /* JSDOMWindowCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */; };
@@ -11548,6 +11549,7 @@
 		BCD0E0F90E972C3500265DEA /* SecurityOriginHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOriginHash.h; sourceTree = "<group>"; };
 		BCD0FBCF0DBD625E00B2F630 /* DOMAbstractView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMAbstractView.mm; sourceTree = "<group>"; };
 		BCD0FC4E0DBD720B00B2F630 /* DOMRGBColorInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMRGBColorInternal.h; sourceTree = "<group>"; };
+		BCD3F9821326C93700098A60 /* TextOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextOrientation.h; sourceTree = "<group>"; };
 		BCD41ABA0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFrameSetElementCustom.cpp; sourceTree = "<group>"; };
 		BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedScriptSourceProvider.h; sourceTree = "<group>"; };
 		BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowCustom.cpp; sourceTree = "<group>"; };
@@ -17676,6 +17678,7 @@
 				C105DA610F3AA68F001DD44F /* TextEncodingDetectorICU.cpp */,
 				B2C3DA180D006C1D00EF6F26 /* TextEncodingRegistry.cpp */,
 				B2C3DA190D006C1D00EF6F26 /* TextEncodingRegistry.h */,
+				BCD3F9821326C93700098A60 /* TextOrientation.h */,
 				B2C3DA1A0D006C1D00EF6F26 /* TextStream.cpp */,
 				B2C3DA1B0D006C1D00EF6F26 /* TextStream.h */,
 				B2C3DA1C0D006C1D00EF6F26 /* UnicodeRange.cpp */,
@@ -22568,6 +22571,7 @@
 				593D3EB1132532950057E7EE /* JavaString.h in Headers */,
 				598D77DF132541FA00761B22 /* JavaArrayJSC.h in Headers */,
 				598D77E31325420E00761B22 /* JavaFieldJSC.h in Headers */,
+				BCD3F9831326C93700098A60 /* TextOrientation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

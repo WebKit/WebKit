@@ -30,7 +30,7 @@ FontCustomPlatformData::~FontCustomPlatformData()
 {
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation, FontWidthVariant, FontRenderingMode)
+FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation, TextOrientation, FontWidthVariant, FontRenderingMode)
 {
     return FontPlatformData(m_fontFace, size, bold, italic);
 }

@@ -47,15 +47,16 @@ using namespace std;
 
 namespace WebCore {
 
-SimpleFontData::SimpleFontData(const FontPlatformData& platformData, bool isCustomFont, bool isLoading)
+SimpleFontData::SimpleFontData(const FontPlatformData& platformData, bool isCustomFont, bool isLoading, bool isTextOrientationFallback)
     : m_maxCharWidth(-1)
     , m_avgCharWidth(-1)
-    , m_orientation(platformData.orientation())
     , m_platformData(platformData)
     , m_treatAsFixedPitch(false)
     , m_isCustomFont(isCustomFont)
     , m_isLoading(isLoading)
-    , m_isBrokenIdeographFont(false)
+    , m_isTextOrientationFallback(isTextOrientationFallback)
+    , m_isBrokenIdeographFallback(false)
+    , m_hasVerticalGlyphs(false)
 {
     platformInit();
     platformGlyphInit();
@@ -64,13 +65,14 @@ SimpleFontData::SimpleFontData(const FontPlatformData& platformData, bool isCust
 
 #if ENABLE(SVG_FONTS)
 SimpleFontData::SimpleFontData(PassOwnPtr<SVGFontData> svgFontData, int size, bool syntheticBold, bool syntheticItalic)
-    : m_orientation(Horizontal)
-    , m_platformData(FontPlatformData(size, syntheticBold, syntheticItalic))
+    : m_platformData(FontPlatformData(size, syntheticBold, syntheticItalic))
     , m_treatAsFixedPitch(false)
     , m_svgFontData(svgFontData)
     , m_isCustomFont(true)
     , m_isLoading(false)
-    , m_isBrokenIdeographFont(false)
+    , m_isTextOrientationFallback(false)
+    , m_isBrokenIdeographFallback(false)
+    , m_hasVerticalGlyphs(false)
 {
     SVGFontFaceElement* svgFontFaceElement = m_svgFontData->svgFontFaceElement();
     unsigned unitsPerEm = svgFontFaceElement->unitsPerEm();
@@ -202,14 +204,34 @@ bool SimpleFontData::isSegmented() const
     return false;
 }
 
+SimpleFontData* SimpleFontData::verticalRightOrientationFontData() const
+{
+    if (!m_derivedFontData)
+        m_derivedFontData = DerivedFontData::create(isCustomFont());
+    if (!m_derivedFontData->verticalRightOrientation) {
+        FontPlatformData verticalRightPlatformData(m_platformData);
+        verticalRightPlatformData.m_orientation = Horizontal;
+        m_derivedFontData->verticalRightOrientation = new SimpleFontData(verticalRightPlatformData, isCustomFont(), false, true);
+    }
+    return m_derivedFontData->verticalRightOrientation.get();
+}
+
+SimpleFontData* SimpleFontData::uprightOrientationFontData() const
+{
+    if (!m_derivedFontData)
+        m_derivedFontData = DerivedFontData::create(isCustomFont());
+    if (!m_derivedFontData->uprightOrientation)
+        m_derivedFontData->uprightOrientation = new SimpleFontData(m_platformData, isCustomFont(), false, true);
+    return m_derivedFontData->uprightOrientation.get();
+}
+
 SimpleFontData* SimpleFontData::brokenIdeographFontData() const
 {
     if (!m_derivedFontData)
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->brokenIdeograph) {
         m_derivedFontData->brokenIdeograph = new SimpleFontData(m_platformData, isCustomFont(), false);
-        m_derivedFontData->brokenIdeograph->m_orientation = Vertical;
-        m_derivedFontData->brokenIdeograph->m_isBrokenIdeographFont = true;
+        m_derivedFontData->brokenIdeograph->m_isBrokenIdeographFallback = true;
     }
     return m_derivedFontData->brokenIdeograph.get();
 }
@@ -242,6 +264,10 @@ SimpleFontData::DerivedFontData::~DerivedFontData()
         GlyphPageTreeNode::pruneTreeCustomFontData(emphasisMark.get());
     if (brokenIdeograph)
         GlyphPageTreeNode::pruneTreeCustomFontData(brokenIdeograph.get());
+    if (verticalRightOrientation)
+        GlyphPageTreeNode::pruneTreeCustomFontData(verticalRightOrientation.get());
+    if (uprightOrientation)
+        GlyphPageTreeNode::pruneTreeCustomFontData(uprightOrientation.get());
 }
 
 } // namespace WebCore

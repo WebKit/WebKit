@@ -21,6 +21,7 @@ font-variant
 font-weight
 text-rendering
 -webkit-font-smoothing
+-webkit-text-orientation
 -webkit-text-size-adjust
 -webkit-writing-mode
 zoom

@@ -39,6 +39,7 @@
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
 #include "TextDirection.h"
+#include "TextOrientation.h"
 #include "TextRenderingMode.h"
 #include "ThemeTypes.h"
 
@@ -2174,6 +2175,33 @@ template<> inline CSSPrimitiveValue::operator TextEmphasisMark() const
     default:
         ASSERT_NOT_REACHED();
         return TextEmphasisMarkNone;
+    }
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextOrientation e)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (e) {
+    case TextOrientationVerticalRight:
+        m_value.ident = CSSValueVerticalRight;
+        break;
+    case TextOrientationUpright:
+        m_value.ident = CSSValueUpright;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator TextOrientation() const
+{
+    switch (m_value.ident) {
+    case CSSValueVerticalRight:
+        return TextOrientationVerticalRight;
+    case CSSValueUpright:
+        return TextOrientationUpright;
+    default:
+        ASSERT_NOT_REACHED();
+        return TextOrientationVerticalRight;
     }
 }
 

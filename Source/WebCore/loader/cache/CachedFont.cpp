@@ -117,7 +117,7 @@ bool CachedFont::ensureCustomFontData()
     return m_fontData;
 }
 
-FontPlatformData CachedFont::platformDataFromCustomData(float size, bool bold, bool italic, FontOrientation orientation, FontWidthVariant widthVariant, FontRenderingMode renderingMode)
+FontPlatformData CachedFont::platformDataFromCustomData(float size, bool bold, bool italic, FontOrientation orientation, TextOrientation textOrientation, FontWidthVariant widthVariant, FontRenderingMode renderingMode)
 {
 #if ENABLE(SVG_FONTS)
     if (m_externalSVGDocument)
@@ -125,7 +125,7 @@ FontPlatformData CachedFont::platformDataFromCustomData(float size, bool bold, b
 #endif
 #ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
     ASSERT(m_fontData);
-    return m_fontData->fontPlatformData(static_cast<int>(size), bold, italic, orientation, widthVariant, renderingMode);
+    return m_fontData->fontPlatformData(static_cast<int>(size), bold, italic, orientation, textOrientation, widthVariant, renderingMode);
 #else
     return FontPlatformData();
 #endif

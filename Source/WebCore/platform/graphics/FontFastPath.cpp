@@ -77,21 +77,62 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant va
             page = node->page();
             if (page) {
                 GlyphData data = page->glyphDataForCharacter(c);
+                if (data.fontData && (data.fontData->platformData().orientation() == Horizontal || data.fontData->isTextOrientationFallback()))
+                    return data;
+                
                 if (data.fontData) {
-                    if (data.fontData->platformData().orientation() == Vertical && data.fontData->orientation() == Horizontal && Font::isCJKIdeographOrSymbol(c)) {
-                        const SimpleFontData* ideographFontData = data.fontData->brokenIdeographFontData();
-                        GlyphPageTreeNode* ideographNode = GlyphPageTreeNode::getRootChild(ideographFontData, pageNumber);
-                        const GlyphPage* ideographPage = ideographNode->page();
-                        if (ideographPage) {
-                            GlyphData data = ideographPage->glyphDataForCharacter(c);
-                            if (data.fontData)
-                                return data;
+                    if (isCJKIdeographOrSymbol(c)) {
+                        if (!data.fontData->hasVerticalGlyphs()) {
+                            // Use the broken ideograph font data. The broken ideograph font will use the horizontal width of glyphs
+                            // to make sure you get a square (even for broken glyphs like symbols used for punctuation).
+                            const SimpleFontData* brokenIdeographFontData = data.fontData->brokenIdeographFontData();
+                            GlyphPageTreeNode* brokenIdeographNode = GlyphPageTreeNode::getRootChild(brokenIdeographFontData, pageNumber);
+                            const GlyphPage* brokenIdeographPage = brokenIdeographNode->page();
+                            if (brokenIdeographPage) {
+                                GlyphData brokenIdeographData = brokenIdeographPage->glyphDataForCharacter(c);
+                                if (brokenIdeographData.fontData)
+                                    return brokenIdeographData;
+                            }
+                            
+                            // Shouldn't be possible to even reach this point.
+                            ASSERT_NOT_REACHED();
+                            return data;
                         }
-                        
+                    } else {
+                        if (m_fontDescription.textOrientation() == TextOrientationVerticalRight) {
+                            const SimpleFontData* verticalRightFontData = data.fontData->verticalRightOrientationFontData();
+                            GlyphPageTreeNode* verticalRightNode = GlyphPageTreeNode::getRootChild(verticalRightFontData, pageNumber);
+                            const GlyphPage* verticalRightPage = verticalRightNode->page();
+                            if (verticalRightPage) {
+                                GlyphData verticalRightData = verticalRightPage->glyphDataForCharacter(c);
+                                // If the glyphs are distinct, we will make the assumption that the font has a vertical-right glyph baked
+                                // into it.
+                                if (data.glyph != verticalRightData.glyph)
+                                    return data;
+                                // The glyphs are identical, meaning that we should just use the horizontal glyph.
+                                if (verticalRightData.fontData)
+                                    return verticalRightData;
+                            }
+                        } else if (m_fontDescription.textOrientation() == TextOrientationUpright) {
+                            const SimpleFontData* uprightFontData = data.fontData->uprightOrientationFontData();
+                            GlyphPageTreeNode* uprightNode = GlyphPageTreeNode::getRootChild(uprightFontData, pageNumber);
+                            const GlyphPage* uprightPage = uprightNode->page();
+                            if (uprightPage) {
+                                GlyphData uprightData = uprightPage->glyphDataForCharacter(c);
+                                // If the glyphs are the same, then we know we can just use the horizontal glyph rotated vertically to be upright.
+                                if (data.glyph == uprightData.glyph)
+                                    return data;
+                                // The glyphs are distinct, meaning that the font has a vertical-right glyph baked into it. We can't use that
+                                // glyph, so we fall back to the upright data and use the horizontal glyph.
+                                if (uprightData.fontData)
+                                    return uprightData;
+                            }
+                        }
+
                         // Shouldn't be possible to even reach this point.
                         ASSERT_NOT_REACHED();
+                        return data;
                     }
-                    return data;
                 }
 
                 if (node->isSystemFallback())
@@ -364,7 +405,7 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const GlyphBuffer& glyphBuf
 
 inline static float offsetToMiddleOfGlyph(const SimpleFontData* fontData, Glyph glyph)
 {
-    if (fontData->orientation() == Horizontal) {
+    if (fontData->platformData().orientation() == Horizontal) {
         FloatRect bounds = fontData->boundsForGlyph(glyph);
         return bounds.x() + bounds.width() / 2;
     }

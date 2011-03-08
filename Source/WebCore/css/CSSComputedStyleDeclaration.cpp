@@ -228,6 +228,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitTextEmphasisPosition,
     CSSPropertyWebkitTextEmphasisStyle,
     CSSPropertyWebkitTextFillColor,
+    CSSPropertyWebkitTextOrientation,
     CSSPropertyWebkitTextSecurity,
     CSSPropertyWebkitTextStrokeColor,
     CSSPropertyWebkitTextStrokeWidth,
@@ -1633,6 +1634,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createValue(style->writingMode());
         case CSSPropertyWebkitTextCombine:
             return primitiveValueCache->createValue(style->textCombine());
+        case CSSPropertyWebkitTextOrientation:
+            return CSSPrimitiveValue::create(style->fontDescription().textOrientation());
 
         case CSSPropertyContent:
             return contentToCSSValue(style.get(), primitiveValueCache);

@@ -65,7 +65,8 @@ FontCustomPlatformData::~FontCustomPlatformData()
 #endif
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation orientation, FontWidthVariant, FontRenderingMode mode)
+FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation orientation,
+                                                          TextOrientation, FontWidthVariant, FontRenderingMode mode)
 {
 #if OS(WINDOWS)
     ASSERT(m_fontReference);

@@ -1832,6 +1832,12 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitTextEmphasisStyle:
         return parseTextEmphasisStyle(important);
 
+    case CSSPropertyWebkitTextOrientation:
+        // FIXME: For now just support upright and vertical-right.
+        if (id == CSSValueVerticalRight || id == CSSValueUpright)
+            validPrimitive = true;
+        break;
+
 #if ENABLE(SVG)
     default:
         return parseSVGValue(propId, important);

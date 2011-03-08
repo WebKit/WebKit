@@ -115,7 +115,8 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
     }
 
     // See if we have a mapping in our FontData cache.
-    unsigned hashKey = (fontDescription.computedPixelSize() + 1) << 5 | fontDescription.widthVariant() << 3 | (fontDescription.orientation() == Vertical ? 4 : 0) | (syntheticBold ? 2 : 0) | (syntheticItalic ? 1 : 0);
+    unsigned hashKey = (fontDescription.computedPixelSize() + 1) << 6 | fontDescription.widthVariant() << 4
+                       | (fontDescription.textOrientation() == TextOrientationUpright ? 8 : 0) | (fontDescription.orientation() == Vertical ? 4 : 0) | (syntheticBold ? 2 : 0) | (syntheticItalic ? 1 : 0);
     if (SimpleFontData* cachedData = m_fontDataTable.get(hashKey))
         return cachedData;
 
@@ -162,7 +163,8 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
                 if (!m_font->ensureCustomFontData())
                     return 0;
 
-                fontData.set(new SimpleFontData(m_font->platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.renderingMode()), true, false));
+                fontData.set(new SimpleFontData(m_font->platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic, fontDescription.orientation(),
+                                                                                   fontDescription.textOrientation(), fontDescription.widthVariant(), fontDescription.renderingMode()), true, false));
             }
         } else {
 #if ENABLE(SVG_FONTS)

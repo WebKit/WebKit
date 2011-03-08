@@ -1,3 +1,29 @@
+2011-03-08  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48540, support the text-orientation CSS property.
+        
+        This patch adds support for two values of the text-orientation property (the ones that actually matter): vertical-right and upright.
+        The TextOrientation is part of the FontDescription and used to look up fonts (similar to FontOrientation).
+        
+        Orientation of non-CJK characters is done using fallback font data of the appropriate orientation type, e.g., verticalRightOrientation and
+        uprightOrientation fallback font data.  Vertical right is just implemented as a normal horizontal font.  Upright is implemented as a
+        vertically oriented font that rotates all glyphs.
+        
+        The main complication implementing text-orientation is that fonts have "baked-in" vertical glyphs for letters that are hardcoded to
+        a vertical right facing.  This means that you can use those special vertical glyphs for vertical-right orientation without having to 
+        fall back, but then for upright orientation you have to ignore them and still fall back.  As you can see from the test case, this doesn't
+        work very well, but hopefully it won't be all that common.  Limitations of CoreText prevent this case from rendering properly in either the
+        simple or complex code paths, although the simple code path at least gets close.
+
+        Added fast/blockflow/text-orientation-basic.html
+
+        * fast/blockflow/text-orientation-basic.html: Added.
+        * platform/mac/fast/blockflow/text-orientation-basic-expected.checksum: Added.
+        * platform/mac/fast/blockflow/text-orientation-basic-expected.png: Added.
+        * platform/mac/fast/blockflow/text-orientation-basic-expected.txt: Added.
+
 2011-03-08  Nico Weber  <thakis@chromium.org>
 
         Reviewed by James Robinson.

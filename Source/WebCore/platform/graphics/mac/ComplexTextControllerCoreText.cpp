@@ -148,13 +148,13 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
         RetainPtr<CTTypesetterRef> typesetter(AdoptCF, wkCreateCTTypesetterWithUniCharProviderAndOptions(&provideStringAndAttributes, 0, &info, m_run.ltr() ? ltrTypesetterOptions : rtlTypesetterOptions));
 #else
         RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, cp, length, kCFAllocatorNull));
-        RetainPtr<CFAttributedStringRef> attributedString(AdoptCF, CFAttributedStringCreate(kCFAllocatorDefault, string.get(), fontData->getCFStringAttributes(m_font.typesettingFeatures())));
+        RetainPtr<CFAttributedStringRef> attributedString(AdoptCF, CFAttributedStringCreate(kCFAllocatorDefault, string.get(), fontData->getCFStringAttributes(m_font.typesettingFeatures(), fontData->platformData().orientation())));
         RetainPtr<CTTypesetterRef> typesetter(AdoptCF, CTTypesetterCreateWithAttributedStringAndOptions(attributedString.get(), m_run.ltr() ? ltrTypesetterOptions : rtlTypesetterOptions));
 #endif
 
         line.adoptCF(CTTypesetterCreateLine(typesetter.get(), CFRangeMake(0, 0)));
     } else {
-        ProviderInfo info = { cp, length, fontData->getCFStringAttributes(m_font.typesettingFeatures()) };
+        ProviderInfo info = { cp, length, fontData->getCFStringAttributes(m_font.typesettingFeatures(), fontData->platformData().orientation()) };
 
         line.adoptCF(wkCreateCTLineWithUniCharProvider(&provideStringAndAttributes, 0, &info));
     }

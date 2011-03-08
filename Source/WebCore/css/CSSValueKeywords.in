@@ -790,3 +790,7 @@ farthest-side
 farthest-corner
 # contain
 # cover
+
+# -webkit-text-orientation
+upright
+vertical-right

@@ -3406,7 +3406,7 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
 
                 if (applyFirst) {
                     COMPILE_ASSERT(firstCSSProperty == CSSPropertyColor, CSS_color_is_first_property);
-                    COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 13, CSS_zoom_is_end_of_first_prop_range);
+                    COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 14, CSS_zoom_is_end_of_first_prop_range);
                     COMPILE_ASSERT(CSSPropertyLineHeight == CSSPropertyZoom + 1, CSS_line_height_is_after_zoom);
 
                     // give special priority to font-xxx, color properties, etc
@@ -6206,6 +6206,27 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
 
         return;
+
+    case CSSPropertyWebkitTextOrientation: {
+        if (!isInherit && !isInitial && !primitiveValue)
+            return;
+        
+        TextOrientation result;
+        if (isInherit)
+            result = m_parentStyle->fontDescription().textOrientation();
+        else if (isInitial)
+            result = RenderStyle::initialTextOrientation();
+        else
+            result = *primitiveValue;
+        
+        FontDescription fontDescription = m_style->fontDescription();
+        if (fontDescription.textOrientation() != result) {
+            fontDescription.setTextOrientation(result);
+            if (m_style->setFontDescription(fontDescription))
+                m_fontDirty = true;
+        }
+        return;
+    }
 
 #if ENABLE(SVG)
     default:

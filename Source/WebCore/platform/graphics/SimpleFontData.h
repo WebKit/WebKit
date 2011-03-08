@@ -71,7 +71,7 @@ enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
 class SimpleFontData : public FontData {
 public:
-    SimpleFontData(const FontPlatformData&, bool isCustomFont = false, bool isLoading = false);
+    SimpleFontData(const FontPlatformData&, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false);
 #if ENABLE(SVG_FONTS)
     SimpleFontData(PassOwnPtr<SVGFontData>, int size, bool syntheticBold, bool syntheticItalic);
 #endif
@@ -97,11 +97,13 @@ public:
         return const_cast<SimpleFontData*>(this);
     }
 
+    SimpleFontData* verticalRightOrientationFontData() const;
+    SimpleFontData* uprightOrientationFontData() const;
     SimpleFontData* brokenIdeographFontData() const;
-    
-    // FIXME: Use the actual metrics for fonts with vertical tables instead of just hard-coding.  If the font is horizontally oriented or
-    // a broken ideographic font, then just hard-code to split ascent/descent down the middle.  Otherwise we should actually use the metrics
-    // from the font itself.
+
+    bool hasVerticalGlyphs() const { return m_hasVerticalGlyphs; }
+    bool isTextOrientationFallback() const { return m_isTextOrientationFallback; }
+
     const FontMetrics& fontMetrics() const { return m_fontMetrics; }
     float maxCharWidth() const { return m_maxCharWidth; }
     float avgCharWidth() const { return m_avgCharWidth; }
@@ -137,8 +139,6 @@ public:
     virtual bool isLoading() const { return m_isLoading; }
     virtual bool isSegmented() const;
 
-    bool isBrokenIdeographFont() const { return m_isBrokenIdeographFont; }
-
     const GlyphData& missingGlyphData() const { return m_missingGlyphData; }
 
 #ifndef NDEBUG
@@ -152,7 +152,7 @@ public:
 #endif
 
 #if PLATFORM(MAC) || USE(CORE_TEXT)
-    CFDictionaryRef getCFStringAttributes(TypesettingFeatures) const;
+    CFDictionaryRef getCFStringAttributes(TypesettingFeatures, FontOrientation) const;
 #endif
 
 #if USE(ATSUI)
@@ -183,8 +183,6 @@ public:
     wxFont* getWxFont() const { return m_platformData.font(); }
 #endif
 
-    FontOrientation orientation() const { return m_orientation; }
-
 private:
     void platformInit();
     void platformGlyphInit();
@@ -209,9 +207,6 @@ private:
     float m_maxCharWidth;
     float m_avgCharWidth;
     
-    FontOrientation m_orientation; // This is our supported orientation according to the tables in the font.  FontPlatformData will just always have the desired orientation.
-                                   // This value represents what we actually support.
-
     FontPlatformData m_platformData;
 
     mutable OwnPtr<GlyphMetricsMap<FloatRect> > m_glyphToBoundsMap;
@@ -225,8 +220,11 @@ private:
 
     bool m_isCustomFont;  // Whether or not we are custom font loaded via @font-face
     bool m_isLoading; // Whether or not this custom font is still in the act of loading.
-    bool m_isBrokenIdeographFont;
-
+    
+    bool m_isTextOrientationFallback;
+    bool m_isBrokenIdeographFallback;
+    bool m_hasVerticalGlyphs;
+    
     Glyph m_spaceGlyph;
     float m_spaceWidth;
 
@@ -242,6 +240,8 @@ private:
         OwnPtr<SimpleFontData> smallCaps;
         OwnPtr<SimpleFontData> emphasisMark;
         OwnPtr<SimpleFontData> brokenIdeograph;
+        OwnPtr<SimpleFontData> verticalRightOrientation;
+        OwnPtr<SimpleFontData> uprightOrientation;
 
     private:
         DerivedFontData(bool custom)

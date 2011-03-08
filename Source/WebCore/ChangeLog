@@ -1,3 +1,121 @@
+2011-03-08  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48540, support the text-orientation CSS property.
+        
+        This patch adds support for two values of the text-orientation property (the ones that actually matter): vertical-right and upright.
+        The TextOrientation is part of the FontDescription and used to look up fonts (similar to FontOrientation).
+        
+        Orientation of non-CJK characters is done using fallback font data of the appropriate orientation type, e.g., verticalRightOrientation and
+        uprightOrientation fallback font data.  Vertical right is just implemented as a normal horizontal font.  Upright is implemented as a
+        vertically oriented font that rotates all glyphs.
+        
+        The main complication implementing text-orientation is that fonts have "baked-in" vertical glyphs for letters that are hardcoded to
+        a vertical right facing.  This means that you can use those special vertical glyphs for vertical-right orientation without having to 
+        fall back, but then for upright orientation you have to ignore them and still fall back.  As you can see from the test case, this doesn't
+        work very well, but hopefully it won't be all that common.  Limitations of CoreText prevent this case from rendering properly in either the
+        simple or complex code paths, although the simple code path at least gets close.
+
+        Added fast/blockflow/text-orientation-basic.html
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator TextOrientation):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::platformDataFromCustomData):
+        * loader/cache/CachedFont.h:
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        (WebCore::FontPlatformDataCacheKey::operator==):
+        (WebCore::computeHash):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::textOrientation):
+        (WebCore::FontDescription::setTextOrientation):
+        (WebCore::FontDescription::operator==):
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataForCharacter):
+        (WebCore::offsetToMiddleOfGlyph):
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData):
+        (WebCore::SimpleFontData::verticalRightOrientationFontData):
+        (WebCore::SimpleFontData::uprightOrientationFontData):
+        (WebCore::SimpleFontData::brokenIdeographFontData):
+        (WebCore::SimpleFontData::DerivedFontData::~DerivedFontData):
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::hasVerticalGlyphs):
+        (WebCore::SimpleFontData::isTextOrientationFallback):
+        * platform/graphics/cairo/FontCustomPlatformData.h:
+        * platform/graphics/cocoa/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::textOrientation):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::operator==):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/haiku/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/haiku/FontCustomPlatformData.h:
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersCoreText):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::showGlyphsWithAdvances):
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        (WebCore::shouldUseCoreText):
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        (WebCore::SimpleFontData::getCFStringAttributes):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/pango/FontCustomPlatformDataPango.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/qt/FontCustomPlatformData.h:
+        * platform/graphics/qt/FontCustomPlatformDataQt.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/skia/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/skia/FontCustomPlatformData.h:
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/win/FontCustomPlatformData.h:
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/win/FontCustomPlatformDataCairo.h:
+        * platform/graphics/wince/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/wince/FontCustomPlatformData.h:
+        * platform/text/TextOrientation.h: Added.
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::requiresIdeographicBaseline):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::initialTextOrientation):
+
 2011-03-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

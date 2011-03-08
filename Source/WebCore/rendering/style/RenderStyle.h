@@ -58,6 +58,7 @@
 #include "StyleTransformData.h"
 #include "StyleVisualData.h"
 #include "TextDirection.h"
+#include "TextOrientation.h"
 #include "ThemeTypes.h"
 #include "TransformOperations.h"
 #include <wtf/Forward.h>
@@ -1211,6 +1212,7 @@ public:
     static TextDirection initialDirection() { return LTR; }
     static WritingMode initialWritingMode() { return TopToBottomWritingMode; }
     static TextCombine initialTextCombine() { return TextCombineNone; }
+    static TextOrientation initialTextOrientation() { return TextOrientationVerticalRight; }
     static EDisplay initialDisplay() { return INLINE; }
     static EEmptyCell initialEmptyCells() { return SHOW; }
     static EFloat initialFloating() { return FNONE; }

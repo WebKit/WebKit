@@ -59,7 +59,7 @@ FontCustomPlatformData::~FontCustomPlatformData()
     }
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation, FontWidthVariant, FontRenderingMode renderingMode)
+FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation, TextOrientation, FontWidthVariant, FontRenderingMode renderingMode)
 {
     ASSERT(m_fontReference);
     ASSERT(T2embedLibrary());

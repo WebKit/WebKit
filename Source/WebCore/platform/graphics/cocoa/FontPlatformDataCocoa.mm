@@ -45,9 +45,12 @@ void FontPlatformData::loadFont(NSFont* nsFont, float, NSFont*& outNSFont, CGFon
 }
 #endif  // PLATFORM(MAC)
 
-FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
+FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation,
+                                   TextOrientation textOrientation, FontWidthVariant widthVariant)
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
+    , m_orientation(orientation)
+    , m_textOrientation(textOrientation)
     , m_size(size)
     , m_widthVariant(widthVariant)
     , m_font(nsFont)
@@ -63,8 +66,6 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool syntheticBol
 
     CGFontRef cgFont = 0;
     loadFont(nsFont, size, m_font, cgFont);
-
-    m_orientation = orientation;
 
     if (m_font)
         CFRetain(m_font);
@@ -87,6 +88,7 @@ FontPlatformData::FontPlatformData(const FontPlatformData& f)
     m_cgFont = f.m_cgFont;
     m_isColorBitmapFont = f.m_isColorBitmapFont;
     m_orientation = f.m_orientation;
+    m_textOrientation = f.m_textOrientation;
     m_CTFont = f.m_CTFont;
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
     m_inMemoryFont = f.m_inMemoryFont;
@@ -115,6 +117,7 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& f)
     m_font = f.m_font;
     m_isColorBitmapFont = f.m_isColorBitmapFont;
     m_orientation = f.m_orientation;
+    m_textOrientation = f.m_textOrientation;
     m_CTFont = f.m_CTFont;
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
     m_inMemoryFont = f.m_inMemoryFont;
