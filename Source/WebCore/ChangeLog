@@ -1,3 +1,20 @@
+2011-03-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Adjust functions of WebCore's efl port to WebKit coding style
+        https://bugs.webkit.org/show_bug.cgi?id=55924
+
+        Adjust webkit style to PlatformKeyboardEventEfl, PlatformMouseEventEfl and WidgetEfl files.
+
+        * platform/efl/PlatformKeyboardEventEfl.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/efl/PlatformMouseEventEfl.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/efl/WidgetEfl.cpp:
+        (WebCore::Widget::frameRectsChanged):
+        (WebCore::Widget::setEvasObject):
+
 2011-03-07  Daniel Cheng  <dcheng@chromium.org>
 
         Unreviewed.

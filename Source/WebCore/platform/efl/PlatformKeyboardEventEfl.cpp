@@ -188,15 +188,15 @@ static int windowsKeyCodeForEvasKeyName(String& keyName)
     return 0;
 }
 
-PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Down* ev)
+PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Down* event)
     : m_type(KeyDown)
-    , m_text(String::fromUTF8(ev->string))
-    , m_shiftKey(evas_key_modifier_is_set(ev->modifiers, "Shift"))
-    , m_ctrlKey(evas_key_modifier_is_set(ev->modifiers, "Control"))
-    , m_altKey(evas_key_modifier_is_set(ev->modifiers, "Alt"))
-    , m_metaKey(evas_key_modifier_is_set(ev->modifiers, "Meta"))
+    , m_text(String::fromUTF8(event->string))
+    , m_shiftKey(evas_key_modifier_is_set(event->modifiers, "Shift"))
+    , m_ctrlKey(evas_key_modifier_is_set(event->modifiers, "Control"))
+    , m_altKey(evas_key_modifier_is_set(event->modifiers, "Alt"))
+    , m_metaKey(evas_key_modifier_is_set(event->modifiers, "Meta"))
 {
-    String keyName = String(ev->key);
+    String keyName = String(event->key);
     m_keyIdentifier = keyIdentifierForEvasKeyName(keyName);
     m_windowsVirtualKeyCode = windowsKeyCodeForEvasKeyName(keyName);
 
@@ -205,15 +205,15 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Down* ev)
     m_autoRepeat = false;
 }
 
-PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Up* ev)
+PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Up* event)
     : m_type(KeyUp)
-    , m_text(String::fromUTF8(ev->string))
-    , m_shiftKey(evas_key_modifier_is_set(ev->modifiers, "Shift"))
-    , m_ctrlKey(evas_key_modifier_is_set(ev->modifiers, "Control"))
-    , m_altKey(evas_key_modifier_is_set(ev->modifiers, "Alt"))
-    , m_metaKey(evas_key_modifier_is_set(ev->modifiers, "Meta"))
+    , m_text(String::fromUTF8(event->string))
+    , m_shiftKey(evas_key_modifier_is_set(event->modifiers, "Shift"))
+    , m_ctrlKey(evas_key_modifier_is_set(event->modifiers, "Control"))
+    , m_altKey(evas_key_modifier_is_set(event->modifiers, "Alt"))
+    , m_metaKey(evas_key_modifier_is_set(event->modifiers, "Meta"))
 {
-    String keyName = String(ev->key);
+    String keyName = String(event->key);
     m_keyIdentifier = keyIdentifierForEvasKeyName(keyName);
     m_windowsVirtualKeyCode = windowsKeyCodeForEvasKeyName(keyName);
 

@@ -47,44 +47,44 @@ void PlatformMouseEvent::setClickCount(unsigned int flags)
         m_clickCount = 1;
 }
 
-PlatformMouseEvent::PlatformMouseEvent(const Evas_Event_Mouse_Down* ev, IntPoint pos)
-    : m_position(IntPoint(ev->canvas.x - pos.x(), ev->canvas.y - pos.y()))
-    , m_globalPosition(IntPoint(ev->canvas.x, ev->canvas.y))
-    , m_button(MouseButton(ev->button - 1))
+PlatformMouseEvent::PlatformMouseEvent(const Evas_Event_Mouse_Down* event, IntPoint position)
+    : m_position(IntPoint(event->canvas.x - position.x(), event->canvas.y - position.y()))
+    , m_globalPosition(IntPoint(event->canvas.x, event->canvas.y))
+    , m_button(MouseButton(event->button - 1))
     , m_eventType(MouseEventPressed)
-    , m_shiftKey(evas_key_modifier_is_set(ev->modifiers, "Shift"))
-    , m_ctrlKey(evas_key_modifier_is_set(ev->modifiers, "Control"))
-    , m_altKey(evas_key_modifier_is_set(ev->modifiers, "Alt"))
-    , m_metaKey(evas_key_modifier_is_set(ev->modifiers, "Meta"))
+    , m_shiftKey(evas_key_modifier_is_set(event->modifiers, "Shift"))
+    , m_ctrlKey(evas_key_modifier_is_set(event->modifiers, "Control"))
+    , m_altKey(evas_key_modifier_is_set(event->modifiers, "Alt"))
+    , m_metaKey(evas_key_modifier_is_set(event->modifiers, "Meta"))
     , m_timestamp(currentTime())
 {
-    setClickCount(ev->flags);
+    setClickCount(event->flags);
 }
 
-PlatformMouseEvent::PlatformMouseEvent(const Evas_Event_Mouse_Up* ev, IntPoint pos)
-    : m_position(IntPoint(ev->canvas.x - pos.x(), ev->canvas.y - pos.y()))
-    , m_globalPosition(IntPoint(ev->canvas.x, ev->canvas.y))
-    , m_button(MouseButton(ev->button - 1))
+PlatformMouseEvent::PlatformMouseEvent(const Evas_Event_Mouse_Up* event, IntPoint position)
+    : m_position(IntPoint(event->canvas.x - position.x(), event->canvas.y - position.y()))
+    , m_globalPosition(IntPoint(event->canvas.x, event->canvas.y))
+    , m_button(MouseButton(event->button - 1))
     , m_eventType(MouseEventReleased)
-    , m_shiftKey(evas_key_modifier_is_set(ev->modifiers, "Shift"))
-    , m_ctrlKey(evas_key_modifier_is_set(ev->modifiers, "Control"))
-    , m_altKey(evas_key_modifier_is_set(ev->modifiers, "Alt"))
-    , m_metaKey(evas_key_modifier_is_set(ev->modifiers, "Meta"))
+    , m_shiftKey(evas_key_modifier_is_set(event->modifiers, "Shift"))
+    , m_ctrlKey(evas_key_modifier_is_set(event->modifiers, "Control"))
+    , m_altKey(evas_key_modifier_is_set(event->modifiers, "Alt"))
+    , m_metaKey(evas_key_modifier_is_set(event->modifiers, "Meta"))
     , m_timestamp(currentTime())
 {
-    setClickCount(ev->flags);
+    setClickCount(event->flags);
 }
 
-PlatformMouseEvent::PlatformMouseEvent(const Evas_Event_Mouse_Move* ev, IntPoint pos)
-    : m_position(IntPoint(ev->cur.canvas.x - pos.x(), ev->cur.canvas.y - pos.y()))
-    , m_globalPosition(IntPoint(ev->cur.canvas.x, ev->cur.canvas.y))
-    , m_button(MouseButton(ev->buttons - 1))
+PlatformMouseEvent::PlatformMouseEvent(const Evas_Event_Mouse_Move* event, IntPoint position)
+    : m_position(IntPoint(event->cur.canvas.x - position.x(), event->cur.canvas.y - position.y()))
+    , m_globalPosition(IntPoint(event->cur.canvas.x, event->cur.canvas.y))
+    , m_button(MouseButton(event->buttons - 1))
     , m_eventType(MouseEventMoved)
     , m_clickCount(0)
-    , m_shiftKey(evas_key_modifier_is_set(ev->modifiers, "Shift"))
-    , m_ctrlKey(evas_key_modifier_is_set(ev->modifiers, "Control"))
-    , m_altKey(evas_key_modifier_is_set(ev->modifiers, "Alt"))
-    , m_metaKey(evas_key_modifier_is_set(ev->modifiers, "Meta"))
+    , m_shiftKey(evas_key_modifier_is_set(event->modifiers, "Shift"))
+    , m_ctrlKey(evas_key_modifier_is_set(event->modifiers, "Control"))
+    , m_altKey(evas_key_modifier_is_set(event->modifiers, "Alt"))
+    , m_metaKey(evas_key_modifier_is_set(event->modifiers, "Meta"))
     , m_timestamp(currentTime())
 {
 }
