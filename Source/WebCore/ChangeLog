@@ -1,3 +1,18 @@
+2011-03-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        REGRESSION(r78147): Crash on http://gnarf.net/jquery/test/
+        https://bugs.webkit.org/show_bug.cgi?id=55894
+
+        The m_frame can disappear out from under us, and there's no point in
+        checking whether the load is complete in a non-existant frame.
+
+        Test: fast/parser/document-write-into-initial-document.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::explicitClose):
+
 2011-03-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80500.

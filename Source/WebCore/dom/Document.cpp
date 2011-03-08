@@ -2055,7 +2055,8 @@ void Document::explicitClose()
 
     // This code calls implicitClose() if all loading has completed.
     loader()->writer()->endIfNotLoadingMainResource();
-    m_frame->loader()->checkCompleted();
+    if (m_frame)
+        m_frame->loader()->checkCompleted();
 }
 
 void Document::implicitClose()
