@@ -64,50 +64,50 @@ ScrollbarEfl::~ScrollbarEfl()
     setEvasObject(0);
 }
 
-static void scrollbarEflEdjeMessage(void* data, Evas_Object* o, Edje_Message_Type type, int id, void* msg)
+static void scrollbarEflEdjeMessage(void* data, Evas_Object* object, Edje_Message_Type messageType, int id, void* message)
 {
     ScrollbarEfl* that = static_cast<ScrollbarEfl*>(data);
-    Edje_Message_Float* m;
-    int v;
+    Edje_Message_Float* messageFloat;
+    int value;
 
     if (!id) {
         EINA_LOG_ERR("Unknown message id '%d' from scroll bar theme.", id);
         return;
     }
 
-    if (type != EDJE_MESSAGE_FLOAT) {
+    if (messageType != EDJE_MESSAGE_FLOAT) {
         EINA_LOG_ERR("Message id '%d' of incorrect type from scroll bar theme. "
                      "Expected '%d', got '%d'.",
-                     id, EDJE_MESSAGE_FLOAT, type);
+                     id, EDJE_MESSAGE_FLOAT, messageType);
         return;
     }
 
-    m = static_cast<Edje_Message_Float*>(msg);
-    v = m->val * (that->totalSize() - that->visibleSize());
-    that->scrollableArea()->scrollToOffsetWithoutAnimation(that->orientation(), v);
+    messageFloat = static_cast<Edje_Message_Float*>(message);
+    value = messageFloat->val * (that->totalSize() - that->visibleSize());
+    that->scrollableArea()->scrollToOffsetWithoutAnimation(that->orientation(), value);
 }
 
 void ScrollbarEfl::setParent(ScrollView* view)
 {
-    Evas_Object* o = evasObject();
+    Evas_Object* object = evasObject();
     Evas_Coord w, h;
 
     Widget::setParent(view);
 
-    if (!o) {
+    if (!object) {
         if (!view)
             return;
 
-        o = edje_object_add(view->evas());
-        if (!o) {
+        object = edje_object_add(view->evas());
+        if (!object) {
             EINA_LOG_ERR("Could not create edje object for view=%p (evas=%p)",
                          view, view->evas());
             return;
         }
-        edje_object_message_handler_set(o, scrollbarEflEdjeMessage, this);
-        setEvasObject(o);
+        edje_object_message_handler_set(object, scrollbarEflEdjeMessage, this);
+        setEvasObject(object);
     } else if (!view) {
-        evas_object_hide(o);
+        evas_object_hide(object);
         return;
     }
 
@@ -117,23 +117,23 @@ void ScrollbarEfl::setParent(ScrollView* view)
 
     if (theme.isEmpty()) {
         EINA_LOG_ERR("Could not load theme '%s': no theme path set.", group);
-        evas_object_hide(o);
+        evas_object_hide(object);
         return;
     }
 
-    if (!edje_object_file_set(o, theme.utf8().data(), group)) {
-        Edje_Load_Error err = edje_object_load_error_get(o);
-        const char* errmsg = edje_load_error_str(err);
+    if (!edje_object_file_set(object, theme.utf8().data(), group)) {
+        Edje_Load_Error err = edje_object_load_error_get(object);
+        const char* errmessage = edje_load_error_str(err);
         EINA_LOG_ERR("Could not load theme '%s' from file '%s': #%d '%s'",
-                     group, theme.utf8().data(), err, errmsg);
+                     group, theme.utf8().data(), err, errmessage);
         return;
     }
 
-    setPlatformWidget(o);
-    evas_object_smart_member_add(o, view->evasObject());
-    evas_object_show(o);
+    setPlatformWidget(object);
+    evas_object_smart_member_add(object, view->evasObject());
+    evas_object_show(object);
 
-    edje_object_size_min_get(o, &w, &h);
+    edje_object_size_min_get(object, &w, &h);
 
     IntRect rect = frameRect();
     rect.setSize(IntSize(w, h));
@@ -168,21 +168,21 @@ void ScrollbarEfl::updateThumbPositionAndProportion()
     m_lastTotalSize = tSize;
     m_lastVisibleSize = vSize;
 
-    Edje_Message_Float_Set* msg = static_cast<Edje_Message_Float_Set*>
+    Edje_Message_Float_Set* message = static_cast<Edje_Message_Float_Set*>
         (alloca(sizeof(Edje_Message_Float_Set) + sizeof(float)));
-    msg->count = 2;
+    message->count = 2;
 
     if (tSize - vSize > 0)
-        msg->val[0] = pos / (float)(tSize - vSize);
+        message->val[0] = pos / static_cast<float>(tSize - vSize);
     else
-        msg->val[0] = 0.0;
+        message->val[0] = 0.0;
 
     if (tSize > 0)
-        msg->val[1] = vSize / (float)tSize;
+        message->val[1] = vSize / static_cast<float>(tSize);
     else
-        msg->val[1] = 0.0;
+        message->val[1] = 0.0;
 
-    edje_object_message_send(platformWidget(), EDJE_MESSAGE_FLOAT_SET, 0, msg);
+    edje_object_message_send(platformWidget(), EDJE_MESSAGE_FLOAT_SET, 0, message);
 }
 
 void ScrollbarEfl::setFrameRect(const IntRect& rect)
@@ -193,10 +193,10 @@ void ScrollbarEfl::setFrameRect(const IntRect& rect)
 
 void ScrollbarEfl::frameRectsChanged()
 {
-    Evas_Object* o = platformWidget();
+    Evas_Object* object = platformWidget();
     Evas_Coord x, y;
 
-    if (!parent() || !o)
+    if (!parent() || !object)
         return;
 
     IntRect rect = frameRect();
@@ -206,11 +206,11 @@ void ScrollbarEfl::frameRectsChanged()
         rect.setLocation(parent()->contentsToWindow(rect.location()));
 
     evas_object_geometry_get(root()->evasObject(), &x, &y, 0, 0);
-    evas_object_move(o, x + rect.x(), y + rect.y());
-    evas_object_resize(o, rect.width(), rect.height());
+    evas_object_move(object, x + rect.x(), y + rect.y());
+    evas_object_resize(object, rect.width(), rect.height());
 }
 
-void ScrollbarEfl::paint(GraphicsContext* context, const IntRect& rect)
+void ScrollbarEfl::paint(GraphicsContext* graphicsContext, const IntRect& damageRect)
 {
 }
 

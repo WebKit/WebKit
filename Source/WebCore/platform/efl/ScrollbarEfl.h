@@ -49,7 +49,7 @@ public:
 
     virtual void frameRectsChanged();
 
-    virtual void paint(GraphicsContext* context, const IntRect& damageRect);
+    virtual void paint(GraphicsContext*, const IntRect&);
 
 protected:
     ScrollbarEfl(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize);
@@ -58,7 +58,7 @@ protected:
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
 
-    virtual void setParent(ScrollView* view);
+    virtual void setParent(ScrollView*);
 
 private:
     int m_lastPos;

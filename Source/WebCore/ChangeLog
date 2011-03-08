@@ -1,3 +1,20 @@
+2011-03-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Adjust functions of ScrollbarEfl.cpp to WebKit coding style
+        https://bugs.webkit.org/show_bug.cgi?id=55917
+
+        Adjust webkit style to ScrollbarEfl files.
+
+        * platform/efl/ScrollbarEfl.cpp:
+        (scrollbarEflEdjeMessage):
+        (ScrollbarEfl::setParent):
+        (ScrollbarEfl::updateThumbPositionAndProportion):
+        (ScrollbarEfl::frameRectsChanged):
+        (ScrollbarEfl::paint):
+        * platform/efl/ScrollbarEfl.h:
+
 2011-03-07  Daniel Cheng  <dcheng@chromium.org>
 
         Unreviewed.
