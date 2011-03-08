@@ -2199,8 +2199,11 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, int tx, int ty, co
         m_scrollCorner->paintIntoRect(context, tx, ty, absRect);
         return;
     }
-    
-    context->fillRect(absRect, Color::white, box->style()->colorSpace());
+
+    // We don't want to paint white if we have overlay scrollbars, since we need
+    // to see what is behind it.
+    if (!hasOverlayScrollbars())
+        context->fillRect(absRect, Color::white, box->style()->colorSpace());
 }
 
 void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const IntRect& damageRect)

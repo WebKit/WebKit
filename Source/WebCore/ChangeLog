@@ -1,3 +1,15 @@
+2011-03-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Overflow: scroll areas should not paint white in scroll corner if the 
+        scrollbars are overlay.
+        <rdar://problem/9082871>
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintScrollCorner):
+        Don't paint the scroll corner white if we have overlay scrollbars.
+
 2011-03-08  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Darin Adler.
