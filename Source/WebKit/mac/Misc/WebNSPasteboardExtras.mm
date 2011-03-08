@@ -47,11 +47,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 
-@interface NSFilePromiseDragSource : NSObject
-- (id)initWithSource:(id)draggingSource;
-- (void)setTypes:(NSArray *)types onPasteboard:(NSPasteboard *)pboard;
-@end
-
 using namespace WebCore;
 
 NSString *WebURLPboardType = @"public.url";

@@ -579,49 +579,12 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     }
     
     if (contentsOnly)
-        _private->coreFrame->view()->paintContents(&context, enclosingIntRect(rect));
+        view->paintContents(&context, enclosingIntRect(rect));
     else
-        _private->coreFrame->view()->paint(&context, enclosingIntRect(rect));
+        view->paint(&context, enclosingIntRect(rect));
 
     if (shouldFlatten)
         view->setPaintBehavior(oldBehavior);
-}
-
-// Used by pagination code called from AppKit when a standalone web page is printed.
-- (NSArray*)_computePageRectsWithPrintScaleFactor:(float)printScaleFactor pageSize:(NSSize)pageSize
-{
-    NSMutableArray* pages = [NSMutableArray arrayWithCapacity:5];
-    if (printScaleFactor <= 0) {
-        LOG_ERROR("printScaleFactor has bad value %.2f", printScaleFactor);
-        return pages;
-    }
-
-    if (!_private->coreFrame || !_private->coreFrame->document() || !_private->coreFrame->view()) return pages;
-    RenderView* root = toRenderView(_private->coreFrame->document()->renderer());
-    if (!root) return pages;
-    
-    FrameView* view = _private->coreFrame->view();
-    if (!view)
-        return pages;
-
-    NSView* documentView = view->documentView();
-    if (!documentView)
-        return pages;
-
-    float docWidth = root->docWidth();
-    float docHeight = root->docHeight();
-
-    float printWidth = root->style()->isHorizontalWritingMode() ? docWidth / printScaleFactor : pageSize.width;
-    float printHeight = root->style()->isHorizontalWritingMode() ? pageSize.height : docHeight / printScaleFactor;
-
-    PrintContext printContext(_private->coreFrame);
-    printContext.computePageRectsWithPageSize(FloatSize(printWidth, printHeight), true);
-
-    const Vector<IntRect>& pageRects = printContext.pageRects();
-    const size_t pageCount = pageRects.size();
-    for (size_t pageNumber = 0; pageNumber < pageCount; ++pageNumber)
-        [pages addObject: [NSValue valueWithRect: NSRect(pageRects[pageNumber])]];
-    return pages;
 }
 
 - (BOOL)_getVisibleRect:(NSRect*)rect
@@ -1385,6 +1348,41 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     Frame* coreFrame = _private->coreFrame;
     if (coreFrame)
         coreFrame->loader()->setOpener(0);
+}
+
+// Used by pagination code called from AppKit when a standalone web page is printed.
+- (NSArray *)_computePageRectsWithPrintScaleFactor:(float)printScaleFactor pageSize:(NSSize)pageSize
+{
+    if (printScaleFactor <= 0) {
+        LOG_ERROR("printScaleFactor has bad value %.2f", printScaleFactor);
+        return [NSArray array];
+    }
+
+    if (!_private->coreFrame)
+        return [NSArray array];
+    if (!_private->coreFrame->document())
+        return [NSArray array];
+    if (!_private->coreFrame->view())
+        return [NSArray array];
+    if (!_private->coreFrame->view()->documentView())
+        return [NSArray array];
+
+    RenderView* root = toRenderView(_private->coreFrame->document()->renderer());
+    if (!root)
+        return [NSArray array];
+
+    float printWidth = root->style()->isHorizontalWritingMode() ? root->docWidth() / printScaleFactor : pageSize.width;
+    float printHeight = root->style()->isHorizontalWritingMode() ? pageSize.height : root->docHeight() / printScaleFactor;
+
+    PrintContext printContext(_private->coreFrame);
+    printContext.computePageRectsWithPageSize(FloatSize(printWidth, printHeight), true);
+    const Vector<IntRect>& pageRects = printContext.pageRects();
+
+    size_t size = pageRects.size();
+    NSMutableArray *pages = [NSMutableArray arrayWithCapacity:size];
+    for (size_t i = 0; i < size; ++i)
+        [pages addObject:[NSValue valueWithRect:NSRect(pageRects[i])]];
+    return pages;
 }
 
 @end

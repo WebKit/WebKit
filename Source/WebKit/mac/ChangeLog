@@ -1,3 +1,21 @@
+2011-03-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Promote a method used outside WebKit from internal to private
+        https://bugs.webkit.org/show_bug.cgi?id=55949
+
+        * Misc/WebNSPasteboardExtras.mm: Removed an unused category declaration.
+        Minor tweak, not directly related to the rest of this patch.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _computePageRectsWithPrintScaleFactor:pageSize:]): Moved
+        this method from the internal category into the private category.
+        Streamlined the code a bit.
+
+        * WebView/WebFrameInternal.h: Removed _computePageRects method.
+        * WebView/WebFramePrivate.h: Added _computePageRects method.
+
 2011-03-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
