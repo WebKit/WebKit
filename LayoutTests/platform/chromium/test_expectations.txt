@@ -2849,14 +2849,14 @@ BUGWK52414 MAC : fast/body-propagation/overflow/005.html = IMAGE
 BUGWK52414 MAC : fast/overflow/006.html = IMAGE
 BUGWK52414 MAC : fast/overflow/overflow-x-y.html = IMAGE
 
-// Platforms that use Skia don't support elliptical gradients.
-BUGWK51841 : fast/gradients/css3-color-stop-units.html = IMAGE
-BUGWK51841 : fast/gradients/css3-color-stops.html = IMAGE
-BUGWK51841 : fast/gradients/css3-linear-angle-gradients.html = IMAGE
-BUGWK51841 : fast/gradients/css3-radial-gradients.html = IMAGE
-BUGWK51841 : fast/gradients/css3-radial-gradients2.html = IMAGE
-BUGWK51841 : fast/gradients/css3-radial-gradients3.html = IMAGE
-BUGWK51841 : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
+// MAC not passing the CSS3 elliptical gradient tests.
+BUGWK55745 MAC : fast/gradients/css3-color-stop-units.html = IMAGE
+BUGWK55745 MAC : fast/gradients/css3-color-stops.html = IMAGE
+BUGWK55745 MAC : fast/gradients/css3-linear-angle-gradients.html = IMAGE
+BUGWK55745 MAC : fast/gradients/css3-radial-gradients.html = IMAGE
+BUGWK55745 MAC : fast/gradients/css3-radial-gradients2.html = IMAGE
+BUGWK55745 MAC : fast/gradients/css3-radial-gradients3.html = IMAGE
+BUGWK55745 MAC : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
 
 // This was introduced by r75077.
 BUGWK52082 LINUX : fast/text/basic/014.html = IMAGE
