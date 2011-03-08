@@ -1,3 +1,12 @@
+2011-03-08  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Re-fix: can't paste from 3rd party text editor into WebKit2 window
+        <rdar://problem/8978624>
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-03-08  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the WebKit2 compilation after r80578.

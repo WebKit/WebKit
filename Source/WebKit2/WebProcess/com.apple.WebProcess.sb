@@ -3,6 +3,10 @@
 (allow ipc-posix-shm system-audit system-socket file-read-metadata)
 
 (import "system.sb")
+(import "com.apple.corefoundation.sb")
+
+;; Distributed notifications, local pasteboard client
+(corefoundation)
 
 ;; Read-only preferences and data
 (allow file-read*
@@ -87,7 +91,6 @@
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
    (global-name "com.apple.CoreServices.coreservicesd")
-   (global-name "com.apple.CFPasteboardClient")
    (global-name "com.apple.DiskArbitration.diskarbitrationd")
    (global-name "com.apple.FileCoordination")
    (global-name "com.apple.FontObjectsServer")
@@ -99,7 +102,6 @@
    (global-name "com.apple.audio.coreaudiod")
    (global-name "com.apple.cookied")
    (global-name "com.apple.cvmsServ")
-   (global-name "com.apple.distributed_notifications.2")
    (global-name "com.apple.dock.server")
    (global-name "com.apple.ocspd")
    (global-name "com.apple.pasteboard.1")
