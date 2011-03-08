@@ -52,6 +52,7 @@ void SVGHKernElement::insertedIntoDocument()
         if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
             element->invalidateGlyphCache();
     }
+    SVGElement::insertedIntoDocument();
 }
 
 void SVGHKernElement::removedFromDocument()

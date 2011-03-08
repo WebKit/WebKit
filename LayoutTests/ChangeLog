@@ -1,3 +1,13 @@
+2011-03-07  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Add the missing insertedIntoDocument() call in SVGVKernElement and SVGHKernElement
+        https://bugs.webkit.org/show_bug.cgi?id=55896
+
+        * svg/dom/vkern-element-crash-expected.txt: Added.
+        * svg/dom/vkern-element-crash.html: Added.
+
 2011-03-07  Cosmin Truta  <ctruta@chromium.org>
 
         Reviewed by Adam Barth.
