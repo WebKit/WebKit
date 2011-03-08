@@ -794,6 +794,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Shared\API\c\win\WKBaseWin.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\API\c\win\WKCertificateInfoWin.cpp"
 					>
 				</File>
@@ -2933,10 +2937,6 @@
 						>
 						<File
 							RelativePath="..\UIProcess\API\C\win\WKAPICastWin.h"
-							>
-						</File>
-						<File
-							RelativePath="..\UIProcess\API\C\win\WKBaseWin.h"
 							>
 						</File>
 						<File

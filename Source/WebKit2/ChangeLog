@@ -1,3 +1,13 @@
+2011-03-08  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Remove Source/WebKit2/UIProcess/API/C/win/WKBaseWin.h
+        https://bugs.webkit.org/show_bug.cgi?id=55952
+
+        * UIProcess/API/C/win/WKBaseWin.h: Removed.
+        * win/WebKit2.vcproj: Refer to the Shared version of WKBaseWin.h instead of the one in UIProcess.
+
 2011-03-08  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
