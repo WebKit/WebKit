@@ -867,6 +867,8 @@ BUGCR23463 WIN LINUX : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT TEXT
 BUGCR23463 WIN LINUX : svg/W3C-SVG-1.1/struct-use-01-t.svg = IMAGE IMAGE+TEXT PASS
 BUGCR23463 WIN LINUX : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE+TEXT
 
+BUGCR75234 : svg/W3C-SVG-1.1/struct-image-07-t.svg = IMAGE
+
 // Merge 39744:39829 - regression
 BUGCR10284 MAC : svg/custom/path-bad-data.svg = FAIL
 

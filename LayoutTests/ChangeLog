@@ -2,6 +2,14 @@
 
         Unreviewed, update chromium test expectations.
 
+        svg/W3C-SVG-1.1/struct-image-07-t.svg failing
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-07  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
         Mark several jquery tests slow for debug build.
 
         * platform/chromium/test_expectations.txt:
