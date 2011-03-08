@@ -1,3 +1,16 @@
+2011-03-07  Damian Kaleta  <dkaleta@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        QuickTime plugin should opt in to a 32-bit non-executable heap
+        https://bugs.webkit.org/show_bug.cgi?id=55704
+        <rdar://problem/8105706>
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::pluginNeedsExecutableHeap): Decides per plugin if it should opt-in to a 32-bit non-executable heap.
+        By default it should opt-out.
+        (WebKit::PluginProcessProxy::PluginProcessProxy):
+
 2011-03-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
