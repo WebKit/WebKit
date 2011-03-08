@@ -262,9 +262,9 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
     }
 
 #if OS(DARWIN)
-    if (selectedFrame->editor()->selectionHasStyle(CSSPropertyDirection, 'ltr') != FalseTriState)
+    if (selectedFrame->editor()->selectionHasStyle(CSSPropertyDirection, "ltr") != FalseTriState)
         data.writingDirectionLeftToRight |= WebContextMenuData::CheckableMenuItemChecked;
-    if (selectedFrame->editor()->selectionHasStyle(CSSPropertyDirection, 'rtl') != FalseTriState)
+    if (selectedFrame->editor()->selectionHasStyle(CSSPropertyDirection, "rtl") != FalseTriState)
         data.writingDirectionRightToLeft |= WebContextMenuData::CheckableMenuItemChecked;
 #endif // OS(DARWIN)
 

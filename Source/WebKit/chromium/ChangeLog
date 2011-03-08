@@ -1,5 +1,12 @@
 2011-03-07  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium build fix.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
+2011-03-07  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Darin Adler.
 
         selectionHasStyle and selectionStartHasStyle should use EditingStyle
