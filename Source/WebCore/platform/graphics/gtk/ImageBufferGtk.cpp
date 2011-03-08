@@ -54,7 +54,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
     GError* error = 0;
     gboolean success = FALSE;
     if (type == "jpeg" && quality && *quality >= 0.0 && *quality <= 1.0) {
-        String qualityString = String::format("%f", *quality);
+        String qualityString = String::format("%f", *quality * 100.0);
         success = gdk_pixbuf_save_to_buffer(pixbuf.get(), &buffer.outPtr(), &bufferSize,
             type.utf8().data(), &error, "quality", qualityString.utf8().data(), NULL);
     } else {

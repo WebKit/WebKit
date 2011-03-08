@@ -1001,7 +1001,6 @@ canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html
 canvas/philip/tests/2d.pattern.paint.repeatx.outside.html
 canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html
 canvas/philip/tests/2d.pattern.paint.repeaty.outside.html
-canvas/philip/tests/toDataURL.jpeg.quality.basic.html
 
 # Failing tests after sync with Philip Taylor's upstream tests
 canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html
