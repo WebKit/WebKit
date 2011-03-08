@@ -1,3 +1,16 @@
+2011-03-07  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        add webkit-patch attach-to-bug for posting to bugzilla from the commandline
+        https://bugs.webkit.org/show_bug.cgi?id=55749
+
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/attachtobug.py: Added.
+        * Scripts/webkitpy/tool/steps/options.py:
+
 2011-03-07  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by David Levin.

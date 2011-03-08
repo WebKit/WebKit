@@ -40,7 +40,7 @@ class Options(object):
     comment = make_option("--comment", action="store", type="string", dest="comment", help="Comment to post to bug.")
     component = make_option("--component", action="store", type="string", dest="component", help="Component for the new bug.")
     confirm = make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Skip confirmation steps.")
-    description = make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: \"patch\")")
+    description = make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment")
     email = make_option("--email", action="store", type="string", dest="email", help="Email address to use in ChangeLogs.")
     force_clean = make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)")
     force_patch = make_option("--force-patch", action="store_true", dest="force_patch", default=False, help="Forcefully applies the patch, continuing past errors.")

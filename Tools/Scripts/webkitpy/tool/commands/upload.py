@@ -173,6 +173,21 @@ class ObsoleteAttachments(AbstractSequencedCommand):
         return { "bug_id" : args[0] }
 
 
+class AttachToBug(AbstractSequencedCommand):
+    name = "attach-to-bug"
+    help_text = "Attach the the file to the bug"
+    argument_names = "BUGID FILEPATH"
+    steps = [
+        steps.AttachToBug,
+    ]
+
+    def _prepare_state(self, options, args, tool):
+        state = {}
+        state["bug_id"] = args[0]
+        state["filepath"] = args[1]
+        return state
+
+
 class AbstractPatchUploadingCommand(AbstractSequencedCommand):
     def _bug_id(self, options, args, tool, state):
         # Perfer a bug id passed as an argument over a bug url in the diff (i.e. ChangeLogs).
