@@ -156,21 +156,18 @@ static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, E
 
 static bool executeToggleStyle(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, const char* offValue, const char* onValue)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
-    style->setProperty(propertyID, onValue); // We need to add this style to pass it to selectionStartHasStyle / selectionHasStyle
-
     // Style is considered present when
     // Mac: present at the beginning of selection
     // other: present throughout the selection
 
     bool styleIsPresent;
     if (frame->editor()->behavior().shouldToggleStyleBasedOnStartOfSelection())
-        styleIsPresent = frame->editor()->selectionStartHasStyle(style.get());
+        styleIsPresent = frame->editor()->selectionStartHasStyle(propertyID, onValue);
     else
-        styleIsPresent = frame->editor()->selectionHasStyle(style.get()) == TrueTriState;
+        styleIsPresent = frame->editor()->selectionHasStyle(propertyID, onValue) == TrueTriState;
 
-    style->setProperty(propertyID, styleIsPresent ? offValue : onValue);
-    return applyCommandToFrame(frame, source, action, style.get());
+    RefPtr<EditingStyle> style = EditingStyle::create(propertyID, styleIsPresent ? offValue : onValue);
+    return applyCommandToFrame(frame, source, action, style->style());
 }
 
 static bool executeApplyParagraphStyle(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, const String& propertyValue)
@@ -227,12 +224,9 @@ static bool expandSelectionToGranularity(Frame* frame, TextGranularity granulari
 
 static TriState stateStyle(Frame* frame, int propertyID, const char* desiredValue)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
-    style->setProperty(propertyID, desiredValue);
-
     if (frame->editor()->behavior().shouldToggleStyleBasedOnStartOfSelection())
-        return frame->editor()->selectionStartHasStyle(style.get()) ? TrueTriState : FalseTriState;
-    return frame->editor()->selectionHasStyle(style.get());
+        return frame->editor()->selectionStartHasStyle(propertyID, desiredValue) ? TrueTriState : FalseTriState;
+    return frame->editor()->selectionHasStyle(propertyID, desiredValue);
 }
 
 static String valueStyle(Frame* frame, int propertyID)

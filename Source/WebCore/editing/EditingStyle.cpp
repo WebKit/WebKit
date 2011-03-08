@@ -286,6 +286,14 @@ EditingStyle::EditingStyle(const CSSStyleDeclaration* style)
     extractFontSizeDelta();
 }
 
+EditingStyle::EditingStyle(int propertyID, const String& value)
+    : m_mutableStyle(0)
+    , m_shouldUseFixedDefaultFontSize(false)
+    , m_fontSizeDelta(NoFontDelta)
+{
+    setProperty(propertyID, value);
+}
+
 EditingStyle::~EditingStyle()
 {
 }
@@ -503,6 +511,30 @@ void EditingStyle::collapseTextDecorationProperties()
 
     m_mutableStyle->setProperty(CSSPropertyTextDecoration, textDecorationsInEffect->cssText(), m_mutableStyle->getPropertyPriority(CSSPropertyTextDecoration));
     m_mutableStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
+}
+
+// CSS properties that create a visual difference only when applied to text.
+static const int textOnlyProperties[] = {
+    CSSPropertyTextDecoration,
+    CSSPropertyWebkitTextDecorationsInEffect,
+    CSSPropertyFontStyle,
+    CSSPropertyFontWeight,
+    CSSPropertyColor,
+};
+
+TriState EditingStyle::triStateOfStyle(CSSStyleDeclaration* styleToCompare, ShouldIgnoreTextOnlyProperties shouldIgnoreTextOnlyProperties) const
+{
+    RefPtr<CSSMutableStyleDeclaration> difference = getPropertiesNotIn(m_mutableStyle.get(), styleToCompare);
+
+    if (shouldIgnoreTextOnlyProperties == IgnoreTextOnlyProperties)
+        difference->removePropertiesInSet(textOnlyProperties, WTF_ARRAY_LENGTH(textOnlyProperties));
+
+    if (!difference->length())
+        return TrueTriState;
+    if (difference->length() == m_mutableStyle->length())
+        return FalseTriState;
+
+    return MixedTriState;
 }
 
 bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, EditingStyle* extractedStyle, Vector<CSSPropertyID>* conflictingProperties) const

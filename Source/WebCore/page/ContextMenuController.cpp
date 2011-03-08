@@ -1010,11 +1010,8 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         case ContextMenuItemTagLeftToRight:
         case ContextMenuItemTagRightToLeft: {
-            ExceptionCode ec = 0;
-            RefPtr<CSSStyleDeclaration> style = frame->document()->createCSSStyleDeclaration();
             String direction = item.action() == ContextMenuItemTagLeftToRight ? "ltr" : "rtl";
-            style->setProperty(CSSPropertyDirection, direction, false, ec);
-            shouldCheck = frame->editor()->selectionHasStyle(style.get()) != FalseTriState;
+            shouldCheck = frame->editor()->selectionHasStyle(CSSPropertyDirection, direction) != FalseTriState;
             shouldEnable = true;
             break;
         }
@@ -1060,10 +1057,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
 #endif
         case ContextMenuItemTagUnderline: {
-            ExceptionCode ec = 0;
-            RefPtr<CSSStyleDeclaration> style = frame->document()->createCSSStyleDeclaration();
-            style->setProperty(CSSPropertyWebkitTextDecorationsInEffect, "underline", false, ec);
-            shouldCheck = frame->editor()->selectionHasStyle(style.get()) != FalseTriState;
+            shouldCheck = frame->editor()->selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline") != FalseTriState;
             shouldEnable = frame->editor()->canEditRichly();
             break;
         }
@@ -1078,18 +1072,12 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
 #endif
             break;
         case ContextMenuItemTagItalic: {
-            ExceptionCode ec = 0;
-            RefPtr<CSSStyleDeclaration> style = frame->document()->createCSSStyleDeclaration();
-            style->setProperty(CSSPropertyFontStyle, "italic", false, ec);
-            shouldCheck = frame->editor()->selectionHasStyle(style.get()) != FalseTriState;
+            shouldCheck = frame->editor()->selectionHasStyle(CSSPropertyFontStyle, "italic") != FalseTriState;
             shouldEnable = frame->editor()->canEditRichly();
             break;
         }
         case ContextMenuItemTagBold: {
-            ExceptionCode ec = 0;
-            RefPtr<CSSStyleDeclaration> style = frame->document()->createCSSStyleDeclaration();
-            style->setProperty(CSSPropertyFontWeight, "bold", false, ec);
-            shouldCheck = frame->editor()->selectionHasStyle(style.get()) != FalseTriState;
+            shouldCheck = frame->editor()->selectionHasStyle(CSSPropertyFontWeight, "bold") != FalseTriState;
             shouldEnable = frame->editor()->canEditRichly();
             break;
         }

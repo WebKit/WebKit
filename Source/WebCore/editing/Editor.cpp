@@ -945,39 +945,18 @@ void Editor::applyParagraphStyleToSelection(CSSStyleDeclaration* style, EditActi
         applyParagraphStyle(style, editingAction);
 }
 
-// CSS properties that only has a visual difference when applied to text.
-static const int textOnlyProperties[] = {
-    CSSPropertyTextDecoration,
-    CSSPropertyWebkitTextDecorationsInEffect,
-    CSSPropertyFontStyle,
-    CSSPropertyFontWeight,
-    CSSPropertyColor,
-};
-
-static TriState triStateOfStyle(CSSStyleDeclaration* desiredStyle, CSSStyleDeclaration* styleToCompare, bool ignoreTextOnlyProperties = false)
+bool Editor::selectionStartHasStyle(int propertyID, const String& value) const
 {
-    RefPtr<CSSMutableStyleDeclaration> diff = getPropertiesNotIn(desiredStyle, styleToCompare);
-
-    if (ignoreTextOnlyProperties)
-        diff->removePropertiesInSet(textOnlyProperties, WTF_ARRAY_LENGTH(textOnlyProperties));
-
-    if (!diff->length())
-        return TrueTriState;
-    if (diff->length() == desiredStyle->length())
-        return FalseTriState;
-    return MixedTriState;
-}
-
-bool Editor::selectionStartHasStyle(CSSStyleDeclaration* style) const
-{
+    RefPtr<EditingStyle> style = EditingStyle::create(propertyID, value);
     RefPtr<EditingStyle> selectionStyle = selectionStartStyle();
     if (!selectionStyle || !selectionStyle->style())
         return false;
-    return triStateOfStyle(style, selectionStyle->style()) == TrueTriState;
+    return style->triStateOfStyle(selectionStyle->style()) == TrueTriState;
 }
 
-TriState Editor::selectionHasStyle(CSSStyleDeclaration* style) const
+TriState Editor::selectionHasStyle(int propertyID, const String& value) const
 {
+    RefPtr<EditingStyle> style = EditingStyle::create(propertyID, value);
     if (!m_frame->selection()->isCaretOrRange())
         return FalseTriState;
 
@@ -985,14 +964,14 @@ TriState Editor::selectionHasStyle(CSSStyleDeclaration* style) const
         RefPtr<EditingStyle> selectionStyle = selectionStartStyle();
         if (!selectionStyle || !selectionStyle->style())
             return FalseTriState;
-        return triStateOfStyle(style, selectionStyle->style());
+        return style->triStateOfStyle(selectionStyle->style());
     }
 
     TriState state = FalseTriState;
     for (Node* node = m_frame->selection()->start().deprecatedNode(); node; node = node->traverseNextNode()) {
         RefPtr<CSSComputedStyleDeclaration> nodeStyle = computedStyle(node);
         if (nodeStyle) {
-            TriState nodeState = triStateOfStyle(style, nodeStyle.get(), !node->isTextNode());
+            TriState nodeState = style->triStateOfStyle(nodeStyle.get(), node->isTextNode() ? EditingStyle::DoNotIgnoreTextOnlyProperties : EditingStyle::IgnoreTextOnlyProperties);
             if (node == m_frame->selection()->start().deprecatedNode())
                 state = nodeState;
             else if (state != nodeState && node->isTextNode()) {

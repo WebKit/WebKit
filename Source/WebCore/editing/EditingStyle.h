@@ -51,6 +51,8 @@ class QualifiedName;
 class RenderStyle;
 class StyledElement;
 
+enum TriState { FalseTriState, TrueTriState, MixedTriState };
+
 class EditingStyle : public RefCounted<EditingStyle> {
 public:
 
@@ -79,6 +81,11 @@ public:
         return adoptRef(new EditingStyle(style));
     }
 
+    static PassRefPtr<EditingStyle> create(int propertyID, const String& value)
+    {
+        return adoptRef(new EditingStyle(propertyID, value));
+    }
+
     ~EditingStyle();
 
     CSSMutableStyleDeclaration* style() { return m_mutableStyle.get(); }
@@ -95,6 +102,8 @@ public:
     void removeStyleConflictingWithStyleOfNode(Node*);
     void removeNonEditingProperties();
     void collapseTextDecorationProperties();
+    enum ShouldIgnoreTextOnlyProperties { IgnoreTextOnlyProperties, DoNotIgnoreTextOnlyProperties };
+    TriState triStateOfStyle(CSSStyleDeclaration*, ShouldIgnoreTextOnlyProperties = DoNotIgnoreTextOnlyProperties) const;
     bool conflictsWithInlineStyleOfElement(StyledElement* element) const { return conflictsWithInlineStyleOfElement(element, 0, 0); }
     bool conflictsWithInlineStyleOfElement(StyledElement* element, EditingStyle* extractedStyle, Vector<CSSPropertyID>& conflictingProperties) const
     {
@@ -117,6 +126,7 @@ private:
     EditingStyle(Node*, PropertiesToInclude);
     EditingStyle(const Position&);
     EditingStyle(const CSSStyleDeclaration*);
+    EditingStyle(int propertyID, const String& value);
     void init(Node*, PropertiesToInclude);
     void removeTextFillAndStrokeColorsIfNeeded(RenderStyle*);
     void setProperty(int propertyID, const String& value, bool important = false);

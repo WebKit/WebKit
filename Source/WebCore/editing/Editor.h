@@ -76,7 +76,6 @@ struct CompositionUnderline {
     bool thick;
 };
 
-enum TriState { FalseTriState, TrueTriState, MixedTriState };
 enum EditorCommandSource { CommandFromMenuOrKeyBinding, CommandFromDOM, CommandFromDOMWithUserInterface };
 
 class Editor {
@@ -133,7 +132,8 @@ public:
     void respondToChangedSelection(const VisibleSelection& oldSelection);
     void respondToChangedContents(const VisibleSelection& endingSelection);
 
-    TriState selectionHasStyle(CSSStyleDeclaration*) const;
+    bool selectionStartHasStyle(int propertyID, const String& value) const;
+    TriState selectionHasStyle(int propertyID, const String& value) const;
     String selectionStartCSSPropertyValue(int propertyID);
     const SimpleFontData* fontForSelection(bool&) const;
     WritingDirection textDirectionForSelection(bool&) const;
@@ -169,8 +169,6 @@ public:
     void unappliedEditing(PassRefPtr<EditCommand>);
     void reappliedEditing(PassRefPtr<EditCommand>);
     void unappliedSpellCorrection(const VisibleSelection& selectionOfCorrected, const String& corrected, const String& correction);
-
-    bool selectionStartHasStyle(CSSStyleDeclaration*) const;
 
     void setShouldStyleWithCSS(bool flag) { m_shouldStyleWithCSS = flag; }
     bool shouldStyleWithCSS() const { return m_shouldStyleWithCSS; }

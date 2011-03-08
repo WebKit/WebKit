@@ -2643,14 +2643,6 @@ WEBCORE_COMMAND(yankAndSelect)
         coreFrame->selection()->revealSelection(ScrollAlignment::alignCenterAlways);
 }
 
-- (NSCellStateValue)selectionHasStyle:(CSSStyleDeclaration*)style
-{
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return NSOffState;
-    return kit(coreFrame->editor()->selectionHasStyle(style));
-}
-
 - (BOOL)validateUserInterfaceItemWithoutDelegate:(id <NSValidatedUserInterfaceItem>)item
 {
     SEL action = [item action];
@@ -2706,10 +2698,8 @@ WEBCORE_COMMAND(yankAndSelect)
 
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
-            RefPtr<CSSStyleDeclaration> style = CSSMutableStyleDeclaration::create();
-            ExceptionCode ec;
-            style->setProperty("direction", writingDirection == NSWritingDirectionLeftToRight ? "LTR" : "RTL", ec);
-            [menuItem setState:frame->editor()->selectionHasStyle(style.get())];
+            String direction = writingDirection == NSWritingDirectionLeftToRight ? "ltr" : "rtl";
+            [menuItem setState:frame->editor()->selectionHasStyle(CSSPropertyDirection, direction)];
         }
         return [self _canEdit];
     }
@@ -2724,12 +2714,9 @@ WEBCORE_COMMAND(yankAndSelect)
     if (action == @selector(toggleBaseWritingDirection:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
-            RefPtr<CSSStyleDeclaration> style = CSSMutableStyleDeclaration::create();
-            ExceptionCode ec;
-            style->setProperty("direction", "RTL", ec);
             // Take control of the title of the menu item instead of just checking/unchecking it because
             // a check would be ambiguous.
-            [menuItem setTitle:frame->editor()->selectionHasStyle(style.get())
+            [menuItem setTitle:frame->editor()->selectionHasStyle(CSSPropertyDirection, "rtl")
                 ? UI_STRING_INTERNAL("Left to Right", "Left to Right context menu item")
                 : UI_STRING_INTERNAL("Right to Left", "Right to Left context menu item")];
         }
