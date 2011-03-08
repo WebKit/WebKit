@@ -1,3 +1,22 @@
+2011-03-08  Adam Roben  <aroben@apple.com>
+
+        Set svn:mime-type to text/css for all Inspector CSS files
+
+        This will cause them to be served with the correct MIME type from svn.webkit.org's web
+        interface.
+
+        Rubber-stamped by Tim Hatcher.
+
+        * inspector/front-end/audits.css: Added property svn:mime-type.
+        * inspector/front-end/goToLineDialog.css: Added property svn:mime-type.
+        * inspector/front-end/heapProfiler.css: Added property svn:mime-type.
+        * inspector/front-end/helpScreen.css: Added property svn:mime-type.
+        * inspector/front-end/inspector.css: Added property svn:mime-type.
+        * inspector/front-end/inspectorSyntaxHighlight.css: Added property svn:mime-type.
+        * inspector/front-end/networkPanel.css: Added property svn:mime-type.
+        * inspector/front-end/popover.css: Added property svn:mime-type.
+        * inspector/front-end/textViewer.css: Added property svn:mime-type.
+
 2011-03-08  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Steve Block.
