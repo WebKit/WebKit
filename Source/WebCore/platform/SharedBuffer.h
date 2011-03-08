@@ -45,6 +45,10 @@ class NSData;
 
 #endif
 
+#if PLATFORM(QT)
+#include "QtByteBlock.h"
+#endif
+
 namespace WebCore {
     
 class PurgeableBuffer;
@@ -72,6 +76,9 @@ public:
 #if USE(CF)
     CFDataRef createCFData();
     static PassRefPtr<SharedBuffer> wrapCFData(CFDataRef);
+#endif
+#if PLATFORM(QT)
+    static PassRefPtr<SharedBuffer> wrapQtByteBlock(PassRefPtr<QtByteBlock>);
 #endif
 
     // Calling this function will force internal segmented buffers
@@ -134,6 +141,10 @@ private:
     SharedBuffer(CFDataRef);
     RetainPtr<CFDataRef> m_cfData;
 #endif
+#if PLATFORM(QT)
+    RefPtr<QtByteBlock> m_qtByteBlock;
+#endif
+
 };
     
 }

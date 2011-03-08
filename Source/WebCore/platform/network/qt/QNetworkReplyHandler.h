@@ -24,6 +24,8 @@
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
 
+#include <SharedBuffer.h>
+
 #include "FormData.h"
 
 QT_BEGIN_NAMESPACE
@@ -55,6 +57,8 @@ public:
 
     QNetworkReply* release();
 
+    PassRefPtr<SharedBuffer> bufferedData();
+
 signals:
     void processQueuedItems();
 
@@ -63,6 +67,7 @@ public slots:
     void sendResponseIfNeeded();
     void forwardData();
     void sendQueuedItems();
+    void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
     void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
 
 private:
@@ -85,6 +90,15 @@ private:
     bool m_shouldSendResponse;
     bool m_shouldForwardData;
     int m_redirectionTries;
+
+    // Using the QNetworkAccessManager download buffer feature.
+    bool m_usingZeroCopy;
+
+    // For zerocopy. Holds the download data.
+    RefPtr<QtByteBlock> m_byteBlock;
+
+    // For zerocopy it wraps m_byteBlock, otherwise it holds data normally.
+    RefPtr<SharedBuffer> m_bufferedData;
 };
 
 // Self destructing QIODevice for FormData

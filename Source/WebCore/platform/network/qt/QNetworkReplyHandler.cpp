@@ -31,8 +31,10 @@
 #include <QDateTime>
 #include <QFile>
 #include <QFileInfo>
+#include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QNetworkCookie>
+#include <QSharedPointer>
 #include <qwebframe.h>
 #include <qwebpage.h>
 
@@ -56,6 +58,8 @@
 const QNetworkRequest::Attribute gSynchronousNetworkRequestAttribute = static_cast<QNetworkRequest::Attribute>(QNetworkRequest::HttpPipeliningWasUsedAttribute + 7);
 
 static const int gMaxRecursionLimit = 10;
+
+Q_DECLARE_METATYPE(QSharedPointer<char>)
 
 namespace WebCore {
 
@@ -195,6 +199,7 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
     , m_shouldSendResponse(false)
     , m_shouldForwardData(false)
     , m_redirectionTries(gMaxRecursionLimit)
+    , m_usingZeroCopy(false)
 {
     const ResourceRequest &r = m_resourceHandle->firstRequest();
 
@@ -221,6 +226,9 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
         originatingObject = m_resourceHandle->getInternal()->m_context->originatingObject();
 
     m_request = r.toNetworkRequest(originatingObject);
+
+    // We allow the QNetworkAccessManager to allocate the whole buffer up to a certain size.
+    m_request.setAttribute(QNetworkRequest::MaximumDownloadBufferSizeAttribute, 1024 * 256); // 256 kB.
 
     if (m_loadMode == LoadSynchronously)
         m_request.setAttribute(gSynchronousNetworkRequestAttribute, true);
@@ -275,6 +283,11 @@ QNetworkReply* QNetworkReplyHandler::release()
         m_reply = 0;
     }
     return reply;
+}
+
+PassRefPtr<SharedBuffer> QNetworkReplyHandler::bufferedData()
+{
+     return m_bufferedData;
 }
 
 static bool ignoreHttpError(QNetworkReply* reply, bool receivedData)
@@ -358,6 +371,19 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     ResourceHandleClient* client = m_resourceHandle->client();
     if (!client)
         return;
+
+    // Check if there is a zerocopy buffer.
+    QVariant downloadBufferVariant = m_reply->attribute(QNetworkRequest::DownloadBufferAttribute);
+    QSharedPointer<char> downloadBuffer = downloadBufferVariant.value<QSharedPointer<char> >();
+    if (!downloadBuffer.isNull()) {
+        m_byteBlock = QtByteBlock::create(downloadBuffer);
+        m_bufferedData = SharedBuffer::wrapQtByteBlock(m_byteBlock);
+        m_usingZeroCopy = true;
+    } else {
+        // Use the legacy way of using QNetworkReply as a QIODevice.
+        m_bufferedData = SharedBuffer::create();
+        m_usingZeroCopy = false;
+    }
 
     WTF::String contentType = m_reply->header(QNetworkRequest::ContentTypeHeader).toString();
     WTF::String encoding = extractCharsetFromMediaType(contentType);
@@ -447,6 +473,42 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     client->didReceiveResponse(m_resourceHandle, response);
 }
 
+
+void QNetworkReplyHandler::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
+{
+    m_shouldForwardData = (m_loadMode != LoadNormal);
+    if (m_shouldForwardData)
+        return;
+
+    if (!m_usingZeroCopy)
+        return;
+
+    sendResponseIfNeeded();
+
+    // Don't emit the "Document has moved here" type of HTML.
+    if (m_redirected)
+        return;
+
+    if (!m_resourceHandle)
+        return;
+
+    ResourceHandleClient* client = m_resourceHandle->client();
+    if (!client)
+        return;
+
+    // If the server just closes the connection we get a (0,0) progress but
+    // we did not receive a metaDataChanged() signal before so there is no m_byteBlock.
+    if (!m_byteBlock)
+        return;
+
+    qint64 oldSize = m_byteBlock->size();
+    m_byteBlock->setSize(bytesReceived);
+    m_byteBlock->setCapacity(bytesTotal);
+
+    client->didReceiveData(m_resourceHandle, m_byteBlock->data() + oldSize,
+                           bytesReceived - oldSize, bytesReceived - oldSize);
+}
+
 void QNetworkReplyHandler::forwardData()
 {
     m_shouldForwardData = (m_loadMode != LoadNormal);
@@ -455,6 +517,9 @@ void QNetworkReplyHandler::forwardData()
 
     if (m_reply->bytesAvailable())
         m_responseContainsData = true;
+
+    if (m_usingZeroCopy)
+        return;
 
     sendResponseIfNeeded();
 
@@ -471,8 +536,10 @@ void QNetworkReplyHandler::forwardData()
     if (!client)
         return;
 
-    if (!data.isEmpty())
+    if (!data.isEmpty()) {
         client->didReceiveData(m_resourceHandle, data.constData(), data.length(), data.length() /*FixMe*/);
+        m_bufferedData->append(data.constData(), data.length());
+    }
 }
 
 void QNetworkReplyHandler::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
@@ -579,6 +646,10 @@ void QNetworkReplyHandler::start()
         connect(m_reply, SIGNAL(uploadProgress(qint64, qint64)),
                 this, SLOT(uploadProgress(qint64, qint64)), SIGNAL_CONN);
     }
+
+    // For zero copy.
+    connect(m_reply, SIGNAL(downloadProgress(qint64, qint64)),
+            this, SLOT(downloadProgress(qint64, qint64)), SIGNAL_CONN);
 
     // Make this a direct function call once we require 4.6.1+.
     connect(this, SIGNAL(processQueuedItems()),

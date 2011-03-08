@@ -1961,6 +1961,7 @@ HEADERS += \
     platform/PlatformTouchPoint.h \
     platform/PopupMenu.h \
     platform/qt/ClipboardQt.h \
+    platform/qt/QtByteBlock.h \
     platform/qt/QWebPageClient.h \
     platform/qt/QtStyleOptionWebComboBox.h \
     platform/qt/RenderThemeQt.h \
@@ -2494,6 +2495,7 @@ SOURCES += \
     platform/qt/PlatformScreenQt.cpp \
     platform/qt/PlatformTouchEventQt.cpp \
     platform/qt/PlatformTouchPointQt.cpp \
+    platform/qt/QtByteBlock.cpp \
     platform/qt/RenderThemeQt.cpp \
     platform/qt/ScrollbarQt.cpp \
     platform/qt/ScrollbarThemeQt.cpp \

@@ -239,7 +239,7 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
     return segment == segments - 1 ? segmentedSize - position : segmentSize - positionInSegment;
 }
 
-#if !USE(CF) || PLATFORM(QT)
+#if !USE(CF) && !PLATFORM(QT)
 
 inline void SharedBuffer::clearPlatformData()
 {

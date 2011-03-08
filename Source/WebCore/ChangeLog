@@ -1,3 +1,35 @@
+2011-03-08  Markus Goetz  <guruz@guruz.de>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Use the QNetworkAccessManager zerocopy feature
+        https://bugs.webkit.org/show_bug.cgi?id=50082
+
+        The feature will be introduced in Qt 4.8.
+        This patch is backwards compatible with Qt 4.7.
+
+        * WebCore.pro:
+        * platform/SharedBuffer.cpp:
+        * platform/SharedBuffer.h:
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::bufferedData):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        (WebCore::QNetworkReplyHandler::downloadProgress):
+        (WebCore::QNetworkReplyHandler::forwardData):
+        (WebCore::QNetworkReplyHandler::start):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::supportsBufferedData):
+        (WebCore::ResourceHandle::bufferedData):
+        * platform/qt/SharedBufferQt.cpp:
+        (WebCore::SharedBuffer::wrapQtByteBlock):
+        (WebCore::SharedBuffer::hasPlatformData):
+        (WebCore::SharedBuffer::platformData):
+        (WebCore::SharedBuffer::platformDataSize):
+        (WebCore::SharedBuffer::maybeTransferPlatformData):
+        (WebCore::SharedBuffer::clearPlatformData):
+
 2011-03-08  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
