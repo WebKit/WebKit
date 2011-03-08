@@ -2624,6 +2624,7 @@ BUGCR61739 WIN LINUX DEBUG : animations/suspend-resume-animation-events.html = C
 // New tests added with http://trac.webkit.org/changeset/72472 and further.
 // See https://bugs.webkit.org/show_bug.cgi?id=51982 for more info.
 BUGWK52509 LINUX WIN : fast/canvas/canvas-strokeRect-gradient-shadow.html = TEXT
+BUGWK52509 : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
 BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-gradient-shadow.html = TEXT
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-pattern-shadow.html = TEXT
