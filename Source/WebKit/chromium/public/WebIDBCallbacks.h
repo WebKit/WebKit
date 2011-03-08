@@ -49,8 +49,8 @@ public:
     virtual void onSuccess(WebIDBCursor*) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(WebIDBDatabase*) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(const WebIDBKey&) { WEBKIT_ASSERT_NOT_REACHED(); }
+    // FIXME: remove after Webkit roll.
     virtual void onSuccess(WebIDBIndex*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess(WebIDBObjectStore*) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(WebIDBTransaction*) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onBlocked() { WEBKIT_ASSERT_NOT_REACHED(); }

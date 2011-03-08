@@ -1,3 +1,19 @@
+2011-03-08  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Steve Block.
+
+        IDBCallbacks::onsuccess(IDBIndex*) is unused and should be removed.
+        https://bugs.webkit.org/show_bug.cgi?id=55938
+
+        The IndexedDatabase specification changed and IDBIndex objects are no
+        longer created asynchronously. We therefore no longer need this method.
+
+        No new tests, just cleanup.
+
+        * storage/IDBCallbacks.h:
+        * storage/IDBRequest.cpp:
+        * storage/IDBRequest.h:
+
 2011-03-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80551.

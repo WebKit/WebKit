@@ -1,3 +1,17 @@
+2011-03-08  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Steve Block.
+
+        IDBCallbacks::onsuccess(IDBIndex*) is unused and should be removed.
+        https://bugs.webkit.org/show_bug.cgi?id=55938
+
+        * public/WebIDBCallbacks.h:
+        * src/IDBCallbacksProxy.cpp:
+        * src/IDBCallbacksProxy.h:
+        * src/WebIDBCallbacksImpl.cpp:
+        * src/WebIDBCallbacksImpl.h:
+        * src/WebIDBObjectStoreImpl.cpp:
+
 2011-03-07  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by David Levin.

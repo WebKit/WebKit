@@ -39,7 +39,6 @@
 #include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"
 #include "IDBEventDispatcher.h"
-#include "IDBIndex.h"
 #include "IDBPendingTransactionMonitor.h"
 #include "IDBTransaction.h"
 
@@ -203,11 +202,6 @@ void IDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
 
     m_result = IDBAny::create(idbDatabase.release());
     enqueueEvent(createSuccessEvent());
-}
-
-void IDBRequest::onSuccess(PassRefPtr<IDBIndexBackendInterface> backend)
-{
-    ASSERT_NOT_REACHED(); // FIXME: This method should go away.
 }
 
 void IDBRequest::onSuccess(PassRefPtr<IDBKey> idbKey)

@@ -45,7 +45,6 @@ public:
     virtual void onSuccess(WebKit::WebIDBCursor*);
     virtual void onSuccess(WebKit::WebIDBDatabase*);
     virtual void onSuccess(const WebKit::WebIDBKey&);
-    virtual void onSuccess(WebKit::WebIDBIndex*);
     virtual void onSuccess(WebKit::WebIDBTransaction*);
     virtual void onSuccess(const WebKit::WebSerializedScriptValue&);
     virtual void onBlocked();

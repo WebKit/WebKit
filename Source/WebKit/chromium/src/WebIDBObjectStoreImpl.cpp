@@ -28,6 +28,7 @@
 
 #include "DOMStringList.h"
 #include "IDBCallbacksProxy.h"
+#include "IDBIndexBackendInterface.h"
 #include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "WebIDBIndexImpl.h"
