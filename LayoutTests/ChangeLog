@@ -1,3 +1,13 @@
+2011-03-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48540, support the text-orientation CSS property.
+        Update Qt specific expected results after r80582.
+
+        * platform/qt/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2011-03-08  Joe Wild  <joseph.wild@nokia.com>
 
         Reviewed by Csaba Osztrogonác.
