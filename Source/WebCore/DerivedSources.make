@@ -131,6 +131,8 @@ DOM_CLASSES = \
     CustomEvent \
     DataGridColumn \
     DataGridColumnList \
+    DataTransferItem \
+    DataTransferItems \
     DedicatedWorkerContext \
     DOMApplicationCache \
     DOMCoreException \
@@ -496,6 +498,7 @@ DOM_CLASSES = \
     SVGZoomAndPan \
     SVGZoomEvent \
     Screen \
+    StringCallback \
     StyleMedia \
     StyleSheet \
     StyleSheetList \

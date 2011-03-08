@@ -1,3 +1,11 @@
+2011-03-07  Daniel Cheng  <dcheng@chromium.org>
+
+        Unreviewed.
+
+        Final build fix for r80536.
+
+        * DerivedSources.make:
+
 2011-03-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kent Tamura.
