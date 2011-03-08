@@ -1,3 +1,11 @@
+2011-03-07  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        Update fast/text/large-text-composed-char-dos.html
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-07  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
