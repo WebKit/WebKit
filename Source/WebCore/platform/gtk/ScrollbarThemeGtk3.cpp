@@ -135,40 +135,16 @@ void ScrollbarThemeGtk::paintButton(GraphicsContext* context, Scrollbar* scrollb
         flags |= GTK_STATE_FLAG_INSENSITIVE;
     gtk_style_context_set_state(m_context, static_cast<GtkStateFlags>(flags));
 
-    guint sides = gtk_style_context_get_junction_sides(m_context);
-    if (scrollbar->orientation() == VerticalScrollbar)
-        sides &= ~(GTK_JUNCTION_TOP | GTK_JUNCTION_BOTTOM);
-    else
-        sides &= ~(GTK_JUNCTION_LEFT | GTK_JUNCTION_RIGHT);
-
-    switch (part) {
-    case BackButtonStartPart:
-        sides |= (scrollbar->orientation() == VerticalScrollbar) ? GTK_JUNCTION_BOTTOM : GTK_JUNCTION_RIGHT;
-        break;
-    case BackButtonEndPart:
-    case ForwardButtonEndPart:
-        sides |= (scrollbar->orientation() == VerticalScrollbar) ?
-                GTK_JUNCTION_TOP | GTK_JUNCTION_BOTTOM : GTK_JUNCTION_RIGHT | GTK_JUNCTION_LEFT;
-        break;
-    case ForwardButtonStartPart:
-        sides |= (scrollbar->orientation() == VerticalScrollbar) ? GTK_JUNCTION_TOP : GTK_JUNCTION_LEFT;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-    gtk_style_context_set_junction_sides(m_context, static_cast<GtkJunctionSides>(sides));
     gtk_style_context_add_class(m_context, GTK_STYLE_CLASS_BUTTON);
-
     gtk_render_background(m_context, context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
     gtk_render_frame(m_context, context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
 
     gfloat arrowScaling;
     gtk_style_context_get_style(m_context, "arrow-scaling", &arrowScaling, NULL);
 
-    IntSize arrowSize = rect.size();
-    arrowSize.scale(arrowScaling);
-    FloatPoint arrowPoint(rect.x() + (rect.width() - arrowSize.width()) / 2,
-                          rect.y() + (rect.height() - arrowSize.height()) / 2);
+    double arrowSize = std::min(rect.width(), rect.height()) * arrowScaling;
+    FloatPoint arrowPoint(rect.x() + (rect.width() - arrowSize) / 2,
+                          rect.y() + (rect.height() - arrowSize) / 2);
 
     if (flags & GTK_STATE_FLAG_ACTIVE) {
         gint arrowDisplacementX, arrowDisplacementY;
@@ -179,16 +155,14 @@ void ScrollbarThemeGtk::paintButton(GraphicsContext* context, Scrollbar* scrollb
         arrowPoint.move(arrowDisplacementX, arrowDisplacementY);
     }
 
-    gdouble angle, size;
+    gdouble angle;
     if (scrollbar->orientation() == VerticalScrollbar) {
-        size = arrowSize.width();
         angle = (part == ForwardButtonEndPart || part == ForwardButtonStartPart) ? G_PI : 0;
     } else {
-        size = arrowSize.height();
         angle = (part == ForwardButtonEndPart || part == ForwardButtonStartPart) ? G_PI / 2 : 3 * (G_PI / 2);
     }
 
-    gtk_render_arrow(m_context, context->platformContext(), angle, arrowPoint.x(), arrowPoint.y(), size);
+    gtk_render_arrow(m_context, context->platformContext(), angle, arrowPoint.x(), arrowPoint.y(), arrowSize);
 
     gtk_style_context_restore(m_context);
 }

@@ -2,6 +2,19 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Do not set juntion sides on scrollbar stepper buttons
+        https://bugs.webkit.org/show_bug.cgi?id=55868
+
+        Fixes rendering of steppers for themes using rounded stepper
+        buttons on scrollbars like Adwaita.
+
+        * platform/gtk/ScrollbarThemeGtk3.cpp:
+        (WebCore::ScrollbarThemeGtk::paintButton):
+
+2011-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Use doubles instead of integers for coordinates when rendering arrows
         https://bugs.webkit.org/show_bug.cgi?id=55866
 
