@@ -1,3 +1,17 @@
+2011-03-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Import jquery test suite
+        https://bugs.webkit.org/show_bug.cgi?id=55911
+
+        This test suite is imported from https://github.com/jquery/jquery.  I
+        tried to make as few changes as possible in case we want to merge with
+        upstream in the future.  The test suite was original licensed under the
+        MIT license, which is compatible with WebKit's license.
+
+        * jquery: Added.
+
 2011-03-07  Daniel Cheng  <dcheng@chromium.org>
 
         Unreviewed.
