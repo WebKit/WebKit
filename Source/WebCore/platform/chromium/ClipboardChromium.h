@@ -80,6 +80,8 @@ namespace WebCore {
 
         virtual bool hasData();
 
+        virtual PassRefPtr<DataTransferItems> items();
+
     private:
         ClipboardChromium(ClipboardType, PassRefPtr<ChromiumDataObject>, ClipboardAccessPolicy, Frame*);
 

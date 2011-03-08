@@ -90,6 +90,7 @@ TestShell::TestShell(bool testShellMode)
     , m_stressDeopt(false)
     , m_dumpWhenFinished(true)
 {
+    WebRuntimeFeatures::enableDataTransferItems(true);
     WebRuntimeFeatures::enableGeolocation(true);
     WebRuntimeFeatures::enableIndexedDatabase(true);
     WebRuntimeFeatures::enableFileSystem(true);

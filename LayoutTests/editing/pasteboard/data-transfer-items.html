@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<body oncopy="copy(event)" onpaste="paste(event)">
+<div>This file tests the basic functionality and properties of DataTransferItems. This test requires DRT.</div>
+
+<script src="../editing.js"></script>
+<script>
+var savedDataTransferItems = null;
+var savedDataTransferItem = null;
+
+function handleEvent(data)
+{
+    console.log(data);
+}
+
+function copy(ev)
+{
+    var items = event.clipboardData.items;
+    console.log('Populating DataTransferItems...');
+    items.add('Hello World!', 'text/plain');
+    items.add('<b>Hello World!', 'text/html');
+
+    // Check that an exception is properly raised when attempting to add a duplicate string type.
+    try {
+        items.add('Moo', 'text/plain');
+    } catch (e) {
+        console.log('Caught exception "' + e + '" as expected.');
+    }
+
+    // Check that the container didn't change.
+    console.log('Verifying contents of DataTransferItems...');
+    console.log('items.length: ' + items.length);
+    console.log('items[0].kind: ' + items[0].kind);
+    console.log('items[0].type: ' + items[0].type);
+    console.log('items[1].kind: ' + items[1].kind);
+    console.log('items[1].type: ' + items[1].type);
+    items[0].getAsString(function (data) { handleEvent('items[0] value: ' + data); });
+    items[1].getAsString(function (data) { handleEvent('items[1] value: ' + data); });
+
+    console.log('Checking if items past the end of the collection can be indexed:');
+    console.log('items[2]: ' + items[2]);
+
+    savedDataTransferItems = items;
+    savedDataTransferItem = items[0];
+}
+
+function paste(ev)
+{
+    var items = event.clipboardData.items;
+    var originalLength = items.length;
+    console.log('Checking that a read-only DataTransferItems cannot be mutated...');
+    // Should be immutable.
+    items.add('Hello World!', 'text/plain');
+    console.log('items.length: ' + items.length);
+    console.log('items[0]: ' + items[0]); // Shouldn't exist.
+}
+
+function runTest() {
+    if (!window.layoutTestController)
+        return;
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+
+    copyCommand();
+    pasteCommand();
+
+    var failed = false;
+    console.log('Testing if DataTransferItems can be accessed outside an event handler...');
+    if (savedDataTransferItems.length != 0) {
+        failed = true;
+        console.log('DataTransferItems.length non-zero outside event handler!');
+    }
+    savedDataTransferItems.add('Security?', 'text/foo');
+    if (savedDataTransferItems.length != 0) {
+        failed = true;
+        console.log('DataTransferItems mutated outside event handler!');
+    }
+    if (savedDataTransferItems[0]) {
+        failed = true;
+        console.log('DataTransferItem accessed outside event handler!');
+    }
+    if (savedDataTransferItem.kind != '') {
+        failed = true;
+        console.log('DataTransferItem.kind accessible outside event handler!');
+    }
+    if (savedDataTransferItem.type != '') {
+        failed = true;
+        console.log('DataTransferItem.type accessible outside event handler!');
+    }
+    savedDataTransferItem.getAsString(function (data) {
+        failed = true;
+        console.log('getAsString called back outside event handler!');
+    });
+
+    window.setTimeout(function () {
+        if (failed)
+            console.log('FAILED');
+        else
+            console.log('PASSED');
+        window.layoutTestController.notifyDone();
+    }, 0);
+}
+
+runTest();
+
+</script>
+</body>
+</html>

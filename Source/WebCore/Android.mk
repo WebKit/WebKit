@@ -114,6 +114,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/ContainerNode.cpp \
 	dom/DOMImplementation.cpp \
 	dom/DOMStringList.cpp \
+	dom/DataTransferItem.cpp \
 	dom/DecodedDataDocumentParser.cpp \
 	dom/DeviceMotionController.cpp \
 	dom/DeviceMotionData.cpp \
@@ -176,6 +177,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/SpaceSplitString.cpp \
 	dom/StaticHashSetNodeList.cpp \
 	dom/StaticNodeList.cpp \
+	dom/StringCallback.cpp \
 	dom/StyleElement.cpp \
 	dom/StyledElement.cpp \
 	dom/TagNodeList.cpp \

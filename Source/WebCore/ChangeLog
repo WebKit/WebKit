@@ -1,3 +1,69 @@
+2011-03-07  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add support for DataTransferItems
+        https://bugs.webkit.org/show_bug.cgi?id=55115
+
+        This patch adds stubs for DataTransferItems/DataTransferItem as well as implementing the
+        basic functionality on the Chromium port. With the exception of DataTransferItem::getAsFile,
+        all functionality on the DataTransferItems collection has been implemented.
+        This change does not actually hook up DataTransferItems to reflect the actual contents of a
+        drop/paste operation or to allow mutation of data in a copy/drag start yet. That will be
+        enabled via several followup patches.
+
+        Test: editing/pasteboard/data-transfer-items.html
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setDataTransferItemsEnabled):
+        (WebCore::RuntimeEnabledFeatures::dataTransferItemsEnabled):
+        * bindings/scripts/CodeGeneratorV8.pm: Do not emit an #include line for DOMString, since it's built-in.
+        * dom/Clipboard.h:
+        (WebCore::Clipboard::policy):
+        * dom/Clipboard.idl:
+        * dom/DataTransferItem.cpp: Added.
+        * dom/DataTransferItem.h: Added.
+        (WebCore::DataTransferItem::~DataTransferItem):
+        * dom/DataTransferItem.idl: Added.
+        * dom/DataTransferItems.h: Added.
+        (WebCore::DataTransferItems::~DataTransferItems):
+        * dom/DataTransferItems.idl: Added.
+        * dom/StringCallback.cpp: Added.
+        (WebCore::StringCallback::scheduleCallback):
+        * dom/StringCallback.h: Added.
+        (WebCore::StringCallback::~StringCallback):
+        * dom/StringCallback.idl: Added.
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::items):
+        * platform/chromium/ClipboardChromium.h:
+        * platform/chromium/DataTransferItemChromium.cpp: Added.
+        (WebCore::DataTransferItemChromium::create):
+        (WebCore::DataTransferItemChromium::DataTransferItemChromium):
+        (WebCore::DataTransferItemChromium::kind):
+        (WebCore::DataTransferItemChromium::type):
+        (WebCore::DataTransferItemChromium::getAsString):
+        * platform/chromium/DataTransferItemChromium.h: Added.
+        * platform/chromium/DataTransferItemsChromium.cpp: Added.
+        (WebCore::DataTransferItemsChromium::create):
+        (WebCore::DataTransferItemsChromium::DataTransferItemsChromium):
+        (WebCore::DataTransferItemsChromium::length):
+        (WebCore::DataTransferItemsChromium::item):
+        (WebCore::DataTransferItemsChromium::deleteItem):
+        (WebCore::DataTransferItemsChromium::clear):
+        (WebCore::DataTransferItemsChromium::add):
+        * platform/chromium/DataTransferItemsChromium.h: Added.
+
 2011-03-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

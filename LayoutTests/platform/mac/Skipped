@@ -302,3 +302,6 @@ media/video-controls-in-media-document.html
 # Non-premultiplied-alpha currently broken on mac.
 # https://bugs.webkit.org/show_bug.cgi?id=55509
 compositing/webgl/webgl-nonpremultiplied-blend.html
+
+# DataTransferItems is not yet implemented.
+editing/pasteboard/data-transfer-items.html

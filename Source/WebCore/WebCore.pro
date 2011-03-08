@@ -2692,6 +2692,16 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBTransaction.cpp
 }
 
+contains(DEFINES, ENABLE_DATA_TRANSFER_ITEMS=1) {
+    HEADERS += \
+        dom/DataTransferItem.h \
+        dom/DataTransferItems.h \
+        dom/StringCallback.h
+    SOURCES += \
+        dom/DataTransferItem.cpp \
+        dom/StringCallback.cpp
+}
+
 contains(DEFINES, ENABLE_DOM_STORAGE=1) {
     HEADERS += \
         storage/AbstractDatabase.h \

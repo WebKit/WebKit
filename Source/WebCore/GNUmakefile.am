@@ -4016,10 +4016,23 @@ endif # END ENABLE_DATALIST
 
 # ----
 # HTML5 data transfer items support
-#-----
+# ----
 if ENABLE_DATA_TRANSFER_ITEMS
 FEATURE_DEFINES += ENABLE_DATA_TRANSFER_ITEMS=1
 webcore_cppflags += -DENABLE_DATA_TRANSFER_ITEMS=1
+webcore_built_sources += \
+        DerivedSources/WebCore/JSDataTransferItem.cpp \
+        DerivedSources/WebCore/JSDataTransferItem.h \
+        DerivedSources/WebCore/JSDataTransferItems.cpp \
+        DerivedSources/WebCore/JSDataTransferItems.h \
+        DerivedSources/WebCore/JSStringCallback.cpp \
+        DerivedSources/WebCore/JSStringCallback.h
+webcore_sources += \
+	Source/WebCore/dom/DataTransferItem.cpp \
+	Source/WebCore/dom/DataTransferItem.h \
+	Source/WebCore/dom/DataTransferItems.h \
+	Source/WebCore/dom/StringCallback.cpp \
+	Source/WebCore/dom/StringCallback.h
 endif # END ENABLE_DATA_TRANSFER_ITEMS
 
 # ----

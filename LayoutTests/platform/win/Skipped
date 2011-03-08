@@ -1168,3 +1168,6 @@ fast/xmlhttprequest/xmlhttprequest-responsetype-arraybuffer.html
 # https://bugs.webkit.org/show_bug.cgi?id=55921
 # Windows port doesn't support HTML in pastes.
 editing/pasteboard/onpaste-text-html-types.html
+
+# DataTransferItems is not yet implemented.
+editing/pasteboard/data-transfer-items.html

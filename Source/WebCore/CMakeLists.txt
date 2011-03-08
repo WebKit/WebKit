@@ -1573,6 +1573,18 @@ IF (ENABLE_DATABASE)
     )
 ENDIF ()
 
+IF (ENABLE_DATA_TRANSFER_ITEMS)
+    LIST(APPEND WebCore_IDL_FILES
+        dom/DataTransferItem.idl
+        dom/DataTransferItems.idl
+        dom/StringCallback.idl
+    )
+    LIST(APPEND WebCore_SOURCES
+        dom/DataTransferItem.cpp
+        dom/StringCallback.cpp
+    )
+ENDIF ()
+
 IF (ENABLE_MATHML)
     LIST(APPEND WebCore_SOURCES
         mathml/MathMLElement.cpp

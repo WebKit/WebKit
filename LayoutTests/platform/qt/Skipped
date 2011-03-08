@@ -108,6 +108,9 @@ inspector/debugger/live-edit.html
 # This port doesn't support v8 i18n extension.
 fast/js/i18n-bindings-locale.html
 
+# DataTransferItems is not yet implemented.
+editing/pasteboard/data-transfer-items.html
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #

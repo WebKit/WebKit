@@ -1661,9 +1661,14 @@
 		7EE6847012D26E3800E79415 /* ResourceResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845D12D26E3800E79415 /* ResourceResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EE6847112D26E3800E79415 /* ResourceResponseCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845E12D26E3800E79415 /* ResourceResponseCFNet.cpp */; };
 		7EE6847512D26E7000E79415 /* ResourceLoaderCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6847412D26E7000E79415 /* ResourceLoaderCFNet.cpp */; };
+		8102C5881325BB1100DDE67A /* StringCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8102C5871325BB1100DDE67A /* StringCallback.cpp */; };
+		815E6167132587AA00B622B0 /* DataTransferItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 815E6166132587AA00B622B0 /* DataTransferItem.cpp */; };
 		81A7325E1210189B00FC0D9E /* IDBCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 81A7325D1210189B00FC0D9E /* IDBCursor.h */; };
 		81A73260121018A400FC0D9E /* IDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81A7325F121018A400FC0D9E /* IDBCursor.cpp */; };
 		81A73278121019E100FC0D9E /* IDBCursorBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 81A73277121019E100FC0D9E /* IDBCursorBackendImpl.h */; };
+		81AC5999131636E60009A7E0 /* DataTransferItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 81AC5997131636E60009A7E0 /* DataTransferItem.h */; };
+		81AC599A131636E60009A7E0 /* DataTransferItems.h in Headers */ = {isa = PBXBuildFile; fileRef = 81AC5998131636E60009A7E0 /* DataTransferItems.h */; };
+		81AC6C36131C57D30009A7E0 /* StringCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 81AC6C35131C57D30009A7E0 /* StringCallback.h */; };
 		81BE209811F4AB8D00915DFA /* IDBCursorBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81BE209311F4AB8D00915DFA /* IDBCursorBackendImpl.cpp */; };
 		81BE209911F4AB8D00915DFA /* IDBCursorBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 81BE209411F4AB8D00915DFA /* IDBCursorBackendInterface.h */; };
 		81BE20D211F4BC3200915DFA /* JSIDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81BE20A711F4B66F00915DFA /* JSIDBCursor.cpp */; };
@@ -8155,9 +8160,17 @@
 		7EE6845D12D26E3800E79415 /* ResourceResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceResponse.h; sourceTree = "<group>"; };
 		7EE6845E12D26E3800E79415 /* ResourceResponseCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceResponseCFNet.cpp; sourceTree = "<group>"; };
 		7EE6847412D26E7000E79415 /* ResourceLoaderCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceLoaderCFNet.cpp; path = cf/ResourceLoaderCFNet.cpp; sourceTree = "<group>"; };
+		8102C5871325BB1100DDE67A /* StringCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringCallback.cpp; sourceTree = "<group>"; };
+		815E6166132587AA00B622B0 /* DataTransferItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataTransferItem.cpp; sourceTree = "<group>"; };
 		81A7325D1210189B00FC0D9E /* IDBCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursor.h; sourceTree = "<group>"; };
 		81A7325F121018A400FC0D9E /* IDBCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursor.cpp; sourceTree = "<group>"; };
 		81A73277121019E100FC0D9E /* IDBCursorBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorBackendImpl.h; sourceTree = "<group>"; };
+		81AC5997131636E60009A7E0 /* DataTransferItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataTransferItem.h; sourceTree = "<group>"; };
+		81AC5998131636E60009A7E0 /* DataTransferItems.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataTransferItems.h; sourceTree = "<group>"; };
+		81AC5AE81316392E0009A7E0 /* DataTransferItem.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DataTransferItem.idl; sourceTree = "<group>"; };
+		81AC5AE91316392E0009A7E0 /* DataTransferItems.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DataTransferItems.idl; sourceTree = "<group>"; };
+		81AC6C34131C57C20009A7E0 /* StringCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StringCallback.idl; sourceTree = "<group>"; };
+		81AC6C35131C57D30009A7E0 /* StringCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringCallback.h; sourceTree = "<group>"; };
 		81BE209311F4AB8D00915DFA /* IDBCursorBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursorBackendImpl.cpp; sourceTree = "<group>"; };
 		81BE209411F4AB8D00915DFA /* IDBCursorBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorBackendInterface.h; sourceTree = "<group>"; };
 		81BE209C11F4ABBD00915DFA /* IDBCursor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBCursor.idl; sourceTree = "<group>"; };
@@ -19021,6 +19034,11 @@
 				62CD32561157E57C0063B0A7 /* CustomEvent.cpp */,
 				62CD32571157E57C0063B0A7 /* CustomEvent.h */,
 				62CD32581157E57C0063B0A7 /* CustomEvent.idl */,
+				815E6166132587AA00B622B0 /* DataTransferItem.cpp */,
+				81AC5997131636E60009A7E0 /* DataTransferItem.h */,
+				81AC5998131636E60009A7E0 /* DataTransferItems.h */,
+				81AC5AE81316392E0009A7E0 /* DataTransferItem.idl */,
+				81AC5AE91316392E0009A7E0 /* DataTransferItems.idl */,
 				BC64641B11D7F416006455B0 /* DatasetDOMStringMap.cpp */,
 				BC64641A11D7F416006455B0 /* DatasetDOMStringMap.h */,
 				A8C228A011D5722E00D5A7D3 /* DecodedDataDocumentParser.cpp */,
@@ -19215,6 +19233,9 @@
 				CEA3949B11D45CDA003094CF /* StaticHashSetNodeList.h */,
 				BC7FA62C0D1F0EFF00DB22A9 /* StaticNodeList.cpp */,
 				BC7FA62B0D1F0EFF00DB22A9 /* StaticNodeList.h */,
+				8102C5871325BB1100DDE67A /* StringCallback.cpp */,
+				81AC6C35131C57D30009A7E0 /* StringCallback.h */,
+				81AC6C34131C57C20009A7E0 /* StringCallback.idl */,
 				A8C4A7EC09D563270003AC8D /* StyledElement.cpp */,
 				A8C4A7EB09D563270003AC8D /* StyledElement.h */,
 				AA4C3A740B2B1679002334A2 /* StyleElement.cpp */,
@@ -19793,6 +19814,8 @@
 				BC2272AD0E82E8F300E7F975 /* CursorList.h in Headers */,
 				62CD325A1157E57C0063B0A7 /* CustomEvent.h in Headers */,
 				A8CB413E0E8633FD0032C4F0 /* DashArray.h in Headers */,
+				81AC5999131636E60009A7E0 /* DataTransferItem.h in Headers */,
+				81AC599A131636E60009A7E0 /* DataTransferItems.h in Headers */,
 				A80E6D0B0A1989CA007FB8C5 /* DashboardRegion.h in Headers */,
 				5196116B0CAC56570010A80C /* Database.h in Headers */,
 				51A45B560CAD7FD7000D2BE9 /* DatabaseAuthorizer.h in Headers */,
@@ -22075,6 +22098,7 @@
 				93B2D8160F9920D2006AE6B2 /* SuddenTermination.h in Headers */,
 				97C078501165D5BE003A32EF /* SuffixTree.h in Headers */,
 				62C1217D11AB9E77003C462C /* SuspendableTimer.h in Headers */,
+				81AC6C36131C57D30009A7E0 /* StringCallback.h in Headers */,
 				B22279740D00BF220071B782 /* SVGAElement.h in Headers */,
 				65653F2E0D9727D200CA9723 /* SVGAltGlyphElement.h in Headers */,
 				B22279770D00BF220071B782 /* SVGAngle.h in Headers */,
@@ -25196,6 +25220,8 @@
 				593D3EAD132532840057E7EE /* JavaMethod.cpp in Sources */,
 				598D77DD132541EE00761B22 /* JavaArrayJSC.cpp in Sources */,
 				598D77E11325420400761B22 /* JavaFieldJSC.cpp in Sources */,
+				815E6167132587AA00B622B0 /* DataTransferItem.cpp in Sources */,
+				8102C5881325BB1100DDE67A /* StringCallback.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -152,6 +152,22 @@ bool WebRuntimeFeatures::isApplicationCacheEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableDataTransferItems(bool enable)
+{
+#if ENABLE(DATA_TRANSFER_ITEMS)
+    RuntimeEnabledFeatures::setDataTransferItemsEnabled(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isDataTransferItemsEnabled()
+{
+#if ENABLE(DATA_TRANSFER_ITEMS)
+    return RuntimeEnabledFeatures::dataTransferItemsEnabled();
+#else
+    return false;
+#endif
+}
+
 void WebRuntimeFeatures::enableGeolocation(bool enable)
 {
 #if ENABLE(GEOLOCATION)

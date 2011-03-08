@@ -42,6 +42,8 @@ module core {
         [RequiresAllArguments] boolean setData(in DOMString type, in DOMString data);
         [Custom] void setDragImage(in HTMLImageElement image, in long x, in long y)
             raises(DOMException);
+
+        readonly attribute [Conditional=DATA_TRANSFER_ITEMS, EnabledAtRuntime=DataTransferItems] DataTransferItems items;
     };
 
 }

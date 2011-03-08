@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: line 19: Populating DataTransferItems...
+CONSOLE MESSAGE: line 27: Caught exception "Error: INVALID_STATE_ERR: DOM Exception 11" as expected.
+CONSOLE MESSAGE: line 31: Verifying contents of DataTransferItems...
+CONSOLE MESSAGE: line 32: items.length: 2
+CONSOLE MESSAGE: line 33: items[0].kind: string
+CONSOLE MESSAGE: line 34: items[0].type: text/plain
+CONSOLE MESSAGE: line 35: items[1].kind: string
+CONSOLE MESSAGE: line 36: items[1].type: text/html
+CONSOLE MESSAGE: line 40: Checking if items past the end of the collection can be indexed:
+CONSOLE MESSAGE: line 41: items[2]: undefined
+CONSOLE MESSAGE: line 51: Checking that a read-only DataTransferItems cannot be mutated...
+CONSOLE MESSAGE: line 54: items.length: 0
+CONSOLE MESSAGE: line 55: items[0]: undefined
+CONSOLE MESSAGE: line 68: Testing if DataTransferItems can be accessed outside an event handler...
+CONSOLE MESSAGE: line 13: items[0] value: Hello World!
+CONSOLE MESSAGE: line 13: items[1] value: <b>Hello World!
+CONSOLE MESSAGE: line 99: PASSED
+This file tests the basic functionality and properties of DataTransferItems. This test requires DRT.

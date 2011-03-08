@@ -1,3 +1,15 @@
+2011-03-07  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add support for DataTransferItems
+        https://bugs.webkit.org/show_bug.cgi?id=55115
+
+        Enable data transfer items in DRT.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+
 2011-03-06  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.

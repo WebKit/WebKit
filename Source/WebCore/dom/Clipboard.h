@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+    class DataTransferItems;
     class DragData;
     class FileList;
     class Frame;
@@ -84,6 +85,7 @@ namespace WebCore {
         virtual bool hasData() = 0;
         
         void setAccessPolicy(ClipboardAccessPolicy);
+        ClipboardAccessPolicy policy() const { return m_policy; }
 
         DragOperation sourceOperation() const;
         DragOperation destinationOperation() const;
@@ -91,11 +93,14 @@ namespace WebCore {
         void setDestinationOperation(DragOperation);
         
         void setDragHasStarted() { m_dragStarted = true; }
+
+#if ENABLE(DATA_TRANSFER_ITEMS)
+        virtual PassRefPtr<DataTransferItems> items() = 0;
+#endif
         
     protected:
         Clipboard(ClipboardAccessPolicy, ClipboardType);
 
-        ClipboardAccessPolicy policy() const { return m_policy; }
         bool dragStarted() const { return m_dragStarted; }
         
     private:

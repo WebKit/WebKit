@@ -150,6 +150,8 @@ DOM_CLASSES = \
     DOMTokenList \
     DOMURL \
     DOMWindow \
+    DataTransferItem \
+    DataTransferItems \
     Database \
     DatabaseCallback \
     DatabaseSync \
@@ -347,6 +349,7 @@ DOM_CLASSES = \
     SQLTransactionSyncCallback \
     Storage \
     StorageEvent \
+    StringCallback \
     SVGAElement \
     SVGAltGlyphElement \
     SVGAngle \

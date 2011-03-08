@@ -109,6 +109,8 @@ IDL_BINDINGS += \
     dom/Comment.idl \
     dom/CompositionEvent.idl \
     dom/CustomEvent.idl \
+    dom/DataTransferItem.idl \
+    dom/DataTransferItems.idl \
     dom/DeviceMotionEvent.idl \
     dom/DeviceOrientationEvent.idl \
     dom/DocumentFragment.idl \
@@ -146,6 +148,7 @@ IDL_BINDINGS += \
     dom/ProgressEvent.idl \
     dom/RangeException.idl \
     dom/Range.idl \
+    dom/StringCallback.idl \
     dom/Text.idl \
     dom/TextEvent.idl \
     dom/Touch.idl \
