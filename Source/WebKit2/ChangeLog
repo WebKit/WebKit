@@ -1,3 +1,11 @@
+2011-03-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the WebKit2 compilation after r80578.
+
+        * UIProcess/gtk/WebView.cpp:
+        (WebKit::WebView::setFocus): Added.
+        * UIProcess/gtk/WebView.h:
+
 2011-03-08  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Anders Carlsson.

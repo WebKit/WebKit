@@ -179,6 +179,11 @@ void WebView::didRelaunchProcess()
     notImplemented();
 }
 
+void WebView::setFocus(bool)
+{
+    notImplemented();
+}
+
 void WebView::takeFocus(bool)
 {
     notImplemented();
