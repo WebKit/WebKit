@@ -101,8 +101,10 @@ BUGCR69513 DEBUG SLOW : html5lib/webkit-resumer.html = PASS
 
 BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector/change-iframe-src.html = PASS
 
-BUGUKAI WIN SLOW : http/tests/cache/subresource-expiration-1.html = PASS
-BUGUKAI WIN SLOW : http/tests/cache/subresource-expiration-2.html = PASS
+BUGCR75226 WIN SLOW : http/tests/cache/subresource-expiration-1.html = PASS
+BUGCR75226 WIN SLOW : http/tests/cache/subresource-expiration-2.html = PASS
+
+BUGWK55913 SLOW : jquery/effects.html = PASS
 
 // -----------------------------------------------------------------
 // SKIPPED TESTS
