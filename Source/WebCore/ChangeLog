@@ -1,3 +1,12 @@
+2011-03-08  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Fix compilation warnings after r80429
+        https://bugs.webkit.org/show_bug.cgi?id=55864
+
+        * platform/gtk/WidgetGtk.cpp:
+
 2011-03-08  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix after r80536

@@ -41,8 +41,6 @@
 
 namespace WebCore {
 
-static GdkCursor* lastSetCursor;
-
 Widget::Widget(PlatformWidget widget)
 {
     init(widget);
@@ -60,11 +58,6 @@ void Widget::setFocus(bool focused)
         gtk_widget_grab_focus(platformWidget() ? platformWidget() : GTK_WIDGET(root()->hostWindow()->platformPageClient()));
 }
 
-static GdkWindow* gdkWindow(PlatformWidget widget)
-{
-    return widget ? gtk_widget_get_window(widget) : 0;
-}
-    
 void Widget::setCursor(const Cursor& cursor)
 {
     ScrollView* view = root();
