@@ -17,6 +17,14 @@
 
         Unreviewed, update chromium test expectations.
 
+        Update fast/text/large-text-composed-char.html on Windows
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-07  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
         Update fast/viewport/viewport-{128,129}.html
 
         * platform/chromium/test_expectations.txt:

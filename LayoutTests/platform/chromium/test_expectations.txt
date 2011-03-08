@@ -2904,6 +2904,7 @@ BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
 BUGDIMICH : fast/loader/stateobjects/pushstate-object-types.html = TEXT
 BUGDIMICH : fast/regex/cross-frame-callable.html = TEXT
 
+BUGCR75238 WIN : fast/text/large-text-composed-char.html = FAIL
 BUGCR75238 : fast/text/large-text-composed-char-dos.html = TEXT
 
 // Added by http://trac.webkit.org/changeset/76548
