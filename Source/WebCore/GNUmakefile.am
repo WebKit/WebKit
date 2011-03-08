@@ -196,6 +196,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDataGridColumn.h \
 	DerivedSources/WebCore/JSDataGridColumnList.cpp \
 	DerivedSources/WebCore/JSDataGridColumnList.h \
+	DerivedSources/WebCore/JSDataTransferItems.h \
+	DerivedSources/WebCore/JSDataTransferItems.cpp \
 	DerivedSources/WebCore/JSDataView.cpp \
 	DerivedSources/WebCore/JSDataView.h \
 	DerivedSources/WebCore/JSDedicatedWorkerContext.cpp \

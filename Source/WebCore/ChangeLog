@@ -1,3 +1,9 @@
+2011-03-08  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix after r80536
+
+        * GNUmakefile.am:
+
 2011-03-08  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Martin Robinson.
