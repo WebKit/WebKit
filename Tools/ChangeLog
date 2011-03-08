@@ -1,3 +1,15 @@
+2011-03-07  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] fast/js/navigator-language.html fails locally
+        https://bugs.webkit.org/show_bug.cgi?id=55880
+
+        Add LANG variable to the clean environment when running
+        old-run-webkit-tests script.
+
+        * Scripts/old-run-webkit-tests:
+
 2011-03-07  Tony Chang  <tony@chromium.org>
 
         Reviewed by Mihai Parparita.
