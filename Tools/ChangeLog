@@ -1,5 +1,14 @@
 2011-03-08  Jessie Berlin  <jberlin@apple.com>
 
+        Rubber-stamped by Adam Roben.
+
+        Fix two leaks I introduced into the API tests.
+
+        * TestWebKitAPI/Tests/WebKit2/win/DoNotCopyANullCFURLResponse.cpp:
+        (TestWebKitAPI::TEST):
+
+2011-03-08  Jessie Berlin  <jberlin@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Crash in CFNetwork visiting google.com

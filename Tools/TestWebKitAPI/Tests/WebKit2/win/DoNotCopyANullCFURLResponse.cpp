@@ -34,8 +34,8 @@ namespace TestWebKitAPI {
 TEST(WebKit2, DoNotCopyANullCFURLResponse)
 {
     // Neither of these calls should cause a crash.
-    WKRetainPtr<WKURLResponseRef> nullWKResponse = WKURLResponseCreateWithCFURLResponse(0);
-    RetainPtr<CFURLResponseRef> nullCFResponse = WKURLResponseCopyCFURLResponse(kCFAllocatorDefault, nullWKResponse.get());
+    WKRetainPtr<WKURLResponseRef> nullWKResponse(AdoptWK, WKURLResponseCreateWithCFURLResponse(0));
+    RetainPtr<CFURLResponseRef> nullCFResponse(AdoptCF, WKURLResponseCopyCFURLResponse(kCFAllocatorDefault, nullWKResponse.get()));
 }
 
 } // namespace TestWebKitAPI
