@@ -41,6 +41,10 @@ class WebKitPort(object):
     def script_path(cls, script_name):
         return os.path.join("Tools", "Scripts", script_name)
 
+    @classmethod
+    def script_shell_command(cls, script_name):
+        return [cls.script_path(script_name)]
+
     @staticmethod
     def port(port_name):
         ports = {
@@ -76,11 +80,11 @@ class WebKitPort(object):
 
     @classmethod
     def update_webkit_command(cls):
-        return [cls.script_path("update-webkit")]
+        return cls.script_shell_command("update-webkit")
 
     @classmethod
     def build_webkit_command(cls, build_style=None):
-        command = [cls.script_path("build-webkit")]
+        command = cls.script_shell_command("build-webkit")
         if build_style == "debug":
             command.append("--debug")
         if build_style == "release":
@@ -89,19 +93,19 @@ class WebKitPort(object):
 
     @classmethod
     def run_javascriptcore_tests_command(cls):
-        return [cls.script_path("run-javascriptcore-tests")]
+        return cls.script_shell_command("run-javascriptcore-tests")
 
     @classmethod
     def run_webkit_tests_command(cls):
-        return [cls.script_path("run-webkit-tests")]
+        return cls.script_shell_command("run-webkit-tests")
 
     @classmethod
     def run_python_unittests_command(cls):
-        return [cls.script_path("test-webkitpy")]
+        return cls.script_shell_command("test-webkitpy")
 
     @classmethod
     def run_perl_unittests_command(cls):
-        return [cls.script_path("test-webkitperl")]
+        return cls.script_shell_command("test-webkitperl")
 
     @classmethod
     def layout_tests_results_path(cls):
@@ -226,11 +230,10 @@ class ChromiumPort(WebKitPort):
 
     @classmethod
     def run_webkit_tests_command(cls):
-        return [
-            cls.script_path("new-run-webkit-tests"),
-            "--chromium",
-            "--no-pixel-tests",
-        ]
+        command = cls.script_shell_command("new-run-webkit-tests")
+        command.append("--chromium")
+        command.append("--no-pixel-tests")
+        return command
 
     @classmethod
     def run_javascriptcore_tests_command(cls):

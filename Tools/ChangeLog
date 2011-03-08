@@ -1,3 +1,18 @@
+2011-03-08  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add script_shell_command to WebKitPort
+        https://bugs.webkit.org/show_bug.cgi?id=55925
+
+        Add a central place where we generate the shell command from the script name.
+        This function will be used later to detect the correct script interpreter on Win32.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+
 2011-03-07  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

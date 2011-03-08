@@ -498,6 +498,9 @@ class Port(object):
     def script_path(self, script_name):
         return self._config.script_path(script_name)
 
+    def script_shell_command(self, script_name):
+        return self._config.script_shell_command(script_name)
+
     def path_to_test_expectations_file(self):
         """Update the test expectations to the passed-in string.
 

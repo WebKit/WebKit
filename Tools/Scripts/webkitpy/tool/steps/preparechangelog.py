@@ -61,7 +61,7 @@ class PrepareChangeLog(AbstractStep):
             self._ensure_bug_url(state)
             return
         os.chdir(self._tool.scm().checkout_root)
-        args = [self._tool.port().script_path("prepare-ChangeLog")]
+        args = self._tool.port().script_shell_command("prepare-ChangeLog")
         if state.get("bug_id"):
             args.append("--bug=%s" % state["bug_id"])
             args.append("--description=%s" % self._tool.bugs.fetch_bug(state["bug_id"]).title())

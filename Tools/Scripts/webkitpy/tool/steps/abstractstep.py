@@ -40,7 +40,7 @@ class AbstractStep(object):
     # FIXME: This should use tool.port()
     def _run_script(self, script_name, args=None, quiet=False, port=WebKitPort):
         log("Running %s" % script_name)
-        command = [port.script_path(script_name)]
+        command = port.script_shell_command(script_name)
         if args:
             command.extend(args)
         self._tool.executive.run_and_throw_if_fail(command, quiet)
