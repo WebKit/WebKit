@@ -167,8 +167,8 @@ void ScrollbarThemeGtk::paintButton(GraphicsContext* context, Scrollbar* scrollb
 
     IntSize arrowSize = rect.size();
     arrowSize.scale(arrowScaling);
-    IntPoint arrowPoint(rect.x() + (rect.width() - arrowSize.width()) / 2,
-                        rect.y() + (rect.height() - arrowSize.height()) / 2);
+    FloatPoint arrowPoint(rect.x() + (rect.width() - arrowSize.width()) / 2,
+                          rect.y() + (rect.height() - arrowSize.height()) / 2);
 
     if (flags & GTK_STATE_FLAG_ACTIVE) {
         gint arrowDisplacementX, arrowDisplacementY;

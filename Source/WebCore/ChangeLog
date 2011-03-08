@@ -1,3 +1,17 @@
+2011-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Use doubles instead of integers for coordinates when rendering arrows
+        https://bugs.webkit.org/show_bug.cgi?id=55866
+
+        To prevent off-by-one rounding errors.
+
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::paintMenuList):
+        * platform/gtk/ScrollbarThemeGtk3.cpp:
+        (WebCore::ScrollbarThemeGtk::paintButton):
+
 2011-03-08  Markus Goetz  <guruz@guruz.de>
 
         Reviewed by Kenneth Rohde Christiansen.

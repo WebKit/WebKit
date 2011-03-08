@@ -483,14 +483,14 @@ bool RenderThemeGtk::paintMenuList(RenderObject* renderObject, const PaintInfo& 
     gtk_style_context_get_style(arrowStyleContext, "arrow-scaling", &arrowScaling, NULL);
 
     IntSize arrowSize(minArrowSize, innerRect.height());
-    IntPoint arrowPosition = innerRect.location();
+    FloatPoint arrowPosition(innerRect.location());
     if (direction == GTK_TEXT_DIR_LTR)
         arrowPosition.move(innerRect.width() - arrowSize.width(), 0);
 
     // GTK+ actually fetches the xalign and valign values from the widget, but since we
     // don't have a widget here, we are just using the default xalign and valign values of 0.5.
     gint extent = std::min(arrowSize.width(), arrowSize.height()) * arrowScaling;
-    arrowPosition.move(std::floor((arrowSize.width() - extent) / 2), std::floor((arrowSize.height() - extent) / 2));
+    arrowPosition.move((arrowSize.width() - extent) / 2, (arrowSize.height() - extent) / 2);
 
     gtk_style_context_set_state(arrowStyleContext, state);
     gtk_render_arrow(arrowStyleContext, cairoContext, G_PI, arrowPosition.x(), arrowPosition.y(), extent);
