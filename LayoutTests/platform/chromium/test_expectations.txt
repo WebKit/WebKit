@@ -2992,6 +2992,7 @@ BUGWK50528 MAC : svg/custom/image-small-width-height.svg = IMAGE
 // We only maintain pixel GPU baselines for Snow Leopard
 WONTFIX GPU MAC LEOPARD : compositing = IMAGE PASS
 WONTFIX GPU MAC LEOPARD : platform/chromium/compositing = IMAGE PASS
+WONTFIX GPU MAC LEOPARD : media = IMAGE PASS
 
 // The picture does not match the video in the test.
 BUGWK55519 GPU WIN LINUX : compositing/video/video-background-color.html = IMAGE+TEXT

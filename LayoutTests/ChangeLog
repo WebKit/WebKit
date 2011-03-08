@@ -1,3 +1,18 @@
+2011-03-07  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by Mihai Parparita.
+
+        Rebaseline GPU media/video-display-toggle.html for snow leopard
+        https://bugs.webkit.org/show_bug.cgi?id=55920
+
+        * platform/chromium-gpu-mac/media/video-display-toggle-expected.checksum:
+        * platform/chromium-gpu-mac/media/video-display-toggle-expected.png:
+        * platform/chromium-gpu-mac/media/video-no-audio-expected.checksum:
+        * platform/chromium-gpu-mac/media/video-no-audio-expected.png:
+        * platform/chromium-gpu-mac/media/video-volume-slider-expected.checksum:
+        * platform/chromium-gpu-mac/media/video-volume-slider-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-07  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, update chromium test expectations.
