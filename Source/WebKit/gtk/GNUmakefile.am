@@ -116,6 +116,7 @@ webkitgtk_static_h_api += \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitgeolocationpolicydecision.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitglobals.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkithittestresult.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkiticondatabase.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitnetworkrequest.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitnetworkresponse.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitsecurityorigin.h \
@@ -203,6 +204,7 @@ webkitgtk_sources += \
 	Source/WebKit/gtk/webkit/webkitglobalsprivate.h \
 	Source/WebKit/gtk/webkit/webkithittestresult.cpp \
 	Source/WebKit/gtk/webkit/webkithittestresultprivate.h \
+	Source/WebKit/gtk/webkit/webkiticondatabase.cpp \
 	Source/WebKit/gtk/webkit/webkitnetworkrequest.cpp \
 	Source/WebKit/gtk/webkit/webkitnetworkrequestprivate.h \
 	Source/WebKit/gtk/webkit/webkitnetworkresponse.cpp \

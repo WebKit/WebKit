@@ -30,6 +30,7 @@
 #include <webkit/webkitgeolocationpolicydecision.h>
 #include <webkit/webkitglobals.h>
 #include <webkit/webkithittestresult.h>
+#include <webkit/webkiticondatabase.h>
 #include <webkit/webkitnetworkrequest.h>
 #include <webkit/webkitnetworkresponse.h>
 #include <webkit/webkitsecurityorigin.h>

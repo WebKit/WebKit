@@ -458,7 +458,7 @@ static void resetDefaultsToConsistentValues()
     setlocale(LC_ALL, "");
 
     DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(true);
-    DumpRenderTreeSupportGtk::setIconDatabaseEnabled(false);
+    webkit_icon_database_set_path(webkit_get_icon_database(), 0);
     DumpRenderTreeSupportGtk::setSelectTrailingWhitespaceEnabled(false);
 
     if (axController)

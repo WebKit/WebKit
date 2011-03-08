@@ -33,7 +33,6 @@ namespace WebKit {
 class PasteboardHelperGtk;
 PasteboardHelperGtk* pasteboardHelperInstance();
 
-void setIconDatabaseEnabled(bool);
 }
 
 extern "C" {

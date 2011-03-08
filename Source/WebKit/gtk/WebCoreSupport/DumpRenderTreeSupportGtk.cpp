@@ -99,11 +99,6 @@ bool DumpRenderTreeSupportGtk::linksIncludedInFocusChain()
     return s_linksIncludedInTabChain;
 }
 
-void DumpRenderTreeSupportGtk::setIconDatabaseEnabled(bool enabled)
-{
-    WebKit::setIconDatabaseEnabled(enabled);
-}
-
 void DumpRenderTreeSupportGtk::setSelectTrailingWhitespaceEnabled(bool enabled)
 {
     s_selectTrailingWhitespaceEnabled = enabled;

@@ -85,6 +85,7 @@
 #include "webkitgeolocationpolicydecision.h"
 #include "webkitglobalsprivate.h"
 #include "webkithittestresultprivate.h"
+#include "webkiticondatabase.h"
 #include "webkitmarshal.h"
 #include "webkitnetworkrequest.h"
 #include "webkitnetworkresponse.h"
@@ -2315,6 +2316,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @icon_uri: the URI for the icon
      *
      * This signal is emitted when the main frame has got a favicon.
+     * See WebKitIconDatabase::icon-loaded if you want to keep track of
+     * icons for child frames.
      *
      * Since: 1.1.18
      */
@@ -5062,6 +5065,35 @@ G_CONST_RETURN gchar* webkit_web_view_get_icon_uri(WebKitWebView* webView)
     webView->priv->iconURI = iconURL.utf8();
     return webView->priv->iconURI.data();
 }
+
+/**
+ * webkit_web_view_get_icon_pixbuf:
+ * @webView: the #WebKitWebView object
+ *
+ * Obtains a #GdkPixbuf of the favicon for the given #WebKitWebView, or
+ * a default icon if there is no icon for the given page. Use
+ * webkit_web_view_get_icon_uri() if you need to distinguish these cases.
+ * Usually you want to connect to WebKitWebView::icon-loaded and call this
+ * method in the callback.
+ *
+ * The pixbuf will have the largest size provided by the server and should
+ * be resized before it is displayed.
+ * See also webkit_icon_database_get_icon_pixbuf().
+ *
+ * Returns: (transfer full): a new reference to a #GdkPixbuf, or %NULL
+ *
+ * Since: 1.3.13
+ */
+GdkPixbuf* webkit_web_view_get_icon_pixbuf(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    const gchar* pageURI = webkit_web_view_get_uri(webView);
+    WebKitIconDatabase* database = webkit_get_icon_database();
+    return webkit_icon_database_get_icon_pixbuf(database, pageURI);
+}
+
+
 
 /**
  * webkit_web_view_get_dom_document:

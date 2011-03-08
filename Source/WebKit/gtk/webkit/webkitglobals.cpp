@@ -40,6 +40,7 @@
 #include "ResourceResponse.h"
 #include "webkitapplicationcache.h"
 #include "webkitglobalsprivate.h"
+#include "webkiticondatabase.h"
 #include "webkitsoupauthdialog.h"
 #include "webkitwebdatabase.h"
 #include "webkitwebplugindatabaseprivate.h"
@@ -223,9 +224,24 @@ static GtkWidget* currentToplevelCallback(WebKitSoupAuthDialog* feature, SoupMes
         return NULL;
 }
 
-static void closeIconDatabaseOnExit()
+/**
+ * webkit_get_icon_database:
+ *
+ * Returns the #WebKitIconDatabase providing access to website icons.
+ *
+ * Return value: (transfer none): the current #WebKitIconDatabase
+ *
+ * Since: 1.3.13
+ */
+WebKitIconDatabase* webkit_get_icon_database()
 {
-    iconDatabase().close();
+    webkitInit();
+
+    static WebKitIconDatabase* database = 0;
+    if (!database)
+        database = WEBKIT_ICON_DATABASE(g_object_new(WEBKIT_TYPE_ICON_DATABASE, NULL));
+
+    return database;
 }
 
 void webkitInit()
@@ -256,7 +272,8 @@ void webkitInit()
     PageGroup::setShouldTrackVisitedLinks(true);
 
     Pasteboard::generalPasteboard()->setHelper(WebKit::pasteboardHelperInstance());
-    WebKit::setIconDatabaseEnabled(true);
+    GOwnPtr<gchar> iconDatabasePath(g_build_filename(g_get_user_data_dir(), "webkit", "icondatabase", NULL));
+    webkit_icon_database_set_path(webkit_get_icon_database(), iconDatabasePath.get());
 
     SoupSession* session = webkit_get_default_session();
 
@@ -279,26 +296,6 @@ PasteboardHelperGtk* pasteboardHelperInstance()
     static PasteboardHelperGtk* helper = new PasteboardHelperGtk();
     return helper;
 }
-
-void setIconDatabaseEnabled(bool enabled)
-{
-    static bool initialized = false;
-    if (enabled && !initialized) {
-        initialized = true;
-        atexit(closeIconDatabaseOnExit);
-    }
-
-    if (enabled) {
-        iconDatabase().setEnabled(true);
-        GOwnPtr<gchar> iconDatabasePath(g_build_filename(g_get_user_data_dir(), "webkit", "icondatabase", NULL));
-        iconDatabase().open(iconDatabasePath.get());
-        return;
-    }
-
-    iconDatabase().setEnabled(false);
-    iconDatabase().close();
-}
-
 
 } /** end namespace WebKit */
 

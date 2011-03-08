@@ -53,7 +53,6 @@ public:
 
     static void setLinksIncludedInFocusChain(bool);
     static bool linksIncludedInFocusChain();
-    static void setIconDatabaseEnabled(bool);
     static void setSelectTrailingWhitespaceEnabled(bool);
     static bool selectTrailingWhitespaceEnabled();
 

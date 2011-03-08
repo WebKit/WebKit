@@ -496,7 +496,12 @@ void LayoutTestController::addMockSpeechInputResult(JSStringRef result, double c
 
 void LayoutTestController::setIconDatabaseEnabled(bool enabled)
 {
-    DumpRenderTreeSupportGtk::setIconDatabaseEnabled(enabled);
+    WebKitIconDatabase* database = webkit_get_icon_database();
+    if (enabled) {
+        GOwnPtr<gchar> iconDatabasePath(g_build_filename(g_get_tmp_dir(), "DumpRenderTree", "icondatabase", NULL));
+        webkit_icon_database_set_path(database, iconDatabasePath.get());
+    } else
+        webkit_icon_database_set_path(database, 0);
 }
 
 void LayoutTestController::setJavaScriptProfilingEnabled(bool flag)

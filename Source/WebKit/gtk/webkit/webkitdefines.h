@@ -41,6 +41,9 @@
 
 G_BEGIN_DECLS
 
+typedef struct _WebKitIconDatabase WebKitIconDatabase;
+typedef struct _WebKitIconDatabaseClass WebKitIconDatabaseClass;
+
 typedef struct _WebKitNetworkRequest WebKitNetworkRequest;
 typedef struct _WebKitNetworkRequestClass WebKitNetworkRequestClass;
 

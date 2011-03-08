@@ -397,6 +397,9 @@ webkit_web_view_get_hit_test_result             (WebKitWebView        *webView,
 WEBKIT_API G_CONST_RETURN gchar *
 webkit_web_view_get_icon_uri                    (WebKitWebView        *webView);
 
+WEBKIT_API GdkPixbuf *
+webkit_web_view_get_icon_pixbuf                 (WebKitWebView        *webView);
+
 WEBKIT_API WebKitDOMDocument *
 webkit_web_view_get_dom_document                (WebKitWebView        *webView);
 

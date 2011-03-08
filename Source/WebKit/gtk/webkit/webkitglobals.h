@@ -58,6 +58,9 @@ webkit_get_default_session                      (void);
 WEBKIT_API WebKitWebPluginDatabase *
 webkit_get_web_plugin_database                  (void);
 
+WEBKIT_API WebKitIconDatabase *
+webkit_get_icon_database                        (void);
+
 WEBKIT_API void
 webkit_set_cache_model                          (WebKitCacheModel     cache_model);
 

@@ -1,3 +1,25 @@
+2011-03-08  Christian Dywan  <christian@lanedo.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] provide an API to control the IconDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=32510
+
+        * GNUmakefile.am:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp: Emit signals on
+            the icon database for new icons.
+        * webkit/webkit.h:
+        * webkit/webkitdefines.h:
+        * webkit/webkitglobals.cpp:
+        * webkit/webkitglobals.h: Add a function to obtain the global
+            icon database.
+        * webkit/webkiticondatabase.cpp:
+        * webkit/webkiticondatabase.h: Implement public icon database
+            object with methods for obtaining icon URLs, pixbufs, clearing
+            waiting for new icons.
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h: Add a method to obtain an icon pixbuf
+            for the web view.
 2011-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

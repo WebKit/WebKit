@@ -65,6 +65,7 @@
 #include "webkiterror.h"
 #include "webkitglobals.h"
 #include "webkitglobalsprivate.h"
+#include "webkiticondatabase.h"
 #include "webkitnetworkrequest.h"
 #include "webkitnetworkrequestprivate.h"
 #include "webkitnetworkresponse.h"
@@ -924,6 +925,10 @@ void FrameLoaderClient::dispatchDidReceiveIcon()
 {
     if (m_loadingErrorPage)
         return;
+
+    const gchar* frameURI = webkit_web_frame_get_uri(m_frame);
+    WebKitIconDatabase* database = webkit_get_icon_database();
+    g_signal_emit_by_name(database, "icon-loaded", m_frame, frameURI);
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
 
