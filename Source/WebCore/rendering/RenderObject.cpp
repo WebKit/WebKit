@@ -901,7 +901,7 @@ IntRect RenderObject::borderInnerRect(const IntRect& borderRect, unsigned short 
 }
 
 #if HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
-void RenderObject::drawBoxSideFromPath(GraphicsContext* graphicsContext, IntRect borderRect, Path borderPath, 
+void RenderObject::drawBoxSideFromPath(GraphicsContext* graphicsContext, const IntRect& borderRect, const Path& borderPath,
                                     float thickness, float drawThickness, BoxSide s, const RenderStyle* style, 
                                     Color c, EBorderStyle borderStyle)
 {
@@ -1048,7 +1048,7 @@ void RenderObject::drawBoxSideFromPath(GraphicsContext* graphicsContext, IntRect
     graphicsContext->drawRect(borderRect);
 }
 #else
-void RenderObject::drawArcForBoxSide(GraphicsContext* graphicsContext, int x, int y, float thickness, IntSize radius,
+void RenderObject::drawArcForBoxSide(GraphicsContext* graphicsContext, int x, int y, float thickness, const IntSize& radius,
                                      int angleStart, int angleSpan, BoxSide s, Color c,
                                      EBorderStyle style, bool firstCorner)
 {
@@ -1936,7 +1936,7 @@ IntRect RenderObject::viewRect() const
     return view()->viewRect();
 }
 
-FloatPoint RenderObject::localToAbsolute(FloatPoint localPoint, bool fixed, bool useTransforms) const
+FloatPoint RenderObject::localToAbsolute(const FloatPoint& localPoint, bool fixed, bool useTransforms) const
 {
     TransformState transformState(TransformState::ApplyTransformDirection, localPoint);
     mapLocalToContainer(0, fixed, useTransforms, transformState);
@@ -1945,7 +1945,7 @@ FloatPoint RenderObject::localToAbsolute(FloatPoint localPoint, bool fixed, bool
     return transformState.lastPlanarPoint();
 }
 
-FloatPoint RenderObject::absoluteToLocal(FloatPoint containerPoint, bool fixed, bool useTransforms) const
+FloatPoint RenderObject::absoluteToLocal(const FloatPoint& containerPoint, bool fixed, bool useTransforms) const
 {
     TransformState transformState(TransformState::UnapplyInverseTransformDirection, containerPoint);
     mapAbsoluteToLocalPoint(fixed, useTransforms, transformState);

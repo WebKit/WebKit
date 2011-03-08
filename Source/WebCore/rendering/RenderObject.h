@@ -432,13 +432,13 @@ public:
     void drawLineForBoxSide(GraphicsContext*, int x1, int y1, int x2, int y2, BoxSide,
                             Color, EBorderStyle, int adjbw1, int adjbw2);
 #if HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
-    void drawBoxSideFromPath(GraphicsContext*, IntRect, Path, 
+    void drawBoxSideFromPath(GraphicsContext*, const IntRect&, const Path&,
                             float thickness, float drawThickness, BoxSide, const RenderStyle*, 
                             Color, EBorderStyle);
 #else
     // FIXME: This function should be removed when all ports implement GraphicsContext::clipConvexPolygon()!!
     // At that time, everyone can use RenderObject::drawBoxSideFromPath() instead. This should happen soon.
-    void drawArcForBoxSide(GraphicsContext*, int x, int y, float thickness, IntSize radius, int angleStart,
+    void drawArcForBoxSide(GraphicsContext*, int x, int y, float thickness, const IntSize& radius, int angleStart,
                            int angleSpan, BoxSide, Color, EBorderStyle, bool firstCorner);
 #endif
 
@@ -557,8 +557,8 @@ public:
 
     // Convert the given local point to absolute coordinates
     // FIXME: Temporary. If useTransforms is true, take transforms into account. Eventually localToAbsolute() will always be transform-aware.
-    FloatPoint localToAbsolute(FloatPoint localPoint = FloatPoint(), bool fixed = false, bool useTransforms = false) const;
-    FloatPoint absoluteToLocal(FloatPoint, bool fixed = false, bool useTransforms = false) const;
+    FloatPoint localToAbsolute(const FloatPoint& localPoint = FloatPoint(), bool fixed = false, bool useTransforms = false) const;
+    FloatPoint absoluteToLocal(const FloatPoint&, bool fixed = false, bool useTransforms = false) const;
 
     // Convert a local quad to absolute coordinates, taking transforms into account.
     FloatQuad localToAbsoluteQuad(const FloatQuad& quad, bool fixed = false) const

@@ -1,5 +1,19 @@
 2011-03-08  Andreas Kling  <kling@webkit.org>
 
+        Reviewed by Benjamin Poulain.
+
+        RenderObject: Pass complex type arguments as const-references.
+
+        * WebCore.exp.in:
+        * rendering/RenderObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawBoxSideFromPath):
+        (WebCore::RenderObject::drawArcForBoxSide):
+        (WebCore::RenderObject::localToAbsolute):
+        (WebCore::RenderObject::absoluteToLocal):
+
+2011-03-08  Andreas Kling  <kling@webkit.org>
+
         Reviewed by Antonio Gomes.
 
         Path: Make measurement functions const
