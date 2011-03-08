@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "SharedBuffer.h"
-#include "QtByteBlock.h"
 
 #include <QFile>
 
@@ -44,43 +43,5 @@ PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fi
     file.read(buffer.data(), buffer.size());
     return SharedBuffer::adoptVector(buffer);
 }
-
-PassRefPtr<SharedBuffer> SharedBuffer::wrapQtByteBlock(PassRefPtr<QtByteBlock> byteBlock)
-{
-    SharedBuffer* sharedBuffer = new SharedBuffer();
-    sharedBuffer->m_qtByteBlock = byteBlock;
-    return adoptRef(sharedBuffer);
-}
-
-bool SharedBuffer::hasPlatformData() const
-{
-    return m_qtByteBlock;
-}
-
-const char* SharedBuffer::platformData() const
-{
-    return static_cast<const char*>(m_qtByteBlock->data());
-}
-
-unsigned SharedBuffer::platformDataSize() const
-{
-    return m_qtByteBlock->size();
-}
-
-void SharedBuffer::maybeTransferPlatformData()
-{
-    if (!m_qtByteBlock)
-        return;
-
-    RefPtr<QtByteBlock> byteBlock = m_qtByteBlock;
-    m_qtByteBlock = 0;
-    append(static_cast<const char*>(byteBlock->data()), byteBlock->size());
-}
-
-void SharedBuffer::clearPlatformData()
-{
-    m_qtByteBlock = 0;
-}
-
 
 } // namespace WebCore

@@ -183,14 +183,12 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame* frame)
 
 bool ResourceHandle::supportsBufferedData()
 {
-    return true;
+    return false;
 }
 
 PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
 {
-    if (d->m_job)
-        return d->m_job->bufferedData();
-
+    ASSERT_NOT_REACHED();
     return 0;
 }
 

@@ -1,3 +1,27 @@
+2011-03-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80551.
+        http://trac.webkit.org/changeset/80551
+        https://bugs.webkit.org/show_bug.cgi?id=55933
+
+        It broke 285 tests on Qt bot (Requested by Ossy on #webkit).
+
+        * WebCore.pro:
+        * platform/SharedBuffer.cpp:
+        * platform/SharedBuffer.h:
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        (WebCore::QNetworkReplyHandler::forwardData):
+        (WebCore::QNetworkReplyHandler::start):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::supportsBufferedData):
+        (WebCore::ResourceHandle::bufferedData):
+        * platform/qt/QtByteBlock.cpp: Removed.
+        * platform/qt/QtByteBlock.h: Removed.
+        * platform/qt/SharedBufferQt.cpp:
+
 2011-03-08  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Benjamin Poulain.
