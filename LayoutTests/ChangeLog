@@ -1,3 +1,11 @@
+2011-03-07  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        Fix jquery/effects.html and fast/viewpoert/viewport-129.html
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-07  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by David Levin.
