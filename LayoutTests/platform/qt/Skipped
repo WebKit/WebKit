@@ -362,7 +362,9 @@ editing/pasteboard/paste-text-008.html
 editing/pasteboard/paste-xml.xhtml
 # ----- Rendertree results match but width of tabs field is suspicious.
 editing/pasteboard/paste-text-at-tabspan-001.html
-
+# ----- Qt doesn't add aslises for "text/plain" to types: https://bugs.webkit.org/show_bug.cgi?id=55922
+editing/pasteboard/onpaste-text-html-types.html
+ 
 # =========================================================================== #
 #       Failing plugins tests.                                                #
 # =========================================================================== #

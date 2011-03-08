@@ -1,3 +1,15 @@
+2011-03-07  Daniel Cheng  <dcheng@chromium.org>
+
+        Unreviewed.
+
+        Updated Skipped lists for editing/pasteboard/onpaste-text-html-types.html.
+        https://bugs.webkit.org/show_bug.cgi?id=55921
+        https://bugs.webkit.org/show_bug.cgi?id=55922
+
+        * platform/qt-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-03-07  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, update chromium test expectations.
