@@ -1,3 +1,11 @@
+2011-03-08  Brent Fulgham  <bfulgham@webkit.org>
+
+        More build bustage fix.
+
+        * platform/graphics/win/cairo/FontPlatformData.h:
+        (WebCore::FontPlatformData::setOrientation): Duplicate accessor
+        in WinCairo-local header.  This is such a mess!
+
 2011-03-08  David Hyatt  <hyatt@apple.com>
 
         Fix build bustage.  Hide orientation setting behind a setter and stub it out in all

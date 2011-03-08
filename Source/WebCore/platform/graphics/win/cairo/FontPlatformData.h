@@ -78,6 +78,7 @@ public:
     bool syntheticOblique() const { return m_syntheticOblique; }
 
     FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
+    void setOrientation(FontOrientation) { } // FIXME: Implement.
 
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont; }
 
