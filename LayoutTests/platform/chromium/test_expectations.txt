@@ -2384,7 +2384,14 @@ BUGWK45623 WIN LINUX : fast/dynamic/first-letter-display-change.html = IMAGE
 
 // We don't support LayoutTestController.dumpConfigurationForViewport
 BUGWK45652 : fast/viewport = TEXT
+BUGWK45652 : fast/viewport/viewport-65.html = MISSING
+BUGWK45652 : fast/viewport/viewport-82.html = MISSING
+BUGWK45652 : fast/viewport/viewport-84.html = MISSING
+BUGWK45652 : fast/viewport/viewport-87.html = MISSING
+BUGWK45652 : fast/viewport/viewport-126.html = MISSING
+BUGWK45652 : fast/viewport/viewport-127.html = MISSING
 BUGWK45652 : fast/viewport/viewport-128.html = TIMEOUT
+
 
 BUGWK45667 : fast/files/read-file-async.html = CRASH PASS
 BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS

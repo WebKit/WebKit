@@ -1,3 +1,11 @@
+2011-03-07  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        Some fast/viewport tests are missing expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
