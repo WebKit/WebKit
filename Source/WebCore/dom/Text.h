@@ -32,7 +32,7 @@ public:
     static const unsigned defaultLengthLimit = 1 << 16;
 
     static PassRefPtr<Text> create(Document*, const String&);
-    static PassRefPtr<Text> createWithLengthLimit(Document*, const String&, unsigned& charsLeft, unsigned lengthLimit = defaultLengthLimit);
+    static PassRefPtr<Text> createWithLengthLimit(Document*, const String&, unsigned positionInString, unsigned lengthLimit = defaultLengthLimit);
 
     PassRefPtr<Text> splitText(unsigned offset, ExceptionCode&);
 

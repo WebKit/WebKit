@@ -1,3 +1,27 @@
+2011-03-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (HTML5 tree builder): Text selection in a large text document is extremely slow
+        https://bugs.webkit.org/show_bug.cgi?id=55898
+
+        <rdar://problem/9095839> REGRESSION: Mail hangs with a certain large mail message when
+        linkifying e-mail addresses in in -[DOMCharacterData setData:]
+
+        Changes render tree of fast/text/large-text-composed-char.html, but not image results.
+
+        * dom/CharacterData.cpp: (WebCore::CharacterData::parserAppendData):
+        Changed parserAppendData() to accept a maximum length, and moved code from Text::createWithLengthLimit().
+
+        * dom/CharacterData.h: Moved a constant for maximum length from Text.h.
+
+        * dom/Text.cpp: (WebCore::Text::createWithLengthLimit):
+        * dom/Text.h:
+        This function was unused in ToT. Moved code around to share with CharacterData.
+
+        * html/parser/HTMLConstructionSite.cpp: (WebCore::HTMLConstructionSite::insertTextNode):
+        Chnaged to split large text nodes while parsing again.
+
 2011-03-07  Alice Boxhall  <aboxhall@chromium.org>
 
         Reviewed by Adam Barth.

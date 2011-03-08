@@ -43,7 +43,8 @@ public:
     StringImpl* dataImpl() { return m_data.get(); }
 
     // Like appendData, but optimized for the parser (e.g., no mutation events).
-    void parserAppendData(const String&);
+    // Returns how much could be added before length limit was met.
+    unsigned parserAppendData(const UChar*, unsigned dataLength, unsigned lengthLimit);
 
 protected:
     CharacterData(Document* document, const String& text, ConstructionType type)

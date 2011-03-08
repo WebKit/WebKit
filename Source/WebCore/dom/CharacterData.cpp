@@ -27,6 +27,9 @@
 #include "InspectorInstrumentation.h"
 #include "MutationEvent.h"
 #include "RenderText.h"
+#include "TextBreakIterator.h"
+
+using namespace std;
 
 namespace WebCore {
 
@@ -51,12 +54,27 @@ String CharacterData::substringData(unsigned offset, unsigned count, ExceptionCo
     return m_data->substring(offset, count);
 }
 
-void CharacterData::parserAppendData(const String& data)
+unsigned CharacterData::parserAppendData(const UChar* data, unsigned dataLength, unsigned lengthLimit)
 {
-    String newStr = m_data;
-    newStr.append(data);
+    unsigned oldLength = m_data->length();
 
-    int oldLength = m_data->length();
+    unsigned end = min(dataLength, lengthLimit - oldLength);
+
+    // Check that we are not on an unbreakable boundary.
+    // Some text break iterator implementations work best if the passed buffer is as small as possible, 
+    // see <https://bugs.webkit.org/show_bug.cgi?id=29092>. 
+    // We need at least two characters look-ahead to account for UTF-16 surrogates.
+    if (end < dataLength) {
+        TextBreakIterator* it = characterBreakIterator(data, (end + 2 > dataLength) ? dataLength : end + 2);
+        if (!isTextBreak(it, end))
+            end = textBreakPreceding(it, end);
+    }
+    
+    if (!end)
+        return 0;
+
+    String newStr = m_data;
+    newStr.append(data, end);
     m_data = newStr.impl();
 
     updateRenderer(oldLength, 0);
@@ -64,6 +82,8 @@ void CharacterData::parserAppendData(const String& data)
     // parser to dispatch DOM mutation events.
     if (parentNode())
         parentNode()->childrenChanged();
+    
+    return end;
 }
 
 void CharacterData::appendData(const String& data, ExceptionCode&)

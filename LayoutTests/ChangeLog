@@ -1,3 +1,13 @@
+2011-03-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (HTML5 tree builder): Text selection in a large text document is extremely slow
+        https://bugs.webkit.org/show_bug.cgi?id=55898
+
+        * platform/mac/fast/text/large-text-composed-char-expected.txt: The huge text run is split
+        into multiple text nodes again.
+
 2011-03-07  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, update chromium test expectations.

@@ -341,16 +341,29 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
     if (shouldFosterParent())
         findFosterSite(site);
 
+    unsigned currentPosition = 0;
+
+    // FIXME: Splitting text nodes into smaller chunks contradicts HTML5 spec, but is currently necessary
+    // for performance, see <https://bugs.webkit.org/show_bug.cgi?id=55898>.
+
     Node* previousChild = site.nextChild ? site.nextChild->previousSibling() : site.parent->lastChild();
     if (previousChild && previousChild->isTextNode()) {
         // FIXME: We're only supposed to append to this text node if it
         // was the last text node inserted by the parser.
         CharacterData* textNode = static_cast<CharacterData*>(previousChild);
-        textNode->parserAppendData(characters);
-        return;
+        currentPosition = textNode->parserAppendData(characters.characters(), characters.length(), Text::defaultLengthLimit);
     }
 
-    attachAtSite(site, Text::create(site.parent->document(), characters));
+    while (currentPosition < characters.length()) {
+        RefPtr<Text> textNode = Text::createWithLengthLimit(site.parent->document(), characters, currentPosition);
+        // If we have a whole string of unbreakable characters the above could lead to an infinite loop. Exceeding the length limit is the lesser evil.
+        if (!textNode->length())
+            textNode = Text::create(site.parent->document(), characters.substring(currentPosition));
+
+        currentPosition += textNode->length();
+        ASSERT(currentPosition <= characters.length());
+        attachAtSite(site, textNode.release());
+    }
 }
 
 PassRefPtr<Element> HTMLConstructionSite::createElement(AtomicHTMLToken& token, const AtomicString& namespaceURI)
