@@ -221,6 +221,12 @@ FloatRect WebView::convertToUserSpace(const FloatRect& viewRect)
     return viewRect;
 }
 
+IntRect WebView::windowToScreen(const IntRect& rect)
+{
+    notImplemented();
+    return IntRect();
+}
+
 void WebView::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled)
 {
     notImplemented();

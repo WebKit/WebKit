@@ -1,3 +1,11 @@
+2011-03-08  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, fixed GTK+ compilation after r80569.
+
+        * UIProcess/gtk/WebView.cpp:
+        (WebKit::WebView::windowToScreen):
+        * UIProcess/gtk/WebView.h:
+
 2011-03-08  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Sam Weinig.
