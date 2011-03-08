@@ -423,10 +423,10 @@ class ChromiumDriver(base.Driver):
     def _output_image(self):
         """Returns the image output which driver generated."""
         png_path = self._image_path
-        if png_path and self._port._filesystem.isfile(png_path):
+        if png_path and self._port._filesystem.exists(png_path):
             return self._port._filesystem.read_binary_file(png_path)
         else:
-            return None
+            return ''
 
     def _output_image_with_retry(self):
         # Retry a few more times because open() sometimes fails on Windows,
@@ -443,6 +443,11 @@ class ChromiumDriver(base.Driver):
                     raise e
         return self._output_image()
 
+    def _clear_output_image(self):
+        png_path = self._image_path
+        if png_path and self._port._filesystem.exists(png_path):
+            self._port._filesystem.remove(png_path)
+
     def run_test(self, driver_input):
         output = []
         error = []
@@ -450,7 +455,7 @@ class ChromiumDriver(base.Driver):
         timeout = False
         actual_uri = None
         actual_checksum = None
-
+        self._clear_output_image()
         start_time = time.time()
 
         uri = self._port.filename_to_uri(driver_input.filename)
@@ -497,9 +502,10 @@ class ChromiumDriver(base.Driver):
             (line, crash) = self._write_command_and_read_line(input=None)
 
         run_time = time.time() - start_time
-        return base.DriverOutput(
-            ''.join(output), self._output_image_with_retry(), actual_checksum,
-            crash, run_time, timeout, ''.join(error))
+        output_image = self._output_image_with_retry()
+        assert output_image is not None
+        return base.DriverOutput(''.join(output), output_image, actual_checksum,
+                                 crash, run_time, timeout, ''.join(error))
 
     def stop(self):
         if self._proc:

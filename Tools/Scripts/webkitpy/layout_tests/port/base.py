@@ -901,6 +901,7 @@ class Driver:
           driver_input: a DriverInput object
 
         Returns a DriverOutput object.
+          Note that DriverOutput.image will be '' (empty string) if a test crashes.
         """
         raise NotImplementedError('Driver.run_test')
 

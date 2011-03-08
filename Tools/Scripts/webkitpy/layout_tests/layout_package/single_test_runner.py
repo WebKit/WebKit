@@ -127,7 +127,7 @@ class SingleTestRunner:
           generate_new_baseline: whether to enerate a new, platform-specific
             baseline, or update the existing one
         """
-
+        assert data is not None
         port = self._port
         fs = port._filesystem
         if generate_new_baseline:
