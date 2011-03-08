@@ -1,3 +1,13 @@
+2011-03-07  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        FrameView::setBaseBackgroundColor: Pass Color argument as const-reference.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setBaseBackgroundColor):
+        * page/FrameView.h:
+
 2011-03-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

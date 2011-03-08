@@ -139,7 +139,7 @@ public:
     void setTransparent(bool isTransparent);
 
     Color baseBackgroundColor() const;
-    void setBaseBackgroundColor(Color);
+    void setBaseBackgroundColor(const Color&);
     void updateBackgroundRecursively(const Color&, bool);
 
     bool shouldUpdateWhileOffscreen() const;

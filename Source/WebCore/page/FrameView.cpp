@@ -1746,11 +1746,12 @@ Color FrameView::baseBackgroundColor() const
     return m_baseBackgroundColor;
 }
 
-void FrameView::setBaseBackgroundColor(Color bc)
+void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
 {
-    if (!bc.isValid())
-        bc = Color::white;
-    m_baseBackgroundColor = bc;
+    if (!backgroundColor.isValid())
+        m_baseBackgroundColor = Color::white;
+    else
+        m_baseBackgroundColor = backgroundColor;
 }
 
 void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool transparent)
