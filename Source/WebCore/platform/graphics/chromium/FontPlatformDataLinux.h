@@ -113,7 +113,8 @@ public:
     int emSizeInFontUnits() const;
 
     FontOrientation orientation() const { return m_orientation; }
-
+    void setOrientation(FontOrientation orientation) { m_orientation = orientation; }
+    
     bool operator==(const FontPlatformData&) const;
     FontPlatformData& operator=(const FontPlatformData&);
     bool isHashTableDeletedValue() const { return m_typeface == hashTableDeletedFontValue(); }

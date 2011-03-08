@@ -141,6 +141,7 @@ public:
     }
     
     FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
+    void setOrientation(FontOrientation) { } // FIXME: Implement.
 
     unsigned hash() const;
 

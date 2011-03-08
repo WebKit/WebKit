@@ -79,6 +79,7 @@ namespace WebCore {
         static LONG adjustedGDIFontWeight(LONG gdiFontWeight, const String& family);
 
         FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
+        void setOrientation(FontOrientation) { } // FIXME: Implement.
 
 #ifndef NDEBUG
         String description() const;

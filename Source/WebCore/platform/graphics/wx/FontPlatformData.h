@@ -150,6 +150,7 @@ public:
     bool allowsLigatures() const { return false; }
     
     FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
+    void setOrientation(FontOrientation) { } // FIXME: Implement.
 
     // We don't support this yet, so just return the default value for now.
     FontWidthVariant widthVariant() const { return RegularWidth; }

@@ -68,6 +68,7 @@ public:
     bool useGDI() const { return m_useGDI; }
 
     FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
+    void setOrientation(FontOrientation) { } // FIXME: Implement.
 
     unsigned hash() const
     {

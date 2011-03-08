@@ -210,7 +210,7 @@ SimpleFontData* SimpleFontData::verticalRightOrientationFontData() const
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->verticalRightOrientation) {
         FontPlatformData verticalRightPlatformData(m_platformData);
-        verticalRightPlatformData.m_orientation = Horizontal;
+        verticalRightPlatformData.setOrientation(Horizontal);
         m_derivedFontData->verticalRightOrientation = new SimpleFontData(verticalRightPlatformData, isCustomFont(), false, true);
     }
     return m_derivedFontData->verticalRightOrientation.get();

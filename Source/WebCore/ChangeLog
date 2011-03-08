@@ -1,3 +1,27 @@
+2011-03-08  David Hyatt  <hyatt@apple.com>
+
+        Fix build bustage.  Hide orientation setting behind a setter and stub it out in all
+        FontPlatformData classes.  (This class really needs to move to a common header with ifdefs.)
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::verticalRightOrientationFontData):
+        * platform/graphics/cg/FontPlatformData.h:
+        (WebCore::FontPlatformData::setOrientation):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.h:
+        (WebCore::FontPlatformData::setOrientation):
+        * platform/graphics/chromium/FontPlatformDataLinux.h:
+        (WebCore::FontPlatformData::setOrientation):
+        * platform/graphics/cocoa/FontPlatformData.h:
+        (WebCore::FontPlatformData::setOrientation):
+        * platform/graphics/freetype/FontPlatformData.h:
+        (WebCore::FontPlatformData::setOrientation):
+        * platform/graphics/qt/FontPlatformData.h:
+        (WebCore::FontPlatformData::setOrientation):
+        * platform/graphics/wince/FontPlatformData.h:
+        (WebCore::FontPlatformData::setOrientation):
+        * platform/graphics/wx/FontPlatformData.h:
+        (WebCore::FontPlatformData::setOrientation):
+
 2011-03-08  Joe Wild  <joseph.wild@nokia.com>
 
         Reviewed by Csaba Osztrogonác.

@@ -108,6 +108,8 @@ class FontPlatformData {
     TextOrientation textOrientation() const { return m_textOrientation; }
     FontWidthVariant widthVariant() const { return m_widthVariant; }
 
+    void setOrientation(FontOrientation orientation) { m_orientation = orientation; }
+
     bool m_syntheticBold;
     bool m_syntheticOblique;
     FontOrientation m_orientation;
