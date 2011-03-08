@@ -126,8 +126,8 @@ class TestFailure(object):
         return filename[:filename.rfind('.')] + modifier
 
 
-class FailureWithType(TestFailure):
-    """Base class that produces standard HTML output based on the test type.
+class ComparisonTestFailure(TestFailure):
+    """Base class that produces standard HTML output based on the result of the comparison test.
 
     Subclasses may commonly choose to override the ResultHtmlOutput, but still
     use the standard OutputLinks.
@@ -205,7 +205,7 @@ class FailureCrash(TestFailure):
         return True
 
 
-class FailureMissingResult(FailureWithType):
+class FailureMissingResult(ComparisonTestFailure):
     """Expected result was missing."""
     OUT_FILENAMES = ("-actual.txt",)
 
@@ -218,7 +218,7 @@ class FailureMissingResult(FailureWithType):
                 self.output_links(filename, self.OUT_FILENAMES))
 
 
-class FailureTextMismatch(FailureWithType):
+class FailureTextMismatch(ComparisonTestFailure):
     """Text diff output failed."""
     # Filename suffixes used by ResultHtmlOutput.
     # FIXME: Why don't we use the constants from TestTypeBase here?
@@ -230,7 +230,7 @@ class FailureTextMismatch(FailureWithType):
         return "Text diff mismatch"
 
 
-class FailureMissingImageHash(FailureWithType):
+class FailureMissingImageHash(ComparisonTestFailure):
     """Actual result hash was missing."""
     # Chrome doesn't know to display a .checksum file as text, so don't bother
     # putting in a link to the actual result.
@@ -243,7 +243,7 @@ class FailureMissingImageHash(FailureWithType):
         return "<strong>%s</strong>" % self.message()
 
 
-class FailureMissingImage(FailureWithType):
+class FailureMissingImage(ComparisonTestFailure):
     """Actual result image was missing."""
     OUT_FILENAMES = ("-actual.png",)
 
@@ -256,7 +256,7 @@ class FailureMissingImage(FailureWithType):
                 self.output_links(filename, self.OUT_FILENAMES))
 
 
-class FailureImageHashMismatch(FailureWithType):
+class FailureImageHashMismatch(ComparisonTestFailure):
     """Image hashes didn't match."""
     OUT_FILENAMES = ("-actual.png", "-expected.png", "-diff.png")
 
@@ -267,7 +267,7 @@ class FailureImageHashMismatch(FailureWithType):
         return "Image mismatch"
 
 
-class FailureImageHashIncorrect(FailureWithType):
+class FailureImageHashIncorrect(ComparisonTestFailure):
     """Actual result hash is incorrect."""
     # Chrome doesn't know to display a .checksum file as text, so don't bother
     # putting in a link to the actual result.

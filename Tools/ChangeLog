@@ -1,3 +1,15 @@
+2011-03-08  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [NRWT] Renamed a FailureWithType class to a ComparisonTestFailure class.
+
+        FailureWithType is a confusing naming because we have removed test_type/* classes in r79840.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55450
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py:
+
 2011-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
