@@ -140,6 +140,8 @@ SET(WebCore_IDL_FILES
     dom/Comment.idl
     dom/CompositionEvent.idl
     dom/CustomEvent.idl
+    dom/DataTransferItem.idl
+    dom/DataTransferItems.idl
     dom/DeviceMotionEvent.idl
     dom/DeviceOrientationEvent.idl
     dom/DocumentFragment.idl
@@ -175,6 +177,7 @@ SET(WebCore_IDL_FILES
     dom/ProgressEvent.idl
     dom/RangeException.idl
     dom/Range.idl
+    dom/StringCallback.idl
     dom/TextEvent.idl
     dom/Text.idl
     dom/TouchEvent.idl
@@ -1575,9 +1578,6 @@ ENDIF ()
 
 IF (ENABLE_DATA_TRANSFER_ITEMS)
     LIST(APPEND WebCore_IDL_FILES
-        dom/DataTransferItem.idl
-        dom/DataTransferItems.idl
-        dom/StringCallback.idl
     )
     LIST(APPEND WebCore_SOURCES
         dom/DataTransferItem.cpp

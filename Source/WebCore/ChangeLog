@@ -1,3 +1,13 @@
+2011-03-07  Daniel Cheng  <dcheng@chromium.org>
+
+        Unreviewed.
+
+        More build fixes for r80536.
+
+        * CMakeLists.txt:
+        * platform/chromium/ClipboardChromium.cpp:
+        * platform/chromium/ClipboardChromium.h:
+
 2011-03-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.
@@ -23,6 +33,16 @@
 
         * platform/chromium/DataTransferItemChromium.cpp:
         * platform/chromium/DataTransferItemsChromium.cpp:
+
+2011-03-07  Daniel Cheng  <dcheng@chromium.org>
+
+        Unreviewed.
+
+        More build fixes for r80536.
+
+        * CMakeLists.txt:
+        * platform/chromium/ClipboardChromium.cpp:
+        * platform/chromium/ClipboardChromium.h:
 
 2011-03-07  Daniel Cheng  <dcheng@chromium.org>
 

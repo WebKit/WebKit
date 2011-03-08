@@ -343,9 +343,11 @@ bool ClipboardChromium::hasData()
     return m_dataObject->hasData();
 }
 
+#if ENABLE(DATA_TRANSFER_ITEMS)
 PassRefPtr<DataTransferItems> ClipboardChromium::items()
 {
     return DataTransferItemsChromium::create(this, m_frame->document()->scriptExecutionContext());
 }
+#endif
 
 } // namespace WebCore
