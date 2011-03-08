@@ -2005,6 +2005,7 @@ void WebPage::drawRectToPDF(uint64_t frameID, const WebCore::IntRect& rect, uint
     if (coreFrame) {
         ASSERT(coreFrame->document()->printing());
 
+#if PLATFORM(CG)
         // FIXME: Use CGDataConsumerCreate with callbacks to avoid copying the data.
         RetainPtr<CGDataConsumerRef> pdfDataConsumer(AdoptCF, CGDataConsumerCreateWithCFData(pdfPageData.get()));
 
@@ -2020,6 +2021,7 @@ void WebPage::drawRectToPDF(uint64_t frameID, const WebCore::IntRect& rect, uint
 
         CGPDFContextEndPage(context.get());
         CGPDFContextClose(context.get());
+#endif
     }
 
     send(Messages::WebPageProxy::DataCallback(CoreIPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get())), callbackID));
@@ -2035,6 +2037,7 @@ void WebPage::drawPagesToPDF(uint64_t frameID, uint32_t first, uint32_t count, u
     if (coreFrame) {
         ASSERT(coreFrame->document()->printing());
 
+#if PLATFORM(CG)
         // FIXME: Use CGDataConsumerCreate with callbacks to avoid copying the data.
         RetainPtr<CGDataConsumerRef> pdfDataConsumer(AdoptCF, CGDataConsumerCreateWithCFData(pdfPageData.get()));
 
@@ -2055,6 +2058,7 @@ void WebPage::drawPagesToPDF(uint64_t frameID, uint32_t first, uint32_t count, u
             CGPDFContextEndPage(context.get());
         }
         CGPDFContextClose(context.get());
+#endif
     }
 
     send(Messages::WebPageProxy::DataCallback(CoreIPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get())), callbackID));

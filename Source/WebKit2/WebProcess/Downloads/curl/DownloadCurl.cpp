@@ -58,9 +58,4 @@ void Download::didDecideDestination(const String& destination, bool allowOverwri
     notImplemented();
 }
 
-void Download::platformDidFinish()
-{
-    notImplemented();
-}
-
 } // namespace WebKit

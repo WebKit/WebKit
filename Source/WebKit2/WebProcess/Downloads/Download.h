@@ -105,10 +105,10 @@ private:
     RetainPtr<NSURLDownload> m_nsURLDownload;
     RetainPtr<WKDownloadAsDelegate> m_delegate;
 #endif
-#if USE(CFNETWORK)
     bool m_allowOverwrite;
     String m_destination;
     String m_bundlePath;
+#if USE(CFNETWORK)
     RetainPtr<CFURLDownloadRef> m_download;
 #endif
 };

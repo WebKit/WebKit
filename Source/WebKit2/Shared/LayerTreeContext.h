@@ -26,12 +26,12 @@
 #ifndef LayerTreeContext_h
 #define LayerTreeContext_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 namespace CoreIPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
+
+#if USE(ACCELERATED_COMPOSITING)
 
 namespace WebKit {
 

@@ -1,3 +1,39 @@
+2011-03-08  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55956
+        WebKit2 Changes to correct WinCairo port build
+
+        * Shared/LayerTreeContext.h: Don't exclude CoreIPC declarations for non-accelerated
+          compositing case.
+        * UIProcess/DrawingAreaProxy.h: Add "stdint.h" include needed for Cairo build.
+        * UIProcess/DrawingAreaProxyImpl.cpp: Exclude accelerated compositing code for
+          WinCairo build.
+        (WebKit::DrawingAreaProxyImpl::~DrawingAreaProxyImpl):
+        (WebKit::DrawingAreaProxyImpl::didUpdateBackingStoreState):
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::exitAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::sendUpdateBackingStoreState):
+        (WebKit::DrawingAreaProxyImpl::waitForAndDispatchDidUpdateBackingStoreState):
+        * UIProcess/DrawingAreaProxyImpl.h: Exclude declarations for code only used when
+          accelerated compositing is enabled.
+        (WebKit::DrawingAreaProxyImpl::isInAcceleratedCompositingMode):
+        * UIProcess/win/WebView.cpp: Protect CG-specific drawing code.
+        (WebKit::WebView::setFindIndicator):
+        * WebProcess/Downloads/Download.h: Allow CFLite implentation to share overwrite flag,
+          as well as destination and bundle paths.
+        * WebProcess/Downloads/curl/DownloadCurl.cpp: Remove stub (to share CFNet implementation
+          of file handling.  This will be moved to a common area in a future patch.)
+        * WebProcess/WebPage/DrawingAreaImpl.cpp: Exclude accelerated-compositing paths.
+        (WebKit::DrawingAreaImpl::layerHostDidFlushLayers):
+        (WebKit::DrawingAreaImpl::sendDidUpdateBackingStoreState):
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        * WebProcess/WebPage/WebPage.cpp: Protect CG-specific drawing code.
+        (WebKit::WebPage::drawRectToPDF):
+        (WebKit::WebPage::drawPagesToPDF):
+        * win/WebKit2.vcproj: Exclude unused LayerTreeContext from WinCairo
+
 2011-03-08  Ivan Krstić  <ike@apple.com>
 
         Reviewed by Sam Weinig.

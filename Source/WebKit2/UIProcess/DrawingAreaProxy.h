@@ -28,6 +28,7 @@
 #define DrawingAreaProxy_h
 
 #include "DrawingAreaInfo.h"
+#include <stdint.h>
 #include <WebCore/IntSize.h>
 #include <wtf/Noncopyable.h>
 

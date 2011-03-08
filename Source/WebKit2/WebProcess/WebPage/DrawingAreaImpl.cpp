@@ -197,7 +197,9 @@ void DrawingAreaImpl::layerHostDidFlushLayers()
     if (!m_layerTreeHost)
         return;
 
+#if USE(ACCELERATED_COMPOSITING)
     m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_backingStoreStateID, m_layerTreeHost->layerTreeContext()));
+#endif
 }
 
 void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
@@ -291,10 +293,12 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
     m_shouldSendDidUpdateBackingStoreState = false;
 
     UpdateInfo updateInfo;
-    LayerTreeContext layerTreeContext;
 
     if (!m_isPaintingSuspended && !m_layerTreeHost)
         display(updateInfo);
+
+#if USE(ACCELERATED_COMPOSITING)
+    LayerTreeContext layerTreeContext;
 
     if (m_isPaintingSuspended || m_layerTreeHost) {
         updateInfo.viewSize = m_webPage->size();
@@ -311,6 +315,7 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
     }
 
     m_webPage->send(Messages::DrawingAreaProxy::DidUpdateBackingStoreState(m_backingStoreStateID, updateInfo, layerTreeContext));
+#endif
 }
 
 void DrawingAreaImpl::didUpdate()
@@ -391,9 +396,11 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     else
         display(updateInfo);
 
+#if USE(ACCELERATED_COMPOSITING)
     // Send along a complete update of the page so we can paint the contents right after we exit the
     // accelerated compositing mode, eliminiating flicker.
     m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(m_backingStoreStateID, updateInfo));
+#endif
 }
 
 void DrawingAreaImpl::exitAcceleratedCompositingModeSoon()
