@@ -1,3 +1,13 @@
+2011-03-07  Daniel Cheng  <dcheng@chromium.org>
+
+        Unreviewed.
+
+        Skip onpaste-text-html-types.html on Mac and Qt since parts of the test
+        infrastructure to support it aren't there.
+
+        * platform/mac/Skipped:
+        * platform/qt-wk2/Skipped:
+
 2011-03-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

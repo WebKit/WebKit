@@ -1299,6 +1299,7 @@ editing/pasteboard/merge-end-list.html
 editing/pasteboard/merge-end-table.html
 editing/pasteboard/merge-start-blockquote.html
 editing/pasteboard/merge-start-list.html
+editing/pasteboard/onpaste-text-html-types.html
 editing/pasteboard/onpaste-text-html.html
 editing/pasteboard/paste-into-anchor-text.html
 editing/pasteboard/pasting-object.html
