@@ -1176,6 +1176,13 @@ void WebPage::setUserAgent(const String& userAgent)
 {
     m_userAgent = userAgent;
 }
+    
+IntRect WebPage::windowToScreen(const IntRect& rect)
+{
+    IntRect screenRect;
+    sendSync(Messages::WebPageProxy::WindowToScreen(rect), Messages::WebPageProxy::WindowToScreen::Reply(screenRect));
+    return screenRect;
+}
 
 IntRect WebPage::windowResizerRect() const
 {

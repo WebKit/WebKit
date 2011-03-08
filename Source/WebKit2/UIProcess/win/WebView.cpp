@@ -806,6 +806,11 @@ FloatRect WebView::convertToDeviceSpace(const FloatRect& rect)
     return rect;
 }
 
+IntRect WebView::windowToScreen(const IntRect& rect)
+{
+    return rect;
+}
+
 FloatRect WebView::convertToUserSpace(const FloatRect& rect)
 {
     return rect;

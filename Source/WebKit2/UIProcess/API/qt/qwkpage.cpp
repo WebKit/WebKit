@@ -222,6 +222,11 @@ FloatRect QWKPagePrivate::convertToDeviceSpace(const FloatRect& rect)
     return rect;
 }
 
+IntRect QWKPagePrivate::windowToScreen(const IntRect& rect)
+{
+    return rect;
+}
+
 FloatRect QWKPagePrivate::convertToUserSpace(const FloatRect& rect)
 {
     return rect;

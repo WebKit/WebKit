@@ -238,6 +238,7 @@ public:
     void installPageOverlay(PassRefPtr<PageOverlay>);
     void uninstallPageOverlay(PageOverlay*);
     bool hasPageOverlay() const { return m_pageOverlay; }
+    WebCore::IntRect windowToScreen(const WebCore::IntRect&);
 
     PassRefPtr<WebImage> snapshotInViewCoordinates(const WebCore::IntRect&, ImageOptions);
     PassRefPtr<WebImage> snapshotInDocumentCoordinates(const WebCore::IntRect&, ImageOptions);

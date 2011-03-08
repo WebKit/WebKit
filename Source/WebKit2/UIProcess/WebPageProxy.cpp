@@ -1889,6 +1889,11 @@ void WebPageProxy::getWindowFrame(FloatRect& newWindowFrame)
     newWindowFrame = m_pageClient->convertToUserSpace(m_uiClient.windowFrame(this));
 }
 
+void WebPageProxy::windowToScreen(const IntRect& viewRect, IntRect& result)
+{
+    result = m_pageClient->windowToScreen(viewRect);
+}
+    
 void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose)
 {
     WebFrameProxy* frame = process()->webFrame(frameID);

@@ -1,3 +1,33 @@
+2011-03-08  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: Webkit2 not sending UAZoomFocusChanged notifications
+        https://bugs.webkit.org/show_bug.cgi?id=55916
+
+        Needed to implement the windowToScreen() method so that the right frame
+        could be calculated to send for zoom focus changes.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::windowToScreen):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::windowToScreen):
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::windowToScreen):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::windowToScreen):
+        * UIProcess/win/WebView.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::windowToScreen):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowToScreen):
+        * WebProcess/WebPage/WebPage.h:
+
 2011-03-08  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.

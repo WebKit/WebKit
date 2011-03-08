@@ -303,6 +303,14 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
 {
     return [m_wkView _convertToUserSpace:rect];
 }
+    
+IntRect PageClientImpl::windowToScreen(const IntRect& rect)
+{
+    NSRect tempRect = rect;
+    tempRect = [m_wkView convertRect:tempRect toView:nil];
+    tempRect.origin = [[m_wkView window] convertBaseToScreen:tempRect.origin];
+    return enclosingIntRect(tempRect);
+}
 
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool wasEventHandled)
 {

@@ -385,10 +385,9 @@ IntPoint WebChromeClient::screenToWindow(const IntPoint&) const
     return IntPoint();
 }
 
-IntRect WebChromeClient::windowToScreen(const IntRect&) const
+IntRect WebChromeClient::windowToScreen(const IntRect& rect) const
 {
-    notImplemented();
-    return IntRect();
+    return m_page->windowToScreen(rect);
 }
 
 PlatformPageClient WebChromeClient::platformPageClient() const
