@@ -1,3 +1,17 @@
+2011-03-08  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, add pngs to chromium and chromium-linux .checksum files
+        that are missing pngs.  I generated these on my local desktop.
+
+        * platform/chromium-linux/fast/block/float/clear-element-too-wide-for-containing-block-expected.png: Added.
+        * platform/chromium-linux/fast/blockflow/english-bt-text-expected.png: Added.
+        * platform/chromium-linux/fast/blockflow/english-lr-text-expected.png: Added.
+        * platform/chromium-linux/fast/blockflow/english-rl-text-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/border-padding-pagination-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/margin-collapse-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug16012-expected.png: Added.
+        * platform/chromium/fast/images/png_per_row_alpha_decoding-expected.png: Added.
+
 2011-03-08  Martin Maly  <mmaly@chromium.org>
 
         Reviewed by Dimitri Glazkov.
