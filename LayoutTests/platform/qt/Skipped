@@ -818,12 +818,6 @@ svg/filters/feDisplacementMap.svg
 svg/filters/filterRes.svg
 svg/css/composite-shadow-example.html
 svg/css/composite-shadow-with-opacity.html
-# Missing variables:
-# SVGAltGlyphElement, SVGAnimateElement, SVGAnimateColorElement, SVGAnimateTransformElement
-# SVGFontElement, SVGGlyphElement, SVGMissingGlyphElement, SVGFontFaceElement, SVGFontFaceSrcElement
-# SVGFontFaceUriElement, SVGFontFaceFormatElement, SVGFontFaceNameElement, SVGForeignObjectElement
-# https://bugs.webkit.org/show_bug.cgi?id=32941
-svg/custom/global-constructors.html
 
 # --- to be reviewed
 svg/batik/filters/filterRegions.svg

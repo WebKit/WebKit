@@ -720,7 +720,7 @@ module window {
         attribute SVGSetElementConstructor SVGSetElement;
 #endif
 
-#if ENABLE_SVG_FONTS && ENABLE_SVG_FONTS
+#if defined(ENABLE_SVG_FONTS) && ENABLE_SVG_FONTS
 //      attribute SVGAltGlyphDefElementConstructor SVGAltGlyphDefElement;
         attribute SVGAltGlyphElementConstructor SVGAltGlyphElement;
 //      attribute SVGAltGlyphItemElementConstructor SVGAltGlyphItemElement;

@@ -1,3 +1,19 @@
+2011-03-08  Joe Wild  <joseph.wild@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Missing SVG variables
+        https://bugs.webkit.org/show_bug.cgi?id=32941
+
+        Basically, this patch just modifies features.pri to the Qt build to
+        pass on the ENABLE_SVG_* flags to the IDL binding generator.
+
+        Also I had remove global-construtors.html from the skip list and
+        updated the associated expected results files.
+
+        * features.pri:
+        * page/DOMWindow.idl:
+
 2011-03-08  Alok priyadarshi  <alokp@chromium.org>
 
         Reviewed by Dimitri Glazkov.
