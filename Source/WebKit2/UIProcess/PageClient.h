@@ -81,6 +81,7 @@ public:
     virtual void didRelaunchProcess() = 0;
     virtual void pageClosed() = 0;
 
+    virtual void setFocus(bool focused) = 0;
     virtual void takeFocus(bool direction) = 0;
     virtual void toolTipChanged(const String&, const String&) = 0;
 

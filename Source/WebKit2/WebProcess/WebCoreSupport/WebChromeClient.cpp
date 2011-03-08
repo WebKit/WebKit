@@ -121,12 +121,12 @@ float WebChromeClient::scaleFactor()
 
 void WebChromeClient::focus()
 {
-    notImplemented();
+    m_page->send(Messages::WebPageProxy::SetFocus(true));
 }
 
 void WebChromeClient::unfocus()
 {
-    notImplemented();
+    m_page->send(Messages::WebPageProxy::SetFocus(false));
 }
 
 bool WebChromeClient::canTakeFocus(FocusDirection)

@@ -35,6 +35,7 @@ messages -> WebPageProxy {
     SetCursor(WebCore::Cursor cursor)
     SetStatusText(WTF::String statusText)
     SetToolTip(WTF::String toolTip)
+    SetFocus(bool focused)
     TakeFocus(bool direction)
     FocusedFrameChanged(uint64_t frameID)
     FrameSetLargestFrameChanged(uint64_t frameID)

@@ -611,6 +611,7 @@ private:
     void learnWord(const String& word);
     void ignoreWord(const String& word);
 
+    void setFocus(bool focused);
     void takeFocus(bool direction);
     void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);

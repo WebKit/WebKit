@@ -1,3 +1,16 @@
+2011-03-08  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WK2: Cannot set focus on an element when focus is outside of WKView
+        https://bugs.webkit.org/show_bug.cgi?id=55281
+    
+        In WK2, focus cannot be set from the WebProcess side because there's no platformWidget().
+        Instead, the focus/unfocus messages need to be sent to the UIProcess side.
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::setFocus):
+
 2011-03-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

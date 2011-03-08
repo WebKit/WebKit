@@ -195,6 +195,15 @@ void PageClientImpl::didRelaunchProcess()
     [m_wkView _didRelaunchProcess];
 }
 
+void PageClientImpl::setFocus(bool focused)
+{
+    if (focused)
+        [[m_wkView window] makeFirstResponder:m_wkView];
+    else
+        // takeFocus in this context means take focus away from the WKView.
+        takeFocus(true);
+}
+    
 void PageClientImpl::takeFocus(bool direction)
 {
     [m_wkView _takeFocus:direction];

@@ -62,6 +62,7 @@ private:
     virtual void processDidCrash();
     virtual void pageClosed();
     virtual void didRelaunchProcess();
+    virtual void setFocus(bool focused);
     virtual void takeFocus(bool direction);
     virtual void toolTipChanged(const String& oldToolTip, const String& newToolTip);
     virtual void setCursor(const WebCore::Cursor&);

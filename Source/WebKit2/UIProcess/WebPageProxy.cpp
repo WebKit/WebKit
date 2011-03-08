@@ -2346,6 +2346,11 @@ void WebPageProxy::ignoreWord(const String& word)
 
 // Other
 
+void WebPageProxy::setFocus(bool focused)
+{
+    m_pageClient->setFocus(focused);
+}
+
 void WebPageProxy::takeFocus(bool direction)
 {
     m_pageClient->takeFocus(direction);

@@ -1,3 +1,26 @@
+2011-03-08  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WK2: Cannot set focus on an element when focus is outside of WKView
+        https://bugs.webkit.org/show_bug.cgi?id=55281
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setFocus):
+        * UIProcess/API/qt/qwkpage_p.h:
+        (QWKPagePrivate::setFocus):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setFocus):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/win/WebView.h:
+        (WebKit::WebView::setFocus):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::focus):
+        (WebKit::WebChromeClient::unfocus):
+
 2011-03-08  Jeff Miller  <jeffm@apple.com>
 
         Unreviewed, fix last change so WKBaseWin.h is in alphabetical order in the project XML.
