@@ -1,3 +1,19 @@
+2011-03-07  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        SVG <image> referenced by <use> is displayed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=55750
+
+        The result of sourceURI must use the URL of the enclosing document as base.
+        Otherwise, the base may sometimes be empty, and, as a consequence,
+        the intermediate KURL object may be invalid.
+
+        Test: svg/custom/use-image-in-g.svg
+
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::sourceURI):
+
 2011-03-07  Helder Correia  <helder@sencha.com>
 
         Reviewed by Simon Fraser.

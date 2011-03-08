@@ -49,7 +49,7 @@ void SVGImageLoader::dispatchLoadEvent()
 
 String SVGImageLoader::sourceURI(const AtomicString& attr) const
 {
-    return KURL(element()->baseURI(), stripLeadingAndTrailingHTMLSpaces(attr)).string();
+    return element()->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(attr));
 }
 
 }

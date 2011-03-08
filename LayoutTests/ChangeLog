@@ -1,3 +1,16 @@
+2011-03-07  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        SVG <image> referenced by <use> is displayed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=55750
+
+        * svg/custom/resources/rgb.svg: Added.
+        * svg/custom/use-image-in-g-expected.checksum: Added.
+        * svg/custom/use-image-in-g-expected.png: Added.
+        * svg/custom/use-image-in-g-expected.txt: Added.
+        * svg/custom/use-image-in-g.svg: Added.
+
 2011-03-07  Helder Correia  <helder@sencha.com>
 
         Reviewed by Simon Fraser.
