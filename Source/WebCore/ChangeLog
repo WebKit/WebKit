@@ -1,3 +1,17 @@
+2011-03-07  Alice Boxhall  <aboxhall@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix platform/image-encoders/JPEGImageEncoder.cpp empty_output_buffer() behaviour
+        https://bugs.webkit.org/show_bug.cgi?id=54522
+
+        Fix jpegEmptyOutputBuffer() by ignoring free_in_buffer value as required.
+
+        No new tests, as this code is not yet used in WebKit. Once this code is used to implement canvas.toDataUrl(), the canvas tests will exercise it.
+
+        * platform/image-encoders/JPEGImageEncoder.cpp:
+        (WebCore::jpegEmptyOutputBuffer):
+
 2011-03-07  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Reviewed by Eric Seidel.

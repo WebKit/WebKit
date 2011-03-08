@@ -65,7 +65,7 @@ static void jpegInitializeDestination(j_compress_ptr compressData)
 static boolean jpegEmptyOutputBuffer(j_compress_ptr compressData)
 {
     JPEGDestinationManager* dest = static_cast<JPEGDestinationManager*>(compressData->dest);
-    dest->m_dump.append(dest->m_buffer.data(), dest->m_buffer.size() - dest->free_in_buffer);
+    dest->m_dump.append(dest->m_buffer.data(), dest->m_buffer.size());
     dest->next_output_byte  = reinterpret_cast<JOCTET*>(dest->m_buffer.data());
     dest->free_in_buffer    = dest->m_buffer.size();
     return TRUE;
