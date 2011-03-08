@@ -1,3 +1,16 @@
+2011-03-08  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Doxygen documentation for ewk_window_features and ewk_context_menu
+        https://bugs.webkit.org/show_bug.cgi?id=55026
+
+        * ewk/ewk_contextmenu.cpp:
+        (ewk_context_menu_item_select): returns EINA_FALSE when CONTEXT_MENU is disabled
+        * ewk/ewk_contextmenu.h:
+        * ewk/ewk_window_features.cpp:
+        * ewk/ewk_window_features.h:
+
 2011-03-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

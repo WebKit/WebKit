@@ -26,17 +26,21 @@
 
 #include <Eina.h>
 
+/**
+ * \struct  _Ewk_Window_Features
+ * @brief   Contains the window features data.
+ */
 struct _Ewk_Window_Features {
     unsigned int __ref;
     WebCore::WindowFeatures* core;
 };
 
 /**
- * Decrease the ref count of an Ewk_Window_Features, possibly freeing it.
+ * Decreases the referece count of an Ewk_Window_Features, possibly freeing it.
  *
- * When its ref count reaches 0, @param window_features is freed.
+ * When the reference count of the object reaches 0, the one is freed.
  *
- * @param window_features The window's features.
+ * @param window_features the object to decrease reference count
  */
 EAPI void ewk_window_features_unref(Ewk_Window_Features* window_features)
 {
@@ -52,9 +56,9 @@ EAPI void ewk_window_features_unref(Ewk_Window_Features* window_features)
 }
 
 /**
- * Increase the ref count of an Ewk_Window_Features
+ * Increases the reference count of an Ewk_Window_Features.
  *
- * @param window_features The window's features.
+ * @param window_features the object to increase reference count
  */
 EAPI void ewk_window_features_ref(Ewk_Window_Features* window_features)
 {
@@ -63,15 +67,20 @@ EAPI void ewk_window_features_ref(Ewk_Window_Features* window_features)
 }
 
 /**
- * Get boolean properties
+ * Gets boolean properties of an Ewk_Window_Features.
  *
- * @param window_features A window_features.
- * @param toolbar_visible pointer to store if toolbar is visible.
- * @param statusbar_visible pointer to store if statusbar is visible.
- * @param scrollbars_visible pointer to store if scrollbars is visible.
- * @param menubar_visible pointer to store if menubar is visible.
- * @param locationbar_visible pointer to store if locationbar is visible.
- * @param fullscreen pointer to store if fullscreen is enabled.
+ * Properties are returned in the respective pointers. Passing @c 0 to any of
+ * these pointers will make that property to not be returned.
+ *
+ * @param window_features the object to get boolean properties
+ * @param toolbar_visible the pointer to store if toolbar is visible
+ * @param statusbar_visible the pointer to store if statusbar is visible
+ * @param scrollbars_visible the pointer to store if scrollbars is visible
+ * @param menubar_visible the pointer to store if menubar is visible
+ * @param locationbar_visible the pointer to store if locationbar is visible
+ * @param fullscreen the pointer to store if fullscreen is enabled
+ *
+ * @see ewk_window_features_int_property_get
  */
 EAPI void ewk_window_features_bool_property_get(Ewk_Window_Features* window_features, Eina_Bool* toolbar_visible, Eina_Bool* statusbar_visible, Eina_Bool* scrollbars_visible, Eina_Bool* menubar_visible, Eina_Bool* locationbar_visible, Eina_Bool* fullscreen)
 {
@@ -98,18 +107,21 @@ EAPI void ewk_window_features_bool_property_get(Ewk_Window_Features* window_feat
 }
 
 /**
- * Get int properties
+ * Gets int properties of an Ewk_Window_Features.
  *
- * Properties are returned in the respective pointers. Passing NULL to any of
- * these pointers will make that property to not be returned. Make sure to check
- * if the value returned is less than 0 before using it, since in that case it
- * means that property was not set in @param winwdow_features.
+ * Properties are returned in the respective pointers. Passing @c 0 to any of
+ * these pointers will make that property to not be returned.
  *
- * @param window_features A window_features.
- * @param x pointer to store x position or -1 if it's not set in window_features.
- * @param y pointer to store y position or-1 if it's not set in window_features.
- * @param w pointer to store width or-1 if it's not set in window_features.
- * @param h pointer to store height or-1 if it's not set in window_features.
+ * Make sure to check if the value returned is less than 0 before using it, since in
+ * that case it means that property was not set in winwdow_features object.
+ *
+ * @param window_features the window's features
+ * @param x the pointer to store x position
+ * @param y the pointer to store y position
+ * @param w the pointer to store width
+ * @param h the pointer to store height
+ *
+ * @see ewk_window_features_bool_property_get
  */
 EAPI void ewk_window_features_int_property_get(Ewk_Window_Features* window_features, int* x, int* y, int* w, int* h)
 {
@@ -133,13 +145,12 @@ EAPI void ewk_window_features_int_property_get(Ewk_Window_Features* window_featu
 
 /**
  * @internal
- * Create a new Ewk_Window_Features from a WebCore::WindowFeatures if @param
- * core is not NULL or a new one with default features.
  *
- * A new WebCore::WindowFeatures is allocated copying @param core features and
- * it is embedded inside an Ewk_Window_Features whose ref count is initialized.
+ * Creates a new Ewk_Window_Features object.
  *
- * @returns a new allocated Ewk_Window_Features
+ * @param core if not @c 0 a new WebCore::WindowFeatures is allocated copying core features and
+ * it is embedded inside the Ewk_Window_Features whose ref count is initialized, if core is @c 0 a new one is created with the default features.
+ * @returns a new allocated the Ewk_Window_Features object
  */
 Ewk_Window_Features* ewk_window_features_new_from_core(const WebCore::WindowFeatures* core)
 {

@@ -18,6 +18,11 @@
     Boston, MA 02110-1301, USA.
 */
 
+/**
+ * @file    ewk_contextmenu.h
+ * @brief   Describes the context menu API.
+ */
+
 #ifndef ewk_contextmenu_h
 #define ewk_contextmenu_h
 
@@ -30,7 +35,11 @@
 extern "C" {
 #endif
 
-// keep this in sync with ContextMenuItem.h
+/**
+ * \enum    _Ewk_Context_Menu_Action
+ * @brief   Provides the actions of items for the context menu.
+ * @info    Keep this in sync with ContextMenuItem.h
+ */
 enum _Ewk_Context_Menu_Action {
     EWK_CONTEXT_MENU_ITEM_TAG_NO_ACTION = 0, // this item is not actually in web_uidelegate.h
     EWK_CONTEXT_MENU_ITEM_TAG_OPEN_LINK_IN_NEW_WINDOW = 1,
@@ -67,12 +76,12 @@ enum _Ewk_Context_Menu_Action {
     EWK_CONTEXT_MENU_ITEM_PDFPREVIOUS_PAGE,
     EWK_CONTEXT_MENU_ITEM_TAG_OPEN_LINK = 2000,
     EWK_CONTEXT_MENU_ITEM_TAG_IGNORE_GRAMMAR,
-    EWK_CONTEXT_MENU_ITEM_TAG_SPELLING_MENU, // spelling or spelling/grammar sub-menu
+    EWK_CONTEXT_MENU_ITEM_TAG_SPELLING_MENU, /**< spelling or spelling/grammar sub-menu */
     EWK_CONTEXT_MENU_ITEM_TAG_SHOW_SPELLING_PANEL,
     EWK_CONTEXT_MENU_ITEM_TAG_CHECK_SPELLING,
     EWK_CONTEXT_MENU_ITEM_TAG_CHECK_SPELLING_WHILE_TYPING,
     EWK_CONTEXT_MENU_ITEM_TAG_CHECK_GRAMMAR_WITH_SPELLING,
-    EWK_CONTEXT_MENU_ITEM_TAG_FONT_MENU, // font sub-menu
+    EWK_CONTEXT_MENU_ITEM_TAG_FONT_MENU, /**< font sub-menu */
     EWK_CONTEXT_MENU_ITEM_TAG_SHOW_FONTS,
     EWK_CONTEXT_MENU_ITEM_TAG_BOLD,
     EWK_CONTEXT_MENU_ITEM_TAG_ITALIC,
@@ -80,41 +89,43 @@ enum _Ewk_Context_Menu_Action {
     EWK_CONTEXT_MENU_ITEM_TAG_OUTLINE,
     EWK_CONTEXT_MENU_ITEM_TAG_STYLES,
     EWK_CONTEXT_MENU_ITEM_TAG_SHOW_COLORS,
-    EWK_CONTEXT_MENU_ITEM_TAG_SPEECH_MENU, // speech sub-menu
+    EWK_CONTEXT_MENU_ITEM_TAG_SPEECH_MENU, /**< speech sub-menu */
     EWK_CONTEXT_MENU_ITEM_TAG_START_SPEAKING,
     EWK_CONTEXT_MENU_ITEM_TAG_STOP_SPEAKING,
-    EWK_CONTEXT_MENU_ITEM_TAG_WRITING_DIRECTION_MENU, // writing direction sub-menu
+    EWK_CONTEXT_MENU_ITEM_TAG_WRITING_DIRECTION_MENU, /**< writing direction sub-menu */
     EWK_CONTEXT_MENU_ITEM_TAG_DEFAULT_DIRECTION,
     EWK_CONTEXT_MENU_ITEM_TAG_LEFT_TO_RIGHT,
     EWK_CONTEXT_MENU_ITEM_TAG_RIGHT_TO_LEFT,
     EWK_CONTEXT_MENU_ITEM_TAG_PDFSINGLE_PAGE_SCROLLING,
     EWK_CONTEXT_MENU_ITEM_TAG_PDFFACING_PAGES_SCROLLING,
-    EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_MENU, // text direction sub-menu
+    EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_MENU, /**< text direction sub-menu */
     EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_DEFAULT,
     EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_LEFT_TO_RIGHT,
     EWK_CONTEXT_MENU_ITEM_TAG_TEXT_DIRECTION_RIGHT_TO_LEFT,
     EWK_CONTEXT_MENU_ITEM_BASE_CUSTOM_TAG = 5000,
     EWK_CONTEXT_MENU_ITEM_BASE_APPLICATION_TAG = 10000
 };
+/** Creates a type name for _Ewk_Context_Menu_Action */
 typedef enum _Ewk_Context_Menu_Action Ewk_Context_Menu_Action;
 
-// keep this in sync with ContextMenuItem.h
+/**
+ * \enum    _Ewk_Context_Menu_Item_Type
+ * @brief   Defines the types of the items for the context menu.
+ * @info    Keep this in sync with ContextMenuItem.h
+ */
 enum _Ewk_Context_Menu_Item_Type {
     EWK_ACTION_TYPE,
     EWK_CHECKABLE_ACTION_TYPE,
     EWK_SEPARATOR_TYPE,
     EWK_SUBMENU_TYPE
 };
+/** Creates a type name for _Ewk_Context_Menu_Item_Type */
 typedef enum _Ewk_Context_Menu_Item_Type    Ewk_Context_Menu_Item_Type;
 
-/**
- * The structure to contain Context Menu data
- */
+/** Creates a type name for _Ewk_Context_Menu */
 typedef struct _Ewk_Context_Menu            Ewk_Context_Menu;
 
-/**
- * Represents one item from Ewk_Context_Menu
- */
+/** Creates a type name for _Ewk_Context_Menu_Item */
 typedef struct _Ewk_Context_Menu_Item       Ewk_Context_Menu_Item;
 
 

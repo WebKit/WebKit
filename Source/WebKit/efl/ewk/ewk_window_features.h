@@ -18,6 +18,11 @@
     Boston, MA 02110-1301, USA.
 */
 
+/**
+ * @file    ewk_window_features.h
+ * @brief   Access to the features of window.
+ */
+
 #ifndef ewk_window_features_h
 #define ewk_window_features_h
 
@@ -29,6 +34,7 @@
 extern "C" {
 #endif
 
+/** Creates a type name for _Ewk_Window_Features. */
 typedef struct _Ewk_Window_Features Ewk_Window_Features;
 
 EAPI void         ewk_window_features_unref(Ewk_Window_Features* window_features);
