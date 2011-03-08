@@ -105,7 +105,7 @@ FloatRect Path::boundingRect() const
     return FloatRect();
 }
 
-FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
+FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 {
     notImplemented();
     return FloatRect();

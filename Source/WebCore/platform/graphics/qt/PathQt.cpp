@@ -154,7 +154,7 @@ FloatRect Path::boundingRect() const
     return m_path.boundingRect();
 }
 
-FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
+FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 {
     GraphicsContext* context = scratchContext();
     QPainterPathStroker stroke;
@@ -409,12 +409,12 @@ void Path::transform(const AffineTransform& transform)
         m_path = qTransform.map(m_path);
 }
 
-float Path::length()
+float Path::length() const
 {
     return m_path.length();
 }
 
-FloatPoint Path::pointAtLength(float length, bool& ok)
+FloatPoint Path::pointAtLength(float length, bool& ok) const
 {
     ok = (length >= 0 && length <= m_path.length());
 
@@ -424,7 +424,7 @@ FloatPoint Path::pointAtLength(float length, bool& ok)
     return point;
 }
 
-float Path::normalAngleAtLength(float length, bool& ok)
+float Path::normalAngleAtLength(float length, bool& ok) const
 {
     ok = (length >= 0 && length <= m_path.length());
 

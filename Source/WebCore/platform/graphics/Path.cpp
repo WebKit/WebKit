@@ -83,14 +83,14 @@ static void pathLengthApplierFunction(void* info, const PathElement* element)
     }
 }
 
-float Path::length()
+float Path::length() const
 {
     PathTraversalState traversalState(PathTraversalState::TraversalTotalLength);
     apply(&traversalState, pathLengthApplierFunction);
     return traversalState.m_totalLength;
 }
 
-FloatPoint Path::pointAtLength(float length, bool& ok)
+FloatPoint Path::pointAtLength(float length, bool& ok) const
 {
     PathTraversalState traversalState(PathTraversalState::TraversalPointAtLength);
     traversalState.m_desiredLength = length;
@@ -99,7 +99,7 @@ FloatPoint Path::pointAtLength(float length, bool& ok)
     return traversalState.m_current;
 }
 
-float Path::normalAngleAtLength(float length, bool& ok)
+float Path::normalAngleAtLength(float length, bool& ok) const
 {
     PathTraversalState traversalState(PathTraversalState::TraversalNormalAngleAtLength);
     traversalState.m_desiredLength = length;

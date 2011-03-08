@@ -166,7 +166,7 @@ FloatRect Path::boundingRect() const
     return CGPathGetBoundingBox(m_path);
 }
 
-FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
+FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 {
     CGContextRef context = scratchContext();
 

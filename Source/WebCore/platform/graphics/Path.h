@@ -112,11 +112,11 @@ namespace WebCore {
         bool contains(const FloatPoint&, WindRule rule = RULE_NONZERO) const;
         bool strokeContains(StrokeStyleApplier*, const FloatPoint&) const;
         FloatRect boundingRect() const;
-        FloatRect strokeBoundingRect(StrokeStyleApplier* = 0);
+        FloatRect strokeBoundingRect(StrokeStyleApplier* = 0) const;
         
-        float length();
-        FloatPoint pointAtLength(float length, bool& ok);
-        float normalAngleAtLength(float length, bool& ok);
+        float length() const;
+        FloatPoint pointAtLength(float length, bool& ok) const;
+        float normalAngleAtLength(float length, bool& ok) const;
 
         void clear();
         bool isEmpty() const;

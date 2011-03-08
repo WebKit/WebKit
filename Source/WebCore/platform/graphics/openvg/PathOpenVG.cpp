@@ -169,7 +169,7 @@ FloatRect Path::boundingRect() const
     return FloatRect(FloatPoint(minX, minY), FloatSize(width, height));
 }
 
-FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
+FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 {
     notImplemented();
 
@@ -464,7 +464,7 @@ void Path::transform(const AffineTransform& transformation)
 // functions and Path::apply() doesn't really work as long as we rely on VGPath
 // as primary path storage.
 
-float Path::length()
+float Path::length() const
 {
     m_path->makeCompatibleContextCurrent();
     VGfloat length = vgPathLength(m_path->vgPath(), 0, vgGetParameteri(m_path->vgPath(), VG_PATH_NUM_SEGMENTS));
@@ -472,7 +472,7 @@ float Path::length()
     return length;
 }
 
-FloatPoint Path::pointAtLength(float length, bool& ok)
+FloatPoint Path::pointAtLength(float length, bool& ok) const
 {
     VGfloat x = 0, y = 0;
     m_path->makeCompatibleContextCurrent();
@@ -483,7 +483,7 @@ FloatPoint Path::pointAtLength(float length, bool& ok)
     return FloatPoint(x, y);
 }
 
-float Path::normalAngleAtLength(float length, bool& ok)
+float Path::normalAngleAtLength(float length, bool& ok) const
 {
     VGfloat tangentX, tangentY;
     m_path->makeCompatibleContextCurrent();

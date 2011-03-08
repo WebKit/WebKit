@@ -281,7 +281,7 @@ FloatRect Path::boundingRect() const
     return FloatRect(x0, y0, x1 - x0, y1 - y0);
 }
 
-FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
+FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 {
     cairo_t* cr = platformPath()->context();
     if (applier) {

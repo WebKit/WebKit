@@ -228,7 +228,7 @@ void Path::transform(const AffineTransform& xform)
     m_path->transform(xform);
 }
 
-FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
+FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 {
     GraphicsContext* scratch = scratchContext();
     scratch->save();

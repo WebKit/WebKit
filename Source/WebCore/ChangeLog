@@ -1,3 +1,36 @@
+2011-03-08  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        Path: Make measurement functions const
+        https://bugs.webkit.org/show_bug.cgi?id=55914
+
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::length):
+        (WebCore::Path::pointAtLength):
+        (WebCore::Path::normalAngleAtLength):
+        * platform/graphics/Path.h:
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::strokeBoundingRect):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::strokeBoundingRect):
+        * platform/graphics/openvg/PathOpenVG.cpp:
+        (WebCore::Path::strokeBoundingRect):
+        (WebCore::Path::length):
+        (WebCore::Path::pointAtLength):
+        (WebCore::Path::normalAngleAtLength):
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::strokeBoundingRect):
+        (WebCore::Path::length):
+        (WebCore::Path::pointAtLength):
+        (WebCore::Path::normalAngleAtLength):
+        * platform/graphics/skia/PathSkia.cpp:
+        (WebCore::Path::strokeBoundingRect):
+        * platform/graphics/wince/PathWinCE.cpp:
+        (WebCore::Path::strokeBoundingRect):
+        * platform/graphics/wx/PathWx.cpp:
+        (WebCore::Path::strokeBoundingRect):
+
 2011-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

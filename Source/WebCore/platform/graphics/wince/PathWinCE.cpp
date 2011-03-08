@@ -133,7 +133,7 @@ void Path::transform(const AffineTransform& t)
     m_path->transform(t);
 }
 
-FloatRect Path::strokeBoundingRect(StrokeStyleApplier *)
+FloatRect Path::strokeBoundingRect(StrokeStyleApplier*) const
 {
     notImplemented();
     return FloatRect();
