@@ -503,6 +503,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundle.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleInitialize.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleInspector.h \
@@ -526,16 +528,18 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h \
 	Source/WebKit2/WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundle.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundle.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleBackForwardList.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleClient.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleClient.h \
-	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundle.cpp \
-	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundle.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleHitTestResult.h \
+	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleNavigationAction.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp \
@@ -544,6 +548,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageFormClient.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h \
+	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp \

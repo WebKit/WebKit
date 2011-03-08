@@ -39,7 +39,12 @@ void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequ
 bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
 {
     notImplemented();
-    return false;
+
+    // FIXME: Add real implementation when we want to implement something that
+    // depends on this like the policy client.
+    // https://bugs.webkit.org/show_bug.cgi?id=55934
+    resourceRequest = WebCore::ResourceRequest();
+    return true;
 }
 
 void encodeResourceResponse(ArgumentEncoder* encoder, const WebCore::ResourceResponse& resourceResponse)
@@ -50,7 +55,10 @@ void encodeResourceResponse(ArgumentEncoder* encoder, const WebCore::ResourceRes
 bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse& resourceResponse)
 {
     notImplemented();
-    return false;
+
+    // FIXME: Ditto.
+    resourceResponse = WebCore::ResourceResponse();
+    return true;
 }
 
 }

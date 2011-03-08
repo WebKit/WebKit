@@ -1,3 +1,19 @@
+2011-03-08  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add new files to compilation after r77974
+        https://bugs.webkit.org/show_bug.cgi?id=54076
+
+        The commit added new code to allow passing context to policy
+        delegate methods, we also added dummy ResourceRequest and
+        ResourceResponse decoders until we implement them.
+
+        * GNUmakefile.am:
+        * Shared/gtk/WebCoreArgumentCodersGtk.cpp:
+        (CoreIPC::decodeResourceRequest):
+        (CoreIPC::decodeResourceResponse):
+
 2011-03-08  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
