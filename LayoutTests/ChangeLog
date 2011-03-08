@@ -1,3 +1,12 @@
+2011-03-08  Martin Maly  <mmaly@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Expectation updates for strict mode V8 features.
+        https://bugs.webkit.org/show_bug.cgi?id=55789
+
+        * platform/chromium/fast/js/mozilla/strict/15.5.5.1-expected.txt:
+
 2011-03-08  Tony Chang  <tony@chromium.org>
 
         Unreviewed, remove png layout test results that don't have
