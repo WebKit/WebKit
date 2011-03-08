@@ -786,15 +786,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Shared\API\c\win\WKBaseWin.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\API\c\WKCertificateInfo.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\Shared\API\c\WKCertificateInfo.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\API\c\win\WKBaseWin.h"
 					>
 				</File>
 				<File

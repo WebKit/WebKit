@@ -1,5 +1,11 @@
 2011-03-08  Jeff Miller  <jeffm@apple.com>
 
+        Unreviewed, fix last change so WKBaseWin.h is in alphabetical order in the project XML.
+
+        * win/WebKit2.vcproj: Move WKBaseWin.h to be in alphabetical order.
+
+2011-03-08  Jeff Miller  <jeffm@apple.com>
+
         Reviewed by Darin Adler.
 
         Remove Source/WebKit2/UIProcess/API/C/win/WKBaseWin.h
