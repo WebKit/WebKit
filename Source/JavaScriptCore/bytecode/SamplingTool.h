@@ -95,8 +95,8 @@ namespace JSC {
     struct Instruction;
 
     struct ScriptSampleRecord {
-        ScriptSampleRecord(ScriptExecutable* executable)
-            : m_executable(executable)
+        ScriptSampleRecord(JSGlobalData& globalData, ScriptExecutable* executable)
+            : m_executable(globalData, executable)
             , m_codeBlock(0)
             , m_sampleCount(0)
             , m_opcodeSampleCount(0)
@@ -113,7 +113,7 @@ namespace JSC {
         
         void sample(CodeBlock*, Instruction*);
 
-        RefPtr<ScriptExecutable> m_executable;
+        Global<ScriptExecutable> m_executable;
         CodeBlock* m_codeBlock;
         int m_sampleCount;
         int m_opcodeSampleCount;

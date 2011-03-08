@@ -39,8 +39,8 @@ ASSERT_CLASS_FITS_IN_CELL(JSActivation);
 
 const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, 0 };
 
-JSActivation::JSActivation(CallFrame* callFrame, NonNullPassRefPtr<FunctionExecutable> functionExecutable)
-    : Base(callFrame->globalData().activationStructure, new JSActivationData(functionExecutable, callFrame->registers()))
+JSActivation::JSActivation(CallFrame* callFrame, FunctionExecutable* functionExecutable)
+    : Base(callFrame->globalData().activationStructure, new JSActivationData(callFrame->globalData(), this, functionExecutable, callFrame->registers()))
 {
     ASSERT(inherits(&s_info));
 }
@@ -53,6 +53,7 @@ JSActivation::~JSActivation()
 void JSActivation::markChildren(MarkStack& markStack)
 {
     Base::markChildren(markStack);
+    markStack.append(&d()->functionExecutable);
 
     // No need to mark our registers if they're still in the RegisterFile.
     WriteBarrier<Unknown>* registerArray = d()->registerArray.get();

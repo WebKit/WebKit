@@ -44,7 +44,7 @@ VPtrHackExecutable::~VPtrHackExecutable()
 }
 
 EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext)
-    : ScriptExecutable(exec, source, inStrictContext)
+    : ScriptExecutable(exec->globalData().evalExecutableStructure, exec, source, inStrictContext)
 {
 }
 
@@ -53,7 +53,7 @@ EvalExecutable::~EvalExecutable()
 }
 
 ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
-    : ScriptExecutable(exec, source, false)
+    : ScriptExecutable(exec->globalData().programExecutableStructure, exec, source, false)
 {
 }
 
@@ -62,7 +62,7 @@ ProgramExecutable::~ProgramExecutable()
 }
 
 FunctionExecutable::FunctionExecutable(JSGlobalData* globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext, int firstLine, int lastLine)
-    : ScriptExecutable(globalData, source, inStrictContext)
+    : ScriptExecutable(globalData->functionExecutableStructure, globalData, source, inStrictContext)
     , m_numCapturedVariables(0)
     , m_forceUsesArguments(forceUsesArguments)
     , m_parameters(parameters)
@@ -74,7 +74,7 @@ FunctionExecutable::FunctionExecutable(JSGlobalData* globalData, const Identifie
 }
 
 FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext, int firstLine, int lastLine)
-    : ScriptExecutable(exec, source, inStrictContext)
+    : ScriptExecutable(exec->globalData().functionExecutableStructure, exec, source, inStrictContext)
     , m_numCapturedVariables(0)
     , m_forceUsesArguments(forceUsesArguments)
     , m_parameters(parameters)
@@ -87,6 +87,12 @@ FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, 
 
 FunctionExecutable::~FunctionExecutable()
 {
+#if ENABLE(JIT_OPTIMIZE_CALL)
+    if (isGeneratedForCall())
+        generatedBytecodeForCall().unlinkCallers();
+    if (isGeneratedForConstruct())
+        generatedBytecodeForConstruct().unlinkCallers();
+#endif
 }
 
 JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scopeChainNode)
@@ -125,6 +131,13 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
 #endif
 
     return 0;
+}
+
+void EvalExecutable::markChildren(MarkStack& markStack)
+{
+    ScriptExecutable::markChildren(markStack);
+    if (m_evalCodeBlock)
+        m_evalCodeBlock->markAggregate(markStack);
 }
 
 JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
@@ -176,6 +189,13 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
 #endif
 
    return 0;
+}
+
+void ProgramExecutable::markChildren(MarkStack& markStack)
+{
+    ScriptExecutable::markChildren(markStack);
+    if (m_programCodeBlock)
+        m_programCodeBlock->markAggregate(markStack);
 }
 
 JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChainNode* scopeChainNode)
@@ -268,8 +288,9 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     return 0;
 }
 
-void FunctionExecutable::markAggregate(MarkStack& markStack)
+void FunctionExecutable::markChildren(MarkStack& markStack)
 {
+    ScriptExecutable::markChildren(markStack);
     if (m_codeBlockForCall)
         m_codeBlockForCall->markAggregate(markStack);
     if (m_codeBlockForConstruct)
@@ -288,7 +309,7 @@ void FunctionExecutable::discardCode()
 #endif
 }
 
-PassRefPtr<FunctionExecutable> FunctionExecutable::fromGlobalCode(const Identifier& functionName, ExecState* exec, Debugger* debugger, const SourceCode& source, JSObject** exception)
+FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& functionName, ExecState* exec, Debugger* debugger, const SourceCode& source, JSObject** exception)
 {
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
     RefPtr<ProgramNode> program = exec->globalData().parser->parse<ProgramNode>(lexicalGlobalObject, debugger, exec, source, 0, JSParseNormal, exception);

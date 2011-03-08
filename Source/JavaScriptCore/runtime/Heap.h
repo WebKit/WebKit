@@ -92,9 +92,7 @@ namespace JSC {
 
         void pushTempSortVector(Vector<ValueStringPair>*);
         void popTempSortVector(Vector<ValueStringPair>*);
-        
-        HashSet<GlobalCodeBlock*>& codeBlocks() { return m_codeBlocks; }
-
+    
         HashSet<MarkedArgumentBuffer*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<MarkedArgumentBuffer*>; return *m_markListSet; }
         
         template <typename Functor> void forEach(Functor&);
@@ -124,7 +122,6 @@ namespace JSC {
 
         ProtectCountSet m_protectedValues;
         Vector<Vector<ValueStringPair>* > m_tempSortingVectors;
-        HashSet<GlobalCodeBlock*> m_codeBlocks;
 
         HashSet<MarkedArgumentBuffer*>* m_markListSet;
 

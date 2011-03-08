@@ -943,7 +943,7 @@ RegisterID* BytecodeGenerator::addConstantValue(JSValue v)
     if (result.second) {
         m_constantPoolRegisters.append(FirstConstantRegisterIndex + m_nextConstantOffset);
         ++m_nextConstantOffset;
-        m_codeBlock->addConstantRegister(JSValue(v));
+        m_codeBlock->addConstant(JSValue(v));
     } else
         index = result.first->second;
 
@@ -1026,8 +1026,8 @@ RegisterID* BytecodeGenerator::emitEqualityOp(OpcodeID opcodeID, RegisterID* dst
         if (src1->index() == dstIndex
             && src1->isTemporary()
             && m_codeBlock->isConstantRegisterIndex(src2->index())
-            && m_codeBlock->constantRegister(src2->index()).jsValue().isString()) {
-            const UString& value = asString(m_codeBlock->constantRegister(src2->index()).jsValue())->tryGetValue();
+            && m_codeBlock->constantRegister(src2->index()).get().isString()) {
+            const UString& value = asString(m_codeBlock->constantRegister(src2->index()).get())->tryGetValue();
             if (value == "undefined") {
                 rewindUnaryOp();
                 emitOpcode(op_is_undefined);

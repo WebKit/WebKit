@@ -118,14 +118,19 @@ void Debugger::recompileAllJSFunctions(JSGlobalData* globalData)
 JSValue evaluateInGlobalCallFrame(const UString& script, JSValue& exception, JSGlobalObject* globalObject)
 {
     CallFrame* globalCallFrame = globalObject->globalExec();
+    JSGlobalData& globalData = globalObject->globalData();
 
-    RefPtr<EvalExecutable> eval = EvalExecutable::create(globalCallFrame, makeSource(script), false);
+    EvalExecutable* eval = EvalExecutable::create(globalCallFrame, makeSource(script), false);
+    if (!eval) {
+        exception = globalData.exception.get();
+        globalData.exception = JSValue();
+        return exception;
+    }
     JSObject* error = eval->compile(globalCallFrame, globalCallFrame->scopeChain());
     if (error)
         return error;
 
-    JSGlobalData& globalData = globalObject->globalData();
-    JSValue result = globalData.interpreter->execute(eval.get(), globalCallFrame, globalObject, globalCallFrame->scopeChain());
+    JSValue result = globalData.interpreter->execute(eval, globalCallFrame, globalObject, globalCallFrame->scopeChain());
     if (globalData.exception) {
         exception = globalData.exception.get();
         globalData.exception = JSValue();

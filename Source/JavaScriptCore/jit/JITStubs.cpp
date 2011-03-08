@@ -40,6 +40,7 @@
 #include "Debugger.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
+#include "Global.h"
 #include "JIT.h"
 #include "JSActivation.h"
 #include "JSArray.h"
@@ -679,6 +680,7 @@ __asm void ctiOpThrowNotCaught()
 #endif
 
 JITThunks::JITThunks(JSGlobalData* globalData)
+    : m_hostFunctionStubMap(new HostFunctionStubMap)
 {
     if (!globalData->executableAllocator.isValid())
         return;
@@ -3483,22 +3485,27 @@ MacroAssemblerCodePtr JITThunks::ctiStub(JSGlobalData* globalData, ThunkGenerato
     return entry.first->second;
 }
 
-PassRefPtr<NativeExecutable> JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function)
+NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function)
 {
-    std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap.add(function, 0);
+    std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap->add(function, Global<NativeExecutable>(Global<NativeExecutable>::EmptyValue));
     if (entry.second)
-        entry.first->second = NativeExecutable::create(JIT::compileCTINativeCall(globalData, m_executablePool, function), function, ctiNativeConstruct(), callHostFunctionAsConstructor);
-    return entry.first->second;
+        entry.first->second.set(*globalData, NativeExecutable::create(*globalData, JIT::compileCTINativeCall(globalData, m_executablePool, function), function, ctiNativeConstruct(), callHostFunctionAsConstructor));
+    return entry.first->second.get();
 }
 
-PassRefPtr<NativeExecutable> JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function, ThunkGenerator generator)
+NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function, ThunkGenerator generator)
 {
-    std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap.add(function, 0);
+    std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap->add(function, Global<NativeExecutable>(Global<NativeExecutable>::EmptyValue));
     if (entry.second) {
         MacroAssemblerCodePtr code = globalData->canUseJIT() ? generator(globalData, m_executablePool.get()) : MacroAssemblerCodePtr();
-        entry.first->second = NativeExecutable::create(code, function, ctiNativeConstruct(), callHostFunctionAsConstructor);
+        entry.first->second.set(*globalData, NativeExecutable::create(*globalData, code, function, ctiNativeConstruct(), callHostFunctionAsConstructor));
     }
-    return entry.first->second;
+    return entry.first->second.get();
+}
+
+void JITThunks::clearHostFunctionStubs()
+{
+    m_hostFunctionStubMap.clear();
 }
 
 } // namespace JSC

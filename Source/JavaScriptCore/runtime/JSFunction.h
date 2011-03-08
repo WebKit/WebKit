@@ -34,6 +34,7 @@ namespace JSC {
     class JSActivation;
     class JSGlobalObject;
     class NativeExecutable;
+    class VPtrHackExecutable;
 
     EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState*);
 
@@ -45,8 +46,8 @@ namespace JSC {
 
     public:
         JSFunction(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, int length, const Identifier&, NativeFunction);
-        JSFunction(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, int length, const Identifier&, PassRefPtr<NativeExecutable>);
-        JSFunction(ExecState*, NonNullPassRefPtr<FunctionExecutable>, ScopeChainNode*);
+        JSFunction(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, int length, const Identifier&, NativeExecutable*);
+        JSFunction(ExecState*, FunctionExecutable*, ScopeChainNode*);
         virtual ~JSFunction();
 
         const UString& name(ExecState*);
@@ -86,7 +87,7 @@ namespace JSC {
         const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesMarkChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
     private:
-        JSFunction(NonNullPassRefPtr<Structure>);
+        JSFunction(NonNullPassRefPtr<Structure>, VPtrHackExecutable*);
 
         bool isHostFunctionNonInline() const;
 
@@ -102,7 +103,7 @@ namespace JSC {
         static JSValue callerGetter(ExecState*, JSValue, const Identifier&);
         static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
 
-        RefPtr<ExecutableBase> m_executable;
+        WriteBarrier<ExecutableBase> m_executable;
         WriteBarrier<ScopeChainNode> m_scopeChain;
     };
 

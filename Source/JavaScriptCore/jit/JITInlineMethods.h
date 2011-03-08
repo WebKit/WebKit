@@ -396,7 +396,7 @@ inline void JIT::emitLoad2(unsigned index1, RegisterID tag1, RegisterID payload1
 inline void JIT::emitLoadDouble(unsigned index, FPRegisterID value)
 {
     if (m_codeBlock->isConstantRegisterIndex(index)) {
-        Register& inConstantPool = m_codeBlock->constantRegister(index);
+        WriteBarrier<Unknown>& inConstantPool = m_codeBlock->constantRegister(index);
         loadDouble(&inConstantPool, value);
     } else
         loadDouble(addressFor(index), value);
@@ -405,7 +405,7 @@ inline void JIT::emitLoadDouble(unsigned index, FPRegisterID value)
 inline void JIT::emitLoadInt32ToDouble(unsigned index, FPRegisterID value)
 {
     if (m_codeBlock->isConstantRegisterIndex(index)) {
-        Register& inConstantPool = m_codeBlock->constantRegister(index);
+        WriteBarrier<Unknown>& inConstantPool = m_codeBlock->constantRegister(index);
         char* bytePointer = reinterpret_cast<char*>(&inConstantPool);
         convertInt32ToDouble(AbsoluteAddress(bytePointer + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), value);
     } else
@@ -701,7 +701,7 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, int vReg)
 inline void JIT::emitLoadDouble(unsigned index, FPRegisterID value)
 {
     if (m_codeBlock->isConstantRegisterIndex(index)) {
-        Register& inConstantPool = m_codeBlock->constantRegister(index);
+        WriteBarrier<Unknown>& inConstantPool = m_codeBlock->constantRegister(index);
         loadDouble(&inConstantPool, value);
     } else
         loadDouble(addressFor(index), value);
@@ -710,7 +710,7 @@ inline void JIT::emitLoadDouble(unsigned index, FPRegisterID value)
 inline void JIT::emitLoadInt32ToDouble(unsigned index, FPRegisterID value)
 {
     if (m_codeBlock->isConstantRegisterIndex(index)) {
-        Register& inConstantPool = m_codeBlock->constantRegister(index);
+        WriteBarrier<Unknown>& inConstantPool = m_codeBlock->constantRegister(index);
         convertInt32ToDouble(AbsoluteAddress(&inConstantPool), value);
     } else
         convertInt32ToDouble(addressFor(index), value);

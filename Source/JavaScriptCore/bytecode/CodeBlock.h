@@ -248,7 +248,7 @@ namespace JSC {
     protected:
         CodeBlock(ScriptExecutable* ownerExecutable, CodeType, JSGlobalObject*, PassRefPtr<SourceProvider>, unsigned sourceOffset, SymbolTable* symbolTable, bool isConstructor);
 
-        DeprecatedPtr<JSGlobalObject> m_globalObject;
+        WriteBarrier<JSGlobalObject> m_globalObject;
         Heap* m_heap;
 
     public:
@@ -359,7 +359,7 @@ namespace JSC {
         ExecutablePool* executablePool() { return getJITCode().getExecutablePool(); }
 #endif
 
-        ScriptExecutable* ownerExecutable() const { return m_ownerExecutable; }
+        ScriptExecutable* ownerExecutable() const { return m_ownerExecutable.get(); }
 
         void setGlobalData(JSGlobalData* globalData) { m_globalData = globalData; }
 
@@ -472,15 +472,31 @@ namespace JSC {
         Identifier& identifier(int index) { return m_identifiers[index]; }
 
         size_t numberOfConstantRegisters() const { return m_constantRegisters.size(); }
-        void addConstantRegister(const Register& r) { return m_constantRegisters.append(r); }
-        Register& constantRegister(int index) { return m_constantRegisters[index - FirstConstantRegisterIndex]; }
+        void addConstant(JSValue v)
+        {
+            m_constantRegisters.append(WriteBarrier<Unknown>());
+            m_constantRegisters.last().set(m_globalObject->globalData(), m_ownerExecutable.get(), v);
+        }
+        WriteBarrier<Unknown>& constantRegister(int index) { return m_constantRegisters[index - FirstConstantRegisterIndex]; }
         ALWAYS_INLINE bool isConstantRegisterIndex(int index) const { return index >= FirstConstantRegisterIndex; }
-        ALWAYS_INLINE JSValue getConstant(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex].jsValue(); }
+        ALWAYS_INLINE JSValue getConstant(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex].get(); }
 
-        unsigned addFunctionDecl(NonNullPassRefPtr<FunctionExecutable> n) { unsigned size = m_functionDecls.size(); m_functionDecls.append(n); return size; }
+        unsigned addFunctionDecl(FunctionExecutable* n)
+        {
+            unsigned size = m_functionDecls.size();
+            m_functionDecls.append(WriteBarrier<FunctionExecutable>());
+            m_functionDecls.last().set(m_globalObject->globalData(), m_ownerExecutable.get(), n);
+            return size;
+        }
         FunctionExecutable* functionDecl(int index) { return m_functionDecls[index].get(); }
         int numberOfFunctionDecls() { return m_functionDecls.size(); }
-        unsigned addFunctionExpr(NonNullPassRefPtr<FunctionExecutable> n) { unsigned size = m_functionExprs.size(); m_functionExprs.append(n); return size; }
+        unsigned addFunctionExpr(FunctionExecutable* n)
+        {
+            unsigned size = m_functionExprs.size();
+            m_functionExprs.append(WriteBarrier<FunctionExecutable>());
+            m_functionExprs.last().set(m_globalObject->globalData(), m_ownerExecutable.get(), n);
+            return size;
+        }
         FunctionExecutable* functionExpr(int index) { return m_functionExprs[index].get(); }
 
         unsigned addRegExp(RegExp* r) { createRareDataIfNecessary(); unsigned size = m_rareData->m_regexps.size(); m_rareData->m_regexps.append(r); return size; }
@@ -536,7 +552,7 @@ namespace JSC {
                 m_rareData = adoptPtr(new RareData);
         }
 
-        ScriptExecutable* m_ownerExecutable;
+        WriteBarrier<ScriptExecutable> m_ownerExecutable;
         JSGlobalData* m_globalData;
 
         Vector<Instruction> m_instructions;
@@ -574,9 +590,10 @@ namespace JSC {
 
         // Constant Pool
         Vector<Identifier> m_identifiers;
-        Vector<Register> m_constantRegisters;
-        Vector<RefPtr<FunctionExecutable> > m_functionDecls;
-        Vector<RefPtr<FunctionExecutable> > m_functionExprs;
+        COMPILE_ASSERT(sizeof(Register) == sizeof(WriteBarrier<Unknown>), Register_must_be_same_size_as_WriteBarrier_Unknown);
+        Vector<WriteBarrier<Unknown> > m_constantRegisters;
+        Vector<WriteBarrier<FunctionExecutable> > m_functionDecls;
+        Vector<WriteBarrier<FunctionExecutable> > m_functionExprs;
 
         SymbolTable* m_symbolTable;
 
@@ -617,12 +634,6 @@ namespace JSC {
         GlobalCodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset)
             : CodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, sourceOffset, &m_unsharedSymbolTable, false)
         {
-            m_heap->codeBlocks().add(this);
-        }
-
-        ~GlobalCodeBlock()
-        {
-            m_heap->codeBlocks().remove(this);
         }
 
     private:
@@ -680,7 +691,7 @@ namespace JSC {
     {
         CodeBlock* codeBlock = this->codeBlock();
         if (codeBlock->isConstantRegisterIndex(index))
-            return codeBlock->constantRegister(index);
+            return *reinterpret_cast<Register*>(&codeBlock->constantRegister(index));
         return this[index];
     }
 

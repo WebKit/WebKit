@@ -75,6 +75,10 @@ void Heap::destroy()
     // (and thus the global data) before other objects that may use the global data.
     RefPtr<JSGlobalData> protect(m_globalData);
 
+#if ENABLE(JIT)
+    m_globalData->jitStubs->clearHostFunctionStubs();
+#endif
+
     delete m_markListSet;
     m_markListSet = 0;
     m_markedSpace.clearMarks();
@@ -220,11 +224,6 @@ void Heap::markRoots()
     
     // Mark temporary vector for Array sorting
     markTempSortVectors(markStack);
-    markStack.drain();
-    
-    HashSet<GlobalCodeBlock*>::const_iterator end = m_codeBlocks.end();
-    for (HashSet<GlobalCodeBlock*>::const_iterator it = m_codeBlocks.begin(); it != end; ++it)
-        (*it)->markAggregate(markStack);
     markStack.drain();
 
     // Mark misc. other roots.

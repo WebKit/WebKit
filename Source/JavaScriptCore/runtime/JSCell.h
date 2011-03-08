@@ -53,6 +53,7 @@ namespace JSC {
         WTF_MAKE_NONCOPYABLE(JSCell);
 #endif
 
+        friend class ExecutableBase;
         friend class GetterSetter;
         friend class Heap;
         friend class JIT;

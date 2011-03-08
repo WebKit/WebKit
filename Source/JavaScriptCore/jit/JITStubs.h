@@ -254,6 +254,8 @@ namespace JSC {
     extern "C" void ctiOpThrowNotCaught();
     extern "C" EncodedJSValue ctiTrampoline(void* code, RegisterFile*, CallFrame*, void* /*unused1*/, Profiler**, JSGlobalData*);
 
+    template <typename T> class Global;
+
     class JITThunks {
     public:
         JITThunks(JSGlobalData*);
@@ -273,13 +275,16 @@ namespace JSC {
 
         MacroAssemblerCodePtr ctiStub(JSGlobalData* globalData, ThunkGenerator generator);
 
-        PassRefPtr<NativeExecutable> hostFunctionStub(JSGlobalData* globalData, NativeFunction func);
-        PassRefPtr<NativeExecutable> hostFunctionStub(JSGlobalData* globalData, NativeFunction func, ThunkGenerator generator);
+        NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction);
+        NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, ThunkGenerator);
+
+        void clearHostFunctionStubs();
+
     private:
         typedef HashMap<ThunkGenerator, MacroAssemblerCodePtr> CTIStubMap;
         CTIStubMap m_ctiStubMap;
-        typedef HashMap<NativeFunction, RefPtr<NativeExecutable> > HostFunctionStubMap;
-        HostFunctionStubMap m_hostFunctionStubMap;
+        typedef HashMap<NativeFunction, Global<NativeExecutable> > HostFunctionStubMap;
+        OwnPtr<HostFunctionStubMap> m_hostFunctionStubMap;
         RefPtr<ExecutablePool> m_executablePool;
 
         TrampolineStructure m_trampolineStructure;

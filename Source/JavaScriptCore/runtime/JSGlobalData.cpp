@@ -107,7 +107,9 @@ void JSGlobalData::storeVPtrs()
     jsString->~JSCell();
 
     COMPILE_ASSERT(sizeof(JSFunction) <= sizeof(storage), sizeof_JSFunction_must_be_less_than_storage);
-    JSCell* jsFunction = new (storage) JSFunction(JSFunction::createStructure(jsNull()));
+    char executableStorage[sizeof(VPtrHackExecutable)];
+    VPtrHackExecutable* executable = new (executableStorage) VPtrHackExecutable(VPtrHackExecutable::createStructure(jsNull()));
+    JSCell* jsFunction = new (storage) JSFunction(JSFunction::createStructure(jsNull()), executable);
     JSGlobalData::jsFunctionVPtr = jsFunction->vptr();
     jsFunction->~JSCell();
 }
@@ -135,6 +137,10 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , getterSetterStructure(GetterSetter::createStructure(jsNull()))
     , apiWrapperStructure(JSAPIValueWrapper::createStructure(jsNull()))
     , scopeChainNodeStructure(ScopeChainNode::createStructure(jsNull()))
+    , executableStructure(ExecutableBase::createStructure(jsNull()))
+    , evalExecutableStructure(EvalExecutable::createStructure(jsNull()))
+    , programExecutableStructure(ProgramExecutable::createStructure(jsNull()))
+    , functionExecutableStructure(FunctionExecutable::createStructure(jsNull()))
     , dummyMarkableCellStructure(JSCell::createDummyStructure())
     , identifierTable(globalDataType == Default ? wtfThreadData().currentIdentifierTable() : createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
@@ -282,18 +288,18 @@ JSGlobalData*& JSGlobalData::sharedInstanceInternal()
 }
 
 #if ENABLE(JIT)
-PassRefPtr<NativeExecutable> JSGlobalData::getHostFunction(NativeFunction function)
+NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function)
 {
     return jitStubs->hostFunctionStub(this, function);
 }
-PassRefPtr<NativeExecutable> JSGlobalData::getHostFunction(NativeFunction function, ThunkGenerator generator)
+NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, ThunkGenerator generator)
 {
     return jitStubs->hostFunctionStub(this, function, generator);
 }
 #else
-PassRefPtr<NativeExecutable> JSGlobalData::getHostFunction(NativeFunction function)
+NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function)
 {
-    return NativeExecutable::create(function, callHostFunctionAsConstructor);
+    return NativeExecutable::create(*this, function, callHostFunctionAsConstructor);
 }
 #endif
 

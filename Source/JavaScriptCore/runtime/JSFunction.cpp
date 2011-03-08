@@ -56,16 +56,16 @@ bool JSFunction::isHostFunctionNonInline() const
     return isHostFunction();
 }
 
-JSFunction::JSFunction(NonNullPassRefPtr<Structure> structure)
+JSFunction::JSFunction(NonNullPassRefPtr<Structure> structure, VPtrHackExecutable* executable)
     : Base(structure)
-    , m_executable(adoptRef(new VPtrHackExecutable()))
 {
     ASSERT(inherits(&s_info));
+    m_executable.setWithoutWriteBarrier(executable);
 }
 
-JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, PassRefPtr<NativeExecutable> thunk)
+JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, NativeExecutable* thunk)
     : Base(globalObject, structure)
-    , m_executable(thunk)
+    , m_executable(exec->globalData(), this, thunk)
     , m_scopeChain(exec->globalData(), this, globalObject->globalScopeChain())
 {
     ASSERT(inherits(&s_info));
@@ -75,7 +75,7 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPas
 
 JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, NativeFunction func)
     : Base(globalObject, structure)
-    , m_executable(exec->globalData().getHostFunction(func))
+    , m_executable(exec->globalData(), this, exec->globalData().getHostFunction(func))
     , m_scopeChain(exec->globalData(), this, globalObject->globalScopeChain())
 {
     ASSERT(inherits(&s_info));
@@ -83,9 +83,9 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPas
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
 
-JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<FunctionExecutable> executable, ScopeChainNode* scopeChainNode)
+JSFunction::JSFunction(ExecState* exec, FunctionExecutable* executable, ScopeChainNode* scopeChainNode)
     : Base(scopeChainNode->globalObject.get(), scopeChainNode->globalObject->functionStructure())
-    , m_executable(executable)
+    , m_executable(exec->globalData(), this, executable)
     , m_scopeChain(exec->globalData(), this, scopeChainNode)
 {
     ASSERT(inherits(&s_info));
@@ -96,19 +96,6 @@ JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<FunctionExecutable> ex
 JSFunction::~JSFunction()
 {
     ASSERT(vptr() == JSGlobalData::jsFunctionVPtr);
-
-    // JIT code for other functions may have had calls linked directly to the code for this function; these links
-    // are based on a check for the this pointer value for this JSFunction - which will no longer be valid once
-    // this memory is freed and may be reused (potentially for another, different JSFunction).
-    if (!isHostFunction()) {
-#if ENABLE(JIT_OPTIMIZE_CALL)
-        ASSERT(m_executable);
-        if (jsExecutable()->isGeneratedForCall())
-            jsExecutable()->generatedBytecodeForCall().unlinkCallers();
-        if (jsExecutable()->isGeneratedForConstruct())
-            jsExecutable()->generatedBytecodeForConstruct().unlinkCallers();
-#endif
-    }
 }
 
 static const char* StrictModeCallerAccessError = "Cannot access caller property of a strict mode function";
@@ -148,8 +135,8 @@ const UString JSFunction::calculatedDisplayName(ExecState* exec)
 void JSFunction::markChildren(MarkStack& markStack)
 {
     Base::markChildren(markStack);
+    markStack.append(&m_executable);
     if (!isHostFunction()) {
-        jsExecutable()->markAggregate(markStack);
         markStack.append(&m_scopeChain);
     }
 }

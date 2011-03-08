@@ -483,12 +483,12 @@ namespace JSC {
         RegisterID* addConstantValue(JSValue);
         unsigned addRegExp(RegExp*);
 
-        PassRefPtr<FunctionExecutable> makeFunction(ExecState* exec, FunctionBodyNode* body)
+        FunctionExecutable* makeFunction(ExecState* exec, FunctionBodyNode* body)
         {
             return FunctionExecutable::create(exec, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
         }
 
-        PassRefPtr<FunctionExecutable> makeFunction(JSGlobalData* globalData, FunctionBodyNode* body)
+        FunctionExecutable* makeFunction(JSGlobalData* globalData, FunctionBodyNode* body)
         {
             return FunctionExecutable::create(globalData, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
         }

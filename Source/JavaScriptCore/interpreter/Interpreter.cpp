@@ -409,13 +409,13 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
 
     ScopeChainNode* scopeChain = callFrame->scopeChain();
     JSValue exceptionValue;
-    RefPtr<EvalExecutable> eval = codeBlock->evalCodeCache().get(callFrame, codeBlock->isStrictMode(), programSource, scopeChain, exceptionValue);
+    EvalExecutable* eval = codeBlock->evalCodeCache().get(callFrame, codeBlock->ownerExecutable(), codeBlock->isStrictMode(), programSource, scopeChain, exceptionValue);
 
     ASSERT(!eval == exceptionValue);
     if (UNLIKELY(!eval))
         return throwError(callFrame, exceptionValue);
 
-    return callFrame->globalData().interpreter->execute(eval.get(), callFrame, callFrame->uncheckedR(codeBlock->thisRegister()).jsValue().toThisObject(callFrame), callFrame->registers() - registerFile->start() + registerOffset, scopeChain);
+    return callFrame->globalData().interpreter->execute(eval, callFrame, callFrame->uncheckedR(codeBlock->thisRegister()).jsValue().toThisObject(callFrame), callFrame->registers() - registerFile->start() + registerOffset, scopeChain);
 }
 
 Interpreter::Interpreter(JSGlobalData& globalData)

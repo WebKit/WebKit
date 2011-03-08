@@ -34,7 +34,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSStaticScopeObject);
 void JSStaticScopeObject::markChildren(MarkStack& markStack)
 {
     JSVariableObject::markChildren(markStack);
-    markStack.deprecatedAppend(&d()->registerStore);
+    markStack.append(&d()->registerStore);
 }
 
 JSObject* JSStaticScopeObject::toThisObject(ExecState* exec) const

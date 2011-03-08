@@ -41,14 +41,16 @@
 
 namespace JSC {
 
+    class MarkStack;
+
     class EvalCodeCache {
     public:
-        PassRefPtr<EvalExecutable> get(ExecState* exec, bool inStrictContext, const UString& evalSource, ScopeChainNode* scopeChain, JSValue& exceptionValue)
+        EvalExecutable* get(ExecState* exec, ScriptExecutable* owner, bool inStrictContext, const UString& evalSource, ScopeChainNode* scopeChain, JSValue& exceptionValue)
         {
-            RefPtr<EvalExecutable> evalExecutable;
+            EvalExecutable* evalExecutable = 0;
 
             if (!inStrictContext && evalSource.length() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject())
-                evalExecutable = m_cacheMap.get(evalSource.impl());
+                evalExecutable = m_cacheMap.get(evalSource.impl()).get();
 
             if (!evalExecutable) {
                 evalExecutable = EvalExecutable::create(exec, makeSource(evalSource), inStrictContext);
@@ -57,19 +59,21 @@ namespace JSC {
                     return 0;
 
                 if (!inStrictContext && evalSource.length() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject() && m_cacheMap.size() < maxCacheEntries)
-                    m_cacheMap.set(evalSource.impl(), evalExecutable);
+                    m_cacheMap.set(evalSource.impl(), WriteBarrier<EvalExecutable>(exec->globalData(), owner, evalExecutable));
             }
 
-            return evalExecutable.release();
+            return evalExecutable;
         }
 
         bool isEmpty() const { return m_cacheMap.isEmpty(); }
+
+        void markAggregate(MarkStack&);
 
     private:
         static const unsigned maxCacheableSourceLength = 256;
         static const int maxCacheEntries = 64;
 
-        typedef HashMap<RefPtr<StringImpl>, RefPtr<EvalExecutable> > EvalCacheMap;
+        typedef HashMap<RefPtr<StringImpl>, WriteBarrier<EvalExecutable> > EvalCacheMap;
         EvalCacheMap m_cacheMap;
     };
 

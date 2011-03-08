@@ -35,18 +35,18 @@ namespace JSC{
         using JSVariableObject::JSVariableObjectData;
         struct JSStaticScopeObjectData : public JSVariableObjectData {
             JSStaticScopeObjectData()
-                : JSVariableObjectData(&symbolTable, &registerStore + 1)
+                : JSVariableObjectData(&symbolTable, reinterpret_cast<Register*>(&registerStore + 1))
             {
             }
             SymbolTable symbolTable;
-            Register registerStore;
+            WriteBarrier<Unknown> registerStore;
         };
         
     public:
         JSStaticScopeObject(ExecState* exec, const Identifier& ident, JSValue value, unsigned attributes)
             : JSVariableObject(exec->globalData().staticScopeStructure, new JSStaticScopeObjectData())
         {
-            d()->registerStore = value;
+            d()->registerStore.set(exec->globalData(), this, value);
             symbolTable().add(ident.impl(), SymbolTableEntry(-1, attributes));
         }
         virtual ~JSStaticScopeObject();

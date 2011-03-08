@@ -1,3 +1,124 @@
+2011-03-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make CodeBlock GC write barrier safe
+        https://bugs.webkit.org/show_bug.cgi?id=55910
+
+        In order to make CodeBlock WriteBarrier safe it was necessary
+        to make it have a single GC owner, and for that reason I have
+        made ExecutableBase a GC allocated object.  This required
+        updating their creation routines as well as all sites that hold
+        a reference to them.  GC objects that held Executable's have been
+        converted to WriteBarriers, and all other sites now use Global<>.
+
+        As an added benefit this gets rid of JSGlobalData's list of
+        GlobalCodeBlocks.
+
+        Perf testing shows a 0.5% progression on v8, vs. a 0.3% regression
+        on SunSpider.  Given none of the tests that show regressions
+        demonstrate a regression on their own, and sampling shows up nothing.
+        I suspect we're just getting one or two additional gc passes at
+        the end of the run.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::EvalCodeCache::markAggregate):
+        (JSC::CodeBlock::markAggregate):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::ownerExecutable):
+        (JSC::CodeBlock::addConstant):
+        (JSC::CodeBlock::constantRegister):
+        (JSC::CodeBlock::getConstant):
+        (JSC::CodeBlock::addFunctionDecl):
+        (JSC::CodeBlock::addFunctionExpr):
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        (JSC::ExecState::r):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::get):
+        * bytecode/SamplingTool.h:
+        (JSC::ScriptSampleRecord::ScriptSampleRecord):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addConstantValue):
+        (JSC::BytecodeGenerator::emitEqualityOp):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        * debugger/Debugger.cpp:
+        (JSC::evaluateInGlobalCallFrame):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitLoadDouble):
+        (JSC::JIT::emitLoadInt32ToDouble):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+        (JSC::JITThunks::hostFunctionStub):
+        (JSC::JITThunks::clearHostFunctionStubs):
+        * jit/JITStubs.h:
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::evaluate):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::~FunctionExecutable):
+        (JSC::EvalExecutable::markChildren):
+        (JSC::ProgramExecutable::markChildren):
+        (JSC::FunctionExecutable::markChildren):
+        (JSC::FunctionExecutable::fromGlobalCode):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::ExecutableBase):
+        (JSC::ExecutableBase::createStructure):
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::NativeExecutable):
+        (JSC::VPtrHackExecutable::VPtrHackExecutable):
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::EvalExecutable::create):
+        (JSC::EvalExecutable::createStructure):
+        (JSC::ProgramExecutable::create):
+        (JSC::ProgramExecutable::createStructure):
+        (JSC::FunctionExecutable::create):
+        (JSC::FunctionExecutable::createStructure):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/Heap.cpp:
+        (JSC::Heap::destroy):
+        (JSC::Heap::markRoots):
+        * runtime/Heap.h:
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation):
+        (JSC::JSActivation::markChildren):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::JSActivationData::JSActivationData):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::~JSFunction):
+        (JSC::JSFunction::markChildren):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::storeVPtrs):
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::getHostFunction):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/JSObject.cpp:
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::markChildren):
+        * runtime/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::JSStaticScopeObjectData::JSStaticScopeObjectData):
+        (JSC::JSStaticScopeObject::JSStaticScopeObject):
+        * runtime/JSZombie.cpp:
+        (JSC::JSZombie::leakedZombieStructure):
+        * runtime/JSZombie.h:
+        (JSC::JSZombie::createStructure):
+        * runtime/MarkedSpace.h:
+
 2011-03-07  Andy Estes  <aestes@apple.com>
 
         Reviewed by Dan Bernstein.

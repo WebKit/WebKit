@@ -33,7 +33,7 @@
 #include <wtf/Vector.h>
 
 #define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) <= MarkedSpace::maxCellSize, class_fits_in_cell)
-#define ASSERT_CLASS_FILLS_CELL(class) COMPILE_ASSERT(sizeof(class) == MarkedSpace::maxCellSize, class_fills_cell)
+#define ASSERT_CLASS_FILLS_CELL(class) COMPILE_ASSERT((sizeof(class) <= MarkedSpace::maxCellSize) && !(sizeof(class) & (sizeof(class) - 1)), class_fills_cell)
 
 namespace JSC {
 
@@ -48,7 +48,7 @@ namespace JSC {
         WTF_MAKE_NONCOPYABLE(MarkedSpace);
     public:
         // Currently public for use in assertions.
-        static const size_t maxCellSize = 64;
+        static const size_t maxCellSize = 256;
 
         static Heap* heap(JSCell*);
 

@@ -364,7 +364,7 @@ void CodeBlock::dump(ExecState* exec) const
         unsigned registerIndex = m_numVars;
         size_t i = 0;
         do {
-            printf("   k%u = %s\n", registerIndex, valueToSourceString(exec, m_constantRegisters[i].jsValue()).utf8().data());
+            printf("   k%u = %s\n", registerIndex, valueToSourceString(exec, m_constantRegisters[i].get()).utf8().data());
             ++i;
             ++registerIndex;
         } while (i < m_constantRegisters.size());
@@ -1360,13 +1360,13 @@ void CodeBlock::dumpStatistics()
 }
 
 CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject *globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, SymbolTable* symTab, bool isConstructor)
-    : m_globalObject(globalObject)
+    : m_globalObject(globalObject->globalData(), ownerExecutable, globalObject)
     , m_heap(&m_globalObject->globalData().heap)
     , m_numCalleeRegisters(0)
     , m_numVars(0)
     , m_numParameters(0)
     , m_isConstructor(isConstructor)
-    , m_ownerExecutable(ownerExecutable)
+    , m_ownerExecutable(globalObject->globalData(), ownerExecutable, ownerExecutable)
     , m_globalData(0)
 #ifndef NDEBUG
     , m_instructionCount(0)
@@ -1527,14 +1527,24 @@ void CodeBlock::refStructures(Instruction* vPC) const
     ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic));
 }
 
+void EvalCodeCache::markAggregate(MarkStack& markStack)
+{
+    EvalCacheMap::iterator end = m_cacheMap.end();
+    for (EvalCacheMap::iterator ptr = m_cacheMap.begin(); ptr != end; ++ptr)
+        markStack.append(&ptr->second);
+}
+
 void CodeBlock::markAggregate(MarkStack& markStack)
 {
-    for (size_t i = 0; i < m_constantRegisters.size(); ++i)
-        markStack.deprecatedAppend(&m_constantRegisters[i]);
+    markStack.append(&m_globalObject);
+    markStack.append(&m_ownerExecutable);
+    if (m_rareData)
+        m_rareData->m_evalCodeCache.markAggregate(markStack);
+    markStack.appendValues(m_constantRegisters.data(), m_constantRegisters.size());
     for (size_t i = 0; i < m_functionExprs.size(); ++i)
-        m_functionExprs[i]->markAggregate(markStack);
+        markStack.append(&m_functionExprs[i]);
     for (size_t i = 0; i < m_functionDecls.size(); ++i)
-        m_functionDecls[i]->markAggregate(markStack);
+        markStack.append(&m_functionDecls[i]);
 }
 
 HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
