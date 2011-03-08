@@ -151,7 +151,6 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
             provisionalURL = static_cast<CFStringRef>(value);
     }
 
-    bool restoredFromBackForwardList = false;
     if (backForwardListDictionary) {
         if (!m_backForwardList->restoreFromCFDictionaryRepresentation(backForwardListDictionary))
             LOG(SessionState, "Failed to restore back/forward list from SessionHistory dictionary");
@@ -165,17 +164,16 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
                 if (WebBackForwardListItem* item = m_backForwardList->currentItem())
                     initializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
 
-                process()->send(Messages::WebPage::RestoreSessionAndNavigateToCurrentItem(SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex()), sandboxExtensionHandle), m_pageID);
-
-                restoredFromBackForwardList = true;
+                SessionState state(m_backForwardList->entries(), m_backForwardList->currentIndex());
+                if (provisionalURL)
+                    process()->send(Messages::WebPage::RestoreSession(state), m_pageID);
+                else
+                    process()->send(Messages::WebPage::RestoreSessionAndNavigateToCurrentItem(state, sandboxExtensionHandle), m_pageID);
             }
         }
     }
 
-    // FIXME: It would be better to load the provisional URL even if the back/forward list is also present.
-    // But when we tried it, it overwrote the current item in the back/forward list instead of pushing a
-    // new item on. For now, just throw away the provisional URL if there is also a back/forward list.
-    if (provisionalURL && !restoredFromBackForwardList)
+    if (provisionalURL)
         loadURL(provisionalURL);
 }
 

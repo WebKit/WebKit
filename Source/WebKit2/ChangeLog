@@ -1,3 +1,14 @@
+2011-03-08  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <http://webkit.org/b/55976> Provisional URL should be loaded when restoring session state even if there are back / forward list entries.
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionStateData): If there's a provisional URL that we will load then restore the session state
+        without navigating to the current item.
+        * WebProcess/WebPage/WebPage.messages.in: Expose the ability to restore the session state without navigating to the current item.
+
 2011-03-08  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Anders Carlsson.

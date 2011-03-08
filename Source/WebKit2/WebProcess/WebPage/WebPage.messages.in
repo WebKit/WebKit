@@ -55,6 +55,7 @@ messages -> WebPage {
 
     StopLoadingFrame(uint64_t frameID)
     
+    RestoreSession(WebKit::SessionState state)
     RestoreSessionAndNavigateToCurrentItem(WebKit::SessionState state, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
 
     DidRemoveBackForwardItem(uint64_t backForwardItemID)
