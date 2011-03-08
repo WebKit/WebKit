@@ -987,7 +987,7 @@ void GraphicsContext::clearRect(const FloatRect& r)
     CGContextClearRect(platformContext(), r);
 }
 
-void GraphicsContext::strokeRect(const FloatRect& r, float lineWidth)
+void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
 {
     if (paintingDisabled())
         return;
@@ -995,19 +995,49 @@ void GraphicsContext::strokeRect(const FloatRect& r, float lineWidth)
     CGContextRef context = platformContext();
 
     if (m_state.strokeGradient) {
-        CGContextSaveGState(context);
-        setStrokeThickness(lineWidth);
-        CGContextAddRect(context, r);
-        CGContextReplacePathWithStrokedPath(context);
-        CGContextClip(context);
-        m_state.strokeGradient->paint(this);
-        CGContextRestoreGState(context);
+        if (hasShadow()) {
+            const float doubleLineWidth = lineWidth * 2;
+            const float layerWidth = ceilf(rect.width() + doubleLineWidth);
+            const float layerHeight = ceilf(rect.height() + doubleLineWidth);
+            CGLayerRef layer = CGLayerCreateWithContext(context, CGSizeMake(layerWidth, layerHeight), 0);
+
+            CGContextRef layerContext = CGLayerGetContext(layer);
+            m_state.strokeThickness = lineWidth;
+            CGContextSetLineWidth(layerContext, lineWidth);
+
+            // Compensate for the line width, otherwise the layer's top-left corner would be
+            // aligned with the rect's top-left corner. This would result in leaving pixels out of
+            // the layer on the left and top sides.
+            const float translationX = lineWidth - rect.x();
+            const float translationY = lineWidth - rect.y();
+            CGContextTranslateCTM(layerContext, translationX, translationY);
+
+            CGContextAddRect(layerContext, rect);
+            CGContextReplacePathWithStrokedPath(layerContext);
+            CGContextClip(layerContext);
+            CGContextConcatCTM(layerContext, m_state.strokeGradient->gradientSpaceTransform());
+            m_state.strokeGradient->paint(layerContext);
+
+            const float destinationX = roundf(rect.x() - lineWidth);
+            const float destinationY = roundf(rect.y() - lineWidth);
+            CGContextDrawLayerAtPoint(context, CGPointMake(destinationX, destinationY), layer);
+            CGLayerRelease(layer);
+        } else {
+            CGContextSaveGState(context);
+            setStrokeThickness(lineWidth);
+            CGContextAddRect(context, rect);
+            CGContextReplacePathWithStrokedPath(context);
+            CGContextClip(context);
+            CGContextConcatCTM(context, m_state.strokeGradient->gradientSpaceTransform());
+            m_state.strokeGradient->paint(this);
+            CGContextRestoreGState(context);
+        }
         return;
     }
 
     if (m_state.strokePattern)
         applyStrokePattern();
-    CGContextStrokeRectWithWidth(context, r, lineWidth);
+    CGContextStrokeRectWithWidth(context, rect, lineWidth);
 }
 
 void GraphicsContext::setLineCap(LineCap cap)

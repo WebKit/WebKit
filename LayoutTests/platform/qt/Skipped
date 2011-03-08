@@ -1471,6 +1471,7 @@ fast/text/large-text-composed-char-dos.html
 fast/text/international/002.html
 fast/block/positioning/absolute-in-inline-rtl-4.html
 fast/canvas/canvas-gradient-addStop-error.html
+fast/canvas/canvas-strokeRect-gradient-shadow.html
 fast/css/zoom-body-scroll.html
 fast/dom/Element/getBoundingClientRect.html
 fast/dom/Element/getClientRects.html

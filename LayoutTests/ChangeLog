@@ -1,3 +1,27 @@
+2011-03-07  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Simon Fraser.
+
+        Shadow is not shown when using strokeRect with a gradient strokeStyle
+        https://bugs.webkit.org/show_bug.cgi?id=52509
+
+        This happens in CG and is related to bug 51869, this time to be fixed
+        in GraphicsContext::strokeRect(const FloatRect& r, float lineWidth).
+        We need to draw the gradient clipped to the stroke on a CGLayer first,
+        and then draw the layer on the GraphicsContext.
+
+        * fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Added.
+        * fast/canvas/canvas-strokeRect-gradient-shadow.html: Added.
+        * fast/canvas/script-tests/canvas-strokeRect-gradient-shadow.js: Added.
+        * platform/chromium/test_expectations.txt: Skip new test since it fails.
+        * platform/mac/svg/css/rect-gradient-stroke-shadow-expected.checksum: Added.
+        * platform/mac/svg/css/rect-gradient-stroke-shadow-expected.png: Added.
+        * platform/qt/Skipped: Skip new test since it fails.
+        * platform/qt/svg/css/rect-gradient-stroke-shadow-expected.checksum: Added.
+        * platform/qt/svg/css/rect-gradient-stroke-shadow-expected.png: Added.
+        * svg/css/rect-gradient-stroke-shadow-expected.txt: Added.
+        * svg/css/rect-gradient-stroke-shadow.svg: Added.
+
 2011-03-07  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, update chromium test expectations.
