@@ -1,5 +1,14 @@
 2011-03-08  Philippe Normand  <pnormand@igalia.com>
 
+        REGRESSION (r80478): broke GTK inspector tests
+        https://bugs.webkit.org/show_bug.cgi?id=55941
+
+        Unreviewed, skipping inspector crashing tests on GTK.
+
+        * platform/gtk/Skipped:
+
+2011-03-08  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, updated GTK baselines of fast/text and 2 SVG
         text-related tests after r80526.
 
