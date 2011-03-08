@@ -133,6 +133,16 @@ testDateParseExact("Wed Dec 25 1:30 1995 2010 GMT", "NaN");
 testDateParseExact("Wed Dec 25 1:30 1995r GMT", "NaN");
 testDateParseExact("Wed 1:30 Dec 25 GMT", "NaN");
 
+// RFC 2822
+testDateParse("Wed Dec 25 1995 01:30 +0000", "819855000000");
+testDateParse("Dec 25 1995 1:30 AM -0000", "819855000000");
+testDateParse("Wed Dec 25 1995 13:30 -0800", "819927000000");
+testDateParse("Dec 25 1995 01:30 +1700", "819793800000");
+testDateParse("Wed Dec 25 1:30 PM -0800 1995", "819927000000");
+testDateParseExact("Wed Dec 25 1995 01:30 &1700", "NaN");
+testDateParseExact("Wed Dec 25 1995 &1700 01:30", "NaN");
+
+
 testDateParseExpr('"Dec 25" + String.fromCharCode(9) + "1995 13:30 GMT"', "819898200000");
 testDateParseExpr('"Dec 25" + String.fromCharCode(10) + "1995 13:30 GMT"', "819898200000");
 

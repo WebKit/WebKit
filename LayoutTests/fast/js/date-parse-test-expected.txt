@@ -168,6 +168,23 @@ PASS Date.parse("Wed Dec 25 1:30 1995GMT") == 819855000000 is true
 PASS Date.parse("Wed Dec 25 1:30 1995 2010 GMT") is NaN
 PASS Date.parse("Wed Dec 25 1:30 1995r GMT") is NaN
 PASS Date.parse("Wed 1:30 Dec 25 GMT") is NaN
+PASS Date.parse("Wed Dec 25 1995 01:30 +0000") == 819855000000 is true
+PASS Date.parse("WED DEC 25 1995 01:30 +0000") == 819855000000 is true
+PASS Date.parse("wed dec 25 1995 01:30 +0000") == 819855000000 is true
+PASS Date.parse("Dec 25 1995 1:30 AM -0000") == 819855000000 is true
+PASS Date.parse("DEC 25 1995 1:30 AM -0000") == 819855000000 is true
+PASS Date.parse("dec 25 1995 1:30 am -0000") == 819855000000 is true
+PASS Date.parse("Wed Dec 25 1995 13:30 -0800") == 819927000000 is true
+PASS Date.parse("WED DEC 25 1995 13:30 -0800") == 819927000000 is true
+PASS Date.parse("wed dec 25 1995 13:30 -0800") == 819927000000 is true
+PASS Date.parse("Dec 25 1995 01:30 +1700") == 819793800000 is true
+PASS Date.parse("DEC 25 1995 01:30 +1700") == 819793800000 is true
+PASS Date.parse("dec 25 1995 01:30 +1700") == 819793800000 is true
+PASS Date.parse("Wed Dec 25 1:30 PM -0800 1995") == 819927000000 is true
+PASS Date.parse("WED DEC 25 1:30 PM -0800 1995") == 819927000000 is true
+PASS Date.parse("wed dec 25 1:30 pm -0800 1995") == 819927000000 is true
+PASS Date.parse("Wed Dec 25 1995 01:30 &1700") is NaN
+PASS Date.parse("Wed Dec 25 1995 &1700 01:30") is NaN
 PASS Date.parse("Dec 25" + String.fromCharCode(9) + "1995 13:30 GMT") == 819898200000 is true
 PASS Date.parse(("Dec 25" + String.fromCharCode(9) + "1995 13:30 GMT").toUpperCase()) == 819898200000 is true
 PASS Date.parse(("Dec 25" + String.fromCharCode(9) + "1995 13:30 GMT").toLowerCase()) == 819898200000 is true

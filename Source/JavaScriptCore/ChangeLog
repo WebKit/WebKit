@@ -1,3 +1,20 @@
+2011-03-07  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r79060): Timestamp is missing from tweets in twitter.
+        https://bugs.webkit.org/show_bug.cgi?id=55228
+
+        A change to the date parser to handle the case where the year is
+        specified before the time zone inadvertently started accepting strings
+        such as '+0000' as valid years. Those strings actually represent time
+        zones in an offset of hours and minutes from UTC, not years.
+
+        * wtf/DateMath.cpp:
+        (WTF::parseDateFromNullTerminatedCharacters): If the current character
+        in dateString is '+' or '-', do not try to parse the next token as a
+        year.
+
 2011-03-06  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.

@@ -1,3 +1,13 @@
+2011-03-07  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r79060): Timestamp is missing from tweets in twitter.
+        https://bugs.webkit.org/show_bug.cgi?id=55228
+
+        * fast/js/date-parse-test-expected.txt:
+        * fast/js/script-tests/date-parse-test.js:
+
 2011-03-07  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, update chromium test expectations.
