@@ -1,3 +1,28 @@
+2011-03-08  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, remove png layout test results that don't have
+        corresponding checksum files.  I checked a few of these and they
+        were cases where the .checksum was removed and the .png forgotten.
+
+        * platform/gtk/fast/css/xml-stylesheet-pi-not-in-prolog-expected.png: Removed.
+        * platform/gtk/fast/encoding/utf-16-no-bom-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/004-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/005-expected.png: Removed.
+        * platform/mac-leopard/fast/css/xml-stylesheet-pi-not-in-prolog-expected.png: Removed.
+        * platform/mac-leopard/fast/encoding/utf-16-no-bom-expected.png: Removed.
+        * platform/mac-leopard/svg/hixie/error/004-expected.png: Removed.
+        * platform/mac-leopard/svg/hixie/error/005-expected.png: Removed.
+        * platform/mac/editing/selection/contenteditable-click-outside-expected.png: Removed.
+        * platform/mac/fast/css/xml-stylesheet-pi-not-in-prolog-expected.png: Removed.
+        * platform/mac/fast/dynamic/8952-reduction-expected.png: Removed.
+        * platform/mac/fast/encoding/utf-16-no-bom-expected.png: Removed.
+        * platform/mac/fast/js/Plug-ins-expected.png: Removed.
+        * platform/mac/fast/table/row-height-recalc2-expected.png: Removed.
+        * platform/mac/svg/hixie/error/004-expected.png: Removed.
+        * platform/mac/svg/hixie/error/005-expected.png: Removed.
+        * platform/qt/fast/table/row-height-recalc2-expected.png: Removed.
+        * platform/win/fast/table/row-height-recalc2-expected.png: Removed.
+
 2011-03-08  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION (r80478): broke GTK inspector tests
