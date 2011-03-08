@@ -87,11 +87,15 @@ class UpdateDashboardFile(webapp.RequestHandler):
     def get(self):
         files = self.request.get_all(PARAM_FILE)
         if not files:
-            files = ["flakiness_dashboard.html",
+            # FIXME: Just grab the entire dashboards directory.
+            files = ["aggregate_results.html",
                      "dashboard_base.js",
-                     "aggregate_results.html",
                      "dygraph-combined.js",
-                     "timeline_explorer.html"]
+                     "flakiness_dashboard.html",
+                     "timeline_explorer.html",
+                     "treemap.html",
+                     "webtreemap.css",
+                     "webtreemap.js"]
 
         errors = []
         for file in files:
