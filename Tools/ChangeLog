@@ -1,3 +1,16 @@
+2011-03-08  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Crash in CFNetwork visiting google.com
+        https://bugs.webkit.org/show_bug.cgi?id=55958
+
+        Add a test for not trying to copy a null CFURLResponse.
+
+        * TestWebKitAPI/Tests/WebKit2/win/DoNotCopyANullCFURLResponse.cpp: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+
 2011-03-08  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Ojan Vafai.

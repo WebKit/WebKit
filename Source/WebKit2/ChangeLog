@@ -1,3 +1,14 @@
+2011-03-08  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Crash in CFNetwork visiting google.com
+        https://bugs.webkit.org/show_bug.cgi?id=55958
+
+        * Shared/API/c/cf/WKURLResponseCF.cpp:
+        (WKURLResponseCopyCFURLResponse):
+        If the response to copy is null, return 0;
+
 2011-03-08  John Sullivan  <sullivan@apple.com>
 
         Reverted the patch for https://bugs.webkit.org/show_bug.cgi?id=55940

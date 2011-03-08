@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKURLResponseCF.h"
+#include "Test.h"
 
-#include "WKAPICast.h"
-#include "WebURLResponse.h"
+#include <WebKit2/WKRetainPtr.h>
+#include <WebKit2/WKURLResponseCF.h>
+#include <wtf/RetainPtr.h>
 
-using namespace WebKit;
+namespace TestWebKitAPI {
 
-WKURLResponseRef WKURLResponseCreateWithCFURLResponse(CFURLResponseRef urlResponse)
+TEST(WebKit2, DoNotCopyANullCFURLResponse)
 {
-    if (!urlResponse)
-        return 0;
-
-    CFURLResponseRef copiedURLResponse = CFURLResponseCreateCopy(kCFAllocatorDefault, urlResponse);
-    RefPtr<WebURLResponse> response = WebURLResponse::create(copiedURLResponse);
-    return toAPI(response.release().releaseRef());
+    // Neither of these calls should cause a crash.
+    WKRetainPtr<WKURLResponseRef> nullWKResponse = WKURLResponseCreateWithCFURLResponse(0);
+    RetainPtr<CFURLResponseRef> nullCFResponse = WKURLResponseCopyCFURLResponse(kCFAllocatorDefault, nullWKResponse.get());
 }
 
-CFURLResponseRef WKURLResponseCopyCFURLResponse(CFAllocatorRef alloc, WKURLResponseRef urlResponse)
-{
-    if (!urlResponse)
-        return 0;
-
-    PlatformResponse platformURLResponse = toImpl(urlResponse)->platformResponse();
-    if (!platformURLResponse)
-        return 0;
-
-    return CFURLResponseCreateCopy(alloc, toImpl(urlResponse)->platformResponse());
-}
+} // namespace TestWebKitAPI

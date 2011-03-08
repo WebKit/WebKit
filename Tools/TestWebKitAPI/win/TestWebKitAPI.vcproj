@@ -448,11 +448,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Tests\WebKit2\icon.png"
+					RelativePath="..\Tests\WebKit2\HitTestResultNodeHandle.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\Tests\WebKit2\HitTestResultNodeHandle.cpp"
+					RelativePath="..\Tests\WebKit2\icon.png"
 					>
 				</File>
 				<File
@@ -516,6 +516,10 @@
 					>
 					<File
 						RelativePath="..\Tests\WebKit2\win\AltKeyGeneratesWMSysCommand.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\Tests\WebKit2\win\DoNotCopyANullCFURLResponse.cpp"
 						>
 					</File>
 					<File
