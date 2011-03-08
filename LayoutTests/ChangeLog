@@ -1,3 +1,14 @@
+2011-03-08  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, updated GTK baselines of fast/text and 2 SVG
+        text-related tests after r80526.
+
+        * platform/gtk/fast/text/international/complex-character-based-fallback-expected.txt:
+        * platform/gtk/fast/text/international/thai-line-breaks-expected.txt:
+        * platform/gtk/fast/text/large-text-composed-char-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/text-intro-05-t-expected.txt:
+        * platform/gtk/svg/text/text-intro-05-t-expected.txt:
+
 2011-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
