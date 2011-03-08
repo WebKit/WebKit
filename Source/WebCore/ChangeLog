@@ -1,3 +1,20 @@
+2011-03-07  Justin Novosad  <junov@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Fix for blurs behind bitmap images in Chromium, and boosting
+        shadow blur quality 
+        Bug URLs:
+                https://bugs.webkit.org/show_bug.cgi?id=55410
+                https://bugs.webkit.org/show_bug.cgi?id=55506
+
+        No new tests. Covered by existing layout tests. 
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow): Turn on high quality shadows and fix shadow color
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::paintSkBitmap): Propagate the draw looper from context to painter
+
 2011-03-07  Andreas Kling  <kling@webkit.org>
 
         Unreviewed Mac build fix after r80508.
