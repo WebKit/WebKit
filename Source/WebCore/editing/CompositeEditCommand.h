@@ -32,7 +32,6 @@
 
 namespace WebCore {
 
-class CSSStyleDeclaration;
 class EditingStyle;
 class HTMLElement;
 class StyledElement;

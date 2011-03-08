@@ -97,7 +97,7 @@ private:
     void fixRangeAndApplyInlineStyle(EditingStyle*, const Position& start, const Position& end);
     void applyInlineStyleToNodeRange(EditingStyle*, Node* startNode, Node* pastEndNode);
     void addBlockStyle(const StyleChange&, HTMLElement*);
-    void addInlineStyleIfNeeded(CSSMutableStyleDeclaration*, PassRefPtr<Node> start, PassRefPtr<Node> end, EAddStyledElement addStyledElement = AddStyledElement);
+    void addInlineStyleIfNeeded(EditingStyle*, PassRefPtr<Node> start, PassRefPtr<Node> end, EAddStyledElement = AddStyledElement);
     void splitTextAtStart(const Position& start, const Position& end);
     void splitTextAtEnd(const Position& start, const Position& end);
     void splitTextElementAtStart(const Position& start, const Position& end);

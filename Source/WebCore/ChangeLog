@@ -1,3 +1,29 @@
+2011-03-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        addInlineStyleIfNeeded should take EditingStyle
+        https://bugs.webkit.org/show_bug.cgi?id=55950
+
+        Deployed EditingStyle in addInlineStyleIfNeeded, StyleChange::StyleChange, and StyleChange::init.
+        Also extracted EditingStyle::styleIsPresentInComputedStyleOfNode from removeStyleFromRunBeforeApplyingStyle.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::StyleChange): Takes EditingStyle instead of CSSStyleDeclaration.
+        (WebCore::StyleChange::init): Ditto.
+        (WebCore::ApplyStyleCommand::applyBlockStyle): Instantiates StyleChange.
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange): Calls addInlineStyleIfNeeded.
+        (WebCore::ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle): Calls styleIsPresentInComputedStyleOfNode.
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement): Calls EditingStyle::mergeInlineStyleOfElement
+        instead of manually merging styles.
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown): Calls addInlineStyleIfNeeded.
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded): Takes EditingStyle instead of CSSMutableStyleDeclaration.
+        * editing/ApplyStyleCommand.h:
+        * editing/CompositeEditCommand.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::styleIsPresentInComputedStyleOfNode): Extracted from removeStyleFromRunBeforeApplyingStyle.
+        * editing/EditingStyle.h:
+
 2011-03-08  Nico Weber  <thakis@chromium.org>
 
         Reviewed by James Robinson.

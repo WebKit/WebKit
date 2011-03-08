@@ -675,6 +675,11 @@ bool EditingStyle::extractConflictingImplicitStyleOfAttributes(HTMLElement* elem
     return removed;
 }
 
+bool EditingStyle::styleIsPresentInComputedStyleOfNode(Node* node) const
+{
+    return !m_mutableStyle || !getPropertiesNotIn(m_mutableStyle.get(), computedStyle(node).get())->length();
+}
+
 void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWritingDirection shouldPreserveWritingDirection)
 {
     if (!m_mutableStyle)

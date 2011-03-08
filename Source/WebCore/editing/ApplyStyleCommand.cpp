@@ -76,7 +76,7 @@ static RGBA32 getRGBAFontColor(CSSStyleDeclaration* style)
 
 class StyleChange {
 public:
-    explicit StyleChange(CSSStyleDeclaration*, const Position&);
+    StyleChange(EditingStyle*, const Position&);
 
     String cssStyle() const { return m_cssStyle; }
     bool applyBold() const { return m_applyBold; }
@@ -111,7 +111,7 @@ public:
         return !(*this == other);
     }
 private:
-    void init(PassRefPtr<CSSStyleDeclaration>, const Position&);
+    void init(EditingStyle*, const Position&);
     void reconcileTextDecorationProperties(CSSMutableStyleDeclaration*);
     void extractTextStyles(Document*, CSSMutableStyleDeclaration*, bool shouldUseFixedFontDefaultSize);
 
@@ -128,7 +128,7 @@ private:
 };
 
 
-StyleChange::StyleChange(CSSStyleDeclaration* style, const Position& position)
+StyleChange::StyleChange(EditingStyle* style, const Position& position)
     : m_applyBold(false)
     , m_applyItalic(false)
     , m_applyUnderline(false)
@@ -139,14 +139,14 @@ StyleChange::StyleChange(CSSStyleDeclaration* style, const Position& position)
     init(style, position);
 }
 
-void StyleChange::init(PassRefPtr<CSSStyleDeclaration> style, const Position& position)
+void StyleChange::init(EditingStyle* style, const Position& position)
 {
     Document* document = position.anchorNode() ? position.anchorNode()->document() : 0;
-    if (!style || !document || !document->frame())
+    if (!style || !style->style() || !document || !document->frame())
         return;
 
     RefPtr<CSSComputedStyleDeclaration> computedStyle = position.computedStyle();
-    RefPtr<CSSMutableStyleDeclaration> mutableStyle = getPropertiesNotIn(style.get(), computedStyle.get());
+    RefPtr<CSSMutableStyleDeclaration> mutableStyle = getPropertiesNotIn(style->style(), computedStyle.get());
 
     reconcileTextDecorationProperties(mutableStyle.get());
     if (!document->frame()->editor()->shouldStyleWithCSS())
@@ -158,8 +158,8 @@ void StyleChange::init(PassRefPtr<CSSStyleDeclaration> style, const Position& po
 
     // If unicode-bidi is present in mutableStyle and direction is not, then add direction to mutableStyle.
     // FIXME: Shouldn't this be done in getPropertiesNotIn?
-    if (mutableStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi) && !style->getPropertyCSSValue(CSSPropertyDirection))
-        mutableStyle->setProperty(CSSPropertyDirection, style->getPropertyValue(CSSPropertyDirection));
+    if (mutableStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi) && !style->style()->getPropertyCSSValue(CSSPropertyDirection))
+        mutableStyle->setProperty(CSSPropertyDirection, style->style()->getPropertyValue(CSSPropertyDirection));
 
     // Save the result for later
     m_cssStyle = mutableStyle->cssText().stripWhiteSpace();
@@ -591,7 +591,7 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle *style)
     VisiblePosition nextParagraphStart(endOfParagraph(paragraphStart).next());
     VisiblePosition beyondEnd(endOfParagraph(visibleEnd).next());
     while (paragraphStart.isNotNull() && paragraphStart != beyondEnd) {
-        StyleChange styleChange(style->style(), paragraphStart.deepEquivalent());
+        StyleChange styleChange(style, paragraphStart.deepEquivalent());
         if (styleChange.cssStyle().length() || m_removeOnly) {
             RefPtr<Node> block = enclosingBlock(paragraphStart.deepEquivalent().deprecatedNode());
             if (!m_removeOnly) {
@@ -1080,7 +1080,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, Node* n
 
         if (!removeStyleFromRunBeforeApplyingStyle(style, runStart, runEnd))
             continue;
-        addInlineStyleIfNeeded(style->style(), runStart.get(), runEnd.get(), AddStyledElement);
+        addInlineStyleIfNeeded(style, runStart.get(), runEnd.get(), AddStyledElement);
     }
 }
 
@@ -1099,7 +1099,7 @@ bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(EditingStyle* styl
         if (node->childNodeCount())
             continue;
         // We don't consider m_isInlineElementToRemoveFunction here because we never apply style when m_isInlineElementToRemoveFunction is specified
-        if ((!style->isEmpty() && getPropertiesNotIn(style->style(), computedStyle(node).get())->length())
+        if (!style->styleIsPresentInComputedStyleOfNode(node)
             || (m_styledInlineElement && !enclosingNodeWithTag(positionBeforeNode(node), m_styledInlineElement->tagQName()))) {
             needToApplyStyle = true;
             break;
@@ -1141,18 +1141,10 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle* style, PassRe
         if (mode == RemoveNone)
             return true;
         ASSERT(extractedStyle);
-        if (element->inlineStyleDecl()) {
-            if (extractedStyle->style())
-                extractedStyle->style()->merge(element->inlineStyleDecl());
-            else
-                extractedStyle->setStyle(element->inlineStyleDecl()->copy());
-        }
+        extractedStyle->mergeInlineStyleOfElement(element.get());
         removeNodePreservingChildren(element);
         return true;
     }
-
-    if (!style->style())
-        return false;
 
     bool removed = false;
     if (removeImplicitlyStyledElement(style, element.get(), mode, extractedStyle))
@@ -1296,7 +1288,7 @@ void ApplyStyleCommand::applyInlineStyleToPushDown(Node* node, EditingStyle* sty
     // We can't wrap node with the styled element here because new styled element will never be removed if we did.
     // If we modified the child pointer in pushDownInlineStyleAroundNode to point to new style element
     // then we fall into an infinite loop where we keep removing and adding styled element wrapping node.
-    addInlineStyleIfNeeded(newInlineStyle->style(), node, node, DoNotAddStyledElement);
+    addInlineStyleIfNeeded(newInlineStyle.get(), node, node, DoNotAddStyledElement);
 }
 
 void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node* targetNode)
@@ -1689,7 +1681,7 @@ void ApplyStyleCommand::addBlockStyle(const StyleChange& styleChange, HTMLElemen
     setNodeAttribute(block, styleAttr, cssText);
 }
 
-void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style, PassRefPtr<Node> passedStart, PassRefPtr<Node> passedEnd, EAddStyledElement addStyledElement)
+void ApplyStyleCommand::addInlineStyleIfNeeded(EditingStyle* style, PassRefPtr<Node> passedStart, PassRefPtr<Node> passedEnd, EAddStyledElement addStyledElement)
 {
     if (!passedStart || !passedEnd || !passedStart->inDocument() || !passedEnd->inDocument())
         return;
