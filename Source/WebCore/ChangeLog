@@ -1,3 +1,18 @@
+2011-03-08  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Crash on big blur radius with canvas
+        https://bugs.webkit.org/show_bug.cgi?id=55951
+
+        Move the clamping code out of an if branch, so that it happens in the
+        canvas case as well.
+
+        Test: fast/canvas/shadow-huge-blur.html
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+
 2011-03-08  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Sam Weinig.

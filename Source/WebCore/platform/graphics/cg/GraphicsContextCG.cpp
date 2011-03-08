@@ -929,14 +929,16 @@ void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, con
 
         CGFloat smallEigenvalue = narrowPrecisionToCGFloat(sqrt(0.5 * ((A + D) - sqrt(4 * B * C + (A - D) * (A - D)))));
 
-        // Extreme "blur" values can make text drawing crash or take crazy long times, so clamp
-        blurRadius = min(blur * smallEigenvalue, narrowPrecisionToCGFloat(1000.0));
+        blurRadius = blur * smallEigenvalue;
 
         CGSize offsetInBaseSpace = CGSizeApplyAffineTransform(offset, userToBaseCTM);
 
         xOffset = offsetInBaseSpace.width;
         yOffset = offsetInBaseSpace.height;
     }
+
+    // Extreme "blur" values can make text drawing crash or take crazy long times, so clamp
+    blurRadius = min(blurRadius, narrowPrecisionToCGFloat(1000.0));
 
     // Work around <rdar://problem/5539388> by ensuring that the offsets will get truncated
     // to the desired integer.
