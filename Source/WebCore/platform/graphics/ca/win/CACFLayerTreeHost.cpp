@@ -308,7 +308,11 @@ void CACFLayerTreeHost::contextDidChange()
 void CACFLayerTreeHost::notifyAnimationsStarted()
 {
     double currentTime = WTF::currentTime();
-    double time = currentTime + lastCommitTime() - CACurrentMediaTime();
+    double commitTime = lastCommitTime();
+    double mediaTime = CACurrentMediaTime();
+    if (commitTime <= 0)
+        commitTime = mediaTime;
+    double time = currentTime + commitTime - mediaTime;
     ASSERT(time <= currentTime);
 
     HashSet<RefPtr<PlatformCALayer> >::iterator end = m_pendingAnimatedLayers.end();
