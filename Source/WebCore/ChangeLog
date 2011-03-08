@@ -1,3 +1,16 @@
+2011-03-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80514.
+        http://trac.webkit.org/changeset/80514
+        https://bugs.webkit.org/show_bug.cgi?id=55915
+
+        Caused assertion failures (Requested by ukai on #webkit).
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::paintSkBitmap):
+
 2011-03-07  Cosmin Truta  <ctruta@chromium.org>
 
         Reviewed by Adam Barth.

@@ -1035,15 +1035,14 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
     double height = size.height();
     double blur = blurFloat;
 
-    uint32_t blurFlags = SkBlurDrawLooper::kHighQuality_BlurFlag | 
-        SkBlurDrawLooper::kOverrideColor_BlurFlag;
+    SkBlurDrawLooper::BlurFlags blurFlags = SkBlurDrawLooper::kNone_BlurFlag;
 
     if (m_state.shadowsIgnoreTransforms)  {
         // Currently only the GraphicsContext associated with the
         // CanvasRenderingContext for HTMLCanvasElement have shadows ignore
         // Transforms. So with this flag set, we know this state is associated
         // with a CanvasRenderingContext.
-        blurFlags |= SkBlurDrawLooper::kIgnoreTransform_BlurFlag;
+        blurFlags = SkBlurDrawLooper::kIgnoreTransform_BlurFlag;
         
         // CG uses natural orientation for Y axis, but the HTML5 canvas spec
         // does not.

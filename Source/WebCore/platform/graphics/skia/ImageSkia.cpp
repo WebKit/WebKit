@@ -260,7 +260,6 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
     paint.setXfermodeMode(compOp);
     paint.setFilterBitmap(true);
     paint.setAlpha(platformContext->getNormalizedAlpha());
-    paint.setLooper(platformContext->getDrawLooper());
 
     skia::PlatformCanvas* canvas = platformContext->canvas();
 
