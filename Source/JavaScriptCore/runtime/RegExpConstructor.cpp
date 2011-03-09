@@ -291,7 +291,7 @@ void setRegExpConstructorMultiline(ExecState* exec, JSObject* baseObject, JSValu
 {
     asRegExpConstructor(baseObject)->setMultiline(value.toBoolean(exec));
 }
-  
+
 // ECMA 15.10.4
 JSObject* constructRegExp(ExecState* exec, const ArgList& args)
 {
@@ -305,7 +305,17 @@ JSObject* constructRegExp(ExecState* exec, const ArgList& args)
     }
 
     UString pattern = arg0.isUndefined() ? UString("") : arg0.toString(exec);
-    UString flags = arg1.isUndefined() ? UString("") : arg1.toString(exec);
+    if (exec->hadException())
+        return 0;
+
+    RegExpFlags flags = NoFlags;
+    if (!arg1.isUndefined()) {
+        flags = regExpFlags(arg1.toString(exec));
+        if (exec->hadException())
+            return 0;
+        if (flags == InvalidFlags)
+            return throwError(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
+    }
 
     RefPtr<RegExp> regExp = exec->globalData().regExpCache()->lookupOrCreate(pattern, flags);
     if (!regExp->isValid())

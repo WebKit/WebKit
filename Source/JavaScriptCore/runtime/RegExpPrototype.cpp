@@ -48,7 +48,7 @@ static EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*);
 // ECMA 15.10.5
 
 RegExpPrototype::RegExpPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, Structure* functionStructure)
-    : RegExpObject(globalObject, structure, RegExp::create(&exec->globalData(), "", ""))
+    : RegExpObject(globalObject, structure, RegExp::create(&exec->globalData(), "", NoFlags))
 {
     putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 0, exec->propertyNames().compile, regExpProtoFuncCompile), DontEnum);
     putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 0, exec->propertyNames().exec, regExpProtoFuncExec), DontEnum);
@@ -90,7 +90,17 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
         regExp = asRegExpObject(arg0)->regExp();
     } else {
         UString pattern = !exec->argumentCount() ? UString("") : arg0.toString(exec);
-        UString flags = arg1.isUndefined() ? UString("") : arg1.toString(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+
+        RegExpFlags flags = NoFlags;
+        if (!arg1.isUndefined()) {
+            flags = regExpFlags(arg1.toString(exec));
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+            if (flags == InvalidFlags)
+                return throwVMError(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
+        }
         regExp = exec->globalData().regExpCache()->lookupOrCreate(pattern, flags);
     }
 

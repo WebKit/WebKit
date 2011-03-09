@@ -34,6 +34,38 @@
 
 namespace JSC {
 
+RegExpFlags regExpFlags(const UString& string)
+{
+    RegExpFlags flags = NoFlags;
+
+    for (unsigned i = 0; i < string.length(); ++i) {
+        switch (string.characters()[i]) {
+        case 'g':
+            if (flags & FlagGlobal)
+                return InvalidFlags;
+            flags = static_cast<RegExpFlags>(flags | FlagGlobal);
+            break;
+
+        case 'i':
+            if (flags & FlagIgnoreCase)
+                return InvalidFlags;
+            flags = static_cast<RegExpFlags>(flags | FlagIgnoreCase);
+            break;
+
+        case 'm':
+            if (flags & FlagMultiline)
+                return InvalidFlags;
+            flags = static_cast<RegExpFlags>(flags | FlagMultiline);
+            break;
+
+        default:
+            return InvalidFlags;
+        }
+    }
+
+    return flags;
+}
+  
 struct RegExpRepresentation {
 #if ENABLE(YARR_JIT)
     Yarr::YarrCodeBlock m_regExpJITCode;
@@ -41,9 +73,9 @@ struct RegExpRepresentation {
     OwnPtr<Yarr::BytecodePattern> m_regExpBytecode;
 };
 
-inline RegExp::RegExp(JSGlobalData* globalData, const UString& patternString, const UString& flags)
+inline RegExp::RegExp(JSGlobalData* globalData, const UString& patternString, RegExpFlags flags)
     : m_patternString(patternString)
-    , m_flagBits(0)
+    , m_flags(flags)
     , m_constructionError(0)
     , m_numSubpatterns(0)
 #if ENABLE(REGEXP_TRACING)
@@ -52,17 +84,6 @@ inline RegExp::RegExp(JSGlobalData* globalData, const UString& patternString, co
 #endif
     , m_representation(adoptPtr(new RegExpRepresentation))
 {
-    // NOTE: The global flag is handled on a case-by-case basis by functions like
-    // String::match and RegExpObject::match.
-    if (!flags.isNull()) {
-        if (flags.find('g') != notFound)
-            m_flagBits |= Global;
-        if (flags.find('i') != notFound)
-            m_flagBits |= IgnoreCase;
-        if (flags.find('m') != notFound)
-            m_flagBits |= Multiline;
-    }
-
     m_state = compile(globalData);
 }
 
@@ -70,7 +91,7 @@ RegExp::~RegExp()
 {
 }
 
-PassRefPtr<RegExp> RegExp::create(JSGlobalData* globalData, const UString& patternString, const UString& flags)
+PassRefPtr<RegExp> RegExp::create(JSGlobalData* globalData, const UString& patternString, RegExpFlags flags)
 {
     RefPtr<RegExp> res = adoptRef(new RegExp(globalData, patternString, flags));
 #if ENABLE(REGEXP_TRACING)

@@ -1,6 +1,6 @@
 S15.10.4.1_A5_T5
 
-FAIL SputnikError: #1.2: new RegExp("a|b|[a-b]",{toString:function(){return "x" throw SyntaxError. Actual: SputnikError: #1.1: new RegExp("a|b|[a-b]",{toString:function(){return "x" throw SyntaxError. Actual: /a|b|[a-b]/
+PASS 
 
 TEST COMPLETE
 

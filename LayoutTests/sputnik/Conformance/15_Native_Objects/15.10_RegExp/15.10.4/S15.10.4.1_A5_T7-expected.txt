@@ -1,6 +1,6 @@
 S15.10.4.1_A5_T7
 
-FAIL SputnikError: #1.2: new RegExp("^",1.0) throw SyntaxError. Actual: SputnikError: #1.1: new RegExp("^",1.0) throw SyntaxError. Actual: /^/
+PASS 
 
 TEST COMPLETE
 

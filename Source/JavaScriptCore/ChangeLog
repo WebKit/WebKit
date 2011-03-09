@@ -1,3 +1,45 @@
+2011-03-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 56041 - RexExp constructor should only accept flags "gim"
+        We also should be passing the flags around as a bitfield rather than a string,
+        and should not have redundant, incompatible code for converting the string to a bitfield!
+
+        * JavaScriptCore.exp:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::RegExpNode::emitBytecode):
+            - Need to parse flags string to enum.
+        * runtime/RegExp.cpp:
+        (JSC::regExpFlags):
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::create):
+            - Add method to parse flags string to enum, change constructor/create args to take enum.
+        * runtime/RegExp.h:
+        (JSC::RegExp::global):
+        (JSC::RegExp::ignoreCase):
+        (JSC::RegExp::multiline):
+            - Change to use new enum values.
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::lookupOrCreate):
+        (JSC::RegExpCache::create):
+        * runtime/RegExpCache.h:
+            - Changed to use regExpFlags enum instead of int/const UString&.
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructRegExp):
+            - Add use new enum parsing, check for error.
+        * runtime/RegExpKey.h:
+        (JSC::RegExpKey::RegExpKey):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::RegExpPrototype):
+            - Pass NoFlags value instead of empty string.
+        (JSC::regExpProtoFuncCompile):
+            - Add use new enum parsing, check for error.
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+            - Pass NoFlags value instead of empty string.
+
 2011-03-08  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig

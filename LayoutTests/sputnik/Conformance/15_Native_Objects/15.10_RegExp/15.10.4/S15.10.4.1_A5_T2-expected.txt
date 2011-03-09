@@ -1,6 +1,6 @@
 S15.10.4.1_A5_T2
 
-FAIL SputnikError: #1.2: new RegExp(null,"migg") throw SyntaxError. Actual: SputnikError: #1.1: new RegExp(null,"migg") throw SyntaxError. Actual: /null/gim
+PASS 
 
 TEST COMPLETE
 

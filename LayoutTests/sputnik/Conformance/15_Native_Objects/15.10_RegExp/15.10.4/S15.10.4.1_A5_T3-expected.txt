@@ -1,6 +1,6 @@
 S15.10.4.1_A5_T3
 
-FAIL SputnikError: #1.2: new RegExp("",eval("\"migr\"")) throw SyntaxError. Actual: SputnikError: #1.1: new RegExp("",eval("\"migr\"")) throw SyntaxError. Actual: /(?:)/gim
+PASS 
 
 TEST COMPLETE
 

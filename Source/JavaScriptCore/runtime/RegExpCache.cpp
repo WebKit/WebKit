@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-PassRefPtr<RegExp> RegExpCache::lookupOrCreate(const UString& patternString, const UString& flags)
+PassRefPtr<RegExp> RegExpCache::lookupOrCreate(const UString& patternString, RegExpFlags flags)
 {
     if (patternString.length() < maxCacheablePatternLength) {
         pair<RegExpCacheMap::iterator, bool> result = m_cacheMap.add(RegExpKey(flags, patternString), 0);
@@ -43,7 +43,7 @@ PassRefPtr<RegExp> RegExpCache::lookupOrCreate(const UString& patternString, con
     return create(patternString, flags, m_cacheMap.end());
 }
 
-PassRefPtr<RegExp> RegExpCache::create(const UString& patternString, const UString& flags, RegExpCacheMap::iterator iterator) 
+PassRefPtr<RegExp> RegExpCache::create(const UString& patternString, RegExpFlags flags, RegExpCacheMap::iterator iterator) 
 {
     RefPtr<RegExp> regExp = RegExp::create(m_globalData, patternString, flags);
 

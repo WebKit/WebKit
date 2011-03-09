@@ -1,3 +1,22 @@
+2011-03-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 56041 - RexExp constructor should only accept flags "gim"
+        We also should be passing the flags around as a bitfield rather than a string,
+        and should not have redundant, incompatible code for converting the string to a bitfield!
+
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A5_T1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A5_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A5_T3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A5_T4-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A5_T5-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A5_T6-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A5_T7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A5_T8-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.4/S15.10.4.1_A5_T9-expected.txt:
+            - Check in passing results!
+
 2011-03-09  Martin Robinson  <mrobinson@igalia.com>
 
         jquery/manipulation.html fails after r80598

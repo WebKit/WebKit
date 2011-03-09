@@ -1,3 +1,15 @@
+2011-03-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 56041 - RexExp constructor should only accept flags "gim"
+        We also should be passing the flags around as a bitfield rather than a string,
+        and should not have redundant, incompatible code for converting the string to a bitfield!
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readTerminal):
+            - Need to parse flags string back to enum.
+
 2011-03-09  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

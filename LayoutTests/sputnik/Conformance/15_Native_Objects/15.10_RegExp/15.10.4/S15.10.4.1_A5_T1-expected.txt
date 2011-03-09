@@ -1,6 +1,6 @@
 S15.10.4.1_A5_T1
 
-FAIL SputnikError: #1.2: new RegExp(undefined,"ii") throw SyntaxError. Actual: SputnikError: #1.1: new RegExp(undefined,"ii") throw SyntaxError. Actual: /(?:)/i
+PASS 
 
 TEST COMPLETE
 

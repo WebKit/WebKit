@@ -24,6 +24,7 @@
 
 #include "UString.h"
 #include "ExecutableAllocator.h"
+#include "RegExpKey.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -32,14 +33,16 @@ namespace JSC {
     struct RegExpRepresentation;
     class JSGlobalData;
 
+    RegExpFlags regExpFlags(const UString&);
+
     class RegExp : public RefCounted<RegExp> {
     public:
-        static PassRefPtr<RegExp> create(JSGlobalData* globalData, const UString& pattern, const UString& flags);
+        static PassRefPtr<RegExp> create(JSGlobalData* globalData, const UString& pattern, RegExpFlags);
         ~RegExp();
 
-        bool global() const { return m_flagBits & Global; }
-        bool ignoreCase() const { return m_flagBits & IgnoreCase; }
-        bool multiline() const { return m_flagBits & Multiline; }
+        bool global() const { return m_flags & FlagGlobal; }
+        bool ignoreCase() const { return m_flags & FlagIgnoreCase; }
+        bool multiline() const { return m_flags & FlagMultiline; }
 
         const UString& pattern() const { return m_patternString; }
 
@@ -54,7 +57,7 @@ namespace JSC {
 #endif
 
     private:
-        RegExp(JSGlobalData* globalData, const UString& pattern, const UString& flags);
+        RegExp(JSGlobalData* globalData, const UString& pattern, RegExpFlags);
 
         enum RegExpState {
             ParseError,
@@ -68,9 +71,8 @@ namespace JSC {
         void matchCompareWithInterpreter(const UString&, int startOffset, int* offsetVector, int jitResult);
 #endif
 
-        enum FlagBits { Global = 1, IgnoreCase = 2, Multiline = 4 };
         UString m_patternString;
-        int m_flagBits;
+        RegExpFlags m_flags;
         const char* m_constructionError;
         unsigned m_numSubpatterns;
 #if ENABLE(REGEXP_TRACING)

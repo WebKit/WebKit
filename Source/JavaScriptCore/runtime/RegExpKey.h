@@ -25,62 +25,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "UString.h"
-#include <wtf/text/StringHash.h>
-
 #ifndef RegExpKey_h
 #define RegExpKey_h
 
+#include "UString.h"
+#include <wtf/text/StringHash.h>
+
 namespace JSC {
 
+enum RegExpFlags {
+    NoFlags = 0,
+    FlagGlobal = 1,
+    FlagIgnoreCase = 2,
+    FlagMultiline = 4,
+    InvalidFlags = 8
+};
+
 struct RegExpKey {
-    int flagsValue;
+    RegExpFlags flagsValue;
     RefPtr<StringImpl> pattern;
 
     RegExpKey()
-        : flagsValue(0)
+        : flagsValue(NoFlags)
     {
     }
 
-    RegExpKey(int flags)
+    RegExpKey(RegExpFlags flags)
         : flagsValue(flags)
     {
     }
 
-    RegExpKey(int flags, const UString& pattern)
+    RegExpKey(RegExpFlags flags, const UString& pattern)
         : flagsValue(flags)
         , pattern(pattern.impl())
     {
     }
 
-    RegExpKey(int flags, const PassRefPtr<StringImpl> pattern)
+    RegExpKey(RegExpFlags flags, const PassRefPtr<StringImpl> pattern)
         : flagsValue(flags)
         , pattern(pattern)
     {
     }
 
-    RegExpKey(int flags, const RefPtr<StringImpl>& pattern)
+    RegExpKey(RegExpFlags flags, const RefPtr<StringImpl>& pattern)
         : flagsValue(flags)
         , pattern(pattern)
     {
-    }
-
-    RegExpKey(const UString& flags, const UString& pattern)
-        : pattern(pattern.impl())
-    {
-        flagsValue = getFlagsValue(flags);
-    }
-
-    int getFlagsValue(const UString flags) 
-    {
-        flagsValue = 0;
-        if (flags.find('g') != notFound)
-            flagsValue += 4;
-        if (flags.find('i') != notFound)
-            flagsValue += 2;
-        if (flags.find('m') != notFound)
-            flagsValue += 1;
-        return flagsValue;
     }
 };
 
@@ -112,8 +102,8 @@ template<> struct DefaultHash<JSC::RegExpKey> {
 };
 
 template<> struct HashTraits<JSC::RegExpKey> : GenericHashTraits<JSC::RegExpKey> {
-    static void constructDeletedValue(JSC::RegExpKey& slot) { slot.flagsValue = -1; }
-    static bool isDeletedValue(const JSC::RegExpKey& value) { return value.flagsValue == -1; }
+    static void constructDeletedValue(JSC::RegExpKey& slot) { slot.flagsValue = JSC::InvalidFlags; }
+    static bool isDeletedValue(const JSC::RegExpKey& value) { return value.flagsValue == JSC::InvalidFlags; }
 };
 } // namespace WTF
 

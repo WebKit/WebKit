@@ -41,8 +41,8 @@ class RegExpCache {
 typedef HashMap<RegExpKey, RefPtr<RegExp> > RegExpCacheMap;
 
 public:
-    PassRefPtr<RegExp> lookupOrCreate(const UString& patternString, const UString& flags);
-    PassRefPtr<RegExp> create(const UString& patternString, const UString& flags, RegExpCacheMap::iterator iterator);
+    PassRefPtr<RegExp> lookupOrCreate(const UString& patternString, RegExpFlags);
+    PassRefPtr<RegExp> create(const UString& patternString, RegExpFlags, RegExpCacheMap::iterator);
     RegExpCache(JSGlobalData* globalData);
 
 private:
