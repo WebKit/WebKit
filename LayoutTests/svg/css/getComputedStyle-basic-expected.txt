@@ -336,6 +336,8 @@ rect: style.getPropertyValue(-webkit-text-emphasis-style) : none
 rect: style.getPropertyCSSValue(-webkit-text-emphasis-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-fill-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(-webkit-text-fill-color) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-text-orientation) : vertical-right
+rect: style.getPropertyCSSValue(-webkit-text-orientation) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-security) : none
 rect: style.getPropertyCSSValue(-webkit-text-security) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-stroke-color) : rgb(0, 0, 0)
@@ -778,6 +780,8 @@ g: style.getPropertyValue(-webkit-text-emphasis-style) : none
 g: style.getPropertyCSSValue(-webkit-text-emphasis-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-fill-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(-webkit-text-fill-color) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-text-orientation) : vertical-right
+g: style.getPropertyCSSValue(-webkit-text-orientation) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-security) : none
 g: style.getPropertyCSSValue(-webkit-text-security) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-stroke-color) : rgb(0, 0, 0)

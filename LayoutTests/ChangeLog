@@ -1,3 +1,9 @@
+2011-03-09  Brian Weinstein  <bweinstein@apple.com>
+
+        Update expected results of svg/css/getComputedStyle-basic after r80582.
+
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2011-03-09  Mihai Parparita  <mihaip@chromium.org>
 
         Update chromium-gpu expectations.
