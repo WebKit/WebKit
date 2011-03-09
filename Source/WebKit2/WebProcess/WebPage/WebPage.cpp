@@ -1382,6 +1382,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     AbstractDatabase::setIsAvailable(store.getBoolValueForKey(WebPreferencesKey::databasesEnabledKey()));
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+    settings->setFullScreenEnabled(store.getBoolValueForKey(WebPreferencesKey::fullScreenEnabledKey()));
+#endif
+
     platformPreferencesDidChange(store);
 }
 

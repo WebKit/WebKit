@@ -68,6 +68,7 @@ namespace WebKit {
     macro(DOMPasteAllowed, domPasteAllowed, Bool, bool, false) \
     macro(JavaScriptCanAccessClipboard, javaScriptCanAccessClipboard, Bool, bool, false) \
     macro(ShouldPrintBackgrounds, shouldPrintBackgrounds, Bool, bool, false) \
+    macro(FullScreenEnabled, fullScreenEnabled, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

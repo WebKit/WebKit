@@ -1,3 +1,22 @@
+2011-03-08  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2: Plumb through the "supportsFullScreen" preference.
+        https://bugs.webkit.org/show_bug.cgi?id=55261
+
+        The "supportsFullScreen" preference needs to be plumbed through from
+        the UIProcess to the WebProcess.
+
+        * Shared/WebPreferencesStore.h: Add a new macro entry.
+        * UIProcess/API/C/WKPreferences.cpp: Implement preferences getter and setter.
+        (WKPreferencesSetFullScreenEnabled):
+        (WKPreferencesGetFullScreenEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Sync the fullScreenEnabled setting through to
+            the settings object.
+
 2011-03-08  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adele Peterson.
