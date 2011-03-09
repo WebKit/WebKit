@@ -1,5 +1,11 @@
 2011-03-09  Roland Steiner  <rolandsteiner@chromium.org>
 
+        Unreviewed: yet more tweaking of the chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-09  Roland Steiner  <rolandsteiner@chromium.org>
+
         Unreviewed: fix chromium test expectations file.
 
         * platform/chromium/test_expectations.txt:
