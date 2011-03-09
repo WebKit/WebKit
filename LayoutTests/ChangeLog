@@ -1,3 +1,19 @@
+2011-03-08  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Fix Regression: Content not drawn when scrolling horizontally in an RTL page.
+        https://bugs.webkit.org/show_bug.cgi?id=55077.
+
+        * fast/dom/scroll-reveal-left-overflow.html: Added.
+        * fast/dom/scroll-reveal-top-overflow.html: Added.
+        * platform/mac/fast/dom/scroll-reveal-left-overflow-expected.checksum: Added.
+        * platform/mac/fast/dom/scroll-reveal-left-overflow-expected.png: Added.
+        * platform/mac/fast/dom/scroll-reveal-left-overflow-expected.txt: Added.
+        * platform/mac/fast/dom/scroll-reveal-top-overflow-expected.checksum: Added.
+        * platform/mac/fast/dom/scroll-reveal-top-overflow-expected.png: Added.
+        * platform/mac/fast/dom/scroll-reveal-top-overflow-expected.txt: Added.
+
 2011-03-08  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig

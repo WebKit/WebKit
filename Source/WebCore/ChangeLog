@@ -1,3 +1,20 @@
+2011-03-08  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Fix Regression: Content not drawn when scrolling horizontally in an RTL page.
+        https://bugs.webkit.org/show_bug.cgi?id=55077.
+
+        Inside ScrollView::calculateOverhangAreasForPainting(), when scroll position
+        is negative, should include the position value into overhang rectangle's 
+        starting position. 
+
+        Tests: fast/dom/scroll-reveal-left-overflow.html
+               fast/dom/scroll-reveal-top-overflow.html
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::calculateOverhangAreasForPainting):
+
 2011-03-08  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.

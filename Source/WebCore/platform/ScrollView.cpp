@@ -970,6 +970,7 @@ void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRe
     if (scrollY() < 0) {
         horizontalOverhangRect = frameRect();
         horizontalOverhangRect.setHeight(-scrollY());
+        horizontalOverhangRect.setY(scrollY());
     } else if (scrollY() > contentsHeight() - visibleContentRect().height()) {
         int height = scrollY() - (contentsHeight() - visibleContentRect().height());
         horizontalOverhangRect = frameRect();
@@ -980,7 +981,7 @@ void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRe
     if (scrollX() < 0) {
         verticalOverhangRect.setWidth(-scrollX());
         verticalOverhangRect.setHeight(frameRect().height() - horizontalOverhangRect.height());
-        verticalOverhangRect.setX(frameRect().x());
+        verticalOverhangRect.setX(frameRect().x() + scrollX());
         if (horizontalOverhangRect.y() == frameRect().y())
             verticalOverhangRect.setY(frameRect().y() + horizontalOverhangRect.height());
         else
