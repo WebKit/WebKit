@@ -1,3 +1,16 @@
+2011-03-09  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: it should be possible to copy stack trace from call stack sidebar pane.
+        https://bugs.webkit.org/show_bug.cgi?id=56024
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane):
+        (WebInspector.CallStackSidebarPane.prototype.update):
+        (WebInspector.CallStackSidebarPane.prototype._contextMenu):
+
 2011-03-09  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

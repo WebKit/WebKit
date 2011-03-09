@@ -27,6 +27,8 @@ WebInspector.CallStackSidebarPane = function(model)
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Call Stack"));
     this._model = model;
+
+    this.bodyElement.addEventListener("contextmenu", this._contextMenu.bind(this), true);
 }
 
 WebInspector.CallStackSidebarPane.prototype = {
@@ -35,6 +37,7 @@ WebInspector.CallStackSidebarPane.prototype = {
         this.bodyElement.removeChildren();
 
         this.placards = [];
+        this._text = "";
 
         if (!details) {
             var infoElement = document.createElement("div");
@@ -78,6 +81,8 @@ WebInspector.CallStackSidebarPane.prototype = {
 
             this.placards.push(placard);
             this.bodyElement.appendChild(placard.element);
+
+            this._text += WebInspector.UIString("%s() at %s", i + 1, title, subtitle) + "\n";
         }
 
         if (details.breakpoint)
@@ -146,6 +151,16 @@ WebInspector.CallStackSidebarPane.prototype = {
     {
         var placardElement = event.target.enclosingNodeOrSelfWithClass("placard");
         this.selectedCallFrame = placardElement.placard.callFrame;
+    },
+
+    _contextMenu: function(event)
+    {
+        if (!this._text)
+            return;
+
+        var contextMenu = new WebInspector.ContextMenu();
+        contextMenu.appendItem(WebInspector.UIString("Copy Stack Trace"), InspectorFrontendHost.copyText.bind(InspectorFrontendHost, this._text));
+        contextMenu.show(event);
     },
 
     registerShortcuts: function(section)
