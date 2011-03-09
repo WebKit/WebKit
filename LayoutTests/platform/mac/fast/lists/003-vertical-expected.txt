@@ -8,25 +8,25 @@ layer at (0,0) size 334x600
           RenderText {#text} at (0,0) size 36x319
             text run at (0,0) width 319: "This test case illustrates incorrect positioning of list"
             text run at (18,0) width 92: "items within a "
-          RenderInline {CODE} at (0,0) size 15x136
-            RenderText {#text} at (19,92) size 15x136
-              text run at (19,92) width 136: "text-align: right"
-          RenderText {#text} at (18,228) size 18x71
-            text run at (18,228) width 71: " div after a "
-          RenderInline {CODE} at (0,0) size 33x347
-            RenderText {#text} at (19,299) size 33x347
-              text run at (19,299) width 48: "float:"
+          RenderInline {CODE} at (0,0) size 15x133
+            RenderText {#text} at (19,92) size 15x133
+              text run at (19,92) width 133: "text-align: right"
+          RenderText {#text} at (18,224) size 18x72
+            text run at (18,224) width 71: " div after a "
+          RenderInline {CODE} at (0,0) size 33x343
+            RenderText {#text} at (19,295) size 33x343
+              text run at (19,295) width 47: "float:"
               text run at (37,0) width 32: "left"
-          RenderText {#text} at (36,32) size 18x32
-            text run at (36,32) width 32: " div. "
-          RenderInline {A} at (0,0) size 18x192 [color=#0000EE]
-            RenderText {#text} at (36,64) size 18x192
-              text run at (36,64) width 192: "Screenshot of correct behavior"
-          RenderText {#text} at (36,256) size 18x8
-            text run at (36,256) width 8: "; "
+          RenderText {#text} at (36,31) size 18x33
+            text run at (36,31) width 32: " div. "
+          RenderInline {A} at (0,0) size 18x193 [color=#0000EE]
+            RenderText {#text} at (36,63) size 18x193
+              text run at (36,63) width 192: "Screenshot of correct behavior"
+          RenderText {#text} at (36,255) size 18x9
+            text run at (36,255) width 8: "; "
           RenderInline {A} at (0,0) size 36x347 [color=#0000EE]
-            RenderText {#text} at (36,264) size 36x347
-              text run at (36,264) width 83: "screenshot of"
+            RenderText {#text} at (36,263) size 36x347
+              text run at (36,263) width 83: "screenshot of"
               text run at (54,0) width 37: "Safari"
           RenderText {#text} at (54,37) size 18x4
             text run at (54,37) width 4: "."
