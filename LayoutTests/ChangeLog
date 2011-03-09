@@ -1,3 +1,9 @@
+2011-03-09  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: update chromium test expectations
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-08  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

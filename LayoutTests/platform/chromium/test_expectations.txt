@@ -2567,7 +2567,8 @@ BUGCR65877 LINUX WIN : fast/blockflow/japanese-lr-selection.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/japanese-rl-selection.html = IMAGE+TEXT
 BUGCR65877 WIN : fast/blockflow/broken-ideographic-font.html = IMAGE
 BUGCR65877 LINUX : fast/blockflow/broken-ideographic-font.html = IMAGE+TEXT
-BUGCR65877 LINUX WIN : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
+BUGCR65877 WIN : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
+BUGCR65877 LINUX RELEASE : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
 BUGCR65877 LINUX WIN : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
 BUGCR65877 WIN : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
@@ -2919,8 +2920,10 @@ BUGCR70882 WIN : fast/text/offsetForPosition-complex-fallback.html = TEXT
 BUGCR70942 WIN : editing/execCommand/break-out-of-empty-list-item.html = PASS TIMEOUT
 BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
 
-// Added by and started crashing at http://trac.webkit.org/changeset/76743
-BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH IMAGE+TEXT
+// Added by and started crashing at http://trac.webkit.org/changeset/76743,
+// stopped crashing at some point after 80582
+//BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH IMAGE+TEXT
+BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
 
 // Started failing at http://trac.webkit.org/changeset/76743
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-complex.html = IMAGE+TEXT
@@ -3312,3 +3315,76 @@ BUGWK55854 WIN LINUX MAC : fast/forms/onchange-setvalueforuser.html = TEXT
 // New tests introduced in r80622, need rebase.
 BUGXJI : fast/dom/scroll-reveal-left-overflow.html = FAIL
 BUGXJI : fast/dom/scroll-reveal-top-overflow.html = FAIL
+
+// WebKit roll 80564:80618+, mainly introduced changes to vertical text
+// some of these probably just need rebaseline:
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/overflow/overflow-rtl-vertical.html = IMAGE+TEXT
+BUGROLANDSTEINER MAC : fast/lists/003-vertical.html = IMAGE+TEXT
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/border-vertical-lr.html = IMAGE
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/japanese-lr-selection.html = IMAGE
+BUGROLANDSTEINER WIN-VISTA : fast/blockflow/japanese-lr-text.html = IMAGE
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/japanese-lr-text.html = IMAGE
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/japanese-rl-selection.html = IMAGE
+BUGROLANDSTEINER WIN-VISTA : fast/blockflow/japanese-rl-text.html = IMAGE
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/japanese-rl-text.html = IMAGE
+BUGROLANDSTEINER WIN-VISTA : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
+BUGROLANDSTEINER WIN-VISTA : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUGROLANDSTEINER WIN-VISTA : fast/blockflow/vertical-align-table-baseline.html = IMAGE
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/vertical-align-table-baseline.html = IMAGE 
+BUGROLANDSTEINER WIN-VISTA : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/vertical-font-fallback.html = IMAGE
+BUGROLANDSTEINER WIN-VISTA : fast/repaint/japanese-rl-selection-clear.html = IMAGE
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/japanese-rl-selection-clear.html = IMAGE
+BUGROLANDSTEINER WIN-VISTA : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/japanese-rl-selection-repaint.html = IMAGE SLOW
+BUGROLANDSTEINER WIN-VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/text-emphasis-h.html
+// others need a-fixin': some of these on Mac LEOPARD are shifted to the top tight by some constant factor
+// shift started to happen between WK r80582 and r80608
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/overflow/overflow-rtl-vertical.html = IMAGE+TEXT
+BUGROLANDSTEINER MAC : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
+BUGROLANDSTEINER MAC : fast/lists/008-vertical.html = IMAGE+TEXT
+BUGROLANDSTEINER MAC LEOPARD : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
+BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
+BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/border-vertical-lr.html = IMAGE
+BUGROLANDSTEINER MAC : fast/blockflow/broken-ideographic-font.html = IMAGE
+BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/japanese-lr-selection.html = IMAGE
+BUGROLANDSTEINER LINUX RELEASE : fast/blockflow/japanese-lr-text.html = IMAGE
+BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/japanese-lr-text.html = CRASH
+BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/japanese-lr-text.html = IMAGE
+BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/japanese-rl-selection.html = IMAGE
+BUGROLANDSTEINER MAC : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
+BUGROLANDSTEINER LINUX RELEASE : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
+BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/japanese-rl-text-with-broken-font.html = CRASH 
+BUGROLANDSTEINER LINUX : fast/blockflow/japanese-rl-text.html = IMAGE
+BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/japanese-rl-text.html = IMAGE
+BUGROLANDSTEINER LINUX : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
+BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
+BUGROLANDSTEINER LINUX RELEASE : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/japanese-ruby-vertical-rl.html = CRASH
+BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/vertical-align-table-baseline.html = IMAGE
+BUGROLANDSTEINER LINUX RELEASE : fast/blockflow/vertical-align-table-baseline.html = IMAGE
+BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/vertical-align-table-baseline.html = CRASH
+BUGROLANDSTEINER LINUX : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/vertical-font-fallback.html = CRASH
+BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/vertical-font-fallback.html = IMAGE
+BUGROLANDSTEINER MAC LEOPARD : fast/repaint/japanese-rl-selection-clear.html = IMAGE
+BUGROLANDSTEINER LINUX RELEASE : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUGROLANDSTEINER LINUX DEBUG : fast/repaint/japanese-rl-selection-repaint.html = CRASH
+BUGROLANDSTEINER MAC LEOPARD : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUGROLANDSTEINER MAC LEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
+BUGROLANDSTEINER MAC LEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
+BUGROLANDSTEINER MAC : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
+BUGROLANDSTEINER MAC : fast/css/getComputedStyle/computed-style.html = TEXT
+BUGROLANDSTEINER : fast/js/mozilla/strict/15.5.5.1.html = TEXT
+BUGROLANDSTEINER MAC : svg/css/getComputedStyle-basic.xhtml = TEXT
+// introduced by Dave Hyatt in WK r80582
+BUGROLANDSTEINER : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
+
