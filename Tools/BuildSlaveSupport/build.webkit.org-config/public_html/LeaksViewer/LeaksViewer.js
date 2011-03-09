@@ -76,11 +76,11 @@ var LeaksViewer = {
 
     urlPromptButtonClicked: function(e) {
         this._loadLeaksFromURL(document.getElementById("url").value);
-        document.getElementById("url-prompt-container").classList.add("hidden");
+        document.getElementById("url-prompt-container").addStyleClass("hidden");
     },
 
     _displayURLPrompt: function() {
-        document.getElementById("url-prompt-container").classList.remove("hidden");
+        document.getElementById("url-prompt-container").removeStyleClass("hidden");
         document.getElementById("url").focus();
     },
 
@@ -106,9 +106,9 @@ var LeaksViewer = {
 
     _setLoadingIndicatorHidden: function(hidden) {
         if (hidden)
-            this._loadingIndicator.classList.add("hidden");
+            this._loadingIndicator.addStyleClass("hidden");
         else
-            this._loadingIndicator.classList.remove("hidden");
+            this._loadingIndicator.removeStyleClass("hidden");
     },
 
     _updateTitle: function() {

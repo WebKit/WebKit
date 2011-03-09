@@ -1,5 +1,24 @@
 2011-03-09  Adam Roben  <aroben@apple.com>
 
+        Don't use Element.classList or box-shadow in Leaks Viewer
+
+        They aren't supported by Safari 5. Luckily we have substitutes for them!
+
+        Fixes <http://webkit.org/b/56035> Leaks viewer doesn't work in Safari 5
+
+        Reviewed by Simon Fraser.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.css:
+        (#url-prompt): Use -webkit-box-shadow instead of box-shadow.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.js:
+        (LeaksViewer.urlPromptButtonClicked):
+        (LeaksViewer._displayURLPrompt):
+        (LeaksViewer._setLoadingIndicatorHidden):
+        Use add/removeStyleClass (from utilities.js) instead of Element.classList.
+
+2011-03-09  Adam Roben  <aroben@apple.com>
+
         Add a link to the Leaks Viewer tool on the build.webkit.org homepage
 
         Rubber-stamped by David Kilzer.
