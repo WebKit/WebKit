@@ -1,3 +1,13 @@
+2011-03-08  Kenji Imasaki  <imasaki@chromium.org>
+
+        Reviewed by David Levin. 
+
+        [Chromium] Clean up Media GPU test expectation since
+        http://crbug.com?id=74887 was fixed. These expectations are based
+        on the results on flakiness dashboard.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-08  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline a GTK+ result after r80582.

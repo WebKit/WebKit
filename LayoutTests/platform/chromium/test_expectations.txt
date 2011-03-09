@@ -3091,14 +3091,9 @@ BUGCR74982 GPU : media/video-aspect-ratio.html = IMAGE
 BUGCR74982 GPU : media/video-transformed.html = IMAGE
 BUGCR74982 GPU : media/video-zoom-controls.html = IMAGE
 
-BUGCR74982 GPU WIN LINUX MAC LEOPARD: media/video-controls-rendering.html = IMAGE
-BUGWK55708 GPU MAC SNOWLEOPARD: media/video-controls-rendering.html = CRASH
-BUGWK55708 GPU MAC SNOWLEOPARD: media/video-zoom.html = CRASH
-BUGWK55718 GPU MAC LEOPARD : media/media-document-audio-repaint.html = CRASH IMAGE+TEXT
-BUGWK55718 GPU MAC SNOWLEOPARD : media/media-document-audio-repaint.html = IMAGE+TEXT
-
-BUGWK55718 GPU WIN : media/media-document-audio-repaint.html = CRASH PASS
-BUGWK55718 GPU LINUX : media/media-document-audio-repaint.html = IMAGE+TEXT
+BUGWK55708 BUGCR75345 GPU MAC : media/video-controls-rendering.html = CRASH
+BUGWK55708 BUGCR75345 GPU MAC : media/video-zoom.html = CRASH
+BUGWK55718 BUGCR75354 GPU : media/media-document-audio-repaint.html = IMAGE+TEXT
 
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE
 
