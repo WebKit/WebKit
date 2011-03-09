@@ -481,11 +481,11 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/Authentication/AuthenticationManager.h \
 	Source/WebKit2/WebProcess/Cookies/WebCookieManager.h \
 	Source/WebKit2/WebProcess/Cookies/WebCookieManager.cpp \
-	Source/WebKit2/WebProcess/Downloads/curl/DownloadCurl.cpp \
 	Source/WebKit2/WebProcess/Downloads/Download.cpp \
 	Source/WebKit2/WebProcess/Downloads/Download.h \
 	Source/WebKit2/WebProcess/Downloads/DownloadManager.cpp \
 	Source/WebKit2/WebProcess/Downloads/DownloadManager.h \
+	Source/WebKit2/WebProcess/Downloads/soup/DownloadSoup.cpp \
 	Source/WebKit2/WebProcess/FullScreen/WebFullScreenManager.cpp \
 	Source/WebKit2/WebProcess/FullScreen/WebFullScreenManager.h \
 	Source/WebKit2/WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \

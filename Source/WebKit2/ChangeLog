@@ -1,5 +1,18 @@
 2011-03-09  Alejandro G. Castro  <alex@igalia.com>
 
+        Fix compilation after r80596, add soup Download stubs.
+
+        * GNUmakefile.am:
+        * WebProcess/Downloads/soup/DownloadSoup.cpp: Added.
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+        (WebKit::Download::cancel):
+        (WebKit::Download::platformInvalidate):
+        (WebKit::Download::didDecideDestination):
+        (WebKit::Download::platformDidFinish):
+
+2011-03-09  Alejandro G. Castro  <alex@igalia.com>
+
         Fix GTK+ compilation after r80619. Add WebFullScreenManager.
 
         * GNUmakefile.am:
