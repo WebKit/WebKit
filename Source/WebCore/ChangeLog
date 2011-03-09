@@ -1,3 +1,20 @@
+2011-03-08  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Factor out JNI method call to be used by both JSC and V8
+        https://bugs.webkit.org/show_bug.cgi?id=55966
+
+        No new tests, refactoring only.
+
+        * bridge/jni/JNIUtility.cpp:
+        (JSC::Bindings::callJNIMethod):
+        * bridge/jni/JNIUtility.h:
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::invokeMethod):
+        * bridge/jni/v8/JavaInstanceV8.cpp:
+        (JavaInstance::invokeMethod):
+
 2011-03-09  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

@@ -75,6 +75,7 @@ JNIType JNITypeFromPrimitiveType(char type);
 const char* signatureFromPrimitiveType(JNIType);
 
 jvalue getJNIField(jobject, JNIType, const char* name, const char* signature);
+jvalue callJNIMethod(jobject, JNIType returnType, const char* name, const char* signature, jvalue* args);
 
 jmethodID getMethodID(jobject, const char* name, const char* sig);
 JNIEnv* getJNIEnv();

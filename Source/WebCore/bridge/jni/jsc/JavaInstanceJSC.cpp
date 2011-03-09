@@ -206,44 +206,8 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod
 // This is a deprecated code path which should not be required on Android.
 // Remove this guard once Bug 39476 is fixed.
 #if PLATFORM(ANDROID) || defined(BUILDING_ON_TIGER)
-    if (!handled) {
-        jobject obj = m_instance->m_instance;
-        switch (jMethod->JNIReturnType()) {
-        case void_type:
-            callJNIMethodIDA<void>(obj, jMethod->methodID(obj), jArgs.data());
-            break;
-        case object_type:
-            result.l = callJNIMethodIDA<jobject>(obj, jMethod->methodID(obj), jArgs.data());
-            break;
-        case boolean_type:
-            result.z = callJNIMethodIDA<jboolean>(obj, jMethod->methodID(obj), jArgs.data());
-            break;
-        case byte_type:
-            result.b = callJNIMethodIDA<jbyte>(obj, jMethod->methodID(obj), jArgs.data());
-            break;
-        case char_type:
-            result.c = callJNIMethodIDA<jchar>(obj, jMethod->methodID(obj), jArgs.data());
-            break;
-        case short_type:
-            result.s = callJNIMethodIDA<jshort>(obj, jMethod->methodID(obj), jArgs.data());
-            break;
-        case int_type:
-            result.i = callJNIMethodIDA<jint>(obj, jMethod->methodID(obj), jArgs.data());
-            break;
-        case long_type:
-            result.j = callJNIMethodIDA<jlong>(obj, jMethod->methodID(obj), jArgs.data());
-            break;
-        case float_type:
-            result.f = callJNIMethodIDA<jfloat>(obj, jMethod->methodID(obj), jArgs.data());
-            break;
-        case double_type:
-            result.d = callJNIMethodIDA<jdouble>(obj, jMethod->methodID(obj), jArgs.data());
-            break;
-        case array_type:
-        case invalid_type:
-            break;
-        }
-    }
+    if (!handled)
+        result = callJNIMethod(m_instance->m_instance, jMethod->JNIReturnType(), jMethod->name().utf8().data(), jMethod->signature(), jArgs.data());
 #endif
 
     switch (jMethod->JNIReturnType()) {

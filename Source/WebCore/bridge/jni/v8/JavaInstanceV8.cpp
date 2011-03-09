@@ -102,49 +102,7 @@ bool JavaInstance::invokeMethod(const char* methodName, const NPVariant* args, i
     for (int i = 0; i < count; i++)
         jArgs[i] = convertNPVariantToJValue(args[i], jMethod->parameterAt(i));
 
-    jvalue result;
-
-    // The following code can be conditionally removed once we have a Tiger update that
-    // contains the new Java plugin.  It is needed for builds prior to Tiger.
-    {
-        jobject obj = javaInstance();
-        switch (jMethod->JNIReturnType()) {
-        case void_type:
-            callJNIMethodIDA<void>(obj, jMethod->methodID(obj), jArgs);
-            break;
-        case object_type:
-            result.l = callJNIMethodIDA<jobject>(obj, jMethod->methodID(obj), jArgs);
-            break;
-        case boolean_type:
-            result.z = callJNIMethodIDA<jboolean>(obj, jMethod->methodID(obj), jArgs);
-            break;
-        case byte_type:
-            result.b = callJNIMethodIDA<jbyte>(obj, jMethod->methodID(obj), jArgs);
-            break;
-        case char_type:
-            result.c = callJNIMethodIDA<jchar>(obj, jMethod->methodID(obj), jArgs);
-            break;
-        case short_type:
-            result.s = callJNIMethodIDA<jshort>(obj, jMethod->methodID(obj), jArgs);
-            break;
-        case int_type:
-            result.i = callJNIMethodIDA<jint>(obj, jMethod->methodID(obj), jArgs);
-            break;
-
-        case long_type:
-            result.j = callJNIMethodIDA<jlong>(obj, jMethod->methodID(obj), jArgs);
-            break;
-        case float_type:
-            result.f = callJNIMethodIDA<jfloat>(obj, jMethod->methodID(obj), jArgs);
-            break;
-        case double_type:
-            result.d = callJNIMethodIDA<jdouble>(obj, jMethod->methodID(obj), jArgs);
-            break;
-        case invalid_type:
-        default:
-            break;
-        }
-    }
+    jvalue result = callJNIMethod(javaInstance(), jMethod->JNIReturnType(), jMethod->name().utf8().data(), jMethod->signature(), jArgs);
 
     convertJValueToNPVariant(result, jMethod->JNIReturnType(), jMethod->returnType(), resultValue);
     free(jArgs);

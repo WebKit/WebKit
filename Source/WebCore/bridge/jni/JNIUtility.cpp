@@ -340,6 +340,47 @@ jvalue getJNIField(jobject obj, JNIType type, const char* name, const char* sign
     return result;
 }
 
+jvalue callJNIMethod(jobject object, JNIType returnType, const char* name, const char* signature, jvalue* args)
+{
+    jmethodID methodId = getMethodID(object, name, signature);
+    jvalue result;
+    switch (returnType) {
+    case void_type:
+        callJNIMethodIDA<void>(object, methodId, args);
+        break;
+    case object_type:
+        result.l = callJNIMethodIDA<jobject>(object, methodId, args);
+        break;
+    case boolean_type:
+        result.z = callJNIMethodIDA<jboolean>(object, methodId, args);
+        break;
+    case byte_type:
+        result.b = callJNIMethodIDA<jbyte>(object, methodId, args);
+        break;
+    case char_type:
+        result.c = callJNIMethodIDA<jchar>(object, methodId, args);
+        break;
+    case short_type:
+        result.s = callJNIMethodIDA<jshort>(object, methodId, args);
+        break;
+    case int_type:
+        result.i = callJNIMethodIDA<jint>(object, methodId, args);
+        break;
+    case long_type:
+        result.j = callJNIMethodIDA<jlong>(object, methodId, args);
+        break;
+    case float_type:
+        result.f = callJNIMethodIDA<jfloat>(object, methodId, args);
+        break;
+    case double_type:
+        result.d = callJNIMethodIDA<jdouble>(object, methodId, args);
+        break;
+    default:
+        break;
+    }
+    return result;
+}
+
 } // namespace Bindings
 
 } // namespace JSC
