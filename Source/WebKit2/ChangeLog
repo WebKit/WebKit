@@ -1,3 +1,22 @@
+2011-03-08  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55977
+        Refine CF/CFNet distinctions for better code sharing.
+        1. Rename Downloads/cf/win/DownloadCFNetWin.cpp to DownloadCFWin.cpp
+           since it does not use any CFNETWORK features.
+        2. Create new cfnet directory.
+        3. Move Downloads/cf/DownloadCFNet.cpp to Downloads/cfnet
+        4. Update project file.
+
+        * WebProcess/Downloads/cf/DownloadCFNet.cpp: Removed.
+        * WebProcess/Downloads/cf/win/DownloadCFNetWin.cpp: Removed.
+        * WebProcess/Downloads/cf/win/DownloadCFWin.cpp: Copied from WebProcess/Downloads/cf/win/DownloadCFNetWin.cpp.
+        * WebProcess/Downloads/cfnet: Added.
+        * WebProcess/Downloads/cfnet/DownloadCFNet.cpp: Copied from WebProcess/Downloads/cf/DownloadCFNet.cpp.
+        * win/WebKit2.vcproj:
+
 2011-03-08  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Brady Eidson.

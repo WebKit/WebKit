@@ -1825,7 +1825,15 @@
 					Name="cf"
 					>
 					<File
-						RelativePath="..\WebProcess\Downloads\cf\DownloadCFNet.cpp"
+						RelativePath="..\WebProcess\Downloads\cf\win\DownloadCFWin.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="cfnet"
+					>
+					<File
+						RelativePath="..\WebProcess\Downloads\cfnet\DownloadCFNet.cpp"
 						>
 						<FileConfiguration
 							Name="Debug_Cairo_CFLite|Win32"
@@ -1844,14 +1852,6 @@
 							/>
 						</FileConfiguration>
 					</File>
-					<Filter
-						Name="win"
-						>
-						<File
-							RelativePath="..\WebProcess\Downloads\cf\win\DownloadCFNetWin.cpp"
-							>
-						</File>
-					</Filter>
 				</Filter>
 				<Filter
 					Name="curl"
