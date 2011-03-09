@@ -448,13 +448,15 @@ InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceResp
 
 void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorInstrumentationCookie& cookie, unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response)
 {
+    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
+        timelineAgent->didReceiveResourceResponse();
+    if (!loader)
+        return;
     if (InspectorAgent* inspectorAgent = inspectorAgentForFrame(loader->frame())) {
         if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
             resourceAgent->didReceiveResponse(identifier, loader, response);
         inspectorAgent->consoleAgent()->didReceiveResponse(identifier, response);
     }
-    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
-        timelineAgent->didReceiveResourceResponse();
 }
 
 void InspectorInstrumentation::didReceiveContentLengthImpl(InspectorAgent* inspectorAgent, unsigned long identifier, int lengthReceived)

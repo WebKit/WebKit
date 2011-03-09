@@ -1,3 +1,10 @@
+2011-03-09  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Fixed a crash in InspectorInstrumentation::didReceiveResponse() when loader is null (broken in r80639)
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseImpl):
+
 2011-03-09  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
