@@ -1,3 +1,11 @@
+2011-03-09  Brian Weinstein  <bweinstein@apple.com>
+
+        Update expected results of computed-style and computed-style-without-renderer after
+        r80582.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2011-03-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
