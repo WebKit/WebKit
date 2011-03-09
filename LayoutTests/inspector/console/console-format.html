@@ -34,15 +34,15 @@ function onload()
     };
     var num = 1.2e-1;
     var linkify = "http://webkit.org/";
-
     var valuelessAttribute = document.createAttribute("attr");
     var valuedAttribute = document.createAttribute("attr");
     valuedAttribute.value = "value";
     var existingAttribute = document.getElementById("x").attributes[0];
+    var throwingLengthGetter = {get length() { throw "Length called"; }};
 
     globals = [
         regex1, regex2, str, str2, error, node, func, multilinefunc, num, linkify,
-        null, undefined, valuelessAttribute, valuedAttribute, existingAttribute
+        null, undefined, valuelessAttribute, valuedAttribute, existingAttribute, throwingLengthGetter
     ];
 
     runTest();

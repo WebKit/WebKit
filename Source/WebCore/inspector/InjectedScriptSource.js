@@ -393,10 +393,14 @@ InjectedScript.prototype = {
         if (obj instanceof inspectedWindow.RegExp)
             return "regexp";
         // FireBug's array detection.
-        if (isFinite(obj.length) && typeof obj.splice === "function")
-            return "array";
-        if (isFinite(obj.length) && typeof obj.callee === "function") // arguments.
-            return "array";
+        try {
+            if (isFinite(obj.length) && typeof obj.splice === "function")
+                return "array";
+            if (isFinite(obj.length) && typeof obj.callee === "function") // arguments.
+                return "array";
+        } catch (e) {
+            return type;
+        }
         if (obj instanceof inspectedWindow.NodeList)
             return "array";
         if (obj instanceof inspectedWindow.HTMLCollection)

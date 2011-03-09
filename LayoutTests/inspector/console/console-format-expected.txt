@@ -38,6 +38,8 @@ CONSOLE MESSAGE: line 53: [object Attr]
 CONSOLE MESSAGE: line 54: [object Attr]
 CONSOLE MESSAGE: line 53: [object Attr]
 CONSOLE MESSAGE: line 54: [object Attr]
+CONSOLE MESSAGE: line 53: [object Object]
+CONSOLE MESSAGE: line 54: [object Object]
 Tests that console logging dumps proper messages.
 
 console-format.html:12Message format number 1, 2 and 3.5
@@ -112,4 +114,8 @@ console-format.html:53id="x"
 console-format.html:54[id="x"]
 globals[14]
 id="x"
+console-format.html:53Object
+console-format.html:54[Object]
+globals[15]
+Object
 
