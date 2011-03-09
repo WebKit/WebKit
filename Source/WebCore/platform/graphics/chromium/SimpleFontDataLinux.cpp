@@ -113,7 +113,7 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setXHeight(xHeight);
     m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
 
-    if (m_orientation == Vertical) {
+    if (platformData().orientation() == Vertical && !isTextOrientationFallback()) {
         static const uint32_t vheaTag = SkSetFourByteTag('v', 'h', 'e', 'a');
         static const uint32_t vorgTag = SkSetFourByteTag('V', 'O', 'R', 'G');
         size_t vheaSize = SkFontHost::GetTableSize(fontID, vheaTag);

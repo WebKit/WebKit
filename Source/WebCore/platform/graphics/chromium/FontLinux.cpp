@@ -98,7 +98,7 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
     SkPoint* vPosBegin = storage2.get();
     SkPoint* vPosEnd = storage3.get();
 
-    bool isVertical = font->orientation() == Vertical;
+    bool isVertical = font->platformData().orientation() == Vertical;
     for (int i = 0; i < numGlyphs; i++) {
         SkScalar myWidth = SkFloatToScalar(adv[i].width());
         pos[i].set(x, y);

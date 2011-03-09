@@ -1,5 +1,16 @@
 2011-03-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium Linux build fix attempt after r80582.
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/skia/GlyphPageTreeNodeSkia.cpp:
+        (WebCore::GlyphPage::fill):
+
+2011-03-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Mac build fix attempt for r80582.
 
         * platform/graphics/mac/ComplexTextControllerATSUI.cpp:

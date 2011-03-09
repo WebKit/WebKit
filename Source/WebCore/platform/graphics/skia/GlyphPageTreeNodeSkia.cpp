@@ -91,7 +91,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
         return false;
     }
 
-    if ((fontData->orientation() == Vertical) && (!fontData->isBrokenIdeographFont())) {
+    if (fontData->hasVerticalGlyphs()) {
         bool lookVariants = false;
         for (unsigned i = 0; i < bufferLength; ++i) {
             if (!Font::isCJKIdeograph(buffer[i])) {
