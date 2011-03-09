@@ -42,6 +42,7 @@ PolicyCallback::PolicyCallback()
     : m_navigationFunction(0)
     , m_newWindowFunction(0)
     , m_contentFunction(0)
+    , m_argument(0)
 {
 }
 

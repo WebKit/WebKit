@@ -1,5 +1,17 @@
 2011-03-08  Brent Fulgham  <bfulgham@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Correct uninitialized variable in PolicyCallback found while
+        running WebKit in BoundsChecker.
+        https://bugs.webkit.org/show_bug.cgi?id=45199.
+
+        * loader/PolicyCallback.cpp:
+        (WebCore::PolicyCallback::PolicyCallback): Initialize
+        m_argument.
+
+2011-03-08  Brent Fulgham  <bfulgham@webkit.org>
+
         More build bustage fix.
 
         * platform/graphics/win/cairo/FontPlatformData.h:
