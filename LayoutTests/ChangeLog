@@ -1,3 +1,9 @@
+2011-03-09  Mihai Parparita  <mihaip@chromium.org>
+
+        Update chromium-gpu expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-09  Brian Weinstein  <bweinstein@apple.com>
 
         Update expected results of computed-style and computed-style-without-renderer after
