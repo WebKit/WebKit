@@ -1,3 +1,10 @@
+2011-03-08  James Robinson  <jamesr@chromium.org>
+
+        Chromium compile fix.
+
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        (WebCore::SimpleFontData::platformInit):
+
 2011-03-08  Peter Kasting  <pkasting@google.com>
 
         Reviewed by James Robinson.

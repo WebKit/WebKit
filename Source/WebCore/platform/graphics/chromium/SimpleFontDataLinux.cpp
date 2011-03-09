@@ -119,7 +119,7 @@ void SimpleFontData::platformInit()
         size_t vheaSize = SkFontHost::GetTableSize(fontID, vheaTag);
         size_t vorgSize = SkFontHost::GetTableSize(fontID, vorgTag);
         if ((vheaSize <= 0) && (vorgSize <= 0))
-            m_orientation = Horizontal;
+            m_platformData.setOrientation(Horizontal);
     }
 
     // In WebKit/WebCore/platform/graphics/SimpleFontData.cpp, m_spaceWidth is
