@@ -77,6 +77,7 @@ LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
     , m_opaque(true)
     , m_geometryFlipped(false)
     , m_needsDisplayOnBoundsChange(false)
+    , m_doubleSided(true)
     , m_ccLayerImpl(CCLayerImpl::create(this))
     , m_replicaLayer(0)
 {

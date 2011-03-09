@@ -1,3 +1,18 @@
+2011-03-09  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium]: Regression - Explicitly copy compositing properties from LayerChromium to CCLayerImpl
+        https://bugs.webkit.org/show_bug.cgi?id=56021
+
+        Adds a test for basic functionality of the backface-visibility
+        property.
+
+        * compositing/backface-visibility-expected.checksum: Added.
+        * compositing/backface-visibility-expected.png: Added.
+        * compositing/backface-visibility-expected.txt: Added.
+        * compositing/backface-visibility.html: Added.
+
 2011-03-09  Andrei Popescu  <andreip@google.com>
 
         Unreviewed, build fix.

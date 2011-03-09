@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css" media="screen">
+    .red {
+        background-color: red;
+    }
+
+    .green {
+        background-color: green;
+    }
+    div {
+      height: 100px;
+      width: 100px;
+    }
+    
+    .backfaceVisible {
+      -webkit-transform: rotateY(180deg);
+      -webkit-backface-visibility: visible;
+    }
+
+    .backfaceHidden {
+      -webkit-transform: rotateY(180deg);
+      -webkit-backface-visibility: hidden;
+    }
+  </style>
+</head>
+<body>
+  <!-- In the pixel results, two green squares should be visible. -->
+  <div class="red">
+    <div class="backfaceVisible green">
+    </div>
+  </div>
+  <p>
+  <div class="green">
+    <div class="backfaceHidden red">
+    </div>
+  </div>
+  <script>
+  if (window.layoutTestController) {
+    layoutTestController.dumpAsText(true);  // This is only useful as a pixel test.
+    document.write("<span style='position:absolute; top:-5000px'>This test is only useful as a pixel test</span>");
+  }
+  </script>
+</body>
+</html>

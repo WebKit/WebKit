@@ -1,3 +1,19 @@
+2011-03-09  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium]: Regression - Explicitly copy compositing properties from LayerChromium to CCLayerImpl
+        https://bugs.webkit.org/show_bug.cgi?id=56021
+
+        Initializes the m_doubleSided flag of LayerChromiums to the default
+        value of true so the back sides of layers without
+        backface-visibility:hidden are rendered.
+
+        Test: compositing/backface-visibility.html
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+
 2011-03-09  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
