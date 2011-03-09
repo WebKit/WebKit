@@ -264,7 +264,7 @@ static void disableLigatures(const SimpleFontData* fontData, ATSUStyle atsuStyle
     // Don't be too aggressive: if the font doesn't contain 'a', then assume that any ligatures it contains are
     // in characters that always go through ATSUI, and therefore allow them. Geeza Pro is an example.
     // See bugzilla 5166.
-    if ((typesettingFeatures & Ligatures) || (fontData->orientation() == Horizontal && fontData->platformData().allowsLigatures()))
+    if ((typesettingFeatures & Ligatures) || (fontData->platformData().orientation() == Horizontal && fontData->platformData().allowsLigatures()))
         return;
 
     ATSUFontFeatureType featureTypes[] = { kLigaturesType };

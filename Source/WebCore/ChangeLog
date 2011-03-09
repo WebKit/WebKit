@@ -1,5 +1,12 @@
 2011-03-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Mac build fix attempt for r80582.
+
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp:
+        (WebCore::disableLigatures):
+
+2011-03-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Kent Tamura.
 
         Remove calls to deprecatedEditingOffset in SelectionController and VisibleSelection
