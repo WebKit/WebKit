@@ -3343,7 +3343,7 @@ BUGROLANDSTEINER WIN-VISTA : fast/repaint/japanese-rl-selection-repaint.html = I
 BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/japanese-rl-selection-repaint.html = IMAGE SLOW
 BUGROLANDSTEINER WIN-VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/text-emphasis-h.html
+BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
 // others need a-fixin': some of these on Mac LEOPARD are shifted to the top tight by some constant factor
 // shift started to happen between WK r80582 and r80608
 BUGROLANDSTEINER MAC SNOWLEOPARD : fast/overflow/overflow-rtl-vertical.html = IMAGE+TEXT
