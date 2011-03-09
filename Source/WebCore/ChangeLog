@@ -1,3 +1,22 @@
+2011-03-08  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Add BackingStoreType parameter to IDBFactoryBackendInterface::open
+        https://bugs.webkit.org/show_bug.cgi?id=55948
+
+        Add a parameter that allows for selection of alternative backing store
+        implementations.
+
+        No new tests: no new functionality.
+
+        * storage/IDBFactory.cpp:
+        (WebCore::IDBFactory::open):
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::open):
+        * storage/IDBFactoryBackendImpl.h:
+        * storage/IDBFactoryBackendInterface.h:
+
 2011-03-08  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

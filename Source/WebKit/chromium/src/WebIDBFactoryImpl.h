@@ -42,7 +42,7 @@ public:
     WebIDBFactoryImpl();
     virtual ~WebIDBFactoryImpl();
 
-    virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir, unsigned long long maximumSize);
+    virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType);
 
 private:
     WTF::RefPtr<WebCore::IDBFactoryBackendInterface> m_idbFactoryBackend;

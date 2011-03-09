@@ -59,13 +59,12 @@ IDBFactoryBackendProxy::~IDBFactoryBackendProxy()
 {
 }
 
-void IDBFactoryBackendProxy::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame, const String& dataDir, int64_t maximumSize)
+void IDBFactoryBackendProxy::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame, const String& dataDir, int64_t maximumSize, BackingStoreType backingStoreType)
 {
     WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
-    m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir, maximumSize);
+    m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir, maximumSize, static_cast<WebKit::WebIDBFactory::BackingStoreType>(backingStoreType));
 }
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-

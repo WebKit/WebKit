@@ -51,7 +51,12 @@ public:
     static PassRefPtr<IDBFactoryBackendInterface> create();
     virtual ~IDBFactoryBackendInterface() { }
 
-    virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize) = 0;
+    enum BackingStoreType {
+        DefaultBackingStore,
+        LevelDBBackingStore
+    };
+
+    virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType) = 0;
 };
 
 } // namespace WebCore

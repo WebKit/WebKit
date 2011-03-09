@@ -58,9 +58,9 @@ WebIDBFactoryImpl::~WebIDBFactoryImpl()
 {
 }
 
-void WebIDBFactoryImpl::open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir, unsigned long long maximumSize)
+void WebIDBFactoryImpl::open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType backingStoreType)
 {
-    m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(callbacks), origin, 0, dataDir, maximumSize);
+    m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(callbacks), origin, 0, dataDir, maximumSize, static_cast<IDBFactoryBackendInterface::BackingStoreType>(backingStoreType));
 }
 
 } // namespace WebKit

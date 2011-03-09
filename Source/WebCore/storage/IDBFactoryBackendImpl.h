@@ -55,7 +55,7 @@ public:
     void addIDBBackingStore(const String& uniqueIdentifier, IDBBackingStore*);
     void removeIDBBackingStore(const String& uniqueIdentifier);
 
-    virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize);
+    virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType);
 
 private:
     IDBFactoryBackendImpl();

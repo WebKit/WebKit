@@ -51,8 +51,18 @@ public:
 
     virtual ~WebIDBFactory() { }
 
+    enum BackingStoreType {
+        DefaultBackingStore,
+        LevelDBBackingStore
+    };
+
     // The WebKit implementation of open ignores the WebFrame* parameter.
-    virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir, unsigned long long maximumSize) { WEBKIT_ASSERT_NOT_REACHED(); }
+    // FIXME: Assert not reached when Chromium side is updated.
+    virtual void open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType) { open(name, callbacks, origin, frame, dataDir, maximumSize); }
+
+    // FIXME: Remove this when Chromium side is updated.
+    virtual void open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir, unsigned long long maximumSize) { open(name, callbacks, origin, frame, dataDir, maximumSize, DefaultBackingStore); }
+
     virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 

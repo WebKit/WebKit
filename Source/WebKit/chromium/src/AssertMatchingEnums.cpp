@@ -45,6 +45,7 @@
 #include "GeolocationError.h"
 #include "GeolocationPosition.h"
 #include "HTMLInputElement.h"
+#include "IDBFactoryBackendInterface.h"
 #include "IDBKey.h"
 #include "MediaPlayer.h"
 #include "NotificationPresenter.h"
@@ -67,6 +68,7 @@
 #include "WebFontDescription.h"
 #include "WebGeolocationError.h"
 #include "WebGeolocationPosition.h"
+#include "WebIDBFactory.h"
 #include "WebIDBKey.h"
 #include "WebInputElement.h"
 #include "WebMediaPlayer.h"
@@ -376,6 +378,9 @@ COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::NullType, IDBKey::NullType);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::StringType, IDBKey::StringType);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::DateType, IDBKey::DateType);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::NumberType, IDBKey::NumberType);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBFactory::DefaultBackingStore, IDBFactoryBackendInterface::DefaultBackingStore);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBFactory::LevelDBBackingStore, IDBFactoryBackendInterface::LevelDBBackingStore);
 
 #if ENABLE(FILE_SYSTEM)
 COMPILE_ASSERT_MATCHING_ENUM(WebFileSystem::TypeTemporary, AsyncFileSystem::Temporary);

@@ -69,7 +69,7 @@ void IDBFactoryBackendImpl::removeIDBBackingStore(const String& uniqueIdentifier
     m_backingStoreMap.remove(uniqueIdentifier);
 }
 
-void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir, int64_t maximumSize)
+void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType)
 {
     String fileIdentifier = securityOrigin->databaseIdentifier();
     String uniqueIdentifier = fileIdentifier + "@" + name;
