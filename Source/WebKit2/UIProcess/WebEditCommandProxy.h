@@ -26,6 +26,7 @@
 #ifndef WebEditCommandProxy_h
 #define WebEditCommandProxy_h
 
+#include "APIObject.h"
 #include <WebCore/EditAction.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -34,7 +35,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebEditCommandProxy : public RefCounted<WebEditCommandProxy> {
+class WebEditCommandProxy : public APIObject {
 public:
     static PassRefPtr<WebEditCommandProxy> create(uint64_t commandID, WebCore::EditAction editAction, WebPageProxy* page)
     {
@@ -52,6 +53,8 @@ public:
 
 private:
     WebEditCommandProxy(uint64_t commandID, WebCore::EditAction, WebPageProxy*);
+
+    virtual Type type() const { return TypeEditCommandProxy; }
 
     uint64_t m_commandID;
     WebCore::EditAction m_editAction;

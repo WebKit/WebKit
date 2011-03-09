@@ -1,5 +1,21 @@
 2011-03-08  Jeff Miller  <jeffm@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        WebKit2: Expose WebEditCommandProxy in the C API on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=55962
+        
+        Make WebEditCommandProxy a subclass of APIObject, and define
+        WKEditCommandRef as the type that will be exposed through the C API.
+
+        * Shared/API/c/win/WKBaseWin.h: Add WKEditCommandRef.
+        * Shared/APIObject.h: Add platform-specific TypeEditCommandProxy.
+        * UIProcess/API/C/win/WKAPICastWin.h: Add API mapping for WKEditCommandRef.
+        * UIProcess/WebEditCommandProxy.h: Subclass WebEditCommandProxy from APIObject.
+        (WebKit::WebEditCommandProxy::type): Added.
+
+2011-03-08  Jeff Miller  <jeffm@apple.com>
+
         Reviewed by Oliver Hunt.
 
         WebKit2: Redo is broken

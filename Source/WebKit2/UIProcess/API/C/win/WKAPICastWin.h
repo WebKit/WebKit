@@ -33,8 +33,10 @@
 namespace WebKit {
 
 class WebView;
+class WebEditCommandProxy;
 
 WK_ADD_API_MAPPING(WKViewRef, WebView)
+WK_ADD_API_MAPPING(WKEditCommandRef, WebEditCommandProxy)
 
 }
 
