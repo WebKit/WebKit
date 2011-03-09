@@ -1,5 +1,19 @@
 2011-03-09  Adam Roben  <aroben@apple.com>
 
+        Hide Leaks Viewer's URL prompt by default
+
+        We will show it as needed. I think I left it visible by default by accident after doing some
+        testing.
+
+        Fixes <http://webkit.org/b/56031> Leaks Viewer: URL prompt overlay shouldn't appear when a
+        URL is passed as a query parameter, but does
+
+        Reviewed by Simon Fraser.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/index.html:
+
+2011-03-09  Adam Roben  <aroben@apple.com>
+
         Don't use Element.classList or box-shadow in Leaks Viewer
 
         They aren't supported by Safari 5. Luckily we have substitutes for them!
