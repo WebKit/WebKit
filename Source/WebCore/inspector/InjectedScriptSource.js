@@ -456,10 +456,12 @@ var injectedScript = new InjectedScript();
 
 InjectedScript.RemoteObject = function(objectId, type, description, hasChildren)
 {
-    this.objectId = objectId;
+    if (objectId) {
+        this.objectId = objectId;
+        this.hasChildren = hasChildren;
+    }
     this.type = type;
     this.description = description;
-    this.hasChildren = hasChildren;
 }
 
 InjectedScript.RemoteObject.fromException = function(e)

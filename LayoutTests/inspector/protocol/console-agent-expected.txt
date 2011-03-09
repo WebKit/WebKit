@@ -75,10 +75,8 @@ event ConsoleAgent.addConsoleMessage
             message : "test"
             parameters : {
                 0 : {
-                    objectId : null
                     type : "string"
                     description : "test"
-                    hasChildren : false
                 }
             }
             stackTrace : <object>
@@ -101,10 +99,8 @@ response:
     seq : <number>
     body : {
         result : {
-            objectId : null
             type : "undefined"
             description : "undefined"
-            hasChildren : false
         }
     }
 }

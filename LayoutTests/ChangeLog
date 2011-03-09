@@ -1,3 +1,13 @@
+2011-03-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Web Inspector: we don't need to transfer objectId and hasChildren for primitive values.
+        https://bugs.webkit.org/show_bug.cgi?id=55998
+
+        * inspector/protocol/console-agent-expected.txt:
+        * inspector/protocol/runtime-agent-expected.txt:
+
 2011-03-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

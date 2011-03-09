@@ -24,9 +24,9 @@ response:
                 injectedScriptId : <number>
                 id : <number>
             }
+            hasChildren : true
             type : "object"
             description : "TestObject"
-            hasChildren : true
         }
     }
 }
@@ -53,10 +53,8 @@ response:
     seq : <number>
     body : {
         result : {
-            objectId : null
             type : "undefined"
             description : "undefined"
-            hasChildren : false
         }
     }
 }
@@ -139,19 +137,15 @@ response:
             0 : {
                 name : "assignedByEvaluateOn"
                 value : {
-                    objectId : null
                     type : "string"
                     description : "evaluateOn function works fine"
-                    hasChildren : false
                 }
             }
             1 : {
                 name : "assignedBySetPropertyValue"
                 value : {
-                    objectId : null
                     type : "boolean"
                     description : "true"
-                    hasChildren : false
                 }
             }
             2 : {
@@ -161,9 +155,9 @@ response:
                         injectedScriptId : <number>
                         id : <number>
                     }
+                    hasChildren : true
                     type : "object"
                     description : "TestObject"
-                    hasChildren : true
                 }
             }
         }
