@@ -1,3 +1,25 @@
+2011-03-09  Xiaomei Ji  <xji@chromium.org>
+
+        Unreviewed.
+
+        Rebaseline after r80622.
+
+        * platform/chromium-linux/fast/dom/scroll-reveal-left-overflow-expected.checksum: Added.
+        * platform/chromium-linux/fast/dom/scroll-reveal-left-overflow-expected.png: Added.
+        * platform/chromium-linux/fast/dom/scroll-reveal-top-overflow-expected.checksum: Added.
+        * platform/chromium-linux/fast/dom/scroll-reveal-top-overflow-expected.png: Added.
+        * platform/chromium-mac/fast/dom/scroll-reveal-left-overflow-expected.checksum: Added.
+        * platform/chromium-mac/fast/dom/scroll-reveal-left-overflow-expected.png: Added.
+        * platform/chromium-mac/fast/dom/scroll-reveal-left-overflow-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/scroll-reveal-top-overflow-expected.txt: Added.
+        * platform/chromium-win/fast/dom/scroll-reveal-left-overflow-expected.checksum: Added.
+        * platform/chromium-win/fast/dom/scroll-reveal-left-overflow-expected.png: Added.
+        * platform/chromium-win/fast/dom/scroll-reveal-left-overflow-expected.txt: Added.
+        * platform/chromium-win/fast/dom/scroll-reveal-top-overflow-expected.checksum: Added.
+        * platform/chromium-win/fast/dom/scroll-reveal-top-overflow-expected.png: Added.
+        * platform/chromium-win/fast/dom/scroll-reveal-top-overflow-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-09  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. Rebaselining after text orientation change in r80582.
