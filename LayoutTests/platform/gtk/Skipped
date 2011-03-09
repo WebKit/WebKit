@@ -1262,6 +1262,7 @@ fast/canvas/canvas-fillPath-shadow.html
 fast/canvas/canvas-strokePath-shadow.html
 fast/canvas/canvas-transforms-fillRect-shadow.html
 fast/canvas/canvas-scale-strokePath-shadow.html
+fast/canvas/rgba-parsing.html
 
 # While zooming we sometimes appear to have ~1 pixel differences
 # with font metrics to other ports
@@ -1322,9 +1323,6 @@ canvas/philip/tests/2d.imageData.object.wrap.html
 fast/viewport/viewport-128.html
 http/tests/security/xss-DENIED-xsl-document-redirect.xml
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml
-
-# https://bugs.webkit.org/show_bug.cgi?id=55670
-fast/canvas/rgba-parsing.html
 
 # DataTransferItems is not yet implemented.
 editing/pasteboard/data-transfer-items.html

@@ -1,3 +1,10 @@
+2011-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Move fast/canvas/rgba-parsing.html to the group of
+        tests failing due to rounding color problems in cairo/pixman.
+
+        * platform/gtk/Skipped:
+
 2011-03-09  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed: more vertical text fallout for the chromium test expectations.
