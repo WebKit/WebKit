@@ -1,3 +1,13 @@
+2011-03-09  Martin Robinson  <mrobinson@igalia.com>
+
+        jquery/manipulation.html fails after r80598
+        https://bugs.webkit.org/show_bug.cgi?id=56019
+
+        Skip jquery test failing on the GTK+ debug bots. Move another
+        failing test to the appropriate section.
+
+        * platform/gtk/Skipped: Update skipped list.
+
 2011-03-09  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
