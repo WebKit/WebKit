@@ -90,6 +90,7 @@ class WebContextMenu;
 class WebContextMenuItemData;
 class WebEvent;
 class WebFrame;
+class WebFullScreenManager;
 class WebImage;
 class WebInspector;
 class WebKeyboardEvent;
@@ -139,6 +140,10 @@ public:
 
 #if ENABLE(INSPECTOR)
     WebInspector* inspector();
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    WebFullScreenManager* fullScreenManager();
 #endif
 
     // -- Called by the DrawingArea.
@@ -539,6 +544,9 @@ private:
 
 #if ENABLE(INSPECTOR)
     RefPtr<WebInspector> m_inspector;
+#endif
+#if ENABLE(FULLSCREEN_API)
+    RefPtr<WebFullScreenManager> m_fullScreenManager;
 #endif
     RefPtr<WebPopupMenu> m_activePopupMenu;
     RefPtr<WebContextMenu> m_contextMenu;

@@ -33,6 +33,8 @@ WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebCookieManagerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebFullScreenManagerMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebFullScreenManagerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorMessages.h \
@@ -62,6 +64,8 @@ WEBKIT2_GENERATED_SOURCES = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebCookieManagerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebFullScreenManagerMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebFullScreenManagerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorMessageReceiver.cpp \
@@ -190,6 +194,7 @@ HEADERS += \
     UIProcess/WebFrameListenerProxy.h \
     UIProcess/WebFramePolicyListenerProxy.h \
     UIProcess/WebFrameProxy.h \
+    UIProcess/WebFullScreenManagerProxy.h \
     UIProcess/WebGeolocationManagerProxy.h \
     UIProcess/WebGeolocationProvider.h \
     UIProcess/WebHistoryClient.h \
@@ -214,6 +219,7 @@ HEADERS += \
     WebProcess/Cookies/WebCookieManager.h \
     WebProcess/Downloads/Download.h \
     WebProcess/Downloads/DownloadManager.h \
+    WebProcess/FullScreen/WebFullScreenManager.h \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
     WebProcess/Geolocation/WebGeolocationManager.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h \
@@ -380,6 +386,7 @@ SOURCES += \
     UIProcess/WebFrameListenerProxy.cpp \
     UIProcess/WebFramePolicyListenerProxy.cpp \
     UIProcess/WebFrameProxy.cpp \
+    UIProcess/WebFullScreenManagerProxy.cpp \
     UIProcess/WebGeolocationManagerProxy.cpp \
     UIProcess/WebGeolocationProvider.cpp \
     UIProcess/WebHistoryClient.cpp \
@@ -412,6 +419,7 @@ SOURCES += \
     WebProcess/Cookies/WebCookieManager.cpp \
     WebProcess/Downloads/Download.cpp \
     WebProcess/Downloads/DownloadManager.cpp \
+    WebProcess/FullScreen/WebFullScreenManager.cpp \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \
     WebProcess/Geolocation/WebGeolocationManager.cpp \
     WebProcess/Downloads/qt/DownloadQt.cpp \

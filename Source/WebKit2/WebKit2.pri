@@ -43,6 +43,7 @@ WEBKIT2_INCLUDEPATH = \
     $$SOURCE_DIR/WebKit2/WebProcess/Cookies \
     $$SOURCE_DIR/WebKit2/WebProcess/Downloads \
     $$SOURCE_DIR/WebKit2/WebProcess/Downloads/qt \
+    $$SOURCE_DIR/WebKit2/WebProcess/FullScreen \
     $$SOURCE_DIR/WebKit2/WebProcess/Geolocation \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/DOM \

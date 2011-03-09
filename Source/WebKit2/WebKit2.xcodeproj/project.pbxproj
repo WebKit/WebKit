@@ -738,6 +738,13 @@
 		C574A37712E6099D002DFE98 /* WebDragClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */; };
 		C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = C574A57F12E66681002DFE98 /* PasteboardTypes.h */; };
 		C574A58212E66681002DFE98 /* PasteboardTypes.mm in Sources */ = {isa = PBXBuildFile; fileRef = C574A58012E66681002DFE98 /* PasteboardTypes.mm */; };
+		CD6F75F4131B66D000D6B21E /* WebFullScreenManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA3E131A2E8A00EEDED2 /* WebFullScreenManagerProxy.cpp */; };
+		CD73BA42131A2E8B00EEDED2 /* WebFullScreenManagerProxy.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD73BA3F131A2E8A00EEDED2 /* WebFullScreenManagerProxy.h */; };
+		CD73BA47131ACC9A00EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA45131ACC8800EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp */; };
+		CD73BA4C131ACD8F00EEDED2 /* WebFullScreenManagerMessages.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD73BA49131ACD8E00EEDED2 /* WebFullScreenManagerMessages.h */; };
+		CD73BA4D131ACD8F00EEDED2 /* WebFullScreenManagerProxyMessages.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD73BA4A131ACD8F00EEDED2 /* WebFullScreenManagerProxyMessages.h */; };
+		CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */; };
+		CD73BA53131B645B00EEDED2 /* WebFullScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA37131A29FE00EEDED2 /* WebFullScreenManager.cpp */; };
 		D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */; };
 		D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484311FF4B6500032B39 /* WebPopupMenu.h */; };
 		D3B9484811FF4B6500032B39 /* WebSearchPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */; };
@@ -815,6 +822,9 @@
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
 				1A64228B12DD024700CAAE2C /* DrawingArea.messages.in in CopyFiles */,
 				6546A82C13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h in CopyFiles */,
+				CD73BA42131A2E8B00EEDED2 /* WebFullScreenManagerProxy.h in CopyFiles */,
+				CD73BA4C131ACD8F00EEDED2 /* WebFullScreenManagerMessages.h in CopyFiles */,
+				CD73BA4D131ACD8F00EEDED2 /* WebFullScreenManagerProxyMessages.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1588,6 +1598,16 @@
 		C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClientMac.mm; sourceTree = "<group>"; };
 		C574A57F12E66681002DFE98 /* PasteboardTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardTypes.h; sourceTree = "<group>"; };
 		C574A58012E66681002DFE98 /* PasteboardTypes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardTypes.mm; sourceTree = "<group>"; };
+		CD73BA37131A29FE00EEDED2 /* WebFullScreenManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebFullScreenManager.cpp; path = FullScreen/WebFullScreenManager.cpp; sourceTree = "<group>"; };
+		CD73BA38131A29FE00EEDED2 /* WebFullScreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFullScreenManager.h; path = FullScreen/WebFullScreenManager.h; sourceTree = "<group>"; };
+		CD73BA39131A29FE00EEDED2 /* WebFullScreenManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebFullScreenManager.messages.in; path = FullScreen/WebFullScreenManager.messages.in; sourceTree = "<group>"; };
+		CD73BA3E131A2E8A00EEDED2 /* WebFullScreenManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFullScreenManagerProxy.cpp; sourceTree = "<group>"; };
+		CD73BA3F131A2E8A00EEDED2 /* WebFullScreenManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFullScreenManagerProxy.h; sourceTree = "<group>"; };
+		CD73BA40131A2E8A00EEDED2 /* WebFullScreenManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebFullScreenManagerProxy.messages.in; sourceTree = "<group>"; };
+		CD73BA45131ACC8800EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFullScreenManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFullScreenManagerMessageReceiver.cpp; sourceTree = "<group>"; };
+		CD73BA49131ACD8E00EEDED2 /* WebFullScreenManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFullScreenManagerMessages.h; sourceTree = "<group>"; };
+		CD73BA4A131ACD8F00EEDED2 /* WebFullScreenManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFullScreenManagerProxyMessages.h; sourceTree = "<group>"; };
 		D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPopupMenu.cpp; sourceTree = "<group>"; };
 		D3B9484311FF4B6500032B39 /* WebPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPopupMenu.h; sourceTree = "<group>"; };
 		D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSearchPopupMenu.cpp; sourceTree = "<group>"; };
@@ -2212,6 +2232,7 @@
 		BC032D5C10F436D50058C15A /* WebProcess */ = {
 			isa = PBXGroup;
 			children = (
+				CD73BA3D131A2A2100EEDED2 /* FullScreen */,
 				512E352A130B559900ABD19A /* ApplicationCache */,
 				512F588612A8834700629530 /* Authentication */,
 				3309344B1315B93A0097A7BC /* Cookies */,
@@ -2315,6 +2336,9 @@
 		BC032DC310F438260058C15A /* UIProcess */ = {
 			isa = PBXGroup;
 			children = (
+				CD73BA3E131A2E8A00EEDED2 /* WebFullScreenManagerProxy.cpp */,
+				CD73BA3F131A2E8A00EEDED2 /* WebFullScreenManagerProxy.h */,
+				CD73BA40131A2E8A00EEDED2 /* WebFullScreenManagerProxy.messages.in */,
 				BC032DC410F4387C0058C15A /* API */,
 				512F588D12A8836F00629530 /* Authentication */,
 				51B3004D12529CF5000B5CA0 /* cf */,
@@ -2928,6 +2952,10 @@
 		C0CE729D1247E71D00BC0EC4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */,
+				CD73BA49131ACD8E00EEDED2 /* WebFullScreenManagerMessages.h */,
+				CD73BA4A131ACD8F00EEDED2 /* WebFullScreenManagerProxyMessages.h */,
+				CD73BA45131ACC8800EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp */,
 				1A64230612DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp */,
 				1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */,
 				512F58A012A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp */,
@@ -3013,6 +3041,16 @@
 				C08FDE87124A851C007645BD /* messages_unittest.py */,
 			);
 			path = webkit2;
+			sourceTree = "<group>";
+		};
+		CD73BA3D131A2A2100EEDED2 /* FullScreen */ = {
+			isa = PBXGroup;
+			children = (
+				CD73BA37131A29FE00EEDED2 /* WebFullScreenManager.cpp */,
+				CD73BA38131A29FE00EEDED2 /* WebFullScreenManager.h */,
+				CD73BA39131A29FE00EEDED2 /* WebFullScreenManager.messages.in */,
+			);
+			name = FullScreen;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -3976,6 +4014,10 @@
 				BCE81D98131AE02100241910 /* DictionaryPopupInfo.cpp in Sources */,
 				E1BB16A513201B9B00F49431 /* FullKeyboardAccessWatcher.mm in Sources */,
 				33AA1066131F060000D4A575 /* WebCookieManagerProxyClient.cpp in Sources */,
+				CD73BA47131ACC9A00EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp in Sources */,
+				CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */,
+				CD73BA53131B645B00EEDED2 /* WebFullScreenManager.cpp in Sources */,
+				CD6F75F4131B66D000D6B21E /* WebFullScreenManagerProxy.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -205,6 +205,12 @@ private:
     virtual void setLastSetCursorToCurrentCursor();
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+    virtual bool supportsFullScreenForElement(const WebCore::Element*);
+    virtual void enterFullScreenForElement(WebCore::Element*);
+    virtual void exitFullScreenForElement(WebCore::Element*);
+#endif
+
     virtual void dispatchViewportDataDidChange(const WebCore::ViewportArguments&) const;
 
     virtual void didCompleteRubberBandForMainFrame(const WebCore::IntSize&) const;

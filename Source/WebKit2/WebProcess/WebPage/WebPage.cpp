@@ -54,6 +54,7 @@
 #include "WebEvent.h"
 #include "WebEventConversion.h"
 #include "WebFrame.h"
+#include "WebFullScreenManager.h"
 #include "WebGeolocationClient.h"
 #include "WebImage.h"
 #include "WebInspector.h"
@@ -351,6 +352,9 @@ void WebPage::close()
 
 #if ENABLE(INSPECTOR)
     m_inspector = 0;
+#endif
+#if ENABLE(FULLSCREEN_API)
+    m_fullScreenManager = 0;
 #endif
 
     if (m_activePopupMenu) {
@@ -1400,6 +1404,15 @@ WebInspector* WebPage::inspector()
 }
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+WebFullScreenManager* WebPage::fullScreenManager()
+{
+    if (!m_fullScreenManager)
+        m_fullScreenManager = WebFullScreenManager::create(this);
+    return m_fullScreenManager.get();
+}
+#endif
+
 #if !PLATFORM(MAC)
 bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 {
@@ -1767,6 +1780,13 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
     if (messageID.is<CoreIPC::MessageClassWebInspector>()) {
         if (WebInspector* inspector = this->inspector())
             inspector->didReceiveWebInspectorMessage(connection, messageID, arguments);
+        return;
+    }
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    if (messageID.is<CoreIPC::MessageClassWebFullScreenManager>()) {
+        fullScreenManager()->didReceiveMessage(connection, messageID, arguments);
         return;
     }
 #endif

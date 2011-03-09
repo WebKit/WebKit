@@ -2,6 +2,53 @@
 
         Reviewed by Sam Weinig.
 
+        WebKit2: Plumb through the FULLSCREEN_API Chrome client calls
+        https://bugs.webkit.org/show_bug.cgi?id=55273
+
+        The FULLSCREEN_API Chrome client calls need to be plumbed through from the 
+        WebProcess to the UIProcess.  To do this, WebFullScreenManager (and Proxy)
+        classes have been added to WebPage.
+
+        * DerivedSources.make: Added rules necessary to build DerivedSources for new .in files.
+        * DerivedSources.pro: Ditto.
+        * Platform/CoreIPC/MessageID.h: Added message types for WebFullScreenManager.
+        * Shared/API/c/WKBase.h: Added WKFullScreenManagerRef.
+        * Shared/APIObject.h: Added APIType for WebFullScreenManager.
+        * UIProcess/WebFullScreenManagerProxy.cpp: Added.
+        * UIProcess/WebFullScreenManagerProxy.h: Added.
+        * UIProcess/WebFullScreenManagerProxy.messages.in: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): Invalidate and clear m_fullScreenManager.
+        (WebKit::WebPageProxy::processDidCrash): Ditto.
+        (WebKit::WebPageProxy::didReceiveMessage): Pass messages on to WebFullScreenManagerProxy.
+        (WebKit::WebPageProxy::didReceiveSyncMessage): Ditto.
+        (WebKit::WebPageProxy::fullScreenManager): Added. Lazy instantiation of m_fullScreenManager.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        * UIProcess/WebUIClient.h:
+        * WebKit2.xcodeproj/project.pbxproj: Added references to new classes in project file.
+        * WebKit2.pro: Ditto.
+        * win/WebKit2.vcproj: Ditto.
+        * WebKit2.pri: Added new directories to include file path.
+        * win/WebKit2Common.vsprops: Ditto.
+        * WebProcess/FullScreen/WebFullScreenManager.cpp: Added.
+        * WebProcess/FullScreen/WebFullScreenManager.h: Added.
+        * WebProcess/FullScreen/WebFullScreenManager.messages.in: Added.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::supportsFullScreenForElement): Pass through to WebFullScreenManager.
+        (WebKit::WebChromeClient::enterFullScreenForElement): Ditto.
+        (WebKit::WebChromeClient::exitFullScreenForElement): Ditto.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close): Invalidate and clear m_fullScreenManager.
+        (WebKit::WebPage::fullScreenManager): Lazy instantiation of m_fullScreenManager.
+        (WebKit::WebPage::didReceiveMessage): Pass messages through to WebFullScreenManager.
+        * WebProcess/WebPage/WebPage.h:
+
+2011-03-08  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Sam Weinig.
+
         WebKit2: Plumb through the "supportsFullScreen" preference.
         https://bugs.webkit.org/show_bug.cgi?id=55261
 

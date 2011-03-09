@@ -34,6 +34,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
+#include "WebFullScreenManager.h"
 #include "WebOpenPanelParameters.h"
 #include "WebOpenPanelResultListener.h"
 #include "WebPage.h"
@@ -701,6 +702,23 @@ void WebChromeClient::needTouchEvents(bool)
 #if PLATFORM(WIN)
 void WebChromeClient::setLastSetCursorToCurrentCursor()
 {
+}
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+bool WebChromeClient::supportsFullScreenForElement(const WebCore::Element* element)
+{
+    return m_page->fullScreenManager()->supportsFullScreen();
+}
+
+void WebChromeClient::enterFullScreenForElement(WebCore::Element* element)
+{
+    m_page->fullScreenManager()->enterFullScreenForElement(element);
+}
+
+void WebChromeClient::exitFullScreenForElement(WebCore::Element* element)
+{
+    m_page->fullScreenManager()->exitFullScreenForElement(element);
 }
 #endif
 

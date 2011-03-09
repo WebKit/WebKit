@@ -2531,6 +2531,14 @@
 				>
 			</File>
 			<File
+ 				RelativePath="..\UIProcess\WebFullScreenManagerProxy.cpp"
+ 				>
+ 			</File>
+ 			<File
+ 				RelativePath="..\UIProcess\WebFullScreenManagerProxy.h"
+ 				>
+ 			</File>
+ 			<File
 				RelativePath="..\UIProcess\WebGeolocationManagerProxy.cpp"
 				>
 			</File>
@@ -3571,6 +3579,22 @@
 				>
 			</File>
 			<File
+ 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebFullScreenManagerMessageReceiver.cpp"
+ 				>
+ 			</File>
+ 			<File
+ 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebFullScreenManagerMessages.h"
+ 				>
+ 			</File>
+ 			<File
+ 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebFullScreenManagerProxyMessageReceiver.cpp"
+ 				>
+ 			</File>
+ 			<File
+ 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebFullScreenManagerProxyMessages.h"
+ 				>
+ 			</File>
+ 			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebGeolocationManagerMessageReceiver.cpp"
 				>
 			</File>

@@ -297,6 +297,13 @@ void WebPageProxy::close()
     }
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+    if (m_fullScreenManager) {
+        m_fullScreenManager->invalidate();
+        m_fullScreenManager = 0;
+    }
+#endif
+
     if (m_openPanelResultListener) {
         m_openPanelResultListener->invalidate();
         m_openPanelResultListener = 0;
@@ -1257,6 +1264,13 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
     }
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+    if (messageID.is<CoreIPC::MessageClassWebFullScreenManagerProxy>()) {
+        fullScreenManager()->didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+#endif
+
     didReceiveWebPageProxyMessage(connection, messageID, arguments);
 }
 
@@ -1266,6 +1280,13 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
     if (messageID.is<CoreIPC::MessageClassWebInspectorProxy>()) {
         if (WebInspectorProxy* inspector = this->inspector())
             inspector->didReceiveSyncWebInspectorProxyMessage(connection, messageID, arguments, reply);
+        return;
+    }
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    if (messageID.is<CoreIPC::MessageClassWebFullScreenManagerProxy>()) {
+        fullScreenManager()->didReceiveSyncMessage(connection, messageID, arguments, reply);
         return;
     }
 #endif
@@ -1988,6 +2009,15 @@ WebInspectorProxy* WebPageProxy::inspector()
 
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+WebFullScreenManagerProxy* WebPageProxy::fullScreenManager()
+{
+    if (!m_fullScreenManager)
+        m_fullScreenManager = WebFullScreenManagerProxy::create(this);
+    return m_fullScreenManager.get();
+}
+#endif
+
 // BackForwardList
 
 void WebPageProxy::backForwardAddItem(uint64_t itemID)
@@ -2584,6 +2614,13 @@ void WebPageProxy::processDidCrash()
     if (m_inspector) {
         m_inspector->invalidate();
         m_inspector = 0;
+    }
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    if (m_fullScreenManager) {
+        m_fullScreenManager->invalidate();
+        m_fullScreenManager = 0;
     }
 #endif
 

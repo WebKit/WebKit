@@ -42,6 +42,7 @@
 #include "WebFindOptions.h"
 #include "WebFormClient.h"
 #include "WebFrameProxy.h"
+#include "WebFullScreenManagerProxy.h"
 #include "WebHistoryClient.h"
 #include "WebInspectorProxy.h"
 #include "WebLoaderClient.h"
@@ -180,6 +181,10 @@ public:
 
 #if ENABLE(INSPECTOR)
     WebInspectorProxy* inspector();
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    WebFullScreenManagerProxy* fullScreenManager();
 #endif
 
     void initializeContextMenuClient(const WKPageContextMenuClient*);
@@ -668,6 +673,10 @@ private:
 
 #if ENABLE(INSPECTOR)
     RefPtr<WebInspectorProxy> m_inspector;
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    RefPtr<WebFullScreenManagerProxy> m_fullScreenManager;
 #endif
 
     HashMap<uint64_t, RefPtr<VoidCallback> > m_voidCallbacks;

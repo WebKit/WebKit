@@ -26,6 +26,7 @@ VPATH = \
     $(WebKit2)/WebProcess/ApplicationCache \
     $(WebKit2)/WebProcess/Authentication \
     $(WebKit2)/WebProcess/Cookies \
+    $(WebKit2)/WebProcess/FullScreen \
     $(WebKit2)/WebProcess/Geolocation \
     $(WebKit2)/WebProcess/KeyValueStorage \
     $(WebKit2)/WebProcess/Plugins \
@@ -55,6 +56,8 @@ MESSAGE_RECEIVERS = \
     WebContext \
     WebDatabaseManager \
     WebDatabaseManagerProxy \
+    WebFullScreenManager \
+    WebFullScreenManagerProxy \
     WebGeolocationManager \
     WebGeolocationManagerProxy \
     WebInspector \

@@ -72,6 +72,7 @@ public:
         TypeFormSubmissionListener,
         TypeFrame,
         TypeFramePolicyListener,
+        TypeFullScreenManager,
         TypeGeolocationManager,
         TypeGeolocationPermissionRequest,
         TypeGeolocationPosition,
