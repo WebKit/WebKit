@@ -1,3 +1,15 @@
+2011-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        REGRESSION: crash in nextLinePosition when extending selection forward by line in an empty document
+        https://bugs.webkit.org/show_bug.cgi?id=56004
+
+        Added a regression test.
+
+        * editing/selection/extend-by-line-in-empty-document-expected.txt: Added.
+        * editing/selection/extend-by-line-in-empty-document.html: Added.
+
 2011-03-09  Brian Weinstein  <bweinstein@apple.com>
 
         Update expected results of svg/css/getComputedStyle-basic after r80582.

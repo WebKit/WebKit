@@ -1,3 +1,19 @@
+2011-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        REGRESSION: crash in nextLinePosition when extending selection forward by line in an empty document
+        https://bugs.webkit.org/show_bug.cgi?id=56004
+
+        The crash was caused by the false assumption that rootEditableElement() or documentElement()
+        always return non-null pointer. Fixed the bug by adding an early exit.
+
+        Test: editing/selection/extend-by-line-in-empty-document.html
+
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+
 2011-03-09  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

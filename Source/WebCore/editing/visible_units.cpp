@@ -572,6 +572,8 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     // Move to the start of the content in this block, which effectively moves us
     // to the start of the line we're on.
     Element* rootElement = node->isContentEditable() ? node->rootEditableElement() : node->document()->documentElement();
+    if (!rootElement)
+        return VisiblePosition();
     return VisiblePosition(firstPositionInNode(rootElement), DOWNSTREAM);
 }
 
@@ -677,6 +679,8 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
     // Move to the end of the content in this block, which effectively moves us
     // to the end of the line we're on.
     Element* rootElement = node->isContentEditable() ? node->rootEditableElement() : node->document()->documentElement();
+    if (!rootElement)
+        return VisiblePosition();
     return VisiblePosition(lastPositionInNode(rootElement), DOWNSTREAM);
 }
 
