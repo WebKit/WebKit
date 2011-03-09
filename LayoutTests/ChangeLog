@@ -1,3 +1,20 @@
+2011-03-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Bug 55994 - Functions on Array.prototype should check length first.
+        These methods are designed to work on generic objects too, and if 'length'
+        is a getter that throws an exception, ensure this is correctly thrown
+        (even if other exceptions would be thrown, too).
+
+        Added test cases.
+
+        * fast/js/array-proto-func-length-getter-except-expected.txt: Added.
+        * fast/js/array-proto-func-length-getter-except.html: Added.
+        * fast/js/script-tests/array-proto-func-length-getter-except.js: Added.
+        (lengthGetter):
+        (test):
+
 2011-03-08  Mihai Parparita  <mihaip@chromium.org>
 
         Add failing expectation for compositing/webgl/

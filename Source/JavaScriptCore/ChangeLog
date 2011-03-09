@@ -1,3 +1,37 @@
+2011-03-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Bug 55994 - Functions on Array.prototype should check length first.
+        These methods are designed to work on generic objects too, and if 'length'
+        is a getter that throws an exception, ensure this is correctly thrown
+        (even if other exceptions would be thrown, too).
+
+        Make the length check the first thing we do.
+        This change shows a progression on SunSpider on my machine, but this is likely bogus.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncForEach):
+        (JSC::arrayProtoFuncSome):
+        (JSC::arrayProtoFuncReduce):
+        (JSC::arrayProtoFuncReduceRight):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+
 2011-03-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
