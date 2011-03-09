@@ -3095,6 +3095,9 @@ BUGWK55708 BUGCR75345 GPU MAC : media/video-controls-rendering.html = CRASH
 BUGWK55708 BUGCR75345 GPU MAC : media/video-zoom.html = CRASH
 BUGWK55718 BUGCR75354 GPU : media/media-document-audio-repaint.html = IMAGE+TEXT
 
+BUGWK55968 GPU MAC : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT
+BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
+
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE
 
 BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT

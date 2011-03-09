@@ -1,3 +1,10 @@
+2011-03-08  Mihai Parparita  <mihaip@chromium.org>
+
+        Add failing expectation for compositing/webgl/
+        webgl-nonpremultiplied-blend.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-08  Kenji Imasaki  <imasaki@chromium.org>
 
         Reviewed by David Levin. 
