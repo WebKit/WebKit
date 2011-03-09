@@ -1141,12 +1141,37 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (this._readOnly)
             return;
 
-        var lineNumber = lineRow.lineNumber;
+        if (target === lineRow && e.type === "DOMNodeInserted") {
+            // Ensure that the newly inserted line row has no lineNumber.
+            delete lineRow.lineNumber;
+        }
+
+        var startLine = 0;
+        for (var row = lineRow; row; row = row.previousSibling) {
+            if (typeof row.lineNumber === "number") {
+                startLine = row.lineNumber;
+                break;
+            }
+        }
+
+        var endLine = startLine + 1;
+        for (var row = lineRow.nextSibling; row; row = row.nextSibling) {
+            if (typeof row.lineNumber === "number") {
+                endLine = row.lineNumber;
+                break;
+            }
+        }
+
+        if (target === lineRow && e.type === "DOMNodeRemoved") {
+            // Now this will no longer be valid.
+            delete lineRow.lineNumber;
+        }
+ 
         if (this._dirtyLines) {
-            this._dirtyLines.start = Math.min(this._dirtyLines.start, lineNumber);
-            this._dirtyLines.end = Math.max(this._dirtyLines.end, lineNumber + 1);
+            this._dirtyLines.start = Math.min(this._dirtyLines.start, startLine);
+            this._dirtyLines.end = Math.max(this._dirtyLines.end, endLine);
         } else {
-            this._dirtyLines = { start: lineNumber, end: lineNumber + 1 };
+            this._dirtyLines = { start: startLine, end: endLine };
             setTimeout(this._applyDomUpdates.bind(this), 0);
             // Remove marked ranges, if any.
             this.markAndRevealRange(null);

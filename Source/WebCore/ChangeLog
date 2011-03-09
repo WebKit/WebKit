@@ -1,3 +1,13 @@
+2011-03-09  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Text editor] Regression in handling DOMNodeInserted/DOMNodeRemoved events
+        https://bugs.webkit.org/show_bug.cgi?id=55818
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorMainPanel.prototype._handleDOMUpdates):
+
 2011-03-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
