@@ -2,6 +2,24 @@
 
         Reviewed by Jeremy Orlow.
 
+        JavaNPObject should not use JNI directly
+        https://bugs.webkit.org/show_bug.cgi?id=56009
+
+        We move the JNI code to access a Java object's fields into
+        a new JavaInstance::getField() method.
+
+        No new tests, refactoring only.
+
+        * bridge/jni/v8/JavaInstanceV8.cpp:
+        (JavaInstance::getField):
+        * bridge/jni/v8/JavaInstanceV8.h:
+        * bridge/jni/v8/JavaNPObjectV8.cpp:
+        (JSC::Bindings::JavaNPObjectGetProperty):
+
+2011-03-09  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
         NPAPI - jvalue conversion should not be in JavaInstance
         https://bugs.webkit.org/show_bug.cgi?id=55967
 

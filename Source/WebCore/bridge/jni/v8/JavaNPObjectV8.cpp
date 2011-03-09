@@ -182,16 +182,12 @@ bool JavaNPObjectGetProperty(NPObject* obj, NPIdentifier identifier, NPVariant* 
 
     instance->begin();
     JavaField* field = instance->getClass()->fieldNamed(name);
-    instance->end();
     free(name); // TODO: use NPN_MemFree
-
     if (!field)
         return false;
 
-    jvalue value = getJNIField(instance->javaInstance(),
-                               field->getJNIType(),
-                               field->name().utf8(),
-                               field->type());
+    jvalue value = instance->getField(field);
+    instance->end();
 
     convertJValueToNPVariant(value, field->getJNIType(), field->type(), result);
 

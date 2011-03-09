@@ -29,9 +29,10 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JavaMethod.h"
 #include "JNIUtilityPrivate.h"
 #include "JavaClassV8.h"
+#include "JavaFieldV8.h"
+#include "JavaMethod.h"
 
 #include <wtf/text/CString.h>
 
@@ -72,6 +73,12 @@ jvalue JavaInstance::invokeMethod(const JavaMethod* method, jvalue* args)
 {
     ASSERT(getClass()->methodsNamed(method->name().utf8()).find(method) != notFound);
     return callJNIMethod(javaInstance(), method->JNIReturnType(), method->name().utf8(), method->signature(), args);
+}
+
+jvalue JavaInstance::getField(const JavaField* field)
+{
+    ASSERT(getClass()->fieldNamed(field->name().utf8()) == field);
+    return getJNIField(javaInstance(), field->getJNIType(), field->name().utf8(), field->type());
 }
 
 #endif // ENABLE(JAVA_BRIDGE)
