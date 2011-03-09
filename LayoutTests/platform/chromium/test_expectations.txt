@@ -649,7 +649,7 @@ BUGCR66087 WIN LINUX SLOW : inspector/storage-panel-dom-storage.html = PASS TEXT
 BUGCR66087 WIN LINUX SLOW : http/tests/inspector/console-resource-errors.html = PASS
 BUGCR66087 WIN LINUX SLOW : http/tests/inspector/inspect-iframe-from-different-domain.html = PASS TEXT
 
-BUGCR75121 WIN LINUX : inspector/styles/styles-add-blank-property.html = PASS TEXT
+BUGCR75121 WIN LINUX : inspector/styles/styles-add-blank-property.html = PASS TEXT TIMEOUT
 
 // -----------------------------------------------------------------
 // Other
@@ -3355,6 +3355,13 @@ BUGCR75426 LINUX DEBUG : fast/lists/006.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/lists/007.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/lists/008.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/lists/009.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/multicol/vertical-lr/break-properties.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/multicol/vertical-lr/column-count-with-rules.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/multicol/vertical-lr/float-avoidance.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/multicol/vertical-lr/float-paginate-complex.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/multicol/vertical-lr/float-truncation.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/multicol/vertical-lr/image-inside-nested-blocks-with-border.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/multicol/vertical-lr/unsplittable-inline-block.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/break-properties.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/column-count-with-rules.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/float-avoidance.html = CRASH
@@ -3362,9 +3369,22 @@ BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/float-paginate-complex.html =
 BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/float-truncation.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/image-inside-nested-blocks-with-border.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/unsplittable-inline-block.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/overflow/overflow-rtl.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/repaint/japanese-rl-selection-repaint.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/repaint/slider-thumb-drag-release.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/repaint/text-emphasis-v.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/table/040.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/auto-with-percent-height.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/growCellForImageQuirk.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/rowspan-paint-order.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/tableInsideCaption.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/table-hspace-align-center.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/001.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/003.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/003-vertical.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/004.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/border-collapsing-head-foot.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/rtl-border-collapsing.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/text/international/vertical-text-metrics-test.html = CRASH
 
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
@@ -3432,7 +3452,7 @@ BUGROLANDSTEINER MAC : fast/css/getComputedStyle/computed-style-without-renderer
 BUGROLANDSTEINER MAC : fast/css/getComputedStyle/computed-style.html = TEXT
 BUGROLANDSTEINER : fast/js/mozilla/strict/15.5.5.1.html = TEXT
 BUGROLANDSTEINER MAC : svg/css/getComputedStyle-basic.xhtml = TEXT
-BUGROLANDSTEINER LINUX : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT
+BUGROLANDSTEINER WIN-VISTA LINUX : fast/ruby/base-shorter-than-text.html = FAIL
 // introduced by Dave Hyatt in WK r80582
 BUGROLANDSTEINER : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
 // introduced by brarraclough in WK r80621
