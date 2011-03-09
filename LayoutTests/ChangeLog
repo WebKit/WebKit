@@ -1,3 +1,13 @@
+2011-03-09  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: more vertical text fallout for the chromium test expectations.
+        Also, a rebaseline.
+
+        * platform/chromium-mac/fast/lists/003-vertical-expected.checksum: Added.
+        * platform/chromium-mac/fast/lists/003-vertical-expected.png: Added.
+        * platform/chromium-mac/fast/lists/003-vertical-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
