@@ -46,6 +46,7 @@ var InjectedScript = function()
 {
     this._lastBoundObjectId = 1;
     this._idToWrappedObject = {};
+    this._idToObjectGroupName = {};
     this._objectGroups = {};
 }
 
@@ -104,7 +105,7 @@ InjectedScript.prototype = {
                         this._objectGroups[objectGroupName] = group;
                     }
                     group.push(id);
-                    objectId.groupName = objectGroupName;
+                    this._idToObjectGroupName[id] = objectGroupName;
                 }
             }
             return InjectedScript.RemoteObject.fromObject(object, objectId, abbreviate);
@@ -124,7 +125,7 @@ InjectedScript.prototype = {
         if (!group)
             return;
         for (var i = 0; i < group.length; i++)
-            delete this._idToWrappedObject[group[i]];
+            this._releaseObject(group[i]);
         delete this._objectGroups[objectGroupName];
     },
 
@@ -143,6 +144,7 @@ InjectedScript.prototype = {
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
+        var objectGroupName = this._idToObjectGroupName[parsedObjectId.id];
 
         if (!this._isDefined(object))
             return false;
@@ -161,7 +163,7 @@ InjectedScript.prototype = {
             var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
             if (!isGetter) {
                 try {
-                    property.value = this._wrapObject(object[propertyName], parsedObjectId.groupName, abbreviate);
+                    property.value = this._wrapObject(object[propertyName], objectGroupName, abbreviate);
                 } catch(e) {
                     property.value = new InjectedScript.RemoteObject.fromException(e);
                 }
@@ -213,7 +215,13 @@ InjectedScript.prototype = {
     releaseObject: function(objectId)
     {
         var parsedObjectId = this._parseObjectId(objectId);
-        delete this._idToWrappedObject[parsedObjectId.id];
+        this._releaseObject(parsedObjectId.id);
+    },
+
+    _releaseObject: function(id)
+    {
+        delete this._idToWrappedObject[id];
+        delete this._idToObjectGroupName[id];
     },
 
     _populatePropertyNames: function(object, resultSet)

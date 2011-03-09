@@ -23,7 +23,6 @@ response:
             objectId : {
                 injectedScriptId : <number>
                 id : <number>
-                groupName : "test"
             }
             type : "object"
             description : "TestObject"
@@ -33,7 +32,7 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.evaluateOn({"injectedScriptId":<number>,"id":<number>,"groupName":"test"},"this.assignedByEvaluateOn = \"evaluateOn function works fine\";")
+RuntimeAgent.evaluateOn({"injectedScriptId":<number>,"id":<number>},"this.assignedByEvaluateOn = \"evaluateOn function works fine\";")
 
 request:
 {
@@ -44,7 +43,6 @@ request:
         objectId : {
             injectedScriptId : <number>
             id : <number>
-            groupName : "test"
         }
         expression : "this.assignedByEvaluateOn = "evaluateOn function works fine";"
     }
@@ -64,7 +62,7 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.setPropertyValue({"injectedScriptId":<number>,"id":<number>,"groupName":"test"},"assignedBySetPropertyValue","true")
+RuntimeAgent.setPropertyValue({"injectedScriptId":<number>,"id":<number>},"assignedBySetPropertyValue","true")
 
 request:
 {
@@ -75,7 +73,6 @@ request:
         objectId : {
             injectedScriptId : <number>
             id : <number>
-            groupName : "test"
         }
         propertyName : "assignedBySetPropertyValue"
         expression : "true"
@@ -91,7 +88,7 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.setPropertyValue({"injectedScriptId":<number>,"id":<number>,"groupName":"test"},"removedBySetPropertyValue","")
+RuntimeAgent.setPropertyValue({"injectedScriptId":<number>,"id":<number>},"removedBySetPropertyValue","")
 
 request:
 {
@@ -102,7 +99,6 @@ request:
         objectId : {
             injectedScriptId : <number>
             id : <number>
-            groupName : "test"
         }
         propertyName : "removedBySetPropertyValue"
         expression : ""
@@ -118,7 +114,7 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.getProperties({"injectedScriptId":<number>,"id":<number>,"groupName":"test"},false,false)
+RuntimeAgent.getProperties({"injectedScriptId":<number>,"id":<number>},false,false)
 
 request:
 {
@@ -129,7 +125,6 @@ request:
         objectId : {
             injectedScriptId : <number>
             id : <number>
-            groupName : "test"
         }
         ignoreHasOwnProperty : false
         abbreviate : false
@@ -165,7 +160,6 @@ response:
                     objectId : {
                         injectedScriptId : <number>
                         id : <number>
-                        groupName : "test"
                     }
                     type : "object"
                     description : "TestObject"
@@ -177,7 +171,7 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.releaseObject({"injectedScriptId":<number>,"id":<number>,"groupName":"test"})
+RuntimeAgent.releaseObject({"injectedScriptId":<number>,"id":<number>})
 
 request:
 {
@@ -188,7 +182,6 @@ request:
         objectId : {
             injectedScriptId : <number>
             id : <number>
-            groupName : "test"
         }
     }
 }

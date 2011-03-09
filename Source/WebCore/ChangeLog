@@ -1,3 +1,12 @@
+2011-03-08  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove groupName from objectId.
+        https://bugs.webkit.org/show_bug.cgi?id=55825
+
+        * inspector/InjectedScriptSource.js:
+
 2011-03-08  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by David Hyatt.
