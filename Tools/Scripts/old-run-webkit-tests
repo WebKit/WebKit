@@ -139,7 +139,7 @@ my $ignoreMetrics = 0;
 my $webSocketPort = 8880;
 # wss is disabled until all platforms support pyOpenSSL.
 # my $webSocketSecurePort = 9323;
-my $ignoreTests = '';
+my @ignoreTests;
 my $iterations = 1;
 my $launchSafari = 1;
 my $mergeDepth;
@@ -329,7 +329,7 @@ my $getOptionsResult = GetOptions(
     'http!' => \$testHTTP,
     'wait-for-httpd!' => \$shouldWaitForHTTPD,
     'ignore-metrics!' => \$ignoreMetrics,
-    'ignore-tests|i=s' => \$ignoreTests,
+    'ignore-tests|i=s' => \@ignoreTests,
     'iterations=i' => \$iterations,
     'launch-safari!' => \$launchSafari,
     'leaks|l' => \$shouldCheckLeaks,
@@ -594,7 +594,7 @@ if (!checkWebCoreFeatureSupport("XHTMLMP", 0)) {
     $ignoredDirectories{'fast/xhtmlmp'} = 1;
 }
 
-processIgnoreTests($ignoreTests, "ignore-tests") if $ignoreTests;
+processIgnoreTests(join(',', @ignoreTests), "ignore-tests") if @ignoreTests;
 if (!$ignoreSkipped) {
     if (!$skippedOnly || @ARGV == 0) {
         readSkippedFiles("");
