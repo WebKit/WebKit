@@ -1,3 +1,18 @@
+2011-03-09  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/9110316> REGRESSION: 'ex' unit broken for vertical text
+
+        Fall back to the verticalRightOrientation data when obtaining the x-height for vertically oriented
+        text. That way we use the same metrics as for horizontal.
+
+        This fixes regressions in fast/lists and fast/overflow vertical text tests.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+
 2011-03-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
