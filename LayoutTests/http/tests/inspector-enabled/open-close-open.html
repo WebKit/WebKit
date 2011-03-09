@@ -17,13 +17,17 @@ function onload()
 function didEvaluateForTestInFrontend(callId)
 {
     if (callId === 0) {
-        console.log("Closing Web Inspector.");
-        layoutTestController.closeWebInspector();
+        // Do this asynchronously to allow InspectorBackendDispatcher to send response
+        // back to the frontend before it's destroyed.
+        setTimeout(function() {
+            console.log("Closing Web Inspector.");
+            layoutTestController.closeWebInspector();
 
-        console.log("Re-opending Web Inspector.");
-        layoutTestController.showWebInspector();
+            console.log("Re-opending Web Inspector.");
+            layoutTestController.showWebInspector();
 
-        layoutTestController.evaluateInWebInspector(1, "(" + frontend_testCommunucationWithServer + ")()");
+            layoutTestController.evaluateInWebInspector(1, "(" + frontend_testCommunucationWithServer + ")()");
+        }, 0);
     }
 }
 

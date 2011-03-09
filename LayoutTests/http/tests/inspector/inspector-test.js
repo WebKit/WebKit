@@ -333,7 +333,9 @@ function didEvaluateForTestInFrontend(callId)
     if (callId !== completeTestCallId)
         return;
     delete window.completeTestCallId;
-    closeInspectorAndNotifyDone();
+    // Close inspector asynchrously to allow caller of this
+    // function send response before backend dispatcher and frontend are destroyed.
+    setTimeout(closeInspectorAndNotifyDone, 0);
 }
 
 function closeInspectorAndNotifyDone()

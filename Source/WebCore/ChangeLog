@@ -1,3 +1,17 @@
+2011-03-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: pass explicit agent references to InspectorBackendDispatcher
+        https://bugs.webkit.org/show_bug.cgi?id=55820
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::dispatchMessageFromFrontend):
+
 2011-03-09  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

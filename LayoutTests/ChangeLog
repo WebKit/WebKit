@@ -1,3 +1,15 @@
+2011-03-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: pass explicit agent references to InspectorBackendDispatcher
+        https://bugs.webkit.org/show_bug.cgi?id=55820
+
+        * http/tests/inspector-enabled/open-close-open-expected.txt:
+        * http/tests/inspector-enabled/open-close-open.html:
+        * http/tests/inspector/inspector-test.js:
+        ():
+
 2011-03-09  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed: assign bug entries to Chromium test expectations.

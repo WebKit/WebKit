@@ -53,7 +53,6 @@ namespace WebCore {
 
 InspectorController::InspectorController(Page* page, InspectorClient* inspectorClient)
     : m_inspectorAgent(new InspectorAgent(page, inspectorClient))
-    , m_inspectorBackendDispatcher(new InspectorBackendDispatcher(m_inspectorAgent.get()))
     , m_inspectorClient(inspectorClient)
     , m_openingFrontend(false)
 {
@@ -105,12 +104,42 @@ void InspectorController::connectFrontend()
     if (!InspectorInstrumentation::hasFrontends())
         ScriptController::setCaptureCallStackForUncaughtExceptions(true);
     InspectorInstrumentation::frontendCreated();
+
+    ASSERT(m_inspectorClient);
+    m_inspectorBackendDispatcher = new InspectorBackendDispatcher(
+        m_inspectorClient,
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+        m_inspectorAgent->applicationCacheAgent(),
+#endif
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+        m_inspectorAgent->browserDebuggerAgent(),
+#endif
+        m_inspectorAgent->cssAgent(),
+        m_inspectorAgent->consoleAgent(),
+        m_inspectorAgent->domAgent(),
+#if ENABLE(DOM_STORAGE)
+        m_inspectorAgent->domStorageAgent(),
+#endif
+#if ENABLE(DATABASE)
+        m_inspectorAgent->databaseAgent(),
+#endif
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+        m_inspectorAgent->debuggerAgent(),
+#endif
+        m_inspectorAgent.get(),
+        m_inspectorAgent->resourceAgent(),
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+        m_inspectorAgent->profilerAgent(),
+#endif
+        m_inspectorAgent->runtimeAgent(),
+        m_inspectorAgent->timelineAgent());
 }
 
 void InspectorController::disconnectFrontend()
 {
     if (!m_inspectorFrontend)
         return;
+    m_inspectorBackendDispatcher.clear();
 
     m_inspectorAgent->disconnectFrontend();
 
@@ -203,7 +232,8 @@ void InspectorController::setInspectorExtensionAPI(const String& source)
 
 void InspectorController::dispatchMessageFromFrontend(const String& message)
 {
-    m_inspectorBackendDispatcher->dispatch(message);
+    if (m_inspectorBackendDispatcher)
+        m_inspectorBackendDispatcher->dispatch(message);
 }
 
 void InspectorController::hideHighlight()
