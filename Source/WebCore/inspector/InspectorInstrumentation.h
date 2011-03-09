@@ -671,8 +671,8 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResou
 inline void InspectorInstrumentation::didReceiveResourceResponse(const InspectorInstrumentationCookie& cookie, unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response)
 {
 #if ENABLE(INSPECTOR)
-    if (hasFrontends() && cookie.first)
-        didReceiveResourceResponseImpl(cookie, identifier, loader, response);
+    // Call this unconditionally so that we're able to log to console with no front-end attached.
+    didReceiveResourceResponseImpl(cookie, identifier, loader, response);
 #endif
 }
 
@@ -695,7 +695,7 @@ inline void InspectorInstrumentation::didFinishLoading(Frame* frame, unsigned lo
 inline void InspectorInstrumentation::didFailLoading(Frame* frame, unsigned long identifier, const ResourceError& error)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+    if (InspectorAgent* inspectorAgent = inspectorAgentForFrame(frame))
         didFailLoadingImpl(inspectorAgent, identifier, error);
 #endif
 }

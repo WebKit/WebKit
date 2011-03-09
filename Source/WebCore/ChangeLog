@@ -1,3 +1,16 @@
+2011-03-09  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: resource errors are not reported before front-end is opened
+        https://bugs.webkit.org/show_bug.cgi?id=55939
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponse):
+        (WebCore::InspectorInstrumentation::didFailLoading):
+
 2011-03-08  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.
