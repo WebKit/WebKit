@@ -1,3 +1,9 @@
+2011-03-09  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed. Rebaselining after text orientation change in r80582.
+
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2011-03-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
