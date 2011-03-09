@@ -1,3 +1,16 @@
+2011-03-08  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by David Levin.
+
+        Destroying WorkerFileSystemCallbacksBridge on main thread results in ASSERT in WorkerContext::Observer::~Observer
+        https://bugs.webkit.org/show_bug.cgi?id=55895
+
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        (WebKit::WorkerFileSystemCallbacksBridge::runTaskOnWorkerThread):
+        Added stopObserving() so that releasing the bridge on the main thread
+        (this could happen before or after the runTaskOnWorkerThread) does
+        not cause the assertion error.
+
 2011-03-08  Alok priyadarshi  <alokp@chromium.org>
 
         Reviewed by Dimitri Glazkov.

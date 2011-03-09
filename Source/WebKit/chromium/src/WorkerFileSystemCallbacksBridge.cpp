@@ -365,6 +365,7 @@ void WorkerFileSystemCallbacksBridge::runTaskOnWorkerThread(WebCore::ScriptExecu
     ASSERT(bridge->m_workerContext->isContextThread());
     taskToRun->performTask(scriptExecutionContext);
     bridge->m_callbacksOnWorkerThread = 0;
+    bridge->stopObserving();
 }
 
 void WorkerFileSystemCallbacksBridge::dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task> task)
