@@ -1,3 +1,30 @@
+2011-03-08  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Add templatized CSSMutableStyleDeclaration::get{ShorthandValue, CommonValue, LayeredShorthandValue}()
+        https://bugs.webkit.org/show_bug.cgi?id=55351
+
+        By using some template magic CSSMutableStyleDeclaration::get{ShorthandValue, CommonValue, LayeredShorthandValue}()
+        can be called on an array A without the caller explicitly specifying the size of A.
+
+        No functionality was changed. So no new tests.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue): Modified to call templatized variants of
+        CSSMutableStyleDeclaration::get{ShorthandValue, CommonValue, LayeredShorthandValue}().
+        (WebCore::CSSMutableStyleDeclaration::getLayeredShorthandValue): Renamed second argument from "number" to "size"
+        to better reflect its purpose - to be the size of the passed array.
+        (WebCore::CSSMutableStyleDeclaration::getShorthandValue): Ditto.
+        (WebCore::CSSMutableStyleDeclaration::getCommonValue): Ditto.
+        (WebCore::CSSMutableStyleDeclaration::cssText): Modified to call templatized variant of CSSMutableStyleDeclaration::getShorthandValue().
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::getShorthandValue): Added templatized function that can determine
+        the size of a passed array. Changed type of second argument to size_t since it represents the size of
+        an array.
+        (WebCore::CSSMutableStyleDeclaration::getCommonValue): Ditto.
+        (WebCore::CSSMutableStyleDeclaration::getLayeredShorthandValue): Ditto.
+
 2011-03-08  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

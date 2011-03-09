@@ -152,12 +152,16 @@ private:
 
     void setNeedsStyleRecalc();
 
-    String getShorthandValue(const int* properties, int number) const;
-    String getCommonValue(const int* properties, int number) const;
-    String getLayeredShorthandValue(const int* properties, unsigned number) const;
+    String getShorthandValue(const int* properties, size_t) const;
+    String getCommonValue(const int* properties, size_t) const;
+    String getLayeredShorthandValue(const int* properties, size_t) const;
     String get4Values(const int* properties) const;
     String borderSpacingValue(const int properties[2]) const;
-    
+
+    template<size_t size> String getShorthandValue(const int (&properties)[size]) const { return getShorthandValue(properties, size); }
+    template<size_t size> String getCommonValue(const int (&properties)[size]) const { return getCommonValue(properties, size); }
+    template<size_t size> String getLayeredShorthandValue(const int (&properties)[size]) const { return getLayeredShorthandValue(properties, size); }
+
     void setPropertyInternal(const CSSProperty&, CSSProperty* slot = 0);
     bool removeShorthandProperty(int propertyID, bool notifyChanged);
 
