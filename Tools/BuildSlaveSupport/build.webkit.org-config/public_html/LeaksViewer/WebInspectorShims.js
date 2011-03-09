@@ -1,0 +1,65 @@
+/*
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// This file contains definitions that are needed to satisfy the Web Inspector JavaScript files we
+// import.
+
+var WebInspector = {
+    UIString: function(string) {
+        return String.vsprintf(string, Array.prototype.slice.call(arguments, 1));
+    },
+};
+
+var Preferences = {
+    // Setting this to true causes the "Average" and "Calls" columns to be omitted from the profile
+    // view.
+    samplingCPUProfiler: true,
+};
+
+var ProfilerAgent = {
+    getProfile: function(typeId, uid, callback) {
+        this._callback = callback;
+    },
+
+    profileReady: function(head) {
+        this._callback({ head: head });
+    },
+};
+
+// This function makes any required changes to objects imported from the Web Inspector JavaScript
+// files.
+function monkeyPatchInspectorObjects() {
+    var originalGetter = WebInspector.ProfileDataGridNode.prototype.__lookupGetter__("data");
+    WebInspector.ProfileDataGridNode.prototype.__defineGetter__("data", function() {
+        var data = originalGetter.call(this);
+
+        // In our fake "profile", selfTime and totalTime hold leak counts, not time values. Always
+        // display self and total counts as real values, not percentages or milliseconds.
+        data.self = this.selfTime;
+        data.total = this.totalTime;
+
+        return data;
+    });
+}
