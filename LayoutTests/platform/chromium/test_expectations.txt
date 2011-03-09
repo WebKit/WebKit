@@ -2544,7 +2544,7 @@ BUGJAMESR MAC LEOPARD : fast/text/international/vertical-text-glyph-test.html = 
 BUGJAMESR WIN : fast/text/international/vertical-text-metrics-test.html = TEXT
 BUGJAMESR LINUX RELEASE : fast/text/international/vertical-text-metrics-test.html = TEXT
 // started crashing somewhere after WK r80582, probably with Dave Hyatt's vertical text changes
-BUGJAMESR LINUX DEBUG : fast/text/international/vertical-text-metrics-test.html = CRASH
+// see BUGCR75426 list
 
 // Added in WebKit r69755, failed immediately.
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
@@ -2583,7 +2583,7 @@ BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-rl.html = IMAGE+TEXT
 BUGWK61161 WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
 BUGWK61161 LINUX RELEASE : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
 // Started to ASSERT at some point at or after WK r80582
-BUGWK61161 LINUX DEBUG : fast/blockflow/border-image-vertical-lr.html = CRASH
+// see BUGCR75426 list
 
 // New test, added in http://trac.webkit.org/changeset/70814.
 // This test was removed by revert of r70814, but keep it for now.
@@ -2829,10 +2829,9 @@ BUGCR67540 WIN LINUX : fast/text/emphasis-overlap.html = IMAGE+TEXT
 BUGCR67540 WIN LINUX : fast/text/emphasis-avoid-ruby.html = IMAGE
 // IMAGE or IMAGE+TEXT
 BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-h.html = FAIL
-// started to crash/assert at some point after WK r80582
+// started to crash/assert at some point after WK r80582 (see BUGCR75426 list)
 BUGCR67540 WIN : fast/repaint/text-emphasis-v.html = IMAGE
 BUGCR67540 LINUX RELEASE : fast/repaint/text-emphasis-v.html = IMAGE
-BUGCR67540 LINUX DEBUG : fast/repaint/text-emphasis-v.html = CRASH
 
 BUGCR67662 WIN LINUX RELEASE : http/tests/inspector/console-websocket-error.html = TEXT
 BUGCR67662 WIN LINUX DEBUG SLOW : http/tests/inspector/console-websocket-error.html = TEXT
@@ -2921,7 +2920,7 @@ BUGCR75238 WIN : fast/text/large-text-composed-char.html = FAIL
 // started to time out under Linux Debug at some point after WK r80582
 BUGCR75238 WIN MAC : fast/text/large-text-composed-char-dos.html = TEXT
 BUGCR75238 LINUX RELEASE : fast/text/large-text-composed-char-dos.html = TEXT
-BUGCR75238 LINUX DEBUG : fast/text/large-text-composed-char-dos.html = TIMEOUT
+BUGCR75426 LINUX DEBUG : fast/text/large-text-composed-char-dos.html = TIMEOUT
 
 // Added by http://trac.webkit.org/changeset/76548
 BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
@@ -2933,7 +2932,7 @@ BUGCR70942 WIN : editing/execCommand/break-out-of-empty-list-item.html = PASS TI
 BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
 
 // Added by and started crashing at http://trac.webkit.org/changeset/76743,
-// stopped crashing at some point after 80582
+// stopped crashing at some point after 80582, but see BUGCR75426!
 //BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH IMAGE+TEXT
 BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
 
@@ -3328,8 +3327,67 @@ BUGWK55854 WIN LINUX MAC : fast/forms/onchange-setvalueforuser.html = TEXT
 BUGXJI : fast/dom/scroll-reveal-left-overflow.html = FAIL
 BUGXJI : fast/dom/scroll-reveal-top-overflow.html = FAIL
 
-// WebKit roll 80564:80618+, mainly introduced changes to vertical text
-// some of these probably just need rebaseline:
+// WebKit roll 80564:80631:
+// Apparent font cache cleanup issue when running multiple tests in a row (only)
+BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-rl/001.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-rl/003.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/blockflow/auto-margins-across-boundaries.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/blockflow/border-image-vertical-lr.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/blockflow/border-radius-clipping-vertical-lr.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/blockflow/box-shadow-horizontal-bt.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/blockflow/box-shadow-vertical-rl.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/blockflow/english-rl-text.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/blockflow/japanese-ruby-horizontal-bt.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/blockflow/japanese-lr-text.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/blockflow/japanese-rl-text-with-broken-font.html = CRASH 
+BUGCR75426 LINUX DEBUG : fast/blockflow/japanese-ruby-vertical-rl.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/blockflow/vertical-align-table-baseline.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/blockflow/vertical-font-fallback.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/blockflow/vertical-rl-replaced-selection.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/dom/vertical-scrollbar-in-rtl.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/dom/vertical-scrollbar-when-dir-change.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/events/window-events-bubble.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/lists/001.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/lists/002.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/lists/003.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/lists/005.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/lists/006.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/lists/007.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/lists/008.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/lists/009.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/break-properties.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/column-count-with-rules.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/float-avoidance.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/float-paginate-complex.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/float-truncation.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/image-inside-nested-blocks-with-border.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/unsplittable-inline-block.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/repaint/japanese-rl-selection-repaint.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/repaint/slider-thumb-drag-release.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/repaint/text-emphasis-v.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/text/international/vertical-text-metrics-test.html = CRASH
+
+// WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
+// started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
+BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-lr-selection.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
+BUGCR75424 MAC LEOPARD : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/blockflow/border-vertical-lr.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-lr-text.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-rl-selection.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-rl-text.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/blockflow/vertical-align-table-baseline.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/blockflow/vertical-font-fallback.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/repaint/japanese-rl-selection-clear.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT
+
+// WebKit roll 80564:80631: vertical text fallout - these probably just need rebaseline:
 BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
 BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/border-vertical-lr.html = IMAGE
 BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/japanese-lr-selection.html = IMAGE
@@ -3354,79 +3412,27 @@ BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/japanese-rl-selection-repaint.ht
 BUGROLANDSTEINER WIN-VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
-// others need a-fixin': some of these on Mac LEOPARD are shifted to the top tight by some constant factor
-// shift started to happen at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
-// The LINUX DEBUG tests may either be a fallout of the same change, or a flaky bot.
+
+// WebKit roll 80564:80631, still need to be classified
 BUGROLANDSTEINER MAC : fast/overflow/overflow-rtl-vertical.html = IMAGE+TEXT
 BUGROLANDSTEINER MAC : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
 BUGROLANDSTEINER MAC : fast/lists/008-vertical.html = IMAGE+TEXT
-BUGROLANDSTEINER MAC LEOPARD : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
-BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
-BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/border-vertical-lr.html = IMAGE
 BUGROLANDSTEINER MAC : fast/blockflow/broken-ideographic-font.html = IMAGE
-BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/japanese-lr-selection.html = IMAGE
 BUGROLANDSTEINER LINUX RELEASE : fast/blockflow/japanese-lr-text.html = IMAGE
-BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/japanese-lr-text.html = CRASH
-BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/japanese-lr-text.html = IMAGE
-BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/japanese-rl-selection.html = IMAGE
 BUGROLANDSTEINER MAC : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
 BUGROLANDSTEINER LINUX RELEASE : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
-BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/japanese-rl-text-with-broken-font.html = CRASH 
 BUGROLANDSTEINER LINUX : fast/blockflow/japanese-rl-text.html = IMAGE
-BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/japanese-rl-text.html = IMAGE
 BUGROLANDSTEINER LINUX : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
-BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
 BUGROLANDSTEINER LINUX RELEASE : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/japanese-ruby-vertical-rl.html = CRASH
-BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/vertical-align-table-baseline.html = IMAGE
 BUGROLANDSTEINER LINUX RELEASE : fast/blockflow/vertical-align-table-baseline.html = IMAGE
-BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/vertical-align-table-baseline.html = CRASH
 BUGROLANDSTEINER LINUX : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/vertical-font-fallback.html = CRASH
-BUGROLANDSTEINER MAC LEOPARD : fast/blockflow/vertical-font-fallback.html = IMAGE
 BUGROLANDSTEINER LINUX : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-BUGROLANDSTEINER MAC LEOPARD : fast/repaint/japanese-rl-selection-clear.html = IMAGE
 BUGROLANDSTEINER LINUX RELEASE : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
-BUGROLANDSTEINER LINUX DEBUG : fast/repaint/japanese-rl-selection-repaint.html = CRASH
-BUGROLANDSTEINER MAC LEOPARD : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
-BUGROLANDSTEINER MAC LEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
-BUGROLANDSTEINER MAC LEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
 BUGROLANDSTEINER MAC : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
 BUGROLANDSTEINER MAC : fast/css/getComputedStyle/computed-style.html = TEXT
 BUGROLANDSTEINER : fast/js/mozilla/strict/15.5.5.1.html = TEXT
 BUGROLANDSTEINER MAC : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUGROLANDSTEINER LINUX : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT
-BUGROLANDSTEINER MAC LEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT
-BUGROLANDSTEINER LINUX DEBUG : fast/multicol/vertical-rl/column-count-with-rules.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/multicol/vertical-rl/float-avoidance.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/multicol/vertical-rl/float-paginate-complex.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/multicol/vertical-rl/float-truncation.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/multicol/vertical-rl/image-inside-nested-blocks-with-border.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/multicol/vertical-rl/unsplittable-inline-block.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/repaint/slider-thumb-drag-release.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/lists/001.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/lists/002.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/lists/003.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/lists/005.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/lists/006.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/lists/007.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/lists/008.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/lists/009.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/multicol/vertical-rl/break-properties.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/block/positioning/vertical-rl/001.html = CRASH PASS
-BUGROLANDSTEINER LINUX DEBUG : fast/block/positioning/vertical-rl/003.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/auto-margins-across-boundaries.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/border-radius-clipping-vertical-lr.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/box-shadow-horizontal-bt.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/box-shadow-vertical-rl.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/english-rl-text.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/japanese-ruby-horizontal-bt.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/blockflow/vertical-rl-replaced-selection.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/dom/vertical-scrollbar-in-rtl.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/dom/vertical-scrollbar-when-dir-change.html = CRASH
-BUGROLANDSTEINER LINUX DEBUG : fast/events/window-events-bubble.html = CRASH
 // introduced by Dave Hyatt in WK r80582
 BUGROLANDSTEINER : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
 // introduced by brarraclough in WK r80621

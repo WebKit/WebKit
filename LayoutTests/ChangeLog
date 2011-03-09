@@ -1,3 +1,9 @@
+2011-03-09  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: assign bug entries to Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Move fast/canvas/rgba-parsing.html to the group of
