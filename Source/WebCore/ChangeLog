@@ -1,3 +1,27 @@
+2011-03-08  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by James Robinson.
+
+        Unify Windows version checks, part 1.
+        https://bugs.webkit.org/show_bug.cgi?id=55979
+
+        Make everyone (I hope) pull in SystemInfo.cpp.  Eliminate the
+        now-unnecessary WindowsVersion.cpp from Chromium.
+
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/chromium/ScrollbarThemeChromiumWin.cpp:
+        (WebCore::ScrollbarThemeChromiumWin::invalidateOnMouseEnterExit):
+        (WebCore::ScrollbarThemeChromiumWin::getThemeState):
+        (WebCore::ScrollbarThemeChromiumWin::getThemeArrowState):
+        * platform/chromium/WindowsVersion.cpp: Removed.
+        * platform/chromium/WindowsVersion.h: Removed.
+        * platform/graphics/chromium/GlyphPageTreeNodeChromiumWin.cpp:
+        (WebCore::fillBMPGlyphs):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::getNonClientMetrics):
+
 2011-03-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium Linux build fix attempt after r80582.

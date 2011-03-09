@@ -1332,7 +1332,10 @@
 
             # The Chromium Win currently uses GlyphPageTreeNodeChromiumWin.cpp from
             # platform/graphics/chromium, included by regex above, instead.
-            ['exclude', 'platform/graphics/skia/GlyphPageTreeNodeSkia\\.cpp$']
+            ['exclude', 'platform/graphics/skia/GlyphPageTreeNodeSkia\\.cpp$'],
+
+            # SystemInfo.cpp is useful and we don't want to copy it.
+            ['include', 'platform/win/SystemInfo\\.cpp$'],
           ],
         }],
         ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_MKL=1" in feature_defines', {
