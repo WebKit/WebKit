@@ -1,3 +1,41 @@
+2011-03-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Remove calls to deprecatedEditingOffset in SelectionController and VisibleSelection
+        https://bugs.webkit.org/show_bug.cgi?id=54937
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection): Calls anchorNode() instead of deprecatedNode() to obtain
+        the document. Also restrained the lifetime of document variable.
+        (WebCore::removingNodeRemovesPosition): Compare the node with anchorNode() instead of deprecatedNode()
+        to determine whether or not position becomes null after removing a node.
+        (WebCore::SelectionController::directionOfEnclosingBlock): The enclosing block is always a container
+        so call containerNode() instead of deprecatedNode().
+        (WebCore::SelectionController::debugRenderer): Call containerNode() and computeOffsetInContainer()
+        instead of deprecatedNode() and deprecatedEditingOffset() respectively.
+        (WebCore::SelectionController::isInPasswordField): Look for the shadow root from containerNode()
+        instead of deprecatedNode to determine whether or not selection inside a password field. Also assert
+        that the specified position is not before or after the shadow root as it violates our assumption.
+        * editing/VisibleSelection.cpp:
+        (WebCore::makeSearchRange): Call containerNode() and offsetInContainerNode() instead of deprecatedNode()
+        and deprecatedEditingOffset() respectively because start is always parent anchored and therefore
+        guaranteed to be an offset inside an anchor node.
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries): Call containerNode()
+        instead of deprecatedNode() to look for the lowest editable ancestor because position before or after
+        an editable element isn't editable.
+        * page/DOMSelection.cpp: Call containerNode() and offsetInContainerNode() instead of deprecatedNode()
+        and deprecatedEditingOffset() respectively in the following functions because they are exposed to
+        DOM, which doesn't have before/after concept.
+        (WebCore::DOMSelection::anchorNode):
+        (WebCore::DOMSelection::anchorOffset):
+        (WebCore::DOMSelection::focusNode):
+        (WebCore::DOMSelection::focusOffset):
+        (WebCore::DOMSelection::baseNode):
+        (WebCore::DOMSelection::baseOffset):
+        (WebCore::DOMSelection::extentNode):
+        (WebCore::DOMSelection::extentOffset):
+
 2011-03-08  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.

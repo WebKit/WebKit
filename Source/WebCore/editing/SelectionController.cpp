@@ -150,16 +150,14 @@ void SelectionController::setSelection(const VisibleSelection& s, SetSelectionOp
         return;
     }
 
-    Node* baseNode = s.base().deprecatedNode();
-    Document* document = 0;
-    if (baseNode)
-        document = baseNode->document();
-    
     // <http://bugs.webkit.org/show_bug.cgi?id=23464>: Infinite recursion at SelectionController::setSelection
     // if document->frame() == m_frame we can get into an infinite loop
-    if (document && document->frame() && document->frame() != m_frame && document != m_frame->document()) {
-        document->frame()->selection()->setSelection(s, options);
-        return;
+    if (s.base().anchorNode()) {
+        Document* document = s.base().anchorNode()->document();
+        if (document && document->frame() && document->frame() != m_frame && document != m_frame->document()) {
+            document->frame()->selection()->setSelection(s, options);
+            return;
+        }
     }
 
     if (closeTyping)
@@ -205,17 +203,17 @@ void SelectionController::setSelection(const VisibleSelection& s, SetSelectionOp
 
 static bool removingNodeRemovesPosition(Node* node, const Position& position)
 {
-    if (!position.deprecatedNode())
+    if (!position.anchorNode())
         return false;
 
-    if (position.deprecatedNode() == node)
+    if (position.anchorNode() == node)
         return true;
 
     if (!node->isElementNode())
         return false;
 
     Element* element = static_cast<Element*>(node);
-    return element->contains(position.deprecatedNode()) || element->contains(position.deprecatedNode()->shadowAncestorNode());
+    return element->contains(position.anchorNode()) || element->contains(position.anchorNode()->shadowAncestorNode());
 }
 
 void SelectionController::nodeWillBeRemoved(Node *node)
@@ -384,7 +382,7 @@ void SelectionController::willBeModified(EAlteration alter, SelectionDirection d
 
 TextDirection SelectionController::directionOfEnclosingBlock()
 {
-    Node* enclosingBlockNode = enclosingBlock(m_selection.extent().deprecatedNode());
+    Node* enclosingBlockNode = enclosingBlock(m_selection.extent().containerNode());
     if (!enclosingBlockNode)
         return LTR;
     RenderObject* renderer = enclosingBlockNode->renderer();
@@ -1249,11 +1247,11 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
         int textLength = text.length();
         if (selected) {
             int offset = 0;
-            if (r->node() == m_selection.start().deprecatedNode())
-                offset = m_selection.start().deprecatedEditingOffset();
-            else if (r->node() == m_selection.end().deprecatedNode())
-                offset = m_selection.end().deprecatedEditingOffset();
-                
+            if (r->node() == m_selection.start().containerNode())
+                offset = m_selection.start().computeOffsetInContainerNode();
+            else if (r->node() == m_selection.end().containerNode())
+                offset = m_selection.end().computeOffsetInContainerNode();
+
             int pos;
             InlineTextBox* box = textRenderer->findNextInlineTextBox(offset, pos);
             text = text.substring(box->start(), box->len());
@@ -1449,7 +1447,9 @@ bool SelectionController::setSelectedRange(Range* range, EAffinity affinity, boo
 
 bool SelectionController::isInPasswordField() const
 {
-    Node* startNode = start().deprecatedNode();
+    ASSERT(start().isNull() || start().anchorType() == Position::PositionIsOffsetInAnchor
+           || start().containerNode() || !start().anchorNode()->shadowAncestorNode());
+    Node* startNode = start().containerNode();
     if (!startNode)
         return false;
 
