@@ -89,6 +89,9 @@ public:
     void setBackgroundColor(const Color& color) { m_backgroundColor = color; setNeedsCommit(); }
     Color backgroundColor() const { return m_backgroundColor; }
 
+    void setBounds(const IntSize&);
+    const IntSize& bounds() const { return m_bounds; }
+
     void setClearsContext(bool clears) { m_clearsContext = clears; setNeedsCommit(); }
     bool clearsContext() const { return m_clearsContext; }
 
@@ -133,6 +136,9 @@ public:
     void setTransform(const TransformationMatrix& transform) { m_transform = transform; setNeedsCommit(); }
     const TransformationMatrix& transform() const { return m_transform; }
 
+    bool doubleSided() const { return m_doubleSided; }
+    void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }
+
     // FIXME: This setting is currently ignored.
     void setGeometryFlipped(bool flipped) { m_geometryFlipped = flipped; setNeedsCommit(); }
     bool geometryFlipped() const { return m_geometryFlipped; }
@@ -142,9 +148,6 @@ public:
     // Derived types must override this method if they need to react to a change
     // in the LayerRendererChromium.
     virtual void setLayerRenderer(LayerRendererChromium*);
-
-    // Returns true if any of the layer's descendants has content to draw.
-    bool descendantsDrawContent();
 
     void setOwner(GraphicsLayerChromium* owner) { m_owner = owner; }
 
@@ -182,9 +185,6 @@ public:
 
     // Begin calls that forward to the CCLayerImpl.
     LayerRendererChromium* layerRenderer() const;
-    void setDoubleSided(bool);
-    void setBounds(const IntSize&);
-    const IntSize& bounds() const;
     // End calls that forward to the CCLayerImpl.
 
     typedef ProgramBinding<VertexShaderPos, FragmentShaderColor> BorderProgram;
@@ -233,8 +233,6 @@ private:
     // This should only be called from removeFromSuperlayer.
     void removeSublayer(LayerChromium*);
 
-    bool descendantsDrawContentRecursive();
-
     Vector<RefPtr<LayerChromium> > m_sublayers;
     LayerChromium* m_superlayer;
 
@@ -243,6 +241,7 @@ private:
 #endif
 
     // Layer properties.
+    IntSize m_bounds;
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
     Color m_backgroundColor;
@@ -255,6 +254,7 @@ private:
     bool m_opaque;
     bool m_geometryFlipped;
     bool m_needsDisplayOnBoundsChange;
+    bool m_doubleSided;
 
     TransformationMatrix m_transform;
     TransformationMatrix m_sublayerTransform;

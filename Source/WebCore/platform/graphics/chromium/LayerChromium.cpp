@@ -188,7 +188,7 @@ void LayerChromium::setBounds(const IntSize& size)
 
     bool firstResize = !bounds().width() && !bounds().height() && size.width() && size.height();
 
-    m_ccLayerImpl->setBounds(size);
+    m_bounds = size;
 
     if (firstResize)
         setNeedsDisplay(FloatRect(0, 0, bounds().width(), bounds().height()));
@@ -316,31 +316,6 @@ void LayerChromium::drawTexturedQuad(GraphicsContext3D* context, const Transform
     GLC(context, context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0));
 }
 
-
-
-// Returns true if any of the layer's descendants has drawable content.
-bool LayerChromium::descendantsDrawContent()
-{
-    const Vector<RefPtr<LayerChromium> >& sublayers = getSublayers();
-    for (size_t i = 0; i < sublayers.size(); ++i)
-        if (sublayers[i]->descendantsDrawContentRecursive())
-            return true;
-    return false;
-}
-
-// Returns true if either this layer or one of its descendants has drawable content.
-bool LayerChromium::descendantsDrawContentRecursive()
-{
-    if (drawsContent())
-        return true;
-
-    const Vector<RefPtr<LayerChromium> >& sublayers = getSublayers();
-    for (size_t i = 0; i < sublayers.size(); ++i)
-        if (sublayers[i]->descendantsDrawContentRecursive())
-            return true;
-    return false;
-}
-
 String LayerChromium::layerTreeAsText() const
 {
     TextStream ts;
@@ -415,16 +390,6 @@ LayerRendererChromium* LayerChromium::layerRenderer() const
     return m_ccLayerImpl->layerRenderer();
 }
 
-void LayerChromium::setDoubleSided(bool doubleSided)
-{
-    m_ccLayerImpl->setDoubleSided(doubleSided);
-    setNeedsCommit();
-}
-
-const IntSize& LayerChromium::bounds() const
-{
-    return m_ccLayerImpl->bounds();
-}
 // ==============================================
 // End calls that forward to the CCLayerImpl.
 

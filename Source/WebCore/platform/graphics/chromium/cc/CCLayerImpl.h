@@ -60,11 +60,27 @@ public:
     CCLayerImpl* replicaLayer() const;
 
     void draw();
-    bool drawsContent() const;
     void unreserveContentsTexture();
     void bindContentsTexture();
 
+    // Returns true if this layer has content to draw.
+    bool drawsContent() const;
+
+    // Returns true if any of the layer's descendants has content to draw.
+    bool descendantsDrawsContent();
+
     void cleanupResources();
+
+    void updateFromLayer(LayerChromium*);
+
+    const FloatPoint& anchorPoint() const { return m_anchorPoint; }
+    float anchorPointZ() const { return m_anchorPointZ; }
+    bool masksToBounds() const { return m_masksToBounds; }
+    float opacity() const { return m_opacity; }
+    const FloatPoint& position() const { return m_position; }
+    bool preserves3D() const { return m_preserves3D; }
+    const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
+    const TransformationMatrix& transform() const { return m_transform; }
 
     void setName(const String& name) { m_name = name; }
     const String& name() const { return m_name; }
@@ -113,6 +129,22 @@ private:
     LayerChromium* m_owner;
     explicit CCLayerImpl(LayerChromium*);
 
+    // Properties synchronized from the associated LayerChromium.
+    FloatPoint m_anchorPoint;
+    float m_anchorPointZ;
+    IntSize m_bounds;
+
+    // Whether the "back" of this layer should draw.
+    bool m_doubleSided;
+
+    bool m_masksToBounds;
+    float m_opacity;
+    FloatPoint m_position;
+    bool m_preserves3D;
+    TransformationMatrix m_sublayerTransform;
+    TransformationMatrix m_transform;
+
+    // Properties owned exclusively by this CCLayerImpl.
     // Debugging.
 #ifndef NDEBUG
     int m_debugID;
@@ -131,16 +163,11 @@ private:
     float m_drawDepth;
     float m_drawOpacity;
 
-    // Whether the "back" of this layer should draw.
-    bool m_doubleSided;
-
     // Debug borders.
     Color m_debugBorderColor;
     float m_debugBorderWidth;
 
     TransformationMatrix m_drawTransform;
-
-    IntSize m_bounds;
 
     // The scissor rectangle that should be used when this layer is drawn.
     // Inherited by the parent layer and further restricted if this layer masks

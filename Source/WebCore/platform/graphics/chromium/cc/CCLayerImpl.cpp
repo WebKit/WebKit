@@ -62,13 +62,18 @@ namespace WebCore {
 
 CCLayerImpl::CCLayerImpl(LayerChromium* owner)
     : m_owner(owner)
+    , m_anchorPoint(0.5, 0.5)
+    , m_anchorPointZ(0)
+    , m_doubleSided(true)
+    , m_masksToBounds(false)
+    , m_opacity(1.0)
+    , m_preserves3D(false)
 #ifndef NDEBUG
     , m_debugID(owner->debugID())
 #endif
     , m_targetRenderSurface(0)
     , m_drawDepth(0)
     , m_drawOpacity(0)
-    , m_doubleSided(true)
     , m_debugBorderColor(0, 0, 0, 0)
     , m_debugBorderWidth(0)
     , m_renderSurface(0)
@@ -96,6 +101,25 @@ CCLayerImpl* CCLayerImpl::replicaLayer() const
     return m_owner->replicaLayer() ? m_owner->replicaLayer()->ccLayerImpl() : 0;
 }
 
+void CCLayerImpl::updateFromLayer(LayerChromium* layer)
+{
+    m_anchorPoint = layer->anchorPoint();
+    m_anchorPointZ = layer->anchorPointZ();
+    m_bounds = layer->bounds();
+    m_doubleSided = layer->doubleSided();
+    m_masksToBounds = layer->masksToBounds();
+    m_opacity = layer->opacity();
+    m_position = layer->position();
+    m_preserves3D = layer->preserves3D();
+    m_sublayerTransform = layer->sublayerTransform();
+    m_transform = layer->transform();
+
+    if (maskLayer())
+        maskLayer()->updateFromLayer(m_owner->maskLayer());
+    if (replicaLayer())
+        replicaLayer()->updateFromLayer(m_owner->replicaLayer());
+}
+
 void CCLayerImpl::setLayerRenderer(LayerRendererChromium* renderer)
 {
     m_layerRenderer = renderer;
@@ -105,6 +129,15 @@ RenderSurfaceChromium* CCLayerImpl::createRenderSurface()
 {
     m_renderSurface = new RenderSurfaceChromium(this);
     return m_renderSurface.get();
+}
+
+bool CCLayerImpl::descendantsDrawsContent()
+{
+    const Vector<RefPtr<LayerChromium> >& sublayers = m_owner->getSublayers();
+    for (size_t i = 0; i < sublayers.size(); ++i)
+        if (sublayers[i]->ccLayerImpl()->drawsContent() || sublayers[i]->ccLayerImpl()->descendantsDrawsContent())
+            return true;
+    return false;
 }
 
 // These belong on CCLayerImpl, but should be subclased by each type and not defer to the LayerChromium subtypes.

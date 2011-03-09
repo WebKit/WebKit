@@ -1,5 +1,37 @@
 2011-03-08  James Robinson  <jamesr@chromium.org>
 
+        Reviewed by Kenneth Russell.
+
+        [chromium] Explicitly copy compositing properties from LayerChromium to CCLayerImpl
+        https://bugs.webkit.org/show_bug.cgi?id=55900
+
+        This adds an explicit step to synchronize properties from
+        LayerChromiums to their corresponding CCLayerImpls.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setBounds):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::bounds):
+        (WebCore::LayerChromium::doubleSided):
+        (WebCore::LayerChromium::setDoubleSided):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        (WebCore::CCLayerImpl::updateFromLayer):
+        (WebCore::CCLayerImpl::descendantsDrawsContent):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::anchorPoint):
+        (WebCore::CCLayerImpl::anchorPointZ):
+        (WebCore::CCLayerImpl::masksToBounds):
+        (WebCore::CCLayerImpl::opacity):
+        (WebCore::CCLayerImpl::position):
+        (WebCore::CCLayerImpl::preserves3D):
+        (WebCore::CCLayerImpl::sublayerTransform):
+        (WebCore::CCLayerImpl::transform):
+
+2011-03-08  James Robinson  <jamesr@chromium.org>
+
         Chromium compile fix.
 
         * platform/graphics/chromium/SimpleFontDataLinux.cpp:

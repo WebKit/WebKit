@@ -448,6 +448,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
 {
     layer->setLayerRenderer(this);
     CCLayerImpl* drawLayer = layer->ccLayerImpl();
+    drawLayer->updateFromLayer(layer);
 
     // Compute the new matrix transformation that will be applied to this layer and
     // all its sublayers. It's important to remember that the layer's position
@@ -467,9 +468,9 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     // Where: P is the projection matrix
     //        M is the layer's matrix computed above
     //        S is the scale adjustment (to scale up to the layer size)
-    IntSize bounds = layer->bounds();
-    FloatPoint anchorPoint = layer->anchorPoint();
-    FloatPoint position = layer->position();
+    IntSize bounds = drawLayer->bounds();
+    FloatPoint anchorPoint = drawLayer->anchorPoint();
+    FloatPoint position = drawLayer->position();
 
     // Offset between anchor point and the center of the quad.
     float centerOffsetX = (0.5 - anchorPoint.x()) * bounds.width();
@@ -477,16 +478,16 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
 
     TransformationMatrix layerLocalTransform;
     // LT = Tr[l]
-    layerLocalTransform.translate3d(position.x(), position.y(), layer->anchorPointZ());
+    layerLocalTransform.translate3d(position.x(), position.y(), drawLayer->anchorPointZ());
     // LT = Tr[l] * M[l]
-    layerLocalTransform.multiply(layer->transform());
+    layerLocalTransform.multiply(drawLayer->transform());
     // LT = Tr[l] * M[l] * Tr[c]
-    layerLocalTransform.translate3d(centerOffsetX, centerOffsetY, -layer->anchorPointZ());
+    layerLocalTransform.translate3d(centerOffsetX, centerOffsetY, -drawLayer->anchorPointZ());
 
     TransformationMatrix combinedTransform = parentMatrix;
     combinedTransform = combinedTransform.multiply(layerLocalTransform);
 
-    FloatRect layerRect(-0.5 * layer->bounds().width(), -0.5 * layer->bounds().height(), layer->bounds().width(), layer->bounds().height());
+    FloatRect layerRect(-0.5 * drawLayer->bounds().width(), -0.5 * drawLayer->bounds().height(), drawLayer->bounds().width(), drawLayer->bounds().height());
     IntRect transformedLayerRect;
 
     // The layer and its descendants render on a new RenderSurface if any of
@@ -498,11 +499,11 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     // If a layer preserves-3d then we don't create a RenderSurface for it to avoid flattening
     // out its children. The opacity value of the children layers is multiplied by the opacity
     // of their parent.
-    bool useSurfaceForClipping = layer->masksToBounds() && !isScaleOrTranslation(combinedTransform);
-    bool useSurfaceForOpacity = layer->opacity() != 1 && !layer->preserves3D();
-    bool useSurfaceForMasking = layer->maskDrawLayer();
-    bool useSurfaceForReflection = layer->replicaLayer();
-    if (((useSurfaceForClipping || useSurfaceForOpacity) && layer->descendantsDrawContent())
+    bool useSurfaceForClipping = drawLayer->masksToBounds() && !isScaleOrTranslation(combinedTransform);
+    bool useSurfaceForOpacity = drawLayer->opacity() != 1 && !drawLayer->preserves3D();
+    bool useSurfaceForMasking = drawLayer->maskLayer();
+    bool useSurfaceForReflection = drawLayer->replicaLayer();
+    if (((useSurfaceForClipping || useSurfaceForOpacity) && drawLayer->descendantsDrawsContent())
         || useSurfaceForMasking || useSurfaceForReflection) {
         RenderSurfaceChromium* renderSurface = drawLayer->renderSurface();
         if (!renderSurface)
@@ -516,15 +517,15 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
         transformedLayerRect = IntRect(0, 0, bounds.width(), bounds.height());
 
         // Layer's opacity will be applied when drawing the render surface.
-        renderSurface->m_drawOpacity = layer->opacity();
-        if (layer->superlayer() && layer->superlayer()->preserves3D())
+        renderSurface->m_drawOpacity = drawLayer->opacity();
+        if (drawLayer->superlayer() && drawLayer->superlayer()->preserves3D())
             renderSurface->m_drawOpacity *= drawLayer->superlayer()->drawOpacity();
         drawLayer->setDrawOpacity(1);
 
         TransformationMatrix layerOriginTransform = combinedTransform;
         layerOriginTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
         renderSurface->m_originTransform = layerOriginTransform;
-        if (layerOriginTransform.isInvertible() && layer->superlayer()) {
+        if (layerOriginTransform.isInvertible() && drawLayer->superlayer()) {
             TransformationMatrix parentToLayer = layerOriginTransform.inverse();
 
             drawLayer->setScissorRect(parentToLayer.mapRect(drawLayer->superlayer()->scissorRect()));
@@ -538,16 +539,16 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
 
         renderSurface->m_layerList.clear();
 
-        if (layer->maskDrawLayer()) {
-            renderSurface->m_maskLayer = layer->maskDrawLayer();
-            layer->maskDrawLayer()->setLayerRenderer(this);
-            layer->maskDrawLayer()->setTargetRenderSurface(renderSurface);
+        if (drawLayer->maskLayer()) {
+            renderSurface->m_maskLayer = drawLayer->maskLayer();
+            drawLayer->maskLayer()->setLayerRenderer(this);
+            drawLayer->maskLayer()->setTargetRenderSurface(renderSurface);
         } else
             renderSurface->m_maskLayer = 0;
 
-        if (layer->replicaLayer() && layer->replicaLayer()->maskDrawLayer()) {
-            layer->replicaLayer()->maskDrawLayer()->setLayerRenderer(this);
-            layer->replicaLayer()->maskDrawLayer()->setTargetRenderSurface(renderSurface);
+        if (drawLayer->replicaLayer() && drawLayer->replicaLayer()->maskLayer()) {
+            drawLayer->replicaLayer()->maskLayer()->setLayerRenderer(this);
+            drawLayer->replicaLayer()->maskLayer()->setTargetRenderSurface(renderSurface);
         }
 
         renderSurfaceLayerList.append(drawLayer);
@@ -556,10 +557,10 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
         drawLayer->setDrawTransform(combinedTransform);
         transformedLayerRect = enclosingIntRect(drawLayer->drawTransform().mapRect(layerRect));
 
-        drawLayer->setDrawOpacity(layer->opacity());
+        drawLayer->setDrawOpacity(drawLayer->opacity());
 
-        if (layer->superlayer()) {
-            if (layer->superlayer()->preserves3D())
+        if (drawLayer->superlayer()) {
+            if (drawLayer->superlayer()->preserves3D())
                drawLayer->setDrawOpacity(drawLayer->drawOpacity() * drawLayer->superlayer()->drawOpacity());
 
             // Layers inherit the scissor rect from their superlayer.
@@ -571,7 +572,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
         if (layer != m_rootLayer)
             drawLayer->clearRenderSurface();
 
-        if (layer->masksToBounds()) {
+        if (drawLayer->masksToBounds()) {
             IntRect scissor = drawLayer->scissorRect();
             scissor.intersect(transformedLayerRect);
             drawLayer->setScissorRect(scissor);
@@ -581,7 +582,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     if (drawLayer->renderSurface())
         drawLayer->setTargetRenderSurface(drawLayer->renderSurface());
     else {
-        ASSERT(layer->superlayer());
+        ASSERT(drawLayer->superlayer());
         drawLayer->setTargetRenderSurface(drawLayer->superlayer()->targetRenderSurface());
     }
 
@@ -595,7 +596,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     TransformationMatrix sublayerMatrix = drawLayer->drawTransform();
 
     // Flatten to 2D if the layer doesn't preserve 3D.
-    if (!layer->preserves3D()) {
+    if (!drawLayer->preserves3D()) {
         sublayerMatrix.setM13(0);
         sublayerMatrix.setM23(0);
         sublayerMatrix.setM31(0);
@@ -606,7 +607,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     }
 
     // Apply the sublayer transform at the center of the layer.
-    sublayerMatrix.multiply(layer->sublayerTransform());
+    sublayerMatrix.multiply(drawLayer->sublayerTransform());
 
     // The origin of the sublayers is the top left corner of the layer, not the
     // center. The matrix passed down to the sublayers is therefore:
@@ -635,7 +636,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
         }
     }
 
-    if (layer->masksToBounds() || useSurfaceForMasking) {
+    if (drawLayer->masksToBounds() || useSurfaceForMasking) {
         IntRect drawableContentRect = drawLayer->drawableContentRect();
         drawableContentRect.intersect(transformedLayerRect);
         drawLayer->setDrawableContentRect(drawableContentRect);
@@ -651,7 +652,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
 
         // Don't clip if the layer is reflected as the reflection shouldn't be
         // clipped.
-        if (!layer->replicaLayer()) {
+        if (!drawLayer->replicaLayer()) {
             renderSurface->m_contentRect.intersect(drawLayer->scissorRect());
             FloatPoint clippedSurfaceCenter = renderSurface->contentRectCenter();
             centerOffsetDueToClipping = clippedSurfaceCenter - surfaceCenter;
@@ -675,10 +676,10 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
 
         // Compute the transformation matrix used to draw the replica of the render
         // surface.
-        if (layer->replicaLayer()) {
+        if (drawLayer->replicaLayer()) {
             renderSurface->m_replicaDrawTransform = renderSurface->m_originTransform;
-            renderSurface->m_replicaDrawTransform.translate3d(layer->replicaLayer()->position().x(), layer->replicaLayer()->position().y(), 0);
-            renderSurface->m_replicaDrawTransform.multiply(layer->replicaLayer()->transform());
+            renderSurface->m_replicaDrawTransform.translate3d(drawLayer->replicaLayer()->position().x(), drawLayer->replicaLayer()->position().y(), 0);
+            renderSurface->m_replicaDrawTransform.multiply(drawLayer->replicaLayer()->transform());
             renderSurface->m_replicaDrawTransform.translate3d(surfaceCenter.x() - anchorPoint.x() * bounds.width(), surfaceCenter.y() - anchorPoint.y() * bounds.height(), 0);
         }
     }
@@ -686,8 +687,8 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     // Compute the depth value of the center of the layer which will be used when
     // sorting the layers for the preserves-3d property.
     const TransformationMatrix& layerDrawMatrix = drawLayer->renderSurface() ? drawLayer->renderSurface()->m_drawTransform : drawLayer->drawTransform();
-    if (layer->superlayer()) {
-        if (!layer->superlayer()->preserves3D())
+    if (drawLayer->superlayer()) {
+        if (!drawLayer->superlayer()->preserves3D())
             drawLayer->setDrawDepth(drawLayer->superlayer()->drawDepth());
         else
             drawLayer->setDrawDepth(layerDrawMatrix.m43());
@@ -697,7 +698,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     // If preserves-3d then sort all the descendants by the Z coordinate of their
     // center. If the preserves-3d property is also set on the superlayer then
     // skip the sorting as the superlayer will sort all the descendants anyway.
-    if (layer->preserves3D() && (!layer->superlayer() || !layer->superlayer()->preserves3D()))
+    if (drawLayer->preserves3D() && (!drawLayer->superlayer() || !drawLayer->superlayer()->preserves3D()))
         std::stable_sort(&descendants.at(thisLayerIndex), descendants.end(), compareLayerZ);
 }
 
