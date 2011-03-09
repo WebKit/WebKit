@@ -15,6 +15,7 @@
 			);
 			dependencies = (
 				1A50DB3C110A3C19000D3FE5 /* PBXTargetDependency */,
+				BCDE0AC113272712001259FB /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = WebKit2;
@@ -66,8 +67,6 @@
 		1A18718512EF9877008E5F37 /* LayerTreeHostMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A18718412EF9877008E5F37 /* LayerTreeHostMac.mm */; };
 		1A1C4EC810D06099005E67E7 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
 		1A1C649B11F4174200553C19 /* WebContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1C648611F415B700553C19 /* WebContextMac.mm */; };
-		1A1FA285127A13BC0050E709 /* NPObjectProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA284127A13BC0050E709 /* NPObjectProxy.cpp */; };
-		1A1FA35D127A45BF0050E709 /* NPObjectMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA35C127A45BF0050E709 /* NPObjectMessageReceiver.cpp */; };
 		1A2161B011F37664008AD0F5 /* NPRuntimeObjectMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2161AE11F37664008AD0F5 /* NPRuntimeObjectMap.h */; };
 		1A2161B111F37664008AD0F5 /* NPRuntimeObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2161AF11F37664008AD0F5 /* NPRuntimeObjectMap.cpp */; };
 		1A2162B011F38971008AD0F5 /* NPRuntimeUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2162AE11F38971008AD0F5 /* NPRuntimeUtilities.cpp */; };
@@ -125,7 +124,6 @@
 		1A64218712DCF49200CAAE2C /* DrawingAreaProxyImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64218512DCF49200CAAE2C /* DrawingAreaProxyImpl.cpp */; };
 		1A6421F612DCFBAB00CAAE2C /* DrawingAreaImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6421F412DCFBAB00CAAE2C /* DrawingAreaImpl.h */; };
 		1A6421F712DCFBAB00CAAE2C /* DrawingAreaImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6421F512DCFBAB00CAAE2C /* DrawingAreaImpl.cpp */; };
-		1A64228B12DD024700CAAE2C /* DrawingArea.messages.in in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A64228A12DD024700CAAE2C /* DrawingArea.messages.in */; };
 		1A64229912DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64229712DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp */; };
 		1A64229A12DD029200CAAE2C /* DrawingAreaMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64229812DD029200CAAE2C /* DrawingAreaMessages.h */; };
 		1A64230812DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64230612DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp */; };
@@ -203,7 +201,6 @@
 		1AB7D78D1288CD9A00CFD08C /* WKDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7D78B1288CD9A00CFD08C /* WKDownload.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AB7D78E1288CD9A00CFD08C /* WKDownload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D78C1288CD9A00CFD08C /* WKDownload.cpp */; };
 		1AC25FC212A48F6000BD2671 /* PluginProcessShim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC25F8A12A48E0300BD2671 /* PluginProcessShim.cpp */; };
-		1AC25FDC12A4902700BD2671 /* PluginProcessShim.dylib in Copy Plug-in Process Shim */ = {isa = PBXBuildFile; fileRef = 1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */; };
 		1AC41AC71263C88300054E94 /* BinarySemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC41AC51263C88300054E94 /* BinarySemaphore.h */; };
 		1AC41AC81263C88300054E94 /* BinarySemaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC41AC61263C88300054E94 /* BinarySemaphore.cpp */; };
 		1AC86FF3130B46D3002C1257 /* WKPluginSiteDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC86FF1130B46D3002C1257 /* WKPluginSiteDataManager.cpp */; };
@@ -337,7 +334,6 @@
 		51B3005012529D0E000B5CA0 /* WebBackForwardListCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004E12529D0E000B5CA0 /* WebBackForwardListCF.cpp */; };
 		51B3005112529D0E000B5CA0 /* WebPageProxyCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */; };
 		6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */; };
-		6546A82C13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6546A82A13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h */; };
 		659C551E130006410025C0C2 /* InjectedBundlePageResourceLoadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */; };
 		65B86F1E12F11DE300B7DD8A /* WKBundleInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6D8A91A611F0EFD100DD01FE /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = 6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */; };
@@ -676,6 +672,9 @@
 		BCDDB32D124EC2E10048D13C /* WKAPICast.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDDB32C124EC2E10048D13C /* WKAPICast.h */; };
 		BCDE059B11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */; };
 		BCDE059C11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */; };
+		BCDE093B13272496001259FB /* MainMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FA31011E3921E00DB1371 /* MainMac.cpp */; };
+		BCDE093D13272496001259FB /* PluginProcessShim.dylib in Copy Plug-in Process Shim */ = {isa = PBXBuildFile; fileRef = 1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */; };
+		BCDE0ABF13272708001259FB /* PluginProcess.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCDE094213272496001259FB /* PluginProcess.app */; };
 		BCE2315D122C30CA00D5C35A /* WebURLRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE2315B122C30CA00D5C35A /* WebURLRequest.h */; };
 		BCE2315E122C30CA00D5C35A /* WebURLRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE2315C122C30CA00D5C35A /* WebURLRequest.cpp */; };
 		BCE231C2122C466E00D5C35A /* WebURLRequestMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCE231C0122C466E00D5C35A /* WebURLRequestMac.mm */; };
@@ -752,8 +751,6 @@
 		E134F01712EA5D33004EC58D /* WKPrintingView.h in Headers */ = {isa = PBXBuildFile; fileRef = E134F01512EA5D11004EC58D /* WKPrintingView.h */; };
 		E134F01A12EA5D99004EC58D /* WKPrintingView.mm in Sources */ = {isa = PBXBuildFile; fileRef = E134F01912EA5D99004EC58D /* WKPrintingView.mm */; };
 		E18C92F412DB9E7100CF2AEB /* PrintInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */; };
-		E18C92F512DB9E7A00CF2AEB /* PrintInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */; };
-		E18C92F612DB9E9400CF2AEB /* PrintInfoMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */; };
 		E1BB16A413201B9B00F49431 /* FullKeyboardAccessWatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BB1688132018BA00F49431 /* FullKeyboardAccessWatcher.h */; };
 		E1BB16A513201B9B00F49431 /* FullKeyboardAccessWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1BB1689132018BA00F49431 /* FullKeyboardAccessWatcher.mm */; };
 		E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CC1B8E12D7EADF00625838 /* PrintInfo.h */; };
@@ -796,19 +793,33 @@
 			remoteGlobalIDString = 1A50DB1D110A3BDC000D3FE5;
 			remoteInfo = WebProcess;
 		};
-		1AC25FD712A48FD500BD2671 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1AC25FAF12A48EA700BD2671;
-			remoteInfo = PluginProcessShim;
-		};
 		37F7407812721F740093869B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = C0CE72851247E66800BC0EC4;
 			remoteInfo = "Derived Sources";
+		};
+		BCDE093513272496001259FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1AC25FAF12A48EA700BD2671;
+			remoteInfo = PluginProcessShim;
+		};
+		BCDE093713272496001259FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = WebKit2;
+		};
+		BCDE0AC013272712001259FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BCDE093313272496001259FB /* Plugin Process */;
+			remoteInfo = "Plugin Process";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -820,21 +831,20 @@
 			dstSubfolderSpec = 1;
 			files = (
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
-				1A64228B12DD024700CAAE2C /* DrawingArea.messages.in in CopyFiles */,
-				6546A82C13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h in CopyFiles */,
+				BCDE0ABF13272708001259FB /* PluginProcess.app in CopyFiles */,
 				CD73BA42131A2E8B00EEDED2 /* WebFullScreenManagerProxy.h in CopyFiles */,
 				CD73BA4C131ACD8F00EEDED2 /* WebFullScreenManagerMessages.h in CopyFiles */,
 				CD73BA4D131ACD8F00EEDED2 /* WebFullScreenManagerProxyMessages.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1AC25FDD12A4904500BD2671 /* Copy Plug-in Process Shim */ = {
+		BCDE093C13272496001259FB /* Copy Plug-in Process Shim */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = WebProcess.app/Contents/MacOS;
+			dstPath = PluginProcess.app/Contents/MacOS;
 			dstSubfolderSpec = 16;
 			files = (
-				1AC25FDC12A4902700BD2671 /* PluginProcessShim.dylib in Copy Plug-in Process Shim */,
+				BCDE093D13272496001259FB /* PluginProcessShim.dylib in Copy Plug-in Process Shim */,
 			);
 			name = "Copy Plug-in Process Shim";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1267,6 +1277,8 @@
 		BC111B4C112F619200337BAB /* PageClientImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageClientImpl.mm; sourceTree = "<group>"; };
 		BC111B5B112F629800337BAB /* WebEventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEventFactory.h; sourceTree = "<group>"; };
 		BC111B5C112F629800337BAB /* WebEventFactory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEventFactory.mm; sourceTree = "<group>"; };
+		BC122FA3132707F300F7EAC1 /* PluginProcess.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginProcess.xcconfig; sourceTree = "<group>"; };
+		BC122FA61327087400F7EAC1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = PluginProcess/Info.plist; sourceTree = "<group>"; };
 		BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCMessageKinds.h; sourceTree = "<group>"; };
 		BC14DF75120B5B7900826C0C /* InjectedBundleScriptWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleScriptWorld.h; sourceTree = "<group>"; };
 		BC14DF76120B5B7900826C0C /* InjectedBundleScriptWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleScriptWorld.cpp; sourceTree = "<group>"; };
@@ -1523,6 +1535,7 @@
 		BCDDB32C124EC2E10048D13C /* WKAPICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKAPICast.h; sourceTree = "<group>"; };
 		BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextInjectedBundleClient.h; sourceTree = "<group>"; };
 		BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextInjectedBundleClient.cpp; sourceTree = "<group>"; };
+		BCDE094213272496001259FB /* PluginProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PluginProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCE2315B122C30CA00D5C35A /* WebURLRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURLRequest.h; sourceTree = "<group>"; };
 		BCE2315C122C30CA00D5C35A /* WebURLRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebURLRequest.cpp; sourceTree = "<group>"; };
 		BCE231C0122C466E00D5C35A /* WebURLRequestMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebURLRequestMac.mm; sourceTree = "<group>"; };
@@ -1676,6 +1689,7 @@
 				8DC2EF5B0486A6940098B216 /* WebKit2.framework */,
 				1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */,
 				1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */,
+				BCDE094213272496001259FB /* PluginProcess.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1717,6 +1731,7 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BC122FA51327085D00F7EAC1 /* PluginProcess */,
 				BC8A500E11765AD400757573 /* WebKit2 */,
 				BC8A500F11765AE300757573 /* WebProcess */,
 				6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */,
@@ -1808,6 +1823,7 @@
 				5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */,
 				1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */,
 				1A4F976C100E7B6600637A18 /* FeatureDefines.xcconfig */,
+				BC122FA3132707F300F7EAC1 /* PluginProcess.xcconfig */,
 				1AC25FBB12A48EDA00BD2671 /* PluginProcessShim.xcconfig */,
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
 				BCB86F4B116AAACD00CE20B7 /* WebKit2.xcconfig */,
@@ -2644,6 +2660,14 @@
 			path = CoreIPCSupport;
 			sourceTree = "<group>";
 		};
+		BC122FA51327085D00F7EAC1 /* PluginProcess */ = {
+			isa = PBXGroup;
+			children = (
+				BC122FA61327087400F7EAC1 /* Info.plist */,
+			);
+			name = PluginProcess;
+			sourceTree = "<group>";
+		};
 		BC204EDF11C83E72008F3375 /* InjectedBundle */ = {
 			isa = PBXGroup;
 			children = (
@@ -3447,12 +3471,10 @@
 			buildPhases = (
 				1A50DB1A110A3BDC000D3FE5 /* Resources */,
 				1A50DB1B110A3BDC000D3FE5 /* Sources */,
-				1AC25FDD12A4904500BD2671 /* Copy Plug-in Process Shim */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				1AC25FD812A48FD500BD2671 /* PBXTargetDependency */,
 				1A50DB27110A3BEF000D3FE5 /* PBXTargetDependency */,
 			);
 			name = WebProcess;
@@ -3502,6 +3524,25 @@
 			productReference = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		BCDE093313272496001259FB /* Plugin Process */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BCDE093E13272496001259FB /* Build configuration list for PBXNativeTarget "Plugin Process" */;
+			buildPhases = (
+				BCDE093813272496001259FB /* Resources */,
+				BCDE093A13272496001259FB /* Sources */,
+				BCDE093C13272496001259FB /* Copy Plug-in Process Shim */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BCDE093413272496001259FB /* PBXTargetDependency */,
+				BCDE093613272496001259FB /* PBXTargetDependency */,
+			);
+			name = "Plugin Process";
+			productName = WebProcess;
+			productReference = BCDE094213272496001259FB /* PluginProcess.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -3525,6 +3566,7 @@
 				1A50DB38110A3C13000D3FE5 /* All */,
 				8DC2EF4F0486A6940098B216 /* WebKit2 */,
 				1A50DB1D110A3BDC000D3FE5 /* WebProcess */,
+				BCDE093313272496001259FB /* Plugin Process */,
 				C0CE72851247E66800BC0EC4 /* Derived Sources */,
 				1AC25FAF12A48EA700BD2671 /* PluginProcessShim */,
 			);
@@ -3545,6 +3587,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BCDE093813272496001259FB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3646,10 +3695,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A6FA31111E3921E00DB1371 /* MainMac.cpp in Sources */,
-				1A1FA285127A13BC0050E709 /* NPObjectProxy.cpp in Sources */,
-				1A1FA35D127A45BF0050E709 /* NPObjectMessageReceiver.cpp in Sources */,
-				E18C92F512DB9E7A00CF2AEB /* PrintInfo.cpp in Sources */,
-				E18C92F612DB9E9400CF2AEB /* PrintInfoMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4021,6 +4066,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BCDE093A13272496001259FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BCDE093B13272496001259FB /* MainMac.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -4034,15 +4087,25 @@
 			target = 1A50DB1D110A3BDC000D3FE5 /* WebProcess */;
 			targetProxy = 1A50DB3B110A3C19000D3FE5 /* PBXContainerItemProxy */;
 		};
-		1AC25FD812A48FD500BD2671 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 1AC25FAF12A48EA700BD2671 /* PluginProcessShim */;
-			targetProxy = 1AC25FD712A48FD500BD2671 /* PBXContainerItemProxy */;
-		};
 		37F7407912721F740093869B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C0CE72851247E66800BC0EC4 /* Derived Sources */;
 			targetProxy = 37F7407812721F740093869B /* PBXContainerItemProxy */;
+		};
+		BCDE093413272496001259FB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1AC25FAF12A48EA700BD2671 /* PluginProcessShim */;
+			targetProxy = BCDE093513272496001259FB /* PBXContainerItemProxy */;
+		};
+		BCDE093613272496001259FB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* WebKit2 */;
+			targetProxy = BCDE093713272496001259FB /* PBXContainerItemProxy */;
+		};
+		BCDE0AC113272712001259FB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BCDE093313272496001259FB /* Plugin Process */;
+			targetProxy = BCDE0AC013272712001259FB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4179,6 +4242,27 @@
 			};
 			name = Production;
 		};
+		BCDE093F13272496001259FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC122FA3132707F300F7EAC1 /* PluginProcess.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		BCDE094013272496001259FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		BCDE094113272496001259FB /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 		C0CE72861247E66800BC0EC4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4256,6 +4340,16 @@
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1DEB91B308733DA50010E9CD /* Release */,
 				5D22D69B11A7534600BF30E5 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		BCDE093E13272496001259FB /* Build configuration list for PBXNativeTarget "Plugin Process" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BCDE093F13272496001259FB /* Debug */,
+				BCDE094013272496001259FB /* Release */,
+				BCDE094113272496001259FB /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
