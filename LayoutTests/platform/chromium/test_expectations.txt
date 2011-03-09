@@ -3308,3 +3308,7 @@ BUGCR75109 WIN LINUX : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
 BUGWK55854 WIN LINUX MAC : fast/forms/onchange-setvalueforuser.html = TEXT
+
+// New tests introduced in r80622, need rebase.
+BUGXJI : fast/dom/scroll-reveal-left-overflow.html = FAIL
+BUGXJI : fast/dom/scroll-reveal-top-overflow.html = FAIL

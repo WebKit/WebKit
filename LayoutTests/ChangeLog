@@ -9,6 +9,14 @@
 
 2011-03-08  Xiaomei Ji  <xji@chromium.org>
 
+        Unreviewed.
+
+        Add tests introduced in r80622 as expect to fail for now, rebase later.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-08  Xiaomei Ji  <xji@chromium.org>
+
         Reviewed by David Hyatt.
 
         Fix Regression: Content not drawn when scrolling horizontally in an RTL page.
