@@ -872,6 +872,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 
 .console-formatted-string, .console-formatted-regexp {
     color: rgb(196, 26, 22);
+    white-space: pre-wrap;
 }
 
 .console-formatted-null, .console-formatted-undefined {

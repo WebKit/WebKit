@@ -432,11 +432,9 @@ InjectedScript.prototype = {
                 className += "[" + obj.length + "]";
             return className;
         case "string":
-            if (!abbreviated)
-                return obj;
-            if (obj.length > 100)
-                return "\"" + obj.substring(0, 100) + "\u2026\"";
-            return "\"" + obj + "\"";
+            if (abbreviated && obj.length > 100)
+                return obj.substring(0, 100) + "\u2026";
+            return obj;
         case "function":
             var objectText = this._toString(obj);
             if (abbreviated)

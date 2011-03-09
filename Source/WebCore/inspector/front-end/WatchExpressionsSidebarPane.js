@@ -103,7 +103,7 @@ WebInspector.WatchExpressionsSection.prototype = {
             // last property, and then call the superclass's updateProperties() 
             // method to get all the properties refreshed at once.
             properties.push(property);
-            
+
             if (properties.length == propertyCount) {
                 this.updateProperties(properties, WebInspector.WatchExpressionTreeElement, WebInspector.WatchExpressionsSection.CompareProperties);
 

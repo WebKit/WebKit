@@ -32,17 +32,7 @@ function test()
 
     function dumpConsoleMessages()
     {
-        var messages = WebInspector.console.messages;
-        var result = [];
-        for (var i = 0; i < messages.length; ++i) {
-            var section = messages[i].section;
-            if (section) {
-                InspectorTest.addResult(section.titleElement.textContent);
-                var properties = section.propertiesForTest;
-                for (var j = 0; properties && j < properties.length; ++j)
-                    InspectorTest.addResult("    " + properties[j].name + " = " + properties[j].value._description);
-            }
-        }
+        InspectorTest.addResult(InspectorTest.textContentWithLineBreaks(document.getElementById("console-messages")));
         InspectorTest.completeTest();
     }
 }

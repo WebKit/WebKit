@@ -184,7 +184,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         var description = this.property.value.description;
         // Render \n as a nice unicode cr symbol.
         if (this.property.value.type === "string" && typeof description === "string")
-            description = description.replace(/\n/g, "\u21B5");
+            description = "\"" + description.replace(/\n/g, "\u21B5") + "\"";
         this.valueElement.textContent = description;
 
         if (this.property.isGetter)

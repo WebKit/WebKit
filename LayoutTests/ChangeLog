@@ -2,6 +2,22 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: watch expressions should show string values in quotes.
+        https://bugs.webkit.org/show_bug.cgi?id=55846
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest):
+        * inspector/console/console-dir-expected.txt:
+        * inspector/console/console-dir.html:
+        * inspector/debugger/debugger-expand-scope-expected.txt:
+        * inspector/debugger/debugger-expand-scope.html:
+        * platform/chromium/inspector/console/console-dir-expected.txt:
+        * platform/chromium/inspector/debugger/debugger-expand-scope-expected.txt:
+
+2011-03-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: "length" getter is invoked upon console object formatting.
         https://bugs.webkit.org/show_bug.cgi?id=55220
 

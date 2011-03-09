@@ -171,7 +171,7 @@ WebInspector.LocalJSONObject.prototype = {
             case "object":
                 return this.hasChildren ? "{...}" : "{ }";
             default:
-                return JSON.stringify(this._value);
+                return String(this._value);
         }
     },
 

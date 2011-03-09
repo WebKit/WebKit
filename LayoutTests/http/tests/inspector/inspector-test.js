@@ -239,6 +239,21 @@ InspectorTest.addSniffer = function(receiver, methodName, override, opt_sticky)
     };
 }
 
+InspectorTest.textContentWithLineBreaks = function(node)
+{
+    var buffer = "";
+    var currentNode = node;
+    while (currentNode = currentNode.traverseNextNode(node)) {
+        if (currentNode.nodeType === Node.TEXT_NODE)
+            buffer += currentNode.nodeValue;
+        else if (currentNode.nodeName === "LI")
+            buffer += "\n    ";
+        else if (currentNode.classList.contains("console-message"))
+            buffer += "\n\n";
+    }
+    return buffer;
+}
+
 };
 
 var runTestCallId = 0;

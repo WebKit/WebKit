@@ -44,26 +44,17 @@ function test()
 
     function step3()
     {
+    
         var sections = WebInspector.currentPanel.sidebarPanes.scopechain._sections;
         InspectorTest.addResult("");
         InspectorTest.addResult("Dump scope sections:");
         for (var i = 0; i < sections.length; i++) {
             var section = sections[i];
-            InspectorTest.addResult("- " + section.headerElement.textContent);
-            if (!section.expanded) {
-                InspectorTest.addResult("  <section collapsed>");
-                continue;
-            }
             var properties = section.propertiesForTest;
-            if (properties) {
-                for (var j = 0; j < properties.length; j++) {
-                    var p = properties[j];
-                    InspectorTest.addResult("  " + p.name + ": " + p.value.description);
-                }
-            } else
-                InspectorTest.addResult("  <no properties>");
+            InspectorTest.addResult(InspectorTest.textContentWithLineBreaks(section.element));
+            if (!section.expanded)
+                InspectorTest.addResult("    <section collapsed>");
         }
-        InspectorTest.addResult("");
         InspectorTest.completeDebuggerTest();
     }
 }

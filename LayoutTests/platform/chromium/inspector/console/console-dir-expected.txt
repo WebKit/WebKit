@@ -3,22 +3,26 @@ CONSOLE MESSAGE: line 10: [object NodeList]
 CONSOLE MESSAGE: line 11: [object XPathResult]
 Tests that console logging dumps proper messages.
 
-Array[2]
-    0 = "test1"
-    1 = "test2"
-    length = 2
-    __proto__ = Array[0]
-NodeList[1]
-    0 = HTMLHtmlElement
-    length = 1
-    __proto__ = NodeList
-XPathResult
-    booleanValue = Error: TYPE_ERR: DOM XPath Exception 52
-    invalidIteratorState = false
-    numberValue = Error: TYPE_ERR: DOM XPath Exception 52
-    resultType = 4
-    singleNodeValue = Error: TYPE_ERR: DOM XPath Exception 52
-    snapshotLength = Error: TYPE_ERR: DOM XPath Exception 52
-    stringValue = Error: TYPE_ERR: DOM XPath Exception 52
-    __proto__ = XPathResult
+
+
+console-dir.html:9Array[2]
+    0: "test1"
+    1: "test2"
+    length: 2
+    __proto__: Array[0]
+
+console-dir.html:10NodeList[1]
+    0: HTMLHtmlElement
+    length: 1
+    __proto__: NodeList
+
+console-dir.html:11XPathResult
+    booleanValue: Error: TYPE_ERR: DOM XPath Exception 52
+    invalidIteratorState: false
+    numberValue: Error: TYPE_ERR: DOM XPath Exception 52
+    resultType: 4
+    singleNodeValue: Error: TYPE_ERR: DOM XPath Exception 52
+    snapshotLength: Error: TYPE_ERR: DOM XPath Exception 52
+    stringValue: Error: TYPE_ERR: DOM XPath Exception 52
+    __proto__: XPathResult
 

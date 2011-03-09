@@ -6,16 +6,15 @@ Evaluated script in console.
 Script execution paused.
 
 Dump scope sections:
-- Local
-  innerFunctionLocalVar: 2012
-  this: DOMWindow
-  x: 2010
-- Closure
-  makeClosureLocalVar: "local.TextParam"
-  n: "TextParam"
-- DOMWindowGlobal
-  <section collapsed>
-
+Local
+    innerFunctionLocalVar: 2012
+    this: DOMWindow
+    x: 2010
+Closure
+    makeClosureLocalVar: "local.TextParam"
+    n: "TextParam"
+DOMWindowGlobal
+    <section collapsed>
 Script execution resumed.
 Debugger was disabled.
 

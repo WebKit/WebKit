@@ -6,20 +6,19 @@ Evaluated script in console.
 Script execution paused.
 
 Dump scope sections:
-- Local
-  arguments: Arguments[1]
-  innerFunctionLocalVar: 2012
-  this: DOMWindow
-  x: 2010
-- DOMWindowWith Block
-  innerFunction: function innerFunction(x) {
-- Closure
-  arguments: Arguments[1]
-  makeClosureLocalVar: "local.TextParam"
-  n: "TextParam"
-- DOMWindowGlobal
-  <section collapsed>
-
+Local
+    arguments: Arguments[1]
+    innerFunctionLocalVar: 2012
+    this: DOMWindow
+    x: 2010
+DOMWindowWith Block
+    innerFunction: function innerFunction(x) {
+Closure
+    arguments: Arguments[1]
+    makeClosureLocalVar: "local.TextParam"
+    n: "TextParam"
+DOMWindowGlobal
+    <section collapsed>
 Script execution resumed.
 Debugger was disabled.
 
