@@ -68,46 +68,10 @@ JavaClass* JavaInstance::getClass() const
     return m_class;
 }
 
-bool JavaInstance::invokeMethod(const char* methodName, const NPVariant* args, int count, NPVariant* resultValue)
+jvalue JavaInstance::invokeMethod(const JavaMethod* method, jvalue* args)
 {
-    VOID_TO_NPVARIANT(*resultValue);
-
-    MethodList methodList = getClass()->methodsNamed(methodName);
-
-    size_t numMethods = methodList.size();
-
-    // Try to find a good match for the overloaded method.  The
-    // fundamental problem is that JavaScript doesn't have the
-    // notion of method overloading and Java does.  We could
-    // get a bit more sophisticated and attempt to does some
-    // type checking as we as checking the number of parameters.
-    JavaMethod* aMethod;
-    JavaMethod* method = 0;
-    for (size_t methodIndex = 0; methodIndex < numMethods; methodIndex++) {
-        aMethod = methodList[methodIndex];
-        if (aMethod->numParameters() == count) {
-            method = aMethod;
-            break;
-        }
-    }
-    if (!method)
-        return false;
-
-    const JavaMethod* jMethod = static_cast<const JavaMethod*>(method);
-
-    jvalue* jArgs = 0;
-    if (count > 0)
-        jArgs = static_cast<jvalue*>(malloc(count * sizeof(jvalue)));
-
-    for (int i = 0; i < count; i++)
-        jArgs[i] = convertNPVariantToJValue(args[i], jMethod->parameterAt(i));
-
-    jvalue result = callJNIMethod(javaInstance(), jMethod->JNIReturnType(), jMethod->name().utf8().data(), jMethod->signature(), jArgs);
-
-    convertJValueToNPVariant(result, jMethod->JNIReturnType(), jMethod->returnType(), resultValue);
-    free(jArgs);
-
-    return true;
+    ASSERT(getClass()->methodsNamed(method->name().utf8()).find(method) != notFound);
+    return callJNIMethod(javaInstance(), method->JNIReturnType(), method->name().utf8(), method->signature(), args);
 }
 
 #endif // ENABLE(JAVA_BRIDGE)

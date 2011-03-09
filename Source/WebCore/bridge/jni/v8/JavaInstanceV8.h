@@ -43,6 +43,7 @@ namespace JSC {
 namespace Bindings {
 
 class JavaClass;
+class JavaMethod;
 
 class JavaInstance : public RefCounted<JavaInstance> {
 public:
@@ -50,9 +51,7 @@ public:
     virtual ~JavaInstance();
 
     JavaClass* getClass() const;
-
-    bool invokeMethod(const char* name, const NPVariant* args, int argsCount, NPVariant* result);
-
+    jvalue invokeMethod(const JavaMethod*, jvalue* args);
     jobject javaInstance() const { return m_instance->m_instance; }
 
     // These functions are called before and after the main entry points into

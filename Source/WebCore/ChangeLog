@@ -1,3 +1,18 @@
+2011-03-09  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        NPAPI - jvalue conversion should not be in JavaInstance
+        https://bugs.webkit.org/show_bug.cgi?id=55967
+
+        No new tests, refactoring only.
+
+        * bridge/jni/v8/JavaInstanceV8.cpp:
+        (JavaInstance::invokeMethod):
+        * bridge/jni/v8/JavaInstanceV8.h:
+        * bridge/jni/v8/JavaNPObjectV8.cpp:
+        (JSC::Bindings::JavaNPObjectInvoke):
+
 2011-03-09  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.

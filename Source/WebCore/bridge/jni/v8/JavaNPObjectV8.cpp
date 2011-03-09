@@ -33,6 +33,7 @@
 #include "JavaClassV8.h"
 #include "JavaFieldV8.h"
 #include "JavaInstanceV8.h"
+#include "JavaMethod.h"
 #include "npruntime_impl.h"
 
 namespace JSC {
@@ -115,12 +116,43 @@ bool JavaNPObjectInvoke(NPObject* obj, NPIdentifier identifier, const NPVariant*
         return false;
 
     instance->begin();
-    bool r = instance->invokeMethod(name, args, argCount, result);
-    instance->end();
 
+    MethodList methodList = instance->getClass()->methodsNamed(name);
     // TODO: use NPN_MemFree
     free(name);
-    return r;
+
+    // Try to find a good match for the overloaded method. The
+    // fundamental problem is that JavaScript doesn't have the
+    // notion of method overloading and Java does. We could
+    // get a bit more sophisticated and attempt to do some
+    // type checking as well as checking the number of parameters.
+    size_t numMethods = methodList.size();
+    JavaMethod* aMethod;
+    JavaMethod* jMethod = 0;
+    for (size_t methodIndex = 0; methodIndex < numMethods; methodIndex++) {
+        aMethod = methodList[methodIndex];
+        if (aMethod->numParameters() == static_cast<int>(argCount)) {
+            jMethod = aMethod;
+            break;
+        }
+    }
+    if (!jMethod)
+        return false;
+
+    jvalue* jArgs = 0;
+    if (argCount > 0)
+        jArgs = static_cast<jvalue*>(malloc(argCount * sizeof(jvalue)));
+
+    for (unsigned int i = 0; i < argCount; i++)
+        jArgs[i] = convertNPVariantToJValue(args[i], jMethod->parameterAt(i));
+
+    jvalue jResult = instance->invokeMethod(jMethod, jArgs);
+    instance->end();
+    free(jArgs);
+
+    VOID_TO_NPVARIANT(*result);
+    convertJValueToNPVariant(jResult, jMethod->JNIReturnType(), jMethod->returnType(), result);
+    return true;
 }
 
 bool JavaNPObjectHasProperty(NPObject* obj, NPIdentifier identifier)
