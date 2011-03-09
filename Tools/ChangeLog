@@ -1,3 +1,11 @@
+2011-03-08  Kenji Imasaki  <imasaki@chromium.org>
+
+        Reviewed by David Levin.
+
+        Adding myself to the committer file.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-03-08  Jessie Berlin  <jberlin@apple.com>
 
         Rubber-stamped by Adam Roben.
