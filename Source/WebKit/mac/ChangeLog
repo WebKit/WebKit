@@ -1,3 +1,13 @@
+2011-03-09  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Use the Cookie Storage from the Private Browsing Storage Session directly
+        https://bugs.webkit.org/show_bug.cgi?id=55986
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-03-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Timothy Hatcher.

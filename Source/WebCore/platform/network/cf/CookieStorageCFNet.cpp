@@ -74,10 +74,11 @@ void setCookieStoragePrivateBrowsingEnabled(bool enabled)
     }
 
 #if USE(CFURLSTORAGESESSIONS)
-    privateBrowsingCookieStorage().adoptCF(wkCreatePrivateInMemoryHTTPCookieStorage(ResourceHandle::privateBrowsingStorageSession()));
-#else
-    privateBrowsingCookieStorage().adoptCF(wkCreatePrivateInMemoryHTTPCookieStorage(0));
+    if (CFURLStorageSessionRef privateStorageSession = ResourceHandle::privateBrowsingStorageSession())
+        privateBrowsingCookieStorage().adoptCF(wkCopyHTTPCookieStorage(privateStorageSession));
+    else
 #endif
+        privateBrowsingCookieStorage().adoptCF(wkCreateInMemoryHTTPCookieStorage());
 }
 
 static void notifyCookiesChangedOnMainThread(void* context)

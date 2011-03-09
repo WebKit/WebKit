@@ -244,7 +244,7 @@ extern CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
 extern NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
 
 typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
-extern CFHTTPCookieStorageRef (*wkCreatePrivateInMemoryHTTPCookieStorage)(CFURLStorageSessionRef);
+extern CFHTTPCookieStorageRef (*wkCopyHTTPCookieStorage)(CFURLStorageSessionRef);
 extern unsigned (*wkGetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef);
 extern NSArray *(*wkHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSURL *);
 extern void (*wkSetHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);

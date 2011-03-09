@@ -92,7 +92,7 @@ void setCookieStoragePrivateBrowsingEnabled(bool enabled)
         return;
 
     if (enabled && ResourceHandle::privateBrowsingStorageSession()) {
-        privateBrowsingCookieStorage().adoptCF(wkCreatePrivateInMemoryHTTPCookieStorage(ResourceHandle::privateBrowsingStorageSession()));
+        privateBrowsingCookieStorage().adoptCF(wkCopyHTTPCookieStorage(ResourceHandle::privateBrowsingStorageSession()));
 
         // FIXME: When Private Browsing is enabled, the Private Browsing Cookie Storage should be
         // observed for changes, not the default Cookie Storage.

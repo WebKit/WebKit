@@ -95,7 +95,7 @@ void InitWebCoreSystemInterface(void)
         INIT(SignalCFReadStreamHasBytes);
         INIT(CreatePrivateStorageSession);
         INIT(CopyRequestWithStorageSession);
-        INIT(CreatePrivateInMemoryHTTPCookieStorage);
+        INIT(CopyHTTPCookieStorage);
         INIT(GetHTTPCookieAcceptPolicy);
         INIT(HTTPCookiesForURL);
         INIT(SetHTTPCookiesForURL);
