@@ -438,6 +438,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/WebFramePolicyListenerProxy.h \
 	Source/WebKit2/UIProcess/WebFrameProxy.cpp \
 	Source/WebKit2/UIProcess/WebFrameProxy.h \
+	Source/WebKit2/UIProcess/WebFullScreenManagerProxy.cpp \
+	Source/WebKit2/UIProcess/WebFullScreenManagerProxy.h \
 	Source/WebKit2/UIProcess/WebGeolocationManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebGeolocationManagerProxy.h \
 	Source/WebKit2/UIProcess/WebGeolocationProvider.cpp \
@@ -484,6 +486,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/Downloads/Download.h \
 	Source/WebKit2/WebProcess/Downloads/DownloadManager.cpp \
 	Source/WebKit2/WebProcess/Downloads/DownloadManager.h \
+	Source/WebKit2/WebProcess/FullScreen/WebFullScreenManager.cpp \
+	Source/WebKit2/WebProcess/FullScreen/WebFullScreenManager.h \
 	Source/WebKit2/WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \
 	Source/WebKit2/WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
 	Source/WebKit2/WebProcess/Geolocation/WebGeolocationManager.cpp \
@@ -691,6 +695,7 @@ libWebKit2_la_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Authentication \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Cookies \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Downloads \
+	-I$(srcdir)/Source/WebKit2/WebProcess/FullScreen \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Geolocation \
 	-I$(srcdir)/Source/WebKit2/WebProcess/gtk \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle \
@@ -854,6 +859,10 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebDatabaseManagerMessages.h \
 	DerivedSources/WebKit2/WebDatabaseManagerProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebDatabaseManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebFullScreenManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebFullScreenManagerMessages.h \
+	DerivedSources/WebKit2/WebFullScreenManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebFullScreenManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebGeolocationManagerMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebGeolocationManagerMessages.h \
 	DerivedSources/WebKit2/WebGeolocationManagerProxyMessageReceiver.cpp \
@@ -903,6 +912,7 @@ vpath %.messages.in = \
 	$(WebKit2)/WebProcess/ApplicationCache \
 	$(WebKit2)/WebProcess/Authentication \
 	$(WebKit2)/WebProcess/Cookies \
+	$(WebKit2)/WebProcess/FullScreen \
 	$(WebKit2)/WebProcess/Geolocation \
 	$(WebKit2)/WebProcess/KeyValueStorage \
 	$(WebKit2)/WebProcess/Plugins \

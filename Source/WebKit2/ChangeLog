@@ -1,3 +1,9 @@
+2011-03-09  Alejandro G. Castro  <alex@igalia.com>
+
+        Fix GTK+ compilation after r80619. Add WebFullScreenManager.
+
+        * GNUmakefile.am:
+
 2011-03-08  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Sam Weinig.
