@@ -1,3 +1,16 @@
+2011-03-09  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Patch FontPlatformDataLinux to properly initialize and copy orientation/text-orientation in all
+        places.  Make sure text-orientation is specified in the lookups/creation in FontCustomPlatformData
+        and FontCache.
+
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/chromium/FontPlatformDataLinux.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2011-03-09  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

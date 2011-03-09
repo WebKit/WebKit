@@ -33,6 +33,7 @@
 
 #include "FontOrientation.h"
 #include "FontRenderStyle.h"
+#include "TextOrientation.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
@@ -66,6 +67,8 @@ public:
         , m_emSizeInFontUnits(0)
         , m_fakeBold(false)
         , m_fakeItalic(false)
+        , m_orientation(Horizontal)
+        , m_textOrientation(TextOrientationVerticalRight)
         { }
 
     FontPlatformData()
@@ -75,6 +78,7 @@ public:
         , m_fakeBold(false)
         , m_fakeItalic(false)
         , m_orientation(Horizontal)
+        , m_textOrientation(TextOrientationVerticalRight)
         { }
 
     FontPlatformData(float textSize, bool fakeBold, bool fakeItalic)
@@ -84,10 +88,11 @@ public:
         , m_fakeBold(fakeBold)
         , m_fakeItalic(fakeItalic)
         , m_orientation(Horizontal)
+        , m_textOrientation(TextOrientationVerticalRight)
         { }
 
     FontPlatformData(const FontPlatformData&);
-    FontPlatformData(SkTypeface*, const char* name, float textSize, bool fakeBold, bool fakeItalic, FontOrientation orientation = Horizontal);
+    FontPlatformData(SkTypeface*, const char* name, float textSize, bool fakeBold, bool fakeItalic, FontOrientation = Horizontal, TextOrientation = TextOrientationVerticalRight);
     FontPlatformData(const FontPlatformData& src, float textSize);
     ~FontPlatformData();
 
@@ -162,6 +167,7 @@ private:
     bool m_fakeBold;
     bool m_fakeItalic;
     FontOrientation m_orientation;
+    TextOrientation m_textOrientation;
     FontRenderStyle m_style;
     mutable RefPtr<RefCountedHarfbuzzFace> m_harfbuzzFace;
 
