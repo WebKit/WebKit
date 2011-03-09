@@ -22,9 +22,8 @@
 
 messages -> DrawingAreaProxy {
     Update(uint64_t stateID, WebKit::UpdateInfo updateInfo)
-    DidUpdateBackingStoreState(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo, WebKit::LayerTreeContext context)
-
 #if USE(ACCELERATED_COMPOSITING)
+    DidUpdateBackingStoreState(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo, WebKit::LayerTreeContext context)
     EnterAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
     ExitAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo)
 #endif

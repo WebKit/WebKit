@@ -1,3 +1,10 @@
+2011-03-09  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction.
+
+        * UIProcess/DrawingAreaProxy.messages.in: Exclude the other
+          method using LayerTreeContext for non-accelerated composition case.
+
 2011-03-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
