@@ -1,3 +1,26 @@
+2011-03-08  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        REGRESSION: Copied content loses formatting on paste to external apps.
+        https://bugs.webkit.org/show_bug.cgi?id=47615
+        <rdar://problem/9001214>
+        
+        This is a resubmission of a patch that was landed a while ago then rolled
+        back because of a build failure on SnowLeopard and Leopard on the 32-bit builds.
+
+        This patch adds a way for WebKit2 to create NSAttributedStrings from
+        a DOM range without using the AppKit api initWithDOMRange that internally
+        needs to access the WebView. The NSAttributedString is needed to create
+        RTF formats in the pasteboard.
+        This is to be considered a first step, since in the future we want to have
+        an implementation based on the TextIterator.
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/HTMLConverter.h: Added.
+        * platform/mac/HTMLConverter.mm: Added.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection):
+
 2011-03-08  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
