@@ -81,3 +81,20 @@ WKViewFindIndicatorCallback WKViewGetFindIndicatorCallback(WKViewRef viewRef, vo
 {    
     return toImpl(viewRef)->getFindIndicatorCallback(context);
 }
+
+void WKViewSetViewUndoClient(WKViewRef viewRef, const WKViewUndoClient* wkClient)
+{
+    if (wkClient && wkClient->version)
+        return;
+    toImpl(viewRef)->initializeUndoClient(wkClient);
+}
+
+void WKViewReapplyEditCommand(WKViewRef viewRef, WKEditCommandRef command)
+{
+    toImpl(viewRef)->reapplyEditCommand(toImpl(command));
+}
+
+void WKViewUnapplyEditCommand(WKViewRef viewRef, WKEditCommandRef command)
+{
+    toImpl(viewRef)->unapplyEditCommand(toImpl(command));
+}

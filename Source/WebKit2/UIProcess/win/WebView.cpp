@@ -284,6 +284,11 @@ void WebView::initialize()
     ::RegisterDragDrop(m_window, this);
 }
 
+void WebView::initializeUndoClient(const WKViewUndoClient* client)
+{
+    m_undoClient.initialize(client);
+}
+
 void WebView::setParentWindow(HWND parentWindow)
 {
     if (m_window) {
@@ -642,6 +647,7 @@ void WebView::stopTrackingMouseLeave()
 
 void WebView::close()
 {
+    m_undoClient.initialize(0);
     ::RevokeDragDrop(m_window);
     setParentWindow(0);
     m_page->close();
@@ -795,12 +801,31 @@ void WebView::setViewportArguments(const WebCore::ViewportArguments&)
 {
 }
 
-void WebView::registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo)
+void WebView::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpCommand, WebPageProxy::UndoOrRedo undoOrRedo)
 {
+    RefPtr<WebEditCommandProxy> command = prpCommand;
+    m_undoClient.registerEditCommand(this, command, undoOrRedo);
 }
 
 void WebView::clearAllEditCommands()
 {
+    m_undoClient.clearAllEditCommands(this);
+}
+
+void WebView::reapplyEditCommand(WebEditCommandProxy* command)
+{
+    if (!m_page->isValid() || !m_page->isValidEditCommand(command))
+        return;
+    
+    command->reapply();
+}
+
+void WebView::unapplyEditCommand(WebEditCommandProxy* command)
+{
+    if (!m_page->isValid() || !m_page->isValidEditCommand(command))
+        return;
+    
+    command->unapply();
 }
 
 FloatRect WebView::convertToDeviceSpace(const FloatRect& rect)

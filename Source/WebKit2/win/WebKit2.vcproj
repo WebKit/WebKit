@@ -3126,6 +3126,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\UIProcess\win\WebUndoClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\win\WebUndoClient.h"
+					>
+				</File>
+				<File
 					RelativePath="..\UIProcess\win\WebView.cpp"
 					>
 				</File>

@@ -30,6 +30,7 @@
 #include "PageClient.h"
 #include "WKView.h"
 #include "WebPageProxy.h"
+#include "WebUndoClient.h"
 #include <ShlObj.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/DragActions.h>
@@ -64,6 +65,10 @@ public:
     void setFindIndicatorCallback(WKViewFindIndicatorCallback, void*);
     WKViewFindIndicatorCallback getFindIndicatorCallback(void**);
     void initialize();
+    
+    void initializeUndoClient(const WKViewUndoClient*);
+    void reapplyEditCommand(WebEditCommandProxy*);
+    void unapplyEditCommand(WebEditCommandProxy*);
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
@@ -193,6 +198,8 @@ private:
     RefPtr<WebPageProxy> m_page;
 
     unsigned m_inIMEComposition;
+
+    WebUndoClient m_undoClient;
 
     WKViewFindIndicatorCallback m_findIndicatorCallback;
     void* m_findIndicatorCallbackContext;

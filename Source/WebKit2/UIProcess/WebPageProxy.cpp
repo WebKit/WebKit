@@ -2298,6 +2298,11 @@ void WebPageProxy::removeEditCommand(WebEditCommandProxy* command)
     process()->send(Messages::WebPage::DidRemoveEditCommand(command->commandID()), m_pageID);
 }
 
+bool WebPageProxy::isValidEditCommand(WebEditCommandProxy* command)
+{
+    return m_editCommandSet.find(command) != m_editCommandSet.end();
+}
+
 int64_t WebPageProxy::spellDocumentTag()
 {
     if (!m_hasSpellDocumentTag) {

@@ -33,6 +33,24 @@
 extern "C" {
 #endif
 
+// Undo Client.
+enum {
+    kWKViewUndo = 0,
+    kWKViewRedo = 1
+};
+typedef uint32_t WKViewUndoType;
+
+typedef void (*WKViewRegisterEditCommandCallback)(WKViewRef, WKEditCommandRef, int32_t undoOrRedo, const void *clientInfo);
+typedef void (*WKViewClearAllEditCommandsCallback)(WKViewRef, const void *clientInfo);
+
+struct WKViewUndoClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKViewRegisterEditCommandCallback                                   registerEditCommand;
+    WKViewClearAllEditCommandsCallback                                  clearAllEditCommands;
+};
+typedef struct WKViewUndoClient WKViewUndoClient;
+
 WK_EXPORT WKTypeID WKViewGetTypeID();
 
 WK_EXPORT WKViewRef WKViewCreate(RECT rect, WKContextRef context, WKPageGroupRef pageGroup, HWND parentWindow);
@@ -40,6 +58,10 @@ WK_EXPORT WKViewRef WKViewCreate(RECT rect, WKContextRef context, WKPageGroupRef
 WK_EXPORT HWND WKViewGetWindow(WKViewRef view);
 
 WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
+
+WK_EXPORT void WKViewSetViewUndoClient(WKViewRef view, const WKViewUndoClient* client);
+WK_EXPORT void WKViewReapplyEditCommand(WKViewRef view, WKEditCommandRef command);
+WK_EXPORT void WKViewUnapplyEditCommand(WKViewRef view, WKEditCommandRef command);
 
 WK_EXPORT void WKViewSetParentWindow(WKViewRef view, HWND parentWindow);
 WK_EXPORT void WKViewWindowAncestryDidChange(WKViewRef view);

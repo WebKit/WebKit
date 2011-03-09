@@ -1,5 +1,38 @@
 2011-03-08  Jeff Miller  <jeffm@apple.com>
 
+        Reviewed by Adele Peterson.
+
+        WebKit2: Implement Windows glue for Undo/Redo
+        https://bugs.webkit.org/show_bug.cgi?id=55961
+        
+        Expose Undo/Redo infrastructure through WKView on Windows by
+        adding an undo client as well as APIs to reapply and unapply
+        an edit command.
+
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewSetViewUndoClient): Added.
+        (WKViewReapplyEditCommand): Added.
+        (WKViewUnapplyEditCommand): Added.
+        * UIProcess/API/C/win/WKView.h: Added WKViewUndoClient, WKViewSetViewUndoClient(), and WKViewUnapplyEditCommand().
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isValidEditCommand): Added, used to validated an edit command from a WKView API.
+        * UIProcess/WebPageProxy.h: Added isValidEditCommand().
+        * UIProcess/win/WebUndoClient.cpp: Added, APIClient for WKViewUndoClient. 
+        (WebKit::WebUndoClient::registerEditCommand): Added.
+        (WebKit::WebUndoClient::clearAllEditCommands): Added.
+        * UIProcess/win/WebUndoClient.h: Added, APIClient for WKViewUndoClient.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::initializeUndoClient): Added.
+        (WebKit::WebView::close): Clear out undo client.
+        (WebKit::WebView::registerEditCommand): Implemented to call through to WKViewUndoClient.
+        (WebKit::WebView::clearAllEditCommands): Implmented to call through to WKViewUndoClient.
+        (WebKit::WebView::reapplyEditCommand): Added.
+        (WebKit::WebView::unapplyEditCommand): Added.
+        * UIProcess/win/WebView.h: Added undo client support.
+        * win/WebKit2.vcproj: Added WebUndoClient.cpp and WebUndoClient.h.
+
+2011-03-08  Jeff Miller  <jeffm@apple.com>
+
         Reviewed by Sam Weinig.
 
         WebKit2: Expose WebEditCommandProxy in the C API on Windows
