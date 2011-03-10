@@ -1222,6 +1222,9 @@ void QWebPagePrivate::dynamicPropertyChangeEvent(QDynamicPropertyChangeEvent* ev
     else if (event->propertyName() == "_q_webInspectorServerPort") {
         InspectorServerQt* inspectorServer = InspectorServerQt::server();
         inspectorServer->listen(inspectorServerPort());
+    } else if (event->propertyName() == "_q_deadDecodedDataDeletionInterval") {
+        double interval = q->property("_q_deadDecodedDataDeletionInterval").toDouble();
+        memoryCache()->setDeadDecodedDataDeletionInterval(interval);
     }
 }
 #endif

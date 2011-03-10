@@ -1,3 +1,17 @@
+2011-03-10  Stanislav Paltis  <Stanislav.Paltis@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] MemoryCache deadDecodedDataDeletionInterval is not exposed for client's usage
+        https://bugs.webkit.org/show_bug.cgi?id=55945
+        
+        Added handling of dynamic/runtime property _q_deadDecodedDataDeletionInterval to 
+        set interval used to trigger when decoded data in dead list of object cache will 
+        be purged from object cache. 
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::dynamicPropertyChangeEvent):
+
 2011-03-10  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Antonio Gomes.
