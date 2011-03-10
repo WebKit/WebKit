@@ -1,3 +1,10 @@
+2011-03-10  Adam Barth  <abarth@webkit.org>
+
+        Partial revert of http://trac.webkit.org/changeset/80670.  This test
+        has been failing sporatically since it was changed in that revision.
+
+        * platform/mac/accessibility/aria-expanded-notifications.html:
+
 2011-03-10  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.

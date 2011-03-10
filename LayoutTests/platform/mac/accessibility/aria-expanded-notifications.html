@@ -2,8 +2,30 @@
 <html>
 <head>
 <link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
-<script src="../../../fast/js/resources/js-test-pre.js"></script>
 <script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<ul id="tree0" role="tree" aria-labelledby="treelabel" aria-activedescendant="tree0_item0_2_0_1" tabindex="0">
+    <li id="tree0_item0" role="treeitem" aria-level="1" aria-expanded="true">
+        <span>
+            <span class="expander"></span>
+        Animals
+        </span>
+        <ul role="group">
+             <li id="tree0_item0_0" role="treeitem" aria-level="2"><span>Birds</span></li>
+        </ul>
+     </li>
+</ul>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
     description("This tests that when aria-expanded is toggled, the appropriate notifications are sent out");
 
     var axTree = 0;
@@ -29,9 +51,7 @@
         notifyCount++;
     }
 
-    function test() {
-        if (!window.accessibilityController) return;
-
+    if (window.accessibilityController) {
         window.layoutTestController.waitUntilDone();
 
         var domTree = document.getElementById("tree0");
@@ -47,28 +67,9 @@
 
         // the second aria-expanded should generate row count, row expanded.
         document.getElementById("tree0_item0").setAttribute("aria-expanded", "true");
-   }
-</script>
-</head>
-<body id="body" onload="test()">
+    }
 
-<ul id="tree0" role="tree" aria-labelledby="treelabel" aria-activedescendant="tree0_item0_2_0_1" tabindex="0">
-    <li id="tree0_item0" role="treeitem" aria-level="1" aria-expanded="true">
-        <span>
-            <span class="expander"></span>
-        Animals
-        </span>
-        <ul role="group">
-             <li id="tree0_item0_0" role="treeitem" aria-level="2"><span>Birds</span></li>
-        </ul>
-     </li>
-</ul>
-
-<p id="description"></p>
-<div id="console"></div>
-
-<script>
-    var successfullyParsed = true;
+    successfullyParsed = true;
 </script>
 
 <script src="../../../fast/js/resources/js-test-post.js"></script>
