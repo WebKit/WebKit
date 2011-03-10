@@ -108,14 +108,14 @@ public:
     void querySelector(ErrorString*, long nodeId, const String& selectors, bool documentWide, long* elementId);
     void querySelectorAll(ErrorString*, long nodeId, const String& selectors, bool documentWide, RefPtr<InspectorArray>* result);
     void getDocument(ErrorString*, RefPtr<InspectorObject>* root);
-    void getChildNodes(ErrorString*, long nodeId);
+    void childNodes(ErrorString*, long nodeId);
     void setAttribute(ErrorString*, long elementId, const String& name, const String& value, bool* success);
     void removeAttribute(ErrorString*, long elementId, const String& name, bool* success);
     void removeNode(ErrorString*, long nodeId, long* outNodeId);
-    void changeTagName(ErrorString*, long nodeId, const String& tagName, long* newId);
-    void getOuterHTML(ErrorString*, long nodeId, WTF::String* outerHTML);
+    void setNodeName(ErrorString*, long nodeId, const String& name, long* newId);
+    void outerHTML(ErrorString*, long nodeId, WTF::String* outerHTML);
     void setOuterHTML(ErrorString*, long nodeId, const String& outerHTML, long* newId);
-    void setTextNodeValue(ErrorString*, long nodeId, const String& value, bool* success);
+    void setNodeValue(ErrorString*, long nodeId, const String& value, bool* success);
     void getEventListenersForNode(ErrorString*, long nodeId, long* outNodeId, RefPtr<InspectorArray>* listenersArray);
     void addInspectedNode(ErrorString*, long nodeId);
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, bool runSynchronously);

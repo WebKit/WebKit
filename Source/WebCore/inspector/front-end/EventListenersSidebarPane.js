@@ -202,7 +202,7 @@ WebInspector.EventListenerBar.prototype = {
         if (!node)
             return;
 
-        if (node.nodeType === Node.DOCUMENT_NODE) {
+        if (node.nodeType() === Node.DOCUMENT_NODE) {
             this.titleElement.textContent = "document";
             return;
         }

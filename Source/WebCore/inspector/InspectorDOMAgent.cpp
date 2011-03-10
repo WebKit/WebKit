@@ -428,7 +428,7 @@ Node* InspectorDOMAgent::nodeForId(long id)
     return 0;
 }
 
-void InspectorDOMAgent::getChildNodes(ErrorString*, long nodeId)
+void InspectorDOMAgent::childNodes(ErrorString*, long nodeId)
 {
     pushChildNodesToFrontend(nodeId);
 }
@@ -555,8 +555,10 @@ void InspectorDOMAgent::removeNode(ErrorString*, long nodeId, long* outNodeId)
     *outNodeId = nodeId;
 }
 
-void InspectorDOMAgent::changeTagName(ErrorString*, long nodeId, const String& tagName, long* newId)
+void InspectorDOMAgent::setNodeName(ErrorString*, long nodeId, const String& tagName, long* newId)
 {
+    *newId = 0;
+
     Node* oldNode = nodeForId(nodeId);
     if (!oldNode || !oldNode->isElementNode())
         return;
@@ -590,7 +592,7 @@ void InspectorDOMAgent::changeTagName(ErrorString*, long nodeId, const String& t
         pushChildNodesToFrontend(*newId);
 }
 
-void InspectorDOMAgent::getOuterHTML(ErrorString*, long nodeId, WTF::String* outerHTML)
+void InspectorDOMAgent::outerHTML(ErrorString*, long nodeId, WTF::String* outerHTML)
 {
     Node* node = nodeForId(nodeId);
     if (!node || !node->isHTMLElement())
@@ -637,7 +639,7 @@ void InspectorDOMAgent::setOuterHTML(ErrorString*, long nodeId, const String& ou
         pushChildNodesToFrontend(*newId);
 }
 
-void InspectorDOMAgent::setTextNodeValue(ErrorString*, long nodeId, const String& value, bool* success)
+void InspectorDOMAgent::setNodeValue(ErrorString*, long nodeId, const String& value, bool* success)
 {
     Node* node = nodeForId(nodeId);
     if (node && (node->nodeType() == Node::TEXT_NODE)) {
@@ -645,7 +647,9 @@ void InspectorDOMAgent::setTextNodeValue(ErrorString*, long nodeId, const String
         ExceptionCode ec = 0;
         text_node->replaceWholeText(value, ec);
         *success = !ec;
+        return;
     }
+    *success = false;
 }
 
 void InspectorDOMAgent::getEventListenersForNode(ErrorString*, long nodeId, long* outNodeId, RefPtr<InspectorArray>* listenersArray)

@@ -132,10 +132,10 @@ WebInspector.StylesSidebarPane.prototype = {
         if (!forceUpdate && (!node || node === this.node))
             refresh = true;
 
-        if (node && node.nodeType === Node.TEXT_NODE && node.parentNode)
+        if (node && node.nodeType() === Node.TEXT_NODE && node.parentNode)
             node = node.parentNode;
 
-        if (node && node.nodeType !== Node.ELEMENT_NODE)
+        if (node && node.nodeType() !== Node.ELEMENT_NODE)
             node = null;
 
         if (node)
@@ -244,7 +244,7 @@ WebInspector.StylesSidebarPane.prototype = {
         var styleAttributes = {};
         for (var name in styles.styleAttributes) {
             var attrStyle = { style: styles.styleAttributes[name], editable: false };
-            attrStyle.selectorText = WebInspector.panels.elements.treeOutline.nodeNameToCorrectCase(node.nodeName) + "[" + name;
+            attrStyle.selectorText = WebInspector.panels.elements.treeOutline.nodeNameToCorrectCase(node.nodeName()) + "[" + name;
             if (node.getAttribute(name))
                 attrStyle.selectorText += "=" + node.getAttribute(name);
             attrStyle.selectorText += "]";
@@ -252,7 +252,7 @@ WebInspector.StylesSidebarPane.prototype = {
         }
 
         // Show element's Style Attributes
-        if (styles.inlineStyle && node.nodeType === Node.ELEMENT_NODE) {
+        if (styles.inlineStyle && node.nodeType() === Node.ELEMENT_NODE) {
             var inlineStyle = { selectorText: "element.style", style: styles.inlineStyle, isAttribute: true };
             styleRules.push(inlineStyle);
         }

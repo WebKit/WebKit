@@ -28,7 +28,7 @@ function test()
 {
     function listener(type, event)
     {
-        InspectorTest.addResult("DOMAgent event fired. Should only happen once for output node: " + type + " " + event.target.nodeName + "#" + event.target.getAttribute("id"));
+        InspectorTest.addResult("DOMAgent event fired. Should only happen once for output node: " + type + " " + event.target.nodeName() + "#" + event.target.getAttribute("id"));
     }
 
     WebInspector.domAgent.requestDocument(step0.bind(this));

@@ -1,3 +1,62 @@
+2011-03-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: brush up DOM agent API.
+        https://bugs.webkit.org/show_bug.cgi?id=56093
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::childNodes):
+        (WebCore::InspectorDOMAgent::setNodeName):
+        (WebCore::InspectorDOMAgent::outerHTML):
+        (WebCore::InspectorDOMAgent::setNodeValue):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+        (WebInspector.DOMNode.prototype.hasAttributes):
+        (WebInspector.DOMNode.prototype.nodeType):
+        (WebInspector.DOMNode.prototype.nodeName):
+        (WebInspector.DOMNode.prototype.setNodeName):
+        (WebInspector.DOMNode.prototype.localName):
+        (WebInspector.DOMNode.prototype.nodeValue):
+        (WebInspector.DOMNode.prototype.setNodeValue):
+        (WebInspector.DOMNode.prototype.setAttribute):
+        (WebInspector.DOMNode.prototype.attributes):
+        (WebInspector.DOMNode.prototype.removeAttribute):
+        (WebInspector.DOMNode.prototype.childNodes.mycallback):
+        (WebInspector.DOMNode.prototype.childNodes):
+        (WebInspector.DOMNode.prototype.outerHTML):
+        (WebInspector.DOMNode.prototype.setOuterHTML):
+        (WebInspector.DOMNode.prototype.removeNode):
+        (WebInspector.DOMNode.prototype.copyNode):
+        (WebInspector.DOMNode.prototype.path):
+        (WebInspector.DOMNode.prototype._setAttributesPayload):
+        (WebInspector.DOMNode.prototype._addAttribute):
+        (WebInspector.DOMAgent.prototype._characterDataModified):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumb):
+        (WebInspector.ElementsPanel.prototype.decorateNodeLabel):
+        (WebInspector.ElementsPanel.prototype.handleCopyEvent):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.findTreeElement):
+        (WebInspector.ElementsTreeElement):
+        (WebInspector.ElementsTreeElement.prototype.updateChildren):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren):
+        (WebInspector.ElementsTreeElement.prototype._startEditingTarget):
+        (WebInspector.ElementsTreeElement.prototype._startEditing):
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted.moveToNextAttributeIfNeeded):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted):
+        (WebInspector.ElementsTreeElement.prototype._textNodeEditingCommitted):
+        (WebInspector.ElementsTreeElement.prototype._attributeHTML):
+        ():
+        * inspector/front-end/EventListenersSidebarPane.js:
+        ():
+        * inspector/front-end/MetricsSidebarPane.js:
+        * inspector/front-end/StylesSidebarPane.js:
+        * inspector/front-end/utilities.js:
+
 2011-03-09  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -33,13 +33,12 @@ WebInspector.DOMNode = function(doc, payload) {
     this.ownerDocument = doc;
 
     this.id = payload.id;
-    this.nodeType = payload.nodeType;
-    this.nodeName = payload.nodeName;
-    this.localName = payload.localName;
+    this._nodeType = payload.nodeType;
+    this._nodeName = payload.nodeName;
+    this._localName = payload.localName;
     this._nodeValue = payload.nodeValue;
-    this.textContent = this.nodeValue;
 
-    this.attributes = [];
+    this._attributes = [];
     this._attributesMap = {};
     if (payload.attributes)
         this._setAttributesPayload(payload.attributes);
@@ -62,21 +61,21 @@ WebInspector.DOMNode = function(doc, payload) {
 
     this.breakpoints = {};
 
-    if (this.nodeType === Node.ELEMENT_NODE) {
+    if (this._nodeType === Node.ELEMENT_NODE) {
         // HTML and BODY from internal iframes should not overwrite top-level ones.
-        if (!this.ownerDocument.documentElement && this.nodeName === "HTML")
+        if (!this.ownerDocument.documentElement && this._nodeName === "HTML")
             this.ownerDocument.documentElement = this;
-        if (!this.ownerDocument.body && this.nodeName === "BODY")
+        if (!this.ownerDocument.body && this._nodeName === "BODY")
             this.ownerDocument.body = this;
         if (payload.documentURL)
             this.documentURL = payload.documentURL;
-    } else if (this.nodeType === Node.DOCUMENT_TYPE_NODE) {
+    } else if (this._nodeType === Node.DOCUMENT_TYPE_NODE) {
         this.publicId = payload.publicId;
         this.systemId = payload.systemId;
         this.internalSubset = payload.internalSubset;
-    } else if (this.nodeType === Node.DOCUMENT_NODE) {
+    } else if (this._nodeType === Node.DOCUMENT_NODE) {
         this.documentURL = payload.documentURL;
-    } else if (this.nodeType === Node.ATTRIBUTE_NODE) {
+    } else if (this._nodeType === Node.ATTRIBUTE_NODE) {
         this.name = payload.name;
         this.value = payload.value;
     }
@@ -85,7 +84,7 @@ WebInspector.DOMNode = function(doc, payload) {
 WebInspector.DOMNode.prototype = {
     hasAttributes: function()
     {
-        return this.attributes.length > 0;
+        return this._attributes.length > 0;
     },
 
     hasChildNodes: function()
@@ -93,14 +92,34 @@ WebInspector.DOMNode.prototype = {
         return this._childNodeCount > 0;
     },
 
-    get nodeValue() {
+    nodeType: function()
+    {
+        return this._nodeType;
+    },
+
+    nodeName: function()
+    {
+        return this._nodeName;
+    },
+
+    setNodeName: function(name, callback)
+    {
+        DOMAgent.setNodeName(this.id, name, callback);
+    },
+
+    localName: function()
+    {
+        return this._localName;
+    },
+
+    nodeValue: function()
+    {
         return this._nodeValue;
     },
 
-    set nodeValue(value) {
-        if (this.nodeType != Node.TEXT_NODE)
-            return;
-        this.ownerDocument._domAgent.setTextNodeValueAsync(this, value, function() {});
+    setNodeValue: function(value, callback)
+    {
+        DOMAgent.setNodeValue(this.id, value, callback);
     },
 
     getAttribute: function(name)
@@ -109,42 +128,91 @@ WebInspector.DOMNode.prototype = {
         return attr ? attr.value : undefined;
     },
 
-    setAttribute: function(name, value)
+    setAttribute: function(name, value, callback)
     {
-        var self = this;
-        var callback = function()
+        function mycallback(success)
         {
-            var attr = self._attributesMap[name];
+            if (!success)
+                return;
+
+            var attr = this._attributesMap[name];
             if (attr)
                 attr.value = value;
             else
-                attr = self._addAttribute(name, value);
-        };
-        this.ownerDocument._domAgent.setAttributeAsync(this, name, value, callback);
+                attr = this._addAttribute(name, value);
+
+            if (callback)
+                callback();
+        }
+        DOMAgent.setAttribute(this.id, name, value, mycallback.bind(this));
     },
 
-    removeAttribute: function(name)
+    attributes: function()
     {
-        var self = this;
-        var callback = function()
+        return this._attributes;
+    },
+
+    removeAttribute: function(name, callback)
+    {
+        function mycallback(success)
         {
-            delete self._attributesMap[name];
-            for (var i = 0;  i < self.attributes.length; ++i) {
-                if (self.attributes[i].name == name) {
-                    self.attributes.splice(i, 1);
+            if (!success)
+                return;
+
+            delete this._attributesMap[name];
+            for (var i = 0;  i < this._attributes.length; ++i) {
+                if (this._attributes[i].name === name) {
+                    this._attributes.splice(i, 1);
                     break;
                 }
             }
-        };
-        this.ownerDocument._domAgent.removeAttributeAsync(this, name, callback);
+            if (callback)
+                callback();
+        }
+        DOMAgent.removeAttribute(this.id, name, mycallback.bind(this));
+    },
+
+    childNodes: function(callback)
+    {
+        if (this.children) {
+            if (callback)
+                callback(this.children);
+            return;
+        }
+
+        function mycallback() {
+            if (callback)
+                callback(this.children);
+        }
+        DOMAgent.childNodes(this.id, mycallback.bind(this));
+    },
+
+    outerHTML: function(callback)
+    {
+        DOMAgent.outerHTML(this.id, callback);
+    },
+
+    setOuterHTML: function(html, callback)
+    {
+        DOMAgent.setOuterHTML(this.id, html, callback);
+    },
+
+    removeNode: function(callback)
+    {
+        DOMAgent.removeNode(this.id);
+    },
+
+    copyNode: function()
+    {
+        DOMAgent.copyNode(this.id);
     },
 
     path: function()
     {
         var path = [];
         var node = this;
-        while (node && "index" in node && node.nodeName.length) {
-            path.push([node.index, node.nodeName]);
+        while (node && "index" in node && node._nodeName.length) {
+            path.push([node.index, node._nodeName]);
             node = node.parentNode;
         }
         path.reverse();
@@ -153,7 +221,7 @@ WebInspector.DOMNode.prototype = {
 
     _setAttributesPayload: function(attrs)
     {
-        this.attributes = [];
+        this._attributes = [];
         this._attributesMap = {};
         for (var i = 0; i < attrs.length; i += 2)
             this._addAttribute(attrs[i], attrs[i + 1]);
@@ -219,7 +287,7 @@ WebInspector.DOMNode.prototype = {
             "_node": this
         };
         this._attributesMap[name] = attr;
-        this.attributes.push(attr);
+        this._attributes.push(attr);
     }
 }
 
@@ -312,48 +380,6 @@ WebInspector.DOMAgent.prototype = {
         this.requestDocument(mycallback.bind(this));
     },
 
-    getChildNodesAsync: function(parent, callback)
-    {
-        var children = parent.children;
-        if (children) {
-            callback(children);
-            return;
-        }
-        function mycallback() {
-            callback(parent.children);
-        }
-        DOMAgent.getChildNodes(parent.id, mycallback);
-    },
-
-    setAttributeAsync: function(node, name, value, callback)
-    {
-        var mycallback = this._didApplyDomChange.bind(this, node, callback);
-        DOMAgent.setAttribute(node.id, name, value, mycallback);
-    },
-
-    removeAttributeAsync: function(node, name, callback)
-    {
-        var mycallback = this._didApplyDomChange.bind(this, node, callback);
-        DOMAgent.removeAttribute(node.id, name, mycallback);
-    },
-
-    setTextNodeValueAsync: function(node, text, callback)
-    {
-        var mycallback = this._didApplyDomChange.bind(this, node, callback);
-        DOMAgent.setTextNodeValue(node.id, text, mycallback);
-    },
-
-    _didApplyDomChange: function(node, callback, success)
-    {
-        if (!success)
-            return;
-        callback();
-        // TODO(pfeldman): Fix this hack.
-        var elem = WebInspector.panels.elements.treeOutline.findTreeElement(node);
-        if (elem)
-            elem.updateTitle();
-    },
-
     _attributesUpdated: function(nodeId, attrsArray)
     {
         var node = this._idToDOMNode[nodeId];
@@ -366,7 +392,6 @@ WebInspector.DOMAgent.prototype = {
     {
         var node = this._idToDOMNode[nodeId];
         node._nodeValue = newValue;
-        node.textContent = newValue;
         var event = { target : node };
         this._document._fireDomEvent("DOMCharacterDataModified", event);
     },

@@ -144,19 +144,26 @@ module core {
 
     interface [Conditional=INSPECTOR] DOM {
         void getDocument(out Object root);
-        void getChildNodes(in long nodeId);
+        void childNodes(in long nodeId);
+
         void querySelector(in long nodeId, in String selectors, in boolean documentWide, out long elementId);
         void querySelectorAll(in long nodeId, in String selectors, in boolean documentWide, out Array result);
+
+        void setNodeName(in long nodeId, in String name, out long outNodeId);
+        void setNodeValue(in long nodeId, in String value, out boolean success);
+        void removeNode(in long nodeId, out long outNodeId);
+
         void setAttribute(in long elementId, in String name, in String value, out boolean success);
         void removeAttribute(in long elementId, in String name, out boolean success);
-        void setTextNodeValue(in long nodeId, in String value, out boolean success);
+
         void getEventListenersForNode(in long nodeId, out long outNodeId, out Array listenersArray);
         void copyNode(in long nodeId);
-        void removeNode(in long nodeId, out long outNodeId);
-        void changeTagName(in long nodeId, in String newTagName, out long outNodeId);
-        void getOuterHTML(in long nodeId, out String outerHTML);
+
+        void outerHTML(in long nodeId, out String outerHTML);
         void setOuterHTML(in long nodeId, in String outerHTML, out long outNodeId);
+
         void addInspectedNode(in long nodeId);
+
         void performSearch(in String query, in boolean runSynchronously);
         void searchCanceled();
         void pushNodeByPathToFrontend(in String path, out long nodeId);

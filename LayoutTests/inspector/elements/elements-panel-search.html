@@ -24,10 +24,10 @@ function test()
     {
         for (var i = 0; i < nodeIds.length; ++i) {
             var node = WebInspector.domAgent.nodeForId(nodeIds[i]);
-            if (node.nodeType === Node.TEXT_NODE)
-                searchResults.push(node.nodeValue);
+            if (node.nodeType() === Node.TEXT_NODE)
+                searchResults.push(node.nodeValue());
             else
-                DOMAgent.getOuterHTML(node.id, addSearchResult);
+                node.outerHTML(addSearchResult);
         }
     }
 

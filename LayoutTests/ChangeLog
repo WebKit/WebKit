@@ -1,3 +1,22 @@
+2011-03-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: brush up DOM agent API.
+        https://bugs.webkit.org/show_bug.cgi?id=56093
+
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.nodeWithId.processChildren):
+        (initialize_ElementTest.InspectorTest.nodeWithId.documentRequested):
+        (initialize_ElementTest.InspectorTest.nodeWithId):
+        (initialize_ElementTest.InspectorTest.dumpDOMAgentTree.dump):
+        (initialize_ElementTest.InspectorTest.dumpDOMAgentTree):
+        (initialize_ElementTest):
+        * inspector/elements/elements-panel-rewrite-href.html:
+        * inspector/elements/elements-panel-search.html:
+        * inspector/elements/elements-panel-selection-on-refresh.html:
+        * inspector/elements/mutate-unknown-node.html:
+
 2011-03-10  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip 2 more flacky tests on GTK 32-bits Release.

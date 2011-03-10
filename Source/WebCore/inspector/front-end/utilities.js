@@ -380,7 +380,6 @@ Node.prototype.isAncestor = function(node)
 Node.prototype.isDescendant = isDescendantNode;
 Node.prototype.traverseNextNode = traverseNextNode;
 Node.prototype.traversePreviousNode = traversePreviousNode;
-Node.prototype.onlyTextChild = onlyTextChild;
 
 String.prototype.hasSubstring = function(string, caseInsensitive)
 {
@@ -614,19 +613,6 @@ function traversePreviousNode(stayWithin)
     if (node)
         return node;
     return this.parentNode;
-}
-
-function onlyTextChild()
-{
-    if (!this)
-        return null;
-
-    var firstChild = this.firstChild;
-    if (!firstChild || firstChild.nodeType !== Node.TEXT_NODE)
-        return null;
-
-    var sibling = firstChild.nextSibling;
-    return sibling ? null : firstChild;
 }
 
 function appropriateSelectorForNode(node, justSelector)

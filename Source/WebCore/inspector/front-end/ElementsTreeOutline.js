@@ -142,7 +142,7 @@ WebInspector.ElementsTreeOutline.prototype = {
     findTreeElement: function(node)
     {
         var treeElement = TreeOutline.prototype.findTreeElement.call(this, node, isAncestorNode, parentNode);
-        if (!treeElement && node.nodeType === Node.TEXT_NODE) {
+        if (!treeElement && node.nodeType() === Node.TEXT_NODE) {
             // The text node might have been inlined if it was short, so try to find the parent element.
             treeElement = TreeOutline.prototype.findTreeElement.call(this, node.parentNode, isAncestorNode, parentNode);
         }
@@ -305,7 +305,7 @@ WebInspector.ElementsTreeElement = function(node, elementCloseTag)
     // The title will be updated in onattach.
     TreeElement.call(this, "", node, hasChildrenOverride);
 
-    if (this.representedObject.nodeType == Node.ELEMENT_NODE && !elementCloseTag)
+    if (this.representedObject.nodeType() == Node.ELEMENT_NODE && !elementCloseTag)
         this._canAddAttributes = true;
     this._searchQuery = null;
     this._expandedChildrenLimit = WebInspector.ElementsTreeElement.InitialChildrenLimit;
@@ -403,7 +403,7 @@ WebInspector.ElementsTreeElement.prototype = {
     _createTooltipForNode: function()
     {
         var node = this.representedObject;
-        if (!node.nodeName || node.nodeName.toLowerCase() !== "img")
+        if (!node.nodeName() || node.nodeName().toLowerCase() !== "img")
             return;
 
         function setTooltip(result)
@@ -492,8 +492,7 @@ WebInspector.ElementsTreeElement.prototype = {
     {
         if (this._elementCloseTag)
             return;
-
-        WebInspector.domAgent.getChildNodesAsync(this.representedObject, this._updateChildren.bind(this, fullRefresh));
+        this.representedObject.childNodes(this._updateChildren.bind(this, fullRefresh));
     },
 
     insertChildElement: function(child, index, closingTag)
@@ -590,7 +589,7 @@ WebInspector.ElementsTreeElement.prototype = {
         this.adjustCollapsedRange(false);
 
         var lastChild = this.children[this.children.length - 1];
-        if (this.representedObject.nodeType == Node.ELEMENT_NODE && (!lastChild || !lastChild._elementCloseTag))
+        if (this.representedObject.nodeType() == Node.ELEMENT_NODE && (!lastChild || !lastChild._elementCloseTag))
             this.insertChildElement(this.representedObject, this.children.length, true);
 
         // We want to restore the original selection and tree scroll position after a full refresh, if possible.
@@ -751,7 +750,7 @@ WebInspector.ElementsTreeElement.prototype = {
         if (this.treeOutline.focusedDOMNode != this.representedObject)
             return;
 
-        if (this.representedObject.nodeType != Node.ELEMENT_NODE && this.representedObject.nodeType != Node.TEXT_NODE)
+        if (this.representedObject.nodeType() != Node.ELEMENT_NODE && this.representedObject.nodeType() != Node.TEXT_NODE)
             return false;
 
         var textNode = eventTarget.enclosingNodeOrSelfWithClass("webkit-html-text-node");
@@ -832,7 +831,7 @@ WebInspector.ElementsTreeElement.prototype = {
             return this._addNewAttribute();
         }
 
-        if (this.representedObject.nodeType === Node.TEXT_NODE) {
+        if (this.representedObject.nodeType() === Node.TEXT_NODE) {
             var textNode = listItem.getElementsByClassName("webkit-html-text-node")[0];
             if (textNode)
                 return this._startEditingTextNode(textNode);
@@ -1038,7 +1037,7 @@ WebInspector.ElementsTreeElement.prototype = {
             var found = false;
 
             // Search for the attribute's position, and then decide where to move to.
-            var attributes = this.representedObject.attributes;
+            var attributes = this.representedObject.attributes();
             for (var i = 0; i < attributes.length; ++i) {
                 if (attributes[i].name === attributeName) {
                     found = true;
@@ -1103,7 +1102,7 @@ WebInspector.ElementsTreeElement.prototype = {
         }
 
         if (!parseElement.hasAttributes()) {
-            this.representedObject.removeAttribute(attributeName);
+            this.representedObject.removeAttribute(attributeName, this.updateTitle.bind(this));
             this.treeOutline.focusedNodeChanged(true);
             moveToNextAttributeIfNeeded.call(this);
             return;
@@ -1114,13 +1113,13 @@ WebInspector.ElementsTreeElement.prototype = {
             var attr = parseElement.attributes[i];
             foundOriginalAttribute = foundOriginalAttribute || attr.name === attributeName;
             try {
-                this.representedObject.setAttribute(attr.name, attr.value);
+                this.representedObject.setAttribute(attr.name, attr.value, this.updateTitle.bind(this));
                 regenerateStyledAttribute.call(this, attr.name, attr.value);
             } catch(e) {} // ignore invalid attribute (innerHTML doesn't throw errors, but this can)
         }
 
         if (!foundOriginalAttribute)
-            this.representedObject.removeAttribute(attributeName);
+            this.representedObject.removeAttribute(attributeName, this.updateTitle.bind(this));
 
         this.treeOutline.focusedNodeChanged(true);
 
@@ -1149,7 +1148,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 return;
             }
 
-            var attributes = this.representedObject.attributes;
+            var attributes = this.representedObject.attributes();
             if (attributes.length > 0)
                 this._triggerEditAttribute(attributes[0].name);
             else
@@ -1183,7 +1182,7 @@ WebInspector.ElementsTreeElement.prototype = {
             moveToNextAttributeIfNeeded.call(newTreeItem);
         }
 
-        DOMAgent.changeTagName(this.representedObject.id, newText, changeTagNameCallback);
+        this.representedObject.setNodeName(newText, changeTagNameCallback);
     },
 
     _textNodeEditingCommitted: function(element, newText)
@@ -1191,14 +1190,14 @@ WebInspector.ElementsTreeElement.prototype = {
         delete this._editing;
 
         var textNode;
-        if (this.representedObject.nodeType === Node.ELEMENT_NODE) {
+        if (this.representedObject.nodeType() === Node.ELEMENT_NODE) {
             // We only show text nodes inline in elements if the element only
             // has a single child, and that child is a text node.
             textNode = this.representedObject.firstChild;
-        } else if (this.representedObject.nodeType == Node.TEXT_NODE)
+        } else if (this.representedObject.nodeType() == Node.TEXT_NODE)
             textNode = this.representedObject;
 
-        textNode.nodeValue = newText;
+        textNode.setNodeValue(newText, this.updateTitle.bind(this));
     },
 
     _editingCancelled: function(element, context)
@@ -1258,7 +1257,7 @@ WebInspector.ElementsTreeElement.prototype = {
         if (linkify && (name === "src" || name === "href")) {
             var rewrittenHref = WebInspector.resourceURLForRelatedNode(node, value);
             value = value.replace(/([\/;:\)\]\}])/g, "$1\u200B");
-            html += linkify(rewrittenHref, value, "webkit-html-attribute-value", node.nodeName.toLowerCase() === "a");
+            html += linkify(rewrittenHref, value, "webkit-html-attribute-value", node.nodeName().toLowerCase() === "a");
         } else {
             value = value.escapeHTML().replace(/([\/;:\)\]\}])/g, "$1&#8203;");
             html += "<span class=\"webkit-html-attribute-value\">" + value + "</span>";
@@ -1277,8 +1276,9 @@ WebInspector.ElementsTreeElement.prototype = {
         var result = "<span class=\"webkit-html-tag" + (isClosingTag && isDistinctTreeElement ? " close" : "")  + "\">&lt;";
         result += "<span " + (isClosingTag ? "" : "class=\"webkit-html-tag-name\"") + ">" + (isClosingTag ? "/" : "") + tagName + "</span>";
         if (!isClosingTag && node.hasAttributes()) {
-            for (var i = 0; i < node.attributes.length; ++i) {
-                var attr = node.attributes[i];
+            var attributes = node.attributes();
+            for (var i = 0; i < attributes.length; ++i) {
+                var attr = attributes[i];
                 result += " " + this._attributeHTML(attr.name, attr.value, node, linkify);
             }
         }
@@ -1292,7 +1292,7 @@ WebInspector.ElementsTreeElement.prototype = {
         var node = this.representedObject;
         var info = {titleHTML: "", hasChildren: this.hasChildren};
 
-        switch (node.nodeType) {
+        switch (node.nodeType()) {
             case Node.DOCUMENT_NODE:
                 info.titleHTML = "Document";
                 break;
@@ -1307,7 +1307,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 break;
 
             case Node.ELEMENT_NODE:
-                var tagName = this.treeOutline.nodeNameToCorrectCase(node.nodeName).escapeHTML();
+                var tagName = this.treeOutline.nodeNameToCorrectCase(node.nodeName()).escapeHTML();
                 if (this._elementCloseTag) {
                     info.titleHTML = this._tagHTML(tagName, true, true);
                     info.hasChildren = false;
@@ -1316,8 +1316,8 @@ WebInspector.ElementsTreeElement.prototype = {
 
                 var titleHTML = this._tagHTML(tagName, false, false, linkify);
 
-                var textChild = onlyTextChild.call(node);
-                var showInlineText = textChild && textChild.textContent.length < Preferences.maxInlineTextChildLength;
+                var textChild = this._singleTextChild(node);
+                var showInlineText = textChild && textChild.nodeValue().length < Preferences.maxInlineTextChildLength;
 
                 if (!this.expanded && (!showInlineText && (this.treeOutline.isXMLMimeType || !WebInspector.ElementsTreeElement.ForbiddenClosingTagElements[tagName]))) {
                     if (this.hasChildren)
@@ -1329,7 +1329,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 // just show that text and the closing tag inline rather than
                 // create a subtree for them
                 if (showInlineText) {
-                    titleHTML += "<span class=\"webkit-html-text-node\">" + textChild.nodeValue.escapeHTML() + "</span>&#8203;" + this._tagHTML(tagName, true, false);
+                    titleHTML += "<span class=\"webkit-html-text-node\">" + textChild.nodeValue().escapeHTML() + "</span>&#8203;" + this._tagHTML(tagName, true, false);
                     info.hasChildren = false;
                 }
                 info.titleHTML = titleHTML;
@@ -1339,33 +1339,33 @@ WebInspector.ElementsTreeElement.prototype = {
                 if (isNodeWhitespace.call(node))
                     info.titleHTML = "(whitespace)";
                 else {
-                    if (node.parentNode && node.parentNode.nodeName.toLowerCase() === "script") {
+                    if (node.parentNode && node.parentNode.nodeName().toLowerCase() === "script") {
                         var newNode = document.createElement("span");
-                        newNode.textContent = node.textContent;
+                        newNode.textContent = node.nodeValue();
 
                         var javascriptSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter("text/javascript");
                         javascriptSyntaxHighlighter.syntaxHighlightNode(newNode);
 
                         info.titleHTML = "<span class=\"webkit-html-text-node webkit-html-js-node\">" + newNode.innerHTML.replace(/^[\n\r]*/, "").replace(/\s*$/, "") + "</span>";
-                    } else if (node.parentNode && node.parentNode.nodeName.toLowerCase() === "style") {
+                    } else if (node.parentNode && node.parentNode.nodeName().toLowerCase() === "style") {
                         var newNode = document.createElement("span");
-                        newNode.textContent = node.textContent;
+                        newNode.textContent = node.nodeValue();
 
                         var cssSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter("text/css");
                         cssSyntaxHighlighter.syntaxHighlightNode(newNode);
 
                         info.titleHTML = "<span class=\"webkit-html-text-node webkit-html-css-node\">" + newNode.innerHTML.replace(/^[\n\r]*/, "").replace(/\s*$/, "") + "</span>";
                     } else
-                        info.titleHTML = "\"<span class=\"webkit-html-text-node\">" + node.nodeValue.escapeHTML() + "</span>\"";
+                        info.titleHTML = "\"<span class=\"webkit-html-text-node\">" + node.nodeValue().escapeHTML() + "</span>\"";
                 }
                 break;
 
             case Node.COMMENT_NODE:
-                info.titleHTML = "<span class=\"webkit-html-comment\">&lt;!--" + node.nodeValue.escapeHTML() + "--&gt;</span>";
+                info.titleHTML = "<span class=\"webkit-html-comment\">&lt;!--" + node.nodeValue().escapeHTML() + "--&gt;</span>";
                 break;
 
             case Node.DOCUMENT_TYPE_NODE:
-                var titleHTML = "<span class=\"webkit-html-doctype\">&lt;!DOCTYPE " + node.nodeName;
+                var titleHTML = "<span class=\"webkit-html-doctype\">&lt;!DOCTYPE " + node.nodeName();
                 if (node.publicId) {
                     titleHTML += " PUBLIC \"" + node.publicId + "\"";
                     if (node.systemId)
@@ -1379,20 +1379,33 @@ WebInspector.ElementsTreeElement.prototype = {
                 break;
 
             case Node.CDATA_SECTION_NODE:
-                info.titleHTML = "<span class=\"webkit-html-text-node\">&lt;![CDATA[" + node.nodeValue.escapeHTML() + "]]&gt;</span>";
+                info.titleHTML = "<span class=\"webkit-html-text-node\">&lt;![CDATA[" + node.nodeValue().escapeHTML() + "]]&gt;</span>";
                 break;
             default:
-                info.titleHTML = this.treeOutline.nodeNameToCorrectCase(node.nodeName).collapseWhitespace().escapeHTML();
+                info.titleHTML = this.treeOutline.nodeNameToCorrectCase(node.nodeName()).collapseWhitespace().escapeHTML();
         }
 
         return info;
     },
 
+    _singleTextChild: function(node)
+    {
+        if (!node)
+            return null;
+
+        var firstChild = node.firstChild;
+        if (!firstChild || firstChild.nodeType() !== Node.TEXT_NODE)
+            return null;
+
+        var sibling = firstChild.nextSibling;
+        return sibling ? null : firstChild;
+    },
+
     _showInlineText: function(node)
     {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            var textChild = onlyTextChild.call(node);
-            if (textChild && textChild.textContent.length < Preferences.maxInlineTextChildLength)
+        if (node.nodeType() === Node.ELEMENT_NODE) {
+            var textChild = this._singleTextChild(node);
+            if (textChild && textChild.nodeValue().length < Preferences.maxInlineTextChildLength)
                 return true;
         }
         return false;
@@ -1416,7 +1429,7 @@ WebInspector.ElementsTreeElement.prototype = {
             parentElement.adjustCollapsedRange(true);
         }
 
-        DOMAgent.removeNode(this.representedObject.id, removeNodeCallback);
+        this.representedObject.removeNode(removeNodeCallback);
     },
 
     _editAsHTML: function()
@@ -1443,15 +1456,15 @@ WebInspector.ElementsTreeElement.prototype = {
 
         function commitChange(value)
         {
-            DOMAgent.setOuterHTML(node.id, value, selectNode);
+            node.setOuterHTML(value, selectNode);
         }
 
-        DOMAgent.getOuterHTML(node.id, this._startEditingAsHTML.bind(this, commitChange));
+        node.outerHTML(this._startEditingAsHTML.bind(this, commitChange));
     },
 
     _copyHTML: function()
     {
-        DOMAgent.copyNode(this.representedObject.id);
+        this.representedObject.copyNode();
     },
 
     _highlightSearchResults: function()

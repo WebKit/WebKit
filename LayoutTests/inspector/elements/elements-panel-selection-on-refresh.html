@@ -22,7 +22,7 @@ function test()
     {
         // We should have "test-topic" element selected after refresh.
         var selectedElement = WebInspector.panels.elements.treeOutline.selectedTreeElement;
-        var nodeName = selectedElement ? selectedElement.representedObject.nodeName : "null";
+        var nodeName = selectedElement ? selectedElement.representedObject.nodeName() : "null";
         InspectorTest.addResult("Selected element should be 'P', was: '" + nodeName + "'");
         InspectorTest.completeTest();
     }

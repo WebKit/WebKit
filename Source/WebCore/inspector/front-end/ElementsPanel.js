@@ -608,7 +608,7 @@ WebInspector.ElementsPanel.prototype = {
 
         foundRoot = false;
         for (var current = this.focusedDOMNode; current; current = current.parentNode) {
-            if (current.nodeType === Node.DOCUMENT_NODE)
+            if (current.nodeType() === Node.DOCUMENT_NODE)
                 continue;
 
             if (current === this.rootDOMNode)
@@ -620,7 +620,7 @@ WebInspector.ElementsPanel.prototype = {
             crumb.addEventListener("mousedown", selectCrumbFunction, false);
 
             var crumbTitle;
-            switch (current.nodeType) {
+            switch (current.nodeType()) {
                 case Node.ELEMENT_NODE:
                     this.decorateNodeLabel(current, crumb);
                     break;
@@ -641,7 +641,7 @@ WebInspector.ElementsPanel.prototype = {
                     break;
 
                 default:
-                    crumbTitle = this.treeOutline.nodeNameToCorrectCase(current.nodeName);
+                    crumbTitle = this.treeOutline.nodeNameToCorrectCase(current.nodeName());
             }
 
             if (!crumb.childNodes.length) {
@@ -669,7 +669,7 @@ WebInspector.ElementsPanel.prototype = {
 
     decorateNodeLabel: function(node, parentElement)
     {
-        var title = this.treeOutline.nodeNameToCorrectCase(node.nodeName);
+        var title = this.treeOutline.nodeNameToCorrectCase(node.nodeName());
 
         var nameElement = document.createElement("span");
         nameElement.textContent = title;
@@ -1064,7 +1064,7 @@ WebInspector.ElementsPanel.prototype = {
             return;
         event.clipboardData.clearData();
         event.preventDefault();
-        DOMAgent.copyNode(this.focusedDOMNode.id);
+        this.focusedDOMNode.copyNode();
     },
 
     rightSidebarResizerDragStart: function(event)
