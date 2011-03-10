@@ -983,6 +983,29 @@ void QDeclarativeWebView::setContentsScale(qreal scale)
     emit contentsScaleChanged();
 }
 
+#if QT_VERSION >= 0x040702
+/*!
+    \qmlproperty color WebView::backgroundColor
+    \since QtWebKit 1.1
+    This property holds the background color of the view.
+*/
+
+QColor QDeclarativeWebView::backgroundColor() const
+{
+    return d->view->palette().base().color();
+}
+
+void QDeclarativeWebView::setBackgroundColor(const QColor& color)
+{
+    QPalette palette = d->view->palette();
+    if (palette.base().color() == color)
+        return;
+    palette.setBrush(QPalette::Base, color);
+    d->view->setPalette(palette);
+    emit backgroundColorChanged();
+}
+#endif
+
 /*!
     Returns the area of the largest element at position (\a x,\a y) that is no larger
     than \a maxWidth by \a maxHeight pixels.

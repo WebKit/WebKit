@@ -1,3 +1,24 @@
+2011-03-10  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QtDeclarative Webview element has a fixed white background
+        https://bugs.webkit.org/show_bug.cgi?id=40918
+
+        Implement a way to change the background color of the WebView QML element.
+        This feature is activated for QtWebKit 1.1 version of the plugin.
+
+        * declarative/plugin.cpp:
+        (WebKitQmlPlugin::registerTypes):
+        * declarative/qdeclarativewebview.cpp:
+        (QDeclarativeWebView::backgroundColor):
+        (QDeclarativeWebView::setBackgroundColor):
+        * declarative/qdeclarativewebview_p.h:
+        * tests/qdeclarativewebview/resources/webviewbackgroundcolor.qml: Added.
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.cpp:
+        (tst_QDeclarativeWebView::backgroundColor):
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.qrc:
+
 2011-03-10  Stanislav Paltis  <Stanislav.Paltis@nokia.com>
 
         Reviewed by Laszlo Gombos.

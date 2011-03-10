@@ -3,5 +3,6 @@
         <file>resources/webviewtestdefault.qml</file>
         <file>resources/webviewtest.qml</file>
         <file>resources/sample.html</file>
+        <file>resources/webviewbackgroundcolor.qml</file>
     </qresource>
 </RCC>

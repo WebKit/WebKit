@@ -1,4 +1,5 @@
 #include "../util.h"
+#include <QColor>
 #include <QDebug>
 #include <QDeclarativeComponent>
 #include <QDeclarativeEngine>
@@ -22,6 +23,9 @@ private slots:
     void preferredHeightTest();
     void preferredWidthDefaultTest();
     void preferredHeightDefaultTest();
+#if QT_VERSION >= 0x040702
+    void backgroundColor();
+#endif
 
 private:
     void checkNoErrors(const QDeclarativeComponent&);
@@ -81,6 +85,36 @@ void tst_QDeclarativeWebView::preferredHeightDefaultTest()
     wv->setProperty("testUrl", QUrl("qrc:///resources/sample.html"));
     QCOMPARE(wv->property("prefHeight").toDouble(), view.preferredHeight());
 }
+
+#if QT_VERSION >= 0x040702
+void tst_QDeclarativeWebView::backgroundColor()
+{
+    // We test here the rendering of the background.
+    QDeclarativeEngine engine;
+    QDeclarativeComponent component(&engine, QUrl("qrc:///resources/webviewbackgroundcolor.qml"));
+    checkNoErrors(component);
+    QObject* wv = component.create();
+    QVERIFY(wv);
+    QCOMPARE(wv->property("backgroundColor").value<QColor>(), QColor(Qt::red));
+    QDeclarativeView view;
+    view.setSource(QUrl("qrc:///resources/webviewbackgroundcolor.qml"));
+    view.show();
+    QTest::qWaitForWindowShown(&view);
+    QPixmap result(view.width(), view.height());
+    QPainter painter(&result);
+    view.render(&painter);
+    QPixmap reference(view.width(), view.height());
+    reference.fill(Qt::red);
+    QCOMPARE(reference, result);
+
+    // We test the emission of the backgroundColorChanged signal.
+    QSignalSpy spyColorChanged(wv, SIGNAL(backgroundColorChanged()));
+    wv->setProperty("backgroundColor", Qt::red);
+    QCOMPARE(spyColorChanged.count(), 0);
+    wv->setProperty("backgroundColor", Qt::green);
+    QCOMPARE(spyColorChanged.count(), 1);
+}
+#endif
 
 void tst_QDeclarativeWebView::checkNoErrors(const QDeclarativeComponent& component)
 {
