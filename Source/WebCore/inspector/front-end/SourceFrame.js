@@ -46,6 +46,11 @@ WebInspector.SourceFrame = function(delegate, url)
     this._messages = [];
     this._rowMessages = {};
     this._messageBubbles = {};
+
+    if (Preferences.sourceEditorEnabled) {
+        this._registerShortcuts();
+        this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
+    }
 }
 
 WebInspector.SourceFrame.Events = {
@@ -173,6 +178,9 @@ WebInspector.SourceFrame.prototype = {
 
     _startEditing: function()
     {
+        if (this._originalTextModelContent === undefined)
+            this._originalTextModelContent = this._textModel.text;
+
         WebInspector.searchController.cancelSearch();
         this.clearMessages();
     },
@@ -763,6 +771,44 @@ WebInspector.SourceFrame.prototype = {
         formatter.formatContent(this._content, didFormat.bind(this))
     },
 
+    _registerShortcuts: function()
+    {
+        this._shortcuts = {};
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey("s", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta)] = this._handleSave.bind(this);
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.Keys.Esc.code)] = this._handleRevertEditing.bind(this);
+    },
+
+    _handleKeyDown: function(e)
+    {
+        var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(e);
+        var handler = this._shortcuts[shortcutKey];
+        if (handler) {
+            handler.call(this);
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    },
+
+    _handleSave: function()
+    {
+        if (!this._delegate.canEditScriptSource())
+            return;
+
+        var newSource = this._textModel.text;
+        if (this._originalTextModelContent !== newSource)
+            this._delegate.editScriptSource(newSource);
+        delete this._originalTextModelContent;
+        this._textViewer.readOnly = true;
+    },
+
+    _handleRevertEditing: function()
+    {
+        if (this._originalTextModelContent !== undefined)
+            this._textModel.setText(null, this._originalTextModelContent);
+        delete this._originalTextModelContent;
+        this._textViewer.readOnly = true;
+    },
+
     _doubleClick: function(event)
     {
         if (!this._delegate.canEditScriptSource())
@@ -771,6 +817,14 @@ WebInspector.SourceFrame.prototype = {
         var lineRow = event.target.enclosingNodeOrSelfWithClass("webkit-line-content");
         if (!lineRow)
             return;  // Do not trigger editing from line numbers.
+
+        if (Preferences.sourceEditorEnabled) {
+            if (this._textViewer.readOnly) {
+                this._textViewer.readOnly = false;
+                window.getSelection().collapseToStart();
+            }
+            return;
+        }
 
         this._textViewer.editLine(lineRow, this._didEditLine.bind(this, lineRow.lineNumber));
     },

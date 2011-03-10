@@ -1,3 +1,28 @@
+2011-03-10  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Text editor] Substitute live-edit mode activation by double-click
+        https://bugs.webkit.org/show_bug.cgi?id=56084
+
+        Also fixed a regression: console was not opening/closing on ESC key press because tabIndex="0" attribute was preserved for a readOnly viewer.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype._startEditing):
+        (WebInspector.SourceFrame.prototype._registerShortcuts):
+        (WebInspector.SourceFrame.prototype._handleKeyDown):
+        (WebInspector.SourceFrame.prototype._handleSave):
+        (WebInspector.SourceFrame.prototype._handleRevertEditing):
+        (WebInspector.SourceFrame.prototype._doubleClick):
+        * inspector/front-end/TextEditorModel.js:
+        (WebInspector.TextEditorModel.prototype.get text):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype.get readOnly):
+        (WebInspector.TextEditorMainPanel):
+        (WebInspector.TextEditorMainPanel.prototype.set readOnly):
+        (WebInspector.TextEditorMainPanel.prototype.get readOnly):
+
 2011-03-10  Greg Simon  <gregsimon@chromium.org>
 
         Reviewed by Pavel Feldman.

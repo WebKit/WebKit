@@ -72,6 +72,11 @@ WebInspector.TextEditorModel.prototype = {
         return this._lines.length;
     },
 
+    get text()
+    {
+        return this._lines.join("\n");
+    },
+
     line: function(lineNumber)
     {
         if (lineNumber >= this._lines.length)

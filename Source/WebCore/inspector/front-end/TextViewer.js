@@ -58,6 +58,11 @@ WebInspector.TextViewer.prototype = {
         this._mainPanel.readOnly = readOnly;
     },
 
+    get readOnly()
+    {
+        return this._mainPanel.readOnly;
+    },
+
     set startEditingListener(startEditingListener)
     {
         this._startEditingListener = startEditingListener;
@@ -680,11 +685,9 @@ WebInspector.TextEditorMainPanel = function(textModel, url, syncScrollListener, 
 
     this.element = document.createElement("div");
     this.element.className = "text-editor-contents";
-    this.element.tabIndex = 0;
 
     this._container = document.createElement("div");
     this._container.className = "inner-container";
-    this._container.tabIndex = 0;
     this.element.appendChild(this._container);
 
     this.element.addEventListener("scroll", this._scroll.bind(this), false);
@@ -720,11 +723,24 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         this.beginDomUpdates();
         this._readOnly = readOnly;
-        if (this._readOnly)
+        if (this._readOnly) {
+            this.element.removeAttribute("tabIndex");
+            this._container.removeAttribute("tabIndex");
             this._container.removeStyleClass("text-editor-editable");
-        else
+            // Remove the focus from the editable area.
+            this._container.blur();
+            this.element.blur();
+        } else {
+            this.element.setAttribute("tabIndex", "0");
+            this._container.setAttribute("tabIndex", "0");
             this._container.addStyleClass("text-editor-editable");
+        }
         this.endDomUpdates();
+    },
+
+    get readOnly()
+    {
+        return this._readOnly;
     },
 
     markAndRevealRange: function(range)
