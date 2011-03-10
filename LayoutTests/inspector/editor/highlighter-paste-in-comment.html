@@ -19,7 +19,6 @@ function test()
 
     var src = "/*\n\n1\n2\n3\n4\n5\n\n*/";
     textModel.setText(null, src);
-    highlighter.reset();
 
     highlighter.highlight(textModel.linesCount);
     dumpTextModel("After highlighting all lines");
@@ -31,6 +30,13 @@ function test()
 
     highlighter.highlight(textModel.linesCount);
     dumpTextModel("After highlighting up to the end");
+
+    // There was an actual bug with wrongly restored position after updating the highlights.
+    var range = new WebInspector.TextRange(12, 0, 12, 0);
+    var newRange = textModel.setText(range, "\n");
+    highlighter.updateHighlight(12, textModel.linesCount);
+    highlighter.highlight(textModel.linesCount);
+    dumpTextModel("After inserting a new line");
 
     InspectorTest.completeTest();
 }

@@ -19,24 +19,37 @@ function test()
         comments *= 2;
     }
     textModel.setText(null, src);
-    highlighter.reset();
+
+    function checkHighlights()
+    {
+        var commentsFound = 0;
+        for (var lineNumber = 0; lineNumber < textModel.linesCount; ++lineNumber) {
+            var highlight = textModel.getAttribute(lineNumber, "highlight");
+            for (var i = 0; i < textModel.lineLength(lineNumber); ++i) {
+                if (highlight[i]) {
+                    if (highlight[i].length !== 10 || (i % 11)) {
+                        InspectorTest.addResult("ERROR: unexpected highlight result: i=" + i + ", length=" + highlight[i].length);
+                        break;
+                    }
+                    ++commentsFound;
+                }
+            }
+        }
+        if (comments !== commentsFound)
+            InspectorTest.addResult("ERROR: some of the comments were not highlighted, found: " + commentsFound);
+    }
 
     InspectorTest.addResult("Line length: " + src.length + ", number of comments: " + comments);
 
     highlighter.highlight(textModel.linesCount);
+    checkHighlights();
 
-    var highlight = textModel.getAttribute(0, "highlight");
-    for (var i = 0; i < src.length; ++i) {
-        if (highlight[i]) {
-            if (highlight[i].length !== 10 || (i % 11)) {
-                InspectorTest.addResult("ERROR: unexpected highlight result: i=" + i + ", length=" + highlight[i].length);
-                break;
-            }
-            --comments;
-        }
-    }
-    if (comments)
-        InspectorTest.addResult("ERROR: some of the comments were not highlighted: " + comments);
+    // Insert a caret return in the middle of the long line.
+    var halfLength = Math.floor(src.length / 2);
+    var range = new WebInspector.TextRange(0, halfLength, 0, halfLength);
+    var newRange = textModel.setText(range, "\n");
+    highlighter.updateHighlight(newRange.startLine, newRange.endLine + 1);
+    checkHighlights();
 
     InspectorTest.addResult("All checks completed.");
     InspectorTest.completeTest();

@@ -819,7 +819,6 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     _buildChunks: function()
     {
-        this._highlighter.reset();
         for (var i = 0; i < this._textModel.linesCount; ++i)
             this._textModel.removeAttribute(i, "highlight");
 
@@ -1373,7 +1372,8 @@ WebInspector.TextEditorMainPanel.prototype = {
         var chunk = this._textChunks[result.end - 1];
         var lastVisibleLine = chunk.startLine + chunk.linesCount;
 
-        lastVisibleLine = Math.max(lastVisibleLine, range.endLine);
+        lastVisibleLine = Math.max(lastVisibleLine, range.endLine + 1);
+        lastVisibleLine = Math.min(lastVisibleLine, this._textModel.linesCount);
 
         var updated = this._highlighter.updateHighlight(range.startLine, lastVisibleLine);
         if (!updated) {

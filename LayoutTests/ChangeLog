@@ -1,3 +1,16 @@
+2011-03-10  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Highlighter refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=56015
+
+        * inspector/editor/highlighter-basics-expected.txt:
+        * inspector/editor/highlighter-basics.html:
+        * inspector/editor/highlighter-long-line.html:
+        * inspector/editor/highlighter-paste-in-comment-expected.txt:
+        * inspector/editor/highlighter-paste-in-comment.html:
+
 2011-03-10  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Andreas Kling.

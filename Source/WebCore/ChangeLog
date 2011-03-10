@@ -1,3 +1,23 @@
+2011-03-10  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Highlighter refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=56015
+
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter):
+        (WebInspector.TextEditorHighlighter.prototype.set mimeType):
+        (WebInspector.TextEditorHighlighter.prototype.highlight):
+        (WebInspector.TextEditorHighlighter.prototype.updateHighlight):
+        (WebInspector.TextEditorHighlighter.prototype._highlightInChunks):
+        (WebInspector.TextEditorHighlighter.prototype._highlightLines):
+        (WebInspector.TextEditorHighlighter.prototype._selectHighlightState):
+        (WebInspector.TextEditorHighlighter.prototype._clearHighlightState):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorMainPanel.prototype._buildChunks):
+        (WebInspector.TextEditorMainPanel.prototype._updateHighlightsForRange):
+
 2011-03-05  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -35,7 +35,7 @@ function test()
     var newRange = textModel.setText(range, src);
     dumpTextModel("After changing text model, but before updating highlights");
 
-    highlighter.updateHighlight(newRange.startLine, newRange.endLine);
+    highlighter.updateHighlight(newRange.startLine, newRange.endLine + 1);
     dumpTextModel("After updating highlights");
 
     highlighter.highlight(textModel.linesCount, true);
