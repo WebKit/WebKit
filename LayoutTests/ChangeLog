@@ -1,3 +1,15 @@
+2011-03-04  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] fast/workers/stress-js-execution.html is crashing on Qt bot (intermittently)
+        https://bugs.webkit.org/show_bug.cgi?id=33008
+
+        Removing several tests from the Qt skip list. Those tests were flaky because of race conditions
+        related to web workers.
+
+        * platform/qt/Skipped:
+
 2011-03-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

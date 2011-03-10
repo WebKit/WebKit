@@ -533,9 +533,6 @@ http/tests/inspector/resource-har-conversion.html
 # Fails caused by layoutTestController.display() in fast/frames/flattening/frameset-flattening-subframe-resize.html
 # https://bugs.webkit.org/show_bug.cgi?id=37334
 
-# https://bugs.webkit.org/show_bug.cgi?id=34281
-fast/workers/shared-worker-frame-lifecycle.html
-
 # Tests that currently fail but perhaps used to work at some point.
 fast/dom/open-and-close-by-DOM.html
 fast/dom/Window/new-window-opener.html
@@ -3111,23 +3108,6 @@ fast/animation/
 fast/tokenizer/flush-characters-in-document-write-evil.html
 fast/tokenizer/flush-characters-in-document-write.html
 fast/viewport/viewport-128.html
-fast/workers/dedicated-worker-lifecycle.html
-fast/workers/shared-worker-exception.html
-fast/workers/shared-worker-lifecycle.html
-fast/workers/shared-worker-name.html
-fast/workers/shared-worker-script-error.html
-fast/workers/stress-js-execution.html
-fast/workers/termination-early.html
-fast/workers/termination-with-port-messages.html
-fast/workers/worker-cloneport.html
-fast/workers/worker-close-more.html
-fast/workers/worker-close.html
-fast/workers/worker-context-multi-port.html
-fast/workers/worker-gc2.html
-fast/workers/worker-lifecycle.html
-fast/workers/worker-messageport-gc.html
-fast/workers/worker-multi-port.html
-fast/workers/worker-terminate.html
 fast/xmlhttprequest/null-document-xmlhttprequest-open.html
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 
