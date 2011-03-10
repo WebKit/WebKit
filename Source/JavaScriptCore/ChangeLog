@@ -1,3 +1,32 @@
+2011-03-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Rolled back in 80277 and 80280 with event handler layout test failures fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=55653        
+
+        The failures were caused by a last minute typo: assigning to currentEvent
+        instead of m_currentEvent.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecompiler/BytecodeGenerator.cpp:
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+        * runtime/Arguments.h:
+        * runtime/JSActivation.cpp:
+        * runtime/JSActivation.h:
+        * runtime/JSCell.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.cpp:
+        * runtime/JSStaticScopeObject.cpp:
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSVariableObject.h:
+        * runtime/MarkedSpace.cpp:
+        * runtime/MarkedSpace.h:
+
 2011-03-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

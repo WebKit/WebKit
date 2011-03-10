@@ -72,23 +72,6 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NeedsThisConversion | OverridesMarkChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
 
     private:
-        struct JSActivationData : public JSVariableObjectData {
-            JSActivationData(JSGlobalData& globalData, JSActivation* activation, FunctionExecutable* _functionExecutable, Register* registers)
-                : JSVariableObjectData(_functionExecutable->symbolTable(), registers)
-                , functionExecutable(globalData, activation, _functionExecutable)
-            {
-                // We have to manually ref and deref the symbol table as JSVariableObjectData
-                // doesn't know about SharedSymbolTable
-                functionExecutable->symbolTable()->ref();
-            }
-            ~JSActivationData()
-            {
-                static_cast<SharedSymbolTable*>(symbolTable)->deref();
-            }
-
-            WriteBarrier<FunctionExecutable> functionExecutable;
-        };
-
         bool symbolTableGet(const Identifier&, PropertySlot&);
         bool symbolTableGet(const Identifier&, PropertyDescriptor&);
         bool symbolTableGet(const Identifier&, PropertySlot&, bool& slotIsWriteable);
@@ -98,7 +81,7 @@ namespace JSC {
         static JSValue argumentsGetter(ExecState*, JSValue, const Identifier&);
         NEVER_INLINE PropertySlot::GetValueFunc getArgumentsGetter();
 
-        JSActivationData* d() const { return static_cast<JSActivationData*>(JSVariableObject::d); }
+        WriteBarrier<FunctionExecutable> m_functionExecutable;
     };
 
     JSActivation* asActivation(JSValue);
