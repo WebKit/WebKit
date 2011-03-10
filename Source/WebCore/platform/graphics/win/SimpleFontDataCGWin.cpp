@@ -97,18 +97,14 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setLineGap(fLineGap);
     m_fontMetrics.setLineSpacing(lroundf(fAscent) + lroundf(fDescent) + lroundf(fLineGap));
 
-    // Measure the actual character "x", because AppKit synthesizes X height rather than getting it from the font.
-    // Unfortunately, NSFont will round this for us so we don't quite get the right value.
     GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
     Glyph xGlyph = glyphPageZero ? glyphPageZero->glyphDataForCharacter('x').glyph : 0;
     if (xGlyph) {
+        // Measure the actual character "x", since it's possible for it to extend below the baseline, and we need the
+        // reported x-height to only include the portion of the glyph that is above the baseline.
         CGRect xBox;
         CGFontGetGlyphBBoxes(font, &xGlyph, 1, &xBox);
-        // Use the maximum of either width or height because "x" is nearly square
-        // and web pages that foolishly use this metric for width will be laid out
-        // poorly if we return an accurate height. Classic case is Times 13 point,
-        // which has an "x" that is 7x6 pixels.
-        m_fontMetrics.setXHeight(scaleEmToUnits(max(CGRectGetMaxX(xBox), CGRectGetMaxY(xBox)), unitsPerEm) * pointSize);
+        m_fontMetrics.setXHeight(scaleEmToUnits(CGRectGetMaxY(xBox), unitsPerEm) * pointSize);
     } else {
         int iXHeight = CGFontGetXHeight(font);
         m_fontMetrics.setXHeight(scaleEmToUnits(iXHeight, unitsPerEm) * pointSize);

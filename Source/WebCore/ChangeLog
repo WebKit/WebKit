@@ -1,5 +1,14 @@
 2011-03-10  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Make the same change to xheight on Windows for CG.
+
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+
+2011-03-10  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=47147
