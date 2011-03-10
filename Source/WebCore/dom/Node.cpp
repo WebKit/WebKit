@@ -759,8 +759,7 @@ bool Node::hasNonEmptyBoundingBox() const
 
 void Node::setDocumentRecursively(Document* document)
 {
-    // FIXME: To match Gecko, we should do this for nodes that are already in the document as well.
-    if (this->document() == document || this->inDocument())
+    if (this->document() == document)
         return;
 
     for (Node* node = this; node; node = node->traverseNextNode(this)) {
@@ -1142,37 +1141,25 @@ bool Node::canReplaceChild(Node* newChild, Node*)
 
 static void checkAcceptChild(Node* newParent, Node* newChild, ExceptionCode& ec)
 {
-    // Perform error checking as required by spec for adding a new child. Used by replaceChild().
-    
     // Not mentioned in spec: throw NOT_FOUND_ERR if newChild is null
     if (!newChild) {
         ec = NOT_FOUND_ERR;
         return;
     }
     
-    // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
     if (newParent->isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-    
-    // WRONG_DOCUMENT_ERR: Raised if newChild was created from a different document than the one that
-    // created this node.
-    // We assume that if newChild is a DocumentFragment, all children are created from the same document
-    // as the fragment itself (otherwise they could not have been added as children)
-    if (newChild->document() != newParent->document() && newChild->inDocument()) {
-        // but if the child is not in a document yet then loosen the
-        // restriction, so that e.g. creating an element with the Option()
-        // constructor and then adding it to a different document works,
-        // as it does in Mozilla and Mac IE.
-        ec = WRONG_DOCUMENT_ERR;
+
+    if (newChild->inDocument() && newChild->nodeType() == Node::DOCUMENT_TYPE_NODE) {
+        ec = HIERARCHY_REQUEST_ERR;
         return;
     }
-    
+
     // HIERARCHY_REQUEST_ERR: Raised if this node is of a type that does not allow children of the type of the
     // newChild node, or if the node to append is one of this node's ancestors.
 
-    // check for ancestor/same node
     if (newChild == newParent || newParent->isDescendantOf(newChild)) {
         ec = HIERARCHY_REQUEST_ERR;
         return;
@@ -1181,6 +1168,11 @@ static void checkAcceptChild(Node* newParent, Node* newChild, ExceptionCode& ec)
 
 void Node::checkReplaceChild(Node* newChild, Node* oldChild, ExceptionCode& ec)
 {
+    if (!oldChild) {
+        ec = NOT_FOUND_ERR;
+        return;
+    }
+
     checkAcceptChild(this, newChild, ec);
     if (ec)
         return;

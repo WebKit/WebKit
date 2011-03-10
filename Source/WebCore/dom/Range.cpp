@@ -932,13 +932,6 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
         return;
     }
 
-    // WRONG_DOCUMENT_ERR: Raised if newParent and the container of the start of the Range were
-    // not created from the same document.
-    if (newNode->document() != m_start.container()->document()) {
-        ec = WRONG_DOCUMENT_ERR;
-        return;
-    }
-
     // HIERARCHY_REQUEST_ERR: Raised if the container of the start of the Range is of a type that
     // does not allow children of the type of newNode or if newNode is an ancestor of the container.
 
@@ -1420,13 +1413,6 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
     // the Range is read-only.
     if (containedByReadOnly()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
-    }
-
-    // WRONG_DOCUMENT_ERR: Raised if newParent and the container of the start of the Range were
-    // not created from the same document.
-    if (newParent->document() != m_start.container()->document()) {
-        ec = WRONG_DOCUMENT_ERR;
         return;
     }
 

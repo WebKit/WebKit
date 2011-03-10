@@ -1,3 +1,28 @@
+2011-03-10  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Able to move nodes across documents
+        https://bugs.webkit.org/show_bug.cgi?id=19524
+
+        Makes cross-document appendChild, insertBefore, Range.insertNode and Range.surroundContents work.
+        This matches Gecko and the new Dom Core spec. There are a number of Range methods where we don't 
+        match Gecko or the spec that will need to be updated in a following patch.
+
+        Test: fast/dom/move-nodes-across-documents.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::removeAttributeNode):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::setNamedItem):
+        * dom/Node.cpp:
+        (WebCore::Node::setDocumentRecursively):
+        (WebCore::checkAcceptChild):
+        (WebCore::Node::checkReplaceChild):
+        * dom/Range.cpp:
+        (WebCore::Range::insertNode):
+        (WebCore::Range::surroundContents):
+
 2011-03-09  Antti Koivisto  <antti@apple.com>
 
         Not reviewed.

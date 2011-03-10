@@ -1397,10 +1397,8 @@ PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
         ec = NOT_FOUND_ERR;
         return 0;
     }
-    if (document() != attr->document()) {
-        ec = WRONG_DOCUMENT_ERR;
-        return 0;
-    }
+
+    ASSERT(document() == attr->document());
 
     NamedNodeMap* attrs = attributes(true);
     if (!attrs)

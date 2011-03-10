@@ -1,3 +1,21 @@
+2011-03-10  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Able to move nodes across documents
+        https://bugs.webkit.org/show_bug.cgi?id=19524
+
+        Makes cross-document appendChild, insertBefore, Range.insertNode and Range.surroundContents work.
+        This matches Gecko and the new Dom Core spec. There are a number of Range methods where we don't
+        match Gecko or the spec that will need to be updated in a following patch.
+
+        * dom/html/level1/core/hc_elementwrongdocumenterr-expected.txt:
+        * dom/html/level1/core/hc_namednodemapwrongdocumenterr-expected.txt:
+        * dom/xhtml/level1/core/hc_elementwrongdocumenterr-expected.txt:
+        * dom/xhtml/level1/core/hc_namednodemapwrongdocumenterr-expected.txt:
+        * fast/dom/move-nodes-across-documents-expected.txt: Added.
+        * fast/dom/move-nodes-across-documents.html: Added.
+
 2011-03-09  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed: tweaking of Chromium test_expectations.txt

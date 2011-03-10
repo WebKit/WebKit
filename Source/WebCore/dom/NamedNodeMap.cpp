@@ -100,12 +100,6 @@ PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* arg, ExceptionCode& ec)
         return 0;
     }
 
-    // WRONG_DOCUMENT_ERR: Raised if arg was created from a different document than the one that created this map.
-    if (arg->document() != m_element->document()) {
-        ec = WRONG_DOCUMENT_ERR;
-        return 0;
-    }
-
     // Not mentioned in spec: throw a HIERARCHY_REQUEST_ERROR if the user passes in a non-attribute node
     if (!arg->isAttributeNode()) {
         ec = HIERARCHY_REQUEST_ERR;
