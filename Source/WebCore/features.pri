@@ -135,7 +135,7 @@ contains(MOBILITY_CONFIG, sensors) {
 symbian|maemo5|maemo6 {
     !CONFIG(QTDIR_build):!contains(DEFINES, ENABLE_QT_USERAGENT_DEVICEMODEL=.) {
         contains(MOBILITY_CONFIG, systeminfo) {
-            DEFINES += QT_USERAGENT_DEVICEMODEL=1
+            DEFINES += ENABLE_QT_USERAGENT_DEVICEMODEL=1
         }
     }
 }
