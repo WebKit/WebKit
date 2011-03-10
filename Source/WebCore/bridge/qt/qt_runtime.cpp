@@ -845,17 +845,13 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
         QRegExp re = variant.value<QRegExp>();
 
         if (re.isValid()) {
-            UString uflags;
-            if (re.caseSensitivity() == Qt::CaseInsensitive)
-                uflags = "i"; // ### Can't do g or m
-
             UString pattern((UChar*)re.pattern().utf16(), re.pattern().length());
+            RegExpFlags flags = (re.caseSensitivity() == Qt::CaseInsensitive) ? FlagIgnoreCase : NoFlags;
 
-            RefPtr<JSC::RegExp> regExp = JSC::RegExp::create(&exec->globalData(), pattern, uflags);
+            RefPtr<JSC::RegExp> regExp = JSC::RegExp::create(&exec->globalData(), pattern, flags);
             if (regExp->isValid())
                 return new (exec) RegExpObject(exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regExp.release());
-            else
-                return jsNull();
+            return jsNull();
         }
     }
 

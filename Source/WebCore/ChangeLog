@@ -1,3 +1,10 @@
+2011-03-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Qt build fix.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertQVariantToValue):
+
 2011-03-09  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adam Barth.
