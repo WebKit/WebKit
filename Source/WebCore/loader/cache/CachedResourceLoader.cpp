@@ -340,7 +340,8 @@ CachedResource* CachedResourceLoader::revalidateResource(CachedResource* resourc
     ASSERT(resource->canUseCacheValidator());
     ASSERT(!resource->resourceToRevalidate());
     
-    const String& url = resource->url();
+    // Copy the URL out of the resource to be revalidated in case it gets deleted by the remove() call below.
+    String url = resource->url();
     CachedResource* newResource = createResource(resource->type(), KURL(ParsedURLString, url), resource->encoding());
     
     LOG(ResourceLoading, "Resource %p created to revalidate %p", newResource, resource);

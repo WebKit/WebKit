@@ -1,3 +1,20 @@
+2011-03-09  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        REGRESSION (r74807): memory corruption after CachedResourceLoader refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=53045
+        
+        Copy the URL out of the CachedResource that is being revalidated, so
+        that we can still use it (in m_validatedURLs) after removing the
+        resource from the memory cache, which may delete it.
+
+        No new tests, since I was not able to trigger this locally (in a layout
+        test or otherwise).
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::revalidateResource):
+
 2011-03-09  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
