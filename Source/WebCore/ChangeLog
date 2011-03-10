@@ -1,5 +1,20 @@
 2011-03-09  Peter Kasting  <pkasting@google.com>
 
+        Reviewed by Ryosuke Niwa.
+
+        Add UA string tags for Windows 64.
+        https://bugs.webkit.org/show_bug.cgi?id=55226
+
+        * StringsNotToBeLocalized.txt:
+        * platform/win/SystemInfo.cpp:
+        (WebCore::osVersionForUAString):
+        (WebCore::isWOW64):
+        (WebCore::processorArchitecture):
+        (WebCore::architectureTokenForUAString):
+        (WebCore::windowsVersionForUAString):
+
+2011-03-09  Peter Kasting  <pkasting@google.com>
+
         Unreviewed, attempted build fix.
 
         * WebCore.pri: Try to update include path for Qt Windows build.
