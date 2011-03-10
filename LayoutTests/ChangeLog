@@ -1,3 +1,17 @@
+2011-03-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Unable to paste in input[type="text"] with last-child selector
+        https://bugs.webkit.org/show_bug.cgi?id=50736
+
+        Added regressions tests since this bug no longer reproduces on TOT WebKit.
+
+        * editing/input/div-first-child-rule-input-expected.txt: Added.
+        * editing/input/div-first-child-rule-input.html: Added.
+        * editing/input/div-first-child-rule-textarea-expected.txt: Added.
+        * editing/input/div-first-child-rule-textarea.html: Added.
+
 2011-03-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] plugins/return-negative-one-from-write.html crashes
