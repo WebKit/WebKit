@@ -5337,6 +5337,7 @@
             'inspector/front-end/Images/graphLabelCalloutRight.png',
             'inspector/front-end/Images/helpButtonGlyph.png',
             'inspector/front-end/Images/largerResourcesButtonGlyph.png',
+            'inspector/front-end/Images/garbageCollectButtonGlyph.png',
             'inspector/front-end/Images/localStorage.png',
             'inspector/front-end/Images/networkIcon.png',
             'inspector/front-end/Images/nodeSearchButtonGlyph.png',

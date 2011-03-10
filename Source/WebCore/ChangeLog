@@ -1,3 +1,33 @@
+2011-03-10  Greg Simon  <gregsimon@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Need new graphic icon for garbage collect button.
+        https://bugs.webkit.org/show_bug.cgi?id=55794
+
+        No new tests: gc tests are flaky due to non-determinisic
+        behavior of collection APIs (more notes in bug)
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * bindings/js/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::collectGarbage):
+        * bindings/js/ScriptProfiler.h:
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::collectGarbage):
+        * bindings/v8/ScriptProfiler.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::collectGarbage):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/front-end/Images/garbageCollectButtonGlyph.png: Added.
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.get statusBarItems):
+        (WebInspector.TimelinePanel.prototype._createStatusbarButtons):
+        (WebInspector.TimelinePanel.prototype._garbageCollectButtonClicked):
+        * inspector/front-end/inspector.css:
+        (.garbage-collect-status-bar-item .glyph):
+
 2011-03-10  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: better names for HAR export commands

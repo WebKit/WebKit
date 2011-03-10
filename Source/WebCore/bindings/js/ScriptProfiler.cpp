@@ -30,10 +30,16 @@
 
 #include "ScriptProfiler.h"
 
+#include "GCController.h"
 #include "JSDOMBinding.h"
 #include <profiler/Profiler.h>
 
 namespace WebCore {
+
+void ScriptProfiler::collectGarbage()
+{
+    gcController().garbageCollectNow();
+}
 
 void ScriptProfiler::start(ScriptState* state, const String& title)
 {

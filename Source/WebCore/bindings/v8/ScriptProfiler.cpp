@@ -53,6 +53,14 @@ PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String&
     return profile ? ScriptProfile::create(profile) : 0;
 }
 
+void ScriptProfiler::collectGarbage()
+{
+    // NOTE : There is currently no direct way to collect memory from the v8 C++ API
+    // but notifying low-memory forces a mark-compact, which is exactly what we want
+    // in this case.
+    v8::V8::LowMemoryNotification();
+}
+
 namespace {
 
 class ActivityControlAdapter : public v8::ActivityControl {

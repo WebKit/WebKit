@@ -61,6 +61,7 @@ public:
     void addProfile(PassRefPtr<ScriptProfile> prpProfile, unsigned lineNumber, const String& sourceURL);
     void addProfileFinishedMessageToConsole(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
     void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL);
+    void collectGarbage(ErrorString*);
     void clearProfiles(ErrorString*) { resetState(); }
     void disable();
     void enable(bool skipRecompile);

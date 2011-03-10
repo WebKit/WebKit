@@ -40,6 +40,7 @@
 #include "InstrumentingAgents.h"
 #include "KURL.h"
 #include "Page.h"
+#include "ScriptController.h"
 #include "ScriptDebugServer.h"
 #include "ScriptHeapSnapshot.h"
 #include "ScriptProfile.h"
@@ -106,6 +107,11 @@ void InspectorProfilerAgent::addStartProfilingMessageToConsole(const String& tit
         return;
     String message = makeString("Profile \"webkit-profile://", CPUProfileType, '/', encodeWithURLEscapeSequences(title), "#0\" started.");
     m_consoleAgent->addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
+}
+
+void InspectorProfilerAgent::collectGarbage(WebCore::ErrorString*)
+{
+    ScriptProfiler::collectGarbage();
 }
 
 PassRefPtr<InspectorObject> InspectorProfilerAgent::createProfileHeader(const ScriptProfile& profile)

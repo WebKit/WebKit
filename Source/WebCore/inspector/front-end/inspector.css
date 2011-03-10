@@ -3935,6 +3935,10 @@ body.inactive li.selected .bubble.search-matches {
     background-color: rgb(66, 129, 235) !important;
 }
 
+.garbage-collect-status-bar-item .glyph {
+    -webkit-mask-image: url(Images/garbageCollectButtonGlyph.png);
+}
+
 .timeline-records-counter, .storage-application-cache-status, .storage-application-cache-connectivity {
     font-size: 11px;
     text-shadow: white 0 1px 0;
