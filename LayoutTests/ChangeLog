@@ -1,3 +1,92 @@
+2011-03-10  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=47157
+        
+        CSS2.1 test suite failures because the ex unit is broken with the Ahem font.
+        
+        Remove the code that tries to also include the maxX of the glyph bounds for the
+        'x' glyph, since it just causes the x-height to be way too large in cases where the 'x' glyph extends
+        below the baseline.
+
+        Remove the Apple Symbol hack for ex units, since the person who added that was confused by another
+        issue, namely that CGFontGetXHeight wasn't being properly multiplied by the pointSize.  That's why
+        the value was too small.  Patched the code to just multiply by pointSize and took out the hack.
+        
+        Fix causes many tests in the css2.1 directory to progress, so no new tests required.  Many other
+        layout tests change because the xHeight for Lucida Grande gets smaller by a little bit, and radio
+        buttons use ex horizontal margins by default.
+
+        * platform/mac/accessibility/radio-button-group-members-expected.txt:
+        * platform/mac/css1/box_properties/acid_test-expected.txt:
+        * platform/mac/css1/font_properties/font_size-expected.txt:
+        * platform/mac/css1/text_properties/line_height-expected.txt:
+        * platform/mac/css1/text_properties/text_indent-expected.txt:
+        * platform/mac/css1/units/length_units-expected.txt:
+        * platform/mac/css2.1/t040302-c61-ex-len-00-b-a-expected.txt:
+        * platform/mac/css2.1/t040302-c61-rel-len-00-b-ag-expected.txt:
+        * platform/mac/css2.1/t09-c5526c-display-00-e-expected.txt:
+        * platform/mac/css2.1/t1008-c44-ln-box-02-d-ag-expected.txt:
+        * platform/mac/css2.1/t100801-c544-valgn-01-d-ag-expected.txt:
+        * platform/mac/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/mac/css2.1/t100801-c548-ln-ht-02-b-ag-expected.txt:
+        * platform/mac/css2.1/t1507-c526-font-sz-02-b-a-expected.txt:
+        * platform/mac/css2.1/t1601-c547-indent-00-b-a-expected.txt:
+        * platform/mac/css2.1/t1604-c541-word-sp-00-b-a-expected.txt:
+        * platform/mac/css2.1/t1604-c542-letter-sp-00-b-a-expected.txt:
+        * platform/mac/editing/selection/caret-ltr-2-expected.txt:
+        * platform/mac/editing/selection/caret-ltr-2-left-expected.txt:
+        * platform/mac/editing/selection/caret-ltr-expected.txt:
+        * platform/mac/editing/selection/caret-ltr-right-expected.txt:
+        * platform/mac/editing/selection/caret-rtl-2-expected.txt:
+        * platform/mac/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/mac/editing/selection/caret-rtl-expected.txt:
+        * platform/mac/editing/selection/caret-rtl-right-expected.txt:
+        * platform/mac/fast/block/basic/011-expected.txt:
+        * platform/mac/fast/block/margin-collapse/103-expected.txt:
+        * platform/mac/fast/css/ex-after-font-variant-expected.txt:
+        * platform/mac/fast/css/non-standard-checkbox-size-expected.txt:
+        * platform/mac/fast/forms/001-expected.txt:
+        * platform/mac/fast/forms/basic-inputs-expected.txt:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/checkbox-radio-onchange-expected.txt:
+        * platform/mac/fast/forms/file-input-disabled-expected.txt:
+        * platform/mac/fast/forms/form-element-geometry-expected.txt:
+        * platform/mac/fast/forms/formmove-expected.txt:
+        * platform/mac/fast/forms/formmove2-expected.txt:
+        * platform/mac/fast/forms/indeterminate-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/input-value-expected.txt:
+        * platform/mac/fast/forms/minWidthPercent-expected.txt:
+        * platform/mac/fast/forms/radio-attr-order-expected.txt:
+        * platform/mac/fast/forms/radio-nested-labels-expected.txt:
+        * platform/mac/fast/forms/radio_checked-expected.txt:
+        * platform/mac/fast/forms/radio_checked_dynamic-expected.txt:
+        * platform/mac/fast/inline/positionedLifetime-expected.txt:
+        * platform/mac/fast/lists/008-expected.txt:
+        * platform/mac/fast/lists/008-vertical-expected.txt:
+        * platform/mac/fast/media/mq-relative-constraints-08-expected.txt:
+        * platform/mac/fast/overflow/overflow-rtl-expected.txt:
+        * platform/mac/fast/overflow/overflow-rtl-vertical-expected.txt:
+        * platform/mac/fast/parser/bad-xml-slash-expected.txt:
+        * platform/mac/fast/replaced/replaced-breaking-expected.txt:
+        * platform/mac/fast/replaced/width100percent-checkbox-expected.txt:
+        * platform/mac/fast/replaced/width100percent-radio-expected.txt:
+        * platform/mac/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/mac/fast/text/whitespace/normal-after-nowrap-breaking-expected.txt:
+        * platform/mac/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/mac/svg/custom/alignment-baseline-modes-expected.txt:
+        * platform/mac/svg/custom/dominant-baseline-modes-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/core/captions1-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/core/captions2-expected.txt:
+        * svg/custom/invalid-text-content-expected.png:
+        * svg/custom/text-zoom-expected.png:
+        * svg/custom/use-clipped-transform-expected.png:
+
 2011-03-10  Adam Roben  <aroben@apple.com>
 
         Skip a test that sometimes times out in Windows Debug builds

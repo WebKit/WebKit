@@ -274,26 +274,15 @@ void SimpleFontData::platformInit()
 
     float xHeight;
 
-    // Measure the actual character "x", since it's possible for it to extend below the baseline, and we need the
-    // reported x-height to only include the portion of the glyph that is above the baseline.
     if (platformData().orientation() == Horizontal) {
+        // Measure the actual character "x", since it's possible for it to extend below the baseline, and we need the
+        // reported x-height to only include the portion of the glyph that is above the baseline.
         GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
         NSGlyph xGlyph = glyphPageZero ? glyphPageZero->glyphDataForCharacter('x').glyph : 0;
-        if (xGlyph) {
-            CGRect xBox = platformBoundsForGlyph(xGlyph);
-            // Use the maximum of either width or height because "x" is nearly square
-            // and web pages that foolishly use this metric for width will be laid out
-            // poorly if we return an accurate height. Classic case is Times 13 point,
-            // which has an "x" that is 7x6 pixels.
-            xHeight = max(CGRectGetMaxX(xBox), -CGRectGetMinY(xBox));
-        } else {
-            xHeight = static_cast<float>(CGFontGetXHeight(m_platformData.cgFont())) / unitsPerEm;
-            // CGFontGetXHeight() returns a wrong value for "Apple Symbols" font (a float close to 0, but not strictly 0).
-            // The following code makes a guess for xHeight in that case.
-            // The int cast is a workaround for the "almost" zero value returned by CGFontGetXHeight().
-            if (!static_cast<int>(xHeight) && ascent)
-                xHeight = 2 * ascent / 3;
-        }
+        if (xGlyph)
+            xHeight = -CGRectGetMinY(platformBoundsForGlyph(xGlyph));
+        else
+            xHeight = scaleEmToUnits(CGFontGetXHeight(m_platformData.cgFont()), unitsPerEm) * pointSize;
     } else
         xHeight = verticalRightOrientationFontData()->fontMetrics().xHeight();
 

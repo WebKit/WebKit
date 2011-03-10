@@ -80,17 +80,17 @@ layer at (0,0) size 785x1718
               RenderText {#text} at (0,2) size 220x15
                 text run at (0,2) width 220: "Your research is primarily focused on:"
             RenderBlock {SPAN} at (325,250) size 180x20 [color=#333333]
-              RenderBlock {INPUT} at (3,3) size 12x13 [color=#000000]
-              RenderText {#text} at (18,2) size 32x15
-                text run at (18,2) width 32: "Texts"
+              RenderBlock {INPUT} at (2,3) size 12x13 [color=#000000]
+              RenderText {#text} at (16,2) size 32x15
+                text run at (16,2) width 32: "Texts"
             RenderBlock {SPAN} at (325,270) size 180x20 [color=#333333]
-              RenderBlock {INPUT} at (3,3) size 12x13 [color=#000000]
-              RenderText {#text} at (18,2) size 133x15
-                text run at (18,2) width 133: "Performance materials"
+              RenderBlock {INPUT} at (2,3) size 12x13 [color=#000000]
+              RenderText {#text} at (16,2) size 133x15
+                text run at (16,2) width 133: "Performance materials"
             RenderBlock {SPAN} at (325,290) size 180x20 [color=#333333]
-              RenderBlock {INPUT} at (3,3) size 12x13 [color=#000000]
-              RenderText {#text} at (18,2) size 21x15
-                text run at (18,2) width 21: "n/a"
+              RenderBlock {INPUT} at (2,3) size 12x13 [color=#000000]
+              RenderText {#text} at (16,2) size 21x15
+                text run at (16,2) width 21: "n/a"
             RenderBlock {H2} at (0,335) size 560x16 [color=#333333]
               RenderText {#text} at (0,0) size 374x16
                 text run at (0,0) width 374: "INTERNET SHAKESPEARE EDITIONS QUESTIONS"
@@ -100,11 +100,11 @@ layer at (0,0) size 785x1718
             RenderBlock {SPAN} at (325,361) size 180x20 [color=#333333]
               RenderText {#text} at (0,2) size 19x15
                 text run at (0,2) width 19: "Yes"
-              RenderBlock {INPUT} at (22,3) size 12x13 [color=#000000]
-              RenderText {#text} at (37,2) size 19x15
-                text run at (37,2) width 4: " "
-                text run at (41,2) width 15: "No"
-              RenderBlock {INPUT} at (59,3) size 12x13 [color=#000000]
+              RenderBlock {INPUT} at (21,3) size 12x13 [color=#000000]
+              RenderText {#text} at (35,2) size 19x15
+                text run at (35,2) width 4: " "
+                text run at (39,2) width 15: "No"
+              RenderBlock {INPUT} at (56,3) size 12x13 [color=#000000]
               RenderText {#text} at (0,0) size 0x0
             RenderBlock {P} at (0,394) size 560x20 [color=#333333]
               RenderText {#text} at (0,2) size 378x15

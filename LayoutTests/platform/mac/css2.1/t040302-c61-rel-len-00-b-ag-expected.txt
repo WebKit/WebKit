@@ -13,7 +13,7 @@ layer at (0,0) size 800x118
         RenderBlock {DIV} at (45,15) size 739x15
           RenderText {#text} at (0,0) size 15x15
             text run at (0,0) width 15: "X"
-        RenderBlock {DIV} at (56,30) size 728x15
+        RenderBlock {DIV} at (45,30) size 739x15
           RenderText {#text} at (0,0) size 15x15
             text run at (0,0) width 15: "X"
         RenderBlock {DIV} at (45,45) size 739x15

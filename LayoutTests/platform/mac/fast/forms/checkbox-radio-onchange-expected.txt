@@ -7,19 +7,19 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 364x18
           text run at (0,0) width 364: "This is to test onchange of checkboxes and radio buttons. "
         RenderBR {BR} at (364,14) size 0x0
-        RenderBlock {INPUT} at (3,22) size 12x12
-        RenderText {#text} at (18,18) size 65x18
-          text run at (18,18) width 65: "Checkbox"
+        RenderBlock {INPUT} at (2,22) size 12x12
+        RenderText {#text} at (16,18) size 65x18
+          text run at (16,18) width 65: "Checkbox"
       RenderBlock {DIV} at (0,37) size 784x18
         RenderText {#text} at (0,0) size 321x18
           text run at (0,0) width 321: "Test 1 Passed. onChange event fired for checkbox."
       RenderBlock (anonymous) at (0,55) size 784x19
-        RenderBlock {INPUT} at (3,3) size 12x13
-        RenderText {#text} at (18,0) size 54x18
-          text run at (18,0) width 54: "Radio 1 "
-        RenderBlock {INPUT} at (75,3) size 12x13
-        RenderText {#text} at (90,0) size 50x18
-          text run at (90,0) width 50: "Radio 2"
+        RenderBlock {INPUT} at (2,3) size 12x13
+        RenderText {#text} at (16,0) size 54x18
+          text run at (16,0) width 54: "Radio 1 "
+        RenderBlock {INPUT} at (72,3) size 12x13
+        RenderText {#text} at (86,0) size 50x18
+          text run at (86,0) width 50: "Radio 2"
       RenderBlock {DIV} at (0,74) size 784x18
         RenderText {#text} at (0,0) size 336x18
           text run at (0,0) width 336: "Test 2 Passed. onChange event fired for radio button."

@@ -135,8 +135,8 @@ layer at (0,0) size 785x2819
         RenderText {#text} at (0,0) size 465x37
           text run at (0,0) width 465: "This sentence should be two em tall."
       RenderBlock {P} at (0,1359) size 769x26
-        RenderText {#text} at (0,0) size 343x26
-          text run at (0,0) width 343: "This sentence should be three ex tall."
+        RenderText {#text} at (0,0) size 331x26
+          text run at (0,0) width 331: "This sentence should be three ex tall."
       RenderBlock {P} at (0,1410) size 769x29
         RenderText {#text} at (0,0) size 476x29
           text run at (0,0) width 476: "This sentence should be twenty-five pixels tall."
@@ -245,8 +245,8 @@ layer at (0,0) size 785x2819
                 RenderText {#text} at (0,0) size 465x37
                   text run at (0,0) width 465: "This sentence should be two em tall."
               RenderBlock {P} at (4,998) size 747x26
-                RenderText {#text} at (0,0) size 343x26
-                  text run at (0,0) width 343: "This sentence should be three ex tall."
+                RenderText {#text} at (0,0) size 331x26
+                  text run at (0,0) width 331: "This sentence should be three ex tall."
               RenderBlock {P} at (4,1049) size 747x29
                 RenderText {#text} at (0,0) size 476x29
                   text run at (0,0) width 476: "This sentence should be twenty-five pixels tall."

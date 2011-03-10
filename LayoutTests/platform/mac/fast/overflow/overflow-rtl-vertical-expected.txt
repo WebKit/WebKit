@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 337x600
-  RenderBlock {HTML} at (0,0) size 337x600
-    RenderBody {BODY} at (16,8) size 313x584
+layer at (0,0) size 331x600
+  RenderBlock {HTML} at (0,0) size 331x600
+    RenderBody {BODY} at (16,8) size 307x584
       RenderBlock {P} at (0,0) size 36x584
         RenderText {#text} at (0,0) size 18x135
           text run at (0,0) width 135: "This is a test case for "
@@ -28,36 +28,36 @@ layer at (0,0) size 337x600
           RenderListMarker at (0,-17) size 18x7: bullet
           RenderText {#text} at (0,0) size 18x331
             text run at (0,0) width 331: "which letters are visible initially and when you scroll"
-      RenderTable {TABLE} at (156,0) size 157x256
-        RenderTableSection {TBODY} at (0,0) size 157x256
-          RenderTableRow {TR} at (0,2) size 153x256
-            RenderTableCell {TD} at (2,2) size 153x125 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (2,129) size 153x125 [r=0 c=1 rs=1 cs=1]
-layer at (179,15) size 45x115 clip at (179,25) size 30x100 scrollHeight 188
-  RenderBlock {DIV} at (5,5) size 45x115 [bgcolor=#FFFF00] [border: (10px solid #FF0000) none (5px solid #008000) none]
+      RenderTable {TABLE} at (156,0) size 151x256
+        RenderTableSection {TBODY} at (0,0) size 151x256
+          RenderTableRow {TR} at (0,2) size 147x256
+            RenderTableCell {TD} at (2,2) size 147x125 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,129) size 147x125 [r=0 c=1 rs=1 cs=1]
+layer at (179,15) size 43x115 clip at (179,25) size 28x100 scrollHeight 188
+  RenderBlock {DIV} at (5,5) size 43x115 [bgcolor=#FFFF00] [border: (10px solid #FF0000) none (5px solid #008000) none]
     RenderText {#text} at (0,10) size 18x188
       text run at (0,10) width 188: "abcdefghijklmnopqrstuvwxyz"
-layer at (228,15) size 45x115 clip at (228,25) size 45x100
-  RenderBlock {DIV} at (54,5) size 45x115 [bgcolor=#FFFF00] [border: (10px solid #FF0000) none (5px solid #008000) none]
+layer at (226,15) size 43x115 clip at (226,25) size 43x100
+  RenderBlock {DIV} at (52,5) size 43x115 [bgcolor=#FFFF00] [border: (10px solid #FF0000) none (5px solid #008000) none]
     RenderBlock {DIV} at (0,10) size 18x100 [bgcolor=#D3D3D3]
       RenderText {#text} at (0,-88) size 18x188
         text run at (0,-88) width 188: "abcdefghijklmnopqrstuvwxyz"
-layer at (277,15) size 45x115 clip at (277,25) size 30x100 scrollHeight 188
-  RenderBlock {DIV} at (103,5) size 45x115 [bgcolor=#FFFF00] [border: (10px solid #FF0000) none (5px solid #008000) none]
+layer at (273,15) size 43x115 clip at (273,25) size 28x100 scrollHeight 188
+  RenderBlock {DIV} at (99,5) size 43x115 [bgcolor=#FFFF00] [border: (10px solid #FF0000) none (5px solid #008000) none]
     RenderBlock {DIV} at (0,10) size 18x100 [bgcolor=#D3D3D3]
       RenderText {#text} at (0,0) size 18x188
         text run at (0,0) width 188: "abcdefghijklmnopqrstuvwxyz"
-layer at (179,142) size 45x115 clip at (179,147) size 30x100 scrollY 88 scrollHeight 188
-  RenderBlock {DIV} at (5,5) size 45x115 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000) none]
+layer at (179,142) size 43x115 clip at (179,147) size 28x100 scrollY 88 scrollHeight 188
+  RenderBlock {DIV} at (5,5) size 43x115 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000) none]
     RenderText {#text} at (0,-83) size 18x188
       text run at (0,-83) width 188: "zyxwvutsrqponmlkjihgfedcba"
-layer at (228,142) size 45x115 clip at (228,147) size 45x100
-  RenderBlock {DIV} at (54,5) size 45x115 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000) none]
+layer at (226,142) size 43x115 clip at (226,147) size 43x100
+  RenderBlock {DIV} at (52,5) size 43x115 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000) none]
     RenderBlock {DIV} at (0,5) size 18x100 [bgcolor=#D3D3D3]
       RenderText {#text} at (0,0) size 18x188
         text run at (0,0) width 188: "zyxwvutsrqponmlkjihgfedcba"
-layer at (277,142) size 45x115 clip at (277,147) size 30x100 scrollY 88 scrollHeight 188
-  RenderBlock {DIV} at (103,5) size 45x115 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000) none]
+layer at (273,142) size 43x115 clip at (273,147) size 28x100 scrollY 88 scrollHeight 188
+  RenderBlock {DIV} at (99,5) size 43x115 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000) none]
     RenderBlock {DIV} at (0,5) size 18x100 [bgcolor=#D3D3D3]
       RenderText {#text} at (0,-88) size 18x188
         text run at (0,-88) width 188: "zyxwvutsrqponmlkjihgfedcba"

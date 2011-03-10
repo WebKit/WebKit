@@ -13,5 +13,5 @@ layer at (0,0) size 800x118
               RenderBlock {DIV} at (4,4) size 40x40 [color=#000080]
                 RenderText {#text} at (0,0) size 40x40
                   text run at (0,0) width 40: "\x{C9}"
-            RenderTableCell {TD} at (52,2) size 48x48 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (4,4) size 40x40 [border: (40px solid #000080) none]
+            RenderTableCell {TD} at (52,2) size 48x40 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (4,4) size 40x32 [border: (32px solid #000080) none]

@@ -1,3 +1,26 @@
+2011-03-10  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47157
+        
+        CSS2.1 test suite failures because the ex unit is broken with the Ahem font.
+        
+        Remove the code that tries to also include the maxX of the glyph bounds for the
+        'x' glyph, since it just causes the x-height to be way too large in cases where the 'x' glyph extends
+        below the baseline.
+
+        Remove the Apple Symbol hack for ex units, since the person who added that was confused by another
+        issue, namely that CGFontGetXHeight wasn't being properly multiplied by the pointSize.  That's why
+        the value was too small.  Patched the code to just multiply by pointSize and took out the hack.
+        
+        Fix causes many tests in the css2.1 directory to progress, so no new tests required.  Many other
+        layout tests change because the xHeight for Lucida Grande gets smaller by a little bit, and radio
+        buttons use ex horizontal margins by default.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit):
+
 2011-03-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

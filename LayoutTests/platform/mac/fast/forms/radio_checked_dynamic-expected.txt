@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {FORM} at (0,54) size 784x19
-        RenderBlock {INPUT} at (3,3) size 12x13
-        RenderBlock {INPUT} at (21,3) size 12x13
+        RenderBlock {INPUT} at (2,3) size 12x13
+        RenderBlock {INPUT} at (18,3) size 12x13
       RenderBlock {DIV} at (0,89) size 784x18
         RenderText {#text} at (0,0) size 91x18
           text run at (0,0) width 91: "Test 1 Passed"
@@ -46,16 +46,16 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {FORM} at (0,299) size 784x19
-        RenderBlock {INPUT} at (3,3) size 12x13
-        RenderText {#text} at (18,0) size 4x18
-          text run at (18,0) width 4: " "
-        RenderBlock {INPUT} at (25,3) size 12x13
-        RenderBlock {INPUT} at (43,3) size 12x13
+        RenderBlock {INPUT} at (2,3) size 12x13
+        RenderText {#text} at (16,0) size 4x18
+          text run at (16,0) width 4: " "
+        RenderBlock {INPUT} at (22,3) size 12x13
+        RenderBlock {INPUT} at (38,3) size 12x13
       RenderBlock {DIV} at (0,334) size 784x18
         RenderText {#text} at (0,0) size 91x18
           text run at (0,0) width 91: "Test 4 Passed"
       RenderBlock (anonymous) at (0,352) size 784x19
-        RenderBlock {INPUT} at (3,3) size 12x13
-        RenderBlock {INPUT} at (21,3) size 12x13
-        RenderBlock {INPUT} at (39,3) size 12x13
-        RenderBlock {INPUT} at (57,3) size 12x13
+        RenderBlock {INPUT} at (2,3) size 12x13
+        RenderBlock {INPUT} at (18,3) size 12x13
+        RenderBlock {INPUT} at (34,3) size 12x13
+        RenderBlock {INPUT} at (50,3) size 12x13
