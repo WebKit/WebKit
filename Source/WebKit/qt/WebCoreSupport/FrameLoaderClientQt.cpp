@@ -437,6 +437,8 @@ void FrameLoaderClientQt::dispatchDidStartProvisionalLoad()
     if (dumpUserGestureInFrameLoaderCallbacks)
         printf("%s - in didStartProvisionalLoadForFrame\n", qPrintable(drtPrintFrameUserGestureStatus(m_frame)));
 
+    m_lastRequestedUrl = m_frame->loader()->activeDocumentLoader()->requestURL();
+
     if (m_webFrame)
         emit m_webFrame->provisionalLoad();
 }
@@ -516,6 +518,10 @@ void FrameLoaderClientQt::dispatchDidFinishLoad()
 
     // Clears the previous error.
     m_loadError = ResourceError();
+
+    // The requested URL will be available in the document loader that just finished, so we
+    // don't need to keep it anymore.
+    m_lastRequestedUrl = KURL();
 
     if (!m_webFrame)
         return;

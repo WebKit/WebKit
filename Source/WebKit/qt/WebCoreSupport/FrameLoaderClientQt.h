@@ -239,6 +239,8 @@ public:
 
     virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext();
 
+    const KURL& lastRequestedUrl() const { return m_lastRequestedUrl; }
+
     static bool dumpFrameLoaderCallbacks;
     static bool dumpUserGestureInFrameLoaderCallbacks;
     static bool dumpResourceLoadCallbacks;
@@ -267,6 +269,7 @@ private:
     // See finishedLoading().
     bool m_hasRepresentation;
 
+    KURL m_lastRequestedUrl;
     ResourceError m_loadError;
 };
 

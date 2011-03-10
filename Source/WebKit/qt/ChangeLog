@@ -1,3 +1,30 @@
+2011-03-10  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Antonio Gomes.
+
+        Simplify how QWebFrame::requestedUrl() is obtained
+        https://bugs.webkit.org/show_bug.cgi?id=55842
+
+        When a load starts, store the requested URL until we know that it'll be
+        available for us in the document loader -- after load finished.
+
+        The existing auto tests cover the three different code paths in
+        requestedUrl() and the new code passes the autotests. In each of those
+        cases, we looked for the information in a different place, but in all
+        of them, dispatchDidStartProvisionalLoad was called.
+
+        This simplification will be useful to fix bug 32723. The way requestedUrl()
+        is implementent, we can't use it as a fallback for url() when the setUrl()
+        was called with an invalid URL.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::requestedUrl):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoad):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+        (WebCore::FrameLoaderClientQt::lastRequestedUrl):
+
 2011-03-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Kenneth Rohde Christiansen.
