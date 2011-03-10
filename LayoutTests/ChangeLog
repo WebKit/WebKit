@@ -1,5 +1,70 @@
 2011-03-09  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, land a second set of baselines for chromium linux lucid x86_64.
+        These are differences due to a newer freetype and a few rounding
+        differences in gradients.
+        https://bugs.webkit.org/show_bug.cgi?id=55527
+
+        * platform/chromium-linux-x86_64/fast/borders/borderRadiusGroove01-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/fast/borders/borderRadiusGroove01-expected.png: Added.
+        * platform/chromium-linux-x86_64/fast/borders/borderRadiusGroove02-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/fast/borders/borderRadiusGroove02-expected.png: Added.
+        * platform/chromium-linux-x86_64/fast/borders/borderRadiusRidge01-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/fast/borders/borderRadiusRidge01-expected.png: Added.
+        * platform/chromium-linux-x86_64/fast/images/animated-svg-as-image-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/fast/images/animated-svg-as-image-expected.png: Added.
+        * platform/chromium-linux-x86_64/fast/text/international/bidi-mirror-he-ar-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/fast/text/international/bidi-mirror-he-ar-expected.png: Added.
+        * platform/chromium-linux-x86_64/fast/text/international/danda-space-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/fast/text/international/danda-space-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/pservers-grad-07-b-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/pservers-grad-07-b-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/struct-frag-02-t-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/struct-frag-02-t-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/text-text-01-b-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/text-text-01-b-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/batik/text/textFeatures-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/batik/text/textFeatures-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/batik/text/textLayout-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/batik/text/textLayout-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/custom/js-late-clipPath-and-object-creation-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/custom/js-late-clipPath-and-object-creation-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/custom/js-late-clipPath-creation-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/custom/js-late-clipPath-creation-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/custom/js-late-gradient-creation-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/custom/js-late-gradient-creation-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/custom/js-late-pattern-creation-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/custom/js-late-pattern-creation-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/custom/svg-curve-with-relative-cordinates-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/custom/svg-curve-with-relative-cordinates-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/text/text-text-01-b-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/text/text-text-01-b-expected.png: Added.
+        * platform/chromium-linux-x86_64/transforms/2d/transform-borderbox-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/transforms/2d/transform-borderbox-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-03-09  Tony Chang  <tony@chromium.org>
+
         Unreviewed, first set of baselines for chromium linux lucid x86_64.
         These are just small rounding differences.
         https://bugs.webkit.org/show_bug.cgi?id=55527
