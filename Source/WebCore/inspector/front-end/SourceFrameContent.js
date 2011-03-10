@@ -48,18 +48,7 @@ WebInspector.SourceFrameContent.prototype = {
 
     sourceFrameLineNumberToActualLocation: function(lineNumber)
     {
-        // Script content may start right after <script> tag without new line (e.g. "<script>function f()...").
-        // In that case, column number should be equal to script column offset.
-        var columnNumber = 0;
-        for (var i = 0; i < this._scriptRanges.length; ++i) {
-            var scriptRange = this._scriptRanges[i];
-            if (scriptRange.start.lineNumber < lineNumber)
-                continue;
-            if (scriptRange.start.lineNumber === lineNumber)
-                columnNumber = scriptRange.start.columnNumber;
-            break;
-        }
-        var location = this._mapping.sourceLocationToActualLocation(lineNumber, columnNumber);
+        var location = this._mapping.sourceLocationToActualLocation(lineNumber, 0);
         location.sourceID = this._sourceIDForSourceFrameLineNumber(lineNumber);
         return location;
     },

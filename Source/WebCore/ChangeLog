@@ -1,3 +1,18 @@
+2011-03-05  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: move breakpoint column adjustment to debugger model.
+        https://bugs.webkit.org/show_bug.cgi?id=55821
+
+        Test: inspector/debugger/debug-inlined-scripts.html
+
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.setBreakpoint.didSetBreakpoint):
+        (WebInspector.DebuggerModel.prototype.setBreakpoint):
+        * inspector/front-end/SourceFrameContent.js:
+        (WebInspector.SourceFrameContent.prototype.sourceFrameLineNumberToActualLocation):
+
 2011-01-21  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Dmitry Titov.

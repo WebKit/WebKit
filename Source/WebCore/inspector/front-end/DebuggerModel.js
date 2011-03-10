@@ -78,6 +78,15 @@ WebInspector.DebuggerModel.prototype = {
 
     setBreakpoint: function(url, lineNumber, columnNumber, condition, enabled)
     {
+        // Adjust column if needed.
+        var minColumnNumber = 0;
+        for (var id in this._scripts) {
+            var script = this._scripts[id];
+            if (url === script.sourceURL && lineNumber === script.lineOffset)
+                minColumnNumber = minColumnNumber ? Math.min(minColumnNumber, script.columnOffset) : script.columnOffset;
+        }
+        columnNumber = Math.max(columnNumber, minColumnNumber);
+
         function didSetBreakpoint(breakpointsPushedToBackend, breakpointId, locations)
         {
             if (!breakpointId)
