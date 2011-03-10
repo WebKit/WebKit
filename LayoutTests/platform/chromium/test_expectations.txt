@@ -3384,7 +3384,9 @@ BUGROLANDSTEINER MAC : fast/css/getComputedStyle/computed-style.html = TEXT
 //BUGROLANDSTEINER MAC : svg/css/getComputedStyle-basic.xhtml = TEXT
 
 // introduced by Dave Hyatt in WK r80582
-BUGCR75561 : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
+BUGCR75561 WIN LINUX : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
+BUGCR75561 MAC LEOPARD : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
+BUGCR75561 MAC SNOWLEOPARD : fast/blockflow/text-orientation-basic.html = IMAGE
 
 // introduced by brarraclough in WK r80621
 BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT
@@ -3396,4 +3398,5 @@ BUGWK56060 LINUX X86_64 : svg/custom/pattern-excessive-malloc.svg = IMAGE
 BUGWK56060 LINUX X86_64 : fast/images/favicon-as-image.html = IMAGE+TEXT
 
 BUGCR75632 LINUX : svg/W3C-SVG-1.1/text-text-03-b.svg = CRASH PASS
-BUGCR75639 WIN MAC LINUX : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
+BUGCR75639 WIN LINUX : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
+BUGCR75639 MAC LEOPARD : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
