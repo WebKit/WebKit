@@ -1,3 +1,30 @@
+2011-03-09  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (r80320): Assertion failure when processing mis-nested foreign content.
+        https://bugs.webkit.org/show_bug.cgi?id=55982
+
+        Test: fast/parser/fragment-foreign-content-misnested.html
+        
+        It is a parse error to encounter certain start tags while the parser's
+        insertion mode is InForeignContentMode (e.g. <br>). In these cases, we
+        are to pop open elements off the HTMLElementStack until a foreign
+        content scope marker is encountered. Before the change in r80320 to not
+        insert a fake HTML element during fragment parsing, said fake HTML
+        element counted as a foreign content scope marker.
+        
+        With r80320, no fake HTML element is inserted and the stack is popped
+        until empty in cases where no other element claims to be a foreign
+        content scope marker. Fix this by treating the DocumentFragment as a
+        foreign content scope marker.
+
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isForeignContentScopeMarker): Take a
+        ContainerNode* instead of a Element*.
+        (WebCore::HTMLElementStack::popUntilForeignContentScopeMarker): Pass
+        topNode() to isForeignContentScopeMarker() instead of top().
+
 2011-03-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,13 @@
+2011-03-09  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (r80320): Assertion failure when processing mis-nested foreign content.
+        https://bugs.webkit.org/show_bug.cgi?id=55982
+
+        * fast/parser/fragment-foreign-content-misnested-expected.txt: Added.
+        * fast/parser/fragment-foreign-content-misnested.html: Added.
+
 2011-03-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.

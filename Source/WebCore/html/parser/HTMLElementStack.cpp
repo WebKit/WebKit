@@ -104,17 +104,18 @@ inline bool isTableRowScopeMarker(ContainerNode* node)
         || isRootMarker(node);
 }
 
-inline bool isForeignContentScopeMarker(Element* element)
+inline bool isForeignContentScopeMarker(ContainerNode* node)
 {
-    return element->hasTagName(MathMLNames::miTag)
-        || element->hasTagName(MathMLNames::moTag)
-        || element->hasTagName(MathMLNames::mnTag)
-        || element->hasTagName(MathMLNames::msTag)
-        || element->hasTagName(MathMLNames::mtextTag)
-        || element->hasTagName(SVGNames::foreignObjectTag)
-        || element->hasTagName(SVGNames::descTag)
-        || element->hasTagName(SVGNames::titleTag)
-        || element->namespaceURI() == HTMLNames::xhtmlNamespaceURI;
+    return node->hasTagName(MathMLNames::miTag)
+        || node->hasTagName(MathMLNames::moTag)
+        || node->hasTagName(MathMLNames::mnTag)
+        || node->hasTagName(MathMLNames::msTag)
+        || node->hasTagName(MathMLNames::mtextTag)
+        || node->hasTagName(SVGNames::foreignObjectTag)
+        || node->hasTagName(SVGNames::descTag)
+        || node->hasTagName(SVGNames::titleTag)
+        || node->namespaceURI() == HTMLNames::xhtmlNamespaceURI
+        || node->nodeType() == Node::DOCUMENT_FRAGMENT_NODE;
 }
 
 inline bool isButtonScopeMarker(ContainerNode* node)
@@ -275,7 +276,7 @@ void HTMLElementStack::popUntilTableRowScopeMarker()
 
 void HTMLElementStack::popUntilForeignContentScopeMarker()
 {
-    while (!isForeignContentScopeMarker(top()))
+    while (!isForeignContentScopeMarker(topNode()))
         pop();
 }
     
