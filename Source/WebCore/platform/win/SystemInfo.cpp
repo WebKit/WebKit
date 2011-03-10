@@ -40,10 +40,11 @@ WindowsVersion windowsVersion(int* major, int* minor)
     if (!initialized) {
         initialized = true;
 #if OS(WINCE)
-        OSVERSIONINFO versionInfo = {0};
+        OSVERSIONINFO versionInfo;
 #else
-        OSVERSIONINFOEX versionInfo = {0};
+        OSVERSIONINFOEX versionInfo;
 #endif
+        ZeroMemory(&versionInfo, sizeof(versionInfo));
         versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
         GetVersionEx(reinterpret_cast<OSVERSIONINFO*>(&versionInfo));
         majorVersion = versionInfo.dwMajorVersion;
@@ -113,6 +114,7 @@ static String osVersionForUAString()
     return makeString(familyName, String::number(major), '.', String::number(minor));
 }
 
+#if !OS(WINCE)
 static bool isWOW64()
 {
     static bool initialized = false;
@@ -147,7 +149,8 @@ static WORD processorArchitecture()
         typedef VOID (WINAPI* GetNativeSystemInfoFunc)(LPSYSTEM_INFO);
         GetNativeSystemInfoFunc getNativeSystemInfo = reinterpret_cast<GetNativeSystemInfoFunc>(GetProcAddress(kernel32Module, "GetNativeSystemInfo"));
         if (getNativeSystemInfo) {
-            SYSTEM_INFO systemInfo = {0};
+            SYSTEM_INFO systemInfo;
+            ZeroMemory(&systemInfo, sizeof(systemInfo));
             getNativeSystemInfo(&systemInfo);
             architecture = systemInfo.wProcessorArchitecture;
         }
@@ -155,6 +158,7 @@ static WORD processorArchitecture()
 
     return architecture;
 }
+#endif
 
 static String architectureTokenForUAString()
 {

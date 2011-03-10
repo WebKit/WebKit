@@ -1,5 +1,16 @@
 2011-03-09  Peter Kasting  <pkasting@google.com>
 
+        Unreviewed, build fix.
+
+        * StringsNotToBeLocalized.txt: Add function names I forgot.
+        * platform/win/SystemInfo.cpp: #if out some uncalled functions on WinCE,
+          since they don't compile anyway.  Use ZeroMemory() instead of "= {0}"
+          since Qt is stupid and (sometimes?!) warns about it.
+        (WebCore::windowsVersion):
+        (WebCore::processorArchitecture):
+
+2011-03-09  Peter Kasting  <pkasting@google.com>
+
         Reviewed by Ryosuke Niwa.
 
         Add UA string tags for Windows 64.
