@@ -1,3 +1,29 @@
+2011-03-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 56077 - ES5 conformance issues with RegExp.prototype
+
+        There are three issues causing test failures in sputnik.
+
+        (1) lastIndex should be converted at the point it is used, not the point it is set (this is visible if valueOf is overridden).
+        (2) The 'length' property of the test/exec functions should be 1.
+        (3) If no input is specified, the input to test()/exec() is "undefined" (i.e. ToString(undefined)) - not RegExp.input.
+
+        * fast/js/kde/function_length-expected.txt:
+        * fast/js/kde/script-tests/function_length.js:
+            - 'length' of RexExp.test/RexExp.exec is 1
+        * fast/js/regexp-caching-expected.txt:
+        * fast/js/regexp-test-null-string-expected.txt:
+        * fast/js/regexp-test-null-string.html:
+            - test() is equivalent to test("undefined")
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.6/15.10.6.2_RegExp.prototype.exec/S15.10.6.2_A11-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.6/15.10.6.2_RegExp.prototype.exec/S15.10.6.2_A1_T16-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.6/15.10.6.2_RegExp.prototype.exec/S15.10.6.2_A4_T11-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.6/15.10.6.3_RegExp.prototype.test/S15.10.6.3_A11-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.6/15.10.6.3_RegExp.prototype.test/S15.10.6.3_A1_T16-expected.txt:
+            - These tests now pass!
+
 2011-03-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80701.

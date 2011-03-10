@@ -50,40 +50,40 @@
 	testcases[count++] = new TestCase ( SECTION, "RegExp.input = 'abcd12357efg'; /\\d+/.exec('2345')",
 	                                    String(["2345"]), String(/\d+/.exec('2345')));
 
-    // RegExp.input = "abcd12357efg"; /\d+/.exec()
+    // RegExp.input = "abcd12357efg"; /\d+/.exec(RegExp.input)
     RegExp.input = "abcd12357efg";
-	testcases[count++] = new TestCase ( SECTION, "RegExp.input = 'abcd12357efg'; /\\d+/.exec()",
-	                                    String(["12357"]), String(/\d+/.exec()));
+	testcases[count++] = new TestCase ( SECTION, "RegExp.input = 'abcd12357efg'; /\\d+/.exec(RegExp.input)",
+	                                    String(["12357"]), String(/\d+/.exec(RegExp.input)));
 
-    // RegExp.input = "abcd12357efg"; /[h-z]+/.exec()
+    // RegExp.input = "abcd12357efg"; /[h-z]+/.exec(RegExp.input)
     RegExp.input = "abcd12357efg";
-	testcases[count++] = new TestCase ( SECTION, "RegExp.input = 'abcd12357efg'; /[h-z]+/.exec()",
-	                                    null, /[h-z]+/.exec());
+	testcases[count++] = new TestCase ( SECTION, "RegExp.input = 'abcd12357efg'; /[h-z]+/.exec(RegExp.input)",
+	                                    null, /[h-z]+/.exec(RegExp.input));
 
     // RegExp.input = "abcd12357efg"; /\d+/.test('2345')
     RegExp.input = "abcd12357efg";
 	testcases[count++] = new TestCase ( SECTION, "RegExp.input = 'abcd12357efg'; /\\d+/.test('2345')",
 	                                    true, /\d+/.test('2345'));
 
-    // RegExp.input = "abcd12357efg"; /\d+/.test()
+    // RegExp.input = "abcd12357efg"; /\d+/.test(RegExp.input)
     RegExp.input = "abcd12357efg";
-	testcases[count++] = new TestCase ( SECTION, "RegExp.input = 'abcd12357efg'; /\\d+/.test()",
-	                                    true, /\d+/.test());
+	testcases[count++] = new TestCase ( SECTION, "RegExp.input = 'abcd12357efg'; /\\d+/.test(RegExp.input)",
+	                                    true, /\d+/.test(RegExp.input));
 
-    // RegExp.input = "abcd12357efg"; (new RegExp('d+')).test()
+    // RegExp.input = "abcd12357efg"; (new RegExp('d+')).test(RegExp.input)
     RegExp.input = "abcd12357efg";
-	testcases[count++] = new TestCase ( SECTION, "RegExp.input = 'abcd12357efg'; (new RegExp('d+')).test()",
-	                                    true, (new RegExp('d+')).test());
+	testcases[count++] = new TestCase ( SECTION, "RegExp.input = 'abcd12357efg'; (new RegExp('d+')).test(RegExp.input)",
+	                                    true, (new RegExp('d+')).test(RegExp.input));
 
-    // RegExp.input = "abcd12357efg"; /[h-z]+/.test()
+    // RegExp.input = "abcd12357efg"; /[h-z]+/.test(RegExp.input)
     RegExp.input = "abcd12357efg";
-	testcases[count++] = new TestCase ( SECTION, "RegExp.input = 'abcd12357efg'; /[h-z]+/.test()",
-	                                    false, /[h-z]+/.test());
+	testcases[count++] = new TestCase ( SECTION, "RegExp.input = 'abcd12357efg'; /[h-z]+/.test(RegExp.input)",
+	                                    false, /[h-z]+/.test(RegExp.input));
 
-    // RegExp.input = "abcd12357efg"; (new RegExp('[h-z]+')).test()
+    // RegExp.input = "abcd12357efg"; (new RegExp('[h-z]+')).test(RegExp.input)
     RegExp.input = "abcd12357efg";
-	testcases[count++] = new TestCase ( SECTION, "RegExp.input = 'abcd12357efg'; (new RegExp('[h-z]+')).test()",
-	                                    false, (new RegExp('[h-z]+')).test());
+	testcases[count++] = new TestCase ( SECTION, "RegExp.input = 'abcd12357efg'; (new RegExp('[h-z]+')).test(RegExp.input)",
+	                                    false, (new RegExp('[h-z]+')).test(RegExp.input));
 
 	function test()
 	{

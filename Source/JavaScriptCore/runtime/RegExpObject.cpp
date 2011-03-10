@@ -63,13 +63,20 @@ const ClassInfo RegExpObject::s_info = { "RegExp", &JSObjectWithGlobalObject::s_
 
 RegExpObject::RegExpObject(JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, NonNullPassRefPtr<RegExp> regExp)
     : JSObjectWithGlobalObject(globalObject, structure)
-    , d(adoptPtr(new RegExpObjectData(regExp, 0)))
+    , d(adoptPtr(new RegExpObjectData(regExp)))
 {
     ASSERT(inherits(&s_info));
 }
 
 RegExpObject::~RegExpObject()
 {
+}
+
+void RegExpObject::markChildren(MarkStack& markStack)
+{
+    Base::markChildren(markStack);
+    if (UNLIKELY(!d->lastIndex.get().isInt32()))
+        markStack.append(&d->lastIndex);
 }
 
 bool RegExpObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -104,7 +111,7 @@ JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, const Identifier&)
 
 JSValue regExpObjectLastIndex(ExecState*, JSValue slotBase, const Identifier&)
 {
-    return jsNumber(asRegExpObject(slotBase)->lastIndex());
+    return asRegExpObject(slotBase)->getLastIndex();
 }
 
 void RegExpObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
@@ -114,7 +121,7 @@ void RegExpObject::put(ExecState* exec, const Identifier& propertyName, JSValue 
 
 void setRegExpObjectLastIndex(ExecState* exec, JSObject* baseObject, JSValue value)
 {
-    asRegExpObject(baseObject)->setLastIndex(value.toInteger(exec));
+    asRegExpObject(baseObject)->setLastIndex(exec->globalData(), value);
 }
 
 JSValue RegExpObject::test(ExecState* exec)
@@ -133,12 +140,7 @@ JSValue RegExpObject::exec(ExecState* exec)
 bool RegExpObject::match(ExecState* exec)
 {
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
-
-    UString input = !exec->argumentCount() ? regExpConstructor->input() : exec->argument(0).toString(exec);
-    if (input.isNull()) {
-        throwError(exec, createError(exec, makeUString("No input to ", toString(exec), ".")));
-        return false;
-    }
+    UString input = exec->argument(0).toString(exec);
 
     if (!regExp()->global()) {
         int position;
@@ -147,20 +149,32 @@ bool RegExpObject::match(ExecState* exec)
         return position >= 0;
     }
 
-    if (d->lastIndex < 0 || d->lastIndex > input.length()) {
-        d->lastIndex = 0;
-        return false;
+    JSValue jsLastIndex = getLastIndex();
+    unsigned lastIndex;
+    if (LIKELY(jsLastIndex.isUInt32())) {
+        lastIndex = jsLastIndex.asUInt32();
+        if (lastIndex > input.length()) {
+            setLastIndex(0);
+            return false;
+        }
+    } else {
+        double doubleLastIndex = jsLastIndex.toInteger(exec);
+        if (doubleLastIndex < 0 || doubleLastIndex > input.length()) {
+            setLastIndex(0);
+            return false;
+        }
+        lastIndex = static_cast<unsigned>(doubleLastIndex);
     }
 
     int position;
     int length = 0;
-    regExpConstructor->performMatch(d->regExp.get(), input, static_cast<int>(d->lastIndex), position, length);
+    regExpConstructor->performMatch(d->regExp.get(), input, lastIndex, position, length);
     if (position < 0) {
-        d->lastIndex = 0;
+        setLastIndex(0);
         return false;
     }
 
-    d->lastIndex = position + length;
+    setLastIndex(position + length);
     return true;
 }
 

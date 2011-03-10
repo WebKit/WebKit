@@ -1,3 +1,42 @@
+2011-03-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 56077 - ES5 conformance issues with RegExp.prototype
+
+        There are three issues causing test failures in sputnik.
+
+        (1) lastIndex should be converted at the point it is used, not the point it is set (this is visible if valueOf is overridden).
+        (2) The 'length' property of the test/exec functions should be 1.
+        (3) If no input is specified, the input to test()/exec() is "undefined" (i.e. ToString(undefined)) - not RegExp.input.
+
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::markChildren):
+            - Added to mark lastIndex
+        (JSC::regExpObjectLastIndex):
+        (JSC::setRegExpObjectLastIndex):
+            - lastIndex is now stored as a JSValue.
+        (JSC::RegExpObject::match):
+            - Use accessor methods to get/set lastIndex, add fast case for isUInt32 (don't convert to double).
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::setLastIndex):
+        (JSC::RegExpObject::setLastIndex):
+            - Set lastIndex, either from a size_t or a JSValue.
+        (JSC::RegExpObject::getLastIndex):
+            - Get lastIndex.
+        (JSC::RegExpObject::RegExpObjectData::RegExpObjectData):
+            - Initialize as a JSValue.
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::RegExpPrototype):
+            - Add test/exec properties with length 1.
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+            - Do not read RegExp.input if none is provided.
+        * tests/mozilla/js1_2/regexp/RegExp_input.js:
+        * tests/mozilla/js1_2/regexp/RegExp_input_as_array.js:
+            - Update these tests (they relied on non-ES5 behaviour).
+
 2011-03-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -28,14 +28,26 @@ namespace JSC {
 
     class RegExpObject : public JSObjectWithGlobalObject {
     public:
+        typedef JSObjectWithGlobalObject Base;
+
         RegExpObject(JSGlobalObject* globalObject, NonNullPassRefPtr<Structure>, NonNullPassRefPtr<RegExp>);
         virtual ~RegExpObject();
 
         void setRegExp(PassRefPtr<RegExp> r) { d->regExp = r; }
         RegExp* regExp() const { return d->regExp.get(); }
 
-        void setLastIndex(double lastIndex) { d->lastIndex = lastIndex; }
-        double lastIndex() const { return d->lastIndex; }
+        void setLastIndex(size_t lastIndex)
+        {
+            d->lastIndex.setWithoutWriteBarrier(jsNumber(lastIndex));
+        }
+        void setLastIndex(JSGlobalData& globalData, JSValue lastIndex)
+        {
+            d->lastIndex.set(globalData, this, lastIndex);
+        }
+        JSValue getLastIndex() const
+        {
+            return d->lastIndex.get();
+        }
 
         JSValue test(ExecState*);
         JSValue exec(ExecState*);
@@ -52,22 +64,24 @@ namespace JSC {
         }
 
     protected:
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObjectWithGlobalObject::StructureFlags;
-        
+        static const unsigned StructureFlags = OverridesMarkChildren | OverridesGetOwnPropertySlot | JSObjectWithGlobalObject::StructureFlags;
+
     private:
+        virtual void markChildren(MarkStack&);
+
         bool match(ExecState*);
 
         struct RegExpObjectData {
             WTF_MAKE_FAST_ALLOCATED;
         public:
-            RegExpObjectData(NonNullPassRefPtr<RegExp> regExp, double lastIndex)
+            RegExpObjectData(NonNullPassRefPtr<RegExp> regExp)
                 : regExp(regExp)
-                , lastIndex(lastIndex)
             {
+                lastIndex.setWithoutWriteBarrier(jsNumber(0));
             }
 
             RefPtr<RegExp> regExp;
-            double lastIndex;
+            WriteBarrier<Unknown> lastIndex;
         };
 #if COMPILER(MSVC)
         friend void WTF::deleteOwnedPtr<RegExpObjectData>(RegExpObjectData*);

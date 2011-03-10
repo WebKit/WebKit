@@ -23,9 +23,6 @@ function shouldBe(a, aDescription, b)
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
 
-try {
-    /a/.test();
-} catch (e) {
-    shouldBe(e, "e", "Error: No input to /a/.");
-}
+var result = /define/.test();
+shouldBe(result, "result", true);
 </script>

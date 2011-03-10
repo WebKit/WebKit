@@ -36,7 +36,7 @@ rightContext: {>}
 
 RegExp.$0 does not exist
 RegExp.$10 does not exist
-RegExp uses RegExp.input
+RegExp doesn't use RegExp.input
 RegExp.multiline coerces values to booleans
 RegExp.input coerces values to strings
 

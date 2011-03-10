@@ -90,8 +90,8 @@ PASS Math.sqrt.length is 1
 PASS Math.tan.length is 1
 PASS Object.prototype.toString.length is 0
 PASS Object.prototype.valueOf.length is 0
-PASS RegExp.prototype.exec.length is 0
-PASS RegExp.prototype.test.length is 0
+PASS RegExp.prototype.exec.length is 1
+PASS RegExp.prototype.test.length is 1
 PASS RegExp.prototype.toString.length is 0
 PASS String.fromCharCode.length is 1
 PASS String.prototype.concat.length is 1

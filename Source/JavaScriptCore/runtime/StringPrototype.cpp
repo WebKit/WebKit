@@ -604,9 +604,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
 
     JSValue a0 = exec->argument(0);
 
-    UString u = s;
     RefPtr<RegExp> reg;
-    RegExpObject* imp = 0;
     if (a0.inherits(&RegExpObject::s_info))
         reg = asRegExpObject(a0)->regExp();
     else {
@@ -620,7 +618,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
     int matchLength = 0;
-    regExpConstructor->performMatch(reg.get(), u, 0, pos, matchLength);
+    regExpConstructor->performMatch(reg.get(), s, 0, pos, matchLength);
     if (!(reg->global())) {
         // case without 'g' flag is handled like RegExp.prototype.exec
         if (pos < 0)
@@ -630,15 +628,13 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
 
     // return array of matches
     MarkedArgumentBuffer list;
-    int lastIndex = 0;
+    unsigned lastIndex = 0;
     while (pos >= 0) {
-        list.append(jsSubstring(exec, u, pos, matchLength));
+        list.append(jsSubstring(exec, s, pos, matchLength));
         lastIndex = pos;
         pos += matchLength == 0 ? 1 : matchLength;
-        regExpConstructor->performMatch(reg.get(), u, pos, pos, matchLength);
+        regExpConstructor->performMatch(reg.get(), s, pos, pos, matchLength);
     }
-    if (imp)
-        imp->setLastIndex(lastIndex);
     if (list.isEmpty()) {
         // if there are no matches at all, it's important to return
         // Null instead of an empty array, because this matches
@@ -658,7 +654,6 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
 
     JSValue a0 = exec->argument(0);
 
-    UString u = s;
     RefPtr<RegExp> reg;
     if (a0.inherits(&RegExpObject::s_info))
         reg = asRegExpObject(a0)->regExp();
@@ -673,7 +668,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
     int matchLength = 0;
-    regExpConstructor->performMatch(reg.get(), u, 0, pos, matchLength);
+    regExpConstructor->performMatch(reg.get(), s, 0, pos, matchLength);
     return JSValue::encode(jsNumber(pos));
 }
 

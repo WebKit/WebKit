@@ -1,6 +1,6 @@
 S15.10.6.2_A11
 
-FAIL SputnikError: #2: RegExp.prototype.exec.length === 1. Actual: 0
+PASS 
 
 TEST COMPLETE
 
