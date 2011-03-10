@@ -972,16 +972,12 @@ WebInspector.NetworkPanel.prototype = {
 
     _contextMenu: function(event)
     {
-        // createBlobURL is enabled conditionally, do not expose resource export if it's not available.
-        if ((window.webkitURL && typeof window.webkitURL.createObjectURL !== "function") || !Preferences.resourceExportEnabled)
-            return;
-
         var contextMenu = new WebInspector.ContextMenu();
         var gridNode = this._dataGrid.dataGridNodeFromNode(event.target);
         var resource = gridNode && gridNode._resource;
         if (resource)
-            contextMenu.appendItem(WebInspector.UIString("Export to HAR"), this._exportResource.bind(this, resource));
-        contextMenu.appendItem(WebInspector.UIString("Export all to HAR"), this._exportAll.bind(this));
+            contextMenu.appendItem(WebInspector.UIString("Copy entry as HAR"), this._exportResource.bind(this, resource));
+        contextMenu.appendItem(WebInspector.UIString("Copy network log as HAR"), this._exportAll.bind(this));
         contextMenu.show(event);
     },
 

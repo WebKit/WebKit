@@ -1,3 +1,15 @@
+2011-03-10  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: better names for HAR export commands
+        https://bugs.webkit.org/show_bug.cgi?id=56097
+
+        Rename Export to HAR to Copy entry/network log as HAR
+        Expose Copy as HAR unconditionally, remove related settings entry.
+
+        * src/js/DevTools.js: removed override for resourceExportEnabled
+
 2011-01-26  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Dmitry Titov.

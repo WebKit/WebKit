@@ -44,7 +44,6 @@ var Preferences = {
     profilerAlwaysEnabled: false,
     onlineDetectionEnabled: true,
     nativeInstrumentationEnabled: false,
-    resourceExportEnabled: false,
     useDataURLForResourceImageIcons: true,
     showTimingTab: false,
     showCookiesTab: false,

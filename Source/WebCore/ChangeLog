@@ -1,3 +1,16 @@
+2011-03-10  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: better names for HAR export commands
+        https://bugs.webkit.org/show_bug.cgi?id=56097
+
+        Rename Export to HAR to Copy entry/network log as HAR
+        Expose Copy as HAR unconditionally, remove related settings entry.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype._contextMenu):
+        * inspector/front-end/Settings.js:
+
 2011-03-10  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Laszlo Gombos.

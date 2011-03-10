@@ -48,7 +48,6 @@ var context = {};  // Used by WebCore's inspector routines.
     Preferences.onlineDetectionEnabled = false;
     Preferences.nativeInstrumentationEnabled = true;
     Preferences.fileSystemEnabled = false;
-    Preferences.resourceExportEnabled = true;
     Preferences.showTimingTab = true;
     Preferences.showCookiesTab = true;
 })();
