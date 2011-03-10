@@ -1,3 +1,10 @@
+2011-03-10  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, roll chromium version to r77259 to pick up
+        webfontinfo api change.
+
+        * DEPS:
+
 2011-03-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80701.
