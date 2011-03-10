@@ -1,3 +1,12 @@
+2011-03-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows rebaselines for r80755.
+
+        * platform/win/editing/selection/caret-ltr-right-expected.txt:
+        * platform/win/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/win/editing/selection/caret-rtl-right-expected.txt:
+        * platform/win/fast/forms/file-input-disabled-expected.txt:
+
 2011-03-10  Xiyuan Xia  <xiyuan@chromium.org>
 
         Reviewed by Tony Chang.
