@@ -40,7 +40,7 @@ enum {
 };
 typedef uint32_t WKViewUndoType;
 
-typedef void (*WKViewRegisterEditCommandCallback)(WKViewRef, WKEditCommandRef, int32_t undoOrRedo, const void *clientInfo);
+typedef void (*WKViewRegisterEditCommandCallback)(WKViewRef, WKEditCommandRef, WKViewUndoType undoOrRedo, const void *clientInfo);
 typedef void (*WKViewClearAllEditCommandsCallback)(WKViewRef, const void *clientInfo);
 
 struct WKViewUndoClient {
