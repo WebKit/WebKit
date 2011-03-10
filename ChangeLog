@@ -1,3 +1,10 @@
+2011-03-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Fixed the help message for WebGL support on GTK+ to reflect the fact that
+        it's turned off by default and is experimental.
+
+        * configure.ac: Fix WebGL help message.
+
 2011-03-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.

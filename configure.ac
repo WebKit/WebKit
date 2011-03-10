@@ -367,7 +367,7 @@ AC_MSG_RESULT([$enable_3d_transforms])
 AC_MSG_CHECKING([whether to enable WebGL support])
 AC_ARG_ENABLE(webgl,
               AC_HELP_STRING([--enable-webgl],
-                             [enable support for (WebGL [default=yes]]),
+                             [enable support for WebGL (experimental) [default=no]]),
               [], [enable_webgl="no"])
 AC_MSG_RESULT([$enable_webgl])
 
