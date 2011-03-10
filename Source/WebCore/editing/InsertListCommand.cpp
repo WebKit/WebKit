@@ -121,7 +121,7 @@ void InsertListCommand::doApply()
     // FIXME: We paint the gap before some paragraphs that are indented with left 
     // margin/padding, but not others.  We should make the gap painting more consistent and 
     // then use a left margin/padding rule here.
-    if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd))
+    if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd, CanSkipOverEditingBoundary))
         setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(CannotCrossEditingBoundary)));
 
     const QualifiedName& listTag = (m_type == OrderedList) ? olTag : ulTag;
@@ -130,14 +130,14 @@ void InsertListCommand::doApply()
         ASSERT(selection.isRange());
         VisiblePosition startOfSelection = selection.visibleStart();
         VisiblePosition endOfSelection = selection.visibleEnd();
-        VisiblePosition startOfLastParagraph = startOfParagraph(endOfSelection);
+        VisiblePosition startOfLastParagraph = startOfParagraph(endOfSelection, CanSkipOverEditingBoundary);
 
-        if (startOfParagraph(startOfSelection) != startOfLastParagraph) {
+        if (startOfParagraph(startOfSelection, CanSkipOverEditingBoundary) != startOfLastParagraph) {
             bool forceCreateList = !selectionHasListOfType(selection, listTag);
 
             RefPtr<Range> currentSelection = endingSelection().firstRange();
             VisiblePosition startOfCurrentParagraph = startOfSelection;
-            while (startOfCurrentParagraph != startOfLastParagraph) {
+            while (!inSameParagraph(startOfCurrentParagraph, startOfLastParagraph, CanCrossEditingBoundary)) {
                 // doApply() may operate on and remove the last paragraph of the selection from the document 
                 // if it's in the same list item as startOfCurrentParagraph.  Return early to avoid an 
                 // infinite loop and because there is no more work to be done.
@@ -162,7 +162,7 @@ void InsertListCommand::doApply()
                     if (!lastSelectionRange)
                         return;
                     endOfSelection = lastSelectionRange->startPosition();
-                    startOfLastParagraph = startOfParagraph(endOfSelection);
+                    startOfLastParagraph = startOfParagraph(endOfSelection, CanSkipOverEditingBoundary);
                 }
 
                 // Fetch the start of the selection after moving the first paragraph,
@@ -263,8 +263,8 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
         previousListChild = listChildNode->previousSibling();
     } else {
         // A paragraph is visually a list item minus a list marker.  The paragraph will be moved.
-        start = startOfParagraph(originalStart);
-        end = endOfParagraph(start);
+        start = startOfParagraph(originalStart, CanSkipOverEditingBoundary);
+        end = endOfParagraph(start, CanSkipOverEditingBoundary);
         nextListChild = enclosingListChild(end.next().deepEquivalent().deprecatedNode(), listNode);
         ASSERT(nextListChild != listChildNode);
         previousListChild = enclosingListChild(start.previous().deepEquivalent().deprecatedNode(), listNode);
@@ -327,8 +327,8 @@ static Element* adjacentEnclosingList(const VisiblePosition& pos, const VisibleP
 
 PassRefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& originalStart, const QualifiedName& listTag)
 {
-    VisiblePosition start = startOfParagraph(originalStart);
-    VisiblePosition end = endOfParagraph(start);
+    VisiblePosition start = startOfParagraph(originalStart, CanSkipOverEditingBoundary);
+    VisiblePosition end = endOfParagraph(start, CanSkipOverEditingBoundary);
     
     if (start.isNull() || end.isNull())
         return 0;
@@ -375,8 +375,11 @@ PassRefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePositio
 
         // We inserted the list at the start of the content we're about to move
         // Update the start of content, so we don't try to move the list into itself.  bug 19066
-        if (insertionPos == start.deepEquivalent())
-            start = startOfParagraph(originalStart);
+        // Layout is necessary since start's node's inline renderers may have been destroyed by the insertion
+        if (insertionPos == start.deepEquivalent()) {
+            listElement->document()->updateLayoutIgnorePendingStylesheets();
+            start = startOfParagraph(originalStart, CanSkipOverEditingBoundary);
+        }
     }
 
     moveParagraph(start, end, positionBeforeNode(placeholder.get()), true);

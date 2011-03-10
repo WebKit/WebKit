@@ -830,10 +830,10 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Positi
 // Deleting a paragraph will leave a placeholder. Remove it (and prune
 // empty or unrendered parents).
 
-void CompositeEditCommand::cleanupAfterDeletion()
+void CompositeEditCommand::cleanupAfterDeletion(VisiblePosition destination)
 {
     VisiblePosition caretAfterDelete = endingSelection().visibleStart();
-    if (isStartOfParagraph(caretAfterDelete) && isEndOfParagraph(caretAfterDelete)) {
+    if (caretAfterDelete != destination && isStartOfParagraph(caretAfterDelete) && isEndOfParagraph(caretAfterDelete)) {
         // Note: We want the rightmost candidate.
         Position position = caretAfterDelete.deepEquivalent().downstream();
         Node* node = position.deprecatedNode();
@@ -947,8 +947,8 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         }
     }
     
-    VisiblePosition beforeParagraph = startOfParagraphToMove.previous();
-    VisiblePosition afterParagraph(endOfParagraphToMove.next());
+    VisiblePosition beforeParagraph = startOfParagraphToMove.previous(CannotCrossEditingBoundary);
+    VisiblePosition afterParagraph(endOfParagraphToMove.next(CannotCrossEditingBoundary));
 
     // We upstream() the end and downstream() the start so that we don't include collapsed whitespace in the move.
     // When we paste a fragment, spaces after the end and before the start are treated as though they were rendered.
@@ -985,8 +985,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     deleteSelection(false, false, false, false);
 
     ASSERT(destination.deepEquivalent().anchorNode()->inDocument());
-
-    cleanupAfterDeletion();
+    cleanupAfterDeletion(destination);
     ASSERT(destination.deepEquivalent().anchorNode()->inDocument());
 
     // Add a br if pruning an empty block level element caused a collapse. For example:

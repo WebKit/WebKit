@@ -1,0 +1,13 @@
+This tests list creation in an editable context but across non-editable content. Editable content should be pulled into the list and not crash.
+| <ul>
+|   <li>
+|     "Editabl<#selection-anchor>e paragraph containing a "
+|     <span>
+|       contenteditable="false"
+|       style="background-color: LightGray;"
+|       "non-editable"
+|     " in the middle"
+|     <br>
+|   <li>
+|     "Anothe<#selection-focus>r editable paragraph."
+|     <br>

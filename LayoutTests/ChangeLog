@@ -1,3 +1,15 @@
+2011-03-10  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        InsertUnorderedList over a non-editable region and multiple lines enters an infinite loop
+        https://bugs.webkit.org/show_bug.cgi?id=53409
+
+        Avoiding crashes and infinite loops when listifying content with mixed-editability
+
+        * editing/execCommand/insert-list-with-noneditable-content-expected.txt: Added.
+        * editing/execCommand/insert-list-with-noneditable-content.html: Added.
+
 2011-03-10  Berend-Jan Wever  <skylined@chromium.org>
 
         Reviewed by Darin Adler.

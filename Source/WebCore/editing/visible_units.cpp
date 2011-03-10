@@ -751,14 +751,21 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
 
     Node* startBlock = enclosingBlock(startNode);
 
-    Node *node = startNode;
+    Node* node = startNode;
+    Node* highestRoot = highestEditableRoot(p);
     int offset = p.deprecatedEditingOffset();
     Position::AnchorType type = p.anchorType();
 
-    Node *n = startNode;
+    Node* n = startNode;
     while (n) {
         if (boundaryCrossingRule == CannotCrossEditingBoundary && n->isContentEditable() != startNode->isContentEditable())
             break;
+        if (boundaryCrossingRule == CanSkipOverEditingBoundary) {
+            while (n && n->isContentEditable() != startNode->isContentEditable())
+                n = n->traversePreviousNodePostOrder(startBlock);
+            if (!n || !n->isDescendantOf(highestRoot))
+                break;
+        }
         RenderObject *r = n->renderer();
         if (!r) {
             n = n->traversePreviousNodePostOrder(startBlock);
@@ -814,16 +821,24 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossing
         return lastDeepEditingPositionForNode(startNode);
     
     Node* startBlock = enclosingBlock(startNode);
-    Node *stayInsideBlock = startBlock;
+    Node* stayInsideBlock = startBlock;
     
-    Node *node = startNode;
+    Node* node = startNode;
+    Node* highestRoot = highestEditableRoot(p);
     int offset = p.deprecatedEditingOffset();
     Position::AnchorType type = p.anchorType();
 
-    Node *n = startNode;
+    Node* n = startNode;
     while (n) {
         if (boundaryCrossingRule == CannotCrossEditingBoundary && n->isContentEditable() != startNode->isContentEditable())
             break;
+        if (boundaryCrossingRule == CanSkipOverEditingBoundary) {
+            while (n && n->isContentEditable() != startNode->isContentEditable())
+                n = n->traverseNextNode(stayInsideBlock);
+            if (!n || !n->isDescendantOf(highestRoot))
+                break;
+        }
+
         RenderObject *r = n->renderer();
         if (!r) {
             n = n->traverseNextNode(stayInsideBlock);
@@ -866,9 +881,10 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossing
     return VisiblePosition(Position(node, type), DOWNSTREAM);
 }
 
+// FIXME: isStartOfParagraph(startOfNextParagraph(pos)) is not always true
 VisiblePosition startOfNextParagraph(const VisiblePosition& visiblePosition)
 {
-    VisiblePosition paragraphEnd(endOfParagraph(visiblePosition));
+    VisiblePosition paragraphEnd(endOfParagraph(visiblePosition, CanSkipOverEditingBoundary));
     VisiblePosition afterParagraphEnd(paragraphEnd.next(CannotCrossEditingBoundary));
     // The position after the last position in the last cell of a table
     // is not the start of the next paragraph.
@@ -877,9 +893,9 @@ VisiblePosition startOfNextParagraph(const VisiblePosition& visiblePosition)
     return afterParagraphEnd;
 }
 
-bool inSameParagraph(const VisiblePosition &a, const VisiblePosition &b)
+bool inSameParagraph(const VisiblePosition &a, const VisiblePosition &b, EditingBoundaryCrossingRule boundaryCrossingRule)
 {
-    return a.isNotNull() && startOfParagraph(a) == startOfParagraph(b);
+    return a.isNotNull() && startOfParagraph(a, boundaryCrossingRule) == startOfParagraph(b, boundaryCrossingRule);
 }
 
 bool isStartOfParagraph(const VisiblePosition &pos, EditingBoundaryCrossingRule boundaryCrossingRule)

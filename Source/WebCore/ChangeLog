@@ -1,3 +1,32 @@
+2011-03-10  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        InsertUnorderedList over a non-editable region and multiple lines enters an infinite loop
+        https://bugs.webkit.org/show_bug.cgi?id=53409
+
+        Fixing broken handling of mixed-editability content for InsertListCommand. Previously, if the selection
+        spanned non-contenteditable regions, it would get stuck endlessly iterating the same region as the algorithm
+        didn't skip the editable boundary.
+
+        Test: editing/execCommand/insert-list-with-noneditable-content.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::cleanupAfterDeletion): Changed signature to take the destination
+        position for the active editing command. Without this, there are cases when the destination happens
+        to be a placeholder, and we remove it.
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/CompositeEditCommand.h:
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): Added logic to the paragraph iteration loop to handle pockets of
+        non-editable content in an editable context. Previously, this could cause an infinite loop.
+        * editing/visible_units.cpp:
+        (WebCore::startOfParagraph): Added a mode of operation where we'll jump across non-editable
+        content in the same paragraph to reach the actual editable paragraph start.
+        (WebCore::endOfParagraph): Ditto.
+        (WebCore::startOfNextParagraph): Now uses the aforementioned non-editable content skipping mode of
+        endOfParagraph.
+
 2011-03-10  Berend-Jan Wever  <skylined@chromium.org>
 
         Reviewed by Darin Adler.
