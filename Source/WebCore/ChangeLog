@@ -1,3 +1,14 @@
+2011-03-10  Xiyuan Xia  <xiyuan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Fix default single selection select's popup background on chromium/linux
+        https://bugs.webkit.org/show_bug.cgi?id=56023
+
+        Test: fast/html/select-dropdown-consistent-background-color.html
+
+        * css/themeChromiumLinux.css:
+
 2011-03-10  Kris Jordan  <krisjordan@gmail.com>
 
         Reviewed by Alexey Proskuryakov.
