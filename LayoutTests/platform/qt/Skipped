@@ -2965,6 +2965,7 @@ http/tests/xmlhttprequest/remember-bad-password.html
 fast/forms/interactive-validation-lost-focusable.html
 fast/forms/interactive-validation-prevented.html
 fast/forms/interactive-validation-attach-assertion.html
+fast/forms/interactive-validation-assertion-by-validate-twice.html
 
 # [Qt] REGRESSION(63862): animations/play-state.html fails intermittently
 # https://bugs.webkit.org/show_bug.cgi?id=42821

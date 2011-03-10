@@ -20,9 +20,6 @@ function check() {
         layoutTestController.notifyDone();
 }
 
-// Make sure the text field is rendered.
-document.getElementsByTagName('input')[0].offsetLeft;
-
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();

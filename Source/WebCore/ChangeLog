@@ -1,3 +1,20 @@
+2011-03-10  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Assertion fails by validating a form twice very quickly
+        https://bugs.webkit.org/show_bug.cgi?id=56069
+
+        If the interactive validation is invoked when a form control is in
+        needsLayout() state, an assertion in isFocusable() fails. To avoid it,
+        Add a call to updateLayoutIgnorePendingStylesheets() before isFocusable().
+
+        Test: fast/forms/interactive-validation-assertion-by-validate-twice.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::validateInteractively):
+          Calls updateLayoutIgnorePendingStylesheets().
+
 2011-03-10  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Beth Dakin.

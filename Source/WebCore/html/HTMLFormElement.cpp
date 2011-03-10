@@ -223,7 +223,12 @@ bool HTMLFormElement::validateInteractively(Event* event)
     Vector<RefPtr<FormAssociatedElement> > unhandledInvalidControls;
     if (!checkInvalidControlsAndCollectUnhandled(unhandledInvalidControls))
         return true;
-    // If the form has invalid controls, abort submission.
+    // Because the form has invalid controls, we abort the form submission and
+    // show a validation message on a focusable form control.
+
+    // Needs to update layout now because we'd like to call isFocusable(), which
+    // has !renderer()->needsLayout() assertion.
+    document()->updateLayoutIgnorePendingStylesheets();
 
     RefPtr<HTMLFormElement> protector(this);
     // Focus on the first focusable control and show a validation message.
