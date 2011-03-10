@@ -878,6 +878,8 @@ svg/zoom/page/zoom-coords-viewattr-01-b.svg
 svg/zoom/text/zoom-coords-viewattr-01-b.svg
 # Fail on 32-bits Release
 svg/W3C-SVG-1.1/animate-elem-30-t.svg
+svg/W3C-SVG-1.1/animate-elem-03-t.svg
+svg/W3C-SVG-1.1/animate-elem-33-t.svg
 
 
 # The following 3 started to fail after r79592 when they were

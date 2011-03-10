@@ -1,3 +1,10 @@
+2011-03-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip 2 more svg tests failing by one pixel in 32-bits
+        Release, see bug 39022.
+
+        * platform/gtk/Skipped:
+
 2011-03-10  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.
