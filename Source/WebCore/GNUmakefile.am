@@ -3902,7 +3902,7 @@ endif # END ENABLE_FAST_MOBILE_SCROLLING
 # ---
 if USE_FREETYPE
 webcoregtk_cppflags += \
-	-DUSE_FREETYPE=1 \
+	-DWTF_USE_FREETYPE=1 \
 	-I$(srcdir)/Source/WebCore/platform/graphics/freetype
 
 webcoregtk_sources += \
@@ -3919,7 +3919,7 @@ endif # END USE_FREETYPE
 # ---
 if USE_PANGO
 webcoregtk_cppflags += \
-	-DUSE_PANGO=1 \
+	-DWTF_USE_PANGO=1 \
 	-I$(srcdir)/Source/WebCore/platform/graphics/pango
 
 webcoregtk_sources += \

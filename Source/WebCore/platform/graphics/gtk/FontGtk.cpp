@@ -44,7 +44,7 @@
 #include <pango/pango.h>
 #include <pango/pangocairo.h>
 
-#if defined(USE_FREETYPE)
+#if USE(FREETYPE)
 #include <pango/pangofc-fontmap.h>
 #endif
 
@@ -171,13 +171,13 @@ static gchar* convertUniCharToUTF8(const UChar* characters, gint length, int fro
 
 static void setPangoAttributes(const Font* font, const TextRun& run, PangoLayout* layout)
 {
-#if defined(USE_FREETYPE)
+#if USE(FREETYPE)
     if (font->primaryFont()->platformData().m_pattern) {
         PangoFontDescription* desc = pango_fc_font_description_from_pattern(font->primaryFont()->platformData().m_pattern.get(), FALSE);
         pango_layout_set_font_description(layout, desc);
         pango_font_description_free(desc);
     }
-#elif defined(USE_PANGO)
+#elif USE(PANGO)
     if (font->primaryFont()->platformData().m_font) {
         PangoFontDescription* desc = pango_font_describe(font->primaryFont()->platformData().m_font);
         pango_layout_set_font_description(layout, desc);
@@ -268,7 +268,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context,
 
 void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
-#if defined(USE_FREETYPE)
+#if USE(FREETYPE)
     if (!primaryFont()->platformData().m_pattern) {
         drawSimpleText(context, run, point, from, to);
         return;
@@ -348,7 +348,7 @@ static PangoLayout* getDefaultPangoLayout(const TextRun& run)
 
 float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* overflow) const
 {
-#if defined(USE_FREETYPE)
+#if USE(FREETYPE)
     if (!primaryFont()->platformData().m_pattern)
         return floatWidthForSimpleText(run, 0, fallbackFonts, overflow);
 #endif
@@ -373,7 +373,7 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 
 int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat, bool includePartialGlyphs) const
 {
-#if defined(USE_FREETYPE)
+#if USE(FREETYPE)
     if (!primaryFont()->platformData().m_pattern)
         return offsetForPositionForSimpleText(run, xFloat, includePartialGlyphs);
 #endif
@@ -401,7 +401,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat, bool
 
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint& point, int h, int from, int to) const
 {
-#if defined(USE_FREETYPE)
+#if USE(FREETYPE)
     if (!primaryFont()->platformData().m_pattern)
         return selectionRectForSimpleText(run, point, h, from, to);
 #endif

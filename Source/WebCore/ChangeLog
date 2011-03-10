@@ -1,3 +1,25 @@
+2011-03-10  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Some Gtk code uses defined(USE_FREETYPE) instead of just USE(FREETYPE)
+        https://bugs.webkit.org/show_bug.cgi?id=55996
+
+        Use the macre USE instead of defined fro WTF_USE_FREETYPE and
+        WTF_USE_PANGO.
+
+        * GNUmakefile.am:
+        * platform/graphics/cairo/OwnPtrCairo.cpp:
+        * platform/graphics/cairo/OwnPtrCairo.h:
+        * platform/graphics/cairo/RefPtrCairo.cpp:
+        * platform/graphics/cairo/RefPtrCairo.h:
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::setPangoAttributes):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+
 2011-03-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

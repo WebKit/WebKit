@@ -21,7 +21,7 @@
 
 #include <cairo.h>
 
-#if defined(USE_FREETYPE)
+#if USE(FREETYPE)
 #include <cairo-ft.h>
 #include <fontconfig/fcfreetype.h>
 #endif
@@ -88,7 +88,7 @@ template<> void derefIfNotNull(cairo_pattern_t* ptr)
         cairo_pattern_destroy(ptr);
 }
 
-#if defined(USE_FREETYPE)
+#if USE(FREETYPE)
 template<> void refIfNotNull(FcPattern* ptr)
 {
     if (LIKELY(ptr != 0))

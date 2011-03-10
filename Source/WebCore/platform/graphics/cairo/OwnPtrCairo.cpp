@@ -20,7 +20,7 @@
 #include "config.h"
 #include "OwnPtrCairo.h"
 
-#if defined(USE_FREETYPE)
+#if USE(FREETYPE)
 #include <cairo-ft.h>
 #include <fontconfig/fcfreetype.h>
 #endif
@@ -29,7 +29,7 @@
 
 namespace WTF {
 
-#if defined(USE_FREETYPE)
+#if USE(FREETYPE)
 template <> void deleteOwnedPtr<FcObjectSet>(FcObjectSet* ptr)
 {
     if (ptr)
