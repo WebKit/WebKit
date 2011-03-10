@@ -31,6 +31,8 @@
 #include "config.h"
 #include "ScrollView.h"
 
+#if USE(NATIVE_GTK_MAIN_FRAME_SCROLLBAR)
+
 #include "ChromeClient.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -44,7 +46,6 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollbarTheme.h"
-
 #include <gtk/gtk.h>
 
 using namespace std;
@@ -228,3 +229,5 @@ void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode v
 }
 
 }
+
+#endif // USE(NATIVE_GTK_MAIN_FRAME_SCROLLBAR)

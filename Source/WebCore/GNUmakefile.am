@@ -3880,6 +3880,10 @@ webcoregtk_sources += \
 	Source/WebCore/platform/text/gtk/TextBreakIteratorGtk.cpp
 endif
 
+if !ENABLE_WEBKIT2
+FEATURE_DEFINES += WTF_USE_NATIVE_GTK_MAIN_FRAME_SCROLLBAR=1
+webcore_cppflags += -DWTF_USE_NATIVE_GTK_MAIN_FRAME_SCROLLBAR=1
+endif # END WEBKIT2
 
 # ---
 # Channel mesaging support

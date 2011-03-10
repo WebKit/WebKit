@@ -1,3 +1,20 @@
+2011-03-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] [Webkit2] There are no scrollbars visible in the MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=56125
+
+        No new tests. This functionality will be tested once we have TestRunner
+        implementation for WebKit2 with pixel dumping support.
+
+        * GNUmakefile.am: Add a new define with tracks whether or not we are using
+        our specialized GTK+ ScrollView.
+        * platform/ScrollView.cpp: Only use the GTK+-specific ScrollView if we are compiling
+        WebKit1.
+        (WebCore::ScrollView::wheelEvent):
+        * platform/gtk/ScrollViewGtk.cpp: Ditto.
+
 2011-03-10  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
