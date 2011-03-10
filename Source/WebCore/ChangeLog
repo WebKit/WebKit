@@ -1,3 +1,20 @@
+2011-03-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80749.
+        http://trac.webkit.org/changeset/80749
+        https://bugs.webkit.org/show_bug.cgi?id=56143
+
+        "Caused at least 3 media tests to be flaky" (Requested by
+        tonyg-cr on #webkit).
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::canTakeNextToken):
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        * html/parser/HTMLParserScheduler.cpp:
+        * html/parser/HTMLParserScheduler.h:
+        (WebCore::HTMLParserScheduler::checkForYieldBeforeToken):
+        * page/FrameView.h:
+
 2011-03-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.

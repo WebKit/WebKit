@@ -86,16 +86,6 @@ void HTMLParserScheduler::continueNextChunkTimerFired(Timer<HTMLParserScheduler>
     m_parser->resumeParsingAfterYield();
 }
 
-void HTMLParserScheduler::checkForYieldBeforeScript(PumpSession& session)
-{
-    // If we've never painted before and a layout is pending, yield prior to running
-    // scripts to give the page a chance to paint earlier.
-    Document* document = m_parser->document();
-    bool needsFirstPaint = document->view() && !document->view()->hasEverPainted();
-    if (needsFirstPaint && document->isLayoutTimerActive())
-        session.needsYield = true;
-}
-
 void HTMLParserScheduler::scheduleForResume()
 {
     m_continueNextChunkTimer.startOneShot(0);
