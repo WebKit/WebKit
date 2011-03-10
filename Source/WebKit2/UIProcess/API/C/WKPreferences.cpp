@@ -311,6 +311,16 @@ bool WKPreferencesGetAcceleratedDrawingEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->acceleratedDrawingEnabled();
 }
 
+void WKPreferencesSetCanvasUsesAcceleratedDrawing(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setCanvasUsesAcceleratedDrawing(flag);
+}
+
+bool WKPreferencesGetCanvasUsesAcceleratedDrawing(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->canvasUsesAcceleratedDrawing();
+}
+
 void WKPreferencesSetAcceleratedCompositingEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setAcceleratedCompositingEnabled(flag);

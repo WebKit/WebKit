@@ -143,6 +143,7 @@ Settings::Settings(Page* page)
     , m_enforceCSSMIMETypeInNoQuirksMode(true)
     , m_usesEncodingDetector(false)
     , m_allowScriptsToCloseWindows(false)
+    , m_canvasUsesAcceleratedDrawing(true)
     , m_acceleratedDrawingEnabled(false)
     // FIXME: This should really be disabled by default as it makes platforms that don't support the feature download files
     // they can't use by. Leaving enabled for now to not change existing behavior.
@@ -617,6 +618,11 @@ void Settings::setAcceleratedCompositingEnabled(bool enabled)
         
     m_acceleratedCompositingEnabled = enabled;
     setNeedsRecalcStyleInAllFrames(m_page);
+}
+
+void Settings::setCanvasUsesAcceleratedDrawing(bool enabled)
+{
+    m_canvasUsesAcceleratedDrawing = enabled;
 }
 
 void Settings::setAcceleratedDrawingEnabled(bool enabled)

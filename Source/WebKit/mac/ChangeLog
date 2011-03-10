@@ -1,3 +1,14 @@
+2011-03-09  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Plumb through settings for accelerated drawing for canvas
+        https://bugs.webkit.org/show_bug.cgi?id=56039
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        * WebView/WebPreferencesPrivate.h:
+
 2011-03-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

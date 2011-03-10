@@ -399,7 +399,10 @@ void HTMLCanvasElement::createImageBuffer() const
         return;
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    m_imageBuffer = ImageBuffer::create(size, ColorSpaceDeviceRGB, Accelerated);
+    if (document()->settings()->canvasUsesAcceleratedDrawing())
+        m_imageBuffer = ImageBuffer::create(size, ColorSpaceDeviceRGB, Accelerated);
+    else
+        m_imageBuffer = ImageBuffer::create(size, ColorSpaceDeviceRGB, Unaccelerated);
 #else
     m_imageBuffer = ImageBuffer::create(size);
 #endif

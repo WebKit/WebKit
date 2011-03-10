@@ -179,6 +179,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)acceleratedDrawingEnabled;
 - (void)setAcceleratedDrawingEnabled:(BOOL)enabled;
 
+- (BOOL)canvasUsesAcceleratedDrawing;
+- (void)setCanvasUsesAcceleratedDrawing:(BOOL)enabled;
+
 - (BOOL)acceleratedCompositingEnabled;
 - (void)setAcceleratedCompositingEnabled:(BOOL)enabled;
 

@@ -283,6 +283,9 @@ namespace WebCore {
         void setXSSAuditorEnabled(bool);
         bool xssAuditorEnabled() const { return m_xssAuditorEnabled; }
 
+        void setCanvasUsesAcceleratedDrawing(bool);
+        bool canvasUsesAcceleratedDrawing() const { return m_canvasUsesAcceleratedDrawing; }
+
         void setAcceleratedDrawingEnabled(bool);
         bool acceleratedDrawingEnabled() const { return m_acceleratedDrawingEnabled; }
         
@@ -437,6 +440,7 @@ namespace WebCore {
         bool m_enforceCSSMIMETypeInNoQuirksMode : 1;
         bool m_usesEncodingDetector : 1;
         bool m_allowScriptsToCloseWindows : 1;
+        bool m_canvasUsesAcceleratedDrawing : 1;
         bool m_acceleratedDrawingEnabled : 1;
         bool m_downloadableBinaryFontsEnabled : 1;
         bool m_xssAuditorEnabled : 1;

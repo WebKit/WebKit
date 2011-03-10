@@ -359,6 +359,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitXSSAuditorEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAcceleratedCompositingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitAcceleratedDrawingEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitCanvasUsesAcceleratedDrawingPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowDebugBordersPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowRepaintCounterPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebGLEnabledPreferenceKey,
@@ -1243,6 +1244,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setAcceleratedDrawingEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitAcceleratedDrawingEnabledPreferenceKey];
+}
+
+- (BOOL)canvasUsesAcceleratedDrawing
+{
+    return [self _boolValueForKey:WebKitCanvasUsesAcceleratedDrawingPreferenceKey];
+}
+
+- (void)setCanvasUsesAcceleratedDrawing:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitCanvasUsesAcceleratedDrawingPreferenceKey];
 }
 
 - (BOOL)acceleratedCompositingEnabled

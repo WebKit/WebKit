@@ -1,3 +1,15 @@
+2011-03-09  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Plumb through settings for accelerated drawing for canvas
+        https://bugs.webkit.org/show_bug.cgi?id=56039
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+
 2011-03-10  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Oliver Hunt and Brian Weinstein.

@@ -1,3 +1,18 @@
+2011-03-09  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Plumb through settings for accelerated drawing for canvas
+        https://bugs.webkit.org/show_bug.cgi?id=56039
+
+        No new tests. Doesn't affect behavior, just adding a switch to toggle canvas backends.
+
+        * WebCore.exp.in:
+        * html/HTMLCanvasElement.cpp:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * page/Settings.cpp:
+        * page/Settings.h:
+
 2011-03-10  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.
