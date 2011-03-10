@@ -1,3 +1,12 @@
+2011-03-10  Kris Jordan  <krisjordan@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Testing the improved Accept header as per bug 27267.
+        https://bugs.webkit.org/show_bug.cgi?id=27267
+
+        * http/tests/misc/xhtml-expected.txt: Tests against improved Accept header.
+
 2011-03-10  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -1,3 +1,13 @@
+2011-03-10  Kris Jordan  <krisjordan@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Improve default Accept header to give preference to HTML over XML.
+        https://bugs.webkit.org/show_bug.cgi?id=27267
+
+        * loader/FrameLoader.cpp:Changed default accept header to match
+        FireFox' as per bug 27267.
+
 2011-03-10  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
