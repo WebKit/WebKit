@@ -219,7 +219,6 @@ public slots:
     void setMockGeolocationError(int code, const QString& message);
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
     void setGeolocationPermission(bool allow);
-    int numberOfPendingGeolocationPermissionRequests();
     bool isGeolocationPermissionSet() const { return m_isGeolocationPermissionSet; }
     bool geolocationPermission() const { return m_geolocationPermission; }
 

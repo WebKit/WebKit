@@ -51,7 +51,6 @@ public:
     WEBKIT_API void setPosition(double latitude, double longitude, double accuracy);
     WEBKIT_API void setError(int errorCode, const WebString& message);
     WEBKIT_API void setPermission(bool);
-    WEBKIT_API int numberOfPendingPermissionRequests() const;
     WEBKIT_API void resetMock();
 
     virtual void startUpdating();

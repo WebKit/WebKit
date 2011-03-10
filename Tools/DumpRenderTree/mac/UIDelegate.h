@@ -37,6 +37,5 @@
 }
 
 - (void)didSetMockGeolocationPermission;
-- (int)numberOfPendingGeolocationPermissionRequests;
 
 @end

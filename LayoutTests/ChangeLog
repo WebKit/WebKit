@@ -1,3 +1,20 @@
+2011-03-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80701.
+        http://trac.webkit.org/changeset/80701
+        https://bugs.webkit.org/show_bug.cgi?id=56126
+
+        fast/dom/Geolocation/window-close-crash.html fails on Snow
+        Leopard release builds (Requested by mihaip on #webkit).
+
+        * fast/dom/Geolocation/page-reload-cancel-permission-requests-expected.txt: Removed.
+        * fast/dom/Geolocation/page-reload-cancel-permission-requests.html: Removed.
+        * fast/dom/Geolocation/resources/page-reload-cancel-permission-requests-inner.html: Removed.
+        * fast/dom/Geolocation/script-tests/page-reload-cancel-permission-requests.js: Removed.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-wk2/Skipped:
+
 2011-03-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

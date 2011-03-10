@@ -488,12 +488,6 @@ void LayoutTestController::setGeolocationPermission(bool allow)
     setGeolocationPermissionCommon(allow);
 }
 
-int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
-{
-    // FIXME: Implement for Geolocation layout tests.
-    return -1;
-}
-
 void LayoutTestController::addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language)
 {
     // FIXME: Implement for speech input layout tests.

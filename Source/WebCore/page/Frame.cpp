@@ -686,10 +686,8 @@ void Frame::pageDestroyed()
     if (Frame* parent = tree()->parent())
         parent->loader()->checkLoadComplete();
 
-    if (m_domWindow) {
-        m_domWindow->resetGeolocation();
+    if (m_domWindow)
         m_domWindow->pageDestroyed();
-    }
 
     // FIXME: It's unclear as to why this is called more than once, but it is,
     // so page() could be NULL.
@@ -733,13 +731,6 @@ void Frame::transferChildFrameToNewDocument()
 
              m_page->decrementFrameCount();
         }
-
-        // FIXME: We should ideally allow existing Geolocation activities to continue
-        // when the Geolocation's iframe is reparented.
-        // See https://bugs.webkit.org/show_bug.cgi?id=55577
-        // and https://bugs.webkit.org/show_bug.cgi?id=52877
-        if (m_domWindow)
-            m_domWindow->resetGeolocation();
 
         m_page = newPage;
 

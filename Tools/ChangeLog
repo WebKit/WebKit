@@ -1,3 +1,27 @@
+2011-03-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80701.
+        http://trac.webkit.org/changeset/80701
+        https://bugs.webkit.org/show_bug.cgi?id=56126
+
+        fast/dom/Geolocation/window-close-crash.html fails on Snow
+        Leopard release builds (Requested by mihaip on #webkit).
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        * DumpRenderTree/mac/UIDelegate.h:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+
 2011-03-10  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

@@ -41,7 +41,6 @@ public:
     static PassRefPtr<Navigator> create(Frame* frame) { return adoptRef(new Navigator(frame)); }
     virtual ~Navigator();
 
-    void resetGeolocation();
     void disconnectFrame();
     Frame* frame() const { return m_frame; }
 
