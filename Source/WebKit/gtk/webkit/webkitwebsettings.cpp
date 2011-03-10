@@ -39,6 +39,8 @@
 
 #if OS(UNIX)
 #include <sys/utsname.h>
+#elif OS(WINDOWS)
+#include "SystemInfo.h"
 #endif
 
 /**
@@ -208,7 +210,7 @@ static String webkitOSVersion()
     else
         uaOSVersion = String("Unknown");
 #elif OS(WINDOWS)
-    DEFINE_STATIC_LOCAL(const String, uaOSVersion, (String("Windows")));
+    DEFINE_STATIC_LOCAL(const String, uaOSVersion, (windowsVersionForUAString()));
 #else
     DEFINE_STATIC_LOCAL(const String, uaOSVersion, (String("Unknown")));
 #endif

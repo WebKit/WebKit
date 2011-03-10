@@ -30,6 +30,7 @@
 #include "BitmapInfo.h"
 #include "Image.h"
 #include "IntPoint.h"
+#include "SystemInfo.h"
 
 #include <wtf/OwnPtr.h>
 
@@ -39,20 +40,12 @@
 
 namespace WebCore {
 
-static inline bool supportsAlphaCursors() 
-{
-    OSVERSIONINFO osinfo = {0};
-    osinfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-    GetVersionEx(&osinfo);
-    return osinfo.dwMajorVersion > 5 || (osinfo.dwMajorVersion == 5 && osinfo.dwMinorVersion > 0);
-}
-
 static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& hotSpot)
 {
     RefPtr<SharedCursor> impl;
 
     IntPoint effectiveHotSpot = determineHotSpot(img, hotSpot);
-    static bool doAlpha = supportsAlphaCursors();
+    static bool doAlpha = windowsVersion() >= WindowsXP;
     BitmapInfo cursorImage = BitmapInfo::create(IntSize(img->width(), img->height()));
 
     HDC dc = GetDC(0);

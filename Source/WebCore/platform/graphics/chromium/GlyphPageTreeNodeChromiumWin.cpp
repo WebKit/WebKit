@@ -134,7 +134,7 @@ static bool fillBMPGlyphs(unsigned offset,
     bool haveGlyphs = false;
     int invalidGlyph = 0xFFFF;
     const DWORD cffTableTag = 0x20464643; // 4-byte identifier for OpenType CFF table ('CFF ').
-    if (!isRunningOnVistaOrLater() && !(tm.tmPitchAndFamily & TMPF_TRUETYPE) && (GetFontData(dc, cffTableTag, 0, 0, 0) == GDI_ERROR))
+    if ((windowsVersion() < WindowsVista) && !(tm.tmPitchAndFamily & TMPF_TRUETYPE) && (GetFontData(dc, cffTableTag, 0, 0, 0) == GDI_ERROR))
         invalidGlyph = 0x1F;
 
     Glyph spaceGlyph = 0;  // Glyph for a space. Lazily filled.

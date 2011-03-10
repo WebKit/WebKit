@@ -28,6 +28,7 @@
 
 #include "resource.h"
 #include <tchar.h>
+#include <WebCore/SystemInfo.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringConcatenate.h>
@@ -35,30 +36,6 @@
 using namespace WebCore;
 
 namespace WebKit {
-
-static String windowsVersion()
-{
-   String osVersion;
-   OSVERSIONINFO versionInfo = { 0 };
-   versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
-   ::GetVersionEx(&versionInfo);
-
-   if (versionInfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) {
-       if (versionInfo.dwMajorVersion == 4) {
-           if (versionInfo.dwMinorVersion == 0)
-               osVersion = "Windows 95";
-           else if (versionInfo.dwMinorVersion == 10)
-               osVersion = "Windows 98";
-           else if (versionInfo.dwMinorVersion == 90)
-               osVersion = "Windows 98; Win 9x 4.90";
-       }
-   } else if (versionInfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
-       osVersion = makeString("Windows NT ", String::number(versionInfo.dwMajorVersion), '.', String::number(versionInfo.dwMinorVersion));
-
-   if (!osVersion.length())
-       osVersion = makeString("Windows ", String::number(versionInfo.dwMajorVersion), '.', String::number(versionInfo.dwMinorVersion));
-   return osVersion;
-}
 
 static String userVisibleWebKitVersionString()
 {
@@ -71,12 +48,10 @@ static String userVisibleWebKitVersionString()
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
-    DEFINE_STATIC_LOCAL(String, osVersion, (windowsVersion()));
+    DEFINE_STATIC_LOCAL(String, osVersion, (windowsVersionForUAString()));
     DEFINE_STATIC_LOCAL(String, webKitVersion, (userVisibleWebKitVersionString()));
 
-    if (applicationNameForUserAgent.isEmpty())
-        return makeString("Mozilla/5.0 (", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko)");
-    return makeString("Mozilla/5.0 (", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) ", applicationNameForUserAgent);
+    return makeString("Mozilla/5.0 (", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko)", applicationNameForUserAgent.isEmpty() ? "" : " ", applicationNameForUserAgent);
 }
 
 } // namespace WebKit

@@ -141,8 +141,8 @@ bool ThemePainter::s_hasInstance = false;
 
 static void getNonClientMetrics(NONCLIENTMETRICS* metrics)
 {
-    static UINT size = isRunningOnVistaOrLater() ?
-        sizeof(NONCLIENTMETRICS) : NONCLIENTMETRICS_SIZE_PRE_VISTA;
+    static UINT size = (windowsVersion() >= WindowsVista) ?
+        (sizeof NONCLIENTMETRICS) : NONCLIENTMETRICS_SIZE_PRE_VISTA;
     metrics->cbSize = size;
     bool success = !!SystemParametersInfo(SPI_GETNONCLIENTMETRICS, size, metrics, 0);
     ASSERT(success);

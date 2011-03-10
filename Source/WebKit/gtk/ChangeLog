@@ -1,3 +1,13 @@
+2011-03-09  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Mihai Parparita.
+
+        Unify Windows version checks.
+        https://bugs.webkit.org/show_bug.cgi?id=55979
+
+        * webkit/webkitwebsettings.cpp:
+        (webkitOSVersion):
+
 2011-03-08  Christian Dywan  <christian@lanedo.com>
 
         Reviewed by Martin Robinson.

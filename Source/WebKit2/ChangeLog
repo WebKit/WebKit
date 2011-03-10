@@ -1,3 +1,13 @@
+2011-03-09  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Mihai Parparita.
+
+        Unify Windows version checks.
+        https://bugs.webkit.org/show_bug.cgi?id=55979
+
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::standardUserAgent):
+
 2011-03-09  Adele Peterson  <adele@apple.com>
 
         Reviewed by Anders Carlsson.

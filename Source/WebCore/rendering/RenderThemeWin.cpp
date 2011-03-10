@@ -569,15 +569,17 @@ ThemeData RenderThemeWin::getThemeData(RenderObject* o, ControlSubPart subPart)
             result.m_state = determineState(o);
             break;
         case MenulistPart:
-        case MenulistButtonPart:
-            result.m_part = isRunningOnVistaOrLater() ? CP_DROPDOWNBUTTONRIGHT : CP_DROPDOWNBUTTON;
-            if (isRunningOnVistaOrLater() && documentIsInApplicationChromeMode(o->document())) {
+        case MenulistButtonPart: {
+            const bool isVistaOrLater = (windowsVersion() >= WindowsVista);
+            result.m_part = isVistaOrLater ? CP_DROPDOWNBUTTONRIGHT : CP_DROPDOWNBUTTON;
+            if (isVistaOrLater && documentIsInApplicationChromeMode(o->document())) {
                 // The "readonly" look we use in application chrome mode
                 // only uses a "normal" look for the drop down button.
                 result.m_state = TS_NORMAL;
             } else
                 result.m_state = determineState(o);
             break;
+        }
         case RadioPart:
             result.m_part = BP_RADIO;
             result.m_state = determineState(o);
@@ -585,7 +587,7 @@ ThemeData RenderThemeWin::getThemeData(RenderObject* o, ControlSubPart subPart)
         case SearchFieldPart:
         case TextFieldPart:
         case TextAreaPart:
-            result.m_part = isRunningOnVistaOrLater() ? EP_EDITBORDER_NOSCROLL : TFP_TEXTFIELD;
+            result.m_part = (windowsVersion() >= WindowsVista) ? EP_EDITBORDER_NOSCROLL : TFP_TEXTFIELD;
             result.m_state = determineState(o);
             break;
         case SliderHorizontalPart:
@@ -728,7 +730,7 @@ bool RenderThemeWin::paintMenuList(RenderObject* o, const PaintInfo& i, const In
 {
     HANDLE theme;
     int part;
-    if (haveTheme && isRunningOnVistaOrLater()) {
+    if (haveTheme && (windowsVersion() >= WindowsVista)) {
         theme = menuListTheme();
         if (documentIsInApplicationChromeMode(o->document()))
             part = CP_READONLY;
@@ -792,7 +794,7 @@ bool RenderThemeWin::paintMenuListButton(RenderObject* o, const PaintInfo& i, co
         buttonRect.setX(buttonRect.maxX() - dropDownButtonWidth);
     buttonRect.setWidth(dropDownButtonWidth);
 
-    if (isRunningOnVistaOrLater()) {
+    if ((windowsVersion() >= WindowsVista)) {
         // Outset the top, right, and bottom borders of the button so that they coincide with the <select>'s border.
         buttonRect.setY(buttonRect.y() - vistaMenuListButtonOutset);
         buttonRect.setHeight(buttonRect.height() + 2 * vistaMenuListButtonOutset);

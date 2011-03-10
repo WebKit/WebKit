@@ -104,6 +104,9 @@
 #include "Scrollbar.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#if defined Q_OS_WIN32
+#include "SystemInfo.h"
+#endif // Q_OS_WIN32
 #include "TextIterator.h"
 #include "WebPlatformStrategies.h"
 #include "WindowFeatures.h"
@@ -3772,52 +3775,7 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
 #ifdef Q_OS_AIX
         firstPartTemp += QString::fromLatin1("AIX");
 #elif defined Q_OS_WIN32
-
-        switch (QSysInfo::WindowsVersion) {
-        case QSysInfo::WV_32s:
-            firstPartTemp += QString::fromLatin1("Windows 3.1");
-            break;
-        case QSysInfo::WV_95:
-            firstPartTemp += QString::fromLatin1("Windows 95");
-            break;
-        case QSysInfo::WV_98:
-            firstPartTemp += QString::fromLatin1("Windows 98");
-            break;
-        case QSysInfo::WV_Me:
-            firstPartTemp += QString::fromLatin1("Windows 98; Win 9x 4.90");
-            break;
-        case QSysInfo::WV_NT:
-            firstPartTemp += QString::fromLatin1("WinNT4.0");
-            break;
-        case QSysInfo::WV_2000:
-            firstPartTemp += QString::fromLatin1("Windows NT 5.0");
-            break;
-        case QSysInfo::WV_XP:
-            firstPartTemp += QString::fromLatin1("Windows NT 5.1");
-            break;
-        case QSysInfo::WV_2003:
-            firstPartTemp += QString::fromLatin1("Windows NT 5.2");
-            break;
-        case QSysInfo::WV_VISTA:
-            firstPartTemp += QString::fromLatin1("Windows NT 6.0");
-            break;
-         case QSysInfo::WV_WINDOWS7:
-            firstPartTemp += QString::fromLatin1("Windows NT 6.1");
-            break;
-         case QSysInfo::WV_CE:
-            firstPartTemp += QString::fromLatin1("Windows CE");
-            break;
-         case QSysInfo::WV_CENET:
-            firstPartTemp += QString::fromLatin1("Windows CE .NET");
-            break;
-         case QSysInfo::WV_CE_5:
-            firstPartTemp += QString::fromLatin1("Windows CE 5.x");
-            break;
-         case QSysInfo::WV_CE_6:
-            firstPartTemp += QString::fromLatin1("Windows CE 6.x");
-            break;
-        }
-
+        firstPartTemp += windowsVersionForUAString();
 #elif defined Q_OS_DARWIN
 #ifdef __i386__ || __x86_64__
         firstPartTemp += QString::fromLatin1("Intel Mac OS X");

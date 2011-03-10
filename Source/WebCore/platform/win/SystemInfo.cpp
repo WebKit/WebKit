@@ -27,30 +27,90 @@
 #include "SystemInfo.h"
 
 #include <windows.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
-bool isRunningOnVistaOrLater()
+WindowsVersion windowsVersion(int* major, int* minor)
 {
+    static bool initialized = false;
+    static WindowsVersion version;
+    static int majorVersion, minorVersion;
+
+    if (!initialized) {
+        initialized = true;
 #if OS(WINCE)
-    return false;
+        OSVERSIONINFO versionInfo = {0};
 #else
-    static bool isVistaOrLater;
-    static bool initialized;
-
-    if (initialized)
-        return isVistaOrLater;
-
-    initialized = true;
-
-    OSVERSIONINFOEX vi = {0};
-    vi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-    GetVersionEx(reinterpret_cast<OSVERSIONINFO*>(&vi));
-
-    isVistaOrLater = vi.dwMajorVersion >= 6;
-
-    return isVistaOrLater;
+        OSVERSIONINFOEX versionInfo = {0};
 #endif
+        versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
+        GetVersionEx(reinterpret_cast<OSVERSIONINFO*>(&versionInfo));
+        majorVersion = versionInfo.dwMajorVersion;
+        minorVersion = versionInfo.dwMinorVersion;
+
+#if OS(WINCE)
+        if (majorVersion >= 1 && majorVersion <= 7)
+            version = static_cast<WindowsVersion>(WindowsCE1 + (majorVersion - 1));
+        else
+            version = (majorVersion < 1) ? WindowsCE1 : WindowsCE7;
+#else
+        if (versionInfo.dwPlatformId == VER_PLATFORM_WIN32s)
+            version = Windows3_1;
+        else if (versionInfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) {
+            if (!minorVersion)
+                version = Windows95;
+            else
+                version = (minorVersion == 10) ? Windows98 : WindowsME;
+        } else {
+            if (majorVersion == 5) {
+                if (!minorVersion)
+                    version = Windows2000;
+                else
+                    version = (minorVersion == 1) ? WindowsXP : WindowsServer2003;
+            } else if (majorVersion >= 6) {
+                if (versionInfo.wProductType == VER_NT_WORKSTATION)
+                    version = (majorVersion == 6 && !minorVersion) ? WindowsVista : Windows7;
+                else
+                    version = WindowsServer2008;
+            } else
+                version = (majorVersion == 4) ? WindowsNT4 : WindowsNT3;
+        }
+#endif
+    }
+
+    if (major)
+        *major = majorVersion;
+    if (minor)
+        *minor = minorVersion;
+    return version;
+}
+
+String windowsVersionForUAString()
+{
+    int major, minor;
+    WindowsVersion version = windowsVersion(&major, &minor);
+    switch (version) {
+    case WindowsCE1:
+    case WindowsCE2:
+    case WindowsCE3:
+        return "Windows CE";
+    case WindowsCE4:
+        return "Windows CE .NET";
+    case Windows3_1:
+        return "Windows 3.1";
+    case Windows95:
+        return "Windows 95";
+    case Windows98:
+        return "Windows 98";
+    case WindowsME:
+        return "Windows 98; Win 9x 4.90";
+    case WindowsNT4:
+        return "WinNT4.0";
+    }
+
+    char* familyName = (version >= WindowsNT3) ? "Windows NT " : "Windows CE ";
+    return makeString(familyName, String::number(major), '.', String::number(minor));
 }
 
 } // namespace WebCore

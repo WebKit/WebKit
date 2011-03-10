@@ -100,7 +100,7 @@ ScrollbarThemeWin::ScrollbarThemeWin()
     if (!initialized) {
         initialized = true;
         checkAndInitScrollbarTheme();
-        runningVista = isRunningOnVistaOrLater();
+        runningVista = (windowsVersion() >= WindowsVista);
     }
 }
 
