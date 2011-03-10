@@ -1,3 +1,22 @@
+2011-03-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/8733254> Float disappears after incremental layout
+
+        * fast/dynamic/dirty-float-in-clean-line-expected.checksum: Added.
+        * fast/dynamic/dirty-float-in-clean-line-expected.png: Added.
+        * fast/dynamic/dirty-float-in-clean-line-expected.txt: Added.
+        * fast/dynamic/dirty-float-in-clean-line.html: Added.
+        * fast/dynamic/float-at-line-break-expected.checksum: Added.
+        * fast/dynamic/float-at-line-break-expected.png: Added.
+        * fast/dynamic/float-at-line-break-expected.txt: Added.
+        * fast/dynamic/float-at-line-break.html: Added.
+        * fast/dynamic/float-from-empty-line-expected.checksum: Added.
+        * fast/dynamic/float-from-empty-line-expected.png: Added.
+        * fast/dynamic/float-from-empty-line-expected.txt: Added.
+        * fast/dynamic/float-from-empty-line.html: Added.
+
 2011-03-09  Martin Robinson  <mrobinson@igalia.com>
 
         Add some new GTK+ test results.

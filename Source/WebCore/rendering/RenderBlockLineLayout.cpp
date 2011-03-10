@@ -628,7 +628,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
         BidiStatus cleanLineBidiStatus;
         int endLineLogicalTop = 0;
         RootInlineBox* endLine = (fullLayout || !startLine) ? 
-                                 0 : determineEndPosition(startLine, cleanLineStart, cleanLineBidiStatus, endLineLogicalTop);
+                                 0 : determineEndPosition(startLine, floats, floatIndex, cleanLineStart, cleanLineBidiStatus, endLineLogicalTop);
 
         if (startLine) {
             if (!useRepaintBounds) {
@@ -697,7 +697,10 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
             }
             ASSERT(end != resolver.position());
 
-            if (!isLineEmpty) {
+            if (isLineEmpty) {
+                if (lastRootBox())
+                    lastRootBox()->setLineBreakInfo(end.obj, end.pos, resolver.status());
+            } else {
                 VisualDirectionOverride override = (style()->visuallyOrdered() ? (style()->direction() == LTR ? VisualLeftToRightOverride : VisualRightToLeftOverride) : NoVisualOverride);
                 resolver.createBidiRunsForLine(end, override, previousLineBrokeCleanly);
                 ASSERT(resolver.position() == end);
@@ -969,6 +972,35 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
         checkLinesForTextOverflow();
 }
 
+void RenderBlock::checkFloatsInCleanLine(RootInlineBox* line, Vector<FloatWithRect>& floats, size_t& floatIndex, bool& encounteredNewFloat, bool& dirtiedByFloat)
+{
+    Vector<RenderBox*>* cleanLineFloats = line->floatsPtr();
+    if (!cleanLineFloats)
+        return;
+
+    Vector<RenderBox*>::iterator end = cleanLineFloats->end();
+    for (Vector<RenderBox*>::iterator it = cleanLineFloats->begin(); it != end; ++it) {
+        RenderBox* floatingBox = *it;
+        floatingBox->layoutIfNeeded();
+        IntSize newSize(floatingBox->width() + floatingBox->marginLeft() + floatingBox->marginRight(), floatingBox->height() + floatingBox->marginTop() + floatingBox->marginBottom());
+        ASSERT(floatIndex < floats.size());
+        if (floats[floatIndex].object != floatingBox) {
+            encounteredNewFloat = true;
+            return;
+        }
+        if (floats[floatIndex].rect.size() != newSize) {
+            int floatTop = style()->isHorizontalWritingMode() ? floats[floatIndex].rect.y() : floats[floatIndex].rect.x();
+            int floatHeight = style()->isHorizontalWritingMode() ? max(floats[floatIndex].rect.height(), newSize.height()) 
+                                                                 : max(floats[floatIndex].rect.width(), newSize.width());
+            line->markDirty();
+            markLinesDirtyInBlockRange(line->blockLogicalHeight(), floatTop + floatHeight, line);
+            floats[floatIndex].rect.setSize(newSize);
+            dirtiedByFloat = true;
+        }
+        floatIndex++;
+    }
+}
+
 RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLayout, bool& previousLineBrokeCleanly, 
                                                    InlineBidiResolver& resolver, Vector<FloatWithRect>& floats, unsigned& numCleanFloats,
                                                    bool& useRepaintBounds, int& repaintLogicalTop, int& repaintLogicalBottom)
@@ -1001,32 +1033,9 @@ RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLa
                     curr->adjustBlockDirectionPosition(paginationDelta);
                 }                
             }
-            
-            if (Vector<RenderBox*>* cleanLineFloats = curr->floatsPtr()) {
-                Vector<RenderBox*>::iterator end = cleanLineFloats->end();
-                for (Vector<RenderBox*>::iterator o = cleanLineFloats->begin(); o != end; ++o) {
-                    RenderBox* f = *o;
-                    f->layoutIfNeeded();
-                    IntSize newSize(f->width() + f->marginLeft() + f->marginRight(), f->height() + f->marginTop() + f->marginBottom());
-                    ASSERT(floatIndex < floats.size());
-                    if (floats[floatIndex].object != f) {
-                        // A new float has been inserted before this line or before its last known float.
-                        // Just do a full layout.
-                        fullLayout = true;
-                        break;
-                    }
-                    if (floats[floatIndex].rect.size() != newSize) {
-                        int floatTop = style()->isHorizontalWritingMode() ? floats[floatIndex].rect.y() : floats[floatIndex].rect.x();
-                        int floatHeight = style()->isHorizontalWritingMode() ? max(floats[floatIndex].rect.height(), newSize.height()) 
-                                                                             : max(floats[floatIndex].rect.width(), newSize.width());
-                        curr->markDirty();
-                        markLinesDirtyInBlockRange(curr->blockLogicalHeight(), floatTop + floatHeight, curr);
-                        floats[floatIndex].rect.setSize(newSize);
-                        dirtiedByFloat = true;
-                    }
-                    floatIndex++;
-                }
-            }
+
+            // If a new float has been inserted before this line or before its last known float,just do a full layout.
+            checkFloatsInCleanLine(curr, floats, floatIndex, fullLayout, dirtiedByFloat);
             if (dirtiedByFloat || fullLayout)
                 break;
         }
@@ -1120,22 +1129,28 @@ RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLa
     return curr;
 }
 
-RootInlineBox* RenderBlock::determineEndPosition(RootInlineBox* startLine, InlineIterator& cleanLineStart, BidiStatus& cleanLineBidiStatus, int& logicalTop)
+RootInlineBox* RenderBlock::determineEndPosition(RootInlineBox* startLine, Vector<FloatWithRect>& floats, size_t floatIndex, InlineIterator& cleanLineStart, BidiStatus& cleanLineBidiStatus, int& logicalTop)
 {
     RootInlineBox* last = 0;
-    if (!startLine)
-        last = 0;
-    else {
-        for (RootInlineBox* curr = startLine->nextRootBox(); curr; curr = curr->nextRootBox()) {
-            if (curr->isDirty())
-                last = 0;
-            else if (!last)
-                last = curr;
+    for (RootInlineBox* curr = startLine->nextRootBox(); curr; curr = curr->nextRootBox()) {
+        if (!curr->isDirty()) {
+            bool encounteredNewFloat = false;
+            bool dirtiedByFloat = false;
+            checkFloatsInCleanLine(curr, floats, floatIndex, encounteredNewFloat, dirtiedByFloat);
+            if (encounteredNewFloat)
+                return 0;
         }
+        if (curr->isDirty())
+            last = 0;
+        else if (!last)
+            last = curr;
     }
 
     if (!last)
         return 0;
+
+    // At this point, |last| is the first line in a run of clean lines that ends with the last line
+    // in the block.
 
     RootInlineBox* prev = last->prevRootBox();
     cleanLineStart = InlineIterator(this, prev->lineBreakObj(), prev->lineBreakPos());
@@ -1558,6 +1573,10 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 if (floatsFitOnLine && logicalWidthForFloat(f) + w + tmpW <= width) {
                     positionNewFloatOnLine(f, lastFloatFromPreviousLine);
                     width = availableLogicalWidthForLine(logicalHeight(), firstLine);
+                    if (lBreak.obj == o) {
+                        ASSERT(!lBreak.pos);
+                        lBreak.increment();
+                    }
                 } else
                     floatsFitOnLine = false;
             } else if (o->isPositioned()) {

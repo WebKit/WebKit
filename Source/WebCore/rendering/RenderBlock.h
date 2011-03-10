@@ -480,12 +480,12 @@ private:
     }
 
     // The following functions' implementations are in RenderBlockLineLayout.cpp.
+    void checkFloatsInCleanLine(RootInlineBox*, Vector<FloatWithRect>&, size_t& floatIndex, bool& encounteredNewFloat, bool& dirtiedByFloat);
     RootInlineBox* determineStartPosition(bool& firstLine, bool& fullLayout, bool& previousLineBrokeCleanly,
                                           InlineBidiResolver&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats,
                                           bool& useRepaintBounds, int& repaintTop, int& repaintBottom);
-    RootInlineBox* determineEndPosition(RootInlineBox* startBox, InlineIterator& cleanLineStart,
-                                        BidiStatus& cleanLineBidiStatus,
-                                        int& yPos);
+    RootInlineBox* determineEndPosition(RootInlineBox* startBox, Vector<FloatWithRect>& floats, size_t floatIndex, InlineIterator& cleanLineStart,
+                                        BidiStatus& cleanLineBidiStatus, int& yPos);
     bool matchedEndLine(const InlineBidiResolver&, const InlineIterator& endLineStart, const BidiStatus& endLineStatus,
                         RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop);
 

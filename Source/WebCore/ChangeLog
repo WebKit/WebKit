@@ -1,3 +1,30 @@
+2011-03-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/8733254> Float disappears after incremental layout
+        Fixed the original bug and a copule more issues noticed while doing so.
+
+        Tests: fast/dynamic/dirty-float-in-clean-line.html
+               fast/dynamic/float-at-line-break.html
+               fast/dynamic/float-from-empty-line.html
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): If findNextLineBreak() returned an empty line,
+        update the line break info of the last line with the new line break position. This is tested
+        by float-from-empty-line.html.
+        (WebCore::RenderBlock::checkFloatsInCleanLine): Factored out code from determineStartPosition()
+        into this new function.
+        (WebCore::RenderBlock::determineStartPosition): Call checkFloatsInCleanLine().
+        (WebCore::RenderBlock::determineEndPosition): When iterating over lines, check clean lines with
+        floats, as they may yet become dirty because of the floats. This is tested by
+        dirty-float-in-clean-line.html.
+        (WebCore::RenderBlock::findNextLineBreak): If a float fits on the line, and the current line
+        break is at the float, advance it to after the float. Otherwise, if the line gets dirty and the
+        next one does not, the float will not make it into any line. This is tested by
+        float-at-line-break.html.
+
 2011-03-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.
