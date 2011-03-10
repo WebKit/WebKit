@@ -1,3 +1,33 @@
+2011-03-09  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: use DebuggerPresentation instead of DebuggerModel in source frame delegate.
+        https://bugs.webkit.org/show_bug.cgi?id=56034
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.continueToLine):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype.updateBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype.findBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype._sourceLocationToActualLocation):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        (WebInspector.SourceFrameDelegateForScriptsPanel):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.setBreakpoint):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.updateBreakpoint):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.removeBreakpoint):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.findBreakpoint):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.continueToLine):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._contextMenu.else.editBreakpointCondition.didEditBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._contextMenu.else.editBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._contextMenu.else.setBreakpointEnabled):
+        (WebInspector.SourceFrame.prototype._contextMenu):
+        (WebInspector.SourceFrame.prototype._mouseDown):
+        (WebInspector.SourceFrameDelegate.prototype.removeBreakpoint):
+        (WebInspector.SourceFrameDelegate.prototype.updateBreakpoint):
+
 2011-03-09  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

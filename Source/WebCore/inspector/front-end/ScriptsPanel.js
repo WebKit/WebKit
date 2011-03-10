@@ -590,7 +590,7 @@ WebInspector.ScriptsPanel.prototype = {
     _createSourceFrame: function(sourceFileId)
     {
         var script = this._scriptForSourceFileId(sourceFileId);
-        var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(script);
+        var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(this._presentationModel, sourceFileId, script);
         var sourceFrame = new WebInspector.SourceFrame(delegate, script.sourceURL);
         sourceFrame._sourceFileId = sourceFileId;
         sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
@@ -1050,9 +1050,11 @@ WebInspector.ScriptsPanel.prototype = {
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 
-WebInspector.SourceFrameDelegateForScriptsPanel = function(script)
+WebInspector.SourceFrameDelegateForScriptsPanel = function(model, sourceFileId, script)
 {
     WebInspector.SourceFrameDelegate.call(this);
+    this._model = model;
+    this._sourceFileId = sourceFileId;
     this._script = script;
     this._popoverObjectGroup = "popover";
 }
@@ -1172,52 +1174,30 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
 
     setBreakpoint: function(lineNumber, condition, enabled)
     {
-        var location = this._content.sourceFrameLineNumberToActualLocation(lineNumber);
-        if (this._script.sourceURL)
-            WebInspector.debuggerModel.setBreakpoint(this._script.sourceURL, location.lineNumber, location.columnNumber, condition, enabled);
-        else if (location.sourceID)
-            WebInspector.debuggerModel.setBreakpointBySourceId(location.sourceID, location.lineNumber, location.columnNumber, condition, enabled);
-        else
-            return;
+        this._model.setBreakpoint(this._sourceFileId, lineNumber, condition, enabled);
 
         if (!WebInspector.panels.scripts.breakpointsActivated)
             WebInspector.panels.scripts.toggleBreakpointsClicked();
     },
 
-    removeBreakpoint: function(breakpointId)
+    updateBreakpoint: function(lineNumber, condition, enabled)
     {
-        WebInspector.debuggerModel.removeBreakpoint(breakpointId);
+        this._model.updateBreakpoint(this._sourceFileId, lineNumber, condition, enabled);
     },
 
-    updateBreakpoint: function(breakpointId, condition, enabled)
+    removeBreakpoint: function(lineNumber)
     {
-        WebInspector.debuggerModel.updateBreakpoint(breakpointId, condition, enabled);
+        this._model.removeBreakpoint(this._sourceFileId, lineNumber);
     },
 
     findBreakpoint: function(lineNumber)
     {
-        var url = this._script.sourceURL;
-        var location = this._content.sourceFrameLineNumberToActualLocation(lineNumber);
-        function filter(breakpoint)
-        {
-            if (breakpoint.url) {
-                if (breakpoint.url !== url)
-                    return false;
-            } else {
-                if (breakpoint.sourceID !== location.sourceID)
-                    return false;
-            }
-            var lineNumber = breakpoint.locations.length ? breakpoint.locations[0].lineNumber : breakpoint.lineNumber;
-            return lineNumber === location.lineNumber;
-        }
-        return WebInspector.debuggerModel.queryBreakpoints(filter)[0];
+        return this._model.findBreakpoint(this._sourceFileId, lineNumber);
     },
 
     continueToLine: function(lineNumber)
     {
-        var location = this._content.sourceFrameLineNumberToActualLocation(lineNumber);
-        if (location.sourceID)
-            WebInspector.debuggerModel.continueToLocation(location.sourceID, location.lineNumber, location.columnNumber);
+        this._model.continueToLine(this._sourceFileId, lineNumber);
     },
 
     canEditScriptSource: function()

@@ -71,6 +71,13 @@ WebInspector.DebuggerPresentationModel.prototype = {
         }
     },
 
+    continueToLine: function(sourceFileId, lineNumber)
+    {
+        var location = this._sourceLocationToActualLocation(sourceFileId, lineNumber);
+        if (location.sourceID)
+            WebInspector.debuggerModel.continueToLocation(location.sourceID, location.lineNumber, location.columnNumber);
+    },
+
     breakpointsForSourceFileId: function(sourceFileId)
     {
         var breakpoints = [];
@@ -80,6 +87,15 @@ WebInspector.DebuggerPresentationModel.prototype = {
                 breakpoints.push(breakpoint);
         }
         return breakpoints;
+    },
+
+    setBreakpoint: function(sourceFileId, lineNumber, condition, enabled)
+    {
+        var location = this._sourceLocationToActualLocation(sourceFileId, lineNumber);
+        if (location.url)
+            WebInspector.debuggerModel.setBreakpoint(location.url, location.lineNumber, location.columnNumber, condition, enabled);
+        else
+            WebInspector.debuggerModel.setBreakpointBySourceId(location.sourceID, location.lineNumber, location.columnNumber, condition, enabled);
     },
 
     setBreakpointEnabled: function(sourceFileId, lineNumber, enabled)
@@ -92,12 +108,28 @@ WebInspector.DebuggerPresentationModel.prototype = {
         WebInspector.debuggerModel.updateBreakpoint(breakpointId, breakpoint.condition, enabled);
     },
 
+    updateBreakpoint: function(sourceFileId, lineNumber, condition, enabled)
+    {
+        var encodedSourceLocation = this._encodeSourceLocation(sourceFileId, lineNumber);
+        var breakpointId = this._sourceLocationToBreakpointId[encodedSourceLocation];
+        if (breakpointId)
+            WebInspector.debuggerModel.updateBreakpoint(breakpointId, condition, enabled);
+    },
+
     removeBreakpoint: function(sourceFileId, lineNumber)
     {
         var encodedSourceLocation = this._encodeSourceLocation(sourceFileId, lineNumber);
         var breakpointId = this._sourceLocationToBreakpointId[encodedSourceLocation];
         if (breakpointId)
             WebInspector.debuggerModel.removeBreakpoint(breakpointId);
+    },
+
+    findBreakpoint: function(sourceFileId, lineNumber)
+    {
+        var encodedSourceLocation = this._encodeSourceLocation(sourceFileId, lineNumber);
+        var breakpointId = this._sourceLocationToBreakpointId[encodedSourceLocation];
+        if (breakpointId)
+            return this._breakpoints[breakpointId];
     },
 
     _breakpointAdded: function(event)
@@ -139,6 +171,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
     {
         var breakpointId = event.data;
         var breakpoint = this._breakpoints[breakpointId];
+        if (!breakpoint)
+            return;
         var encodedSourceLocation = this._encodeSourceLocation(breakpoint.sourceFileId, breakpoint.lineNumber);
         delete this._breakpoints[breakpointId];
         delete this._sourceLocationToBreakpointId[encodedSourceLocation];
@@ -176,6 +210,17 @@ WebInspector.DebuggerPresentationModel.prototype = {
     {
         // TODO: use source mapping to obtain source location.
         return { sourceFileId: sourceID, lineNumber: lineNumber, columnNumber: columnNumber };
+    },
+
+    _sourceLocationToActualLocation: function(sourceFileId, lineNumber)
+    {
+        // TODO: use source mapping to obtain actual location.
+        function filter(script)
+        {
+            return (script.sourceURL || script.sourceID) === sourceFileId;
+        }
+        var script = WebInspector.debuggerModel.queryScripts(filter)[0];
+        return { url: script.sourceURL, sourceID: script.sourceID, lineNumber: lineNumber, columnNumber: 0 };
     },
 
     reset: function()

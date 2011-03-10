@@ -505,20 +505,20 @@ WebInspector.SourceFrame.prototype = {
             contextMenu.appendItem(WebInspector.UIString("Add Conditional Breakpoint…"), addConditionalBreakpoint.bind(this));
         } else {
             // This row has a breakpoint, we want to show edit and remove breakpoint, and either disable or enable.
-            contextMenu.appendItem(WebInspector.UIString("Remove Breakpoint"), this._delegate.removeBreakpoint.bind(this._delegate, breakpoint.id));
+            contextMenu.appendItem(WebInspector.UIString("Remove Breakpoint"), this._delegate.removeBreakpoint.bind(this._delegate, lineNumber));
             function editBreakpointCondition()
             {
                 function didEditBreakpointCondition(committed, condition)
                 {
                     if (committed)
-                        this._delegate.updateBreakpoint(breakpoint.id, condition, breakpoint.enabled);
+                        this._delegate.updateBreakpoint(lineNumber, condition, breakpoint.enabled);
                 }
                 this._editBreakpointCondition(lineNumber, breakpoint.condition, didEditBreakpointCondition.bind(this));
             }
             contextMenu.appendItem(WebInspector.UIString("Edit Breakpoint…"), editBreakpointCondition.bind(this));
             function setBreakpointEnabled(enabled)
             {
-                this._delegate.updateBreakpoint(breakpoint.id, breakpoint.condition, enabled);
+                this._delegate.updateBreakpoint(lineNumber, breakpoint.condition, enabled);
             }
             if (breakpoint.enabled)
                 contextMenu.appendItem(WebInspector.UIString("Disable Breakpoint"), setBreakpointEnabled.bind(this, false));
@@ -547,9 +547,9 @@ WebInspector.SourceFrame.prototype = {
         var breakpoint = this._delegate.findBreakpoint(lineNumber);
         if (breakpoint) {
             if (event.shiftKey)
-                this._delegate.updateBreakpoint(breakpoint.id, breakpoint.condition, !breakpoint.enabled);
+                this._delegate.updateBreakpoint(lineNumber, breakpoint.condition, !breakpoint.enabled);
             else
-                this._delegate.removeBreakpoint(breakpoint.id);
+                this._delegate.removeBreakpoint(lineNumber);
         } else
             this._delegate.setBreakpoint(lineNumber, "", true);
         event.preventDefault();
@@ -812,12 +812,12 @@ WebInspector.SourceFrameDelegate.prototype = {
         // Should be implemented by subclasses.
     },
 
-    removeBreakpoint: function(breakpointId)
+    removeBreakpoint: function(lineNumber)
     {
         // Should be implemented by subclasses.
     },
 
-    updateBreakpoint: function(breakpointId, condition, enabled)
+    updateBreakpoint: function(lineNumber, condition, enabled)
     {
         // Should be implemented by subclasses.
     },

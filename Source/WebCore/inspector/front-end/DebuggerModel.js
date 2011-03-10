@@ -89,8 +89,11 @@ WebInspector.DebuggerModel.prototype = {
 
         function didSetBreakpoint(breakpointsPushedToBackend, breakpointId, locations)
         {
-            if (!breakpointId)
+            if (!breakpointId) {
+                WebInspector.log("failed");
                 return;
+            }
+                
             var breakpoint = new WebInspector.Breakpoint(breakpointId, url, "", lineNumber, columnNumber, condition, enabled);
             breakpoint.locations = locations;
             this._breakpoints[breakpointId] = breakpoint;
