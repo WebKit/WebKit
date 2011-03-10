@@ -392,9 +392,6 @@ namespace JSC {
     {
         JSValue v;
         v.u.asEncodedJSValue = encodedJSValue;
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!v.isZombie());
-#endif
         return v;
     }
 

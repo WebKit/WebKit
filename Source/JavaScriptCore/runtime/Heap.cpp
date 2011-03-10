@@ -370,7 +370,7 @@ void Heap::reset(SweepToggle sweepToggle)
     m_extraCost = 0;
 
 #if ENABLE(JSC_ZOMBIES)
-    sweep();
+    sweepToggle = DoSweep;
 #endif
 
     if (sweepToggle == DoSweep) {

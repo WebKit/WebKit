@@ -75,10 +75,13 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPas
 
 JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, NativeFunction func)
     : Base(globalObject, structure)
-    , m_executable(exec->globalData(), this, exec->globalData().getHostFunction(func))
     , m_scopeChain(exec->globalData(), this, globalObject->globalScopeChain())
 {
     ASSERT(inherits(&s_info));
+    // We separate out intialisation from setting the executable
+    // as getHostFunction may perform a GC allocation, so we have to be able to
+    // mark ourselves safely
+    m_executable.set(exec->globalData(), this, exec->globalData().getHostFunction(func));
     putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
@@ -135,9 +138,13 @@ const UString JSFunction::calculatedDisplayName(ExecState* exec)
 void JSFunction::markChildren(MarkStack& markStack)
 {
     Base::markChildren(markStack);
-    markStack.append(&m_executable);
-    if (!isHostFunction()) {
-        markStack.append(&m_scopeChain);
+
+    markStack.append(&m_scopeChain);
+    if (m_executable) {
+        // Delightful race condition: m_executable may not have been initialised
+        // if this is a host function, as the executable isn't necessarily created 
+        // until after the function has been allocated.
+        markStack.append(&m_executable);
     }
 }
 

@@ -68,7 +68,7 @@ public:
     
     static PassRefPtr<Structure> createStructure(JSValue prototype)
     {
-        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        return Structure::create(prototype, TypeInfo(ObjectType, 0), AnonymousSlotCount, &s_info);
     }
 
     static const ClassInfo s_info;

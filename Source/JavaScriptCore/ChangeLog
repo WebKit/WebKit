@@ -1,3 +1,27 @@
+2011-03-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix allocation of native function with a cached thunk
+        https://bugs.webkit.org/show_bug.cgi?id=56127
+
+        Fix this race condition found while fixing zombies.
+
+        * collector/handles/HandleHeap.cpp:
+        (JSC::HandleHeap::clearWeakPointers):
+        * runtime/Heap.cpp:
+        (JSC::Heap::reset):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::markChildren):
+        * runtime/JSValue.h:
+        (JSC::JSValue::decode):
+        * runtime/JSZombie.cpp:
+        (JSC::JSZombie::leakedZombieStructure):
+        * runtime/JSZombie.h:
+        (JSC::JSZombie::createStructure):
+        * runtime/MarkedBlock.cpp:
+
 2011-03-10  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Andreas Kling.

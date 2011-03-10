@@ -79,7 +79,10 @@ void HandleHeap::clearWeakPointers()
         
         JSCell* cell = value.asCell();
         ASSERT(!cell || cell->structure());
-
+        
+#if ENABLE(JSC_ZOMBIES)
+        ASSERT(!cell->isZombie());
+#endif
         if (Heap::isMarked(cell))
             continue;
         
