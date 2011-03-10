@@ -33,7 +33,9 @@
 #include "LayerTexture.h"
 #include "PlatformCanvas.h"
 #include "TilingData.h"
+#include <wtf/HashTraits.h>
 #include <wtf/OwnArrayPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -70,20 +72,26 @@ public:
 private:
     LayerTilerChromium(LayerRendererChromium*, const IntSize& tileSize, BorderTexelOption);
 
-    class Tile {
+    class Tile : public RefCounted<Tile> {
         WTF_MAKE_NONCOPYABLE(Tile);
     public:
-        explicit Tile(PassOwnPtr<LayerTexture> tex) : m_tex(tex) {}
+        explicit Tile(PassOwnPtr<LayerTexture> tex) : m_tex(tex), m_i(-1), m_j(-1) {}
 
         LayerTexture* texture() { return m_tex.get(); }
 
         bool dirty() const { return !m_dirtyLayerRect.isEmpty(); }
         void clearDirty() { m_dirtyLayerRect = IntRect(); }
 
+        int i() const { return m_i; }
+        int j() const { return m_j; }
+        void moveTo(int i, int j) { m_i = i; m_j = j; }
+
         // Layer-space dirty rectangle that needs to be repainted.
         IntRect m_dirtyLayerRect;
     private:
         OwnPtr<LayerTexture> m_tex;
+        int m_i;
+        int m_j;
     };
 
     void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& drawMatrix,
@@ -92,40 +100,45 @@ private:
                           float texScaleX, float texScaleY,
                           const LayerTilerChromium::Program*);
 
-    void resizeLayer(const IntSize& size);
     // Grow layer size to contain this rectangle.
     void growLayerToContain(const IntRect& contentRect);
 
     LayerRendererChromium* layerRenderer() const { return m_layerRenderer; }
     GraphicsContext3D* layerRendererContext() const;
     Tile* createTile(int i, int j);
-    // Invalidate any tiles which do not intersect with the newLayerRect.
-    void invalidateTiles(const IntRect& oldLayerRect, const IntRect& newLayerRect);
+    // Invalidate any tiles which do not intersect with the contentRect
+    void invalidateTiles(const IntRect& contentRect);
     void reset();
     void contentRectToTileIndices(const IntRect& contentRect, int &left, int &top, int &right, int &bottom) const;
     IntRect contentRectToLayerRect(const IntRect& contentRect) const;
     IntRect layerRectToContentRect(const IntRect& layerRect) const;
 
-    // Returns the index into m_tiles for a given tile location.
-    int tileIndex(int i, int j) const;
-    // Returns the bounds in content space for a given tile location.
-    IntRect tileContentRect(int i, int j) const;
-    // Returns the bounds in layer space for a given tile location.
-    IntRect tileLayerRect(int i, int j) const;
-
-    IntSize layerSize() const;
-    IntSize layerTileSize() const;
+    Tile* tileAt(int, int) const;
+    IntRect tileContentRect(const Tile*) const;
+    IntRect tileLayerRect(const Tile*) const;
 
     IntSize m_tileSize;
-    IntRect m_lastUpdateLayerRect;
     IntPoint m_layerPosition;
 
     bool m_skipsDraw;
 
-    // Logical 2D array of tiles (dimensions of m_layerTileSize)
-    Vector<OwnPtr<Tile> > m_tiles;
-    // Linear array of unused tiles.
-    Vector<OwnPtr<Tile> > m_unusedTiles;
+    // Default hash key traits for integers disallow 0 and -1 as a key, so
+    // use a custom hash trait which disallows -1 and -2 instead.
+    typedef std::pair<int, int> TileMapKey;
+    struct TileMapKeyTraits : HashTraits<TileMapKey> {
+        static const bool emptyValueIsZero = false;
+        static const bool needsDestruction = false;
+        static TileMapKey emptyValue() { return std::make_pair(-1, -1); }
+        static void constructDeletedValue(TileMapKey& slot) { slot = std::make_pair(-2, -2); }
+        static bool isDeletedValue(TileMapKey value) { return value.first == -2 && value.second == -2; }
+    };
+    // FIXME: The mapped value in TileMap should really be an OwnPtr, as the
+    // refcount of a Tile should never be more than 1. However, HashMap
+    // doesn't easily support OwnPtr as a value.
+    typedef HashMap<TileMapKey, RefPtr<Tile>, DefaultHash<TileMapKey>::Hash, TileMapKeyTraits> TileMap;
+    TileMap m_tiles;
+    // Tightly packed set of unused tiles.
+    Vector<RefPtr<Tile> > m_unusedTiles;
 
     PlatformCanvas m_canvas;
 

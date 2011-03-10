@@ -84,58 +84,50 @@ void LayerTilerChromium::reset()
 {
     m_tiles.clear();
     m_unusedTiles.clear();
-
     m_tilingData.setTotalSize(0, 0);
-    m_lastUpdateLayerRect = IntRect();
 }
 
 LayerTilerChromium::Tile* LayerTilerChromium::createTile(int i, int j)
 {
-    const int index = tileIndex(i, j);
-    ASSERT(!m_tiles[index]);
+    ASSERT(!tileAt(i, j));
 
+    RefPtr<Tile> tile;
     if (m_unusedTiles.size() > 0) {
-        m_tiles[index] = m_unusedTiles.last().release();
+        tile = m_unusedTiles.last().release();
         m_unusedTiles.removeLast();
+        ASSERT(tile->refCount() == 1);
     } else {
         GraphicsContext3D* context = layerRendererContext();
         TextureManager* manager = layerRenderer()->textureManager();
-        OwnPtr<Tile> tile = adoptPtr(new Tile(LayerTexture::create(context, manager)));
-        m_tiles[index] = tile.release();
+        tile = adoptRef(new Tile(LayerTexture::create(context, manager)));
     }
+    m_tiles.add(make_pair(i, j), tile);
 
-    m_tiles[index]->m_dirtyLayerRect = tileLayerRect(i, j);
-    return m_tiles[index].get();
+    tile->moveTo(i, j);
+    tile->m_dirtyLayerRect = tileLayerRect(tile.get());
+
+    return tile.get();
 }
 
-void LayerTilerChromium::invalidateTiles(const IntRect& oldLayerRect, const IntRect& newLayerRect)
+void LayerTilerChromium::invalidateTiles(const IntRect& contentRect)
 {
     if (!m_tiles.size())
         return;
 
-    IntRect oldContentRect = layerRectToContentRect(oldLayerRect);
-    int oldLeft, oldTop, oldRight, oldBottom;
-    contentRectToTileIndices(oldContentRect, oldLeft, oldTop, oldRight, oldBottom);
-
-    IntRect newContentRect = layerRectToContentRect(newLayerRect);
-    int newLeft, newTop, newRight, newBottom;
-    contentRectToTileIndices(newContentRect, newLeft, newTop, newRight, newBottom);
-
-    // Iterating through just the old tile indices is an optimization to avoid
-    // iterating through the entire m_tiles array.
-    for (int j = oldTop; j <= oldBottom; ++j) {
-        for (int i = oldLeft; i <= oldRight; ++i) {
-            if (i >= newLeft && i <= newRight && j >= newTop && j <= newBottom)
-                continue;
-
-            const int index = tileIndex(i, j);
-            if (m_tiles[index])
-                m_unusedTiles.append(m_tiles[index].release());
-        }
+    Vector<TileMapKey> removeKeys;
+    for (TileMap::iterator iter = m_tiles.begin(); iter != m_tiles.end(); ++iter) {
+        Tile* tile = iter->second.get();
+        IntRect tileRect = tileContentRect(tile);
+        if (tileRect.intersects(contentRect))
+            continue;
+        removeKeys.append(iter->first);
     }
+
+    for (size_t i = 0; i < removeKeys.size(); ++i)
+        m_unusedTiles.append(m_tiles.take(removeKeys[i]));
 }
 
-void LayerTilerChromium::contentRectToTileIndices(const IntRect& contentRect, int &left, int &top, int &right, int &bottom) const
+void LayerTilerChromium::contentRectToTileIndices(const IntRect& contentRect, int& left, int& top, int& right, int& bottom) const
 {
     const IntRect layerRect = contentRectToLayerRect(contentRect);
 
@@ -163,34 +155,26 @@ IntRect LayerTilerChromium::layerRectToContentRect(const IntRect& layerRect) con
     return contentRect;
 }
 
-int LayerTilerChromium::tileIndex(int i, int j) const
+LayerTilerChromium::Tile* LayerTilerChromium::tileAt(int i, int j) const
 {
-    return m_tilingData.tileIndex(i, j);
+    Tile* tile = m_tiles.get(make_pair(i, j)).get();
+    ASSERT(!tile || tile->refCount() == 1);
+    return tile;
 }
 
-IntRect LayerTilerChromium::tileContentRect(int i, int j) const
+IntRect LayerTilerChromium::tileContentRect(const Tile* tile) const
 {
-    IntRect contentRect = tileLayerRect(i, j);
+    IntRect contentRect = tileLayerRect(tile);
     contentRect.move(m_layerPosition.x(), m_layerPosition.y());
     return contentRect;
 }
 
-IntRect LayerTilerChromium::tileLayerRect(int i, int j) const
+IntRect LayerTilerChromium::tileLayerRect(const Tile* tile) const
 {
-    const int index = m_tilingData.tileIndex(i, j);
+    const int index = m_tilingData.tileIndex(tile->i(), tile->j());
     IntRect layerRect = m_tilingData.tileBoundsWithBorder(index);
     layerRect.setSize(m_tileSize);
     return layerRect;
-}
-
-IntSize LayerTilerChromium::layerSize() const
-{
-    return IntSize(m_tilingData.totalSizeX(), m_tilingData.totalSizeY());
-}
-
-IntSize LayerTilerChromium::layerTileSize() const
-{
-    return IntSize(m_tilingData.numTilesX(), m_tilingData.numTilesY());
 }
 
 void LayerTilerChromium::invalidateRect(const IntRect& contentRect)
@@ -202,16 +186,16 @@ void LayerTilerChromium::invalidateRect(const IntRect& contentRect)
 
     // Dirty rects are always in layer space, as the layer could be repositioned
     // after invalidation.
-    IntRect layerRect = contentRectToLayerRect(contentRect);
+    const IntRect layerRect = contentRectToLayerRect(contentRect);
 
     int left, top, right, bottom;
     contentRectToTileIndices(contentRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
-            Tile* tile = m_tiles[tileIndex(i, j)].get();
+            Tile* tile = tileAt(i, j);
             if (!tile)
                 continue;
-            IntRect bound = tileLayerRect(i, j);
+            IntRect bound = tileLayerRect(tile);
             bound.intersect(layerRect);
             tile->m_dirtyLayerRect.unite(bound);
         }
@@ -220,14 +204,13 @@ void LayerTilerChromium::invalidateRect(const IntRect& contentRect)
 
 void LayerTilerChromium::invalidateEntireLayer()
 {
-    for (size_t i = 0; i < m_tiles.size(); ++i) {
-        if (m_tiles[i])
-            m_unusedTiles.append(m_tiles[i].release());
+    for (TileMap::iterator iter = m_tiles.begin(); iter != m_tiles.end(); ++iter) {
+        ASSERT(iter->second->refCount() == 1);
+        m_unusedTiles.append(iter->second.release());
     }
     m_tiles.clear();
 
     m_tilingData.setTotalSize(0, 0);
-    m_lastUpdateLayerRect = IntRect();
 }
 
 void LayerTilerChromium::update(TilePaintInterface& painter, const IntRect& contentRect)
@@ -237,10 +220,7 @@ void LayerTilerChromium::update(TilePaintInterface& painter, const IntRect& cont
 
     // Invalidate old tiles that were previously used but aren't in use this
     // frame so that they can get reused for new tiles.
-    IntRect layerRect = contentRectToLayerRect(contentRect);
-    invalidateTiles(m_lastUpdateLayerRect, layerRect);
-    m_lastUpdateLayerRect = layerRect;
-
+    invalidateTiles(contentRect);
     growLayerToContain(contentRect);
 
     // Create tiles as needed, expanding a dirty rect to contain all
@@ -250,11 +230,11 @@ void LayerTilerChromium::update(TilePaintInterface& painter, const IntRect& cont
     contentRectToTileIndices(contentRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
-            Tile* tile = m_tiles[tileIndex(i, j)].get();
+            Tile* tile = tileAt(i, j);
             if (!tile)
                 tile = createTile(i, j);
             if (!tile->texture()->isValid(m_tileSize, GraphicsContext3D::RGBA))
-                tile->m_dirtyLayerRect = tileLayerRect(i, j);
+                tile->m_dirtyLayerRect = tileLayerRect(tile);
             dirtyLayerRect.unite(tile->m_dirtyLayerRect);
         }
     }
@@ -285,14 +265,14 @@ void LayerTilerChromium::updateFromPixels(const IntRect& paintRect, const uint8_
     contentRectToTileIndices(paintRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
-            Tile* tile = m_tiles[tileIndex(i, j)].get();
+            Tile* tile = tileAt(i, j);
             if (!tile)
                 CRASH();
             if (!tile->dirty())
                 continue;
 
             // Calculate page-space rectangle to copy from.
-            IntRect sourceRect = tileContentRect(i, j);
+            IntRect sourceRect = tileContentRect(tile);
             const IntPoint anchor = sourceRect.location();
             sourceRect.intersect(layerRectToContentRect(tile->m_dirtyLayerRect));
             if (sourceRect.isEmpty())
@@ -366,8 +346,7 @@ void LayerTilerChromium::draw(const IntRect& contentRect)
     contentRectToTileIndices(contentRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
-            const int index = tileIndex(i, j);
-            Tile* tile = m_tiles[index].get();
+            Tile* tile = tileAt(i, j);
             ASSERT(tile);
 
             tile->texture()->bindTexture();
@@ -376,11 +355,11 @@ void LayerTilerChromium::draw(const IntRect& contentRect)
 
             // Don't use tileContentRect here, as that contains the full
             // rect with border texels which shouldn't be drawn.
-            IntRect tileRect = m_tilingData.tileBounds(index);
+            IntRect tileRect = m_tilingData.tileBounds(m_tilingData.tileIndex(tile->i(), tile->j()));
             tileRect.move(m_layerPosition.x(), m_layerPosition.y());
             tileMatrix.translate3d(tileRect.x() - contentRect.x() + tileRect.width() / 2.0, tileRect.y() - contentRect.y() + tileRect.height() / 2.0, 0);
 
-            IntPoint texOffset = m_tilingData.textureOffset(i, j);
+            IntPoint texOffset = m_tilingData.textureOffset(tile->i(), tile->j());
             float tileWidth = static_cast<float>(m_tileSize.width());
             float tileHeight = static_cast<float>(m_tileSize.height());
             float texTranslateX = texOffset.x() / tileWidth;
@@ -395,37 +374,15 @@ void LayerTilerChromium::draw(const IntRect& contentRect)
     }
 }
 
-void LayerTilerChromium::resizeLayer(const IntSize& size)
-{
-    if (layerSize() == size)
-        return;
-
-    const IntSize oldTileSize = layerTileSize();
-    m_tilingData.setTotalSize(size.width(), size.height());
-    const IntSize newTileSize = layerTileSize();
-
-    if (oldTileSize == newTileSize)
-        return;
-
-    if (newTileSize.height() && (newTileSize.width() > INT_MAX / newTileSize.height()))
-        CRASH();
-
-    Vector<OwnPtr<Tile> > newTiles;
-    newTiles.resize(newTileSize.width() * newTileSize.height());
-    for (int j = 0; j < oldTileSize.height(); ++j)
-        for (int i = 0; i < oldTileSize.width(); ++i)
-            newTiles[i + j * newTileSize.width()].swap(m_tiles[i + j * oldTileSize.width()]);
-    m_tiles.swap(newTiles);
-}
-
 void LayerTilerChromium::growLayerToContain(const IntRect& contentRect)
 {
     // Grow the tile array to contain this content rect.
     IntRect layerRect = contentRectToLayerRect(contentRect);
     IntSize rectSize = IntSize(layerRect.maxX(), layerRect.maxY());
 
-    IntSize newSize = rectSize.expandedTo(layerSize());
-    resizeLayer(newSize);
+    IntSize oldLayerSize(m_tilingData.totalSizeX(), m_tilingData.totalSizeY());
+    IntSize newSize = rectSize.expandedTo(oldLayerSize);
+    m_tilingData.setTotalSize(newSize.width(), newSize.height());
 }
 
 void LayerTilerChromium::drawTexturedQuad(GraphicsContext3D* context, const TransformationMatrix& projectionMatrix, const TransformationMatrix& drawMatrix,
