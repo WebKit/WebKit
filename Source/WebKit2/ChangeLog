@@ -1,3 +1,14 @@
+2011-03-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Frequent crashes when printing in WebPageProxy::setAutodisplay
+        https://bugs.webkit.org/show_bug.cgi?id=56057
+        <rdar://problem/9053290>
+
+        * UIProcess/API/mac/WKPrintingView.mm: (-[WKPrintingView _delayedResumeAutodisplayTimerFired]):
+        Null check the page, there is no reason for it to still exist.
+
 2011-03-09  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction.

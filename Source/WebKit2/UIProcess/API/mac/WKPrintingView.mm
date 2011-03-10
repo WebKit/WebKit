@@ -75,7 +75,8 @@ static BOOL isForcingPreviewUpdate;
     ASSERT(isMainThread());
     
     _autodisplayResumeTimer = nil;
-    _webFrame->page()->setAutodisplay(true);
+    if (WebPageProxy* page = _webFrame->page())
+        page->setAutodisplay(true);
 }
 
 - (void)_delayedResumeAutodisplay
