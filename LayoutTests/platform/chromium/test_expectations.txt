@@ -3396,3 +3396,4 @@ BUGWK56060 LINUX X86_64 : svg/custom/pattern-excessive-malloc.svg = IMAGE
 BUGWK56060 LINUX X86_64 : fast/images/favicon-as-image.html = IMAGE+TEXT
 
 BUGCR75632 LINUX : svg/W3C-SVG-1.1/text-text-03-b.svg = CRASH PASS
+BUGCR75639 WIN MAC LINUX : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
