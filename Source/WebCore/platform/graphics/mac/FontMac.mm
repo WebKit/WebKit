@@ -66,11 +66,17 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData
             CGAffineTransform runMatrix = CGAffineTransformConcat(savedMatrix, rotateLeftTransform);
             CGContextSetTextMatrix(context, runMatrix);
             
+#if defined(BUILDING_ON_SNOW_LEOPARD)
+            // CTFontGetVerticalTranslationsForGlyphs is different on Snow Leopard.  It returns values for a font-size of 1
+            // without unitsPerEm applied.  We have to apply a transform that scales up to the point size and that also 
+            // divides by unitsPerEm.
             CGAffineTransform translationsTransform = CGAffineTransformMake(platformData.m_size, 0, 0, platformData.m_size, 0, 0);
             translationsTransform = CGAffineTransformConcat(translationsTransform, rotateLeftTransform);
             CGFloat unitsPerEm = CGFontGetUnitsPerEm(platformData.cgFont());
             translationsTransform = CGAffineTransformConcat(translationsTransform, CGAffineTransformMakeScale(1 / unitsPerEm, 1 / unitsPerEm));
-
+#else
+            CGAffineTransform translationsTransform = rotateLeftTransform;
+#endif
             Vector<CGSize, 256> translations(count);
             CTFontGetVerticalTranslationsForGlyphs(platformData.ctFont(), glyphs, translations.data(), count);
             
