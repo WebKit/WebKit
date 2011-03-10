@@ -2211,6 +2211,11 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         process()->updateTextCheckerState();
         return;
     }
+    if (item.action() == ContextMenuItemTagCorrectSpellingAutomatically) {
+        TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::state().isAutomaticSpellingCorrectionEnabled);
+        process()->updateTextCheckerState();
+        return;        
+    }
 #endif
     if (item.action() == ContextMenuItemTagDownloadImageToDisk) {
         m_context->download(this, KURL(KURL(), m_activeContextMenuState.absoluteImageURLString));
@@ -2220,7 +2225,16 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         m_context->download(this, KURL(KURL(), m_activeContextMenuState.absoluteLinkURLString));
         return;
     }
-    
+    if (item.action() == ContextMenuItemTagCheckSpellingWhileTyping) {
+        TextChecker::setContinuousSpellCheckingEnabled(!TextChecker::state().isContinuousSpellCheckingEnabled);
+        process()->updateTextCheckerState();
+        return;
+    }
+    if (item.action() == ContextMenuItemTagCheckGrammarWithSpelling) {
+        TextChecker::setGrammarCheckingEnabled(!TextChecker::state().isGrammarCheckingEnabled);
+        process()->updateTextCheckerState();
+        return;
+    }
     if (item.action() == ContextMenuItemTagLearnSpelling || item.action() == ContextMenuItemTagIgnoreSpelling)
         ++m_pendingLearnOrIgnoreWordMessageCount;
 
