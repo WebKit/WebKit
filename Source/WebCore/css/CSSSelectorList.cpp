@@ -87,7 +87,7 @@ void CSSSelectorList::deleteSelectors()
     if (!m_selectorArray)
         return;
 
-    // FIXME: Remove once http://webkit.org/b/53045 is fixed.
+    // FIXME: Remove once http://webkit.org/b/56124 is fixed.
     if (m_selectorArray == freedSelectorArrayMarker)
         CRASH();
 

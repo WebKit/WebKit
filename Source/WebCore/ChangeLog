@@ -1,3 +1,24 @@
+2011-03-10  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Remove CRASH() calls added to track down bug 53045
+        https://bugs.webkit.org/show_bug.cgi?id=56137
+
+        Remove CRASH() calls added by r76575 and re-label ones added by r80155
+        and r80269 as being associated with bug 56124 (which may still be
+        happening).
+
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage):
+        * css/CSSSelector.h:
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::deleteSelectors):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::~CachedResource):
+        * loader/cache/CachedResource.h:
+
 2011-03-10  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.

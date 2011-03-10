@@ -266,9 +266,8 @@ private:
     unsigned m_type : 3; // Type
     unsigned m_status : 3; // Status
 
-    // FIXME: Move m_deleted back inside NDEBUG when http://webkit.org/b/53045 is fixed.
-    bool m_deleted;
 #ifndef NDEBUG
+    bool m_deleted;
     unsigned m_lruIndex;
 #endif
 

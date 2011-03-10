@@ -284,7 +284,7 @@ namespace WebCore {
         bool m_isLastInTagHistory     : 1;
         bool m_hasRareData            : 1;
         bool m_isForPage              : 1;
-        // FIXME: Remove once http://webkit.org/b/53045 is fixed.
+        // FIXME: Remove once http://webkit.org/b/56124 is fixed.
         bool m_deleted                : 1;
 
         unsigned specificityForOneSelector() const;
