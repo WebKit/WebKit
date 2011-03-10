@@ -1,3 +1,15 @@
+2011-03-10  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] run-gtk-tests doesn't fail if a test crashes
+        https://bugs.webkit.org/show_bug.cgi?id=56089
+
+        * Scripts/run-gtk-tests: gtester -k exits with a 0 exit status
+        even if a test crashes. So run the tests individually and if a
+        test fails remember its exit code so run-gtk-test fails too, if
+        required.
+
 2011-01-26  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Dmitry Titov.

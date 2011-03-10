@@ -32,4 +32,17 @@ my @unitTests = glob  $productDir . "/Programs/unittests/*";
 if ($#unitTests < 1) {
     die "ERROR: tests not found in $productDir.\n";
 }
-system "gtester -k @unitTests"
+
+my $exitStatus = 0;
+foreach my $unitTest (@unitTests)
+{
+    system "gtester $unitTest";
+    if ($?) {
+        $exitStatus = $?;
+    }
+}
+
+if ($exitStatus) {
+    print "Tests failed\n";
+    exit $exitStatus;
+}
