@@ -846,6 +846,7 @@ svg/W3C-SVG-1.1/animate-elem-80-t.svg
 svg/W3C-SVG-1.1/extend-namespace-01-f.svg
 svg/W3C-SVG-1.1/filters-conv-01-f.svg
 svg/W3C-SVG-1.1/metadata-example-01-b.svg
+svg/W3C-SVG-1.1/animate-elem-41-t.svg
 # These two started to fail in 64bit debug bot
 svg/W3C-SVG-1.1-SE/types-dom-02-f.svg
 svg/W3C-SVG-1.1-SE/types-dom-05-b.svg
