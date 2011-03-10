@@ -189,24 +189,6 @@ http/tests/inspector-enabled/open-close-open.html
 # https://bugs.webkit.org/show_bug.cgi?id=55135
 http/tests/incremental/slow-utf8-html.pl
 
-# https://bugs.webkit.org/show_bug.cgi?id=55941
-inspector/console/console-api-on-call-frame.html
-inspector/debugger/debug-inlined-scripts.html
-inspector/debugger/debugger-cyclic-ref.html
-inspector/debugger/debugger-eval-on-call-frame.html
-inspector/debugger/debugger-eval-while-paused.html
-inspector/debugger/debugger-expand-scope.html
-inspector/debugger/debugger-no-nested-pause.html
-inspector/debugger/debugger-pause-in-eval-script.html
-inspector/debugger/debugger-pause-on-breakpoint.html
-inspector/debugger/debugger-pause-on-debugger-statement.html
-inspector/debugger/debugger-pause-on-exception.html
-inspector/debugger/debugger-proto-property.html
-inspector/debugger/debugger-step-in.html
-inspector/debugger/debugger-step-over.html
-inspector/debugger/debugger-suspend-active-dom-objects.html
-inspector/extensions/extensions-resources.html
-
 ###############################################################################
 # EXPECTED FAILURES
 ###############################################################################

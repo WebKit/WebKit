@@ -7,7 +7,6 @@
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008, 2009 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- * Copyright (C) Research In Motion, Limited 2010-2011.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -437,7 +436,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_writingModeSetOnDocumentElement(false)
     , m_writeRecursionIsTooDeep(false)
     , m_writeRecursionDepth(0)
-    , m_pendingTasksTimer(this, &Document::pendingTasksTimerFired)
 {
     m_document = this;
 
@@ -4718,59 +4716,22 @@ public:
     OwnPtr<ScriptExecutionContext::Task> task;
 };
 
-void Document::didReceiveTask(void* untypedContext)
+static void performTask(void* ctx)
 {
     ASSERT(isMainThread());
 
-    OwnPtr<PerformTaskContext> context = adoptPtr(static_cast<PerformTaskContext*>(untypedContext));
+    PerformTaskContext* context = reinterpret_cast<PerformTaskContext*>(ctx);
     ASSERT(context);
 
-    Document* document = context->documentReference->document();
-    if (!document)
-        return;
+    if (Document* document = context->documentReference->document())
+        context->task->performTask(document);
 
-    Page* page = document->page();
-    if ((page && page->defersLoading()) || !document->m_pendingTasks.isEmpty()) {
-        document->m_pendingTasks.append(context->task.release());
-        return;
-    }
-
-    context->task->performTask(document);
+    delete context;
 }
 
 void Document::postTask(PassOwnPtr<Task> task)
 {
-    callOnMainThread(didReceiveTask, new PerformTaskContext(m_weakReference, task));
-}
-
-void Document::pendingTasksTimerFired(Timer<Document>*)
-{
-    while (!m_pendingTasks.isEmpty()) {
-        OwnPtr<Task> task = m_pendingTasks[0].release();
-        m_pendingTasks.remove(0);
-        task->performTask(this);
-    }
-}
-
-void Document::suspendScheduledTasks()
-{
-    suspendScriptedAnimationControllerCallbacks();
-    suspendActiveDOMObjects(ActiveDOMObject::WillShowDialog);
-    asyncScriptRunner()->suspend();
-    m_pendingTasksTimer.stop();
-    if (m_parser)
-        m_parser->suspendScheduledTasks();
-}
-
-void Document::resumeScheduledTasks()
-{
-    if (m_parser)
-        m_parser->resumeScheduledTasks();
-    if (!m_pendingTasks.isEmpty())
-        m_pendingTasksTimer.startOneShot(0);
-    asyncScriptRunner()->resume();
-    resumeActiveDOMObjects();
-    resumeScriptedAnimationControllerCallbacks();
+    callOnMainThread(performTask, new PerformTaskContext(m_weakReference, task));
 }
 
 void Document::suspendScriptedAnimationControllerCallbacks()

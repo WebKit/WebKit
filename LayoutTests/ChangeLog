@@ -1,3 +1,11 @@
+2011-03-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: rolling out r80478 and its follow ups for breaking
+        inspector and engadget.com.
+        https://bugs.webkit.org/show_bug.cgi?id=49401
+
+        * platform/gtk/Skipped:
+
 2011-03-10  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip 1 more svg test failing by one pixel in 32-bits
