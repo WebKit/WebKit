@@ -90,7 +90,11 @@ def archiveTestResults(configuration, platform, layoutTestResultsDir):
         # deleting its contents, claiming "Directory not empty".
         # We can safely ignore this since it was the directory contents that
         # we are most interested in deleting.
-        if e.errno != 90:
+        # Python in Cygwin will also sometimes throw errno 2 if a process is
+        # holding a file open. There's no point in failing to create the
+        # archive just because some other process is behaving badly. See
+        # <http://webkit.org/b/55581>.
+        if e.errno != 90 and e.errno != 2:
             raise
 
 def zipFilesRecursively(archiveFile, files):
