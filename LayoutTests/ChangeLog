@@ -1,3 +1,11 @@
+2011-03-09  Mihai Parparita  <mihaip@chromium.org>
+
+        JSC now implements Object.freeze/seal (as of r80378) and correct
+        expectations have been checked in, therefore we now pass more
+        ietestcenter tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-09  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
