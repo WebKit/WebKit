@@ -1023,6 +1023,14 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     bottom: 0;
 }
 
+#elements-content.nowrap {
+    white-space: nowrap;
+}
+
+#elements-content > ol {
+    display: inline-block;
+}
+
 #elements-sidebar {
     position: absolute;
     top: 0;

@@ -1,3 +1,28 @@
+2011-03-09  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: elements dom tree - word wrap toggle
+        https://bugs.webkit.org/show_bug.cgi?id=44311
+
+        A "Word Wrap" option is now shown in a context menu for the entire DOM tree content area
+        and persisted into application settings.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._contextMenuEventFired):
+        (WebInspector.ElementsPanel.prototype._contextMenuEventFired.toggleWordWrap):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline):
+        (WebInspector.ElementsTreeOutline.prototype._treeElementFromEvent):
+        (WebInspector.ElementsTreeOutline.prototype.populateContextMenu):
+        (WebInspector.ElementsTreeElement.prototype.onreveal):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        * inspector/front-end/inspector.css:
+        (#elements-content.nowrap):
+        (#elements-content > ol):
+
 2011-03-09  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

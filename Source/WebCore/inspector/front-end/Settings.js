@@ -58,6 +58,7 @@ WebInspector.Settings = function()
     this.installApplicationSetting("colorFormat", "hex");
     this.installApplicationSetting("consoleHistory", []);
     this.installApplicationSetting("debuggerEnabled", false);
+    this.installApplicationSetting("domWordWrap", true);
     this.installApplicationSetting("profilerEnabled", false);
     this.installApplicationSetting("eventListenersFilter", "all");
     this.installApplicationSetting("lastActivePanel", "elements");

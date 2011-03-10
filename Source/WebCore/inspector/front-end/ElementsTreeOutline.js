@@ -41,8 +41,6 @@ WebInspector.ElementsTreeOutline = function() {
     this.showInElementsPanelEnabled = false;
     this.rootDOMNode = null;
     this.focusedDOMNode = null;
-
-    this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 }
 
 WebInspector.ElementsTreeOutline.prototype = {
@@ -189,11 +187,13 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     _treeElementFromEvent: function(event)
     {
-        var root = this.element;
+        var scrollContainer = this.element.parentElement;
 
         // We choose this X coordinate based on the knowledge that our list
-        // items extend nearly to the right edge of the outer <ol>.
-        var x = root.totalOffsetLeft + root.offsetWidth - 20;
+        // items extend at least to the right edge of the outer <ol> container.
+        // In the no-word-wrap mode the outer <ol> may be wider than the tree container
+        // (and partially hidden), in which case we are left to use only its right boundary.
+        var x = scrollContainer.totalOffsetLeft + scrollContainer.offsetWidth - 20;
 
         var y = event.pageY;
 
@@ -258,37 +258,40 @@ WebInspector.ElementsTreeOutline.prototype = {
         WebInspector.highlightDOMNode(0);
     },
 
-    _contextMenuEventFired: function(event)
+    populateContextMenu: function(contextMenu, event)
     {
         var listItem = event.target.enclosingNodeOrSelfWithNodeName("LI");
         if (!listItem || !listItem.treeElement)
-            return;
+            return false;
 
-        var contextMenu = new WebInspector.ContextMenu();
+        var populated;
         if (this.showInElementsPanelEnabled) {
             function focusElement()
             {
                 WebInspector.panels.elements.switchToAndFocus(listItem.treeElement.representedObject);
             }
             contextMenu.appendItem(WebInspector.UIString("Reveal in Elements Panel"), focusElement.bind(this));
+            populated = true;
         } else {
             var href = event.target.enclosingNodeOrSelfWithClass("webkit-html-resource-link") || event.target.enclosingNodeOrSelfWithClass("webkit-html-external-link");
             var tag = event.target.enclosingNodeOrSelfWithClass("webkit-html-tag");
             var textNode = event.target.enclosingNodeOrSelfWithClass("webkit-html-text-node");
-            var needSeparator;
             if (href)
-                needSeparator = WebInspector.panels.elements.populateHrefContextMenu(contextMenu, event, href);
+                populated = WebInspector.panels.elements.populateHrefContextMenu(contextMenu, event, href);
             if (tag && listItem.treeElement._populateTagContextMenu) {
-                if (needSeparator)
+                if (populated)
                     contextMenu.appendSeparator();
                 listItem.treeElement._populateTagContextMenu(contextMenu, event);
+                populated = true;
             } else if (textNode && listItem.treeElement._populateTextContextMenu) {
-                if (needSeparator)
+                if (populated)
                     contextMenu.appendSeparator();
                 listItem.treeElement._populateTextContextMenu(contextMenu, textNode);
+                populated = true;
             }
         }
-        contextMenu.show(event);
+
+        return populated;
     }
 }
 
@@ -660,8 +663,13 @@ WebInspector.ElementsTreeElement.prototype = {
 
     onreveal: function()
     {
-        if (this.listItemElement)
-            this.listItemElement.scrollIntoViewIfNeeded(false);
+        if (this.listItemElement) {
+            var tagSpans = this.listItemElement.getElementsByClassName("webkit-html-tag-name");
+            if (tagSpans.length)
+                tagSpans[0].scrollIntoViewIfNeeded(false);
+            else
+                this.listItemElement.scrollIntoViewIfNeeded(false);
+        }
     },
 
     onselect: function(treeElement, selectedByUser)

@@ -35,6 +35,10 @@ WebInspector.ElementsPanel = function()
     this.contentElement = document.createElement("div");
     this.contentElement.id = "elements-content";
     this.contentElement.className = "outline-disclosure source-code";
+    if (!WebInspector.settings.domWordWrap)
+        this.contentElement.classList.add("nowrap");
+
+    this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 
     this.treeOutline = new WebInspector.ElementsTreeOutline();
     this.treeOutline.panel = this;
@@ -246,6 +250,33 @@ WebInspector.ElementsPanel.prototype = {
         this._searchQuery = query;
 
         DOMAgent.performSearch(whitespaceTrimmedQuery, false);
+    },
+
+    _contextMenuEventFired: function(event)
+    {
+        function isTextWrapped()
+        {
+            return !this.contentElement.hasStyleClass("nowrap");
+        }
+
+        function toggleWordWrap()
+        {
+            this.contentElement.classList.toggle("nowrap");
+            WebInspector.settings.domWordWrap = !this.contentElement.classList.contains("nowrap");
+
+            var treeElement = this.treeOutline.findTreeElement(this.focusedDOMNode);
+            if (treeElement)
+                treeElement.updateSelection(); // Recalculate selection highlight dimensions.
+        }
+
+        var contextMenu = new WebInspector.ContextMenu();
+
+        var populated = this.treeOutline.populateContextMenu(contextMenu, event);
+        if (populated)
+            contextMenu.appendSeparator();
+        contextMenu.appendCheckboxItem(WebInspector.UIString("Word Wrap"), toggleWordWrap.bind(this), isTextWrapped.call(this));
+
+        contextMenu.show(event);
     },
 
     populateHrefContextMenu: function(contextMenu, event, anchorElement)
