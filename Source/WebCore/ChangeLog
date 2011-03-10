@@ -1,3 +1,16 @@
+2011-03-10  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        ASSERT_NOT_REACHED triggered in WebCore::mapHTTPPipeliningPriorityToResourceLoadPriority
+        https://bugs.webkit.org/show_bug.cgi?id=56075
+
+        Map priority value 3, which means no priority, to ResourceLoadPriorityUnresolved.
+
+        * platform/network/cf/ResourceRequestCFNet.h:
+        (WebCore::mapHTTPPipeliningPriorityToResourceLoadPriority):
+        (WebCore::mapResourceLoadPriorityToHTTPPipeliningPriority):
+
 2011-03-10  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

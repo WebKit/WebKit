@@ -50,6 +50,8 @@ inline ResourceLoadPriority mapHTTPPipeliningPriorityToResourceLoadPriority(int 
         return ResourceLoadPriorityMedium;
     case 2:
         return ResourceLoadPriorityHigh;
+    case 3:
+        return ResourceLoadPriorityUnresolved;
     default:
         ASSERT_NOT_REACHED();
         return ResourceLoadPriorityLowest;
@@ -67,8 +69,7 @@ inline int mapResourceLoadPriorityToHTTPPipeliningPriority(ResourceLoadPriority 
     case ResourceLoadPriorityHigh:
         return 2;
     case ResourceLoadPriorityUnresolved:
-        ASSERT_NOT_REACHED();
-        return 0;
+        return 3;
     }
 
     ASSERT_NOT_REACHED();
