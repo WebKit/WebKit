@@ -557,7 +557,7 @@ private:
     void reattachToWebProcessWithItem(WebBackForwardListItem*);
 
 #if ENABLE(TILED_BACKING_STORE)
-    void pageDidRequestScroll(const WebCore::IntSize&);
+    void pageDidRequestScroll(const WebCore::IntPoint&);
 #endif
 
 #if PLATFORM(QT)

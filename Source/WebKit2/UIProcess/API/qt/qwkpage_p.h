@@ -63,7 +63,7 @@ public:
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode();
 #endif // USE(ACCELERATED_COMPOSITING)
-    virtual void pageDidRequestScroll(const WebCore::IntSize&);
+    virtual void pageDidRequestScroll(const WebCore::IntPoint&);
     virtual void processDidCrash();
     virtual void pageClosed() { }
     virtual void didRelaunchProcess();

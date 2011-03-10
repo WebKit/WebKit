@@ -52,7 +52,7 @@ public:
 
 #if ENABLE(TILED_BACKING_STORE)
     // Requests the host to do the actual scrolling. This is only used in combination with a tiled backing store.
-    virtual void delegatedScrollRequested(const IntSize& scrollDelta) = 0;
+    virtual void delegatedScrollRequested(const IntPoint& scrollPoint) = 0;
 #endif
 
     // Methods for doing coordinate conversions to and from screen coordinates.

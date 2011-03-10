@@ -143,7 +143,7 @@ namespace WebCore {
         virtual void invalidateContentsForSlowScroll(const IntRect&, bool) = 0;
         virtual void scroll(const IntSize&, const IntRect&, const IntRect&) = 0;
 #if ENABLE(TILED_BACKING_STORE)
-        virtual void delegatedScrollRequested(const IntSize&) = 0;
+        virtual void delegatedScrollRequested(const IntPoint&) = 0;
 #endif
         virtual IntPoint screenToWindow(const IntPoint&) const = 0;
         virtual IntRect windowToScreen(const IntRect&) const = 0;

@@ -194,9 +194,9 @@ void QWKPagePrivate::exitAcceleratedCompositingMode()
     // FIXME: Implement.
 }
 
-void QWKPagePrivate::pageDidRequestScroll(const IntSize& delta)
+void QWKPagePrivate::pageDidRequestScroll(const IntPoint& point)
 {
-    emit q->scrollRequested(delta.width(), delta.height());
+    emit q->scrollRequested(point.x(), point.y());
 }
 
 void QWKPagePrivate::didChangeContentsSize(const IntSize& newSize)

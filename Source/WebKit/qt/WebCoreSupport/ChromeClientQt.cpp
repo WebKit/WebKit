@@ -430,9 +430,10 @@ void ChromeClientQt::scroll(const IntSize& delta, const IntRect& scrollViewRect,
 }
 
 #if ENABLE(TILED_BACKING_STORE)
-void ChromeClientQt::delegatedScrollRequested(const IntSize& delta)
+void ChromeClientQt::delegatedScrollRequested(const IntPoint& point)
 {
-    emit m_webPage->scrollRequested(delta.width(), delta.height(), QRect(QPoint(0, 0), m_webPage->viewportSize()));
+    QPoint currentPosition(m_webPage->mainFrame()->scrollPosition());
+    emit m_webPage->scrollRequested(point.x() - currentPosition.x(), point.y() - currentPosition.y(), QRect(QPoint(0, 0), m_webPage->viewportSize()));
 }
 #endif
 

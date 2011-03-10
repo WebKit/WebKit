@@ -789,9 +789,9 @@ void WebPage::pageDidScroll()
 }
 
 #if ENABLE(TILED_BACKING_STORE)
-void WebPage::pageDidRequestScroll(const IntSize& delta)
+void WebPage::pageDidRequestScroll(const IntPoint& point)
 {
-    send(Messages::WebPageProxy::PageDidRequestScroll(delta));
+    send(Messages::WebPageProxy::PageDidRequestScroll(point));
 }
 #endif
 

@@ -1924,9 +1924,9 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t f
 }
 
 #if ENABLE(TILED_BACKING_STORE)
-void WebPageProxy::pageDidRequestScroll(const IntSize& delta)
+void WebPageProxy::pageDidRequestScroll(const IntPoint& point)
 {
-    m_pageClient->pageDidRequestScroll(delta);
+    m_pageClient->pageDidRequestScroll(point);
 }
 #endif
 

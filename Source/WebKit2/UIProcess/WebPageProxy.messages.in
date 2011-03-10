@@ -60,7 +60,7 @@ messages -> WebPageProxy {
     DidChangeScrollOffsetPinningForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
 
 #if ENABLE(TILED_BACKING_STORE)
-    PageDidRequestScroll(WebCore::IntSize delta)
+    PageDidRequestScroll(WebCore::IntPoint point)
 #endif
 #if PLATFORM(QT)
     DidChangeContentsSize(WebCore::IntSize newSize)

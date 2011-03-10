@@ -256,7 +256,7 @@ public:
 
     void pageDidScroll();
 #if ENABLE(TILED_BACKING_STORE)
-    void pageDidRequestScroll(const WebCore::IntSize& delta);
+    void pageDidRequestScroll(const WebCore::IntPoint&);
     void setActualVisibleContentRect(const WebCore::IntRect&);
 
     bool resizesToContentsEnabled() const { return !m_resizesToContentsLayoutSize.isEmpty(); }

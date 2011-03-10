@@ -88,9 +88,9 @@ void Chrome::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, con
 }
 
 #if ENABLE(TILED_BACKING_STORE)
-void Chrome::delegatedScrollRequested(const IntSize& scrollDelta)
+void Chrome::delegatedScrollRequested(const IntPoint& scrollPoint)
 {
-    m_client->delegatedScrollRequested(scrollDelta);
+    m_client->delegatedScrollRequested(scrollPoint);
 }
 #endif
 

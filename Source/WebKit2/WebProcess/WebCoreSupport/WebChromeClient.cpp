@@ -374,7 +374,7 @@ void WebChromeClient::scroll(const IntSize& scrollOffset, const IntRect& scrollR
 }
 
 #if ENABLE(TILED_BACKING_STORE)
-void WebChromeClient::delegatedScrollRequested(const IntSize& scrollOffset)
+void WebChromeClient::delegatedScrollRequested(const IntPoint& scrollOffset)
 {
     m_page->pageDidRequestScroll(scrollOffset);
 }
