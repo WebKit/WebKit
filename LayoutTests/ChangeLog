@@ -1,3 +1,14 @@
+2011-03-10  Andrei Popescu  <andreip@google.com>
+
+        Unreviewed, build fix.
+
+        [Chromium] fast/text/international/vertical-text-glyph-test.html fails on OSX 10.6
+        https://bugs.webkit.org/show_bug.cgi?id=56108
+
+        Update Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-10  Adam Roben  <aroben@apple.com>
 
         Skip another spinbutton test on Windows

@@ -2457,7 +2457,7 @@ BUGCR59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
 
 // Needs investigation
 BUGJAMESR LINUX WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
-BUGJAMESR MAC LEOPARD : fast/text/international/vertical-text-glyph-test.html = IMAGE
+BUGJAMESR MAC : fast/text/international/vertical-text-glyph-test.html = IMAGE
 BUGJAMESR WIN : fast/text/international/vertical-text-metrics-test.html = TEXT
 BUGJAMESR LINUX RELEASE : fast/text/international/vertical-text-metrics-test.html = TEXT
 // started crashing somewhere after WK r80582, probably with Dave Hyatt's vertical text changes
