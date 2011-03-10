@@ -65,7 +65,7 @@ VisiblePosition VisiblePosition::next(EditingBoundaryCrossingRule rule) const
     ASSERT(rule == CanCrossEditingBoundary || rule == CannotCrossEditingBoundary);
     VisiblePosition next(nextVisuallyDistinctCandidate(m_deepPosition), m_affinity);
 
-    if (rule == CannotCrossEditingBoundary)
+    if (rule == CanCrossEditingBoundary)
         return next;
 
     return honorEditableBoundaryAtOrAfter(next);
@@ -95,7 +95,7 @@ VisiblePosition VisiblePosition::previous(EditingBoundaryCrossingRule rule) cons
     }
 #endif
 
-    if (rule == CannotCrossEditingBoundary)
+    if (rule == CanCrossEditingBoundary)
         return prev;
     
     return honorEditableBoundaryAtOrBefore(prev);
