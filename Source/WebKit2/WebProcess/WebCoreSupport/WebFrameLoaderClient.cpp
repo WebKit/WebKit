@@ -1217,6 +1217,19 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
             parameters.names[i] = paramNames[i].lower();
     }
 
+#if PLUGIN_ARCHITECTURE(X11)
+    if (equalIgnoringCase(mimeType, "application/x-shockwave-flash")) {
+        // Currently we don't support transparency and windowed mode.
+        // Inject wmode=opaque to make Flash work in these conditions.
+        size_t wmodeIndex = parameters.names.find("wmode");
+        if (wmodeIndex == -1) {
+            parameters.names.append("wmode");
+            parameters.values.append("opaque");
+        } else if (equalIgnoringCase(parameters.values[wmodeIndex], "window"))
+            parameters.values[wmodeIndex] = "opaque";
+    }
+#endif
+
     RefPtr<Plugin> plugin = webPage->createPlugin(parameters);
     if (!plugin)
         return 0;

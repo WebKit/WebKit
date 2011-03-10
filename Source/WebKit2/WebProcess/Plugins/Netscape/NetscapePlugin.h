@@ -208,7 +208,7 @@ private:
     RefPtr<NetscapePluginStream> m_manualStream;
     Vector<bool, 8> m_popupEnabledStates;
 
-#if PLATFORM(MAC)
+#if PLUGIN_ARCHITECTURE(MAC)
     NPDrawingModel m_drawingModel;
     NPEventModel m_eventModel;
     RetainPtr<PlatformLayer> m_pluginLayer;
@@ -229,8 +229,11 @@ private:
     RunLoop::Timer<NetscapePlugin> m_nullEventTimer;
     NP_CGContext m_npCGContext;
 #endif
-#elif PLATFORM(WIN)
+#elif PLUGIN_ARCHITECTURE(WIN)
     HWND m_window;
+#elif PLUGIN_ARCHITECTURE(X11)
+    Pixmap m_drawable;
+    Display* m_pluginDisplay;
 #endif
 };
 

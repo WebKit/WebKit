@@ -35,6 +35,12 @@
 #include <WebCore/SharedBuffer.h>
 #include <utility>
 
+#if PLATFORM(QT)
+#include <QX11Info>
+#elif PLATFORM(GTK)
+#include <gdk/gdkx.h>
+#endif
+
 using namespace WebCore;
 using namespace std;
 
@@ -484,17 +490,33 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
            *(NPBool*)value = true;
            break;
 #elif PLUGIN_ARCHITECTURE(X11)
+       case NPNVxDisplay:
+#if PLATFORM(QT)
+           *reinterpret_cast<Display**>(value) = QX11Info::display();
+           break;
+#elif PLATFORM(GTK)
+           *reinterpret_cast<Display**>(value) = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
+           break;
+#else
+           goto default;
+#endif
+       case NPNVSupportsXEmbedBool:
+           *static_cast<NPBool*>(value) = true;
+           break;
+       case NPNVSupportsWindowless:
+           *static_cast<NPBool*>(value) = true;
+           break;
+
        case NPNVToolkit: {
            const uint32_t expectedGTKToolKitVersion = 2;
 
            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
-           if (plugin->quirks().contains(PluginQuirks::RequiresGTKToolKit)) {
-               *reinterpret_cast<uint32_t*>(value) = expectedGTKToolKitVersion;
-               break;
-           }
-
-           return NPERR_GENERIC_ERROR;
+           *reinterpret_cast<uint32_t*>(value) = plugin->quirks().contains(PluginQuirks::RequiresGTKToolKit) ?
+                                                 expectedGTKToolKitVersion : 0;
+           break;
        }
+
+       // TODO: implement NPNVnetscapeWindow once we want to support windowed plugins.
 #endif
         default:
             notImplemented();

@@ -75,7 +75,10 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
 #ifndef NP_NO_CARBON
     , m_nullEventTimer(RunLoop::main(), this, &NetscapePlugin::nullEventTimerFired)
     , m_npCGContext()
-#endif    
+#endif
+#elif PLUGIN_ARCHITECTURE(X11)
+    , m_drawable(0)
+    , m_pluginDisplay(0)
 #endif
 {
     m_npp.ndata = this;
@@ -347,8 +350,14 @@ NPError NetscapePlugin::NPP_SetValue(NPNVariable variable, void *value)
 
 void NetscapePlugin::callSetWindow()
 {
+#if PLUGIN_ARCHITECTURE(X11)
+    // We use a backing store as the painting area for the plugin.
+    m_npWindow.x = 0;
+    m_npWindow.y = 0;
+#else
     m_npWindow.x = m_frameRect.x();
     m_npWindow.y = m_frameRect.y();
+#endif
     m_npWindow.width = m_frameRect.width();
     m_npWindow.height = m_frameRect.height();
     m_npWindow.clipRect.top = m_clipRect.y();

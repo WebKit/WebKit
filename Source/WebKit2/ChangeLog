@@ -1,3 +1,58 @@
+2011-03-10  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [WK2] Make non-transparent windowless plugins paint on X11
+        https://bugs.webkit.org/show_bug.cgi?id=55660
+
+        Implement painting for non-transparent windowless X11 plugins.
+        The essence of the logic has been adapted from WebCore.
+        The implementation is stubbed for GTK and working only on Qt
+        but it should be really easy to finish it for GTK.
+
+        * WebKit2.pro:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue): Handle X11 specific values that are necessary.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin): Initialize the X11 specific
+        members that has been added.
+        (WebKit::NetscapePlugin::callSetWindow): Always set the x and y coordinates
+        of the NP_Window to 0 on X11 since we are using a backings store as the
+        painting area for the plugin.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/gtk/NetscapePluginGtk.cpp: Removed in favour
+        of a common implementation for X11.
+        * WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp: Ditto.
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp: Added.
+        (WebKit::getPluginDisplay):
+
+        Platform specific static getters.
+        (WebKit::x11Display):
+        (WebKit::displayDepth):
+        (WebKit::rootWindowID):
+        (WebKit::x11Screen):
+
+        (WebKit::NetscapePlugin::platformPostInitialize): Set up the visual
+        settings and the colormap for the plugin.
+        (WebKit::NetscapePlugin::platformDestroy):
+        (WebKit::NetscapePlugin::platformInvalidate): Remained stub.
+        (WebKit::NetscapePlugin::platformGeometryDidChange): Create a new
+        pixmap that fits the geometry.
+        (WebKit::NetscapePlugin::platformPaint): Propagate a paint event
+        to the plugin, sync with it if necessary and draw the pixmap to
+        the screen.
+        (WebKit::toNP): Remained stub.
+        (WebKit::NetscapePlugin::platformHandleMouseEvent): Remained stub.
+        (WebKit::NetscapePlugin::platformHandleWheelEvent): Remained stub.
+        (WebKit::NetscapePlugin::platformSetFocus): Remained stub.
+        (WebKit::NetscapePlugin::platformHandleMouseEnterEvent): Remained stub.
+        (WebKit::NetscapePlugin::platformHandleMouseLeaveEvent): Remained stub.
+        (WebKit::NetscapePlugin::platformHandleKeyboardEvent): Remained stub.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin): Hack. Inject wmode=opaque
+        key-value pair to the plugin parameters to force Flash to act in
+        non-transparent windowless mode. Qt also doing this in WebCore.
+
 2011-03-09  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Mihai Parparita.

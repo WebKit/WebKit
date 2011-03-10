@@ -450,7 +450,7 @@ SOURCES += \
     WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp \
     WebProcess/Plugins/Netscape/NetscapePlugin.cpp \
     WebProcess/Plugins/Netscape/NetscapePluginStream.cpp \
-    WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp \
+    WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp \
     WebProcess/Plugins/Netscape/qt/PluginProxyQt.cpp \
     WebProcess/Plugins/Plugin.cpp \
     WebProcess/Plugins/PluginView.cpp \
