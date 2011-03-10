@@ -2485,6 +2485,9 @@ BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
 BUGCR65877 LINUX WIN : fast/blockflow/border-vertical-lr.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/japanese-lr-selection.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/japanese-rl-selection.html = IMAGE+TEXT
+BUGCR65877 LINUX RELEASE : fast/blockflow/japanese-lr-text.html = IMAGE
+BUGCR65877 LINUX : fast/blockflow/japanese-rl-text.html = IMAGE
+BUGCR65877 LINUX RELEASE : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
 BUGCR65877 WIN : fast/blockflow/broken-ideographic-font.html = IMAGE
 BUGCR65877 LINUX : fast/blockflow/broken-ideographic-font.html = IMAGE+TEXT
 BUGCR65877 WIN : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
@@ -2492,6 +2495,13 @@ BUGCR65877 LINUX RELEASE : fast/blockflow/vertical-font-fallback.html = IMAGE+TE
 BUGCR65877 LINUX WIN : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
 BUGCR65877 LINUX WIN : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
 BUGCR65877 WIN : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
+BUGCR65877 LINUX : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
+BUGCR65877 LINUX RELEASE : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUGCR65877 LINUX RELEASE : fast/blockflow/vertical-align-table-baseline.html = IMAGE
+BUGCR65877 LINUX : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUGCR65877 LINUX : fast/repaint/japanese-rl-selection-clear.html = IMAGE
+BUGCR65877 LINUX RELEASE : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUGCR65877 LINUX : fast/ruby/base-shorter-than-text.html = FAIL
 BUGWK53451 LINUX : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
 
 // New test, introduced by http://trac.webkit.org/changeset/70813 with only platform/mac baselines.
@@ -3149,6 +3159,7 @@ BUGWK54322 MAC SNOWLEOPARD : transforms/no_transform_hit_testing.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : transforms/svg-vs-css.xhtml = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : transitions/default-timing-function.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
+BUGWK54322 MAC SNOWLEOPARD : fast/dom/scroll-reveal-left-overflow.html = IMAGE
 
 // Snow Leopard-only flakiness
 BUGWK54322 MAC SNOWLEOPARD : dom/html/level1/core/hc_textwithnomarkup.html = TIMEOUT PASS
@@ -3303,6 +3314,8 @@ BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/004.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/border-collapsing-head-foot.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/rtl-border-collapsing.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/text/international/vertical-text-metrics-test.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-lr/002.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html = CRASH PASS
 
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
@@ -3323,57 +3336,56 @@ BUGCR75424 MAC LEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html 
 BUGCR75424 MAC LEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
 BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
 BUGCR75424 MAC LEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT
+BUGCR75424 MAC : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
+BUGCR75424 MAC : fast/blockflow/broken-ideographic-font.html = IMAGE
+BUGCR75424 MAC : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
 
 // WebKit roll 80564:80631: vertical text fallout - these probably just need rebaseline:
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/border-vertical-lr.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/japanese-lr-selection.html = IMAGE
-BUGROLANDSTEINER WIN-VISTA : fast/blockflow/japanese-lr-text.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/japanese-lr-text.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/japanese-rl-selection.html = IMAGE
-BUGROLANDSTEINER WIN-VISTA : fast/blockflow/japanese-rl-text.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/japanese-rl-text.html = IMAGE
-BUGROLANDSTEINER WIN-VISTA : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
-BUGROLANDSTEINER WIN-VISTA : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-BUGROLANDSTEINER WIN-VISTA : fast/blockflow/vertical-align-table-baseline.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/vertical-align-table-baseline.html = IMAGE 
-BUGROLANDSTEINER WIN-VISTA : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/blockflow/vertical-font-fallback.html = IMAGE
-BUGROLANDSTEINER WIN-VISTA : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-BUGROLANDSTEINER WIN-VISTA : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
-BUGROLANDSTEINER WIN-VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
-BUGROLANDSTEINER MAC SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/border-vertical-lr.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/japanese-lr-selection.html = IMAGE
+BUGWK56072 WIN-VISTA : fast/blockflow/japanese-lr-text.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/japanese-lr-text.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/japanese-rl-selection.html = IMAGE
+BUGWK56072 WIN-VISTA : fast/blockflow/japanese-rl-text.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/japanese-rl-text.html = IMAGE
+BUGWK56072 WIN-VISTA : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
+BUGWK56072 WIN-VISTA : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUGWK56072 WIN-VISTA : fast/blockflow/vertical-align-table-baseline.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/vertical-align-table-baseline.html = IMAGE 
+BUGWK56072 WIN-VISTA : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/vertical-font-fallback.html = IMAGE
+BUGWK56072 WIN-VISTA : fast/repaint/japanese-rl-selection-clear.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/repaint/japanese-rl-selection-clear.html = IMAGE
+BUGWK56072 WIN-VISTA : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUGWK56072 WIN-VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
+BUGWK56072 MAC SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
+BUGWK56072 WIN-VISTA : fast/ruby/base-shorter-than-text.html = FAIL
 
 // WebKit roll 80564:80631, still need to be classified
 BUGROLANDSTEINER MAC : fast/overflow/overflow-rtl-vertical.html = IMAGE+TEXT
-BUGROLANDSTEINER MAC : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
 BUGROLANDSTEINER MAC : fast/lists/008-vertical.html = IMAGE+TEXT
-BUGROLANDSTEINER MAC : fast/blockflow/broken-ideographic-font.html = IMAGE
-BUGROLANDSTEINER LINUX RELEASE : fast/blockflow/japanese-lr-text.html = IMAGE
-BUGROLANDSTEINER MAC : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
-BUGROLANDSTEINER LINUX RELEASE : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
-BUGROLANDSTEINER LINUX : fast/blockflow/japanese-rl-text.html = IMAGE
-BUGROLANDSTEINER LINUX : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
-BUGROLANDSTEINER LINUX RELEASE : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-BUGROLANDSTEINER LINUX RELEASE : fast/blockflow/vertical-align-table-baseline.html = IMAGE
-BUGROLANDSTEINER LINUX : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUGROLANDSTEINER LINUX : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-BUGROLANDSTEINER LINUX RELEASE : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
-BUGROLANDSTEINER MAC : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
+
+// incorrect computed style
+// started to pass again on Mac around WK r806548
 BUGROLANDSTEINER MAC : fast/css/getComputedStyle/computed-style.html = TEXT
-BUGROLANDSTEINER : fast/js/mozilla/strict/15.5.5.1.html = TEXT
-BUGROLANDSTEINER MAC : svg/css/getComputedStyle-basic.xhtml = TEXT
-BUGROLANDSTEINER WIN-VISTA LINUX : fast/ruby/base-shorter-than-text.html = FAIL
+// started to pass again on Mac around WK r80659
+//BUGROLANDSTEINER MAC : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
+// started to pass after WK r80640
+//BUGROLANDSTEINER : fast/js/mozilla/strict/15.5.5.1.html = TEXT
+// started to pass after WK r80659
+//BUGROLANDSTEINER MAC : svg/css/getComputedStyle-basic.xhtml = TEXT
+
 // introduced by Dave Hyatt in WK r80582
-BUGROLANDSTEINER : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
+BUGCR75561 : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
+
 // introduced by brarraclough in WK r80621
-BUGROLANDSTEINER : fast/js/array-proto-func-length-getter-except.html = TEXT
+BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT
 
 BUGWK56060 LINUX X86_64 : http/tests/loading/preload-slow-loading.php = TEXT
 BUGWK56060 LINUX X86_64 : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT

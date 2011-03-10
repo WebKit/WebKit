@@ -1,3 +1,9 @@
+2011-03-09  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: tweaking of Chromium test_expectations.txt
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-09  Mihai Parparita  <mihaip@chromium.org>
 
         JSC now implements Object.freeze/seal (as of r80378) and correct
