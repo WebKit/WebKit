@@ -426,7 +426,7 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
     if (layer->renderer()->isRoot()) {
         // If the root layer becomes composited (e.g. because some descendant with negative z-index is composited),
         // then it has to be big enough to cover the viewport in order to display the background. This is akin
-        // to the code in RenderBox::paintRootBoxDecorations().
+        // to the code in RenderBox::paintRootBoxFillLayers().
         if (m_renderView->frameView()) {
             int rw = m_renderView->frameView()->contentsWidth();
             int rh = m_renderView->frameView()->contentsHeight();

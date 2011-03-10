@@ -1,3 +1,24 @@
+2011-03-10  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47147
+        
+        Fix for repaint issues when the root element is a table and needs to paint a background that
+        covers the entire canvas.  Remove paintRootBoxDecorations and replace with paintRootBoxFillLayers,
+        so that it can be called only for fill layer painting.  Make tables and normal boxes both
+        call this new method.  Fix the dirty check at the start of RenderTable paint to not happen if
+        the table is the root of the document (this same check exists in RenderBlock painting already).
+
+        * fast/backgrounds/positioned-root.html: Added.
+        * fast/backgrounds/table-root.html: Added.
+        * platform/mac/fast/backgrounds/positioned-root-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/positioned-root-expected.png: Added.
+        * platform/mac/fast/backgrounds/positioned-root-expected.txt: Added.
+        * platform/mac/fast/backgrounds/table-root-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/table-root-expected.png: Added.
+        * platform/mac/fast/backgrounds/table-root-expected.txt: Added.
+
 2011-03-10  Mihai Parparita  <mihaip@chromium.org>
 
         Update chromium Snow Leopard expectations.

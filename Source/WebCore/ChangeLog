@@ -1,3 +1,26 @@
+2011-03-10  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47147
+        
+        Fix for repaint issues when the root element is a table and needs to paint a background that
+        covers the entire canvas.  Remove paintRootBoxDecorations and replace with paintRootBoxFillLayers,
+        so that it can be called only for fill layer painting.  Make tables and normal boxes both
+        call this new method.  Fix the dirty check at the start of RenderTable paint to not happen if
+        the table is the root of the document (this same check exists in RenderBlock painting already).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintRootBoxFillLayers):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::paintBoxDecorationsWithSize):
+        * rendering/RenderBox.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint):
+        (WebCore::RenderTable::paintBoxDecorations):
+
 2011-03-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80749.
