@@ -347,19 +347,6 @@ private:
     bool m_clipsRepaints;
     bool m_delegatesScrolling;
 
-    // There are 8 possible combinations of writing mode and direction.  Scroll origin will be non-zero in the x or y axis
-    // if there is any reversed direction or writing-mode.  The combinations are:
-    // writing-mode / direction     scrollOrigin.x() set    scrollOrigin.y() set
-    // horizontal-tb / ltr          NO                      NO
-    // horizontal-tb / rtl          YES                     NO
-    // horizontal-bt / ltr          NO                      YES
-    // horizontal-bt / rtl          YES                     YES
-    // vertical-lr / ltr            NO                      NO
-    // vertical-lr / rtl            NO                      YES
-    // vertical-rl / ltr            YES                     NO
-    // vertical-rl / rtl            YES                     YES
-    IntPoint m_scrollOrigin;
-
     IntSize m_boundsSize;
 
     void init();

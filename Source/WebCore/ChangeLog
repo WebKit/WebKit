@@ -1,3 +1,29 @@
+2011-03-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Regression: Content not drawn when scrolling horizontally in an RTL page
+        https://bugs.webkit.org/show_bug.cgi?id=55077
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::overhangAmount):
+        (WebCore::ScrollView::calculateOverhangAreasForPainting):
+        Take the scroll origin into account when calculating overhang.
+
+        * platform/ScrollView.h:
+        * rendering/RenderLayer.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::scrollOrigin):
+        Move identical scroll origin member from ScrollView and RenderLayer
+        to shared base ScrollableArea. This is also needed so that the animator
+        can access it.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::pinnedInDirection):
+        (WebCore::ScrollAnimatorMac::smoothScrollWithEvent):
+        (WebCore::ScrollAnimatorMac::snapRubberBandTimerFired):
+        Account for a scroll origin when doing calculating scroll offsets.
+
 2011-03-09  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

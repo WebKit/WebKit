@@ -751,18 +751,18 @@ bool ScrollAnimatorMac::pinnedInDirection(float deltaX, float deltaY)
     if (fabsf(deltaY) >= fabsf(deltaX)) {
         if (deltaY < 0) {
             // We are trying to scroll up.  Make sure we are not pinned to the top
-            limitDelta.setHeight(m_scrollableArea->visibleContentRect().y());
+            limitDelta.setHeight(m_scrollableArea->visibleContentRect().y() + + m_scrollableArea->scrollOrigin().y());
         } else {
             // We are trying to scroll down.  Make sure we are not pinned to the bottom
-            limitDelta.setHeight(m_scrollableArea->contentsSize().height() - m_scrollableArea->visibleContentRect().maxY());
+            limitDelta.setHeight(m_scrollableArea->contentsSize().height() - (m_scrollableArea->visibleContentRect().maxY() + m_scrollableArea->scrollOrigin().y()));
         }
     } else if (deltaX != 0) {
         if (deltaX < 0) {
             // We are trying to scroll left.  Make sure we are not pinned to the left
-            limitDelta.setWidth(m_scrollableArea->visibleContentRect().x());
+            limitDelta.setWidth(m_scrollableArea->visibleContentRect().x() + m_scrollableArea->scrollOrigin().x());
         } else {
             // We are trying to scroll right.  Make sure we are not pinned to the right
-            limitDelta.setWidth(m_scrollableArea->contentsSize().width() - m_scrollableArea->visibleContentRect().maxX());
+            limitDelta.setWidth(m_scrollableArea->contentsSize().width() - (m_scrollableArea->visibleContentRect().maxX() + m_scrollableArea->scrollOrigin().x()));
         }
     }
     
@@ -925,7 +925,7 @@ void ScrollAnimatorMac::smoothScrollWithEvent(PlatformWheelEvent& wheelEvent)
             m_stretchScrollForce.setHeight(m_stretchScrollForce.height() + deltaY);
 
             FloatSize dampedDelta(ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.width())), ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.height())));
-            FloatPoint origOrigin = m_scrollableArea->visibleContentRect().location() - stretchAmount;
+            FloatPoint origOrigin = (m_scrollableArea->visibleContentRect().location() + m_scrollableArea->scrollOrigin()) - stretchAmount;
             FloatPoint newOrigin = origOrigin + dampedDelta;
 
             if (origOrigin != newOrigin) {
@@ -1017,7 +1017,7 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
                 return;
             }
 
-            m_origOrigin = m_scrollableArea->visibleContentRect().location() - m_startStretch;
+            m_origOrigin = (m_scrollableArea->visibleContentRect().location() + m_scrollableArea->scrollOrigin()) - m_startStretch;
             m_origVelocity = m_momentumVelocity;
 
             // Just like normal scrolling, prefer vertical rubberbanding
