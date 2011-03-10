@@ -3458,3 +3458,6 @@ BUGROLANDSTEINER : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
 // introduced by brarraclough in WK r80621
 BUGROLANDSTEINER : fast/js/array-proto-func-length-getter-except.html = TEXT
 
+BUGWK56060 LINUX X86_64 : http/tests/loading/preload-slow-loading.php = TEXT
+BUGWK56060 LINUX X86_64 : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
+BUGWK56060 LINUX X86_64 : svg/text/font-size-below-point-five.svg = TEXT
