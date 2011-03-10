@@ -103,6 +103,9 @@ media/controls-after-reload.html
 # https://bugs.webkit.org/show_bug.cgi?id=55126
 media/video-aspect-ratio.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=56080
+jquery/effects.html
+
 ###############################################################################
 # TESTS TIMING OUT
 ###############################################################################

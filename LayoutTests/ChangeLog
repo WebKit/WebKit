@@ -1,3 +1,9 @@
+2011-03-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip jquery/effects.html on GTK.
+
+        * platform/gtk/Skipped:
+
 2011-03-10  Adam Barth  <abarth@webkit.org>
 
         Partial revert of http://trac.webkit.org/changeset/80670.  This test
