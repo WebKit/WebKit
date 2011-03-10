@@ -103,6 +103,9 @@ media/controls-after-reload.html
 # https://bugs.webkit.org/show_bug.cgi?id=55126
 media/video-aspect-ratio.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=37623
+scrollbars/scrollbar-crash-on-refresh.html
+
 ###############################################################################
 # TESTS TIMING OUT
 ###############################################################################
@@ -133,14 +136,6 @@ http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 # crashes on GStreamer side when loading one of the media elements of the test
 fast/events/tabindex-focus-blur-all.html
 
-# ASSERTION FAILED: currentThread() == m_openingThread in WebCore::SQLiteDatabase::sqlite3Handle()
-# https://bugs.webkit.org/show_bug.cgi?id=30814
-storage
-fast/js/excessive-comma-usage.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=39346
-fast/workers/storage
-
 # crashes because of a failing ASSERT (see https://bugs.webkit.org/show_bug.cgi?id=54470)
 svg/text/select-textLength-spacing-squeeze-1.svg
 
@@ -148,21 +143,8 @@ svg/text/select-textLength-spacing-squeeze-1.svg
 # https://bugs.webkit.org/show_bug.cgi?id=31433
 plugins/document-open.html
 
-# Crashes on debug bots, see https://bugs.webkit.org/show_bug.cgi?id=35085
-plugins/iframe-shims.html
-fast/loader/loadInProgress.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=37574
 plugins/window-open.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37616
-fast/workers/shared-worker-frame-lifecycle.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37623
-scrollbars/scrollbar-crash-on-refresh.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37914
-fast/frames/frame-crash-with-page-cache.html
 
 # For some reason crashes when run with all tests. Passes individually.
 fast/forms/multiple-form-submission-protection-mouse.html
@@ -182,6 +164,11 @@ http/tests/inspector-enabled/open-close-open.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=55135
 http/tests/incremental/slow-utf8-html.pl
+
+# [GTK] fast/workers/storage/use-same-database-in-page-and-workers.html fails an ASSERT
+# https://bugs.webkit.org/show_bug.cgi?id=56147 
+# Fails assertion: ASSERT(m_workerContext->hasOneRef());
+fast/workers/storage/use-same-database-in-page-and-workers.html
 
 ###############################################################################
 # EXPECTED FAILURES
@@ -607,6 +594,12 @@ http/tests/appcache/auth.html
 # New test infrastructure required -- need isolated worlds
 # See https://bugs.webkit.org/show_bug.cgi?id=31508
 http/tests/security/isolatedWorld
+storage/open-database-creation-callback-isolated-world.html
+storage/statement-error-callback-isolated-world.html
+storage/statement-success-callback-isolated-world.html
+storage/transaction-callback-isolated-world.html
+storage/transaction-error-callback-isolated-world.html
+storage/transaction-success-callback-isolated-world.html
 
 # Missing DRT ability return a null request for willSendRequest redirect calls
 http/tests/misc/will-send-request-returns-null-on-redirect.html
