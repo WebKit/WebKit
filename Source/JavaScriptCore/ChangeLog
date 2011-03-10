@@ -1,5 +1,11 @@
 2011-03-09  Gavin Barraclough  <barraclough@apple.com>
 
+        Windows build fix part 1.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2011-03-09  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Darin Adler.
 
         Bug 56041 - RexExp constructor should only accept flags "gim"
