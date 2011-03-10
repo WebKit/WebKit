@@ -1490,6 +1490,9 @@ CSSStyleDeclaration *Element::style()
 
 void Element::focus(bool restorePreviousSelection)
 {
+    if (!inDocument())
+        return;
+
     Document* doc = document();
     if (doc->focusedNode() == this)
         return;

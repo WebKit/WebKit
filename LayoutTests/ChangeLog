@@ -1,3 +1,14 @@
+2011-03-10  Berend-Jan Wever  <skylined@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Calling focus() on an area element not in a document should not cause a NULL ptr crash
+        https://bugs.webkit.org/show_bug.cgi?id=54877
+
+        * fast/dom/HTMLAreaElement: Added.
+        * fast/dom/HTMLAreaElement/area-islink-focus-null-ptr-crash-expected.txt: Added.
+        * fast/dom/HTMLAreaElement/area-islink-focus-null-ptr-crash.html: Added.
+
 2011-03-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows rebaselines for r80755.
