@@ -1,3 +1,9 @@
+2011-03-10  Adam Barth  <abarth@webkit.org>
+
+        Update test expectation after my partial revert of r80670.
+
+        * platform/mac/accessibility/aria-expanded-notifications-expected.txt:
+
 2011-03-10  Andrei Popescu  <andreip@google.com>
 
         Unreviewed, build fix.
