@@ -1,3 +1,29 @@
+2011-03-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        jquery/manipulation.html fails after r80598
+        https://bugs.webkit.org/show_bug.cgi?id=56019
+
+        When linking a call, codeblock now takes ownership of the linked function
+        This removes the need for unlinking, and thus the incorrectness that was
+        showing up in these tests.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::markAggregate):
+        * bytecode/CodeBlock.h:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::setUnlinked):
+        (JSC::CodeBlock::addCaller):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::linkCall):
+        (JSC::JIT::linkConstruct):
+        * jit/JIT.h:
+        * runtime/Executable.cpp:
+        * runtime/Executable.h:
+
 2011-03-09  Daniel Bates  <dbates@rim.com>
 
         Attempt to fix the WinCE build after changeset 80684 <http://trac.webkit.org/changeset/80684>

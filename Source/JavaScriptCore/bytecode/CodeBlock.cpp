@@ -1406,12 +1406,6 @@ CodeBlock::~CodeBlock()
     for (size_t size = m_structureStubInfos.size(), i = 0; i < size; ++i)
         m_structureStubInfos[i].deref();
 
-    for (size_t size = m_callLinkInfos.size(), i = 0; i < size; ++i) {
-        CallLinkInfo* callLinkInfo = &m_callLinkInfos[i];
-        if (callLinkInfo->isLinked())
-            callLinkInfo->callee->removeCaller(callLinkInfo);
-    }
-
     for (size_t size = m_methodCallLinkInfos.size(), i = 0; i < size; ++i) {
         if (Structure* structure = m_methodCallLinkInfos[i].cachedStructure) {
             structure->deref();
@@ -1421,29 +1415,12 @@ CodeBlock::~CodeBlock()
         }
     }
 
-#if ENABLE(JIT_OPTIMIZE_CALL)
-    unlinkCallers();
-#endif
-
 #endif // ENABLE(JIT)
 
 #if DUMP_CODE_BLOCK_STATISTICS
     liveCodeBlockSet.remove(this);
 #endif
 }
-
-#if ENABLE(JIT_OPTIMIZE_CALL)
-void CodeBlock::unlinkCallers()
-{
-    size_t size = m_linkedCallerList.size();
-    for (size_t i = 0; i < size; ++i) {
-        CallLinkInfo* currentCaller = m_linkedCallerList[i];
-        JIT::unlinkCallOrConstruct(currentCaller);
-        currentCaller->setUnlinked();
-    }
-    m_linkedCallerList.clear();
-}
-#endif
 
 void CodeBlock::derefStructures(Instruction* vPC) const
 {
@@ -1545,6 +1522,11 @@ void CodeBlock::markAggregate(MarkStack& markStack)
         markStack.append(&m_functionExprs[i]);
     for (size_t i = 0; i < m_functionDecls.size(); ++i)
         markStack.append(&m_functionDecls[i]);
+#if ENABLE(JIT_OPTIMIZE_CALL)
+    for (unsigned i = 0; i < numberOfCallLinkInfos(); ++i)
+        if (callLinkInfo(i).isLinked())
+            markStack.append(&callLinkInfo(i).callee);
+#endif
 }
 
 HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)

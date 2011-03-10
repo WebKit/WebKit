@@ -245,7 +245,6 @@ namespace JSC {
 
         static void linkCall(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, int callerArgCount, JSGlobalData*);
         static void linkConstruct(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, int callerArgCount, JSGlobalData*);
-        static void unlinkCallOrConstruct(CallLinkInfo*);
 
     private:
         struct JSRInfo {

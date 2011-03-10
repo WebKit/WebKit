@@ -567,7 +567,6 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 #if ENABLE(JIT_OPTIMIZE_CALL)
     for (unsigned i = 0; i < m_codeBlock->numberOfCallLinkInfos(); ++i) {
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
-        info.ownerCodeBlock = m_codeBlock;
         info.callReturnLocation = patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].callReturnLocation);
         info.hotPathBegin = patchBuffer.locationOf(m_callStructureStubCompilationInfo[i].hotPathBegin);
         info.hotPathOther = patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].hotPathOther);
@@ -588,18 +587,6 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 }
 
 #if ENABLE(JIT_OPTIMIZE_CALL)
-void JIT::unlinkCallOrConstruct(CallLinkInfo* callLinkInfo)
-{
-    // When the JSFunction is deleted the pointer embedded in the instruction stream will no longer be valid
-    // (and, if a new JSFunction happened to be constructed at the same location, we could get a false positive
-    // match).  Reset the check so it no longer matches.
-    RepatchBuffer repatchBuffer(callLinkInfo->ownerCodeBlock);
-#if USE(JSVALUE32_64)
-    repatchBuffer.repatch(callLinkInfo->hotPathBegin, 0);
-#else
-    repatchBuffer.repatch(callLinkInfo->hotPathBegin, JSValue::encode(JSValue()));
-#endif
-}
 
 void JIT::linkCall(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, int callerArgCount, JSGlobalData* globalData)
 {
@@ -611,7 +598,7 @@ void JIT::linkCall(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* ca
         ASSERT(!callLinkInfo->isLinked());
     
         if (calleeCodeBlock)
-            calleeCodeBlock->addCaller(callLinkInfo);
+            calleeCodeBlock->addCaller(*globalData, callLinkInfo, callee);
     
         repatchBuffer.repatch(callLinkInfo->hotPathBegin, callee);
         repatchBuffer.relink(callLinkInfo->hotPathOther, code);
@@ -631,7 +618,7 @@ void JIT::linkConstruct(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBloc
         ASSERT(!callLinkInfo->isLinked());
     
         if (calleeCodeBlock)
-            calleeCodeBlock->addCaller(callLinkInfo);
+            calleeCodeBlock->addCaller(*globalData, callLinkInfo, callee);
     
         repatchBuffer.repatch(callLinkInfo->hotPathBegin, callee);
         repatchBuffer.relink(callLinkInfo->hotPathOther, code);

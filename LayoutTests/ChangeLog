@@ -1,3 +1,15 @@
+2011-03-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        jquery/manipulation.html fails after r80598
+        https://bugs.webkit.org/show_bug.cgi?id=56019
+
+        Removed jQuery tests from skiplists
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2011-03-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.

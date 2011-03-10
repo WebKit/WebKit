@@ -307,8 +307,6 @@ namespace JSC {
             return new (globalData) FunctionExecutable(globalData, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine);
         }
 
-        ~FunctionExecutable();
-
         JSFunction* make(ExecState* exec, ScopeChainNode* scopeChain)
         {
             return new (exec) JSFunction(exec, this, scopeChain);

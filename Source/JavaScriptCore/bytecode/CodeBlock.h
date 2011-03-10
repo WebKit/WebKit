@@ -96,8 +96,7 @@ namespace JSC {
 #if ENABLE(JIT)
     struct CallLinkInfo {
         CallLinkInfo()
-            : callee(0)
-            , position(0)
+            : position(0)
             , hasSeenShouldRepatch(0)
         {
         }
@@ -105,12 +104,11 @@ namespace JSC {
         CodeLocationNearCall callReturnLocation;
         CodeLocationDataLabelPtr hotPathBegin;
         CodeLocationNearCall hotPathOther;
-        CodeBlock* ownerCodeBlock;
-        CodeBlock* callee;
+        WriteBarrier<JSFunction> callee;
         unsigned position : 31;
         unsigned hasSeenShouldRepatch : 1;
         
-        void setUnlinked() { callee = 0; }
+        void setUnlinked() { callee.clear(); }
         bool isLinked() { return callee; }
 
         bool seenOnce()
@@ -257,9 +255,6 @@ namespace JSC {
         void markAggregate(MarkStack&);
         void refStructures(Instruction* vPC) const;
         void derefStructures(Instruction* vPC) const;
-#if ENABLE(JIT_OPTIMIZE_CALL)
-        void unlinkCallers();
-#endif
 
         static void dumpStatistics();
 
@@ -292,23 +287,11 @@ namespace JSC {
         void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset);
 
 #if ENABLE(JIT)
-        void addCaller(CallLinkInfo* caller)
+        void addCaller(JSGlobalData& globalData, CallLinkInfo* caller, JSFunction* callee)
         {
-            caller->callee = this;
+            caller->callee.set(globalData, ownerExecutable(), callee);
             caller->position = m_linkedCallerList.size();
             m_linkedCallerList.append(caller);
-        }
-
-        void removeCaller(CallLinkInfo* caller)
-        {
-            unsigned pos = caller->position;
-            unsigned lastPos = m_linkedCallerList.size() - 1;
-
-            if (pos != lastPos) {
-                m_linkedCallerList[pos] = m_linkedCallerList[lastPos];
-                m_linkedCallerList[pos]->position = pos;
-            }
-            m_linkedCallerList.shrink(lastPos);
         }
 
         StructureStubInfo& getStubInfo(ReturnAddressPtr returnAddress)

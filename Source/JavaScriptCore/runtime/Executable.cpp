@@ -85,15 +85,6 @@ FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, 
     m_lastLine = lastLine;
 }
 
-FunctionExecutable::~FunctionExecutable()
-{
-#if ENABLE(JIT_OPTIMIZE_CALL)
-    if (isGeneratedForCall())
-        generatedBytecodeForCall().unlinkCallers();
-    if (isGeneratedForConstruct())
-        generatedBytecodeForConstruct().unlinkCallers();
-#endif
-}
 
 JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
