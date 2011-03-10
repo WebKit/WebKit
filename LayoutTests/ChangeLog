@@ -1,3 +1,10 @@
+2011-03-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] plugins/return-negative-one-from-write.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=41903
+
+        * platform/gtk/Skipped: Unskipping test which appears to be passing locally.
+
 2011-03-10  Adam Barth  <abarth@webkit.org>
 
         Update test expectation after my partial revert of r80670.

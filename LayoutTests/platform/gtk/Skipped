@@ -570,9 +570,6 @@ plugins/clicking-missing-plugin-fires-delegate.html
 #   Tests failing
 security/set-form-autocomplete-attribute.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=41903
-plugins/return-negative-one-from-write.html
-
 # Tests in svg/ directory
 #   Tests failing
 svg/filters/feColorMatrix-values.svg
