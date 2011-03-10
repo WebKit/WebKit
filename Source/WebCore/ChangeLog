@@ -1,3 +1,24 @@
+2011-03-09  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Bad cast in HTMLTreeBuilder::processStartTag
+        https://bugs.webkit.org/show_bug.cgi?id=55955
+
+        Test: fast/parser/self-closing-foreign-content.html
+
+        When the parser encounters an svg or mathml root element, it places the
+        insertion mode into InForeignContentMode. However, if the root element
+        is self-closing (e.g. <svg />) then the element is never placed on the
+        open elements stack. This leaves the parser in an inconsistent state
+        where it is in InForeignContentMode but no foreign content is in the
+        open element stack.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody): If a self-closing
+        foreign element is inserted into the tree, do not set the insertion
+        mode to InForeignContentMode.
+
 2011-03-09  Gavin Barraclough  <barraclough@apple.com>
 
         Qt build fix.

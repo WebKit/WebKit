@@ -1,3 +1,13 @@
+2011-03-09  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Bad cast in HTMLTreeBuilder::processStartTag
+        https://bugs.webkit.org/show_bug.cgi?id=55955
+
+        * fast/parser/self-closing-foreign-content-expected.txt: Added.
+        * fast/parser/self-closing-foreign-content.html: Added.
+
 2011-03-09  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Mihai Parparita.

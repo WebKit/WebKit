@@ -984,7 +984,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         adjustMathMLAttributes(token);
         adjustForeignAttributes(token);
         m_tree.insertForeignElement(token, MathMLNames::mathmlNamespaceURI);
-        if (m_insertionMode != InForeignContentMode)
+        if (m_insertionMode != InForeignContentMode && !token.selfClosing())
             setInsertionMode(InForeignContentMode);
         return;
     }
@@ -993,7 +993,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         adjustSVGAttributes(token);
         adjustForeignAttributes(token);
         m_tree.insertForeignElement(token, SVGNames::svgNamespaceURI);
-        if (m_insertionMode != InForeignContentMode)
+        if (m_insertionMode != InForeignContentMode && !token.selfClosing())
             setInsertionMode(InForeignContentMode);
         return;
     }
