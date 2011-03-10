@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<ul tabindex="0" id="list">
+
+<li><div class="image thumb2160"><img src></div>
+<span><div class="date"><script></script>Mar 7</div>
+<a href="/">test</a><p class="blurb">test</p></span><div class="spacer"></div>
+</li>
+
+<li><div class="image thumb2160"><img src></div>
+<span><div class="date"><script></script>Mar 7</div>
+<a href="/">test</a><p class="blurb">test</p></span><div class="spacer"></div>
+</li>
+
+<li><div class="image thumb2160"><img src></div>
+<span><div class="date"><script></script>Mar 7</div>
+<a href="/">test</a><p class="blurb">test</p></span><div class="spacer"></div>
+</li>
+
+
+</ul>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that list items will not be ignored as children of a list.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("list").focus();
+        var list = accessibilityController.focusedElement;
+
+        shouldBe("list.childrenCount", "3");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

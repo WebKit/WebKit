@@ -1838,6 +1838,10 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
             return false;
     }
     
+    // List items play an important role in defining the structure of lists. They should not be ignored.
+    if (roleValue() == ListItemRole)
+        return false;
+    
     // if this element has aria attributes on it, it should not be ignored.
     if (supportsARIAAttributes())
         return false;

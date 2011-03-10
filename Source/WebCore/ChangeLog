@@ -1,3 +1,18 @@
+2011-03-09  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        VO reporting incorrect list count for http://www.macworld.com/news.html
+        https://bugs.webkit.org/show_bug.cgi?id=56064
+
+        <li> tags should not be ignored, because they provide valuable information
+        to screen readers.
+
+        Test: platform/mac/accessibility/list-items-ignored.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+
 2011-03-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
