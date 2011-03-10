@@ -142,7 +142,7 @@ WebInspector.ScriptsPanel = function()
     this.sidebarPanes.watchExpressions = new WebInspector.WatchExpressionsSidebarPane();
     this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane(this._presentationModel);
     this.sidebarPanes.scopechain = new WebInspector.ScopeChainSidebarPane();
-    this.sidebarPanes.jsBreakpoints = new WebInspector.JavaScriptBreakpointsSidebarPane();
+    this.sidebarPanes.jsBreakpoints = new WebInspector.JavaScriptBreakpointsSidebarPane(this._presentationModel);
     if (Preferences.nativeInstrumentationEnabled) {
         this.sidebarPanes.domBreakpoints = WebInspector.createDOMBreakpointsSidebarPane();
         this.sidebarPanes.xhrBreakpoints = WebInspector.createXHRBreakpointsSidebarPane();
@@ -392,6 +392,8 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceFrame = this._sourceFileIdToSourceFrame[breakpoint.sourceFileId];
         if (sourceFrame && sourceFrame.loaded)
             sourceFrame.addBreakpoint(breakpoint.lineNumber, breakpoint.resolved, breakpoint.condition, breakpoint.enabled);
+
+        this.sidebarPanes.jsBreakpoints.addBreakpoint(breakpoint);
     },
 
     _breakpointRemoved: function(event)
@@ -401,6 +403,8 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceFrame = this._sourceFileIdToSourceFrame[breakpoint.sourceFileId];
         if (sourceFrame && sourceFrame.loaded)
             sourceFrame.removeBreakpoint(breakpoint.lineNumber);
+
+        this.sidebarPanes.jsBreakpoints.removeBreakpoint(breakpoint.sourceFileId, breakpoint.lineNumber);
     },
 
     evaluateInSelectedCallFrame: function(code, objectGroup, includeCommandLineAPI, callback)
@@ -431,6 +435,9 @@ WebInspector.ScriptsPanel.prototype = {
 
         this.sidebarPanes.callstack.update(event.data);
         this.sidebarPanes.callstack.selectedCallFrame = callFrames[0];
+
+        var sourceLocation = this._presentationModel.selectedCallFrame.sourceLocation;
+        this.sidebarPanes.jsBreakpoints.highlightBreakpoint(sourceLocation.sourceFileId, sourceLocation.lineNumber);
 
         window.focus();
         InspectorFrontendHost.bringToFront();
@@ -468,6 +475,8 @@ WebInspector.ScriptsPanel.prototype = {
 
     reset: function(preserveItems)
     {
+        this._presentationModel.reset();
+
         this.visibleView = null;
 
         delete this.currentQuery;
@@ -486,6 +495,7 @@ WebInspector.ScriptsPanel.prototype = {
         this.functionsSelectElement.removeChildren();
         this.viewsContainerElement.removeChildren();
 
+        this.sidebarPanes.jsBreakpoints.reset();
         this.sidebarPanes.watchExpressions.refreshExpressions();
         if (!preserveItems)
             this.sidebarPanes.workers.reset();
@@ -786,6 +796,7 @@ WebInspector.ScriptsPanel.prototype = {
     {
         this.sidebarPanes.callstack.update(null);
         this.sidebarPanes.scopechain.update(null);
+        this.sidebarPanes.jsBreakpoints.clearBreakpointHighlight();
 
         this._clearCurrentExecutionLine();
         this._updateDebuggerButtons();

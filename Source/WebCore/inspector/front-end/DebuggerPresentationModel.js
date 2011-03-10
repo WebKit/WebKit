@@ -33,6 +33,8 @@ WebInspector.DebuggerPresentationModel = function()
     this._breakpoints = {};
     this._sourceLocationToBreakpointId = {};
 
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._failedToParseScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointAdded, this._breakpointAdded, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointRemoved, this._breakpointRemoved, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointResolved, this._breakpointResolved, this);
@@ -44,15 +46,58 @@ WebInspector.DebuggerPresentationModel.Events = {
 }
 
 WebInspector.DebuggerPresentationModel.prototype = {
+    _parsedScriptSource: function(event)
+    {
+        var script = event.data;
+        if (script.sourceURL)
+            this._revealHiddenBreakpoints(script.sourceURL);
+    },
+
+    _failedToParseScriptSource: function(event)
+    {
+        var script = event.data;
+        if (script.sourceURL)
+            this._revealHiddenBreakpoints(script.sourceURL);
+    },
+
+    _revealHiddenBreakpoints: function(url)
+    {
+        for (var id in this._breakpoints) {
+            var breakpoint = this._breakpoints[id];
+            if (breakpoint._hidden && breakpoint.url === url) {
+                delete breakpoint._hidden;
+                this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, breakpoint);
+            }
+        }
+    },
+
     breakpointsForSourceFileId: function(sourceFileId)
     {
         var breakpoints = [];
         for (var id in this._breakpoints) {
             var breakpoint = this._breakpoints[id];
-            if (breakpoint.sourceFileId === sourceFileId)
+            if (!breakpoint._hidden && breakpoint.sourceFileId === sourceFileId)
                 breakpoints.push(breakpoint);
         }
         return breakpoints;
+    },
+
+    setBreakpointEnabled: function(sourceFileId, lineNumber, enabled)
+    {
+        var encodedSourceLocation = this._encodeSourceLocation(sourceFileId, lineNumber);
+        var breakpointId = this._sourceLocationToBreakpointId[encodedSourceLocation];
+        if (!breakpointId)
+            return;
+        var breakpoint = this._breakpoints[breakpointId];
+        WebInspector.debuggerModel.updateBreakpoint(breakpointId, breakpoint.condition, enabled);
+    },
+
+    removeBreakpoint: function(sourceFileId, lineNumber)
+    {
+        var encodedSourceLocation = this._encodeSourceLocation(sourceFileId, lineNumber);
+        var breakpointId = this._sourceLocationToBreakpointId[encodedSourceLocation];
+        if (breakpointId)
+            WebInspector.debuggerModel.removeBreakpoint(breakpointId);
     },
 
     _breakpointAdded: function(event)
@@ -76,11 +121,18 @@ WebInspector.DebuggerPresentationModel.prototype = {
             condition: breakpoint.condition,
             enabled: breakpoint.enabled
         };
+        if (location.sourceID) {
+            var script = WebInspector.debuggerModel.scriptForSourceID(location.sourceID);
+            presentationBreakpoint.loadSnippet = script.sourceLine.bind(script, location.lineNumber);
+        }
 
         this._sourceLocationToBreakpointId[encodedSourceLocation] = breakpoint.id;
         this._breakpoints[breakpoint.id] = presentationBreakpoint;
 
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, presentationBreakpoint);
+        if (!WebInspector.debuggerModel.scriptsForURL(breakpoint.url).length)
+            presentationBreakpoint._hidden = true;
+        else
+            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, presentationBreakpoint);
     },
 
     _breakpointRemoved: function(event)
@@ -110,7 +162,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._selectedCallFrame = callFrame;
         if (!callFrame)
             return;
-
         var script = WebInspector.debuggerModel.scriptForSourceID(callFrame.sourceID);
         callFrame.sourceLocation = this._actualLocationToSourceLocation(script.sourceURL || script.sourceID, callFrame.line, callFrame.column);
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, callFrame);
@@ -125,6 +176,15 @@ WebInspector.DebuggerPresentationModel.prototype = {
     {
         // TODO: use source mapping to obtain source location.
         return { sourceFileId: sourceID, lineNumber: lineNumber, columnNumber: columnNumber };
+    },
+
+    reset: function()
+    {
+        for (var id in this._breakpoints) {
+            var breakpoint = this._breakpoints[id];
+            breakpoint._hidden = true;
+        }
+        this._sourceLocationToBreakpointId = {};
     }
 }
 

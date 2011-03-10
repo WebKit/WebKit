@@ -1,3 +1,42 @@
+2011-03-09  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: re-implement breakpoints sidebar pane based on debugger presentation model.
+        https://bugs.webkit.org/show_bug.cgi?id=55823
+
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.JavaScriptBreakpointsSidebarPane):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype.addBreakpoint.didLoadSnippet):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype.addBreakpoint):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype.removeBreakpoint):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype.highlightBreakpoint):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype.clearBreakpointHighlight):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._createBreakpointItemId):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._breakpointClicked):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._breakpointCheckboxClicked):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._contextMenu):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype.reset):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype._parsedScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._failedToParseScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._revealHiddenBreakpoints):
+        (WebInspector.DebuggerPresentationModel.prototype.breakpointsForSourceFileId):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpointEnabled):
+        (WebInspector.DebuggerPresentationModel.prototype.removeBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded):
+        (WebInspector.DebuggerPresentationModel.prototype.set selectedCallFrame):
+        (WebInspector.DebuggerPresentationModel.prototype._actualLocationToSourceLocation):
+        (WebInspector.DebuggerPresentationModel.prototype.reset):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._breakpointAdded):
+        (WebInspector.ScriptsPanel.prototype._breakpointRemoved):
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        (WebInspector.ScriptsPanel.prototype._clearInterface):
+
 2011-03-10  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.
