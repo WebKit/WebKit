@@ -38,7 +38,8 @@ enum RegExpFlags {
     FlagGlobal = 1,
     FlagIgnoreCase = 2,
     FlagMultiline = 4,
-    InvalidFlags = 8
+    InvalidFlags = 8,
+    DeletedValueFlags = -1
 };
 
 struct RegExpKey {
@@ -102,8 +103,8 @@ template<> struct DefaultHash<JSC::RegExpKey> {
 };
 
 template<> struct HashTraits<JSC::RegExpKey> : GenericHashTraits<JSC::RegExpKey> {
-    static void constructDeletedValue(JSC::RegExpKey& slot) { slot.flagsValue = JSC::InvalidFlags; }
-    static bool isDeletedValue(const JSC::RegExpKey& value) { return value.flagsValue == JSC::InvalidFlags; }
+    static void constructDeletedValue(JSC::RegExpKey& slot) { slot.flagsValue = JSC::DeletedValueFlags; }
+    static bool isDeletedValue(const JSC::RegExpKey& value) { return value.flagsValue == JSC::DeletedValueFlags; }
 };
 } // namespace WTF
 

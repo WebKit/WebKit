@@ -291,7 +291,7 @@ namespace JSC {
         RegisterID* emitLazyNewFunction(RegisterID* dst, FunctionBodyNode* body);
         RegisterID* emitNewFunctionInternal(RegisterID* dst, unsigned index, bool shouldNullCheck);
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode* func);
-        RegisterID* emitNewRegExp(RegisterID* dst, RegExp* regExp);
+        RegisterID* emitNewRegExp(RegisterID* dst, PassRefPtr<RegExp> regExp);
 
         RegisterID* emitMove(RegisterID* dst, RegisterID* src);
 
@@ -481,7 +481,7 @@ namespace JSC {
 
         unsigned addConstant(const Identifier&);
         RegisterID* addConstantValue(JSValue);
-        unsigned addRegExp(RegExp*);
+        unsigned addRegExp(PassRefPtr<RegExp>);
 
         FunctionExecutable* makeFunction(ExecState* exec, FunctionBodyNode* body)
         {

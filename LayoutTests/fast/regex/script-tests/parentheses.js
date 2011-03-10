@@ -196,7 +196,7 @@ shouldBeTrue("/(?!(?=r{0}){2,})|((z)?)?/gi.test('')");
 var regexp43 = /(?!(?:\1+s))/;
 shouldBe("regexp43.exec('SSS')", "['']");
 
-var regexp44 = /(?!(?:\3+(s+?)))/gy;
+var regexp44 = /(?!(?:\3+(s+?)))/g;
 shouldBe("regexp44.exec('SSS')", "['',undefined]");
 
 var regexp45 = /((?!(?:|)v{2,}|))/;

@@ -499,7 +499,7 @@ namespace JSC {
         }
         FunctionExecutable* functionExpr(int index) { return m_functionExprs[index].get(); }
 
-        unsigned addRegExp(RegExp* r) { createRareDataIfNecessary(); unsigned size = m_rareData->m_regexps.size(); m_rareData->m_regexps.append(r); return size; }
+        unsigned addRegExp(PassRefPtr<RegExp> r) { createRareDataIfNecessary(); unsigned size = m_rareData->m_regexps.size(); m_rareData->m_regexps.append(r); return size; }
         RegExp* regexp(int index) const { ASSERT(m_rareData); return m_rareData->m_regexps[index].get(); }
 
         JSGlobalObject* globalObject() { return m_globalObject.get(); }

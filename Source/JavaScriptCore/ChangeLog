@@ -1,5 +1,37 @@
 2011-03-09  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Bug 56041 - RexExp constructor should only accept flags "gim"
+        Fix for issues introduced in r80667.
+
+        Invalid flags to a RegExp literal are a late syntax error!
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addRegExp):
+            - Pass a PassRefPtr<RegExp>
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addRegExp):
+        (JSC::BytecodeGenerator::emitNewRegExp):
+        * bytecompiler/BytecodeGenerator.h:
+            - Pass a PassRefPtr<RegExp>
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::RegExpNode::emitBytecode):
+            - Should not be ASSERTing that the flags are valid - this is a late(er) error.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+            - Need to check for error from RegExp constructor.
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+            - Need to check for error from RegExp constructor.
+        * runtime/RegExp.h:
+        (JSC::RegExp::isValid):
+            - Make isValid check that the regexp was created with valid flags.
+        * runtime/RegExpKey.h:
+            - Since we'll not create RegExp objects with invalid flags, separate out the deleted value.
+
+2011-03-09  Gavin Barraclough  <barraclough@apple.com>
+
         Windows build fix part 2.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:

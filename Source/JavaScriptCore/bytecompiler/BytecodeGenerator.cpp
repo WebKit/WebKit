@@ -950,7 +950,7 @@ RegisterID* BytecodeGenerator::addConstantValue(JSValue v)
     return &m_constantPoolRegisters[index];
 }
 
-unsigned BytecodeGenerator::addRegExp(RegExp* r)
+unsigned BytecodeGenerator::addRegExp(PassRefPtr<RegExp> r)
 {
     return m_codeBlock->addRegExp(r);
 }
@@ -1584,7 +1584,7 @@ RegisterID* BytecodeGenerator::emitNewFunctionInternal(RegisterID* dst, unsigned
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitNewRegExp(RegisterID* dst, RegExp* regExp)
+RegisterID* BytecodeGenerator::emitNewRegExp(RegisterID* dst, PassRefPtr<RegExp> regExp)
 {
     emitOpcode(op_new_regexp);
     instructions().append(dst->index());

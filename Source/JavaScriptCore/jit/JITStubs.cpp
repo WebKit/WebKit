@@ -3069,7 +3069,15 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_regexp)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    return new (stackFrame.globalData) RegExpObject(stackFrame.callFrame->lexicalGlobalObject(), stackFrame.callFrame->lexicalGlobalObject()->regExpStructure(), stackFrame.args[0].regExp());
+    CallFrame* callFrame = stackFrame.callFrame;
+
+    RegExp* regExp = stackFrame.args[0].regExp();
+    if (!regExp->isValid()) {
+        stackFrame.globalData->exception = createSyntaxError(callFrame, "Invalid flags supplied to RegExp constructor.");
+        VM_THROW_EXCEPTION();
+    }
+
+    return new (stackFrame.globalData) RegExpObject(stackFrame.callFrame->lexicalGlobalObject(), stackFrame.callFrame->lexicalGlobalObject()->regExpStructure(), regExp);
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_bitor)

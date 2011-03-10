@@ -2217,7 +2217,7 @@ var input1 = "\"the \\\"quick\\\" brown fox\"";
 var results = ["\"the \\\"quick\\\" brown fox\"", " brown fox"];
 shouldBe('regex203.exec(input1);', 'results');
 
-var regex204 = /<tr([\w\W\s\d][^<>]{0,})><TD([\w\W\s\d][^<>]{0,})>([\d]{0,}\.)(.*)((<BR>([\w\W\s\d][^<>]{0,})|[\s]{0,}))<\/a><\/TD><TD([\w\W\s\d][^<>]{0,})>([\w\W\s\d][^<>]{0,})<\/TD><TD([\w\W\s\d][^<>]{0,})>([\w\W\s\d][^<>]{0,})<\/TD><\/TR>/is;
+var regex204 = /<tr([\w\W\s\d][^<>]{0,})><TD([\w\W\s\d][^<>]{0,})>([\d]{0,}\.)(.*)((<BR>([\w\W\s\d][^<>]{0,})|[\s]{0,}))<\/a><\/TD><TD([\w\W\s\d][^<>]{0,})>([\w\W\s\d][^<>]{0,})<\/TD><TD([\w\W\s\d][^<>]{0,})>([\w\W\s\d][^<>]{0,})<\/TD><\/TR>/i;
 var input0 = "<TR BGCOLOR='#DBE9E9'><TD align=left valign=top>43.<a href='joblist.cfm?JobID=94 6735&Keyword='>Word Processor<BR>(N-1286)</a></TD><TD align=left valign=top>Lega lstaff.com</TD><TD align=left valign=top>CA - Statewide</TD></TR>";
 var results = ["<TR BGCOLOR=\'#DBE9E9\'><TD align=left valign=top>43.<a href=\'joblist.cfm?JobID=94 6735&Keyword=\'>Word Processor<BR>(N-1286)</a></TD><TD align=left valign=top>Lega lstaff.com</TD><TD align=left valign=top>CA - Statewide</TD></TR>", " BGCOLOR=\'#DBE9E9\'", " align=left valign=top", "43.", "<a href=\'joblist.cfm?JobID=94 6735&Keyword=\'>Word Processor<BR>(N-1286)", "", "", undefined, " align=left valign=top", "Lega lstaff.com", " align=left valign=top", "CA - Statewide"];
 shouldBe('regex204.exec(input0);', 'results');

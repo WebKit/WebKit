@@ -46,7 +46,7 @@ namespace JSC {
 
         const UString& pattern() const { return m_patternString; }
 
-        bool isValid() const { return !m_constructionError; }
+        bool isValid() const { return !m_constructionError && m_flags != InvalidFlags; }
         const char* errorMessage() const { return m_constructionError; }
 
         int match(const UString&, int startOffset, Vector<int, 32>* ovector = 0);

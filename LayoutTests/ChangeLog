@@ -1,3 +1,14 @@
+2011-03-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 56041 - RexExp constructor should only accept flags "gim"
+        Fix for issues introduced in r80667.
+
+        * fast/regex/script-tests/parentheses.js:
+        * fast/regex/script-tests/pcre-test-1.js:
+            - Providing invalid flags to RegExp literals is an error in ES5.
+
 2011-03-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
