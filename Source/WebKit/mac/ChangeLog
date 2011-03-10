@@ -1,3 +1,13 @@
+2011-03-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/9117047>
+        Don't paint more than 60 times per second even when scrolling
+
+        * WebView/WebClipView.mm:
+        (-[WebClipView _immediateScrollToPoint:]):
+
 2011-03-09  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.
