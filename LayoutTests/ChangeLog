@@ -1,5 +1,14 @@
 2011-03-10  Adam Roben  <aroben@apple.com>
 
+        Add Windows expected failure results for fast/text/hyphenate-limit-before-after.html
+
+        The failure is tracked by <http://webkit.org/b/56102>.
+
+        * platform/win/fast/text/hyphenate-limit-before-after-expected.txt: Added. Copied this from
+        mac-snowleopard.
+
+2011-03-10  Adam Roben  <aroben@apple.com>
+
         Add Windows expected failure results for fast/blockflow/text-orientation-basic.html
 
         The failure is tracked by <http://webkit.org/b/56101>.
