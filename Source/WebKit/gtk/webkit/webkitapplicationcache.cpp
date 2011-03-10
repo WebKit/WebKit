@@ -26,8 +26,6 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
-// keeps current directory path to offline web applications cache database
-static WTF::CString cacheDirectoryPath = "";
 // web application cache maximum storage size
 static unsigned long long cacheMaxSize = UINT_MAX;
 
@@ -89,33 +87,9 @@ G_CONST_RETURN gchar* webkit_application_cache_get_database_directory_path()
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     CString path = WebCore::fileSystemRepresentation(WebCore::cacheStorage().cacheDirectory());
-
-    if (path != cacheDirectoryPath)
-        cacheDirectoryPath = path;
-
-    return cacheDirectoryPath.data();
+    return path.data();
 #else
     return "";
-#endif
-}
-
-/**
- * webkit_application_cache_set_database_directory_path:
- * @path: the new web application cache database path
- *
- * Sets the current path to the directory WebKit will write web aplication cache
- * databases.
- *
- * Since: 1.3.13
- **/
-void webkit_application_cache_set_database_directory_path(const gchar* path)
-{
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    WTF::CString pathString(path);
-    if (pathString != cacheDirectoryPath)
-        cacheDirectoryPath = pathString;
-
-    WebCore::cacheStorage().setCacheDirectory(WebCore::filenameToString(cacheDirectoryPath.data()));
 #endif
 }
 

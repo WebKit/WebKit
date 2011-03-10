@@ -37,25 +37,6 @@ static void test_application_cache_maximum_size()
     g_assert(maxSize == webkit_application_cache_get_maximum_size());
 }
 
-static void test_application_cache_database_directory_path()
-{
-    unsigned long long maxSize = 8192;
-    webkit_application_cache_set_maximum_size(maxSize);
-
-    gchar* databaseDirectorySet = g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL);
-    webkit_application_cache_set_database_directory_path(databaseDirectorySet);
-
-    // Creating a WebView - make sure that it didn't change anything
-    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
-    g_object_ref_sink(webView);
-    g_object_unref(webView);
-
-    const gchar* databaseDirectoryGet = webkit_application_cache_get_database_directory_path();
-    g_assert_cmpstr(databaseDirectorySet, ==, databaseDirectoryGet);
-
-    g_free(databaseDirectorySet);
-}
-
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -64,8 +45,6 @@ int main(int argc, char** argv)
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/application_cache/maximum_size",
                     test_application_cache_maximum_size);
-    g_test_add_func("/webkit/application_cache/database_directory_path",
-                    test_application_cache_database_directory_path);
 
     return g_test_run();
 }

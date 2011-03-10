@@ -265,7 +265,7 @@ void webkitInit()
 
     gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL);
     webkit_set_web_database_directory_path(databaseDirectory);
-    webkit_application_cache_set_database_directory_path(databaseDirectory);
+    WebCore::cacheStorage().setCacheDirectory(databaseDirectory);
 
     g_free(databaseDirectory);
 

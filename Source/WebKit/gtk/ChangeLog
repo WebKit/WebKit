@@ -1,3 +1,22 @@
+2011-03-10  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] unittests/testapplicationcache crashes
+        https://bugs.webkit.org/show_bug.cgi?id=56083
+
+        Removed the webkit_application_cache_get_database_directory_path
+        API as the underlying ApplicationCacheStorage doesn't allow
+        setting the cache path multiple times.
+
+        * tests/testapplicationcache.c:
+        (main):
+        * webkit/webkitapplicationcache.cpp:
+        (webkit_application_cache_get_database_directory_path):
+        * webkit/webkitapplicationcache.h:
+        * webkit/webkitglobals.cpp:
+        (webkitInit):
+
 2011-03-09  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Mihai Parparita.
