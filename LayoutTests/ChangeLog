@@ -1,3 +1,19 @@
+2011-03-09  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Fix some potentially flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=56049
+
+        These tests were not resilient to parser yields for reasons explained below.
+
+        * media/video-src-plus-source.html: loadstart or loadmetadata could have fired before
+        the waitForEvent() calls. So define them prior to the <video> element.
+        * platform/mac/accessibility/aria-expanded-notifications.html: The aria events could
+        have fired before successfullyParsed was set, so run the test in the onload handler.
+        * plugins/npruntime/npruntime.html: The plugin could have been loaded before
+        successfullyParsed was set, so set it before including the plugin.
+
 2011-03-09  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adam Barth.
