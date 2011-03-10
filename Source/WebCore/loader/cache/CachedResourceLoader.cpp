@@ -41,7 +41,6 @@
 #include "FrameLoaderClient.h"
 #include "HTMLElement.h"
 #include "Logging.h"
-#include "NestingLevelIncrementer.h"
 #include "MemoryCache.h"
 #include "PingLoader.h"
 #include "ResourceLoadScheduler.h"
@@ -85,18 +84,11 @@ CachedResourceLoader::CachedResourceLoader(Document* document)
     , m_autoLoadImages(true)
     , m_loadFinishing(false)
     , m_allowStaleResources(false)
-    , m_isInMethod(0)
 {
 }
 
 CachedResourceLoader::~CachedResourceLoader()
 {
-    // Try to catch https://bugs.webkit.org/show_bug.cgi?id=54486
-    // Crashes under CachedResourceLoader::revalidateResource
-    // FIXME: Remove this and the related code when it has served its purpose.
-    if (m_isInMethod)
-        CRASH();
-
     m_document = 0;
 
     cancelRequests();
@@ -128,7 +120,6 @@ Frame* CachedResourceLoader::frame() const
 
 CachedImage* CachedResourceLoader::requestImage(const String& url)
 {
-    NestingLevelIncrementer debugIncrementer(m_isInMethod);
     if (Frame* f = frame()) {
         Settings* settings = f->settings();
         if (!f->loader()->client()->allowImages(!settings || settings->areImagesEnabled()))
@@ -161,7 +152,6 @@ CachedCSSStyleSheet* CachedResourceLoader::requestCSSStyleSheet(const String& ur
 
 CachedCSSStyleSheet* CachedResourceLoader::requestUserCSSStyleSheet(const String& requestURL, const String& charset)
 {
-    NestingLevelIncrementer debugIncrementer(m_isInMethod);
     KURL url = MemoryCache::removeFragmentIdentifierIfNeeded(KURL(KURL(), requestURL));
 
     if (CachedResource* existing = memoryCache()->resourceForURL(url)) {
@@ -273,7 +263,6 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
 
 CachedResource* CachedResourceLoader::requestResource(CachedResource::Type type, const String& resourceURL, const String& charset, ResourceLoadPriority priority, bool forPreload)
 {
-    NestingLevelIncrementer debugIncrementer(m_isInMethod);
     KURL url = m_document->completeURL(resourceURL);
     
     LOG(ResourceLoading, "CachedResourceLoader::requestResource '%s', charset '%s', priority=%d, forPreload=%u", url.string().latin1().data(), charset.latin1().data(), priority, forPreload);
@@ -482,7 +471,6 @@ void CachedResourceLoader::printAccessDeniedMessage(const KURL& url) const
 
 void CachedResourceLoader::setAutoLoadImages(bool enable)
 {
-    NestingLevelIncrementer debugIncrementer(m_isInMethod);
     if (enable == m_autoLoadImages)
         return;
 
@@ -520,7 +508,6 @@ void CachedResourceLoader::removeCachedResource(CachedResource* resource) const
 
 void CachedResourceLoader::load(CachedResource* resource, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
 {
-    NestingLevelIncrementer debugIncrementer(m_isInMethod);
     incrementRequestCount(resource);
 
     RefPtr<CachedResourceRequest> request = CachedResourceRequest::load(this, resource, incremental, securityCheck, sendResourceLoadCallbacks);
@@ -530,7 +517,6 @@ void CachedResourceLoader::load(CachedResource* resource, bool incremental, Secu
 
 void CachedResourceLoader::loadDone(CachedResourceRequest* request)
 {
-    NestingLevelIncrementer debugIncrementer(m_isInMethod);
     m_loadFinishing = false;
     RefPtr<CachedResourceRequest> protect(request);
     if (request)
@@ -607,7 +593,6 @@ int CachedResourceLoader::requestCount()
     
 void CachedResourceLoader::preload(CachedResource::Type type, const String& url, const String& charset, bool referencedFromBody)
 {
-    NestingLevelIncrementer debugIncrementer(m_isInMethod);
     bool hasRendering = m_document->body() && m_document->body()->renderer();
     if (!hasRendering && (referencedFromBody || type == CachedResource::ImageResource)) {
         // Don't preload images or body resources before we have something to draw. This prevents
@@ -634,7 +619,6 @@ void CachedResourceLoader::checkForPendingPreloads()
 
 void CachedResourceLoader::requestPreload(CachedResource::Type type, const String& url, const String& charset)
 {
-    NestingLevelIncrementer debugIncrementer(m_isInMethod);
     String encoding;
     if (type == CachedResource::Script || type == CachedResource::CSSStyleSheet)
         encoding = charset.isEmpty() ? m_document->charset() : charset;

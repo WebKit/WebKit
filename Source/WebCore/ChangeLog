@@ -1,3 +1,23 @@
+2011-03-09  Antti Koivisto  <antti@apple.com>
+
+        Not reviewed.
+
+        Reverting crash catching code, the bug being hunted was fixed by
+        http://trac.webkit.org/changeset/80686
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::CachedResourceLoader):
+        (WebCore::CachedResourceLoader::~CachedResourceLoader):
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::setAutoLoadImages):
+        (WebCore::CachedResourceLoader::load):
+        (WebCore::CachedResourceLoader::loadDone):
+        (WebCore::CachedResourceLoader::preload):
+        (WebCore::CachedResourceLoader::requestPreload):
+        * loader/cache/CachedResourceLoader.h:
+
 2011-03-09  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, build fix.

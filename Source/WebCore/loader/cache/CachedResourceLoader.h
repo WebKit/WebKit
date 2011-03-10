@@ -147,9 +147,6 @@ private:
     bool m_autoLoadImages : 1;
     bool m_loadFinishing : 1;
     bool m_allowStaleResources : 1;
-    
-    // FIME: For debugging, remove.
-    unsigned m_isInMethod;
 };
 
 }
