@@ -1,5 +1,12 @@
 2011-03-09  Peter Kasting  <pkasting@google.com>
 
+        Unreviewed, build fix.
+
+        * platform/win/SystemInfo.cpp:
+        (WebCore::windowsVersionForUAString): Fix const conversion warning on Qt.
+
+2011-03-09  Peter Kasting  <pkasting@google.com>
+
         Reviewed by Mihai Parparita.
 
         Unify Windows version checks.

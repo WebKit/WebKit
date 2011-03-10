@@ -109,7 +109,7 @@ String windowsVersionForUAString()
         return "WinNT4.0";
     }
 
-    char* familyName = (version >= WindowsNT3) ? "Windows NT " : "Windows CE ";
+    const char* familyName = (version >= WindowsNT3) ? "Windows NT " : "Windows CE ";
     return makeString(familyName, String::number(major), '.', String::number(minor));
 }
 
