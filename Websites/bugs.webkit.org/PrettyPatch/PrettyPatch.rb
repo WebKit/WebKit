@@ -70,6 +70,9 @@ private
     START_OF_EXTENT_STRING = "%c" % 0
     END_OF_EXTENT_STRING = "%c" % 1
 
+    # We won't search for intra-line diffs in lines longer than this length, to avoid hangs. See <http://webkit.org/b/56109>.
+    MAXIMUM_INTRALINE_DIFF_LINE_LENGTH = 10000
+
     SMALLEST_EQUAL_OPERATION = 3
 
     OPENSOURCE_TRAC_URL = "http://trac.webkit.org/"
@@ -726,7 +729,10 @@ END
             for change in changes
                 next unless change.first.length == change.last.length
                 for i in (0...change.first.length)
-                    raw_operations = HTMLDiff::DiffBuilder.new(change.first[i].text, change.last[i].text).operations
+                    from_text = change.first[i].text
+                    to_text = change.last[i].text
+                    next if from_text.length > MAXIMUM_INTRALINE_DIFF_LINE_LENGTH or to_text.length > MAXIMUM_INTRALINE_DIFF_LINE_LENGTH
+                    raw_operations = HTMLDiff::DiffBuilder.new(from_text, to_text).operations
                     operations = []
                     back = 0
                     raw_operations.each_with_index do |operation, j|

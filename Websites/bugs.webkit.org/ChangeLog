@@ -1,3 +1,20 @@
+2011-03-10  Adam Roben  <aroben@apple.com>
+
+        Don't search for intra-line diffs in really long lines
+
+        Doing so can lead to hangs (or at least really slow execution).
+
+        Fixes <http://webkit.org/b/56109> run-webkit-tests sometimes times out on Windows XP Debug
+        (Tests) after fast/text/large-text-composed-char-dos.html fails (due to PrettyPatch
+        hanging?)
+
+        Reviewed by David Kilzer.
+
+        * PrettyPatch/PrettyPatch.rb:
+        (PrettyPatch.MAXIMUM_INTRALINE_DIFF_LINE_LENGTH): Added this new constant.
+        (PrettyPatch.DiffSection.initialize): Don't bother looking for intra-line diffs in lines
+        longer than the maximum length.
+
 2011-02-25  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.
