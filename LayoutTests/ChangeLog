@@ -1,3 +1,22 @@
+2011-03-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        Add Qt specific expected files for tests introduced in r80622 and r80682.
+
+        * platform/qt/fast/dom/scroll-reveal-left-overflow-expected.checksum: Added.
+        * platform/qt/fast/dom/scroll-reveal-left-overflow-expected.png: Added.
+        * platform/qt/fast/dom/scroll-reveal-left-overflow-expected.txt: Added.
+        * platform/qt/fast/dom/scroll-reveal-top-overflow-expected.checksum: Added.
+        * platform/qt/fast/dom/scroll-reveal-top-overflow-expected.png: Added.
+        * platform/qt/fast/dom/scroll-reveal-top-overflow-expected.txt: Added.
+        * platform/qt/fast/dynamic/dirty-float-in-clean-line-expected.checksum: Added.
+        * platform/qt/fast/dynamic/dirty-float-in-clean-line-expected.png: Added.
+        * platform/qt/fast/dynamic/dirty-float-in-clean-line-expected.txt: Added.
+        * platform/qt/fast/dynamic/float-at-line-break-expected.checksum: Added.
+        * platform/qt/fast/dynamic/float-at-line-break-expected.png: Added.
+        * platform/qt/fast/dynamic/float-at-line-break-expected.txt: Added.
+
 2011-03-10  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip fast/js/large-expressions.html on GTK.
