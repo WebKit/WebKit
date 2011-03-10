@@ -108,6 +108,11 @@ void ewk_view_download_request(Evas_Object *o, Ewk_Download *download);
 
 int ewk_view_dpi_get();
 
+#if ENABLE(TOUCH_EVENTS)
+void ewk_view_need_touch_events_set(Evas_Object*, bool needed);
+Eina_Bool ewk_view_need_touch_events_get(Evas_Object*);
+#endif
+
 Ewk_History *ewk_history_new(WebCore::BackForwardListImpl *history);
 void ewk_history_free(Ewk_History *history);
 

@@ -121,7 +121,7 @@ public:
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    virtual void needTouchEvents(bool) { }
+    virtual void needTouchEvents(bool);
 #endif
 
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);

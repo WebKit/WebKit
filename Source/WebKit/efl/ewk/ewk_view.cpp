@@ -95,6 +95,7 @@ struct _Ewk_View_Private_Data {
     unsigned int imh; /**< input method hints */
     struct {
         Eina_Bool view_cleared:1;
+        Eina_Bool need_touch_events:1;
     } flags;
     struct {
         const char* user_agent;
@@ -4516,3 +4517,20 @@ int ewk_view_dpi_get()
      return 160;
 #endif
 }
+
+#if ENABLE(TOUCH_EVENTS)
+void ewk_view_need_touch_events_set(Evas_Object* o, bool needed)
+{
+    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
+    priv->flags.need_touch_events = needed;
+}
+
+Eina_Bool ewk_view_need_touch_events_get(Evas_Object* o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    return priv->flags.need_touch_events;
+}
+#endif

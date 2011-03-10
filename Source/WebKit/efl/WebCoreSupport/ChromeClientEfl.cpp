@@ -396,6 +396,13 @@ void ChromeClientEfl::reachedApplicationCacheOriginQuota(SecurityOrigin*)
 }
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
+void ChromeClientEfl::needTouchEvents(bool needed)
+{
+    ewk_view_need_touch_events_set(m_view, needed);
+}
+#endif
+
 #if ENABLE(DATABASE)
 void ChromeClientEfl::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {

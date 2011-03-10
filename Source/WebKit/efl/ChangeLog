@@ -1,3 +1,22 @@
+2011-03-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Limit touch events when only page required touch events.
+        https://bugs.webkit.org/show_bug.cgi?id=54857
+
+        Block touch events when ChromeClient::needTouchEvents got false.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::needTouchEvents):
+        * WebCoreSupport/ChromeClientEfl.h:
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_feed_touch_event):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_need_touch_events_set):
+        (ewk_view_need_touch_events_get):
+
 2011-03-08  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Reviewed by Kent Tamura.
