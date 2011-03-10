@@ -1,5 +1,11 @@
 2011-03-10  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip fast/js/large-expressions.html on GTK.
+
+        * platform/gtk/Skipped:
+
+2011-03-10  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skip jquery/effects.html on GTK.
 
         * platform/gtk/Skipped:
