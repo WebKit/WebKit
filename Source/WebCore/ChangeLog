@@ -1,5 +1,11 @@
 2011-03-09  Peter Kasting  <pkasting@google.com>
 
+        Unreviewed, attempted build fix.
+
+        * WebCore.pri: Try to update include path for Qt Windows build.
+
+2011-03-09  Peter Kasting  <pkasting@google.com>
+
         Unreviewed, build fix.
 
         * platform/win/SystemInfo.cpp:

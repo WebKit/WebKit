@@ -311,6 +311,7 @@ contains (CONFIG, text_breaking_with_icu) {
 }
 
 win32-* {
+    INCLUDEPATH += $$SOURCE_DIR/WebCore/platform/win
     LIBS += -lgdi32
     LIBS += -lole32
     LIBS += -luser32
