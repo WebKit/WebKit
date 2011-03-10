@@ -1,3 +1,13 @@
+2011-03-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        - Fix plugins in release and production builds.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Make sure to base the PluginProcess target on the correct xcconfig file
+        in all configurations.
+
 2011-03-09  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

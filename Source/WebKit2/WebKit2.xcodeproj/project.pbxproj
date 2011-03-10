@@ -738,10 +738,7 @@
 		C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = C574A57F12E66681002DFE98 /* PasteboardTypes.h */; };
 		C574A58212E66681002DFE98 /* PasteboardTypes.mm in Sources */ = {isa = PBXBuildFile; fileRef = C574A58012E66681002DFE98 /* PasteboardTypes.mm */; };
 		CD6F75F4131B66D000D6B21E /* WebFullScreenManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA3E131A2E8A00EEDED2 /* WebFullScreenManagerProxy.cpp */; };
-		CD73BA42131A2E8B00EEDED2 /* WebFullScreenManagerProxy.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD73BA3F131A2E8A00EEDED2 /* WebFullScreenManagerProxy.h */; };
 		CD73BA47131ACC9A00EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA45131ACC8800EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp */; };
-		CD73BA4C131ACD8F00EEDED2 /* WebFullScreenManagerMessages.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD73BA49131ACD8E00EEDED2 /* WebFullScreenManagerMessages.h */; };
-		CD73BA4D131ACD8F00EEDED2 /* WebFullScreenManagerProxyMessages.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CD73BA4A131ACD8F00EEDED2 /* WebFullScreenManagerProxyMessages.h */; };
 		CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */; };
 		CD73BA53131B645B00EEDED2 /* WebFullScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA37131A29FE00EEDED2 /* WebFullScreenManager.cpp */; };
 		D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */; };
@@ -774,7 +771,6 @@
 		F634445C12A885E9000612D8 /* WKSecurityOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F634445A12A885E9000612D8 /* WKSecurityOrigin.cpp */; };
 		F634445D12A885E9000612D8 /* WKSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = F634445B12A885E9000612D8 /* WKSecurityOrigin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F67DD7BA125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F67DD7B9125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F6A0C14013281E6E0070430F /* ResourceCachesToClear.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6A0C13F13281E6E0070430F /* ResourceCachesToClear.h */; };
 		F6A25FDC12ADC6CC00DC40CC /* WebDatabaseManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6A25FDA12ADC6CC00DC40CC /* WebDatabaseManager.cpp */; };
 		F6A25FDD12ADC6CC00DC40CC /* WebDatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A25FDB12ADC6CC00DC40CC /* WebDatabaseManager.h */; };
 /* End PBXBuildFile section */
@@ -833,10 +829,6 @@
 			files = (
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
 				BCDE0ABF13272708001259FB /* PluginProcess.app in CopyFiles */,
-				CD73BA42131A2E8B00EEDED2 /* WebFullScreenManagerProxy.h in CopyFiles */,
-				CD73BA4C131ACD8F00EEDED2 /* WebFullScreenManagerMessages.h in CopyFiles */,
-				CD73BA4D131ACD8F00EEDED2 /* WebFullScreenManagerProxyMessages.h in CopyFiles */,
-				F6A0C14013281E6E0070430F /* ResourceCachesToClear.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3528,9 +3520,9 @@
 			productReference = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		BCDE093313272496001259FB /* Plugin Process */ = {
+		BCDE093313272496001259FB /* PluginProcess */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BCDE093E13272496001259FB /* Build configuration list for PBXNativeTarget "Plugin Process" */;
+			buildConfigurationList = BCDE093E13272496001259FB /* Build configuration list for PBXNativeTarget "PluginProcess" */;
 			buildPhases = (
 				BCDE093813272496001259FB /* Resources */,
 				BCDE093A13272496001259FB /* Sources */,
@@ -3542,7 +3534,7 @@
 				BCDE093413272496001259FB /* PBXTargetDependency */,
 				BCDE093613272496001259FB /* PBXTargetDependency */,
 			);
-			name = "Plugin Process";
+			name = PluginProcess;
 			productName = WebProcess;
 			productReference = BCDE094213272496001259FB /* PluginProcess.app */;
 			productType = "com.apple.product-type.application";
@@ -3570,7 +3562,7 @@
 				1A50DB38110A3C13000D3FE5 /* All */,
 				8DC2EF4F0486A6940098B216 /* WebKit2 */,
 				1A50DB1D110A3BDC000D3FE5 /* WebProcess */,
-				BCDE093313272496001259FB /* Plugin Process */,
+				BCDE093313272496001259FB /* PluginProcess */,
 				C0CE72851247E66800BC0EC4 /* Derived Sources */,
 				1AC25FAF12A48EA700BD2671 /* PluginProcessShim */,
 			);
@@ -4108,7 +4100,7 @@
 		};
 		BCDE0AC113272712001259FB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BCDE093313272496001259FB /* Plugin Process */;
+			target = BCDE093313272496001259FB /* PluginProcess */;
 			targetProxy = BCDE0AC013272712001259FB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -4255,14 +4247,14 @@
 		};
 		BCDE094013272496001259FB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */;
+			baseConfigurationReference = BC122FA3132707F300F7EAC1 /* PluginProcess.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		BCDE094113272496001259FB /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */;
+			baseConfigurationReference = BC122FA3132707F300F7EAC1 /* PluginProcess.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;
@@ -4348,7 +4340,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
-		BCDE093E13272496001259FB /* Build configuration list for PBXNativeTarget "Plugin Process" */ = {
+		BCDE093E13272496001259FB /* Build configuration list for PBXNativeTarget "PluginProcess" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BCDE093F13272496001259FB /* Debug */,
