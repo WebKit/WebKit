@@ -1,5 +1,13 @@
 2011-03-10  Adam Roben  <aroben@apple.com>
 
+        Skip another spinbutton test on Windows
+
+        The missing functionality is tracked by <http://webkit.org/b/38381>.
+
+        * platform/win/Skipped: Added fast/forms/input-appearance-spinbutton-visibility.html
+
+2011-03-10  Adam Roben  <aroben@apple.com>
+
         Add Windows expected failure results for fast/text/hyphenate-limit-before-after.html
 
         The failure is tracked by <http://webkit.org/b/56102>.

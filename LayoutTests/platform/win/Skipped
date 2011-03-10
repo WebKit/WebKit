@@ -1036,6 +1036,7 @@ printing/page-format-data.html
 # https://bugs.webkit.org/show_bug.cgi?id=38381
 fast/forms/input-appearance-spinbutton-disabled-readonly.html
 fast/forms/input-appearance-spinbutton-layer.html
+fast/forms/input-appearance-spinbutton-visibility.html
 fast/forms/input-number-events.html
 fast/forms/input-spinbutton-capturing.html
 
