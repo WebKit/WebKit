@@ -1,3 +1,23 @@
+2011-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        selectionStart reports wrong caret position when the last characters are newlines
+        https://bugs.webkit.org/show_bug.cgi?id=56061
+
+        The bug was caused by SelectionController::setSelection's not calling
+        notifyRendererOfSelectionChange when old selection was equal to new selection.
+
+        Because InsertLineBreakCommand inserts a text node with a single LF before the caret,
+        this condition holds after the command is executed. However, the values of
+        selectionStart and selectionEnd still need to be updated in this case because
+        the offsets counted from the beginning of textarea have been increased by 1.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection): Call notifyRendererOfSelectionChange
+        when m_selection = s.
+        * manual-tests/selection-start-after-inserting-line-break-in-textarea.html: Added.
+
 2011-03-09  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adam Barth.

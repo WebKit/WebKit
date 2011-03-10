@@ -165,10 +165,13 @@ void SelectionController::setSelection(const VisibleSelection& s, SetSelectionOp
 
     if (shouldClearTypingStyle)
         clearTypingStyle();
-        
-    if (m_selection == s)
+
+    if (m_selection == s) {
+        // Even if selection was not changed, selection offsets may have been changed.
+        notifyRendererOfSelectionChange(userTriggered);
         return;
-    
+    }
+
     VisibleSelection oldSelection = m_selection;
 
     m_selection = s;
