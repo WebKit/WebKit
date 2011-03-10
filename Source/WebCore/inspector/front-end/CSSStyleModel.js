@@ -130,7 +130,7 @@ WebInspector.CSSStyleModel.prototype = {
                 DOMAgent.querySelectorAll(nodeId, newSelector, true, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
         }
 
-        CSSAgent.setRuleSelector(ruleId, newSelector, callback.bind(this, nodeId, successCallback, failureCallback));
+        CSSAgent.setRuleSelector(ruleId, newSelector, callback.bind(this, nodeId, successCallback, failureCallback, newSelector));
     },
 
     addRule: function(nodeId, selector, successCallback, failureCallback)
