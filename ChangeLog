@@ -1,3 +1,9 @@
+2011-03-10  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, fixed Efl compilation after r80744.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2011-03-10  Martin Robinson  <mrobinson@igalia.com>
 
         Fixed the help message for WebGL support on GTK+ to reflect the fact that
