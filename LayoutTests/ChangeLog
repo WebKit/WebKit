@@ -1,3 +1,13 @@
+2011-03-10  Adam Roben  <aroben@apple.com>
+
+        Skip a test that sometimes times out in Windows Debug builds
+
+        <http://webkit.org/b/56080> tracks the failure.
+
+        * platform/win-xp/Skipped: Added jquery/effects.html. (Ideally we'd only skip this in Debug
+        builds regardless of whether it's XP or Vista or 7, but doing that requires fixing
+        <http://webkit.org/b/55254>.)
+
 2011-03-04  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Andreas Kling.
