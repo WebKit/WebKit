@@ -1964,6 +1964,9 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
     _buildPropertyCompletions: function(wordRange, bestMatchOnly, completionsReadyCallback)
     {
         var prefix = wordRange.toString().toLowerCase();
+        if (!prefix && bestMatchOnly)
+            return;
+
         var results;
         if (bestMatchOnly) {
             results = [];

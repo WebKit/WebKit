@@ -1,3 +1,12 @@
+2011-03-09  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [STYLES] Editing a property value adds a word for any property value that uses a paren
+        https://bugs.webkit.org/show_bug.cgi?id=56002
+
+        * inspector/front-end/StylesSidebarPane.js: Introduce an additional check.
+
 2011-03-09  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
