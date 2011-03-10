@@ -1,3 +1,19 @@
+2011-03-10  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47143
+        
+        Static distance computation is wrong when an ancestor is also positioned.  We need to go up the container()
+        chain (after initially starting with the parent()) when doing this computation, so that we properly skip
+        intermediate boxes between two positioned blocks.
+
+        Added fast/block/positioning/static-distance-with-positioned-ancestor.html.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::computeInlineStaticDistance):
+        (WebCore::computeBlockStaticDistance):
+
 2011-03-10  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.

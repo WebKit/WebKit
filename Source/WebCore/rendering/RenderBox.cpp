@@ -2101,7 +2101,7 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
     // FIXME: The static distance computation has not been patched for mixed writing modes yet.
     if (containerDirection == LTR) {
         int staticPosition = child->layer()->staticInlinePosition() - containerBlock->borderLogicalLeft();
-        for (RenderObject* curr = child->parent(); curr && curr != containerBlock; curr = curr->parent()) {
+        for (RenderObject* curr = child->parent(); curr && curr != containerBlock; curr = curr->container()) {
             if (curr->isBox())
                 staticPosition += toRenderBox(curr)->logicalLeft();
         }
@@ -2110,7 +2110,7 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
         RenderBox* enclosingBox = child->parent()->enclosingBox();
         int staticPosition = child->layer()->staticInlinePosition() + containerLogicalWidth + containerBlock->borderLogicalRight();
         staticPosition -= enclosingBox->logicalWidth();
-        for (RenderObject* curr = enclosingBox; curr && curr != containerBlock; curr = curr->parent()) {
+        for (RenderObject* curr = enclosingBox; curr && curr != containerBlock; curr = curr->container()) {
             if (curr->isBox())
                 staticPosition -= toRenderBox(curr)->logicalLeft();
         }
@@ -2452,7 +2452,7 @@ static void computeBlockStaticDistance(Length& logicalTop, Length& logicalBottom
     
     // FIXME: The static distance computation has not been patched for mixed writing modes.
     int staticLogicalTop = child->layer()->staticBlockPosition() - containerBlock->borderBefore();
-    for (RenderObject* curr = child->parent(); curr && curr != containerBlock; curr = curr->parent()) {
+    for (RenderObject* curr = child->parent(); curr && curr != containerBlock; curr = curr->container()) {
         if (curr->isBox() && !curr->isTableRow())
             staticLogicalTop += toRenderBox(curr)->logicalTop();
     }
