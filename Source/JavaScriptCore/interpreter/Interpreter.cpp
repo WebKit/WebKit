@@ -1551,7 +1551,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int dst = vPC[1].u.operand;
         RegExp* regExp = codeBlock->regexp(vPC[2].u.operand);
         if (!regExp->isValid()) {
-            exceptionValue = createSyntaxError(exec, "Invalid flags supplied to RegExp constructor.");
+            exceptionValue = createSyntaxError(callFrame, "Invalid flags supplied to RegExp constructor.");
             goto vm_throw;
         }
         callFrame->uncheckedR(dst) = JSValue(new (globalData) RegExpObject(callFrame->lexicalGlobalObject(), callFrame->scopeChain()->globalObject->regExpStructure(), regExp));
