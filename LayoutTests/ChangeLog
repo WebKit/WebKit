@@ -1,5 +1,25 @@
 2011-03-09  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, third and final set of baselines for chromium linux lucid x86_64.
+        These are small rounding differences.
+        https://bugs.webkit.org/show_bug.cgi?id=55527
+
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/paths-data-03-f-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/paths-data-03-f-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt: Added.
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/paths-data-12-t-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/paths-data-12-t-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/W3C-SVG-1.1/paths-data-12-t-expected.txt: Added.
+        * platform/chromium-linux-x86_64/svg/hixie/perf/001-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/hixie/perf/001-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/hixie/perf/001-expected.txt: Added.
+        * platform/chromium-linux-x86_64/svg/hixie/perf/002-expected.checksum: Added.
+        * platform/chromium-linux-x86_64/svg/hixie/perf/002-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/hixie/perf/002-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-03-09  Tony Chang  <tony@chromium.org>
+
         Unreviewed, land a second set of baselines for chromium linux lucid x86_64.
         These are differences due to a newer freetype and a few rounding
         differences in gradients.

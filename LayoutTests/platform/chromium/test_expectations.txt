@@ -3462,3 +3462,4 @@ BUGWK56060 LINUX X86_64 : http/tests/loading/preload-slow-loading.php = TEXT
 BUGWK56060 LINUX X86_64 : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
 BUGWK56060 LINUX X86_64 : svg/text/font-size-below-point-five.svg = TEXT
 BUGWK56060 LINUX X86_64 : svg/custom/pattern-excessive-malloc.svg = IMAGE
+BUGWK56060 LINUX X86_64 : fast/images/favicon-as-image.html = IMAGE+TEXT
