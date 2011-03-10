@@ -1,3 +1,17 @@
+2011-03-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Add some new GTK+ test results.
+
+        * platform/gtk/fast/blockflow/text-orientation-basic-expected.checksum: Added.
+        * platform/gtk/fast/blockflow/text-orientation-basic-expected.png: Added.
+        * platform/gtk/fast/blockflow/text-orientation-basic-expected.txt: Added.
+        * platform/gtk/fast/dom/scroll-reveal-left-overflow-expected.checksum: Added.
+        * platform/gtk/fast/dom/scroll-reveal-left-overflow-expected.png: Added.
+        * platform/gtk/fast/dom/scroll-reveal-left-overflow-expected.txt: Added.
+        * platform/gtk/fast/dom/scroll-reveal-top-overflow-expected.checksum: Added.
+        * platform/gtk/fast/dom/scroll-reveal-top-overflow-expected.png: Added.
+        * platform/gtk/fast/dom/scroll-reveal-top-overflow-expected.txt: Added.
+
 2011-03-09  Tony Chang  <tony@chromium.org>
 
         Unreviewed, third and final set of baselines for chromium linux lucid x86_64.
