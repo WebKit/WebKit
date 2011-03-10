@@ -118,7 +118,7 @@ public:
 
     void setCacheModel(CacheModel);
     CacheModel cacheModel() const { return m_cacheModel; }
-    void clearResourceCaches();
+    void clearResourceCaches(ResourceCachesToClear);
     void clearApplicationCache();
 
     void setDefaultRequestTimeoutInterval(double);

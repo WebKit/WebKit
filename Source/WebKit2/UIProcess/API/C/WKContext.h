@@ -39,6 +39,12 @@ enum {
 };
 typedef uint32_t WKCacheModel;
 
+enum {
+    kWKAllResourceCaches = 0,
+    kWKInMemoryResourceCachesOnly = 1
+};
+typedef uint32_t WKResourceCachesToClear;
+
 // Injected Bundle Client
 typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
 typedef void (*WKContextDidReceiveSynchronousMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void *clientInfo);
@@ -117,7 +123,7 @@ WK_EXPORT void WKContextAddVisitedLink(WKContextRef context, WKStringRef visited
 WK_EXPORT void WKContextSetCacheModel(WKContextRef context, WKCacheModel cacheModel);
 WK_EXPORT WKCacheModel WKContextGetCacheModel(WKContextRef context);
 
-WK_EXPORT void WKContextClearResourceCaches(WKContextRef context);
+WK_EXPORT void WKContextClearResourceCaches(WKContextRef context, WKResourceCachesToClear cachesToClear);
 WK_EXPORT void WKContextClearApplicationCache(WKContextRef context);
 
 WK_EXPORT void WKContextStartMemorySampler(WKContextRef context, WKDoubleRef interval);

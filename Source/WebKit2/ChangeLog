@@ -1,3 +1,52 @@
+2011-03-10  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Oliver Hunt and Brian Weinstein.
+
+        WebKit2: Need a way to clear only the in-memory resource caches
+        https://bugs.webkit.org/show_bug.cgi?id=56022
+
+        Add a parameter to WKContextClearResourceCaches to specify whether to clear all the caches
+        or just the memory caches.
+
+        * Shared/ResourceCachesToClear.h: Added.
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toResourceCachesToClear):
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextClearResourceCaches):
+        Add the new parameter.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::clearResourceCaches):
+        Ditto.
+        * UIProcess/WebContext.h:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::clearResourceCaches):
+        Pass the new parameter through to the platform-specific functions.
+        * WebProcess/WebProcess.h:
+        Add the new parameter and give it a default of AllResourceCaches.
+        * WebProcess/WebProcess.messages.in:
+        Ditto.
+        * WebProcess/gtk/WebProcessGtk.cpp:
+        (WebKit::WebProcess::platformClearResourceCaches):
+        Ditto.
+        * WebProcess/qt/WebProcessQt.cpp:
+        (WebKit::WebProcess::platformClearResourceCaches):
+        Ditto.
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::platformClearResourceCaches):
+        When told to clear only the in-memory caches, return early so as not to clear the CFNetwork
+        disk cache.
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformClearResourceCaches):
+        Ditto.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add ResourceCachesToClear.h
+        * win/WebKit2.vcproj:
+        Ditto.
+
 2011-03-10  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adam Roben.

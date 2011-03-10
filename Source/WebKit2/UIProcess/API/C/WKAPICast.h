@@ -29,6 +29,7 @@
 
 #include "CacheModel.h"
 #include "FontSmoothingLevel.h"
+#include "ResourceCachesToClear.h"
 #include "WKContext.h"
 #include "WKCredentialTypes.h"
 #include "WKPage.h"
@@ -233,6 +234,19 @@ inline WebCore::CredentialPersistence toCredentialPersistence(WKCredentialPersis
     default:
         return WebCore::CredentialPersistenceNone;
     }
+}
+
+inline ResourceCachesToClear toResourceCachesToClear(WKResourceCachesToClear wkResourceCachesToClear)
+{
+    switch (wkResourceCachesToClear) {
+    case kWKAllResourceCaches:
+        return AllResourceCaches;
+    case kWKInMemoryResourceCachesOnly:
+        return InMemoryResourceCachesOnly;
+    }
+
+    ASSERT_NOT_REACHED();
+    return AllResourceCaches;
 }
 
 } // namespace WebKit

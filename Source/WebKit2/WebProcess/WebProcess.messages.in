@@ -51,7 +51,7 @@ messages -> WebProcess {
     ClearPluginSiteData(Vector<WTF::String> pluginPaths, Vector<WTF::String> sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 #endif
 
-    ClearResourceCaches();
+    ClearResourceCaches(uint32_t cachesToClear);
     ClearApplicationCache();
     
     void StartMemorySampler(WebKit::SandboxExtension::Handle sampleLogFileHandle, WTF::String sampleLogFilePath, double interval);

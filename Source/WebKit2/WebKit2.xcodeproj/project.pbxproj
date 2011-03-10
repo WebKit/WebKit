@@ -774,6 +774,7 @@
 		F634445C12A885E9000612D8 /* WKSecurityOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F634445A12A885E9000612D8 /* WKSecurityOrigin.cpp */; };
 		F634445D12A885E9000612D8 /* WKSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = F634445B12A885E9000612D8 /* WKSecurityOrigin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F67DD7BA125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F67DD7B9125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F6A0C14013281E6E0070430F /* ResourceCachesToClear.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F6A0C13F13281E6E0070430F /* ResourceCachesToClear.h */; };
 		F6A25FDC12ADC6CC00DC40CC /* WebDatabaseManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6A25FDA12ADC6CC00DC40CC /* WebDatabaseManager.cpp */; };
 		F6A25FDD12ADC6CC00DC40CC /* WebDatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A25FDB12ADC6CC00DC40CC /* WebDatabaseManager.h */; };
 /* End PBXBuildFile section */
@@ -818,7 +819,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = BCDE093313272496001259FB /* Plugin Process */;
+			remoteGlobalIDString = BCDE093313272496001259FB;
 			remoteInfo = "Plugin Process";
 		};
 /* End PBXContainerItemProxy section */
@@ -835,6 +836,7 @@
 				CD73BA42131A2E8B00EEDED2 /* WebFullScreenManagerProxy.h in CopyFiles */,
 				CD73BA4C131ACD8F00EEDED2 /* WebFullScreenManagerMessages.h in CopyFiles */,
 				CD73BA4D131ACD8F00EEDED2 /* WebFullScreenManagerProxyMessages.h in CopyFiles */,
+				F6A0C14013281E6E0070430F /* ResourceCachesToClear.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1651,6 +1653,7 @@
 		F634445A12A885E9000612D8 /* WKSecurityOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKSecurityOrigin.cpp; sourceTree = "<group>"; };
 		F634445B12A885E9000612D8 /* WKSecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSecurityOrigin.h; sourceTree = "<group>"; };
 		F67DD7B9125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSerializedScriptValuePrivate.h; sourceTree = "<group>"; };
+		F6A0C13F13281E6E0070430F /* ResourceCachesToClear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceCachesToClear.h; sourceTree = "<group>"; };
 		F6A25FDA12ADC6CC00DC40CC /* WebDatabaseManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDatabaseManager.cpp; sourceTree = "<group>"; };
 		F6A25FDB12ADC6CC00DC40CC /* WebDatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDatabaseManager.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1980,6 +1983,7 @@
 				E1CC1B8E12D7EADF00625838 /* PrintInfo.h */,
 				BCE81D8A1319F7EF00241910 /* FontInfo.cpp */,
 				BCE81D8B1319F7EF00241910 /* FontInfo.h */,
+				F6A0C13F13281E6E0070430F /* ResourceCachesToClear.h */,
 				BC2D021612AC41CB00E732A3 /* SameDocumentNavigationType.h */,
 				1AAB4A8C1296F0A20023952F /* SandboxExtension.h */,
 				33152973130D0CB200ED2483 /* SecurityOriginData.cpp */,

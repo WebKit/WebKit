@@ -668,9 +668,11 @@ WebPageGroupProxy* WebProcess::webPageGroup(const WebPageGroupData& pageGroupDat
     return result.first->second.get();
 }
 
-void WebProcess::clearResourceCaches()
+void WebProcess::clearResourceCaches(uint32_t cachesToClear)
 {
-    platformClearResourceCaches();
+    ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);
+
+    platformClearResourceCaches(resourceCachesToClear);
 
     // Toggling the cache model like this forces the cache to evict all its in-memory resources.
     // FIXME: We need a better way to do this.

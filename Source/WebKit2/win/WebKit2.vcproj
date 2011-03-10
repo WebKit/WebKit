@@ -507,6 +507,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\ResourceCachesToClear.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\SameDocumentNavigationType.h"
 				>
 			</File>

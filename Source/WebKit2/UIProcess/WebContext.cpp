@@ -653,9 +653,9 @@ CoreIPC::SyncReplyMode WebContext::didReceiveSyncMessage(CoreIPC::Connection* co
     return CoreIPC::AutomaticReply;
 }
 
-void WebContext::clearResourceCaches()
+void WebContext::clearResourceCaches(ResourceCachesToClear cachesToClear)
 {
-    if (!hasValidProcess()) {
+    if (!hasValidProcess() && cachesToClear == AllResourceCaches) {
         // FIXME <rdar://problem/8727879>: Setting this flag ensures that the next time a WebProcess is created, this request to
         // clear the resource cache will be respected. But if the user quits the application before another WebProcess is created,
         // their request will be ignored.
@@ -663,7 +663,7 @@ void WebContext::clearResourceCaches()
         return;
     }
 
-    m_process->send(Messages::WebProcess::ClearResourceCaches(), 0);
+    m_process->send(Messages::WebProcess::ClearResourceCaches(cachesToClear), 0);
 }
 
 void WebContext::clearApplicationCache()

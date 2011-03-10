@@ -29,6 +29,7 @@
 #include "CacheModel.h"
 #include "ChildProcess.h"
 #include "DrawingArea.h"
+#include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
 #include "SharedMemory.h"
 #include "TextCheckerState.h"
@@ -116,7 +117,7 @@ public:
     // Geolocation
     WebGeolocationManager& geolocationManager() { return m_geolocationManager; }
 
-    void clearResourceCaches();
+    void clearResourceCaches(uint32_t cachesToClear = AllResourceCaches);
 
 private:
     WebProcess();
@@ -144,7 +145,7 @@ private:
     static void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t diskFreeSize,
         unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, double& deadDecodedDataDeletionInterval,
         unsigned& pageCacheCapacity, unsigned long& urlCacheMemoryCapacity, unsigned long& urlCacheDiskCapacity);
-    void platformClearResourceCaches();
+    void platformClearResourceCaches(ResourceCachesToClear);
     void clearApplicationCache();
 
 #if !ENABLE(PLUGIN_PROCESS)

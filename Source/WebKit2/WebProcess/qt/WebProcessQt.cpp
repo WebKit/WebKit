@@ -37,7 +37,7 @@ void WebProcess::platformSetCacheModel(CacheModel)
     // FIXME: Implement.
 }
 
-void WebProcess::platformClearResourceCaches()
+void WebProcess::platformClearResourceCaches(ResourceCachesToClear)
 {
 }
 

@@ -98,9 +98,11 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 #endif
 }
 
-void WebProcess::platformClearResourceCaches()
+void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear)
 {
 #if USE(CFNETWORK)
+    if (cachesToClear == InMemoryResourceCachesOnly)
+        return;
     CFURLCacheRemoveAllCachedResponses(RetainPtr<CFURLCacheRef>(AdoptCF, CFURLCacheCopySharedURLCache()).get());
 #endif
 }
