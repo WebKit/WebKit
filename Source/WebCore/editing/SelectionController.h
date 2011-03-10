@@ -127,7 +127,7 @@ public:
     bool isRange() const { return m_selection.isRange(); }
     bool isCaretOrRange() const { return m_selection.isCaretOrRange(); }
     bool isInPasswordField() const;
-    bool isAll(StayInEditableContent stayInEditableContent = MustStayInEditableContent) const { return m_selection.isAll(stayInEditableContent); }
+    bool isAll(EditingBoundaryCrossingRule rule = CannotCrossEditingBoundary) const { return m_selection.isAll(rule); }
     
     PassRefPtr<Range> toNormalizedRange() const { return m_selection.toNormalizedRange(); }
 

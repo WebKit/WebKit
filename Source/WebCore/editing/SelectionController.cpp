@@ -429,9 +429,9 @@ VisiblePosition SelectionController::modifyExtendingRight(TextGranularity granul
     switch (granularity) {
     case CharacterGranularity:
         if (directionOfEnclosingBlock() == LTR)
-            pos = pos.next(true);
+            pos = pos.next(CannotCrossEditingBoundary);
         else
-            pos = pos.previous(true);
+            pos = pos.previous(CannotCrossEditingBoundary);
         break;
     case WordGranularity:
         if (directionOfEnclosingBlock() == LTR)
@@ -462,7 +462,7 @@ VisiblePosition SelectionController::modifyExtendingForward(TextGranularity gran
     VisiblePosition pos(m_selection.extent(), m_selection.affinity());
     switch (granularity) {
     case CharacterGranularity:
-        pos = pos.next(true);
+        pos = pos.next(CannotCrossEditingBoundary);
         break;
     case WordGranularity:
         pos = nextWordPosition(pos);
@@ -536,7 +536,7 @@ VisiblePosition SelectionController::modifyMovingForward(TextGranularity granula
         if (isRange())
             pos = VisiblePosition(m_selection.end(), m_selection.affinity());
         else
-            pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).next(true);
+            pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).next(CannotCrossEditingBoundary);
         break;
     case WordGranularity:
         pos = nextWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
@@ -587,9 +587,9 @@ VisiblePosition SelectionController::modifyExtendingLeft(TextGranularity granula
     switch (granularity) {
     case CharacterGranularity:
         if (directionOfEnclosingBlock() == LTR)
-            pos = pos.previous(true);
+            pos = pos.previous(CannotCrossEditingBoundary);
         else
-            pos = pos.next(true);
+            pos = pos.next(CannotCrossEditingBoundary);
         break;
     case WordGranularity:
         if (directionOfEnclosingBlock() == LTR)
@@ -624,7 +624,7 @@ VisiblePosition SelectionController::modifyExtendingBackward(TextGranularity gra
     // over everything.
     switch (granularity) {
     case CharacterGranularity:
-        pos = pos.previous(true);
+        pos = pos.previous(CannotCrossEditingBoundary);
         break;
     case WordGranularity:
         pos = previousWordPosition(pos);
@@ -696,7 +696,7 @@ VisiblePosition SelectionController::modifyMovingBackward(TextGranularity granul
         if (isRange())
             pos = VisiblePosition(m_selection.start(), m_selection.affinity());
         else
-            pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).previous(true);
+            pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).previous(CannotCrossEditingBoundary);
         break;
     case WordGranularity:
         pos = previousWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));

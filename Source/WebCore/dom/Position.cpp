@@ -982,7 +982,7 @@ Position Position::trailingWhitespacePosition(EAffinity, bool considerNonCollaps
     VisiblePosition v(*this);
     UChar c = v.characterAfter();
     // The space must not be in another paragraph and it must be editable.
-    if (!isEndOfParagraph(v) && v.next(true).isNotNull())
+    if (!isEndOfParagraph(v) && v.next(CannotCrossEditingBoundary).isNotNull())
         if (considerNonCollapsibleWhitespace ? (isSpaceOrNewline(c) || c == noBreakSpace) : isCollapsibleWhitespace(c))
             return *this;
     

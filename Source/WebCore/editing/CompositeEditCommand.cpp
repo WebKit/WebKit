@@ -1114,7 +1114,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     if (!isStartOfParagraph(caret) || !isEndOfParagraph(caret))
         return false;
     
-    VisiblePosition previous(caret.previous(true));
+    VisiblePosition previous(caret.previous(CannotCrossEditingBoundary));
     // Only move forward if there's nothing before the caret, or if there's unquoted content before it.
     if (enclosingNodeOfType(previous.deepEquivalent(), &isMailBlockquote))
         return false;

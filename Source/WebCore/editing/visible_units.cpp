@@ -869,11 +869,11 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossing
 VisiblePosition startOfNextParagraph(const VisiblePosition& visiblePosition)
 {
     VisiblePosition paragraphEnd(endOfParagraph(visiblePosition));
-    VisiblePosition afterParagraphEnd(paragraphEnd.next(true));
+    VisiblePosition afterParagraphEnd(paragraphEnd.next(CannotCrossEditingBoundary));
     // The position after the last position in the last cell of a table
     // is not the start of the next paragraph.
     if (isFirstPositionAfterTable(afterParagraphEnd))
-        return afterParagraphEnd.next(true);
+        return afterParagraphEnd.next(CannotCrossEditingBoundary);
     return afterParagraphEnd;
 }
 

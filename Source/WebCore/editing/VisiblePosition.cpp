@@ -59,18 +59,22 @@ void VisiblePosition::init(const Position& position, EAffinity affinity)
         m_affinity = DOWNSTREAM;
 }
 
-VisiblePosition VisiblePosition::next(bool stayInEditableContent) const
+VisiblePosition VisiblePosition::next(EditingBoundaryCrossingRule rule) const
 {
+    // FIXME: Support CanSkipEditingBoundary
+    ASSERT(rule == CanCrossEditingBoundary || rule == CannotCrossEditingBoundary);
     VisiblePosition next(nextVisuallyDistinctCandidate(m_deepPosition), m_affinity);
-    
-    if (!stayInEditableContent)
+
+    if (rule == CannotCrossEditingBoundary)
         return next;
-    
+
     return honorEditableBoundaryAtOrAfter(next);
 }
 
-VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
+VisiblePosition VisiblePosition::previous(EditingBoundaryCrossingRule rule) const
 {
+    // FIXME: Support CanSkipEditingBoundary
+    ASSERT(rule == CanCrossEditingBoundary || rule == CannotCrossEditingBoundary);
     // find first previous DOM position that is visible
     Position pos = previousVisuallyDistinctCandidate(m_deepPosition);
     
@@ -91,7 +95,7 @@ VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
     }
 #endif
 
-    if (!stayInEditableContent)
+    if (rule == CannotCrossEditingBoundary)
         return prev;
     
     return honorEditableBoundaryAtOrBefore(prev);

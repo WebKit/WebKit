@@ -72,7 +72,7 @@ void ApplyBlockElementCommand::doApply()
     // margin/padding, but not others.  We should make the gap painting more consistent and 
     // then use a left margin/padding rule here.
     if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd))
-        setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(true)));
+        setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(CannotCrossEditingBoundary)));
 
     VisibleSelection selection = selectionForParagraphIteration(endingSelection());
     VisiblePosition startOfSelection = selection.visibleStart();

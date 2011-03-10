@@ -5415,7 +5415,7 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     Frame* coreFrame = core([self _selectedOrMainFrame]);
     if (!coreFrame)
         return NO;
-    return coreFrame->selection()->isAll(MayLeaveEditableContent);
+    return coreFrame->selection()->isAll(CanCrossEditingBoundary);
 }
 
 @end

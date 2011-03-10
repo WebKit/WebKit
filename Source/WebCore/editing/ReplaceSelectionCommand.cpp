@@ -367,7 +367,7 @@ bool ReplaceSelectionCommand::shouldMergeStart(bool selectionStartWasStartOfPara
         return false;
     
     VisiblePosition startOfInsertedContent(positionAtStartOfInsertedContent());
-    VisiblePosition prev = startOfInsertedContent.previous(true);
+    VisiblePosition prev = startOfInsertedContent.previous(CannotCrossEditingBoundary);
     if (prev.isNull())
         return false;
     
@@ -389,7 +389,7 @@ bool ReplaceSelectionCommand::shouldMergeStart(bool selectionStartWasStartOfPara
 bool ReplaceSelectionCommand::shouldMergeEnd(bool selectionEndWasEndOfParagraph)
 {
     VisiblePosition endOfInsertedContent(positionAtEndOfInsertedContent());
-    VisiblePosition next = endOfInsertedContent.next(true);
+    VisiblePosition next = endOfInsertedContent.next(CannotCrossEditingBoundary);
     if (next.isNull())
         return false;
 
@@ -840,7 +840,7 @@ void ReplaceSelectionCommand::doApply()
     } else {
         ASSERT(selection.isCaret());
         if (fragment.hasInterchangeNewlineAtStart()) {
-            VisiblePosition next = visibleStart.next(true);
+            VisiblePosition next = visibleStart.next(CannotCrossEditingBoundary);
             if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart) && next.isNotNull())
                 setEndingSelection(next);
             else 
@@ -1036,7 +1036,7 @@ void ReplaceSelectionCommand::doApply()
     startOfInsertedContent = positionAtStartOfInsertedContent();
     
     if (interchangeNewlineAtEnd) {
-        VisiblePosition next = endOfInsertedContent.next(true);
+        VisiblePosition next = endOfInsertedContent.next(CannotCrossEditingBoundary);
 
         if (selectionEndWasEndOfParagraph || !isEndOfParagraph(endOfInsertedContent) || next.isNull()) {
             if (!isStartOfParagraph(endOfInsertedContent)) {

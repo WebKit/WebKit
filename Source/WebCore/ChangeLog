@@ -1,3 +1,55 @@
+2011-03-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        VisiblePosition's next and previous should take an enum instead of a boolean
+        https://bugs.webkit.org/show_bug.cgi?id=56135
+
+        Changed the argument type of VisiblePosition::next and VisiblePosition::previous
+        from bool to EditingBoundaryCrossingRule. Also got rid of StayInEditableContent enum
+        in VisibleSelection and replaced it by EditingBoundaryCrossingRule because the enum
+        was only used in VisiblePosition::isAll and subsequently in SelectionController::isAll
+        to call VisiblePosition::next and VisiblePosition::previous.
+
+        * WebCore.exp.in:
+        * dom/Position.cpp:
+        (WebCore::Position::trailingWhitespacePosition):
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+        (WebCore::InsertListCommand::listifyParagraph):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::shouldMergeStart):
+        (WebCore::ReplaceSelectionCommand::shouldMergeEnd):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyExtendingRight):
+        (WebCore::SelectionController::modifyExtendingForward):
+        (WebCore::SelectionController::modifyMovingForward):
+        (WebCore::SelectionController::modifyExtendingLeft):
+        (WebCore::SelectionController::modifyExtendingBackward):
+        (WebCore::SelectionController::modifyMovingBackward):
+        * editing/SelectionController.h:
+        (WebCore::SelectionController::isAll):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::next):
+        (WebCore::VisiblePosition::previous):
+        * editing/VisiblePosition.h:
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::isAll):
+        (WebCore::VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity):
+        * editing/VisibleSelection.h:
+        * editing/htmlediting.cpp:
+        (WebCore::selectionForParagraphIteration):
+        * editing/visible_units.cpp:
+        (WebCore::startOfNextParagraph):
+
 2011-03-10  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Gentilcore.

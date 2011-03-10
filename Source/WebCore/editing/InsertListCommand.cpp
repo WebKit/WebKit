@@ -122,7 +122,7 @@ void InsertListCommand::doApply()
     // margin/padding, but not others.  We should make the gap painting more consistent and 
     // then use a left margin/padding rule here.
     if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd))
-        setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(true)));
+        setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(CannotCrossEditingBoundary)));
 
     const QualifiedName& listTag = (m_type == OrderedList) ? olTag : ulTag;
     if (endingSelection().isRange()) {
@@ -339,8 +339,8 @@ PassRefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePositio
     appendNode(placeholder, listItemElement);
 
     // Place list item into adjoining lists.
-    Element* previousList = adjacentEnclosingList(start.deepEquivalent(), start.previous(true), listTag);
-    Element* nextList = adjacentEnclosingList(start.deepEquivalent(), end.next(true), listTag);
+    Element* previousList = adjacentEnclosingList(start.deepEquivalent(), start.previous(CannotCrossEditingBoundary), listTag);
+    Element* nextList = adjacentEnclosingList(start.deepEquivalent(), end.next(CannotCrossEditingBoundary), listTag);
     RefPtr<HTMLElement> listElement;
     if (previousList)
         appendNode(listItemElement, previousList);

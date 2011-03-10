@@ -1,3 +1,16 @@
+2011-03-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        VisiblePosition's next and previous should take an enum instead of a boolean
+        https://bugs.webkit.org/show_bug.cgi?id=56135
+
+        SelectionController::isAll now takes EditingBoundaryCrossingRule instead of
+        StayInEditableContent.
+
+        * WebView/WebView.mm:
+        (-[WebView _selectionIsAll]):
+
 2011-03-09  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.

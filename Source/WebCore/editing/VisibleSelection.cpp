@@ -217,9 +217,9 @@ static PassRefPtr<Range> makeSearchRange(const Position& pos)
     return searchRange.release();
 }
 
-bool VisibleSelection::isAll(StayInEditableContent stayInEditableContent) const
+bool VisibleSelection::isAll(EditingBoundaryCrossingRule rule) const
 {
-    return !shadowTreeRootNode() && visibleStart().previous(stayInEditableContent).isNull() && visibleEnd().next(stayInEditableContent).isNull();
+    return !shadowTreeRootNode() && visibleStart().previous(rule).isNull() && visibleEnd().next(rule).isNull();
 }
 
 void VisibleSelection::appendTrailingWhitespace()
@@ -305,7 +305,7 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
                     // The paragraph break after the last paragraph in the last cell of a block table ends
                     // at the start of the paragraph after the table.
                     if (isBlock(table))
-                        end = end.next(true);
+                        end = end.next(CannotCrossEditingBoundary);
                     else
                         end = wordEnd;
                 }
@@ -355,7 +355,7 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
                 // The paragraph break after the last paragraph in the last cell of a block table ends
                 // at the start of the paragraph after the table, not at the position just after the table.
                 if (isBlock(table))
-                    end = end.next(true);
+                    end = end.next(CannotCrossEditingBoundary);
                 // There is no parargraph break after the last paragraph in the last cell of an inline table.
                 else
                     end = visibleParagraphEnd;
