@@ -1,3 +1,14 @@
+2011-03-10  Adam Roben  <aroben@apple.com>
+
+        Add Windows expected failure results for fast/lists/003-vertical.html
+
+        The Windows results match the pre-r80648 Mac results. The failure is tracked by
+        <http://webkit.org/b/56101>.
+
+        * platform/win/fast/lists/003-vertical-expected.checksum: Added.
+        * platform/win/fast/lists/003-vertical-expected.png: Added.
+        * platform/win/fast/lists/003-vertical-expected.txt: Added.
+
 2011-03-10  Andrei Popescu  <andreip@google.com>
 
         Unreviewed, build fix.
