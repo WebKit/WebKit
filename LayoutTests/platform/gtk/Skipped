@@ -106,6 +106,9 @@ media/video-aspect-ratio.html
 # https://bugs.webkit.org/show_bug.cgi?id=56080
 jquery/effects.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=22770
+tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html
+
 ###############################################################################
 # TESTS TIMING OUT
 ###############################################################################
@@ -847,6 +850,7 @@ svg/W3C-SVG-1.1/extend-namespace-01-f.svg
 svg/W3C-SVG-1.1/filters-conv-01-f.svg
 svg/W3C-SVG-1.1/metadata-example-01-b.svg
 svg/W3C-SVG-1.1/animate-elem-41-t.svg
+svg/W3C-SVG-1.1/animate-elem-37-t.svg
 # These two started to fail in 64bit debug bot
 svg/W3C-SVG-1.1-SE/types-dom-02-f.svg
 svg/W3C-SVG-1.1-SE/types-dom-05-b.svg

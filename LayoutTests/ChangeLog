@@ -1,5 +1,11 @@
 2011-03-10  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip 2 more flacky tests on GTK 32-bits Release.
+
+        * platform/gtk/Skipped:
+
+2011-03-10  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skip 1 more svg test failing by one pixel in 32-bits
         Debug, see bug 39022.
 
