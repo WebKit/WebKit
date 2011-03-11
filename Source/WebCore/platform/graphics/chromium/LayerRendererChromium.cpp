@@ -721,6 +721,9 @@ void LayerRendererChromium::updateContentsRecursive(LayerChromium* layer)
     for (size_t i = 0; i < sublayers.size(); ++i)
         updateContentsRecursive(sublayers[i].get());
 
+    if (layer->bounds().isEmpty())
+        return;
+
     if (layer->drawsContent())
         layer->updateContentsIfDirty();
     if (layer->maskLayer() && layer->maskLayer()->drawsContent())

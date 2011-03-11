@@ -1,3 +1,17 @@
+2011-03-11  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Avoid updating a composited layer&apos;s contents if the layer has nonpositive dimensions
+        https://bugs.webkit.org/show_bug.cgi?id=56209
+
+        This matches the behavior prior to r80482.  No test since the only changes in
+        behavior are avoiding work on invisible layers, which is unobservable,
+        and fixing a crash due to bug 56153.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateContentsRecursive):
+
 2011-03-11  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.
