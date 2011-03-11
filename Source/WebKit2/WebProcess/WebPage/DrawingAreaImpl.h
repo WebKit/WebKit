@@ -72,6 +72,7 @@ private:
     void exitAcceleratedCompositingMode();
 
     void scheduleDisplay();
+    void displayTimerFired();
     void display();
     void display(UpdateInfo&);
 
@@ -96,6 +97,8 @@ private:
     // won't paint until painting has resumed again.
     bool m_isPaintingSuspended;
     bool m_alwaysUseCompositing;
+
+    double m_lastDisplayTime;
 
     RunLoop::Timer<DrawingAreaImpl> m_displayTimer;
     RunLoop::Timer<DrawingAreaImpl> m_exitCompositingTimer;

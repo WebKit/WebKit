@@ -64,7 +64,8 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
     , m_isWaitingForDidUpdate(false)
     , m_isPaintingSuspended(!parameters.isVisible)
     , m_alwaysUseCompositing(false)
-    , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::display)
+    , m_lastDisplayTime(0)
+    , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::displayTimerFired)
     , m_exitCompositingTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::exitAcceleratedCompositingMode)
 {
     if (webPage->corePage()->settings()->acceleratedDrawingEnabled())
@@ -327,8 +328,8 @@ void DrawingAreaImpl::didUpdate()
 
     m_isWaitingForDidUpdate = false;
 
-    // Display if needed.
-    display();
+    // Display if needed. We call displayTimerFired here since it will throttle updates to 60fps.
+    displayTimerFired();
 }
 
 void DrawingAreaImpl::suspendPainting()
@@ -426,6 +427,21 @@ void DrawingAreaImpl::scheduleDisplay()
         return;
 
     m_displayTimer.startOneShot(0);
+}
+
+void DrawingAreaImpl::displayTimerFired()
+{
+    static const double minimumFrameInterval = 1.0 / 60.0;
+    
+    double timeSinceLastDisplay = currentTime() - m_lastDisplayTime;
+    double timeUntilNextDisplay = minimumFrameInterval - timeSinceLastDisplay;
+
+    if (timeUntilNextDisplay > 0) {
+        m_displayTimer.startOneShot(timeUntilNextDisplay);
+        return;
+    }
+
+    display();
 }
 
 void DrawingAreaImpl::display()
@@ -534,6 +550,8 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     // Layout can trigger more calls to setNeedsDisplay and we don't want to process them
     // until the UI process has painted the update, so we stop the timer here.
     m_displayTimer.stop();
+
+    m_lastDisplayTime = currentTime();
 }
 
 

@@ -1,3 +1,25 @@
+2011-03-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Don't paint more than 60 times per second
+        https://bugs.webkit.org/show_bug.cgi?id=56206
+        <rdar://problem/9085989>
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        Initialize m_lastDisplayTime to 0. Change the display timer to call displayTimerFired.
+
+        (WebKit::DrawingAreaImpl::didUpdate):
+        Call displayTimerFired instead of display.
+
+        (WebKit::DrawingAreaImpl::displayTimerFired):
+        If we're asked to paint again less than 1/60th of a second after we've already painted,
+        defer painting.
+
+        (WebKit::DrawingAreaImpl::display):
+        Update m_lastDisplayTime.
+
 2011-03-11  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alice Liu.
