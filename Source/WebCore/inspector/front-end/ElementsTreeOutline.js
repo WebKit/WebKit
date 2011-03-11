@@ -193,7 +193,7 @@ WebInspector.ElementsTreeOutline.prototype = {
         // items extend at least to the right edge of the outer <ol> container.
         // In the no-word-wrap mode the outer <ol> may be wider than the tree container
         // (and partially hidden), in which case we are left to use only its right boundary.
-        var x = scrollContainer.totalOffsetLeft + scrollContainer.offsetWidth - 20;
+        var x = scrollContainer.totalOffsetLeft + scrollContainer.offsetWidth - 36;
 
         var y = event.pageY;
 

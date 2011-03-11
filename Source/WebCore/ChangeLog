@@ -1,3 +1,17 @@
+2011-03-11  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: hover over elements in Elements panel does not highlight nodes
+        https://bugs.webkit.org/show_bug.cgi?id=56121
+
+        In DOM trees with a comment and/or doctype preceding the HTML tag, the tree container right boundary
+        is 16px apart from the OL right boundary, and we miss the relevant LI by 4px. The fix is to compensate
+        for these 16px when computing the test point coordinates.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._treeElementFromEvent):
+
 2011-03-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Roll out r80837.
