@@ -1,3 +1,17 @@
+2011-03-10  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        update comment to reference new DOM Core spec
+        https://bugs.webkit.org/show_bug.cgi?id=56079
+
+        I'm excising all instances of WRONG_DOCUMENT_ERR from WebKit.
+        This is the only one that's actually specified to fire
+        in the latest DOM Core spec.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+
 2011-03-10  Rik Cabanier  <cabanier@gmail.com>
 
         Reviewed by Tony Gentilcore.

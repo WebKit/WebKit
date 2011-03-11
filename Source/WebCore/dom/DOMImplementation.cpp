@@ -262,7 +262,8 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
     // WRONG_DOCUMENT_ERR: Raised if doctype has already been used with a different document or was
     // created from a different implementation.
     // Hixie's interpretation of the DOM Core spec suggests we should prefer
-    // other exceptions to WRONG_DOCUMENT_ERR (based on order mentioned in spec).
+    // other exceptions to WRONG_DOCUMENT_ERR (based on order mentioned in spec),
+    // but this matches the new DOM Core spec (http://www.w3.org/TR/domcore/).
     if (doctype && doctype->document()) {
         ec = WRONG_DOCUMENT_ERR;
         return 0;
