@@ -1,3 +1,43 @@
+2011-03-11  Mihai Parparita  <mihaip@chromium.org>
+
+        Chromium Mac expectations update. Rebaseline some tests after r80582
+        (those that already had chromium-mac-leopard baselines).
+
+        * platform/chromium-mac-leopard/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/Kusa-Makura-background-canvas-expected.png:
+        * platform/chromium-mac-leopard/fast/blockflow/border-vertical-lr-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/border-vertical-lr-expected.png:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-lr-selection-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-lr-selection-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-lr-text-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-lr-text-expected.png:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-rl-selection-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-rl-selection-expected.png:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-rl-text-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-rl-text-expected.png:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-ruby-vertical-lr-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-ruby-vertical-lr-expected.png:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-ruby-vertical-rl-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-ruby-vertical-rl-expected.png:
+        * platform/chromium-mac-leopard/fast/blockflow/vertical-align-table-baseline-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/vertical-align-table-baseline-expected.png:
+        * platform/chromium-mac-leopard/fast/blockflow/vertical-font-fallback-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/vertical-font-fallback-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/japanese-rl-selection-clear-expected.checksum:
+        * platform/chromium-mac-leopard/fast/repaint/japanese-rl-selection-clear-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/japanese-rl-selection-repaint-expected.checksum:
+        * platform/chromium-mac-leopard/fast/repaint/japanese-rl-selection-repaint-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/repaint-across-writing-mode-boundary-expected.checksum:
+        * platform/chromium-mac-leopard/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/text-combine-image-test-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/text-combine-image-test-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/text-combine-image-test-expected.txt:
+        * platform/chromium-mac/fast/blockflow/japanese-lr-selection-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/japanese-lr-selection-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/blockflow/japanese-lr-selection-expected.checksum:
+        * platform/mac-leopard/fast/blockflow/japanese-lr-selection-expected.png:
+
 2011-03-11  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

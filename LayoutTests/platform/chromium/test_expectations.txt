@@ -3319,22 +3319,8 @@ BUGCR75426 LINUX DEBUG : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-
 
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
-BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-lr-selection.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
-BUGCR75424 MAC LEOPARD : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/blockflow/border-vertical-lr.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-lr-text.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-rl-selection.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-rl-text.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/blockflow/vertical-align-table-baseline.html = IMAGE
 BUGCR75424 MAC LEOPARD : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/blockflow/vertical-font-fallback.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUGCR75424 MAC LEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
 BUGCR75424 MAC LEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT
 BUGCR75424 MAC : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
 BUGCR75424 MAC : fast/blockflow/broken-ideographic-font.html = IMAGE
