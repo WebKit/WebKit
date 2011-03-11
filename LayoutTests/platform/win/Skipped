@@ -378,8 +378,8 @@ http/tests/media/video-cancel-load.html
 http/tests/websocket/tests/workers/close-in-onmessage-crash.html
 # Sometimes crashes http://webkit.org/b/55375
 http/tests/websocket/tests/reload-crash.html
-# Sometimes crashes http://webkit.org/b/56185
-http/tests/websocket/tests/url-with-credential.html
+# Sometimes causes crashes in following tests http://webkit.org/b/56185
+http/tests/websocket/tests/url-parsing.html
 
 # Sometimes times out http://webkit.org/b/48997
 animations/animation-iteration-event-destroy-renderer.html

@@ -1,3 +1,15 @@
+2011-03-11  Jessie Berlin  <jberlin@apple.com>
+
+        http/tests/websocket/tests/url-with-credential.html sometimes crashes beneath SocketStreamHandle::readStreamCallback on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=56185
+
+        url-parsing.html appears to be causing the crashes in later tests.
+        Skipping the url-parsing.html test and unskipping the url-with-credential.html test.
+
+        Unreviewed.
+
+        * platform/win/Skipped:
+
 2011-03-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
