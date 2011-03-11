@@ -1,3 +1,17 @@
+2011-03-10  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Text layout is broken on Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=56046
+
+        Change integers included into bitfields to be signed by default on RVCT
+        compiler as a lot of other compilers do (gcc, msvc, winsc).
+        There are a lot of places in webkit where integers included in bitfield
+        are assumed to be signed.
+
+        * Source/WebKit.pri:
+
 2011-03-10  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, fixed Efl compilation after r80744.
