@@ -66,7 +66,7 @@ void TilingData::setTotalSize(int totalSizeX, int totalSizeY)
 
 void TilingData::setMaxTextureSize(int maxTextureSize)
 {
-    m_maxTextureSize = m_maxTextureSize;
+    m_maxTextureSize = maxTextureSize;
     recomputeNumTiles();
 }
 

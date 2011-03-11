@@ -1,3 +1,13 @@
+2011-03-10  Chris Guillory  <chris.guillory@google.com>
+
+        Reviewed by James Robinson.
+
+        Fix for Coverity discovered NO_EFFECT (self-assign) defect.
+        https://bugs.webkit.org/show_bug.cgi?id=54143
+
+        * platform/graphics/gpu/TilingData.cpp:
+        (WebCore::TilingData::setMaxTextureSize):
+
 2011-03-10  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
