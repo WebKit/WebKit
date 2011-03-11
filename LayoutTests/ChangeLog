@@ -1,3 +1,9 @@
+2011-03-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline a test which differs on the bots from my local machine.
+
+        * platform/gtk/fast/forms/input-appearance-spinbutton-visibility-expected.txt: Update results.
+
 2011-03-10  takano takumi  <takano@apple.com>
 
         Reviewed by David Hyatt.
