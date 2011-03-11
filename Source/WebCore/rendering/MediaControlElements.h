@@ -396,8 +396,6 @@ private:
 
 class MediaControlTimeDisplayElement : public MediaControlElement {
 public:
-    void setVisible(bool);
-
     void setCurrentValue(float);
     float currentValue() const { return m_currentValue; }
 
@@ -405,9 +403,9 @@ protected:
     MediaControlTimeDisplayElement(HTMLMediaElement*);
 
 private:
-    virtual PassRefPtr<RenderStyle> styleForElement();
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+
     float m_currentValue;
-    bool m_isVisible;
 };
 
 // ----------------------------

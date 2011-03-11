@@ -41,6 +41,7 @@
 #include "MediaControls.h"
 #include "MouseEvent.h"
 #include "Page.h"
+#include "RenderFlexibleBox.h"
 #include "RenderMedia.h"
 #include "RenderSlider.h"
 #include "RenderTheme.h"
@@ -920,41 +921,45 @@ const AtomicString& MediaControlFullscreenButtonElement::shadowPseudoId() const
 
 // ----------------------------
 
+class RenderMediaControlTimeDisplay : public RenderFlexibleBox {
+public:
+    RenderMediaControlTimeDisplay(Node*);
+
+private:
+    virtual void layout();
+};
+
+RenderMediaControlTimeDisplay::RenderMediaControlTimeDisplay(Node* node)
+    : RenderFlexibleBox(node)
+{
+}
+
+// We want the timeline slider to be at least 100 pixels wide.
+// FIXME: Eliminate hard-coded widths altogether.
+static const int minWidthToDisplayTimeDisplays = 45 + 100 + 45;
+
+void RenderMediaControlTimeDisplay::layout()
+{
+    RenderFlexibleBox::layout();
+    RenderBox* timelineContainerBox = parentBox();
+    if (timelineContainerBox && timelineContainerBox->width() < minWidthToDisplayTimeDisplays)
+        setWidth(0);
+}
+
 inline MediaControlTimeDisplayElement::MediaControlTimeDisplayElement(HTMLMediaElement* mediaElement)
     : MediaControlElement(mediaElement)
     , m_currentValue(0)
-    , m_isVisible(true)
 {
-}
-
-PassRefPtr<RenderStyle> MediaControlTimeDisplayElement::styleForElement()
-{
-    RefPtr<RenderStyle> style = MediaControlElement::styleForElement();
-    if (!m_isVisible) {
-        style = RenderStyle::clone(style.get());
-        style->setWidth(Length(0, Fixed));
-    }
-    return style;
-}
-
-void MediaControlTimeDisplayElement::setVisible(bool visible)
-{
-    if (visible == m_isVisible)
-        return;
-    m_isVisible = visible;
-
-    // This function is used during the RenderMedia::layout()
-    // call, where we cannot change the renderer at this time.
-    if (!renderer() || !renderer()->style())
-        return;
-
-    RefPtr<RenderStyle> style = styleForElement();
-    renderer()->setStyle(style.get());
 }
 
 void MediaControlTimeDisplayElement::setCurrentValue(float time)
 {
     m_currentValue = time;
+}
+
+RenderObject* MediaControlTimeDisplayElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderMediaControlTimeDisplay(this);
 }
 
 // ----------------------------

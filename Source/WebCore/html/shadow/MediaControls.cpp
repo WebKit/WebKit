@@ -570,23 +570,6 @@ void MediaControls::forwardEvent(Event* event)
     }
 }
 
-// We want the timeline slider to be at least 100 pixels wide.
-static const int minWidthToDisplayTimeDisplays = 16 + 16 + 45 + 100 + 45 + 16 + 1;
-
-void MediaControls::updateTimeDisplayVisibility()
-{
-    ASSERT(m_mediaElement->renderer());
-
-    if (!m_currentTimeDisplay && !m_timeRemainingDisplay)
-        return;
-
-    int width = m_mediaElement->renderBox()->width();
-    bool shouldShowTimeDisplays = width >= minWidthToDisplayTimeDisplays * m_mediaElement->renderer()->style()->effectiveZoom();
-
-    m_currentTimeDisplay->setVisible(shouldShowTimeDisplays);
-    m_timeRemainingDisplay->setVisible(shouldShowTimeDisplays);
-}
-
 }
 
 #endif

@@ -72,7 +72,6 @@ public:
     void updateStyle();
     void forwardEvent(Event*);
     void updateTimeDisplay();
-    void updateTimeDisplayVisibility();
 
     // FIXME: This is temporary to allow RenderMedia::layout tweak the position of controls.
     // Once shadow DOM refactoring is complete, the tweaking will be in MediaControlsShadowRoot and this accessor will no longer be necessary.

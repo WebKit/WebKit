@@ -1,3 +1,36 @@
+2011-03-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Convert MediaControlTimeDisplayElement to use standard layout with a custom renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=55972
+
+        Instead of poking at the time display elements all the way from RenderMedia,
+        let the standard layout cycle take care of things. Move the logic of calculating
+        when to collapse the time display elements into a custom renderer, since
+        this is not something that can be accomplished with CSS.
+
+        Also, the logic of keeping the timeline slider at least 100px needed refreshing,
+        since it didn't actually keep it at 100px.
+
+        * html/shadow/MediaControls.cpp: Moved the logic of determining visibility
+            of time display elements to RenderMediaControlTimeDisplay, eliminating
+            updateTimeDisplayVisibility method.
+        * html/shadow/MediaControls.h: Removed decl.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::RenderMediaControlTimeDisplay::RenderMediaControlTimeDisplay):
+            Added new renderer class.
+        (WebCore::RenderMediaControlTimeDisplay::layout): Simplified (and corrected)
+            size-sensing logic, still using hard-coded values.
+        (WebCore::MediaControlTimeDisplayElement::MediaControlTimeDisplayElement):
+            Removed m_isVisible member, which is no longer necessary.
+        (WebCore::MediaControlTimeDisplayElement::createRenderer): Added to
+            return the new renderer.
+        * rendering/MediaControlElements.h: Adjusted decls.
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::layout): Remove the now-unnecessary poking at
+            media controls in layout.
+
 2011-03-09  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Carlson.

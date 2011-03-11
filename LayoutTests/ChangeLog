@@ -1,3 +1,19 @@
+2011-03-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Convert MediaControlTimeDisplayElement to use standard layout with a custom renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=55972
+
+        Update test results, because they are now laying out timeline consistently.
+
+        * media/audio-repaint-expected.txt: Updated.
+        * platform/mac/media/audio-controls-rendering-expected.checksum: Ditto.
+        * platform/mac/media/audio-controls-rendering-expected.png: Ditto.
+        * platform/mac/media/audio-controls-rendering-expected.txt: Ditto.
+        * platform/mac/media/audio-repaint-expected.checksum: Ditto.
+        * platform/mac/media/audio-repaint-expected.png: Ditto.
+
 2011-03-11  Adam Roben  <aroben@apple.com>
 
         Update Windows results after r80846
