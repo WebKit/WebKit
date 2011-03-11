@@ -26,6 +26,7 @@
 #ifndef htmlediting_h
 #define htmlediting_h
 
+#include "EditingBoundary.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "Position.h"
@@ -57,12 +58,12 @@ Node* highestEditableRoot(const Position&);
 Node* highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*));
 Node* lowestEditableAncestor(Node*);   
 
-Node* enclosingBlock(Node*);
+Node* enclosingBlock(Node*, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 Node* enclosingTableCell(const Position&);
 Node* enclosingEmptyListItem(const VisiblePosition&);
 Node* enclosingAnchorElement(const Position&);
 Node* enclosingNodeWithTag(const Position&, const QualifiedName&);
-Node* enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*), bool onlyReturnEditableNodes = true);
+Node* enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 
 Node* tabSpanNode(const Node*);
 Node* nearestMailBlockquote(const Node*);
@@ -237,7 +238,7 @@ inline bool isWhitespace(UChar c)
 {
     return c == noBreakSpace || c == ' ' || c == '\n' || c == '\t';
 }
-String stringWithRebalancedWhitespace(const String&, bool, bool);
+String stringWithRebalancedWhitespace(const String&, bool startIsStartOfParagraph, bool endIsEndOfParagraph);
 const String& nonBreakingSpaceString();
 
 }

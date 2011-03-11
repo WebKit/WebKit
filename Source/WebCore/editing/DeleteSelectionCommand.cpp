@@ -188,8 +188,8 @@ void DeleteSelectionCommand::initializePositionData()
     // Don't move content out of a table cell.
     // If the cell is non-editable, enclosingNodeOfType won't return it by default, so
     // tell that function that we don't care if it returns non-editable nodes.
-    Node* startCell = enclosingNodeOfType(m_upstreamStart, &isTableCell, false);
-    Node* endCell = enclosingNodeOfType(m_downstreamEnd, &isTableCell, false);
+    Node* startCell = enclosingNodeOfType(m_upstreamStart, &isTableCell, CanCrossEditingBoundary);
+    Node* endCell = enclosingNodeOfType(m_downstreamEnd, &isTableCell, CanCrossEditingBoundary);
     // FIXME: This isn't right.  A borderless table with two rows and a single column would appear as two paragraphs.
     if (endCell && endCell != startCell)
         m_mergeBlocksAfterDelete = false;
@@ -262,8 +262,8 @@ void DeleteSelectionCommand::initializePositionData()
     // like the one below, since editing functions should obviously accept editing positions.
     // FIXME: Passing false to enclosingNodeOfType tells it that it's OK to return a non-editable
     // node.  This was done to match existing behavior, but it seems wrong.
-    m_startBlock = enclosingNodeOfType(m_downstreamStart.parentAnchoredEquivalent(), &isBlock, false);
-    m_endBlock = enclosingNodeOfType(m_upstreamEnd.parentAnchoredEquivalent(), &isBlock, false);
+    m_startBlock = enclosingNodeOfType(m_downstreamStart.parentAnchoredEquivalent(), &isBlock, CanCrossEditingBoundary);
+    m_endBlock = enclosingNodeOfType(m_upstreamEnd.parentAnchoredEquivalent(), &isBlock, CanCrossEditingBoundary);
 }
 
 void DeleteSelectionCommand::saveTypingStyleState()

@@ -934,41 +934,37 @@ VisiblePosition nextParagraphPosition(const VisiblePosition& p, int x)
 
 // ---------
 
-VisiblePosition startOfBlock(const VisiblePosition &c)
+VisiblePosition startOfBlock(const VisiblePosition& visiblePosition, EditingBoundaryCrossingRule rule)
 {
-    Position p = c.deepEquivalent();
-    Node* startNode = p.deprecatedNode();
-    if (!startNode)
+    Position position = visiblePosition.deepEquivalent();
+    Node* startBlock;
+    if (!position.containerNode() || !(startBlock = enclosingBlock(position.containerNode(), rule)))
         return VisiblePosition();
-    return VisiblePosition(firstPositionInNode(startNode->enclosingBlockFlowElement()), DOWNSTREAM);
+    return firstPositionInNode(startBlock);
 }
 
-VisiblePosition endOfBlock(const VisiblePosition &c)
+VisiblePosition endOfBlock(const VisiblePosition& visiblePosition, EditingBoundaryCrossingRule rule)
 {
-    Position p = c.deepEquivalent();
-
-    Node* startNode = p.deprecatedNode();
-    if (!startNode)
+    Position position = visiblePosition.deepEquivalent();
+    Node* endBlock;
+    if (!position.containerNode() || !(endBlock = enclosingBlock(position.containerNode(), rule)))
         return VisiblePosition();
-
-    Node *startBlock = startNode->enclosingBlockFlowElement();
-    
-    return VisiblePosition(lastPositionInNode(startBlock), VP_DEFAULT_AFFINITY);   
+    return lastPositionInNode(endBlock);
 }
 
 bool inSameBlock(const VisiblePosition &a, const VisiblePosition &b)
 {
-    return !a.isNull() && enclosingBlockFlowElement(a) == enclosingBlockFlowElement(b);
+    return !a.isNull() && enclosingBlock(a.deepEquivalent().containerNode()) == enclosingBlock(b.deepEquivalent().containerNode());
 }
 
 bool isStartOfBlock(const VisiblePosition &pos)
 {
-    return pos.isNotNull() && pos == startOfBlock(pos);
+    return pos.isNotNull() && pos == startOfBlock(pos, CanCrossEditingBoundary);
 }
 
 bool isEndOfBlock(const VisiblePosition &pos)
 {
-    return pos.isNotNull() && pos == endOfBlock(pos);
+    return pos.isNotNull() && pos == endOfBlock(pos, CanCrossEditingBoundary);
 }
 
 // ---------

@@ -1,3 +1,46 @@
+2011-03-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        startOfBlock and endOfBlock may return a position inside hr
+        https://bugs.webkit.org/show_bug.cgi?id=56025
+
+        Replaced calls to enclosingBlockFlowElement in startOfBlock and endOfBlock by
+        calls to enclosingBlock. Added EditingBoundaryCrossingRule to the argument lists
+        of startOfBlock, endOfBlock, and enclosingBlock. Also replaced the last boolean
+        argument variable of enclosingNodeOfType by EditingBoundaryCrossingRule.
+
+        Also replaced calls to enclosingBlockFlowElement in inSameBlock by calls to
+        enclosingBlock to be consitent with startOfBlock and endOfBlock.
+
+        This patch also replaced calls to deprecatedNode in startOfBlock, endOfBlock,
+        and inSameBlock by calls to containerNode because the enclosing block of a position
+        should never be before or after the position.
+
+        No tests are added because this change only affects WebCore internally.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializePositionData): Calls enclosingNodeOfType.
+        Pass CanCrossEditingBoundary instead of false.
+        * editing/htmlediting.cpp:
+        (WebCore::unsplittableElementForPosition): Ditto.
+        (WebCore::enclosingBlock): Takes EditingBoundaryCrossingRule and passes it to
+        enclosingNodeOfType.
+        (WebCore::enclosingNodeOfType): Takes EditingBoundaryCrossingRule instead of boolean.
+        Fixed a bug that it stops walking the tree when it reached the root editable node
+        even when the editing boundary crossing rule is CanCrossEditingBoundary.
+        * editing/htmlediting.h: Prototype changes.
+        * editing/visible_units.cpp:
+        (WebCore::startOfBlock): Calls enclosingBlock instead of enclosingBlockFlowElement.
+        Also added an early exit when there's no enclosing block.
+        (WebCore::endOfBlock): Ditto. The early exist in this case prevents crash in
+        lastPositionInNode.
+        (WebCore::inSameBlock): Calls enclosingBlock instead of enclosingBlockFlowElement.
+        (WebCore::isStartOfBlock): Calls startOfBlock with CanCrossEditingBoundary because
+        we don't care where the start of block is when we're comparing against the given position.
+        (WebCore::isEndOfBlock): Ditto.
+        * editing/visible_units.h:
+
 2011-03-10  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

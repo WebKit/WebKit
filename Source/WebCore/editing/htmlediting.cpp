@@ -221,7 +221,7 @@ Element* unsplittableElementForPosition(const Position& p)
 {
     // Since enclosingNodeOfType won't search beyond the highest root editable node,
     // this code works even if the closest table cell was outside of the root editable node.
-    Element* enclosingCell = static_cast<Element*>(enclosingNodeOfType(p, &isTableCell, true));
+    Element* enclosingCell = static_cast<Element*>(enclosingNodeOfType(p, &isTableCell));
     if (enclosingCell)
         return enclosingCell;
 
@@ -327,9 +327,9 @@ bool isBlock(const Node* node)
 // FIXME: Pass a position to this function.  The enclosing block of [table, x] for example, should be the 
 // block that contains the table and not the table, and this function should be the only one responsible for 
 // knowing about these kinds of special cases.
-Node* enclosingBlock(Node* node)
+Node* enclosingBlock(Node* node, EditingBoundaryCrossingRule rule)
 {
-    return static_cast<Element*>(enclosingNodeOfType(firstPositionInOrBeforeNode(node), isBlock));
+    return static_cast<Element*>(enclosingNodeOfType(firstPositionInOrBeforeNode(node), isBlock, rule));
 }
 
 // This method is used to create positions in the DOM. It returns the maximum valid offset
@@ -603,8 +603,10 @@ Node* enclosingNodeWithTag(const Position& p, const QualifiedName& tagName)
     return 0;
 }
 
-Node* enclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), bool onlyReturnEditableNodes)
+Node* enclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule rule)
 {
+    // FIXME: support CanSkipCrossEditingBoundary
+    ASSERT(rule == CanCrossEditingBoundary || rule == CannotCrossEditingBoundary);
     if (p.isNull())
         return 0;
         
@@ -612,11 +614,11 @@ Node* enclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), 
     for (Node* n = p.deprecatedNode(); n; n = n->parentNode()) {
         // Don't return a non-editable node if the input position was editable, since
         // the callers from editing will no doubt want to perform editing inside the returned node.
-        if (root && !n->isContentEditable() && onlyReturnEditableNodes)
+        if (root && !n->isContentEditable() && rule == CannotCrossEditingBoundary)
             continue;
         if ((*nodeIsOfType)(n))
             return n;
-        if (n == root)
+        if (n == root && rule == CannotCrossEditingBoundary)
             return 0;
     }
     
