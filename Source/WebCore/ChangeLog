@@ -1,3 +1,18 @@
+2011-03-11  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Martin Robinson.
+
+        [GStreamer] When seeking webKitWebSrcStop release the frame but should not.
+        https://bugs.webkit.org/show_bug.cgi?id=55703
+
+        When calling webKitWebSrcStop in case of a seeking, the frame should not
+        be reset (the source hasn't change). The frame may be used to get the network
+        context. Some network stack (like Qt) are relaying on the network context
+        to work.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStop):
+
 2011-03-11  Dean Jackson  <dino@apple.com>
 
         Unreviewed.

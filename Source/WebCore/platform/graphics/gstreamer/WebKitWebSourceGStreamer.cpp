@@ -352,7 +352,7 @@ static void webKitWebSrcStop(WebKitWebSrc* src, bool seeking)
     }
     priv->resourceHandle = 0;
 
-    if (priv->frame)
+    if (priv->frame && !seeking)
         priv->frame.release();
 
     GST_OBJECT_LOCK(src);
