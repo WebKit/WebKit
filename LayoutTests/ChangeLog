@@ -1,3 +1,11 @@
+2011-03-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Skipping two test cases that are failing on GTK debug bots.
+
+        * platform/gtk/Skipped:
+
 2011-03-11  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
