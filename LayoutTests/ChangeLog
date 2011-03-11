@@ -1,3 +1,11 @@
+2011-03-11  Adam Roben  <aroben@apple.com>
+
+        Disable fast/text/large-text-composed-char-dos.html
+
+        It is failing on multiple bots. The failure is tracked by <http://webkit.org/b/56140>.
+
+        * fast/text/large-text-composed-char-dos.html-disabled: Renamed from LayoutTests/fast/text/large-text-composed-char-dos.html.
+
 2011-03-11  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser and Chris Marrin.
