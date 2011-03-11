@@ -1,5 +1,20 @@
 2011-03-11  Adam Roben  <aroben@apple.com>
 
+        Don't trigger a build when build.webkit.org's HTML files are modified
+
+        Fixes <http://webkit.org/b/56190> Windows bots shouldn't have built r80848/r80851, but did
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkitpy/common/config/build.py:
+        (_should_file_trigger_build): Added build.webkit.org's public_html directory to the list of
+        directories that shouldn't trigger builds. Re-sorted the list.
+
+        * Scripts/webkitpy/common/config/build_unittest.py:
+        (ShouldBuildTest): Added a test to cover the above change.
+
+2011-03-11  Adam Roben  <aroben@apple.com>
+
         Roll out r80848
 
         It was accidentally committed.

@@ -53,6 +53,7 @@ class ShouldBuildTest(unittest.TestCase):
         (["Source/WebCore/rendering/RenderThemeMac.mm", "Source/WebCore/rendering/RenderThemeMac.h"], ["mac-leopard", "mac-snowleopard"]),
         (["Source/WebCore/rendering/RenderThemeChromiumLinux.h"], ["chromium-linux"]),
         (["Source/WebCore/rendering/RenderThemeWinCE.h"], []),
+        (["Tools/BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.js"], []),
     ]
 
     def test_should_build(self):

@@ -41,9 +41,10 @@ def _should_file_trigger_build(target_platform, file):
 
     directories = [
         # Directories that shouldn't trigger builds on any bots.
+        ("Examples", []),
         ("PerformanceTests", []),
         ("Source/WebCore/manual-tests", []),
-        ("Examples", []),
+        ("Tools/BuildSlaveSupport/build.webkit.org-config/public_html", []),
         ("Websites", []),
         ("android", []),
         ("brew", []),
@@ -53,8 +54,8 @@ def _should_file_trigger_build(target_platform, file):
         ("opengl", []),
         ("opentype", []),
         ("openvg", []),
-        ("wx", []),
         ("wince", []),
+        ("wx", []),
 
         # Directories that should trigger builds on only some bots.
         ("Source/JavaScriptGlue", ["mac"]),
