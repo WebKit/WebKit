@@ -1,3 +1,14 @@
+2011-03-11  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alice Liu.
+
+        <rdar://problem/9120161> WKPageRestoreFromSessionState does not set the pending API request URL.
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionStateData): If we're navigating to a back/forward item
+        as part of the restoration, call setPendingAPIRequestURL. When there's a provisional URL this will
+        be done by our call to loadURL elsewhere in the function.
+
 2011-03-10  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Jon Honeycutt.

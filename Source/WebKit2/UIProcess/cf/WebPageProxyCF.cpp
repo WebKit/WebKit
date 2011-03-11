@@ -160,15 +160,18 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
                 for (size_t i = 0; i < size; ++i)
                     process()->registerNewWebBackForwardListItem(entries[i].get());
 
-                SandboxExtension::Handle sandboxExtensionHandle;
-                if (WebBackForwardListItem* item = m_backForwardList->currentItem())
-                    initializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
-
                 SessionState state(m_backForwardList->entries(), m_backForwardList->currentIndex());
                 if (provisionalURL)
                     process()->send(Messages::WebPage::RestoreSession(state), m_pageID);
-                else
+                else {
+                    SandboxExtension::Handle sandboxExtensionHandle;
+                    if (WebBackForwardListItem* item = m_backForwardList->currentItem()) {
+                        initializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
+                        setPendingAPIRequestURL(item->url());
+                    }
+
                     process()->send(Messages::WebPage::RestoreSessionAndNavigateToCurrentItem(state, sandboxExtensionHandle), m_pageID);
+                }
             }
         }
     }
