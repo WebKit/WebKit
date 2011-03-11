@@ -1,3 +1,11 @@
+2011-03-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Build for WebKit2 GTK+ after r80714.
+
+        * GNUmakefile.am: Update source list.
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp: 
+        (WebKit::x11Display): Add missing semicolon.
+
 2011-03-10  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

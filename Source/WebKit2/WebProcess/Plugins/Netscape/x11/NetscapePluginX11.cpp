@@ -80,7 +80,7 @@ static inline Display* x11Display()
 #if PLATFORM(QT)
     return QX11Info::display();
 #elif PLATFORM(GTK)
-    return GDK_DISPLAY_XDISPLAY(gdk_display_get_default())
+    return GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
 #else
     return 0;
 #endif
