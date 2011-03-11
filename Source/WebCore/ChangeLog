@@ -1,3 +1,32 @@
+2011-03-10  takano takumi  <takano@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Crash in RenderCombineText::combineText when running fast/text/international/text-combine-parser-test.html on Windows with full page heap enabled
+        https://bugs.webkit.org/show_bug.cgi?id=55069
+
+        No new tests. If the test above runs without crash, the fix should be okay.
+
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        - Changed to return Detach when textCombine style was changed.
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::styleDidChange):
+        (WebCore::RenderCombineText::setTextInternal):
+        (WebCore::RenderCombineText::width):
+        (WebCore::RenderCombineText::adjustTextOrigin):
+        (WebCore::RenderCombineText::charactersToRender):
+        (WebCore::RenderCombineText::combineText):
+        - Added assertions to ensure the passed object is RenderCombineText.
+        * rendering/RenderCombineText.h:
+        (WebCore::RenderCombineText::isCombineText):
+        - Added to distinguish plain RenderText and RenderCombineText.
+        (WebCore::toRenderCombineText):
+        - Added assertions to ensure the passed object is RenderCombineText.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isCombineText):
+        - Added to distinguish plain RenderText and RenderCombineText.
+
 2011-03-10  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Darin Adler.

@@ -36,6 +36,7 @@ public:
     float combinedTextWidth(const Font& font) const { return font.size(); }
 
 private:
+    virtual bool isCombineText() const { return true; }
     virtual float width(unsigned from, unsigned length, const Font&, float xPosition, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     virtual const char* renderName() const { return "RenderCombineText"; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
@@ -48,13 +49,13 @@ private:
 
 inline RenderCombineText* toRenderCombineText(RenderObject* object)
 { 
-    ASSERT(!object || object->isText());
+    ASSERT(!object || object->isCombineText());
     return static_cast<RenderCombineText*>(object);
 }
 
 inline const RenderCombineText* toRenderCombineText(const RenderObject* object)
 { 
-    ASSERT(!object || object->isText());
+    ASSERT(!object || object->isCombineText());
     return static_cast<const RenderCombineText*>(object);
 }
 

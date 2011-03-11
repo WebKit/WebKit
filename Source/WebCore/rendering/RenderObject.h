@@ -730,6 +730,8 @@ public:
     virtual bool isFlexingChildren() const { return false; }
     virtual bool isStretchingChildren() const { return false; }
 
+    virtual bool isCombineText() const { return false; }
+
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;
