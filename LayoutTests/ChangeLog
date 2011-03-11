@@ -1,3 +1,11 @@
+2011-03-11  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip
+        tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html
+        on GTK again after being unskipped by accident in r80738.
+
+        * platform/gtk/Skipped:
+
 2011-03-10  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
