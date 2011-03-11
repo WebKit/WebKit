@@ -1,3 +1,15 @@
+2011-03-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Make single backing store the default for EWebLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=55753
+
+        Set single backing store the default for EWebLauncher.
+
+        * EWebLauncher/main.c:
+        (main):
+
 2011-03-10  Adam Roben  <aroben@apple.com>
 
         Ignore errors from files being held open when creating a test result archive

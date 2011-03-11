@@ -822,7 +822,7 @@ main(int argc, char *argv[])
 
     char *engine = NULL;
     char *theme = NULL;
-    char *backingStore = (char *)backingStores[0];
+    char *backingStore = (char *)backingStores[1];
 
     unsigned char quitOption = 0;
     unsigned char isFlattening = 0;
