@@ -1548,7 +1548,7 @@ SET(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/html.css
     ${WEBCORE_DIR}/css/mathml.css
     ${WEBCORE_DIR}/css/mediaControls.css
-    ${WEBCORE_DIR}/css/mediaControlsGtk.css
+    ${WEBCORE_DIR}/css/mediaControlsEfl.css
     ${WEBCORE_DIR}/css/quirks.css
     ${WEBCORE_DIR}/css/svg.css
     ${WEBCORE_DIR}/css/view-source.css

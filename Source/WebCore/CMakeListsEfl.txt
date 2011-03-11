@@ -13,6 +13,7 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   "${WEBCORE_DIR}/accessibility/efl"
   "${WEBKIT_DIR}/efl/WebCoreSupport"
   "${WEBKIT_DIR}/efl/ewk"
+  "${DERIVED_SOURCES_DIR}"
 )
 
 LIST(APPEND WebCore_SOURCES

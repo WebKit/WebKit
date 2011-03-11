@@ -1,3 +1,36 @@
+2011-03-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] New mediaControl css file for EFL
+        https://bugs.webkit.org/show_bug.cgi?id=55460
+
+        Add new mediaControl css file for html5 video UI.
+
+        * CMakeLists.txt:
+        * CMakeListsEfl.txt:
+        * css/mediaControlsEfl.css: Added.
+        (audio):
+        (audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel):
+        (video:-webkit-full-page-media::-webkit-media-controls-panel):
+        (audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button):
+        (audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container):
+        (audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display):
+        (audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display):
+        (audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline):
+        (audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container):
+        (audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider):
+        (audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button):
+        (audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button):
+        (audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-rewind-button, video::-webkit-media-controls-rewind-button):
+        (audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-controls-return-to-realtime-button):
+        (audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button):
+        (audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-controls-volume-slider-mute-button):
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::extraMediaControlsStyleSheet):
+
 2011-03-10  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Dimitri Glazkov.

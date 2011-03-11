@@ -38,6 +38,7 @@
 #include "RenderObject.h"
 #include "RenderProgress.h"
 #include "RenderSlider.h"
+#include "UserAgentStyleSheets.h"
 #include <wtf/text/CString.h>
 
 #include <Ecore_Evas.h>
@@ -1046,8 +1047,7 @@ bool RenderThemeEfl::paintProgressBar(RenderObject* object, const PaintInfo& inf
 #if ENABLE(VIDEO)
 String RenderThemeEfl::extraMediaControlsStyleSheet()
 {
-    notImplemented();
-    return String();
+    return String(mediaControlsEflUserAgentStyleSheet, sizeof(mediaControlsEflUserAgentStyleSheet));
 }
 
 String RenderThemeEfl::formatMediaControlsCurrentTime(float currentTime, float duration) const
