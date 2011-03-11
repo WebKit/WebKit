@@ -1,5 +1,14 @@
 2011-03-11  Adam Roben  <aroben@apple.com>
 
+        Update Windows results after r80846
+
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-expected.txt:
+        * platform/win/fast/js/global-constructors-expected.txt:
+
+2011-03-11  Adam Roben  <aroben@apple.com>
+
         Skip a crashing test on Windows
 
         The crash is tracked by <http://webkit.org/b/56185>.
