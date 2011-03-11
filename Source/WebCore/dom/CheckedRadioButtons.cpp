@@ -77,7 +77,7 @@ void CheckedRadioButtons::removeButton(HTMLFormControlElement* element)
     if (it == m_nameToCheckedRadioButtonMap->end() || it->second != element)
         return;
     
-    InputElement* inputElement = toInputElement(element);
+    InputElement* inputElement = element->toInputElement();
     ASSERT_UNUSED(inputElement, inputElement);
     ASSERT(inputElement->isChecked());
     ASSERT(element->isRadioButton());

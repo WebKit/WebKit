@@ -38,21 +38,12 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "HTMLInputElement.h"
-#include "HTMLNames.h"
 #include "Page.h"
 #include "RenderTextControlSingleLine.h"
 #include "SelectionController.h"
 #include "TextIterator.h"
 
-#if ENABLE(WML)
-#include "WMLInputElement.h"
-#include "WMLNames.h"
-#endif
-
 namespace WebCore {
-
-using namespace HTMLNames;
 
 // FIXME: According to HTML4, the length attribute's value can be arbitrarily
 // large. However, due to https://bugs.webkit.org/show_bug.cgi?id=14536 things
@@ -285,19 +276,6 @@ InputElementData::~InputElementData()
 const AtomicString& InputElementData::name() const
 {
     return m_name.isNull() ? emptyAtom : m_name;
-}
-
-InputElement* toInputElement(Element* element)
-{
-    if (element->isHTMLElement() && (element->hasTagName(inputTag) || element->hasTagName(isindexTag)))
-        return static_cast<HTMLInputElement*>(element);
-
-#if ENABLE(WML)
-    if (element->isWMLElement() && element->hasTagName(WMLNames::inputTag))
-        return static_cast<WMLInputElement*>(element);
-#endif
-
-    return 0;
 }
 
 #if ENABLE(WCSS)

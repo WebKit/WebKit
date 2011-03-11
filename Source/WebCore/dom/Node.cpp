@@ -105,6 +105,10 @@
 #include "SVGUseElement.h"
 #endif
 
+#if ENABLE(WML)
+#include "WMLNames.h"
+#endif
+
 #if ENABLE(XHTMLMP)
 #include "HTMLNoScriptElement.h"
 #endif
@@ -505,6 +509,18 @@ void Node::setShadowHost(Element* host)
         clearFlag(IsShadowRootFlag);
 
     setParent(host);
+}
+
+InputElement* Node::toInputElement()
+{
+    // If one of the below ASSERTs trigger, you are calling this function
+    // directly or indirectly from a constructor or destructor of this object.
+    // Don't do this!
+    ASSERT(!(isHTMLElement() && hasTagName(inputTag)));
+#if ENABLE(WML)
+    ASSERT(!(isWMLElement() && hasTagName(WMLNames::inputTag)));
+#endif
+    return 0;
 }
 
 short Node::tabIndex() const

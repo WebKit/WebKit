@@ -36,6 +36,8 @@ public:
     WMLInputElement(const QualifiedName& tagName, Document*);
     virtual ~WMLInputElement();
 
+    virtual InputElement* toInputElement() { return this; }
+
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
     virtual void dispatchFocusEvent();

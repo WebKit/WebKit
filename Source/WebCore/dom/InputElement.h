@@ -160,8 +160,6 @@ private:
 #endif
 };
 
-InputElement* toInputElement(Element*);
-
 }
 
 #endif

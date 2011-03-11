@@ -53,6 +53,7 @@ class EventContext;
 class EventListener;
 class FloatPoint;
 class Frame;
+class InputElement;
 class IntRect;
 class KeyboardEvent;
 class NSResolver;
@@ -516,6 +517,8 @@ public:
     unsigned short compareDocumentPosition(Node*);
 
     virtual Node* toNode() { return this; }
+
+    virtual InputElement* toInputElement();
 
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 

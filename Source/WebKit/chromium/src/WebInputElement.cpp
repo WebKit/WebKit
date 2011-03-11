@@ -183,7 +183,7 @@ WebInputElement::operator PassRefPtr<HTMLInputElement>() const
 
 WebInputElement* toWebInputElement(WebElement* webElement)
 {
-    InputElement* inputElement = toInputElement(webElement->unwrap<Element>());
+    InputElement* inputElement = webElement->unwrap<Element>()->toInputElement();
     if (!inputElement)
         return 0;
 

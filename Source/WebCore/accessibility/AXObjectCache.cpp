@@ -616,7 +616,7 @@ void AXObjectCache::textMarkerDataForVisiblePosition(TextMarkerData& textMarkerD
         return;
     
     if (domNode->isHTMLElement()) {
-        InputElement* inputElement = toInputElement(static_cast<Element*>(domNode));
+        InputElement* inputElement = domNode->toInputElement();
         if (inputElement && inputElement->isPasswordField())
             return;
     }

@@ -1,3 +1,25 @@
+2011-03-11  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Bug 55570 - Remove dependency of dom/InputElement.cpp on html/ and wml/
+        https://bugs.webkit.org/show_bug.cgi?id=55570
+
+        Add a virtual function toInputElement() to Node that has a default
+        implementation of returning 0.
+        For HTMLInputElement and WMLInputElement (which derive from InputElement)
+        override this to return the object.
+        Change all calling sites of the old toInputElement to use the new member
+        function. This also allows us to save some casts.
+
+        No new tests (refactoring).
+
+        * src/WebInputElement.cpp:
+        (WebKit::toWebInputElement):
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setValueForUser):
+
 2011-03-10  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.

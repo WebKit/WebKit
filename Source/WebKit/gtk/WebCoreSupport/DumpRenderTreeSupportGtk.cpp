@@ -672,7 +672,7 @@ void DumpRenderTreeSupportGtk::setValueForUser(JSContextRef context, JSValueRef 
     Element* element = toElement(toJS(exec, nodeObject));
     if (!element)
         return;
-    InputElement* inputElement = toInputElement(element);
+    InputElement* inputElement = element->toInputElement();
     if (!inputElement)
         return;
 

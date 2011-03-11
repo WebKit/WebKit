@@ -775,10 +775,10 @@ bool RenderTheme::isActive(const RenderObject* o) const
 
 bool RenderTheme::isChecked(const RenderObject* o) const
 {
-    if (!o->node() || !o->node()->isElementNode())
+    if (!o->node())
         return false;
 
-    InputElement* inputElement = toInputElement(static_cast<Element*>(o->node()));
+    InputElement* inputElement = o->node()->toInputElement();
     if (!inputElement)
         return false;
 
@@ -787,10 +787,10 @@ bool RenderTheme::isChecked(const RenderObject* o) const
 
 bool RenderTheme::isIndeterminate(const RenderObject* o) const
 {
-    if (!o->node() || !o->node()->isElementNode())
+    if (!o->node())
         return false;
 
-    InputElement* inputElement = toInputElement(static_cast<Element*>(o->node()));
+    InputElement* inputElement = o->node()->toInputElement();
     if (!inputElement)
         return false;
 
