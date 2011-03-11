@@ -329,6 +329,38 @@ private:
     }
 };
 
+static uintptr_t calculateGroupId(StyleBase* styleBase)
+{
+    ASSERT(styleBase);
+    StyleBase* current = styleBase;
+    StyleSheet* styleSheet = 0;
+    while (true) {
+        // Special case: CSSStyleDeclarations should have CSSRule as a parent
+        // to proceed with parent traversal, otherwise they are coming from
+        // inlined style declaration and should be treated as a root.
+        if (current->isMutableStyleDeclaration()) {
+            CSSMutableStyleDeclaration* cssMutableStyleDeclaration = static_cast<CSSMutableStyleDeclaration*>(current);
+            if (CSSRule* parentRule = cssMutableStyleDeclaration->parentRule())
+                current = parentRule;
+            else
+                return reinterpret_cast<uintptr_t>(cssMutableStyleDeclaration);
+        }
+
+        if (current->isStyleSheet())
+            styleSheet = static_cast<StyleSheet*>(current);
+
+        StyleBase* parent = current->parent();
+        if (!parent)
+            break;
+        current = parent;
+    }
+
+    if (styleSheet)
+        return reinterpret_cast<uintptr_t>(styleSheet);
+
+    return reinterpret_cast<uintptr_t>(current);
+}
+
 class DOMObjectGrouperVisitor : public DOMWrapperMap<void>::Visitor {
 public:
     DOMObjectGrouperVisitor()
@@ -360,18 +392,7 @@ public:
             || V8CSSMediaRule::info.equals(typeInfo)) {
             StyleBase* styleBase = static_cast<StyleBase*>(object);
 
-            // We put the whole tree of style elements into a single object group.
-            // To achieve that we group elements by the roots of their trees.
-            StyleBase* root = styleBase;
-            ASSERT(root);
-            while (true) {
-                StyleBase* parent = root->parent();
-                if (!parent)
-                    break;
-                root = parent;
-            }
-            // Group id is an address of the root.
-            uintptr_t groupId = reinterpret_cast<uintptr_t>(root);
+            uintptr_t groupId = calculateGroupId(styleBase);
             m_grouper.append(GrouperItem(groupId, wrapper));
 
             if (V8CSSStyleDeclaration::info.equals(typeInfo)) {
