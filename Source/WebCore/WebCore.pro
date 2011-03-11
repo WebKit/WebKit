@@ -875,8 +875,8 @@ SOURCES += \
     page/animation/CompositeAnimation.cpp \
     page/animation/ImplicitAnimation.cpp \
     page/animation/KeyframeAnimation.cpp \
-    page/animation/WebKitAnimation.cpp \
-    page/animation/WebKitAnimationList.cpp \
+    page/WebKitAnimation.cpp \
+    page/WebKitAnimationList.cpp \
     page/BarInfo.cpp \
     page/Chrome.cpp \
     page/Console.cpp \
