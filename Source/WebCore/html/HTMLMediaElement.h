@@ -182,13 +182,14 @@ public:
     void privateBrowsingStateDidChange();
 
     // Restrictions to change default behaviors.
-    enum BehaviorRestrictions {
+    enum BehaviorRestrictionFlags {
         NoRestrictions = 0,
         RequireUserGestureForLoadRestriction = 1 << 0,
         RequireUserGestureForRateChangeRestriction = 1 << 1,
         RequireUserGestureForFullScreenRestriction = 1 << 2
     };
-
+    typedef unsigned BehaviorRestrictions;
+    
     bool requireUserGestureForLoad() const { return m_restrictions & RequireUserGestureForLoadRestriction; }
     bool requireUserGestureForRateChange() const { return m_restrictions & RequireUserGestureForRateChangeRestriction; }
     bool requireUserGestureForFullScreen() const { return m_restrictions & RequireUserGestureForFullScreenRestriction; }

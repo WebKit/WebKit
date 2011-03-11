@@ -1,3 +1,17 @@
+2011-03-11  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56205
+        m_restrictions needs to allow multiple values (a bitfield)
+
+        HTMLMediaElement::m_restrictions needs to hold multiple values, so
+        change BehaviorRestrictions to an unsigned typedef and rename the
+        existing enum BehaviorRestrictionFlags.
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::setBehaviorRestrictions):
+
 2011-03-11  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
