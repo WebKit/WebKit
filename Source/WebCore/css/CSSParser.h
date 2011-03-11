@@ -89,8 +89,13 @@ namespace WebCore {
         PassRefPtr<CSSValue> parseBackgroundColor();
 
         bool parseFillImage(RefPtr<CSSValue>&);
-        PassRefPtr<CSSValue> parseFillPositionXY(CSSParserValueList*, bool& xFound, bool& yFound);
+
+        enum FillPositionFlag { InvalidFillPosition = 0, AmbiguousFillPosition = 1, XFillPosition = 2, YFillPosition = 4 };
+        PassRefPtr<CSSValue> parseFillPositionComponent(CSSParserValueList*, unsigned& cumulativeFlags, FillPositionFlag& individualFlag);
+        PassRefPtr<CSSValue> parseFillPositionX(CSSParserValueList*);
+        PassRefPtr<CSSValue> parseFillPositionY(CSSParserValueList*);
         void parseFillPosition(CSSParserValueList*, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
+        
         void parseFillRepeat(RefPtr<CSSValue>&, RefPtr<CSSValue>&);
         PassRefPtr<CSSValue> parseFillSize(int propId, bool &allowComma);
 

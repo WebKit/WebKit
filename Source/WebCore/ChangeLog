@@ -1,3 +1,42 @@
+2011-03-11  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47159
+        
+        CSS2.1 failures in background position parsing.
+        
+        Rewrite background position component parsing to match the spec.  Our old parsing would allow "100% left" to be valid
+        when it should not have.  Rename parseFillPositionXY to parseFillPositionComponent and pass in enough information for
+        it to understand what the first component was.
+        
+        For individual property parsing using background-position-x/y, I added new functions that just handle that without
+        worrying about the other component.
+        
+        In order to pass the CSS2.1 test, I also had to fix multiple background parsing.  The number of layers in multiple
+        backgrounds is determined solely by the background-image property and not by any of the other properties.  cullEmptyLayers
+        has been changed to always consider a layer empty if it has no image set, even if other properties are set.
+        
+        A number of layout tests had to be patched as they were invalid.  A couple of them relied on incorrect background-position
+        parsing (e.g., "50 left") and another relied on incorrect multiple background parsing.  It's not clear if the computed style
+        should actually include the additional values when no image is set though, so that should perhaps be the subject of a 
+        follow-up bug.
+
+        Added fast/backgrounds/background-position-parsing.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillPositionX):
+        (WebCore::CSSParser::parseFillPositionY):
+        (WebCore::CSSParser::parseFillPositionComponent):
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseTransformOrigin):
+        (WebCore::CSSParser::parsePerspectiveOrigin):
+        * css/CSSParser.h:
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::fillUnsetProperties):
+        (WebCore::FillLayer::cullEmptyLayers):
+
 2011-03-11  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by James Robinson.

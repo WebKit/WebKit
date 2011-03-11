@@ -2521,34 +2521,80 @@ bool CSSParser::parseFillImage(RefPtr<CSSValue>& value)
     return false;
 }
 
-PassRefPtr<CSSValue> CSSParser::parseFillPositionXY(CSSParserValueList* valueList, bool& xFound, bool& yFound)
+PassRefPtr<CSSValue> CSSParser::parseFillPositionX(CSSParserValueList* valueList)
 {
     int id = valueList->current()->id;
-    if (id == CSSValueLeft || id == CSSValueTop || id == CSSValueRight || id == CSSValueBottom || id == CSSValueCenter) {
+    if (id == CSSValueLeft || id == CSSValueRight || id == CSSValueCenter) {
         int percent = 0;
-        if (id == CSSValueLeft || id == CSSValueRight) {
-            if (xFound)
-                return 0;
-            xFound = true;
-            if (id == CSSValueRight)
-                percent = 100;
-        }
-        else if (id == CSSValueTop || id == CSSValueBottom) {
-            if (yFound)
-                return 0;
-            yFound = true;
-            if (id == CSSValueBottom)
-                percent = 100;
-        }
+        if (id == CSSValueRight)
+            percent = 100;
         else if (id == CSSValueCenter)
-            // Center is ambiguous, so we're not sure which position we've found yet, an x or a y.
             percent = 50;
         return primitiveValueCache()->createValue(percent, CSSPrimitiveValue::CSS_PERCENTAGE);
     }
     if (validUnit(valueList->current(), FPercent | FLength, m_strict))
         return primitiveValueCache()->createValue(valueList->current()->fValue,
-                                         (CSSPrimitiveValue::UnitTypes)valueList->current()->unit);
+                                                  (CSSPrimitiveValue::UnitTypes)valueList->current()->unit);
+    return 0;
+}
 
+PassRefPtr<CSSValue> CSSParser::parseFillPositionY(CSSParserValueList* valueList)
+{
+    int id = valueList->current()->id;
+    if (id == CSSValueTop || id == CSSValueBottom || id == CSSValueCenter) {
+        int percent = 0;
+        if (id == CSSValueBottom)
+            percent = 100;
+        else if (id == CSSValueCenter)
+            percent = 50;
+        return primitiveValueCache()->createValue(percent, CSSPrimitiveValue::CSS_PERCENTAGE);
+    }
+    if (validUnit(valueList->current(), FPercent | FLength, m_strict))
+        return primitiveValueCache()->createValue(valueList->current()->fValue,
+                                                  (CSSPrimitiveValue::UnitTypes)valueList->current()->unit);
+    return 0;
+}
+
+PassRefPtr<CSSValue> CSSParser::parseFillPositionComponent(CSSParserValueList* valueList, unsigned& cumulativeFlags, FillPositionFlag& individualFlag)
+{
+    int id = valueList->current()->id;
+    if (id == CSSValueLeft || id == CSSValueTop || id == CSSValueRight || id == CSSValueBottom || id == CSSValueCenter) {
+        int percent = 0;
+        if (id == CSSValueLeft || id == CSSValueRight) {
+            if (cumulativeFlags & XFillPosition)
+                return 0;
+            cumulativeFlags |= XFillPosition;
+            individualFlag = XFillPosition;
+            if (id == CSSValueRight)
+                percent = 100;
+        }
+        else if (id == CSSValueTop || id == CSSValueBottom) {
+            if (cumulativeFlags & YFillPosition)
+                return 0;
+            cumulativeFlags |= YFillPosition;
+            individualFlag = YFillPosition;
+            if (id == CSSValueBottom)
+                percent = 100;
+        } else if (id == CSSValueCenter) {
+            // Center is ambiguous, so we're not sure which position we've found yet, an x or a y.
+            percent = 50;
+            cumulativeFlags |= AmbiguousFillPosition;
+            individualFlag = AmbiguousFillPosition;
+        }
+        return primitiveValueCache()->createValue(percent, CSSPrimitiveValue::CSS_PERCENTAGE);
+    }
+    if (validUnit(valueList->current(), FPercent | FLength, m_strict)) {
+        if (!cumulativeFlags) {
+            cumulativeFlags |= XFillPosition;
+            individualFlag = XFillPosition;
+        } else if (cumulativeFlags & (XFillPosition | AmbiguousFillPosition)) {
+            cumulativeFlags |= YFillPosition;
+            individualFlag = YFillPosition;
+        } else
+            return 0;
+        return primitiveValueCache()->createValue(valueList->current()->fValue,
+                                                  (CSSPrimitiveValue::UnitTypes)valueList->current()->unit);
+    }
     return 0;
 }
 
@@ -2557,8 +2603,10 @@ void CSSParser::parseFillPosition(CSSParserValueList* valueList, RefPtr<CSSValue
     CSSParserValue* value = valueList->current();
 
     // Parse the first value.  We're just making sure that it is one of the valid keywords or a percentage/length.
-    bool value1IsX = false, value1IsY = false;
-    value1 = parseFillPositionXY(valueList, value1IsX, value1IsY);
+    unsigned cumulativeFlags = 0;
+    FillPositionFlag value1Flag;
+    FillPositionFlag value2Flag;
+    value1 = parseFillPositionComponent(valueList, cumulativeFlags, value1Flag);
     if (!value1)
         return;
 
@@ -2571,9 +2619,8 @@ void CSSParser::parseFillPosition(CSSParserValueList* valueList, RefPtr<CSSValue
     if (value && value->unit == CSSParserValue::Operator && value->iValue == ',')
         value = 0;
 
-    bool value2IsX = false, value2IsY = false;
     if (value) {
-        value2 = parseFillPositionXY(valueList, value2IsX, value2IsY);
+        value2 = parseFillPositionComponent(valueList, cumulativeFlags, value2Flag);
         if (value2)
             valueList->next();
         else {
@@ -2591,7 +2638,7 @@ void CSSParser::parseFillPosition(CSSParserValueList* valueList, RefPtr<CSSValue
         // For left/right/center, the default of 50% in the y is still correct.
         value2 = primitiveValueCache()->createValue(50, CSSPrimitiveValue::CSS_PERCENTAGE);
 
-    if (value1IsY || value2IsX)
+    if (value1Flag == YFillPosition || value2Flag == XFillPosition)
         value1.swap(value2);
 }
 
@@ -2769,16 +2816,14 @@ bool CSSParser::parseFillProperty(int propId, int& propId1, int& propId2,
                     break;
                 case CSSPropertyBackgroundPositionX:
                 case CSSPropertyWebkitMaskPositionX: {
-                    bool xFound = false, yFound = true;
-                    currValue = parseFillPositionXY(m_valueList, xFound, yFound);
+                    currValue = parseFillPositionX(m_valueList);
                     if (currValue)
                         m_valueList->next();
                     break;
                 }
                 case CSSPropertyBackgroundPositionY:
                 case CSSPropertyWebkitMaskPositionY: {
-                    bool xFound = true, yFound = false;
-                    currValue = parseFillPositionXY(m_valueList, xFound, yFound);
+                    currValue = parseFillPositionY(m_valueList);
                     if (currValue)
                         m_valueList->next();
                     break;
@@ -5457,15 +5502,13 @@ bool CSSParser::parseTransformOrigin(int propId, int& propId1, int& propId2, int
             // parseTransformOriginShorthand advances the m_valueList pointer
             break;
         case CSSPropertyWebkitTransformOriginX: {
-            bool xFound = false, yFound = true;
-            value = parseFillPositionXY(m_valueList, xFound, yFound);
+            value = parseFillPositionX(m_valueList);
             if (value)
                 m_valueList->next();
             break;
         }
         case CSSPropertyWebkitTransformOriginY: {
-            bool xFound = true, yFound = false;
-            value = parseFillPositionXY(m_valueList, xFound, yFound);
+            value = parseFillPositionY(m_valueList);
             if (value)
                 m_valueList->next();
             break;
@@ -5496,15 +5539,13 @@ bool CSSParser::parsePerspectiveOrigin(int propId, int& propId1, int& propId2, R
             parseFillPosition(m_valueList, value, value2);
             break;
         case CSSPropertyWebkitPerspectiveOriginX: {
-            bool xFound = false, yFound = true;
-            value = parseFillPositionXY(m_valueList, xFound, yFound);
+            value = parseFillPositionX(m_valueList);
             if (value)
                 m_valueList->next();
             break;
         }
         case CSSPropertyWebkitPerspectiveOriginY: {
-            bool xFound = true, yFound = false;
-            value = parseFillPositionXY(m_valueList, xFound, yFound);
+            value = parseFillPositionY(m_valueList);
             if (value)
                 m_valueList->next();
             break;
