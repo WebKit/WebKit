@@ -3293,7 +3293,8 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
         javaScriptCanAccessClipboard, enableOfflineWebAppCache,
         enableUniversalAccessFromFileURI, enableFileAccessFromFileURI,
         enableDOMPaste, tabKeyCyclesThroughElements,
-        enableSiteSpecificQuirks, usePageCache, enableJavaApplet, enableHyperlinkAuditing, enableFullscreen;
+        enableSiteSpecificQuirks, usePageCache, enableJavaApplet,
+        enableHyperlinkAuditing, enableFullscreen, enableDNSPrefetching;
 
     WebKitEditingBehavior editingBehavior;
 
@@ -3334,6 +3335,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "enable-hyperlink-auditing", &enableHyperlinkAuditing,
                  "spell-checking-languages", &defaultSpellCheckingLanguages,
                  "enable-fullscreen", &enableFullscreen,
+                 "enable-dns-prefetching", &enableDNSPrefetching,
                  NULL);
 
     settings->setDefaultTextEncodingName(defaultEncoding);
@@ -3378,6 +3380,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     WebKit::EditorClient* client = static_cast<WebKit::EditorClient*>(core(webView)->editorClient());
     static_cast<WebKit::TextCheckerClientEnchant*>(client->textChecker())->updateSpellCheckingLanguage(defaultSpellCheckingLanguages);
 #endif
+    settings->setDNSPrefetchingEnabled(enableDNSPrefetching);
 
     Page* page = core(webView);
     if (page)
@@ -3444,6 +3447,8 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setJavaScriptEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-plugins"))
         settings->setPluginsEnabled(g_value_get_boolean(&value));
+    else if (name == g_intern_string("enable-dns-prefetching"))
+        settings->setDNSPrefetchingEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("resizable-text-areas"))
         settings->setTextAreasAreResizable(g_value_get_boolean(&value));
     else if (name == g_intern_string("user-stylesheet-uri"))

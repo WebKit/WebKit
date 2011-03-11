@@ -1,3 +1,20 @@
+2011-03-11  Marco Peereboom  <marco@peereboom.us>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Provide a knob to enable/disable DNS prefetching.
+        DNS prefetching is enabled by default.
+        https://bugs.webkit.org/show_bug.cgi?id=55973
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        (webkit_web_settings_set_property):
+        (webkit_web_settings_get_property):
+        (webkit_web_settings_copy):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings):
+        (webkit_web_view_settings_notify):
+
 2011-03-08  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

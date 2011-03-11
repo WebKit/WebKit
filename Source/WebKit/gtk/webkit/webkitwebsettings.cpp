@@ -112,6 +112,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean enable_java_applet;
     gboolean enable_hyperlink_auditing;
     gboolean enable_fullscreen;
+    gboolean enable_dns_prefetching;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -164,7 +165,8 @@ enum {
     PROP_AUTO_RESIZE_WINDOW,
     PROP_ENABLE_JAVA_APPLET,
     PROP_ENABLE_HYPERLINK_AUDITING,
-    PROP_ENABLE_FULLSCREEN
+    PROP_ENABLE_FULLSCREEN,
+    PROP_ENABLE_DNS_PREFETCHING
 };
 
 // Create a default user agent string
@@ -911,6 +913,22 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          FALSE,
                                                          flags));
 
+    /**
+    * WebKitWebSettings:enable-dns-prefetching
+    *
+    * Whether webkit prefetches domain names.  This is a separate knob from private browsing.
+    * Whether private browsing should set this or not is up for debate, for now it doesn't.
+    *
+    * Since: 1.3.13.
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_DNS_PREFETCHING,
+                                    g_param_spec_boolean("enable-dns-prefetching",
+                                                         _("WebKit prefetches domain names"),
+                                                         _("Whether WebKit prefetches domain names"),
+                                                         TRUE,
+                                                         flags));
+
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
 
@@ -1096,6 +1114,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_FULLSCREEN:
         priv->enable_fullscreen = g_value_get_boolean(value);
         break;
+    case PROP_ENABLE_DNS_PREFETCHING:
+        priv->enable_dns_prefetching = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -1246,6 +1267,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_ENABLE_FULLSCREEN:
         g_value_set_boolean(value, priv->enable_fullscreen);
         break;
+    case PROP_ENABLE_DNS_PREFETCHING:
+        g_value_set_boolean(value, priv->enable_dns_prefetching);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -1322,6 +1346,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "enable-java-applet", priv->enable_java_applet,
                  "enable-hyperlink-auditing", priv->enable_hyperlink_auditing,
                  "enable-fullscreen", priv->enable_fullscreen,
+                 "enable-dns-prefetching", priv->enable_dns_prefetching,
                  NULL));
 
     return copy;
