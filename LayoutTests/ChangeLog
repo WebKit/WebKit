@@ -1,3 +1,10 @@
+2011-03-11  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Roll out r80837.
+
+        * inspector/protocol/console-agent-expected.txt:
+        * inspector/protocol/console-agent.html:
+
 2011-03-11  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewied trivial fix. Leave default state of setMonitoringXHREnabled intact so it doesn't affect other tests.

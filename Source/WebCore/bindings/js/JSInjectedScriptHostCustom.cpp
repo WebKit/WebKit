@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
- * Copyright (C) 2010-2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,20 +35,37 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "Console.h"
+#include "JSMainThreadExecState.h"
 #if ENABLE(DATABASE)
 #include "Database.h"
 #include "JSDatabase.h"
 #endif
 #include "ExceptionCode.h"
+#include "Frame.h"
+#include "FrameLoader.h"
+#include "InjectedScript.h"
 #include "InjectedScriptHost.h"
+#include "InspectorAgent.h"
 #include "InspectorValues.h"
+#include "JSDOMWindow.h"
+#include "JSDOMWindowCustom.h"
 #include "JSNode.h"
+#include "JSRange.h"
+#include "Node.h"
+#include "Page.h"
 #include "ScriptValue.h"
 #if ENABLE(DOM_STORAGE)
 #include "Storage.h"
 #include "JSStorage.h"
 #endif
+#include "TextIterator.h"
+#include "VisiblePosition.h"
+#include <parser/SourceCode.h>
+#include <runtime/JSArray.h>
 #include <runtime/JSLock.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 #include "JavaScriptCallFrame.h"
@@ -70,6 +87,37 @@ Node* InjectedScriptHost::scriptValueAsNode(ScriptValue value)
 ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node)
 {
     return ScriptValue(state->globalData(), toJS(state, node));
+}
+
+ScriptObject InjectedScriptHost::createInjectedScript(const String& source, ScriptState* scriptState, long id)
+{
+    SourceCode sourceCode = makeSource(stringToUString(source));
+    JSLock lock(SilenceAssertionsOnly);
+    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
+    JSValue globalThisValue = scriptState->globalThisValue();
+    Completion comp = JSMainThreadExecState::evaluate(scriptState, globalObject->globalScopeChain(), sourceCode, globalThisValue);
+    if (comp.complType() != JSC::Normal && comp.complType() != JSC::ReturnValue)
+        return ScriptObject();
+    JSValue functionValue = comp.value();
+    CallData callData;
+    CallType callType = getCallData(functionValue, callData);
+    if (callType == CallTypeNone)
+        return ScriptObject();
+
+    MarkedArgumentBuffer args;
+    args.append(toJS(scriptState, globalObject, this));
+    args.append(globalThisValue);
+    args.append(jsNumber(id));
+    JSValue result = JSC::call(scriptState, functionValue, callType, callData, globalThisValue, args);
+    if (result.isObject())
+        return ScriptObject(scriptState, result.getObject());
+    return ScriptObject();
+}
+
+void InjectedScriptHost::discardInjectedScript(ScriptState* scriptState)
+{
+    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
+    globalObject->setInjectedScript(0);
 }
 
 JSValue JSInjectedScriptHost::currentCallFrame(ExecState* exec)
@@ -141,6 +189,33 @@ JSValue JSInjectedScriptHost::storageId(ExecState* exec)
         return jsNumber(impl()->storageIdImpl(storage));
 #endif
     return jsUndefined();
+}
+
+InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState* scriptState)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
+    JSObject* injectedScript = globalObject->injectedScript();
+    if (injectedScript)
+        return InjectedScript(ScriptObject(scriptState, injectedScript));
+
+    if (!canAccessInspectedWindow(scriptState))
+        return InjectedScript();
+
+    pair<long, ScriptObject> injectedScriptObject = injectScript(injectedScriptSource(), scriptState);
+    globalObject->setInjectedScript(injectedScriptObject.second.jsObject());
+    InjectedScript result(injectedScriptObject.second);
+    m_idToInjectedScript.set(injectedScriptObject.first, result);
+    return result;
+}
+
+bool InjectedScriptHost::canAccessInspectedWindow(ScriptState* scriptState)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    JSDOMWindow* inspectedWindow = toJSDOMWindow(scriptState->lexicalGlobalObject());
+    if (!inspectedWindow)
+        return false;
+    return inspectedWindow->allowsAccessFromNoErrorMessage(scriptState);
 }
 
 } // namespace WebCore

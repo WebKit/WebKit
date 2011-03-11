@@ -35,7 +35,7 @@
 
 #include "Console.h"
 #include "InjectedScript.h"
-#include "InjectedScriptManager.h"
+#include "InjectedScriptHost.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "ScriptArguments.h"
@@ -86,7 +86,7 @@ ConsoleMessage::~ConsoleMessage()
 {
 }
 
-void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, InjectedScriptManager* injectedScriptManager)
+void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, InjectedScriptHost* injectedScriptHost)
 {
     RefPtr<InspectorObject> jsonObj = InspectorObject::create();
     jsonObj->setNumber("source", static_cast<int>(m_source));
@@ -99,7 +99,7 @@ void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, Injecte
     if (m_type == NetworkErrorMessageType) 
         jsonObj->setNumber("requestId", m_requestId);
     if (m_arguments && m_arguments->argumentCount()) {
-        InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(m_arguments->globalState());
+        InjectedScript injectedScript = injectedScriptHost->injectedScriptFor(m_arguments->globalState());
         if (!injectedScript.hasNoValue()) {
             RefPtr<InspectorArray> jsonArgs = InspectorArray::create();
             for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {

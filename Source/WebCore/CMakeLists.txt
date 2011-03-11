@@ -540,7 +540,6 @@ SET(WebCore_SOURCES
     bindings/js/JSInt32ArrayCustom.cpp
     bindings/js/JSInt8ArrayCustom.cpp
     bindings/js/JSInjectedScriptHostCustom.cpp
-    bindings/js/JSInjectedScriptManager.cpp
     bindings/js/JSInspectorFrontendHostCustom.cpp
     bindings/js/JSJavaScriptCallFrameCustom.cpp
     bindings/js/JSLazyEventListener.cpp
@@ -1044,7 +1043,6 @@ SET(WebCore_SOURCES
     inspector/ConsoleMessage.cpp
     inspector/InjectedScript.cpp
     inspector/InjectedScriptHost.cpp
-    inspector/InjectedScriptManager.cpp
     inspector/InspectorAgent.cpp
     inspector/InspectorApplicationCacheAgent.cpp
     inspector/InspectorBrowserDebuggerAgent.cpp

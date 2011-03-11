@@ -33,22 +33,29 @@
 
 #if ENABLE(INSPECTOR)
 
-#include <wtf/Forward.h>
+#include "InjectedScript.h"
+#include "PlatformString.h"
+
 #include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class InjectedScriptManager;
+class InjectedScriptHost;
 class InspectorObject;
 class InspectorValue;
-class Page;
 
 typedef String ErrorString;
 
 class InspectorRuntimeAgent {
     WTF_MAKE_NONCOPYABLE(InspectorRuntimeAgent);
 public:
-    static PassOwnPtr<InspectorRuntimeAgent> create(InjectedScriptManager*, Page*);
+    static PassOwnPtr<InspectorRuntimeAgent> create(InjectedScriptHost* injectedScriptHost)
+    {
+        return adoptPtr(new InspectorRuntimeAgent(injectedScriptHost));
+    }
+
     ~InspectorRuntimeAgent();
 
     // Part of the protocol.
@@ -60,10 +67,9 @@ public:
     void releaseObjectGroup(ErrorString*, long injectedScriptId, const String& objectGroup);
 
 private:
-    InspectorRuntimeAgent(InjectedScriptManager*, Page*);
+    InspectorRuntimeAgent(InjectedScriptHost*);
 
-    InjectedScriptManager* m_injectedScriptManager;
-    Page* m_inspectedPage;
+    InjectedScriptHost* m_injectedScriptHost;
 };
 
 } // namespace WebCore

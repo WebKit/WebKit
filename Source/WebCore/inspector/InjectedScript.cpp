@@ -35,7 +35,6 @@
 
 #include "Frame.h"
 #include "InjectedScriptHost.h"
-#include "InjectedScriptManager.h"
 #include "InspectorValues.h"
 #include "Node.h"
 #include "PlatformString.h"
@@ -175,7 +174,7 @@ void InjectedScript::releaseObjectGroup(const String& objectGroup)
 
 bool InjectedScript::canAccessInspectedWindow()
 {
-    return InjectedScriptManager::canAccessInspectedWindow(m_injectedScriptObject.scriptState());
+    return InjectedScriptHost::canAccessInspectedWindow(m_injectedScriptObject.scriptState());
 }
 
 void InjectedScript::makeCall(ScriptFunctionCall& function, RefPtr<InspectorValue>* result)

@@ -56,7 +56,6 @@
 #include "HitTestResult.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
-#include "InjectedScriptManager.h"
 #include "InspectorBrowserDebuggerAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorClient.h"
@@ -133,14 +132,14 @@ static const char scriptsPanelName[] = "scripts";
 static const char consolePanelName[] = "console";
 static const char profilesPanelName[] = "profiles";
 
-InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScriptManager* injectedScriptManager)
+InspectorAgent::InspectorAgent(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
     , m_client(client)
     , m_frontend(0)
     , m_instrumentingAgents(new InstrumentingAgents())
-    , m_injectedScriptManager(injectedScriptManager)
+    , m_injectedScriptHost(InjectedScriptHost::create(this))
     , m_state(new InspectorState(client))
-    , m_domAgent(InspectorDOMAgent::create(m_instrumentingAgents.get(), m_state.get(), injectedScriptManager))
+    , m_domAgent(InspectorDOMAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptHost.get()))
     , m_cssAgent(new InspectorCSSAgent(m_instrumentingAgents.get(), m_domAgent.get()))
 #if ENABLE(DATABASE)
     , m_databaseAgent(InspectorDatabaseAgent::create(m_instrumentingAgents.get()))
@@ -153,9 +152,9 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
     , m_applicationCacheAgent(new InspectorApplicationCacheAgent(m_instrumentingAgents.get(), page))
 #endif
     , m_resourceAgent(InspectorResourceAgent::create(m_instrumentingAgents.get(), page, m_state.get()))
-    , m_consoleAgent(new InspectorConsoleAgent(m_instrumentingAgents.get(), this, m_state.get(), injectedScriptManager, m_domAgent.get()))
+    , m_consoleAgent(new InspectorConsoleAgent(m_instrumentingAgents.get(), this, m_state.get(), m_injectedScriptHost.get(), m_domAgent.get()))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    , m_debuggerAgent(InspectorDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, injectedScriptManager))
+    , m_debuggerAgent(InspectorDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, m_injectedScriptHost.get()))
     , m_browserDebuggerAgent(InspectorBrowserDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent.get(), m_debuggerAgent.get(), this))
     , m_profilerAgent(InspectorProfilerAgent::create(m_instrumentingAgents.get(), m_consoleAgent.get(), page))
 #endif
@@ -164,8 +163,6 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
     ASSERT_ARG(page, page);
     ASSERT_ARG(client, client);
     InspectorInstrumentation::bindInspectorAgent(m_inspectedPage, this);
-
-    m_injectedScriptManager->injectedScriptHost()->init(this, m_consoleAgent.get(), m_databaseAgent.get(), m_domStorageAgent.get());
 }
 
 InspectorAgent::~InspectorAgent()
@@ -196,7 +193,7 @@ void InspectorAgent::inspectedPageDestroyed()
     m_inspectedPage = 0;
 
     releaseFrontendLifetimeAgents();
-    m_injectedScriptManager->disconnect();
+    m_injectedScriptHost->disconnectController();
 
     m_client->inspectorDestroyed();
     m_client = 0;
@@ -256,7 +253,7 @@ void InspectorAgent::focusNode()
     if (!frame)
         return;
 
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldScriptState(frame));
+    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptFor(mainWorldScriptState(frame));
     if (injectedScript.hasNoValue())
         return;
 
@@ -332,19 +329,19 @@ void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* 
 
     if (enabled()) {
         if (m_frontend && frame == m_inspectedPage->mainFrame())
-            m_injectedScriptManager->discardInjectedScripts();
+            m_injectedScriptHost->discardInjectedScripts();
 
         if (m_scriptsToEvaluateOnLoad.size()) {
             ScriptState* scriptState = mainWorldScriptState(frame);
             for (Vector<String>::iterator it = m_scriptsToEvaluateOnLoad.begin();
                   it != m_scriptsToEvaluateOnLoad.end(); ++it) {
-                m_injectedScriptManager->injectScript(*it, scriptState);
+                m_injectedScriptHost->injectScript(*it, scriptState);
             }
         }
     }
 
     if (!m_inspectorExtensionAPI.isEmpty())
-        m_injectedScriptManager->injectScript(m_inspectorExtensionAPI, mainWorldScriptState(frame));
+        m_injectedScriptHost->injectScript(m_inspectorExtensionAPI, mainWorldScriptState(frame));
 }
 
 void InspectorAgent::setSearchingForNode(bool enabled)
@@ -441,7 +438,7 @@ void InspectorAgent::disconnectFrontend()
 
 void InspectorAgent::createFrontendLifetimeAgents()
 {
-    m_runtimeAgent = InspectorRuntimeAgent::create(m_injectedScriptManager, m_inspectedPage);
+    m_runtimeAgent = InspectorRuntimeAgent::create(m_injectedScriptHost.get());
 }
 
 void InspectorAgent::releaseFrontendLifetimeAgents()
@@ -512,7 +509,7 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
         m_frontend->inspector()->inspectedURLChanged(loader->url().string());
         m_frontend->inspector()->reset();
     }
-    m_injectedScriptManager->discardInjectedScripts();
+    m_injectedScriptHost->discardInjectedScripts();
 #if ENABLE(WORKERS)
     m_workers.clear();
 #endif
@@ -523,7 +520,6 @@ void InspectorAgent::domContentLoadedEventFired(DocumentLoader* loader, const KU
     if (!enabled() || !isMainResourceLoader(loader, url))
         return;
 
-    m_injectedScriptManager->injectedScriptHost()->clearInspectedNodes();
     if (InspectorDOMAgent* domAgent = m_instrumentingAgents->inspectorDOMAgent())
         domAgent->mainFrameDOMContentLoaded();
     if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())

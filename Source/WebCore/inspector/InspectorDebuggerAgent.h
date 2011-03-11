@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-class InjectedScriptManager;
+class InjectedScriptHost;
 class InspectorFrontend;
 class InspectorObject;
 class InspectorState;
@@ -63,7 +63,7 @@ enum DebuggerEventType {
 class InspectorDebuggerAgent : public ScriptDebugListener {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<InspectorDebuggerAgent> create(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptManager*);
+    static PassOwnPtr<InspectorDebuggerAgent> create(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptHost*);
     virtual ~InspectorDebuggerAgent();
 
     void startUserInitiatedDebugging();
@@ -109,7 +109,7 @@ public:
     void setListener(Listener* listener) { m_listener = listener; }
 
 private:
-    InspectorDebuggerAgent(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptManager*);
+    InspectorDebuggerAgent(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptHost*);
 
     void enable(bool restoringFromState);
 
@@ -154,7 +154,7 @@ private:
     InstrumentingAgents* m_instrumentingAgents;
     InspectorState* m_inspectorState;
     Page* m_inspectedPage;
-    InjectedScriptManager* m_injectedScriptManager;
+    InjectedScriptHost* m_injectedScriptHost;
     InspectorFrontend::Debugger* m_frontend;
     ScriptState* m_pausedScriptState;
     ScriptsMap m_scripts;

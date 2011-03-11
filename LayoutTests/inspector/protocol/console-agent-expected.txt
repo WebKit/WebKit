@@ -167,31 +167,12 @@ response:
     seq : <number>
 }
 
------------------------------------------------------------
-ConsoleAgent.addInspectedNode(<number>)
-
-request:
-{
-    seq : <number>
-    domain : "Console"
-    command : "addInspectedNode"
-    arguments : {
-        nodeId : 1
-    }
-}
-
-response:
-{
-    seq : <number>
-}
-
 ===========================================================
 Coverage for ConsoleAgent
 {
     setConsoleMessagesEnabled : "checked"
     clearConsoleMessages : "checked"
     setMonitoringXHREnabled : "checked"
-    addInspectedNode : "checked"
     addConsoleMessage : "checked"
     updateConsoleMessageExpiredCount : "not checked"
     updateConsoleMessageRepeatCount : "checked"

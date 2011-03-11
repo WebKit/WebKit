@@ -54,7 +54,7 @@ class GraphicsContext;
 class HTTPHeaderMap;
 class HitTestResult;
 class InjectedScript;
-class InjectedScriptManager;
+class InjectedScriptHost;
 class InspectorArray;
 class InspectorBrowserDebuggerAgent;
 class InspectorClient;
@@ -100,10 +100,11 @@ class InspectorAgent {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorAgent(Page*, InspectorClient*, InjectedScriptManager*);
+    InspectorAgent(Page*, InspectorClient*);
     virtual ~InspectorAgent();
 
     InspectorClient* inspectorClient() { return m_client; }
+    InjectedScriptHost* injectedScriptHost() { return m_injectedScriptHost.get(); }
 
     void inspectedPageDestroyed();
 
@@ -244,7 +245,7 @@ private:
     InspectorClient* m_client;
     InspectorFrontend* m_frontend;
     OwnPtr<InstrumentingAgents> m_instrumentingAgents;
-    InjectedScriptManager* m_injectedScriptManager;
+    RefPtr<InjectedScriptHost> m_injectedScriptHost;
     OwnPtr<InspectorState> m_state;
     OwnPtr<InspectorDOMAgent> m_domAgent;
     OwnPtr<InspectorCSSAgent> m_cssAgent;

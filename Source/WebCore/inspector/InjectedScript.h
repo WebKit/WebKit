@@ -31,7 +31,7 @@
 #ifndef InjectedScript_h
 #define InjectedScript_h
 
-#include "InjectedScriptManager.h"
+#include "InjectedScriptHost.h"
 #include "ScriptObject.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -71,7 +71,7 @@ public:
     ScriptState* scriptState() const { return m_injectedScriptObject.scriptState(); }
 
 private:
-    friend InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState*);
+    friend InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState*);
     explicit InjectedScript(ScriptObject);
 
     bool canAccessInspectedWindow();

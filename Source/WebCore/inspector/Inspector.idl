@@ -88,7 +88,6 @@ module core {
         void clearConsoleMessages();
         [event] void consoleMessagesCleared();
         void setMonitoringXHREnabled(in boolean enabled);
-        void addInspectedNode(in long nodeId);
     };
 
     interface [Conditional=INSPECTOR] Network {
@@ -162,6 +161,8 @@ module core {
 
         void outerHTML(in long nodeId, out String outerHTML);
         void setOuterHTML(in long nodeId, in String outerHTML, out long outNodeId);
+
+        void addInspectedNode(in long nodeId);
 
         void performSearch(in String query, in boolean runSynchronously);
         void searchCanceled();
