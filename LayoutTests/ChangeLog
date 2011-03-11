@@ -1,3 +1,9 @@
+2011-03-10  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: tweak Chromium test_expectations.txt
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-10  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Darin Adler.
