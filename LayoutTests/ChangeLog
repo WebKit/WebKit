@@ -1,5 +1,20 @@
 2011-03-11  Mihai Parparita  <mihaip@chromium.org>
 
+        Chromium Mac expectations update. Rebaseline some more tests after
+        r80582.
+
+        * fast/repaint/text-emphasis-h-expected.checksum:
+        * fast/repaint/text-emphasis-h-expected.png:
+        * platform/chromium-mac/fast/repaint/text-emphasis-h-expected.txt: Removed.
+        * platform/chromium-mac/fast/ruby/base-shorter-than-text-expected.checksum:
+        * platform/chromium-mac/fast/ruby/base-shorter-than-text-expected.png:
+        * platform/chromium-mac/fast/ruby/base-shorter-than-text-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/blockflow/vertical-baseline-alignment-expected.checksum:
+        * platform/mac-leopard/fast/blockflow/vertical-baseline-alignment-expected.png:
+
+2011-03-11  Mihai Parparita  <mihaip@chromium.org>
+
         Chromium Mac expectations update. Rebaseline some tests after r80582
         (those that already had chromium-mac-leopard baselines).
 

@@ -3088,7 +3088,6 @@ BUGCR74719 MAC SNOWLEOPARD : fast/layers/video-layer.html = TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/media/mq-transform-02.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/media/mq-transform-03.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/speech/input-appearance-numberandspeech.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/speech/input-appearance-searchandspeech.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
@@ -3319,9 +3318,6 @@ BUGCR75426 LINUX DEBUG : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-
 
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
-BUGCR75424 MAC LEOPARD : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT
 BUGCR75424 MAC : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
 BUGCR75424 MAC : fast/blockflow/broken-ideographic-font.html = IMAGE
 BUGCR75424 MAC : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
