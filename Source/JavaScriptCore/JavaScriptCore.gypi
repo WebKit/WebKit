@@ -539,6 +539,7 @@
             'runtime/StructureChain.cpp',
             'runtime/TimeoutChecker.cpp',
             'runtime/Tracing.h',
+            'runtime/Tracing.d',
             'runtime/UString.cpp',
             'runtime/UStringConcatenate.h',
             'wtf/Assertions.cpp',

@@ -44,8 +44,8 @@
         '<@(javascriptcore_privateheader_files)',
         '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
         '$(SDKROOT)/System/Library/Frameworks/Foundation.framework',
-        'libicucore.dylib',
-        'libobjc.dylib',
+        '/usr/lib/libicucore.dylib',
+        '/usr/lib/libobjc.dylib',
       ],
       'mac_framework_headers': [
         '<@(javascriptcore_publicheader_files)',
@@ -133,14 +133,24 @@
     {
       'target_name': 'Derived Sources',
       'type': 'none',
-      'actions': [{
-        'action_name': 'Generate Derived Sources',
-        'inputs': [],
-        'outputs': [],
-        'action': [
-          'sh', 'generate-derived-sources.sh',
-        ],
-      }],
+      'actions': [
+        {
+          'action_name': 'Generate Derived Sources',
+          'inputs': [],
+          'outputs': [],
+          'action': [
+            'sh', 'generate-derived-sources.sh',
+          ],
+        },
+        {
+          'action_name': 'Generate DTrace Header',
+          'inputs': [],
+           'outputs': [],
+           'action': [
+             'sh', '<(DEPTH)/JavaScriptCore/gyp/generate-dtrace-header.sh'
+            ]
+        }
+      ],
     },
     {
       'target_name': 'Update Version',
@@ -209,7 +219,7 @@
       'sources': [
         '<@(jsc_files)',
         '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
-        'libedit.dylib',
+        '/usr/lib/libedit.dylib',
       ],
     },
   ], # targets

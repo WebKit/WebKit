@@ -1,3 +1,15 @@
+2011-03-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Tweak dylib paths and add dtrace header generation action to JavaScriptCore gyp project.
+        https://bugs.webkit.org/show_bug.cgi?id=56207
+
+        * JavaScriptCore.gypi: Added Tracing.d to the sources.
+        * gyp/generate-dtrace-header.sh: Added.
+        * gyp/JavaScriptCore.gyp: Updated dylib paths (now the project can see them),
+            and added DTrace header generating step.
+
 2011-03-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
