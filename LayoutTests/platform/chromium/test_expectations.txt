@@ -151,6 +151,10 @@ WONTFIX SKIP : fast/wml = FAIL
 // most likely these tests will always be JSC specific.
 WONTFIX SKIP : fast/profiler = FAIL TIMEOUT
 
+// StorageTracker isn't used by Chromium and not all requisite platform code
+// is implemented.
+WONTFIX SKIP : storage/domstorage/localstorage/storagetracker = PASS TIMEOUT FAIL
+
 // We use worker_uitests to run workers tests. Don't run them in test_shell.
 WONTFIX SKIP : fast/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : fast/files/workers = PASS TIMEOUT FAIL

@@ -59,6 +59,11 @@ namespace WebCore {
         // Only called from a background thread.
         void importItem(const String& key, const String& value);
 
+        // Used to clear a StorageArea and close db before backing db file is deleted.
+        void clearForOriginDeletion();
+
+        void sync();
+
     private:
         StorageAreaImpl(StorageType, PassRefPtr<SecurityOrigin>, PassRefPtr<StorageSyncManager>, unsigned quota);
         StorageAreaImpl(StorageAreaImpl*);

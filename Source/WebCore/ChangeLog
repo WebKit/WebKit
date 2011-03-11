@@ -1,3 +1,94 @@
+2011-03-11  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed and landed by Brady Eidson.
+
+        Add WebKit1 API to view and delete local storage
+        https://bugs.webkit.org/show_bug.cgi?id=51878
+
+        Created StorageTracker as a central point for tracking and deleting LocalStorage per origin.
+        StorageTracker maintains its own database of origin identifiers and backing db paths,
+        and this allows it to contain more relational data in the future, like variable quotas per origin.
+
+        On initialization, StorageTracker syncs its database with LocalStorage files on disk. It adds
+        an origin entry when StorageAreaSync performs a first sync for an origin.
+
+        All StorageTracker file operations are performed on one background thread with a task queue.
+
+        Tests: storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html
+               storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html
+               storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html
+               storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html
+               storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html
+
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::clearLocalStorageForAllOrigins):
+        (WebCore::PageGroup::clearLocalStorageForOrigin):
+        (WebCore::PageGroup::syncLocalStorage):
+        (WebCore::PageGroup::numberOfPageGroups):
+        * page/PageGroup.h:
+        * platform/chromium/FileSystemChromium.cpp:
+        (WebCore::listDirectory):
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::listDirectory):
+        * storage/LocalStorageTask.cpp:
+        (WebCore::LocalStorageTask::LocalStorageTask):
+        (WebCore::LocalStorageTask::performTask):
+        * storage/LocalStorageTask.h:
+        (WebCore::LocalStorageTask::createOriginIdentifiersImport):
+        (WebCore::LocalStorageTask::createSetOriginDetails):
+        (WebCore::LocalStorageTask::createDeleteOrigin):
+        (WebCore::LocalStorageTask::createDeleteAllOrigins):
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::clearForOriginDeletion):
+        (WebCore::StorageAreaImpl::sync):
+        * storage/StorageAreaImpl.h:
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::scheduleCloseDatabase):
+        (WebCore::StorageAreaSync::openDatabase):
+        (WebCore::StorageAreaSync::sync):
+        (WebCore::StorageAreaSync::deleteEmptyDatabase):
+        (WebCore::StorageAreaSync::scheduleSync):
+        * storage/StorageAreaSync.h:
+        * storage/StorageNamespace.h:
+        * storage/StorageNamespaceImpl.cpp:
+        (WebCore::StorageNamespaceImpl::clearOriginForDeletion):
+        (WebCore::StorageNamespaceImpl::clearAllOriginsForDeletion):
+        (WebCore::StorageNamespaceImpl::sync):
+        * storage/StorageNamespaceImpl.h:
+        * storage/StorageTracker.cpp: Added.
+        (WebCore::StorageTracker::initializeTracker):
+        (WebCore::StorageTracker::tracker):
+        (WebCore::StorageTracker::StorageTracker):
+        (WebCore::StorageTracker::setStorageDirectoryPath):
+        (WebCore::StorageTracker::trackerDatabasePath):
+        (WebCore::StorageTracker::openTrackerDatabase):
+        (WebCore::StorageTracker::importOriginIdentifiers):
+        (WebCore::StorageTracker::syncImportOriginIdentifiers):
+        (WebCore::StorageTracker::syncFileSystemAndTrackerDatabase):
+        (WebCore::StorageTracker::setOriginDetails):
+        (WebCore::StorageTracker::scheduleTask):
+        (WebCore::StorageTracker::syncSetOriginDetails):
+        (WebCore::StorageTracker::origins):
+        (WebCore::StorageTracker::deleteAllOrigins):
+        (WebCore::StorageTracker::syncDeleteAllOrigins):
+        (WebCore::StorageTracker::deleteOrigin):
+        (WebCore::StorageTracker::syncDeleteOrigin):
+        (WebCore::StorageTracker::willDeleteAllOrigins):
+        (WebCore::StorageTracker::willDeleteOrigin):
+        (WebCore::StorageTracker::canDeleteOrigin):
+        (WebCore::StorageTracker::cancelDeletingOrigin):
+        (WebCore::StorageTracker::setClient):
+        (WebCore::StorageTracker::syncLocalStorage):
+        * storage/StorageTracker.h: Added.
+        * storage/StorageTrackerClient.h: Added.
+        (WebCore::StorageTrackerClient::~StorageTrackerClient):
+
 2011-03-11  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

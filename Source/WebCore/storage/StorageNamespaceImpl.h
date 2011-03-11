@@ -51,6 +51,14 @@ namespace WebCore {
         virtual void close();
         virtual void unlock();
 
+        // Not removing the origin's StorageArea from m_storageAreaMap because
+        // we're just deleting the underlying db file. If an item is added immediately
+        // after file deletion, we want the same StorageArea to eventually trigger
+        // a sync and for StorageAreaSync to recreate the backing db file.
+        virtual void clearOriginForDeletion(SecurityOrigin*);
+        virtual void clearAllOriginsForDeletion();
+        virtual void sync();
+        
     private:
         StorageNamespaceImpl(StorageType, const String& path, unsigned quota);
 

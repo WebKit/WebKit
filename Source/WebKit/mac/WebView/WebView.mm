@@ -97,6 +97,7 @@
 #import "WebPreferencesPrivate.h"
 #import "WebScriptDebugDelegate.h"
 #import "WebScriptWorldInternal.h"
+#import "WebStorageManagerInternal.h"
 #import "WebSystemInterface.h"
 #import "WebTextCompletionController.h"
 #import "WebTextIterator.h"
@@ -686,6 +687,10 @@ static NSString *leakMailQuirksUserScriptPath()
         [WebHistoryItem initWindowWatcherIfNecessary];
 #if ENABLE(DATABASE)
         WebKitInitializeDatabasesIfNecessary();
+#endif
+
+#if ENABLE(DOM_STORAGE)
+        WebKitInitializeStorageIfNecessary();
 #endif
         WebKitInitializeApplicationCachePathIfNecessary();
         patchMailRemoveAttributesMethod();

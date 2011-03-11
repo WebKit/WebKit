@@ -193,7 +193,12 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setPrivateBrowsingEnabled", &LayoutTestController::setPrivateBrowsingEnabled);
     bindMethod("setUseDashboardCompatibilityMode", &LayoutTestController::setUseDashboardCompatibilityMode);
     bindMethod("storeWebScriptObject", &LayoutTestController::storeWebScriptObject);
-
+    bindMethod("deleteAllLocalStorage", &LayoutTestController::deleteAllLocalStorage);
+    bindMethod("originsWithLocalStorage", &LayoutTestController::originsWithLocalStorage);
+    bindMethod("deleteLocalStorageForOrigin", &LayoutTestController::deleteLocalStorageForOrigin);
+    bindMethod("observeStorageTrackerNotifications", &LayoutTestController::observeStorageTrackerNotifications);
+    bindMethod("syncLocalStorage", &LayoutTestController::syncLocalStorage);
+    
     // The fallback method is called when an unknown method is invoked.
     bindFallbackMethod(&LayoutTestController::fallbackMethod);
 
@@ -1620,3 +1625,30 @@ void LayoutTestController::setValueForUser(const CppArgumentList& arguments, Cpp
 
     input->setValue(cppVariantToWebString(arguments[1]), true);
 }
+
+void LayoutTestController::deleteAllLocalStorage(const CppArgumentList& arguments, CppVariant*)
+{
+    // Not Implemented
+}
+
+void LayoutTestController::originsWithLocalStorage(const CppArgumentList& arguments, CppVariant*)
+{
+    // Not Implemented
+}
+
+void LayoutTestController::deleteLocalStorageForOrigin(const CppArgumentList& arguments, CppVariant*)
+{
+    // Not Implemented
+}
+
+void LayoutTestController::observeStorageTrackerNotifications(const CppArgumentList&, CppVariant*)
+{
+    // Not Implemented
+}
+
+void LayoutTestController::syncLocalStorage(const CppArgumentList&, CppVariant*)
+{
+    // Not Implemented
+}
+
+

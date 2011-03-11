@@ -3218,6 +3218,9 @@ webcore_sources += \
 	Source/WebCore/storage/StorageNamespaceImpl.h \
 	Source/WebCore/storage/StorageSyncManager.cpp \
 	Source/WebCore/storage/StorageSyncManager.h \
+	Source/WebCore/storage/StorageTracker.cpp \
+	Source/WebCore/storage/StorageTracker.h \
+	Source/WebCore/storage/StorageTrackerClient.h \
 	Source/WebCore/svg/animation/SMILTimeContainer.cpp \
 	Source/WebCore/svg/animation/SMILTimeContainer.h \
 	Source/WebCore/svg/animation/SMILTime.cpp \

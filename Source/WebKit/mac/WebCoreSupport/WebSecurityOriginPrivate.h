@@ -37,8 +37,10 @@
 
 - (id)initWithURL:(NSURL *)url;
 
-- (NSString*)protocol;
-- (NSString*)host;
+- (NSString *)protocol;
+- (NSString *)host;
+
+- (NSString *)databaseIdentifier;
 
 // Returns zero if the port is the default port for the protocol, non-zero otherwise.
 - (unsigned short)port;

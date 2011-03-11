@@ -30,8 +30,10 @@
 #include "FileSystem.h"
 
 #include "PlatformString.h"
+#include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <fnmatch.h>
 #include <libgen.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -227,10 +229,28 @@ String directoryName(const String& path)
     return dirname(fsRep.mutableData());
 }
 
-// OK to not implement listDirectory at the moment, because it's only used for plug-ins, and
-// all platforms that use the shared plug-in implementation have implementations. We'd need
-// to implement it if we wanted to use PluginDatabase.cpp on the Mac. Better to not implement
-// at all and get a link error in case this arises, rather than having a stub here, because
-// with a stub you learn about the problem at runtime instead of link time.
+Vector<String> listDirectory(const String& path, const String& filter)
+{
+    Vector<String> entries;
+    CString cpath = path.utf8();
+    CString cfilter = filter.utf8();
+    DIR* dir = opendir(cpath.data());
+    if (dir) {
+        struct dirent* dp;
+        while ((dp = readdir(dir))) {
+            const char* name = dp->d_name;
+            if (!strcmp(name, ".") || !strcmp(name, ".."))
+                continue;
+            if (fnmatch(cfilter.data(), name, 0))
+                continue;
+            char filePath[1024];
+            if (static_cast<int>(sizeof(filePath) - 1) < snprintf(filePath, sizeof(filePath), "%s/%s", cpath.data(), name))
+                continue; // buffer overflow
+            entries.append(filePath);
+        }
+        closedir(dir);
+    }
+    return entries;
+}
 
 } // namespace WebCore

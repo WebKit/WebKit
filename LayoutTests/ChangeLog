@@ -1,3 +1,23 @@
+2011-03-11  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed and landed by Brady Eidson.
+
+        Add WebKit1 API to view and delete local storage
+        https://bugs.webkit.org/show_bug.cgi?id=51878
+
+        * platform/chromium/test_expectations.txt:
+        * storage/domstorage/localstorage/storagetracker: Added.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare-expected.txt: Added.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html: Added.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-2-create-expected.txt: Added.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html: Added.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all-expected.txt: Added.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html: Added.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-4-create-expected.txt: Added.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html: Added.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one-expected.txt: Added.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html: Added.
+
 2011-03-11  Jessie Berlin  <jberlin@apple.com>
 
         http/tests/websocket/tests/url-with-credential.html sometimes crashes beneath SocketStreamHandle::readStreamCallback on Windows

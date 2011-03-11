@@ -558,4 +558,33 @@ void LayoutTestController::setSerializeHTTPLoads(bool)
 void LayoutTestController::setMinimumTimerInterval(double interval) {
 
 }
-    
+
+void LayoutTestController::syncLocalStorage()
+{
+    // FIXME: Implement.
+}
+
+void LayoutTestController::observeStorageTrackerNotifications(unsigned number)
+{
+    // FIXME: Implement.
+}
+
+void LayoutTestController::clearAllDatabases()
+{
+    // FIXME: Implement.
+}
+
+void LayoutTestController::deleteAllLocalStorage()
+{
+    // FIXME: Implement.
+}
+
+JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)
+{
+    // FIXME: Implement.
+}
+
+void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)
+{
+    // FIXME: Implement.
+}

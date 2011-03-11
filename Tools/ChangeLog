@@ -1,3 +1,76 @@
+2011-03-11  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed and landed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51878
+        Add WebKit1 API to view and delete local storage
+
+        Added tests that write to LocalStorage, delete one origin, get list of origins with local storage, delete all origins.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/LayoutTestController.cpp:
+        (syncLocalStorageCallback):
+        (observeStorageTrackerNotificationsCallback):
+        (deleteAllLocalStorageCallback):
+        (deleteLocalStorageForOriginCallback):
+        (originsWithLocalStorageCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/StorageTrackerDelegate.h: Added.
+        * DumpRenderTree/StorageTrackerDelegate.mm: Added.
+        (-[StorageTrackerDelegate init]):
+        (-[StorageTrackerDelegate logNotifications:controller:]):
+        (-[StorageTrackerDelegate originModified:]):
+        (-[StorageTrackerDelegate dealloc]):
+        (-[StorageTrackerDelegate setControllerToNotifyDone:]):
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::deleteAllLocalStorage):
+        (LayoutTestController::originsWithLocalStorage):
+        (LayoutTestController::deleteLocalStorageForOrigin):
+        (observeStorageTrackerNotifications):
+        (syncLocalStorage):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::originsWithLocalStorage):
+        (LayoutTestController::deleteAllLocalStorage):
+        (LayoutTestController::deleteLocalStorageForOrigin):
+        (LayoutTestController::observeStorageTrackerNotifications):
+        (LayoutTestController::syncLocalStorage):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        (allocateGlobalControllers):
+        (releaseGlobalControllers):
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::syncLocalStorage):
+        (LayoutTestController::observeStorageTrackerNotifications):
+        (LayoutTestController::deleteAllLocalStorage):
+        (LayoutTestController::originsWithLocalStorage):
+        (LayoutTestController::deleteLocalStorageForOrigin):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::originsWithLocalStorage):
+        (LayoutTestController::deleteAllLocalStorage):
+        (LayoutTestController::deleteLocalStorageForOrigin):
+        (LayoutTestController::observeStorageTrackerNotifications):
+        (LayoutTestController::syncLocalStorage):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::clearAllApplicationCaches):
+        (LayoutTestController::syncLocalStorage):
+        (LayoutTestController::observeStorageTrackerNotifications):
+        (LayoutTestController::clearAllDatabases):
+        (LayoutTestController::deleteAllLocalStorage):
+        (LayoutTestController::originsWithLocalStorage):
+        (LayoutTestController::deleteLocalStorageForOrigin):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::syncLocalStorage):
+        (LayoutTestController::observeStorageTrackerNotifications):
+        (LayoutTestController::clearAllDatabases):
+        (LayoutTestController::deleteAllLocalStorage):
+        (LayoutTestController::originsWithLocalStorage):
+        (LayoutTestController::deleteLocalStorageForOrigin):
+
 2011-03-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.

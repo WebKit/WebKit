@@ -39,6 +39,7 @@ namespace WebCore {
     class GroupSettings;
     class IDBFactoryBackendInterface;
     class Page;
+    class SecurityOrigin;
     class StorageNamespace;
 
     class PageGroup {
@@ -49,7 +50,15 @@ namespace WebCore {
         ~PageGroup();
 
         static PageGroup* pageGroup(const String& groupName);
+
+#if ENABLE(DOM_STORAGE)
         static void closeLocalStorage();
+        static void clearLocalStorageForAllOrigins();
+        static void clearLocalStorageForOrigin(SecurityOrigin*);
+        // DumpRenderTree helper that triggers a StorageArea sync.
+        static void syncLocalStorage();
+#endif
+        static unsigned numberOfPageGroups();
         
         const HashSet<Page*>& pages() const { return m_pages; }
 

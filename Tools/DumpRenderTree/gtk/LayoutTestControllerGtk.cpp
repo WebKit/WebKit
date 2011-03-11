@@ -651,6 +651,31 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
     webkit_security_origin_set_web_database_quota(origin, quota);
 }
 
+JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef)
+{
+        // FIXME: implement
+}
+
+void LayoutTestController::deleteAllLocalStorage()
+{
+        // FIXME: implement
+}
+
+void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef originIdentifier)
+{
+        // FIXME: implement
+}
+
+void LayoutTestController::observeStorageTrackerNotifications(unsigned number)
+{
+        // FIXME: implement
+}
+
+void LayoutTestController::syncLocalStorage()
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool, JSStringRef)
 {
     // FIXME: implement

@@ -227,6 +227,31 @@ void StorageAreaImpl::close()
 #endif
 }
 
+void StorageAreaImpl::clearForOriginDeletion()
+{
+    ASSERT(!m_isShutdown);
+    blockUntilImportComplete();
+    
+    if (m_storageMap->length()) {
+        unsigned quota = m_storageMap->quota();
+        m_storageMap = StorageMap::create(quota);
+    }
+
+    if (m_storageAreaSync) {
+        m_storageAreaSync->scheduleClear();
+        m_storageAreaSync->scheduleCloseDatabase();
+    }
+}
+    
+void StorageAreaImpl::sync()
+{
+    ASSERT(!m_isShutdown);
+    blockUntilImportComplete();
+    
+    if (m_storageAreaSync)
+        m_storageAreaSync->scheduleSync();
+}
+
 void StorageAreaImpl::blockUntilImportComplete() const
 {
     if (m_storageAreaSync)

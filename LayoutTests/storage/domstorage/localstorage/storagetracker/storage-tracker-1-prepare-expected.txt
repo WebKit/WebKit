@@ -1,0 +1,10 @@
+Prepare for StorageTracker tests by ensuring that every origin with local storage is deleted.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+This test should have no visible output on success.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

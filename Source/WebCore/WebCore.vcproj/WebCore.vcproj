@@ -65894,9 +65894,18 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\VersionChangeCallback.h"
+				RelativePath="..\storage\StorageTracker.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\storage\StorageTracker.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\VersionChangeCallback.h"
+			    >
+			</File>
+
 		</Filter>
 		<Filter
 			Name="strings"

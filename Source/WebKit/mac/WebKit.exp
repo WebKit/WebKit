@@ -6,6 +6,7 @@
 .objc_class_name_WebCoreStatistics
 .objc_class_name_WebDataSource
 .objc_class_name_WebDatabaseManager
+.objc_class_name_WebStorageManager
 .objc_class_name_WebDefaultPolicyDelegate
 .objc_class_name_WebDeviceOrientation
 .objc_class_name_WebDeviceOrientationProviderMock
@@ -114,6 +115,8 @@ _WebReportError
 _WebScriptErrorDescriptionKey
 _WebScriptErrorDomain
 _WebScriptErrorLineNumberKey
+_WebStorageDirectoryDefaultsKey
+_WebStorageDidModifyOriginNotification
 _WebURLNamePboardType
 _WebURLPboardType
 _WebViewDidBeginEditingNotification

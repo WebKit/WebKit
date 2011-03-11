@@ -1,0 +1,10 @@
+Origin identifier: 'file__0'
+StorageTracker test - write local storage for this origin. Should be called after origins-prepare.html.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -50,6 +50,8 @@
 		29CFBA2E12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29CFBA2D12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm */; };
 		3713EDE2115BE19300705720 /* ColorBits-A.png in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 3713EDDF115BE16F00705720 /* ColorBits-A.png */; };
 		3713EDE3115BE19300705720 /* ColorBits.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 3713EDE0115BE16F00705720 /* ColorBits.ttf */; };
+		3A5626CB131CA02A002BE6D9 /* StorageTrackerDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3A5626C1131C8B17002BE6D9 /* StorageTrackerDelegate.mm */; };
+		3A5626CC131CA036002BE6D9 /* StorageTrackerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A5626C0131C8B17002BE6D9 /* StorageTrackerDelegate.h */; };
 		440590711268453800CFD48D /* WebArchiveDumpSupportMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 440590701268453800CFD48D /* WebArchiveDumpSupportMac.mm */; };
 		4437730E125CBC3600AAE02C /* WebArchiveDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44A997830FCDE86400580F10 /* WebArchiveDumpSupport.cpp */; };
 		4437730F125CBC4D00AAE02C /* WebArchiveDumpSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A997820FCDE86400580F10 /* WebArchiveDumpSupport.h */; };
@@ -230,6 +232,8 @@
 		375F09770DAC3CB600C8B4E5 /* WebKitWeightWatcher700.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher700.ttf; path = fonts/WebKitWeightWatcher700.ttf; sourceTree = "<group>"; };
 		375F09780DAC3CB600C8B4E5 /* WebKitWeightWatcher800.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher800.ttf; path = fonts/WebKitWeightWatcher800.ttf; sourceTree = "<group>"; };
 		375F09790DAC3CB600C8B4E5 /* WebKitWeightWatcher900.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher900.ttf; path = fonts/WebKitWeightWatcher900.ttf; sourceTree = "<group>"; };
+		3A5626C0131C8B17002BE6D9 /* StorageTrackerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageTrackerDelegate.h; sourceTree = "<group>"; };
+		3A5626C1131C8B17002BE6D9 /* StorageTrackerDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StorageTrackerDelegate.mm; sourceTree = "<group>"; };
 		440590701268453800CFD48D /* WebArchiveDumpSupportMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebArchiveDumpSupportMac.mm; path = mac/WebArchiveDumpSupportMac.mm; sourceTree = "<group>"; };
 		44A997820FCDE86400580F10 /* WebArchiveDumpSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebArchiveDumpSupport.h; path = cf/WebArchiveDumpSupport.h; sourceTree = "<group>"; };
 		44A997830FCDE86400580F10 /* WebArchiveDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebArchiveDumpSupport.cpp; path = cf/WebArchiveDumpSupport.cpp; sourceTree = "<group>"; };
@@ -460,6 +464,8 @@
 				BCA18B5E0C9B08C200114369 /* ResourceLoadDelegate.mm */,
 				BCA18B5F0C9B08C200114369 /* UIDelegate.h */,
 				BCA18B600C9B08C200114369 /* UIDelegate.mm */,
+				3A5626C0131C8B17002BE6D9 /* StorageTrackerDelegate.h */,
+				3A5626C1131C8B17002BE6D9 /* StorageTrackerDelegate.mm */,
 			);
 			name = Delegates;
 			sourceTree = "<group>";
@@ -620,6 +626,7 @@
 				5185F6B310714E12007AA393 /* HistoryDelegate.h in Headers */,
 				E1B7816711AF31C3007E1BC2 /* MockGeolocationProvider.h in Headers */,
 				29CFBA10122736E600BC30C0 /* AccessibilityTextMarker.h in Headers */,
+				3A5626CC131CA036002BE6D9 /* StorageTrackerDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -809,6 +816,7 @@
 				E1B7816511AF31B7007E1BC2 /* MockGeolocationProvider.mm in Sources */,
 				29CFBA11122736E600BC30C0 /* AccessibilityTextMarker.cpp in Sources */,
 				29CFBA2E12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm in Sources */,
+				3A5626CB131CA02A002BE6D9 /* StorageTrackerDelegate.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,43 +20,18 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StorageNamespace_h
-#define StorageNamespace_h
+class LayoutTestController;
 
-#if ENABLE(DOM_STORAGE)
+@interface StorageTrackerDelegate : NSObject {
+    unsigned numberOfNotificationsToLog;
+    LayoutTestController* controllerToNotifyDone;
+}
 
-#include "PlatformString.h"
+- (void)logNotifications:(unsigned)number controller:(LayoutTestController*)controller;
+- (void)originModified:(NSNotification *)notification;
+- (void)setControllerToNotifyDone:(LayoutTestController*)controller;
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-
-namespace WebCore {
-
-class Page;
-class SecurityOrigin;
-class StorageArea;
-
-// This interface is required for Chromium since these actions need to be proxied between processes.
-class StorageNamespace : public RefCounted<StorageNamespace> {
-public:
-    static PassRefPtr<StorageNamespace> localStorageNamespace(const String& path, unsigned quota);
-    static PassRefPtr<StorageNamespace> sessionStorageNamespace(Page*, unsigned quota);
-
-    virtual ~StorageNamespace() { }
-    virtual PassRefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>) = 0;
-    virtual PassRefPtr<StorageNamespace> copy() = 0;
-    virtual void close() = 0;
-    virtual void unlock() = 0;
-    virtual void clearOriginForDeletion(SecurityOrigin*) = 0;
-    virtual void clearAllOriginsForDeletion() = 0;
-    virtual void sync() = 0;
-};
-
-} // namespace WebCore
-
-#endif // ENABLE(DOM_STORAGE)
-
-#endif // StorageNamespace_h
+@end

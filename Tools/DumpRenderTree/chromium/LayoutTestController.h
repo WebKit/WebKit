@@ -341,6 +341,13 @@ public:
     // Forwards the setValueForUser() call to the element.
     void setValueForUser(const CppArgumentList&, CppVariant*);
 
+    // LocalStorage origin-related
+    void deleteAllLocalStorage(const CppArgumentList&, CppVariant*);
+    void originsWithLocalStorage(const CppArgumentList&, CppVariant*);
+    void deleteLocalStorageForOrigin(const CppArgumentList&, CppVariant*);
+    void observeStorageTrackerNotifications(const CppArgumentList&, CppVariant*);
+    void syncLocalStorage(const CppArgumentList&, CppVariant*);
+
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }

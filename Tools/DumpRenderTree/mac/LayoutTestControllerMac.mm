@@ -33,6 +33,7 @@
 #import "EditingDelegate.h"
 #import "MockGeolocationProvider.h"
 #import "PolicyDelegate.h"
+#import "StorageTrackerDelegate.h"
 #import "UIDelegate.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
@@ -66,6 +67,7 @@
 #import <WebKit/WebQuotaManager.h>
 #import <WebKit/WebScriptWorld.h>
 #import <WebKit/WebSecurityOriginPrivate.h>
+#import <WebKit/WebStorageManagerPrivate.h>
 #import <WebKit/WebTypesInternal.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
@@ -133,9 +135,51 @@ void LayoutTestController::clearAllApplicationCaches()
     [WebApplicationCache deleteAllApplicationCaches];
 }
 
+void LayoutTestController::syncLocalStorage()
+{
+    [[WebStorageManager sharedWebStorageManager] syncLocalStorage];
+}
+
+void LayoutTestController::observeStorageTrackerNotifications(unsigned number)
+{
+    [storageDelegate logNotifications:number controller:this];
+}
+
 void LayoutTestController::clearAllDatabases()
 {
     [[WebDatabaseManager sharedWebDatabaseManager] deleteAllDatabases];
+}
+
+void LayoutTestController::deleteAllLocalStorage()
+{
+    [[WebStorageManager sharedWebStorageManager] deleteAllOrigins];
+}
+
+JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)
+{
+    WebStorageManager *storage = [WebStorageManager sharedWebStorageManager];
+
+    NSArray *origins = [storage origins];
+    NSInteger count = [origins count];
+
+    JSValueRef jsOriginsArray[count];
+    for (NSInteger i = 0; i < count; i++) {
+        NSString *origin = [[origins objectAtIndex:i] databaseIdentifier];
+        JSStringRef str = JSStringCreateWithCFString((CFStringRef)origin);
+        jsOriginsArray[i] = JSValueMakeString(context, str);
+    }
+
+    JSObjectRef jsArrayObject = JSObjectMakeArray(context, count, jsOriginsArray, NULL);
+    return jsArrayObject;
+}
+
+void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)
+{
+    RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, URL));
+    
+    WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:(NSString *)urlCF.get()]];
+
+    [[WebStorageManager sharedWebStorageManager] deleteOrigin:origin];
 }
 
 void LayoutTestController::clearBackForwardList()

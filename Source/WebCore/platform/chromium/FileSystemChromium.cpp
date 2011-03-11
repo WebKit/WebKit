@@ -112,4 +112,11 @@ int writeToFile(PlatformFileHandle handle, const char* data, int length)
     return PlatformBridge::writeToFile(handle, data, length);
 }
 
+Vector<String> listDirectory(const String& path, const String& filter)
+{
+    notImplemented();
+
+    return Vector<String>();
+}
+
 } // namespace WebCore

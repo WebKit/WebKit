@@ -842,5 +842,30 @@ void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
     DumpRenderTreeSupportQt::setMinimumTimerInterval(m_drt->webPage(), minimumTimerInterval);
 }
 
+void LayoutTestController::originsWithLocalStorage()
+{
+    // FIXME: Implement.
+}
+
+void LayoutTestController::deleteAllLocalStorage()
+{
+    // FIXME: Implement.
+}
+
+void LayoutTestController::deleteLocalStorageForOrigin(const QString& originIdentifier)
+{
+    // FIXME: Implement.
+}
+
+void LayoutTestController::observeStorageTrackerNotifications(unsigned number)
+{
+    // FIXME: Implement.
+}
+
+void LayoutTestController::syncLocalStorage()
+{
+    // FIXME: Implement.
+}
+
 const unsigned LayoutTestController::maxViewWidth = 800;
 const unsigned LayoutTestController::maxViewHeight = 600;

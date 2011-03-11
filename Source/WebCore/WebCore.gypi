@@ -4635,6 +4635,8 @@
             'storage/StorageNamespaceImpl.h',
             'storage/StorageSyncManager.cpp',
             'storage/StorageSyncManager.h',
+            'storage/StorageTracker.cpp',
+            'storage/StorageTracker.h',
             'storage/chromium/DatabaseObserver.h',
             'storage/chromium/DatabaseTrackerChromium.cpp',
             'storage/chromium/IDBFactoryBackendInterface.cpp',

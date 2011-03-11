@@ -2748,7 +2748,9 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/StorageMap.h \
         storage/StorageNamespace.h \
         storage/StorageNamespaceImpl.h \
-        storage/StorageSyncManager.h
+        storage/StorageSyncManager.h \
+        storage/StorageTracker.h \
+        storage/StorageTrackerClient.h
 
     !v8 {
         SOURCES += \
@@ -2765,7 +2767,8 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/StorageMap.cpp \
         storage/StorageNamespace.cpp \
         storage/StorageNamespaceImpl.cpp \
-        storage/StorageSyncManager.cpp
+        storage/StorageSyncManager.cpp \
+        storage/StorageTracker.cpp
 }
 
 contains(DEFINES, ENABLE_FILE_SYSTEM=1) {

@@ -35,6 +35,7 @@
 @class DumpRenderTreeDraggingInfo;
 @class NavigationController;
 @class PolicyDelegate;
+@class StorageTrackerDelegate;
 @class WebFrame;
 @class WebScriptWorld;
 @class WebView;
@@ -42,6 +43,7 @@
 class DumpRenderTreeDraggingInfo;
 class NavigationController;
 class PolicyDelegate;
+class StorageTrackerDelegate;
 class WebFrame;
 class WebScriptWorld;
 class WebView;
@@ -54,6 +56,7 @@ extern WebFrame* topLoadingFrame;
 extern DumpRenderTreeDraggingInfo *draggingInfo;
 extern NavigationController* gNavigationController;
 extern PolicyDelegate* policyDelegate;
+extern StorageTrackerDelegate* storageDelegate;
 
 extern const unsigned maxViewHeight;
 extern const unsigned maxViewWidth;

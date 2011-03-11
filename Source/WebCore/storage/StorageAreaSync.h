@@ -49,6 +49,9 @@ namespace WebCore {
 
         void scheduleItemForSync(const String& key, const String& value);
         void scheduleClear();
+        void scheduleCloseDatabase();
+
+        void scheduleSync();
 
     private:
         StorageAreaSync(PassRefPtr<StorageSyncManager>, PassRefPtr<StorageAreaImpl>, const String& databaseIdentifier);
@@ -92,6 +95,8 @@ namespace WebCore {
         bool m_syncScheduled;
         bool m_syncInProgress;
         bool m_databaseOpenFailed;
+        
+        bool m_syncCloseDatabase;
 
         mutable Mutex m_importLock;
         mutable ThreadCondition m_importCondition;

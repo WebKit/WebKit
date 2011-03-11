@@ -1,3 +1,16 @@
+2011-03-11  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed and landed by Brady Eidson.
+
+        Add WebKit1 API to view and delete local storage
+        https://bugs.webkit.org/show_bug.cgi?id=51878
+
+        * src/StorageNamespaceProxy.cpp:
+        (WebCore::StorageNamespaceProxy::clearOriginForDeletion):
+        (WebCore::StorageNamespaceProxy::clearAllOriginsForDeletion):
+        (WebCore::StorageNamespaceProxy::sync):
+        * src/StorageNamespaceProxy.h:
+
 2011-03-11  Dominic Mazzoni  <dmazzoni@google.com>
 
         Reviewed by Dimitri Glazkov.

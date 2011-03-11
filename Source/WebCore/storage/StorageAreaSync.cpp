@@ -36,6 +36,7 @@
 #include "SecurityOrigin.h"
 #include "StorageAreaImpl.h"
 #include "StorageSyncManager.h"
+#include "StorageTracker.h"
 #include "SuddenTermination.h"
 #include <wtf/text/CString.h>
 
@@ -138,6 +139,25 @@ void StorageAreaSync::scheduleClear()
     }
 }
 
+void StorageAreaSync::scheduleCloseDatabase()
+{
+    ASSERT(isMainThread());
+    ASSERT(!m_finalSyncScheduled);
+
+    if (!m_database.isOpen())
+        return;
+
+    m_syncCloseDatabase = true;
+    
+    if (!m_syncTimer.isActive()) {
+        m_syncTimer.startOneShot(StorageSyncInterval);
+        
+        // The following is balanced by the call to enableSuddenTermination in the
+        // syncTimerFired function.
+        disableSuddenTermination();
+    }
+}
+
 void StorageAreaSync::syncTimerFired(Timer<StorageAreaSync>*)
 {
     ASSERT(isMainThread());
@@ -222,6 +242,10 @@ void StorageAreaSync::openDatabase(OpenDatabaseParamType openingStrategy)
         return;
     }
 
+    // A StorageTracker thread may have been scheduled to delete the db we're
+    // reopening, so cancel possible deletion.
+    StorageTracker::tracker().cancelDeletingOrigin(m_databaseIdentifier);
+
     if (!m_database.open(databaseFilename)) {
         LOG_ERROR("Failed to open database file %s for local storage", databaseFilename.utf8().data());
         markImported();
@@ -235,6 +259,8 @@ void StorageAreaSync::openDatabase(OpenDatabaseParamType openingStrategy)
         m_databaseOpenFailed = true;
         return;
     }
+
+    StorageTracker::tracker().setOriginDetails(m_databaseIdentifier, databaseFilename);
 }
 
 void StorageAreaSync::performImport()
@@ -319,6 +345,15 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
     if (!m_database.isOpen())
         return;
 
+    // Closing this db because it is about to be deleted by StorageTracker.
+    // The delete will be cancelled if StorageAreaSync needs to reopen the db
+    // to write new items created after the request to delete the db.
+    if (m_syncCloseDatabase) {
+        m_syncCloseDatabase = false;
+        m_database.close();
+        return;
+    }
+    
     // If the clear flag is set, then we clear all items out before we write any new ones in.
     if (clearItems) {
         SQLiteStatement clear(m_database, "DELETE FROM ItemTable");
@@ -421,12 +456,21 @@ void StorageAreaSync::deleteEmptyDatabase()
     if (!count) {
         query.finalize();
         m_database.close();
-        String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
-        if (!SQLiteFileSystem::deleteDatabaseFile(databaseFilename))
-            LOG_ERROR("Failed to delete database file %s\n", databaseFilename.utf8().data());
+        if (StorageTracker::tracker().isActive())
+            StorageTracker::tracker().deleteOrigin(m_databaseIdentifier);
+        else {
+            String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
+            if (!SQLiteFileSystem::deleteDatabaseFile(databaseFilename))
+                LOG_ERROR("Failed to delete database file %s\n", databaseFilename.utf8().data());
+        }
     }
 }
 
+void StorageAreaSync::scheduleSync()
+{
+    syncTimerFired(&m_syncTimer);
+}
+    
 } // namespace WebCore
 
 #endif // ENABLE(DOM_STORAGE)

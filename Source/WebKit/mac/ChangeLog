@@ -1,3 +1,39 @@
+2011-03-11  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed and landed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51878
+        Add WebKit1 API to view and delete local storage
+
+        * Storage/WebStorageManager.mm: Added.
+        (+[WebStorageManager sharedWebStorageManager]):
+        (-[WebStorageManager origins]):
+        (-[WebStorageManager deleteAllOrigins]):
+        (-[WebStorageManager deleteOrigin:]):
+        (-[WebStorageManager syncLocalStorage]):
+        (-[WebStorageManager syncFileSystemAndTrackerDatabase]):
+        (storageDirectoryPath):
+        (WebKitInitializeStorageIfNecessary):
+        * Storage/WebStorageManagerInternal.h: Added.
+        * Storage/WebStorageManagerPrivate.h: Added.
+        * Storage/WebStorageTrackerClient.h: Added.
+        * Storage/WebStorageTrackerClient.mm: Added.
+        (WebStorageTrackerClient::sharedWebStorageTrackerClient):
+        (WebStorageTrackerClient::WebStorageTrackerClient):
+        (WebStorageTrackerClient::~WebStorageTrackerClient):
+        (WebStorageTrackerClient::dispatchDidModifyOriginOnMainThread):
+        (WebStorageTrackerClient::dispatchDidModifyOrigin):
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin protocol]):
+        (-[WebSecurityOrigin host]):
+        (-[WebSecurityOrigin databaseIdentifier]):
+        (-[WebSecurityOrigin domain]):
+        (-[WebSecurityOrigin _initWithWebCoreSecurityOrigin:]):
+        * WebCoreSupport/WebSecurityOriginPrivate.h:
+        * WebKit.exp:
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+
 2011-03-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

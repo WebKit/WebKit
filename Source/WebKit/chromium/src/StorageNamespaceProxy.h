@@ -43,6 +43,11 @@ public:
     virtual PassRefPtr<StorageNamespace> copy();
     virtual void close();
     virtual void unlock();
+    
+    virtual void clearOriginForDeletion(SecurityOrigin*);
+    virtual void clearAllOriginsForDeletion();
+    
+    virtual void sync();
 
 private:
     OwnPtr<WebKit::WebStorageNamespace> m_storageNamespace;

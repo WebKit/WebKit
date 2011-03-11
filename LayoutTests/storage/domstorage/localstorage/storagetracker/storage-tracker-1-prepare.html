@@ -1,0 +1,44 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../fast/js/resources/js-test-post-function.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Prepare for StorageTracker tests by ensuring that every origin with local storage is deleted.");
+
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+    
+function finishTest() {
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function test()
+{
+    if (!window.localStorage) {
+        testFailed("localStorage DOES NOT exist");
+        return;
+    }
+    
+    debug("This test should have no visible output on success.");
+
+    if (layoutTestController.originsWithLocalStorage().length > 0) {
+        layoutTestController.observeStorageTrackerNotifications(1);
+        layoutTestController.deleteAllLocalStorage();
+    } else {
+        finishTest();
+    }
+}
+
+test();	
+
+window.successfullyParsed = true;
+isSuccessfullyParsed();
+</script>
+</body>
+</html>

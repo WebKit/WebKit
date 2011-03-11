@@ -308,6 +308,12 @@ public:
 
     JSRetainPtr<JSStringRef> markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const;
 
+    JSValueRef originsWithLocalStorage(JSContextRef);
+    void deleteAllLocalStorage();
+    void deleteLocalStorageForOrigin(JSStringRef originIdentifier);
+    void observeStorageTrackerNotifications(unsigned number);
+    void syncLocalStorage();
+
     void setShouldPaintBrokenImage(bool);
     bool shouldPaintBrokenImage() const { return m_shouldPaintBrokenImage; }
 

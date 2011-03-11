@@ -92,6 +92,21 @@ void StorageNamespaceProxy::unlock()
     // FIXME: Implement.
 }
 
+void StorageNamespaceProxy::clearOriginForDeletion(SecurityOrigin* origin)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void StorageNamespaceProxy::clearAllOriginsForDeletion()
+{
+    ASSERT_NOT_REACHED();
+}
+
+void StorageNamespaceProxy::sync()
+{
+    ASSERT_NOT_REACHED();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(DOM_STORAGE)

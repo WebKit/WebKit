@@ -1428,6 +1428,32 @@ void LayoutTestController::setSerializeHTTPLoads(bool)
     // FIXME: Implement.
 }
 
+void LayoutTestController::syncLocalStorage()
+{
+    // FIXME: Implement.
+}
+
+void LayoutTestController::observeStorageTrackerNotifications(unsigned number)
+{
+    // FIXME: Implement.
+}
+
+void LayoutTestController::deleteAllLocalStorage()
+{
+    // FIXME: Implement.
+}
+
+JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)
+{
+    // FIXME: Implement.
+    return JSValueMakeUndefined(context);
+}
+
+void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)
+{
+    // FIXME: Implement.
+}
+
 void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
 {
     COMPtr<IWebView> webView;
@@ -1440,3 +1466,5 @@ void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
 
     viewPrivate->setMinimumTimerInterval(minimumTimerInterval);
 }
+
+

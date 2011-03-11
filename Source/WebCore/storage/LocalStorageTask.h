@@ -28,6 +28,7 @@
 
 #if ENABLE(DOM_STORAGE)
 
+#include "PlatformString.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Threading.h>
 
@@ -40,13 +41,17 @@ namespace WebCore {
     class LocalStorageTask {
         WTF_MAKE_NONCOPYABLE(LocalStorageTask); WTF_MAKE_FAST_ALLOCATED;
     public:
-        enum Type { AreaImport, AreaSync, DeleteEmptyDatabase, TerminateThread };
+        enum Type { AreaImport, AreaSync, DeleteEmptyDatabase, SetOriginDetails, ImportOrigins, DeleteAllOrigins, DeleteOrigin, TerminateThread };
 
         ~LocalStorageTask();
 
         static PassOwnPtr<LocalStorageTask> createImport(StorageAreaSync* area) { return adoptPtr(new LocalStorageTask(AreaImport, area)); }
         static PassOwnPtr<LocalStorageTask> createSync(StorageAreaSync* area) { return adoptPtr(new LocalStorageTask(AreaSync, area)); }
         static PassOwnPtr<LocalStorageTask> createDeleteEmptyDatabase(StorageAreaSync* area) { return adoptPtr(new LocalStorageTask(DeleteEmptyDatabase, area)); }
+        static PassOwnPtr<LocalStorageTask> createOriginIdentifiersImport() { return adoptPtr(new LocalStorageTask(ImportOrigins)); }
+        static PassOwnPtr<LocalStorageTask> createSetOriginDetails(const String& originIdentifier, const String& databaseFilename) { return adoptPtr(new LocalStorageTask(SetOriginDetails, originIdentifier, databaseFilename)); }
+        static PassOwnPtr<LocalStorageTask> createDeleteOrigin(const String& originIdentifier) { return adoptPtr(new LocalStorageTask(DeleteOrigin, originIdentifier)); }
+        static PassOwnPtr<LocalStorageTask> createDeleteAllOrigins() { return adoptPtr(new LocalStorageTask(DeleteAllOrigins)); }
         static PassOwnPtr<LocalStorageTask> createTerminate(LocalStorageThread* thread) { return adoptPtr(new LocalStorageTask(TerminateThread, thread)); }
 
         void performTask();
@@ -54,10 +59,15 @@ namespace WebCore {
     private:
         LocalStorageTask(Type, StorageAreaSync*);
         LocalStorageTask(Type, LocalStorageThread*);
+        LocalStorageTask(Type, const String& originIdentifier);
+        LocalStorageTask(Type, const String& originIdentifier, const String& databaseFilename);
+        LocalStorageTask(Type);
 
         Type m_type;
         StorageAreaSync* m_area;
         LocalStorageThread* m_thread;
+        String m_originIdentifier;
+        String m_databaseFilename;
     };
 
 } // namespace WebCore

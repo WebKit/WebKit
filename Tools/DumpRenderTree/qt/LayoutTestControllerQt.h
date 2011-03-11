@@ -253,6 +253,12 @@ public slots:
     void addUserStyleSheet(const QString& sourceCode);
 
     void setMinimumTimerInterval(double);
+    
+    void originsWithLocalStorage();
+    void deleteAllLocalStorage();
+    void deleteLocalStorageForOrigin(const QString& originIdentifier);
+    void observeStorageTrackerNotifications(unsigned number);
+    void syncLocalStorage();
 
 private slots:
     void processWork();

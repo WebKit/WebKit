@@ -46,23 +46,28 @@ using namespace WebCore;
 
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create(KURL([url absoluteURL]));
     origin->ref();
-    _private = reinterpret_cast<WebSecurityOriginPrivate*>(origin.get());
+    _private = reinterpret_cast<WebSecurityOriginPrivate *>(origin.get());
 
     return self;
 }
 
-- (NSString*)protocol
+- (NSString *)protocol
 {
     return reinterpret_cast<SecurityOrigin*>(_private)->protocol();
 }
 
-- (NSString*)host
+- (NSString *)host
 {
     return reinterpret_cast<SecurityOrigin*>(_private)->host();
 }
 
+- (NSString *)databaseIdentifier
+{
+    return reinterpret_cast<SecurityOrigin*>(_private)->databaseIdentifier();
+}
+
 // Deprecated. Use host instead. This needs to stay here until we ship a new Safari.
-- (NSString*)domain
+- (NSString *)domain
 {
     return [self host];
 }
@@ -111,7 +116,7 @@ using namespace WebCore;
         return nil;
 
     origin->ref();
-    _private = reinterpret_cast<WebSecurityOriginPrivate*>(origin);
+    _private = reinterpret_cast<WebSecurityOriginPrivate *>(origin);
 
     return self;
 }
