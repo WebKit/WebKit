@@ -1,3 +1,11 @@
+2011-03-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Fix crashes in dom/html/level2/html/HTMLInputElement*.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle): Added a null-check for e,
+            because e can certainly be a null.
+
 2011-03-09  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by David Hyatt.
