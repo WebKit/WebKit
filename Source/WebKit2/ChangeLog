@@ -1,3 +1,16 @@
+2011-03-11  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Crash calling WebContext::clearResourceCaches(InMemoryResourceCachesOnly) before the Web
+        Process has finished launching.
+        https://bugs.webkit.org/show_bug.cgi?id=56208
+
+        Only send the message if the Web Process is valid.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::clearResourceCaches):
+
 2011-03-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

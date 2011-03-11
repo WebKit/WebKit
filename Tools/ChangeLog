@@ -1,3 +1,21 @@
+2011-03-11  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Crash calling WebContext::clearResourceCaches(InMemoryResourceCachesOnly) before the Web
+        Process has finished launching.
+        https://bugs.webkit.org/show_bug.cgi?id=56208
+
+        * TestWebKitAPI/Tests/WebKit2/SendingMessagesToTheWebProcessBeforeItIsValid.cpp: Added.
+        (TestWebKitAPI::TEST):
+        Test that calling WKContextClearResourceCaches works with both options when called before
+        the Web Process is valid.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add the new test.
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        Ditto.
+
 2011-03-11  Adam Roben  <aroben@apple.com>
 
         Make it possible to view all leaks from a build at once in Leaks Viewer

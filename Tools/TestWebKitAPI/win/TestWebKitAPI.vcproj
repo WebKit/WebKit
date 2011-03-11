@@ -496,6 +496,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\SendingMessagesToTheWebProcessBeforeItIsValid.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\SpacebarScrolling.cpp"
 					>
 				</File>
