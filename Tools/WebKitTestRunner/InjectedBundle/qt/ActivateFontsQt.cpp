@@ -93,8 +93,10 @@ void activateFonts()
     f.setStyle(QFont::StyleNormal);
     QApplication::setFont(f);
 
+#if defined(Q_WS_X11)
     QX11Info::setAppDpiX(0, 96);
     QX11Info::setAppDpiY(0, 96);
+#endif
 }
 
 }

@@ -1,3 +1,12 @@
+2011-03-10  Keith Kyzivat  <keith.kyzivat@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Buildfix for platforms where X11 is not available (e.g. Symbian)
+
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp:
+        (WTR::activateFonts): Guard X11-specific code with Q_WS_X11.
+
 2011-03-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.
