@@ -49,7 +49,7 @@ public:
 
     typedef HashMap<AtomicStringImpl*, Vector<Element*>*> NodeCacheMap;
 
-    unsigned version;
+    uint64_t version;
     Element* current;
     unsigned position;
     unsigned length;

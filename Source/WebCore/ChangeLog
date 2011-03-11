@@ -1,3 +1,11 @@
+2011-03-10  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed build fix.
+
+        Fix Leopard Release build broken by r80797.
+
+        * html/CollectionCache.h:
+
 2011-03-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
