@@ -526,6 +526,7 @@ private:
     virtual IntSize contentsSize() const;
     virtual int visibleHeight() const;
     virtual int visibleWidth() const;
+    virtual IntPoint currentMousePosition() const;
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int x, int y);

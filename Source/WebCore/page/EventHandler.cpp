@@ -1439,6 +1439,22 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
     return swallowMouseUpEvent || swallowClickEvent || swallowMouseReleaseEvent;
 }
 
+static RenderLayer* layerForNode(Node* node)
+{
+    if (!node)
+        return 0;
+
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return 0;
+
+    RenderLayer* layer = renderer->enclosingLayer();
+    if (!layer)
+        return 0;
+
+    return layer;
+}
+
 bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
 {
     HitTestResult hoveredNode = HitTestResult(IntPoint());
@@ -1447,6 +1463,11 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
     Page* page = m_frame->page();
     if (!page)
         return result;
+
+    if (RenderLayer* layer = layerForNode(hoveredNode.innerNode())) {
+        if (page->containsScrollableArea(layer))
+            layer->scrollAnimator()->mouseMovedInContentArea();
+    }
 
     if (FrameView* frameView = m_frame->view())
         frameView->scrollAnimator()->mouseMovedInContentArea();  
@@ -1858,21 +1879,32 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
 
     // Fire mouseout/mouseover if the mouse has shifted to a different node.
     if (fireMouseOverOut) {
-        // FIXME: This code will only correctly handle transitions between frames with scrollbars,
-        // not transitions between overflow regions, or transitions between two frames
-        // that don't have scrollbars contained within a frame that does.
+        RenderLayer* layerForLastNode = layerForNode(m_lastNodeUnderMouse.get());
+        RenderLayer* layerForNodeUnderMouse = layerForNode(m_nodeUnderMouse.get());
+        Page* page = m_frame->page();
+
         if (m_lastNodeUnderMouse && (!m_nodeUnderMouse || m_nodeUnderMouse->document() != m_frame->document())) {
+            // The mouse has moved between frames.
             if (Frame* frame = m_lastNodeUnderMouse->document()->frame()) {
                 if (FrameView* frameView = frame->view())
                     frameView->scrollAnimator()->mouseExitedContentArea();
             }
+        } else if (page && (layerForLastNode && (!layerForNodeUnderMouse || layerForNodeUnderMouse != layerForLastNode))) {
+            // The mouse has moved between layers.
+            if (page->containsScrollableArea(layerForLastNode))
+                layerForLastNode->scrollAnimator()->mouseExitedContentArea();
         }
         
         if (m_nodeUnderMouse && (!m_lastNodeUnderMouse || m_lastNodeUnderMouse->document() != m_frame->document())) {
+            // The mouse has moved between frames.
             if (Frame* frame = m_nodeUnderMouse->document()->frame()) {
                 if (FrameView* frameView = frame->view())
                     frameView->scrollAnimator()->mouseEnteredContentArea();
             }
+        } else if (page && (layerForNodeUnderMouse && (!layerForLastNode || layerForNodeUnderMouse != layerForLastNode))) {
+            // The mouse has moved between layers.
+            if (page->containsScrollableArea(layerForNodeUnderMouse))
+                layerForNodeUnderMouse->scrollAnimator()->mouseEnteredContentArea();
         }
         
         if (m_lastNodeUnderMouse && m_lastNodeUnderMouse->document() != m_frame->document()) {

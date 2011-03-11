@@ -1,3 +1,68 @@
+2011-03-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/8944558> Overlay scrollers in overflow areas need to 
+        send notifications appropriate times (showing up, resizing)
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=56067
+
+        The general strategy here is to add a HashSet of ScrollableAreas to the page that 
+        can be accessed when necessary to send notifications to all ScrollableAreas.
+
+        Find layers for relevant node and if the layers are in the Page's ScrollableArea 
+        set, then send the relevant notification.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::mouseMoved):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+
+        When the page is set active or not active, iterate through the Page's 
+        ScrollableAreas to send hide/show notifications. 
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setActive):
+
+        When a FrameView is created, add it to the ScrollableArea set. When it's 
+        destroyed, remove it.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::~FrameView):
+
+        Iterate through the Page's ScrollableAreas to send the paint notification.
+        (WebCore::FrameView::notifyPageThatContentAreaWillPaint):
+        * page/FrameView.h:
+
+        Add the new ScrollableArea set.
+        * page/Page.cpp:
+        (WebCore::Page::addScrollableArea):
+        (WebCore::Page::removeScrollableArea):
+        (WebCore::Page::pageContainsScrollableArea):
+        * page/Page.h:
+        (WebCore::Page::scrollableAreaSet):
+
+        notifyPageThatContentAreaWillPaint() is a dummy function implemented in FrameView.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::notifyPageThatContentAreaWillPaint):
+
+        Call notifyPageThatContentAreaWillPaint() instead of calling 
+        contentAreaWillPaint() just for the ScrollView.
+        (WebCore::ScrollView::paint):
+        * platform/ScrollView.h:
+
+        Add/remove ScrollableAreas to the set.
+        * rendering/RenderDataGrid.cpp:
+        (WebCore::RenderDataGrid::RenderDataGrid):
+        (WebCore::RenderDataGrid::~RenderDataGrid):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::RenderListBox):
+        (WebCore::RenderListBox::~RenderListBox):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+
+        Should have implemented this ScrollableArea-interface function a while ago.
+        (WebCore::RenderLayer::currentMousePosition):
+        * rendering/RenderLayer.h:
+
 2011-03-10  takano takumi  <takano@apple.com>
 
         Reviewed by David Hyatt.
