@@ -1,3 +1,13 @@
+2011-03-11  Avi Drissman  <avi@google.com>
+
+        Reviewed by Tony Chang.
+
+        Fix missing initialization of new member variables.
+        https://bugs.webkit.org/show_bug.cgi?id=50969
+
+        * public/WebMenuItemInfo.h:
+        (WebKit::WebMenuItemInfo::WebMenuItemInfo):
+
 2011-03-11  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Ryosuke Niwa.

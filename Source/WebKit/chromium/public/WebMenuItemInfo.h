@@ -49,6 +49,8 @@ struct WebMenuItemInfo {
     WebMenuItemInfo() 
         : type(Option)
         , action(0)
+        , textDirection(WebTextDirectionDefault)
+        , hasTextDirectionOverride(false)
         , enabled(false)
         , checked(false)
     {
