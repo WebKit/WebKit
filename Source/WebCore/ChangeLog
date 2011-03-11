@@ -1,3 +1,24 @@
+2011-01-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Implement spin buttons for GTK+ 2.x
+        https://bugs.webkit.org/show_bug.cgi?id=53098
+
+        Implement spin buttons for GTK+ 2.x. This allows proper render and functioning
+        for input type=number. The implementation is based on the one in gtkspinbutton.c
+        from the GTK+ sources.
+
+        * platform/gtk/RenderThemeGtk.h: Added new members and getters.
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::RenderThemeGtk::platformInit): Initialize spin button widget.
+        (WebCore::RenderThemeGtk::adjustRepaintRect): We need to draw outside the
+        spin button area to have proper rendering. There doesn't seem to be any other
+        clean way of having spin buttons that are the size of the text input frame.
+        (WebCore::RenderThemeGtk::adjustInnerSpinButtonStyle): Added implementation.
+        (WebCore::RenderThemeGtk::paintInnerSpinButton): Ditto.
+        (WebCore::RenderThemeGtk::gtkSpinButton): Added.
+
 2011-03-10  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.

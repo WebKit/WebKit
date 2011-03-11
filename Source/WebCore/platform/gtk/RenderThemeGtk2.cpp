@@ -46,6 +46,9 @@
 
 namespace WebCore {
 
+// This is the default value defined by GTK+, where it was defined as MIN_ARROW_WIDTH in gtkspinbutton.c.
+static const int minSpinButtonArrowSize = 6;
+
 // This is not a static method, because we want to avoid having GTK+ headers in RenderThemeGtk.h.
 extern GtkTextDirection gtkTextDirection(TextDirection);
 
@@ -68,6 +71,7 @@ void RenderThemeGtk::platformInit()
     m_gtkComboBoxSeparator = 0;
     m_gtkVScrollbar = 0;
     m_gtkHScrollbar = 0;
+    m_gtkSpinButton = 0;
 
     m_colormap = gdk_screen_get_rgba_colormap(gdk_screen_get_default());
     if (!m_colormap) {
@@ -117,6 +121,10 @@ void RenderThemeGtk::adjustRepaintRect(const RenderObject* renderObject, IntRect
         adjustRectForFocus(part == CheckboxPart ? gtkCheckButton() : gtkRadioButton(), rect, true);
         return;
     }
+    case InnerSpinButtonPart:
+        // See paintInnerSpinButton for an explanation of why we expand the painting rect.
+        rect.inflateY(2);
+        rect.setWidth(rect.width() + 2);
     default:
         return;
     }
@@ -566,13 +574,84 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
 }
 #endif
 
-void RenderThemeGtk::adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const
+void RenderThemeGtk::adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
+    GtkStyle* gtkStyle = gtk_widget_get_style(gtkSpinButton());
+    const PangoFontDescription* fontDescription = gtkStyle->font_desc;
+    gint fontSize = pango_font_description_get_size(fontDescription);
+
+    // Force an odd arrow size here. GTK+ 3.x forces even in this case, but
+    // Nodoka-based themes look incorrect with an even arrow size.
+    int width = max(PANGO_PIXELS(fontSize), minSpinButtonArrowSize);
+    width += -((width % 2) - 1) + gtkStyle->xthickness;
+
+    style->setWidth(Length(width, Fixed));
+    style->setMinWidth(Length(width, Fixed));
 }
 
-bool RenderThemeGtk::paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&)
+bool RenderThemeGtk::paintInnerSpinButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return true;
+    // We expand the painted area by 2 pixels on the top and bottom and 2 pixels on the right. This
+    // is because GTK+ themes want to draw over the text box borders, but WebCore renders the inner
+    // spin button inside the text box.
+    IntRect expandedRect(rect);
+    expandedRect.inflateY(2);
+    expandedRect.setWidth(rect.width() + 2);
+
+    WidgetRenderingContext widgetContext(paintInfo.context, expandedRect);
+    GtkWidget* widget = gtkSpinButton();
+    gtk_widget_set_direction(widget, gtkTextDirection(renderObject->style()->direction()));
+
+    IntRect fullSpinButtonRect(IntPoint(), expandedRect.size());
+    widgetContext.gtkPaintBox(fullSpinButtonRect, widget, GTK_STATE_NORMAL, GTK_SHADOW_IN, "spinbutton");
+
+    bool upPressed = isSpinUpButtonPartPressed(renderObject);
+    bool upHovered = isSpinUpButtonPartHovered(renderObject);
+    bool controlActive = isEnabled(renderObject) && !isReadOnlyControl(renderObject);
+    GtkShadowType shadowType = upPressed ? GTK_SHADOW_IN : GTK_SHADOW_OUT;
+
+    GtkStateType stateType = GTK_STATE_INSENSITIVE;
+    if (controlActive) {
+        if (isPressed(renderObject) && upPressed)
+            stateType = GTK_STATE_ACTIVE;
+        else if (isHovered(renderObject) && upHovered)
+            stateType = GTK_STATE_PRELIGHT;
+        else
+            stateType = GTK_STATE_NORMAL;
+    }
+    IntRect topRect(IntPoint(), expandedRect.size());
+    topRect.setHeight(expandedRect.height() / 2);
+    widgetContext.gtkPaintBox(topRect, widget, stateType, shadowType, "spinbutton_up");
+
+    // The arrow size/position calculation here is based on the arbitrary gymnastics that happen
+    // in gtkspinbutton.c. It isn't pretty there and it isn't pretty here. This manages to make
+    // the button look native for many themes though.
+    IntRect arrowRect;
+    int arrowSize = (expandedRect.width() - 3) / 2;
+    arrowSize -= (arrowSize % 2) - 1; // Force odd.
+    arrowRect.setWidth(arrowSize);
+    arrowRect.setHeight(arrowSize);
+    arrowRect.move((expandedRect.width() - arrowRect.width()) / 2,
+                   (topRect.height() - arrowRect.height()) / 2 + 1);
+    widgetContext.gtkPaintArrow(arrowRect, widget, stateType, shadowType, GTK_ARROW_UP, "spinbutton");
+
+    shadowType = isPressed(renderObject) && !upPressed ? GTK_SHADOW_IN : GTK_SHADOW_OUT;
+    if (controlActive) {
+        if (isPressed(renderObject) && !upPressed)
+            stateType = GTK_STATE_ACTIVE;
+        else if (isHovered(renderObject) && !upHovered)
+            stateType = GTK_STATE_PRELIGHT;
+        else
+            stateType = GTK_STATE_NORMAL;
+    }
+    IntRect bottomRect(IntPoint(0, expandedRect.height() / 2), expandedRect.size());
+    bottomRect.setHeight(expandedRect.height() - bottomRect.y());
+    widgetContext.gtkPaintBox(bottomRect, widget, stateType, shadowType, "spinbutton_down");
+
+    arrowRect.setY(arrowRect.y() + bottomRect.y() - 1);
+    widgetContext.gtkPaintArrow(arrowRect, widget, stateType, shadowType, GTK_ARROW_DOWN, "spinbutton");
+
+    return false;
 }
 
 GRefPtr<GdkPixbuf> RenderThemeGtk::getStockIcon(GType widgetType, const char* iconName, gint direction, gint state, gint iconSize)
@@ -865,6 +944,15 @@ GtkWidget* RenderThemeGtk::gtkVScrollbar() const
     m_gtkVScrollbar = gtk_vscrollbar_new(0);
     setupWidgetAndAddToContainer(m_gtkVScrollbar, gtkContainer());
     return m_gtkVScrollbar;
+}
+
+GtkWidget* RenderThemeGtk::gtkSpinButton() const
+{
+    if (m_gtkSpinButton)
+        return m_gtkSpinButton;
+    m_gtkSpinButton = gtk_spin_button_new_with_range(0, 10, 1);
+    setupWidgetAndAddToContainer(m_gtkSpinButton, gtkContainer());
+    return m_gtkSpinButton;
 }
 
 } // namespace WebCore

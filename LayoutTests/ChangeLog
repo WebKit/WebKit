@@ -1,3 +1,18 @@
+2011-01-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Implement spin buttons for GTK+ 2.x
+        https://bugs.webkit.org/show_bug.cgi?id=53098
+
+        Unskip tests which are now passing with the spin button implementation.
+        Add results for one test.
+
+        * platform/gtk/Skipped: Unskip passing tests.
+        * platform/gtk/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.checksum: Added.
+        * platform/gtk/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.png: Added.
+        * platform/gtk/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt: Added.
+
 2011-03-10  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.

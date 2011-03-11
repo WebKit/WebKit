@@ -1012,12 +1012,6 @@ canvas/philip/tests/2d.pattern.image.incomplete.omitted.html
 # Fake italics do not work: https://bugs.webkit.org/show_bug.cgi?id=40856
 fast/text/fake-italic.html
 
-# Need to implement inner-spin-button or outer-spin-button
-fast/forms/input-appearance-spinbutton-disabled-readonly.html
-fast/forms/input-appearance-spinbutton-layer.html
-fast/forms/input-number-events.html
-fast/forms/input-spinbutton-capturing.html
-
 # Tests that user modal dialogs fail in the DRT for some reason.
 # https://bugs.webkit.org/show_bug.cgi?id=53600
 fast/events/show-modal-dialog-onblur-onfocus.html

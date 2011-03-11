@@ -214,6 +214,7 @@ private:
     GtkWidget* gtkComboBoxButton() const;
     GtkWidget* gtkComboBoxArrow() const;
     GtkWidget* gtkComboBoxSeparator() const;
+    GtkWidget* gtkSpinButton() const;
 
     GdkColormap* m_colormap;
     mutable GtkWidget* m_gtkWindow;
@@ -232,6 +233,7 @@ private:
     mutable GtkWidget* m_gtkComboBoxSeparator;
     mutable GtkWidget* m_gtkVScrollbar;
     mutable GtkWidget* m_gtkHScrollbar;
+    mutable GtkWidget* m_gtkSpinButton;
     bool m_themePartsHaveRGBAColormap;
     friend class WidgetRenderingContext;
 #endif
