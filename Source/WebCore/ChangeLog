@@ -1,3 +1,35 @@
+2011-03-11  Andy Estes  <aestes@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Table cells with dynamically added percentage height descendants do not
+        grow in size if the table has already been laid out.
+        https://bugs.webkit.org/show_bug.cgi?id=56174
+        
+        Table cells ignore their specified size and collapse to fit their
+        children. When a descendent with percentage height is present before
+        the table is first laid out, the descendent is sized based on the
+        specified size of the table cell. However, when the child isn't present
+        when the table is first laid out, the table cell ignores its specified
+        size and collapses down to 0. Then, when the child div is added in a
+        separate run loop iteration, it is sized to be 100% of the collapsed
+        cell height instead of 100% of the cell's specified height. We should
+        not get different layouts depending on the timing of tree construction.
+        
+        Fix this by clearing intrinsic padding before calculating the table
+        cell's override height when we detect a child that should flex the
+        table cell.
+
+        Test: fast/table/dynamic-descendant-percentage-height.html
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::setOverrideSizeFromRowHeight): clear
+        intrinsic padding before setting the override size.
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows): Call
+        setOverrideSizeFromRowHeight() instead of setOverrideSize().
+
 2011-03-11  Michael Nordman  <michaeln@google.com>
 
         Reviewed by David Levin.

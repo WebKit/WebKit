@@ -216,6 +216,12 @@ void RenderTableCell::setOverrideSize(int size)
     clearIntrinsicPadding();
     RenderBlock::setOverrideSize(size);
 }
+    
+void RenderTableCell::setOverrideSizeFromRowHeight(int rowHeight)
+{
+    clearIntrinsicPadding();
+    RenderBlock::setOverrideSize(max(0, rowHeight - borderBefore() - paddingBefore() - borderAfter() - paddingAfter()));
+}
 
 IntSize RenderTableCell::offsetFromContainer(RenderObject* o, const IntPoint& point) const
 {

@@ -120,6 +120,7 @@ public:
     virtual int paddingAfter(bool includeIntrinsicPadding = true) const;
 
     virtual void setOverrideSize(int);
+    void setOverrideSizeFromRowHeight(int);
 
     bool hasVisualOverflow() const { return m_overflow && !borderBoxRect().contains(m_overflow->visualOverflowRect()); }
 

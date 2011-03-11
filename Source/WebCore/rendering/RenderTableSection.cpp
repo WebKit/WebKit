@@ -560,9 +560,7 @@ int RenderTableSection::layoutRows(int toAdd)
                 // Alignment within a cell is based off the calculated
                 // height, which becomes irrelevant once the cell has
                 // been resized based off its percentage.
-                cell->setOverrideSize(max(0, 
-                                           rHeight - cell->borderBefore() - cell->paddingBefore() - 
-                                                     cell->borderAfter() - cell->paddingAfter()));
+                cell->setOverrideSizeFromRowHeight(rHeight);
                 cell->layoutIfNeeded();
 
                 // If the baseline moved, we may have to update the data for our row. Find out the new baseline.

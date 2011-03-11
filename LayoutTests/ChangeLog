@@ -1,3 +1,16 @@
+2011-03-11  Andy Estes  <aestes@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Table cells with dynamically added percentage height descendants do not
+        grow in size if the table has already been laid out.
+        https://bugs.webkit.org/show_bug.cgi?id=56174
+
+        * fast/table/dynamic-descendant-percentage-height.html: Added.
+        * platform/mac/fast/table/dynamic-descendant-percentage-height-expected.checksum: Added.
+        * platform/mac/fast/table/dynamic-descendant-percentage-height-expected.png: Added.
+        * platform/mac/fast/table/dynamic-descendant-percentage-height-expected.txt: Added.
+
 2011-03-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [GTK] Update expectations after r80857.
