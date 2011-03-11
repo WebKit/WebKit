@@ -137,7 +137,7 @@ void DrawingBuffer::publishToPlatformLayer()
     // would insert a fence into the child command stream that the compositor could wait for.
     m_context->makeContextCurrent();
 #if ENABLE(SKIA_GPU)
-    GetGlobalGrContext()->flush(false);
+    GetGlobalGrContext()->flush(0);
 #endif
     static_cast<Extensions3DChromium*>(m_context->getExtensions())->copyTextureToParentTextureCHROMIUM(m_colorBuffer, parentTexture);
     m_context->flush();

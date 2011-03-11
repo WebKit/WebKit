@@ -1,3 +1,19 @@
+2011-03-11  Brian Salomon  <bsalomon@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Adds GrContext flush call to PlatformContextSkia destructor. 
+Calls GrContext flush with int parameter instead of bool due to skia 
+revision.       
+
+        No new tests needed.
+
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::publishToPlatformLayer):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::~PlatformContextSkia):
+        (WebCore::PlatformContextSkia::setSharedGraphicsContext3D):
+
 2011-03-10  Chris Guillory  <chris.guillory@google.com>
 
         Reviewed by James Robinson.

@@ -241,8 +241,14 @@ PlatformContextSkia::PlatformContextSkia(skia::PlatformCanvas* canvas)
 PlatformContextSkia::~PlatformContextSkia()
 {
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    if (m_gpuCanvas)
+    if (m_gpuCanvas) {
+#if ENABLE(SKIA_GPU)
+        // make sure everything related to this platform context has been flushed
+        if (!m_useGPU)
+            GetGlobalGrContext()->flush(0);
+#endif
         m_gpuCanvas->drawingBuffer()->setWillPublishCallback(0);
+    }
 #endif
 }
 
