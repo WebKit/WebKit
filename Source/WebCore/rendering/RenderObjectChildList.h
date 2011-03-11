@@ -58,7 +58,6 @@ public:
     void updateBeforeAfterContent(RenderObject* owner, PseudoId type, const RenderObject* styledObject = 0);
     RenderObject* beforePseudoElementRenderer(const RenderObject* owner) const;
     RenderObject* afterPseudoElementRenderer(const RenderObject* owner) const;
-    void invalidateCounters(const RenderObject* owner, const AtomicString& identifier);
 
 private:
     RenderObject* m_firstChild;
