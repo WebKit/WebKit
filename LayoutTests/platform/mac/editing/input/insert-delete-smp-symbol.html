@@ -1,0 +1,25 @@
+<meta charset="utf-8">
+<body>
+<p>Test that inserting an SMP symbol from Character Palette works correctly. Should say PASS:</p>
+<div id=test contenteditable></div>
+<script type="text/javascript">
+
+    if (window.layoutTestController) {
+        
+        try {
+            layoutTestController.dumpAsText();
+
+            window.getSelection().setPosition(document.getElementById("test"), 0);
+            textInputController.insertText("PASS");
+            textInputController.insertText("𐆂");
+            textInputController.doCommand("deleteBackward:");
+
+        } catch (ex) {
+            alert("Exception: " + ex.description);
+        }
+        
+    } else {
+        document.write("(cannot run interactively)");
+    }
+</script>
+</body>

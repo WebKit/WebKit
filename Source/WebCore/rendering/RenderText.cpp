@@ -1404,6 +1404,8 @@ int RenderText::previousOffset(int current) const
     return result;
 }
 
+#if PLATFORM(MAC)
+
 #define HANGUL_CHOSEONG_START (0x1100)
 #define HANGUL_CHOSEONG_END (0x115F)
 #define HANGUL_JUNGSEONG_START (0x1160)
@@ -1428,6 +1430,14 @@ inline bool isHangulLVT(UChar32 character)
     return (character - HANGUL_SYLLABLE_START) % HANGUL_JONGSEONG_COUNT;
 }
 
+inline bool isMark(UChar32 c)
+{
+    int8_t charType = u_charType(c);
+    return charType == U_NON_SPACING_MARK || charType == U_ENCLOSING_MARK || charType == U_COMBINING_SPACING_MARK;
+}
+
+#endif
+
 int RenderText::previousOffsetForBackwardDeletion(int current) const
 {
 #if PLATFORM(MAC)
@@ -1446,7 +1456,7 @@ int RenderText::previousOffsetForBackwardDeletion(int current) const
         if ((character >= 0x0530) && (character < 0x1950))
             break;
 
-        if (u_isbase(character) && (character != 0xFF9E) && (character != 0xFF9F))
+        if (!isMark(character) && (character != 0xFF9E) && (character != 0xFF9F))
             break;
     }
 

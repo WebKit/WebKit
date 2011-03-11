@@ -1,3 +1,17 @@
+2011-03-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Backspace deletes all non-BMP symbols at once, and then some
+        https://bugs.webkit.org/show_bug.cgi?id=55971
+        <rdar://problem/8725312>
+
+        Test: platform/mac/editing/input/insert-delete-smp-symbol.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::isMark): This matches what Core Foundation does for all characters that I tested.
+        (WebCore::RenderText::previousOffsetForBackwardDeletion): Changed to use isMark().
+
 2011-03-10  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.
