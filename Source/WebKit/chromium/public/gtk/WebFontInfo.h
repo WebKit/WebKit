@@ -50,7 +50,7 @@ public:
     //
     // Returns: the font family or an empty string if the request could not be
     // satisfied.
-    WEBKIT_API static WebCString familyForChars(const WebUChar* characters, size_t numCharacters, const char* preferredLocale = 0);
+    WEBKIT_API static WebCString familyForChars(const WebUChar* characters, size_t numCharacters, const char* preferredLocale);
 
     // Fill out the given WebFontRenderStyle with the user's preferences for
     // rendering the given font at the given size.
