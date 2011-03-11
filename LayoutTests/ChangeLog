@@ -1,5 +1,21 @@
 2011-03-11  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47206
+        
+        Table rows don't support ::before/::after.  Add support to RenderTableRow::styleDidChange so that ::before/::after content gets
+        properly constructed.
+
+        Added fast/css-generated-content/table-row-before-after.html
+
+        * fast/css-generated-content/table-row-before-after.html: Added.
+        * platform/mac/fast/css-generated-content/table-row-before-after-expected.checksum: Added.
+        * platform/mac/fast/css-generated-content/table-row-before-after-expected.png: Added.
+        * platform/mac/fast/css-generated-content/table-row-before-after-expected.txt: Added.
+
+2011-03-11  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=47159

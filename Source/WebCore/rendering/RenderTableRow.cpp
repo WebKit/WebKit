@@ -63,6 +63,17 @@ void RenderTableRow::styleWillChange(StyleDifference diff, const RenderStyle* ne
     RenderBox::styleWillChange(diff, newStyle);
 }
 
+void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBox::styleDidChange(diff, oldStyle);
+
+    // Update pseudos for :before and :after now.
+    if (!isAnonymous() && document()->usesBeforeAfterRules()) {
+        children()->updateBeforeAfterContent(this, BEFORE);
+        children()->updateBeforeAfterContent(this, AFTER);
+    }
+}
+
 void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     // Make sure we don't append things after :after-generated content if we have it.

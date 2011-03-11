@@ -1,3 +1,18 @@
+2011-03-11  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47206
+        
+        Table rows don't support ::before/::after.  Add support to RenderTableRow::styleDidChange so that ::before/::after content gets
+        properly constructed.
+
+        Added fast/css-generated-content/table-row-before-after.html
+
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::styleDidChange):
+        * rendering/RenderTableRow.h:
+
 2011-03-11  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
