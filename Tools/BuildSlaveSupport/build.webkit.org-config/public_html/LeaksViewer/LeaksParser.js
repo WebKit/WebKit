@@ -23,48 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#url-prompt-container {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 50000;
+function LeaksParser(didParseLeaksFileCallback) {
+    this._didParseLeaksFileCallback = didParseLeaksFileCallback;
+    this._worker = new Worker("LeaksParserWorker.js");
+
+    var self = this;
+    this._worker.onmessage = function(e) {
+        self._didParseLeaksFileCallback(e.data);
+    };
 }
 
-#url-prompt {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 400px;
-    height: 200px;
-    margin: auto;
-    background-color: white;
-    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
-    padding: 50px 0;
-    text-align: center;
-}
-
-#loading-indicator {
-    position: absolute;
-    right: 20px;
-    width: 150px;
-    margin-top: 5px;
-}
-
-#spinner {
-    float: left;
-    margin-top: -1px;
-}
-
-#loading-indicator-label {
-    margin-left: 5px;
-}
-
-.percent-time-status-bar-item {
-    /* We always show leak counts as real values, not percentages, so this button isn't useful. */
-    display: none !important;
-}
+LeaksParser.prototype = {
+    addLeaksFile: function(leaksText) {
+        this._worker.postMessage(leaksText);
+    },
+};

@@ -23,48 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#url-prompt-container {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 50000;
+function getResource(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        // Allow a status of 0 for easier testing with local files.
+        if (this.readyState == 4 && (!this.status || this.status == 200))
+            callback(this);
+    };
+    xhr.open("GET", url);
+    xhr.send();
 }
 
-#url-prompt {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 400px;
-    height: 200px;
-    margin: auto;
-    background-color: white;
-    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
-    padding: 50px 0;
-    text-align: center;
-}
-
-#loading-indicator {
-    position: absolute;
-    right: 20px;
-    width: 150px;
-    margin-top: 5px;
-}
-
-#spinner {
-    float: left;
-    margin-top: -1px;
-}
-
-#loading-indicator-label {
-    margin-left: 5px;
-}
-
-.percent-time-status-bar-item {
-    /* We always show leak counts as real values, not percentages, so this button isn't useful. */
-    display: none !important;
-}

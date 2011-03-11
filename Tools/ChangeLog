@@ -1,5 +1,81 @@
 2011-03-11  Adam Roben  <aroben@apple.com>
 
+        Make it possible to view all leaks from a build at once in Leaks Viewer
+
+        You can now give Leaks Viewer the URL of a build results page (e.g.,
+        <http://build.webkit.org/results/SnowLeopard%20Intel%20Leaks/r80847%20(15493)/>), and it
+        will load all the leaks files from that build.
+
+        Fixes <http://webkit.org/b/56030> Leaks Viewer: Would like to be able to look at all leaks
+        files from a particular build at once, rather than one at a time
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksLoader.js: Added.
+        (LeaksLoader): Initialize our properties.
+        (LeaksLoader.prototype.start): If the URL ends in .txt, assume it's a single leaks file and
+        load it. Otherwise assume it's a build results page URL and start fetching the leaks files
+        from that page.
+        (LeaksLoader.prototype._loadLeaksFiles): Tell our client how many leaks files we're loading
+        so it can provide feedback. Then load each one and pass it to the client.
+        (LeaksLoader.prototype._loadLeaksFromResultsPage): Load the HTML of the results page, parse
+        it into a DOM, pull out all the links to leaks files, and load each one.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksParser.js: Added.
+        (LeaksParser): Initialize our worker.
+        (LeaksParser.prototype.addLeaksFile): Tell the worker about the leaks file's contents.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksParserWorker.js: Added.
+        This code mostly came from Worker.js.
+        (LeaksParserWorker): Initialize our profile.
+        (LeaksParserWorker.prototype.addLeaksFile): Parse the leaks file and incorporate it into our
+        profile.
+        (LeaksParserWorker.prototype._parseLeaks):
+        (LeaksParserWorker.prototype._createNode):
+        (LeaksParserWorker.prototype._incorporateLeaks):
+        Moved these functions here from LeaksViewer. _incorporateLeaks is essentially just a renamed
+        version of createProfile which adds to this.profile instead of making a new profile each
+        time.
+        (onmessage): Parse the file and send back the new profile.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.css:
+        (#loading-indicator):
+        (#spinner):
+        (#loading-indicator-label):
+        Tweaked styles to accomodate a longer label.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.js:
+        (LeaksViewer.loaded): Set up a loader and parser.
+
+        (LeaksViewer.get filesLeftToParse):
+        (LeaksViewer.set filesLeftToParse):
+        Added these simple accessors.
+
+        (LeaksViewer._didCountLeaksFiles): Callback from LeaksLoader. Stores the count.
+        (LeaksViewer._didLoadLeaksFile): Callback from LeaksLoader. Passes the file contents off to
+        the parser.
+        (LeaksViewer._didParseLeaksFile): Callback from LeaksParser. If all files have been parsed,
+        tell the ProfilerAgent and mark that we're done loading. (Code came from the old
+        _loadLeaksFromURL function).
+        (LeaksViewer._loadLeaksFromURL): Now just calls through to the loader.
+        (LeaksViewer._loadingIndicatorText): Added. Returns the text that should show up in the
+        loading indicator, including the number of files being loaded.
+        (LeaksViewer._loadingStatusChanged): Update the loading indicator's label, too.
+        (LeaksViewer._updateLoadingIndicatorLabel): Added. Just updates the label!
+        (LeaksViewer._updateTitle): Moved code to compute the "Loading" text to
+        _loadingIndicatorText.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/Utilities.js: Added.
+        (getResource): Moved here from LeaksViewer.js.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/Worker.js: Subsumed by
+        LeaksParserWorker.js.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/index.html: Added new JS
+        files, added a #loading-indicator-label element, and tweaked the prompt wording.
+
+2011-03-11  Adam Roben  <aroben@apple.com>
+
         Don't trigger a build when build.webkit.org's HTML files are modified
 
         Fixes <http://webkit.org/b/56190> Windows bots shouldn't have built r80848/r80851, but did

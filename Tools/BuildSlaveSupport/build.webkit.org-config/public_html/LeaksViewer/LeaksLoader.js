@@ -23,48 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#url-prompt-container {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 50000;
+function LeaksLoader(didCountLeaksFilesCallback, didLoadLeaksFileCallback) {
+    this._didCountLeaksFilesCallback = didCountLeaksFilesCallback;
+    this._didLoadLeaksFileCallback = didLoadLeaksFileCallback;
 }
 
-#url-prompt {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 400px;
-    height: 200px;
-    margin: auto;
-    background-color: white;
-    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
-    padding: 50px 0;
-    text-align: center;
-}
+LeaksLoader.prototype = {
+    start: function(url) {
+        if (/\.txt$/.test(url))
+            this._loadLeaksFiles([url]);
+        else
+            this._loadLeaksFromResultsPage(url);
+    },
 
-#loading-indicator {
-    position: absolute;
-    right: 20px;
-    width: 150px;
-    margin-top: 5px;
-}
+    _loadLeaksFiles: function(urls) {
+        this._didCountLeaksFilesCallback(urls.length);
 
-#spinner {
-    float: left;
-    margin-top: -1px;
-}
+        var self = this;
+        var pendingURLs = urls.length;
+        urls.forEach(function(url) {
+            getResource(url, function(xhr) {
+                self._didLoadLeaksFileCallback(xhr.responseText);
+            });
+        });
+    },
 
-#loading-indicator-label {
-    margin-left: 5px;
-}
+    _loadLeaksFromResultsPage: function(url) {
+        var self = this;
+        getResource(url, function(xhr) {
+            var root = document.createElement("html");
+            root.innerHTML = xhr.responseText;
 
-.percent-time-status-bar-item {
-    /* We always show leak counts as real values, not percentages, so this button isn't useful. */
-    display: none !important;
-}
+            // Strip off everything after the last /.
+            var baseURL = url.substring(0, url.lastIndexOf("/") + 1);
+
+            var urls = Array.prototype.map.call(root.querySelectorAll("tr.file > td > a[href$='-leaks.txt']"), function(link) { return baseURL + link.getAttribute("href"); });
+
+            self._loadLeaksFiles(urls);
+        });
+    },
+};

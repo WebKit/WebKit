@@ -25,7 +25,11 @@
 
 var LeaksViewer = {
     loaded: function() {
+        this._loader = new LeaksLoader(this._didCountLeaksFiles.bind(this), this._didLoadLeaksFile.bind(this));
+        this._parser = new LeaksParser(this._didParseLeaksFile.bind(this));
+
         this._loadingIndicator = document.getElementById("loading-indicator");
+        this._loadingIndicatorLabel = document.getElementById("loading-indicator-label");
 
         this._profileView = new WebInspector.CPUProfileView({});
         document.getElementById("main-panels").appendChild(this._profileView.element);
@@ -49,6 +53,19 @@ var LeaksViewer = {
             this._loadLeaksFromURL(url)
         else
             this._displayURLPrompt();
+    },
+
+    get filesLeftToParse() {
+        if (!('_filesLeftToParse' in this))
+            this._filesLeftToParse = 0;
+        return this._filesLeftToParse;
+    },
+
+    set filesLeftToParse(x) {
+        if (this._filesLeftToParse === x)
+            return;
+        this._filesLeftToParse = x;
+        this._loadingStatusChanged();
     },
 
     get loading() {
@@ -79,6 +96,22 @@ var LeaksViewer = {
         document.getElementById("url-prompt-container").addStyleClass("hidden");
     },
 
+    _didCountLeaksFiles: function(fileCount) {
+        this._fileCount = fileCount;
+        this.filesLeftToParse = fileCount;
+    },
+
+    _didLoadLeaksFile: function(leaksText) {
+        this._parser.addLeaksFile(leaksText);
+    },
+
+    _didParseLeaksFile: function(profile) {
+        if (--this.filesLeftToParse)
+            return;
+        ProfilerAgent.profileReady(profile);
+        this.loading = false;
+    },
+
     _displayURLPrompt: function() {
         document.getElementById("url-prompt-container").removeStyleClass("hidden");
         document.getElementById("url").focus();
@@ -88,19 +121,20 @@ var LeaksViewer = {
         this.url = url;
         this.loading = true;
 
-        var self = this;
-        getResource(url, function(xhr) {
-            var worker = new Worker("Worker.js");
-            worker.onmessage = function(e) {
-                ProfilerAgent.profileReady(e.data);
-                self.loading = false;
-            };
-            worker.postMessage(xhr.responseText);
-        });
+        this._loader.start(this.url);
+    },
+
+    _loadingIndicatorText: function() {
+        var text = "Loading";
+        if (this.filesLeftToParse)
+            text += " " + (this._fileCount - this.filesLeftToParse + 1) + "/" + this._fileCount + " files";
+        text += "\u2026";
+        return text;
     },
 
     _loadingStatusChanged: function() {
         this._setLoadingIndicatorHidden(!this.loading);
+        this._updateLoadingIndicatorLabel();
         this._updateTitle();
     },
 
@@ -111,24 +145,17 @@ var LeaksViewer = {
             this._loadingIndicator.removeStyleClass("hidden");
     },
 
+    _updateLoadingIndicatorLabel: function() {
+        this._loadingIndicatorLabel.innerText = this._loadingIndicatorText();
+    },
+
     _updateTitle: function() {
         var title = "Leaks Viewer \u2014 ";
         if (this.loading)
-            title += "(Loading\u2026) ";
+            title += "(" + this._loadingIndicatorText() + ") ";
         title += this.url;
         document.title = title;
     },
 };
-
-function getResource(url, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        // Allow a status of 0 for easier testing with local files.
-        if (this.readyState == 4 && (!this.status || this.status == 200))
-            callback(this);
-    };
-    xhr.open("GET", url);
-    xhr.send();
-}
 
 addEventListener("load", LeaksViewer.loaded.bind(LeaksViewer));
