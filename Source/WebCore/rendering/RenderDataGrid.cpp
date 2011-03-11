@@ -46,14 +46,10 @@ static const int cDefaultWidth = 300;
 RenderDataGrid::RenderDataGrid(Element* elt)
     : RenderBlock(elt)
 {
-    if (Page* page = frame()->page())
-        page->addScrollableArea(this);
 }
 
 RenderDataGrid::~RenderDataGrid()
 {
-    if (Page* page = frame()->page())
-        page->removeScrollableArea(this);
 }
 
 void RenderDataGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

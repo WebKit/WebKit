@@ -316,8 +316,6 @@ private:
     virtual void scrollTo(const IntSize&);
     virtual void didCompleteRubberBand(const IntSize&) const;
 
-    virtual void notifyPageThatContentAreaWillPaint() const;
-
     void deferredRepaintTimerFired(Timer<FrameView>*);
     void doDeferredRepaints();
     void updateDeferredRepaintDelay();

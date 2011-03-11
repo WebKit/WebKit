@@ -327,10 +327,6 @@ void ScrollView::didCompleteRubberBand(const IntSize&) const
 {
 }
 
-void ScrollView::notifyPageThatContentAreaWillPaint() const
-{
-}
-
 void ScrollView::setScrollOffset(const IntPoint& offset)
 {
     int horizontalOffset = offset.x();
@@ -921,7 +917,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     if (context->paintingDisabled() && !context->updatingControlTints())
         return;
 
-    notifyPageThatContentAreaWillPaint();
+    scrollAnimator()->contentAreaWillPaint();
     
     IntRect documentDirtyRect = rect;
     documentDirtyRect.intersect(frameRect());

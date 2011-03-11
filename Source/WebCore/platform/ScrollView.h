@@ -62,7 +62,6 @@ public:
     virtual int scrollPosition(Scrollbar*) const;
     virtual void setScrollOffset(const IntPoint&);
     virtual void didCompleteRubberBand(const IntSize&) const;
-    virtual void notifyPageThatContentAreaWillPaint() const;
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     virtual void scrollTo(const IntSize& newOffset);

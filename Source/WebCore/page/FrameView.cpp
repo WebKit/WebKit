@@ -136,11 +136,6 @@ FrameView::FrameView(Frame* frame)
     , m_scrollCorner(0)
 {
     init();
-
-    if (m_frame) {
-        if (Page* page = m_frame->page())
-            page->addScrollableArea(this);
-    }
 }
 
 PassRefPtr<FrameView> FrameView::create(Frame* frame)
@@ -182,9 +177,6 @@ FrameView::~FrameView()
     ASSERT(m_actionScheduler->isEmpty());
 
     if (m_frame) {
-        if (Page* page = m_frame->page())
-            page->removeScrollableArea(this);
-
         ASSERT(m_frame->view() != this || !m_frame->contentRenderer());
         RenderPart* renderer = m_frame->ownerRenderer();
         if (renderer && renderer->widget() == this)
@@ -2054,18 +2046,6 @@ void FrameView::didCompleteRubberBand(const IntSize& initialOverhang) const
     if (page->mainFrame() != m_frame)
         return;
     return page->chrome()->client()->didCompleteRubberBandForMainFrame(initialOverhang);
-}
-
-void FrameView::notifyPageThatContentAreaWillPaint() const
-{
-    Page* page = m_frame->page();
-    const HashSet<ScrollableArea*>* scrollableAreas = page->scrollableAreaSet();
-    if (!scrollableAreas)
-        return;
-
-    HashSet<ScrollableArea*>::const_iterator end = scrollableAreas->end(); 
-    for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(); it != end; ++it)
-        (*it)->scrollAnimator()->contentAreaWillPaint();
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)
