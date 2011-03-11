@@ -1,3 +1,20 @@
+2011-03-09  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        REGRESSION (5.0.3-ToT): Scrolling text doesn&apos;t scroll in Star Wars intro animation
+        https://bugs.webkit.org/show_bug.cgi?id=52468
+
+        Added WIN32 to the ifdef controlling whether animations are applied in normal or
+        reverse order. On Mac, animations used to be applied in reverse, but 
+        <rdar://problem/7095638> fixed this in the release after Snow Leopard.
+        But that patch has not be applied to the Safari Windows SDK yet. For now
+        I've made Windows use the reverse order logig. <rdar://problem/9112233> is
+        tracking the inclusion of the patch on Windows.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+
 2011-03-11  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.
