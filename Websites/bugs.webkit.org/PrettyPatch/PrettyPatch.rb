@@ -12,6 +12,7 @@ public
     GIT_PATH = "git"
 
     def self.prettify(string)
+        string = normalize_line_ending(string)
         fileDiffs = FileDiff.parse(string)
 
         str = HEADER + "\n"
@@ -87,6 +88,10 @@ private
         WebKitLibraries
         Websites
     ]
+
+    def self.normalize_line_ending(s)
+        s.gsub /\r\n?/, "\n"
+    end
 
     def self.find_url_and_path(file_path)
         # Search file_path from the bottom up, at each level checking whether

@@ -2,6 +2,19 @@
 
         Reviewed by Adam Roben.
 
+        Formatted Diff for attachment 23920 is mangled
+        https://bugs.webkit.org/show_bug.cgi?id=21222
+
+        The mangled diff files mentioned in the bug were using Mac line
+        ending and this was causing problems for String#each_line. Now we
+        normalize the line endings in patch data before processing it.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-03-10  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Adam Roben.
+
         PrettyPatch displays last two lines of a git-format-patch diff strangely
         https://bugs.webkit.org/show_bug.cgi?id=29317
 
