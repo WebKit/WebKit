@@ -88,64 +88,15 @@ var LeaksViewer = {
         this.url = url;
         this.loading = true;
 
-        if (/\.txt$/.test(this.url)) {
-            // We're loading a single leaks file.
-
-            var self = this;
-            getResource(url, function(xhr) {
-                var worker = new Worker("Worker.js");
-                worker.onmessage = function(e) {
-                    ProfilerAgent.profileReady(e.data);
-                    self.loading = false;
-                };
-                worker.postMessage(xhr.responseText);
-            });
-        } else {
-            function mergeProfiles(a, b) {
-                a.selfTime += b.selfTime;
-                a.totalTime += b.totalTime;
-
-                b.children.forEach(function(child) {
-                    var aChild = a.childrenByName[child.functionName];
-                    if (aChild) {
-                        mergeProfiles(aChild, child);
-                        return;
-                    }
-
-                    a.children.push(child);
-                    a.childrenByName[child.functionName] = child;
-                });
-            }
-            // Assume we're loading a results directory. Try to find all the leaks files in it.
-            var self = this;
-            getResource(url, function(xhr) {
-                var root = document.createElement("html");
-                root.innerHTML = xhr.responseText;
-
-                // Strip off everything after the last /.
-                var baseURL = url.substring(0, url.lastIndexOf("/") + 1);
-                var urls = Array.prototype.map.call(root.querySelectorAll("tr.file > td > a[href$='-leaks.txt']"), function(link) { return baseURL + link.getAttribute("href"); });
-
-                var pendingProfilesCount = urls.length;
-                var profile;
-                urls.forEach(function(url) {
-                    getResource(url, function(xhr) {
-                        var worker = new Worker("Worker.js");
-                        worker.onmessage = function(e) {
-                            if (profile)
-                                mergeProfiles(profile, e.data);
-                            else
-                                profile = e.data;
-                            if (--pendingProfilesCount)
-                                return;
-                            ProfilerAgent.profileReady(profile);
-                            self.loading = false;
-                        };
-                        worker.postMessage(xhr.responseText);
-                    });
-                });
-            });
-        }
+        var self = this;
+        getResource(url, function(xhr) {
+            var worker = new Worker("Worker.js");
+            worker.onmessage = function(e) {
+                ProfilerAgent.profileReady(e.data);
+                self.loading = false;
+            };
+            worker.postMessage(xhr.responseText);
+        });
     },
 
     _loadingStatusChanged: function() {
