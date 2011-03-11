@@ -93,33 +93,24 @@ void ContentLayerChromium::updateContentsIfDirty()
 
     // FIXME: Remove this test when tiled layers are implemented.
     if (requiresClippedUpdateRect()) {
-        // A layer with 3D transforms could require an arbitrarily large number
-        // of texels to be repainted, so ignore these layers until tiling is
-        // implemented.
-        if (!ccLayerImpl()->drawTransform().isIdentityOrTranslation()) {
-            m_skipsDraw = true;
-            return;
-        }
-
         // Calculate the region of this layer that is currently visible.
         const IntRect clipRect = ccLayerImpl()->targetRenderSurface()->contentRect();
 
         TransformationMatrix layerOriginTransform = ccLayerImpl()->drawTransform();
         layerOriginTransform.translate3d(-0.5 * bounds().width(), -0.5 * bounds().height(), 0);
 
-        // For now we apply the large layer treatment only for layers that are either untransformed
-        // or are purely translated. Their matrix is expected to be invertible.
-        ASSERT(layerOriginTransform.isInvertible());
-
+        // We compute the visible portion of the layer by back-mapping the current RenderSurface
+        // content area to the layer. To do that, we invert the drawing matrix of the layer
+        // and project the content area rectangle to it. If the layer transform is not invertible
+        // then we skip rendering the layer.
+        if (!layerOriginTransform.isInvertible()) {
+            m_skipsDraw = true;
+            return;
+        }
         TransformationMatrix targetToLayerMatrix = layerOriginTransform.inverse();
-        IntRect visibleRectInLayerCoords = targetToLayerMatrix.mapRect(clipRect);
+        FloatQuad mappedClipToLayer = targetToLayerMatrix.projectQuad(FloatRect(clipRect));
+        IntRect visibleRectInLayerCoords = mappedClipToLayer.enclosingBoundingBox();
         visibleRectInLayerCoords.intersect(IntRect(0, 0, bounds().width(), bounds().height()));
-
-        // For normal layers, the center of the texture corresponds with the center of the layer.
-        // In large layers the center of the texture is the center of the visible region so we have
-        // to keep track of the offset in order to render correctly.
-        IntRect visibleRectInSurfaceCoords = layerOriginTransform.mapRect(visibleRectInLayerCoords);
-        m_layerCenterInSurfaceCoords = FloatRect(visibleRectInSurfaceCoords).center();
 
         // If this is still too large to render, then skip the layer completely.
         if (!layerRenderer()->checkTextureSize(visibleRectInLayerCoords.size())) {
@@ -256,9 +247,14 @@ void ContentLayerChromium::draw()
     GLC(context, context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
 
     if (requiresClippedUpdateRect()) {
-        float m43 = ccLayerImpl()->drawTransform().m43();
-        TransformationMatrix transform;
-        transform.translate3d(m_layerCenterInSurfaceCoords.x(), m_layerCenterInSurfaceCoords.y(), m43);
+        // Compute the offset between the layer's center point and the center of the visible portion
+        // of the layer.
+        FloatPoint visibleRectCenterOffset = FloatRect(m_visibleRectInLayerCoords).center();
+        visibleRectCenterOffset.move(-0.5 * bounds().width(), -0.5 * bounds().height());
+
+        TransformationMatrix transform = ccLayerImpl()->drawTransform();
+        transform.translate(visibleRectCenterOffset.x(), visibleRectCenterOffset.y());
+
         drawTexturedQuad(context, layerRenderer()->projectionMatrix(),
                          transform, m_visibleRectInLayerCoords.width(),
                          m_visibleRectInLayerCoords.height(), ccLayerImpl()->drawOpacity(),

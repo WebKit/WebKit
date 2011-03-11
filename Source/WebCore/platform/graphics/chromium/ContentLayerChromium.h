@@ -82,7 +82,6 @@ private:
     PlatformCanvas m_canvas;
 
     IntRect m_visibleRectInLayerCoords;
-    FloatPoint m_layerCenterInSurfaceCoords;
 };
 
 }

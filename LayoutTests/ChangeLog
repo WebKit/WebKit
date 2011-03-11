@@ -1,3 +1,15 @@
+2011-03-11  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Adding a test for rotated large layers.
+        https://bugs.webkit.org/show_bug.cgi?id=55984
+
+        * platform/chromium/compositing/huge-layer-rotated-expected.checksum: Added.
+        * platform/chromium/compositing/huge-layer-rotated-expected.png: Added.
+        * platform/chromium/compositing/huge-layer-rotated-expected.txt: Added.
+        * platform/chromium/compositing/huge-layer-rotated.html: Added.
+
 2011-03-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Carlson.

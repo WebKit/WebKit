@@ -1,3 +1,19 @@
+2011-03-11  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Allow large layers with non-identity transforms to be drawn
+        as long as their visible portion is smaller than the largest supported
+        texture size. This code will soon be replaced by tiled layers.
+        https://bugs.webkit.org/show_bug.cgi?id=55984
+
+        Test: platform/chromium/compositing/huge-layer-rotated.html
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::updateContentsIfDirty):
+        (WebCore::ContentLayerChromium::draw):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+
 2011-03-09  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Adam Roben.
