@@ -1,3 +1,10 @@
+2011-03-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Added 3 http tests to Windows port's skipped list.
+        Tracked by https://bugs.webkit.org/show_bug.cgi?id=56167
+
+        * platform/win/Skipped:
+
 2011-03-10  Alice Boxhall  <aboxhall@chromium.org>
 
         Reviewed by Dimitri Glazkov.
