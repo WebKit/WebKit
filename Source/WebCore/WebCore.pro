@@ -203,6 +203,7 @@ v8 {
         bindings/v8/custom/V8StorageCustom.cpp \
         bindings/v8/custom/V8StyleSheetCustom.cpp \
         bindings/v8/custom/V8StyleSheetListCustom.cpp \
+        bindings/v8/custom/V8WebKitAnimationCustom.cpp \
         bindings/v8/custom/V8WebKitCSSMatrixConstructor.cpp \
         bindings/v8/custom/V8WebKitPointConstructor.cpp \
         bindings/v8/custom/V8WorkerContextCustom.cpp \
@@ -333,6 +334,8 @@ v8 {
         bindings/js/JSUint16ArrayCustom.cpp \
         bindings/js/JSUint32ArrayCustom.cpp \
         bindings/js/JSUint8ArrayCustom.cpp \
+        bindings/js/JSWebKitAnimationCustom.cpp \
+        bindings/js/JSWebKitAnimationListCustom.cpp \
         bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
         bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
         bindings/js/JSWebKitCSSMatrixCustom.cpp \
@@ -872,6 +875,8 @@ SOURCES += \
     page/animation/CompositeAnimation.cpp \
     page/animation/ImplicitAnimation.cpp \
     page/animation/KeyframeAnimation.cpp \
+    page/animation/WebKitAnimation.cpp \
+    page/animation/WebKitAnimationList.cpp \
     page/BarInfo.cpp \
     page/Chrome.cpp \
     page/Console.cpp \
@@ -1836,6 +1841,8 @@ HEADERS += \
     page/SpeechInputListener.h \
     page/SpeechInputResult.h \
     page/SpeechInputResultList.h \
+    page/WebKitAnimation.h \
+    page/WebKitAnimationList.h \
     page/WindowFeatures.h \
     page/WorkerNavigator.h \
     platform/animation/Animation.h \

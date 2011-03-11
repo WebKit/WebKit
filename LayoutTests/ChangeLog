@@ -1,3 +1,24 @@
+2011-03-11  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser and Chris Marrin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54151
+        Implement an API to play/pause/scrub animations
+        
+        This is Part 1. Adds the new WebKitAnimation and WebKitAnimationList
+        APIs, exposed via Element.getWebKitAnimations(). This first pass
+        is read-only. One new layout test that examines animation
+        properties. Update existing layout tests for the new interfaces
+        on Window.
+
+        * animations/animation-api-1-expected.txt: Added.
+        * animations/animation-api-1.html: Added.
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
 2011-03-11  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

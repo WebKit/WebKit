@@ -808,8 +808,13 @@ AnimationBase::AnimationBase(const Animation* transition, RenderObject* renderer
 
 AnimationBase::~AnimationBase()
 {
-    m_compAnim->animationController()->removeFromStyleAvailableWaitList(this);
-    m_compAnim->animationController()->removeFromStartTimeResponseWaitList(this);
+    // If we have a renderer, remove ourselves from the wait lists. We can get into
+    // the situation where there is no renderer when the binding has a reference to
+    // this object, but the element has since been removed from the document.
+    if (m_object) {
+        m_compAnim->animationController()->removeFromStyleAvailableWaitList(this);
+        m_compAnim->animationController()->removeFromStartTimeResponseWaitList(this);
+    }
 }
 
 bool AnimationBase::propertiesEqual(int prop, const RenderStyle* a, const RenderStyle* b)
@@ -1397,5 +1402,21 @@ double AnimationBase::getElapsedTime() const
 
     return beginAnimationUpdateTime() - m_startTime;
 }
-    
+
+void AnimationBase::setElapsedTime(double time)
+{
+    // FIXME: implement this method
+    UNUSED_PARAM(time);
+}
+
+void AnimationBase::play()
+{
+    // FIXME: implement this method
+}
+
+void AnimationBase::pause()
+{
+    // FIXME: implement this method
+}
+
 } // namespace WebCore

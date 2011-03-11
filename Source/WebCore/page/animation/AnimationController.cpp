@@ -37,12 +37,14 @@
 #include "Frame.h"
 #include "RenderView.h"
 #include "WebKitAnimationEvent.h"
+#include "WebKitAnimationList.h"
 #include "WebKitTransitionEvent.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
+// FIXME: Why isn't this set to 60fps or something?
 static const double cAnimationTimerDelay = 0.025;
 static const double cBeginAnimationUpdateTimeNotSet = -1;
 
@@ -479,6 +481,16 @@ void AnimationControllerPrivate::startTimeResponse(double time)
     m_lastStartTimeResponseWaiter = 0;
 }
 
+PassRefPtr<WebKitAnimationList> AnimationControllerPrivate::animationsForRenderer(RenderObject* renderer) const
+{
+    RefPtr<CompositeAnimation> animation = m_compositeAnimations.get(renderer);
+
+    if (!animation)
+        return 0;
+
+    return animation->animations();
+}
+
 AnimationController::AnimationController(Frame* frame)
     : m_data(new AnimationControllerPrivate(frame))
 {
@@ -610,6 +622,11 @@ bool AnimationController::supportsAcceleratedAnimationOfProperty(CSSPropertyID p
     UNUSED_PARAM(property);
     return false;
 #endif
+}
+
+PassRefPtr<WebKitAnimationList> AnimationController::animationsForRenderer(RenderObject* renderer) const
+{
+    return m_data->animationsForRenderer(renderer);
 }
 
 } // namespace WebCore

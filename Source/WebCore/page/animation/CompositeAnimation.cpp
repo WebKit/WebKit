@@ -36,6 +36,8 @@
 #include "KeyframeAnimation.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
+#include "WebKitAnimation.h"
+#include "WebKitAnimationList.h"
 
 namespace WebCore {
 
@@ -252,8 +254,10 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, Render
     kfend = m_keyframeAnimations.end();
     for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it) {
         KeyframeAnimation* keyframeAnim = it->second.get();
-        if (keyframeAnim->index() < 0)
+        if (keyframeAnim->index() < 0) {
             animsToBeRemoved.append(keyframeAnim->name().impl());
+            keyframeAnim->clearRenderer();
+        }
     }
     
     // Now remove the animations from the list.
@@ -558,6 +562,22 @@ unsigned CompositeAnimation::numberOfActiveAnimations() const
     }
     
     return count;
+}
+
+PassRefPtr<WebKitAnimationList> CompositeAnimation::animations() const
+{
+    RefPtr<WebKitAnimationList> animations = WebKitAnimationList::create();
+    if (!m_keyframeAnimations.isEmpty()) {
+        m_keyframeAnimations.checkConsistency();
+        for (Vector<AtomicStringImpl*>::const_iterator it = m_keyframeAnimationOrderMap.begin(); it != m_keyframeAnimationOrderMap.end(); ++it) {
+            RefPtr<KeyframeAnimation> keyframeAnimation = m_keyframeAnimations.get(*it);
+            if (keyframeAnimation) {
+                RefPtr<WebKitAnimation> anim = WebKitAnimation::create(keyframeAnimation);
+                animations->append(anim);
+            }
+        }
+    }
+    return animations;
 }
 
 } // namespace WebCore

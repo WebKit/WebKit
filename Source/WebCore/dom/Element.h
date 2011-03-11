@@ -39,6 +39,7 @@ class DOMStringMap;
 class DOMTokenList;
 class ElementRareData;
 class IntSize;
+class WebKitAnimationList;
 
 enum SpellcheckAttributeState {
     SpellcheckAttributeTrue,
@@ -343,6 +344,8 @@ public:
 #endif
 
     virtual bool isSpellCheckingEnabled() const;
+
+    PassRefPtr<WebKitAnimationList> webkitGetAnimations() const;
 
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)

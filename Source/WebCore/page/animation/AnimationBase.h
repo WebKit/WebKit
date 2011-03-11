@@ -163,11 +163,17 @@ public:
     
     // Freeze the animation; used by DumpRenderTree.
     void freezeAtTime(double t);
+
+    // Play and pause API
+    void play();
+    void pause();
     
     double beginAnimationUpdateTime() const;
     
     double getElapsedTime() const;
-    
+    // Setting the elapsed time will adjust the start time and possibly pause time.
+    void setElapsedTime(double);
+
     AnimationBase* next() const { return m_next; }
     void setNext(AnimationBase* animation) { m_next = animation; }
     
@@ -182,7 +188,9 @@ public:
 #endif
 
     static HashSet<int> animatableShorthandsAffectingProperty(int property);
-    
+
+    const Animation* animation() const { return m_animation.get(); }
+
 protected:
     virtual void overrideAnimations() { }
     virtual void resumeOverriddenAnimations() { }

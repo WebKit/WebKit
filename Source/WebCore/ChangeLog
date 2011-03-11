@@ -1,3 +1,96 @@
+2011-03-11  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser and Chris Marrin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54151
+        Implement an API to play/pause/scrub animations
+
+        This is Part 1. Adds the new WebKitAnimation and WebKitAnimationList
+        APIs, exposed via Element.getWebKitAnimations(). This first pass
+        is a read-only API - a subsequent commit will add the ability
+        to scrub animations.
+
+        Test: animations/animation-api-1.html
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.mk:
+        * Android.v8bindings.mk:
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        - All build settings updated for new files
+        * bindings/js/JSBindingsAllInOne.cpp:
+        - Include new custom files
+        * bindings/js/JSWebKitAnimationCustom.cpp: Added.
+        (WebCore::JSWebKitAnimation::iterationCount):
+        - Custom property getter so that we can return INFINITY
+        * bindings/js/JSWebKitAnimationListCustom.cpp: Added.
+        (WebCore::JSWebKitAnimationList::markChildren):
+        - Make sure WebKitAnimations are marked
+        * bindings/v8/custom/V8WebKitAnimationCustom.cpp: Added.
+        (WebCore::V8WebkitAnimation::iterationCountAccessorGetter):
+        - Custom property getter so that we can return INFINITY
+        * dom/Element.cpp:
+        (WebCore::Element::webkitGetAnimations):
+        * dom/Element.h:
+        * dom/Element.idl:
+        - New API entry point
+        * page/DOMWindow.idl:
+        - Constructor definitions for WebKitAnimation and WebKitAnimationList
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::~AnimationBase):
+        - Since AnimationBase can now live longer (if a WebKitAnimation is
+        held in Javascript) we need to guard for the renderer having disappeared.
+        (WebCore::AnimationBase::setElapsedTime):
+        (WebCore::AnimationBase::play):
+        (WebCore::AnimationBase::pause):
+        - Stub implementations at present
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::animation):
+        - Expose the Animation properties
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::animationsForRenderer):
+        (WebCore::AnimationController::animationsForRenderer):
+        - Builds the list of WebKitAnimations
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        - Make sure we clear the renderer if we are removing the animation
+        (WebCore::CompositeAnimation::animations):
+        * page/animation/CompositeAnimation.h:
+        * page/animation/WebKitAnimation.cpp: Added.
+        (WebCore::WebKitAnimation::WebKitAnimation):
+        (WebCore::WebKitAnimation::name):
+        (WebCore::WebKitAnimation::duration):
+        (WebCore::WebKitAnimation::elapsedTime):
+        (WebCore::WebKitAnimation::setElapsedTime):
+        (WebCore::WebKitAnimation::delay):
+        (WebCore::WebKitAnimation::iterationCount):
+        (WebCore::WebKitAnimation::paused):
+        (WebCore::WebKitAnimation::ended):
+        (WebCore::WebKitAnimation::direction):
+        (WebCore::WebKitAnimation::fillMode):
+        (WebCore::WebKitAnimation::pause):
+        (WebCore::WebKitAnimation::play):
+        - The implementation of the new API. All the read-only parts are
+        done, but elapsedTime, play() and pause() are stubs.
+        * page/animation/WebKitAnimation.h: Added.
+        (WebCore::WebKitAnimation::create):
+        (WebCore::WebKitAnimation::~WebKitAnimation):
+        * page/animation/WebKitAnimation.idl: Added.
+        * page/animation/WebKitAnimationList.cpp: Added.
+        * page/animation/WebKitAnimationList.h: Added.
+        * page/animation/WebKitAnimationList.idl: Added.
+        - Copies NodeList implementation
+
 2011-03-11  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -55,6 +55,7 @@
 #include "RenderWidget.h"
 #include "Settings.h"
 #include "TextIterator.h"
+#include "WebKitAnimationList.h"
 #include "XMLNames.h"
 #include <wtf/text/CString.h>
 
@@ -1884,6 +1885,19 @@ bool Element::isSpellCheckingEnabled() const
     }
 
     return true;
+}
+
+PassRefPtr<WebKitAnimationList> Element::webkitGetAnimations() const
+{
+    if (!renderer())
+        return 0;
+
+    AnimationController* animController = renderer()->animation();
+
+    if (!animController)
+        return 0;
+    
+    return animController->animationsForRenderer(renderer());
 }
 
 } // namespace WebCore

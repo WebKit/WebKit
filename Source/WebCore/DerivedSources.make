@@ -512,7 +512,9 @@ DOM_CLASSES = \
     TreeWalker \
     UIEvent \
     ValidityState \
+    WebKitAnimation \
     WebKitAnimationEvent \
+    WebKitAnimationList \
     WebKitCSSKeyframeRule \
     WebKitCSSKeyframesRule \
     WebKitCSSMatrix \

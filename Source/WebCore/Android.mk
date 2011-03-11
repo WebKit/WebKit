@@ -449,6 +449,8 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	page/SpeechInputResult.cpp \
 	page/SuspendableTimer.cpp \
 	page/UserContentURLPattern.cpp \
+	page/WebKitAnimation.cpp \
+	page/WebKitAnimationList.cpp \
 	page/WindowFeatures.cpp \
 	page/WorkerNavigator.cpp \
 	\

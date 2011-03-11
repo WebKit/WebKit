@@ -334,6 +334,8 @@ IDL_BINDINGS += \
     page/SpeechInputEvent.idl \
     page/SpeechInputResult.idl \
     page/SpeechInputResultList.idl \
+    page/WebKitAnimation.idl \
+    page/WebKitAnimationList.idl \
     page/WebKitPoint.idl \
     page/WorkerNavigator.idl \
     plugins/DOMPlugin.idl \

@@ -144,6 +144,8 @@
 #include "JSUint16ArrayCustom.cpp"
 #include "JSUint32ArrayCustom.cpp"
 #include "JSUint8ArrayCustom.cpp"
+#include "JSWebKitAnimationCustom.cpp"
+#include "JSWebKitAnimationListCustom.cpp"
 #include "JSWebKitCSSKeyframeRuleCustom.cpp"
 #include "JSWebKitCSSKeyframesRuleCustom.cpp"
 #include "JSWebKitCSSMatrixCustom.cpp"

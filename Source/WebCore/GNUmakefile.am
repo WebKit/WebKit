@@ -598,7 +598,11 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebGLUniformLocation.h \
 	DerivedSources/WebCore/JSWebGLVertexArrayObjectOES.cpp \
 	DerivedSources/WebCore/JSWebGLVertexArrayObjectOES.h \
+	DerivedSources/WebCore/JSWebKitAnimation.cpp \
+	DerivedSources/WebCore/JSWebKitAnimation.h \
 	DerivedSources/WebCore/JSWebKitAnimationEvent.cpp \
+	DerivedSources/WebCore/JSWebKitAnimationList.h \
+	DerivedSources/WebCore/JSWebKitAnimationList.cpp \
 	DerivedSources/WebCore/JSWebKitAnimationEvent.h \
 	DerivedSources/WebCore/JSWebKitCSSKeyframeRule.cpp \
 	DerivedSources/WebCore/JSWebKitCSSKeyframeRule.h \
@@ -871,6 +875,8 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSUint16ArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSUint32ArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSUint8ArrayCustom.cpp \
+	Source/WebCore/bindings/js/JSWebKitAnimationCustom.cpp \
+	Source/WebCore/bindings/js/JSWebKitAnimationListCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebGLRenderingContextCustom.cpp \
@@ -2308,6 +2314,10 @@ webcore_sources += \
 	Source/WebCore/page/UserScriptTypes.h \
 	Source/WebCore/page/UserStyleSheet.h \
 	Source/WebCore/page/UserStyleSheetTypes.h \
+	Source/WebCore/page/WebKitAnimation.h \
+	Source/WebCore/page/WebKitAnimation.cpp \
+	Source/WebCore/page/WebKitAnimationList.h \
+	Source/WebCore/page/WebKitAnimationList.cpp \
 	Source/WebCore/page/WebKitPoint.h \
 	Source/WebCore/page/WindowFeatures.cpp \
 	Source/WebCore/page/WindowFeatures.h \

@@ -42,6 +42,7 @@ class Frame;
 class Node;
 class RenderObject;
 class RenderStyle;
+class WebKitAnimationList;
 
 class AnimationController {
 public:
@@ -72,6 +73,8 @@ public:
     void endAnimationUpdate();
     
     static bool supportsAcceleratedAnimationOfProperty(CSSPropertyID);
+
+    PassRefPtr<WebKitAnimationList> animationsForRenderer(RenderObject*) const;
 
 private:
     AnimationControllerPrivate* m_data;

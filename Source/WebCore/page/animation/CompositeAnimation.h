@@ -41,6 +41,7 @@ class AnimationControllerPrivate;
 class AnimationController;
 class RenderObject;
 class RenderStyle;
+class WebKitAnimationList;
 
 // A CompositeAnimation represents a collection of animations that are running
 // on a single RenderObject, such as a number of properties transitioning at once.
@@ -79,6 +80,8 @@ public:
     bool pauseAnimationAtTime(const AtomicString& name, double t);
     bool pauseTransitionAtTime(int property, double t);
     unsigned numberOfActiveAnimations() const;
+
+    PassRefPtr<WebKitAnimationList> animations() const;
 
 private:
     CompositeAnimation(AnimationControllerPrivate* animationController)

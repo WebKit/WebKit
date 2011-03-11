@@ -605,6 +605,9 @@ module window {
         attribute [Conditional=VIDEO, EnabledAtRuntime] MediaErrorConstructor MediaError;
         attribute [Conditional=VIDEO, EnabledAtRuntime] TimeRangesConstructor TimeRanges;
 
+        attribute WebKitAnimationConstructor WebKitAnimation;
+        attribute WebKitAnimationListConstructor WebKitAnimationList;
+
 #if defined(ENABLE_XPATH) && ENABLE_XPATH
         attribute XPathEvaluatorConstructor XPathEvaluator;
         attribute XPathResultConstructor XPathResult;

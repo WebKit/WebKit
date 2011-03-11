@@ -769,6 +769,20 @@
 		316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE10E0E6E1DA700BF6088 /* ImplicitAnimation.h */; };
 		316FE1190E6E1DA700BF6088 /* KeyframeAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE10F0E6E1DA700BF6088 /* KeyframeAnimation.cpp */; };
 		316FE11A0E6E1DA700BF6088 /* KeyframeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE1100E6E1DA700BF6088 /* KeyframeAnimation.h */; };
+		3194616213020B20004BB3F8 /* JSWebKitAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3194616013020B20004BB3F8 /* JSWebKitAnimation.cpp */; };
+		3194616313020B20004BB3F8 /* JSWebKitAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3194616113020B20004BB3F8 /* JSWebKitAnimation.h */; };
+		3194616A13020B66004BB3F8 /* DOMWebKitAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3194616813020B66004BB3F8 /* DOMWebKitAnimation.h */; };
+		3194616B13020B66004BB3F8 /* DOMWebKitAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3194616913020B66004BB3F8 /* DOMWebKitAnimation.mm */; };
+		319461FE13022BB8004BB3F8 /* JSWebKitAnimationList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 319461FC13022BB8004BB3F8 /* JSWebKitAnimationList.cpp */; };
+		319461FF13022BB8004BB3F8 /* JSWebKitAnimationList.h in Headers */ = {isa = PBXBuildFile; fileRef = 319461FD13022BB8004BB3F8 /* JSWebKitAnimationList.h */; };
+		3194620413022BF1004BB3F8 /* DOMWebKitAnimationList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3194620213022BF1004BB3F8 /* DOMWebKitAnimationList.h */; };
+		3194620513022BF1004BB3F8 /* DOMWebKitAnimationList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3194620313022BF1004BB3F8 /* DOMWebKitAnimationList.mm */; };
+		3194623213022F65004BB3F8 /* JSWebKitAnimationListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3194623113022F65004BB3F8 /* JSWebKitAnimationListCustom.cpp */; };
+		319E68871327C911004AC91A /* JSWebKitAnimationCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 319E68861327C911004AC91A /* JSWebKitAnimationCustom.cpp */; };
+		319E69B213299BBD004AC91A /* WebKitAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 319E69AC13299BBD004AC91A /* WebKitAnimation.cpp */; };
+		319E69B313299BBD004AC91A /* WebKitAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 319E69AD13299BBD004AC91A /* WebKitAnimation.h */; };
+		319E69B513299BBD004AC91A /* WebKitAnimationList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 319E69AF13299BBD004AC91A /* WebKitAnimationList.cpp */; };
+		319E69B613299BBD004AC91A /* WebKitAnimationList.h in Headers */ = {isa = PBXBuildFile; fileRef = 319E69B013299BBD004AC91A /* WebKitAnimationList.h */; };
 		31C0FF210E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */; };
 		31C0FF220E4CEB6E007D6FE5 /* WebKitAnimationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */; };
 		31C0FF240E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF1E0E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp */; };
@@ -7154,6 +7168,22 @@
 		316FE10E0E6E1DA700BF6088 /* ImplicitAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImplicitAnimation.h; path = animation/ImplicitAnimation.h; sourceTree = "<group>"; };
 		316FE10F0E6E1DA700BF6088 /* KeyframeAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyframeAnimation.cpp; path = animation/KeyframeAnimation.cpp; sourceTree = "<group>"; };
 		316FE1100E6E1DA700BF6088 /* KeyframeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyframeAnimation.h; path = animation/KeyframeAnimation.h; sourceTree = "<group>"; };
+		3194616013020B20004BB3F8 /* JSWebKitAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitAnimation.cpp; sourceTree = "<group>"; };
+		3194616113020B20004BB3F8 /* JSWebKitAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitAnimation.h; sourceTree = "<group>"; };
+		3194616813020B66004BB3F8 /* DOMWebKitAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitAnimation.h; sourceTree = "<group>"; };
+		3194616913020B66004BB3F8 /* DOMWebKitAnimation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitAnimation.mm; sourceTree = "<group>"; };
+		319461FC13022BB8004BB3F8 /* JSWebKitAnimationList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitAnimationList.cpp; sourceTree = "<group>"; };
+		319461FD13022BB8004BB3F8 /* JSWebKitAnimationList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitAnimationList.h; sourceTree = "<group>"; };
+		3194620213022BF1004BB3F8 /* DOMWebKitAnimationList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitAnimationList.h; sourceTree = "<group>"; };
+		3194620313022BF1004BB3F8 /* DOMWebKitAnimationList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitAnimationList.mm; sourceTree = "<group>"; };
+		3194623113022F65004BB3F8 /* JSWebKitAnimationListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitAnimationListCustom.cpp; sourceTree = "<group>"; };
+		319E68861327C911004AC91A /* JSWebKitAnimationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitAnimationCustom.cpp; sourceTree = "<group>"; };
+		319E69AC13299BBD004AC91A /* WebKitAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitAnimation.cpp; sourceTree = "<group>"; };
+		319E69AD13299BBD004AC91A /* WebKitAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAnimation.h; sourceTree = "<group>"; };
+		319E69AE13299BBD004AC91A /* WebKitAnimation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitAnimation.idl; sourceTree = "<group>"; };
+		319E69AF13299BBD004AC91A /* WebKitAnimationList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitAnimationList.cpp; sourceTree = "<group>"; };
+		319E69B013299BBD004AC91A /* WebKitAnimationList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAnimationList.h; sourceTree = "<group>"; };
+		319E69B113299BBD004AC91A /* WebKitAnimationList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitAnimationList.idl; sourceTree = "<group>"; };
 		31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitAnimationEvent.cpp; sourceTree = "<group>"; };
 		31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAnimationEvent.h; sourceTree = "<group>"; };
 		31C0FF1D0E4CEB6E007D6FE5 /* WebKitAnimationEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitAnimationEvent.idl; sourceTree = "<group>"; };
@@ -14024,9 +14054,8 @@
 		65BF02180974806300C43196 /* page */ = {
 			isa = PBXGroup;
 			children = (
-				316FE1060E6E1D8400BF6088 /* animation */,
-				93C09A820B064F05005ABD4D /* mac */,
 				8538F0000AD71770006A81D1 /* AbstractView.idl */,
+				316FE1060E6E1D8400BF6088 /* animation */,
 				BC124EE40C2641CD009E2349 /* BarInfo.cpp */,
 				BC124EE50C2641CD009E2349 /* BarInfo.h */,
 				BC124EE60C2641CD009E2349 /* BarInfo.idl */,
@@ -14098,6 +14127,7 @@
 				BCE1C41A0D982980003B02F2 /* Location.cpp */,
 				BCE1C4190D982980003B02F2 /* Location.h */,
 				BCE1C4220D9829F2003B02F2 /* Location.idl */,
+				93C09A820B064F05005ABD4D /* mac */,
 				931BCC601124DFCB00BE70DD /* MediaCanStartListener.h */,
 				9FFE3E7811B59C5D0037874E /* MemoryInfo.cpp */,
 				9FFE3E7911B59C5D0037874E /* MemoryInfo.h */,
@@ -14169,6 +14199,12 @@
 				BC8BF150105813BF00A40A07 /* UserStyleSheet.h */,
 				BC8BF1591058141800A40A07 /* UserStyleSheetTypes.h */,
 				BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */,
+				319E69AC13299BBD004AC91A /* WebKitAnimation.cpp */,
+				319E69AD13299BBD004AC91A /* WebKitAnimation.h */,
+				319E69AE13299BBD004AC91A /* WebKitAnimation.idl */,
+				319E69AF13299BBD004AC91A /* WebKitAnimationList.cpp */,
+				319E69B013299BBD004AC91A /* WebKitAnimationList.h */,
+				319E69B113299BBD004AC91A /* WebKitAnimationList.idl */,
 				494BD7930F55C8EE00747828 /* WebKitPoint.h */,
 				494BD7940F55C8EE00747828 /* WebKitPoint.idl */,
 				BC8243E60D0CFD7500460C8F /* WindowFeatures.cpp */,
@@ -15022,6 +15058,10 @@
 				85BA4D0A0AA688680088052D /* DOMHTMLUListElement.mm */,
 				15C770A4100D41CD005BA267 /* DOMValidityState.h */,
 				15C770A3100D41CD005BA267 /* DOMValidityState.mm */,
+				3194616813020B66004BB3F8 /* DOMWebKitAnimation.h */,
+				3194616913020B66004BB3F8 /* DOMWebKitAnimation.mm */,
+				3194620213022BF1004BB3F8 /* DOMWebKitAnimationList.h */,
+				3194620313022BF1004BB3F8 /* DOMWebKitAnimationList.mm */,
 			);
 			name = HTML;
 			sourceTree = "<group>";
@@ -16349,6 +16389,10 @@
 				0C45342610CDBBFA00869157 /* JSWebGLUniformLocation.h */,
 				77EF62F112F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp */,
 				77EF62F212F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h */,
+				3194616013020B20004BB3F8 /* JSWebKitAnimation.cpp */,
+				3194616113020B20004BB3F8 /* JSWebKitAnimation.h */,
+				319461FC13022BB8004BB3F8 /* JSWebKitAnimationList.cpp */,
+				319461FD13022BB8004BB3F8 /* JSWebKitAnimationList.h */,
 				93F1D5BE12D5335600832BEC /* JSWebKitLoseContext.cpp */,
 				93F1D5BF12D5335600832BEC /* JSWebKitLoseContext.h */,
 			);
@@ -18050,6 +18094,8 @@
 				49EECF7610508D9C00099FAB /* JSUint32ArrayCustom.cpp */,
 				49EECF7510508D9C00099FAB /* JSUint8ArrayCustom.cpp */,
 				49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */,
+				319E68861327C911004AC91A /* JSWebKitAnimationCustom.cpp */,
+				3194623113022F65004BB3F8 /* JSWebKitAnimationListCustom.cpp */,
 				E1AD14C41297354900ACA989 /* JSWebKitCSSKeyframeRuleCustom.cpp */,
 				E1AD14B4129734CA00ACA989 /* JSWebKitCSSKeyframesRuleCustom.cpp */,
 				BC275B7C11C5D23500C9206C /* JSWebKitCSSMatrixCustom.cpp */,
@@ -22587,6 +22633,12 @@
 				598D77E31325420E00761B22 /* JavaFieldJSC.h in Headers */,
 				BCD3F9831326C93700098A60 /* TextOrientation.h in Headers */,
 				F316396C1329481A00A649CB /* InjectedScriptManager.h in Headers */,
+				3194616313020B20004BB3F8 /* JSWebKitAnimation.h in Headers */,
+				3194616A13020B66004BB3F8 /* DOMWebKitAnimation.h in Headers */,
+				319461FF13022BB8004BB3F8 /* JSWebKitAnimationList.h in Headers */,
+				3194620413022BF1004BB3F8 /* DOMWebKitAnimationList.h in Headers */,
+				319E69B313299BBD004AC91A /* WebKitAnimation.h in Headers */,
+				319E69B613299BBD004AC91A /* WebKitAnimationList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25244,6 +25296,14 @@
 				5D4F51DF132725480016F541 /* HTMLConverter.mm in Sources */,
 				F316396B1329481A00A649CB /* InjectedScriptManager.cpp in Sources */,
 				F316396E1329487600A649CB /* JSInjectedScriptManager.cpp in Sources */,
+				3194616213020B20004BB3F8 /* JSWebKitAnimation.cpp in Sources */,
+				3194616B13020B66004BB3F8 /* DOMWebKitAnimation.mm in Sources */,
+				319461FE13022BB8004BB3F8 /* JSWebKitAnimationList.cpp in Sources */,
+				3194620513022BF1004BB3F8 /* DOMWebKitAnimationList.mm in Sources */,
+				3194623213022F65004BB3F8 /* JSWebKitAnimationListCustom.cpp in Sources */,
+				319E68871327C911004AC91A /* JSWebKitAnimationCustom.cpp in Sources */,
+				319E69B213299BBD004AC91A /* WebKitAnimation.cpp in Sources */,
+				319E69B513299BBD004AC91A /* WebKitAnimationList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

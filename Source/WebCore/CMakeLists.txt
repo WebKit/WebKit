@@ -343,6 +343,8 @@ SET(WebCore_IDL_FILES
     page/SpeechInputEvent.idl
     page/SpeechInputResult.idl
     page/SpeechInputResultList.idl
+    page/WebKitAnimation.idl
+    page/WebKitAnimationList.idl
     page/WebKitPoint.idl
     page/WorkerNavigator.idl
 
@@ -575,6 +577,8 @@ SET(WebCore_SOURCES
     bindings/js/JSUint16ArrayCustom.cpp 
     bindings/js/JSUint32ArrayCustom.cpp
     bindings/js/JSUint8ArrayCustom.cpp
+    bindings/js/JSWebKitAnimationCustom.cpp
+    bindings/js/JSWebKitAnimationListCustom.cpp
     bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp
     bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp
     bindings/js/JSWebKitCSSMatrixCustom.cpp
@@ -1175,6 +1179,8 @@ SET(WebCore_SOURCES
     page/SpatialNavigation.cpp
     page/SuspendableTimer.cpp
     page/UserContentURLPattern.cpp
+    page/WebKitAnimation.cpp
+    page/WebKitAnimationList.cpp
     page/WindowFeatures.cpp
     page/WorkerNavigator.cpp
 

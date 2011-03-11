@@ -96,6 +96,8 @@ module core {
         void scrollByLines(in long lines);
         void scrollByPages(in long pages);
 
+        WebKitAnimationList webkitGetAnimations();
+
         // HTML 5
         NodeList getElementsByClassName(in DOMString name);
 

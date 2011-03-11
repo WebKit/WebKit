@@ -298,6 +298,8 @@ GEN := \
     $(intermediates)/page/JSNavigator.h \
     $(intermediates)/page/JSPositionError.h \
     $(intermediates)/page/JSScreen.h \
+    $(intermediates)/page/JSWebKitAnimation.h \
+    $(intermediates)/page/JSWebKitAnimationList.h \
     $(intermediates)/page/JSWebKitPoint.h \
     $(intermediates)/page/JSWorkerNavigator.h
 

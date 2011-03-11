@@ -48,6 +48,7 @@ class Frame;
 class Node;
 class RenderObject;
 class RenderStyle;
+class WebKitAnimationList;
 
 class AnimationControllerPrivate {
     WTF_MAKE_NONCOPYABLE(AnimationControllerPrivate); WTF_MAKE_FAST_ALLOCATED;
@@ -92,6 +93,8 @@ public:
     
     void addToStartTimeResponseWaitList(AnimationBase*, bool willGetResponse);
     void removeFromStartTimeResponseWaitList(AnimationBase*);    
+    
+    PassRefPtr<WebKitAnimationList> animationsForRenderer(RenderObject*) const;
     
 private:
     void animationTimerFired(Timer<AnimationControllerPrivate>*);
