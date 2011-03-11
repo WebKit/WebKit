@@ -51,7 +51,7 @@ public:
         ASSERT(!m_callback || (m_scriptExecutionContext.get() && m_scriptExecutionContext->isContextThread()));
     }
 
-    SQLCallbackWrapper()
+    ~SQLCallbackWrapper()
     {
         clear();
     }
