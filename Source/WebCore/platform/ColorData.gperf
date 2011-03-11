@@ -107,7 +107,7 @@ maroon, 0xff800000
 mediumaquamarine, 0xff66cdaa
 mediumblue, 0xff0000cd
 mediumorchid, 0xffba55d3
-mediumpurple, 0xff9370d8
+mediumpurple, 0xff9370db
 mediumseagreen, 0xff3cb371
 mediumslateblue, 0xff7b68ee
 mediumspringgreen, 0xff00fa9a
@@ -128,7 +128,7 @@ orchid, 0xffda70d6
 palegoldenrod, 0xffeee8aa
 palegreen, 0xff98fb98
 paleturquoise, 0xffafeeee
-palevioletred, 0xffd87093
+palevioletred, 0xffdb7093
 papayawhip, 0xffffefd5
 peachpuff, 0xffffdab9
 peru, 0xffcd853f

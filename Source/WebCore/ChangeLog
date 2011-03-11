@@ -1,3 +1,18 @@
+2011-03-10  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The web colours palevioletred and mediumpurple are incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=46658
+
+        Changed value for the palevioletred and mediumpurple colors to match
+        the css3 specification.
+
+        Test: fast/css/named-colors.html
+
+        * inspector/front-end/Color.js:
+        * platform/ColorData.gperf:
+
 2011-03-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed build fix.
