@@ -31,6 +31,7 @@
 #include "Console.h"
 #include "ConsoleMessage.h"
 #include "InjectedScriptHost.h"
+#include "InjectedScriptManager.h"
 #include "InspectorAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorFrontend.h"
@@ -55,11 +56,11 @@ static const char monitoringXHR[] = "monitoringXHR";
 static const char consoleMessagesEnabled[] = "consoleMessagesEnabled";
 }
 
-InspectorConsoleAgent::InspectorConsoleAgent(InstrumentingAgents* instrumentingAgents, InspectorAgent* inspectorAgent, InspectorState* state, InjectedScriptHost* injectedScriptHost, InspectorDOMAgent* domAgent)
+InspectorConsoleAgent::InspectorConsoleAgent(InstrumentingAgents* instrumentingAgents, InspectorAgent* inspectorAgent, InspectorState* state, InjectedScriptManager* injectedScriptManager, InspectorDOMAgent* domAgent)
     : m_instrumentingAgents(instrumentingAgents)
     , m_inspectorAgent(inspectorAgent)
     , m_inspectorState(state)
-    , m_injectedScriptHost(injectedScriptHost)
+    , m_injectedScriptManager(injectedScriptManager)
     , m_inspectorDOMAgent(domAgent)
     , m_frontend(0)
     , m_previousMessage(0)
@@ -74,7 +75,7 @@ InspectorConsoleAgent::~InspectorConsoleAgent()
     m_instrumentingAgents = 0;
     m_inspectorAgent = 0;
     m_inspectorState = 0;
-    m_injectedScriptHost = 0;
+    m_injectedScriptManager = 0;
     m_inspectorDOMAgent = 0;
 }
 
@@ -89,9 +90,8 @@ void InspectorConsoleAgent::clearConsoleMessages(ErrorString*)
     m_consoleMessages.clear();
     m_expiredConsoleMessageCount = 0;
     m_previousMessage = 0;
-    m_injectedScriptHost->releaseObjectGroup(0 /* release the group in all scripts */, "console");
-    if (InspectorDOMAgent* domAgent = m_inspectorAgent->domAgent())
-        domAgent->releaseDanglingNodes();
+    m_injectedScriptManager->releaseObjectGroup(0 /* release the group in all scripts */, "console");
+    m_inspectorDOMAgent->releaseDanglingNodes();
     if (m_frontend)
         m_frontend->consoleMessagesCleared();
 }
@@ -218,6 +218,14 @@ void InspectorConsoleAgent::setMonitoringXHREnabled(ErrorString*, bool enabled)
     m_inspectorState->setBoolean(ConsoleAgentState::monitoringXHR, enabled);
 }
 
+void InspectorConsoleAgent::addInspectedNode(ErrorString*, long nodeId)
+{
+    Node* node = m_inspectorDOMAgent->nodeForId(nodeId);
+    if (!node)
+        return;
+    m_injectedScriptManager->injectedScriptHost()->addInspectedNode(node);
+}
+
 void InspectorConsoleAgent::setConsoleMessagesEnabled(bool enabled)
 {
     m_inspectorState->setBoolean(ConsoleAgentState::consoleMessagesEnabled, enabled);
@@ -228,7 +236,7 @@ void InspectorConsoleAgent::setConsoleMessagesEnabled(bool enabled)
         m_frontend->updateConsoleMessageExpiredCount(m_expiredConsoleMessageCount);
     unsigned messageCount = m_consoleMessages.size();
     for (unsigned i = 0; i < messageCount; ++i)
-        m_consoleMessages[i]->addToFrontend(m_frontend, m_injectedScriptHost);
+        m_consoleMessages[i]->addToFrontend(m_frontend, m_injectedScriptManager);
 }
 
 void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> consoleMessage)
@@ -244,7 +252,7 @@ void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> console
         m_previousMessage = consoleMessage.get();
         m_consoleMessages.append(consoleMessage);
         if (m_inspectorState->getBoolean(ConsoleAgentState::consoleMessagesEnabled) && m_frontend)
-            m_previousMessage->addToFrontend(m_frontend, m_injectedScriptHost);
+            m_previousMessage->addToFrontend(m_frontend, m_injectedScriptManager);
     }
 
     if (!m_frontend && m_consoleMessages.size() >= maximumConsoleMessages) {

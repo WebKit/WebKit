@@ -38,7 +38,6 @@
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InjectedScript.h"
-#include "InjectedScriptSource.h"
 #include "InspectorAgent.h"
 #include "InspectorClient.h"
 #include "InspectorConsoleAgent.h"
@@ -69,9 +68,21 @@ using namespace std;
 
 namespace WebCore {
 
-InjectedScriptHost::InjectedScriptHost(InspectorAgent* inspectorAgent)
-    : m_inspectorAgent(inspectorAgent)
-    , m_nextInjectedScriptId(1)
+PassRefPtr<InjectedScriptHost> InjectedScriptHost::create()
+{
+    return adoptRef(new InjectedScriptHost());
+}
+
+InjectedScriptHost::InjectedScriptHost()
+    : m_inspectorAgent(0)
+    , m_consoleAgent(0)
+#if ENABLE(DATABASE)
+    , m_databaseAgent(0)
+#endif
+#if ENABLE(DOM_STORAGE)
+    , m_domStorageAgent(0)
+#endif
+    , m_frontend(0)
     , m_lastWorkerId(1 << 31) // Distinguish ids of fake workers from real ones, to minimize the chances they overlap.
 {
 }
@@ -80,18 +91,17 @@ InjectedScriptHost::~InjectedScriptHost()
 {
 }
 
-void InjectedScriptHost::inspectImpl(PassRefPtr<InspectorValue> objectId, PassRefPtr<InspectorValue> hints)
+void InjectedScriptHost::disconnect()
 {
-    if (InspectorFrontend* fe = frontend())
-        fe->inspector()->inspect(objectId->asObject(), hints->asObject());
-}
-
-void InjectedScriptHost::clearConsoleMessages()
-{
-    if (m_inspectorAgent) {
-        ErrorString error;
-        m_inspectorAgent->consoleAgent()->clearConsoleMessages(&error);
-    }
+    m_inspectorAgent = 0;
+    m_consoleAgent = 0;
+#if ENABLE(DATABASE)
+    m_databaseAgent = 0;
+#endif
+#if ENABLE(DOM_STORAGE)
+    m_domStorageAgent = 0;
+#endif
+    m_frontend = 0;
 }
 
 void InjectedScriptHost::addInspectedNode(Node* node)
@@ -104,6 +114,20 @@ void InjectedScriptHost::addInspectedNode(Node* node)
 void InjectedScriptHost::clearInspectedNodes()
 {
     m_inspectedNodes.clear();
+}
+
+void InjectedScriptHost::inspectImpl(PassRefPtr<InspectorValue> objectId, PassRefPtr<InspectorValue> hints)
+{
+    if (m_frontend)
+        m_frontend->inspector()->inspect(objectId->asObject(), hints->asObject());
+}
+
+void InjectedScriptHost::clearConsoleMessages()
+{
+    if (m_consoleAgent) {
+        ErrorString error;
+        m_consoleAgent->clearConsoleMessages(&error);
+    }
 }
 
 void InjectedScriptHost::copyText(const String& text)
@@ -121,8 +145,8 @@ Node* InjectedScriptHost::inspectedNode(unsigned long num)
 #if ENABLE(DATABASE)
 long InjectedScriptHost::databaseIdImpl(Database* database)
 {
-    if (m_inspectorAgent && m_inspectorAgent->databaseAgent())
-        return m_inspectorAgent->databaseAgent()->databaseId(database);
+    if (m_databaseAgent)
+        return m_databaseAgent->databaseId(database);
     return 0;
 }
 #endif
@@ -130,69 +154,11 @@ long InjectedScriptHost::databaseIdImpl(Database* database)
 #if ENABLE(DOM_STORAGE)
 long InjectedScriptHost::storageIdImpl(Storage* storage)
 {
-    if (m_inspectorAgent && m_inspectorAgent->domStorageAgent())
-        return m_inspectorAgent->domStorageAgent()->storageId(storage);
+    if (m_domStorageAgent)
+        return m_domStorageAgent->storageId(storage);
     return 0;
 }
 #endif
-
-InjectedScript InjectedScriptHost::injectedScriptForId(long id)
-{
-    return m_idToInjectedScript.get(id);
-}
-
-InjectedScript InjectedScriptHost::injectedScriptForObjectId(InspectorObject* objectId)
-{
-    long injectedScriptId = 0;
-    bool success = objectId->getNumber("injectedScriptId", &injectedScriptId);
-    if (success)
-        return injectedScriptForId(injectedScriptId);
-    return InjectedScript();
-}
-
-InjectedScript InjectedScriptHost::injectedScriptForMainFrame()
-{
-    return injectedScriptFor(mainWorldScriptState(m_inspectorAgent->inspectedPage()->mainFrame()));
-}
-
-void InjectedScriptHost::discardInjectedScripts()
-{
-    IdToInjectedScriptMap::iterator end = m_idToInjectedScript.end();
-    for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != end; ++it)
-        discardInjectedScript(it->second.scriptState());
-    m_idToInjectedScript.clear();
-}
-
-void InjectedScriptHost::releaseObjectGroup(long injectedScriptId, const String& objectGroup)
-{
-    if (injectedScriptId) {
-         InjectedScript injectedScript = m_idToInjectedScript.get(injectedScriptId);
-         if (!injectedScript.hasNoValue())
-             injectedScript.releaseObjectGroup(objectGroup);
-    } else {
-         // Iterate over all injected scripts if injectedScriptId is not specified.
-         for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != m_idToInjectedScript.end(); ++it)
-              it->second.releaseObjectGroup(objectGroup);
-    }
-}
-
-InspectorFrontend* InjectedScriptHost::frontend()
-{
-    if (!m_inspectorAgent)
-        return 0;
-    return m_inspectorAgent->frontend();
-}
-
-String InjectedScriptHost::injectedScriptSource()
-{
-    return String(reinterpret_cast<char*>(InjectedScriptSource_js), sizeof(InjectedScriptSource_js));
-}
-
-pair<long, ScriptObject> InjectedScriptHost::injectScript(const String& source, ScriptState* scriptState)
-{
-    long id = m_nextInjectedScriptId++;
-    return std::make_pair(id, createInjectedScript(source, scriptState, id));
-}
 
 #if ENABLE(WORKERS)
 long InjectedScriptHost::nextWorkerId()

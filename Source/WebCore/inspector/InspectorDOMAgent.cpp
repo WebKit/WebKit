@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009-2011 Google Inc. All rights reserved.
  * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,7 +59,7 @@
 #include "FrameTree.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
-#include "InjectedScriptHost.h"
+#include "InjectedScriptManager.h"
 #include "InspectorFrontend.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
@@ -248,10 +248,10 @@ void RevalidateStyleAttributeTask::onTimer(Timer<RevalidateStyleAttributeTask>*)
     m_elements.clear();
 }
 
-InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InjectedScriptHost* injectedScriptHost)
+InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
     : m_instrumentingAgents(instrumentingAgents)
     , m_inspectorState(inspectorState)
-    , m_injectedScriptHost(injectedScriptHost)
+    , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_domListener(0)
     , m_lastNodeId(1)
@@ -414,7 +414,6 @@ void InspectorDOMAgent::discardBindings()
     m_idToNode.clear();
     releaseDanglingNodes();
     m_childrenRequested.clear();
-    m_injectedScriptHost->clearInspectedNodes();
 }
 
 Node* InspectorDOMAgent::nodeForId(long id)
@@ -719,14 +718,6 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString*, long nodeId, long
     }
 }
 
-void InspectorDOMAgent::addInspectedNode(ErrorString*, long nodeId)
-{
-    Node* node = nodeForId(nodeId);
-    if (!node)
-        return;
-    m_injectedScriptHost->addInspectedNode(node);
-}
-
 void InspectorDOMAgent::performSearch(ErrorString* error, const String& whitespaceTrimmedQuery, bool runSynchronously)
 {
     // FIXME: Few things are missing here:
@@ -835,7 +826,7 @@ void InspectorDOMAgent::resolveNode(ErrorString* error, long nodeId, const Strin
 
 void InspectorDOMAgent::pushNodeToFrontend(ErrorString*, PassRefPtr<InspectorObject> objectId, long* nodeId)
 {
-    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptForObjectId(objectId.get());
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId.get());
     Node* node = injectedScript.nodeForObjectId(objectId);
     if (node)
         *nodeId = pushNodePathToFrontend(node);
@@ -1233,7 +1224,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::resolveNode(Node* node, const Str
     if (!frame)
         return 0;
 
-    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptFor(mainWorldScriptState(frame));
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldScriptState(frame));
     if (injectedScript.hasNoValue())
         return 0;
 

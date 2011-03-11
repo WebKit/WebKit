@@ -300,6 +300,7 @@ v8 {
         bindings/js/JSImageConstructor.cpp \
         bindings/js/JSImageDataCustom.cpp \
         bindings/js/JSInjectedScriptHostCustom.cpp \
+        bindings/js/JSInjectedScriptManager.cpp \
         bindings/js/JSInspectorFrontendHostCustom.cpp \
         bindings/js/JSInt16ArrayCustom.cpp \
         bindings/js/JSInt32ArrayCustom.cpp \
@@ -793,6 +794,7 @@ SOURCES += \
     inspector/ConsoleMessage.cpp \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptHost.cpp \
+    inspector/InjectedScriptManager.cpp \
     inspector/InspectorAgent.cpp \
     inspector/InspectorApplicationCacheAgent.cpp \
     inspector/InspectorBrowserDebuggerAgent.cpp \
@@ -1708,6 +1710,7 @@ HEADERS += \
     inspector/ConsoleMessage.h \
     inspector/InjectedScript.h \
     inspector/InjectedScriptHost.h \
+    inspector/InjectedScriptManager.h \
     inspector/InspectorAgent.h \
     inspector/InspectorApplicationCacheAgent.h \
     inspector/InspectorBrowserDebuggerAgent.h \

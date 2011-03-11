@@ -32,7 +32,7 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 #include "InjectedScript.h"
-#include "InjectedScriptHost.h"
+#include "InjectedScriptManager.h"
 #include "InspectorFrontend.h"
 #include "InspectorState.h"
 #include "InspectorValues.h"
@@ -49,16 +49,16 @@ static const char enableWhenShown[] = "debuggerEnableWhenShown";
 static const char javaScriptBreakpoints[] = "javaScriptBreakopints";
 };
 
-PassOwnPtr<InspectorDebuggerAgent> InspectorDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, Page* inspectedPage, InjectedScriptHost* injectedScriptHost)
+PassOwnPtr<InspectorDebuggerAgent> InspectorDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, Page* inspectedPage, InjectedScriptManager* injectedScriptManager)
 {
-    return adoptPtr(new InspectorDebuggerAgent(instrumentingAgents, inspectorState, inspectedPage, injectedScriptHost));
+    return adoptPtr(new InspectorDebuggerAgent(instrumentingAgents, inspectorState, inspectedPage, injectedScriptManager));
 }
 
-InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, Page* inspectedPage, InjectedScriptHost* injectedScriptHost)
+InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, Page* inspectedPage, InjectedScriptManager* injectedScriptManager)
     : m_instrumentingAgents(instrumentingAgents)
     , m_inspectorState(inspectorState)
     , m_inspectedPage(inspectedPage)
-    , m_injectedScriptHost(injectedScriptHost)
+    , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_pausedScriptState(0)
     , m_javaScriptPauseScheduled(false)
@@ -329,7 +329,7 @@ void InspectorDebuggerAgent::setPauseOnExceptionsState(ErrorString*, long pauseS
 
 void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString*, PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
 {
-    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptForObjectId(callFrameId.get());
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(callFrameId.get());
     if (!injectedScript.hasNoValue())
         injectedScript.evaluateOnCallFrame(callFrameId, expression, objectGroup, includeCommandLineAPI, result);
 }
@@ -338,7 +338,7 @@ PassRefPtr<InspectorValue> InspectorDebuggerAgent::currentCallFrames()
 {
     if (!m_pausedScriptState)
         return InspectorValue::null();
-    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptFor(m_pausedScriptState);
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(m_pausedScriptState);
     if (injectedScript.hasNoValue()) {
         ASSERT_NOT_REACHED();
         return InspectorValue::null();

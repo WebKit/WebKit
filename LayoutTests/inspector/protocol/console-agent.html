@@ -12,7 +12,9 @@ function test()
         ["RuntimeAgent", "evaluate", "console.info('test'); console.info('test')", "test-group", false],
         ["ConsoleAgent", "clearConsoleMessages"],
         ["ConsoleAgent", "setMonitoringXHREnabled", false],
-        ["ConsoleAgent", "setMonitoringXHREnabled", true]];
+        ["ConsoleAgent", "setMonitoringXHREnabled", true],
+        ["ConsoleAgent", "addInspectedNode", 1]
+    ];
 
     InspectorTest.runProtocolTestSuite("ConsoleAgent", testSuite, ['seq', 'id', 'injectedScriptId', 'stackTrace']);
 }

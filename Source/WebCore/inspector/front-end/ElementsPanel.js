@@ -61,7 +61,7 @@ WebInspector.ElementsPanel = function()
         this.panel.updateEventListeners();
 
         if (this._focusedDOMNode) {
-            DOMAgent.addInspectedNode(this._focusedDOMNode.id);
+            ConsoleAgent.addInspectedNode(this._focusedDOMNode.id);
             WebInspector.extensionServer.notifyObjectSelected(this.panel.name);
         }
     };
