@@ -1,5 +1,16 @@
 2011-03-11  Dean Jackson  <dino@apple.com>
 
+        Unreviewed.
+
+        Build fixes for GTK and Leopard.
+
+        * bindings/gobject/GNUmakefile.am:
+        - add missing WebKitAnimation* generated bindings
+        * page/WebKitAnimation.idl:
+        - use double in place of float (the core values are double anyway)
+
+2011-03-11  Dean Jackson  <dino@apple.com>
+
         Unreviewed build fix for QT.
 
         * WebCore.pro:

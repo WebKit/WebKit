@@ -32,10 +32,10 @@ module html {
 
         readonly attribute DOMString name;
 
-        readonly attribute float duration;
-        attribute float elapsedTime;
+        readonly attribute double duration;
+        attribute double elapsedTime;
 
-        readonly attribute float delay;
+        readonly attribute double delay;
         readonly attribute [Custom] int iterationCount;
 
         readonly attribute boolean paused;
