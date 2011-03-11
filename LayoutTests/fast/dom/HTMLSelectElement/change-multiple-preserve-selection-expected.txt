@@ -1,0 +1,8 @@
+      
+PASS selectElement.selectedIndex is -1
+PASS selectElement.selectedIndex is -1
+PASS selectElement.selectedIndex is 0
+PASS selectElement.selectedIndex is -1
+PASS selectElement.selectedIndex is -1
+PASS selectElement.selectedIndex is 0
+

@@ -1,3 +1,15 @@
+2011-03-10  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        style.display affecting the initial selectedIndex value of a <select> when it's multiple attribute is set programatically
+        https://bugs.webkit.org/show_bug.cgi?id=53860
+
+        Add tests for selectedIndex when changing the multiple property on a select element.
+
+        * fast/dom/HTMLSelectElement/change-multiple-preserve-selection-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/change-multiple-preserve-selection.html: Added.
+
 2011-03-10  Rik Cabanier  <cabanier@gmail.com>
 
         Reviewed by Tony Gentilcore.

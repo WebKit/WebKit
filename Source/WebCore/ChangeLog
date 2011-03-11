@@ -1,3 +1,18 @@
+2011-03-10  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        style.display affecting the initial selectedIndex value of a <select> when its multiple attribute is set programatically
+        https://bugs.webkit.org/show_bug.cgi?id=53860
+
+        Preserve selection when changing between multi-select and single-select
+        for <select> boxes even if it has not yet been rendered.
+
+        Test: fast/dom/HTMLSelectElement/change-multiple-preserve-selection.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setMultiple):
+
 2011-03-10  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.
