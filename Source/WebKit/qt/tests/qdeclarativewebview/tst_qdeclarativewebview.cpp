@@ -23,7 +23,7 @@ private slots:
     void preferredHeightTest();
     void preferredWidthDefaultTest();
     void preferredHeightDefaultTest();
-#if QT_VERSION >= 0x040702
+#if QT_VERSION >= 0x040703
     void backgroundColor();
 #endif
 
@@ -86,7 +86,7 @@ void tst_QDeclarativeWebView::preferredHeightDefaultTest()
     QCOMPARE(wv->property("prefHeight").toDouble(), view.preferredHeight());
 }
 
-#if QT_VERSION >= 0x040702
+#if QT_VERSION >= 0x040703
 void tst_QDeclarativeWebView::backgroundColor()
 {
     // We test here the rendering of the background.

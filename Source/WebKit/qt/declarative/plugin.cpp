@@ -32,7 +32,7 @@ public:
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtWebKit"));
         qmlRegisterType<QDeclarativeWebSettings>();
         qmlRegisterType<QDeclarativeWebView>(uri, 1, 0, "WebView");
-#if QT_VERSION >= 0x040702
+#if QT_VERSION >= 0x040703
         qmlRegisterType<QDeclarativeWebView>(uri, 1, 1, "WebView");
         qmlRegisterRevision<QDeclarativeWebView, 0>("QtWebKit", 1, 0);
         qmlRegisterRevision<QDeclarativeWebView, 1>("QtWebKit", 1, 1);

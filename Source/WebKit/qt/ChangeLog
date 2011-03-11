@@ -1,3 +1,16 @@
+2011-03-10  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed build fix after r80774.
+
+        QML property versioning is introduced in Qt 4.7.3, not 4.7.2.
+        See also: http://bugreports.qt.nokia.com/browse/QTBUG-13451
+
+        * declarative/plugin.cpp:
+        (WebKitQmlPlugin::registerTypes):
+        * declarative/qdeclarativewebview.cpp:
+        * declarative/qdeclarativewebview_p.h:
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.cpp:
+
 2011-03-10  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.

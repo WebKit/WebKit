@@ -983,7 +983,7 @@ void QDeclarativeWebView::setContentsScale(qreal scale)
     emit contentsScaleChanged();
 }
 
-#if QT_VERSION >= 0x040702
+#if QT_VERSION >= 0x040703
 /*!
     \qmlproperty color WebView::backgroundColor
     \since QtWebKit 1.1

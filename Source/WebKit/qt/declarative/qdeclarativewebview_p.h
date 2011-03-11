@@ -123,7 +123,7 @@ class QDeclarativeWebView : public QDeclarativeItem {
 
     Q_PROPERTY(QSize contentsSize READ contentsSize NOTIFY contentsSizeChanged)
     Q_PROPERTY(qreal contentsScale READ contentsScale WRITE setContentsScale NOTIFY contentsScaleChanged)
-#if QT_VERSION >= 0x040702
+#if QT_VERSION >= 0x040703
     Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged REVISION 1)
 #endif
 
@@ -196,7 +196,7 @@ public:
     void setContentsScale(qreal scale);
     qreal contentsScale() const;
 
-#if QT_VERSION >= 0x040702
+#if QT_VERSION >= 0x040703
     Q_REVISION(1) QColor backgroundColor() const;
     Q_REVISION(1) void setBackgroundColor(const QColor&);
 #endif
@@ -217,7 +217,7 @@ Q_SIGNALS:
     void renderingEnabledChanged();
     void contentsSizeChanged(const QSize&);
     void contentsScaleChanged();
-#if QT_VERSION >= 0x040702
+#if QT_VERSION >= 0x040703
     void backgroundColorChanged();
 #endif
 
