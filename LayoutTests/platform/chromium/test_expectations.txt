@@ -3367,14 +3367,6 @@ BUGWK56072 MAC SNOWLEOPARD : fast/repaint/repaint-across-writing-mode-boundary.h
 BUGWK56072 MAC SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/ruby/base-shorter-than-text.html = FAIL
 
-// WebKit roll 80564:80631, still need to be classified
-BUGROLANDSTEINER MAC : fast/overflow/overflow-rtl-vertical.html = IMAGE+TEXT
-BUGROLANDSTEINER MAC : fast/lists/008-vertical.html = IMAGE+TEXT
-
-// incorrect computed style
-// started to pass again on Mac around WK r806548
-BUGROLANDSTEINER MAC : fast/css/getComputedStyle/computed-style.html = TEXT
-
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 WIN LINUX : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
 BUGCR75561 MAC LEOPARD : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
@@ -3395,10 +3387,3 @@ BUGCR75639 MAC LEOPARD : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
 
 // Test changed in Wk r80743, throws an exception rather than returning 'true'
 BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
-
-// The following just need a rebaseline
-BUGROLANDSTEINER WIN-7 : fast/block/basic/percent-height-inside-anonymous-block.html = IMAGE+TEXT
-BUGROLANDSTEINER WIN-7 : fast/block/positioning/static-distance-with-positioned-ancestor.html = IMAGE+TEXT
-BUGROLANDSTEINER WIN-7 : fast/js/kde/function_length.html = FAIL
-
-

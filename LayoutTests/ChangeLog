@@ -1,5 +1,18 @@
 2011-03-11  Mihai Parparita  <mihaip@chromium.org>
 
+        Mac and Chromium expectations update. Remove failing expectations for
+        tests that no longer fail. Rebaseline fast/overflow/
+        overflow-rtl-vertical.html and fast/lists/008-vertical.html after
+        r80755.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/lists/008-vertical-expected.checksum:
+        * platform/mac/fast/lists/008-vertical-expected.png:
+        * platform/mac/fast/overflow/overflow-rtl-vertical-expected.checksum:
+        * platform/mac/fast/overflow/overflow-rtl-vertical-expected.png:
+
+2011-03-11  Mihai Parparita  <mihaip@chromium.org>
+
         Update Chromium expectations. Remove some commented out lines and
         promote some expectatiosn from chromium-mac to mac-leopard, so that
         those tests pass on chromium Snow Leopard (and mac Leopard).
