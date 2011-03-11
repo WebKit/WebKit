@@ -3405,8 +3405,8 @@ BUGCR75639 MAC LEOPARD : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
 BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
 
 // The following just need a rebaseline
-BUGROLANDSTEINER : fast/block/basic/percent-height-inside-anonymous-block.html = IMAGE+TEXT
-BUGROLANDSTEINER : fast/block/positioning/static-distance-with-positioned-ancestor.html = IMAGE+TEXT
-BUGROLANDSTEINER : fast/js/kde/function_length.html = FAIL
+BUGROLANDSTEINER WIN-7 : fast/block/basic/percent-height-inside-anonymous-block.html = IMAGE+TEXT
+BUGROLANDSTEINER WIN-7 : fast/block/positioning/static-distance-with-positioned-ancestor.html = IMAGE+TEXT
+BUGROLANDSTEINER WIN-7 : fast/js/kde/function_length.html = FAIL
 
 

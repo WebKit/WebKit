@@ -1,3 +1,25 @@
+2011-03-10  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: update Chromium test expectations.
+
+        * platform/chromium-linux/fast/block/basic/percent-height-inside-anonymous-block-expected.checksum: Added.
+        * platform/chromium-linux/fast/block/basic/percent-height-inside-anonymous-block-expected.png: Added.
+        * platform/chromium-linux/fast/block/positioning/static-distance-with-positioned-ancestor-expected.checksum: Added.
+        * platform/chromium-linux/fast/block/positioning/static-distance-with-positioned-ancestor-expected.png: Added.
+        * platform/chromium-mac/fast/block/basic/percent-height-inside-anonymous-block-expected.checksum: Added.
+        * platform/chromium-mac/fast/block/basic/percent-height-inside-anonymous-block-expected.png: Added.
+        * platform/chromium-mac/fast/block/positioning/static-distance-with-positioned-ancestor-expected.checksum: Added.
+        * platform/chromium-mac/fast/block/positioning/static-distance-with-positioned-ancestor-expected.png: Added.
+        * platform/chromium-mac/fast/js/kde/function_length-expected.txt: Removed.
+        * platform/chromium-win/fast/block/basic/percent-height-inside-anonymous-block-expected.checksum: Added.
+        * platform/chromium-win/fast/block/basic/percent-height-inside-anonymous-block-expected.png: Added.
+        * platform/chromium-win/fast/block/basic/percent-height-inside-anonymous-block-expected.txt: Added.
+        * platform/chromium-win/fast/block/positioning/static-distance-with-positioned-ancestor-expected.checksum: Added.
+        * platform/chromium-win/fast/block/positioning/static-distance-with-positioned-ancestor-expected.png: Added.
+        * platform/chromium-win/fast/block/positioning/static-distance-with-positioned-ancestor-expected.txt: Added.
+        * platform/chromium-win/fast/js/kde/function_length-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
