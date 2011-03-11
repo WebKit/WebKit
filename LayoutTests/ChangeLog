@@ -1,3 +1,15 @@
+2011-03-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        document.compatMode is incorrect for javascript: protocol URLs in IFRAMEs
+        https://bugs.webkit.org/show_bug.cgi?id=27845
+
+        This bug was randomly fixed by the HTML5 parser.
+
+        * fast/parser/javascript-url-compat-mode-expected.txt: Added.
+        * fast/parser/javascript-url-compat-mode.html: Added.
+
 2011-03-10  Ami Fischman  <fischman@google.com>
 
         Reviewed by David Levin.
