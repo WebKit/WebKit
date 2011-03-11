@@ -1,3 +1,29 @@
+2011-03-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        drag-text-delay.html should be a dump as text test
+        https://bugs.webkit.org/show_bug.cgi?id=56223
+
+        Converted the test to a dump as text. Also reorganized the test code and added more descriptions.
+
+        * editing/selection/drag-text-delay-expected.txt:
+        * editing/selection/drag-text-delay.html:
+        * platform/chromium-linux/editing/selection/drag-text-delay-expected.checksum: Removed.
+        * platform/chromium-linux/editing/selection/drag-text-delay-expected.png: Removed.
+        * platform/chromium-win/editing/selection/drag-text-delay-expected.checksum: Removed.
+        * platform/chromium-win/editing/selection/drag-text-delay-expected.png: Removed.
+        * platform/chromium-win/editing/selection/drag-text-delay-expected.txt: Removed.
+        * platform/gtk/editing/selection/drag-text-delay-expected.checksum: Removed.
+        * platform/gtk/editing/selection/drag-text-delay-expected.png: Removed.
+        * platform/gtk/editing/selection/drag-text-delay-expected.txt: Removed.
+        * platform/mac/editing/selection/drag-text-delay-expected.checksum: Removed.
+        * platform/mac/editing/selection/drag-text-delay-expected.png: Removed.
+        * platform/mac/editing/selection/drag-text-delay-expected.txt:
+        * platform/win/editing/selection/drag-text-delay-expected.checksum: Removed.
+        * platform/win/editing/selection/drag-text-delay-expected.png: Removed.
+        * platform/win/editing/selection/drag-text-delay-expected.txt:
+
 2011-03-11  Mihai Parparita  <mihaip@chromium.org>
 
         Chromium Mac expectations update. Rebaseline some more tests after
