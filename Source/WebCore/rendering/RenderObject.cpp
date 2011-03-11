@@ -2152,6 +2152,11 @@ RenderObject* RenderObject::container(RenderBoxModelObject* repaintContainer, bo
     return o;
 }
 
+bool RenderObject::wasOriginallyRelativePositioned() const
+{
+    return isRelPositioned() || style()->positionWasRelative();
+}
+
 bool RenderObject::isSelectionBorder() const
 {
     SelectionState st = selectionState();
@@ -2610,11 +2615,12 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     //     * The computed value of the position property of A is static and the ancestor
     //       is one of the following HTML elements: td, th, or table.
     //     * Our own extension: if there is a difference in the effective zoom
-    bool skipTables = isPositioned() || isRelPositioned();
+
+    bool skipTables = isPositioned() || wasOriginallyRelativePositioned();
     float currZoom = style()->effectiveZoom();
     RenderObject* curr = parent();
     while (curr && (!curr->node() ||
-                    (!curr->isPositioned() && !curr->isRelPositioned() && !curr->isBody()))) {
+                    (!curr->isPositioned() && !curr->wasOriginallyRelativePositioned() && !curr->isBody()))) {
         Node* element = curr->node();
         if (!skipTables && element) {
             bool isTableElement = element->hasTagName(tableTag) ||

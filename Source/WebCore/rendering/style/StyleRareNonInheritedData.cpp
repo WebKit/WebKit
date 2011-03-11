@@ -46,6 +46,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_textCombine(RenderStyle::initialTextCombine())
     , m_counterIncrement(0)
     , m_counterReset(0)
+    , m_positionWasRelative(0)
 #if USE(ACCELERATED_COMPOSITING)
     , m_runningAcceleratedAnimation(false)
 #endif
@@ -83,6 +84,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_textCombine(o.m_textCombine)
     , m_counterIncrement(o.m_counterIncrement)
     , m_counterReset(o.m_counterReset)
+    , m_positionWasRelative(o.m_positionWasRelative)
 #if USE(ACCELERATED_COMPOSITING)
     , m_runningAcceleratedAnimation(o.m_runningAcceleratedAnimation)
 #endif
@@ -129,6 +131,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_textCombine == o.m_textCombine
         && m_counterIncrement == o.m_counterIncrement
         && m_counterReset == o.m_counterReset
+        && m_positionWasRelative == o.m_positionWasRelative
 #if USE(ACCELERATED_COMPOSITING)
         && !m_runningAcceleratedAnimation && !o.m_runningAcceleratedAnimation
 #endif

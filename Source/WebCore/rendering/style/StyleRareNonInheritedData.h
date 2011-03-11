@@ -108,6 +108,9 @@ public:
     short m_counterIncrement;
     short m_counterReset;
     
+    // This flag preserves the fact that the position attribute was originally specified as relative.
+    unsigned m_positionWasRelative : 1;
+
 #if USE(ACCELERATED_COMPOSITING)
     bool m_runningAcceleratedAnimation : 1;
 #endif

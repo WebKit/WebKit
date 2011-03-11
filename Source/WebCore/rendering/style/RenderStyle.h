@@ -599,6 +599,8 @@ public:
     short counterIncrement() const { return rareNonInheritedData->m_counterIncrement; }
     short counterReset() const { return rareNonInheritedData->m_counterReset; }
 
+    bool positionWasRelative() const { return rareNonInheritedData->m_positionWasRelative; }
+
     EListStyleType listStyleType() const { return static_cast<EListStyleType>(inherited_flags._list_style_type); }
     StyleImage* listStyleImage() const { return inherited->list_style_image.get(); }
     EListStylePosition listStylePosition() const { return static_cast<EListStylePosition>(inherited_flags._list_style_position); }
@@ -970,6 +972,8 @@ public:
 
     void setCounterIncrement(short v) { SET_VAR(rareNonInheritedData, m_counterIncrement, v) }
     void setCounterReset(short v) { SET_VAR(rareNonInheritedData, m_counterReset, v) }
+
+    void setPositionWasRelative(bool v) { SET_VAR(rareNonInheritedData, m_positionWasRelative, v) }
 
     void setListStyleType(EListStyleType v) { inherited_flags._list_style_type = v; }
     void setListStyleImage(PassRefPtr<StyleImage> v) { if (inherited->list_style_image != v) inherited.access()->list_style_image = v; }

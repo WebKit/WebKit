@@ -1,3 +1,36 @@
+2011-03-10  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix navigation menus on a bunch of sites in WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=52535
+
+        WebKit doesn't support position:relative for several table elements and
+        overwrites the style internally when position:relative is encountered.
+        Unfortunately position:relative affects the choice of nodes returned by
+        offsetParent.
+
+        This CL adds a bit to RenderStyle to track whether position:relative was
+        overwritten.  The value is then consulted in offsetParent which makes us
+        match FF/IE.
+
+        Tests: fast/block/positioning/offsetLeft-relative-iframe.html
+               fast/block/positioning/offsetLeft-relative-td.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::isOriginallyRelPositioned):
+        (WebCore::RenderObject::offsetParent):
+        * rendering/RenderObject.h:
+        * rendering/style/RenderStyle.h: Add a bit to track the original value of position:relative.
+        (WebCore::InheritedFlags::positionWasRelative):
+        (WebCore::InheritedFlags::setPositionWasRelative):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2011-03-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
