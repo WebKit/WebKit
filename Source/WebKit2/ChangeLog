@@ -1,3 +1,22 @@
+2011-03-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        WebKit2 UI process crashes if web process crashes while computing page rects for printing
+        https://bugs.webkit.org/show_bug.cgi?id=56160
+        <rdar://problem/9027410>
+
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (-[WKPrintingView _suspendAutodisplay]): Added a null check for page, matching one that
+        we have when resuming autodisplay.
+        (-[WKPrintingView _delayedResumeAutodisplayTimerFired]): Added a FIXME.
+        (pageDidComputePageRects): Sanitize results coming from the web process (and avoid crashing
+        when there is a communication error, so results are all null).
+        (-[WKPrintingView knowsPageRange:]): If there is no page any more, we can't tell how many
+        pages it had.
+        (-[WKPrintingView rectForPage:]): Handle the case where we are neither calculating pages
+        nor knowing them, as it happens when the web process crashes.        
+
 2011-03-10  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Sam Weinig.
