@@ -1,3 +1,23 @@
+2011-03-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        Added new GTK+ test expectations.
+
+        * platform/gtk/fast/backgrounds/positioned-root-expected.checksum: Added.
+        * platform/gtk/fast/backgrounds/positioned-root-expected.png: Added.
+        * platform/gtk/fast/backgrounds/positioned-root-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/table-root-expected.checksum: Added.
+        * platform/gtk/fast/backgrounds/table-root-expected.png: Added.
+        * platform/gtk/fast/backgrounds/table-root-expected.txt: Added.
+        * platform/gtk/fast/block/basic/percent-height-inside-anonymous-block-expected.checksum: Added.
+        * platform/gtk/fast/block/basic/percent-height-inside-anonymous-block-expected.png: Added.
+        * platform/gtk/fast/block/basic/percent-height-inside-anonymous-block-expected.txt: Added.
+        * platform/gtk/fast/block/positioning/static-distance-with-positioned-ancestor-expected.checksum: Added.
+        * platform/gtk/fast/block/positioning/static-distance-with-positioned-ancestor-expected.png: Added.
+        * platform/gtk/fast/block/positioning/static-distance-with-positioned-ancestor-expected.txt: Added.
+        * platform/gtk/fast/forms/input-appearance-spinbutton-layer-expected.checksum: Added.
+        * platform/gtk/fast/forms/input-appearance-spinbutton-layer-expected.png: Added.
+        * platform/gtk/fast/forms/input-appearance-spinbutton-layer-expected.txt: Added.
+
 2011-03-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Roll out r80837.
