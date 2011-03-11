@@ -1,3 +1,13 @@
+2011-03-11  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add missing unit tests to TilingData.
+        https://bugs.webkit.org/show_bug.cgi?id=54143
+
+        * tests/TilingDataTest.cpp:
+        (WebCore::TEST):
+
 2011-03-11  Anton D'Auria  <adauria@apple.com>
 
         Reviewed and landed by Brady Eidson.

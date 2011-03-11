@@ -331,4 +331,56 @@ TEST(TilingDataTest, tileSizeY_and_tilePositionY)
     EXPECT_EQ(4, TilingData(3, 100, 6, true).tilePositionY(3));
 }
 
+TEST(TilingDataTest, setTotalSize)
+{
+    TilingData data(5, 5, 5, false);
+    EXPECT_EQ(5, data.totalSizeX());
+    EXPECT_EQ(5, data.totalSizeY());
+    EXPECT_EQ(1, data.numTilesX());
+    EXPECT_EQ(5, data.tileSizeX(0));
+    EXPECT_EQ(1, data.numTilesY());
+    EXPECT_EQ(5, data.tileSizeY(0));
+
+    data.setTotalSize(6, 5);
+    EXPECT_EQ(6, data.totalSizeX());
+    EXPECT_EQ(5, data.totalSizeY());
+    EXPECT_EQ(2, data.numTilesX());
+    EXPECT_EQ(5, data.tileSizeX(0));
+    EXPECT_EQ(1, data.tileSizeX(1));
+    EXPECT_EQ(1, data.numTilesY());
+    EXPECT_EQ(5, data.tileSizeY(0));
+
+    data.setTotalSize(5, 12);
+    EXPECT_EQ(5, data.totalSizeX());
+    EXPECT_EQ(12, data.totalSizeY());
+    EXPECT_EQ(1, data.numTilesX());
+    EXPECT_EQ(5, data.tileSizeX(0));
+    EXPECT_EQ(3, data.numTilesY());
+    EXPECT_EQ(5, data.tileSizeY(0));
+    EXPECT_EQ(5, data.tileSizeY(1));
+    EXPECT_EQ(2, data.tileSizeY(2));
+}
+
+TEST(TilingDataTest, setMaxTextureSize)
+{
+    TilingData data(8, 16, 32, false);
+    EXPECT_EQ(2, data.numTilesX());
+    EXPECT_EQ(4, data.numTilesY());
+
+    data.setMaxTextureSize(32);
+    EXPECT_EQ(32, data.maxTextureSize());
+    EXPECT_EQ(1, data.numTilesX());
+    EXPECT_EQ(1, data.numTilesY());
+
+    data.setMaxTextureSize(2);
+    EXPECT_EQ(2, data.maxTextureSize());
+    EXPECT_EQ(8, data.numTilesX());
+    EXPECT_EQ(16, data.numTilesY());
+
+    data.setMaxTextureSize(5);
+    EXPECT_EQ(5, data.maxTextureSize());
+    EXPECT_EQ(4, data.numTilesX());
+    EXPECT_EQ(7, data.numTilesY());
+}
+
 } // namespace
