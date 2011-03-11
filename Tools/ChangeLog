@@ -1,3 +1,13 @@
+2011-03-10  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Clean up some gross code in TestShellWin.cpp.  No functional change.
+        https://bugs.webkit.org/show_bug.cgi?id=56048
+
+        * DumpRenderTree/chromium/TestShellWin.cpp:
+        (checkLayoutTestSystemDependencies):
+
 2011-03-10  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         Reviewed by Laszlo Gombos.
