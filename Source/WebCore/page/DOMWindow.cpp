@@ -394,6 +394,7 @@ bool DOMWindow::canShowModalDialogNow(const Frame* frame)
 DOMWindow::DOMWindow(Frame* frame)
     : m_shouldPrintWhenFinishedLoading(false)
     , m_frame(frame)
+    , m_printTimer(this, &DOMWindow::printTimerFired)
 {
 }
 
@@ -941,6 +942,12 @@ void DOMWindow::print()
     }
     m_shouldPrintWhenFinishedLoading = false;
     page->chrome()->print(m_frame);
+}
+
+void DOMWindow::printTimerFired(Timer<DOMWindow>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_printTimer);
+    print();
 }
 
 void DOMWindow::stop()
@@ -1620,7 +1627,9 @@ void DOMWindow::finishedLoading()
 {
     if (m_shouldPrintWhenFinishedLoading) {
         m_shouldPrintWhenFinishedLoading = false;
-        print();
+
+        m_printTimer.stop();
+        m_printTimer.startOneShot(0);
     }
 }
 

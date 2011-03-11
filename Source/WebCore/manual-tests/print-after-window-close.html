@@ -1,0 +1,8 @@
+<script>
+function crash() {
+    var w = window.open("data:text/html,foo");
+    w.print();
+    w.close();
+}
+</script>
+<button onclick="crash()">Crash</button>

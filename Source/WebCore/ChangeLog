@@ -1,3 +1,23 @@
+2011-03-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r66428/r71892): Crash after assertion failure (!m_reachedTerminalState) in ResourceLoader::didCancel()
+        https://bugs.webkit.org/show_bug.cgi?id=51357
+
+        Previously, we would try to print from a callstack that didn't want a
+        nested event loop, leading to re-entrancy problems.  In this patch, we
+        complete the print call asynchronously, giving us a clean stack on
+        which to run the nested event loop.
+
+        Test: printing/print-close-crash.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::DOMWindow):
+        (WebCore::DOMWindow::print):
+        (WebCore::DOMWindow::printTimerFired):
+        * page/DOMWindow.h:
+
 2011-03-11  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Ryosuke Niwa.
