@@ -337,6 +337,10 @@ public:
 
     void setMinimumTimerInterval(const CppArgumentList&, CppVariant*);
 
+    // Expects the first argument to be an input element and the second argument to be a string value.
+    // Forwards the setValueForUser() call to the element.
+    void setValueForUser(const CppArgumentList&, CppVariant*);
+
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }

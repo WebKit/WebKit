@@ -108,10 +108,10 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("evaluateScriptInIsolatedWorld", &LayoutTestController::evaluateScriptInIsolatedWorld);
     bindMethod("execCommand", &LayoutTestController::execCommand);
     bindMethod("grantDesktopNotificationPermission", &LayoutTestController::grantDesktopNotificationPermission);
+    bindMethod("hasSpellingMarker", &LayoutTestController::hasSpellingMarker);
     bindMethod("isCommandEnabled", &LayoutTestController::isCommandEnabled);
     bindMethod("layerTreeAsText", &LayoutTestController::layerTreeAsText);
     bindMethod("markerTextForListItem", &LayoutTestController::markerTextForListItem);
-    bindMethod("hasSpellingMarker", &LayoutTestController::hasSpellingMarker);
     bindMethod("notifyDone", &LayoutTestController::notifyDone);
     bindMethod("numberOfActiveAnimations", &LayoutTestController::numberOfActiveAnimations);
     bindMethod("numberOfPages", &LayoutTestController::numberOfPages);
@@ -162,6 +162,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setTimelineProfilingEnabled", &LayoutTestController::setTimelineProfilingEnabled);
     bindMethod("setUserStyleSheetEnabled", &LayoutTestController::setUserStyleSheetEnabled);
     bindMethod("setUserStyleSheetLocation", &LayoutTestController::setUserStyleSheetLocation);
+    bindMethod("setValueForUser", &LayoutTestController::setValueForUser);
     bindMethod("setWillSendRequestClearHeader", &LayoutTestController::setWillSendRequestClearHeader);
     bindMethod("setWillSendRequestReturnsNull", &LayoutTestController::setWillSendRequestReturnsNull);
     bindMethod("setWillSendRequestReturnsNullOnRedirect", &LayoutTestController::setWillSendRequestReturnsNullOnRedirect);
@@ -1601,4 +1602,21 @@ void LayoutTestController::setMinimumTimerInterval(const CppArgumentList& argume
     if (arguments.size() < 1 || !arguments[0].isNumber())
         return;
     m_shell->webView()->settings()->setMinimumTimerInterval(arguments[0].toDouble());
+}
+
+void LayoutTestController::setValueForUser(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() != 2)
+        return;
+
+    WebElement element;
+    if (!WebBindings::getElement(arguments[0].value.objectValue, &element))
+        return;
+
+    WebInputElement* input = toWebInputElement(&element);
+    if (!input)
+        return;
+
+    input->setValue(cppVariantToWebString(arguments[1]), true);
 }

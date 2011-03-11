@@ -1,3 +1,12 @@
+2011-03-11  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] missing HTMLInputElement::setValueForUser() to tests
+        https://bugs.webkit.org/show_bug.cgi?id=55854
+
+        * platform/chromium/test_expectations.txt: Removed onchange-setvalueforuser.html
+
 2011-03-11  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip

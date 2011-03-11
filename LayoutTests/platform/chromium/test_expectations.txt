@@ -3255,8 +3255,6 @@ BUGCR75109 WIN LINUX MAC : platform/chromium/fast/text/international/complex-tex
 BUGCR75109 WIN LINUX : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
-BUGWK55854 WIN LINUX MAC : fast/forms/onchange-setvalueforuser.html = TEXT
-
 // WebKit roll 80564:80631:
 // Apparent font cache cleanup issue when running multiple tests in a row (only)
 BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-rl/001.html = CRASH PASS

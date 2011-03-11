@@ -1,3 +1,15 @@
+2011-03-11  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] missing HTMLInputElement::setValueForUser() to tests
+        https://bugs.webkit.org/show_bug.cgi?id=55854
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::setValueForUser): Added.
+        * DumpRenderTree/chromium/LayoutTestController.h:
+
 2011-03-10  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Dimitri Glazkov.
