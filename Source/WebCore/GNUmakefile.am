@@ -821,6 +821,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSImageConstructor.h \
 	Source/WebCore/bindings/js/JSImageDataCustom.cpp \
 	Source/WebCore/bindings/js/JSInjectedScriptHostCustom.cpp \
+	Source/WebCore/bindings/js/JSInjectedScriptManager.cpp \
 	Source/WebCore/bindings/js/JSInspectorFrontendHostCustom.cpp \
 	Source/WebCore/bindings/js/JSInt16ArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSInt32ArrayCustom.cpp \
@@ -1971,6 +1972,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InjectedScript.h \
 	Source/WebCore/inspector/InjectedScriptHost.cpp \
 	Source/WebCore/inspector/InjectedScriptHost.h \
+	Source/WebCore/inspector/InjectedScriptManager.cpp \
+	Source/WebCore/inspector/InjectedScriptManager.h \
 	Source/WebCore/inspector/InspectorAgent.cpp \
 	Source/WebCore/inspector/InspectorAgent.h \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.cpp \

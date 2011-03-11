@@ -1,3 +1,13 @@
+2011-03-11  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: split InjectedScriptHost into InjectedScriptManager and InjectedScriptHost
+        https://bugs.webkit.org/show_bug.cgi?id=56173
+
+        * inspector/protocol/console-agent-expected.txt:
+        * inspector/protocol/console-agent.html:
+
 2011-03-11  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] JSC crashes in 32bit Release bots after r80743

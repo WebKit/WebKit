@@ -103,6 +103,7 @@
 #include "JSImageConstructor.cpp"
 #include "JSImageDataCustom.cpp"
 #include "JSInjectedScriptHostCustom.cpp"
+#include "JSInjectedScriptManager.cpp"
 #include "JSInspectorFrontendHostCustom.cpp"
 #include "JSInt16ArrayCustom.cpp"
 #include "JSInt32ArrayCustom.cpp"

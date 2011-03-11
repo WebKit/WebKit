@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009-2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,9 @@
 #ifndef InspectorDOMAgent_h
 #define InspectorDOMAgent_h
 
+#include "EventTarget.h"
 #include "InjectedScript.h"
-#include "InjectedScriptHost.h"
+#include "InjectedScriptManager.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "Timer.h"
@@ -91,9 +92,9 @@ public:
         virtual void didModifyDOMAttr(Element*) = 0;
     };
 
-    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InjectedScriptHost* injectedScriptHost)
+    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
     {
-        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, inspectorState, injectedScriptHost));
+        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, inspectorState, injectedScriptManager));
     }
 
     ~InspectorDOMAgent();
@@ -117,7 +118,6 @@ public:
     void setOuterHTML(ErrorString*, long nodeId, const String& outerHTML, long* newId);
     void setNodeValue(ErrorString*, long nodeId, const String& value, bool* success);
     void getEventListenersForNode(ErrorString*, long nodeId, long* outNodeId, RefPtr<InspectorArray>* listenersArray);
-    void addInspectedNode(ErrorString*, long nodeId);
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, bool runSynchronously);
     void searchCanceled(ErrorString*);
     void resolveNode(ErrorString*, long nodeId, const String& objectGroup, RefPtr<InspectorValue>* result);
@@ -156,7 +156,7 @@ public:
     static bool isWhitespace(Node*);
 
 private:
-    InspectorDOMAgent(InstrumentingAgents*, InspectorState*, InjectedScriptHost*);
+    InspectorDOMAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*);
 
     // Node-related methods.
     typedef HashMap<RefPtr<Node>, long> NodeToIdMap;
@@ -187,7 +187,7 @@ private:
 
     InstrumentingAgents* m_instrumentingAgents;
     InspectorState* m_inspectorState;
-    InjectedScriptHost* m_injectedScriptHost;
+    InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::DOM* m_frontend;
     DOMListener* m_domListener;
     NodeToIdMap m_documentNodeToIdMap;

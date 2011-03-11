@@ -1,3 +1,116 @@
+2011-03-11  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: split InjectedScriptHost into InjectedScriptManager and InjectedScriptHost
+        https://bugs.webkit.org/show_bug.cgi?id=56173
+
+        Moved all injected script managing logic into InjectedScriptManager which is owned by InspectorController.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        * bindings/js/JSInjectedScriptManager.cpp: Added.
+        (WebCore::InjectedScriptManager::createInjectedScript):
+        (WebCore::InjectedScriptManager::discardInjectedScript):
+        (WebCore::InjectedScriptManager::injectedScriptFor):
+        (WebCore::InjectedScriptManager::canAccessInspectedWindow):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        * bindings/v8/custom/V8InjectedScriptManager.cpp: Copied from Source/WebCore/bindings/v8/custom/V8InjectedScriptHostCustom.cpp.
+        (WebCore::WeakReferenceCallback):
+        (WebCore::createInjectedScriptHostV8Wrapper):
+        (WebCore::InjectedScriptManager::createInjectedScript):
+        (WebCore::InjectedScriptManager::discardInjectedScript):
+        (WebCore::InjectedScriptManager::injectedScriptFor):
+        (WebCore::InjectedScriptManager::canAccessInspectedWindow):
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToFrontend):
+        * inspector/ConsoleMessage.h:
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::canAccessInspectedWindow):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::create):
+        (WebCore::InjectedScriptHost::InjectedScriptHost):
+        (WebCore::InjectedScriptHost::~InjectedScriptHost):
+        (WebCore::InjectedScriptHost::disconnect):
+        (WebCore::InjectedScriptHost::inspectImpl):
+        (WebCore::InjectedScriptHost::clearConsoleMessages):
+        (WebCore::InjectedScriptHost::databaseIdImpl):
+        (WebCore::InjectedScriptHost::storageIdImpl):
+        * inspector/InjectedScriptHost.h:
+        (WebCore::InjectedScriptHost::init):
+        (WebCore::InjectedScriptHost::setFrontend):
+        (WebCore::InjectedScriptHost::clearFrontend):
+        * inspector/InjectedScriptManager.cpp: Added.
+        (WebCore::InjectedScriptManager::create):
+        (WebCore::InjectedScriptManager::InjectedScriptManager):
+        (WebCore::InjectedScriptManager::~InjectedScriptManager):
+        (WebCore::InjectedScriptManager::disconnect):
+        (WebCore::InjectedScriptManager::injectedScriptHost):
+        (WebCore::InjectedScriptManager::injectedScriptForId):
+        (WebCore::InjectedScriptManager::injectedScriptForObjectId):
+        (WebCore::InjectedScriptManager::discardInjectedScripts):
+        (WebCore::InjectedScriptManager::releaseObjectGroup):
+        (WebCore::InjectedScriptManager::injectedScriptSource):
+        (WebCore::InjectedScriptManager::injectScript):
+        * inspector/InjectedScriptManager.h: Copied from Source/WebCore/inspector/InjectedScriptHost.h.
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::inspectedPageDestroyed):
+        (WebCore::InspectorAgent::focusNode):
+        (WebCore::InspectorAgent::didClearWindowObjectInWorld):
+        (WebCore::InspectorAgent::createFrontendLifetimeAgents):
+        (WebCore::InspectorAgent::didCommitLoad):
+        (WebCore::InspectorAgent::domContentLoadedEventFired):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::InspectorConsoleAgent):
+        (WebCore::InspectorConsoleAgent::~InspectorConsoleAgent):
+        (WebCore::InspectorConsoleAgent::clearConsoleMessages):
+        (WebCore::InspectorConsoleAgent::addInspectedNode):
+        (WebCore::InspectorConsoleAgent::setConsoleMessagesEnabled):
+        (WebCore::InspectorConsoleAgent::addConsoleMessage):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::discardBindings):
+        (WebCore::InspectorDOMAgent::pushNodeToFrontend):
+        (WebCore::InspectorDOMAgent::resolveNode):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::create):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::create):
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::evaluateOnCallFrame):
+        (WebCore::InspectorDebuggerAgent::currentCallFrames):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::create):
+        (WebCore::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        (WebCore::InspectorRuntimeAgent::~InspectorRuntimeAgent):
+        (WebCore::InspectorRuntimeAgent::evaluate):
+        (WebCore::InspectorRuntimeAgent::evaluateOn):
+        (WebCore::InspectorRuntimeAgent::getProperties):
+        (WebCore::InspectorRuntimeAgent::setPropertyValue):
+        (WebCore::InspectorRuntimeAgent::releaseObject):
+        (WebCore::InspectorRuntimeAgent::releaseObjectGroup):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.this.treeOutline.focusedNodeChanged):
+        (WebInspector.ElementsPanel):
+
 2011-03-11  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.

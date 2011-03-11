@@ -36,6 +36,7 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "InjectedScriptHost.h"
+#include "InjectedScriptManager.h"
 #include "InspectorAgent.h"
 #include "InspectorBackendDispatcher.h"
 #include "InspectorBrowserDebuggerAgent.h"
@@ -52,7 +53,8 @@
 namespace WebCore {
 
 InspectorController::InspectorController(Page* page, InspectorClient* inspectorClient)
-    : m_inspectorAgent(new InspectorAgent(page, inspectorClient))
+    : m_injectedScriptManager(InjectedScriptManager::create())
+    , m_inspectorAgent(new InspectorAgent(page, inspectorClient, m_injectedScriptManager.get()))
     , m_inspectorClient(inspectorClient)
     , m_openingFrontend(false)
 {
@@ -99,6 +101,7 @@ void InspectorController::connectFrontend()
 {
     m_openingFrontend = false;
     m_inspectorFrontend = new InspectorFrontend(m_inspectorClient);
+    m_injectedScriptManager->injectedScriptHost()->setFrontend(m_inspectorFrontend.get());
     m_inspectorAgent->setFrontend(m_inspectorFrontend.get());
 
     if (!InspectorInstrumentation::hasFrontends())
@@ -142,6 +145,7 @@ void InspectorController::disconnectFrontend()
     m_inspectorBackendDispatcher.clear();
 
     m_inspectorAgent->disconnectFrontend();
+    m_injectedScriptManager->injectedScriptHost()->clearFrontend();
 
     m_inspectorFrontend.clear();
 
