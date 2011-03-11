@@ -69,8 +69,8 @@ void QWebHistoryInterface::setDefaultInterface(QWebHistoryInterface* defaultInte
 
 /*!
   Returns the default interface that will be used by WebKit. If no default interface has been set,
-  Webkit will not keep track of visited links and a null pointer will be returned.
-  \sa setDefaultInterface
+  WebKit will not keep track of visited links and a null pointer will be returned.
+  \sa setDefaultInterface()
 */
 QWebHistoryInterface* QWebHistoryInterface::defaultInterface()
 {
