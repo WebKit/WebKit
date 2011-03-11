@@ -1,7 +1,7 @@
 #!/bin/sh
 
-mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/docs"
-cd "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore"
+mkdir -p "$1/docs"
+cd "$1"
 
 /bin/ln -sfh "${SRCROOT}/.." JavaScriptCore
 export JavaScriptCore="JavaScriptCore"

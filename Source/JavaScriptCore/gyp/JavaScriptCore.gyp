@@ -26,6 +26,21 @@
       '<(DEPTH)/JavaScriptCore/wtf/unicode',
       '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore',
     ],
+    'derived_source_files': [
+      '<(SHARED_INTERMEDIATE_DIR)/ArrayPrototype.lut.h',
+      '<(SHARED_INTERMEDIATE_DIR)/DatePrototype.lut.h',
+      '<(SHARED_INTERMEDIATE_DIR)/HeaderDetection.h',
+      '<(SHARED_INTERMEDIATE_DIR)/JSONObject.lut.h',
+      '<(SHARED_INTERMEDIATE_DIR)/Lexer.lut.h',
+      '<(SHARED_INTERMEDIATE_DIR)/MathObject.lut.h',
+      '<(SHARED_INTERMEDIATE_DIR)/NumberConstructor.lut.h',
+      '<(SHARED_INTERMEDIATE_DIR)/RegExpConstructor.lut.h',
+      '<(SHARED_INTERMEDIATE_DIR)/RegExpJitTables.h',
+      '<(SHARED_INTERMEDIATE_DIR)/RegExpObject.lut.h',
+      '<(SHARED_INTERMEDIATE_DIR)/StringPrototype.lut.h',
+      '<(SHARED_INTERMEDIATE_DIR)/TracingDtrace.h',
+      '<(SHARED_INTERMEDIATE_DIR)/ObjectConstructor.lut.h',
+    ],
   },
   'targets': [
     {
@@ -42,6 +57,7 @@
         '<@(javascriptcore_files)',
         '<@(javascriptcore_publicheader_files)',
         '<@(javascriptcore_privateheader_files)',
+        '<@(derived_source_files)',
         '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
         '$(SDKROOT)/System/Library/Frameworks/Foundation.framework',
         '/usr/lib/libicucore.dylib',
@@ -137,9 +153,11 @@
         {
           'action_name': 'Generate Derived Sources',
           'inputs': [],
-          'outputs': [],
+          'outputs': [
+            '<@(derived_source_files)',
+          ],
           'action': [
-            'sh', 'generate-derived-sources.sh',
+            'sh', 'generate-derived-sources.sh', '<(SHARED_INTERMEDIATE_DIR)'
           ],
         },
         {
@@ -147,7 +165,7 @@
           'inputs': [],
            'outputs': [],
            'action': [
-             'sh', '<(DEPTH)/JavaScriptCore/gyp/generate-dtrace-header.sh'
+             'sh', '<(DEPTH)/JavaScriptCore/gyp/generate-dtrace-header.sh', '<(SHARED_INTERMEDIATE_DIR)'
             ]
         }
       ],

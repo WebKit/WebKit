@@ -1,3 +1,15 @@
+2011-03-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Start using derived sources correctly and link minidom with JavaScriptCore gyp project.
+        https://bugs.webkit.org/show_bug.cgi?id=56217
+
+        * gyp/JavaScriptCore.gyp: Added derived source files and passing of shared directory
+            to the scripts.
+        * gyp/generate-derived-sources.sh: Changed to use passed directory.
+        * gyp/generate-dtrace-header.sh: Ditto.
+
 2011-03-11  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Sam Weinig.
