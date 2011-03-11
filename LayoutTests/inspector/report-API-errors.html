@@ -13,8 +13,7 @@ function test()
 
     ConsoleAgent.setMonitoringXHREnabled(1);
     ConsoleAgent.setMonitoringXHREnabled();
-    ConsoleAgent.setMonitoringXHREnabled(true, "not a function");
-    ConsoleAgent.setMonitoringXHREnabled(true, undefined);
+    ConsoleAgent.setMonitoringXHREnabled(false, "not a function");
     ConsoleAgent.setMonitoringXHREnabled(false, undefined);
     InspectorBackend.dispatch('{"type": "event", "domain": "wrongDomain", "event": "something-strange", "data": {}}');
     InspectorBackend.dispatch('{"type": "event", "domain": "Inspector", "event": "something-strange", "data": {}}');
