@@ -1,3 +1,15 @@
+2011-03-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Choke text-decoration when entering shadow DOM subtree.
+        https://bugs.webkit.org/show_bug.cgi?id=56044
+
+        No new tests, because the functionality can't be tested yet.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle): Added a check for shadow DOM root.
+
 2011-03-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Carlson.
