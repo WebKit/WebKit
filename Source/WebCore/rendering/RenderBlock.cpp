@@ -1328,12 +1328,16 @@ void RenderBlock::addOverflowFromChildren()
                 int overflowRight = style()->isLeftToRightDirection() ? max(width(), lastRect.maxX()) : 0;
                 int overflowHeight = borderBefore() + paddingBefore() + colInfo->columnHeight();
                 addLayoutOverflow(IntRect(overflowLeft, 0, overflowRight - overflowLeft, overflowHeight));
+                if (!hasOverflowClip())
+                    addVisualOverflow(IntRect(overflowLeft, 0, overflowRight - overflowLeft, overflowHeight));
             } else {
                 IntRect lastRect = columnRectAt(colInfo, columnCount(colInfo) - 1);
                 int overflowTop = !style()->isLeftToRightDirection() ? min(0, lastRect.y()) : 0;
                 int overflowBottom = style()->isLeftToRightDirection() ? max(height(), lastRect.maxY()) : 0;
                 int overflowWidth = borderBefore() + paddingBefore() + colInfo->columnHeight();
                 addLayoutOverflow(IntRect(0, overflowTop, overflowWidth, overflowBottom - overflowTop));
+                if (!hasOverflowClip())
+                    addVisualOverflow(IntRect(0, overflowTop, overflowWidth, overflowBottom - overflowTop));
             }
         }
     }

@@ -1,3 +1,21 @@
+2011-03-11  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52987
+        
+        REGRESSION: Overflowing columns not repainted correctly
+        
+        Make sure to add in column overflow as visual overflow as well.  It was only propagating layout overflow, which is obviously not
+        sufficient, since blocks paint their own columns.
+
+        Added fast/multicol/scrolling-overflow.html
+
+        * fast/multicol/scrolling-overflow.html: Added.
+        * platform/mac/fast/multicol/scrolling-overflow-expected.checksum: Added.
+        * platform/mac/fast/multicol/scrolling-overflow-expected.png: Added.
+        * platform/mac/fast/multicol/scrolling-overflow-expected.txt: Added.
+
 2011-03-11  Mihai Parparita  <mihaip@chromium.org>
 
         Mac and Chromium expectations update. Remove failing expectations for

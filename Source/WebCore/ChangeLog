@@ -1,3 +1,19 @@
+2011-03-11  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52987
+        
+        REGRESSION: Overflowing columns not repainted correctly
+        
+        Make sure to add in column overflow as visual overflow as well.  It was only propagating layout overflow, which is obviously not
+        sufficient, since blocks paint their own columns.
+
+        Added fast/multicol/scrolling-overflow.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverflowFromChildren):
+
 2011-03-11  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.
