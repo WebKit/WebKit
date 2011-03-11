@@ -1,3 +1,16 @@
+2011-03-10  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        PrettyPatch displays last two lines of a git-format-patch diff strangely
+        https://bugs.webkit.org/show_bug.cgi?id=29317
+
+        If the diff section has full range information, we parse only enough to cover the
+        range. This avoids incorrectly showing trailing lines (like git signature) as part
+        of the patch.
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2011-03-10  Adam Roben  <aroben@apple.com>
 
         Don't search for intra-line diffs in really long lines
