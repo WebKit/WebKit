@@ -1,3 +1,14 @@
+2011-03-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8955589> Adopt AVFoundation media back end on Lion.
+
+        No new tests, existing media tests cover this.
+
+        * JavaScriptCore.exp: Export cancelCallOnMainThread
+        * wtf/Platform.h: Define WTF_USE_AVFOUNDATION.
+
 2011-03-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.

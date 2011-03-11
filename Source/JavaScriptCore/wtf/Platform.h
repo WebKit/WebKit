@@ -1134,6 +1134,10 @@
 #define WTF_USE_PROTECTION_SPACE_AUTH_CALLBACK 1
 #endif
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#define WTF_USE_AVFOUNDATION 1
+#endif
+
 #if COMPILER(GCC)
 #define WARN_UNUSED_RETURN __attribute__ ((warn_unused_result))
 #else

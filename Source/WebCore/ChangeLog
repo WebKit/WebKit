@@ -1,3 +1,26 @@
+2011-03-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8955589> Adopt AVFoundation media back end on Lion.
+
+        No new tests, existing media tests cover this.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::installedMediaEngines): Register MediaPlayerPrivateAVFoundationObjC.
+        (WebCore::bestMediaEngineForTypeAndCodecs): Kill some whitespace.
+        (WebCore::MediaPlayer::loadWithNextMediaEngine): Ditto.
+        (WebCore::MediaPlayer::inMediaDocument): Ditto.
+        * platform/graphics/MediaPlayer.h:
+
+        * platform/graphics/avfoundation: Added.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp: Added.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h: Added.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.h: Added.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm: Added.
+
 2011-03-11  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.
