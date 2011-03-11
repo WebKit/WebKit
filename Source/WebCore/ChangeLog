@@ -1,3 +1,57 @@
+2011-03-11  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Introduce lookup-table based approach for applying CSS properties.
+        The aim is to be a starting point for refactoring
+        CSSStyleSelector::applyProperty() into more readable, maintainable code.
+        https://bugs.webkit.org/show_bug.cgi?id=54707
+
+        No new behavior / covered by existing tests.
+
+        * css/CSSStyleApplyProperty.cpp: Added.
+        (WebCore::ApplyPropertyNull):
+        Class that provides empty implementations of inherit, initial, value.
+        (WebCore::ApplyPropertyDefault::ApplyPropertyDefault):
+        Class that calls the appropriate RenderStyle setters directly.
+        (WebCore::ApplyPropertyColorBase::ApplyPropertyColorBase):
+        Class for handling CSSProperty*Color.
+        (WebCore::ApplyPropertyColor::ApplyPropertyColor):
+        Class for handling CSSPropertyColor.
+        (WebCore::CSSStyleApplyProperty::sharedCSSStyleApplyProperty):
+        Singleton initializer.
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Constructor that bulds up the map from property id to apply-er objects.
+        * css/CSSStyleApplyProperty.h: Added.
+        (WebCore::CSSStyleApplyProperty::inherit):
+        Handle the inherit case for a given property.
+        (WebCore::CSSStyleApplyProperty::initial):
+        Handle the initial case for a given property.
+        (WebCore::CSSStyleApplyProperty::value):
+        Apply a value to a given property.
+        (WebCore::CSSStyleApplyProperty::implements):
+        Returns true if the provided property id is implemented.
+        (WebCore::CSSStyleApplyProperty::index):
+        Private function to determine the index of a property the property map.
+        (WebCore::CSSStyleApplyProperty::valid):
+        Function to determine that a given property id is valid.
+        (WebCore::CSSStyleApplyProperty::setPropertyValue):
+        (WebCore::CSSStyleApplyProperty::propertyValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        Get reference to the CSSStyleApplyProperty singleton.
+        (WebCore::CSSStyleSelector::applyProperty):
+        Now calls into CSSStyleApplyProperty for implemented property ids.
+        Deleted color-related methods from the property id switch.
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::style):
+        Made public to allow access from CSSStyleApplyProperty.
+        (WebCore::CSSStyleSelector::parentStyle):
+        Made public to allow access from CSSStyleApplyProperty.
+        * rendering/style/RenderStyle.h:
+        Made CSSStyleApplyProperty a friend class. Necessary because it needs
+        to access the private getters and setters on this clsass.
+
 2011-03-11  Anton D'Auria  <adauria@apple.com>
 
         Reviewed and landed by Brady Eidson.

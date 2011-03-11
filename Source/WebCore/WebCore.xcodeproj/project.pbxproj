@@ -1684,6 +1684,8 @@
 		7EE6847012D26E3800E79415 /* ResourceResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845D12D26E3800E79415 /* ResourceResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EE6847112D26E3800E79415 /* ResourceResponseCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845E12D26E3800E79415 /* ResourceResponseCFNet.cpp */; };
 		7EE6847512D26E7000E79415 /* ResourceLoaderCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6847412D26E7000E79415 /* ResourceLoaderCFNet.cpp */; };
+		809DD1DF130DE2AD00CAE3ED /* CSSStyleApplyProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 809DD1DD130DE2AD00CAE3ED /* CSSStyleApplyProperty.cpp */; };
+		809DD1E0130DE2AD00CAE3ED /* CSSStyleApplyProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 809DD1DE130DE2AD00CAE3ED /* CSSStyleApplyProperty.h */; };
 		8102C5881325BB1100DDE67A /* StringCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8102C5871325BB1100DDE67A /* StringCallback.cpp */; };
 		815E6167132587AA00B622B0 /* DataTransferItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 815E6166132587AA00B622B0 /* DataTransferItem.cpp */; };
 		81A7325E1210189B00FC0D9E /* IDBCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 81A7325D1210189B00FC0D9E /* IDBCursor.h */; };
@@ -8211,6 +8213,8 @@
 		7EE6845D12D26E3800E79415 /* ResourceResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceResponse.h; sourceTree = "<group>"; };
 		7EE6845E12D26E3800E79415 /* ResourceResponseCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceResponseCFNet.cpp; sourceTree = "<group>"; };
 		7EE6847412D26E7000E79415 /* ResourceLoaderCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceLoaderCFNet.cpp; path = cf/ResourceLoaderCFNet.cpp; sourceTree = "<group>"; };
+		809DD1DD130DE2AD00CAE3ED /* CSSStyleApplyProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSStyleApplyProperty.cpp; sourceTree = "<group>"; };
+		809DD1DE130DE2AD00CAE3ED /* CSSStyleApplyProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSStyleApplyProperty.h; sourceTree = "<group>"; };
 		8102C5871325BB1100DDE67A /* StringCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringCallback.cpp; sourceTree = "<group>"; };
 		815E6166132587AA00B622B0 /* DataTransferItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataTransferItem.cpp; sourceTree = "<group>"; };
 		81A7325D1210189B00FC0D9E /* IDBCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursor.h; sourceTree = "<group>"; };
@@ -18759,6 +18763,8 @@
 				A80E734B0A199C77007FB8C5 /* CSSSelector.h */,
 				E4C178950EE6903800824D69 /* CSSSelectorList.cpp */,
 				E4C178960EE6903800824D69 /* CSSSelectorList.h */,
+				809DD1DD130DE2AD00CAE3ED /* CSSStyleApplyProperty.cpp */,
+				809DD1DE130DE2AD00CAE3ED /* CSSStyleApplyProperty.h */,
 				A80E6E0E0A19911C007FB8C5 /* CSSStyleDeclaration.cpp */,
 				A80E6E0D0A19911C007FB8C5 /* CSSStyleDeclaration.h */,
 				142011AE0A003117008303F9 /* CSSStyleDeclaration.idl */,
@@ -19894,6 +19900,7 @@
 				371F51A10D262FA000ECE0D5 /* CSSSegmentedFontFace.h in Headers */,
 				A80E73520A199C77007FB8C5 /* CSSSelector.h in Headers */,
 				E4C1789B0EE6903800824D69 /* CSSSelectorList.h in Headers */,
+				809DD1E0130DE2AD00CAE3ED /* CSSStyleApplyProperty.h in Headers */,
 				A80E6E0F0A19911C007FB8C5 /* CSSStyleDeclaration.h in Headers */,
 				A80E6D0C0A1989CA007FB8C5 /* CSSStyleRule.h in Headers */,
 				BC772B400C4EA91E0083285F /* CSSStyleSelector.h in Headers */,
@@ -23188,6 +23195,7 @@
 				371F51A20D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp in Sources */,
 				A80E734F0A199C77007FB8C5 /* CSSSelector.cpp in Sources */,
 				E4C1789A0EE6903800824D69 /* CSSSelectorList.cpp in Sources */,
+				809DD1DF130DE2AD00CAE3ED /* CSSStyleApplyProperty.cpp in Sources */,
 				A80E6E100A19911C007FB8C5 /* CSSStyleDeclaration.cpp in Sources */,
 				A80E6CEF0A1989CA007FB8C5 /* CSSStyleRule.cpp in Sources */,
 				BC772B3F0C4EA91E0083285F /* CSSStyleSelector.cpp in Sources */,

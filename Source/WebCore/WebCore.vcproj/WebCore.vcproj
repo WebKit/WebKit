@@ -31882,6 +31882,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSStyleApplyProperty.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSStyleApplyProperty.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSStyleDeclaration.cpp"
 				>
 			</File>

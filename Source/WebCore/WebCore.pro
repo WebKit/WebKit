@@ -410,6 +410,7 @@ SOURCES += \
     css/CSSSelector.cpp \
     css/CSSSelectorList.cpp \
     css/CSSSegmentedFontFace.cpp \
+    css/CSSStyleApplyProperty.cpp \
     css/CSSStyleDeclaration.cpp \
     css/CSSStyleRule.cpp \
     css/CSSStyleSelector.cpp \
@@ -1363,6 +1364,7 @@ HEADERS += \
     css/CSSSegmentedFontFace.h \
     css/CSSSelector.h \
     css/CSSSelectorList.h \
+    css/CSSStyleApplyPropwerty.h \
     css/CSSStyleDeclaration.h \
     css/CSSStyleRule.h \
     css/CSSStyleSelector.h \

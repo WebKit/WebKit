@@ -45,6 +45,7 @@ class CSSFontFaceRule;
 class CSSImageValue;
 class CSSRuleList;
 class CSSSelector;
+class CSSStyleApplyProperty;
 class CSSStyleRule;
 class CSSStyleSheet;
 class CSSValue;
@@ -95,6 +96,7 @@ public:
         void pushParent(Element* parent);
         void popParent(Element* parent);
 
+
         PassRefPtr<RenderStyle> styleForElement(Element* e, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false, bool matchVisitedPseudoClass = false);
         
         void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList& list);
@@ -111,6 +113,9 @@ public:
         PassRefPtr<RenderStyle> pseudoStyleForDataGridColumnHeader(DataGridColumn*, RenderStyle* parentStyle);
 #endif
 
+        RenderStyle* style() const { return m_style.get(); }
+        RenderStyle* parentStyle() const { return m_parentStyle; }
+
     private:
         void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
         void initElement(Element*);
@@ -122,8 +127,6 @@ public:
         
         void pushParentStackFrame(Element* parent);
         void popParentStackFrame();
-
-        RenderStyle* style() const { return m_style.get(); }
 
         PassRefPtr<RenderStyle> styleForKeyframe(const RenderStyle*, const WebKitCSSKeyframeRule*, KeyframeValue&);
 
@@ -156,7 +159,6 @@ public:
     private:
         void setFontSize(FontDescription&, float size);
         static float getComputedSizeFromSpecifiedSize(Document*, RenderStyle*, bool isAbsoluteSize, float specifiedSize, bool useSVGZoomRules);
-
     public:
         Color getColorFromPrimitiveValue(CSSPrimitiveValue*) const;
 
@@ -355,6 +357,8 @@ public:
         HashSet<AtomicStringImpl*> m_selectorAttrs;
         Vector<CSSMutableStyleDeclaration*> m_additionalAttributeStyleDecls;
         Vector<MediaQueryResult*> m_viewportDependentMediaQueryResults;
+
+        const CSSStyleApplyProperty& m_applyProperty;
     };
 
 } // namespace WebCore

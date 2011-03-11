@@ -1232,6 +1232,8 @@
             'css/CSSSelector.h',
             'css/CSSSelectorList.cpp',
             'css/CSSSelectorList.h',
+            'css/CSSStyleApplyProperty.cpp',
+            'css/CSSStyleApplyProperty.h',
             'css/CSSStyleDeclaration.cpp',
             'css/CSSStyleDeclaration.h',
             'css/CSSStyleRule.cpp',

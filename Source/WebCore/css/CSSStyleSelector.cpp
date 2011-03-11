@@ -44,6 +44,7 @@
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
+#include "CSSStyleApplyProperty.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSTimingFunctionValue.h"
@@ -507,6 +508,7 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
     , m_styledElement(0)
     , m_elementLinkState(NotInsideLink)
     , m_fontSelector(CSSFontSelector::create(document))
+    , m_applyProperty(CSSStyleApplyProperty::sharedCSSStyleApplyProperty())
 {
     m_matchAuthorAndUserStyles = matchAuthorAndUserStyles;
     
@@ -3630,10 +3632,22 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
     
+    CSSPropertyID property = static_cast<CSSPropertyID>(id);
+
+    // check lookup table for implementations and use when available
+    if (m_applyProperty.implements(property)) {
+      if (isInherit)
+          m_applyProperty.inherit(property, this);
+      else if (isInitial)
+          m_applyProperty.initial(property, this);
+      else
+          m_applyProperty.value(property, this, value);
+      return;
+    }
+
     // What follows is a list that maps the CSS properties into their corresponding front-end
     // RenderStyle values.  Shorthands (e.g. border, background) occur in this list as well and
     // are only hit when mapping "inherit" or "initial" into front-end values.
-    CSSPropertyID property = static_cast<CSSPropertyID>(id);
     switch (property) {
 // ident only properties
     case CSSPropertyBackgroundAttachment:
@@ -4038,87 +4052,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 m_style->setCursor(*primitiveValue);
         }
         return;
-// colors || inherit
-    case CSSPropertyColor:
-        // If the 'currentColor' keyword is set on the 'color' property itself,
-        // it is treated as 'color:inherit' at parse time
-        if (primitiveValue && primitiveValue->getIdent() == CSSValueCurrentcolor)
-            isInherit = true;
-    case CSSPropertyBackgroundColor:
-    case CSSPropertyBorderTopColor:
-    case CSSPropertyBorderRightColor:
-    case CSSPropertyBorderBottomColor:
-    case CSSPropertyBorderLeftColor:
-    case CSSPropertyOutlineColor:
-    case CSSPropertyWebkitColumnRuleColor:
-    case CSSPropertyWebkitTextStrokeColor:
-    case CSSPropertyWebkitTextEmphasisColor:
-    case CSSPropertyWebkitTextFillColor: {
-        Color col;
-        if (isInherit) {
-            HANDLE_INHERIT_COND(CSSPropertyBackgroundColor, backgroundColor, BackgroundColor)
-            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyBorderTopColor, borderTopColor, color, BorderTopColor)
-            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyBorderBottomColor, borderBottomColor, color, BorderBottomColor)
-            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyBorderRightColor, borderRightColor, color, BorderRightColor)
-            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyBorderLeftColor, borderLeftColor, color, BorderLeftColor)
-            HANDLE_INHERIT_COND(CSSPropertyColor, color, Color)
-            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyOutlineColor, outlineColor, color, OutlineColor)
-            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyWebkitColumnRuleColor, columnRuleColor, color, ColumnRuleColor)
-            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyWebkitTextStrokeColor, textStrokeColor, color, TextStrokeColor)
-            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyWebkitTextEmphasisColor, textEmphasisColor, color, TextEmphasisColor)
-            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyWebkitTextFillColor, textFillColor, color, TextFillColor)
-            return;
-        }
-        if (isInitial) {
-            // The border/outline colors will just map to the invalid color |col| above.  This will have the
-            // effect of forcing the use of the currentColor when it comes time to draw the borders (and of
-            // not painting the background since the color won't be valid).
-            if (id == CSSPropertyColor)
-                col = RenderStyle::initialColor();
-        } else {
-            if (!primitiveValue)
-                return;
-            col = getColorFromPrimitiveValue(primitiveValue);
-        }
-
-        switch (id) {
-        case CSSPropertyBackgroundColor:
-            m_style->setBackgroundColor(col);
-            break;
-        case CSSPropertyBorderTopColor:
-            m_style->setBorderTopColor(col);
-            break;
-        case CSSPropertyBorderRightColor:
-            m_style->setBorderRightColor(col);
-            break;
-        case CSSPropertyBorderBottomColor:
-            m_style->setBorderBottomColor(col);
-            break;
-        case CSSPropertyBorderLeftColor:
-            m_style->setBorderLeftColor(col);
-            break;
-        case CSSPropertyColor:
-            m_style->setColor(col);
-            break;
-        case CSSPropertyOutlineColor:
-            m_style->setOutlineColor(col);
-            break;
-        case CSSPropertyWebkitColumnRuleColor:
-            m_style->setColumnRuleColor(col);
-            break;
-        case CSSPropertyWebkitTextStrokeColor:
-            m_style->setTextStrokeColor(col);
-            break;
-        case CSSPropertyWebkitTextEmphasisColor:
-            m_style->setTextEmphasisColor(col);
-            break;
-        case CSSPropertyWebkitTextFillColor:
-            m_style->setTextFillColor(col);
-            break;
-        }
-        
-        return;
-    }
     
 // uri || inherit
     case CSSPropertyBackgroundImage:
