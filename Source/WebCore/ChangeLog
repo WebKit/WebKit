@@ -1,3 +1,44 @@
+2011-03-11  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Let the parser yield for layout before running scripts
+        https://bugs.webkit.org/show_bug.cgi?id=54355
+
+        Prior to this patch, the parser would yield to perform a layout/paint before running a
+        script only if the script or a stylesheet blocking the script is not loaded yet. Since we
+        don't preload scan into the body while parsing the head, typically we'll block on a script
+        early in the body that causes us to yield to do the first paint within a reasonable time.
+
+        However, I'm planning to change the PreloadScanner to scan into the body from the head.
+        That significantly improves overall load time, but would hurt first paint time because
+        fewer scripts would be blocked during parsing and thus wouldn't yield.
+
+        This change causes us to yield before running scripts if we haven't painted yet (regardless
+        of whether or not the script is loaded). In addition to allowing the above mentioned
+        PreloadScanner change to be implemented without regressing first paint time, this also
+        improves first paint time by itself.
+
+        I tested Alexa's top 45 websites using Web Page Replay to control the content and simulate
+        bandwidth. This patch improved average first paint time by 1% over an unlimited connection,
+        6% over a 1Mbps connection and 11% over a 5Mbps connection. There was no statistically
+        signifcant change in page load time.
+
+        Within the pages tested, 33 had no statistically significant change in time to first paint,
+        12 improved, and none regressed. Of the improved, some of the standouts from the 1Mbps set
+        are: 20% on youtube, 37% on wiki, 27% on ebay, 13% on cnn, 16% on espn, 74% on sohu.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::canTakeNextToken): This is the new yield point.
+        (WebCore::HTMLDocumentParser::pumpTokenizer): Remove ASSERT that we are not paused. isPaused
+        means that we are waiting for a script. Bug 54574 changed pumpTokenizer() so that it does
+        the right thing whether we are just before a token or waiting for a script. Now that we may
+        yield before a token or before a script, this may be called while paused.
+        * html/parser/HTMLParserScheduler.cpp:
+        (WebCore::HTMLParserScheduler::checkForYieldBeforeScript): Added.
+        * page/FrameView.h:
+        (WebCore::FrameView::hasEverPainted): Added.
+
 2011-03-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Fix crashes in dom/html/level2/html/HTMLInputElement*.

@@ -70,6 +70,7 @@ public:
         }
         ++session.processedTokens;
     }
+    void checkForYieldBeforeScript(PumpSession&);
 
     void scheduleForResume();
     bool isScheduledForResume() const { return m_isSuspendedWithActiveTimer || m_continueNextChunkTimer.isActive(); }
