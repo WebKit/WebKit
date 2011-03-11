@@ -1,3 +1,16 @@
+2011-03-11  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Entering fullscreen and leaving it may hide the cursor of the application.
+        https://bugs.webkit.org/show_bug.cgi?id=56181
+
+        We need to stop the auto hide cursor timer when closing the widget otherwise the timer
+        might get fired and therefore hide the cursor even when the fullscreen widget is closed.
+
+        * WebCoreSupport/FullScreenVideoWidget.cpp:
+        (WebCore::FullScreenVideoWidget::closeEvent):
+
 2011-03-10  David Boddie <david.boddie@nokia.com>
 
         Reviewed by Andreas Kling.
