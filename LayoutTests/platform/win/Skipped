@@ -376,6 +376,10 @@ http/tests/media/video-cancel-load.html
 
 # Sometimes crashes http://webkit.org/b/48996
 http/tests/websocket/tests/workers/close-in-onmessage-crash.html
+# Sometimes crashes http://webkit.org/b/55375
+http/tests/websocket/tests/reload-crash.html
+# Sometimes crashes http://webkit.org/b/56185
+http/tests/websocket/tests/url-with-credential.html
 
 # Sometimes times out http://webkit.org/b/48997
 animations/animation-iteration-event-destroy-renderer.html
@@ -409,9 +413,6 @@ http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html
 
 # Needs windows-specific pixel results http://webkit.org/b/54757
 media/video-controls-in-media-document.html
-
-# Sometimes crashes http://webkit.org/b/55375
-http/tests/websocket/tests/reload-crash.html
 
 # Sometimes fails http://webkit.org/b/55329
 fast/events/pageshow-pagehide-on-back-cached.html
