@@ -79,6 +79,9 @@ ChromeClient::ChromeClient(WebKitWebView* webView)
 
 void ChromeClient::chromeDestroyed()
 {
+    if (m_closeSoonTimer)
+        g_source_remove(m_closeSoonTimer);
+
     delete this;
 }
 

@@ -1,3 +1,14 @@
+2011-03-08  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] close-web-view emitted on disposed WebView
+        https://bugs.webkit.org/show_bug.cgi?id=55932
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (ChromeClient::chromeDestroyed): Remove the closeSoonTimer glib
+        source before destruction of the ChromeClient.
+
 2011-03-11  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Ryosuke Niwa.
