@@ -1,3 +1,18 @@
+2011-03-11  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Compositor uses too much texture memory for scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=56212
+
+        Compositor invalidations can be off the page (and very large), but
+        scrollbars only need to care about the invalidation that's visible.
+        The large invalidation was causing the tiler layer size to grow
+        needlessly larger than the scrollbar.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::invalidateRootLayerRect):
+
 2011-03-11  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

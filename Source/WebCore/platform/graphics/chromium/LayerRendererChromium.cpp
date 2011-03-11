@@ -163,18 +163,23 @@ IntRect LayerRendererChromium::horizontalScrollbarRect() const
 void LayerRendererChromium::invalidateRootLayerRect(const IntRect& dirtyRect)
 {
     m_rootLayerContentTiler->invalidateRect(dirtyRect);
+
+    // Scrollbars never need to render beyond the fold, so clip to the viewport.
+    IntRect visibleDirtyRect = dirtyRect;
+    visibleDirtyRect.intersect(m_viewportVisibleRect);
+
     if (m_horizontalScrollbarTiler) {
         IntRect scrollbar = horizontalScrollbarRect();
-        if (dirtyRect.intersects(scrollbar)) {
+        if (visibleDirtyRect.intersects(scrollbar)) {
             m_horizontalScrollbarTiler->setLayerPosition(scrollbar.location());
-            m_horizontalScrollbarTiler->invalidateRect(dirtyRect);
+            m_horizontalScrollbarTiler->invalidateRect(visibleDirtyRect);
         }
     }
     if (m_verticalScrollbarTiler) {
         IntRect scrollbar = verticalScrollbarRect();
-        if (dirtyRect.intersects(scrollbar)) {
+        if (visibleDirtyRect.intersects(scrollbar)) {
             m_verticalScrollbarTiler->setLayerPosition(scrollbar.location());
-            m_verticalScrollbarTiler->invalidateRect(dirtyRect);
+            m_verticalScrollbarTiler->invalidateRect(visibleDirtyRect);
         }
     }
 }
