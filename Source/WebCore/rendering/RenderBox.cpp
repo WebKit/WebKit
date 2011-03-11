@@ -1814,18 +1814,20 @@ int RenderBox::computeLogicalHeightUsing(const Length& h)
 int RenderBox::computePercentageLogicalHeight(const Length& height)
 {
     int result = -1;
+    
+    // In quirks mode, blocks with auto height are skipped, and we keep looking for an enclosing
+    // block that may have a specified height and then use it. In strict mode, this violates the
+    // specification, which states that percentage heights just revert to auto if the containing
+    // block has an auto height. We still skip anonymous containing blocks in both modes, though, and look
+    // only at explicit containers.
     bool skippedAutoHeightContainingBlock = false;
     RenderBlock* cb = containingBlock();
-    if (document()->inQuirksMode()) {
-        // In quirks mode, blocks with auto height are skipped, and we keep looking for an enclosing
-        // block that may have a specified height and then use it.  In strict mode, this violates the
-        // specification, which states that percentage heights just revert to auto if the containing
-        // block has an auto height.
-        while (!cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isPositioned() && cb->style()->logicalHeight().isAuto()) {
-            skippedAutoHeightContainingBlock = true;
-            cb = cb->containingBlock();
-            cb->addPercentHeightDescendant(this);
-        }
+    while (!cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isPositioned() && cb->style()->logicalHeight().isAuto()) {
+        if (!document()->inQuirksMode() && !cb->isAnonymousBlock())
+            break;
+        skippedAutoHeightContainingBlock = true;
+        cb = cb->containingBlock();
+        cb->addPercentHeightDescendant(this);
     }
 
     // A positioned element that specified both top/bottom or that specifies height should be treated as though it has a height

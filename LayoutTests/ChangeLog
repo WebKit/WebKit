@@ -1,3 +1,18 @@
+2011-03-10  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47151
+        
+        Percentage heights should skip anonymous containing blocks when computing the used value.
+
+        Added fast/block/basic/percentage-height-inside-anonymous-block.html
+
+        * fast/block/basic/percent-height-inside-anonymous-block.html: Added.
+        * platform/mac/fast/block/basic/percent-height-inside-anonymous-block-expected.checksum: Added.
+        * platform/mac/fast/block/basic/percent-height-inside-anonymous-block-expected.png: Added.
+        * platform/mac/fast/block/basic/percent-height-inside-anonymous-block-expected.txt: Added.
+
 2011-01-25  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
