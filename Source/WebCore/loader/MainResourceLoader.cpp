@@ -118,7 +118,9 @@ ResourceError MainResourceLoader::interruptionForPolicyChangeError() const
 
 void MainResourceLoader::stopLoadingForPolicyChange()
 {
-    cancel(interruptionForPolicyChangeError());
+    ResourceError error = interruptionForPolicyChangeError();
+    error.setIsCancellation(true);
+    cancel(error);
 }
 
 void MainResourceLoader::callContinueAfterNavigationPolicy(void* argument, const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue)

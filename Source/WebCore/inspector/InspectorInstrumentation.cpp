@@ -455,7 +455,7 @@ void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorIns
     if (InspectorAgent* inspectorAgent = inspectorAgentForFrame(loader->frame())) {
         if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
             resourceAgent->didReceiveResponse(identifier, loader, response);
-        inspectorAgent->consoleAgent()->didReceiveResponse(identifier, response);
+        inspectorAgent->consoleAgent()->didReceiveResponse(identifier, response); // This should come AFTER resource notification, front-end relies on this.
     }
 }
 
@@ -475,11 +475,11 @@ void InspectorInstrumentation::didFinishLoadingImpl(InspectorAgent* inspectorAge
 
 void InspectorInstrumentation::didFailLoadingImpl(InspectorAgent* inspectorAgent, unsigned long identifier, const ResourceError& error)
 {
-    inspectorAgent->consoleAgent()->didFailLoading(identifier, error);
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(inspectorAgent))
         timelineAgent->didFinishLoadingResource(identifier, true, 0);
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
         resourceAgent->didFailLoading(identifier, error);
+    inspectorAgent->consoleAgent()->didFailLoading(identifier, error); // This should come AFTER resource notification, front-end relies on this.
 }
 
 void InspectorInstrumentation::resourceRetrievedByXMLHttpRequestImpl(InspectorAgent* inspectorAgent, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)

@@ -1,3 +1,22 @@
+2011-03-11  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: resource load cancellation is reported to console as an error
+        https://bugs.webkit.org/show_bug.cgi?id=55764
+
+        - mark interruptionForPolicyChangeError as cancellation
+        - do not log resource cancelation as an error
+        - always push resource to front-end before console message, so front-end can use resource info while formatting message.
+
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::didFailLoading):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseImpl):
+        (WebCore::InspectorInstrumentation::didFailLoadingImpl):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::stopLoadingForPolicyChange):
+
 2011-03-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

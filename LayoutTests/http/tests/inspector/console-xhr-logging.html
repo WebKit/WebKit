@@ -21,6 +21,8 @@ function makeRequests()
     requestHelper("GET", "resources/xhr-does-not-exist.html");
     // 3. POST to a page.
     requestHelper("POST", "resources/post-target.cgi");
+    // 4. Cross-origin request
+    requestHelper("GET", "http://localhost:8000/inspector/resources/xhr-exists.html");
 }
 
 function test()
