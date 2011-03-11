@@ -413,9 +413,9 @@ WebInspector.ScriptsPanel.prototype = {
         if (!this._paused || !selectedCallFrame)
             return;
 
-        function updatingCallbackWrapper(result)
+        function updatingCallbackWrapper(error, result)
         {
-            if (result)
+            if (!error && result)
                 callback(WebInspector.RemoteObject.fromPayload(result));
         }
         DebuggerAgent.evaluateOnCallFrame(selectedCallFrame.id, code, objectGroup, includeCommandLineAPI, updatingCallbackWrapper.bind(this));
@@ -731,8 +731,10 @@ WebInspector.ScriptsPanel.prototype = {
 
     _setPauseOnExceptions: function(pauseOnExceptionsState)
     {
-        function callback(pauseOnExceptionsState)
+        function callback(error, pauseOnExceptionsState)
         {
+            if (error)
+                return;
             if (pauseOnExceptionsState == WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions)
                 this._pauseOnExceptionButton.title = WebInspector.UIString("Don't pause on exceptions.\nClick to Pause on all exceptions.");
             else if (pauseOnExceptionsState == WebInspector.ScriptsPanel.PauseOnExceptionsState.PauseOnAllExceptions)

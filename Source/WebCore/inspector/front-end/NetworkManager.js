@@ -53,15 +53,17 @@ WebInspector.NetworkManager.prototype = {
 
     requestContent: function(resource, base64Encode, callback)
     {
-        function callbackWrapper(success, content)
+        function callbackWrapper(error, success, content)
         {
-            callback(success ? content : null);
+            callback((!error && success) ? content : null);
         }
         NetworkAgent.resourceContent(resource.loader.frameId, resource.url, base64Encode, callbackWrapper);
     },
 
-    _processCachedResources: function(mainFramePayload)
+    _processCachedResources: function(error, mainFramePayload)
     {
+        if (error)
+            return;
         var mainResource = this._dispatcher._addFramesRecursively(mainFramePayload);
         WebInspector.mainResource = mainResource;
         mainResource.isMainResource = true;

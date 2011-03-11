@@ -48,6 +48,15 @@
     (new Image()).src = "Images/undockButtonGlyph.png";
 })();
 
+function errorFilter()
+{
+    var args = Array.prototype.slice.call(arguments);
+    var callback = args.shift();
+    var error = args.shift();
+    if (!error)
+        callback.apply(this, args);
+}
+
 var WebInspector = {
     resources: {},
     missingLocalizedStrings: {},
@@ -522,9 +531,9 @@ WebInspector.doLoadedDone = function()
 
     this.extensionServer.initExtensions();
 
-    function onPopulateScriptObjects()
+    function onPopulateScriptObjects(error)
     {
-        if (!WebInspector.currentPanel)
+        if (!error && !WebInspector.currentPanel)
             WebInspector.showPanel(WebInspector.settings.lastActivePanel);
     }
     InspectorAgent.populateScriptObjects(onPopulateScriptObjects);
@@ -538,9 +547,10 @@ WebInspector.doLoadedDone = function()
 
     ConsoleAgent.setConsoleMessagesEnabled(true);
 
-    function propertyNamesCallback(names)
+    function propertyNamesCallback(error, names)
     {
-        WebInspector.cssNameCompletions = new WebInspector.CSSCompletions(names);
+        if (!error)
+            WebInspector.cssNameCompletions = new WebInspector.CSSCompletions(names);
     }
     // As a DOMAgent method, this needs to happen after the frontend has loaded and the agent is available.
     CSSAgent.getSupportedCSSProperties(propertyNamesCallback);

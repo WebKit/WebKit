@@ -413,7 +413,6 @@ sub generateDocumentationEvent
 
     push(@lines, "<pre style='background: lightGrey; padding: 10px'>");
     push(@lines, "{");
-    push(@lines, "    seq: &lt;number&gt;,");
     push(@lines, "    type: \"event\",");
     push(@lines, "    domain: \"$domain\",");
     if (scalar(@argsFiltered)) {
@@ -478,6 +477,9 @@ sub generateBackendFunction
 
     # declare local variables for out arguments.
     push(@function, map("    " . typeTraits($_->type, "variable") . " " . $_->name . " = " . typeTraits($_->type, "defaultValue") . ";", @outArgs));
+    push(@function, "");
+    push(@function, "    ErrorString error;");
+    push(@function, "");
 
     my $indent = "";
     if (scalar(@inArgs)) {
@@ -493,12 +495,9 @@ sub generateBackendFunction
         $indent = "    ";
     }
 
-    push(@function, "$indent    ErrorString error;");
     my $args = join(", ", ("&error", map($_->name, @inArgs), map("&" . $_->name, @outArgs)));
     push(@function, "$indent    if (!protocolErrors->length())");
     push(@function, "$indent        $domainAccessor->$functionName($args);");
-    push(@function, "$indent    if (error.length())");
-    push(@function, "$indent        protocolErrors->pushString(error);");
     if (scalar(@inArgs)) {
         push(@function, "    } else {");
         push(@function, "        protocolErrors->pushString(\"Protocol Error: 'arguments' property with type 'object' was not found.\");");
@@ -508,12 +507,14 @@ sub generateBackendFunction
     push(@function, "    // use InspectorFrontend as a marker of WebInspector availability");
     push(@function, "    if (callId || protocolErrors->length()) {");
     push(@function, "        RefPtr<InspectorObject> responseMessage = InspectorObject::create();");
-    push(@function, "        responseMessage->setNumber(\"seq\", callId);");
+    push(@function, "        responseMessage->setNumber(\"requestId\", callId);");
     push(@function, "");
     push(@function, "        if (protocolErrors->length())");
-    push(@function, "            responseMessage->setArray(\"errors\", protocolErrors);");
+    push(@function, "            responseMessage->setArray(\"protocolErrors\", protocolErrors);");
     if (scalar(@outArgs)) {
         push(@function, "        else {");
+        push(@function, "            if (error.length())");
+        push(@function, "                responseMessage->setString(\"error\", error);");
         push(@function, "            RefPtr<InspectorObject> responseBody = InspectorObject::create();");
         push(@function, map("            responseBody->set" . typeTraits($_->type, "JSONType") . "(\"" . $_->name . "\", " . $_->name . ");", @outArgs));
         push(@function, "            responseMessage->setObject(\"body\", responseBody);");
@@ -547,7 +548,7 @@ sub generateDocumentationCommand
     my @inArgs = grep($_->direction eq "in" && !($_->name eq "callId") , @{$function->parameters});
     push(@lines, "<pre style='background: lightGrey; padding: 10px'>");
     push(@lines, "request: {");
-    push(@lines, "    seq: &lt;number&gt;,");
+    push(@lines, "    id: &lt;number&gt;,");
     push(@lines, "    type: \"request\",");
     push(@lines, "    domain: \"" . $interface->name . "\",");
     if (scalar(@inArgs)) {
@@ -567,7 +568,7 @@ sub generateDocumentationCommand
     my @outArgs = grep($_->direction eq "out", @{$function->parameters});    
     push(@lines, "");
     push(@lines, "response: {");
-    push(@lines, "    seq: &lt;number&gt;,");
+    push(@lines, "    requestId: &lt;number&gt;,");
     if (scalar(@outArgs)) {
         push(@lines, "    type: \"response\",");
         push(@lines, "    body: {");
@@ -593,10 +594,10 @@ sub generateBackendReportProtocolError
 void ${backendClassName}::reportProtocolError(const long callId, const String& errorText) const
 {
     RefPtr<InspectorObject> message = InspectorObject::create();
-    message->setNumber("seq", callId);
+    message->setNumber("requestId", callId);
     RefPtr<InspectorArray> errors = InspectorArray::create();
     errors->pushString(errorText);
-    message->setArray("errors", errors);
+    message->setArray("protocolErrors", errors);
     m_inspectorClient->sendMessageToFrontend(message->toJSONString());
 }
 EOF
@@ -696,14 +697,14 @@ $mapEntries
         return;
     }
 
-    RefPtr<InspectorValue> callIdValue = messageObject->get("seq");
+    RefPtr<InspectorValue> callIdValue = messageObject->get("id");
     if (!callIdValue) {
-        reportProtocolError(callId, "Protocol Error: Invalid message format. 'seq' property was not found in the request.");
+        reportProtocolError(callId, "Protocol Error: Invalid message format. 'id' property was not found in the request.");
         return;
     }
 
     if (!callIdValue->asNumber(&callId)) {
-        reportProtocolError(callId, "Protocol Error: Invalid message format. The type of 'seq' property should be number.");
+        reportProtocolError(callId, "Protocol Error: Invalid message format. The type of 'id' property should be number.");
         return;
     }
 
@@ -757,7 +758,7 @@ sub collectBackendJSStubFunctions
         my $name = $function->signature->name;
         my $argumentNames = join(",", map("\"" . $_->name . "\": \"" . typeTraits($_->type, "JSType") . "\"", grep($_->direction eq "in", @{$function->parameters})));
         push(@backendJSStubs, "    this._registerDelegate('{" .
-            "\"seq\": 0, " .
+            "\"id\": 0, " .
             "\"domain\": \"$domain\", " .
             "\"command\": \"$name\", " .
             "\"arguments\": {$argumentNames}" .
@@ -823,7 +824,7 @@ InspectorBackendStub.prototype = {
             }
             callback = args[0];
         }
-        request.seq = this._wrap(callback || function() {});
+        request.id = this._wrap(callback || function() {});
 
         if (window.dumpInspectorProtocolMessages)
             console.log("frontend: " + JSON.stringify(request));
@@ -851,14 +852,19 @@ InspectorBackendStub.prototype = {
             for (var key in messageObject.body)
                 arguments.push(messageObject.body[key]);
 
-        if ("seq" in messageObject) { // just a response for some request
-            if (!messageObject.errors)
-                this._callbacks[messageObject.seq].apply(null, arguments);
-            else
+        if ("requestId" in messageObject) { // just a response for some request
+            if (messageObject.protocolErrors)
                 this.reportProtocolError(messageObject);
 
-            --this._pendingResponsesCount;
-            delete this._callbacks[messageObject.seq];
+            var callback = this._callbacks[messageObject.requestId];
+            if (callback) {
+                if (!messageObject.protocolErrors) {
+                    arguments.unshift(messageObject.error);
+                    callback.apply(null, arguments);
+                }
+                --this._pendingResponsesCount;
+                delete this._callbacks[messageObject.requestId];
+            }
 
             if (this._scripts && !this._pendingResponsesCount)
                 this.runAfterPendingDispatches();
@@ -876,15 +882,16 @@ InspectorBackendStub.prototype = {
                 console.error("Protocol Error: Attempted to dispatch an unimplemented method '" + messageObject.domain + "." + messageObject.event + "'");
                 return;
             }
+
             dispatcher[messageObject.event].apply(dispatcher, arguments);
         }
     },
 
     reportProtocolError: function(messageObject)
     {
-        console.error("Protocol Error: InspectorBackend request with seq = " + messageObject.seq + " failed.");
-        for (var i = 0; i < messageObject.errors.length; ++i)
-            console.error("    " + messageObject.errors[i]);
+        console.error("Protocol Error: InspectorBackend request with id = " + messageObject.requestId + " failed.");
+        for (var i = 0; i < messageObject.protocolErrors.length; ++i)
+            console.error("    " + messageObject.protocolErrors[i]);
     },
 
     runAfterPendingDispatches: function(script)

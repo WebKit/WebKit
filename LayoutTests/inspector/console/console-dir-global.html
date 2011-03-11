@@ -14,8 +14,12 @@ function test()
 {
     RuntimeAgent.evaluate("window", "console", false, evalCallback);
 
-    function evalCallback(result)
+    function evalCallback(error, result)
     {
+        if (error) {
+            testController.notifyDone("Exception:" + error);
+            return;
+        }
         if (result.type === "error")
             testController.notifyDone("Exception:" + result);
         var objectProxy = WebInspector.RemoteObject.fromPayload(result);

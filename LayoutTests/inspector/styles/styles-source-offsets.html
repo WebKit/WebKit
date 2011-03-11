@@ -40,12 +40,16 @@ function test()
         CSSAgent.getStylesForNode(node.id, step2);
     }
 
-    function step2(styles)
+    function step2(error, styles)
     {
-        var matchedCSSRules = styles.matchedCSSRules;
-        for (var i = 0; i < matchedCSSRules.length; ++i)
-            dumpStyleData(matchedCSSRules[i]);
-        dumpStyleData(styles.inlineStyle);
+        if (error)
+            InspectorTest.addResult("error: " + error);
+        else {
+            var matchedCSSRules = styles.matchedCSSRules;
+            for (var i = 0; i < matchedCSSRules.length; ++i)
+                dumpStyleData(matchedCSSRules[i]);
+            dumpStyleData(styles.inlineStyle);
+        }
         InspectorTest.completeTest();
     }
 }

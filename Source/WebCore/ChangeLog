@@ -1,3 +1,104 @@
+2011-03-11  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: introduce error argument for all the callbacks on frontend.
+        https://bugs.webkit.org/show_bug.cgi?id=56100
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.evaluateInTargetWindow):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.allStylesCallback):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun.getStyles):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.getStylesAsync):
+        (WebInspector.CSSStyleModel.prototype.getComputedStyleAsync):
+        (WebInspector.CSSStyleModel.prototype.getInlineStyleAsync):
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector):
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector.callback):
+        (WebInspector.CSSStyleModel.prototype.addRule):
+        (WebInspector.CSSStyleModel.prototype.addRule.callback):
+        (WebInspector.CSSStyleModel.prototype._styleSheetChanged.callback):
+        (WebInspector.CSSStyleModel.prototype._styleSheetChanged):
+        (WebInspector.CSSStyleModel.prototype._onRevert):
+        (WebInspector.CSSStyleDeclaration.prototype.insertPropertyAt):
+        (WebInspector.CSSProperty.prototype.setText.callback):
+        (WebInspector.CSSProperty.prototype.setText):
+        (WebInspector.CSSProperty.prototype.setDisabled.callback):
+        (WebInspector.CSSProperty.prototype.setDisabled):
+        (WebInspector.CSSStyleSheet.createForId):
+        (WebInspector.CSSStyleSheet.prototype.setText):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.evalInInspectedWindow):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype.setNodeName):
+        (WebInspector.DOMNode.prototype.setNodeValue):
+        (WebInspector.DOMNode.prototype.setAttribute):
+        (WebInspector.DOMNode.prototype.removeAttribute):
+        (WebInspector.DOMNode.prototype.childNodes.mycallback):
+        (WebInspector.DOMNode.prototype.childNodes):
+        (WebInspector.DOMNode.prototype.outerHTML):
+        (WebInspector.DOMNode.prototype.setOuterHTML):
+        (WebInspector.DOMNode.prototype.removeNode):
+        (WebInspector.DOMNode.prototype.copyNode):
+        (WebInspector.DOMAgent.prototype.pushNodeToFrontend):
+        (WebInspector.DOMAgent.prototype.pushNodeByPathToFrontend):
+        (WebInspector.DOMAgent.prototype._documentUpdated):
+        (WebInspector.ApplicationCacheDispatcher.getApplicationCachesAsync):
+        (WebInspector.Cookies.getCookiesAsync):
+        (WebInspector.EventListeners.getEventListenersForNodeAsync):
+        * inspector/front-end/DOMStorage.js:
+        (WebInspector.DOMStorage.prototype.getEntries):
+        (WebInspector.DOMStorage.prototype.setItem):
+        (WebInspector.DOMStorage.prototype.removeItem):
+        * inspector/front-end/Database.js:
+        (WebInspector.Database.prototype.getTableNames):
+        (WebInspector.Database.prototype.executeSql):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.setBreakpoint.didSetBreakpoint):
+        (WebInspector.DebuggerModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerModel.prototype.setBreakpointBySourceId):
+        (WebInspector.DebuggerModel.prototype.editScriptSource):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._setSearchingForNode):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode.resolvedNode):
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted.changeTagNameCallback):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted):
+        ():
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionWatchSidebarPane.prototype._onEvaluate):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onEvaluateOnInspectedPage):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype.requestContent):
+        (WebInspector.NetworkManager.prototype._processCachedResources):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileView.profileCallback):
+        (WebInspector.CPUProfileView):
+        * inspector/front-end/ProfilesPanel.js:
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.resolveNode):
+        (WebInspector.RemoteObject.prototype.getProperties.remoteObjectBinder):
+        (WebInspector.RemoteObject.prototype.getProperties):
+        (WebInspector.RemoteObject.prototype.setPropertyValue):
+        (WebInspector.RemoteObject.prototype.evaluate):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.requestSource.didGetScriptSource):
+        (WebInspector.Script.prototype.requestSource):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame.updatingCallbackWrapper):
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame):
+        (WebInspector.ScriptsPanel.prototype._setPauseOnExceptions):
+        * inspector/front-end/inspector.js:
+        ():
+        (WebInspector.doLoadedDone.onPopulateScriptObjects):
+        (WebInspector.doLoadedDone.propertyNamesCallback):
+        (WebInspector.doLoadedDone):
+
 2011-03-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

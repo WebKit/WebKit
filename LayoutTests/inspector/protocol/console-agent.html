@@ -16,7 +16,7 @@ function test()
         ["ConsoleAgent", "addInspectedNode", 1]
     ];
 
-    InspectorTest.runProtocolTestSuite("ConsoleAgent", testSuite, ['seq', 'id', 'injectedScriptId', 'stackTrace']);
+    InspectorTest.runProtocolTestSuite("ConsoleAgent", testSuite, ['id', 'requestId', 'injectedScriptId', 'stackTrace']);
 }
 
 </script>

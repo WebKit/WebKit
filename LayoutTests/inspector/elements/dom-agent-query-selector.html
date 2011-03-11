@@ -36,8 +36,11 @@ function test()
         ]);
     }
 
-    function dumpNodes(next, nodeIds)
+    function dumpNodes(next, error, nodeIds)
     {
+        if (error)
+            InspectorTest.addRecord(error);
+
         if (!(nodeIds instanceof Array))
             nodeIds = [nodeIds];
 

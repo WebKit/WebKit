@@ -77,17 +77,22 @@ WebInspector.Database.prototype = {
 
     getTableNames: function(callback)
     {
-        function sortingCallback(names)
+        function sortingCallback(error, names)
         {
-            callback(names.sort());
+            if (!error)
+                callback(names.sort());
         }
         DatabaseAgent.getDatabaseTableNames(this._id, sortingCallback);
     },
     
     executeSql: function(query, onSuccess, onError)
     {
-        function callback(success, transactionId)
+        function callback(error, success, transactionId)
         {
+            if (error) {
+                onError(error);
+                return;
+            }
             if (!success) {
                 onError(WebInspector.UIString("Database not found."));
                 return;

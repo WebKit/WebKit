@@ -531,9 +531,10 @@ WebInspector.ConsoleView.prototype = {
             expression = "this";
         }
 
-        function evalCallback(result)
+        function evalCallback(error, result)
         {
-            callback(WebInspector.RemoteObject.fromPayload(result));
+            if (!error)
+                callback(WebInspector.RemoteObject.fromPayload(result));
         }
         RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, evalCallback);
     },

@@ -43,9 +43,9 @@ WebInspector.CSSStyleModel.parseRuleArrayPayload = function(ruleArray)
 WebInspector.CSSStyleModel.prototype = {
     getStylesAsync: function(nodeId, userCallback)
     {
-        function callback(userCallback, payload)
+        function callback(userCallback, error, payload)
         {
-            if (!payload) {
+            if (error || !payload) {
                 if (userCallback)
                     userCallback(null);
                 return;
@@ -88,9 +88,9 @@ WebInspector.CSSStyleModel.prototype = {
 
     getComputedStyleAsync: function(nodeId, userCallback)
     {
-        function callback(userCallback, stylePayload)
+        function callback(userCallback, error, stylePayload)
         {
-            if (!stylePayload)
+            if (error || !stylePayload)
                 userCallback(null);
             else
                 userCallback(WebInspector.CSSStyleDeclaration.parsePayload(stylePayload));
@@ -101,9 +101,9 @@ WebInspector.CSSStyleModel.prototype = {
 
     getInlineStyleAsync: function(nodeId, userCallback)
     {
-        function callback(userCallback, stylePayload)
+        function callback(userCallback, error, stylePayload)
         {
-            if (!stylePayload)
+            if (error || !stylePayload)
                 userCallback(null);
             else
                 userCallback(WebInspector.CSSStyleDeclaration.parsePayload(stylePayload));
@@ -114,17 +114,20 @@ WebInspector.CSSStyleModel.prototype = {
 
     setRuleSelector: function(ruleId, nodeId, newSelector, successCallback, failureCallback)
     {
-        function checkAffectsCallback(nodeId, successCallback, rulePayload, selectedNodeIds)
+        function checkAffectsCallback(nodeId, successCallback, rulePayload, error, selectedNodeIds)
         {
+            if (error)
+                return;
             var doesAffectSelectedNode = (selectedNodeIds.indexOf(nodeId) >= 0);
             var rule = WebInspector.CSSRule.parsePayload(rulePayload);
             successCallback(rule, doesAffectSelectedNode);
             this._styleSheetChanged(rule.id.styleSheetId, true);
         }
 
-        function callback(nodeId, successCallback, failureCallback, newSelector, rulePayload)
+        function callback(nodeId, successCallback, failureCallback, error, newSelector, rulePayload)
         {
-            if (!rulePayload)
+            // FIXME: looks lire rulePayload always null.
+            if (error || !rulePayload)
                 failureCallback();
             else
                 DOMAgent.querySelectorAll(nodeId, newSelector, true, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
@@ -135,7 +138,7 @@ WebInspector.CSSStyleModel.prototype = {
 
     addRule: function(nodeId, selector, successCallback, failureCallback)
     {
-        function checkAffectsCallback(nodeId, successCallback, rulePayload, selectedNodeIds)
+        function checkAffectsCallback(nodeId, successCallback, rulePayload, error, selectedNodeIds)
         {
             var doesAffectSelectedNode = (selectedNodeIds.indexOf(nodeId) >= 0);
             var rule = WebInspector.CSSRule.parsePayload(rulePayload);
@@ -143,9 +146,9 @@ WebInspector.CSSStyleModel.prototype = {
             this._styleSheetChanged(rule.id.styleSheetId, true);
         }
 
-        function callback(successCallback, failureCallback, selector, rulePayload)
+        function callback(successCallback, failureCallback, selector, error, rulePayload)
         {
-            if (!rulePayload) {
+            if (error || !rulePayload) {
                 // Invalid syntax for a selector
                 failureCallback();
             } else
@@ -160,8 +163,10 @@ WebInspector.CSSStyleModel.prototype = {
         if (!majorChange || !styleSheetId)
             return;
 
-        function callback(href, content)
+        function callback(error, href, content)
         {
+            if (error)
+                return;
             var resource = WebInspector.resourceForURL(href);
             if (resource && resource.type === WebInspector.Resource.Type.Stylesheet)
                 resource.setContent(content, this._onRevert.bind(this, styleSheetId));
@@ -171,8 +176,10 @@ WebInspector.CSSStyleModel.prototype = {
 
     _onRevert: function(styleSheetId, contentToRevertTo)
     {
-        function callback(success)
+        function callback(error, success)
         {
+            if (error)
+                return;
             this._styleSheetChanged(styleSheetId, true);
             this.dispatchEventToListeners("stylesheet changed");
         }
@@ -335,12 +342,12 @@ WebInspector.CSSStyleDeclaration.prototype = {
 
     insertPropertyAt: function(index, name, value, userCallback)
     {
-        function callback(userCallback, payload)
+        function callback(userCallback, error, payload)
         {
             if (!userCallback)
                 return;
 
-            if (!payload)
+            if (error || !payload)
                 userCallback(null);
             else {
                 userCallback(WebInspector.CSSStyleDeclaration.parsePayload(payload));
@@ -464,9 +471,9 @@ WebInspector.CSSProperty.prototype = {
                 userCallback(style);
         }
 
-        function callback(stylePayload)
+        function callback(error, stylePayload)
         {
-            if (stylePayload) {
+            if (!error && stylePayload) {
                 this.text = propertyText;
                 var style = WebInspector.CSSStyleDeclaration.parsePayload(stylePayload);
                 var newProperty = style.allProperties[this.index];
@@ -504,11 +511,11 @@ WebInspector.CSSProperty.prototype = {
         if (disabled === this.disabled && userCallback)
             userCallback(this.ownerStyle);
 
-        function callback(stylePayload)
+        function callback(error, stylePayload)
         {
             if (!userCallback)
                 return;
-            if (!stylePayload)
+            if (error || !stylePayload)
                 userCallback(null);
             else {
                 var style = WebInspector.CSSStyleDeclaration.parsePayload(stylePayload);
@@ -541,9 +548,9 @@ WebInspector.CSSStyleSheet = function(payload)
 
 WebInspector.CSSStyleSheet.createForId = function(styleSheetId, userCallback)
 {
-    function callback(styleSheetPayload)
+    function callback(error, styleSheetPayload)
     {
-        if (!styleSheetPayload)
+        if (error || !styleSheetPayload)
             userCallback(null);
         else
             userCallback(new WebInspector.CSSStyleSheet(styleSheetPayload));
@@ -559,9 +566,9 @@ WebInspector.CSSStyleSheet.prototype = {
 
     setText: function(newText, userCallback)
     {
-        function callback(styleSheetPayload)
+        function callback(error, styleSheetPayload)
         {
-            if (!styleSheetPayload)
+            if (error || !styleSheetPayload)
                 userCallback(null);
             else {
                 userCallback(new WebInspector.CSSStyleSheet(styleSheetPayload));

@@ -98,9 +98,10 @@ WebInspector.ExtensionWatchSidebarPane.prototype = {
         RuntimeAgent.evaluate(expression, "extension-watch", false, this._onEvaluate.bind(this, title));
     },
 
-    _onEvaluate: function(title, result)
+    _onEvaluate: function(title, error, result)
     {
-        this._setObject(WebInspector.RemoteObject.fromPayload(result), title);
+        if (!error)
+            this._setObject(WebInspector.RemoteObject.fromPayload(result), title);
     },
 
     _setObject: function(object, title)

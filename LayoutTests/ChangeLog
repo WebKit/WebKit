@@ -1,3 +1,28 @@
+2011-03-11  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: introduce error argument for all the callbacks on frontend.
+        https://bugs.webkit.org/show_bug.cgi?id=56100
+
+        * http/tests/inspector/extensions-test.js:
+        (initialize_ExtensionsTest.InspectorTest.runExtensionTests):
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.evaluateInPage.mycallback):
+        (initialize_InspectorTest.InspectorTest.evaluateInPage):
+        * inspector/console/console-dir-global.html:
+        * inspector/elements/dom-agent-query-selector.html:
+        * inspector/protocol/console-agent-expected.txt:
+        * inspector/protocol/console-agent.html:
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/protocol/runtime-agent.html:
+        * inspector/report-protocol-errors-expected.txt:
+        * inspector/report-protocol-errors.html:
+        * inspector/styles/styles-new-API.html:
+        * inspector/styles/styles-source-offsets.html:
+        * inspector/timeline/timeline-test.js:
+        (initialize_Timeline.InspectorTest.stopTimeline):
+
 2011-03-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

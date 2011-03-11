@@ -626,7 +626,9 @@ WebInspector.ProfilesPanel.prototype = {
         if (!this._profilerEnabled || this._profilesWereRequested)
             return;
 
-        function populateCallback(profileHeaders) {
+        function populateCallback(error, profileHeaders) {
+            if (error)
+                return;
             profileHeaders.sort(function(a, b) { return a.uid - b.uid; });
             var profileHeadersLength = profileHeaders.length;
             for (var i = 0; i < profileHeadersLength; ++i)

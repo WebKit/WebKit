@@ -65,9 +65,9 @@ WebInspector.AuditRules.getDomainToResourcesMap = function(resources, types, nee
 
 WebInspector.AuditRules.evaluateInTargetWindow = function(func, args, callback)
 {
-    function mycallback(result)
+    function mycallback(error, result)
     {
-        if (result)
+        if (!error && result)
             callback(JSON.parse(result.description));
         else
             callback(null);
@@ -385,9 +385,9 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                 continuation(styleSheets);
         }
 
-        function allStylesCallback(styleSheetIds)
+        function allStylesCallback(error, styleSheetIds)
         {
-            if (!styleSheetIds || !styleSheetIds.length)
+            if (error || !styleSheetIds || !styleSheetIds.length)
                 return evalCallback([]);
             var styleSheets = [];
             for (var i = 0; i < styleSheetIds.length; ++i)
@@ -717,8 +717,10 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
                 doneCallback();
         }
 
-        function getStyles(nodeIds)
+        function getStyles(error, nodeIds)
         {
+            if (error)
+                return;
             for (var i = 0; i < nodeIds.length; ++i)
                 WebInspector.cssModel.getStylesAsync(nodeIds[i], imageStylesReady.bind(this, nodeIds[i], i === nodeIds.length - 1));
         }

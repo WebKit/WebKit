@@ -426,9 +426,9 @@ WebInspector.ElementsTreeElement.prototype = {
             }
         }
 
-        function resolvedNode(objectPayload)
+        function resolvedNode(error, objectPayload)
         {
-            if (!objectPayload)
+            if (error || !objectPayload)
                 return;
 
             var object = WebInspector.RemoteObject.fromPayload(objectPayload);
@@ -969,10 +969,12 @@ WebInspector.ElementsTreeElement.prototype = {
         return true;
     },
 
-    _startEditingAsHTML: function(commitCallback, initialValue)
+    _startEditingAsHTML: function(commitCallback, error, initialValue)
     {
+        if (error)
+            return;
         if (this._htmlEditElement && WebInspector.isBeingEdited(this._htmlEditElement))
-            return true;
+            return;
 
         this._htmlEditElement = document.createElement("div");
         this._htmlEditElement.className = "source-code elements-tree-editor";
@@ -1164,9 +1166,9 @@ WebInspector.ElementsTreeElement.prototype = {
         var treeOutline = this.treeOutline;
         var wasExpanded = this.expanded;
 
-        function changeTagNameCallback(nodeId)
+        function changeTagNameCallback(error, nodeId)
         {
-            if (!nodeId) {
+            if (error || !nodeId) {
                 cancel();
                 return;
             }
@@ -1422,7 +1424,7 @@ WebInspector.ElementsTreeElement.prototype = {
         {
             // -1 is an error code, which means removing the node from the DOM failed,
             // so we shouldn't remove it from the tree.
-            if (removedNodeId === -1)
+            if (error || removedNodeId === -1)
                 return;
 
             parentElement.removeChild(self);
@@ -1438,9 +1440,9 @@ WebInspector.ElementsTreeElement.prototype = {
         var node = this.representedObject;
         var wasExpanded = this.expanded;
 
-        function selectNode(nodeId)
+        function selectNode(error, nodeId)
         {
-            if (!nodeId)
+            if (error || !nodeId)
                 return;
 
             // Select it and expand if necessary. We force tree update so that it processes dom events and is up to date.

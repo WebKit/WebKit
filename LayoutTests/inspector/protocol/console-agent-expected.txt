@@ -7,7 +7,7 @@ ConsoleAgent.setConsoleMessagesEnabled(false)
 
 request:
 {
-    seq : <number>
+    id : <number>
     domain : "Console"
     command : "setConsoleMessagesEnabled"
     arguments : {
@@ -17,7 +17,7 @@ request:
 
 response:
 {
-    seq : <number>
+    requestId : <number>
     body : {
         newState : false
     }
@@ -28,7 +28,7 @@ ConsoleAgent.setConsoleMessagesEnabled(true)
 
 request:
 {
-    seq : <number>
+    id : <number>
     domain : "Console"
     command : "setConsoleMessagesEnabled"
     arguments : {
@@ -38,7 +38,7 @@ request:
 
 response:
 {
-    seq : <number>
+    requestId : <number>
     body : {
         newState : true
     }
@@ -49,7 +49,7 @@ RuntimeAgent.evaluate("console.info('test'); console.info('test')","test-group",
 
 request:
 {
-    seq : <number>
+    id : <number>
     domain : "Runtime"
     command : "evaluate"
     arguments : {
@@ -96,7 +96,7 @@ event ConsoleAgent.updateConsoleMessageRepeatCount
 
 response:
 {
-    seq : <number>
+    requestId : <number>
     body : {
         result : {
             type : "undefined"
@@ -110,7 +110,7 @@ ConsoleAgent.clearConsoleMessages()
 
 request:
 {
-    seq : <number>
+    id : <number>
     domain : "Console"
     command : "clearConsoleMessages"
     arguments : {
@@ -128,7 +128,7 @@ event ConsoleAgent.consoleMessagesCleared
 
 response:
 {
-    seq : <number>
+    requestId : <number>
 }
 
 -----------------------------------------------------------
@@ -136,7 +136,7 @@ ConsoleAgent.setMonitoringXHREnabled(false)
 
 request:
 {
-    seq : <number>
+    id : <number>
     domain : "Console"
     command : "setMonitoringXHREnabled"
     arguments : {
@@ -146,7 +146,7 @@ request:
 
 response:
 {
-    seq : <number>
+    requestId : <number>
 }
 
 -----------------------------------------------------------
@@ -154,7 +154,7 @@ ConsoleAgent.setMonitoringXHREnabled(true)
 
 request:
 {
-    seq : <number>
+    id : <number>
     domain : "Console"
     command : "setMonitoringXHREnabled"
     arguments : {
@@ -164,7 +164,7 @@ request:
 
 response:
 {
-    seq : <number>
+    requestId : <number>
 }
 
 -----------------------------------------------------------
@@ -172,7 +172,7 @@ ConsoleAgent.addInspectedNode(<number>)
 
 request:
 {
-    seq : <number>
+    id : <number>
     domain : "Console"
     command : "addInspectedNode"
     arguments : {
@@ -182,7 +182,7 @@ request:
 
 response:
 {
-    seq : <number>
+    requestId : <number>
 }
 
 ===========================================================

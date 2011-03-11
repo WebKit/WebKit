@@ -87,9 +87,9 @@ WebInspector.DebuggerModel.prototype = {
         }
         columnNumber = Math.max(columnNumber, minColumnNumber);
 
-        function didSetBreakpoint(breakpointsPushedToBackend, breakpointId, locations)
+        function didSetBreakpoint(breakpointsPushedToBackend, error, breakpointId, locations)
         {
-            if (!breakpointId) {
+            if (error || !breakpointId) {
                 WebInspector.log("failed");
                 return;
             }
@@ -106,9 +106,9 @@ WebInspector.DebuggerModel.prototype = {
 
     setBreakpointBySourceId: function(sourceID, lineNumber, columnNumber, condition, enabled)
     {
-        function didSetBreakpoint(breakpointId, actualLineNumber, actualColumnNumber)
+        function didSetBreakpoint(error, breakpointId, actualLineNumber, actualColumnNumber)
         {
-            if (!breakpointId)
+            if (error || !breakpointId)
                 return;
             var breakpoint = new WebInspector.Breakpoint(breakpointId, "", sourceID, lineNumber, columnNumber, condition, enabled);
             breakpoint.addLocation(sourceID, actualLineNumber, actualColumnNumber);
@@ -222,8 +222,10 @@ WebInspector.DebuggerModel.prototype = {
 
     editScriptSource: function(sourceID, scriptSource)
     {
-        function didEditScriptSource(success, newBodyOrErrorMessage, callFrames)
+        function didEditScriptSource(error, success, newBodyOrErrorMessage, callFrames)
         {
+            if (error)
+                return;
             if (success) {
                 if (callFrames && callFrames.length)
                     this._callFrames = callFrames;

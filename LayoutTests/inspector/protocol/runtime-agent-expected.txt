@@ -5,7 +5,7 @@ RuntimeAgent.evaluate("testObject","test",false)
 
 request:
 {
-    seq : <number>
+    id : <number>
     domain : "Runtime"
     command : "evaluate"
     arguments : {
@@ -17,7 +17,7 @@ request:
 
 response:
 {
-    seq : <number>
+    requestId : <number>
     body : {
         result : {
             objectId : {
@@ -36,7 +36,7 @@ RuntimeAgent.evaluateOn({"injectedScriptId":<number>,"id":<number>},"this.assign
 
 request:
 {
-    seq : <number>
+    id : <number>
     domain : "Runtime"
     command : "evaluateOn"
     arguments : {
@@ -50,7 +50,7 @@ request:
 
 response:
 {
-    seq : <number>
+    requestId : <number>
     body : {
         result : {
             type : "undefined"
@@ -64,7 +64,7 @@ RuntimeAgent.setPropertyValue({"injectedScriptId":<number>,"id":<number>},"assig
 
 request:
 {
-    seq : <number>
+    id : <number>
     domain : "Runtime"
     command : "setPropertyValue"
     arguments : {
@@ -79,7 +79,7 @@ request:
 
 response:
 {
-    seq : <number>
+    requestId : <number>
     body : {
         result : true
     }
@@ -90,7 +90,7 @@ RuntimeAgent.setPropertyValue({"injectedScriptId":<number>,"id":<number>},"remov
 
 request:
 {
-    seq : <number>
+    id : <number>
     domain : "Runtime"
     command : "setPropertyValue"
     arguments : {
@@ -105,7 +105,7 @@ request:
 
 response:
 {
-    seq : <number>
+    requestId : <number>
     body : {
         result : true
     }
@@ -116,7 +116,7 @@ RuntimeAgent.getProperties({"injectedScriptId":<number>,"id":<number>},false,fal
 
 request:
 {
-    seq : <number>
+    id : <number>
     domain : "Runtime"
     command : "getProperties"
     arguments : {
@@ -131,7 +131,7 @@ request:
 
 response:
 {
-    seq : <number>
+    requestId : <number>
     body : {
         result : {
             0 : {
@@ -169,7 +169,7 @@ RuntimeAgent.releaseObject({"injectedScriptId":<number>,"id":<number>})
 
 request:
 {
-    seq : <number>
+    id : <number>
     domain : "Runtime"
     command : "releaseObject"
     arguments : {
@@ -182,7 +182,7 @@ request:
 
 response:
 {
-    seq : <number>
+    requestId : <number>
 }
 
 -----------------------------------------------------------
@@ -190,7 +190,7 @@ RuntimeAgent.releaseObjectGroup(<number>,"test")
 
 request:
 {
-    seq : <number>
+    id : <number>
     domain : "Runtime"
     command : "releaseObjectGroup"
     arguments : {
@@ -201,7 +201,7 @@ request:
 
 response:
 {
-    seq : <number>
+    requestId : <number>
 }
 
 ===========================================================

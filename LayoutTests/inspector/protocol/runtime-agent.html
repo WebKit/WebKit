@@ -14,8 +14,9 @@ testProperty = true;
 
 function test()
 {
-    function callback(result)
+    function callback(error, result)
     {
+        var invalidObjectId = {id: -1, injectedScriptId: result.objectId.injectedScriptId};
         var testSuite = [
             ["RuntimeAgent", "evaluate", 'testObject', 'test', false],
             ["RuntimeAgent", "evaluateOn", result.objectId, 'this.assignedByEvaluateOn = "evaluateOn function works fine";'],
@@ -25,7 +26,7 @@ function test()
             ["RuntimeAgent", "releaseObject", result.objectId],
             ["RuntimeAgent", "releaseObjectGroup", result.objectId.injectedScriptId, 'test']];
 
-        InspectorTest.runProtocolTestSuite("RuntimeAgent", testSuite, ['seq', 'id', 'injectedScriptId']);
+        InspectorTest.runProtocolTestSuite("RuntimeAgent", testSuite, ['id', 'requestId', 'injectedScriptId']);
     }
 
     RuntimeAgent.evaluate('window.testObject', 'test', false, callback);

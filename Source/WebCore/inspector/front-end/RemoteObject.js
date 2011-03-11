@@ -48,8 +48,10 @@ WebInspector.RemoteObject.fromLocalObject = function(value)
 
 WebInspector.RemoteObject.resolveNode = function(node, callback)
 {
-    function mycallback(object)
+    function mycallback(error, object)
     {
+        if (error)
+            return;
         callback(object ? WebInspector.RemoteObject.fromPayload(object) : null);
     }
     DOMAgent.resolveNode(node.id, "dom-selection", mycallback);
@@ -112,8 +114,10 @@ WebInspector.RemoteObject.prototype = {
             callback([]);
             return;
         }
-        function remoteObjectBinder(properties)
+        function remoteObjectBinder(error, properties)
         {
+            if (error)
+                return;
             for (var i = 0; properties && i < properties.length; ++i)
                 properties[i].value = WebInspector.RemoteObject.fromPayload(properties[i].value);
             callback(properties);
@@ -127,7 +131,7 @@ WebInspector.RemoteObject.prototype = {
             callback(false);
             return;
         }
-        RuntimeAgent.setPropertyValue(this._objectId, name, value, callback);
+        RuntimeAgent.setPropertyValue(this._objectId, name, value, errorFilter.bind(this, callback));
     },
 
     pushNodeToFrontend: function(callback)
@@ -140,7 +144,7 @@ WebInspector.RemoteObject.prototype = {
 
     evaluate: function(expression, callback)
     {
-        RuntimeAgent.evaluateOn(this._objectId, expression, callback);
+        RuntimeAgent.evaluateOn(this._objectId, expression, errorFilter.bind(this, callback));
     }
 }
 

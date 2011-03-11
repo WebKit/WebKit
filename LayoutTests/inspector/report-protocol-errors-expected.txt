@@ -1,64 +1,64 @@
 Tests that InspectorBackendDispatcher is catching incorrect messages.
 
 {
-    seq : 0
-    errors : {
+    requestId : 0
+    protocolErrors : {
         0 : "Protocol Error: Invalid message format. Message should be in JSON format."
     }
 }
 {
-    seq : 0
-    errors : {
+    requestId : 0
+    protocolErrors : {
         0 : "Protocol Error: Invalid message format. 'command' property wasn't found."
     }
 }
 {
-    seq : 0
-    errors : {
+    requestId : 0
+    protocolErrors : {
         0 : "Protocol Error: Invalid message format. The type of 'command' property should be string."
     }
 }
 {
-    seq : 0
-    errors : {
-        0 : "Protocol Error: Invalid message format. 'seq' property was not found in the request."
+    requestId : 0
+    protocolErrors : {
+        0 : "Protocol Error: Invalid message format. 'id' property was not found in the request."
     }
 }
 {
-    seq : 0
-    errors : {
-        0 : "Protocol Error: Invalid message format. The type of 'seq' property should be number."
+    requestId : 0
+    protocolErrors : {
+        0 : "Protocol Error: Invalid message format. The type of 'id' property should be number."
     }
 }
 {
-    seq : 1
-    errors : {
+    requestId : 1
+    protocolErrors : {
         0 : "Protocol Error: Invalid command was received. 'test' wasn't found in domain DOM."
     }
 }
 {
-    seq : 2
-    errors : {
+    requestId : 2
+    protocolErrors : {
         0 : "Protocol Error: 'arguments' property with type 'object' was not found."
     }
 }
 {
-    seq : 3
-    errors : {
+    requestId : 3
+    protocolErrors : {
         0 : "Protocol Error: 'arguments' property with type 'object' was not found."
     }
 }
 {
-    seq : 4
-    errors : {
+    requestId : 4
+    protocolErrors : {
         0 : "Protocol Error: Argument 'frameId' with type 'Number' was not found."
         1 : "Protocol Error: Argument 'url' with type 'String' was not found."
         2 : "Protocol Error: Argument 'base64Encode' with type 'Boolean' was not found."
     }
 }
 {
-    seq : 5
-    errors : {
+    requestId : 5
+    protocolErrors : {
         0 : "Protocol Error: Argument 'frameId' with type 'Number' was not found."
         1 : "Protocol Error: Argument 'url' with type 'String' was not found."
         2 : "Protocol Error: Argument 'base64Encode' with type 'Boolean' was not found."

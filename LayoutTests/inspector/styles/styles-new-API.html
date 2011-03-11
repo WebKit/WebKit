@@ -14,8 +14,13 @@ function test()
     var bodyId;
     function test_styles(node)
     {
-        function callback(styles)
+        function callback(error, styles)
         {
+            if (error) {
+                InspectorTest.addError("error: " + error);
+                return;
+            }
+
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Computed style property count for body ===");
             var propCount = styles.computedStyle.cssProperties.length;
@@ -56,8 +61,12 @@ function test()
 
     function test_tableStyles()
     {
-        function callback(styles)
+        function callback(error, styles)
         {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                return;
+            }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Attribute styles for table ===");
             for (var attr in styles.styleAttributes) {
@@ -73,7 +82,7 @@ function test()
         }
         InspectorTest.nodeWithId("thetable", nodeCallback);
     }
-    
+
     function test_styleSheets()
     {
         var newStyleSheetText =
@@ -93,8 +102,12 @@ function test()
                 loadAndDumpStyleSheet.bind(null, styleSheet.styleSheetId, test_changeSelector));
         }
 
-        function styleSheetIdsLoaded(ids)
+        function styleSheetIdsLoaded(error, ids)
         {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                return;
+            }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== All stylesheets ===");
             for (var i = 0; i < ids.length; ++i)
@@ -105,8 +118,12 @@ function test()
 
     function test_changeSelector(styleSheet)
     {
-        function didSetSelector(rule)
+        function didSetSelector(error, rule)
         {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                return;
+            }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== After selector set ===");
             loadAndDumpStyleSheet(rule.ruleId.styleSheetId, test_setStyleText);
@@ -117,8 +134,12 @@ function test()
 
     function test_setStyleText(styleSheet)
     {
-        function didSetStyleText(style)
+        function didSetStyleText(error, style)
         {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                return;
+            }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== After style text set ===");
             loadAndDumpStyleSheet(style.styleId.styleSheetId, test_addRule);
@@ -134,21 +155,33 @@ function test()
 
     function test_addRule()
     {
-        function didGetStyles(styles)
+        function didGetStyles(error, styles)
         {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                return;
+            }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Matched rules after rule added ===");
             dumpRulesArray(styles.matchedCSSRules);
             test_disableProperty();
         }
 
-        function didSetStyleText(style)
+        function didSetStyleText(error, style)
         {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                return;
+            }
             CSSAgent.getStylesForNode(bodyId, didGetStyles);
         }
 
-        function ruleAdded(rule)
+        function ruleAdded(error, rule)
         {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                return;
+            }
             CSSAgent.setPropertyText(rule.style.styleId, 0, "font-family: serif;", false, didSetStyleText);
         }
 
@@ -157,16 +190,24 @@ function test()
 
     function test_disableProperty()
     {
-        function didDisableProperty(style)
+        function didDisableProperty(error, style)
         {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                return;
+            }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== After two properties disabled, one property added, one property removed ===");
             dumpRuleOrStyle(style);
             test_enableProperty(style.styleId);
         }
 
-        function stylesCallback(styles)
+        function stylesCallback(error, styles)
         {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                return;
+            }
             // height : 100% ;
             // border: 1px solid;
             // border-width: 2px;
@@ -207,8 +248,12 @@ function test()
 
     function test_enableProperty(styleId)
     {
-        function didEnableProperty(style)
+        function didEnableProperty(error, style)
         {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                return;
+            }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== After property enabled ===");
             dumpRuleOrStyle(style);
@@ -248,10 +293,18 @@ function test()
     }
 
 
-    function loadAndDumpStyleSheet(styleSheetId, continuation)
+    function loadAndDumpStyleSheet(styleSheetId, continuation, error)
     {
-        function styleSheetLoaded(styleSheet)
+        if (error) {
+            InspectorTest.addRecord("error: " + error);
+            return;
+        }
+        function styleSheetLoaded(error, styleSheet)
         {
+            if (error) {
+                InspectorTest.addRecord("error: " + error);
+                return;
+            }
             InspectorTest.addResult("");
             InspectorTest.addResult("StyleSheet: '" + styleSheet.text + "'");
             for (var i = 0; i < styleSheet.rules.length; ++i)

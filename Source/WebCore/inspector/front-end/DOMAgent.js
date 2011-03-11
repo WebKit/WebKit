@@ -104,7 +104,7 @@ WebInspector.DOMNode.prototype = {
 
     setNodeName: function(name, callback)
     {
-        DOMAgent.setNodeName(this.id, name, callback);
+        DOMAgent.setNodeName(this.id, name, errorFilter.bind(null, callback));
     },
 
     localName: function()
@@ -119,7 +119,7 @@ WebInspector.DOMNode.prototype = {
 
     setNodeValue: function(value, callback)
     {
-        DOMAgent.setNodeValue(this.id, value, callback);
+        DOMAgent.setNodeValue(this.id, value, errorFilter.bind(null, callback));
     },
 
     getAttribute: function(name)
@@ -130,9 +130,9 @@ WebInspector.DOMNode.prototype = {
 
     setAttribute: function(name, value, callback)
     {
-        function mycallback(success)
+        function mycallback(error, success)
         {
-            if (!success)
+            if (error || !success)
                 return;
 
             var attr = this._attributesMap[name];
@@ -154,9 +154,9 @@ WebInspector.DOMNode.prototype = {
 
     removeAttribute: function(name, callback)
     {
-        function mycallback(success)
+        function mycallback(error, success)
         {
-            if (!success)
+            if (error || !success)
                 return;
 
             delete this._attributesMap[name];
@@ -180,8 +180,8 @@ WebInspector.DOMNode.prototype = {
             return;
         }
 
-        function mycallback() {
-            if (callback)
+        function mycallback(error) {
+            if (!error && callback)
                 callback(this.children);
         }
         DOMAgent.childNodes(this.id, mycallback.bind(this));
@@ -189,22 +189,22 @@ WebInspector.DOMNode.prototype = {
 
     outerHTML: function(callback)
     {
-        DOMAgent.outerHTML(this.id, callback);
+        DOMAgent.outerHTML(this.id, errorFilter.bind(null, callback));
     },
 
     setOuterHTML: function(html, callback)
     {
-        DOMAgent.setOuterHTML(this.id, html, callback);
+        DOMAgent.setOuterHTML(this.id, html, errorFilter.bind(null, callback));
     },
 
     removeNode: function(callback)
     {
-        DOMAgent.removeNode(this.id);
+        DOMAgent.removeNode(this.id, errorFilter.bind(null, callback));
     },
 
-    copyNode: function()
+    copyNode: function(callback)
     {
-        DOMAgent.copyNode(this.id);
+        DOMAgent.copyNode(this.id, errorFilter.bind(null, callback));
     },
 
     path: function()
@@ -357,7 +357,7 @@ WebInspector.DOMAgent.prototype = {
         function mycallback()
         {
             if (this._document)
-                DOMAgent.pushNodeToFrontend(objectId, callback);
+                DOMAgent.pushNodeToFrontend(objectId, errorFilter.bind(null, callback));
             else {
                 if (callback)
                     callback(0);
@@ -371,7 +371,7 @@ WebInspector.DOMAgent.prototype = {
         function mycallback()
         {
             if (this._document)
-                DOMAgent.pushNodeByPathToFrontend(path, callback);
+                DOMAgent.pushNodeByPathToFrontend(path, errorFilter.bind(null, callback));
             else {
                 if (callback)
                     callback(0);
@@ -403,8 +403,11 @@ WebInspector.DOMAgent.prototype = {
 
     _documentUpdated: function(callback)
     {
-        function mycallback(root)
+        function mycallback(error, root)
         {
+            if (error)
+                return;
+
             this._setDocument(root);
             if (callback)
                 callback(this._document);
@@ -553,10 +556,10 @@ WebInspector.ApplicationCacheDispatcher = function()
 
 WebInspector.ApplicationCacheDispatcher.getApplicationCachesAsync = function(callback)
 {
-    function mycallback(applicationCaches)
+    function mycallback(error, applicationCaches)
     {
         // FIXME: Currently, this list only returns a single application cache.
-        if (applicationCaches)
+        if (!error && applicationCaches)
             callback(applicationCaches);
     }
 
@@ -581,8 +584,10 @@ WebInspector.Cookies = {}
 
 WebInspector.Cookies.getCookiesAsync = function(callback)
 {
-    function mycallback(cookies, cookiesString)
+    function mycallback(error, cookies, cookiesString)
     {
+        if (error)
+            return;
         if (cookiesString)
             callback(WebInspector.Cookies.buildCookiesFromString(cookiesString), false);
         else
@@ -634,5 +639,5 @@ WebInspector.EventListeners.getEventListenersForNodeAsync = function(node, callb
 {
     if (!node)
         return;
-    DOMAgent.getEventListenersForNode(node.id, callback);
+    DOMAgent.getEventListenersForNode(node.id, errorFilter.bind(this, callback));
 }

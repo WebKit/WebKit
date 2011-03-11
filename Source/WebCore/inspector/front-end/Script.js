@@ -115,8 +115,10 @@ WebInspector.Script.prototype = {
             return;
         }
 
-        function didGetScriptSource(source)
+        function didGetScriptSource(error, source)
         {
+            if (error)
+                return;
             this._source = source;
             callback(this._source);
         }

@@ -1104,9 +1104,10 @@ WebInspector.ElementsPanel.prototype = {
         this._nodeSearchButton.toggled = false;
     },
 
-    _setSearchingForNode: function(enabled)
+    _setSearchingForNode: function(error, enabled)
     {
-        this._nodeSearchButton.toggled = enabled;
+        if (!error)
+            this._nodeSearchButton.toggled = enabled;
     },
 
     setSearchingForNode: function(enabled)
