@@ -1,3 +1,32 @@
+2011-03-10  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Make updateAndDrawLayers argumentless.
+        https://bugs.webkit.org/show_bug.cgi?id=55985
+
+        Made the TilePainters and viewport parameters for
+        LayerRendererChromium member variables instead of arguments on
+        updateAndDrawLayers. In a future change, this will allows us to
+        draw the layer tree without the WebView's assistance.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::scrollRootLayerRect):
+        (WebKit::WebViewImpl::invalidateRootLayerRect):
+        (WebKit::WebViewImplContentPainter::create):
+        (WebKit::WebViewImplContentPainter::paint):
+        (WebKit::WebViewImplContentPainter::WebViewImplContentPainter):
+        (WebKit::WebViewImplScrollbarPainter::create):
+        (WebKit::WebViewImplScrollbarPainter::paint):
+        (WebKit::WebViewImplScrollbarPainter::WebViewImplScrollbarPainter):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::doComposite):
+        (WebKit::WebViewImpl::reallocateRenderer):
+        (WebKit::WebViewImpl::updateLayerRendererViewport):
+        * src/WebViewImpl.h:
+
 2011-03-10  Tony Chang  <tony@chromium.org>
 
         Unreviewed, roll chromium version to r77259 to pick up

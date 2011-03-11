@@ -962,13 +962,14 @@ void WebViewImpl::resize(const WebSize& newSize)
     }
 
     if (m_client) {
-        WebRect damagedRect(0, 0, m_size.width, m_size.height);
         if (isAcceleratedCompositingActive()) {
 #if USE(ACCELERATED_COMPOSITING)
-            invalidateRootLayerRect(damagedRect);
+            updateLayerRendererViewport();
 #endif
-        } else
+        } else {
+            WebRect damagedRect(0, 0, m_size.width, m_size.height);
             m_client->didInvalidateRect(damagedRect);
+        }
     }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -1057,7 +1058,7 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
         if (canvas) {
             // Clip rect to the confines of the rootLayerTexture.
             IntRect resizeRect(rect);
-            resizeRect.intersect(IntRect(IntPoint(), m_layerRenderer->visibleRectSize()));
+            resizeRect.intersect(IntRect(IntPoint(), m_layerRenderer->viewportSize()));
             doPixelReadbackToCanvas(canvas, resizeRect);
         }
 #endif
@@ -2279,6 +2280,7 @@ void WebViewImpl::setRootLayerNeedsDisplay()
 
 void WebViewImpl::scrollRootLayerRect(const IntSize& scrollDelta, const IntRect& clipRect)
 {
+    updateLayerRendererViewport();
     setRootLayerNeedsDisplay();
 }
 
@@ -2290,60 +2292,18 @@ void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
         return;
 
     FrameView* view = page()->mainFrame()->view();
-    IntRect contentRect = view->visibleContentRect(false);
-    IntRect visibleRect = view->visibleContentRect(true);
-
     IntRect dirtyRect = view->windowToContents(rect);
-    m_layerRenderer->invalidateRootLayerRect(dirtyRect, visibleRect, contentRect);
+    updateLayerRendererViewport();
+    m_layerRenderer->invalidateRootLayerRect(dirtyRect);
     setRootLayerNeedsDisplay();
 }
 
-
-void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
-{
-    PlatformBridge::histogramEnumeration("GPU.setIsAcceleratedCompositingActive", active * 2 + m_isAcceleratedCompositingActive, 4);
-
-    if (m_isAcceleratedCompositingActive == active)
-        return;
-
-    if (!active) {
-        m_isAcceleratedCompositingActive = false;
-        if (m_layerRenderer)
-            m_layerRenderer->finish(); // finish all GL rendering before we hide the window?
-        m_client->didActivateAcceleratedCompositing(false);
-    } else if (m_layerRenderer) {
-        m_isAcceleratedCompositingActive = true;
-        m_layerRenderer->resizeOnscreenContent(WebCore::IntSize(std::max(1, m_size.width),
-                                                                std::max(1, m_size.height)));
-
-        m_client->didActivateAcceleratedCompositing(true);
-    } else {
-        RefPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
-        if (!context) {
-            context = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-            if (context)
-                context->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
-        }
-        m_layerRenderer = LayerRendererChromium::create(context.release());
-        if (m_layerRenderer) {
-            m_client->didActivateAcceleratedCompositing(true);
-            m_isAcceleratedCompositingActive = true;
-            m_compositorCreationFailed = false;
-        } else {
-            m_isAcceleratedCompositingActive = false;
-            m_client->didActivateAcceleratedCompositing(false);
-            m_compositorCreationFailed = true;
-        }
-    }
-    if (page())
-        page()->mainFrame()->view()->setClipsRepaints(!m_isAcceleratedCompositingActive);
-}
-
-class WebViewImplTilePaintInterface : public TilePaintInterface {
+class WebViewImplContentPainter : public TilePaintInterface {
+    WTF_MAKE_NONCOPYABLE(WebViewImplContentPainter);
 public:
-    explicit WebViewImplTilePaintInterface(WebViewImpl* webViewImpl)
-        : m_webViewImpl(webViewImpl)
+    static PassOwnPtr<WebViewImplContentPainter*> create(WebViewImpl* webViewImpl)
     {
+        return adoptPtr(new WebViewImplContentPainter(webViewImpl));
     }
 
     virtual void paint(GraphicsContext& context, const IntRect& contentRect)
@@ -2356,15 +2316,20 @@ public:
     }
 
 private:
+    explicit WebViewImplContentPainter(WebViewImpl* webViewImpl)
+        : m_webViewImpl(webViewImpl)
+    {
+    }
+
     WebViewImpl* m_webViewImpl;
 };
 
-
-class WebViewImplScrollbarPaintInterface : public TilePaintInterface {
+class WebViewImplScrollbarPainter : public TilePaintInterface {
+    WTF_MAKE_NONCOPYABLE(WebViewImplScrollbarPainter);
 public:
-    explicit WebViewImplScrollbarPaintInterface(WebViewImpl* webViewImpl)
-        : m_webViewImpl(webViewImpl)
+    static PassOwnPtr<WebViewImplScrollbarPainter> create(WebViewImpl* webViewImpl)
     {
+        return adoptPtr(new WebViewImplScrollbarPainter(webViewImpl));
     }
 
     virtual void paint(GraphicsContext& context, const IntRect& contentRect)
@@ -2380,8 +2345,57 @@ public:
     }
 
 private:
+    explicit WebViewImplScrollbarPainter(WebViewImpl* webViewImpl)
+        : m_webViewImpl(webViewImpl)
+    {
+    }
+
     WebViewImpl* m_webViewImpl;
 };
+
+void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
+{
+    PlatformBridge::histogramEnumeration("GPU.setIsAcceleratedCompositingActive", active * 2 + m_isAcceleratedCompositingActive, 4);
+
+    if (m_isAcceleratedCompositingActive == active)
+        return;
+
+    if (!active) {
+        m_isAcceleratedCompositingActive = false;
+        // We need to finish all GL rendering before sending
+        // didActivateAcceleratedCompositing(false) to prevent
+        // flickering when compositing turns off.
+        if (m_layerRenderer)
+            m_layerRenderer->finish();
+        m_client->didActivateAcceleratedCompositing(false);
+    } else if (m_layerRenderer) {
+        m_isAcceleratedCompositingActive = true;
+        m_layerRenderer->resizeOnscreenContent(WebCore::IntSize(std::max(1, m_size.width),
+                                                                std::max(1, m_size.height)));
+
+        m_client->didActivateAcceleratedCompositing(true);
+    } else {
+        RefPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
+        if (!context) {
+            context = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+            if (context)
+                context->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
+        }
+
+        m_layerRenderer = LayerRendererChromium::create(context.release(), WebViewImplContentPainter::create(this), WebViewImplScrollbarPainter::create(this));
+        if (m_layerRenderer) {
+            m_client->didActivateAcceleratedCompositing(true);
+            m_isAcceleratedCompositingActive = true;
+            m_compositorCreationFailed = false;
+        } else {
+            m_isAcceleratedCompositingActive = false;
+            m_client->didActivateAcceleratedCompositing(false);
+            m_compositorCreationFailed = true;
+        }
+    }
+    if (page())
+        page()->mainFrame()->view()->setClipsRepaints(!m_isAcceleratedCompositingActive);
+}
 
 void WebViewImpl::doComposite()
 {
@@ -2389,26 +2403,13 @@ void WebViewImpl::doComposite()
     if (!page())
         return;
 
-    FrameView* view = page()->mainFrame()->view();
-
-    // The visibleRect includes scrollbars whereas the contentRect doesn't.
-    IntRect visibleRect = view->visibleContentRect(true);
-    IntRect contentRect = view->visibleContentRect(false);
-    IntPoint scroll(view->scrollX(), view->scrollY());
-
-    WebViewImplTilePaintInterface tilePaint(this);
-
-    WebViewImplScrollbarPaintInterface scrollbarPaint(this);
     m_layerRenderer->setCompositeOffscreen(settings()->compositeToTextureEnabled());
 
     CCHeadsUpDisplay* hud = m_layerRenderer->headsUpDisplay();
     hud->setShowFPSCounter(settings()->showFPSCounter());
     hud->setShowPlatformLayerTree(settings()->showPlatformLayerTree());
 
-    m_layerRenderer->updateAndDrawLayers(visibleRect, contentRect, scroll, tilePaint, scrollbarPaint);
-
-    if (m_layerRenderer->isCompositingOffscreen())
-        m_layerRenderer->copyOffscreenTextureToDisplay();
+    m_layerRenderer->updateAndDrawLayers();
 }
 
 void WebViewImpl::reallocateRenderer()
@@ -2416,7 +2417,7 @@ void WebViewImpl::reallocateRenderer()
     GraphicsContext3D* context = m_layerRenderer->context();
     RefPtr<GraphicsContext3D> newContext = GraphicsContext3D::create(context->getContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
     // GraphicsContext3D::create might fail and return 0, in that case LayerRendererChromium::create will also return 0.
-    RefPtr<LayerRendererChromium> layerRenderer = LayerRendererChromium::create(newContext);
+    RefPtr<LayerRendererChromium> layerRenderer = LayerRendererChromium::create(newContext, WebViewImplContentPainter::create(this), WebViewImplScrollbarPainter::create(this));
 
     // Reattach the root layer.  Child layers will get reattached as a side effect of updateLayersRecursive.
     if (layerRenderer)
@@ -2428,6 +2429,20 @@ void WebViewImpl::reallocateRenderer()
 }
 #endif
 
+void WebViewImpl::updateLayerRendererViewport()
+{
+    ASSERT(m_layerRenderer);
+
+    if (!page())
+        return;
+
+    FrameView* view = page()->mainFrame()->view();
+    IntRect contentRect = view->visibleContentRect(false);
+    IntRect visibleRect = view->visibleContentRect(true);
+    IntPoint scroll(view->scrollX(), view->scrollY());
+
+    m_layerRenderer->setViewport(visibleRect, contentRect, scroll);
+}
 
 WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
 {

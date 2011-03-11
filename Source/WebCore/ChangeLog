@@ -1,3 +1,36 @@
+2011-03-10  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Make updateAndDrawLayers argumentless.
+        https://bugs.webkit.org/show_bug.cgi?id=55985
+
+        Made the TilePainters and viewport parameters for
+        LayerRendererChromium member variables instead of arguments on
+        updateAndDrawLayers. In a future change, this will allows us to
+        draw the layer tree without the WebView's assistance.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::verticalScrollbarRect):
+        (WebCore::LayerRendererChromium::horizontalScrollbarRect):
+        (WebCore::LayerRendererChromium::invalidateRootLayerRect):
+        (WebCore::LayerRendererChromium::updateRootLayerContents):
+        (WebCore::LayerRendererChromium::updateRootLayerScrollbars):
+        (WebCore::LayerRendererChromium::drawRootLayer):
+        (WebCore::LayerRendererChromium::setViewport):
+        (WebCore::LayerRendererChromium::updateAndDrawLayers):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::setRootLayer):
+        (WebCore::LayerRendererChromium::getFramebufferPixels):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::viewportSize):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+
 2011-01-25  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

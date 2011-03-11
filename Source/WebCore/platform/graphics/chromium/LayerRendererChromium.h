@@ -66,17 +66,18 @@ class CCHeadsUpDisplay;
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium : public RefCounted<LayerRendererChromium> {
 public:
-    static PassRefPtr<LayerRendererChromium> create(PassRefPtr<GraphicsContext3D> graphicsContext3D);
+    static PassRefPtr<LayerRendererChromium> create(PassRefPtr<GraphicsContext3D>, PassOwnPtr<TilePaintInterface> contentPaint, PassOwnPtr<TilePaintInterface> scrollbarPaint);
 
     ~LayerRendererChromium();
 
     GraphicsContext3D* context();
 
-    void invalidateRootLayerRect(const IntRect& dirtyRect, const IntRect& visibleRect, const IntRect& contentRect);
+    void invalidateRootLayerRect(const IntRect& dirtyRect);
+
+    void setViewport(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition);
 
     // updates and draws the current layers onto the backbuffer
-    void updateAndDrawLayers(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition,
-                             TilePaintInterface&, TilePaintInterface& scrollbarPaint);
+    void updateAndDrawLayers();
 
     // waits for rendering to finish
     void finish();
@@ -84,7 +85,7 @@ public:
     // puts backbuffer onscreen
     void present();
 
-    IntSize visibleRectSize() const { return m_visibleRect.size(); }
+    IntSize viewportSize() const { return m_viewportVisibleRect.size(); }
 
     void setRootLayer(PassRefPtr<LayerChromium> layer);
     LayerChromium* rootLayer() { return m_rootLayer.get(); }
@@ -94,8 +95,6 @@ public:
 
     void setCompositeOffscreen(bool);
     bool isCompositingOffscreen() const { return m_compositeOffscreen; }
-    LayerTexture* getOffscreenLayerTexture();
-    void copyOffscreenTextureToDisplay();
 
     unsigned createLayerTexture();
     void deleteLayerTexture(unsigned);
@@ -132,12 +131,11 @@ public:
     String layerTreeAsText() const;
 
 private:
-    explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D> graphicsContext3D);
+    explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D>, PassOwnPtr<TilePaintInterface> contentPaint, PassOwnPtr<TilePaintInterface> scrollbarPaint);
 
-    void updateLayers(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition,
-                     Vector<CCLayerImpl*>& renderSurfaceLayerList);
-    void updateRootLayerContents(TilePaintInterface&, const IntRect& visibleRect);
-    void updateRootLayerScrollbars(TilePaintInterface& scrollbarPaint, const IntRect& visibleRect, const IntRect& contentRect);
+    void updateLayers(Vector<CCLayerImpl*>& renderSurfaceLayerList);
+    void updateRootLayerContents();
+    void updateRootLayerScrollbars();
     void updatePropertiesAndRenderSurfaces(LayerChromium*, const TransformationMatrix& parentMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList);
     void updateContentsRecursive(LayerChromium*);
 
@@ -145,6 +143,8 @@ private:
     void drawLayer(CCLayerImpl*, RenderSurfaceChromium*);
 
     void drawRootLayer();
+    LayerTexture* getOffscreenLayerTexture();
+    void copyOffscreenTextureToDisplay();
 
     bool isLayerVisible(LayerChromium*, const TransformationMatrix&, const IntRect& visibleRect);
 
@@ -161,19 +161,22 @@ private:
     bool initializeSharedObjects();
     void cleanupSharedObjects();
 
-    static IntRect verticalScrollbarRect(const IntRect& visibleRect, const IntRect& contentRect);
-    static IntRect horizontalScrollbarRect(const IntRect& visibleRect, const IntRect& contentRect);
+    IntRect verticalScrollbarRect() const;
+    IntRect horizontalScrollbarRect() const;
 
-    IntRect m_visibleRect;
+    IntRect m_viewportVisibleRect;
+    IntRect m_viewportContentRect;
+    IntPoint m_viewportScrollPosition;
 
     TransformationMatrix m_projectionMatrix;
 
     RefPtr<LayerChromium> m_rootLayer;
-    OwnPtr<LayerTilerChromium> m_rootLayerTiler;
+    OwnPtr<TilePaintInterface> m_rootLayerContentPaint;
+    OwnPtr<TilePaintInterface> m_rootLayerScrollbarPaint;
+    OwnPtr<LayerTilerChromium> m_rootLayerContentTiler;
     OwnPtr<LayerTilerChromium> m_horizontalScrollbarTiler;
     OwnPtr<LayerTilerChromium> m_verticalScrollbarTiler;
 
-    IntPoint m_scrollPosition;
     bool m_hardwareCompositing;
 
     unsigned m_currentShader;

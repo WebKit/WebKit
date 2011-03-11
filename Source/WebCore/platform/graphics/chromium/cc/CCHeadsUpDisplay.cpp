@@ -66,8 +66,8 @@ void CCHeadsUpDisplay::draw()
     // Use a fullscreen texture only if we need to...
     IntSize hudSize;
     if (m_showPlatformLayerTree) {
-        hudSize.setWidth(min(2048, m_layerRenderer->visibleRectSize().width()));
-        hudSize.setHeight(min(2048, m_layerRenderer->visibleRectSize().height()));
+        hudSize.setWidth(min(2048, m_layerRenderer->viewportSize().width()));
+        hudSize.setHeight(min(2048, m_layerRenderer->viewportSize().height()));
     } else {
         hudSize.setWidth(512);
         hudSize.setHeight(128);

@@ -399,6 +399,7 @@ private:
     void doComposite();
     void doPixelReadbackToCanvas(WebCanvas*, const WebCore::IntRect&);
     void reallocateRenderer();
+    void updateLayerRendererViewport();
 #endif
 
     WebViewClient* m_client;
