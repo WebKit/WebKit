@@ -3374,12 +3374,6 @@ BUGROLANDSTEINER MAC : fast/lists/008-vertical.html = IMAGE+TEXT
 // incorrect computed style
 // started to pass again on Mac around WK r806548
 BUGROLANDSTEINER MAC : fast/css/getComputedStyle/computed-style.html = TEXT
-// started to pass again on Mac around WK r80659
-//BUGROLANDSTEINER MAC : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
-// started to pass after WK r80640
-//BUGROLANDSTEINER : fast/js/mozilla/strict/15.5.5.1.html = TEXT
-// started to pass after WK r80659
-//BUGROLANDSTEINER MAC : svg/css/getComputedStyle-basic.xhtml = TEXT
 
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 WIN LINUX : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT

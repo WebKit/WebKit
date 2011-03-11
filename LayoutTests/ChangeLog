@@ -1,3 +1,15 @@
+2011-03-11  Mihai Parparita  <mihaip@chromium.org>
+
+        Update Chromium expectations. Remove some commented out lines and
+        promote some expectatiosn from chromium-mac to mac-leopard, so that
+        those tests pass on chromium Snow Leopard (and mac Leopard).
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/block/basic/percent-height-inside-anonymous-block-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/block/basic/percent-height-inside-anonymous-block-expected.checksum.
+        * platform/mac-leopard/fast/block/basic/percent-height-inside-anonymous-block-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/block/basic/percent-height-inside-anonymous-block-expected.png.
+        * platform/mac-leopard/fast/block/positioning/static-distance-with-positioned-ancestor-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/block/positioning/static-distance-with-positioned-ancestor-expected.checksum.
+        * platform/mac-leopard/fast/block/positioning/static-distance-with-positioned-ancestor-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/block/positioning/static-distance-with-positioned-ancestor-expected.png.
+
 2011-03-11  Andy Estes  <aestes@apple.com>
 
         Reviewed by David Hyatt.
