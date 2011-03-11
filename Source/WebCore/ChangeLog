@@ -1,3 +1,16 @@
+2011-03-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL] Fix build break when CROSS_PLATFORM_CONTEXT_MENUS is disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=56005
+
+        There are build breaks when CROSS_PLATFORM_CONTEXT_MENUS is disabled.
+
+        * platform/efl/ContextMenuEfl.cpp:
+        (WebCore::ContextMenu::ContextMenu):
+        * platform/efl/ContextMenuItemEfl.cpp:
+
 2011-03-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

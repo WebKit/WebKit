@@ -34,11 +34,6 @@
 
 namespace WebCore {
 
-ContextMenuItem::ContextMenuItem(void* const&)
-{
-    notImplemented();
-}
-
 ContextMenuItem::ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, ContextMenu*)
 {
     notImplemented();
@@ -49,11 +44,13 @@ ContextMenuItem::~ContextMenuItem()
     notImplemented();
 }
 
+#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
 void* ContextMenuItem::nativeMenuItem() const
 {
     notImplemented();
     return 0;
 }
+#endif
 
 ContextMenuItemType ContextMenuItem::type() const
 {
