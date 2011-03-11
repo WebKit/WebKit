@@ -1,3 +1,14 @@
+2011-03-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add an accessibilityIsIgnored method to WebAccessibilityObject.
+        https://bugs.webkit.org/show_bug.cgi?id=50969
+
+        * public/WebAccessibilityObject.h:
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::accessibilityIsIgnored):
+
 2011-03-11  Avi Drissman  <avi@google.com>
 
         Reviewed by Tony Chang.

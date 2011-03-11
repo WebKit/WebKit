@@ -537,6 +537,12 @@ WebString WebAccessibilityObject::computedStyleDisplay() const
     return WebString(CSSPrimitiveValue::create(renderStyle->display())->getStringValue());
 }
 
+bool WebAccessibilityObject::accessibilityIsIgnored() const
+{
+    m_private->updateBackingStore();
+    return m_private->accessibilityIsIgnored();
+}
+
 WebAccessibilityObject::WebAccessibilityObject(const WTF::PassRefPtr<WebCore::AccessibilityObject>& object)
     : m_private(static_cast<WebAccessibilityObjectPrivate*>(object.releaseRef()))
 {
