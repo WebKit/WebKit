@@ -1755,13 +1755,13 @@ void WebPage::windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInSc
         (*it)->windowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates);
 }
 
+#endif
+    
 bool WebPage::windowIsFocused() const
 {
     return m_page->focusController()->isActive();
 }
-
-#endif
-
+    
 void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (messageID.is<CoreIPC::MessageClassDrawingAreaLegacy>()) {

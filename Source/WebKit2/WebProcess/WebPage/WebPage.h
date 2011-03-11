@@ -234,12 +234,12 @@ public:
     bool windowIsVisible() const { return m_windowIsVisible; }
     const WebCore::IntRect& windowFrameInScreenCoordinates() const { return m_windowFrameInScreenCoordinates; }
     const WebCore::IntRect& viewFrameInWindowCoordinates() const { return m_viewFrameInWindowCoordinates; }
-    bool windowIsFocused() const;
     bool interceptEditingKeyboardEvent(WebCore::KeyboardEvent*, bool);
 #elif PLATFORM(WIN)
     HWND nativeWindow() const { return m_nativeWindow; }
 #endif
 
+    bool windowIsFocused() const;
     void installPageOverlay(PassRefPtr<PageOverlay>);
     void uninstallPageOverlay(PageOverlay*);
     bool hasPageOverlay() const { return m_pageOverlay; }

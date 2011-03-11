@@ -77,7 +77,8 @@ public:
     WebPage* webPage(uint64_t pageID) const;
     void createWebPage(uint64_t pageID, const WebPageCreationParameters&);
     void removeWebPage(uint64_t pageID);
-
+    WebPage* focusedWebPage() const;
+    
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
 
     bool isSeparateProcess() const;

@@ -28,6 +28,7 @@
 
 #import "FullKeyboardAccessWatcher.h"
 #import "SandboxExtension.h"
+#import "WebPage.h"
 #import "WebProcessCreationParameters.h"
 #import <WebCore/MemoryCache.h>
 #import <WebCore/PageCache.h>
@@ -37,6 +38,7 @@
 #import <mach/host_info.h>
 #import <mach/mach.h>
 #import <mach/mach_error.h>
+#import <objc/runtime.h>
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
 #import <sandbox.h>
@@ -173,6 +175,15 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
 #endif
 }
 
+static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
+{
+    WebPage* page = WebProcess::shared().focusedWebPage();
+    if (!page || !page->accessibilityRemoteObject())
+        return 0;
+
+    return [page->accessibilityRemoteObject() accessibilityFocusedUIElement];
+}
+    
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::ArgumentDecoder*)
 {
     initializeSandbox(parameters);
@@ -193,6 +204,11 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     }
 
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
+
+    // rdar://9118639 accessibilityFocusedUIElement in NSApplication defaults to use the keyWindow. Since there's
+    // no window in WK2, NSApplication needs to use the focused page's focused element.
+    Method methodToPatch = class_getInstanceMethod([NSApplication class], @selector(accessibilityFocusedUIElement));
+    method_setImplementation(methodToPatch, (IMP)NSApplicationAccessibilityFocusedUIElement);
 }
 
 void WebProcess::platformTerminate()

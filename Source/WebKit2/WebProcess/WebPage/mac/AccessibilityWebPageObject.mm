@@ -186,7 +186,7 @@ using namespace WebKit;
 
 - (id)accessibilityFocusedUIElement 
 {
-    return NSAccessibilityUnignoredDescendant(self);
+    return [[self accessibilityRootObjectWrapper] accessibilityFocusedUIElement];
 }
 
 

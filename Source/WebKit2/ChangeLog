@@ -1,3 +1,25 @@
+2011-03-10  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (WebKit2): VoiceOver focus no longer follows keyboard focus
+        https://bugs.webkit.org/show_bug.cgi?id=55959
+
+        NSApplication has to return the focused element within the app in order
+        for NSAccessibilityHandleFocusChanged() to work. The default implementation
+        relies on keyWindow. Consequently, in WK2, the WebProcess must override that method
+        to return the appropriate focused element within the WebProcess, since
+        there is no keyWindow.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/mac/AccessibilityWebPageObject.mm:
+        (-[AccessibilityWebPageObject accessibilityFocusedUIElement]):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::focusedWebPage):
+        * WebProcess/WebProcess.h:
+        * WebProcess/mac/NSApplicationOverride.mm: Added.
+        (-[NSApplication accessibilityFocusedUIElement]):
+
 2011-03-10  Oleg Romashin  <romaxa@gmail.com>
 
         Reviewed by Andreas Kling.

@@ -453,6 +453,17 @@ void WebProcess::calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize,
     };
 }
 
+WebPage* WebProcess::focusedWebPage() const
+{    
+    HashMap<uint64_t, RefPtr<WebPage> >::const_iterator end = m_pageMap.end();
+    for (HashMap<uint64_t, RefPtr<WebPage> >::const_iterator it = m_pageMap.begin(); it != end; ++it) {
+        WebPage* page = (*it).second.get();
+        if (page->windowIsFocused())
+            return page;
+    }
+    return 0;
+}
+    
 WebPage* WebProcess::webPage(uint64_t pageID) const
 {
     return m_pageMap.get(pageID).get();
