@@ -1,3 +1,15 @@
+2011-03-10  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Error in StyleElement::process with large nodesets
+        https://bugs.webkit.org/show_bug.cgi?id=56150
+
+        Test: none due to excessive runtime and CRASH() vs. real crash.
+
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::process): Handle large node sets better.
+
 2011-03-10  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

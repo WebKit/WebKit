@@ -101,8 +101,12 @@ void StyleElement::process(Element* e)
 
     unsigned resultLength = 0;
     for (Node* c = e->firstChild(); c; c = c->nextSibling()) {
-        if (isValidStyleChild(c))
-            resultLength += c->nodeValue().length();
+        if (isValidStyleChild(c)) {
+            unsigned length = c->nodeValue().length();
+            if (length > std::numeric_limits<unsigned>::max() - resultLength)
+                CRASH();
+            resultLength += length;
+        }
     }
     UChar* text;
     String sheetText = String::createUninitialized(resultLength, text);
