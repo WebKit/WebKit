@@ -1,3 +1,15 @@
+2011-03-11  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Set canvasUsesAcceleratedDrawing setting to be off(false) by default
+        https://bugs.webkit.org/show_bug.cgi?id=56215
+
+        No new tests. Does not affect behavior. Just keeping the setting off by default.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+
 2011-03-11  Andy Estes  <aestes@apple.com>
 
         Reviewed by David Hyatt.
