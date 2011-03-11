@@ -1,3 +1,13 @@
+2011-03-10  Alice Boxhall  <aboxhall@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        NULL pointer crash when using :empty and :first-line pseudoclass selectors together
+        https://bugs.webkit.org/show_bug.cgi?id=53316
+
+        * fast/css/empty-first-line-crash-expected.txt: Added.
+        * fast/css/empty-first-line-crash.html: Added.
+
 2011-03-10  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline a test which differs on the bots from my local machine.

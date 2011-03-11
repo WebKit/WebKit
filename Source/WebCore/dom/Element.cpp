@@ -1183,6 +1183,15 @@ bool Element::childTypeAllowed(NodeType type)
     return false;
 }
 
+static void checkForEmptyStyleChange(Element* element, RenderStyle* style)
+{
+    if (!style)
+        return;
+
+    if (style->affectedByEmpty() && (!style->emptyState() || element->hasChildNodes()))
+        element->setNeedsStyleRecalc();
+}
+
 static void checkForSiblingStyleChanges(Element* e, RenderStyle* style, bool finishedParsingCallback,
                                         Node* beforeChange, Node* afterChange, int childCountDelta)
 {
@@ -1259,17 +1268,18 @@ static void checkForSiblingStyleChanges(Element* e, RenderStyle* style, bool fin
         e->setNeedsStyleRecalc();
     
     // :empty selector.
-    if (style->affectedByEmpty() && (!style->emptyState() || e->hasChildNodes()))
-        e->setNeedsStyleRecalc();
+    checkForEmptyStyleChange(e, style);
 }
 
 void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    if (!changedByParser)
+    if (changedByParser)
+        checkForEmptyStyleChange(this, renderStyle());
+    else
         checkForSiblingStyleChanges(this, renderStyle(), false, beforeChange, afterChange, childCountDelta);
 }
-    
+
 void Element::beginParsingChildren()
 {
     clearIsParsingChildrenFinished();
