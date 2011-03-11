@@ -30,9 +30,9 @@
 #include "IDBFactoryBackendImpl.h"
 
 #include "DOMStringList.h"
-#include "IDBBackingStore.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
+#include "IDBSQLiteBackingStore.h"
 #include "IDBTransactionCoordinator.h"
 #include "SecurityOrigin.h"
 #include <wtf/Threading.h>
@@ -86,7 +86,7 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
     if (it2 != m_backingStoreMap.end())
         backingStore = it2->second;
     else {
-        backingStore = IDBBackingStore::open(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
+        backingStore = IDBSQLiteBackingStore::open(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
         if (!backingStore) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
             return;

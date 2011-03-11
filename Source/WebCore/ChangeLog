@@ -1,3 +1,62 @@
+2011-03-09  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Make IDBBackingStore abstract
+        https://bugs.webkit.org/show_bug.cgi?id=56013
+
+        Make IDBBackingStore abstract to allow for multiple implementations.
+        Move the SQLite implementation to IDBSQLiteBackingStore.
+
+        No new tests: refactoring only.
+
+        * WebCore.gypi:
+        * storage/IDBBackingStore.h:
+        (WebCore::IDBBackingStore::~IDBBackingStore):
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::open):
+        * storage/IDBSQLiteBackingStore.cpp:
+        (WebCore::IDBSQLiteBackingStore::IDBSQLiteBackingStore):
+        (WebCore::IDBSQLiteBackingStore::~IDBSQLiteBackingStore):
+        (WebCore::runCommands):
+        (WebCore::createTables):
+        (WebCore::createMetaDataTable):
+        (WebCore::getDatabaseSchemaVersion):
+        (WebCore::migrateDatabase):
+        (WebCore::IDBSQLiteBackingStore::open):
+        (WebCore::IDBSQLiteBackingStore::extractIDBDatabaseMetaData):
+        (WebCore::IDBSQLiteBackingStore::setIDBDatabaseMetaData):
+        (WebCore::IDBSQLiteBackingStore::getObjectStores):
+        (WebCore::IDBSQLiteBackingStore::createObjectStore):
+        (WebCore::doDelete):
+        (WebCore::IDBSQLiteBackingStore::deleteObjectStore):
+        (WebCore::whereSyntaxForKey):
+        (WebCore::bindKeyToQuery):
+        (WebCore::lowerCursorWhereFragment):
+        (WebCore::upperCursorWhereFragment):
+        (WebCore::IDBSQLiteBackingStore::getObjectStoreRecord):
+        (WebCore::bindKeyToQueryWithNulls):
+        (WebCore::IDBSQLiteBackingStore::putObjectStoreRecord):
+        (WebCore::IDBSQLiteBackingStore::clearObjectStore):
+        (WebCore::IDBSQLiteBackingStore::deleteObjectStoreRecord):
+        (WebCore::IDBSQLiteBackingStore::nextAutoIncrementNumber):
+        (WebCore::IDBSQLiteBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBSQLiteBackingStore::forEachObjectStoreRecord):
+        (WebCore::IDBSQLiteBackingStore::getIndexes):
+        (WebCore::IDBSQLiteBackingStore::createIndex):
+        (WebCore::IDBSQLiteBackingStore::deleteIndex):
+        (WebCore::IDBSQLiteBackingStore::putIndexDataForRecord):
+        (WebCore::IDBSQLiteBackingStore::deleteIndexDataForRecord):
+        (WebCore::IDBSQLiteBackingStore::getObjectViaIndex):
+        (WebCore::keyFromQuery):
+        (WebCore::IDBSQLiteBackingStore::getPrimaryKeyViaIndex):
+        (WebCore::IDBSQLiteBackingStore::keyExistsInIndex):
+        (WebCore::IDBSQLiteBackingStore::openObjectStoreCursor):
+        (WebCore::IDBSQLiteBackingStore::openIndexKeyCursor):
+        (WebCore::IDBSQLiteBackingStore::openIndexCursor):
+        (WebCore::IDBSQLiteBackingStore::createTransaction):
+        * storage/IDBSQLiteBackingStore.h: Added.
+
 2011-03-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed build error fix.
