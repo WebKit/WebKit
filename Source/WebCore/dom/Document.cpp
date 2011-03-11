@@ -372,11 +372,13 @@ private:
     Document* m_document;
 };
 
+uint64_t Document::s_globalTreeVersion = 0;
+
 Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     : ContainerNode(0)
     , m_compatibilityMode(NoQuirksMode)
     , m_compatibilityModeLocked(false)
-    , m_domTreeVersion(0)
+    , m_domTreeVersion(++s_globalTreeVersion)
     , m_styleSheets(StyleSheetList::create(this))
     , m_readyState(Complete)
     , m_styleRecalcTimer(this, &Document::styleRecalcTimerFired)

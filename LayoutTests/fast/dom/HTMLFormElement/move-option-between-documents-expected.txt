@@ -1,0 +1,5 @@
+PASS typeof select.options.namedItem('option') is 'undefined'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

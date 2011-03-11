@@ -67,7 +67,7 @@ HTMLCollection::~HTMLCollection()
 
 void HTMLCollection::resetCollectionInfo() const
 {
-    unsigned docversion = static_cast<HTMLDocument*>(m_base->document())->domTreeVersion();
+    uint64_t docversion = static_cast<HTMLDocument*>(m_base->document())->domTreeVersion();
 
     if (!m_info) {
         m_info = new CollectionCache;

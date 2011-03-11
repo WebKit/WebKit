@@ -762,6 +762,13 @@ void Node::setDocumentRecursively(Document* document)
     if (this->document() == document)
         return;
 
+    // If an element is moved from a document and then eventually back again the collection cache for
+    // that element may contain stale data as changes made to it will have updated the DOMTreeVersion
+    // of the document it was moved to. By increasing the DOMTreeVersion of the donating document here
+    // we ensure that the collection cache will be invalidated as needed when the element is moved back.
+    if (this->document())
+        this->document()->incDOMTreeVersion();
+
     for (Node* node = this; node; node = node->traverseNextNode(this)) {
         node->setDocument(document);
         if (!node->isElementNode())

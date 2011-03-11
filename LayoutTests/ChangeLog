@@ -1,3 +1,19 @@
+2011-03-10  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Collection cache not reset when moving base node between documents
+        https://bugs.webkit.org/show_bug.cgi?id=55446
+
+        Add tests for accessing elements moved across documents using namedItem.
+
+        * fast/dom/HTMLFormElement/invalid-form-field-expected.txt: Added.
+        * fast/dom/HTMLFormElement/invalid-form-field.html: Added.
+        * fast/dom/HTMLFormElement/move-option-between-documents-expected.txt: Added.
+        * fast/dom/HTMLFormElement/move-option-between-documents.html: Added.
+        * fast/dom/collection-nameditem-move-between-documents-expected.txt: Added.
+        * fast/dom/collection-nameditem-move-between-documents.html: Added.
+
 2011-03-10  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

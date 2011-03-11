@@ -1,3 +1,31 @@
+2011-03-10  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Collection cache not reset when moving base node between documents
+        https://bugs.webkit.org/show_bug.cgi?id=55446
+
+        Fix bug where HTMLCollection::resetCollectionInfo does not reset the
+        cache when the base node is moved to a different document by making sure
+        that the DOMVersion is updated and that it's unique across documents.
+
+        Tests: fast/dom/HTMLFormElement/invalid-form-field.html
+               fast/dom/HTMLFormElement/move-option-between-documents.html
+               fast/dom/collection-nameditem-move-between-documents.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::incDOMTreeVersion):
+        (WebCore::Document::domTreeVersion):
+        * dom/Node.cpp:
+        (WebCore::Node::setDocumentRecursively):
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::resetFormOwner):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::resetCollectionInfo):
+        * xml/XPathResult.h:
+
 2011-03-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed build fix.

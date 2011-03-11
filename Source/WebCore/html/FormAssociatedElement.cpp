@@ -132,7 +132,7 @@ void FormAssociatedElement::resetFormOwner(HTMLFormElement* form)
         m_form->removeFormElement(this);
     }
     m_form = 0;
-    if (!formId.isNull()) {
+    if (!formId.isNull() && element->inDocument()) {
         // The HTML5 spec says that the element should be associated with
         // the first element in the document to have an ID that equal to
         // the value of form attribute, so we put the result of

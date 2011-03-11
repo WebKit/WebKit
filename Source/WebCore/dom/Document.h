@@ -911,8 +911,8 @@ public:
     TransformSource* transformSource() const { return m_transformSource.get(); }
 #endif
 
-    void incDOMTreeVersion() { ++m_domTreeVersion; }
-    unsigned domTreeVersion() const { return m_domTreeVersion; }
+    void incDOMTreeVersion() { m_domTreeVersion = ++s_globalTreeVersion; }
+    uint64_t domTreeVersion() const { return m_domTreeVersion; }
 
     void setDocType(PassRefPtr<DocumentType>);
 
@@ -1237,7 +1237,8 @@ private:
     RefPtr<Node> m_activeNode;
     mutable RefPtr<Element> m_documentElement;
 
-    unsigned m_domTreeVersion;
+    uint64_t m_domTreeVersion;
+    static uint64_t s_globalTreeVersion;
     
     HashSet<NodeIterator*> m_nodeIterators;
     HashSet<Range*> m_ranges;
