@@ -1,3 +1,17 @@
+2011-03-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build error fix.
+
+        [EFL] Fix build break when SHARED_CORE is ON
+        https://bugs.webkit.org/show_bug.cgi?id=56155
+
+        * platform/efl/ContextMenuEfl.cpp:
+        (WebCore::ContextMenu::ContextMenu):
+        * platform/efl/ContextMenuItemEfl.cpp:
+        (WebCore::ContextMenuItem::nativeMenuItem):
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::~ContextMenuItem):
+
 2011-03-11  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
