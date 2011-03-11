@@ -222,8 +222,8 @@ void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
             detach();
             attach();
         }
-        if (renderer())
-            renderer()->updateFromElement();
+        if (hasMediaControls())
+            mediaControls()->reset();
 #else
         if (m_player)
             m_player->setControls(controls());
@@ -1525,8 +1525,8 @@ void HTMLMediaElement::setMuted(bool muted)
         if (!processingMediaPlayerCallback()) {
             if (m_player) {
                 m_player->setMuted(m_muted);
-                if (renderer())
-                    renderer()->updateFromElement();
+                if (hasMediaControls())
+                    mediaControls()->changedMute();
             }
         }
         scheduleEvent(eventNames().volumechangeEvent);
@@ -2100,9 +2100,9 @@ void HTMLMediaElement::updateVolume()
         m_player->setMuted(m_muted);
         m_player->setVolume(m_volume * volumeMultiplier);
     }
-    
-    if (renderer())
-        renderer()->updateFromElement();
+
+    if (hasMediaControls())
+        mediaControls()->changedVolume();
 }
 
 void HTMLMediaElement::updatePlayState()
@@ -2302,8 +2302,8 @@ void HTMLMediaElement::defaultEventHandler(Event* event)
     if (widget)
         widget->handleEvent(event);
 #else
-    if (renderer() && renderer()->isMedia())
-        toRenderMedia(renderer())->controls()->forwardEvent(event);
+    if (hasMediaControls())
+        mediaControls()->forwardEvent(event);
     if (event->defaultHandled())
         return;
     HTMLElement::defaultEventHandler(event);
@@ -2479,8 +2479,8 @@ void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
 
     m_closedCaptionsVisible = closedCaptionVisible;
     m_player->setClosedCaptionsVisible(closedCaptionVisible);
-    if (renderer())
-        renderer()->updateFromElement();
+    if (hasMediaControls())
+        mediaControls()->changedClosedCaptionsVisibility();
 }
 
 void HTMLMediaElement::setWebkitClosedCaptionsVisible(bool visible)
@@ -2568,6 +2568,17 @@ void HTMLMediaElement::privateBrowsingStateDidChange()
     bool privateMode = !settings || settings->privateBrowsingEnabled();
     LOG(Media, "HTMLMediaElement::privateBrowsingStateDidChange(%s)", boolString(privateMode));
     m_player->setPrivateBrowsingMode(privateMode);
+}
+
+MediaControls* HTMLMediaElement::mediaControls()
+{
+    ASSERT(renderer());
+    return toRenderMedia(renderer())->controls();
+}
+
+bool HTMLMediaElement::hasMediaControls() const
+{
+    return renderer() && renderer()->isMedia();
 }
 
 }

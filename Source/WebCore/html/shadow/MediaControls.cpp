@@ -62,6 +62,26 @@ MediaControls::MediaControls(HTMLMediaElement* mediaElement)
 {
 }
 
+void MediaControls::reset()
+{
+    update();
+}
+
+void MediaControls::changedMute()
+{
+    update();
+}
+
+void MediaControls::changedVolume()
+{
+    update();
+}
+
+void MediaControls::changedClosedCaptionsVisibility()
+{
+    update();
+}
+
 void MediaControls::updateStyle()
 {
     if (!m_controlsShadowRoot)

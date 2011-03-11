@@ -1,3 +1,32 @@
+2011-03-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Start focusing updates to media controls, away from always updating everything.
+        https://bugs.webkit.org/show_bug.cgi?id=56038
+
+        For now, the new methods just call generic MediaControls::update.
+
+        Covered by existing tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::attributeChanged): Changed to use MediaControls::reset.
+        (WebCore::HTMLMediaElement::setMuted): Changed to use MediaControls::changedMute.
+        (WebCore::HTMLMediaElement::updateVolume): Changed to use MediaControls::changedVolume.
+        (WebCore::HTMLMediaElement::defaultEventHandler): Changed to use the new mediaControls
+            accessor.
+        (WebCore::HTMLMediaElement::setClosedCaptionsVisible): Changed to use
+            MediaControls::changedClosedCaptionsVisibility.
+        (WebCore::HTMLMediaElement::mediaControls): Added.
+        (WebCore::HTMLMediaElement::hasMediaControls): Added.
+        * html/HTMLMediaElement.h: Added decls.
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::reset): Added.
+        (WebCore::MediaControls::changedMute): Added.
+        (WebCore::MediaControls::changedVolume): Added.
+        (WebCore::MediaControls::changedClosedCaptionsVisibility): Added.
+        * html/shadow/MediaControls.h: Added decls.
+
 2011-03-11  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Martin Robinson.

@@ -41,6 +41,7 @@ namespace WebCore {
 
 class Event;
 class HTMLSourceElement;
+class MediaControls;
 class MediaError;
 class KURL;
 class TimeRanges;
@@ -170,6 +171,8 @@ public:
     bool hasClosedCaptions() const;
     bool closedCaptionsVisible() const;
     void setClosedCaptionsVisible(bool);
+
+    MediaControls* mediaControls();
 
     bool processingUserGesture() const;
 
@@ -318,6 +321,8 @@ private:
 
     void invalidateCachedTime();
     void refreshCachedTime() const;
+
+    bool hasMediaControls() const;
 
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_asyncEventTimer;

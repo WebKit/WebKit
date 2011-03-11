@@ -62,6 +62,11 @@ class MediaControls {
 public:
     MediaControls(HTMLMediaElement*);
 
+    void reset();
+    void changedMute();
+    void changedVolume();
+    void changedClosedCaptionsVisibility();
+
     void destroy();
     void update();
     void updateStyle();
