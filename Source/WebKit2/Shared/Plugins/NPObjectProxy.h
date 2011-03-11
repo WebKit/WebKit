@@ -28,7 +28,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-#include <WebCore/npruntime.h>
+#include <WebCore/npruntime_internal.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebKit {

@@ -28,7 +28,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-#include <WebCore/npruntime.h>
+#include <WebCore/npruntime_internal.h>
 #include <wtf/text/CString.h>
 
 namespace CoreIPC {

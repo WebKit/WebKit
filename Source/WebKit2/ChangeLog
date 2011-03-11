@@ -1,3 +1,15 @@
+2011-03-10  Oleg Romashin  <romaxa@gmail.com>
+
+        Reviewed by Andreas Kling.
+
+        Make Qt port compiling with ENABLE_PLUGIN_PROCESS=1, part3
+        Solving conflict of Qt and Xlib includes
+
+        * Shared/Plugins/NPIdentifierData.cpp:
+        * Shared/Plugins/NPIdentifierData.h:
+        * Shared/Plugins/NPObjectProxy.cpp:
+        * Shared/Plugins/NPVariantData.h:
+
 2011-03-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
