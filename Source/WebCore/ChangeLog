@@ -1,3 +1,15 @@
+2011-03-11  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        JavaMethod does not correctly check for a null jstring for the method name
+        https://bugs.webkit.org/show_bug.cgi?id=56187
+
+        No new tests, simple typo fix.
+
+        * bridge/jni/JavaMethod.cpp:
+        (JavaMethod::JavaMethod):
+
 2011-03-11  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

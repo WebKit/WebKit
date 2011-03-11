@@ -53,8 +53,8 @@ JavaMethod::JavaMethod(JNIEnv* env, jobject aMethod)
 
     // Get method name
     jstring methodName = static_cast<jstring>(callJNIMethod<jobject>(aMethod, "getName", "()Ljava/lang/String;"));
-    if (!returnTypeName)
-        returnTypeName = env->NewStringUTF("<Unknown>");
+    if (!methodName)
+        methodName = env->NewStringUTF("<Unknown>");
     m_name = JavaString(env, methodName);
     env->DeleteLocalRef(methodName);
 
