@@ -103,16 +103,21 @@ function verifyByteRangeAsString(fileEntry, offset, contents, onSuccess)
 // Creates a file called fileName in fileSystem's root directory, truncates it to zero length just in case, and calls onSuccess, passing it a FileEntry and FileWriter for the new file.
 function createEmptyFile(fileSystem, fileName, onSuccess)
 {
-    function getSuccessFunc(fileEntry, fileWriter) {
+    function getSuccessFunc(fileEntry) {
+        // Create a fresh FileWriter here, rather than pass in the used one.
+        // This way we don't accidentally leave our event handlers attached.
         return function() {
-            onSuccess(fileEntry, fileWriter);
+            fileEntry.createWriter(function(fw) {
+                onSuccess(fileEntry, fw);
+            }, onError);
         }
     }
     function getFileWriterCallback(fileEntry) {
         return function(fileWriter) {
-            var successFunc = getSuccessFunc(fileEntry, fileWriter);
+            var successFunc = getSuccessFunc(fileEntry);
             fileWriter.onError = onError;
-            fileWriter.onwrite = function() {
+            // FIXME: This should be onwrite, but the spec and code need to be changed to allow that.  See https://bugs.webkit.org/show_bug.cgi?id=50846.
+            fileWriter.onwriteend = function() {
                 verifyFileLength(fileEntry, 0, successFunc);
             };
             fileWriter.truncate(0);
@@ -134,9 +139,24 @@ function writeString(fileEntry, fileWriter, offset, data, onSuccess)
     var blob = bb.getBlob();
     fileWriter.seek(offset);
     fileWriter.write(blob);
-    fileWriter.onwrite = function() {
+    fileWriter.onerror = onError;
+    if (offset < 0)
+        offset += fileWriter.length;
+    assert(offset >= 0);
+    // FIXME: This should be onwrite, but the spec and code need to be changed to allow that.  See https://bugs.webkit.org/show_bug.cgi?id=50846.
+    fileWriter.onwriteend = function() {
+        fileWriter.onwriteend = null;
         verifyByteRangeAsString(fileEntry, offset, data, onSuccess);
     };
+}
+
+function setFileContents(fileEntry, fileWriter, contents, onSuccess) {
+    fileWriter.onerror = onError;
+    // FIXME: This should be onwrite, but the spec and code need to be changed to allow that.  See https://bugs.webkit.org/show_bug.cgi?id=50846.
+    fileWriter.onwriteend = function() {
+        writeString(fileEntry, fileWriter, 0, contents, onSuccess);
+    };
+    fileWriter.truncate(0);
 }
 
 function setupAndRunTest(size, testName, testFunc)

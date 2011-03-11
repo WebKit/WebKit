@@ -1,3 +1,34 @@
+2010-3-11  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add tests for FileWriter
+        https://bugs.webkit.org/show_bug.cgi?id=44363
+
+        Fix small bugs in the utility functions and add setFileContents().
+        * fast/filesystem/resources/file-writer-utils.js:
+
+        Port the GC Blob test over to the new FileWriter utilities.
+        * fast/filesystem/file-writer-gc-blob-expected.txt:
+        * fast/filesystem/file-writer-gc-blob.html:
+        * fast/filesystem/resources/file-writer-gc-blob.js: Copied from LayoutTests/fast/filesystem/file-writer-gc-blob.html.
+
+        Add tests for progress events and overlapping writes [via seek].
+        * fast/filesystem/file-writer-events-expected.txt: Added.
+        * fast/filesystem/file-writer-events.html: Added.
+        * fast/filesystem/resources/file-writer-events.js: Added.
+        * fast/filesystem/file-writer-write-overlapped-expected.txt: Added.
+        * fast/filesystem/file-writer-write-overlapped.html: Added.
+        * fast/filesystem/resources/file-writer-write-overlapped.js: Added.
+
+        Worker versions of the above tests.
+        * fast/filesystem/workers/file-writer-events-expected.txt: Added.
+        * fast/filesystem/workers/file-writer-events.html: Added.
+        * fast/filesystem/workers/file-writer-gc-blob-expected.html: Added.
+        * fast/filesystem/workers/file-writer-gc-blob.html: Added.
+        * fast/filesystem/workers/file-writer-write-overlapped-expected.html: Added.
+        * fast/filesystem/workers/file-writer-write-overlapped.html: Added.
+
 2011-03-11  Anton D'Auria  <adauria@apple.com>
 
         Reviewed and landed by Brady Eidson.
