@@ -1,3 +1,20 @@
+2011-03-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [GTK] Update expectations after r80857.
+        https://bugs.webkit.org/show_bug.cgi?id=55972
+
+        * platform/gtk/media/audio-controls-rendering-expected.txt:
+        * platform/gtk/media/audio-repaint-expected.txt:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/controls-styling-expected.txt:
+        * platform/gtk/media/controls-without-preload-expected.txt:
+        * platform/gtk/media/media-document-audio-repaint-expected.txt:
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+        * platform/gtk/media/video-empty-source-expected.txt:
+        * platform/gtk/media/video-no-audio-expected.txt:
+        * platform/gtk/media/video-volume-slider-expected.txt:
+        * platform/gtk/media/video-zoom-controls-expected.txt:
+
 2011-03-11  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

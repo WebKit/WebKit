@@ -10,16 +10,16 @@ layer at (57,85) size 240x180
   RenderVideo {VIDEO} at (45,73) size 240x180
 layer at (57,85) size 240x180
   RenderBlock (relative positioned) {DIV} at (0,0) size 240x180
-layer at (57,85) size 240x180 scrollHeight 211
+layer at (57,85) size 240x180 scrollHeight 194
   RenderFlexibleBox (positioned) {DIV} at (0,0) size 240x180
     RenderButton {INPUT} at (0,150) size 30x30
     RenderFlexibleBox {DIV} at (30,150) size 90x30 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 88x44
-        RenderBlock {DIV} at (0,0) size 14x44
-          RenderText {#text} at (7,7) size 36x54
-            text run at (7,7) width 36: "00:00"
-            text run at (7,25) width 4: "/"
-            text run at (7,43) width 36: "00:06"
+        RenderFlexibleBox {DIV} at (0,0) size 88x44
+          RenderBlock (anonymous) at (7,7) size 74x30
+            RenderText {#text} at (15,0) size 44x36
+              text run at (15,0) width 44: "00:00 /"
+              text run at (19,18) width 36: "00:06"
       RenderSlider {INPUT} at (89,0) size 6x30
         RenderBlock {DIV} at (3,9) size 12x12
     RenderButton {INPUT} at (120,150) size 30x30
@@ -30,16 +30,16 @@ layer at (57,310) size 240x180
   RenderVideo {VIDEO} at (45,298) size 240x180
 layer at (57,310) size 240x180
   RenderBlock (relative positioned) {DIV} at (0,0) size 240x180
-layer at (57,310) size 240x180 scrollHeight 211
+layer at (57,310) size 240x180 scrollHeight 194
   RenderFlexibleBox (positioned) {DIV} at (0,0) size 240x180
     RenderButton {INPUT} at (0,150) size 30x30
     RenderFlexibleBox {DIV} at (30,150) size 90x30 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 88x44
-        RenderBlock {DIV} at (0,0) size 14x44
-          RenderText {#text} at (7,7) size 36x54
-            text run at (7,7) width 36: "00:00"
-            text run at (7,25) width 4: "/"
-            text run at (7,43) width 36: "00:06"
+        RenderFlexibleBox {DIV} at (0,0) size 88x44
+          RenderBlock (anonymous) at (7,7) size 74x30
+            RenderText {#text} at (15,0) size 44x36
+              text run at (15,0) width 44: "00:00 /"
+              text run at (19,18) width 36: "00:06"
       RenderSlider {INPUT} at (89,0) size 6x30
         RenderBlock {DIV} at (3,9) size 12x12
     RenderButton {INPUT} at (120,150) size 30x30
