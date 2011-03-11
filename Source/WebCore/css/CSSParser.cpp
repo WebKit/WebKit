@@ -2604,8 +2604,8 @@ void CSSParser::parseFillPosition(CSSParserValueList* valueList, RefPtr<CSSValue
 
     // Parse the first value.  We're just making sure that it is one of the valid keywords or a percentage/length.
     unsigned cumulativeFlags = 0;
-    FillPositionFlag value1Flag;
-    FillPositionFlag value2Flag;
+    FillPositionFlag value1Flag = InvalidFillPosition;
+    FillPositionFlag value2Flag = InvalidFillPosition;
     value1 = parseFillPositionComponent(valueList, cumulativeFlags, value1Flag);
     if (!value1)
         return;
