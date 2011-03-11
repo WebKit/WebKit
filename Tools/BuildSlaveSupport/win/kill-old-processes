@@ -30,7 +30,7 @@ def main():
                 "svn.exe", "httpd.exe", "cl.exe", "link.exe", "midl.exe", "devenv.exe", "perl.exe",
                 "imagediff.exe", "imagediff_debug.exe", "jsc.exe", "jsc_debug.exe", "WebKit2WebProcess.exe",
                 "WebKit2WebProcess_debug.exe", "WebKitTestRunner.exe", "WebKitTestRunner_debug.exe",
-                "wdiff.exe"]
+                "wdiff.exe", "LightTPD.exe"]
 
     for task in tasksToKill:
         os.system("taskkill /f /im " + task)
