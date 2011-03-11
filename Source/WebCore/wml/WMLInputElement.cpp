@@ -307,8 +307,8 @@ void WMLInputElement::defaultEventHandler(Event* evt)
 
     if (clickDefaultFormButton) {
         // Fire onChange for text fields.
-        if (wasChangedSinceLastChangeEvent()) {
-            setChangedSinceLastChangeEvent(false);
+        if (wasChangedSinceLastFormControlChangeEvent()) {
+            setChangedSinceLastFormControlChangeEvent(false);
             dispatchEvent(Event::create(eventNames().changeEvent, true, false));
         }
 

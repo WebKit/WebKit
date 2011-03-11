@@ -1,3 +1,13 @@
+2011-03-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build fix.
+
+        [WML] Fix build error
+        https://bugs.webkit.org/show_bug.cgi?id=56078
+
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::defaultEventHandler):
+
 2011-03-10  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Darin Adler.
