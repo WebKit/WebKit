@@ -31,6 +31,7 @@
 #if ENABLE(DATABASE)
 
 #include "PlatformString.h"
+#include "SQLCallbackWrapper.h"
 #include "SQLResultSet.h"
 #include "SQLValue.h"
 #include <wtf/Forward.h>
@@ -46,13 +47,13 @@ class SQLTransaction;
 
 class SQLStatement : public ThreadSafeShared<SQLStatement> {
 public:
-    static PassRefPtr<SQLStatement> create(const String&, const Vector<SQLValue>&, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, int permissions);
+    static PassRefPtr<SQLStatement> create(Database*, const String&, const Vector<SQLValue>&, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, int permissions);
 
     bool execute(Database*);
     bool lastExecutionFailedDueToQuota() const;
 
-    bool hasStatementCallback() const { return m_statementCallback; }
-    bool hasStatementErrorCallback() const { return m_statementErrorCallback; }
+    bool hasStatementCallback() const { return m_statementCallbackWrapper.hasCallback(); }
+    bool hasStatementErrorCallback() const { return m_statementErrorCallbackWrapper.hasCallback(); }
 
     void setDatabaseDeletedError();
     void setVersionMismatchedError();
@@ -61,15 +62,15 @@ public:
 
     SQLError* sqlError() const { return m_error.get(); }
 private:
-    SQLStatement(const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, int permissions);
+    SQLStatement(Database*, const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, int permissions);
 
     void setFailureDueToQuota();
     void clearFailureDueToQuota();
 
     String m_statement;
     Vector<SQLValue> m_arguments;
-    RefPtr<SQLStatementCallback> m_statementCallback;
-    RefPtr<SQLStatementErrorCallback> m_statementErrorCallback;
+    SQLCallbackWrapper<SQLStatementCallback> m_statementCallbackWrapper;
+    SQLCallbackWrapper<SQLStatementErrorCallback> m_statementErrorCallbackWrapper;
 
     RefPtr<SQLError> m_error;
     RefPtr<SQLResultSet> m_resultSet;

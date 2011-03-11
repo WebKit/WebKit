@@ -2729,6 +2729,7 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/LocalStorageThread.h \
         storage/OriginQuotaManager.h \
         storage/OriginUsageRecord.h \
+        storage/SQLCallbackWrapper.h \
         storage/SQLResultSet.h \
         storage/SQLResultSetRowList.h \
         storage/SQLStatement.h \

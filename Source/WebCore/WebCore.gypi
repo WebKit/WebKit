@@ -4592,6 +4592,7 @@
             'storage/OriginQuotaManager.h',
             'storage/OriginUsageRecord.cpp',
             'storage/OriginUsageRecord.h',
+            'storage/SQLCallbackWrapper.h',
             'storage/SQLError.h',
             'storage/SQLException.h',
             'storage/SQLResultSet.cpp',

@@ -43,16 +43,16 @@
 
 namespace WebCore {
 
-PassRefPtr<SQLStatement> SQLStatement::create(const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback, int permissions)
+PassRefPtr<SQLStatement> SQLStatement::create(Database* database, const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback, int permissions)
 {
-    return adoptRef(new SQLStatement(statement, arguments, callback, errorCallback, permissions));
+    return adoptRef(new SQLStatement(database, statement, arguments, callback, errorCallback, permissions));
 }
 
-SQLStatement::SQLStatement(const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback, int permissions)
+SQLStatement::SQLStatement(Database* database, const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback, int permissions)
     : m_statement(statement.crossThreadString())
     , m_arguments(arguments)
-    , m_statementCallback(callback)
-    , m_statementErrorCallback(errorCallback)
+    , m_statementCallbackWrapper(callback, database->scriptExecutionContext())
+    , m_statementErrorCallbackWrapper(errorCallback, database->scriptExecutionContext())
     , m_permissions(permissions)
 {
 }
@@ -166,17 +166,16 @@ bool SQLStatement::performCallback(SQLTransaction* transaction)
 
     bool callbackError = false;
 
+    RefPtr<SQLStatementCallback> callback = m_statementCallbackWrapper.unwrap();
+    RefPtr<SQLStatementErrorCallback> errorCallback = m_statementErrorCallbackWrapper.unwrap();
+
     // Call the appropriate statement callback and track if it resulted in an error,
     // because then we need to jump to the transaction error callback.
     if (m_error) {
-        ASSERT(m_statementErrorCallback);
-        callbackError = m_statementErrorCallback->handleEvent(transaction, m_error.get());
-    } else if (m_statementCallback)
-        callbackError = !m_statementCallback->handleEvent(transaction, m_resultSet.get());
-
-    // Now release our callbacks, to break reference cycles.
-    m_statementCallback = 0;
-    m_statementErrorCallback = 0;
+        ASSERT(errorCallback);
+        callbackError = errorCallback->handleEvent(transaction, m_error.get());
+    } else if (callback)
+        callbackError = !callback->handleEvent(transaction, m_resultSet.get());
 
     return callbackError;
 }

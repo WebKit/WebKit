@@ -3175,6 +3175,7 @@ webcore_sources += \
 	Source/WebCore/storage/OriginQuotaManager.h \
 	Source/WebCore/storage/OriginUsageRecord.cpp \
 	Source/WebCore/storage/OriginUsageRecord.h \
+	Source/WebCore/storage/SQLCallbackWrapper.h \
 	Source/WebCore/storage/SQLError.h \
 	Source/WebCore/storage/SQLException.h \
 	Source/WebCore/storage/SQLResultSet.cpp \

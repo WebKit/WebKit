@@ -115,9 +115,9 @@ private:
 
     RefPtr<Database> m_database;
     RefPtr<SQLTransactionWrapper> m_wrapper;
-    RefPtr<SQLTransactionCallback> m_callback;
-    RefPtr<VoidCallback> m_successCallback;
-    RefPtr<SQLTransactionErrorCallback> m_errorCallback;
+    SQLCallbackWrapper<SQLTransactionCallback> m_callbackWrapper;
+    SQLCallbackWrapper<VoidCallback> m_successCallbackWrapper;
+    SQLCallbackWrapper<SQLTransactionErrorCallback> m_errorCallbackWrapper;
     RefPtr<SQLError> m_transactionError;
     bool m_shouldRetryCurrentStatement;
     bool m_modifiedDatabase;

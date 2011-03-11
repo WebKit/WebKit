@@ -71,9 +71,9 @@ SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> 
     , m_executeSqlAllowed(false)
     , m_database(db)
     , m_wrapper(wrapper)
-    , m_callback(callback)
-    , m_successCallback(successCallback)
-    , m_errorCallback(errorCallback)
+    , m_callbackWrapper(callback, db->scriptExecutionContext())
+    , m_successCallbackWrapper(successCallback, db->scriptExecutionContext())
+    , m_errorCallbackWrapper(errorCallback, db->scriptExecutionContext())
     , m_shouldRetryCurrentStatement(false)
     , m_modifiedDatabase(false)
     , m_lockAcquired(false)
@@ -100,7 +100,7 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
     else if (m_readOnly)
         permissions |= DatabaseAuthorizer::ReadOnlyMask;
 
-    RefPtr<SQLStatement> statement = SQLStatement::create(sqlStatement, arguments, callback, callbackError, permissions);
+    RefPtr<SQLStatement> statement = SQLStatement::create(m_database.get(), sqlStatement, arguments, callback, callbackError, permissions);
 
     if (m_database->deleted())
         statement->setDatabaseDeletedError();
@@ -159,9 +159,9 @@ void SQLTransaction::checkAndHandleClosedOrInterruptedDatabase()
     m_nextStep = 0;
 
     // Release the unneeded callbacks, to break reference cycles.
-    m_callback = 0;
-    m_successCallback = 0;
-    m_errorCallback = 0;
+    m_callbackWrapper.clear();
+    m_successCallbackWrapper.clear();
+    m_errorCallbackWrapper.clear();
 
     // The next steps should be executed only if we're on the DB thread.
     if (currentThread() != database()->scriptExecutionContext()->databaseThread()->getThreadID())
@@ -293,11 +293,11 @@ void SQLTransaction::deliverTransactionCallback()
 {
     bool shouldDeliverErrorCallback = false;
 
-    if (m_callback) {
+    RefPtr<SQLTransactionCallback> callback = m_callbackWrapper.unwrap();
+    if (callback) {
         m_executeSqlAllowed = true;
-        shouldDeliverErrorCallback = !m_callback->handleEvent(this);
+        shouldDeliverErrorCallback = !callback->handleEvent(this);
         m_executeSqlAllowed = false;
-        m_callback = 0;
     }
 
     // Transaction Step 5 - If the transaction callback was null or raised an exception, jump to the error callback
@@ -425,7 +425,7 @@ void SQLTransaction::deliverStatementCallback()
     m_executeSqlAllowed = false;
 
     if (result) {
-      m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "the statement callback raised an exception or statement error callback did not return false");
+        m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "the statement callback raised an exception or statement error callback did not return false");
         handleTransactionError(true);
     } else
         scheduleToRunStatements();
@@ -465,7 +465,7 @@ void SQLTransaction::postflightAndCommit()
 
     // If the commit failed, the transaction will still be marked as "in progress"
     if (m_sqliteTransaction->inProgress()) {
-        m_successCallback = 0;
+        m_successCallbackWrapper.clear();
         m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "failed to commit the transaction");
         handleTransactionError(false);
         return;
@@ -480,10 +480,10 @@ void SQLTransaction::postflightAndCommit()
         m_database->transactionClient()->didCommitWriteTransaction(database());
 
     // Now release our unneeded callbacks, to break reference cycles.
-    m_errorCallback = 0;
+    m_errorCallbackWrapper.clear();
 
     // Transaction Step 10 - Deliver success callback, if there is one
-    if (m_successCallback) {
+    if (m_successCallbackWrapper.hasCallback()) {
         m_nextStep = &SQLTransaction::deliverSuccessCallback;
         LOG(StorageAPI, "Scheduling deliverSuccessCallback for transaction %p\n", this);
         m_database->scheduleTransactionCallback(this);
@@ -494,11 +494,9 @@ void SQLTransaction::postflightAndCommit()
 void SQLTransaction::deliverSuccessCallback()
 {
     // Transaction Step 10 - Deliver success callback
-    ASSERT(m_successCallback);
-    m_successCallback->handleEvent();
-
-    // Release the last callback to break reference cycle
-    m_successCallback = 0;
+    RefPtr<VoidCallback> successCallback = m_successCallbackWrapper.unwrap();
+    if (successCallback)
+        successCallback->handleEvent();
 
     // Schedule a "post-success callback" step to return control to the database thread in case there
     // are further transactions queued up for this Database
@@ -524,7 +522,7 @@ void SQLTransaction::cleanupAfterSuccessCallback()
 
 void SQLTransaction::handleTransactionError(bool inCallback)
 {
-    if (m_errorCallback) {
+    if (m_errorCallbackWrapper.hasCallback()) {
         if (inCallback)
             deliverTransactionErrorCallback();
         else {
@@ -552,10 +550,9 @@ void SQLTransaction::deliverTransactionErrorCallback()
 
     // Transaction Step 12 - If exists, invoke error callback with the last
     // error to have occurred in this transaction.
-    if (m_errorCallback) {
-        m_errorCallback->handleEvent(m_transactionError.get());
-        m_errorCallback = 0;
-    }
+    RefPtr<SQLTransactionErrorCallback> errorCallback = m_errorCallbackWrapper.unwrap();
+    if (errorCallback)
+        errorCallback->handleEvent(m_transactionError.get());
 
     m_nextStep = &SQLTransaction::cleanupAfterTransactionErrorCallback;
     LOG(StorageAPI, "Scheduling cleanupAfterTransactionErrorCallback for transaction %p\n", this);

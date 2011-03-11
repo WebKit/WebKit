@@ -1,3 +1,44 @@
+2011-03-11  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by David Levin.
+
+        Add SQLCallbackWrapper
+        Instead of directly holding RefPtrs to the Callback objects in SQLStatement and SQLTransaction, hold a wrapper objects
+        which holds those references whose dtors will schedule the release of those references on the ScriptExecution thread.
+        https://bugs.webkit.org/show_bug.cgi?id=55919
+
+        No new tests, existing tests apply.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * storage/SQLCallbackWrapper.h: Added.
+        (WebCore::SQLCallbackWrapper::SQLCallbackWrapper):
+        (WebCore::SQLCallbackWrapper::clear):
+        (WebCore::SQLCallbackWrapper::unwrap):
+        (WebCore::SQLCallbackWrapper::hasCallback):
+        (WebCore::SQLCallbackWrapper::safeRelease):
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::create):
+        (WebCore::SQLStatement::SQLStatement):
+        (WebCore::SQLStatement::performCallback):
+        * storage/SQLStatement.h:
+        (WebCore::SQLStatement::hasStatementCallback):
+        (WebCore::SQLStatement::hasStatementErrorCallback):
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::SQLTransaction):
+        (WebCore::SQLTransaction::executeSQL):
+        (WebCore::SQLTransaction::checkAndHandleClosedOrInterruptedDatabase):
+        (WebCore::SQLTransaction::deliverTransactionCallback):
+        (WebCore::SQLTransaction::deliverStatementCallback):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        (WebCore::SQLTransaction::deliverSuccessCallback):
+        (WebCore::SQLTransaction::handleTransactionError):
+        (WebCore::SQLTransaction::deliverTransactionErrorCallback):
+        * storage/SQLTransaction.h:
+
 2011-03-11  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Sam Weinig.
