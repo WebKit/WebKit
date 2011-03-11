@@ -1,3 +1,22 @@
+2011-03-10  Ami Fischman  <fischman@google.com>
+
+        Reviewed by David Levin.
+
+        video-controls-in-media-document.html used to silently rely on
+        timeupdate firing immediately upon playback start, and before any
+        frames changed.  This was (unsurprisingly, in retrospect)
+        super-brittle.  This change instead uses an explicit seek to put
+        the video in a predictable state.  The expected.png change is only to
+        change the "pause" button to "play" (which is part of what's
+        required to have the video be in a predictable state for the pixel
+        diff).  An equivalent rebaselining needs to happen for chromium
+        mac & win.
+
+        * media/video-controls-in-media-document.html:
+        * platform/chromium/media/video-controls-in-media-document-expected.checksum:
+        * platform/chromium/media/video-controls-in-media-document-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-10  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed: tweak Chromium test_expectations.txt

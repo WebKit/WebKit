@@ -3219,7 +3219,7 @@ BUGV8_1168 : fast/js/mozilla/strict/eval-variable-environment.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/this-for-function-expression-recursion.html = TEXT
 BUGV8_1228 : fast/js/preventExtensions.html = TEXT
 
-BUGWK54634 : media/video-controls-in-media-document.html = IMAGE+TEXT
+BUGWK54634 WIN MAC : media/video-controls-in-media-document.html = IMAGE+TEXT
 
 BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = TEXT CRASH TIMEOUT
 
