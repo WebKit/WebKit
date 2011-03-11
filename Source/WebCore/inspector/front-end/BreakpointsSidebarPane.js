@@ -425,7 +425,8 @@ WebInspector.EventListenerBreakpointsSidebarPane = function()
 
     this.categoriesElement = document.createElement("ol");
     this.categoriesElement.tabIndex = 0;
-    this.categoriesElement.addStyleClass("properties-tree event-listener-breakpoints");
+    this.categoriesElement.addStyleClass("properties-tree");
+    this.categoriesElement.addStyleClass("event-listener-breakpoints");
     this.categoriesTreeOutline = new TreeOutline(this.categoriesElement);
     this.bodyElement.appendChild(this.categoriesElement);
 

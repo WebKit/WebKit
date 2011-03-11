@@ -1,3 +1,33 @@
+2011-03-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Get rid of has/add/removeStyleClass() methods on Element.prototype - Step 1
+        https://bugs.webkit.org/show_bug.cgi?id=56096
+
+        No new tests, as this is a refactoring.
+
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.EventListenerBreakpointsSidebarPane):
+        * inspector/front-end/DetailedHeapshotView.js:
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.BaseStorageTreeElement):
+        (WebInspector.BaseStorageTreeElement.prototype.onattach):
+        (WebInspector.StorageCategoryTreeElement):
+        (WebInspector.FrameTreeElement):
+        (WebInspector.FrameResourceTreeElement):
+        (WebInspector.DatabaseTreeElement):
+        (WebInspector.DatabaseTableTreeElement):
+        (WebInspector.DOMStorageTreeElement):
+        (WebInspector.CookieTreeElement):
+        (WebInspector.ApplicationCacheTreeElement):
+        (WebInspector.ResourceRevisionTreeElement):
+        * inspector/front-end/utilities.js:
+        (Element.prototype.removeStyleClass):
+        (Element.prototype.addStyleClass):
+        (Element.prototype.hasStyleClass):
+
 2011-03-11  Brian Salomon  <bsalomon@google.com>
 
         Reviewed by Kenneth Russell.

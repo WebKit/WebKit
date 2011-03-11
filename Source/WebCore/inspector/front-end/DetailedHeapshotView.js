@@ -370,7 +370,8 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.element.appendChild(this.dominatorView.element);
 
     var retainmentView = new WebInspector.View();
-    retainmentView.element.addStyleClass("view retaining-paths-view");
+    retainmentView.element.addStyleClass("view");
+    retainmentView.element.addStyleClass("retaining-paths-view");
     var retainingPathsTitleDiv = document.createElement("div");
     retainingPathsTitleDiv.className = "title";
     var retainingPathsTitle = document.createElement("span");
