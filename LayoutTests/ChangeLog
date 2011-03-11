@@ -1,5 +1,14 @@
 2011-03-11  Sergio Villar Senin  <svillar@igalia.com>
 
+        [GTK] JSC crashes in 32bit Release bots after r80743
+        https://bugs.webkit.org/show_bug.cgi?id=56180
+
+        Skipping a couple of tests until the original issue is fixed.
+
+        * platform/gtk/Skipped:
+
+2011-03-11  Sergio Villar Senin  <svillar@igalia.com>
+
         Added new GTK+ test expectations.
 
         * platform/gtk/fast/backgrounds/positioned-root-expected.checksum: Added.
