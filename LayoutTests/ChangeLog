@@ -1,3 +1,16 @@
+2011-03-10  Rik Cabanier  <cabanier@gmail.com>
+
+        Reviewed by Tony Gentilcore.
+
+        Fix that allows fixed length values to be floating point
+        https://bugs.webkit.org/show_bug.cgi?id=52699
+
+        Transitions now return matrices in floating point. 2 of the transition tests were failing
+        because they expected integer values.
+
+        * transitions/matched-transform-functions.html:
+        * transitions/retargetted-transition.html:
+
 2011-03-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Added 3 http tests to Windows port's skipped list.
