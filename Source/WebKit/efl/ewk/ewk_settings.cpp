@@ -133,7 +133,7 @@ const char *ewk_settings_web_database_path_get()
  */
 Eina_Bool ewk_settings_icon_database_path_set(const char *directory)
 {
-    WebCore::iconDatabase().delayDatabaseCleanup();
+    WebCore::IconDatabase::delayDatabaseCleanup();
 
     if (directory) {
         struct stat st;

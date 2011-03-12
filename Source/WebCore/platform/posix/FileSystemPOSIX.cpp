@@ -229,6 +229,7 @@ String directoryName(const String& path)
     return dirname(fsRep.mutableData());
 }
 
+#if !PLATFORM(EFL)
 Vector<String> listDirectory(const String& path, const String& filter)
 {
     Vector<String> entries;
@@ -252,5 +253,6 @@ Vector<String> listDirectory(const String& path, const String& filter)
     }
     return entries;
 }
+#endif
 
 } // namespace WebCore

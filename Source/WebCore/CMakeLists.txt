@@ -657,6 +657,7 @@ SET(WebCore_SOURCES
     css/CSSSegmentedFontFace.cpp
     css/CSSSelector.cpp
     css/CSSSelectorList.cpp
+    css/CSSStyleApplyProperty.cpp
     css/CSSStyleDeclaration.cpp
     css/CSSStyleRule.cpp
     css/CSSStyleSelector.cpp
@@ -1491,6 +1492,7 @@ SET(WebCore_SOURCES
     storage/StorageNamespace.cpp
     storage/StorageNamespaceImpl.cpp
     storage/StorageSyncManager.cpp
+    storage/StorageTracker.cpp
 
     websockets/ThreadableWebSocketChannel.cpp
     websockets/WebSocket.cpp

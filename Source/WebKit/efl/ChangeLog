@@ -1,3 +1,13 @@
+2011-03-12  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL] Fix build break because of several reason.
+        https://bugs.webkit.org/show_bug.cgi?id=56244
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_icon_database_path_set):
+
 2011-03-10  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.
