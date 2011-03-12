@@ -209,6 +209,7 @@ private:
     virtual bool supportsFullScreenForElement(const WebCore::Element*);
     virtual void enterFullScreenForElement(WebCore::Element*);
     virtual void exitFullScreenForElement(WebCore::Element*);
+    virtual void setRootFullScreenLayer(WebCore::GraphicsLayer*);
 #endif
 
     virtual void dispatchViewportDataDidChange(const WebCore::ViewportArguments&) const;

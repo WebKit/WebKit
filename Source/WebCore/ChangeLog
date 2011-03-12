@@ -1,3 +1,15 @@
+2011-03-11  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Create new interface stubs to support full screen mode in WebKit2.
+
+        WebKit2: Plumb new full screen animation APIs through WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=55993
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::setRootFullScreenLayer): Added.
+
 2011-03-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

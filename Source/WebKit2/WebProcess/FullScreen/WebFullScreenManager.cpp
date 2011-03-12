@@ -29,6 +29,7 @@
 
 #include "Connection.h"
 #include "MessageID.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
@@ -49,6 +50,11 @@ WebFullScreenManager::WebFullScreenManager(WebPage* page)
 {
 }
 
+WebCore::Element* WebFullScreenManager::element() 
+{ 
+    return m_element.get(); 
+}
+
 void WebFullScreenManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     didReceiveWebFullScreenManagerMessage(connection, messageID, arguments);
@@ -60,7 +66,7 @@ bool WebFullScreenManager::supportsFullScreen()
         return false;
 
     bool supports = true;
-    WebProcess::shared().connection()->sendSync(Messages::WebFullScreenManagerProxy::SupportsFullScreen(), supports, 0);
+    m_page->sendSync(Messages::WebFullScreenManagerProxy::SupportsFullScreen(), supports);
     return supports;
 }
 
@@ -68,14 +74,44 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
 {
     ASSERT(element);
     m_element = element;
-    WebProcess::shared().connection()->send(Messages::WebFullScreenManagerProxy::EnterFullScreen(), 0);
+    m_initialFrame = m_element->screenRect();
+    m_page->send(Messages::WebFullScreenManagerProxy::EnterFullScreen());
 }
 
 void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
 {
-    ASSERT(element);
-    ASSERT(m_element == element);
-    WebProcess::shared().connection()->send(Messages::WebFullScreenManagerProxy::ExitFullScreen(), 0);
+    m_page->send(Messages::WebFullScreenManagerProxy::ExitFullScreen());
+}
+
+void WebFullScreenManager::beganEnterFullScreenAnimation()
+{
+    m_page->send(Messages::WebFullScreenManagerProxy::BeganEnterFullScreenAnimation());
+}
+
+void WebFullScreenManager::finishedEnterFullScreenAnimation(bool completed)
+{
+    m_page->send(Messages::WebFullScreenManagerProxy::FinishedEnterFullScreenAnimation(completed));
+}
+
+void WebFullScreenManager::beganExitFullScreenAnimation()
+{
+    m_page->send(Messages::WebFullScreenManagerProxy::BeganExitFullScreenAnimation());
+}
+
+void WebFullScreenManager::finishedExitFullScreenAnimation(bool completed)
+{
+    m_page->send(Messages::WebFullScreenManagerProxy::FinishedExitFullScreenAnimation(completed));
+}
+
+void WebFullScreenManager::setRootFullScreenLayer(WebCore::GraphicsLayer* layer)
+{
+}
+    
+IntRect WebFullScreenManager::getFullScreenRect()
+{
+    IntRect rect;
+    m_page->sendSync(Messages::WebFullScreenManagerProxy::GetFullScreenRect(), Messages::WebFullScreenManagerProxy::GetFullScreenRect::Reply(rect));
+    return rect;
 }
 
 void WebFullScreenManager::willEnterFullScreen()
@@ -102,6 +138,13 @@ void WebFullScreenManager::didExitFullScreen()
     m_element->document()->webkitDidExitFullScreenForElement(m_element.get());
 }
 
+void WebFullScreenManager::beginEnterFullScreenAnimation(float duration)
+{
+}
+
+void WebFullScreenManager::beginExitFullScreenAnimation(float duration)
+{
+}
 
 } // namespace WebKit
 

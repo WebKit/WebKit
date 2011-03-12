@@ -1,3 +1,48 @@
+2011-03-11  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Create new interface stubs to support full screen mode in WebKit2.
+
+        WebKit2: Plumb new full screen animation APIs through WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=55993
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::WebFullScreenManagerProxy): Added.
+        (WebKit::WebFullScreenManagerProxy::invalidate): Clear m_webView.
+        (WebKit::WebFullScreenManagerProxy::setWebView): Set m_webView.
+        (WebKit::WebFullScreenManagerProxy::beginEnterFullScreenAnimation): Added.
+        (WebKit::WebFullScreenManagerProxy::beginExitFullScreenAnimation): Added.
+        (WebKit::WebFullScreenManagerProxy::beganEnterFullScreenAnimation): Added stub.
+        (WebKit::WebFullScreenManagerProxy::finishedEnterFullScreenAnimation): Added stub.
+        (WebKit::WebFullScreenManagerProxy::beganExitFullScreenAnimation): Added stub.
+        (WebKit::WebFullScreenManagerProxy::finishedExitFullScreenAnimation): Added stub.
+        (WebKit::WebFullScreenManagerProxy::enterAcceleratedCompositingMode): Added stub.
+        (WebKit::WebFullScreenManagerProxy::exitAcceleratedCompositingMode): Added stub.
+        (WebKit::WebFullScreenManagerProxy::getFullScreenRect): Added stub.
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * UIProcess/WebFullScreenManagerProxy.messages.in: Added new message definitions.
+        * UIProcess/WebPageProxy.cpp: Moved include of WebFullScreenManagerProxy.h into source file.
+        * UIProcess/WebPageProxy.h: Ditto.
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::element): Added.
+        (WebKit::WebFullScreenManager::supportsFullScreen): Send message through WebPage.
+        (WebKit::WebFullScreenManager::enterFullScreenForElement): Ditto.
+        (WebKit::WebFullScreenManager::exitFullScreenForElement): Ditto.
+        (WebKit::WebFullScreenManager::beganEnterFullScreenAnimation): Added..
+        (WebKit::WebFullScreenManager::finishedEnterFullScreenAnimation): Added.
+        (WebKit::WebFullScreenManager::beganExitFullScreenAnimation): Added.
+        (WebKit::WebFullScreenManager::finishedExitFullScreenAnimation): Added.
+        (WebKit::WebFullScreenManager::setRootFullScreenLayer): Added stub.
+        (WebKit::WebFullScreenManager::getFullScreenRect): Added.
+        (WebKit::WebFullScreenManager::beginEnterFullScreenAnimation): Added stub.
+        (WebKit::WebFullScreenManager::beginExitFullScreenAnimation): Added stub.
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        * WebProcess/FullScreen/WebFullScreenManager.messages.in: Added new message definitions.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setRootFullScreenLayer): Added.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2011-03-11  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Sam Weinig.

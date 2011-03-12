@@ -25,5 +25,14 @@ messages -> WebFullScreenManagerProxy {
     SupportsFullScreen() -> (bool supportsFullScreen)
     EnterFullScreen()
     ExitFullScreen()
+    BeganEnterFullScreenAnimation()
+    FinishedEnterFullScreenAnimation(bool completed)
+    BeganExitFullScreenAnimation()
+    FinishedExitFullScreenAnimation(bool completed)
+    GetFullScreenRect() -> (WebCore::IntRect rect)
+#if USE(ACCELERATED_COMPOSITING)
+    EnterAcceleratedCompositingMode(WebKit::LayerTreeContext context)
+    ExitAcceleratedCompositingMode()
+#endif
 }
 #endif

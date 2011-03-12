@@ -42,6 +42,7 @@ PassRefPtr<WebFullScreenManagerProxy> WebFullScreenManagerProxy::create(WebPageP
 
 WebFullScreenManagerProxy::WebFullScreenManagerProxy(WebPageProxy* page)
     : m_page(page)
+    , m_webView(0)
 {
 }
 
@@ -51,6 +52,12 @@ WebFullScreenManagerProxy::~WebFullScreenManagerProxy()
 
 void WebFullScreenManagerProxy::invalidate()
 {
+    m_webView = 0;
+}
+
+void WebFullScreenManagerProxy::setWebView(PlatformWebView* webView)
+{
+    m_webView = webView;
 }
 
 void WebFullScreenManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
@@ -83,6 +90,16 @@ void WebFullScreenManagerProxy::didExitFullScreen()
     m_page->process()->send(Messages::WebFullScreenManager::DidExitFullScreen(), m_page->pageID());
 }
 
+void WebFullScreenManagerProxy::beginEnterFullScreenAnimation(float duration)
+{
+    m_page->process()->send(Messages::WebFullScreenManager::BeginEnterFullScreenAnimation(duration), m_page->pageID());
+}
+
+void WebFullScreenManagerProxy::beginExitFullScreenAnimation(float duration)
+{
+    m_page->process()->send(Messages::WebFullScreenManager::BeginExitFullScreenAnimation(duration), m_page->pageID());
+}
+
 void WebFullScreenManagerProxy::supportsFullScreen(bool& supports)
 {
     supports = true;
@@ -93,6 +110,34 @@ void WebFullScreenManagerProxy::enterFullScreen()
 }
 
 void WebFullScreenManagerProxy::exitFullScreen()
+{
+}
+
+void WebFullScreenManagerProxy::beganEnterFullScreenAnimation()
+{
+}
+
+void WebFullScreenManagerProxy::finishedEnterFullScreenAnimation(bool completed)
+{
+}
+
+void WebFullScreenManagerProxy::beganExitFullScreenAnimation()
+{
+}
+
+void WebFullScreenManagerProxy::finishedExitFullScreenAnimation(bool completed)
+{
+}
+    
+void WebFullScreenManagerProxy::enterAcceleratedCompositingMode(const LayerTreeContext& context)
+{
+}
+
+void WebFullScreenManagerProxy::exitAcceleratedCompositingMode()
+{
+}
+
+void WebFullScreenManagerProxy::getFullScreenRect(WebCore::IntRect& rect)
 {
 }
 

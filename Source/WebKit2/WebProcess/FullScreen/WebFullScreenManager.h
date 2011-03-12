@@ -27,9 +27,9 @@
 
 #if ENABLE(FULLSCREEN_API)
 
-#include "Connection.h"
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
+#include <WebCore/IntRect.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace CoreIPC {
 class ArgumentDecoder;
@@ -38,7 +38,9 @@ class MessageID;
 }
 
 namespace WebCore {
+class IntRect;
 class Element;
+class GraphicsLayer;
 }
 
 namespace WebKit {
@@ -54,19 +56,28 @@ public:
     bool supportsFullScreen();
     void enterFullScreenForElement(WebCore::Element*);
     void exitFullScreenForElement(WebCore::Element*);
+    void beganEnterFullScreenAnimation();
+    void finishedEnterFullScreenAnimation(bool completed);
+    void beganExitFullScreenAnimation();
+    void finishedExitFullScreenAnimation(bool completed);
+    void setRootFullScreenLayer(WebCore::GraphicsLayer*);
 
-    WebCore::Element* element() { return m_element.get(); }
+    WebCore::Element* element();
 
-private:
+protected:
     WebFullScreenManager(WebPage*);
 
     void willEnterFullScreen();
     void didEnterFullScreen();
     void willExitFullScreen();
     void didExitFullScreen();
+    void beginEnterFullScreenAnimation(float duration);
+    void beginExitFullScreenAnimation(float duration);
+    WebCore::IntRect getFullScreenRect();
 
     void didReceiveWebFullScreenManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
+    WebCore::IntRect m_initialFrame;
     RefPtr<WebPage> m_page;
     RefPtr<WebCore::Element> m_element;
 };

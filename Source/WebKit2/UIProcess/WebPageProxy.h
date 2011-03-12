@@ -42,7 +42,6 @@
 #include "WebFindOptions.h"
 #include "WebFormClient.h"
 #include "WebFrameProxy.h"
-#include "WebFullScreenManagerProxy.h"
 #include "WebHistoryClient.h"
 #include "WebInspectorProxy.h"
 #include "WebLoaderClient.h"
@@ -94,6 +93,7 @@ class WebBackForwardListItem;
 class WebContextMenuProxy;
 class WebData;
 class WebEditCommandProxy;
+class WebFullScreenManagerProxy;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebOpenPanelResultListenerProxy;

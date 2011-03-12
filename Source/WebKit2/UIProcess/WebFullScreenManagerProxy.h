@@ -38,9 +38,30 @@ class Connection;
 class MessageID;
 }
 
+namespace WebCore {
+class IntRect;
+}
+
+#if PLATFORM(MAC)
+OBJC_CLASS WKView;
+#endif
+
 namespace WebKit {
+    
+#if PLATFORM(MAC)
+typedef WKView PlatformWebView;
+#elif PLATFORM(WIN)
+class WebView;
+typedef WebView PlatformWebView;
+#elif PLATFORM(QT)
+typedef QGraphicsWKView PlatformWebView;
+#elif PLATFORM(GTK)
+class WebView;
+typedef WebView PlatformWebView;
+#endif
 
 class WebPageProxy;
+class LayerTreeContext;
 
 class WebFullScreenManagerProxy : public RefCounted<WebFullScreenManagerProxy> {
 public:
@@ -49,6 +70,8 @@ public:
 
     void invalidate();
 
+    void setWebView(PlatformWebView*);
+
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply);
 
@@ -56,6 +79,8 @@ public:
     void didEnterFullScreen();
     void willExitFullScreen();
     void didExitFullScreen();
+    void beginEnterFullScreenAnimation(float duration);
+    void beginExitFullScreenAnimation(float duration);
 
 private:
     WebFullScreenManagerProxy(WebPageProxy*);
@@ -63,8 +88,16 @@ private:
     void supportsFullScreen(bool&);
     void enterFullScreen();
     void exitFullScreen();
+    void beganEnterFullScreenAnimation();
+    void finishedEnterFullScreenAnimation(bool completed);
+    void beganExitFullScreenAnimation();
+    void finishedExitFullScreenAnimation(bool completed);
+    void enterAcceleratedCompositingMode(const LayerTreeContext&);
+    void exitAcceleratedCompositingMode();
+    void getFullScreenRect(WebCore::IntRect&);
 
     WebPageProxy* m_page;
+    PlatformWebView* m_webView;
 
     void didReceiveWebFullScreenManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     CoreIPC::SyncReplyMode didReceiveSyncWebFullScreenManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply);

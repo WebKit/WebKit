@@ -49,6 +49,7 @@ namespace WebCore {
     class FloatRect;
     class Frame;
     class Geolocation;
+    class GraphicsLayer;
     class HitTestResult;
     class IntRect;
     class NavigationAction;
@@ -267,6 +268,7 @@ namespace WebCore {
         virtual void enterFullScreenForElement(Element*) { }
         virtual void exitFullScreenForElement(Element*) { }
         virtual void fullScreenRendererChanged(RenderBox*) { }
+        virtual void setRootFullScreenLayer(GraphicsLayer*) { }
 #endif
         
 #if ENABLE(TILED_BACKING_STORE)
