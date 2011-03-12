@@ -1,5 +1,6 @@
 {
     'variables': {
+        'project_dir': [ '<(DEPTH)/JavaScriptCore' ],
         # These headers are part of JavaScriptCore's public API in the Apple Mac build.
         'javascriptcore_publicheader_files': [
             'API/JSBase.h',

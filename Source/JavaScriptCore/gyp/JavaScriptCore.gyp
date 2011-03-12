@@ -3,28 +3,28 @@
     '../../gyp/common.gypi',
     '../JavaScriptCore.gypi',
   ],
-  'xcode_config_file': '<(DEPTH)/JavaScriptCore/Configurations/DebugRelease.xcconfig',
+  'xcode_config_file': '<(project_dir)/Configurations/DebugRelease.xcconfig',
   'variables': {
     # FIXME: We should use a header map instead of listing these explicitly.
     'javascriptcore_include_dirs': [
       '<(DEPTH)', # Some paths in API include JavaScriptCore/
-      '<(DEPTH)/JavaScriptCore',
-      '<(DEPTH)/JavaScriptCore/ForwardingHeaders',
-      '<(DEPTH)/JavaScriptCore/API',
-      '<(DEPTH)/JavaScriptCore/assembler',
-      '<(DEPTH)/JavaScriptCore/collector/handles',
-      '<(DEPTH)/JavaScriptCore/bytecode',
-      '<(DEPTH)/JavaScriptCore/bytecompiler',
-      '<(DEPTH)/JavaScriptCore/debugger',
-      '<(DEPTH)/JavaScriptCore/icu',
-      '<(DEPTH)/JavaScriptCore/interpreter',
-      '<(DEPTH)/JavaScriptCore/jit',
-      '<(DEPTH)/JavaScriptCore/parser',
-      '<(DEPTH)/JavaScriptCore/profiler',
-      '<(DEPTH)/JavaScriptCore/runtime',
-      '<(DEPTH)/JavaScriptCore/wtf',
-      '<(DEPTH)/JavaScriptCore/wtf/unicode',
-      '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore',
+      '<(project_dir)',
+      '<(project_dir)/ForwardingHeaders',
+      '<(project_dir)/API',
+      '<(project_dir)/assembler',
+      '<(project_dir)/collector/handles',
+      '<(project_dir)/bytecode',
+      '<(project_dir)/bytecompiler',
+      '<(project_dir)/debugger',
+      '<(project_dir)/icu',
+      '<(project_dir)/interpreter',
+      '<(project_dir)/jit',
+      '<(project_dir)/parser',
+      '<(project_dir)/profiler',
+      '<(project_dir)/runtime',
+      '<(project_dir)/wtf',
+      '<(project_dir)/wtf/unicode',
+      '<(SHARED_INTERMEDIATE_DIR)',
     ],
     'derived_source_files': [
       '<(SHARED_INTERMEDIATE_DIR)/ArrayPrototype.lut.h',
@@ -69,7 +69,7 @@
       'mac_framework_private_headers': [
         '<@(javascriptcore_privateheader_files)',
       ],
-      'xcode_config_file': '<(DEPTH)/JavaScriptCore/Configurations/JavaScriptCore.xcconfig',
+      'xcode_config_file': '<(project_dir)/Configurations/JavaScriptCore.xcconfig',
       'sources/': [
         ['exclude', 'qt'],
         ['exclude', 'os-win32'],
@@ -119,8 +119,8 @@
           'xcode_settings': {
             # FIXME: Remove these overrides once JavaScriptCore.xcconfig is
             # used only by this project.
-            'GCC_PREFIX_HEADER': '<(DEPTH)/JavaScriptCore/JavaScriptCorePrefix.h',
-            'INFOPLIST_FILE': '<(DEPTH)/JavaScriptCore/Info.plist',
+            'GCC_PREFIX_HEADER': '<(project_dir)/JavaScriptCorePrefix.h',
+            'INFOPLIST_FILE': '<(project_dir)/Info.plist',
             # This setting mirrors the setting in Base.xcconfig, with
             # one difference noted below.
             'WARNING_CFLAGS_BASE': [
@@ -165,7 +165,7 @@
           'inputs': [],
            'outputs': [],
            'action': [
-             'sh', '<(DEPTH)/JavaScriptCore/gyp/generate-dtrace-header.sh', '<(SHARED_INTERMEDIATE_DIR)'
+             'sh', '<(project_dir)/gyp/generate-dtrace-header.sh', '<(project_dir)', '<(SHARED_INTERMEDIATE_DIR)'
             ]
         }
       ],
@@ -178,7 +178,7 @@
         'inputs': [],
          'outputs': [],
          'action': [
-           'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(DEPTH)/JavaScriptCore/Info.plist'
+           'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(project_dir)/Info.plist'
           ]
       }],
     },

@@ -1,5 +1,16 @@
 2011-03-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        Introduce project_dir variable and make paths a whole lot saner. Ok, a little bit saner.
+        https://bugs.webkit.org/show_bug.cgi?id=56231
+
+        * JavaScriptCore.gypi: Added project_dir variable.
+        * gyp/JavaScriptCore.gyp: Changed to use project_dir, rather than DEPTH/JavaScriptCore.
+        * gyp/generate-dtrace-header.sh: Changed to use project_dir.
+
+2011-03-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Adam Barth.
 
         Start using derived sources correctly and link minidom with JavaScriptCore gyp project.
