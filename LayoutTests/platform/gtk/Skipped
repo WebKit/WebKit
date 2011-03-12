@@ -261,6 +261,9 @@ fast/events/touch
 # IndexedDB is not yet enabled.
 storage/indexeddb
 
+# StorageTracker is not enabled.
+storage/domstorage/localstorage/storagetracker
+
 # Speech input is not yet enabled.
 fast/speech
 

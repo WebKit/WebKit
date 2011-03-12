@@ -1,3 +1,14 @@
+2011-03-11  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Adding StorageTracker tests to skip lists of platforms that don't support it.
+        https://bugs.webkit.org/show_bug.cgi?id=51878
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-03-11  David Levin  <levin@chromium.org>
 
         Fix prototype-inheritance-expected result due to two changes:

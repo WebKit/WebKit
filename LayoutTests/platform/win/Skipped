@@ -979,6 +979,9 @@ editing/spelling/spellcheck-paste.html
 # IndexedDB is not yet enabled.
 storage/indexeddb
 
+# StorageTracker is not enabled.
+storage/domstorage/localstorage/storagetracker
+
 # This port doesn't support DeviceMotion or DeviceOrientation.
 fast/dom/DeviceMotion
 fast/dom/DeviceOrientation

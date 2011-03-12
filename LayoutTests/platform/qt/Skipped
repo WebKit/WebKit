@@ -79,6 +79,9 @@ plugins/clicking-missing-plugin-fires-delegate.html
 # IndexedDB is not yet enabled.
 storage/indexeddb
 
+# StorageTracker is not enabled.
+storage/domstorage/localstorage/storagetracker
+
 # ----- No User Scripts
 userscripts
 plugins/plugin-document-load-prevented-userscript.html
