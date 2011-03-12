@@ -4,6 +4,12 @@
 
         * platform/chromium/test_expectations.txt:
 
+2011-03-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Update chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
