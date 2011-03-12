@@ -45,6 +45,7 @@
 #include "InspectorFrontend.h"
 #include "InspectorFrontendClient.h"
 #include "InspectorInstrumentation.h"
+#include "InspectorProfilerAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "Page.h"
 #include "ScriptObject.h"
@@ -250,18 +251,18 @@ void InspectorController::hideHighlight()
 void InspectorController::enableProfiler()
 {
     ErrorString error;
-    m_inspectorAgent->enableProfiler(&error);
+    m_inspectorAgent->profilerAgent()->enable(&error);
 }
 
 void InspectorController::disableProfiler()
 {
     ErrorString error;
-    m_inspectorAgent->disableProfiler(&error);
+    m_inspectorAgent->profilerAgent()->disable(&error);
 }
 
 bool InspectorController::profilerEnabled()
 {
-    return m_inspectorAgent->profilerEnabled();
+    return m_inspectorAgent->profilerAgent()->enabled();
 }
 
 bool InspectorController::debuggerEnabled()
@@ -285,7 +286,7 @@ void InspectorController::disableDebugger()
 
 void InspectorController::startUserInitiatedProfiling()
 {
-    m_inspectorAgent->startUserInitiatedProfiling();
+    m_inspectorAgent->profilerAgent()->startUserInitiatedProfiling();
 }
 
 void InspectorController::stopUserInitiatedProfiling()
@@ -293,12 +294,13 @@ void InspectorController::stopUserInitiatedProfiling()
     if (!enabled())
         return;
     show();
-    m_inspectorAgent->stopUserInitiatedProfiling();
+    m_inspectorAgent->profilerAgent()->stopUserInitiatedProfiling();
+    m_inspectorAgent->showProfilesPanel();
 }
 
 bool InspectorController::isRecordingUserInitiatedProfile() const
 {
-    return m_inspectorAgent->isRecordingUserInitiatedProfile();
+    return m_inspectorAgent->profilerAgent()->isRecordingUserInitiatedProfile();
 }
 
 void InspectorController::resume()

@@ -215,16 +215,8 @@ var WebInspector = {
             this.panels.scripts = new WebInspector.ScriptsPanel();
         if (hiddenPanels.indexOf("timeline") === -1)
             this.panels.timeline = new WebInspector.TimelinePanel();
-        if (hiddenPanels.indexOf("profiles") === -1) {
+        if (hiddenPanels.indexOf("profiles") === -1)
             this.panels.profiles = new WebInspector.ProfilesPanel();
-            this.panels.profiles.registerProfileType(new WebInspector.CPUProfileType());
-            if (Preferences.heapProfilerPresent) {
-                if (!Preferences.detailedHeapProfiles)
-                    this.panels.profiles.registerProfileType(new WebInspector.HeapSnapshotProfileType());
-                else
-                    this.panels.profiles.registerProfileType(new WebInspector.DetailedHeapshotProfileType());
-            }
-        }
         if (hiddenPanels.indexOf("audits") === -1)
             this.panels.audits = new WebInspector.AuditsPanel();
         if (hiddenPanels.indexOf("console") === -1)

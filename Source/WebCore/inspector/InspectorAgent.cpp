@@ -124,9 +124,7 @@ namespace WebCore {
 namespace InspectorAgentState {
 static const char searchingForNode[] = "searchingForNode";
 static const char timelineProfilerEnabled[] = "timelineProfilerEnabled";
-static const char userInitiatedProfiling[] = "userInitiatedProfiling";
 static const char debuggerEnabled[] = "debuggerEnabled";
-static const char profilerEnabled[] = "profilerEnabled";
 }
 
 static const char scriptsPanelName[] = "scripts";
@@ -157,7 +155,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerAgent(InspectorDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, injectedScriptManager))
     , m_browserDebuggerAgent(InspectorBrowserDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent.get(), m_debuggerAgent.get(), this))
-    , m_profilerAgent(InspectorProfilerAgent::create(m_instrumentingAgents.get(), m_consoleAgent.get(), page))
+    , m_profilerAgent(InspectorProfilerAgent::create(m_instrumentingAgents.get(), m_consoleAgent.get(), page, m_state.get()))
 #endif
     , m_canIssueEvaluateForTestInFrontend(false)
 {
@@ -228,9 +226,7 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_debuggerAgent->restore();
-    restoreProfiler(ProfilerRestoreResetAgent);
-    if (m_state->getBoolean(InspectorAgentState::userInitiatedProfiling))
-        startUserInitiatedProfiling();
+    m_profilerAgent->restore();
 #endif
 }
 
@@ -390,6 +386,7 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_debuggerAgent->setFrontend(m_frontend);
     m_browserDebuggerAgent->setFrontend(m_frontend);
+    m_profilerAgent->setFrontend(m_frontend);
 #endif
 #if ENABLE(DATABASE)
     m_databaseAgent->setFrontend(m_frontend);
@@ -419,15 +416,11 @@ void InspectorAgent::disconnectFrontend()
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_debuggerAgent->clearFrontend();
     m_browserDebuggerAgent->clearFrontend();
+    m_profilerAgent->clearFrontend();
 #endif
     setSearchingForNode(false);
 
     hideHighlight(&error);
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_profilerAgent->clearFrontend();
-    m_profilerAgent->stopUserInitiatedProfiling(true);
-#endif
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheAgent->clearFrontend();
 #endif
@@ -481,7 +474,6 @@ void InspectorAgent::populateScriptObjects(ErrorString*)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_debuggerAgent->enableDebuggerAfterShown();
 #endif
-    restoreProfiler(ProfilerRestoreNoAction);
 
     // Dispatch pending frontend commands
     issueEvaluateForTestCommands();
@@ -497,20 +489,6 @@ void InspectorAgent::pushDataCollectedOffline()
         InspectorWorkerResource* worker = it->second.get();
         m_frontend->debugger()->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
     }
-#endif
-}
-
-void InspectorAgent::restoreProfiler(ProfilerRestoreAction action)
-{
-    ASSERT(m_frontend);
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_profilerAgent->setFrontend(m_frontend);
-    if (m_state->getBoolean(InspectorAgentState::profilerEnabled)) {
-        ErrorString error;
-        enableProfiler(&error);
-    }
-    if (action == ProfilerRestoreResetAgent)
-        m_profilerAgent->resetFrontendProfiles();
 #endif
 }
 
@@ -727,47 +705,11 @@ void InspectorAgent::deleteCookie(ErrorString*, const String& cookieName, const 
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-bool InspectorAgent::isRecordingUserInitiatedProfile() const
+void InspectorAgent::showProfilesPanel()
 {
-    return m_profilerAgent->isRecordingUserInitiatedProfile();
-}
-
-void InspectorAgent::startUserInitiatedProfiling()
-{
-    if (!enabled())
-        return;
-    m_profilerAgent->startUserInitiatedProfiling();
-    m_state->setBoolean(InspectorAgentState::userInitiatedProfiling, true);
-}
-
-void InspectorAgent::stopUserInitiatedProfiling()
-{
-    m_profilerAgent->stopUserInitiatedProfiling();
-    m_state->setBoolean(InspectorAgentState::userInitiatedProfiling, false);
     showPanel(profilesPanelName);
 }
 
-bool InspectorAgent::profilerEnabled() const
-{
-    return enabled() && m_profilerAgent->enabled();
-}
-
-void InspectorAgent::enableProfiler(ErrorString*)
-{
-    if (profilerEnabled())
-        return;
-    m_state->setBoolean(InspectorAgentState::profilerEnabled, true);
-    m_profilerAgent->enable(false);
-}
-
-void InspectorAgent::disableProfiler(ErrorString*)
-{
-    m_state->setBoolean(InspectorAgentState::profilerEnabled, false);
-    m_profilerAgent->disable();
-}
-#endif
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorAgent::showScriptsPanel()
 {
     showPanel(scriptsPanelName);

@@ -595,9 +595,9 @@ WebInspector.CPUProfileType.prototype = {
         this._recording = !this._recording;
 
         if (this._recording)
-            InspectorAgent.startProfiling();
+            ProfilerAgent.start();
         else
-            InspectorAgent.stopProfiling();
+            ProfilerAgent.stop();
     },
 
     get welcomeMessage()

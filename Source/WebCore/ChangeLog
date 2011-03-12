@@ -1,3 +1,51 @@
+2011-03-11  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: move profiler related methods from inspector agent to profiler agent
+        https://bugs.webkit.org/show_bug.cgi?id=56204
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        (WebCore::InspectorAgent::setFrontend):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        (WebCore::InspectorAgent::populateScriptObjects):
+        (WebCore::InspectorAgent::showProfilesPanel):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::enableProfiler):
+        (WebCore::InspectorController::disableProfiler):
+        (WebCore::InspectorController::profilerEnabled):
+        (WebCore::InspectorController::startUserInitiatedProfiling):
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+        (WebCore::InspectorController::isRecordingUserInitiatedProfile):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::profilerEnabledImpl):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::create):
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        (WebCore::InspectorProfilerAgent::enable):
+        (WebCore::InspectorProfilerAgent::disable):
+        (WebCore::InspectorProfilerAgent::setFrontend):
+        (WebCore::InspectorProfilerAgent::clearFrontend):
+        (WebCore::InspectorProfilerAgent::restore):
+        (WebCore::InspectorProfilerAgent::restoreEnablement):
+        (WebCore::InspectorProfilerAgent::startUserInitiatedProfiling):
+        (WebCore::InspectorProfilerAgent::stopUserInitiatedProfiling):
+        * inspector/InspectorProfilerAgent.h:
+        (WebCore::InspectorProfilerAgent::start):
+        (WebCore::InspectorProfilerAgent::stop):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileType.prototype.buttonClicked):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        (WebInspector.ProfilesPanel.prototype._registerProfileType):
+        (WebInspector.ProfilesPanel.prototype._toggleProfiling):
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+
 2011-03-11  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Anders Carlsson.

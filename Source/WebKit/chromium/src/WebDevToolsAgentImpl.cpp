@@ -399,8 +399,8 @@ bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)
         || commandName == InspectorBackendDispatcher::Debugger_removeJavaScriptBreakpointCmd
         || commandName == InspectorBackendDispatcher::Debugger_activateBreakpointsCmd
         || commandName == InspectorBackendDispatcher::Debugger_deactivateBreakpointsCmd
-        || commandName == InspectorBackendDispatcher::Inspector_startProfilingCmd
-        || commandName == InspectorBackendDispatcher::Inspector_stopProfilingCmd
+        || commandName == InspectorBackendDispatcher::Profiler_startCmd
+        || commandName == InspectorBackendDispatcher::Profiler_stopCmd
         || commandName == InspectorBackendDispatcher::Profiler_getProfileCmd;
 }
 

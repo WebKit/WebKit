@@ -183,15 +183,7 @@ public:
     void drawElementTitle(GraphicsContext&, const IntRect& boundingBox, const IntRect& anchorBox, const FloatRect& overlayRect, WebCore::Settings*) const;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    bool isRecordingUserInitiatedProfile() const;
-    void startProfiling(ErrorString*) { startUserInitiatedProfiling(); }
-    void startUserInitiatedProfiling();
-    void stopProfiling(ErrorString*) { stopUserInitiatedProfiling(); }
-    void stopUserInitiatedProfiling();
-    void enableProfiler(ErrorString* error);
-    void disableProfiler(ErrorString* error);
-    bool profilerEnabled() const;
-
+    void showProfilesPanel();
     void showScriptsPanel();
 #endif
 
@@ -218,11 +210,6 @@ public:
 private:
     void showPanel(const String& panel);
     void pushDataCollectedOffline();
-    enum ProfilerRestoreAction {
-        ProfilerRestoreNoAction = 0,
-        ProfilerRestoreResetAgent = 1
-    };
-    void restoreProfiler(ProfilerRestoreAction);
     void unbindAllResources();
     void setSearchingForNode(bool enabled);
 

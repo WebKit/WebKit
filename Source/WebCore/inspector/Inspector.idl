@@ -61,14 +61,6 @@ module core {
         void deleteCookie(in String cookieName, in String domain);
 
         [event] void inspect(out Object objectId, out Object hints);
-
-        // FIXME: dispatch on agents.
-#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        void enableProfiler();
-        void disableProfiler();
-        void startProfiling();
-        void stopProfiling();
-#endif // ENABLE_JAVASCRIPT_DEBUGGER
     };
 
     interface [Conditional=INSPECTOR] Runtime {
@@ -259,6 +251,10 @@ module core {
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
     interface [Conditional=INSPECTOR] Profiler {
+        void enable();
+        void disable();
+        void start();
+        void stop();
         [event] void profilerWasEnabled();
         [event] void profilerWasDisabled();
 

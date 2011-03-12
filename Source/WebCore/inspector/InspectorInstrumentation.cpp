@@ -630,7 +630,7 @@ String InspectorInstrumentation::getCurrentUserInitiatedProfileNameImpl(Inspecto
 
 bool InspectorInstrumentation::profilerEnabledImpl(InspectorAgent* inspectorAgent)
 {
-    return inspectorAgent->profilerEnabled();
+    return inspectorAgent->instrumentingAgents()->inspectorProfilerAgent()->enabled();
 }
 #endif
 
