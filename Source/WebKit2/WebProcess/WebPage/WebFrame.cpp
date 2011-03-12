@@ -335,7 +335,11 @@ String WebFrame::url() const
     if (!m_coreFrame)
         return String();
 
-    return m_coreFrame->document()->url().string();
+    DocumentLoader* documentLoader = m_coreFrame->loader()->documentLoader();
+    if (!documentLoader)
+        return String();
+
+    return documentLoader->url().string();
 }
 
 String WebFrame::innerText() const
@@ -611,7 +615,12 @@ String WebFrame::suggestedFilenameForResourceWithURL(const KURL& url) const
     DocumentLoader* loader = m_coreFrame->loader()->documentLoader();
     if (!loader)
         return String();
-    
+
+    // First, try the main resource.
+    if (loader->url() == url)
+        return loader->response().suggestedFilename();
+
+    // Next, try subresources.
     RefPtr<ArchiveResource> resource = loader->subresource(url);
     if (!resource)
         return String();
@@ -627,7 +636,12 @@ String WebFrame::mimeTypeForResourceWithURL(const KURL& url) const
     DocumentLoader* loader = m_coreFrame->loader()->documentLoader();
     if (!loader)
         return String();
-    
+
+    // First, try the main resource.
+    if (loader->url() == url)
+        return loader->response().mimeType();
+
+    // Next, try subresources.
     RefPtr<ArchiveResource> resource = loader->subresource(url);
     if (resource)
         return resource->mimeType();

@@ -2,6 +2,20 @@
 
         Reviewed by Sam Weinig.
 
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::url):
+        Get the URL from the loader, not from the document.
+
+        (WebKit::WebFrame::suggestedFilenameForResourceWithURL):
+        Return the correct suggested filename for the main resource.
+
+        (WebKit::WebFrame::mimeTypeForResourceWithURL):
+        Return the correct mime type for the main resource.
+
+2011-03-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Should be able to download a PDF to the Downloads folder
         https://bugs.webkit.org/show_bug.cgi?id=56256
 
