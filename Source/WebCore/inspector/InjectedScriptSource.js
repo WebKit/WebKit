@@ -182,12 +182,12 @@ InjectedScript.prototype = {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
         if (!this._isDefined(object))
-            return false;
+            return "Object with given id not found";
     
         var expressionLength = expression.length;
         if (!expressionLength) {
             delete object[propertyName];
-            return !(propertyName in object);
+            return propertyName in object ? "Cound not delete property." : undefined;
         }
     
         try {
@@ -200,14 +200,12 @@ InjectedScript.prototype = {
             var result = inspectedWindow.eval("(" + expression + ")");
             // Store the result in the property.
             object[propertyName] = result;
-            return true;
         } catch(e) {
             try {
                 var result = inspectedWindow.eval("\"" + expression.replace(/"/g, "\\\"") + "\"");
                 object[propertyName] = result;
-                return true;
             } catch(e) {
-                return false;
+                return e.toString();
             }
         }
     },

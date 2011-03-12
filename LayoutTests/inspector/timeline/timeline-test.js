@@ -18,7 +18,7 @@ InspectorTest.timelineNonDeterministicProps = {
 InspectorTest.startTimeline = function(callback)
 {
     InspectorTest._timelineRecords = [];
-    TimelineAgent.start(errorFilter.bind(this, callback));
+    TimelineAgent.start(callback);
     function addRecord(record)
     {
         InspectorTest._timelineRecords.push(record);
@@ -30,7 +30,7 @@ InspectorTest.startTimeline = function(callback)
 
 InspectorTest.stopTimeline = function(callback)
 {
-    TimelineAgent.stop(errorFilter.bind(this, callback));
+    TimelineAgent.stop(callback);
 };
 
 InspectorTest.performActionsAndPrint = function(actions, typeName)

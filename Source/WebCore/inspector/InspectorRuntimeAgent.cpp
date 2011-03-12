@@ -79,11 +79,13 @@ void InspectorRuntimeAgent::getProperties(ErrorString*, PassRefPtr<InspectorObje
         injectedScript.getProperties(objectId, ignoreHasOwnProperty, abbreviate, result);
 }
 
-void InspectorRuntimeAgent::setPropertyValue(ErrorString*, PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result)
+void InspectorRuntimeAgent::setPropertyValue(ErrorString* errorString, PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId.get());
     if (!injectedScript.hasNoValue())
-        injectedScript.setPropertyValue(objectId, propertyName, expression, result);
+        *errorString = injectedScript.setPropertyValue(objectId, propertyName, expression);
+    else
+        *errorString = "No injected script found.";
 }
 
 void InspectorRuntimeAgent::releaseObject(ErrorString*, PassRefPtr<InspectorObject> objectId)

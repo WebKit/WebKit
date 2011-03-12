@@ -57,9 +57,9 @@ public:
     void getProperties(PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result);
     Node* nodeForObjectId(PassRefPtr<InspectorObject> objectId);
     void resolveNode(long nodeId, RefPtr<InspectorValue>* result);
-    void setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result);
+    String setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression);
     void releaseObject(PassRefPtr<InspectorObject> objectId);
-    
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     PassRefPtr<InspectorValue> callFrames();
 #endif

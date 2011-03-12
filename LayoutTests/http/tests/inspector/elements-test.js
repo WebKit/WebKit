@@ -21,7 +21,7 @@ InspectorTest.nodeWithId = function(idValue, callback)
                 return;
             }
             pendingRequests++;
-            childNode.childNodes(processChildren.bind(null, false));
+            childNode.getChildNodes(processChildren.bind(null, false));
         }
 
         if (topLevel)
@@ -34,7 +34,7 @@ InspectorTest.nodeWithId = function(idValue, callback)
     WebInspector.domAgent.requestDocument(documentRequested.bind(this));
     function documentRequested(doc)
     {
-        doc.childNodes(processChildren.bind(this, true));
+        doc.getChildNodes(processChildren.bind(this, true));
     }
 };
 

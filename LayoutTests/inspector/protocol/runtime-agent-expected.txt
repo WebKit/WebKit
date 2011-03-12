@@ -80,9 +80,6 @@ request:
 response:
 {
     requestId : <number>
-    body : {
-        result : true
-    }
 }
 
 -----------------------------------------------------------
@@ -106,9 +103,6 @@ request:
 response:
 {
     requestId : <number>
-    body : {
-        result : true
-    }
 }
 
 -----------------------------------------------------------

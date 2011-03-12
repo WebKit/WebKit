@@ -65,7 +65,10 @@ WebInspector.EventListenersSidebarPane.prototype = {
         this.sections = [];
 
         var self = this;
-        function callback(nodeId, eventListeners) {
+        function callback(error, eventListeners) {
+            if (error)
+                return;
+
             var sectionNames = [];
             var sectionMap = {};
             for (var i = 0; i < eventListeners.length; ++i) {
@@ -77,7 +80,7 @@ WebInspector.EventListenersSidebarPane.prototype = {
                 var type = eventListener.type;
                 var section = sectionMap[type];
                 if (!section) {
-                    section = new WebInspector.EventListenersSection(type, nodeId);
+                    section = new WebInspector.EventListenersSection(type, node.id);
                     sectionMap[type] = section;
                     sectionNames.push(type);
                     self.sections.push(section);
@@ -101,7 +104,7 @@ WebInspector.EventListenersSidebarPane.prototype = {
             }
         }
 
-        WebInspector.EventListeners.getEventListenersForNodeAsync(node, callback);
+        WebInspector.EventListeners.getEventListenersForNode(node, callback);
     },
 
     _changeSetting: function(event)

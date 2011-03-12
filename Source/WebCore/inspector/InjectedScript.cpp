@@ -107,13 +107,18 @@ void InjectedScript::resolveNode(long nodeId, RefPtr<InspectorValue>* result)
     makeCall(function, result);
 }
 
-void InjectedScript::setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result)
+String InjectedScript::setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "setPropertyValue");
     function.appendArgument(objectId->toJSONString());
     function.appendArgument(propertyName);
     function.appendArgument(expression);
-    makeCall(function, result);
+    RefPtr<InspectorValue> result;
+    makeCall(function, &result);
+
+    String error;
+    result->asString(&error);
+    return error;
 }
 
 void InjectedScript::releaseObject(PassRefPtr<InspectorObject> objectId)

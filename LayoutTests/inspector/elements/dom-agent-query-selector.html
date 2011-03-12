@@ -38,15 +38,22 @@ function test()
 
     function dumpNodes(next, error, nodeIds)
     {
-        if (error)
-            InspectorTest.addRecord(error);
+        if (error) {
+            InspectorTest.addResult(error);
+            next();
+            return;
+        }
 
         if (!(nodeIds instanceof Array))
             nodeIds = [nodeIds];
 
         for (var i = 0; i < nodeIds.length; ++i) {
-            var node = WebInspector.domAgent.nodeForId(nodeIds[i]);
-            InspectorTest.addResult("node id: " + node.getAttribute("id"));
+            if (!nodeIds[i])
+                InspectorTest.addResult("no results");
+            else {
+                var node = WebInspector.domAgent.nodeForId(nodeIds[i]);
+                InspectorTest.addResult("node id: " + node.getAttribute("id"));
+            }
         }
         next();
     }

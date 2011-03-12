@@ -46,7 +46,7 @@ function extension_testPageLoadEvents(nextTest)
             if (queuedOutput[i])
                 output(queuedOutput[i]);
         }
-	nextTest();
+        nextTest();
     }
 
     webInspector.inspectedWindow.onDOMContentLoaded.addListener(function(time) {

@@ -406,9 +406,9 @@ WebInspector.ElementsTreeElement.prototype = {
         if (!node.nodeName() || node.nodeName().toLowerCase() !== "img")
             return;
 
-        function setTooltip(result)
+        function setTooltip(error, result)
         {
-            if (!result || result.type !== "string")
+            if (error || !result || result.type !== "string")
                 return;
 
             try {
@@ -426,15 +426,16 @@ WebInspector.ElementsTreeElement.prototype = {
             }
         }
 
-        function resolvedNode(error, objectPayload)
+        function resolvedNode(objectPayload)
         {
-            if (error || !objectPayload)
+            if (!objectPayload)
                 return;
 
             var object = WebInspector.RemoteObject.fromPayload(objectPayload);
             object.evaluate("return '[' + this.offsetWidth + ',' + this.offsetHeight + ',' + this.naturalWidth + ',' + this.naturalHeight + ']'", setTooltip.bind(this));
+            object.release();
         }
-        DOMAgent.resolveNode(node.id, "", resolvedNode.bind(this));
+        WebInspector.RemoteObject.resolveNode(node, resolvedNode.bind(this));
     },
 
     updateSelection: function()
@@ -492,7 +493,7 @@ WebInspector.ElementsTreeElement.prototype = {
     {
         if (this._elementCloseTag)
             return;
-        this.representedObject.childNodes(this._updateChildren.bind(this, fullRefresh));
+        this.representedObject.getChildNodes(this._updateChildren.bind(this, fullRefresh));
     },
 
     insertChildElement: function(child, index, closingTag)
@@ -1420,7 +1421,7 @@ WebInspector.ElementsTreeElement.prototype = {
             return;
 
         var self = this;
-        function removeNodeCallback(removedNodeId)
+        function removeNodeCallback(error, removedNodeId)
         {
             // -1 is an error code, which means removing the node from the DOM failed,
             // so we shouldn't remove it from the tree.
@@ -1461,7 +1462,7 @@ WebInspector.ElementsTreeElement.prototype = {
             node.setOuterHTML(value, selectNode);
         }
 
-        node.outerHTML(this._startEditingAsHTML.bind(this, commitChange));
+        node.getOuterHTML(this._startEditingAsHTML.bind(this, commitChange));
     },
 
     _copyHTML: function()

@@ -104,7 +104,7 @@ WebInspector.DOMNode.prototype = {
 
     setNodeName: function(name, callback)
     {
-        DOMAgent.setNodeName(this.id, name, errorFilter.bind(null, callback));
+        DOMAgent.setNodeName(this.id, name, callback);
     },
 
     localName: function()
@@ -119,7 +119,7 @@ WebInspector.DOMNode.prototype = {
 
     setNodeValue: function(value, callback)
     {
-        DOMAgent.setNodeValue(this.id, value, errorFilter.bind(null, callback));
+        DOMAgent.setNodeValue(this.id, value, callback);
     },
 
     getAttribute: function(name)
@@ -172,7 +172,7 @@ WebInspector.DOMNode.prototype = {
         DOMAgent.removeAttribute(this.id, name, mycallback.bind(this));
     },
 
-    childNodes: function(callback)
+    getChildNodes: function(callback)
     {
         if (this.children) {
             if (callback)
@@ -184,27 +184,27 @@ WebInspector.DOMNode.prototype = {
             if (!error && callback)
                 callback(this.children);
         }
-        DOMAgent.childNodes(this.id, mycallback.bind(this));
+        DOMAgent.getChildNodes(this.id, mycallback.bind(this));
     },
 
-    outerHTML: function(callback)
+    getOuterHTML: function(callback)
     {
-        DOMAgent.outerHTML(this.id, errorFilter.bind(null, callback));
+        DOMAgent.getOuterHTML(this.id, callback);
     },
 
     setOuterHTML: function(html, callback)
     {
-        DOMAgent.setOuterHTML(this.id, html, errorFilter.bind(null, callback));
+        DOMAgent.setOuterHTML(this.id, html, callback);
     },
 
     removeNode: function(callback)
     {
-        DOMAgent.removeNode(this.id, errorFilter.bind(null, callback));
+        DOMAgent.removeNode(this.id, callback);
     },
 
     copyNode: function(callback)
     {
-        DOMAgent.copyNode(this.id, errorFilter.bind(null, callback));
+        DOMAgent.copyNode(this.id, callback);
     },
 
     path: function()
@@ -354,28 +354,37 @@ WebInspector.DOMAgent.prototype = {
 
     pushNodeToFrontend: function(objectId, callback)
     {
+        function callbackWrapper(error, nodeId)
+        {
+            if (callback)
+                callback(error ? 0 : nodeId);
+        }
+
         function mycallback()
         {
             if (this._document)
-                DOMAgent.pushNodeToFrontend(objectId, errorFilter.bind(null, callback));
-            else {
-                if (callback)
-                    callback(0);
-            }
+                DOMAgent.pushNodeToFrontend(objectId, callbackWrapper);
+            else
+                callbackWrapper("No document");
         }
+
         this.requestDocument(mycallback.bind(this));
     },
 
     pushNodeByPathToFrontend: function(path, callback)
     {
+        function callbackWrapper(error, nodeId)
+        {
+            if (callback)
+                callback(error ? 0 : nodeId);
+        }
+
         function mycallback()
         {
             if (this._document)
-                DOMAgent.pushNodeByPathToFrontend(path, errorFilter.bind(null, callback));
-            else {
-                if (callback)
-                    callback(0);
-            }
+                DOMAgent.pushNodeByPathToFrontend(path, callbackWrapper);
+            else
+                callbackWrapper("No document");
         }
         this.requestDocument(mycallback.bind(this));
     },
@@ -635,9 +644,9 @@ WebInspector.Cookies.cookieDomainMatchesResourceDomain = function(cookieDomain, 
 
 WebInspector.EventListeners = {}
 
-WebInspector.EventListeners.getEventListenersForNodeAsync = function(node, callback)
+WebInspector.EventListeners.getEventListenersForNode = function(node, callback)
 {
     if (!node)
         return;
-    DOMAgent.getEventListenersForNode(node.id, errorFilter.bind(this, callback));
+    DOMAgent.getEventListenersForNode(node.id, callback);
 }

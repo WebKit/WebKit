@@ -109,15 +109,15 @@ public:
     void querySelector(ErrorString*, long nodeId, const String& selectors, bool documentWide, long* elementId);
     void querySelectorAll(ErrorString*, long nodeId, const String& selectors, bool documentWide, RefPtr<InspectorArray>* result);
     void getDocument(ErrorString*, RefPtr<InspectorObject>* root);
-    void childNodes(ErrorString*, long nodeId);
+    void getChildNodes(ErrorString*, long nodeId);
     void setAttribute(ErrorString*, long elementId, const String& name, const String& value, bool* success);
     void removeAttribute(ErrorString*, long elementId, const String& name, bool* success);
     void removeNode(ErrorString*, long nodeId, long* outNodeId);
     void setNodeName(ErrorString*, long nodeId, const String& name, long* newId);
-    void outerHTML(ErrorString*, long nodeId, WTF::String* outerHTML);
+    void getOuterHTML(ErrorString*, long nodeId, WTF::String* outerHTML);
     void setOuterHTML(ErrorString*, long nodeId, const String& outerHTML, long* newId);
     void setNodeValue(ErrorString*, long nodeId, const String& value, bool* success);
-    void getEventListenersForNode(ErrorString*, long nodeId, long* outNodeId, RefPtr<InspectorArray>* listenersArray);
+    void getEventListenersForNode(ErrorString*, long nodeId, RefPtr<InspectorArray>* listenersArray);
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, bool runSynchronously);
     void searchCanceled(ErrorString*);
     void resolveNode(ErrorString*, long nodeId, const String& objectGroup, RefPtr<InspectorValue>* result);

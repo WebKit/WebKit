@@ -67,7 +67,7 @@ module core {
         void evaluate(in String expression, in String objectGroup, in boolean includeCommandLineAPI, out Value result);
         void evaluateOn(in Object objectId, in String expression, out Value result);
         void getProperties(in Object objectId, in boolean ignoreHasOwnProperty, in boolean abbreviate, out Value result);
-        void setPropertyValue(in Object objectId, in String propertyName, in String expression, out Value result);
+        void setPropertyValue(in Object objectId, in String propertyName, in String expression);
         void releaseObject(in Object objectId);
         void releaseObjectGroup(in long injectedScriptId, in String objectGroup);
     };
@@ -137,10 +137,10 @@ module core {
 
     interface [Conditional=INSPECTOR] DOM {
         void getDocument(out Object root);
-        void childNodes(in long nodeId);
+        void getChildNodes(in long nodeId);
 
         void querySelector(in long nodeId, in String selectors, in boolean documentWide, out long elementId);
-        void querySelectorAll(in long nodeId, in String selectors, in boolean documentWide, out Array result);
+        void querySelectorAll(in long nodeId, in String selectors, in boolean documentWide, out Array nodeIds);
 
         void setNodeName(in long nodeId, in String name, out long outNodeId);
         void setNodeValue(in long nodeId, in String value, out boolean success);
@@ -149,10 +149,10 @@ module core {
         void setAttribute(in long elementId, in String name, in String value, out boolean success);
         void removeAttribute(in long elementId, in String name, out boolean success);
 
-        void getEventListenersForNode(in long nodeId, out long outNodeId, out Array listenersArray);
+        void getEventListenersForNode(in long nodeId, out Array listenersArray);
         void copyNode(in long nodeId);
 
-        void outerHTML(in long nodeId, out String outerHTML);
+        void getOuterHTML(in long nodeId, out String outerHTML);
         void setOuterHTML(in long nodeId, in String outerHTML, out long outNodeId);
 
         void performSearch(in String query, in boolean runSynchronously);

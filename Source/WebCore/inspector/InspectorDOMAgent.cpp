@@ -427,37 +427,45 @@ Node* InspectorDOMAgent::nodeForId(long id)
     return 0;
 }
 
-void InspectorDOMAgent::childNodes(ErrorString*, long nodeId)
+void InspectorDOMAgent::getChildNodes(ErrorString*, long nodeId)
 {
     pushChildNodesToFrontend(nodeId);
 }
 
-void InspectorDOMAgent::querySelector(ErrorString*, long nodeId, const String& selectors, bool documentWide, long* elementId)
+void InspectorDOMAgent::querySelector(ErrorString* errorString, long nodeId, const String& selectors, bool documentWide, long* elementId)
 {
     *elementId = 0;
     Node* node = nodeToSelectOn(nodeId, documentWide);
-    if (!node)
+    if (!node) {
+        *errorString = "Node with given id not found.";
         return;
+    }
 
     ExceptionCode ec = 0;
     RefPtr<Element> element = node->querySelector(selectors, ec);
-    if (ec)
+    if (ec) {
+        *errorString = "DOM Error while querying.";
         return;
+    }
 
     if (element)
         *elementId = pushNodePathToFrontend(element.get());
 }
 
-void InspectorDOMAgent::querySelectorAll(ErrorString*, long nodeId, const String& selectors, bool documentWide, RefPtr<InspectorArray>* result)
+void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, long nodeId, const String& selectors, bool documentWide, RefPtr<InspectorArray>* result)
 {
     Node* node = nodeToSelectOn(nodeId, documentWide);
-    if (!node)
+    if (!node) {
+        *errorString = "Node with given id not found.";
         return;
+    }
 
     ExceptionCode ec = 0;
     RefPtr<NodeList> nodes = node->querySelectorAll(selectors, ec);
-    if (ec)
+    if (ec) {
+        *errorString = "DOM Error while querying.";
         return;
+    }
 
     for (unsigned i = 0; i < nodes->length(); ++i)
         (*result)->pushNumber(pushNodePathToFrontend(nodes->item(i)));
@@ -591,7 +599,7 @@ void InspectorDOMAgent::setNodeName(ErrorString*, long nodeId, const String& tag
         pushChildNodesToFrontend(*newId);
 }
 
-void InspectorDOMAgent::outerHTML(ErrorString*, long nodeId, WTF::String* outerHTML)
+void InspectorDOMAgent::getOuterHTML(ErrorString*, long nodeId, WTF::String* outerHTML)
 {
     Node* node = nodeForId(nodeId);
     if (!node || !node->isHTMLElement())
@@ -651,10 +659,9 @@ void InspectorDOMAgent::setNodeValue(ErrorString*, long nodeId, const String& va
     *success = false;
 }
 
-void InspectorDOMAgent::getEventListenersForNode(ErrorString*, long nodeId, long* outNodeId, RefPtr<InspectorArray>* listenersArray)
+void InspectorDOMAgent::getEventListenersForNode(ErrorString*, long nodeId, RefPtr<InspectorArray>* listenersArray)
 {
     Node* node = nodeForId(nodeId);
-    *outNodeId = nodeId;
     EventTargetData* d;
 
     // Quick break if a null node or no listeners at all

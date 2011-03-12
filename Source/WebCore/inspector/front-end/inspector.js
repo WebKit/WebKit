@@ -48,15 +48,6 @@
     (new Image()).src = "Images/undockButtonGlyph.png";
 })();
 
-function errorFilter()
-{
-    var args = Array.prototype.slice.call(arguments);
-    var callback = args.shift();
-    var error = args.shift();
-    if (!error)
-        callback.apply(this, args);
-}
-
 var WebInspector = {
     resources: {},
     missingLocalizedStrings: {},
@@ -1201,7 +1192,7 @@ WebInspector.inspect = function(objectId, hints)
         WebInspector.panels.resources.selectDOMStorage(hints.domStorageId);
     }
 
-    RuntimeAgent.releaseObject(objectId);
+    object.release();
 }
 
 WebInspector.updateFocusedNode = function(nodeId)

@@ -50,9 +50,13 @@ WebInspector.RemoteObject.resolveNode = function(node, callback)
 {
     function mycallback(error, object)
     {
-        if (error)
+        if (!callback)
             return;
-        callback(object ? WebInspector.RemoteObject.fromPayload(object) : null);
+
+        if (error || !object)
+            callback(null);
+        else
+            callback(WebInspector.RemoteObject.fromPayload(object));
     }
     DOMAgent.resolveNode(node.id, "dom-selection", mycallback);
 }
@@ -128,10 +132,10 @@ WebInspector.RemoteObject.prototype = {
     setPropertyValue: function(name, value, callback)
     {
         if (!this._objectId) {
-            callback(false);
+            callback("Can't get a property of non-object.");
             return;
         }
-        RuntimeAgent.setPropertyValue(this._objectId, name, value, errorFilter.bind(this, callback));
+        RuntimeAgent.setPropertyValue(this._objectId, name, value, callback);
     },
 
     pushNodeToFrontend: function(callback)
@@ -144,7 +148,12 @@ WebInspector.RemoteObject.prototype = {
 
     evaluate: function(expression, callback)
     {
-        RuntimeAgent.evaluateOn(this._objectId, expression, errorFilter.bind(this, callback));
+        RuntimeAgent.evaluateOn(this._objectId, expression, callback);
+    },
+
+    release: function()
+    {
+        RuntimeAgent.releaseObject(this._objectId);
     }
 }
 

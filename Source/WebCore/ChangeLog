@@ -1,3 +1,57 @@
+2011-03-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: follow up to error reporting, fixing multiple regressions.
+        https://bugs.webkit.org/show_bug.cgi?id=56243
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::setPropertyValue):
+        * inspector/InjectedScript.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getChildNodes):
+        (WebCore::InspectorDOMAgent::getOuterHTML):
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::setPropertyValue):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype.setNodeName):
+        (WebInspector.DOMNode.prototype.setNodeValue):
+        (WebInspector.DOMNode.prototype.getChildNodes):
+        (WebInspector.DOMNode.prototype.getOuterHTML):
+        (WebInspector.DOMNode.prototype.setOuterHTML):
+        (WebInspector.DOMNode.prototype.removeNode):
+        (WebInspector.DOMNode.prototype.copyNode):
+        (WebInspector.DOMAgent.prototype.pushNodeToFrontend):
+        (WebInspector.DOMAgent.prototype.pushNodeByPathToFrontend):
+        (WebInspector.EventListeners.getEventListenersForNode):
+        * inspector/front-end/DOMStorage.js:
+        (WebInspector.DOMStorage.prototype.getEntries):
+        (WebInspector.DOMStorage.prototype.setItem):
+        (WebInspector.DOMStorage.prototype.removeItem):
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView.prototype.update):
+        (WebInspector.DOMStorageItemsView.prototype._showDOMStorageEntries):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode.setTooltip):
+        (WebInspector.ElementsTreeElement.prototype.updateChildren):
+        ():
+        * inspector/front-end/EventListenersSidebarPane.js:
+        (WebInspector.EventListenersSidebarPane.prototype.update.callback):
+        (WebInspector.EventListenersSidebarPane.prototype.update):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.applyExpression.callback):
+        (WebInspector.ObjectPropertyTreeElement.prototype.applyExpression):
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update.nodeResolved):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.setPropertyValue):
+        (WebInspector.RemoteObject.prototype.evaluate):
+        * inspector/front-end/inspector.js:
+
 2011-03-12  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix.

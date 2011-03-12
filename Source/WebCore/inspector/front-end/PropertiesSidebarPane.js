@@ -53,9 +53,9 @@ WebInspector.PropertiesSidebarPane.prototype = {
             object.evaluate("var proto = this; result = {}; var counter = 1; while (proto) { result[counter++] = proto; proto = proto.__proto__ }; return result;", nodePrototypesReady.bind(this));
         }
 
-        function nodePrototypesReady(objectPayload)
+        function nodePrototypesReady(error, objectPayload)
         {
-            if (!objectPayload)
+            if (error || !objectPayload)
                 return;
             var object = WebInspector.RemoteObject.fromPayload(objectPayload);
             object.getOwnProperties(false, fillSection.bind(this));

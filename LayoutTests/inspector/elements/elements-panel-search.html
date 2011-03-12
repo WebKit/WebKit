@@ -8,8 +8,11 @@ function test()
     WebInspector.showPanel("elements");
 
     var searchResults = [];
-    function addSearchResult(markupValue)
+    function addSearchResult(error, markupValue)
     {
+        if (error)
+            return;
+
         if (markupValue.indexOf("ter" + "mi" + "nator") !== -1) {
             InspectorTest.addResult("====================================");
             InspectorTest.addResult("Results:");
@@ -27,7 +30,7 @@ function test()
             if (node.nodeType() === Node.TEXT_NODE)
                 searchResults.push(node.nodeValue());
             else
-                node.outerHTML(addSearchResult);
+                node.getOuterHTML(addSearchResult);
         }
     }
 
