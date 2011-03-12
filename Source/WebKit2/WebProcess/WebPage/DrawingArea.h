@@ -86,7 +86,7 @@ private:
     // CoreIPC message handlers.
     // FIXME: These should be pure virtual.
     virtual void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset) { }
-    virtual void didUpdate(bool didIncorporateBackingStore) { }
+    virtual void didUpdate() { }
     virtual void suspendPainting() { }
     virtual void resumePainting() { }
 };

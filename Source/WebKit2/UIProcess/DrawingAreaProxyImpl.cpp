@@ -144,16 +144,13 @@ void DrawingAreaProxyImpl::setPageIsVisible(bool)
 void DrawingAreaProxyImpl::update(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
 {
     ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
-    if (backingStoreStateID < m_currentBackingStoreStateID) {
-        // We still want to send back a message so that the web process knows that it can reuse the shared memory used for the update info.
-        m_webPageProxy->process()->send(Messages::DrawingArea::DidUpdate(false), m_webPageProxy->pageID());
+    if (backingStoreStateID < m_currentBackingStoreStateID)
         return;
-    }
 
     // FIXME: Handle the case where the view is hidden.
 
     incorporateUpdate(updateInfo);
-    m_webPageProxy->process()->send(Messages::DrawingArea::DidUpdate(true), m_webPageProxy->pageID());
+    m_webPageProxy->process()->send(Messages::DrawingArea::DidUpdate(), m_webPageProxy->pageID());
 }
 
 void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)

@@ -35,7 +35,7 @@ namespace WebKit {
 
 PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size)
 {
-    size_t numBytes = numBytesNeededForBitmapSize(size);
+    size_t numBytes = numBytesForSize(size);
     
     void* data = 0;
     if (!tryFastMalloc(numBytes).getValue(data))
@@ -46,7 +46,7 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size
 
 PassRefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size)
 {
-    size_t numBytes = numBytesNeededForBitmapSize(size);
+    size_t numBytes = numBytesForSize(size);
 
     RefPtr<SharedMemory> sharedMemory = SharedMemory::create(numBytes);
     if (!sharedMemory)
@@ -59,7 +59,7 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size
 {
     ASSERT(sharedMemory);
 
-    size_t numBytes = numBytesNeededForBitmapSize(size);
+    size_t numBytes = numBytesForSize(size);
     ASSERT_UNUSED(numBytes, sharedMemory->size() >= numBytes);
     
     return adoptRef(new ShareableBitmap(size, sharedMemory));
@@ -109,7 +109,7 @@ bool ShareableBitmap::resize(const IntSize& size)
     if (size == m_size)
         return true;
 
-    size_t newNumBytes = numBytesNeededForBitmapSize(size);
+    size_t newNumBytes = numBytesForSize(size);
     
     // Try to resize.
     char* newData = 0;

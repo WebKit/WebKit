@@ -1,3 +1,37 @@
+2011-03-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80899 and r80912.
+        http://trac.webkit.org/changeset/80899
+        http://trac.webkit.org/changeset/80912
+        https://bugs.webkit.org/show_bug.cgi?id=56236
+
+        Caused animation tests to crash on Snow Leopard WebKit2
+        (Requested by rniwa on #webkit).
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::create):
+        (WebKit::ShareableBitmap::createShareable):
+        (WebKit::ShareableBitmap::resize):
+        * Shared/ShareableBitmap.h:
+        (WebKit::ShareableBitmap::numBytesForSize):
+        (WebKit::ShareableBitmap::sizeInBytes):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::update):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::didUpdate):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::~DrawingAreaImpl):
+        (WebKit::DrawingAreaImpl::sendDidUpdateBackingStoreState):
+        (WebKit::DrawingAreaImpl::didUpdate):
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        (WebKit::DrawingAreaImpl::display):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/SharedMemoryCache.cpp: Removed.
+        * WebProcess/WebPage/SharedMemoryCache.h: Removed.
+        * win/WebKit2.vcproj:
+
 2011-03-11  Brian Weinstein  <bweinstein@apple.com>
 
         Windows build fix. Add SharedMemoryCache to the vcproj.

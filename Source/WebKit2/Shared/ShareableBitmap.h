@@ -58,8 +58,6 @@ public:
 
     ~ShareableBitmap();
 
-    static size_t numBytesNeededForBitmapSize(const WebCore::IntSize& size) { return size.width() * size.height() * 4; }
-
     const WebCore::IntSize& size() const { return m_size; }
     WebCore::IntRect bounds() const { return WebCore::IntRect(WebCore::IntPoint(), size()); }
 
@@ -77,10 +75,12 @@ private:
     ShareableBitmap(const WebCore::IntSize&, void*);
     ShareableBitmap(const WebCore::IntSize&, PassRefPtr<SharedMemory>);
 
+    static size_t numBytesForSize(const WebCore::IntSize& size) { return size.width() * size.height() * 4; }
+
     static void releaseData(void* typelessBitmap, void* typelessData);
     
     void* data() const;
-    size_t sizeInBytes() const { return numBytesNeededForBitmapSize(m_size); }
+    size_t sizeInBytes() const { return numBytesForSize(m_size); }
 
     WebCore::IntSize m_size;
 

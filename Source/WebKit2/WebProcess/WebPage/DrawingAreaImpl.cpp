@@ -29,7 +29,6 @@
 #include "DrawingAreaProxyMessages.h"
 #include "LayerTreeContext.h"
 #include "ShareableBitmap.h"
-#include "SharedMemoryCache.h"
 #include "UpdateInfo.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
@@ -46,13 +45,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static SharedMemoryCache& sharedMemoryCache()
-{
-    DEFINE_STATIC_LOCAL(SharedMemoryCache, sharedMemoryCache, ());
-
-    return sharedMemoryCache;
-}
-
 PassOwnPtr<DrawingAreaImpl> DrawingAreaImpl::create(WebPage* webPage, const WebPageCreationParameters& parameters)
 {
     return adoptPtr(new DrawingAreaImpl(webPage, parameters));
@@ -60,9 +52,6 @@ PassOwnPtr<DrawingAreaImpl> DrawingAreaImpl::create(WebPage* webPage, const WebP
 
 DrawingAreaImpl::~DrawingAreaImpl()
 {
-    if (m_sharedMemoryUsedForLastUpdate)
-        sharedMemoryCache().releaseSharedMemory(m_sharedMemoryUsedForLastUpdate.release());
-
     if (m_layerTreeHost)
         m_layerTreeHost->invalidate();
 }
@@ -307,7 +296,7 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
     UpdateInfo updateInfo;
 
     if (!m_isPaintingSuspended && !m_layerTreeHost)
-        display(updateInfo, false);
+        display(updateInfo);
 
 #if USE(ACCELERATED_COMPOSITING)
     LayerTreeContext layerTreeContext;
@@ -330,14 +319,8 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
 #endif
 }
 
-void DrawingAreaImpl::didUpdate(bool didIncorporateBackingStore)
+void DrawingAreaImpl::didUpdate()
 {
-    ASSERT(m_sharedMemoryUsedForLastUpdate);
-    sharedMemoryCache().releaseSharedMemory(m_sharedMemoryUsedForLastUpdate.release());
-
-    if (!didIncorporateBackingStore)
-        return;
-
     // We might get didUpdate messages from the UI process even after we've
     // entered accelerated compositing mode. Ignore them.
     if (m_layerTreeHost)
@@ -412,7 +395,7 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     if (m_isPaintingSuspended)
         updateInfo.viewSize = m_webPage->size();
     else
-        display(updateInfo, false);
+        display(updateInfo);
 
 #if USE(ACCELERATED_COMPOSITING)
     // Send along a complete update of the page so we can paint the contents right after we exit the
@@ -479,7 +462,7 @@ void DrawingAreaImpl::display()
     }
 
     UpdateInfo updateInfo;
-    display(updateInfo, true);
+    display(updateInfo);
 
     if (m_layerTreeHost) {
         // The call to update caused layout which turned on accelerated compositing.
@@ -512,7 +495,7 @@ static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect>& 
     return wastedSpace <= wastedSpaceThreshold;
 }
 
-void DrawingAreaImpl::display(UpdateInfo& updateInfo, bool useSharedMemoryCache)
+void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 {
     ASSERT(!m_isPaintingSuspended);
     ASSERT(!m_layerTreeHost);
@@ -532,19 +515,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo, bool useSharedMemoryCache)
     IntRect bounds = m_dirtyRegion.bounds();
     ASSERT(m_webPage->bounds().contains(bounds));
 
-    RefPtr<ShareableBitmap> bitmap;
-    if (useSharedMemoryCache) {
-        size_t size = ShareableBitmap::numBytesNeededForBitmapSize(bounds.size());
-
-        ASSERT(!m_sharedMemoryUsedForLastUpdate);
-
-        m_sharedMemoryUsedForLastUpdate = sharedMemoryCache().acquireSharedMemory(size);
-        bitmap = ShareableBitmap::create(bounds.size(), m_sharedMemoryUsedForLastUpdate);
-    } else {
-        // Just create a new shareable bitmap.
-        bitmap = ShareableBitmap::createShareable(bounds.size());
-    }
-
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bounds.size());
     if (!bitmap->createHandle(updateInfo.bitmapHandle))
         return;
 

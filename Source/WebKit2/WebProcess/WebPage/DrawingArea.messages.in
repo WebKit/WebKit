@@ -22,7 +22,7 @@
 
 messages -> DrawingArea {
     UpdateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, WebCore::IntSize size, WebCore::IntSize scrollOffset)
-    DidUpdate(bool didIncorporateBackingStore)
+    DidUpdate()
     SuspendPainting()
     ResumePainting()
 }
