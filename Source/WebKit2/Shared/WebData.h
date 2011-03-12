@@ -38,34 +38,60 @@ class WebData : public APIObject {
 public:
     static const Type APIType = TypeData;
 
+    typedef void (*FreeDataFunction)(unsigned char*, const void* context);
+
+    static PassRefPtr<WebData> createWithoutCopying(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)
+    {
+        return adoptRef(new WebData(bytes, size, freeDataFunction, context));
+    }
+
     static PassRefPtr<WebData> create(const unsigned char* bytes, size_t size)
     {
-        return adoptRef(new WebData(bytes, size));
+        unsigned char *copiedBytes = 0;
+
+        if (size) {
+            copiedBytes = static_cast<unsigned char*>(fastMalloc(size));
+            memcpy(copiedBytes, bytes, size);
+        }
+
+        return createWithoutCopying(copiedBytes, size, fastFreeBytes, 0);
     }
     
     static PassRefPtr<WebData> create(const Vector<unsigned char>& buffer)
     {
-        return adoptRef(new WebData(buffer));
+        return create(buffer.data(), buffer.size());
     }
-    
-    const unsigned char* bytes() const { return m_buffer.data(); }
-    size_t size() const { return m_buffer.size(); }
+
+    ~WebData()
+    {
+        m_freeDataFunction(const_cast<unsigned char*>(m_bytes), m_context);
+    }
+
+    const unsigned char* bytes() const { return m_bytes; }
+    size_t size() const { return m_size; }
 
 private:
-    WebData(const unsigned char* bytes, size_t size)
-        : m_buffer(size)
+    WebData(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)
+        : m_bytes(bytes)
+        , m_size(size)
+        , m_freeDataFunction(freeDataFunction)
+        , m_context(context)
     {
-        memcpy(m_buffer.data(), bytes, size);
     }
-    
-    WebData(const Vector<unsigned char>& buffer)
-        : m_buffer(buffer)
+
+    static void fastFreeBytes(unsigned char* bytes, const void*)
     {
+        if (bytes)
+            fastFree(static_cast<void*>(bytes));
     }
 
     virtual Type type() const { return APIType; }
 
-    Vector<unsigned char> m_buffer;
+    const unsigned char* m_bytes;
+    size_t m_size;
+
+    FreeDataFunction m_freeDataFunction;
+    const void* m_context;
 };
 
 } // namespace WebKit

@@ -1,3 +1,19 @@
+2011-03-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebData should be able to wrap already existing data
+        https://bugs.webkit.org/show_bug.cgi?id=56254
+
+        * Shared/WebData.h:
+        (WebKit::WebData::createWithoutCopying):
+        (WebKit::WebData::create):
+        (WebKit::WebData::~WebData):
+        (WebKit::WebData::bytes):
+        (WebKit::WebData::size):
+        (WebKit::WebData::WebData):
+        (WebKit::WebData::fastFreeBytes):
+
 2011-03-12  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.
