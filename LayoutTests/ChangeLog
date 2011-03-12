@@ -1,5 +1,13 @@
 2011-03-11  David Levin  <levin@chromium.org>
 
+        Fix prototype-inheritance-expected result due to two changes:
+          http://src.chromium.org/viewvc/chrome?view=rev&revision=77888 removed "google"
+          http://trac.webkit.org/changeset/80846 added WebKitAnimation/WebKitAnimationList
+
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+
+2011-03-11  David Levin  <levin@chromium.org>
+
         Update some baselines due to Skia update in Chromium.
         Filed http://crbug.com/75820 about the odd look of the results (but
         the odd look previously existed).

@@ -613,8 +613,12 @@ PASS inner.UIEvent.isInner is true
 PASS inner.UIEvent.constructor.isInner is true
 PASS inner.URIError.isInner is true
 PASS inner.URIError.constructor.isInner is true
+PASS inner.WebKitAnimation.isInner is true
+PASS inner.WebKitAnimation.constructor.isInner is true
 PASS inner.WebKitAnimationEvent.isInner is true
 PASS inner.WebKitAnimationEvent.constructor.isInner is true
+PASS inner.WebKitAnimationList.isInner is true
+PASS inner.WebKitAnimationList.constructor.isInner is true
 PASS inner.WebKitCSSKeyframeRule.isInner is true
 PASS inner.WebKitCSSKeyframeRule.constructor.isInner is true
 PASS inner.WebKitCSSKeyframesRule.isInner is true
@@ -713,8 +717,6 @@ PASS inner.getMatchedCSSRules.isInner is true
 PASS inner.getMatchedCSSRules.constructor.isInner is true
 PASS inner.getSelection.isInner is true
 PASS inner.getSelection.constructor.isInner is true
-PASS inner.google.isInner is true
-PASS inner.google.constructor.isInner is true
 FAIL inner.history.isInner should be true. Was false.
 FAIL inner.history.constructor.isInner should be true. Was false.
 PASS inner.isFinite.isInner is true
