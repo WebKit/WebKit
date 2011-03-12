@@ -168,6 +168,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKDictionaryRef, WK
         0, // printFrame
         runModal,
         0, // didCompleteRubberBandForMainFrame
+        0, // saveDataToFileInDownloadsFolder
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -301,6 +302,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // printFrame
         0, // runModal
         0, // didCompleteRubberBandForMainFrame
+        0, // saveDataToFileInDownloadsFolder
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 

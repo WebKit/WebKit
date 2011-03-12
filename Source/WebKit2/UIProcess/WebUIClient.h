@@ -44,6 +44,7 @@ namespace WebKit {
 class APIObject;
 class GeolocationPermissionRequestProxy;
 class NativeWebKeyboardEvent;
+class WebData;
 class WebFrameProxy;
 class WebPageProxy;
 class WebSecurityOrigin;
@@ -98,6 +99,8 @@ public:
     void runModal(WebPageProxy*);
 
     void didCompleteRubberBandForMainFrame(WebPageProxy*, const WebCore::IntSize&);
+
+    void saveDataToFileInDownloadsFolder(WebPageProxy*, const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData*);
 };
 
 } // namespace WebKit

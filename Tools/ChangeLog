@@ -1,3 +1,17 @@
+2011-03-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Should be able to download a PDF to the Downloads folder
+        https://bugs.webkit.org/show_bug.cgi?id=56256
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::initialize):
+        Update for API changes.
+
 2011-03-11  Anton D'Auria  <adauria@apple.com>
 
         Reviewed and landed by Brady Eidson.

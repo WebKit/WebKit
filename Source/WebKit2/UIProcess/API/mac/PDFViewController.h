@@ -41,6 +41,8 @@ namespace CoreIPC {
 
 namespace WebKit {
 
+class WebPageProxy;
+
 class PDFViewController {
     WTF_MAKE_NONCOPYABLE(PDFViewController);
 
@@ -49,6 +51,8 @@ public:
     ~PDFViewController();
 
     WKView* wkView() const { return m_wkView; }
+    WebPageProxy* page() const;
+
     void setPDFDocumentData(const String& mimeType, const String& suggestedFilename, const CoreIPC::DataReference&);
 
     double zoomFactor() const;
@@ -58,6 +62,7 @@ public:
 
     NSPrintOperation *makePrintOperation(NSPrintInfo *);
     void openPDFInFinder();
+    void savePDFToDownloadsFolder();
 
 private:
     explicit PDFViewController(WKView *wkView);

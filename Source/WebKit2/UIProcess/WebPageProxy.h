@@ -463,8 +463,11 @@ public:
 
     // Color to be used with kWKDebugFlashViewUpdates.
     static WebCore::Color viewUpdatesFlashColor();
+
     // Color to be used with kWKDebugFlashBackingStoreUpdates.
     static WebCore::Color backingStoreUpdatesFlashColor();
+
+    void saveDataToFileInDownloadsFolder(const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData*);
 
 private:
     WebPageProxy(PageClient*, WebContext*, WebPageGroup*, uint64_t pageID);

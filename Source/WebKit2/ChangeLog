@@ -2,6 +2,38 @@
 
         Reviewed by Sam Weinig.
 
+        Should be able to download a PDF to the Downloads folder
+        https://bugs.webkit.org/show_bug.cgi?id=56256
+
+        * UIProcess/API/C/WKPage.h:
+        Add WKPageSaveDataToFileInDownloadsFolderCallback to the UI client.
+
+        * UIProcess/API/mac/PDFViewController.h:
+        * UIProcess/API/mac/PDFViewController.mm:
+        (-[WKPDFView _applyPDFPreferences]):
+        (-[WKPDFView _updatePreferences:]):
+        Use new PDFViewController::page getter.
+
+        (-[WKPDFView PDFViewSavePDFToDownloadFolder:]):
+        Call PDFViewController::savePDFToDownloadsFolder.
+
+        (WebKit::releaseCFData):
+        (WebKit::PDFViewController::savePDFToDownloadsFolder):
+        Create a WebData that wraps the CFData, then pass it along to
+        WebPageProxy::saveDataToFileInDownloadsFolder.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::saveDataToFileInDownloadsFolder):
+        Call WebUIClient::saveDataToFileInDownloadsFolder.
+
+        (WebKit::WebUIClient::saveDataToFileInDownloadsFolder):
+        * UIProcess/WebUIClient.h:
+        Call the UI client callback function.
+
+2011-03-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         WebData should be able to wrap already existing data
         https://bugs.webkit.org/show_bug.cgi?id=56254
 

@@ -173,6 +173,7 @@ typedef void (*WKPageDrawHeaderCallback)(WKPageRef page, WKFrameRef frame, WKRec
 typedef void (*WKPageDrawFooterCallback)(WKPageRef page, WKFrameRef frame, WKRect rect, const void* clientInfo);
 typedef void (*WKPagePrintFrameCallback)(WKPageRef page, WKFrameRef frame, const void* clientInfo);
 typedef void (*WKPageDidCompleteRubberBandForMainFrameCallback)(WKPageRef page, WKSize initialOverhang, const void* clientInfo);
+typedef void (*WKPageSaveDataToFileInDownloadsFolderCallback)(WKPageRef page, WKStringRef suggestedFilename, WKStringRef mimeType, WKURLRef originatingURL, WKDataRef data, const void* clientInfo);
 
 struct WKPageUIClient {
     int                                                                 version;
@@ -210,6 +211,7 @@ struct WKPageUIClient {
     WKPagePrintFrameCallback                                            printFrame;
     WKPageCallback                                                      runModal;
     WKPageDidCompleteRubberBandForMainFrameCallback                     didCompleteRubberBandForMainFrame;
+    WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
 };
 typedef struct WKPageUIClient WKPageUIClient;
 

@@ -329,10 +329,18 @@ void WebUIClient::runModal(WebPageProxy* page)
 
 void WebUIClient::didCompleteRubberBandForMainFrame(WebPageProxy* page, const IntSize& initialOverhang)
 {
-    if (!m_client.runModal)
+    if (!m_client.didCompleteRubberBandForMainFrame)
         return;
 
     m_client.didCompleteRubberBandForMainFrame(toAPI(page), toAPI(initialOverhang), m_client.clientInfo);
+}
+
+void WebUIClient::saveDataToFileInDownloadsFolder(WebPageProxy* page, const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData* data)
+{
+    if (!m_client.saveDataToFileInDownloadsFolder)
+        return;
+
+    m_client.saveDataToFileInDownloadsFolder(toAPI(page), toAPI(suggestedFilename.impl()), toAPI(mimeType.impl()), toURLRef(originatingURLString.impl()), toAPI(data), m_client.clientInfo);
 }
 
 } // namespace WebKit
