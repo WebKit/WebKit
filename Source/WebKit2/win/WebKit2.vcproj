@@ -1706,6 +1706,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebPage\SharedMemoryCache.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\SharedMemoryCache.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebPage\WebBackForwardListProxy.cpp"
 					>
 				</File>

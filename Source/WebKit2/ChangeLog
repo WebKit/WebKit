@@ -1,3 +1,9 @@
+2011-03-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Windows build fix. Add SharedMemoryCache to the vcproj.
+
+        * win/WebKit2.vcproj:
+
 2011-03-11  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.
