@@ -1,3 +1,15 @@
+2011-03-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson
+
+        <rdar://problem/8648311> and https://bugs.webkit.org/show_bug.cgi?id=56216
+        Rework disabled IconDatabase builds while allowing for a pluggable icon database implementation.
+
+        * Misc/WebIconDatabase.mm:
+        (+[WebIconDatabase _checkIntegrityBeforeOpening]): Call these static methods on IconDatabase::, not iconDatabase().
+        (-[WebIconDatabase _startUpIconDatabase]): Ditto.
+        (importToWebCoreFormat):
+
 2011-03-11  Anton D'Auria  <adauria@apple.com>
 
         Reviewed and landed by Brady Eidson.

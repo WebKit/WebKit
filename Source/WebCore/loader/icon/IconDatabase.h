@@ -27,6 +27,7 @@
 #ifndef IconDatabase_h
 #define IconDatabase_h
 
+#include "IconDatabaseBase.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -37,7 +38,7 @@
 #if ENABLE(ICONDATABASE)
 #include "SQLiteDatabase.h"
 #include <wtf/Threading.h>
-#endif
+#endif // ENABLE(ICONDATABASE)
 
 namespace WebCore { 
 
@@ -56,41 +57,43 @@ class SharedBuffer;
 class SQLTransaction;
 #endif
 
-enum IconLoadDecision {
-    IconLoadYes,
-    IconLoadNo,
-    IconLoadUnknown
+#if !ENABLE(ICONDATABASE)
+// For builds with IconDatabase disabled, they'll just use a default derivation of IconDatabaseBase. Which does nothing.
+class IconDatabase : public IconDatabaseBase {
 };
+#else 
 
-class IconDatabase {
-    WTF_MAKE_NONCOPYABLE(IconDatabase); WTF_MAKE_FAST_ALLOCATED;
+class IconDatabase : public IconDatabaseBase {
+    WTF_MAKE_FAST_ALLOCATED;
+    
 // *** Main Thread Only ***
 public:
-    void setClient(IconDatabaseClient*);
+    virtual void setClient(IconDatabaseClient*);
 
-    bool open(const String& path);
-    void close();
+    virtual bool open(const String& path);
+    virtual void close();
             
-    void removeAllIcons();
+    virtual void removeAllIcons();
 
-    Image* iconForPageURL(const String&, const IntSize&);
     void readIconForPageURLFromDisk(const String&);
-    String iconURLForPageURL(const String&);
-    Image* defaultIcon(const IntSize&);
 
-    void retainIconForPageURL(const String&);
-    void releaseIconForPageURL(const String&);
+    virtual Image* defaultIcon(const IntSize&);
 
-    void setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&);
-    void setIconURLForPageURL(const String& iconURL, const String& pageURL);
+    virtual void retainIconForPageURL(const String&);
+    virtual void releaseIconForPageURL(const String&);
 
-    IconLoadDecision loadDecisionForIconURL(const String&, DocumentLoader*);
-    bool iconDataKnownForIconURL(const String&);
+    virtual Image* iconForPageURL(const String&, const IntSize&);
+    virtual String iconURLForPageURL(const String&);
+    virtual void setIconURLForPageURL(const String& iconURL, const String& pageURL);
+
+    virtual void setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&);
+    virtual bool iconDataKnownForIconURL(const String&);
+    virtual IconLoadDecision loadDecisionForIconURL(const String&, DocumentLoader*);    
     
-    void setEnabled(bool enabled);
-    bool isEnabled() const;
+    virtual void setEnabled(bool);
+    virtual bool isEnabled() const;
     
-    void setPrivateBrowsingEnabled(bool flag);
+    virtual void setPrivateBrowsingEnabled(bool flag);
     bool isPrivateBrowsingEnabled() const;
     
     static void delayDatabaseCleanup();
@@ -98,17 +101,16 @@ public:
     static void checkIntegrityBeforeOpening();
         
     // Support for WebCoreStatistics in WebKit
-    size_t pageURLMappingCount();
-    size_t retainedPageURLCount();
-    size_t iconRecordCount();
-    size_t iconRecordCountWithData();
+    virtual size_t pageURLMappingCount();
+    virtual size_t retainedPageURLCount();
+    virtual size_t iconRecordCount();
+    virtual size_t iconRecordCountWithData();
 
 private:
     IconDatabase();
     ~IconDatabase();
-    friend IconDatabase& iconDatabase();
+    friend IconDatabaseBase& iconDatabase();
 
-#if ENABLE(ICONDATABASE)
     static void notifyPendingLoadDecisionsOnMainThread(void*);
     void notifyPendingLoadDecisions();
 
@@ -123,7 +125,6 @@ private:
     HashSet<RefPtr<DocumentLoader> > m_loadersPendingDecision;
 
     RefPtr<IconRecord> m_defaultIconRecord;
-#endif // ENABLE(ICONDATABASE)
 
 // *** Any Thread ***
 public:
@@ -131,7 +132,6 @@ public:
     String databasePath() const;
     static String defaultDatabaseFilename();
 
-#if ENABLE(ICONDATABASE)
 private:
     PassRefPtr<IconRecord> getOrCreateIconRecord(const String& iconURL);
     PageURLRecord* getOrCreatePageURLRecord(const String& pageURL);
@@ -166,17 +166,15 @@ private:
     HashSet<String> m_pageURLsPendingImport;
     HashSet<String> m_pageURLsInterestedInIcons;
     HashSet<IconRecord*> m_iconsPendingReading;
-#endif // ENABLE(ICONDATABASE)
 
 // *** Sync Thread Only ***
 public:
     // Should be used only on the sync thread and only by the Safari 2 Icons import procedure
-    void importIconURLForPageURL(const String& iconURL, const String& pageURL);
-    void importIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String& iconURL);
+    virtual void importIconURLForPageURL(const String& iconURL, const String& pageURL);
+    virtual void importIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String& iconURL);
     
-    bool shouldStopThreadActivity() const;
+    virtual bool shouldStopThreadActivity() const;
 
-#if ENABLE(ICONDATABASE)
 private:    
     static void* iconDatabaseSyncThreadStart(void *);
     void* iconDatabaseSyncThread();
@@ -236,11 +234,9 @@ private:
     OwnPtr<SQLiteStatement> m_updateIconDataStatement;
     OwnPtr<SQLiteStatement> m_setIconInfoStatement;
     OwnPtr<SQLiteStatement> m_setIconDataStatement;
-#endif // ENABLE(ICONDATABASE)
 };
 
-// Function to obtain the global icon database.
-IconDatabase& iconDatabase();
+#endif // !ENABLE(ICONDATABASE)
 
 } // namespace WebCore
 

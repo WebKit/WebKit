@@ -1001,7 +1001,6 @@
 		44311CD812E4E24B000A8D19 /* DOMDocumentPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 44311CD512E4E22D000A8D19 /* DOMDocumentPrivate.h */; };
 		44311CD912E4E257000A8D19 /* DOMDocumentFragmentPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 44311CD412E4E22D000A8D19 /* DOMDocumentFragmentPrivate.h */; };
 		44311F8212E4E66C000A8D19 /* DOMDocumentFragmentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711450AC5D5340053270F /* DOMDocumentFragmentInternal.h */; };
-		445C8DB710015FC90031531A /* IconDatabaseNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 445C8DB610015FC90031531A /* IconDatabaseNone.cpp */; };
 		447D69030FA626810015CCB1 /* RuntimeApplicationChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = 447D69010FA626810015CCB1 /* RuntimeApplicationChecks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		447D69040FA626810015CCB1 /* RuntimeApplicationChecks.mm in Sources */ = {isa = PBXBuildFile; fileRef = 447D69020FA626810015CCB1 /* RuntimeApplicationChecks.mm */; };
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; };
@@ -1321,6 +1320,8 @@
 		5160F4980B0AA75F00C1D2AF /* HistoryItemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160F4970B0AA75F00C1D2AF /* HistoryItemMac.mm */; };
 		5162C7F411F77EFB00612EFE /* SchemeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5162C7F211F77EFA00612EFE /* SchemeRegistry.cpp */; };
 		5162C7F511F77EFB00612EFE /* SchemeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 5162C7F311F77EFB00612EFE /* SchemeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		516953971329A3C800B92D04 /* IconDatabaseBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516953951329A3C800B92D04 /* IconDatabaseBase.cpp */; };
+		516953981329A3C800B92D04 /* IconDatabaseBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 516953961329A3C800B92D04 /* IconDatabaseBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		516BB7940CE91E6800512F79 /* JSTreeWalkerCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */; };
 		51721FBB11D2790700638B42 /* BeforeProcessEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 51721FB911D2790700638B42 /* BeforeProcessEvent.h */; };
 		51721FD211D27EF200638B42 /* JSBeforeProcessEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51721FD011D27EF200638B42 /* JSBeforeProcessEvent.cpp */; };
@@ -7451,7 +7452,6 @@
 		4429AB070CB84F81007647C5 /* DOMTextEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMTextEventInternal.h; sourceTree = "<group>"; };
 		44311CD412E4E22D000A8D19 /* DOMDocumentFragmentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDocumentFragmentPrivate.h; sourceTree = "<group>"; };
 		44311CD512E4E22D000A8D19 /* DOMDocumentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDocumentPrivate.h; sourceTree = "<group>"; };
-		445C8DB610015FC90031531A /* IconDatabaseNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabaseNone.cpp; sourceTree = "<group>"; };
 		447D69010FA626810015CCB1 /* RuntimeApplicationChecks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeApplicationChecks.h; sourceTree = "<group>"; };
 		447D69020FA626810015CCB1 /* RuntimeApplicationChecks.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RuntimeApplicationChecks.mm; sourceTree = "<group>"; };
 		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
@@ -7813,6 +7813,8 @@
 		5160F4970B0AA75F00C1D2AF /* HistoryItemMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HistoryItemMac.mm; path = mac/HistoryItemMac.mm; sourceTree = "<group>"; };
 		5162C7F211F77EFA00612EFE /* SchemeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SchemeRegistry.cpp; sourceTree = "<group>"; };
 		5162C7F311F77EFB00612EFE /* SchemeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchemeRegistry.h; sourceTree = "<group>"; };
+		516953951329A3C800B92D04 /* IconDatabaseBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabaseBase.cpp; sourceTree = "<group>"; };
+		516953961329A3C800B92D04 /* IconDatabaseBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconDatabaseBase.h; sourceTree = "<group>"; };
 		516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTreeWalkerCustom.cpp; sourceTree = "<group>"; };
 		51721FB911D2790700638B42 /* BeforeProcessEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeforeProcessEvent.h; sourceTree = "<group>"; };
 		51721FBA11D2790700638B42 /* BeforeProcessEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BeforeProcessEvent.idl; sourceTree = "<group>"; };
@@ -13697,8 +13699,9 @@
 			children = (
 				5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */,
 				5126E6BA0A2E3B12005C29FA /* IconDatabase.h */,
+				516953951329A3C800B92D04 /* IconDatabaseBase.cpp */,
+				516953961329A3C800B92D04 /* IconDatabaseBase.h */,
 				51E1ECB80C91C90400DC255B /* IconDatabaseClient.h */,
-				445C8DB610015FC90031531A /* IconDatabaseNone.cpp */,
 				513F14510AB634C400094DDF /* IconLoader.cpp */,
 				513F14520AB634C400094DDF /* IconLoader.h */,
 				51E1ECBA0C91C90400DC255B /* IconRecord.cpp */,
@@ -22675,6 +22678,7 @@
 				598D77DF132541FA00761B22 /* JavaArrayJSC.h in Headers */,
 				598D77E31325420E00761B22 /* JavaFieldJSC.h in Headers */,
 				BCD3F9831326C93700098A60 /* TextOrientation.h in Headers */,
+				516953981329A3C800B92D04 /* IconDatabaseBase.h in Headers */,
 				245D80A313280E40003492A6 /* SQLCallbackWrapper.h in Headers */,
 				F316396C1329481A00A649CB /* InjectedScriptManager.h in Headers */,
 				3194616313020B20004BB3F8 /* JSWebKitAnimation.h in Headers */,
@@ -23833,7 +23837,6 @@
 				371A67CB11C6C7DB00047B8B /* HyphenationCF.cpp in Sources */,
 				375CD23B119D44EA00A2A859 /* HyphenationMac.mm in Sources */,
 				5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */,
-				445C8DB710015FC90031531A /* IconDatabaseNone.cpp in Sources */,
 				513F14530AB634C400094DDF /* IconLoader.cpp in Sources */,
 				B275358E0B053A66002CE64F /* IconMac.mm in Sources */,
 				51E1ECC00C91C90400DC255B /* IconRecord.cpp in Sources */,
@@ -25342,6 +25345,7 @@
 				815E6167132587AA00B622B0 /* DataTransferItem.cpp in Sources */,
 				8102C5881325BB1100DDE67A /* StringCallback.cpp in Sources */,
 				5D4F51DF132725480016F541 /* HTMLConverter.mm in Sources */,
+				516953971329A3C800B92D04 /* IconDatabaseBase.cpp in Sources */,
 				F316396B1329481A00A649CB /* InjectedScriptManager.cpp in Sources */,
 				F316396E1329487600A649CB /* JSInjectedScriptManager.cpp in Sources */,
 				3194616213020B20004BB3F8 /* JSWebKitAnimation.cpp in Sources */,

@@ -850,6 +850,7 @@ SOURCES += \
     loader/FrameLoaderStateMachine.cpp \
     loader/HistoryController.cpp \
     loader/FTPDirectoryParser.cpp \
+    loader/icon/IconDatabaseBase.cpp \
     loader/icon/IconLoader.cpp \
     loader/ImageLoader.cpp \
     loader/MainResourceLoader.cpp \
@@ -1773,6 +1774,7 @@ HEADERS += \
     loader/FrameLoaderStateMachine.h \
     loader/FTPDirectoryParser.h \
     loader/icon/IconDatabase.h \
+    loader/icon/IconDatabaseBase.h \
     loader/icon/IconLoader.h \
     loader/icon/IconRecord.h \
     loader/icon/PageURLRecord.h \
@@ -2844,9 +2846,6 @@ contains(DEFINES, ENABLE_ICONDATABASE=1) {
         loader/icon/IconDatabase.cpp \
         loader/icon/IconRecord.cpp \
         loader/icon/PageURLRecord.cpp
-} else {
-    SOURCES += \
-        loader/icon/IconDatabaseNone.cpp
 }
 
 contains(DEFINES, ENABLE_WORKERS=1) {

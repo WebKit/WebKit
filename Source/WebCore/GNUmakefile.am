@@ -2121,7 +2121,8 @@ webcore_sources += \
 	Source/WebCore/loader/icon/IconDatabaseClient.h \
 	Source/WebCore/loader/icon/IconDatabase.cpp \
 	Source/WebCore/loader/icon/IconDatabase.h \
-	Source/WebCore/loader/icon/IconDatabaseNone.cpp \
+	Source/WebCore/loader/icon/IconDatabaseBase.cpp \
+	Source/WebCore/loader/icon/IconDatabaseBase.h \
 	Source/WebCore/loader/icon/IconLoader.cpp \
 	Source/WebCore/loader/icon/IconLoader.h \
 	Source/WebCore/loader/icon/IconRecord.cpp \

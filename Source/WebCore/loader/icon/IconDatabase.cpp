@@ -58,7 +58,6 @@
 
 namespace WebCore {
 
-static IconDatabase* sharedIconDatabase = 0;
 static int databaseCleanupCounter = 0;
 
 // This version number is in the DB and marks the current generation of the schema
@@ -89,15 +88,6 @@ static IconDatabaseClient* defaultClient()
 {
     static IconDatabaseClient* defaultClient = new IconDatabaseClient();
     return defaultClient;
-}
-
-IconDatabase& iconDatabase()
-{
-    if (!sharedIconDatabase) {
-        ScriptController::initializeThreading();
-        sharedIconDatabase = new IconDatabase;
-    }
-    return *sharedIconDatabase;
 }
 
 // ************************

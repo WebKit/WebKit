@@ -1133,6 +1133,7 @@ SET(WebCore_SOURCES
     loader/cache/MemoryCache.cpp
 
     loader/icon/IconDatabase.cpp
+    loader/icon/IconDatabaseBase.cpp
     loader/icon/IconLoader.cpp
     loader/icon/IconRecord.cpp
     loader/icon/PageURLRecord.cpp

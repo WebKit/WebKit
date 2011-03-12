@@ -25465,6 +25465,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\loader\icon\IconDatabaseBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\icon\IconDatabaseBase.h"
+					>
+				</File>
+				<File
 					RelativePath="..\loader\icon\IconDatabaseClient.h"
 					>
 				</File>

@@ -1,5 +1,57 @@
 2011-03-11  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8648311> and https://bugs.webkit.org/show_bug.cgi?id=56216
+        Rework disabled IconDatabase builds while allowing for a pluggable icon database implementation.
+
+        Project file stuff:
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore.vcproj/WebCore.vcproj:
+
+        * loader/icon/IconDatabase.cpp:
+        * loader/icon/IconDatabase.h: Inherit from IconDatabaseBase.
+
+        * loader/icon/IconDatabaseBase.cpp: Added.
+        (WebCore::IconDatabaseBase::iconURLForPageURL):
+        (WebCore::iconDatabase):
+        (WebCore::setGlobalIconDatabase):
+        * loader/icon/IconDatabaseBase.h: Added.
+        (WebCore::IconDatabaseBase::IconDatabaseBase):
+        (WebCore::IconDatabaseBase::~IconDatabaseBase):
+        (WebCore::IconDatabaseBase::setEnabled):
+        (WebCore::IconDatabaseBase::isEnabled):
+        (WebCore::IconDatabaseBase::defaultIcon):
+        (WebCore::IconDatabaseBase::retainIconForPageURL):
+        (WebCore::IconDatabaseBase::releaseIconForPageURL):
+        (WebCore::IconDatabaseBase::iconForPageURL):
+        (WebCore::IconDatabaseBase::setIconURLForPageURL):
+        (WebCore::IconDatabaseBase::setIconDataForIconURL):
+        (WebCore::IconDatabaseBase::iconDataKnownForIconURL):
+        (WebCore::IconDatabaseBase::loadDecisionForIconURL):
+        (WebCore::IconDatabaseBase::pageURLMappingCount):
+        (WebCore::IconDatabaseBase::retainedPageURLCount):
+        (WebCore::IconDatabaseBase::iconRecordCount):
+        (WebCore::IconDatabaseBase::iconRecordCountWithData):
+        (WebCore::IconDatabaseBase::importIconURLForPageURL):
+        (WebCore::IconDatabaseBase::importIconDataForIconURL):
+        (WebCore::IconDatabaseBase::shouldStopThreadActivity):
+        (WebCore::IconDatabaseBase::open):
+        (WebCore::IconDatabaseBase::close):
+        (WebCore::IconDatabaseBase::removeAllIcons):
+        (WebCore::IconDatabaseBase::setPrivateBrowsingEnabled):
+        (WebCore::IconDatabaseBase::setClient):
+
+        * loader/icon/IconDatabaseNone.cpp: Removed.
+
+2011-03-11  Brady Eidson  <beidson@apple.com>
+
         Attempt at a build-fix for https://bugs.webkit.org/show_bug.cgi?id=51878
 
         * page/PageGroup.h: Declare this method, even if the definition will end up being empty.

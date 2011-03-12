@@ -403,6 +403,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	loader/cache/MemoryCache.cpp \
 	\
 	loader/icon/IconDatabase.cpp \
+	loader/icon/IconDatabaseBase.cpp \
 	loader/icon/IconFetcher.cpp \
 	loader/icon/IconLoader.cpp \
 	loader/icon/IconRecord.cpp \

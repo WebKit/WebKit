@@ -1468,7 +1468,7 @@
         ['exclude', 'loader/archive/cf/LegacyWebArchiveMac\\.mm$'],
         ['exclude', 'loader/archive/ArchiveFactory\\.cpp$'],
 
-        # Use loader/icon/IconDatabaseNone.cpp instead.
+        # Only needs loader/icon/IconDatabaseBase.cpp for default IconDB.
         ['exclude', 'loader/icon/IconDatabase\\.cpp$'],
 
         # Exclude some, but not all, of plugins.

@@ -258,7 +258,7 @@ static WebIconDatabaseClient* defaultClient()
 
 + (void)_checkIntegrityBeforeOpening
 {
-    iconDatabase().checkIntegrityBeforeOpening();
+    IconDatabase::checkIntegrityBeforeOpening();
 }
 
 @end
@@ -296,7 +296,7 @@ static WebIconDatabaseClient* defaultClient()
     NSString *legacyDB = [databaseDirectory stringByAppendingPathComponent:@"icon.db"];
     NSFileManager *defaultManager = [NSFileManager defaultManager];
     if ([defaultManager fileExistsAtPath:legacyDB isDirectory:&isDirectory] && !isDirectory) {
-        NSString *newDB = [databaseDirectory stringByAppendingPathComponent:iconDatabase().defaultDatabaseFilename()];
+        NSString *newDB = [databaseDirectory stringByAppendingPathComponent:IconDatabase::defaultDatabaseFilename()];
         if (![defaultManager fileExistsAtPath:newDB])
             rename([legacyDB fileSystemRepresentation], [newDB fileSystemRepresentation]);
     }
@@ -656,7 +656,7 @@ bool importToWebCoreFormat()
     NSFileManager *fileManager = [NSFileManager defaultManager];
     enumerator = [[fileManager contentsOfDirectoryAtPath:databaseDirectory error:NULL] objectEnumerator];
 
-    NSString *databaseFilename = iconDatabase().defaultDatabaseFilename();
+    NSString *databaseFilename = IconDatabase::defaultDatabaseFilename();
 
     BOOL foundIconDB = NO;
     NSString *file;
