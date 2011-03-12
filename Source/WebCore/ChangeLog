@@ -1,3 +1,10 @@
+2011-03-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: Inspect Element action regression fix.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.inspect):
+
 2011-03-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. One line fix for inspector/dom-breakpoints.html

@@ -1183,8 +1183,11 @@ WebInspector.inspect = function(objectId, hints)
     var object = WebInspector.RemoteObject.fromPayload(objectId);
     if (object.type === "node") {
         // Request node from backend and focus it.
-        object.pushNodeToFrontend(WebInspector.updateFocusedNode.bind(WebInspector));
-    } else if (hints.databaseId) {
+        object.pushNodeToFrontend(WebInspector.updateFocusedNode.bind(WebInspector), object.release.bind(object));
+        return;
+    }
+
+    if (hints.databaseId) {
         WebInspector.currentPanel = WebInspector.panels.resources;
         WebInspector.panels.resources.selectDatabase(hints.databaseId);
     } else if (hints.domStorageId) {
