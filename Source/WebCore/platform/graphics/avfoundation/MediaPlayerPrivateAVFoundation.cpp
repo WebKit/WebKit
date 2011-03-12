@@ -59,7 +59,7 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_cachedDuration(invalidTime)
     , m_reportedDuration(invalidTime)
     , m_seekTo(invalidTime)
-    , m_requestedRate(1.0)
+    , m_requestedRate(1)
     , m_delayCallbacks(false)
     , m_havePreparedToPlay(false)
     , m_assetIsPlayable(false)
