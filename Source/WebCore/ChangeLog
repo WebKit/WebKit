@@ -1,3 +1,9 @@
+2011-03-12  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r80900.
+
+        * CMakeListsWinCE.txt: Removed IconDatabaseNone.cpp.
+
 2011-03-12  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed typo fix.

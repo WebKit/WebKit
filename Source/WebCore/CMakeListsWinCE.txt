@@ -24,8 +24,6 @@ LIST(APPEND WebCore_SOURCES
     page/win/EventHandlerWin.cpp
     page/wince/FrameWinCE.cpp
 
-    loader/icon/IconDatabaseNone.cpp
-
     rendering/RenderThemeWince.cpp
 
     plugins/PluginDatabase.cpp
