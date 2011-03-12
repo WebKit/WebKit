@@ -43,6 +43,7 @@ public:
 
     bool add(const String& key, APIObject*);
     bool set(const String& key, APIObject*);
+    void remove(const String& key);
 
     virtual bool isMutable() { return true; }
 

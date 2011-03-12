@@ -48,4 +48,9 @@ bool MutableDictionary::set(const String& key, APIObject* item)
     return result.second;
 }
 
+void MutableDictionary::remove(const String& key)
+{
+    m_map.remove(key);
+}
+
 } // namespace WebKit

@@ -1,3 +1,17 @@
+2011-03-11  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add api for "remove" to WKMutableDictionary
+        https://bugs.webkit.org/show_bug.cgi?id=56157
+
+        * Shared/API/c/WKMutableDictionary.cpp:
+        (WKDictionaryRemoveItem): Added; call remove on MutableDictionary impl.
+        * Shared/API/c/WKMutableDictionary.h:
+        * Shared/MutableDictionary.cpp:
+        (WebKit::MutableDictionary::remove): Added; call remove on the underlying hashmap.
+        * Shared/MutableDictionary.h:
+
 2011-03-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80899 and r80912.

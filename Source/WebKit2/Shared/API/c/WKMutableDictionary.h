@@ -42,6 +42,7 @@ WK_EXPORT bool WKDictionaryIsMutable(WKDictionaryRef dictionary);
 
 WK_EXPORT bool WKDictionaryAddItem(WKMutableDictionaryRef dictionary, WKStringRef key, WKTypeRef item);
 WK_EXPORT bool WKDictionarySetItem(WKMutableDictionaryRef dictionary, WKStringRef key, WKTypeRef item);
+WK_EXPORT void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionary, WKStringRef key);
 
 #ifdef __cplusplus
 }

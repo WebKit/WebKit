@@ -51,3 +51,8 @@ bool WKDictionarySetItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRe
 {
     return toImpl(dictionaryRef)->set(toImpl(keyRef)->string(), toImpl(itemRef));
 }
+
+void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef)
+{
+    toImpl(dictionaryRef)->remove(toImpl(keyRef)->string());
+}
