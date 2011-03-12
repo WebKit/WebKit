@@ -42,6 +42,7 @@
 #import "TextChecker.h"
 #import "TextCheckerState.h"
 #import "WKAPICast.h"
+#import "WKFullScreenWindowController.h"
 #import "WKPrintingView.h"
 #import "WKStringCF.h"
 #import "WKTextInputWindowController.h"
@@ -144,6 +145,10 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 
 #if ENABLE(GESTURE_EVENTS)
     id _endGestureMonitor;
+#endif
+    
+#if ENABLE(FULLSCREEN_API)
+    RetainPtr<WKFullScreenWindowController> _fullScreenWindowController;
 #endif
 }
 @end
@@ -2000,6 +2005,17 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 {
     [self _updateGrowBoxForWindowFrameChange];
 }
+
+#if ENABLE(FULLSCREEN_API)
+- (WKFullScreenWindowController*)fullScreenWindowController
+{
+    if (!_data->_fullScreenWindowController) {
+        _data->_fullScreenWindowController.adoptNS([[WKFullScreenWindowController alloc] init]);
+        [_data->_fullScreenWindowController.get() setWebView:self];
+    }
+    return _data->_fullScreenWindowController.get();
+}
+#endif
 
 @end
 

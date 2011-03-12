@@ -2,6 +2,28 @@
 
         Reviewed by Anders Carlsson.
 
+        Hook up new WKFullScreenWindowController functions to WebFullScreenManagerProxy
+        https://bugs.webkit.org/show_bug.cgi?id=56218
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        * UIProcess/mac/WebFullScreenManagerProxyMac.mm: Added.
+        (WebKit::WebFullScreenManagerProxy::enterFullScreen): Call into WKFullScreenWindowController.
+        (WebKit::WebFullScreenManagerProxy::exitFullScreen): Ditto.
+        (WebKit::WebFullScreenManagerProxy::beganEnterFullScreenAnimation): Ditto.
+        (WebKit::WebFullScreenManagerProxy::finishedEnterFullScreenAnimation): Ditto.
+        (WebKit::WebFullScreenManagerProxy::beganExitFullScreenAnimation): Ditto.
+        (WebKit::WebFullScreenManagerProxy::finishedExitFullScreenAnimation): Ditto.
+        (WebKit::WebFullScreenManagerProxy::enterAcceleratedCompositingMode): Ditto.
+        (WebKit::WebFullScreenManagerProxy::exitAcceleratedCompositingMode): Ditto.
+        (WebKit::WebFullScreenManagerProxy::getFullScreenRect): Ditto.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView fullScreenWindowController]): Lazily instantiate a WKFullScreenWindowController.
+        * UIProcess/API/mac/WKViewInternal.h:
+
+2011-03-11  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Add the WKFullScreenWindowController, mostly cribbed from WebKit's WebFullScreenController.
 
         [WebKit2] Implement a full screen window controller

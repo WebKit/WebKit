@@ -30,7 +30,12 @@
 namespace WebKit {
     class DrawingAreaProxy;
     class FindIndicator;
+    class LayerTreeContext;
 }
+
+#if ENABLE(FULLSCREEN_API)
+@class WKFullScreenWindowController;
+#endif
 
 @interface WKView (Internal)
 - (PassOwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
@@ -64,4 +69,8 @@ namespace WebKit {
 - (void)_setDrawingAreaSize:(NSSize)size;
 
 - (void)_didChangeScrollbarsForMainFrame;
+
+#if ENABLE(FULLSCREEN_API)
+- (WKFullScreenWindowController*)fullScreenWindowController;
+#endif
 @end

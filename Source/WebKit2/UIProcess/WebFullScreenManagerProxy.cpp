@@ -105,42 +105,6 @@ void WebFullScreenManagerProxy::supportsFullScreen(bool& supports)
     supports = true;
 }
 
-void WebFullScreenManagerProxy::enterFullScreen()
-{
-}
-
-void WebFullScreenManagerProxy::exitFullScreen()
-{
-}
-
-void WebFullScreenManagerProxy::beganEnterFullScreenAnimation()
-{
-}
-
-void WebFullScreenManagerProxy::finishedEnterFullScreenAnimation(bool completed)
-{
-}
-
-void WebFullScreenManagerProxy::beganExitFullScreenAnimation()
-{
-}
-
-void WebFullScreenManagerProxy::finishedExitFullScreenAnimation(bool completed)
-{
-}
-    
-void WebFullScreenManagerProxy::enterAcceleratedCompositingMode(const LayerTreeContext& context)
-{
-}
-
-void WebFullScreenManagerProxy::exitAcceleratedCompositingMode()
-{
-}
-
-void WebFullScreenManagerProxy::getFullScreenRect(WebCore::IntRect& rect)
-{
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(FULLSCREEN_API)
