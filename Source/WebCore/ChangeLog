@@ -1,3 +1,16 @@
+2011-03-12  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix.
+
+        Fix GTK+ builds by wrapping sections of full screen code in USE(ACCELERATED_COMPOSITING)
+        checks.
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitWillEnterFullScreenForElement):
+        (WebCore::Document::webkitDidEnterFullScreenForElement):
+        (WebCore::Document::webkitWillExitFullScreenForElement):
+        (WebCore::Document::webkitDidExitFullScreenForElement):
+
 2011-03-12  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix.

@@ -4887,9 +4887,11 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     
     if (m_fullScreenRenderer) {
         m_fullScreenRenderer->setAnimating(true);
+#if USE(ACCELERATED_COMPOSITING)
         view()->updateCompositingLayers();
         ASSERT(m_fullScreenRenderer->layer()->backing());
         page()->chrome()->client()->setRootFullScreenLayer(m_fullScreenRenderer->layer()->backing()->graphicsLayer());
+#endif
     }
 }
     
@@ -4897,9 +4899,11 @@ void Document::webkitDidEnterFullScreenForElement(Element*)
 {
     if (m_fullScreenRenderer) {
         m_fullScreenRenderer->setAnimating(false);
+#if USE(ACCELERATED_COMPOSITING)
         view()->updateCompositingLayers();
         ASSERT(!m_fullScreenRenderer->layer()->backing());
         page()->chrome()->client()->setRootFullScreenLayer(0);
+#endif
     }
     m_fullScreenChangeDelayTimer.startOneShot(0);
 }
@@ -4909,9 +4913,11 @@ void Document::webkitWillExitFullScreenForElement(Element*)
     if (m_fullScreenRenderer) {
         m_fullScreenRenderer->setAnimating(true);
         m_fullScreenRenderer->setAnimating(true);
+#if USE(ACCELERATED_COMPOSITING)
         view()->updateCompositingLayers();
         ASSERT(m_fullScreenRenderer->layer()->backing());
         page()->chrome()->client()->setRootFullScreenLayer(m_fullScreenRenderer->layer()->backing()->graphicsLayer());
+#endif
     }
 }
 
@@ -4927,7 +4933,9 @@ void Document::webkitDidExitFullScreenForElement(Element*)
         m_fullScreenElement->detach();
     
     setFullScreenRenderer(0);
+#if USE(ACCELERATED_COMPOSITING)
     page()->chrome()->client()->setRootFullScreenLayer(0);
+#endif
     recalcStyle(Force);
     
     m_fullScreenChangeDelayTimer.startOneShot(0);
