@@ -1,3 +1,13 @@
+2011-03-12  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        WebKit2: Initialize the WebFullScreenManagerProxy with a WKView
+        https://bugs.webkit.org/show_bug.cgi?id=56250
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]): Call fullScreenManager()->setView(self).
+
 2011-03-11  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Anders Carlsson.

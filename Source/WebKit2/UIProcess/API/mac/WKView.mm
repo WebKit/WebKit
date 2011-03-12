@@ -50,6 +50,7 @@
 #import "WKViewPrivate.h"
 #import "WebContext.h"
 #import "WebEventFactory.h"
+#import "WebFullScreenManagerProxy.h"
 #import "WebPage.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
@@ -228,6 +229,9 @@ static bool useNewDrawingArea()
     _data->_pageClient = PageClientImpl::create(self);
     _data->_page = toImpl(contextRef)->createWebPage(_data->_pageClient.get(), toImpl(pageGroupRef));
     _data->_page->initializeWebPage();
+#if ENABLE(FULLSCREEN_API)
+    _data->_page->fullScreenManager()->setWebView(self);
+#endif
     _data->_mouseDownEvent = nil;
     _data->_ignoringMouseDraggedEvents = NO;
 
