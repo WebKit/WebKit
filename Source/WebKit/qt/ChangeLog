@@ -1,3 +1,13 @@
+2011-03-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by attempt at build fix!
+
+        https://bugs.webkit.org/show_bug.cgi?id=56216
+        Fix the Qt build following the same pattern of the patch.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::setIconDatabasePath): Call the static method via IconDatabase:: and not via iconDatabase()
+
 2011-03-11  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Ariya Hidayat.

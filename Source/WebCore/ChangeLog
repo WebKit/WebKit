@@ -1,3 +1,14 @@
+2011-03-11  Brady Eidson  <beidson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=56216
+        Fix the Qt build following the same pattern of the patch.
+
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconDatabaseBase.cpp:
+        (WebCore::IconDatabaseBase::databasePath): Added to the virtual base.
+        * loader/icon/IconDatabaseBase.h:
+        (WebCore::IconDatabaseBase::isOpen): Ditto.
+
 2011-03-11  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Alexey Proskuryakov.

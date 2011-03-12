@@ -645,7 +645,7 @@ QString QWebSettings::defaultTextEncoding() const
 */
 void QWebSettings::setIconDatabasePath(const QString& path)
 {
-    WebCore::iconDatabase().delayDatabaseCleanup();
+    WebCore::IconDatabase::delayDatabaseCleanup();
 
     if (!path.isEmpty()) {
         WebCore::iconDatabase().setEnabled(true);

@@ -128,8 +128,8 @@ private:
 
 // *** Any Thread ***
 public:
-    bool isOpen() const;
-    String databasePath() const;
+    virtual bool isOpen() const;
+    virtual String databasePath() const;
     static String defaultDatabaseFilename();
 
 private:

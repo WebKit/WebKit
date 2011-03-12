@@ -36,6 +36,11 @@ String IconDatabaseBase::iconURLForPageURL(const String&)
     return String();
 }
 
+String IconDatabaseBase::databasePath() const
+{
+    return String();
+}
+
 static IconDatabaseBase* globalDatabase = 0;
 
 // Functions to get/set the global icon database.

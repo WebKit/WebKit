@@ -83,6 +83,9 @@ public:
 
     virtual void setPrivateBrowsingEnabled(bool) { }
     virtual void setClient(IconDatabaseClient*) { }
+    
+    virtual bool isOpen() const { return false; }
+    virtual String databasePath() const;
 
 };
 
