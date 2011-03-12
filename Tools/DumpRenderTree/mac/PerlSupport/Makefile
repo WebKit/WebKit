@@ -66,7 +66,7 @@ $(PERL_MODULE): DumpRenderTreeSupportPregenerated.pm $(DUMPRENDERTREE)
 endif
 
 $(DYLIB): DumpRenderTreeSupport.c $(WRAPPER)
-	gcc -g -dynamiclib -o $(DYLIB) `$(PERL) -MExtUtils::Embed -eperl_inc` `$(PERL) -MExtUtils::Embed -eldopts` $^
+	gcc -g -dynamiclib -o $(DYLIB) `$(PERL) -MExtUtils::Embed -eperl_inc` `$(PERL) -MExtUtils::Embed -e'my $$opts = ldopts(0); $$opts =~ s/-arch [^ ]*( |$$)//g; print $$opts, " -arch ",join(" -arch", split(" ",$$ENV{ARCHS}))'` $^
 
 clean:
 	rm -f $(WRAPPER) $(PERL_MODULE) $(DYLIB)

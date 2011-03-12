@@ -1,5 +1,14 @@
 2011-03-12  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/8995822> Build DumpRenderTree perl support only for the architectures
+        DumpRenderTree is being built for.
+
+        * DumpRenderTree/mac/PerlSupport/Makefile:
+
+2011-03-12  Dan Bernstein  <mitz@apple.com>
+
         Suggested by Mark Rowe.
 
         * DumpRenderTree/mac/Configurations/Base.xcconfig: Leave C++ exceptions enabled
