@@ -1,3 +1,10 @@
+2011-03-11  Brady Eidson  <beidson@apple.com>
+
+        More Windows build fix for https://bugs.webkit.org/show_bug.cgi?id=56216
+
+        * WebCoreStatistics.cpp:
+        * WebIconDatabase.cpp:
+
 2011-03-09  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Mihai Parparita.

@@ -38,6 +38,8 @@
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Image.h>
 #include <WebCore/PlatformString.h>
+#include <WebCore/SharedBuffer.h>
+
 #pragma warning(pop)
 #include <wtf/MainThread.h>
 #include "shlobj.h"

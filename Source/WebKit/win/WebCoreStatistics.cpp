@@ -33,6 +33,7 @@
 #include <WebCore/GlyphPageTreeNode.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/JSDOMWindow.h>
+#include <WebCore/SharedBuffer.h>
 
 using namespace JSC;
 using namespace WebCore;
