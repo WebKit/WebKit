@@ -1,3 +1,12 @@
+2011-03-11  Chris Marrin  <cmarrin@apple.com>
+
+        Unreviewed.
+
+        Fixes an error with the checkin for https://bugs.webkit.org/show_bug.cgi?id=52468
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+
 2011-03-11  Brady Eidson  <beidson@apple.com>
 
         Attempted Qt build fix for https://bugs.webkit.org/show_bug.cgi?id=56216
