@@ -35,6 +35,7 @@ namespace WebKit {
 @interface WKPrintingView : NSView {
 @public
     NSPrintOperation *_printOperation; // WKPrintingView is owned by the operation.
+    RetainPtr<NSView> _wkView;
 
     RefPtr<WebKit::WebFrameProxy> _webFrame;
     Vector<WebCore::IntRect> _printingPageRects;
@@ -56,6 +57,6 @@ namespace WebKit {
     NSTimer *_autodisplayResumeTimer;
 }
 
-- (id)initWithFrameProxy:(WebKit::WebFrameProxy*)frame;
+- (id)initWithFrameProxy:(WebKit::WebFrameProxy*)frame view:(NSView *)wkView;
 
 @end

@@ -43,13 +43,14 @@ static BOOL isForcingPreviewUpdate;
 
 @implementation WKPrintingView
 
-- (id)initWithFrameProxy:(WebFrameProxy*)frame
+- (id)initWithFrameProxy:(WebKit::WebFrameProxy*)frame view:(NSView *)wkView
 {
     self = [super init]; // No frame rect to pass to NSView.
     if (!self)
         return nil;
 
     _webFrame = frame;
+    _wkView = wkView;
 
     return self;
 }
@@ -59,6 +60,19 @@ static BOOL isForcingPreviewUpdate;
     return YES;
 }
 
+- (void)_setAutodisplay:(BOOL)newState
+{
+    if (!newState && [[_wkView.get() window] isAutodisplay])
+        [_wkView.get() displayIfNeeded];
+    
+    [[_wkView.get() window] setAutodisplay:newState];
+
+    // For some reason, painting doesn't happen for a long time without this call, <rdar://problem/8975229>.
+    if (newState)
+        [_wkView.get() displayIfNeeded];
+}
+
+
 - (void)_suspendAutodisplay
 {
     // A drawRect: call on WKView causes a switch to screen mode, which is slow due to relayout, and we want to avoid that.
@@ -66,10 +80,8 @@ static BOOL isForcingPreviewUpdate;
     if (_autodisplayResumeTimer) {
         [_autodisplayResumeTimer invalidate];
         _autodisplayResumeTimer = nil;
-    } else {
-        if (WebPageProxy* page = _webFrame->page())
-            page->setAutodisplay(false);
-    }
+    } else
+        [self _setAutodisplay:NO];
 }
 
 - (void)_delayedResumeAutodisplayTimerFired
@@ -77,10 +89,7 @@ static BOOL isForcingPreviewUpdate;
     ASSERT(isMainThread());
     
     _autodisplayResumeTimer = nil;
-
-    // FIXME: The page is null, but NSWindow is still around, and should be told to resume autodisplay.
-    if (WebPageProxy* page = _webFrame->page())
-        page->setAutodisplay(true);
+    [self _setAutodisplay:YES];
 }
 
 - (void)_delayedResumeAutodisplay

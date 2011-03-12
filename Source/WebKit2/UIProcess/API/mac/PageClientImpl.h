@@ -89,7 +89,6 @@ private:
 
     virtual void accessibilityWebProcessTokenReceived(const CoreIPC::DataReference&);    
     virtual void setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled);
-    virtual void setAutodisplay(bool);
 
     virtual CGContextRef containingWindowGraphicsContext();
 

@@ -1,3 +1,31 @@
+2011-03-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56222
+        A window remains frozen if web process crashes during printing
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setComplexTextInputEnabled):
+        * UIProcess/WebPageProxy.h:
+        Moved setAutodisplay code into WKPrintingView.
+
+        * UIProcess/API/mac/WKPrintingView.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView printOperationWithPrintInfo:forFrame:]):
+        Keep a reference to the actual WKView, so that we can manipulate how it displays, even if
+        page goes away.
+
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (-[WKPrintingView initWithFrameProxy:WebKit::view:]):
+        (-[WKPrintingView _setAutodisplay:]):
+        (-[WKPrintingView _suspendAutodisplay]):
+        (-[WKPrintingView _delayedResumeAutodisplayTimerFired]):
+        Move setAutodisplay here.
+
 2011-03-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

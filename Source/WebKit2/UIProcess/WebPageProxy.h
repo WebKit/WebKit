@@ -363,8 +363,6 @@ public:
     void drawFooter(WebFrameProxy*, const WebCore::FloatRect&);
 
 #if PLATFORM(MAC)
-    void setAutodisplay(bool);
-
     // Dictionary.
     void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
 #endif
