@@ -524,7 +524,7 @@ WebInspector.doLoadedDone = function()
     if (Preferences.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled)
         this.debuggerModel.enableDebugger();
     if (Preferences.profilerAlwaysEnabled || WebInspector.settings.profilerEnabled)
-        InspectorAgent.enableProfiler();
+        ProfilerAgent.enable();
     if (WebInspector.settings.monitoringXHREnabled)
         ConsoleAgent.setMonitoringXHREnabled(true);
 
