@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,54 +25,50 @@
 
 #if ENABLE(FULLSCREEN_API)
 
-#import <wtf/RefPtr.h>
+#import <Cocoa/Cocoa.h>
+#import <wtf/RetainPtr.h>
 
-@class WebWindowFadeAnimation;
-@class WebView;
-namespace WebCore {
-    class Element;
-    class RenderBox;
-    class EventListener;
+namespace WebKit { 
+class LayerTreeContext;
 }
 
-@interface WebFullScreenController : NSWindowController {
-@private
-    RefPtr<WebCore::Element> _element;
-    WebCore::RenderBox* _renderer; // (set)
-    RefPtr<WebCore::Element> _replacementElement; 
-    NSWindow *_backgroundFullscreenWindow; // (retain)
-    WebWindowFadeAnimation *_fadeAnimation; // (retain)
-    WebView *_webView;
-    NSView* _placeholderView;
-    CALayer* _rendererLayer;
-    CALayer* _backgroundLayer;
-    RefPtr<WebCore::EventListener> _mediaEventListener; 
+namespace WebCore {
+class IntRect;
+}
 
+@class WKView;
+
+@interface WKFullScreenWindowController : NSWindowController {
+@private
+    WKView *_webView;
+    RetainPtr<NSView> _webViewPlaceholder;
+    RetainPtr<NSView> _layerViewPlaceholder;
+    RetainPtr<NSView> _layerHostingView;
+    
     BOOL _isAnimating;
-    BOOL _isFullscreen;
+    BOOL _isFullScreen;
     BOOL _isWindowLoaded;
     BOOL _forceDisableAnimation;
     BOOL _isPlaying;
+    CGRect _initialFrame;    
     uint32_t _idleDisplaySleepAssertion;
     uint32_t _idleSystemSleepAssertion;
     NSTimer *_tickleTimer;
-    SystemUIMode _savedUIMode;
-    SystemUIOptions _savedUIOptions;
-    CGRect _initialFrame;
 }
 
-- (WebView*)webView;
-- (void)setWebView:(WebView*)webView;
+- (WKView*)webView;
+- (void)setWebView:(WKView*)webView;
 
-- (void)setElement:(PassRefPtr<WebCore::Element>)element;
-- (WebCore::Element*)element;
-
-- (void)setRenderer:(WebCore::RenderBox*)renderer;
-- (WebCore::RenderBox*)renderer;
-
-- (void)enterFullscreen:(NSScreen *)screen;
-- (void)exitFullscreen;
+- (void)enterFullScreen:(NSScreen *)screen;
+- (void)exitFullScreen;
+- (void)beganEnterFullScreenAnimation;
+- (void)beganExitFullScreenAnimation;
+- (void)finishedEnterFullScreenAnimation:(bool)completed;
+- (void)finishedExitFullScreenAnimation:(bool)completed;
+- (void)enterAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)context;
+- (void)exitAcceleratedCompositingMode;
+- (WebCore::IntRect)getFullScreenRect;
 
 @end
 
-#endif // ENABLE(FULLSCREEN_API)
+#endif

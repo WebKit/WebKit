@@ -2,6 +2,53 @@
 
         Reviewed by Anders Carlsson.
 
+        Add the WKFullScreenWindowController, mostly cribbed from WebKit's WebFullScreenController.
+
+        [WebKit2] Implement a full screen window controller
+        https://bugs.webkit.org/show_bug.cgi?id=56210
+
+        * UIProcess/mac/WKFullScreenWindowController.h: Added.
+        * UIProcess/mac/WKFullScreenWindowController.mm: Added.
+        (-[WKFullScreenWindowController init]): Remove the _mediaEventListener.
+        (-[WKFullScreenWindowController dealloc]): Make sure to cancel previous async requests.
+        (-[WKFullScreenWindowController windowDidLoad]): Remove the Tiger protection.
+        (-[WKFullScreenWindowController webView]): Type change.
+        (-[WKFullScreenWindowController setWebView:]): Type change.
+        (-[WKFullScreenWindowController applicationDidResignActive:]): Case changes.
+        (-[WKFullScreenWindowController applicationDidChangeScreenParameters:]): Case changes.
+        (-[WKFullScreenWindowController enterFullScreen:]): Removed most of the animation code
+            which will reappear in WebFullScreenManager.
+        (-[WKFullScreenWindowController beganEnterFullScreenAnimation]): Added.
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]): Added.
+        (-[WKFullScreenWindowController exitFullScreen]): Ditto to enterFullScreen.
+        (-[WKFullScreenWindowController beganExitFullScreenAnimation]): Added.
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]): Added.
+        (-[WKFullScreenWindowController enterAcceleratedCompositingMode:WebKit::]): Set up the
+            layer tree host.
+        (-[WKFullScreenWindowController exitAcceleratedCompositingMode]): Tear down same.
+        (-[WKFullScreenWindowController getFullScreenRect:WebCore::]): Added.
+        (-[WKFullScreenWindowController _updateMenuAndDockForFullScreen]): Case changes.
+        (-[WKFullScreenWindowController _disableIdleDisplaySleep]): Ditto.
+        (-[WKFullScreenWindowController _enableIdleDisplaySleep]): Ditto.
+        (-[WKFullScreenWindowController _disableIdleSystemSleep]): Ditto.
+        (-[WKFullScreenWindowController _enableIdleSystemSleep]): Ditto.
+        (-[WKFullScreenWindowController _enableTickleTimer]): Ditto.
+        (-[WKFullScreenWindowController _disableTickleTimer]): Ditto.
+        (-[WKFullScreenWindowController _tickleTimerFired]): Ditto.
+        (-[WKFullScreenWindowController _updatePowerAssertions]): Use _isPlaying ivar.
+        (-[WKFullScreenWindowController _manager]): Added.
+        (-[WKFullScreenWindowController _requestExit]): Case changes.
+        (-[WKFullScreenWindowController _requestExitFullScreenWithAnimation:]): Ditto.
+        (-[WKFullScreenWindowController _swapView:with:]): Added.
+        (-[WKFullScreenWindowController _fullScreenWindow]): Case changes.
+        (-[WKFullScreenWindow initWithContentRect:styleMask:backing:defer:]): Geometry no
+            longer needs to be flipped.
+        (-[WKFullScreenWindow cancelOperation:]): Case changes.
+
+2011-03-11  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Create new interface stubs to support full screen mode in WebKit2.
 
         WebKit2: Plumb new full screen animation APIs through WebKit2.

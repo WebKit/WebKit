@@ -741,6 +741,9 @@
 		CD73BA47131ACC9A00EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA45131ACC8800EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp */; };
 		CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */; };
 		CD73BA53131B645B00EEDED2 /* WebFullScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA37131A29FE00EEDED2 /* WebFullScreenManager.cpp */; };
+		CDCA85C8132ABA4E00E961DF /* WKFullScreenWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */; };
+		CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */; };
+		CDCA85D5132AC2B300E961DF /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCA85D4132AC2B300E961DF /* IOKit.framework */; };
 		D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */; };
 		D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484311FF4B6500032B39 /* WebPopupMenu.h */; };
 		D3B9484811FF4B6500032B39 /* WebSearchPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */; };
@@ -1615,6 +1618,9 @@
 		CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFullScreenManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		CD73BA49131ACD8E00EEDED2 /* WebFullScreenManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFullScreenManagerMessages.h; sourceTree = "<group>"; };
 		CD73BA4A131ACD8F00EEDED2 /* WebFullScreenManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFullScreenManagerProxyMessages.h; sourceTree = "<group>"; };
+		CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKFullScreenWindowController.mm; sourceTree = "<group>"; };
+		CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFullScreenWindowController.h; sourceTree = "<group>"; };
+		CDCA85D4132AC2B300E961DF /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPopupMenu.cpp; sourceTree = "<group>"; };
 		D3B9484311FF4B6500032B39 /* WebPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPopupMenu.h; sourceTree = "<group>"; };
 		D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSearchPopupMenu.cpp; sourceTree = "<group>"; };
@@ -1672,6 +1678,7 @@
 				1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */,
 				1A1C4EC810D06099005E67E7 /* WebCore.framework in Frameworks */,
 				BCF5068512431861005955AE /* Security.framework in Frameworks */,
+				CDCA85D5132AC2B300E961DF /* IOKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1745,6 +1752,7 @@
 				1AA1CD06100FA1BA0078DEBC /* Carbon.framework */,
 				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
 				BCD0042C110C1E27003B8A67 /* CoreServices.framework */,
+				CDCA85D4132AC2B300E961DF /* IOKit.framework */,
 				1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */,
 				BC87DFA91018101400564216 /* libicucore.dylib */,
 				1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */,
@@ -2868,6 +2876,8 @@
 		BCCF085C113F3B7500C650C5 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */,
+				CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */,
 				1A64292C12DE5F9800CAAE2C /* BackingStoreMac.mm */,
 				BC2651F511825EF800243E12 /* ChunkedUpdateDrawingAreaProxyMac.mm */,
 				1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */,
@@ -3455,6 +3465,7 @@
 				37C4E9F6131C6E7E0029BD5A /* config.h in Headers */,
 				E1BB16A413201B9B00F49431 /* FullKeyboardAccessWatcher.h in Headers */,
 				33AA1067131F060000D4A575 /* WebCookieManagerProxyClient.h in Headers */,
+				CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4059,6 +4070,7 @@
 				CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */,
 				CD73BA53131B645B00EEDED2 /* WebFullScreenManager.cpp in Sources */,
 				CD6F75F4131B66D000D6B21E /* WebFullScreenManagerProxy.cpp in Sources */,
+				CDCA85C8132ABA4E00E961DF /* WKFullScreenWindowController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
