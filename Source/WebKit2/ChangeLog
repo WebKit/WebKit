@@ -2,6 +2,18 @@
 
         Reviewed by Sam Weinig.
 
+        Support encoding /decoding WebData in usermessages
+        https://bugs.webkit.org/show_bug.cgi?id=56158
+
+        Added encoding/decoding for APIObject::TypeData
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+
+2011-03-11  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add api for "remove" to WKMutableDictionary
         https://bugs.webkit.org/show_bug.cgi?id=56157
 

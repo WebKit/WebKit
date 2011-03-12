@@ -32,6 +32,7 @@
 #include "ImmutableDictionary.h"
 #include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebData.h"
 #include "WebImage.h"
 #include "WebNumber.h"
 #include "WebSerializedScriptValue.h"
@@ -47,6 +48,7 @@ namespace WebKit {
 //   - SerializedScriptValue -> SerializedScriptValue
 //   - String -> String
 //   - UserContentURLPattern -> UserContentURLPattern
+//   - WebData -> WebData
 //   - WebDouble -> WebDouble
 //   - WebImage -> WebImage
 //   - WebUInt64 -> WebUInt64
@@ -138,6 +140,11 @@ public:
             encoder->encode(handle);
             return true;
         }
+        case APIObject::TypeData: {
+            WebData* data = static_cast<WebData*>(m_root);
+            encoder->encodeBytes(data->bytes(), data->size());
+            return true;
+        }
         default:
             break;
         }
@@ -162,6 +169,7 @@ protected:
 //   - SerializedScriptValue -> SerializedScriptValue
 //   - String -> String
 //   - UserContentURLPattern -> UserContentURLPattern
+//   - WebData -> WebData
 //   - WebDouble -> WebDouble
 //   - WebImage -> WebImage
 //   - WebUInt64 -> WebUInt64
@@ -288,6 +296,14 @@ public:
             coder.m_root = WebImage::create(ShareableBitmap::create(size, handle));
             return true;
         }
+        case APIObject::TypeData: {
+            Vector<uint8_t> buffer;
+            if (!decoder->decodeBytes(buffer))
+                return false;
+            coder.m_root = WebData::create(buffer);
+            break;
+        }
+
         default:
             break;
         }
