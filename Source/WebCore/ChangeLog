@@ -1,3 +1,15 @@
+2011-03-11  Ben Taylor  <bentaylor.solx86@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56198
+        Fix conditional which had an int for one case and a pointer for another.
+
+        No new tests. Fix compilation on Solaris 10 with SunStudio 12 C++
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+
 2011-03-11  Brady Eidson  <beidson@apple.com>
 
         Windows build fix.
