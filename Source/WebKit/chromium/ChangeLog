@@ -1,3 +1,16 @@
+2011-03-11  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Correct return type of WebClipboard::readImage.
+        https://bugs.webkit.org/show_bug.cgi?id=56234
+
+        Update the return type to reflect that we are returning a blob of PNG
+        data, not a bitmap.
+
+        * public/WebClipboard.h:
+        (WebKit::WebClipboard::readImage):
+
 2011-03-11  David Levin  <levin@chromium.org>
 
         Update chromium deps to pick up the skia roll.
