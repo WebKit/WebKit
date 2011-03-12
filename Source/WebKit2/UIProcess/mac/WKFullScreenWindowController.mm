@@ -30,15 +30,15 @@
 #import "WKFullScreenWindowController.h"
 
 #import "LayerTreeContext.h"
-#import "WebPageProxy.h"
-#import "WebFullScreenManagerProxy.h"
 #import "WKAPICast.h"
 #import "WKViewInternal.h"
-#import <IOKit/pwr_mgt/IOPMLib.h> // For IOPMAssertionCreate()
+#import "WebFullScreenManagerProxy.h"
+#import "WebPageProxy.h"
 #import <HIToolbox/MacApplication.h> // For SetSystemUIMode()
+#import <IOKit/pwr_mgt/IOPMLib.h> // For IOPMAssertionCreate()
 #import <QuartzCore/QuartzCore.h>
-#import <WebCore/IntRect.h>
 #import <WebCore/FloatRect.h>
+#import <WebCore/IntRect.h>
 #import <WebKitSystemInterface.h>
 
 static const NSTimeInterval tickleTimerInterval = 1.0;
@@ -199,7 +199,7 @@ using namespace WebCore;
     
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    [backgroundLayer setFrame:backgroundFrame];
+    [backgroundLayer setFrame:NSRectToCGRect(backgroundFrame)];
     [CATransaction commit];
 
     CFTimeInterval duration = [self _animationDuration];

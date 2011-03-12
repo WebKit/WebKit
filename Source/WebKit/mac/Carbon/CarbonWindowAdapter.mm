@@ -179,7 +179,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
     osStatus = GetWindowModality(_windowRef, &windowModality, NULL);
     if (osStatus != noErr) {
-        NSLog(@"Couldn't get window modality: error=%d", osStatus);
+        NSLog(@"Couldn't get window modality: error=%ld", osStatus);
         return nil;
     }
     
@@ -334,7 +334,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     if ([self _hasWindowRef]) {
         osStatus = GetWindowClass([self windowRef], &windowClass);
         if (osStatus != noErr) {
-            NSLog(@"Couldn't get window class: error=%d", osStatus);
+            NSLog(@"Couldn't get window class: error=%ld", osStatus);
         }
     }
     return windowClass; 

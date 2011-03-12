@@ -27,6 +27,10 @@
 #import <WebCore/Editor.h>
 #import <WebCore/KeyboardEvent.h>
 
+namespace CoreIPC {
+    class DataReference;
+}
+
 namespace WebKit {
     class DrawingAreaProxy;
     class FindIndicator;

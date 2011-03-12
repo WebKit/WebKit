@@ -230,7 +230,7 @@ void WebFullScreenManagerMac::beginExitFullScreenAnimation(float duration)
     // the fullscreen element appears to move from its starting position and size to its
     // final one.
     CGPoint destinationPosition = [(CALayer*)[caLayer presentationLayer] position];
-    CGRect destinationBounds = [[caLayer presentationLayer] bounds];
+    CGRect destinationBounds = NSRectToCGRect([[caLayer presentationLayer] bounds]);
     CGPoint layerAnchor = [caLayer anchorPoint];
     CGPoint initialPosition = CGPointMake(
         m_initialFrame.x() + m_initialFrame.width() * layerAnchor.x,

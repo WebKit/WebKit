@@ -1,3 +1,15 @@
+2011-03-12  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 32-bit build.
+
+        This involves hacking around some HIToolbox headers that do things of dubious correctness,
+        and fixing the usual CGRect vs NSRect issues.
+        
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]): NSRect is not CGRect.
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::beginExitFullScreenAnimation): Ditto.
+
 2011-03-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

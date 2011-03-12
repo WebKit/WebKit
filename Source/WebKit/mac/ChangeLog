@@ -1,3 +1,11 @@
+2011-03-12  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 32-bit build.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:disableOrdering:carbon:]): Use a more appropriate format specifier.
+        (-[CarbonWindowAdapter _carbonWindowClass]): Ditto.
+
 2011-03-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson
