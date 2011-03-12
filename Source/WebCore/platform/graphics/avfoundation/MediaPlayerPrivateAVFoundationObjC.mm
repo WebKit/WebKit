@@ -188,7 +188,7 @@ void MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer()
     if (!m_avAsset || m_imageGenerator)
         return;
 
-    m_imageGenerator.adoptNS([AVAssetImageGenerator assetImageGeneratorWithAsset:m_avAsset.get()]);
+    m_imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:m_avAsset.get()];
 
     [m_imageGenerator.get() setApertureMode:AVAssetImageGeneratorApertureModeCleanAperture];
     [m_imageGenerator.get() setAppliesPreferredTrackTransform:YES];
@@ -498,7 +498,7 @@ unsigned MediaPlayerPrivateAVFoundationObjC::totalBytes() const
 
 void MediaPlayerPrivateAVFoundationObjC::setAsset(id asset)
 {
-    m_avAsset.adoptNS(asset);
+    m_avAsset = asset;
 }
 
 MediaPlayerPrivateAVFoundation::AVAssetStatus MediaPlayerPrivateAVFoundationObjC::assetStatus() const
