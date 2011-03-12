@@ -487,7 +487,7 @@ WebInspector.DOMBreakpointView.prototype = {
                 if (!targetNodeId)
                     return;
 
-                eventData.targetNode.release();
+                targetNodeObject.release();
                 var targetNode = WebInspector.panels.elements.linkifyNodeById(targetNodeId);
                 if (eventData.insertion) {
                     if (targetNodeId !== this._nodeId)

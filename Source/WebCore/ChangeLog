@@ -1,5 +1,12 @@
 2011-03-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed. One line fix for inspector/dom-breakpoints.html
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.DOMBreakpointView.prototype.populateStatusMessageElement.decorateNode):
+
+2011-03-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Unreviewed build fix.
 
         Almost all inspector tests are crashing after r80928.
