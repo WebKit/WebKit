@@ -29,6 +29,7 @@
 #include "JITCode.h"
 #include "JITStubs.h"
 #include "JSImmediate.h"
+#include "JSValue.h"
 #include "MacroAssembler.h"
 #include "RegisterFile.h"
 #include <wtf/AlwaysInline.h>
@@ -157,6 +158,11 @@ namespace JSC {
 #error "JIT not supported on this platform."
 #endif
 
+#if USE(JSVALUE32_64)
+        static const unsigned Int32Tag = JSValue::Int32Tag;
+#else
+        static const unsigned Int32Tag = JSImmediate::TagTypeNumber >> 32;
+#endif
         inline Jump emitLoadJSCell(unsigned virtualRegisterIndex, RegisterID payload);
         inline Jump emitLoadInt32(unsigned virtualRegisterIndex, RegisterID dst);
         inline Jump emitLoadDouble(unsigned virtualRegisterIndex, FPRegisterID dst, RegisterID scratch);
@@ -173,6 +179,8 @@ namespace JSC {
 #endif
 
         inline Address payloadFor(unsigned index, RegisterID base = callFrameRegister);
+        inline Address intPayloadFor(unsigned index, RegisterID base = callFrameRegister);
+        inline Address intTagFor(unsigned index, RegisterID base = callFrameRegister);
         inline Address addressFor(unsigned index, RegisterID base = callFrameRegister);
     };
 
@@ -212,6 +220,16 @@ namespace JSC {
     {
         ASSERT(static_cast<int>(virtualRegisterIndex) < FirstConstantRegisterIndex);
         return Address(base, (virtualRegisterIndex * sizeof(Register)) + OBJECT_OFFSETOF(JSValue, u.asBits.payload));
+    }
+
+    inline JSInterfaceJIT::Address JSInterfaceJIT::intPayloadFor(unsigned virtualRegisterIndex, RegisterID base)
+    {
+        return payloadFor(virtualRegisterIndex, base);
+    }
+
+    inline JSInterfaceJIT::Address JSInterfaceJIT::intTagFor(unsigned virtualRegisterIndex, RegisterID base)
+    {
+        return tagFor(virtualRegisterIndex, base);
     }
 
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadDouble(unsigned virtualRegisterIndex, FPRegisterID dst, RegisterID scratch)
@@ -278,6 +296,17 @@ namespace JSC {
     {
         ASSERT(static_cast<int>(virtualRegisterIndex) < FirstConstantRegisterIndex);
         return addressFor(virtualRegisterIndex, base);
+    }
+
+    inline JSInterfaceJIT::Address JSInterfaceJIT::intPayloadFor(unsigned virtualRegisterIndex, RegisterID base)
+    {
+        ASSERT(static_cast<int>(virtualRegisterIndex) < FirstConstantRegisterIndex);
+        return Address(base, (virtualRegisterIndex * sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+    }
+    inline JSInterfaceJIT::Address JSInterfaceJIT::intTagFor(unsigned virtualRegisterIndex, RegisterID base)
+    {
+        ASSERT(static_cast<int>(virtualRegisterIndex) < FirstConstantRegisterIndex);
+        return Address(base, (virtualRegisterIndex * sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     }
 #endif
 

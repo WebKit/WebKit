@@ -34,6 +34,7 @@
 #include "npruntime_impl.h"
 #include <runtime/ScopeChain.h>
 #include <runtime/JSLock.h>
+#include <runtime/JSObject.h>
 
 namespace JSC {
 namespace Bindings {

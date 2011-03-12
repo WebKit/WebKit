@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StructureStubInfo.h"
 
+#include "JSObject.h"
 #include "ScopeChain.h"
 
 namespace JSC {

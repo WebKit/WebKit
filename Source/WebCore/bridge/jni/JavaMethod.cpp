@@ -31,6 +31,7 @@
 
 #include "JavaString.h"
 
+#include <runtime/JSObject.h>
 #include <runtime/ScopeChain.h>
 #include <wtf/text/StringBuilder.h>
 

@@ -1,3 +1,61 @@
+2011-03-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Ensure all values are correctly tagged in the registerfile
+        https://bugs.webkit.org/show_bug.cgi?id=56214
+
+        This patch makes sure that all JSCell pointers written to
+        the registerfile are correctly tagged as JSCells, and replaces
+        raw int usage with the immediate representation.
+
+        For performance, register pressure, and general saneness reasons
+        I've added abstractions for reading and writing the tag
+        and payload of integer registers directly for the JSVALUE64
+        encoding.
+
+        * interpreter/Register.h:
+        (JSC::Register::withInt):
+        (JSC::Register::withCallee):
+        (JSC::Register::operator=):
+        (JSC::Register::i):
+        (JSC::Register::activation):
+        (JSC::Register::function):
+        (JSC::Register::propertyNameIterator):
+        (JSC::Register::scopeChain):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitPutToCallFrameHeader):
+        (JSC::JIT::emitPutCellToCallFrameHeader):
+        (JSC::JIT::emitPutIntToCallFrameHeader):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_next_pname):
+        (JSC::JIT::emit_op_load_varargs):
+        (JSC::JIT::emitSlow_op_load_varargs):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_next_pname):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::intPayloadFor):
+        (JSC::JSInterfaceJIT::intTagFor):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::returnJSValue):
+        (JSC::SpecializedThunkJIT::returnDouble):
+        (JSC::SpecializedThunkJIT::returnInt32):
+        (JSC::SpecializedThunkJIT::returnJSCell):
+
 2011-03-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -48,10 +48,11 @@ namespace JSC {
 
 void JIT::compileOpCallInitializeCallFrame()
 {
-    store32(regT1, Address(callFrameRegister, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))));
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT3); // newScopeChain
-    storePtr(regT0, Address(callFrameRegister, RegisterFile::Callee * static_cast<int>(sizeof(Register))));
-    storePtr(regT3, Address(callFrameRegister, RegisterFile::ScopeChain * static_cast<int>(sizeof(Register))));
+    // regT0 holds callee, regT1 holds argCount
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT3); // scopeChain
+    emitPutIntToCallFrameHeader(regT1, RegisterFile::ArgumentCount);
+    emitPutCellToCallFrameHeader(regT0, RegisterFile::Callee);
+    emitPutCellToCallFrameHeader(regT3, RegisterFile::ScopeChain);
 }
 
 void JIT::emit_op_call_put_result(Instruction* instruction)
@@ -67,6 +68,7 @@ void JIT::compileOpCallVarargs(Instruction* instruction)
     int registerOffset = instruction[3].u.operand;
 
     emitGetVirtualRegister(argCountRegister, regT1);
+    emitFastArithImmToInt(regT1);
     emitGetVirtualRegister(callee, regT0);
     addPtr(Imm32(registerOffset), regT1, regT2);
 
@@ -199,8 +201,9 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     // Note that this omits to set up RegisterFile::CodeBlock, which is set in the callee
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1); // newScopeChain
-
-    store32(Imm32(argCount), Address(callFrameRegister, (registerOffset + RegisterFile::ArgumentCount) * static_cast<int>(sizeof(Register))));
+    
+    store32(Imm32(Int32Tag), intTagFor(registerOffset + RegisterFile::ArgumentCount));
+    store32(Imm32(argCount), intPayloadFor(registerOffset + RegisterFile::ArgumentCount));
     storePtr(callFrameRegister, Address(callFrameRegister, (registerOffset + RegisterFile::CallerFrame) * static_cast<int>(sizeof(Register))));
     storePtr(regT0, Address(callFrameRegister, (registerOffset + RegisterFile::Callee) * static_cast<int>(sizeof(Register))));
     storePtr(regT1, Address(callFrameRegister, (registerOffset + RegisterFile::ScopeChain) * static_cast<int>(sizeof(Register))));

@@ -23,6 +23,7 @@
 
 #include "JSValue.h"
 #include "JSCell.h"
+#include "JSObject.h"
 #include "ScopeChain.h"
 
 using std::min;
