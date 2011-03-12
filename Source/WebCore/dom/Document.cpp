@@ -119,6 +119,7 @@
 #include "RegisteredEventListener.h"
 #include "RenderArena.h"
 #include "RenderLayer.h"
+#include "RenderLayerBacking.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -4884,23 +4885,34 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
 
     recalcStyle(Force);
     
-    if (m_fullScreenRenderer)
+    if (m_fullScreenRenderer) {
         m_fullScreenRenderer->setAnimating(true);
+        view()->updateCompositingLayers();
+        ASSERT(m_fullScreenRenderer->layer()->backing());
+        page()->chrome()->client()->setRootFullScreenLayer(m_fullScreenRenderer->layer()->backing()->graphicsLayer());
+    }
 }
     
 void Document::webkitDidEnterFullScreenForElement(Element*)
 {
-    if (m_fullScreenRenderer)
+    if (m_fullScreenRenderer) {
         m_fullScreenRenderer->setAnimating(false);
+        view()->updateCompositingLayers();
+        ASSERT(!m_fullScreenRenderer->layer()->backing());
+        page()->chrome()->client()->setRootFullScreenLayer(0);
+    }
     m_fullScreenChangeDelayTimer.startOneShot(0);
 }
 
 void Document::webkitWillExitFullScreenForElement(Element*)
 {
-    if (m_fullScreenRenderer)
+    if (m_fullScreenRenderer) {
         m_fullScreenRenderer->setAnimating(true);
-
-    recalcStyle(Force);
+        m_fullScreenRenderer->setAnimating(true);
+        view()->updateCompositingLayers();
+        ASSERT(m_fullScreenRenderer->layer()->backing());
+        page()->chrome()->client()->setRootFullScreenLayer(m_fullScreenRenderer->layer()->backing()->graphicsLayer());
+    }
 }
 
 void Document::webkitDidExitFullScreenForElement(Element*)
@@ -4915,6 +4927,7 @@ void Document::webkitDidExitFullScreenForElement(Element*)
         m_fullScreenElement->detach();
     
     setFullScreenRenderer(0);
+    page()->chrome()->client()->setRootFullScreenLayer(0);
     recalcStyle(Force);
     
     m_fullScreenChangeDelayTimer.startOneShot(0);
@@ -4942,6 +4955,7 @@ void Document::setFullScreenRendererSize(const IntSize& size)
         newStyle->setTop(Length(0, WebCore::Fixed));
         newStyle->setLeft(Length(0, WebCore::Fixed));
         m_fullScreenRenderer->setStyle(newStyle);
+        updateLayout();
     }
 }
     

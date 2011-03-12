@@ -2,6 +2,20 @@
 
         Reviewed by Anders Carlsson.
 
+        WebCore::Document should notify ChromeClient when the full screen renderer's backing changes.
+        https://bugs.webkit.org/show_bug.cgi?id=56226
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitWillEnterFullScreenForElement): Call setRootFullScreenLayer().
+        (WebCore::Document::webkitDidEnterFullScreenForElement): Ditto.
+        (WebCore::Document::webkitWillExitFullScreenForElement): Ditto.
+        (WebCore::Document::webkitDidExitFullScreenForElement): Ditto.
+        (WebCore::Document::setFullScreenRendererSize): Layout after setting the renderer's size.
+
+2011-03-11  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Create new interface stubs to support full screen mode in WebKit2.
 
         WebKit2: Plumb new full screen animation APIs through WebKit2.
