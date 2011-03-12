@@ -1,3 +1,11 @@
+2011-03-12  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed typo fix.
+
+        No new tests needed.
+
+        * WebCore.pro: Fix typo in header name.
+
 2011-03-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: Inspect Element action regression fix.

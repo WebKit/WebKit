@@ -1365,7 +1365,7 @@ HEADERS += \
     css/CSSSegmentedFontFace.h \
     css/CSSSelector.h \
     css/CSSSelectorList.h \
-    css/CSSStyleApplyPropwerty.h \
+    css/CSSStyleApplyProperty.h \
     css/CSSStyleDeclaration.h \
     css/CSSStyleRule.h \
     css/CSSStyleSelector.h \
