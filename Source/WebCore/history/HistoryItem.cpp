@@ -31,6 +31,7 @@
 #include "IconDatabase.h"
 #include "PageCache.h"
 #include "ResourceRequest.h"
+#include "SharedBuffer.h"
 #include <stdio.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/Decoder.h>

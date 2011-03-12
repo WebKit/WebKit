@@ -27,6 +27,7 @@
 #include "IconDatabaseBase.h"
 
 #include "IconDatabase.h"
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
