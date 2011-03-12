@@ -1,3 +1,14 @@
+2011-03-11  David Levin  <levin@chromium.org>
+
+        Update some baselines due to Skia update in Chromium.
+        Filed http://crbug.com/75820 about the odd look of the results (but
+        the odd look previously existed).
+
+        * platform/chromium-linux/svg/css/composite-shadow-text-expected.checksum:
+        * platform/chromium-linux/svg/css/composite-shadow-text-expected.png:
+        * platform/chromium-win/svg/css/composite-shadow-text-expected.checksum:
+        * platform/chromium-win/svg/css/composite-shadow-text-expected.png:
+
 2010-3-11  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.
