@@ -1,3 +1,10 @@
+2011-03-12  Dan Bernstein  <mitz@apple.com>
+
+        Suggested by Mark Rowe.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig: Leave C++ exceptions enabled
+        as they were before r80915.
+
 2011-03-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
