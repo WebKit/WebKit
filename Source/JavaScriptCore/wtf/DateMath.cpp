@@ -75,9 +75,6 @@
 #include "Assertions.h"
 #include "ASCIICType.h"
 #include "CurrentTime.h"
-#if USE(JSC)
-#include "JSObject.h"
-#endif
 #include "MathExtras.h"
 #if USE(JSC)
 #include "ScopeChain.h"

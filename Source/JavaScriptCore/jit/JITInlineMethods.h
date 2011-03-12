@@ -52,21 +52,7 @@ ALWAYS_INLINE JSValue JIT::getConstantOperand(unsigned src)
 
 ALWAYS_INLINE void JIT::emitPutToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry entry)
 {
-    storePtr(from, payloadFor(entry, callFrameRegister));
-}
-
-ALWAYS_INLINE void JIT::emitPutCellToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry entry)
-{
-#if USE(JSVALUE32_64)
-    store32(Imm32(JSValue::CellTag), tagFor(entry, callFrameRegister));
-#endif
-    storePtr(from, payloadFor(entry, callFrameRegister));
-}
-
-ALWAYS_INLINE void JIT::emitPutIntToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry entry)
-{
-    store32(Imm32(Int32Tag), intTagFor(entry, callFrameRegister));
-    store32(from, intPayloadFor(entry, callFrameRegister));
+    storePtr(from, Address(callFrameRegister, entry * sizeof(Register)));
 }
 
 ALWAYS_INLINE void JIT::emitPutImmediateToCallFrameHeader(void* value, RegisterFile::CallFrameHeaderEntry entry)

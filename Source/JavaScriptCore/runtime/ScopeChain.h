@@ -128,17 +128,6 @@ namespace JSC {
     {
         return scopeChain()->globalThis.get();
     }
-    
-    ALWAYS_INLINE ScopeChainNode* Register::scopeChain() const
-    {
-        return static_cast<ScopeChainNode*>(jsValue().asCell());
-    }
-    
-    ALWAYS_INLINE Register& Register::operator=(ScopeChainNode* scopeChain)
-    {
-        *this = JSValue(scopeChain);
-        return *this;
-    }
 
 } // namespace JSC
 

@@ -1,3 +1,71 @@
+2011-03-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80919.
+        http://trac.webkit.org/changeset/80919
+        https://bugs.webkit.org/show_bug.cgi?id=56251
+
+        all windows bots failed to compile this change (Requested by
+        loislo on #webkit).
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/StructureStubInfo.cpp:
+        * interpreter/Register.h:
+        (JSC::Register::withInt):
+        (JSC::Register::withCallee):
+        (JSC::Register::operator=):
+        (JSC::Register::i):
+        (JSC::Register::activation):
+        (JSC::Register::function):
+        (JSC::Register::propertyNameIterator):
+        (JSC::Register::scopeChain):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitPutToCallFrameHeader):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_next_pname):
+        (JSC::JIT::emit_op_load_varargs):
+        (JSC::JIT::emitSlow_op_load_varargs):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_next_pname):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::payloadFor):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::returnJSValue):
+        (JSC::SpecializedThunkJIT::returnDouble):
+        (JSC::SpecializedThunkJIT::returnInt32):
+        (JSC::SpecializedThunkJIT::returnJSCell):
+        * runtime/ArgList.cpp:
+        * runtime/DateConversion.cpp:
+        * runtime/GCActivityCallbackCF.cpp:
+        * runtime/Identifier.cpp:
+        * runtime/JSActivation.h:
+        (JSC::asActivation):
+        * runtime/JSLock.cpp:
+        * runtime/JSNumberCell.cpp:
+        * runtime/JSObject.h:
+        * runtime/JSPropertyNameIterator.h:
+        * runtime/JSValue.h:
+        * runtime/JSZombie.cpp:
+        * runtime/MarkedBlock.cpp:
+        * runtime/MarkedSpace.cpp:
+        * runtime/PropertyNameArray.cpp:
+        * runtime/ScopeChain.h:
+        (JSC::ExecState::globalThisValue):
+        * wtf/DateMath.cpp:
+
 2011-03-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

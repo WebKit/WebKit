@@ -44,7 +44,6 @@
 #include "DateConversion.h"
 
 #include "CallFrame.h"
-#include "JSObject.h"
 #include "ScopeChain.h"
 #include "UString.h"
 #include <wtf/DateMath.h>

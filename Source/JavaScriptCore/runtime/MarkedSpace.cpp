@@ -24,7 +24,6 @@
 #include "JSCell.h"
 #include "JSGlobalData.h"
 #include "JSLock.h"
-#include "JSObject.h"
 #include "ScopeChain.h"
 
 namespace JSC {

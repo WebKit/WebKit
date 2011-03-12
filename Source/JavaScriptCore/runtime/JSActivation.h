@@ -91,11 +91,6 @@ namespace JSC {
         ASSERT(asObject(value)->inherits(&JSActivation::s_info));
         return static_cast<JSActivation*>(asObject(value));
     }
-    
-    ALWAYS_INLINE JSActivation* Register::activation() const
-    {
-        return asActivation(jsValue());
-    }
 
 } // namespace JSC
 

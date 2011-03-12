@@ -22,7 +22,6 @@
 #include "Identifier.h"
 
 #include "CallFrame.h"
-#include "JSObject.h"
 #include "NumericStrings.h"
 #include "ScopeChain.h"
 #include <new> // for placement new

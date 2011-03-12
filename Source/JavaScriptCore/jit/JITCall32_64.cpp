@@ -49,10 +49,10 @@ namespace JSC {
 void JIT::compileOpCallInitializeCallFrame()
 {
     // regT0 holds callee, regT1 holds argCount
+    store32(regT1, Address(callFrameRegister, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))));
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT3); // scopeChain
-    emitPutIntToCallFrameHeader(regT1, RegisterFile::ArgumentCount);
-    emitPutCellToCallFrameHeader(regT0, RegisterFile::Callee);
-    emitPutCellToCallFrameHeader(regT3, RegisterFile::ScopeChain);
+    storePtr(regT0, Address(callFrameRegister, RegisterFile::Callee * static_cast<int>(sizeof(Register)))); // callee
+    storePtr(regT3, Address(callFrameRegister, RegisterFile::ScopeChain * static_cast<int>(sizeof(Register)))); // scopeChain
 }
 
 void JIT::emit_op_call_put_result(Instruction* instruction)
@@ -77,8 +77,7 @@ void JIT::compileOpCallVarargs(Instruction* instruction)
     // Speculatively roll the callframe, assuming argCount will match the arity.
     mul32(Imm32(sizeof(Register)), regT3, regT3);
     addPtr(callFrameRegister, regT3);
-    store32(Imm32(JSValue::CellTag), tagFor(RegisterFile::CallerFrame, regT3));
-    storePtr(callFrameRegister, payloadFor(RegisterFile::CallerFrame, regT3));
+    storePtr(callFrameRegister, Address(regT3, RegisterFile::CallerFrame * static_cast<int>(sizeof(Register))));
     move(regT3, callFrameRegister);
 
     move(regT2, regT1); // argCount
@@ -209,8 +208,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
     addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsFunctionVPtr)));
 
     // Speculatively roll the callframe, assuming argCount will match the arity.
-    store32(Imm32(JSValue::CellTag), tagFor(RegisterFile::CallerFrame + registerOffset, callFrameRegister));
-    storePtr(callFrameRegister, payloadFor(RegisterFile::CallerFrame + registerOffset, callFrameRegister));
+    storePtr(callFrameRegister, Address(callFrameRegister, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register))));
     addPtr(Imm32(registerOffset * static_cast<int>(sizeof(Register))), callFrameRegister);
     move(Imm32(argCount), regT1);
 
@@ -282,12 +280,10 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     // Note that this omits to set up RegisterFile::CodeBlock, which is set in the callee
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT2);
 
-    store32(Imm32(JSValue::Int32Tag), tagFor(registerOffset + RegisterFile::ArgumentCount));
-    store32(Imm32(argCount), payloadFor(registerOffset + RegisterFile::ArgumentCount));
-    storePtr(callFrameRegister, payloadFor(RegisterFile::CallerFrame + registerOffset, callFrameRegister));
+    store32(Imm32(argCount), Address(callFrameRegister, (registerOffset + RegisterFile::ArgumentCount) * static_cast<int>(sizeof(Register))));
+    storePtr(callFrameRegister, Address(callFrameRegister, (registerOffset + RegisterFile::CallerFrame) * static_cast<int>(sizeof(Register))));
     emitStore(registerOffset + RegisterFile::Callee, regT1, regT0);
-    store32(Imm32(JSValue::CellTag), tagFor(registerOffset + RegisterFile::ScopeChain));
-    store32(regT2, payloadFor(registerOffset + RegisterFile::ScopeChain));
+    storePtr(regT2, Address(callFrameRegister, (registerOffset + RegisterFile::ScopeChain) * static_cast<int>(sizeof(Register))));
     addPtr(Imm32(registerOffset * sizeof(Register)), callFrameRegister);
 
     // Call to the callee
@@ -313,8 +309,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     Jump callLinkFailNotJSFunction = branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsFunctionVPtr));
 
     // Speculatively roll the callframe, assuming argCount will match the arity.
-    store32(Imm32(JSValue::CellTag), tagFor(RegisterFile::CallerFrame + registerOffset, callFrameRegister));
-    storePtr(callFrameRegister, payloadFor(RegisterFile::CallerFrame + registerOffset, callFrameRegister));
+    storePtr(callFrameRegister, Address(callFrameRegister, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register))));
     addPtr(Imm32(registerOffset * static_cast<int>(sizeof(Register))), callFrameRegister);
     move(Imm32(argCount), regT1);
 

@@ -840,20 +840,6 @@ inline JSValue JSValue::toStrictThisObject(ExecState* exec) const
     return asObject(asCell())->toStrictThisObject(exec);
 }
 
-ALWAYS_INLINE JSObject* Register::function() const
-{
-    if (!jsValue())
-        return 0;
-    return asObject(jsValue());
-}
-
-ALWAYS_INLINE Register Register::withCallee(JSObject* callee)
-{
-    Register r;
-    r = JSValue(callee);
-    return r;
-}
-
 } // namespace JSC
 
 #endif // JSObject_h

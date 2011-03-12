@@ -21,7 +21,6 @@
 #include "config.h"
 #include "PropertyNameArray.h"
 
-#include "JSObject.h"
 #include "ScopeChain.h"
 #include "Structure.h"
 #include "StructureChain.h"

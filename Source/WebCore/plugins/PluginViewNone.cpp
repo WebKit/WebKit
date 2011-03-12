@@ -28,7 +28,6 @@
 
 #if USE(JSC)
 #include "BridgeJSC.h"
-#include <runtime/JSObject.h>
 #include <runtime/ScopeChain.h>
 #endif
 

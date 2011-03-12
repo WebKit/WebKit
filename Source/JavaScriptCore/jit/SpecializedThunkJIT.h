@@ -87,7 +87,7 @@ namespace JSC {
         {
             if (src != regT0)
                 move(src, regT0);
-            loadPtr(payloadFor(RegisterFile::CallerFrame, callFrameRegister), callFrameRegister);
+            loadPtr(Address(callFrameRegister, RegisterFile::CallerFrame * (int)sizeof(Register)), callFrameRegister);
             ret();
         }
         
@@ -101,7 +101,7 @@ namespace JSC {
             loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(JSValue, u.asBits.tag) - sizeof(double)), regT1);
             loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(JSValue, u.asBits.payload) - sizeof(double)), regT0);
 #endif
-            loadPtr(payloadFor(RegisterFile::CallerFrame, callFrameRegister), callFrameRegister);
+            loadPtr(Address(callFrameRegister, RegisterFile::CallerFrame * (int)sizeof(Register)), callFrameRegister);
             ret();
         }
 
@@ -110,7 +110,7 @@ namespace JSC {
             if (src != regT0)
                 move(src, regT0);
             tagReturnAsInt32();
-            loadPtr(payloadFor(RegisterFile::CallerFrame, callFrameRegister), callFrameRegister);
+            loadPtr(Address(callFrameRegister, RegisterFile::CallerFrame * (int)sizeof(Register)), callFrameRegister);
             ret();
         }
 
@@ -119,7 +119,7 @@ namespace JSC {
             if (src != regT0)
                 move(src, regT0);
             tagReturnAsJSCell();
-            loadPtr(payloadFor(RegisterFile::CallerFrame, callFrameRegister), callFrameRegister);
+            loadPtr(Address(callFrameRegister, RegisterFile::CallerFrame * (int)sizeof(Register)), callFrameRegister);
             ret();
         }
         

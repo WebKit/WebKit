@@ -23,7 +23,6 @@
 
 #include "Heap.h"
 #include "CallFrame.h"
-#include "JSObject.h"
 #include "ScopeChain.h"
 
 #if USE(PTHREADS)

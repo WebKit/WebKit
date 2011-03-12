@@ -54,9 +54,11 @@ namespace JSC {
         Register(const JSValue&);
         Register& operator=(const JSValue&);
         JSValue jsValue() const;
-
+        
+        Register& operator=(JSActivation*);
         Register& operator=(CallFrame*);
         Register& operator=(CodeBlock*);
+        Register& operator=(JSPropertyNameIterator*);
         Register& operator=(ScopeChainNode*);
         Register& operator=(Instruction*);
 
@@ -71,17 +73,29 @@ namespace JSC {
 
         static Register withInt(int32_t i)
         {
-            Register r = jsNumber(i);
+            Register r;
+            r.u.i = i;
             return r;
         }
 
-        static inline Register withCallee(JSObject* callee);
+        static Register withCallee(JSObject* callee)
+        {
+            Register r;
+            r.u.function = callee;
+            return r;
+        }
 
     private:
         union {
+            int32_t i;
             EncodedJSValue value;
+
+            JSActivation* activation;
             CallFrame* callFrame;
             CodeBlock* codeBlock;
+            JSObject* function;
+            JSPropertyNameIterator* propertyNameIterator;
+            ScopeChainNode* scopeChain;
             Instruction* vPC;
         } u;
     };
@@ -117,6 +131,12 @@ namespace JSC {
 
     // Interpreter functions
 
+    ALWAYS_INLINE Register& Register::operator=(JSActivation* activation)
+    {
+        u.activation = activation;
+        return *this;
+    }
+
     ALWAYS_INLINE Register& Register::operator=(CallFrame* callFrame)
     {
         u.callFrame = callFrame;
@@ -135,11 +155,28 @@ namespace JSC {
         return *this;
     }
 
-    ALWAYS_INLINE int32_t Register::i() const
+    ALWAYS_INLINE Register& Register::operator=(ScopeChainNode* scopeChain)
     {
-        return jsValue().asInt32();
+        u.scopeChain = scopeChain;
+        return *this;
     }
 
+    ALWAYS_INLINE Register& Register::operator=(JSPropertyNameIterator* propertyNameIterator)
+    {
+        u.propertyNameIterator = propertyNameIterator;
+        return *this;
+    }
+
+    ALWAYS_INLINE int32_t Register::i() const
+    {
+        return u.i;
+    }
+    
+    ALWAYS_INLINE JSActivation* Register::activation() const
+    {
+        return u.activation;
+    }
+    
     ALWAYS_INLINE CallFrame* Register::callFrame() const
     {
         return u.callFrame;
@@ -149,7 +186,22 @@ namespace JSC {
     {
         return u.codeBlock;
     }
-
+    
+    ALWAYS_INLINE JSObject* Register::function() const
+    {
+        return u.function;
+    }
+    
+    ALWAYS_INLINE JSPropertyNameIterator* Register::propertyNameIterator() const
+    {
+        return u.propertyNameIterator;
+    }
+    
+    ALWAYS_INLINE ScopeChainNode* Register::scopeChain() const
+    {
+        return u.scopeChain;
+    }
+    
     ALWAYS_INLINE Instruction* Register::vPC() const
     {
         return u.vPC;

@@ -33,7 +33,6 @@
 #include "Heap.h"
 #include "JSGlobalData.h"
 #include "JSLock.h"
-#include "JSObject.h"
 #include "ScopeChain.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/WTFThreadData.h>

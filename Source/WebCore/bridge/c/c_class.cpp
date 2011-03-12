@@ -35,7 +35,6 @@
 #include <runtime/ScopeChain.h>
 #include <runtime/Identifier.h>
 #include <runtime/JSLock.h>
-#include <runtime/JSObject.h>
 #include <wtf/text/StringHash.h>
 
 namespace JSC { namespace Bindings {
