@@ -51,8 +51,9 @@ namespace WebCore {
 
         static PageGroup* pageGroup(const String& groupName);
 
-#if ENABLE(DOM_STORAGE)
         static void closeLocalStorage();
+
+#if ENABLE(DOM_STORAGE)
         static void clearLocalStorageForAllOrigins();
         static void clearLocalStorageForOrigin(SecurityOrigin*);
         // DumpRenderTree helper that triggers a StorageArea sync.

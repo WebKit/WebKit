@@ -1,3 +1,9 @@
+2011-03-11  Brady Eidson  <beidson@apple.com>
+
+        Attempt at a build-fix for https://bugs.webkit.org/show_bug.cgi?id=51878
+
+        * page/PageGroup.h: Declare this method, even if the definition will end up being empty.
+
 2011-03-11  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Dmitry Titov.
