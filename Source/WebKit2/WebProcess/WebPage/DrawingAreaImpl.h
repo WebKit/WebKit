@@ -33,6 +33,7 @@
 
 namespace WebKit {
 
+class SharedMemory;
 class UpdateInfo;
 
 class DrawingAreaImpl : public DrawingArea {
@@ -61,7 +62,7 @@ private:
 
     // CoreIPC message handlers.
     virtual void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
-    virtual void didUpdate();
+    virtual void didUpdate(bool didIncorporateBackingStore);
     virtual void suspendPainting();
     virtual void resumePainting();
 
@@ -74,7 +75,7 @@ private:
     void scheduleDisplay();
     void displayTimerFired();
     void display();
-    void display(UpdateInfo&);
+    void display(UpdateInfo&, bool useSharedMemoryCache);
 
     uint64_t m_backingStoreStateID;
 
@@ -105,6 +106,12 @@ private:
 
     // The layer tree host that handles accelerated compositing.
     RefPtr<LayerTreeHost> m_layerTreeHost;
+
+    // The shared memory we used for the last update. If possible, we'll try
+    // to reuse it for subsequent paints to avoid allocating/freeeing shared memory
+    // for every paint.
+    RefPtr<SharedMemory> m_sharedMemoryUsedForLastUpdate;
+
 };
 
 } // namespace WebKit

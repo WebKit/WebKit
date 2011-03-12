@@ -75,6 +75,8 @@
 		1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24B5F111F531E800C38269 /* MachUtilities.h */; };
 		1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24BED3120894D100FBB059 /* SharedMemory.h */; };
 		1A24BF3A120896A600FBB059 /* SharedMemoryMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */; };
+		1A27A5C8132AC86A001138FB /* SharedMemoryCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A27A5C6132AC86A001138FB /* SharedMemoryCache.cpp */; };
+		1A27A5C9132AC86A001138FB /* SharedMemoryCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A27A5C7132AC86A001138FB /* SharedMemoryCache.h */; };
 		1A2C307112D555450063DAA2 /* ContextMenuState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2C306F12D555450063DAA2 /* ContextMenuState.h */; };
 		1A2D82A4127F4EAB001EB962 /* NPObjectMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA35C127A45BF0050E709 /* NPObjectMessageReceiver.cpp */; };
 		1A2D82A5127F4EAB001EB962 /* NPObjectMessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1FA35B127A45BF0050E709 /* NPObjectMessageReceiver.h */; };
@@ -900,6 +902,8 @@
 		1A24B5F111F531E800C38269 /* MachUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachUtilities.h; sourceTree = "<group>"; };
 		1A24BED3120894D100FBB059 /* SharedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedMemory.h; sourceTree = "<group>"; };
 		1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryMac.cpp; sourceTree = "<group>"; };
+		1A27A5C6132AC86A001138FB /* SharedMemoryCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryCache.cpp; sourceTree = "<group>"; };
+		1A27A5C7132AC86A001138FB /* SharedMemoryCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedMemoryCache.h; sourceTree = "<group>"; };
 		1A2C306F12D555450063DAA2 /* ContextMenuState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextMenuState.h; sourceTree = "<group>"; };
 		1A2D8411127F64E8001EB962 /* NPObjectMessageReceiver.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NPObjectMessageReceiver.messages.in; sourceTree = "<group>"; };
 		1A2D8437127F65D5001EB962 /* NPObjectMessageReceiverMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPObjectMessageReceiverMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -2323,6 +2327,8 @@
 				1A186EE812EF7618008E5F37 /* LayerTreeHost.h */,
 				1A90C23612650717003E44D4 /* PageOverlay.cpp */,
 				1A90C23512650717003E44D4 /* PageOverlay.h */,
+				1A27A5C6132AC86A001138FB /* SharedMemoryCache.cpp */,
+				1A27A5C7132AC86A001138FB /* SharedMemoryCache.h */,
 				BC72B9F811E6476B001EB4EA /* WebBackForwardListProxy.cpp */,
 				BC72B9F911E6476B001EB4EA /* WebBackForwardListProxy.h */,
 				51871B59127CB89D00F76232 /* WebContextMenu.cpp */,
@@ -3455,6 +3461,7 @@
 				37C4E9F6131C6E7E0029BD5A /* config.h in Headers */,
 				E1BB16A413201B9B00F49431 /* FullKeyboardAccessWatcher.h in Headers */,
 				33AA1067131F060000D4A575 /* WebCookieManagerProxyClient.h in Headers */,
+				1A27A5C9132AC86A001138FB /* SharedMemoryCache.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4059,6 +4066,7 @@
 				CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */,
 				CD73BA53131B645B00EEDED2 /* WebFullScreenManager.cpp in Sources */,
 				CD6F75F4131B66D000D6B21E /* WebFullScreenManagerProxy.cpp in Sources */,
+				1A27A5C8132AC86A001138FB /* SharedMemoryCache.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

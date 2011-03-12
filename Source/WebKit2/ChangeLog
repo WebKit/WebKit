@@ -1,3 +1,63 @@
+2011-03-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a shared memory cache to the web process
+        https://bugs.webkit.org/show_bug.cgi?id=56232
+
+        Add a very simple shared memory cache to the web process, so that we don't have to allocate and
+        free memory over and over when painting.
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::create):
+        (WebKit::ShareableBitmap::createShareable):
+        (WebKit::ShareableBitmap::resize):
+        * Shared/ShareableBitmap.h:
+        (WebKit::ShareableBitmap::numBytesNeededForBitmapSize):
+        (WebKit::ShareableBitmap::sizeInBytes):
+        Rename numBytesForSize to numBytesNeededForBitmapSize.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::update):
+        Always send back a DidUpdate message, even if we didn't use the update info.
+        This is needed so that the web process knows when the UI process is done with the shared memory inside
+        the update info struct.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::didUpdate):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        DidUpdate now takes a boolean.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::sharedMemoryCache):
+        Add shared memory cache.
+
+        (WebKit::DrawingAreaImpl::~DrawingAreaImpl):
+        Return the shared memory to the cache.
+
+        (WebKit::DrawingAreaImpl::sendDidUpdateBackingStoreState):
+        display now takes an extra boolean.
+
+        (WebKit::DrawingAreaImpl::didUpdate):
+        Return the shared memory to the cache.
+
+        (WebKit::DrawingAreaImpl::display):
+        If useSharedMemoryCache is true, get shared memory from the cache.
+
+        * WebProcess/WebPage/SharedMemoryCache.cpp: Added.
+        (WebKit::SharedMemoryCache::acquireSharedMemory):
+        If the memory we currently hold on to is big enough, return it.
+
+        (WebKit::SharedMemoryCache::releaseSharedMemory):
+        If we're already holding on to shared memory, evict it if the returned
+        shared memory object is bigger than the one we currently hold.
+
+        (WebKit::SharedMemoryCache::clearCacheTimerFired):
+        Null out the shared memory object.
+
 2011-03-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.
