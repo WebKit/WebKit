@@ -33,6 +33,7 @@
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/Color.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 
@@ -40,14 +41,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebFullScreenManager> WebFullScreenManager::create(WebPage* page)
-{
-    return adoptRef(new WebFullScreenManager(page));
-}
-
 WebFullScreenManager::WebFullScreenManager(WebPage* page)
     : m_page(page)
 {
+}
+    
+WebFullScreenManager::~WebFullScreenManager()
+{
+    
 }
 
 WebCore::Element* WebFullScreenManager::element() 
@@ -80,6 +81,8 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
 
 void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
 {
+    ASSERT(element);
+    ASSERT(m_element == element);
     m_page->send(Messages::WebFullScreenManagerProxy::ExitFullScreen());
 }
 
@@ -102,10 +105,6 @@ void WebFullScreenManager::finishedExitFullScreenAnimation(bool completed)
 {
     m_page->send(Messages::WebFullScreenManagerProxy::FinishedExitFullScreenAnimation(completed));
 }
-
-void WebFullScreenManager::setRootFullScreenLayer(WebCore::GraphicsLayer* layer)
-{
-}
     
 IntRect WebFullScreenManager::getFullScreenRect()
 {
@@ -118,33 +117,30 @@ void WebFullScreenManager::willEnterFullScreen()
 {
     ASSERT(m_element);
     m_element->document()->webkitWillEnterFullScreenForElement(m_element.get());
+    m_element->document()->setFullScreenRendererBackgroundColor(Color::transparent);
 }
 
 void WebFullScreenManager::didEnterFullScreen()
 {
     ASSERT(m_element);
     m_element->document()->webkitDidEnterFullScreenForElement(m_element.get());
+    m_element->document()->setFullScreenRendererBackgroundColor(Color::black);
 }
 
 void WebFullScreenManager::willExitFullScreen()
 {
     ASSERT(m_element);
     m_element->document()->webkitWillExitFullScreenForElement(m_element.get());
+    m_element->document()->setFullScreenRendererBackgroundColor(Color::transparent);
 }
 
 void WebFullScreenManager::didExitFullScreen()
 {
     ASSERT(m_element);
     m_element->document()->webkitDidExitFullScreenForElement(m_element.get());
+    m_element->document()->setFullScreenRendererBackgroundColor(Color::black);
 }
 
-void WebFullScreenManager::beginEnterFullScreenAnimation(float duration)
-{
-}
-
-void WebFullScreenManager::beginExitFullScreenAnimation(float duration)
-{
-}
 
 } // namespace WebKit
 

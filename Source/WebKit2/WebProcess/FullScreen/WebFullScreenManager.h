@@ -50,6 +50,7 @@ class WebPage;
 class WebFullScreenManager : public RefCounted<WebFullScreenManager> {
 public:
     static PassRefPtr<WebFullScreenManager> create(WebPage*);
+    virtual ~WebFullScreenManager();
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
@@ -60,7 +61,7 @@ public:
     void finishedEnterFullScreenAnimation(bool completed);
     void beganExitFullScreenAnimation();
     void finishedExitFullScreenAnimation(bool completed);
-    void setRootFullScreenLayer(WebCore::GraphicsLayer*);
+    virtual void setRootFullScreenLayer(WebCore::GraphicsLayer*) = 0;
 
     WebCore::Element* element();
 
@@ -71,8 +72,8 @@ protected:
     void didEnterFullScreen();
     void willExitFullScreen();
     void didExitFullScreen();
-    void beginEnterFullScreenAnimation(float duration);
-    void beginExitFullScreenAnimation(float duration);
+    virtual void beginEnterFullScreenAnimation(float duration) = 0;
+    virtual void beginExitFullScreenAnimation(float duration) = 0;
     WebCore::IntRect getFullScreenRect();
 
     void didReceiveWebFullScreenManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

@@ -2,6 +2,37 @@
 
         Reviewed by Anders Carlsson.
 
+        Add full screen animation code to WebFullScreenManager.
+        https://bugs.webkit.org/show_bug.cgi?id=56220
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp: .
+        (WebKit::WebFullScreenManager::~WebFullScreenManager): Added.
+        (WebKit::WebFullScreenManager::exitFullScreenForElement): Remove ASSERTs.
+        (WebKit::WebFullScreenManager::willEnterFullScreen): Set the full screen renderer's background color.
+        (WebKit::WebFullScreenManager::didEnterFullScreen): Ditto.
+        (WebKit::WebFullScreenManager::willExitFullScreen): Ditto.
+        (WebKit::WebFullScreenManager::didExitFullScreen): Ditto.
+        * WebProcess/FullScreen/WebFullScreenManager.h: Make a few functions pure virtual to be implemented in a 
+            concrete subclass.
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.h: Added.
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm: Added.
+        (-[WebFullScreenManagerAnimationListener initWithManager:WebKit::began:finished:]): Listener for CAAnimations.
+        (-[WebFullScreenManagerAnimationListener animationDidStart:]): Added.
+        (-[WebFullScreenManagerAnimationListener animationDidStop:finished:]): Added.
+        (-[WebFullScreenManagerAnimationListener invalidate]): Added.
+        (WebKit::WebFullScreenManager::create): Now creates a WebFullScreenManagerMac.
+        (WebKit::WebFullScreenManagerMac::create): Added.
+        (WebKit::WebFullScreenManagerMac::WebFullScreenManagerMac): Added.
+        (WebKit::WebFullScreenManagerMac::~WebFullScreenManagerMac): Added.
+        (WebKit::WebFullScreenManagerMac::setRootFullScreenLayer): Set up the remote layer host.
+        (WebKit::WebFullScreenManagerMac::beginEnterFullScreenAnimation): Create a CATransform3D
+            which will animate the full screen renderer from its initial position to its final one.
+        (WebKit::WebFullScreenManagerMac::beginExitFullScreenAnimation): Ditto.
+
+2011-03-11  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Hook up new WKFullScreenWindowController functions to WebFullScreenManagerProxy
         https://bugs.webkit.org/show_bug.cgi?id=56218
 
