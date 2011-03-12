@@ -2,6 +2,12 @@
 
         Attempted Qt build fix for https://bugs.webkit.org/show_bug.cgi?id=56216
 
+        * loader/icon/IconDatabase.h: Make this guy public.
+
+2011-03-11  Brady Eidson  <beidson@apple.com>
+
+        Attempted Qt build fix for https://bugs.webkit.org/show_bug.cgi?id=56216
+
         * loader/icon/IconDatabase.h:
         (WebCore::IconDatabase::delayDatabaseCleanup): Maybe Qt has Icon Database disabled, so we need to define this here?
 

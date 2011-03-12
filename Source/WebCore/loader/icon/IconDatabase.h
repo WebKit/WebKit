@@ -60,6 +60,7 @@ class SQLTransaction;
 #if !ENABLE(ICONDATABASE)
 // For builds with IconDatabase disabled, they'll just use a default derivation of IconDatabaseBase. Which does nothing.
 class IconDatabase : public IconDatabaseBase {
+public:
     static void delayDatabaseCleanup() { }
 };
 #else 
