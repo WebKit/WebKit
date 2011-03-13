@@ -1,5 +1,19 @@
 2011-03-12  David Levin  <levin@chromium.org>
 
+        Add results for newly added test in r80883.
+        The differences appear to be very small in keep with the typical
+        font drawing differences.
+
+        * platform/chromium-linux/fast/multicol/scrolling-overflow-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/scrolling-overflow-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/scrolling-overflow-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/scrolling-overflow-expected.png: Added.
+        * platform/chromium-win/fast/multicol/scrolling-overflow-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/scrolling-overflow-expected.png: Added.
+        * platform/chromium-win/fast/multicol/scrolling-overflow-expected.txt: Added.
+
+2011-03-12  David Levin  <levin@chromium.org>
+
         r80743 updated the main baseline due to a jsc change.
         chromium isn't affected by the change.
 
