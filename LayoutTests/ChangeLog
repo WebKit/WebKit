@@ -1,5 +1,38 @@
 2011-03-13  David Levin  <levin@chromium.org>
 
+        Added the following expectations:
+          fast/backgrounds/background-position-parsing.html new test in r80868
+          fast/css-generated-content/table-row-before-after.html new test in r80871
+          fast/table/dynamic-descendant-percentage-height.html new test in r80878
+
+        Updated test_expectation to cover a failure due to a missing layout test feature
+        and added an appropriate bug.
+
+        * platform/chromium-linux/fast/backgrounds/background-position-parsing-expected.checksum: Added.
+        * platform/chromium-linux/fast/backgrounds/background-position-parsing-expected.png: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-row-before-after-expected.checksum: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-row-before-after-expected.png: Added.
+        * platform/chromium-linux/fast/table/dynamic-descendant-percentage-height-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/dynamic-descendant-percentage-height-expected.png: Added.
+        * platform/chromium-mac/fast/backgrounds/background-position-parsing-expected.checksum: Added.
+        * platform/chromium-mac/fast/backgrounds/background-position-parsing-expected.png: Added.
+        * platform/chromium-mac/fast/css-generated-content/table-row-before-after-expected.checksum: Added.
+        * platform/chromium-mac/fast/css-generated-content/table-row-before-after-expected.png: Added.
+        * platform/chromium-mac/fast/table/dynamic-descendant-percentage-height-expected.checksum: Added.
+        * platform/chromium-mac/fast/table/dynamic-descendant-percentage-height-expected.png: Added.
+        * platform/chromium-win/fast/backgrounds/background-position-parsing-expected.checksum: Added.
+        * platform/chromium-win/fast/backgrounds/background-position-parsing-expected.png: Added.
+        * platform/chromium-win/fast/backgrounds/background-position-parsing-expected.txt: Added.
+        * platform/chromium-win/fast/css-generated-content/table-row-before-after-expected.checksum: Added.
+        * platform/chromium-win/fast/css-generated-content/table-row-before-after-expected.png: Added.
+        * platform/chromium-win/fast/css-generated-content/table-row-before-after-expected.txt: Added.
+        * platform/chromium-win/fast/table/dynamic-descendant-percentage-height-expected.checksum: Added.
+        * platform/chromium-win/fast/table/dynamic-descendant-percentage-height-expected.png: Added.
+        * platform/chromium-win/fast/table/dynamic-descendant-percentage-height-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-03-13  David Levin  <levin@chromium.org>
+
         Update test results due to r80755. All of these tests started failing
         on that check in and were given new baselines in that check in.
 

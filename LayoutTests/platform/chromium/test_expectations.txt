@@ -3377,3 +3377,5 @@ BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
 BUG_LOISLO LINUX DEBUG : fast/block/positioning/vertical-lr/003.html = CRASH PASS
 BUG_LOISLO MAC DEBUG : fast/text/font-size-zero.html = TEXT
 
+// Adeed in http://trac.webkit.org/changeset/80412/ missing layouttest support.
+BUGCR75954 WIN LINUX : fast/forms/onchange-setvalueforuser.html = TEXT
