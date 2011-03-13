@@ -80,12 +80,12 @@ static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image)
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize([image size]));
     OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
 
-    NSGraphicsContext *savedContext = [NSGraphicsContext currentContext];
+    RetainPtr<NSGraphicsContext> savedContext = [NSGraphicsContext currentContext];
 
     [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:graphicsContext->platformContext() flipped:YES]];
     [image drawInRect:NSMakeRect(0, 0, bitmap->size().width(), bitmap->size().height()) fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1 respectFlipped:YES hints:nil];
 
-    [NSGraphicsContext setCurrentContext:savedContext];
+    [NSGraphicsContext setCurrentContext:savedContext.get()];
 
     return bitmap.release();
 }

@@ -1,3 +1,12 @@
+2011-03-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix a crash when dragging.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertImageToBitmap): Retain the saved context.
+
 2011-03-12  Darin Adler  <darin@apple.com>
 
         * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
