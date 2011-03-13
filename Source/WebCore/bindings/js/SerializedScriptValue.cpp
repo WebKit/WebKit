@@ -221,7 +221,7 @@ template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T v
 }
 #endif
 
-template <> static void writeLittleEndian<uint8_t>(Vector<uint8_t>& buffer, uint8_t value)
+template <> void writeLittleEndian<uint8_t>(Vector<uint8_t>& buffer, uint8_t value)
 {
     buffer.append(value);
 }
@@ -244,7 +244,6 @@ template <typename T> static bool writeLittleEndian(Vector<uint8_t>& buffer, con
 #endif
     return true;
 }
-
 
 class CloneSerializer : CloneBase {
 public:

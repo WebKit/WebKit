@@ -1,5 +1,14 @@
 2011-03-12  Cameron Zwarich  <zwarich@apple.com>
 
+        Not reviewed.
+
+        Fix the build with newer GCCs and remove some extra whitespae.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::uint8_t):
+
+2011-03-12  Cameron Zwarich  <zwarich@apple.com>
+
         Rubber-stamped by Oliver Hunt.
 
         Removed unused ARMv5 code. The ARMv5 case now falls under the general
