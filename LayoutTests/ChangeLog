@@ -1,5 +1,14 @@
 2011-03-13  David Levin  <levin@chromium.org>
 
+        Fix test expectations due to bad update:
+          r80820 which limited to win/mac when it still regularly fails on Linux
+          and it made the test fail with the expectation IMAGE instead of IMAGE+TEXT
+          as well as occaisionally pass.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-13  David Levin  <levin@chromium.org>
+
         Added the following expectations:
           fast/backgrounds/background-position-parsing.html new test in r80868
           fast/css-generated-content/table-row-before-after.html new test in r80871
