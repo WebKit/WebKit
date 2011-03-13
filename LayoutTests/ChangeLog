@@ -1,3 +1,14 @@
+2011-03-12  David Levin  <levin@chromium.org>
+
+        Remove bad test_expectation updates.
+
+        I fixed both of these already:
+          http://trac.webkit.org/changeset/80911
+          http://trac.webkit.org/changeset/80904
+        so it is unclear why they were added.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Update chromium expectations.

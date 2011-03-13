@@ -3374,9 +3374,6 @@ BUGCR75639 MAC LEOPARD : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
 // Test changed in Wk r80743, throws an exception rather than returning 'true'
 BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
 
-BUGCR75867 : svg/css/composite-shadow-text.svg = IMAGE
-BUG_LOISLO : fast/dom/prototype-inheritance.html = TEXT
-
 BUG_LOISLO LINUX DEBUG : fast/block/positioning/vertical-lr/003.html = CRASH PASS
 BUG_LOISLO MAC DEBUG : fast/text/font-size-zero.html = TEXT
 
