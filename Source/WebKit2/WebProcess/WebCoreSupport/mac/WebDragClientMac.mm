@@ -96,7 +96,7 @@ void WebDragClient::startDrag(RetainPtr<NSImage> image, const IntPoint& point, c
     SharedMemory::Handle handle;
     if (!bitmap->createHandle(handle))
         return;
-    // FIXME: Seems this mesage should be named StartDrag, not SetDragImage.
+    // FIXME: Seems this message should be named StartDrag, not SetDragImage.
     m_page->send(Messages::WebPageProxy::SetDragImage(point, bitmap->size(), handle, linkDrag));
 }
 
