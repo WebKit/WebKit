@@ -1,5 +1,16 @@
 2011-03-12  Cameron Zwarich  <zwarich@apple.com>
 
+        Rubber-stamped by Oliver Hunt.
+
+        Removed unused ARMv5 code. The ARMv5 case now falls under the general
+        unaligned accessed case.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readLittleEndian):
+        (WebCore::CloneDeserializer::readString):
+
+2011-03-12  Cameron Zwarich  <zwarich@apple.com>
+
         Reviewed by Oliver Hunt.
 
         WebCore fails to build with Clang on ARM
