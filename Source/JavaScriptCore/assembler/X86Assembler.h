@@ -228,6 +228,8 @@ public:
         {
         }
 
+        bool isSet() const { return (m_offset != -1); }
+
     private:
         JmpSrc(int offset)
             : m_offset(offset)
@@ -1398,6 +1400,12 @@ public:
     }
 #endif
 
+    void movsd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_MOVSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
+    }
+
     void movsd_rm(XMMRegisterID src, int offset, RegisterID base)
     {
         m_formatter.prefix(PRE_SSE_F2);
@@ -1536,6 +1544,7 @@ public:
         ASSERT(to.m_offset != -1);
 
         char* code = reinterpret_cast<char*>(m_formatter.data());
+        ASSERT(!reinterpret_cast<int32_t*>(code + from.m_offset)[-1]);
         setRel32(code + from.m_offset, code + to.m_offset);
     }
     

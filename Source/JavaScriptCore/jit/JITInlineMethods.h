@@ -710,8 +710,8 @@ inline void JIT::emitLoadDouble(unsigned index, FPRegisterID value)
 inline void JIT::emitLoadInt32ToDouble(unsigned index, FPRegisterID value)
 {
     if (m_codeBlock->isConstantRegisterIndex(index)) {
-        WriteBarrier<Unknown>& inConstantPool = m_codeBlock->constantRegister(index);
-        convertInt32ToDouble(AbsoluteAddress(&inConstantPool), value);
+        ASSERT(isOperandConstantImmediateInt(index));
+        convertInt32ToDouble(Imm32(getConstantOperand(index).asInt32()), value);
     } else
         convertInt32ToDouble(addressFor(index), value);
 }

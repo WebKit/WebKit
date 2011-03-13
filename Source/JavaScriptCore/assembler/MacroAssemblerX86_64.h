@@ -48,6 +48,7 @@ public:
     using MacroAssemblerX86Common::load32;
     using MacroAssemblerX86Common::store32;
     using MacroAssemblerX86Common::call;
+    using MacroAssemblerX86Common::addDouble;
     using MacroAssemblerX86Common::loadDouble;
     using MacroAssemblerX86Common::convertInt32ToDouble;
 
@@ -92,9 +93,15 @@ public:
         loadDouble(scratchRegister, dest);
     }
 
-    void convertInt32ToDouble(AbsoluteAddress src, FPRegisterID dest)
+    void addDouble(AbsoluteAddress address, FPRegisterID dest)
     {
-        move(Imm32(*static_cast<const int32_t*>(src.m_ptr)), scratchRegister);
+        move(ImmPtr(address.m_ptr), scratchRegister);
+        m_assembler.addsd_mr(0, scratchRegister, dest);
+    }
+
+    void convertInt32ToDouble(Imm32 imm, FPRegisterID dest)
+    {
+        move(imm, scratchRegister);
         m_assembler.cvtsi2sd_rr(scratchRegister, dest);
     }
 
@@ -227,7 +234,7 @@ public:
         m_assembler.movq_mr(address.offset, address.base, address.index, address.scale, dest);
     }
 
-    void loadPtr(void* address, RegisterID dest)
+    void loadPtr(const void* address, RegisterID dest)
     {
         if (dest == X86Registers::eax)
             m_assembler.movq_mEAX(address);
@@ -349,6 +356,12 @@ public:
         else
             m_assembler.testq_i32r(mask.m_value, reg);
         return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
+    Jump branchTestPtr(Condition cond, AbsoluteAddress address, Imm32 mask = Imm32(-1))
+    {
+        loadPtr(address.m_ptr, scratchRegister);
+        return branchTestPtr(cond, scratchRegister, mask);
     }
 
     Jump branchTestPtr(Condition cond, Address address, Imm32 mask = Imm32(-1))

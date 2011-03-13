@@ -358,15 +358,17 @@ public:
         {
         }
         
-        void link(AbstractMacroAssembler<AssemblerType>* masm)
+        void link(AbstractMacroAssembler<AssemblerType>* masm) const
         {
             masm->m_assembler.linkJump(m_jmp, masm->m_assembler.label());
         }
         
-        void linkTo(Label label, AbstractMacroAssembler<AssemblerType>* masm)
+        void linkTo(Label label, AbstractMacroAssembler<AssemblerType>* masm) const
         {
             masm->m_assembler.linkJump(m_jmp, label.m_label);
         }
+
+        bool isSet() const { return m_jmp.isSet(); }
 
     private:
         JmpSrc m_jmp;

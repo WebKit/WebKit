@@ -1,5 +1,61 @@
 2011-03-13  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Bug 56273 - Add three operand forms to MacroAssember operations.
+
+        Adding for X86(_64) for now, should be rolled out to other backends as necessary.
+        These may allow more efficient code generation in some cases, avoiding the need
+        for unnecessary register-register move instructions.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Jump::link):
+        (JSC::AbstractMacroAssembler::Jump::linkTo):
+            - marked these methods const.
+        (JSC::AbstractMacroAssembler::Jump::isSet):
+            - add a method to check whether a Jump object has been set to
+              reference an instruction, or is in a null, unset state. 
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::FunctionPtr::FunctionPtr):
+            - add non-explicit constructor, for FunctionPtr's to C/C++ functions.
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::and32):
+        (JSC::MacroAssemblerX86Common::lshift32):
+        (JSC::MacroAssemblerX86Common::or32):
+        (JSC::MacroAssemblerX86Common::rshift32):
+        (JSC::MacroAssemblerX86Common::urshift32):
+        (JSC::MacroAssemblerX86Common::xor32):
+        (JSC::MacroAssemblerX86Common::moveDouble):
+        (JSC::MacroAssemblerX86Common::addDouble):
+        (JSC::MacroAssemblerX86Common::divDouble):
+        (JSC::MacroAssemblerX86Common::subDouble):
+        (JSC::MacroAssemblerX86Common::mulDouble):
+        (JSC::MacroAssemblerX86Common::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerX86Common::branchTest32):
+        (JSC::MacroAssemblerX86Common::branchTest8):
+        (JSC::MacroAssemblerX86Common::branchAdd32):
+        (JSC::MacroAssemblerX86Common::branchMul32):
+        (JSC::MacroAssemblerX86Common::branchSub32):
+            - add three operand forms of these instructions.
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::addDouble):
+        (JSC::MacroAssemblerX86_64::convertInt32ToDouble):
+        (JSC::MacroAssemblerX86_64::loadPtr):
+        (JSC::MacroAssemblerX86_64::branchTestPtr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::JmpSrc::isSet):
+            - add a method to check whether a JmpSrc object has been set to
+              reference an instruction, or is in a null, unset state. 
+        (JSC::X86Assembler::movsd_rr):
+            - added FP register-register move.
+        (JSC::X86Assembler::linkJump):
+            - Add an assert to check jumps aren't linked more than once.
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitLoadInt32ToDouble):
+            - load integers to the FPU via regsiters on x86-64.
+
+2011-03-13  Gavin Barraclough  <barraclough@apple.com>
+
         ARM build fix.
 
         * assembler/MacroAssemblerARM.h:
