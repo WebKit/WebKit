@@ -1,5 +1,12 @@
 2011-03-13  Gavin Barraclough  <barraclough@apple.com>
 
+        ARM build fix.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::load32):
+
+2011-03-13  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Bug 56270 - The JIT 'friend's many classes in JSC; start unwinding this.
