@@ -1,5 +1,15 @@
 2011-03-12  David Levin  <levin@chromium.org>
 
+        r80743 updated the main baseline due to a jsc change.
+        chromium isn't affected by the change.
+
+        * platform/chromium/fast/js/regexp-caching-expected.txt: Added.
+        chromium already had a specific baseline for this but it was in chromium-win,
+        so I moved this result to the more general chromium direction.
+        * platform/chromium-win/fast/js/regexp-caching-expected.txt: Removed.
+
+2011-03-12  David Levin  <levin@chromium.org>
+
         Remove bad test_expectation updates.
 
         I fixed both of these already:
