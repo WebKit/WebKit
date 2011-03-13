@@ -1,3 +1,15 @@
+2011-03-13  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Dave Hyatt.
+
+        REGRESSION (r61383): Navigation menu laid out incorrectly on aboardtheworld.com
+        https://bugs.webkit.org/show_bug.cgi?id=53470
+
+        Test handling of !important and duplicate properties in a style rule.
+
+        * fast/css/duplicate-property-in-rule-important-expected.txt: Added.
+        * fast/css/duplicate-property-in-rule-important.html: Added.
+
 2011-03-13  David Levin  <levin@chromium.org>
 
         Add expectation (and bug) for test that has failed with an image

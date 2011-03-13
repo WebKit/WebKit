@@ -82,15 +82,18 @@ CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const CS
 #endif
 {
     m_properties.reserveInitialCapacity(numProperties);
-    HashSet<int> candidates;
+    HashMap<int, bool> candidates;
     for (int i = 0; i < numProperties; ++i) {
         const CSSProperty *property = properties[i];
         ASSERT(property);
-        if (candidates.contains(property->id()))
-            removeProperty(properties[i]->id(), false);
+        bool important = property->isImportant();
+        if (candidates.contains(property->id())) {
+            if (!important && candidates.get(property->id()))
+                continue;
+            removeProperty(property->id(), false);
+        }
         m_properties.append(*property);
-        if (!getPropertyPriority(property->id()) && !property->isImportant())
-            candidates.add(property->id());
+        candidates.set(property->id(), important);
     }
 }
 
