@@ -1,3 +1,20 @@
+2011-03-13  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by Alice Liu.
+
+        StorageTracker constructor shouldn't have initialization code and isMainThread() assertion
+        https://bugs.webkit.org/show_bug.cgi?id=56259
+
+        Move all StorageTracker initialization to
+        StorageTracker::initializeTracker. This also removes the
+        requirement that the StorageTracker constructor isn't run
+        on the main thread.
+
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::initializeTracker):
+        (WebCore::StorageTracker::tracker):
+        (WebCore::StorageTracker::StorageTracker):
+
 2011-03-13  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Dave Hyatt.

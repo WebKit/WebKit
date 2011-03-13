@@ -47,21 +47,22 @@ static StorageTracker* storageTracker = 0;
 
 void StorageTracker::initializeTracker(const String& storagePath)
 {
+    ASSERT(isMainThread());
     ASSERT(!storageTracker);
-    if (storageTracker)
-        return;
-
-    storageTracker = new StorageTracker(storagePath);
+    
+    if (!storageTracker)
+        storageTracker = new StorageTracker(storagePath);
+    
+    SQLiteFileSystem::registerSQLiteVFS();
     storageTracker->setIsActive(true);
+    storageTracker->m_thread->start();  
     storageTracker->importOriginIdentifiers();
 }
 
 StorageTracker& StorageTracker::tracker()
 {
-    if (!storageTracker) {
+    if (!storageTracker)
         storageTracker = new StorageTracker("");
-        storageTracker->importOriginIdentifiers();
-    }
     
     return *storageTracker;
 }
@@ -71,13 +72,7 @@ StorageTracker::StorageTracker(const String& storagePath)
     , m_thread(LocalStorageThread::create())
     , m_isActive(false)
 {
-    ASSERT(isMainThread());
-        
     setStorageDirectoryPath(storagePath);
-    
-    SQLiteFileSystem::registerSQLiteVFS();
-    
-    m_thread->start();  
 }
 
 void StorageTracker::setStorageDirectoryPath(const String& path)
