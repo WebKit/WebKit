@@ -3260,6 +3260,8 @@ BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TE
 
 // WebKit roll 80564:80631:
 // Apparent font cache cleanup issue when running multiple tests in a row (only)
+BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-lr/002.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-lr/003.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-rl/001.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-rl/003.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/blockflow/auto-margins-across-boundaries.html = CRASH
@@ -3275,8 +3277,10 @@ BUGCR75426 LINUX DEBUG : fast/blockflow/japanese-ruby-vertical-rl.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/blockflow/vertical-align-table-baseline.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/blockflow/vertical-font-fallback.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/blockflow/vertical-rl-replaced-selection.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/dom/vertical-scrollbar-in-rtl.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/dom/vertical-scrollbar-when-dir-change.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/js/pic/cached-single-entry-transition.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/events/window-events-bubble.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/lists/001.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/lists/002.html = CRASH
@@ -3304,6 +3308,8 @@ BUGCR75426 LINUX DEBUG : fast/overflow/overflow-rtl.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/repaint/japanese-rl-selection-repaint.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/repaint/slider-thumb-drag-release.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/repaint/text-emphasis-v.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/table/028.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/029.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/040.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/auto-with-percent-height.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/growCellForImageQuirk.html = CRASH PASS
@@ -3317,12 +3323,8 @@ BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/004.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/border-collapsing-head-foot.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/rtl-border-collapsing.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/text/international/vertical-text-metrics-test.html = CRASH
-BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-lr/002.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/028.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/029.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/text/firstline/003.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/js/pic/cached-single-entry-transition.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : tables/mozilla/bugs/bug1318.html = CRASH PASS
 
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
@@ -3378,11 +3380,9 @@ BUGCR75639 MAC LEOPARD : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
 // Test changed in Wk r80743, throws an exception rather than returning 'true'
 BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
 
-BUG_LOISLO LINUX DEBUG : fast/block/positioning/vertical-lr/003.html = CRASH PASS
-BUG_LOISLO MAC DEBUG : fast/text/font-size-zero.html = TEXT
-
 // Adeed in http://trac.webkit.org/changeset/80412/ missing layouttest support.
 BUGCR75954 WIN LINUX : fast/forms/onchange-setvalueforuser.html = TEXT
 
 BUGCR75992 GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
 
+BUGCR76003 WIN LINUX : tables/mozilla/bugs/bug1318.html = IMAGE

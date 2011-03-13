@@ -1,5 +1,17 @@
 2011-03-13  David Levin  <levin@chromium.org>
 
+        Sort some test expectations into a better place. Move a linux debug
+        crash to be near the other instances of it.
+
+        Remove fast/text/font-size-zero.html as it appears to be passing consistently.
+
+        Add the expectation for bug1318.html due to r80806 changing its output in a way
+        that looks less optimal than it did before.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-13  David Levin  <levin@chromium.org>
+
         Add some more crashing tests to an existing bug about the same issue
         for Chromium Linux Debug.
 
