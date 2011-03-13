@@ -206,6 +206,46 @@ protected:
     MarkedArgumentBuffer m_gcBuffer;
 };
 
+#if ASSUME_LITTLE_ENDIAN
+template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
+{
+    buffer.append(reinterpret_cast<uint8_t*>(&value), sizeof(value));
+}
+#else
+template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
+{
+    for (unsigned i = 0; i < sizeof(T); i++) {
+        buffer.append(value & 0xFF);
+        value >>= 8;
+    }
+}
+#endif
+
+template <> static void writeLittleEndian<uint8_t>(Vector<uint8_t>& buffer, uint8_t value)
+{
+    buffer.append(value);
+}
+
+template <typename T> static bool writeLittleEndian(Vector<uint8_t>& buffer, const T* values, uint32_t length)
+{
+    if (length > numeric_limits<uint32_t>::max() / sizeof(T))
+        return false;
+
+#if ASSUME_LITTLE_ENDIAN
+    buffer.append(reinterpret_cast<const uint8_t*>(values), length * sizeof(T));
+#else
+    for (unsigned i = 0; i < length; i++) {
+        T value = values[i];
+        for (unsigned j = 0; j < sizeof(T); j++) {
+            buffer.append(static_cast<uint8_t>(value & 0xFF));
+            value >>= 8;
+        }
+    }
+#endif
+    return true;
+}
+
+
 class CloneSerializer : CloneBase {
 public:
     static bool serialize(ExecState* exec, JSValue value, Vector<uint8_t>& out)
@@ -442,43 +482,6 @@ private:
     void write(uint8_t c)
     {
         writeLittleEndian(m_buffer, c);
-    }
-
-#if ASSUME_LITTLE_ENDIAN
-    template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
-    {
-        if (sizeof(T) == 1)
-            buffer.append(value);
-        else
-            buffer.append(reinterpret_cast<uint8_t*>(&value), sizeof(value));
-    }
-#else
-    template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
-    {
-        for (unsigned i = 0; i < sizeof(T); i++) {
-            buffer.append(value & 0xFF);
-            value >>= 8;
-        }
-    }
-#endif
-
-    template <typename T> static bool writeLittleEndian(Vector<uint8_t>& buffer, const T* values, uint32_t length)
-    {
-        if (length > numeric_limits<uint32_t>::max() / sizeof(T))
-            return false;
-
-#if ASSUME_LITTLE_ENDIAN
-        buffer.append(reinterpret_cast<const uint8_t*>(values), length * sizeof(T));
-#else
-        for (unsigned i = 0; i < length; i++) {
-            T value = values[i];
-            for (unsigned j = 0; j < sizeof(T); j++) {
-                buffer.append(static_cast<uint8_t>(value & 0xFF));
-                value >>= 8;
-            }
-        }
-#endif
-        return true;
     }
 
     void write(uint32_t i)

@@ -1,3 +1,16 @@
+2011-03-12  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        WebCore fails to build with Clang on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=56257
+
+        Add an explicit instantiation of writeLittleEndian for uint8_t and move it to
+        namespace scope, since explicit specializations are not allowed at class scope.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::writeLittleEndian):
+
 2011-03-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
