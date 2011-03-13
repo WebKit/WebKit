@@ -1,3 +1,10 @@
+2011-03-13  David Levin  <levin@chromium.org>
+
+        Add some more crashing tests to an existing bug about the same issue
+        for Chromium Linux Debug.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-13  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Dave Hyatt.
