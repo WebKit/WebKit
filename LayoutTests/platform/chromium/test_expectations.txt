@@ -3379,3 +3379,6 @@ BUG_LOISLO MAC DEBUG : fast/text/font-size-zero.html = TEXT
 
 // Adeed in http://trac.webkit.org/changeset/80412/ missing layouttest support.
 BUGCR75954 WIN LINUX : fast/forms/onchange-setvalueforuser.html = TEXT
+
+BUGCR75992 GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
+

@@ -1,5 +1,12 @@
 2011-03-13  David Levin  <levin@chromium.org>
 
+        Add expectation (and bug) for test that has failed with an image
+        mismatch ever since it was added in r80867.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-13  David Levin  <levin@chromium.org>
+
         Update test expections due to the OSX specific ex size change done in r80755.
 
         * platform/chromium-mac/fast/lists/008-expected.checksum: Added.
