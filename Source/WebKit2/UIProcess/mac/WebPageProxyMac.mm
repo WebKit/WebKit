@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,13 @@
 #import "config.h"
 #import "WebPageProxy.h"
 
+#import "DataReference.h"
+#import "DictionaryPopupInfo.h"
+#import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
+#import "TextChecker.h"
+#import "WebPageMessages.h"
+#import "WebProcessProxy.h"
 #import <wtf/text/StringConcatenate.h>
 
 @interface NSApplication (Details)
@@ -111,6 +117,127 @@ void WebPageProxy::stopSpeaking()
 CGContextRef WebPageProxy::containingWindowGraphicsContext()
 {
     return m_pageClient->containingWindowGraphicsContext();
+}
+
+void WebPageProxy::updateWindowIsVisible(bool windowIsVisible)
+{
+    if (!isValid())
+        return;
+    process()->send(Messages::WebPage::SetWindowIsVisible(windowIsVisible), m_pageID);
+}
+
+void WebPageProxy::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCoordinates, const IntRect& viewFrameInWindowCoordinates, const IntPoint& accessibilityViewCoordinates)
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates), m_pageID);
+}
+
+void WebPageProxy::getMarkedRange(uint64_t& location, uint64_t& length)
+{
+    process()->sendSync(Messages::WebPage::GetMarkedRange(), Messages::WebPage::GetMarkedRange::Reply(location, length), m_pageID);
+}
+    
+uint64_t WebPageProxy::characterIndexForPoint(const IntPoint point)
+{
+    uint64_t result;
+    process()->sendSync(Messages::WebPage::CharacterIndexForPoint(point), Messages::WebPage::CharacterIndexForPoint::Reply(result), m_pageID);
+    return result;
+}
+
+WebCore::IntRect WebPageProxy::firstRectForCharacterRange(uint64_t location, uint64_t length)
+{
+    IntRect resultRect;
+    process()->sendSync(Messages::WebPage::FirstRectForCharacterRange(location, length), Messages::WebPage::FirstRectForCharacterRange::Reply(resultRect), m_pageID);
+    return resultRect;
+}
+    
+bool WebPageProxy::writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes)
+{
+    bool result;
+    const double MessageTimeout = 20;
+    process()->sendSync(Messages::WebPage::WriteSelectionToPasteboard(pasteboardName, pasteboardTypes), Messages::WebPage::WriteSelectionToPasteboard::Reply(result), m_pageID, MessageTimeout);
+    return result;
+}
+
+void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const IntSize& imageSize, const SharedMemory::Handle& dragImageHandle, bool isLinkDrag)
+{
+    RefPtr<ShareableBitmap> dragImage = ShareableBitmap::create(imageSize, dragImageHandle);
+    if (!dragImage)
+        return;
+    
+    m_pageClient->setDragImage(clientPosition, imageSize, dragImage.release(), isLinkDrag);
+}
+
+void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::PerformDictionaryLookupAtLocation(point), m_pageID); 
+}
+
+void WebPageProxy::interpretKeyEvent(uint32_t type, Vector<KeypressCommand>& commandsList, uint32_t selectionStart, uint32_t selectionEnd, Vector<CompositionUnderline>& underlines)
+{
+    m_pageClient->interceptKeyEvent(m_keyEventQueue.first(), commandsList, selectionStart, selectionEnd, underlines);
+}
+
+// Complex text input support for plug-ins.
+void WebPageProxy::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput)
+{
+    if (!isValid())
+        return;
+    
+    process()->send(Messages::WebPage::SendComplexTextInputToPlugin(pluginComplexTextInputIdentifier, textInput), m_pageID);
+}
+
+void WebPageProxy::uppercaseWord()
+{
+    process()->send(Messages::WebPage::UppercaseWord(), m_pageID);
+}
+
+void WebPageProxy::lowercaseWord()
+{
+    process()->send(Messages::WebPage::LowercaseWord(), m_pageID);
+}
+
+void WebPageProxy::capitalizeWord()
+{
+    process()->send(Messages::WebPage::CapitalizeWord(), m_pageID);
+}
+
+void WebPageProxy::setSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)
+{ 
+    if (m_isSmartInsertDeleteEnabled == isSmartInsertDeleteEnabled)
+        return;
+
+    TextChecker::setSmartInsertDeleteEnabled(isSmartInsertDeleteEnabled);
+    m_isSmartInsertDeleteEnabled = isSmartInsertDeleteEnabled;
+    process()->send(Messages::WebPage::SetSmartInsertDeleteEnabled(isSmartInsertDeleteEnabled), m_pageID);
+}
+
+void WebPageProxy::didPerformDictionaryLookup(const String& text, const DictionaryPopupInfo& dictionaryPopupInfo)
+{
+    m_pageClient->didPerformDictionaryLookup(text, m_viewScaleFactor, dictionaryPopupInfo);
+}
+    
+void WebPageProxy::registerWebProcessAccessibilityToken(const CoreIPC::DataReference& data)
+{
+    m_pageClient->accessibilityWebProcessTokenReceived(data);
+}    
+    
+void WebPageProxy::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elementToken, const CoreIPC::DataReference& windowToken)
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken), m_pageID);
+}
+
+void WebPageProxy::setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled)
+{
+    m_pageClient->setComplexTextInputEnabled(pluginComplexTextInputIdentifier, complexTextInputEnabled);
 }
 
 } // namespace WebKit

@@ -2,6 +2,37 @@
 
         Reviewed by Darin Adler.
 
+        WebPageProxy cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=56267
+
+        * UIProcess/WebPageProxy.cpp: Moved all Mac-only function implementations from
+        here to WebPageProxyMac.mm.
+        * UIProcess/WebPageProxy.h: Cleaned up #includes.
+        * UIProcess/mac/WebPageProxyMac.mm: Moved all Mac-only function implementations
+        here.
+        (WebKit::WebPageProxy::updateWindowIsVisible):
+        (WebKit::WebPageProxy::windowAndViewFramesChanged):
+        (WebKit::WebPageProxy::getMarkedRange):
+        (WebKit::WebPageProxy::characterIndexForPoint):
+        (WebKit::WebPageProxy::firstRectForCharacterRange):
+        (WebKit::WebPageProxy::writeSelectionToPasteboard):
+        (WebKit::WebPageProxy::setDragImage):
+        (WebKit::WebPageProxy::performDictionaryLookupAtLocation):
+        (WebKit::WebPageProxy::interpretKeyEvent):
+        (WebKit::WebPageProxy::sendComplexTextInputToPlugin):
+        (WebKit::WebPageProxy::uppercaseWord):
+        (WebKit::WebPageProxy::lowercaseWord):
+        (WebKit::WebPageProxy::capitalizeWord):
+        (WebKit::WebPageProxy::setSmartInsertDeleteEnabled):
+        (WebKit::WebPageProxy::didPerformDictionaryLookup):
+        (WebKit::WebPageProxy::registerWebProcessAccessibilityToken):
+        (WebKit::WebPageProxy::registerUIProcessAccessibilityTokens):
+        (WebKit::WebPageProxy::setComplexTextInputEnabled):
+
+2011-03-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
         <rdar://problem/8949683> WebKit2: Drag image is offset when the page is scrolled down
         https://bugs.webkit.org/show_bug.cgi?id=56265
 

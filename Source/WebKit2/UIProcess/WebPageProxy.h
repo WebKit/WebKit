@@ -27,6 +27,7 @@
 #define WebPageProxy_h
 
 #include "APIObject.h"
+#include "Connection.h"
 #include "ContextMenuState.h"
 #include "DragControllerAction.h"
 #include "DrawingAreaProxy.h"
@@ -37,24 +38,16 @@
 #include "WKBase.h"
 #include "WKPagePrivate.h"
 #include "WebContextMenuItemData.h"
-#include "WebEvent.h"
 #include "WebFindClient.h"
-#include "WebFindOptions.h"
 #include "WebFormClient.h"
 #include "WebFrameProxy.h"
 #include "WebHistoryClient.h"
-#include "WebInspectorProxy.h"
 #include "WebLoaderClient.h"
 #include "WebPageContextMenuClient.h"
 #include "WebPolicyClient.h"
 #include "WebPopupMenuProxy.h"
 #include "WebResourceLoadClient.h"
 #include "WebUIClient.h"
-#include <WebCore/DragActions.h>
-#include <WebCore/EditAction.h>
-#include <WebCore/Editor.h>
-#include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/KeyboardEvent.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -83,7 +76,6 @@ namespace WebCore {
 
 namespace WebKit {
 
-class DrawingAreaProxy;
 class NativeWebKeyboardEvent;
 class PageClient;
 class PlatformCertificateInfo;
@@ -98,11 +90,9 @@ class WebKeyboardEvent;
 class WebMouseEvent;
 class WebOpenPanelResultListenerProxy;
 class WebPageGroup;
-class WebPopupMenuProxy;
 class WebProcessProxy;
 class WebURLRequest;
 class WebWheelEvent;
-struct ContextMenuState;
 struct DictionaryPopupInfo;
 struct PlatformPopupMenuData;
 struct PrintInfo;
