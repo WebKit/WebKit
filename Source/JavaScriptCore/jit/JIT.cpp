@@ -475,7 +475,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
         emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
 
         addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), callFrameRegister, regT1);
-        registerFileCheck = branchPtr(Below, AbsoluteAddress(&m_globalData->interpreter->registerFile().m_end), regT1);
+        registerFileCheck = branchPtr(Below, AbsoluteAddress(m_globalData->interpreter->registerFile().addressOfEnd()), regT1);
     }
 
     Label functionBody = label();

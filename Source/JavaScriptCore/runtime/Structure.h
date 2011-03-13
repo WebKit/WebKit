@@ -56,7 +56,6 @@ namespace JSC {
 
     class Structure : public RefCounted<Structure> {
     public:
-        friend class JIT;
         friend class StructureTransitionTable;
         static PassRefPtr<Structure> create(JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
         {
@@ -139,6 +138,21 @@ namespace JSC {
         const ClassInfo* classInfo() const { return m_classInfo; }
 
         static void initializeThreading();
+
+        static ptrdiff_t prototypeOffset()
+        {
+            return OBJECT_OFFSETOF(Structure, m_prototype);
+        }
+
+        static ptrdiff_t typeInfoFlagsOffset()
+        {
+            return OBJECT_OFFSETOF(Structure, m_typeInfo) + TypeInfo::flagsOffset();
+        }
+
+        static ptrdiff_t typeInfoTypeOffset()
+        {
+            return OBJECT_OFFSETOF(Structure, m_typeInfo) + TypeInfo::typeOffset();
+        }
 
     private:
         Structure(JSValue prototype, const TypeInfo&, unsigned anonymousSlotCount, const ClassInfo*);

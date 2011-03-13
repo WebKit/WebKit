@@ -299,7 +299,7 @@ public:
     // Arithmetic operations:
 
 #if !CPU(X86_64)
-    void adcl_im(int imm, void* addr)
+    void adcl_im(int imm, const void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
             m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_ADC, addr);
@@ -376,7 +376,7 @@ public:
         }
     }
 #else
-    void addl_im(int imm, void* addr)
+    void addl_im(int imm, const void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
             m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_ADD, addr);
@@ -442,7 +442,7 @@ public:
         }
     }
 #else
-    void andl_im(int imm, void* addr)
+    void andl_im(int imm, const void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
             m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_AND, addr);
@@ -528,7 +528,7 @@ public:
         }
     }
 #else
-    void orl_im(int imm, void* addr)
+    void orl_im(int imm, const void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
             m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_OR, addr);
@@ -594,7 +594,7 @@ public:
         }
     }
 #else
-    void subl_im(int imm, void* addr)
+    void subl_im(int imm, const void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
             m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_SUB, addr);
@@ -867,12 +867,12 @@ public:
         }
     }
 #else
-    void cmpl_rm(RegisterID reg, void* addr)
+    void cmpl_rm(RegisterID reg, const void* addr)
     {
         m_formatter.oneByteOp(OP_CMP_EvGv, reg, addr);
     }
 
-    void cmpl_im(int imm, void* addr)
+    void cmpl_im(int imm, const void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
             m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_CMP, addr);
@@ -1039,7 +1039,7 @@ public:
         m_formatter.oneByteOp(OP_MOV_EvGv, src, base, index, scale, offset);
     }
     
-    void movl_mEAX(void* addr)
+    void movl_mEAX(const void* addr)
     {
         m_formatter.oneByteOp(OP_MOV_EAXOv);
 #if CPU(X86_64)
@@ -1076,7 +1076,7 @@ public:
         m_formatter.immediate32(imm);
     }
 
-    void movl_EAXm(void* addr)
+    void movl_EAXm(const void* addr)
     {
         m_formatter.oneByteOp(OP_MOV_OvEAX);
 #if CPU(X86_64)
@@ -1107,13 +1107,13 @@ public:
         m_formatter.oneByteOp64(OP_MOV_EvGv, src, base, index, scale, offset);
     }
 
-    void movq_mEAX(void* addr)
+    void movq_mEAX(const void* addr)
     {
         m_formatter.oneByteOp64(OP_MOV_EAXOv);
         m_formatter.immediate64(reinterpret_cast<int64_t>(addr));
     }
 
-    void movq_EAXm(void* addr)
+    void movq_EAXm(const void* addr)
     {
         m_formatter.oneByteOp64(OP_MOV_OvEAX);
         m_formatter.immediate64(reinterpret_cast<int64_t>(addr));
@@ -1153,7 +1153,7 @@ public:
     
     
 #else
-    void movl_rm(RegisterID src, void* addr)
+    void movl_rm(RegisterID src, const void* addr)
     {
         if (src == X86Registers::eax)
             movl_EAXm(addr);
@@ -1161,7 +1161,7 @@ public:
             m_formatter.oneByteOp(OP_MOV_EvGv, src, addr);
     }
     
-    void movl_mr(void* addr, RegisterID dst)
+    void movl_mr(const void* addr, RegisterID dst)
     {
         if (dst == X86Registers::eax)
             movl_mEAX(addr);
@@ -1169,7 +1169,7 @@ public:
             m_formatter.oneByteOp(OP_MOV_GvEv, dst, addr);
     }
 
-    void movl_i32m(int imm, void* addr)
+    void movl_i32m(int imm, const void* addr)
     {
         m_formatter.oneByteOp(OP_GROUP11_EvIz, GROUP11_MOV, addr);
         m_formatter.immediate32(imm);
@@ -1365,7 +1365,7 @@ public:
     }
 
 #if !CPU(X86_64)
-    void cvtsi2sd_mr(void* address, XMMRegisterID dst)
+    void cvtsi2sd_mr(const void* address, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F2);
         m_formatter.twoByteOp(OP2_CVTSI2SD_VsdEd, (RegisterID)dst, address);
@@ -1717,7 +1717,7 @@ private:
         }
 
 #if !CPU(X86_64)
-        void oneByteOp(OneByteOpcodeID opcode, int reg, void* address)
+        void oneByteOp(OneByteOpcodeID opcode, int reg, const void* address)
         {
             m_buffer.ensureSpace(maxInstructionSize);
             m_buffer.putByteUnchecked(opcode);

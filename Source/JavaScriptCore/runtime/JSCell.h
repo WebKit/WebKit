@@ -56,8 +56,6 @@ namespace JSC {
         friend class ExecutableBase;
         friend class GetterSetter;
         friend class Heap;
-        friend class JIT;
-        friend class JSNumberCell;
         friend class JSObject;
         friend class JSPropertyNameIterator;
         friend class JSString;
@@ -137,6 +135,16 @@ namespace JSC {
         // call this function, not its slower virtual counterpart. (For integer
         // property names, we want a similar interface with appropriate optimizations.)
         bool fastGetOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+
+        static ptrdiff_t structureOffset()
+        {
+            return OBJECT_OFFSETOF(JSCell, m_structure);
+        }
+
+        Structure* const * addressOfStructure() const
+        {
+            return &m_structure;
+        }
 
     protected:
         static const unsigned AnonymousSlotCount = 0;

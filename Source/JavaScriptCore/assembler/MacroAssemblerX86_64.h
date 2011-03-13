@@ -94,7 +94,7 @@ public:
 
     void convertInt32ToDouble(AbsoluteAddress src, FPRegisterID dest)
     {
-        move(Imm32(*static_cast<int32_t*>(src.m_ptr)), scratchRegister);
+        move(Imm32(*static_cast<const int32_t*>(src.m_ptr)), scratchRegister);
         m_assembler.cvtsi2sd_rr(scratchRegister, dest);
     }
 

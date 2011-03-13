@@ -213,9 +213,9 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
     
     BEGIN_UNINTERRUPTED_SEQUENCE(sequenceMethodCheck);
     
-    Jump structureCheck = branchPtrWithPatch(NotEqual, Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), info.structureToCompare, ImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
+    Jump structureCheck = branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), info.structureToCompare, ImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
     DataLabelPtr protoStructureToCompare, protoObj = moveWithPatch(ImmPtr(0), regT2);
-    Jump protoStructureCheck = branchPtrWithPatch(NotEqual, Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), protoStructureToCompare, ImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
+    Jump protoStructureCheck = branchPtrWithPatch(NotEqual, Address(regT2, JSCell::structureOffset()), protoStructureToCompare, ImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
     
     // This will be relinked to load the function without doing a load.
     DataLabelPtr putFunction = moveWithPatch(ImmPtr(0), regT0);
@@ -311,8 +311,8 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(base, regT1);
     addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsArrayVPtr)));
     
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSArray, m_storage)), regT3);
-    addSlowCase(branch32(AboveOrEqual, regT2, Address(regT0, OBJECT_OFFSETOF(JSArray, m_vectorLength))));
+    loadPtr(Address(regT0, JSArray::storageOffset()), regT3);
+    addSlowCase(branch32(AboveOrEqual, regT2, Address(regT0, JSArray::vectorLengthOffset())));
     
     load32(BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1); // tag
     load32(BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0); // payload
@@ -362,9 +362,9 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     addSlowCase(branch32(NotEqual, regT3, Imm32(JSValue::Int32Tag)));
     emitJumpSlowCaseIfNotJSCell(base, regT1);
     addSlowCase(branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsArrayVPtr)));
-    addSlowCase(branch32(AboveOrEqual, regT2, Address(regT0, OBJECT_OFFSETOF(JSArray, m_vectorLength))));
+    addSlowCase(branch32(AboveOrEqual, regT2, Address(regT0, JSArray::vectorLengthOffset())));
     
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSArray, m_storage)), regT3);
+    loadPtr(Address(regT0, JSArray::storageOffset()), regT3);
     
     Jump empty = branch32(Equal, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), Imm32(JSValue::EmptyValueTag));
     
@@ -429,7 +429,7 @@ void JIT::compileGetByIdHotPath()
     m_propertyAccessInstructionIndex++;
     
     DataLabelPtr structureToCompare;
-    Jump structureCheck = branchPtrWithPatch(NotEqual, Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), structureToCompare, ImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
+    Jump structureCheck = branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare, ImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
     addSlowCase(structureCheck);
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureToCompare), patchOffsetGetByIdStructure);
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureCheck), patchOffsetGetByIdBranchToSlowCase);
@@ -505,7 +505,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     
     // It is important that the following instruction plants a 32bit immediate, in order that it can be patched over.
     DataLabelPtr structureToCompare;
-    addSlowCase(branchPtrWithPatch(NotEqual, Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), structureToCompare, ImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure))));
+    addSlowCase(branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare, ImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure))));
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureToCompare), patchOffsetPutByIdStructure);
     
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), regT0);
@@ -580,9 +580,9 @@ void JIT::testPrototype(JSValue prototype, JumpList& failureCases)
     // two less instructions and doesn't require any scratch registers.
 #if CPU(X86_64)
     move(ImmPtr(prototype.asCell()->structure()), regT3);
-    failureCases.append(branchPtr(NotEqual, AbsoluteAddress(&prototype.asCell()->m_structure), regT3));
+    failureCases.append(branchPtr(NotEqual, AbsoluteAddress(prototype.asCell()->addressOfStructure()), regT3));
 #else
-    failureCases.append(branchPtr(NotEqual, AbsoluteAddress(&prototype.asCell()->m_structure), ImmPtr(prototype.asCell()->structure())));
+    failureCases.append(branchPtr(NotEqual, AbsoluteAddress(prototype.asCell()->addressOfStructure()), ImmPtr(prototype.asCell()->structure())));
 #endif
 }
 
@@ -592,7 +592,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     
     JumpList failureCases;
     failureCases.append(branch32(NotEqual, regT1, Imm32(JSValue::CellTag)));
-    failureCases.append(branchPtr(NotEqual, Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), ImmPtr(oldStructure)));
+    failureCases.append(branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), ImmPtr(oldStructure)));
     testPrototype(oldStructure->storedPrototype(), failureCases);
     
     if (!direct) {
@@ -622,7 +622,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     
     sub32(Imm32(1), AbsoluteAddress(oldStructure->addressOfCount()));
     add32(Imm32(1), AbsoluteAddress(newStructure->addressOfCount()));
-    storePtr(ImmPtr(newStructure), Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)));
+    storePtr(ImmPtr(newStructure), Address(regT0, JSCell::structureOffset()));
     
 #if CPU(MIPS)
     // For MIPS, we don't add sizeof(void*) to the stack offset.
@@ -720,7 +720,7 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     Jump failureCases1 = branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsArrayVPtr));
     
     // Checks out okay! - get the length from the storage
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSArray, m_storage)), regT2);
+    loadPtr(Address(regT0, JSArray::storageOffset()), regT2);
     load32(Address(regT2, OBJECT_OFFSETOF(ArrayStorage, m_length)), regT2);
     
     Jump failureCases2 = branch32(Above, regT2, Imm32(INT_MAX));
@@ -762,7 +762,7 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     Jump failureCases1 = checkStructure(regT0, structure);
     
     // Check the prototype object's Structure had not changed.
-    Structure** prototypeStructureAddress = &(protoObject->m_structure);
+    Structure* const * prototypeStructureAddress = protoObject->addressOfStructure();
 #if CPU(X86_64)
     move(ImmPtr(prototypeStructure), regT3);
     Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), regT3);
@@ -889,7 +889,7 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     Jump failureCases1 = checkStructure(regT0, structure);
     
     // Check the prototype object's Structure had not changed.
-    Structure** prototypeStructureAddress = &(protoObject->m_structure);
+    Structure* const * prototypeStructureAddress = protoObject->addressOfStructure();
 #if CPU(X86_64)
     move(ImmPtr(prototypeStructure), regT3);
     Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), regT3);
@@ -1113,7 +1113,7 @@ void JIT::emit_op_get_by_pname(Instruction* currentInstruction)
     emitLoadPayload(iter, regT1);
     
     // Test base's structure
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), regT0);
+    loadPtr(Address(regT2, JSCell::structureOffset()), regT0);
     addSlowCase(branchPtr(NotEqual, regT0, Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedStructure))));
     load32(addressFor(i), regT3);
     sub32(Imm32(1), regT3);

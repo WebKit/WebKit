@@ -46,7 +46,6 @@ namespace JSC {
     static const unsigned IsJSFinalObject = 1 << 8;
 
     class TypeInfo {
-        friend class JIT;
     public:
         TypeInfo(JSType type, unsigned flags = 0)
             : m_type(type)
@@ -71,6 +70,16 @@ namespace JSC {
         bool overridesGetPropertyNames() const { return m_flags & OverridesGetPropertyNames; }
         unsigned flags() const { return m_flags; }
         unsigned isFinal() const { return m_flags2 && (IsJSFinalObject >> 8); }
+
+        static ptrdiff_t flagsOffset()
+        {
+            return OBJECT_OFFSETOF(TypeInfo, m_flags);
+        }
+
+        static ptrdiff_t typeOffset()
+        {
+            return OBJECT_OFFSETOF(TypeInfo, m_type);
+        }
 
     private:
         unsigned char m_type;

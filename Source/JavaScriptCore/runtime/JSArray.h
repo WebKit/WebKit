@@ -58,7 +58,6 @@ namespace JSC {
     enum ArrayCreationMode { CreateCompact, CreateInitialized };
 
     class JSArray : public JSNonFinalObject {
-        friend class JIT;
         friend class Walker;
 
     public:
@@ -132,6 +131,16 @@ namespace JSC {
         
         inline void markChildrenDirect(MarkStack& markStack);
 
+        static ptrdiff_t storageOffset()
+        {
+            return OBJECT_OFFSETOF(JSArray, m_storage);
+        }
+
+        static ptrdiff_t vectorLengthOffset()
+        {
+            return OBJECT_OFFSETOF(JSArray, m_vectorLength);
+        }
+
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
@@ -142,7 +151,7 @@ namespace JSC {
 
         void* subclassData() const;
         void setSubclassData(void*);
-        
+
     private:
         bool getOwnPropertySlotSlowCase(ExecState*, unsigned propertyName, PropertySlot&);
         void putSlowCase(ExecState*, unsigned propertyName, JSValue);
@@ -174,11 +183,8 @@ namespace JSC {
         return asArray(value.asCell());
     }
 
-    inline bool isJSArray(JSGlobalData* globalData, JSValue v)
-    {
-        return v.isCell() && v.asCell()->vptr() == globalData->jsArrayVPtr;
-    }
     inline bool isJSArray(JSGlobalData* globalData, JSCell* cell) { return cell->vptr() == globalData->jsArrayVPtr; }
+    inline bool isJSArray(JSGlobalData* globalData, JSValue v) { return v.isCell() && isJSArray(globalData, v.asCell()); }
 
     inline void JSArray::markChildrenDirect(MarkStack& markStack)
     {

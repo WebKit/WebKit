@@ -520,8 +520,8 @@ void JIT::emit_op_check_has_instance(Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseVal);
     
     // Check that baseVal 'ImplementsHasInstance'.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT0);
-    addSlowCase(branchTest8(Zero, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(ImplementsHasInstance)));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT0);
+    addSlowCase(branchTest8(Zero, Address(regT0, Structure::typeInfoFlagsOffset()), Imm32(ImplementsHasInstance)));
 }
 
 void JIT::emit_op_instanceof(Instruction* currentInstruction)
@@ -542,13 +542,13 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(proto);
     
     // Check that prototype is an object
-    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSCell, m_structure)), regT3);
-    addSlowCase(branch8(NotEqual, Address(regT3, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType)));
+    loadPtr(Address(regT1, JSCell::structureOffset()), regT3);
+    addSlowCase(branch8(NotEqual, Address(regT3, Structure::typeInfoTypeOffset()), Imm32(ObjectType)));
 
     // Fixme: this check is only needed because the JSC API allows HasInstance to be overridden; we should deprecate this.
     // Check that baseVal 'ImplementsDefaultHasInstance'.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT0);
-    addSlowCase(branchTest8(Zero, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(ImplementsDefaultHasInstance)));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT0);
+    addSlowCase(branchTest8(Zero, Address(regT0, Structure::typeInfoFlagsOffset()), Imm32(ImplementsDefaultHasInstance)));
 
     // Optimistically load the result true, and start looping.
     // Initially, regT1 still contains proto and regT2 still contains value.
@@ -558,8 +558,8 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
 
     // Load the prototype of the cell in regT2.  If this is equal to regT1 - WIN!
     // Otherwise, check if we've hit null - if we have then drop out of the loop, if not go again.
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    load32(Address(regT2, OBJECT_OFFSETOF(Structure, m_prototype) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT2);
+    loadPtr(Address(regT2, JSCell::structureOffset()), regT2);
+    load32(Address(regT2, Structure::prototypeOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT2);
     Jump isInstance = branchPtr(Equal, regT2, regT1);
     branchTest32(NonZero, regT2).linkTo(loop, this);
 
@@ -797,7 +797,7 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool dynamic)
     // Verify structure.
     move(ImmPtr(globalObject), regT0);
     loadPtr(structureAddress, regT1);
-    addSlowCase(branchPtr(NotEqual, regT1, Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure))));
+    addSlowCase(branchPtr(NotEqual, regT1, Address(regT0, JSCell::structureOffset())));
 
     // Load property.
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSGlobalObject, m_propertyStorage)), regT2);
@@ -938,8 +938,8 @@ void JIT::emit_op_jeq_null(Instruction* currentInstruction)
     Jump isImmediate = branch32(NotEqual, regT1, Imm32(JSValue::CellTag));
 
     // First, handle JSCell cases - check MasqueradesAsUndefined bit on the structure.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    addJump(branchTest8(NonZero, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined)), target);
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+    addJump(branchTest8(NonZero, Address(regT2, Structure::typeInfoFlagsOffset()), Imm32(MasqueradesAsUndefined)), target);
 
     Jump wasNotImmediate = jump();
 
@@ -962,8 +962,8 @@ void JIT::emit_op_jneq_null(Instruction* currentInstruction)
     Jump isImmediate = branch32(NotEqual, regT1, Imm32(JSValue::CellTag));
 
     // First, handle JSCell cases - check MasqueradesAsUndefined bit on the structure.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    addJump(branchTest8(Zero, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined)), target);
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+    addJump(branchTest8(Zero, Address(regT2, Structure::typeInfoFlagsOffset()), Imm32(MasqueradesAsUndefined)), target);
 
     Jump wasNotImmediate = jump();
 
@@ -1178,8 +1178,8 @@ void JIT::emit_op_eq_null(Instruction* currentInstruction)
     emitLoad(src, regT1, regT0);
     Jump isImmediate = branch32(NotEqual, regT1, Imm32(JSValue::CellTag));
 
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT1);
-    set32Test8(NonZero, Address(regT1, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined), regT1);
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
+    set32Test8(NonZero, Address(regT1, Structure::typeInfoFlagsOffset()), Imm32(MasqueradesAsUndefined), regT1);
 
     Jump wasNotImmediate = jump();
 
@@ -1204,8 +1204,8 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
     emitLoad(src, regT1, regT0);
     Jump isImmediate = branch32(NotEqual, regT1, Imm32(JSValue::CellTag));
 
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT1);
-    set32Test8(Zero, Address(regT1, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined), regT1);
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
+    set32Test8(Zero, Address(regT1, Structure::typeInfoFlagsOffset()), Imm32(MasqueradesAsUndefined), regT1);
 
     Jump wasNotImmediate = jump();
 
@@ -1265,8 +1265,8 @@ void JIT::emit_op_get_pnames(Instruction* currentInstruction)
     if (!m_codeBlock->isKnownNotImmediate(base))
         isNotObject.append(branch32(NotEqual, regT1, Imm32(JSValue::CellTag)));
     if (base != m_codeBlock->thisRegister() || m_codeBlock->isStrictMode()) {
-        loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-        isNotObject.append(branch8(NotEqual, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType)));
+        loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+        isNotObject.append(branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), Imm32(ObjectType)));
     }
 
     // We could inline the case where you have a valid cache, but
@@ -1321,7 +1321,7 @@ void JIT::emit_op_next_pname(Instruction* currentInstruction)
     loadPtr(addressFor(base), regT0);
 
     // Test base's structure
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
     callHasProperty.append(branchPtr(NotEqual, regT2, Address(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedStructure)))));
 
     // Test base's prototype chain
@@ -1330,9 +1330,9 @@ void JIT::emit_op_next_pname(Instruction* currentInstruction)
     addJump(branchTestPtr(Zero, Address(regT3)), target);
 
     Label checkPrototype(this);
-    callHasProperty.append(branch32(Equal, Address(regT2, OBJECT_OFFSETOF(Structure, m_prototype) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), Imm32(JSValue::NullTag)));
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(Structure, m_prototype) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT2);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
+    callHasProperty.append(branch32(Equal, Address(regT2, Structure::prototypeOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), Imm32(JSValue::NullTag)));
+    loadPtr(Address(regT2, Structure::prototypeOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT2);
+    loadPtr(Address(regT2, JSCell::structureOffset()), regT2);
     callHasProperty.append(branchPtr(NotEqual, regT2, Address(regT3)));
     addPtr(Imm32(sizeof(Structure*)), regT3);
     branchTestPtr(NonZero, Address(regT3)).linkTo(checkPrototype, this);
@@ -1571,8 +1571,8 @@ void JIT::emit_op_convert_this(Instruction* currentInstruction)
 
     addSlowCase(branch32(NotEqual, regT1, Imm32(JSValue::CellTag)));
 
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    addSlowCase(branchTest8(NonZero, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(NeedsThisConversion)));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+    addSlowCase(branchTest8(NonZero, Address(regT2, Structure::typeInfoFlagsOffset()), Imm32(NeedsThisConversion)));
 
     map(m_bytecodeOffset + OPCODE_LENGTH(op_convert_this), thisRegister, regT1, regT0);
 }
@@ -1588,9 +1588,9 @@ void JIT::emit_op_convert_this_strict(Instruction* currentInstruction)
     Jump setThis = jump();
     notNull.link(this);
     Jump isImmediate = branch32(NotEqual, regT1, Imm32(JSValue::CellTag));
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    Jump notAnObject = branch8(NotEqual, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType));
-    addSlowCase(branchTest8(NonZero, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(NeedsThisConversion)));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+    Jump notAnObject = branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), Imm32(ObjectType));
+    addSlowCase(branchTest8(NonZero, Address(regT2, Structure::typeInfoFlagsOffset()), Imm32(NeedsThisConversion)));
     isImmediate.link(this);
     notAnObject.link(this);
     setThis.link(this);

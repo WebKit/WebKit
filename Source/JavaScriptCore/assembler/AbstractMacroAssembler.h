@@ -145,12 +145,12 @@ public:
     // Describes an memory operand given by a pointer.  For regular load & store
     // operations an unwrapped void* will be used, rather than using this.
     struct AbsoluteAddress {
-        explicit AbsoluteAddress(void* ptr)
+        explicit AbsoluteAddress(const void* ptr)
             : m_ptr(ptr)
         {
         }
 
-        void* m_ptr;
+        const void* m_ptr;
     };
 
     // ImmPtr:

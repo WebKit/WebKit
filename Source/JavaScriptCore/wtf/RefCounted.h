@@ -59,6 +59,12 @@ public:
 #endif
     }
 
+    // Helper for generating JIT code. Please do not use for non-JIT purposes.
+    const int* addressOfCount() const
+    {
+        return &m_refCount;
+    }
+
 protected:
     RefCountedBase()
         : m_refCount(1)
@@ -91,12 +97,6 @@ protected:
 
         --m_refCount;
         return false;
-    }
-
-    // Helper for generating JIT code. Please do not use for non-JIT purposes.
-    int* addressOfCount()
-    {
-        return &m_refCount;
     }
 
 #ifndef NDEBUG

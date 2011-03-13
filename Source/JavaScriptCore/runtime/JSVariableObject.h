@@ -56,6 +56,8 @@ namespace JSC {
 
         WriteBarrier<Unknown>& registerAt(int index) const { return m_registers[index]; }
 
+        WriteBarrier<Unknown>* const * addressOfRegisters() const { return &m_registers; }
+
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
             return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);

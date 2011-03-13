@@ -1,3 +1,45 @@
+2011-03-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 56270 - The JIT 'friend's many classes in JSC; start unwinding this.
+
+        The JIT need to 'friend' other classes in order to be able to calculate offsets
+        of various properties, or the absolute addresses of members within specific objects,
+        in order to JIT generate code that will access members within the class when run.
+
+        Instead of using friends in these cases, switch to providing specific accessor
+        methods to provide this information.  In the case of offsets, these can be static
+        functions, and in the case of pointers to members within a specific object these can
+        be const methods returning pointers to const values, to prevent clients from
+        modifying values otherwise encapsulated within classes.
+
+        * bytecode/SamplingTool.h:
+        * interpreter/Register.h:
+        * interpreter/RegisterFile.h:
+        * runtime/JSArray.h:
+        * runtime/JSCell.h:
+        * runtime/JSTypeInfo.h:
+        * runtime/JSVariableObject.h:
+        * runtime/Structure.h:
+        * wtf/RefCounted.h:
+            - Change these classes to no longer friend the JIT, add accessors for member offsets.
+        * jit/JIT.cpp:
+        * jit/JITCall32_64.cpp:
+        * jit/JITInlineMethods.h:
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITPropertyAccess.cpp:
+        * jit/JITPropertyAccess32_64.cpp:
+            - Change the JIT to use class accessors, rather than taking object ofsets directly.
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssemblerX86_64.h:
+        * assembler/X86Assembler.h:
+            - Since the accessors for objects members return const pointers to retain encapsulation,
+              methods generating code with absolute addresses must be able to handle const pointers
+              (the JIT doesn't write to these values, do dies treat the pointer to value as const
+              from within the C++ code of the JIT, if not at runtime!).
+
 2011-03-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r80919.

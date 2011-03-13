@@ -209,7 +209,7 @@ ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 
 ALWAYS_INLINE JIT::Jump JIT::checkStructure(RegisterID reg, Structure* structure)
 {
-    return branchPtr(NotEqual, Address(reg, OBJECT_OFFSETOF(JSCell, m_structure)), ImmPtr(structure));
+    return branchPtr(NotEqual, Address(reg, JSCell::structureOffset()), ImmPtr(structure));
 }
 
 ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator& iter, int vReg)
@@ -269,10 +269,10 @@ ALWAYS_INLINE void JIT::clearSamplingFlag(int32_t flag)
 ALWAYS_INLINE void JIT::emitCount(AbstractSamplingCounter& counter, uint32_t count)
 {
 #if CPU(X86_64) // Or any other 64-bit plattform.
-    addPtr(Imm32(count), AbsoluteAddress(&counter.m_counter));
+    addPtr(Imm32(count), AbsoluteAddress(counter.addressOfCounter()));
 #elif CPU(X86) // Or any other little-endian 32-bit plattform.
-    intptr_t hiWord = reinterpret_cast<intptr_t>(&counter.m_counter) + sizeof(int32_t);
-    add32(Imm32(count), AbsoluteAddress(&counter.m_counter));
+    intptr_t hiWord = reinterpret_cast<intptr_t>(counter.addressOfCounter()) + sizeof(int32_t);
+    add32(Imm32(count), AbsoluteAddress(counter.addressOfCounter()));
     addWithCarry32(Imm32(0), AbsoluteAddress(reinterpret_cast<void*>(hiWord)));
 #else
 #error "SAMPLING_FLAGS not implemented on this platform."

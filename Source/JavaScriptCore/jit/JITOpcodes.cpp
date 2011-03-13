@@ -378,8 +378,8 @@ void JIT::emit_op_check_has_instance(Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT0, baseVal);
 
     // Check that baseVal 'ImplementsHasInstance'.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT0);
-    addSlowCase(branchTest8(Zero, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(ImplementsHasInstance)));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT0);
+    addSlowCase(branchTest8(Zero, Address(regT0, Structure::typeInfoFlagsOffset()), Imm32(ImplementsHasInstance)));
 }
 
 void JIT::emit_op_instanceof(Instruction* currentInstruction)
@@ -400,13 +400,13 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT1, proto);
 
     // Check that prototype is an object
-    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSCell, m_structure)), regT3);
-    addSlowCase(branch8(NotEqual, Address(regT3, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType)));
+    loadPtr(Address(regT1, JSCell::structureOffset()), regT3);
+    addSlowCase(branch8(NotEqual, Address(regT3, Structure::typeInfoTypeOffset()), Imm32(ObjectType)));
     
     // Fixme: this check is only needed because the JSC API allows HasInstance to be overridden; we should deprecate this.
     // Check that baseVal 'ImplementsDefaultHasInstance'.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT0);
-    addSlowCase(branchTest8(Zero, Address(regT0, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(ImplementsDefaultHasInstance)));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT0);
+    addSlowCase(branchTest8(Zero, Address(regT0, Structure::typeInfoFlagsOffset()), Imm32(ImplementsDefaultHasInstance)));
 
     // Optimistically load the result true, and start looping.
     // Initially, regT1 still contains proto and regT2 still contains value.
@@ -416,8 +416,8 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
 
     // Load the prototype of the object in regT2.  If this is equal to regT1 - WIN!
     // Otherwise, check if we've hit null - if we have then drop out of the loop, if not go again.
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(Structure, m_prototype)), regT2);
+    loadPtr(Address(regT2, JSCell::structureOffset()), regT2);
+    loadPtr(Address(regT2, Structure::prototypeOffset()), regT2);
     Jump isInstance = branchPtr(Equal, regT2, regT1);
     emitJumpIfJSCell(regT2).linkTo(loop, this);
 
@@ -565,8 +565,8 @@ void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
     // Return the result in %eax.
     emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueRegister);
     Jump notJSCell = emitJumpIfNotJSCell(returnValueRegister);
-    loadPtr(Address(returnValueRegister, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    Jump notObject = branch8(NotEqual, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo) + OBJECT_OFFSETOF(TypeInfo, m_type)), Imm32(ObjectType));
+    loadPtr(Address(returnValueRegister, JSCell::structureOffset()), regT2);
+    Jump notObject = branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), Imm32(ObjectType));
 
     // Grab the return address.
     emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
@@ -667,7 +667,7 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool)
     // Check Structure of global object
     move(ImmPtr(globalObject), regT0);
     loadPtr(structureAddress, regT1);
-    addSlowCase(branchPtr(NotEqual, regT1, Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)))); // Structures don't match
+    addSlowCase(branchPtr(NotEqual, regT1, Address(regT0, JSCell::structureOffset()))); // Structures don't match
 
     // Load cached property
     // Assume that the global object always uses external storage.
@@ -725,8 +725,8 @@ void JIT::emit_op_jeq_null(Instruction* currentInstruction)
     Jump isImmediate = emitJumpIfNotJSCell(regT0);
 
     // First, handle JSCell cases - check MasqueradesAsUndefined bit on the structure.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    addJump(branchTest8(NonZero, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined)), target);
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+    addJump(branchTest8(NonZero, Address(regT2, Structure::typeInfoFlagsOffset()), Imm32(MasqueradesAsUndefined)), target);
     Jump wasNotImmediate = jump();
 
     // Now handle the immediate cases - undefined & null
@@ -746,8 +746,8 @@ void JIT::emit_op_jneq_null(Instruction* currentInstruction)
     Jump isImmediate = emitJumpIfNotJSCell(regT0);
 
     // First, handle JSCell cases - check MasqueradesAsUndefined bit on the structure.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    addJump(branchTest8(Zero, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined)), target);
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+    addJump(branchTest8(Zero, Address(regT2, Structure::typeInfoFlagsOffset()), Imm32(MasqueradesAsUndefined)), target);
     Jump wasNotImmediate = jump();
 
     // Now handle the immediate cases - undefined & null
@@ -891,8 +891,8 @@ void JIT::emit_op_get_pnames(Instruction* currentInstruction)
     if (!m_codeBlock->isKnownNotImmediate(base))
         isNotObject.append(emitJumpIfNotJSCell(regT0));
     if (base != m_codeBlock->thisRegister() || m_codeBlock->isStrictMode()) {
-        loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-        isNotObject.append(branch8(NotEqual, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType)));
+        loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+        isNotObject.append(branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), Imm32(ObjectType)));
     }
 
     // We could inline the case where you have a valid cache, but
@@ -950,7 +950,7 @@ void JIT::emit_op_next_pname(Instruction* currentInstruction)
     emitGetVirtualRegister(base, regT0);
 
     // Test base's structure
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
     callHasProperty.append(branchPtr(NotEqual, regT2, Address(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedStructure)))));
 
     // Test base's prototype chain
@@ -959,9 +959,9 @@ void JIT::emit_op_next_pname(Instruction* currentInstruction)
     addJump(branchTestPtr(Zero, Address(regT3)), target);
 
     Label checkPrototype(this);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(Structure, m_prototype)), regT2);
+    loadPtr(Address(regT2, Structure::prototypeOffset()), regT2);
     callHasProperty.append(emitJumpIfNotJSCell(regT2));
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
+    loadPtr(Address(regT2, JSCell::structureOffset()), regT2);
     callHasProperty.append(branchPtr(NotEqual, regT2, Address(regT3)));
     addPtr(Imm32(sizeof(Structure*)), regT3);
     branchTestPtr(NonZero, Address(regT3)).linkTo(checkPrototype, this);
@@ -1038,8 +1038,8 @@ void JIT::emit_op_to_jsnumber(Instruction* currentInstruction)
     Jump wasImmediate = emitJumpIfImmediateInteger(regT0);
 
     emitJumpSlowCaseIfNotJSCell(regT0, srcVReg);
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    addSlowCase(branch8(NotEqual, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(NumberType)));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+    addSlowCase(branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), Imm32(NumberType)));
     
     wasImmediate.link(this);
 
@@ -1155,8 +1155,8 @@ void JIT::emit_op_eq_null(Instruction* currentInstruction)
     emitGetVirtualRegister(src1, regT0);
     Jump isImmediate = emitJumpIfNotJSCell(regT0);
 
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    set32Test8(NonZero, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined), regT0);
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+    set32Test8(NonZero, Address(regT2, Structure::typeInfoFlagsOffset()), Imm32(MasqueradesAsUndefined), regT0);
 
     Jump wasNotImmediate = jump();
 
@@ -1180,8 +1180,8 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
     emitGetVirtualRegister(src1, regT0);
     Jump isImmediate = emitJumpIfNotJSCell(regT0);
 
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
-    set32Test8(Zero, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined), regT0);
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+    set32Test8(Zero, Address(regT2, Structure::typeInfoFlagsOffset()), Imm32(MasqueradesAsUndefined), regT0);
 
     Jump wasNotImmediate = jump();
 
@@ -1243,8 +1243,8 @@ void JIT::emit_op_convert_this(Instruction* currentInstruction)
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 
     emitJumpSlowCaseIfNotJSCell(regT0);
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT1);
-    addSlowCase(branchTest8(NonZero, Address(regT1, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(NeedsThisConversion)));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
+    addSlowCase(branchTest8(NonZero, Address(regT1, Structure::typeInfoFlagsOffset()), Imm32(NeedsThisConversion)));
 }
 
 void JIT::emit_op_convert_this_strict(Instruction* currentInstruction)
@@ -1256,9 +1256,9 @@ void JIT::emit_op_convert_this_strict(Instruction* currentInstruction)
     Jump setThis = jump();
     notNull.link(this);
     Jump isImmediate = emitJumpIfNotJSCell(regT0);
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT1);
-    Jump notAnObject = branch8(NotEqual, Address(regT1, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType));
-    addSlowCase(branchTest8(NonZero, Address(regT1, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(NeedsThisConversion)));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
+    Jump notAnObject = branch8(NotEqual, Address(regT1, Structure::typeInfoTypeOffset()), Imm32(ObjectType));
+    addSlowCase(branchTest8(NonZero, Address(regT1, Structure::typeInfoFlagsOffset()), Imm32(NeedsThisConversion)));
     isImmediate.link(this);
     notAnObject.link(this);
     setThis.link(this);
@@ -1700,7 +1700,7 @@ void JIT::emit_op_load_varargs(Instruction* currentInstruction)
     // Bounds check the registerfile
     addPtr(regT2, regT3);
     addPtr(Imm32((registerOffset - argsOffset) * sizeof(Register)), regT3);
-    addSlowCase(branchPtr(Below, AbsoluteAddress(&m_globalData->interpreter->registerFile().m_end), regT3));
+    addSlowCase(branchPtr(Below, AbsoluteAddress(m_globalData->interpreter->registerFile().addressOfEnd()), regT3));
 
     sub32(Imm32(1), regT0);
     Label loopStart = label();
