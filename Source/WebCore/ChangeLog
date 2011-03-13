@@ -1,3 +1,18 @@
+2011-03-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r76474): IntegerArray hash hashes only 1/4 of the array
+        https://bugs.webkit.org/show_bug.cgi?id=56258
+
+        No tests because the wrong hashing is mostly harmless. The only symptom
+        we have seen is an occasional assertion in debug builds about the size
+        not being a multiple of two. But a worse hash is worse for performance too.
+
+        * platform/cf/BinaryPropertyList.cpp:
+        (WebCore::IntegerArrayHash::hash): Pass in the size in bytes rather
+        than the number of array entries.
+
 2011-03-12  Cameron Zwarich  <zwarich@apple.com>
 
         Not reviewed.

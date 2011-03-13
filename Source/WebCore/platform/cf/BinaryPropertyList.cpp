@@ -92,7 +92,7 @@ struct IntegerArrayHash {
 
 unsigned IntegerArrayHash::hash(const IntegerArray& array)
 {
-    return WTF::StringHasher::createBlobHash(array.integers(), array.size());
+    return WTF::StringHasher::createBlobHash(array.integers(), array.size() * sizeof(int));
 }
 
 bool IntegerArrayHash::equal(const IntegerArray& a, const IntegerArray& b)
