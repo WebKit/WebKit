@@ -61,6 +61,7 @@
 #include "DictionaryPopupInfo.h"
 #include <wtf/RetainPtr.h>
 OBJC_CLASS AccessibilityWebPageObject;
+OBJC_CLASS NSObject;
 #endif
 
 namespace CoreIPC {
@@ -356,6 +357,10 @@ public:
 
     void forceRepaintWithoutCallback();
 
+#if PLATFORM(MAC)
+    void setDragSource(NSObject *);
+#endif
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -479,6 +484,8 @@ private:
     void didSelectItemFromActiveContextMenu(const WebContextMenuItemData&);
 #endif
 
+    void platformDragEnded();
+
     OwnPtr<WebCore::Page> m_page;
     RefPtr<WebFrame> m_mainFrame;
     RefPtr<InjectedBundleBackForwardList> m_backForwardList;
@@ -518,6 +525,8 @@ private:
     HashSet<PluginView*> m_pluginViews;
     
     RetainPtr<AccessibilityWebPageObject> m_mockAccessibilityElement;
+
+    RetainPtr<NSObject> m_dragSource;
 #elif PLATFORM(WIN)
     // Our view's window (in the UI process).
     HWND m_nativeWindow;

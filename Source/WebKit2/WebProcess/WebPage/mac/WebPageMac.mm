@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -479,6 +479,19 @@ bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
 
     // FIXME: Return true if this scheme is any one WebKit2 knows how to handle.
     return request.url().protocolIs("applewebdata");
+}
+
+void WebPage::setDragSource(NSObject *dragSource)
+{
+    m_dragSource = dragSource;
+}
+
+void WebPage::platformDragEnded()
+{
+    // The drag source we care about here is NSFilePromiseDragSource, which doesn't look at
+    // the arguments. It's OK to just pass arbitrary constant values, so we just pass all zeroes.
+    [m_dragSource.get() draggedImage:nil endedAt:NSZeroPoint operation:NSDragOperationNone];
+    m_dragSource = nullptr;
 }
 
 } // namespace WebKit
