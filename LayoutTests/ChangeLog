@@ -1,5 +1,24 @@
 2011-03-13  David Levin  <levin@chromium.org>
 
+        Update test expections due to the OSX specific ex size change done in r80755.
+
+        * platform/chromium-mac/fast/lists/008-expected.checksum: Added.
+        * platform/chromium-mac/fast/lists/008-expected.png: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-08-expected.checksum: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-08-expected.png: Added.
+        * platform/chromium-mac/fast/replaced/width100percent-checkbox-expected.checksum: Added.
+        * platform/chromium-mac/fast/replaced/width100percent-checkbox-expected.png: Added.
+        * platform/chromium-mac/fast/replaced/width100percent-radio-expected.checksum: Added.
+        * platform/chromium-mac/fast/replaced/width100percent-radio-expected.png: Added.
+        * platform/chromium-mac/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.png:
+
+2011-03-13  David Levin  <levin@chromium.org>
+
         Fix test expectations due to bad update:
           r80820 which limited to win/mac when it still regularly fails on Linux
           and it made the test fail with the expectation IMAGE instead of IMAGE+TEXT
