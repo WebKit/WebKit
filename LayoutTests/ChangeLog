@@ -1,3 +1,59 @@
+2011-03-13  David Levin  <levin@chromium.org>
+
+        Update test results due to r80755. All of these tests started failing
+        on that check in and were given new baselines in that check in.
+
+        * platform/chromium-mac/css1/text_properties/text_indent-expected.checksum: Added.
+        * platform/chromium-mac/css1/text_properties/text_indent-expected.png: Added.
+        * platform/chromium-mac/css1/units/length_units-expected.checksum: Added.
+        * platform/chromium-mac/css1/units/length_units-expected.png: Added.
+        * platform/chromium-mac/css2.1/t040302-c61-ex-len-00-b-a-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t040302-c61-ex-len-00-b-a-expected.png: Added.
+        * platform/chromium-mac/css2.1/t040302-c61-rel-len-00-b-ag-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t040302-c61-rel-len-00-b-ag-expected.png: Added.
+        * platform/chromium-mac/css2.1/t1008-c44-ln-box-02-d-ag-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t1008-c44-ln-box-02-d-ag-expected.png: Added.
+        * platform/chromium-mac/css2.1/t100801-c544-valgn-01-d-ag-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t100801-c544-valgn-01-d-ag-expected.png: Added.
+        * platform/chromium-mac/css2.1/t100801-c544-valgn-03-d-agi-expected.checksum:
+        * platform/chromium-mac/css2.1/t100801-c544-valgn-03-d-agi-expected.png: Added.
+        * platform/chromium-mac/css2.1/t100801-c548-ln-ht-02-b-ag-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t100801-c548-ln-ht-02-b-ag-expected.png: Added.
+        * platform/chromium-mac/css2.1/t1507-c526-font-sz-02-b-a-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t1507-c526-font-sz-02-b-a-expected.png: Added.
+        * platform/chromium-mac/css2.1/t1601-c547-indent-00-b-a-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t1601-c547-indent-00-b-a-expected.png: Added.
+        * platform/chromium-mac/css2.1/t1604-c541-word-sp-00-b-a-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t1604-c541-word-sp-00-b-a-expected.png: Added.
+        * platform/chromium-mac/css2.1/t1604-c542-letter-sp-00-b-a-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t1604-c542-letter-sp-00-b-a-expected.png: Added.
+        * platform/chromium-mac/editing/selection/caret-ltr-2-expected.checksum:
+        * platform/chromium-mac/editing/selection/caret-ltr-2-expected.png:
+        * platform/chromium-mac/editing/selection/caret-ltr-2-left-expected.checksum:
+        * platform/chromium-mac/editing/selection/caret-ltr-2-left-expected.png:
+        * platform/chromium-mac/editing/selection/caret-ltr-expected.checksum:
+        * platform/chromium-mac/editing/selection/caret-ltr-expected.png:
+        * platform/chromium-mac/editing/selection/caret-ltr-right-expected.checksum:
+        * platform/chromium-mac/editing/selection/caret-ltr-right-expected.png:
+        * platform/chromium-mac/editing/selection/caret-rtl-2-expected.checksum: Added.
+        * platform/chromium-mac/editing/selection/caret-rtl-2-expected.png: Added.
+        * platform/chromium-mac/editing/selection/caret-rtl-2-left-expected.checksum: Added.
+        * platform/chromium-mac/editing/selection/caret-rtl-2-left-expected.png: Added.
+        * platform/chromium-mac/editing/selection/caret-rtl-expected.checksum: Added.
+        * platform/chromium-mac/editing/selection/caret-rtl-expected.png: Added.
+        * platform/chromium-mac/editing/selection/caret-rtl-right-expected.checksum: Added.
+        * platform/chromium-mac/editing/selection/caret-rtl-right-expected.png: Added.
+        * platform/chromium-mac/fast/block/margin-collapse/103-expected.checksum:
+        * platform/chromium-mac/fast/block/margin-collapse/103-expected.png:
+        * platform/chromium-mac/fast/css/ex-after-font-variant-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/ex-after-font-variant-expected.png: Added.
+        * platform/chromium-mac/fast/css/non-standard-checkbox-size-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/non-standard-checkbox-size-expected.png: Added.
+        * platform/chromium-mac/fast/forms/minWidthPercent-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/minWidthPercent-expected.png: Added.
+        * platform/chromium-mac/fast/overflow/overflow-rtl-expected.checksum: Added.
+        * platform/chromium-mac/fast/overflow/overflow-rtl-expected.png: Added.
+
 2011-03-12  David Levin  <levin@chromium.org>
 
         Add results for newly added test in r80883.
