@@ -34,9 +34,11 @@ public:
     RenderCounter(Document*, const CounterContent&);
     virtual ~RenderCounter();
 
-    // Removes the reference to the CounterNode associated with this renderer.
-    // This is used to cause a counter display update when the CounterNode tree changes.
-    void invalidate();
+    // Removes the reference to the CounterNode associated with this renderer
+    // if its identifier matches the argument.
+    // This is used to cause a counter display update when the CounterNode
+    // tree for identifier changes.
+    void invalidate(const AtomicString& identifier);
 
     static void destroyCounterNodes(RenderObject*);
     static void destroyCounterNode(RenderObject*, const AtomicString& identifier);

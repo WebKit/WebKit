@@ -32,8 +32,7 @@ CounterNode::CounterNode(RenderObject* o, bool hasResetType, int value)
     : m_hasResetType(hasResetType)
     , m_value(value)
     , m_countInParent(0)
-    , m_owner(o)
-    , m_renderer(0)
+    , m_renderer(o)
     , m_parent(0)
     , m_previousSibling(0)
     , m_nextSibling(0)
@@ -42,9 +41,9 @@ CounterNode::CounterNode(RenderObject* o, bool hasResetType, int value)
 {
 }
 
-PassRefPtr<CounterNode> CounterNode::create(RenderObject* owner, bool hasResetType, int value)
+PassRefPtr<CounterNode> CounterNode::create(RenderObject* renderer, bool hasResetType, int value)
 {
-    return adoptRef(new CounterNode(owner, hasResetType, value));
+    return adoptRef(new CounterNode(renderer, hasResetType, value));
 }
 
 CounterNode* CounterNode::nextInPreOrderAfterChildren(const CounterNode* stayWithin) const
@@ -103,24 +102,24 @@ int CounterNode::computeCountInParent() const
     return m_parent->m_value + increment;
 }
 
-void CounterNode::resetRenderer() const
+void CounterNode::resetRenderer(const AtomicString& identifier) const
 {
-    if (!m_renderer)
+    if (!m_renderer || m_renderer->documentBeingDestroyed())
         return;
-    m_renderer->invalidate();
-    ASSERT(!m_renderer);
+    if (RenderObjectChildList* children = m_renderer->virtualChildren())
+        children->invalidateCounters(m_renderer, identifier);
 }
 
-void CounterNode::resetRenderers() const
+void CounterNode::resetRenderers(const AtomicString& identifier) const
 {
     const CounterNode* node = this;
     do {
-        node->resetRenderer();
+        node->resetRenderer(identifier);
         node = node->nextInPreOrder(this);
     } while (node);
 }
 
-void CounterNode::recount()
+void CounterNode::recount(const AtomicString& identifier)
 {
     for (CounterNode* node = this; node; node = node->m_nextSibling) {
         int oldCount = node->m_countInParent;
@@ -128,7 +127,7 @@ void CounterNode::recount()
         if (oldCount == newCount)
             break;
         node->m_countInParent = newCount;
-        node->resetRenderers();
+        node->resetRenderers(identifier);
     }
 }
 
@@ -142,7 +141,7 @@ void CounterNode::insertAfter(CounterNode* newChild, CounterNode* refChild, cons
 
     if (newChild->m_hasResetType) {
         while (m_lastChild != refChild)
-            RenderCounter::destroyCounterNode(m_lastChild->owner(), identifier);
+            RenderCounter::destroyCounterNode(m_lastChild->renderer(), identifier);
     }
 
     CounterNode* next;
@@ -169,9 +168,9 @@ void CounterNode::insertAfter(CounterNode* newChild, CounterNode* refChild, cons
         }
 
         newChild->m_countInParent = newChild->computeCountInParent();
-        newChild->resetRenderers();
+        newChild->resetRenderers(identifier);
         if (next)
-            next->recount();
+            next->recount(identifier);
         return;
     }
 
@@ -204,11 +203,11 @@ void CounterNode::insertAfter(CounterNode* newChild, CounterNode* refChild, cons
     newChild->m_firstChild = 0;
     newChild->m_lastChild = 0;
     newChild->m_countInParent = newChild->computeCountInParent();
-    newChild->resetRenderer();
-    first->recount();
+    newChild->resetRenderer(identifier);
+    first->recount(identifier);
 }
 
-void CounterNode::removeChild(CounterNode* oldChild)
+void CounterNode::removeChild(CounterNode* oldChild, const AtomicString& identifier)
 {
     ASSERT(oldChild);
     ASSERT(!oldChild->m_firstChild);
@@ -236,7 +235,7 @@ void CounterNode::removeChild(CounterNode* oldChild)
     }
 
     if (next)
-        next->recount();
+        next->recount(identifier);
 }
 
 #ifndef NDEBUG
@@ -254,9 +253,8 @@ static void showTreeAndMark(const CounterNode* node)
         fprintf(stderr, "%p %s: %d %d P:%p PS:%p NS:%p R:%p\n",
             current, current->actsAsReset() ? "reset____" : "increment", current->value(),
             current->countInParent(), current->parent(), current->previousSibling(),
-            current->nextSibling(), current->owner());
+            current->nextSibling(), current->renderer());
     }
-    fflush(stderr);
 }
 
 #endif

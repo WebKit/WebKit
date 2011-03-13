@@ -262,6 +262,31 @@ static RenderObject* findBeforeAfterParent(RenderObject* object)
     return beforeAfterParent;
 }
 
+static void invalidateCountersInContainer(RenderObject* container, const AtomicString& identifier)
+{
+    if (!container)
+        return;
+    container = findBeforeAfterParent(container);
+    if (!container)
+        return;
+    // Sometimes the counter is attached directly on the container.
+    if (container->isCounter()) {
+        toRenderCounter(container)->invalidate(identifier);
+        return;
+    }
+    for (RenderObject* content = container->firstChild(); content; content = content->nextSibling()) {
+        if (content->isCounter())
+            toRenderCounter(content)->invalidate(identifier);
+    }
+}
+
+void RenderObjectChildList::invalidateCounters(const RenderObject* owner, const AtomicString& identifier)
+{
+    ASSERT(!owner->documentBeingDestroyed());
+    invalidateCountersInContainer(beforePseudoElementRenderer(owner), identifier);
+    invalidateCountersInContainer(afterPseudoElementRenderer(owner), identifier);
+}
+
 RenderObject* RenderObjectChildList::beforePseudoElementRenderer(const RenderObject* owner) const
 {
     // An anonymous (generated) inline run-in that has PseudoId BEFORE must come from a grandparent.

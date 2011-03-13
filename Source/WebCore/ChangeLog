@@ -1,3 +1,41 @@
+2011-03-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r80895.
+        http://trac.webkit.org/changeset/80895
+        https://bugs.webkit.org/show_bug.cgi?id=56261
+
+        Causing crashes in several tests including
+        t1202-counters-16-c.html (see
+        http://build.webkit.org/results/SnowLeopard%20Intel%20Leaks/r80956%20(15528)/results.html)
+        (Requested by dave_levin on #webkit).
+
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::CounterNode):
+        (WebCore::CounterNode::create):
+        (WebCore::CounterNode::resetRenderer):
+        (WebCore::CounterNode::resetRenderers):
+        (WebCore::CounterNode::recount):
+        (WebCore::CounterNode::insertAfter):
+        (WebCore::CounterNode::removeChild):
+        (WebCore::showTreeAndMark):
+        * rendering/CounterNode.h:
+        (WebCore::CounterNode::renderer):
+        * rendering/RenderCounter.cpp:
+        (WebCore::findPlaceForCounter):
+        (WebCore::RenderCounter::~RenderCounter):
+        (WebCore::RenderCounter::originalText):
+        (WebCore::RenderCounter::invalidate):
+        (WebCore::destroyCounterNodeWithoutMapRemoval):
+        (WebCore::RenderCounter::destroyCounterNodes):
+        (WebCore::RenderCounter::destroyCounterNode):
+        (WebCore::updateCounters):
+        (showCounterRendererTree):
+        * rendering/RenderCounter.h:
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::invalidateCountersInContainer):
+        (WebCore::RenderObjectChildList::invalidateCounters):
+        * rendering/RenderObjectChildList.h:
+
 2011-03-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

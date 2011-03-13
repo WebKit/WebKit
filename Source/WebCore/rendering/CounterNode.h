@@ -38,7 +38,6 @@
 namespace WebCore {
 
 class RenderObject;
-class RenderCounter;
 
 class CounterNode : public RefCounted<CounterNode> {
 public:
@@ -48,15 +47,7 @@ public:
     bool hasResetType() const { return m_hasResetType; }
     int value() const { return m_value; }
     int countInParent() const { return m_countInParent; }
-    RenderObject* owner() const { return m_owner; }
-    RenderCounter* renderer() const { return m_renderer; }
-    void setRenderer(const RenderCounter* value)
-    {
-        ASSERT((!m_renderer && value) || (!value && m_renderer));
-        m_renderer = const_cast<RenderCounter*>(value);
-    }
-    // Invalidates the text in the renderer of this counter, if any.
-    void resetRenderer() const;
+    RenderObject* renderer() const { return m_renderer; }
 
     CounterNode* parent() const { return m_parent; }
     CounterNode* previousSibling() const { return m_previousSibling; }
@@ -71,21 +62,26 @@ public:
     void insertAfter(CounterNode* newChild, CounterNode* beforeChild, const AtomicString& identifier);
 
     // identifier must match the identifier of this counter.
-    void removeChild(CounterNode*);
+    void removeChild(CounterNode*, const AtomicString& identifier);
 
 private:
     CounterNode(RenderObject*, bool isReset, int value);
     int computeCountInParent() const;
+    void recount(const AtomicString& identifier);
+
+    // Invalidates the text in the renderer of this counter, if any.
+    // identifier must match the identifier of this counter.
+    void resetRenderer(const AtomicString& identifier) const;
+
     // Invalidates the text in the renderer of this counter, if any,
     // and in the renderers of all descendants of this counter, if any.
-    void resetRenderers() const;
-    void recount();
+    // identifier must match the identifier of this counter.
+    void resetRenderers(const AtomicString& identifier) const;
 
     bool m_hasResetType;
     int m_value;
     int m_countInParent;
-    RenderObject* m_owner;
-    RenderCounter* m_renderer;
+    RenderObject* m_renderer;
 
     CounterNode* m_parent;
     CounterNode* m_previousSibling;
