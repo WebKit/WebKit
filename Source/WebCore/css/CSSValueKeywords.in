@@ -4,7 +4,7 @@
 # --------
 #
 # The Values are sorted according to the properties they belong to,
-# and have to be in the same order as the enums in RenderStyle.h.
+# and have to be in the same order as the enums in RenderStyleConstants.h.
 #
 # If not, the optimizations in the cssparser and style selector will fail,
 # and produce incorrect results.

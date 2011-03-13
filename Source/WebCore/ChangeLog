@@ -1,3 +1,17 @@
+2011-03-13  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Update comment in CSSValueKeywords.in
+        https://bugs.webkit.org/show_bug.cgi?id=56266
+
+        The enums the comment refers to were moved from RenderStyle.h to RenderStyleConstants.h
+        in r36579 but it appears that the comment in CSSValueKeywords.in wasn't updated.
+
+        No tests - just updating a comment.
+
+        * css/CSSValueKeywords.in:
+
 2011-03-13  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by Alice Liu.
