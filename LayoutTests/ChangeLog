@@ -1,5 +1,12 @@
 2011-03-13  David Levin  <levin@chromium.org>
 
+        Fix the expectation to refer to transitions/default-timing-function.html
+        instead of bug1318. My change log description also made the same mistake.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-13  David Levin  <levin@chromium.org>
+
         Sort some test expectations into a better place. Move a linux debug
         crash to be near the other instances of it.
 
