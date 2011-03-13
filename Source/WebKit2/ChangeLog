@@ -1,5 +1,16 @@
 2011-03-13  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8949683> WebKit2: Drag image is offset when the page is scrolled down
+        https://bugs.webkit.org/show_bug.cgi?id=56265
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::startDrag): Send the location in view coordinates rather than
+        document coordinates.
+
+2011-03-13  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Mark Rowe.
 
         Fix a crash when dragging.
