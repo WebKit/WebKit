@@ -1,3 +1,12 @@
+2011-03-14  Alejandro G. Castro  <alex@igalia.com>
+
+        Rebaseline GTK+ tests after r80996.
+
+        * platform/gtk/fast/text/soft-hyphen-2-expected.txt:
+        * platform/gtk/fast/text/soft-hyphen-4-expected.checksum: Added.
+        * platform/gtk/fast/text/soft-hyphen-4-expected.png: Added.
+        * platform/gtk/fast/text/soft-hyphen-4-expected.txt: Added.
+
 2011-03-14  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Steve Block.
