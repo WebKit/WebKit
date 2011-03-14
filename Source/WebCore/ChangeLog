@@ -1,3 +1,14 @@
+2011-03-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r81015.
+        http://trac.webkit.org/changeset/81015
+        https://bugs.webkit.org/show_bug.cgi?id=56308
+
+        A Similar patch landed in r76960 (Requested by philn-tp on
+        #webkit).
+
+        * GNUmakefile.am:
+
 2011-03-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
