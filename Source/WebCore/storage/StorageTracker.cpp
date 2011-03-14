@@ -282,10 +282,6 @@ void StorageTracker::origins(Vector<RefPtr<SecurityOrigin> >& result)
     
     if (!m_isActive)
         return;
-    
-    // FIXME: StorageTracker is currently a singleton and should be assumed
-    // to have undefined behavior with more than one PageGroup.
-    ASSERT(PageGroup::numberOfPageGroups() == 1);
 
     MutexLocker lockOrigins(m_originSetGuard);
 
@@ -302,10 +298,6 @@ void StorageTracker::deleteAllOrigins()
     
     if (!m_isActive)
         return;
-    
-    // FIXME: StorageTracker is currently a singleton and should be assumed
-    // to have undefined behavior with more than one PageGroup.
-    ASSERT(PageGroup::numberOfPageGroups() == 1);
 
     {
         MutexLocker lockOrigins(m_originSetGuard);
@@ -368,10 +360,6 @@ void StorageTracker::deleteOrigin(SecurityOrigin* origin)
     if (!m_isActive)
         return;
 
-    // FIXME: StorageTracker is currently a singleton and should be assumed
-    // to have undefined behavior with more than one PageGroup.
-    ASSERT(PageGroup::numberOfPageGroups() == 1);
-    
     // Before deleting database, we need to clear in-memory local storage data
     // in StorageArea, and to close the StorageArea db. It's possible for an
     // item to be added immediately after closing the db and cause StorageAreaSync

@@ -1,3 +1,17 @@
+2011-03-13  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed and landed by Brady Eidson.
+
+        Invalid assertion in StorageTracker - PageGroup::numberOfPageGroups() == 1
+        https://bugs.webkit.org/show_bug.cgi?id=56240
+
+        This assertion is invalid until LocalStorage is either global or is isolated by PageGroup.
+
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::origins):
+        (WebCore::StorageTracker::deleteAllOrigins):
+        (WebCore::StorageTracker::deleteOrigin):
+
 2011-03-13  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Dan Bernstein.
