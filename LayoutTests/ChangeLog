@@ -18,6 +18,12 @@
 
 2011-03-13  David Levin  <levin@chromium.org>
 
+        Clean up overlapping test_expectation which I mistakenly added in my haste.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-13  David Levin  <levin@chromium.org>
+
         Add more crashing tests to an existing bug about the same issue
         for Chromium Linux Debug. :(
 

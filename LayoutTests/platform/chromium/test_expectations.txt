@@ -2511,7 +2511,8 @@ BUGWK53451 LINUX : fast/text/international/text-combine-image-test.html = IMAGE+
 // New test, introduced by http://trac.webkit.org/changeset/70813 with only platform/mac baselines.
 BUGWK61161 LINUX WIN : fast/blockflow/border-image-horizontal-bt.html = IMAGE+TEXT
 BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-rl.html = IMAGE+TEXT
-BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
+BUGWK61161 WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
+BUGWK61161 LINUX RELEASE : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
 
 // Started to ASSERT at some point at or after WK r80582
 // see BUGCR75426 list
@@ -3065,7 +3066,6 @@ BUGWK54322 MAC SNOWLEOPARD : css2.1/t1508-c527-font-10-c.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : css2.1/t1605-c545-txttrans-00-b-ag.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/backgrounds/svg-as-background-5.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/backgrounds/svg-as-background-6.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/block/margin-collapse/103.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/block/positioning/auto/vertical-lr/007.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/block/positioning/auto/vertical-rl/007.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/canvas/arc360.html = IMAGE
@@ -3231,7 +3231,7 @@ BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
 
 BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 
-BUGJAMESR DEBUG : html5lib/runner.html = PASS TIMEOUT
+BUGJAMESR DEBUG LINUX WIN : html5lib/runner.html = PASS TIMEOUT
 
 BUG_ANTONM : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
 
@@ -3264,7 +3264,7 @@ BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-lr/003.html = CRASH PAS
 BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-rl/001.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-rl/003.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/blockflow/auto-margins-across-boundaries.html = CRASH
-BUGCR75426 LINUX DEBUG : fast/blockflow/border-image-vertical-lr.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/blockflow/border-image-vertical-lr.html = CRASH IMAGE+TEXT
 BUGCR75426 LINUX DEBUG : fast/blockflow/border-radius-clipping-vertical-lr.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/blockflow/box-shadow-horizontal-bt.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/blockflow/box-shadow-vertical-rl.html = CRASH
@@ -3403,6 +3403,8 @@ BUG_LEVIN MAC : editing/selection/caret-ltr.html = IMAGE
 BUG_LEVIN MAC : fast/block/margin-collapse/103.html = IMAGE
 BUG_LEVIN MAC : tables/mozilla/bugs/bug1318.html = IMAGE
 BUG_LEVIN MAC : tables/mozilla/bugs/bug4527.html = IMAGE
-BUG_LEVIN MAC : html5lib/runner.html = CRASH
+
+// See above for the pass timeout case when the crash is resolved (BUGJAMESR).
+BUG_LEVIN MAC : html5lib/runner.html = CRASH PASS TIMEOUT
 BUG_LEVIN MAC : platform/mac/editing/input/text-control-ime-input.html = CRASH
 BUG_LEVIN MAC : storage/domstorage/complex-values.html = CRASH
