@@ -880,7 +880,7 @@ WebInspector.ElementsTreeElement.prototype = {
         if (!attributeNameElement)
             return false;
 
-        var attributeName = attributeNameElement.innerText;
+        var attributeName = attributeNameElement.textContent;
 
         function removeZeroWidthSpaceRecursive(node)
         {

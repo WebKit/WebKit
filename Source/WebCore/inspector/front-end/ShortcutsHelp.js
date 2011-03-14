@@ -125,7 +125,7 @@ WebInspector.ShortcutsSection.prototype = {
         for (var line = 0; line < this._lines.length; ++line) {
             var tr = parent.createChild("tr");
             tr.createChild("td", "help-key-cell").innerHTML = this._lines[line].key + " : ";
-            tr.createChild("td").innerText = this._lines[line].text;
+            tr.createChild("td").textContent = this._lines[line].text;
         }
     },
 
@@ -134,7 +134,7 @@ WebInspector.ShortcutsSection.prototype = {
         var trHead = parent.createChild("tr");
  
         trHead.createChild("th");
-        trHead.createChild("th").innerText = this.name;
+        trHead.createChild("th").textContent = this.name;
     },
 
     _renderSequence: function(sequence, delimiter)

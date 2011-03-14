@@ -16,9 +16,9 @@ Added audit category.
         http://www.google.com
        ... and a snippet
          function rand()
-         {
-             return 4;
-         }
+{
+    return 4;
+}
     Passed rule
      this rule always passes ok
   Extension audits that fail

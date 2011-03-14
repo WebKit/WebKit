@@ -40,9 +40,9 @@ WebInspector.HelpScreen = function(title)
     this.contentElement = mainWindow.createChild("div", "help-content");
     this.contentElement.tabIndex = 0;
     this.contentElement.addEventListener("blur", this._onBlur.bind(this), false);
-    captionWindow.createChild("h1", "help-window-title").innerText = title;
+    captionWindow.createChild("h1", "help-window-title").textContent = title;
 
-    closeButton.innerText = "\u2716"; // Code stands for HEAVY MULTIPLICATION X.
+    closeButton.textContent = "\u2716"; // Code stands for HEAVY MULTIPLICATION X.
     closeButton.addEventListener("click", this._hide.bind(this), false);
     this._closeKeys = [
         WebInspector.KeyboardShortcut.Keys.Enter.code,

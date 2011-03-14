@@ -40,7 +40,7 @@ WebInspector.GoToLineDialog = function(view)
 
     var dialogWindow = this._element;
 
-    dialogWindow.createChild("label").innerText = WebInspector.UIString("Go to line: ");
+    dialogWindow.createChild("label").textContent = WebInspector.UIString("Go to line: ");
 
     this._input = dialogWindow.createChild("input");
     this._input.setAttribute("type", "text");
@@ -53,7 +53,7 @@ WebInspector.GoToLineDialog = function(view)
     
 
     var go = dialogWindow.createChild("button");
-    go.innerText = WebInspector.UIString("Go");
+    go.textContent = WebInspector.UIString("Go");
     go.addEventListener("click", this._onClick.bind(this), false);
     go.addEventListener("mousedown", function(e) {
         // Ok button click will close the dialog, removing onBlur listener

@@ -66,7 +66,7 @@ WebInspector.AuditFormatters = {
     snippet: function(snippetText)
     {
         var div = document.createElement("div");
-        div.innerText = snippetText;
+        div.textContent = snippetText;
         div.className = "source-code";
         return div;
     },
