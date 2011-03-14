@@ -42,7 +42,7 @@ protected:
         UNUSED_PARAM(registerThread);
 #if ENABLE(JSC_MULTIPLE_THREADS)
         if (registerThread)
-            globalData->heap.machineStackMarker().registerThread();
+            globalData->heap.machineThreads().addCurrentThread();
 #endif
         m_globalData->heap.activityCallback()->synchronize();
         m_globalData->timeoutChecker.start();

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ConservativeSet_h
-#define ConservativeSet_h
+#ifndef ConservativeRoots_h
+#define ConservativeRoots_h
 
 #include <wtf/OSAllocator.h>
 #include <wtf/Vector.h>
@@ -36,15 +36,15 @@ class Heap;
 
 // May contain duplicates.
 
-class ConservativeSet {
+class ConservativeRoots {
 public:
-    ConservativeSet(Heap*);
-    ~ConservativeSet();
+    ConservativeRoots(Heap*);
+    ~ConservativeRoots();
 
     void add(void* begin, void* end);
     
     size_t size();
-    JSCell** set();
+    JSCell** roots();
 
 private:
     static const size_t inlineCapacity = 128;
@@ -53,36 +53,36 @@ private:
     void grow();
 
     Heap* m_heap;
-    JSCell** m_set;
+    JSCell** m_roots;
     size_t m_size;
     size_t m_capacity;
-    JSCell* m_inlineSet[inlineCapacity];
+    JSCell* m_inlineRoots[inlineCapacity];
 };
 
-inline ConservativeSet::ConservativeSet(Heap* heap)
+inline ConservativeRoots::ConservativeRoots(Heap* heap)
     : m_heap(heap)
-    , m_set(m_inlineSet)
+    , m_roots(m_inlineRoots)
     , m_size(0)
     , m_capacity(inlineCapacity)
 {
 }
 
-inline ConservativeSet::~ConservativeSet()
+inline ConservativeRoots::~ConservativeRoots()
 {
-    if (m_set != m_inlineSet)
-        OSAllocator::decommitAndRelease(m_set, m_capacity * sizeof(JSCell*));
+    if (m_roots != m_inlineRoots)
+        OSAllocator::decommitAndRelease(m_roots, m_capacity * sizeof(JSCell*));
 }
 
-inline size_t ConservativeSet::size()
+inline size_t ConservativeRoots::size()
 {
     return m_size;
 }
 
-inline JSCell** ConservativeSet::set()
+inline JSCell** ConservativeRoots::roots()
 {
-    return m_set;
+    return m_roots;
 }
 
 } // namespace JSC
 
-#endif // ConservativeSet_h
+#endif // ConservativeRoots_h

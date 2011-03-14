@@ -72,12 +72,12 @@ namespace JSC {
                 m_markSets.append(MarkSet(values, values + count, properties));
         }
 
-        void append(ConservativeSet& conservativeSet)
+        void append(ConservativeRoots& conservativeRoots)
         {
-            JSCell** set = conservativeSet.set();
-            size_t size = conservativeSet.size();
+            JSCell** roots = conservativeRoots.roots();
+            size_t size = conservativeRoots.size();
             for (size_t i = 0; i < size; ++i)
-                internalAppend(set[i]);
+                internalAppend(roots[i]);
         }
 
         inline void drain();

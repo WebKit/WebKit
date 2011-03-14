@@ -1,3 +1,62 @@
+2011-03-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        A few Heap-related renames (sans file moves, which should come next)
+        https://bugs.webkit.org/show_bug.cgi?id=56283
+        
+        ConservativeSet => ConservativeRoots. "Set" was misleading, since items
+        are not uniqued. Also, "Roots" is more specific about what's in the set.
+        
+        MachineStackMarker => MachineThreads. "Threads" is more descriptive of
+        the fact that this class maintains a set of all threads using JSC.
+        "Stack" was misleading, since this class traverses stacks and registers.
+        "Mark" was misleading, since this class doesn't mark anything anymore.
+        
+        registerThread => addCurrentThread. "Current" is more specific.
+        unregisterThread => removeCurrentThread. "Current" is more specific.
+        
+        "currentThreadRegistrar" => threadSpecific. The only point of this data
+        structure is to register a thread-specific destructor with a pointer to
+        this.
+        
+        "mark...Conservatively" => "gather". "Mark" is not true, since these
+        functions don't mark anything. "Conservatively" is redundant, since they
+        take "ConservativeRoots" as an argument.
+
+        * API/APIShims.h:
+        (JSC::APIEntryShimWithoutLock::APIEntryShimWithoutLock):
+        * JavaScriptCore.exp:
+        * runtime/ConservativeSet.cpp:
+        (JSC::ConservativeRoots::grow):
+        (JSC::ConservativeRoots::add):
+        * runtime/ConservativeSet.h:
+        (JSC::ConservativeRoots::ConservativeRoots):
+        (JSC::ConservativeRoots::~ConservativeRoots):
+        (JSC::ConservativeRoots::size):
+        (JSC::ConservativeRoots::roots):
+        * runtime/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::markRoots):
+        * runtime/Heap.h:
+        (JSC::Heap::machineThreads):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::makeUsableFromMultipleThreads):
+        * runtime/MachineStackMarker.cpp:
+        (JSC::MachineThreads::MachineThreads):
+        (JSC::MachineThreads::~MachineThreads):
+        (JSC::MachineThreads::makeUsableFromMultipleThreads):
+        (JSC::MachineThreads::addCurrentThread):
+        (JSC::MachineThreads::removeThread):
+        (JSC::MachineThreads::removeCurrentThread):
+        (JSC::MachineThreads::gatherFromCurrentThreadInternal):
+        (JSC::MachineThreads::gatherFromCurrentThread):
+        (JSC::MachineThreads::gatherFromOtherThread):
+        (JSC::MachineThreads::gatherConservativeRoots):
+        * runtime/MachineStackMarker.h:
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::append):
+
 2011-03-13  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX for armv7 after r80969

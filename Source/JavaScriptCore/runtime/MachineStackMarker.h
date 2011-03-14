@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MachineStackMarker_h
-#define MachineStackMarker_h
+#ifndef MachineThreads_h
+#define MachineThreads_h
 
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadingPrimitives.h>
@@ -32,32 +32,32 @@
 namespace JSC {
 
     class Heap;
-    class ConservativeSet;
+    class ConservativeRoots;
 
-    class MachineStackMarker {
-        WTF_MAKE_NONCOPYABLE(MachineStackMarker);
+    class MachineThreads {
+        WTF_MAKE_NONCOPYABLE(MachineThreads);
     public:
-        MachineStackMarker(Heap*);
-        ~MachineStackMarker();
+        MachineThreads(Heap*);
+        ~MachineThreads();
 
-        void markMachineStackConservatively(ConservativeSet&);
+        void gatherConservativeRoots(ConservativeRoots&);
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
         void makeUsableFromMultipleThreads();
-        void registerThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
+        void addCurrentThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
 #endif
 
     private:
-        void markCurrentThreadConservatively(ConservativeSet&);
-        void markCurrentThreadConservativelyInternal(ConservativeSet&);
+        void gatherFromCurrentThread(ConservativeRoots&);
+        void gatherFromCurrentThreadInternal(ConservativeRoots&);
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
         class Thread;
 
-        static void unregisterThread(void*);
+        static void removeThread(void*);
+        void removeCurrentThread();
 
-        void unregisterThread();
-        void markOtherThreadConservatively(ConservativeSet&, Thread*);
+        void gatherFromOtherThread(ConservativeRoots&, Thread*);
 #endif
 
         Heap* m_heap;
@@ -65,10 +65,10 @@ namespace JSC {
 #if ENABLE(JSC_MULTIPLE_THREADS)
         Mutex m_registeredThreadsMutex;
         Thread* m_registeredThreads;
-        pthread_key_t m_currentThreadRegistrar;
+        pthread_key_t m_threadSpecific;
 #endif
     };
 
 } // namespace JSC
 
-#endif // MachineStackMarker_h
+#endif // MachineThreads_h

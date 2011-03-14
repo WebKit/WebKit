@@ -65,7 +65,7 @@ namespace JSC {
 
         JSGlobalData* globalData() const { return m_globalData; }
         MarkedSpace& markedSpace() { return m_markedSpace; }
-        MachineStackMarker& machineStackMarker() { return m_machineStackMarker; }
+        MachineThreads& machineThreads() { return m_machineThreads; }
 
         GCActivityCallback* activityCallback();
         void setActivityCallback(PassOwnPtr<GCActivityCallback>);
@@ -129,7 +129,7 @@ namespace JSC {
 
         JSGlobalData* m_globalData;
         
-        MachineStackMarker m_machineStackMarker;
+        MachineThreads m_machineThreads;
         MarkStack m_markStack;
         HandleHeap m_handleHeap;
         

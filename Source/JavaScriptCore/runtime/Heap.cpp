@@ -46,7 +46,7 @@ Heap::Heap(JSGlobalData* globalData)
     , m_markListSet(0)
     , m_activityCallback(DefaultGCActivityCallback::create(this))
     , m_globalData(globalData)
-    , m_machineStackMarker(this)
+    , m_machineThreads(this)
     , m_markStack(globalData->jsArrayVPtr)
     , m_handleHeap(globalData)
     , m_extraCost(0)
@@ -208,14 +208,14 @@ void Heap::markRoots()
     // We gather the conservative set before clearing mark bits, because
     // conservative gathering uses the mark bits from our last mark pass to
     // determine whether a reference is valid.
-    ConservativeSet conservativeSet(this);
-    m_machineStackMarker.markMachineStackConservatively(conservativeSet);
-    conservativeSet.add(registerFile().start(), registerFile().end());
+    ConservativeRoots conservativeRoots(this);
+    m_machineThreads.gatherConservativeRoots(conservativeRoots);
+    conservativeRoots.add(registerFile().start(), registerFile().end());
 
     m_markedSpace.clearMarks();
 
     MarkStack& markStack = m_markStack;
-    markStack.append(conservativeSet);
+    markStack.append(conservativeRoots);
     markStack.drain();
 
     // Mark explicitly registered roots.
