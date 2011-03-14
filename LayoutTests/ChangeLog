@@ -1,3 +1,10 @@
+2011-03-14  David Levin  <levin@chromium.org>
+
+        Move the crash result and the bug to the debug line for the test (instead of release)
+        since that is where the crash occurs.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: remove the flaky part of the new inspector test for now.

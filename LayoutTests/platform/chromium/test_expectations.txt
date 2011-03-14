@@ -70,7 +70,7 @@ BUGCR24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
 // This tests is normally <1 second, but occasionally takes >20s.
 BUGCR24182 SLOW WIN RELEASE : fast/dom/Window/webkitConvertPoint.html = PASS
 
-BUGCR24182 BUGCR76018 WIN RELEASE SLOW : http/tests/loading/redirect-methods.html = PASS CRASH
+BUGCR24182 WIN RELEASE SLOW : http/tests/loading/redirect-methods.html = PASS
 BUGCR24182 SLOW MAC RELEASE : dom/html/level2/html/HTMLImageElement01.html = PASS
 BUGCR24182 SLOW WIN RELEASE : http/tests/local/file-url-sent-as-referer.html = PASS
 BUGCR24182 SLOW LINUX DEBUG : fast/xpath/4XPath/Borrowed/cz_20030217.html = PASS
@@ -1492,7 +1492,7 @@ BUGCR9798 WIN RELEASE : http/tests/xmlhttprequest/small-chunks-response-text.htm
 BUGCR9798 LINUX : svg/custom/use-property-changes-through-svg-dom.svg = FAIL
 BUGCR9798 LINUX : svg/custom/js-update-transform-changes.svg = FAIL
 // Occasionally times out. Not just slow.
-BUGCR9798 WIN DEBUG : http/tests/loading/redirect-methods.html = TIMEOUT PASS
+BUGCR9798 BUGCR76018 WIN DEBUG : http/tests/loading/redirect-methods.html = TIMEOUT PASS CRASH
 
 // New tests or failures from WebKit merge 42324:42364. Re-baselined on
 // Windows. Probably just need the same on other platforms.
