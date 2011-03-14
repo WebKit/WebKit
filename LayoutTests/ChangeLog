@@ -1,3 +1,47 @@
+2011-03-14  David Levin  <levin@chromium.org>
+
+        Add rebaselines due to two changes:
+        For r81053, we have
+           editing/selection/drag-select-1.html, editing/selection/fake-drag.html, svg/custom/mouse-move-on-svg-container-standalone.svg,
+           svg/custom/mouse-move-on-svg-container.xhtml, svg/custom/mouse-move-on-svg-root-standalone.svg, svg/custom/mouse-move-on-svg-root.xhtml
+
+        For r81049, we have
+           fast/table/overflowHidden.html, fast/table/relative-position-containment.html, fast/table/relative-position-offsets.html, fast/table/relative-position-stacking.html
+
+        * platform/chromium-linux/editing/selection/drag-select-1-expected.checksum:
+        * platform/chromium-linux/editing/selection/drag-select-1-expected.png:
+        * platform/chromium-linux/editing/selection/drag-select-1-expected.txt: Added.
+        * platform/chromium-linux/editing/selection/fake-drag-expected.txt: Added.
+        * platform/chromium-linux/fast/table/relative-position-containment-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/relative-position-containment-expected.png: Added.
+        * platform/chromium-linux/fast/table/relative-position-offsets-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/relative-position-offsets-expected.png: Added.
+        * platform/chromium-linux/fast/table/relative-position-stacking-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/relative-position-stacking-expected.png: Added.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-container-expected.checksum:
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-container-expected.png:
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-container-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-container-standalone-expected.checksum:
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-container-standalone-expected.png:
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-container-standalone-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-root-expected.checksum:
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-root-expected.png:
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-root-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-root-standalone-expected.checksum:
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-root-standalone-expected.png:
+        * platform/chromium-linux/svg/custom/mouse-move-on-svg-root-standalone-expected.txt: Added.
+        * platform/chromium-win/fast/table/overflowHidden-expected.txt:
+        * platform/chromium-win/fast/table/relative-position-containment-expected.checksum: Added.
+        * platform/chromium-win/fast/table/relative-position-containment-expected.png: Added.
+        * platform/chromium-win/fast/table/relative-position-containment-expected.txt: Added.
+        * platform/chromium-win/fast/table/relative-position-offsets-expected.checksum: Added.
+        * platform/chromium-win/fast/table/relative-position-offsets-expected.png: Added.
+        * platform/chromium-win/fast/table/relative-position-offsets-expected.txt: Added.
+        * platform/chromium-win/fast/table/relative-position-stacking-expected.checksum: Added.
+        * platform/chromium-win/fast/table/relative-position-stacking-expected.png: Added.
+        * platform/chromium-win/fast/table/relative-position-stacking-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Removed redundant baselines from Windows port so that rebaselines done in r81059 take effect.

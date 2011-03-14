@@ -3253,6 +3253,7 @@ BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TE
 
 // WebKit roll 80564:80631:
 // Apparent font cache cleanup issue when running multiple tests in a row (only)
+BUGCR75426 LINUX DEBUG : css1/box_properties/border_top_width_inline.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/backgrounds/repeat/background-repeat-shorthand.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-lr/002.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-lr/003.html = CRASH PASS
