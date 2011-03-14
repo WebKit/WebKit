@@ -180,6 +180,7 @@ _PATH_RULES_SPECIFIER = [
       # struct members. Also, we allow unnecessary parameter names in
       # WebKit2 APIs because we're matching CF's header style.
       "Source/WebKit2/UIProcess/API/C/",
+      "Source/WebKit2/Shared/API/c/",
       "Source/WebKit2/WebProcess/InjectedBundle/API/c/"],
      ["-readability/naming",
       "-readability/parameter_name",

@@ -1,3 +1,13 @@
+2011-03-14  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        check-webkit-style falsely should not complain about WebKit2 API headers in the Shared directory
+        https://bugs.webkit.org/show_bug.cgi?id=56321
+
+        * Scripts/webkitpy/style/checker.py: Add the patch "Source/WebKit2/Shared/API/c"
+        to the list of exceptions for WebKit2 C API headers.
+
 2011-03-14  Adam Roben  <aroben@apple.com>
 
         Show the list of recent leaky builds in reverse chronological order
