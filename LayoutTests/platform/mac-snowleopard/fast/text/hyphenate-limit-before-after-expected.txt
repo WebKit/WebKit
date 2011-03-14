@@ -55,13 +55,13 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (446,84) size 126x60 [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 72x54
           text run at (3,3) width 72: "There is re"
-          text run at (3,21) width 63: "markable"
+          text run at (3,21) width 58: "markable"
           text run at (3,39) width 60: "evidence."
       RenderText {#text} at (580,123) size 4x18
         text run at (580,123) width 4: " "
       RenderBlock {DIV} at (592,84) size 126x60 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 75x54
+        RenderText {#text} at (3,3) size 70x54
           text run at (3,3) width 51: "There is"
-          text run at (3,21) width 75: "remarkable"
+          text run at (3,21) width 70: "remarkable"
           text run at (3,39) width 60: "evidence."
       RenderText {#text} at (0,0) size 0x0
