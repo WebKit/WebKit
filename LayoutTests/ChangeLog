@@ -1,5 +1,11 @@
 2011-03-14  David Levin  <levin@chromium.org>
 
+        It's the same old song (about the linux debug crash).
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-14  David Levin  <levin@chromium.org>
+
         Add more linux debug crashers to the sad list.
 
         * platform/chromium/test_expectations.txt:
