@@ -137,8 +137,6 @@ private:
 
     virtual void destroy();
 
-    virtual bool requiresLayer() const { return isPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasMask() || hasReflection(); }
-
     virtual void computeLogicalWidth();
 
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);

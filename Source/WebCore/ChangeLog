@@ -2,6 +2,28 @@
 
         Reviewed by Beth Dakin.
 
+        https://bugs.webkit.org/show_bug.cgi?id=56246
+        
+        Add support for relative positioning to table cells.   Back out the code that hacked around the lack of support
+        for offsetLeft, and add new tests to demonstrate that relative positioning works.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetParent):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRelPositioned):
+        * rendering/RenderTableCell.h:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
+2011-03-14  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Beth Dakin.
+
         Partial backout of https://bugs.webkit.org/show_bug.cgi?id=56230.  Go back to repainting the root
         layer, since first layouts and printing mess up otherwise.
 

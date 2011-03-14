@@ -1894,8 +1894,6 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
         // Frames and framesets never honor position:relative or position:absolute.  This is necessary to
         // fix a crash where a site tries to position these objects.  They also never honor display.
         if (e && (e->hasTagName(frameTag) || e->hasTagName(framesetTag))) {
-            if (style->position() == RelativePosition)
-                style->setPositionWasRelative(true);
             style->setPosition(StaticPosition);
             style->setDisplay(BLOCK);
         }
@@ -1936,12 +1934,10 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
         // After performing the display mutation, check table rows.  We do not honor position:relative on
         // table rows or cells.  This has been established in CSS2.1 (and caused a crash in containingBlock()
         // on some sites).
-        if ((style->display() == TABLE_HEADER_GROUP || style->display() == TABLE_ROW_GROUP ||
-             style->display() == TABLE_FOOTER_GROUP || style->display() == TABLE_ROW || style->display() == TABLE_CELL) &&
-             style->position() == RelativePosition) {
-            style->setPositionWasRelative(true);
+        if ((style->display() == TABLE_HEADER_GROUP || style->display() == TABLE_ROW_GROUP
+             || style->display() == TABLE_FOOTER_GROUP || style->display() == TABLE_ROW) &&
+             style->position() == RelativePosition)
             style->setPosition(StaticPosition);
-        }
 
         // writing-mode does not apply to table row groups, table column groups, table rows, and table columns.
         // FIXME: Table cells should be allowed to be perpendicular or flipped with respect to the table, though.

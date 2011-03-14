@@ -400,11 +400,6 @@ public:
     bool isFloating() const { return m_floating; }
     bool isPositioned() const { return m_positioned; } // absolute or fixed positioning
     bool isRelPositioned() const { return m_relPositioned; } // relative positioning
-
-    // WebKit overwrites the position:relative style for certain elements for which such positioning is illegal or behavior is undefined.
-    // This function returns the value specified in the source, even if it was corrected by WebKit.
-    bool wasOriginallyRelativePositioned() const;
-
     bool isText() const  { return m_isText; }
     bool isBox() const { return m_isBox; }
     bool isInline() const { return m_inline; }  // inline object

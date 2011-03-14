@@ -1,3 +1,26 @@
+2011-03-14  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56246
+        
+        Add support for relative positioning to table cells.   Back out the code that hacked around the lack of support
+        for offsetLeft, and add new tests to demonstrate that relative positioning works.
+
+        * fast/table/relative-position-containment.html: Added.
+        * fast/table/relative-position-offsets.html: Added.
+        * fast/table/relative-position-stacking.html: Added.
+        * platform/mac/fast/table/overflowHidden-expected.txt:
+        * platform/mac/fast/table/relative-position-containment-expected.checksum: Added.
+        * platform/mac/fast/table/relative-position-containment-expected.png: Added.
+        * platform/mac/fast/table/relative-position-containment-expected.txt: Added.
+        * platform/mac/fast/table/relative-position-offsets-expected.checksum: Added.
+        * platform/mac/fast/table/relative-position-offsets-expected.png: Added.
+        * platform/mac/fast/table/relative-position-offsets-expected.txt: Added.
+        * platform/mac/fast/table/relative-position-stacking-expected.checksum: Added.
+        * platform/mac/fast/table/relative-position-stacking-expected.png: Added.
+        * platform/mac/fast/table/relative-position-stacking-expected.txt: Added.
+
 2011-03-14  David Levin  <levin@chromium.org>
 
         Improvements for the mondo linux debug failure list changes:
