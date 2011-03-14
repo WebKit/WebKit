@@ -1,5 +1,13 @@
 2011-03-14  Brady Eidson  <beidson@apple.com>
 
+        Try to fix the EFL build-bustage that their EWS bot did not see, but their core-builder did.  (sigh)
+
+        * ewk/ewk_history.cpp:
+        (ewk_history_item_icon_surface_get):
+        (ewk_history_item_icon_object_add):
+
+2011-03-14  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Anders Carlsson.
 
         https://bugs.webkit.org/show_bug.cgi?id=56320
