@@ -45,14 +45,14 @@ namespace JSC {
         {
         }
 
-        void setExistingProperty(DeprecatedPtr<JSObject> base, size_t offset)
+        void setExistingProperty(JSObject* base, size_t offset)
         {
             m_type = ExistingProperty;
             m_base = base;
             m_offset = offset;
         }
 
-        void setNewProperty(DeprecatedPtr<JSObject> base, size_t offset)
+        void setNewProperty(JSObject* base, size_t offset)
         {
             m_type = NewProperty;
             m_base = base;
@@ -60,7 +60,7 @@ namespace JSC {
         }
 
         Type type() const { return m_type; }
-        JSObject* base() const { return m_base.get(); }
+        JSObject* base() const { return m_base; }
 
         bool isStrictMode() const { return m_isStrictMode; }
         bool isCacheable() const { return m_type != Uncachable; }
@@ -68,9 +68,10 @@ namespace JSC {
             ASSERT(isCacheable());
             return m_offset;
         }
+
     private:
         Type m_type;
-        DeprecatedPtr<JSObject> m_base;
+        JSObject* m_base;
         size_t m_offset;
         bool m_isStrictMode;
     };
