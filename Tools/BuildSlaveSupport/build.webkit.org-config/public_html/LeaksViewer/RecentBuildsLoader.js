@@ -71,6 +71,8 @@ RecentBuildsLoader.prototype = {
                     }
                 }
             });
+            // Sort descending by revision.
+            builds.sort(function(a, b) { return b.revision - a.revision; });
             self._didLoadRecentBuildsCallback(builds);
         });
     },

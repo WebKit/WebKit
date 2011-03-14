@@ -1,5 +1,20 @@
 2011-03-14  Adam Roben  <aroben@apple.com>
 
+        Show the list of recent leaky builds in reverse chronological order
+
+        Previously they were being shown in a deterministic but surprising order based on
+        lexicographically sorting the build offsets (-1, -10, -2, -3...).
+
+        Fixes <http://webkit.org/b/56342> Leaks Viewer shows recent builds in a strange order
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/RecentBuildsLoader.js:
+        (RecentBuildsLoader.prototype.start): Sort the builds by revision before passing them to our
+        callback.
+
+2011-03-14  Adam Roben  <aroben@apple.com>
+
         Show a list of up to 10 recent leaky builds when Leaks Viewer loads
 
         Fixes <http://webkit.org/b/56043> Leaks Viewer should present a list of recent builds to
