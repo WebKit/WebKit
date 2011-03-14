@@ -1,3 +1,24 @@
+2011-03-14  David Levin  <levin@chromium.org>
+
+        Update the chromium windows baselines for r81053.
+
+        * platform/chromium-win/editing/selection/drag-select-1-expected.checksum:
+        * platform/chromium-win/editing/selection/drag-select-1-expected.png:
+        * platform/chromium-win/editing/selection/drag-select-1-expected.txt:
+        * platform/chromium-win/editing/selection/fake-drag-expected.txt:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-container-expected.checksum:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-container-expected.png:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-container-expected.txt:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-container-standalone-expected.checksum:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-container-standalone-expected.png:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-container-standalone-expected.txt:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-expected.checksum:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-expected.png:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-expected.txt:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-standalone-expected.checksum:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-standalone-expected.png:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-standalone-expected.txt:
+
 2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         GTK rebaselines for r81053.
