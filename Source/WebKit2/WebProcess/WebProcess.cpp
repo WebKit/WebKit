@@ -62,6 +62,7 @@
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
+#include <WebCore/StorageTracker.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RandomNumber.h>
 
@@ -175,6 +176,11 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     WebDatabaseManager::initialize(parameters.databaseDirectory);
 #endif
 
+#if ENABLE(DOM_STORAGE)
+    StorageTracker::initializeTracker(parameters.localStorageDirectory);
+    m_localStorageDirectory = parameters.localStorageDirectory;
+#endif
+    
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!parameters.applicationCacheDirectory.isEmpty())
         cacheStorage().setCacheDirectory(parameters.applicationCacheDirectory);

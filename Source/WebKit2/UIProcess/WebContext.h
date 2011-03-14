@@ -153,6 +153,7 @@ public:
     static Statistics& statistics();
 
     void setDatabaseDirectory(const String& dir) { m_overrideDatabaseDirectory = dir; }
+    void setLocalStorageDirectory(const String& dir) { m_overrideLocalStorageDirectory = dir; }
 
     void ensureWebProcess();
 
@@ -189,6 +190,9 @@ private:
     String databaseDirectory() const;
     String platformDefaultDatabaseDirectory() const;
 
+    String localStorageDirectory() const;
+    String platformDefaultLocalStorageDirectory() const;
+    
     ProcessModel m_processModel;
     
     // FIXME: In the future, this should be one or more WebProcessProxies.
@@ -237,6 +241,7 @@ private:
 #endif
 
     String m_overrideDatabaseDirectory;
+    String m_overrideLocalStorageDirectory;
 };
 
 } // namespace WebKit

@@ -46,4 +46,9 @@ String WebContext::platformDefaultDatabaseDirectory() const
     return WTF::String::fromUTF8(g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL));
 }
 
+String WebContext::platformDefaultLocalStorageDirectory() const
+{
+    return WTF::String::fromUTF8(g_build_filename(g_get_user_data_dir(), "webkit", "localstorage", NULL));
+}
+
 } // namespace WebKit

@@ -207,3 +207,8 @@ void WKContextSetDatabaseDirectory(WKContextRef contextRef, WKStringRef database
 {
     toImpl(contextRef)->setDatabaseDirectory(toImpl(databaseDirectory)->string());
 }
+
+void WKContextSetLocalStorageDirectory(WKContextRef contextRef, WKStringRef localStorageDirectory)
+{
+    toImpl(contextRef)->setLocalStorageDirectory(toImpl(localStorageDirectory)->string());
+}

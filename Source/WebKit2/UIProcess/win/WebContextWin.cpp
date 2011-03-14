@@ -81,5 +81,10 @@ String WebContext::platformDefaultDatabaseDirectory() const
     return WebCore::pathByAppendingComponent(WebCore::localUserSpecificStorageDirectory(), "Databases");
 }
 
+String WebContext::platformDefaultLocalStorageDirectory() const
+{
+    return WebCore::pathByAppendingComponent(WebCore::localUserSpecificStorageDirectory(), "LocalStorage");
+}
+
 } // namespace WebKit
 

@@ -54,9 +54,10 @@ WK_EXPORT void WKContextRegisterURLSchemeAsSecure(WKContextRef context, WKString
 
 WK_EXPORT void WKContextSetDomainRelaxationForbiddenForURLScheme(WKContextRef context, WKStringRef urlScheme);
 
-// FIXME: This function is only effective if called before the Web process is launched. But
-// we should really change this setting to be on WebPreferences and changeable at runtime.
+// FIXME: These functions are only effective if called before the Web process is launched. But
+// we should really change these settings to be on WebPreferences and changeable at runtime.
 WK_EXPORT void WKContextSetDatabaseDirectory(WKContextRef context, WKStringRef databaseDirectory);
+WK_EXPORT void WKContextSetLocalStorageDirectory(WKContextRef context, WKStringRef localStorageDirectory);
 
 #ifdef __cplusplus
 }

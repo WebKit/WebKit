@@ -119,6 +119,8 @@ public:
     WebGeolocationManager& geolocationManager() { return m_geolocationManager; }
 
     void clearResourceCaches(uint32_t cachesToClear = AllResourceCaches);
+    
+    const String& localStorageDirectory() const { return m_localStorageDirectory; }
 
 private:
     WebProcess();
@@ -204,6 +206,8 @@ private:
 
     TextCheckerState m_textCheckerState;
     WebGeolocationManager m_geolocationManager;
+    
+    String m_localStorageDirectory;
 };
 
 } // namespace WebKit

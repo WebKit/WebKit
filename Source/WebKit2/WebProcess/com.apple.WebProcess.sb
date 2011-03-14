@@ -73,6 +73,10 @@
 (if (positive? (string-length (param "WEBKIT_DATABASE_DIR")))
     (allow file* (subpath (param "WEBKIT_DATABASE_DIR"))))
 
+;; LocalStorage dir
+(if (positive? (string-length (param "WEBKIT_LOCALSTORAGE_DIR")))
+    (allow file* (subpath (param "WEBKIT_LOCALSTORAGE_DIR"))))
+    
 ;; The NSURLCache directory.
 (if (positive? (string-length (param "NSURL_CACHE_DIR")))
     (allow file* (subpath (param "NSURL_CACHE_DIR"))))

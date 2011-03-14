@@ -35,6 +35,7 @@ using namespace WebCore;
 
 NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
+NSString *WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPreferenceKey";
 
 namespace WebKit {
 
@@ -105,6 +106,14 @@ String WebContext::platformDefaultDatabaseDirectory() const
     if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
         databasesDirectory = @"~/Library/WebKit/Databases";
     return [databasesDirectory stringByStandardizingPath];
+}
+
+String WebContext::platformDefaultLocalStorageDirectory() const
+{
+    NSString *localStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebStorageDirectoryDefaultsKey];
+    if (!localStorageDirectory || ![localStorageDirectory isKindOfClass:[NSString class]])
+        localStorageDirectory = @"~/Library/WebKit/LocalStorage";
+    return [localStorageDirectory stringByStandardizingPath];
 }
 
 } // namespace WebKit

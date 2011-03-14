@@ -156,6 +156,7 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
     appendSandboxParameterConfPath(sandboxParameters, "DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);
     appendSandboxParameterConfPath(sandboxParameters, "DARWIN_USER_CACHE_DIR", _CS_DARWIN_USER_CACHE_DIR);
     appendSandboxParameterPath(sandboxParameters, "WEBKIT_DATABASE_DIR", [(NSString *)parameters.databaseDirectory fileSystemRepresentation]);
+    appendSandboxParameterPath(sandboxParameters, "WEBKIT_LOCALSTORAGE_DIR", [(NSString *)parameters.localStorageDirectory fileSystemRepresentation]);
     appendSandboxParameterPath(sandboxParameters, "NSURL_CACHE_DIR", parameters.nsURLCachePath.data());
     appendSandboxParameterPath(sandboxParameters, "UI_PROCESS_BUNDLE_RESOURCE_DIR", parameters.uiProcessBundleResourcePath.data());
     sandboxParameters.append(static_cast<const char*>(0));

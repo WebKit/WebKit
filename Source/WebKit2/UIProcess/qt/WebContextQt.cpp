@@ -53,4 +53,10 @@ String WebContext::platformDefaultDatabaseDirectory() const
     return "";
 }
 
+String WebContext::platformDefaultLocalStorageDirectory() const
+{
+    // FIXME: Implement.
+    return "";
+}
+
 } // namespace WebKit

@@ -222,6 +222,7 @@ void WebContext::ensureWebProcess()
     parameters.languageCode = defaultLanguage();
     parameters.applicationCacheDirectory = applicationCacheDirectory();
     parameters.databaseDirectory = databaseDirectory();
+    parameters.localStorageDirectory = localStorageDirectory();
     parameters.clearResourceCaches = m_clearResourceCachesForNewWebProcess;
     parameters.clearApplicationCache = m_clearApplicationCacheForNewWebProcess;
 #if PLATFORM(MAC)
@@ -727,6 +728,14 @@ String WebContext::databaseDirectory() const
         return m_overrideDatabaseDirectory;
 
     return platformDefaultDatabaseDirectory();
+}
+
+String WebContext::localStorageDirectory() const
+{
+    if (!m_overrideLocalStorageDirectory.isEmpty())
+        return m_overrideLocalStorageDirectory;
+
+    return platformDefaultLocalStorageDirectory();
 }
 
 } // namespace WebKit

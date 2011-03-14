@@ -1392,6 +1392,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setFullScreenEnabled(store.getBoolValueForKey(WebPreferencesKey::fullScreenEnabledKey()));
 #endif
 
+#if ENABLE(DOM_STORAGE)
+    settings->setLocalStorageDatabasePath(WebProcess::shared().localStorageDirectory());
+#endif
+
     platformPreferencesDidChange(store);
 }
 
