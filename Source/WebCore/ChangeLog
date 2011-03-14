@@ -1,3 +1,17 @@
+2011-03-14  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45164
+
+        REGRESSION: <a><img align=top></a> Clickable area too large
+        
+        Make sure to clamp hit testing of quirky inline flow boxes the same way we already clamped
+        painting.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint):
+
 2011-03-14  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Adam Roben.
