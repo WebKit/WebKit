@@ -1,3 +1,17 @@
+2011-03-14  Steve Block  <steveblock@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        JavaMethod.cpp does not compile with V8
+        https://bugs.webkit.org/show_bug.cgi?id=56306
+
+        Moved the ScopeChain.h include to JavaStringJSC.
+
+        No new tests, build fix only.
+
+        * bridge/jni/JavaMethod.cpp:
+        * bridge/jni/jsc/JavaStringJSC.h
+
 2011-02-28  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Dave Hyatt.

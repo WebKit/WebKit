@@ -28,7 +28,9 @@
 
 #include "JNIUtility.h"
 #include "JavaInstanceJSC.h"
+
 #include <runtime/JSLock.h>
+#include <runtime/ScopeChain.h>
 
 
 namespace JSC {

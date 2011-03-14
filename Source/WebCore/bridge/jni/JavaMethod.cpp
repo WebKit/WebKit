@@ -31,7 +31,6 @@
 
 #include "JavaString.h"
 
-#include <runtime/ScopeChain.h>
 #include <wtf/text/StringBuilder.h>
 
 using namespace JSC;
