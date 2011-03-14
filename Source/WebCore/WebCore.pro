@@ -3396,9 +3396,9 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/OESStandardDerivatives.h \
         html/canvas/OESTextureFloat.h \
         html/canvas/OESVertexArrayObject.h \
-        html/canvas/OESVertexArray.h \
         html/canvas/WebGLTexture.h \
         html/canvas/WebGLUniformLocation.h \
+        html/canvas/WebGLVertexArrayObjectOES.h \
         html/canvas/WebKitLoseContext.h \
         platform/graphics/Extensions3D.h \
         platform/graphics/GraphicsContext3D.h \
@@ -3425,9 +3425,9 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/OESStandardDerivatives.cpp \
         html/canvas/OESTextureFloat.cpp \
         html/canvas/OESVertexArrayObject.cpp \
-        html/canvas/OESVertexArray.cpp \
         html/canvas/WebGLTexture.cpp \
         html/canvas/WebGLUniformLocation.cpp \
+        html/canvas/WebGLVertexArrayObjectOES.cpp \
         html/canvas/WebKitLoseContext.cpp \
         platform/graphics/GraphicsContext3D.cpp \
         platform/graphics/gpu/DrawingBuffer.cpp \

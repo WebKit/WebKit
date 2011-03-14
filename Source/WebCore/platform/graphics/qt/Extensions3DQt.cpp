@@ -30,6 +30,7 @@
 #include "Extensions3DQt.h"
 
 #include "GraphicsContext3D.h"
+#include <QGLContext>
 
 namespace WebCore {
 

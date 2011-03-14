@@ -1,3 +1,13 @@
+2011-03-14  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Compilation fails with --3d-canvas 
+        https://bugs.webkit.org/show_bug.cgi?id=55964
+
+        * WebCore.pro:
+        * platform/graphics/qt/Extensions3DQt.cpp:
+
 2011-03-14  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben and Gavin Barraclough.
