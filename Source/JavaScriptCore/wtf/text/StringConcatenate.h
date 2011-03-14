@@ -89,6 +89,34 @@ private:
 };
 
 template<>
+class StringTypeAdapter<const UChar*> {
+public:
+    StringTypeAdapter<const UChar*>(const UChar* buffer)
+        : m_buffer(buffer)
+    {
+        size_t len = 0;
+        while (m_buffer[len] != UChar(0))
+            len++;
+
+        if (len > std::numeric_limits<unsigned>::max())
+            CRASH();
+
+        m_length = len;
+    }
+
+    unsigned length() { return m_length; }
+
+    void writeTo(UChar* destination)
+    {
+        memcpy(destination, m_buffer, static_cast<size_t>(m_length) * sizeof(UChar));
+    }
+
+private:
+    const UChar* m_buffer;
+    unsigned m_length;
+};
+
+template<>
 class StringTypeAdapter<const char*> {
 public:
     StringTypeAdapter<const char*>(const char* buffer)

@@ -31,9 +31,11 @@
 #include "FileSystem.h"
 
 #include "NotImplemented.h"
+#include "PathWalker.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 #include <windows.h>
 #include <winbase.h>
@@ -297,10 +299,21 @@ bool safeCreateFile(const String& path, CFDataRef data)
     return true;
 }
 
-Vector<String> listDirectory(const String& path, const String& filter)
+Vector<String> listDirectory(const String& directory, const String& filter)
 {
     Vector<String> entries;
-    notImplemented();
+
+    PathWalker walker(directory, filter);
+    if (!walker.isValid())
+        return entries;
+
+    do {
+        if (walker.data().dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+            continue;
+
+        entries.append(makeString(directory, "\\", reinterpret_cast<const UChar*>(walker.data().cFileName)));
+    } while (walker.step());
+
     return entries;
 }
 

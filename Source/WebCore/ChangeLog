@@ -1,3 +1,29 @@
+2011-03-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben and Gavin Barraclough.
+
+        FileSystemWin.cpp needs listDirectory() implementation
+        https://bugs.webkit.org/show_bug.cgi?id=56331
+        <rdar://problem/9126635>
+        
+        Move PathWalker from an inline class in WebKit2 to its own class in WebCore,
+        so it can be used from both WebCore and WebKit2.
+        
+        Implement FileSystemWin::listDirectory using PathWalker to populate the Vector
+        of paths matching the passed in pattern.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::listDirectory): Call through to PathWalker.
+        * platform/win/PathWalker.cpp: Added.
+        (WebCore::PathWalker::PathWalker): Moved from WebKit2. Added a second argument
+            for the pattern to pass to the Windows File APIs.
+        (WebCore::PathWalker::~PathWalker): Moved from WebKit2.
+        (WebCore::PathWalker::isValid): Ditto.
+        (WebCore::PathWalker::data): Ditto.
+        (WebCore::PathWalker::step): Ditto.
+        * platform/win/PathWalker.h: Added.
+
 2011-03-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

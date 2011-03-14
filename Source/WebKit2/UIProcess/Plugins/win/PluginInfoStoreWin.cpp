@@ -27,6 +27,7 @@
 #include "PluginInfoStore.h"
 
 #include "NetscapePluginModule.h"
+#include <WebCore/PathWalker.h>
 #include <shlwapi.h>
 
 using namespace WebCore;
@@ -254,37 +255,11 @@ Vector<String> PluginInfoStore::pluginsDirectories()
     return directories;
 }
 
-class PathWalker {
-    WTF_MAKE_NONCOPYABLE(PathWalker);
-public:
-    PathWalker(const String& directory)
-    {
-        String pattern = directory + "\\*";
-        m_handle = ::FindFirstFileW(pattern.charactersWithNullTermination(), &m_data);
-    }
-
-    ~PathWalker()
-    {
-        if (!isValid())
-            return;
-        ::FindClose(m_handle);
-    }
-
-    bool isValid() const { return m_handle != INVALID_HANDLE_VALUE; }
-    const WIN32_FIND_DATAW& data() const { return m_data; }
-
-    bool step() { return ::FindNextFileW(m_handle, &m_data); }
-
-private:
-    HANDLE m_handle;
-    WIN32_FIND_DATAW m_data;
-};
-
 Vector<String> PluginInfoStore::pluginPathsInDirectory(const String& directory)
 {
     Vector<String> paths;
 
-    PathWalker walker(directory);
+    PathWalker walker(directory, "*");
     if (!walker.isValid())
         return paths;
 

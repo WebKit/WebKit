@@ -26309,6 +26309,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\win\PathWalker.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\PathWalker.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\win\PlatformMouseEventWin.cpp"
 					>
 				</File>

@@ -1,3 +1,17 @@
+2011-03-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben and Gavin Barraclough.
+
+        FileSystemWin.cpp needs listDirectory() implementation
+        https://bugs.webkit.org/show_bug.cgi?id=56331
+        <rdar://problem/9126635>
+        
+        Move PathWalker down into WebCore, and call the PathWalker in WebCore
+        (that now has a second argument, the pattern to take).
+
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::PluginInfoStore::pluginPathsInDirectory):
+
 2011-03-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
