@@ -26,7 +26,6 @@
 #include "Logging.h"
 #include "PageCache.h"
 #include "PageGroup.h"
-#include "appcache/ApplicationCacheStorage.h"
 #include "ewk_private.h"
 #include "ewk_settings.h"
 #include "runtime/InitializeThreading.h"
@@ -175,7 +174,9 @@ Eina_Bool _ewk_init_body(void)
         ewk_settings_web_database_path_set(wkdir.utf8().data());
         ewk_settings_icon_database_path_set(wkdir.utf8().data());
 
-        WebCore::cacheStorage().setCacheDirectory(wkdir);
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+        ewk_settings_cache_directory_path_set(wkdir.utf8().data());
+#endif
     }
 
     // TODO: this should move to WebCore, already reported to webkit-gtk folks:

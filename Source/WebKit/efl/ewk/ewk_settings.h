@@ -48,8 +48,11 @@ EAPI Eina_Bool        ewk_settings_icon_database_clear(void);
 EAPI cairo_surface_t *ewk_settings_icon_database_icon_surface_get(const char *url);
 EAPI Evas_Object     *ewk_settings_icon_database_icon_object_add(const char *url, Evas *canvas);
 
-EAPI void            ewk_settings_proxy_uri_set(const char* proxy);
-EAPI const char*     ewk_settings_proxy_uri_get();
+EAPI Eina_Bool        ewk_settings_cache_directory_path_set(const char *path);
+EAPI const char      *ewk_settings_cache_directory_path_get(void);
+
+EAPI void             ewk_settings_proxy_uri_set(const char* proxy);
+EAPI const char*      ewk_settings_proxy_uri_get();
 
 #ifdef __cplusplus
 }

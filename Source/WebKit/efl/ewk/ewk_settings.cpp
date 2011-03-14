@@ -47,6 +47,12 @@
 #include <libsoup/soup.h>
 #endif
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+#include "appcache/ApplicationCacheStorage.h"
+
+static const char* _ewk_cache_directory_path = 0;
+#endif
+
 static const char* _ewk_default_web_database_path = 0;
 static const char* _ewk_icon_database_path = 0;
 static uint64_t _ewk_default_web_database_quota = 1 * 1024 * 1024;
@@ -332,4 +338,47 @@ const char* ewk_settings_default_user_agent_get()
     WTF::String static_ua = makeString("Mozilla/5.0 (", _ewk_settings_webkit_platform_get(), "; ", _ewk_settings_webkit_os_version_get(), ") AppleWebKit/", ua_version) + makeString(" (KHTML, like Gecko) Version/5.0 Safari/", ua_version);
 
     return eina_stringshare_add(static_ua.utf8().data());
+}
+
+/**
+ * Sets cache directory.
+ *
+ * @param path where to store cache, must be write-able.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE if path is NULL or offline
+ *         web application is not supported.
+ */
+Eina_Bool ewk_settings_cache_directory_path_set(const char *path)
+{
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    if (!path)
+        return EINA_FALSE;
+
+    WebCore::cacheStorage().setCacheDirectory(WTF::String::fromUTF8(path));
+    if (!_ewk_cache_directory_path)
+        _ewk_cache_directory_path = eina_stringshare_add(path);
+    else
+        eina_stringshare_replace(&_ewk_cache_directory_path, path);
+    return EINA_TRUE;
+#else
+    return EINA_FALSE;
+#endif
+}
+
+/**
+ * Return cache directory path.
+ *
+ * This is guaranteed to be eina_stringshare, so whenever possible
+ * save yourself some cpu cycles and use eina_stringshare_ref()
+ * instead of eina_stringshare_add() or strdup().
+ *
+ * @return cache directory path.
+ */
+const char *ewk_settings_cache_directory_path_get()
+{
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    return _ewk_cache_directory_path;
+#else
+    return 0;
+#endif
 }

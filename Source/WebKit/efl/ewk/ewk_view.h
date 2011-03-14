@@ -450,8 +450,6 @@ EAPI const char  *ewk_view_setting_encoding_custom_get(const Evas_Object *o);
 EAPI Eina_Bool    ewk_view_setting_encoding_custom_set(Evas_Object *o, const char *encoding);
 EAPI const char  *ewk_view_setting_encoding_default_get(const Evas_Object *o);
 EAPI Eina_Bool    ewk_view_setting_encoding_default_set(Evas_Object *o, const char *encoding);
-EAPI const char  *ewk_view_setting_cache_directory_get(const Evas_Object *o);
-EAPI Eina_Bool    ewk_view_setting_cache_directory_set(Evas_Object *o, const char *path);
 
 EAPI int          ewk_view_setting_font_minimum_size_get(const Evas_Object *o);
 EAPI Eina_Bool    ewk_view_setting_font_minimum_size_set(Evas_Object *o, int size);

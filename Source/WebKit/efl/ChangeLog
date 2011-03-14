@@ -1,3 +1,24 @@
+2011-03-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Move cache_directory api
+        https://bugs.webkit.org/show_bug.cgi?id=52139
+
+        Move cache directory related apis from ewk_view to ewk_settings because
+        those are not related to ewk_view.
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_cache_directory_path_set):
+        (ewk_settings_cache_directory_path_get):
+        * ewk/ewk_settings.h:
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (_ewk_view_priv_del):
+        * ewk/ewk_view.h:
+
 2011-03-12  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix.

@@ -43,7 +43,6 @@
 #include "PlatformMouseEvent.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
-#include "appcache/ApplicationCacheStorage.h"
 #include "ewk_private.h"
 
 #include <Ecore.h>
@@ -102,7 +101,6 @@ struct _Ewk_View_Private_Data {
         const char* user_stylesheet;
         const char* encoding_default;
         const char* encoding_custom;
-        const char* cache_directory;
         const char* theme;
         const char* local_storage_database_path;
         int font_minimum_size;
@@ -585,9 +583,6 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
         (priv->page_settings->defaultTextEncodingName().utf8().data());
     priv->settings.encoding_custom = 0;
 
-    priv->settings.cache_directory = eina_stringshare_add
-        (WebCore::cacheStorage().cacheDirectory().utf8().data());
-
     s = priv->page_settings->localStorageDatabasePath();
     priv->settings.local_storage_database_path = eina_stringshare_add(s.string().utf8().data());
 
@@ -673,7 +668,6 @@ static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
     eina_stringshare_del(priv->settings.user_stylesheet);
     eina_stringshare_del(priv->settings.encoding_default);
     eina_stringshare_del(priv->settings.encoding_custom);
-    eina_stringshare_del(priv->settings.cache_directory);
     eina_stringshare_del(priv->settings.font_standard);
     eina_stringshare_del(priv->settings.font_cursive);
     eina_stringshare_del(priv->settings.font_monospace);
@@ -2722,22 +2716,6 @@ Eina_Bool ewk_view_setting_encoding_detector_get(Evas_Object* o)
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.encoding_detector;
-}
-
-const char* ewk_view_setting_cache_directory_get(const Evas_Object* o)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
-    return priv->settings.cache_directory;
-}
-
-Eina_Bool ewk_view_setting_cache_directory_set(Evas_Object* o, const char* path)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.cache_directory, path))
-        WebCore::cacheStorage().setCacheDirectory(String::fromUTF8(path));
-    return EINA_TRUE;
 }
 
 int ewk_view_setting_font_minimum_size_get(const Evas_Object* o)
