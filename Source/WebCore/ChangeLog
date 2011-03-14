@@ -10,6 +10,14 @@
 
 2011-03-13  David Levin  <levin@chromium.org>
 
+        Improve my hasitly added build fix and added a bug https://bugs.webkit.org/show_bug.cgi?id=56288
+        above addressing this FIXME.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
+2011-03-13  David Levin  <levin@chromium.org>
+
         Build fix adding remaining enum values to switch statement.
 
         * css/CSSStyleSelector.cpp:
