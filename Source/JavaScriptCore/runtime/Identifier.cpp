@@ -217,7 +217,7 @@ PassRefPtr<StringImpl> Identifier::add(JSGlobalData* globalData, const UChar* s,
 {
     if (length == 1) {
         UChar c = s[0];
-        if (c <= 0xFF)
+        if (c <= maxSingleCharacterString)
             return add(globalData, globalData->smallStrings.singleCharacterStringRep(c));
     }
     if (!length)
@@ -244,7 +244,7 @@ PassRefPtr<StringImpl> Identifier::addSlowCase(JSGlobalData* globalData, StringI
 
     if (r->length() == 1) {
         UChar c = r->characters()[0];
-        if (c <= 0xFF)
+        if (c <= maxSingleCharacterString)
             r = globalData->smallStrings.singleCharacterStringRep(c);
             if (r->isIdentifier())
                 return r;

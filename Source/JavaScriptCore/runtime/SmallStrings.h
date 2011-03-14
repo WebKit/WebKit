@@ -38,8 +38,10 @@ namespace JSC {
     class MarkStack;
     class SmallStringsStorage;
 
+    static const unsigned maxSingleCharacterString = 0xFF;
+
     class SmallStrings {
-        WTF_MAKE_NONCOPYABLE(SmallStrings); WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_NONCOPYABLE(SmallStrings);
     public:
         SmallStrings();
         ~SmallStrings();
@@ -50,6 +52,7 @@ namespace JSC {
                 createEmptyString(globalData);
             return m_emptyString.get();
         }
+
         JSString* singleCharacterString(JSGlobalData* globalData, unsigned char character)
         {
             if (!m_singleCharacterStrings[character])
@@ -67,11 +70,13 @@ namespace JSC {
         JSCell** singleCharacterStrings() { return m_singleCharacterStrings[0].slot(); }
 
     private:
+        static const unsigned singleCharacterStringCount = maxSingleCharacterString + 1;
+
         void createEmptyString(JSGlobalData*);
         void createSingleCharacterString(JSGlobalData*, unsigned char);
 
-        DeprecatedPtr<JSString> m_emptyString;
-        FixedArray<DeprecatedPtr<JSString>, 0x100> m_singleCharacterStrings;
+        HeapRoot<JSString> m_emptyString;
+        HeapRoot<JSString> m_singleCharacterStrings[singleCharacterStringCount];
         OwnPtr<SmallStringsStorage> m_storage;
     };
 

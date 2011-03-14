@@ -35,6 +35,7 @@ class JSGlobalData;
 typedef enum { } Unknown;
 typedef JSValue* HandleSlot;
 
+// FIXME: Remove all uses of this class.
 template <class T> class DeprecatedPtr {
 public:
     DeprecatedPtr() : m_cell(0) { }
@@ -54,6 +55,7 @@ protected:
     JSCell* m_cell;
 };
 
+// FIXME: Remove all uses of this class.
 template <> class DeprecatedPtr<Unknown> {
 public:
     DeprecatedPtr() { }
@@ -73,17 +75,23 @@ private:
     JSValue m_value;
 };
 
-template <typename T> struct WriteBarrierCheck {
+template <typename U, typename V> inline bool operator==(const DeprecatedPtr<U>& lhs, const DeprecatedPtr<V>& rhs)
+{
+    return lhs.get() == rhs.get();
+}
+
+template <typename T> struct JSValueChecker {
     static const bool IsJSValue = false;
 };
 
-template <> struct WriteBarrierCheck<JSValue> {
+template <> struct JSValueChecker<JSValue> {
     static const bool IsJSValue = true;
 };
 
+// We have a separate base class with no constructors for use in Unions.
 template <typename T> class WriteBarrierBase {
 public:
-    COMPILE_ASSERT(!WriteBarrierCheck<T>::IsJSValue, WriteBarrier_JSValue_is_invalid__use_unknown);
+    COMPILE_ASSERT(!JSValueChecker<T>::IsJSValue, WriteBarrier_JSValue_is_invalid__use_unknown);
     void set(JSGlobalData&, const JSCell*, T* value) { this->m_cell = reinterpret_cast<JSCell*>(value); }
     
     T* get() const { return reinterpret_cast<T*>(m_cell); }
@@ -100,18 +108,8 @@ public:
 
     void setWithoutWriteBarrier(T* value) { this->m_cell = reinterpret_cast<JSCell*>(value); }
 
-protected:
+private:
     JSCell* m_cell;
-};
-
-template <typename T> class WriteBarrier : public WriteBarrierBase<T> {
-public:
-    WriteBarrier() { this->m_cell = 0; }
-    WriteBarrier(JSGlobalData& globalData, const JSCell* owner, T* value)
-    {
-        this->set(globalData, owner, value);
-    }
-
 };
 
 template <> class WriteBarrierBase<Unknown> {
@@ -138,29 +136,83 @@ public:
     operator UnspecifiedBoolType*() const { return get() ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
     bool operator!() const { return !get(); } 
     
-protected:
+private:
     EncodedJSValue m_value;
+};
+
+template <typename T> class WriteBarrier : public WriteBarrierBase<T> {
+public:
+    WriteBarrier()
+    {
+        this->setWithoutWriteBarrier(0);
+    }
+
+    WriteBarrier(JSGlobalData& globalData, const JSCell* owner, T* value)
+    {
+        this->set(globalData, owner, value);
+    }
 };
 
 template <> class WriteBarrier<Unknown> : public WriteBarrierBase<Unknown> {
 public:
-    WriteBarrier() { m_value = JSValue::encode(JSValue()); }
+    WriteBarrier()
+    {
+        this->setWithoutWriteBarrier(JSValue());
+    }
+
     WriteBarrier(JSGlobalData& globalData, const JSCell* owner, JSValue value)
     {
         this->set(globalData, owner, value);
     }
 };
 
-template <typename U, typename V> inline bool operator==(const DeprecatedPtr<U>& lhs, const DeprecatedPtr<V>& rhs)
-{
-    return lhs.get() == rhs.get();
-}
-
 template <typename U, typename V> inline bool operator==(const WriteBarrierBase<U>& lhs, const WriteBarrierBase<V>& rhs)
 {
     return lhs.get() == rhs.get();
 }
 
-}
+// For use in data members that are owned by the Heap.
+template <typename T> class HeapRoot : public WriteBarrier<T> {
+private:
+    friend class Heap;
+    friend class JSGlobalData; // FIXME: Move Heap roots from JSGlobalData to Heap.
+    friend class SmallStrings; // FIXME: Convert SmallStrings to use weak handles.
+
+    HeapRoot() { }
+    HeapRoot(T* value)
+    {
+        this->setWithoutWriteBarrier(value);
+    }
+
+public:
+    HeapRoot& operator=(T* value)
+    {
+        this->setWithoutWriteBarrier(value);
+        return *this;
+    }
+};
+
+// For use in data members that are owned by the Heap.
+template <> class HeapRoot<Unknown> : public WriteBarrier<Unknown> {
+private:
+    friend class Heap;
+    friend class JSGlobalData; // FIXME: Move Heap roots from JSGlobalData to Heap.
+    friend class SmallStrings; // FIXME: Convert SmallStrings to use weak handles.
+
+    HeapRoot() { }
+    HeapRoot(JSValue value)
+    {
+        this->setWithoutWriteBarrier(value);
+    }
+
+public:
+    HeapRoot& operator=(JSValue value)
+    {
+        this->setWithoutWriteBarrier(value);
+        return *this;
+    }
+};
+
+} // namespace JSC
 
 #endif // WriteBarrier_h

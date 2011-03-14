@@ -1,3 +1,54 @@
+2011-03-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed more cases of DeprecatedPtr (exception, SmallStrings)
+        https://bugs.webkit.org/show_bug.cgi?id=56332
+
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add):
+        (JSC::Identifier::addSlowCase): Use a variable instead of a hard-coded
+        constant, to make this code less brittle.
+
+        * runtime/JSGlobalData.h: Use HeapRoot instead of DeprecatedPtr because
+        this reference is owned and managed directly by the heap.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::substringFromRope):
+        * runtime/JSString.h:
+        (JSC::jsSingleCharacterString):
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::jsString):
+        (JSC::jsStringWithFinalizer):
+        (JSC::jsSubstring):
+        (JSC::jsOwnedString): Use a variable instead of a hard-coded
+        constant, to make this code less brittle.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStringsStorage::rep):
+        (JSC::SmallStringsStorage::SmallStringsStorage):
+        (JSC::SmallStrings::SmallStrings):
+        (JSC::SmallStrings::markChildren):
+        (JSC::SmallStrings::clear):
+        (JSC::SmallStrings::count): Use a variable instead of a hard-coded
+        constant, to make this code less brittle.
+
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::singleCharacterString): Use HeapRoot instead of
+        DeprecatedPtr because these references are owned and managed directly by
+        the heap.
+        
+        Stop using FixedArray because we only want a very limited set
+        of classes to be able to use HeapRoot. (Replaced with manual ASSERTs.)
+
+        * runtime/WriteBarrier.h:
+        (JSC::operator==):
+        (JSC::WriteBarrier::WriteBarrier):
+        (JSC::HeapRoot::HeapRoot):
+        (JSC::HeapRoot::operator=): Added HeapRoot, which is allowed to set
+        without write barrier because we assume all HeapRoots are scanned during
+        all GC passes.
+
 2011-03-14  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben and Gavin Barraclough.

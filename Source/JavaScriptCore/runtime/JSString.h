@@ -468,7 +468,7 @@ namespace JSC {
 
     inline JSString* jsSingleCharacterString(JSGlobalData* globalData, UChar c)
     {
-        if (c <= 0xFF)
+        if (c <= maxSingleCharacterString)
             return globalData->smallStrings.singleCharacterString(globalData, c);
         return fixupVPtr(globalData, new (globalData) JSString(globalData, UString(&c, 1)));
     }
@@ -478,7 +478,7 @@ namespace JSC {
         JSGlobalData* globalData = &exec->globalData();
         ASSERT(offset < static_cast<unsigned>(s.length()));
         UChar c = s.characters()[offset];
-        if (c <= 0xFF)
+        if (c <= maxSingleCharacterString)
             return globalData->smallStrings.singleCharacterString(globalData, c);
         return fixupVPtr(globalData, new (globalData) JSString(globalData, UString(StringImpl::create(s.impl(), offset, 1))));
     }
@@ -513,7 +513,7 @@ namespace JSC {
             return globalData->smallStrings.emptyString(globalData);
         if (size == 1) {
             UChar c = s.characters()[0];
-            if (c <= 0xFF)
+            if (c <= maxSingleCharacterString)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }
         return fixupVPtr(globalData, new (globalData) JSString(globalData, s));
@@ -521,7 +521,7 @@ namespace JSC {
 
     inline JSString* jsStringWithFinalizer(ExecState* exec, const UString& s, JSStringFinalizerCallback callback, void* context)
     {
-        ASSERT(s.length() && (s.length() > 1 || s.characters()[0] > 0xFF));
+        ASSERT(s.length() && (s.length() > 1 || s.characters()[0] > maxSingleCharacterString));
         JSGlobalData* globalData = &exec->globalData();
         return fixupVPtr(globalData, new (globalData) JSString(globalData, s, callback, context));
     }
@@ -548,7 +548,7 @@ namespace JSC {
             return globalData->smallStrings.emptyString(globalData);
         if (length == 1) {
             UChar c = s.characters()[offset];
-            if (c <= 0xFF)
+            if (c <= maxSingleCharacterString)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }
         return fixupVPtr(globalData, new (globalData) JSString(globalData, UString(StringImpl::create(s.impl(), offset, length)), JSString::HasOtherOwner));
@@ -561,7 +561,7 @@ namespace JSC {
             return globalData->smallStrings.emptyString(globalData);
         if (size == 1) {
             UChar c = s.characters()[0];
-            if (c <= 0xFF)
+            if (c <= maxSingleCharacterString)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }
         return fixupVPtr(globalData, new (globalData) JSString(globalData, s, JSString::HasOtherOwner));
