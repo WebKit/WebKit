@@ -1,3 +1,14 @@
+2011-03-13  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Timer-based events should inherit the user gesture state of their
+        originating event in certain cases.
+        https://bugs.webkit.org/show_bug.cgi?id=55104
+
+        * fast/events/popup-blocking-timers-expected.txt: Added.
+        * fast/events/popup-blocking-timers.html: Added.
+
 2011-03-09  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.

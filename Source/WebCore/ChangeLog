@@ -1,3 +1,35 @@
+2011-03-14  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Timer-based events should inherit the user gesture state of their
+        originating event in certain cases.
+        https://bugs.webkit.org/show_bug.cgi?id=55104
+
+        If a timer is installed by a gesture-originated event and will fire
+        within one second, the timer-initiated event should behave as if it
+        were also initiated by a user gesture. Multi-shot timers should only
+        get this behavior on their first execution. Nested timers should not
+        get this behavior. This makes us compatible with Gecko when handling
+        popups and file chooser dialogs created from timer events.
+
+        Test: fast/events/popup-blocking-timers.html
+
+        * page/DOMTimer.cpp:
+        (WebCore::timeoutId): Create a helper function so that m_timeoutId can
+        be initialized in the data member initialization list.
+        (WebCore::shouldForwardUserGesture): Ditto, but for
+        m_shouldForwardUserGesture.
+        (WebCore::DOMTimer::DOMTimer): Move initialization of data members from
+        the ctor body to the data member initialization list. Also rename the
+        argument 'timeout' to 'interval'.
+        (WebCore::DOMTimer::fired): Create a UserGestureIndicator and set its
+        state based on the value of m_shouldForwardUserGesture.
+        (WebCore::DOMTimer::adjustMinimumTimerInterval): m_originalTimeout was
+        renamed to m_originalInterval.
+        * page/DOMTimer.h: Add m_shouldForwardUserGesture and rename
+        m_originalTimeout to m_originalInterval.
+
 2011-03-09  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.

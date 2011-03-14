@@ -55,7 +55,7 @@ namespace WebCore {
         void adjustMinimumTimerInterval(double oldMinimumTimerInterval);
 
     private:
-        DOMTimer(ScriptExecutionContext*, PassOwnPtr<ScheduledAction>, int timeout, bool singleShot);
+        DOMTimer(ScriptExecutionContext*, PassOwnPtr<ScheduledAction>, int interval, bool singleShot);
         virtual void fired();
 
         double intervalClampedToMinimum(int timeout, double minimumTimerInterval) const;
@@ -68,7 +68,8 @@ namespace WebCore {
         int m_timeoutId;
         int m_nestingLevel;
         OwnPtr<ScheduledAction> m_action;
-        int m_originalTimeout;
+        int m_originalInterval;
+        bool m_shouldForwardUserGesture;
         static double s_minDefaultTimerInterval;
     };
 
