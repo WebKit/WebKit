@@ -34,7 +34,7 @@
 #import "WKViewInternal.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
-#import <HIToolbox/MacApplication.h> // For SetSystemUIMode()
+#import <Carbon/Carbon.h> // For SetSystemUIMode()
 #import <IOKit/pwr_mgt/IOPMLib.h> // For IOPMAssertionCreate()
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/FloatRect.h>
