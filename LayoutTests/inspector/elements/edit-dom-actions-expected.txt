@@ -34,26 +34,6 @@ Running: testSetNodeValue
       <div id="node-to-set-value">Edited Text</div>
   </div>
 
-Running: testSetAttribute
-==== before ====
-- <div id="testSetAttribute">
-      <div foo="attribute value" id="node-to-set-attribute"></div>
-  </div>
-==== after ====
-- <div id="testSetAttribute">
-      <div id="node-to-set-attribute" bar="edited attribute"></div>
-  </div>
-
-Running: testRemoveAttribute
-==== before ====
-- <div id="testRemoveAttribute">
-      <div foo="attribute value" id="node-to-remove-attribute"></div>
-  </div>
-==== after ====
-- <div id="testRemoveAttribute">
-      <div id="node-to-remove-attribute"></div>
-  </div>
-
 Running: testAddAttribute
 ==== before ====
 - <div id="testAddAttribute">

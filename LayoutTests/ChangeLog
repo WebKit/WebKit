@@ -1,5 +1,12 @@
 2011-03-14  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: remove the flaky part of the new inspector test for now.
+
+        * inspector/elements/edit-dom-actions-expected.txt:
+        * inspector/elements/edit-dom-actions.html:
+
+2011-03-14  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: make DOMAgent event target, remove dependency from ElementsPanel.
