@@ -1,3 +1,18 @@
+2011-03-14  Martin Robinson  <mrobinson@igalia.com>
+
+        Update GTK+ pixel results after r81053.
+
+        * platform/gtk/editing/selection/drag-select-1-expected.checksum:
+        * platform/gtk/editing/selection/drag-select-1-expected.png:
+        * platform/gtk/editing/selection/fake-drag-expected.checksum: Added.
+        * platform/gtk/editing/selection/fake-drag-expected.png: Added.
+        * platform/gtk/editing/selection/inline-closest-leaf-child-expected.checksum: Added.
+        * platform/gtk/editing/selection/inline-closest-leaf-child-expected.png: Added.
+        * platform/gtk/svg/custom/mouse-move-on-svg-container-standalone-expected.checksum:
+        * platform/gtk/svg/custom/mouse-move-on-svg-container-standalone-expected.png:
+        * platform/gtk/svg/custom/mouse-move-on-svg-root-standalone-expected.checksum:
+        * platform/gtk/svg/custom/mouse-move-on-svg-root-standalone-expected.png:
+
 2011-03-14  David Levin  <levin@chromium.org>
 
         Upstream test expectations from the chromium repository to WebKit.
