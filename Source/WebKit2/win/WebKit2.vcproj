@@ -981,6 +981,14 @@
 					Name="cf"
 					>
 					<File
+						RelativePath="..\Shared\API\c\cf\WKErrorCF.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\API\c\cf\WKErrorCF.h"
+						>
+					</File>
+					<File
 						RelativePath="..\Shared\API\c\cf\WKStringCF.cpp"
 						>
 					</File>

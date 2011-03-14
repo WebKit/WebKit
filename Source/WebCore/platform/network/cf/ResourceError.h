@@ -32,6 +32,7 @@
 #if USE(CFNETWORK)
 #include <CoreFoundation/CFStream.h>
 #else
+
 #ifdef __OBJC__
 @class NSError;
 #else
@@ -54,27 +55,19 @@ public:
     {
     }
 
+    ResourceError(CFErrorRef error);
+
+    CFErrorRef cfError() const;
+    operator CFErrorRef() const;
+
 #if USE(CFNETWORK)
     ResourceError(CFStreamError error);
-
-    ResourceError(CFErrorRef error)
-        : m_dataIsUpToDate(false)
-        , m_platformError(error)
-    {
-        m_isNull = !error;
-    }
-
-    operator CFErrorRef() const;
+    CFStreamError cfStreamError() const;
     operator CFStreamError() const;
 #else
-    ResourceError(NSError* error)
-        : m_dataIsUpToDate(false)
-        , m_platformError(error)
-    {
-        m_isNull = !error;
-    }
-
-    operator NSError*() const;
+    ResourceError(NSError *);
+    NSError *nsError() const;
+    operator NSError *() const;
 #endif
 
 private:

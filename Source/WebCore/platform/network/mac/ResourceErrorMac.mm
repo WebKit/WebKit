@@ -28,6 +28,7 @@
 
 #import "BlockExceptions.h"
 #import "KURL.h"
+#import <CoreFoundation/CFError.h>
 #import <Foundation/Foundation.h>
 
 @interface NSError (WebExtras)
@@ -35,6 +36,20 @@
 @end
 
 namespace WebCore {
+
+ResourceError::ResourceError(NSError *nsError)
+    : m_dataIsUpToDate(false)
+    , m_platformError(nsError)
+{
+    m_isNull = !nsError;
+}
+
+ResourceError::ResourceError(CFErrorRef cfError)
+    : m_dataIsUpToDate(false)
+    , m_platformError((NSError *)cfError)
+{
+    m_isNull = !cfError;
+}
 
 void ResourceError::platformLazyInit()
 {
@@ -59,10 +74,10 @@ void ResourceError::platformLazyInit()
 
 bool ResourceError::platformCompare(const ResourceError& a, const ResourceError& b)
 {
-    return (NSError*)a == (NSError*)b;
+    return a.nsError() == b.nsError();
 }
 
-ResourceError::operator NSError*() const
+NSError *ResourceError::nsError() const
 {
     if (m_isNull) {
         ASSERT(!m_platformError);
@@ -85,6 +100,21 @@ ResourceError::operator NSError*() const
     }
 
     return m_platformError.get();
+}
+
+ResourceError::operator NSError *() const
+{
+    return nsError();
+}
+
+CFErrorRef ResourceError::cfError() const
+{
+    return (CFErrorRef)nsError();
+}
+
+ResourceError::operator CFErrorRef() const
+{
+    return cfError();
 }
 
 } // namespace WebCore

@@ -1,6 +1,7 @@
 all:
     touch "%ConfigurationBuildDir%\buildfailed"
     -mkdir 2>NUL "%ConfigurationBuildDir%\include\WebKit2"
+    xcopy /y /d "..\Shared\API\c\cf\WKErrorCF.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\cf\WKStringCF.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\cf\WKURLCF.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\cf\WKURLRequestCF.h" "%ConfigurationBuildDir%\include\WebKit2"
