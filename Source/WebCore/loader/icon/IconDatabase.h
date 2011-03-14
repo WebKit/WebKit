@@ -34,6 +34,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(ICONDATABASE)
 #include "SQLiteDatabase.h"

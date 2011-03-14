@@ -1,3 +1,28 @@
+2011-03-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56296
+        Clean up IconDatabaseBase header.
+
+        -Get rid of the "PlatformString.h" include and replace it with a forward declaration.
+        -Group methods by which are used in WebCore directly and which are used in WebKit ports.
+
+        This'll make it easier to use in external frameworks (like WebKit2).
+
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconDatabaseBase.h:
+        (WebCore::IconDatabaseBase::retainIconForPageURL):
+        (WebCore::IconDatabaseBase::releaseIconForPageURL):
+        (WebCore::IconDatabaseBase::iconForPageURL):
+        (WebCore::IconDatabaseBase::setIconURLForPageURL):
+        (WebCore::IconDatabaseBase::setIconDataForIconURL):
+        (WebCore::IconDatabaseBase::iconDataKnownForIconURL):
+        (WebCore::IconDatabaseBase::loadDecisionForIconURL):
+        (WebCore::IconDatabaseBase::importIconURLForPageURL):
+        (WebCore::IconDatabaseBase::importIconDataForIconURL):
+        (WebCore::IconDatabaseBase::open):
+
 2011-03-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81026.

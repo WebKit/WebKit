@@ -26,9 +26,10 @@
 #ifndef IconDatabaseBase_h
 #define IconDatabaseBase_h
 
-#include "PlatformString.h"
-
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
+
 
 namespace WebCore { 
 
@@ -36,6 +37,7 @@ class DocumentLoader;
 class IconDatabaseClient;
 class Image;
 class IntSize;
+class SharedBuffer;
 
 enum IconLoadDecision {
     IconLoadYes,
@@ -52,22 +54,27 @@ protected:
 public:
     virtual ~IconDatabaseBase() { }
 
-    virtual void setEnabled(bool) { }
+    // Used internally by WebCore
     virtual bool isEnabled() const { return false; }
+    
+    virtual Image* iconForPageURL(const String&, const IntSize&) { return 0; }
     virtual Image* defaultIcon(const IntSize&) { return 0; }
-
+    
     virtual void retainIconForPageURL(const String&) { }
     virtual void releaseIconForPageURL(const String&) { }
 
-    virtual Image* iconForPageURL(const String&, const IntSize&) { return 0; }
     virtual String iconURLForPageURL(const String&);
-    virtual void setIconURLForPageURL(const String&, const String&) { }
-
-    virtual void setIconDataForIconURL(PassRefPtr<SharedBuffer>, const String&) { }
     virtual bool iconDataKnownForIconURL(const String&) { return false; }
     virtual IconLoadDecision loadDecisionForIconURL(const String&, DocumentLoader*) { return IconLoadNo; }
+    
+    virtual void setIconURLForPageURL(const String&, const String&) { }
+    virtual void setIconDataForIconURL(PassRefPtr<SharedBuffer>, const String&) { }
 
-    // Support for WebCoreStatistics in WebKit
+    // Used within one or more WebKit ports.
+    // We should try to remove these dependencies from the IconDatabaseBase class.
+
+    virtual void setEnabled(bool) { }
+
     virtual size_t pageURLMappingCount() { return 0; }
     virtual size_t retainedPageURLCount() { return 0; }
     virtual size_t iconRecordCount() { return 0; }
