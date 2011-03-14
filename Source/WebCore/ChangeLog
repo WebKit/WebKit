@@ -1,3 +1,13 @@
+2011-03-14  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Partial backout of https://bugs.webkit.org/show_bug.cgi?id=56230.  Go back to repainting the root
+        layer, since first layouts and printing mess up otherwise.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2011-03-11  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

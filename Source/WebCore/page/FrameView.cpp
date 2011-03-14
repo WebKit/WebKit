@@ -914,6 +914,9 @@ void FrameView::layout(bool allowSubtree)
     // Now update the positions of all layers.
     beginDeferredRepaints();
     IntPoint cachedOffset;
+    if (m_doFullRepaint)
+        root->view()->repaint(); // FIXME: This isn't really right, since the RenderView doesn't fully encompass the visibleContentRect(). It just happens
+                                 // to work out most of the time, since first layouts and printing don't have you scrolled anywhere.
     layer->updateLayerPositions((m_doFullRepaint ? 0 : RenderLayer::CheckForRepaint)
                                 | RenderLayer::IsCompositingUpdateRoot
                                 | RenderLayer::UpdateCompositingLayers,
