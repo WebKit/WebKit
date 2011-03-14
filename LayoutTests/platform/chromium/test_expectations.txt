@@ -3311,6 +3311,7 @@ BUGCR75426 LINUX DEBUG : fast/repaint/slider-thumb-drag-release.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/repaint/text-emphasis-v.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/table/028.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/029.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/039.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/040.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/auto-with-percent-height.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/growCellForImageQuirk.html = CRASH PASS
@@ -3324,8 +3325,10 @@ BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/003-vertical.html = CRASH 
 BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/004.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/border-collapsing-head-foot.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/rtl-border-collapsing.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/table-row-compositing-repaint-crash.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/text/international/vertical-text-metrics-test.html = CRASH
 BUGCR75426 LINUX DEBUG : fast/text/firstline/003.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : tables/mozilla/bugs/bug1318.html = CRASH PASS
 
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
