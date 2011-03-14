@@ -1,5 +1,16 @@
 2011-03-13  David Levin  <levin@chromium.org>
 
+        Update some baselines due to r80868.
+        Also, add MAC to a failure line where I should have put it previously.
+
+        * platform/chromium-mac/fast/backgrounds/animated-svg-as-background-expected.checksum: Added.
+        * platform/chromium-mac/fast/backgrounds/animated-svg-as-background-expected.png: Added.
+        * platform/chromium-mac/fast/backgrounds/animated-svg-as-mask-expected.checksum: Added.
+        * platform/chromium-mac/fast/backgrounds/animated-svg-as-mask-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-03-13  David Levin  <levin@chromium.org>
+
         Add one more failure which is related to change in this range:
           http://trac.webkit.org/log/?verbose=on&rev=80866&stop_rev=80860
         that I haven't been able to narrow down yet.
