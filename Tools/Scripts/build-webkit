@@ -3,6 +3,7 @@
 # Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2010 moiji-mobile.com All rights reserved.
+# Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,6 +42,7 @@ use webkitdirs;
 use webkitperl::features;
 use POSIX;
 
+sub cMakeArgsFromFeatures();
 sub checkForJavaSDK();
 sub formatBuildTime($);
 sub writeCongrats();
@@ -55,7 +57,7 @@ my $v8 = 0;
 my $installHeaders;
 my $installLibs;
 my $prefixPath;
-my $makeArgs;
+my $makeArgs = "";
 my $noWebKit2 = 0;
 my $startTime = time();
 
@@ -419,7 +421,7 @@ if (isGtk()) {
     }
 
     push @options, "--prefix=" . $prefixPath if defined($prefixPath);
-    push @options, "--makeargs=" . $makeArgs if defined($makeArgs);
+    push @options, "--makeargs=" . $makeArgs if $makeArgs;
 } elsif (isAppleMacWebKit()) {
     checkForJavaSDK();
     push @options, XcodeOptions();
@@ -487,7 +489,7 @@ if (isGtk()) {
     @options = @ARGV;
     push @options, "--install-headers=" . $installHeaders if defined($installHeaders);
     push @options, "--install-libs=" . $installLibs if defined($installLibs);
-    push @options, "--makeargs=" . $makeArgs if defined($makeArgs);
+    push @options, "--makeargs=" . $makeArgs if $makeArgs;
 
     foreach (@features) {
         push @options, "DEFINES+=$_->{define}=${$_->{value}}" if ${$_->{value}} != $_->{default};
@@ -511,10 +513,7 @@ if (isInspectorFrontend()) {
 
 if (isWx()) {
     downloadWafIfNeeded();
-    @options = ();
-    if (defined($makeArgs)) {
-        @options = split(/ /, $makeArgs);
-    }
+    @options = split(/ /, $makeArgs);
     @projects = ();
     my $result = buildWafProject('.', $clean, @options);
     exit exitStatus($result) if exitStatus($result);
@@ -529,34 +528,13 @@ if (isChromium()) {
 }
 
 if (isEfl()) {
-    @options = ();
-    @projects = ();
-    foreach (@features) {
-        my $featureName = $_->{define};
-        if ($featureName) {
-            my $featureEnabled = ${$_->{value}} ? "ON" : "OFF";
-            push @options, "-D$featureName=$featureEnabled";
-        }
-    }
-    push @options, "--makeargs=" . $makeArgs if defined($makeArgs);
-    push @options, "--prefix=" . $prefixPath if defined($prefixPath);
-    my $result = buildCMakeEflProject($clean, @options);
-    exit exitStatus($result) if exitStatus($result);
+    # By default we build using all of the available CPUs.
+    $makeArgs .= ($makeArgs ? " " : "") . "-j" . numberOfCPUs() if $makeArgs !~ /-j\s*\d+/;
+    buildCMakeProjectOrExit($clean, "Efl", $prefixPath, $makeArgs, cMakeArgsFromFeatures());
 }
 
 if (isWinCE()) {
-    @options = ();
-    @projects = ();
-    foreach (@features) {
-        my $featureName = $_->{define};
-        if ($featureName) {
-            my $featureEnabled = ${$_->{value}} ? "ON" : "OFF";
-            push @options, "-D$featureName=$featureEnabled";
-        }
-    }
-    push @options, "--makeargs=" . $makeArgs if defined($makeArgs);
-    my $result = buildCMakeWinCEProject("STANDARDSDK_500 (ARMV4I)", $clean, @options);
-    exit exitStatus($result) if exitStatus($result);
+    buildCMakeProjectOrExit($clean, "WinCE", $prefixPath, $makeArgs, ("-DCMAKE_WINCE_SDK=STANDARDSDK_500 (ARMV4I)", cMakeArgsFromFeatures()));
 }
 
 # Build, and abort if the build fails.
@@ -612,6 +590,19 @@ exit if $clean;
 writeCongrats();
 
 exit 0;
+
+sub cMakeArgsFromFeatures()
+{
+    my @args;
+    foreach (@features) {
+        my $featureName = $_->{define};
+        if ($featureName) {
+            my $featureEnabled = ${$_->{value}} ? "ON" : "OFF";
+            push @args, "-D$featureName=$featureEnabled";
+        }
+    }
+    return @args;
+}
 
 sub checkForJavaSDK()
 {

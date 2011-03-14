@@ -1,3 +1,28 @@
+2011-03-14  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by David Kilzer.
+
+        Cleanup: Separate port-specific implementation details from webkitdirs::buildCMakeProject()
+        https://bugs.webkit.org/show_bug.cgi?id=55438
+
+        Separate out the EFL- and WinCE-specific logic from the port-independent logic in
+        webkitdirs::buildCMakeProject(). Also, remove redundant code for generating the
+        CMake arguments for feature defines.
+
+        * Scripts/build-webkit:
+          - Added cMakeArgsFromFeatures() to convert the @features array to CMake arguments.
+          - Modified EFL and WinCE-specific building logic to call buildCMakeProjectOrExit().
+          - Sorted forward declarations.
+          - Initialize $makeArgs with the empty string so as to simplify its use in string operations;
+            Modified call sites as needed.
+        * Scripts/webkitdirs.pm:
+          - Added cleanCMakeGeneratedProject() to clean a CMake build.
+          - Added buildCMakeGeneratedProject() to build using generated build system.
+          - Added buildCMakeProjectOrExit() which is a facade for building a CMake project.
+          - Added generateBuildSystemFromCMakeProject() to generate the build system from
+            a CMake project.
+          - Removed buildCMakeProject(). This functionality is in buildCMakeProjectOrExit().
+
 2011-03-14  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Steve Block.
