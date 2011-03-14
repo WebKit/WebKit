@@ -363,13 +363,53 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
     }
 }
 
-Node* InspectorDOMAgent::nodeToSelectOn(long nodeId, bool documentWide)
+Node* InspectorDOMAgent::assertNode(ErrorString* errorString, long nodeId)
+{
+    Node* node = nodeForId(nodeId);
+    if (!node) {
+        *errorString = "Could not find node with given id.";
+        return 0;
+    }
+    return node;
+}
+
+Element* InspectorDOMAgent::assertElement(ErrorString* errorString, long nodeId)
+{
+    Node* node = assertNode(errorString, nodeId);
+    if (!node)
+        return 0;
+
+    if (node->nodeType() != Node::ELEMENT_NODE) {
+        *errorString = "Node is not an Element.";
+        return 0;
+    }
+    return toElement(node);
+}
+
+
+HTMLElement* InspectorDOMAgent::assertHTMLElement(ErrorString* errorString, long nodeId)
+{
+    Element* element = assertElement(errorString, nodeId);
+    if (!element)
+        return 0;
+
+    if (!element->isHTMLElement()) {
+        *errorString = "Node is not an HTML Element.";
+        return 0;
+    }
+    return toHTMLElement(element);
+}
+
+Node* InspectorDOMAgent::nodeToSelectOn(ErrorString* errorString, long nodeId, bool documentWide)
 {
     Node* node;
-    if (!nodeId)
+    if (!nodeId) {
         node = m_document.get();
-    else
-        node = nodeForId(nodeId);
+        if (!node)
+            *errorString = "No document to query on.";
+    } else
+        node = assertNode(errorString, nodeId);
+
     if (!node)
         return 0;
 
@@ -435,11 +475,9 @@ void InspectorDOMAgent::getChildNodes(ErrorString*, long nodeId)
 void InspectorDOMAgent::querySelector(ErrorString* errorString, long nodeId, const String& selectors, bool documentWide, long* elementId)
 {
     *elementId = 0;
-    Node* node = nodeToSelectOn(nodeId, documentWide);
-    if (!node) {
-        *errorString = "Node with given id not found.";
+    Node* node = nodeToSelectOn(errorString, nodeId, documentWide);
+    if (!node)
         return;
-    }
 
     ExceptionCode ec = 0;
     RefPtr<Element> element = node->querySelector(selectors, ec);
@@ -454,11 +492,9 @@ void InspectorDOMAgent::querySelector(ErrorString* errorString, long nodeId, con
 
 void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, long nodeId, const String& selectors, bool documentWide, RefPtr<InspectorArray>* result)
 {
-    Node* node = nodeToSelectOn(nodeId, documentWide);
-    if (!node) {
-        *errorString = "Node with given id not found.";
+    Node* node = nodeToSelectOn(errorString, nodeId, documentWide);
+    if (!node)
         return;
-    }
 
     ExceptionCode ec = 0;
     RefPtr<NodeList> nodes = node->querySelectorAll(selectors, ec);
@@ -522,25 +558,25 @@ long InspectorDOMAgent::boundNodeId(Node* node)
     return m_documentNodeToIdMap.get(node);
 }
 
-void InspectorDOMAgent::setAttribute(ErrorString*, long elementId, const String& name, const String& value, bool* success)
+void InspectorDOMAgent::setAttribute(ErrorString* errorString, long elementId, const String& name, const String& value)
 {
-    Node* node = nodeForId(elementId);
-    if (node && (node->nodeType() == Node::ELEMENT_NODE)) {
-        Element* element = static_cast<Element*>(node);
+    Element* element = assertElement(errorString, elementId);
+    if (element) {
         ExceptionCode ec = 0;
         element->setAttribute(name, value, ec);
-        *success = !ec;
+        if (ec)
+            *errorString = "Exception while setting attribute value.";
     }
 }
 
-void InspectorDOMAgent::removeAttribute(ErrorString*, long elementId, const String& name, bool* success)
+void InspectorDOMAgent::removeAttribute(ErrorString* errorString, long elementId, const String& name)
 {
-    Node* node = nodeForId(elementId);
-    if (node && (node->nodeType() == Node::ELEMENT_NODE)) {
-        Element* element = static_cast<Element*>(node);
+    Element* element = assertElement(errorString, elementId);
+    if (element) {
         ExceptionCode ec = 0;
         element->removeAttribute(name, ec);
-        *success = !ec;
+        if (ec)
+            *errorString = "Exception while removing attribute.";
     }
 }
 
@@ -599,28 +635,25 @@ void InspectorDOMAgent::setNodeName(ErrorString*, long nodeId, const String& tag
         pushChildNodesToFrontend(*newId);
 }
 
-void InspectorDOMAgent::getOuterHTML(ErrorString*, long nodeId, WTF::String* outerHTML)
+void InspectorDOMAgent::getOuterHTML(ErrorString* errorString, long nodeId, WTF::String* outerHTML)
 {
-    Node* node = nodeForId(nodeId);
-    if (!node || !node->isHTMLElement())
-        return;
-
-    *outerHTML = toHTMLElement(node)->outerHTML();
+    HTMLElement* element = assertHTMLElement(errorString, nodeId);
+    if (element)
+        *outerHTML = element->outerHTML();
 }
 
-void InspectorDOMAgent::setOuterHTML(ErrorString*, long nodeId, const String& outerHTML, long* newId)
+void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, long nodeId, const String& outerHTML, long* newId)
 {
-    Node* node = nodeForId(nodeId);
-    if (!node || !node->isHTMLElement())
+    HTMLElement* htmlElement = assertHTMLElement(errorString, nodeId);
+    if (!htmlElement)
         return;
 
-    bool requiresTotalUpdate = node->nodeName() == "HTML" || node->nodeName() == "BODY" || node->nodeName() == "HEAD";
+    bool requiresTotalUpdate = htmlElement->tagName() == "HTML" || htmlElement->tagName() == "BODY" || htmlElement->tagName() == "HEAD";
 
     bool childrenRequested = m_childrenRequested.contains(nodeId);
-    Node* previousSibling = node->previousSibling();
-    ContainerNode* parentNode = node->parentNode();
+    Node* previousSibling = htmlElement->previousSibling();
+    ContainerNode* parentNode = htmlElement->parentNode();
 
-    HTMLElement* htmlElement = toHTMLElement(node);
     ExceptionCode ec = 0;
     htmlElement->setOuterHTML(outerHTML, ec);
     if (ec)

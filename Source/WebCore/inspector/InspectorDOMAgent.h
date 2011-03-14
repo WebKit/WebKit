@@ -56,6 +56,7 @@ class Event;
 class InspectorDOMAgent;
 class InspectorFrontend;
 class MatchJob;
+class HTMLElement;
 class InspectorState;
 class InstrumentingAgents;
 class NameNodeMap;
@@ -110,8 +111,8 @@ public:
     void querySelectorAll(ErrorString*, long nodeId, const String& selectors, bool documentWide, RefPtr<InspectorArray>* result);
     void getDocument(ErrorString*, RefPtr<InspectorObject>* root);
     void getChildNodes(ErrorString*, long nodeId);
-    void setAttribute(ErrorString*, long elementId, const String& name, const String& value, bool* success);
-    void removeAttribute(ErrorString*, long elementId, const String& name, bool* success);
+    void setAttribute(ErrorString*, long elementId, const String& name, const String& value);
+    void removeAttribute(ErrorString*, long elementId, const String& name);
     void removeNode(ErrorString*, long nodeId, long* outNodeId);
     void setNodeName(ErrorString*, long nodeId, const String& name, long* newId);
     void getOuterHTML(ErrorString*, long nodeId, WTF::String* outerHTML);
@@ -162,8 +163,10 @@ private:
     typedef HashMap<RefPtr<Node>, long> NodeToIdMap;
     long bind(Node*, NodeToIdMap*);
     void unbind(Node*, NodeToIdMap*);
-
-    Node* nodeToSelectOn(long nodeId, bool documentWide);
+    Node* assertNode(ErrorString*, long nodeId);
+    Element* assertElement(ErrorString*, long nodeId);
+    HTMLElement* assertHTMLElement(ErrorString*, long nodeId);
+    Node* nodeToSelectOn(ErrorString*, long nodeId, bool documentWide);
 
     long pushNodePathToFrontend(Node*);
     void pushChildNodesToFrontend(long nodeId);

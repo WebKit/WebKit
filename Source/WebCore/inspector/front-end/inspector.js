@@ -1537,7 +1537,7 @@ WebInspector.startEditing = function(element, config)
         var isMetaOrCtrl = WebInspector.isMac() ?
             event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey :
             event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
-        if (isEnterKey(event) && (!config.multiline || isMetaOrCtrl))
+        if (isEnterKey(event) && (event.isMetaOrCtrlForTest || !config.multiline || isMetaOrCtrl))
             return "commit";
         else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code)
             return "cancel";

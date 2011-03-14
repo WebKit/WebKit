@@ -146,8 +146,8 @@ module core {
         void setNodeValue(in long nodeId, in String value, out boolean success);
         void removeNode(in long nodeId, out long outNodeId);
 
-        void setAttribute(in long elementId, in String name, in String value, out boolean success);
-        void removeAttribute(in long elementId, in String name, out boolean success);
+        void setAttribute(in long elementId, in String name, in String value);
+        void removeAttribute(in long elementId, in String name);
 
         void getEventListenersForNode(in long nodeId, out Array listenersArray);
         void copyNode(in long nodeId);
@@ -157,6 +157,7 @@ module core {
 
         void performSearch(in String query, in boolean runSynchronously);
         void searchCanceled();
+
         void pushNodeByPathToFrontend(in String path, out long nodeId);
         void resolveNode(in long nodeId, in String objectGroup, out Value result);
         void pushNodeToFrontend(in Object objectId, out long nodeId);

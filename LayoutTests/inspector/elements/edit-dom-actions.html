@@ -1,0 +1,189 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    // Save time on style updates.
+    WebInspector.StylesSidebarPane.prototype.update = function() {};
+    WebInspector.MetricsSidebarPane.prototype.update = function() {};
+
+    InspectorTest.runTestSuite([
+        function testSetUp(next)
+        {
+            InspectorTest.expandElementsTree(next);
+        },
+
+        function testRemove(next)
+        {
+            domActionTest("testRemove", "node-to-remove", testBody, next);
+
+            function testBody(node, done)
+            {
+                var treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(node);
+                treeElement.remove();
+                InspectorTest.runAfterPendingDispatches(done);
+            }
+        },
+
+        function testSetNodeName(next)
+        {
+            domActionTest("testSetNodeName", "node-to-set-name", testBody, next);
+
+            function testBody(node, done)
+            {
+                editNodePartAndRun(node, "webkit-html-tag-name", "span", done);
+            }
+        },
+
+        function testSetNodeValue(next)
+        {
+            domActionTest("testSetNodeValue", "node-to-set-value", testBody, next);
+
+            function testBody(node, done)
+            {
+                editNodePartAndRun(node, "webkit-html-text-node", "Edited Text", done);
+            }
+        },
+
+        function testSetAttribute(next)
+        {
+            domActionTest("testSetAttribute", "node-to-set-attribute", testBody, next);
+         
+            function testBody(node, done)
+            {
+                editNodePartAndRun(node, "webkit-html-attribute", "bar=\"edited attribute\"", done);
+            }
+        },
+
+        function testRemoveAttribute(next)
+        {
+            domActionTest("testRemoveAttribute", "node-to-remove-attribute", testBody, next);
+         
+            function testBody(node, done)
+            {
+                editNodePartAndRun(node, "webkit-html-attribute", "", done);
+            }
+        },
+
+        function testAddAttribute(next)
+        {
+            domActionTest("testAddAttribute", "node-to-add-attribute", testBody, next);
+         
+            function testBody(node, done)
+            {
+                editNodePart(node, "webkit-html-attribute");
+
+                var editorElement = window.getSelection().anchorNode.parentElement;
+                editorElement.dispatchEvent(InspectorTest.createKeyEvent("U+0009")); // Tab
+
+                var editorElement = window.getSelection().anchorNode.parentElement;
+                editorElement.textContent = "newattr=\"new-value\"";
+                editorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+                InspectorTest.runAfterPendingDispatches(done);
+            }
+        },
+
+        function testEditAsHTML(next)
+        {
+            domActionTest("testEditAsHTML", "node-to-edit-as-html", testBody, next);
+
+            function testBody(node, done)
+            {
+                var treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(node);
+                treeElement._editAsHTML();
+                InspectorTest.runAfterPendingDispatches(step2);
+
+                function step2()
+                {
+                    InspectorTest.addResult(treeElement._htmlEditElement.textContent);
+                    treeElement._htmlEditElement.textContent = "<div foo=\"bar\"><span id=\"inner-span\">Span contents</span></div>";
+                    var event = InspectorTest.createKeyEvent("Enter");
+                    event.isMetaOrCtrlForTest = true;
+                    treeElement._htmlEditElement.dispatchEvent(event);
+                    InspectorTest.runAfterPendingDispatches(done);
+                }
+            }
+        }
+    ]);
+
+    function domActionTest(testName, dataNode, testBody, next)
+    {
+        var testNode = InspectorTest.expandedNodeWithId(testName);
+        InspectorTest.addResult("==== before ====");
+        InspectorTest.dumpElementsTree(testNode);
+
+        InspectorTest.selectNodeWithId(dataNode, step1);
+
+        function step1(node)
+        {
+            testBody(node, step2);
+        }
+
+        function step2()
+        {
+	        InspectorTest.addResult("==== after ====");
+            InspectorTest.dumpElementsTree(testNode);
+            next();
+        }
+    }
+
+    function editNodePart(node, className)
+    {
+        var treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(node);
+        var textElement = treeElement.listItemElement.getElementsByClassName(className)[0];
+        treeElement._startEditingTarget(textElement);
+    }
+
+    function editNodePartAndRun(node, className, newValue, step2)
+    {
+        editNodePart(node, className);
+
+        var editorElement = window.getSelection().anchorNode.parentElement;
+        editorElement.textContent = newValue;
+        editorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        InspectorTest.runAfterPendingDispatches(step2);
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that user can mutate DOM by means of elements panel.
+</p>
+
+<div>
+    <div id="testRemove">
+        <div id="node-to-remove"></div>
+    </div>
+
+    <div id="testSetNodeName">
+        <div id="node-to-set-name"></div>
+    </div>
+
+    <div id="testSetNodeValue">
+        <div id="node-to-set-value">Text</div>
+    </div>
+
+    <div id="testSetAttribute">
+        <div foo="attribute value" id="node-to-set-attribute"></div>
+    </div>
+
+    <div id="testRemoveAttribute">
+        <div foo="attribute value" id="node-to-remove-attribute"></div>
+    </div>
+
+    <div id="testAddAttribute">
+        <div id="node-to-add-attribute"></div>
+    </div>
+
+    <div id="testEditAsHTML">
+        <div id="node-to-edit-as-html"><span id="span">Text</span></div>
+    </div>
+</div>
+</body>
+</html>

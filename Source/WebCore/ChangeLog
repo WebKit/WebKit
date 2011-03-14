@@ -1,3 +1,31 @@
+2011-03-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add tests for edit dom operations.
+        https://bugs.webkit.org/show_bug.cgi?id=56248
+
+        Test: inspector/elements/edit-dom-actions.html
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::assertNode):
+        (WebCore::InspectorDOMAgent::assertElement):
+        (WebCore::InspectorDOMAgent::assertHTMLElement):
+        (WebCore::InspectorDOMAgent::nodeToSelectOn):
+        (WebCore::InspectorDOMAgent::querySelector):
+        (WebCore::InspectorDOMAgent::querySelectorAll):
+        (WebCore::InspectorDOMAgent::setAttribute):
+        (WebCore::InspectorDOMAgent::removeAttribute):
+        (WebCore::InspectorDOMAgent::getOuterHTML):
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype.setAttribute):
+        (WebInspector.DOMNode.prototype.removeAttribute):
+        * inspector/front-end/inspector.js:
+        (WebInspector.startEditing.defaultFinishHandler):
+
 2011-03-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein.

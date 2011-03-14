@@ -130,16 +130,15 @@ WebInspector.DOMNode.prototype = {
 
     setAttribute: function(name, value, callback)
     {
-        function mycallback(error, success)
+        function mycallback(error)
         {
-            if (error || !success)
-                return;
-
-            var attr = this._attributesMap[name];
-            if (attr)
-                attr.value = value;
-            else
-                attr = this._addAttribute(name, value);
+            if (!error) {
+                var attr = this._attributesMap[name];
+                if (attr)
+                    attr.value = value;
+                else
+                    attr = this._addAttribute(name, value);
+            }
 
             if (callback)
                 callback();
@@ -156,16 +155,16 @@ WebInspector.DOMNode.prototype = {
     {
         function mycallback(error, success)
         {
-            if (error || !success)
-                return;
-
-            delete this._attributesMap[name];
-            for (var i = 0;  i < this._attributes.length; ++i) {
-                if (this._attributes[i].name === name) {
-                    this._attributes.splice(i, 1);
-                    break;
+            if (!error) {
+                delete this._attributesMap[name];
+                for (var i = 0;  i < this._attributes.length; ++i) {
+                    if (this._attributes[i].name === name) {
+                        this._attributes.splice(i, 1);
+                        break;
+                    }
                 }
             }
+
             if (callback)
                 callback();
         }
