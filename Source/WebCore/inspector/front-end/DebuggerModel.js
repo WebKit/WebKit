@@ -38,13 +38,13 @@ WebInspector.DebuggerModel = function()
 }
 
 WebInspector.DebuggerModel.Events = {
+    DebuggerWasEnabled: "debugger-was-enabled",
+    DebuggerWasDisabled: "debugger-was-disabled",
     DebuggerPaused: "debugger-paused",
     DebuggerResumed: "debugger-resumed",
     ParsedScriptSource: "parsed-script-source",
     FailedToParseScriptSource: "failed-to-parse-script-source",
     ScriptSourceChanged: "script-source-changed",
-    BreakpointAdded: "breakpoint-added",
-    BreakpointRemoved: "breakpoint-removed",
     BreakpointResolved: "breakpoint-resolved"
 }
 
@@ -52,17 +52,6 @@ WebInspector.DebuggerModel.prototype = {
     enableDebugger: function()
     {
         DebuggerAgent.enable();
-        if (this._breakpointsPushedToBackend)
-            return;
-        var breakpoints = WebInspector.settings.breakpoints;
-        for (var i = 0; i < breakpoints.length; ++i) {
-            var breakpoint = breakpoints[i];
-            if (typeof breakpoint.url !== "string" || typeof breakpoint.lineNumber !== "number" || typeof breakpoint.columnNumber !== "number" ||
-                typeof breakpoint.condition !== "string" || typeof breakpoint.enabled !== "boolean")
-                continue;
-            this.setBreakpoint(breakpoint.url, breakpoint.lineNumber, breakpoint.columnNumber, breakpoint.condition, breakpoint.enabled);
-        }
-        this._breakpointsPushedToBackend = true;
     },
 
     disableDebugger: function()
@@ -70,12 +59,23 @@ WebInspector.DebuggerModel.prototype = {
         DebuggerAgent.disable();
     },
 
+    _debuggerWasEnabled: function()
+    {
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerWasEnabled);
+    },
+
+    _debuggerWasDisabled: function()
+    {
+        this._breakpoints = {};
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerWasDisabled);
+    },
+
     continueToLocation: function(sourceID, lineNumber, columnNumber)
     {
         DebuggerAgent.continueToLocation(sourceID, lineNumber, columnNumber);
     },
 
-    setBreakpoint: function(url, lineNumber, columnNumber, condition, enabled)
+    setBreakpoint: function(url, lineNumber, columnNumber, condition, enabled, callback)
     {
         // Adjust column if needed.
         var minColumnNumber = 0;
@@ -86,31 +86,32 @@ WebInspector.DebuggerModel.prototype = {
         }
         columnNumber = Math.max(columnNumber, minColumnNumber);
 
-        function didSetBreakpoint(breakpointsPushedToBackend, error, breakpointId, locations)
+        function didSetBreakpoint(error, breakpointId, locations)
         {
-            if (error || !breakpointId)
-                return;
-
-            var breakpoint = new WebInspector.Breakpoint(breakpointId, url, "", lineNumber, columnNumber, condition, enabled);
-            breakpoint.locations = locations;
-            this._breakpoints[breakpointId] = breakpoint;
-            if (breakpointsPushedToBackend)
-                this._saveBreakpoints();
-            this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointAdded, breakpoint);
+            var breakpoint;
+            if (!error && breakpointId) {
+                breakpoint = new WebInspector.Breakpoint(breakpointId, url, "", lineNumber, columnNumber, condition, enabled);
+                breakpoint.locations = locations;
+                this._breakpoints[breakpointId] = breakpoint;
+            }
+            if (callback)
+                callback(breakpoint);
         }
-        DebuggerAgent.setJavaScriptBreakpoint(url, lineNumber, columnNumber, condition, enabled, didSetBreakpoint.bind(this, this._breakpointsPushedToBackend));
+        DebuggerAgent.setJavaScriptBreakpoint(url, lineNumber, columnNumber, condition, enabled, didSetBreakpoint.bind(this));
     },
 
-    setBreakpointBySourceId: function(sourceID, lineNumber, columnNumber, condition, enabled)
+    setBreakpointBySourceId: function(sourceID, lineNumber, columnNumber, condition, enabled, callback)
     {
         function didSetBreakpoint(error, breakpointId, actualLineNumber, actualColumnNumber)
         {
-            if (error || !breakpointId)
-                return;
-            var breakpoint = new WebInspector.Breakpoint(breakpointId, "", sourceID, lineNumber, columnNumber, condition, enabled);
-            breakpoint.addLocation(sourceID, actualLineNumber, actualColumnNumber);
-            this._breakpoints[breakpointId] = breakpoint;
-            this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointAdded, breakpoint);
+            var breakpoint;
+            if (!error && breakpointId) {
+                breakpoint = new WebInspector.Breakpoint(breakpointId, "", sourceID, lineNumber, columnNumber, condition, enabled);
+                breakpoint.addLocation(sourceID, actualLineNumber, actualColumnNumber);
+                this._breakpoints[breakpointId] = breakpoint;
+            }
+            if (callback)
+                callback(breakpoint);
         }
         DebuggerAgent.setJavaScriptBreakpointBySourceId(sourceID, lineNumber, columnNumber, condition, enabled, didSetBreakpoint.bind(this));
     },
@@ -118,68 +119,19 @@ WebInspector.DebuggerModel.prototype = {
     removeBreakpoint: function(breakpointId)
     {
         DebuggerAgent.removeJavaScriptBreakpoint(breakpointId);
-        var breakpoint = this._breakpoints[breakpointId];
         delete this._breakpoints[breakpointId];
-        this._saveBreakpoints();
-        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointRemoved, breakpointId);
-    },
-
-    updateBreakpoint: function(breakpointId, condition, enabled)
-    {
-        var breakpoint = this._breakpoints[breakpointId];
-        this.removeBreakpoint(breakpointId);
-        if (breakpoint.url)
-            this.setBreakpoint(breakpoint.url, breakpoint.lineNumber, breakpoint.columnNumber, condition, enabled);
-        else
-            this.setBreakpointBySourceId(breakpoint.sourceID, breakpoint.lineNumber, breakpoint.columnNumber, condition, enabled);
     },
 
     _breakpointResolved: function(breakpointId, sourceID, lineNumber, columnNumber)
     {
         var breakpoint = this._breakpoints[breakpointId];
-        if (!breakpoint)
-            return;
         breakpoint.addLocation(sourceID, lineNumber, columnNumber);
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, breakpoint);
-    },
-
-    _saveBreakpoints: function()
-    {
-        var serializedBreakpoints = [];
-        for (var id in this._breakpoints) {
-            var breakpoint = this._breakpoints[id];
-            if (!breakpoint.url)
-                continue;
-            var serializedBreakpoint = {};
-            serializedBreakpoint.url = breakpoint.url;
-            serializedBreakpoint.lineNumber = breakpoint.lineNumber;
-            serializedBreakpoint.columnNumber = breakpoint.columnNumber;
-            serializedBreakpoint.condition = breakpoint.condition;
-            serializedBreakpoint.enabled = breakpoint.enabled;
-            serializedBreakpoints.push(serializedBreakpoint);
-        }
-        WebInspector.settings.breakpoints = serializedBreakpoints;
     },
 
     get breakpoints()
     {
         return this._breakpoints;
-    },
-
-    breakpointForId: function(breakpointId)
-    {
-        return this._breakpoints[breakpointId];
-    },
-
-    queryBreakpoints: function(filter)
-    {
-        var breakpoints = [];
-        for (var id in this._breakpoints) {
-           var breakpoint = this._breakpoints[id];
-           if (filter(breakpoint))
-               breakpoints.push(breakpoint);
-        }
-        return breakpoints;
     },
 
     reset: function()
@@ -188,7 +140,7 @@ WebInspector.DebuggerModel.prototype = {
         for (var id in this._breakpoints) {
             var breakpoint = this._breakpoints[id];
             if (!breakpoint.url)
-                this.removeBreakpoint(id);
+                delete this._breakpoints[id];
             else
                 breakpoint.locations = [];
         }
@@ -316,12 +268,12 @@ WebInspector.DebuggerDispatcher.prototype = {
 
     debuggerWasEnabled: function()
     {
-        WebInspector.panels.scripts.debuggerWasEnabled();
+        this._debuggerModel._debuggerWasEnabled();
     },
 
     debuggerWasDisabled: function()
     {
-        WebInspector.panels.scripts.debuggerWasDisabled();
+        this._debuggerModel._debuggerWasDisabled();
     },
 
     parsedScriptSource: function(sourceID, sourceURL, lineOffset, columnOffset, length, scriptWorldType)

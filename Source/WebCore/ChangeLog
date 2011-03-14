@@ -1,3 +1,51 @@
+2011-03-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: move breakpoints restoring to debugger presentation model.
+        https://bugs.webkit.org/show_bug.cgi?id=56123
+
+        DebuggerModel's "breakpoint-added" and "breakpoint-removed" events are gone since
+        setBreakpoint/removeBreakpoint are now called from DPM only.
+
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::disable):
+        (WebCore::InspectorDebuggerAgent::enableDebuggerAfterShown):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.enableDebugger):
+        (WebInspector.DebuggerModel.prototype._debuggerWasEnabled):
+        (WebInspector.DebuggerModel.prototype._debuggerWasDisabled):
+        (WebInspector.DebuggerModel.prototype.setBreakpoint.didSetBreakpoint):
+        (WebInspector.DebuggerModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerModel.prototype.setBreakpointBySourceId):
+        (WebInspector.DebuggerModel.prototype.removeBreakpoint):
+        (WebInspector.DebuggerModel.prototype._breakpointResolved):
+        (WebInspector.DebuggerModel.prototype.reset):
+        (WebInspector.DebuggerDispatcher.prototype.debuggerWasEnabled):
+        (WebInspector.DebuggerDispatcher.prototype.debuggerWasDisabled):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerWasEnabled):
+        (WebInspector.DebuggerPresentationModel.prototype._parsedScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._failedToParseScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._scriptSourceChanged):
+        (WebInspector.DebuggerPresentationModel.prototype.breakpointsForSourceFileId):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpointEnabled):
+        (WebInspector.DebuggerPresentationModel.prototype.updateBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype.removeBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype.findBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointRemoved):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointResolved):
+        (WebInspector.DebuggerPresentationModel.prototype._restoreBreakpoints):
+        (WebInspector.DebuggerPresentationModel.prototype._saveBreakpoints):
+        (WebInspector.DebuggerPresentationModel.prototype.reset):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._debuggerWasEnabled):
+        (WebInspector.ScriptsPanel.prototype._debuggerWasDisabled):
+
 2011-03-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81015.

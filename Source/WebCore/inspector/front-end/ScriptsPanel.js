@@ -185,6 +185,8 @@ WebInspector.ScriptsPanel = function()
 
     this.reset();
 
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasEnabled, this._debuggerWasEnabled, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasDisabled, this._debuggerWasDisabled, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._failedToParseScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ScriptSourceChanged, this._scriptSourceChanged, this);
@@ -450,7 +452,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._clearInterface();
     },
 
-    debuggerWasEnabled: function()
+    _debuggerWasEnabled: function()
     {
         this._setPauseOnExceptions(WebInspector.settings.pauseOnExceptionState);
 
@@ -460,7 +462,7 @@ WebInspector.ScriptsPanel.prototype = {
         this.reset(true);
     },
 
-    debuggerWasDisabled: function()
+    _debuggerWasDisabled: function()
     {
         if (!this._debuggerEnabled)
             return;

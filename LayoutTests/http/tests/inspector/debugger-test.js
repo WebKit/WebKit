@@ -8,7 +8,7 @@ InspectorTest.startDebuggerTest = function(callback, quiet)
     if (WebInspector.panels.scripts._debuggerEnabled)
         startTest();
     else {
-        InspectorTest.addSniffer(WebInspector.panels.scripts, "debuggerWasEnabled", startTest);
+        InspectorTest.addSniffer(WebInspector.debuggerModel, "_debuggerWasEnabled", startTest);
         WebInspector.panels.scripts._toggleDebugging(false);
     }
 
@@ -35,7 +35,7 @@ InspectorTest.completeDebuggerTest = function()
         if (!scriptsPanel._debuggerEnabled)
             completeTest();
         else {
-            InspectorTest.addSniffer(WebInspector.panels.scripts, "debuggerWasDisabled", completeTest);
+            InspectorTest.addSniffer(WebInspector.debuggerModel, "_debuggerWasDisabled", completeTest);
             scriptsPanel._toggleDebugging(false);
         }
     }
