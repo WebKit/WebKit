@@ -3407,4 +3407,4 @@ BUG_LEVIN MAC : html5lib/runner.html = CRASH PASS TIMEOUT
 BUG_LEVIN MAC : platform/mac/editing/input/text-control-ime-input.html = CRASH
 BUG_LEVIN MAC : storage/domstorage/complex-values.html = CRASH
 
-BUGCR76020 GPU WIN : canvas/philip/tests/2d.text.draw.align.end.ltr.html = TEST
+BUGCR76020 GPU WIN : canvas/philip/tests/2d.text.draw.align.end.ltr.html = TEXT

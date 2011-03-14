@@ -1,5 +1,11 @@
 2011-03-14  David Levin  <levin@chromium.org>
 
+        Fix typo TEXT vs TEST.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-14  David Levin  <levin@chromium.org>
+
         Rebaseline some test due to r80996.
         Rearrange some expectations (from IMAGE to IMAGE_TEXT) due to r80996
         and add a few bugs which track the other failures.
