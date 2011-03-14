@@ -1,3 +1,12 @@
+2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Removed redundant baselines from Windows port so that rebaselines done in r81059 take effect.
+
+        * platform/win/svg/custom/mouse-move-on-svg-container-expected.txt: Removed.
+        * platform/win/svg/custom/mouse-move-on-svg-container-standalone-expected.txt: Removed.
+        * platform/win/svg/custom/mouse-move-on-svg-root-expected.txt: Removed.
+        * platform/win/svg/custom/mouse-move-on-svg-root-standalone-expected.txt: Removed.
+
 2011-03-14  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Adjusting Snow Leopard expected results after r81035.
