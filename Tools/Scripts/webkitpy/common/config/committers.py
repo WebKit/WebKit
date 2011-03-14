@@ -119,7 +119,7 @@ committers_unable_to_review = [
     Committer("Girish Ramakrishnan", ["girish@forwardbias.in", "ramakrishnan.girish@gmail.com"]),
     Committer("Graham Dennis", ["Graham.Dennis@gmail.com", "gdennis@webkit.org"]),
     Committer("Greg Bolsinga", "bolsinga@apple.com"),
-    Committer("Gyuyoung Kim", ["gyuyoung.kim@samsung.com", "gyuyoung@gmail.com", "gyuyoung@webkit.org"], "gyuyoung"),
+    Committer("Gyuyoung Kim", ["gyuyoung.kim@samsung.com", "gyuyoung.kim@webkit.org"], "gyuyoung"),
     Committer("Hans Wennborg", "hans@chromium.org", "hwennborg"),
     Committer("Hayato Ito", "hayato@chromium.org", "hayato"),
     Committer("Helder Correia", "helder@sencha.com", "helder"),

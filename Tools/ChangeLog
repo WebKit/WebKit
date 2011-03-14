@@ -1,3 +1,9 @@
+2011-03-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Modify my email address in committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-03-13  Joe Wild  <joseph.wild@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
