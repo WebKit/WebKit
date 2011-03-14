@@ -106,6 +106,11 @@ namespace JSC {
         return m_enumerationCache.get();
     }
 
+    ALWAYS_INLINE JSPropertyNameIterator* Register::propertyNameIterator() const
+    {
+        return static_cast<JSPropertyNameIterator*>(jsValue().asCell());
+    }
+
 } // namespace JSC
 
 #endif // JSPropertyNameIterator_h

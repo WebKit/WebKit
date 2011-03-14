@@ -205,7 +205,7 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     // get to its global data.
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT0);
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT0);
-    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     peek(regT1);
     emitPutToCallFrameHeader(regT1, RegisterFile::ReturnPC);
@@ -229,7 +229,7 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     // get to its global data.
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT2);
-    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
@@ -251,7 +251,7 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     // get to its global data.
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT0);
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT0);
-    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
@@ -321,7 +321,7 @@ JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executa
     // get to its global data.
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT0);
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT0);
-    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     peek(regT1);
     emitPutToCallFrameHeader(regT1, RegisterFile::ReturnPC);
@@ -344,7 +344,7 @@ JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executa
     // get to its global data.
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT2);
-    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
@@ -367,7 +367,7 @@ JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executa
     // get to its global data.
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT0);
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT0);
-    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
@@ -1276,8 +1276,10 @@ void JIT::emit_op_get_pnames(Instruction* currentInstruction)
     getPnamesStubCall.addArgument(regT0);
     getPnamesStubCall.call(dst);
     load32(Address(regT0, OBJECT_OFFSETOF(JSPropertyNameIterator, m_jsStringsSize)), regT3);
-    store32(Imm32(0), addressFor(i));
-    store32(regT3, addressFor(size));
+    store32(Imm32(Int32Tag), intTagFor(i));
+    store32(Imm32(0), intPayloadFor(i));
+    store32(Imm32(Int32Tag), intTagFor(size));
+    store32(regT3, payloadFor(size));
     Jump end = jump();
 
     isNotObject.link(this);
@@ -1303,11 +1305,11 @@ void JIT::emit_op_next_pname(Instruction* currentInstruction)
     JumpList callHasProperty;
 
     Label begin(this);
-    load32(addressFor(i), regT0);
-    Jump end = branch32(Equal, regT0, addressFor(size));
+    load32(intPayloadFor(i), regT0);
+    Jump end = branch32(Equal, regT0, intPayloadFor(size));
 
     // Grab key @ i
-    loadPtr(addressFor(it), regT1);
+    loadPtr(payloadFor(it), regT1);
     loadPtr(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_jsStrings)), regT2);
     load32(BaseIndex(regT2, regT0, TimesEight), regT2);
     store32(Imm32(JSValue::CellTag), tagFor(dst));
@@ -1315,10 +1317,10 @@ void JIT::emit_op_next_pname(Instruction* currentInstruction)
 
     // Increment i
     add32(Imm32(1), regT0);
-    store32(regT0, addressFor(i));
+    store32(regT0, intPayloadFor(i));
 
     // Verify that i is valid:
-    loadPtr(addressFor(base), regT0);
+    loadPtr(payloadFor(base), regT0);
 
     // Test base's structure
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);

@@ -52,11 +52,33 @@ namespace JSC {
 
     enum PreferredPrimitiveType { NoPreference, PreferNumber, PreferString };
 
+
 #if USE(JSVALUE32_64)
     typedef int64_t EncodedJSValue;
 #else
     typedef void* EncodedJSValue;
 #endif
+    
+    union EncodedValueDescriptor {
+        EncodedJSValue asEncodedJSValue;
+#if USE(JSVALUE32_64)
+        double asDouble;
+#elif USE(JSVALUE64)
+        JSCell* ptr;
+#endif
+        
+#if CPU(BIG_ENDIAN)
+        struct {
+            int32_t tag;
+            int32_t payload;
+        } asBits;
+#else
+        struct {
+            int32_t payload;
+            int32_t tag;
+        } asBits;
+#endif
+    };
 
     double nonInlineNaN();
 
@@ -239,28 +261,14 @@ namespace JSC {
         enum { DeletedValueTag = 0xfffffff8 };
         
         enum { LowestTag =  DeletedValueTag };
-        
+
         uint32_t tag() const;
         int32_t payload() const;
 
-        union {
-            EncodedJSValue asEncodedJSValue;
-            double asDouble;
-#if CPU(BIG_ENDIAN)
-            struct {
-                int32_t tag;
-                int32_t payload;
-            } asBits;
-#else
-            struct {
-                int32_t payload;
-                int32_t tag;
-            } asBits;
-#endif
-        } u;
-#else // USE(JSVALUE32_64)
+        EncodedValueDescriptor u;
+#elif USE(JSVALUE64)
         JSCell* m_ptr;
-#endif // USE(JSVALUE32_64)
+#endif
     };
 
 #if USE(JSVALUE32_64)

@@ -199,7 +199,7 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     // get to its global data.
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT0);
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT0);
-    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     peek(regT1);
     emitPutToCallFrameHeader(regT1, RegisterFile::ReturnPC);
@@ -222,7 +222,7 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     // get to its global data.
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT2);
-    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
@@ -243,7 +243,7 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     // get to its global data.
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT0);
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT0);
-    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
@@ -902,8 +902,9 @@ void JIT::emit_op_get_pnames(Instruction* currentInstruction)
     getPnamesStubCall.addArgument(regT0);
     getPnamesStubCall.call(dst);
     load32(Address(regT0, OBJECT_OFFSETOF(JSPropertyNameIterator, m_jsStringsSize)), regT3);
-    store32(Imm32(0), addressFor(i));
-    store32(regT3, addressFor(size));
+    storePtr(tagTypeNumberRegister, payloadFor(i));
+    store32(Imm32(Int32Tag), intTagFor(size));
+    store32(regT3, intPayloadFor(size));
     Jump end = jump();
 
     isNotObject.link(this);
@@ -931,8 +932,8 @@ void JIT::emit_op_next_pname(Instruction* currentInstruction)
     JumpList callHasProperty;
 
     Label begin(this);
-    load32(addressFor(i), regT0);
-    Jump end = branch32(Equal, regT0, addressFor(size));
+    load32(intPayloadFor(i), regT0);
+    Jump end = branch32(Equal, regT0, intPayloadFor(size));
 
     // Grab key @ i
     loadPtr(addressFor(it), regT1);
@@ -944,7 +945,7 @@ void JIT::emit_op_next_pname(Instruction* currentInstruction)
 
     // Increment i
     add32(Imm32(1), regT0);
-    store32(regT0, addressFor(i));
+    store32(regT0, intPayloadFor(i));
 
     // Verify that i is valid:
     emitGetVirtualRegister(base, regT0);
@@ -1689,7 +1690,8 @@ void JIT::emit_op_load_varargs(Instruction* currentInstruction)
 #endif
     // Load arg count into regT0
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
-    storePtr(regT0, addressFor(argCountDst));
+    store32(Imm32(Int32Tag), intTagFor(argCountDst));
+    store32(regT0, intPayloadFor(argCountDst));
     Jump endBranch = branch32(Equal, regT0, Imm32(1));
 
     mul32(Imm32(sizeof(Register)), regT0, regT3);
@@ -1727,8 +1729,9 @@ void JIT::emitSlow_op_load_varargs(Instruction* currentInstruction, Vector<SlowC
     JITStubCall stubCall(this, cti_op_load_varargs);
     stubCall.addArgument(Imm32(argsOffset));
     stubCall.call();
-    // Stores a naked int32 in the register file.
-    store32(returnValueRegister, Address(callFrameRegister, argCountDst * sizeof(Register)));
+    
+    store32(Imm32(Int32Tag), intTagFor(argCountDst));
+    store32(returnValueRegister, intPayloadFor(argCountDst));
 }
 
 void JIT::emit_op_new_func(Instruction* currentInstruction)
