@@ -1,3 +1,12 @@
+2011-03-14  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        DumpRenderTree Perl Support fails to build with ARCHS="i386 x86_64"
+
+        * DumpRenderTree/mac/PerlSupport/Makefile:
+        Add whitespace when joining "-arch" with the architectures passed in as arguments.
+
 2011-03-14  Daniel Bates  <dbates@rim.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=55438
