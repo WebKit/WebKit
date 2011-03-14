@@ -1,3 +1,21 @@
+2011-03-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Include hyphenation information in text representation of render tree
+        https://bugs.webkit.org/show_bug.cgi?id=56287
+
+        * fast/text/soft-hyphen-4-expected.txt:
+        * platform/mac-snowleopard/fast/text/hyphenate-limit-before-after-expected.txt:
+        * platform/mac-snowleopard/fast/text/hyphenate-locale-expected.txt:
+        * platform/mac/fast/text/basic/014-expected.txt:
+        * platform/mac/fast/text/capitalize-boundaries-expected.txt:
+        * platform/mac/fast/text/hyphenate-character-expected.txt:
+        * platform/mac/fast/text/hyphenate-first-word-expected.txt:
+        * platform/mac/fast/text/hyphens-expected.txt:
+        * platform/mac/fast/text/midword-break-after-breakable-char-expected.txt:
+        * platform/mac/fast/text/soft-hyphen-2-expected.txt:
+
 2011-03-13  David Levin  <levin@chromium.org>
 
         Add more crashing tests to an existing bug about the same issue

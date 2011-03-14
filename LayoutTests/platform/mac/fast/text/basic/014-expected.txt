@@ -6,15 +6,15 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 396x194 [border: (2px solid #FF0000)]
         RenderBlock {P} at (2,18) size 392x36
           RenderText {#text} at (0,0) size 387x36
-            text run at (0,0) width 387: "I\x{2019}m told this is the longest word in the English language: anti\x{AD}"
+            text run at (0,0) width 387: "I\x{2019}m told this is the longest word in the English language: anti\x{AD}" + hyphen string "-"
             text run at (0,18) width 160: "dis\x{AD}est\x{AD}ab\x{AD}lish\x{AD}ment\x{AD}arian\x{AD}ism."
         RenderBlock {P} at (2,70) size 392x36
           RenderText {#text} at (0,0) size 387x36
-            text run at (0,0) width 387: "I\x{2019}m told this is the longest word in the English language: anti\x{AD}"
+            text run at (0,0) width 387: "I\x{2019}m told this is the longest word in the English language: anti\x{AD}" + hyphen string "-"
             text run at (0,18) width 160: "dis\x{AD}est\x{AD}ab\x{AD}lish\x{AD}ment\x{AD}arian\x{AD}ism."
         RenderBlock {P} at (2,122) size 392x54
           RenderText {#text} at (0,0) size 387x36
-            text run at (0,0) width 387: "I\x{2019}m told this is the longest word in the English language: anti\x{AD}"
+            text run at (0,0) width 387: "I\x{2019}m told this is the longest word in the English language: anti\x{AD}" + hyphen string "-"
             text run at (0,18) width 50: "dis\x{AD}est\x{AD}ab\x{AD}"
           RenderBR {BR} at (50,32) size 0x0
           RenderText {#text} at (0,36) size 110x18

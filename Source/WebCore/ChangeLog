@@ -1,3 +1,13 @@
+2011-03-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Include hyphenation information in text representation of render tree
+        https://bugs.webkit.org/show_bug.cgi?id=56287
+
+        (WebCore::writeTextRun): If the text box is hyphenated, output the hyphenation
+        string.
+
 2011-03-13  David Levin  <levin@chromium.org>
 
         Build fix adding remaining enum values to switch statement.

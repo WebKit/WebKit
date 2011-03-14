@@ -487,8 +487,10 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
             ts << " override";
     }
     ts << ": "
-        << quoteAndEscapeNonPrintables(String(o.text()).substring(run.start(), run.len()))
-        << "\n";
+        << quoteAndEscapeNonPrintables(String(o.text()).substring(run.start(), run.len()));
+    if (run.hasHyphen())
+        ts << " + hyphen string " << quoteAndEscapeNonPrintables(o.style()->hyphenString());
+    ts << "\n";
 }
 
 void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavior behavior)

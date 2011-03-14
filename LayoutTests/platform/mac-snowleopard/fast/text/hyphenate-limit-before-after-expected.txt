@@ -5,25 +5,25 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (8,26) size 126x42 [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 104x36
-          text run at (3,3) width 104: "There is remark"
+          text run at (3,3) width 104: "There is remark" + hyphen string "-"
           text run at (3,21) width 90: "able evidence."
       RenderText {#text} at (142,47) size 4x18
         text run at (142,47) width 4: " "
       RenderBlock {DIV} at (154,26) size 126x42 [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 104x36
-          text run at (3,3) width 104: "There is remark"
+          text run at (3,3) width 104: "There is remark" + hyphen string "-"
           text run at (3,21) width 90: "able evidence."
       RenderText {#text} at (288,47) size 4x18
         text run at (288,47) width 4: " "
       RenderBlock {DIV} at (300,26) size 126x42 [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 104x36
-          text run at (3,3) width 104: "There is remark"
+          text run at (3,3) width 104: "There is remark" + hyphen string "-"
           text run at (3,21) width 90: "able evidence."
       RenderText {#text} at (434,47) size 4x18
         text run at (434,47) width 4: " "
       RenderBlock {DIV} at (446,26) size 126x42 [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 104x36
-          text run at (3,3) width 104: "There is remark"
+          text run at (3,3) width 104: "There is remark" + hyphen string "-"
           text run at (3,21) width 90: "able evidence."
       RenderText {#text} at (580,47) size 4x18
         text run at (580,47) width 4: " "
@@ -36,25 +36,25 @@ layer at (0,0) size 800x600
         text run at (726,47) width 4: " "
       RenderBlock {DIV} at (8,102) size 126x42 [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 104x36
-          text run at (3,3) width 104: "There is remark"
+          text run at (3,3) width 104: "There is remark" + hyphen string "-"
           text run at (3,21) width 90: "able evidence."
       RenderText {#text} at (142,123) size 4x18
         text run at (142,123) width 4: " "
       RenderBlock {DIV} at (154,102) size 126x42 [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 104x36
-          text run at (3,3) width 104: "There is remark"
+          text run at (3,3) width 104: "There is remark" + hyphen string "-"
           text run at (3,21) width 90: "able evidence."
       RenderText {#text} at (288,123) size 4x18
         text run at (288,123) width 4: " "
       RenderBlock {DIV} at (300,102) size 126x42 [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 104x36
-          text run at (3,3) width 104: "There is remark"
+          text run at (3,3) width 104: "There is remark" + hyphen string "-"
           text run at (3,21) width 90: "able evidence."
       RenderText {#text} at (434,123) size 4x18
         text run at (434,123) width 4: " "
       RenderBlock {DIV} at (446,84) size 126x60 [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 72x54
-          text run at (3,3) width 72: "There is re"
+          text run at (3,3) width 72: "There is re" + hyphen string "-"
           text run at (3,21) width 58: "markable"
           text run at (3,39) width 60: "evidence."
       RenderText {#text} at (580,123) size 4x18
