@@ -1,3 +1,13 @@
+2011-03-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        REGRESSION (r80438): fast/text/hyphenate-character failing in pixel mode
+        https://bugs.webkit.org/show_bug.cgi?id=56280
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::tryHyphenating): Avoid subtracting 1 from an unsigned 0.
+
 2011-03-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

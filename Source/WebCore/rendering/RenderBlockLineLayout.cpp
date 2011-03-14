@@ -1455,7 +1455,7 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
     // FIXME: The following assumes that the character at lastSpace is a space (and therefore should not factor
     // into hyphenate-limit-before) unless lastSpace is 0. This is wrong in the rare case of hyphenating
     // the first word in a text node which has leading whitespace.
-    if (prefixLength - (lastSpace ? 1 : 0) < static_cast<unsigned>(minimumPrefixLength))
+    if (!prefixLength || prefixLength - (lastSpace ? 1 : 0) < static_cast<unsigned>(minimumPrefixLength))
         return;
 
     ASSERT(pos - lastSpace - prefixLength >= static_cast<unsigned>(minimumSuffixLength));
