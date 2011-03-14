@@ -1,3 +1,9 @@
+2011-03-14  Alejandro G. Castro  <alex@igalia.com>
+
+        Update more expectations after r80857.
+
+        * platform/gtk/fast/layers/video-layer-expected.txt:
+
 2011-03-14  David Levin  <levin@chromium.org>
 
         Move the crash result and the bug to the debug line for the test (instead of release)
