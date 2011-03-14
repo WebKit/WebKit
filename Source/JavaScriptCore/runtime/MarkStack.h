@@ -26,6 +26,7 @@
 #ifndef MarkStack_h
 #define MarkStack_h
 
+#include "ConservativeSet.h"
 #include "JSValue.h"
 #include "WriteBarrier.h"
 #include <wtf/Vector.h>
@@ -69,6 +70,14 @@ namespace JSC {
             JSValue* values = barriers->slot();
             if (count)
                 m_markSets.append(MarkSet(values, values + count, properties));
+        }
+
+        void append(ConservativeSet& conservativeSet)
+        {
+            JSCell** set = conservativeSet.set();
+            size_t size = conservativeSet.size();
+            for (size_t i = 0; i < size; ++i)
+                internalAppend(set[i]);
         }
 
         inline void drain();

@@ -26,13 +26,15 @@
 #ifndef ConservativeSet_h
 #define ConservativeSet_h
 
-#include "Heap.h"
-#include "MarkStack.h"
+#include <wtf/OSAllocator.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
 class JSCell;
+class Heap;
+
+// May contain duplicates.
 
 class ConservativeSet {
 public:
@@ -40,7 +42,9 @@ public:
     ~ConservativeSet();
 
     void add(void* begin, void* end);
-    void mark(MarkStack&);
+    
+    size_t size();
+    JSCell** set();
 
 private:
     static const size_t inlineCapacity = 128;
@@ -49,10 +53,10 @@ private:
     void grow();
 
     Heap* m_heap;
-    DeprecatedPtr<JSCell>* m_set;
+    JSCell** m_set;
     size_t m_size;
     size_t m_capacity;
-    DeprecatedPtr<JSCell> m_inlineSet[inlineCapacity];
+    JSCell* m_inlineSet[inlineCapacity];
 };
 
 inline ConservativeSet::ConservativeSet(Heap* heap)
@@ -66,13 +70,17 @@ inline ConservativeSet::ConservativeSet(Heap* heap)
 inline ConservativeSet::~ConservativeSet()
 {
     if (m_set != m_inlineSet)
-        OSAllocator::decommitAndRelease(m_set, m_capacity * sizeof(DeprecatedPtr<JSCell>*));
+        OSAllocator::decommitAndRelease(m_set, m_capacity * sizeof(JSCell*));
 }
 
-inline void ConservativeSet::mark(MarkStack& markStack)
+inline size_t ConservativeSet::size()
 {
-    for (size_t i = 0; i < m_size; ++i)
-        markStack.append(&m_set[i]);
+    return m_size;
+}
+
+inline JSCell** ConservativeSet::set()
+{
+    return m_set;
 }
 
 } // namespace JSC

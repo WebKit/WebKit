@@ -2,6 +2,35 @@
 
         Reviewed by Oliver Hunt.
 
+        Removed another case of DeprecatedPtr (ConservativeSet)
+        https://bugs.webkit.org/show_bug.cgi?id=56281
+        
+        The ConservativeSet is an internal data structure used during marking,
+        so direct pointers are fine.
+
+        * runtime/ConservativeSet.cpp:
+        (JSC::ConservativeSet::grow):
+        * runtime/ConservativeSet.h: Added some accessors, for use by MarkStack::append.
+        (JSC::ConservativeSet::~ConservativeSet): Fixed a typo where we calculated
+        the size of the set based on sizeof(DeprecatedPtr<T>*) instead of
+        sizeof(DeprecatedPtr<T>). I'm not sure if this had real-world implications or not.
+        (JSC::ConservativeSet::size):
+        (JSC::ConservativeSet::set): Use direct pointers, as stated above. 
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::markRoots):
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::append): Created a special case of append for
+        ConservativeSet. I didn't want to add back a generic "append JSCell*"
+        function, since other class might start using that wrong. (In the end,
+        this function might go away, since the Heap will want to do something
+        slightly more interesting with the conservative set, but this is OK for
+        now.)
+
+2011-03-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Removed another case of DeprecatedPtr (PutPropertySlot)
         https://bugs.webkit.org/show_bug.cgi?id=56278
 

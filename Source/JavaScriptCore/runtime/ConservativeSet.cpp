@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ConservativeSet.h"
 
+#include "Heap.h"
+
 namespace JSC {
 
 inline bool isPointerAligned(void* p)
@@ -36,7 +38,7 @@ inline bool isPointerAligned(void* p)
 void ConservativeSet::grow()
 {
     size_t newCapacity = m_capacity == inlineCapacity ? nonInlineCapacity : m_capacity * 2;
-    DeprecatedPtr<JSCell>* newSet = static_cast<DeprecatedPtr<JSCell>*>(OSAllocator::reserveAndCommit(newCapacity * sizeof(JSCell*)));
+    JSCell** newSet = static_cast<JSCell**>(OSAllocator::reserveAndCommit(newCapacity * sizeof(JSCell*)));
     memcpy(newSet, m_set, m_size * sizeof(JSCell*));
     if (m_set != m_inlineSet)
         OSAllocator::decommitAndRelease(m_set, m_capacity * sizeof(JSCell*));

@@ -215,7 +215,7 @@ void Heap::markRoots()
     m_markedSpace.clearMarks();
 
     MarkStack& markStack = m_markStack;
-    conservativeSet.mark(markStack);
+    markStack.append(conservativeSet);
     markStack.drain();
 
     // Mark explicitly registered roots.
