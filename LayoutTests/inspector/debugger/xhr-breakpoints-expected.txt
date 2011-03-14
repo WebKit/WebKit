@@ -1,0 +1,14 @@
+Tests XHR breakpoints.
+
+Debugger was enabled.
+
+Running: testXHRBreakpoint
+Script execution paused.
+Call stack:
+    0) sendRequest (xhr-breakpoints.html:11)
+    1)  (:1)
+Script execution resumed.
+
+Running: testPauseOnAnyXHR
+Debugger was disabled.
+

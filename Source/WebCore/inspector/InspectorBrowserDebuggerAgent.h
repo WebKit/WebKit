@@ -109,8 +109,6 @@ private:
     InspectorAgent* m_inspectorAgent;
     HashMap<Node*, uint32_t> m_domBreakpoints;
     HashSet<String> m_eventListenerBreakpoints;
-    HashSet<String> m_XHRBreakpoints;
-    bool m_hasXHRBreakpointWithEmptyURL;
 };
 
 } // namespace WebCore

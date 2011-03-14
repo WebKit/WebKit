@@ -141,7 +141,7 @@ var WebInspector = {
     resetFocusElement: function()
     {
         this.currentFocusElement = null;
-        this._previousFocusElement = null;        
+        this._previousFocusElement = null;
     },
 
     get currentPanel()
@@ -179,17 +179,6 @@ var WebInspector = {
             pane.addBreakpointItem(new WebInspector.BreakpointItem(event.data));
         }
         WebInspector.breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.DOMBreakpointAdded, breakpointAdded);
-        return pane;
-    },
-
-    createXHRBreakpointsSidebarPane: function()
-    {
-        var pane = new WebInspector.XHRBreakpointsSidebarPane();
-        function breakpointAdded(event)
-        {
-            pane.addBreakpointItem(new WebInspector.BreakpointItem(event.data));
-        }
-        WebInspector.breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.XHRBreakpointAdded, breakpointAdded);
         return pane;
     },
 
@@ -239,7 +228,7 @@ var WebInspector = {
             dockToggleButton.title = WebInspector.UIString("Dock to main window.");
         }
 
-        // This may be called before onLoadedDone, hence the bulk of inspector objects may 
+        // This may be called before onLoadedDone, hence the bulk of inspector objects may
         // not be created yet.
         if (WebInspector.searchController)
             WebInspector.searchController.updateSearchLabel();
