@@ -1,3 +1,16 @@
+2011-03-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <http://webkit.org/b/56304> REGRESSION(r80892): 100,000+ leaks seen on the build bot
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::OpaqueJSClass): Don't leak any existing entry for the given name if
+        the class definition contains duplicates. This also removes what look to be leaks
+        of the StringImpl instances that are used as keys: the HashMap key type is a RefPtr
+        which retains / releases the instances at the appropriate time, so explicitly calling
+        ref is not necessary.
+
 2011-03-14  Oliver Hunt  <oliver@apple.com>
 
         Fix windows build

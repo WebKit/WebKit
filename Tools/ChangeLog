@@ -1,3 +1,12 @@
+2011-03-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <http://webkit.org/b/56304> REGRESSION(r80892): 100,000+ leaks seen on the build bot
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::staticFunctions): Remove duplicate entries.
+
 2011-03-14  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Dan Bernstein.

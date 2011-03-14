@@ -84,8 +84,9 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
                 // Use a local variable here to sidestep an RVCT compiler bug.
                 StaticValueEntry* entry = new StaticValueEntry(staticValue->getProperty, staticValue->setProperty, staticValue->attributes);
                 StringImpl* impl = valueName.impl();
-                impl->ref();
-                m_staticValues->add(impl, entry);
+                StaticValueEntry* existingEntry = m_staticValues->get(impl);
+                m_staticValues->set(impl, entry);
+                delete existingEntry;
             }
             ++staticValue;
         }
@@ -99,8 +100,9 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
                 // Use a local variable here to sidestep an RVCT compiler bug.
                 StaticFunctionEntry* entry = new StaticFunctionEntry(staticFunction->callAsFunction, staticFunction->attributes);
                 StringImpl* impl = functionName.impl();
-                impl->ref();
-                m_staticFunctions->add(impl, entry);
+                StaticFunctionEntry* existingEntry = m_staticFunctions->get(impl);
+                m_staticFunctions->set(impl, entry);
+                delete existingEntry;
             }
             ++staticFunction;
         }
