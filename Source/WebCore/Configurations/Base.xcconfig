@@ -135,6 +135,19 @@ GCC_ENABLE_CPP_EXCEPTIONS_GCC_42 = NO;
 GCC_ENABLE_CPP_EXCEPTIONS_LLVM_GCC = NO;
 GCC_ENABLE_CPP_EXCEPTIONS_LLVM_COMPILER = YES;
 
+// FIXME: The size of the debug symbols generated for WebCore exceeds that which a 32-bit linker can deal with.
+// To allow the Leopard build bots to successfully compile WebCore we're disabling debug symbols in debug builds.
+GCC_GENERATE_DEBUGGING_SYMBOLS = $(GCC_GENERATE_DEBUGGING_SYMBOLS_$(REAL_PLATFORM_NAME));
+GCC_GENERATE_DEBUGGING_SYMBOLS_iphoneos = YES;
+GCC_GENERATE_DEBUGGING_SYMBOLS_iphonesimulator = YES;
+GCC_GENERATE_DEBUGGING_SYMBOLS_macosx = $(GCC_GENERATE_DEBUGGING_SYMBOLS_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
+GCC_GENERATE_DEBUGGING_SYMBOLS_macosx_1050 = $(GCC_GENERATE_DEBUGGING_SYMBOLS_macosx_1050_$(CONFIGURATION));
+GCC_GENERATE_DEBUGGING_SYMBOLS_macosx_1050_Debug = NO;
+GCC_GENERATE_DEBUGGING_SYMBOLS_macosx_1050_Release = YES;
+GCC_GENERATE_DEBUGGING_SYMBOLS_macosx_1050_Production = YES;
+GCC_GENERATE_DEBUGGING_SYMBOLS_macosx_1060 = YES;
+GCC_GENERATE_DEBUGGING_SYMBOLS_macosx_1070 = YES;
+
 // If the target Mac OS X version does not match the current Mac OS X version then we'll want to build using the target version's SDK.
 SDKROOT = $(SDKROOT_$(MAC_OS_X_VERSION_MAJOR)_$(TARGET_MAC_OS_X_VERSION_MAJOR));
 SDKROOT_1050_1040 = macosx10.4;
