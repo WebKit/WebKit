@@ -1,3 +1,15 @@
+2011-03-13  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX for armv7 after r80969
+
+        Bug 56270 - The JIT 'friend's many classes in JSC; start unwinding this.
+        <https://bugs.webkit.org/show_bug.cgi?id=56270>
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load32): Made void* address argument
+        const.
+        (JSC::MacroAssemblerARMv7::store32): Ditto.
+
 2011-03-13  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.

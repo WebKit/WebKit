@@ -460,7 +460,7 @@ public:
         load32(setupArmAddress(address), dest);
     }
 
-    void load32(void* address, RegisterID dest)
+    void load32(const void* address, RegisterID dest)
     {
         move(ImmPtr(address), addressTempRegister);
         m_assembler.ldr(dest, addressTempRegister, ARMThumbImmediate::makeUInt16(0));
@@ -517,13 +517,13 @@ public:
         store32(dataTempRegister, setupArmAddress(address));
     }
 
-    void store32(RegisterID src, void* address)
+    void store32(RegisterID src, const void* address)
     {
         move(ImmPtr(address), addressTempRegister);
         m_assembler.str(src, addressTempRegister, ARMThumbImmediate::makeUInt16(0));
     }
 
-    void store32(Imm32 imm, void* address)
+    void store32(Imm32 imm, const void* address)
     {
         move(imm, dataTempRegister);
         store32(dataTempRegister, address);
