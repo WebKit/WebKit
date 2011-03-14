@@ -1,3 +1,18 @@
+2011-03-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r81026.
+        http://trac.webkit.org/changeset/81026
+        https://bugs.webkit.org/show_bug.cgi?id=56313
+
+        Breaks gtk 64-bit tests (Requested by podivilov on #webkit).
+
+        * inspector/debugger/xhr-breakpoints-expected.txt: Removed.
+        * inspector/debugger/xhr-breakpoints.html: Removed.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-03-14  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

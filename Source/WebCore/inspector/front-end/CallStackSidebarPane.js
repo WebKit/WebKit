@@ -87,12 +87,8 @@ WebInspector.CallStackSidebarPane.prototype = {
 
         if (details.breakpoint)
             this._scriptBreakpointHit();
-        else if (details.eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint) {
-            if (details.eventData.breakpointType === WebInspector.BreakpointManager.BreakpointTypes.XHR)
-                this._xhrBreakpointHit();
-            else
-                this._nativeBreakpointHit(details.eventData);
-        }
+        else if (details.eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint)
+            this._nativeBreakpointHit(details.eventData);
     },
 
     set selectedCallFrame(x)
@@ -187,14 +183,6 @@ WebInspector.CallStackSidebarPane.prototype = {
         var statusMessageElement = document.createElement("div");
         statusMessageElement.className = "info";
         statusMessageElement.appendChild(document.createTextNode(WebInspector.UIString("Paused on a JavaScript breakpoint.")));
-        this.bodyElement.appendChild(statusMessageElement);
-    },
-
-    _xhrBreakpointHit: function()
-    {
-        var statusMessageElement = document.createElement("div");
-        statusMessageElement.className = "info";
-        statusMessageElement.textContent = WebInspector.UIString("Paused on a XMLHttpRequest.");
         this.bodyElement.appendChild(statusMessageElement);
     },
 

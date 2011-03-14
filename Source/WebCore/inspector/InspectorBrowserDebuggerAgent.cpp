@@ -65,8 +65,6 @@ namespace WebCore {
 
 namespace BrowserDebuggerAgentState {
 static const char browserBreakpoints[] = "browserBreakpoints";
-static const char pauseOnAllXHRs[] = "pauseOnAllXHRs";
-static const char xhrBreakpoints[] = "xhrBreakpoints";
 }
 
 PassOwnPtr<InspectorBrowserDebuggerAgent> InspectorBrowserDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent, InspectorAgent* inspectorAgent)
@@ -80,6 +78,7 @@ InspectorBrowserDebuggerAgent::InspectorBrowserDebuggerAgent(InstrumentingAgents
     , m_domAgent(domAgent)
     , m_debuggerAgent(debuggerAgent)
     , m_inspectorAgent(inspectorAgent)
+    , m_hasXHRBreakpointWithEmptyURL(false)
 {
     m_debuggerAgent->setListener(this);
 }
@@ -129,6 +128,8 @@ void InspectorBrowserDebuggerAgent::setAllBrowserBreakpoints(ErrorString*, PassR
 void InspectorBrowserDebuggerAgent::inspectedURLChanged(const String& url)
 {
     m_eventListenerBreakpoints.clear();
+    m_XHRBreakpoints.clear();
+    m_hasXHRBreakpointWithEmptyURL = false;
 
     RefPtr<InspectorObject> allBreakpoints = m_inspectorState->getObject(BrowserDebuggerAgentState::browserBreakpoints);
     RefPtr<InspectorArray> breakpoints = allBreakpoints->getArray(url);
@@ -160,6 +161,13 @@ void InspectorBrowserDebuggerAgent::restoreStickyBreakpoint(PassRefPtr<Inspector
         if (!condition->getString("eventName", &eventName))
             return;
         setEventListenerBreakpoint(&error, eventName);
+    } else if (type == xhrNativeBreakpointType) {
+        if (!enabled)
+            return;
+        String url;
+        if (!condition->getString("url", &url))
+            return;
+        setXHRBreakpoint(&error, url);
     }
 }
 
@@ -362,26 +370,18 @@ void InspectorBrowserDebuggerAgent::pauseOnNativeEventIfNeeded(const String& cat
 
 void InspectorBrowserDebuggerAgent::setXHRBreakpoint(ErrorString*, const String& url)
 {
-    if (url.isEmpty()) {
-        m_inspectorState->setBoolean(BrowserDebuggerAgentState::pauseOnAllXHRs, true);
-        return;
-    }
-
-    RefPtr<InspectorObject> xhrBreakpoints = m_inspectorState->getObject(BrowserDebuggerAgentState::xhrBreakpoints);
-    xhrBreakpoints->setBoolean(url, true);
-    m_inspectorState->setObject(BrowserDebuggerAgentState::xhrBreakpoints, xhrBreakpoints);
+    if (url.isEmpty())
+        m_hasXHRBreakpointWithEmptyURL = true;
+    else
+        m_XHRBreakpoints.add(url);
 }
 
 void InspectorBrowserDebuggerAgent::removeXHRBreakpoint(ErrorString*, const String& url)
 {
-    if (url.isEmpty()) {
-        m_inspectorState->setBoolean(BrowserDebuggerAgentState::pauseOnAllXHRs, false);
-        return;
-    }
-
-    RefPtr<InspectorObject> xhrBreakpoints = m_inspectorState->getObject(BrowserDebuggerAgentState::xhrBreakpoints);
-    xhrBreakpoints->remove(url);
-    m_inspectorState->setObject(BrowserDebuggerAgentState::xhrBreakpoints, xhrBreakpoints);
+    if (url.isEmpty())
+        m_hasXHRBreakpointWithEmptyURL = false;
+    else
+        m_XHRBreakpoints.remove(url);
 }
 
 void InspectorBrowserDebuggerAgent::willSendXMLHttpRequest(const String& url)
@@ -391,13 +391,12 @@ void InspectorBrowserDebuggerAgent::willSendXMLHttpRequest(const String& url)
         return;
 
     String breakpointURL;
-    if (m_inspectorState->getBoolean(BrowserDebuggerAgentState::pauseOnAllXHRs))
+    if (m_hasXHRBreakpointWithEmptyURL)
         breakpointURL = "";
     else {
-        RefPtr<InspectorObject> xhrBreakpoints = m_inspectorState->getObject(BrowserDebuggerAgentState::xhrBreakpoints);
-        for (InspectorObject::iterator it = xhrBreakpoints->begin(); it != xhrBreakpoints->end(); ++it) {
-            if (url.contains(it->first)) {
-                breakpointURL = it->first;
+        for (HashSet<String>::iterator it = m_XHRBreakpoints.begin(); it != m_XHRBreakpoints.end(); ++it) {
+            if (url.contains(*it)) {
+                breakpointURL = *it;
                 break;
             }
         }
@@ -417,6 +416,8 @@ void InspectorBrowserDebuggerAgent::clear()
 {
     m_domBreakpoints.clear();
     m_eventListenerBreakpoints.clear();
+    m_XHRBreakpoints.clear();
+    m_hasXHRBreakpointWithEmptyURL = false;
 }
 
 } // namespace WebCore
