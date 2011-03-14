@@ -52,6 +52,7 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLPlugInImageElement.h>
+#include <WebCore/Icon.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
@@ -610,9 +611,9 @@ void WebChromeClient::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFile
     m_page->send(Messages::WebPageProxy::RunOpenPanel(static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame()->frameID(), parameters));
 }
 
-void WebChromeClient::chooseIconForFiles(const Vector<String>&, FileChooser*)
+void WebChromeClient::chooseIconForFiles(const Vector<String>& filenames, FileChooser* chooser)
 {
-    notImplemented();
+    chooser->iconLoaded(Icon::createIconForFiles(filenames));
 }
 
 void WebChromeClient::setCursor(const WebCore::Cursor& cursor)
