@@ -100,7 +100,7 @@ namespace JSC {
         bool operator!=(const ScopeChainIterator& other) const { return m_node != other.m_node; }
 
     private:
-        DeprecatedPtr<ScopeChainNode> m_node;
+        ScopeChainNode* m_node;
     };
 
     inline ScopeChainIterator ScopeChainNode::begin()

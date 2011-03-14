@@ -1,3 +1,13 @@
+2011-03-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed one case of DeprecatedPtr (ScopeChainIterator)
+        https://bugs.webkit.org/show_bug.cgi?id=56277
+
+        * runtime/ScopeChain.h: Direct pointer is fine for ScopeChainIterator,
+        since it's a stack-allocated temporary.
+
 2011-03-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
