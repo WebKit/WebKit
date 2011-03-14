@@ -534,7 +534,7 @@ if (isEfl()) {
 }
 
 if (isWinCE()) {
-    buildCMakeProjectOrExit($clean, "WinCE", $prefixPath, $makeArgs, ("-DCMAKE_WINCE_SDK=STANDARDSDK_500 (ARMV4I)", cMakeArgsFromFeatures()));
+    buildCMakeProjectOrExit($clean, "WinCE", $prefixPath, $makeArgs, ("-DCMAKE_WINCE_SDK=\"STANDARDSDK_500 (ARMV4I)\"", cMakeArgsFromFeatures()));
 }
 
 # Build, and abort if the build fails.

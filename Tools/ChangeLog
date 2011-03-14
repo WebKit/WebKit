@@ -1,5 +1,13 @@
 2011-03-14  Daniel Bates  <dbates@rim.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=55438
+        Add double quotes around value of -DCMAKE_WINCE_SDK that I inadvertently did not add
+        when landing changeset 81041 <http://trac.webkit.org/changeset/81041>.
+
+        * Scripts/build-webkit:
+
+2011-03-14  Daniel Bates  <dbates@rim.com>
+
         Reviewed by David Kilzer.
 
         Cleanup: Separate port-specific implementation details from webkitdirs::buildCMakeProject()
