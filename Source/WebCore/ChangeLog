@@ -1,3 +1,19 @@
+2011-03-09  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Deleting content directly following a button inserts an unnecessary placeholder
+        https://bugs.webkit.org/show_bug.cgi?id=56053
+
+        Fixing a use of Node's enclosingBlockFlowElement with enclosingBlock htmlediting's
+        enclosingBlock, as enclosingBlockFlowElement would return inline-block elements despite
+        DeleteSelectionCommand treating them as blockflow.
+
+        Test: editing/deleting/delete-inserts-br-after-button.html
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+
 2011-03-14  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

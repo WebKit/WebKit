@@ -1,3 +1,15 @@
+2011-03-09  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Deleting content directly following a button inserts an unnecessary placeholder
+        https://bugs.webkit.org/show_bug.cgi?id=56053
+
+        Test to ensure unnecessary placeholders aren't inserted after buttons when delete is pressed.
+
+        * editing/deleting/delete-inserts-br-after-button-expected.txt: Added.
+        * editing/deleting/delete-inserts-br-after-button.html: Added.
+
 2011-03-14  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
