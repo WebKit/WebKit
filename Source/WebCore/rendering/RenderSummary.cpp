@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2010, 2011 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,11 +21,41 @@
 #include "config.h"
 #include "RenderSummary.h"
 
+#include "RenderDetails.h"
+
 namespace WebCore {
 
-RenderSummary::RenderSummary(Node* element)
-    : RenderBlock(element)
+RenderSummary::RenderSummary(Node* node)
+    : RenderBlock(node)
 {
+}
+
+void RenderSummary::destroy()
+{
+    RenderDetails* details = parentDetails();
+    if (details)
+        details->summaryDestroyed(this);
+
+    RenderBlock::destroy();
+}
+
+RenderDetails* RenderSummary::parentDetails()
+{
+    RenderObject* obj = parent();
+    while (obj && !obj->isDetails())
+        obj = obj->parent();
+
+    return static_cast<RenderDetails*>(obj);
+}
+
+void RenderSummary::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+
+
+    // Ensure that if we ended up being inline that we set our replaced flag
+    // so that we're treated like an inline-block.
+    setReplaced(isInline());
 }
 
 }

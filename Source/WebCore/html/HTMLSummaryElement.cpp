@@ -21,7 +21,9 @@
 #include "config.h"
 #include "HTMLSummaryElement.h"
 
+#include "HTMLDetailsElement.h"
 #include "HTMLNames.h"
+#include "RenderSummary.h"
 
 namespace WebCore {
 
@@ -36,6 +38,11 @@ HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document* d
     : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(summaryTag));
+}
+
+RenderObject* HTMLSummaryElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderSummary(this);
 }
 
 }

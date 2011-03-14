@@ -31,6 +31,8 @@ public:
 
 private:
     HTMLSummaryElement(const QualifiedName&, Document*);
+
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 };
 
 }

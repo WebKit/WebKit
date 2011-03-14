@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2010, 2011 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,11 +28,23 @@ namespace WebCore {
 class HTMLDetailsElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLDetailsElement> create(const QualifiedName& tagName, Document* document);
+    Node* mainSummary() const { return m_mainSummary; }
 
 private:
     HTMLDetailsElement(const QualifiedName&, Document*);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta);
+    virtual void finishParsingChildren();
+
+    void parseMappedAttribute(Attribute*);
+    bool childShouldCreateRenderer(Node*) const;
+    void defaultEventHandler(Event*);
+
+    void findMainSummary();
+
+    Node* m_mainSummary;
+    bool m_isOpen;
 
 };
 

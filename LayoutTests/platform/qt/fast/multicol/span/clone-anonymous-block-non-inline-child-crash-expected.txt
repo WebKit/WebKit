@@ -16,7 +16,7 @@ layer at (13,21) size 774x21
         RenderText {#text} at (0,0) size 107x21
           text run at (0,0) width 107: "Some inline text"
     RenderBlock (anonymous) at (0,21) size 379x21
-      RenderBlock {SUMMARY} at (0,0) size 379x21
+      RenderSummary {SUMMARY} at (0,0) size 379x21
         RenderText {#text} at (0,0) size 107x21
           text run at (0,0) width 107: "Some block text"
 layer at (13,111) size 774x126

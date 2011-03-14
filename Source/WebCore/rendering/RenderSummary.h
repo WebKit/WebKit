@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2010, 2011 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,13 +25,20 @@
 
 namespace WebCore {
 
+class RenderDetails;
+
 class RenderSummary : public RenderBlock {
 public:
     explicit RenderSummary(Node*);
 
+    virtual void destroy();
+
 private:
     virtual const char* renderName() const { return "RenderSummary"; }
     virtual bool isSummary() const { return true; }
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
+    RenderDetails* parentDetails();
 };
 
 inline RenderSummary* toRenderSummary(RenderObject* object)

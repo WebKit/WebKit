@@ -35,6 +35,7 @@
 #include "InlineTextBox.h"
 #include "PrintContext.h"
 #include "RenderBR.h"
+#include "RenderDetailsMarker.h"
 #include "RenderFileUploadControl.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -370,6 +371,24 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     if (o.isTableCell()) {
         const RenderTableCell& c = *toRenderTableCell(&o);
         ts << " [r=" << c.row() << " c=" << c.col() << " rs=" << c.rowSpan() << " cs=" << c.colSpan() << "]";
+    }
+
+    if (o.isDetailsMarker()) {
+        ts << ": ";
+        switch (toRenderDetailsMarker(&o)->orientation()) {
+        case RenderDetailsMarker::Left:
+            ts << "left";
+            break;
+        case RenderDetailsMarker::Right:
+            ts << "right";
+            break;
+        case RenderDetailsMarker::Up:
+            ts << "up";
+            break;
+        case RenderDetailsMarker::Down:
+            ts << "down";
+            break;
+        }
     }
 
     if (o.isListMarker()) {

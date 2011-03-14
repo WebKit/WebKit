@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2010, 2011 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,23 +21,50 @@
 #ifndef RenderDetailsMarker_h
 #define RenderDetailsMarker_h
 
-#include "RenderBlock.h"
+#include "RenderBox.h"
 
 namespace WebCore {
 
-class RenderDetailsMarker : public RenderBlock {
+class RenderDetails;
+
+class RenderDetailsMarker : public RenderBox {
 public:
-    explicit RenderDetailsMarker(Node*);
+    RenderDetailsMarker(RenderDetails*);
+
+    enum Orientation { Up, Down, Left, Right };
+
+    Orientation orientation() const;
+
+    virtual void computePreferredLogicalWidths();
+    virtual void destroy();
 
 private:
     virtual const char* renderName() const { return "RenderDetailsMarker"; }
     virtual bool isDetailsMarker() const { return true; }
+    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void layout();
+    virtual int lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+
+    IntRect getRelativeMarkerRect() const;
+
+    bool isOpen() const;
+    Path getCanonicalPath() const;
+    Path getPath(const IntPoint& origin) const;
+
+    RenderDetails* m_details;
 };
 
 inline RenderDetailsMarker* toRenderDetailsMarker(RenderObject* object)
 {
-    ASSERT(!object || object->isDetails());
+    ASSERT(!object || object->isDetailsMarker());
     return static_cast<RenderDetailsMarker*>(object);
+}
+
+inline const RenderDetailsMarker* toRenderDetailsMarker(const RenderObject* object)
+{
+    ASSERT(!object || object->isDetailsMarker());
+    return static_cast<const RenderDetailsMarker*>(object);
 }
 
 // This will catch anyone doing an unnecessary cast.
