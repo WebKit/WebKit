@@ -1,3 +1,13 @@
+2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac rebaselines for r81053.
+
+        * platform/mac/fast/text/atsui-rtl-override-selection-expected.txt:
+        * platform/mac/svg/custom/mouse-move-on-svg-container-expected.txt:
+        * platform/mac/svg/custom/mouse-move-on-svg-container-standalone-expected.txt:
+        * platform/mac/svg/custom/mouse-move-on-svg-root-expected.txt:
+        * platform/mac/svg/custom/mouse-move-on-svg-root-standalone-expected.txt:
+
 2011-03-13  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.
