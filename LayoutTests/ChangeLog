@@ -1,5 +1,15 @@
 2011-03-14  David Levin  <levin@chromium.org>
 
+        Improvements for the mondo linux debug failure list changes:
+         + Add more tests that belong there.
+         + Sort the tests that are there.
+         + Add PASS to the lines that are there since these tests are known to pass and a passing
+           result for them shouldn't cause a test run to go orange.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-14  David Levin  <levin@chromium.org>
+
         Rebaselines due to r81035.
         Also, added yet more tests to the linux debug crash sweeping through the layout tests.
 
