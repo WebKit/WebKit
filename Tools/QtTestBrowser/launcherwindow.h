@@ -100,6 +100,9 @@ public:
 #if defined(QT_CONFIGURED_WITH_OPENGL)
         , useQGLWidgetViewport(false)
 #endif
+#if defined(Q_WS_X11)
+        , useTestFonts(false)
+#endif
     {
     }
 
@@ -118,6 +121,9 @@ public:
     quint64 offlineStorageDefaultQuotaSize;
 #if defined(QT_CONFIGURED_WITH_OPENGL)
     bool useQGLWidgetViewport;
+#endif
+#if defined(Q_WS_X11)
+    bool useTestFonts;
 #endif
     QUrl inspectorUrl;
     quint16 remoteInspectorPort;
