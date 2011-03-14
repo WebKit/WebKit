@@ -30,6 +30,7 @@
 
 
 var Preferences = {
+    sourceEditorEnabled: true,
     canEditScriptSource: false,
     maxInlineTextChildLength: 80,
     minConsoleHeight: 75,

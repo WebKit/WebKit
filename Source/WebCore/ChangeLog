@@ -2,6 +2,15 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: [Text editor] Disable live-edit in favor of the text editor
+        https://bugs.webkit.org/show_bug.cgi?id=56176
+
+        * inspector/front-end/Settings.js:
+
+2011-03-14  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector: [REGRESSION] scroll does not work in source frame when mouse is inside the gutter
         https://bugs.webkit.org/show_bug.cgi?id=56095
 
