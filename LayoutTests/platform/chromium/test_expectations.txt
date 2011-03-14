@@ -2511,8 +2511,8 @@ BUGWK53451 LINUX : fast/text/international/text-combine-image-test.html = IMAGE+
 // New test, introduced by http://trac.webkit.org/changeset/70813 with only platform/mac baselines.
 BUGWK61161 LINUX WIN : fast/blockflow/border-image-horizontal-bt.html = IMAGE+TEXT
 BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-rl.html = IMAGE+TEXT
-BUGWK61161 WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
-BUGWK61161 LINUX RELEASE : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
+BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
+
 // Started to ASSERT at some point at or after WK r80582
 // see BUGCR75426 list
 
@@ -3162,7 +3162,6 @@ BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/core/row_span.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/other/cell_widths.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : transforms/no_transform_hit_testing.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : transforms/svg-vs-css.xhtml = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : transitions/default-timing-function.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/dom/scroll-reveal-left-overflow.html = IMAGE
 
@@ -3393,3 +3392,15 @@ BUGCR75992 GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
 BUGCR76003 WIN MAC LINUX : transitions/default-timing-function.html = IMAGE
 
 BUG_LEVIN WIN : fast/dom/Window/window-lookup-precedence.html = TEXT
+BUG_LEVIN MAC : css2.1/t1008-c44-ln-box-02-d-ag.html = IMAGE
+BUG_LEVIN MAC : css2.1/t100801-c544-valgn-03-d-agi.html = IMAGE
+BUG_LEVIN MAC : editing/selection/caret-ltr-2-left.html = IMAGE
+BUG_LEVIN MAC : editing/selection/caret-ltr-2.html = IMAGE
+BUG_LEVIN MAC : editing/selection/caret-ltr-right.html = IMAGE
+BUG_LEVIN MAC : editing/selection/caret-ltr.html = IMAGE
+BUG_LEVIN MAC : fast/block/margin-collapse/103.html = IMAGE
+BUG_LEVIN MAC : tables/mozilla/bugs/bug1318.html = IMAGE
+BUG_LEVIN MAC : tables/mozilla/bugs/bug4527.html = IMAGE
+BUG_LEVIN MAC : html5lib/runner.html = CRASH
+BUG_LEVIN MAC : platform/mac/editing/input/text-control-ime-input.html = CRASH
+BUG_LEVIN MAC : storage/domstorage/complex-values.html = CRASH

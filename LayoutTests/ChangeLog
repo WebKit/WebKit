@@ -1,5 +1,13 @@
 2011-03-13  David Levin  <levin@chromium.org>
 
+        Add some test failures that I need to investigate further.
+        Clean up a duplicate test expectation (default-timing-function.html ).
+        Add a missing test expection for linux debug which was there for linux release (border-image-vertical-lr.html).
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-13  David Levin  <levin@chromium.org>
+
         Add more crashing tests to an existing bug about the same issue
         for Chromium Linux Debug.
 
