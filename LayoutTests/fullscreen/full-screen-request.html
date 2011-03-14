@@ -7,6 +7,6 @@
         endTest();
     } else {
         waitForEventTestAndEnd(document, 'webkitfullscreenchange', "document.webkitIsFullScreen==true");
-        document.documentElement.webkitRequestFullScreen();
+        runWithKeyDown(function(){document.documentElement.webkitRequestFullScreen()});
     }
 </script>

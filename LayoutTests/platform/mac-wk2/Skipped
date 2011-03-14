@@ -1913,6 +1913,8 @@ fast/harness/show-modal-dialog.html
 
 # WebKit2 needs fullscreen support
 fullscreen/full-screen-css.html
+fullscreen/full-screen-iframe-allowed.html
+fullscreen/full-screen-iframe-not-allowed.html
 fullscreen/full-screen-remove-ancestor.html
 fullscreen/full-screen-remove.html
 fullscreen/full-screen-request.html

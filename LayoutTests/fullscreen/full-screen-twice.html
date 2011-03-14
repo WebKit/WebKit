@@ -20,7 +20,7 @@
         var spanEnteredFullScreen = function() {
             testExpected("document.webkitCurrentFullScreenElement", span);
             callback = documentEnteredFullScreen;
-            document.documentElement.webkitRequestFullScreen();
+            runWithKeyDown(function(){document.documentElement.webkitRequestFullScreen()});
         };
     
         var documentEnteredFullScreen = function() {
@@ -30,6 +30,6 @@
         };
 
         callback = spanEnteredFullScreen;
-        span.webkitRequestFullScreen();
+        runWithKeyDown(function(){span.webkitRequestFullScreen()});
     }
 </script>

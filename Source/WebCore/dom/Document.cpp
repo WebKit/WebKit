@@ -4849,6 +4849,20 @@ bool Document::isXHTMLMPDocument() const
 #endif
 
 #if ENABLE(FULLSCREEN_API)
+bool Document::fullScreenIsAllowedForElement(Element* element) const
+{
+    ASSERT(element);
+    while (HTMLFrameOwnerElement* ownerElement = element->document()->ownerElement()) {
+        if (!ownerElement->hasTagName(frameTag) && !ownerElement->hasTagName(iframeTag))
+            continue;
+
+        if (!static_cast<HTMLFrameElementBase*>(ownerElement)->allowFullScreen())
+            return false;
+        element = ownerElement;
+    }
+    return true;
+}
+
 void Document::webkitRequestFullScreenForElement(Element* element, unsigned short flags)
 {
     if (!page() || !page()->settings()->fullScreenEnabled())
@@ -4856,6 +4870,12 @@ void Document::webkitRequestFullScreenForElement(Element* element, unsigned shor
 
     if (!element)
         element = documentElement();
+    
+    if (!fullScreenIsAllowedForElement(element))
+        return;
+    
+    if (!ScriptController::processingUserGesture())
+        return;
     
     if (!page()->chrome()->client()->supportsFullScreenForElement(element))
         return;

@@ -1,3 +1,28 @@
+2011-03-13  Jer Noble  <jer.noble@apple.com>
+
+        FullScreen: Handle entering full screen security restrictions
+        https://bugs.webkit.org/show_bug.cgi?id=56264
+
+        Tests: fullscreen/full-screen-iframe-allowed.html
+               fullscreen/full-screen-iframe-not-allowed.html
+
+        Disable full screen documents in the following conditions:
+        1) requesting element is in an iframe which does not have a
+        webkitallowfullscreen attribute.
+        2) page is not processing a user gesture.
+
+        * dom/Document.cpp:
+        (WebCore::Document::fullScreenIsAllowedForElement): Added.  Checks
+            to see if elements contained in IFRAMES are allowed to
+            enter full screen.
+        (WebCore::Document::webkitRequestFullScreenForElement): Checks
+            if page is currently processing a user gesture.
+        * dom/Document.h:
+        * html/HTMLAttributeNames.in: Added webkitallowfullscreenAttr.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::allowFullScreen): Added.
+        * html/HTMLFrameElementBase.h:
+
 2011-03-14  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by David Levin.

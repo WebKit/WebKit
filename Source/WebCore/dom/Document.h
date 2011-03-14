@@ -1093,6 +1093,7 @@ public:
     void setFullScreenRendererBackgroundColor(Color);
     
     void fullScreenChangeDelayTimerFired(Timer<Document>*);
+    bool fullScreenIsAllowedForElement(Element*) const;
 #endif
 
     // Used to allow element that loads data without going through a FrameLoader to delay the 'load' event.

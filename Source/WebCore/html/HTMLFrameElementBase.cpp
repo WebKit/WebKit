@@ -283,4 +283,11 @@ void HTMLFrameElementBase::willRemove()
     HTMLFrameOwnerElement::willRemove();
 }
 
+#if ENABLE(FULLSCREEN_API)
+bool HTMLFrameElementBase::allowFullScreen() const
+{
+    return hasAttribute(webkitallowfullscreenAttr);
+}
+#endif
+
 } // namespace WebCore

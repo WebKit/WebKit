@@ -31,6 +31,6 @@
         };
 
         callback = spanEnteredFullScreen;
-        span.webkitRequestFullScreen();
+        runWithKeyDown(function(){span.webkitRequestFullScreen()});
     }
 </script>

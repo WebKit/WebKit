@@ -43,6 +43,9 @@ public:
     int height() const;
 
     void setRemainsAliveOnRemovalFromTree(bool);
+#if ENABLE(FULLSCREEN_API)
+    virtual bool allowFullScreen() const;
+#endif
 
 protected:
     HTMLFrameElementBase(const QualifiedName&, Document*);

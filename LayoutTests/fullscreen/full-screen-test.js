@@ -8,6 +8,14 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
 }
 
+function runWithKeyDown(fn) 
+{
+    document.addEventListener('keypress', function() { fn(); }, false);
+    if (window.layoutTestController) {
+        eventSender.keyDown(" ", []);
+    }
+}
+
 function logConsole()
 {
     if (!console && document.body) {

@@ -1,3 +1,25 @@
+2011-03-12  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        FullScreen: Handle entering full screen security restrictions
+        https://bugs.webkit.org/show_bug.cgi?id=56264
+
+        * fullscreen/full-screen-css.html: Use runWithKeyDown.
+        * fullscreen/full-screen-remove-ancestor.html: Ditto.
+        * fullscreen/full-screen-remove.html: Ditto.
+        * fullscreen/full-screen-request.html: Ditto.
+        * fullscreen/full-screen-twice.html: Ditto.
+        * fullscreen/full-screen-test.js:
+        * fullscreen/full-screen-iframe-allowed-expected.txt: Added.
+        * fullscreen/full-screen-iframe-allowed.html: Added.
+        * fullscreen/full-screen-iframe-not-allowed-expected.txt: Added.
+        * fullscreen/full-screen-iframe-not-allowed.html: Added.
+        (runWithKeyDown): Added.  Wraps the command in a keyDown/keyPress
+            listener.
+        * platform/mac-wk2/Skipped: Added new tests to skipped list.
+        * platform/qt-wk2/Skipped: Ditto.
+
 2011-02-28  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Dave Hyatt.
