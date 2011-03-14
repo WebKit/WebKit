@@ -1,0 +1,4 @@
+This test checks Web Inspector utilities.
+
+PASS: binaryIndexOf
+

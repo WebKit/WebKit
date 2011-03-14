@@ -1,0 +1,59 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    (function binaryIndexOfTest()
+    {
+        var testArrays = [
+            [],
+            [1],
+            [1, 10],
+            [1, 10, 11, 12, 13, 14, 100],
+            [-100, -50, 0, 50, 100],
+            [-100, -14, -13, -12, -11, -10, -1]
+        ];
+
+        function testArray(array)
+        {
+            function comparator(a, b)
+            {
+                return a < b ? -1 : (a > b ? 1 : 0);
+            }
+
+            for (var i = -100; i <= 100; ++i) {
+                var reference = array.indexOf(i);
+                var actual = array.binaryIndexOf(i, comparator);
+                if (reference !== actual) {
+                    InspectorTest.addResult(String.vsprintf("FAIL: binaryIndexOf: expected %d, actual %d for %d on %s", [expected, actual, i, array.join(",")]));
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        var passed = true;
+        for (var i = 0, l = testArrays.length; i < l; ++i) {
+            if (!testArray(testArrays[i])) {
+                passed = false;
+                break;
+            }
+        }
+        if (passed)
+            InspectorTest.addResult("PASS: binaryIndexOf");
+        InspectorTest.completeTest();
+    })();
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+This test checks Web Inspector utilities.
+</p>
+
+</body>
+</html>

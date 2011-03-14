@@ -1,3 +1,14 @@
+2011-03-14  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Factor out binary search algo from the insertionIndexForObjectInListSortedByFunction function.
+        https://bugs.webkit.org/show_bug.cgi?id=56312
+
+        Test: inspector/utilities.html
+
+        * inspector/front-end/utilities.js:
+
 2011-03-12  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
