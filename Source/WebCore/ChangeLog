@@ -2,6 +2,49 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: make DOMAgent event target, remove dependency from ElementsPanel.
+        https://bugs.webkit.org/show_bug.cgi?id=56268
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::reset):
+        (WebCore::InspectorDOMAgent::performSearch):
+        (WebCore::InspectorDOMAgent::cancelSearch):
+        (WebCore::InspectorDOMAgent::onMatchJobsTimer):
+        (WebCore::InspectorDOMAgent::reportNodesAsSearchResults):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype.requestDocument.mycallback):
+        (WebInspector.DOMAgent.prototype.requestDocument):
+        (WebInspector.DOMAgent.prototype._attributesUpdated):
+        (WebInspector.DOMAgent.prototype._characterDataModified):
+        (WebInspector.DOMAgent.prototype._documentUpdated):
+        (WebInspector.DOMAgent.prototype._setDocument):
+        (WebInspector.DOMAgent.prototype._childNodeCountUpdated):
+        (WebInspector.DOMAgent.prototype._childNodeInserted):
+        (WebInspector.DOMAgent.prototype._childNodeRemoved):
+        (WebInspector.DOMAgent.prototype._removeBreakpoints):
+        (WebInspector.DOMAgent.prototype.performSearch):
+        (WebInspector.DOMAgent.prototype.cancelSearch):
+        (WebInspector.DOMDispatcher.prototype.searchResults):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype._reset):
+        (WebInspector.ElementsPanel.prototype._documentUpdated):
+        (WebInspector.ElementsPanel.prototype.searchCanceled):
+        (WebInspector.ElementsPanel.prototype.performSearch):
+        (WebInspector.ElementsPanel.prototype._addNodesToSearchResult):
+        (WebInspector.ElementsPanel.prototype._attributesUpdated):
+        (WebInspector.ElementsPanel.prototype._characterDataModified):
+        (WebInspector.ElementsPanel.prototype._nodeInserted):
+        (WebInspector.ElementsPanel.prototype._nodeRemoved):
+        (WebInspector.ElementsPanel.prototype._childNodeCountUpdated):
+        (WebInspector.ElementsPanel.prototype.updateModifiedNodes):
+
+2011-03-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: add tests for edit dom operations.
         https://bugs.webkit.org/show_bug.cgi?id=56248
 

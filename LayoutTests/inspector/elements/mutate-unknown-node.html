@@ -28,17 +28,18 @@ function test()
 {
     function listener(type, event)
     {
-        InspectorTest.addResult("DOMAgent event fired. Should only happen once for output node: " + type + " " + event.target.nodeName() + "#" + event.target.getAttribute("id"));
+        InspectorTest.addResult("DOMAgent event fired. Should only happen once for output node: " + type + " " + event.data.nodeName() + "#" + event.data.getAttribute("id"));
     }
+
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, listener.bind(this, "DOMAttrModified"));
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.CharacterDataModified, listener.bind(this, "DOMCharacterDataModified"));
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeInserted, listener.bind(this, "DOMNodeInserted"));
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeRemoved, listener.bind(this, "DOMNodeRemoved"));
 
     WebInspector.domAgent.requestDocument(step0.bind(this));
 
-    function step0(doc)
+    function step0()
     {
-        doc.addEventListener("DOMAttrModified", listener.bind(this, "DOMAttrModified"));
-        doc.addEventListener("DOMCharacterDataModified", listener.bind(this, "DOMCharacterDataModified"));
-        doc.addEventListener("DOMNodeInserted", listener.bind(this, "DOMNodeInserted"));
-        doc.addEventListener("DOMNodeRemoved", listener.bind(this, "DOMNodeRemoved"));
         InspectorTest.evaluateInPage("appendChild()", step1);
     }
 

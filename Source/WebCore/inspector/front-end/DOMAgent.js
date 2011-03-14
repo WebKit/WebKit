@@ -297,42 +297,6 @@ WebInspector.DOMDocument = function(domAgent, payload)
     this._domAgent = domAgent;
 }
 
-WebInspector.DOMDocument.prototype = {
-
-    addEventListener: function(name, callback)
-    {
-        var listeners = this._listeners[name];
-        if (!listeners) {
-            listeners = [];
-            this._listeners[name] = listeners;
-        }
-        listeners.push(callback);
-    },
-
-    removeEventListener: function(name, callback)
-    {
-        var listeners = this._listeners[name];
-        if (!listeners)
-            return;
-
-        var index = listeners.indexOf(callback);
-        if (index != -1)
-            listeners.splice(index, 1);
-    },
-
-    _fireDomEvent: function(name, event)
-    {
-        var listeners = this._listeners[name];
-        if (!listeners)
-            return;
-
-        for (var i = 0; i < listeners.length; ++i) {
-            var listener = listeners[i];
-            listener.call(this, event);
-        }
-    }
-}
-
 WebInspector.DOMDocument.prototype.__proto__ = WebInspector.DOMNode.prototype;
 
 WebInspector.DOMAgent = function() {
@@ -341,14 +305,33 @@ WebInspector.DOMAgent = function() {
     InspectorBackend.registerDomainDispatcher("DOM", new WebInspector.DOMDispatcher(this));
 }
 
+WebInspector.DOMAgent.Events = {
+    AttrModified: "AttrModified",
+    CharacterDataModified: "CharacterDataModified",
+    NodeInserted: "NodeInserted",
+    NodeRemoved: "NodeRemoved",
+    DocumentUpdated: "DocumentUpdated",
+    ChildNodeCountUpdated: "ChildNodeCountUpdated"
+}
+
 WebInspector.DOMAgent.prototype = {
     requestDocument: function(callback)
     {
         if (this._document) {
             if (callback)
                 callback(this._document);
-        } else
-            this._documentUpdated(callback);
+            return;
+        }
+
+        function mycallback(error, root)
+        {
+            if (!error)
+                this._setDocument(root);
+
+            if (callback)
+                callback(this._document);
+        }
+        DOMAgent.getDocument(mycallback.bind(this));
     },
 
     pushNodeToFrontend: function(objectId, callback)
@@ -392,16 +375,14 @@ WebInspector.DOMAgent.prototype = {
     {
         var node = this._idToDOMNode[nodeId];
         node._setAttributesPayload(attrsArray);
-        var event = {target: node};
-        this._document._fireDomEvent("DOMAttrModified", event);
+        this.dispatchEventToListeners(WebInspector.DOMAgent.Events.AttrModified, node);
     },
 
     _characterDataModified: function(nodeId, newValue)
     {
         var node = this._idToDOMNode[nodeId];
         node._nodeValue = newValue;
-        var event = { target : node };
-        this._document._fireDomEvent("DOMCharacterDataModified", event);
+        this.dispatchEventToListeners(WebInspector.DOMAgent.Events.CharacterDataModified, node);
     },
 
     nodeForId: function(nodeId)
@@ -409,18 +390,10 @@ WebInspector.DOMAgent.prototype = {
         return this._idToDOMNode[nodeId];
     },
 
-    _documentUpdated: function(callback)
+    _documentUpdated: function()
     {
-        function mycallback(error, root)
-        {
-            if (error)
-                return;
-
-            this._setDocument(root);
-            if (callback)
-                callback(this._document);
-        }
-        DOMAgent.getDocument(mycallback.bind(this));
+        this._setDocument(null);
+        this.requestDocument();
     },
 
     _setDocument: function(payload)
@@ -430,10 +403,9 @@ WebInspector.DOMAgent.prototype = {
             this._document = new WebInspector.DOMDocument(this, payload);
             this._idToDOMNode[payload.id] = this._document;
             this._bindNodes(this._document.children);
-            WebInspector.breakpointManager.restoreDOMBreakpoints();
         } else
             this._document = null;
-        WebInspector.panels.elements.setDocument(this._document);
+        this.dispatchEventToListeners(WebInspector.DOMAgent.Events.DocumentUpdated, this._document);
     },
 
     _setDetachedRoot: function(payload)
@@ -468,10 +440,7 @@ WebInspector.DOMAgent.prototype = {
     {
         var node = this._idToDOMNode[nodeId];
         node._childNodeCount = newValue;
-        var outline = WebInspector.panels.elements.treeOutline;
-        var treeElement = outline.findTreeElement(node);
-        if (treeElement)
-            treeElement.hasChildren = newValue;
+        this.dispatchEventToListeners(WebInspector.DOMAgent.Events.ChildNodeCountUpdated, node);
     },
 
     _childNodeInserted: function(parentId, prevId, payload)
@@ -480,8 +449,7 @@ WebInspector.DOMAgent.prototype = {
         var prev = this._idToDOMNode[prevId];
         var node = parent._insertChild(prev, payload);
         this._idToDOMNode[node.id] = node;
-        var event = { target : node, relatedNode : parent };
-        this._document._fireDomEvent("DOMNodeInserted", event);
+        this.dispatchEventToListeners(WebInspector.DOMAgent.Events.NodeInserted, node);
     },
 
     _childNodeRemoved: function(parentId, nodeId)
@@ -489,8 +457,7 @@ WebInspector.DOMAgent.prototype = {
         var parent = this._idToDOMNode[parentId];
         var node = this._idToDOMNode[nodeId];
         parent.removeChild_(node);
-        var event = { target : node, relatedNode : parent };
-        this._document._fireDomEvent("DOMNodeRemoved", event);
+        this.dispatchEventToListeners(WebInspector.DOMAgent.Events.NodeRemoved, {node:node, parent:parent});
         delete this._idToDOMNode[nodeId];
         this._removeBreakpoints(node);
     },
@@ -503,8 +470,22 @@ WebInspector.DOMAgent.prototype = {
             return;
         for (var i = 0; i < node.children.length; ++i)
             this._removeBreakpoints(node.children[i]);
+    },
+
+    performSearch: function(query, searchResultCollector, searchSynchronously)
+    {
+        this._searchResultCollector = searchResultCollector;
+        DOMAgent.performSearch(query, !!searchSynchronously);
+    },
+
+    cancelSearch: function()
+    {
+        delete this._searchResultCollector;
+        DOMAgent.cancelSearch();
     }
 }
+
+WebInspector.DOMAgent.prototype.__proto__ = WebInspector.Object.prototype;
 
 WebInspector.DOMDispatcher = function(domAgent)
 {
@@ -552,9 +533,10 @@ WebInspector.DOMDispatcher.prototype = {
         WebInspector.updateFocusedNode(nodeId);
     },
 
-    addNodesToSearchResult: function(nodeIds)
+    searchResults: function(nodeIds)
     {
-        WebInspector.panels.elements.addNodesToSearchResult(nodeIds);
+        if (this._domAgent._searchResultCollector)
+            this._domAgent._searchResultCollector(nodeIds);
     }
 }
 

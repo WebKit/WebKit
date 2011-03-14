@@ -295,7 +295,7 @@ Vector<Document*> InspectorDOMAgent::documents()
 void InspectorDOMAgent::reset()
 {
     ErrorString error;
-    searchCanceled(&error);
+    cancelSearch(&error);
     discardBindings();
     if (m_revalidateStyleAttrTask)
         m_revalidateStyleAttrTask->reset();
@@ -785,7 +785,7 @@ void InspectorDOMAgent::performSearch(ErrorString* error, const String& whitespa
     escapedTagNameQuery.replace("'", "\\'");
 
     // Clear pending jobs.
-    searchCanceled(error);
+    cancelSearch(error);
 
     // Find all frames, iframes and object elements to search their documents.
     Vector<Document*> docs = documents();
@@ -839,13 +839,13 @@ void InspectorDOMAgent::performSearch(ErrorString* error, const String& whitespa
         for (Deque<MatchJob*>::iterator it = m_pendingMatchJobs.begin(); it != m_pendingMatchJobs.end(); ++it)
             (*it)->match(resultCollector);
         reportNodesAsSearchResults(resultCollector);
-        searchCanceled(error);
+        cancelSearch(error);
         return;
     }
     m_matchJobsTimer.startOneShot(0);
 }
 
-void InspectorDOMAgent::searchCanceled(ErrorString*)
+void InspectorDOMAgent::cancelSearch(ErrorString*)
 {
     if (m_matchJobsTimer.isActive())
         m_matchJobsTimer.stop();
@@ -1216,7 +1216,7 @@ void InspectorDOMAgent::onMatchJobsTimer(Timer<InspectorDOMAgent>*)
 {
     if (!m_pendingMatchJobs.size()) {
         ErrorString error;
-        searchCanceled(&error);
+        cancelSearch(&error);
         return;
     }
 
@@ -1239,7 +1239,7 @@ void InspectorDOMAgent::reportNodesAsSearchResults(ListHashSet<Node*>& resultCol
         m_searchResults.add(*it);
         nodeIds->pushNumber(static_cast<long long>(pushNodePathToFrontend(*it)));
     }
-    m_frontend->addNodesToSearchResult(nodeIds.release());
+    m_frontend->searchResults(nodeIds.release());
 }
 
 void InspectorDOMAgent::copyNode(ErrorString*, long nodeId)

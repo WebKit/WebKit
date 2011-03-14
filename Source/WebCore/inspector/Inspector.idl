@@ -156,13 +156,12 @@ module core {
         void setOuterHTML(in long nodeId, in String outerHTML, out long outNodeId);
 
         void performSearch(in String query, in boolean runSynchronously);
-        void searchCanceled();
+        void cancelSearch();
 
+        void pushNodeToFrontend(in Object objectId, out long nodeId);
         void pushNodeByPathToFrontend(in String path, out long nodeId);
         void resolveNode(in long nodeId, in String objectGroup, out Value result);
-        void pushNodeToFrontend(in Object objectId, out long nodeId);
 
-        [event] void addNodesToSearchResult(out Array nodeIds);
         [event] void documentUpdated();
         [event] void setChildNodes(out long parentId, out Array nodes);
         [event] void attributesUpdated(out long id, out Array attributes);
@@ -171,6 +170,7 @@ module core {
         [event] void childNodeCountUpdated(out long id, out int newValue);
         [event] void childNodeInserted(out long parentId, out long prevId, out Object node);
         [event] void childNodeRemoved(out long parentId, out long id);
+        [event] void searchResults(out Array nodeIds);
     };
 
     interface [Conditional=INSPECTOR] CSS {

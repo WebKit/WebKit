@@ -120,7 +120,7 @@ public:
     void setNodeValue(ErrorString*, long nodeId, const String& value, bool* success);
     void getEventListenersForNode(ErrorString*, long nodeId, RefPtr<InspectorArray>* listenersArray);
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, bool runSynchronously);
-    void searchCanceled(ErrorString*);
+    void cancelSearch(ErrorString*);
     void resolveNode(ErrorString*, long nodeId, const String& objectGroup, RefPtr<InspectorValue>* result);
     void pushNodeToFrontend(ErrorString*, PassRefPtr<InspectorObject> objectId, long* nodeId);
     void pushNodeByPathToFrontend(ErrorString*, const String& path, long* nodeId);

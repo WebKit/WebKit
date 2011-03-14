@@ -23,7 +23,7 @@ function test()
         searchResults.push(markupValue);
     }
 
-    WebInspector.panels.elements.addNodesToSearchResult = function(nodeIds)
+    function addNodesToSearchResult(nodeIds)
     {
         for (var i = 0; i < nodeIds.length; ++i) {
             var node = WebInspector.domAgent.nodeForId(nodeIds[i]);
@@ -34,22 +34,27 @@ function test()
         }
     }
 
-    // Plain text.
-    DOMAgent.performSearch("Foo" + "Bar", true);
-    // Partial text.
-    DOMAgent.performSearch("oo" + "Ba", true);
-    // Start tag.
-    DOMAgent.performSearch("<inpu" + "t", true);
-    // Partial tag.
-    DOMAgent.performSearch("npu" + "t", true);
-    // Exact attribute name.
-    DOMAgent.performSearch("valu" + "e", true);
-    // Exact attribute val<>ue.
-    DOMAgent.performSearch("In" + "putVa" + "l", true);
-    // Partial attribute val<>ue.
-    DOMAgent.performSearch("n" + "putVa" + "l", true);
-    // Terminator.
-    DOMAgent.performSearch("ter" + "mi" + "nator", true);
+    WebInspector.domAgent.requestDocument(step1);
+
+    function step1()
+    {
+        // Plain text.
+        WebInspector.domAgent.performSearch("Foo" + "Bar", addNodesToSearchResult, true);
+        // Partial text.
+        WebInspector.domAgent.performSearch("oo" + "Ba", addNodesToSearchResult, true);
+        // Start tag.
+        WebInspector.domAgent.performSearch("<inpu" + "t", addNodesToSearchResult, true);
+        // Partial tag.
+        WebInspector.domAgent.performSearch("npu" + "t", addNodesToSearchResult, true);
+        // Exact attribute name.
+        WebInspector.domAgent.performSearch("valu" + "e", addNodesToSearchResult, true);
+        // Exact attribute val<>ue.
+        WebInspector.domAgent.performSearch("In" + "putVa" + "l", addNodesToSearchResult, true);
+        // Partial attribute val<>ue.
+        WebInspector.domAgent.performSearch("n" + "putVa" + "l", addNodesToSearchResult, true);
+        // Terminator.
+        WebInspector.domAgent.performSearch("ter" + "mi" + "nator", addNodesToSearchResult, true);
+    }
 }
 </script>
 </head>
