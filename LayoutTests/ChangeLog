@@ -1,3 +1,13 @@
+2011-03-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Optimize backend-frontend data transfer volume for CSS styles
+        https://bugs.webkit.org/show_bug.cgi?id=56111
+
+        * inspector/styles/styles-new-API.html:
+        * inspector/styles/styles-source-offsets.html:
+
 2011-03-14  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Steve Block.

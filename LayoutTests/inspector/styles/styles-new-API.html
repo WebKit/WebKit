@@ -286,7 +286,7 @@ function test()
         for (var i = 0; i < style.cssProperties.length; ++i) {
             var property = style.cssProperties[i];
             if (property.status !== "disabled")
-                InspectorTest.addResult("['" + property.name + "':'" + property.value + "'" + (property.priority === "important" ? " is-important" : "") + (property.parsedOk ? "" : " non-parsed") +"] @[" + property.startOffset + "-" + property.endOffset + "] " + property.status);
+                InspectorTest.addResult("['" + property.name + "':'" + property.value + "'" + (property.priority === "important" ? " is-important" : "") + (("parsedOk" in property) ? " non-parsed" : "") +"] @[" + property.startOffset + "-" + property.endOffset + "] " + (property.status || "style"));
             else
                 InspectorTest.addResult("[text='" + property.text + "'] " + property.status);
         }

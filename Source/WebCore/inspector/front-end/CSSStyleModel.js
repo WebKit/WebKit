@@ -419,8 +419,14 @@ WebInspector.CSSProperty = function(ownerStyle, index, name, value, priority, st
 
 WebInspector.CSSProperty.parsePayload = function(ownerStyle, index, payload)
 {
+    // The following default field values are used in the payload:
+    // priority: ""
+    // parsedOk: true
+    // implicit: false
+    // status: "style"
+    // shorthandName: ""
     var result = new WebInspector.CSSProperty(
-        ownerStyle, index, payload.name, payload.value, payload.priority, payload.status, payload.parsedOk, payload.implicit, payload.shorthandName, payload.text);
+        ownerStyle, index, payload.name, payload.value, payload.priority || "", payload.status || "style", ("parsedOk" in payload) ? payload.parsedOk : true, !!payload.implicit, payload.shorthandName || "", payload.text);
     return result;
 }
 
