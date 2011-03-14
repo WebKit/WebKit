@@ -1,3 +1,13 @@
+2011-03-14  Pratik Solanki  <psolanki@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        I checked in Intel-only version of these files in r80975. This fixes that by building all
+        the correct slices - i386/x86_64/ppc for SnowLeopard and i386/x86_64/ppc/ppc64 for Leopard.
+
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2011-03-13  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Brady Eidson.
