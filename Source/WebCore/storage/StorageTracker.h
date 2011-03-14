@@ -76,7 +76,7 @@ public:
 private:
     StorageTracker(const String& storagePath);
 
-    String trackerDatabasePath() const;
+    String trackerDatabasePath();
     void openTrackerDatabase(bool createIfDoesNotExist);
 
     void setStorageDirectoryPath(const String&);
@@ -91,16 +91,17 @@ private:
     
     void setIsActive(bool);
 
+    // Guard for m_database, m_storageDirectoryPath and static Strings in syncFileSystemAndTrackerDatabase().
     Mutex m_databaseGuard;
     SQLiteDatabase m_database;
-
     String m_storageDirectoryPath;
 
+    Mutex m_clientGuard;
     StorageTrackerClient* m_client;
 
-    typedef HashSet<String> OriginSet;
-
+    // Guard for m_originSet and m_originsBeingDeleted.
     Mutex m_originSetGuard;
+    typedef HashSet<String> OriginSet;
     OriginSet m_originSet;
     OriginSet m_originsBeingDeleted;
 

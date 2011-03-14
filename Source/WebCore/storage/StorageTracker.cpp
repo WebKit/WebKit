@@ -83,8 +83,9 @@ void StorageTracker::setStorageDirectoryPath(const String& path)
     m_storageDirectoryPath = path.threadsafeCopy();
 }
 
-String StorageTracker::trackerDatabasePath() const
+String StorageTracker::trackerDatabasePath()
 {
+    ASSERT(!m_databaseGuard.tryLock());
     return SQLiteFileSystem::appendDatabaseFileNameToPath(m_storageDirectoryPath, "StorageTracker.db");
 }
 
@@ -138,47 +139,73 @@ void StorageTracker::syncImportOriginIdentifiers()
     {
         MutexLocker lockDatabase(m_databaseGuard);
 
+        // Don't force creation of StorageTracker's db just because a tracker
+        // was initialized. It will be created if local storage dbs are found
+        // by syncFileSystemAndTrackerDatabse() or the next time a local storage
+        // db is created by StorageAreaSync.
         openTrackerDatabase(false);
-        if (!m_database.isOpen())
-            return;
-        
-        SQLiteStatement statement(m_database, "SELECT origin FROM Origins");
-        if (statement.prepare() != SQLResultOk) {
-            LOG_ERROR("Failed to prepare statement.");
-            return;
-        }
-        
-        int result;
 
-        {
-            MutexLocker lockOrigins(m_originSetGuard);
-            while ((result = statement.step()) == SQLResultRow)
-                m_originSet.add(statement.getColumnText(0).threadsafeCopy());
+        if (m_database.isOpen()) {
+            SQLiteStatement statement(m_database, "SELECT origin FROM Origins");
+            if (statement.prepare() != SQLResultOk) {
+                LOG_ERROR("Failed to prepare statement.");
+                return;
+            }
+            
+            int result;
+            
+            {
+                MutexLocker lockOrigins(m_originSetGuard);
+                while ((result = statement.step()) == SQLResultRow)
+                    m_originSet.add(statement.getColumnText(0).threadsafeCopy());
+            }
+            
+            if (result != SQLResultDone) {
+                LOG_ERROR("Failed to read in all origins from the database.");
+                return;
+            }
         }
-        
-        if (result != SQLResultDone)
-            LOG_ERROR("Failed to read in all origins from the database.");
     }
     
     syncFileSystemAndTrackerDatabase();
     
-    if (m_client) {
-        MutexLocker lockOrigins(m_originSetGuard);
-        OriginSet::const_iterator end = m_originSet.end();
-        for (OriginSet::const_iterator it = m_originSet.begin(); it != end; ++it)
-            m_client->dispatchDidModifyOrigin(*it);
+    {
+        MutexLocker lockClient(m_clientGuard);
+        if (m_client) {
+            MutexLocker lockOrigins(m_originSetGuard);
+            OriginSet::const_iterator end = m_originSet.end();
+            for (OriginSet::const_iterator it = m_originSet.begin(); it != end; ++it)
+                m_client->dispatchDidModifyOrigin(*it);
+        }
     }
 }
     
 void StorageTracker::syncFileSystemAndTrackerDatabase()
 {
+    ASSERT(!isMainThread());
     ASSERT(m_isActive);
 
+    m_databaseGuard.lock();
     DEFINE_STATIC_LOCAL(const String, fileMatchPattern, ("*.localstorage"));
     DEFINE_STATIC_LOCAL(const String, fileExt, (".localstorage"));
     DEFINE_STATIC_LOCAL(const unsigned, fileExtLength, (fileExt.length()));
+    m_databaseGuard.unlock();
 
-    Vector<String> paths = listDirectory(m_storageDirectoryPath, fileMatchPattern);
+    Vector<String> paths;
+    {
+        MutexLocker lock(m_databaseGuard);
+        paths = listDirectory(m_storageDirectoryPath, fileMatchPattern);
+    }
+
+    // Use a copy of m_originSet to find expired entries and to schedule their
+    // deletions from disk and from m_originSet.
+    OriginSet originSetCopy;
+    {
+        MutexLocker lock(m_originSetGuard);
+        OriginSet::const_iterator end = m_originSet.end();
+        for (OriginSet::const_iterator it = m_originSet.begin(); it != end; ++it)
+            originSetCopy.add((*it).threadsafeCopy());
+    }
     
     // Add missing StorageTracker records.
     OriginSet foundOrigins;
@@ -188,26 +215,18 @@ void StorageTracker::syncFileSystemAndTrackerDatabase()
         if (path.endsWith(fileExt, true) && path.length() > fileExtLength) {
             String file = pathGetFileName(path);
             String originIdentifier = file.substring(0, file.length() - fileExtLength);
-            if (!m_originSet.contains(originIdentifier)) {
-                if (isMainThread())
-                    setOriginDetails(originIdentifier, path);
-                else
-                    syncSetOriginDetails(originIdentifier, path);
-            }
+            if (!originSetCopy.contains(originIdentifier))
+                syncSetOriginDetails(originIdentifier, path);
 
             foundOrigins.add(originIdentifier);
         }
     }
 
     // Delete stale StorageTracker records.
-    OriginSet::const_iterator setEnd = m_originSet.end();
-    for (OriginSet::const_iterator it = m_originSet.begin(); it != setEnd; ++it) {
-        if (!foundOrigins.contains(*it)) {
-            if (isMainThread())
-                deleteOrigin(*it);
-            else 
-                syncDeleteOrigin(*it);
-        }
+    OriginSet::const_iterator setEnd = originSetCopy.end();
+    for (OriginSet::const_iterator it = originSetCopy.begin(); it != setEnd; ++it) {
+        if (!foundOrigins.contains(*it))
+            syncDeleteOrigin(*it);
     }
 }
 
@@ -225,22 +244,23 @@ void StorageTracker::setOriginDetails(const String& originIdentifier, const Stri
         m_originSet.add(originIdentifier);
     }
 
-    LocalStorageTask* task = LocalStorageTask::createSetOriginDetails(originIdentifier.threadsafeCopy(), databaseFile).leakPtr();
+    OwnPtr<LocalStorageTask> task = LocalStorageTask::createSetOriginDetails(originIdentifier.threadsafeCopy(), databaseFile);
 
     if (isMainThread()) {
         ASSERT(m_thread);
-        m_thread->scheduleTask(task);
+        m_thread->scheduleTask(task.release());
     } else 
-        callOnMainThread(scheduleTask, (void*)task);
+        callOnMainThread(scheduleTask, reinterpret_cast<void*>(task.leakPtr()));
 }
 
-void StorageTracker::scheduleTask(void* task)
+void StorageTracker::scheduleTask(void* taskIn)
 {
     ASSERT(isMainThread());
     ASSERT(StorageTracker::tracker().m_thread);
     
-    if (StorageTracker::tracker().m_thread)
-        StorageTracker::tracker().m_thread->scheduleTask((LocalStorageTask*)task);
+    OwnPtr<LocalStorageTask> task = adoptPtr(reinterpret_cast<LocalStorageTask*>(taskIn));
+
+    StorageTracker::tracker().m_thread->scheduleTask(task.release());
 }
 
 void StorageTracker::syncSetOriginDetails(const String& originIdentifier, const String& databaseFile)
@@ -272,8 +292,11 @@ void StorageTracker::syncSetOriginDetails(const String& originIdentifier, const 
             m_originSet.add(originIdentifier);
     }
 
-    if (m_client)
-        m_client->dispatchDidModifyOrigin(originIdentifier);
+    {
+        MutexLocker lockClient(m_clientGuard);
+        if (m_client)
+            m_client->dispatchDidModifyOrigin(originIdentifier);
+    }
 }
 
 void StorageTracker::origins(Vector<RefPtr<SecurityOrigin> >& result)
@@ -329,11 +352,15 @@ void StorageTracker::syncDeleteAllOrigins()
     int result;
     while ((result = statement.step()) == SQLResultRow) {
         if (!canDeleteOrigin(statement.getColumnText(0)))
-                continue;
+            continue;
 
         SQLiteFileSystem::deleteDatabaseFile(statement.getColumnText(1));
-        if (m_client)
-            m_client->dispatchDidModifyOrigin(statement.getColumnText(0));
+
+        {
+            MutexLocker lockClient(m_clientGuard);
+            if (m_client)
+                m_client->dispatchDidModifyOrigin(statement.getColumnText(0));
+        }
     }
     
     if (result != SQLResultDone)
@@ -436,9 +463,12 @@ void StorageTracker::syncDeleteOrigin(const String& originIdentifier)
         SQLiteFileSystem::deleteDatabaseFile(trackerDatabasePath());
         SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_storageDirectoryPath);
     }
-    
-    if (m_client)
-        m_client->dispatchDidModifyOrigin(originIdentifier);
+
+    {
+        MutexLocker lockClient(m_clientGuard);
+        if (m_client)
+            m_client->dispatchDidModifyOrigin(originIdentifier);
+    }
 }
     
 void StorageTracker::willDeleteAllOrigins()
@@ -470,14 +500,15 @@ void StorageTracker::cancelDeletingOrigin(const String& originIdentifier)
     if (!m_isActive)
         return;
 
-    MutexLocker lockOrigins(m_originSetGuard);
     MutexLocker lockDatabase(m_databaseGuard);
+    MutexLocker lockOrigins(m_originSetGuard);
     if (!m_originsBeingDeleted.isEmpty())
         m_originsBeingDeleted.remove(originIdentifier);
 }
 
 void StorageTracker::setClient(StorageTrackerClient* client)
 {
+    MutexLocker lockClient(m_clientGuard);
     m_client = client;
 }
 

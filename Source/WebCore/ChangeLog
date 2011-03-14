@@ -1,5 +1,33 @@
 2011-03-13  Anton D'Auria  <adauria@apple.com>
 
+        Reviewed by Brady Eidson and David Levin, landed by Brady Eidson.
+
+        Fixed lock-taking order to prevent deadlock, added lock for m_client,
+        removed premature return in syncImportOriginIdentifiers when tracker
+        db does not exist because that prevented syncFileSystemAndTrackerDatabase()
+        from running until next LocalStorage db creation, cleaned up
+        StorageTracker::scheduleTask() code for readability.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=56285
+        
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::trackerDatabasePath):
+        (WebCore::StorageTracker::syncImportOriginIdentifiers): If tracker db isn't
+        optionally opened (as in the case when it doesn't exist on disk), don't
+        exit early and call syncFileSystemAndTrackerDatabase(), which will create
+        a tracker db if localstorage db files are found on disk by calling setOriginDetails.
+        (WebCore::StorageTracker::syncFileSystemAndTrackerDatabase):
+        (WebCore::StorageTracker::setOriginDetails):
+        (WebCore::StorageTracker::scheduleTask): readability changes.
+        (WebCore::StorageTracker::syncSetOriginDetails):
+        (WebCore::StorageTracker::syncDeleteAllOrigins):
+        (WebCore::StorageTracker::syncDeleteOrigin):
+        (WebCore::StorageTracker::cancelDeletingOrigin): order lock-taking consistently to avoid deadlock.
+        (WebCore::StorageTracker::setClient):
+        * storage/StorageTracker.h:
+
+2011-03-13  Anton D'Auria  <adauria@apple.com>
+
         Reviewed and landed by Brady Eidson.
 
         Invalid assertion in StorageTracker - PageGroup::numberOfPageGroups() == 1
