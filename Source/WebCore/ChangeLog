@@ -1,3 +1,15 @@
+2011-03-13  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Make adjustMIMETypeIfNecessary use CFNetwork directly
+        https://bugs.webkit.org/show_bug.cgi?id=55912
+
+        Follow up fix for Layout Test failure. Fix typo - it should be text/plain, not test/plain.
+
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (WebCore::adjustMIMETypeIfNecessary):
+
 2011-03-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
