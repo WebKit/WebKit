@@ -1,3 +1,28 @@
+2011-03-11  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: move breakpoints restoring after live edit to debugger presentation model.
+        https://bugs.webkit.org/show_bug.cgi?id=56179
+
+        Presentation model should move breakpoints based on text diff as required by "revert to revision" action in resources panel.
+
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel):
+        (WebInspector.DebuggerModel.prototype.setBreakpoint.didSetBreakpoint):
+        (WebInspector.DebuggerModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerModel.prototype.reset):
+        (WebInspector.DebuggerModel.prototype.editScriptSource.didEditScriptSource):
+        (WebInspector.DebuggerModel.prototype.editScriptSource):
+        (WebInspector.DebuggerModel.prototype.get callFrames):
+        (WebInspector.DebuggerModel.prototype._pausedScript):
+        (WebInspector.DebuggerModel.prototype._resumedScript):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype._scriptSourceChanged):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._scriptSourceChanged):
+
 2011-03-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

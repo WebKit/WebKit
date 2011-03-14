@@ -267,10 +267,6 @@ WebInspector.ScriptsPanel.prototype = {
 
         var sourceFileId = this._sourceFileIdForScript(script);
         this._recreateSourceFrame(sourceFileId);
-
-        var callFrames = WebInspector.debuggerModel.callFrames;
-        if (callFrames.length)
-            this._debuggerPaused({ data: { callFrames: callFrames } });
     },
 
     _addScript: function(script)
