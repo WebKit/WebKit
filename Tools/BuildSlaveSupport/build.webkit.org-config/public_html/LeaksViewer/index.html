@@ -55,6 +55,7 @@ THE POSSIBILITY OF SUCH DAMAGE.
     <script src=LeaksLoader.js></script>
     <script src=LeaksParser.js></script>
     <script src=LeaksViewer.js></script>
+    <script src=RecentBuildsLoader.js></script>
     <script src=Utilities.js></script>
 </head>
 <body>
@@ -67,8 +68,12 @@ THE POSSIBILITY OF SUCH DAMAGE.
     </div>
     <div id=url-prompt-container class=hidden>
         <div id=url-prompt>
-            <p>Please enter the URL of a build results page or leaks file:</p>
+            <p>Enter the URL of a build results page or leaks file:</p>
             <input id=url type=url><button onclick='LeaksViewer.urlPromptButtonClicked(event)'>Fetch leaks</button>
+            <p>Or choose a recent build:</p>
+            <div id=recent-builds-container>
+                <p id=recent-builds-loading-indicator>Loading builds&hellip;</p>
+            </div>
         </div>
     </div>
 </body>

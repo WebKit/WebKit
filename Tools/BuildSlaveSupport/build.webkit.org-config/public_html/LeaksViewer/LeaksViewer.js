@@ -47,7 +47,7 @@ var LeaksViewer = {
         var url;
         var match = /url=([^&]+)/.exec(location.search);
         if (match)
-            url = match[1];
+            url = decodeURIComponent(match[1]);
 
         if (url)
             this._loadLeaksFromURL(url)
@@ -92,8 +92,7 @@ var LeaksViewer = {
     },
 
     urlPromptButtonClicked: function(e) {
-        this._loadLeaksFromURL(document.getElementById("url").value);
-        document.getElementById("url-prompt-container").addStyleClass("hidden");
+        this._urlChosenFromPrompt(document.getElementById("url").value);
     },
 
     _didCountLeaksFiles: function(fileCount) {
@@ -103,6 +102,11 @@ var LeaksViewer = {
 
     _didLoadLeaksFile: function(leaksText) {
         this._parser.addLeaksFile(leaksText);
+    },
+
+    _didLoadRecentBuilds: function(builds) {
+        this._recentBuilds = builds;
+        this._updateURLPrompt();
     },
 
     _didParseLeaksFile: function(profile) {
@@ -115,6 +119,8 @@ var LeaksViewer = {
     _displayURLPrompt: function() {
         document.getElementById("url-prompt-container").removeStyleClass("hidden");
         document.getElementById("url").focus();
+        var loader = new RecentBuildsLoader(this._didLoadRecentBuilds.bind(this));
+        loader.start("SnowLeopard Intel Leaks", this._numberOfRecentBuildsToLoad);
     },
 
     _loadLeaksFromURL: function(url) {
@@ -138,6 +144,8 @@ var LeaksViewer = {
         this._updateTitle();
     },
 
+    _numberOfRecentBuildsToLoad: 10,
+
     _setLoadingIndicatorHidden: function(hidden) {
         if (hidden)
             this._loadingIndicator.addStyleClass("hidden");
@@ -156,6 +164,39 @@ var LeaksViewer = {
         title += this.url;
         document.title = title;
     },
+
+    _updateURLPrompt: function() {
+        var recentBuildsContainer = document.getElementById("recent-builds-container");
+        recentBuildsContainer.removeChildren();
+        if (this._recentBuilds && this._recentBuilds.length) {
+            var list = document.createElement("ol");
+            list.id = "recent-builds-list";
+
+            var self = this;
+            this._recentBuilds.forEach(function(build) {
+                var link = document.createElement("a");
+                link.href = document.location.href + "?url=" + encodeURIComponent(build.url);
+                link.addEventListener("click", function(e) {
+                    self._urlChosenFromPrompt(build.url);
+                    e.preventDefault();
+                });
+                link.appendChild(document.createTextNode("r" + build.revision + ": " + build.leakCount + " leaks"));
+                var item = document.createElement("li");
+                item.appendChild(link);
+
+                list.appendChild(item);
+            });
+
+            recentBuildsContainer.appendChild(list);
+        } else
+            recentBuildsContainer.appendChild(document.createTextNode("No recent leaky builds found."));
+    },
+
+    _urlChosenFromPrompt: function(url) {
+        this._loadLeaksFromURL(url);
+        document.getElementById("url-prompt-container").addStyleClass("hidden");
+    },
+
 };
 
 addEventListener("load", LeaksViewer.loaded.bind(LeaksViewer));

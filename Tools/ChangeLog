@@ -1,3 +1,42 @@
+2011-03-14  Adam Roben  <aroben@apple.com>
+
+        Show a list of up to 10 recent leaky builds when Leaks Viewer loads
+
+        Fixes <http://webkit.org/b/56043> Leaks Viewer should present a list of recent builds to
+        analyze
+
+        Reviewed by David Kilzer and Joe Pecoraro.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.css:
+        (#url-prompt): Made this a bit taller to make room for the list of builds.
+
+        (#recent-builds-loading-indicator):
+        (#recent-builds-list):
+        Added styles for the build list and loading indicator.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.js:
+        (LeaksViewer.loaded): Pass the URL from the query through decodeURIComponent before loading
+        it. This will unescape it.
+        (LeaksViewer.urlPromptButtonClicked): Moved code from here to _urlChosenFromPrompt.
+        (LeaksViewer._didLoadRecentBuilds): Added. Stores the builds and updates the prompt.
+        (LeaksViewer._displayURLPrompt): Start loading the recent leaky builds.
+        (LeaksViewer._updateURLPrompt): Create a list of the recent leaky builds and add them to the
+        prompt UI.
+        (LeaksViewer._urlChosenFromPrompt): Added. Code came from urlPromptButtonClicked. This is
+        now also used when a recent build is clicked.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/RecentBuildsLoader.js: Added.
+        (RecentBuildsLoader): Store the callback.
+        (RecentBuildsLoader.prototype.start): Load the N most recent builds from the specified
+        builder. Find the revision number, leak count, and results URL for each one. Pass the
+        resulting info to our callback.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/Utilities.js:
+        (range): Added this helper function to return an array containing the integers [0, n).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/index.html: Added
+        RecentBuildsLoader.js and added text to the prompt UI to show the recent builds.
+
 2011-03-14  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -34,3 +34,9 @@ function getResource(url, callback) {
     xhr.send();
 }
 
+function range(n) {
+    var result = new Array(n);
+    for (var i = 0; i < n; ++i)
+        result[i] = i;
+    return result;
+}

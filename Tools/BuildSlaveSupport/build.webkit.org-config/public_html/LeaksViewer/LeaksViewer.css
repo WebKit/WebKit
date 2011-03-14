@@ -40,7 +40,7 @@
     left: 0;
     right: 0;
     width: 400px;
-    height: 200px;
+    height: 300px;
     margin: auto;
     background-color: white;
     -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
@@ -62,6 +62,16 @@
 
 #loading-indicator-label {
     margin-left: 5px;
+}
+
+#recent-builds-loading-indicator {
+    color: gray;
+}
+
+#recent-builds-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .percent-time-status-bar-item {
