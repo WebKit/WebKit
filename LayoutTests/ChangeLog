@@ -1,3 +1,13 @@
+2011-03-14  David Levin  <levin@chromium.org>
+
+        Add a baseline for linux for this test since it matches what we have for OSX
+        except for the typical minor font differences.
+
+        * platform/chromium-linux/css2.1/t1008-c44-ln-box-02-d-ag-expected.checksum: Added.
+        * platform/chromium-linux/css2.1/t1008-c44-ln-box-02-d-ag-expected.png: Added.
+        * platform/chromium-linux/css2.1/t1008-c44-ln-box-02-d-ag-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-14  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Beth Dakin.

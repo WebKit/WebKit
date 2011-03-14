@@ -1056,10 +1056,6 @@ BUGCR10328 LINUX : fast/css/font-face-multiple-faces.html = FAIL
 // Got flakey (both debug and release) around r3581 (ananta).
 BUGCR10329 WIN LINUX : http/tests/plugins/geturlnotify-from-npp-destroystream.html = PASS TEXT
 
-// Uses ahem font and expects line heights to match some pixel value.
-// We should be able to pass this -- not sure what's wrong.
-BUGCR10331 LINUX : css2.1/t1008-c44-ln-box-02-d-ag.html = FAIL
-
 // Looks like we're failing the test -- there are red boogers in the box that should be all green.
 BUGCR10332 LINUX : css2.1/t1605-c545-txttrans-00-b-ag.html = FAIL
 
