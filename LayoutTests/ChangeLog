@@ -1,3 +1,22 @@
+2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac pixel rebaselines for r81053.
+
+        * platform/mac/editing/selection/drag-select-1-expected.checksum:
+        * platform/mac/editing/selection/drag-select-1-expected.png:
+        * platform/mac/editing/selection/fake-drag-expected.checksum:
+        * platform/mac/editing/selection/fake-drag-expected.png:
+        * platform/mac/fast/text/atsui-rtl-override-selection-expected.checksum:
+        * platform/mac/fast/text/atsui-rtl-override-selection-expected.png:
+        * platform/mac/svg/custom/mouse-move-on-svg-container-expected.checksum:
+        * platform/mac/svg/custom/mouse-move-on-svg-container-expected.png:
+        * platform/mac/svg/custom/mouse-move-on-svg-container-standalone-expected.checksum:
+        * platform/mac/svg/custom/mouse-move-on-svg-container-standalone-expected.png:
+        * platform/mac/svg/custom/mouse-move-on-svg-root-expected.checksum:
+        * platform/mac/svg/custom/mouse-move-on-svg-root-expected.png:
+        * platform/mac/svg/custom/mouse-move-on-svg-root-standalone-expected.checksum:
+        * platform/mac/svg/custom/mouse-move-on-svg-root-standalone-expected.png:
+
 2011-03-14  David Levin  <levin@chromium.org>
 
         Update the chromium windows baselines for r81053.
