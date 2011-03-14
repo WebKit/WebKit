@@ -1,3 +1,15 @@
+2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK rebaselines or r81053.
+
+        * platform/gtk/editing/selection/drag-select-1-expected.txt:
+        * platform/gtk/editing/selection/fake-drag-expected.txt:
+        * platform/gtk/editing/selection/inline-closest-leaf-child-expected.txt:
+        * platform/gtk/svg/custom/mouse-move-on-svg-container-expected.txt:
+        * platform/gtk/svg/custom/mouse-move-on-svg-container-standalone-expected.txt:
+        * platform/gtk/svg/custom/mouse-move-on-svg-root-expected.txt:
+        * platform/gtk/svg/custom/mouse-move-on-svg-root-standalone-expected.txt:
+
 2011-03-14  David Levin  <levin@chromium.org>
 
         Add rebaselines due to two changes:
