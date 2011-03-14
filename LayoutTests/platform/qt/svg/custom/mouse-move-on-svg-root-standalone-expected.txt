@@ -6,4 +6,5 @@ layer at (0,0) size 406x406
     RenderSVGText {text} at (86,34) size 228x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 228x21
         chunk 1 (middle anchor) text run 1 at (86.00,50.00) startOffset 0 endOffset 34 width 228.00: "The circle should be in the middle"
-caret: position 16 of child 0 {#text} of child 3 {text} of child 0 {svg} of document
+selection start: position 16 of child 0 {#text} of child 3 {text} of child 0 {svg} of document
+selection end:   position 34 of child 0 {#text} of child 3 {text} of child 0 {svg} of document
