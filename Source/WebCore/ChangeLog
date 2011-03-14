@@ -1,3 +1,18 @@
+2011-03-14  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: REGRESSION: Messed up with the tabIndex for text editor
+        https://bugs.webkit.org/show_bug.cgi?id=56183
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._handleKeyDown):
+        (WebInspector.SourceFrame.prototype._handleSave):
+        (WebInspector.SourceFrame.prototype._handleRevertEditing):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorMainPanel):
+        (WebInspector.TextEditorMainPanel.prototype.set readOnly):
+
 2011-03-14  Chris Rogers  <crogers@google.com>
 
         Reviewed by Xan Lopez.

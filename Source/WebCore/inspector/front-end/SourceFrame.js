@@ -782,8 +782,7 @@ WebInspector.SourceFrame.prototype = {
     {
         var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(e);
         var handler = this._shortcuts[shortcutKey];
-        if (handler) {
-            handler.call(this);
+        if (handler && handler.call(this)) {
             e.preventDefault();
             e.stopPropagation();
         }
@@ -791,22 +790,27 @@ WebInspector.SourceFrame.prototype = {
 
     _handleSave: function()
     {
-        if (!this._delegate.canEditScriptSource())
-            return;
+        if (this._textViewer.readOnly || !this._delegate.canEditScriptSource())
+            return false;
 
         var newSource = this._textModel.text;
         if (this._originalTextModelContent !== newSource)
             this._delegate.editScriptSource(newSource);
         delete this._originalTextModelContent;
         this._textViewer.readOnly = true;
+        return true;
     },
 
     _handleRevertEditing: function()
     {
+        if (this._textViewer.readOnly)
+            return false;
+
         if (this._originalTextModelContent !== undefined)
             this._textModel.setText(null, this._originalTextModelContent);
         delete this._originalTextModelContent;
         this._textViewer.readOnly = true;
+        return true;
     },
 
     _doubleClick: function(event)
