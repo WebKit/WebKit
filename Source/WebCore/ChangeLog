@@ -1,3 +1,11 @@
+2011-03-13  Sam Weinig  <sam@webkit.org>
+
+        Fix windows build.
+
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::ResourceError):
+        Add missing constructor.
+
 2011-03-13  David Sosby  <dsosby@rim.com>
 
         Reviewed by Dan Bernstein.

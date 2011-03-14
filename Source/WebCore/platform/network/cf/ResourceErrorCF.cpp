@@ -35,6 +35,13 @@
 
 namespace WebCore {
 
+ResourceError::ResourceError(CFErrorRef cfError)
+    : m_dataIsUpToDate(false)
+    , m_platformError(cfError)
+{
+    m_isNull = !cfError;
+}
+
 const CFStringRef failingURLStringKey = CFSTR("NSErrorFailingURLStringKey");
 const CFStringRef failingURLKey = CFSTR("NSErrorFailingURLKey");
 
