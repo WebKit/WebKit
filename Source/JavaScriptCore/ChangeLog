@@ -1,3 +1,15 @@
+2011-03-14  Oliver Hunt  <oliver@apple.com>
+
+        Fix windows build
+
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitLoadInt32):
+        (JSC::JSInterfaceJIT::tagFor):
+        (JSC::JSInterfaceJIT::payloadFor):
+        (JSC::JSInterfaceJIT::intPayloadFor):
+        (JSC::JSInterfaceJIT::intTagFor):
+        (JSC::JSInterfaceJIT::addressFor):
+
 2011-03-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
