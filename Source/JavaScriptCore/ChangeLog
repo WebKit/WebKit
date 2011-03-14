@@ -1,3 +1,15 @@
+2011-03-14  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Warning that round/roundf functions are already defined when compiled with RVCT 4 on symbian.
+        https://bugs.webkit.org/show_bug.cgi?id=56133
+
+        Add condition to not compile webkit internal math round functions on RVCT compiler versions 
+        from 3.0.0 because they are already defined in compiler math library.
+
+        * wtf/MathExtras.h:
+
 2011-03-14  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoffrey Garen & Oliver Hunt.
