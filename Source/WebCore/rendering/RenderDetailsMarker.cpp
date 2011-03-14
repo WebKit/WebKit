@@ -111,25 +111,25 @@ static Path createPath(const FloatPoint* path)
 
 static Path createDownArrowPath()
 {
-    FloatPoint points[4] = { FloatPoint(0.0, 0.07), FloatPoint(0.5, 0.93), FloatPoint(1.0, 0.07), FloatPoint(0.0, 0.07) };
+    FloatPoint points[4] = { FloatPoint(0.0f, 0.07f), FloatPoint(0.5f, 0.93f), FloatPoint(1.0f, 0.07f), FloatPoint(0.0f, 0.07f) };
     return createPath(points);
 }
 
 static Path createUpArrowPath()
 {
-    FloatPoint points[4] = { FloatPoint(0.0, 0.93), FloatPoint(0.5, 0.07), FloatPoint(1.0, 0.93), FloatPoint(0.0, 0.93) };
+    FloatPoint points[4] = { FloatPoint(0.0f, 0.93f), FloatPoint(0.5f, 0.07f), FloatPoint(1.0f, 0.93f), FloatPoint(0.0f, 0.93f) };
     return createPath(points);
 }
 
 static Path createLeftArrowPath()
 {
-    FloatPoint points[4] = { FloatPoint(1.0, 0.0), FloatPoint(0.14, 0.5), FloatPoint(1.0, 1.0), FloatPoint(1.0, 0.0) };
+    FloatPoint points[4] = { FloatPoint(1.0f, 0.0f), FloatPoint(0.14f, 0.5f), FloatPoint(1.0f, 1.0f), FloatPoint(1.0f, 0.0f) };
     return createPath(points);
 }
 
 static Path createRightArrowPath()
 {
-    FloatPoint points[4] = { FloatPoint(0.0, 0.0), FloatPoint(0.86, 0.5), FloatPoint(0.0, 1.0), FloatPoint(0.0, 0.0) };
+    FloatPoint points[4] = { FloatPoint(0.0f, 0.0f), FloatPoint(0.86f, 0.5f), FloatPoint(0.0f, 1.0f), FloatPoint(0.0f, 0.0f) };
     return createPath(points);
 }
 

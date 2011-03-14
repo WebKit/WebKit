@@ -124,7 +124,7 @@ void HTMLDetailsElement::defaultEventHandler(Event* event)
 
     RenderDetails* renderDetails = static_cast<RenderDetails*>(renderer());
 
-    float factor = document() && document()->frame() ? document()->frame()->pageZoomFactor() : 1.0;
+    float factor = document() && document()->frame() ? document()->frame()->pageZoomFactor() : 1.0f;
     FloatPoint pos = renderDetails->absoluteToLocal(FloatPoint(mouseEvent->pageX() * factor, mouseEvent->pageY() * factor));
 
     if (renderDetails->interactiveArea().contains(pos.x(), pos.y())) {

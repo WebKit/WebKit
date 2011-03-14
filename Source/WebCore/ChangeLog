@@ -1,3 +1,15 @@
+2011-03-14  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Unreviewed build fix for r81035.
+
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::defaultEventHandler):
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::createDownArrowPath):
+        (WebCore::createUpArrowPath):
+        (WebCore::createLeftArrowPath):
+        (WebCore::createRightArrowPath):
+
 2011-03-13  Jer Noble  <jer.noble@apple.com>
 
         FullScreen: Handle entering full screen security restrictions
