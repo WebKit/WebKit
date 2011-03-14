@@ -766,6 +766,12 @@ void LayoutTestController::setGeolocationPermission(bool allow)
     DumpRenderTreeSupportQt::setMockGeolocationPermission(m_drt->webPage(), allow);
 }
 
+int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
+{
+    // FIXME: Implement for Geolocation layout tests.
+    return -1;
+}
+
 void LayoutTestController::setGeolocationPermissionCommon(bool allow)
 {
      m_isGeolocationPermissionSet = true;

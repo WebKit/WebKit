@@ -68,6 +68,7 @@ public:
     JSValueRef nodesFromRect(JSContextRef, JSValueRef, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping);
     void notifyDone();
     int numberOfPages(float pageWidthInPixels, float pageHeightInPixels);
+    int numberOfPendingGeolocationPermissionRequests();
     void overridePreference(JSStringRef key, JSStringRef value);
     int pageNumberForElementById(JSStringRef id, float pageWidthInPixels, float pageHeightInPixels);
     JSRetainPtr<JSStringRef> pageProperty(const char* propertyName, int pageNumber) const;

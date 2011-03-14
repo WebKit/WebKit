@@ -115,6 +115,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("notifyDone", &LayoutTestController::notifyDone);
     bindMethod("numberOfActiveAnimations", &LayoutTestController::numberOfActiveAnimations);
     bindMethod("numberOfPages", &LayoutTestController::numberOfPages);
+    bindMethod("numberOfPendingGeolocationPermissionRequests", &LayoutTestController:: numberOfPendingGeolocationPermissionRequests);
     bindMethod("objCIdentityIsEqual", &LayoutTestController::objCIdentityIsEqual);
     bindMethod("overridePreference", &LayoutTestController::overridePreference);
     bindMethod("pageNumberForElementById", &LayoutTestController::pageNumberForElementById);
@@ -1456,6 +1457,16 @@ void LayoutTestController::numberOfPages(const CppArgumentList& arguments, CppVa
     int numberOfPages = frame->printBegin(size);
     frame->printEnd();
     result->set(numberOfPages);
+}
+
+void LayoutTestController::numberOfPendingGeolocationPermissionRequests(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    Vector<WebViewHost*> windowList = m_shell->windowList();
+    int numberOfRequests = 0;
+    for (size_t i = 0; i < windowList.size(); i++)
+        numberOfRequests += windowList[i]->geolocationClientMock()->numberOfPendingPermissionRequests();
+    result->set(numberOfRequests);
 }
 
 void LayoutTestController::logErrorToConsole(const std::string& text)

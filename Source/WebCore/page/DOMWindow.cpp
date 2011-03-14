@@ -712,6 +712,13 @@ void DOMWindow::pageDestroyed()
 #endif
 }
 
+void DOMWindow::resetGeolocation()
+{
+    // Geolocation should cancel activities and permission requests when the page is detached.
+    if (m_navigator)
+        m_navigator->resetGeolocation();
+}
+
 #if ENABLE(INDEXED_DATABASE)
 IDBFactory* DOMWindow::webkitIndexedDB() const
 {

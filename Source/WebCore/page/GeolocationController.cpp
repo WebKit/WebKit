@@ -41,12 +41,10 @@ GeolocationController::GeolocationController(Page* page, GeolocationClient* clie
 
 GeolocationController::~GeolocationController()
 {
-    if (m_client) {
-        if (!m_observers.isEmpty())
-            m_client->stopUpdating();
+    ASSERT(m_observers.isEmpty());
 
+    if (m_client)
         m_client->geolocationDestroyed();
-    }
 }
 
 void GeolocationController::addObserver(Geolocation* observer, bool enableHighAccuracy)

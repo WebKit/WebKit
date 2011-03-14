@@ -1722,8 +1722,10 @@ fast/dom/Geolocation/disconnected-frame-already.html
 fast/dom/Geolocation/disconnected-frame-permission-denied.html
 fast/dom/Geolocation/disconnected-frame.html
 fast/dom/Geolocation/error.html
+fast/dom/Geolocation/iframe-reparent.html
 fast/dom/Geolocation/multiple-requests.html
 fast/dom/Geolocation/notimer-after-unload.html
+fast/dom/Geolocation/page-reload-cancel-permission-requests.html
 fast/dom/Geolocation/permission-denied-already-clear-watch.html
 fast/dom/Geolocation/permission-denied-already-error.html
 fast/dom/Geolocation/permission-denied-already-success.html

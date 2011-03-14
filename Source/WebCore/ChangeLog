@@ -1,3 +1,73 @@
+2011-03-14  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Detach Geolocation from Frame when Page destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=52877
+
+        On Page destruction, any outstanding Geolocation permission
+        requests should be cancelled, because the Geolocation can only
+        access the client indirectly via m_frame->page().
+
+        Page destruction is signalled by a call to the
+        Frame::pageDestroyed() method. This explictly calls
+        DOMWindow::resetGeolocation which ultimately calls Geolocation::reset.
+
+        Geolocation::reset() detaches from the GeolocationController,
+        cancels requests, watches and single shots, and sets the
+        permission state back to Unknown.
+
+        Frame::pageDestroyed() is also called by FrameLoader even though
+        the page is not destroyed. We should still cancel permission
+        requests, because the GeolocationClient will become inaccessible
+        to the Geolocation object after this call.
+
+        Frame::transferChildFrameToNewDocument also indirectly calls
+        Geolocation::reset when the frame is reparented between
+        pages. Ideally we would like the Geolocation's activities to
+        continue after reparenting, see bug
+        https://bugs.webkit.org/show_bug.cgi?id=55577
+
+        Since GeolocationController is owned by Page, and all Geolocation
+        objects will now unsubscribe from the GeolocationController on
+        pageDetached(), we no longer need to call stopUpdating() from the
+        GeolocationController's destructor. Instead we can simply assert
+        that there should be no no observers. See related bug
+        https://bugs.webkit.org/show_bug.cgi?id=52216 .
+
+        Introduced new method 'numberOfPendingPermissionRequests' on
+        GeolocationClientMock to count the number of outstanding pending
+        permission requests. This provides a reusable implementation for
+        client-based implementations of the LayoutTestController's
+        numberOfPendingGeolocationPermissionRequests method.
+
+        Test: fast/dom/Geolocation/page-reload-cancel-permission-requests.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::resetGeolocation):
+        * page/DOMWindow.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::pageDestroyed):
+        (WebCore::Frame::transferChildFrameToNewDocument):
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::~Geolocation):
+        (WebCore::Geolocation::page):
+        (WebCore::Geolocation::reset):
+        (WebCore::Geolocation::disconnectFrame):
+        (WebCore::Geolocation::lastPosition):
+        (WebCore::Geolocation::requestPermission):
+        (WebCore::Geolocation::startUpdating):
+        (WebCore::Geolocation::stopUpdating):
+        * page/Geolocation.h:
+        * page/GeolocationController.cpp:
+        (WebCore::GeolocationController::~GeolocationController):
+        * page/Navigator.cpp:
+        (WebCore::Navigator::resetGeolocation):
+        * page/Navigator.h:
+        * platform/mock/GeolocationClientMock.cpp:
+        (WebCore::GeolocationClientMock::numberOfPendingPermissionRequests):
+        * platform/mock/GeolocationClientMock.h:
+
 2011-03-14  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

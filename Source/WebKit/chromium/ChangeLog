@@ -1,3 +1,17 @@
+2011-03-14  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Detach Geolocation from Frame when Page destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=52877
+
+        Add accessors to the WebGeolocationClientMock to allow the number of
+        pending geolocation permission requests to be queried.
+
+        * public/WebGeolocationClientMock.h:
+        * src/WebGeolocationClientMock.cpp:
+        (WebKit::WebGeolocationClientMock::numberOfPendingPermissionRequests):
+
 2011-03-11  David Levin  <levin@chromium.org>
 
         Rollout the chromium deps roll as it adds a dependency on a header
