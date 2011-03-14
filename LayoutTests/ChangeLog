@@ -1,3 +1,17 @@
+2011-03-14  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Fix flaky layout test: fast/dom/Geolocation/window-close-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=56202
+
+        By testing for geolocation watch errors, the test tests more than
+        it should, which can cause a flaky result as demonstrated by
+        https://bugs.webkit.org/show_bug.cgi?id=56126 .
+
+        * fast/dom/Geolocation/resources/window-close-popup.html:
+        * fast/dom/Geolocation/script-tests/window-close-crash.js:
+
 2011-03-14  Alejandro G. Castro  <alex@igalia.com>
 
         Update more expectations after r80857.

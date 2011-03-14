@@ -11,9 +11,7 @@ function loadNext() {
        layoutTestController.setMockGeolocationPosition(mockLatitude, mockLongitude, mockAccuracy);
     }
 
-    navigator.geolocation.watchPosition(
-       function(p) { window.opener.gotPosition(); },
-       function(e) { window.opener.failedToCreateWatch(e); });
+    navigator.geolocation.watchPosition(window.opener.gotPosition);
 }
 </script>
 <body onload="loadNext()"></body>

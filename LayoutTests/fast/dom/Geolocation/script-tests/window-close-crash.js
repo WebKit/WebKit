@@ -28,12 +28,6 @@ function waitForWindowToClose()
     finishJSTest();
 }
 
-function failedToCreateWatch(e)
-{
-    testFailed("Failed to create watch: " + e);
-    finishJSTest();
-}
-
 debug("Main page opening resources/window-close-popup.html");
 otherWindow = window.open("resources/window-close-popup.html");
 
