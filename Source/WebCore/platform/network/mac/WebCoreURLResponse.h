@@ -26,10 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@interface NSURLResponse (WebCoreURLResponse)
--(void)adjustMIMETypeIfNecessary;
-@end
+typedef struct _CFURLResponse* CFURLResponseRef;
 
+#ifdef __OBJC__
 @interface NSURLResponse (Details)
+- (CFURLResponseRef)_CFURLResponse;
 - (void)_setMIMEType:(NSString *)type;
 @end
+#endif
+
+namespace WebCore {
+void adjustMIMETypeIfNecessary(CFURLResponseRef);
+}

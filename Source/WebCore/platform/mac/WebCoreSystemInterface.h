@@ -86,6 +86,8 @@ class QTMovie;
 class QTMovieView;
 #endif
 
+typedef struct _CFURLResponse *CFURLResponseRef;
+
 extern "C" {
 
 // In alphabetical order.
@@ -249,6 +251,12 @@ extern unsigned (*wkGetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef);
 extern NSArray *(*wkHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSURL *);
 extern void (*wkSetHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
 extern void (*wkDeleteHTTPCookie)(CFHTTPCookieStorageRef, NSHTTPCookie *);
+
+extern CFStringRef (*wkGetCFURLResponseMIMEType)(CFURLResponseRef);
+extern CFURLRef (*wkGetCFURLResponseURL)(CFURLResponseRef);
+extern CFHTTPMessageRef (*wkGetCFURLResponseHTTPResponse)(CFURLResponseRef);
+extern CFStringRef (*wkCopyCFURLResponseSuggestedFilename)(CFURLResponseRef);
+extern void (*wkSetCFURLResponseMIMEType)(CFURLResponseRef, CFStringRef mimeType);
 
 }
 

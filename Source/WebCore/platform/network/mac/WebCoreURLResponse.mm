@@ -30,308 +30,429 @@
 #import "WebCoreURLResponse.h"
 
 #import "MIMETypeRegistry.h"
-#import <objc/objc-class.h>
+#import "WebCoreSystemInterface.h"
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 
-#ifndef BUILDING_ON_TIGER
+namespace WebCore {
+
 // <rdar://problem/5321972> Plain text document from HTTP server detected as application/octet-stream
 // When we sniff a resource as application/octet-stream but the http response headers had "text/plain",
 // we have a hard decision to make about which of the two generic MIME types to go with.
 // When the URL's extension is a known binary type, we'll go with application/octet-stream.
 // Otherwise, we'll trust the server.
-static NSSet *createBinaryExtensionsSet()
+static CFSetRef createBinaryExtensionsSet()
 {
-    return [[NSSet alloc] initWithObjects:
-        @"3g2",
-        @"3gp",
-        @"ai",
-        @"aif",
-        @"aifc",
-        @"aiff",
-        @"au",
-        @"avi",
-        @"bcpio",
-        @"bin",
-        @"bmp",
-        @"boz",
-        @"bpk",
-        @"bz",
-        @"bz2",
-        @"chm",
-        @"class",
-        @"com",
-        @"cpio",
-        @"dcr",
-        @"dir",
-        @"dist",
-        @"distz",
-        @"dll",
-        @"dmg",
-        @"dms",
-        @"doc",
-        @"dot",
-        @"dump",
-        @"dv",
-        @"dvi",
-        @"dxr",
-        @"elc",
-        @"eot",
-        @"eps",
-        @"exe",
-        @"fgd",
-        @"gif",
-        @"gtar",
-        @"h261",
-        @"h263",
-        @"h264",
-        @"ico",
-        @"ims",
-        @"indd",
-        @"iso",
-        @"jp2",
-        @"jpe",
-        @"jpeg",
-        @"jpg",
-        @"jpgm",
-        @"jpgv",
-        @"jpm",
-        @"kar",
-        @"kmz",
-        @"lha",
-        @"lrm",
-        @"lzh",
-        @"m1v",
-        @"m2a",
-        @"m2v",
-        @"m3a",
-        @"m3u",
-        @"m4a",
-        @"m4p",
-        @"m4v",
-        @"mdb",
-        @"mid",
-        @"midi",
-        @"mj2",
-        @"mjp2",
-        @"mov",
-        @"movie",
-        @"mp2",
-        @"mp2a",
-        @"mp3",
-        @"mp4",
-        @"mp4a",
-        @"mp4s",
-        @"mp4v",
-        @"mpe",
-        @"mpeg",
-        @"mpg",
-        @"mpg4",
-        @"mpga",
-        @"mpp",
-        @"mpt",
-        @"msi",
-        @"ogg",
-        @"otf",
-        @"pct",
-        @"pdf",
-        @"pfa",
-        @"pfb",
-        @"pic",
-        @"pict",
-        @"pkg",
-        @"png",
-        @"pot",
-        @"pps",
-        @"ppt",
-        @"ps",
-        @"psd",
-        @"qt",
-        @"qti",
-        @"qtif",
-        @"qwd",
-        @"qwt",
-        @"qxb",
-        @"qxd",
-        @"qxl",
-        @"qxp",
-        @"qxt",
-        @"ra",
-        @"ram",
-        @"rm",
-        @"rmi",
-        @"rmp",
-        @"scpt",
-        @"sit",
-        @"sitx",
-        @"snd",
-        @"so",
-        @"swf",
-        @"tar",
-        @"tif",
-        @"tiff",
-        @"ttf",
-        @"wav",
-        @"wcm",
-        @"wdb",
-        @"wks",
-        @"wm",
-        @"wma",
-        @"wmd",
-        @"wmf",
-        @"wmv",
-        @"wmx",
-        @"wmz",
-        @"wpd",
-        @"wpl",
-        @"wps",
-        @"wvx",
-        @"xla",
-        @"xlc",
-        @"xlm",
-        @"xls",
-        @"xlt",
-        @"xlw",
-        @"xps",
-        @"zip",
-        nil
-    ];
+    CFStringRef extensions[] = {
+        CFSTR("3g2"),
+        CFSTR("3gp"),
+        CFSTR("ai"),
+        CFSTR("aif"),
+        CFSTR("aifc"),
+        CFSTR("aiff"),
+        CFSTR("au"),
+        CFSTR("avi"),
+        CFSTR("bcpio"),
+        CFSTR("bin"),
+        CFSTR("bmp"),
+        CFSTR("boz"),
+        CFSTR("bpk"),
+        CFSTR("bz"),
+        CFSTR("bz2"),
+        CFSTR("chm"),
+        CFSTR("class"),
+        CFSTR("com"),
+        CFSTR("cpio"),
+        CFSTR("dcr"),
+        CFSTR("dir"),
+        CFSTR("dist"),
+        CFSTR("distz"),
+        CFSTR("dll"),
+        CFSTR("dmg"),
+        CFSTR("dms"),
+        CFSTR("doc"),
+        CFSTR("dot"),
+        CFSTR("dump"),
+        CFSTR("dv"),
+        CFSTR("dvi"),
+        CFSTR("dxr"),
+        CFSTR("elc"),
+        CFSTR("eot"),
+        CFSTR("eps"),
+        CFSTR("exe"),
+        CFSTR("fgd"),
+        CFSTR("gif"),
+        CFSTR("gtar"),
+        CFSTR("h261"),
+        CFSTR("h263"),
+        CFSTR("h264"),
+        CFSTR("ico"),
+        CFSTR("ims"),
+        CFSTR("indd"),
+        CFSTR("iso"),
+        CFSTR("jp2"),
+        CFSTR("jpe"),
+        CFSTR("jpeg"),
+        CFSTR("jpg"),
+        CFSTR("jpgm"),
+        CFSTR("jpgv"),
+        CFSTR("jpm"),
+        CFSTR("kar"),
+        CFSTR("kmz"),
+        CFSTR("lha"),
+        CFSTR("lrm"),
+        CFSTR("lzh"),
+        CFSTR("m1v"),
+        CFSTR("m2a"),
+        CFSTR("m2v"),
+        CFSTR("m3a"),
+        CFSTR("m3u"),
+        CFSTR("m4a"),
+        CFSTR("m4p"),
+        CFSTR("m4v"),
+        CFSTR("mdb"),
+        CFSTR("mid"),
+        CFSTR("midi"),
+        CFSTR("mj2"),
+        CFSTR("mjp2"),
+        CFSTR("mov"),
+        CFSTR("movie"),
+        CFSTR("mp2"),
+        CFSTR("mp2a"),
+        CFSTR("mp3"),
+        CFSTR("mp4"),
+        CFSTR("mp4a"),
+        CFSTR("mp4s"),
+        CFSTR("mp4v"),
+        CFSTR("mpe"),
+        CFSTR("mpeg"),
+        CFSTR("mpg"),
+        CFSTR("mpg4"),
+        CFSTR("mpga"),
+        CFSTR("mpp"),
+        CFSTR("mpt"),
+        CFSTR("msi"),
+        CFSTR("ogg"),
+        CFSTR("otf"),
+        CFSTR("pct"),
+        CFSTR("pdf"),
+        CFSTR("pfa"),
+        CFSTR("pfb"),
+        CFSTR("pic"),
+        CFSTR("pict"),
+        CFSTR("pkg"),
+        CFSTR("png"),
+        CFSTR("pot"),
+        CFSTR("pps"),
+        CFSTR("ppt"),
+        CFSTR("ps"),
+        CFSTR("psd"),
+        CFSTR("qt"),
+        CFSTR("qti"),
+        CFSTR("qtif"),
+        CFSTR("qwd"),
+        CFSTR("qwt"),
+        CFSTR("qxb"),
+        CFSTR("qxd"),
+        CFSTR("qxl"),
+        CFSTR("qxp"),
+        CFSTR("qxt"),
+        CFSTR("ra"),
+        CFSTR("ram"),
+        CFSTR("rm"),
+        CFSTR("rmi"),
+        CFSTR("rmp"),
+        CFSTR("scpt"),
+        CFSTR("sit"),
+        CFSTR("sitx"),
+        CFSTR("snd"),
+        CFSTR("so"),
+        CFSTR("swf"),
+        CFSTR("tar"),
+        CFSTR("tif"),
+        CFSTR("tiff"),
+        CFSTR("ttf"),
+        CFSTR("wav"),
+        CFSTR("wcm"),
+        CFSTR("wdb"),
+        CFSTR("wks"),
+        CFSTR("wm"),
+        CFSTR("wma"),
+        CFSTR("wmd"),
+        CFSTR("wmf"),
+        CFSTR("wmv"),
+        CFSTR("wmx"),
+        CFSTR("wmz"),
+        CFSTR("wpd"),
+        CFSTR("wpl"),
+        CFSTR("wps"),
+        CFSTR("wvx"),
+        CFSTR("xla"),
+        CFSTR("xlc"),
+        CFSTR("xlm"),
+        CFSTR("xls"),
+        CFSTR("xlt"),
+        CFSTR("xlw"),
+        CFSTR("xps"),
+        CFSTR("zip")
+    };
+    return CFSetCreate(kCFAllocatorDefault, (const void **)&extensions, sizeof(extensions)/sizeof(CFStringRef), &kCFTypeSetCallBacks);
 }
-#endif
 
 // <rdar://problem/7007389> CoreTypes UTI map is missing 100+ file extensions that GateKeeper knew about
 // When we disabled content sniffing for file URLs we caused problems with these 100+ extensions that CoreTypes
 // doesn't know about.
 // If CoreTypes is ever brought up to speed we can remove this table and associated code.
-static NSDictionary *createExtensionToMIMETypeMap()
+static CFDictionaryRef createExtensionToMIMETypeMap()
 {
-    return [[NSDictionary alloc] initWithObjectsAndKeys:
-        @"application/postscript", @"ai",
-        @"text/plain", @"asc",
-        @"application/x-bcpio", @"bcpio",
-        @"image/bmp", @"bmp",
-        @"application/x-netcdf", @"cdf",
-        @"application/octet-stream", @"class",
-        @"application/x-gzip", @"cpgz",
-        @"application/x-cpio", @"cpio",
-        @"application/mac-compactpro", @"cpt",
-        @"application/x-csh", @"csh",
-        @"text/css", @"css",
-        @"application/x-director", @"dcr",
-        @"application/x-director", @"dir",
-        @"application/x-diskcopy", @"dmg",
-        @"application/octet-stream", @"dms",
-        @"application/x-dvi", @"dvi",
-        @"application/x-director", @"dxr",
-        @"application/postscript", @"eps",
-        @"text/x-setext", @"etx",
-        @"application/andrew-inset", @"ez",
-        @"application/vnd.fdf", @"fdf",
-        @"application/octet-stream", @"fla",
-        @"application/x-filemaker", @"fp",
-        @"application/x-filemaker", @"fp2",
-        @"application/x-filemaker", @"fp3",
-        @"application/x-filemaker", @"fp4",
-        @"application/x-filemaker", @"fp5",
-        @"application/x-filemaker", @"fp6",
-        @"application/x-hdf", @"hdf",
-        @"x-conference/x-cooltalk", @"ice",
-        @"image/x-icon", @"ico",
-        @"text/calendar", @"ics",
-        @"image/ief", @"ief",
-        @"model/iges", @"iges",
-        @"model/iges", @"igs",
-        @"application/octet-stream", @"iso",
-        @"text/html", @"jhtml",
-        @"application/x-latex", @"latex",
-        @"application/octet-stream", @"lha",
-        @"application/octet-stream", @"lzh",
-        @"audio/x-mpegurl", @"m3u",
-        @"audio/x-m4p", @"m4p",
-        @"image/x-macpaint", @"mac",
-        @"application/x-troff-man", @"man",
-        @"application/x-troff-me", @"me",
-        @"model/mesh", @"mesh",
-        @"application/vnd.mif", @"mif",
-        @"video/x-sgi-movie", @"movie",
-        @"audio/mpeg", @"mp2",
-        @"audio/mpeg", @"mpga",
-        @"application/x-troff-ms", @"ms",
-        @"model/mesh", @"msh",
-        @"video/vnd.mpegurl", @"mxu",
-        @"application/x-netcdf", @"nc",
-        @"application/oda", @"oda",
-        @"image/x-portable-bitmap", @"pbm",
-        @"image/x-pcx", @"pcx",
-        @"chemical/x-pdb", @"pdb",
-        @"image/x-portable-graymap", @"pgm",
-        @"application/x-chess-pgn", @"pgn",
-        @"audio/scpls", @"pls",
-        @"image/x-portable-anymap", @"pnm",
-        @"image/x-macpaint", @"pnt",
-        @"image/x-macpaint", @"pntg",
-        @"image/x-portable-pixmap", @"ppm",
-        @"image/x-cmu-raster", @"ras",
-        @"image/x-rgb", @"rgb",
-        @"application/x-troff", @"roff",
-        @"audio/x-pn-realaudio-plugin", @"rpm",
-        @"text/richtext", @"rtx",
-        @"text/sgml", @"sgm",
-        @"text/sgml", @"sgml",
-        @"application/x-sh", @"sh",
-        @"application/x-shar", @"shar",
-        @"model/mesh", @"silo",
-        @"application/x-koan", @"skd",
-        @"application/x-koan", @"skm",
-        @"application/x-koan", @"skp",
-        @"application/x-koan", @"skt",
-        @"application/x-diskcopy", @"smi",
-        @"application/octet-stream", @"so",
-        @"application/x-futuresplash", @"spl",
-        @"application/x-wais-source", @"src",
-        @"application/x-sv4cpio", @"sv4cpio",
-        @"application/x-sv4crc", @"sv4crc",
-        @"application/x-shockwave-flash", @"swf",
-        @"application/x-troff", @"t",
-        @"image/x-targa", @"targa",
-        @"application/x-tcl", @"tcl",
-        @"application/x-tex", @"tex",
-        @"application/x-texinfo", @"texi",
-        @"application/x-texinfo", @"texinfo",
-        @"application/x-gzip", @"tgz",
-        @"application/x-bittorrent", @"torrent",
-        @"application/x-troff", @"tr",
-        @"text/tab-separated-values", @"tsv",
-        @"application/x-ustar", @"ustar",
-        @"application/x-cdlink", @"vcd",
-        @"model/vrml", @"vrml",
-        @"image/vnd.wap.wbmp", @"wbmp",
-        @"application/vnd.wap.wbxml", @"wbxml",
-        @"application/x-webarchive", @"webarchive",
-        @"application/x-ms-wmd", @"wmd",
-        @"text/vnd.wap.wml", @"wml",
-        @"application/vnd.wap.wmlc", @"wmlc",
-        @"text/vnd.wap.wmlscript", @"wmls",
-        @"application/vnd.wap.wmlscriptc", @"wmlsc",
-        @"model/vrml", @"wrl",
-        @"application/vnd.adobe.xdp+xml", @"xdp",
-        @"application/vnd.adobe.xfd+xml", @"xfd",
-        @"application/vnd.adobe.xfdf", @"xfdf",
-        @"image/x-xpixmap", @"xpm",
-        @"text/xml", @"xsl",
-        @"image/x-xwindowdump", @"xwd",
-        @"chemical/x-xyz", @"xyz",
-        @"application/x-compress", @"z",
-        nil
-    ];
+    CFStringRef keys[] = {
+        CFSTR("ai"),
+        CFSTR("asc"),
+        CFSTR("bcpio"),
+        CFSTR("bmp"),
+        CFSTR("cdf"),
+        CFSTR("class"),
+        CFSTR("cpgz"),
+        CFSTR("cpio"),
+        CFSTR("cpt"),
+        CFSTR("csh"),
+        CFSTR("css"),
+        CFSTR("dcr"),
+        CFSTR("dir"),
+        CFSTR("dmg"),
+        CFSTR("dms"),
+        CFSTR("dvi"),
+        CFSTR("dxr"),
+        CFSTR("eps"),
+        CFSTR("etx"),
+        CFSTR("ez"),
+        CFSTR("fdf"),
+        CFSTR("fla"),
+        CFSTR("fp"),
+        CFSTR("fp2"),
+        CFSTR("fp3"),
+        CFSTR("fp4"),
+        CFSTR("fp5"),
+        CFSTR("fp6"),
+        CFSTR("hdf"),
+        CFSTR("ice"),
+        CFSTR("ico"),
+        CFSTR("ics"),
+        CFSTR("ief"),
+        CFSTR("iges"),
+        CFSTR("igs"),
+        CFSTR("iso"),
+        CFSTR("jhtml"),
+        CFSTR("latex"),
+        CFSTR("lha"),
+        CFSTR("lzh"),
+        CFSTR("m3u"),
+        CFSTR("m4p"),
+        CFSTR("mac"),
+        CFSTR("man"),
+        CFSTR("me"),
+        CFSTR("mesh"),
+        CFSTR("mif"),
+        CFSTR("movie"),
+        CFSTR("mp2"),
+        CFSTR("mpga"),
+        CFSTR("ms"),
+        CFSTR("msh"),
+        CFSTR("mxu"),
+        CFSTR("nc"),
+        CFSTR("oda"),
+        CFSTR("pbm"),
+        CFSTR("pcx"),
+        CFSTR("pdb"),
+        CFSTR("pgm"),
+        CFSTR("pgn"),
+        CFSTR("pls"),
+        CFSTR("pnm"),
+        CFSTR("pnt"),
+        CFSTR("pntg"),
+        CFSTR("ppm"),
+        CFSTR("ras"),
+        CFSTR("rgb"),
+        CFSTR("roff"),
+        CFSTR("rpm"),
+        CFSTR("rtx"),
+        CFSTR("sgm"),
+        CFSTR("sgml"),
+        CFSTR("sh"),
+        CFSTR("shar"),
+        CFSTR("silo"),
+        CFSTR("skd"),
+        CFSTR("skm"),
+        CFSTR("skp"),
+        CFSTR("skt"),
+        CFSTR("smi"),
+        CFSTR("so"),
+        CFSTR("spl"),
+        CFSTR("src"),
+        CFSTR("sv4cpio"),
+        CFSTR("sv4crc"),
+        CFSTR("swf"),
+        CFSTR("t"),
+        CFSTR("targa"),
+        CFSTR("tcl"),
+        CFSTR("tex"),
+        CFSTR("texi"),
+        CFSTR("texinfo"),
+        CFSTR("tgz"),
+        CFSTR("torrent"),
+        CFSTR("tr"),
+        CFSTR("tsv"),
+        CFSTR("ustar"),
+        CFSTR("vcd"),
+        CFSTR("vrml"),
+        CFSTR("wbmp"),
+        CFSTR("wbxml"),
+        CFSTR("webarchive"),
+        CFSTR("wmd"),
+        CFSTR("wml"),
+        CFSTR("wmlc"),
+        CFSTR("wmls"),
+        CFSTR("wmlsc"),
+        CFSTR("wrl"),
+        CFSTR("xdp"),
+        CFSTR("xfd"),
+        CFSTR("xfdf"),
+        CFSTR("xpm"),
+        CFSTR("xsl"),
+        CFSTR("xwd"),
+        CFSTR("xyz"),
+        CFSTR("z")
+    };
+
+    CFStringRef values[] = {
+        CFSTR("application/postscript"),
+        CFSTR("text/plain"),
+        CFSTR("application/x-bcpio"),
+        CFSTR("image/bmp"),
+        CFSTR("application/x-netcdf"),
+        CFSTR("application/octet-stream"),
+        CFSTR("application/x-gzip"),
+        CFSTR("application/x-cpio"),
+        CFSTR("application/mac-compactpro"),
+        CFSTR("application/x-csh"),
+        CFSTR("text/css"),
+        CFSTR("application/x-director"),
+        CFSTR("application/x-director"),
+        CFSTR("application/x-diskcopy"),
+        CFSTR("application/octet-stream"),
+        CFSTR("application/x-dvi"),
+        CFSTR("application/x-director"),
+        CFSTR("application/postscript"),
+        CFSTR("text/x-setext"),
+        CFSTR("application/andrew-inset"),
+        CFSTR("application/vnd.fdf"),
+        CFSTR("application/octet-stream"),
+        CFSTR("application/x-filemaker"),
+        CFSTR("application/x-filemaker"),
+        CFSTR("application/x-filemaker"),
+        CFSTR("application/x-filemaker"),
+        CFSTR("application/x-filemaker"),
+        CFSTR("application/x-filemaker"),
+        CFSTR("application/x-hdf"),
+        CFSTR("x-conference/x-cooltalk"),
+        CFSTR("image/x-icon"),
+        CFSTR("text/calendar"),
+        CFSTR("image/ief"),
+        CFSTR("model/iges"),
+        CFSTR("model/iges"),
+        CFSTR("application/octet-stream"),
+        CFSTR("text/html"),
+        CFSTR("application/x-latex"),
+        CFSTR("application/octet-stream"),
+        CFSTR("application/octet-stream"),
+        CFSTR("audio/x-mpegurl"),
+        CFSTR("audio/x-m4p"),
+        CFSTR("image/x-macpaint"),
+        CFSTR("application/x-troff-man"),
+        CFSTR("application/x-troff-me"),
+        CFSTR("model/mesh"),
+        CFSTR("application/vnd.mif"),
+        CFSTR("video/x-sgi-movie"),
+        CFSTR("audio/mpeg"),
+        CFSTR("audio/mpeg"),
+        CFSTR("application/x-troff-ms"),
+        CFSTR("model/mesh"),
+        CFSTR("video/vnd.mpegurl"),
+        CFSTR("application/x-netcdf"),
+        CFSTR("application/oda"),
+        CFSTR("image/x-portable-bitmap"),
+        CFSTR("image/x-pcx"),
+        CFSTR("chemical/x-pdb"),
+        CFSTR("image/x-portable-graymap"),
+        CFSTR("application/x-chess-pgn"),
+        CFSTR("audio/scpls"),
+        CFSTR("image/x-portable-anymap"),
+        CFSTR("image/x-macpaint"),
+        CFSTR("image/x-macpaint"),
+        CFSTR("image/x-portable-pixmap"),
+        CFSTR("image/x-cmu-raster"),
+        CFSTR("image/x-rgb"),
+        CFSTR("application/x-troff"),
+        CFSTR("audio/x-pn-realaudio-plugin"),
+        CFSTR("text/richtext"),
+        CFSTR("text/sgml"),
+        CFSTR("text/sgml"),
+        CFSTR("application/x-sh"),
+        CFSTR("application/x-shar"),
+        CFSTR("model/mesh"),
+        CFSTR("application/x-koan"),
+        CFSTR("application/x-koan"),
+        CFSTR("application/x-koan"),
+        CFSTR("application/x-koan"),
+        CFSTR("application/x-diskcopy"),
+        CFSTR("application/octet-stream"),
+        CFSTR("application/x-futuresplash"),
+        CFSTR("application/x-wais-source"),
+        CFSTR("application/x-sv4cpio"),
+        CFSTR("application/x-sv4crc"),
+        CFSTR("application/x-shockwave-flash"),
+        CFSTR("application/x-troff"),
+        CFSTR("image/x-targa"),
+        CFSTR("application/x-tcl"),
+        CFSTR("application/x-tex"),
+        CFSTR("application/x-texinfo"),
+        CFSTR("application/x-texinfo"),
+        CFSTR("application/x-gzip"),
+        CFSTR("application/x-bittorrent"),
+        CFSTR("application/x-troff"),
+        CFSTR("text/tab-separated-values"),
+        CFSTR("application/x-ustar"),
+        CFSTR("application/x-cdlink"),
+        CFSTR("model/vrml"),
+        CFSTR("image/vnd.wap.wbmp"),
+        CFSTR("application/vnd.wap.wbxml"),
+        CFSTR("application/x-webarchive"),
+        CFSTR("application/x-ms-wmd"),
+        CFSTR("text/vnd.wap.wml"),
+        CFSTR("application/vnd.wap.wmlc"),
+        CFSTR("text/vnd.wap.wmlscript"),
+        CFSTR("application/vnd.wap.wmlscriptc"),
+        CFSTR("model/vrml"),
+        CFSTR("application/vnd.adobe.xdp+xml"),
+        CFSTR("application/vnd.adobe.xfd+xml"),
+        CFSTR("application/vnd.adobe.xfdf"),
+        CFSTR("image/x-xpixmap"),
+        CFSTR("text/xml"),
+        CFSTR("image/x-xwindowdump"),
+        CFSTR("chemical/x-xyz"),
+        CFSTR("application/x-compress")
+    };
+
+    ASSERT(sizeof(keys) == sizeof(values));
+    return CFDictionaryCreate(kCFAllocatorDefault, (const void**)&keys, (const void**)&values, sizeof(keys)/sizeof(CFStringRef), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 }
 
-static RetainPtr<NSString> mimeTypeFromUTITree(CFStringRef uti)
+static RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef uti)
 {
     // Check if this UTI has a MIME type.
     RetainPtr<CFStringRef> mimeType(AdoptCF, UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType));
     if (mimeType)
-        return (NSString *)mimeType.get();
+        return mimeType.get();
     
     // If not, walk the ancestory of this UTI via its "ConformsTo" tags and return the first MIME type we find.
     RetainPtr<CFDictionaryRef> decl(AdoptCF, UTTypeCopyDeclaration(uti));
@@ -353,7 +474,7 @@ static RetainPtr<NSString> mimeTypeFromUTITree(CFStringRef uti)
             if (CFGetTypeID(object) != CFStringGetTypeID())
                 continue;
 
-            if (RetainPtr<NSString> mimeType = mimeTypeFromUTITree((CFStringRef)object))
+            if (RetainPtr<CFStringRef> mimeType = mimeTypeFromUTITree((CFStringRef)object))
                 return mimeType;
         }
     }
@@ -361,33 +482,29 @@ static RetainPtr<NSString> mimeTypeFromUTITree(CFStringRef uti)
     return nil;
 }
 
-@implementation NSURLResponse (WebCoreURLResponse)
-
--(void)adjustMIMETypeIfNecessary
+void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
 {
-    RetainPtr<NSString> result = [self MIMEType];
-    RetainPtr<NSString> originalResult = result;
-
-#ifdef BUILDING_ON_TIGER
-    // When content sniffing is disabled, Tiger's CFNetwork automatically returns application/octet-stream for certain
-    // extensions even when scouring the UTI maps would end up with a better result, so we'll give a chance for that to happen.
-    if ([[self URL] isFileURL] && [result.get() caseInsensitiveCompare:@"application/octet-stream"] == NSOrderedSame)
-        result = nil;
-#endif
+    RetainPtr<CFStringRef> result = wkGetCFURLResponseMIMEType(cfResponse);
+    RetainPtr<CFStringRef> originalResult = result;
 
     if (!result) {
-        NSURL *url = [self URL];
-        if ([url isFileURL]) {
-            if (NSString *extension = [[url path] pathExtension]) {
+        CFURLRef url = wkGetCFURLResponseURL(cfResponse);
+        NSURL *nsURL = (NSURL *)url;
+        if ([nsURL isFileURL]) {
+            RetainPtr<CFStringRef> extension(AdoptCF, CFURLCopyPathExtension(url));
+            if (extension) {
                 // <rdar://problem/7007389> CoreTypes UTI map is missing 100+ file extensions that GateKeeper knew about
                 // When this radar is resolved, we can remove this file:// url specific code.
-                static NSDictionary *extensionMap = createExtensionToMIMETypeMap();
-                result = [extensionMap objectForKey:[extension lowercaseString]];
+                static CFDictionaryRef extensionMap = createExtensionToMIMETypeMap();
+                CFMutableStringRef mutableExtension = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, extension.get());
+                CFStringLowercase(mutableExtension, NULL);
+                extension.adoptCF(mutableExtension);
+                result = (CFStringRef) CFDictionaryGetValue(extensionMap, extension.get());
                 
                 if (!result) {
                     // If the Gatekeeper-based map doesn't have a MIME type, we'll try to figure out what it should be by
                     // looking up the file extension in the UTI maps.
-                    RetainPtr<CFStringRef> uti(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)extension, 0));
+                    RetainPtr<CFStringRef> uti(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, extension.get(), 0));
                     result = mimeTypeFromUTITree(uti.get());
                 }
             }
@@ -395,29 +512,33 @@ static RetainPtr<NSString> mimeTypeFromUTITree(CFStringRef uti)
     }
     
     if (!result) {
-        static NSString *defaultMIMETypeString = [(NSString *)WebCore::defaultMIMEType() retain];
+        static CFStringRef defaultMIMETypeString = WebCore::defaultMIMEType().createCFString();
         result = defaultMIMETypeString;
     }
 
-#ifndef BUILDING_ON_TIGER
     // <rdar://problem/5321972> Plain text document from HTTP server detected as application/octet-stream
     // Make the best guess when deciding between "generic binary" and "generic text" using a table of known binary MIME types.
-    if ([result.get() isEqualToString:@"application/octet-stream"] && [self respondsToSelector:@selector(allHeaderFields)] && [[[self performSelector:@selector(allHeaderFields)] objectForKey:@"Content-Type"] hasPrefix:@"text/plain"]) {
-        static NSSet *binaryExtensions = createBinaryExtensionsSet();
-        if (![binaryExtensions containsObject:[[[self suggestedFilename] pathExtension] lowercaseString]])
-            result = @"text/plain";
+    if (CFStringCompare(result.get(), CFSTR("application/octet-stream"), 0) == kCFCompareEqualTo) {
+        CFHTTPMessageRef message = wkGetCFURLResponseHTTPResponse(cfResponse);
+        if (message) {
+            RetainPtr<CFStringRef> contentType(AdoptCF, CFHTTPMessageCopyHeaderFieldValue(message, CFSTR("Content-Type")));
+            if (CFStringHasPrefix(contentType.get(), CFSTR("test/plain"))) {
+                static CFSetRef binaryExtensions = createBinaryExtensionsSet();
+                RetainPtr<NSString> suggestedFilename(AdoptNS, (NSString *)wkCopyCFURLResponseSuggestedFilename(cfResponse));
+                if (!CFSetContainsValue(binaryExtensions, (CFStringRef) [[suggestedFilename.get() pathExtension] lowercaseString]))
+                    result = CFSTR("text/plain");
+            }
+        }
     }
-
-#endif
 
 #ifdef BUILDING_ON_LEOPARD
     // Workaround for <rdar://problem/5539824>
-    if ([result.get() isEqualToString:@"text/xml"])
-        result = @"application/xml";
+    if (CFStringCompare(result.get(), CFSTR("text/xml"), 0) == kCFCompareEqualTo)
+        result = CFSTR("application/xml");
 #endif
 
     if (result != originalResult)
-        [self _setMIMEType:result.get()];
+        wkSetCFURLResponseMIMEType(cfResponse, result.get());
 }
 
-@end
+}

@@ -174,5 +174,11 @@ void InitWebCoreSystemInterface(void)
     INIT(SetHTTPCookiesForURL);
     INIT(DeleteHTTPCookie);
 
+    INIT(GetCFURLResponseMIMEType);
+    INIT(GetCFURLResponseURL);
+    INIT(GetCFURLResponseHTTPResponse);
+    INIT(CopyCFURLResponseSuggestedFilename);
+    INIT(SetCFURLResponseMIMEType);
+
     didInit = true;
 }

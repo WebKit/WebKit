@@ -148,5 +148,11 @@ void InitWebCoreSystemInterface(void)
         INIT(AccessibilityHandleFocusChanged);
         INIT(CreateAXUIElementRef);
         INIT(UnregisterUniqueIdForElement);        
+
+        INIT(GetCFURLResponseMIMEType);
+        INIT(GetCFURLResponseURL);
+        INIT(GetCFURLResponseHTTPResponse);
+        INIT(CopyCFURLResponseSuggestedFilename);
+        INIT(SetCFURLResponseMIMEType);
     });
 }

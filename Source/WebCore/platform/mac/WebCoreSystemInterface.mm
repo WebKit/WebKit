@@ -179,3 +179,9 @@ unsigned (*wkGetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef);
 NSArray *(*wkHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSURL *);
 void (*wkSetHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
 void (*wkDeleteHTTPCookie)(CFHTTPCookieStorageRef, NSHTTPCookie *);
+
+CFStringRef (*wkGetCFURLResponseMIMEType)(CFURLResponseRef);
+CFURLRef (*wkGetCFURLResponseURL)(CFURLResponseRef);
+CFHTTPMessageRef (*wkGetCFURLResponseHTTPResponse)(CFURLResponseRef);
+CFStringRef (*wkCopyCFURLResponseSuggestedFilename)(CFURLResponseRef);
+void (*wkSetCFURLResponseMIMEType)(CFURLResponseRef, CFStringRef mimeType);

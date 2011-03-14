@@ -15,6 +15,8 @@
 extern "C" {
 #endif
 
+typedef struct _CFURLResponse* CFURLResponseRef;
+
 typedef enum {
     WKCertificateParseResultSucceeded  = 0,
     WKCertificateParseResultFailed     = 1,
@@ -385,6 +387,12 @@ CFIndex WKGetHyphenationLocationBeforeIndex(CFStringRef string, CFIndex index);
 
 CFArrayRef WKCFURLCacheCopyAllHostNamesInPersistentStore(void);
 void WKCFURLCacheDeleteHostNamesInPersistentStore(CFArrayRef hostArray);    
+
+CFStringRef WKGetCFURLResponseMIMEType(CFURLResponseRef);
+CFURLRef WKGetCFURLResponseURL(CFURLResponseRef);
+CFHTTPMessageRef WKGetCFURLResponseHTTPResponse(CFURLResponseRef);
+CFStringRef WKCopyCFURLResponseSuggestedFilename(CFURLResponseRef);
+void WKSetCFURLResponseMIMEType(CFURLResponseRef, CFStringRef mimeType);
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 typedef enum {

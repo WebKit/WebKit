@@ -886,7 +886,7 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
     int statusCode = [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0;
     if (statusCode != 304)
-        [r adjustMIMETypeIfNecessary];
+        adjustMIMETypeIfNecessary([r _CFURLResponse]);
 
     if ([m_handle->firstRequest().nsURLRequest() _propertyForKey:@"ForceHTMLMIMEType"])
         [r _setMIMEType:@"text/html"];
