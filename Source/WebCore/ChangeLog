@@ -1,3 +1,14 @@
+2011-03-14  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Xan Lopez.
+
+        Add all web audio auto-generated files to GTK make system
+        https://bugs.webkit.org/show_bug.cgi?id=50497
+
+        No new tests since these are build-system tweaks.
+
+        * GNUmakefile.am:
+
 2011-03-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

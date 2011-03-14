@@ -120,10 +120,44 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSArrayBufferView.h \
 	DerivedSources/WebCore/JSAttr.cpp \
 	DerivedSources/WebCore/JSAttr.h \
+	DerivedSources/WebCore/JSAudioBuffer.cpp \
+	DerivedSources/WebCore/JSAudioBuffer.h \
+	DerivedSources/WebCore/JSAudioBufferSourceNode.cpp \
+	DerivedSources/WebCore/JSAudioBufferSourceNode.h \
+	DerivedSources/WebCore/JSAudioChannelMerger.cpp \
+	DerivedSources/WebCore/JSAudioChannelMerger.h \
+	DerivedSources/WebCore/JSAudioChannelSplitter.cpp \
+	DerivedSources/WebCore/JSAudioChannelSplitter.h \
 	DerivedSources/WebCore/JSAudioContext.cpp \
 	DerivedSources/WebCore/JSAudioContext.h \
+	DerivedSources/WebCore/JSAudioDestinationNode.cpp \
+	DerivedSources/WebCore/JSAudioDestinationNode.h \
+	DerivedSources/WebCore/JSAudioGain.cpp \
+	DerivedSources/WebCore/JSAudioGain.h \
+	DerivedSources/WebCore/JSAudioListener.cpp \
+	DerivedSources/WebCore/JSAudioListener.h \
+	DerivedSources/WebCore/JSAudioNode.cpp \
+	DerivedSources/WebCore/JSAudioNode.h \
 	DerivedSources/WebCore/JSAudioPannerNode.cpp \
 	DerivedSources/WebCore/JSAudioPannerNode.h \
+	DerivedSources/WebCore/JSAudioParam.cpp \
+	DerivedSources/WebCore/JSAudioParam.h \
+	DerivedSources/WebCore/JSAudioProcessingEvent.cpp \
+	DerivedSources/WebCore/JSAudioProcessingEvent.h \
+	DerivedSources/WebCore/JSAudioSourceNode.cpp \
+	DerivedSources/WebCore/JSAudioSourceNode.h \
+	DerivedSources/WebCore/JSConvolverNode.cpp \
+	DerivedSources/WebCore/JSConvolverNode.h \
+	DerivedSources/WebCore/JSDelayNode.cpp \
+	DerivedSources/WebCore/JSDelayNode.h \
+	DerivedSources/WebCore/JSHighPass2FilterNode.cpp \
+	DerivedSources/WebCore/JSHighPass2FilterNode.h \
+	DerivedSources/WebCore/JSJavaScriptAudioNode.cpp \
+	DerivedSources/WebCore/JSJavaScriptAudioNode.h \
+	DerivedSources/WebCore/JSLowPass2FilterNode.cpp \
+	DerivedSources/WebCore/JSLowPass2FilterNode.h \
+	DerivedSources/WebCore/JSRealtimeAnalyserNode.h \
+	DerivedSources/WebCore/JSRealtimeAnalyserNode.cpp \
 	DerivedSources/WebCore/JSBarInfo.cpp \
 	DerivedSources/WebCore/JSBarInfo.h \
 	DerivedSources/WebCore/JSBeforeLoadEvent.cpp \
