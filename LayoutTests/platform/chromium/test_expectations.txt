@@ -3329,6 +3329,12 @@ BUGCR75426 LINUX DEBUG : fast/text/international/thai-baht-space.html = CRASH PA
 BUGCR75426 LINUX DEBUG : fast/text/justify-nbsp.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : tables/mozilla/bugs/bug1318.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/backgrounds/repeat/background-repeat-shorthand.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : platform/mac/editing/pasteboard/5583362.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/ruby/before-doesnt-crash.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/td-display-nowrap.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : platform/chromium/fast/text/font-linux-normalize.html = CRASH PASS
+
 
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)

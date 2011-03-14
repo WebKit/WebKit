@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x600
+      RenderDetails {DETAILS} at (0,0) size 800x18
+        RenderBlock (anonymous) at (0,0) size 800x18
+          RenderBlock (anonymous) at (0,0) size 800x18
+            RenderDetailsMarker at (0,0) size 9x18: right
+            RenderText at (9,0) size 44x18
+              text run at (9,0) width 44: "Details"
+caret: position 0 of child 1 {DETAILS} of body
