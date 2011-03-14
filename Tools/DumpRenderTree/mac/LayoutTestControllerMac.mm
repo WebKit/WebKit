@@ -165,12 +165,11 @@ JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)
     JSValueRef jsOriginsArray[count];
     for (NSInteger i = 0; i < count; i++) {
         NSString *origin = [[origins objectAtIndex:i] databaseIdentifier];
-        JSStringRef str = JSStringCreateWithCFString((CFStringRef)origin);
-        jsOriginsArray[i] = JSValueMakeString(context, str);
+        JSRetainPtr<JSStringRef> str(Adopt, JSStringCreateWithCFString((CFStringRef)origin));
+        jsOriginsArray[i] = JSValueMakeString(context, str.get());
     }
 
-    JSObjectRef jsArrayObject = JSObjectMakeArray(context, count, jsOriginsArray, NULL);
-    return jsArrayObject;
+    return JSObjectMakeArray(context, count, jsOriginsArray, NULL);
 }
 
 void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)
@@ -178,8 +177,8 @@ void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)
     RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, URL));
     
     WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:(NSString *)urlCF.get()]];
-
     [[WebStorageManager sharedWebStorageManager] deleteOrigin:origin];
+    [origin release];
 }
 
 void LayoutTestController::clearBackForwardList()

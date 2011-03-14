@@ -64,6 +64,18 @@
 
 2011-03-14  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Fix two memory leaks within LayoutTestController's storage support.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::originsWithLocalStorage): Don't leak the JSStringRef that is returned
+        by JSStringCreateWithCFString.
+        (LayoutTestController::deleteLocalStorageForOrigin): Don't leak the WebSecurityOrigin that we
+        allocate.
+
+2011-03-14  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Oliver Hunt.
 
         <http://webkit.org/b/56304> REGRESSION(r80892): 100,000+ leaks seen on the build bot
