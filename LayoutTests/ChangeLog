@@ -1,3 +1,9 @@
+2011-03-14  David Levin  <levin@chromium.org>
+
+        Add more linux debug crashers to the sad list.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-14  Martin Robinson  <mrobinson@igalia.com>
 
         Update GTK+ pixel results after r81053.

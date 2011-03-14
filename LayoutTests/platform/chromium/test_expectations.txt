@@ -3254,6 +3254,7 @@ BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TE
 // WebKit roll 80564:80631:
 // Apparent font cache cleanup issue when running multiple tests in a row (only)
 BUGCR75426 LINUX DEBUG : css1/box_properties/border_top_width_inline.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : css1/classification/white_space.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/backgrounds/repeat/background-repeat-shorthand.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-lr/002.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-lr/003.html = CRASH PASS
@@ -3276,6 +3277,7 @@ BUGCR75426 LINUX DEBUG : fast/dom/HTMLFormElement/adopt-assertion.html = CRASH P
 BUGCR75426 LINUX DEBUG : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/dom/vertical-scrollbar-in-rtl.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/dom/vertical-scrollbar-when-dir-change.html = CRASH
+BUGCR75426 LINUX DEBUG : fast/html/mark-element.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/js/pic/cached-single-entry-transition.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/events/window-events-bubble.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/lists/001.html = CRASH PASS
@@ -3306,10 +3308,12 @@ BUGCR75426 LINUX DEBUG : fast/repaint/slider-thumb-drag-release.html = CRASH PAS
 BUGCR75426 LINUX DEBUG : fast/repaint/text-emphasis-v.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/ruby/before-doesnt-crash.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/td-display-nowrap.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/027.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/028.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/029.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/039.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/040.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : fast/table/041.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/auto-with-percent-height.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/growCellForImageQuirk.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : fast/table/height-percent-test.html = CRASH PASS
@@ -3329,10 +3333,9 @@ BUGCR75426 LINUX DEBUG : fast/text/international/thai-baht-space.html = CRASH PA
 BUGCR75426 LINUX DEBUG : fast/text/justify-nbsp.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : platform/chromium/fast/text/font-linux-normalize.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : platform/mac/editing/pasteboard/5583362.html = CRASH PASS
+BUGCR75426 LINUX DEBUG : platform/mac/editing/pasteboard/5583362.html = CRASH PASS IMAGE+TEXT
 BUGCR75426 LINUX DEBUG : tables/layering/paint-test-layering-1.html = CRASH PASS
 BUGCR75426 LINUX DEBUG : tables/mozilla/bugs/bug1318.html = CRASH PASS
-
 
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
