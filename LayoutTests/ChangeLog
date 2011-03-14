@@ -1,3 +1,14 @@
+2011-03-14  David Levin  <levin@chromium.org>
+
+        Rebaseline some test due to r80996.
+        Rearrange some expectations (from IMAGE to IMAGE_TEXT) due to r80996
+        and add a few bugs which track the other failures.
+
+        * platform/chromium-linux/fast/text/capitalize-boundaries-expected.txt:
+        * platform/chromium-linux/fast/text/soft-hyphen-4-expected.checksum: Added.
+        * platform/chromium-linux/fast/text/soft-hyphen-4-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

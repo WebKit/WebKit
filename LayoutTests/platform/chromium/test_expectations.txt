@@ -70,7 +70,7 @@ BUGCR24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
 // This tests is normally <1 second, but occasionally takes >20s.
 BUGCR24182 SLOW WIN RELEASE : fast/dom/Window/webkitConvertPoint.html = PASS
 
-BUGCR24182 WIN RELEASE SLOW : http/tests/loading/redirect-methods.html = PASS
+BUGCR24182 BUGCR76018 WIN RELEASE SLOW : http/tests/loading/redirect-methods.html = PASS CRASH
 BUGCR24182 SLOW MAC RELEASE : dom/html/level2/html/HTMLImageElement01.html = PASS
 BUGCR24182 SLOW WIN RELEASE : http/tests/local/file-url-sent-as-referer.html = PASS
 BUGCR24182 SLOW LINUX DEBUG : fast/xpath/4XPath/Borrowed/cz_20030217.html = PASS
@@ -2800,12 +2800,10 @@ BUGWK55745 MAC : fast/gradients/css3-radial-gradients3.html = IMAGE
 BUGWK55745 MAC : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
 
 // This was introduced by r75077.
-BUGWK52082 LINUX : fast/text/basic/014.html = IMAGE
 BUGWK52082 MAC LEOPARD : fast/text/basic/014.html = IMAGE
-BUGWK52082 LINUX : fast/text/midword-break-after-breakable-char.html = IMAGE
 BUGWK52082 MAC LEOPARD: fast/text/midword-break-after-breakable-char.html = IMAGE
-BUGWK52082 WIN : fast/text/basic/014.html = IMAGE+TEXT
-BUGWK52082 WIN : fast/text/midword-break-after-breakable-char.html = IMAGE+TEXT
+BUGWK52082 WIN LINUX : fast/text/basic/014.html = IMAGE+TEXT
+BUGWK52082 WIN LINUX : fast/text/midword-break-after-breakable-char.html = IMAGE+TEXT
 
 // These were introduced by r75139
 BUGWK51989 WIN LINUX : fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
@@ -3408,3 +3406,5 @@ BUG_LEVIN MAC : tables/mozilla/bugs/bug4527.html = IMAGE
 BUG_LEVIN MAC : html5lib/runner.html = CRASH PASS TIMEOUT
 BUG_LEVIN MAC : platform/mac/editing/input/text-control-ime-input.html = CRASH
 BUG_LEVIN MAC : storage/domstorage/complex-values.html = CRASH
+
+BUGCR76020 GPU WIN : canvas/philip/tests/2d.text.draw.align.end.ltr.html = TEST
