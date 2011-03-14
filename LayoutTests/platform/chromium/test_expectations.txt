@@ -3412,3 +3412,16 @@ BUG_LEVIN MAC : platform/mac/editing/input/text-control-ime-input.html = CRASH
 BUG_LEVIN MAC : storage/domstorage/complex-values.html = CRASH
 
 BUGCR76020 GPU WIN : canvas/philip/tests/2d.text.draw.align.end.ltr.html = TEXT
+
+// Skip an overly restrictive cross-origin HTTPS test
+BUGCR69594 SKIP : http/tests/appcache/different-https-origin-resource-main.html = FAIL
+
+// Need a rebaseline.
+BUG_ANTONM MAC : http/tests/security/xss-DENIED-xml-external-entity.xhtml = TEXT
+BUG_ANTONM MAC : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
+
+// Until new baselines land in WebKit.
+BUG_MMALY : fast/js/mozilla/strict/15.5.5.1.html = PASS TEXT
+
+// are failing after roll 80582 -> 80608
+BUG_LOISLO MAC DEBUG : fast/text/font-size-zero.html = TEXT

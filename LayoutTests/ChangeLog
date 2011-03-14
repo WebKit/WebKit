@@ -1,3 +1,9 @@
+2011-03-14  David Levin  <levin@chromium.org>
+
+        Upstream test expectations from the chromium repository to WebKit.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac pixel rebaselines for r81053.
