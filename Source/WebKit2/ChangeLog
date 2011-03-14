@@ -1,3 +1,18 @@
+2011-03-14  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add WKViewSetScrollOffsetOnNextResize() to C API on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=56340
+
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewSetScrollOffsetOnNextResize): Added.
+        * UIProcess/API/C/win/WKView.h: Added WKViewSetScrollOffsetOnNextResize().
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onSizeEvent): Apply any scroll offset when setting the drawing area size.
+        (WebKit::WebView::setScrollOffsetOnNextResize): Added.
+        * UIProcess/win/WebView.h: Added setScrollOffsetOnNextResize().
+
 2011-03-14  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben and Gavin Barraclough.

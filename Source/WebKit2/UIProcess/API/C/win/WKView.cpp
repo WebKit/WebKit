@@ -72,6 +72,11 @@ void WKViewSetInitialFocus(WKViewRef viewRef, bool forward)
     toImpl(viewRef)->setInitialFocus(forward);
 }
 
+void WKViewSetScrollOffsetOnNextResize(WKViewRef viewRef, WKSize scrollOffset)
+{
+    toImpl(viewRef)->setScrollOffsetOnNextResize(toIntSize(scrollOffset));
+}
+
 void WKViewSetFindIndicatorCallback(WKViewRef viewRef, WKViewFindIndicatorCallback callback, void* context)
 {
     toImpl(viewRef)->setFindIndicatorCallback(callback, context);

@@ -27,6 +27,7 @@
 #define WKView_h
 
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKGeometry.h>
 #include <windows.h>
 
 #ifdef __cplusplus
@@ -67,6 +68,7 @@ WK_EXPORT void WKViewSetParentWindow(WKViewRef view, HWND parentWindow);
 WK_EXPORT void WKViewWindowAncestryDidChange(WKViewRef view);
 WK_EXPORT void WKViewSetIsInWindow(WKViewRef view, bool isInWindow);
 WK_EXPORT void WKViewSetInitialFocus(WKViewRef view, bool forward);
+WK_EXPORT void WKViewSetScrollOffsetOnNextResize(WKViewRef view, WKSize scrollOffset);
 
 typedef void (*WKViewFindIndicatorCallback)(WKViewRef, HBITMAP selectionBitmap, RECT selectionRectInWindowCoordinates, bool fadeout, void*);
 WK_EXPORT void WKViewSetFindIndicatorCallback(WKViewRef view, WKViewFindIndicatorCallback callback, void* context);

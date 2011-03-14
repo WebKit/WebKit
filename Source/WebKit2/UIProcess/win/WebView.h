@@ -62,6 +62,7 @@ public:
     void setIsInWindow(bool);
     void setOverrideCursor(HCURSOR);
     void setInitialFocus(bool forward);
+    void setScrollOffsetOnNextResize(const WebCore::IntSize&);
     void setFindIndicatorCallback(WKViewFindIndicatorCallback, void*);
     WKViewFindIndicatorCallback getFindIndicatorCallback(void**);
     void initialize();
@@ -184,6 +185,8 @@ private:
     HWND m_window;
     HWND m_topLevelParentWindow;
     HWND m_toolTipWindow;
+    
+    WebCore::IntSize m_nextResizeScrollOffset;
 
     HCURSOR m_lastCursorSet;
     HCURSOR m_webCoreCursor;

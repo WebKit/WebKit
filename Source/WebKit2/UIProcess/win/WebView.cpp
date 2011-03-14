@@ -497,8 +497,10 @@ LRESULT WebView::onSizeEvent(HWND, UINT, WPARAM, LPARAM lParam, bool& handled)
     int width = LOWORD(lParam);
     int height = HIWORD(lParam);
 
-    if (m_page && m_page->drawingArea())
-        m_page->drawingArea()->setSize(IntSize(width, height), IntSize());
+    if (m_page && m_page->drawingArea()) {
+        m_page->drawingArea()->setSize(IntSize(width, height), m_nextResizeScrollOffset);
+        m_nextResizeScrollOffset = IntSize();
+    }
 
     handled = true;
     return 0;
@@ -795,6 +797,12 @@ void WebView::setOverrideCursor(HCURSOR overrideCursor)
 void WebView::setInitialFocus(bool forward)
 {
     m_page->setInitialFocus(forward);
+}
+
+void WebView::setScrollOffsetOnNextResize(const IntSize& scrollOffset)
+{
+    // The next time we get a WM_SIZE message, scroll by the specified amount in onSizeEvent().
+    m_nextResizeScrollOffset = scrollOffset;
 }
 
 void WebView::setViewportArguments(const WebCore::ViewportArguments&)
