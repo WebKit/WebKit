@@ -1,3 +1,93 @@
+2011-03-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoffrey Garen & Oliver Hunt.
+
+        Bug 56284 - Add a dataflow intermediate representation for use in JIT generation.
+
+        The JSC JIT presently generates code directly from the bytecode used by the interpreter.
+        This is not an optimal intermediate representation for JIT code generation, since it does
+        not capture liveness information of values, and provides little opportunity to perform
+        any static analysis for even primitive types. The JIT currently generates two code paths,
+        a fast path handling common cases, and a slower path handling less common operand types.
+        However the slow path jumps back into the fast path, meaning that information arising
+        from the earlier type checks cannot be propagated to later operations.
+
+        This patch adds:
+            * a dataflow intermediate representation capable of describing a single basic block
+              of operations,
+            * a mechanism to convert a simple, single-block bytecode functions to the new IR,
+            * and a JIT code generator capable of generating code from this representation.
+
+        The JIT generates two code paths, with the slower path not reentering the fast path
+        mid-block, allowing speculative optimizations to be made on the hot path, with type
+        information arising from these speculative decisions able to be propagated through the
+        dataflow. Code generation of both speculative and non-speculative paths exploits the type
+        and liveness information represented in the dataflow graph to attempt to avoid redundant
+        boxing and type-checking of values, and to remove unnecessary spills of temporary values
+        to the RegisterFile.
+
+        The dataflow JIT currently can only support a subset of bytecode operations, limited to
+        arithmetic, bit-ops, and basic property access. Functions that cannot be compiled by the
+        dataflow JIT will be run using the existing JIT. The coverage of the dataflow JIT will be
+        expanded to include, control-flow, function calls, and then the long-tail of remaining
+        bytecode instructions. The JIT presently only support JSVALUE64, and as a consequence of
+        this only supports x86-64.
+
+        The status of the dataflow JIT is currently work-in-progress. Limitations of the present
+        JIT code generation may cause performance regressions, particularly:
+            * the policy to only generate arithmetic code on the speculative path using integer
+              instructions, never using floating point.
+            * the policy to only generate arithmetic code on the non-speculative path using
+              floating point instructions, never using integer.
+            * always generating JSValue adds on the non-speculative path as a call out to a
+              C-function, never handling this in JIT code.
+            * always assuming by-Value property accesses on the speculative path to be array
+              accesses.
+            * generating all by-Value property accesses from the non-speculative path as a call
+              out to a C-function.
+            * generating all by-Indentifer property accesses as a call out to a C-function.
+        Due to these regressions, the code is landed in a state where it is disabled in most
+        cases by the ENABLE_DFG_JIT_RESTRICTIONS guard in Platform.h. As these regressions are
+        addressed, the JIT will be allowed to trigger in more cases.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            - Added new files to Xcode project.
+        * dfg: Added.
+            - Added directory for new code.
+        * dfg/DFGByteCodeParser.cpp: Added.
+        * dfg/DFGByteCodeParser.h: Added.
+            - Contruct a DFG::Graph representation from a bytecode CodeBlock.
+        * dfg/DFGGenerationInfo.h: Added.
+            - Track type & register information for VirtualRegisters during JIT code generation.
+        * dfg/DFGGraph.cpp: Added.
+        * dfg/DFGGraph.h: Added.
+            - Dataflow graph intermediate representation for code generation.
+        * dfg/DFGJITCodeGenerator.cpp: Added.
+        * dfg/DFGJITCodeGenerator.h: Added.
+            - Base class for SpeculativeJIT & NonSpeculativeJIT to share common functionality.
+        * dfg/DFGJITCompiler.cpp: Added.
+        * dfg/DFGJITCompiler.h: Added.
+            - Class responsible for driving code generation of speculativeJIT & non-speculative
+              code paths from the dataflow graph.
+        * dfg/DFGNonSpeculativeJIT.cpp: Added.
+        * dfg/DFGNonSpeculativeJIT.h: Added.
+            - Used to generate the non-speculative code path, this make no assumptions
+              about operand types.
+        * dfg/DFGOperations.cpp: Added.
+        * dfg/DFGOperations.h: Added.
+            - Helper functions called from the JIT generated code.
+        * dfg/DFGRegisterBank.h: Added.
+            - Used to track contents of physical registers during JIT code generation.
+        * dfg/DFGSpeculativeJIT.cpp: Added.
+        * dfg/DFGSpeculativeJIT.h: Added.
+            - Used to generate the speculative code path, this make assumptions about
+              operand types to enable optimization.
+        * runtime/Executable.cpp:
+            - Add code to attempt to use the DFG JIT to compile a function, with fallback
+              to the existing JIT.
+        * wtf/Platform.h:
+            - Added compile guards to enable the DFG JIT.
+
 2011-03-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

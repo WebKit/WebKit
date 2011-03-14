@@ -1016,6 +1016,13 @@
 #define ENABLE_JIT 1
 #endif
 
+/* Currently only implemented for JSVALUE64, only tested on PLATFORM(MAC) */
+#if ENABLE(JIT) && USE(JSVALUE64) && PLATFORM(MAC)
+#define ENABLE_DFG_JIT 1
+/* Enabled with restrictions to circumvent known performance regressions. */
+#define ENABLE_DFG_JIT_RESTRICTIONS 1
+#endif
+
 /* Ensure that either the JIT or the interpreter has been enabled. */
 #if !defined(ENABLE_INTERPRETER) && !ENABLE(JIT)
 #define ENABLE_INTERPRETER 1

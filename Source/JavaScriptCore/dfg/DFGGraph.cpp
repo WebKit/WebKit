@@ -1,0 +1,128 @@
+/*
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "DFGGraph.h"
+
+#include "CodeBlock.h"
+
+#if ENABLE(DFG_JIT)
+
+namespace JSC { namespace DFG {
+
+#ifndef NDEBUG
+void Graph::dump(CodeBlock* codeBlock)
+{
+    // Creates an array of stringized names.
+#define STRINGIZE_DFG_OP_ENUM(opcode, flags) #opcode ,
+    const char* dfgOpNames[] = {
+        FOR_EACH_DFG_OP(STRINGIZE_DFG_OP_ENUM)
+    };
+#undef STRINGIZE_DFG_OP_ENUM
+
+    Node* nodes = this->begin();
+    size_t size = this->size();
+    for (size_t i = 0; i < size; ++i) {
+        Node& node = nodes[i];
+        NodeType op = node.op;
+
+        unsigned refCount = node.refCount;
+        if (!refCount)
+            continue;
+        bool mustGenerate = node.mustGenerate();
+        if (mustGenerate)
+            --refCount;
+
+        // Example/explanation of dataflow dump output
+        //
+        //   14:   <!2:7>  GetByVal(@3, @13)
+        //   ^1     ^2 ^3     ^4       ^5
+        //
+        // (1) The nodeIndex of this operation.
+        // (2) The reference count. The number printed is the 'real' count,
+        //     not including the 'mustGenerate' ref. If the node is
+        //     'mustGenerate' then the count it prefixed with '!'.
+        // (3) The virtual register slot assigned to this node.
+        // (4) The name of the operation.
+        // (5) The arguments to the operation. The may be of the form:
+        //         @#   - a NodeIndex referencing a prior node in the graph.
+        //         arg# - an argument number.
+        //         $#   - the index in the CodeBlock of a constant { for numeric constants the value is displayed | for integers, in both decimal and hex }.
+        //         id#  - the index in the CodeBlock of an identifer { if codeBlock is passed to dump(), the string representation is displayed }.
+        //         var# - the index of a var on the global object, used by GetGlobalVar/PutGlobalVar operations.
+        printf("% 4d:\t<%c%u:%u>\t%s(", (int)i, mustGenerate ? '!' : ' ', refCount, node.virtualRegister, dfgOpNames[op & NodeIdMask]);
+        if (node.child1 != NoNode)
+            printf("@%u", node.child1);
+        if (node.child2 != NoNode)
+            printf(", @%u", node.child2);
+        if (node.child3 != NoNode)
+            printf(", @%u", node.child3);
+        bool hasChildren = node.child1 != NoNode;
+        if (node.hasVarNumber())
+            printf("%svar%u", hasChildren ? ", " : "", node.varNumber());
+        if (node.hasIdentifier()) {
+            if (codeBlock)
+                printf("%sid%u{%s}", hasChildren ? ", " : "", node.identifierNumber(), codeBlock->identifier(node.identifierNumber()).ustring().utf8().data());
+            else
+                printf("%sid%u", hasChildren ? ", " : "", node.identifierNumber());
+        }
+        if (node.isArgument())
+            printf("%sarg%u", hasChildren ? ", " : "", node.argumentNumber());
+        if (op == Int32Constant)
+            printf("%s$%u{%d|0x%08x}", hasChildren ? ", " : "", node.constantNumber(), node.int32Constant(), node.int32Constant());
+        if (op == DoubleConstant)
+            printf("%s$%u{%f})", hasChildren ? ", " : "", node.constantNumber(), node.numericConstant());
+        if (op == JSConstant)
+            printf("%s$%u", hasChildren ? ", " : "", node.constantNumber());
+        printf(")\n");
+    }
+}
+#endif
+
+// FIXME: Convert this method to be iterative, not recursive.
+void Graph::refChildren(NodeIndex op)
+{
+    Node& node = at(op);
+
+    if (node.child1 == NoNode) {
+        ASSERT(node.child2 == NoNode && node.child3 == NoNode);
+        return;
+    }
+    ref(node.child1);
+
+    if (node.child2 == NoNode) {
+        ASSERT(node.child3 == NoNode);
+        return;
+    }
+    ref(node.child2);
+
+    if (node.child3 == NoNode)
+        return;
+    ref(node.child3);
+}
+
+} } // namespace JSC::DFG
+
+#endif

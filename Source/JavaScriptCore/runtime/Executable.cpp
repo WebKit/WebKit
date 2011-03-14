@@ -33,6 +33,11 @@
 #include "UStringBuilder.h"
 #include "Vector.h"
 
+#if ENABLE(DFG_JIT)
+#include "DFGByteCodeParser.h"
+#include "DFGJITCompiler.h"
+#endif
+
 namespace JSC {
 
 NativeExecutable::~NativeExecutable()
@@ -182,6 +187,32 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
    return 0;
 }
 
+static bool tryDFGCompile(JSGlobalData* globalData, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
+{
+#if ENABLE(DFG_JIT)
+#if ENABLE(DFG_JIT_RESTRICTIONS)
+    // FIXME: No flow control yet supported, don't bother scanning the bytecode if there are any jump targets.
+    // FIXME: temporarily disable property accesses until we fix regressions.
+    if (codeBlock->numberOfJumpTargets() || codeBlock->numberOfStructureStubInfos())
+        return false;
+#endif
+
+    DFG::Graph dfg;
+    if (!parse(dfg, globalData, codeBlock, 0))
+        return false;
+
+    DFG::JITCompiler dataFlowJIT(globalData, dfg, codeBlock);
+    dataFlowJIT.compileFunction(jitCode, jitCodeWithArityCheck);
+    return true;
+#else
+    UNUSED_PARAM(globalData);
+    UNUSED_PARAM(codeBlock);
+    UNUSED_PARAM(jitCode);
+    UNUSED_PARAM(jitCodeWithArityCheck);
+    return false;
+#endif
+}
+
 void ProgramExecutable::markChildren(MarkStack& markStack)
 {
     ScriptExecutable::markChildren(markStack);
@@ -223,7 +254,10 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 
 #if ENABLE(JIT)
     if (exec->globalData().canUseJIT()) {
-        m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_codeBlockForCall.get(), &m_jitCodeForCallWithArityCheck);
+        bool dfgCompiled = tryDFGCompile(&exec->globalData(), m_codeBlockForCall.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
+        if (!dfgCompiled)
+            m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_codeBlockForCall.get(), &m_jitCodeForCallWithArityCheck);
+
 #if !ENABLE(OPCODE_SAMPLING)
         if (!BytecodeGenerator::dumpsGeneratedCode())
             m_codeBlockForCall->discardBytecode();

@@ -281,6 +281,25 @@
 		86DB64640F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */; };
 		86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E116B00FE75AC800B512BC /* CodeLocation.h */; };
 		86E85539111B9968001AF51E /* JSStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E85538111B9968001AF51E /* JSStringBuilder.h */; };
+		86EC9DC41328DF82002B2AD7 /* DFGByteCodeParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */; };
+		86EC9DC51328DF82002B2AD7 /* DFGByteCodeParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */; };
+		86EC9DC61328DF82002B2AD7 /* DFGGenerationInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DB61328DF82002B2AD7 /* DFGGenerationInfo.h */; };
+		86EC9DC71328DF82002B2AD7 /* DFGGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DB71328DF82002B2AD7 /* DFGGraph.cpp */; };
+		86EC9DC81328DF82002B2AD7 /* DFGGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DB81328DF82002B2AD7 /* DFGGraph.h */; };
+		86EC9DC91328DF82002B2AD7 /* DFGJITCodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DB91328DF82002B2AD7 /* DFGJITCodeGenerator.cpp */; };
+		86EC9DCA1328DF82002B2AD7 /* DFGJITCodeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DBA1328DF82002B2AD7 /* DFGJITCodeGenerator.h */; };
+		86EC9DCB1328DF82002B2AD7 /* DFGJITCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DBB1328DF82002B2AD7 /* DFGJITCompiler.cpp */; };
+		86EC9DCC1328DF82002B2AD7 /* DFGJITCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DBC1328DF82002B2AD7 /* DFGJITCompiler.h */; };
+		86EC9DCD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DBD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp */; };
+		86EC9DCE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DBE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h */; };
+		86EC9DCF1328DF82002B2AD7 /* DFGOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DBF1328DF82002B2AD7 /* DFGOperations.cpp */; };
+		86EC9DD01328DF82002B2AD7 /* DFGOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DC01328DF82002B2AD7 /* DFGOperations.h */; };
+		86EC9DD11328DF82002B2AD7 /* DFGRegisterBank.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */; };
+		86EC9DD21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DC21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp */; };
+		86EC9DD31328DF82002B2AD7 /* DFGSpeculativeJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DC31328DF82002B2AD7 /* DFGSpeculativeJIT.h */; };
+		86ECA3EA132DEF1C002B2AD7 /* DFGNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */; };
+		86ECA3FA132DF25A002B2AD7 /* DFGScoreBoard.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */; };
+		86ECA4F1132EAA6D002B2AD7 /* DFGAliasTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ECA4F0132EAA6D002B2AD7 /* DFGAliasTracker.h */; };
 		86F38859121130CA007A7CE3 /* AtomicStringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F38858121130CA007A7CE3 /* AtomicStringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		90213E3D123A40C200D422F3 /* MemoryStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90213E3B123A40C200D422F3 /* MemoryStatistics.cpp */; };
 		90213E3E123A40C200D422F3 /* MemoryStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 90213E3C123A40C200D422F3 /* MemoryStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -923,6 +942,25 @@
 		86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocatorFixedVMPool.cpp; sourceTree = "<group>"; };
 		86E116B00FE75AC800B512BC /* CodeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeLocation.h; sourceTree = "<group>"; };
 		86E85538111B9968001AF51E /* JSStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringBuilder.h; sourceTree = "<group>"; };
+		86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGByteCodeParser.cpp; path = dfg/DFGByteCodeParser.cpp; sourceTree = "<group>"; };
+		86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGByteCodeParser.h; path = dfg/DFGByteCodeParser.h; sourceTree = "<group>"; };
+		86EC9DB61328DF82002B2AD7 /* DFGGenerationInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGGenerationInfo.h; path = dfg/DFGGenerationInfo.h; sourceTree = "<group>"; };
+		86EC9DB71328DF82002B2AD7 /* DFGGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGGraph.cpp; path = dfg/DFGGraph.cpp; sourceTree = "<group>"; };
+		86EC9DB81328DF82002B2AD7 /* DFGGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGGraph.h; path = dfg/DFGGraph.h; sourceTree = "<group>"; };
+		86EC9DB91328DF82002B2AD7 /* DFGJITCodeGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGJITCodeGenerator.cpp; path = dfg/DFGJITCodeGenerator.cpp; sourceTree = "<group>"; };
+		86EC9DBA1328DF82002B2AD7 /* DFGJITCodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGJITCodeGenerator.h; path = dfg/DFGJITCodeGenerator.h; sourceTree = "<group>"; };
+		86EC9DBB1328DF82002B2AD7 /* DFGJITCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGJITCompiler.cpp; path = dfg/DFGJITCompiler.cpp; sourceTree = "<group>"; };
+		86EC9DBC1328DF82002B2AD7 /* DFGJITCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGJITCompiler.h; path = dfg/DFGJITCompiler.h; sourceTree = "<group>"; };
+		86EC9DBD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGNonSpeculativeJIT.cpp; path = dfg/DFGNonSpeculativeJIT.cpp; sourceTree = "<group>"; };
+		86EC9DBE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNonSpeculativeJIT.h; path = dfg/DFGNonSpeculativeJIT.h; sourceTree = "<group>"; };
+		86EC9DBF1328DF82002B2AD7 /* DFGOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOperations.cpp; path = dfg/DFGOperations.cpp; sourceTree = "<group>"; };
+		86EC9DC01328DF82002B2AD7 /* DFGOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOperations.h; path = dfg/DFGOperations.h; sourceTree = "<group>"; };
+		86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGRegisterBank.h; path = dfg/DFGRegisterBank.h; sourceTree = "<group>"; };
+		86EC9DC21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGSpeculativeJIT.cpp; path = dfg/DFGSpeculativeJIT.cpp; sourceTree = "<group>"; };
+		86EC9DC31328DF82002B2AD7 /* DFGSpeculativeJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSpeculativeJIT.h; path = dfg/DFGSpeculativeJIT.h; sourceTree = "<group>"; };
+		86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNode.h; path = dfg/DFGNode.h; sourceTree = "<group>"; };
+		86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGScoreBoard.h; path = dfg/DFGScoreBoard.h; sourceTree = "<group>"; };
+		86ECA4F0132EAA6D002B2AD7 /* DFGAliasTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAliasTracker.h; path = dfg/DFGAliasTracker.h; sourceTree = "<group>"; };
 		86F38858121130CA007A7CE3 /* AtomicStringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AtomicStringHash.h; path = text/AtomicStringHash.h; sourceTree = "<group>"; };
 		90213E3B123A40C200D422F3 /* MemoryStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryStatistics.cpp; sourceTree = "<group>"; };
 		90213E3C123A40C200D422F3 /* MemoryStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryStatistics.h; sourceTree = "<group>"; };
@@ -1318,6 +1356,7 @@
 				7E39D81D0EC38EFA003AF11A /* bytecompiler */,
 				A7E4FC8312F8E4A300AF4CF4 /* collector */,
 				1480DB9A0DDC2231003CFDF2 /* debugger */,
+				86EC9DB31328DF44002B2AD7 /* dfg */,
 				1429D77A0ED20D7300B89619 /* interpreter */,
 				1429D92C0ED22D7000B89619 /* jit */,
 				7E39D8370EC3A388003AF11A /* parser */,
@@ -1947,6 +1986,32 @@
 			name = yarr;
 			sourceTree = "<group>";
 		};
+		86EC9DB31328DF44002B2AD7 /* dfg */ = {
+			isa = PBXGroup;
+			children = (
+				86ECA4F0132EAA6D002B2AD7 /* DFGAliasTracker.h */,
+				86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */,
+				86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */,
+				86EC9DB61328DF82002B2AD7 /* DFGGenerationInfo.h */,
+				86EC9DB71328DF82002B2AD7 /* DFGGraph.cpp */,
+				86EC9DB81328DF82002B2AD7 /* DFGGraph.h */,
+				86EC9DB91328DF82002B2AD7 /* DFGJITCodeGenerator.cpp */,
+				86EC9DBA1328DF82002B2AD7 /* DFGJITCodeGenerator.h */,
+				86EC9DBB1328DF82002B2AD7 /* DFGJITCompiler.cpp */,
+				86EC9DBC1328DF82002B2AD7 /* DFGJITCompiler.h */,
+				86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */,
+				86EC9DBD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp */,
+				86EC9DBE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h */,
+				86EC9DBF1328DF82002B2AD7 /* DFGOperations.cpp */,
+				86EC9DC01328DF82002B2AD7 /* DFGOperations.h */,
+				86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */,
+				86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */,
+				86EC9DC21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp */,
+				86EC9DC31328DF82002B2AD7 /* DFGSpeculativeJIT.h */,
+			);
+			name = dfg;
+			sourceTree = "<group>";
+		};
 		932FC3C20824BB70005B3C75 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -2451,6 +2516,18 @@
 				A7C40C0A130B057D00D002A1 /* BlockStack.h in Headers */,
 				A7C40C0B130B057D00D002A1 /* SentinelLinkedList.h in Headers */,
 				A7C40C0C130B057D00D002A1 /* SinglyLinkedList.h in Headers */,
+				86EC9DC51328DF82002B2AD7 /* DFGByteCodeParser.h in Headers */,
+				86EC9DC61328DF82002B2AD7 /* DFGGenerationInfo.h in Headers */,
+				86EC9DC81328DF82002B2AD7 /* DFGGraph.h in Headers */,
+				86EC9DCA1328DF82002B2AD7 /* DFGJITCodeGenerator.h in Headers */,
+				86EC9DCC1328DF82002B2AD7 /* DFGJITCompiler.h in Headers */,
+				86EC9DCE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h in Headers */,
+				86EC9DD01328DF82002B2AD7 /* DFGOperations.h in Headers */,
+				86EC9DD11328DF82002B2AD7 /* DFGRegisterBank.h in Headers */,
+				86EC9DD31328DF82002B2AD7 /* DFGSpeculativeJIT.h in Headers */,
+				86ECA3EA132DEF1C002B2AD7 /* DFGNode.h in Headers */,
+				86ECA3FA132DF25A002B2AD7 /* DFGScoreBoard.h in Headers */,
+				86ECA4F1132EAA6D002B2AD7 /* DFGAliasTracker.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2546,6 +2623,7 @@
 			};
 			buildConfigurationList = 149C277108902AFE008A9EFC /* Build configuration list for PBXProject "JavaScriptCore" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -2889,6 +2967,13 @@
 				97941A7E1302A098004A3447 /* CryptographicallyRandomNumber.cpp in Sources */,
 				A7E4FC9112F8E4CA00AF4CF4 /* HandleHeap.cpp in Sources */,
 				A7AC25BD1304D146003396DE /* MarkedBlock.cpp in Sources */,
+				86EC9DC41328DF82002B2AD7 /* DFGByteCodeParser.cpp in Sources */,
+				86EC9DC71328DF82002B2AD7 /* DFGGraph.cpp in Sources */,
+				86EC9DC91328DF82002B2AD7 /* DFGJITCodeGenerator.cpp in Sources */,
+				86EC9DCB1328DF82002B2AD7 /* DFGJITCompiler.cpp in Sources */,
+				86EC9DCD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp in Sources */,
+				86EC9DCF1328DF82002B2AD7 /* DFGOperations.cpp in Sources */,
+				86EC9DD21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
