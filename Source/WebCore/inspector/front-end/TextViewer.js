@@ -45,6 +45,11 @@ WebInspector.TextViewer = function(textModel, platform, url)
     this._gutterPanel = new WebInspector.TextEditorGutterPanel(this._textModel, syncDecorationsForLineListener);
     this.element.appendChild(this._mainPanel.element);
     this.element.appendChild(this._gutterPanel.element);
+
+    // Forward mouse wheel events from the unscrollable gutter to the main panel.
+    this._gutterPanel.element.addEventListener("mousewheel", function(e) {
+        this._mainPanel.element.dispatchEvent(e);
+    }.bind(this), false)
 }
 
 WebInspector.TextViewer.prototype = {
