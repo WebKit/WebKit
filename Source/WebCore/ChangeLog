@@ -1,3 +1,14 @@
+2011-03-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/8762095> and https://bugs.webkit.org/show_bug.cgi?id=55172
+        Need WK2 API to view/manage origins with LocalStorage
+
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::initializeTracker): Make sure the TextEncoding map is initialized on the main thread
+          before the StorageTracker thread can do it on the background thread.
+
 2011-03-13  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by Brady Eidson and David Levin, landed by Brady Eidson.

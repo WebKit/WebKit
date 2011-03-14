@@ -36,6 +36,7 @@
 #include "SQLiteStatement.h"
 #include "SecurityOrigin.h"
 #include "StorageTrackerClient.h"
+#include "TextEncoding.h"
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -52,6 +53,10 @@ void StorageTracker::initializeTracker(const String& storagePath)
     
     if (!storageTracker)
         storageTracker = new StorageTracker(storagePath);
+    
+    // Make sure text encoding maps have been built on the main thread, as the StorageTracker thread might try to do it there instead.
+    // FIXME (<rdar://problem/9127819>): Is there a more explicit way of doing this besides accessing the UTF8Encoding?
+    UTF8Encoding();
     
     SQLiteFileSystem::registerSQLiteVFS();
     storageTracker->setIsActive(true);

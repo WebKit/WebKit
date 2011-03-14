@@ -1,3 +1,16 @@
+2011-03-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/8762095> and https://bugs.webkit.org/show_bug.cgi?id=55172
+        Need WK2 API to view/manage origins with LocalStorage
+
+        Hookup the existing API stubs to the WebCore implementations:
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp:
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManager::deleteEntriesForOrigin):
+        (WebKit::WebKeyValueStorageManager::deleteAllEntries):
+
 2011-03-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

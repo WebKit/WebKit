@@ -34,6 +34,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginHash.h>
+#include <WebCore/StorageTracker.h>
 
 using namespace WebCore;
 
@@ -56,22 +57,20 @@ void WebKeyValueStorageManager::didReceiveMessage(CoreIPC::Connection* connectio
 
 void WebKeyValueStorageManager::getKeyValueStorageOrigins(uint64_t callbackID)
 {
-    HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash> origins;
+    Vector<RefPtr<SecurityOrigin> > coreOrigins;
 
-    // FIXME: <rdar://problem/8762095> and https://bugs.webkit.org/show_bug.cgi?id=55172 - Actually get the origins from WebCore once https://bugs.webkit.org/show_bug.cgi?id=51878 is resolved.
+    StorageTracker::tracker().origins(coreOrigins);
 
+    size_t size = coreOrigins.size();
     Vector<SecurityOriginData> identifiers;
-    identifiers.reserveCapacity(origins.size());
+    identifiers.reserveCapacity(size);
 
-    HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>::iterator end = origins.end();
-    HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>::iterator i = origins.begin();
-    for (; i != end; ++i) {
-        RefPtr<SecurityOrigin> origin = *i;
-        
+    for (size_t i = 0; i < size; ++i) {        
         SecurityOriginData originData;
-        originData.protocol = origin->protocol();
-        originData.host = origin->host();
-        originData.port = origin->port();
+        
+        originData.protocol = coreOrigins[i]->protocol();
+        originData.host = coreOrigins[i]->host();
+        originData.port = coreOrigins[i]->port();
 
         identifiers.uncheckedAppend(originData);
     }
@@ -81,14 +80,16 @@ void WebKeyValueStorageManager::getKeyValueStorageOrigins(uint64_t callbackID)
 
 void WebKeyValueStorageManager::deleteEntriesForOrigin(const SecurityOriginData& originData)
 {
-    // FIXME: <rdar://problem/8762095> and https://bugs.webkit.org/show_bug.cgi?id=55172 - Implement once https://bugs.webkit.org/show_bug.cgi?id=51878 is resolved.
-    notImplemented();
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(originData.protocol, originData.host, originData.port);
+    if (!origin)
+        return;
+
+    StorageTracker::tracker().deleteOrigin(origin.get());
 }
 
 void WebKeyValueStorageManager::deleteAllEntries()
 {
-    // FIXME: <rdar://problem/8762095> and https://bugs.webkit.org/show_bug.cgi?id=55172 - Implement once https://bugs.webkit.org/show_bug.cgi?id=51878 is resolved.
-    notImplemented();
+    StorageTracker::tracker().deleteAllOrigins();
 }
 
 } // namespace WebKit
