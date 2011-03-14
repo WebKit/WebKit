@@ -58,7 +58,6 @@ public:
     virtual bool isEnabled() const { return false; }
     
     virtual Image* iconForPageURL(const String&, const IntSize&) { return 0; }
-    virtual Image* defaultIcon(const IntSize&) { return 0; }
     
     virtual void retainIconForPageURL(const String&) { }
     virtual void releaseIconForPageURL(const String&) { }
@@ -72,8 +71,9 @@ public:
 
     // Used within one or more WebKit ports.
     // We should try to remove these dependencies from the IconDatabaseBase class.
-
     virtual void setEnabled(bool) { }
+
+    virtual Image* defaultIcon(const IntSize&) { return 0; }
 
     virtual size_t pageURLMappingCount() { return 0; }
     virtual size_t retainedPageURLCount() { return 0; }

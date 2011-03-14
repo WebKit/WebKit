@@ -1,3 +1,13 @@
+2011-03-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56320
+        Remove HistoryItem::icon() and the WebCore dependency on "IconDatabaseBase::defaultIcon()"
+
+        * ewk/ewk_history.cpp:
+        (ewk_history_item_icon_surface_get): Use IconDatabase directly.
+
 2011-03-14  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

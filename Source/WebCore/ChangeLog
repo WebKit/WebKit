@@ -1,3 +1,18 @@
+2011-03-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56320
+        Remove HistoryItem::icon() and the WebCore dependency on "IconDatabaseBase::defaultIcon()"
+
+        Remove HistoryItem::icon():
+        * history/HistoryItem.cpp:
+        * history/HistoryItem.h:
+        * WebCore.exp.in:
+
+        * loader/icon/IconDatabaseBase.h:
+        (WebCore::IconDatabaseBase::defaultIcon):
+
 2011-03-14  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

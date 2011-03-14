@@ -1,3 +1,13 @@
+2011-03-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56320
+        Remove HistoryItem::icon() and the WebCore dependency on "IconDatabaseBase::defaultIcon()"
+
+        * Api/qwebhistory.cpp:
+        (QWebHistoryItem::icon): Use IconDatabase directly.
+
 2011-03-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by attempt at build fix!

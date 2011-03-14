@@ -231,12 +231,6 @@ const String& HistoryItem::alternateTitle() const
     return m_displayTitle;
 }
 
-Image* HistoryItem::icon() const
-{
-    Image* result = iconDatabase().iconForPageURL(m_urlString, IntSize(16, 16));
-    return result ? result : iconDatabase().defaultIcon(IntSize(16, 16));
-}
-
 double HistoryItem::lastVisitedTime() const
 {
     return m_lastVisitedTime;

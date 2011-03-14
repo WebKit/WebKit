@@ -105,8 +105,6 @@ public:
     void setAlternateTitle(const String& alternateTitle);
     const String& alternateTitle() const;
     
-    Image* icon() const;
-    
     const String& parent() const;
     KURL url() const;
     KURL originalURL() const;

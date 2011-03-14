@@ -23,11 +23,13 @@
 #include "qwebframe_p.h"
 
 #include "BackForwardListImpl.h"
-#include "PlatformString.h"
+#include "IconDatabaseBase.h"
 #include "Image.h"
+#include "IntSize.h"
 #include "KURL.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "PlatformString.h"
 
 #include <QSharedData>
 #include <QDebug>
@@ -156,7 +158,8 @@ QDateTime QWebHistoryItem::lastVisited() const
 QIcon QWebHistoryItem::icon() const
 {
     if (d->item)
-        return *d->item->icon()->nativeImageForCurrentFrame();
+        return *WebCore::iconDatabase().iconForPageURL(d->item->url(), WebCore::IntSize(16, 16))->nativeImageForCurrentFrame();
+
     return QIcon();
 }
 
