@@ -346,8 +346,10 @@ void RenderBoxModelObject::styleDidChange(StyleDifference diff, const RenderStyl
             m_layer = new (renderArena()) RenderLayer(this);
             setHasLayer(true);
             m_layer->insertOnlyThisLayer();
-            if (parent() && !needsLayout() && containingBlock())
+            if (parent() && !needsLayout() && containingBlock()) {
+                m_layer->setNeedsFullRepaint();
                 m_layer->updateLayerPositions();
+            }
         }
     } else if (layer() && layer()->parent()) {
         setHasTransform(false); // Either a transform wasn't specified or the object doesn't support transforms, so just null out the bit.

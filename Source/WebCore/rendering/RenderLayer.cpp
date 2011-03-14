@@ -262,19 +262,6 @@ bool RenderLayer::canRender3DTransforms() const
 
 void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, IntPoint* cachedOffset)
 {
-    if (flags & DoFullRepaint) {
-        renderer()->repaint();
-#if USE(ACCELERATED_COMPOSITING)
-        flags &= ~CheckForRepaint;
-        // We need the full repaint to propagate to child layers if we are hardware compositing.
-        if (!compositor()->inCompositingMode())
-            flags &= ~DoFullRepaint;
-#else
-        flags &= ~(CheckForRepaint | DoFullRepaint);
-#endif
-    }
-    
-
     updateLayerPosition(); // For relpositioned layers or non-positioned layers,
                            // we need to keep in sync, since we may have shifted relative
                            // to our parent layer.
@@ -1106,6 +1093,7 @@ void RenderLayer::removeOnlyThisLayer()
         RenderLayer* next = current->nextSibling();
         removeChild(current);
         parent->addChild(current, nextSib);
+        current->setNeedsFullRepaint();
         current->updateLayerPositions(); // Depends on hasLayer() already being false for proper layout.
         current = next;
     }

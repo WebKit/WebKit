@@ -914,8 +914,7 @@ void FrameView::layout(bool allowSubtree)
     // Now update the positions of all layers.
     beginDeferredRepaints();
     IntPoint cachedOffset;
-    layer->updateLayerPositions((m_doFullRepaint ? RenderLayer::DoFullRepaint : 0)
-                                | RenderLayer::CheckForRepaint
+    layer->updateLayerPositions((m_doFullRepaint ? 0 : RenderLayer::CheckForRepaint)
                                 | RenderLayer::IsCompositingUpdateRoot
                                 | RenderLayer::UpdateCompositingLayers,
                                 subtree ? 0 : &cachedOffset);

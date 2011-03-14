@@ -1,3 +1,33 @@
+2011-03-11  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Clean up full repainting of layers during layout and at other times.  Platforms that did not do an invalidation on
+        size changes were incorrectly relying on the DoFullRepaint case of RenderLayer::updateLayerPositions to invalidate
+        for them. However this code is now wrong, since it assumed that the outermost layer was a RenderView that encompassed
+        all of the child layers.  This is no longer the case since the overflow changes that tightened up visual overflow
+        and limited that overflow only to content that the layer painted.
+        
+        Eliminate the DoFullRepaint flag and actually make no repainting of any kind happen from the layer code if FrameView's
+        m_doFullRepaint boolean is set.  This will flush out any ports that aren't just invalidating the world on their
+        own in response to view resizes or fixed layout size changes and force them to fix things to be consistent with
+        the other ports.
+        
+        Make the two dynamic calls to updateLayerPositions still do a full repaint by setting the repaint flag on the layer.
+        I'm suspicious as to the correctness of the repainting in both of these cases (both before and after this patch),
+        but the behavior should be the same.
+        
+        No new tests, since this is untestable on ports that invalidate on a resize.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::styleDidChange):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::removeOnlyThisLayer):
+        * rendering/RenderLayer.h:
+
 2011-03-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

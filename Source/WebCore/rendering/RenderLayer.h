@@ -296,14 +296,13 @@ public:
     void updateLayerPosition();
     
     enum UpdateLayerPositionsFlag {
-        DoFullRepaint = 1,
-        CheckForRepaint = 1 << 1,
-        IsCompositingUpdateRoot = 1 << 2,
-        UpdateCompositingLayers = 1 << 3,
-        UpdatePagination = 1 << 4
+        CheckForRepaint = 1,
+        IsCompositingUpdateRoot = 1 << 1,
+        UpdateCompositingLayers = 1 << 2,
+        UpdatePagination = 1 << 3
     };
     typedef unsigned UpdateLayerPositionsFlags;
-    void updateLayerPositions(UpdateLayerPositionsFlags = DoFullRepaint | IsCompositingUpdateRoot | UpdateCompositingLayers, IntPoint* cachedOffset = 0);
+    void updateLayerPositions(UpdateLayerPositionsFlags = CheckForRepaint | IsCompositingUpdateRoot | UpdateCompositingLayers, IntPoint* cachedOffset = 0);
 
     void updateTransform();
 
