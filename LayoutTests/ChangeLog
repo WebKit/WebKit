@@ -1,6 +1,6 @@
 2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
-        GTK rebaselines or r81053.
+        GTK rebaselines for r81053.
 
         * platform/gtk/editing/selection/drag-select-1-expected.txt:
         * platform/gtk/editing/selection/fake-drag-expected.txt:
