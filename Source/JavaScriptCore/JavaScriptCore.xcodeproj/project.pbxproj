@@ -121,6 +121,7 @@
 		14469DEC107EC7E700650446 /* StringObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C3C20E16EE3300B34460 /* StringObject.cpp */; };
 		14469DED107EC7E700650446 /* StringPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C3C50E16EE3300B34460 /* StringPrototype.cpp */; };
 		14469DEE107EC7E700650446 /* UString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8850255597D01FF60F7 /* UString.cpp */; };
+		144836E7132DA7BE005BE785 /* ConservativeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 149DAAF212EB559D0083B12B /* ConservativeSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		146AAB380B66A94400E55F16 /* JSStringRefCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */; };
 		146B16D812EB5B59001BEC1B /* ConservativeSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 146B14DB12EB5B12001BEC1B /* ConservativeSet.cpp */; };
 		146FE51211A710430087AE66 /* JITCall32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 146FE51111A710430087AE66 /* JITCall32_64.cpp */; };
@@ -2160,6 +2161,7 @@
 				BC18C3F40E16F5CD00B34460 /* Completion.h in Headers */,
 				FDA15C1E12B0305C003A583A /* Complex.h in Headers */,
 				BC18C3F50E16F5CD00B34460 /* config.h in Headers */,
+				144836E7132DA7BE005BE785 /* ConservativeSet.h in Headers */,
 				BC18C3F60E16F5CD00B34460 /* ConstructData.h in Headers */,
 				0BDFFAE00FC6192900D69EF4 /* CrossThreadRefCounted.h in Headers */,
 				86565743115BE3DA00291F40 /* CString.h in Headers */,

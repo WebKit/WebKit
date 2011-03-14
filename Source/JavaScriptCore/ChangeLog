@@ -1,5 +1,14 @@
 2011-03-13  Geoffrey Garen  <ggaren@apple.com>
 
+        Not reviewed.
+
+        Try to fix the Mac build.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Make sure to forward
+        ConervativeSet.h, since it's now visible when compiling other projects.
+
+2011-03-13  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Removed another case of DeprecatedPtr (ConservativeSet)
