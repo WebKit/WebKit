@@ -1,3 +1,18 @@
+2011-03-13  David Sosby  <dsosby@rim.com>
+
+        Reviewed and tweaked by Dan Bernstein.
+
+        REGRESSION: Soft hyphen is not always rendered
+        https://bugs.webkit.org/show_bug.cgi?id=56017
+        
+        Adding new test that verifies soft hyphen is rendered
+        when it is the last breakable point in a line.
+
+        * fast/text/soft-hyphen-4-expected.checksum: Added.
+        * fast/text/soft-hyphen-4-expected.png: Added.
+        * fast/text/soft-hyphen-4-expected.txt: Added.
+        * fast/text/soft-hyphen-4.html: Added.
+
 2011-03-13  David Levin  <levin@chromium.org>
 
         Update some baselines due to r80868.

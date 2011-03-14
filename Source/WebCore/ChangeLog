@@ -1,3 +1,21 @@
+2011-03-13  David Sosby  <dsosby@rim.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: Soft hyphen is not always rendered
+        https://bugs.webkit.org/show_bug.cgi?id=56017
+        
+        The check to flag a text block as hyphenated was only
+        occurring at break points in the line. If no break points
+        were found after the soft hyphen then the line would not
+        be flagged hyphenated. Adding a check for soft hyphen at
+        the end of the text run resolves the issue.
+
+        Test: fast/text/soft-hyphen-4.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2011-03-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.
