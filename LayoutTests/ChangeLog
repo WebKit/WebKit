@@ -1,3 +1,23 @@
+2011-03-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Selection uses first mousemove's localRect instead of that of mousedown
+        https://bugs.webkit.org/show_bug.cgi?id=56213
+
+        Added a test to ensure the selection start is computed using the mouse coordinates passed down
+        to the corresponding mousedown event instead of that of the first mousemove event.
+
+        The test is co-authored by Evan Martin.
+
+        * editing/selection/anchor-focus2-expected.txt: Editing delegate changes.
+        * editing/selection/anchor-focus3-expected.txt: Ditto.
+        * editing/selection/drag-select-rapidly-expected.txt: Added.
+        * editing/selection/drag-select-rapidly.html: Added.
+        * platform/mac/editing/selection/drag-select-1-expected.txt: Selects the correct range of text.
+        * platform/mac/editing/selection/fake-drag-expected.txt: Ditto.
+        * platform/mac/editing/selection/inline-closest-leaf-child-expected.txt: Ditto.
+
 2011-03-14  David Levin  <levin@chromium.org>
 
         Add a baseline for linux for this test since it matches what we have for OSX

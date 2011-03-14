@@ -545,7 +545,13 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
         
         m_mouseDownMayStartAutoscroll = false;
     }
-    
+
+    if (!m_beganSelectingText) {
+        HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
+        HitTestResult result(m_mouseDownPos);
+        m_frame->document()->renderView()->layer()->hitTest(request, result);
+        updateSelectionForMouseDrag(result.innerNode(), result.localPoint());
+    }
     updateSelectionForMouseDrag(targetNode, event.localPoint());
     return true;
 }
