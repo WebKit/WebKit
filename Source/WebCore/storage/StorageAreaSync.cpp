@@ -61,6 +61,7 @@ inline StorageAreaSync::StorageAreaSync(PassRefPtr<StorageSyncManager> storageSy
     , m_syncScheduled(false)
     , m_syncInProgress(false)
     , m_databaseOpenFailed(false)
+    , m_syncCloseDatabase(false)
     , m_importComplete(false)
 {
     ASSERT(isMainThread());

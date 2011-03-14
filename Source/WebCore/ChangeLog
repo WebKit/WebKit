@@ -1,3 +1,15 @@
+2011-03-14  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by David Levin.
+
+        REGRESSION(r80892): Use of uninitialized variable "m_syncCloseDatabase" in StorageAreaSync::sync
+        https://bugs.webkit.org/show_bug.cgi?id=56303
+
+        Initialized m_syncCloseDatabase to false in the StorageAreaSync constructor.
+
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::StorageAreaSync):
+
 2011-03-14  Steve Block  <steveblock@google.com>
 
         Reviewed by Oliver Hunt.
