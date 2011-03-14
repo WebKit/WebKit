@@ -1,5 +1,13 @@
 2011-03-13  David Levin  <levin@chromium.org>
 
+        Add one more failure which is related to change in this range:
+          http://trac.webkit.org/log/?verbose=on&rev=80866&stop_rev=80860
+        that I haven't been able to narrow down yet.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-13  David Levin  <levin@chromium.org>
+
         Add more crashing tests to an existing bug about the same issue
         for Chromium Linux Debug.
 

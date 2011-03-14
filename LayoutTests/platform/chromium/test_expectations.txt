@@ -3388,3 +3388,5 @@ BUGCR75954 WIN LINUX : fast/forms/onchange-setvalueforuser.html = TEXT
 BUGCR75992 GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
 
 BUGCR76003 WIN LINUX : transitions/default-timing-function.html = IMAGE
+
+BUG_LEVIN WIN : fast/dom/Window/window-lookup-precedence.html = TEXT
