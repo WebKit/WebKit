@@ -1,3 +1,13 @@
+2011-03-15  Adam Roben  <aroben@apple.com>
+
+        Update Windows results again after r81168
+
+        I accidentally copied the Mac results into platform/win for these two tests when I tried to
+        update results in r81179.
+
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt:
+        * platform/win/svg/text/small-fonts-2-expected.txt:
+
 2011-03-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
