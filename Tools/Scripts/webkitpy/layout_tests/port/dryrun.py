@@ -118,12 +118,26 @@ class DryrunDriver(base.Driver):
 
     def run_test(self, driver_input):
         start_time = time.time()
-        text_output = self._port.expected_text(driver_input.filename)
-
-        if driver_input.image_hash is not None:
+        fs = self._port._filesystem
+        if fs.exists(self._port.reftest_expected_filename(driver_input.filename)) or \
+            fs.exists(self._port.reftest_expected_mismatch_filename(driver_input.filename)):
+            text_output = 'test-text'
+            image = 'test-image'
+            hash = 'test-checksum'
+        elif driver_input.filename.endswith('-expected.html'):
+            text_output = 'test-text'
+            image = 'test-image'
+            hash = 'test-checksum'
+        elif driver_input.filename.endswith('-expected-mismatch.html'):
+            text_output = 'test-text-mismatch'
+            image = 'test-image-mismatch'
+            hash = 'test-checksum-mismatch'
+        elif driver_input.image_hash is not None:
+            text_output = self._port.expected_text(driver_input.filename)
             image = self._port.expected_image(driver_input.filename)
             hash = self._port.expected_checksum(driver_input.filename)
         else:
+            text_output = self._port.expected_text(driver_input.filename)
             image = None
             hash = None
         return base.DriverOutput(text_output, image, hash, False,

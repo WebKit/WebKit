@@ -347,6 +347,14 @@ class Port(object):
         text = self._filesystem.read_binary_file(path)
         return text.replace("\r\n", "\n")
 
+    def reftest_expected_filename(self, filename):
+        """Return the filename of reference we expect the test matches."""
+        return self.expected_filename(filename, '.html')
+
+    def reftest_expected_mismatch_filename(self, filename):
+        """Return the filename of reference we don't expect the test matches."""
+        return self.expected_filename(filename, '-mismatch.html')
+
     def filename_to_uri(self, filename):
         """Convert a test file (which is an absolute path) to a URI."""
         LAYOUTTEST_HTTP_DIR = "http/tests/"

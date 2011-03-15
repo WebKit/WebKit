@@ -50,6 +50,7 @@ class TestInstance:
         self.keyboard = False
         self.error = ''
         self.timeout = False
+        self.is_reftest = False
 
         # The values of each field are treated as raw byte strings. They
         # will be converted to unicode strings where appropriate using
@@ -77,6 +78,13 @@ class TestList:
         for key, value in kwargs.items():
             test.__dict__[key] = value
         self.tests[name] = test
+
+    def add_reftest(self, name, reference_name, same_image):
+        self.add(name, actual_checksum='xxx', actual_image='XXX', is_reftest=True)
+        if same_image:
+            self.add(reference_name, actual_checksum='xxx', actual_image='XXX', is_reftest=True)
+        else:
+            self.add(reference_name, actual_checksum='yyy', actual_image='YYY', is_reftest=True)
 
     def keys(self):
         return self.tests.keys()
@@ -129,6 +137,16 @@ def unit_test_list():
     # helpfully filtered to "\r\r\n" by our Python/Cygwin tooling.
     tests.add('passes/text.html',
               expected_text='\nfoo\n\n', actual_text='\nfoo\r\n\r\r\n')
+
+    # For reftests.
+    tests.add_reftest('passes/reftest.html', 'passes/reftest-expected.html', same_image=True)
+    tests.add_reftest('passes/mismatch.html', 'passes/mismatch-expected-mismatch.html', same_image=False)
+    tests.add_reftest('failures/expected/reftest.html', 'failures/expected/reftest-expected.html', same_image=False)
+    tests.add_reftest('failures/expected/mismatch.html', 'failures/expected/mismatch-expected-mismatch.html', same_image=True)
+    tests.add_reftest('failures/unexpected/reftest.html', 'failures/unexpected/reftest-expected.html', same_image=False)
+    tests.add_reftest('failures/unexpected/mismatch.html', 'failures/unexpected/mismatch-expected-mismatch.html', same_image=True)
+    # FIXME: Add a reftest which crashes.
+
     tests.add('websocket/tests/passes/text.html')
     return tests
 
@@ -158,6 +176,8 @@ def unit_test_filesystem(files=None):
     # Add each test and the expected output, if any.
     for test in test_list.tests.values():
         add_file(files, test, '.html', '')
+        if test.is_reftest:
+            continue
         add_file(files, test, '-expected.txt', test.expected_text)
         add_file(files, test, '-expected.checksum', test.expected_checksum)
         add_file(files, test, '-expected.png', test.expected_image)
@@ -169,12 +189,14 @@ WONTFIX : failures/expected/crash.html = CRASH
 // This one actually passes because the checksums will match.
 WONTFIX : failures/expected/image.html = PASS
 WONTFIX : failures/expected/image_checksum.html = IMAGE
+WONTFIX : failures/expected/mismatch.html = IMAGE
 WONTFIX : failures/expected/missing_check.html = MISSING PASS
 WONTFIX : failures/expected/missing_image.html = MISSING PASS
 WONTFIX : failures/expected/missing_text.html = MISSING PASS
 WONTFIX : failures/expected/newlines_leading.html = TEXT
 WONTFIX : failures/expected/newlines_trailing.html = TEXT
 WONTFIX : failures/expected/newlines_with_excess_CR.html = TEXT
+WONTFIX : failures/expected/reftest.html = IMAGE
 WONTFIX : failures/expected/text.html = TEXT
 WONTFIX : failures/expected/timeout.html = TIMEOUT
 WONTFIX SKIP : failures/expected/hang.html = TIMEOUT

@@ -64,7 +64,17 @@ def write_test_result(port, root_output_dir, filename, driver_output,
                 checksums_mismatch_but_images_are_same = True
                 imagehash_mismatch_failure = failure
         elif isinstance(failure, test_failures.FailureCrash):
-            writer.write_crash_report(driver_output.error)
+            if failure.reference_filename:
+                writer.write_crash_report(expected_driver_output.error)
+            else:
+                writer.write_crash_report(driver_output.error)
+        elif isinstance(failure, test_failures.FailureReftestMismatch):
+            writer.write_image_files(driver_output.image, expected_driver_output.image)
+            writer.create_image_diff_and_write_result(driver_output.image, expected_driver_output.image)
+            writer.copy_file(port.reftest_expected_filename(filename), '-expected.html')
+        elif isinstance(failure, test_failures.FailureReftestMismatchDidNotOccur):
+            writer.write_image_files(driver_output.image, expected_image=None)
+            writer.copy_file(port.reftest_expected_mismatch_filename(filename), '-expected-mismatch.html')
         else:
             assert isinstance(failure, (test_failures.FailureTimeout,))
 
@@ -135,9 +145,9 @@ class TestResultWriter(object):
         expected_filename = self.output_filename(self.FILENAME_SUFFIX_EXPECTED + file_type)
 
         fs = self._port._filesystem
-        if output:
+        if output is not None:
             fs.write_binary_file(actual_filename, output)
-        if expected:
+        if expected is not None:
             fs.write_binary_file(expected_filename, expected)
 
     def write_crash_report(self, error):
@@ -193,3 +203,10 @@ class TestResultWriter(object):
         # To do so, we have to change port.diff_image() as well.
         diff_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFF)
         return self._port.diff_image(actual_image, expected_image, diff_filename)
+
+    def copy_file(self, src_filepath, dst_extension):
+        fs = self._port._filesystem
+        assert fs.exists(src_filepath), 'src_filepath: %s' % src_filepath
+        dst_filename = self.output_filename(dst_extension)
+        self._make_output_directory()
+        fs.copyfile(src_filepath, dst_filename)

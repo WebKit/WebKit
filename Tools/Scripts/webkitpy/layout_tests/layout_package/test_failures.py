@@ -60,11 +60,13 @@ def determine_result_type(failure_list):
         is_text_failure = FailureTextMismatch in failure_types
         is_image_failure = (FailureImageHashIncorrect in failure_types or
                             FailureImageHashMismatch in failure_types)
+        is_reftest_failure = (FailureReftestMismatch in failure_types or
+                              FailureReftestMismatchDidNotOccur in failure_types)
         if is_text_failure and is_image_failure:
             return test_expectations.IMAGE_PLUS_TEXT
         elif is_text_failure:
             return test_expectations.TEXT
-        elif is_image_failure:
+        elif is_image_failure or is_reftest_failure:
             return test_expectations.IMAGE
         else:
             raise ValueError("unclassifiable set of failures: "
@@ -177,11 +179,17 @@ class FailureTimeout(TestFailure):
     """Test timed out.  We also want to restart DumpRenderTree if this
     happens."""
 
+    def __init__(self, reference_filename=None):
+        self.reference_filename = reference_filename
+
     @staticmethod
     def message():
         return "Test timed out"
 
     def result_html_output(self, filename):
+        if self.reference_filename:
+            return "<strong>%s</strong> (occured in <a href=%s>expected html</a>)" % (
+                self.message(), self.reference_filename)
         return "<strong>%s</strong>" % self.message()
 
     def should_kill_dump_render_tree(self):
@@ -191,6 +199,9 @@ class FailureTimeout(TestFailure):
 class FailureCrash(TestFailure):
     """DumpRenderTree crashed."""
 
+    def __init__(self, reference_filename=None):
+        self.reference_filename = reference_filename
+
     @staticmethod
     def message():
         return "DumpRenderTree crashed"
@@ -198,8 +209,11 @@ class FailureCrash(TestFailure):
     def result_html_output(self, filename):
         # FIXME: create a link to the minidump file
         stack = self.relative_output_filename(filename, "-stack.txt")
-        return "<strong>%s</strong> <a href=%s>stack</a>" % (self.message(),
-                                                             stack)
+        if self.reference_filename:
+            return "<strong>%s</strong> <a href=%s>stack</a> (occured in <a href=%s>expected html</a>)" % (
+                self.message(), stack, self.reference_filename)
+        else:
+            return "<strong>%s</strong> <a href=%s>stack</a>" % (self.message(), stack)
 
     def should_kill_dump_render_tree(self):
         return True
@@ -279,9 +293,48 @@ class FailureImageHashIncorrect(ComparisonTestFailure):
     def result_html_output(self, filename):
         return "<strong>%s</strong>" % self.message()
 
+
+class FailureReftestMismatch(ComparisonTestFailure):
+    """The result didn't match the reference rendering."""
+
+    OUT_FILENAMES = ("-expected.html", "-expected.png", "-actual.png",
+                     "-diff.png",)
+
+    @staticmethod
+    def message():
+        return "Mismatch with reference"
+
+    def output_links(self, filename, out_names):
+        links = ['']
+        uris = [self.relative_output_filename(filename, output_filename)
+                for output_filename in out_names]
+        for text, uri in zip(['-expected.html', 'expected', 'actual', 'diff'], uris):
+            links.append("<a href='%s'>%s</a>" % (uri, text))
+        return ' '.join(links)
+
+
+class FailureReftestMismatchDidNotOccur(ComparisonTestFailure):
+    """Unexpected match between the result and the reference rendering."""
+
+    OUT_FILENAMES = ("-expected-mismatch.html", "-actual.png",)
+
+    @staticmethod
+    def message():
+        return "Mismatch with the reference did not occur"
+
+    def output_links(self, filename, out_names):
+        links = ['']
+        uris = [self.relative_output_filename(filename, output_filename)
+                for output_filename in out_names]
+        for text, uri in zip(['-expected-mismatch.html', 'image'], uris):
+            links.append("<a href='%s'>%s</a>" % (uri, text))
+        return ' '.join(links)
+
+
 # Convenient collection of all failure classes for anything that might
 # need to enumerate over them all.
 ALL_FAILURE_CLASSES = (FailureTimeout, FailureCrash, FailureMissingResult,
                        FailureTextMismatch, FailureMissingImageHash,
                        FailureMissingImage, FailureImageHashMismatch,
-                       FailureImageHashIncorrect)
+                       FailureImageHashIncorrect, FailureReftestMismatch,
+                       FailureReftestMismatchDidNotOccur)

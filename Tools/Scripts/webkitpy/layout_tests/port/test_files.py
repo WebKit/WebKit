@@ -105,11 +105,10 @@ def _has_supported_extension(filesystem, filename):
     return extension in _supported_file_extensions
 
 
-def _is_reference_html_file(filename):
+def is_reference_html_file(filename):
     """Return true if the filename points to a reference HTML file."""
     if (filename.endswith('-expected.html') or
         filename.endswith('-expected-mismatch.html')):
-        _log.warn("Reftests are not supported - ignoring %s" % filename)
         return True
     return False
 
@@ -117,4 +116,4 @@ def _is_reference_html_file(filename):
 def _is_test_file(filesystem, dirname, filename):
     """Return true if the filename points to a test file."""
     return (_has_supported_extension(filesystem, filename) and
-            not _is_reference_html_file(filename))
+            not is_reference_html_file(filename))

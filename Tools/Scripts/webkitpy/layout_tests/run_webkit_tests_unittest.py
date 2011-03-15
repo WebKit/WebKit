@@ -55,6 +55,7 @@ from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.layout_package import dump_render_tree_thread
 from webkitpy.layout_tests.port.test import TestPort, TestDriver
+from webkitpy.layout_tests.port.test_files import is_reference_html_file
 from webkitpy.python24.versioning import compare_version
 from webkitpy.test.skip import skip_if
 
@@ -124,7 +125,8 @@ def run_and_capture(port_obj, options, parsed_args):
     return (res, buildbot_output, regular_output)
 
 
-def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False, filesystem=None):
+def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
+                  filesystem=None, include_reference_html=False):
     extra_args = extra_args or []
     if not tests_included:
         # Not including http tests since they get run out of order (that
@@ -135,6 +137,7 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False, 
     user = mocktool.MockUser()
 
     test_batches = []
+
 
     class RecordingTestDriver(TestDriver):
         def __init__(self, port, worker_number):
@@ -153,7 +156,11 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False, 
                 self._current_test_batch = []
                 test_batches.append(self._current_test_batch)
             test_name = self._port.relative_test_filename(test_input.filename)
-            self._current_test_batch.append(test_name)
+            # In case of reftest, one test calls the driver's run_test() twice.
+            # We should not add a reference html used by reftests to tests unless include_reference_html parameter
+            # is explicitly given.
+            if include_reference_html or not is_reference_html_file(test_input.filename):
+                self._current_test_batch.append(test_name)
             return TestDriver.run_test(self, test_input)
 
     class RecordingTestPort(TestPort):
@@ -352,7 +359,12 @@ class MainTest(unittest.TestCase):
         # Run tests including the unexpected failures.
         self._url_opened = None
         res, out, err, user = logging_run(tests_included=True)
-        self.assertEqual(res, 3)
+
+        # Update this magic number if you add an unexpected test to webkitpy.layout_tests.port.test
+        # FIXME: It's nice to have a routine in port/test.py that returns this number.
+        unexpected_tests_count = 5
+
+        self.assertEqual(res, unexpected_tests_count)
         self.assertFalse(out.empty())
         self.assertFalse(err.empty())
         self.assertEqual(user.opened_urls, ['/tmp/layout-test-results/results.html'])
@@ -515,6 +527,25 @@ class MainTest(unittest.TestCase):
     def test_worker_model__unknown(self):
         self.assertRaises(ValueError, logging_run,
                           ['--worker-model', 'unknown'])
+
+    def test_reftest_run(self):
+        tests_run = get_tests_run(['passes/reftest.html'], tests_included=True, flatten_batches=True)
+        self.assertEquals(['passes/reftest.html'], tests_run)
+
+    def test_reftest_expected_html_should_be_ignored(self):
+        tests_run = get_tests_run(['passes/reftest-expected.html'], tests_included=True, flatten_batches=True)
+        self.assertEquals([], tests_run)
+
+    def test_reftest_driver_should_run_expected_html(self):
+        tests_run = get_tests_run(['passes/reftest.html'], tests_included=True, flatten_batches=True,
+                                  include_reference_html=True)
+        self.assertEquals(['passes/reftest.html', 'passes/reftest-expected.html'], tests_run)
+
+    def test_reftest_driver_should_run_expected_mismatch_html(self):
+        tests_run = get_tests_run(['passes/mismatch.html'], tests_included=True, flatten_batches=True,
+                                  include_reference_html=True)
+        self.assertEquals(['passes/mismatch.html', 'passes/mismatch-expected-mismatch.html'], tests_run)
+
 
 MainTest = skip_if(MainTest, sys.platform == 'cygwin' and compare_version(sys, '2.6')[0] < 0, 'new-run-webkit-tests tests hang on Cygwin Python 2.5.2')
 
