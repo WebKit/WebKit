@@ -1117,6 +1117,7 @@ fast/forms/interactive-validation-lost-focusable.html
 fast/forms/interactive-validation-prevented.html
 fast/forms/interactive-validation-attach-assertion.html
 fast/forms/interactive-validation-assertion-by-validate-twice.html
+fast/forms/interactive-validation-select-crash.html
 
 # Tests that seem to be Mac only, assume that smart drag-and-drop
 # is enabled or assume platform-dependent sizing.

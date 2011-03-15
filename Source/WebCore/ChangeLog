@@ -1,3 +1,16 @@
+2011-03-14  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Assertion failure by form validation message for <select required> with float:left
+        https://bugs.webkit.org/show_bug.cgi?id=55995
+
+        Test: fast/forms/interactive-validation-select-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::canMergeContiguousAnonymousBlocks):
+          isAnonymousBlock() doesn't mean it is a RenderBlock. We need to check isRenderBlock().
+
 2011-03-14  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Adam Roben.
