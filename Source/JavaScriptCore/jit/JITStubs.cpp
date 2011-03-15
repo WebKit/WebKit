@@ -943,17 +943,17 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
 
 #define CHECK_FOR_EXCEPTION() \
     do { \
-        if (UNLIKELY(stackFrame.globalData->exception.get())) \
+        if (UNLIKELY(stackFrame.globalData->exception)) \
             VM_THROW_EXCEPTION(); \
     } while (0)
 #define CHECK_FOR_EXCEPTION_AT_END() \
     do { \
-        if (UNLIKELY(stackFrame.globalData->exception.get())) \
+        if (UNLIKELY(stackFrame.globalData->exception)) \
             VM_THROW_EXCEPTION_AT_END(); \
     } while (0)
 #define CHECK_FOR_EXCEPTION_VOID() \
     do { \
-        if (UNLIKELY(stackFrame.globalData->exception.get())) { \
+        if (UNLIKELY(stackFrame.globalData->exception)) { \
             VM_THROW_EXCEPTION_AT_END(); \
             return; \
         } \
@@ -3472,7 +3472,7 @@ DEFINE_STUB_FUNCTION(void*, vm_throw)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
     JSGlobalData* globalData = stackFrame.globalData;
-    ExceptionHandler handler = jitThrow(globalData, stackFrame.callFrame, globalData->exception.get(), globalData->exceptionLocation);
+    ExceptionHandler handler = jitThrow(globalData, stackFrame.callFrame, globalData->exception, globalData->exceptionLocation);
     STUB_SET_RETURN_ADDRESS(handler.catchRoutine);
     return handler.callFrame;
 }

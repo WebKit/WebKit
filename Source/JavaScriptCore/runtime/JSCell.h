@@ -376,6 +376,18 @@ namespace JSC {
         internalAppend(*value);
     }
     
+    ALWAYS_INLINE void MarkStack::append(JSValue* value)
+    {
+        ASSERT(value);
+        internalAppend(*value);
+    }
+
+    ALWAYS_INLINE void MarkStack::append(JSCell** value)
+    {
+        ASSERT(value);
+        internalAppend(*value);
+    }
+
     ALWAYS_INLINE void MarkStack::deprecatedAppend(Register* value)
     {
         ASSERT(value);

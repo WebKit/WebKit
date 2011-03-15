@@ -54,7 +54,7 @@ Completion evaluate(ExecState* exec, ScopeChainNode* scopeChain, const SourceCod
 
     ProgramExecutable* program = ProgramExecutable::create(exec, source);
     if (!program) {
-        JSValue exception = exec->globalData().exception.get();
+        JSValue exception = exec->globalData().exception;
         exec->globalData().exception = JSValue();
         return Completion(Throw, exception);
     }

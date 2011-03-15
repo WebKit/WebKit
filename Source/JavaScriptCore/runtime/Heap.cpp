@@ -151,11 +151,11 @@ bool Heap::unprotect(JSValue k)
     return m_protectedValues.remove(k.asCell());
 }
 
-void Heap::markProtectedObjects(MarkStack& markStack)
+void Heap::markProtectedObjects(HeapRootMarker& heapRootMarker)
 {
     ProtectCountSet::iterator end = m_protectedValues.end();
     for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
-        markStack.deprecatedAppend(&it->first);
+        heapRootMarker.mark(&it->first);
 }
 
 void Heap::pushTempSortVector(Vector<ValueStringPair>* tempVector)
@@ -169,7 +169,7 @@ void Heap::popTempSortVector(Vector<ValueStringPair>* tempVector)
     m_tempSortingVectors.removeLast();
 }
     
-void Heap::markTempSortVectors(MarkStack& markStack)
+void Heap::markTempSortVectors(HeapRootMarker& heapRootMarker)
 {
     typedef Vector<Vector<ValueStringPair>* > VectorOfValueStringVectors;
 
@@ -180,7 +180,7 @@ void Heap::markTempSortVectors(MarkStack& markStack)
         Vector<ValueStringPair>::iterator vectorEnd = tempSortingVector->end();
         for (Vector<ValueStringPair>::iterator vectorIt = tempSortingVector->begin(); vectorIt != vectorEnd; ++vectorIt) {
             if (vectorIt->first)
-                markStack.deprecatedAppend(&vectorIt->first);
+                heapRootMarker.mark(&vectorIt->first);
         }
     }
 }
@@ -215,29 +215,28 @@ void Heap::markRoots()
     m_markedSpace.clearMarks();
 
     MarkStack& markStack = m_markStack;
+    HeapRootMarker heapRootMarker(markStack);
+
     markStack.append(conservativeRoots);
     markStack.drain();
 
-    // Mark explicitly registered roots.
-    markProtectedObjects(markStack);
+    markProtectedObjects(heapRootMarker);
     markStack.drain();
     
-    // Mark temporary vector for Array sorting
-    markTempSortVectors(markStack);
+    markTempSortVectors(heapRootMarker);
     markStack.drain();
 
-    // Mark misc. other roots.
     if (m_markListSet && m_markListSet->size())
         MarkedArgumentBuffer::markLists(markStack, *m_markListSet);
     if (m_globalData->exception)
-        markStack.append(&m_globalData->exception);
+        heapRootMarker.mark(&m_globalData->exception);
     markStack.drain();
 
     m_handleHeap.markStrongHandles(markStack);
 
     // Mark the small strings cache last, since it will clear itself if nothing
     // else has marked it.
-    m_globalData->smallStrings.markChildren(markStack);
+    m_globalData->smallStrings.markChildren(heapRootMarker);
 
     markStack.drain();
     markStack.compact();

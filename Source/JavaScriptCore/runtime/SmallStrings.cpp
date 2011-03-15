@@ -74,7 +74,7 @@ SmallStrings::~SmallStrings()
 {
 }
 
-void SmallStrings::markChildren(MarkStack& markStack)
+void SmallStrings::markChildren(HeapRootMarker& heapRootMarker)
 {
     /*
        Our hypothesis is that small strings are very common. So, we cache them
@@ -86,9 +86,9 @@ void SmallStrings::markChildren(MarkStack& markStack)
        so, it's probably reasonable to mark the rest. If not, we clear the cache.
      */
 
-    bool isAnyStringMarked = isMarked(m_emptyString.get());
+    bool isAnyStringMarked = isMarked(m_emptyString);
     for (unsigned i = 0; i < singleCharacterStringCount && !isAnyStringMarked; ++i)
-        isAnyStringMarked = isMarked(m_singleCharacterStrings[i].get());
+        isAnyStringMarked = isMarked(m_singleCharacterStrings[i]);
     
     if (!isAnyStringMarked) {
         clear();
@@ -96,10 +96,10 @@ void SmallStrings::markChildren(MarkStack& markStack)
     }
     
     if (m_emptyString)
-        markStack.append(&m_emptyString);
+        heapRootMarker.mark(&m_emptyString);
     for (unsigned i = 0; i < singleCharacterStringCount; ++i) {
         if (m_singleCharacterStrings[i])
-            markStack.append(&m_singleCharacterStrings[i]);
+            heapRootMarker.mark(&m_singleCharacterStrings[i]);
     }
 }
 

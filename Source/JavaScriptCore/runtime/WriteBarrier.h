@@ -171,48 +171,6 @@ template <typename U, typename V> inline bool operator==(const WriteBarrierBase<
     return lhs.get() == rhs.get();
 }
 
-// For use in data members that are owned by the Heap.
-template <typename T> class HeapRoot : public WriteBarrier<T> {
-private:
-    friend class Heap;
-    friend class JSGlobalData; // FIXME: Move Heap roots from JSGlobalData to Heap.
-    friend class SmallStrings; // FIXME: Convert SmallStrings to use weak handles.
-
-    HeapRoot() { }
-    HeapRoot(T* value)
-    {
-        this->setWithoutWriteBarrier(value);
-    }
-
-public:
-    HeapRoot& operator=(T* value)
-    {
-        this->setWithoutWriteBarrier(value);
-        return *this;
-    }
-};
-
-// For use in data members that are owned by the Heap.
-template <> class HeapRoot<Unknown> : public WriteBarrier<Unknown> {
-private:
-    friend class Heap;
-    friend class JSGlobalData; // FIXME: Move Heap roots from JSGlobalData to Heap.
-    friend class SmallStrings; // FIXME: Convert SmallStrings to use weak handles.
-
-    HeapRoot() { }
-    HeapRoot(JSValue value)
-    {
-        this->setWithoutWriteBarrier(value);
-    }
-
-public:
-    HeapRoot& operator=(JSValue value)
-    {
-        this->setWithoutWriteBarrier(value);
-        return *this;
-    }
-};
-
 } // namespace JSC
 
 #endif // WriteBarrier_h

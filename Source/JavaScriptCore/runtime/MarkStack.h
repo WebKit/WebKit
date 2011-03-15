@@ -96,6 +96,10 @@ namespace JSC {
         }
 
     private:
+        friend class HeapRootMarker; // Allowed to mark a JSValue* or JSCell** directly.
+        void append(JSValue*);
+        void append(JSCell**);
+
         void internalAppend(JSCell*);
         void internalAppend(JSValue);
         void markChildren(JSCell*);
@@ -211,7 +215,45 @@ namespace JSC {
         bool m_isDraining;
 #endif
     };
-    
-}
+
+    // Privileged class for marking JSValues directly. It is only safe to use
+    // this class to mark direct heap roots that are marked during every GC pass.
+    // All other references should be wrapped in WriteBarriers and marked through
+    // the MarkStack.
+    class HeapRootMarker {
+    private:
+        friend class Heap;
+        HeapRootMarker(MarkStack&);
+        
+    public:
+        void mark(JSValue*);
+        void mark(JSString**);
+        void mark(JSCell**);
+
+    private:
+        MarkStack& m_markStack;
+    };
+
+    inline HeapRootMarker::HeapRootMarker(MarkStack& markStack)
+        : m_markStack(markStack)
+    {
+    }
+
+    inline void HeapRootMarker::mark(JSValue* slot)
+    {
+        m_markStack.append(slot);
+    }
+
+    inline void HeapRootMarker::mark(JSString** slot)
+    {
+        m_markStack.append(reinterpret_cast<JSCell**>(slot));
+    }
+
+    inline void HeapRootMarker::mark(JSCell** slot)
+    {
+        m_markStack.append(slot);
+    }
+
+} // namespace JSC
 
 #endif

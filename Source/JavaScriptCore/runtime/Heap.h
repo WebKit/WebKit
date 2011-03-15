@@ -34,6 +34,7 @@ namespace JSC {
 
     class GCActivityCallback;
     class GlobalCodeBlock;
+    class HeapRootMarker;
     class JSCell;
     class JSGlobalData;
     class JSValue;
@@ -113,8 +114,8 @@ namespace JSC {
         void reportExtraMemoryCostSlowCase(size_t);
 
         void markRoots();
-        void markProtectedObjects(MarkStack&);
-        void markTempSortVectors(MarkStack&);
+        void markProtectedObjects(HeapRootMarker&);
+        void markTempSortVectors(HeapRootMarker&);
 
         enum SweepToggle { DoNotSweep, DoSweep };
         void reset(SweepToggle);

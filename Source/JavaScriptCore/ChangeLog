@@ -1,3 +1,72 @@
+2011-03-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed a few more deprecatedAppends, and removed HeapRoot<T>
+        https://bugs.webkit.org/show_bug.cgi?id=56422
+        
+        Added HeapRootMarker, a privileged class for marking direct heap roots
+        that are iterated during each garbage collection. This is easier to use
+        and more reliable than HeapRoot<T>, so I've removed HeapRoot<T>.
+
+        * debugger/Debugger.cpp:
+        (JSC::evaluateInGlobalCallFrame):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::exception):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Completion.cpp:
+        (JSC::evaluate): exception is no longer a HeapRoot<T>, so no need to
+        call .get() on it.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::markProtectedObjects):
+        (JSC::Heap::markTempSortVectors):
+        (JSC::Heap::markRoots):
+        * runtime/Heap.h: Updated to use HeapRootMarker.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::MarkStack::append): Added private functions for
+        HeapRootMarker to use.
+
+        * runtime/JSGlobalData.h: exception is no longer a HeapRoot<T>.
+
+        * runtime/MarkStack.h:
+        (JSC::HeapRootMarker::HeapRootMarker):
+        (JSC::HeapRootMarker::mark): Added private functions for
+        HeapRootMarker to use.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::markChildren): Updated to use HeapRootMarker.
+
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::emptyString):
+        (JSC::SmallStrings::singleCharacterString):
+        (JSC::SmallStrings::singleCharacterStrings): Updated to use HeapRootMarker.
+
+        * runtime/WriteBarrier.h: Removed HeapRoot<T>.
+
+2011-03-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Made the global object moving-GC-safe
+        https://bugs.webkit.org/show_bug.cgi?id=56348
+        
+        SunSpider reports no change.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::markChildren): Removed a dubious comment that
+        suggested we do not need to visit all our references during GC, since
+        that is not true in a moving GC.
+
+        Re-sorted data members by type, removed one duplicate, and added back
+        the one missing mark I found.
+
+        * runtime/JSGlobalObject.h: Re-sorted data members by type.
+
 2011-03-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

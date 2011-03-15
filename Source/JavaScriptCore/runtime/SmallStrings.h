@@ -33,6 +33,7 @@
 
 namespace JSC {
 
+    class HeapRootMarker;
     class JSGlobalData;
     class JSString;
     class MarkStack;
@@ -50,24 +51,24 @@ namespace JSC {
         {
             if (!m_emptyString)
                 createEmptyString(globalData);
-            return m_emptyString.get();
+            return m_emptyString;
         }
 
         JSString* singleCharacterString(JSGlobalData* globalData, unsigned char character)
         {
             if (!m_singleCharacterStrings[character])
                 createSingleCharacterString(globalData, character);
-            return m_singleCharacterStrings[character].get();
+            return m_singleCharacterStrings[character];
         }
 
         StringImpl* singleCharacterStringRep(unsigned char character);
 
-        void markChildren(MarkStack&);
+        void markChildren(HeapRootMarker&);
         void clear();
 
         unsigned count() const;
 
-        JSCell** singleCharacterStrings() { return m_singleCharacterStrings[0].slot(); }
+        JSString** singleCharacterStrings() { return &m_singleCharacterStrings[0]; }
 
     private:
         static const unsigned singleCharacterStringCount = maxSingleCharacterString + 1;
@@ -75,8 +76,8 @@ namespace JSC {
         void createEmptyString(JSGlobalData*);
         void createSingleCharacterString(JSGlobalData*, unsigned char);
 
-        HeapRoot<JSString> m_emptyString;
-        HeapRoot<JSString> m_singleCharacterStrings[singleCharacterStringCount];
+        JSString* m_emptyString;
+        JSString* m_singleCharacterStrings[singleCharacterStringCount];
         OwnPtr<SmallStringsStorage> m_storage;
     };
 

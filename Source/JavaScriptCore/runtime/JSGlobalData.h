@@ -212,7 +212,7 @@ namespace JSC {
         Terminator terminator;
         Heap heap;
 
-        HeapRoot<Unknown> exception;
+        JSValue exception;
 #if ENABLE(JIT)
         ReturnAddressPtr exceptionLocation;
 #endif
