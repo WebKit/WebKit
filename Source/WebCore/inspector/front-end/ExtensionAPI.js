@@ -516,5 +516,7 @@ var WatchExpressionSidebarPane = declareInterfaceClass(WatchExpressionSidebarPan
 var extensionServer = new ExtensionServerClient();
 
 webInspector = new InspectorExtensionAPI();
+experimental = window.experimental || {};
+experimental.webInspector = webInspector;
 
 }

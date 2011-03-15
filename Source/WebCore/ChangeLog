@@ -1,3 +1,14 @@
+2011-03-15  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: further extension API cleanup (removed inspectedPage, add experimental prefix)
+        https://bugs.webkit.org/show_bug.cgi?id=56327
+
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI):
+        * inspector/front-end/ExtensionAPISchema.json:
+
 2011-03-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

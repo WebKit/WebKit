@@ -1,57 +1,5 @@
 [
   {
-    "namespace": "experimental.webInspector.inspectedWindow",
-    "description": "Provides access to the window being inspected.",
-    "functions": [
-      {
-        "name": "eval",
-        "type": "function",
-        "description": "Evaluates a JavaScript expression in the context of inspected page (NOTE: the expression must evaluate to a JSON-compliant object, otherwise the exception is thrown)",
-        "parameters": [
-          {
-            "name": "expression",
-            "type": "string",
-            "description": "An expression to evaluate."
-          },
-          {
-            "name": "callback",
-            "type": "function",
-            "description": "A function called when evaluation completes.",
-            "parameters": [
-              {
-                "name": "result",
-                "type": "object",
-                "description": "The result of evaluation"
-              },
-              {
-                "name": "isException",
-                "type": "boolean",
-                "description": "Set if an exception was caught while evaluating the expression"
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "events": [
-      {
-        "name": "onDOMContentLoaded",
-        "type": "function",
-        "description": "Fired after DOMContentLoaded event on inspected page is fired."
-      },
-      {
-        "name": "onLoaded",
-        "type": "function",
-        "description": "Fired after load event on inspected page is fired."
-      },
-      {
-        "name": "onNavigated",
-        "type": "function",
-        "description": "Fired when navigation occurs in the window being inspected."
-      }
-    ]
-  },
-  {
     "namespace": "experimental.webInspector.panels",
     "types": [
       {
