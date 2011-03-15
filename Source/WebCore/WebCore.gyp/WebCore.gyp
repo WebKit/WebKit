@@ -1127,6 +1127,8 @@
         # Start by excluding everything then include html files only.
         ['exclude', '.*'],
         ['include', 'html/'],
+
+        ['exclude', 'AllInOne\\.cpp$'],
       ],
     },
     {
@@ -1167,32 +1169,23 @@
         '../../WebKit/mac/WebCoreSupport/WebSystemInterface.mm',
       ],
       'sources/': [
-        # Start by excluding everything then include platform files only.
         ['exclude', '.*'],
         ['include', 'platform/'],
 
-        # Exclude things that don't apply to the Chromium platform on the basis
-        # of their enclosing directories and tags at the ends of their
-        # filenames.
-        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|fftw|gtk|haiku|linux|mac|mkl|opentype|posix|qt|soup|svg|symbian|win|wince|wx)/'],
-        ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
-
-        # A few things can't be excluded by patterns.  List them individually.
+        # FIXME: Figure out how to store these patterns in a variable.
+        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mac|mkl|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
+        ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|JSC|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|WinCE|Wx)\\.(cpp|mm?)$'],
 
         ['include', 'platform/graphics/opentype/OpenTypeSanitizer\\.cpp$'],
 
-        # Exclude some DB-related files.
-        ['exclude', 'platform/sql/SQLiteFileSystem\\.cpp$'],
-
-        # Use platform/MIMETypeRegistryChromium.cpp instead.
-        ['exclude', 'platform/MIMETypeRegistry\\.cpp$'],
-
-        # Theme.cpp is used only if we're using USE_NEW_THEME. We are not for
-        # Windows and Linux. We manually include Theme.cpp for the Mac below.
-        ['exclude', 'platform/Theme\\.cpp$'],
-
-        # Use LinkHashChromium.cpp instead
         ['exclude', 'platform/LinkHash\\.cpp$'],
+        ['exclude', 'platform/MIMETypeRegistry\\.cpp$'],
+        ['exclude', 'platform/Theme\\.cpp$'],
+        ['exclude', 'platform/graphics/ANGLEWebKitBridge\\.(cpp|h)$'],
+        ['exclude', 'platform/image-encoders/JPEGImageEncoder\\.(cpp|h)$'],
+        ['exclude', 'platform/image-encoders/PNGImageEncoder\\.(cpp|h)$'],
+        ['exclude', 'platform/network/ResourceHandle\\.cpp$'],
+        ['exclude', 'platform/sql/SQLiteFileSystem\\.cpp$'],
 
         ['include', 'thirdparty/glu/libtess/'],
       ],
@@ -1360,15 +1353,14 @@
         '<@(webcore_files)',
       ],
       'sources/': [
-        # Start by excluding everything then include rendering files only.
         ['exclude', '.*'],
         ['include', 'rendering/'],
 
-        # Exclude things that don't apply to the Chromium platform on the basis
-        # of their enclosing directories and tags at the ends of their
-        # filenames.
-        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|gtk|haiku|html|linux|mac|opentype|platform|posix|qt|soup|svg|symbian|win|wince|wx)/'],
-        ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
+        # FIXME: Figure out how to store these patterns in a variable.
+        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mac|mkl|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
+        ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|JSC|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|WinCE|Wx)\\.(cpp|mm?)$'],
+
+        ['exclude', 'AllInOne\\.cpp$'],
 
         # Exclude most of SVG except css and javascript bindings.
         ['exclude', 'rendering/style/SVG[^/]+.(cpp|h)$'],
@@ -1421,72 +1413,60 @@
         '<@(webcore_files)',
       ],
       'sources/': [
-        # Exclude JSC custom bindings.
-        ['exclude', 'bindings/cpp'],
-        ['exclude', 'bindings/gobject'],
-        ['exclude', 'bindings/js'],
-        ['exclude', 'bindings/objc'],
+        ['exclude', 'html/'],
+        ['exclude', 'platform/'],
+        ['exclude', 'rendering/'],
 
-        # Fortunately, many things can be excluded by using broad patterns.
+        # Exclude most of bindings, except of the V8-related parts.
+        ['exclude', 'bindings/[^/]+/'],
+        ['include', 'bindings/generic/'],
+        ['include', 'bindings/v8/'],
 
-        # Exclude things that don't apply to the Chromium platform on the basis
-        # of their enclosing directories and tags at the ends of their
-        # filenames.
-        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|gtk|haiku|html|linux|mac|opentype|platform|posix|qt|rendering|soup|svg|symbian|win|wince|wx)/'],
-        ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
+        # Exclude most of bridge, except for the V8-related parts.
+        ['exclude', 'bridge/'],
+        ['include', 'bridge/jni/'],
+        ['exclude', 'bridge/jni/[^/]+_jsobject\\.mm$'],
+        ['exclude', 'bridge/jni/[^/]+_objc\\.mm$'],
+        ['exclude', 'bridge/jni/jsc/'],
 
-        # JSC-only.
+        # FIXME: Figure out how to store these patterns in a variable.
+        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mac|mkl|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
+        ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|JSC|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|WinCE|Wx)\\.(cpp|mm?)$'],
+
+        ['exclude', 'AllInOne\\.cpp$'],
+
+        ['exclude', 'dom/StaticStringList\\.cpp$'],
+        ['exclude', 'dom/default/PlatformMessagePortChannel\\.(cpp|h)$'],
+        ['exclude', 'fileapi/LocalFileSystem\\.cpp$'],
+        ['exclude', 'inspector/InspectorFrontendClientLocal\\.cpp$'],
         ['exclude', 'inspector/JavaScript[^/]*\\.cpp$'],
-
-        # ENABLE_OFFLINE_WEB_APPLICATIONS, exclude most of webcore's impl
+        ['exclude', 'loader/UserStyleSheetLoader\\.cpp$'],
         ['exclude', 'loader/appcache/'],
-        ['include', 'loader/appcache/ApplicationCacheHost\.h$'],
-        ['include', 'loader/appcache/DOMApplicationCache\.(h|cpp)$'],
-
-        # Exclude some DB-related files.
-        ['exclude', 'storage/DatabaseTracker\\.cpp$'],
-        ['exclude', 'storage/DatabaseTrackerClient\\.h$'],
-        ['exclude', 'storage/OriginQuotaManager\\.(cpp|h)$'],
-        ['exclude', 'storage/OriginUsageRecord\\.(cpp|h)$'],
-        ['exclude', 'storage/SQLTransactionClient\\.cpp$'],
-
-        # Don't build StorageNamespace.  We have our own implementation.
-        ['exclude', 'storage/StorageNamespace\\.cpp$'],
-
-        # Don't build StorageEventDispatcher.  We have our own implementation.
-        ['exclude', 'storage/StorageEventDispatcher\\.cpp$'],
-
-        # Don't build IDBFactoryBackendInterface.  We have our own implementation.
-        ['exclude', 'storage/IDBFactoryBackendInterface\\.cpp$'],
-
-        # Don't build IDBKeyPathBackendImpl.  We have our own implementation.
-        ['exclude', 'storage/IDBKeyPathBackendImpl\\.cpp$'],
-
-        # Don't build files needed for WebArchive support, since we disable
-        # this feature.
-        ['exclude', 'loader/archive/cf/LegacyWebArchive\\.cpp$'],
-        ['exclude', 'loader/archive/cf/LegacyWebArchiveMac\\.mm$'],
         ['exclude', 'loader/archive/ArchiveFactory\\.cpp$'],
-
-        # Only needs loader/icon/IconDatabaseBase.cpp for default IconDB.
+        ['exclude', 'loader/archive/cf/LegacyWebArchiveMac\\.mm$'],
+        ['exclude', 'loader/archive/cf/LegacyWebArchive\\.cpp$'],
         ['exclude', 'loader/icon/IconDatabase\\.cpp$'],
-
-        # Exclude some, but not all, of plugins.
+        ['exclude', 'platform/text/LocalizedNumberNone\\.cpp$'],
+        ['exclude', 'platform/text/TextEncodingDetectorNone\\.cpp$'],
+        ['exclude', 'plugins/PluginDataNone\\.cpp$'],
         ['exclude', 'plugins/PluginDatabase\\.cpp$'],
         ['exclude', 'plugins/PluginMainThreadScheduler\\.cpp$'],
+        ['exclude', 'plugins/PluginPackageNone\\.cpp$'],
         ['exclude', 'plugins/PluginPackage\\.cpp$'],
         ['exclude', 'plugins/PluginStream\\.cpp$'],
         ['exclude', 'plugins/PluginView\\.cpp$'],
         ['exclude', 'plugins/npapi\\.cpp$'],
-
-        # FIXME: I don't know exactly why these are excluded.  It would
-        # be nice to provide more explicit comments.  Some of these do actually
-        # compile.
-        ['exclude', 'dom/StaticStringList\\.cpp$'],
-        ['exclude', 'loader/UserStyleSheetLoader\\.cpp$'],
-
-        # We use a multi-process version from the WebKit API.
-        ['exclude', 'dom/default/PlatformMessagePortChannel\\.(cpp|h)$'],
+        ['exclude', 'storage/DatabaseTrackerClient\\.h$'],
+        ['exclude', 'storage/DatabaseTracker\\.cpp$'],
+        ['exclude', 'storage/IDBFactoryBackendInterface\\.cpp$'],
+        ['exclude', 'storage/IDBKeyPathBackendImpl\\.cpp$'],
+        ['exclude', 'storage/OriginQuotaManager\\.(cpp|h)$'],
+        ['exclude', 'storage/OriginUsageRecord\\.(cpp|h)$'],
+        ['exclude', 'storage/SQLTransactionClient\\.cpp$'],
+        ['exclude', 'storage/StorageEventDispatcher\\.cpp$'],
+        ['exclude', 'storage/StorageNamespace\\.cpp$'],
+        ['include', 'loader/appcache/ApplicationCacheHost\.h$'],
+        ['include', 'loader/appcache/DOMApplicationCache\.(cpp|h)$'],
       ],
       'link_settings': {
         'mac_bundle_resources': [

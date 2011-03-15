@@ -1,3 +1,21 @@
+2011-03-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add remaining files to WebCore.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=56351
+
+        Adding the remaining files to WebCore.gypi required updating the
+        include/exclude lists in WebCore.gyp.  These lists aren't overly
+        elegant, but we can try to improve them in the future.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * bindings/v8/ScriptCachedFrameData.cpp:
+            - Added ifdefs to this file to match the header.
+        * platform/graphics/WOFFFileFormat.cpp:
+            - Fixed build error when compiling without ENABLE(OPENTYPE_SANITIZER).
+
 2011-03-14  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.
