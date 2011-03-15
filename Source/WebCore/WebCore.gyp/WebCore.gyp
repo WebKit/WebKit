@@ -1150,7 +1150,8 @@
         ['include', 'rendering/style/SVG'],
         ['include', 'rendering/RenderSVG'],
         ['include', 'rendering/SVG'],
-        ['exclude', 'svg/SVGAllInOne\\.cpp$'],
+
+        ['exclude', 'AllInOne\\.cpp$'],
       ],
     },
     {

@@ -1,3 +1,9 @@
+2011-03-14  Adam Barth  <abarth@webkit.org>
+
+        Attempted Chromium build fix.  Exclude AllInOne harder.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
