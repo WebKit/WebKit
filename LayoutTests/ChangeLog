@@ -17,6 +17,33 @@
 
 2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        EventHandler calls shouldChangeSelection needlessly
+        https://bugs.webkit.org/show_bug.cgi?id=56324
+
+        Since redundant calls to SelectionController::ShouldChangeSelection has been eliminated
+        some editing delegate dumps have lost redundant shouldChangeSelectedDOMRange.
+
+        * editing/selection/after-line-break-expected.txt:
+        * editing/selection/anchor-focus2-expected.txt:
+        * editing/selection/anchor-focus3-expected.txt:
+        * platform/mac/editing/deleting/smart-delete-001-expected.txt:
+        * platform/mac/editing/deleting/smart-delete-002-expected.txt:
+        * platform/mac/editing/pasteboard/smart-drag-drop-expected.txt:
+        * platform/mac/editing/pasteboard/smart-paste-001-expected.txt:
+        * platform/mac/editing/pasteboard/smart-paste-003-expected.txt:
+        * platform/mac/editing/pasteboard/smart-paste-004-expected.txt:
+        * platform/mac/editing/pasteboard/smart-paste-007-expected.txt:
+        * platform/mac/editing/pasteboard/smart-paste-008-expected.txt:
+        * platform/mac/editing/selection/expanding-selections-expected.txt:
+        * platform/mac/editing/selection/expanding-selections2-expected.txt:
+        * platform/mac/editing/selection/fake-drag-expected.txt:
+        * platform/mac/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/mac/editing/selection/triple-click-in-pre-expected.txt:
+
+2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
         Mac Leopard rebaselines for r81053 (Grabbed off of Chromium bots).
 
         * platform/mac-leopard/fast/text/atsui-rtl-override-selection-expected.checksum:

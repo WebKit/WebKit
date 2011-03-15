@@ -250,6 +250,20 @@ void EventHandler::clear()
 #endif
 }
 
+static void setSelectionIfNeeded(SelectionController* selection, const VisibleSelection& newSelection)
+{
+    ASSERT(selection);
+    if (selection->selection() != newSelection && selection->shouldChangeSelection(newSelection))
+        selection->setSelection(newSelection);
+}
+
+static void setNonDirectionalSelectionIfNeeded(SelectionController* selection, const VisibleSelection& newSelection, TextGranularity granularity)
+{
+    ASSERT(selection);
+    if (selection->selection() != newSelection && selection->shouldChangeSelection(newSelection))
+        selection->setSelection(newSelection, granularity, MakeNonDirectionalSelection);
+}
+
 void EventHandler::selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults& result)
 {
     Node* innerNode = result.targetNode();
@@ -269,9 +283,8 @@ void EventHandler::selectClosestWordFromMouseEvent(const MouseEventWithHitTestRe
             if (result.event().clickCount() == 2 && m_frame->editor()->isSelectTrailingWhitespaceEnabled()) 
                 newSelection.appendTrailingWhitespace();            
         }
-        
-        if (m_frame->selection()->shouldChangeSelection(newSelection))
-            m_frame->selection()->setSelection(newSelection, granularity, MakeNonDirectionalSelection);
+
+        setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, granularity);
     }
 }
 
@@ -295,8 +308,7 @@ void EventHandler::selectClosestWordOrLinkFromMouseEvent(const MouseEventWithHit
             m_beganSelectingText = true;
         }
 
-        if (m_frame->selection()->shouldChangeSelection(newSelection))
-            m_frame->selection()->setSelection(newSelection, granularity, MakeNonDirectionalSelection);
+        setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, granularity);
     }
 }
 
@@ -339,9 +351,8 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
         granularity = ParagraphGranularity;
         m_beganSelectingText = true;
     }
-    
-    if (m_frame->selection()->shouldChangeSelection(newSelection))
-        m_frame->selection()->setSelection(newSelection, granularity, MakeNonDirectionalSelection);
+
+    setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, granularity);
 
     return true;
 }
@@ -406,9 +417,8 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
         m_beganSelectingText = true;
     } else
         newSelection = VisibleSelection(visiblePos);
-    
-    if (m_frame->selection()->shouldChangeSelection(newSelection))
-        m_frame->selection()->setSelection(newSelection, granularity, MakeNonDirectionalSelection);
+
+    setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, granularity);
 
     return true;
 }
@@ -649,10 +659,7 @@ void EventHandler::updateSelectionForMouseDrag(Node* targetNode, const IntPoint&
     if (m_frame->selection()->granularity() != CharacterGranularity)
         newSelection.expandUsingGranularity(m_frame->selection()->granularity());
 
-    if (m_frame->selection()->shouldChangeSelection(newSelection)) {
-        m_frame->selection()->setIsDirectional(false);
-        m_frame->selection()->setSelection(newSelection, m_frame->selection()->granularity(), MakeNonDirectionalSelection);
-    }
+    setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, m_frame->selection()->granularity());
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
@@ -713,8 +720,8 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
             VisiblePosition pos = node->renderer()->positionForPoint(event.localPoint());
             newSelection = VisibleSelection(pos);
         }
-        if (m_frame->selection()->shouldChangeSelection(newSelection))
-            m_frame->selection()->setSelection(newSelection);
+
+        setSelectionIfNeeded(m_frame->selection(), newSelection);
 
         handled = true;
     }

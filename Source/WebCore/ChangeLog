@@ -1,3 +1,24 @@
+2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        EventHandler calls shouldChangeSelection needlessly
+        https://bugs.webkit.org/show_bug.cgi?id=56324
+
+        Extracted setSelectionIfNeeded and setNonDirectionalSelectionIfNeeded and
+        avoided calling shouldChangeSelection and setSelection when the existing
+        selection is identical to that of new selection.
+
+        * page/EventHandler.cpp:
+        (WebCore::setSelectionIfNeeded): Extracted.
+        (WebCore::setNonDirectionalSelectionIfNeeded): Extracted.
+        (WebCore::EventHandler::selectClosestWordFromMouseEvent): Calls a helper function above.
+        (WebCore::EventHandler::selectClosestWordOrLinkFromMouseEvent): Ditto.
+        (WebCore::EventHandler::handleMousePressEventTripleClick): Ditto.
+        (WebCore::EventHandler::handleMousePressEventSingleClick): Ditto.
+        (WebCore::EventHandler::updateSelectionForMouseDrag): Ditto.
+        (WebCore::EventHandler::handleMouseReleaseEvent): Ditto.
+
 2011-03-14  Daniel Sievers  <sievers@google.com>
 
         Reviewed by Simon Fraser.
