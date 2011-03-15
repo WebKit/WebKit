@@ -1,3 +1,10 @@
+2011-03-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline some GTK+ tests after r81035 and r81049.
+
+        * platform/gtk/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/gtk/fast/table/overflowHidden-expected.txt:
+
 2011-03-15  Adam Roben  <aroben@apple.com>
 
         Update Windows XP results after r81168
