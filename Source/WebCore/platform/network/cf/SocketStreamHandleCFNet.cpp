@@ -117,7 +117,7 @@ CFStringRef SocketStreamHandle::copyPACExecutionDescription(void*)
 
 struct MainThreadPACCallbackInfo {
     MainThreadPACCallbackInfo(SocketStreamHandle* handle, CFArrayRef proxyList) : handle(handle), proxyList(proxyList) { }
-    SocketStreamHandle* handle;
+    RefPtr<SocketStreamHandle> handle;
     CFArrayRef proxyList;
 };
 
@@ -436,7 +436,7 @@ CFStringRef SocketStreamHandle::copyCFStreamDescription(void* info)
 struct MainThreadEventCallbackInfo {
     MainThreadEventCallbackInfo(CFStreamEventType type, SocketStreamHandle* handle) : type(type), handle(handle) { }
     CFStreamEventType type;
-    SocketStreamHandle* handle;
+    RefPtr<SocketStreamHandle> handle;
 };
 
 void SocketStreamHandle::readStreamCallback(CFReadStreamRef stream, CFStreamEventType type, void* clientCallBackInfo)

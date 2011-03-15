@@ -316,9 +316,6 @@ editing/pasteboard/drop-text-events.html
 editing/selection/drag-in-iframe.html
 fast/events/dragging-mouse-moves.html
 
-# Crash beneath SocketStream::readStreamCallback http://webkit.org/b/44138
-http/tests/websocket/tests/workers/worker-handshake-challenge-randomness.html
-
 # Causes next test to time out http://webkit.org/b/46975
 http/tests/xmlhttprequest/xmlhttprequest-sync-vs-async-assertion-failure.html
 
@@ -376,10 +373,6 @@ http/tests/media/video-cancel-load.html
 
 # Sometimes crashes http://webkit.org/b/48996
 http/tests/websocket/tests/workers/close-in-onmessage-crash.html
-# Sometimes crashes http://webkit.org/b/55375
-http/tests/websocket/tests/reload-crash.html
-# Sometimes causes crashes in following tests http://webkit.org/b/56185
-http/tests/websocket/tests/url-parsing.html
 
 # Sometimes times out http://webkit.org/b/48997
 animations/animation-iteration-event-destroy-renderer.html

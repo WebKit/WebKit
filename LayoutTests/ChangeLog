@@ -1,3 +1,13 @@
+2011-03-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44138
+        Crashes beneath SocketStreamHandle::readStreamCallback when running WebSocket tests.
+
+        * platform/win/Skipped: Unskipped tests that should be fixed now. I couldn't verify that
+        locally, becasue most WebSocket tests time out on my machine.
+
 2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaselines for r81095.

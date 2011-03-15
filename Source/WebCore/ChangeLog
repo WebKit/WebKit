@@ -1,3 +1,22 @@
+2011-03-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44138
+        Crash beneath SocketStreamHandle::readStreamCallback when running websocket/tests/workers/worker-handshake-challenge-randomness.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=55375
+        http/tests/websocket/tests/reload-crash.html sometimes crashes beneath SocketStreamHandle::readStreamCallback on Windows
+
+        https://bugs.webkit.org/show_bug.cgi?id=56185
+        http/tests/websocket/tests/url-with-credential.html sometimes crashes beneath SocketStreamHandle::readStreamCallback on Windows
+
+        * platform/network/cf/SocketStreamHandle.h: Made SocketStreamHandle ThreadSafeShared, so that
+        a pointer can be passed across threads when wrapped in a RefPtr.
+
+        * platform/network/cf/SocketStreamHandleCFNet.cpp: Make sure that an object still exists
+        when executing a method on main thread by using RefPtr.
+
 2011-03-14  Sam Weinig  <sam@webkit.org>
 
         Mac build fix. Part 1 of N.

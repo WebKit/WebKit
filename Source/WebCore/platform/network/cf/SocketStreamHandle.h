@@ -44,14 +44,14 @@ class AuthenticationChallenge;
 class Credential;
 class SocketStreamHandleClient;
 
-class SocketStreamHandle : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase, public AuthenticationClient {
+class SocketStreamHandle : public ThreadSafeShared<SocketStreamHandle>, public SocketStreamHandleBase, public AuthenticationClient {
 public:
     static PassRefPtr<SocketStreamHandle> create(const KURL& url, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(url, client)); }
 
     virtual ~SocketStreamHandle();
 
-    using RefCounted<SocketStreamHandle>::ref;
-    using RefCounted<SocketStreamHandle>::deref;
+    using ThreadSafeShared<SocketStreamHandle>::ref;
+    using ThreadSafeShared<SocketStreamHandle>::deref;
 
 private:
     virtual int platformSend(const char* data, int length);
