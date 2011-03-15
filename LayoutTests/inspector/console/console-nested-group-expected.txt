@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 11: Message inside inner group
+CONSOLE MESSAGE: line 14: Message that must not be in any group
+Tests that console.groupEnd messages won't be coalesced. Bug 56114
+
+console-nested-group.html:9outer group console-message console-log-level console-group-title
+console-nested-group.html:10inner group console-message console-log-level console-group-title
+console-nested-group.html:11Message inside inner group console-message console-log-level
+ console-message console-log-level
+ console-message console-log-level
+console-nested-group.html:14Message that must not be in any group console-message console-log-level
+

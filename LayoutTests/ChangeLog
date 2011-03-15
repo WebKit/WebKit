@@ -1,3 +1,13 @@
+2011-03-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: when console.groupEnd calls twice
+        https://bugs.webkit.org/show_bug.cgi?id=56114
+
+        * inspector/console/console-nested-group-expected.txt: Added.
+        * inspector/console/console-nested-group.html: Added.
+
 2011-03-15  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip failing media test on GTK.

@@ -62,6 +62,7 @@ public:
 
     MessageSource source() const { return m_source; }
     const String& message() const { return m_message; }
+    MessageType type() const { return m_type; }
 
 private:
     MessageSource m_source;
