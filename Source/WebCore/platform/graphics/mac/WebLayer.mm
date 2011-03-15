@@ -40,8 +40,9 @@ using namespace WebCore;
 
 @implementation WebLayer
 
-void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCALayerClient* layerContents)
+void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCALayer* platformLayer)
 {
+    WebCore::PlatformCALayerClient* layerContents = platformLayer->owner();
     if (!layerContents)
         return;
 
@@ -62,9 +63,7 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
 
     GraphicsContext graphicsContext(context);
     graphicsContext.setIsCALayerContext(true);
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    graphicsContext.setIsAcceleratedContext([layer acceleratesDrawing]);
-#endif
+    graphicsContext.setIsAcceleratedContext(platformLayer->acceleratesDrawing());
 
     if (!layerContents->platformCALayerContentsOpaque()) {
         // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
@@ -170,7 +169,7 @@ void setLayerNeedsDisplayInRect(CALayer *layer, WebCore::PlatformCALayerClient* 
 {
     PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
     if (layer)
-        drawLayerContents(context, self, layer->owner());
+        drawLayerContents(context, self, layer);
 }
 
 @end // implementation WebLayer

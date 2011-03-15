@@ -83,7 +83,7 @@ using namespace WebCore;
 {
     PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
     if (layer)
-        drawLayerContents(context, self, layer->owner());
+        drawLayerContents(context, self, layer);
 }
 
 @end // implementation WebTiledLayer

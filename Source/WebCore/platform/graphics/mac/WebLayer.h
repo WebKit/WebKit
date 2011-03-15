@@ -32,6 +32,7 @@
 
 namespace WebCore {
     class GraphicsLayer;
+    class PlatformCALayer;
     class PlatformCALayerClient;
 }
 
@@ -48,7 +49,7 @@ namespace WebCore {
 @end
 
 // Functions allows us to share implementation across WebTiledLayer and WebLayer
-void drawLayerContents(CGContextRef, CALayer *, WebCore::PlatformCALayerClient*);
+void drawLayerContents(CGContextRef, CALayer *, WebCore::PlatformCALayer*);
 void setLayerNeedsDisplayInRect(CALayer *, WebCore::PlatformCALayerClient*, CGRect);
 
 #endif // USE(ACCELERATED_COMPOSITING)

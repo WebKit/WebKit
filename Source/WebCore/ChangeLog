@@ -1,3 +1,17 @@
+2011-03-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix Lion build after r81161.
+        
+        Pass the PlatformCALayer down into drawLayerContents()
+        so we can use its acceleratesDrawing() method.
+
+        * platform/graphics/mac/WebLayer.h:
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+        (-[WebLayer drawInContext:]):
+        * platform/graphics/mac/WebTiledLayer.mm:
+        (-[WebTiledLayer drawInContext:]):
+
 2011-03-15  Alok priyadarshi  <alokp@chromium.org>
 
         Reviewed by James Robinson.
