@@ -396,12 +396,6 @@ namespace JSC {
 
         CodeType codeType() const { return m_codeType; }
 
-        void setRegeneratingForExceptionInfo(CodeBlock* originalCodeBlock)
-        {
-            m_regeneratingForExceptionInfo = true;
-            m_codeBlockBeingRegeneratedFrom = originalCodeBlock;
-        }
-
         bool shouldEmitProfileHooks() { return m_shouldEmitProfileHooks; }
         
         bool isStrictMode() const { return m_codeBlock->isStrictMode(); }
@@ -577,8 +571,6 @@ namespace JSC {
         StackBounds m_stack;
 
         bool m_usesExceptions;
-        bool m_regeneratingForExceptionInfo;
-        CodeBlock* m_codeBlockBeingRegeneratedFrom;
         bool m_expressionTooDeep;
     };
 

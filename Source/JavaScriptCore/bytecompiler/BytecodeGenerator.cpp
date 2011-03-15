@@ -224,8 +224,6 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
 #endif
     , m_stack(m_globalData->stack())
     , m_usesExceptions(false)
-    , m_regeneratingForExceptionInfo(false)
-    , m_codeBlockBeingRegeneratedFrom(0)
     , m_expressionTooDeep(false)
 {
     if (m_shouldEmitDebugHooks)
@@ -325,8 +323,6 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
 #endif
     , m_stack(m_globalData->stack())
     , m_usesExceptions(false)
-    , m_regeneratingForExceptionInfo(false)
-    , m_codeBlockBeingRegeneratedFrom(0)
     , m_expressionTooDeep(false)
 {
     if (m_shouldEmitDebugHooks)
@@ -491,8 +487,6 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, ScopeChainNode* scopeCh
 #endif
     , m_stack(m_globalData->stack())
     , m_usesExceptions(false)
-    , m_regeneratingForExceptionInfo(false)
-    , m_codeBlockBeingRegeneratedFrom(0)
     , m_expressionTooDeep(false)
 {
     if (m_shouldEmitDebugHooks || m_baseScopeDepth)
@@ -1201,13 +1195,6 @@ RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& pr
 
     if (globalObject) {
         bool forceGlobalResolve = false;
-        if (m_regeneratingForExceptionInfo) {
-#if ENABLE(JIT)
-            forceGlobalResolve = m_codeBlockBeingRegeneratedFrom->hasGlobalResolveInfoAtBytecodeOffset(instructions().size());
-#else
-            forceGlobalResolve = m_codeBlockBeingRegeneratedFrom->hasGlobalResolveInstructionAtBytecodeOffset(instructions().size());
-#endif
-        }
 
         if (index != missingSymbolMarker() && !forceGlobalResolve && !requiresDynamicChecks) {
             // Directly index the property lookup across multiple scopes.
@@ -1344,13 +1331,6 @@ RegisterID* BytecodeGenerator::emitResolveWithBase(RegisterID* baseDst, Register
     }
 
     bool forceGlobalResolve = false;
-    if (m_regeneratingForExceptionInfo) {
-#if ENABLE(JIT)
-        forceGlobalResolve = m_codeBlockBeingRegeneratedFrom->hasGlobalResolveInfoAtBytecodeOffset(instructions().size());
-#else
-        forceGlobalResolve = m_codeBlockBeingRegeneratedFrom->hasGlobalResolveInstructionAtBytecodeOffset(instructions().size());
-#endif
-    }
 
     // Global object is the base
     emitLoad(baseDst, JSValue(globalObject));

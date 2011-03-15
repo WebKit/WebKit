@@ -1,3 +1,13 @@
+2011-03-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+
+        Removed redundant code from BytecodeGenerator.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        * bytecompiler/BytecodeGenerator.h:
+            - delete uncalled code missed when reparsing was removed.
+
 2011-03-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.
