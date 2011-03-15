@@ -232,7 +232,7 @@ void Heap::markRoots()
         heapRootMarker.mark(&m_globalData->exception);
     markStack.drain();
 
-    m_handleHeap.markStrongHandles(markStack);
+    m_handleHeap.markStrongHandles(heapRootMarker);
     m_handleStack.mark(heapRootMarker);
 
     // Mark the small strings cache last, since it will clear itself if nothing

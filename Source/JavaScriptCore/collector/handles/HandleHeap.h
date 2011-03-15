@@ -36,7 +36,7 @@ namespace JSC {
 class HandleHeap;
 class JSGlobalData;
 class JSValue;
-class MarkStack;
+class HeapRootMarker;
 
 class Finalizer {
 public:
@@ -56,7 +56,7 @@ public:
     void makeWeak(HandleSlot, Finalizer*, void* context);
     void makeSelfDestroying(HandleSlot, Finalizer*, void* context);
 
-    void markStrongHandles(MarkStack&);
+    void markStrongHandles(HeapRootMarker&);
     void updateAfterMark();
     
     // Should only be called during teardown.
