@@ -1,3 +1,12 @@
+2011-03-15  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by David Levin.
+
+        Update Chromium test expectations for fast/forms/onchange-setvalueforuser
+        https://bugs.webkit.org/show_bug.cgi?id=56365
+
+        * platform/chromium/fast/forms/onchange-setvalueforuser-expected.txt: Added.
+
 2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another Chromium rebaseline for r81095.
