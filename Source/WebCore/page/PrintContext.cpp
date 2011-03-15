@@ -282,16 +282,16 @@ String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pa
     if (!strcmp(propertyName, "margin-left")) {
         if (style->marginLeft().isAuto())
             return String("auto");
-        return String::number(style->marginLeft().rawValue());
+        return String::number(style->marginLeft().value());
     }
     if (!strcmp(propertyName, "line-height"))
-        return String::number(style->lineHeight().rawValue());
+        return String::number(style->lineHeight().value());
     if (!strcmp(propertyName, "font-size"))
         return String::number(style->fontDescription().computedPixelSize());
     if (!strcmp(propertyName, "font-family"))
         return style->fontDescription().family().family().string();
     if (!strcmp(propertyName, "size"))
-        return makeString(String::number(style->pageSize().width().rawValue()), ' ', String::number(style->pageSize().height().rawValue()));
+        return makeString(String::number(style->pageSize().width().value()), ' ', String::number(style->pageSize().height().value()));
 
     return makeString("pageProperty() unimplemented for: ", propertyName);
 }

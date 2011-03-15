@@ -81,7 +81,7 @@ void AutoTableLayout::recalcColumn(int effCol)
 
                     Length cellLogicalWidth = cell->styleOrColLogicalWidth();
                     // FIXME: What is this arbitrary value?
-                    if (cellLogicalWidth.rawValue() > 32760)
+                    if (cellLogicalWidth.value() > 32760)
                         cellLogicalWidth.setValue(32760);
                     if (cellLogicalWidth.isNegative())
                         cellLogicalWidth.setValue(0);
@@ -105,13 +105,13 @@ void AutoTableLayout::recalcColumn(int effCol)
                         break;
                     case Percent:
                         m_hasPercent = true;
-                        if (cellLogicalWidth.isPositive() && (!columnLayout.logicalWidth.isPercent() || cellLogicalWidth.rawValue() > columnLayout.logicalWidth.rawValue()))
+                        if (cellLogicalWidth.isPositive() && (!columnLayout.logicalWidth.isPercent() || cellLogicalWidth.value() > columnLayout.logicalWidth.value()))
                             columnLayout.logicalWidth = cellLogicalWidth;
                         break;
                     case Relative:
                         // FIXME: Need to understand this case and whether it makes sense to compare values
                         // which are not necessarily of the same type.
-                        if (cellLogicalWidth.isAuto() || (cellLogicalWidth.isRelative() && cellLogicalWidth.value() > columnLayout.logicalWidth.rawValue()))
+                        if (cellLogicalWidth.isAuto() || (cellLogicalWidth.isRelative() && cellLogicalWidth.value() > columnLayout.logicalWidth.value()))
                             columnLayout.logicalWidth = cellLogicalWidth;
                     default:
                         break;
@@ -232,16 +232,16 @@ void AutoTableLayout::computePreferredLogicalWidths(int& minWidth, int& maxWidth
 
     // We substitute 0 percent by (epsilon / percentScaleFactor) percent in two places below to avoid division by zero.
     // FIXME: Handle the 0% cases properly.
-    const int epsilon = 1;
+    const float epsilon = 1 / 128.0;
 
-    int remainingPercent = 100 * percentScaleFactor;
+    float remainingPercent = 100;
     for (size_t i = 0; i < m_layoutStruct.size(); ++i) {
         minWidth += m_layoutStruct[i].effectiveMinLogicalWidth;
         maxWidth += m_layoutStruct[i].effectiveMaxLogicalWidth;
         if (scaleColumns) {
             if (m_layoutStruct[i].effectiveLogicalWidth.isPercent()) {
-                int percent = min(m_layoutStruct[i].effectiveLogicalWidth.rawValue(), remainingPercent);
-                float logicalWidth = static_cast<float>(m_layoutStruct[i].effectiveMaxLogicalWidth) * 100 * percentScaleFactor / max(percent, epsilon);
+                float percent = min(static_cast<float>(m_layoutStruct[i].effectiveLogicalWidth.percent()), remainingPercent);
+                float logicalWidth = static_cast<float>(m_layoutStruct[i].effectiveMaxLogicalWidth) * 100 / max(percent, epsilon);
                 maxPercent = max(logicalWidth,  maxPercent);
                 remainingPercent -= percent;
             } else
@@ -250,7 +250,7 @@ void AutoTableLayout::computePreferredLogicalWidths(int& minWidth, int& maxWidth
     }
 
     if (scaleColumns) {
-        maxNonPercent = maxNonPercent * 100 * percentScaleFactor / max(remainingPercent, epsilon);
+        maxNonPercent = maxNonPercent * 100 / max(remainingPercent, epsilon);
         maxWidth = max(maxWidth, static_cast<int>(min(maxNonPercent, INT_MAX / 2.0f)));
         maxWidth = max(maxWidth, static_cast<int>(min(maxPercent, INT_MAX / 2.0f)));
     }
@@ -266,6 +266,10 @@ void AutoTableLayout::computePreferredLogicalWidths(int& minWidth, int& maxWidth
         minWidth = max(minWidth, tableLogicalWidth.value());
         maxWidth = minWidth;
     }
+    
+    // if there was no remaining percent, maxWidth is invalid.
+    if (!remainingPercent && maxNonPercent)
+        maxWidth = intMaxForLength;        
 }
 
 /*
@@ -300,7 +304,7 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
         size_t lastCol = effCol;
         int cellMinLogicalWidth = cell->minPreferredLogicalWidth() + spacingInRowDirection;
         float cellMaxLogicalWidth = cell->maxPreferredLogicalWidth() + spacingInRowDirection;
-        int totalPercent = 0;
+        float totalPercent = 0;
         int spanMinLogicalWidth = 0;
         float spanMaxLogicalWidth = 0;
         bool allColsArePercent = true;
@@ -312,7 +316,7 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
             Layout& columnLayout = m_layoutStruct[lastCol];
             switch (columnLayout.logicalWidth.type()) {
             case Percent:
-                totalPercent += columnLayout.logicalWidth.rawValue();
+                totalPercent += columnLayout.logicalWidth.percent();
                 allColsAreFixed = false;
                 break;
             case Fixed:
@@ -339,7 +343,7 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
                     columnLayout.effectiveLogicalWidth = Length();
                     allColsArePercent = false;
                 } else
-                    totalPercent += columnLayout.effectiveLogicalWidth.rawValue();
+                    totalPercent += columnLayout.effectiveLogicalWidth.percent();
                 allColsAreFixed = false;
             }
             if (!columnLayout.emptyCellsOnly)
@@ -354,14 +358,14 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
 
         // adjust table max width if needed
         if (cellLogicalWidth.isPercent()) {
-            if (totalPercent > cellLogicalWidth.rawValue() || allColsArePercent) {
+            if (totalPercent > cellLogicalWidth.percent() || allColsArePercent) {
                 // can't satify this condition, treat as variable
                 cellLogicalWidth = Length();
             } else {
-                maxLogicalWidth = max(maxLogicalWidth, max(spanMaxLogicalWidth, cellMaxLogicalWidth) * 100 * percentScaleFactor / cellLogicalWidth.rawValue());
+                maxLogicalWidth = max(maxLogicalWidth, static_cast<float>(max(spanMaxLogicalWidth, cellMaxLogicalWidth) * 100  / cellLogicalWidth.percent()));
 
                 // all non percent columns in the span get percent values to sum up correctly.
-                int percentMissing = cellLogicalWidth.rawValue() - totalPercent;
+                float percentMissing = cellLogicalWidth.percent() - totalPercent;
                 float totalWidth = 0;
                 for (unsigned pos = effCol; pos < lastCol; ++pos) {
                     if (!m_layoutStruct[pos].effectiveLogicalWidth.isPercent())
@@ -370,7 +374,7 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
 
                 for (unsigned pos = effCol; pos < lastCol && totalWidth > 0; ++pos) {
                     if (!m_layoutStruct[pos].effectiveLogicalWidth.isPercent()) {
-                        int percent = static_cast<int>(percentMissing * static_cast<float>(m_layoutStruct[pos].effectiveMaxLogicalWidth) / totalWidth);
+                        float percent = percentMissing * static_cast<float>(m_layoutStruct[pos].effectiveMaxLogicalWidth) / totalWidth;
                         totalWidth -= m_layoutStruct[pos].effectiveMaxLogicalWidth;
                         percentMissing -= percent;
                         if (percent > 0)
@@ -491,7 +495,7 @@ void AutoTableLayout::layout()
     int numFixed = 0;
     float totalAuto = 0;
     float totalFixed = 0;
-    int totalPercent = 0;
+    float totalPercent = 0;
     int allocAuto = 0;
     unsigned numAutoEmptyCellsOnly = 0;
 
@@ -504,7 +508,7 @@ void AutoTableLayout::layout()
         switch (logicalWidth.type()) {
         case Percent:
             havePercent = true;
-            totalPercent += logicalWidth.rawValue();
+            totalPercent += logicalWidth.percent();
             break;
         case Relative:
             totalRelative += logicalWidth.value();
@@ -538,9 +542,9 @@ void AutoTableLayout::layout()
                 m_layoutStruct[i].computedLogicalWidth = cellLogicalWidth;
             }
         }
-        if (totalPercent > 100 * percentScaleFactor) {
+        if (totalPercent > 100) {
             // remove overallocated space from the last columns
-            int excess = tableLogicalWidth * (totalPercent - 100 * percentScaleFactor) / (100 * percentScaleFactor);
+            int excess = tableLogicalWidth * (totalPercent - 100) / 100;
             for (int i = nEffCols - 1; i >= 0; --i) {
                 if (m_layoutStruct[i].effectiveLogicalWidth.isPercent()) {
                     int cellLogicalWidth = m_layoutStruct[i].computedLogicalWidth;
@@ -607,13 +611,13 @@ void AutoTableLayout::layout()
     }
 
     // spread over percent colums
-    if (available > 0 && m_hasPercent && totalPercent < 100 * percentScaleFactor) {
+    if (available > 0 && m_hasPercent && totalPercent < 100) {
         for (size_t i = 0; i < nEffCols; ++i) {
             Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
             if (logicalWidth.isPercent()) {
-                int cellLogicalWidth = available * logicalWidth.rawValue() / totalPercent;
+                int cellLogicalWidth = available * logicalWidth.percent() / totalPercent;
                 available -= cellLogicalWidth;
-                totalPercent -= logicalWidth.rawValue();
+                totalPercent -= logicalWidth.percent();
                 m_layoutStruct[i].computedLogicalWidth += cellLogicalWidth;
                 if (!available || !totalPercent)
                     break;
