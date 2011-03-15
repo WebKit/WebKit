@@ -1,5 +1,12 @@
 2011-03-15  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the Windows build.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NPDeallocateCalledBeforeNPShutdown.cpp:
+        (NPDeallocateCalledBeforeNPShutdown::TestObject::~TestObject):
+
+2011-03-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Make sure that NP_Shutdown is always the last NPP function called
