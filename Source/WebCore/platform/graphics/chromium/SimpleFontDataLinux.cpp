@@ -118,8 +118,8 @@ void SimpleFontData::platformInit()
         static const uint32_t vorgTag = SkSetFourByteTag('V', 'O', 'R', 'G');
         size_t vheaSize = SkFontHost::GetTableSize(fontID, vheaTag);
         size_t vorgSize = SkFontHost::GetTableSize(fontID, vorgTag);
-        if ((vheaSize <= 0) && (vorgSize <= 0))
-            m_platformData.setOrientation(Horizontal);
+        if ((vheaSize > 0) || (vorgSize > 0))
+            m_hasVerticalGlyphs = true;
     }
 
     // In WebKit/WebCore/platform/graphics/SimpleFontData.cpp, m_spaceWidth is
