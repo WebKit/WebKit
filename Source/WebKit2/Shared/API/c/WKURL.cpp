@@ -49,3 +49,13 @@ bool WKURLIsEqual(WKURLRef a, WKURLRef b)
 {
     return toImpl(a)->string() == toImpl(b)->string();
 }
+
+WKStringRef WKURLCopyHostName(WKURLRef url)
+{
+    return toCopiedAPI(toImpl(url)->host());
+}
+
+WKStringRef WKURLCopyScheme(WKURLRef url)
+{
+    return toCopiedAPI(toImpl(url)->protocol());
+}

@@ -32,8 +32,6 @@
 		6510A78A11EC643800410867 /* WebKitWeightWatcher700.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77F11EC643800410867 /* WebKitWeightWatcher700.ttf */; };
 		6510A78B11EC643800410867 /* WebKitWeightWatcher800.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A78011EC643800410867 /* WebKitWeightWatcher800.ttf */; };
 		6510A78C11EC643800410867 /* WebKitWeightWatcher900.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A78111EC643800410867 /* WebKitWeightWatcher900.ttf */; };
-		65DD1D9612FFE798004B5285 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65DD1D9512FFE798004B5285 /* WebCore.framework */; };
-		65DE432512FFE84000171BCA /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65DD1D9512FFE798004B5285 /* WebCore.framework */; };
 		65EB85A011EC67CC0034D300 /* ActivateFonts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65EB859F11EC67CC0034D300 /* ActivateFonts.mm */; };
 		BC14E4DB120E02D000826C0C /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14E4D9120E02D000826C0C /* GCController.cpp */; };
 		BC14E4EA120E03D800826C0C /* JSGCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14E4E8120E03D800826C0C /* JSGCController.cpp */; };
@@ -90,7 +88,6 @@
 		6510A77F11EC643800410867 /* WebKitWeightWatcher700.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher700.ttf; path = fonts/WebKitWeightWatcher700.ttf; sourceTree = "<group>"; };
 		6510A78011EC643800410867 /* WebKitWeightWatcher800.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher800.ttf; path = fonts/WebKitWeightWatcher800.ttf; sourceTree = "<group>"; };
 		6510A78111EC643800410867 /* WebKitWeightWatcher900.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher900.ttf; path = fonts/WebKitWeightWatcher900.ttf; sourceTree = "<group>"; };
-		65DD1D9512FFE798004B5285 /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		65EB859D11EC67CC0034D300 /* ActivateFonts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivateFonts.h; sourceTree = "<group>"; };
 		65EB859F11EC67CC0034D300 /* ActivateFonts.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActivateFonts.mm; sourceTree = "<group>"; };
 		8DD76FA10486AA7600D96B5E /* WebKitTestRunner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebKitTestRunner; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -151,7 +148,6 @@
 				BC7934A511906584005EA8E2 /* Cocoa.framework in Frameworks */,
 				BC7934AC1190658C005EA8E2 /* WebKit2.framework in Frameworks */,
 				BCDA2B9A1191051F00C3BC47 /* JavaScriptCore.framework in Frameworks */,
-				65DD1D9612FFE798004B5285 /* WebCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,7 +158,6 @@
 				BC25193E11D15D8B002EBC01 /* Cocoa.framework in Frameworks */,
 				BC25193F11D15D8B002EBC01 /* WebKit2.framework in Frameworks */,
 				BC25194011D15D8B002EBC01 /* JavaScriptCore.framework in Frameworks */,
-				65DE432512FFE84000171BCA /* WebCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,7 +199,6 @@
 				BC7934A411906584005EA8E2 /* Cocoa.framework */,
 				BC7934AB1190658C005EA8E2 /* WebKit2.framework */,
 				BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */,
-				65DD1D9512FFE798004B5285 /* WebCore.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";

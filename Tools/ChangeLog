@@ -1,5 +1,23 @@
 2011-03-14  Balazs Kelemen  <kbalazs@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        [Qt][WK2]Unbreak InjectedBundle on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=54109
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::willSendRequestForFrame): Use new WebKit2
+        API's instead of KURL to analyze the URL.
+        * WebKitTestRunner/StringFunctions.h:
+        (WTR::adoptWK): Moved from InjectedBundlePage.cpp to make it available globally
+        in the WebKitTestRunner project.
+        (WTR::toWK): Use adoptWK.
+        (WTR::operator<<): Added helper for printing a WKURL.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Do not link
+        against WebCore.
+
+2011-03-14  Balazs Kelemen  <kbalazs@webkit.org>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         check-webkit-style falsely should not complain about WebKit2 API headers in the Shared directory

@@ -19,14 +19,6 @@ EXPORTS
         WebKitShouldUseFontSmoothing
         WebKitCreateInstance
 		
-        ; Exported for WebKitTestRunner's use only
-        ??0KURL@WebCore@@QAE@W4ParsedURLStringTag@1@PBD@Z
-        ??1StringImpl@WTF@@QAE@XZ
-        ?equal@WTF@@YA_NPBVStringImpl@1@PBD@Z
-        ?equalIgnoringCase@WTF@@YA_NPAVStringImpl@1@PBD@Z
-        ?host@KURL@WebCore@@QBE?AVString@WTF@@XZ
-        ?protocol@KURL@WebCore@@QBE?AVString@WTF@@XZ
-		
         ; These functions are deprecated
         WebLocalizedString
         WebLocalizedLPCTSTR

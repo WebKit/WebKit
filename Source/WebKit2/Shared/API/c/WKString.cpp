@@ -67,6 +67,11 @@ bool WKStringIsEqualToUTF8CString(WKStringRef aRef, const char* b)
     return toImpl(aRef)->equalToUTF8String(b);
 }
 
+bool WKStringIsEqualToUTF8CStringIgnoringCase(WKStringRef aRef, const char* b)
+{
+    return toImpl(aRef)->equalToUTF8StringIgnoringCase(b);
+}
+
 WKStringRef WKStringCreateWithJSString(JSStringRef jsStringRef)
 {
     RefPtr<WebString> webString = WebString::create(jsStringRef);

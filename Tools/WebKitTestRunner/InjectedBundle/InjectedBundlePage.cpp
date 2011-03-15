@@ -29,7 +29,6 @@
 #include "StringFunctions.h"
 #include <cmath>
 #include <JavaScriptCore/JSRetainPtr.h>
-#include <WebCore/KURL.h>
 #include <WebKit2/WKArray.h>
 #include <WebKit2/WKBundle.h>
 #include <WebKit2/WKBundleBackForwardList.h>
@@ -42,11 +41,6 @@
 using namespace std;
 
 namespace WTR {
-
-template<typename T> static inline WKRetainPtr<T> adoptWK(T item)
-{
-    return WKRetainPtr<T>(AdoptWK, item);
-}
 
 static bool hasPrefix(const string& searchString, const string& prefix)
 {
@@ -634,15 +628,15 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKB
     if (InjectedBundle::shared().isTestRunning() && InjectedBundle::shared().layoutTestController()->willSendRequestReturnsNull())
         return 0;
 
-    string urlString = toSTD(adoptWK(WKURLCopyString(adoptWK(WKURLRequestCopyURL(request)).get())));
-    WebCore::KURL url(WebCore::ParsedURLString, urlString.c_str());
-
-    if (!url.host().isEmpty()
-        && (equalIgnoringCase(url.protocol(), "http") || (equalIgnoringCase(url.protocol(), "https")))
-        && (url.host() != "127.0.0.1")
-        && (url.host() != "255.255.255.255") // used in some tests that expect to get back an error
-        && (!equalIgnoringCase(url.host(), "localhost"))) {
-        InjectedBundle::shared().os() << "Blocked access to external URL " << urlString << "\n";
+    WKRetainPtr<WKURLRef> url = adoptWK(WKURLRequestCopyURL(request));
+    WKRetainPtr<WKStringRef> host = adoptWK(WKURLCopyHostName(url.get()));
+    WKRetainPtr<WKStringRef> scheme = adoptWK(WKURLCopyScheme(url.get()));
+    if (host
+        && (WKStringIsEqualToUTF8CStringIgnoringCase(scheme.get(), "http") || WKStringIsEqualToUTF8CStringIgnoringCase(scheme.get(), "https"))
+        && !WKStringIsEqualToUTF8CString(host.get(), "127.0.0.1")
+        && !WKStringIsEqualToUTF8CString(host.get(), "255.255.255.255") // Used in some tests that expect to get back an error.
+        && !WKStringIsEqualToUTF8CStringIgnoringCase(host.get(), "localhost")) {
+        InjectedBundle::shared().os() << "Blocked access to external URL " << url << "\n";
         return 0;
     }
 

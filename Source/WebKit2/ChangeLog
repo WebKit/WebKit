@@ -1,3 +1,30 @@
+2011-03-14  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [Qt][WK2]Unbreak InjectedBundle on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=54109
+
+        Add API's to WKURL and WKString to satisfy
+        WebKitTestRunner's needs.
+
+        * Shared/API/c/WKString.cpp:
+        (WKStringIsEqualToUTF8CStringIgnoringCase):
+        * Shared/API/c/WKString.h:
+        * Shared/API/c/WKURL.cpp:
+        (WKURLCopyHostName):
+        (WKURLCopyScheme):
+        * Shared/API/c/WKURL.h:
+        * Shared/WebString.h:
+        (WebKit::WebString::equalToUTF8StringIgnoringCase):
+        * Shared/WebURL.h: Added OwnPtr<KURL> member to be able
+        to lazily parse the URL and store the result.
+        (WebKit::WebURL::host):
+        (WebKit::WebURL::protocol):
+        (WebKit::WebURL::parseURLIfNecessary):
+        * win/WebKit2.def: Revert the symbol exports that were
+        needed to use KURL in WebKitTestRunner.
+
 2011-03-14  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adam Roben.

@@ -44,9 +44,14 @@ namespace WTR {
 
 // Conversion functions
 
+template<typename T> static inline WKRetainPtr<T> adoptWK(const T item)
+{
+    return WKRetainPtr<T>(AdoptWK, item);
+}
+
 inline WKRetainPtr<WKStringRef> toWK(JSStringRef string)
 {
-    return WKRetainPtr<WKStringRef>(AdoptWK, WKStringCreateWithJSString(string));
+    return adoptWK(WKStringCreateWithJSString(string));
 }
 
 inline WKRetainPtr<WKStringRef> toWK(JSRetainPtr<JSStringRef> string)
@@ -90,6 +95,19 @@ inline std::ostream& operator<<(std::ostream& out, WKStringRef stringRef)
 inline std::ostream& operator<<(std::ostream& out, const WKRetainPtr<WKStringRef>& stringRef)
 {
     return out << stringRef.get();
+}
+
+inline std::ostream& operator<<(std::ostream& out, WKURLRef urlRef)
+{
+    if (!urlRef)
+        return out;
+
+    return out << toSTD(adoptWK(WKURLCopyString(urlRef)));
+}
+
+inline std::ostream& operator<<(std::ostream& out, const WKRetainPtr<WKURLRef>& urlRef)
+{
+    return out << urlRef.get();
 }
 
 } // namespace WTR

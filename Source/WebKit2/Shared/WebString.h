@@ -74,6 +74,7 @@ public:
 
     bool equal(WebString* other) { return m_string == other->m_string; }
     bool equalToUTF8String(const char* other) { return m_string == String::fromUTF8(other); }
+    bool equalToUTF8StringIgnoringCase(const char* other) { return equalIgnoringCase(m_string, other); }
 
     const String& string() const { return m_string; }
 

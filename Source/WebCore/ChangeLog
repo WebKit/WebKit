@@ -1,3 +1,18 @@
+2011-03-14  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [Qt][WK2]Unbreak InjectedBundle on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=54109
+
+        No code changes so no new tests.
+
+        Revert the changes that were needed to use KURL
+        in WebKitTestRunner.
+
+        * Configurations/WebCore.xcconfig:
+        * WebCore.exp.in:
+
 2011-03-14  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

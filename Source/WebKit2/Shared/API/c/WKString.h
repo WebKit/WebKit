@@ -47,6 +47,7 @@ WK_EXPORT size_t WKStringGetUTF8CString(WKStringRef string, char* buffer, size_t
 
 WK_EXPORT bool WKStringIsEqual(WKStringRef a, WKStringRef b);
 WK_EXPORT bool WKStringIsEqualToUTF8CString(WKStringRef a, const char* b);
+WK_EXPORT bool WKStringIsEqualToUTF8CStringIgnoringCase(WKStringRef a, const char* b);
 
 #ifdef __cplusplus
 }

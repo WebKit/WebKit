@@ -27,6 +27,9 @@
 #define WebURL_h
 
 #include "APIObject.h"
+#include <WebCore/KURL.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,15 +51,35 @@ public:
 
     const String& string() const { return m_string; }
 
+    String host() const
+    {
+        parseURLIfNecessary();
+        return m_parsedURL->isValid() ? m_parsedURL->host() : String();
+    }
+
+    String protocol() const
+    {
+        parseURLIfNecessary();
+        return m_parsedURL->isValid() ? m_parsedURL->protocol() : String();
+    }
+
 private:
     WebURL(const String& string)
         : m_string(string)
     {
     }
 
+    void parseURLIfNecessary() const
+    {
+        if (m_parsedURL)
+            return;
+        m_parsedURL = WTF::adoptPtr(new WebCore::KURL(WebCore::KURL(), m_string));
+    }
+
     virtual Type type() const { return APIType; }
 
     String m_string;
+    mutable OwnPtr<WebCore::KURL> m_parsedURL;
 };
 
 } // namespace WebKit
