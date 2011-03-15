@@ -1,3 +1,11 @@
+2011-03-14  Adam Barth  <abarth@webkit.org>
+
+        Apparently we need to exclude DefaultSharedWorkerRepository.cpp from
+        the Chromium build, otherwise the objects visible in the global scope
+        change.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-03-14  Rik Cabanier  <cabanier@adobe.com>
 
         Reviewed by David Hyatt.

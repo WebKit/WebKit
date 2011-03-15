@@ -1466,6 +1466,8 @@
         ['exclude', 'storage/SQLTransactionClient\\.cpp$'],
         ['exclude', 'storage/StorageEventDispatcher\\.cpp$'],
         ['exclude', 'storage/StorageNamespace\\.cpp$'],
+        ['exclude', 'workers/DefaultSharedWorkerRepository\\.(cpp|h)$'],
+
         ['include', 'loader/appcache/ApplicationCacheHost\.h$'],
         ['include', 'loader/appcache/DOMApplicationCache\.(cpp|h)$'],
       ],
