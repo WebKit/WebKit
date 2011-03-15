@@ -1187,6 +1187,8 @@
         ['exclude', 'platform/image-encoders/PNGImageEncoder\\.(cpp|h)$'],
         ['exclude', 'platform/network/ResourceHandle\\.cpp$'],
         ['exclude', 'platform/sql/SQLiteFileSystem\\.cpp$'],
+        ['exclude', 'platform/text/LocalizedNumberNone\\.cpp$'],
+        ['exclude', 'platform/text/TextEncodingDetectorNone\\.cpp$'],
 
         ['include', 'thirdparty/glu/libtess/'],
       ],
@@ -1447,8 +1449,6 @@
         ['exclude', 'loader/archive/cf/LegacyWebArchiveMac\\.mm$'],
         ['exclude', 'loader/archive/cf/LegacyWebArchive\\.cpp$'],
         ['exclude', 'loader/icon/IconDatabase\\.cpp$'],
-        ['exclude', 'platform/text/LocalizedNumberNone\\.cpp$'],
-        ['exclude', 'platform/text/TextEncodingDetectorNone\\.cpp$'],
         ['exclude', 'plugins/PluginDataNone\\.cpp$'],
         ['exclude', 'plugins/PluginDatabase\\.cpp$'],
         ['exclude', 'plugins/PluginMainThreadScheduler\\.cpp$'],
