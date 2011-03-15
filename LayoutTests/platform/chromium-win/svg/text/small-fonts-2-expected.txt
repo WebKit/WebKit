@@ -42,7 +42,7 @@ layer at (0,0) size 800x600
         RenderSVGTSpan {tspan} at (0,0) size 195x11
           RenderSVGInlineText {#text} at (0,60) size 195x11
             chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 35 width 194.44: "transformations make it equivalent."
-        RenderSVGInlineText {#text} at (194,60) size 7x11
+        RenderSVGInlineText {#text} at (194,60) size 6x11
           chunk 1 text run 1 at (194.44,60.00) startOffset 0 endOffset 1 width 5.56: " "
         RenderSVGTSpan {tspan} at (0,0) size 50x11
           RenderSVGInlineText {#text} at (0,75) size 50x11

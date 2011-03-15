@@ -2490,8 +2490,7 @@ BUGCR65877 LINUX : fast/blockflow/japanese-rl-text.html = IMAGE
 BUGCR65877 LINUX RELEASE : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
 BUGCR65877 WIN : fast/blockflow/broken-ideographic-font.html = IMAGE
 BUGCR65877 LINUX : fast/blockflow/broken-ideographic-font.html = IMAGE+TEXT
-BUGCR65877 WIN : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
-BUGCR65877 LINUX RELEASE : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
+BUGCR65877 LINUX WIN : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
 BUGCR65877 LINUX WIN : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
 BUGCR65877 WIN : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
@@ -2507,8 +2506,7 @@ BUGWK53451 LINUX : fast/text/international/text-combine-image-test.html = IMAGE+
 // New test, introduced by http://trac.webkit.org/changeset/70813 with only platform/mac baselines.
 BUGWK61161 LINUX WIN : fast/blockflow/border-image-horizontal-bt.html = IMAGE+TEXT
 BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-rl.html = IMAGE+TEXT
-BUGWK61161 WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
-BUGWK61161 LINUX RELEASE : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
+BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
 
 // Started to ASSERT at some point at or after WK r80582
 // see BUGCR75426 list
@@ -2906,7 +2904,6 @@ BUGWK50528 MAC : svg/text/selection-tripleclick.svg = IMAGE
 BUGWK50528 MAC : svg/text/text-align-01-b.svg = IMAGE
 BUGWK50528 MAC : svg/text/text-align-02-b.svg = IMAGE
 BUGWK50528 MAC : svg/text/text-align-03-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-align-04-b.svg = IMAGE
 BUGWK50528 MAC : svg/text/text-align-05-b.svg = IMAGE
 BUGWK50528 MAC : svg/text/text-align-06-b.svg = IMAGE
 BUGWK50528 MAC : svg/text/text-altglyph-01-b.svg = IMAGE
@@ -3252,94 +3249,6 @@ BUGCR75109 WIN LINUX MAC : platform/chromium/fast/text/international/complex-tex
 BUGCR75109 WIN LINUX : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
-// WebKit roll 80564:80631:
-// Apparent font cache cleanup issue when running multiple tests in a row (only)
-BUGCR75426 LINUX DEBUG : css1/box_properties/border_top_width_inline.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : css1/classification/white_space.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/backgrounds/repeat/background-repeat-shorthand.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-lr/002.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-lr/003.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-rl/001.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/block/positioning/vertical-rl/003.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/blockflow/auto-margins-across-boundaries.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/blockflow/border-image-vertical-lr.html = CRASH IMAGE+TEXT
-BUGCR75426 LINUX DEBUG : fast/blockflow/border-radius-clipping-vertical-lr.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/blockflow/box-shadow-horizontal-bt.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/blockflow/box-shadow-vertical-rl.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/blockflow/english-rl-text.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/blockflow/japanese-ruby-horizontal-bt.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/blockflow/japanese-lr-text.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/blockflow/japanese-rl-text-with-broken-font.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/blockflow/japanese-ruby-vertical-rl.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/blockflow/vertical-align-table-baseline.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/blockflow/vertical-font-fallback.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/blockflow/vertical-rl-replaced-selection.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/dom/HTMLFormElement/adopt-assertion.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/dom/vertical-scrollbar-in-rtl.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/dom/vertical-scrollbar-when-dir-change.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/html/details-no-summary2.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/html/mark-element.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/html/script-allowed-types-languages.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/js/pic/cached-single-entry-transition.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/events/window-events-bubble.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/lists/001.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/lists/002.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/lists/003.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/lists/005.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/lists/006.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/lists/007.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/lists/008.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/lists/009.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/multicol/vertical-lr/break-properties.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/multicol/vertical-lr/column-count-with-rules.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/multicol/vertical-lr/float-avoidance.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/multicol/vertical-lr/float-paginate-complex.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/multicol/vertical-lr/float-truncation.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/multicol/vertical-lr/image-inside-nested-blocks-with-border.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/multicol/vertical-lr/unsplittable-inline-block.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/break-properties.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/column-count-with-rules.html = CRASH
-BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/float-avoidance.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/float-paginate-complex.html = CRASH
-BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/float-truncation.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/image-inside-nested-blocks-with-border.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/multicol/vertical-rl/unsplittable-inline-block.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/overflow/overflow-rtl.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/repaint/japanese-rl-selection-repaint.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/repaint/slider-thumb-drag-release.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/repaint/text-emphasis-v.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/ruby/before-doesnt-crash.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/td-display-nowrap.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/027.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/028.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/029.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/039.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/040.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/041.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/auto-with-percent-height.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/growCellForImageQuirk.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/height-percent-test.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/rowspan-paint-order.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/tableInsideCaption.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/table-hspace-align-center.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/001.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/003.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/003-vertical.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/004.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/border-collapsing-head-foot.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/border-collapsing/rtl-border-collapsing.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/table/table-row-compositing-repaint-crash.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/text/firstline/003.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/text/international/vertical-text-metrics-test.html = CRASH
-BUGCR75426 LINUX DEBUG : fast/text/international/thai-baht-space.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : fast/text/justify-nbsp.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : platform/chromium/fast/text/font-linux-normalize.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : platform/mac/editing/pasteboard/5583362.html = CRASH PASS IMAGE+TEXT
-BUGCR75426 LINUX DEBUG : tables/layering/paint-test-layering-1.html = CRASH PASS
-BUGCR75426 LINUX DEBUG : tables/mozilla/bugs/bug1318.html = CRASH PASS
-
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
 BUGCR75424 MAC : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
@@ -3397,23 +3306,9 @@ BUGWK55399 : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
 // Test changed in Wk r80743, throws an exception rather than returning 'true'
 BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
 
-// Adeed in http://trac.webkit.org/changeset/80412/ missing layouttest support.
-BUGCR75954 WIN LINUX : fast/forms/onchange-setvalueforuser.html = TEXT
-
 BUGCR75992 GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
 
-BUGCR76003 WIN MAC LINUX : transitions/default-timing-function.html = IMAGE
-
 BUG_LEVIN WIN : fast/dom/Window/window-lookup-precedence.html = TEXT
-BUG_LEVIN MAC : css2.1/t1008-c44-ln-box-02-d-ag.html = IMAGE
-BUG_LEVIN MAC : css2.1/t100801-c544-valgn-03-d-agi.html = IMAGE
-BUG_LEVIN MAC : editing/selection/caret-ltr-2-left.html = IMAGE
-BUG_LEVIN MAC : editing/selection/caret-ltr-2.html = IMAGE
-BUG_LEVIN MAC : editing/selection/caret-ltr-right.html = IMAGE
-BUG_LEVIN MAC : editing/selection/caret-ltr.html = IMAGE
-BUG_LEVIN MAC : fast/block/margin-collapse/103.html = IMAGE
-BUG_LEVIN MAC : tables/mozilla/bugs/bug1318.html = IMAGE
-BUG_LEVIN MAC : tables/mozilla/bugs/bug4527.html = IMAGE
 
 // See above for the pass timeout case when the crash is resolved (BUGJAMESR).
 BUG_LEVIN MAC : html5lib/runner.html = CRASH PASS TIMEOUT
@@ -3437,3 +3332,22 @@ BUG_LOISLO MAC DEBUG : fast/text/font-size-zero.html = TEXT
 
 // Failure from WebKit r81104
 BUGCR76159 MAC LINUX : http/tests/media/video-play-stall-before-meta-data.html = TEXT
+
+BUGWK56407 : editing/style/iframe-onload-crash.html = CRASH
+BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = FAIL
+
+// Need Mac baselines
+BUG_LEVIN MAC : css2.1/t1008-c44-ln-box-02-d-ag.html = IMAGE
+BUG_LEVIN MAC : css2.1/t100801-c544-valgn-03-d-agi.html = IMAGE
+BUG_LEVIN MAC : editing/selection/caret-ltr-2-left.html = IMAGE
+BUG_LEVIN MAC : editing/selection/caret-ltr-2.html = IMAGE
+BUG_LEVIN MAC : editing/selection/caret-ltr-right.html = IMAGE
+BUG_LEVIN MAC : editing/selection/caret-ltr.html = IMAGE
+BUG_LEVIN MAC : fast/block/margin-collapse/103.html = IMAGE
+BUG_LEVIN MAC : tables/mozilla/bugs/bug1318.html = IMAGE
+BUG_LEVIN MAC : tables/mozilla/bugs/bug4527.html = IMAGE
+BUG_LEVIN MAC : svg/text/select-textLength-spacing-stretch-4.svg = FAIL
+BUG_LEVIN MAC : svg/W3C-SVG-1.1/text-align-08-b.svg = FAIL
+BUG_LEVIN MAC : svg/W3C-SVG-1.1/text-intro-02-b.svg = FAIL
+BUG_LEVIN MAC : svg/W3C-SVG-1.1/text-intro-04-t.svg = FAIL
+BUG_LEVIN MAC : svg/text/bidi-reorder-value-lists.svg = FAIL
