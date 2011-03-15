@@ -1,3 +1,9 @@
+2011-03-15  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Unreviewed. Update chromium deps to pick up the latest V8.
+
+        * DEPS:
+
 2011-03-14  Alexey Marinichev  <amarinichev@chromium.org>
 
         Reviewed by Kenneth Russell.
