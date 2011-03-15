@@ -1,3 +1,19 @@
+2011-03-15  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Eric Carlson.
+
+        HTMLMediaElement::mediaPlayerPlaybackStateChanged should not change the "public" state of the element
+        if it's an internal pause for example.
+        https://bugs.webkit.org/show_bug.cgi?id=56374
+
+        In case of an internal pause, the callback from the mediaplayer should be ignored to avoid reflecting the
+        change into the DOM.
+
+        No new tests: Verified manually.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerPlaybackStateChanged):
+
 2011-03-12  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

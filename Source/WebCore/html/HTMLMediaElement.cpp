@@ -1920,7 +1920,7 @@ void HTMLMediaElement::mediaPlayerPlaybackStateChanged(MediaPlayer*)
 {
     LOG(Media, "HTMLMediaElement::mediaPlayerPlaybackStateChanged");
 
-    if (!m_player)
+    if (!m_player || m_pausedInternal)
         return;
 
     beginProcessingMediaPlayerCallback();
