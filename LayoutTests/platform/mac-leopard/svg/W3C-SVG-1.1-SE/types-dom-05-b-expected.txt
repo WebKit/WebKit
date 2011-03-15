@@ -25,8 +25,8 @@ layer at (0,0) size 480x360
             chunk 1 text run 1 at (50.00,60.00) startOffset 0 endOffset 1 width 10.01: "V"
             chunk 1 text run 2 at (59.12,60.00) startOffset 1 endOffset 7 width 35.01: "alid s"
             chunk 1 text run 3 at (94.09,60.00) startOffset 7 endOffset 9 width 9.16: "tr"
-            chunk 1 text run 4 at (103.27,60.00) startOffset 9 endOffset 17 width 55.03: "ing on S"
-            chunk 1 text run 5 at (157.67,60.00) startOffset 17 endOffset 18 width 10.01: "V"
+            chunk 1 text run 4 at (103.26,60.00) startOffset 9 endOffset 17 width 55.03: "ing on S"
+            chunk 1 text run 5 at (157.67,60.00) startOffset 17 endOffset 18 width 10.00: "V"
             chunk 1 text run 6 at (167.04,60.00) startOffset 18 endOffset 24 width 49.20: "GLengt"
             chunk 1 text run 7 at (216.20,60.00) startOffset 24 endOffset 25 width 8.34: "h"
         RenderSVGText {text} at (50,88) size 185x15 contains 1 chunk(s)
@@ -34,9 +34,9 @@ layer at (0,0) size 480x360
             chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 2 width 12.51: "In"
             chunk 1 text run 2 at (62.31,100.00) startOffset 2 endOffset 3 width 7.50: "v"
             chunk 1 text run 3 at (69.55,100.00) startOffset 3 endOffset 9 width 35.01: "alid s"
-            chunk 1 text run 4 at (104.51,100.00) startOffset 9 endOffset 11 width 9.16: "tr"
+            chunk 1 text run 4 at (104.51,100.00) startOffset 9 endOffset 11 width 9.17: "tr"
             chunk 1 text run 5 at (113.69,100.00) startOffset 11 endOffset 19 width 55.03: "ing on S"
-            chunk 1 text run 6 at (168.10,100.00) startOffset 19 endOffset 20 width 10.01: "V"
+            chunk 1 text run 6 at (168.10,100.00) startOffset 19 endOffset 20 width 10.00: "V"
             chunk 1 text run 7 at (177.47,100.00) startOffset 20 endOffset 26 width 49.20: "GLengt"
             chunk 1 text run 8 at (226.62,100.00) startOffset 26 endOffset 27 width 8.34: "h"
         RenderSVGText {text} at (50,128) size 167x15 contains 1 chunk(s)
@@ -44,20 +44,20 @@ layer at (0,0) size 480x360
             chunk 1 text run 1 at (50.00,140.00) startOffset 0 endOffset 1 width 10.01: "V"
             chunk 1 text run 2 at (59.12,140.00) startOffset 1 endOffset 7 width 35.01: "alid s"
             chunk 1 text run 3 at (94.09,140.00) startOffset 7 endOffset 9 width 9.16: "tr"
-            chunk 1 text run 4 at (103.27,140.00) startOffset 9 endOffset 17 width 55.03: "ing on S"
-            chunk 1 text run 5 at (157.67,140.00) startOffset 17 endOffset 18 width 10.01: "V"
+            chunk 1 text run 4 at (103.26,140.00) startOffset 9 endOffset 17 width 55.03: "ing on S"
+            chunk 1 text run 5 at (157.67,140.00) startOffset 17 endOffset 18 width 10.00: "V"
             chunk 1 text run 6 at (167.04,140.00) startOffset 18 endOffset 19 width 11.67: "G"
-            chunk 1 text run 7 at (178.62,140.00) startOffset 19 endOffset 24 width 38.36: "Angle"
+            chunk 1 text run 7 at (178.62,140.00) startOffset 19 endOffset 24 width 38.35: "Angle"
         RenderSVGText {text} at (50,168) size 178x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 178x15
             chunk 1 text run 1 at (50.00,180.00) startOffset 0 endOffset 2 width 12.51: "In"
             chunk 1 text run 2 at (62.31,180.00) startOffset 2 endOffset 3 width 7.50: "v"
             chunk 1 text run 3 at (69.55,180.00) startOffset 3 endOffset 9 width 35.01: "alid s"
-            chunk 1 text run 4 at (104.51,180.00) startOffset 9 endOffset 11 width 9.16: "tr"
+            chunk 1 text run 4 at (104.51,180.00) startOffset 9 endOffset 11 width 9.17: "tr"
             chunk 1 text run 5 at (113.69,180.00) startOffset 11 endOffset 19 width 55.03: "ing on S"
-            chunk 1 text run 6 at (168.10,180.00) startOffset 19 endOffset 20 width 10.01: "V"
+            chunk 1 text run 6 at (168.10,180.00) startOffset 19 endOffset 20 width 10.00: "V"
             chunk 1 text run 7 at (177.47,180.00) startOffset 20 endOffset 21 width 11.67: "G"
-            chunk 1 text run 8 at (189.05,180.00) startOffset 21 endOffset 26 width 38.36: "Angle"
+            chunk 1 text run 8 at (189.05,180.00) startOffset 21 endOffset 26 width 38.35: "Angle"
     RenderSVGContainer {g} at (10,314) size 227x33
       RenderSVGText {text} at (10,314) size 227x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 227x33
