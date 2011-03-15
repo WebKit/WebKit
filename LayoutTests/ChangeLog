@@ -1,3 +1,16 @@
+2011-03-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        REGRESSION (r68976): Incorrect bidi rendering in SVG text
+        https://bugs.webkit.org/show_bug.cgi?id=53980
+
+        Update Qt baseline, still waiting for gtk/leopard/win7/winxp.
+
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt:
+        * platform/qt/svg/text/text-align-02-b-expected.txt:
+        * platform/qt/svg/text/text-align-04-b-expected.txt:
+
 2011-03-14  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
