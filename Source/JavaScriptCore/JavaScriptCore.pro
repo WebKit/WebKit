@@ -73,6 +73,7 @@ SOURCES += \
     debugger/DebuggerCallFrame.cpp \
     debugger/Debugger.cpp \
     collector/handles/HandleHeap.cpp \
+    collector/handles/HandleStack.cpp \
     interpreter/CallFrame.cpp \
     interpreter/Interpreter.cpp \
     interpreter/RegisterFile.cpp \

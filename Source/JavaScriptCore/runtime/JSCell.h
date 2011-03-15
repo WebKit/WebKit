@@ -212,6 +212,11 @@ namespace JSC {
         return isCell() ? asCell()->getString(exec) : UString();
     }
 
+    template <typename Base> UString HandleConverter<Base, Unknown>::getString(ExecState* exec) const
+    {
+        return jsValue().getString(exec);
+    }
+
     inline JSObject* JSValue::getObject() const
     {
         return isCell() ? asCell()->getObject() : 0;

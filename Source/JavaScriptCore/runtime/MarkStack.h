@@ -71,6 +71,12 @@ namespace JSC {
             if (count)
                 m_markSets.append(MarkSet(values, values + count, properties));
         }
+        
+        void appendSlots(HandleSlot values, size_t count, MarkSetProperties properties = NoNullValues)
+        {
+            if (count)
+                m_markSets.append(MarkSet(values, values + count, properties));
+        }
 
         void append(ConservativeRoots& conservativeRoots)
         {

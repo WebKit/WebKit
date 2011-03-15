@@ -1,3 +1,74 @@
+2011-03-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Introduce Local<T> to allow us to start moving to precise marking of locals
+        https://bugs.webkit.org/show_bug.cgi?id=56394
+
+        Introduce a new handle type, Local<T> and a scoping mechanism
+        LocalScope to allow us to start moving towards precise marking
+        of temporaries and local variables.
+
+        We also start to use the new Local<> type in the JSON stringifier
+        so that we can have some coverage of their behaviour in the initial
+        checkin.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * collector/handles/Handle.h:
+        (JSC::::asObject):
+        * collector/handles/HandleStack.cpp: Added.
+        (JSC::HandleStack::HandleStack):
+        (JSC::HandleStack::mark):
+        (JSC::HandleStack::grow):
+        * collector/handles/HandleStack.h: Added.
+        (JSC::HandleStack::enterScope):
+        (JSC::HandleStack::zapTo):
+        (JSC::HandleStack::leaveScope):
+        (JSC::HandleStack::push):
+        * collector/handles/Local.h: Added.
+        (JSC::Local::internalSet):
+        (JSC::::Local):
+        (JSC::::operator):
+        (JSC::LocalStack::LocalStack):
+        (JSC::LocalStack::peek):
+        (JSC::LocalStack::pop):
+        (JSC::LocalStack::push):
+        (JSC::LocalStack::isEmpty):
+        (JSC::LocalStack::size):
+        * collector/handles/LocalScope.h: Added.
+        (JSC::LocalScope::LocalScope):
+        (JSC::LocalScope::~LocalScope):
+        (JSC::LocalScope::release):
+        * runtime/Heap.cpp:
+        (JSC::Heap::markRoots):
+        * runtime/Heap.h:
+        (JSC::Heap::allocateLocalHandle):
+        (JSC::Heap::handleStack):
+        * runtime/JSCell.h:
+        (JSC::JSCell::::getString):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::allocateLocalHandle):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+        (JSC::Stringifier::stringify):
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Stringifier::Holder::Holder):
+        (JSC::Walker::Walker):
+        (JSC::Walker::walk):
+        (JSC::JSONProtoFuncParse):
+        (JSC::JSONProtoFuncStringify):
+        (JSC::JSONStringify):
+        * runtime/JSONObject.h:
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::appendValues):
+        (JSC::MarkStack::appendSlots):
+
 2011-03-15  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

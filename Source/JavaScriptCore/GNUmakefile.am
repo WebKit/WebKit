@@ -115,6 +115,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/collector/handles/Handle.h \
 	Source/JavaScriptCore/collector/handles/HandleHeap.cpp \
 	Source/JavaScriptCore/collector/handles/HandleHeap.h \
+	Source/JavaScriptCore/collector/handles/HandleStack.cpp \
+	Source/JavaScriptCore/collector/handles/HandleStack.h \
 	Source/JavaScriptCore/config.h \
 	Source/JavaScriptCore/debugger/DebuggerActivation.cpp \
 	Source/JavaScriptCore/debugger/DebuggerActivation.h \

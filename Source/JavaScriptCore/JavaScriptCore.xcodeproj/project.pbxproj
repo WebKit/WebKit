@@ -375,6 +375,10 @@
 		A74DE1D0120B875600D40D5B /* ARMv7Assembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A74DE1CB120B86D600D40D5B /* ARMv7Assembler.cpp */; };
 		A75706DE118A2BCF0057F88F /* JITArithmetic32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */; };
 		A766B44F0EE8DCD1009518CA /* ExecutableAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A76BE39F132EEA7C008F7F0B /* HandleStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A76BE1B7132DAC68008F7F0B /* HandleStack.cpp */; };
+		A76BE3A0132EEA7C008F7F0B /* HandleStack.h in Headers */ = {isa = PBXBuildFile; fileRef = A76BE1B8132DAC68008F7F0B /* HandleStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A76BE3A1132EEA7C008F7F0B /* Local.h in Headers */ = {isa = PBXBuildFile; fileRef = A76BE1B5132DABF5008F7F0B /* Local.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A76BE3A2132EEA7C008F7F0B /* LocalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = A76BE1B6132DAC24008F7F0B /* LocalScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A76C51761182748D00715B05 /* JSInterfaceJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = A76C51741182748D00715B05 /* JSInterfaceJIT.h */; };
 		A7795590101A74D500114E55 /* MarkStack.h in Headers */ = {isa = PBXBuildFile; fileRef = A779558F101A74D500114E55 /* MarkStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A783A0D111A36DCA00563D20 /* JSObjectWithGlobalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A783A0D011A36DCA00563D20 /* JSObjectWithGlobalObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1069,6 +1073,10 @@
 		A74B3498102A5F8E0032AB98 /* MarkStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkStack.cpp; sourceTree = "<group>"; };
 		A74DE1CB120B86D600D40D5B /* ARMv7Assembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ARMv7Assembler.cpp; sourceTree = "<group>"; };
 		A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic32_64.cpp; sourceTree = "<group>"; };
+		A76BE1B5132DABF5008F7F0B /* Local.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Local.h; path = collector/handles/Local.h; sourceTree = "<group>"; };
+		A76BE1B6132DAC24008F7F0B /* LocalScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalScope.h; path = collector/handles/LocalScope.h; sourceTree = "<group>"; };
+		A76BE1B7132DAC68008F7F0B /* HandleStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HandleStack.cpp; path = collector/handles/HandleStack.cpp; sourceTree = "<group>"; };
+		A76BE1B8132DAC68008F7F0B /* HandleStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HandleStack.h; path = collector/handles/HandleStack.h; sourceTree = "<group>"; };
 		A76C51741182748D00715B05 /* JSInterfaceJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInterfaceJIT.h; sourceTree = "<group>"; };
 		A779558F101A74D500114E55 /* MarkStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkStack.h; sourceTree = "<group>"; };
 		A783A0D011A36DCA00563D20 /* JSObjectWithGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObjectWithGlobalObject.h; sourceTree = "<group>"; };
@@ -2140,6 +2148,10 @@
 				A7E4FC8812F8E4CA00AF4CF4 /* Handle.h */,
 				A7E4FC8912F8E4CA00AF4CF4 /* HandleHeap.cpp */,
 				A7E4FC8A12F8E4CA00AF4CF4 /* HandleHeap.h */,
+				A76BE1B7132DAC68008F7F0B /* HandleStack.cpp */,
+				A76BE1B8132DAC68008F7F0B /* HandleStack.h */,
+				A76BE1B5132DABF5008F7F0B /* Local.h */,
+				A76BE1B6132DAC24008F7F0B /* LocalScope.h */,
 			);
 			name = handles;
 			sourceTree = "<group>";
@@ -2516,6 +2528,9 @@
 				A7C40C0A130B057D00D002A1 /* BlockStack.h in Headers */,
 				A7C40C0B130B057D00D002A1 /* SentinelLinkedList.h in Headers */,
 				A7C40C0C130B057D00D002A1 /* SinglyLinkedList.h in Headers */,
+				A76BE3A0132EEA7C008F7F0B /* HandleStack.h in Headers */,
+				A76BE3A1132EEA7C008F7F0B /* Local.h in Headers */,
+				A76BE3A2132EEA7C008F7F0B /* LocalScope.h in Headers */,
 				86EC9DC51328DF82002B2AD7 /* DFGByteCodeParser.h in Headers */,
 				86EC9DC61328DF82002B2AD7 /* DFGGenerationInfo.h in Headers */,
 				86EC9DC81328DF82002B2AD7 /* DFGGraph.h in Headers */,
@@ -2967,6 +2982,7 @@
 				97941A7E1302A098004A3447 /* CryptographicallyRandomNumber.cpp in Sources */,
 				A7E4FC9112F8E4CA00AF4CF4 /* HandleHeap.cpp in Sources */,
 				A7AC25BD1304D146003396DE /* MarkedBlock.cpp in Sources */,
+				A76BE39F132EEA7C008F7F0B /* HandleStack.cpp in Sources */,
 				86EC9DC41328DF82002B2AD7 /* DFGByteCodeParser.cpp in Sources */,
 				86EC9DC71328DF82002B2AD7 /* DFGGraph.cpp in Sources */,
 				86EC9DC91328DF82002B2AD7 /* DFGJITCodeGenerator.cpp in Sources */,

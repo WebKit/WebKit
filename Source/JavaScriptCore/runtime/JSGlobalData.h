@@ -57,6 +57,7 @@ namespace JSC {
 
     class CodeBlock;
     class CommonIdentifiers;
+    class HandleStack;
     class IdentifierTable;
     class Interpreter;
     class JSGlobalObject;
@@ -223,8 +224,6 @@ namespace JSC {
 
         HashSet<JSObject*> stringRecursionCheckVisitedObjects;
 
-        Stringifier* firstStringifierToMark;
-
         double cachedUTCOffset;
         DSTOffsetCache dstOffsetCache;
         
@@ -259,6 +258,7 @@ namespace JSC {
 #endif
         void dumpRegExpTrace();
         HandleSlot allocateGlobalHandle() { return heap.allocateGlobalHandle(); }
+        HandleSlot allocateLocalHandle() { return heap.allocateLocalHandle(); }
 
     private:
         JSGlobalData(GlobalDataType, ThreadStackType);

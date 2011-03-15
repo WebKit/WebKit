@@ -1960,6 +1960,22 @@
 					RelativePath="..\..\collector\handles\HandleHeap.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\collector\handles\HandleStack.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\collector\handles\HandleStack.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\collector\handles\Local.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\collector\handles\LocalScope.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File

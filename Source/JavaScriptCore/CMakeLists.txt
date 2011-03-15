@@ -42,6 +42,7 @@ SET(JavaScriptCore_SOURCES
     bytecompiler/NodesCodegen.cpp
 
     collector/handles/HandleHeap.cpp
+    collector/handles/HandleStack.cpp
 
     debugger/Debugger.cpp
     debugger/DebuggerActivation.cpp

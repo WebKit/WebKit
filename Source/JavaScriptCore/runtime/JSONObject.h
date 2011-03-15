@@ -41,8 +41,6 @@ namespace JSC {
             return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
-        static void markStringifiers(MarkStack&, Stringifier*);
-
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
 

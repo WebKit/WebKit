@@ -23,6 +23,7 @@
 #define Heap_h
 
 #include "HandleHeap.h"
+#include "HandleStack.h"
 #include "MarkStack.h"
 #include "MarkedSpace.h"
 #include <wtf/Forward.h>
@@ -98,6 +99,9 @@ namespace JSC {
         template <typename Functor> void forEach(Functor&);
         
         HandleSlot allocateGlobalHandle() { return m_handleHeap.allocate(); }
+        HandleSlot allocateLocalHandle() { return m_handleStack.push(); }
+
+        HandleStack* handleStack() { return &m_handleStack; }
 
     private:
         friend class JSGlobalData;
@@ -132,7 +136,8 @@ namespace JSC {
         MachineThreads m_machineThreads;
         MarkStack m_markStack;
         HandleHeap m_handleHeap;
-        
+        HandleStack m_handleStack;
+
         size_t m_extraCost;
     };
 

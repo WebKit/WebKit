@@ -111,10 +111,19 @@ template <typename Base, typename T> struct HandleConverter {
 };
 
 template <typename Base> struct HandleConverter<Base, Unknown> {
+    Handle<JSObject> asObject() const;
+    bool isObject() const { return jsValue().isObject(); }
+    bool getNumber(double number) const { return jsValue().getNumber(number); }
+    UString getString(ExecState*) const;
+    bool isUndefinedOrNull() const { return jsValue().isUndefinedOrNull(); }
+
+private:
+    JSValue jsValue() const { return static_cast<const Base*>(this)->get(); }
 };
 
 template <typename T> class Handle : public HandleBase, public HandleConverter<Handle<T>, T> {
 public:
+    template <typename A, typename B> friend class HandleConverter;
     typedef typename HandleTypes<T>::ExternalType ExternalType;
     template <typename U> Handle(Handle<U> o)
     {
@@ -143,6 +152,11 @@ private:
         return Handle<T>(slot);
     }
 };
+
+template <typename Base> Handle<JSObject> HandleConverter<Base, Unknown>::asObject() const
+{
+    return Handle<JSObject>::wrapSlot(static_cast<const Base*>(this)->slot());
+}
 
 template <typename T, typename U> inline bool operator==(const Handle<T>& a, const Handle<U>& b)
 { 
