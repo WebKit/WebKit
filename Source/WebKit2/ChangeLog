@@ -1,3 +1,16 @@
+2011-03-14  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        CrashTracer: 60 crashes in WebProcess at com.apple.WebKit2: -[AccessibilityWebPageObject accessibilityHitTest:] + 248
+        https://bugs.webkit.org/show_bug.cgi?id=56336
+
+        Crash trace indicates a nil pointer access in one of these m_page->mainFrame()->coreFrame()->view()
+        pointers.
+
+        * WebProcess/WebPage/mac/AccessibilityWebPageObject.mm:
+        (-[AccessibilityWebPageObject accessibilityHitTest:]):
+
 2011-03-14  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Sam Weinig.
