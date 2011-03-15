@@ -1,3 +1,169 @@
+2011-03-15  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        pngcrush images used by inspector
+        https://bugs.webkit.org/show_bug.cgi?id=56426
+
+        This saves 120k in WebCore and 8k in WebKit/chromium.  I ran
+        pngcrush -brute, so none of the meta data (ancillary chunks)
+        are modified.
+
+        No new tests, just compressing png files.
+
+        * inspector/front-end/Images/applicationCache.png:
+        * inspector/front-end/Images/auditsIcon.png:
+        * inspector/front-end/Images/back.png:
+        * inspector/front-end/Images/breakpointBorder.png:
+        * inspector/front-end/Images/breakpointConditionalBorder.png:
+        * inspector/front-end/Images/breakpointConditionalCounterBorder.png:
+        * inspector/front-end/Images/breakpointCounterBorder.png:
+        * inspector/front-end/Images/breakpointsActivateButtonGlyph.png:
+        * inspector/front-end/Images/breakpointsDeactivateButtonGlyph.png:
+        * inspector/front-end/Images/checker.png:
+        * inspector/front-end/Images/clearConsoleButtonGlyph.png:
+        * inspector/front-end/Images/closeButtons.png:
+        * inspector/front-end/Images/consoleButtonGlyph.png:
+        * inspector/front-end/Images/consoleIcon.png:
+        * inspector/front-end/Images/cookie.png:
+        * inspector/front-end/Images/database.png:
+        * inspector/front-end/Images/databaseTable.png:
+        * inspector/front-end/Images/debuggerContinue.png:
+        * inspector/front-end/Images/debuggerPause.png:
+        * inspector/front-end/Images/debuggerStepInto.png:
+        * inspector/front-end/Images/debuggerStepOut.png:
+        * inspector/front-end/Images/debuggerStepOver.png:
+        * inspector/front-end/Images/disclosureTriangleSmallDown.png:
+        * inspector/front-end/Images/disclosureTriangleSmallDownBlack.png:
+        * inspector/front-end/Images/disclosureTriangleSmallDownWhite.png:
+        * inspector/front-end/Images/disclosureTriangleSmallRight.png:
+        * inspector/front-end/Images/disclosureTriangleSmallRightBlack.png:
+        * inspector/front-end/Images/disclosureTriangleSmallRightDown.png:
+        * inspector/front-end/Images/disclosureTriangleSmallRightDownBlack.png:
+        * inspector/front-end/Images/disclosureTriangleSmallRightDownWhite.png:
+        * inspector/front-end/Images/disclosureTriangleSmallRightWhite.png:
+        * inspector/front-end/Images/dockButtonGlyph.png:
+        * inspector/front-end/Images/elementsIcon.png:
+        * inspector/front-end/Images/enableOutlineButtonGlyph.png:
+        * inspector/front-end/Images/enableSolidButtonGlyph.png:
+        * inspector/front-end/Images/errorIcon.png:
+        * inspector/front-end/Images/errorMediumIcon.png:
+        * inspector/front-end/Images/errorRedDot.png:
+        * inspector/front-end/Images/excludeButtonGlyph.png:
+        * inspector/front-end/Images/focusButtonGlyph.png:
+        * inspector/front-end/Images/forward.png:
+        * inspector/front-end/Images/frame.png:
+        * inspector/front-end/Images/garbageCollectButtonGlyph.png:
+        * inspector/front-end/Images/gearButtonGlyph.png:
+        * inspector/front-end/Images/glossyHeader.png:
+        * inspector/front-end/Images/glossyHeaderPressed.png:
+        * inspector/front-end/Images/glossyHeaderSelected.png:
+        * inspector/front-end/Images/glossyHeaderSelectedPressed.png:
+        * inspector/front-end/Images/goArrow.png:
+        * inspector/front-end/Images/graphLabelCalloutLeft.png:
+        * inspector/front-end/Images/graphLabelCalloutRight.png:
+        * inspector/front-end/Images/helpButtonGlyph.png:
+        * inspector/front-end/Images/largerResourcesButtonGlyph.png:
+        * inspector/front-end/Images/localStorage.png:
+        * inspector/front-end/Images/networkIcon.png:
+        * inspector/front-end/Images/nodeSearchButtonGlyph.png:
+        * inspector/front-end/Images/paneAddButtons.png:
+        * inspector/front-end/Images/paneBottomGrow.png:
+        * inspector/front-end/Images/paneBottomGrowActive.png:
+        * inspector/front-end/Images/paneGrowHandleLine.png:
+        * inspector/front-end/Images/paneSettingsButtons.png:
+        * inspector/front-end/Images/pauseOnExceptionButtonGlyph.png:
+        * inspector/front-end/Images/percentButtonGlyph.png:
+        * inspector/front-end/Images/popoverArrows.png:
+        * inspector/front-end/Images/popoverBackground.png:
+        * inspector/front-end/Images/profileGroupIcon.png:
+        * inspector/front-end/Images/profileIcon.png:
+        * inspector/front-end/Images/profileSmallIcon.png:
+        * inspector/front-end/Images/profilesIcon.png:
+        * inspector/front-end/Images/profilesSilhouette.png:
+        * inspector/front-end/Images/programCounterBorder.png:
+        * inspector/front-end/Images/radioDot.png:
+        * inspector/front-end/Images/recordButtonGlyph.png:
+        * inspector/front-end/Images/recordToggledButtonGlyph.png:
+        * inspector/front-end/Images/reloadButtonGlyph.png:
+        * inspector/front-end/Images/resourceCSSIcon.png:
+        * inspector/front-end/Images/resourceDocumentIcon.png:
+        * inspector/front-end/Images/resourceDocumentIconSmall.png:
+        * inspector/front-end/Images/resourceJSIcon.png:
+        * inspector/front-end/Images/resourcePlainIcon.png:
+        * inspector/front-end/Images/resourcePlainIconSmall.png:
+        * inspector/front-end/Images/resourcesIcon.png:
+        * inspector/front-end/Images/resourcesSizeGraphIcon.png:
+        * inspector/front-end/Images/resourcesTimeGraphIcon.png:
+        * inspector/front-end/Images/scriptsIcon.png:
+        * inspector/front-end/Images/scriptsSilhouette.png:
+        * inspector/front-end/Images/searchSmallBlue.png:
+        * inspector/front-end/Images/searchSmallBrightBlue.png:
+        * inspector/front-end/Images/searchSmallGray.png:
+        * inspector/front-end/Images/searchSmallWhite.png:
+        * inspector/front-end/Images/segment.png:
+        * inspector/front-end/Images/segmentEnd.png:
+        * inspector/front-end/Images/segmentHover.png:
+        * inspector/front-end/Images/segmentHoverEnd.png:
+        * inspector/front-end/Images/segmentSelected.png:
+        * inspector/front-end/Images/segmentSelectedEnd.png:
+        * inspector/front-end/Images/sessionStorage.png:
+        * inspector/front-end/Images/splitviewDimple.png:
+        * inspector/front-end/Images/splitviewDividerBackground.png:
+        * inspector/front-end/Images/statusbarButtons.png:
+        * inspector/front-end/Images/statusbarMenuButton.png:
+        * inspector/front-end/Images/statusbarMenuButtonSelected.png:
+        * inspector/front-end/Images/statusbarResizerHorizontal.png:
+        * inspector/front-end/Images/statusbarResizerVertical.png:
+        * inspector/front-end/Images/successGreenDot.png:
+        * inspector/front-end/Images/thumbActiveHoriz.png:
+        * inspector/front-end/Images/thumbActiveVert.png:
+        * inspector/front-end/Images/thumbHoriz.png:
+        * inspector/front-end/Images/thumbHoverHoriz.png:
+        * inspector/front-end/Images/thumbHoverVert.png:
+        * inspector/front-end/Images/thumbVert.png:
+        * inspector/front-end/Images/timelineBarBlue.png:
+        * inspector/front-end/Images/timelineBarGray.png:
+        * inspector/front-end/Images/timelineBarGreen.png:
+        * inspector/front-end/Images/timelineBarOrange.png:
+        * inspector/front-end/Images/timelineBarPurple.png:
+        * inspector/front-end/Images/timelineBarRed.png:
+        * inspector/front-end/Images/timelineBarYellow.png:
+        * inspector/front-end/Images/timelineCheckmarks.png:
+        * inspector/front-end/Images/timelineDots.png:
+        * inspector/front-end/Images/timelineHollowPillBlue.png:
+        * inspector/front-end/Images/timelineHollowPillGray.png:
+        * inspector/front-end/Images/timelineHollowPillGreen.png:
+        * inspector/front-end/Images/timelineHollowPillOrange.png:
+        * inspector/front-end/Images/timelineHollowPillPurple.png:
+        * inspector/front-end/Images/timelineHollowPillRed.png:
+        * inspector/front-end/Images/timelineHollowPillYellow.png:
+        * inspector/front-end/Images/timelineIcon.png:
+        * inspector/front-end/Images/timelinePillBlue.png:
+        * inspector/front-end/Images/timelinePillGray.png:
+        * inspector/front-end/Images/timelinePillGreen.png:
+        * inspector/front-end/Images/timelinePillOrange.png:
+        * inspector/front-end/Images/timelinePillPurple.png:
+        * inspector/front-end/Images/timelinePillRed.png:
+        * inspector/front-end/Images/timelinePillYellow.png:
+        * inspector/front-end/Images/toolbarItemSelected.png:
+        * inspector/front-end/Images/trackHoriz.png:
+        * inspector/front-end/Images/trackVert.png:
+        * inspector/front-end/Images/treeDownTriangleBlack.png:
+        * inspector/front-end/Images/treeDownTriangleWhite.png:
+        * inspector/front-end/Images/treeRightTriangleBlack.png:
+        * inspector/front-end/Images/treeRightTriangleWhite.png:
+        * inspector/front-end/Images/treeUpTriangleBlack.png:
+        * inspector/front-end/Images/treeUpTriangleWhite.png:
+        * inspector/front-end/Images/undockButtonGlyph.png:
+        * inspector/front-end/Images/userInputIcon.png:
+        * inspector/front-end/Images/userInputPreviousIcon.png:
+        * inspector/front-end/Images/userInputResultIcon.png:
+        * inspector/front-end/Images/warningIcon.png:
+        * inspector/front-end/Images/warningMediumIcon.png:
+        * inspector/front-end/Images/warningOrangeDot.png:
+        * inspector/front-end/Images/warningsErrors.png:
+
 2011-03-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
