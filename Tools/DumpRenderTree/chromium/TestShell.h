@@ -65,8 +65,6 @@ class DRTDevToolsClient;
 struct TestParams {
     bool dumpTree;
     bool dumpPixels;
-    bool debugRenderTree;
-    bool debugLayerTree;
     bool printSeparators;
     WebKit::WebURL testUrl;
     // Resultant image file name. Required only if the test_shell mode.
@@ -76,8 +74,6 @@ struct TestParams {
     TestParams()
         : dumpTree(true)
         , dumpPixels(false)
-        , debugRenderTree(false)
-        , debugLayerTree(false)
         , printSeparators(false) {}
 };
 

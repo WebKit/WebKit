@@ -188,9 +188,6 @@ void TestShell::runFileTest(const TestParams& params)
         || testUrl.find("\\inspector\\") != string::npos)
         showDevTools();
 
-    if (m_params.debugLayerTree)
-        m_layoutTestController->setShowDebugLayerTree(true);
-
     if (m_dumpWhenFinished)
         m_printer->handleTestHeader(testUrl.c_str());
     loadURL(m_params.testUrl);
@@ -457,7 +454,7 @@ void TestShell::dump()
             if (fwrite(dataUtf8.c_str(), 1, dataUtf8.size(), stdout) != dataUtf8.size())
                 FATAL("Short write to stdout, disk full?\n");
         } else {
-            printf("%s", frame->renderTreeAsText(m_params.debugRenderTree).utf8().data());
+            printf("%s", frame->renderTreeAsText().utf8().data());
             bool recursive = m_layoutTestController->shouldDumpChildFrameScrollPositions();
             dumpFrameScrollPosition(frame, recursive);
         }

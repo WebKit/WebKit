@@ -43,8 +43,7 @@ static const char optionDumpAllPixels[] = "--dump-all-pixels";
 static const char optionNotree[] = "--notree";
 static const char optionPixelTests[] = "--pixel-tests";
 static const char optionThreaded[] = "--threaded";
-static const char optionDebugRenderTree[] = "--debug-render-tree";
-static const char optionDebugLayerTree[] = "--debug-layer-tree";
+static const char optionTree[] = "--tree";
 
 static const char optionPixelTestsWithName[] = "--pixel-tests=";
 static const char optionTestShell[] = "--test-shell";
@@ -149,11 +148,7 @@ int main(int argc, char* argv[])
         else if (!argument.find(optionPixelTestsWithName)) {
             params.dumpPixels = true;
             params.pixelFileName = argument.substr(strlen(optionPixelTestsWithName));
-        } else if (argument == optionDebugRenderTree)
-            params.debugRenderTree = true;
-        else if (argument == optionDebugLayerTree)
-            params.debugLayerTree = true;
-        else if (argument == optionTestShell) {
+        } else if (argument == optionTestShell) {
             testShellMode = true;
             serverMode = true;
         } else if (argument == optionAllowExternalPages)

@@ -880,7 +880,7 @@ void RenderLayerCompositor::frameViewDidScroll(const IntPoint& scrollPosition)
         m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
 }
 
-String RenderLayerCompositor::layerTreeAsText(bool showDebugInfo)
+String RenderLayerCompositor::layerTreeAsText()
 {
     if (compositingLayerUpdatePending())
         updateCompositingLayers();
@@ -890,7 +890,7 @@ String RenderLayerCompositor::layerTreeAsText(bool showDebugInfo)
 
     // We skip dumping the scroll and clip layers to keep layerTreeAsText output
     // similar between platforms.
-    return m_rootPlatformLayer->layerTreeAsText(showDebugInfo ? LayerTreeAsTextDebug : LayerTreeAsTextBehaviorNormal);
+    return m_rootPlatformLayer->layerTreeAsText();
 }
 
 RenderLayerCompositor* RenderLayerCompositor::iframeContentsCompositor(RenderIFrame* renderer)

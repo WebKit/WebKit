@@ -127,7 +127,7 @@ namespace WebCore {
 
         void injectUserScripts(UserScriptInjectionTime);
         
-        String layerTreeAsText(bool showDebugInfo = false) const;
+        String layerTreeAsText() const;
 
         // Unlike most accessors in this class, domWindow() always creates a new DOMWindow if m_domWindow is null.
         // Callers that don't need a new DOMWindow to be created should use existingDOMWindow().

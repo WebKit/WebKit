@@ -73,7 +73,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     : m_shell(shell)
     , m_closeRemainingWindows(false)
     , m_deferMainResourceDataLoad(false)
-    , m_showDebugLayerTree(false)
     , m_workQueue(this)
 {
 
@@ -1594,7 +1593,7 @@ void LayoutTestController::addMockSpeechInputResult(const CppArgumentList& argum
 
 void LayoutTestController::layerTreeAsText(const CppArgumentList& args, CppVariant* result)
 {
-    result->set(m_shell->webView()->mainFrame()->layerTreeAsText(m_showDebugLayerTree).utf8());
+    result->set(m_shell->webView()->mainFrame()->layerTreeAsText().utf8());
 }
 
 void LayoutTestController::markerTextForListItem(const CppArgumentList& args, CppVariant* result)
