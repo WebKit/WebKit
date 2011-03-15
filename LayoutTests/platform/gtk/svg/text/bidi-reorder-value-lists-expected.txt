@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 400x400
+  RenderSVGRoot {svg} at (40,60) size 360x196
+    RenderSVGContainer {g} at (40,60) size 360x196 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}]
+      RenderSVGText {text} at (10,15) size 91x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 91x19
+          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 1 width 9.75: "T"
+          chunk 1 text run 1 at (20.00,30.00) startOffset 0 endOffset 1 width 7.00: "e"
+          chunk 1 text run 1 at (30.00,30.00) startOffset 0 endOffset 1 width 6.25: "s"
+          chunk 1 text run 1 at (40.00,30.00) startOffset 0 endOffset 1 width 4.50: "t"
+          chunk 1 text run 1 at (50.00,30.00) startOffset 0 endOffset 1 width 4.00: " "
+          chunk 1 text run 1 at (54.00,30.00) startOffset 0 endOffset 5 width 46.75 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}\x{5D4}"
+      RenderSVGText {text} at (10,45) size 88x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 88x19
+          chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 1 width 9.75: "T"
+          chunk 1 text run 1 at (20.00,60.00) startOffset 0 endOffset 1 width 7.00: "e"
+          chunk 1 text run 1 at (30.00,60.00) startOffset 0 endOffset 1 width 6.25: "s"
+          chunk 1 text run 1 at (40.00,60.00) startOffset 0 endOffset 1 width 4.50: "t"
+          chunk 1 text run 1 at (50.00,60.00) startOffset 0 endOffset 1 width 4.00: " "
+          chunk 1 text run 1 at (55.00,60.00) startOffset 0 endOffset 1 width 10.25 RTL: "\x{5D4}"
+          chunk 1 text run 1 at (64.00,60.00) startOffset 0 endOffset 1 width 9.50 RTL: "\x{5D3}"
+          chunk 1 text run 1 at (72.00,60.00) startOffset 0 endOffset 1 width 7.25 RTL: "\x{5D2}"
+          chunk 1 text run 1 at (79.00,60.00) startOffset 0 endOffset 1 width 9.75 RTL: "\x{5D1}"
+          chunk 1 text run 1 at (88.00,60.00) startOffset 0 endOffset 1 width 10.00 RTL: "\x{5D0}"

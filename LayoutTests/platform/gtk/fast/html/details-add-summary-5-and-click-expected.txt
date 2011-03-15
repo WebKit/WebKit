@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x600
+      RenderDetails {DETAILS} at (0,0) size 800x38
+        RenderBlock (anonymous) at (0,0) size 800x19
+          RenderSummary {SUMMARY} at (0,0) size 800x19
+            RenderDetailsMarker at (0,0) size 10x19: down
+            RenderText {#text} at (10,0) size 39x19
+              text run at (10,0) width 39: "new 1"
+        RenderBlock (anonymous) at (0,19) size 800x19
+          RenderSummary {SUMMARY} at (0,0) size 800x19
+            RenderText {#text} at (0,0) size 58x19
+              text run at (0,0) width 58: "summary"
+caret: position 0 of child 0 {#text} of child 1 {SUMMARY} of child 1 {DETAILS} of body

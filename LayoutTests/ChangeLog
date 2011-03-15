@@ -1,5 +1,11 @@
 2011-03-15  Martin Robinson  <mrobinson@igalia.com>
 
+        Adding new test results for GTK+.
+
+        * platform/gtk: All files omitted to prevent overflowing the BuildBot console.
+
+2011-03-15  Martin Robinson  <mrobinson@igalia.com>
+
         Rebaseline some GTK+ tests after r81035 and r81049.
 
         * platform/gtk/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:

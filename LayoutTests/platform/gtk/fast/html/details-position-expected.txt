@@ -1,0 +1,35 @@
+layer at (0,0) size 942x581
+  RenderView at (0,0) size 800x581
+layer at (0,0) size 800x581
+  RenderBlock {HTML} at (0,0) size 800x581
+    RenderBody {BODY} at (8,8) size 784x565
+      RenderDetails {DETAILS} at (0,0) size 784x19
+        RenderBlock (anonymous) at (0,0) size 784x19
+          RenderBlock (anonymous) at (0,0) size 784x19
+            RenderDetailsMarker at (0,0) size 10x19: right
+            RenderText at (10,0) size 44x19
+              text run at (10,0) width 44: "Details"
+        RenderBlock (anonymous) at (0,19) size 784x0
+      RenderDetails {DETAILS} at (0,19) size 784x19
+        RenderBlock (anonymous) at (0,0) size 784x19
+        RenderBlock (anonymous) at (0,19) size 784x0
+      RenderDetails {DETAILS} at (0,38) size 784x19
+        RenderBlock (anonymous) at (0,0) size 784x19
+          RenderBlock (anonymous) at (0,0) size 784x19
+            RenderDetailsMarker at (0,0) size 10x19: right
+            RenderText at (10,0) size 44x19
+              text run at (10,0) width 44: "Details"
+        RenderBlock (anonymous) at (0,19) size 784x0
+layer at (50,150) size 32x19
+  RenderSummary {SUMMARY} at (50,150) size 32x19
+    RenderText {#text} at (0,0) size 32x19
+      text run at (0,0) width 32: "fixed"
+layer at (158,177) size 784x19
+  RenderSummary {SUMMARY} at (0,0) size 784x19
+    RenderDetailsMarker at (0,0) size 10x19: right
+    RenderText {#text} at (10,0) size 46x19
+      text run at (10,0) width 46: "relative"
+layer at (250,150) size 52x19
+  RenderSummary {SUMMARY} at (250,150) size 52x19
+    RenderText {#text} at (0,0) size 52x19
+      text run at (0,0) width 52: "absolute"
