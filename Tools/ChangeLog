@@ -1,3 +1,9 @@
+2011-03-14  Adam Roben  <aroben@apple.com>
+
+        Add forgotten file from r81116
+
+        * TestWebKitAPI/Configurations/TestWebKitAPICFNetwork.vsprops: Added.
+
 2011-03-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
