@@ -532,6 +532,8 @@ private:
     RefPtr<WebCore::LayerRendererChromium> m_layerRenderer;
     bool m_isAcceleratedCompositingActive;
     bool m_compositorCreationFailed;
+    // If true, the graphics context is being restored.
+    bool m_recreatingGraphicsContext;
 #endif
     static const WebInputEvent* m_currentInputEvent;
 

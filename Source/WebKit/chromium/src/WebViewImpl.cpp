@@ -1082,6 +1082,13 @@ void WebViewImpl::themeChanged()
 void WebViewImpl::composite(bool finish)
 {
 #if USE(ACCELERATED_COMPOSITING)
+    if (m_recreatingGraphicsContext) {
+        // reallocateRenderer will request a repaint whether or not it succeeded
+        // in creating a new context.
+        reallocateRenderer();
+        m_recreatingGraphicsContext = false;
+        return;
+    }
     doComposite();
 
     // Finish if requested.
@@ -1092,8 +1099,16 @@ void WebViewImpl::composite(bool finish)
     m_layerRenderer->present();
 
     GraphicsContext3D* context = m_layerRenderer->context();
-    if (context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR)
-        reallocateRenderer();
+    if (context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR) {
+        // Trying to recover the context right here will not work if GPU process
+        // died. This is because GpuChannelHost::OnErrorMessage will only be
+        // called at the next iteration of the message loop, reverting our
+        // recovery attempts here. Instead, we detach the root layer from the
+        // renderer, recreate the renderer at the next message loop iteration
+        // and request a repaint yet again.
+        m_recreatingGraphicsContext = true;
+        setRootLayerNeedsDisplay();
+    }
 #endif
 }
 
@@ -2399,6 +2414,12 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
 void WebViewImpl::doComposite()
 {
+    ASSERT(m_layerRenderer);
+    if (!m_layerRenderer) {
+        setIsAcceleratedCompositingActive(false);
+        return;
+    }
+
     ASSERT(isAcceleratedCompositingActive());
     if (!page())
         return;
@@ -2414,18 +2435,27 @@ void WebViewImpl::doComposite()
 
 void WebViewImpl::reallocateRenderer()
 {
-    GraphicsContext3D* context = m_layerRenderer->context();
-    RefPtr<GraphicsContext3D> newContext = GraphicsContext3D::create(context->getContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+    RefPtr<GraphicsContext3D> newContext = GraphicsContext3D::create(
+            getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
     // GraphicsContext3D::create might fail and return 0, in that case LayerRendererChromium::create will also return 0.
     RefPtr<LayerRendererChromium> layerRenderer = LayerRendererChromium::create(newContext, WebViewImplContentPainter::create(this), WebViewImplScrollbarPainter::create(this));
 
     // Reattach the root layer.  Child layers will get reattached as a side effect of updateLayersRecursive.
-    if (layerRenderer)
+    if (layerRenderer) {
         m_layerRenderer->transferRootLayer(layerRenderer.get());
-    m_layerRenderer = layerRenderer;
-
-    // Enable or disable accelerated compositing and request a refresh.
-    setRootGraphicsLayer(m_layerRenderer ? m_layerRenderer->rootLayer() : 0);
+        m_layerRenderer = layerRenderer;
+        // FIXME: In MacOS newContext->reshape method needs to be called to
+        // allocate IOSurfaces. All calls to create a context followed by
+        // reshape should really be extracted into one function; it is not
+        // immediately obvious that GraphicsContext3D object will not
+        // function properly until its reshape method is called.
+        newContext->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
+        setRootGraphicsLayer(m_layerRenderer->rootLayer());
+        // Forces ViewHostMsg_DidActivateAcceleratedCompositing to be sent so
+        // that the browser process can reacquire surfaces.
+        m_client->didActivateAcceleratedCompositing(true);
+    } else
+        setRootGraphicsLayer(0);
 }
 #endif
 
