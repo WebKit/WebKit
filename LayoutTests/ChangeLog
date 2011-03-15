@@ -1,3 +1,16 @@
+2011-03-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Crash in ReplaceSelectionCommand::doApply when inserting a node under a document node
+        https://bugs.webkit.org/show_bug.cgi?id=56372
+
+        Added a test to ensure WebKit does not crash when appending a node to a document
+        that has only two nested iframes.
+
+        * editing/execCommand/append-node-under-document-expected.txt: Added.
+        * editing/execCommand/append-node-under-document.html: Added.
+
 2011-03-15  David Levin  <levin@chromium.org>
 
         Compensate for r81168 (svg) and r81155 (fast/forms/input-autofilled.html) and r81049 (fast/table).

@@ -1,3 +1,32 @@
+2011-03-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Crash in ReplaceSelectionCommand::doApply when inserting a node under a document node
+        https://bugs.webkit.org/show_bug.cgi?id=56372
+
+        The bug was caused by insertNodeAfter's calling parentElement on document's child.
+        Fixed this by changing the node that AppendNodeCommand takes.
+
+        There was also a bug that document node always returned false for isContentEditable
+        and isContentRichlyEditable because they never overrode Node's default implementation.
+        Fixed this by overriding them in Document.
+
+        Test: editing/execCommand/append-node-under-document.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::isContentEditable): Added.
+        (WebCore::Document::isContentRichlyEditable): Added.
+        * dom/Document.h:
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::AppendNodeCommand): Takes ContainerNode instead of Element.
+        * editing/AppendNodeCommand.h:
+        (WebCore::AppendNodeCommand::create): Ditto.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::appendNode): Ditto.
+        (WebCore::CompositeEditCommand::insertNodeAfter): Calls parentNode instead of parentElement.
+        * editing/CompositeEditCommand.h:
+
 2011-03-15  David Grogan  <dgrogan@chromium.org>
 
         Reviewed by Jeremy Orlow.

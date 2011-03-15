@@ -144,7 +144,7 @@ void CompositeEditCommand::insertNodeAfter(PassRefPtr<Node> insertChild, PassRef
     ASSERT(insertChild);
     ASSERT(refChild);
     ASSERT(!refChild->hasTagName(bodyTag));
-    Element* parent = refChild->parentElement();
+    ContainerNode* parent = refChild->parentNode();
     ASSERT(parent);
     if (parent->lastChild() == refChild)
         appendNode(insertChild, parent);
@@ -184,7 +184,7 @@ void CompositeEditCommand::insertNodeAt(PassRefPtr<Node> insertChild, const Posi
         insertNodeAfter(insertChild, refChild);
 }
 
-void CompositeEditCommand::appendNode(PassRefPtr<Node> node, PassRefPtr<Element> parent)
+void CompositeEditCommand::appendNode(PassRefPtr<Node> node, PassRefPtr<ContainerNode> parent)
 {
     ASSERT(canHaveChildrenForEditing(parent.get()));
     applyCommandToComposite(AppendNodeCommand::create(parent, node));

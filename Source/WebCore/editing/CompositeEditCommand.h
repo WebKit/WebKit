@@ -49,7 +49,7 @@ protected:
     //
     // sugary-sweet convenience functions to help create and apply edit commands in composite commands
     //
-    void appendNode(PassRefPtr<Node>, PassRefPtr<Element> parent);
+    void appendNode(PassRefPtr<Node>, PassRefPtr<ContainerNode> parent);
     void applyCommandToComposite(PassRefPtr<EditCommand>);
     void applyStyle(const EditingStyle*, EditAction = EditActionChangeAttributes);
     void applyStyle(const EditingStyle*, const Position& start, const Position& end, EditAction = EditActionChangeAttributes);
