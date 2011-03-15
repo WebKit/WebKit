@@ -1,5 +1,11 @@
 2011-03-15  Tony Chang  <tony@chromium.org>
 
+        Fix chromium build using python 2.5 (with statement).
+
+        * scripts/generate_devtools_grd.py:
+
+2011-03-15  Tony Chang  <tony@chromium.org>
+
         Reviewed by Adam Barth.
 
         [chromium] add a build target to create a grd file with devtool resources

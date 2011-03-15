@@ -30,6 +30,8 @@
 
 """Creates a grd file for packaging the inspector files."""
 
+from __future__ import with_statement
+
 import errno
 import os
 import shutil
