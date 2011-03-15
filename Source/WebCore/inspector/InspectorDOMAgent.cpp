@@ -206,8 +206,12 @@ public:
         unsigned long size = result->snapshotLength(ec);
         for (unsigned long i = 0; !ec && i < size; ++i) {
             Node* node = result->snapshotItem(i, ec);
-            if (!ec)
-                resultCollector.add(node);
+            if (ec)
+                break;
+
+            if (node->nodeType() == Node::ATTRIBUTE_NODE)
+                node = static_cast<Attr*>(node)->ownerElement();
+            resultCollector.add(node);
         }
 #else
         UNUSED_PARAM(resultCollector);

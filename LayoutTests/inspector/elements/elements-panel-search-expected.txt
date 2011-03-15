@@ -11,4 +11,5 @@ FooBar
 <input value="InputVal">
 <input value="InputVal">
 <input value="InputVal">
+<div attr="foo"></div>
 

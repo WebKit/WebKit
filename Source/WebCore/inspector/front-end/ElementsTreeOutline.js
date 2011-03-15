@@ -1492,6 +1492,11 @@ WebInspector.ElementsTreeElement.prototype = {
             matchRanges.push({ offset: match.index, length: match[0].length });
             match = regexObject.exec(text);
         }
+
+        // Fall back for XPath, etc. matches.
+        if (!matchRanges.length)
+            matchRanges.push({ offset: 0, length: text.length });
+
         highlightSearchResults(this.listItemElement, matchRanges);
         this._searchHighlightedHTML = this.listItemElement.innerHTML;
     }
