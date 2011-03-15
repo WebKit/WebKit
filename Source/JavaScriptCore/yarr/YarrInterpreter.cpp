@@ -1234,6 +1234,10 @@ public:
             if (input.checkInput(currentTerm().checkInputCount))
                 MATCH_NEXT();
             BACKTRACK();
+
+            case ByteTerm::TypeUncheckInput:
+                input.uncheckInput(currentTerm().checkInputCount);
+                MATCH_NEXT();
         }
 
         // We should never fall-through to here.
@@ -1354,6 +1358,10 @@ public:
             case ByteTerm::TypeCheckInput:
                 input.uncheckInput(currentTerm().checkInputCount);
                 BACKTRACK();
+
+            case ByteTerm::TypeUncheckInput:
+                input.checkInput(currentTerm().checkInputCount);
+                BACKTRACK();
         }
 
         ASSERT_NOT_REACHED();
@@ -1453,6 +1461,11 @@ public:
         m_bodyDisjunction->terms.append(ByteTerm::CheckInput(count));
     }
 
+    void uncheckInput(unsigned count)
+    {
+        m_bodyDisjunction->terms.append(ByteTerm::UncheckInput(count));
+    }
+    
     void assertionBOL(int inputPosition)
     {
         m_bodyDisjunction->terms.append(ByteTerm::BOL(inputPosition));
@@ -1849,10 +1862,21 @@ public:
 
                     ASSERT(currentCountAlreadyChecked >= static_cast<unsigned>(term.inputPosition));
                     int positiveInputOffset = currentCountAlreadyChecked - term.inputPosition;
+                    int uncheckAmount = positiveInputOffset - term.parentheses.disjunction->m_minimumSize;
+
+                    if (uncheckAmount > 0) {
+                        uncheckInput(uncheckAmount);
+                        currentCountAlreadyChecked -= uncheckAmount;
+                    } else
+                        uncheckAmount = 0;
 
                     atomParentheticalAssertionBegin(term.parentheses.subpatternId, term.invert(), term.frameLocation, alternativeFrameLocation);
                     emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, positiveInputOffset, true);
                     atomParentheticalAssertionEnd(0, term.frameLocation, term.quantityCount, term.quantityType);
+                    if (uncheckAmount) {
+                        checkInput(uncheckAmount);
+                        currentCountAlreadyChecked += uncheckAmount;
+                    }
                     break;
                 }
                 }

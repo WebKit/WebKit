@@ -1,3 +1,16 @@
+2011-03-14  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Look-ahead assertions with back references don’t work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=56082
+
+        New tests to verify the corresponding changes.
+
+        * fast/regex/assertion-expected.txt: Added.
+        * fast/regex/assertion.html: Added.
+        * fast/regex/script-tests/assertion.js: Added.
+
 2011-03-14  David Levin  <levin@chromium.org>
 
         It's the same old song (about the linux debug crash).

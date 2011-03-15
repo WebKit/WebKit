@@ -70,6 +70,7 @@ struct ByteTerm {
         TypeParentheticalAssertionBegin,
         TypeParentheticalAssertionEnd,
         TypeCheckInput,
+        TypeUncheckInput,
     } type;
     union {
         struct {
@@ -205,6 +206,13 @@ struct ByteTerm {
         return term;
     }
 
+    static ByteTerm UncheckInput(unsigned count)
+    {
+        ByteTerm term(TypeUncheckInput);
+        term.checkInputCount = count;
+        return term;
+    }
+    
     static ByteTerm EOL(int inputPos)
     {
         ByteTerm term(TypeAssertionEOL);

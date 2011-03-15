@@ -1,3 +1,24 @@
+2011-03-14  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Look-ahead assertions with back references don’t work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=56082
+
+        Changed parentheses assertion processing to temporarily back out the 
+        number of known characters after the assertion while processing the 
+        assertion.  This was done so that assertions don't fail due to 
+        checking the number of required characters as additional to the 
+        rest of the express since assertions don't "consume" input.
+        Added a byte code to uncheck characters to support the change.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::ByteCompiler::uncheckInput):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::ByteTerm::UncheckInput):
+
 2011-03-14  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         Reviewed by Laszlo Gombos.
