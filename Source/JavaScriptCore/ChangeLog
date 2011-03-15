@@ -1,5 +1,15 @@
 2011-03-15  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Fix broken assert in new code.
+
+        * dfg/DFGAliasTracker.h:
+        (JSC::DFG::AliasTracker::recordPutByVal):
+            - recordPutByVal is called for both PutByVal & PutByValAlias.
+
+2011-03-15  Gavin Barraclough  <barraclough@apple.com>
+
         Rubber stamped by Sam Weinig.
 
         Removed redundant code from BytecodeGenerator.

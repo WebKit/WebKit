@@ -73,7 +73,7 @@ public:
 
     void recordPutByVal(NodeIndex putByVal)
     {
-        ASSERT_UNUSED(putByVal, m_graph[putByVal].op == PutByVal);
+        ASSERT_UNUSED(putByVal, m_graph[putByVal].op == PutByVal || m_graph[putByVal].op == PutByValAlias);
         m_candidateAliasGetByVal = NoNode;
     }
 
