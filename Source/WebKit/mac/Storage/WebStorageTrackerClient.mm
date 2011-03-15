@@ -53,7 +53,9 @@ WebStorageTrackerClient::~WebStorageTrackerClient()
 void WebStorageTrackerClient::dispatchDidModifyOriginOnMainThread(void* context)
 {
     ASSERT(isMainThread());
-    WebStorageTrackerClient::sharedWebStorageTrackerClient()->dispatchDidModifyOrigin(static_cast<SecurityOrigin*>(context));
+    // adoptRef is balanced by leakRef in dispatchDidModifyOrigin.
+    RefPtr<SecurityOrigin> origin = adoptRef(static_cast<SecurityOrigin*>(context));
+    WebStorageTrackerClient::sharedWebStorageTrackerClient()->dispatchDidModifyOrigin(origin.get());
 }
 
 void WebStorageTrackerClient::dispatchDidModifyOrigin(PassRefPtr<SecurityOrigin> origin)
@@ -69,7 +71,8 @@ void WebStorageTrackerClient::dispatchDidModifyOrigin(const String& originIdenti
     PassRefPtr<SecurityOrigin> origin = SecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
 
     if (!isMainThread()) {
-        callOnMainThread(dispatchDidModifyOriginOnMainThread, static_cast<void*>(origin.leakRef()));
+        // leakRef is balanced by adoptRef in dispatchDidModifyOriginOnMainThread.
+        callOnMainThread(dispatchDidModifyOriginOnMainThread, origin.leakRef());
         return;
     }
 
