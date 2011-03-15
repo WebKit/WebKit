@@ -1,3 +1,16 @@
+2011-03-15  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] fast/canvas/canvas-strokeRect-gradient-shadow.html no longer fails
+        https://bugs.webkit.org/show_bug.cgi?id=56413
+
+        Rect stroking uses the same code path as path stroking, which was fixed
+        in r80250. Therefore, the test can be removed from the Skipped list as
+        it now succeeds.
+
+        * platform/qt/Skipped:
+
 2011-03-15  Adam Roben  <aroben@apple.com>
 
         Add Windows results for tests added in r81168
