@@ -1,3 +1,17 @@
+2011-03-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Adam Barth.
+
+        [GTK] [WebKit2] The UIProcess never changes the mouse cursor
+        https://bugs.webkit.org/show_bug.cgi?id=56333
+
+        Add an implementation for WebView::addCursor for WebKit2 GTK+. This allows
+        the cursor to change as the user mouses around the page. There is currently
+        no test infrastructure to track cursor changes.
+
+        * UIProcess/gtk/WebView.cpp:
+        (WebKit::WebView::setCursor): Ported implementation from WebKit1.
+
 2011-03-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.
