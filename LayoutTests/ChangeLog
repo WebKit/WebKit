@@ -186,6 +186,13 @@
 
 2011-03-14  Luiz Agostini  <luiz.agostini@openbossa.org>
 
+        Skipping some tests on Windows due to problems on mouse click handling.
+        See https://bugs.webkit.org/show_bug.cgi?id=56347.
+
+        * platform/win/Skipped:
+
+2011-03-14  Luiz Agostini  <luiz.agostini@openbossa.org>
+
         Adjusting Snow Leopard expected results after r81035.
 
         * platform/mac/fast/html/details-add-summary-1-and-click-expected.txt: Added.
