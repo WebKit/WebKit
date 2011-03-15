@@ -42,6 +42,7 @@ using namespace HTMLNames;
 AccessibilityImageMapLink::AccessibilityImageMapLink()
     : m_areaElement(0)
     , m_mapElement(0)
+    , m_parent(0)
 {
 }
 

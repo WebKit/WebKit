@@ -1,3 +1,22 @@
+2011-03-15  Chris Mumford  <chris.mumford@palm.com>
+
+        Reviewed by Adam Barth.
+
+        Initializing several member variables that were not initialized in
+        their constructors. These values were all read prior to initialization
+        as reported by Valgrind.
+
+        No new tests: No feature additions/removals.
+
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::AccessibilityImageMapLink):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::DeleteSelectionCommand):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        * xml/XPathResult.cpp:
+        (WebCore::XPathResult::XPathResult):
+
 2011-03-15  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Adam Barth.

@@ -76,6 +76,7 @@ static const float MaxSkiaDim = 32767.0F; // Maximum width/height in CSS pixels.
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
     , m_size(DefaultWidth, DefaultHeight)
+    , m_rendererIsCanvas(false)
     , m_ignoreReset(false)
     , m_pageScaleFactor(document->frame() ? document->frame()->page()->chrome()->scaleFactor() : 1)
     , m_originClean(true)
