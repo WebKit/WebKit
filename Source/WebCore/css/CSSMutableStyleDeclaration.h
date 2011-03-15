@@ -140,6 +140,8 @@ public:
     
     bool propertiesEqual(const CSSMutableStyleDeclaration* o) const { return m_properties == o->m_properties; }
 
+    bool isInlineStyleDeclaration();
+
 protected:
     CSSMutableStyleDeclaration(CSSRule* parentRule);
 

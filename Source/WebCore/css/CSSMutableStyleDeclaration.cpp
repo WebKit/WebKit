@@ -498,14 +498,18 @@ String CSSMutableStyleDeclaration::removeProperty(int propertyID, bool notifyCha
     return value;
 }
 
+bool CSSMutableStyleDeclaration::isInlineStyleDeclaration()
+{
+    // FIXME: Ideally, this should be factored better and there
+    // should be a subclass of CSSMutableStyleDeclaration just
+    // for inline style declarations that handles this
+    return m_node && m_node->isStyledElement() && static_cast<StyledElement*>(m_node)->inlineStyleDecl() == this;
+}
+
 void CSSMutableStyleDeclaration::setNeedsStyleRecalc()
 {
     if (m_node) {
-        // FIXME: Ideally, this should be factored better and there
-        // should be a subclass of CSSMutableStyleDeclaration just
-        // for inline style declarations that handles this
-        bool isInlineStyleDeclaration = m_node->isStyledElement() && this == static_cast<StyledElement*>(m_node)->inlineStyleDecl();
-        if (isInlineStyleDeclaration) {
+        if (isInlineStyleDeclaration()) {
             m_node->setNeedsStyleRecalc(InlineStyleChange);
             static_cast<StyledElement*>(m_node)->invalidateStyleAttribute();
             if (m_node->document())

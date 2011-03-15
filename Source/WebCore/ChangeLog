@@ -1,3 +1,35 @@
+2011-03-14  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [v8] Rework object group building.
+        https://bugs.webkit.org/show_bug.cgi?id=55399
+
+        Instead of going top-down (from owner to owned elements), go up---from objects
+        to their group ids.  That fits better to v8's object grouping model and guarantees
+        that each wrapper belongs to the single group.
+
+        Alas, this cannot be implemented for one kind of objects---CSSProperties.
+
+        Part of core GC algorithm and tested extensively by exisiting layout tests.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::calculateGroupId):
+        (WebCore::calculateRootStyleSheet):
+        (WebCore::GrouperVisitor::visitDOMWrapper):
+        (WebCore::GrouperVisitor::applyGrouping):
+        (WebCore::V8GCController::gcPrologue):
+        * bindings/v8/WrapperTypeInfo.h:
+        (WebCore::WrapperTypeInfo::isSubclass):
+        * css/CSSRuleList.h:
+        (WebCore::CSSRuleList::styleList):
+        * css/StyleSheetList.h:
+        (WebCore::StyleSheetList::document):
+
 2011-03-14  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by James Robinson.

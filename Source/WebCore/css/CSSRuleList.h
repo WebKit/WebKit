@@ -53,6 +53,11 @@ public:
     void deleteRule(unsigned index);
     void append(CSSRule*);
 
+    StyleList* styleList()
+    {
+        return m_list.get();
+    }
+
 private:
     CSSRuleList();
     CSSRuleList(StyleList*, bool omitCharsetRules);

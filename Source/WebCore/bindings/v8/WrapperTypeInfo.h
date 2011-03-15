@@ -61,6 +61,16 @@ namespace WebCore {
         {
             return this == that;
         }
+
+        bool isSubclass(const WrapperTypeInfo* that) const
+        {
+            for (const WrapperTypeInfo* current = this; current; current = current->parentClass) {
+                if (current == that)
+                    return true;
+            }
+
+            return false;
+        }
         
         v8::Persistent<v8::FunctionTemplate> getTemplate() { return getTemplateFunction(); }
         
@@ -80,6 +90,7 @@ namespace WebCore {
         const GetTemplateFunction getTemplateFunction;
         const DerefObjectFunction derefObjectFunction;
         const ToActiveDOMObjectFunction toActiveDOMObjectFunction;
+        const WrapperTypeInfo* parentClass;
     };
 }
 

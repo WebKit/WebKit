@@ -1716,8 +1716,22 @@ sub GenerateImplementation
 
     my $toActive = IsActiveDomType($interfaceName) ? "${className}::toActiveDOMObject" : "0";
 
+    # Find the super descriptor.
+    my $parentClass = "";
+    my $parentClassTemplate = "";
+    foreach (@{$dataNode->parents}) {
+        my $parent = $codeGenerator->StripModule($_);
+        if ($parent eq "EventTarget") {
+            next;
+        }
+        $implIncludes{"V8${parent}.h"} = 1;
+        $parentClass = "V8" . $parent;
+        $parentClassTemplate = $parentClass . "::GetTemplate()";
+        last;
+    }
     push(@implContentDecls, "namespace WebCore {\n\n");
-    push(@implContentDecls, "WrapperTypeInfo ${className}::info = { ${className}::GetTemplate, ${className}::derefObject, ${toActive} };\n\n");   
+    my $parentClassInfo = $parentClass ? "&${parentClass}::info" : "0";
+    push(@implContentDecls, "WrapperTypeInfo ${className}::info = { ${className}::GetTemplate, ${className}::derefObject, ${toActive}, ${parentClassInfo} };\n\n");   
     push(@implContentDecls, "namespace ${interfaceName}Internal {\n\n");
     push(@implContentDecls, "template <typename T> void V8_USE(T) { }\n\n");
 
@@ -1941,15 +1955,6 @@ static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Pers
 END
     }
 
-    # find the super descriptor
-    my $parentClassTemplate = "";
-    foreach (@{$dataNode->parents}) {
-        my $parent = $codeGenerator->StripModule($_);
-        if ($parent eq "EventTarget") { next; }
-        $implIncludes{"V8${parent}.h"} = 1;
-        $parentClassTemplate = "V8" . $parent . "::GetTemplate()";
-        last;
-    }
     if (!$parentClassTemplate) {
         $parentClassTemplate = "v8::Persistent<v8::FunctionTemplate>()";
     }

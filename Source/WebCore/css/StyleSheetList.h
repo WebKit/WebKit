@@ -50,6 +50,11 @@ public:
     {
         m_sheets.swap(sheets);
     }
+
+    Document* document()
+    {
+        return m_doc;
+    }
     
 private:
     StyleSheetList(Document*);

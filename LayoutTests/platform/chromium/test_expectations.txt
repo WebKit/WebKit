@@ -3390,6 +3390,9 @@ BUGCR75632 LINUX : svg/W3C-SVG-1.1/text-text-03-b.svg = CRASH PASS
 BUGCR75639 WIN LINUX : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
 BUGCR75639 MAC LEOPARD : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
 
+// I (antonm) am working on proper fix for it.  Temporary suppressing text differences.
+BUGWK55399 : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
+
 // Test changed in Wk r80743, throws an exception rather than returning 'true'
 BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
 
