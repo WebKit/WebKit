@@ -1,3 +1,12 @@
+2011-03-15  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Document the qmakearg argument, and hint how to build webkit2 on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=56326
+
+        * Scripts/build-webkit: add --qmakearg to build-webkit --help
+
 2011-03-15  Adam Roben  <aroben@apple.com>
 
         Make Windows 7 Release (Tests) a core builder

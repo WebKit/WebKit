@@ -349,6 +349,7 @@ Usage: $programName [options] [options to pass to build system]
 
   --prefix=<path>                   Set installation prefix to the given path (Gtk/Efl only)
   --makeargs=<arguments>            Optional Makefile flags
+  --qmakearg=<arguments>            Optional qmake flags (Qt only, e.g. --qmakearg="CONFIG+=webkit2" to build WebKit2)
 
   --minimal                         No optional features, unless explicitly enabled.
 
