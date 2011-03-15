@@ -3,6 +3,6 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="TestWebKitAPIDebug"
-	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;..\Configurations\TestWebKitAPICommon.vsprops;..\Configurations\TestWebKitAPICoreFoundation.vsprops"
+	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\TestWebKitAPICommon.vsprops;.\TestWebKitAPICoreFoundation.vsprops;.\TestWebKitAPICFNetwork.vsprops"
 	>
 </VisualStudioPropertySheet>

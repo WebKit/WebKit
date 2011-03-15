@@ -412,6 +412,10 @@
 				Name="WebKit2"
 				>
 				<File
+					RelativePath="..\Tests\WebKit2\AboutBlankLoad.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\CanHandleRequest.cpp"
 					>
 				</File>

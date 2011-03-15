@@ -98,9 +98,9 @@ private:
     static bool platformCompare(const ResourceResponse& a, const ResourceResponse& b);
 
 #if USE(CFNETWORK)
-    RetainPtr<CFURLResponseRef> m_cfResponse;
+    mutable RetainPtr<CFURLResponseRef> m_cfResponse;
 #else
-    RetainPtr<NSURLResponse> m_nsResponse;
+    mutable RetainPtr<NSURLResponse> m_nsResponse;
 #endif
     bool m_isUpToDate;
 };

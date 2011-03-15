@@ -1,3 +1,19 @@
+2011-03-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben
+
+        about:blank fake responses don't get serialized when sent the UIProcess
+        <rdar://problem/9108119>
+        https://bugs.webkit.org/show_bug.cgi?id=56357
+
+        Test: AboutBlankLoad
+
+        * platform/network/cf/ResourceResponse.h:
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::cfURLResponse):
+        Create a CFURLResponseRef if one does not exist yet as we do for
+        NSURLResponses on the mac.
+
 2011-03-14  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

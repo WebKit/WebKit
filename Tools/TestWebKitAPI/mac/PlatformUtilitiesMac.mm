@@ -28,7 +28,9 @@
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKStringCF.h>
 #include <WebKit2/WKURLCF.h>
+#include <WebKit2/WKURLResponseNS.h>
 #include <WebKit2/WebKit2.h>
+#include <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
 namespace Util {
@@ -60,6 +62,12 @@ WKURLRef URLForNonExistentResource()
 {
     NSURL *nsURL = [NSURL URLWithString:@"file:///does-not-exist.html"];
     return WKURLCreateWithCFURL((CFURLRef)nsURL);
+}
+
+WKRetainPtr<WKStringRef> MIMETypeForWKURLResponse(WKURLResponseRef wkResponse)
+{
+    RetainPtr<NSURLResponse> response(AdoptNS, WKURLResponseCopyNSURLResponse(wkResponse));
+    return adoptWK(WKStringCreateWithCFString((CFStringRef)[response.get() MIMEType]));
 }
 
 bool isKeyDown(WKNativeEventPtr event)

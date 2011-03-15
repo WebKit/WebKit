@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
+#include "Test.h"
 
+#include "PlatformUtilities.h"
+#include "PlatformWebView.h"
 #include <WebKit2/WebKit2.h>
-#include <WebKit2/WKRetainPtr.h>
-#include <string>
 
 namespace TestWebKitAPI {
-namespace Util {
+    
+static bool done;
 
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
-
-void sleep(double seconds);
-
-WKContextRef createContextForInjectedBundleTest(const std::string&, WKTypeRef userData = 0);
-
-WKStringRef createInjectedBundlePath();
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
-WKRetainPtr<WKStringRef> MIMETypeForWKURLResponse(WKURLResponseRef);
-
-bool isKeyDown(WKNativeEventPtr);
-
-std::string toSTD(WKStringRef string);
-WKRetainPtr<WKStringRef> toWK(const char* utf8String);
-
-template<typename T> static inline WKRetainPtr<T> adoptWK(T item)
+static void decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void*)
 {
-    return WKRetainPtr<T>(AdoptWK, item);
+    TEST_ASSERT(WKStringIsEqualToUTF8CString(Util::MIMETypeForWKURLResponse(response).get(), "text/html"));
+
+    WKFramePolicyListenerUse(listener);
+    done = true;
 }
 
-} // namespace Util
-} // namespace TestWebKitAPI
+TEST(WebKit2, AboutBlankLoad)
+{
+    WKRetainPtr<WKContextRef> context = Util::adoptWK(WKContextCreate());
+    PlatformWebView webView(context.get());
 
-#endif // PlatformUtilities_h
+    WKPagePolicyClient policyClient;
+    memset(&policyClient, 0, sizeof(policyClient));
+
+    policyClient.decidePolicyForResponse = decidePolicyForResponse;
+    WKPageSetPagePolicyClient(webView.page(), &policyClient);
+
+    WKPageLoadURL(webView.page(), Util::adoptWK(WKURLCreateWithUTF8CString("about:blank")).get());
+
+    Util::run(&done);
+}
+
+} // namespace TestWebKitAPI

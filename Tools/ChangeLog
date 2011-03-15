@@ -1,3 +1,27 @@
+2011-03-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        about:blank fake responses don't get serialized when sent the UIProcess
+        <rdar://problem/9108119>
+        https://bugs.webkit.org/show_bug.cgi?id=56357
+
+        * TestWebKitAPI/Tests/WebKit2/AboutBlankLoad.cpp: Added.
+        (TestWebKitAPI::decidePolicyForResponse):
+        (TestWebKitAPI::TEST):
+        Add test that loads of about:blank have a response with a MIMEType of text/html.
+
+        * TestWebKitAPI/PlatformUtilities.h:
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        (TestWebKitAPI::Util::MIMETypeForWKURLResponse):
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp:
+        (TestWebKitAPI::Util::MIMETypeForWKURLResponse):
+        Add helper to get the MIMEType from a WKURLResponse.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        Add new files.
+
 2011-03-14  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

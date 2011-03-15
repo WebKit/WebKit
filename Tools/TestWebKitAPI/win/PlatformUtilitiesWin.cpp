@@ -29,6 +29,10 @@
 #include <WebKit2/WKURLCF.h>
 #include <wtf/RetainPtr.h>
 
+#if USE(CFNETWORK)
+#include <WebKit2/WKURLResponseCF.h>
+#endif
+
 namespace TestWebKitAPI {
 namespace Util {
 
@@ -79,6 +83,16 @@ WKURLRef createURLForResource(const char* resource, const char* extension)
 WKURLRef URLForNonExistentResource()
 {
     return WKURLCreateWithUTF8CString("file:///does-not-exist.html");
+}
+
+WKRetainPtr<WKStringRef> MIMETypeForWKURLResponse(WKURLResponseRef wkResponse)
+{
+#if USE(CFNETWORK)
+    RetainPtr<CFURLResponseRef> response(AdoptCF, WKURLResponseCopyCFURLResponse(0, wkResponse));
+    return adoptWK(WKStringCreateWithCFString(CFURLResponseGetMIMEType(response.get())));
+#else
+    return 0;
+#endif
 }
 
 bool isKeyDown(WKNativeEventPtr event)
