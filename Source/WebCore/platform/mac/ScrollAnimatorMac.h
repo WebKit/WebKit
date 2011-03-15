@@ -67,12 +67,22 @@ public:
 #endif
 #endif
 
+    virtual void cancelAnimations();
+
     void immediateScrollToPoint(const FloatPoint& newPosition);
     void immediateScrollByDeltaX(float deltaX);
     void immediateScrollByDeltaY(float deltaY);
 
     void setIsDrawingIntoLayer(bool b) { m_drawingIntoLayer = b; }
     bool isDrawingIntoLayer() const { return m_drawingIntoLayer; }
+
+    bool haveScrolledSincePageLoad() const { return m_haveScrolledSincePageLoad; }
+
+#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+    bool scrollbarPaintTimerIsActive() const;
+    void startScrollbarPaintTimer();
+    void stopScrollbarPaintTimer();
+#endif
 
 private:
     RetainPtr<id> m_scrollAnimationHelper;
@@ -82,6 +92,9 @@ private:
     RetainPtr<WKScrollbarPainterControllerRef> m_scrollbarPainterController;
     RetainPtr<ScrollbarPainterControllerDelegate> m_scrollbarPainterControllerDelegate;
     RetainPtr<id> m_scrollbarPainterDelegate;
+
+    void initialScrollbarPaintTimerFired(Timer<ScrollAnimatorMac>*);
+    Timer<ScrollAnimatorMac> m_initialScrollbarPaintTimer;
 #endif
     
     virtual void notityPositionChanged();
@@ -131,6 +144,7 @@ private:
     Timer<ScrollAnimatorMac> m_snapRubberBandTimer;
 #endif
     bool m_drawingIntoLayer;
+    bool m_haveScrolledSincePageLoad;
 };
 
 } // namespace WebCore

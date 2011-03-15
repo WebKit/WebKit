@@ -112,6 +112,7 @@ private:
     virtual int visibleHeight() const;
     virtual int visibleWidth() const;
     virtual IntPoint currentMousePosition() const;
+    virtual bool shouldSuspendScrollAnimations() const;
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int newOffset);

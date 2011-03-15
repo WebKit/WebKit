@@ -77,6 +77,7 @@ private:
     virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const;
     virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const;
     virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const;
+    virtual bool shouldSuspendScrollAnimations() const;
 
     RefPtr<Scrollbar> m_vBar;
 };

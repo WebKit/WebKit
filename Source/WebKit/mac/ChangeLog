@@ -1,3 +1,13 @@
+2011-03-15  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        WebKit part of <rdar://problem/9075624> Overlay scrollbars slow down PLT by 6%
+
+        New WebKitystemInterface function to force the scrollbars to flash
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-03-15  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Tony Chang.

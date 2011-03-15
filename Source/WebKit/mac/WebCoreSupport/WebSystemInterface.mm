@@ -128,6 +128,7 @@ void InitWebCoreSystemInterface(void)
     INIT(MakeScrollbarPainter);
     INIT(ScrollbarPainterSetDelegate);
     INIT(ScrollbarPainterPaint);
+    INIT(ScrollbarPainterForceFlashScrollers);
     INIT(ScrollbarThickness);
     INIT(ScrollbarMinimumThumbLength);
     INIT(ScrollbarMinimumTotalLengthNeededForThumb);

@@ -2050,6 +2050,11 @@ void FrameView::didCompleteRubberBand(const IntSize& initialOverhang) const
     return page->chrome()->client()->didCompleteRubberBandForMainFrame(initialOverhang);
 }
 
+bool FrameView::shouldSuspendScrollAnimations() const
+{
+    return m_frame->loader()->state() != FrameStateComplete;
+}
+
 #if ENABLE(DASHBOARD_SUPPORT)
 void FrameView::updateDashboardRegions()
 {

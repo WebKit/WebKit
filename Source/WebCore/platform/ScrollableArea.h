@@ -115,6 +115,7 @@ public:
     virtual IntSize overhangAmount() const { ASSERT_NOT_REACHED(); return IntSize(); }
     virtual IntPoint currentMousePosition() const { return IntPoint(); }
     virtual void didCompleteRubberBand(const IntSize&) const { ASSERT_NOT_REACHED(); }
+    virtual bool shouldSuspendScrollAnimations() const { return true; }
 
 private:
     // NOTE: Only called from the ScrollAnimator.

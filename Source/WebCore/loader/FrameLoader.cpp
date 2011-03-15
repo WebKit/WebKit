@@ -84,6 +84,7 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "SchemeRegistry.h"
+#include "ScrollAnimator.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
@@ -1948,6 +1949,9 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
 
     if (m_state != FrameStateProvisional)
         return;
+
+    if (m_frame->view())
+        m_frame->view()->scrollAnimator()->cancelAnimations();
 
     m_client->setCopiesOnScroll();
     history()->updateForCommit();

@@ -747,6 +747,14 @@ IntPoint RenderListBox::currentMousePosition() const
     return view->frameView()->currentMousePosition();
 }
 
+bool RenderListBox::shouldSuspendScrollAnimations() const
+{
+    RenderView* view = this->view();
+    if (!view)
+        return true;
+    return view->frameView()->shouldSuspendScrollAnimations();
+}
+
 PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
 {
     RefPtr<Scrollbar> widget;

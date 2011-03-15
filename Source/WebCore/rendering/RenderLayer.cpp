@@ -1778,6 +1778,14 @@ int RenderLayer::visibleWidth() const
     return m_width;
 }
 
+bool RenderLayer::shouldSuspendScrollAnimations() const
+{
+    RenderView* view = renderer()->view();
+    if (!view)
+        return true;
+    return view->frameView()->shouldSuspendScrollAnimations();
+}
+
 IntSize RenderLayer::scrollbarOffset(const Scrollbar* scrollbar) const
 {
     RenderBox* box = renderBox();

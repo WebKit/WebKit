@@ -196,10 +196,13 @@ extern CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned w
 extern CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
 
 typedef struct __WKScrollbarPainter *WKScrollbarPainterRef;
+typedef struct __WKScrollbarPainterController *WKScrollbarPainterControllerRef;
+
 extern WKScrollbarPainterRef (*wkMakeScrollbarPainter)(int controlSize, bool isHorizontal);
 extern WKScrollbarPainterRef (*wkMakeScrollbarReplacementPainter)(WKScrollbarPainterRef oldPainter, int newStyle, int controlSize, bool isHorizontal);
 extern void (*wkScrollbarPainterSetDelegate)(WKScrollbarPainterRef, id scrollbarPainterDelegate);
 extern void (*wkScrollbarPainterPaint)(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, CGRect frameRect);
+extern void (*wkScrollbarPainterForceFlashScrollers)(WKScrollbarPainterControllerRef);
 extern int (*wkScrollbarThickness)(int controlSize);
 extern int (*wkScrollbarMinimumThumbLength)(WKScrollbarPainterRef);
 extern int (*wkScrollbarMinimumTotalLengthNeededForThumb)(WKScrollbarPainterRef);
@@ -210,7 +213,6 @@ extern void (*wkSetScrollbarPainterTrackAlpha)(WKScrollbarPainterRef, CGFloat);
 extern bool (*wkScrollbarPainterIsHorizontal)(WKScrollbarPainterRef);
 extern void (*wkScrollbarPainterSetOverlayState)(WKScrollbarPainterRef, int overlayScrollerState);
 
-typedef struct __WKScrollbarPainterController *WKScrollbarPainterControllerRef;
 extern WKScrollbarPainterControllerRef (*wkMakeScrollbarPainterController)(id painterControllerDelegate);
 extern void (*wkSetPainterForPainterController)(WKScrollbarPainterControllerRef, WKScrollbarPainterRef, bool isHorizontal);
 extern WKScrollbarPainterRef (*wkVerticalScrollbarPainterForController)(WKScrollbarPainterControllerRef);

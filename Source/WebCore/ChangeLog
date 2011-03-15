@@ -1,3 +1,67 @@
+2011-03-15  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for <rdar://problem/9075624> Overlay scrollbars slow down PLT by 6%
+
+        Tell the ScrollAnimator to cancelAnimations() since we are navigating to a new 
+        page.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+        
+        Scroll animations should be suspended if the FrameLoadState is anything but 
+        complete.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::shouldSuspendScrollAnimations):
+        * page/FrameView.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::shouldSuspendScrollAnimations):
+        * rendering/RenderDataGrid.cpp:
+        (WebCore::RenderDataGrid::shouldSuspendScrollAnimations):
+        * rendering/RenderDataGrid.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::shouldSuspendScrollAnimations):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::shouldSuspendScrollAnimations):
+        * rendering/RenderListBox.h:
+
+        New virtual function cancelAnimations() is only needed on the Mac, so the base 
+        class is empty.
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::cancelAnimations):
+
+        ScrollAnimatorMac needs to keep track of whether the page has been scrolled since 
+        it started loading. If so, we will override optimizations that wait for the 
+        FrameLoadState to be complete before animating scrollbars.
+        * platform/mac/ScrollAnimatorMac.h:
+        (WebCore::ScrollAnimatorMac::haveScrolledSincePageLoad):
+
+        If the scrollbar animations should be suspended, we start a timer to make sure 
+        that we do flash the scrollbars. Animating the scrollbars is expensive, so this is 
+        both a performance optimization and a UI enhancement since the scrollbar won't 
+        jump around nearly as much on a page load.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPainterDelegate cancelAnimations]):
+        (-[ScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:overlayScrollerStateChangedTo:]):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::scroll):
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        (WebCore::ScrollAnimatorMac::cancelAnimations):
+        (WebCore::ScrollAnimatorMac::smoothScrollWithEvent):
+        (WebCore::ScrollAnimatorMac::beginScrollGesture):
+        (WebCore::ScrollAnimatorMac::startScrollbarPaintTimer):
+        (WebCore::ScrollAnimatorMac::scrollbarPaintTimerIsActive):
+        (WebCore::ScrollAnimatorMac::stopScrollbarPaintTimer):
+        (WebCore::ScrollAnimatorMac::initialScrollbarPaintTimerFired):
+
+        New WebCoreSystemInterface function to force the scrollbars to flash
+        * WebCore.exp.in:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2011-03-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.

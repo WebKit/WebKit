@@ -132,6 +132,7 @@ WKScrollbarPainterRef (*wkMakeScrollbarPainter)(int controlSize, bool isHorizont
 WKScrollbarPainterRef (*wkMakeScrollbarReplacementPainter)(WKScrollbarPainterRef oldPainter, int newStyle, int controlSize, bool isHorizontal);
 void (*wkScrollbarPainterSetDelegate)(WKScrollbarPainterRef, id scrollbarPainterDelegate);
 void (*wkScrollbarPainterPaint)(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, CGRect frameRect);
+void (*wkScrollbarPainterForceFlashScrollers)(WKScrollbarPainterControllerRef);
 int (*wkScrollbarThickness)(int controlSize);
 int (*wkScrollbarMinimumThumbLength)(WKScrollbarPainterRef);
 int (*wkScrollbarMinimumTotalLengthNeededForThumb)(WKScrollbarPainterRef);

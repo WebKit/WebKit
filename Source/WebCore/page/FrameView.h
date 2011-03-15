@@ -271,6 +271,8 @@ public:
     void setIsRestoringFromBackForward(bool isRestoring) { m_isRestoringFromBackForward = isRestoring; }
     bool isRestoringFromBackForward() const { return m_isRestoringFromBackForward; }
 
+    virtual bool shouldSuspendScrollAnimations() const;
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);

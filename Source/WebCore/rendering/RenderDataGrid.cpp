@@ -256,6 +256,14 @@ IntPoint RenderDataGrid::convertFromContainingViewToScrollbar(const Scrollbar* s
     return point;
 }
 
+bool RenderDataGrid::shouldSuspendScrollAnimations() const
+{
+    RenderView* view = this->view();
+    if (!view)
+        return true;
+    return view->frameView()->shouldSuspendScrollAnimations();
+}
+
 }
 
 #endif
