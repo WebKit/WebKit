@@ -117,6 +117,7 @@ extern BOOL (*wkGetGlyphTransformedAdvances)(CGFontRef, NSFont*, CGAffineTransfo
 extern void (*wkDrawMediaSliderTrack)(int themeStyle, CGContextRef context, CGRect rect, float timeLoaded, float currentTime, 
     float duration, unsigned state);
 extern void (*wkDrawMediaUIPart)(int part, int themeStyle, CGContextRef context, CGRect rect, unsigned state);
+extern CFStringRef (*wkSignedPublicKeyAndChallengeString)(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription);
 extern NSString* (*wkGetPreferredExtensionForMIMEType)(NSString*);
 extern NSArray* (*wkGetExtensionsForMIMEType)(NSString*);
 extern NSString* (*wkGetMIMETypeForExtension)(NSString*);

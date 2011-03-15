@@ -167,6 +167,13 @@ public:
     virtual String allFilesText() = 0;
 #endif
 
+#if PLATFORM(MAC)
+    virtual String keygenMenuItem512() = 0;
+    virtual String keygenMenuItem1024() = 0;
+    virtual String keygenMenuItem2048() = 0;
+    virtual String keygenKeychainItemName(const String& host) = 0;
+#endif
+
     virtual String imageTitle(const String& filename, const IntSize& size) = 0;
 
     virtual String mediaElementLoadingStateText() = 0;

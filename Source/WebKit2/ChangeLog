@@ -1,3 +1,18 @@
+2011-03-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (WebKit2): keygen element doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=56402
+        <rdar://problem/9006545>
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        Added strings used by keygen.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm: Initialize a WebCore pointer to
+        a function used by keygen.
+
 2011-03-15  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.

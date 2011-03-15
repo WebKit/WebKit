@@ -307,7 +307,7 @@
 		939811130824BF01008DF038 /* WebHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65DA2608052CC18700A97B31 /* WebHistory.mm */; };
 		939811150824BF01008DF038 /* WebNSDataExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = BECD142A0565830A005BB09C /* WebNSDataExtras.m */; };
 		939811160824BF01008DF038 /* WebNSEventExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = BE887C00056D3A6E009BB3E7 /* WebNSEventExtras.m */; };
-		939811170824BF01008DF038 /* WebKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 84723BE4056D719E0044BFEA /* WebKeyGenerator.m */; };
+		939811170824BF01008DF038 /* WebKeyGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84723BE4056D719E0044BFEA /* WebKeyGenerator.mm */; };
 		939811190824BF01008DF038 /* WebNSPrintOperationExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = EDD1A5C705C83987008E3150 /* WebNSPrintOperationExtras.m */; };
 		9398111A0824BF01008DF038 /* WebResource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84311A1305EAAAF00088EDA4 /* WebResource.mm */; };
 		9398111B0824BF01008DF038 /* WebDefaultEditingDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BE95BEE505FD0805006E1513 /* WebDefaultEditingDelegate.m */; };
@@ -597,7 +597,7 @@
 		8467275C0367158500CA2ACA /* WebPluginController.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginController.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		8467275D0367158500CA2ACA /* WebPluginController.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPluginController.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		84723BE3056D719E0044BFEA /* WebKeyGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKeyGenerator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		84723BE4056D719E0044BFEA /* WebKeyGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebKeyGenerator.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		84723BE4056D719E0044BFEA /* WebKeyGenerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKeyGenerator.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		848DFF840365FE6A00CA2ACA /* WebPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPlugin.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		848DFF850365FE6A00CA2ACA /* WebPluginContainer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginContainer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		848DFF860365FE6A00CA2ACA /* WebPluginViewFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginViewFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1325,7 +1325,7 @@
 				9345D4EA0365C5B2008635CE /* WebJavaScriptTextInputPanel.h */,
 				9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */,
 				84723BE3056D719E0044BFEA /* WebKeyGenerator.h */,
-				84723BE4056D719E0044BFEA /* WebKeyGenerator.m */,
+				84723BE4056D719E0044BFEA /* WebKeyGenerator.mm */,
 				1AA879B411CBE9BF003C664F /* WebPlatformStrategies.h */,
 				1AA879B511CBE9BF003C664F /* WebPlatformStrategies.mm */,
 				0A2D87FB107AF52B00CDDEE3 /* WebPluginHalterClient.h */,
@@ -1926,7 +1926,7 @@
 				1C7B0C660EB2464D00A28502 /* WebInspectorClientCF.cpp in Sources */,
 				939810E40824BF01008DF038 /* WebJavaScriptTextInputPanel.m in Sources */,
 				37D1DCA91065928C0068F7EF /* WebJSPDFDoc.mm in Sources */,
-				939811170824BF01008DF038 /* WebKeyGenerator.m in Sources */,
+				939811170824BF01008DF038 /* WebKeyGenerator.mm in Sources */,
 				939811030824BF01008DF038 /* WebKitErrors.m in Sources */,
 				939810C30824BF01008DF038 /* WebKitLogging.m in Sources */,
 				939810C40824BF01008DF038 /* WebKitNSStringExtras.mm in Sources */,

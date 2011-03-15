@@ -308,7 +308,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         WebCore::notifyHistoryItemChanged = WKNotifyHistoryItemChanged;
 
         [WebViewFactory createSharedFactory];
-        [WebKeyGenerator createSharedGenerator];
 
 // FIXME: Remove the NSAppKitVersionNumberWithDeferredWindowDisplaySupport check once
 // once AppKit's Deferred Window Display support is available.

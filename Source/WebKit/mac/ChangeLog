@@ -1,3 +1,33 @@
+2011-03-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (WebKit2): keygen element doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=56402
+        <rdar://problem/9006545>
+
+        * WebCoreSupport/WebKeyGenerator.h:
+        * WebCoreSupport/WebKeyGenerator.m: Removed.
+        * WebCoreSupport/WebKeyGenerator.mm: Copied from Source/WebKit/mac/WebCoreSupport/WebKeyGenerator.m.
+        (+[WebKeyGenerator sharedGenerator]):
+        (toWebCertificateParseResult):
+        WebCore no longer needs WebKeyGenerator. Safari still does need a part of it, so keeping
+        this misnamed and misplaced code for now.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::keygenMenuItem512):
+        (WebPlatformStrategies::keygenMenuItem1024):
+        (WebPlatformStrategies::keygenMenuItem2048):
+        (WebPlatformStrategies::keygenKeychainItemName):
+        Added strings used by keygen.
+
+        * WebCoreSupport/WebSystemInterface.mm: (InitWebCoreSystemInterface): Initialize a WebCore
+        pointer to a function used by keygen.
+
+        * WebView/WebFrameView.mm: (-[WebFrameView initWithFrame:]): WebKeyGenerator can be lazily
+        initialized now.
+
 2011-03-15  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.

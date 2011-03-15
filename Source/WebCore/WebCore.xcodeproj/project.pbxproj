@@ -2976,7 +2976,6 @@
 		93F199B808245E59001E9ABC /* Scrollbar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7B2AF80450824100A8000F /* Scrollbar.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199BB08245E59001E9ABC /* WebCoreKeyboardUIMode.h in Headers */ = {isa = PBXBuildFile; fileRef = BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A640F00533BB1F0085E777 /* BlockExceptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199C208245E59001E9ABC /* WebCoreKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199DE08245E59001E9ABC /* Position.h in Headers */ = {isa = PBXBuildFile; fileRef = BE91FC8B06133666005E3790 /* Position.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199E508245E59001E9ABC /* HTMLCanvasElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */; };
 		93F199E708245E59001E9ABC /* ClipboardMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D90660B0665D937006B6F1A /* ClipboardMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2992,8 +2991,7 @@
 		93F19ABC08245E59001E9ABC /* XMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30902DE4476018635CA /* XMLDocumentParser.cpp */; };
 		93F19AD508245E59001E9ABC /* RenderTreeAsText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93955A4203D72932008635CE /* RenderTreeAsText.cpp */; };
 		93F19AE108245E59001E9ABC /* BlockExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65F80697054D9F86008BF776 /* BlockExceptions.mm */; };
-		93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */; };
-		93F19AE608245E59001E9ABC /* SSLKeyGeneratorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */; };
+		93F19AE608245E59001E9ABC /* SSLKeyGeneratorMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.cpp */; };
 		93F19AF808245E59001E9ABC /* Position.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE91FC8C06133666005E3790 /* Position.cpp */; };
 		93F19AFD08245E59001E9ABC /* HTMLCanvasElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */; };
 		93F19AFF08245E59001E9ABC /* ClipboardMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D90660C0665D937006B6F1A /* ClipboardMac.mm */; };
@@ -8319,9 +8317,7 @@
 		84A81F3C0FC7DFF000955300 /* SourceAlpha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SourceAlpha.h; path = filters/SourceAlpha.h; sourceTree = "<group>"; };
 		84A81F3F0FC7E02700955300 /* SourceGraphic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SourceGraphic.cpp; path = filters/SourceGraphic.cpp; sourceTree = "<group>"; };
 		84A81F400FC7E02700955300 /* SourceGraphic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SourceGraphic.h; path = filters/SourceGraphic.h; sourceTree = "<group>"; };
-		84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreKeyGenerator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreKeyGenerator.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SSLKeyGeneratorMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SSLKeyGeneratorMac.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		84B6B975120F13E500B8EFAF /* SVGPathSegListSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathSegListSource.cpp; sourceTree = "<group>"; };
 		84B6B976120F13E500B8EFAF /* SVGPathSegListSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegListSource.h; sourceTree = "<group>"; };
 		84C5B2F81216DC810088B53A /* SVGPathTraversalStateBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathTraversalStateBuilder.cpp; sourceTree = "<group>"; };
@@ -14065,14 +14061,12 @@
 				93309E9F099EB78C0056E581 /* SharedTimerMac.mm */,
 				0A4844980CA44CB200B7BD48 /* SoftLinking.h */,
 				4B3043C80AE0371D00A82647 /* SoundMac.mm */,
-				84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */,
+				84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.cpp */,
 				93B2D8170F9920EE006AE6B2 /* SuddenTermination.mm */,
 				6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */,
 				BCE659E50EA92FB2007E4533 /* ThemeMac.h */,
 				BCE659E80EA92FFA007E4533 /* ThemeMac.mm */,
 				51DF6D7F0B92A18E00C2DC85 /* ThreadCheck.mm */,
-				84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */,
-				84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */,
 				934D9BA60B8C1175007B42A9 /* WebCoreNSStringExtras.h */,
 				934D9BA40B8C116B007B42A9 /* WebCoreNSStringExtras.mm */,
 				DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */,
@@ -22523,7 +22517,6 @@
 				93F199A808245E59001E9ABC /* WebCoreFrameView.h in Headers */,
 				BC53D911114310CC000D817E /* WebCoreJSClientData.h in Headers */,
 				93F199BB08245E59001E9ABC /* WebCoreKeyboardUIMode.h in Headers */,
-				93F199C208245E59001E9ABC /* WebCoreKeyGenerator.h in Headers */,
 				934D9BA70B8C1175007B42A9 /* WebCoreNSStringExtras.h in Headers */,
 				DD05FE0D0B8BA3C6009ACDFE /* WebCoreObjCExtras.h in Headers */,
 				EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */,
@@ -24941,7 +24934,7 @@
 				B5C1123B102B6C4600096578 /* SQLTransactionCoordinator.cpp in Sources */,
 				B523CF091182675400EBB29C /* SQLTransactionSync.cpp in Sources */,
 				1A2E6E590CC55213004A2062 /* SQLValue.cpp in Sources */,
-				93F19AE608245E59001E9ABC /* SSLKeyGeneratorMac.mm in Sources */,
+				93F19AE608245E59001E9ABC /* SSLKeyGeneratorMac.cpp in Sources */,
 				CEA3949C11D45CDA003094CF /* StaticHashSetNodeList.cpp in Sources */,
 				BC7FA62E0D1F0EFF00DB22A9 /* StaticNodeList.cpp in Sources */,
 				A5AFB34F115151A700B045CB /* StepRange.cpp in Sources */,
@@ -25204,7 +25197,6 @@
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
 				93309E1F099E64920056E581 /* VisiblePosition.cpp in Sources */,
 				A883DF270F3D045D00F19BF6 /* VisibleSelection.cpp in Sources */,
-				93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */,
 				934D9BA50B8C116B007B42A9 /* WebCoreNSStringExtras.mm in Sources */,
 				B50F5B810E96CD9900AD71A6 /* WebCoreObjCExtras.mm in Sources */,
 				93EB169509F880B00091F8FF /* WebCoreSystemInterface.mm in Sources */,

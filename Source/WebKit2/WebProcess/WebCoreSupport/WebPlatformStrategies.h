@@ -178,6 +178,12 @@ private:
     virtual String uploadFileText();
     virtual String allFilesText();
 #endif
+#if PLATFORM(MAC)
+    virtual String keygenMenuItem512();
+    virtual String keygenMenuItem1024();
+    virtual String keygenMenuItem2048();
+    virtual String keygenKeychainItemName(const String& host);
+#endif
     virtual String imageTitle(const String& filename, const WebCore::IntSize& size);
     virtual String mediaElementLoadingStateText();
     virtual String mediaElementLiveBroadcastStateText();

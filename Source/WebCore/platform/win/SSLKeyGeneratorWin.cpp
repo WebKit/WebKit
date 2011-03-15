@@ -30,6 +30,7 @@ namespace WebCore {
 
 void WebCore::getSupportedKeySizes(Vector<String>& v)
 {
+    // FIXME: Strings should be localizable.
     v.append("High Grade");
     v.append("Medium Grade");
 }

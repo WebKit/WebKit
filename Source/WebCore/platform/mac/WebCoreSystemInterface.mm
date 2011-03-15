@@ -48,6 +48,7 @@ void (*wkDrawMediaUIPart)(int part, int themeStyle, CGContextRef context, CGRect
 void (*wkMeasureMediaUIPart)(int part, int themeStyle, CGRect *bounds, CGSize *naturalSize);
 BOOL (*wkMediaControllerThemeAvailable)(int themeStyle);
 NSString* (*wkGetPreferredExtensionForMIMEType)(NSString*);
+CFStringRef (*wkSignedPublicKeyAndChallengeString)(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription);
 NSArray* (*wkGetExtensionsForMIMEType)(NSString*);
 NSString* (*wkGetMIMETypeForExtension)(NSString*);
 NSTimeInterval (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);

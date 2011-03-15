@@ -163,6 +163,13 @@ namespace WebCore {
     String allFilesText();
 #endif
 
+#if PLATFORM(MAC)
+    String keygenMenuItem512();
+    String keygenMenuItem1024();
+    String keygenMenuItem2048();
+    String keygenKeychainItemName(const String& host);
+#endif
+
     String imageTitle(const String& filename, const IntSize& size);
 
     String mediaElementLoadingStateText();

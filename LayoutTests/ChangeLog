@@ -1,3 +1,15 @@
+2011-03-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (WebKit2): keygen element doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=56402
+        <rdar://problem/9006545>
+
+        * platform/mac-wk2/Skipped:
+        * platform/win-wk2/Skipped:
+        Moved tests that were skipped becasue of keygen to win-wk2/Skipped.
+
 2011-03-15  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.

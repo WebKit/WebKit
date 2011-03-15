@@ -1912,11 +1912,6 @@ http/tests/loading/cross-origin-XHR-willLoadRequest.html
 fast/dom/Window/window-resize-and-move-arguments.html
 fast/dom/Window/window-resize.html
 
-# WebKit2 needs keygen support
-fast/html/keygen.html
-fast/invalid/residual-style.html
-html5lib/runner.html
-
 # WebKitTestRunner needs to sanitize file urls in the output
 http/tests/misc/image-blocked-src-change.html
 http/tests/misc/image-blocked-src-no-change.html

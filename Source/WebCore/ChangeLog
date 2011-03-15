@@ -1,3 +1,45 @@
+2011-03-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (WebKit2): keygen element doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=56402
+        <rdar://problem/9006545>
+
+        Covered by existing regresison tests.
+
+        * English.lproj/Localizable.strings:
+
+        * WebCore.exp.in: Removed WebCoreKeyGenerator, which no longer exists. Added
+        _wkSignedPublicKeyAndChallengeString, so that this WKSI function could be used in WebCore.
+
+        * platform/mac/SSLKeyGeneratorMac.mm: Removed.
+        * platform/mac/WebCoreKeyGenerator.h: Removed.
+        * platform/mac/WebCoreKeyGenerator.m: Removed.
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * WebCore.xcodeproj/project.pbxproj:
+        Renamed SSLKeyGeneratorMac.mm to .cpp, as it doesn't use any Objective C any more.
+        Removed WebCoreKeyGenerator, as we no longer need an interface to WebKit.
+
+        * platform/LocalizationStrategy.h:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::keygenMenuItem512):
+        (WebCore::keygenMenuItem1024):
+        (WebCore::keygenMenuItem2048):
+        (WebCore::keygenKeychainItemName):
+        * platform/LocalizedStrings.h:
+        Added strings used by keygen element, now that the code using them is in WebCore.
+
+        * platform/mac/SSLKeyGeneratorMac.cpp: Copied from Source/WebCore/platform/mac/SSLKeyGeneratorMac.mm.
+        (WebCore::getSupportedKeySizes):
+        (WebCore::signedPublicKeyAndChallengeString):
+        Moved the code from WebKit. There is never any need to provide implementation at runtime,
+        like old code was doing.
+
+        * platform/win/SSLKeyGeneratorWin.cpp: (WebCore::WebCore::getSupportedKeySizes):
+        Added a FIXME about localization. Note that Safari for Windows doesn't support keygen.
+
 2011-03-15  Anders Carlsson  <andersca@apple.com>
 
         Fix clang build.

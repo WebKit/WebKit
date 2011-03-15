@@ -63,6 +63,7 @@ void InitWebCoreSystemInterface(void)
     INIT(GetHTTPPipeliningPriority);
     INIT(GetMIMETypeForExtension);
     INIT(GetNSURLResponseLastModifiedDate);
+    INIT(SignedPublicKeyAndChallengeString);
     INIT(GetPreferredExtensionForMIMEType);
     INIT(GetWheelEventDeltas);
     INIT(HitTestMediaUIPart);

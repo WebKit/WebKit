@@ -105,7 +105,6 @@
 .objc_class_name_DOMTreeWalker
 .objc_class_name_DOMUIEvent
 .objc_class_name_DOMWheelEvent
-.objc_class_name_WebCoreKeyGenerator
 .objc_class_name_WebCoreViewFactory
 .objc_class_name_WebFontCache
 .objc_class_name_WebScriptObject
@@ -1355,6 +1354,7 @@ _wkSetUpFontCache
 _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError
 _wkSignalCFReadStreamHasBytes
+_wkSignedPublicKeyAndChallengeString
 
 #if ENABLE(DOM_STORAGE)
 __ZN7WebCore14StorageTracker17initializeTrackerERKN3WTF6StringE

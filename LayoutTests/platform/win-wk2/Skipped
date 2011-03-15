@@ -155,3 +155,8 @@ fast/frames/iframe-plugin-load-remove-document-crash.html
 
 # Crashes http://webkit.org/b/55780
 platform/win/plugins/get-value-netscape-window.html
+
+# No keygen support
+fast/html/keygen.html
+fast/invalid/residual-style.html
+html5lib/runner.html

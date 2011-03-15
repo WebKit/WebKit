@@ -569,6 +569,29 @@ String allFilesText()
 }
 #endif
 
+#if PLATFORM(MAC)
+String keygenMenuItem512()
+{
+    return platformStrategies()->localizationStrategy()->keygenMenuItem512();
+}
+
+String keygenMenuItem1024()
+{
+    return platformStrategies()->localizationStrategy()->keygenMenuItem1024();
+}
+
+String keygenMenuItem2048()
+{
+    return platformStrategies()->localizationStrategy()->keygenMenuItem2048();
+}
+
+String keygenKeychainItemName(const String& host)
+{
+    return platformStrategies()->localizationStrategy()->keygenKeychainItemName(host);
+}
+
+#endif
+
 String imageTitle(const String& filename, const IntSize& size)
 {
     return platformStrategies()->localizationStrategy()->imageTitle(filename, size);

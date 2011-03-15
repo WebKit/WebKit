@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2011 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-typedef enum {
-    WebCertificateParseResultSucceeded  = 0,
-    WebCertificateParseResultFailed     = 1,
-    WebCertificateParseResultPKCS7      = 2,
-} WebCertificateParseResult;
+#import <WebKit/WebKeyGenerator.h>
 
-#ifdef __OBJC__
+#import <WebKitSystemInterface.h>
+#import <wtf/Assertions.h>
 
-@interface WebKeyGenerator : NSObject
+@implementation WebKeyGenerator
 
-+ (WebKeyGenerator *)sharedGenerator;
-- (WebCertificateParseResult)addCertificatesToKeychainFromData:(NSData *)data;
++ (WebKeyGenerator *)sharedGenerator
+{
+    static WebKeyGenerator *sharedGenerator = [[WebKeyGenerator alloc] init];
+    return sharedGenerator;
+}
+
+static inline WebCertificateParseResult toWebCertificateParseResult(WKCertificateParseResult result)
+{
+    // FIXME: WebKeyGenerator is not used in WebKit, and this code should be moved to Safari.
+
+    switch (result) {
+    case WKCertificateParseResultSucceeded:
+        return WebCertificateParseResultSucceeded;
+    case WKCertificateParseResultFailed:
+        return WebCertificateParseResultFailed;
+    case WKCertificateParseResultPKCS7:
+        return WebCertificateParseResultPKCS7;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebCertificateParseResultFailed;
+}
+
+- (WebCertificateParseResult)addCertificatesToKeychainFromData:(NSData *)data
+{
+    return toWebCertificateParseResult(WKAddCertificatesToKeychainFromData([data bytes], [data length]));
+}
 
 @end
-
-#endif
