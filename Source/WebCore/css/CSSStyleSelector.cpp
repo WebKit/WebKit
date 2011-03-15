@@ -5265,8 +5265,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             radiusHeight = Length(pair->second()->getDoubleValue(), Percent);
         else
             radiusHeight = Length(max(intMinForLength, min(intMaxForLength, pair->second()->computeLengthInt(style(), m_rootElementStyle, zoomFactor))), Fixed);
-        int width = radiusWidth.value();
-        int height = radiusHeight.value();
+        int width = radiusWidth.rawValue();
+        int height = radiusHeight.rawValue();
         if (width < 0 || height < 0)
             return;
         if (width == 0)

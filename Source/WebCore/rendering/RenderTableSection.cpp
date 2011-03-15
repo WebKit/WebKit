@@ -199,7 +199,7 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
             switch (logicalHeight.type()) {
                 case Percent:
                     if (!(cRowLogicalHeight.isPercent()) ||
-                        (cRowLogicalHeight.isPercent() && cRowLogicalHeight.percent() < logicalHeight.percent()))
+                        (cRowLogicalHeight.isPercent() && cRowLogicalHeight.rawValue() < logicalHeight.rawValue()))
                         m_grid[m_cRow].logicalHeight = logicalHeight;
                         break;
                 case Fixed:
@@ -434,22 +434,22 @@ int RenderTableSection::layoutRows(int toAdd)
             if (m_grid[r].logicalHeight.isAuto())
                 numAuto++;
             else if (m_grid[r].logicalHeight.isPercent())
-                totalPercent += m_grid[r].logicalHeight.percent();
+                totalPercent += m_grid[r].logicalHeight.rawValue();
         }
         if (totalPercent) {
             // try to satisfy percent
             int add = 0;
-            totalPercent = min(totalPercent, 100);
+            totalPercent = min(totalPercent, 100 * percentScaleFactor);
             int rh = m_rowPos[1] - m_rowPos[0];
             for (int r = 0; r < totalRows; r++) {
                 if (totalPercent > 0 && m_grid[r].logicalHeight.isPercent()) {
-                    int toAdd = min(dh, static_cast<int>((totalHeight * m_grid[r].logicalHeight.percent() / 100) - rh));
+                    int toAdd = min(dh, (totalHeight * m_grid[r].logicalHeight.rawValue() / (100 * percentScaleFactor)) - rh);
                     // If toAdd is negative, then we don't want to shrink the row (this bug
                     // affected Outlook Web Access).
                     toAdd = max(0, toAdd);
                     add += toAdd;
                     dh -= toAdd;
-                    totalPercent -= m_grid[r].logicalHeight.percent();
+                    totalPercent -= m_grid[r].logicalHeight.rawValue();
                 }
                 if (r < totalRows - 1)
                     rh = m_rowPos[r + 2] - m_rowPos[r + 1];

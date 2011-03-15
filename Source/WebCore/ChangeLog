@@ -41,45 +41,6 @@
 
         * WebCore.gyp/WebCore.gyp:
 
-2011-03-14  Rik Cabanier  <cabanier@adobe.com>
-
-        Reviewed by David Hyatt.
-
-        bug 56052: percentages are incorrectly rounded in WebKit
-        https://bugs.webkit.org/show_bug.cgi?id=56052
-
-        test: fast/css/percentage-non-integer.html
-
-        * css/CSSStyleSelector.cpp:
-        (WebCore::CSSStyleSelector::applyProperty):
-        * page/PrintContext.cpp:
-        (WebCore::PrintContext::pageProperty):
-        * platform/Length.h:
-        (WebCore::Length::Length):
-        (WebCore::Length::operator*=):
-        (WebCore::Length::value):
-        (WebCore::Length::percent):
-        (WebCore::Length::setValue):
-        (WebCore::Length::calcValue):
-        (WebCore::Length::calcMinValue):
-        (WebCore::Length::isUndefined):
-        (WebCore::Length::isZero):
-        (WebCore::Length::isPositive):
-        (WebCore::Length::isNegative):
-        * rendering/AutoTableLayout.cpp:
-        (WebCore::AutoTableLayout::recalcColumn):
-        (WebCore::AutoTableLayout::computePreferredLogicalWidths):
-        (WebCore::AutoTableLayout::calcEffectiveLogicalWidth):
-        (WebCore::AutoTableLayout::layout):
-        * rendering/FixedTableLayout.cpp:
-        (WebCore::FixedTableLayout::calcWidthArray):
-        (WebCore::FixedTableLayout::layout):
-        * rendering/RenderTableSection.cpp:
-        (WebCore::RenderTableSection::addCell):
-        (WebCore::RenderTableSection::layoutRows):
-        * rendering/style/BorderData.h:
-        (WebCore::BorderData::hasBorderRadius):
-
 2011-03-14  Adam Barth  <abarth@webkit.org>
 
         Attempted Chromium build fix.  Exclude AllInOne harder.
