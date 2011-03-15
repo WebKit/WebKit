@@ -58,9 +58,6 @@ namespace JSC {
             return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
-    protected:
-        static const unsigned StructureFlags = OverridesMarkChildren | JSWrapperObject::StructureFlags;
-
     private:
         const GregorianDateTime* calculateGregorianDateTime(ExecState*) const;
         const GregorianDateTime* calculateGregorianDateTimeUTC(ExecState*) const;

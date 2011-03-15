@@ -1,3 +1,56 @@
+2011-03-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Made JSWrapperObject and subclasses moving-GC-safe
+        https://bugs.webkit.org/show_bug.cgi?id=56346
+        
+        SunSpider reports no change.
+
+        * runtime/BooleanObject.cpp:
+        (JSC::BooleanObject::BooleanObject):
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::DateInstance): No more need for JSGlobalData, since
+        we don't initialize the wrapped value in our constructor.
+
+        * runtime/DateInstance.h: Don't set the OverridesMarkChildren flag because
+        we do not in fact override markChildren.
+
+        * runtime/DatePrototype.h: Declare an anonymous slot, since wrapper object
+        no longer does so for us. Also added an ASSERT to catch a latent bug,
+        where DatePrototype stomped on its base class's anonymous slot. Hard-coded
+        anonymous slots are a plague on our code. This doesn't cause any problems
+        in our existing code since the base class never reads the anonymous slot
+        it declares, but it caused crashes when I tried to start using the slot
+        in an initial version of this patch.
+
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::JSWrapperObject):
+        (JSC::JSWrapperObject::internalValue):
+        (JSC::JSWrapperObject::setInternalValue): Resolved a problem where
+        our internal value was stored in two places: an anonymous slot, and a
+        data member which was not always visited during GC. Now, we only use the
+        data member, and we always visit it. (Instead of relying on certain
+        subclasses to set the OverridesMarkChildren bit, we set it ourselves.)
+
+        * runtime/NumberObject.cpp:
+        (JSC::NumberObject::NumberObject): No more need for JSGlobalData, since
+        we don't initialize the wrapped value in our constructor.
+
+        * runtime/NumberObject.h: Removed meaningless declaration.
+
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::StringObject): No more need for JSGlobalData, since
+        we don't initialize the wrapped value in our constructor.
+
+        * runtime/StringObject.h: Don't set the OverridesMarkChildren flag because
+        we do not in fact override markChildren.
+
+        * runtime/StringPrototype.h: Declare an anonymous slot, since wrapper object
+        no longer does so for us. Also added an ASSERT to catch a latent bug,
+        where DatePrototype stomped on its base class's anonymous slot. Hard-coded
+        anonymous slots are a plague on our code.
+
 2011-03-14  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.

@@ -51,9 +51,9 @@ namespace JSC {
         }
 
     protected:
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames | JSWrapperObject::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSWrapperObject::StructureFlags;
         StringObject(JSGlobalData&, NonNullPassRefPtr<Structure>, JSString*);
-  };
+    };
 
     StringObject* asStringObject(JSValue);
 

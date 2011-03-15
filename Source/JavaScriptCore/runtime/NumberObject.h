@@ -36,9 +36,6 @@ namespace JSC {
             return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
-    protected:
-        static const unsigned StructureFlags = JSWrapperObject::StructureFlags;
-
     private:
         virtual JSValue getJSNumber();
     };

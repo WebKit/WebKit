@@ -40,6 +40,12 @@ namespace JSC {
         }
 
         static const ClassInfo s_info;
+        
+    protected:
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | StringObject::StructureFlags;
+
+        COMPILE_ASSERT(!StringObject::AnonymousSlotCount, StringPrototype_stomps_on_your_anonymous_slot);
+        static const unsigned AnonymousSlotCount = 1;
     };
 
 } // namespace JSC

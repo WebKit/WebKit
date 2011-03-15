@@ -44,6 +44,8 @@ namespace JSC {
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | DateInstance::StructureFlags;
 
+        COMPILE_ASSERT(!DateInstance::AnonymousSlotCount, DatePrototype_stomps_on_your_anonymous_slot);
+        static const unsigned AnonymousSlotCount = 1;
     };
 
 } // namespace JSC
