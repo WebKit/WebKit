@@ -1,3 +1,13 @@
+2011-03-15  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION(80977): breaks Qt ARMv7 Linux Release bot
+        https://bugs.webkit.org/show_bug.cgi?id=56349
+
+        * QtTestBrowser/QtTestBrowser.pro: Link against fontconfig
+        on platforms where we use it. Copied from DumpRenderTree.pro.
+
 2011-03-15  Dan Bernstein  <mitz@apple.com>
 
         Build fix after r81135.

@@ -33,6 +33,11 @@ DESTDIR = $$OUTPUT_DIR/bin
 QT += network
 macx:QT+=xml
 
+unix:!mac:!symbian {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += fontconfig
+}
+
 linux-* {
     # From Creator's src/rpath.pri:
     # Do the rpath by hand since it's not possible to use ORIGIN in QMAKE_RPATHDIR
