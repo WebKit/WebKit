@@ -45,7 +45,7 @@ WebInspector.Section = function(title, subtitle)
     this.headerElement.appendChild(this.subtitleElement);
     this.headerElement.appendChild(this.titleElement);
 
-    this.headerElement.addEventListener("click", this.toggleExpanded.bind(this), false);
+    this.headerElement.addEventListener("click", this.handleClick.bind(this), false);
     this.element.appendChild(this.headerElement);
 
     this.title = title;
@@ -168,5 +168,11 @@ WebInspector.Section.prototype = {
     toggleExpanded: function()
     {
         this.expanded = !this.expanded;
+    },
+
+    handleClick: function(e)
+    {
+        this.toggleExpanded();
+        e.stopPropagation();
     }
 }
