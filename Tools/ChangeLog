@@ -1,3 +1,28 @@
+2011-03-15  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Autofilled form elements are assigned fixed background color but not text color
+        https://bugs.webkit.org/show_bug.cgi?id=48382
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setAutofilledCallback): Added.
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::setAutofilled): Added.
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setAutofilled): Added.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setAutofilled): Added.
+        (LayoutTestController::setValueForUser): Style tweak.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setAutofilled): Added (stub).
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setAutofilled): Added (stub).
+
 2011-03-15  Dan Bernstein  <mitz@apple.com>
 
         Build fix after r81135.

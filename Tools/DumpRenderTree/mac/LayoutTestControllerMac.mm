@@ -368,6 +368,15 @@ void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
     [[[mainFrame webView] preferences] setAuthorAndUserStylesEnabled:flag];
 }
 
+void LayoutTestController::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
+{
+    DOMElement *element = [DOMElement _DOMElementFromJSContext:context value:nodeObject];
+    if (!element || ![element isKindOfClass:[DOMHTMLInputElement class]])
+        return;
+
+    [(DOMHTMLInputElement *)element _setAutofilled:autofilled];
+}
+
 void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
     if (setDelegate) {
@@ -532,7 +541,7 @@ void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef node
     DOMElement *element = [DOMElement _DOMElementFromJSContext:context value:nodeObject];
     if (!element || ![element isKindOfClass:[DOMHTMLInputElement class]])
         return;
-    
+
     RetainPtr<CFStringRef> valueCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, value));
     [(DOMHTMLInputElement *)element _setValueForUser:(NSString *)valueCF.get()];
 }

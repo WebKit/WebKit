@@ -197,6 +197,11 @@ using namespace JSC;
 
 @implementation DOMHTMLInputElement (WebDOMHTMLInputElementOperationsPrivate)
 
+- (void)_setAutofilled:(BOOL)autofilled
+{
+    static_cast<HTMLInputElement*>(core((DOMElement *)self))->setAutofilled(autofilled);
+}
+
 - (void)_setValueForUser:(NSString *)value
 {
     static_cast<HTMLInputElement*>(core((DOMElement *)self))->setValueForUser(value);

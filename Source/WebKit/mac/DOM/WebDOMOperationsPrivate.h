@@ -39,6 +39,7 @@
 @end
 
 @interface DOMHTMLInputElement (WebDOMHTMLInputElementOperationsPrivate)
+- (void)_setAutofilled:(BOOL)autofilled;
 - (void)_setValueForUser:(NSString *)value;
 @end
 

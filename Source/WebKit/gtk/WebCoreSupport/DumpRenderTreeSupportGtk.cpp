@@ -34,6 +34,7 @@
 #include "FrameView.h"
 #include "GCController.h"
 #include "GraphicsContext.h"
+#include "HTMLInputElement.h"
 #include "InputElement.h"
 #include "JSDOMWindow.h"
 #include "JSDocument.h"
@@ -664,6 +665,19 @@ double DumpRenderTreeSupportGtk::defaultMinimumTimerInterval()
 void DumpRenderTreeSupportGtk::setMinimumTimerInterval(WebKitWebView* webView, double interval)
 {
     core(webView)->settings()->setMinDOMTimerInterval(interval);
+}
+
+void DumpRenderTreeSupportGtk::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
+{
+    JSC::ExecState* exec = toJS(context);
+    Element* element = toElement(toJS(exec, nodeObject));
+    if (!element)
+        return;
+    InputElement* inputElement = element->toInputElement();
+    if (!inputElement)
+        return;
+
+    static_cast<HTMLInputElement*>(inputElement)->setAutofilled(autofilled);
 }
 
 void DumpRenderTreeSupportGtk::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)

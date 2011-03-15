@@ -339,6 +339,10 @@ public:
 
     void setMinimumTimerInterval(const CppArgumentList&, CppVariant*);
 
+    // Expects the first argument to be an input element and the second argument to be a boolean.
+    // Forwards the setAutofilled() call to the element.
+    void setAutofilled(const CppArgumentList&, CppVariant*);
+
     // Expects the first argument to be an input element and the second argument to be a string value.
     // Forwards the setValueForUser() call to the element.
     void setValueForUser(const CppArgumentList&, CppVariant*);

@@ -1,0 +1,65 @@
+<html>
+<head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+    function test() {
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+        }
+
+        var tf = document.getElementById('tf');
+        var computedStyle = document.defaultView.getComputedStyle(tf);
+        var originalForeground = computedStyle.color;
+        var originalBackground = computedStyle.backgroundColor;
+
+        if (window.layoutTestController) {
+            layoutTestController.setAutofilled(tf, true);
+        }
+
+        // Both the foreground and background colors should change.
+        computedStyle = document.defaultView.getComputedStyle(tf);
+        var autofilledForeground = computedStyle.color;
+        var autofilledBackground = computedStyle.backgroundColor;
+        if (autofilledForeground == originalForeground) {
+            testFailed('Foreground color did not change when autofilled.');
+            return;
+        }
+        if (autofilledBackground == originalBackground) {
+            testFailed('Background color did not change when autofilled.');
+            return;
+        }
+
+        if (window.layoutTestController) {
+            layoutTestController.setAutofilled(tf, false);
+        }
+
+        // Colors should be restored.
+        computedStyle = document.defaultView.getComputedStyle(tf);
+        if (computedStyle.color != originalForeground) {
+            testFailed('Foreground color did not revert when un-autofilled.');
+            return;
+        }
+        if (computedStyle.backgroundColor != originalBackground) {
+            testFailed('Background color did not revert when un-autofilled.');
+            return;
+        }
+
+        testPassed('');
+    }
+    </script>
+
+    <style>
+    #tf {
+      color: #FFFFFF;
+      background-color: #FFFFFF;
+    }
+    </style>
+</head>
+<body onload="test()">
+    This tests that foreground and background colors properly change for autofilled inputs.  It can only be run using DumpRenderTree.<br>
+    <form name="fm">
+        <input type="text" id="tf" value="Field value" />
+    </form>
+    <div id="console"></div>
+</body>
+</html>

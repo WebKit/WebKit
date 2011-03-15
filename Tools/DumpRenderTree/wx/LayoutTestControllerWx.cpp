@@ -207,6 +207,11 @@ void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
     // FIXME: implement
 }
 
+void LayoutTestController::setAutofilled(JSContextRef, JSValueRef element, bool isAutofilled)
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::setPopupBlockingEnabled(bool popupBlockingEnabled)
 {
     // FIXME: implement

@@ -374,6 +374,11 @@ void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
     prefsPrivate->setAuthorAndUserStylesEnabled(flag);
 }
 
+void LayoutTestController::setAutofilled(JSContextRef, JSValueRef element, bool isAutofilled)
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
     COMPtr<IWebView> webView;

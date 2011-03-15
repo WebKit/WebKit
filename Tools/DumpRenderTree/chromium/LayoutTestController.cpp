@@ -138,6 +138,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setAllowUniversalAccessFromFileURLs", &LayoutTestController::setAllowUniversalAccessFromFileURLs);
     bindMethod("setAlwaysAcceptCookies", &LayoutTestController::setAlwaysAcceptCookies);
     bindMethod("setAuthorAndUserStylesEnabled", &LayoutTestController::setAuthorAndUserStylesEnabled);
+    bindMethod("setAutofilled", &LayoutTestController::setAutofilled);
     bindMethod("setCanOpenWindows", &LayoutTestController::setCanOpenWindows);
     bindMethod("setCloseRemainingWindowsWhenComplete", &LayoutTestController::setCloseRemainingWindowsWhenComplete);
     bindMethod("setCustomPolicyDelegate", &LayoutTestController::setCustomPolicyDelegate);
@@ -1620,6 +1621,23 @@ void LayoutTestController::setMinimumTimerInterval(const CppArgumentList& argume
     m_shell->webView()->settings()->setMinimumTimerInterval(arguments[0].toDouble());
 }
 
+void LayoutTestController::setAutofilled(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() != 2 || !arguments[1].isBool())
+        return;
+
+    WebElement element;
+    if (!WebBindings::getElement(arguments[0].value.objectValue, &element))
+        return;
+
+    WebInputElement* input = toWebInputElement(&element);
+    if (!input)
+        return;
+
+    input->setAutofilled(arguments[1].value.boolValue);
+}
+
 void LayoutTestController::setValueForUser(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
@@ -1661,5 +1679,3 @@ void LayoutTestController::syncLocalStorage(const CppArgumentList&, CppVariant*)
 {
     // Not Implemented
 }
-
-

@@ -458,6 +458,11 @@ void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
     // FIXME: implement
 }
 
+void LayoutTestController::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool isAutofilled)
+{
+    DumpRenderTreeSupportGtk::setAutofilled(context, nodeObject, isAutofilled);
+}
+
 void LayoutTestController::disableImageLoading()
 {
     // FIXME: Implement for testing fix for https://bugs.webkit.org/show_bug.cgi?id=27896

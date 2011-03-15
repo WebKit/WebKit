@@ -1,3 +1,17 @@
+2011-03-15  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Autofilled form elements are assigned fixed background color but not text color
+        https://bugs.webkit.org/show_bug.cgi?id=48382
+
+        Test: fast/forms/input-autofilled.html
+
+        * css/html.css:
+        (input:-webkit-autofill): Added foreground color: #000000
+        * css/wml.css:
+        (input:-webkit-autofill): Added foreground color: #000000
+
 2011-03-15  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Eric Carlson.
