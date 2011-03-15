@@ -796,6 +796,39 @@
             }],
         },
         {
+            'target_name': 'generate_devtools_grd',
+            'type': 'none',
+            'dependencies': [
+                'devtools_html',
+                'concatenated_devtools_js',
+                'concatenated_devtools_css',
+            ],
+            'actions': [{
+                'action_name': 'generate_devtools_grd',
+                'script_name': 'scripts/generate_devtools_grd.py',
+                'input_pages': [
+                    '<(PRODUCT_DIR)/resources/inspector/devtools.html',
+                    '<(PRODUCT_DIR)/resources/inspector/DevTools.js',
+                    '<(PRODUCT_DIR)/resources/inspector/devTools.css',
+                ],
+                'images': [
+                    '<@(webinspector_image_files)',
+                    '<@(devtools_image_files)',
+                ],
+                'inputs': [
+                    '<@(_script_name)',
+                    '<@(_input_pages)',
+                    '<@(_images)',
+                ],
+                'search_path': [
+                    '../../WebCore/inspector/front-end/Images',
+                    'src/js/Images',
+                ],
+                'outputs': ['<(SHARED_INTERMEDIATE_DIR)/devtools/devtools_resources.grd'],
+                'action': ['python', '<@(_script_name)', '<@(_input_pages)', '--images', '<@(_search_path)', '--output', '<@(_outputs)'],
+            }],
+        },
+        {
             'target_name': 'webkit_unit_tests',
             'type': 'executable',
             'msvs_guid': '7CEFE800-8403-418A-AD6A-2D52C6FC3EAD',
