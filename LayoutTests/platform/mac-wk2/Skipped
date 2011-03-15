@@ -52,6 +52,8 @@ compositing/iframes/iframe-src-change.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+editing/pasteboard/drop-file-svg.html
+editing/selection/drag-select-rapidly.html
 fast/forms/select-listbox-multiple-no-focusring.html
 fast/forms/textinput-not-fired-on-enter-in-input.html
 svg/animations/animate-color-fill-currentColor.html
@@ -474,6 +476,23 @@ fast/frames/iframe-window-focus.html
 fast/frames/take-focus-from-iframe.html
 fast/history/history_reload.html
 fast/history/window-open.html
+fast/html/details-add-summary-1-and-click.html
+fast/html/details-add-summary-2-and-click.html
+fast/html/details-add-summary-3-and-click.html
+fast/html/details-add-summary-4-and-click.html
+fast/html/details-add-summary-5-and-click.html
+fast/html/details-add-summary-6-and-click.html
+fast/html/details-add-summary-7-and-click.html
+fast/html/details-add-summary-8-and-click.html
+fast/html/details-add-summary-9-and-click.html
+fast/html/details-add-summary-10-and-click.html
+fast/html/details-mouse-click.html
+fast/html/details-remove-summary-1-and-click.html
+fast/html/details-remove-summary-2-and-click.html
+fast/html/details-remove-summary-3-and-click.html
+fast/html/details-remove-summary-4-and-click.html
+fast/html/details-remove-summary-5-and-click.html
+fast/html/details-remove-summary-6-and-click.html
 fast/images/drag-pdf-as-image.html
 fast/images/drag-svg-as-image.html
 fast/images/image-map-multiple-xhtml.xhtml
@@ -1346,6 +1365,7 @@ platform/mac/editing/input/caret-primary-bidi.html
 platform/mac/editing/input/firstrectforcharacterrange-plain.html
 platform/mac/editing/input/firstrectforcharacterrange-styled.html
 platform/mac/editing/input/hangul-enter-confirms-and-sends-keypress.html
+platform/mac/editing/input/insert-delete-smp-symbol.html
 platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline.html
 platform/mac/editing/input/NSBackgroundColor-transparent.html
 platform/mac/editing/input/range-for-empty-document.html
@@ -1432,6 +1452,7 @@ http/tests/security/local-video-src-from-remote.html
 
 # WebKitTestRunner needs layoutTestController.dumpResourceResponseMIMETypes
 # <https://bugs.webkit.org/show_bug.cgi?id=42543>
+fast/dom/HTMLScriptElement/dont-load-unknown-type.html
 fast/preloader/image.html
 fast/preloader/link.html
 fast/preloader/noscript.html
@@ -1765,6 +1786,10 @@ compositing/tiling/huge-layer-resize.html
 # <https://bugs.webkit.org/show_bug.cgi?id=54159>
 http/tests/security/aboutBlank/security-context-window-open.html
 
+# jquery/effects.html times out flakily
+# https://bugs.webkit.org/show_bug.cgi?id=56080
+jquery/effects.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
@@ -1843,6 +1868,7 @@ fast/events/popup-blocked-from-iframe-script.html
 fast/events/popup-blocked-from-untrusted-mouse-click.html
 fast/events/popup-blocked-from-window-open.html
 fast/events/popup-blocked-to-post-blank.html
+fast/events/popup-blocking-timers.html
 
 # WebKitTestRunner needs layoutTestController.addDisallowedURL
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
@@ -1981,6 +2007,16 @@ fast/dom/timer-increase-min-interval-repeating.html
 fast/dom/timer-increase-min-interval.html
 fast/dom/timer-increase-then-decrease-min-interval-repeating.html
 fast/dom/timer-increase-then-decrease-min-interval.html
+
+# WebKitTestRunner needs layoutTestController.setValueForUser
+fast/forms/onchange-setvalueforuser.html
+
+# WebKitTestRunner needs layoutTestController.originsWithLocalStorage
+storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html
 
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
