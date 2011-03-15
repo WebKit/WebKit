@@ -54,6 +54,8 @@ public:
     static PluginTest* create(NPP, const std::string& identifier);
     virtual ~PluginTest();
 
+    static void NP_Shutdown();
+
     // NPP functions.
     virtual NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char *argn[], char *argv[], NPSavedData *saved);
     virtual NPError NPP_Destroy(NPSavedData**);
@@ -73,6 +75,8 @@ public:
     bool NPN_RemoveProperty(NPObject*, NPIdentifier propertyName);
     
     void executeScript(const char*);
+
+    void registerNPShutdownFunction(void (*)());
 
     template<typename TestClassTy> class Register {
     public:

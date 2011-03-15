@@ -42,6 +42,7 @@
 		1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7800D07589B00CD3161 /* PluginObject.cpp */; };
 		1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7810D07589B00CD3161 /* TestObject.cpp */; };
 		1AC77DCF120605B6005C19EF /* NPRuntimeRemoveProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC77DCE120605B6005C19EF /* NPRuntimeRemoveProperty.cpp */; };
+		1ACF898D132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACF898B132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp */; };
 		1AD4CB2212A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD4CB2012A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp */; };
 		1AD9D2FE12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */; };
 		23BCB8900EA57623003C6289 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23BCB88F0EA57623003C6289 /* OpenGL.framework */; };
@@ -214,6 +215,7 @@
 		1AC6C7800D07589B00CD3161 /* PluginObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginObject.cpp; sourceTree = "<group>"; };
 		1AC6C7810D07589B00CD3161 /* TestObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestObject.cpp; sourceTree = "<group>"; };
 		1AC77DCE120605B6005C19EF /* NPRuntimeRemoveProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeRemoveProperty.cpp; sourceTree = "<group>"; };
+		1ACF898B132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPDeallocateCalledBeforeNPShutdown.cpp; sourceTree = "<group>"; };
 		1AD4CB2012A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetUserAgentWithNullNPPFromNPPNew.cpp; sourceTree = "<group>"; };
 		1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginScriptableNPObjectInvokeDefault.cpp; sourceTree = "<group>"; };
 		23BCB88F0EA57623003C6289 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
@@ -477,6 +479,7 @@
 				C0E720741281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp */,
 				1A3E28A91311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp */,
 				1AD4CB2012A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp */,
+				1ACF898B132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp */,
 				1A24BAA8120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp */,
 				1AC77DCE120605B6005C19EF /* NPRuntimeRemoveProperty.cpp */,
 				C0EC3C9B12787F0500939164 /* NullNPPGetValuePointer.cpp */,
@@ -770,6 +773,7 @@
 				C0E720751281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp in Sources */,
 				1AD4CB2212A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp in Sources */,
 				1A3E28AA1311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp in Sources */,
+				1ACF898D132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,32 @@
+2011-03-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make sure that NP_Shutdown is always the last NPP function called
+        https://bugs.webkit.org/show_bug.cgi?id=56391
+
+        Add a test that times out if an NP_Deallocate object is called after NP_Shutdown.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::PluginTest):
+        (PluginTest::NP_Shutdown):
+        (PluginTest::registerNPShutdownFunction):
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NPDeallocateCalledBeforeNPShutdown.cpp: Added.
+        (NPDeallocateCalledBeforeNPShutdown::NPDeallocateCalledBeforeNPShutdown):
+        (NPDeallocateCalledBeforeNPShutdown::TestObject::~TestObject):
+        (NPDeallocateCalledBeforeNPShutdown::ScriptableObject::hasProperty):
+        (NPDeallocateCalledBeforeNPShutdown::ScriptableObject::getProperty):
+        (NPDeallocateCalledBeforeNPShutdown::NPP_New):
+        (NPDeallocateCalledBeforeNPShutdown::NPP_GetValue):
+        (NPDeallocateCalledBeforeNPShutdown::shutdown):
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NP_Shutdown):
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * GNUmakefile.am:
+
 2011-03-15  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Tony Chang.

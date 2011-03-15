@@ -32,6 +32,7 @@ SOURCES = PluginObject.cpp \
           Tests/EvaluateJSAfterRemovingPluginElement.cpp \
           Tests/GetURLWithJavaScriptURLDestroyingPlugin.cpp \
           Tests/GetUserAgentWithNullNPPFromNPPNew.cpp \
+          Tests/NPDeallocateCalledBeforeNPShutdown.cpp \
           Tests/NPRuntimeObjectFromDestroyedPlugin.cpp \
           Tests/NPRuntimeRemoveProperty.cpp \
           Tests/NullNPPGetValuePointer.cpp \

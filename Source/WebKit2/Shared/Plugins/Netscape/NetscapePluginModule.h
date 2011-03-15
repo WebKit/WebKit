@@ -45,9 +45,9 @@ public:
     ~NetscapePluginModule();
 
     const NPPluginFuncs& pluginFuncs() const { return m_pluginFuncs; }
-
-    void pluginCreated();
-    void pluginDestroyed();
+ 
+    void incrementLoadCount();
+    void decrementLoadCount();
 
     static bool getPluginInfo(const String& pluginPath, PluginInfoStore::Plugin&);
 
@@ -67,9 +67,6 @@ private:
 #if PLUGIN_ARCHITECTURE(X11)
     void applyX11QuirksBeforeLoad();
 #endif
-
-    void incrementLoadCount();
-    void decrementLoadCount();
 
     bool tryGetSitesWithData(Vector<String>&);
     bool tryClearSiteData(const String& site, uint64_t flags, uint64_t maxAge);

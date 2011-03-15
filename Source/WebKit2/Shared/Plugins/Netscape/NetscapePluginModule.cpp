@@ -58,16 +58,6 @@ NetscapePluginModule::~NetscapePluginModule()
     ASSERT(initializedNetscapePluginModules().find(this) == notFound);
 }
 
-void NetscapePluginModule::pluginCreated()
-{
-    incrementLoadCount();
-}
-
-void NetscapePluginModule::pluginDestroyed()
-{
-    decrementLoadCount();
-}
-
 Vector<String> NetscapePluginModule::sitesWithData()
 {
     Vector<String> sites;

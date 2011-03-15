@@ -1,3 +1,24 @@
+2011-03-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make sure that NP_Shutdown is always the last NPP function called
+        https://bugs.webkit.org/show_bug.cgi?id=56391
+        <rdar://problem/8989902>
+
+        Make sure to always increment the load count whenever a web process connection
+        is opened to a plug-in process, and decrement it when the last web process connection
+        goes away.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::createWebProcessConnection):
+        (WebKit::PluginProcess::startShutdownTimerIfNecessary):
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        * Shared/Plugins/Netscape/NetscapePluginModule.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        (WebKit::NetscapePlugin::~NetscapePlugin):
+
 2011-03-15  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Adam Barth.

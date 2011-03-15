@@ -31,6 +31,8 @@
 using namespace std;
 extern NPNetscapeFuncs *browser;
 
+static void (*shutdownFunction)();
+
 PluginTest* PluginTest::create(NPP npp, const string& identifier)
 {
     if (identifier.empty())
@@ -47,10 +49,24 @@ PluginTest::PluginTest(NPP npp, const string& identifier)
     : m_npp(npp)
     , m_identifier(identifier)
 {
+    // Reset the shutdown function.
+    shutdownFunction = 0;
 }
 
 PluginTest::~PluginTest()
 {
+}
+
+void PluginTest::NP_Shutdown()
+{
+    if (shutdownFunction)
+        shutdownFunction();
+}
+
+void PluginTest::registerNPShutdownFunction(void (*func)())
+{
+    assert(!shutdownFunction);
+    shutdownFunction = func;
 }
 
 NPError PluginTest::NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char *argn[], char *argv[], NPSavedData *saved)

@@ -123,6 +123,7 @@ NPError STDCALL NP_GetEntryPoints(NPPluginFuncs *pluginFuncs)
 extern "C"
 void STDCALL NP_Shutdown(void)
 {
+    PluginTest::NP_Shutdown();
 }
 
 static void executeScript(const PluginObject* obj, const char* script);

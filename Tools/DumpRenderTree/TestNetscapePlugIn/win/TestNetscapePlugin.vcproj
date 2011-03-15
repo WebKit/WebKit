@@ -406,6 +406,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Tests\NPDeallocateCalledBeforeNPShutdown.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Tests\NPRuntimeObjectFromDestroyedPlugin.cpp"
 				>
 			</File>

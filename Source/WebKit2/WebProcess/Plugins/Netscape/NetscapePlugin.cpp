@@ -84,14 +84,14 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     m_npp.ndata = this;
     m_npp.pdata = 0;
     
-    m_pluginModule->pluginCreated();
+    m_pluginModule->incrementLoadCount();
 }
 
 NetscapePlugin::~NetscapePlugin()
 {
     ASSERT(!m_isStarted);
 
-    m_pluginModule->pluginDestroyed();
+    m_pluginModule->decrementLoadCount();
 }
 
 PassRefPtr<NetscapePlugin> NetscapePlugin::fromNPP(NPP npp)

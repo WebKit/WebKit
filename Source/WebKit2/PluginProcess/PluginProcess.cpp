@@ -133,12 +133,22 @@ void PluginProcess::createWebProcessConnection()
     mach_port_t listeningPort;
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
 
+    bool didHaveAnyWebProcessConnections = !m_webProcessConnections.isEmpty();
+
     // Create a listening connection.
     RefPtr<WebProcessConnection> connection = WebProcessConnection::create(listeningPort);
     m_webProcessConnections.append(connection.release());
 
     CoreIPC::MachPort clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
     m_connection->send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientPort), 0);
+
+    if (NetscapePluginModule* module = netscapePluginModule()) {
+        if (!didHaveAnyWebProcessConnections) {
+            // Increment the load count. This is matched by a call to decrementLoadCount in startShutdownTimerIfNecessary.
+            // We do this so that the plug-in module's NP_Shutdown won't be called until right before exiting.
+            module->incrementLoadCount();
+        }
+    }
 
     // Stop the shutdown timer.
     m_shutdownTimer.stop();
@@ -176,6 +186,10 @@ void PluginProcess::startShutdownTimerIfNecessary()
 {
     if (!m_webProcessConnections.isEmpty())
         return;
+
+    // Decrement the load count. This is balanced by a call to incrementLoadCount in createWebProcessConnection.
+    if (m_pluginModule)
+        m_pluginModule->decrementLoadCount();
 
     // Start the shutdown timer.
     m_shutdownTimer.startOneShot(shutdownTimeout);

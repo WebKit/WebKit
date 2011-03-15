@@ -1,3 +1,16 @@
+2011-03-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make sure that NP_Shutdown is always the last NPP function called
+        https://bugs.webkit.org/show_bug.cgi?id=56391
+        <rdar://problem/8989902>
+
+        Add test.
+
+        * plugins/npruntime/np-deallocate-called-before-np-shutdown-expected.txt: Added.
+        * plugins/npruntime/np-deallocate-called-before-np-shutdown.html: Added.
+
 2011-03-15  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Tony Chang.
