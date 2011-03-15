@@ -51,8 +51,8 @@
 @class CALayer;
 @class WebGLLayer;
 #else
-typedef struct CALayer CALayer;
-typedef struct WebGLLayer WebGLLayer;
+class CALayer;
+class WebGLLayer;
 #endif
 #elif PLATFORM(QT)
 QT_BEGIN_NAMESPACE

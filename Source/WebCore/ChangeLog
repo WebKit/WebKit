@@ -1,3 +1,10 @@
+2011-03-15  Anders Carlsson  <andersca@apple.com>
+
+        Fix clang build.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsLayer.h:
+
 2011-03-15  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Lion build after r81161.
