@@ -1,3 +1,22 @@
+2011-03-15  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        When initiating a main resource load, let the application cache
+        know which frame the load is being conducted for. This patch doesn't
+        resolve the following bug, but the additional WebFrame parameter
+        should provide the chromium port with enough info to pick the
+        "most appropiate" cached resource.
+        https://bugs.webkit.org/show_bug.cgi?id=55505
+
+        Also fixup a stale comment in stopLoadingInFrame.
+
+        * public/WebApplicationCacheHost.h:
+        (WebKit::WebApplicationCacheHost::willStartMainResourceRequest):
+        * src/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::maybeLoadMainResource):
+        (WebCore::ApplicationCacheHost::stopLoadingInFrame):
+
 2011-03-15  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.

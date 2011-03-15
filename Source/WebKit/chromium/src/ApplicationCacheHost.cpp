@@ -42,6 +42,7 @@
 #include "Page.h"
 #include "ProgressEvent.h"
 #include "Settings.h"
+#include "WebFrameImpl.h"
 #include "WebURL.h"
 #include "WebURLError.h"
 #include "WebURLResponse.h"
@@ -81,7 +82,7 @@ void ApplicationCacheHost::maybeLoadMainResource(ResourceRequest& request, Subst
     m_internal.set(new ApplicationCacheHostInternal(this));
     if (m_internal->m_outerHost) {
         WrappedResourceRequest wrapped(request);
-        m_internal->m_outerHost->willStartMainResourceRequest(wrapped);
+        m_internal->m_outerHost->willStartMainResourceRequest(wrapped, WebFrameImpl::fromFrame(m_documentLoader->frame()));
     } else
         m_internal.clear();
 
@@ -259,7 +260,7 @@ void ApplicationCacheHost::stopDeferringEvents()
 
 void ApplicationCacheHost::stopLoadingInFrame(Frame* frame)
 {
-    // FIXME: Implement this method.
+    // N/A to the chromium port
 }
 
 void ApplicationCacheHost::dispatchDOMEvent(EventID id, int total, int done)

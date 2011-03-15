@@ -38,6 +38,7 @@
 namespace WebKit {
 
 class WebApplicationCacheHostClient;
+class WebFrame;
 class WebURL;
 class WebURLRequest;
 class WebURLResponse;
@@ -73,8 +74,10 @@ public:
     virtual ~WebApplicationCacheHost() { }
 
     // Called for every request made within the context.
-    virtual void willStartMainResourceRequest(WebURLRequest&) { }
+    virtual void willStartMainResourceRequest(WebURLRequest& r, const WebFrame*) { willStartMainResourceRequest(r); }
     virtual void willStartSubResourceRequest(WebURLRequest&) { }
+
+    virtual void willStartMainResourceRequest(WebURLRequest&) { } // DEPRECATED, remove after derived classes have caught up.
 
     // One or the other selectCache methods is called after having parsed the <html> tag.
     // The latter returns false if the current document has been identified as a "foreign"
