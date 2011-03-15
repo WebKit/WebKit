@@ -1,3 +1,61 @@
+2011-03-12  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: re-implement xhr breakpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=56252
+
+        - restore xhr breakpoints one by one instead of using setAllBrowserBreakpoints
+        - store xhr breakpoints in a separate setting
+        - move presentation-related code from BreakpointManager to XHRBreakpointsSidebarPane
+
+        Test: inspector/debugger/xhr-breakpoints.html
+
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        (WebCore::InspectorBrowserDebuggerAgent::InspectorBrowserDebuggerAgent):
+        (WebCore::InspectorBrowserDebuggerAgent::inspectedURLChanged):
+        (WebCore::InspectorBrowserDebuggerAgent::restoreStickyBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::setXHRBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::removeXHRBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::willSendXMLHttpRequest):
+        (WebCore::InspectorBrowserDebuggerAgent::clear):
+        * inspector/InspectorBrowserDebuggerAgent.h:
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype.setXHRBreakpoint):
+        (WebInspector.BreakpointManager.prototype.removeXHRBreakpoint):
+        (WebInspector.BreakpointManager.prototype.breakpointViewForEventData):
+        (WebInspector.BreakpointManager.prototype._projectChanged):
+        (WebInspector.BreakpointManager.prototype._validateBreakpoints):
+        (WebInspector.BreakpointManager.prototype._createEventListenerBreakpointId):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.XHRBreakpointsSidebarPane):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._addButtonClicked.finishEditing):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._addButtonClicked):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._setBreakpoint):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._removeBreakpoint):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._contextMenu.removeBreakpoint):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._contextMenu):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._checkboxClicked):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._labelClicked.finishEditing):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._labelClicked):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype.highlightBreakpoint):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype.clearBreakpointHighlight):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._saveBreakpoints):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._restoreBreakpoints):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._projectChanged):
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.update):
+        (WebInspector.CallStackSidebarPane.prototype._xhrBreakpointHit):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused):
+        (WebInspector.ScriptsPanel.prototype._clearInterface):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        * inspector/front-end/inspector.js:
+        (WebInspector.resetFocusElement):
+        (WebInspector.set attached):
+
 2011-03-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.

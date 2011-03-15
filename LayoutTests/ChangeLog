@@ -1,3 +1,17 @@
+2011-03-12  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: re-implement xhr breakpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=56252
+
+        * inspector/debugger/xhr-breakpoints-expected.txt: Added.
+        * inspector/debugger/xhr-breakpoints.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-03-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
