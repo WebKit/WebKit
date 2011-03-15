@@ -1,5 +1,11 @@
 2011-03-15  Alexey Proskuryakov  <ap@apple.com>
 
+        Forgot to save a modification to this file when committing.
+
+        * WebCoreSupport/WebKeyGenerator.mm: Changed "Apple Computer" to "Apple" in copyright header.
+
+2011-03-15  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Darin Adler.
 
         REGRESSION (WebKit2): keygen element doesn't work
