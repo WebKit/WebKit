@@ -187,6 +187,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
    return 0;
 }
 
+#if ENABLE(JIT)
 static bool tryDFGCompile(JSGlobalData* globalData, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
 {
 #if ENABLE(DFG_JIT)
@@ -212,6 +213,7 @@ static bool tryDFGCompile(JSGlobalData* globalData, CodeBlock* codeBlock, JITCod
     return false;
 #endif
 }
+#endif
 
 void ProgramExecutable::markChildren(MarkStack& markStack)
 {
