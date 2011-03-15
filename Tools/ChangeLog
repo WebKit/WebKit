@@ -2,6 +2,12 @@
 
         Build fix after r81135.
 
+        * TestWebKitAPI/Configurations/InjectedBundle.xcconfig:
+
+2011-03-15  Dan Bernstein  <mitz@apple.com>
+
+        Build fix after r81135.
+
         * WebKitTestRunner/Configurations/InjectedBundle.xcconfig:
         * WebKitTestRunner/mac/TestControllerMac.mm:
         * WebKitTestRunner/mac/TestInvocationMac.mm:
