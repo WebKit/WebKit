@@ -26,16 +26,8 @@
 
 #include <QtGlobal>
 
-#if !defined(QWEBKIT_EXPORT)
-#if defined(QT_SHARED)
-#define QWEBKIT_EXPORT Q_DECL_EXPORT
-#else
-#define QWEBKIT_EXPORT
-#endif
-#endif
-
 namespace WebKit {
-QWEBKIT_EXPORT int WebProcessMainQt(int argc, char** argv);
+Q_DECL_IMPORT int WebProcessMainQt(int argc, char** argv);
 }
 
 // The framework entry point.

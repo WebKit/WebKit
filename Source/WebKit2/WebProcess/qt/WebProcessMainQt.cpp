@@ -48,13 +48,6 @@
 #endif
 #endif
 
-#if !defined(QWEBKIT_EXPORT)
-#if defined(QT_SHARED)
-#define QWEBKIT_EXPORT Q_DECL_EXPORT
-#else
-#define QWEBKIT_EXPORT
-#endif
-#endif
 #ifndef NDEBUG
 #include <QDebug>
 #endif
@@ -137,7 +130,7 @@ static void initializeProxy()
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 }
 
-QWEBKIT_EXPORT int WebProcessMainQt(int argc, char** argv)
+Q_DECL_EXPORT int WebProcessMainQt(int argc, char** argv)
 {
     QApplication::setGraphicsSystem("raster");
     QApplication* app = new QApplication(argc, argv);

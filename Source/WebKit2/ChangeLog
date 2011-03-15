@@ -1,3 +1,17 @@
+2011-03-15  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt][Symbian][WK2] Fix exporting and importing the WebProcessMainQt symbol
+        https://bugs.webkit.org/show_bug.cgi?id=56417
+
+        Use the Q_DECL_EXPORT and Q_DECL_IMPORT macros directly to make sure
+        the symbol is always exported/imported.
+
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt):
+        * qt/MainQt.cpp:
+
 2011-03-15  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
