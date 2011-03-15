@@ -64,10 +64,6 @@ public:
     virtual void updateGeometry(
         const WebRect& frameRect, const WebRect& clipRect,
         const WebVector<WebRect>& cutOutsRects, bool isVisible) = 0;
-    
-    // If the plugin instance is backed by an OpenGL texture, return its ID in the
-    // compositors namespace. Otherwise return 0. Returns 0 by default.
-    virtual unsigned getBackingTextureId() { return 0; }
 
     virtual void updateFocus(bool) = 0;
     virtual void updateVisibility(bool) = 0;

@@ -1,3 +1,17 @@
+2011-03-15  Alok priyadarshi  <alokp@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Remove unnecessary function WebPlugin::getBackingTextureId
+        https://bugs.webkit.org/show_bug.cgi?id=56122
+
+        It will be tested by Pepper2D and Pepper3D layout/smoke tests
+        on the Chromium side.
+
+        * public/WebPlugin.h:
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::platformLayer):
+
 2011-03-15  Mikhail Naganov  <mnaganov@chromium.org>
 
         Unreviewed. Update chromium deps to pick up the latest V8.

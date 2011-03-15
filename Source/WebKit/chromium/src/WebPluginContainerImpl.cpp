@@ -443,15 +443,7 @@ void WebPluginContainerImpl::willDestroyPluginLoadObserver(WebPluginLoadObserver
 #if USE(ACCELERATED_COMPOSITING)
 WebCore::LayerChromium* WebPluginContainerImpl::platformLayer() const
 {
-    // FIXME: In the event of a context lost, the texture needs to be recreated on the compositor's
-    // context and rebound to the platform layer here.
-    unsigned backingTextureId = m_webPlugin->getBackingTextureId();
-    if (!backingTextureId)
-        return 0;
-
-    m_platformLayer->setTextureId(backingTextureId);
-
-    return m_platformLayer.get();
+    return m_platformLayer->getTextureId() ? m_platformLayer.get() : 0;
 }
 #endif
 
