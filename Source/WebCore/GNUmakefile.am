@@ -2317,6 +2317,7 @@ webcore_sources += \
 	Source/WebCore/page/UserScriptTypes.h \
 	Source/WebCore/page/UserStyleSheet.h \
 	Source/WebCore/page/UserStyleSheetTypes.h \
+	Source/WebCore/page/WebCoreKeyboardUIMode.h \
 	Source/WebCore/page/WebKitAnimation.h \
 	Source/WebCore/page/WebKitAnimation.cpp \
 	Source/WebCore/page/WebKitAnimationList.h \
@@ -2689,6 +2690,7 @@ webcore_sources += \
 	Source/WebCore/platform/text/TextEncoding.h \
 	Source/WebCore/platform/text/TextEncodingRegistry.cpp \
 	Source/WebCore/platform/text/TextEncodingRegistry.h \
+	Source/WebCore/platform/text/TextOrientation.h \
 	Source/WebCore/platform/text/TextStream.cpp \
 	Source/WebCore/platform/text/TextStream.h \
 	Source/WebCore/platform/text/transcoder/FontTranscoder.cpp \
@@ -3132,6 +3134,7 @@ webcore_sources += \
 	Source/WebCore/storage/IDBDatabaseBackendImpl.cpp \
 	Source/WebCore/storage/IDBDatabaseBackendImpl.h \
 	Source/WebCore/storage/IDBDatabaseBackendInterface.h \
+	Source/WebCore/storage/IDBDatabaseCallbacks.h \
 	Source/WebCore/storage/IDBDatabase.cpp \
 	Source/WebCore/storage/IDBDatabaseError.h \
 	Source/WebCore/storage/IDBDatabaseException.h \
@@ -3169,6 +3172,7 @@ webcore_sources += \
 	Source/WebCore/storage/IDBTransactionCoordinator.h \
 	Source/WebCore/storage/IDBTransaction.cpp \
 	Source/WebCore/storage/IDBTransaction.h \
+	Source/WebCore/storage/IDBVersionChangeEvent.h \
 	Source/WebCore/storage/IDBVersionChangeRequest.h \
 	Source/WebCore/storage/LocalStorageTask.cpp \
 	Source/WebCore/storage/LocalStorageTask.h \
@@ -5146,6 +5150,7 @@ EXTRA_DIST += \
 	Source/WebCore/svg/xlinkattrs.in \
 	Source/WebCore/xml/xmlattrs.in \
 	Source/WebCore/xml/xmlnsattrs.in \
+	Source/WebCore/xml/XMLViewer.xsl \
 	Source/WebCore/xml/XPathGrammar.y
 
 # Installing web inspector files
