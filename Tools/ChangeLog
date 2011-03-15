@@ -1,3 +1,30 @@
+2011-03-14  Adam Roben  <aroben@apple.com>
+
+        Test that WKBundlePageCanHandleRequest returns true for empty document URLs
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebKit2/CanHandleRequest.cpp: Added.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle): Store the result of the test.
+        (TestWebKitAPI::setInjectedBundleClient): Hook up our callback.
+        (TestWebKitAPI::TEST): Register "emptyscheme" as an empty document scheme, load a page to
+        ensure the web process is initialized, then ask the bundle to run the test and assert that
+        it succeeded.
+
+        * TestWebKitAPI/Tests/WebKit2/CanHandleRequest_Bundle.cpp: Added.
+        (TestWebKitAPI::CanHandleRequestTest::CanHandleRequestTest): Just call up to the base class.
+        (TestWebKitAPI::canHandleURL): Helper function to test whether WebKit2 claims to be able to
+        handle a given URL.
+        (TestWebKitAPI::runTest): Check that empty document URLs can be handled (and that an unknown
+        URL type cannot be handled).
+        (TestWebKitAPI::CanHandleRequestTest::didReceiveMessage): Run the test and return the
+        result.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        * TestWebKitAPI/win/TestWebKitAPIInjectedBundle.vcproj:
+        Added new files to the project.
+
 2011-03-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81094.

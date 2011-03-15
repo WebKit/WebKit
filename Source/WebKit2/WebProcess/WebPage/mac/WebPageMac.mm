@@ -472,10 +472,10 @@ String WebPage::cachedResponseMIMETypeForURL(const WebCore::KURL& url)
     return [[cachedResponse response] MIMEType];
 }
 
-bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
+bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
 {
     if ([NSURLConnection canHandleRequest:request.nsURLRequest()])
-        return YES;
+        return true;
 
     // FIXME: Return true if this scheme is any one WebKit2 knows how to handle.
     return request.url().protocolIs("applewebdata");

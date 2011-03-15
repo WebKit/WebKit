@@ -277,7 +277,7 @@ String WebPage::cachedResponseMIMETypeForURL(const WebCore::KURL&)
     return String();
 }
 
-bool WebPage::canHandleRequest(const WebCore::ResourceRequest&)
+bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest&)
 {
     // FIXME: Implement
     return true;

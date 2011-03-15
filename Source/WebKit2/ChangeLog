@@ -1,3 +1,23 @@
+2011-03-14  Adam Roben  <aroben@apple.com>
+
+        Make WKBundlePageCanHandleRequest return true for empty document URLs
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::canHandleRequest): Return true for any URL schemes that are handled as
+        empty documents, and defer to the platform for everything else.
+
+        * WebProcess/WebPage/WebPage.h: Added platformCanHandleRequest.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformCanHandleRequest):
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::platformCanHandleRequest):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::platformCanHandleRequest):
+        Renamed from canHandleRequest.
+
 2011-03-14  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

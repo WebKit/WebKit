@@ -400,6 +400,10 @@
 				Name="WebKit2"
 				>
 				<File
+					RelativePath="..\Tests\WebKit2\CanHandleRequest_Bundle.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\DocumentStartUserScriptAlertCrash_Bundle.cpp"
 					>
 				</File>

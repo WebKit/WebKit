@@ -486,6 +486,8 @@ private:
 
     void platformDragEnded();
 
+    static bool platformCanHandleRequest(const WebCore::ResourceRequest&);
+
     OwnPtr<WebCore::Page> m_page;
     RefPtr<WebFrame> m_mainFrame;
     RefPtr<InjectedBundleBackForwardList> m_backForwardList;

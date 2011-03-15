@@ -92,6 +92,7 @@
 #include <WebCore/RenderView.h>
 #include <WebCore/ReplaceSelectionCommand.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SchemeRegistry.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SharedBuffer.h>
@@ -2119,5 +2120,12 @@ void WebPage::platformDragEnded()
 {
 }
 #endif
+
+bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
+{
+    if (SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(request.url().protocol()))
+        return true;
+    return platformCanHandleRequest(request);
+}
 
 } // namespace WebKit

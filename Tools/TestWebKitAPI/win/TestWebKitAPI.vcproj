@@ -412,6 +412,10 @@
 				Name="WebKit2"
 				>
 				<File
+					RelativePath="..\Tests\WebKit2\CanHandleRequest.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\DocumentStartUserScriptAlertCrash.cpp"
 					>
 				</File>
@@ -480,6 +484,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\SendingMessagesToTheWebProcessBeforeItIsValid.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\simple-accelerated-compositing.html"
 					>
 				</File>
@@ -493,10 +501,6 @@
 				</File>
 				<File
 					RelativePath="..\Tests\WebKit2\spacebar-scrolling.html"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\SendingMessagesToTheWebProcessBeforeItIsValid.cpp"
 					>
 				</File>
 				<File
