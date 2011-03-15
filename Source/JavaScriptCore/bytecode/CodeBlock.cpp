@@ -1608,49 +1608,6 @@ void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& d
     return;
 }
 
-#if ENABLE(INTERPRETER)
-bool CodeBlock::hasGlobalResolveInstructionAtBytecodeOffset(unsigned bytecodeOffset)
-{
-    if (m_globalResolveInstructions.isEmpty())
-        return false;
-
-    int low = 0;
-    int high = m_globalResolveInstructions.size();
-    while (low < high) {
-        int mid = low + (high - low) / 2;
-        if (m_globalResolveInstructions[mid] <= bytecodeOffset)
-            low = mid + 1;
-        else
-            high = mid;
-    }
-
-    if (!low || m_globalResolveInstructions[low - 1] != bytecodeOffset)
-        return false;
-    return true;
-}
-#endif
-#if ENABLE(JIT)
-bool CodeBlock::hasGlobalResolveInfoAtBytecodeOffset(unsigned bytecodeOffset)
-{
-    if (m_globalResolveInfos.isEmpty())
-        return false;
-
-    int low = 0;
-    int high = m_globalResolveInfos.size();
-    while (low < high) {
-        int mid = low + (high - low) / 2;
-        if (m_globalResolveInfos[mid].bytecodeOffset <= bytecodeOffset)
-            low = mid + 1;
-        else
-            high = mid;
-    }
-
-    if (!low || m_globalResolveInfos[low - 1].bytecodeOffset != bytecodeOffset)
-        return false;
-    return true;
-}
-#endif
-
 void CodeBlock::shrinkToFit()
 {
     m_instructions.shrinkToFit();

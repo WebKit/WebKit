@@ -183,6 +183,32 @@
 
 2011-03-15  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber Stamped by Sam Weinig.
+
+        Bug 56420 - Remove ENABLE(JIT) code from ByteCompiler
+        Some methods have unnecessary differences in name/arguments for interpreter/JIT.
+
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        (JSC::HandlerInfo::HandlerInfo):
+        (JSC::CodeBlock::addPropertyAccessInfo):
+        (JSC::CodeBlock::addGlobalResolveInfo):
+        (JSC::CodeBlock::addCallLinkInfo):
+        (JSC::CodeBlock::globalResolveInfo):
+        * bytecode/Opcode.h:
+        * bytecode/StructureStubInfo.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+        (JSC::BytecodeGenerator::emitCatch):
+
+2011-03-15  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Fix broken assert in new code.
