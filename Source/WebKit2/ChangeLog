@@ -1,3 +1,16 @@
+2011-03-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: Print preview is blank when selecting multiple pages per sheet
+        https://bugs.webkit.org/show_bug.cgi?id=56341
+        <rdar://problem/8991382>
+
+        * UIProcess/API/mac/WKPrintingView.mm: (pageDidDrawToPDF): Don't reset latest expected
+        callback number after receiving a different one. We only update preview after receiving
+        the latest expected page data (and the assumption is that AppKit will ask for pages in
+        natural order for N-up).
+
 2011-03-14  Adam Roben  <aroben@apple.com>
 
         Make WKBundlePageCanHandleRequest return true for empty document URLs

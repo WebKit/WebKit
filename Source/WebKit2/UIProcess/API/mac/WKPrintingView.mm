@@ -214,11 +214,12 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
                 pair<HashMap<WebCore::IntRect, Vector<uint8_t> >::iterator, bool> entry = view->_pagePreviews.add(iter->second, Vector<uint8_t>());
                 entry.first->second.append(data->bytes(), data->size());
             }
-            bool receivedResponseToLatestRequest = view->_latestExpectedPreviewCallback == context->callbackID;
-            view->_latestExpectedPreviewCallback = 0;
             view->_expectedPreviewCallbacks.remove(context->callbackID);
-            if (receivedResponseToLatestRequest)
+            bool receivedResponseToLatestRequest = view->_latestExpectedPreviewCallback == context->callbackID;
+            if (receivedResponseToLatestRequest) {
+                view->_latestExpectedPreviewCallback = 0;
                 [view _updatePreview];
+            }
         }
     }
 }
