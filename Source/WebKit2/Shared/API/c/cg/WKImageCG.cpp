@@ -39,3 +39,12 @@ CGImageRef WKImageCreateCGImage(WKImageRef imageRef)
     OwnPtr<GraphicsContext> sourceContext = toImpl(imageRef)->bitmap()->createGraphicsContext();
     return CGBitmapContextCreateImage(sourceContext->platformContext());
 }
+
+WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
+{
+    IntSize imageSize(CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
+    RefPtr<WebImage> webImage = WebImage::create(imageSize, toImageOptions(options));
+    OwnPtr<GraphicsContext> graphicsContext = webImage->bitmap()->createGraphicsContext();
+    CGContextDrawImage(graphicsContext->platformContext(), CGRectMake(0, 0, imageSize.width(), imageSize.height()), imageRef);
+    return toAPI(webImage.release().leakRef());
+}

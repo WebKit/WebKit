@@ -1,3 +1,15 @@
+2011-03-14  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Provide API for creating WKImage from CGImageRef
+        https://bugs.webkit.org/show_bug.cgi?id=56159
+
+        Add function for creating a WKImage from CGImage data.
+        * Shared/API/c/cg/WKImageCG.cpp:
+        (WKImageCreateFromCGImage): Added. Creates a graphics context for the bitmap-backed image and draws into it. 
+        * Shared/API/c/cg/WKImageCG.h:
+
 2011-03-14  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Adam Roben.

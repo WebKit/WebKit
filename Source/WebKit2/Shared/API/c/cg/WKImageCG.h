@@ -28,12 +28,15 @@
 
 #include <CoreGraphics/CGImage.h>
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKImage.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 WK_EXPORT CGImageRef WKImageCreateCGImage(WKImageRef image);
+
+WK_EXPORT WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options);
 
 #ifdef __cplusplus
 }
