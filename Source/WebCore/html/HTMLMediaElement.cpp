@@ -896,6 +896,7 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
         if (m_networkState > NETWORK_IDLE) {
             m_progressEventTimer.stop();
             scheduleEvent(eventNames().suspendEvent);
+            setShouldDelayLoadEvent(false);
         }
         m_networkState = NETWORK_IDLE;
     }
@@ -1027,6 +1028,7 @@ void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>*)
         if (timedelta > 3.0 && !m_sentStalledEvent) {
             scheduleEvent(eventNames().stalledEvent);
             m_sentStalledEvent = true;
+            setShouldDelayLoadEvent(false);
         }
     } else {
         scheduleEvent(eventNames().progressEvent);
