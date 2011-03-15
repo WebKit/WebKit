@@ -1,3 +1,18 @@
+2011-03-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        accessibility should build in WebCore GYP build
+        https://bugs.webkit.org/show_bug.cgi?id=56405
+
+        This patch changes our include/exclude strategy to more closely match
+        the strategy used by the Chromium GYP build system.  Ideally, we'd find
+        a way to share more of these patterns.  In the meantime, I'm going to
+        slowly increase the number of translation units in the project and
+        adjust the include/exclude filters appropriately.
+
+        * gyp/WebCore.gyp:
+
 2011-03-15  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
