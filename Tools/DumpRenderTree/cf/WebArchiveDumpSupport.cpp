@@ -23,11 +23,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebArchiveDumpSupport.h"
+#include "config.h"
+#include "WebArchiveDumpSupport.h"
 
-#import <CoreFoundation/CoreFoundation.h>
-#import <CFNetwork/CFNetwork.h>
-#import <wtf/RetainPtr.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <CFNetwork/CFNetwork.h>
+#include <wtf/RetainPtr.h>
 
 extern "C" {
 
