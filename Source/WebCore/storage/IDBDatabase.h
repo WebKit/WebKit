@@ -32,7 +32,7 @@
 #include "EventTarget.h"
 #include "ExceptionCode.h"
 #include "IDBDatabaseBackendInterface.h"
-#include "IDBDatabaseCallbacks.h"
+#include "IDBDatabaseCallbacksImpl.h"
 #include "IDBObjectStore.h"
 #include "IDBTransaction.h"
 #include "OptionsObject.h"
@@ -47,7 +47,7 @@ namespace WebCore {
 class IDBVersionChangeRequest;
 class ScriptExecutionContext;
 
-class IDBDatabase : public IDBDatabaseCallbacks, public EventTarget, public ActiveDOMObject {
+class IDBDatabase : public RefCounted<IDBDatabase>, public EventTarget, public ActiveDOMObject {
 public:
     static PassRefPtr<IDBDatabase> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>);
     ~IDBDatabase();
@@ -91,8 +91,8 @@ public:
     bool dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec) { return EventTarget::dispatchEvent(event, ec); }
     virtual bool dispatchEvent(PassRefPtr<Event>);
 
-    using RefCounted<IDBDatabaseCallbacks>::ref;
-    using RefCounted<IDBDatabaseCallbacks>::deref;
+    using RefCounted<IDBDatabase>::ref;
+    using RefCounted<IDBDatabase>::deref;
 
 private:
     IDBDatabase(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>);
@@ -114,6 +114,8 @@ private:
     // Keep track of the versionchange events waiting to be fired on this
     // database so that we can cancel them if the database closes.
     Vector<RefPtr<Event> > m_enqueuedEvents;
+
+    RefPtr<IDBDatabaseCallbacksImpl> m_databaseCallbacks;
 };
 
 } // namespace WebCore

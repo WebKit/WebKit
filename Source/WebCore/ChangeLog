@@ -1,3 +1,47 @@
+2011-03-15  David Grogan  <dgrogan@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Fix crash caused by Invalid call to destroyActiveDOMObject during stopActiveDOMObjects
+        https://bugs.webkit.org/show_bug.cgi?id=56350
+
+        When a frame is unloaded, ScriptExecutionContext::stopActiveDOMObjects
+        calls stop() on each ActiveDOMObject.
+
+        Calling IDBDatabase::stop() can cause IDBDatabase to be destroyed:
+        * IDBDatabase::stop() causes the chrome message dispatcher to remove
+        its reference to IDBDatabase, which it has as type
+        IDBDatabaseCallbacks.
+        * If that reference is the last one, the IDBDatabase is destroyed.
+        * Destroying an ActiveDOMObject while they are being iterated over causes
+        a defensive crash.
+        
+        This change creates a separate IDBDatabaseCallbacks object that is not
+        an ActiveDOMObject, so it can be destroyed by
+        ScriptExecutionContext::stopActiveDOMObjects.
+        
+        Because the chrome message dispatcher is only used in multi-process
+        chromium, that's the only platform affected.  Chromium browser tests
+        forthcoming.
+
+        * WebCore.gypi:
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::IDBDatabase):
+        (WebCore::IDBDatabase::~IDBDatabase):
+        (WebCore::IDBDatabase::setVersion):
+        (WebCore::IDBDatabase::close):
+        (WebCore::IDBDatabase::open):
+        * storage/IDBDatabase.h:
+        * storage/IDBDatabaseCallbacks.h:
+        (WebCore::IDBDatabaseCallbacks::unRegisterDatabase):
+        * storage/IDBDatabaseCallbacksImpl.cpp: Copied from Source/WebCore/storage/IDBDatabaseCallbacks.h.
+        (WebCore::IDBDatabaseCallbacksImpl::create):
+        (WebCore::IDBDatabaseCallbacksImpl::IDBDatabaseCallbacksImpl):
+        (WebCore::IDBDatabaseCallbacksImpl::onVersionChange):
+        (WebCore::IDBDatabaseCallbacksImpl::unRegisterDatabase):
+        * storage/IDBDatabaseCallbacksImpl.h: Copied from Source/WebCore/storage/IDBDatabaseCallbacks.h.
+        (WebCore::IDBDatabaseCallbacksImpl::~IDBDatabaseCallbacksImpl):
+
 2011-03-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "EventQueue.h"
 #include "IDBAny.h"
+#include "IDBDatabaseCallbacksImpl.h"
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseException.h"
 #include "IDBEventDispatcher.h"
@@ -58,10 +59,12 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabase
 {
     // We pass a reference of this object before it can be adopted.
     relaxAdoptionRequirement();
+    m_databaseCallbacks = IDBDatabaseCallbacksImpl::create(this);
 }
 
 IDBDatabase::~IDBDatabase()
 {
+    m_databaseCallbacks->unregisterDatabase(this);
 }
 
 void IDBDatabase::setSetVersionTransaction(IDBTransaction* transaction)
@@ -103,7 +106,7 @@ void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
 PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, const String& version, ExceptionCode& ec)
 {
     RefPtr<IDBVersionChangeRequest> request = IDBVersionChangeRequest::create(context, IDBAny::create(this), version);
-    m_backend->setVersion(version, request, this, ec);
+    m_backend->setVersion(version, request, m_databaseCallbacks, ec);
     return request;
 }
 
@@ -154,7 +157,7 @@ void IDBDatabase::close()
     }
 
     m_noNewTransactions = true;
-    m_backend->close(this);
+    m_backend->close(m_databaseCallbacks);
 }
 
 void IDBDatabase::onVersionChange(const String& version)
@@ -174,7 +177,7 @@ bool IDBDatabase::hasPendingActivity() const
 
 void IDBDatabase::open()
 {
-    m_backend->open(this);
+    m_backend->open(m_databaseCallbacks);
 }
 
 void IDBDatabase::enqueueEvent(PassRefPtr<Event> event)
