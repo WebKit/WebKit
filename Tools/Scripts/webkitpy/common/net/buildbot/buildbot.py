@@ -42,9 +42,11 @@ import urllib2
 from webkitpy.common.net.failuremap import FailureMap
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.regressionwindow import RegressionWindow
+from webkitpy.common.net.testoutputset import TestOutputSet
 from webkitpy.common.system.logutils import get_logger
-from webkitpy.thirdparty.autoinstalled.mechanize import Browser
+from webkitpy.common.system.zipfileset import ZipFileSet
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
+from webkitpy.thirdparty.autoinstalled.mechanize import Browser
 
 _log = get_logger(__file__)
 
@@ -91,6 +93,12 @@ class Builder(object):
         build = self._fetch_build(build_number)
         self._builds_cache[build_number] = build
         return build
+
+    def latest_cached_build(self):
+        revision_build_pairs = self.revision_build_pairs_with_results()
+        revision_build_pairs.sort(key=lambda i: i[1])
+        latest_build_number = revision_build_pairs[-1][1]
+        return self.build(latest_build_number)
 
     def force_build(self, username="webkit-patch", comments=None):
         def predicate(form):
@@ -220,6 +228,12 @@ class Build(object):
     def results_url(self):
         results_directory = "r%s (%s)" % (self.revision(), self._number)
         return "%s/%s" % (self._builder.results_url(), urllib.quote(results_directory))
+
+    def results_zip_url(self):
+        return "%s.zip" % self.results_url()
+
+    def results(self):
+        return TestOutputSet(self._builder.name(), None, ZipFileSet(self.results_zip_url()), include_expected=False)
 
     def _fetch_results_html(self):
         results_html = "%s/results.html" % (self.results_url())

@@ -410,6 +410,33 @@ class BuildBotTest(unittest.TestCase):
         buildbot._latest_builds_from_builders = mock_builds_from_builders
         self.assertEqual(buildbot.last_green_revision(), 1)
 
+    def _fetch_build(self, build_number):
+        if build_number == 5:
+            return "correct build"
+        return "wrong build"
+
+    def _fetch_revision_to_build_map(self):
+        return {'r5': 5, 'r2': 2, 'r3': 3}
+
+    def test_latest_cached_build(self):
+        b = Builder('builder', BuildBot())
+        b._fetch_build = self._fetch_build
+        b._fetch_revision_to_build_map = self._fetch_revision_to_build_map
+        self.assertEquals("correct build", b.latest_cached_build())
+
+    def results_url(self):
+        return "some-url"
+
+    def test_results_zip_url(self):
+        b = Build(None, 123, 123, False)
+        b.results_url = self.results_url
+        self.assertEquals("some-url.zip", b.results_zip_url())
+
+    def test_results(self):
+        builder = Builder('builder', BuildBot())
+        b = Build(builder, 123, 123, True)
+        self.assertTrue(b.results())
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,3 +1,16 @@
+2011-03-14  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Add method to make BuildBot return test outputs
+        https://bugs.webkit.org/show_bug.cgi?id=54374
+
+        The Builder.latest_cached_build will be used by the new rebaseline
+        script to determine the build to use baselines from.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
 2011-03-14  Adam Roben  <aroben@apple.com>
 
         Test that WKBundlePageCanHandleRequest returns true for empty document URLs
