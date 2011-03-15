@@ -3087,6 +3087,7 @@ BUGWK54322 MAC SNOWLEOPARD : fast/media/mq-transform-02.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/media/mq-transform-03.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/speech/input-appearance-numberandspeech.html = IMAGE
+BUGWK54322 WIN             : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/speech/input-appearance-searchandspeech.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
@@ -3433,3 +3434,6 @@ BUG_MMALY : fast/js/mozilla/strict/15.5.5.1.html = PASS TEXT
 
 // are failing after roll 80582 -> 80608
 BUG_LOISLO MAC DEBUG : fast/text/font-size-zero.html = TEXT
+
+// Failure from WebKit r81104
+BUGCR76159 MAC LINUX : http/tests/media/video-play-stall-before-meta-data.html = TEXT

@@ -1,3 +1,9 @@
+2011-03-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, update test expectations
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-15  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by David Levin.
