@@ -132,24 +132,6 @@ response:
 }
 
 -----------------------------------------------------------
-ConsoleAgent.setMonitoringXHREnabled(false)
-
-request:
-{
-    id : <number>
-    domain : "Console"
-    command : "setMonitoringXHREnabled"
-    arguments : {
-        enabled : false
-    }
-}
-
-response:
-{
-    requestId : <number>
-}
-
------------------------------------------------------------
 ConsoleAgent.setMonitoringXHREnabled(true)
 
 request:
@@ -159,6 +141,24 @@ request:
     command : "setMonitoringXHREnabled"
     arguments : {
         enabled : true
+    }
+}
+
+response:
+{
+    requestId : <number>
+}
+
+-----------------------------------------------------------
+ConsoleAgent.setMonitoringXHREnabled(false)
+
+request:
+{
+    id : <number>
+    domain : "Console"
+    command : "setMonitoringXHREnabled"
+    arguments : {
+        enabled : false
     }
 }
 
