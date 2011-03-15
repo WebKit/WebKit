@@ -371,6 +371,7 @@ static bool setSelectionToDragCaret(Frame* frame, VisibleSelection& dragCaret, R
 
 bool DragController::dispatchTextInputEventFor(Frame* innerFrame, DragData* dragData)
 {
+    ASSERT(!m_page->dragCaretController()->isNone());
     VisibleSelection dragCaret(m_page->dragCaretController()->selection());
     String text = dragCaret.isContentRichlyEditable() ? "" : dragData->asPlainText(innerFrame);
     Node* target = innerFrame->editor()->findEventTargetFrom(dragCaret);
@@ -393,7 +394,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
     Frame* innerFrame = element->ownerDocument()->frame();
     ASSERT(innerFrame);
 
-    if (!dispatchTextInputEventFor(innerFrame, dragData))
+    if (!m_page->dragCaretController()->isNone() && !dispatchTextInputEventFor(innerFrame, dragData))
         return true;
 
     if (dragData->containsColor()) {

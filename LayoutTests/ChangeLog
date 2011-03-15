@@ -1,3 +1,13 @@
+2011-03-13  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        Crash when dragging and dropping in a document with an invalid XHTML header
+        https://bugs.webkit.org/show_bug.cgi?id=48799
+        
+        * editing/pasteboard/drop-file-svg.html: Added.
+        * editing/pasteboard/resources/drop-file-svg.svg: Added.
+
 2011-03-14  Rik Cabanier  <cabanier@gmail.com>
 
         Reviewed by David Hyatt.

@@ -1,3 +1,20 @@
+2011-03-13  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        Crash when dragging and dropping in a document with an invalid XHTML header
+        https://bugs.webkit.org/show_bug.cgi?id=48799
+
+        DragController tried to dispatch textInput event even when the
+        drag destination is not the editable area.
+        This change skips the event dispatching on that case.
+        
+        Test: editing/pasteboard/drop-file-svg.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dispatchTextInputEventFor):
+        (WebCore::DragController::concludeEditDrag):
+
 2011-03-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81094.
