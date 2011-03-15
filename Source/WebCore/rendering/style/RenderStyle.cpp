@@ -295,21 +295,6 @@ static bool positionedObjectMoved(const LengthBox& a, const LengthBox& b)
     return true;
 }
 
-/*
-  compares two styles. The result gives an idea of the action that
-  needs to be taken when replacing the old style with a new one.
-
-  CbLayout: The containing block of the object needs a relayout.
-  Layout: the RenderObject needs a relayout after the style change
-  Visible: The change is visible, but no relayout is needed
-  NonVisible: The object does need neither repaint nor relayout after
-       the change.
-
-  ### TODO:
-  A lot can be optimised here based on the display type, lots of
-  optimisations are unimplemented, and currently result in the
-  worst case result causing a relayout of the containing block.
-*/
 StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedContextSensitiveProperties) const
 {
     changedContextSensitiveProperties = ContextSensitivePropertyNone;

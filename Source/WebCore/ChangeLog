@@ -1,3 +1,12 @@
+2011-03-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Remove stale comment at RenderStyle::diff.
+        https://bugs.webkit.org/show_bug.cgi?id=56387
+
+        * rendering/style/RenderStyle.cpp: Removed comment.
+
 2011-03-15  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/56381> Objective-C classes should be typedef-ed as structs (not void*) in C++
