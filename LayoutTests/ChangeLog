@@ -1,5 +1,32 @@
 2011-03-15  Adam Roben  <aroben@apple.com>
 
+        Update Windows XP results after r81168
+
+        They differ from Windows 7 due to different fonts being used.
+
+        * platform/win-xp/svg/W3C-I18N/g-dirLTR-ubNone-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/g-dirLTR-ubOverride-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/text-dirLTR-ubNone-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/text-dirRTL-ubOverride-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.txt: Added.
+        * platform/win-xp/svg/W3C-I18N/tspan-direction-rtl-expected.txt: Added.
+        * platform/win-xp/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt: Added.
+        * platform/win-xp/svg/text/bidi-text-query-expected.txt: Added.
+        * platform/win-xp/svg/text/bidi-tspans-expected.txt: Added.
+
+2011-03-15  Adam Roben  <aroben@apple.com>
+
         Update Windows results again after r81168
 
         I accidentally copied the Mac results into platform/win for these two tests when I tried to
