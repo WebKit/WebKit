@@ -657,9 +657,10 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
     webkit_security_origin_set_web_database_quota(origin, quota);
 }
 
-JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef)
+JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)
 {
-        // FIXME: implement
+    // FIXME: implement
+    return JSValueMakeUndefined(context);
 }
 
 void LayoutTestController::deleteAllLocalStorage()
