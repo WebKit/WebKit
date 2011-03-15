@@ -1,3 +1,13 @@
+2011-03-15  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Links from code reviews to trac are incorrect for files in Source/WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=56404
+
+        * PrettyPatch/PrettyPatch.rb: Remove WebKit from the list of top level
+          directories since it is now under Source.
+
 2011-03-10  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Adam Roben.

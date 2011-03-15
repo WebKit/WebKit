@@ -84,7 +84,6 @@ private
         PerformanceTests
         Source
         Tools
-        WebKit
         WebKitLibraries
         Websites
     ]
