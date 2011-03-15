@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
+
 #import "TestController.h"
 
 int main(int argc, const char* argv[])

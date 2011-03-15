@@ -23,17 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TestInvocation.h"
+#import "config.h"
+#import "TestInvocation.h"
 
-#include "PlatformWebView.h"
-#include "TestController.h"
-#include <ImageIO/CGImageDestination.h>
-#include <LaunchServices/UTCoreTypes.h>
-#include <WebKit2/WKPage.h>
-#include <wtf/RetainPtr.h>
+#import "PlatformWebView.h"
+#import "TestController.h"
+#import <ImageIO/CGImageDestination.h>
+#import <LaunchServices/UTCoreTypes.h>
+#import <WebKit2/WKPage.h>
+#import <wtf/RetainPtr.h>
 
 #define COMMON_DIGEST_FOR_OPENSSL
-#include <CommonCrypto/CommonDigest.h>
+#import <CommonCrypto/CommonDigest.h>
 
 namespace WTR {
 

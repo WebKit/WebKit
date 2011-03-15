@@ -23,11 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TestController.h"
+#import "config.h"
+#import "TestController.h"
 
-#include "PlatformWebView.h"
-#include <WebKit2/WKStringCF.h>
-#include <mach-o/dyld.h> 
+#import "PlatformWebView.h"
+#import <WebKit2/WKStringCF.h>
+#import <mach-o/dyld.h> 
 
 namespace WTR {
 

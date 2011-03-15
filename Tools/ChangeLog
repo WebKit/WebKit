@@ -1,3 +1,12 @@
+2011-03-15  Dan Bernstein  <mitz@apple.com>
+
+        Build fix after r81135.
+
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig:
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        * WebKitTestRunner/mac/TestInvocationMac.mm:
+        * WebKitTestRunner/mac/main.mm:
+
 2011-03-15  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Adam Barth.
