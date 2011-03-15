@@ -43,6 +43,7 @@ PassRefPtr<PluginLayerChromium> PluginLayerChromium::create(GraphicsLayerChromiu
 
 PluginLayerChromium::PluginLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
+    , m_textureId(0)
 {
 }
 

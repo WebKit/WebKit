@@ -310,7 +310,7 @@ void WebPluginContainerImpl::reportGeometry()
 void WebPluginContainerImpl::setBackingTextureId(unsigned id)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    unsigned currId = m_platformLayer->getTextureId();
+    unsigned currId = m_platformLayer->textureId();
     if (currId == id)
         return;
 
@@ -443,7 +443,7 @@ void WebPluginContainerImpl::willDestroyPluginLoadObserver(WebPluginLoadObserver
 #if USE(ACCELERATED_COMPOSITING)
 WebCore::LayerChromium* WebPluginContainerImpl::platformLayer() const
 {
-    return m_platformLayer->getTextureId() ? m_platformLayer.get() : 0;
+    return m_platformLayer->textureId() ? m_platformLayer.get() : 0;
 }
 #endif
 

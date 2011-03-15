@@ -40,9 +40,9 @@ public:
     virtual bool drawsContent() const { return true; }
     virtual void updateContentsIfDirty();
     virtual void draw();
-    
+
+    unsigned textureId() const { return m_textureId; }
     void setTextureId(unsigned textureId);
-    unsigned getTextureId() const { return m_textureId; }
 
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> Program;
 
