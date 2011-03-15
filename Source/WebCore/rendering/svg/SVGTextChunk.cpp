@@ -27,10 +27,8 @@
 
 namespace WebCore {
 
-SVGTextChunk::SVGTextChunk(bool isVerticalText, ETextAnchor textAnchor, SVGTextContentElement::SVGLengthAdjustType lengthAdjust, float desiredTextLength)
-    : m_isVerticalText(isVerticalText)
-    , m_textAnchor(textAnchor)
-    , m_lengthAdjust(lengthAdjust)
+SVGTextChunk::SVGTextChunk(unsigned chunkStyle, float desiredTextLength)
+    : m_chunkStyle(chunkStyle)
     , m_desiredTextLength(desiredTextLength)
 {
 }
@@ -52,7 +50,7 @@ void SVGTextChunk::calculateLength(float& length, unsigned& characters) const
             SVGTextFragment& fragment = fragments.at(i);
             characters += fragment.length;
 
-            if (m_isVerticalText)
+            if (m_chunkStyle & VerticalText)
                 length += fragment.height;
             else
                 length += fragment.width;
@@ -63,7 +61,7 @@ void SVGTextChunk::calculateLength(float& length, unsigned& characters) const
             }
 
             // Resepect gap between chunks.
-            if (m_isVerticalText)
+            if (m_chunkStyle & VerticalText)
                  length += fragment.y - (lastFragment->y + lastFragment->height);
             else
                  length += fragment.x - (lastFragment->x + lastFragment->width);
@@ -75,17 +73,11 @@ void SVGTextChunk::calculateLength(float& length, unsigned& characters) const
 
 float SVGTextChunk::calculateTextAnchorShift(float length) const
 {
-    switch (m_textAnchor) {
-    case TA_START:
-        return 0;
-    case TA_MIDDLE:
+    if (m_chunkStyle & MiddleAnchor)
         return -length / 2;
-    case TA_END:
-        return -length;
-    };
-
-    ASSERT_NOT_REACHED();
-    return 0;
+    if (m_chunkStyle & EndAnchor)
+        return m_chunkStyle & RightToLeftText ? 0 : -length;
+    return m_chunkStyle & RightToLeftText ? -length : 0;
 }
 
 } // namespace WebCore

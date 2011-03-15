@@ -74,17 +74,31 @@
 	<!--======================================================================-->
 	<!--Content of Test Case follows...                  =====================-->
 	<!--======================================================================-->
+	<defs>
+		<!-- Important SVGExotic font instead of relying on MS Office Fonts to be present -->
+		<font-face font-family="SVGExotic">
+			<font-face-src>
+				<font-face-uri xlink:href="resources/SVGExotic.svg#exotic"/>
+			</font-face-src>
+		</font-face>
+	</defs>
 	<g id="test-body-content">
 		<text font-family="Arial" font-size="17" fill="red" x="10" y="40">unicode-bidi="bidi-override" direction="ltr".</text>
-		<g font-size="18"  font-family="'Arial Unicode MS', 'LucidaSansUnicode','MS-Gothic'">
+		<g font-size="18"  font-family="SVGExotic">
 			<text x="10" y="80" unicode-bidi="bidi-override" direction="ltr">Text "אני יכול לאכול זכוכית וזה לא מזיק לי" is in Hebrew</text>
  			</g>
+        <!-- NOTE: THIS SUBTEST IS BROKEN ON PURPOSE. SVG 1.1 2nd Edition changed the meaning of direction="rtl" and text-anchor properties.
+             text-anchor should be defined relative to writing direction, so with text-anchor="end" this test would work again.
+             Compare with LayoutTests/svg/W3C-SVG-1.1-SE/text-intro-02-b.svg, which contains this fix. -->
 		<text font-family="Arial" font-size="17" fill="red" x="10" y="140">unicode-bidi="bidi-override" direction="rtl".</text>
-					<g font-size="18"  font-family="'Arial Unicode MS', 'LucidaSansUnicode','MS-Gothic'">
+					<g font-size="18"  font-family="SVGExotic">
 			<text x="10" y="180" unicode-bidi="bidi-override" direction="rtl">Text "אני יכול לאכול זכוכית וזה לא מזיק לי" is in Hebrew</text>
 		</g>
+        <!-- NOTE: THIS SUBTEST IS BROKEN ON PURPOSE. SVG 1.1 2nd Edition changed the meaning of direction="rtl" and text-anchor properties.
+             text-anchor should be defined relative to writing direction, so with text-anchor="end" this test would work again.
+             Compare with LayoutTests/svg/W3C-SVG-1.1-SE/text-intro-02-b.svg, which contains this fix. -->
 				<text font-family="Arial" font-size="17" fill="red" x="10" y="240">unicode-bidi="normal" direction="ltr".</text>
-					<g font-size="18"  font-family="'Arial Unicode MS', 'LucidaSansUnicode','MS-Gothic'">
+					<g font-size="18"  font-family="SVGExotic">
 			<text x="10" y="280" unicode-bidi="normal"  direction="rtl">Text "אני יכול לאכול זכוכית וזה לא מזיק לי" is in Hebrew</text>
 		</g>
 	</g>

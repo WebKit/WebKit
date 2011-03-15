@@ -28,7 +28,8 @@ namespace WebCore {
 // A SVGTextFragment describes a text fragment of a RenderSVGInlineText which can be rendered at once.
 struct SVGTextFragment {
     SVGTextFragment()
-        : positionListOffset(0)
+        : characterOffset(0)
+        , metricsListOffset(0)
         , length(0)
         , x(0)
         , y(0)
@@ -37,8 +38,9 @@ struct SVGTextFragment {
     {
     }
 
-    // The first rendered character starts at RenderSVGInlineText::characters() + positionListOffset.
-    unsigned positionListOffset;
+    // The first rendered character starts at RenderSVGInlineText::characters() + characterOffset.
+    unsigned characterOffset;
+    unsigned metricsListOffset;
     unsigned length;
 
     float x;

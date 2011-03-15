@@ -73,7 +73,7 @@ int SVGInlineTextBox::offsetForPositionInFragment(const SVGTextFragment& fragmen
     if (!fragment.transform.isIdentity())
         textRun.setHorizontalGlyphStretch(narrowPrecisionToFloat(fragment.transform.xScale()));
 
-    return fragment.positionListOffset - start() + textRenderer->scaledFont().offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
+    return fragment.characterOffset - start() + textRenderer->scaledFont().offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
 }
 
 float SVGInlineTextBox::positionForOffset(int) const
@@ -402,7 +402,7 @@ TextRun SVGInlineTextBox::constructTextRun(RenderStyle* style, const SVGTextFrag
     RenderText* text = textRenderer();
     ASSERT(text);
 
-    TextRun run(text->characters() + fragment.positionListOffset
+    TextRun run(text->characters() + fragment.characterOffset
                 , fragment.length
                 , false /* allowTabs */
                 , 0 /* xPos, only relevant with allowTabs=true */
@@ -425,7 +425,7 @@ bool SVGInlineTextBox::mapStartEndPositionsIntoFragmentCoordinates(const SVGText
     if (startPosition >= endPosition)
         return false;
 
-    int offset = static_cast<int>(fragment.positionListOffset) - start();
+    int offset = static_cast<int>(fragment.characterOffset) - start();
     int length = static_cast<int>(fragment.length);
 
     if (startPosition >= offset + length || endPosition <= offset)

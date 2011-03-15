@@ -42,25 +42,27 @@
 	<!--======================================================================-->
 	<!--Content of Test Case follows...                  =====================-->
 	<!--======================================================================-->
+	<defs>
+		<!-- Important SVGExotic font instead of relying on MS Office Fonts to be present -->
+		<font-face font-family="SVGExotic">
+			<font-face-src>
+				<font-face-uri xlink:href="resources/SVGExotic.svg#exotic"/>
+			</font-face-src>
+		</font-face>
+	</defs>
 	<g id="test-body-content">
-		<defs>
-			<font id="Missy" horiz-adv-x="5">
-				<font-face font-family="MissingInAction" font-weight="normal" font-style="normal" units-per-em="8" cap-height="8" x-height="4" ascent="8" descent="2" alphabetic="0" mathematical="4" ideographic="-2" hanging="8"/>
-				<missing-glyph d="M1,3h2v2h-2z"/>
-			</font>
-		</defs>
 		<text font-family="Arial" font-size="40" fill="red" x="5" y="40">Test left-to-right text.</text>
-		<g font-size="17" font-family="MissingInAction, 'LucidaSansUnicode','MS-Gothic'">
+		<g font-size="17" font-family="SVGExotic">
 			<text x="10" y="75">Polish: Mogę jeść szkło, i mi ...</text>
 			<text x="10" y="110">Russian: Я могу есть стекло, ...</text>
 			<text x="10" y="145" font-size="17">Greek: Μπορώ να φάω ...</text>
 			<text x="10" y="180">Hebrew: אני יכול לאכול זכוכית ... </text>
 			<text x="10" y="215">Yiddish: איך קען עסן גלאָז און ...</text>
 		</g>
-		<g font-size="17" font-family="MissingInAction, SimHei,'LucidaSansUnicode', 'Arial Unicode MS'">
+		<g font-size="17" font-family="SVGExotic">
 			<text x="10" y="250">Chinese:我能吞下玻璃而不伤身体。</text>
 		</g>
-		<g font-size="17" font-family="MissingInAction, 'MS-Gothic','LucidaSansUnicode', 'Arial Unicode MS'">
+		<g font-size="17" font-family="SVGExotic">
 			<text x="10" y="285" font-size="17">Japanese: 私はガラスを食べます。</text>
 		</g>
 	</g>

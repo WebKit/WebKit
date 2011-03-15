@@ -1109,12 +1109,7 @@ RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLa
         pos = last->lineBreakPos();
         resolver.setStatus(last->lineBreakBidiStatus());
     } else {
-        bool ltr = style()->isLeftToRightDirection()
-    #if ENABLE(SVG)   
-            || (style()->unicodeBidi() == UBNormal && isSVGText())
-    #endif
-            ;
-
+        bool ltr = style()->isLeftToRightDirection();
         Direction direction = ltr ? LeftToRight : RightToLeft;
         resolver.setLastStrongDir(direction);
         resolver.setLastDir(direction);

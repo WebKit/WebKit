@@ -1,3 +1,174 @@
+2011-03-14  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        REGRESSION (r68976): Incorrect bidi rendering in SVG text
+        https://bugs.webkit.org/show_bug.cgi?id=53980
+
+        rework the test engine or SVG "text-intro" tests so we can turn them back on
+        https://bugs.webkit.org/show_bug.cgi?id=6524
+
+        svg/W3C-SVG-1.1/text-intro-0*.svg fail when MS Office fonts are present
+        https://bugs.webkit.org/show_bug.cgi?id=11662
+
+        svg/batik/text/textBiDi.svg failing
+        https://bugs.webkit.org/show_bug.cgi?id=17392
+
+        SVG bidi examples at w3C I18N WG tutorials are not rendered correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=24374
+
+        Implement proper bidirectionality support for SVG text.
+
+        BiDi didn't work properly until now, because the x/y/dx/dy/rotate value lists are stored in logical order (aka. in
+        the order the characters appear in the markup), and when laying out bidi text, we associated the current character
+        in visual order with the current x/y/dx/dy/rotate value in logical order, messing up RTL text layout.
+        The BiDi algorithm itself, inherited by RenderBlockLineLayout, works just fine, the inline box tree is correct.
+
+        Long story:
+        Before the inline box tree is created, SVGTextLayoutAttributesBuilder builds a list of x/y/dx/dy/rotate/<text metrics>
+        for each RenderSVGInlineText* object, called SVGTextLayoutAttributes. This happens in logical order, as specified in
+        the markup. <text x="10 20" y="10">abcdef</text> creates a SVGTextLayoutAttributes object in the renderer associated with
+        "abcdef" that contains (10, 20) for x, (10) for y, the dx/dy/rotate lists are empty, and the SVGTextMetrics list holds 6
+        width/height values for each of the glyphs (and some other infromation, see SVGTextMetrics class).
+        The SVGTextLayoutAttributes object is _used by_ RenderBlockLineLayout when applying the BiDi algorithm as SVG demands
+        that BiDi reordering does not happen across text chunks (a text chunk is defined by an absolute position, eg. x="10").
+
+        To summarize: SVGTextLayoutAttributes are stored in all RenderSVGInlineText renderers, caching the metrics of all
+        characters, their position based on the DOM attributes x/y/dx/dy/rotate. Using that information it's possible to
+        determine whether a position starts a new text chunk, and that's used by RenderBlockLineLayout to create the 
+        inline box tree, in _visual order_, as it will appear on screen.
+
+        After the inline box tree is created, the SVGRootInlineBox traverses its children in visual order and feeds the
+        found text boxes to SVGTextLayoutEngine, which lays out the text on a line or a path, according to SVG text layout
+        rules. For each character of the passed in InlineTextBox, it determines the x/y/dx/dy/rotate value, and the position
+        in the <text metrics> list of the renderer. The problem here is that the passed in text boxes are in visual order,
+        the x/y/.. lists are all in logical order.
+
+        Example: <text direction="rtl" unicde-bidi="bidi-override" x="10 20">abcdef</text>, reverse the text direction:
+                 the visual order now is: "fedcba", where 'f' should be associated with x="10" and 'e' with x="20".
+
+        Fix that problem, by computing a list of text boxes in _logical_ order in advance and pass it to SVGTextLayoutEngine,
+        before it starts processing the boxes in visual order, fed by SVGRootInlineBox. When laying oout text, we can now
+        process text in visual order, but grab the x/y/.. coordinates from the renderer in logical order.
+
+        Some more work was needed to truly fix Arabic. The SVGTextLayoutAttributesBuilder measured all characters isolated,
+        which is not a problem with latin text, but results in wrong advances for Arabic text, as isolated forms, instead of
+        shaped forms are measured. This broke text-anchor support, text queries on Arabic text etc. Fixed now, covered by
+        dozens of new tests.
+
+        Tests: svg/W3C-I18N/g-dirLTR-ubNone.svg
+               svg/W3C-I18N/g-dirLTR-ubOverride.svg
+               svg/W3C-I18N/g-dirRTL-ubNone.svg
+               svg/W3C-I18N/g-dirRTL-ubOverride.svg
+               svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg
+               svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg
+               svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg
+               svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg
+               svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg
+               svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg
+               svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg
+               svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg
+               svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg
+               svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg
+               svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg
+               svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg
+               svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg
+               svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg
+               svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg
+               svg/W3C-I18N/text-anchor-no-markup.svg
+               svg/W3C-I18N/text-dirLTR-ubNone.svg
+               svg/W3C-I18N/text-dirLTR-ubOverride.svg
+               svg/W3C-I18N/text-dirRTL-ubNone.svg
+               svg/W3C-I18N/text-dirRTL-ubOverride.svg
+               svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context.svg
+               svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context.svg
+               svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context.svg
+               svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context.svg
+               svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg
+               svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context.svg
+               svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context.svg
+               svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context.svg
+               svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context.svg
+               svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context.svg
+               svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context.svg
+               svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context.svg
+               svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context.svg
+               svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context.svg
+               svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg
+               svg/W3C-I18N/tspan-direction-ltr.svg
+               svg/W3C-I18N/tspan-direction-rtl.svg
+               svg/W3C-SVG-1.1-SE/text-intro-02-b.svg
+               svg/W3C-SVG-1.1-SE/text-intro-05-t.svg
+               svg/W3C-SVG-1.1-SE/text-intro-09-b.svg
+               svg/W3C-SVG-1.1/text-align-08-b.svg
+               svg/W3C-SVG-1.1/text-fonts-03-t.svg
+               svg/W3C-SVG-1.1/text-intro-01-t.svg
+               svg/W3C-SVG-1.1/text-intro-02-b.svg
+               svg/W3C-SVG-1.1/text-intro-03-b.svg
+               svg/W3C-SVG-1.1/text-intro-04-t.svg
+               svg/text/bidi-reorder-value-lists.svg
+               svg/text/bidi-text-anchor-direction.svg
+               svg/text/bidi-text-query.svg
+               svg/text/bidi-tspans.svg
+
+        * rendering/RenderBlockLineLayout.cpp: Remove hack that forced LTR support when unicode-bidi="normal" and handling SVG text.
+        (WebCore::RenderBlock::determineStartPosition):
+        * rendering/svg/SVGInlineTextBox.cpp: s/fragment.positionListOffset/fragment.characterOffset/
+        (WebCore::SVGInlineTextBox::offsetForPositionInFragment):
+        (WebCore::SVGInlineTextBox::constructTextRun):
+        (WebCore::SVGInlineTextBox::mapStartEndPositionsIntoFragmentCoordinates):
+        * rendering/svg/SVGRenderTreeAsText.cpp: Ditto.
+        (WebCore::writeSVGInlineTextBox):
+        * rendering/svg/SVGRootInlineBox.cpp: Add new buildTextBoxListInLogicalOrder(), collecting all text boxes recursively in logical order (aka. as specified in markup).
+                                              This is needed as we have to process x/y/dx/dy/rotate value lists of text/tspan/.. elements in logical order, not in visual
+                                              order as the characters are presented on screen.
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation):
+        (WebCore::SVGRootInlineBox::buildTextBoxListInLogicalOrder):
+        (WebCore::SVGRootInlineBox::layoutCharactersInTextBoxes):
+        * rendering/svg/SVGRootInlineBox.h:
+        * rendering/svg/SVGTextChunk.cpp: Cleanup code, minimize SVGTextChunks memory consumption.
+        (WebCore::SVGTextChunk::SVGTextChunk): A text chunk now know whether its base progress direction is left-to-right or right-to-left.
+        (WebCore::SVGTextChunk::calculateLength):
+        (WebCore::SVGTextChunk::calculateTextAnchorShift): Make text-anchor direction aware. text-anchor="start/end" meaning depends on the context (ltr vs. rtl).
+        * rendering/svg/SVGTextChunk.h: Adapt code, merging three members into a bitfield.
+        (WebCore::SVGTextChunk::isVerticalText):
+        (WebCore::SVGTextChunk::hasDesiredTextLength):
+        (WebCore::SVGTextChunk::hasTextAnchor):
+        (WebCore::SVGTextChunk::hasLengthAdjustSpacing):
+        (WebCore::SVGTextChunk::hasLengthAdjustSpacingAndGlyphs):
+        * rendering/svg/SVGTextChunkBuilder.cpp: Adapt to SVGTextChunk code changes.
+        (WebCore::SVGTextChunkBuilder::addTextChunk):
+        (WebCore::SVGTextChunkBuilder::processTextChunk):
+        * rendering/svg/SVGTextFragment.h: Add metricsListOffset, needed only while laying out text.
+        (WebCore::SVGTextFragment::SVGTextFragment): Rename positionListOffset to characterOffset, as it describes an offset in the textRenderer->characters() array.
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp
+        (WebCore::SVGTextLayoutAttributesBuilder::propagateLayoutAttributes): Fix measuring Arabic text in LTR/RTL modes. Assure that each SVGTextMetrics object
+                                                                              that we cache, refers to the _rendered_ character. For Arabic text that means, that we're
+                                                                              measuring the shaped width of the glyph, not the glyph in its isolated form. Without that
+                                                                              fix reordering boxes containing Arabic is wrong.
+        * rendering/svg/SVGTextLayoutEngine.cpp: SVGTextLayoutEngine is fed with text boxes to be laid out in _visual_ order, left-to-right, after the BiDi algorithm
+                                                 has been applied by RenderBlockLineLayout to create the inline box tree. The coordinates lists x/y/dx/dy/rotate have
+                                                 to be processed in _logical_ order. SVGRootInlineBox now passes a list of text boxes in logical order to SVGTextLayoutEngine,
+                                                 to assure it grabs the coordinates from the correct InlineTextBox. See examples at the top of the ChangeLog.
+        (WebCore::SVGTextLayoutEngine::SVGTextLayoutEngine):
+        (WebCore::SVGTextLayoutEngine::recordTextFragment): No need to measure text here anymore, SVGTextLayoutAttributesBuilder now provides exact advances for each glyph.
+                                                            The width of a SVGTextFragment is always equal to the sum of each glyph advance. (This was not the case for
+                                                            Arabic until now.)
+        (WebCore::SVGTextLayoutEngine::finalizeTransformMatrices):
+        (WebCore::SVGTextLayoutEngine::nextLogicalBoxAndOffset): Computes the next logical box and the offset to the next coordinate value in its position list.
+        (WebCore::SVGTextLayoutEngine::layoutTextOnLineOrPath):
+        * rendering/svg/SVGTextLayoutEngine.h: Add CharacterRange helper struct.
+        (WebCore::SVGTextLayoutEngine::CharacterRange::CharacterRange):
+        * rendering/svg/SVGTextMetrics.cpp: Remove unused measureAllCharactersIndividually() method.
+        (WebCore::constructTextRun): Pass direction and unicode-bidi="override" values to the TextRun, otherwhise LTR is always asumed.
+        * rendering/svg/SVGTextMetrics.h:
+        (WebCore::SVGTextMetrics::setWidth): Add private setter, only SVGTextLayoutAttributesBuilder is allowed to modify the metrics (to fix up glyph widths for Arabic).
+        * rendering/svg/SVGTextQuery.cpp: s/fragment.positionListOffset/fragment.characterOffset/
+        (WebCore::SVGTextQuery::subStringLengthCallback):
+        (WebCore::SVGTextQuery::startPositionOfCharacterCallback):
+        (WebCore::SVGTextQuery::endPositionOfCharacterCallback):
+        (WebCore::calculateGlyphBoundaries):
+
 2011-03-15  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -1,3 +1,289 @@
+2011-03-14  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        REGRESSION (r68976): Incorrect bidi rendering in SVG text
+        https://bugs.webkit.org/show_bug.cgi?id=53980
+
+        rework the test engine or SVG "text-intro" tests so we can turn them back on
+        https://bugs.webkit.org/show_bug.cgi?id=6524
+
+        svg/W3C-SVG-1.1/text-intro-0*.svg fail when MS Office fonts are present
+        https://bugs.webkit.org/show_bug.cgi?id=11662
+
+        svg/batik/text/textBiDi.svg failing
+        https://bugs.webkit.org/show_bug.cgi?id=17392
+
+        SVG bidi examples at w3C I18N WG tutorials are not rendered correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=24374
+
+        Implement proper bidirectionality support for SVG text. The actual bidi support is working
+        fine, the problem is that SVG demands to reorder x/y/dx/dy/rotate value lists, in order to
+        main correspondance between the attributes and the potentially reordered text.
+
+        Land a new suite of SVG & i18n tests, covering unicode-bidi/direction and text-anchor support
+        with BiDi text (Arabic mixed with Latin) in LayoutTests/svg/W3C-I18N.
+
+        Enable long-disabled SVG BiDi tests, and international fonts support in svg/W3C-SVG-1.1
+        by providing a SVGFont replacment, replacing the need for MS Office Fonts to be present.
+        These tests have some value and we'd like to have them enabled again.
+
+        * platform/mac/svg/W3C-I18N: Added.
+        * platform/mac/svg/W3C-I18N/g-dirLTR-ubNone-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/g-dirLTR-ubNone-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/g-dirLTR-ubNone-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/g-dirLTR-ubOverride-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/g-dirLTR-ubOverride-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/g-dirLTR-ubOverride-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/g-dirRTL-ubNone-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/g-dirRTL-ubNone-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/g-dirRTL-ubOverride-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/g-dirRTL-ubOverride-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-no-markup-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-no-markup-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-anchor-no-markup-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-dirLTR-ubNone-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-dirLTR-ubNone-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-dirLTR-ubNone-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-dirLTR-ubOverride-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-dirLTR-ubOverride-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-dirRTL-ubNone-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-dirRTL-ubNone-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/text-dirRTL-ubOverride-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/text-dirRTL-ubOverride-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/text-dirRTL-ubOverride-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-direction-ltr-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-direction-ltr-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-direction-ltr-expected.txt: Added.
+        * platform/mac/svg/W3C-I18N/tspan-direction-rtl-expected.checksum: Added.
+        * platform/mac/svg/W3C-I18N/tspan-direction-rtl-expected.png: Added.
+        * platform/mac/svg/W3C-I18N/tspan-direction-rtl-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.checksum: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.checksum: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.checksum: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-08-b-expected.checksum: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-align-08-b-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-align-08-b-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-fonts-03-t-expected.checksum: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-fonts-03-t-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-fonts-03-t-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-01-t-expected.checksum: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-01-t-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-01-t-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-02-b-expected.checksum: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-02-b-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-02-b-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-03-b-expected.checksum: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-03-b-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-03-b-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-04-t-expected.checksum: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-04-t-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-04-t-expected.txt: Added.
+        * platform/mac/svg/text/bidi-reorder-value-lists-expected.checksum: Added.
+        * platform/mac/svg/text/bidi-reorder-value-lists-expected.png: Added.
+        * platform/mac/svg/text/bidi-reorder-value-lists-expected.txt: Added.
+        * platform/mac/svg/text/bidi-text-anchor-direction-expected.checksum: Added.
+        * platform/mac/svg/text/bidi-text-anchor-direction-expected.png: Added.
+        * platform/mac/svg/text/bidi-text-anchor-direction-expected.txt: Added.
+        * platform/mac/svg/text/bidi-text-query-expected.checksum: Added.
+        * platform/mac/svg/text/bidi-text-query-expected.png: Added.
+        * platform/mac/svg/text/bidi-text-query-expected.txt: Added.
+        * platform/mac/svg/text/bidi-tspans-expected.checksum: Added.
+        * platform/mac/svg/text/bidi-tspans-expected.png: Added.
+        * platform/mac/svg/text/bidi-tspans-expected.txt: Added.
+        * platform/mac/svg/text/small-fonts-2-expected.txt:
+        * platform/mac/svg/text/text-align-02-b-expected.txt:
+        * platform/mac/svg/text/text-align-04-b-expected.txt:
+        * svg/W3C-I18N: Added.
+        * svg/W3C-I18N/NOTE: Added.
+        * svg/W3C-I18N/g-dirLTR-ubNone.svg: Added.
+        * svg/W3C-I18N/g-dirLTR-ubOverride.svg: Added.
+        * svg/W3C-I18N/g-dirRTL-ubNone.svg: Added.
+        * svg/W3C-I18N/g-dirRTL-ubOverride.svg: Added.
+        * svg/W3C-I18N/resources: Added.
+        * svg/W3C-I18N/resources/img1.png: Added.
+        * svg/W3C-I18N/resources/img11.png: Added.
+        * svg/W3C-I18N/resources/img12.png: Added.
+        * svg/W3C-I18N/resources/img13.png: Added.
+        * svg/W3C-I18N/resources/img14.png: Added.
+        * svg/W3C-I18N/resources/img15.png: Added.
+        * svg/W3C-I18N/resources/img16.png: Added.
+        * svg/W3C-I18N/resources/img17.png: Added.
+        * svg/W3C-I18N/resources/img18.png: Added.
+        * svg/W3C-I18N/resources/img19.png: Added.
+        * svg/W3C-I18N/resources/img2.png: Added.
+        * svg/W3C-I18N/resources/img20.png: Added.
+        * svg/W3C-I18N/resources/img21.png: Added.
+        * svg/W3C-I18N/resources/img24.png: Added.
+        * svg/W3C-I18N/resources/img25.png: Added.
+        * svg/W3C-I18N/resources/img3.png: Added.
+        * svg/W3C-I18N/resources/img4.png: Added.
+        * svg/W3C-I18N/resources/img5.png: Added.
+        * svg/W3C-I18N/resources/tanchor-left-right.png: Added.
+        * svg/W3C-I18N/resources/tanchor-left.png: Added.
+        * svg/W3C-I18N/resources/tanchor-right.png: Added.
+        * svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg: Added.
+        * svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg: Added.
+        * svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg: Added.
+        * svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg: Added.
+        * svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg: Added.
+        * svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg: Added.
+        * svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg: Added.
+        * svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg: Added.
+        * svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg: Added.
+        * svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg: Added.
+        * svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg: Added.
+        * svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg: Added.
+        * svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg: Added.
+        * svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg: Added.
+        * svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg: Added.
+        * svg/W3C-I18N/text-anchor-no-markup.svg: Added.
+        * svg/W3C-I18N/text-dirLTR-ubNone.svg: Added.
+        * svg/W3C-I18N/text-dirLTR-ubOverride.svg: Added.
+        * svg/W3C-I18N/text-dirRTL-ubNone.svg: Added.
+        * svg/W3C-I18N/text-dirRTL-ubOverride.svg: Added.
+        * svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context.svg: Added.
+        * svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context.svg: Added.
+        * svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context.svg: Added.
+        * svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context.svg: Added.
+        * svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg: Added.
+        * svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context.svg: Added.
+        * svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context.svg: Added.
+        * svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context.svg: Added.
+        * svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context.svg: Added.
+        * svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context.svg: Added.
+        * svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context.svg: Added.
+        * svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context.svg: Added.
+        * svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context.svg: Added.
+        * svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context.svg: Added.
+        * svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg: Added.
+        * svg/W3C-I18N/tspan-direction-ltr.svg: Added.
+        * svg/W3C-I18N/tspan-direction-rtl.svg: Added.
+        * svg/W3C-SVG-1.1-SE/text-intro-02-b.svg: Added.
+        * svg/W3C-SVG-1.1-SE/text-intro-05-t.svg: Added.
+        * svg/W3C-SVG-1.1-SE/text-intro-09-b.svg: Added.
+        * svg/W3C-SVG-1.1/resources/SVGExotic.svg: Added.
+        * svg/W3C-SVG-1.1/text-align-08-b.svg: Copied from LayoutTests/svg/W3C-SVG-1.1/text-align-08-b.svg-disabled.
+        * svg/W3C-SVG-1.1/text-align-08-b.svg-disabled: Removed.
+        * svg/W3C-SVG-1.1/text-fonts-03-t.svg: Copied from LayoutTests/svg/W3C-SVG-1.1/text-fonts-03-t.svg-disabled.
+        * svg/W3C-SVG-1.1/text-fonts-03-t.svg-disabled: Removed.
+        * svg/W3C-SVG-1.1/text-intro-01-t.svg: Copied from LayoutTests/svg/W3C-SVG-1.1/text-intro-01-t.svg-disabled.
+        * svg/W3C-SVG-1.1/text-intro-01-t.svg-disabled: Removed.
+        * svg/W3C-SVG-1.1/text-intro-02-b.svg: Copied from LayoutTests/svg/W3C-SVG-1.1/text-intro-02-b.svg-disabled.
+        * svg/W3C-SVG-1.1/text-intro-02-b.svg-disabled: Removed.
+        * svg/W3C-SVG-1.1/text-intro-03-b.svg: Copied from LayoutTests/svg/W3C-SVG-1.1/text-intro-03-b.svg-disabled.
+        * svg/W3C-SVG-1.1/text-intro-03-b.svg-disabled: Removed.
+        * svg/W3C-SVG-1.1/text-intro-04-t.svg: Copied from LayoutTests/svg/W3C-SVG-1.1/text-intro-04-t.svg-disabled.
+        * svg/W3C-SVG-1.1/text-intro-04-t.svg-disabled: Removed.
+        * svg/custom/glyph-transformation-with-hkern-expected.txt:
+        * svg/text/bidi-reorder-value-lists.svg: Added.
+        * svg/text/bidi-text-anchor-direction.svg: Added.
+        * svg/text/bidi-text-query.svg: Added.
+        * svg/text/bidi-tspans.svg: Added.
+
 2011-03-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

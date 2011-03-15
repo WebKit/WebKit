@@ -101,15 +101,47 @@ void SVGTextChunkBuilder::addTextChunk(Vector<SVGInlineTextBox*>& lineLayoutBoxe
     const SVGRenderStyle* svgStyle = style->svgStyle();
     ASSERT(svgStyle);
 
-    SVGTextContentElement::SVGLengthAdjustType lengthAdjust = SVGTextContentElement::LENGTHADJUST_UNKNOWN;
-    float desiredTextLength = 0;
+    // Build chunk style flags.
+    unsigned chunkStyle = SVGTextChunk::DefaultStyle;
 
+    // Handle 'direction' property.
+    if (!style->isLeftToRightDirection())
+        chunkStyle |= SVGTextChunk::RightToLeftText;
+
+    // Handle 'writing-mode' property.
+    if (svgStyle->isVerticalWritingMode())
+        chunkStyle |= SVGTextChunk::VerticalText;
+
+    // Handle 'text-anchor' property.
+    switch (svgStyle->textAnchor()) {
+    case TA_START:
+        break;
+    case TA_MIDDLE:
+        chunkStyle |= SVGTextChunk::MiddleAnchor;
+        break;
+    case TA_END:
+        chunkStyle |= SVGTextChunk::EndAnchor;
+        break;
+    };
+
+    // Handle 'lengthAdjust' property.
+    float desiredTextLength = 0;
     if (SVGTextContentElement* textContentElement = SVGTextContentElement::elementFromRenderer(textRenderer->parent())) {
-        lengthAdjust = static_cast<SVGTextContentElement::SVGLengthAdjustType>(textContentElement->lengthAdjust());
         desiredTextLength = textContentElement->textLength().value(textContentElement);
+
+        switch (static_cast<SVGTextContentElement::SVGLengthAdjustType>(textContentElement->lengthAdjust())) {
+        case SVGTextContentElement::LENGTHADJUST_UNKNOWN:
+            break;
+        case SVGTextContentElement::LENGTHADJUST_SPACING:
+            chunkStyle |= SVGTextChunk::LengthAdjustSpacing;
+            break;
+        case SVGTextContentElement::LENGTHADJUST_SPACINGANDGLYPHS:
+            chunkStyle |= SVGTextChunk::LengthAdjustSpacingAndGlyphs;
+            break;
+        };
     }
 
-    SVGTextChunk chunk(svgStyle->isVerticalWritingMode(), svgStyle->textAnchor(), lengthAdjust, desiredTextLength);
+    SVGTextChunk chunk(chunkStyle, desiredTextLength);
 
     Vector<SVGInlineTextBox*>& boxes = chunk.boxes();
     for (unsigned i = boxStart; i < boxStart + boxCount; ++i)
@@ -137,7 +169,7 @@ void SVGTextChunkBuilder::processTextChunk(const SVGTextChunk& chunk)
 
     bool isVerticalText = chunk.isVerticalText();
     if (processTextLength) {
-        if (chunk.lengthAdjust() == SVGTextContentElement::LENGTHADJUST_SPACING) {
+        if (chunk.hasLengthAdjustSpacing()) {
             float textLengthShift = (chunk.desiredTextLength() - chunkLength) / chunkCharacters;
             unsigned atCharacter = 0;
             for (unsigned boxPosition = 0; boxPosition < boxCount; ++boxPosition) {
@@ -147,7 +179,7 @@ void SVGTextChunkBuilder::processTextChunk(const SVGTextChunk& chunk)
                 processTextLengthSpacingCorrection(isVerticalText, textLengthShift, fragments, atCharacter);
             }
         } else {
-            ASSERT(chunk.lengthAdjust() == SVGTextContentElement::LENGTHADJUST_SPACINGANDGLYPHS);
+            ASSERT(chunk.hasLengthAdjustSpacingAndGlyphs());
             float scale = chunk.desiredTextLength() / chunkLength;
             AffineTransform spacingAndGlyphsTransform;
 
@@ -172,7 +204,7 @@ void SVGTextChunkBuilder::processTextChunk(const SVGTextChunk& chunk)
         return;
 
     // If we previously applied a lengthAdjust="spacing" correction, we have to recalculate the chunk length, to be able to apply the text-anchor shift.
-    if (processTextLength && chunk.lengthAdjust() == SVGTextContentElement::LENGTHADJUST_SPACING) {
+    if (processTextLength && chunk.hasLengthAdjustSpacing()) {
         chunkLength = 0;
         chunkCharacters = 0;
         chunk.calculateLength(chunkLength, chunkCharacters);

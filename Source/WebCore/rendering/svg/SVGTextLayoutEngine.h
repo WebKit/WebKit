@@ -47,7 +47,7 @@ class SVGRenderStyle;
 class SVGTextLayoutEngine {
     WTF_MAKE_NONCOPYABLE(SVGTextLayoutEngine);
 public:
-    SVGTextLayoutEngine();
+    SVGTextLayoutEngine(Vector<SVGInlineTextBox*>& boxesInLogicalOrder);
     SVGTextChunkBuilder& chunkLayoutBuilder() { return m_chunkLayoutBuilder; }
 
     void beginTextPathLayout(RenderObject*, SVGTextLayoutEngine& lineLayout);
@@ -57,17 +57,35 @@ public:
     void finishLayout();
 
 private:
+    struct CharacterRange {
+        CharacterRange(unsigned newStart = 0, unsigned newEnd = 0, SVGInlineTextBox* newBox = 0)
+            : start(newStart)
+            , end(newEnd)
+            , box(newBox)
+        {
+        }
+
+        unsigned start;
+        unsigned end;
+        SVGInlineTextBox* box;
+    };
+
+    typedef Vector<CharacterRange> CharacterRanges;
+
     void updateCharacerPositionIfNeeded(float& x, float& y);
     void updateCurrentTextPosition(float x, float y, float glyphAdvance);
     void updateRelativePositionAdjustmentsIfNeeded(Vector<float>& dxValues, Vector<float>& dyValues, unsigned valueListPosition);
 
-    void recordTextFragment(SVGInlineTextBox*, RenderSVGInlineText*, unsigned positionListOffset, const SVGTextMetrics& lastCharacterMetrics);
+    void recordTextFragment(SVGInlineTextBox*, Vector<SVGTextMetrics>& textMetricValues, unsigned characterOffset, unsigned metricsListOffset);
     bool parentDefinesTextLength(RenderObject*) const;
 
     void layoutTextOnLineOrPath(SVGInlineTextBox*, RenderSVGInlineText*, const RenderStyle*);
     void finalizeTransformMatrices(Vector<SVGInlineTextBox*>&);
 
+    void nextLogicalBoxAndOffset(unsigned consumeCharacters, unsigned& positionListOffset, SVGInlineTextBox*&);
+
 private:
+    CharacterRanges m_ranges;
     Vector<SVGInlineTextBox*> m_lineLayoutBoxes;
     Vector<SVGInlineTextBox*> m_pathLayoutBoxes;
     SVGTextChunkBuilder m_chunkLayoutBuilder;

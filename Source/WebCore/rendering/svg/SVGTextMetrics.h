@@ -32,7 +32,6 @@ class SVGTextMetrics {
 public:
     static SVGTextMetrics emptyMetrics();
     static SVGTextMetrics measureCharacterRange(RenderSVGInlineText*, unsigned position, unsigned length);
-    static void measureAllCharactersIndividually(RenderSVGInlineText*, Vector<SVGTextMetrics>&);
 
     bool operator==(const SVGTextMetrics&);
 
@@ -60,6 +59,10 @@ public:
 
     // Only useful when measuring individual characters, to lookup ligatures.
     const Glyph& glyph() const { return m_glyph; }
+
+private:
+    friend class SVGTextLayoutAttributesBuilder;
+    void setWidth(float width) { m_width = width; }
 
 private:
     SVGTextMetrics();

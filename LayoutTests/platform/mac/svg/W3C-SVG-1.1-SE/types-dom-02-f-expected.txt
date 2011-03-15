@@ -4,8 +4,8 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (51,40) size 389x249
-      RenderSVGText {text} at (51,40) size 160x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 160x19
+      RenderSVGText {text} at (51,40) size 159x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 159x19
           chunk 1 (end anchor) text run 1 at (51.55,55.00) startOffset 0 endOffset 5 width 51.01: "animV"
           chunk 1 (end anchor) text run 2 at (101.50,55.00) startOffset 5 endOffset 16 width 90.56: "al != baseV"
           chunk 1 (end anchor) text run 3 at (190.99,55.00) startOffset 16 endOffset 19 width 19.01: "al:"

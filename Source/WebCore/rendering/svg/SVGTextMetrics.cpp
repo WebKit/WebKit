@@ -74,7 +74,17 @@ SVGTextMetrics SVGTextMetrics::emptyMetrics()
 
 static TextRun constructTextRun(RenderSVGInlineText* text, const UChar* characters, unsigned position, unsigned length)
 {
-    TextRun run(characters + position, length);
+    RenderStyle* style = text->style();
+    ASSERT(style);
+
+    TextRun run(characters + position
+                , length
+                , false /* allowTabs */
+                , 0 /* xPos, only relevant with allowTabs=true */
+                , 0 /* padding, only relevant for justified text, not relevant for SVG */
+                , TextRun::AllowTrailingExpansion
+                , !style->isLeftToRightDirection()
+                , style->unicodeBidi() == Override /* directionalOverride */);
 
 #if ENABLE(SVG_FONTS)
     run.setReferencingRenderObject(text);
@@ -90,22 +100,6 @@ SVGTextMetrics SVGTextMetrics::measureCharacterRange(RenderSVGInlineText* text, 
     ASSERT(text);
     TextRun run(constructTextRun(text, text->characters(), position, length));
     return SVGTextMetrics(text, run, position, text->textLength());
-}
-
-void SVGTextMetrics::measureAllCharactersIndividually(RenderSVGInlineText* text, Vector<SVGTextMetrics>& allMetrics)
-{
-    ASSERT(text);
-    const UChar* characters = text->characters();
-    unsigned length = text->textLength();
-
-    TextRun run(constructTextRun(text, 0, 0, 0));
-    for (unsigned position = 0; position < length; ) {
-        run.setText(characters + position, 1);
-
-        SVGTextMetrics metrics(text, run, position, text->textLength());
-        allMetrics.append(metrics);
-        position += metrics.length();
-    }
 }
 
 }

@@ -59,8 +59,16 @@
 	<!--======================================================================-->
 	<!--Content of Test Case follows...                  =====================-->
 	<!--======================================================================-->
+	<defs>
+		<!-- Important SVGExotic font instead of relying on MS Office Fonts to be present -->
+		<font-face font-family="SVGExotic">
+			<font-face-src>
+				<font-face-uri xlink:href="resources/SVGExotic.svg#exoticVertical"/>
+			</font-face-src>
+		</font-face>
+	</defs>
 	<g id="test-body-content">
-		<g font-size="14" font-family="'Arial Unicode MS', 'LucidaSansUnicode','MS-Gothic'" writing-mode="tb">
+		<g font-size="14" font-family="SVGExotic" writing-mode="tb">
 			<text x="70" y="10">Text "我能吞下玻璃而不伤身体。" in Chinese</text>
 			<text x="230" y="10" font-size="13">Japanese: 私はガラスを食べられます。それは私を傷つけません。</text>
 			<text x="370" y="13" glyph-orientation-vertical="0" font-size="10">Japanese: 私はガラスを食べられます。それは私を傷つけません。</text>

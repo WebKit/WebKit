@@ -31,34 +31,37 @@ class SVGInlineTextBox;
 // A SVGTextChunk describes a range of SVGTextFragments, see the SVG spec definition of a "text chunk".
 class SVGTextChunk {
 public:
-    SVGTextChunk(bool isVerticalText, ETextAnchor, SVGTextContentElement::SVGLengthAdjustType, float desiredTextLength);
+    enum ChunkStyle {
+        DefaultStyle = 1 << 0,
+        MiddleAnchor = 1 << 1,
+        EndAnchor = 1 << 2,
+        RightToLeftText = 1 << 3,
+        VerticalText = 1 << 4,
+        LengthAdjustSpacing = 1 << 5,
+        LengthAdjustSpacingAndGlyphs = 1 << 6
+    };
+
+    SVGTextChunk(unsigned chunkStyle, float desiredTextLength);
 
     void calculateLength(float& length, unsigned& characters) const;
     float calculateTextAnchorShift(float length) const;
 
-    bool isVerticalText() const { return m_isVerticalText; }
-    ETextAnchor textAnchor() const { return m_textAnchor; }
-    SVGTextContentElement::SVGLengthAdjustType lengthAdjust() const { return m_lengthAdjust; }
+    bool isVerticalText() const { return m_chunkStyle & VerticalText; }
     float desiredTextLength() const { return m_desiredTextLength; }
 
     Vector<SVGInlineTextBox*>& boxes() { return m_boxes; }
     const Vector<SVGInlineTextBox*>& boxes() const { return m_boxes; }
 
-    bool hasDesiredTextLength() const { return m_lengthAdjust != SVGTextContentElement::LENGTHADJUST_UNKNOWN && m_desiredTextLength > 0; } 
-    bool hasTextAnchor() const { return m_textAnchor != TA_START; }
+    bool hasDesiredTextLength() const { return m_desiredTextLength > 0 && ((m_chunkStyle & LengthAdjustSpacing) || (m_chunkStyle & LengthAdjustSpacingAndGlyphs)); }
+    bool hasTextAnchor() const {  return m_chunkStyle & RightToLeftText ? !(m_chunkStyle & EndAnchor) : (m_chunkStyle & MiddleAnchor) || (m_chunkStyle & EndAnchor); }
+    bool hasLengthAdjustSpacing() const { return m_chunkStyle & LengthAdjustSpacing; }
+    bool hasLengthAdjustSpacingAndGlyphs() const { return m_chunkStyle & LengthAdjustSpacingAndGlyphs; }
 
 private:
     // Contains all SVGInlineTextBoxes this chunk spans.
     Vector<SVGInlineTextBox*> m_boxes;
 
-    // writing-mode specific property.
-    bool m_isVerticalText;
-
-    // text-anchor specific properties.
-    ETextAnchor m_textAnchor;
-
-    // textLength/lengthAdjust specific properties.
-    SVGTextContentElement::SVGLengthAdjustType m_lengthAdjust;
+    unsigned m_chunkStyle;
     float m_desiredTextLength;
 };
 

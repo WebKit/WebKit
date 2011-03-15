@@ -73,8 +73,18 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, int, int)
 
 void SVGRootInlineBox::computePerCharacterLayoutInformation()
 {
+    RenderBlock* parentBlock = block();
+    ASSERT(parentBlock);
+
+    // Build list of all text boxes which belong to our root renderer, in logical order,
+    // aka. the order of the characters as they appear in the original document.
+    // This is needed to maintain correspondence between the x/y/dx/dy/rotate value
+    // lists and the potentially reordered characters in the inline box tree.
+    Vector<SVGInlineTextBox*> boxesInLogicalOrder;
+    buildTextBoxListInLogicalOrder(parentBlock, boxesInLogicalOrder);
+
     // Perform SVG text layout phase two (see SVGTextLayoutEngine for details).
-    SVGTextLayoutEngine characterLayout;
+    SVGTextLayoutEngine characterLayout(boxesInLogicalOrder);
     layoutCharactersInTextBoxes(this, characterLayout);
 
     // Perform SVG text layout phase three (see SVGTextChunkBuilder for details).
@@ -84,6 +94,27 @@ void SVGRootInlineBox::computePerCharacterLayoutInformation()
     // Position & resize all SVGInlineText/FlowBoxes in the inline box tree, resize the root box as well as the RenderSVGText parent block.
     layoutChildBoxes(this);
     layoutRootBox();
+}
+
+void SVGRootInlineBox::buildTextBoxListInLogicalOrder(RenderObject* start, Vector<SVGInlineTextBox*>& boxes)
+{
+    bool ltr = start->style()->isLeftToRightDirection();
+    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
+        if (child->isSVGInline()) {
+            buildTextBoxListInLogicalOrder(child, boxes);
+            continue;
+        }
+
+        if (!child->isSVGInlineText())
+            continue;
+
+        RenderSVGInlineText* text = toRenderSVGInlineText(child);
+        for (InlineTextBox* textBox = ltr ? text->firstTextBox() : text->lastTextBox(); textBox; textBox = ltr ? textBox->nextTextBox() : textBox->prevTextBox()) {
+            if (!textBox->isSVGInlineTextBox())
+                continue;
+            boxes.append(static_cast<SVGInlineTextBox*>(textBox));
+        }
+    }
 }
 
 void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGTextLayoutEngine& characterLayout)
@@ -108,8 +139,12 @@ void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGText
             if (isTextPath) {
                 // Build text chunks for all <textPath> children, using the line layout algorithm.
                 // This is needeed as text-anchor is just an additional startOffset for text paths.
-                SVGTextLayoutEngine lineLayout;
+                Vector<SVGInlineTextBox*> boxesInLogicalOrder;
+                buildTextBoxListInLogicalOrder(flowBox->renderer(), boxesInLogicalOrder);
+
+                SVGTextLayoutEngine lineLayout(boxesInLogicalOrder);
                 layoutCharactersInTextBoxes(flowBox, lineLayout);
+
                 characterLayout.beginTextPathLayout(child->renderer(), lineLayout);
             }
 

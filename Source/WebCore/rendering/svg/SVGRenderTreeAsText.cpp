@@ -464,8 +464,8 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
         SVGTextFragment& fragment = fragments.at(i);
         writeIndent(ts, indent + 1);
 
-        unsigned startOffset = fragment.positionListOffset;
-        unsigned endOffset = fragment.positionListOffset + fragment.length;
+        unsigned startOffset = fragment.characterOffset;
+        unsigned endOffset = fragment.characterOffset + fragment.length;
 
         // FIXME: Remove this hack, once the new text layout engine is completly landed. We want to preserve the old layout test results for now.
         ts << "chunk 1 ";
@@ -500,7 +500,7 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
                 ts << " override";
         }
 
-        ts << ": " << quoteAndEscapeNonPrintables(text.substring(fragment.positionListOffset, fragment.length)) << "\n";
+        ts << ": " << quoteAndEscapeNonPrintables(text.substring(fragment.characterOffset, fragment.length)) << "\n";
     }
 }
 

@@ -50,9 +50,17 @@
 	<!--======================================================================-->
 	<!--Content of Test Case follows...                  =====================-->
 	<!--======================================================================-->
+	<defs>
+		<!-- Important SVGExotic font instead of relying on MS Office Fonts to be present -->
+		<font-face font-family="SVGExotic">
+			<font-face-src>
+				<font-face-uri xlink:href="resources/SVGExotic.svg#exotic"/>
+			</font-face-src>
+		</font-face>
+	</defs>
 	<g id="test-body-content">
 		<text font-family="Arial" font-size="16" fill="red" x="10" y="20">Test horizontal text.</text>
-		<g font-size="17" font-family="'Arial Unicode MS', 'LucidaSansUnicode','MS-Gothic'">
+		<g font-size="17" font-family="SVGExotic">
 			<text x="10" y="60">Polish: Mogę jeść szkło, i mi nie szkodzi.</text>
 			<text x="10" y="90">Russian: Я могу есть стекло, это мне не вредит.</text>
 			<text x="10" y="120" font-size="15">Greek: Μπορώ να φάω σπασμένα γυαλιά χωρίς να πάθω τίποτα.</text>
