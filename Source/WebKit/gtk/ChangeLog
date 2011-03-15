@@ -1,3 +1,15 @@
+2011-03-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Possible leaks after splitting TextCheckerClientEnchant.
+        https://bugs.webkit.org/show_bug.cgi?id=55989
+
+        Convert gchar* to GOwnPtr<gchar> and refactor the code.
+
+        * WebCoreSupport/TextCheckerClientEnchant.cpp:
+        (WebKit::TextCheckerClientEnchant::checkSpellingOfString):
+
 2011-03-11  Marco Peereboom  <marco@peereboom.us>
 
         Reviewed by Gustavo Noronha Silva.

@@ -77,16 +77,16 @@ void TextCheckerClientEnchant::checkSpellingOfString(const UChar* text, int leng
     if (!dicts)
         return;
 
-    gchar* ctext = g_utf16_to_utf8(const_cast<gunichar2*>(text), length, 0, 0, 0);
-    int utflen = g_utf8_strlen(ctext, -1);
+    GOwnPtr<gchar> utf8Text(g_utf16_to_utf8(const_cast<gunichar2*>(text), length, 0, 0, 0));
+    int utf8Length = g_utf8_strlen(utf8Text.get(), -1);
 
     PangoLanguage* language(pango_language_get_default());
-    GOwnPtr<PangoLogAttr> attrs(g_new(PangoLogAttr, utflen+1));
+    GOwnPtr<PangoLogAttr> attrs(g_new(PangoLogAttr, utf8Length + 1));
 
     // pango_get_log_attrs uses an aditional position at the end of the text.
-    pango_get_log_attrs(ctext, -1, -1, language, attrs.get(), utflen+1);
+    pango_get_log_attrs(utf8Text.get(), -1, -1, language, attrs.get(), utf8Length + 1);
 
-    for (int i = 0; i < length+1; i++) {
+    for (int i = 0; i < length + 1; i++) {
         // We go through each character until we find an is_word_start,
         // then we get into an inner loop to find the is_word_end corresponding
         // to it.
@@ -103,18 +103,15 @@ void TextCheckerClientEnchant::checkSpellingOfString(const UChar* text, int leng
             // check characters twice.
             i = end;
 
+            gchar* cstart = g_utf8_offset_to_pointer(utf8Text.get(), start);
+            gint bytes = static_cast<gint>(g_utf8_offset_to_pointer(utf8Text.get(), end) - cstart);
+            GOwnPtr<gchar> word(g_new0(gchar, bytes + 1));
+
+            g_utf8_strncpy(word.get(), cstart, wordLength);
+
             for (; dicts; dicts = dicts->next) {
                 EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
-                gchar* cstart = g_utf8_offset_to_pointer(ctext, start);
-                gint bytes = static_cast<gint>(g_utf8_offset_to_pointer(ctext, end) - cstart);
-                gchar* word = g_new0(gchar, bytes+1);
-                int result;
-
-                g_utf8_strncpy(word, cstart, end - start);
-
-                result = enchant_dict_check(dict, word, -1);
-                g_free(word);
-                if (result) {
+                if (enchant_dict_check(dict, word.get(), wordLength)) {
                     *misspellingLocation = start;
                     *misspellingLength = wordLength;
                 } else {
