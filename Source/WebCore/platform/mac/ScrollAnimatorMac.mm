@@ -695,6 +695,17 @@ void ScrollAnimatorMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 #endif
 }
 
+void ScrollAnimatorMac::cancelAnimations()
+{
+    m_haveScrolledSincePageLoad = false;
+
+#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+    if (scrollbarPaintTimerIsActive())
+        stopScrollbarPaintTimer();
+    [m_scrollbarPainterDelegate.get() cancelAnimations];
+#endif
+}
+
 #if ENABLE(RUBBER_BANDING)
 
 static const float scrollVelocityZeroingTimeout = 0.10f;
@@ -762,17 +773,6 @@ void ScrollAnimatorMac::handleGestureEvent(const PlatformGestureEvent& gestureEv
         beginScrollGesture();
     else
         endScrollGesture();
-}
-
-void ScrollAnimatorMac::cancelAnimations()
-{
-    m_haveScrolledSincePageLoad = false;
-
-#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
-    if (scrollbarPaintTimerIsActive())
-        stopScrollbarPaintTimer();
-    [m_scrollbarPainterDelegate.get() cancelAnimations];
-#endif
 }
 
 bool ScrollAnimatorMac::pinnedInDirection(float deltaX, float deltaY)
