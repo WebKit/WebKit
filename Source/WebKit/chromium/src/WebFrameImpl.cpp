@@ -1742,9 +1742,18 @@ WebString WebFrameImpl::contentAsMarkup() const
     return createFullMarkup(m_frame->document());
 }
 
-WebString WebFrameImpl::renderTreeAsText() const
+WebString WebFrameImpl::renderTreeAsText(bool showDebugInfo) const
 {
-    return externalRepresentation(m_frame);
+    RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal;
+
+    if (showDebugInfo) {
+        behavior |= RenderAsTextShowCompositedLayers
+            | RenderAsTextShowAddresses
+            | RenderAsTextShowIDAndClass
+            | RenderAsTextShowLayerNesting;
+    }
+
+    return externalRepresentation(m_frame, behavior);
 }
 
 WebString WebFrameImpl::counterValueForElementById(const WebString& id) const
@@ -1814,11 +1823,11 @@ bool WebFrameImpl::pauseSVGAnimation(const WebString& animationId, double time, 
 #endif
 }
 
-WebString WebFrameImpl::layerTreeAsText() const
+WebString WebFrameImpl::layerTreeAsText(bool showDebugInfo) const
 {
     if (!m_frame)
         return WebString();
-    return WebString(m_frame->layerTreeAsText());
+    return WebString(m_frame->layerTreeAsText(showDebugInfo));
 }
 
 // WebFrameImpl public ---------------------------------------------------------

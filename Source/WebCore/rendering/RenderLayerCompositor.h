@@ -175,7 +175,7 @@ public:
     void frameViewDidChangeSize(const IntPoint& contentsOffset = IntPoint());
     void frameViewDidScroll(const IntPoint& = IntPoint());
 
-    String layerTreeAsText();
+    String layerTreeAsText(bool showDebugInfo = false);
 
     // These are named to avoid conflicts with the functions in GraphicsLayerClient
     // These return the actual internal variables.

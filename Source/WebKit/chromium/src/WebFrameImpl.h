@@ -187,7 +187,7 @@ public:
 
     virtual WebString contentAsText(size_t maxChars) const;
     virtual WebString contentAsMarkup() const;
-    virtual WebString renderTreeAsText() const;
+    virtual WebString renderTreeAsText(bool showDebugInfo = false) const;
     virtual WebString counterValueForElementById(const WebString& id) const;
     virtual WebString markerTextForListItem(const WebElement&) const;
     virtual int pageNumberForElementById(const WebString& id,
@@ -199,7 +199,7 @@ public:
     virtual bool pauseSVGAnimation(const WebString& animationId,
                                    double time,
                                    const WebString& elementId);
-    virtual WebString layerTreeAsText() const;
+    virtual WebString layerTreeAsText(bool showDebugInfo = false) const;
 
     static PassRefPtr<WebFrameImpl> create(WebFrameClient* client);
     ~WebFrameImpl();

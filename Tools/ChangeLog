@@ -1,3 +1,23 @@
+2011-03-14  Daniel Sievers  <sievers@google.com>
+
+        Reviewed by Simon Fraser.
+
+        [Chromium] Make RenderAsTextBehavior and LayerTreeAsTextBehavior tweakable from the DumpRenderTree commandline
+        https://bugs.webkit.org/show_bug.cgi?id=56139
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::layerTreeAsText):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController::setShowDebugLayerTree):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::runFileTest):
+        (TestShell::dump):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestParams::TestParams):
+
 2011-03-14  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Adam Roben.

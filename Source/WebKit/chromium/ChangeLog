@@ -1,3 +1,16 @@
+2011-03-14  Daniel Sievers  <sievers@google.com>
+
+        Reviewed by Simon Fraser.
+
+        [Chromium] Make RenderAsTextBehavior and LayerTreeAsTextBehavior tweakable from the DumpRenderTree commandline
+        https://bugs.webkit.org/show_bug.cgi?id=56139
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::renderTreeAsText):
+        (WebKit::WebFrameImpl::layerTreeAsText):
+        * src/WebFrameImpl.h:
+
 2011-03-14  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Steve Block.
