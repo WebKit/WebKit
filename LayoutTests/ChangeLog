@@ -1,3 +1,28 @@
+2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK and Qt rebaselines for r81095.
+
+        * platform/gtk/editing/deleting/smart-delete-001-expected.txt:
+        * platform/gtk/editing/deleting/smart-delete-002-expected.txt:
+        * platform/gtk/editing/pasteboard/smart-paste-001-expected.txt:
+        * platform/gtk/editing/pasteboard/smart-paste-003-expected.txt:
+        * platform/gtk/editing/pasteboard/smart-paste-004-expected.txt:
+        * platform/gtk/editing/pasteboard/smart-paste-007-expected.txt:
+        * platform/gtk/editing/pasteboard/smart-paste-008-expected.txt:
+        * platform/gtk/editing/selection/expanding-selections-expected.txt:
+        * platform/gtk/editing/selection/expanding-selections2-expected.txt:
+        * platform/gtk/editing/selection/fake-drag-expected.txt:
+        * platform/gtk/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/gtk/editing/selection/triple-click-in-pre-expected.txt:
+        * platform/qt/editing/deleting/smart-delete-001-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-001-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-003-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-004-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-007-expected.txt:
+        * platform/qt/editing/selection/expanding-selections-expected.txt:
+        * platform/qt/editing/selection/expanding-selections2-expected.txt:
+        * platform/qt/editing/selection/triple-click-in-pre-expected.txt:
+
 2011-03-14  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Eric Carlson.
