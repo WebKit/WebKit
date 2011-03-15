@@ -1,3 +1,9 @@
+2011-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another Chromium rebaseline for r81095.
+
+        * platform/chromium-win/editing/pasteboard/smart-paste-008-expected.txt:
+
 2011-03-14  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, skipped tests that uses an unsupported DRT API.
