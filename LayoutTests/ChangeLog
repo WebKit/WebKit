@@ -5,6 +5,19 @@
         REGRESSION (r68976): Incorrect bidi rendering in SVG text
         https://bugs.webkit.org/show_bug.cgi?id=53980
 
+        Update Gtk baseline.
+
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt:
+        * platform/gtk/svg/text/text-align-02-b-expected.txt:
+        * platform/gtk/svg/text/text-spacing-01-b-expected.txt:
+
+2011-03-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        REGRESSION (r68976): Incorrect bidi rendering in SVG text
+        https://bugs.webkit.org/show_bug.cgi?id=53980
+
         Update Mac Leopard baseline.
 
         * platform/mac-leopard/svg/W3C-I18N: Added.
