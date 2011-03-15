@@ -142,6 +142,7 @@ editing/pasteboard/drag-drop-input-textarea.html
 editing/pasteboard/drag-drop-iframe-refresh-crash.html
 editing/pasteboard/drag-drop-modifies-page.html
 editing/pasteboard/drag-drop-url-text.html
+editing/pasteboard/drop-file-svg.html
 editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
 editing/pasteboard/drag-selected-image-to-contenteditable.html
 editing/pasteboard/drop-link.html

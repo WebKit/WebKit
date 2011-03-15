@@ -116,6 +116,7 @@ editing/execCommand/copy-without-selection.html
 
 # Drag & Drop doesn't work correctly in DRT <rdar://5621244>
 editing/pasteboard/drag-image-in-about-blank-frame.html
+editing/pasteboard/drop-file-svg.html
 editing/pasteboard/get-data-text-plain-drop.html
 fast/events/drag-in-frames.html
 fast/events/standalone-image-drag-to-editable.html

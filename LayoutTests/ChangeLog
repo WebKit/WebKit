@@ -1,3 +1,10 @@
+2011-03-14  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, skipped tests that uses an unsupported DRT API.
+
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-03-14  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Roben.
