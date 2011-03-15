@@ -50,7 +50,7 @@
 @class CALayer;
 typedef CALayer PlatformLayer;
 #else
-typedef void* PlatformLayer;
+typedef struct CALayer PlatformLayer;
 #endif
 #elif PLATFORM(WIN)
 typedef struct _CACFLayer PlatformLayer;

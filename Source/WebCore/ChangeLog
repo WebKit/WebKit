@@ -1,3 +1,24 @@
+2011-03-15  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/56381> Objective-C classes should be typedef-ed as structs (not void*) in C++
+
+        Reviewed by Simon Fraser.
+
+        Typedef-ing Objective-C classes as void* for pure C++ makes it
+        easier for bugs to creep in because compilers can't do any type
+        checking for void pointers.
+
+        * platform/graphics/GraphicsContext3D.h: Changed typedef
+        declarations for CALayer and WebGLLayer from void* to structs.
+        (WebCore::GraphicsContext3D::platformLayer): Changed
+        static_cast<CALayer*> to reinterpret_cast<CALayer*> now that
+        CALayer and WebGLLayer are not void pointers.
+        * platform/graphics/GraphicsLayer.h: Changed typedef declaration
+        for PlatformLayer from void* to struct CALayer.
+        * platform/graphics/ca/PlatformCAAnimation.h: Changed typedef
+        declaration for CAPropertyAnimation from void* to a struct.
+        Extracted typdef for PlatformAnimationRef.
+
 2011-03-15  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Tony Chang.

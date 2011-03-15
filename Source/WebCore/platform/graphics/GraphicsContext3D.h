@@ -51,8 +51,8 @@
 @class CALayer;
 @class WebGLLayer;
 #else
-typedef void* CALayer;
-typedef void* WebGLLayer;
+typedef struct CALayer CALayer;
+typedef struct WebGLLayer WebGLLayer;
 #endif
 #elif PLATFORM(QT)
 QT_BEGIN_NAMESPACE
@@ -450,7 +450,7 @@ public:
 #if PLATFORM(MAC)
     PlatformGraphicsContext3D platformGraphicsContext3D() const { return m_contextObj; }
     Platform3DObject platformTexture() const { return m_texture; }
-    CALayer* platformLayer() const { return static_cast<CALayer*>(m_webGLLayer.get()); }
+    CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
 #elif PLATFORM(CHROMIUM)
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
     Platform3DObject platformTexture() const;

@@ -38,11 +38,10 @@
 #if PLATFORM(MAC)
 #ifdef __OBJC__
 @class CAPropertyAnimation;
-typedef CAPropertyAnimation* PlatformAnimationRef;
 #else
-typedef void* CAPropertyAnimation; // So the m_animation declaration works
-typedef void* PlatformAnimationRef;
+typedef struct CAPropertyAnimation CAPropertyAnimation;
 #endif
+typedef CAPropertyAnimation* PlatformAnimationRef;
 #elif PLATFORM(WIN)
 typedef struct _CACFAnimation* CACFAnimationRef;
 typedef CACFAnimationRef PlatformAnimationRef;
