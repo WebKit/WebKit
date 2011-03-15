@@ -39,12 +39,12 @@ void ArgList::getSlice(int startIndex, ArgList& result) const
     result = ArgList(m_args + startIndex, m_argCount - startIndex);
 }
 
-void MarkedArgumentBuffer::markLists(MarkStack& markStack, ListSet& markSet)
+void MarkedArgumentBuffer::markLists(HeapRootMarker& heapRootMarker, ListSet& markSet)
 {
     ListSet::iterator end = markSet.end();
     for (ListSet::iterator it = markSet.begin(); it != end; ++it) {
         MarkedArgumentBuffer* list = *it;
-        markStack.deprecatedAppendValues(list->m_buffer, list->m_size);
+        heapRootMarker.mark(reinterpret_cast<JSValue*>(list->m_buffer), list->m_size);
     }
 }
 
@@ -56,8 +56,8 @@ void MarkedArgumentBuffer::slowAppend(JSValue v)
     // our Vector's inline capacity, though, our values move to the 
     // heap, where they do need explicit marking.
     if (!m_markSet) {
-        // We can only register for explicit marking once we know which heap
-        // is the current one, i.e., when a non-immediate value is appended.
+        // FIXME: Even if v is not a JSCell*, if previous values in the buffer
+        // are, then they won't be marked!
         if (Heap* heap = Heap::heap(v)) {
             ListSet& markSet = heap->markListSet();
             markSet.add(this);

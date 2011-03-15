@@ -2,6 +2,34 @@
 
         Reviewed by Oliver Hunt.
 
+        Removed some more deprecated / unsafe append
+        https://bugs.webkit.org/show_bug.cgi?id=56428
+
+        * collector/handles/HandleStack.cpp:
+        (JSC::HandleStack::mark):
+        * collector/handles/HandleStack.h: Mark the handle stack using a HeapRoot
+        marker, since it's a heap root.
+        
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::markLists):
+        (JSC::MarkedArgumentBuffer::slowAppend):
+        * runtime/ArgList.h: Ditto.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::markRoots): Added a mark call for marking the handle stack.
+        It seems like Oliver forgot this in his last patch. (!)
+
+        * runtime/MarkStack.h: Removed appendSlots, since it would allow an
+        object to embed JSValues directly instead of using WriteBarrier.
+
+        (JSC::MarkStack::append): Added a private append for a list of values.
+
+        (JSC::HeapRootMarker::mark): Access to the above.
+
+2011-03-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Removed a few more deprecatedAppends, and removed HeapRoot<T>
         https://bugs.webkit.org/show_bug.cgi?id=56422
         

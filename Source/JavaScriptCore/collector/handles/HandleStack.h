@@ -35,7 +35,7 @@
 namespace JSC {
 
 class LocalScope;
-class MarkStack;
+class HeapRootMarker;
 
 class HandleStack {
 public:
@@ -52,7 +52,7 @@ public:
 
     HandleSlot push();
 
-    void mark(MarkStack&);
+    void mark(HeapRootMarker&);
 
 private:
     void grow();

@@ -72,12 +72,6 @@ namespace JSC {
                 m_markSets.append(MarkSet(values, values + count, properties));
         }
         
-        void appendSlots(HandleSlot values, size_t count, MarkSetProperties properties = NoNullValues)
-        {
-            if (count)
-                m_markSets.append(MarkSet(values, values + count, properties));
-        }
-
         void append(ConservativeRoots& conservativeRoots)
         {
             JSCell** roots = conservativeRoots.roots();
@@ -98,6 +92,7 @@ namespace JSC {
     private:
         friend class HeapRootMarker; // Allowed to mark a JSValue* or JSCell** directly.
         void append(JSValue*);
+        void append(JSValue*, size_t count);
         void append(JSCell**);
 
         void internalAppend(JSCell*);
@@ -216,6 +211,13 @@ namespace JSC {
 #endif
     };
 
+    inline void MarkStack::append(JSValue* slot, size_t count)
+    {
+        if (!count)
+            return;
+        m_markSets.append(MarkSet(slot, slot + count, NoNullValues));
+    }
+
     // Privileged class for marking JSValues directly. It is only safe to use
     // this class to mark direct heap roots that are marked during every GC pass.
     // All other references should be wrapped in WriteBarriers and marked through
@@ -227,6 +229,7 @@ namespace JSC {
         
     public:
         void mark(JSValue*);
+        void mark(JSValue*, size_t);
         void mark(JSString**);
         void mark(JSCell**);
 
@@ -242,6 +245,11 @@ namespace JSC {
     inline void HeapRootMarker::mark(JSValue* slot)
     {
         m_markStack.append(slot);
+    }
+
+    inline void HeapRootMarker::mark(JSValue* slot, size_t count)
+    {
+        m_markStack.append(slot, count);
     }
 
     inline void HeapRootMarker::mark(JSString** slot)

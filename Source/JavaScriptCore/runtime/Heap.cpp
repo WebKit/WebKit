@@ -227,12 +227,13 @@ void Heap::markRoots()
     markStack.drain();
 
     if (m_markListSet && m_markListSet->size())
-        MarkedArgumentBuffer::markLists(markStack, *m_markListSet);
+        MarkedArgumentBuffer::markLists(heapRootMarker, *m_markListSet);
     if (m_globalData->exception)
         heapRootMarker.mark(&m_globalData->exception);
     markStack.drain();
 
     m_handleHeap.markStrongHandles(markStack);
+    m_handleStack.mark(heapRootMarker);
 
     // Mark the small strings cache last, since it will clear itself if nothing
     // else has marked it.

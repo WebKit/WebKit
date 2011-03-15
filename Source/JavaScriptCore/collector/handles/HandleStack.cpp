@@ -39,7 +39,7 @@ HandleStack::HandleStack()
     grow();
 }
 
-void HandleStack::mark(MarkStack& markStack)
+void HandleStack::mark(HeapRootMarker& heapRootMarker)
 {
     const Vector<HandleSlot>& blocks = m_blockStack.blocks();
     size_t blockLength = m_blockStack.blockLength;
@@ -47,10 +47,10 @@ void HandleStack::mark(MarkStack& markStack)
     int end = blocks.size() - 1;
     for (int i = 0; i < end; ++i) {
         HandleSlot block = blocks[i];
-        markStack.appendSlots(block, blockLength);
+        heapRootMarker.mark(block, blockLength);
     }
     HandleSlot block = blocks[end];
-    markStack.appendSlots(block, m_frame.m_next - block);
+    heapRootMarker.mark(block, m_frame.m_next - block);
 }
 
 void HandleStack::grow()

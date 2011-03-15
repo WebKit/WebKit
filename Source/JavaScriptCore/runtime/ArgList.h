@@ -141,7 +141,7 @@ namespace JSC {
         const_iterator begin() const { return m_buffer; }
         const_iterator end() const { return m_buffer + m_size; }
 
-        static void markLists(MarkStack&, ListSet&);
+        static void markLists(HeapRootMarker&, ListSet&);
 
     private:
         void slowAppend(JSValue);
