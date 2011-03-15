@@ -171,7 +171,7 @@ void InsertLineBreakCommand::doApply()
         // leaves and then comes back, new input will have the right style.
         // FIXME: We shouldn't always apply the typing style to the line break here,
         // see <rdar://problem/5794462>.
-        applyStyle(typingStyle.get(), firstDeepEditingPositionForNode(nodeToInsert.get()), lastDeepEditingPositionForNode(nodeToInsert.get()));
+        applyStyle(typingStyle.get(), firstPositionInOrBeforeNode(nodeToInsert.get()), lastPositionInOrAfterNode(nodeToInsert.get()));
         // Even though this applyStyle operates on a Range, it still sets an endingSelection().
         // It tries to set a VisibleSelection around the content it operated on. So, that VisibleSelection
         // will either (a) select the line break we inserted, or it will (b) be a caret just 

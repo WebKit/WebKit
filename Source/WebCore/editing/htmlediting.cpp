@@ -277,14 +277,14 @@ Position previousVisuallyDistinctCandidate(const Position& position)
 VisiblePosition firstEditablePositionAfterPositionInRoot(const Position& position, Node* highestRoot)
 {
     // position falls before highestRoot.
-    if (comparePositions(position, firstDeepEditingPositionForNode(highestRoot)) == -1 && highestRoot->isContentEditable())
-        return firstDeepEditingPositionForNode(highestRoot);
+    if (comparePositions(position, firstPositionInNode(highestRoot)) == -1 && highestRoot->isContentEditable())
+        return firstPositionInNode(highestRoot);
 
     Position p = position;
     
     if (Node* shadowAncestor = p.deprecatedNode()->shadowAncestorNode())
         if (shadowAncestor != p.deprecatedNode())
-            p = lastDeepEditingPositionForNode(shadowAncestor);
+            p = positionAfterNode(shadowAncestor);
     
     while (p.deprecatedNode() && !isEditablePosition(p) && p.deprecatedNode()->isDescendantOf(highestRoot))
         p = isAtomicNode(p.deprecatedNode()) ? positionInParentAfterNode(p.deprecatedNode()) : nextVisuallyDistinctCandidate(p);
@@ -298,14 +298,14 @@ VisiblePosition firstEditablePositionAfterPositionInRoot(const Position& positio
 VisiblePosition lastEditablePositionBeforePositionInRoot(const Position& position, Node* highestRoot)
 {
     // When position falls after highestRoot, the result is easy to compute.
-    if (comparePositions(position, lastDeepEditingPositionForNode(highestRoot)) == 1)
-        return lastDeepEditingPositionForNode(highestRoot);
+    if (comparePositions(position, lastPositionInNode(highestRoot)) == 1)
+        return lastPositionInNode(highestRoot);
 
     Position p = position;
     
     if (Node* shadowAncestor = p.deprecatedNode()->shadowAncestorNode())
         if (shadowAncestor != p.deprecatedNode())
-            p = firstDeepEditingPositionForNode(shadowAncestor);
+            p = firstPositionInNode(shadowAncestor);
     
     while (p.deprecatedNode() && !isEditablePosition(p) && p.deprecatedNode()->isDescendantOf(highestRoot))
         p = isAtomicNode(p.deprecatedNode()) ? positionInParentBeforeNode(p.deprecatedNode()) : previousVisuallyDistinctCandidate(p);
@@ -723,8 +723,8 @@ Node* enclosingEmptyListItem(const VisiblePosition& visiblePos)
     if (!listChildNode || !isStartOfParagraph(visiblePos) || !isEndOfParagraph(visiblePos))
         return 0;
 
-    VisiblePosition firstInListChild(firstDeepEditingPositionForNode(listChildNode));
-    VisiblePosition lastInListChild(lastDeepEditingPositionForNode(listChildNode));
+    VisiblePosition firstInListChild(firstPositionInOrBeforeNode(listChildNode));
+    VisiblePosition lastInListChild(lastPositionInOrAfterNode(listChildNode));
 
     if (firstInListChild != visiblePos || lastInListChild != visiblePos)
         return 0;

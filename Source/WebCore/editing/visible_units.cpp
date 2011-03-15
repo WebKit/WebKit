@@ -747,7 +747,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
         return VisiblePosition();
     
     if (isRenderedAsNonInlineTableImageOrHR(startNode))
-        return firstDeepEditingPositionForNode(startNode);
+        return positionBeforeNode(startNode);
 
     Node* startBlock = enclosingBlock(startNode);
 
@@ -818,7 +818,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossing
     Node* startNode = p.deprecatedNode();
 
     if (isRenderedAsNonInlineTableImageOrHR(startNode))
-        return lastDeepEditingPositionForNode(startNode);
+        return positionAfterNode(startNode);
     
     Node* startBlock = enclosingBlock(startNode);
     Node* stayInsideBlock = startBlock;
@@ -1028,7 +1028,7 @@ VisiblePosition startOfEditableContent(const VisiblePosition& visiblePosition)
     if (!highestRoot)
         return VisiblePosition();
 
-    return firstDeepEditingPositionForNode(highestRoot);
+    return firstPositionInNode(highestRoot);
 }
 
 VisiblePosition endOfEditableContent(const VisiblePosition& visiblePosition)
@@ -1037,7 +1037,7 @@ VisiblePosition endOfEditableContent(const VisiblePosition& visiblePosition)
     if (!highestRoot)
         return VisiblePosition();
 
-    return lastDeepEditingPositionForNode(highestRoot);
+    return lastPositionInNode(highestRoot);
 }
 
 static void getLeafBoxesInLogicalOrder(RootInlineBox* rootBox, Vector<InlineBox*>& leafBoxesInLogicalOrder)

@@ -133,6 +133,7 @@ public:
 
     // These can be either inside or just before/after the node, depending on
     // if the node is ignored by editing or not.
+    // FIXME: These should go away. They only make sense for legacy positions.
     bool atFirstEditingPositionForNode() const;
     bool atLastEditingPositionForNode() const;
 
@@ -196,7 +197,7 @@ inline bool operator==(const Position& a, const Position& b)
 {
     // FIXME: In <div><img></div> [div, 0] != [img, 0] even though most of the
     // editing code will treat them as identical.
-    return a.anchorNode() == b.anchorNode() && a.deprecatedEditingOffset() == b.deprecatedEditingOffset();
+    return a.anchorNode() == b.anchorNode() && a.deprecatedEditingOffset() == b.deprecatedEditingOffset() && a.anchorType() == b.anchorType();
 }
 
 inline bool operator!=(const Position& a, const Position& b)

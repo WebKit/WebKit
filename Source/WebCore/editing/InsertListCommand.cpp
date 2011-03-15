@@ -257,8 +257,8 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
     VisiblePosition start;
     VisiblePosition end;
     if (listChildNode->hasTagName(liTag)) {
-        start = firstDeepEditingPositionForNode(listChildNode);
-        end = lastDeepEditingPositionForNode(listChildNode);
+        start = firstPositionInNode(listChildNode);
+        end = lastPositionInNode(listChildNode);
         nextListChild = listChildNode->nextSibling();
         previousListChild = listChildNode->previousSibling();
     } else {

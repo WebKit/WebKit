@@ -193,7 +193,7 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
         if (!startStyle->collapseWhiteSpace() && start.offsetInContainerNode() > 0) {
             int startOffset = start.offsetInContainerNode();
             splitTextNode(static_cast<Text*>(start.deprecatedNode()), startOffset);
-            start = positionBeforeNode(start.deprecatedNode());
+            start = firstPositionInOrBeforeNode(start.deprecatedNode());
             if (isStartAndEndOnSameNode) {
                 ASSERT(end.offsetInContainerNode() >= startOffset);
                 end = Position(end.deprecatedNode(), end.offsetInContainerNode() - startOffset, Position::PositionIsOffsetInAnchor);
@@ -224,7 +224,7 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
             && end.offsetInContainerNode() < end.containerNode()->maxCharacterOffset()) {
             splitTextNode(static_cast<Text*>(end.deprecatedNode()), end.offsetInContainerNode());
             if (isStartAndEndOnSameNode)
-                start = positionBeforeNode(end.deprecatedNode()->previousSibling());
+                start = firstPositionInOrBeforeNode(end.deprecatedNode()->previousSibling());
             if (isEndAndEndOfLastParagraphOnSameNode) {
                 if (m_endOfLastParagraph.offsetInContainerNode() == end.offsetInContainerNode())
                     m_endOfLastParagraph = lastPositionInNode(end.deprecatedNode()->previousSibling());

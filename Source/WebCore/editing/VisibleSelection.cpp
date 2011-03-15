@@ -89,7 +89,8 @@ VisibleSelection::VisibleSelection(const Range* range, EAffinity affinity)
 
 VisibleSelection VisibleSelection::selectionFromContentsOfNode(Node* node)
 {
-    return VisibleSelection(firstDeepEditingPositionForNode(node), lastDeepEditingPositionForNode(node), DOWNSTREAM);
+    ASSERT(!editingIgnoresContent(node));
+    return VisibleSelection(firstPositionInNode(node), lastPositionInNode(node), DOWNSTREAM);
 }
 
 void VisibleSelection::setBase(const Position& position)
@@ -498,13 +499,13 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
             Position p = previousVisuallyDistinctCandidate(m_end);
             Node* shadowAncestor = endRoot ? endRoot->shadowAncestorNode() : 0;
             if (p.isNull() && endRoot && (shadowAncestor != endRoot))
-                p = lastDeepEditingPositionForNode(shadowAncestor);
+                p = positionAfterNode(shadowAncestor);
             while (p.isNotNull() && !(lowestEditableAncestor(p.containerNode()) == baseEditableAncestor && !isEditablePosition(p))) {
                 Node* root = editableRootForPosition(p);
                 shadowAncestor = root ? root->shadowAncestorNode() : 0;
                 p = isAtomicNode(p.containerNode()) ? positionInParentBeforeNode(p.containerNode()) : previousVisuallyDistinctCandidate(p);
                 if (p.isNull() && (shadowAncestor != root))
-                    p = lastDeepEditingPositionForNode(shadowAncestor);
+                    p = positionAfterNode(shadowAncestor);
             }
             VisiblePosition previous(p);
 

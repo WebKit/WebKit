@@ -41,7 +41,7 @@ PositionIterator::operator Position() const
         return positionInParentBeforeNode(m_nodeAfterPositionInAnchor);
     }
     if (m_anchorNode->hasChildNodes())
-        return lastDeepEditingPositionForNode(m_anchorNode);
+        return lastPositionInOrAfterNode(m_anchorNode);
     return Position(m_anchorNode, m_offsetInAnchor);
 }
 

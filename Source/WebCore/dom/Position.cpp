@@ -161,12 +161,12 @@ Position Position::parentAnchoredEquivalent() const
         return Position();
     
     // FIXME: This should only be necessary for legacy positions, but is also needed for positions before and after Tables
-    if (m_offset <= 0) {
+    if (m_offset <= 0 && m_anchorType != PositionIsAfterAnchor) {
         if (m_anchorNode->parentNode() && (editingIgnoresContent(m_anchorNode.get()) || isTableElement(m_anchorNode.get())))
             return positionInParentBeforeNode(m_anchorNode.get());
-        return Position(m_anchorNode, 0, PositionIsOffsetInAnchor);
+        return firstPositionInNode(m_anchorNode.get());
     }
-    if (!m_anchorNode->offsetInCharacters() && static_cast<unsigned>(m_offset) == m_anchorNode->childNodeCount()
+    if (!m_anchorNode->offsetInCharacters() && (m_anchorType == PositionIsAfterAnchor || static_cast<unsigned>(m_offset) == m_anchorNode->childNodeCount())
         && (editingIgnoresContent(m_anchorNode.get()) || isTableElement(m_anchorNode.get()))) {
         return positionInParentAfterNode(m_anchorNode.get());
     }
@@ -240,15 +240,15 @@ Position Position::previous(PositionMoveType moveType) const
     Node* n = deprecatedNode();
     if (!n)
         return *this;
-    
-    int o = m_offset;
+
+    int o = deprecatedEditingOffset();
     // FIXME: Negative offsets shouldn't be allowed. We should catch this earlier.
     ASSERT(o >= 0);
 
     if (o > 0) {
         Node* child = n->childNode(o - 1);
         if (child)
-            return lastDeepEditingPositionForNode(child);
+            return lastPositionInOrAfterNode(child);
 
         // There are two reasons child might be 0:
         //   1) The node is node like a text node that is not an element, and therefore has no children.
@@ -279,15 +279,15 @@ Position Position::next(PositionMoveType moveType) const
     Node* n = deprecatedNode();
     if (!n)
         return *this;
-    
-    int o = m_offset;
+
+    int o = deprecatedEditingOffset();
     // FIXME: Negative offsets shouldn't be allowed. We should catch this earlier.
     ASSERT(o >= 0);
 
     Node* child = n->childNode(o);
     if (child || (!n->hasChildNodes() && o < lastOffsetForEditing(n))) {
         if (child)
-            return firstDeepEditingPositionForNode(child);
+            return firstPositionInOrBeforeNode(child);
 
         // There are two reasons child might be 0:
         //   1) The node is node like a text node that is not an element, and therefore has no children.
@@ -323,14 +323,14 @@ bool Position::atFirstEditingPositionForNode() const
 {
     if (isNull())
         return true;
-    return m_offset <= 0;
+    return m_anchorType == PositionIsBeforeAnchor || m_offset <= 0;
 }
 
 bool Position::atLastEditingPositionForNode() const
 {
     if (isNull())
         return true;
-    return m_offset >= lastOffsetForEditing(deprecatedNode());
+    return m_anchorType == PositionIsAfterAnchor || m_offset >= lastOffsetForEditing(deprecatedNode());
 }
 
 // A position is considered at editing boundary if one of the following is true:
@@ -569,7 +569,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         // Return position after tables and nodes which have content that can be ignored.
         if (editingIgnoresContent(currentNode) || isTableElement(currentNode)) {
             if (currentPos.atEndOfNode())
-                return lastDeepEditingPositionForNode(currentNode);
+                return positionAfterNode(currentNode);
             continue;
         }
 
@@ -781,7 +781,8 @@ bool Position::isCandidate() const
         return false;
 
     if (renderer->isBR())
-        return !m_offset && !nodeIsUserSelectNone(deprecatedNode()->parentNode());
+        // FIXME: The condition should be m_anchorType == PositionIsBeforeAnchor, but for now we still need to support legacy positions.
+        return !m_offset && m_anchorType != PositionIsAfterAnchor && !nodeIsUserSelectNone(deprecatedNode()->parentNode());
 
     if (renderer->isText())
         return !nodeIsUserSelectNone(deprecatedNode()) && inRenderedText();
@@ -1053,7 +1054,7 @@ static Position upstreamIgnoringEditingBoundaries(Position position)
 
 void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDirection, InlineBox*& inlineBox, int& caretOffset) const
 {
-    caretOffset = m_offset;
+    caretOffset = deprecatedEditingOffset();
     RenderObject* renderer = deprecatedNode()->renderer();
 
     if (!renderer->isText()) {

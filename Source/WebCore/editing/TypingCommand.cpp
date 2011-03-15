@@ -577,7 +577,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
             downstreamEnd = visibleEnd.next(CannotCrossEditingBoundary).deepEquivalent().downstream();
         // When deleting tables: Select the table first, then perform the deletion
         if (downstreamEnd.deprecatedNode() && downstreamEnd.deprecatedNode()->renderer() && downstreamEnd.deprecatedNode()->renderer()->isTable() && !downstreamEnd.deprecatedEditingOffset()) {
-            setEndingSelection(VisibleSelection(endingSelection().end(), lastDeepEditingPositionForNode(downstreamEnd.deprecatedNode()), DOWNSTREAM));
+            setEndingSelection(VisibleSelection(endingSelection().end(), positionAfterNode(downstreamEnd.deprecatedNode()), DOWNSTREAM));
             typingAddedToOpenCommand(ForwardDeleteKey);
             return;
         }

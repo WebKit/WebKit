@@ -52,7 +52,7 @@ static bool isTableRow(const Node* node)
 static bool isTableCellEmpty(Node* cell)
 {
     ASSERT(isTableCell(cell));
-    return VisiblePosition(firstDeepEditingPositionForNode(cell)) == VisiblePosition(lastDeepEditingPositionForNode(cell));
+    return VisiblePosition(firstPositionInNode(cell)) == VisiblePosition(lastPositionInNode(cell));
 }
 
 static bool isTableRowEmpty(Node* row)
@@ -380,9 +380,9 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
         return;
     }
     
-    if (node == m_startBlock && !isEndOfBlock(VisiblePosition(firstDeepEditingPositionForNode(m_startBlock.get())).previous()))
+    if (node == m_startBlock && !isEndOfBlock(VisiblePosition(firstPositionInNode(m_startBlock.get())).previous()))
         m_needPlaceholder = true;
-    else if (node == m_endBlock && !isStartOfBlock(VisiblePosition(lastDeepEditingPositionForNode(m_startBlock.get())).next()))
+    else if (node == m_endBlock && !isStartOfBlock(VisiblePosition(lastPositionInNode(m_startBlock.get())).next()))
         m_needPlaceholder = true;
     
     // FIXME: Update the endpoints of the range being deleted.

@@ -1,3 +1,62 @@
+2011-03-08  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Get rid of firstDeepEditingPositionForNode and lastDeepEditingPositionForNode
+        https://bugs.webkit.org/show_bug.cgi?id=52642
+
+        Replacing calls to first/lastDeepEditingPositionForNode with calls to their analogous
+        functions that create new positions. Also fixing various parts of editing code that
+        incorrectly handled the new positions now being created.
+
+        No new tests as this is refactoring/cleanup.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionRange):
+        * dom/Position.cpp:
+        (WebCore::Position::parentAnchoredEquivalent):
+        (WebCore::Position::previous):
+        (WebCore::Position::next):
+        (WebCore::Position::atFirstEditingPositionForNode):
+        (WebCore::Position::atLastEditingPositionForNode):
+        (WebCore::Position::upstream):
+        (WebCore::Position::isCandidate):
+        (WebCore::Position::getInlineBoxAndOffset):
+        * dom/Position.h:
+        (WebCore::operator==):
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::operator Position):
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::positionAvoidingSpecialElementBoundary):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::isTableCellEmpty):
+        (WebCore::DeleteSelectionCommand::removeNode):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::unlistifyParagraph):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::positionAtEndOfInsertedContent):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::selectionFromContentsOfNode):
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries):
+        * editing/htmlediting.cpp:
+        (WebCore::firstEditablePositionAfterPositionInRoot):
+        (WebCore::lastEditablePositionBeforePositionInRoot):
+        (WebCore::enclosingEmptyListItem):
+        * editing/htmlediting.h:
+        * editing/visible_units.cpp:
+        (WebCore::startOfParagraph):
+        (WebCore::endOfParagraph):
+        (WebCore::startOfEditableContent):
+        (WebCore::endOfEditableContent):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionForPoint):
+
 2011-03-15  Beth Dakin  <bdakin@apple.com>
 
         Attempted build fix.

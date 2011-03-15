@@ -536,10 +536,10 @@ VisiblePosition ReplaceSelectionCommand::positionAtEndOfInsertedContent()
 {
     Node* lastNode = m_lastLeafInserted.get();
     // FIXME: Why is this hack here?  What's special about <select> tags?
-    Node* enclosingSelect = enclosingNodeWithTag(firstDeepEditingPositionForNode(lastNode), selectTag);
+    Node* enclosingSelect = enclosingNodeWithTag(firstPositionInOrBeforeNode(lastNode), selectTag);
     if (enclosingSelect)
         lastNode = enclosingSelect;
-    return lastDeepEditingPositionForNode(lastNode);
+    return lastPositionInOrAfterNode(lastNode);
 }
 
 VisiblePosition ReplaceSelectionCommand::positionAtStartOfInsertedContent()

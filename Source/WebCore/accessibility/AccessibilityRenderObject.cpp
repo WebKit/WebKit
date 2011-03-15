@@ -2405,8 +2405,8 @@ VisiblePositionRange AccessibilityRenderObject::visiblePositionRange() const
     if (!node)
         return VisiblePositionRange();
 
-    VisiblePosition startPos = firstDeepEditingPositionForNode(node);
-    VisiblePosition endPos = lastDeepEditingPositionForNode(node);
+    VisiblePosition startPos = firstPositionInOrBeforeNode(node);
+    VisiblePosition endPos = lastPositionInOrAfterNode(node);
 
     // the VisiblePositions are equal for nodes like buttons, so adjust for that
     // FIXME: Really?  [button, 0] and [button, 1] are distinct (before and after the button)
