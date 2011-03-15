@@ -316,8 +316,9 @@ void JSGlobalObject::resetPrototype(JSValue prototype)
 void JSGlobalObject::markChildren(MarkStack& markStack)
 {
     JSVariableObject::markChildren(markStack);
-    
+
     markIfNeeded(markStack, &m_globalScopeChain);
+    markIfNeeded(markStack, &m_methodCallDummy);
 
     markIfNeeded(markStack, &m_regExpConstructor);
     markIfNeeded(markStack, &m_errorConstructor);
@@ -341,9 +342,6 @@ void JSGlobalObject::markChildren(MarkStack& markStack)
     markIfNeeded(markStack, &m_datePrototype);
     markIfNeeded(markStack, &m_regExpPrototype);
 
-    markIfNeeded(markStack, &m_methodCallDummy);
-
-    markIfNeeded(markStack, m_errorStructure);
     markIfNeeded(markStack, m_argumentsStructure);
     markIfNeeded(markStack, m_arrayStructure);
     markIfNeeded(markStack, m_booleanObjectStructure);
@@ -358,9 +356,7 @@ void JSGlobalObject::markChildren(MarkStack& markStack)
     markIfNeeded(markStack, m_regExpMatchesArrayStructure);
     markIfNeeded(markStack, m_regExpStructure);
     markIfNeeded(markStack, m_stringObjectStructure);
-
-    // No need to mark the other structures, because their prototypes are all
-    // guaranteed to be referenced elsewhere.
+    markIfNeeded(markStack, m_internalFunctionStructure);
 
     if (m_registerArray) {
         // Outside the execution of global code, when our variables are torn off,

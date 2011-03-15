@@ -2,6 +2,25 @@
 
         Reviewed by Oliver Hunt.
 
+        Made the global object moving-GC-safe
+        https://bugs.webkit.org/show_bug.cgi?id=56348
+        
+        SunSpider reports no change.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::markChildren): Removed a dubious comment that
+        suggested we do not need to visit all our references during GC, since
+        that is not true in a moving GC.
+
+        Re-sorted data members by type, removed one duplicate, and added back
+        the one missing mark I found.
+
+        * runtime/JSGlobalObject.h: Re-sorted data members by type.
+
+2011-03-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Made JSWrapperObject and subclasses moving-GC-safe
         https://bugs.webkit.org/show_bug.cgi?id=56346
         

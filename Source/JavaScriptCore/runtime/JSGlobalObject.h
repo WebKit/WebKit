@@ -56,15 +56,13 @@ namespace JSC {
     protected:
         typedef HashSet<RefPtr<OpaqueJSWeakObjectMap> > WeakMapSet;
 
+        RefPtr<JSGlobalData> m_globalData;
+
         size_t m_registerArraySize;
-
-        JSGlobalObject* m_next;
-        JSGlobalObject* m_prev;
-
-        Debugger* m_debugger;
-        
-        WriteBarrier<ScopeChainNode> m_globalScopeChain;
         Register m_globalCallFrame[RegisterFile::CallFrameHeaderSize];
+
+        WriteBarrier<ScopeChainNode> m_globalScopeChain;
+        WriteBarrier<JSObject> m_methodCallDummy;
 
         WriteBarrier<RegExpConstructor> m_regExpConstructor;
         WriteBarrier<ErrorConstructor> m_errorConstructor;
@@ -88,8 +86,6 @@ namespace JSC {
         WriteBarrier<DatePrototype> m_datePrototype;
         WriteBarrier<RegExpPrototype> m_regExpPrototype;
 
-        WriteBarrier<JSObject> m_methodCallDummy;
-
         RefPtr<Structure> m_argumentsStructure;
         RefPtr<Structure> m_arrayStructure;
         RefPtr<Structure> m_booleanObjectStructure;
@@ -106,13 +102,13 @@ namespace JSC {
         RefPtr<Structure> m_stringObjectStructure;
         RefPtr<Structure> m_internalFunctionStructure;
 
-        SymbolTable m_symbolTable;
         unsigned m_profileGroup;
-
-        RefPtr<JSGlobalData> m_globalData;
+        Debugger* m_debugger;
 
         WeakMapSet m_weakMaps;
         WeakRandom m_weakRandom;
+
+        SymbolTable m_symbolTable;
 
     public:
         void* operator new(size_t, JSGlobalData*);
