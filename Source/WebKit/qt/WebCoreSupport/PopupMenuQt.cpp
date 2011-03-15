@@ -157,4 +157,6 @@ void PopupMenuQt::selectItem(int index, bool ctrl, bool shift)
 
 }
 
+#include "moc_PopupMenuQt.cpp"
+
 // vim: ts=4 sw=4 et

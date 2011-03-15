@@ -29,6 +29,30 @@
 
 #include <wtf/Platform.h>
 
+/* See note in wtf/Platform.h for more info on EXPORT_MACROS. */
+#if USE(EXPORT_MACROS)
+
+#include <wtf/ExportMacros.h>
+
+#if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
+#define WTF_EXPORT_PRIVATE WTF_EXPORT
+#define JS_EXPORT_PRIVATE WTF_EXPORT
+#else
+#define WTF_EXPORT_PRIVATE WTF_IMPORT
+#define JS_EXPORT_PRIVATE WTF_IMPORT
+#endif
+
+#define JS_EXPORTDATA JS_EXPORT_PRIVATE
+#define JS_EXPORTCLASS JS_EXPORT_PRIVATE
+
+#if defined(BUILDING_WebCore) || defined(BUILDING_WebKit)
+#define WEBKIT_EXPORTDATA WTF_EXPORT
+#else
+#define WEBKIT_EXPORTDATA WTF_IMPORT
+#endif
+
+#else /* !USE(EXPORT_MACROS) */
+
 #if !PLATFORM(CHROMIUM) && OS(WINDOWS) && !defined(BUILDING_WX__) && !COMPILER(GCC)
 #if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
 #define JS_EXPORTDATA __declspec(dllexport)
@@ -40,12 +64,18 @@
 #else
 #define WEBKIT_EXPORTDATA __declspec(dllimport)
 #endif
+#define WTF_EXPORT_PRIVATE JS_EXPORTDATA
+#define JS_EXPORT_PRIVATE JS_EXPORTDATA
 #define JS_EXPORTCLASS JS_EXPORTDATA
 #else
 #define JS_EXPORTDATA
 #define JS_EXPORTCLASS
 #define WEBKIT_EXPORTDATA
+#define WTF_EXPORT_PRIVATE
+#define JS_EXPORT_PRIVATE
 #endif
+
+#endif /* USE(EXPORT_MACROS) */
 
 #ifdef __APPLE__
 #define HAVE_FUNC_USLEEP 1

@@ -575,11 +575,6 @@ void LayoutTestController::observeStorageTrackerNotifications(unsigned number)
     // FIXME: Implement.
 }
 
-void LayoutTestController::clearAllDatabases()
-{
-    // FIXME: Implement.
-}
-
 void LayoutTestController::deleteAllLocalStorage()
 {
     // FIXME: Implement.

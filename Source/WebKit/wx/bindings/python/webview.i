@@ -49,6 +49,7 @@
 #include "WebDOMNodeList.h"
 #include "WebDOMObject.h"
 #include "WebDOMRange.h"
+#include "WebDOMWebKitAnimationList.h"
 
 #ifndef __WXMSW__
 PyObject* createDOMNodeSubtype(WebDOMNode* ptr, bool setThisOwn, bool isValueObject)

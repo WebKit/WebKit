@@ -1,3 +1,49 @@
+2011-03-15  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Darin Adler.
+
+        Introduce WTF_USE_EXPORT_MACROS, which will allow us to put shared library import/export
+        info into the headers rather than in export symbol definition files, but disable it on 
+        all platforms initially so we can deal with port build issues one port at a time.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=27551
+
+        * DumpRenderTree/cg/ImageDiffCG.cpp:
+        * DumpRenderTree/chromium/config.h:
+        * DumpRenderTree/config.h:
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        * TestWebKitAPI/TestWebKitAPIPrefix.h:
+        * WebKitAPITest/HostWindow.cpp:
+        * WebKitAPITest/TestsController.cpp:
+        * WebKitAPITest/config.h: Added.
+        * WebKitAPITest/main.cpp:
+        * WebKitAPITest/tests/WebViewDestruction.cpp:
+        * WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.cpp:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        * WebKitTestRunner/InjectedBundle/GCController.cpp:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        * WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp:
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundleQt.cpp:
+        * WebKitTestRunner/InjectedBundle/qt/LayoutTestControllerQt.cpp:
+        * WebKitTestRunner/InjectedBundle/win/ActivateFonts.cpp:
+        * WebKitTestRunner/InjectedBundle/win/InjectedBundleWin.cpp:
+        * WebKitTestRunner/InjectedBundle/win/LayoutTestControllerWin.cpp:
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/TestInvocation.cpp:
+        * WebKitTestRunner/config.h: Added.
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        * WebKitTestRunner/qt/TestInvocationQt.cpp:
+        * WebKitTestRunner/qt/main.cpp:
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        * WebKitTestRunner/win/TestInvocationWin.cpp:
+        * WebKitTestRunner/win/main.cpp:
+        * wx/build/settings.py:
+
 2011-03-15  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Shinichiro Hamaji.

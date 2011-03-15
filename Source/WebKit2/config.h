@@ -28,16 +28,6 @@
 #include "autotoolsconfig.h"
 #endif /* defined (BUILDING_GTK__) */
 
-#ifdef __cplusplus
-
-// These undefs match up with defines in WebKit2Prefix.h for Mac OS X.
-// Helps us catch if anyone uses new or delete by accident in code and doesn't include "config.h".
-#undef new
-#undef delete
-#include <wtf/FastMalloc.h>
-
-#endif
-
 #include <wtf/DisallowCType.h>
 #include <wtf/Platform.h>
 
@@ -68,6 +58,8 @@ static const type& name() \
 
 #define JS_EXPORTDATA
 #define JS_EXPORTCLASS
+#define WTF_EXPORT_PRIVATE
+#define JS_EXPORT_PRIVATE
 
 #elif defined(__APPLE__)
 
@@ -102,6 +94,9 @@ static const type& name() \
 #define JS_EXPORTCLASS
 #define WEBKIT_EXPORTDATA
 
+#define WTF_EXPORT_PRIVATE
+#define JS_EXPORT_PRIVATE
+
 #include <WebCore/EmptyProtocolDefinitions.h>
 
 #elif defined(WIN32) || defined(_WIN32)
@@ -135,6 +130,16 @@ static const type& name() \
 #endif
 
 #endif /* defined(WIN32) || defined(_WIN32) */
+
+#ifdef __cplusplus
+
+// These undefs match up with defines in WebKit2Prefix.h for Mac OS X.
+// Helps us catch if anyone uses new or delete by accident in code and doesn't include "config.h".
+#undef new
+#undef delete
+#include <wtf/FastMalloc.h>
+
+#endif
 
 #if PLATFORM(MAC) || (OS(MAC_OS_X) && PLATFORM(QT))
 #define PLUGIN_ARCHITECTURE_MAC 1

@@ -19,3 +19,6 @@
 
 #define JS_EXPORTDATA
 #define JS_EXPORTCLASS
+#define JS_EXPORT_PRIVATE
+#define WTF_EXPORT_PRIVATE
+

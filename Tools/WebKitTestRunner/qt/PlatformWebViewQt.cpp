@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #include "PlatformWebView.h"
 #include "qgraphicswkview.h"
 #include "qwkcontext.h"

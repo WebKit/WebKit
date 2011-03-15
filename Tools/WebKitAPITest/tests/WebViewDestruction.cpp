@@ -22,6 +22,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #include "HostWindow.h"
 #include "Test.h"
 #include <WebCore/COMPtr.h>

@@ -188,7 +188,7 @@ os.environ['CREATE_HASH_TABLE'] = create_hash_table
 feature_defines = ['ENABLE_DATABASE', 'ENABLE_XSLT', 'ENABLE_JAVASCRIPT_DEBUGGER',
                     'ENABLE_SVG', 'ENABLE_SVG_USE', 'ENABLE_FILTERS', 'ENABLE_SVG_FONTS',
                     'ENABLE_SVG_ANIMATION', 'ENABLE_SVG_AS_IMAGE', 'ENABLE_SVG_FOREIGN_OBJECT',
-                    'ENABLE_JIT', 'BUILDING_%s' % build_port.upper()]
+                    'ENABLE_JIT', 'ENABLE_DOM_STORAGE', 'BUILDING_%s' % build_port.upper()]
 
 msvc_version = 'msvc2008'
 

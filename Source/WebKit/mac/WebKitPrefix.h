@@ -79,12 +79,6 @@ typedef float CGFloat;
 #define WTF_USE_JSC 1
 #define WTF_USE_V8 0
 
-#ifdef __cplusplus
-#include <wtf/FastMalloc.h>
-#endif
-
-#include <wtf/DisallowCType.h>
-
 /* Work around bug with C++ library that screws up Objective-C++ when exception support is disabled. */
 #undef try
 #undef catch
@@ -92,3 +86,11 @@ typedef float CGFloat;
 #define JS_EXPORTDATA
 #define JS_EXPORTCLASS
 #define WEBKIT_EXPORTDATA
+#define WTF_EXPORT_PRIVATE
+#define JS_EXPORT_PRIVATE
+
+#ifdef __cplusplus
+#include <wtf/FastMalloc.h>
+#endif
+
+#include <wtf/DisallowCType.h>

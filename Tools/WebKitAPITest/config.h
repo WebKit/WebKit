@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,22 +21,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+#ifndef WebKitAPITests_config_h
+#define WebKitAPITests_config_h
 
-#include "config.h"
+#include <wtf/Platform.h>
 
-#include "TestsController.h"
+/* See note in wtf/Platform.h for more info on EXPORT_MACROS. */
+#if USE(EXPORT_MACROS)
 
-using namespace WebKitAPITest;
+#include <wtf/ExportMacros.h>
 
-int main(int, char*[])
-{
-    // Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
-    // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
-    // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
-    ::SetErrorMode(0);
+#define WTF_EXPORT_PRIVATE WTF_IMPORT
+#define JS_EXPORT_PRIVATE WTF_IMPORT
+#define WEBKIT_EXPORTDATA WTF_IMPORT
 
-    // FIXME: Remove this line once <http://webkit.org/b/32867> is fixed.
-    OleInitialize(0);
+#define JS_EXPORTDATA JS_EXPORT_PRIVATE
+#define JS_EXPORTCLASS JS_EXPORT_PRIVATE
 
-    return !TestsController::shared().runAllTests();
-}
+#else /* !USE(EXPORT_MACROS) */
+
+#if OS(WINDOWS) && !COMPILER(GCC) && !defined(BUILDING_WX__)
+#define JS_EXPORTDATA __declspec(dllimport)
+#define WEBKIT_EXPORTDATA __declspec(dllimport)
+#else
+#define JS_EXPORTDATA
+#define WEBKIT_EXPORTDATA
+#endif
+
+#define WTF_EXPORT_PRIVATE JS_EXPORTDATA
+#define JS_EXPORT_PRIVATE JS_EXPORTDATA
+
+#endif /* USE(EXPORT_MACROS) */
+
+#endif

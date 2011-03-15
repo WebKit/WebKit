@@ -36,6 +36,10 @@
 
 #endif
 
+/* FIXME: Define these properly once USE(EXPORT_MACROS) is set for ports using this */
+#define JS_EXPORT_PRIVATE
+#define WTF_EXPORT_PRIVATE
+
 #include <stdint.h>
 
 #include <WebKit2/WebKit2.h>

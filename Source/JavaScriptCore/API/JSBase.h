@@ -80,6 +80,11 @@ typedef struct OpaqueJSValue* JSObjectRef;
 #define JS_EXPORT
 #endif /* defined(JS_NO_EXPORT) */
 
+/* JS tests uses WTF but has no config.h, so we need to set the export defines here. */
+#ifndef WTF_EXPORT_PRIVATE
+#define WTF_EXPORT_PRIVATE JS_EXPORT
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

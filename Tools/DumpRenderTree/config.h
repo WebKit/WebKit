@@ -26,18 +26,37 @@
 
 #include <wtf/Platform.h>
 
-#ifdef __cplusplus
-#undef new
-#undef delete
-#include <wtf/FastMalloc.h>
-#endif
+/* See note in wtf/Platform.h for more info on EXPORT_MACROS. */
+#if USE(EXPORT_MACROS)
 
-#if OS(WINDOWS) && !COMPILER(GCC)
+#include <wtf/ExportMacros.h>
+
+#define WTF_EXPORT_PRIVATE WTF_IMPORT
+#define JS_EXPORT_PRIVATE WTF_IMPORT
+#define WEBKIT_EXPORTDATA WTF_IMPORT
+
+#define JS_EXPORTDATA JS_EXPORT_PRIVATE
+#define JS_EXPORTCLASS JS_EXPORT_PRIVATE
+
+#else /* !USE(EXPORT_MACROS) */
+
+#if OS(WINDOWS) && !COMPILER(GCC) && !defined(BUILDING_WX__)
 #define JS_EXPORTDATA __declspec(dllimport)
 #define WEBKIT_EXPORTDATA __declspec(dllimport)
 #else
 #define JS_EXPORTDATA
 #define WEBKIT_EXPORTDATA
+#endif
+
+#define WTF_EXPORT_PRIVATE JS_EXPORTDATA
+#define JS_EXPORT_PRIVATE JS_EXPORTDATA
+
+#endif /* USE(EXPORT_MACROS) */
+
+#ifdef __cplusplus
+#undef new
+#undef delete
+#include <wtf/FastMalloc.h>
 #endif
 
 #if PLATFORM(MAC)

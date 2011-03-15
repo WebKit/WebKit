@@ -140,3 +140,5 @@ void GeolocationClientQt::cancelPermissionRequest(Geolocation* geolocation)
 }
 
 } // namespace WebCore
+
+#include "moc_GeolocationClientQt.cpp"

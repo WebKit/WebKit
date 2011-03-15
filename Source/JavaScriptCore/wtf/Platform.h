@@ -1184,4 +1184,10 @@
 #include "GTypedefs.h"
 #endif
 
+/* FIXME: This define won't be needed once #27551 is fully landed. However, 
+   since most ports try to support sub-project independence, adding new headers
+   to WTF causes many ports to break, and so this way we can address the build
+   breakages one port at a time. */
+#define WTF_USE_EXPORT_MACROS 0
+
 #endif /* WTF_Platform_h */
