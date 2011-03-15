@@ -49,7 +49,7 @@ struct WebConsoleMessage {
     WebConsoleMessage()
         : level(LevelLog) { }
     WebConsoleMessage(Level level, const WebString& text)
-        : level(LevelLog)
+        : level(level)
         , text(text) { }
 };
 
