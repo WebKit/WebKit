@@ -177,6 +177,10 @@ void LauncherApplication::handleUserOptions()
         qDebug() << "Usage:" << programName.toLatin1().data()
              << "[-graphicsbased]"
              << "[-no-compositing]"
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+             << "[-gl-viewport]"
+             << "[-webgl]"
+#endif
              << QString("[-viewport-update-mode %1]").arg(formatKeys(updateModes)).toLatin1().data()
              << "[-cache-webview]"
              << "[-show-fps]"
@@ -262,6 +266,11 @@ void LauncherApplication::handleUserOptions()
     if (args.contains("-gl-viewport") || defaultForAnimations) {
         requiresGraphicsView("-gl-viewport");
         windowOptions.useQGLWidgetViewport = true;
+    }
+
+    if (args.contains("-webgl")) {
+        requiresGraphicsView("-webgl");
+        windowOptions.useWebGL = true;
     }
 #endif
 

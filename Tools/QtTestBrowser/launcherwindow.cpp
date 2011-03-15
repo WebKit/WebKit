@@ -108,6 +108,10 @@ void LauncherWindow::initializeView()
         m_view = view;
     } else {
         WebViewGraphicsBased* view = new WebViewGraphicsBased(splitter);
+        m_view = view;
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+        toggleQGLWidgetViewport(m_windowOptions.useQGLWidgetViewport);
+#endif
         view->setPage(page());
 
         connect(view, SIGNAL(currentFPSUpdated(int)), this, SLOT(updateFPS(int)));
@@ -116,8 +120,6 @@ void LauncherWindow::initializeView()
         // The implementation of QAbstractScrollArea::eventFilter makes us need
         // to install the event filter also on the viewport of a QGraphicsView.
         view->viewport()->installEventFilter(this);
-
-        m_view = view;
     }
 
     m_touchMocking = false;
