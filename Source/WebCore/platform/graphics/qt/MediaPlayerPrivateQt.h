@@ -120,8 +120,6 @@ private slots:
     void handleError(QMediaPlayer::Error);
     void stateChanged(QMediaPlayer::State);
     void nativeSizeChanged(const QSizeF&);
-    void queuedSeekTimeout();
-    void seekTimeout();
     void positionChanged(qint64);
     void durationChanged(qint64);
     void bufferStatusChanged(int);
@@ -153,7 +151,6 @@ private:
     bool m_isVisible;
     bool m_isSeeking;
     bool m_composited;
-    qint64 m_queuedSeek;
     MediaPlayer::Preload m_preload;
     bool m_delayingLoad;
     String m_mediaUrl;

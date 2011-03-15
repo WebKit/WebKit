@@ -1,3 +1,21 @@
+2011-03-14  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Seeking videos using the timeline bar does not work properly and stop the video playback.
+        https://bugs.webkit.org/show_bug.cgi?id=56145
+
+        We do not need seekTimeout and queuedSeekTimeout anymore. setPosition on QMediaPlayer is good enough.
+        positionChanged() will be emitted when the data is buffered. On Linux the signal was not emitted because
+        of a bug in QtMultimedia.
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::MediaPlayerPrivateQt):
+        (WebCore::MediaPlayerPrivateQt::seek):
+        (WebCore::MediaPlayerPrivateQt::stateChanged):
+        (WebCore::MediaPlayerPrivateQt::positionChanged):
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+
 2011-03-14  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Roben.
