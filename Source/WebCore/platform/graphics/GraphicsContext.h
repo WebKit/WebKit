@@ -271,6 +271,9 @@ namespace WebCore {
         
         void setIsCALayerContext(bool);
         bool isCALayerContext() const;
+
+        void setIsAcceleratedContext(bool);
+        bool isAcceleratedContext() const;
 #endif
 
         void save();

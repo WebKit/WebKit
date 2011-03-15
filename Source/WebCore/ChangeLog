@@ -1,3 +1,27 @@
+2011-03-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Disable ShadowBlur shadow drawing in accelerated contexts
+        https://bugs.webkit.org/show_bug.cgi?id=56392
+
+        When drawing into a graphics context that is accelerated, don't use
+        ShadowBlur, because it may be slower.
+        
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        (WebCore::GraphicsContext::setIsCALayerContext):
+        (WebCore::GraphicsContext::isCALayerContext):
+        (WebCore::GraphicsContext::setIsAcceleratedContext):
+        (WebCore::GraphicsContext::isAcceleratedContext):
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+
 2011-03-15  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.

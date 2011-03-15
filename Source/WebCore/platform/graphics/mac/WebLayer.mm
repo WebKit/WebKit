@@ -62,6 +62,9 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
 
     GraphicsContext graphicsContext(context);
     graphicsContext.setIsCALayerContext(true);
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    graphicsContext.setIsAcceleratedContext([layer acceleratesDrawing]);
+#endif
 
     if (!layerContents->platformCALayerContentsOpaque()) {
         // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
