@@ -1,3 +1,11 @@
+2011-03-15  Adam Roben  <aroben@apple.com>
+
+        Skip an asserting test on Windows
+
+        <http://webkit.org/b/56047> tracks the failure.
+
+        * platform/win/Skipped: Added editing/style/iframe-onload-crash.html.
+
 2011-03-15  David Levin  <levin@chromium.org>
 
         Fix few more baselines (which the tool didn't handle well before due to them
