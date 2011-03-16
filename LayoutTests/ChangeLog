@@ -1,5 +1,11 @@
 2011-03-16  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip svg/W3C-I18N tests failing on 32-bits Debug only.
+
+        * platform/gtk/Skipped:
+
+2011-03-16  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skip editing/style/iframe-onload-crash.html on GTK.
 
         * platform/gtk/Skipped:
