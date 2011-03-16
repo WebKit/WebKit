@@ -327,8 +327,8 @@ public:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
 
-    virtual bool isContentEditable() const;
-    virtual bool isContentRichlyEditable() const;
+    bool isContentEditable() const { return isContentEditable(Editable); }
+    bool isContentRichlyEditable() const { return isContentEditable(RichlyEditable); }
     virtual bool shouldUseInputMethod() const;
     virtual IntRect getRect() const;
     IntRect renderRect(bool* isReplaced);
@@ -658,6 +658,9 @@ private:
 #if USE(JSC)
     void markCachedNodeListsSlow(JSC::MarkStack&, JSC::JSGlobalData&);
 #endif
+
+    enum EditableLevel { Editable, RichlyEditable };
+    bool isContentEditable(EditableLevel) const;
 
     void setStyleChange(StyleChangeType);
 

@@ -56,9 +56,6 @@ public:
     void insertAdjacentText(const String& where, const String& text, ExceptionCode&);
 
     virtual bool supportsFocus() const;
-    
-    virtual bool isContentEditable() const;
-    virtual bool isContentRichlyEditable() const;
 
     String contentEditable() const;
     void setContentEditable(const String&, ExceptionCode&);

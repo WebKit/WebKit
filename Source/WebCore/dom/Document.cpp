@@ -4117,22 +4117,6 @@ bool Document::inDesignMode() const
     return false;
 }
 
-bool Document::isContentEditable() const
-{
-    if (inDesignMode())
-        return true;
-
-    return renderer() && (renderer()->style()->userModify() == READ_WRITE || renderer()->style()->userModify() == READ_WRITE_PLAINTEXT_ONLY);
-}
-
-bool Document::isContentRichlyEditable() const
-{
-    if (inDesignMode())
-        return true;
-
-    return renderer() && renderer()->style()->userModify() == READ_WRITE;
-}
-
 Document* Document::parentDocument() const
 {
     if (!m_frame)

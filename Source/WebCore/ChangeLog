@@ -1,3 +1,22 @@
+2011-03-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Devirtualize isContentEditable and isRichlyContentEditable
+        https://bugs.webkit.org/show_bug.cgi?id=56421
+
+        Rewrote Node::isContentEditable as a non-recursive non-virtual function.
+
+        * dom/Document.cpp: Removed isContentEditable and isContentRichlyEditable.
+        * dom/Document.h: Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::isContentEditable): Rewritten.
+        * dom/Node.h:
+        (WebCore::Node::isContentEditable): Calls isContentEditable(Editable).
+        (WebCore::Node::isContentRichlyEditable): Calls isContentEditable(RichlyEditable).
+        * html/HTMLElement.cpp: Removed isContentEditable and isContentRichlyEditable.
+        * html/HTMLElement.h: Ditto.
+
 2011-03-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -711,14 +711,32 @@ void Node::deprecatedParserAddChild(PassRefPtr<Node>)
 {
 }
 
-bool Node::isContentEditable() const
+bool Node::isContentEditable(EditableLevel editableLevel) const
 {
-    return parentOrHostNode() && parentOrHostNode()->isContentEditable();
-}
+    if (document()->inDesignMode())
+        return true;
 
-bool Node::isContentRichlyEditable() const
-{
-    return parentOrHostNode() && parentOrHostNode()->isContentRichlyEditable();
+    // Ideally we'd call ASSERT(!needsStyleRecalc()) here, but
+    // ContainerNode::setFocus() calls setNeedsStyleRecalc(), so the assertion
+    // would fire in the middle of Document::setFocusedNode().
+
+    for (const Node* node = this; node; ) {
+        if (node->isHTMLElement() || node->isDocumentNode()) {
+            if (node->renderer()) {
+                if (editableLevel == RichlyEditable)
+                    return node->renderer()->style()->userModify() == READ_WRITE;
+
+                EUserModify userModify = node->renderer()->style()->userModify();
+                return userModify == READ_WRITE || userModify == READ_WRITE_PLAINTEXT_ONLY;
+            }
+            node = node->parentNode();
+        } else {
+            // FIXME: Should this be parentNode() instead?
+            node = node->parentOrHostNode();
+        }
+    }
+
+    return false;
 }
 
 bool Node::shouldUseInputMethod() const

@@ -894,8 +894,6 @@ public:
     void setDesignMode(InheritedBool value);
     InheritedBool getDesignMode() const;
     bool inDesignMode() const;
-    virtual bool isContentEditable() const;
-    virtual bool isContentRichlyEditable() const;
 
     Document* parentDocument() const;
     Document* topDocument() const;
