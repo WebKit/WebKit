@@ -47,10 +47,8 @@ WebInspector.SourceFrame = function(delegate, url)
     this._rowMessages = {};
     this._messageBubbles = {};
 
-    if (Preferences.sourceEditorEnabled) {
-        this._registerShortcuts();
-        this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
-    }
+    this._registerShortcuts();
+    this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
 }
 
 WebInspector.SourceFrame.Events = {
@@ -822,28 +820,10 @@ WebInspector.SourceFrame.prototype = {
         if (!lineRow)
             return;  // Do not trigger editing from line numbers.
 
-        if (Preferences.sourceEditorEnabled) {
-            if (this._textViewer.readOnly) {
-                this._textViewer.readOnly = false;
-                window.getSelection().collapseToStart();
-            }
-            return;
+        if (this._textViewer.readOnly) {
+            this._textViewer.readOnly = false;
+            window.getSelection().collapseToStart();
         }
-
-        this._textViewer.editLine(lineRow, this._didEditLine.bind(this, lineRow.lineNumber));
-    },
-
-    _didEditLine: function(lineNumber, newContent)
-    {
-        var lines = [];
-        var oldLines = this._content.text.split('\n');
-        for (var i = 0; i < oldLines.length; ++i) {
-            if (i === lineNumber)
-                lines.push(newContent);
-            else
-                lines.push(oldLines[i]);
-        }
-        this._delegate.editScriptSource(lines.join("\n"));
     }
 }
 

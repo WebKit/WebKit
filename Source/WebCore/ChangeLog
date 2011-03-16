@@ -1,3 +1,18 @@
+2011-03-16  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Remove live-edit code
+        https://bugs.webkit.org/show_bug.cgi?id=56177
+
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype._doubleClick):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorMainPanel):
+        (WebInspector.TextEditorMainPanel.prototype.set readOnly):
+
 2011-03-16  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Martin Robinson.

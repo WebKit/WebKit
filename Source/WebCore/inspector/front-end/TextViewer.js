@@ -121,11 +121,6 @@ WebInspector.TextViewer.prototype = {
         this._gutterPanel.freeCachedElements();
     },
 
-    editLine: function(lineRow, callback)
-    {
-        this._mainPanel.editLine(lineRow, callback);
-    },
-
     get scrollTop()
     {
         return this._mainPanel.element.scrollTop;
@@ -699,10 +694,6 @@ WebInspector.TextEditorMainPanel = function(textModel, url, syncScrollListener, 
 
     this.element.addEventListener("scroll", this._scroll.bind(this), false);
 
-    // FIXME: Remove old live editing functionality and Preferences.sourceEditorEnabled flag.
-    if (!Preferences.sourceEditorEnabled)
-        this._container.addEventListener("keydown", this._handleKeyDown.bind(this), false);
-
     // In WebKit the DOMNodeRemoved event is fired AFTER the node is removed, thus it should be
     // attached to all DOM nodes that we want to track. Instead, we attach the DOMNodeRemoved
     // listeners only on the line rows, and use DOMSubtreeModified to track node removals inside
@@ -724,10 +715,6 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     set readOnly(readOnly)
     {
-        // FIXME: Remove the Preferences.sourceEditorEnabled flag.
-        if (!Preferences.sourceEditorEnabled)
-            return;
-
         this.beginDomUpdates();
         this._readOnly = readOnly;
         if (this._readOnly)
@@ -781,55 +768,6 @@ WebInspector.TextEditorMainPanel.prototype = {
         this._cachedSpans = [];
         this._cachedTextNodes = [];
         this._cachedRows = [];
-    },
-
-    _handleKeyDown: function()
-    {
-        if (this._editingLine || event.metaKey || event.shiftKey || event.ctrlKey || event.altKey)
-            return;
-
-        var scrollValue = 0;
-        if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Up.code)
-            scrollValue = -1;
-        else if (event.keyCode == WebInspector.KeyboardShortcut.Keys.Down.code)
-            scrollValue = 1;
-
-        if (scrollValue) {
-            event.preventDefault();
-            event.stopPropagation();
-            this.element.scrollByLines(scrollValue);
-            return;
-        }
-
-        scrollValue = 0;
-        if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Left.code)
-            scrollValue = -40;
-        else if (event.keyCode == WebInspector.KeyboardShortcut.Keys.Right.code)
-            scrollValue = 40;
-
-        if (scrollValue) {
-            event.preventDefault();
-            event.stopPropagation();
-            this.element.scrollLeft += scrollValue;
-        }
-    },
-
-    editLine: function(lineRow, callback)
-    {
-        var oldContent = lineRow.innerHTML;
-        function finishEditing(committed, e, newContent)
-        {
-            if (committed)
-                callback(newContent);
-            lineRow.innerHTML = oldContent;
-            delete this._editingLine;
-        }
-        this._editingLine = WebInspector.startEditing(lineRow, {
-            context: null,
-            commitHandler: finishEditing.bind(this, true),
-            cancelHandler: finishEditing.bind(this, false),
-            multiline: true
-        });
     },
 
     _buildChunks: function()
