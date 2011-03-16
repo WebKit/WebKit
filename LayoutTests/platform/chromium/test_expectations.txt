@@ -3333,21 +3333,5 @@ BUG_LOISLO MAC DEBUG : fast/text/font-size-zero.html = TEXT
 // Failure from WebKit r81104
 BUGCR76159 MAC LINUX : http/tests/media/video-play-stall-before-meta-data.html = TEXT
 
-BUGWK56407 : editing/style/iframe-onload-crash.html = CRASH
-BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = FAIL
-
-// Need Mac baselines
-BUG_LEVIN MAC : css2.1/t1008-c44-ln-box-02-d-ag.html = IMAGE
-BUG_LEVIN MAC : css2.1/t100801-c544-valgn-03-d-agi.html = IMAGE
-BUG_LEVIN MAC : editing/selection/caret-ltr-2-left.html = IMAGE
-BUG_LEVIN MAC : editing/selection/caret-ltr-2.html = IMAGE
-BUG_LEVIN MAC : editing/selection/caret-ltr-right.html = IMAGE
-BUG_LEVIN MAC : editing/selection/caret-ltr.html = IMAGE
-BUG_LEVIN MAC : fast/block/margin-collapse/103.html = IMAGE
-BUG_LEVIN MAC : tables/mozilla/bugs/bug1318.html = IMAGE
-BUG_LEVIN MAC : tables/mozilla/bugs/bug4527.html = IMAGE
-BUG_LEVIN MAC : svg/text/select-textLength-spacing-stretch-4.svg = FAIL
-BUG_LEVIN MAC : svg/W3C-SVG-1.1/text-align-08-b.svg = FAIL
-BUG_LEVIN MAC : svg/W3C-SVG-1.1/text-intro-02-b.svg = FAIL
-BUG_LEVIN MAC : svg/W3C-SVG-1.1/text-intro-04-t.svg = FAIL
-BUG_LEVIN MAC : svg/text/bidi-reorder-value-lists.svg = FAIL
+BUGWK56407 LINUX WIN : editing/style/iframe-onload-crash.html = CRASH
+BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = CRASH

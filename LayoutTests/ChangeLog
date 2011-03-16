@@ -1,3 +1,29 @@
+2011-03-15  David Levin  <levin@chromium.org>
+
+        Update leopard specific baselines for tests (editing, css) changes due to r80755.
+        Fix the expectation for input-autofilled.
+
+        * platform/chromium-mac-leopard/css2.1/t1008-c44-ln-box-02-d-ag-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t1008-c44-ln-box-02-d-ag-expected.png:
+        * platform/chromium-mac-leopard/css2.1/t100801-c544-valgn-03-d-agi-expected.checksum:
+        * platform/chromium-mac-leopard/css2.1/t100801-c544-valgn-03-d-agi-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/caret-ltr-2-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/editing/selection/caret-ltr-2-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/selection/caret-ltr-2-left-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/editing/selection/caret-ltr-2-left-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/selection/caret-ltr-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/editing/selection/caret-ltr-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/selection/caret-ltr-right-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/editing/selection/caret-ltr-right-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/block/margin-collapse/103-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/block/margin-collapse/103-expected.png: Removed.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1318-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1318-expected.png: Removed.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4527-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4527-expected.png: Removed.
+        * platform/chromium/fast/forms/input-autofilled-expected.txt: Renamed from LayoutTests/platform/chromium-win/fast/forms/input-autofilled-expected.txt.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-15  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Tony Gentilcore.
