@@ -47,6 +47,7 @@ class CanvasRenderingContext;
 class GraphicsContext;
 class HTMLCanvasElement;
 class Image;
+class ImageData;
 class ImageBuffer;
 class IntSize;
 
@@ -105,6 +106,7 @@ public:
     ImageBuffer* buffer() const;
     Image* copiedImage() const;
     void clearCopiedImage();
+    PassRefPtr<ImageData> getImageData();
 
     IntRect convertLogicalToDevice(const FloatRect&) const;
     IntSize convertLogicalToDevice(const FloatSize&) const;

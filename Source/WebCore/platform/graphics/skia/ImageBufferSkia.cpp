@@ -341,6 +341,28 @@ void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& so
     putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, context()->platformContext()->canvas()->getDevice(), m_size);
 }
 
+template <typename T>
+static String ImageToDataURL(T& source, const String& mimeType, const double* quality)
+{
+    Vector<unsigned char> encodedImage;
+    if (mimeType == "image/jpeg") {
+        int compressionQuality = JPEGImageEncoder::DefaultCompressionQuality;
+        if (quality && *quality >= 0.0 && *quality <= 1.0)
+            compressionQuality = static_cast<int>(*quality * 100 + 0.5);
+        if (!JPEGImageEncoder::encode(source, compressionQuality, &encodedImage))
+            return "data:,";
+    } else {
+        if (!PNGImageEncoder::encode(source, &encodedImage))
+            return "data:,";
+        ASSERT(mimeType == "image/png");
+    }
+
+    Vector<char> base64Data;
+    base64Encode(*reinterpret_cast<Vector<char>*>(&encodedImage), base64Data);
+
+    return makeString("data:", mimeType, ";base64,", base64Data);
+}
+
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
@@ -358,23 +380,13 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
         if (!device->readPixels(bounds, &bitmap))
             return "data:,";
     }
-    
-    if (mimeType == "image/jpeg") {
-        int compressionQuality = JPEGImageEncoder::DefaultCompressionQuality;
-        if (quality && *quality >= 0.0 && *quality <= 1.0)
-            compressionQuality = static_cast<int>(*quality * 100 + 0.5);
-        if (!JPEGImageEncoder::encode(bitmap, compressionQuality, &encodedImage))
-            return "data:,";
-    } else {
-        if (!PNGImageEncoder::encode(bitmap, &encodedImage))
-            return "data:,";
-        ASSERT(mimeType == "image/png");
-    }
 
-    Vector<char> base64Data;
-    base64Encode(*reinterpret_cast<Vector<char>*>(&encodedImage), base64Data);
+    return ImageToDataURL(bitmap, mimeType, quality);
+}
 
-    return makeString("data:", mimeType, ";base64,", base64Data);
+String ImageDataToDataURL(const ImageData& source, const String& mimeType, const double* quality)
+{
+    return ImageToDataURL(source, mimeType, quality);
 }
 
 } // namespace WebCore

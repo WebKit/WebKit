@@ -32,6 +32,7 @@
 #include "BitmapImage.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextCG.h"
+#include "ImageData.h"
 #include "MIMETypeRegistry.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/Assertions.h>
@@ -498,21 +499,8 @@ static RetainPtr<CFStringRef> utiFromMIMEType(const String& mimeType)
 #endif
 }
 
-String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
+static String CGImageToDataURL(CGImageRef image, const String& mimeType, const double* quality)
 {
-    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
-
-    RetainPtr<CGImageRef> image;
-    if (!m_accelerateRendering)
-        image.adoptCF(CGBitmapContextCreateImage(context()->platformContext()));
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    else
-        image.adoptCF(wkIOSurfaceContextCreateImage(context()->platformContext()));
-#endif
-
-    if (!image)
-        return "data:,";
-
     RetainPtr<CFMutableDataRef> data(AdoptCF, CFDataCreateMutable(kCFAllocatorDefault, 0));
     if (!data)
         return "data:,";
@@ -533,12 +521,54 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
         imageProperties.adoptCF(CFDictionaryCreate(0, &key, &value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     }
 
-    CGImageDestinationAddImage(destination.get(), image.get(), imageProperties.get());
+    CGImageDestinationAddImage(destination.get(), image, imageProperties.get());
     CGImageDestinationFinalize(destination.get());
 
     Vector<char> out;
     base64Encode(reinterpret_cast<const char*>(CFDataGetBytePtr(data.get())), CFDataGetLength(data.get()), out);
 
     return makeString("data:", mimeType, ";base64,", out);
+}
+
+String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
+{
+    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+
+    RetainPtr<CGImageRef> image;
+    if (!m_accelerateRendering)
+        image.adoptCF(CGBitmapContextCreateImage(context()->platformContext()));
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+    else
+        image.adoptCF(wkIOSurfaceContextCreateImage(context()->platformContext()));
+#endif
+
+    if (!image)
+        return "data:,";
+
+    return CGImageToDataURL(image.get(), mimeType, quality);
+}
+
+String ImageDataToDataURL(const ImageData& source, const String& mimeType, const double* quality)
+{
+    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+        
+    RetainPtr<CGImageRef> image;
+    RetainPtr<CGDataProviderRef> dataProvider;
+    
+    dataProvider.adoptCF(CGDataProviderCreateWithData(0, source.data()->data()->data(),
+                                                      4 * source.width() * source.height(), 0));
+    
+    if (!dataProvider)
+        return "data:,";
+
+    image.adoptCF(CGImageCreate(source.width(), source.height(), 8, 32, 4 * source.width(),
+                                CGColorSpaceCreateDeviceRGB(), kCGBitmapByteOrderDefault | kCGImageAlphaLast,
+                                dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+                                
+        
+    if (!image)
+        return "data:,";
+
+    return CGImageToDataURL(image.get(), mimeType, quality);
 }
 } // namespace WebCore

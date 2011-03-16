@@ -757,6 +757,7 @@ public:
 #endif
 
     void paintRenderingResultsToCanvas(CanvasRenderingContext* context);
+    PassRefPtr<ImageData> paintRenderingResultsToImageData();
 
 #if PLATFORM(QT)
     void paint(QPainter* painter, const QRect& rect) const;
@@ -859,6 +860,10 @@ public:
     // could not be honored based on the capabilities of the OpenGL
     // implementation.
     void validateAttributes();
+
+    // Read rendering results into a pixel array with the same format as the
+    // backbuffer.
+    void readRenderingResults(unsigned char* pixels, int pixelsSize);
 #endif
 
     int m_currentWidth, m_currentHeight;

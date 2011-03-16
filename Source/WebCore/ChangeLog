@@ -1,3 +1,55 @@
+2011-03-15  John Bauman  <jbauman@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Non-premultiplied-alpha canvas attribute is ignore for toDataURL, drawImage, texImage2D
+        https://bugs.webkit.org/show_bug.cgi?id=56238
+
+       Attempt to get an ImageData (non-premultiplied) from a WebGL canvas
+       instead of getting an ImageBuffer, so there's a chance the data can be
+       passed straight through to the consumer with no premultiplication
+       necessary. Fixes Chromium and Safari.
+
+        Test: fast/canvas/webgl/premultiplyalpha-test.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toDataURL):
+        (WebCore::HTMLCanvasElement::getImageData):
+        * html/HTMLCanvasElement.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::paintRenderingResultsToImageData):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        * html/canvas/WebGLRenderingContext.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::CGImageToDataURL):
+        (WebCore::ImageBuffer::toDataURL):
+        (WebCore::ImageDataToDataURL):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::validateAttributes):
+        (WebCore::GraphicsContext3D::readRenderingResults):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToImageData):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToImageData):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageToDataURL):
+        (WebCore::ImageBuffer::toDataURL):
+        (WebCore::ImageDataToDataURL):
+        * platform/image-encoders/skia/JPEGImageEncoder.cpp:
+        (WebCore::preMultipliedBGRAtoRGB):
+        (WebCore::RGBAtoRGB):
+        (WebCore::encodePixels):
+        (WebCore::JPEGImageEncoder::encode):
+        * platform/image-encoders/skia/JPEGImageEncoder.h:
+        * platform/image-encoders/skia/PNGImageEncoder.cpp:
+        (WebCore::preMultipliedBGRAtoRGBA):
+        (WebCore::encodePixels):
+        (WebCore::PNGImageEncoder::encode):
+        * platform/image-encoders/skia/PNGImageEncoder.h:
+
 2011-03-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, only compile the methods when the INDEXED_DATABASE feature is enabled.

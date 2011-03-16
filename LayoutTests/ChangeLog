@@ -1,3 +1,19 @@
+2011-03-15  John Bauman  <jbauman@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Non-premultiplied-alpha canvas attribute is ignore for toDataURL, drawImage, texImage2D
+        https://bugs.webkit.org/show_bug.cgi?id=56238
+
+        Add new test from webgl conformance test.
+
+        * fast/canvas/webgl/premultiplyalpha-test-expected.txt: Added.
+        * fast/canvas/webgl/premultiplyalpha-test.html: Added.
+        * fast/canvas/webgl/resources/webgl-test-utils.js: Update to fix fillTexture
+        (WebGLTestUtils):
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-wk2/Skipped:
+
 2011-03-15  David Levin  <levin@chromium.org>
 
         A little more clean-up due to r81168. Also, some adjustment of the results for Linux due to r81162.

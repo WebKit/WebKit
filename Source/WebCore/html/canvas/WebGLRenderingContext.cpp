@@ -495,6 +495,11 @@ void WebGLRenderingContext::paintRenderingResultsToCanvas()
     m_context->paintRenderingResultsToCanvas(this);
 }
 
+PassRefPtr<ImageData> WebGLRenderingContext::paintRenderingResultsToImageData()
+{
+    return m_context->paintRenderingResultsToImageData();
+}
+
 bool WebGLRenderingContext::paintsIntoCanvasBuffer() const
 {
     return m_context->paintsIntoCanvasBuffer();
@@ -3062,8 +3067,12 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
         return;
     }
     checkOrigin(canvas);
-    texImage2DImpl(target, level, internalformat, format, type, canvas->copiedImage(),
-                   m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+    RefPtr<ImageData> imageData = canvas->getImageData();
+    if (imageData)
+        texImage2D(target, level, internalformat, format, type, imageData.get(), ec);
+    else
+        texImage2DImpl(target, level, internalformat, format, type, canvas->copiedImage(),
+                       m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
 #if ENABLE(VIDEO)
@@ -3252,8 +3261,12 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
         return;
     }
     checkOrigin(canvas);
-    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, canvas->copiedImage(),
-                      m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+    RefPtr<ImageData> imageData = canvas->getImageData();
+    if (imageData)
+        texSubImage2D(target, level, xoffset, yoffset, format, type, imageData.get(), ec);
+    else
+        texSubImage2DImpl(target, level, xoffset, yoffset, format, type, canvas->copiedImage(),
+                          m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
 #if ENABLE(VIDEO)

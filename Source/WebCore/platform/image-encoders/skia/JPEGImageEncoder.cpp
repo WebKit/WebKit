@@ -31,6 +31,7 @@
 #include "config.h"
 #include "JPEGImageEncoder.h"
 
+#include "ImageData.h"
 #include "IntSize.h"
 #include "SkBitmap.h"
 #include "SkColorPriv.h"
@@ -79,22 +80,29 @@ static void handleError(j_common_ptr common)
     longjmp(*jumpBufferPtr, -1);
 }
 
-static void preMultipliedBGRAtoRGB(const SkPMColor* input, unsigned int pixels, unsigned char* output)
+static void preMultipliedBGRAtoRGB(const void* pixels, unsigned int pixelCount, unsigned char* output)
 {
-    for (; pixels-- > 0; ++input) {
+    const SkPMColor* input = static_cast<const SkPMColor*>(pixels);
+    for (; pixelCount-- > 0; ++input) {
         *output++ = SkGetPackedR32(*input);
         *output++ = SkGetPackedG32(*input);
         *output++ = SkGetPackedB32(*input);
     }
 }
 
-bool JPEGImageEncoder::encode(const SkBitmap& bitmap, int quality, Vector<unsigned char>* output)
+static void RGBAtoRGB(const unsigned char* input, unsigned int pixels, unsigned char* output)
 {
-    if (bitmap.config() != SkBitmap::kARGB_8888_Config)
-        return false; // Only support ARGB 32 bpp skia bitmaps.
+    for (; pixels-- > 0; input += 4) {
+        *output++ = input[0];
+        *output++ = input[1];
+        *output++ = input[2];
+    }
+}
 
-    SkAutoLockPixels bitmapLock(bitmap);
-    IntSize imageSize(bitmap.width(), bitmap.height());
+static bool encodePixels(const IntSize& inputSize, unsigned char* pixels, 
+                         bool premultiplied, int quality, Vector<unsigned char>* output)
+{
+    IntSize imageSize(inputSize);
     imageSize.clampNegativeToZero();
     JPEGOutputBuffer destination;
     destination.output = output;
@@ -126,17 +134,37 @@ bool JPEGImageEncoder::encode(const SkBitmap& bitmap, int quality, Vector<unsign
     jpeg_set_quality(&cinfo, quality, TRUE);
     jpeg_start_compress(&cinfo, TRUE);
 
-    const SkPMColor* pixels = static_cast<SkPMColor*>(bitmap.getPixels());
     row.resize(cinfo.image_width * cinfo.input_components);
     while (cinfo.next_scanline < cinfo.image_height) {
-        preMultipliedBGRAtoRGB(pixels, cinfo.image_width, row.data());
+        if (premultiplied)
+            preMultipliedBGRAtoRGB(pixels, cinfo.image_width, row.data());
+        else 
+            RGBAtoRGB(pixels, cinfo.image_width, row.data());
         jpeg_write_scanlines(&cinfo, row.dataSlot(), 1);
-        pixels += cinfo.image_width;
+        pixels += cinfo.image_width * 4;
     }
 
     jpeg_finish_compress(&cinfo);
     jpeg_destroy_compress(&cinfo);
     return true;
+}
+
+bool JPEGImageEncoder::encode(const SkBitmap& bitmap, int quality, Vector<unsigned char>* output)
+{
+    if (bitmap.config() != SkBitmap::kARGB_8888_Config)
+        return false; // Only support ARGB 32 bpp skia bitmaps.
+
+    SkAutoLockPixels bitmapLock(bitmap);
+    IntSize imageSize(bitmap.width(), bitmap.height());
+
+    return encodePixels(imageSize, static_cast<unsigned char *>(bitmap.getPixels()),
+                        true, quality, output);
+}
+
+bool JPEGImageEncoder::encode(const ImageData& imageData, int quality, Vector<unsigned char>* output)
+{
+    return encodePixels(imageData.size(), imageData.data()->data()->data(),
+                        false, quality, output);
 }
 
 } // namespace WebCore

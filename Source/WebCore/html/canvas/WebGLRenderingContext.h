@@ -286,6 +286,7 @@ public:
     void reshape(int width, int height);
 
     virtual void paintRenderingResultsToCanvas();
+    virtual PassRefPtr<ImageData> paintRenderingResultsToImageData();
 
     void removeObject(WebGLObject*);
     

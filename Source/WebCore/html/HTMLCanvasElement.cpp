@@ -41,6 +41,7 @@
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
+#include "ImageData.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
@@ -338,13 +339,35 @@ String HTMLCanvasElement::toDataURL(const String& mimeType, const double* qualit
 
     String lowercaseMimeType = mimeType.lower();
 
-    makeRenderingResultsAvailable();
-
     // FIXME: Make isSupportedImageMIMETypeForEncoding threadsafe (to allow this method to be used on a worker thread).
     if (mimeType.isNull() || !MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(lowercaseMimeType))
-        return buffer()->toDataURL("image/png");
+        lowercaseMimeType = "image/png";
 
+#if PLATFORM(CG) || USE(SKIA)
+    // Try to get ImageData first, as that may avoid lossy conversions.
+    RefPtr<ImageData> imageData = getImageData();
+
+    if (imageData)
+        return ImageDataToDataURL(*imageData, lowercaseMimeType, quality);
+#endif
+
+    makeRenderingResultsAvailable();
+      
     return buffer()->toDataURL(lowercaseMimeType, quality);
+}
+
+PassRefPtr<ImageData> HTMLCanvasElement::getImageData()
+{
+    if (!m_context || !m_context->is3d())
+       return 0;
+
+#if ENABLE(WEBGL)    
+    WebGLRenderingContext* ctx = static_cast<WebGLRenderingContext*>(m_context.get());
+
+    return ctx->paintRenderingResultsToImageData();
+#else
+    return 0;
+#endif
 }
 
 IntRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect) const

@@ -525,6 +525,13 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* co
     paint(painter, QRect(QPoint(0, 0), QSize(m_currentWidth, m_currentHeight)));
 }
 
+PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData()
+{
+    // FIXME: This needs to be implemented for proper non-premultiplied-alpha
+    // support.
+    return 0;
+}
+
 void GraphicsContext3D::paint(QPainter* painter, const QRect& rect) const
 {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)

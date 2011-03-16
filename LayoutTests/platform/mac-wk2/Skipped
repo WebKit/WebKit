@@ -1100,6 +1100,7 @@ fast/canvas/webgl/null-object-behaviour.html
 fast/canvas/webgl/null-uniform-location.html
 fast/canvas/webgl/object-deletion-behaviour.html
 fast/canvas/webgl/point-size.html
+fast/canvas/webgl/premultiplyalpha-test.html
 fast/canvas/webgl/program-test.html
 fast/canvas/webgl/read-pixels-pack-alignment.html
 fast/canvas/webgl/read-pixels-test.html

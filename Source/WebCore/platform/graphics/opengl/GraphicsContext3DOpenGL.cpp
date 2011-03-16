@@ -38,6 +38,7 @@
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "ImageBuffer.h"
+#include "ImageData.h"
 #include "Int32Array.h"
 #include "NotImplemented.h"
 #include "Uint8Array.h"
@@ -70,21 +71,11 @@ void GraphicsContext3D::validateAttributes()
         if (!isValidVendor || !std::strstr(extensions, "GL_EXT_framebuffer_multisample"))
             m_attrs.antialias = false;
     }
-    // FIXME: instead of enforcing premultipliedAlpha = true, implement the
-    // correct behavior when premultipliedAlpha = false is requested.
-    m_attrs.premultipliedAlpha = true;
 }
 
-void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context)
+void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSize)
 {
-    HTMLCanvasElement* canvas = context->canvas();
-    ImageBuffer* imageBuffer = canvas->buffer();
-
-    int rowBytes = m_currentWidth * 4;
-    int totalBytes = rowBytes * m_currentHeight;
-
-    OwnArrayPtr<unsigned char> pixels = adoptArrayPtr(new unsigned char[totalBytes]);
-    if (!pixels)
+    if (pixelsSize < m_currentWidth * m_currentHeight * 4)
         return;
 
     makeContextCurrent();
@@ -111,16 +102,60 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* co
         mustRestorePackAlignment = true;
     }
 
-    ::glReadPixels(0, 0, m_currentWidth, m_currentHeight, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels.get());
+    ::glReadPixels(0, 0, m_currentWidth, m_currentHeight, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
 
     if (mustRestorePackAlignment)
         ::glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
 
     if (mustRestoreFBO)
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
+}
+
+void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context)
+{
+    HTMLCanvasElement* canvas = context->canvas();
+    ImageBuffer* imageBuffer = canvas->buffer();
+
+    int rowBytes = m_currentWidth * 4;
+    int totalBytes = rowBytes * m_currentHeight;
+
+    OwnArrayPtr<unsigned char> pixels = adoptArrayPtr(new unsigned char[totalBytes]);
+    if (!pixels)
+        return;
+
+    readRenderingResults(pixels.get(), totalBytes);
+
+    if (!m_attrs.premultipliedAlpha) {
+        for (int i = 0; i < totalBytes; i += 4) {
+            // Premultiply alpha
+            pixels[i + 0] = std::min(255, pixels[i + 0] * pixels[i + 3] / 255);
+            pixels[i + 1] = std::min(255, pixels[i + 1] * pixels[i + 3] / 255);
+            pixels[i + 2] = std::min(255, pixels[i + 2] * pixels[i + 3] / 255);
+        }
+    }
 
     paintToCanvas(pixels.get(), m_currentWidth, m_currentHeight,
                   canvas->width(), canvas->height(), imageBuffer->context()->platformContext());
+}
+
+PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData()
+{
+    // Reading premultiplied alpha would involve unpremultiplying, which is
+    // lossy
+    if (m_attrs.premultipliedAlpha)
+        return 0;
+
+    RefPtr<ImageData> imageData = ImageData::create(IntSize(m_currentWidth, m_currentHeight));
+    unsigned char* pixels = imageData->data()->data()->data();
+    int totalBytes = 4 * m_currentWidth * m_currentHeight;
+
+    readRenderingResults(pixels, totalBytes);
+
+    // Convert to RGBA
+    for (int i = 0; i < totalBytes; i += 4)
+        std::swap(pixels[i], pixels[i + 2]);
+
+    return imageData.release();
 }
 
 void GraphicsContext3D::reshape(int width, int height)

@@ -132,6 +132,10 @@ namespace WebCore {
         ImageBuffer(const IntSize&, ColorSpace colorSpace, RenderingMode renderingMode, bool& success);
     };
 
+#if PLATFORM(CG) || USE(SKIA)
+    String ImageDataToDataURL(const ImageData& input, const String& mimeType, const double* quality);
+#endif
+
 } // namespace WebCore
 
 #endif // ImageBuffer_h

@@ -37,10 +37,13 @@ class SkBitmap;
 
 namespace WebCore {
 
+class ImageData;
+
 // Interface for encoding PNG data. This is a wrapper around libpng.
 class PNGImageEncoder {
 public:
     static bool encode(const SkBitmap&, Vector<unsigned char>* output);
+    static bool encode(const ImageData&, Vector<unsigned char>* output);
 };
 
 } // namespace WebCore

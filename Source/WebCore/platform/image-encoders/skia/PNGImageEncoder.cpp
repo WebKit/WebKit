@@ -31,6 +31,7 @@
 #include "config.h"
 #include "PNGImageEncoder.h"
 
+#include "ImageData.h"
 #include "IntSize.h"
 #include "SkBitmap.h"
 #include "SkColorPriv.h"
@@ -46,11 +47,12 @@ static void writeOutput(png_structp png, png_bytep data, png_size_t size)
     static_cast<Vector<unsigned char>*>(png->io_ptr)->append(data, size);
 }
 
-static void preMultipliedBGRAtoRGBA(const SkPMColor* input, int pixels, unsigned char* output)
+static void preMultipliedBGRAtoRGBA(const void* pixels, int pixelCount, unsigned char* output)
 {
     static const SkUnPreMultiply::Scale* scale = SkUnPreMultiply::GetScaleTable();
+    const SkPMColor* input = static_cast<const SkPMColor*>(pixels);
 
-    for (; pixels-- > 0; ++input) {
+    for (; pixelCount-- > 0; ++input) {
         const unsigned alpha = SkGetPackedA32(*input);
         if ((alpha != 0) && (alpha != 255)) {
             *output++ = SkUnPreMultiply::ApplyScale(scale[alpha], SkGetPackedR32(*input));
@@ -66,13 +68,10 @@ static void preMultipliedBGRAtoRGBA(const SkPMColor* input, int pixels, unsigned
     }
 }
 
-bool PNGImageEncoder::encode(const SkBitmap& bitmap, Vector<unsigned char>* output)
+static bool encodePixels(const IntSize& inputSize, unsigned char* pixels, 
+                         bool premultiplied, Vector<unsigned char>* output)
 {
-    if (bitmap.config() != SkBitmap::kARGB_8888_Config)
-        return false; // Only support ARGB 32 bpp skia bitmaps.
-
-    SkAutoLockPixels bitmapLock(bitmap);
-    IntSize imageSize(bitmap.width(), bitmap.height());
+    IntSize imageSize(inputSize);
     imageSize.clampNegativeToZero();
     Vector<unsigned char> row;
 
@@ -100,17 +99,34 @@ bool PNGImageEncoder::encode(const SkBitmap& bitmap, Vector<unsigned char>* outp
                  8, PNG_COLOR_TYPE_RGB_ALPHA, 0, 0, 0);
     png_write_info(png, info);
 
-    const SkPMColor* pixels = static_cast<SkPMColor*>(bitmap.getPixels());
-    row.resize(imageSize.width() * bitmap.bytesPerPixel());
+    row.resize(imageSize.width() * sizeof(SkPMColor));
     for (int y = 0; y < imageSize.height(); ++y) {
-        preMultipliedBGRAtoRGBA(pixels, imageSize.width(), row.data());
-        png_write_row(png, row.data());
-        pixels += imageSize.width();
+        if (premultiplied) {
+            preMultipliedBGRAtoRGBA(pixels, imageSize.width(), row.data());
+            png_write_row(png, row.data());
+        } else
+            png_write_row(png, pixels);
+        pixels += imageSize.width() * 4;
     }
 
     png_write_end(png, info);
     png_destroy_write_struct(&png, &info);
     return true;
+}
+
+bool PNGImageEncoder::encode(const SkBitmap& bitmap, Vector<unsigned char>* output)
+{
+    if (bitmap.config() != SkBitmap::kARGB_8888_Config)
+        return false; // Only support ARGB 32 bpp skia bitmaps.
+
+    SkAutoLockPixels bitmapLock(bitmap);
+    IntSize imageSize(bitmap.width(), bitmap.height());
+    return encodePixels(imageSize, static_cast<unsigned char*>(bitmap.getPixels()), true, output);
+}
+
+bool PNGImageEncoder::encode(const ImageData& bitmap, Vector<unsigned char>* output)
+{
+    return encodePixels(bitmap.size(), bitmap.data()->data()->data(), false, output);
 }
 
 } // namespace WebCore

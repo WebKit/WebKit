@@ -67,6 +67,7 @@ public:
     IntSize getInternalFramebufferSize();
 
     void paintRenderingResultsToCanvas(CanvasRenderingContext*);
+    PassRefPtr<ImageData> paintRenderingResultsToImageData();
     bool paintsIntoCanvasBuffer() const;
 
     void prepareTexture();

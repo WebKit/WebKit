@@ -200,6 +200,16 @@ void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingCon
 
     m_impl->readBackFramebuffer(pixels, 4 * m_impl->width() * m_impl->height());
 
+    if (!m_impl->getContextAttributes().premultipliedAlpha) {
+        size_t bufferSize = 4 * m_impl->width() * m_impl->height();
+
+        for (size_t i = 0; i < bufferSize; i += 4) {
+            pixels[i + 0] = std::min(255, pixels[i + 0] * pixels[i + 3] / 255);
+            pixels[i + 1] = std::min(255, pixels[i + 1] * pixels[i + 3] / 255);
+            pixels[i + 2] = std::min(255, pixels[i + 2] * pixels[i + 3] / 255);
+        }
+    }
+
 #if USE(SKIA)
     if (m_resizingBitmap.readyToDraw()) {
         // We need to draw the resizing bitmap into the canvas's backing store.
@@ -216,6 +226,23 @@ void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingCon
 #else
 #error Must port to your platform
 #endif
+}
+
+PassRefPtr<ImageData> GraphicsContext3DInternal::paintRenderingResultsToImageData()
+{
+    if (m_impl->getContextAttributes().premultipliedAlpha)
+        return 0;
+    
+    RefPtr<ImageData> imageData = ImageData::create(IntSize(m_impl->width(), m_impl->height()));
+    unsigned char* pixels = imageData->data()->data()->data();
+    size_t bufferSize = 4 * m_impl->width() * m_impl->height();
+
+    m_impl->readBackFramebuffer(pixels, bufferSize);
+
+    for (size_t i = 0; i < bufferSize; i += 4)
+        std::swap(pixels[i], pixels[i + 2]);
+
+    return imageData.release();
 }
 
 bool GraphicsContext3DInternal::paintsIntoCanvasBuffer() const
@@ -1059,6 +1086,7 @@ DELEGATE_TO_INTERNAL_6(vertexAttribPointer, GC3Duint, GC3Dint, GC3Denum, GC3Dboo
 DELEGATE_TO_INTERNAL_4(viewport, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
 
 DELEGATE_TO_INTERNAL_1(paintRenderingResultsToCanvas, CanvasRenderingContext*)
+DELEGATE_TO_INTERNAL_R(paintRenderingResultsToImageData, PassRefPtr<ImageData>)
 
 bool GraphicsContext3D::paintsIntoCanvasBuffer() const
 {
