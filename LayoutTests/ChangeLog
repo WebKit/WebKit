@@ -1,3 +1,10 @@
+2011-03-16  Brian Weinstein  <bweinstein@apple.com>
+
+        Skip fast/js/array-sort-modifying-tostring.html on Windows because it is timing out
+        on Windows Debug. It is being tracked by https://bugs.webkit.org/show_bug.cgi?id=56496.
+
+        * platform/win/Skipped:
+
 2011-03-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
