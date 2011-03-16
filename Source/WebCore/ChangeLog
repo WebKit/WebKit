@@ -1,3 +1,15 @@
+2011-03-16  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by David Levin.
+
+        DocumentThreadableLoaderClient needs a protected default Constructor
+        https://bugs.webkit.org/show_bug.cgi?id=56479
+
+        No new tests. Exposes no new functionality.
+
+        * loader/DocumentThreadableLoaderClient.h:
+        (WebCore::DocumentThreadableLoaderClient::DocumentThreadableLoaderClient):
+
 2011-03-16  David Levin  <levin@chromium.org>
 
         Chromium Leopard build fix attempt #2.

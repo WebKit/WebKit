@@ -45,6 +45,9 @@ public:
     virtual bool isDocumentThreadableLoaderClient() { return true; }
 
     virtual void willSendRequest(ResourceRequest& /*newRequest*/, const ResourceResponse& /*redirectResponse*/) { }
+
+protected:
+    DocumentThreadableLoaderClient() { }
 };
 
 } // namespace WebCore
