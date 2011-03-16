@@ -1,3 +1,15 @@
+2011-03-16  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Fixing backface visibility for transformed layers.
+        https://bugs.webkit.org/show_bug.cgi?id=56237
+
+        Test: platform/chromium/compositing/backface-visibility-transformed.html
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayer):
+
 2011-03-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

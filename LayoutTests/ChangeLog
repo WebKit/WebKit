@@ -1,3 +1,16 @@
+2011-03-16  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Adding a new test for transformed layer with backface
+        visibility set to hidden.
+        https://bugs.webkit.org/show_bug.cgi?id=56237
+
+        * platform/chromium/compositing/backface-visibility-transformed-expected.checksum: Added.
+        * platform/chromium/compositing/backface-visibility-transformed-expected.png: Added.
+        * platform/chromium/compositing/backface-visibility-transformed-expected.txt: Added.
+        * platform/chromium/compositing/backface-visibility-transformed.html: Added.
+
 2011-03-16  Brian Weinstein  <bweinstein@apple.com>
 
         Skip fast/js/array-sort-modifying-tostring.html on Windows because it is timing out

@@ -36,6 +36,7 @@
 
 #include "cc/CCLayerImpl.h"
 #include "Canvas2DLayerChromium.h"
+#include "FloatQuad.h"
 #include "GeometryBinding.h"
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
@@ -823,9 +824,19 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
 
     // FIXME: Need to take into account the commulative render surface transforms all the way from
     //        the default render surface in order to determine visibility.
-    TransformationMatrix combinedDrawMatrix = (layer->renderSurface() ? layer->renderSurface()->drawTransform().multiply(layer->drawTransform()) : layer->drawTransform());
-    if (!layer->doubleSided() && combinedDrawMatrix.m33() < 0)
-         return;
+    TransformationMatrix combinedDrawMatrix = (layer->targetRenderSurface() ? layer->targetRenderSurface()->drawTransform().multiply(layer->drawTransform()) : layer->drawTransform());
+    
+    if (!layer->doubleSided()) {
+        FloatRect layerRect(FloatPoint(0, 0), FloatSize(layer->bounds()));
+        FloatQuad mappedLayer = combinedDrawMatrix.mapQuad(FloatQuad(layerRect));
+        FloatSize horizontalDir = mappedLayer.p2() - mappedLayer.p1();
+        FloatSize verticalDir = mappedLayer.p4() - mappedLayer.p1();
+        FloatPoint3D xAxis(horizontalDir.width(), horizontalDir.height(), 0);
+        FloatPoint3D yAxis(verticalDir.width(), verticalDir.height(), 0);
+        FloatPoint3D zAxis = xAxis.cross(yAxis);
+        if (zAxis.z() < 0)
+            return;
+    }
 
     if (layer->drawsContent())
         layer->draw();
