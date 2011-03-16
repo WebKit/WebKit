@@ -54,6 +54,7 @@ public:
     void assign(const WebFormControlElement& e) { WebElement::assign(e); }
 
     WEBKIT_API bool isEnabled() const;
+    WEBKIT_API bool isReadOnly() const;
     WEBKIT_API WebString formControlName() const;
     WEBKIT_API WebString formControlType() const;
 

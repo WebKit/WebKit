@@ -1,3 +1,16 @@
+2011-03-15  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Move isReadOnly() from WebInputElement to WebFormControlElement
+        https://bugs.webkit.org/show_bug.cgi?id=55760
+
+        * public/WebFormControlElement.h:
+        * public/WebInputElement.h:
+        * src/WebFormControlElement.cpp:
+        (WebKit::WebFormControlElement::isReadOnly):
+        * src/WebInputElement.cpp:
+
 2011-03-15  John Bauman  <jbauman@chromium.org>
 
         Reviewed by Kenneth Russell.

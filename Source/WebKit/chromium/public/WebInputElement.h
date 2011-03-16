@@ -60,7 +60,6 @@ namespace WebKit {
         WEBKIT_API bool isPasswordField() const;
         WEBKIT_API bool isImageButton() const;
         WEBKIT_API bool autoComplete() const;
-        WEBKIT_API bool isReadOnly() const;
         WEBKIT_API bool isEnabledFormControl() const;
         WEBKIT_API int maxLength() const;
         WEBKIT_API bool isActivatedSubmit() const;

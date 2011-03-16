@@ -65,11 +65,6 @@ bool WebInputElement::autoComplete() const
     return constUnwrap<HTMLInputElement>()->autoComplete();
 }
 
-bool WebInputElement::isReadOnly() const
-{
-    return constUnwrap<HTMLInputElement>()->readOnly();
-}
-
 bool WebInputElement::isEnabledFormControl() const
 {
     return constUnwrap<HTMLInputElement>()->isEnabledFormControl();
