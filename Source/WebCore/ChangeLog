@@ -1,3 +1,15 @@
+2011-03-16  Mike Reed  <reed@google.com>
+
+        Reviewed by James Robinson.
+
+        Reestablish typeface/size/encoding when drawing stroked text
+        https://bugs.webkit.org/show_bug.cgi?id=56481
+
+        No new tests. LayoutTests/svg/css/composite-shadow-text.svg
+
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::paintSkiaText):
+
 2011-03-16  Daniel Sievers  <sievers@google.com>
 
         Reviewed by James Robinson.

@@ -380,6 +380,11 @@ bool paintSkiaText(GraphicsContext* context,
         paint.reset();
         platformContext->setupPaintForStroking(&paint, 0, 0);
         paint.setFlags(SkPaint::kAntiAlias_Flag);
+#if ENABLE(SKIA_TEXT)
+        paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+        setupPaintForFont(hfont, &paint);
+#endif
+
         if (didFill) {
             // If there is a shadow and we filled above, there will already be
             // a shadow. We don't want to draw it again or it will be too dark
@@ -390,7 +395,7 @@ bool paintSkiaText(GraphicsContext* context,
             // thing would be to draw to a new layer and then draw that layer
             // with a shadow. But this is a lot of extra work for something
             // that isn't normally an issue.
-            SkSafeUnref(paint.setLooper(0));
+            paint.setLooper(0);
         }
 
         if (!skiaDrawText(hfont, dc, platformContext->canvas(), *origin, &paint,
