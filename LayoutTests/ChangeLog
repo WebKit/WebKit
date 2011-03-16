@@ -1,3 +1,39 @@
+2011-03-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION (r68976): Incorrect bidi rendering in SVG text
+        https://bugs.webkit.org/show_bug.cgi?id=53980
+
+        Add Qt specific expected files after r81168.
+
+        * platform/qt/Skipped: Add new tests because of missing test fonts.
+        * platform/qt/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.checksum: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.checksum: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.checksum: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-align-08-b-expected.checksum: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-align-08-b-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-align-08-b-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-fonts-03-t-expected.checksum: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-fonts-03-t-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-fonts-03-t-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-01-t-expected.checksum: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-01-t-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-01-t-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-02-b-expected.checksum: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-02-b-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-02-b-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-03-b-expected.checksum: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-03-b-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-03-b-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-04-t-expected.checksum: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-04-t-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-04-t-expected.txt: Added.
+
 2011-03-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

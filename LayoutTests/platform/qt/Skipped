@@ -1004,6 +1004,56 @@ svg/dom/SVGRectElement/rect-modify-rx.svg
 svg/hixie/dynamic/002.xml
 svg/hixie/mixed/007.xml
 
+# --- missing test fonts
+svg/W3C-I18N/g-dirLTR-ubNone.svg
+svg/W3C-I18N/g-dirLTR-ubOverride.svg
+svg/W3C-I18N/g-dirRTL-ubNone.svg
+svg/W3C-I18N/g-dirRTL-ubOverride.svg
+svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg
+svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg
+svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg
+svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg
+svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg
+svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg
+svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg
+svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg
+svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg
+svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg
+svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg
+svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg
+svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg
+svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg
+svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg
+svg/W3C-I18N/text-anchor-no-markup.svg
+svg/W3C-I18N/text-dirLTR-ubNone.svg
+svg/W3C-I18N/text-dirLTR-ubOverride.svg
+svg/W3C-I18N/text-dirRTL-ubNone.svg
+svg/W3C-I18N/text-dirRTL-ubOverride.svg
+svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context.svg
+svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context.svg
+svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context.svg
+svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context.svg
+svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg
+svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context.svg
+svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context.svg
+svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context.svg
+svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context.svg
+svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context.svg
+svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context.svg
+svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context.svg
+svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context.svg
+svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context.svg
+svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg
+svg/W3C-I18N/tspan-direction-ltr.svg
+svg/W3C-I18N/tspan-direction-rtl.svg
+svg/W3C-SVG-1.1-SE/text-intro-02-b.svg
+svg/W3C-SVG-1.1-SE/text-intro-05-t.svg
+svg/W3C-SVG-1.1-SE/text-intro-09-b.svg
+svg/text/bidi-reorder-value-lists.svg
+svg/text/bidi-text-anchor-direction.svg
+svg/text/bidi-text-query.svg
+svg/text/bidi-tspans.svg
+
 # ============================================================================= #
 # failing animations tests
 # ============================================================================= #
