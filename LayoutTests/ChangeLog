@@ -1,3 +1,9 @@
+2011-03-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+       [Qt] Typo fix after r81226.
+
+        * platform/qt/Skipped: Remove unnecessary "#".
+
 2011-03-16  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, suppress Win builder failures from r81222.

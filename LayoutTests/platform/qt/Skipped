@@ -577,7 +577,7 @@ fast/workers/storage/interrupt-database-sync.html
 http/tests/websocket/tests/reload-crash.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=34281
-#fast/workers/shared-worker-frame-lifecycle.html
+fast/workers/shared-worker-frame-lifecycle.html
 
 # =========================================================================== #
 # failing media tests
