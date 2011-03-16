@@ -991,7 +991,7 @@ sub isWindowsNT()
 
 sub relativeScriptsDir()
 {
-    my $scriptDir = File::Spec->catpath("", File::Spec->abs2rel(dirname($0), getcwd()), "");
+    my $scriptDir = File::Spec->catpath("", File::Spec->abs2rel($FindBin::Bin, getcwd()), "");
     if ($scriptDir eq "") {
         $scriptDir = ".";
     }
