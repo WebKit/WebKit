@@ -181,6 +181,9 @@ fast/workers/storage/use-same-database-in-page-and-workers.html
 fast/profiler/dead-time.html
 fast/profiler/stop-profiling-after-setTimeout.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=56407
+editing/style/iframe-onload-crash.html
+
 ###############################################################################
 # EXPECTED FAILURES
 ###############################################################################
