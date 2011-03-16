@@ -218,6 +218,9 @@ void WebPageProxy::initializeResourceLoadClient(const WKPageResourceLoadClient* 
 
 void WebPageProxy::initializeUIClient(const WKPageUIClient* client)
 {
+    if (!isValid())
+        return;
+
     m_uiClient.initialize(client);
 
     process()->send(Messages::WebPage::SetCanRunBeforeUnloadConfirmPanel(m_uiClient.canRunBeforeUnloadConfirmPanel()), m_pageID);
@@ -547,11 +550,15 @@ void WebPageProxy::setDrawsTransparentBackground(bool drawsTransparentBackground
 
 void WebPageProxy::viewWillStartLiveResize()
 {
+    if (!isValid())
+        return;
     process()->send(Messages::WebPage::ViewWillStartLiveResize(), m_pageID);
 }
 
 void WebPageProxy::viewWillEndLiveResize()
 {
+    if (!isValid())
+        return;
     process()->send(Messages::WebPage::ViewWillEndLiveResize(), m_pageID);
 }
 

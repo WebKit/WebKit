@@ -1,3 +1,19 @@
+2011-03-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=54987 Crash beneath 
+        WebPageProxy::viewWillStartLiveResize when resizing window after web process 
+        crashed
+        -and corresponding-
+        <rdar://problem/9037685>
+
+        Just need simple isValid() checks here. 
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeUIClient):
+        (WebKit::WebPageProxy::viewWillStartLiveResize):
+        (WebKit::WebPageProxy::viewWillEndLiveResize):
+
 2011-03-16  Damian Kaleta  <dkaleta@apple.com>
 
         Reviewed by Kevin Decker.
