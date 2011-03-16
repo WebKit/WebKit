@@ -1,3 +1,17 @@
+2011-03-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        WebCore GYP build should build bindings/
+        https://bugs.webkit.org/show_bug.cgi?id=56406
+
+        I wanted to include bindings/objc in this patch, but they were somewhat
+        complicated.  It looks like they include headers from the output
+        directory (via PrivateHeaders), but we haven't wired up the
+        PrivateHeaders yet.
+
+        * gyp/WebCore.gyp:
+
 2011-03-15  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Tony Gentilcore.
