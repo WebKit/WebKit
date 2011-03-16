@@ -55,6 +55,11 @@
         ['include', 'fileapi/'],
         ['include', 'history/'],
         ['include', 'html/'],
+        ['include', 'inspector/'],
+        ['include', 'loader/'],
+        ['include', 'mathml/'],
+        ['include', 'notifications/'],
+        ['include', 'page/'],
 
         ['exclude', 'bindings/[^/]+/'],
         ['include', 'bindings/generic/'],

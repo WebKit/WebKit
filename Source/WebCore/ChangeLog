@@ -1,3 +1,14 @@
+2011-03-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebCore GYP build should build inspector/ loader/ mathml/ notifications/ and page/
+        https://bugs.webkit.org/show_bug.cgi?id=56412
+
+        Yay for smooth sailing.
+
+        * gyp/WebCore.gyp:
+
 2011-03-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.
