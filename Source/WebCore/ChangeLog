@@ -1,3 +1,25 @@
+2011-03-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add WebKit2 API to figure out if an input or textarea was edited
+        https://bugs.webkit.org/show_bug.cgi?id=56474
+
+        Add HTMLInputElement::lastChangeWasUserEdit and HTMLTextAreaElement::lastChangeWasUserEdit
+        and use them to implement -[DOMHTMLInputElement _isEdited] and -[DOMHTMLTextAreaElement _isEdited]
+        as well as API in WebKit2.
+
+        * WebCore.exp.in:
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _isEdited]):
+        (-[DOMHTMLTextAreaElement _isEdited]):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::lastChangeWasUserEdit):
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::lastChangeWasUserEdit):
+        * html/HTMLTextAreaElement.h:
+
 2011-03-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

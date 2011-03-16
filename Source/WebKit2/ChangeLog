@@ -1,3 +1,23 @@
+2011-03-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add WebKit2 API to figure out if an input or textarea was edited
+        https://bugs.webkit.org/show_bug.cgi?id=56474
+
+        Expose WKBundleNodeHandleGetHTMLInputElementLastChangeWasUserEdit and
+        WKBundleNodeHandleGetHTMLTextAreaElementLastChangeWasUserEdit. Next time,
+        I will work on giving these functions longer names.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleGetHTMLInputElementLastChangeWasUserEdit):
+        (WKBundleNodeHandleGetHTMLTextAreaElementLastChangeWasUserEdit):
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::htmlInputElementLastChangeWasUserEdit):
+        (WebKit::InjectedBundleNodeHandle::htmlTextAreaElementLastChangeWasUserEdit):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+
 2011-03-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam Roben.

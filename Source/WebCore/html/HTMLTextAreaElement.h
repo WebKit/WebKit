@@ -55,7 +55,9 @@ public:
     
     void setCols(int);
     void setRows(int);
-    
+
+    bool lastChangeWasUserEdit() const;
+
     void cacheSelection(int s, int e) { m_cachedSelectionStart = s; m_cachedSelectionEnd = e; };
 
 private:

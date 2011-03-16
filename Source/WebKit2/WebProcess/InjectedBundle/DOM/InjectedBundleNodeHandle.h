@@ -63,6 +63,9 @@ public:
     void setHTMLInputElementValueForUser(const String&);
     bool isHTMLInputElementAutofilled() const;
     void setHTMLInputElementAutofilled(bool);
+    bool htmlInputElementLastChangeWasUserEdit();
+    bool htmlTextAreaElementLastChangeWasUserEdit();
+    
     PassRefPtr<InjectedBundleNodeHandle> htmlTableCellElementCellAbove();
 
     PassRefPtr<WebFrame> documentFrame();

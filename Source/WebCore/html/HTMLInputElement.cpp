@@ -146,6 +146,17 @@ void HTMLInputElement::updateCheckedRadioButtons()
         renderer()->theme()->stateChanged(renderer(), CheckedState);
 }
 
+bool HTMLInputElement::lastChangeWasUserEdit() const
+{
+    if (!isTextField())
+        return false;
+    
+    if (!renderer())
+        return false;
+
+    return toRenderTextControl(renderer())->lastChangeWasUserEdit();
+}
+
 bool HTMLInputElement::isValidValue(const String& value) const
 {
     if (!m_inputType->canSetStringValue()) {

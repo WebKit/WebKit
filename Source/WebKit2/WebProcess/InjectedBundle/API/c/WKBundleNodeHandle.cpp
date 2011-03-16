@@ -76,6 +76,16 @@ void WKBundleNodeHandleSetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlI
     toImpl(htmlInputElementHandleRef)->setHTMLInputElementAutofilled(filled);
 }
 
+bool WKBundleNodeHandleGetHTMLInputElementLastChangeWasUserEdit(WKBundleNodeHandleRef htmlInputElementHandleRef)
+{
+    return toImpl(htmlInputElementHandleRef)->htmlInputElementLastChangeWasUserEdit();
+}
+
+bool WKBundleNodeHandleGetHTMLTextAreaElementLastChangeWasUserEdit(WKBundleNodeHandleRef htmlTextAreaElementHandleRef)
+{
+    return toImpl(htmlTextAreaElementHandleRef)->htmlTextAreaElementLastChangeWasUserEdit();
+}
+
 WKBundleNodeHandleRef WKBundleNodeHandleCopyHTMLTableCellElementCellAbove(WKBundleNodeHandleRef htmlTableCellElementHandleRef)
 {
     RefPtr<InjectedBundleNodeHandle> nodeHandle = toImpl(htmlTableCellElementHandleRef)->htmlTableCellElementCellAbove();

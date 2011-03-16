@@ -421,6 +421,13 @@ void HTMLTextAreaElement::setRows(int rows)
     setAttribute(rowsAttr, String::number(rows));
 }
 
+bool HTMLTextAreaElement::lastChangeWasUserEdit() const
+{
+    if (!renderer())
+        return false;
+    return toRenderTextControl(renderer())->lastChangeWasUserEdit();
+}
+
 bool HTMLTextAreaElement::shouldUseInputMethod() const
 {
     return true;
