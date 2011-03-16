@@ -1,5 +1,15 @@
 2011-03-16  Brian Weinstein  <bweinstein@apple.com>
 
+        Make the files added -expected.txt instead of -actual.txt so run-webkit-tests
+        will actually find them.
+
+        * platform/win/fast/dynamic/text-combine-actual.txt: Removed.
+        * platform/win/fast/dynamic/text-combine-expected.txt: Copied from platform/win/fast/dynamic/text-combine-actual.txt.
+        * platform/win/fast/international/text-combine-image-test-actual.txt: Removed.
+        * platform/win/fast/international/text-combine-image-test-expected.txt: Copied from platform/win/fast/international/text-combine-image-test-actual.txt.
+
+2011-03-16  Brian Weinstein  <bweinstein@apple.com>
+
         Add Windows-specific results for text combine tests.
 
         * platform/win/fast/dynamic/text-combine-actual.txt: Added.
