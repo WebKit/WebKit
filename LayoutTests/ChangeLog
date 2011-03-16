@@ -1,3 +1,11 @@
+2011-03-16  Brian Weinstein  <bweinstein@apple.com>
+
+        Add Windows-specific results for text combine tests.
+
+        * platform/win/fast/dynamic/text-combine-actual.txt: Added.
+        * platform/win/fast/international: Added.
+        * platform/win/fast/international/text-combine-image-test-actual.txt: Added.
+
 2011-03-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Add failing tests to the Skipped list because of missing test fonts.
