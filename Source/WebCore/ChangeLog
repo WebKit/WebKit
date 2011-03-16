@@ -1,3 +1,58 @@
+2011-03-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: refactor event listener breakpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=56305
+
+        - restore event listener breakpoints one by one instead of using setAllBrowserBreakpoints
+        - store event listener breakpoints in a separate separate setting
+        - move presentation-related code from BreakpointManager to EventListenerBreakpointsSidebarPane
+
+        Test: inspector/debugger/event-listener-breakpoints.html
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::setFrontend):
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        (WebCore::InspectorBrowserDebuggerAgent::setEventListenerBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::removeEventListenerBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorBrowserDebuggerAgent::clear):
+        * inspector/InspectorBrowserDebuggerAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype.setEventListenerBreakpoint):
+        (WebInspector.BreakpointManager.prototype.removeEventListenerBreakpoint):
+        (WebInspector.BreakpointManager.prototype.breakpointViewForEventData):
+        (WebInspector.BreakpointManager.prototype._projectChanged):
+        (WebInspector.BreakpointManager.prototype._saveBreakpoints):
+        (WebInspector.BreakpointManager.prototype._validateBreakpoints):
+        (WebInspector.BreakpointManager.prototype._createDOMBreakpointId):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.EventListenerBreakpointsSidebarPane):
+        (WebInspector.EventListenerBreakpointsSidebarPane.eventNameForUI):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._createCategory):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._categoryCheckboxClicked):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._breakpointCheckboxClicked):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._setBreakpoint):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._removeBreakpoint):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._updateCategoryCheckbox):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype.highlightBreakpoint):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype.clearBreakpointHighlight):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._saveBreakpoints):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._restoreBreakpoints):
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.update):
+        (WebInspector.CallStackSidebarPane.prototype.setStatus):
+        (WebInspector.CallStackSidebarPane.prototype._domBreakpointHit):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused):
+        (WebInspector.ScriptsPanel.prototype._clearInterface):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+
 2011-03-16  David Kilzer  <ddkilzer@apple.com>
 
         Minor clean-up after r81156, r81172

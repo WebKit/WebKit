@@ -385,7 +385,6 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
     m_resourceAgent->setFrontend(m_frontend);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_debuggerAgent->setFrontend(m_frontend);
-    m_browserDebuggerAgent->setFrontend(m_frontend);
     m_profilerAgent->setFrontend(m_frontend);
 #endif
 #if ENABLE(DATABASE)

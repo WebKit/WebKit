@@ -438,13 +438,25 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.callstack.update(event.data);
         this.sidebarPanes.callstack.selectedCallFrame = callFrames[0];
 
+        var status;
         if (details.eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint) {
-            if (details.eventData.breakpointType === WebInspector.BreakpointManager.BreakpointTypes.XHR)
+            if (details.eventData.breakpointType === WebInspector.BreakpointManager.BreakpointTypes.EventListener) {
+                var eventName = details.eventData.eventName;
+                this.sidebarPanes.eventListenerBreakpoints.highlightBreakpoint(details.eventData.eventName);
+                var eventNameForUI = WebInspector.EventListenerBreakpointsSidebarPane.eventNameForUI(eventName);
+                status = WebInspector.UIString("Paused on a \"%s\" Event Listener.", eventNameForUI);
+            } else if (details.eventData.breakpointType === WebInspector.BreakpointManager.BreakpointTypes.XHR) {
                 this.sidebarPanes.xhrBreakpoints.highlightBreakpoint(details.eventData.breakpointURL);
+                status = WebInspector.UIString("Paused on a XMLHttpRequest.");
+            }
         } else {
             var sourceLocation = this._presentationModel.selectedCallFrame.sourceLocation;
             this.sidebarPanes.jsBreakpoints.highlightBreakpoint(sourceLocation.sourceFileId, sourceLocation.lineNumber);
+            if (details.breakpoint)
+                status = WebInspector.UIString("Paused on a JavaScript breakpoint.");
         }
+        if (status)
+            this.sidebarPanes.callstack.setStatus(status);
 
         window.focus();
         InspectorFrontendHost.bringToFront();
@@ -806,8 +818,10 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.callstack.update(null);
         this.sidebarPanes.scopechain.update(null);
         this.sidebarPanes.jsBreakpoints.clearBreakpointHighlight();
-        if (Preferences.nativeInstrumentationEnabled)
+        if (Preferences.nativeInstrumentationEnabled) {
+            this.sidebarPanes.eventListenerBreakpoints.clearBreakpointHighlight();
             this.sidebarPanes.xhrBreakpoints.clearBreakpointHighlight();
+        }
 
         this._clearCurrentExecutionLine();
         this._updateDebuggerButtons();

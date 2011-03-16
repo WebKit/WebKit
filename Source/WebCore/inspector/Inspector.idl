@@ -239,7 +239,6 @@ module core {
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
     interface [Conditional=INSPECTOR] BrowserDebugger {
-        void setAllBrowserBreakpoints(in Object breakpoints);
         void setDOMBreakpoint(in long nodeId, in long type);
         void removeDOMBreakpoint(in long nodeId, in long type);
         void setEventListenerBreakpoint(in String eventName);
