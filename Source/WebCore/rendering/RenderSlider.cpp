@@ -156,7 +156,7 @@ void RenderSlider::layout()
         if (oldSize != size())
             thumb->setChildNeedsLayout(true, false);
 
-        LayoutStateMaintainer statePusher(view(), this, size(), style()->isFlippedBlocksWritingMode());
+        LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), style()->isFlippedBlocksWritingMode());
 
         IntRect oldThumbRect = thumb->frameRect();
 

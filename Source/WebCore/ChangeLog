@@ -1,5 +1,24 @@
 2011-03-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        REGRESSION(r76147): Dragging slider thumb is impossible or results in drawing artifacts.
+        https://bugs.webkit.org/show_bug.cgi?id=56469
+
+        Technically, this is not a regression, but rather uncovering of an old
+        problem. When the RenderSlider::layout was written, the layout state was
+        pushed with a wrong offset. However, since the whole slider track was
+        always repainted, the problem didn't manifest itself until we actually
+        started being more precise in our repaints.
+
+        Test: fast/repaint/slider-thumb-float.html
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::layout): Changed to pass actual thumb offset
+        to the LayoutStateMaintainer, rather than thumb size.
+
+2011-03-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Eric Carlson.
 
         Add play state callbacks to MediaControls, kill timeUpdate timer.
