@@ -1,3 +1,10 @@
+2011-03-15  David Levin  <levin@chromium.org>
+
+        Attempted build fix for Chromium OSX release build following r81213.
+
+        * platform/image-encoders/skia/JPEGImageEncoder.cpp:
+        (WebCore::encodePixels): Change scoping of |pixels| to be after setjmp call.
+
 2011-03-15  John Bauman  <jbauman@chromium.org>
 
         Reviewed by Kenneth Russell.

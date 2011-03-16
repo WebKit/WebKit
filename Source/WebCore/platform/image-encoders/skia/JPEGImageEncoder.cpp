@@ -99,7 +99,7 @@ static void RGBAtoRGB(const unsigned char* input, unsigned int pixels, unsigned 
     }
 }
 
-static bool encodePixels(const IntSize& inputSize, unsigned char* pixels, 
+static bool encodePixels(const IntSize& inputSize, unsigned char* inputPixels,
                          bool premultiplied, int quality, Vector<unsigned char>* output)
 {
     IntSize imageSize(inputSize);
@@ -134,6 +134,7 @@ static bool encodePixels(const IntSize& inputSize, unsigned char* pixels,
     jpeg_set_quality(&cinfo, quality, TRUE);
     jpeg_start_compress(&cinfo, TRUE);
 
+    unsigned char* pixels = inputPixels;
     row.resize(cinfo.image_width * cinfo.input_components);
     while (cinfo.next_scanline < cinfo.image_height) {
         if (premultiplied)
