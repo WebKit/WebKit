@@ -1,3 +1,14 @@
+2011-03-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Qt] Some inspector test fail intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=42090
+
+        Unskip a bunch of non-http inspector tests on Qt. All these tests pass locally.
+
+        * platform/qt/Skipped:
+
 2011-03-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Add failing tests to the Skipped list.
