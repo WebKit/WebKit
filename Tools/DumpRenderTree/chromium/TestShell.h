@@ -125,6 +125,7 @@ public:
     void setAllowExternalPages(bool allowExternalPages) { m_allowExternalPages = allowExternalPages; }
 
     void setAcceleratedCompositingEnabled(bool enabled) { m_acceleratedCompositingEnabled = enabled; }
+    void setForceCompositingMode(bool enabled) { m_forceCompositingMode = enabled; }
     void setAccelerated2dCanvasEnabled(bool enabled) { m_accelerated2dCanvasEnabled = enabled; }
 
 #if defined(OS_WIN)
@@ -200,6 +201,7 @@ private:
     int m_timeout; // timeout value in millisecond
     bool m_allowExternalPages;
     bool m_acceleratedCompositingEnabled;
+    bool m_forceCompositingMode;
     bool m_accelerated2dCanvasEnabled;
     WebPreferences m_prefs;
     bool m_stressOpt;

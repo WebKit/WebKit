@@ -104,6 +104,7 @@ void WebPreferences::reset()
     hyperlinkAuditingEnabled = false;
     acceleratedCompositingEnabled = false;
     accelerated2dCanvasEnabled = false;
+    forceCompositingMode = false;
 }
 
 void WebPreferences::applyTo(WebView* webView)
@@ -149,6 +150,7 @@ void WebPreferences::applyTo(WebView* webView)
     webView->setTabsToLinks(tabsToLinks);
     settings->setCaretBrowsingEnabled(caretBrowsingEnabled);
     settings->setAcceleratedCompositingEnabled(acceleratedCompositingEnabled);
+    settings->setForceCompositingMode(forceCompositingMode);
     settings->setAccelerated2dCanvasEnabled(accelerated2dCanvasEnabled);
 
     // Fixed values.

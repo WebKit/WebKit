@@ -1,3 +1,22 @@
+2011-03-16  Daniel Sievers  <sievers@google.com>
+
+        Reviewed by James Robinson.
+
+        Add setting to always force compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=56156
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::resetWebSettings):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::setForceCompositingMode):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+
 2011-03-15  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Ojan Vafai.

@@ -1,3 +1,15 @@
+2011-03-16  Daniel Sievers  <sievers@google.com>
+
+        Reviewed by James Robinson.
+
+        Add setting to always force compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=56156
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setForceCompositingMode):
+        * src/WebSettingsImpl.h:
+
 2011-03-16  Sreeram Ramachandran  <sreeram@google.com>
 
         Reviewed by Dimitri Glazkov.

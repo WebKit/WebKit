@@ -103,11 +103,22 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_compositing(false)
     , m_compositingLayersNeedRebuild(false)
     , m_flushingLayers(false)
+    , m_forceCompositingMode(false)
     , m_rootLayerAttachment(RootLayerUnattached)
 #if PROFILE_LAYER_REBUILD
     , m_rootLayerUpdateCount(0)
 #endif // PROFILE_LAYER_REBUILD
 {
+    Settings* settings = m_renderView->document()->settings();
+
+    // Even when forcing compositing mode, ignore child frames, or this will trigger
+    // layer creation from the enclosing RenderIFrame.
+    ASSERT(m_renderView->document()->frame());
+    if (settings && settings->forceCompositingMode() && settings->acceleratedCompositingEnabled()
+        && !m_renderView->document()->frame()->tree()->parent()) {
+        m_forceCompositingMode = true;
+        enableCompositingMode();
+    }
 }
 
 RenderLayerCompositor::~RenderLayerCompositor()
@@ -711,7 +722,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
 
     // If we're back at the root, and no other layers need to be composited, and the root layer itself doesn't need
     // to be composited, then we can drop out of compositing mode altogether.
-    if (layer->isRootLayer() && !childState.m_subtreeIsCompositing && !requiresCompositingLayer(layer)) {
+    if (layer->isRootLayer() && !childState.m_subtreeIsCompositing && !requiresCompositingLayer(layer) && !m_forceCompositingMode) {
         enableCompositingMode(false);
         willBeComposited = false;
     }

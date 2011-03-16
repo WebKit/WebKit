@@ -94,6 +94,7 @@ public:
     virtual bool showPlatformLayerTree() const { return m_showPlatformLayerTree; }
     virtual void setEditingBehavior(EditingBehavior);
     virtual void setAcceleratedCompositingEnabled(bool);
+    virtual void setForceCompositingMode(bool);
     virtual void setCompositeToTextureEnabled(bool);
     virtual bool compositeToTextureEnabled() const { return m_compositeToTextureEnabled; }
     virtual void setAcceleratedCompositingFor3DTransformsEnabled(bool);

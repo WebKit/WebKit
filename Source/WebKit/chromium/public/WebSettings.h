@@ -101,6 +101,7 @@ public:
     virtual bool showPlatformLayerTree() const = 0;
     virtual void setEditingBehavior(EditingBehavior) = 0;
     virtual void setAcceleratedCompositingEnabled(bool) = 0;
+    virtual void setForceCompositingMode(bool) = 0;
     virtual void setCompositeToTextureEnabled(bool) = 0;
     virtual bool compositeToTextureEnabled() const = 0;
     virtual void setAcceleratedCompositingFor3DTransformsEnabled(bool) = 0;

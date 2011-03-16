@@ -308,6 +308,11 @@ void WebSettingsImpl::setAcceleratedCompositingEnabled(bool enabled)
     m_settings->setAcceleratedCompositingEnabled(enabled);
 }
 
+void WebSettingsImpl::setForceCompositingMode(bool enabled)
+{
+    m_settings->setForceCompositingMode(enabled);
+}
+
 void WebSettingsImpl::setCompositeToTextureEnabled(bool enabled)
 {
     m_compositeToTextureEnabled = enabled;

@@ -1,3 +1,21 @@
+2011-03-16  Daniel Sievers  <sievers@google.com>
+
+        Reviewed by James Robinson.
+
+        Add setting to always force compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=56156
+
+        No new tests needed as this defaults to disabled (and is unfeasible
+        to be tested through property overriding at runtime).
+
+        * page/Settings.h:
+        (WebCore::Settings::setForceCompositingMode):
+        (WebCore::Settings::forceCompositingMode):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        * rendering/RenderLayerCompositor.h:
+
 2011-03-16  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Kenneth Russell.

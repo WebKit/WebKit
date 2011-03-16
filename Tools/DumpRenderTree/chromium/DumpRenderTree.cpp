@@ -53,6 +53,7 @@ static const char optionCheckLayoutTestSystemDeps[] = "--check-layout-test-sys-d
 
 static const char optionHardwareAcceleratedGL[] = "--enable-hardware-gpu";
 static const char optionEnableAcceleratedCompositing[] = "--enable-accelerated-compositing";
+static const char optionForceCompositingMode[] = "--force-compositing-mode";
 static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-canvas";
 
 static const char optionStressOpt[] = "--stress-opt";
@@ -131,6 +132,7 @@ int main(int argc, char* argv[])
     bool allowExternalPages = false;
     bool startupDialog = false;
     bool acceleratedCompositingEnabled = false;
+    bool forceCompositingMode = false;
     bool accelerated2DCanvasEnabled = false;
     bool stressOpt = false;
     bool stressDeopt = false;
@@ -161,6 +163,8 @@ int main(int argc, char* argv[])
             hardwareAcceleratedGL = true;
         else if (argument == optionEnableAcceleratedCompositing)
             acceleratedCompositingEnabled = true;
+        else if (argument == optionForceCompositingMode)
+            forceCompositingMode = true;
         else if (argument == optionEnableAccelerated2DCanvas)
             accelerated2DCanvasEnabled = true;
         else if (argument == optionStressOpt)
@@ -194,6 +198,7 @@ int main(int argc, char* argv[])
         TestShell shell(testShellMode);
         shell.setAllowExternalPages(allowExternalPages);
         shell.setAcceleratedCompositingEnabled(acceleratedCompositingEnabled);
+        shell.setForceCompositingMode(forceCompositingMode);
         shell.setAccelerated2dCanvasEnabled(accelerated2DCanvasEnabled);
         shell.setJavaScriptFlags(javaScriptFlags);
         shell.setStressOpt(stressOpt);

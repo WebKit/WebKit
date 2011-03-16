@@ -272,6 +272,7 @@ private:
     bool m_compositing;
     bool m_compositingLayersNeedRebuild;
     bool m_flushingLayers;
+    bool m_forceCompositingMode;
 
     RootLayerAttachment m_rootLayerAttachment;
 
