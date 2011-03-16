@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = qgraphicswkview
+SUBDIRS = qgraphicswkview qwkpage

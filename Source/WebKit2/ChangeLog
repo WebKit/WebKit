@@ -1,3 +1,29 @@
+2011-03-16  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt][WK2] Loading an empty URL crashes
+        https://bugs.webkit.org/show_bug.cgi?id=55501
+
+        A null WKURLRef is created in the API of WebKit 2 when converting a null string. The code
+        of WKPageLoadURL assume the WKPageRef is not null which causes crashes if it is.
+
+        This patch uses the converter toWTFString() to pass from WKPageRef to WTFString. This converter
+        ensure the returned string is a valid null string.
+
+        Tested through the Qt API tests.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadURL):
+        * UIProcess/API/qt/tests/qgraphicswkview/tst_qgraphicswkview.cpp:
+        (tst_QGraphicsWKView::loadEmptyUrl):
+        * UIProcess/API/qt/tests/qwkpage/qwkpage.pro: Added.
+        * UIProcess/API/qt/tests/qwkpage/tst_qwkpage.cpp: Added.
+        (tst_QWKPage::init):
+        (tst_QWKPage::cleanup):
+        (tst_QWKPage::loadEmptyUrl):
+        * UIProcess/API/qt/tests/tests.pro:
+
 2011-03-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

@@ -35,6 +35,7 @@ private slots:
     void init();
     void cleanup();
 
+    void loadEmptyUrl();
     void loadEmptyPage();
 
 private:
@@ -85,6 +86,17 @@ void tst_QGraphicsWKView::loadEmptyPage()
 
     m_view->m_webView-> load(QUrl::fromLocalFile(TESTS_SOURCE_DIR "/html/basic_page.html"));
     QVERIFY(waitForSignal(m_view->m_webView, SIGNAL(loadFinished(bool))));
+}
+
+void tst_QGraphicsWKView::loadEmptyUrl()
+{
+    // That should not crash.
+    m_view->show();
+    m_view->m_webView->load(QUrl());
+    QVERIFY(!waitForSignal(m_view->m_webView->page(), SIGNAL(engineConnectionChanged(bool)), 50));
+
+    m_view->m_webView->load(QUrl(""));
+    QVERIFY(!waitForSignal(m_view->m_webView->page(), SIGNAL(engineConnectionChanged(bool)), 50));
 }
 
 QTEST_MAIN(tst_QGraphicsWKView)
