@@ -1620,7 +1620,6 @@ void CodeBlock::shrinkToFit()
     m_structureStubInfos.shrinkToFit();
     m_globalResolveInfos.shrinkToFit();
     m_callLinkInfos.shrinkToFit();
-    m_linkedCallerList.shrinkToFit();
 #endif
 
     m_identifiers.shrinkToFit();

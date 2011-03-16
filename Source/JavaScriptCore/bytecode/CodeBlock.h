@@ -101,8 +101,7 @@ namespace JSC {
 #if ENABLE(JIT)
     struct CallLinkInfo {
         CallLinkInfo()
-            : position(0)
-            , hasSeenShouldRepatch(0)
+            : hasSeenShouldRepatch(false)
         {
         }
 
@@ -110,8 +109,7 @@ namespace JSC {
         CodeLocationDataLabelPtr hotPathBegin;
         CodeLocationNearCall hotPathOther;
         WriteBarrier<JSFunction> callee;
-        unsigned position : 31;
-        unsigned hasSeenShouldRepatch : 1;
+        bool hasSeenShouldRepatch;
         
         void setUnlinked() { callee.clear(); }
         bool isLinked() { return callee; }
@@ -292,12 +290,6 @@ namespace JSC {
         void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset);
 
 #if ENABLE(JIT)
-        void addCaller(JSGlobalData& globalData, CallLinkInfo* caller, JSFunction* callee)
-        {
-            caller->callee.set(globalData, ownerExecutable(), callee);
-            caller->position = m_linkedCallerList.size();
-            m_linkedCallerList.append(caller);
-        }
 
         StructureStubInfo& getStubInfo(ReturnAddressPtr returnAddress)
         {
@@ -572,7 +564,6 @@ namespace JSC {
         Vector<GlobalResolveInfo> m_globalResolveInfos;
         Vector<CallLinkInfo> m_callLinkInfos;
         Vector<MethodCallLinkInfo> m_methodCallLinkInfos;
-        Vector<CallLinkInfo*> m_linkedCallerList;
 #endif
 
         Vector<unsigned> m_jumpTargets;

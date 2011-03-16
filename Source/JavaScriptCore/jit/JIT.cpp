@@ -596,10 +596,7 @@ void JIT::linkCall(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* ca
     // If this is a native call calleeCodeBlock is null so the number of parameters is unimportant
     if (!calleeCodeBlock || (callerArgCount == calleeCodeBlock->m_numParameters)) {
         ASSERT(!callLinkInfo->isLinked());
-    
-        if (calleeCodeBlock)
-            calleeCodeBlock->addCaller(*globalData, callLinkInfo, callee);
-    
+        callLinkInfo->callee.set(*globalData, callerCodeBlock->ownerExecutable(), callee);
         repatchBuffer.repatch(callLinkInfo->hotPathBegin, callee);
         repatchBuffer.relink(callLinkInfo->hotPathOther, code);
     }
@@ -616,10 +613,7 @@ void JIT::linkConstruct(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBloc
     // If this is a native call calleeCodeBlock is null so the number of parameters is unimportant
     if (!calleeCodeBlock || (callerArgCount == calleeCodeBlock->m_numParameters)) {
         ASSERT(!callLinkInfo->isLinked());
-    
-        if (calleeCodeBlock)
-            calleeCodeBlock->addCaller(*globalData, callLinkInfo, callee);
-    
+        callLinkInfo->callee.set(*globalData, callerCodeBlock->ownerExecutable(), callee);
         repatchBuffer.repatch(callLinkInfo->hotPathBegin, callee);
         repatchBuffer.relink(callLinkInfo->hotPathOther, code);
     }
