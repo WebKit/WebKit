@@ -1,3 +1,9 @@
+2011-03-15  Brady Eidson  <beidson@apple.com>
+
+        Build fix after r81208 for https://bugs.webkit.org/show_bug.cgi?id=56425
+
+        * loader/icon/IconDatabaseBase.h: #include instead of forward declare.
+
 2011-03-15  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
