@@ -31,6 +31,7 @@
 #include "IntRect.h"
 #include "IntSize.h"
 #include "TransformationMatrix.h"
+#include <wtf/UnusedParam.h>
 
 /*
     TextureMapper is a mechanism that enables hardware acceleration of CSS animations (accelerated compositing) without
@@ -68,7 +69,7 @@ public:
         return beginPaint(IntRect(0, 0, size().width(), size().height()));
     }
     virtual void setContentsToImage(Image*) = 0;
-    virtual bool save(const String& filename) { return false; }
+    virtual bool save(const String&) { return false; }
 
     inline void lock() { ++m_lockCount; }
     inline void unlock() { --m_lockCount; }
@@ -101,6 +102,7 @@ public:
     virtual void bindSurface(BitmapTexture* surface) = 0;
     virtual void paintToTarget(const BitmapTexture& texture, const IntSize&, const TransformationMatrix& matrix, float opacity, const IntRect& visibleRect)
     {
+        UNUSED_PARAM(visibleRect);
         drawTexture(texture, IntRect(0, 0, texture.contentSize().width(), texture.contentSize().height()), matrix, opacity, 0);
     }
 

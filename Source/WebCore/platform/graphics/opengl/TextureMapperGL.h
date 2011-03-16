@@ -24,8 +24,8 @@
 
 #include "FloatQuad.h"
 #include "IntSize.h"
+#include "TextureMapper.h"
 #include "TransformationMatrix.h"
-#include "texmap/TextureMapper.h"
 
 namespace WebCore {
 

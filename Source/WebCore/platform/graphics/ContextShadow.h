@@ -32,7 +32,7 @@
 #include "Color.h"
 #include "FloatRect.h"
 #include "IntRect.h"
-#include "RefCounted.h"
+#include <wtf/RefCounted.h>
 
 #if PLATFORM(CAIRO)
 typedef struct _cairo cairo_t;

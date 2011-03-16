@@ -42,6 +42,8 @@
 #include <algorithm>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/UnusedParam.h>
+
 
 #if USE(SKIA)
 #include "SkGeometry.h"
@@ -701,6 +703,7 @@ void LoopBlinnPathProcessor::buildContours(const Path& path)
         }
     } while (verb != SkPath::kDone_Verb);
 #else // !USE(SKIA)
+    UNUSED_PARAM(path);
     // Must port to your platform.
     ASSERT_NOT_REACHED();
 #endif
@@ -1145,6 +1148,8 @@ static void combineCallback(GLdouble coords[3], void* vertexData[4],
                             GLfloat weight[4], void** outData,
                             void* polygonData)
 {
+    UNUSED_PARAM(vertexData);
+    UNUSED_PARAM(weight);
     TessellationState* state = static_cast<TessellationState*>(polygonData);
     GLdouble* outVertex = static_cast<GLdouble*>(fastMalloc(3 * sizeof(GLdouble)));
     state->allocatedPointers.append(outVertex);

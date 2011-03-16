@@ -28,11 +28,11 @@
 
 namespace WebCore {
 
-void KillRing::append(const String& string)
+void KillRing::append(const String&)
 {
 }
 
-void KillRing::prepend(const String& string)
+void KillRing::prepend(const String&)
 {
 }
 

@@ -20,19 +20,19 @@
 #ifndef TextureMapperNode_h
 #define TextureMapperNode_h
 
-#include "CurrentTime.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
-#include "HashMap.h"
 #include "Image.h"
-#include "RefCounted.h"
 #include "TextureMapper.h"
 #include "TextureMapperPlatformLayer.h"
 #include "Timer.h"
 #include "TransformOperations.h"
 #include "TranslateTransformOperation.h"
 #include "UnitBezier.h"
+#include <wtf/CurrentTime.h>
+#include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

@@ -21,11 +21,11 @@
 #include "TextureMapperGL.h"
 
 #include "GraphicsContext.h"
-#include "HashMap.h"
 #include "Image.h"
-#include "PassRefPtr.h"
-#include "RefCounted.h"
 #include "Timer.h"
+#include <wtf/HashMap.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 #if defined(TEXMAP_OPENGL_ES_2)
 #include <GLES2/gl2.h>

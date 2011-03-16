@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <config.h>
+#include "config.h"
 #include "CSSPrimitiveValueCache.h"
 
 namespace WebCore {

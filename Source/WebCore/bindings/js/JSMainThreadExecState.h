@@ -26,7 +26,7 @@
 #ifndef JSMainThreadExecState_h
 #define JSMainThreadExecState_h
 
-#include <JSDOMBinding.h>
+#include "JSDOMBinding.h"
 #ifndef NDEBUG
 #include <wtf/MainThread.h>
 #endif

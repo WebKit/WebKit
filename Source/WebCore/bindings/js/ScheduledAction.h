@@ -20,8 +20,8 @@
 #ifndef ScheduledAction_h
 #define ScheduledAction_h
 
+#include "JSDOMBinding.h"
 #include "PlatformString.h"
-#include <JSDOMBinding.h>
 #include <collector/handles/Global.h>
 #include <runtime/JSCell.h>
 #include <wtf/PassOwnPtr.h>

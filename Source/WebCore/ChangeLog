@@ -1,3 +1,37 @@
+2011-03-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebCore GYP build should build platform/
+        https://bugs.webkit.org/show_bug.cgi?id=56430
+
+        Adding platform/ to the GYP build required disabling
+        ALWAYS_SEARCH_USER_PATHS, which in turn required fixing some latent
+        style issues.  I suspect we'll end up excluding some of these files
+        from the build in the final analysis, but we might as well fix the
+        style errors while we're here.
+
+        * bindings/js/JSMainThreadExecState.h:
+        * bindings/js/ScheduledAction.h:
+        * css/CSSPrimitiveValueCache.cpp:
+        * gyp/WebCore.gyp:
+        * platform/KillRingNone.cpp:
+        (WebCore::KillRing::append):
+        (WebCore::KillRing::prepend):
+        * platform/graphics/ContextShadow.h:
+        * platform/graphics/gpu/LoopBlinnPathProcessor.cpp:
+        (WebCore::LoopBlinnPathProcessor::buildContours):
+        (WebCore::TessellationState::combineCallback):
+        * platform/graphics/gpu/PODRedBlackTree.h:
+        (WebCore::PODRedBlackTree::updateNode):
+        (WebCore::PODRedBlackTree::logIfVerbose):
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        * platform/graphics/opengl/TextureMapperGL.h:
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::BitmapTexture::save):
+        (WebCore::TextureMapper::paintToTarget):
+        * platform/graphics/texmap/TextureMapperNode.h:
+
 2011-03-15  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.

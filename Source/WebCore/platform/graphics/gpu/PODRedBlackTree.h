@@ -257,7 +257,7 @@ private:
     // properly update such summary information based only on the values
     // in the left and right children. This method should return true if
     // the node's summary information changed.
-    virtual bool updateNode(Node* node) { return false; }
+    virtual bool updateNode(Node*) { return false; }
 
     //----------------------------------------------------------------------
     // Generic binary search tree operations
@@ -713,7 +713,7 @@ private:
     }
 
 #ifdef NDEBUG
-    void logIfVerbose(const char* output) const { }
+    void logIfVerbose(const char*) const { }
 #else
     void logIfVerbose(const char* output) const
     {
