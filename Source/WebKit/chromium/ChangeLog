@@ -1,3 +1,14 @@
+2011-03-16  Sreeram Ramachandran  <sreeram@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Revert of r80451. Decided to do this in WebCore instead.
+        https://bugs.webkit.org/show_bug.cgi?id=55844
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        * src/WebFrameImpl.h:
+
 2011-03-15  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Darin Fisher.
