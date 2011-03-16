@@ -1,3 +1,57 @@
+2011-03-15  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Need different behavior for ensuring execution order of dynamically loaded scripts
+        https://bugs.webkit.org/show_bug.cgi?id=50115
+
+        Dynamically added scripts with async=false will load in parallel, but execute in order.
+        See: http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#force-async
+
+        Tests: fast/dom/HTMLScriptElement/script-async-attr.html
+               http/tests/misc/script-async-load-execute-in-order.html
+
+        * Android.mk: Rename AsyncScriptRunner -> ScriptRunner.
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/DOMAllInOne.cpp: Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Ditto.
+        (WebCore::Document::~Document): Ditto.
+        * dom/Document.h:
+        (WebCore::Document::scriptRunner): Ditto.
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::ScriptElement): Added forceAsync and willExecuteInOrder.
+        (WebCore::ScriptElement::handleAsyncAttribute): Called by HTMLScriptElement when async attribute changes.
+        (WebCore::ScriptElement::prepareScript): Added support for forceAsync.
+        (WebCore::ScriptElement::notifyFinished): Tell ScriptRunner to execute in order if needed.
+        * dom/ScriptElement.h:
+        (WebCore::ScriptElement::forceAsync): Added.
+        * dom/ScriptRunner.cpp: Renamed from Source/WebCore/dom/AsyncScriptRunner.cpp.
+        (WebCore::ScriptRunner::ScriptRunner): Added in-order script queue.
+        (WebCore::ScriptRunner::~ScriptRunner): Ditto.
+        (WebCore::ScriptRunner::executeScriptSoon):
+        (WebCore::ScriptRunner::queueScriptForInOrderExecution): Added.
+        (WebCore::ScriptRunner::suspend):
+        (WebCore::ScriptRunner::resume):
+        (WebCore::ScriptRunner::timerFired): Execute in-order scripts if ready.
+        * dom/ScriptRunner.h: Renamed from Source/WebCore/dom/AsyncScriptRunner.h.
+        (WebCore::ScriptRunner::create):
+        (WebCore::ScriptRunner::hasPendingScripts): Check for in-order scripts too.
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::attributeChanged): Notify ScriptElement when async changes.
+        (WebCore::HTMLScriptElement::setAsync): Ditto.
+        (WebCore::HTMLScriptElement::async): Include forceAsync in calculation.
+        * html/HTMLScriptElement.h:
+        * html/HTMLScriptElement.idl: Removed Reflect from async for custom behavior.
+        * page/PageGroupLoadDeferrer.cpp:
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer): Rename AsyncScriptRunner -> ScriptRunner.
+        (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer): Ditto.
+
 2011-03-15  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.

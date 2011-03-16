@@ -63,12 +63,14 @@ protected:
     void setHaveFiredLoadEvent(bool haveFiredLoad) { m_haveFiredLoad = haveFiredLoad; }
     bool isParserInserted() const { return m_parserInserted; }
     bool alreadyStarted() const { return m_alreadyStarted; }
+    bool forceAsync() const { return m_forceAsync; }
 
     // Helper functions used by our parent classes.
     void insertedIntoDocument();
     void removedFromDocument();
     void childrenChanged();
     void handleSourceAttribute(const String& sourceUrl);
+    void handleAsyncAttribute();
 
 private:
     bool ignoresLoadRequest() const;
@@ -98,6 +100,8 @@ private:
     bool m_willBeParserExecuted : 1; // Same as "The parser will handle executing the script."
     bool m_readyToBeParserExecuted : 1;
     bool m_willExecuteWhenDocumentFinishedParsing : 1;
+    bool m_forceAsync : 1;
+    bool m_willExecuteInOrder : 1;
     String m_characterEncoding;
     String m_fallbackCharacterEncoding;
 };

@@ -24,7 +24,6 @@
 #include "config.h"
 #include "ScriptElement.h"
 
-#include "AsyncScriptRunner.h"
 #include "CachedScript.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
@@ -37,6 +36,7 @@
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "ScriptController.h"
+#include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "Settings.h"
@@ -61,6 +61,8 @@ ScriptElement::ScriptElement(Element* element, bool parserInserted, bool already
     , m_willBeParserExecuted(false)
     , m_readyToBeParserExecuted(false)
     , m_willExecuteWhenDocumentFinishedParsing(false)
+    , m_forceAsync(!parserInserted)
+    , m_willExecuteInOrder(false)
 {
     ASSERT(m_element);
 }
@@ -94,6 +96,11 @@ void ScriptElement::handleSourceAttribute(const String& sourceUrl)
         return;
 
     prepareScript(); // FIXME: Provide a real starting line number here.
+}
+
+void ScriptElement::handleAsyncAttribute()
+{
+    m_forceAsync = false;
 }
 
 // Helper function
@@ -159,7 +166,8 @@ bool ScriptElement::prepareScript(const TextPosition1& scriptStartPosition, Lega
     } else
         wasParserInserted = false;
 
-    // FIXME: HTML5 spec says we should set forceAsync.
+    if (wasParserInserted && !asyncAttributeValue())
+        m_forceAsync = true;
 
     // FIXME: HTML5 spec says we should check that all children are either comments or empty text nodes.
     if (!hasSourceAttribute() && !m_element->firstChild())
@@ -171,8 +179,10 @@ bool ScriptElement::prepareScript(const TextPosition1& scriptStartPosition, Lega
     if (!isScriptTypeSupported(supportLegacyTypes))
         return false;
 
-    if (wasParserInserted)
+    if (wasParserInserted) {
         m_parserInserted = true;
+        m_forceAsync = false;
+    }
 
     m_alreadyStarted = true;
 
@@ -207,6 +217,10 @@ bool ScriptElement::prepareScript(const TextPosition1& scriptStartPosition, Lega
     else if (!hasSourceAttribute() && m_parserInserted && !m_element->document()->haveStylesheetsLoaded()) {
         m_willBeParserExecuted = true;
         m_readyToBeParserExecuted = true;
+    } else if (hasSourceAttribute() && !asyncAttributeValue() && !m_forceAsync) {
+        m_willExecuteInOrder = true;
+        m_element->document()->scriptRunner()->queueScriptForExecution(this, m_cachedScript, ScriptRunner::IN_ORDER_EXECUTION);
+        m_cachedScript->addClient(this);
     } else if (hasSourceAttribute())
         m_cachedScript->addClient(this);
     else
@@ -286,7 +300,10 @@ void ScriptElement::notifyFinished(CachedResource* o)
 {
     ASSERT(!m_willBeParserExecuted);
     ASSERT_UNUSED(o, o == m_cachedScript);
-    m_element->document()->asyncScriptRunner()->executeScriptSoon(this, m_cachedScript);
+    if (m_willExecuteInOrder)
+        m_element->document()->scriptRunner()->notifyInOrderScriptReady();
+    else
+        m_element->document()->scriptRunner()->queueScriptForExecution(this, m_cachedScript, ScriptRunner::ASYNC_EXECUTION);
     m_cachedScript = 0;
 }
 

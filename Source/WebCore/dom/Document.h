@@ -51,7 +51,6 @@
 
 namespace WebCore {
 
-class AsyncScriptRunner;
 class Attr;
 class AXObjectCache;
 class CDATASection;
@@ -115,6 +114,7 @@ class RenderView;
 class RenderFullScreen;
 class ScriptableDocumentParser;
 class ScriptElementData;
+class ScriptRunner;
 class SecurityOrigin;
 class SerializedScriptValue;
 class SegmentedString;
@@ -902,7 +902,7 @@ public:
 
     int docID() const { return m_docID; }
     
-    AsyncScriptRunner* asyncScriptRunner() { return m_asyncScriptRunner.get(); }
+    ScriptRunner* scriptRunner() { return m_scriptRunner.get(); }
 
 #if ENABLE(XSLT)
     void applyXSLTransform(ProcessingInstruction* pi);
@@ -1319,7 +1319,7 @@ private:
     // points during the lifetime of the Document.
     int m_extraLayoutDelay;
     
-    OwnPtr<AsyncScriptRunner> m_asyncScriptRunner;
+    OwnPtr<ScriptRunner> m_scriptRunner;
 
 #if ENABLE(XSLT)
     OwnPtr<TransformSource> m_transformSource;

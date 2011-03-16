@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href=".../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body onload="">
+Checks that adding an async=false script while executing an async=false script doesn't mess anything up.
+<div id="console"></div>
+<script>
+var jsTestIsAsync = true;
+
+first_script = document.createElement("script");
+first_script.async = false;
+first_script.src = "resources/async-false.js";
+document.getElementsByTagName("head")[0].appendChild(first_script);
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

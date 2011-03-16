@@ -1117,8 +1117,6 @@ webcore_sources += \
 	Source/WebCore/css/WebKitCSSTransformValue.h \
 	Source/WebCore/dom/ActiveDOMObject.cpp \
 	Source/WebCore/dom/ActiveDOMObject.h \
-	Source/WebCore/dom/AsyncScriptRunner.cpp \
-	Source/WebCore/dom/AsyncScriptRunner.h \
 	Source/WebCore/dom/Attr.cpp \
 	Source/WebCore/dom/Attr.h \
 	Source/WebCore/dom/Attribute.cpp \
@@ -1308,6 +1306,8 @@ webcore_sources += \
 	Source/WebCore/dom/ScriptElement.h \
 	Source/WebCore/dom/ScriptExecutionContext.cpp \
 	Source/WebCore/dom/ScriptExecutionContext.h \
+	Source/WebCore/dom/ScriptRunner.cpp \
+	Source/WebCore/dom/ScriptRunner.h \
 	Source/WebCore/dom/SelectElement.cpp \
 	Source/WebCore/dom/SelectElement.h \
 	Source/WebCore/dom/SelectorNodeList.cpp \

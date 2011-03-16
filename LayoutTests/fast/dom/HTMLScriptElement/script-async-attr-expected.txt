@@ -8,8 +8,14 @@ PASS isAsync('s1') is true
 PASS isAsync('s2') is true
 PASS isAsync('s3') is true
 PASS isAsync('s4') is true
+PASS isAsync('s5') is true
+PASS isAsync('s6') is true
+PASS isAsync('s7') is true
+PASS isAsync('s8') is false
 PASS isDynamicallyInsertedScriptAsync(true) is true
 PASS isDynamicallyInsertedScriptAsync(false) is false
+PASS isDynamicallyInsertedScriptAsync("async") is true
+PASS isDynamicallyInsertedScriptAsync(null) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

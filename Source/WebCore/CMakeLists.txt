@@ -688,7 +688,6 @@ SET(WebCore_SOURCES
     css/WebKitCSSTransformValue.cpp
 
     dom/ActiveDOMObject.cpp
-    dom/AsyncScriptRunner.cpp
     dom/Attr.cpp
     dom/Attribute.cpp
     dom/BeforeTextInsertedEvent.cpp
@@ -769,6 +768,7 @@ SET(WebCore_SOURCES
     dom/ScriptableDocumentParser.cpp
     dom/ScriptElement.cpp
     dom/ScriptExecutionContext.cpp
+    dom/ScriptRunner.cpp
     dom/SelectElement.cpp
     dom/SelectorNodeList.cpp
     dom/SpaceSplitString.cpp

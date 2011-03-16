@@ -21,11 +21,11 @@
 #include "config.h"
 #include "PageGroupLoadDeferrer.h"
 
-#include "AsyncScriptRunner.h"
 #include "DocumentParser.h"
 #include "Frame.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "ScriptRunner.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -50,7 +50,7 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
                 for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
                     frame->document()->suspendScriptedAnimationControllerCallbacks();
                     frame->document()->suspendActiveDOMObjects(ActiveDOMObject::WillShowDialog);
-                    frame->document()->asyncScriptRunner()->suspend();
+                    frame->document()->scriptRunner()->suspend();
                     if (DocumentParser* parser = frame->document()->parser())
                         parser->suspendScheduledTasks();
                 }
@@ -73,7 +73,7 @@ PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
             for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
                 frame->document()->resumeActiveDOMObjects();
                 frame->document()->resumeScriptedAnimationControllerCallbacks();
-                frame->document()->asyncScriptRunner()->resume();
+                frame->document()->scriptRunner()->resume();
                 if (DocumentParser* parser = frame->document()->parser())
                     parser->resumeScheduledTasks();
             }

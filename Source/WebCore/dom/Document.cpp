@@ -29,7 +29,6 @@
 
 #include "AXObjectCache.h"
 #include "AnimationController.h"
-#include "AsyncScriptRunner.h"
 #include "Attr.h"
 #include "Attribute.h"
 #include "CDATASection.h"
@@ -128,6 +127,7 @@
 #include "ScriptController.h"
 #include "ScriptElement.h"
 #include "ScriptEventListener.h"
+#include "ScriptRunner.h"
 #include "SecurityOrigin.h"
 #include "SegmentedString.h"
 #include "SelectionController.h"
@@ -395,7 +395,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_startTime(currentTime())
     , m_overMinimumLayoutThreshold(false)
     , m_extraLayoutDelay(0)
-    , m_asyncScriptRunner(AsyncScriptRunner::create(this))
+    , m_scriptRunner(ScriptRunner::create(this))
     , m_xmlVersion("1.0")
     , m_xmlStandalone(false)
     , m_savedRenderer(0)
@@ -566,7 +566,7 @@ Document::~Document()
     ASSERT(m_ranges.isEmpty());
     ASSERT(!m_styleRecalcTimer.isActive());
 
-    m_asyncScriptRunner.clear();
+    m_scriptRunner.clear();
 
     removeAllEventListeners();
 

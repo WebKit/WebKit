@@ -58,6 +58,13 @@ void HTMLScriptElement::childrenChanged(bool changedByParser, Node* beforeChange
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
+void HTMLScriptElement::attributeChanged(Attribute* attr, bool preserveDecls)
+{
+    if (attr->name() == asyncAttr)
+        handleAsyncAttribute();
+    HTMLElement::attributeChanged(attr, preserveDecls);
+}
+
 void HTMLScriptElement::parseMappedAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
@@ -100,6 +107,17 @@ void HTMLScriptElement::setText(const String &value)
         removeChildren();
 
     appendChild(document()->createTextNode(value.impl()), ec);
+}
+
+void HTMLScriptElement::setAsync(bool async)
+{
+    setBooleanAttribute(asyncAttr, async);
+    handleAsyncAttribute();
+}
+
+bool HTMLScriptElement::async() const
+{
+    return fastHasAttribute(asyncAttr) || forceAsync();
 }
 
 KURL HTMLScriptElement::src() const

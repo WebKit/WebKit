@@ -38,6 +38,9 @@ public:
 
     KURL src() const;
 
+    void setAsync(bool);
+    bool async() const;
+
 private:
     HTMLScriptElement(const QualifiedName&, Document*, bool wasInsertedByParser, bool alreadyStarted);
 
@@ -45,6 +48,7 @@ private:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    virtual void attributeChanged(Attribute*, bool preserveDecls = false);
 
     virtual bool isURLAttribute(Attribute*) const;
 

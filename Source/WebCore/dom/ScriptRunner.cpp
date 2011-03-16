@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "AsyncScriptRunner.h"
+#include "ScriptRunner.h"
 
 #include "CachedScript.h"
 #include "Document.h"
@@ -34,52 +34,79 @@
 
 namespace WebCore {
 
-AsyncScriptRunner::AsyncScriptRunner(Document* document)
+ScriptRunner::ScriptRunner(Document* document)
     : m_document(document)
-    , m_timer(this, &AsyncScriptRunner::timerFired)
+    , m_timer(this, &ScriptRunner::timerFired)
 {
     ASSERT(document);
 }
 
-AsyncScriptRunner::~AsyncScriptRunner()
+ScriptRunner::~ScriptRunner()
 {
     for (size_t i = 0; i < m_scriptsToExecuteSoon.size(); ++i)
         m_document->decrementLoadEventDelayCount();
+    for (size_t i = 0; i < m_scriptsToExecuteInOrder.size(); ++i)
+        m_document->decrementLoadEventDelayCount();
 }
 
-void AsyncScriptRunner::executeScriptSoon(ScriptElement* scriptElement, CachedResourceHandle<CachedScript> cachedScript)
+void ScriptRunner::queueScriptForExecution(ScriptElement* scriptElement, CachedResourceHandle<CachedScript> cachedScript, ExecutionType executionType)
 {
-    ASSERT_ARG(scriptElement, scriptElement);
+    ASSERT(scriptElement);
 
     Element* element = scriptElement->element();
     ASSERT(element);
     ASSERT(element->inDocument());
 
     m_document->incrementLoadEventDelayCount();
-    m_scriptsToExecuteSoon.append(PendingScript(element, cachedScript.get()));
-    if (!m_timer.isActive())
-        m_timer.startOneShot(0);
+
+    switch (executionType) {
+    case ASYNC_EXECUTION:
+        m_scriptsToExecuteSoon.append(PendingScript(element, cachedScript.get()));
+        if (!m_timer.isActive())
+            m_timer.startOneShot(0);
+        break;
+
+    case IN_ORDER_EXECUTION:
+        m_scriptsToExecuteInOrder.append(PendingScript(element, cachedScript.get()));
+        break;
+
+    default:
+        ASSERT_NOT_REACHED();
+    }
 }
 
-void AsyncScriptRunner::suspend()
+void ScriptRunner::suspend()
 {
     m_timer.stop();
 }
 
-void AsyncScriptRunner::resume()
+void ScriptRunner::resume()
 {
     if (hasPendingScripts())
         m_timer.startOneShot(0);
 }
 
-void AsyncScriptRunner::timerFired(Timer<AsyncScriptRunner>* timer)
+void ScriptRunner::notifyInOrderScriptReady()
+{
+    ASSERT(!m_scriptsToExecuteInOrder.isEmpty());
+    m_timer.startOneShot(0);
+}
+
+void ScriptRunner::timerFired(Timer<ScriptRunner>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_timer);
 
     RefPtr<Document> protect(m_document);
-    
+
     Vector<PendingScript> scripts;
     scripts.swap(m_scriptsToExecuteSoon);
+
+    size_t numInOrderScriptsToExecute = 0;
+    for (; numInOrderScriptsToExecute < m_scriptsToExecuteInOrder.size() && m_scriptsToExecuteInOrder[numInOrderScriptsToExecute].cachedScript()->isLoaded(); ++numInOrderScriptsToExecute)
+        scripts.append(m_scriptsToExecuteInOrder[numInOrderScriptsToExecute]);
+    if (numInOrderScriptsToExecute)
+        m_scriptsToExecuteInOrder.remove(0, numInOrderScriptsToExecute);
+
     size_t size = scripts.size();
     for (size_t i = 0; i < size; ++i) {
         CachedScript* cachedScript = scripts[i].cachedScript();

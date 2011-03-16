@@ -2737,8 +2737,8 @@
 		89D08DA112228451001241DF /* AsyncFileSystemCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 89D08D9E12228451001241DF /* AsyncFileSystemCallbacks.h */; };
 		8A12E35D11FA33280025836A /* DocumentLoadTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A12E35C11FA33280025836A /* DocumentLoadTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8A309C9F123950BE00CB9204 /* NestingLevelIncrementer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A309C9E123950BE00CB9204 /* NestingLevelIncrementer.h */; };
-		8A413AE01207BBA50082016E /* AsyncScriptRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A413ADE1207BBA50082016E /* AsyncScriptRunner.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		8A413AE11207BBA50082016E /* AsyncScriptRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A413ADF1207BBA50082016E /* AsyncScriptRunner.cpp */; };
+		8A413AE01207BBA50082016E /* ScriptRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A413ADE1207BBA50082016E /* ScriptRunner.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8A413AE11207BBA50082016E /* ScriptRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A413ADF1207BBA50082016E /* ScriptRunner.cpp */; };
 		8A7CC96B12076D73001D4588 /* PendingScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A7CC96A12076D73001D4588 /* PendingScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8A7CC97012076F8A001D4588 /* PendingScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CC96F12076F8A001D4588 /* PendingScript.cpp */; };
 		8A81BF8511DCFD9000DA2B98 /* ResourceLoadTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A81BF8411DCFD9000DA2B98 /* ResourceLoadTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9217,8 +9217,8 @@
 		89D08D9E12228451001241DF /* AsyncFileSystemCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFileSystemCallbacks.h; sourceTree = "<group>"; };
 		8A12E35C11FA33280025836A /* DocumentLoadTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentLoadTiming.h; sourceTree = "<group>"; };
 		8A309C9E123950BE00CB9204 /* NestingLevelIncrementer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NestingLevelIncrementer.h; path = parser/NestingLevelIncrementer.h; sourceTree = "<group>"; };
-		8A413ADE1207BBA50082016E /* AsyncScriptRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncScriptRunner.h; sourceTree = "<group>"; };
-		8A413ADF1207BBA50082016E /* AsyncScriptRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncScriptRunner.cpp; sourceTree = "<group>"; };
+		8A413ADE1207BBA50082016E /* ScriptRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptRunner.h; sourceTree = "<group>"; };
+		8A413ADF1207BBA50082016E /* ScriptRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptRunner.cpp; sourceTree = "<group>"; };
 		8A7CC96A12076D73001D4588 /* PendingScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PendingScript.h; sourceTree = "<group>"; };
 		8A7CC96F12076F8A001D4588 /* PendingScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PendingScript.cpp; sourceTree = "<group>"; };
 		8A81BF8411DCFD9000DA2B98 /* ResourceLoadTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadTiming.h; sourceTree = "<group>"; };
@@ -19077,8 +19077,6 @@
 			children = (
 				E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */,
 				E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */,
-				8A413ADF1207BBA50082016E /* AsyncScriptRunner.cpp */,
-				8A413ADE1207BBA50082016E /* AsyncScriptRunner.h */,
 				A8C4A7FC09D563270003AC8D /* Attr.cpp */,
 				A8C4A7FB09D563270003AC8D /* Attr.h */,
 				93EEC1E509C2877700C515D1 /* Attr.idl */,
@@ -19321,6 +19319,8 @@
 				08A484760E5272C500C3FE76 /* ScriptElement.h */,
 				E11C9DAF0EB3699500E409DB /* ScriptExecutionContext.cpp */,
 				E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */,
+				8A413ADF1207BBA50082016E /* ScriptRunner.cpp */,
+				8A413ADE1207BBA50082016E /* ScriptRunner.h */,
 				084AEBE20FB505FA0038483E /* SelectElement.cpp */,
 				084AEBE30FB505FA0038483E /* SelectElement.h */,
 				BC7FA6800D1F167900DB22A9 /* SelectorNodeList.cpp */,
@@ -19679,7 +19679,6 @@
 				976D6C77122B8A3D001FD1F7 /* AsyncFileWriter.h in Headers */,
 				976D6C93122B8A3D001FD1F7 /* AsyncFileWriterClient.h in Headers */,
 				B0149E7E11A4B21500196A7B /* AsyncImageResizer.h in Headers */,
-				8A413AE01207BBA50082016E /* AsyncScriptRunner.h in Headers */,
 				37C61F0112095C87007A3C67 /* AtomicStringKeyedMRUCache.h in Headers */,
 				A8C4A80D09D563270003AC8D /* Attr.h in Headers */,
 				A8C4A80B09D563270003AC8D /* Attribute.h in Headers */,
@@ -22057,6 +22056,7 @@
 				9F72304F11184B4100AD0126 /* ScriptProfile.h in Headers */,
 				9FA37EE41172FC8000C4CD55 /* ScriptProfileNode.h in Headers */,
 				9F72305111184B4100AD0126 /* ScriptProfiler.h in Headers */,
+				8A413AE01207BBA50082016E /* ScriptRunner.h in Headers */,
 				934CC10A0EDB223900A658F2 /* ScriptSourceCode.h in Headers */,
 				CE54FD381016D9A6008B44C8 /* ScriptSourceProvider.h in Headers */,
 				41C760B10EDE03D300C1655F /* ScriptState.h in Headers */,
@@ -23012,7 +23012,6 @@
 				49EECDDF10503C2400099FAB /* ArrayBufferView.cpp in Sources */,
 				89D08D9F12228451001241DF /* AsyncFileSystem.cpp in Sources */,
 				B0149E7D11A4B21500196A7B /* AsyncImageResizer.cpp in Sources */,
-				8A413AE11207BBA50082016E /* AsyncScriptRunner.cpp in Sources */,
 				A8C4A80E09D563270003AC8D /* Attr.cpp in Sources */,
 				A8C4A80C09D563270003AC8D /* Attribute.cpp in Sources */,
 				FD315FF612B0267600C1A359 /* AudioBasicProcessorNode.cpp in Sources */,
@@ -24850,6 +24849,7 @@
 				41F066E50F64BCF600A07EAC /* ScriptObject.cpp in Sources */,
 				F33F0282120947F200E5743A /* ScriptProfile.cpp in Sources */,
 				9F72305011184B4100AD0126 /* ScriptProfiler.cpp in Sources */,
+				8A413AE11207BBA50082016E /* ScriptRunner.cpp in Sources */,
 				4127D5370F8AAB1D00E424F5 /* ScriptState.cpp in Sources */,
 				934CC0E10ED39D6F00A658F2 /* ScriptValue.cpp in Sources */,
 				BC8AE34E12EA096A00EB3AE6 /* ScrollableArea.cpp in Sources */,

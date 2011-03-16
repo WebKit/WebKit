@@ -95,7 +95,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	css/WebKitCSSTransformValue.cpp \
 	\
 	dom/ActiveDOMObject.cpp \
-	dom/AsyncScriptRunner.cpp \
 	dom/Attr.cpp \
 	dom/Attribute.cpp \
 	dom/BeforeTextInsertedEvent.cpp \
@@ -172,6 +171,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/ScriptableDocumentParser.cpp \
 	dom/ScriptElement.cpp \
 	dom/ScriptExecutionContext.cpp \
+	dom/ScriptRunner.cpp \
 	dom/SelectElement.cpp \
 	dom/SelectorNodeList.cpp \
 	dom/SpaceSplitString.cpp \

@@ -26,7 +26,6 @@
 // This all-in-one cpp file cuts down on template bloat to allow us to build our Windows release build.
 
 #include "ActiveDOMObject.cpp"
-#include "AsyncScriptRunner.cpp"
 #include "Attr.cpp"
 #include "Attribute.cpp"
 #include "BeforeProcessEvent.cpp"
@@ -104,6 +103,7 @@
 #include "ScopedEventQueue.cpp"
 #include "ScriptElement.cpp"
 #include "ScriptExecutionContext.cpp"
+#include "ScriptRunner.cpp"
 #include "ScriptableDocumentParser.cpp"
 #include "SelectElement.cpp"
 #include "SelectorNodeList.cpp"
