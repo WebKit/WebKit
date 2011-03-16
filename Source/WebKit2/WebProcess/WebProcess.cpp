@@ -127,6 +127,7 @@ WebProcess::WebProcess()
 #endif
     , m_textCheckerState()
     , m_geolocationManager(this)
+    , m_iconDatabaseProxy(this)
 {
 #if USE(PLATFORM_STRATEGIES)
     // Initialize our platform strategies.
@@ -174,6 +175,10 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 #if ENABLE(DATABASE)
     // Make sure the WebDatabaseManager is initialized so that the Database directory is set.
     WebDatabaseManager::initialize(parameters.databaseDirectory);
+#endif
+
+#if ENABLE(ICONDATABASE)
+    m_iconDatabaseProxy.setEnabled(parameters.iconDatabaseEnabled);
 #endif
 
 #if ENABLE(DOM_STORAGE)
@@ -579,6 +584,11 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 
     if (messageID.is<CoreIPC::MessageClassWebGeolocationManager>()) {
         m_geolocationManager.didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebIconDatabaseProxy>()) {
+        m_iconDatabaseProxy.didReceiveMessage(connection, messageID, arguments);
         return;
     }
 

@@ -61,6 +61,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(clearResourceCaches);
     encoder->encode(clearApplicationCache);
     encoder->encode(shouldAlwaysUseComplexTextCodePath);
+    encoder->encode(iconDatabaseEnabled);
     encoder->encode(languageCode);
     encoder->encode(textCheckerState);
     encoder->encode(defaultRequestTimeoutInterval);
@@ -112,6 +113,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.clearApplicationCache))
         return false;
     if (!decoder->decode(parameters.shouldAlwaysUseComplexTextCodePath))
+        return false;
+    if (!decoder->decode(parameters.iconDatabaseEnabled))
         return false;
     if (!decoder->decode(parameters.languageCode))
         return false;

@@ -70,6 +70,8 @@ struct WebProcessCreationParameters {
 
     bool shouldAlwaysUseComplexTextCodePath;
 
+    bool iconDatabaseEnabled;
+
     String languageCode;
 
     TextCheckerState textCheckerState;

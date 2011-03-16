@@ -81,6 +81,12 @@ String WebContext::platformDefaultDatabaseDirectory() const
     return WebCore::pathByAppendingComponent(WebCore::localUserSpecificStorageDirectory(), "Databases");
 }
 
+String WebContext::platformDefaultIconDatabasePath() const
+{
+    // IconDatabase should be disabled by default on Windows, and should therefore have no default path.
+    return String();
+}
+
 String WebContext::platformDefaultLocalStorageDirectory() const
 {
     return WebCore::pathByAppendingComponent(WebCore::localUserSpecificStorageDirectory(), "LocalStorage");

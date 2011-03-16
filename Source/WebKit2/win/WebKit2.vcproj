@@ -1443,6 +1443,22 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="IconDatabase"
+				>
+				<File
+					RelativePath="..\WebProcess\IconDatabase\WebIconDatabaseProxy.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\IconDatabase\WebIconDatabaseProxy.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\IconDatabase\WebIconDatabaseProxy.messages.in"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="KeyValueStorage"
 				>
 				<File
@@ -2579,6 +2595,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebIconDatabase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebIconDatabase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebIconDatabase.messages.in"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebInspectorProxy.cpp"
 				>
 			</File>
@@ -3620,6 +3648,22 @@
 			</File>
 			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebGeolocationManagerProxyMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebIconDatabaseMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebIconDatabaseMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebIconDatabaseProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebIconDatabaseProxyMessages.h"
 				>
 			</File>
 			<File

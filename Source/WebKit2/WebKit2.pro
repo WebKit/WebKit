@@ -37,6 +37,8 @@ WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebFullScreenManagerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebIconDatabaseMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebIconDatabaseProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebKeyValueStorageManagerMessages.h \
@@ -68,6 +70,8 @@ WEBKIT2_GENERATED_SOURCES = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebFullScreenManagerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebIconDatabaseMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebIconDatabaseProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebKeyValueStorageManagerMessageReceiver.cpp \
@@ -198,6 +202,7 @@ HEADERS += \
     UIProcess/WebGeolocationManagerProxy.h \
     UIProcess/WebGeolocationProvider.h \
     UIProcess/WebHistoryClient.h \
+    UIProcess/WebIconDatabase.h \
     UIProcess/WebInspectorProxy.h \
     UIProcess/WebKeyValueStorageManagerProxy.h \
     UIProcess/WebLoaderClient.h \
@@ -222,6 +227,7 @@ HEADERS += \
     WebProcess/FullScreen/WebFullScreenManager.h \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
     WebProcess/Geolocation/WebGeolocationManager.h \
+    WebProcess/IconDatabase/WebIconDatabaseProxy.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h \
     WebProcess/InjectedBundle/InjectedBundle.h \
@@ -390,6 +396,7 @@ SOURCES += \
     UIProcess/WebGeolocationManagerProxy.cpp \
     UIProcess/WebGeolocationProvider.cpp \
     UIProcess/WebHistoryClient.cpp \
+    UIProcess/WebIconDatabase.cpp \
     UIProcess/WebInspectorProxy.cpp \
     UIProcess/WebKeyValueStorageManagerProxy.cpp \
     UIProcess/WebLoaderClient.cpp \
@@ -419,10 +426,11 @@ SOURCES += \
     WebProcess/Cookies/WebCookieManager.cpp \
     WebProcess/Downloads/Download.cpp \
     WebProcess/Downloads/DownloadManager.cpp \
+    WebProcess/Downloads/qt/DownloadQt.cpp \
     WebProcess/FullScreen/WebFullScreenManager.cpp \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \
     WebProcess/Geolocation/WebGeolocationManager.cpp \
-    WebProcess/Downloads/qt/DownloadQt.cpp \
+    WebProcess/IconDatabase/WebIconDatabaseProxy.cpp \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp \
     WebProcess/InjectedBundle/InjectedBundle.cpp \

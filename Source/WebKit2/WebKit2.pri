@@ -45,6 +45,7 @@ WEBKIT2_INCLUDEPATH = \
     $$SOURCE_DIR/WebKit2/WebProcess/Downloads/qt \
     $$SOURCE_DIR/WebKit2/WebProcess/FullScreen \
     $$SOURCE_DIR/WebKit2/WebProcess/Geolocation \
+    $$SOURCE_DIR/WebKit2/WebProcess/IconDatabase \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/DOM \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c \

@@ -362,6 +362,8 @@ def generate_messages_header(file):
 
 
 def handler_function(receiver, message):
+    if message.name.find('URL') == 0:
+        return '%s::%s' % (receiver.name, 'url' + message.name[3:])
     return '%s::%s' % (receiver.name, message.name[0].lower() + message.name[1:])
 
 

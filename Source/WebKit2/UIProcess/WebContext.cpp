@@ -40,6 +40,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManagerProxy.h"
 #include "WebGeolocationManagerProxy.h"
+#include "WebIconDatabase.h"
 #include "WebKeyValueStorageManagerProxy.h"
 #include "WebPluginSiteDataManager.h"
 #include "WebPageGroup.h"
@@ -116,6 +117,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_cookieManagerProxy(WebCookieManagerProxy::create(this))
     , m_databaseManagerProxy(WebDatabaseManagerProxy::create(this))
     , m_geolocationManagerProxy(WebGeolocationManagerProxy::create(this))
+    , m_iconDatabase(WebIconDatabase::create(this))
     , m_keyValueStorageManagerProxy(WebKeyValueStorageManagerProxy::create(this))
     , m_pluginSiteDataManager(WebPluginSiteDataManager::create(this))
     , m_resourceCacheManagerProxy(WebResourceCacheManagerProxy::create(this))
@@ -147,11 +149,14 @@ WebContext::~WebContext()
     m_cookieManagerProxy->invalidate();
     m_cookieManagerProxy->clearContext();
 
+    m_databaseManagerProxy->invalidate();
+    m_databaseManagerProxy->clearContext();
+    
     m_geolocationManagerProxy->invalidate();
     m_geolocationManagerProxy->clearContext();
 
-    m_databaseManagerProxy->invalidate();
-    m_databaseManagerProxy->clearContext();
+    m_iconDatabase->invalidate();
+    m_iconDatabase->clearContext();
     
     m_keyValueStorageManagerProxy->invalidate();
     m_keyValueStorageManagerProxy->clearContext();
@@ -237,6 +242,8 @@ void WebContext::ensureWebProcess()
     copyToVector(m_schemesToSetDomainRelaxationForbiddenFor, parameters.urlSchemesForWhichDomainRelaxationIsForbidden);
 
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
+    
+    parameters.iconDatabaseEnabled = !iconDatabasePath().isEmpty();
 
     parameters.textCheckerState = TextChecker::state();
 
@@ -591,6 +598,11 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         m_geolocationManagerProxy->didReceiveMessage(connection, messageID, arguments);
         return;
     }
+    
+    if (messageID.is<CoreIPC::MessageClassWebIconDatabase>()) {
+        m_iconDatabase->didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
 
     if (messageID.is<CoreIPC::MessageClassWebKeyValueStorageManagerProxy>()) {
         m_keyValueStorageManagerProxy->didReceiveMessage(connection, messageID, arguments);
@@ -631,6 +643,9 @@ CoreIPC::SyncReplyMode WebContext::didReceiveSyncMessage(CoreIPC::Connection* co
 
         return CoreIPC::AutomaticReply;
     }
+    
+    if (messageID.is<CoreIPC::MessageClassWebIconDatabase>())
+        return m_iconDatabase->didReceiveSyncMessage(connection, messageID, arguments, reply);
     
     switch (messageID.get<WebContextLegacyMessage::Kind>()) {
         case WebContextLegacyMessage::PostSynchronousMessage: {
@@ -728,6 +743,14 @@ String WebContext::databaseDirectory() const
         return m_overrideDatabaseDirectory;
 
     return platformDefaultDatabaseDirectory();
+}
+
+String WebContext::iconDatabasePath() const
+{
+    if (!m_overrideIconDatabasePath.isEmpty())
+        return m_overrideIconDatabasePath;
+
+    return platformDefaultIconDatabasePath();
 }
 
 String WebContext::localStorageDirectory() const

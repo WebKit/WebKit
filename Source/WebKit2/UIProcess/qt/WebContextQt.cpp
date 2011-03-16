@@ -53,6 +53,12 @@ String WebContext::platformDefaultDatabaseDirectory() const
     return "";
 }
 
+String WebContext::platformDefaultIconDatabasePath() const
+{
+    // FIXME: Implement.
+    return "";
+}
+
 String WebContext::platformDefaultLocalStorageDirectory() const
 {
     // FIXME: Implement.

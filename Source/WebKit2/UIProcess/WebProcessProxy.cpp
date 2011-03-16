@@ -252,6 +252,7 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
         || messageID.is<CoreIPC::MessageClassWebCookieManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebDatabaseManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebGeolocationManagerProxy>()
+        || messageID.is<CoreIPC::MessageClassWebIconDatabase>()
         || messageID.is<CoreIPC::MessageClassWebKeyValueStorageManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebResourceCacheManagerProxy>()) {
         m_context->didReceiveMessage(connection, messageID, arguments);
@@ -290,7 +291,8 @@ CoreIPC::SyncReplyMode WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connectio
     }
 #endif
 
-    if (messageID.is<CoreIPC::MessageClassWebContext>() || messageID.is<CoreIPC::MessageClassWebContextLegacy>()  || messageID.is<CoreIPC::MessageClassDownloadProxy>())
+    if (messageID.is<CoreIPC::MessageClassWebContext>() || messageID.is<CoreIPC::MessageClassWebContextLegacy>() 
+        || messageID.is<CoreIPC::MessageClassDownloadProxy>() || messageID.is<CoreIPC::MessageClassWebIconDatabase>())
         return m_context->didReceiveSyncMessage(connection, messageID, arguments, reply);
 
     uint64_t pageID = arguments->destinationID();

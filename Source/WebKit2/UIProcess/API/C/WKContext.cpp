@@ -203,6 +203,11 @@ void WKContextStopMemorySampler(WKContextRef contextRef)
     toImpl(contextRef)->stopMemorySampler();
 }
 
+void WKContextSetIconDatabasePath(WKContextRef contextRef, WKStringRef iconDatabasePath)
+{
+    toImpl(contextRef)->setIconDatabasePath(toImpl(iconDatabasePath)->string());
+}
+
 void WKContextSetDatabaseDirectory(WKContextRef contextRef, WKStringRef databaseDirectory)
 {
     toImpl(contextRef)->setDatabaseDirectory(toImpl(databaseDirectory)->string());

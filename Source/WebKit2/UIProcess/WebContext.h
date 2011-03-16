@@ -49,6 +49,7 @@ class WebApplicationCacheManagerProxy;
 class WebCookieManagerProxy;
 class WebDatabaseManagerProxy;
 class WebGeolocationManagerProxy;
+class WebIconDatabase;
 class WebKeyValueStorageManagerProxy;
 class WebPageGroup;
 class WebPageProxy;
@@ -153,6 +154,7 @@ public:
     static Statistics& statistics();
 
     void setDatabaseDirectory(const String& dir) { m_overrideDatabaseDirectory = dir; }
+    void setIconDatabasePath(const String& path) { m_overrideIconDatabasePath = path; }
     void setLocalStorageDirectory(const String& dir) { m_overrideLocalStorageDirectory = dir; }
 
     void ensureWebProcess();
@@ -189,6 +191,9 @@ private:
 
     String databaseDirectory() const;
     String platformDefaultDatabaseDirectory() const;
+
+    String iconDatabasePath() const;
+    String platformDefaultIconDatabasePath() const;
 
     String localStorageDirectory() const;
     String platformDefaultLocalStorageDirectory() const;
@@ -232,6 +237,7 @@ private:
     RefPtr<WebCookieManagerProxy> m_cookieManagerProxy;
     RefPtr<WebDatabaseManagerProxy> m_databaseManagerProxy;
     RefPtr<WebGeolocationManagerProxy> m_geolocationManagerProxy;
+    RefPtr<WebIconDatabase> m_iconDatabase;
     RefPtr<WebKeyValueStorageManagerProxy> m_keyValueStorageManagerProxy;
     RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
     RefPtr<WebResourceCacheManagerProxy> m_resourceCacheManagerProxy;
@@ -241,6 +247,7 @@ private:
 #endif
 
     String m_overrideDatabaseDirectory;
+    String m_overrideIconDatabasePath;
     String m_overrideLocalStorageDirectory;
 };
 

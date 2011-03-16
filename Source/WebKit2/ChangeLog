@@ -1,3 +1,109 @@
+2011-03-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56425
+        WebKit2 icon database.
+
+        Project file paperwork:
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * GNUmakefile.am:
+        * WebKit2.pri:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Common.vsprops:
+        * Scripts/webkit2/messages.py: Special-case capitalization for messages that start with "URL" to be lowercased
+          to "url" instead of "uRL".
+
+        Add messaging-related stuff:
+        * Platform/CoreIPC/MessageID.h:
+        * UIProcess/WebIconDatabase.messages.in: Added.
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.messages.in: Added.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+
+        Prep to make WebIconDatabase an API object:
+        * Shared/APIObject.h:
+
+        Add an "icon DB is enabled" flag to WebProcessCreationParameters:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+
+        Add SPI for client apps to set the icon database path:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetIconDatabasePath):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::setIconDatabasePath):
+
+        Hook up initialization, clearing, and messaging for the icon database:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::ensureWebProcess):
+        (WebKit::WebContext::didReceiveMessage):
+        (WebKit::WebContext::didReceiveSyncMessage):
+        (WebKit::WebContext::iconDatabasePath):
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformDefaultIconDatabasePath):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformDefaultIconDatabasePath):
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::platformDefaultIconDatabasePath):
+        * UIProcess/win/WebContextWin.cpp:
+        (WebKit::WebContext::platformDefaultIconDatabasePath):
+
+        Add the UIProcess-side IconDatabase. It will be the "actual database" as well as the API object:
+        * UIProcess/WebIconDatabase.cpp: Added.
+        (WebKit::WebIconDatabase::create):
+        (WebKit::WebIconDatabase::~WebIconDatabase):
+        (WebKit::WebIconDatabase::WebIconDatabase):
+        (WebKit::WebIconDatabase::invalidate):
+        (WebKit::WebIconDatabase::retainIconForPageURL):
+        (WebKit::WebIconDatabase::releaseIconForPageURL):
+        (WebKit::WebIconDatabase::setIconURLForPageURL):
+        (WebKit::WebIconDatabase::setIconDataForIconURL):
+        (WebKit::WebIconDatabase::iconDataForPageURL):
+        (WebKit::WebIconDatabase::iconURLForPageURL):
+        (WebKit::WebIconDatabase::iconDataKnownForIconURL):
+        (WebKit::WebIconDatabase::loadDecisionForIconURL):
+        (WebKit::WebIconDatabase::didReceiveMessage):
+        (WebKit::WebIconDatabase::didReceiveSyncMessage):
+        * UIProcess/WebIconDatabase.h: Added.
+        (WebKit::WebIconDatabase::clearContext):
+        (WebKit::WebIconDatabase::type):
+
+        Add the WebProcess-side IconDatabaseProxy. It acts as the WebCore IconDatabase and operates via messaging:
+        * WebProcess/IconDatabase: Added.
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.cpp: Added.
+        (WebKit::WebIconDatabaseProxy::~WebIconDatabaseProxy):
+        (WebKit::WebIconDatabaseProxy::WebIconDatabaseProxy):
+        (WebKit::WebIconDatabaseProxy::isEnabled):
+        (WebKit::WebIconDatabaseProxy::setEnabled):
+        (WebKit::WebIconDatabaseProxy::iconForPageURL):
+        (WebKit::WebIconDatabaseProxy::retainIconForPageURL):
+        (WebKit::WebIconDatabaseProxy::releaseIconForPageURL):
+        (WebKit::WebIconDatabaseProxy::iconURLForPageURL):
+        (WebKit::WebIconDatabaseProxy::iconDataKnownForIconURL):
+        (WebKit::WebIconDatabaseProxy::loadDecisionForIconURL):
+        (WebKit::WebIconDatabaseProxy::setIconURLForPageURL):
+        (WebKit::WebIconDatabaseProxy::setIconDataForIconURL):
+        (WebKit::WebIconDatabaseProxy::urlImportFinished):
+        (WebKit::WebIconDatabaseProxy::didReceiveMessage):
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.h: Added.
+
+        Hook up initialization and messaging for the icon database proxy:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+
 2011-03-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

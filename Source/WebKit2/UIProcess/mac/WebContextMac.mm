@@ -37,6 +37,9 @@ NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 NSString *WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPreferenceKey";
 
+// FIXME: <rdar://problem/9138817> - After this "backwards compatibility" radar is removed, this code should be removed to only return an empty String.
+NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaultsKey";
+
 namespace WebKit {
 
 String WebContext::applicationCacheDirectory()
@@ -105,6 +108,15 @@ String WebContext::platformDefaultDatabaseDirectory() const
     NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebDatabaseDirectoryDefaultsKey];
     if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
         databasesDirectory = @"~/Library/WebKit/Databases";
+    return [databasesDirectory stringByStandardizingPath];
+}
+
+String WebContext::platformDefaultIconDatabasePath() const
+{
+    // FIXME: <rdar://problem/9138817> - After this "backwards compatibility" radar is removed, this code should be removed to only return an empty String.
+    NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebIconDatabaseDirectoryDefaultsKey];
+    if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
+        databasesDirectory = @"~/Library/Icons/WebpageIcons.db";
     return [databasesDirectory stringByStandardizingPath];
 }
 

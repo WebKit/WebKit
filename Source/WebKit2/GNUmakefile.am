@@ -446,6 +446,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/WebGeolocationProvider.h \
 	Source/WebKit2/UIProcess/WebHistoryClient.cpp \
 	Source/WebKit2/UIProcess/WebHistoryClient.h \
+	Source/WebKit2/UIProcess/WebIconDatabase.cpp \
+	Source/WebKit2/UIProcess/WebIconDatabase.h \
 	Source/WebKit2/UIProcess/WebInspectorProxy.cpp \
 	Source/WebKit2/UIProcess/WebInspectorProxy.h \
 	Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.cpp \
@@ -495,6 +497,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/gtk/WebProcessGtk.cpp \
 	Source/WebKit2/WebProcess/gtk/WebProcessMainGtk.cpp \
 	Source/WebKit2/WebProcess/gtk/WebProcessMainGtk.h \
+	Source/WebKit2/WebProcess/IconDatabase/WebIconDatabaseProxy.cpp \
+	Source/WebKit2/WebProcess/IconDatabase/WebIconDatabaseProxy.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleAPICast.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
@@ -698,6 +702,7 @@ libWebKit2_la_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit2/WebProcess/FullScreen \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Geolocation \
 	-I$(srcdir)/Source/WebKit2/WebProcess/gtk \
+	-I$(srcdir)/Source/WebKit2/WebProcess/IconDatabase \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/API \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/API/c \
@@ -867,6 +872,10 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebGeolocationManagerMessages.h \
 	DerivedSources/WebKit2/WebGeolocationManagerProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebGeolocationManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebIconDatabaseMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebIconDatabaseMessages.h \
+	DerivedSources/WebKit2/WebIconDatabaseProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebIconDatabaseProxyMessages.h \
 	DerivedSources/WebKit2/WebInspectorMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebInspectorMessages.h \
 	DerivedSources/WebKit2/WebInspectorProxyMessageReceiver.cpp \

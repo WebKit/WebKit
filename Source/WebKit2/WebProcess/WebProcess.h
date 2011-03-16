@@ -35,6 +35,7 @@
 #include "TextCheckerState.h"
 #include "VisitedLinkTable.h"
 #include "WebGeolocationManager.h"
+#include "WebIconDatabaseProxy.h"
 #include "WebPageGroupProxy.h"
 #include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>
@@ -206,6 +207,7 @@ private:
 
     TextCheckerState m_textCheckerState;
     WebGeolocationManager m_geolocationManager;
+    WebIconDatabaseProxy m_iconDatabaseProxy;
     
     String m_localStorageDirectory;
 };

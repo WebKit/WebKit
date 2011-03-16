@@ -76,6 +76,7 @@ public:
         TypeGeolocationManager,
         TypeGeolocationPermissionRequest,
         TypeGeolocationPosition,
+        TypeIconDatabase,
         TypeInspector,
         TypeKeyValueStorageManager,
         TypeNavigationData,
