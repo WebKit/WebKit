@@ -3161,3 +3161,7 @@ fast/dom/Geolocation/page-reload-cancel-permission-requests.html
 # https://bugs.webkit.org/show_bug.cgi?id=55767
 http/tests/appcache/auth.html
 http/tests/xmlhttprequest/basic-auth.html
+
+# [Qt]Web Inspector: inspector/elements/mutate-unknown-node.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=56457
+inspector/elements/mutate-unknown-node.html
