@@ -51,6 +51,10 @@
         ['include', 'css/'],
         ['exclude', 'css/CSSParser\\.cpp$'], # Requires tokenizer.cpp
         ['include', 'dom/'],
+        ['include', 'editing/'],
+        ['include', 'fileapi/'],
+        ['include', 'history/'],
+        ['include', 'html/'],
 
         ['exclude', 'bindings/[^/]+/'],
         ['include', 'bindings/generic/'],

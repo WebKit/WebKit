@@ -1,5 +1,16 @@
 2011-03-15  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        WebCore GYP build should build editing, fileapi, history, and html
+        https://bugs.webkit.org/show_bug.cgi?id=56411
+
+        These all went smoothly.
+
+        * gyp/WebCore.gyp:
+
+2011-03-15  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         WebCore GYP build should build dom/
