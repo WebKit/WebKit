@@ -50,6 +50,7 @@
         # FIXME: include bridge/
         ['include', 'css/'],
         ['exclude', 'css/CSSParser\\.cpp$'], # Requires tokenizer.cpp
+        ['include', 'dom/'],
 
         ['exclude', 'bindings/[^/]+/'],
         ['include', 'bindings/generic/'],

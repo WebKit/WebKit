@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel.
 
+        WebCore GYP build should build dom/
+        https://bugs.webkit.org/show_bug.cgi?id=56409
+
+        * gyp/WebCore.gyp:
+
+2011-03-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         WebCore GYP build should build css/
         https://bugs.webkit.org/show_bug.cgi?id=56408
 
