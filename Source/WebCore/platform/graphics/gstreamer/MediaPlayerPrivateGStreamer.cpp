@@ -117,6 +117,13 @@ gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpo
             || err->code == GST_RESOURCE_ERROR_NOT_FOUND)
             error = MediaPlayer::FormatError;
         else if (err->domain == GST_STREAM_ERROR) {
+            // Let the mediaPlayerClient handle the stream error, in
+            // this case the HTMLMediaElement will emit a stalled
+            // event.
+            if (err->code == GST_STREAM_ERROR_TYPE_NOT_FOUND) {
+                LOG_VERBOSE(Media, "Decode error, let the Media element emit a stalled event.");
+                break;
+            }
             error = MediaPlayer::DecodeError;
             attemptNextLocation = true;
         } else if (err->domain == GST_RESOURCE_ERROR)
