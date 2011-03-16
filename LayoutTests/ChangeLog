@@ -1,3 +1,10 @@
+2011-03-16  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, suppress Win builder failures from r81222.
+        Also, one tentatively stale suppression is removed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-16  Dean Jackson  <dino@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=56242
