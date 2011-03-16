@@ -228,8 +228,15 @@
 }
 
 .detailed-heapshot-view .retaining-paths-view .title > span {
+    display: inline-block;
+    padding-top: 3px;
     vertical-align: middle;
     margin-left: 4px;
+    margin-right: 8px;
+}
+
+.detailed-heapshot-view .retaining-paths-to-windows {
+    
 }
 
 .heapshot-help-status-bar-item .glyph {

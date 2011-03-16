@@ -41,7 +41,9 @@ namespace WebCore {
     static const int v8DOMWrapperObjectIndex = 1;
     static const int v8DOMHiddenReferenceArrayIndex = 2;
     static const int v8DefaultWrapperInternalFieldCount = 3;
-    
+
+    static const uint16_t v8DOMSubtreeClassId = 1;
+
     typedef v8::Persistent<v8::FunctionTemplate> (*GetTemplateFunction)();
     typedef void (*DerefObjectFunction)(void*);
     typedef ActiveDOMObject* (*ToActiveDOMObjectFunction)(v8::Handle<v8::Object>);

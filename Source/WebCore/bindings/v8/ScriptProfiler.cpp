@@ -32,9 +32,11 @@
 #include "ScriptProfiler.h"
 
 #include "InspectorValues.h"
+#include "RetainedDOMInfo.h"
+#include "V8Binding.h"
+#include "V8Node.h"
 
 #include <v8-profiler.h>
-#include <V8Binding.h>
 
 namespace WebCore {
 
@@ -97,5 +99,20 @@ PassRefPtr<ScriptHeapSnapshot> ScriptProfiler::takeHeapSnapshot(const String& ti
         snapshot = v8::HeapProfiler::TakeSnapshot(v8String(title), v8::HeapSnapshot::kAggregated);
     return snapshot ? ScriptHeapSnapshot::create(snapshot) : 0;
 }
+
+static v8::RetainedObjectInfo* retainedDOMInfo(uint16_t classId, v8::Handle<v8::Value> wrapper)
+{
+    ASSERT(classId == v8DOMSubtreeClassId);
+    if (!wrapper->IsObject())
+        return 0;
+    Node* node = V8Node::toNative(wrapper.As<v8::Object>());
+    return node ? new RetainedDOMInfo(node) : 0;
+}
+
+void ScriptProfiler::initialize()
+{
+    v8::HeapProfiler::DefineWrapperClass(v8DOMSubtreeClassId, &retainedDOMInfo);
+}
+
 
 } // namespace WebCore

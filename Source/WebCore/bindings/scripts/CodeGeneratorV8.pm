@@ -2511,7 +2511,15 @@ END
     }
 
     push(@implContent, <<END);
-    ${domMapFunction}.set(impl, v8::Persistent<v8::Object>::New(wrapper));
+    v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
+END
+    if (IsNodeSubType($dataNode)) {
+        push(@implContent, <<END);
+    wrapperHandle.SetWrapperClassId(v8DOMSubtreeClassId);
+END
+    }    
+    push(@implContent, <<END);
+    ${domMapFunction}.set(impl, wrapperHandle);
 END
 
     push(@implContent, <<END);

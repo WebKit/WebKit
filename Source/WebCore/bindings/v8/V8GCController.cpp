@@ -39,6 +39,8 @@
 #include "HTMLNames.h"
 #include "MessagePort.h"
 #include "PlatformBridge.h"
+#include "RetainedDOMInfo.h"
+#include "RetainedObjectInfo.h"
 #include "V8Binding.h"
 #include "V8CSSRule.h"
 #include "V8CSSRuleList.h"
@@ -166,19 +168,88 @@ public:
     }
 };
 
+namespace {
+
+// Implements v8::RetainedObjectInfo.
+class UnspecifiedGroup : public RetainedObjectInfo {
+public:
+    explicit UnspecifiedGroup(void* object)
+        : m_object(object)
+    {
+        ASSERT(m_object);
+    }
+    
+    virtual void Dispose() { delete this; }
+  
+    virtual bool IsEquivalent(v8::RetainedObjectInfo* other)
+    {
+        ASSERT(other);
+        return other == this || static_cast<WebCore::RetainedObjectInfo*>(other)->GetEquivalenceClass() == this->GetEquivalenceClass();
+    }
+
+    virtual intptr_t GetHash()
+    {
+        return reinterpret_cast<intptr_t>(m_object);
+    }
+    
+    virtual const char* GetLabel()
+    {
+        return "Object group";
+    }
+
+    virtual intptr_t GetEquivalenceClass()
+    {
+        return reinterpret_cast<intptr_t>(m_object);
+    }
+
+private:
+    void* m_object;
+};
+
+class GroupId {
+public:
+    GroupId() : m_type(NullType), m_groupId(0) {}
+    GroupId(Node* node) : m_type(NodeType), m_node(node) {}
+    GroupId(void* other) : m_type(OtherType), m_other(other) {}
+    bool operator!() const { return m_type == NullType; }
+    uintptr_t groupId() const { return m_groupId; }
+    RetainedObjectInfo* createRetainedObjectInfo() const
+    {
+        switch (m_type) {
+        case NullType:
+            return 0;
+        case NodeType:
+            return new RetainedDOMInfo(m_node);
+        case OtherType:
+            return new UnspecifiedGroup(m_other);
+        default:
+            return 0;
+        }
+    }
+    
+private:
+    enum Type {
+        NullType,
+        NodeType,
+        OtherType
+    };
+    Type m_type;
+    union {
+        uintptr_t m_groupId;
+        Node* m_node;
+        void* m_other;
+    };
+};
+
 class GrouperItem {
 public:
-    GrouperItem(uintptr_t groupId, v8::Persistent<v8::Object> wrapper) 
-        : m_groupId(groupId)
-        , m_wrapper(wrapper) 
-        {
-        }
-
-    uintptr_t groupId() const { return m_groupId; }
+    GrouperItem(GroupId groupId, v8::Persistent<v8::Object> wrapper) : m_groupId(groupId), m_wrapper(wrapper) {}
+    uintptr_t groupId() const { return m_groupId.groupId(); }
+    RetainedObjectInfo* createRetainedObjectInfo() const { return m_groupId.createRetainedObjectInfo(); }
     v8::Persistent<v8::Object> wrapper() const { return m_wrapper; }
 
 private:
-    uintptr_t m_groupId;
+    GroupId m_groupId;
     v8::Persistent<v8::Object> m_wrapper;
 };
 
@@ -188,6 +259,8 @@ bool operator<(const GrouperItem& a, const GrouperItem& b)
 }
 
 typedef Vector<GrouperItem> GrouperList;
+    
+}
 
 // If the node is in document, put it in the ownerDocument's object group.
 //
@@ -197,10 +270,10 @@ typedef Vector<GrouperItem> GrouperList;
 //
 // Otherwise, the node is put in an object group identified by the root
 // element of the tree to which it belongs.
-static uintptr_t calculateGroupId(Node* node)
+static GroupId calculateGroupId(Node* node)
 {
     if (node->inDocument() || (node->hasTagName(HTMLNames::imgTag) && !static_cast<HTMLImageElement*>(node)->haveFiredLoadEvent()))
-        return reinterpret_cast<uintptr_t>(node->document());
+        return GroupId(node->document());
 
     Node* root = node;
     if (node->isAttributeNode()) {
@@ -208,16 +281,16 @@ static uintptr_t calculateGroupId(Node* node)
         // If the attribute has no element, no need to put it in the group,
         // because it'll always be a group of 1.
         if (!root)
-            return 0;
+            return GroupId();
     } else {
         while (Node* parent = root->parentNode())
             root = parent;
     }
 
-    return reinterpret_cast<uintptr_t>(root);
+    return GroupId(root);
 }
 
-static uintptr_t calculateGroupId(StyleBase* styleBase)
+static GroupId calculateGroupId(StyleBase* styleBase)
 {
     ASSERT(styleBase);
     StyleBase* current = styleBase;
@@ -247,17 +320,17 @@ static uintptr_t calculateGroupId(StyleBase* styleBase)
     if (styleSheet) {
         if (Node* ownerNode = styleSheet->ownerNode())
             return calculateGroupId(ownerNode);
-        return reinterpret_cast<uintptr_t>(styleSheet);
+        return GroupId(styleSheet);
     }
 
-    return reinterpret_cast<uintptr_t>(current);
+    return GroupId(current);
 }
 
 class GrouperVisitor : public DOMWrapperMap<Node>::Visitor, public DOMWrapperMap<void>::Visitor {
 public:
     void visitDOMWrapper(DOMDataStore* store, Node* node, v8::Persistent<v8::Object> wrapper)
     {
-        uintptr_t groupId = calculateGroupId(node);
+        GroupId groupId = calculateGroupId(node);
         if (!groupId)
             return;
         m_grouper.append(GrouperItem(groupId, wrapper));
@@ -269,16 +342,16 @@ public:
 
         if (typeInfo->isSubclass(&V8StyleSheetList::info)) {
             StyleSheetList* styleSheetList = static_cast<StyleSheetList*>(object);
-            uintptr_t groupId = reinterpret_cast<uintptr_t>(styleSheetList);
+            GroupId groupId(styleSheetList);
             if (Document* document = styleSheetList->document())
-                groupId = reinterpret_cast<uintptr_t>(document);
+                groupId = GroupId(document);
             m_grouper.append(GrouperItem(groupId, wrapper));
 
         } else if (typeInfo->isSubclass(&V8DOMImplementation::info)) {
             DOMImplementation* domImplementation = static_cast<DOMImplementation*>(object);
-            uintptr_t groupId = reinterpret_cast<uintptr_t>(domImplementation);
+            GroupId groupId(domImplementation);
             if (Document* document = domImplementation->ownerDocument())
-                groupId = reinterpret_cast<uintptr_t>(document);
+                groupId = GroupId(document);
             m_grouper.append(GrouperItem(groupId, wrapper));
 
         } else if (typeInfo->isSubclass(&V8StyleSheet::info) || typeInfo->isSubclass(&V8CSSRule::info)) {
@@ -287,12 +360,12 @@ public:
         } else if (typeInfo->isSubclass(&V8CSSStyleDeclaration::info)) {
             CSSStyleDeclaration* cssStyleDeclaration = static_cast<CSSStyleDeclaration*>(object);
 
-            uintptr_t groupId = calculateGroupId(cssStyleDeclaration);
+            GroupId groupId = calculateGroupId(cssStyleDeclaration);
             m_grouper.append(GrouperItem(groupId, wrapper));
 
         } else if (typeInfo->isSubclass(&V8CSSRuleList::info)) {
             CSSRuleList* cssRuleList = static_cast<CSSRuleList*>(object);
-            uintptr_t groupId = reinterpret_cast<uintptr_t>(cssRuleList);
+            GroupId groupId(cssRuleList);
             StyleList* styleList = cssRuleList->styleList();
             if (styleList)
                 groupId = calculateGroupId(styleList);
@@ -324,6 +397,8 @@ public:
                 continue;
             }
 
+            size_t rootIndex = i;
+            
             Vector<v8::Persistent<v8::Value> > group;
             group.reserveCapacity(nextKeyIndex - i);
             for (; i < nextKeyIndex; ++i) {
@@ -333,7 +408,7 @@ public:
             }
 
             if (group.size() > 1)
-                v8::V8::AddObjectGroup(&group[0], group.size());
+                v8::V8::AddObjectGroup(&group[0], group.size(), m_grouper[rootIndex].createRetainedObjectInfo());
 
             ASSERT(i == nextKeyIndex);
         }

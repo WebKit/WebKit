@@ -90,6 +90,7 @@ v8 {
         bindings/v8/DOMDataStore.cpp \
         bindings/v8/MainThreadDOMData.cpp \
         bindings/v8/NPV8Object.cpp \
+        bindings/v8/RetainedDOMInfo.cpp \
         bindings/v8/ScheduledAction.cpp \
         bindings/v8/ScopedDOMDataStore.cpp \
         bindings/v8/ScriptCachedFrameData.cpp \
@@ -1207,6 +1208,8 @@ v8 {
         bindings/v8/npruntime_priv.h \
         bindings/v8/NPV8Object.h \
         bindings/v8/OwnHandle.h \
+        bindings/v8/RetainedDOMInfo.h \
+        bindings/v8/RetainedObjectInfo.h \
         bindings/v8/ScheduledAction.h \
         bindings/v8/ScopedDOMDataStore.h \
         bindings/v8/ScriptCachedFrameData.h \

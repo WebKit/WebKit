@@ -263,11 +263,21 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
             this.searchCancelled();
 
         this.pathFinder = new WebInspector.HeapSnapshotPathFinder(snapshot, nodeIndex);
+        this._setRootChildrenForFinder();
 
         this.removeChildren();
 
         this._counter = 0;
-        this.showNext(10);
+        this.showNext(100);
+    },
+
+    refresh: function()
+    {
+        this.removeChildren();
+        this._counter = 0;
+        delete this._cancel;
+        this._setRootChildrenForFinder();
+        this.showNext(100);
     },
 
     showNext: function(pathsCount)
@@ -283,7 +293,7 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
                     if (result === null) {
                         WebInspector.PleaseWaitMessage.prototype.hide();
                         if (!this.children.length)
-                            this.appendChild(new WebInspector.DataGridNode({path:WebInspector.UIString("This object is either only accessible via hidden properties, or current path search depth isn't enough."), len:""}, false));
+                            this.appendChild(new WebInspector.DataGridNode({path:WebInspector.UIString("Can't find any paths."), len:""}, false));
                         return;
                     } else if (result !== false) {
                         if (this._prefix)
@@ -309,6 +319,19 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
             this.appendChild(new WebInspector.ShowMoreDataGridNode(this.showNext.bind(this), pathsCount));
             this.sortingChanged();
         }
+    },
+
+    _setRootChildrenForFinder: function()
+    {
+        function FilterDOMWindow(node)
+        {
+            return node.name === "DOMWindow";
+        }
+
+        if (this.snapshotView.isTracingToWindowObjects)
+            this.pathFinder.updateRoots(FilterDOMWindow);
+        else
+            this.pathFinder.updateRoots();
     },
 
     _performSorting: function(sortFunction)
@@ -375,8 +398,18 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     var retainingPathsTitleDiv = document.createElement("div");
     retainingPathsTitleDiv.className = "title";
     var retainingPathsTitle = document.createElement("span");
-    retainingPathsTitle.textContent = WebInspector.UIString("Retaining paths of the selected object");
+    retainingPathsTitle.textContent = WebInspector.UIString("Paths from the selected object");
+    this.retainingPathsRoot = document.createElement("select");
+    this.retainingPathsRoot.className = "status-bar-item";
+    this.retainingPathsRoot.addEventListener("change", this._changeRetainingPathsRoot.bind(this), false);
+    var toGCRootsTraceOption = document.createElement("option");
+    toGCRootsTraceOption.label = WebInspector.UIString("to GC roots");
+    var toWindowObjectsTraceOption = document.createElement("option");
+    toWindowObjectsTraceOption.label = WebInspector.UIString("to window objects");
+    this.retainingPathsRoot.appendChild(toGCRootsTraceOption);
+    this.retainingPathsRoot.appendChild(toWindowObjectsTraceOption);
     retainingPathsTitleDiv.appendChild(retainingPathsTitle);
+    retainingPathsTitleDiv.appendChild(this.retainingPathsRoot);
     retainmentView.element.appendChild(retainingPathsTitleDiv);
     this.retainmentDataGrid = new WebInspector.HeapSnapshotRetainingPathsList();
     retainmentView.element.appendChild(this.retainmentDataGrid.element);
@@ -793,6 +826,18 @@ WebInspector.DetailedHeapshotView.prototype = {
         // Then perform the search again the with same query and callback.
         this._searchFinishedCallback(this, -this._searchResults.length);
         this.performSearch(this.currentQuery, this._searchFinishedCallback);
+    },
+
+    _changeRetainingPathsRoot: function(event)
+    {
+        if (!event)
+            return;
+        this.retainmentDataGrid.refresh();
+    },
+
+    get isTracingToWindowObjects()
+    {
+        return this.retainingPathsRoot.selectedIndex === 1;
     },
 
     get _isShowingAsPercent()

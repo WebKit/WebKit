@@ -212,6 +212,10 @@ WebInspector.HeapSnapshotNode.prototype = {
             return WebInspector.UIString("(system)");
         case "object":
             return this.name;
+        case "native": {
+            var entitiesCountPos = this.name.indexOf("/");
+            return entitiesCountPos !== -1 ? this.name.substring(0, entitiesCountPos).trimRight() : this.name;
+        }
         case "code":
             return WebInspector.UIString("(compiled code)");
         default:
@@ -525,8 +529,8 @@ WebInspector.HeapSnapshot.prototype = {
         for (var iter = this.allNodes; iter.hasNext(); iter.next()) {
             var node = iter.node;
             var className = node.className;
-            var nameMatters = node.type === "object";
-            if (node.selfSize === 0)
+            var nameMatters = node.type === "object" || node.type === "native";
+            if (node.type !== "native" && node.selfSize === 0)
                 continue;
             if (!(className in this._aggregates))
                 this._aggregates[className] = { count: 0, self: 0, maxRet: 0, type: node.type, name: nameMatters ? node.name : null, idxs: [] };
@@ -842,11 +846,18 @@ WebInspector.HeapSnapshotPathFinder.prototype = {
         return false;
     },
 
-    _fillRootChildren: function()
+    updateRoots: function(filter)
+    {
+        this._rootChildren = this._fillRootChildren(filter);  
+    },
+
+    _fillRootChildren: function(filter)
     {
         var result = [];
-        for (var iter = this._snapshot.rootNode.edges; iter.hasNext(); iter.next())
-            result[iter.edge.nodeIndex] = true;
+        for (var iter = this._snapshot.rootNode.edges; iter.hasNext(); iter.next()) {
+            if (!filter || filter(iter.edge.node))
+                result[iter.edge.nodeIndex] = true;
+        }
         return result;
     },
 

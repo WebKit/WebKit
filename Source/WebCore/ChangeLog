@@ -1,3 +1,56 @@
+2011-03-16  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] Report object groups and single DOM-related objects
+        to the new heap profiler.
+        https://bugs.webkit.org/show_bug.cgi?id=53659
+
+        * Android.v8bindings.mk:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/RetainedDOMInfo.cpp: Added.
+        (WebCore::RetainedDOMInfo::RetainedDOMInfo):
+        * bindings/v8/RetainedDOMInfo.h: Added.
+        * bindings/v8/RetainedObjectInfo.h: Added.
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::retainedDOMInfo):
+        (WebCore::ScriptProfiler::initialize):
+        * bindings/v8/ScriptProfiler.h:
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initContextIfNeeded):
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::GroupId::GrouperItem::GrouperItem):
+        (WebCore::GroupId::GrouperItem::groupId):
+        (WebCore::GroupId::GrouperItem::createRetainedObjectInfo):
+        (WebCore::calculateGroupId):
+        (WebCore::GrouperVisitor::visitDOMWrapper):
+        (WebCore::GrouperVisitor::applyGrouping):
+        * bindings/v8/WrapperTypeInfo.h:
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotConstructorNode):
+        (WebInspector.HeapSnapshotConstructorNode.prototype._createNodesProvider):
+        (WebInspector.HeapSnapshotDiffNode):
+        (WebInspector.HeapSnapshotDiffNode.prototype._createNodesProvider.createProvider):
+        (WebInspector.HeapSnapshotDiffNode.prototype._createNodesProvider):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.setDataSource):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.refresh):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.showNext.startSearching):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.showNext):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype._setRootChildrenForFinder):
+        (WebInspector.DetailedHeapshotView.prototype._changeRetainingPathsRoot):
+        (WebInspector.DetailedHeapshotView.prototype.get isTracingToWindowObjects):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotNode.prototype.get className):
+        (WebInspector.HeapSnapshot.prototype._buildAggregates):
+        (WebInspector.HeapSnapshotPathFinder.prototype.updateRoots):
+        (WebInspector.HeapSnapshotPathFinder.prototype._fillRootChildren):
+        * inspector/front-end/heapProfiler.css:
+        (.detailed-heapshot-view .retaining-paths-view .title > span):
+        (.detailed-heapshot-view .retaining-paths-to-windows):
+
 2011-03-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

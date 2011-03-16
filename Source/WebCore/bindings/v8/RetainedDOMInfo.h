@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2010, Google Inc. All rights reserved.
- *
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- *
+ * 
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,38 +28,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptProfiler_h
-#define ScriptProfiler_h
+#ifndef RetainedDOMInfo_h
+#define RetainedDOMInfo_h
 
-#include "PlatformString.h"
-#include "ScriptHeapSnapshot.h"
-#include "ScriptProfile.h"
-#include "ScriptState.h"
-
+#include "RetainedObjectInfo.h"
 
 namespace WebCore {
 
-class InspectorObject;
+class Node;
 
-class ScriptProfiler {
-    WTF_MAKE_NONCOPYABLE(ScriptProfiler);
+// Implements v8::RetainedObjectInfo.
+class RetainedDOMInfo : public RetainedObjectInfo {
 public:
-    class HeapSnapshotProgress {
-    public:
-        virtual ~HeapSnapshotProgress() { }
-        virtual void Start(int totalWork) = 0;
-        virtual void Worked(int workDone) = 0;
-        virtual void Done() = 0;
-        virtual bool isCanceled() = 0;
-    };
-
-    static void collectGarbage();
-    static void start(ScriptState* state, const String& title);
-    static PassRefPtr<ScriptProfile> stop(ScriptState* state, const String& title);
-    static PassRefPtr<ScriptHeapSnapshot> takeHeapSnapshot(const String& title, HeapSnapshotProgress*);
-    static void initialize();
+    explicit RetainedDOMInfo(Node* root);
+    virtual ~RetainedDOMInfo();
+    virtual void Dispose();
+    virtual bool IsEquivalent(v8::RetainedObjectInfo* other);
+    virtual intptr_t GetHash();
+    virtual const char* GetLabel();
+    virtual intptr_t GetElementCount();
+    virtual intptr_t GetEquivalenceClass();
+    
+private:
+    // V8 guarantees to keep RetainedObjectInfos alive only during a GC or heap snapshotting round, when renderer
+    // doesn't get control. This allows us to use raw pointers.
+    Node* m_root;
 };
 
 } // namespace WebCore
 
-#endif // ScriptProfiler_h
+#endif // RetainedDOMInfo_h

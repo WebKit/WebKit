@@ -45,6 +45,7 @@ LOCAL_SRC_FILES += \
 	bindings/v8/IDBBindingUtilities.cpp \
 	bindings/v8/MainThreadDOMData.cpp \
 	bindings/v8/NPV8Object.cpp \
+	bindings/v8/RetainedDOMInfo.cpp \
 	bindings/v8/RuntimeEnabledFeatures.cpp \
 	bindings/v8/ScheduledAction.cpp \
 	bindings/v8/ScopedDOMDataStore.cpp \

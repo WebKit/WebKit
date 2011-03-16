@@ -43,6 +43,7 @@
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 #include "ScriptController.h"
+#include "ScriptProfiler.h"
 #include "StorageNamespace.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
@@ -297,6 +298,8 @@ bool V8DOMWindowShell::initContextIfNeeded()
 
         v8::V8::SetFailedAccessCheckCallbackFunction(reportUnsafeJavaScriptAccess);
 
+        ScriptProfiler::initialize();
+        
         isV8Initialized = true;
     }
 
