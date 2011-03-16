@@ -1,3 +1,12 @@
+2011-03-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Update Qt specific expected results after r80846.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
 2011-03-15  David Levin  <levin@chromium.org>
 
         Update leopard specific baselines for tests (editing, css) changes due to r80755.
