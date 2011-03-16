@@ -72,9 +72,9 @@ namespace JSC {
         virtual ~JSCell();
 
     public:
-        static PassRefPtr<Structure> createDummyStructure()
+        static PassRefPtr<Structure> createDummyStructure(JSGlobalData& globalData)
         {
-            return Structure::create(jsNull(), TypeInfo(UnspecifiedType), AnonymousSlotCount, 0);
+            return Structure::create(globalData, jsNull(), TypeInfo(UnspecifiedType), AnonymousSlotCount, 0);
         }
 
         // Querying the type.

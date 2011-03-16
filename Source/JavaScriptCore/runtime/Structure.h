@@ -57,9 +57,15 @@ namespace JSC {
     class Structure : public RefCounted<Structure> {
     public:
         friend class StructureTransitionTable;
-        static PassRefPtr<Structure> create(JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
+        static PassRefPtr<Structure> create(JSGlobalData&, JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
         {
             return adoptRef(new Structure(prototype, typeInfo, anonymousSlotCount, classInfo));
+        }
+
+        enum VPtrStealingHackType { VPtrStealingHack };
+        static PassRefPtr<Structure> create(VPtrStealingHackType, const ClassInfo* classInfo)
+        {
+            return adoptRef(new Structure(jsNull(), TypeInfo(UnspecifiedType), 0, classInfo));
         }
 
         static void startIgnoringLeaks();

@@ -65,7 +65,7 @@ namespace JSC {
             return m_numParametersForCall == NUM_PARAMETERS_IS_HOST;
         }
 
-        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, 0); }
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, 0); }
 
     protected:
         static const unsigned StructureFlags = 0;
@@ -237,7 +237,7 @@ namespace JSC {
             return generatedJITCodeForCall();
         }
 #endif
-        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, 0); }
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, 0); }
 
     private:
         static const unsigned StructureFlags = OverridesMarkChildren | ScriptExecutable::StructureFlags;
@@ -282,7 +282,7 @@ namespace JSC {
         }
 #endif
         
-        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, 0); }
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, 0); }
 
     private:
         static const unsigned StructureFlags = OverridesMarkChildren | ScriptExecutable::StructureFlags;
@@ -372,7 +372,7 @@ namespace JSC {
         void discardCode();
         void markChildren(MarkStack&);
         static FunctionExecutable* fromGlobalCode(const Identifier&, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
-        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, 0); }
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, 0); }
 
     private:
         FunctionExecutable(JSGlobalData*, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool, int firstLine, int lastLine);

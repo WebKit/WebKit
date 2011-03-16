@@ -890,7 +890,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
         QByteArray qtByteArray = variant.value<QByteArray>();
         WTF::RefPtr<WTF::ByteArray> wtfByteArray = WTF::ByteArray::create(qtByteArray.length());
         memcpy(wtfByteArray->data(), qtByteArray.constData(), qtByteArray.length());
-        return new (exec) JSC::JSByteArray(exec, JSC::JSByteArray::createStructure(jsNull()), wtfByteArray.get());
+        return new (exec) JSC::JSByteArray(exec, JSC::JSByteArray::createStructure(exec->globalData(), jsNull()), wtfByteArray.get());
     }
 
     if (type == QMetaType::QObjectStar || type == QMetaType::QWidgetStar) {
@@ -1828,7 +1828,7 @@ void QtConnectionObject::execute(void **argv)
                         fimp = static_cast<JSFunction*>(m_funcObject.get());
 
                         JSObject* qt_sender = QtInstance::getQtInstance(sender(), ro, QScriptEngine::QtOwnership)->createRuntimeObject(exec);
-                        JSObject* wrapper = constructEmptyObject(exec, createEmptyObjectStructure(jsNull()));
+                        JSObject* wrapper = constructEmptyObject(exec, createEmptyObjectStructure(exec->globalData(), jsNull()));
                         PutPropertySlot slot;
                         wrapper->put(exec, Identifier(exec, "__qt_sender__"), qt_sender, slot);
                         oldsc = fimp->scope();

@@ -39,9 +39,9 @@ public:
     JSObjectCallAsConstructorCallback callback() const { return m_callback; }
     static const ClassInfo s_info;
 
-    static PassRefPtr<Structure> createStructure(JSValue proto) 
+    static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) 
     {
-        return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
 
 protected:

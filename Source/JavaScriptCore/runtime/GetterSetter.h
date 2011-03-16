@@ -47,9 +47,9 @@ namespace JSC {
         void setGetter(JSGlobalData& globalData, JSObject* getter) { m_getter.set(globalData, this, getter); }
         JSObject* setter() const { return m_setter.get(); }
         void setSetter(JSGlobalData& globalData, JSObject* setter) { m_setter.set(globalData, this, setter); }
-        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(GetterSetterType, OverridesMarkChildren), AnonymousSlotCount, 0);
+            return Structure::create(globalData, prototype, TypeInfo(GetterSetterType, OverridesMarkChildren), AnonymousSlotCount, 0);
         }
     private:
         virtual bool isGetterSetter() const;

@@ -175,64 +175,64 @@ void JSGlobalObject::reset(JSValue prototype)
 
     // Prototypes
 
-    m_functionPrototype.set(exec->globalData(), this, new (exec) FunctionPrototype(exec, this, FunctionPrototype::createStructure(jsNull()))); // The real prototype will be set once ObjectPrototype is created.
-    m_functionStructure = JSFunction::createStructure(m_functionPrototype.get());
-    m_internalFunctionStructure = InternalFunction::createStructure(m_functionPrototype.get());
+    m_functionPrototype.set(exec->globalData(), this, new (exec) FunctionPrototype(exec, this, FunctionPrototype::createStructure(exec->globalData(), jsNull()))); // The real prototype will be set once ObjectPrototype is created.
+    m_functionStructure = JSFunction::createStructure(exec->globalData(), m_functionPrototype.get());
+    m_internalFunctionStructure = InternalFunction::createStructure(exec->globalData(), m_functionPrototype.get());
     JSFunction* callFunction = 0;
     JSFunction* applyFunction = 0;
     m_functionPrototype->addFunctionProperties(exec, this, m_functionStructure.get(), &callFunction, &applyFunction);
     m_callFunction.set(exec->globalData(), this, callFunction);
     m_applyFunction.set(exec->globalData(), this, applyFunction);
-    m_objectPrototype.set(exec->globalData(), this, new (exec) ObjectPrototype(exec, this, ObjectPrototype::createStructure(jsNull()), m_functionStructure.get()));
+    m_objectPrototype.set(exec->globalData(), this, new (exec) ObjectPrototype(exec, this, ObjectPrototype::createStructure(exec->globalData(), jsNull()), m_functionStructure.get()));
     m_functionPrototype->structure()->setPrototypeWithoutTransition(m_objectPrototype.get());
 
-    m_emptyObjectStructure = m_objectPrototype->inheritorID();
+    m_emptyObjectStructure = m_objectPrototype->inheritorID(exec->globalData());
 
-    m_callbackFunctionStructure = JSCallbackFunction::createStructure(m_functionPrototype.get());
-    m_argumentsStructure = Arguments::createStructure(m_objectPrototype.get());
-    m_callbackConstructorStructure = JSCallbackConstructor::createStructure(m_objectPrototype.get());
-    m_callbackObjectStructure = JSCallbackObject<JSObjectWithGlobalObject>::createStructure(m_objectPrototype.get());
+    m_callbackFunctionStructure = JSCallbackFunction::createStructure(exec->globalData(), m_functionPrototype.get());
+    m_argumentsStructure = Arguments::createStructure(exec->globalData(), m_objectPrototype.get());
+    m_callbackConstructorStructure = JSCallbackConstructor::createStructure(exec->globalData(), m_objectPrototype.get());
+    m_callbackObjectStructure = JSCallbackObject<JSObjectWithGlobalObject>::createStructure(exec->globalData(), m_objectPrototype.get());
 
-    m_arrayPrototype.set(exec->globalData(), this, new (exec) ArrayPrototype(this, ArrayPrototype::createStructure(m_objectPrototype.get())));
-    m_arrayStructure = JSArray::createStructure(m_arrayPrototype.get());
-    m_regExpMatchesArrayStructure = RegExpMatchesArray::createStructure(m_arrayPrototype.get());
+    m_arrayPrototype.set(exec->globalData(), this, new (exec) ArrayPrototype(this, ArrayPrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
+    m_arrayStructure = JSArray::createStructure(exec->globalData(), m_arrayPrototype.get());
+    m_regExpMatchesArrayStructure = RegExpMatchesArray::createStructure(exec->globalData(), m_arrayPrototype.get());
 
-    m_stringPrototype.set(exec->globalData(), this, new (exec) StringPrototype(exec, this, StringPrototype::createStructure(m_objectPrototype.get())));
-    m_stringObjectStructure = StringObject::createStructure(m_stringPrototype.get());
+    m_stringPrototype.set(exec->globalData(), this, new (exec) StringPrototype(exec, this, StringPrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
+    m_stringObjectStructure = StringObject::createStructure(exec->globalData(), m_stringPrototype.get());
 
-    m_booleanPrototype.set(exec->globalData(), this, new (exec) BooleanPrototype(exec, this, BooleanPrototype::createStructure(m_objectPrototype.get()), m_functionStructure.get()));
-    m_booleanObjectStructure = BooleanObject::createStructure(m_booleanPrototype.get());
+    m_booleanPrototype.set(exec->globalData(), this, new (exec) BooleanPrototype(exec, this, BooleanPrototype::createStructure(exec->globalData(), m_objectPrototype.get()), m_functionStructure.get()));
+    m_booleanObjectStructure = BooleanObject::createStructure(exec->globalData(), m_booleanPrototype.get());
 
-    m_numberPrototype.set(exec->globalData(), this, new (exec) NumberPrototype(exec, this, NumberPrototype::createStructure(m_objectPrototype.get()), m_functionStructure.get()));
-    m_numberObjectStructure = NumberObject::createStructure(m_numberPrototype.get());
+    m_numberPrototype.set(exec->globalData(), this, new (exec) NumberPrototype(exec, this, NumberPrototype::createStructure(exec->globalData(), m_objectPrototype.get()), m_functionStructure.get()));
+    m_numberObjectStructure = NumberObject::createStructure(exec->globalData(), m_numberPrototype.get());
 
-    m_datePrototype.set(exec->globalData(), this, new (exec) DatePrototype(exec, this, DatePrototype::createStructure(m_objectPrototype.get())));
-    m_dateStructure = DateInstance::createStructure(m_datePrototype.get());
+    m_datePrototype.set(exec->globalData(), this, new (exec) DatePrototype(exec, this, DatePrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
+    m_dateStructure = DateInstance::createStructure(exec->globalData(), m_datePrototype.get());
 
-    m_regExpPrototype.set(exec->globalData(), this, new (exec) RegExpPrototype(exec, this, RegExpPrototype::createStructure(m_objectPrototype.get()), m_functionStructure.get()));
-    m_regExpStructure = RegExpObject::createStructure(m_regExpPrototype.get());
+    m_regExpPrototype.set(exec->globalData(), this, new (exec) RegExpPrototype(exec, this, RegExpPrototype::createStructure(exec->globalData(), m_objectPrototype.get()), m_functionStructure.get()));
+    m_regExpStructure = RegExpObject::createStructure(exec->globalData(), m_regExpPrototype.get());
 
     m_methodCallDummy.set(exec->globalData(), this, constructEmptyObject(exec));
 
-    ErrorPrototype* errorPrototype = new (exec) ErrorPrototype(exec, this, ErrorPrototype::createStructure(m_objectPrototype.get()), m_functionStructure.get());
-    m_errorStructure = ErrorInstance::createStructure(errorPrototype);
+    ErrorPrototype* errorPrototype = new (exec) ErrorPrototype(exec, this, ErrorPrototype::createStructure(exec->globalData(), m_objectPrototype.get()), m_functionStructure.get());
+    m_errorStructure = ErrorInstance::createStructure(exec->globalData(), errorPrototype);
 
     // Constructors
 
-    JSCell* objectConstructor = new (exec) ObjectConstructor(exec, this, ObjectConstructor::createStructure(m_functionPrototype.get()), m_objectPrototype.get());
-    JSCell* functionConstructor = new (exec) FunctionConstructor(exec, this, FunctionConstructor::createStructure(m_functionPrototype.get()), m_functionPrototype.get());
-    JSCell* arrayConstructor = new (exec) ArrayConstructor(exec, this, ArrayConstructor::createStructure(m_functionPrototype.get()), m_arrayPrototype.get(), m_functionStructure.get());
-    JSCell* stringConstructor = new (exec) StringConstructor(exec, this, StringConstructor::createStructure(m_functionPrototype.get()), m_functionStructure.get(), m_stringPrototype.get());
-    JSCell* booleanConstructor = new (exec) BooleanConstructor(exec, this, BooleanConstructor::createStructure(m_functionPrototype.get()), m_booleanPrototype.get());
-    JSCell* numberConstructor = new (exec) NumberConstructor(exec, this, NumberConstructor::createStructure(m_functionPrototype.get()), m_numberPrototype.get());
-    JSCell* dateConstructor = new (exec) DateConstructor(exec, this, DateConstructor::createStructure(m_functionPrototype.get()), m_functionStructure.get(), m_datePrototype.get());
+    JSCell* objectConstructor = new (exec) ObjectConstructor(exec, this, ObjectConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_objectPrototype.get());
+    JSCell* functionConstructor = new (exec) FunctionConstructor(exec, this, FunctionConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_functionPrototype.get());
+    JSCell* arrayConstructor = new (exec) ArrayConstructor(exec, this, ArrayConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_arrayPrototype.get(), m_functionStructure.get());
+    JSCell* stringConstructor = new (exec) StringConstructor(exec, this, StringConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_functionStructure.get(), m_stringPrototype.get());
+    JSCell* booleanConstructor = new (exec) BooleanConstructor(exec, this, BooleanConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_booleanPrototype.get());
+    JSCell* numberConstructor = new (exec) NumberConstructor(exec, this, NumberConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_numberPrototype.get());
+    JSCell* dateConstructor = new (exec) DateConstructor(exec, this, DateConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_functionStructure.get(), m_datePrototype.get());
 
-    m_regExpConstructor.set(exec->globalData(), this, new (exec) RegExpConstructor(exec, this, RegExpConstructor::createStructure(m_functionPrototype.get()), m_regExpPrototype.get()));
+    m_regExpConstructor.set(exec->globalData(), this, new (exec) RegExpConstructor(exec, this, RegExpConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_regExpPrototype.get()));
 
-    m_errorConstructor.set(exec->globalData(), this, new (exec) ErrorConstructor(exec, this, ErrorConstructor::createStructure(m_functionPrototype.get()), errorPrototype));
+    m_errorConstructor.set(exec->globalData(), this, new (exec) ErrorConstructor(exec, this, ErrorConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), errorPrototype));
 
-    RefPtr<Structure> nativeErrorPrototypeStructure = NativeErrorPrototype::createStructure(errorPrototype);
-    RefPtr<Structure> nativeErrorStructure = NativeErrorConstructor::createStructure(m_functionPrototype.get());
+    RefPtr<Structure> nativeErrorPrototypeStructure = NativeErrorPrototype::createStructure(exec->globalData(), errorPrototype);
+    RefPtr<Structure> nativeErrorStructure = NativeErrorConstructor::createStructure(exec->globalData(), m_functionPrototype.get());
     m_evalErrorConstructor.set(exec->globalData(), this, new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "EvalError"));
     m_rangeErrorConstructor.set(exec->globalData(), this, new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "RangeError"));
     m_referenceErrorConstructor.set(exec->globalData(), this, new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "ReferenceError"));
@@ -272,11 +272,11 @@ void JSGlobalObject::reset(JSValue prototype)
 
     // Set global values.
     GlobalPropertyInfo staticGlobals[] = {
-        GlobalPropertyInfo(Identifier(exec, "Math"), new (exec) MathObject(exec, this, MathObject::createStructure(m_objectPrototype.get())), DontEnum | DontDelete),
+        GlobalPropertyInfo(Identifier(exec, "Math"), new (exec) MathObject(exec, this, MathObject::createStructure(exec->globalData(), m_objectPrototype.get())), DontEnum | DontDelete),
         GlobalPropertyInfo(Identifier(exec, "NaN"), jsNaN(), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(Identifier(exec, "Infinity"), jsNumber(Inf), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(Identifier(exec, "undefined"), jsUndefined(), DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(Identifier(exec, "JSON"), new (exec) JSONObject(this, JSONObject::createStructure(m_objectPrototype.get())), DontEnum | DontDelete)
+        GlobalPropertyInfo(Identifier(exec, "JSON"), new (exec) JSONObject(this, JSONObject::createStructure(exec->globalData(), m_objectPrototype.get())), DontEnum | DontDelete)
     };
 
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));

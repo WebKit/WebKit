@@ -30,9 +30,9 @@ namespace WebCore {
     public:
         JSOptionConstructor(JSC::ExecState*, JSDOMGlobalObject*);
 
-        static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
+        static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
         {
-            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
         static const JSC::ClassInfo s_info;

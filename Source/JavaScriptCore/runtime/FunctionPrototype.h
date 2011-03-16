@@ -30,9 +30,9 @@ namespace JSC {
         FunctionPrototype(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>);
         void addFunctionProperties(ExecState*, JSGlobalObject*, Structure* functionStructure, JSFunction** callFunction, JSFunction** applyFunction);
 
-        static PassRefPtr<Structure> createStructure(JSValue proto)
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto)
         {
-            return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     private:

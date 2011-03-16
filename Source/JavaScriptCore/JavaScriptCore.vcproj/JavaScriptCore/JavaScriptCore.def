@@ -102,14 +102,13 @@ EXPORTS
     ?create@RegExp@JSC@@SA?AV?$PassRefPtr@VRegExp@JSC@@@WTF@@PAVJSGlobalData@2@ABVUString@2@W4RegExpFlags@2@@Z
     ?createEmptyString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@@Z
     ?createError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
-    ?createInheritorID@JSObject@JSC@@AAEPAVStructure@2@XZ
     ?createInterruptedExecutionException@JSC@@YAPAVJSObject@1@PAVJSGlobalData@1@@Z
     ?createLeaked@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@@Z
     ?createRangeError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createReferenceError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createSingleCharacterString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@E@Z
     ?createStackOverflowError@JSC@@YAPAVJSObject@1@PAVExecState@1@@Z
-    ?createStructure@JSByteArray@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@VJSValue@2@PBUClassInfo@2@@Z
+    ?createStructure@JSByteArray@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@AAVJSGlobalData@2@VJSValue@2@PBUClassInfo@2@@Z
     ?createSyntaxError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createTable@HashTable@JSC@@ABEXPAVJSGlobalData@2@@Z
     ?createThread@WTF@@YAIP6APAXPAX@Z0@Z

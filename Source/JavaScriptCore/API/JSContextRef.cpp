@@ -93,11 +93,11 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
 #endif
 
     if (!globalObjectClass) {
-        JSGlobalObject* globalObject = new (globalData.get()) JSGlobalObject;
+        JSGlobalObject* globalObject = new (globalData.get()) JSGlobalObject(*globalData);
         return JSGlobalContextRetain(toGlobalRef(globalObject->globalExec()));
     }
 
-    JSGlobalObject* globalObject = new (globalData.get()) JSCallbackObject<JSGlobalObject>(globalObjectClass, JSCallbackObject<JSGlobalObject>::createStructure(jsNull()));
+    JSGlobalObject* globalObject = new (globalData.get()) JSCallbackObject<JSGlobalObject>(globalObjectClass, JSCallbackObject<JSGlobalObject>::createStructure(*globalData, jsNull()));
     ExecState* exec = globalObject->globalExec();
     JSValue prototype = globalObjectClass->prototype(exec);
     if (!prototype)

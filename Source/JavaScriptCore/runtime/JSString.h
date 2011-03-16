@@ -349,7 +349,7 @@ namespace JSC {
 
         JSValue replaceCharacter(ExecState*, UChar, const UString& replacement);
 
-        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(StringType, OverridesGetOwnPropertySlot | NeedsThisConversion), AnonymousSlotCount, 0); }
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot | NeedsThisConversion), AnonymousSlotCount, 0); }
 
     private:
         enum VPtrStealingHackType { VPtrStealingHack };

@@ -1,3 +1,21 @@
+2011-03-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make Structure creation require a JSGlobalData
+        https://bugs.webkit.org/show_bug.cgi?id=56438
+
+        Mechanical change to make all Structure creation use a JSGlobalData&.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        (WebKit::JSNPMethod::JSNPMethod):
+        * WebProcess/Plugins/Netscape/JSNPMethod.h:
+        (WebKit::JSNPMethod::createStructure):
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::JSNPObject):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+        (WebKit::JSNPObject::createStructure):
+
 2011-03-16  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

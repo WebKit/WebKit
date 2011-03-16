@@ -746,9 +746,9 @@ sub GenerateHeader
         $structureFlags{"JSC::NeedsThisConversion"} = 1;
     }
     push(@headerContent,
-        "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
+        "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)\n" .
         "    {\n" .
-        "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n" .
+        "        return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n" .
         "    }\n\n");
 
     # markChildren function
@@ -958,9 +958,9 @@ sub GenerateHeader
         $structureFlags{"JSC::OverridesMarkChildren"} = 1;
     }
     push(@headerContent,
-        "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
+        "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)\n" .
         "    {\n" .
-        "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n" .
+        "        return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n" .
         "    }\n");
     if ($dataNode->extendedAttributes->{"DelegatingPrototypePutFunction"}) {
         push(@headerContent, "    virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
@@ -1442,9 +1442,9 @@ sub GenerateImplementation
         push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
-            push(@implContent, "    return new (exec) ${className}Prototype(globalObject, ${className}Prototype::createStructure(${parentClassName}Prototype::self(exec, globalObject)));\n");
+            push(@implContent, "    return new (exec) ${className}Prototype(globalObject, ${className}Prototype::createStructure(exec->globalData(), ${parentClassName}Prototype::self(exec, globalObject)));\n");
         } else {
-            push(@implContent, "    return new (exec) ${className}Prototype(globalObject, ${className}Prototype::createStructure(globalObject->objectPrototype()));\n");
+            push(@implContent, "    return new (exec) ${className}Prototype(globalObject, ${className}Prototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));\n");
         }
         push(@implContent, "}\n\n");
     }
@@ -2873,9 +2873,9 @@ sub GenerateConstructorDeclaration
     push(@$outputArray, "    virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);\n");
     push(@$outputArray, "    static const JSC::ClassInfo s_info;\n");
 
-    push(@$outputArray, "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n");
+    push(@$outputArray, "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)\n");
     push(@$outputArray, "    {\n");
-    push(@$outputArray, "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n");
+    push(@$outputArray, "        return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n");
     push(@$outputArray, "    }\n");
 
     push(@$outputArray, "protected:\n");
@@ -2907,7 +2907,7 @@ sub GenerateConstructorDefinition
     push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", &DOMConstructorObject::s_info, &${constructorClassName}Table, 0 };\n\n");
 
     push(@$outputArray, "${constructorClassName}::${constructorClassName}(ExecState* exec, JSDOMGlobalObject* globalObject)\n");
-    push(@$outputArray, "    : DOMConstructorObject(${constructorClassName}::createStructure(globalObject->objectPrototype()), globalObject)\n");
+    push(@$outputArray, "    : DOMConstructorObject(${constructorClassName}::createStructure(globalObject->globalData(), globalObject->objectPrototype()), globalObject)\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "    ASSERT(inherits(&s_info));\n");
     if ($interfaceName eq "DOMWindow") {

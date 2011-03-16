@@ -113,8 +113,8 @@ namespace JSC {
     public:
         void* operator new(size_t, JSGlobalData*);
         
-        explicit JSGlobalObject()
-            : JSVariableObject(JSGlobalObject::createStructure(jsNull()), &m_symbolTable, 0)
+        explicit JSGlobalObject(JSGlobalData& globalData)
+            : JSVariableObject(JSGlobalObject::createStructure(globalData, jsNull()), &m_symbolTable, 0)
             , m_registerArraySize(0)
             , m_globalScopeChain()
             , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
@@ -238,9 +238,9 @@ namespace JSC {
 
         JSGlobalData& globalData() const { return *m_globalData.get(); }
 
-        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
         void registerWeakMap(OpaqueJSWeakObjectMap* map)

@@ -1,3 +1,131 @@
+2011-03-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make Structure creation require a JSGlobalData
+        https://bugs.webkit.org/show_bug.cgi?id=56438
+
+        Mechanical change to make Structure::create require JSGlobalData&, and
+        require all users to provide the globalData.
+
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::createStructure):
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::createStructure):
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::createStructure):
+        * API/JSContextRef.cpp:
+        * JavaScriptCore.exp:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::DebuggerActivation):
+        * debugger/DebuggerActivation.h:
+        (JSC::DebuggerActivation::createStructure):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jsc.cpp:
+        (GlobalObject::GlobalObject):
+        (functionRun):
+        (jscmain):
+        * runtime/Arguments.h:
+        (JSC::Arguments::createStructure):
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::createStructure):
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::createStructure):
+        * runtime/DateInstance.h:
+        (JSC::DateInstance::createStructure):
+        * runtime/DatePrototype.h:
+        (JSC::DatePrototype::createStructure):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::createStructure):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::createStructure):
+        (JSC::EvalExecutable::createStructure):
+        (JSC::ProgramExecutable::createStructure):
+        (JSC::FunctionExecutable::createStructure):
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::createStructure):
+        * runtime/GetterSetter.h:
+        (JSC::GetterSetter::createStructure):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::createStructure):
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::createStructure):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::createStructure):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        * runtime/JSArray.h:
+        (JSC::JSArray::createStructure):
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::createStructure):
+        * runtime/JSByteArray.h:
+        (JSC::JSByteArray::JSByteArray):
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSCell::createDummyStructure):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::createStructure):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::storeVPtrs):
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::createStructure):
+        * runtime/JSNotAnObject.h:
+        (JSC::JSNotAnObject::createStructure):
+        * runtime/JSONObject.h:
+        (JSC::JSONObject::createStructure):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::createInheritorID):
+        * runtime/JSObject.h:
+        (JSC::JSObject::createStructure):
+        (JSC::JSNonFinalObject::createStructure):
+        (JSC::JSFinalObject::createStructure):
+        (JSC::createEmptyObjectStructure):
+        (JSC::JSObject::inheritorID):
+        * runtime/JSObjectWithGlobalObject.h:
+        (JSC::JSObjectWithGlobalObject::createStructure):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::createStructure):
+        * runtime/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::createStructure):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::createStructure):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::createStructure):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::createStructure):
+        * runtime/JSZombie.h:
+        (JSC::JSZombie::createStructure):
+        * runtime/MathObject.h:
+        (JSC::MathObject::createStructure):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::NativeErrorConstructor):
+        * runtime/NativeErrorConstructor.h:
+        (JSC::NativeErrorConstructor::createStructure):
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::createStructure):
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::createStructure):
+        * runtime/ObjectConstructor.h:
+        (JSC::ObjectConstructor::createStructure):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::createStructure):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::createStructure):
+        * runtime/ScopeChain.h:
+        (JSC::ScopeChainNode::createStructure):
+        * runtime/StringObject.h:
+        (JSC::StringObject::createStructure):
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+        (JSC::StringObjectThatMasqueradesAsUndefined::createStructure):
+        * runtime/StringPrototype.h:
+        (JSC::StringPrototype::createStructure):
+        * runtime/Structure.h:
+        (JSC::Structure::create):
+
 2011-03-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

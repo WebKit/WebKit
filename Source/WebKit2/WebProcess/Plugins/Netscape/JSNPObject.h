@@ -55,9 +55,9 @@ public:
 private:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | JSObject::StructureFlags;
     
-    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
+    static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
 
     virtual JSC::CallType getCallData(JSC::CallData&);

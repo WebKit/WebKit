@@ -103,9 +103,9 @@ public:
         return globalObject->objectPrototype();
     }
 
-    static PassRefPtr<Structure> createStructure(JSValue prototype)
+    static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
     {
-        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
 
 private:

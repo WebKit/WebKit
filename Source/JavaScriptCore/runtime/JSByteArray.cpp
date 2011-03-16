@@ -50,9 +50,9 @@ JSByteArray::~JSByteArray()
 #endif
 
 
-PassRefPtr<Structure> JSByteArray::createStructure(JSValue prototype, const JSC::ClassInfo* classInfo)
+PassRefPtr<Structure> JSByteArray::createStructure(JSGlobalData& globalData, JSValue prototype, const JSC::ClassInfo* classInfo)
 {
-    return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, classInfo);
+    return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, classInfo);
 }
 
 bool JSByteArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

@@ -141,14 +141,14 @@ long StopWatch::getElapsedMS()
 
 class GlobalObject : public JSGlobalObject {
 public:
-    GlobalObject(const Vector<UString>& arguments);
+    GlobalObject(JSGlobalData&, const Vector<UString>& arguments);
     virtual UString className() const { return "global"; }
 };
 COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false);
 ASSERT_CLASS_FITS_IN_CELL(GlobalObject);
 
-GlobalObject::GlobalObject(const Vector<UString>& arguments)
-    : JSGlobalObject()
+GlobalObject::GlobalObject(JSGlobalData& globalData, const Vector<UString>& arguments)
+    : JSGlobalObject(globalData)
 {
     putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "debug"), functionDebug));
     putDirectFunction(globalExec(), new (globalExec()) JSFunction(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "print"), functionPrint));
@@ -212,7 +212,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     if (!fillBufferWithContentsOfFile(fileName, script))
         return JSValue::encode(throwError(exec, createError(exec, "Could not open file.")));
 
-    GlobalObject* globalObject = new (&exec->globalData()) GlobalObject(Vector<UString>());
+    GlobalObject* globalObject = new (&exec->globalData()) GlobalObject(exec->globalData(), Vector<UString>());
 
     StopWatch stopWatch;
     stopWatch.start();
@@ -536,7 +536,7 @@ int jscmain(int argc, char** argv, JSGlobalData* globalData)
     Options options;
     parseArguments(argc, argv, options, globalData);
 
-    GlobalObject* globalObject = new (globalData) GlobalObject(options.arguments);
+    GlobalObject* globalObject = new (globalData) GlobalObject(*globalData, options.arguments);
     bool success = runWithScripts(globalObject, options.scripts, options.dump);
     if (options.interactive && success)
         runInteractive(globalObject);

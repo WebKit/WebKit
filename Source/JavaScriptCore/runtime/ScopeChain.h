@@ -64,7 +64,7 @@ namespace JSC {
         void print();
 #endif
         
-        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, 0); }
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, 0); }
         virtual void markChildren(MarkStack&);
     private:
         static const unsigned StructureFlags = OverridesMarkChildren;

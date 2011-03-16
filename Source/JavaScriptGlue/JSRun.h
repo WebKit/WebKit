@@ -34,7 +34,7 @@
 
 class JSGlueGlobalObject : public JSGlobalObject {
     public:
-        JSGlueGlobalObject(PassRefPtr<Structure>, JSFlags = kJSFlagNone);
+        JSGlueGlobalObject(JSGlobalData&, PassRefPtr<Structure>, JSFlags = kJSFlagNone);
 
         JSFlags Flags() const { return m_flags; }
         Structure* userObjectStructure() const { return m_userObjectStructure.get(); }

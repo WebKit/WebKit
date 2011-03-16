@@ -44,7 +44,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSDOMWindowShell);
 const ClassInfo JSDOMWindowShell::s_info = { "JSDOMWindowShell", &Base::s_info, 0, 0 };
 
 JSDOMWindowShell::JSDOMWindowShell(PassRefPtr<DOMWindow> window, DOMWrapperWorld* world)
-    : Base(JSDOMWindowShell::createStructure(jsNull()))
+    : Base(JSDOMWindowShell::createStructure(*world->globalData(), jsNull()))
     , m_world(world)
 {
     ASSERT(inherits(&s_info));
@@ -60,10 +60,10 @@ void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
     // Explicitly protect the global object's prototype so it isn't collected
     // when we allocate the global object. (Once the global object is fully
     // constructed, it can mark its own prototype.)
-    RefPtr<Structure> prototypeStructure = JSDOMWindowPrototype::createStructure(jsNull());
+    RefPtr<Structure> prototypeStructure = JSDOMWindowPrototype::createStructure(*JSDOMWindow::commonJSGlobalData(), jsNull());
     Global<JSDOMWindowPrototype> prototype(*JSDOMWindow::commonJSGlobalData(), new JSDOMWindowPrototype(0, prototypeStructure.release()));
 
-    RefPtr<Structure> structure = JSDOMWindow::createStructure(prototype.get());
+    RefPtr<Structure> structure = JSDOMWindow::createStructure(*JSDOMWindow::commonJSGlobalData(), prototype.get());
     JSDOMWindow* jsDOMWindow = new (JSDOMWindow::commonJSGlobalData()) JSDOMWindow(structure.release(), domWindow, this);
     prototype->putAnonymousValue(*JSDOMWindow::commonJSGlobalData(), 0, jsDOMWindow);
     setWindow(*JSDOMWindow::commonJSGlobalData(), jsDOMWindow);

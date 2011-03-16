@@ -128,9 +128,9 @@ public:
     JSClassRef classRef() const { return m_callbackObjectData->jsClass; }
     bool inherits(JSClassRef) const;
 
-    static PassRefPtr<Structure> createStructure(JSValue proto) 
+    static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) 
     { 
-        return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), Base::AnonymousSlotCount, &s_info); 
+        return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), Base::AnonymousSlotCount, &s_info); 
     }
     
     JSValue getPrivateProperty(const Identifier& propertyName) const

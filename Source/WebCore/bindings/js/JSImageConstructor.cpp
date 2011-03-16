@@ -35,7 +35,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSImageConstructor);
 const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", &DOMConstructorWithDocument::s_info, 0, 0 };
 
 JSImageConstructor::JSImageConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
-    : DOMConstructorWithDocument(JSImageConstructor::createStructure(globalObject->objectPrototype()), globalObject)
+    : DOMConstructorWithDocument(JSImageConstructor::createStructure(globalObject->globalData(), globalObject->objectPrototype()), globalObject)
 {
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSHTMLImageElementPrototype::self(exec, globalObject), None);

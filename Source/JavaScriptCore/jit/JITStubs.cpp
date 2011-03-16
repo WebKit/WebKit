@@ -1174,7 +1174,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_create_this)
     Structure* structure;
     JSValue proto = stackFrame.args[0].jsValue();
     if (proto.isObject())
-        structure = asObject(proto)->inheritorID();
+        structure = asObject(proto)->inheritorID(*stackFrame.globalData);
     else
         structure = constructor->scope()->globalObject->emptyObjectStructure();
     JSValue result = constructEmptyObject(callFrame, structure);

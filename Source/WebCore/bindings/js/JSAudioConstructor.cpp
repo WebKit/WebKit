@@ -40,7 +40,7 @@ namespace WebCore {
 const ClassInfo JSAudioConstructor::s_info = { "AudioConstructor", &DOMConstructorWithDocument::s_info, 0, 0 };
 
 JSAudioConstructor::JSAudioConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
-    : DOMConstructorWithDocument(JSAudioConstructor::createStructure(globalObject->objectPrototype()), globalObject)
+    : DOMConstructorWithDocument(JSAudioConstructor::createStructure(globalObject->globalData(), globalObject->objectPrototype()), globalObject)
 {
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSHTMLAudioElementPrototype::self(exec, globalObject), None);

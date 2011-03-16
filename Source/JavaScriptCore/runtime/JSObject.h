@@ -92,7 +92,7 @@ namespace JSC {
         bool setPrototypeWithCycleCheck(JSValue prototype);
         
         void setStructure(NonNullPassRefPtr<Structure>);
-        Structure* inheritorID();
+        Structure* inheritorID(JSGlobalData&);
 
         virtual UString className() const;
 
@@ -250,9 +250,9 @@ namespace JSC {
         static JS_EXPORTDATA const ClassInfo s_info;
 
     protected:
-        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
         static const unsigned StructureFlags = 0;
@@ -296,7 +296,7 @@ namespace JSC {
         bool inlineGetOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
 
         const HashEntry* findPropertyHashEntry(ExecState*, const Identifier& propertyName) const;
-        Structure* createInheritorID();
+        Structure* createInheritorID(JSGlobalData&);
 
         PropertyStorage m_propertyStorage;
         RefPtr<Structure> m_inheritorID;
@@ -320,9 +320,9 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         friend class JSObject;
 
     public:
-        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     protected:
@@ -348,9 +348,9 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
             return new (exec) JSFinalObject(structure);
         }
 
-        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     private:
@@ -377,9 +377,9 @@ inline JSObject* constructEmptyObject(ExecState* exec, NonNullPassRefPtr<Structu
     return JSFinalObject::create(exec, structure);
 }
 
-inline PassRefPtr<Structure> createEmptyObjectStructure(JSValue prototype)
+inline PassRefPtr<Structure> createEmptyObjectStructure(JSGlobalData& globalData, JSValue prototype)
 {
-    return JSFinalObject::createStructure(prototype);
+    return JSFinalObject::createStructure(globalData, prototype);
 }
 
 inline JSObject* asObject(JSCell* cell)
@@ -442,11 +442,11 @@ inline void JSObject::setStructure(NonNullPassRefPtr<Structure> structure)
     m_structure = structure.leakRef(); // ~JSObject balances this ref()
 }
 
-inline Structure* JSObject::inheritorID()
+inline Structure* JSObject::inheritorID(JSGlobalData& globalData)
 {
     if (m_inheritorID)
         return m_inheritorID.get();
-    return createInheritorID();
+    return createInheritorID(globalData);
 }
 
 inline bool Structure::isUsingInlineStorage() const

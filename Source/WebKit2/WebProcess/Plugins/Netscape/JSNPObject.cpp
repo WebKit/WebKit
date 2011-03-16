@@ -50,7 +50,7 @@ static NPIdentifier npIdentifierFromIdentifier(const Identifier& identifier)
 const ClassInfo JSNPObject::s_info = { "NPObject", &JSObjectWithGlobalObject::s_info, 0, 0 };
 
 JSNPObject::JSNPObject(JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject)
-    : JSObjectWithGlobalObject(globalObject, createStructure(globalObject->objectPrototype()))
+    : JSObjectWithGlobalObject(globalObject, createStructure(globalObject->globalData(), globalObject->objectPrototype()))
     , m_objectMap(objectMap)
     , m_npObject(npObject)
 {

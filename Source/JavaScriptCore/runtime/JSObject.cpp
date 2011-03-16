@@ -572,9 +572,9 @@ NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, WriteBarr
         slot.setUndefined();
 }
 
-Structure* JSObject::createInheritorID()
+Structure* JSObject::createInheritorID(JSGlobalData& globalData)
 {
-    m_inheritorID = createEmptyObjectStructure(this);
+    m_inheritorID = createEmptyObjectStructure(globalData, this);
     return m_inheritorID.get();
 }
 

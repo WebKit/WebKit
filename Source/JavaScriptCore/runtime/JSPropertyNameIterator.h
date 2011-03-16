@@ -45,9 +45,9 @@ namespace JSC {
     public:
         static JSPropertyNameIterator* create(ExecState*, JSObject*);
         
-        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(CompoundType, OverridesMarkChildren), AnonymousSlotCount, 0);
+            return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesMarkChildren), AnonymousSlotCount, 0);
         }
 
         virtual bool isPropertyNameIterator() const { return true; }

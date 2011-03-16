@@ -59,9 +59,9 @@ namespace JSC {
     public:
         RegExpConstructor(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, RegExpPrototype*);
 
-        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);

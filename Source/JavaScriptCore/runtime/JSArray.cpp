@@ -127,7 +127,7 @@ inline void JSArray::checkConsistency(ConsistencyCheckType)
 #endif
 
 JSArray::JSArray(VPtrStealingHackType)
-    : JSNonFinalObject(createStructure(jsNull()))
+    : JSNonFinalObject(Structure::create(Structure::VPtrStealingHack, &s_info))
 {
     ASSERT(inherits(&s_info));
 

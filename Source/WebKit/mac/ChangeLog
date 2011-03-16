@@ -1,3 +1,17 @@
+2011-03-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make Structure creation require a JSGlobalData
+        https://bugs.webkit.org/show_bug.cgi?id=56438
+
+        Mechanical change to make all Structure creation use a JSGlobalData&
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyRuntimeMethod::createStructure):
+        * Plugins/Hosted/ProxyRuntimeObject.h:
+        (WebKit::ProxyRuntimeObject::createStructure):
+
 2011-03-15  Alexey Proskuryakov  <ap@apple.com>
 
         Forgot to save a modification to this file when committing.

@@ -35,9 +35,9 @@ namespace JSC {
 
         virtual bool isAPIValueWrapper() const { return true; }
 
-        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(CompoundType, OverridesMarkChildren | OverridesGetPropertyNames), AnonymousSlotCount, 0);
+            return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesMarkChildren | OverridesGetPropertyNames), AnonymousSlotCount, 0);
         }
 
         

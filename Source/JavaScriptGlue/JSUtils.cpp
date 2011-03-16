@@ -414,7 +414,7 @@ static JSGlueGlobalObject* getThreadGlobalObject()
     pthread_once(&globalObjectKeyOnce, initializeGlobalObjectKey);
     JSGlueGlobalObject* globalObject = static_cast<JSGlueGlobalObject*>(pthread_getspecific(globalObjectKey));
     if (!globalObject) {
-        globalObject = new (getThreadGlobalData()) JSGlueGlobalObject(JSGlueGlobalObject::createStructure(jsNull()));
+        globalObject = new (getThreadGlobalData()) JSGlueGlobalObject(*getThreadGlobalData(), JSGlueGlobalObject::createStructure(*getThreadGlobalData(), jsNull()));
         gcProtect(globalObject);
         pthread_setspecific(globalObjectKey, globalObject);
     }

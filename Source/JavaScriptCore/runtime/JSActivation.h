@@ -66,7 +66,7 @@ namespace JSC {
         
         static const ClassInfo s_info;
 
-        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); }
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); }
 
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NeedsThisConversion | OverridesMarkChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;

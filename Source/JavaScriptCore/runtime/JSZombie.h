@@ -66,9 +66,9 @@ public:
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&) { ASSERT_NOT_REACHED(); return false; }
     virtual bool getOwnPropertySlot(ExecState*, unsigned, PropertySlot&) { ASSERT_NOT_REACHED(); return false; }
     
-    static PassRefPtr<Structure> createStructure(JSValue prototype)
+    static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
     {
-        return Structure::create(prototype, TypeInfo(ObjectType, 0), AnonymousSlotCount, &s_info);
+        return Structure::create(globalData, prototype, TypeInfo(ObjectType, 0), AnonymousSlotCount, &s_info);
     }
 
     static const ClassInfo s_info;

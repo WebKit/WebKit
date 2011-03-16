@@ -64,9 +64,9 @@ namespace WebCore {
             return globalObject()->scriptExecutionContext();
         }
 
-        static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
+        static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
         {
-            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     protected:
@@ -83,9 +83,9 @@ namespace WebCore {
     // Base class for all constructor objects in the JSC bindings.
     class DOMConstructorObject : public DOMObjectWithGlobalPointer {
     public:
-        static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
+        static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
         {
-            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     protected:
@@ -143,7 +143,7 @@ namespace WebCore {
     {
         if (JSC::Structure* structure = getCachedDOMStructure(globalObject, &WrapperClass::s_info))
             return structure;
-        return cacheDOMStructure(globalObject, WrapperClass::createStructure(WrapperClass::createPrototype(exec, globalObject)), &WrapperClass::s_info);
+        return cacheDOMStructure(globalObject, WrapperClass::createStructure(exec->globalData(), WrapperClass::createPrototype(exec, globalObject)), &WrapperClass::s_info);
     }
     template<class WrapperClass> inline JSC::Structure* deprecatedGetDOMStructure(JSC::ExecState* exec)
     {

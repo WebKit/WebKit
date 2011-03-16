@@ -108,8 +108,8 @@ void JSGlobalData::storeVPtrs()
 
     COMPILE_ASSERT(sizeof(JSFunction) <= sizeof(storage), sizeof_JSFunction_must_be_less_than_storage);
     char executableStorage[sizeof(VPtrHackExecutable)];
-    VPtrHackExecutable* executable = new (executableStorage) VPtrHackExecutable(VPtrHackExecutable::createStructure(jsNull()));
-    JSCell* jsFunction = new (storage) JSFunction(JSFunction::createStructure(jsNull()), executable);
+    VPtrHackExecutable* executable = new (executableStorage) VPtrHackExecutable(Structure::create(Structure::VPtrStealingHack, 0));
+    JSCell* jsFunction = new (storage) JSFunction(Structure::create(Structure::VPtrStealingHack, &JSFunction::s_info), executable);
     JSGlobalData::jsFunctionVPtr = jsFunction->vptr();
     jsFunction->~JSCell();
 }
@@ -126,22 +126,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , regExpTable(fastNew<HashTable>(JSC::regExpTable))
     , regExpConstructorTable(fastNew<HashTable>(JSC::regExpConstructorTable))
     , stringTable(fastNew<HashTable>(JSC::stringTable))
-    , activationStructure(JSActivation::createStructure(jsNull()))
-    , interruptedExecutionErrorStructure(JSNonFinalObject::createStructure(jsNull()))
-    , terminatedExecutionErrorStructure(JSNonFinalObject::createStructure(jsNull()))
-    , staticScopeStructure(JSStaticScopeObject::createStructure(jsNull()))
-    , strictEvalActivationStructure(StrictEvalActivation::createStructure(jsNull()))
-    , stringStructure(JSString::createStructure(jsNull()))
-    , notAnObjectStructure(JSNotAnObject::createStructure(jsNull()))
-    , propertyNameIteratorStructure(JSPropertyNameIterator::createStructure(jsNull()))
-    , getterSetterStructure(GetterSetter::createStructure(jsNull()))
-    , apiWrapperStructure(JSAPIValueWrapper::createStructure(jsNull()))
-    , scopeChainNodeStructure(ScopeChainNode::createStructure(jsNull()))
-    , executableStructure(ExecutableBase::createStructure(jsNull()))
-    , evalExecutableStructure(EvalExecutable::createStructure(jsNull()))
-    , programExecutableStructure(ProgramExecutable::createStructure(jsNull()))
-    , functionExecutableStructure(FunctionExecutable::createStructure(jsNull()))
-    , dummyMarkableCellStructure(JSCell::createDummyStructure())
     , identifierTable(globalDataType == Default ? wtfThreadData().currentIdentifierTable() : createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
     , emptyList(new MarkedArgumentBuffer)
@@ -161,6 +145,23 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , exclusiveThread(0)
 #endif
 {
+    activationStructure = JSActivation::createStructure(*this, jsNull());
+    interruptedExecutionErrorStructure = JSNonFinalObject::createStructure(*this, jsNull());
+    terminatedExecutionErrorStructure = JSNonFinalObject::createStructure(*this, jsNull());
+    staticScopeStructure = JSStaticScopeObject::createStructure(*this, jsNull());
+    strictEvalActivationStructure = StrictEvalActivation::createStructure(*this, jsNull());
+    stringStructure = JSString::createStructure(*this, jsNull());
+    notAnObjectStructure = JSNotAnObject::createStructure(*this, jsNull());
+    propertyNameIteratorStructure = JSPropertyNameIterator::createStructure(*this, jsNull());
+    getterSetterStructure = GetterSetter::createStructure(*this, jsNull());
+    apiWrapperStructure = JSAPIValueWrapper::createStructure(*this, jsNull());
+    scopeChainNodeStructure = ScopeChainNode::createStructure(*this, jsNull());
+    executableStructure = ExecutableBase::createStructure(*this, jsNull());
+    evalExecutableStructure = EvalExecutable::createStructure(*this, jsNull());
+    programExecutableStructure = ProgramExecutable::createStructure(*this, jsNull());
+    functionExecutableStructure = FunctionExecutable::createStructure(*this, jsNull());
+    dummyMarkableCellStructure = JSCell::createDummyStructure(*this);
+
     interpreter = new Interpreter(*this);
     if (globalDataType == Default)
         m_stack = wtfThreadData().stack();
