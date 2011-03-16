@@ -2,6 +2,19 @@
 
         Reviewed by Eric Carlson.
 
+        [GTK] media/audio-repaint.html times out again
+        https://bugs.webkit.org/show_bug.cgi?id=56366
+
+        Rewrote the test to avoid a timer and attempt the seek on media
+        elements only after we are sure playback started to avoid an
+        INVALID_STATE_ERR exception.
+
+        * media/audio-repaint.html:
+
+2011-03-15  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
         [GStreamer] http/tests/media/video-play-stall-before-meta-data.html fails
         https://bugs.webkit.org/show_bug.cgi?id=56370
 
