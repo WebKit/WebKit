@@ -5,13 +5,23 @@
             if (window.layoutTestController)
                 layoutTestController.waitUntilDone();
 
+            var video;
+
             function start()
             {
                 setSrcByTagName("video", findMediaFile("video", "content/test"));
                 video = document.getElementsByTagName('video')[0];
                 video.load();
                 video.play();
-                video.addEventListener("canplaythrough", finish);
+                video.addEventListener("canplaythrough", canPlayThrough);
+            }
+
+            function canPlayThrough()
+            {
+                // Ensure that the frame is always the same in pixel result.
+                video.addEventListener("seeked", finish);
+                video.pause();
+                video.currentTime = 0;
             }
 
             function finish()
