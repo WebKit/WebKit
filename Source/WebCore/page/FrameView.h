@@ -319,6 +319,9 @@ private:
     virtual void scrollTo(const IntSize&);
     virtual void didCompleteRubberBand(const IntSize&) const;
 
+    virtual void notifyPageThatContentAreaWillPaint() const;
+    virtual void disconnectFromPage() { m_page = 0; }
+
     void deferredRepaintTimerFired(Timer<FrameView>*);
     void doDeferredRepaints();
     void updateDeferredRepaintDelay();
@@ -417,6 +420,8 @@ private:
 
     // Renderer to hold our custom scroll corner.
     RenderScrollbarPart* m_scrollCorner;
+
+    Page* m_page;
 
     static double s_deferredRepaintDelay;
     static double s_initialDeferredRepaintDelayDuringLoading;

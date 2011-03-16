@@ -188,6 +188,13 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
         m_visibleContentStatusDirty = false;
         m_hasVisibleContent = renderer->style()->visibility() == VISIBLE;
     }
+
+    if (Frame* frame = renderer->frame()) {
+        if (Page* page = frame->page()) {
+            m_page = page;
+            m_page->addScrollableArea(this);
+        }
+    }
 }
 
 RenderLayer::~RenderLayer()
@@ -196,6 +203,9 @@ RenderLayer::~RenderLayer()
         if (Frame* frame = renderer()->frame())
             frame->eventHandler()->resizeLayerDestroyed();
     }
+
+    if (m_page)
+        m_page->removeScrollableArea(this);
 
     destroyScrollbar(HorizontalScrollbar);
     destroyScrollbar(VerticalScrollbar);
@@ -1784,6 +1794,11 @@ bool RenderLayer::shouldSuspendScrollAnimations() const
     if (!view)
         return true;
     return view->frameView()->shouldSuspendScrollAnimations();
+}
+
+IntPoint RenderLayer::currentMousePosition() const
+{
+    return renderer()->frame() ? renderer()->frame()->eventHandler()->currentMousePosition() : IntPoint();
 }
 
 IntSize RenderLayer::scrollbarOffset(const Scrollbar* scrollbar) const

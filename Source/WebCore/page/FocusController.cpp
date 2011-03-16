@@ -410,11 +410,16 @@ void FocusController::setActive(bool active)
             view->updateLayoutAndStyleIfNeededRecursive();
             view->updateControlTints();
         }
-        // FIXME: This should propogate to all ScrollableAreas.
-        if (!active)
-            view->scrollAnimator()->contentAreaDidHide();
-        else
-            view->scrollAnimator()->contentAreaDidShow();
+
+        if (const HashSet<ScrollableArea*>* scrollableAreas = m_page->scrollableAreaSet()) {
+            HashSet<ScrollableArea*>::const_iterator end = scrollableAreas->end(); 
+            for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(); it != end; ++it) {
+                if (!active)
+                    (*it)->scrollAnimator()->contentAreaDidHide();
+                else
+                    (*it)->scrollAnimator()->contentAreaDidShow();
+            }
+        }
     }
 
     focusedOrMainFrame()->selection()->pageActivationChanged();

@@ -1,3 +1,81 @@
+2011-03-15  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/8944558> Overlay scrollers in overflow areas need to 
+        send notifications appropriate times (showing up, resizing)
+        -and corresponding-
+        https://bugs.webkit.org/show_bug.cgi?id=56067
+
+        The general strategy here is to add a HashSet of ScrollableAreas to the page that 
+        can be accessed when necessary to send notifications to all ScrollableAreas. In 
+        turn, all of the ScrollableArea classes that add themselves to the HashSet must 
+        keep a weak pointer to Page so that they can remove themselves without relying on 
+        Frames or Renderers to still have references.
+
+        Find layers for relevant node and if the layers are in the Page's ScrollableArea 
+        set, then send the relevant notification.
+        * page/EventHandler.cpp:
+        (WebCore::layerForNode):
+        (WebCore::EventHandler::mouseMoved):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+
+        When the page is set active or not active, iterate through the Page's 
+        ScrollableAreas to send hide/show notifications. 
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setActive):
+
+        When a FrameView is created, add it to the ScrollableArea set. When it's 
+        destroyed, remove it.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::~FrameView):
+
+        Iterate through the Page's ScrollableAreas to send the paint notification.
+        (WebCore::FrameView::notifyPageThatContentAreaWillPaint):
+        * page/FrameView.h:
+        (WebCore::FrameView::disconnectFromPage):
+
+        Add the new ScrollableArea set.
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+        (WebCore::Page::addScrollableArea):
+(WebCore::Page::removeScrollableArea):
+        (WebCore::Page::containsScrollableArea):
+        * page/Page.h:
+        (WebCore::Page::scrollableAreaSet):
+
+        notifyPageThatContentAreaWillPaint() is a dummy function implemented in FrameView.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::notifyPageThatContentAreaWillPaint):
+        
+        Call notifyPageThatContentAreaWillPaint() instead of calling 
+        contentAreaWillPaint() just for the ScrollView.
+        (WebCore::ScrollView::paint):
+        * platform/ScrollView.h:
+
+        Add/remove ScrollableAreas to the set. Add new disconnectFromPage().
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::disconnectFromPage):
+        * rendering/RenderDataGrid.cpp:
+        (WebCore::RenderDataGrid::RenderDataGrid):
+        (WebCore::RenderDataGrid::~RenderDataGrid):
+        * rendering/RenderDataGrid.h:
+        (WebCore::RenderDataGrid::disconnectFromPage):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::disconnectFromPage):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::RenderListBox):
+        (WebCore::RenderListBox::~RenderListBox):
+        * rendering/RenderListBox.h:
+        (WebCore::RenderListBox::disconnectFromPage):
+
+        Should have implemented this ScrollableArea-interface function a while ago.
+        (WebCore::RenderLayer::currentMousePosition):
+
 2011-03-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

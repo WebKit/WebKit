@@ -136,6 +136,13 @@ FrameView::FrameView(Frame* frame)
     , m_scrollCorner(0)
 {
     init();
+
+    if (m_frame) {
+        if (Page* page = m_frame->page()) {
+            m_page = page;
+            m_page->addScrollableArea(this);
+        }
+    }
 }
 
 PassRefPtr<FrameView> FrameView::create(Frame* frame)
@@ -175,6 +182,9 @@ FrameView::~FrameView()
     
     ASSERT(!m_scrollCorner);
     ASSERT(m_actionScheduler->isEmpty());
+
+    if (m_page)
+        m_page->removeScrollableArea(this);
 
     if (m_frame) {
         ASSERT(m_frame->view() != this || !m_frame->contentRenderer());
@@ -2053,6 +2063,18 @@ void FrameView::didCompleteRubberBand(const IntSize& initialOverhang) const
 bool FrameView::shouldSuspendScrollAnimations() const
 {
     return m_frame->loader()->state() != FrameStateComplete;
+}
+
+void FrameView::notifyPageThatContentAreaWillPaint() const
+{
+    Page* page = m_frame->page();
+    const HashSet<ScrollableArea*>* scrollableAreas = page->scrollableAreaSet();
+    if (!scrollableAreas)
+        return;
+
+    HashSet<ScrollableArea*>::const_iterator end = scrollableAreas->end(); 
+    for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(); it != end; ++it)
+        (*it)->scrollAnimator()->contentAreaWillPaint();
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)

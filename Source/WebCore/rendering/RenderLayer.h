@@ -525,7 +525,10 @@ private:
     virtual IntSize contentsSize() const;
     virtual int visibleHeight() const;
     virtual int visibleWidth() const;
+    virtual IntPoint currentMousePosition() const;
     virtual bool shouldSuspendScrollAnimations() const;
+
+    virtual void disconnectFromPage() { m_page = 0; }
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int x, int y);
@@ -700,6 +703,8 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<RenderLayerBacking> m_backing;
 #endif
+
+    Page* m_page;
 };
 
 } // namespace WebCore

@@ -117,6 +117,8 @@ public:
     virtual void didCompleteRubberBand(const IntSize&) const { ASSERT_NOT_REACHED(); }
     virtual bool shouldSuspendScrollAnimations() const { return true; }
 
+    virtual void disconnectFromPage() { }
+
 private:
     // NOTE: Only called from the ScrollAnimator.
     friend class ScrollAnimator;
