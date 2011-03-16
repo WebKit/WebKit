@@ -63,4 +63,6 @@ messages -> WebProcess {
     CancelDownload(uint64_t downloadID)
 
     SetTextCheckerState(WebKit::TextCheckerState textCheckerState)
+
+    SetEnhancedAccessibility(bool flag)
 }

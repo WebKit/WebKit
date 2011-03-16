@@ -167,6 +167,8 @@ WebContext::~WebContext()
     m_resourceCacheManagerProxy->invalidate();
     m_resourceCacheManagerProxy->clearContext();
 
+    platformInvalidateContext();
+    
 #ifndef NDEBUG
     webContextCounter.decrement();
 #endif
@@ -696,6 +698,14 @@ void WebContext::clearApplicationCache()
     }
 
     m_process->send(Messages::WebProcess::ClearApplicationCache(), 0);
+}
+   
+void WebContext::setEnhancedAccessibility(bool flag)
+{
+    if (!hasValidProcess())
+        return;
+    
+    m_process->send(Messages::WebProcess::SetEnhancedAccessibility(flag), 0);
 }
     
 void WebContext::startMemorySampler(const double interval)

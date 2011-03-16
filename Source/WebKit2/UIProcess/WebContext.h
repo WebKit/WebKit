@@ -131,6 +131,8 @@ public:
     void setShouldPaintNativeControls(bool);
 #endif
 
+    void setEnhancedAccessibility(bool);
+    
     // Downloads.
     uint64_t createDownloadProxy();
     WebDownloadClient& downloadClient() { return m_downloadClient; }
@@ -167,7 +169,8 @@ private:
     virtual Type type() const { return APIType; }
 
     void platformInitializeWebProcess(WebProcessCreationParameters&);
-
+    void platformInvalidateContext();
+    
     // History client
     void didNavigateWithNavigationData(uint64_t pageID, const WebNavigationDataStore& store, uint64_t frameID);
     void didPerformClientRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID);
@@ -246,6 +249,10 @@ private:
     bool m_shouldPaintNativeControls;
 #endif
 
+#if PLATFORM(MAC)
+    RetainPtr<CFTypeRef> m_enhancedAccessibilityObserver;
+#endif
+    
     String m_overrideDatabaseDirectory;
     String m_overrideIconDatabasePath;
     String m_overrideLocalStorageDirectory;

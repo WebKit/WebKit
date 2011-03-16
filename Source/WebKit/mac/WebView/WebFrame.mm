@@ -1321,8 +1321,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 #if HAVE(ACCESSIBILITY)
     if (!AXObjectCache::accessibilityEnabled()) {
         AXObjectCache::enableAccessibility();
-        if ([[NSApp accessibilityAttributeValue:NSAccessibilityEnhancedUserInterfaceAttribute] boolValue])
-            AXObjectCache::enableEnhancedUserInterfaceAccessibility();
+        AXObjectCache::setEnhancedUserInterfaceAccessibility([[NSApp accessibilityAttributeValue:NSAccessibilityEnhancedUserInterfaceAttribute] boolValue]);
     }
     
     if (!_private->coreFrame || !_private->coreFrame->document())

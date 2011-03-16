@@ -1,3 +1,30 @@
+2011-03-16  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WK2: Need to propagate enhanced accessibility flag from UI -> web process
+        https://bugs.webkit.org/show_bug.cgi?id=56379
+
+        Support sending the enhanced accessibility flag between processes.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::setEnhancedAccessibility):
+        * UIProcess/WebContext.h:
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContet::platformInvalidateContext):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        (WebKit::WebContext::platformInvalidateContext):
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::platformInvalidateContext):
+        * UIProcess/win/WebContextWin.cpp:
+        (WebKit::WebContext::platformInvalidateContext):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setEnhancedAccessibility):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2011-03-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

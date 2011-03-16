@@ -1,3 +1,15 @@
+2011-03-16  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WK2: Need to propagate enhanced accessibility flag from UI -> web process
+        https://bugs.webkit.org/show_bug.cgi?id=56379
+
+        Allow the enhanced accessibility flag to be toggleable. 
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility):
+
 2011-03-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Buildfix after r81230.

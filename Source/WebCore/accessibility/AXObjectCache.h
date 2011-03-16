@@ -96,7 +96,8 @@ public:
     void handleScrollbarUpdate(ScrollView*);
     
     static void enableAccessibility() { gAccessibilityEnabled = true; }
-    static void enableEnhancedUserInterfaceAccessibility() { gAccessibilityEnhancedUserInterfaceEnabled = true; }
+    // Enhanced user interface accessibility can be toggled by the assistive technology.
+    static void setEnhancedUserInterfaceAccessibility(bool flag) { gAccessibilityEnhancedUserInterfaceEnabled = flag; }
     
     static bool accessibilityEnabled() { return gAccessibilityEnabled; }
     static bool accessibilityEnhancedUserInterfaceEnabled() { return gAccessibilityEnhancedUserInterfaceEnabled; }

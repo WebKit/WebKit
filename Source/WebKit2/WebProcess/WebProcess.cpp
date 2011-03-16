@@ -50,6 +50,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebResourceCacheManager.h"
+#include <WebCore/AXObjectCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/Font.h>
@@ -777,6 +778,11 @@ void WebProcess::cancelDownload(uint64_t downloadID)
     DownloadManager::shared().cancelDownload(downloadID);
 }
 
+void WebProcess::setEnhancedAccessibility(bool flag)
+{
+    WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility(flag);
+}
+    
 void WebProcess::startMemorySampler(const SandboxExtension::Handle& sampleLogFileHandle, const String& sampleLogFilePath, const double interval)
 {
 #if ENABLE(MEMORY_SAMPLER)    

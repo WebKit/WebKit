@@ -152,6 +152,8 @@ private:
     void platformClearResourceCaches(ResourceCachesToClear);
     void clearApplicationCache();
 
+    void setEnhancedAccessibility(bool);
+    
 #if !ENABLE(PLUGIN_PROCESS)
     void getSitesWithPluginData(const Vector<String>& pluginPaths, uint64_t callbackID);
     void clearPluginSiteData(const Vector<String>& pluginPaths, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);

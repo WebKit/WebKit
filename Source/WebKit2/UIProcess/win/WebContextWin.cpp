@@ -76,6 +76,10 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif // USE(CFNETWORK)
 }
 
+void WebContext::platformInvalidateContext()
+{
+}
+
 String WebContext::platformDefaultDatabaseDirectory() const
 {
     return WebCore::pathByAppendingComponent(WebCore::localUserSpecificStorageDirectory(), "Databases");
