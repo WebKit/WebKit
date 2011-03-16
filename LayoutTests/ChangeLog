@@ -1,3 +1,9 @@
+2011-03-16  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, remove duplicate expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt]Web Inspector: inspector/elements/mutate-unknown-node.html fails
