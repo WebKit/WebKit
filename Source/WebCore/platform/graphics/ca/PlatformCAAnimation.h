@@ -39,7 +39,7 @@
 #ifdef __OBJC__
 @class CAPropertyAnimation;
 #else
-typedef struct CAPropertyAnimation CAPropertyAnimation;
+class CAPropertyAnimation;
 #endif
 typedef CAPropertyAnimation* PlatformAnimationRef;
 #elif PLATFORM(WIN)

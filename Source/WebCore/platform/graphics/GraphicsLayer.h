@@ -46,7 +46,6 @@
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
-@class WebLayer;
 @class CALayer;
 #else
 class CALayer;

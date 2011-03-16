@@ -1,3 +1,15 @@
+2011-03-16  David Kilzer  <ddkilzer@apple.com>
+
+        Minor clean-up after r81156, r81172
+
+        Follow-up for:
+        <http://webkit.org/b/56381> Objective-C classes should be typedef-ed as structs (not void*) in C++
+
+        * platform/graphics/GraphicsLayer.h: Removed unused @class
+        WebLayer declaration.
+        * platform/graphics/ca/PlatformCAAnimation.h: Changed typedef
+        struct CAPropertyAnimation to class declaration.
+
 2011-03-16  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Yury Semikhatsky.
