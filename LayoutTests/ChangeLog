@@ -1,5 +1,11 @@
 2011-03-16  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Add failing tests to the Skipped list because of missing test fonts.
+
+        * platform/qt/Skipped:
+
+2011-03-16  Csaba Osztrogonác  <ossy@webkit.org>
+
         REGRESSION (r68976): Incorrect bidi rendering in SVG text
         https://bugs.webkit.org/show_bug.cgi?id=53980
 

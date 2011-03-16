@@ -1046,6 +1046,9 @@ svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context.svg
 svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg
 svg/W3C-I18N/tspan-direction-ltr.svg
 svg/W3C-I18N/tspan-direction-rtl.svg
+svg/W3C-SVG-1.1/text-fonts-01-t.svg
+svg/W3C-SVG-1.1/text-intro-05-t.svg
+svg/W3C-SVG-1.1/text-tselect-02-f.svg
 svg/W3C-SVG-1.1-SE/text-intro-02-b.svg
 svg/W3C-SVG-1.1-SE/text-intro-05-t.svg
 svg/W3C-SVG-1.1-SE/text-intro-09-b.svg
@@ -1053,6 +1056,9 @@ svg/text/bidi-reorder-value-lists.svg
 svg/text/bidi-text-anchor-direction.svg
 svg/text/bidi-text-query.svg
 svg/text/bidi-tspans.svg
+svg/text/text-fonts-01-t.svg
+svg/text/text-intro-05-t.svg
+svg/text/text-tselect-02-f.svg
 
 # ============================================================================= #
 # failing animations tests
@@ -2748,6 +2754,26 @@ fast/text/international/bidi-menulist.html
 fast/text/international/pop-up-button-text-alignment-and-direction.html
 fast/text/international/wrap-CJK-001.html
 fast/xpath/string-value.html
+
+# --- missing test fonts
+fast/blockflow/japanese-ruby-horizontal-bt.html
+fast/blockflow/japanese-ruby-vertical-lr.html
+fast/blockflow/japanese-ruby-vertical-rl.html
+fast/blockflow/japanese-lr-selection.html
+fast/blockflow/japanese-lr-text.html
+fast/blockflow/japanese-rl-selection.html
+fast/blockflow/japanese-rl-text.html
+fast/blockflow/japanese-ruby-horizontal-bt.html
+fast/blockflow/japanese-ruby-vertical-lr.html
+fast/blockflow/japanese-ruby-vertical-rl.html
+fast/repaint/japanese-rl-selection-clear.html
+fast/repaint/japanese-rl-selection-repaint.html
+fast/text/international/bidi-mirror-he-ar.html
+fast/text/international/bold-bengali.html
+fast/text/international/hebrew-vowels.html
+fast/text/international/plane2.html
+fast/text/international/vertical-text-glyph-test.html
+fast/text/international/vertical-text-metrics-test.html
 
 # ============================================================================= #
 # failing fonts tests
