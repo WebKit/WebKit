@@ -3235,7 +3235,7 @@ BUGCR74519 WIN LINUX : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = IMAGE+TEXT
 
 BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEXT
 
-BUGCR74710 MAC RELEASE : svg/text/font-size-below-point-five.svg = TEXT
+BUGCR74710 MAC : svg/text/font-size-below-point-five.svg = TEXT
 
 BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
 
@@ -3330,7 +3330,8 @@ BUGWK56407 LINUX WIN : editing/style/iframe-onload-crash.html = CRASH
 BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = CRASH
 
 // Some transition tests are flakey since r79985
-BUGWK56242 LINUX : transitions/interrupted-accelerated-transition.html = PASS FAIL
+// This test has an expectation for DEBUG above, so the test runner fails for Linux Debug builders.
+BUGWK56242 LINUX RELEASE : transitions/interrupted-accelerated-transition.html = PASS FAIL
 
 // These are failing sporadically due to WebKit r81222
 BUGWK56454 WIN : inspector/evaluate-in-page.html = PASS TIMEOUT

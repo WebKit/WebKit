@@ -1,5 +1,13 @@
 2011-03-16  Alexander Pavlov  <apavlov@chromium.org>
 
+        [Chromium] Unreviewed, update expectations.
+        Fix Linux Debug expectation clash for transitions/interrupted-accelerated-transition.html.
+        Let svg/text/font-size-below-point-five.svg fail on Mac Release.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-16  Alexander Pavlov  <apavlov@chromium.org>
+
         [Chromium] Unreviewed, remove duplicate expectations.
 
         * platform/chromium/test_expectations.txt:
