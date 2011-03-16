@@ -33,7 +33,7 @@ var req = new XMLHttpRequest();
 req.onprogress = onProgressPassed;
 req.onload = checkDone;
 // Test that onProgress is called on a normal file
-req.open("GET", "resource/1251.html", true);
+req.open("GET", "resources/1251.html", true);
 req.send(null);
 
 // If content length is not given, it should not be called

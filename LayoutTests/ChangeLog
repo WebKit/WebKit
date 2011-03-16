@@ -2,6 +2,15 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Fix typo in path name. The test was just checking for onProgress was called for the content
+        and the error page served by Apache in this case sufficed for it to pass.
+
+        * http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onProgress.html:
+
+2011-03-16  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
         REGRESSION: Crash in adjustMIMETypeIfNecessary since r81001
         https://bugs.webkit.org/show_bug.cgi?id=56345
 
