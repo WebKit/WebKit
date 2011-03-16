@@ -2888,42 +2888,6 @@ BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = CRASH PASS
 //   (WebCore::ScrollView::calculateOverhangAreasForPainting): 
 BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 
-// These are waiting for platform/mac pixel baselines to be updated.
-BUGWK50528 MAC : fast/box-shadow/box-shadow-transformed.html = IMAGE
-BUGWK50528 MAC LEOPARD : fast/css/color-correction-on-box-shadow.html = IMAGE
-BUGWK50528 MAC : svg/W3C-SVG-1.1/filters-blend-01-b.svg = IMAGE
-BUGWK50528 MAC : svg/W3C-SVG-1.1/masking-path-04-b.svg = IMAGE
-BUGWK50528 MAC : svg/carto.net/scrollbar.svg = IMAGE
-BUGWK50528 MAC : svg/carto.net/selectionlist.svg = IMAGE
-BUGWK50528 MAC : svg/text/selection-doubleclick.svg = IMAGE
-BUGWK50528 MAC : svg/text/selection-tripleclick.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-align-01-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-align-02-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-align-03-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-align-05-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-align-06-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-altglyph-01-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-deco-01-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-fonts-01-t.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-fonts-02-t.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-path-01-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-spacing-01-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-text-01-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-text-03-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-text-04-t.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-text-05-t.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-text-06-t.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-text-07-t.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-text-08-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-tref-01-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-tselect-01-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-tselect-02-f.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-tspan-01-b.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-ws-01-t.svg = IMAGE
-BUGWK50528 MAC : svg/text/text-ws-02-t.svg = IMAGE
-BUGWK50528 MAC : svg/text/textPathBoundsBug.svg = IMAGE
-BUGWK50528 MAC : svg/custom/image-small-width-height.svg = IMAGE
-
 //
 // GPU
 //
@@ -3219,7 +3183,7 @@ BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
 
 BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 
-BUGJAMESR DEBUG LINUX WIN : html5lib/runner.html = PASS TIMEOUT
+BUGJAMESR DEBUG : html5lib/runner.html = PASS TIMEOUT
 
 BUG_ANTONM : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
 
@@ -3306,11 +3270,6 @@ BUGCR75992 GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
 
 BUG_LEVIN WIN : fast/dom/Window/window-lookup-precedence.html = TEXT
 
-// See above for the pass timeout case when the crash is resolved (BUGJAMESR).
-BUG_LEVIN MAC : html5lib/runner.html = CRASH PASS TIMEOUT
-BUG_LEVIN MAC : platform/mac/editing/input/text-control-ime-input.html = CRASH
-BUG_LEVIN MAC : storage/domstorage/complex-values.html = CRASH
-
 BUGCR76020 GPU WIN : canvas/philip/tests/2d.text.draw.align.end.ltr.html = TEXT
 
 // Skip an overly restrictive cross-origin HTTPS test
@@ -3354,3 +3313,4 @@ BUGWK56454 WIN : inspector/elements/mutate-unknown-node.html = PASS TEXT
 
 // Existing expectation above has been temporarily commented for this test. Please uncomment that one once bug 56454 is fixed.
 BUGWK56454 WIN LINUX : inspector/timeline/timeline-parse-html.html = PASS TIMEOUT
+

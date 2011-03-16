@@ -1,3 +1,89 @@
+2011-03-16  David Levin  <levin@chromium.org>
+
+        o Cleaned up test_expectation to remove items due to new baselines
+          and remove some crashes that have been fixed.
+        o text-combine: Added baseline following r81251.
+        o Everything else: Add some not so timely baselines for r77485.
+
+
+        * platform/chromium-linux/fast/dynamic/text-combine-expected.checksum: Added.
+        * platform/chromium-linux/fast/dynamic/text-combine-expected.png: Added.
+        * platform/chromium-linux/fast/dynamic/text-combine-expected.txt: Added.
+        * platform/chromium-mac/fast/box-shadow/box-shadow-transformed-expected.checksum: Added.
+        * platform/chromium-mac/fast/box-shadow/box-shadow-transformed-expected.png: Added.
+        * platform/chromium-mac/fast/dynamic/text-combine-expected.checksum: Added.
+        * platform/chromium-mac/fast/dynamic/text-combine-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/masking-path-04-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/masking-path-04-b-expected.png: Added.
+        * platform/chromium-mac/svg/carto.net/scrollbar-expected.checksum: Added.
+        * platform/chromium-mac/svg/carto.net/scrollbar-expected.png: Added.
+        * platform/chromium-mac/svg/carto.net/selectionlist-expected.checksum: Added.
+        * platform/chromium-mac/svg/carto.net/selectionlist-expected.png: Added.
+        * platform/chromium-mac/svg/custom/image-small-width-height-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/image-small-width-height-expected.png: Added.
+        * platform/chromium-mac/svg/text/selection-doubleclick-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/selection-doubleclick-expected.png: Added.
+        * platform/chromium-mac/svg/text/selection-tripleclick-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/selection-tripleclick-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-align-01-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-align-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-align-02-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-align-02-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-align-03-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-align-03-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-align-05-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-align-05-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-align-06-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-align-06-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-altglyph-01-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-altglyph-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-deco-01-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-deco-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-fonts-01-t-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-fonts-01-t-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-fonts-02-t-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-fonts-02-t-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-path-01-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-path-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-spacing-01-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-spacing-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-text-01-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-text-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-text-03-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-text-03-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-text-04-t-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-text-04-t-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-text-05-t-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-text-05-t-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-text-06-t-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-text-06-t-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-text-07-t-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-text-07-t-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-text-08-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-text-08-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-tref-01-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-tref-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-tselect-01-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-tselect-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-tselect-02-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-tselect-02-f-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-tspan-01-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-tspan-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-ws-01-t-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-ws-01-t-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-ws-02-t-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/text-ws-02-t-expected.png: Added.
+        * platform/chromium-mac/svg/text/textPathBoundsBug-expected.checksum: Added.
+        * platform/chromium-mac/svg/text/textPathBoundsBug-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/css/color-correction-on-box-shadow-expected.checksum:
+        * platform/chromium-mac-leopard/fast/css/color-correction-on-box-shadow-expected.png:
+        * platform/chromium-win/fast/dynamic/text-combine-expected.checksum: Added.
+        * platform/chromium-win/fast/dynamic/text-combine-expected.png: Added.
+        * platform/chromium-win/fast/dynamic/text-combine-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-16  Brian Weinstein  <bweinstein@apple.com>
 
         Skip plugins/refcount-leaks.html on Windows, because it is failing in release builds,
