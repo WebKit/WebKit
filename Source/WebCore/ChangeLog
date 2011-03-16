@@ -1,3 +1,19 @@
+2011-03-16  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        RenderFullScreen::createFullScreenStyle() leaks
+        https://bugs.webkit.org/show_bug.cgi?id=53384
+
+        Two problems: a) not calling release() on the style returned in setFullScreenRenderer
+        causes an unnecessary ref/deref, and b) the fullscreen renderer needs to be destroyed,
+        not just detached, when it is no longer needed.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFullScreenRenderer): Destroy the current renderer when a new one is set.
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreen::createFullScreenStyle): release() the return value.
+
 2011-03-16  Mike Reed  <reed@google.com>
 
         Reviewed by James Robinson.

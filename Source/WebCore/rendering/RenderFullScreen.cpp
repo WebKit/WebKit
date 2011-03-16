@@ -64,7 +64,7 @@ PassRefPtr<RenderStyle> RenderFullScreen::createFullScreenStyle()
     
     fullscreenStyle->setBackgroundColor(Color::black);
     
-    return fullscreenStyle;
+    return fullscreenStyle.release();
 }
 
 #endif

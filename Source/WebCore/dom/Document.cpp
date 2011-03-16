@@ -4963,6 +4963,11 @@ void Document::webkitDidExitFullScreenForElement(Element*)
     
 void Document::setFullScreenRenderer(RenderFullScreen* renderer)
 {
+    if (renderer == m_fullScreenRenderer)
+        return;
+
+    if (m_fullScreenRenderer)
+        m_fullScreenRenderer->destroy();
     m_fullScreenRenderer = renderer;
     
     // This notification can come in after the page has been destroyed.
