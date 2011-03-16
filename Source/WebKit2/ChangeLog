@@ -1,3 +1,13 @@
+2011-03-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56467
+        IconDatabase-related crash seen in WK2 tests
+
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.cpp:
+        (WebKit::WebIconDatabaseProxy::setIconDataForIconURL): The IconLoader might set a null data for an icon, so handle that case.
+
 2011-03-16  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

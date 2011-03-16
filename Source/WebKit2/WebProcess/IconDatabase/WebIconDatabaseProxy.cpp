@@ -109,7 +109,7 @@ void WebIconDatabaseProxy::setIconURLForPageURL(const String& iconURL, const Str
 
 void WebIconDatabaseProxy::setIconDataForIconURL(PassRefPtr<SharedBuffer> iconData, const String& iconURL)
 {
-    CoreIPC::DataReference data(reinterpret_cast<const uint8_t*>(iconData->data()), iconData->size());
+    CoreIPC::DataReference data(reinterpret_cast<const uint8_t*>(iconData ? iconData->data() : 0), iconData ? iconData->size() : 0);
     m_process->connection()->send(Messages::WebIconDatabase::SetIconDataForIconURL(data, iconURL), 0);
 }
 
