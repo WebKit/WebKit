@@ -1,3 +1,10 @@
+2011-03-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] fast/text/soft-hyphen-4.html introduced in r80984
+        and fails because hyphenation isn't implemented yet.
+
+        * platform/qt/Skipped: Add fast/text/soft-hyphen-4.html.
+
 2011-03-16  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip svg/W3C-I18N tests failing on 32-bits Debug only.

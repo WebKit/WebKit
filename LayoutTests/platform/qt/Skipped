@@ -101,6 +101,7 @@ fast/loader/subframe-navigate-during-main-frame-load.html
 # Hyphenation is not implemented yet.
 fast/text/hyphenate-character.html
 fast/text/hyphens.html
+fast/text/soft-hyphen-4.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=43332
 inspector/debugger/dom-breakpoints.html
