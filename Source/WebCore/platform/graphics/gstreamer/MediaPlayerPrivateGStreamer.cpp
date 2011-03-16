@@ -1064,15 +1064,9 @@ void MediaPlayerPrivateGStreamer::updateStates()
         if (!m_isStreaming && !m_buffering)
             return;
 
-        // Resume playback if a seek was performed in a live pipeline
-        // or during progressive download. That second use-case
-        // happens when the seek is performed to a region of the media
-        // that hasn't been downloaded yet.
         if (m_seeking) {
             shouldUpdateAfterSeek = true;
             m_seeking = false;
-            if (m_paused)
-                gst_element_set_state(m_playBin, GST_STATE_PLAYING);
         }
         break;
     case GST_STATE_CHANGE_FAILURE:

@@ -1,3 +1,19 @@
+2011-03-16  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Martin Robinson.
+
+        [GStreamer] There is no need to set the state of the pipeline to playing, HTMLMediaElement will do it.
+        https://bugs.webkit.org/show_bug.cgi?id=56403
+
+        In case of a seek on a live pipeline there is no need to call gst_element_set_state(m_playBin, GST_STATE_PLAYING);
+        As soon as HTMLMediaElement::updatePlayState() is called (like when the data comes in) the playback will be relaunched
+        i.e the pause() made when beginScrubbing is done is just internal.
+
+        No new tests: Verified manually.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates):
+
 2011-03-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
