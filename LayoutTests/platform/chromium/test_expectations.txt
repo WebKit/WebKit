@@ -3352,7 +3352,6 @@ BUGWK56454 WIN : inspector/timeline/timeline-script-tag-2.html = PASS TIMEOUT
 BUGWK56454 WIN : inspector/timeline/timeline-paint.html = PASS TIMEOUT
 BUGWK56454 WIN : inspector/timeline/timeline-event-dispatch.html = PASS TIMEOUT
 BUGWK56454 WIN : inspector/elements/mutate-unknown-node.html = PASS TEXT
-BUGWK56454 WIN LINUX : inspector/debugger/live-edit.html = PASS TEXT
 
 // Existing expectation above has been temporarily commented for this test. Please uncomment that one once bug 56454 is fixed.
 BUGWK56454 WIN LINUX : inspector/timeline/timeline-parse-html.html = PASS TIMEOUT

@@ -1,3 +1,10 @@
+2011-03-16  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, fix test broken by r81238.
+
+        * inspector/debugger/live-edit.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
