@@ -1,3 +1,21 @@
+2011-03-10  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GStreamer] Frame accurate seeking isn't always accurate
+        https://bugs.webkit.org/show_bug.cgi?id=55217
+
+        Attempt to build the seek GstClockTime position by converting the
+        float time value to a GTimeVal value rounded at microsecond
+        precision. Additionally perform the seek with the ACCURATE seek
+        flag. These modifications at least fix this manual-test:
+        http://www.massive-interactive.nl/html5_video/smpte_test_universal.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::currentTime):
+        (WebCore::MediaPlayerPrivateGStreamer::seek):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2011-03-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

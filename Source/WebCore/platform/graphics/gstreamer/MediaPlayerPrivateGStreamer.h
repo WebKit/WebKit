@@ -161,7 +161,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             GstElement* m_videoSinkBin;
             GstElement* m_fpsSink;
             GstElement* m_source;
-            GstClockTime m_seekTime;
+            float m_seekTime;
             bool m_changingRate;
             float m_endTime;
             bool m_isEndReached;

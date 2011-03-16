@@ -495,7 +495,7 @@ float MediaPlayerPrivateGStreamer::currentTime() const
         return 0.0f;
 
     if (m_seeking)
-        return static_cast<float>(m_seekTime);
+        return m_seekTime;
 
     return playbackPosition(m_playBin);
 
@@ -513,17 +513,28 @@ void MediaPlayerPrivateGStreamer::seek(float time)
     if (m_errorOccured)
         return;
 
-    GstClockTime sec = (GstClockTime)(static_cast<float>(time * GST_SECOND));
-    LOG_VERBOSE(Media, "Seek: %" GST_TIME_FORMAT, GST_TIME_ARGS(sec));
+    // Extract the integer part of the time (seconds) and the
+    // fractional part (microseconds). Attempt to round the
+    // microseconds so no floating point precision is lost and we can
+    // perform an accurate seek.
+    float seconds;
+    float microSeconds = modf(time, &seconds) * 1000000;
+    GTimeVal timeValue;
+    timeValue.tv_sec = static_cast<glong>(seconds);
+    timeValue.tv_usec = static_cast<glong>(roundf(microSeconds / 10000) * 10000);
+
+    GstClockTime clockTime = GST_TIMEVAL_TO_TIME(timeValue);
+    LOG_VERBOSE(Media, "Seek: %" GST_TIME_FORMAT, GST_TIME_ARGS(clockTime));
+
     if (!gst_element_seek(m_playBin, m_player->rate(),
             GST_FORMAT_TIME,
-            (GstSeekFlags)(GST_SEEK_FLAG_FLUSH),
-            GST_SEEK_TYPE_SET, sec,
+            (GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE),
+            GST_SEEK_TYPE_SET, clockTime,
             GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE))
         LOG_VERBOSE(Media, "Seek to %f failed", time);
     else {
         m_seeking = true;
-        m_seekTime = sec;
+        m_seekTime = time;
     }
 }
 
