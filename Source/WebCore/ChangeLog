@@ -1,5 +1,12 @@
 2011-03-15  David Levin  <levin@chromium.org>
 
+        Attempted build fix following r81213. Same song second verse.
+
+        * platform/image-encoders/skia/PNGImageEncoder.cpp:
+        (WebCore::encodePixels):
+
+2011-03-15  David Levin  <levin@chromium.org>
+
         Attempted build fix for Chromium OSX release build following r81213.
 
         * platform/image-encoders/skia/JPEGImageEncoder.cpp:

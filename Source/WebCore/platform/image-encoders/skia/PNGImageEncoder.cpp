@@ -68,7 +68,7 @@ static void preMultipliedBGRAtoRGBA(const void* pixels, int pixelCount, unsigned
     }
 }
 
-static bool encodePixels(const IntSize& inputSize, unsigned char* pixels, 
+static bool encodePixels(const IntSize& inputSize, unsigned char* inputPixels,
                          bool premultiplied, Vector<unsigned char>* output)
 {
     IntSize imageSize(inputSize);
@@ -99,6 +99,7 @@ static bool encodePixels(const IntSize& inputSize, unsigned char* pixels,
                  8, PNG_COLOR_TYPE_RGB_ALPHA, 0, 0, 0);
     png_write_info(png, info);
 
+    unsigned char* pixels = inputPixels;
     row.resize(imageSize.width() * sizeof(SkPMColor));
     for (int y = 0; y < imageSize.height(); ++y) {
         if (premultiplied) {
