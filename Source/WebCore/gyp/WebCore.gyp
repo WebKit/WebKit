@@ -47,6 +47,9 @@
         # Artificially reduce the scope during bring-up.
         ['exclude', '.*\\.(c|cpp|mm)$'],
         ['include', 'accessibility/'],
+        # FIXME: include bridge/
+        ['include', 'css/'],
+        ['exclude', 'css/CSSParser\\.cpp$'], # Requires tokenizer.cpp
 
         ['exclude', 'bindings/[^/]+/'],
         ['include', 'bindings/generic/'],
@@ -56,8 +59,10 @@
         ['exclude', 'bindings/js/ScriptControllerMac\\.mm$'],
 
         # FIXME: Figure out how to store these patterns in a variable.
-        ['exclude', '(android|brew|cairo|ca|cg|chromium|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mac|mkl|opengl|openvg|opentype|pango|posix|qt|soup|symbian|texmap|iphone|win|wince|wx)/'],
+        ['exclude', '(android|brew|cairo|ca|chromium|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mac|mkl|opengl|openvg|opentype|pango|posix|qt|soup|symbian|texmap|iphone|win|wince|wx)/'],
         ['exclude', '(Android|Brew|Cairo|CF|CG|Curl|Chromium|Efl|Haiku|Gtk|JSC|Linux|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|V8|Win|WinCE|Wx)\\.(cpp|mm?)$'],
+
+        ['exclude', 'platform/graphics/cg/FontPlatformData\\.h$'],
 
         ['exclude', 'AllInOne\\.cpp$'],
       ],

@@ -1,5 +1,18 @@
 2011-03-15  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        WebCore GYP build should build css/
+        https://bugs.webkit.org/show_bug.cgi?id=56408
+
+        CSSParser.cpp #includes tokenizer.cpp, which we haven't included in the
+        build yet.  I've punted on that problem for now, but we'll come back to
+        it.
+
+        * gyp/WebCore.gyp:
+
+2011-03-15  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Dimitri Glazkov.
 
         WebCore GYP build should build bindings/
