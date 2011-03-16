@@ -1,3 +1,23 @@
+2011-03-15  David Levin  <levin@chromium.org>
+
+        Fix few more baselines (which the tool didn't handle well before due to them
+        being in the mac-leopard directory).
+          svg/w3c due to r81168
+          svg/custom/mouse due to r81053
+
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.checksum:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.png: Removed.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-container-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-container-expected.png: Removed.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-container-standalone-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-container-standalone-expected.png: Removed.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-root-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-root-expected.png: Removed.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-root-standalone-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-root-standalone-expected.png: Removed.
+
 2011-03-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.
