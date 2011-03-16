@@ -168,8 +168,6 @@ public:
     }
 };
 
-namespace {
-
 // Implements v8::RetainedObjectInfo.
 class UnspecifiedGroup : public RetainedObjectInfo {
 public:
@@ -256,8 +254,6 @@ private:
 bool operator<(const GrouperItem& a, const GrouperItem& b)
 {
     return a.groupId() < b.groupId();
-}
-
 }
 
 typedef Vector<GrouperItem> GrouperList;
