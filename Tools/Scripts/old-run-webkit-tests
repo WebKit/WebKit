@@ -187,6 +187,7 @@ $testHTTP = 0 if (isWx());
 my $perlInterpreter = "perl";
 
 my $expectedTag = "expected";
+my $mismatchTag = "mismatch";
 my $actualTag = "actual";
 my $prettyDiffTag = "pretty-diff";
 my $diffsTag = "diffs";
@@ -2446,6 +2447,16 @@ sub readSkippedFiles($)
 
 my @testsFound;
 
+sub isUsedInReftest
+{
+    my $filename = $_;
+    if ($filename =~ /-$expectedTag(-$mismatchTag)?\.html$/) {
+        return 1;
+    }
+    my $base = stripExtension($filename);
+    return (-f "$base-$expectedTag.html" || -f "$base-$expectedTag-$mismatchTag.html");
+}
+
 sub directoryFilter
 {
     return () if exists $ignoredLocalDirectories{basename($File::Find::dir)};
@@ -2457,7 +2468,8 @@ sub fileFilter
 {
     my $filename = $_;
     if ($filename =~ /\.([^.]+)$/) {
-        if (exists $supportedFileExtensions{$1}) {
+        my $extension = $1;
+        if (exists $supportedFileExtensions{$extension} && !isUsedInReftest($filename)) {
             my $path = File::Spec->abs2rel(catfile($File::Find::dir, $filename), $testDirectory);
             push @testsFound, $path if !exists $ignoredFiles{$path};
         }
