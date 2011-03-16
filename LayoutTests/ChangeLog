@@ -1,3 +1,14 @@
+2011-03-16  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        fast/loader/stateobjects/replacestate-in-iframe.html caused infinite loop.
+        https://bugs.webkit.org/show_bug.cgi?id=36467
+
+        Removing the test from skipped list since the problem seems to be solved.
+
+        * platform/qt/Skipped:
+
 2011-03-15  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.

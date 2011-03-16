@@ -1394,10 +1394,6 @@ fast/forms/multiple-form-submission-protection-mouse.html
 # https://bugs.webkit.org/show_bug.cgi?id=35973
 fast/multicol/hit-test-above-or-below.html
 
-# fast/loader/stateobjects/replacestate-in-iframe.html caused infinite loop
-# https://bugs.webkit.org/show_bug.cgi?id=36467
-fast/loader/stateobjects/replacestate-in-iframe.html
-
 # Not sure why this is failing on Qt.
 # https://bugs.webkit.org/show_bug.cgi?id=37697
 fast/url/host.html
