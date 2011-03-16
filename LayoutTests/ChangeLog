@@ -1,3 +1,14 @@
+2011-03-16  Brian Weinstein  <bweinstein@apple.com>
+
+        More cleanup of expected results files for text combine tests from r81255.
+
+        * platform/win/fast/dynamic/text-combine-expected.checksum: Added.
+        * platform/win/fast/dynamic/text-combine-expected.png: Added.
+        * platform/win/fast/text/international/text-combine-image-test-expected.txt:
+        
+        * platform/win/fast/international: Removed. This was the wrong directory.
+        * platform/win/fast/international/text-combine-image-test-expected.txt: Removed. This was the wrong directory.
+
 2011-03-16  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, fix live-edit test broken by r81238.
