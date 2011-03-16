@@ -1,3 +1,18 @@
+2011-03-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Dimitri Glazkov and Darin Adler.
+
+        Node::isContentEditable should always call parentNode() instead of parentOrHostNode()
+        https://bugs.webkit.org/show_bug.cgi?id=56472
+
+        Replaced the call to parentOrHostNode() in Node::isContentEditable by a call to parentNode().
+        Node::isContentEditable now calls parentNode() on all nodes.
+
+        No tests are added since this behavior change is not visible to scripts at the moment.
+
+        * dom/Node.cpp:
+        (WebCore::Node::isContentEditable):
+
 2011-03-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

@@ -720,19 +720,18 @@ bool Node::isContentEditable(EditableLevel editableLevel) const
     // ContainerNode::setFocus() calls setNeedsStyleRecalc(), so the assertion
     // would fire in the middle of Document::setFocusedNode().
 
-    for (const Node* node = this; node; ) {
-        if (node->isHTMLElement() || node->isDocumentNode()) {
-            if (node->renderer()) {
-                if (editableLevel == RichlyEditable)
-                    return node->renderer()->style()->userModify() == READ_WRITE;
-
-                EUserModify userModify = node->renderer()->style()->userModify();
-                return userModify == READ_WRITE || userModify == READ_WRITE_PLAINTEXT_ONLY;
+    for (const Node* node = this; node; node = node->parentNode()) {
+        if ((node->isHTMLElement() || node->isDocumentNode()) && node->renderer()) {
+            switch (node->renderer()->style()->userModify()) {
+            case READ_ONLY:
+                return false;
+            case READ_WRITE:
+                return true;
+            case READ_WRITE_PLAINTEXT_ONLY:
+                return editableLevel != RichlyEditable;
             }
-            node = node->parentNode();
-        } else {
-            // FIXME: Should this be parentNode() instead?
-            node = node->parentOrHostNode();
+            ASSERT_NOT_REACHED();
+            return false;
         }
     }
 
