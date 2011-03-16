@@ -1,3 +1,9 @@
+2011-03-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Update Qt specific expected file after r81049.
+
+        * platform/qt/fast/table/overflowHidden-expected.txt: Updated.
+
 2011-03-16  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, fix test broken by r81238.
