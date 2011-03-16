@@ -411,7 +411,7 @@ media/video-controls-in-media-document.html
 # Sometimes fails http://webkit.org/b/55329
 fast/events/pageshow-pagehide-on-back-cached.html
 
-# Assertion failure http://webkit.org/b/56047
+# Assertion failure http://webkit.org/b/56407
 editing/style/iframe-onload-crash.html
 
 ################################################################################
