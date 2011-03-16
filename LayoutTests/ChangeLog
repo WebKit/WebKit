@@ -1,3 +1,44 @@
+2011-03-15  David Levin  <levin@chromium.org>
+
+        A little more clean-up due to r81168. Also, some adjustment of the results for Linux due to r81162.
+
+        * platform/chromium-mac-leopard/svg/text/small-fonts-2-expected.txt:
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.checksum:
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-light-04-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-light-04-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png: Added.
+        * platform/chromium-win/svg/carto.net/selectionlist-expected.checksum:
+        * platform/chromium-win/svg/carto.net/selectionlist-expected.png:
+        * platform/chromium-win/svg/text/text-text-07-t-expected.checksum:
+        * platform/chromium-win/svg/text/text-text-07-t-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Update Qt specific expected results after r80846.

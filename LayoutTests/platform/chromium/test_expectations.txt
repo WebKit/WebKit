@@ -2458,10 +2458,7 @@ BUGCR59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
 // Needs investigation
 BUGJAMESR LINUX WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
 BUGJAMESR MAC : fast/text/international/vertical-text-glyph-test.html = IMAGE
-BUGJAMESR WIN : fast/text/international/vertical-text-metrics-test.html = TEXT
-BUGJAMESR LINUX RELEASE : fast/text/international/vertical-text-metrics-test.html = TEXT
-// started crashing somewhere after WK r80582, probably with Dave Hyatt's vertical text changes
-// see BUGCR75426 list
+BUGJAMESR WIN LINUX : fast/text/international/vertical-text-metrics-test.html = TEXT
 
 // Added in WebKit r69755, failed immediately.
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
@@ -2755,9 +2752,7 @@ BUGCR67540 WIN LINUX : fast/text/emphasis-overlap.html = IMAGE+TEXT
 BUGCR67540 WIN LINUX : fast/text/emphasis-avoid-ruby.html = IMAGE
 // IMAGE or IMAGE+TEXT
 BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-h.html = FAIL
-// started to crash/assert at some point after WK r80582 (see BUGCR75426 list)
-BUGCR67540 WIN : fast/repaint/text-emphasis-v.html = IMAGE
-BUGCR67540 LINUX RELEASE : fast/repaint/text-emphasis-v.html = IMAGE
+BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-v.html = IMAGE
 
 BUGCR67662 WIN LINUX RELEASE : http/tests/inspector/console-websocket-error.html = TEXT
 BUGCR67662 WIN LINUX DEBUG SLOW : http/tests/inspector/console-websocket-error.html = TEXT
@@ -2830,7 +2825,7 @@ BUGCR69300 LINUX : svg/batik/text/textOnPath.svg = IMAGE PASS
 BUGCR69411 LINUX : svg/custom/linking-a-03-b-transform.svg = IMAGE PASS
 
 // New test added in r75720
-BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH
+BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH TEXT
 
 // Failing after r75768
 BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
@@ -2857,8 +2852,7 @@ BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
 
 // Added by and started crashing at http://trac.webkit.org/changeset/76743,
 // stopped crashing at some point after 80582, but see BUGCR75426!
-//BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH IMAGE+TEXT
-BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
+BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH IMAGE+TEXT
 
 // Started failing at http://trac.webkit.org/changeset/76743
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-complex.html = IMAGE+TEXT
