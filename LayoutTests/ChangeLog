@@ -1,3 +1,10 @@
+2011-03-16  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skipping one more svg test failing on 32-bits release,
+        likely due to bug 39022.
+
+        * platform/gtk/Skipped:
+
 2011-03-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] fast/text/soft-hyphen-4.html introduced in r80984
