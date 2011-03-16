@@ -138,7 +138,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
     , m_instrumentingAgents(new InstrumentingAgents())
     , m_injectedScriptManager(injectedScriptManager)
     , m_state(new InspectorState(client))
-    , m_domAgent(InspectorDOMAgent::create(m_instrumentingAgents.get(), m_state.get(), injectedScriptManager))
+    , m_domAgent(InspectorDOMAgent::create(m_instrumentingAgents.get(), page, m_state.get(), injectedScriptManager))
     , m_cssAgent(new InspectorCSSAgent(m_instrumentingAgents.get(), m_domAgent.get()))
 #if ENABLE(DATABASE)
     , m_databaseAgent(InspectorDatabaseAgent::create(m_instrumentingAgents.get()))
@@ -219,8 +219,8 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
 
     m_frontend->inspector()->frontendReused();
     m_frontend->inspector()->inspectedURLChanged(inspectedURL().string());
-    pushDataCollectedOffline();
 
+    m_domAgent->restore();
     m_resourceAgent->restore();
     m_timelineAgent->restore();
 
@@ -396,6 +396,22 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
 #endif
     // Initialize Web Inspector title.
     m_frontend->inspector()->inspectedURLChanged(inspectedURL().string());
+
+    if (!m_showPanelAfterVisible.isEmpty()) {
+        m_frontend->inspector()->showPanel(m_showPanelAfterVisible);
+        m_showPanelAfterVisible = String();
+    }
+    if (m_nodeToFocus)
+        focusNode();
+#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(WORKERS)
+    WorkersMap::iterator workersEnd = m_workers.end();
+    for (WorkersMap::iterator it = m_workers.begin(); it != workersEnd; ++it) {
+        InspectorWorkerResource* worker = it->second.get();
+        m_frontend->debugger()->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
+    }
+#endif
+    // Dispatch pending frontend commands
+    issueEvaluateForTestCommands();
 }
 
 void InspectorAgent::disconnectFrontend()
@@ -448,48 +464,6 @@ void InspectorAgent::createFrontendLifetimeAgents()
 void InspectorAgent::releaseFrontendLifetimeAgents()
 {
     m_runtimeAgent.clear();
-}
-
-void InspectorAgent::populateScriptObjects(ErrorString*)
-{
-    ASSERT(m_frontend);
-    if (!m_frontend)
-        return;
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (m_profilerAgent->enabled())
-        m_frontend->profiler()->profilerWasEnabled();
-#endif
-
-    pushDataCollectedOffline();
-
-    if (m_nodeToFocus)
-        focusNode();
-
-    if (!m_showPanelAfterVisible.isEmpty()) {
-        m_frontend->inspector()->showPanel(m_showPanelAfterVisible);
-        m_showPanelAfterVisible = "";
-    }
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_debuggerAgent->enableDebuggerAfterShown();
-#endif
-
-    // Dispatch pending frontend commands
-    issueEvaluateForTestCommands();
-}
-
-void InspectorAgent::pushDataCollectedOffline()
-{
-    m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
-
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(WORKERS)
-    WorkersMap::iterator workersEnd = m_workers.end();
-    for (WorkersMap::iterator it = m_workers.begin(); it != workersEnd; ++it) {
-        InspectorWorkerResource* worker = it->second.get();
-        m_frontend->debugger()->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
-    }
-#endif
 }
 
 void InspectorAgent::didCommitLoad(DocumentLoader* loader)

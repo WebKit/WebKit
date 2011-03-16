@@ -503,21 +503,11 @@ WebInspector.doLoadedDone = function()
 
     this.extensionServer.initExtensions();
 
-    function onPopulateScriptObjects(error)
-    {
-        if (!error && !WebInspector.currentPanel)
-            WebInspector.showPanel(WebInspector.settings.lastActivePanel);
-    }
-    InspectorAgent.populateScriptObjects(onPopulateScriptObjects);
-
-    if (Preferences.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled)
-        this.debuggerModel.enableDebugger();
-    if (Preferences.profilerAlwaysEnabled || WebInspector.settings.profilerEnabled)
-        ProfilerAgent.enable();
     if (WebInspector.settings.monitoringXHREnabled)
         ConsoleAgent.setMonitoringXHREnabled(true);
-
     ConsoleAgent.setConsoleMessagesEnabled(true);
+
+    WebInspector.showPanel(WebInspector.settings.lastActivePanel);
 
     function propertyNamesCallback(error, names)
     {

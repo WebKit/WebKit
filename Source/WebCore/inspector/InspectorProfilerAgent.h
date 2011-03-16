@@ -68,6 +68,7 @@ public:
 
     void enable(ErrorString*);
     void disable(ErrorString*);
+    void isEnabled(ErrorString*, bool* result) { *result = enabled(); }
     void start(ErrorString*) { startUserInitiatedProfiling(); }
     void stop(ErrorString*) { stopUserInitiatedProfiling(); }
 

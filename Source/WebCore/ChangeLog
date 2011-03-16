@@ -1,3 +1,38 @@
+2011-03-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: split InspectorAgent.populateScriptObjects into more granular agent-specific requests
+        https://bugs.webkit.org/show_bug.cgi?id=56389
+
+        Instead of sending one big request populateScriptObjects each agent requests
+        for initial data in its constructor.
+        
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        (WebCore::InspectorAgent::setFrontend):
+        (WebCore::InspectorAgent::pushDataCollectedOffline):
+        (WebCore::InspectorAgent::getPreferredPanel):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::setFrontend):
+        (WebCore::InspectorDOMAgent::restore):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::create):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setFrontend):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorProfilerAgent.h:
+        (WebCore::InspectorProfilerAgent::isEnabled):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        * inspector/front-end/inspector.js:
+
 2011-03-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

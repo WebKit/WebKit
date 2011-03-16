@@ -66,6 +66,7 @@
 #include "MutationEvent.h"
 #include "Node.h"
 #include "NodeList.h"
+#include "Page.h"
 #include "Pasteboard.h"
 #include "PlatformString.h"
 #include "RenderStyle.h"
@@ -252,8 +253,9 @@ void RevalidateStyleAttributeTask::onTimer(Timer<RevalidateStyleAttributeTask>*)
     m_elements.clear();
 }
 
-InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
+InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, Page* inspectedPage, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
     : m_instrumentingAgents(instrumentingAgents)
+    , m_inspectedPage(inspectedPage)
     , m_inspectorState(inspectorState)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
@@ -273,6 +275,7 @@ void InspectorDOMAgent::setFrontend(InspectorFrontend* frontend)
     ASSERT(!m_frontend);
     m_frontend = frontend->dom();
     m_instrumentingAgents->setInspectorDOMAgent(this);
+    m_document = m_inspectedPage->mainFrame()->document();
 }
 
 void InspectorDOMAgent::clearFrontend()
@@ -282,6 +285,13 @@ void InspectorDOMAgent::clearFrontend()
     m_instrumentingAgents->setInspectorDOMAgent(0);
     m_inspectorState->setBoolean(DOMAgentState::documentRequested, false);
     reset();
+}
+
+void InspectorDOMAgent::restore()
+{
+    // Reset document to avoid early return from setDocument.
+    m_document = 0;
+    setDocument(m_inspectedPage->mainFrame()->document());
 }
 
 Vector<Document*> InspectorDOMAgent::documents()

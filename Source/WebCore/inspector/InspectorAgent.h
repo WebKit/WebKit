@@ -199,7 +199,6 @@ public:
     // InspectorAgent API
     void getInspectorState(RefPtr<InspectorObject>* state);
     void setMonitoringXHREnabled(bool enabled, bool* newState);
-    void populateScriptObjects(ErrorString* error);
     // Following are used from InspectorBackend and internally.
     void setSearchingForNode(ErrorString* error, bool enabled, bool* newState);
     void didEvaluateForTestInFrontend(ErrorString* error, long callId, const String& jsonResult);
@@ -209,7 +208,6 @@ public:
 
 private:
     void showPanel(const String& panel);
-    void pushDataCollectedOffline();
     void unbindAllResources();
     void setSearchingForNode(bool enabled);
 

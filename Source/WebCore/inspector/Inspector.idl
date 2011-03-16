@@ -34,7 +34,6 @@ module core {
         void addScriptToEvaluateOnLoad(in String scriptSource);
         void removeAllScriptsToEvaluateOnLoad();
         void reloadPage(in boolean ignoreCache);
-        void populateScriptObjects();
 
         void openInInspectedWindow(in String url);
         void setSearchingForNode(in boolean enabled, out boolean newState);
@@ -254,6 +253,7 @@ module core {
     interface [Conditional=INSPECTOR] Profiler {
         void enable();
         void disable();
+        void isEnabled(out boolean state);
         void start();
         void stop();
         [event] void profilerWasEnabled();

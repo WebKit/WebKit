@@ -93,15 +93,16 @@ public:
         virtual void didModifyDOMAttr(Element*) = 0;
     };
 
-    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
+    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
     {
-        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, inspectorState, injectedScriptManager));
+        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, page, inspectorState, injectedScriptManager));
     }
 
     ~InspectorDOMAgent();
 
     void setFrontend(InspectorFrontend*);
     void clearFrontend();
+    void restore();
 
     Vector<Document*> documents();
     void reset();
@@ -157,7 +158,7 @@ public:
     static bool isWhitespace(Node*);
 
 private:
-    InspectorDOMAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*);
+    InspectorDOMAgent(InstrumentingAgents*, Page*, InspectorState*, InjectedScriptManager*);
 
     // Node-related methods.
     typedef HashMap<RefPtr<Node>, long> NodeToIdMap;
@@ -189,6 +190,7 @@ private:
     void discardBindings();
 
     InstrumentingAgents* m_instrumentingAgents;
+    Page* m_inspectedPage;
     InspectorState* m_inspectorState;
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::DOM* m_frontend;

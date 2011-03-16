@@ -73,7 +73,6 @@ public:
     bool enabled();
     void restore();
     void setFrontend(InspectorFrontend*);
-    void enableDebuggerAfterShown();
     void clearFrontend();
 
     void inspectedURLChanged(const String& url);

@@ -195,6 +195,9 @@ WebInspector.ScriptsPanel = function()
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, this._breakpointAdded, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, this._breakpointRemoved, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, this._callFrameSelected, this);
+
+    if (Preferences.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled)
+        WebInspector.debuggerModel.enableDebugger();
 }
 
 // Keep these in sync with WebCore::ScriptDebugServer

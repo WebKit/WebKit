@@ -128,10 +128,7 @@ void InspectorDebuggerAgent::restore()
 void InspectorDebuggerAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend->debugger();
-}
 
-void InspectorDebuggerAgent::enableDebuggerAfterShown()
-{
     if (m_inspectorState->getBoolean(DebuggerAgentState::enableWhenShown)) {
         m_inspectorState->setBoolean(DebuggerAgentState::enableWhenShown, false);
         enable(false);

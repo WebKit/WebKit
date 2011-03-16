@@ -134,6 +134,16 @@ WebInspector.ProfilesPanel = function()
     }
 
     InspectorBackend.registerDomainDispatcher("Profiler", new WebInspector.ProfilerDispatcher(this));
+
+    if (Preferences.profilerAlwaysEnabled || WebInspector.settings.profilerEnabled)
+        ProfilerAgent.enable();
+    else {
+        function onProfilerEnebled(error, value) {
+            if (value)
+                this._profilerWasEnabled();
+        }
+        ProfilerAgent.isEnabled(onProfilerEnebled.bind(this));
+    }
 }
 
 WebInspector.ProfilesPanel.prototype = {
