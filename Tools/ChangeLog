@@ -1,3 +1,13 @@
+2011-03-15  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes for long linker commands on Win and method return error, plus a Mac
+        fix to link against the Security framework after recent WebKitSystemInterface changes.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::originsWithLocalStorage):
+        * wx/build/settings.py:
+        * wx/build/waf_extensions.py:
+
 2011-03-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

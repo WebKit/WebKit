@@ -588,6 +588,7 @@ void LayoutTestController::deleteAllLocalStorage()
 JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)
 {
     // FIXME: Implement.
+    return 0;
 }
 
 void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)

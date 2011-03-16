@@ -1,3 +1,9 @@
+2011-03-15  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, only compile the methods when the INDEXED_DATABASE feature is enabled.
+        
+        * storage/IDBDatabaseCallbacksImpl.cpp:
+
 2011-03-15  Brady Eidson  <beidson@apple.com>
 
         Build fix after r81208 for https://bugs.webkit.org/show_bug.cgi?id=56425

@@ -343,7 +343,9 @@ def common_configure(conf):
 
         conf.env.append_value('CPPFLAGS', sdkflags)
         conf.env.append_value('LINKFLAGS', sdkflags)
-
+        
+        conf.env.append_value('LINKFLAGS', ['-framework', 'Security'])
+        
         conf.env.append_value('CPPPATH_SQLITE3', [os.path.join(wklibs_dir, 'WebCoreSQLite3')])
         conf.env.append_value('LIB_SQLITE3', ['WebCoreSQLite3'])
 

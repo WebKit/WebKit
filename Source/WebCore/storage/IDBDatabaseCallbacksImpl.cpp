@@ -26,6 +26,8 @@
 #include "config.h"
 #include "IDBDatabaseCallbacksImpl.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "IDBDatabase.h"
 
 namespace WebCore {
@@ -57,3 +59,5 @@ void IDBDatabaseCallbacksImpl::unregisterDatabase(IDBDatabase* database)
 }
 
 } // namespace WebCore
+
+#endif

@@ -40,10 +40,25 @@ def exec_command(s, **kw):
             if i.find(" ") != -1:
                 i = '"%s"' % i
             t.append(i)
-        os.write(fd, ' '.join(t[1:]))
+            
+        t1 = t[1:]
+        # Fix for LNK1170 error
+        filename_str = '@' + filename
+        filename2_str = None
+        if len(' '.join(s)) > 131070:
+            t2 = t[len(t) / 2:]
+            t1 = t[1:len(t) / 2]
+            (fd2, filename2) = tempfile.mkstemp()
+            os.write(fd2, ' '.join(t2))
+            os.close(fd2)
+            filename2_str = '@' + filename2
+        os.write(fd, ' '.join(t1))
         os.close(fd)
         
-        s = [s[0], '@' + filename]
+        s = [s[0]]
+        s.append(filename_str)
+        if filename2_str:
+            s.append(filename2_str)
         
     if 'log' in kw:
         kw['stdout'] = kw['stderr'] = kw['log']
