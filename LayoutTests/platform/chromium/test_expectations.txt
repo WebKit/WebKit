@@ -3331,3 +3331,6 @@ BUGCR76159 MAC LINUX : http/tests/media/video-play-stall-before-meta-data.html =
 
 BUGWK56407 LINUX WIN : editing/style/iframe-onload-crash.html = CRASH
 BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = CRASH
+
+// Some transition tests are flakey since r79985
+BUGWK56242 LINUX : transitions/interrupted-accelerated-transition.html = PASS FAIL
