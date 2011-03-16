@@ -317,3 +317,6 @@ fast/dom/Geolocation/page-reload-cancel-permission-requests.html
 # Transition tests are flakey since r79985
 # https://bugs.webkit.org/show_bug.cgi?id=56242
 transitions/interrupted-accelerated-transition.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=56488
+compositing/transitions/scale-transition-no-start.html

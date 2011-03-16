@@ -3290,6 +3290,7 @@ BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = CR
 // Some transition tests are flakey since r79985
 // This test has an expectation for DEBUG above, so the test runner fails for Linux Debug builders.
 BUGWK56242 LINUX RELEASE : transitions/interrupted-accelerated-transition.html = PASS FAIL
+BUGWK56488 SKIP : compositing/transitions/scale-transition-no-start.html = CRASH
 
 // These are failing sporadically due to WebKit r81222
 BUGWK56454 WIN : inspector/evaluate-in-page.html = PASS TIMEOUT
@@ -3313,4 +3314,3 @@ BUGWK56454 WIN : inspector/elements/mutate-unknown-node.html = PASS TEXT
 
 // Existing expectation above has been temporarily commented for this test. Please uncomment that one once bug 56454 is fixed.
 BUGWK56454 WIN LINUX : inspector/timeline/timeline-parse-html.html = PASS TIMEOUT
-

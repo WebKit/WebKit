@@ -1,3 +1,14 @@
+2011-03-16  Dean Jackson  <dino@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=56488
+        transitions/scale-transition-no-start.html is crashing.
+
+        Adding to the Skipped list.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2011-03-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Carlson.
