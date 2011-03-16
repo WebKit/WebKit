@@ -562,6 +562,9 @@ http/tests/websocket/tests/reload-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=55867
 http/tests/inspector/resource-parameters.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=34281
+#fast/workers/shared-worker-frame-lifecycle.html
+
 # =========================================================================== #
 # failing media tests
 # =========================================================================== #
@@ -781,6 +784,9 @@ http/tests/misc/willCacheResponse-delegate-callback.html
 
 # Missing layoutTestController.setHandlesAuthenticationChallenges()
 http/tests/misc/authentication-sent-to-redirect.html
+
+# Missing layoutTestController.setAutofilled()
+fast/forms/input-autofilled.html
 
 # ------- broken ICO file decoding
 fast/images/favicon-as-image.html

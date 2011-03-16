@@ -1,3 +1,11 @@
+2011-03-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Add failing tests to the Skipped list.
+
+        * platform/qt/Skipped:
+         - Add fast/forms/input-autofilled.html because of missing layoutTestController.setAutofilled().
+         - Add fast/workers/shared-worker-frame-lifecycle.html because it is still flakey. (bug 34281)
+
 2011-03-15  Adam Roben  <aroben@apple.com>
 
         Fix bug number typo
