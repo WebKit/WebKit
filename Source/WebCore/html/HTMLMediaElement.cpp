@@ -1595,7 +1595,9 @@ void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>*)
         return;
 
     scheduleTimeupdateEvent(true);
-    
+    if (hasMediaControls())
+        mediaControls()->playbackProgressed();
+
     // FIXME: deal with cue ranges here
 }
 
@@ -2117,6 +2119,8 @@ void HTMLMediaElement::updatePlayState()
             m_player->pause();
         refreshCachedTime();
         m_playbackProgressTimer.stop();
+        if (hasMediaControls())
+            mediaControls()->playbackStopped();
         return;
     }
     
@@ -2140,6 +2144,8 @@ void HTMLMediaElement::updatePlayState()
             m_player->play();
         }
 
+        if (hasMediaControls())
+            mediaControls()->playbackStarted();
         startPlaybackProgressTimer();
         m_playing = true;
 
@@ -2156,6 +2162,9 @@ void HTMLMediaElement::updatePlayState()
 
         if (couldPlayIfEnoughData())
             m_player->prepareToPlay();
+
+        if (hasMediaControls())
+            mediaControls()->playbackStopped();
     }
     
     if (renderer())

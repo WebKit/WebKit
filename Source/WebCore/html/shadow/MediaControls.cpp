@@ -47,12 +47,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const double cTimeUpdateRepeatDelay = 0.2;
 static const double cOpacityAnimationRepeatDelay = 0.05;
 
 MediaControls::MediaControls(HTMLMediaElement* mediaElement)
     : m_mediaElement(mediaElement)
-    , m_timeUpdateTimer(this, &MediaControls::timeUpdateTimerFired)
     , m_opacityAnimationTimer(this, &MediaControls::opacityAnimationTimerFired)
     , m_opacityAnimationStartTime(0)
     , m_opacityAnimationDuration(0)
@@ -65,6 +63,23 @@ MediaControls::MediaControls(HTMLMediaElement* mediaElement)
 void MediaControls::reset()
 {
     update();
+}
+
+void MediaControls::playbackProgressed()
+{
+    if (m_timeline)
+        m_timeline->update(false);
+    updateTimeDisplay();
+}
+
+void MediaControls::playbackStarted()
+{
+    playbackProgressed();
+}
+
+void MediaControls::playbackStopped()
+{
+    playbackProgressed();
 }
 
 void MediaControls::changedMute()
@@ -166,7 +181,6 @@ void MediaControls::update()
         }
         m_opacityAnimationTo = 1.0f;
         m_opacityAnimationTimer.stop();
-        m_timeUpdateTimer.stop();
         return;
     }
 
@@ -196,13 +210,6 @@ void MediaControls::update()
             }
             m_panel->attach();
         }
-    }
-
-    if (media->canPlay()) {
-        if (m_timeUpdateTimer.isActive())
-            m_timeUpdateTimer.stop();
-    } else if (media->renderer()->style()->visibility() == VISIBLE && m_timeline && m_timeline->renderer() && m_timeline->renderer()->style()->display() != NONE) {
-        m_timeUpdateTimer.startRepeating(cTimeUpdateRepeatDelay);
     }
 
     if (m_panel) {
@@ -377,13 +384,6 @@ void MediaControls::createFullscreenButton()
     ASSERT(!m_fullscreenButton);
     m_fullscreenButton = MediaControlFullscreenButtonElement::create(m_mediaElement);
     m_fullscreenButton->attachToParent(m_panel.get());
-}
-
-void MediaControls::timeUpdateTimerFired(Timer<MediaControls>*)
-{
-    if (m_timeline)
-        m_timeline->update(false);
-    updateTimeDisplay();
 }
 
 void MediaControls::updateTimeDisplay()

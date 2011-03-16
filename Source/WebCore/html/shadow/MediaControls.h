@@ -63,6 +63,11 @@ public:
     MediaControls(HTMLMediaElement*);
 
     void reset();
+
+    void playbackProgressed();
+    void playbackStarted();
+    void playbackStopped();
+
     void changedMute();
     void changedVolume();
     void changedClosedCaptionsVisibility();
@@ -98,8 +103,6 @@ private:
     void createTimeRemainingDisplay();
     void createFullscreenButton();
 
-    void timeUpdateTimerFired(Timer<MediaControls>*);
-
     void updateControlVisibility();
     void changeOpacity(HTMLElement*, float opacity);
     void opacityAnimationTimerFired(Timer<MediaControls>*);
@@ -127,7 +130,6 @@ private:
     RefPtr<MediaControlStatusDisplayElement> m_statusDisplay;
 
     HTMLMediaElement* m_mediaElement;
-    Timer<MediaControls> m_timeUpdateTimer;
     Timer<MediaControls> m_opacityAnimationTimer;
 
     double m_opacityAnimationStartTime;

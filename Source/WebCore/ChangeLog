@@ -1,3 +1,26 @@
+2011-03-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Add play state callbacks to MediaControls, kill timeUpdate timer.
+        https://bugs.webkit.org/show_bug.cgi?id=56473
+
+        No change in behavior, covered by existing tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::playbackProgressTimerFired): Added a call to
+            media controls.
+        (WebCore::HTMLMediaElement::updatePlayState): Ditto.
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::MediaControls): Removed initialization of the timer.
+        (WebCore::MediaControls::playbackProgressed): Added.
+        (WebCore::MediaControls::playbackStarted): Added, for now routing to just
+            call playbackProgressed.
+        (WebCore::MediaControls::playbackStopped): Ditto.
+        (WebCore::MediaControls::update): Removed the code to start/stop the
+            timer that's now gone.
+        * html/shadow/MediaControls.h: Removed timer decls.
+
 2011-03-16  Bill Budge  <bbudge@chromium.org>
 
         Reviewed by David Levin.
