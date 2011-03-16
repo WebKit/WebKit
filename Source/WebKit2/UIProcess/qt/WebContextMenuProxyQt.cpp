@@ -82,6 +82,9 @@ PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create(QWKPage* page)
 
 void WebContextMenuProxyQt::showContextMenu(const IntPoint& position, const Vector<WebContextMenuItemData>& items)
 {
+    if (items.isEmpty())
+        return;
+
     OwnPtr<QMenu> menu = createContextMenu(items);
 
     // We send the signal, even with no items, because the client should be able to show custom items

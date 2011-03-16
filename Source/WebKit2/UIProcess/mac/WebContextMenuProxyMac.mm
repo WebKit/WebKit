@@ -199,6 +199,9 @@ void WebContextMenuProxyMac::populate(const Vector<WebContextMenuItemData>& item
 
 void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const Vector<WebContextMenuItemData>& items)
 {
+    if (items.isEmpty())
+        return;
+    
     populate(items);
     [[WKMenuTarget sharedMenuTarget] setMenuProxy:this];
     

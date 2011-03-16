@@ -1,3 +1,25 @@
+2011-03-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: False SPOD cursor when context menu is open
+        <rdar://problem/9029154>
+        https://bugs.webkit.org/show_bug.cgi?id=56433
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showContextMenu):
+        Update to match showPopupMenu idiomatically, and stop the responsivenessTimer
+        since the act of showing the context menu could spin a nested runloop.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+        * UIProcess/qt/WebContextMenuProxyQt.cpp:
+        (WebKit::WebContextMenuProxyQt::showContextMenu):
+        * UIProcess/win/WebContextMenuProxyWin.cpp:
+        (WebKit::WebContextMenuProxyWin::showContextMenu):
+        Move isEmpty() check to implementations, since we don't want to show
+        this in any case, not just the one where we check it.
+
 2011-03-15  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.

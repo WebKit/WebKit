@@ -73,6 +73,9 @@ void WebContextMenuProxyWin::populateMenu(HMENU menu, const Vector<WebContextMen
 
 void WebContextMenuProxyWin::showContextMenu(const IntPoint& origin, const Vector<WebContextMenuItemData>& items)
 {
+    if (items.isEmpty())
+        return;
+
     // Hide any context menu we have showing (this also destroys the menu).
     hideContextMenu();
 
