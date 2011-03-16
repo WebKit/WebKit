@@ -6100,8 +6100,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
     case CSSPropertyWebkitTextCombine:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(textCombine, TextCombine)
-        if (m_style->hasTextCombine())
-            m_style->setUnique(); // The style could be modified in RenderCombineText depending on text metrics.
         return;
 
     case CSSPropertyWebkitTextEmphasisPosition:

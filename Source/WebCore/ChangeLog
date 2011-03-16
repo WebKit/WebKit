@@ -1,3 +1,23 @@
+2011-03-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        text-combine text retains compressed font after adding characters to it
+        https://bugs.webkit.org/show_bug.cgi?id=56448
+
+        Test: fast/dynamic/text-combine.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Allow styles with text-combine to be shared, since
+        only the clones on the RenderCombineText will be mutated.
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::styleDidChange): Clone the style, to avoid mutating the parent’s
+        style.
+        (WebCore::RenderCombineText::combineText): Start off with the original font; restore it if
+        the text cannot be combined.
+        * rendering/RenderCombineText.h:
+        (WebCore::RenderCombineText::originalFont): Added. Returns the parent’s font.
+
 2011-03-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

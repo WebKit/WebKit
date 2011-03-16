@@ -1,3 +1,15 @@
+2011-03-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        text-combine text retains compressed font after adding characters to it
+        https://bugs.webkit.org/show_bug.cgi?id=56448
+
+        * fast/dynamic/text-combine.html: Added.
+        * platform/mac/fast/dynamic/text-combine-expected.checksum: Added.
+        * platform/mac/fast/dynamic/text-combine-expected.png: Added.
+        * platform/mac/fast/dynamic/text-combine-expected.txt: Added.
+
 2011-03-16  Adam Roben  <aroben@apple.com>
 
         Disable jquery/effects.html

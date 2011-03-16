@@ -37,6 +37,7 @@ RenderCombineText::RenderCombineText(Node* node, PassRefPtr<StringImpl> string)
 
 void RenderCombineText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
+    setStyleInternal(RenderStyle::clone(style()));
     RenderText::styleDidChange(diff, oldStyle);
 
     if (m_isCombined)
@@ -93,12 +94,12 @@ void RenderCombineText::combineText()
         return;
 
     TextRun run = TextRun(String(text()));
-    FontDescription description = style()->font().fontDescription();
+    FontDescription description = originalFont().fontDescription();
     float emWidth = description.computedSize() * textCombineMargin;
     bool shouldUpdateFont = false;
 
     description.setOrientation(Horizontal); // We are going to draw combined text horizontally.
-    m_combinedTextWidth = style()->font().width(run);
+    m_combinedTextWidth = originalFont().width(run);
     m_isCombined = m_combinedTextWidth <= emWidth;
 
     if (m_isCombined)
@@ -122,12 +123,14 @@ void RenderCombineText::combineText()
         }
     }
 
+    if (!m_isCombined)
+        shouldUpdateFont = style()->setFontDescription(originalFont().fontDescription());
+
     if (shouldUpdateFont)
         style()->font().update(style()->font().fontSelector());
 
     if (m_isCombined) {
-        static const UChar newCharacter = objectReplacementCharacter;
-        DEFINE_STATIC_LOCAL(String, objectReplacementCharacterString, (&newCharacter, 1));
+        DEFINE_STATIC_LOCAL(String, objectReplacementCharacterString, (&objectReplacementCharacter, 1));
         RenderText::setTextInternal(objectReplacementCharacterString.impl());
     }
 }
