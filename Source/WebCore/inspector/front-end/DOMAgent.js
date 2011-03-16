@@ -402,7 +402,8 @@ WebInspector.DOMAgent.prototype = {
         if (payload && "id" in payload) {
             this._document = new WebInspector.DOMDocument(this, payload);
             this._idToDOMNode[payload.id] = this._document;
-            this._bindNodes(this._document.children);
+            if (this._document.children)
+                this._bindNodes(this._document.children);
         } else
             this._document = null;
         this.dispatchEventToListeners(WebInspector.DOMAgent.Events.DocumentUpdated, this._document);

@@ -222,12 +222,13 @@ void InspectorBrowserDebuggerAgent::willRemoveDOMNode(Node* node)
     if (!debuggerAgent)
         return;
 
+    Node* parentNode = InspectorDOMAgent::innerParentNode(node);
     if (hasBreakpoint(node, NodeRemoved)) {
         RefPtr<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(node, NodeRemoved, false, eventData.get());
         eventData->setString("breakpointType", domNativeBreakpointType);
         debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData.release());
-    } else if (hasBreakpoint(InspectorDOMAgent::innerParentNode(node), SubtreeModified)) {
+    } else if (parentNode && hasBreakpoint(parentNode, SubtreeModified)) {
         RefPtr<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(node, SubtreeModified, false, eventData.get());
         eventData->setString("breakpointType", domNativeBreakpointType);
