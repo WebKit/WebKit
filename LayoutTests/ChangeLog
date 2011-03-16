@@ -1,3 +1,10 @@
+2011-03-16  Sam Weinig  <sam@webkit.org>
+
+        Skip test fast/forms/input-autofilled.html in mac-wk2 since 
+        layoutTestController.setAutofilled is not yet supported.
+
+        * platform/mac-wk2/Skipped:
+
 2011-03-16  Brian Weinstein  <bweinstein@apple.com>
 
         More cleanup of expected results files for text combine tests from r81255.

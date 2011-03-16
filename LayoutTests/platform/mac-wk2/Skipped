@@ -2014,6 +2014,9 @@ storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html
 storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html
 storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html
 
+# WebKitTestRunner needs layoutTestController.setAutofilled
+fast/forms/input-autofilled.html
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 
