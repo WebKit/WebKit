@@ -1,3 +1,9 @@
+2011-03-16  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, fix live-edit test broken by r81238.
+
+        * inspector/debugger/live-edit.html:
+
 2011-03-16  Brian Weinstein  <bweinstein@apple.com>
 
         Make the files added -expected.txt instead of -actual.txt so run-webkit-tests

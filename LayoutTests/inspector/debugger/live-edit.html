@@ -18,8 +18,8 @@ function test()
             function didShowScriptSource(sourceFrame)
             {
                 InspectorTest.addSniffer(WebInspector.debuggerModel, "_updateScriptSource", didEditScriptSource);
-                sourceFrame._textModel.text = sourceFrame._textModel.text.replace("return 0;", "return \"live-edited string\";");
-                sourceFrame._handleSave();
+                var newText = sourceFrame._textModel.text.replace("return 0;", "return \"live-edited string\";");
+                sourceFrame._delegate.editScriptSource(newText);
             }
 
             function didEditScriptSource()
