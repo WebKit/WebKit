@@ -1,3 +1,11 @@
+2011-03-16  David Levin  <levin@chromium.org>
+
+        Chromium Leopard build fix attempt.
+
+        The error was 'WebCore::GrouperVisitor' has a field 'WebCore::GrouperVisitor::m_grouper' whose type uses the anonymous namespace.
+
+        * bindings/v8/V8GCController.cpp:
+
 2011-03-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Dimitri Glazkov and Darin Adler.

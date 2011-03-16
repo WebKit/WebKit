@@ -258,9 +258,9 @@ bool operator<(const GrouperItem& a, const GrouperItem& b)
     return a.groupId() < b.groupId();
 }
 
-typedef Vector<GrouperItem> GrouperList;
-    
 }
+
+typedef Vector<GrouperItem> GrouperList;
 
 // If the node is in document, put it in the ownerDocument's object group.
 //
