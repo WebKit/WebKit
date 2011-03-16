@@ -47,6 +47,9 @@ struct PluginProcessCreationParameters;
 
 class PluginProcessProxy : CoreIPC::Connection::Client, ProcessLauncher::Client {
 public:
+#if PLATFORM(MAC)
+    static bool pluginNeedsExecutableHeap(const PluginInfoStore::Plugin&);
+#endif
     static PassOwnPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginInfoStore::Plugin&);
     ~PluginProcessProxy();
 

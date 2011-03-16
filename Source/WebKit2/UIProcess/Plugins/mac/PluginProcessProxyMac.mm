@@ -32,6 +32,18 @@
 #import "WebKitSystemInterface.h"
 
 namespace WebKit {
+    
+bool PluginProcessProxy::pluginNeedsExecutableHeap(const PluginInfoStore::Plugin& pluginInfo)
+{
+    static bool forceNonexecutableHeapForPlugins = [[NSUserDefaults standardUserDefaults] boolForKey:@"ForceNonexecutableHeapForPlugins"];
+    if (forceNonexecutableHeapForPlugins)
+        return false;
+    
+    if (pluginInfo.bundleIdentifier == "com.apple.QuickTime Plugin.plugin")
+        return false;
+    
+    return true;
+}
 
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters& parameters)
 {

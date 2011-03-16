@@ -1,3 +1,17 @@
+2011-03-16  Damian Kaleta  <dkaleta@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Add a user default that will force all plugins to opt in to non-executable data
+        https://bugs.webkit.org/show_bug.cgi?id=56487
+        <rdar://problem/9109095>
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::PluginProcessProxy):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::pluginNeedsExecutableHeap):
+
 2011-03-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

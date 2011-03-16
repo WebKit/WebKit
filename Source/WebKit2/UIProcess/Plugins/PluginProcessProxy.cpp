@@ -38,16 +38,6 @@
 #include "WebProcessProxy.h"
 
 namespace WebKit {
-    
-#if PLATFORM(MAC)
-static bool pluginNeedsExecutableHeap(const PluginInfoStore::Plugin& pluginInfo)
-{
-    if (pluginInfo.bundleIdentifier == "com.apple.QuickTime Plugin.plugin")
-        return false;
-    
-    return true;
-}
-#endif
 
 PassOwnPtr<PluginProcessProxy> PluginProcessProxy::create(PluginProcessManager* PluginProcessManager, const PluginInfoStore::Plugin& pluginInfo)
 {
@@ -63,7 +53,7 @@ PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManage
     launchOptions.processType = ProcessLauncher::PluginProcess;
 #if PLATFORM(MAC)
     launchOptions.architecture = pluginInfo.pluginArchitecture;
-    launchOptions.executableHeap = pluginNeedsExecutableHeap(pluginInfo);
+    launchOptions.executableHeap = PluginProcessProxy::pluginNeedsExecutableHeap(pluginInfo);
 #endif
 
     m_processLauncher = ProcessLauncher::create(this, launchOptions);
