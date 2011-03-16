@@ -28,6 +28,7 @@
 #include "JSGlobalData.h"
 #include <setjmp.h>
 #include <stdlib.h>
+#include <wtf/StdLibExtras.h>
 
 #if USE(PTHREAD_BASED_QT) && !defined(WTF_USE_PTHREADS)
 #define WTF_USE_PTHREADS 1
@@ -83,6 +84,8 @@
 #endif
 
 #endif
+
+using namespace WTF;
 
 namespace JSC {
 
@@ -244,21 +247,13 @@ void MachineThreads::removeCurrentThread()
 
 #endif
 
-void NEVER_INLINE MachineThreads::gatherFromCurrentThreadInternal(ConservativeRoots& conservativeRoots)
-{
-    void* begin = m_heap->globalData()->stack().current();
-    void* end = m_heap->globalData()->stack().origin();
-    swapIfBackwards(begin, end);
-    conservativeRoots.add(begin, end);
-}
-
 #if COMPILER(GCC)
 #define REGISTER_BUFFER_ALIGNMENT __attribute__ ((aligned (sizeof(void*))))
 #else
 #define REGISTER_BUFFER_ALIGNMENT
 #endif
 
-void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoots)
+void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoots, void* stackCurrent)
 {
     // setjmp forces volatile registers onto the stack
     jmp_buf registers REGISTER_BUFFER_ALIGNMENT;
@@ -271,7 +266,15 @@ void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoot
 #pragma warning(pop)
 #endif
 
-    gatherFromCurrentThreadInternal(conservativeRoots);
+    void* registersBegin = &registers;
+    void* registersEnd = reinterpret_cast<void*>(roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(&registers + 1)));
+    swapIfBackwards(registersBegin, registersEnd);
+    conservativeRoots.add(registersBegin, registersEnd);
+
+    void* stackBegin = stackCurrent;
+    void* stackEnd = m_heap->globalData()->stack().origin();
+    swapIfBackwards(stackBegin, stackEnd);
+    conservativeRoots.add(stackBegin, stackEnd);
 }
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
@@ -456,9 +459,9 @@ void MachineThreads::gatherFromOtherThread(ConservativeRoots& conservativeRoots,
 
 #endif
 
-void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
+void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, void* stackCurrent)
 {
-    gatherFromCurrentThread(conservativeRoots);
+    gatherFromCurrentThread(conservativeRoots, stackCurrent);
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
 

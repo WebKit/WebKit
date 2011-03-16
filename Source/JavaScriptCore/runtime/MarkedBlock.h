@@ -24,6 +24,7 @@
 
 #include <wtf/Bitmap.h>
 #include <wtf/PageAllocationAligned.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
@@ -34,15 +35,6 @@ namespace JSC {
     typedef uintptr_t Bits;
 
     static const size_t KB = 1024;
-
-    // Efficient implementation that takes advantage of powers of two.
-    template<size_t divisor> inline size_t roundUpToMultipleOf(size_t x)
-    {
-        COMPILE_ASSERT(divisor && !(divisor & (divisor - 1)), divisor_is_a_power_of_two);
-
-        size_t remainderMask = divisor - 1;
-        return (x + remainderMask) & ~remainderMask;
-    }
 
     class MarkedBlock {
     public:
@@ -109,7 +101,7 @@ namespace JSC {
 
     inline size_t MarkedBlock::firstAtom()
     {
-        return roundUpToMultipleOf<atomSize>(sizeof(MarkedBlock)) / atomSize;
+        return WTF::roundUpToMultipleOf<atomSize>(sizeof(MarkedBlock)) / atomSize;
     }
 
     inline MarkedBlock::Atom* MarkedBlock::atoms()

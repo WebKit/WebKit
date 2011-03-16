@@ -113,6 +113,8 @@ namespace JSC {
 
         RegisterFile(JSGlobalData&, size_t capacity = defaultCapacity, size_t maxGlobals = defaultMaxGlobals);
         ~RegisterFile();
+        
+        void gatherConservativeRoots(ConservativeRoots&);
 
         Register* start() const { return m_start; }
         Register* end() const { return m_end; }

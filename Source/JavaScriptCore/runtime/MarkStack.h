@@ -26,7 +26,6 @@
 #ifndef MarkStack_h
 #define MarkStack_h
 
-#include "ConservativeSet.h"
 #include "JSValue.h"
 #include "Register.h"
 #include "WriteBarrier.h"
@@ -36,6 +35,7 @@
 
 namespace JSC {
 
+    class ConservativeRoots;
     class JSGlobalData;
     class Register;
     
@@ -79,13 +79,7 @@ namespace JSC {
                 m_markSets.append(MarkSet(values, values + count, properties));
         }
         
-        void append(ConservativeRoots& conservativeRoots)
-        {
-            JSCell** roots = conservativeRoots.roots();
-            size_t size = conservativeRoots.size();
-            for (size_t i = 0; i < size; ++i)
-                internalAppend(roots[i]);
-        }
+        void append(ConservativeRoots&);
 
         void drain();
         void compact();

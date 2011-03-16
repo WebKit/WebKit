@@ -2,6 +2,48 @@
 
         Reviewed by Oliver Hunt.
 
+        Some conservative root gathering cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=56447
+        
+        SunSpider says 0.5% - 1.8% faster.
+
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::gatherConservativeRoots):
+        * interpreter/RegisterFile.h: New helper function for doing the
+        conservative gathering of the register file. It's still conservative,
+        since the register file may contain uninitialized values, but it's
+        moving-safe, because it only visits values tagged as pointers, so there's
+        no risk of mistaking an integer for a pointer and accidentally changing it.
+
+        * runtime/ConservativeSet.cpp:
+        (JSC::ConservativeRoots::add):
+        * runtime/ConservativeSet.h: Added a single-value add function, used above.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::markRoots): Separated machine stack conservative roots from
+        register file conservative roots because machine stack roots must be
+        pinned, but register file roots need not be pinned.
+        
+        Adopted new interface for passing the current stack extent to the machine
+        stack root gathering routine. This allows us to exclude marking-related
+        data structures on the stack, and thus avoid double-marking the set of
+        machine roots.
+
+        * runtime/MachineStackMarker.cpp:
+        (JSC::MachineThreads::gatherFromCurrentThread):
+        (JSC::MachineThreads::gatherConservativeRoots):
+        * runtime/MachineStackMarker.h: Added new interface, described above.
+
+        * runtime/MarkedBlock.h:
+        (JSC::MarkedBlock::firstAtom):
+        * wtf/StdLibExtras.h:
+        (WTF::roundUpToMultipleOf): Moved roundUpToMultipleOf so it could be used
+        by MachineStacks.
+
+2011-03-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         A little bit of MarkStack cleanup
         https://bugs.webkit.org/show_bug.cgi?id=56443
         

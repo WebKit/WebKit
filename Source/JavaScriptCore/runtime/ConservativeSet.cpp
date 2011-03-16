@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ConservativeSet.h"
 
-#include "Heap.h"
-
 namespace JSC {
 
 inline bool isPointerAligned(void* p)
@@ -53,15 +51,8 @@ void ConservativeRoots::add(void* begin, void* end)
     ASSERT(isPointerAligned(begin));
     ASSERT(isPointerAligned(end));
 
-    for (char** it = static_cast<char**>(begin); it != static_cast<char**>(end); ++it) {
-        if (!m_heap->contains(*it))
-            continue;
-
-        if (m_size == m_capacity)
-            grow();
-
-        m_roots[m_size++] = reinterpret_cast<JSCell*>(*it);
-    }
+    for (char** it = static_cast<char**>(begin); it != static_cast<char**>(end); ++it)
+        add(*it);
 }
 
 } // namespace JSC

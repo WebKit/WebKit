@@ -26,6 +26,7 @@
 #ifndef ConservativeRoots_h
 #define ConservativeRoots_h
 
+#include "Heap.h"
 #include <wtf/OSAllocator.h>
 #include <wtf/Vector.h>
 
@@ -41,6 +42,7 @@ public:
     ConservativeRoots(Heap*);
     ~ConservativeRoots();
 
+    void add(void*);
     void add(void* begin, void* end);
     
     size_t size();
@@ -71,6 +73,17 @@ inline ConservativeRoots::~ConservativeRoots()
 {
     if (m_roots != m_inlineRoots)
         OSAllocator::decommitAndRelease(m_roots, m_capacity * sizeof(JSCell*));
+}
+
+inline void ConservativeRoots::add(void* p)
+{
+    if (!m_heap->contains(p))
+        return;
+
+    if (m_size == m_capacity)
+        grow();
+
+    m_roots[m_size++] = reinterpret_cast<JSCell*>(p);
 }
 
 inline size_t ConservativeRoots::size()

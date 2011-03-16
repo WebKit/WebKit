@@ -29,6 +29,7 @@
 #include "config.h"
 #include "RegisterFile.h"
 
+#include "ConservativeSet.h"
 #include "Interpreter.h"
 #include "JSGlobalData.h"
 #include "JSGlobalObject.h"
@@ -49,6 +50,16 @@ RegisterFile::~RegisterFile()
     m_reservation.decommit(base, reinterpret_cast<intptr_t>(m_commitEnd) - reinterpret_cast<intptr_t>(base));
     addToCommittedByteCount(-(reinterpret_cast<intptr_t>(m_commitEnd) - reinterpret_cast<intptr_t>(base)));
     m_reservation.deallocate();
+}
+
+void RegisterFile::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
+{
+    for (Register* it = start(); it != end(); ++it) {
+        JSValue v = it->jsValue();
+        if (!v.isCell())
+            continue;
+        conservativeRoots.add(v.asCell());
+    }
 }
 
 void RegisterFile::releaseExcessCapacity()

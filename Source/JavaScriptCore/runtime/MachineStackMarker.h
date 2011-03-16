@@ -40,7 +40,7 @@ namespace JSC {
         MachineThreads(Heap*);
         ~MachineThreads();
 
-        void gatherConservativeRoots(ConservativeRoots&);
+        void gatherConservativeRoots(ConservativeRoots&, void* stackCurrent);
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
         void makeUsableFromMultipleThreads();
@@ -48,8 +48,7 @@ namespace JSC {
 #endif
 
     private:
-        void gatherFromCurrentThread(ConservativeRoots&);
-        void gatherFromCurrentThreadInternal(ConservativeRoots&);
+        void gatherFromCurrentThread(ConservativeRoots&, void* stackCurrent);
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
         class Thread;

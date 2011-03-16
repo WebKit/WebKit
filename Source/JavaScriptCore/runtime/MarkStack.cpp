@@ -26,9 +26,12 @@
 #include "config.h"
 #include "MarkStack.h"
 
+#include "ConservativeSet.h"
 #include "Heap.h"
 #include "JSArray.h"
 #include "JSCell.h"
+#include "JSObject.h"
+#include "ScopeChain.h"
 #include "Structure.h"
 
 namespace JSC {
@@ -40,6 +43,14 @@ void MarkStack::compact()
     ASSERT(s_pageSize);
     m_values.shrinkAllocation(s_pageSize);
     m_markSets.shrinkAllocation(s_pageSize);
+}
+
+void MarkStack::append(ConservativeRoots& conservativeRoots)
+{
+    JSCell** roots = conservativeRoots.roots();
+    size_t size = conservativeRoots.size();
+    for (size_t i = 0; i < size; ++i)
+        internalAppend(roots[i]);
 }
 
 inline void MarkStack::markChildren(JSCell* cell)

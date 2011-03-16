@@ -199,25 +199,32 @@ void Heap::markRoots()
     }
 #endif
 
+    void* dummy;
+
     ASSERT(m_operationInProgress == NoOperation);
     if (m_operationInProgress != NoOperation)
         CRASH();
 
     m_operationInProgress = Collection;
 
-    // We gather the conservative set before clearing mark bits, because
+    MarkStack& markStack = m_markStack;
+    HeapRootMarker heapRootMarker(markStack);
+    
+    // We gather conservative roots before clearing mark bits because
     // conservative gathering uses the mark bits from our last mark pass to
     // determine whether a reference is valid.
-    ConservativeRoots conservativeRoots(this);
-    m_machineThreads.gatherConservativeRoots(conservativeRoots);
-    conservativeRoots.add(registerFile().start(), registerFile().end());
+    ConservativeRoots machineThreadRoots(this);
+    m_machineThreads.gatherConservativeRoots(machineThreadRoots, &dummy);
+
+    ConservativeRoots registerFileRoots(this);
+    registerFile().gatherConservativeRoots(registerFileRoots);
 
     m_markedSpace.clearMarks();
 
-    MarkStack& markStack = m_markStack;
-    HeapRootMarker heapRootMarker(markStack);
+    markStack.append(machineThreadRoots);
+    markStack.drain();
 
-    markStack.append(conservativeRoots);
+    markStack.append(registerFileRoots);
     markStack.drain();
 
     markProtectedObjects(heapRootMarker);
