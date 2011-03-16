@@ -1,3 +1,14 @@
+2011-03-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix for r81266. "expected" should appear after "mac", "unix", and "win" not before them.
+
+        * editing/style/iframe-onload-crash-expected-mac.txt: Removed.
+        * editing/style/iframe-onload-crash-expected-unix.txt: Removed.
+        * editing/style/iframe-onload-crash-expected-win.txt: Removed.
+        * editing/style/iframe-onload-crash-mac-expected.txt: Copied from LayoutTests/editing/style/iframe-onload-crash-expected-mac.txt.
+        * editing/style/iframe-onload-crash-unix-expected.txt: Copied from LayoutTests/editing/style/iframe-onload-crash-expected-unix.txt.
+        * editing/style/iframe-onload-crash-win-expected.txt: Copied from LayoutTests/editing/style/iframe-onload-crash-expected-win.txt.
+
 2011-03-16  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Alexey Proskuryakov.
