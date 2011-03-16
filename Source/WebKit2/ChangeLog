@@ -1,3 +1,15 @@
+2011-03-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2: Sometimes Command-[ opens a new tab and loads the back page in it
+        https://bugs.webkit.org/show_bug.cgi?id=56477
+        <rdar://problem/8806664>
+
+        * UIProcess/API/mac/PageClientImpl.mm: (WebKit::PageClientImpl::doneWithKeyEvent):
+        Set NSApplication current event when re-dispatching a key event that returned from the web
+        process unhandled. That way, code that looks at current event modifiers won't be confused.
+
 2011-03-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

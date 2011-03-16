@@ -48,6 +48,7 @@
 
 @interface NSApplication (WebNSApplicationDetails)
 - (NSCursor *)_cursorRectCursor;
+- (void)_setCurrentEvent:(NSEvent *)event;
 @end
 
 using namespace WebCore;
@@ -330,7 +331,8 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
         [NSCursor setHiddenUntilMouseMoves:YES];
     else {
         [m_wkView _setEventBeingResent:nativeEvent];
-        [[NSApplication sharedApplication] sendEvent:nativeEvent];
+        [NSApp _setCurrentEvent:nativeEvent];
+        [NSApp sendEvent:nativeEvent];
     }
 }
 
