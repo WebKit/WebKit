@@ -1,3 +1,21 @@
+2011-03-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        REGRESSION(r76147): A slider thumb that is styled cannot be programmatically moved
+        https://bugs.webkit.org/show_bug.cgi?id=56059
+
+        Test: fast/dom/HTMLInputElement/input-slider-update-styled.html
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::valueChanged): Changed to use setPositionFromValue.
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::setPositionFromValue): Added.
+        (WebCore::SliderThumbElement::dragFrom): Changed to use setPositionFromPoint.
+        (WebCore::SliderThumbElement::setPositionFromPoint): Ditto.
+        (WebCore::SliderThumbElement::defaultEventHandler): Ditto.
+        * html/shadow/SliderThumbElement.h: Added decls.
+
 2011-03-15  David Levin  <levin@chromium.org>
 
         Attempted build fix following r81213. Same song second verse.

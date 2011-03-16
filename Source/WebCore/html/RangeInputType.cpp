@@ -241,7 +241,7 @@ void RangeInputType::minOrMaxAttributeChanged()
 
 void RangeInputType::valueChanged()
 {
-    element()->shadowRoot()->setNeedsStyleRecalc();
+    toSliderThumbElement(element()->shadowRoot())->setPositionFromValue();
 }
 
 String RangeInputType::fallbackValue()

@@ -49,6 +49,7 @@ public:
     static PassRefPtr<SliderThumbElement> create(Document*);
 
     bool inDragMode() const { return m_inDragMode; }
+    void setPositionFromValue();
 
     void dragFrom(const IntPoint&);
     virtual void defaultEventHandler(Event*);
@@ -60,7 +61,7 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     void startDragging();
     void stopDragging();
-    void setPosition(const IntPoint&);
+    void setPositionFromPoint(const IntPoint&);
 
     FloatPoint m_offsetToThumb;
     bool m_inDragMode;

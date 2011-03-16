@@ -1,3 +1,18 @@
+2011-03-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        REGRESSION(r76147): A slider thumb that is styled cannot be programmatically moved
+        https://bugs.webkit.org/show_bug.cgi?id=56059
+
+        Note: the test should pass on all platforms, because it was designed to not use
+        platform-specific metrics.
+
+        * fast/dom/HTMLInputElement/input-slider-update-styled.html: Added.
+        * fast/dom/HTMLInputElement/input-slider-update-styled-expected.checksum: Added.
+        * fast/dom/HTMLInputElement/input-slider-update-styled-expected.png: Added.
+        * fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt: Added.
+
 2011-03-15  John Bauman  <jbauman@chromium.org>
 
         Reviewed by Kenneth Russell.
