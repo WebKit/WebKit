@@ -7,3 +7,6 @@ AddCharset koi8-r .txt
 <Files "reply2.xml">
 AddCharset windows-1251 .xml
 </Files>
+<Files "noContentType.asis">
+DefaultType None
+</Files>

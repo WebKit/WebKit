@@ -522,7 +522,7 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
         CFHTTPMessageRef message = wkGetCFURLResponseHTTPResponse(cfResponse);
         if (message) {
             RetainPtr<CFStringRef> contentType(AdoptCF, CFHTTPMessageCopyHeaderFieldValue(message, CFSTR("Content-Type")));
-            if (CFStringHasPrefix(contentType.get(), CFSTR("text/plain"))) {
+            if (contentType && CFStringHasPrefix(contentType.get(), CFSTR("text/plain"))) {
                 static CFSetRef binaryExtensions = createBinaryExtensionsSet();
                 RetainPtr<NSString> suggestedFilename(AdoptNS, (NSString *)wkCopyCFURLResponseSuggestedFilename(cfResponse));
                 if (!CFSetContainsValue(binaryExtensions, (CFStringRef) [[suggestedFilename.get() pathExtension] lowercaseString]))
