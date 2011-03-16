@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,11 @@
 #include "config.h"
 #include "MarkStack.h"
 
+#include "Heap.h"
+#include "JSArray.h"
+#include "JSCell.h"
+#include "Structure.h"
+
 namespace JSC {
 
 size_t MarkStack::s_pageSize = 0;
@@ -37,4 +42,75 @@ void MarkStack::compact()
     m_markSets.shrinkAllocation(s_pageSize);
 }
 
+inline void MarkStack::markChildren(JSCell* cell)
+{
+    ASSERT(Heap::isMarked(cell));
+    if (!cell->structure()->typeInfo().overridesMarkChildren()) {
+#ifdef NDEBUG
+        asObject(cell)->markChildrenDirect(*this);
+#else
+        ASSERT(!m_isCheckingForDefaultMarkViolation);
+        m_isCheckingForDefaultMarkViolation = true;
+        cell->markChildren(*this);
+        ASSERT(m_isCheckingForDefaultMarkViolation);
+        m_isCheckingForDefaultMarkViolation = false;
+#endif
+        return;
+    }
+    if (cell->vptr() == m_jsArrayVPtr) {
+        asArray(cell)->markChildrenDirect(*this);
+        return;
+    }
+    cell->markChildren(*this);
 }
+
+void MarkStack::drain()
+{
+#if !ASSERT_DISABLED
+    ASSERT(!m_isDraining);
+    m_isDraining = true;
+#endif
+    while (!m_markSets.isEmpty() || !m_values.isEmpty()) {
+        while (!m_markSets.isEmpty() && m_values.size() < 50) {
+            ASSERT(!m_markSets.isEmpty());
+            MarkSet& current = m_markSets.last();
+            ASSERT(current.m_values);
+            JSValue* end = current.m_end;
+            ASSERT(current.m_values);
+            ASSERT(current.m_values != end);
+        findNextUnmarkedNullValue:
+            ASSERT(current.m_values != end);
+            JSValue value = *current.m_values;
+            current.m_values++;
+
+            JSCell* cell;
+            if (!value || !value.isCell() || Heap::testAndSetMarked(cell = value.asCell())) {
+                if (current.m_values == end) {
+                    m_markSets.removeLast();
+                    continue;
+                }
+                goto findNextUnmarkedNullValue;
+            }
+
+            if (cell->structure()->typeInfo().type() < CompoundType) {
+                if (current.m_values == end) {
+                    m_markSets.removeLast();
+                    continue;
+                }
+                goto findNextUnmarkedNullValue;
+            }
+
+            if (current.m_values == end)
+                m_markSets.removeLast();
+
+            markChildren(cell);
+        }
+        while (!m_values.isEmpty())
+            markChildren(m_values.removeLast());
+    }
+#if !ASSERT_DISABLED
+    m_isDraining = false;
+#endif
+}
+
+} // namespace JSC

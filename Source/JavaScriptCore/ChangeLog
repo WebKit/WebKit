@@ -1,3 +1,27 @@
+2011-03-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        A little bit of MarkStack cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=56443
+        
+        Moved MarkStack functions into MarkStack.h/.cpp.
+        
+        SunSpider reports no change.
+
+        * runtime/JSArray.h:
+        * runtime/JSCell.h: Moved from here...
+        * runtime/MarkStack.cpp:
+        (JSC::MarkStack::markChildren):
+        (JSC::MarkStack::drain): ...to here. Also, no need to inline drain. It's
+        a huge function, and not called many times.
+
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::~MarkStack): Moved near constructor, per style guide.
+        (JSC::MarkStack::append):
+        (JSC::MarkStack::deprecatedAppend):
+        (JSC::MarkStack::internalAppend): Moved to here.
+
 2011-03-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

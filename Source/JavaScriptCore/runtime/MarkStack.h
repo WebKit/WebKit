@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "ConservativeSet.h"
 #include "JSValue.h"
+#include "Register.h"
 #include "WriteBarrier.h"
 #include <wtf/Vector.h>
 #include <wtf/Noncopyable.h>
@@ -51,7 +52,13 @@ namespace JSC {
 #endif
         {
         }
-        
+
+        ~MarkStack()
+        {
+            ASSERT(m_markSets.isEmpty());
+            ASSERT(m_values.isEmpty());
+        }
+
         void deprecatedAppend(JSValue*);
         void deprecatedAppend(JSCell**);
         void deprecatedAppend(Register*);
@@ -80,14 +87,8 @@ namespace JSC {
                 internalAppend(roots[i]);
         }
 
-        inline void drain();
+        void drain();
         void compact();
-
-        ~MarkStack()
-        {
-            ASSERT(m_markSets.isEmpty());
-            ASSERT(m_values.isEmpty());
-        }
 
     private:
         friend class HeapRootMarker; // Allowed to mark a JSValue* or JSCell** directly.
@@ -216,6 +217,53 @@ namespace JSC {
         if (!count)
             return;
         m_markSets.append(MarkSet(slot, slot + count, NoNullValues));
+    }
+
+    template <typename T> inline void MarkStack::append(DeprecatedPtr<T>* slot)
+    {
+        internalAppend(slot->get());
+    }
+    
+    template <typename T> inline void MarkStack::append(WriteBarrierBase<T>* slot)
+    {
+        internalAppend(slot->get());
+    }
+
+    ALWAYS_INLINE void MarkStack::deprecatedAppend(JSCell** value)
+    {
+        ASSERT(value);
+        internalAppend(*value);
+    }
+
+    ALWAYS_INLINE void MarkStack::deprecatedAppend(JSValue* value)
+    {
+        ASSERT(value);
+        internalAppend(*value);
+    }
+    
+    ALWAYS_INLINE void MarkStack::append(JSValue* value)
+    {
+        ASSERT(value);
+        internalAppend(*value);
+    }
+
+    ALWAYS_INLINE void MarkStack::append(JSCell** value)
+    {
+        ASSERT(value);
+        internalAppend(*value);
+    }
+
+    ALWAYS_INLINE void MarkStack::deprecatedAppend(Register* value)
+    {
+        ASSERT(value);
+        internalAppend(value->jsValue());
+    }
+
+    ALWAYS_INLINE void MarkStack::internalAppend(JSValue value)
+    {
+        ASSERT(value);
+        if (value.isCell())
+            internalAppend(value.asCell());
     }
 
     // Privileged class for marking JSValues directly. It is only safe to use
