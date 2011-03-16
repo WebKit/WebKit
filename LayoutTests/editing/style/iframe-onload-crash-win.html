@@ -1,6 +1,8 @@
 <meta><input><h6><nobr></nobr><datagrid><ins><button><em><iframe onload="
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setEditingBehavior('win');
+}
 
 document.designMode='on';
 document.execCommand('selectall');

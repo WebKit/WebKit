@@ -3326,7 +3326,6 @@ BUG_LOISLO MAC DEBUG : fast/text/font-size-zero.html = TEXT
 // Failure from WebKit r81104
 BUGCR76159 MAC LINUX : http/tests/media/video-play-stall-before-meta-data.html = TEXT
 
-BUGWK56407 LINUX WIN : editing/style/iframe-onload-crash.html = CRASH
 BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = CRASH
 
 // Some transition tests are flakey since r79985

@@ -1,3 +1,24 @@
+2011-03-16  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        REGRESSION (r81165): Assert running editing/style/iframe-onload-crash.html with non-Mac editing behavior
+        https://bugs.webkit.org/show_bug.cgi?id=56407
+
+        Creating three versions of the iframe-onload-crash test to cover all editing behaviors.
+
+        * editing/style/iframe-onload-crash-expected-mac.txt: Copied from LayoutTests/editing/style/iframe-onload-crash-expected.txt.
+        * editing/style/iframe-onload-crash-expected-unix.txt: Copied from LayoutTests/editing/style/iframe-onload-crash-expected.txt.
+        * editing/style/iframe-onload-crash-expected-win.txt: Copied from LayoutTests/editing/style/iframe-onload-crash-expected.txt.
+        * editing/style/iframe-onload-crash-expected.txt: Removed.
+        * editing/style/iframe-onload-crash-mac.html: Copied from LayoutTests/editing/style/iframe-onload-crash.html.
+        * editing/style/iframe-onload-crash-unix.html: Copied from LayoutTests/editing/style/iframe-onload-crash.html.
+        * editing/style/iframe-onload-crash-win.html: Copied from LayoutTests/editing/style/iframe-onload-crash.html.
+        * editing/style/iframe-onload-crash.html: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/win/Skipped:
+
 2011-03-16  Sam Weinig  <sam@webkit.org>
 
         Skip test fast/forms/input-autofilled.html in mac-wk2 since 

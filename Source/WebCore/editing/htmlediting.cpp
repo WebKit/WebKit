@@ -73,22 +73,21 @@ bool editingIgnoresContent(const Node* node)
 
 bool canHaveChildrenForEditing(const Node* node)
 {
-    return !node->hasTagName(hrTag) &&
-           !node->hasTagName(brTag) &&
-           !node->hasTagName(imgTag) &&
-           !node->hasTagName(buttonTag) &&
-           !node->hasTagName(inputTag) &&
-           !node->hasTagName(textareaTag) &&
-           !node->hasTagName(objectTag) &&
-           !node->hasTagName(iframeTag) &&
-           !node->hasTagName(embedTag) &&
-           !node->hasTagName(appletTag) &&
-           !node->hasTagName(selectTag) &&
-           !node->hasTagName(datagridTag) &&
+    return !node->isTextNode()
+        && !node->hasTagName(brTag)
+        && !node->hasTagName(imgTag)
+        && !node->hasTagName(buttonTag)
+        && !node->hasTagName(inputTag)
+        && !node->hasTagName(textareaTag)
+        && !node->hasTagName(objectTag)
+        && !node->hasTagName(iframeTag)
+        && !node->hasTagName(embedTag)
+        && !node->hasTagName(appletTag)
+        && !node->hasTagName(selectTag)
 #if ENABLE(WML)
-           !node->hasTagName(WMLNames::doTag) &&
+        && !node->hasTagName(WMLNames::doTag)
 #endif
-           !node->isTextNode();
+        && ((!node->hasTagName(hrTag) && !node->hasTagName(datagridTag)) || node->hasChildNodes());
 }
 
 // Compare two positions, taking into account the possibility that one or both

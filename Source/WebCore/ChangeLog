@@ -1,3 +1,24 @@
+2011-03-15  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        REGRESSION (r81165): Assert running editing/style/iframe-onload-crash.html with non-Mac editing behavior
+        https://bugs.webkit.org/show_bug.cgi?id=56407
+
+        Fixing the creation of incorrect ranges from TextIterator due to passing node/offset pairs that
+        weren't parent-anchored. Also changing canHaveChildrenForEditing to properly handle nodes that
+        have had children appended to them that editing wouldn't normally allow.
+
+        Tests: editing/style/iframe-onload-crash-mac.html
+               editing/style/iframe-onload-crash-unix.html
+               editing/style/iframe-onload-crash-win.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::rangeFromLocationAndLength): Passing parent-anchored values to range.
+        * editing/htmlediting.cpp:
+        (WebCore::canHaveChildrenForEditing): Adding a condition that the nodes don't already have children
+        for hr and datagrid, as you can append any node to another using javascript.
+
 2011-03-16  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

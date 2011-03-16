@@ -2320,7 +2320,7 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element* scope, int r
                     Position runEnd = VisiblePosition(runStart).next().deepEquivalent();
                     if (runEnd.isNotNull()) {
                         ExceptionCode ec = 0;
-                        textRunRange->setEnd(runEnd.deprecatedNode(), runEnd.deprecatedEditingOffset(), ec);
+                        textRunRange->setEnd(runEnd.containerNode(), runEnd.computeOffsetInContainerNode(), ec);
                         ASSERT(!ec);
                     }
                 }
