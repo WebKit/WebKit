@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,203 +31,103 @@
 #include "config.h"
 #include "AssociatedURLLoader.h"
 
-#include "DocumentThreadableLoader.h"
-#include "SubresourceLoader.h"
-#include "ThreadableLoaderClient.h"
 #include "WebApplicationCacheHost.h"
 #include "WebDataSource.h"
 #include "WebFrameImpl.h"
 #include "WebKit.h"
 #include "WebKitClient.h"
-#include "WebURLError.h"
-#include "WebURLLoaderClient.h"
 #include "WebURLRequest.h"
-#include "WrappedResourceRequest.h"
-#include "WrappedResourceResponse.h"
-
-using namespace WebCore;
-using namespace WebKit;
-using namespace WTF;
 
 namespace WebKit {
 
-// This class bridges the interface differences between WebCore and WebKit loader clients.
-// It forwards its ThreadableLoaderClient notifications to a WebURLLoaderClient.
-class AssociatedURLLoader::ClientAdapter : public ThreadableLoaderClient {
-public:
-    static PassOwnPtr<ClientAdapter> create(AssociatedURLLoader*, WebURLLoaderClient*, bool /*downloadToFile*/);
-
-    virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/);
-    virtual void willSendRequest(ResourceRequest& /*newRequest*/, const ResourceResponse& /*redirectResponse*/);
-
-    virtual void didReceiveResponse(const ResourceResponse&);
-    virtual void didReceiveData(const char*, int /*dataLength*/);
-    virtual void didReceiveCachedMetadata(const char*, int /*dataLength*/);
-    virtual void didFinishLoading(unsigned long /*identifier*/, double /*finishTime*/);
-    virtual void didFail(const ResourceError&);
-
-    // This method stops loading and releases the DocumentThreadableLoader as early as possible.
-    void clearClient() { m_client = 0; }
-
-private:
-    ClientAdapter(AssociatedURLLoader*, WebURLLoaderClient*, bool /*downloadToFile*/);
-
-    AssociatedURLLoader* m_loader;
-    WebURLLoaderClient* m_client;
-    unsigned long m_downloadLength;
-    bool m_downloadToFile;
-};
-
-PassOwnPtr<AssociatedURLLoader::ClientAdapter> AssociatedURLLoader::ClientAdapter::create(AssociatedURLLoader* loader, WebURLLoaderClient* client, bool downloadToFile)
-{
-    return adoptPtr(new ClientAdapter(loader, client, downloadToFile));
-}
-
-AssociatedURLLoader::ClientAdapter::ClientAdapter(AssociatedURLLoader* loader, WebURLLoaderClient* client, bool downloadToFile)
-    : m_loader(loader)
-    , m_client(client)
-    , m_downloadLength(0)
-    , m_downloadToFile(downloadToFile)
-{
-    ASSERT(m_loader);
-    ASSERT(m_client);
-}
-
-void AssociatedURLLoader::ClientAdapter::willSendRequest(ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
-{
-    if (!m_client)
-        return;
-
-    WrappedResourceRequest wrappedNewRequest(newRequest);
-    WrappedResourceResponse wrappedRedirectResponse(redirectResponse);
-    m_client->willSendRequest(m_loader, wrappedNewRequest, wrappedRedirectResponse);
-}
-
-void AssociatedURLLoader::ClientAdapter::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
-{
-    if (!m_client)
-        return;
-
-    m_client->didSendData(m_loader, bytesSent, totalBytesToBeSent);
-}
-
-void AssociatedURLLoader::ClientAdapter::didReceiveResponse(const ResourceResponse& response)
-{
-    WrappedResourceResponse wrappedResponse(response);
-    m_client->didReceiveResponse(m_loader, wrappedResponse);
-}
-
-void AssociatedURLLoader::ClientAdapter::didReceiveData(const char* data, int lengthReceived)
-{
-    if (!m_client)
-        return;
-
-    m_client->didReceiveData(m_loader, data, lengthReceived);
-    m_downloadLength += lengthReceived;
-}
-
-void AssociatedURLLoader::ClientAdapter::didReceiveCachedMetadata(const char* data, int lengthReceived)
-{
-    if (!m_client)
-        return;
-
-    m_client->didReceiveCachedMetadata(m_loader, data, lengthReceived);
-}
-
-void AssociatedURLLoader::ClientAdapter::didFinishLoading(unsigned long identifier, double finishTime)
-{
-    if (!m_client)
-        return;
-
-    if (m_downloadToFile) {
-        int downloadLength = m_downloadLength <= INT_MAX ? m_downloadLength : INT_MAX;
-        m_client->didDownloadData(m_loader, downloadLength);
-        // While the client could have cancelled, continue, since the load finished. 
-    }
-
-    m_client->didFinishLoading(m_loader, finishTime);
-}
-
-void AssociatedURLLoader::ClientAdapter::didFail(const ResourceError& error)
-{
-    if (!m_client)
-        return;
-
-    WebURLError webError(error);
-    m_client->didFail(m_loader, webError);
-}
-
 AssociatedURLLoader::AssociatedURLLoader(PassRefPtr<WebFrameImpl> frameImpl)
-    : m_frameImpl(frameImpl)
-    , m_client(0)
+    : m_frameImpl(frameImpl),
+      m_realLoader(webKitClient()->createURLLoader()),
+      m_realClient(0)
 {
-    ASSERT(m_frameImpl);
-
-    m_options.sniffContent = false;
-    m_options.allowCredentials = true;
-    m_options.forcePreflight = false;
-    m_options.crossOriginRequestPolicy = AllowCrossOriginRequests; // TODO(bbudge) Default should be DenyCrossOriginRequests, but this would break some tests.
-}
-
-AssociatedURLLoader::AssociatedURLLoader(PassRefPtr<WebFrameImpl> frameImpl, const WebURLLoaderOptions& options)
-    : m_frameImpl(frameImpl)
-    , m_options(options)
-    , m_client(0)
-{
-    ASSERT(m_frameImpl);
 }
 
 AssociatedURLLoader::~AssociatedURLLoader()
 {
-    if (m_clientAdapter)
-        m_clientAdapter->clearClient();
 }
-
-#define COMPILE_ASSERT_MATCHING_ENUM(webkit_name, webcore_name) \
-    COMPILE_ASSERT(static_cast<int>(WebKit::webkit_name) == static_cast<int>(WebCore::webcore_name), mismatching_enums)
-
-COMPILE_ASSERT_MATCHING_ENUM(DenyCrossOriginRequests, DenyCrossOriginRequests);
-COMPILE_ASSERT_MATCHING_ENUM(UseAccessControl, UseAccessControl);
-COMPILE_ASSERT_MATCHING_ENUM(AllowCrossOriginRequests, AllowCrossOriginRequests);
 
 void AssociatedURLLoader::loadSynchronously(const WebURLRequest& request, WebURLResponse& response, WebURLError& error, WebData& data)
 {
-    ASSERT(0); // Synchronous loading is not supported.
+    ASSERT(!m_realClient);
+
+    WebURLRequest requestCopy(request);
+    prepareRequest(requestCopy);
+
+    m_realLoader->loadSynchronously(requestCopy, response, error, data);
 }
 
 void AssociatedURLLoader::loadAsynchronously(const WebURLRequest& request, WebURLLoaderClient* client)
 {
-    ASSERT(!m_client);
+    ASSERT(!m_realClient);
 
-    m_client = client;
-    ASSERT(m_client);
+    WebURLRequest requestCopy(request);
+    prepareRequest(requestCopy);
 
-    ThreadableLoaderOptions options;
-    options.sendLoadCallbacks = true; // Always send callbacks.
-    options.sniffContent = m_options.sniffContent;
-    options.allowCredentials = m_options.allowCredentials;
-    options.forcePreflight = m_options.forcePreflight;
-    options.crossOriginRequestPolicy = static_cast<WebCore::CrossOriginRequestPolicy>(m_options.crossOriginRequestPolicy);
-
-    const ResourceRequest& webcoreRequest = request.toResourceRequest();
-    Document* webcoreDocument = m_frameImpl->frame()->document();
-    m_clientAdapter = ClientAdapter::create(this, m_client, request.downloadToFile());
-
-    m_loader = DocumentThreadableLoader::create(webcoreDocument, m_clientAdapter.get(), webcoreRequest, options);
+    m_realClient = client;
+    m_realLoader->loadAsynchronously(requestCopy, this);
 }
 
 void AssociatedURLLoader::cancel()
 {
-    if (m_loader) {
-        m_clientAdapter->clearClient();
-        m_loader->cancel();
-    }
+    m_realLoader->cancel();
 }
 
 void AssociatedURLLoader::setDefersLoading(bool defersLoading)
 {
-    if (m_loader)
-        m_loader->setDefersLoading(defersLoading);
+    m_realLoader->setDefersLoading(defersLoading);
+}
+
+void AssociatedURLLoader::prepareRequest(WebURLRequest& request)
+{
+    WebApplicationCacheHost* applicationCacheHost = m_frameImpl->dataSource()->applicationCacheHost();
+    if (applicationCacheHost)
+        applicationCacheHost->willStartSubResourceRequest(request);
+    m_frameImpl->dispatchWillSendRequest(request);
+}
+
+void AssociatedURLLoader::willSendRequest(WebURLLoader*, WebURLRequest& newRequest, const WebURLResponse& redirectResponse)
+{
+    m_realClient->willSendRequest(this, newRequest, redirectResponse);
+}
+
+void AssociatedURLLoader::didSendData(WebURLLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+{
+    m_realClient->didSendData(this, bytesSent, totalBytesToBeSent);
+}
+
+void AssociatedURLLoader::didReceiveResponse(WebURLLoader*, const WebURLResponse& response)
+{
+    m_realClient->didReceiveResponse(this, response);
+}
+
+void AssociatedURLLoader::didDownloadData(WebURLLoader*, int dataLength)
+{
+    m_realClient->didDownloadData(this, dataLength);
+}
+
+void AssociatedURLLoader::didReceiveData(WebURLLoader*, const char* data, int dataLength)
+{
+    m_realClient->didReceiveData(this, data, dataLength);
+}
+
+void AssociatedURLLoader::didReceiveCachedMetadata(WebURLLoader*, const char* data, int dataLength)
+{
+    m_realClient->didReceiveCachedMetadata(this, data, dataLength);
+}
+
+void AssociatedURLLoader::didFinishLoading(WebURLLoader*, double finishTime)
+{
+    m_realClient->didFinishLoading(this, finishTime);
+}
+
+void AssociatedURLLoader::didFail(WebURLLoader*, const WebURLError& error)
+{
+    m_realClient->didFail(this, error);
 }
 
 } // namespace WebKit

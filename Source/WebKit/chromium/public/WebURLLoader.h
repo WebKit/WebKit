@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -40,21 +40,6 @@ class WebURLLoaderClient;
 class WebURLRequest;
 class WebURLResponse;
 struct WebURLError;
-
-enum WebCrossOriginRequestPolicy {
-    DenyCrossOriginRequests,
-    UseAccessControl,
-    AllowCrossOriginRequests
-};
-
-struct WebURLLoaderOptions {
-    WebURLLoaderOptions() : sniffContent(false), allowCredentials(false), forcePreflight(false), crossOriginRequestPolicy(DenyCrossOriginRequests) {}
-
-    bool sniffContent; // Whether to sniff content.
-    bool allowCredentials; // Whether to send HTTP credentials and cookies with the request.
-    bool forcePreflight; // If AccessControl is used, whether to force a preflight.
-    WebCrossOriginRequestPolicy crossOriginRequestPolicy;
-};
 
 class WebURLLoader {
 public:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,22 +32,20 @@
 #define AssociatedURLLoader_h
 
 #include "WebURLLoader.h"
-#include <wtf/Noncopyable.h>
+#include "WebURLLoaderClient.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
-
-namespace WebCore { class DocumentThreadableLoader; }
 
 namespace WebKit {
 
 class WebFrameImpl;
 
 // This class is used to implement WebFrame::createAssociatedURLLoader.
-class AssociatedURLLoader : public WebURLLoader {
-    WTF_MAKE_NONCOPYABLE(AssociatedURLLoader);
+// FIXME: Implement in terms of WebCore::SubresourceLoader.
+class AssociatedURLLoader : public WebURLLoader,
+                            public WebURLLoaderClient {
 public:
     AssociatedURLLoader(PassRefPtr<WebFrameImpl>);
-    AssociatedURLLoader(PassRefPtr<WebFrameImpl>, const WebURLLoaderOptions&);
     ~AssociatedURLLoader();
 
     // WebURLLoader methods:
@@ -56,15 +54,22 @@ public:
     virtual void cancel();
     virtual void setDefersLoading(bool);
 
-private:
+    // WebURLLoaderClient methods:
+    virtual void willSendRequest(WebURLLoader*, WebURLRequest& newRequest, const WebURLResponse& redirectResponse);
+    virtual void didSendData(WebURLLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
+    virtual void didReceiveResponse(WebURLLoader*, const WebURLResponse&);
+    virtual void didDownloadData(WebURLLoader*, int dataLength);
+    virtual void didReceiveData(WebURLLoader*, const char* data, int dataLength);
+    virtual void didReceiveCachedMetadata(WebURLLoader*, const char* data, int dataLength);
+    virtual void didFinishLoading(WebURLLoader*, double finishTime);
+    virtual void didFail(WebURLLoader*, const WebURLError&);
 
-    class ClientAdapter;
+private:
+    void prepareRequest(WebURLRequest&);
 
     RefPtr<WebFrameImpl> m_frameImpl;
-    WebURLLoaderOptions m_options;
-    WebURLLoaderClient* m_client;
-    OwnPtr<ClientAdapter> m_clientAdapter;
-    RefPtr<WebCore::DocumentThreadableLoader> m_loader;
+    OwnPtr<WebURLLoader> m_realLoader;
+    WebURLLoaderClient* m_realClient;
 };
 
 } // namespace WebKit
