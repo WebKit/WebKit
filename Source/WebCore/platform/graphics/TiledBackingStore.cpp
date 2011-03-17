@@ -102,8 +102,6 @@ void TiledBackingStore::updateTileBuffers()
         if (!it->second->isDirty())
             continue;
         dirtyTiles.append(it->second);
-        // FIXME: should not request system repaint for the full tile.
-        paintedArea.append(mapToContents(it->second->rect()));
     }
     
     if (dirtyTiles.isEmpty()) {
@@ -115,11 +113,11 @@ void TiledBackingStore::updateTileBuffers()
     // one by one and then swapped to front in one go. This would minimize the time spent
     // blocking on tile updates.
     unsigned size = dirtyTiles.size();
-    for (unsigned n = 0; n < size; ++n)
-        dirtyTiles[n]->updateBackBuffer();
-
-    for (unsigned n = 0; n < size; ++n)
+    for (unsigned n = 0; n < size; ++n) {
+        Vector<IntRect> paintedRects = dirtyTiles[n]->updateBackBuffer();
+        paintedArea.append(paintedRects);
         dirtyTiles[n]->swapBackBufferToFront();
+    }
 
     m_client->tiledBackingStorePaintEnd(paintedArea);
 }

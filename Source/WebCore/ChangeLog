@@ -1,3 +1,19 @@
+2011-03-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Andreas Kling.
+
+        Tiled backing store should only request repaint for updated areas
+        https://bugs.webkit.org/show_bug.cgi?id=56464
+
+        Reuse updateBackBuffer's dirty rectangle calculations to only
+        invalidate the necessary parts of the window.
+
+        * platform/graphics/Tile.h:
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::updateTileBuffers):
+        * platform/graphics/qt/TileQt.cpp:
+        (WebCore::Tile::updateBackBuffer):
+
 2011-03-17  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

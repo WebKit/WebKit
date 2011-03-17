@@ -91,10 +91,10 @@ void Tile::invalidate(const IntRect& dirtyRect)
     *m_dirtyRegion += tileDirtyRect;
 }
     
-void Tile::updateBackBuffer()
+Vector<IntRect> Tile::updateBackBuffer()
 {
     if (m_buffer && !isDirty())
-        return;
+        return Vector<IntRect>();
 
     if (!m_backBuffer) {
         if (!m_buffer) {
@@ -115,15 +115,19 @@ void Tile::updateBackBuffer()
     GraphicsContext context(&painter);
     context.translate(-m_rect.x(), -m_rect.y());
 
+    Vector<IntRect> updatedRects;
     int size = dirtyRects.size();
     for (int n = 0; n < size; ++n)  {
         context.save();
         IntRect rect = dirtyRects[n];
+        updatedRects.append(rect);
         context.clip(FloatRect(rect));
         context.scale(FloatSize(m_backingStore->m_contentsScale, m_backingStore->m_contentsScale));
         m_backingStore->m_client->tiledBackingStorePaint(&context, m_backingStore->mapToContents(rect));
         context.restore();
     }
+
+    return updatedRects;
 }
 
 void Tile::swapBackBufferToFront()
