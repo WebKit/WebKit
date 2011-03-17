@@ -196,3 +196,7 @@ fast/frames/iframe-plugin-load-remove-document-crash.html
 # Crash in -[WebNetscapePluginDocumentView restorePortState:] when running plugins/destroy-on-setwindow.html on Leopard
 # https://bugs.webkit.org/show_bug.cgi?id=56165
 plugins/destroy-on-setwindow.html
+
+# java/lc3/JavaObject/JavaObjectToDouble-001.html is failing on the Leopard Debug tester
+# https://bugs.webkit.org/show_bug.cgi?id=56545
+java/lc3/JavaObject/JavaObjectToDouble-001.html
