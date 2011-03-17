@@ -898,8 +898,22 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
+    Jump branchTest8(Condition cond, RegisterID reg, Imm32 mask = Imm32(-1))
+    {
+        // Byte in Imm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
+        ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
+        ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
+        if (mask.m_value == -1)
+            m_assembler.testb_rr(reg, reg);
+        else
+            m_assembler.testb_i8r(mask.m_value, reg);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
     Jump branchTest8(Condition cond, Address address, Imm32 mask = Imm32(-1))
     {
+        // Byte in Imm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
+        ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
         ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         if (mask.m_value == -1)
             m_assembler.cmpb_im(0, address.offset, address.base);
@@ -910,6 +924,8 @@ public:
     
     Jump branchTest8(Condition cond, BaseIndex address, Imm32 mask = Imm32(-1))
     {
+        // Byte in Imm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
+        ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
         ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         if (mask.m_value == -1)
             m_assembler.cmpb_im(0, address.offset, address.base, address.index, address.scale);

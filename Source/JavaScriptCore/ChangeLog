@@ -1,5 +1,16 @@
 2011-03-17  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber Stamped by Sam Weinig.
+
+        Add missing register-register branchTest8 to MacroAssemblerX86Common/X86Assembler.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchTest8):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::testb_rr):
+
+2011-03-17  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Bug 56603 - DFG JIT related cleanup

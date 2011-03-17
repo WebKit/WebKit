@@ -131,6 +131,7 @@ private:
         OP_GROUP1_EbIb                  = 0x80,
         OP_GROUP1_EvIz                  = 0x81,
         OP_GROUP1_EvIb                  = 0x83,
+        OP_TEST_EbGb                    = 0x84,
         OP_TEST_EvGv                    = 0x85,
         OP_XCHG_EvGv                    = 0x87,
         OP_MOV_EvGv                     = 0x89,
@@ -921,7 +922,12 @@ public:
         m_formatter.oneByteOp(OP_GROUP3_EvIz, GROUP3_OP_TEST, base, offset);
         m_formatter.immediate32(imm);
     }
-    
+
+    void testb_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_TEST_EbGb, src, dst);
+    }
+
     void testb_im(int imm, int offset, RegisterID base)
     {
         m_formatter.oneByteOp(OP_GROUP3_EbIb, GROUP3_OP_TEST, base, offset);
