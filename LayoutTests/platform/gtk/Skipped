@@ -1212,6 +1212,9 @@ fast/viewport/viewport-87.html
 fast/viewport/viewport-126.html
 fast/viewport/viewport-127.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=56556
+fast/viewport/viewport-131.html
+
 # Needs more investigation like QT
 fast/dom/nodesFromRect-links-and-text.html
 fast/dom/nodesFromRect-inner-documents.html

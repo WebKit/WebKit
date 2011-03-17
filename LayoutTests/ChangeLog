@@ -1,3 +1,9 @@
+2011-03-17  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip failing viewport test on GTK.
+
+        * platform/gtk/Skipped:
+
 2011-03-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81243.
