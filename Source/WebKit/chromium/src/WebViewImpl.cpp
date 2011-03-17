@@ -994,6 +994,12 @@ void WebViewImpl::animate()
 
 void WebViewImpl::layout()
 {
+#if USE(ACCELERATED_COMPOSITING)
+    // FIXME: RTL style not supported by the compositor yet.
+    if (isAcceleratedCompositingActive() && pageHasRTLStyle())
+        setIsAcceleratedCompositingActive(false);
+#endif
+
     WebFrameImpl* webframe = mainFrameImpl();
     if (webframe) {
         // In order for our child HWNDs (NativeWindowWidgets) to update properly,
@@ -2274,9 +2280,26 @@ bool WebViewImpl::allowsAcceleratedCompositing()
     return !m_compositorCreationFailed;
 }
 
+bool WebViewImpl::pageHasRTLStyle() const
+{
+    if (!page())
+        return false;
+    Document* document = page()->mainFrame()->document();
+    if (!document)
+        return false;
+    RenderView* renderView = document->renderView();
+    if (!renderView)
+        return false;
+    RenderStyle* style = renderView->style();
+    if (!style)
+        return false;
+    return (style->direction() == RTL);
+}
+
 void WebViewImpl::setRootGraphicsLayer(WebCore::PlatformLayer* layer)
 {
-    setIsAcceleratedCompositingActive(layer ? true : false);
+    // FIXME: RTL style not supported by the compositor yet.
+    setIsAcceleratedCompositingActive(layer && !pageHasRTLStyle() ? true : false);
     if (m_layerRenderer)
         m_layerRenderer->setRootLayer(layer);
 

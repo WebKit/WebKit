@@ -1,3 +1,16 @@
+2011-03-17  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Turn off accelerated compositing for RTL style pages.
+        https://bugs.webkit.org/show_bug.cgi?id=56585
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::layout):
+        (WebKit::WebViewImpl::pageHasRTLStyle):
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+        * src/WebViewImpl.h:
+
 2011-03-17  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by David Levin.
