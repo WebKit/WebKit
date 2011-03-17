@@ -1,3 +1,16 @@
+2011-03-17  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Blob URL should not be allow to get created from the code running from data URI
+        https://bugs.webkit.org/show_bug.cgi?id=56600
+
+        * http/tests/fileapi/create-blob-url-from-data-url-expected.txt: Added.
+        * http/tests/fileapi/create-blob-url-from-data-url.html: Added.
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-03-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip an editing test that hits assertion on non-Mac platforms.

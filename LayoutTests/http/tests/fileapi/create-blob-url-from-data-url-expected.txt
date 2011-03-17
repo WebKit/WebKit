@@ -1,0 +1,4 @@
+Test case for checking blob URL not allowed to be created from the code running from data URI
+
+PASS: no blob URL is created
+

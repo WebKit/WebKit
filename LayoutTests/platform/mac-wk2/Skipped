@@ -535,6 +535,7 @@ fast/text/international/thai-offsetForPosition-inside-character.html
 fast/text/offsetForPosition-cluster-at-zero.html
 fast/text/reset-drag-on-mouse-down.html
 fast/text/textIteratorNilRenderer.html
+http/tests/fileapi
 http/tests/local/blob/send-data-blob.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/blob/send-sliced-data-blob.html

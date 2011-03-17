@@ -1,0 +1,33 @@
+<html>
+<head>
+<script type="text/javascript">
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var t = setInterval(function(){
+    if (!location.hash)
+        return;
+    var blobURL = location.hash.substr(1);
+    if (blobURL == "undefined")
+        log("PASS: no blob URL is created");
+    else
+        log("FAIL: created " + blobURL);
+    clearInterval(t);
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}, 100)
+</script>
+</head>
+<body>
+<p> Test case for checking blob URL not allowed to be created from the code running from data URI</p>
+<pre id='console'></pre>
+<iframe src="data:text/html,%3Cscript%3Evar%20b%20%3D%20new%20BlobBuilder()%3Bb.append(%22Foo%22)%3Bvar%20bb%20%3D%20b.getBlob('text%2Fhtml')%3Btop.location%3D'http%3A%2F%2F127.0.0.1%3A8000%2Ffileapi%2Fcreate-blob-url-from-data-url.html%23'%20%2B%20window.webkitURL.createObjectURL(bb)%3B%3C%2Fscript%3E"></iframe>
+</body>
+</html>

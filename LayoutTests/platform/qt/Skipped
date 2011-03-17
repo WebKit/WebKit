@@ -784,6 +784,7 @@ http/tests/security/isolatedWorld/world-reuse.html
 
 # File API is not supported yet
 fast/files
+http/tests/fileapi
 
 # Missing layoutTestController.setAlwaysAcceptCookies()
 http/tests/plugins/third-party-cookie-accept-policy.html

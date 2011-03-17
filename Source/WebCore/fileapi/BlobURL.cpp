@@ -72,6 +72,9 @@ String BlobURL::getIdentifier(const KURL& url)
 
 KURL BlobURL::createBlobURL(const String& originString)
 {
+    ASSERT(!originString.isEmpty());
+    if (originString == "null")
+        return KURL();
     String urlString = kBlobProtocol;
     urlString += ":";
     urlString += encodeWithURLEscapeSequences(originString);

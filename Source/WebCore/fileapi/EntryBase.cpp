@@ -56,9 +56,13 @@ EntryBase::~EntryBase()
 
 String EntryBase::toURI()
 {
+    String originString = m_fileSystem->securityOrigin()->toString();
+    ASSERT(!originString.isEmpty());
+    if (originString == "null")
+        return String();
     StringBuilder result;
     result.append("filesystem:");
-    result.append(m_fileSystem->securityOrigin()->toString());
+    result.append(originString);
     result.append("/");
     result.append(m_fileSystem->asyncFileSystem()->type() == AsyncFileSystem::Temporary ? DOMFileSystemBase::kTemporaryPathPrefix : DOMFileSystemBase::kPersistentPathPrefix);
     result.append(m_fullPath);

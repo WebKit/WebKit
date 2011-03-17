@@ -382,6 +382,8 @@ KURL ScriptExecutionContext::createPublicBlobURL(Blob* blob)
     if (!blob)
         return KURL();
     KURL publicURL = BlobURL::createPublicURL(securityOrigin());
+    if (publicURL.isEmpty())
+        return KURL();
     ThreadableBlobRegistry::registerBlobURL(publicURL, blob->url());
     m_publicBlobURLs.add(publicURL.string());
     return publicURL;
