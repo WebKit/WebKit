@@ -1,3 +1,15 @@
+2011-03-17  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Clean up Inspector strings.
+        https://bugs.webkit.org/show_bug.cgi?id=56557
+
+        Modify the script to deal correctly with "\xNN" escapes, and to
+        check strings in Chromium's DevTools.js.
+
+        * Scripts/check-inspector-strings:
+
 2011-03-17  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         Reviewed by Benjamin Poulain.

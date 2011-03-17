@@ -40,9 +40,14 @@ from webkitpy.style.filereader import TextFileReader
 from webkitpy.style.main import change_directory
 
 _inspector_directory = "Source/WebCore/inspector/front-end"
+_devtools_directory = "Source/WebKit/chromium/src/js"
 _localized_strings = "Source/WebCore/English.lproj/localizedStrings.js"
 
 _log = logging.getLogger("check-inspector-strings")
+
+def decode_unicode_escapes(s):
+    xNN_converted_to_u00NN = s.replace("\\x", "\\u00")
+    return eval("ur\"" + xNN_converted_to_u00NN + "\"")
 
 class StringsExtractor(ProcessorBase):
     def __init__(self, patterns):
@@ -54,9 +59,6 @@ class StringsExtractor(ProcessorBase):
     def should_process(self, file_path):
         return file_path.endswith(".js") and (not file_path.endswith("InjectedScript.js"))
 
-    def decode_unicode_escapes(self, s):
-        return eval("ur\"" + s + "\"")
-
     def process(self, lines, file_path, line_numbers=None):
         for line in lines:
             comment_start = line.find("//")
@@ -66,7 +68,7 @@ class StringsExtractor(ProcessorBase):
             for pattern in self._patterns:
                 line_strings = re.findall(pattern, line)
                 for string in line_strings:
-                    self.strings[index].append(self.decode_unicode_escapes(string))
+                    self.strings[index].append(decode_unicode_escapes(string))
                 index += 1
 
 class LocalizedStringsExtractor:
@@ -81,7 +83,7 @@ class LocalizedStringsExtractor:
             for line in lines:
                 match = re.match(r"localizedStrings\[\"((?:[^\"\\]|\\.)*?)\"", line)
                 if match:
-                    self.localized_strings.append(match.group(1))
+                    self.localized_strings.append(decode_unicode_escapes(match.group(1)))
         finally:
             localized_strings_file.close()
 
@@ -99,7 +101,7 @@ if __name__ == "__main__":
 
     strings_extractor = StringsExtractor([r"WebInspector\.(?:UIString|formatLocalized)\(\"((?:[^\"\\]|\\.)*?)\"", r"\"((?:[^\"\\]|\\.)*?)\""])
     file_reader = TextFileReader(strings_extractor)
-    file_reader.process_paths([_inspector_directory])
+    file_reader.process_paths([_inspector_directory, _devtools_directory])
     localized_strings_extractor = LocalizedStringsExtractor()
     localized_strings_extractor.process_file(_localized_strings)
     ui_strings = frozenset(strings_extractor.strings[0])
