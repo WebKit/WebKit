@@ -1,3 +1,19 @@
+2011-03-16  David Levin  <levin@chromium.org>
+
+        Update test expectations due to r81280 (media/controls-without-preload.html),
+        and r81285 (media-document-audio-repaint-expected).
+
+        * platform/chromium-linux/media/controls-without-preload-expected.checksum:
+        * platform/chromium-linux/media/controls-without-preload-expected.png:
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.checksum:
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-mac/media/controls-without-preload-expected.checksum:
+        * platform/chromium-mac/media/controls-without-preload-expected.png:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.checksum:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.checksum:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.png:
+
 2011-03-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by David Levin.
