@@ -795,8 +795,17 @@
             'type': 'none',
             'dependencies': [
                 'devtools_html',
-                'concatenated_devtools_js',
-                'concatenated_devtools_css',
+            ],
+            'conditions': [
+                ['debug_devtools==0', {
+                    'dependencies': ['concatenated_devtools_js',
+                                     'concatenated_devtools_css'],
+                },{
+                    # If we're not concatenating devtools files, we want to
+                    # run after the original files have been copied to
+                    # <(PRODUCT_DIR)/resources/inspector.
+                    'dependencies': ['inspector_resources'],
+                }],
             ],
             'actions': [{
                 'action_name': 'generate_devtools_grd',
