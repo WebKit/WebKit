@@ -1,3 +1,14 @@
+2011-03-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] Web Inspector tests timing out on Windows after r81222
+        https://bugs.webkit.org/show_bug.cgi?id=56454
+
+        Remove custom expectations for Chromium tests that consistently pass locally.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-17  Adam Roben  <aroben@apple.com>
 
         Skip some tests that only fail on apple-macpro-6

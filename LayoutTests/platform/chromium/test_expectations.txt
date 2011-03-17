@@ -645,7 +645,7 @@ BUGCR26734 MAC SKIP : http/tests/inspector = PASS
 BUGCR26734 MAC SKIP : http/tests/inspector-enabled = PASS
 
 BUGCR66087 WIN LINUX : inspector/timeline/timeline-layout.html = CRASH TIMEOUT PASS TEXT
-// BUGCR66087 WIN LINUX DEBUG SLOW : inspector/timeline/timeline-parse-html.html = PASS
+BUGCR66087 WIN LINUX DEBUG SLOW : inspector/timeline/timeline-parse-html.html = PASS
 // WebKit roll 74708:74711
 BUGCR68165 WIN LINUX DEBUG SLOW : inspector/styles/styles-source-lines.html = PASS
 BUGCR66087 WIN LINUX SLOW : inspector/storage-panel-dom-storage.html = PASS TEXT
@@ -3290,24 +3290,4 @@ BUGWK56242 LINUX RELEASE : transitions/interrupted-accelerated-transition.html =
 BUGWK56488 SKIP : compositing/transitions/scale-transition-no-start.html = CRASH
 
 // These are failing sporadically due to WebKit r81222
-BUGWK56454 WIN : inspector/evaluate-in-page.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/report-API-errors.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/syntax-highlight-css.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/syntax-highlight-javascript.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/debugger/debugger-step-over.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/debugger/debugger-step-in.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/debugger/debugger-cyclic-ref.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/debugger/debugger-pause-on-breakpoint.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/elements/elements-panel-styles.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/elements/elements-panel-selection-on-refresh.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/elements/elements-delete-inline-style.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/styles/styles-source-lines-inline.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/timeline/timeline-recalculate-styles.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/timeline/timeline-mark-timeline.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/timeline/timeline-script-tag-2.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/timeline/timeline-paint.html = PASS TIMEOUT
-BUGWK56454 WIN : inspector/timeline/timeline-event-dispatch.html = PASS TIMEOUT
 BUGWK56454 WIN : inspector/elements/mutate-unknown-node.html = PASS TEXT
-
-// Existing expectation above has been temporarily commented for this test. Please uncomment that one once bug 56454 is fixed.
-BUGWK56454 WIN LINUX : inspector/timeline/timeline-parse-html.html = PASS TIMEOUT
