@@ -1,3 +1,14 @@
+2011-03-17  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Adam Barth.
+
+        RequestAnimationFrame callbacks prevent Document from being released on detach
+        https://bugs.webkit.org/show_bug.cgi?id=56607
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef): Remove RequestAnimationFrame callbacks.
+        (WebCore::Document::detach): Ditto.
+
 2011-03-17  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

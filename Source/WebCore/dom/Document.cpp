@@ -545,6 +545,11 @@ void Document::removedLastRef()
 
         m_cssCanvasElements.clear();
 
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+        // FIXME: consider using ActiveDOMObject.
+        m_scriptedAnimationController = 0;
+#endif
+
 #ifndef NDEBUG
         m_inRemovedLastRefFunction = false;
 #endif
@@ -1755,7 +1760,12 @@ void Document::detach()
 
     clearAXObjectCache();
     stopActiveDOMObjects();
-    
+
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    // FIXME: consider using ActiveDOMObject.
+    m_scriptedAnimationController = 0;
+#endif
+
     RenderObject* render = renderer();
 
     // Send out documentWillBecomeInactive() notifications to registered elements,
