@@ -1,5 +1,11 @@
 2011-03-16  Sam Weinig  <sam@webkit.org>
 
+        Check in new results for text-combine-image-test-expected.txt.
+
+        * platform/mac-leopard/fast/text/international/text-combine-image-test-expected.txt:
+
+2011-03-16  Sam Weinig  <sam@webkit.org>
+
         Adding new results for some failing tests on the Leopard Release Tester.
 
         The following bugs were filed to track these issues:
