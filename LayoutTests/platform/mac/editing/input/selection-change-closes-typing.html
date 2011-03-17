@@ -15,7 +15,7 @@ With Pinyin Simplified IM, a wrong character is deleted from google.com suggesti
     if (window.layoutTestController) {
         
         try {
-            textInputController.setMarkedText("P", 0, 1);
+            textInputController.setMarkedText("P", 1, 0);
             testInput.value="PAS";
             eventSender.keyDown("S");
 
