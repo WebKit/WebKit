@@ -1,3 +1,28 @@
+2011-03-17  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Videos look ugly when using QGraphicsWebView.
+        https://bugs.webkit.org/show_bug.cgi?id=56580
+
+        We need to set QPainter::SmoothPixmapTransform on the painter for a proper rendering of the video.
+        QWebView does it but not QGraphicsWebView because the API does not exist. This patch is fixing it
+        by introducing the same API as QWebView to control the renderHints of the item. Unlike QWebView
+        QGraphicsWebView inherits the painter from QGraphicsScene and those flags are not set. This patch
+        ensure that before rendering the item we add QPainter::SmoothPixmapTransform and QPainter::TextAntialiasing
+        in addition of what could be set on the painter. In order to not break the rendering of all the items in the
+        scene we set back the painter to its original state when QGraphicsWebView is rendered.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::QGraphicsWebViewPrivate):
+        (QGraphicsWebView::paint):
+        (QGraphicsWebView::renderHints):
+        (QGraphicsWebView::setRenderHints):
+        (QGraphicsWebView::setRenderHint):
+        * Api/qgraphicswebview.h:
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::renderHints):
+
 2011-03-16  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

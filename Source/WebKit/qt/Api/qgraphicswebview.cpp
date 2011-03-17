@@ -55,7 +55,8 @@ public:
     QGraphicsWebViewPrivate(QGraphicsWebView* parent)
         : q(parent)
         , page(0)
-        , resizesToContents(false) {}
+        , resizesToContents(false)
+        , renderHints(QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform) {}
 
     virtual ~QGraphicsWebViewPrivate();
 
@@ -74,6 +75,7 @@ public:
     QGraphicsWebView* q;
     QWebPage* page;
     bool resizesToContents;
+    QPainter::RenderHints renderHints;
 
     QGraphicsItemOverlay* overlay() const
     {
@@ -279,6 +281,8 @@ QWebPage* QGraphicsWebView::page() const
 */
 void QGraphicsWebView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget*)
 {
+    QPainter::RenderHints oldHints = painter->renderHints();
+    painter->setRenderHints(oldHints | d->renderHints);
 #if ENABLE(TILED_BACKING_STORE)
     if (WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(page()->mainFrame())->tiledBackingStore()) {
         // FIXME: We should set the backing store viewport earlier than in paint
@@ -286,6 +290,7 @@ void QGraphicsWebView::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
         // QWebFrame::render is a public API, bypass it for tiled rendering so behavior does not need to change.
         WebCore::GraphicsContext context(painter); 
         page()->mainFrame()->d->renderFromTiledBackingStore(&context, option->exposedRect.toAlignedRect());
+        painter->setRenderHints(oldHints);
         return;
     } 
 #endif
@@ -294,6 +299,7 @@ void QGraphicsWebView::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
 #else
     page()->mainFrame()->render(painter, QWebFrame::AllLayers, option->exposedRect.toRect());
 #endif
+    painter->setRenderHints(oldHints);
 }
 
 /*! \reimp
@@ -355,6 +361,65 @@ QVariant QGraphicsWebView::inputMethodQuery(Qt::InputMethodQuery query) const
     if (d->page)
         return d->page->inputMethodQuery(query);
     return QVariant();
+}
+
+/*!
+    \property QGraphicsWebView::renderHints
+    \since 4.8
+    \brief the default render hints for the view
+
+    These hints are used to initialize QPainter before painting the Web page.
+
+    QPainter::TextAntialiasing and QPainter::SmoothPixmapTransform are enabled by default and will be
+    used to render the item in addition of what has been set on the painter given by QGraphicsScene.
+
+    \note This property is not available on Symbian. However, the getter and
+    setter functions can still be used directly.
+
+    \sa QPainter::renderHints()
+*/
+
+/*!
+    \since 4.8
+    Returns the render hints used by the view to render content.
+
+    \sa QPainter::renderHints()
+*/
+QPainter::RenderHints QGraphicsWebView::renderHints() const
+{
+    return d->renderHints;
+}
+
+/*!
+    \since 4.8
+    Sets the render hints used by the view to the specified \a hints.
+
+    \sa QPainter::setRenderHints()
+*/
+void QGraphicsWebView::setRenderHints(QPainter::RenderHints hints)
+{
+    if (hints == d->renderHints)
+        return;
+    d->renderHints = hints;
+    update();
+}
+
+/*!
+    \since 4.8
+    If \a enabled is true, enables the specified render \a hint; otherwise
+    disables it.
+
+    \sa renderHints, QPainter::renderHints()
+*/
+void QGraphicsWebView::setRenderHint(QPainter::RenderHint hint, bool enabled)
+{
+    QPainter::RenderHints oldHints = d->renderHints;
+    if (enabled)
+        d->renderHints |= hint;
+    else
+        d->renderHints &= ~hint;
+    if (oldHints != d->renderHints)
+        update();
 }
 
 /*! \reimp

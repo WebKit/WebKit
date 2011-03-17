@@ -38,6 +38,7 @@ private slots:
     void widgetsRenderingThroughCache();
     void setPalette_data();
     void setPalette();
+    void renderHints();
 };
 
 void tst_QGraphicsWebView::qgraphicswebview()
@@ -407,6 +408,40 @@ void tst_QGraphicsWebView::setPalette()
     controlView.close();
 
     QVERIFY(img1 != img2);
+}
+
+void tst_QGraphicsWebView::renderHints()
+{
+    QGraphicsWebView webView;
+
+    // default is only text antialiasing + smooth pixmap transform
+    QVERIFY(!(webView.renderHints() & QPainter::Antialiasing));
+    QVERIFY(webView.renderHints() & QPainter::TextAntialiasing);
+    QVERIFY(webView.renderHints() & QPainter::SmoothPixmapTransform);
+    QVERIFY(!(webView.renderHints() & QPainter::HighQualityAntialiasing));
+
+    webView.setRenderHint(QPainter::Antialiasing, true);
+    QVERIFY(webView.renderHints() & QPainter::Antialiasing);
+    QVERIFY(webView.renderHints() & QPainter::TextAntialiasing);
+    QVERIFY(webView.renderHints() & QPainter::SmoothPixmapTransform);
+    QVERIFY(!(webView.renderHints() & QPainter::HighQualityAntialiasing));
+
+    webView.setRenderHint(QPainter::Antialiasing, false);
+    QVERIFY(!(webView.renderHints() & QPainter::Antialiasing));
+    QVERIFY(webView.renderHints() & QPainter::TextAntialiasing);
+    QVERIFY(webView.renderHints() & QPainter::SmoothPixmapTransform);
+    QVERIFY(!(webView.renderHints() & QPainter::HighQualityAntialiasing));
+
+    webView.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    QVERIFY(!(webView.renderHints() & QPainter::Antialiasing));
+    QVERIFY(webView.renderHints() & QPainter::TextAntialiasing);
+    QVERIFY(webView.renderHints() & QPainter::SmoothPixmapTransform);
+    QVERIFY(!(webView.renderHints() & QPainter::HighQualityAntialiasing));
+
+    webView.setRenderHint(QPainter::SmoothPixmapTransform, false);
+    QVERIFY(webView.renderHints() & QPainter::TextAntialiasing);
+    QVERIFY(!(webView.renderHints() & QPainter::SmoothPixmapTransform));
+    QVERIFY(!(webView.renderHints() & QPainter::HighQualityAntialiasing));
 }
 
 QTEST_MAIN(tst_QGraphicsWebView)

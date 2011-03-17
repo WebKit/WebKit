@@ -50,6 +50,9 @@ class QWEBKIT_EXPORT QGraphicsWebView : public QGraphicsWidget {
     Q_PROPERTY(bool resizesToContents READ resizesToContents WRITE setResizesToContents)
     Q_PROPERTY(bool tiledBackingStoreFrozen READ isTiledBackingStoreFrozen WRITE setTiledBackingStoreFrozen)
 
+    Q_PROPERTY(QPainter::RenderHints renderHints READ renderHints WRITE setRenderHints)
+    Q_FLAGS(QPainter::RenderHints)
+
 public:
     explicit QGraphicsWebView(QGraphicsItem* parent = 0);
     ~QGraphicsWebView();
@@ -98,6 +101,10 @@ public:
     virtual QSizeF sizeHint(Qt::SizeHint which, const QSizeF& constraint) const;
 
     virtual QVariant inputMethodQuery(Qt::InputMethodQuery query) const;
+
+    QPainter::RenderHints renderHints() const;
+    void setRenderHints(QPainter::RenderHints);
+    void setRenderHint(QPainter::RenderHint, bool enabled = true);
 
 public Q_SLOTS:
     void stop();
