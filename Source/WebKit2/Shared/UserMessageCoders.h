@@ -31,6 +31,7 @@
 #include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
 #include "ShareableBitmap.h"
+#include "WebCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebData.h"
 #include "WebImage.h"
@@ -48,6 +49,7 @@ namespace WebKit {
 //   - SerializedScriptValue -> SerializedScriptValue
 //   - String -> String
 //   - UserContentURLPattern -> UserContentURLPattern
+//   - WebCertificateInfo -> WebCertificateInfo
 //   - WebData -> WebData
 //   - WebDouble -> WebDouble
 //   - WebImage -> WebImage
@@ -145,6 +147,11 @@ public:
             encoder->encodeBytes(data->bytes(), data->size());
             return true;
         }
+        case APIObject::TypeCertificateInfo: {
+            WebCertificateInfo* certificateInfo = static_cast<WebCertificateInfo*>(m_root);
+            encoder->encode(certificateInfo->platformCertificateInfo());
+            return true;
+        }
         default:
             break;
         }
@@ -169,6 +176,7 @@ protected:
 //   - SerializedScriptValue -> SerializedScriptValue
 //   - String -> String
 //   - UserContentURLPattern -> UserContentURLPattern
+//   - WebCertificateInfo -> WebCertificateInfo
 //   - WebData -> WebData
 //   - WebDouble -> WebDouble
 //   - WebImage -> WebImage
@@ -303,7 +311,13 @@ public:
             coder.m_root = WebData::create(buffer);
             break;
         }
-
+        case APIObject::TypeCertificateInfo: {
+            PlatformCertificateInfo platformCertificateInfo;
+            if (!decoder->decode(platformCertificateInfo))
+                return false;
+            coder.m_root = WebCertificateInfo::create(platformCertificateInfo);
+            break;
+        }
         default:
             break;
         }

@@ -31,6 +31,12 @@
 
 using namespace WebKit;
 
+WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(CFArrayRef certificateChain)
+{
+    RefPtr<WebCertificateInfo> certificateInfo = WebCertificateInfo::create(PlatformCertificateInfo(certificateChain));
+    return toAPI(certificateInfo.release().leakRef());
+}
+
 CFArrayRef WKCertificateInfoGetCertificateChain(WKCertificateInfoRef certificateInfoRef)
 {
     return toImpl(certificateInfoRef)->platformCertificateInfo().certificateChain();
