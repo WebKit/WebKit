@@ -22,6 +22,7 @@
 #include "TextBreakIterator.h"
 
 #include <QtCore/qtextboundaryfinder.h>
+#include <algorithm>
 #include <qdebug.h>
 
 // #define DEBUG_TEXT_ITERATORS
@@ -89,7 +90,7 @@ const char* currentTextBreakLocaleID()
         TextBreakIterator* lineBreakIterator = 0;
         if (staticLineBreakIterator) {
             setUpIterator(*staticLineBreakIterator, QTextBoundaryFinder::Line, string, length);
-            swap(staticLineBreakIterator, lineBreakIterator);
+            std::swap(staticLineBreakIterator, lineBreakIterator);
         }
 
         if (!lineBreakIterator && string && length)

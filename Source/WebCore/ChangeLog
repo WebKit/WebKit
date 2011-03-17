@@ -1,3 +1,18 @@
+2011-03-16  Keith Kyzivat  <keith.kyzivat@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix std::swap not found issue on mobile Qt devices.
+        https://bugs.webkit.org/show_bug.cgi?id=56463
+
+        Include <algorithm> in TextBreakIteratorQt.cpp so std::swap is found
+        on some Qt mobile devices.
+
+        No new tests: No tests needed - compilation verified manually.
+
+        * platform/text/qt/TextBreakIteratorQt.cpp:
+        (WebCore::acquireLineBreakIterator):
+
 2011-03-16  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
