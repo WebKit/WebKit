@@ -1,3 +1,19 @@
+2011-03-17  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Viewport test for user-scalable=yes
+        https://bugs.webkit.org/show_bug.cgi?id=56527
+
+        Provide tests for user-scalable no, yes, and default values.
+
+        * fast/viewport/viewport-130-expected.txt: Added.
+        * fast/viewport/viewport-130.html: Added.
+        * fast/viewport/viewport-131-expected.txt: Added.
+        * fast/viewport/viewport-131.html: Added.
+        * fast/viewport/viewport-132-expected.txt: Copied from LayoutTests/fast/viewport/viewport-1-expected.txt.
+        * fast/viewport/viewport-132.html: Added.
+
 2011-03-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
