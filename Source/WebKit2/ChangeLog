@@ -1,3 +1,14 @@
+2011-03-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56574
+        Dealloc'ing a WKView can leave a stale reference to it in NSWindow
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewWillMoveToWindow:]):
+        Clear the outgoing window's growBoxOwner if it is this view.
+
 2011-03-17  Anders Carlsson  <andersca@apple.com>
 
         Rubber-stamped by John Sullivan.

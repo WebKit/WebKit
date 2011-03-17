@@ -77,6 +77,7 @@
 
 @interface NSWindow (Details)
 - (NSRect)_growBoxRect;
+- (id)_growBoxOwner;
 - (void)_setShowOpaqueGrowBoxForOwner:(id)owner;
 - (BOOL)_updateGrowBoxForWindowFrameChange;
 @end
@@ -1427,10 +1428,15 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
-    if (window != [self window]) {
-        [self removeWindowObservers];
-        [self addWindowObserversForWindow:window];
-    }
+    NSWindow *currentWindow = [self window];
+    if (window == currentWindow)
+        return;
+    
+    [self removeWindowObservers];
+    [self addWindowObserversForWindow:window];
+    
+    if ([currentWindow _growBoxOwner] == self)
+        [currentWindow _setShowOpaqueGrowBoxForOwner:nil];
 }
 
 - (void)viewDidMoveToWindow
