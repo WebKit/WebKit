@@ -310,10 +310,6 @@ public:
         }
     } m_state;
 
-#if ENABLE(WEBGL)
-    const GraphicsContext3D* m_gc3D;
-#endif
-
 #ifndef QT_NO_ANIMATION
     friend class AnimationQtBase;
 #endif
@@ -339,9 +335,6 @@ GraphicsLayerQtImpl::GraphicsLayerQtImpl(GraphicsLayerQt* newLayer)
     , m_changeMask(NoChanges)
 #if ENABLE(TILED_BACKING_STORE)
     , m_tiledBackingStore(0)
-#endif
-#if ENABLE(WEBGL)
-    , m_gc3D(0)
 #endif
 {
     // We use graphics-view for compositing-only, not for interactivity.
@@ -665,11 +658,6 @@ void GraphicsLayerQtImpl::paint(QPainter* painter, const QStyleOptionGraphicsIte
     case MediaContentType:
         // we don't need to paint anything: we have a QGraphicsItem from the media element
         break;
-#if ENABLE(WEBGL)
-    case Canvas3DContentType:
-        m_gc3D->paint(painter, option->rect);
-        break;
-#endif
     }
 }
 
@@ -808,16 +796,6 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
 
             setFlag(ItemHasNoContents, !m_layer->drawsContent());
             break;
-
-#if ENABLE(WEBGL)
-        case Canvas3DContentType:
-            if (m_pendingContent.contentType != m_currentContent.contentType)
-                update();
-
-            setCacheMode(NoCache);
-            setFlag(ItemHasNoContents, false);
-            break;
-#endif
         }
     }
 
@@ -1268,23 +1246,6 @@ void GraphicsLayerQt::setContentsBackgroundColor(const Color& color)
     GraphicsLayer::setContentsBackgroundColor(color);
 }
 
-#if ENABLE(WEBGL)
-void GraphicsLayerQt::setContentsToGraphicsContext3D(const GraphicsContext3D* ctx)
-{
-    if (ctx == m_impl->m_gc3D)
-        return;
-
-    m_impl->m_pendingContent.contentType = GraphicsLayerQtImpl::Canvas3DContentType;
-    m_impl->m_gc3D = ctx;
-    m_impl->notifyChange(GraphicsLayerQtImpl::ContentChange);
-}
-
-void GraphicsLayerQt::setGraphicsContext3DNeedsDisplay()
-{
-    setNeedsDisplay();
-}
-#endif
-
 void GraphicsLayerQt::setContentsToMedia(PlatformLayer* media)
 {
     if (media) {
@@ -1295,6 +1256,11 @@ void GraphicsLayerQt::setContentsToMedia(PlatformLayer* media)
 
     m_impl->notifyChange(GraphicsLayerQtImpl::ContentChange);
     GraphicsLayer::setContentsToMedia(media);
+}
+
+void GraphicsLayerQt::setContentsToCanvas(PlatformLayer* canvas)
+{
+    setContentsToMedia(canvas);
 }
 
 /* \reimp (GraphicsLayer.h)

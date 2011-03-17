@@ -27,10 +27,14 @@
 #include "HTMLCanvasElement.h"
 #include "HostWindow.h"
 #include "ImageBuffer.h"
+#include "ImageData.h"
 #include "NotImplemented.h"
-#include "QWebPageClient.h"
+#include "PageClientQt.h"
+#include "qwebpage.h"
 #include <QAbstractScrollArea>
+#include <QGraphicsObject>
 #include <QGLContext>
+#include <QStyleOptionGraphicsItem>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
@@ -145,13 +149,15 @@ typedef void (APIENTRY* glVertexAttrib4fType) (GLuint, const GLfloat, const GLfl
 typedef void (APIENTRY* glVertexAttrib4fvType) (GLuint, const GLfloat*);
 typedef void (APIENTRY* glVertexAttribPointerType) (GLuint, GLint, GLenum, GLboolean, GLsizei, const GLvoid*);
 
-class GraphicsContext3DInternal {
+class GraphicsContext3DInternal : public QGraphicsObject {
 public:
     GraphicsContext3DInternal(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow);
     ~GraphicsContext3DInternal();
 
     bool isContextValid() { return m_contextValid; }
     QGLWidget* getOwnerGLWidget(QWebPageClient* webPageClient);
+    void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
+    QRectF boundingRect() const;
 
     glActiveTextureType activeTexture;
     glAttachShaderType attachShader;
@@ -247,6 +253,8 @@ public:
     GraphicsContext3D::Attributes m_attrs;
     HostWindow* m_hostWindow;
     QGLWidget* m_glWidget;
+    QGLWidget* m_ownerGLWidget;
+    QRectF m_boundingRect;
     GLuint m_texture;
     GLuint m_mainFbo;
     GLuint m_currentFbo;
@@ -281,17 +289,26 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attribut
     : m_attrs(attrs)
     , m_hostWindow(hostWindow)
     , m_glWidget(0)
+    , m_ownerGLWidget(0)
     , m_texture(0)
     , m_mainFbo(0)
     , m_currentFbo(0)
     , m_depthBuffer(0)
     , m_contextValid(true)
 {
-    QWebPageClient* webPageClient = hostWindow->platformPageClient();
-    QGLWidget* ownerGLWidget  = getOwnerGLWidget(webPageClient);
+    PageClientQWidget* webPageClient
+        = static_cast<PageClientQWidget*>(hostWindow->platformPageClient());
 
-    if (ownerGLWidget) 
-        m_glWidget = new QGLWidget(0, ownerGLWidget);
+#if USE(ACCELERATED_COMPOSITING)
+    if (webPageClient->page->settings()->testAttribute(QWebSettings::AcceleratedCompositingEnabled)) {
+        QAbstractScrollArea* scrollArea = qobject_cast<QAbstractScrollArea*>(webPageClient->ownerWidget());
+        if (scrollArea)
+            m_ownerGLWidget = qobject_cast<QGLWidget*>(scrollArea->viewport());
+    }
+#endif
+
+    if (m_ownerGLWidget)
+        m_glWidget = new QGLWidget(0, m_ownerGLWidget);
     else {
         QGLFormat format;
         format.setDepth(true);
@@ -454,14 +471,32 @@ GraphicsContext3DInternal::~GraphicsContext3DInternal()
     m_glWidget = 0;
 }
 
-QGLWidget* GraphicsContext3DInternal::getOwnerGLWidget(QWebPageClient* webPageClient)
+void GraphicsContext3DInternal::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-    QAbstractScrollArea* scrollArea = qobject_cast<QAbstractScrollArea*>(webPageClient->ownerWidget());
+    Q_UNUSED(widget);
 
-    if (scrollArea) 
-        return qobject_cast<QGLWidget*>(scrollArea->viewport());
+    QRectF rect = option ? option->rect : boundingRect();
 
-    return 0;
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
+    // Use direct texture mapping if WebGL canvas has a shared OpenGL context
+    // with browsers OpenGL context.
+    if (m_ownerGLWidget) {
+        m_ownerGLWidget->drawTexture(rect, m_texture);
+        return;
+    }
+#endif
+
+    // Alternatively read pixels to a memory buffer.
+    m_glWidget->makeCurrent();
+    bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_mainFbo);
+    glReadPixels(/* x */ 0, /* y */ 0, rect.width(), rect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, m_pixels.bits());
+    painter->drawImage(/* x */ 0, /* y */ 0, m_pixels.rgbSwapped().transformed(QMatrix().rotate(180)));
+    bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_currentFbo);
+}
+
+QRectF GraphicsContext3DInternal::boundingRect() const
+{
+    return m_boundingRect;
 }
 
 void* GraphicsContext3DInternal::getProcAddress(const String& proc)
@@ -511,6 +546,11 @@ Platform3DObject GraphicsContext3D::platformTexture() const
     return m_internal->m_texture;
 }
 
+PlatformLayer* GraphicsContext3D::platformLayer() const
+{
+    return m_internal.get();
+}
+
 void GraphicsContext3D::makeContextCurrent()
 {
     m_internal->m_glWidget->makeCurrent();
@@ -522,7 +562,7 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* co
     HTMLCanvasElement* canvas = context->canvas();
     ImageBuffer* imageBuffer = canvas->buffer();
     QPainter* painter = imageBuffer->context()->platformContext();
-    paint(painter, QRect(QPoint(0, 0), QSize(m_currentWidth, m_currentHeight)));
+    m_internal->paint(painter, 0, 0);
 }
 
 PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData()
@@ -530,23 +570,6 @@ PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData()
     // FIXME: This needs to be implemented for proper non-premultiplied-alpha
     // support.
     return 0;
-}
-
-void GraphicsContext3D::paint(QPainter* painter, const QRect& rect) const
-{
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
-    QWebPageClient* webPageClient = m_internal->m_hostWindow->platformPageClient();
-    QGLWidget* ownerGLWidget  = m_internal->getOwnerGLWidget(webPageClient);
-    if (ownerGLWidget) {
-        ownerGLWidget->drawTexture(rect, m_internal->m_texture);
-        return;
-    } 
-#endif
-    m_internal->m_glWidget->makeCurrent();
-    m_internal->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_internal->m_mainFbo);
-    glReadPixels(/* x */ 0, /* y */ 0, m_currentWidth, m_currentHeight, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, m_internal->m_pixels.bits());
-    painter->drawImage(/* x */ 0, /* y */ 0, m_internal->m_pixels.rgbSwapped().transformed(QMatrix().rotate(180)));
-    m_internal->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_internal->m_currentFbo); 
 }
 
 void GraphicsContext3D::reshape(int width, int height)
@@ -557,6 +580,7 @@ void GraphicsContext3D::reshape(int width, int height)
     m_currentWidth = width;
     m_currentHeight = height;
 
+    m_internal->m_boundingRect = QRectF(QPointF(0, 0), QSizeF(width, height));
     m_internal->m_pixels = QImage(m_currentWidth, m_currentHeight, QImage::Format_ARGB32);
 
     m_internal->m_glWidget->makeCurrent();

@@ -1,3 +1,30 @@
+2011-03-16  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] WebGL content not shown when accelerated compositing is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=56339
+
+        Removed all previously implemented WebGL code from GraphicsLayerQt
+        because API has changed. GraphicsContext3D provides PlatformLayer
+        that is added as a child of GraphicsLayer and is therefore painted
+        through QGraphicsView pipeline.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::paint):
+        (WebCore::GraphicsContext3DInternal::boundingRect):
+        (WebCore::GraphicsContext3D::platformLayer):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::reshape):
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::GraphicsLayerQtImpl):
+        (WebCore::GraphicsLayerQtImpl::paint):
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+        (WebCore::GraphicsLayerQt::setContentsToCanvas):
+        * platform/graphics/qt/GraphicsLayerQt.h:
+
 2011-03-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

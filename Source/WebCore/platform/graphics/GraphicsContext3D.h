@@ -461,7 +461,7 @@ public:
     PlatformGraphicsContext3D platformGraphicsContext3D();
     Platform3DObject platformTexture() const;
 #if USE(ACCELERATED_COMPOSITING)
-    PlatformLayer* platformLayer() const { return 0; }
+    PlatformLayer* platformLayer() const;
 #endif
 #else
     PlatformGraphicsContext3D platformGraphicsContext3D() const { return NullPlatformGraphicsContext3D; }
@@ -760,7 +760,6 @@ public:
     PassRefPtr<ImageData> paintRenderingResultsToImageData();
 
 #if PLATFORM(QT)
-    void paint(QPainter* painter, const QRect& rect) const;
     bool paintsIntoCanvasBuffer() const { return true; }
 #elif PLATFORM(CHROMIUM)
     bool paintsIntoCanvasBuffer() const;

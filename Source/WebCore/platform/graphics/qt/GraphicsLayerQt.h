@@ -20,9 +20,6 @@
 #ifndef GraphicsLayerQt_h
 #define GraphicsLayerQt_h
 
-#if ENABLE(WEBGL)
-#include "GraphicsContext3D.h"
-#endif
 #include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 
@@ -78,11 +75,8 @@ public:
     virtual void setContentsToImage(Image*);
     virtual void setContentsNeedsDisplay();
     virtual void setContentsToMedia(PlatformLayer*);
+    virtual void setContentsToCanvas(PlatformLayer*);
     virtual void setContentsBackgroundColor(const Color&);
-#if ENABLE(WEBGL)
-    virtual void setContentsToGraphicsContext3D(const GraphicsContext3D*);
-    virtual void setGraphicsContext3DNeedsDisplay();
-#endif
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation);
     virtual void distributeOpacity(float);
     virtual float accumulatedOpacity() const;
