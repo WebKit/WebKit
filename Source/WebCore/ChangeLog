@@ -1,3 +1,10 @@
+2011-03-17  Sam Weinig  <sam@webkit.org>
+
+        Fix Mac build.
+
+        * WebCore.exp.in:
+        Add missing symbol.
+
 2011-03-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Adele Peterson and Enrica Casucci.
