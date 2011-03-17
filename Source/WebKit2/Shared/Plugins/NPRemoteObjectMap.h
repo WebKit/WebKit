@@ -61,9 +61,8 @@ public:
     NPVariant npVariantDataToNPVariant(const NPVariantData&, Plugin*);
 
     CoreIPC::Connection* connection() const { return m_connection; }
-    bool isInvalidating() const { return m_isInvalidating; }
 
-    void invalidate();
+    void pluginDestroyed(Plugin*);
 
     CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply);
 
@@ -71,14 +70,12 @@ private:
     explicit NPRemoteObjectMap(CoreIPC::Connection*);
     CoreIPC::Connection* m_connection;
 
-    bool m_isInvalidating;
-
     // A map of NPObjectMessageReceiver classes, wrapping objects that we export to the
     // other end of the connection.
     HashMap<uint64_t, NPObjectMessageReceiver*> m_registeredNPObjects;
 
     // A set of NPObjectProxy objects associated with this map.
-    HashSet<NPObject*> m_npObjectProxies;
+    HashSet<NPObjectProxy*> m_npObjectProxies;
 };
 
 } // namespace WebKit

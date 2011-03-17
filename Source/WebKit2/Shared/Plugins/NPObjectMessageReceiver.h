@@ -49,6 +49,7 @@ public:
 
     CoreIPC::SyncReplyMode didReceiveSyncNPObjectMessageReceiverMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
+    Plugin* plugin() const { return m_plugin; }
     NPObject* npObject() const { return m_npObject; }
     
 private:
@@ -70,7 +71,6 @@ private:
     Plugin* m_plugin;
     uint64_t m_npObjectID;
     NPObject* m_npObject;
-    bool m_shouldReleaseObjectWhenInvalidating;
 };
     
 } // namespace WebKit

@@ -62,13 +62,14 @@ void PluginProcessConnection::removePluginProxy(PluginProxy* plugin)
     ASSERT(m_plugins.contains(plugin->pluginInstanceID()));
     m_plugins.remove(plugin->pluginInstanceID());
 
+    // Invalidate all objects related to this plug-in.
+    m_npRemoteObjectMap->pluginDestroyed(plugin);
+
     if (!m_plugins.isEmpty())
         return;
 
-    // Invalidate our remote object map.
-    m_npRemoteObjectMap->invalidate();
-    m_npRemoteObjectMap = 0;
-    
+    m_npRemoteObjectMap = nullptr;
+
     // We have no more plug-ins, invalidate the connection to the plug-in process.
     ASSERT(m_connection);
     m_connection->invalidate();

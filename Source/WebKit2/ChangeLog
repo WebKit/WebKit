@@ -1,3 +1,62 @@
+2011-03-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Invalidate all NPObjects for a plug-in when that plug-in is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=56511
+        <rdar://problem/8993491>
+
+        Before this change, we would invalidate NPObjectProxy objects and delete NPObjectMessageReceiver
+        objects when the last plug-in of a certain type was destroyed. Doing so caused us to hold on to memory
+        which we don't need, and could also lead to crashes if the NPObjectMessageReceiver would get a message and
+        tried to invoke it on a already deallocated NPObject.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::initialize):
+        If we fail to initialize, call removePluginControllerProxy instead of having WebProcessConnection do so.
+
+        (WebKit::PluginControllerProxy::destroy):
+        Pass the plug-in to removePluginControllerProxy.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::removePluginControllerProxy):
+        Call NPRemoteObjectMap::pluginDestroyed when the plug-in has been destroyed.
+
+        (WebKit::WebProcessConnection::createPlugin):
+        Don't call removePluginControllerProxy if the plug-in fails to initialize. PluginControllerProxy::initialize now
+        takes care of doing this.
+
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        (WebKit::NPObjectMessageReceiver::NPObjectMessageReceiver):
+        (WebKit::NPObjectMessageReceiver::~NPObjectMessageReceiver):
+        * Shared/Plugins/NPObjectMessageReceiver.h:
+        Remove m_shouldReleaseObjectWhenInvalidating, we now know that no NPObjects will have been deallocated
+        by the time the NPObjectMessageReceiver is destroyed.
+
+        (WebKit::NPObjectMessageReceiver::plugin):
+        Add getter.
+        
+        * Shared/Plugins/NPObjectProxy.h:
+        (WebKit::NPObjectProxy::plugin):
+        Add getter.
+        
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::NPRemoteObjectMap):
+        Remove m_isInvalidating.
+
+        (WebKit::NPRemoteObjectMap::npObjectProxyDestroyed):
+        Simplify code.
+
+        (WebKit::NPRemoteObjectMap::pluginDestroyed):
+        Rename invalidate to pluginDestroyed. Only invalidate/delete objects that belong to the given plug-in.
+
+        * Shared/Plugins/NPRemoteObjectMap.h:
+        Remove m_isInvalidating.
+        
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::removePluginProxy):
+        Call NPRemoteObjectMap::pluginDestroyed when the plug-in has been destroyed.
+
 2011-03-17  Oleg Romashin  <oleg.romashin@nokia.com>
 
         Reviewed by Anders Carlsson.

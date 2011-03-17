@@ -82,7 +82,14 @@ bool PluginControllerProxy::initialize(const Plugin::Parameters& parameters)
         return false;
 
     if (!m_plugin->initialize(this, parameters)) {
+        // Get the plug-in so we can pass it to removePluginControllerProxy. The pointer is only
+        // used as an identifier so it's OK to just get a weak reference.
+        Plugin* plugin = m_plugin.get();
+        
         m_plugin = 0;
+
+        // This will delete the plug-in controller proxy object.
+        m_connection->removePluginControllerProxy(this, plugin);
         return false;
     }
 
@@ -102,13 +109,17 @@ void PluginControllerProxy::destroy()
         return;
     }
 
+    // Get the plug-in so we can pass it to removePluginControllerProxy. The pointer is only
+    // used as an identifier so it's OK to just get a weak reference.
+    Plugin* plugin = m_plugin.get();
+
     m_plugin->destroy();
     m_plugin = 0;
 
     platformDestroy();
 
     // This will delete the plug-in controller proxy object.
-    m_connection->removePluginControllerProxy(this);
+    m_connection->removePluginControllerProxy(this, plugin);
 }
 
 void PluginControllerProxy::paint()

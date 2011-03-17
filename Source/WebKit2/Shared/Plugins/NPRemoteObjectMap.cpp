@@ -50,7 +50,6 @@ PassRefPtr<NPRemoteObjectMap> NPRemoteObjectMap::create(CoreIPC::Connection* con
 
 NPRemoteObjectMap::NPRemoteObjectMap(CoreIPC::Connection* connection)
     : m_connection(connection)
-    , m_isInvalidating(false)
 {
 }
 
@@ -71,10 +70,10 @@ NPObject* NPRemoteObjectMap::createNPObjectProxy(uint64_t remoteObjectID, Plugin
 
 void NPRemoteObjectMap::npObjectProxyDestroyed(NPObject* npObject)
 {
-    ASSERT(NPObjectProxy::isNPObjectProxy(npObject));
-    ASSERT(m_npObjectProxies.contains(npObject));
+    NPObjectProxy* npObjectProxy = NPObjectProxy::toNPObjectProxy(npObject);
+    ASSERT(m_npObjectProxies.contains(npObjectProxy));
 
-    m_npObjectProxies.remove(npObject);
+    m_npObjectProxies.remove(npObjectProxy);
 }
 
 uint64_t NPRemoteObjectMap::registerNPObject(NPObject* npObject, Plugin* plugin)
@@ -187,25 +186,37 @@ NPVariant NPRemoteObjectMap::npVariantDataToNPVariant(const NPVariantData& npVar
     return npVariant;
 }
 
-void NPRemoteObjectMap::invalidate()
+void NPRemoteObjectMap::pluginDestroyed(Plugin* plugin)
 {
-    ASSERT(!m_isInvalidating);
-
-    m_isInvalidating = true;
-
     Vector<NPObjectMessageReceiver*> messageReceivers;
-    copyValuesToVector(m_registeredNPObjects, messageReceivers);
+
+    // Gather the receivers associated with this plug-in.
+    for (HashMap<uint64_t, NPObjectMessageReceiver*>::const_iterator it = m_registeredNPObjects.begin(), end = m_registeredNPObjects.end(); it != end; ++it) {
+        NPObjectMessageReceiver* npObjectMessageReceiver = it->second;
+        if (npObjectMessageReceiver->plugin() == plugin)
+            messageReceivers.append(npObjectMessageReceiver);
+    }
 
     // Now delete all the receivers.
     deleteAllValues(messageReceivers);
 
-    ASSERT(m_registeredNPObjects.isEmpty());
+    Vector<NPObjectProxy*> objectProxies;
+    for (HashSet<NPObjectProxy*>::const_iterator it = m_npObjectProxies.begin(), end = m_npObjectProxies.end(); it != end; ++it) {
+        NPObjectProxy* npObjectProxy = *it;
 
-    for (HashSet<NPObject*>::const_iterator it = m_npObjectProxies.begin(), end = m_npObjectProxies.end(); it != end; ++it)
-        NPObjectProxy::toNPObjectProxy(*it)->invalidate();
-    m_npObjectProxies.clear();
+        if (npObjectProxy->plugin() == plugin)
+            objectProxies.append(npObjectProxy);
+    }
 
-    m_isInvalidating = false;
+    // Invalidate and remove all proxies associated with this plug-in.
+    for (size_t i = 0; i < objectProxies.size(); ++i) {
+        NPObjectProxy* npObjectProxy = objectProxies[i];
+
+        npObjectProxy->invalidate();
+
+        ASSERT(m_npObjectProxies.contains(npObjectProxy));
+        m_npObjectProxies.remove(npObjectProxy);
+    }
 }
 
 CoreIPC::SyncReplyMode NPRemoteObjectMap::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)

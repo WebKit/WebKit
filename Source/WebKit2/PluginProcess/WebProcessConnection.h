@@ -47,7 +47,7 @@ public:
     CoreIPC::Connection* connection() const { return m_connection.get(); }
     NPRemoteObjectMap* npRemoteObjectMap() const { return m_npRemoteObjectMap.get(); }
 
-    void removePluginControllerProxy(PluginControllerProxy*);
+    void removePluginControllerProxy(PluginControllerProxy*, Plugin*);
 
 private:
     WebProcessConnection(CoreIPC::Connection::Identifier);

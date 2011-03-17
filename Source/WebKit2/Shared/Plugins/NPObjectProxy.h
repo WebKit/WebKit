@@ -50,6 +50,7 @@ public:
         return static_cast<NPObjectProxy*>(npObject);
     }
 
+    Plugin* plugin() const { return m_plugin; }
     uint64_t npObjectID() const { return m_npObjectID; }
 
     void invalidate();

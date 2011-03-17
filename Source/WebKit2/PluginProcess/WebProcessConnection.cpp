@@ -70,20 +70,23 @@ void WebProcessConnection::destroyPluginControllerProxy(PluginControllerProxy* p
     pluginController->destroy();
 }
 
-void WebProcessConnection::removePluginControllerProxy(PluginControllerProxy* pluginController)
+void WebProcessConnection::removePluginControllerProxy(PluginControllerProxy* pluginController, Plugin* plugin)
 {
+    ASSERT(plugin);
+
     {
         ASSERT(m_pluginControllers.contains(pluginController->pluginInstanceID()));
 
         OwnPtr<PluginControllerProxy> pluginControllerOwnPtr = adoptPtr(m_pluginControllers.take(pluginController->pluginInstanceID()));
         ASSERT(pluginControllerOwnPtr == pluginController);
     }
-    
+
+    // Invalidate all objects related to this plug-in.
+    m_npRemoteObjectMap->pluginDestroyed(plugin);
+
     if (!m_pluginControllers.isEmpty())
         return;
 
-    // Invalidate our remote object map.
-    m_npRemoteObjectMap->invalidate();
     m_npRemoteObjectMap = nullptr;
 
     // The last plug-in went away, close this connection.
@@ -167,13 +170,10 @@ void WebProcessConnection::createPlugin(uint64_t pluginInstanceID, const Plugin:
     // Now try to initialize the plug-in.
     result = pluginControllerProxyPtr->initialize(parameters);
 
-    if (result) {
-        remoteLayerClientID = pluginControllerProxyPtr->remoteLayerClientID();
+    if (!result)
         return;
-    }
 
-    // We failed to initialize, remove the plug-in controller. This could cause us to be deleted.
-    removePluginControllerProxy(pluginControllerProxyPtr);
+    remoteLayerClientID = pluginControllerProxyPtr->remoteLayerClientID();
 }
 
 } // namespace WebKit
