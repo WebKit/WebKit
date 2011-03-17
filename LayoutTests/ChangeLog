@@ -1,3 +1,9 @@
+2011-03-17  James Simonsen  <simonjam@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81369.

@@ -3293,8 +3293,8 @@ BUGWK56488 SKIP : compositing/transitions/scale-transition-no-start.html = CRASH
 BUGWK56454 WIN : inspector/elements/mutate-unknown-node.html = PASS TEXT
 
 // Slow
-BUGCR76550 DEBUG WIN LINUX : fast/dom/Window/window-function-frame-getter-precedence.html = SLOW
-BUGCR76550 DEBUG MAC : fast/dom/Window/window-function-frame-getter-precedence.html = SLOW TIMEOUT
+BUGCR76550 SLOW WIN LINUX DEBUG : fast/dom/Window/window-function-frame-getter-precedence.html = PASS
+BUGCR76550 SLOW MAC DEBUG : fast/dom/Window/window-function-frame-getter-precedence.html = TIMEOUT PASS
 
 // New and flaky
 BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS TEXT
