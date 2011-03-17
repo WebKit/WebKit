@@ -530,6 +530,8 @@ void InspectorInstrumentation::didCommitLoadImpl(Page* page, InspectorAgent* ins
     if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent()) {
         KURL url = inspectorAgent->inspectedURLWithoutFragment();
         debuggerAgent->inspectedURLChanged(url);
+        if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = instrumentingAgents->inspectorBrowserDebuggerAgent())
+            browserDebuggerAgent->inspectedURLChanged(url);
     }
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)

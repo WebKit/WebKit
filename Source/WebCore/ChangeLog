@@ -1,3 +1,73 @@
+2011-03-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r81243.
+        http://trac.webkit.org/changeset/81243
+        https://bugs.webkit.org/show_bug.cgi?id=56471
+
+        Breaks GTK 64-bit Debug tests (Requested by podivilov on
+        #webkit).
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::setFrontend):
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        (WebCore::InspectorBrowserDebuggerAgent::setFrontend):
+        (WebCore::InspectorBrowserDebuggerAgent::setAllBrowserBreakpoints):
+        (WebCore::InspectorBrowserDebuggerAgent::inspectedURLChanged):
+        (WebCore::InspectorBrowserDebuggerAgent::restoreStickyBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::discardBindings):
+        (WebCore::InspectorBrowserDebuggerAgent::setEventListenerBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::removeEventListenerBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorBrowserDebuggerAgent::clear):
+        * inspector/InspectorBrowserDebuggerAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype.createEventListenerBreakpoint):
+        (WebInspector.BreakpointManager.prototype._createEventListenerBreakpoint):
+        (WebInspector.BreakpointManager.prototype.setXHRBreakpoint):
+        (WebInspector.BreakpointManager.prototype.removeXHRBreakpoint):
+        (WebInspector.BreakpointManager.prototype.breakpointViewForEventData):
+        (WebInspector.BreakpointManager.prototype._projectChanged):
+        (WebInspector.BreakpointManager.prototype._saveBreakpoints):
+        (WebInspector.BreakpointManager.prototype._validateBreakpoints):
+        (WebInspector.BreakpointManager.prototype._createDOMBreakpointId):
+        (WebInspector.BreakpointManager.prototype._createEventListenerBreakpointId):
+        (WebInspector.EventListenerBreakpoint):
+        (WebInspector.EventListenerBreakpoint.prototype._enable):
+        (WebInspector.EventListenerBreakpoint.prototype._disable):
+        (WebInspector.EventListenerBreakpoint.prototype._serializeToJSON):
+        (WebInspector.EventListenerBreakpointView):
+        (WebInspector.EventListenerBreakpointView.eventNameForUI):
+        (WebInspector.EventListenerBreakpointView.prototype.get eventName):
+        (WebInspector.EventListenerBreakpointView.prototype.compareTo):
+        (WebInspector.EventListenerBreakpointView.prototype.populateLabelElement):
+        (WebInspector.EventListenerBreakpointView.prototype.populateStatusMessageElement):
+        (WebInspector.EventListenerBreakpointView.prototype._uiEventName):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._setBreakpoint):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._removeBreakpoint):
+        (WebInspector.EventListenerBreakpointsSidebarPane):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._createCategory):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._categoryCheckboxClicked):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._breakpointCheckboxClicked):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._breakpointAdded):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._breakpointHitStateChanged):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._breakpointRemoved):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._updateCategoryCheckbox):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._projectChanged):
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.update):
+        (WebInspector.CallStackSidebarPane.prototype._scriptBreakpointHit):
+        (WebInspector.CallStackSidebarPane.prototype._xhrBreakpointHit):
+        (WebInspector.CallStackSidebarPane.prototype._nativeBreakpointHit):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused):
+        (WebInspector.ScriptsPanel.prototype._clearInterface):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+
 2011-03-17  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

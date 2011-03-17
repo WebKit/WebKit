@@ -85,9 +85,13 @@ WebInspector.CallStackSidebarPane.prototype = {
             this._text += WebInspector.UIString("%s() at %s", i + 1, title, subtitle) + "\n";
         }
 
-        if (details.eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint) {
-            if (details.eventData.breakpointType === WebInspector.BreakpointManager.BreakpointTypes.DOM)
-                this._domBreakpointHit(details.eventData);
+        if (details.breakpoint)
+            this._scriptBreakpointHit();
+        else if (details.eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint) {
+            if (details.eventData.breakpointType === WebInspector.BreakpointManager.BreakpointTypes.XHR)
+                this._xhrBreakpointHit();
+            else
+                this._nativeBreakpointHit(details.eventData);
         }
     },
 
@@ -178,15 +182,23 @@ WebInspector.CallStackSidebarPane.prototype = {
         section.addRelatedKeys([ nextCallFrame.name, prevCallFrame.name ], WebInspector.UIString("Next/previous call frame"));
     },
 
-    setStatus: function(status)
+    _scriptBreakpointHit: function()
     {
         var statusMessageElement = document.createElement("div");
         statusMessageElement.className = "info";
-        statusMessageElement.textContent = status;
+        statusMessageElement.appendChild(document.createTextNode(WebInspector.UIString("Paused on a JavaScript breakpoint.")));
         this.bodyElement.appendChild(statusMessageElement);
     },
 
-    _domBreakpointHit: function(eventData)
+    _xhrBreakpointHit: function()
+    {
+        var statusMessageElement = document.createElement("div");
+        statusMessageElement.className = "info";
+        statusMessageElement.textContent = WebInspector.UIString("Paused on a XMLHttpRequest.");
+        this.bodyElement.appendChild(statusMessageElement);
+    },
+
+    _nativeBreakpointHit: function(eventData)
     {
         var breakpoint = WebInspector.breakpointManager.breakpointViewForEventData(eventData);
         if (!breakpoint)

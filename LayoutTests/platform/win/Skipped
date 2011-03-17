@@ -1087,7 +1087,6 @@ http/tests/appcache/origin-quota.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=43332
 inspector/debugger/dom-breakpoints.html
-inspector/debugger/event-listener-breakpoints.html
 inspector/debugger/xhr-breakpoints.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=40300
