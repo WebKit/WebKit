@@ -1,3 +1,10 @@
+2011-03-16  Alice Liu  <alice.liu@apple.com>
+
+        Add fast/workers/storage/interrupt-database-sync.html to the win-xp skipped list
+        due to intermittent failure; tracked by https://bugs.webkit.org/show_bug.cgi?id=56534
+
+        * platform/win-xp/Skipped:
+
 2011-03-16  Sam Weinig  <sam@webkit.org>
 
         Add compositing/transitions/singular-scale-transition.html to the Skipped lists.
