@@ -2,6 +2,17 @@
 
         Reviewed by Eric Seidel.
 
+        WebCore GYP build should build more derived sources
+        https://bugs.webkit.org/show_bug.cgi?id=56529
+
+        This patch brings us down to 597 link errors.
+
+        * gyp/WebCore.gyp:
+
+2011-03-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         WebCore GYP should build (most) remaining source files
         https://bugs.webkit.org/show_bug.cgi?id=56515
 

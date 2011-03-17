@@ -52,7 +52,8 @@
         ['exclude', 'platform/mac/[^/]+.mm$'],
 
         # FIXME: Build these objects.
-        ['exclude', '(DerivedSources|bridge|plugins)/.*\\.(c|cpp|mm)$'],
+        ['exclude', 'DerivedSources/.*\\.mm$'],
+        ['exclude', '(bridge|plugins)/.*\\.(cpp|mm)$'],
 
         ['exclude', 'bindings/[^/]+/'],
         ['include', 'bindings/generic/'],
@@ -75,6 +76,7 @@
 
         ['exclude', 'platform/KillRingNone\\.cpp$'],
         ['exclude', 'platform/graphics/cg/FontPlatformData\\.h$'],
+        ['exclude', 'platform/graphics/gpu/LoopBlinnPathProcessor\\.(cpp|h)$'],
         # FIXME: Consider excluding GL as a suffix.
         ['exclude', 'platform/graphics/opengl/TextureMapperGL\\.cpp$'],
         ['exclude', 'platform/graphics/opentype/OpenTypeUtilities\\.(cpp|h)$'],
@@ -83,6 +85,22 @@
         ['exclude', 'platform/text/LocalizedNumberNone\\.cpp$'],
         ['exclude', 'platform/text/TextEncodingDetectorNone\\.cpp$'],
         ['exclude', 'platform/text/Hyphenation\\.cpp$'],
+
+        # FIXME: Check whether we need to build these derived source files.
+        ['exclude', 'JSAbstractView\\.(cpp|h)'],
+        ['exclude', 'JSElementTimeControl\\.(cpp|h)'],
+        ['exclude', 'JSMathMLElementWrapperFactory\\.(cpp|h)'],
+        ['exclude', 'JSSVGExternalResourcesRequired\\.(cpp|h)'],
+        ['exclude', 'JSSVGFilterPrimitiveStandardAttributes\\.(cpp|h)'],
+        ['exclude', 'JSSVGFitToViewBox\\.(cpp|h)'],
+        ['exclude', 'JSSVGLangSpace\\.(cpp|h)'],
+        ['exclude', 'JSSVGLocatable\\.(cpp|h)'],
+        ['exclude', 'JSSVGStylable\\.(cpp|h)'],
+        ['exclude', 'JSSVGTests\\.(cpp|h)'],
+        ['exclude', 'JSSVGTransformable\\.(cpp|h)'],
+        ['exclude', 'JSSVGURIReference\\.(cpp|h)'],
+        ['exclude', 'JSSVGZoomAndPan\\.(cpp|h)'],
+        ['exclude', 'tokenizer\\.cpp'],
 
         ['exclude', 'AllInOne\\.cpp$'],
       ],
