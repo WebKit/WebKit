@@ -571,9 +571,6 @@ fast/forms/listbox-width-change.html
 fast/forms/plaintext-mode-2.html
 fast/forms/menulist-width-change.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=49906
-fast/workers/storage/interrupt-database-sync.html
-
 # [Qt] http/tests/websocket/tests/reload-crash.html fails intermittently with time out
 # https://bugs.webkit.org/show_bug.cgi?id=50152
 http/tests/websocket/tests/reload-crash.html

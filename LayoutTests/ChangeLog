@@ -1,3 +1,15 @@
+2011-03-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Disable fast/workers/storage/interrupt-database-sync.html due to flakiness on
+        multiple platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=49906
+
+        * fast/workers/storage/interrupt-database-sync.html: Removed.
+        * fast/workers/storage/interrupt-database-sync.html-disabled: Copied from fast/workers/storage/interrupt-database-sync.html.
+        * platform/qt/Skipped: Remove from qt Skipped list since it is now disabled.
+
 2011-03-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
