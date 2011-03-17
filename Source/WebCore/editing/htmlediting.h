@@ -55,7 +55,7 @@ class VisibleSelection;
 
 Node* highestAncestor(Node*);
 Node* highestEditableRoot(const Position&);
-Node* highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*));
+Node* highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 Node* lowestEditableAncestor(Node*);   
 
 Node* enclosingBlock(Node*, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
@@ -66,7 +66,6 @@ Node* enclosingNodeWithTag(const Position&, const QualifiedName&);
 Node* enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 
 Node* tabSpanNode(const Node*);
-Node* nearestMailBlockquote(const Node*);
 Node* isLastPositionBeforeTable(const VisiblePosition&);
 Node* isFirstPositionAfterTable(const VisiblePosition&);
 
@@ -116,11 +115,15 @@ Position positionOutsideContainingSpecialElement(const Position&, Node** contain
 
 inline Position firstPositionInOrBeforeNode(Node* node)
 {
+    if (!node)
+        return Position();
     return editingIgnoresContent(node) ? positionBeforeNode(node) : firstPositionInNode(node);
 }
 
 inline Position lastPositionInOrAfterNode(Node* node)
 {
+    if (!node)
+        return Position();
     return editingIgnoresContent(node) ? positionAfterNode(node) : lastPositionInNode(node);
 }
 

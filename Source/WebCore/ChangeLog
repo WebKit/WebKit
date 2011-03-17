@@ -1,3 +1,39 @@
+2011-03-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Get rid of nearestMailBlockquote
+        https://bugs.webkit.org/show_bug.cgi?id=56439
+
+        Removed nearestMailBlockquote and replaced the calls to the function by calls
+        to enclosingNodeOfType and highestEnclosingNodeOfType.
+        
+        Also fixed a bug in BreakBlockquoteCommand and DeleteSelectionCommand not to
+        respect editing boundaries.  Added a test for the former command.
+
+        Test: editing/execCommand/break-non-editable-blockquote.html
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply): No longer crosses editing boundary
+        when looking for a Mail blockquote.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::saveTypingStyleState): Ditto.
+        (WebCore::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::hasMatchingQuoteLevel):
+        (WebCore::handleStyleSpansBeforeInsertion):
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingNodeOfType): Check rule upfront to improve the performance.
+        (WebCore::highestEnclosingNodeOfType): Ditto; also add the missing check.
+        * editing/htmlediting.h:
+        (WebCore::firstPositionInOrBeforeNode): Added a null pointer check.
+        (WebCore::lastPositionInOrAfterNode): Ditto.
+        * editing/markup.cpp:
+        (WebCore::highestAncestorToWrapMarkup):
+        (WebCore::createMarkup):
+
 2011-03-16  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Beth Dakin.

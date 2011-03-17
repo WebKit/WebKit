@@ -609,27 +609,29 @@ Node* enclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), 
     if (p.isNull())
         return 0;
         
-    Node* root = highestEditableRoot(p);
+    Node* root = rule == CannotCrossEditingBoundary ? highestEditableRoot(p) : 0;
     for (Node* n = p.deprecatedNode(); n; n = n->parentNode()) {
         // Don't return a non-editable node if the input position was editable, since
         // the callers from editing will no doubt want to perform editing inside the returned node.
-        if (root && !n->isContentEditable() && rule == CannotCrossEditingBoundary)
+        if (root && !n->isContentEditable())
             continue;
-        if ((*nodeIsOfType)(n))
+        if (nodeIsOfType(n))
             return n;
-        if (n == root && rule == CannotCrossEditingBoundary)
+        if (n == root)
             return 0;
     }
     
     return 0;
 }
 
-Node* highestEnclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*))
+Node* highestEnclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule rule)
 {
     Node* highest = 0;
-    Node* root = highestEditableRoot(p);
+    Node* root = rule == CannotCrossEditingBoundary ? highestEditableRoot(p) : 0;
     for (Node* n = p.deprecatedNode(); n; n = n->parentNode()) {
-        if ((*nodeIsOfType)(n))
+        if (root && !n->isContentEditable())
+            continue;
+        if (nodeIsOfType(n))
             highest = n;
         if (n == root)
             break;
@@ -931,15 +933,6 @@ bool isNodeRendered(const Node *node)
         return false;
 
     return renderer->style()->visibility() == VISIBLE;
-}
-
-Node *nearestMailBlockquote(const Node *node)
-{
-    for (Node *n = const_cast<Node *>(node); n; n = n->parentNode()) {
-        if (isMailBlockquote(n))
-            return n;
-    }
-    return 0;
 }
 
 unsigned numEnclosingMailBlockquotes(const Position& p)

@@ -1,3 +1,16 @@
+2011-03-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Get rid of nearestMailBlockquote
+        https://bugs.webkit.org/show_bug.cgi?id=56439
+
+        Added a test to ensure WebKi doesn't crash when inserting newline in quoted contents,
+        which is enclosed by a non-editable blockquote.
+
+        * editing/execCommand/break-non-editable-blockquote-expected.txt: Added.
+        * editing/execCommand/break-non-editable-blockquote.html: Added.
+
 2011-03-16  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Kenneth Russell.

@@ -488,10 +488,8 @@ static Node* highestAncestorToWrapMarkup(const Range* range, Node* fullySelected
         specialCommonAncestor = ancestorToRetainStructureAndAppearance(commonAncestor);
 
         // Retain the Mail quote level by including all ancestor mail block quotes.
-        for (Node* ancestor = range->firstNode(); ancestor; ancestor = ancestor->parentNode()) {
-            if (isMailBlockquote(ancestor))
-                specialCommonAncestor = ancestor;
-        }
+        if (Node* highestMailBlockquote = highestEnclosingNodeOfType(firstPositionInOrBeforeNode(range->firstNode()), isMailBlockquote, CanCrossEditingBoundary))
+            specialCommonAncestor = highestMailBlockquote;
     }
 
     Node* checkAncestor = specialCommonAncestor ? specialCommonAncestor : commonAncestor;
@@ -634,7 +632,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote, to help
         // us differentiate those styles from ones that the user has applied.  This helps us
         // get the color of content pasted into blockquotes right.
-        style->removeStyleAddedByNode(nearestMailBlockquote(parentOfLastClosed));
+        style->removeStyleAddedByNode(enclosingNodeOfType(firstPositionInNode(parentOfLastClosed), isMailBlockquote, CanCrossEditingBoundary));
 
         // Document default styles will be added on another wrapper span.
         if (document && document->documentElement())

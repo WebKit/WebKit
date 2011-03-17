@@ -66,12 +66,8 @@ void BreakBlockquoteCommand::doApply()
     Position pos = endingSelection().start().downstream();
     
     // Find the top-most blockquote from the start.
-    Element* topBlockquote = 0;
-    for (ContainerNode* node = pos.deprecatedNode()->parentNode(); node; node = node->parentNode()) {
-        if (isMailBlockquote(node))
-            topBlockquote = static_cast<Element*>(node);
-    }
-    if (!topBlockquote || !topBlockquote->parentNode())
+    Node* topBlockquote = highestEnclosingNodeOfType(pos, isMailBlockquote);
+    if (!topBlockquote || !topBlockquote->parentNode() || !topBlockquote->isElementNode())
         return;
     
     RefPtr<Element> breakNode = createBreakElement(document());
@@ -103,7 +99,7 @@ void BreakBlockquoteCommand::doApply()
         pos = pos.next();
         
     // Adjust the position so we don't split at the beginning of a quote.  
-    while (isFirstVisiblePositionInNode(VisiblePosition(pos), nearestMailBlockquote(pos.deprecatedNode())))
+    while (isFirstVisiblePositionInNode(VisiblePosition(pos), enclosingNodeOfType(pos, isMailBlockquote)))
         pos = pos.previous();
     
     // startNode is the first node that we need to move to the new blockquote.
@@ -135,7 +131,7 @@ void BreakBlockquoteCommand::doApply()
         ancestors.append(node);
     
     // Insert a clone of the top blockquote after the break.
-    RefPtr<Element> clonedBlockquote = topBlockquote->cloneElementWithoutChildren();
+    RefPtr<Element> clonedBlockquote = static_cast<Element*>(topBlockquote)->cloneElementWithoutChildren();
     insertNodeAfter(clonedBlockquote.get(), breakNode.get());
     
     // Clone startNode's ancestors into the cloned blockquote.

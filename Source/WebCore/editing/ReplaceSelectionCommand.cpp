@@ -357,7 +357,7 @@ static bool hasMatchingQuoteLevel(VisiblePosition endOfExistingContent, VisibleP
 {
     Position existing = endOfExistingContent.deepEquivalent();
     Position inserted = endOfInsertedContent.deepEquivalent();
-    bool isInsideMailBlockquote = nearestMailBlockquote(inserted.deprecatedNode());
+    bool isInsideMailBlockquote = enclosingNodeOfType(inserted, isMailBlockquote, CanCrossEditingBoundary);
     return isInsideMailBlockquote && (numEnclosingMailBlockquotes(existing) == numEnclosingMailBlockquotes(inserted));
 }
 
@@ -556,7 +556,7 @@ static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const
 
     // Handling the case where we are doing Paste as Quotation or pasting into quoted content is more complicated (see handleStyleSpans)
     // and doesn't receive the optimization.
-    if (isMailPasteAsQuotationNode(topNode) || nearestMailBlockquote(topNode))
+    if (isMailPasteAsQuotationNode(topNode) || enclosingNodeOfType(firstPositionInOrBeforeNode(topNode), isMailBlockquote, CanCrossEditingBoundary))
         return false;
 
     // Either there are no style spans in the fragment or a WebKit client has added content to the fragment
@@ -623,7 +623,7 @@ void ReplaceSelectionCommand::handleStyleSpans()
 
     // If Mail wraps the fragment with a Paste as Quotation blockquote, or if you're pasting into a quoted region,
     // styles from blockquoteNode are allowed to override those from the source document, see <rdar://problem/4930986> and <rdar://problem/5089327>.
-    Node* blockquoteNode = isMailPasteAsQuotationNode(context) ? context : nearestMailBlockquote(context);
+    Node* blockquoteNode = isMailPasteAsQuotationNode(context) ? context : enclosingNodeOfType(firstPositionInNode(context), isMailBlockquote, CanCrossEditingBoundary);
     if (blockquoteNode) {
         sourceDocumentStyle->removeStyleConflictingWithStyleOfNode(blockquoteNode);
         context = blockquoteNode->parentNode();
@@ -811,8 +811,8 @@ void ReplaceSelectionCommand::doApply()
     Node* startBlock = enclosingBlock(visibleStart.deepEquivalent().deprecatedNode());
     
     Position insertionPos = selection.start();
-    bool startIsInsideMailBlockquote = nearestMailBlockquote(insertionPos.deprecatedNode());
-    
+    bool startIsInsideMailBlockquote = enclosingNodeOfType(insertionPos, isMailBlockquote, CanCrossEditingBoundary);
+
     if ((selectionStartWasStartOfParagraph && selectionEndWasEndOfParagraph && !startIsInsideMailBlockquote) ||
         startBlock == currentRoot || isListItem(startBlock) || selectionIsPlainText)
         m_preventNesting = false;

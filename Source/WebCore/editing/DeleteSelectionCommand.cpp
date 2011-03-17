@@ -286,7 +286,7 @@ void DeleteSelectionCommand::saveTypingStyleState()
 
     // If we're deleting into a Mail blockquote, save the style at end() instead of start()
     // We'll use this later in computeTypingStyleAfterDelete if we end up outside of a Mail blockquote
-    if (nearestMailBlockquote(m_selectionToDelete.start().deprecatedNode()))
+    if (enclosingNodeOfType(m_selectionToDelete.start(), isMailBlockquote))
         m_deleteIntoBlockquoteStyle = EditingStyle::create(m_selectionToDelete.end());
     else
         m_deleteIntoBlockquoteStyle = 0;
@@ -689,7 +689,7 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete()
     // has completed.
     
     // If we deleted into a blockquote, but are now no longer in a blockquote, use the alternate typing style
-    if (m_deleteIntoBlockquoteStyle && !nearestMailBlockquote(m_endingPosition.deprecatedNode()))
+    if (m_deleteIntoBlockquoteStyle && !enclosingNodeOfType(m_endingPosition, isMailBlockquote, CanCrossEditingBoundary))
         m_typingStyle = m_deleteIntoBlockquoteStyle;
     m_deleteIntoBlockquoteStyle = 0;
 
