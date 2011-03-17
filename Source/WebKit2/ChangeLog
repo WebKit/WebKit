@@ -1,5 +1,15 @@
 2011-03-17  Anders Carlsson  <andersca@apple.com>
 
+        Rubber-stamped by John Sullivan.
+
+        Rename PluginProcessShim.cpp to PluginProcessShim.mm.
+
+        * PluginProcess/mac/PluginProcessShim.cpp: Removed.
+        * PluginProcess/mac/PluginProcessShim.mm: Copied from PluginProcess/mac/PluginProcessShim.cpp.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2011-03-17  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Invalidate all NPObjects for a plug-in when that plug-in is destroyed
