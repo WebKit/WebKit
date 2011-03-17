@@ -1,3 +1,16 @@
+2011-03-16  John Bauman  <jbauman@chromium.org>
+
+        Reviewed by James Robinson.
+
+        texImage2D gets old contents of canvas
+        https://bugs.webkit.org/show_bug.cgi?id=56414
+
+        Always update the canvas contents in copiedImage, as there's no reason
+        to ask for an out-of-date image.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::copiedImage):
+
 2011-03-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by James Robinson.

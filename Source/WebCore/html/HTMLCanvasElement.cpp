@@ -461,11 +461,8 @@ ImageBuffer* HTMLCanvasElement::buffer() const
 Image* HTMLCanvasElement::copiedImage() const
 {
     if (!m_copiedImage && buffer()) {
-        if (m_context) {
-            // If we're not rendering to the ImageBuffer, copy the rendering results to it.
-            if (!m_context->paintsIntoCanvasBuffer())
-                m_context->paintRenderingResultsToCanvas();
-        }
+        if (m_context)
+            m_context->paintRenderingResultsToCanvas();
         m_copiedImage = buffer()->copyImage();
     }
     return m_copiedImage.get();

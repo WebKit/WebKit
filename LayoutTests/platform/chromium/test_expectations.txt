@@ -2353,8 +2353,6 @@ BUGWEBGL MAC LINUX : fast/canvas/webgl/glsl-conformance.html = CRASH
 BUGWEBGL GPU WIN DEBUG SLOW : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = PASS
 BUGWEBGL GPU WIN DEBUG SLOW : fast/canvas/webgl/index-validation-with-resized-buffer.html = PASS
 
-BUGWK56414 : fast/canvas/webgl/premultiplyalpha-test.html = TEXT
-
 // These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
 BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS TEXT
 // BUGCR60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
