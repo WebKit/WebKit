@@ -1,3 +1,13 @@
+2011-03-17  Adam Roben  <aroben@apple.com>
+
+        Disable http/tests/inspector/resource-parameters.html
+
+        It is flaky. The flakiness is tracked by <http://webkit.org/b/55867>.
+
+        * http/tests/inspector/resource-parameters.html-disabled: Renamed from LayoutTests/http/tests/inspector/resource-parameters.html.
+
+        * platform/qt/Skipped: Removed the test from this Skipped file since it has been disabled.
+
 2011-03-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81350.

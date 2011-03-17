@@ -536,10 +536,6 @@ transitions/change-values-during-transition.html
 # webkit.org/b/42162
 http/tests/inspector/resource-har-conversion.html
 
-# [Qt] http/tests/inspector/resource-parameters.html is flakey
-# https://bugs.webkit.org/show_bug.cgi?id=55867
-http/tests/inspector/resource-parameters.html
-
 # [Qt] Some inspector test fail intermittently
 # https://bugs.webkit.org/show_bug.cgi?id=42090
 http/tests/inspector/network/network-size.html
