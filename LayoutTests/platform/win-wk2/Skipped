@@ -95,6 +95,12 @@ editing/pasteboard
 http/tests/workers
 http/tests/xmlhttprequest/workers
 
+# Failing on apple-windows-8 but not apple-windows-7
+# http://webkit.org/b/56550
+fast/events/tabindex-focus-blur-all.html
+fast/forms/button-align.html
+media/audio-mpeg4-supported.html
+
 # Unexplained test failures.
 css2.1/t0805-c5518-brdr-t-01-e.html
 css2.1/t0805-c5519-brdr-r-00-a.html
