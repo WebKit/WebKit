@@ -38,6 +38,7 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -45,7 +46,10 @@
 namespace WebCore {
 
 class AffineTransform;
+class BicubicShader;
 class Color;
+class ConvolutionShader;
+class DrawingBuffer;
 class FloatRect;
 class HostWindow;
 class IntSize;
@@ -101,6 +105,8 @@ public:
 
     void useFillSolidProgram(const AffineTransform&, const Color&);
     void useTextureProgram(const AffineTransform&, const AffineTransform&, float alpha);
+    void useBicubicProgram(const AffineTransform&, const AffineTransform&, const float coefficients[16], const float imageIncrement[2], float alpha);
+    void useConvolutionProgram(const AffineTransform&, const AffineTransform& texTransform, const float* kernel, int kernelWidth, float imageIncrement[2]);
 
     void setActiveTexture(GC3Denum textureUnit);
     void bindTexture(GC3Denum target, Platform3DObject texture);
@@ -127,9 +133,10 @@ public:
     static bool useLoopBlinnForPathRendering();
     void useLoopBlinnInteriorProgram(unsigned vertexOffset, const AffineTransform&, const Color&);
     void useLoopBlinnExteriorProgram(unsigned vertexOffset, unsigned klmOffset, const AffineTransform&, const Color&);
+    DrawingBuffer* getOffscreenBuffer(unsigned index, const IntSize&);
 
 private:
-    SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D>, PassOwnPtr<SolidFillShader>, PassOwnPtr<TexShader>);
+    SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D>, PassOwnPtr<SolidFillShader>, PassOwnPtr<TexShader>, PassOwnPtr<BicubicShader>, PassOwnArrayPtr<OwnPtr<ConvolutionShader> >);
 
     // Used to implement removeTexturesFor(), see the comment above.
     static HashSet<SharedGraphicsContext3D*>* allContexts();
@@ -142,6 +149,8 @@ private:
 
     OwnPtr<SolidFillShader> m_solidFillShader;
     OwnPtr<TexShader> m_texShader;
+    OwnPtr<BicubicShader> m_bicubicShader;
+    OwnArrayPtr<OwnPtr<ConvolutionShader> > m_convolutionShaders;
 
     TextureHashMap m_textures;
 
@@ -150,7 +159,12 @@ private:
     OwnPtr<LoopBlinnSolidFillShader> m_loopBlinnInteriorShader;
     OwnPtr<LoopBlinnSolidFillShader> m_loopBlinnExteriorShader;
     bool m_oesStandardDerivativesSupported;
+
+    WTF::Vector<RefPtr<DrawingBuffer> > m_offscreenBuffers;
 };
+
+const float cMaxSigma = 4.0f;
+const int cMaxKernelWidth = 25;
 
 } // namespace WebCore
 

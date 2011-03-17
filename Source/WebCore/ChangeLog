@@ -1,3 +1,109 @@
+2011-03-16  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Implement GPU-accelerated shadows.
+        https://bugs.webkit.org/show_bug.cgi?id=56476
+
+        For hard shadows, we simply offset the CTM and draw in the shadow
+        color.  For soft shadows, we use a separable Gaussian convolution,
+        with a bilinear downsample and Mitchell-Netravali upsample in order to
+        preserve quality.
+
+        * WebCore.gypi:
+        Add BicubicShader and ConvolutionShader to the build.
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::State::State):
+        Add shadow-related members to the GLES2Canvas::State
+        (WebCore::GLES2Canvas::State::shadowActive):
+        Add a helper function to know if shadows are active.
+        (WebCore::GLES2Canvas::clearRect):
+        (WebCore::GLES2Canvas::scissorClear):
+        Refactor the scissor clearing function out of clearRect().
+        (WebCore::GLES2Canvas::fillPath):
+        Add hook for shadow rendering in paths.  Bind framebuffer at this level.
+        (WebCore::GLES2Canvas::fillRect):
+        Add hook for shadow rendering in rects.  Bind framebuffer at this level.
+        (WebCore::GLES2Canvas::fillRectInternal):
+        Rename fillRect() -> fillRectInternal(), which does bind its vertex 
+        buffer, but does not bind the framebuffer.
+        (WebCore::GLES2Canvas::setShadowColor):
+        (WebCore::GLES2Canvas::setShadowOffset):
+        (WebCore::GLES2Canvas::setShadowBlur):
+        (WebCore::GLES2Canvas::setShadowsIgnoreTransforms):
+        Implement graphicsContext-style setters for shadow parameters.
+        (WebCore::GLES2Canvas::clipPath):
+        Call fillPathInternal(), not fillPath().
+        (WebCore::GLES2Canvas::restore):
+        (WebCore::GLES2Canvas::drawTexturedRect):
+        Bind the framebuffer at this level.  Do not bind vertices here (will
+        be done in drawTexturedQuad).
+        (WebCore::GLES2Canvas::drawTexturedRectTile):
+        drawQuad() -> drawTexturedQuad().
+        (WebCore::GLES2Canvas::convolveRect):
+        Implement one pass of a convolution filter (X or Y).
+        (WebCore::gauss):
+        (WebCore::buildKernel):
+        Some helper functions to build a Gaussian convolution kernel.
+        (WebCore::GLES2Canvas::drawTexturedQuad):
+        Rename drawQuad() -> drawTexturedQuad(), to be more clear.  Do not
+        bind the framebuffer at this level (it will be done higher).
+        (WebCore::GLES2Canvas::drawTexturedQuadMitchell):
+        Implement Mitchell-Netravali bicubic sampling, using BicubicShader.
+        (WebCore::GLES2Canvas::fillPathInternal):
+        Rename fillPath() -> fillPathInternal(), which does use quad vertices,
+        but does not bind the framebuffer or set the compositing mode.
+        (WebCore::GLES2Canvas::flipRect):
+        Implement a helper function to flip a rectangle in Y within the canvas.
+        (WebCore::GLES2Canvas::clearBorders):
+        Implement a helper function to clear an n-pixel border around a rect.
+        (WebCore::GLES2Canvas::beginShadowDraw):
+        Setup before drawing a primitive's shadow:  for hard shadows, just
+        offset the CTM by the shadow offset.  For soft shadows, bind to an
+        offscreen DrawingBuffer.
+        (WebCore::GLES2Canvas::endShadowDraw):
+        Tear-down after drawing a primitive's shadow:  for hard shadows, just
+        restore the CTM.  For soft shadows, downsample (if necessary), then
+        blur in X, blur in Y, upsample if necessary).
+        * platform/graphics/chromium/GLES2Canvas.h:
+        * platform/graphics/gpu/BicubicShader.cpp: Added.
+        (WebCore::BicubicShader::BicubicShader):
+        (WebCore::BicubicShader::create):
+        (WebCore::BicubicShader::use):
+        * platform/graphics/gpu/BicubicShader.h: Added.
+        Implement a bicubic image filtering shader.
+        * platform/graphics/gpu/ConvolutionShader.cpp: Added.
+        (WebCore::ConvolutionShader::ConvolutionShader):
+        (WebCore::ConvolutionShader::create):
+        (WebCore::ConvolutionShader::use):
+        * platform/graphics/gpu/ConvolutionShader.h: Added.
+        Implement a 1-dimensional convolution shader.  In order to minimize
+        texture samples, this shader is parameterized at compile time by the
+        width of the convolution kernel.
+        * platform/graphics/gpu/DrawingBuffer.h:
+        (WebCore::DrawingBuffer::colorBuffer):
+        Add an accessor to retrieve a DrawingBuffer's texture ID.
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::create):
+        (WebCore::SharedGraphicsContext3D::SharedGraphicsContext3D):
+        (WebCore::SharedGraphicsContext3D::useBicubicProgram):
+        (WebCore::SharedGraphicsContext3D::useConvolutionProgram):
+        Create BicubicShader and cMaxKernelWidth ConvolutionShader's (one for
+        each possible kernel width).
+        (WebCore::SharedGraphicsContext3D::getOffscreenBuffer):
+        Implement a simple cache of offscreen DrawingBuffers, integer-indexed.
+        This is done to minimize the VRAM usage:  only 2 buffers are used for
+        all canvases.
+        * platform/graphics/gpu/SharedGraphicsContext3D.h:
+        Add bicubic and convolution shader members, and useXXX() functions.
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        Hook into GraphicsContextSkia's platform shadow setters to set
+        parameters on GLES2Canvas.
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::canAccelerate):
+        Remove shadows (loopers) from the list of things we can't accelerate.
+
 2011-03-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Andreas Kling.
