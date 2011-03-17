@@ -1795,6 +1795,14 @@ http/tests/security/aboutBlank/security-context-window-open.html
 # <https://bugs.webkit.org/show_bug.cgi?id=56531>
 transitions/default-timing-function.html
 
+# Sometimes fails
+# http://webkit.org/b/56530
+http/tests/inspector/resource-har-conversion.html
+
+# Sometimes times out
+# http://webkit.org/b/56584
+inspector/debugger/debug-inlined-scripts.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

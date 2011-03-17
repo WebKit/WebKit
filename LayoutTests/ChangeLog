@@ -1,3 +1,12 @@
+2011-03-17  Adam Roben  <aroben@apple.com>
+
+        Skip some flaky tests on the SnowLeopard WebKit2 bot
+
+        Tracked by <http://webkit.org/b/56530> and <http://webkit.org/b/56584>.
+
+        * platform/mac-wk2/Skipped: Added http/tests/inspector/resource-har-conversion.html and
+        inspector/debugger/debug-inlined-scripts.html.
+
 2011-03-17  James Simonsen  <simonjam@chromium.org>
 
         Unreviewed, update chromium test expectations.
