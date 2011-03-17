@@ -1,3 +1,16 @@
+2011-03-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by James Robinson.
+
+        Remove USE(BUILTIN_UTF8_CODEC)
+        https://bugs.webkit.org/show_bug.cgi?id=56508
+
+        We added this recently when we were unsure about the stability of the
+        built-in UTF-8 codec.  However, the codec seems to be stable, so we
+        don't need the macro.
+
+        * wtf/Platform.h:
+
 2011-03-16  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.

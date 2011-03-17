@@ -223,10 +223,8 @@ static void buildBaseTextCodecMaps()
     TextCodecLatin1::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecLatin1::registerCodecs(addToTextCodecMap);
 
-#if USE(BUILTIN_UTF8_CODEC)
     TextCodecUTF8::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecUTF8::registerCodecs(addToTextCodecMap);
-#endif
 
     TextCodecUTF16::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecUTF16::registerCodecs(addToTextCodecMap);

@@ -602,10 +602,6 @@
 #define WTF_USE_ICU_UNICODE 1
 #endif
 
-#if !PLATFORM(CHROMIUM) /* Chromium controls this macro with a gyp define */
-#define WTF_USE_BUILTIN_UTF8_CODEC 1
-#endif
-
 #if PLATFORM(MAC) && !PLATFORM(IOS)
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_TIGER) && CPU(X86_64)
 #define WTF_USE_PLUGIN_HOST_PROCESS 1

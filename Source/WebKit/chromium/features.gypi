@@ -93,7 +93,6 @@
         'ENABLE_XPATH=1',
         'ENABLE_XSLT=1',
         'WTF_USE_ACCELERATED_COMPOSITING=1',
-        'WTF_USE_BUILTIN_UTF8_CODEC=1',
         'WTF_USE_WEBP=1',
         'WTF_USE_WEBKIT_IMAGE_DECODERS=1',
       ],

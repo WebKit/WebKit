@@ -1,3 +1,15 @@
+2011-03-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by James Robinson.
+
+        Remove USE(BUILTIN_UTF8_CODEC)
+        https://bugs.webkit.org/show_bug.cgi?id=56508
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::registerEncodingNames):
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::buildBaseTextCodecMaps):
+
 2011-03-16  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
