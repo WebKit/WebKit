@@ -1,3 +1,10 @@
+2011-03-17  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for fast/dynamic/text-combine.html added
+        in r81251.
+
+        * platform/gtk/fast/dynamic/text-combine-expected.txt: Added.
+
 2011-03-16  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.
