@@ -106,7 +106,7 @@ NEVER_INLINE bool Interpreter::resolve(CallFrame* callFrame, Instruction* vPC, J
         PropertySlot slot(o);
         if (o->getPropertySlot(callFrame, ident, slot)) {
             JSValue result = slot.getValue(callFrame, ident);
-            exceptionValue = callFrame->globalData().exception.get();
+            exceptionValue = callFrame->globalData().exception;
             if (exceptionValue)
                 return false;
             callFrame->uncheckedR(dst) = JSValue(result);
@@ -145,7 +145,7 @@ NEVER_INLINE bool Interpreter::resolveSkip(CallFrame* callFrame, Instruction* vP
         PropertySlot slot(o);
         if (o->getPropertySlot(callFrame, ident, slot)) {
             JSValue result = slot.getValue(callFrame, ident);
-            exceptionValue = callFrame->globalData().exception.get();
+            exceptionValue = callFrame->globalData().exception;
             if (exceptionValue)
                 return false;
             ASSERT(result);
@@ -186,7 +186,7 @@ NEVER_INLINE bool Interpreter::resolveGlobal(CallFrame* callFrame, Instruction* 
             return true;
         }
 
-        exceptionValue = callFrame->globalData().exception.get();
+        exceptionValue = callFrame->globalData().exception;
         if (exceptionValue)
             return false;
         callFrame->uncheckedR(dst) = JSValue(result);
@@ -226,7 +226,7 @@ NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instru
                 PropertySlot slot(o);
                 if (o->getPropertySlot(callFrame, ident, slot)) {
                     JSValue result = slot.getValue(callFrame, ident);
-                    exceptionValue = callFrame->globalData().exception.get();
+                    exceptionValue = callFrame->globalData().exception;
                     if (exceptionValue)
                         return false;
                     ASSERT(result);
@@ -265,7 +265,7 @@ NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instru
             return true;
         }
         
-        exceptionValue = callFrame->globalData().exception.get();
+        exceptionValue = callFrame->globalData().exception;
         if (exceptionValue)
             return false;
         ASSERT(result);
@@ -313,7 +313,7 @@ NEVER_INLINE bool Interpreter::resolveBaseAndProperty(CallFrame* callFrame, Inst
         PropertySlot slot(base);
         if (base->getPropertySlot(callFrame, ident, slot)) {
             JSValue result = slot.getValue(callFrame, ident);
-            exceptionValue = callFrame->globalData().exception.get();
+            exceptionValue = callFrame->globalData().exception;
             if (exceptionValue)
                 return false;
             callFrame->uncheckedR(propDst) = JSValue(result);
@@ -1467,8 +1467,8 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
 #define CHECK_FOR_EXCEPTION() \
     do { \
-        if (UNLIKELY(globalData->exception.get() != JSValue())) { \
-            exceptionValue = globalData->exception.get(); \
+        if (UNLIKELY(globalData->exception != JSValue())) { \
+            exceptionValue = globalData->exception; \
             goto vm_throw; \
         } \
     } while (0)
@@ -3835,7 +3835,7 @@ skip_id_custom_self:
 
         if (thisValue == globalObject && funcVal == globalObject->evalFunction()) {
             JSValue result = callEval(callFrame, registerFile, argv, argCount, registerOffset);
-            if ((exceptionValue = globalData->exception.get()))
+            if ((exceptionValue = globalData->exception))
                 goto vm_throw;
             functionReturnValue = result;
 

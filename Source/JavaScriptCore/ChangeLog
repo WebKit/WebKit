@@ -1,3 +1,16 @@
+2011-03-16  Sam Weinig  <sam@webkit.org>
+
+        Fix the interpreter build.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolve):
+        (JSC::Interpreter::resolveSkip):
+        (JSC::Interpreter::resolveGlobal):
+        (JSC::Interpreter::resolveGlobalDynamic):
+        (JSC::Interpreter::resolveBaseAndProperty):
+        (JSC::Interpreter::privateExecute):
+        Remove .get()s.
+
 2011-03-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by James Robinson.
