@@ -209,6 +209,15 @@ WONTFIX SKIP MAC WIN : platform/chromium/fast/text/chromium-linux-fontconfig-ren
 // WONTFIX TESTS
 // -----------------------------------------------------------------
 
+// These tests pass but require a bit more then 12 seconds which is current
+// timeout in Chromium DRT for non-SLOW tests. They are slow in DEBUG because
+// there is a lot of ASSERTS, but they are very fast in RELEASE.
+WONTFIX SLOW DEBUG : ietestcenter/Javascript/15.4.4.16-7-c-ii-2.html = PASS
+WONTFIX SLOW DEBUG : ietestcenter/Javascript/15.4.4.17-7-c-ii-2.html = PASS
+WONTFIX SLOW DEBUG : ietestcenter/Javascript/15.4.4.18-7-c-ii-1.html = PASS
+WONTFIX SLOW DEBUG : ietestcenter/Javascript/15.4.4.19-8-c-ii-1.html = PASS
+WONTFIX SLOW DEBUG : ietestcenter/Javascript/15.4.4.20-9-c-ii-1.html = PASS
+
 // This test is completely timing dependent.  It is testing the time
 // between a key event and a search event.  You cannot count on this
 // always being exactly the same.

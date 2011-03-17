@@ -1,3 +1,10 @@
+2011-03-17  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Unreviewed, update test_expectations.txt
+
+        Mark some tests as SLOW in DEBUG since they are on a borderline of shorter timeout.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-17  Adam Roben  <aroben@apple.com>
 
         Skip a flaky test on Mac
