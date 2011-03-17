@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        Add more ObjC++ files to the build
+        https://bugs.webkit.org/show_bug.cgi?id=56548
+
+        96 link errors.
+
+        * WebCore.gypi:
+        * gyp/WebCore.gyp:
+
+2011-03-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add a few Objective-C++ files to the WebCore GYP build
         https://bugs.webkit.org/show_bug.cgi?id=56547
 

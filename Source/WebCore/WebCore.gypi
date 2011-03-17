@@ -3952,7 +3952,6 @@
             'platform/mac/PurgeableBufferMac.cpp',
             'platform/mac/RuntimeApplicationChecks.h',
             'platform/mac/RuntimeApplicationChecks.mm',
-            'platform/mac/SSLKeyGeneratorMac.mm',
             'platform/mac/SchedulePairMac.mm',
             'platform/mac/ScrollAnimatorMac.h',
             'platform/mac/ScrollAnimatorMac.mm',

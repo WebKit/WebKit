@@ -47,23 +47,27 @@
       ],
       'sources/': [
         # FIXME: Figure out how to build these mm files.
-        ['exclude', 'platform/mac/[^/]+.mm$'],
         ['exclude', 'DerivedSources/.*\\.mm$'],
+
+        # FIXME: These need to be built, but they're hard.
+        ['exclude', 'platform/mac/DragDataMac.mm$'],
+        ['exclude', 'platform/mac/HTMLConverter.mm$'],
+        ['exclude', 'platform/mac/PasteboardMac.mm$'],
+        ['exclude', 'platform/mac/WebCoreObjCExtras.mm$'],
 
         ['exclude', 'bindings/[^/]+/'],
         ['include', 'bindings/generic/'],
         ['include', 'bindings/js/'],
         # FIXME: Build bindings/objc/
-        ['exclude', 'bindings/objc/'],
         ['exclude', 'bindings/js/ScriptControllerMac\\.mm$'],
-        ['include', 'bindings/objc/DOMInternal\\.h$'],
+        ['include', 'bindings/objc/[^/]+\\.h$'],
 
         # FIXME: This could should move to Source/ThirdParty.
         ['exclude', 'thirdparty/'],
 
         # FIXME: Figure out how to store these patterns in a variable.
         ['exclude', '(android|brew|cairo|chromium|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mkl|openvg|pango|posix|qt|skia|soup|symbian|texmap|iphone|v8|win|wince|wx)/'],
-        ['exclude', '(Android|Brew|Cairo|CF|CG|Curl|Chromium|Efl|Haiku|Gtk|JSC|Linux|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|V8|Win|WinCE|Wx)\\.(cpp|mm?)$'],
+        ['exclude', '(Android|Brew|Cairo|CF|Curl|Chromium|Efl|Haiku|Gtk|JSC|Linux|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|V8|Win|WinCE|Wx)\\.(cpp|mm?)$'],
         ['exclude', 'Chromium[^/]*\\.(cpp|mm?)$'],
 
         ['exclude', 'platform/image-decoders/'],
