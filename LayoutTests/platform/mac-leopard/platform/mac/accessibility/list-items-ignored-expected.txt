@@ -1,0 +1,25 @@
+
+Mar 7
+test
+test
+
+
+Mar 7
+test
+test
+
+
+Mar 7
+test
+test
+
+This tests that list items will not be ignored as children of a list.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL list.childrenCount should be 3. Was 5.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

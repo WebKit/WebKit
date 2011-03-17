@@ -188,3 +188,7 @@ plugins/refcount-leaks.html
 # fast/text/font-size-zero.html failing on leopard debug bot
 # https://bugs.webkit.org/show_bug.cgi?id=50468
 fast/text/font-size-zero.html
+
+# fast/frames/iframe-plugin-load-remove-document-crash.html is crashing on the Leopard Release tester
+# https://bugs.webkit.org/show_bug.cgi?id=56525
+fast/frames/iframe-plugin-load-remove-document-crash.html

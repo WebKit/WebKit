@@ -1,3 +1,28 @@
+2011-03-16  Sam Weinig  <sam@webkit.org>
+
+        Adding new results for some failing tests on the Leopard Release Tester.
+
+        The following bugs were filed to track these issues:
+            https://bugs.webkit.org/show_bug.cgi?id=56516
+            https://bugs.webkit.org/show_bug.cgi?id=56517
+            https://bugs.webkit.org/show_bug.cgi?id=56518
+            https://bugs.webkit.org/show_bug.cgi?id=56519
+            https://bugs.webkit.org/show_bug.cgi?id=56521
+            https://bugs.webkit.org/show_bug.cgi?id=56522
+            https://bugs.webkit.org/show_bug.cgi?id=56522
+            https://bugs.webkit.org/show_bug.cgi?id=56525
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-leopard/fast/blockflow/text-orientation-basic-expected.txt: Added.
+        * platform/mac-leopard/fast/forms/file-input-disabled-expected.txt:
+        * platform/mac-leopard/fast/forms/input-number-unacceptable-style-expected.txt: Added.
+        * platform/mac-leopard/fast/ruby/base-shorter-than-text-expected.txt: Added.
+        * platform/mac-leopard/fast/text/text-combine-image-test-expected.txt: Added.
+        * platform/mac-leopard/media/controls-without-preload-expected.txt: Added.
+        * platform/mac-leopard/platform/mac/accessibility: Added.
+        * platform/mac-leopard/platform/mac/accessibility/aria-table-with-colspan-cells-expected.txt: Added.
+        * platform/mac-leopard/platform/mac/accessibility/list-items-ignored-expected.txt: Added.
+
 2011-03-16  Joseph Pecoraro  <joepeck@webkit.org>
 
         Follow-up patch landing updated expected results,

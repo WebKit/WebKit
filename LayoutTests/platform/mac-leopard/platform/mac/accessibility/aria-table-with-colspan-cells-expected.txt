@@ -1,0 +1,18 @@
+Fremont
+Leaves	Arrives	Route
+7:00 AM	8:00 AM	FB1
+7:00 AM	8:00 AM
+7:00 AM	8:00 AM
+This tests if an ARIA grid has a table cell with colspans, then cellForRowAndColumn still returns the correct cell.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL grid.cellForColumnAndRow(2, 0).role should be AXRole: AXCell. Was AXRole: .
+FAIL grid.cellForColumnAndRow(2, 0).description should be AXDescription: ColspanCell. Was AXDescription: .
+FAIL grid.cellForColumnAndRow(2, 4).role should be AXRole: AXCell. Was AXRole: .
+FAIL grid.cellForColumnAndRow(2, 4).description should be AXDescription: RowspanCell. Was AXDescription: .
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
