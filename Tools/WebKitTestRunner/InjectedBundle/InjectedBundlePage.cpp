@@ -632,7 +632,7 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKB
     WKRetainPtr<WKURLRef> url = adoptWK(WKURLRequestCopyURL(request));
     WKRetainPtr<WKStringRef> host = adoptWK(WKURLCopyHostName(url.get()));
     WKRetainPtr<WKStringRef> scheme = adoptWK(WKURLCopyScheme(url.get()));
-    if (host
+    if (host && !WKStringIsEmpty(host.get())
         && (WKStringIsEqualToUTF8CStringIgnoringCase(scheme.get(), "http") || WKStringIsEqualToUTF8CStringIgnoringCase(scheme.get(), "https"))
         && !WKStringIsEqualToUTF8CString(host.get(), "127.0.0.1")
         && !WKStringIsEqualToUTF8CString(host.get(), "255.255.255.255") // Used in some tests that expect to get back an error.

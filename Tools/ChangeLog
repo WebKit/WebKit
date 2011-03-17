@@ -2,6 +2,18 @@
 
         Reviewed by Adam Roben.
 
+        REGRESSION (r81084): media/invalid-media-url-crash.html and editing/execCommand/indent-paragraphs.html failing on WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=56541
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::willSendRequestForFrame):
+        Check for an empty host in addition to a null host.  This bug was introduced
+        when porting off of the KURL code and onto the WKURLRef version.
+
+2011-03-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
         Add Lucas Forschler to the list of WebKit committers.
 
         * Scripts/webkitpy/common/config/committers.py:
