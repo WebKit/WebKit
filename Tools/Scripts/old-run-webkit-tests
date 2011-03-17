@@ -49,6 +49,7 @@
 use strict;
 use warnings;
 
+use CGI;
 use Config;
 use Cwd;
 use Data::Dumper;
@@ -2047,7 +2048,7 @@ sub linksForErrorTest
 
     my $crashLogText = "crash log";
     if (my $crashLocation = crashLocation($base)) {
-        $crashLogText .= " (<code>" . $crashLocation . "</code>)";
+        $crashLogText .= " (<code>" . CGI::escapeHTML($crashLocation) . "</code>)";
     }
 
     push @links, @{linksForExpectedAndActualResults($base)};

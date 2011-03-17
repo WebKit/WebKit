@@ -1,3 +1,12 @@
+2011-03-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed upon and dictated through Adam Roben.
+
+        Escape crashing function names in results.html. This fixes an issue
+        when a crash involves a type with templates.
+
+        * Scripts/old-run-webkit-tests:
+
 2011-03-16  Daniel Sievers  <sievers@google.com>
 
         Reviewed by James Robinson.
