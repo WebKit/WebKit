@@ -1,5 +1,12 @@
 2011-03-17  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip fast/profiler/window-dot-eval.html on GTK
+        affected by bug 56180.
+
+        * platform/gtk/Skipped:
+
+2011-03-17  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skip failing viewport test on GTK.
 
         * platform/gtk/Skipped:
