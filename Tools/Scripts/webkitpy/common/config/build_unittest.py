@@ -39,13 +39,13 @@ class ShouldBuildTest(unittest.TestCase):
         (["LayoutTests/platform/chromium-linux/foo"], ["chromium-linux"]),
         (["LayoutTests/platform/chromium-win/fast/compact/001-expected.txt"], ["chromium-win"]),
         (["LayoutTests/platform/mac-leopard/foo"], ["mac-leopard"]),
-        (["LayoutTests/platform/mac-snowleopard/foo"], ["mac-snowleopard", "win"]),
+        (["LayoutTests/platform/mac-snowleopard/foo"], ["mac-leopard", "mac-snowleopard", "win"]),
         (["LayoutTests/platform/mac-wk2/Skipped"], ["mac-snowleopard", "win"]),
         (["LayoutTests/platform/mac/foo"], ["mac-leopard", "mac-snowleopard", "win"]),
         (["LayoutTests/platform/win-xp/foo"], ["win"]),
         (["LayoutTests/platform/win-wk2/foo"], ["win"]),
         (["LayoutTests/platform/win/foo"], ["win"]),
-        (["Source/WebCore.exp.in", "Source/WebKit/mac/WebKit.exp"], ["mac"]),
+        (["Source/WebCore.exp.in", "Source/WebKit/mac/WebKit.exp"], ["mac-leopard", "mac-snowleopard"]),
         (["Source/WebCore/mac/foo"], ["chromium-mac", "mac-leopard", "mac-snowleopard"]),
         (["Source/WebCore/win/foo"], ["chromium-win", "win"]),
         (["Source/WebCore/platform/graphics/gpu/foo"], ["mac-leopard", "mac-snowleopard"]),
@@ -60,7 +60,7 @@ class ShouldBuildTest(unittest.TestCase):
         for files, platforms in self._should_build_tests:
             # FIXME: We should test more platforms here once
             # build._should_file_trigger_build is implemented for them.
-            for platform in ["win"]:
+            for platform in ["mac-leopard", "mac-snowleopard", "win"]:
                 should_build = platform in platforms or "*" in platforms
                 self.assertEqual(build.should_build(platform, files), should_build, "%s should%s have built but did%s (files: %s)" % (platform, "" if should_build else "n't", "n't" if should_build else "", str(files)))
 

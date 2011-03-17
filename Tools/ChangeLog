@@ -1,3 +1,27 @@
+2011-03-17  Adam Roben  <aroben@apple.com>
+
+        Start using PlatformSpecificScheduler for the Mac builders
+
+        The current set of file/directory patterns should work for Mac builders. We may discover
+        that there are more files and directories we can exclude from the Mac builds, but they can
+        be added later.
+
+        Fixes <http://webkit.org/b/56593> Mac builders do lots of unnecessary builds
+
+        Reviewed by Mark Rowe.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Moved the Mac builders into two
+        PlatformSpecificSchedulers: one for Leopard, and one for SnowLeopard.
+
+        * Scripts/webkitpy/common/config/build.py:
+        (_should_file_trigger_build): Allow "mac-leopard" and "mac-snowleopard" platforms, and
+        cleaned up patterns a little bit.
+
+        * Scripts/webkitpy/common/config/build_unittest.py:
+        (ShouldBuildTest): Fixed some expected results.
+        (ShouldBuildTest.test_should_build): Start testing "mac-leopard" and "mac-snowleopard"
+        platforms.
+
 2011-03-17  Jeff Miller  <jeffm@apple.com>
 
         Use a consistent set of file patterns in the svn:ignore property for all .xcodeproj directories, specifically:
