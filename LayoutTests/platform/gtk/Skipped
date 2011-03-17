@@ -281,6 +281,7 @@ http/tests/misc/webtiming-two-redirects.php
 
 # FileSystem API is not supported.
 fast/filesystem
+http/tests/filesystem
 http/tests/local/fileapi
 http/tests/security/filesystem-iframe-from-remote.html
 

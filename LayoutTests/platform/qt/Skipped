@@ -3112,6 +3112,7 @@ fast/parser/pre-html5-parser-quirks.html
 
 # FileSystem API is not supported.
 fast/filesystem
+http/tests/filesystem
 http/tests/security/filesystem-iframe-from-remote.html
 
 # It fails, because 3D canvas is disabled by default.

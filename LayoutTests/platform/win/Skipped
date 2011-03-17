@@ -1113,6 +1113,7 @@ fast/parser/pre-html5-parser-quirks.html
 
 # FileSystem API is not supported.
 fast/filesystem
+http/tests/filesystem
 http/tests/security/filesystem-iframe-from-remote.html
 
 # LayoutTestController::nodesFromRect is not supported.

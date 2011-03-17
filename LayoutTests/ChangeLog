@@ -1,3 +1,12 @@
+2011-03-16  Adam Barth  <abarth@webkit.org>
+
+        Update the Skipped lists to reflect the new location of these tests.
+
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-03-16  David Levin  <levin@chromium.org>
 
         Update test expectations due to r81280 (media/controls-without-preload.html),
