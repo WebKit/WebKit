@@ -1,3 +1,16 @@
+2011-03-16  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Make JIT build for ARM Thumb-2 with RVCT
+        https://bugs.webkit.org/show_bug.cgi?id=56440
+
+        Derived from a patch by Dave Tapuska.
+
+        Also, modify the RVCT stub template to indicate that it preserves 8 byte stack alignment.
+
+        * jit/JITStubs.cpp:
+
 2011-03-16  Chao-ying Fu  <fu@mips.com>
 
         Reviewed by Darin Adler.

@@ -978,7 +978,7 @@ static ExceptionHandler jitThrow(JSGlobalData* globalData, CallFrame* callFrame,
     return exceptionHandler;
 }
 
-#if CPU(ARM_THUMB2)
+#if CPU(ARM_THUMB2) && COMPILER(GCC)
 
 #define DEFINE_STUB_FUNCTION(rtype, op) \
     extern "C" { \
@@ -1074,7 +1074,7 @@ static ExceptionHandler jitThrow(JSGlobalData* globalData, CallFrame* callFrame,
         ); \
     rtype JITStubThunked_##op(STUB_ARGS_DECLARATION)
 
-#elif CPU(ARM_TRADITIONAL) && COMPILER(RVCT)
+#elif (CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)) && COMPILER(RVCT)
 
 #define DEFINE_STUB_FUNCTION(rtype, op) rtype JITStubThunked_##op(STUB_ARGS_DECLARATION)
 
@@ -1087,7 +1087,7 @@ static ExceptionHandler jitThrow(JSGlobalData* globalData, CallFrame* callFrame,
 RVCT(extern "C" #rtype# JITStubThunked_#op#(STUB_ARGS_DECLARATION);)
 RVCT(__asm #rtype# cti_#op#(STUB_ARGS_DECLARATION))
 RVCT({)
-RVCT(    ARM)
+RVCT(    PRESERVE8)
 RVCT(    IMPORT JITStubThunked_#op#)
 RVCT(    str lr, [sp, # THUNK_RETURN_ADDRESS_OFFSET])
 RVCT(    bl JITStubThunked_#op#)
