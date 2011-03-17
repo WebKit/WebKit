@@ -33,6 +33,8 @@ struct PaintInfo;
 
 enum LogicalWidthType { LogicalWidth, MinLogicalWidth, MaxLogicalWidth };
 
+enum OverlayScrollbarSizeRelevancy { IgnoreOverlayScrollbarSize, IncludeOverlayScrollbarSize };
+
 class RenderBox : public RenderBoxModelObject {
 public:
     RenderBox(Node*);
@@ -334,7 +336,7 @@ public:
     
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
 
-    virtual IntRect overflowClipRect(int tx, int ty);
+    virtual IntRect overflowClipRect(int tx, int ty, OverlayScrollbarSizeRelevancy relevancy = IgnoreOverlayScrollbarSize);
     IntRect clipRect(int tx, int ty);
     virtual bool hasControlClip() const { return false; }
     virtual IntRect controlClipRect(int /*tx*/, int /*ty*/) const { return IntRect(); }

@@ -1,3 +1,35 @@
+2011-03-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=56493 Drag-scrolling overlay 
+        scrollbars thumb in overflow regions does not work
+        -and corresponding-
+        <rdar://problem/9112688> Drag-scrolling overlay scrollbars thumb in overflow 
+        regions does not work
+
+        Up until now, overlay scrollbars have always been treated in the Render Tree as if 
+        they have a thickness of 0 because they should not affect layout. However, it is 
+        important to consider their size when hit-testing because otherwise, we have this 
+        bug! This patch adds a boolean parameter to overflowClipRect(), 
+        RenderLayer::verticalScrollbarWidth(), and 
+        RenderLayer::horizontalScrollbarHeight(). This bool indicates whether to include 
+        the actual overlay scrollbar thickness. It defaults to false and is only sent is 
+        as true from RenderBloc::nodeAtPoint().
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::overflowClipRect):
+        * rendering/RenderBox.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::verticalScrollbarWidth):
+        (WebCore::RenderLayer::horizontalScrollbarHeight):
+        * rendering/RenderLayer.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::overflowClipRect):
+        * rendering/RenderTable.h:
+
 2011-03-16  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         Reviewed by Andreas Kling.

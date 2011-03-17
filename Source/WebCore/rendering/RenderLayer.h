@@ -255,8 +255,8 @@ public:
     Scrollbar* horizontalScrollbar() const { return m_hBar.get(); }
     Scrollbar* verticalScrollbar() const { return m_vBar.get(); }
 
-    int verticalScrollbarWidth() const;
-    int horizontalScrollbarHeight() const;
+    int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy relevancy = IgnoreOverlayScrollbarSize) const;
+    int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevancy = IgnoreOverlayScrollbarSize) const;
 
     bool hasOverflowControls() const;
     void positionOverflowControls(int tx, int ty);

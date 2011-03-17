@@ -1090,7 +1090,7 @@ void RenderBox::popContentsClip(PaintInfo& paintInfo, PaintPhase originalPhase, 
         paintInfo.phase = originalPhase;
 }
 
-IntRect RenderBox::overflowClipRect(int tx, int ty)
+IntRect RenderBox::overflowClipRect(int tx, int ty, OverlayScrollbarSizeRelevancy relevancy)
 {
     // FIXME: When overflow-clip (CSS3) is implemented, we'll obtain the property
     // here.
@@ -1105,8 +1105,8 @@ IntRect RenderBox::overflowClipRect(int tx, int ty)
 
     // Subtract out scrollbars if we have them.
     if (layer()) {
-        clipWidth -= layer()->verticalScrollbarWidth();
-        clipHeight -= layer()->horizontalScrollbarHeight();
+        clipWidth -= layer()->verticalScrollbarWidth(relevancy);
+        clipHeight -= layer()->horizontalScrollbarHeight(relevancy);
     }
 
     return IntRect(clipX, clipY, clipWidth, clipHeight);

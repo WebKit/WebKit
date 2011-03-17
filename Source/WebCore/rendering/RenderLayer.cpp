@@ -1910,16 +1910,16 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
 #endif
 }
 
-int RenderLayer::verticalScrollbarWidth() const
+int RenderLayer::verticalScrollbarWidth(OverlayScrollbarSizeRelevancy relevancy) const
 {
-    if (!m_vBar || m_vBar->isOverlayScrollbar())
+    if (!m_vBar || (m_vBar->isOverlayScrollbar() && relevancy == IgnoreOverlayScrollbarSize))
         return 0;
     return m_vBar->width();
 }
 
-int RenderLayer::horizontalScrollbarHeight() const
+int RenderLayer::horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevancy) const
 {
-    if (!m_hBar || m_hBar->isOverlayScrollbar())
+    if (!m_hBar || (m_hBar->isOverlayScrollbar() && relevancy == IgnoreOverlayScrollbarSize))
         return 0;
     return m_hBar->height();
 }

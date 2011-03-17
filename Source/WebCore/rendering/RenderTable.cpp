@@ -1148,9 +1148,9 @@ int RenderTable::firstLineBoxBaseline() const
     return firstNonEmptySection->logicalTop() + firstNonEmptySection->firstLineBoxBaseline();
 }
 
-IntRect RenderTable::overflowClipRect(int tx, int ty)
+IntRect RenderTable::overflowClipRect(int tx, int ty, OverlayScrollbarSizeRelevancy relevancy)
 {
-    IntRect rect = RenderBlock::overflowClipRect(tx, ty);
+    IntRect rect = RenderBlock::overflowClipRect(tx, ty, relevancy);
     
     // If we have a caption, expand the clip to include the caption.
     // FIXME: Technically this is wrong, but it's virtually impossible to fix this
