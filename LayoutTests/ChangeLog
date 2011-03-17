@@ -1,5 +1,12 @@
 2011-03-17  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip fast/reflections/abs-position-in-reflection.html on GTK
+        affected by bug 56180.
+
+        * platform/gtk/Skipped:
+
+2011-03-17  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skip flaky svg test on GTK.
 
         * platform/gtk/Skipped:
