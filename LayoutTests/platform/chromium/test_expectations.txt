@@ -3242,8 +3242,7 @@ BUGWK56072 WIN-VISTA : fast/ruby/base-shorter-than-text.html = FAIL
 
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 WIN LINUX : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
-BUGCR75561 MAC LEOPARD : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
-BUGCR75561 MAC SNOWLEOPARD : fast/blockflow/text-orientation-basic.html = IMAGE
+BUGCR75561 MAC : fast/blockflow/text-orientation-basic.html = IMAGE
 
 // introduced by brarraclough in WK r80621
 BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT

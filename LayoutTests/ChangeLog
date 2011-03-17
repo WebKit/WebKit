@@ -1,3 +1,10 @@
+2011-03-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, update expectations
+
+        * platform/chromium-mac/fast/forms/input-number-unacceptable-style-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-17  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip fast/profiler/window-dot-eval.html on GTK
