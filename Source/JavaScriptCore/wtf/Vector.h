@@ -566,6 +566,7 @@ namespace WTF {
         T& last() { return at(size() - 1); }
         const T& last() const { return at(size() - 1); }
 
+        template<typename U> bool contains(const U&) const;
         template<typename U> size_t find(const U&) const;
         template<typename U> size_t reverseFind(const U&) const;
 
@@ -741,6 +742,13 @@ namespace WTF {
         m_size = other.size();
 
         return *this;
+    }
+
+    template<typename T, size_t inlineCapacity>
+    template<typename U>
+    bool Vector<T, inlineCapacity>::contains(const U& value) const
+    {
+        return find(value) != notFound;
     }
 
     template<typename T, size_t inlineCapacity>

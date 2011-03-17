@@ -1,3 +1,14 @@
+2011-03-17  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Adding a contains method to Vector.
+        https://bugs.webkit.org/show_bug.cgi?id=55859
+
+        * wtf/Vector.h:
+        (WTF::::operator):
+        (WTF::::contains):
+
 2011-03-17  Patrick Gansterer  <paroga@webkit.org>
 
         Fix the interpreter build.
