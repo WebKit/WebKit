@@ -113,7 +113,7 @@ BUGWK55913 DEBUG SLOW : jquery/manipulation.html = PASS
 BUGWK55913 DEBUG SLOW : jquery/offset.html = PASS
 BUGWK55913 DEBUG SLOW : jquery/traversing.html = PASS
 
-BUGCR75243 SLOW : editing/pasteboard/data-transfer-items.html = PASS
+BUGCR76543 WIN MAC : editing/pasteboard/data-transfer-items.html = PASS TEXT
 
 // -----------------------------------------------------------------
 // SKIPPED TESTS
@@ -2765,8 +2765,8 @@ BUGWK51720 DEBUG : http/tests/incremental/split-hex-entities.pl = CRASH PASS
 BUGWK51721 DEBUG SLOW: fast/encoding/parser-tests.html = PASS
 BUGCR67463 MAC : editing/selection/caret-mode-paragraph-keys-navigation.html = TEXT
 
-BUGCR68436 LINUX MAC DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
-BUGCR68436 WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TEXT TIMEOUT
+BUGCR68436 LINUX DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS SLOW TIMEOUT
+BUGCR68436 WIN MAC DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TEXT SLOW TIMEOUT
 BUGCR68576 LINUX DEBUG : svg/batik/paints/patternPreserveAspectRatioA.svg = PASS TIMEOUT CRASH
 BUGCR68599 : http/tests/security/mixedContent/insecure-css-in-main-frame.html = PASS TEXT
 
@@ -3147,7 +3147,7 @@ BUGWK54472 : media/audio-delete-while-slider-thumb-clicked.html = TIMEOUT
 
 // Flaky
 BUGCR73080 LINUX DEBUG : fast/forms/form-attribute-elements-order.html = PASS TIMEOUT
-BUGCR73091 WIN LINUX : animations/play-state-suspend.html = PASS TEXT
+BUGCR73091 : animations/play-state-suspend.html = PASS TEXT
 BUGCR73092 WIN : fast/dom/gc-11.html = PASS TEXT
 BUGCR73094 LINUX : http/tests/websocket/tests/send-after-close-on-unload.html = PASS TIMEOUT
 
@@ -3291,3 +3291,10 @@ BUGWK56488 SKIP : compositing/transitions/scale-transition-no-start.html = CRASH
 
 // These are failing sporadically due to WebKit r81222
 BUGWK56454 WIN : inspector/elements/mutate-unknown-node.html = PASS TEXT
+
+// Slow
+BUGCR76550 DEBUG WIN LINUX : fast/dom/Window/window-function-frame-getter-precedence.html = SLOW
+BUGCR76550 DEBUG MAC : fast/dom/Window/window-function-frame-getter-precedence.html = SLOW TIMEOUT
+
+// New and flaky
+BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html
