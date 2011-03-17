@@ -1,3 +1,15 @@
+2011-03-16  David Levin  <levin@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        REGRESSION(r81289): Fix valgrind error (and crashes) when running the chromium unit test "test_shell_test".
+
+        Conditional jump or move depends on uninitialised value(s)
+            WebCore::RenderLayerCompositor::RenderLayerCompositor(WebCore::RenderView*) (third_party/WebKit/Source/WebCore/rendering/RenderLayerCompositor.cpp:117)
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+
 2011-03-16  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
