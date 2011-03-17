@@ -187,11 +187,11 @@ WebInspector.ScriptsPanel = function()
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasEnabled, this._debuggerWasEnabled, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasDisabled, this._debuggerWasDisabled, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._failedToParseScriptSource, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ScriptSourceChanged, this._scriptSourceChanged, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
-
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.SourceFileAdded, this._sourceFileAdded, this)
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.SourceFileChanged, this._sourceFileChanged, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, this._breakpointAdded, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, this._breakpointRemoved, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, this._callFrameSelected, this);
@@ -249,36 +249,111 @@ WebInspector.ScriptsPanel.prototype = {
         return this.toggleBreakpointsButton.toggled;
     },
 
-    _sourceFileAdded: function(event)
+    _parsedScriptSource: function(event)
     {
-        var sourceFile = event.data;
+        this._addScript(event.data);
+    },
 
-        if (!sourceFile.url) {
-            // Anonymous sources are shown only when stepping.
+    _failedToParseScriptSource: function(event)
+    {
+        this._addScript(event.data);
+    },
+
+    _scriptSourceChanged: function(event)
+    {
+        var sourceID = event.data.sourceID;
+        var oldSource = event.data.oldSource;
+
+        var script = WebInspector.debuggerModel.scriptForSourceID(sourceID);
+        if (script.resource) {
+            var revertHandle = WebInspector.debuggerModel.editScriptSource.bind(WebInspector.debuggerModel, sourceID, oldSource);
+            script.resource.setContent(script.source, revertHandle);
+        }
+
+        var sourceFileId = this._sourceFileIdForScript(script);
+        this._recreateSourceFrame(sourceFileId);
+    },
+
+    _addScript: function(script)
+    {
+        if (!script.sourceURL) {
+            // Anonymous scripts are shown only when stepping.
             return;
         }
 
-        this._addOptionToFilesSelect(sourceFile.id);
+        var resource = this._resourceForURL(script.sourceURL);
+        if (resource) {
+            if (resource.finished) {
+                // Resource is finished, bind the script right away.
+                script.resource = resource;
+
+                // Add resource url to files select if not already added while debugging inlined scripts.
+                if (!(resource.url in this._sourceFileIdToFilesSelectOption))
+                    this._addOptionToFilesSelectAndShowSourceFrameIfNeeded(resource.url);
+            } else {
+                // Resource is not finished, bind the script later.
+                if (!resource._scriptsPendingResourceLoad) {
+                    resource._scriptsPendingResourceLoad = [];
+                    resource.addEventListener("finished", this._resourceLoadingFinished, this);
+                }
+                resource._scriptsPendingResourceLoad.push(script);
+
+                // Source frame content is outdated since we have new script parsed.
+                this._recreateSourceFrame(script.sourceURL);
+            }
+        } else if (!(script.sourceURL in this._sourceFileIdToFilesSelectOption)) {
+            // This is a dynamic script with "//@ sourceURL=" comment.
+            this._addOptionToFilesSelectAndShowSourceFrameIfNeeded(script.sourceURL);
+        }
+    },
+
+    _resourceForURL: function(url)
+    {
+        return WebInspector.networkManager.inflightResourceForURL(url) || WebInspector.resourceForURL(url);
+    },
+
+    _resourceLoadingFinished: function(e)
+    {
+        var resource = e.target;
+
+        // Bind scripts to resource.
+        for (var i = 0; i < resource._scriptsPendingResourceLoad.length; ++i) {
+            var script = resource._scriptsPendingResourceLoad[i];
+            script.resource = resource;
+        }
+        delete resource._scriptsPendingResourceLoad;
+
+        // Recreate source frame to show resource content.
+        this._recreateSourceFrame(resource.url);
+
+        // Add resource url to files select if not already added while debugging inlined scripts.
+        if (!(resource.url in this._sourceFileIdToFilesSelectOption))
+            this._addOptionToFilesSelectAndShowSourceFrameIfNeeded(resource.url);
+    },
+
+    _addOptionToFilesSelectAndShowSourceFrameIfNeeded: function(url)
+    {
+        this._addOptionToFilesSelect(url);
 
         var lastViewedURL = WebInspector.settings.lastViewedScriptFile;
         if (this._filesSelectElement.length === 1) {
             // Option we just added is the only option in files select.
             // We have to show corresponding source frame immediately.
-            this._showSourceFrameAndAddToHistory(sourceFile.id);
+            this._showSourceFrameAndAddToHistory(url);
             // Restore original value of lastViewedScriptFile because
             // source frame was shown as a result of initial load.
             WebInspector.settings.lastViewedScriptFile = lastViewedURL;
-        } else if (sourceFile.url === lastViewedURL)
-            this._showSourceFrameAndAddToHistory(sourceFile.id);
+        } else if (url === lastViewedURL)
+            this._showSourceFrameAndAddToHistory(url);
     },
 
     _addOptionToFilesSelect: function(sourceFileId)
     {
-        var sourceFile = this._presentationModel.sourceFile(sourceFileId);
+        var script = this._scriptForSourceFileId(sourceFileId);
         var select = this._filesSelectElement;
         var option = document.createElement("option");
-        option.text = sourceFile.url ? WebInspector.displayNameForURL(sourceFile.url) : WebInspector.UIString("(program)");
-        if (sourceFile.isExtensionScript)
+        option.text = script.sourceURL ? WebInspector.displayNameForURL(script.sourceURL) : WebInspector.UIString("(program)");
+        if (script.worldType === WebInspector.Script.WorldType.EXTENSIONS_WORLD)
             option.addStyleClass("extension-script");
         function optionCompare(a, b)
         {
@@ -518,9 +593,9 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceFrame = this._sourceFrameForSourceFileId(sourceFileId);
         this.visibleView = sourceFrame;
 
-        var sourceFile = this._presentationModel.sourceFile(sourceFileId);
-        if (sourceFile.url)
-            WebInspector.settings.lastViewedScriptFile = sourceFile.url;
+        var script = this._scriptForSourceFileId(sourceFileId);
+        if (script.sourceURL)
+            WebInspector.settings.lastViewedScriptFile = script.sourceURL;
 
         return sourceFrame;
     },
@@ -542,15 +617,14 @@ WebInspector.ScriptsPanel.prototype = {
         return sourceFrame;
     },
 
-    _sourceFileChanged: function(event)
+    _recreateSourceFrame: function(sourceFileId)
     {
-        var sourceFileId = event.data.id;
-
         var oldSourceFrame = this._sourceFileIdToSourceFrame[sourceFileId];
         if (!oldSourceFrame)
             return;
         oldSourceFrame.removeEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
         delete this._sourceFileIdToSourceFrame[sourceFileId];
+        oldSourceFrame.removeEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
         if (this.visibleView !== oldSourceFrame)
             return;
 
@@ -585,6 +659,11 @@ WebInspector.ScriptsPanel.prototype = {
         }
     },
 
+    _sourceFileIdForScript: function(script)
+    {
+        return script.sourceURL || script.sourceID;
+    },
+
     _scriptForSourceFileId: function(sourceFileId)
     {
         function filter(script)
@@ -613,12 +692,11 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.scopechain.update(callFrame);
         this.sidebarPanes.watchExpressions.refreshExpressions();
 
-        if (!callFrame.sourceLocation)
-            return;
-
         var sourceFileId = callFrame.sourceLocation.sourceFileId;
         if (!(sourceFileId in this._sourceFileIdToFilesSelectOption)) {
-            // Anonymous scripts are not added to files select by default.
+            // This happens in two cases:
+            // 1) Current call frame function is defined in anonymous script (anonymous scripts aren't added to files select by default)
+            // 2) We are debugging synchronously executed inlined script and there is no resource so far
             this._addOptionToFilesSelect(sourceFileId);
         }
         var sourceFrame = this._showSourceFrameAndAddToHistory(sourceFileId);
@@ -1009,11 +1087,16 @@ WebInspector.SourceFrameDelegateForScriptsPanel = function(model, sourceFileId, 
 WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
     requestContent: function(callback)
     {
-        function didRequestSourceFileContent(mimeType, text)
+        function didGetTextAndScriptRanges(mimeType, text, scriptRanges)
         {
-            callback(mimeType, { text: text });
+            this._content = new WebInspector.SourceFrameContent(text, new WebInspector.IdenticalSourceMapping(), scriptRanges);
+            callback(mimeType, this._content);
         }
-        this._model.requestSourceFileContent(this._sourceFileId, didRequestSourceFileContent.bind(this));
+
+        if (this._script.resource)
+            this._loadResourceContent(this._script.resource, didGetTextAndScriptRanges.bind(this));
+        else
+            this._loadAndConcatenateScriptsContent(didGetTextAndScriptRanges.bind(this));
     },
 
     _loadResourceContent: function(resource, callback)

@@ -1,3 +1,40 @@
+2011-03-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r81369.
+        http://trac.webkit.org/changeset/81369
+        https://bugs.webkit.org/show_bug.cgi?id=56579
+
+        breaks debugger test (Requested by podivilov on #webkit).
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._parsedScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._failedToParseScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._scriptSourceChanged):
+        (WebInspector.DebuggerPresentationModel.prototype.breakpointsForSourceFileId):
+        (WebInspector.DebuggerPresentationModel.prototype.findBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointRemoved):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointResolved):
+        (WebInspector.DebuggerPresentationModel.prototype._encodeSourceLocation):
+        (WebInspector.DebuggerPresentationModel.prototype._restoreBreakpoints):
+        (WebInspector.DebuggerPresentationModel.prototype.set selectedCallFrame):
+        (WebInspector.DebuggerPresentationModel.prototype._actualLocationToSourceLocation):
+        (WebInspector.DebuggerPresentationModel.prototype.reset):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._parsedScriptSource):
+        (WebInspector.ScriptsPanel.prototype._failedToParseScriptSource):
+        (WebInspector.ScriptsPanel.prototype._scriptSourceChanged):
+        (WebInspector.ScriptsPanel.prototype._addScript):
+        (WebInspector.ScriptsPanel.prototype._resourceForURL):
+        (WebInspector.ScriptsPanel.prototype._resourceLoadingFinished):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelectAndShowSourceFrameIfNeeded):
+        (WebInspector.ScriptsPanel.prototype._showSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._recreateSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._sourceFileIdForScript):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.requestContent):
+
 2011-03-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Justin Garcia.
