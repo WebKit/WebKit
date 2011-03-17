@@ -60,9 +60,9 @@ NPRemoteObjectMap::~NPRemoteObjectMap()
     ASSERT(m_registeredNPObjects.isEmpty());
 }
 
-NPObject* NPRemoteObjectMap::createNPObjectProxy(uint64_t remoteObjectID)
+NPObject* NPRemoteObjectMap::createNPObjectProxy(uint64_t remoteObjectID, Plugin* plugin)
 {
-    NPObjectProxy* npObjectProxy = NPObjectProxy::create(this, remoteObjectID);
+    NPObjectProxy* npObjectProxy = NPObjectProxy::create(this, plugin, remoteObjectID);
 
     m_npObjectProxies.add(npObjectProxy);
 
@@ -77,10 +77,10 @@ void NPRemoteObjectMap::npObjectProxyDestroyed(NPObject* npObject)
     m_npObjectProxies.remove(npObject);
 }
 
-uint64_t NPRemoteObjectMap::registerNPObject(NPObject* npObject)
+uint64_t NPRemoteObjectMap::registerNPObject(NPObject* npObject, Plugin* plugin)
 {
     uint64_t npObjectID = generateNPObjectID();
-    m_registeredNPObjects.set(npObjectID, NPObjectMessageReceiver::create(this, npObjectID, npObject).leakPtr());
+    m_registeredNPObjects.set(npObjectID, NPObjectMessageReceiver::create(this, plugin, npObjectID, npObject).leakPtr());
 
     return npObjectID;
 }
@@ -90,7 +90,7 @@ void NPRemoteObjectMap::unregisterNPObject(uint64_t npObjectID)
     m_registeredNPObjects.remove(npObjectID);
 }
 
-NPVariantData NPRemoteObjectMap::npVariantToNPVariantData(const NPVariant& variant)
+NPVariantData NPRemoteObjectMap::npVariantToNPVariantData(const NPVariant& variant, Plugin* plugin)
 {
     switch (variant.type) {
     case NPVariantType_Void:
@@ -124,7 +124,7 @@ NPVariantData NPRemoteObjectMap::npVariantToNPVariantData(const NPVariant& varia
             return NPVariantData::makeRemoteNPObjectID(npObjectID);
         }
 
-        uint64_t npObjectID = registerNPObject(npObject);
+        uint64_t npObjectID = registerNPObject(npObject, plugin);
         return NPVariantData::makeLocalNPObjectID(npObjectID);
     }
 
@@ -134,7 +134,7 @@ NPVariantData NPRemoteObjectMap::npVariantToNPVariantData(const NPVariant& varia
     return NPVariantData::makeVoid();
 }
 
-NPVariant NPRemoteObjectMap::npVariantDataToNPVariant(const NPVariantData& npVariantData)
+NPVariant NPRemoteObjectMap::npVariantDataToNPVariant(const NPVariantData& npVariantData, Plugin* plugin)
 {
     NPVariant npVariant;
 
@@ -178,7 +178,7 @@ NPVariant NPRemoteObjectMap::npVariantDataToNPVariant(const NPVariantData& npVar
         break;
     }
     case NPVariantData::RemoteNPObjectID: {
-        NPObject* npObjectProxy = createNPObjectProxy(npVariantData.remoteNPObjectIDValue());
+        NPObject* npObjectProxy = createNPObjectProxy(npVariantData.remoteNPObjectIDValue(), plugin);
         OBJECT_TO_NPVARIANT(npObjectProxy, npVariant);
         break;
     }

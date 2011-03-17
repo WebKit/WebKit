@@ -38,16 +38,17 @@
 
 namespace WebKit {
 
-NPObjectProxy* NPObjectProxy::create(NPRemoteObjectMap* npRemoteObjectMap, uint64_t npObjectID)
+NPObjectProxy* NPObjectProxy::create(NPRemoteObjectMap* npRemoteObjectMap, Plugin* plugin, uint64_t npObjectID)
 {
     NPObjectProxy* npObjectProxy = toNPObjectProxy(createNPObject(0, npClass()));
-    npObjectProxy->initialize(npRemoteObjectMap, npObjectID);
+    npObjectProxy->initialize(npRemoteObjectMap, plugin, npObjectID);
 
     return npObjectProxy;
 }
 
 NPObjectProxy::NPObjectProxy()
     : m_npRemoteObjectMap(0)
+    , m_plugin(0)
     , m_npObjectID(0)
 {
 }
@@ -69,19 +70,24 @@ bool NPObjectProxy::isNPObjectProxy(NPObject* npObject)
 void NPObjectProxy::invalidate()
 {
     ASSERT(m_npRemoteObjectMap);
+    ASSERT(m_plugin);
 
     m_npRemoteObjectMap = 0;
+    m_plugin = 0;
 }
     
-void NPObjectProxy::initialize(NPRemoteObjectMap* npRemoteObjectMap, uint64_t npObjectID)
+void NPObjectProxy::initialize(NPRemoteObjectMap* npRemoteObjectMap, Plugin* plugin, uint64_t npObjectID)
 {
     ASSERT(!m_npRemoteObjectMap);
+    ASSERT(!m_plugin);
     ASSERT(!m_npObjectID);
 
     ASSERT(npRemoteObjectMap);
+    ASSERT(plugin);
     ASSERT(npObjectID);
 
     m_npRemoteObjectMap = npRemoteObjectMap;
+    m_plugin = plugin;
     m_npObjectID = npObjectID;
 }
 
@@ -108,7 +114,7 @@ bool NPObjectProxy::invoke(NPIdentifier methodName, const NPVariant* arguments, 
     NPIdentifierData methodNameData = NPIdentifierData::fromNPIdentifier(methodName);
     Vector<NPVariantData> argumentsData;
     for (uint32_t i = 0; i < argumentCount; ++i)
-        argumentsData.append(m_npRemoteObjectMap->npVariantToNPVariantData(arguments[i]));
+        argumentsData.append(m_npRemoteObjectMap->npVariantToNPVariantData(arguments[i], m_plugin));
 
     bool returnValue = false;
     NPVariantData resultData;
@@ -119,7 +125,7 @@ bool NPObjectProxy::invoke(NPIdentifier methodName, const NPVariant* arguments, 
     if (!returnValue)
         return false;
     
-    *result = m_npRemoteObjectMap->npVariantDataToNPVariant(resultData);
+    *result = m_npRemoteObjectMap->npVariantDataToNPVariant(resultData, m_plugin);
     return true;
 }
 
@@ -130,7 +136,7 @@ bool NPObjectProxy::invokeDefault(const NPVariant* arguments, uint32_t argumentC
 
     Vector<NPVariantData> argumentsData;
     for (uint32_t i = 0; i < argumentCount; ++i)
-        argumentsData.append(m_npRemoteObjectMap->npVariantToNPVariantData(arguments[i]));
+        argumentsData.append(m_npRemoteObjectMap->npVariantToNPVariantData(arguments[i], m_plugin));
 
     bool returnValue = false;
     NPVariantData resultData;
@@ -141,7 +147,7 @@ bool NPObjectProxy::invokeDefault(const NPVariant* arguments, uint32_t argumentC
     if (!returnValue)
         return false;
     
-    *result = m_npRemoteObjectMap->npVariantDataToNPVariant(resultData);
+    *result = m_npRemoteObjectMap->npVariantDataToNPVariant(resultData, m_plugin);
     return true;
 }
 
@@ -176,7 +182,7 @@ bool NPObjectProxy::getProperty(NPIdentifier propertyName, NPVariant* result)
     if (!returnValue)
         return false;
 
-    *result = m_npRemoteObjectMap->npVariantDataToNPVariant(resultData);
+    *result = m_npRemoteObjectMap->npVariantDataToNPVariant(resultData, m_plugin);
     return true;
 }
 
@@ -186,7 +192,7 @@ bool NPObjectProxy::setProperty(NPIdentifier propertyName, const NPVariant* valu
         return false;
     
     NPIdentifierData propertyNameData = NPIdentifierData::fromNPIdentifier(propertyName);
-    NPVariantData propertyValueData = m_npRemoteObjectMap->npVariantToNPVariantData(*value);
+    NPVariantData propertyValueData = m_npRemoteObjectMap->npVariantToNPVariantData(*value, m_plugin);
 
     bool returnValue = false;
 
@@ -242,7 +248,7 @@ bool NPObjectProxy::construct(const NPVariant* arguments, uint32_t argumentCount
 
     Vector<NPVariantData> argumentsData;
     for (uint32_t i = 0; i < argumentCount; ++i)
-        argumentsData.append(m_npRemoteObjectMap->npVariantToNPVariantData(arguments[i]));
+        argumentsData.append(m_npRemoteObjectMap->npVariantToNPVariantData(arguments[i], m_plugin));
 
     bool returnValue = false;
     NPVariantData resultData;
@@ -253,7 +259,7 @@ bool NPObjectProxy::construct(const NPVariant* arguments, uint32_t argumentCount
     if (!returnValue)
         return false;
     
-    *result = m_npRemoteObjectMap->npVariantDataToNPVariant(resultData);
+    *result = m_npRemoteObjectMap->npVariantDataToNPVariant(resultData, m_plugin);
     return true;
 }
 

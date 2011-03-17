@@ -319,7 +319,7 @@ NPObject* PluginProxy::pluginScriptableNPObject()
     if (!pluginScriptableNPObjectID)
         return 0;
 
-    return m_connection->npRemoteObjectMap()->createNPObjectProxy(pluginScriptableNPObjectID);
+    return m_connection->npRemoteObjectMap()->createNPObjectProxy(pluginScriptableNPObjectID, this);
 }
 
 #if PLATFORM(MAC)
@@ -388,7 +388,7 @@ void PluginProxy::getWindowScriptNPObject(uint64_t& windowScriptNPObjectID)
         return;
     }
 
-    windowScriptNPObjectID = m_connection->npRemoteObjectMap()->registerNPObject(windowScriptNPObject);
+    windowScriptNPObjectID = m_connection->npRemoteObjectMap()->registerNPObject(windowScriptNPObject, this);
     releaseNPObject(windowScriptNPObject);
 }
 
@@ -400,7 +400,7 @@ void PluginProxy::getPluginElementNPObject(uint64_t& pluginElementNPObjectID)
         return;
     }
 
-    pluginElementNPObjectID = m_connection->npRemoteObjectMap()->registerNPObject(pluginElementNPObject);
+    pluginElementNPObjectID = m_connection->npRemoteObjectMap()->registerNPObject(pluginElementNPObject, this);
     releaseNPObject(pluginElementNPObject);
 }
 
@@ -408,7 +408,7 @@ void PluginProxy::evaluate(const NPVariantData& npObjectAsVariantData, const Str
 {
     PluginController::PluginDestructionProtector protector(m_pluginController);
 
-    NPVariant npObjectAsVariant = m_connection->npRemoteObjectMap()->npVariantDataToNPVariant(npObjectAsVariantData);
+    NPVariant npObjectAsVariant = m_connection->npRemoteObjectMap()->npVariantDataToNPVariant(npObjectAsVariantData, this);
     ASSERT(NPVARIANT_IS_OBJECT(npObjectAsVariant));
 
     NPVariant result;
@@ -417,7 +417,7 @@ void PluginProxy::evaluate(const NPVariantData& npObjectAsVariantData, const Str
         return;
 
     // Convert the NPVariant to an NPVariantData.
-    resultData = m_connection->npRemoteObjectMap()->npVariantToNPVariantData(result);
+    resultData = m_connection->npRemoteObjectMap()->npVariantToNPVariantData(result, this);
     
     // And release the result.
     releaseNPVariantValue(&result);

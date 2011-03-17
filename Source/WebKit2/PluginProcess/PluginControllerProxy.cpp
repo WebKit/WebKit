@@ -199,7 +199,7 @@ NPObject* PluginControllerProxy::windowScriptNPObject()
     if (!windowScriptNPObjectID)
         return 0;
 
-    return m_connection->npRemoteObjectMap()->createNPObjectProxy(windowScriptNPObjectID);
+    return m_connection->npRemoteObjectMap()->createNPObjectProxy(windowScriptNPObjectID, m_plugin.get());
 }
 
 NPObject* PluginControllerProxy::pluginElementNPObject()
@@ -212,7 +212,7 @@ NPObject* PluginControllerProxy::pluginElementNPObject()
     if (!pluginElementNPObjectID)
         return 0;
 
-    return m_connection->npRemoteObjectMap()->createNPObjectProxy(pluginElementNPObjectID);
+    return m_connection->npRemoteObjectMap()->createNPObjectProxy(pluginElementNPObjectID, m_plugin.get());
 }
 
 bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result, bool allowPopups)
@@ -223,7 +223,7 @@ bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptStr
     OBJECT_TO_NPVARIANT(npObject, npObjectAsNPVariant);
 
     // Send the NPObject over as an NPVariantData.
-    NPVariantData npObjectAsNPVariantData = m_connection->npRemoteObjectMap()->npVariantToNPVariantData(npObjectAsNPVariant);
+    NPVariantData npObjectAsNPVariantData = m_connection->npRemoteObjectMap()->npVariantToNPVariantData(npObjectAsNPVariant, m_plugin.get());
 
     bool returnValue = false;
     NPVariantData resultData;
@@ -234,7 +234,7 @@ bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptStr
     if (!returnValue)
         return false;
 
-    *result = m_connection->npRemoteObjectMap()->npVariantDataToNPVariant(resultData);
+    *result = m_connection->npRemoteObjectMap()->npVariantDataToNPVariant(resultData, m_plugin.get());
     return true;
 }
 
@@ -459,7 +459,7 @@ void PluginControllerProxy::getPluginScriptableNPObject(uint64_t& pluginScriptab
         return;
     }
     
-    pluginScriptableNPObjectID = m_connection->npRemoteObjectMap()->registerNPObject(pluginScriptableNPObject);
+    pluginScriptableNPObjectID = m_connection->npRemoteObjectMap()->registerNPObject(pluginScriptableNPObject, m_plugin.get());
     releaseNPObject(pluginScriptableNPObject);
 }
 

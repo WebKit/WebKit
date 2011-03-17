@@ -1,3 +1,47 @@
+2011-03-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        NPObjectProxy and NPObjectMessageReceiver objects should know their Plugin object
+        https://bugs.webkit.org/show_bug.cgi?id=56506
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::windowScriptNPObject):
+        (WebKit::PluginControllerProxy::pluginElementNPObject):
+        (WebKit::PluginControllerProxy::evaluate):
+        (WebKit::PluginControllerProxy::getPluginScriptableNPObject):
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        (WebKit::NPObjectMessageReceiver::create):
+        (WebKit::NPObjectMessageReceiver::NPObjectMessageReceiver):
+        (WebKit::NPObjectMessageReceiver::invoke):
+        (WebKit::NPObjectMessageReceiver::invokeDefault):
+        (WebKit::NPObjectMessageReceiver::getProperty):
+        (WebKit::NPObjectMessageReceiver::setProperty):
+        (WebKit::NPObjectMessageReceiver::construct):
+        * Shared/Plugins/NPObjectMessageReceiver.h:
+        * Shared/Plugins/NPObjectProxy.cpp:
+        (WebKit::NPObjectProxy::create):
+        (WebKit::NPObjectProxy::NPObjectProxy):
+        (WebKit::NPObjectProxy::invalidate):
+        (WebKit::NPObjectProxy::initialize):
+        (WebKit::NPObjectProxy::invoke):
+        (WebKit::NPObjectProxy::invokeDefault):
+        (WebKit::NPObjectProxy::getProperty):
+        (WebKit::NPObjectProxy::setProperty):
+        (WebKit::NPObjectProxy::construct):
+        * Shared/Plugins/NPObjectProxy.h:
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::createNPObjectProxy):
+        (WebKit::NPRemoteObjectMap::registerNPObject):
+        (WebKit::NPRemoteObjectMap::npVariantToNPVariantData):
+        (WebKit::NPRemoteObjectMap::npVariantDataToNPVariant):
+        * Shared/Plugins/NPRemoteObjectMap.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::pluginScriptableNPObject):
+        (WebKit::PluginProxy::getWindowScriptNPObject):
+        (WebKit::PluginProxy::getPluginElementNPObject):
+        (WebKit::PluginProxy::evaluate):
+
 2011-03-16  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
