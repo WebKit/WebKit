@@ -107,7 +107,7 @@ def main(argv):
 
     for dirname in parsed_args.image_dirs:
         for filename in os.listdir(dirname):
-            if not filename.endswith('.png'):
+            if not filename.endswith('.png') and not filename.endswith('.gif'):
                 continue
             shutil.copy(os.path.join(dirname, filename),
                         os.path.join(output_directory, 'Images'))
