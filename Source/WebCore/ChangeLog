@@ -1,3 +1,42 @@
+2011-03-17  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: extract content loading logic from scripts panel.
+        https://bugs.webkit.org/show_bug.cgi?id=55237
+
+        Encapsulate source files creation logic in debugger presentation model
+        to support source mappings in a pluggable way.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.sourceFile):
+        (WebInspector.DebuggerPresentationModel.prototype.requestSourceFileContent.else.didRequestSource):
+        (WebInspector.DebuggerPresentationModel.prototype.requestSourceFileContent):
+        (WebInspector.DebuggerPresentationModel.prototype._parsedScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._failedToParseScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript.else.resourceFinished):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        (WebInspector.DebuggerPresentationModel.prototype._ensureSourceFileAdded):
+        (WebInspector.DebuggerPresentationModel.prototype._resourceForURL):
+        (WebInspector.DebuggerPresentationModel.prototype._scriptSourceChanged):
+        (WebInspector.DebuggerPresentationModel.prototype._sourceFileAdded):
+        (WebInspector.DebuggerPresentationModel.prototype.breakpointsForSourceFileId):
+        (WebInspector.DebuggerPresentationModel.prototype.findBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointRemoved):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointResolved):
+        (WebInspector.DebuggerPresentationModel.prototype._restoreBreakpoints):
+        (WebInspector.DebuggerPresentationModel.prototype.set selectedCallFrame):
+        (WebInspector.DebuggerPresentationModel.prototype._actualLocationToSourceLocation):
+        (WebInspector.DebuggerPresentationModel.prototype.reset):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._sourceFileAdded):
+        (WebInspector.ScriptsPanel.prototype._showSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._sourceFileChanged):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.requestContent):
+
 2011-03-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
