@@ -1,3 +1,26 @@
+2011-03-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben; Dictated, but not read, by Adam Roben.
+
+        Adding new results for some failing tests on the SnowLeopard WebKit2 Tester.
+
+        The following bugs were filed to track these issues:
+            https://bugs.webkit.org/show_bug.cgi?id=56528
+            https://bugs.webkit.org/show_bug.cgi?id=56530
+            https://bugs.webkit.org/show_bug.cgi?id=56531
+            https://bugs.webkit.org/show_bug.cgi?id=56532
+            https://bugs.webkit.org/show_bug.cgi?id=56533
+            https://bugs.webkit.org/show_bug.cgi?id=56537
+            https://bugs.webkit.org/show_bug.cgi?id=56539
+
+        * platform/mac-wk2/animations/animation-controller-drt-api-expected.txt: Added.
+        * platform/mac-wk2/http/tests/appcache/online-fallback-layering-expected.txt: Added.
+        * platform/mac-wk2/http/tests/inspector/console-resource-errors-expected.txt: Added.
+        * platform/mac-wk2/http/tests/inspector/resource-har-conversion-expected.txt: Added.
+        * platform/mac-wk2/http/tests/xmlviewer/dumpAsText/frames-expected.txt: Added.
+        * platform/mac-wk2/media/controls-without-preload-expected.txt: Added.
+        * platform/mac-wk2/transitions/default-timing-function-expected.txt: Added.
+
 2011-03-16  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Ryosuke Niwa.
