@@ -109,6 +109,9 @@ scrollbars/scrollbar-crash-on-refresh.html
 # https://bugs.webkit.org/show_bug.cgi?id=22770
 tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=56561
+svg/custom/clip-path-referencing-use2.svg
+
 ###############################################################################
 # TESTS TIMING OUT
 ###############################################################################

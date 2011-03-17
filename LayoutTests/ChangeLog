@@ -1,5 +1,11 @@
 2011-03-17  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip flaky svg test on GTK.
+
+        * platform/gtk/Skipped:
+
+2011-03-17  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK baselines for fast/dynamic/text-combine.html added
         in r81251.
 
