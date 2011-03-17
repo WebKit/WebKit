@@ -1,3 +1,10 @@
+2011-03-17  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix the interpreter build.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute): Added globalData to inheritorID().
+
 2011-03-16  Sam Weinig  <sam@webkit.org>
 
         Fix the interpreter build.

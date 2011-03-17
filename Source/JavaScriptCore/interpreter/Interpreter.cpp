@@ -4265,7 +4265,7 @@ skip_id_custom_self:
         Structure* structure;
         JSValue proto = callFrame->r(protoRegister).jsValue();
         if (proto.isObject())
-            structure = asObject(proto)->inheritorID();
+            structure = asObject(proto)->inheritorID(callFrame->globalData());
         else
             structure = constructor->scope()->globalObject->emptyObjectStructure();
         callFrame->uncheckedR(thisRegister) = constructEmptyObject(callFrame, structure);
