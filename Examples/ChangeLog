@@ -1,3 +1,18 @@
+2011-03-17  Jeff Miller  <jeffm@apple.com>
+
+        Use a consistent set of file patterns in the svn:ignore property for all .xcodeproj directories, specifically:
+        
+        *.mode*
+        *.pbxuser
+        *.perspective*
+        project.xcworkspace
+        xcuserdata
+
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj: Modified property svn:ignore.
+        * NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj: Modified property svn:ignore.
+        * NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj: Modified property svn:ignore.
+        * NetscapeInputMethodPlugin/NetscapeInputMethodPlugin.xcodeproj: Modified property svn:ignore.
+
 2011-01-17  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.

@@ -1,3 +1,15 @@
+2011-03-17  Jeff Miller  <jeffm@apple.com>
+
+        Use a consistent set of file patterns in the svn:ignore property for all .xcodeproj directories, specifically:
+        
+        *.mode*
+        *.pbxuser
+        *.perspective*
+        project.xcworkspace
+        xcuserdata
+
+        * WebKit.xcodeproj: Modified property svn:ignore.
+
 2011-03-15  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

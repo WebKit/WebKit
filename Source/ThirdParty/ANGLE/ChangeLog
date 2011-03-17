@@ -1,3 +1,16 @@
+2011-03-17  Jeff Miller  <jeffm@apple.com>
+
+        Use a consistent set of file patterns in the svn:ignore property for all .xcodeproj directories, specifically:
+        
+        *.mode*
+        *.pbxuser
+        *.perspective*
+        project.xcworkspace
+        xcuserdata
+
+        * ANGLE.xcodeproj: Modified property svn:ignore.
+        * src/build_angle.xcodeproj: Modified property svn:ignore.
+
 2011-01-18  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, Leopard build fix. Remove flex/bison targets for GLSL

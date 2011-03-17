@@ -1,3 +1,19 @@
+2011-03-17  Jeff Miller  <jeffm@apple.com>
+
+        Use a consistent set of file patterns in the svn:ignore property for all .xcodeproj directories, specifically:
+        
+        *.mode*
+        *.pbxuser
+        *.perspective*
+        project.xcworkspace
+        xcuserdata
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj: Modified property svn:ignore.
+        * MiniBrowser/MiniBrowser.xcodeproj: Modified property svn:ignore.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj: Modified property svn:ignore.
+        * WebKitLauncher/WebKitLauncher.xcodeproj: Modified property svn:ignore.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj: Modified property svn:ignore.
+
 2011-03-17  Adam Roben  <aroben@apple.com>
 
         Make old-run-webkit-tests pick up mac-wk2 results when running in WebKit2 mode on Windows

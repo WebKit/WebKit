@@ -1,3 +1,15 @@
+2011-03-17  Jeff Miller  <jeffm@apple.com>
+
+        Use a consistent set of file patterns in the svn:ignore property for all .xcodeproj directories, specifically:
+        
+        *.mode*
+        *.pbxuser
+        *.perspective*
+        project.xcworkspace
+        xcuserdata
+
+        * JavaScriptCore.xcodeproj: Modified property svn:ignore.
+
 2011-03-17  Gavin Barraclough  <barraclough@apple.com>
 
         Reverting r81197, breaks JIT + INTERPRETER build.
