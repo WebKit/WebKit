@@ -3237,3 +3237,7 @@ http/tests/xmlhttprequest/basic-auth.html
 # [Qt]Web Inspector: inspector/elements/mutate-unknown-node.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=56457
 inspector/elements/mutate-unknown-node.html
+
+# REGRESSION(81374, 81384): editing/deleting/5206311-1.html hits assertion on non-Mac platforms
+# https://bugs.webkit.org/show_bug.cgi?id=56599
+editing/deleting/5206311-1.html
