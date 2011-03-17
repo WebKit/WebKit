@@ -102,10 +102,10 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
     [windowController.get() setInspectorClient:this];
 
     m_frontendPage = core([windowController.get() webView]);
-    WebInspectorFrontendClient* frontendClient = new WebInspectorFrontendClient(m_webView, windowController.get(), inspectorController, m_frontendPage, createFrontendSettings());
-    m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient);
-
-    [[m_webView inspector] setFrontend:[[WebInspectorFrontend alloc] initWithFrontendClient:frontendClient]];
+    OwnPtr<WebInspectorFrontendClient> frontendClient = adoptPtr(new WebInspectorFrontendClient(m_webView, windowController.get(), inspectorController, m_frontendPage, createFrontendSettings()));
+    RetainPtr<WebInspectorFrontend> webInspectorFrontend(AdoptNS, [[WebInspectorFrontend alloc] initWithFrontendClient:frontendClient.get()]);
+    [[m_webView inspector] setFrontend:webInspectorFrontend.get()];
+    m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient.release());
 }
 
 void WebInspectorClient::highlight(Node* node)
