@@ -1,3 +1,12 @@
+2011-03-16  Sam Weinig  <sam@webkit.org>
+
+        Add compositing/transitions/singular-scale-transition.html to the Skipped lists.
+        Seems to be the same assert that https://bugs.webkit.org/show_bug.cgi?id=56488 was
+        filed for.
+
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2011-03-16  John Bauman  <jbauman@chromium.org>
 
         Reviewed by James Robinson.
