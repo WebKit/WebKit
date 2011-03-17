@@ -1,3 +1,13 @@
+2011-03-17  Ben Taylor  <bentaylor.solx86@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a COMPILER(SUNCC) define for Sun Studio 12. 
+        https://bugs.webkit.org/show_bug.cgi?56444
+        derived from patch 1 of 16 originally from https://bugs.webkit.org/show_bug.cgi?id=24932
+
+        * wtf/Platform.h:
+
 2011-03-17  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by David Levin.
