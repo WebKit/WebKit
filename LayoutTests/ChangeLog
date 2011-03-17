@@ -1,3 +1,14 @@
+2011-03-17  Adam Roben  <aroben@apple.com>
+
+        Skip a test that is only failing on some Leopard slaves
+
+        svg/text/font-size-below-point-five.svg generates different results on apple-macpro-5 from
+        the other Leopard slaves. <http://webkit.org/b/56544> tracks this issue.
+
+        * platform/mac-leopard/Skipped: Skip svg/text/font-size-below-point-five.
+        * platform/mac-leopard/svg/text/font-size-below-point-five-expected.txt: Reverted these
+        results to the results that all slaves except apple-macpro-5 generate.
+
 2011-03-17  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed, bad expected results were added. This fixes

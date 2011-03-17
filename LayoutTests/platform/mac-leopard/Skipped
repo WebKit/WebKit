@@ -197,6 +197,15 @@ fast/frames/iframe-plugin-load-remove-document-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=56165
 plugins/destroy-on-setwindow.html
 
-# java/lc3/JavaObject/JavaObjectToDouble-001.html is failing on the Leopard Debug tester
+##########################################################
+# Tests below this point are failing only on some slaves.
+# http://webkit.org/b/56551 covers the general issue.
+##########################################################
+
+# java/lc3/JavaObject/JavaObjectToDouble-001.html is failing on some slaves
 # https://bugs.webkit.org/show_bug.cgi?id=56545
 java/lc3/JavaObject/JavaObjectToDouble-001.html
+
+# Failing on some slaves
+# http://webkit.org/b/56544
+svg/text/font-size-below-point-five.svg
