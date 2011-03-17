@@ -14,13 +14,21 @@
             layoutTestController.notifyDone();
     }
 
+    function playing()
+    {
+        // Ensure that the frame is always the same in pixel result.
+        video.addEventListener("seeked", finish);
+        video.pause();
+        video.currentTime = 0;
+    }
+
     function canplaythrough()
     {
         if (!loadedCount) {
             video.src = findMediaFile("video", "content/test");
             video.load();
             video.play();
-            video.addEventListener("playing", finish);
+            video.addEventListener("playing", playing);
         }
         loadedCount++;
     }
