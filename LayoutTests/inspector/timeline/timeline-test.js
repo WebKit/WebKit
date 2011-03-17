@@ -30,7 +30,11 @@ InspectorTest.startTimeline = function(callback)
 
 InspectorTest.stopTimeline = function(callback)
 {
-    TimelineAgent.stop(callback);
+    function didStop()
+    {
+        callback(InspectorTest._timelineRecords);
+    }
+    TimelineAgent.stop(didStop);
 };
 
 InspectorTest.performActionsAndPrint = function(actions, typeName)

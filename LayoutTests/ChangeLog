@@ -1,3 +1,16 @@
+2011-03-17  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: timeline-paint.html is flaky on GTK 64-bit Debug.
+        https://bugs.webkit.org/show_bug.cgi?id=56554
+
+        It is not guaranteed that we receive exactly one paint event.
+
+        * inspector/timeline/timeline-paint.html:
+        * inspector/timeline/timeline-test.js:
+        (initialize_Timeline.InspectorTest.stopTimeline):
+
 2011-03-17  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip fast/reflections/abs-position-in-reflection.html on GTK

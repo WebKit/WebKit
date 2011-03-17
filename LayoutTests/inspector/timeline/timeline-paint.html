@@ -12,7 +12,28 @@ function performActions()
 
 function test()
 {
-    InspectorTest.performActionsAndPrint("performActions()", "Paint");
+    InspectorTest.startTimeline(step1);
+    function step1()
+    {
+        InspectorTest.evaluateInPage("performActions()", step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.stopTimeline(step3);
+    }
+
+    function step3(records)
+    {
+        for (var i = 0; i < records.length; ++i) {
+            var record = records[i];
+            if (record.type === WebInspector.TimelineAgent.RecordType.Paint) {
+                InspectorTest.printTimelineRecordProperties(record);
+                break;
+            }
+        }
+        InspectorTest.completeTest();
+    }
 }
 
 </script>
