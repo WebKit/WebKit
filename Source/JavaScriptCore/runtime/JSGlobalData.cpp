@@ -111,6 +111,7 @@ void JSGlobalData::storeVPtrs()
     VPtrHackExecutable* executable = new (executableStorage) VPtrHackExecutable(Structure::create(Structure::VPtrStealingHack, 0));
     JSCell* jsFunction = new (storage) JSFunction(Structure::create(Structure::VPtrStealingHack, &JSFunction::s_info), executable);
     JSGlobalData::jsFunctionVPtr = jsFunction->vptr();
+    executable->~JSCell();
     jsFunction->~JSCell();
 }
 
