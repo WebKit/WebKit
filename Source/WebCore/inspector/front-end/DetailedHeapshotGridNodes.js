@@ -572,7 +572,7 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
                 function (node) {
                      return node.type === nodeType
                          && (nodeClassName === null || node.className === nodeClassName)
-                         && !(node.id in otherSnapshot.idsMap);
+                         && !otherSnapshot.hasId(node.id);
                 });
         }
     },
