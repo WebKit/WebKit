@@ -581,7 +581,7 @@ public:
         }
     }
 
-    void load32(void* address, RegisterID dest)
+    void load32(const void* address, RegisterID dest)
     {
         /*
             li  addrTemp, address
@@ -749,7 +749,7 @@ public:
         }
     }
 
-    void store32(RegisterID src, void* address)
+    void store32(RegisterID src, const void* address)
     {
         /*
             li  addrTemp, address
@@ -759,7 +759,7 @@ public:
         m_assembler.sw(src, addrTempRegister, 0);
     }
 
-    void store32(Imm32 imm, void* address)
+    void store32(Imm32 imm, const void* address)
     {
         /*
             li  immTemp, imm

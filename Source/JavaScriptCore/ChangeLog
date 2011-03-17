@@ -1,3 +1,14 @@
+2011-03-16  Chao-ying Fu  <fu@mips.com>
+
+        Reviewed by Darin Adler.
+
+        Fix MIPS build with const *void
+        https://bugs.webkit.org/show_bug.cgi?id=56513
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::load32):
+        (JSC::MacroAssemblerMIPS::store32):
+
 2011-03-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.
