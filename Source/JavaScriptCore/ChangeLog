@@ -1,3 +1,12 @@
+2011-03-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix clang build.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::storeVPtrs):
+
 2011-03-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
