@@ -258,27 +258,49 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
         // Shift new symbols so they get stored prior to existing symbols.
         m_nextGlobalIndex -= symbolTable->size();
 
-        size_t oldSymbolTableSize = symbolTable->size();
-
+        HashSet<StringImpl*, IdentifierRepHash> newGlobals;
+        Vector<std::pair<int, bool>, 16> functionInfo(functionStack.size());
         for (size_t i = 0; i < functionStack.size(); ++i) {
             FunctionBodyNode* function = functionStack[i];
             globalObject->removeDirect(function->ident()); // Make sure our new function is not shadowed by an old property.
-            emitNewFunction(addGlobalVar(function->ident(), false), function);
+            SymbolTableEntry entry = symbolTable->inlineGet(function->ident().impl());
+            
+            if (entry.isNull())
+                newGlobals.add(function->ident().impl());
+            functionInfo[i] = make_pair(entry.getIndex(), entry.isReadOnly());
         }
-
-        Vector<RegisterID*, 32> newVars;
+        
+        Vector<bool, 16> shouldCreateVar(varStack.size());
         for (size_t i = 0; i < varStack.size(); ++i) {
-            if (globalObject->symbolTableHasProperty(*varStack[i].first) || globalObject->hasProperty(exec, *varStack[i].first))
+            if (newGlobals.contains(varStack[i].first->impl()) || globalObject->hasProperty(exec, *varStack[i].first)) {
+                shouldCreateVar[i] = false;
                 continue;
-            newVars.append(addGlobalVar(*varStack[i].first, varStack[i].second & DeclarationStacks::IsConstant));
+            }
+            shouldCreateVar[i] = true;
+            newGlobals.add(varStack[i].first->impl());
         }
 
-        globalObject->resizeRegisters(oldSymbolTableSize, symbolTable->size());
+        int expectedSize = symbolTable->size() + newGlobals.size();
+        globalObject->resizeRegisters(symbolTable->size(), expectedSize);
+    
+        for (size_t i = 0; i < functionStack.size(); ++i) {
+            FunctionBodyNode* function = functionStack[i];
+            if (functionInfo[i].second)
+                continue;
+            RegisterID* dst = addGlobalVar(function->ident(), false);
+            JSValue value = new (exec) JSFunction(exec, makeFunction(exec, function), scopeChain);
+            globalObject->registerAt(dst->index() - m_globalVarStorageOffset).set(*m_globalData, globalObject, value);
+        }
+
+        for (size_t i = 0; i < varStack.size(); ++i) {
+            if (!shouldCreateVar[i])
+                continue;
+            addGlobalVar(*varStack[i].first, varStack[i].second & DeclarationStacks::IsConstant);
+        }
+        if (symbolTable->size() != expectedSize)
+            CRASH();
 
         preserveLastVar();
-
-        for (size_t i = 0; i < newVars.size(); ++i)
-            emitLoad(newVars[i], jsUndefined());
     } else {
         for (size_t i = 0; i < functionStack.size(); ++i) {
             FunctionBodyNode* function = functionStack[i];

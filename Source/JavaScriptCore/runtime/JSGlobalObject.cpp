@@ -414,7 +414,7 @@ void JSGlobalObject::copyGlobalsTo(RegisterFile& registerFile)
 
 void JSGlobalObject::resizeRegisters(int oldSize, int newSize)
 {
-    ASSERT(symbolTable().size() == newSize);
+    ASSERT(oldSize <= newSize);
     if (newSize == oldSize)
         return;
     ASSERT(newSize && newSize > oldSize);

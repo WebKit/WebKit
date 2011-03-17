@@ -1,3 +1,28 @@
+2011-03-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Crash in  JSC::MarkStack::drain Under Stress
+        https://bugs.webkit.org/show_bug.cgi?id=56470
+
+        We perform a number of gc allocations while when
+        we are setting up new globals in a piece of global
+        code.  We do this by adding new properties to the
+        symbol table, and then expanding the storage to fit
+        at the end.
+
+        If a GC happens during this time we will report an
+        incorrect size for the global object's symbol table
+        storage.
+
+        This patch corrects this by growing the storage size
+        before we starting adding entries to the symbol table.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::resizeRegisters):
+
 2011-03-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
