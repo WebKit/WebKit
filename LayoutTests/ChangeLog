@@ -1,3 +1,31 @@
+2011-03-16  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        LayoutTests exercising filesystem: URIs should run over HTTP to avoid weirdness related to file: URLs
+        https://bugs.webkit.org/show_bug.cgi?id=56328
+
+        Moves the test for resolveLocalFileSystemURI into new "filesystem"
+        directory under http/tests/, and adjusts file paths appropriately.
+
+        * fast/filesystem/resolve-uri-expected.txt: Removed.
+        * fast/filesystem/resolve-uri.html: Removed.
+        * fast/filesystem/script-tests/resolve-uri.js: Removed.
+        * http/tests/filesystem: Added.
+        * http/tests/filesystem/resolve-uri-expected.txt: Copied from LayoutTests/fast/filesystem/resolve-uri-expected.txt.
+        * http/tests/filesystem/resolve-uri.html: Copied from LayoutTests/fast/filesystem/resolve-uri.html.
+        * http/tests/filesystem/resources: Added.
+        * http/tests/filesystem/resources/fs-test-util.js: Copied from LayoutTests/fast/filesystem/resources/fs-test-util.js.
+        * http/tests/filesystem/script-tests: Added.
+        * http/tests/filesystem/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/filesystem/script-tests/TEMPLATE.html.
+        * http/tests/filesystem/script-tests/resolve-uri.js: Copied from LayoutTests/fast/filesystem/script-tests/resolve-uri.js.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        Added new http/tests/filesystem directory to skip lists since
+        they don't suppor the filesystem API.
+
 2011-03-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
