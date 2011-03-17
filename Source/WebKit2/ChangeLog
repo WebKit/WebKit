@@ -1,3 +1,43 @@
+2011-03-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add PluginProcessShim hooks for when windows are shown and hidden
+        https://bugs.webkit.org/show_bug.cgi?id=56597
+
+        * Configurations/PluginProcessShim.xcconfig:
+        Add HEADER_SEARCH_PATHS so we can find WebKitSystemInterface.h.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::cocoaWindowShown):
+        (WebKit::cocoaWindowHidden):
+        (WebKit::carbonWindowShown):
+        (WebKit::carbonWindowHidden):
+        (WebKit::setModal):
+        (WebKit::PluginProcess::initializeShim):
+        Add empty stubs.
+
+        * PluginProcess/mac/PluginProcessShim.h:
+        * PluginProcess/mac/PluginProcessShim.mm:
+        (WebKit::beginModal):
+        (WebKit::endModal):
+        Keep a modal count and call setModal accordingly.
+
+        (WebKit::shim_NSApplication_RunModalForWindow):
+        (WebKit::shimModalDialog):
+        (WebKit::shimAlert):
+        Call beginModal/endModal.
+
+        (WebKit::shimShowWindow):
+        (WebKit::shimHideWindow):
+        Call the shim functions.
+        
+        (WebKit::WebKitPluginProcessShimInitialize):
+        Listen for notifications and call the necessary shim functions.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Link the plug-in process shim with AppKit and QuartzCore and WKSI.
+
 2011-03-17  Jeff Miller  <jeffm@apple.com>
 
         Use a consistent set of file patterns in the svn:ignore property for all .xcodeproj directories, specifically:

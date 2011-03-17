@@ -97,6 +97,8 @@
 		1A2D957012848564001EB962 /* ChildProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D956E12848564001EB962 /* ChildProcess.cpp */; };
 		1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A30066C1110F4F70031937C /* ResponsivenessTimer.h */; };
 		1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */; };
+		1A3979F61332983A00E00300 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
+		1A3979F71332983F00E00300 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1A3DD1FD125E59F3004515E6 /* WebFindClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3DD1FC125E59F3004515E6 /* WebFindClient.cpp */; };
 		1A3DD202125E5A1F004515E6 /* WebFindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3DD201125E5A1F004515E6 /* WebFindClient.h */; };
 		1A3DD206125E5A2F004515E6 /* APIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3DD205125E5A2F004515E6 /* APIClient.h */; };
@@ -1688,7 +1690,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A3979F61332983A00E00300 /* AppKit.framework in Frameworks */,
 				1AA479B012A5A436008236C3 /* Carbon.framework in Frameworks */,
+				1A3979F71332983F00E00300 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4232,6 +4236,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1AC25FBB12A48EDA00BD2671 /* PluginProcessShim.xcconfig */;
 			buildSettings = {
+				OTHER_LDFLAGS = (
+					"$(OTHER_LDFLAGS)",
+					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
+				);
 			};
 			name = Debug;
 		};
@@ -4239,6 +4247,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1AC25FBB12A48EDA00BD2671 /* PluginProcessShim.xcconfig */;
 			buildSettings = {
+				OTHER_LDFLAGS = (
+					"$(OTHER_LDFLAGS)",
+					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
+				);
 			};
 			name = Release;
 		};
@@ -4246,6 +4258,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1AC25FBB12A48EDA00BD2671 /* PluginProcessShim.xcconfig */;
 			buildSettings = {
+				OTHER_LDFLAGS = (
+					"$(OTHER_LDFLAGS)",
+					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
+				);
 			};
 			name = Production;
 		};

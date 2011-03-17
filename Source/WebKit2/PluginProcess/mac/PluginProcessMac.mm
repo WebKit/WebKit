@@ -78,12 +78,41 @@ static UInt32 getCurrentEventButtonState()
 #endif
 }
     
+static void cocoaWindowShown(NSWindow *)
+{
+    // FIXME: Implement.
+}
+
+static void cocoaWindowHidden(NSWindow *)
+{
+    // FIXME: Implement.
+}
+
+static void carbonWindowShown(WindowRef)
+{
+    // FIXME: Implement.
+}
+
+static void carbonWindowHidden(WindowRef)
+{
+}
+
+static void setModal(bool)
+{
+    // FIXME: Implement.
+}
+
 void PluginProcess::initializeShim()
 {
     const PluginProcessShimCallbacks callbacks = {
         shouldCallRealDebugger,
         isWindowActive,
-        getCurrentEventButtonState
+        getCurrentEventButtonState,
+        cocoaWindowShown,
+        cocoaWindowHidden,
+        carbonWindowShown,
+        carbonWindowHidden,
+        setModal
     };
 
     PluginProcessShimInitializeFunc initFunc = reinterpret_cast<PluginProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitPluginProcessShimInitialize"));
