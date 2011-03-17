@@ -1,3 +1,38 @@
+2011-03-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r81350.
+        http://trac.webkit.org/changeset/81350
+        https://bugs.webkit.org/show_bug.cgi?id=56560
+
+        "Breaks twenty Chromium Webkit Win builder webkit_gpu_tests"
+        (Requested by apavlov on #webkit).
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::State::State):
+        (WebCore::GLES2Canvas::clearRect):
+        (WebCore::GLES2Canvas::fillPath):
+        (WebCore::GLES2Canvas::fillRect):
+        (WebCore::GLES2Canvas::clipPath):
+        (WebCore::GLES2Canvas::restore):
+        (WebCore::GLES2Canvas::drawTexturedRect):
+        (WebCore::GLES2Canvas::drawTexturedRectTile):
+        (WebCore::GLES2Canvas::drawQuad):
+        * platform/graphics/chromium/GLES2Canvas.h:
+        * platform/graphics/gpu/BicubicShader.cpp: Removed.
+        * platform/graphics/gpu/BicubicShader.h: Removed.
+        * platform/graphics/gpu/ConvolutionShader.cpp: Removed.
+        * platform/graphics/gpu/ConvolutionShader.h: Removed.
+        * platform/graphics/gpu/DrawingBuffer.h:
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::create):
+        (WebCore::SharedGraphicsContext3D::SharedGraphicsContext3D):
+        * platform/graphics/gpu/SharedGraphicsContext3D.h:
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::canAccelerate):
+
 2011-03-17  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -703,7 +703,8 @@ void PlatformContextSkia::applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths)
 
 bool PlatformContextSkia::canAccelerate() const
 {
-    return !m_state->m_fillShader; // Can't accelerate with a fill gradient or pattern.
+    return !m_state->m_fillShader // Can't accelerate with a fill gradient or pattern.
+        && !m_state->m_looper; // Can't accelerate with a shadow.
 }
 
 bool PlatformContextSkia::canvasClipApplied() const

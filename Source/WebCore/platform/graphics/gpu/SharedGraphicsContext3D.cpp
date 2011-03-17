@@ -35,10 +35,7 @@
 #include "SharedGraphicsContext3D.h"
 
 #include "AffineTransform.h"
-#include "BicubicShader.h"
 #include "Color.h"
-#include "ConvolutionShader.h"
-#include "DrawingBuffer.h"
 #include "Extensions3D.h"
 #include "FloatRect.h"
 #include "IntSize.h"
@@ -46,7 +43,6 @@
 #include "SolidFillShader.h"
 #include "TexShader.h"
 
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -69,26 +65,15 @@ PassRefPtr<SharedGraphicsContext3D> SharedGraphicsContext3D::create(HostWindow* 
     OwnPtr<TexShader> texShader = TexShader::create(context.get());
     if (!texShader)
         return 0;
-    OwnPtr<BicubicShader> bicubicShader = BicubicShader::create(context.get());
-    if (!bicubicShader)
-        return 0;
-    OwnArrayPtr<OwnPtr<ConvolutionShader> > convolutionShaders = adoptArrayPtr(new OwnPtr<ConvolutionShader>[cMaxKernelWidth]);
-    for (int i = 0; i < cMaxKernelWidth; ++i) {
-        convolutionShaders[i] = ConvolutionShader::create(context.get(), i + 1);
-        if (!convolutionShaders[i])
-            return 0;
-    }
-    return adoptRef(new SharedGraphicsContext3D(context.release(), solidFillShader.release(), texShader.release(), bicubicShader.release(), convolutionShaders.release()));
+    return adoptRef(new SharedGraphicsContext3D(context.release(), solidFillShader.release(), texShader.release()));
 }
 
-SharedGraphicsContext3D::SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D> context, PassOwnPtr<SolidFillShader> solidFillShader, PassOwnPtr<TexShader> texShader, PassOwnPtr<BicubicShader> bicubicShader, PassOwnArrayPtr<OwnPtr<ConvolutionShader> > convolutionShaders)
+SharedGraphicsContext3D::SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D> context, PassOwnPtr<SolidFillShader> solidFillShader, PassOwnPtr<TexShader> texShader)
     : m_context(context)
     , m_bgraSupported(false)
     , m_quadVertices(0)
     , m_solidFillShader(solidFillShader)
     , m_texShader(texShader)
-    , m_bicubicShader(bicubicShader)
-    , m_convolutionShaders(convolutionShaders)
     , m_oesStandardDerivativesSupported(false)
 {
     allContexts()->add(this);
@@ -384,17 +369,6 @@ void SharedGraphicsContext3D::useTextureProgram(const AffineTransform& transform
     m_texShader->use(transform, texTransform, 0, alpha);
 }
 
-void SharedGraphicsContext3D::useBicubicProgram(const AffineTransform& transform, const AffineTransform& texTransform, const float coefficients[16], const float imageIncrement[2], float alpha)
-{
-    m_bicubicShader->use(transform, texTransform, coefficients, imageIncrement, alpha);
-}
-
-void SharedGraphicsContext3D::useConvolutionProgram(const AffineTransform& transform, const AffineTransform& texTransform, const float* kernel, int kernelWidth, float imageIncrement[2])
-{
-    ASSERT(kernelWidth >= 1 && kernelWidth <= cMaxKernelWidth);
-    m_convolutionShaders[kernelWidth - 1]->use(transform, texTransform, kernel, kernelWidth, imageIncrement);
-}
-
 void SharedGraphicsContext3D::bindFramebuffer(Platform3DObject framebuffer)
 {
     m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, framebuffer);
@@ -435,20 +409,6 @@ void SharedGraphicsContext3D::useLoopBlinnExteriorProgram(unsigned vertexOffset,
     }
     ASSERT(m_loopBlinnExteriorShader);
     m_loopBlinnExteriorShader->use(vertexOffset, klmOffset, transform, color);
-}
-
-DrawingBuffer* SharedGraphicsContext3D::getOffscreenBuffer(unsigned index, const IntSize& size)
-{
-    if (index >= m_offscreenBuffers.size())
-        m_offscreenBuffers.resize(index + 1);
-
-    if (!m_offscreenBuffers[index])
-        m_offscreenBuffers[index] = m_context->createDrawingBuffer(size);
-
-    if (size.width() != m_offscreenBuffers[index]->size().width()
-        || size.height() != m_offscreenBuffers[index]->size().height())
-        m_offscreenBuffers[index]->reset(size);
-    return m_offscreenBuffers[index].get();
 }
 
 } // namespace WebCore

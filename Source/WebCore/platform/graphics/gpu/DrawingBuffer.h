@@ -59,7 +59,6 @@ public:
     void reset(const IntSize&);
     void bind();
     IntSize size() const { return m_size; }
-    Platform3DObject colorBuffer() const { return m_colorBuffer; }
 
     // Clear all resources from this object, as well as context. Called when context is destroyed
     // to prevent invalid accesses to the resources.
