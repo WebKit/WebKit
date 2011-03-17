@@ -1,3 +1,13 @@
+2011-03-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update the default navigator.vendor value
+        https://bugs.webkit.org/show_bug.cgi?id=56449
+
+        * page/NavigatorBase.cpp: Updated the default value of
+        WEBCORE_NAVIGATOR_VENDOR.
+
 2011-03-16  John Bauman  <jbauman@chromium.org>
 
         Reviewed by James Robinson.
