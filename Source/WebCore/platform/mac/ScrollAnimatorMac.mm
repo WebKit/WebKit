@@ -376,13 +376,8 @@ static NSSize abs(NSSize size)
 
 - (void)setUpAnimation:(RetainPtr<ScrollbarPartAnimation>&)scrollbarPartAnimation scrollerPainter:(WKScrollbarPainterRef)scrollerPainter part:(WebCore::ScrollbarPart)part animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
 {
-    CGFloat currentAlpha = part == WebCore::ThumbPart ? wkScrollbarPainterKnobAlpha(scrollerPainter)
-                            : wkScrollbarPainterTrackAlpha(scrollerPainter);
-    if (newAlpha == currentAlpha)
-        return;
-
     // If the user has scrolled the page, then the scrollbars must be animated here. 
-    // This overrides the remaining early returns.
+    // This overrides the early returns.
     bool mustAnimate = _animator->haveScrolledSincePageLoad();
 
     if (_animator->scrollbarPaintTimerIsActive() && !mustAnimate)
@@ -401,7 +396,9 @@ static NSSize abs(NSSize size)
         [scrollbarPartAnimation.get() stopAnimation];
         scrollbarPartAnimation = nil;
     }
-    
+
+    [NSAnimationContext beginGrouping];
+    [[NSAnimationContext currentContext] setDuration:duration];
     scrollbarPartAnimation.adoptNS([[ScrollbarPartAnimation alloc] initWithScrollbarPainter:scrollerPainter 
                                                                     part:part
                                                                     scrollAnimator:_animator 
@@ -409,6 +406,7 @@ static NSSize abs(NSSize size)
                                                                     duration:duration]);
     [scrollbarPartAnimation.get() setAnimationBlockingMode:NSAnimationNonblocking];
     [scrollbarPartAnimation.get() startAnimation];
+    [NSAnimationContext endGrouping];
 }
 
 - (void)scrollerImp:(id)scrollerImp animateKnobAlphaTo:(CGFloat)newKnobAlpha duration:(NSTimeInterval)duration

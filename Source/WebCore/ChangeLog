@@ -1,3 +1,15 @@
+2011-03-17  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=56596 Overlay scrollbars sometimes 
+        fail to appear
+        -and corresponding-
+        <rdar://problem/8953779>
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPainterDelegate setUpAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+
 2011-03-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin.
