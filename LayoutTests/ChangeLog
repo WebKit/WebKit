@@ -1,3 +1,14 @@
+2011-03-17  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed, bad expected results were added. This fixes
+        the expected results and unskips the test on GTK.
+
+        [GTK] fast/viewport/viewport-131.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=56556
+
+        * fast/viewport/viewport-131-expected.txt:
+        * platform/gtk/Skipped:
+
 2011-03-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
