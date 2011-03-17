@@ -427,6 +427,14 @@ bool InlineTextBox::getEmphasisMarkPosition(RenderStyle* style, TextEmphasisPosi
     return !rubyText || !rubyText->firstLineBox();
 }
 
+enum RotationDirection { Counterclockwise, Clockwise };
+
+static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirection clockwise)
+{
+    return clockwise ? AffineTransform(0, 1, -1, 0, boxRect.x() + boxRect.maxY(), boxRect.maxY() - boxRect.x())
+        : AffineTransform(0, -1, 1, 0, boxRect.x() - boxRect.maxY(), boxRect.x() + boxRect.maxY());
+}
+
 void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE ||
@@ -485,25 +493,21 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     FloatPoint boxOrigin = locationIncludingFlipping();
     boxOrigin.move(tx, ty);    
     FloatRect boxRect(boxOrigin, IntSize(logicalWidth(), logicalHeight()));
-    FloatPoint textOrigin = FloatPoint(boxOrigin.x(), boxOrigin.y() + styleToUse->fontMetrics().ascent());
 
-    RenderCombineText* combinedText = styleToUse->hasTextCombine() ? toRenderCombineText(textRenderer()) : 0;
-    bool shouldRotate = !isHorizontal() && (!combinedText || !combinedText->isCombined());
-    if (shouldRotate) {
-        context->save();
-        context->translate(boxRect.x(), boxRect.maxY());
-        context->rotate(static_cast<float>(deg2rad(90.)));
-        context->translate(-boxRect.x(), -boxRect.maxY());
-    }
-    
-    
+    RenderCombineText* combinedText = styleToUse->hasTextCombine() && toRenderCombineText(textRenderer())->isCombined() ? toRenderCombineText(textRenderer()) : 0;
+
+    bool shouldRotate = !isHorizontal() && !combinedText;
+    if (shouldRotate)
+        context->concatCTM(rotation(boxRect, Clockwise));
+
     // Determine whether or not we have composition underlines to draw.
     bool containsComposition = renderer()->node() && renderer()->frame()->editor()->compositionNode() == renderer()->node();
     bool useCustomUnderlines = containsComposition && renderer()->frame()->editor()->compositionUsesCustomUnderlines();
 
     // Set our font.
-    int d = styleToUse->textDecorationsInEffect();
     const Font& font = styleToUse->font();
+
+    FloatPoint textOrigin = FloatPoint(boxOrigin.x(), boxOrigin.y() + font.fontMetrics().ascent());
 
     if (combinedText)
         combinedText->adjustTextOrigin(textOrigin, boxRect);
@@ -653,11 +657,21 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
 
         if (!emphasisMark.isEmpty()) {
             updateGraphicsContext(context, emphasisMarkColor, textStrokeColor, textStrokeWidth, styleToUse->colorSpace());
+
+            static TextRun objectReplacementCharacterTextRun(&objectReplacementCharacter, 1);
+            TextRun& emphasisMarkTextRun = combinedText ? objectReplacementCharacterTextRun : textRun;
+            FloatPoint emphasisMarkTextOrigin = combinedText ? FloatPoint(boxOrigin.x() + boxRect.width() / 2, boxOrigin.y() + font.fontMetrics().ascent()) : textOrigin;
+            if (combinedText)
+                context->concatCTM(rotation(boxRect, Clockwise));
+
             if (!paintSelectedTextSeparately || ePos <= sPos) {
                 // FIXME: Truncate right-to-left text correctly.
-                paintTextWithShadows(context, font, textRun, emphasisMark, emphasisMarkOffset, 0, length, length, textOrigin, boxRect, textShadow, textStrokeWidth > 0, isHorizontal());
+                paintTextWithShadows(context, combinedText ? combinedText->originalFont() : font, emphasisMarkTextRun, emphasisMark, emphasisMarkOffset, 0, length, length, emphasisMarkTextOrigin, boxRect, textShadow, textStrokeWidth > 0, isHorizontal());
             } else
-                paintTextWithShadows(context, font, textRun, emphasisMark, emphasisMarkOffset, ePos, sPos, length, textOrigin, boxRect, textShadow, textStrokeWidth > 0, isHorizontal());
+                paintTextWithShadows(context, combinedText ? combinedText->originalFont() : font, emphasisMarkTextRun, emphasisMark, emphasisMarkOffset, ePos, sPos, length, emphasisMarkTextOrigin, boxRect, textShadow, textStrokeWidth > 0, isHorizontal());
+
+            if (combinedText)
+                context->concatCTM(rotation(boxRect, Counterclockwise));
         }
 
         if (textStrokeWidth > 0)
@@ -673,16 +687,27 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
         paintTextWithShadows(context, font, textRun, nullAtom, 0, sPos, ePos, length, textOrigin, boxRect, selectionShadow, selectionStrokeWidth > 0, isHorizontal());
         if (!emphasisMark.isEmpty()) {
             updateGraphicsContext(context, selectionEmphasisMarkColor, textStrokeColor, textStrokeWidth, styleToUse->colorSpace());
-            paintTextWithShadows(context, font, textRun, emphasisMark, emphasisMarkOffset, sPos, ePos, length, textOrigin, boxRect, selectionShadow, selectionStrokeWidth > 0, isHorizontal());
+
+            static TextRun objectReplacementCharacterTextRun(&objectReplacementCharacter, 1);
+            TextRun& emphasisMarkTextRun = combinedText ? objectReplacementCharacterTextRun : textRun;
+            FloatPoint emphasisMarkTextOrigin = combinedText ? FloatPoint(boxOrigin.x() + boxRect.width() / 2, boxOrigin.y() + font.fontMetrics().ascent()) : textOrigin;
+            if (combinedText)
+                context->concatCTM(rotation(boxRect, Clockwise));
+
+            paintTextWithShadows(context, combinedText ? combinedText->originalFont() : font, emphasisMarkTextRun, emphasisMark, emphasisMarkOffset, sPos, ePos, length, emphasisMarkTextOrigin, boxRect, selectionShadow, selectionStrokeWidth > 0, isHorizontal());
+
+            if (combinedText)
+                context->concatCTM(rotation(boxRect, Counterclockwise));
         }
         if (selectionStrokeWidth > 0)
             context->restore();
     }
 
     // Paint decorations
-    if (d != TDNONE && paintInfo.phase != PaintPhaseSelection) {
+    int textDecorations = styleToUse->textDecorationsInEffect();
+    if (textDecorations != TDNONE && paintInfo.phase != PaintPhaseSelection) {
         updateGraphicsContext(context, textFillColor, textStrokeColor, textStrokeWidth, styleToUse->colorSpace());
-        paintDecoration(context, boxOrigin, d, textShadow);
+        paintDecoration(context, boxOrigin, textDecorations, textShadow);
     }
 
     if (paintInfo.phase == PaintPhaseForeground) {
@@ -715,7 +740,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     }
     
     if (shouldRotate)
-        context->restore();
+        context->concatCTM(rotation(boxRect, Counterclockwise));
 }
 
 void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)

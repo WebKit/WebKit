@@ -1,3 +1,15 @@
+2011-03-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/9052166> Emphasis marks appear over combined text rather than beside it
+        https://bugs.webkit.org/show_bug.cgi?id=56480
+
+        * fast/text/emphasis-combined-text.html: Added.
+        * platform/mac/fast/text/emphasis-combined-text-expected.checksum: Added.
+        * platform/mac/fast/text/emphasis-combined-text-expected.png: Added.
+        * platform/mac/fast/text/emphasis-combined-text-expected.txt: Added.
+
 2011-03-17  Jian Li  <jianli@chromium.org>
 
         Reviewed by Adam Barth.
