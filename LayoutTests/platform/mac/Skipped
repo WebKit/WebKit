@@ -322,6 +322,3 @@ transitions/interrupted-accelerated-transition.html
 # https://bugs.webkit.org/show_bug.cgi?id=56488
 compositing/transitions/scale-transition-no-start.html
 compositing/transitions/singular-scale-transition.html
-
-# Sometimes fails http://webkit.org/b/56578
-http/tests/inspector/network/network-size.html

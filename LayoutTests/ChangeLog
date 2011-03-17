@@ -1,3 +1,14 @@
+2011-03-17  Adam Roben  <aroben@apple.com>
+
+        Disable http/tests/inspector/network tests
+
+        They are known to be flaky. <http://webkit.org/b/56578> tracks the issue.
+
+        * http/tests/inspector/network/network-size.html-disabled: Renamed from LayoutTests/http/tests/inspector/network/network-size.html.
+        * http/tests/inspector/network/network-timing.html-disabled: Renamed from LayoutTests/http/tests/inspector/network/network-timing.html.
+
+        * platform/mac/Skipped: Removed a now-disabled test.
+
 2011-03-17  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Unreviewed, update test_expectations.txt
