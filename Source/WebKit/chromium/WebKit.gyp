@@ -44,22 +44,10 @@
                 # e.g. via build-webkit --chromium
                 'chromium_src_dir': '../../WebKit/chromium',
                 'webkit_target_type': 'static_library',
-
-                # List of DevTools source files, ordered by dependencies. It is used both
-                # for copying them to resource dir, and for generating 'devtools.html' file.
-                'devtools_files': [
-                    '<@(devtools_css_files)',
-                    '<@(devtools_js_files)',
-                ],
             },{
                 # WebKit is checked out in src/chromium/third_party/WebKit
                 'chromium_src_dir': '../../../../..',
                 'webkit_target_type': '<(library)',
-
-                'devtools_files': [
-                    '<@(devtools_css_files)',
-                    '<@(devtools_js_files)',
-                ],
             }],
         ],
         'ahem_path': '../../../Tools/DumpRenderTree/qt/fonts/AHEM____.TTF',
@@ -67,6 +55,13 @@
         # If debug_devtools is set to 1, JavaScript files for DevTools are
         # stored as is. Otherwise, a concatenated file is stored.
         'debug_devtools%': 0,
+
+        # List of DevTools source files, ordered by dependencies. It is used both
+        # for copying them to resource dir, and for generating 'devtools.html' file.
+        'devtools_files': [
+            '<@(devtools_css_files)',
+            '<@(devtools_js_files)',
+        ],
     },
     'targets': [
         {
