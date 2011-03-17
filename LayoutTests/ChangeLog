@@ -1,3 +1,14 @@
+2011-03-16  David Levin  <levin@chromium.org>
+
+        New baselines because the play button is now a pause button due to r81300.
+
+        * platform/chromium-linux/media/controls-after-reload-expected.checksum:
+        * platform/chromium-linux/media/controls-after-reload-expected.png:
+        * platform/chromium-mac/media/controls-after-reload-expected.checksum:
+        * platform/chromium-mac/media/controls-after-reload-expected.png:
+        * platform/chromium-win-xp/media/controls-after-reload-expected.checksum:
+        * platform/chromium-win-xp/media/controls-after-reload-expected.png:
+
 2011-03-16  Adam Barth  <abarth@webkit.org>
 
         Update the Skipped lists to reflect the new location of these tests.
