@@ -88,6 +88,20 @@ document.execCommand('insertLineBreak');
 document.execCommand('insertText', false, 'B');
 shouldBe('textArea.value', '"A\\nB"');
 
+// Confirms correct count for close linebreaks inputs.
+createFocusedTextAreaWithMaxLength3();
+textArea.innerHTML = 'a\n\n';
+document.execCommand('insertLineBreak');
+shouldBe('textArea.value', '"a\\n\\n"');
+
+// Confirms correct count for open consecutive linebreaks inputs.
+createFocusedTextAreaWithMaxLength3();
+document.execCommand('insertLineBreak');
+document.execCommand('insertLineBreak');
+document.execCommand('insertLineBreak');
+document.execCommand('insertLineBreak');
+shouldBe('textArea.value', '"\\n\\n\\n"');
+
 // According to the HTML5 specification, maxLength is code-point length.
 // However WebKit handles it as grapheme length.
 

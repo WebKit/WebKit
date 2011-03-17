@@ -1,3 +1,15 @@
+2011-03-16  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Textarea maxlength doesn't account for newlines
+        https://bugs.webkit.org/show_bug.cgi?id=54443
+
+        * fast/forms/script-tests/textarea-maxlength.js:
+        (createFocusedTextAreaWithMaxLength3): Added two tests to make sure consecutive insertbreaks
+        work correctly for textarea maxlength.
+        * fast/forms/textarea-maxlength-expected.txt: Added two test results.
+
 2011-03-16  Alice Liu  <alice.liu@apple.com>
 
         Add fast/workers/storage/interrupt-database-sync.html to the win-xp skipped list

@@ -47,6 +47,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static bool canAppendNewLineFeed(const VisibleSelection& selection)
+{
+    ExceptionCode ec = 0;
+    RefPtr<BeforeTextInsertedEvent> event = BeforeTextInsertedEvent::create(String("\n"));
+    selection.rootEditableElement()->dispatchEvent(event, ec);
+    return event->text().length();
+}
+
 TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, const String &textToInsert, TypingCommandOptions options, TextGranularity granularity, TextCompositionType compositionType)
     : CompositeEditCommand(document)
     , m_commandType(commandType)
@@ -403,12 +411,18 @@ void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool select
 
 void TypingCommand::insertLineBreak()
 {
+    if (!canAppendNewLineFeed(endingSelection()))
+        return;
+
     applyCommandToComposite(InsertLineBreakCommand::create(document()));
     typingAddedToOpenCommand(InsertLineBreak);
 }
 
 void TypingCommand::insertParagraphSeparator()
 {
+    if (!canAppendNewLineFeed(endingSelection()))
+        return;
+
     applyCommandToComposite(InsertParagraphSeparatorCommand::create(document()));
     typingAddedToOpenCommand(InsertParagraphSeparator);
 }

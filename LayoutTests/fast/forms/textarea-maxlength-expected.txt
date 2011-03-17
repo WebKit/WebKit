@@ -21,6 +21,8 @@ PASS textArea.value is "def"
 PASS textArea.value is "abcdef"
 PASS textArea.value is "abcde"
 PASS textArea.value is "A\nB"
+PASS textArea.value is "a\n\n"
+PASS textArea.value is "\n\n\n"
 PASS textArea.value is "AB" + fancyX
 PASS textArea.value.length is 5
 PASS textArea.value is "ABC"

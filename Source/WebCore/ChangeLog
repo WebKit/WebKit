@@ -1,3 +1,18 @@
+2011-03-16  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Textarea maxlength doesn't account for newlines
+        https://bugs.webkit.org/show_bug.cgi?id=54443
+
+        When a user presses a return key, TypingCommand::insertLineBreak() is called.
+        So before append a new line, check if we can add the new line.
+
+        * editing/TypingCommand.cpp:
+        (WebCore::canAppendNewLineFeed): Implement new helper function to check if we can add new line.
+        (WebCore::TypingCommand::insertLineBreak): Added check logic before adding the new line.
+        (WebCore::TypingCommand::insertParagraphSeparator): Added check logic before adding the new line.
+
 2011-03-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
