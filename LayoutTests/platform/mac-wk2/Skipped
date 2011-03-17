@@ -68,6 +68,7 @@ svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop.ht
 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop.html
 fast/forms/file-input-hit-test.html
 fast/repaint/slider-thumb-drag-release.html
+fast/repaint/slider-thumb-float.html
 editing/pasteboard/emacs-ctrl-k-y-001.html
 editing/pasteboard/drag-drop-dead-frame.html
 editing/pasteboard/drag-drop-modifies-page.html
@@ -1655,6 +1656,9 @@ editing/selection/context-menu-text-selection.html
 editing/execCommand/query-command-state.html
 editing/execCommand/query-text-alignment.html
 editing/execCommand/toggle-compound-styles.html
+editing/style/iframe-onload-crash-mac.html
+editing/style/iframe-onload-crash-unix.html
+editing/style/iframe-onload-crash-win.html
 
 # WebKitTestRunner needs layoutTestController.setStopProvisionalFrameLoads
 # <https://bugs.webkit.org/show_bug.cgi?id=42691>

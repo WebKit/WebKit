@@ -1,3 +1,11 @@
+2011-03-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Update the Skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2011-03-16  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Adam Barth.
