@@ -1,5 +1,14 @@
 2011-03-16  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Adding plugins/destroy-on-setwindow.html to the mac-leopard Skipped list.
+        https://bugs.webkit.org/show_bug.cgi?id=56165 was filed to track this issue.
+
+        * platform/mac-leopard/Skipped:
+
+2011-03-16  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Roben; Dictated, but not read, by Adam Roben.
 
         Adding new results for some failing tests on the SnowLeopard WebKit2 Tester.
