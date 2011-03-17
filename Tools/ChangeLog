@@ -1,3 +1,17 @@
+2011-03-17  Adam Roben  <aroben@apple.com>
+
+        Make old-run-webkit-tests pick up mac-wk2 results when running in WebKit2 mode on Windows
+
+        Fixes <http://webkit.org/b/56563> Running WebKit2 tests on Windows should use results from
+        mac-wk2
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/old-run-webkit-tests:
+        (expectedDirectoryForTest): Clean up the code to search in extra Mac platform result
+        directories on Windows. Add mac-wk2 to the set of extra platforms we look in on Windows when
+        we're running in WebKit2 mode.
+
 2011-03-17  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

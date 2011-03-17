@@ -1681,7 +1681,14 @@ sub expectedDirectoryForTest($;$;$)
     my ($base, $isText, $expectedExtension) = @_;
 
     my @directories = @platformResultHierarchy;
-    push @directories, map { catdir($platformBaseDirectory, $_) } qw(mac-snowleopard mac) if isAppleWinWebKit();
+
+    my @extraPlatforms = ();
+    if (isAppleWinWebKit()) {
+        push @extraPlatforms, "mac-wk2" if $platform eq "win-wk2";
+        push @extraPlatforms, qw(mac-snowleopard mac);
+    }
+  
+    push @directories, map { catdir($platformBaseDirectory, $_) } @extraPlatforms;
     push @directories, $expectedDirectory;
 
     # If we already have expected results, just return their location.
