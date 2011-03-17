@@ -1,5 +1,13 @@
 2011-03-17  Adam Roben  <aroben@apple.com>
 
+        Skip a flaky test on Mac
+
+        <http://webkit.org/b/56578> tracks the failure.
+
+        * platform/mac/Skipped: Added http/tests/inspector/network/network-size.html.
+
+2011-03-17  Adam Roben  <aroben@apple.com>
+
         Skip some flaky tests on the SnowLeopard WebKit2 bot
 
         Tracked by <http://webkit.org/b/56530> and <http://webkit.org/b/56584>.
