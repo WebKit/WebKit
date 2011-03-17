@@ -78,7 +78,7 @@ bool ScriptCallStack::isEqual(ScriptCallStack* o) const
 }
 
 #if ENABLE(INSPECTOR)
-PassRefPtr<InspectorArray> ScriptCallStack::buildInspectorObject() const
+PassRefPtr<InspectorArray> ScriptCallStack::buildInspectorArray() const
 {
     RefPtr<InspectorArray> frames = InspectorArray::create();
     for (size_t i = 0; i < m_frames.size(); i++)

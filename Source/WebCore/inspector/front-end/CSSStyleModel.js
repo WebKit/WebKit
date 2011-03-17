@@ -45,7 +45,7 @@ WebInspector.CSSStyleModel.prototype = {
     {
         function callback(userCallback, error, payload)
         {
-            if (error || !payload) {
+            if (error) {
                 if (userCallback)
                     userCallback(null);
                 return;
@@ -90,7 +90,7 @@ WebInspector.CSSStyleModel.prototype = {
     {
         function callback(userCallback, error, stylePayload)
         {
-            if (error || !stylePayload)
+            if (error)
                 userCallback(null);
             else
                 userCallback(WebInspector.CSSStyleDeclaration.parsePayload(stylePayload));
@@ -103,7 +103,7 @@ WebInspector.CSSStyleModel.prototype = {
     {
         function callback(userCallback, error, stylePayload)
         {
-            if (error || !stylePayload)
+            if (error)
                 userCallback(null);
             else
                 userCallback(WebInspector.CSSStyleDeclaration.parsePayload(stylePayload));
@@ -126,8 +126,8 @@ WebInspector.CSSStyleModel.prototype = {
 
         function callback(nodeId, successCallback, failureCallback, error, newSelector, rulePayload)
         {
-            // FIXME: looks lire rulePayload always null.
-            if (error || !rulePayload)
+            // FIXME: looks like rulePayload is always null.
+            if (error)
                 failureCallback();
             else
                 DOMAgent.querySelectorAll(nodeId, newSelector, true, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
@@ -148,7 +148,7 @@ WebInspector.CSSStyleModel.prototype = {
 
         function callback(successCallback, failureCallback, selector, error, rulePayload)
         {
-            if (error || !rulePayload) {
+            if (error) {
                 // Invalid syntax for a selector
                 failureCallback();
             } else
@@ -347,7 +347,7 @@ WebInspector.CSSStyleDeclaration.prototype = {
             if (!userCallback)
                 return;
 
-            if (error || !payload)
+            if (error)
                 userCallback(null);
             else {
                 userCallback(WebInspector.CSSStyleDeclaration.parsePayload(payload));
@@ -521,7 +521,7 @@ WebInspector.CSSProperty.prototype = {
         {
             if (!userCallback)
                 return;
-            if (error || !stylePayload)
+            if (error)
                 userCallback(null);
             else {
                 var style = WebInspector.CSSStyleDeclaration.parsePayload(stylePayload);
@@ -556,7 +556,7 @@ WebInspector.CSSStyleSheet.createForId = function(styleSheetId, userCallback)
 {
     function callback(error, styleSheetPayload)
     {
-        if (error || !styleSheetPayload)
+        if (error)
             userCallback(null);
         else
             userCallback(new WebInspector.CSSStyleSheet(styleSheetPayload));
@@ -574,7 +574,7 @@ WebInspector.CSSStyleSheet.prototype = {
     {
         function callback(error, styleSheetPayload)
         {
-            if (error || !styleSheetPayload)
+            if (error)
                 userCallback(null);
             else {
                 userCallback(new WebInspector.CSSStyleSheet(styleSheetPayload));

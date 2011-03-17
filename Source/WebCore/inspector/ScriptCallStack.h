@@ -52,7 +52,7 @@ public:
     size_t size() const;
 
     bool isEqual(ScriptCallStack*) const;
-    PassRefPtr<InspectorArray> buildInspectorObject() const;
+    PassRefPtr<InspectorArray> buildInspectorArray() const;
 
 private:
     ScriptCallStack(Vector<ScriptCallFrame>&);

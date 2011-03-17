@@ -40,9 +40,13 @@
 
 namespace WebCore {
 
+class InspectorArray;
+class InspectorObject;
 class InspectorValue;
 class Node;
 class ScriptFunctionCall;
+
+typedef String ErrorString;
 
 class InjectedScript {
 public:
@@ -51,17 +55,16 @@ public:
 
     bool hasNoValue() const { return m_injectedScriptObject.hasNoValue(); }
 
-    void evaluate(const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
-    void evaluateOn(PassRefPtr<InspectorObject> objectId, const String& expression, RefPtr<InspectorValue>* result);
-    void evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
-    void getProperties(PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result);
+    void evaluate(ErrorString*, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result);
+    void evaluateOn(ErrorString*, PassRefPtr<InspectorObject> objectId, const String& expression, RefPtr<InspectorObject>* result);
+    void evaluateOnCallFrame(ErrorString*, PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result);
+    void getProperties(ErrorString*, PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorArray>* result);
     Node* nodeForObjectId(PassRefPtr<InspectorObject> objectId);
-    void resolveNode(long nodeId, RefPtr<InspectorValue>* result);
-    String setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression);
+    void setPropertyValue(ErrorString*, PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression);
     void releaseObject(PassRefPtr<InspectorObject> objectId);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    PassRefPtr<InspectorValue> callFrames();
+    PassRefPtr<InspectorArray> callFrames();
 #endif
 
     PassRefPtr<InspectorObject> wrapObject(ScriptValue, const String& groupName);
@@ -76,6 +79,7 @@ private:
 
     bool canAccessInspectedWindow();
     void makeCall(ScriptFunctionCall&, RefPtr<InspectorValue>* result);
+    void makeObjectCall(ErrorString*, ScriptFunctionCall&, RefPtr<InspectorObject>* result);
     ScriptValue nodeAsScriptValue(Node*);
 
     ScriptObject m_injectedScriptObject;

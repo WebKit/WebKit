@@ -251,7 +251,7 @@ InjectedScript.prototype = {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
         if (!object)
-            return false;
+            return "Could not find object with given id";
         try {
             inspectedWindow.console._objectToEvaluateOn = object;
             return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, "(function() {" + expression + "}).call(window.console._objectToEvaluateOn)", parsedObjectId.objectGroup, false, false);
@@ -314,7 +314,7 @@ InjectedScript.prototype = {
     {
         var callFrame = this._callFrameForId(callFrameId);
         if (!callFrame)
-            return false;
+            return "Could not find call frame with given id";
         return this._evaluateAndWrap(callFrame.evaluate, callFrame, expression, objectGroup, true, injectCommandLineAPI);
     },
 
@@ -340,11 +340,6 @@ InjectedScript.prototype = {
         if (!object || this._type(object) !== "node")
             return null;
         return object;
-    },
-
-    resolveNode: function(node)
-    {
-        return this._wrapObject(node);
     },
 
     _isDefined: function(object)

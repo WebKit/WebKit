@@ -46,6 +46,7 @@ namespace WebCore {
 
 class InjectedScriptManager;
 class InspectorFrontend;
+class InspectorArray;
 class InspectorObject;
 class InspectorState;
 class InspectorValue;
@@ -78,26 +79,26 @@ public:
     void inspectedURLChanged(const String& url);
 
     // Part of the protocol.
-    void activateBreakpoints(ErrorString* error);
-    void deactivateBreakpoints(ErrorString* error);
+    void activateBreakpoints(ErrorString*);
+    void deactivateBreakpoints(ErrorString*);
 
-    void setJavaScriptBreakpoint(ErrorString* error, const String& url, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, RefPtr<InspectorArray>* locations);
-    void setJavaScriptBreakpointBySourceId(ErrorString* error, const String& sourceId, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, int* actualLineNumber, int* actualColumnNumber);
-    void removeJavaScriptBreakpoint(ErrorString* error, const String& breakpointId);
-    void continueToLocation(ErrorString* error, const String& sourceId, int lineNumber, int columnNumber);
+    void setJavaScriptBreakpoint(ErrorString*, const String& url, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, RefPtr<InspectorArray>* locations);
+    void setJavaScriptBreakpointBySourceId(ErrorString*, const String& sourceId, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, int* actualLineNumber, int* actualColumnNumber);
+    void removeJavaScriptBreakpoint(ErrorString*, const String& breakpointId);
+    void continueToLocation(ErrorString*, const String& sourceId, int lineNumber, int columnNumber);
 
-    void editScriptSource(ErrorString* error, const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames);
-    void getScriptSource(ErrorString* error, const String& sourceID, String* scriptSource);
+    void editScriptSource(ErrorString*, const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorArray>* newCallFrames);
+    void getScriptSource(ErrorString*, const String& sourceID, String* scriptSource);
     void schedulePauseOnNextStatement(DebuggerEventType type, PassRefPtr<InspectorValue> data);
     void cancelPauseOnNextStatement();
     void breakProgram(DebuggerEventType type, PassRefPtr<InspectorValue> data);
-    void pause(ErrorString* error);
-    void resume(ErrorString* error);
-    void stepOver(ErrorString* error);
-    void stepInto(ErrorString* error);
-    void stepOut(ErrorString* error);
-    void setPauseOnExceptionsState(ErrorString* error, long pauseState, long* newState);
-    void evaluateOnCallFrame(ErrorString* error, PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
+    void pause(ErrorString*);
+    void resume(ErrorString*);
+    void stepOver(ErrorString*);
+    void stepInto(ErrorString*);
+    void stepOut(ErrorString*);
+    void setPauseOnExceptionsState(ErrorString*, long pauseState, long* newState);
+    void evaluateOnCallFrame(ErrorString*, PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result);
 
     class Listener {
     public:
@@ -112,7 +113,7 @@ private:
 
     void enable(bool restoringFromState);
 
-    PassRefPtr<InspectorValue> currentCallFrames();
+    PassRefPtr<InspectorArray> currentCallFrames();
 
     virtual void didParseSource(const String& sourceID, const String& url, const String& data, int lineOffset, int columnOffset, ScriptWorldType);
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);

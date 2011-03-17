@@ -57,33 +57,33 @@ InspectorRuntimeAgent::~InspectorRuntimeAgent()
 {
 }
 
-void InspectorRuntimeAgent::evaluate(ErrorString*, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
+void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result)
 {
     ScriptState* scriptState = mainWorldScriptState(m_inspectedPage->mainFrame());
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
     if (!injectedScript.hasNoValue())
-        injectedScript.evaluate(expression, objectGroup, includeCommandLineAPI, result);
+        injectedScript.evaluate(errorString, expression, objectGroup, includeCommandLineAPI, result);
 }
 
-void InspectorRuntimeAgent::evaluateOn(ErrorString*, PassRefPtr<InspectorObject> objectId, const String& expression, RefPtr<InspectorValue>* result)
+void InspectorRuntimeAgent::evaluateOn(ErrorString* errorString, PassRefPtr<InspectorObject> objectId, const String& expression, RefPtr<InspectorObject>* result)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId.get());
     if (!injectedScript.hasNoValue())
-        injectedScript.evaluateOn(objectId, expression, result);
+        injectedScript.evaluateOn(errorString, objectId, expression, result);
 }
 
-void InspectorRuntimeAgent::getProperties(ErrorString*, PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result)
+void InspectorRuntimeAgent::getProperties(ErrorString* errorString, PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorArray>* result)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId.get());
     if (!injectedScript.hasNoValue())
-        injectedScript.getProperties(objectId, ignoreHasOwnProperty, abbreviate, result);
+        injectedScript.getProperties(errorString, objectId, ignoreHasOwnProperty, abbreviate, result);
 }
 
 void InspectorRuntimeAgent::setPropertyValue(ErrorString* errorString, PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId.get());
     if (!injectedScript.hasNoValue())
-        *errorString = injectedScript.setPropertyValue(objectId, propertyName, expression);
+        injectedScript.setPropertyValue(errorString, objectId, propertyName, expression);
     else
         *errorString = "No injected script found.";
 }

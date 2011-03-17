@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class InjectedScriptManager;
+class InspectorArray;
 class InspectorObject;
 class InspectorValue;
 class Page;
@@ -52,10 +53,10 @@ public:
     ~InspectorRuntimeAgent();
 
     // Part of the protocol.
-    void evaluate(ErrorString*, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
-    void evaluateOn(ErrorString*, PassRefPtr<InspectorObject> objectId, const String& expression, RefPtr<InspectorValue>* result);
+    void evaluate(ErrorString*, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result);
+    void evaluateOn(ErrorString*, PassRefPtr<InspectorObject> objectId, const String& expression, RefPtr<InspectorObject>* result);
     void releaseObject(ErrorString*, PassRefPtr<InspectorObject> objectId);
-    void getProperties(ErrorString*, PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result);
+    void getProperties(ErrorString*, PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorArray>* result);
     void setPropertyValue(ErrorString*, PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression);
     void releaseObjectGroup(ErrorString*, long injectedScriptId, const String& objectGroup);
 

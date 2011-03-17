@@ -261,7 +261,7 @@ bool InspectorDebuggerAgent::resolveBreakpoint(const String& breakpointId, const
     return true;
 }
 
-void InspectorDebuggerAgent::editScriptSource(ErrorString*, const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames)
+void InspectorDebuggerAgent::editScriptSource(ErrorString*, const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorArray>* newCallFrames)
 {
     if ((*success = ScriptDebugServer::shared().editScriptSource(sourceID, newContent, *result)))
         *newCallFrames = currentCallFrames();
@@ -322,21 +322,21 @@ void InspectorDebuggerAgent::setPauseOnExceptionsState(ErrorString*, long pauseS
     *newState = ScriptDebugServer::shared().pauseOnExceptionsState();
 }
 
-void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString*, PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
+void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString* errorString, PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(callFrameId.get());
     if (!injectedScript.hasNoValue())
-        injectedScript.evaluateOnCallFrame(callFrameId, expression, objectGroup, includeCommandLineAPI, result);
+        injectedScript.evaluateOnCallFrame(errorString, callFrameId, expression, objectGroup, includeCommandLineAPI, result);
 }
 
-PassRefPtr<InspectorValue> InspectorDebuggerAgent::currentCallFrames()
+PassRefPtr<InspectorArray> InspectorDebuggerAgent::currentCallFrames()
 {
     if (!m_pausedScriptState)
-        return InspectorValue::null();
+        return InspectorArray::create();
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(m_pausedScriptState);
     if (injectedScript.hasNoValue()) {
         ASSERT_NOT_REACHED();
-        return InspectorValue::null();
+        return InspectorArray::create();
     }
     return injectedScript.callFrames();
 }

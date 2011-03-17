@@ -114,7 +114,7 @@ void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, Injecte
         }
     }
     if (m_callStack)
-        jsonObj->setArray("stackTrace", m_callStack->buildInspectorObject());
+        jsonObj->setArray("stackTrace", m_callStack->buildInspectorArray());
     frontend->addConsoleMessage(jsonObj);
 }
 

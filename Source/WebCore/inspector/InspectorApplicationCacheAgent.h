@@ -60,7 +60,7 @@ public:
     void networkStateChanged();
 
     // From Frontend
-    void getApplicationCaches(ErrorString* error, RefPtr<InspectorValue>* applicationCaches);
+    void getApplicationCaches(ErrorString*, RefPtr<InspectorObject>* applicationCaches);
 
 private:
     PassRefPtr<InspectorObject> buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);

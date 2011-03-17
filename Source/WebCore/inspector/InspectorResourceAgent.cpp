@@ -314,11 +314,11 @@ void InspectorResourceAgent::identifierForInitialRequest(unsigned long identifie
 {
     RefPtr<InspectorObject> loaderObject = buildObjectForDocumentLoader(loader);
     RefPtr<ScriptCallStack> callStack = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
-    RefPtr<InspectorValue> callStackValue;
+    RefPtr<InspectorArray> callStackValue;
     if (callStack)
-        callStackValue = callStack->buildInspectorObject();
+        callStackValue = callStack->buildInspectorArray();
     else
-        callStackValue = InspectorValue::null();
+        callStackValue = InspectorArray::create();
     m_frontend->identifierForInitialRequest(identifier, url.string(), loaderObject, callStackValue);
 }
 

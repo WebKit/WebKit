@@ -56,24 +56,24 @@ module core {
 
         void setUserAgentOverride(in String userAgent);
 
-        void getCookies(out Array cookies, out String cookiesString);
+        void getCookies(out [typeRef=common::Cookie] Array cookies, out String cookiesString);
         void deleteCookie(in String cookieName, in String domain);
 
-        [event] void inspect(out Object objectId, out Object hints);
+        [event] void inspect(out [typeRef=runtime::ObjectId] Object objectId, out Object hints);
     };
 
     interface [Conditional=INSPECTOR] Runtime {
-        void evaluate(in String expression, in String objectGroup, in boolean includeCommandLineAPI, out Value result);
-        void evaluateOn(in Object objectId, in String expression, out Value result);
-        void getProperties(in Object objectId, in boolean ignoreHasOwnProperty, in boolean abbreviate, out Value result);
-        void setPropertyValue(in Object objectId, in String propertyName, in String expression);
-        void releaseObject(in Object objectId);
+        void evaluate(in String expression, in String objectGroup, in boolean includeCommandLineAPI, out [typeRef=runtime::Object] Object result);
+        void evaluateOn(in [typeRef=runtime::ObjectId] Object objectId, in String expression, out [typeRef=runtime::Object] Object result);
+        void getProperties(in [typeRef=runtime::ObjectId] Object objectId, in boolean ignoreHasOwnProperty, in boolean abbreviate, out [typeRef=runtime::Property] Array result);
+        void setPropertyValue(in [typeRef=runtime::ObjectId] Object objectId, in String propertyName, in String expression);
+        void releaseObject(in [typeRef=runtime::ObjectId] Object objectId);
         void releaseObjectGroup(in long injectedScriptId, in String objectGroup);
     };
 
     interface [Conditional=INSPECTOR] Console {
         void setConsoleMessagesEnabled(in boolean enabled, out boolean newState);
-        [event] void addConsoleMessage(out Object messageObj);
+        [event] void addConsoleMessage(out [typeRef=console::Message] Object messageObj);
         [event] void updateConsoleMessageExpiredCount(out unsigned long count);
         [event] void updateConsoleMessageRepeatCount(out unsigned long count);
         void clearConsoleMessages();
@@ -83,63 +83,63 @@ module core {
     };
 
     interface [Conditional=INSPECTOR] Network {
-        void enable(out Object resources);
+        void enable(out [typeRef=network::ResourceTree] Object resources);
         void disable();
         void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out boolean success, out String content);
-        void setExtraHeaders(in Object headers);
+        void setExtraHeaders(in [typeRef=network::Headers] Object headers);
 
         [event] void frameDetachedFromParent(out unsigned long frameId);
-        [event] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out Value callStack);
-        [event] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
+        [event] void identifierForInitialRequest(out long identifier, out String url, out [typeRef=network::Loader] Object loader, out [typeRef=console::StackFrame] Array callStack);
+        [event] void willSendRequest(out long identifier, out double time, out [typeRef=network::Request] Object request, out [typeRef=network::Response] Object redirectResponse);
         [event] void markResourceAsCached(out long identifier);
-        [event] void didReceiveResponse(out long identifier, out double time, out String resourceType, out Object response);
+        [event] void didReceiveResponse(out long identifier, out double time, out String resourceType, out [typeRef=network::Response] Object response);
         [event] void didReceiveContentLength(out long identifier, out double time, out long lengthReceived);
         [event] void didFinishLoading(out long identifier, out double finishTime);
         [event] void didFailLoading(out long identifier, out double time, out String localizedDescription);
-        [event] void didLoadResourceFromMemoryCache(out double time, out Object resource);
+        [event] void didLoadResourceFromMemoryCache(out double time, out [typeRef=network::CachedResource] Object resource);
         [event] void setInitialContent(out long identifier, out String sourceString, out String type);
-        [event] void didCommitLoadForFrame(out Object frame, out Object loader);
+        [event] void didCommitLoadForFrame(out Object frame, out [typeRef=network::Loader] Object loader);
         [event] void didCreateWebSocket(out unsigned long identifier, out String requestURL);
-        [event] void willSendWebSocketHandshakeRequest(out unsigned long identifier, out double time, out Object request);
-        [event] void didReceiveWebSocketHandshakeResponse(out unsigned long identifier, out double time, out Object response);
+        [event] void willSendWebSocketHandshakeRequest(out unsigned long identifier, out double time, out [typeRef=network::WebSocketRequest] Object request);
+        [event] void didReceiveWebSocketHandshakeResponse(out unsigned long identifier, out double time, out [typeRef=network::WebSocketResponse] Object response);
         [event] void didCloseWebSocket(out unsigned long identifier, out double time);
     };
 
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
     interface [Conditional=INSPECTOR] Database {
-        void getDatabaseTableNames(in long databaseId, out Array tableNames);
+        void getDatabaseTableNames(in long databaseId, out [type=string] Array tableNames);
         void executeSQL(in long databaseId, in String query, out boolean success, out long transactionId);
 
-        [event] void addDatabase(out Object database);
-        [event] void sqlTransactionSucceeded(out long transactionId, out Value columnNames, out Value values);
-        [event] void sqlTransactionFailed(out long transactionId, out Value sqlError);
+        [event] void addDatabase(out [typeRef=database::Database] Object database);
+        [event] void sqlTransactionSucceeded(out long transactionId, out [type=string] Array columnNames, out [type=string or number] Array values);
+        [event] void sqlTransactionFailed(out long transactionId, out [typeRef=database::Error] Object sqlError);
     };
 #endif
 
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
     interface [Conditional=INSPECTOR] DOMStorage {
-        void getDOMStorageEntries(in long storageId, out Array entries);
+        void getDOMStorageEntries(in long storageId, out [typeRef=domstorage::Entry] Array entries);
         void setDOMStorageItem(in long storageId, in String key, in String value, out boolean success);
         void removeDOMStorageItem(in long storageId, in String key, out boolean success);
-        [event] void addDOMStorage(out Object storage);
+        [event] void addDOMStorage(out [typeRef=domstorage::Storage] Object storage);
         [event] void updateDOMStorage(out int storageId);
     };
 #endif
 
 #if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
     interface [Conditional=INSPECTOR] ApplicationCache {
-        void getApplicationCaches(out Value applicationCaches);
+        void getApplicationCaches(out [typeRef=appcache::AppCache] Object applicationCaches);
         [event] void updateApplicationCacheStatus(out int status);
         [event] void updateNetworkState(out boolean isNowOnline);
     };
 #endif
 
     interface [Conditional=INSPECTOR] DOM {
-        void getDocument(out Object root);
+        void getDocument(out [typeRef=dom::Node] Object root);
         void getChildNodes(in long nodeId);
 
         void querySelector(in long nodeId, in String selectors, in boolean documentWide, out long elementId);
-        void querySelectorAll(in long nodeId, in String selectors, in boolean documentWide, out Array nodeIds);
+        void querySelectorAll(in long nodeId, in String selectors, in boolean documentWide, out [type=long] Array nodeIds);
 
         void setNodeName(in long nodeId, in String name, out long outNodeId);
         void setNodeValue(in long nodeId, in String value, out boolean success);
@@ -148,7 +148,7 @@ module core {
         void setAttribute(in long elementId, in String name, in String value);
         void removeAttribute(in long elementId, in String name);
 
-        void getEventListenersForNode(in long nodeId, out Array listenersArray);
+        void getEventListenersForNode(in long nodeId, out [typeRef=dom::Listener] Array listenersArray);
         void copyNode(in long nodeId);
 
         void getOuterHTML(in long nodeId, out String outerHTML);
@@ -157,34 +157,34 @@ module core {
         void performSearch(in String query, in boolean runSynchronously);
         void cancelSearch();
 
-        void pushNodeToFrontend(in Object objectId, out long nodeId);
+        void pushNodeToFrontend(in [typeRef=runtime::ObjectId] Object objectId, out long nodeId);
         void pushNodeByPathToFrontend(in String path, out long nodeId);
-        void resolveNode(in long nodeId, in String objectGroup, out Value result);
+        void resolveNode(in long nodeId, in String objectGroup, out [typeRef=runtime::ObjectId] Object objectId);
 
         [event] void documentUpdated();
-        [event] void setChildNodes(out long parentId, out Array nodes);
-        [event] void attributesUpdated(out long id, out Array attributes);
+        [event] void setChildNodes(out long parentId, out [typeRef=dom::Node] Array nodes);
+        [event] void attributesUpdated(out long id, out[typeRef=dom::Attribute] Array attributes);
         [event] void characterDataModified(out long id, out String newValue);
-        [event] void setDetachedRoot(out Object root);
+        [event] void setDetachedRoot(out [typeRef=dom::Node] Object root);
         [event] void childNodeCountUpdated(out long id, out int newValue);
-        [event] void childNodeInserted(out long parentId, out long prevId, out Object node);
+        [event] void childNodeInserted(out long parentId, out long prevId, out [typeRef=dom::Node] Object node);
         [event] void childNodeRemoved(out long parentId, out long id);
-        [event] void searchResults(out Array nodeIds);
+        [event] void searchResults(out [type=long] Array nodeIds);
     };
 
     interface [Conditional=INSPECTOR] CSS {
-        void getStylesForNode(in long nodeId, out Value styles);
-        void getComputedStyleForNode(in long nodeId, out Value style);
-        void getInlineStyleForNode(in long nodeId, out Value style);
-        void getAllStyles(out Array styleSheetIds);
-        void getStyleSheet(in String styleSheetId, out Value styleSheet);
+        void getStylesForNode(in long nodeId, out [typeRef=css::NodeStyles] Object styles);
+        void getComputedStyleForNode(in long nodeId, out [typeRef=css::ComputedStyle] Object style);
+        void getInlineStyleForNode(in long nodeId, out [typeRef=css::Style] Object style);
+        void getAllStyles(out [type=string] Array styleSheetIds);
+        void getStyleSheet(in String styleSheetId, out [typeRef=css::StyleSheet] Object styleSheet);
         void getStyleSheetText(in String styleSheetId, out String url, out String text);
         void setStyleSheetText(in String styleSheetId, in String text, out boolean success);
-        void setPropertyText(in Object styleId, in long propertyIndex, in String text, in boolean overwrite, out Value style);
-        void toggleProperty(in Object styleId, in long propertyIndex, in boolean disable, out Value style);
-        void setRuleSelector(in Object ruleId, in String selector, out Value rule);
-        void addRule(in long contextNodeId, in String selector, out Value rule);
-        void getSupportedCSSProperties(out Array cssProperties);
+        void setPropertyText(in [typeRef=style::StyleId] Object styleId, in long propertyIndex, in String text, in boolean overwrite, out [typeRef=css::Style] Object style);
+        void toggleProperty(in  [typeRef=style::StyleId] Object styleId, in long propertyIndex, in boolean disable, out [typeRef=css::Style] Object style);
+        void setRuleSelector(in [typeRef=style::RuleId] Object ruleId, in String selector, out [typeRef=css::Rule] Object rule);
+        void addRule(in long contextNodeId, in String selector, out [typeRef=css::Rule] Object rule);
+        void getSupportedCSSProperties(out [type=string] Array cssProperties);
     };
 
     interface [Conditional=INSPECTOR] Timeline {
@@ -192,7 +192,7 @@ module core {
         void stop();
         [event] void timelineProfilerWasStarted();
         [event] void timelineProfilerWasStopped();
-        [event] void addRecordToTimeline(out Object record);
+        [event] void addRecordToTimeline(out [typeRef=timeline::Record] Object record);
     };
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
@@ -208,7 +208,7 @@ module core {
         void activateBreakpoints();
         void deactivateBreakpoints();
 
-        void setJavaScriptBreakpoint(in String url, in int lineNumber, in int columnNumber, in String condition, in boolean enabled, out String breakpointId, out Array locations);
+        void setJavaScriptBreakpoint(in String url, in int lineNumber, in int columnNumber, in String condition, in boolean enabled, out String breakpointId, out [typeRef=debugger::Location] Array locations);
         void setJavaScriptBreakpointBySourceId(in String sourceId, in int lineNumber, in int columnNumber, in String condition, in boolean enabled, out String breakpointId, out int actualLineNumber, out int actualColumnNumber);
         void removeJavaScriptBreakpoint(in String breakpointId);
         [event] void breakpointResolved(out String breakpointId, out String sourceId, out int lineNumber, out int columnNumber);
@@ -218,16 +218,16 @@ module core {
         void stepInto();
         void stepOut();
         void pause();
-        [event] void pausedScript(out Object details);
+        [event] void pausedScript(out [typeRef=debugger::Backtrace] Object details);
         void resume();
         [event] void resumedScript(); // FIXME: Make this out parameter of resume if possible.
 
-        void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
+        void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out [typeRef=debugger::StackFrame, optional] Array stackFrames);
         void getScriptSource(in String sourceID, out String scriptSource);
 
         void setPauseOnExceptionsState(in long pauseOnExceptionsState, out long newState);
 
-        void evaluateOnCallFrame(in Object callFrameId, in String expression, in String objectGroup, in boolean includeCommandLineAPI, out Value result);
+        void evaluateOnCallFrame(in [typeRef=debugger::CallFrameId] Object callFrameId, in String expression, in String objectGroup, in boolean includeCommandLineAPI, out [typeRef=runtime::ObjectId] Object result);
 
 #if defined(ENABLE_WORKERS) && ENABLE_WORKERS
         [event] void didCreateWorker(out long id, out String url, out boolean isShared);
@@ -258,8 +258,8 @@ module core {
         [event] void profilerWasEnabled();
         [event] void profilerWasDisabled();
 
-        void getProfileHeaders(out Array headers);
-        void getProfile(in String type, in unsigned long uid, out Object profile);
+        void getProfileHeaders(out [typeRef=profiler::Header] Array headers);
+        void getProfile(in String type, in unsigned long uid, out [typeRef=profiler::Profile] Object profile);
         void removeProfile(in String type, in unsigned long uid);
         void clearProfiles();
 
@@ -267,7 +267,7 @@ module core {
         void takeHeapSnapshot(in boolean detailed);
         void getExactHeapSnapshotNodeRetainedSize(in unsigned long uid, in unsigned long nodeId, out long size);
         void collectGarbage();
-        [event] void addProfileHeader(out Object header);
+        [event] void addProfileHeader(out [typeRef=profiler::Header] Object header);
         [event] void addHeapSnapshotChunk(out unsigned long uid, out String chunk);
         [event] void finishHeapSnapshot(out unsigned long uid);
         [event] void setRecordingProfile(out boolean isProfiling);

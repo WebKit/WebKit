@@ -868,7 +868,7 @@ void InspectorDOMAgent::cancelSearch(ErrorString*)
     m_searchResults.clear();
 }
 
-void InspectorDOMAgent::resolveNode(ErrorString* error, long nodeId, const String& objectGroup, RefPtr<InspectorValue>* result)
+void InspectorDOMAgent::resolveNode(ErrorString* error, long nodeId, const String& objectGroup, RefPtr<InspectorObject>* result)
 {
     Node* node = nodeForId(nodeId);
     if (!node) {
