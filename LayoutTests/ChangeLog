@@ -1,3 +1,9 @@
+2011-03-17  James Simonsen  <simonjam@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-17  Adam Roben  <aroben@apple.com>
 
         Disable http/tests/inspector/resource-parameters.html

@@ -3297,4 +3297,4 @@ BUGCR76550 DEBUG WIN LINUX : fast/dom/Window/window-function-frame-getter-preced
 BUGCR76550 DEBUG MAC : fast/dom/Window/window-function-frame-getter-precedence.html = SLOW TIMEOUT
 
 // New and flaky
-BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html
+BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS TEXT
