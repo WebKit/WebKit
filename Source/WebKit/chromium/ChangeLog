@@ -1,3 +1,9 @@
+2011-03-16  Adam Barth  <abarth@webkit.org>
+
+        Roll Chromium DEPS.
+
+        * DEPS:
+
 2011-03-16  Daniel Sievers  <sievers@google.com>
 
         Reviewed by James Robinson.
