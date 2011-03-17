@@ -68,7 +68,9 @@ messages -> WebPage {
     GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins)
     GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Connection::Handle connectionHandle) delayed
 
+#if PLATFORM(MAC)
     DidCreateWebProcessConnection(CoreIPC::MachPort connectionIdentifier)
+#endif
 
 #if PLATFORM(MAC)
     # Keyboard support
@@ -179,7 +181,7 @@ _expected_results = {
             'parameters': (
                 ('CoreIPC::MachPort', 'connectionIdentifier'),
             ),
-            'condition': None,
+            'condition': 'PLATFORM(MAC)',
         },
         {
             'name': 'InterpretKeyEvent',
@@ -291,7 +293,9 @@ enum Kind {
     RunJavaScriptAlertID,
     GetPluginsID,
     GetPluginProcessConnectionID,
+#if PLATFORM(MAC)
     DidCreateWebProcessConnectionID,
+#endif
 #if PLATFORM(MAC)
     InterpretKeyEventID,
 #endif
@@ -418,6 +422,7 @@ struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
     }
 };
 
+#if PLATFORM(MAC)
 struct DidCreateWebProcessConnection : CoreIPC::Arguments1<const CoreIPC::MachPort&> {
     static const Kind messageID = DidCreateWebProcessConnectionID;
     typedef CoreIPC::Arguments1<const CoreIPC::MachPort&> DecodeType;
@@ -426,6 +431,7 @@ struct DidCreateWebProcessConnection : CoreIPC::Arguments1<const CoreIPC::MachPo
     {
     }
 };
+#endif
 
 #if PLATFORM(MAC)
 struct InterpretKeyEvent : CoreIPC::Arguments1<uint32_t> {
@@ -486,14 +492,22 @@ _expected_receiver_implementation = """/*
 
 #include "WebPage.h"
 
+#if PLATFORM(MAC)
 #include "ArgumentCoders.h"
+#endif
 #include "ArgumentDecoder.h"
 #include "Connection.h"
 #include "HandleMessage.h"
+#if PLATFORM(MAC)
 #include "MachPort.h"
+#endif
 #include "Plugin.h"
+#if PLATFORM(MAC)
 #include "WebCoreArgumentCoders.h"
+#endif
+#if ENABLE(TOUCH_EVENTS)
 #include "WebEvent.h"
+#endif
 #include "WebPageMessages.h"
 #include "WebPreferencesStore.h"
 
@@ -525,9 +539,11 @@ void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID 
     case Messages::WebPage::SendIntsID:
         CoreIPC::handleMessage<Messages::WebPage::SendInts>(arguments, this, &WebPage::sendInts);
         return;
+#if PLATFORM(MAC)
     case Messages::WebPage::DidCreateWebProcessConnectionID:
         CoreIPC::handleMessage<Messages::WebPage::DidCreateWebProcessConnection>(arguments, this, &WebPage::didCreateWebProcessConnection);
         return;
+#endif
     default:
         break;
     }

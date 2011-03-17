@@ -89,6 +89,9 @@ class MessageReceiver(object):
                 else:
                     parameters = []
 
+                for parameter in parameters:
+                    parameter.condition = condition
+
                 delayed = delayed_string == 'delayed'
 
                 if reply_parameters_string:
@@ -120,9 +123,10 @@ class Message(object):
 
 
 class Parameter(object):
-    def __init__(self, type, name):
+    def __init__(self, type, name, condition=None):
         self.type = type
         self.name = name
+        self.condition = condition
 
 
 def parse_parameter_string(parameter_string):
@@ -451,21 +455,35 @@ def headers_for_type(type):
 
 def generate_message_handler(file):
     receiver = MessageReceiver.parse(file)
-    headers = set([
-        '"%s"' % messages_header_filename(receiver),
-        '"HandleMessage.h"',
-        '"ArgumentDecoder.h"',
-    ])
+    headers = {
+        '"%s"' % messages_header_filename(receiver): None,
+        '"HandleMessage.h"': None,
+        '"ArgumentDecoder.h"': None,
+    }
 
+    type_conditions = {}
     for parameter in receiver.iterparameters():
         type = parameter.type
+        condition = parameter.condition
+
+        if type in type_conditions:
+            if not type_conditions[type]:
+                condition = type_conditions[type]
+            else:
+                if not condition:
+                    type_conditions[type] = condition
+        else:
+            type_conditions[type] = condition
+
         argument_encoder_headers = argument_coder_headers_for_type(parameter.type)
         if argument_encoder_headers:
-            headers.update(argument_encoder_headers)
+            for header in argument_encoder_headers:
+                headers[header] = condition
             continue
 
         type_headers = headers_for_type(type)
-        headers.update(type_headers)
+        for header in type_headers:
+            headers[header] = condition
 
     for message in receiver.messages:
         if message.reply_parameters is not None:
@@ -473,11 +491,13 @@ def generate_message_handler(file):
                 type = reply_parameter.type
                 argument_encoder_headers = argument_coder_headers_for_type(type)
                 if argument_encoder_headers:
-                    headers.update(argument_encoder_headers)
+                    for header in argument_encoder_headers:
+                        headers[header] = message.condition
                     continue
 
                 type_headers = headers_for_type(type)
-                headers.update(type_headers)
+                for header in type_headers:
+                    headers[header] = message.condition
 
     result = []
 
@@ -489,7 +509,13 @@ def generate_message_handler(file):
         result.append('#if %s\n\n' % receiver.condition)
 
     result.append('#include "%s.h"\n\n' % receiver.name)
-    result += ['#include %s\n' % header for header in sorted(headers)]
+    for headercondition in sorted(headers):
+        if headers[headercondition]:
+            result.append('#if %s\n' % headers[headercondition])
+            result += ['#include %s\n' % headercondition]
+            result.append('#endif\n')
+        else:
+            result += ['#include %s\n' % headercondition]
     result.append('\n')
 
     result.append('namespace WebKit {\n\n')
