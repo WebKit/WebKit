@@ -206,6 +206,12 @@ plugins/destroy-on-setwindow.html
 # https://bugs.webkit.org/show_bug.cgi?id=56545
 java/lc3/JavaObject/JavaObjectToDouble-001.html
 
-# Failing on some slaves
+# Failing on apple-macpro-5
 # http://webkit.org/b/56544
 svg/text/font-size-below-point-five.svg
+
+# Failing on apple-macpro-6
+# http://webkit.org/b/56564
+fast/preloader/script.html
+platform/mac/fast/loader/file-url-mimetypes-2.html
+http/tests/inspector/resource-har-conversion.html

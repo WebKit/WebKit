@@ -1,5 +1,13 @@
 2011-03-17  Adam Roben  <aroben@apple.com>
 
+        Skip some tests that only fail on apple-macpro-6
+
+        <http://webkit.org/b/56564> tracks the failures.
+
+        * platform/mac-leopard/Skipped:
+
+2011-03-17  Adam Roben  <aroben@apple.com>
+
         Skip a test that is only failing on some Leopard slaves
 
         svg/text/font-size-below-point-five.svg generates different results on apple-macpro-5 from
