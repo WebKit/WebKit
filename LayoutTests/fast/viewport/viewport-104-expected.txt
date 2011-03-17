@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: line 3: Viewport argument key "x" not recognized and ignored.
 CONSOLE MESSAGE: line 3: Viewport argument key "400" not recognized and ignored.
-viewport size 980x1078 scale 0.326531 with limits [0.326531, 5.000000]
+viewport size 980x1078 scale 0.326531 with limits [0.326531, 5.000000] and userScalable -1.000000
 

@@ -1,3 +1,133 @@
+2011-03-16  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Follow-up patch landing updated expected results,
+        which now include the userScalable value in output.
+
+        Viewport no longer allows an auto value for "user-scalable"
+        https://bugs.webkit.org/show_bug.cgi?id=55416
+
+        * fast/viewport/viewport-1-expected.txt:
+        * fast/viewport/viewport-10-expected.txt:
+        * fast/viewport/viewport-100-expected.txt:
+        * fast/viewport/viewport-101-expected.txt:
+        * fast/viewport/viewport-102-expected.txt:
+        * fast/viewport/viewport-103-expected.txt:
+        * fast/viewport/viewport-104-expected.txt:
+        * fast/viewport/viewport-105-expected.txt:
+        * fast/viewport/viewport-106-expected.txt:
+        * fast/viewport/viewport-107-expected.txt:
+        * fast/viewport/viewport-108-expected.txt:
+        * fast/viewport/viewport-109-expected.txt:
+        * fast/viewport/viewport-11-expected.txt:
+        * fast/viewport/viewport-110-expected.txt:
+        * fast/viewport/viewport-111-expected.txt:
+        * fast/viewport/viewport-112-expected.txt:
+        * fast/viewport/viewport-113-expected.txt:
+        * fast/viewport/viewport-114-expected.txt:
+        * fast/viewport/viewport-115-expected.txt:
+        * fast/viewport/viewport-116-expected.txt:
+        * fast/viewport/viewport-117-expected.txt:
+        * fast/viewport/viewport-118-expected.txt:
+        * fast/viewport/viewport-119-expected.txt:
+        * fast/viewport/viewport-12-expected.txt:
+        * fast/viewport/viewport-120-expected.txt:
+        * fast/viewport/viewport-121-expected.txt:
+        * fast/viewport/viewport-122-expected.txt:
+        * fast/viewport/viewport-123-expected.txt:
+        * fast/viewport/viewport-124-expected.txt:
+        * fast/viewport/viewport-125-expected.txt:
+        * fast/viewport/viewport-129-expected.txt:
+        * fast/viewport/viewport-13-expected.txt:
+        * fast/viewport/viewport-14-expected.txt:
+        * fast/viewport/viewport-15-expected.txt:
+        * fast/viewport/viewport-16-expected.txt:
+        * fast/viewport/viewport-17-expected.txt:
+        * fast/viewport/viewport-18-expected.txt:
+        * fast/viewport/viewport-19-expected.txt:
+        * fast/viewport/viewport-2-expected.txt:
+        * fast/viewport/viewport-20-expected.txt:
+        * fast/viewport/viewport-21-expected.txt:
+        * fast/viewport/viewport-22-expected.txt:
+        * fast/viewport/viewport-23-expected.txt:
+        * fast/viewport/viewport-24-expected.txt:
+        * fast/viewport/viewport-25-expected.txt:
+        * fast/viewport/viewport-26-expected.txt:
+        * fast/viewport/viewport-27-expected.txt:
+        * fast/viewport/viewport-28-expected.txt:
+        * fast/viewport/viewport-29-expected.txt:
+        * fast/viewport/viewport-3-expected.txt:
+        * fast/viewport/viewport-30-expected.txt:
+        * fast/viewport/viewport-31-expected.txt:
+        * fast/viewport/viewport-32-expected.txt:
+        * fast/viewport/viewport-33-expected.txt:
+        * fast/viewport/viewport-34-expected.txt:
+        * fast/viewport/viewport-35-expected.txt:
+        * fast/viewport/viewport-36-expected.txt:
+        * fast/viewport/viewport-37-expected.txt:
+        * fast/viewport/viewport-38-expected.txt:
+        * fast/viewport/viewport-39-expected.txt:
+        * fast/viewport/viewport-4-expected.txt:
+        * fast/viewport/viewport-40-expected.txt:
+        * fast/viewport/viewport-41-expected.txt:
+        * fast/viewport/viewport-42-expected.txt:
+        * fast/viewport/viewport-43-expected.txt:
+        * fast/viewport/viewport-44-expected.txt:
+        * fast/viewport/viewport-46-expected.txt:
+        * fast/viewport/viewport-47-expected.txt:
+        * fast/viewport/viewport-48-expected.txt:
+        * fast/viewport/viewport-49-expected.txt:
+        * fast/viewport/viewport-5-expected.txt:
+        * fast/viewport/viewport-50-expected.txt:
+        * fast/viewport/viewport-51-expected.txt:
+        * fast/viewport/viewport-52-expected.txt:
+        * fast/viewport/viewport-53-expected.txt:
+        * fast/viewport/viewport-54-expected.txt:
+        * fast/viewport/viewport-55-expected.txt:
+        * fast/viewport/viewport-56-expected.txt:
+        * fast/viewport/viewport-57-expected.txt:
+        * fast/viewport/viewport-59-expected.txt:
+        * fast/viewport/viewport-60-expected.txt:
+        * fast/viewport/viewport-61-expected.txt:
+        * fast/viewport/viewport-62-expected.txt:
+        * fast/viewport/viewport-63-expected.txt:
+        * fast/viewport/viewport-64-expected.txt:
+        * fast/viewport/viewport-66-expected.txt:
+        * fast/viewport/viewport-67-expected.txt:
+        * fast/viewport/viewport-68-expected.txt:
+        * fast/viewport/viewport-69-expected.txt:
+        * fast/viewport/viewport-7-expected.txt:
+        * fast/viewport/viewport-70-expected.txt:
+        * fast/viewport/viewport-71-expected.txt:
+        * fast/viewport/viewport-72-expected.txt:
+        * fast/viewport/viewport-73-expected.txt:
+        * fast/viewport/viewport-74-expected.txt:
+        * fast/viewport/viewport-75-expected.txt:
+        * fast/viewport/viewport-76-expected.txt:
+        * fast/viewport/viewport-77-expected.txt:
+        * fast/viewport/viewport-78-expected.txt:
+        * fast/viewport/viewport-79-expected.txt:
+        * fast/viewport/viewport-8-expected.txt:
+        * fast/viewport/viewport-80-expected.txt:
+        * fast/viewport/viewport-81-expected.txt:
+        * fast/viewport/viewport-83-expected.txt:
+        * fast/viewport/viewport-85-expected.txt:
+        * fast/viewport/viewport-86-expected.txt:
+        * fast/viewport/viewport-88-expected.txt:
+        * fast/viewport/viewport-9-expected.txt:
+        * fast/viewport/viewport-90-expected.txt:
+        * fast/viewport/viewport-91-expected.txt:
+        * fast/viewport/viewport-92-expected.txt:
+        * fast/viewport/viewport-93-expected.txt:
+        * fast/viewport/viewport-94-expected.txt:
+        * fast/viewport/viewport-95-expected.txt:
+        * fast/viewport/viewport-96-expected.txt:
+        * fast/viewport/viewport-warnings-1-expected.txt:
+        * fast/viewport/viewport-warnings-2-expected.txt:
+        * fast/viewport/viewport-warnings-3-expected.txt:
+        * fast/viewport/viewport-warnings-4-expected.txt:
+        * fast/viewport/viewport-warnings-5-expected.txt:
+        * fast/viewport/viewport-warnings-6-expected.txt:
+
 2011-03-16  David Levin  <levin@chromium.org>
 
         New baselines because the play button is now a pause button due to r81300.

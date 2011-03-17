@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: line 3: Viewport argument value "height" for key "width" not recognized. Content ignored.
 CONSOLE MESSAGE: line 3: Viewport argument key "830" not recognized and ignored.
-viewport size 64x70 scale 5.000000 with limits [5.000000, 5.000000]
+viewport size 64x70 scale 5.000000 with limits [5.000000, 5.000000] and userScalable -1.000000
 

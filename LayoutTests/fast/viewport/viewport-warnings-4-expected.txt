@@ -1,3 +1,3 @@
 CONSOLE MESSAGE: line 3: Viewport argument value "123x456" for key "width" was truncated to its numeric prefix.
-viewport size 123x135 scale 2.601626 with limits [2.601626, 5.000000]
+viewport size 123x135 scale 2.601626 with limits [2.601626, 5.000000] and userScalable -1.000000
 
