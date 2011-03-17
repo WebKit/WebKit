@@ -123,6 +123,44 @@ template<size_t divisor> inline size_t roundUpToMultipleOf(size_t x)
     return (x + remainderMask) & ~remainderMask;
 }
 
+// Binary search algorithm, calls extractKey on pre-sorted elements in array,
+// compares result with key (KeyTypes should be comparable with '--', '<', '>').
+// Optimized for cases where the array contains the key, checked by assertions.
+template<typename ArrayType, typename KeyType, KeyType(*extractKey)(ArrayType*)>
+inline ArrayType* binarySearch(ArrayType* array, size_t size, KeyType key)
+{
+    // The array must contain at least one element (pre-condition, array does conatin key).
+    // If the array only contains one element, no need to do the comparison.
+    while (size > 1) {
+        // Pick an element to check, half way through the array, and read the value.
+        int pos = (size - 1) >> 1;
+        KeyType val = extractKey(&array[pos]);
+        
+        // If the key matches, success!
+        if (val == key)
+            return &array[pos];
+        // The item we are looking for is smaller than the item being check; reduce the value of 'size',
+        // chopping off the right hand half of the array.
+        else if (key < val)
+            size = pos;
+        // Discard all values in the left hand half of the array, up to and including the item at pos.
+        else {
+            size -= (pos + 1);
+            array += (pos + 1);
+        }
+
+        // 'size' should never reach zero.
+        ASSERT(size);
+    }
+    
+    // If we reach this point we've chopped down to one element, no need to check it matches
+    ASSERT(size == 1);
+    ASSERT(key == extractKey(&array[0]));
+    return &array[0];
+}
+
 } // namespace WTF
+
+using WTF::binarySearch;
 
 #endif // WTF_StdLibExtras_h

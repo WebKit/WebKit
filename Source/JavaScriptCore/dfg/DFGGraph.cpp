@@ -43,8 +43,8 @@ void Graph::dump(CodeBlock* codeBlock)
 #undef STRINGIZE_DFG_OP_ENUM
 
     Node* nodes = this->begin();
-    size_t size = this->size();
-    for (size_t i = 0; i < size; ++i) {
+
+    for (size_t i = 0; i < size(); ++i) {
         Node& node = nodes[i];
         NodeType op = node.op;
 
@@ -79,23 +79,36 @@ void Graph::dump(CodeBlock* codeBlock)
             printf(", @%u", node.child2);
         if (node.child3 != NoNode)
             printf(", @%u", node.child3);
-        bool hasChildren = node.child1 != NoNode;
-        if (node.hasVarNumber())
-            printf("%svar%u", hasChildren ? ", " : "", node.varNumber());
+        bool hasPrinted = node.child1 != NoNode;
+
+        if (node.hasVarNumber()) {
+            printf("%svar%u", hasPrinted ? ", " : "", node.varNumber());
+            hasPrinted = true;
+        }
         if (node.hasIdentifier()) {
             if (codeBlock)
-                printf("%sid%u{%s}", hasChildren ? ", " : "", node.identifierNumber(), codeBlock->identifier(node.identifierNumber()).ustring().utf8().data());
+                printf("%sid%u{%s}", hasPrinted ? ", " : "", node.identifierNumber(), codeBlock->identifier(node.identifierNumber()).ustring().utf8().data());
             else
-                printf("%sid%u", hasChildren ? ", " : "", node.identifierNumber());
+                printf("%sid%u", hasPrinted ? ", " : "", node.identifierNumber());
+            hasPrinted = true;
         }
-        if (node.isArgument())
-            printf("%sarg%u", hasChildren ? ", " : "", node.argumentNumber());
-        if (op == Int32Constant)
-            printf("%s$%u{%d|0x%08x}", hasChildren ? ", " : "", node.constantNumber(), node.int32Constant(), node.int32Constant());
-        if (op == DoubleConstant)
-            printf("%s$%u{%f})", hasChildren ? ", " : "", node.constantNumber(), node.numericConstant());
-        if (op == JSConstant)
-            printf("%s$%u", hasChildren ? ", " : "", node.constantNumber());
+        if (node.isArgument()) {
+            printf("%sarg%u", hasPrinted ? ", " : "", node.argumentNumber());
+            hasPrinted = true;
+        }
+        if (op == Int32Constant) {
+            printf("%s$%u{%d|0x%08x}", hasPrinted ? ", " : "", node.constantNumber(), node.int32Constant(), node.int32Constant());
+            hasPrinted = true;
+        }
+        if (op == DoubleConstant) {
+            printf("%s$%u{%f})", hasPrinted ? ", " : "", node.constantNumber(), node.numericConstant());
+            hasPrinted = true;
+        }
+        if (op == JSConstant) {
+            printf("%s$%u", hasPrinted ? ", " : "", node.constantNumber());
+            hasPrinted = true;
+        }
+
         printf(")\n");
     }
 }

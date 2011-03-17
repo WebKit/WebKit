@@ -43,6 +43,8 @@ public:
         : m_globalData(globalData)
         , m_codeBlock(codeBlock)
         , m_graph(graph)
+        , m_currentIndex(0)
+        , m_noArithmetic(true)
         , m_constantUndefined(UINT_MAX)
         , m_constant1(UINT_MAX)
     {
@@ -60,7 +62,7 @@ public:
             m_calleeRegisters[i] = NoNode;
     }
 
-    bool parse(unsigned startIndex);
+    bool parse();
 
 private:
     // Get/Set the operands/result of a bytecode instruction.
@@ -380,6 +382,9 @@ private:
     // The bytecode index of the current instruction being generated.
     unsigned m_currentIndex;
 
+    // FIXME: used to temporarily disable arithmetic, until we fix associated performance regressions.
+    bool m_noArithmetic;
+
     // We use these values during code generation, and to avoid the need for
     // special handling we make sure they are available as constants in the
     // CodeBlock's constant pool. These variables are initialized to
@@ -415,16 +420,12 @@ private:
     UnaryOpMap m_numberToInt32Nodes;
 };
 
-bool ByteCodeParser::parse(unsigned startIndex)
+bool ByteCodeParser::parse()
 {
     AliasTracker aliases(m_graph);
 
-    // FIXME: used to temporarily disable arithmetic, until we fix associated performance regressions.
-    bool noArithmetic = true;
-
     Interpreter* interpreter = m_globalData->interpreter;
     Instruction* instructionsBegin = m_codeBlock->instructions().begin();
-    m_currentIndex = startIndex;
     while (true) {
         // Switch on the current bytecode opcode.
         Instruction* currentInstruction = instructionsBegin + m_currentIndex;
@@ -568,7 +569,7 @@ bool ByteCodeParser::parse(unsigned startIndex)
         // === Arithmetic operations ===
 
         case op_add: {
-            noArithmetic = false;
+            m_noArithmetic = false;
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             // If both operands can statically be determined to the numbers, then this is an arithmetic add.
@@ -582,7 +583,7 @@ bool ByteCodeParser::parse(unsigned startIndex)
         }
 
         case op_sub: {
-            noArithmetic = false;
+            m_noArithmetic = false;
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithSub, op1, op2));
@@ -591,7 +592,7 @@ bool ByteCodeParser::parse(unsigned startIndex)
         }
 
         case op_mul: {
-            noArithmetic = false;
+            m_noArithmetic = false;
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithMul, op1, op2));
@@ -600,7 +601,7 @@ bool ByteCodeParser::parse(unsigned startIndex)
         }
 
         case op_mod: {
-            noArithmetic = false;
+            m_noArithmetic = false;
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithMod, op1, op2));
@@ -609,7 +610,7 @@ bool ByteCodeParser::parse(unsigned startIndex)
         }
 
         case op_div: {
-            noArithmetic = false;
+            m_noArithmetic = false;
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithDiv, op1, op2));
@@ -701,9 +702,10 @@ bool ByteCodeParser::parse(unsigned startIndex)
 
         case op_ret: {
             addToGraph(Return, get(currentInstruction[1].u.operand));
+            m_currentIndex += OPCODE_LENGTH(op_ret);
 #if ENABLE(DFG_JIT_RESTRICTIONS)
             // FIXME: temporarily disabling the DFG JIT for functions containing arithmetic.
-            return noArithmetic;
+            return m_noArithmetic;
 #else
             return true;
 #endif
@@ -716,11 +718,11 @@ bool ByteCodeParser::parse(unsigned startIndex)
     }
 }
 
-bool parse(Graph& graph, JSGlobalData* globalData, CodeBlock* codeBlock, unsigned startIndex)
+bool parse(Graph& graph, JSGlobalData* globalData, CodeBlock* codeBlock)
 {
     // Call ByteCodeParser::parse to build the dataflow for the basic block at 'startIndex'.
     ByteCodeParser state(globalData, codeBlock, graph);
-    if (!state.parse(startIndex))
+    if (!state.parse())
         return false;
 
     // Assign VirtualRegisters.

@@ -36,9 +36,9 @@
 
 namespace JSC { namespace DFG {
 
-EncodedJSValue operationConvertThis(ExecState* exec, EncodedJSValue encodedOp1)
+EncodedJSValue operationConvertThis(ExecState* exec, EncodedJSValue encodedOp)
 {
-    return JSValue::encode(JSValue::decode(encodedOp1).toThisObject(exec));
+    return JSValue::encode(JSValue::decode(encodedOp).toThisObject(exec));
 }
 
 EncodedJSValue operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)

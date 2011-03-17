@@ -179,7 +179,7 @@ namespace JSC {
         unsigned bytecodeOffset;
     };
 
-    // valueAtPosition helpers for the binaryChop algorithm below.
+    // valueAtPosition helpers for the binarySearch algorithm.
 
     inline void* getStructureStubInfoReturnLocation(StructureStubInfo* structureStubInfo)
     {
@@ -199,42 +199,6 @@ namespace JSC {
     inline unsigned getCallReturnOffset(CallReturnOffsetToBytecodeOffset* pc)
     {
         return pc->callReturnOffset;
-    }
-
-    // Binary chop algorithm, calls valueAtPosition on pre-sorted elements in array,
-    // compares result with key (KeyTypes should be comparable with '--', '<', '>').
-    // Optimized for cases where the array contains the key, checked by assertions.
-    template<typename ArrayType, typename KeyType, KeyType(*valueAtPosition)(ArrayType*)>
-    inline ArrayType* binaryChop(ArrayType* array, size_t size, KeyType key)
-    {
-        // The array must contain at least one element (pre-condition, array does conatin key).
-        // If the array only contains one element, no need to do the comparison.
-        while (size > 1) {
-            // Pick an element to check, half way through the array, and read the value.
-            int pos = (size - 1) >> 1;
-            KeyType val = valueAtPosition(&array[pos]);
-            
-            // If the key matches, success!
-            if (val == key)
-                return &array[pos];
-            // The item we are looking for is smaller than the item being check; reduce the value of 'size',
-            // chopping off the right hand half of the array.
-            else if (key < val)
-                size = pos;
-            // Discard all values in the left hand half of the array, up to and including the item at pos.
-            else {
-                size -= (pos + 1);
-                array += (pos + 1);
-            }
-
-            // 'size' should never reach zero.
-            ASSERT(size);
-        }
-        
-        // If we reach this point we've chopped down to one element, no need to check it matches
-        ASSERT(size == 1);
-        ASSERT(key == valueAtPosition(&array[0]));
-        return &array[0];
     }
 #endif
 
@@ -288,17 +252,17 @@ namespace JSC {
 
         StructureStubInfo& getStubInfo(ReturnAddressPtr returnAddress)
         {
-            return *(binaryChop<StructureStubInfo, void*, getStructureStubInfoReturnLocation>(m_structureStubInfos.begin(), m_structureStubInfos.size(), returnAddress.value()));
+            return *(binarySearch<StructureStubInfo, void*, getStructureStubInfoReturnLocation>(m_structureStubInfos.begin(), m_structureStubInfos.size(), returnAddress.value()));
         }
 
         CallLinkInfo& getCallLinkInfo(ReturnAddressPtr returnAddress)
         {
-            return *(binaryChop<CallLinkInfo, void*, getCallLinkInfoReturnLocation>(m_callLinkInfos.begin(), m_callLinkInfos.size(), returnAddress.value()));
+            return *(binarySearch<CallLinkInfo, void*, getCallLinkInfoReturnLocation>(m_callLinkInfos.begin(), m_callLinkInfos.size(), returnAddress.value()));
         }
 
         MethodCallLinkInfo& getMethodCallLinkInfo(ReturnAddressPtr returnAddress)
         {
-            return *(binaryChop<MethodCallLinkInfo, void*, getMethodCallLinkInfoReturnLocation>(m_methodCallLinkInfos.begin(), m_methodCallLinkInfos.size(), returnAddress.value()));
+            return *(binarySearch<MethodCallLinkInfo, void*, getMethodCallLinkInfoReturnLocation>(m_methodCallLinkInfos.begin(), m_methodCallLinkInfos.size(), returnAddress.value()));
         }
 
         unsigned bytecodeOffset(ReturnAddressPtr returnAddress)
@@ -308,7 +272,7 @@ namespace JSC {
             Vector<CallReturnOffsetToBytecodeOffset>& callIndices = m_rareData->m_callReturnIndexVector;
             if (!callIndices.size())
                 return 1;
-            return binaryChop<CallReturnOffsetToBytecodeOffset, unsigned, getCallReturnOffset>(callIndices.begin(), callIndices.size(), getJITCode().offsetOf(returnAddress.value()))->bytecodeOffset;
+            return binarySearch<CallReturnOffsetToBytecodeOffset, unsigned, getCallReturnOffset>(callIndices.begin(), callIndices.size(), getJITCode().offsetOf(returnAddress.value()))->bytecodeOffset;
         }
 #endif
 #if ENABLE(INTERPRETER)

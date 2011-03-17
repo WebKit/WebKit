@@ -112,7 +112,7 @@ public:
     {
     }
 
-    void compile();
+    bool compile();
 
     // Retrieve the list of bail-outs from the speculative path,
     // and additional recovery information.
@@ -134,6 +134,8 @@ public:
     GPRReg fillSpeculateCell(NodeIndex);
 
 private:
+    bool compile(Node&);
+
     // Add a speculation check without additional recovery.
     void speculationCheck(MacroAssembler::Jump jumpToFail)
     {

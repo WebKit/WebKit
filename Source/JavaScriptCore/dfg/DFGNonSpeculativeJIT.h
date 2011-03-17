@@ -79,6 +79,8 @@ public:
     EntryLocationVector& entryLocations() { return m_entryLocations; }
 
 private:
+    void compile(SpeculationCheckIndexIterator&, Node&);
+
     // These methods are used when generating 'unexpected'
     // calls out from JIT code to C++ helper routines -
     // they spill all live values to the appropriate

@@ -149,8 +149,9 @@ protected:
     JITCodeGenerator(JITCompiler& jit, bool isSpeculative)
         : m_jit(jit)
         , m_isSpeculative(isSpeculative)
+        , m_compileIndex(0)
+        , m_generationInfo(m_jit.codeBlock()->m_numCalleeRegisters)
     {
-        m_generationInfo.grow(m_jit.codeBlock()->m_numCalleeRegisters);
     }
 
     // These methods convert between doubles, and doubles boxed and JSValues.

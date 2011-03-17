@@ -199,7 +199,7 @@ static bool tryDFGCompile(JSGlobalData* globalData, CodeBlock* codeBlock, JITCod
 #endif
 
     DFG::Graph dfg;
-    if (!parse(dfg, globalData, codeBlock, 0))
+    if (!parse(dfg, globalData, codeBlock))
         return false;
 
     DFG::JITCompiler dataFlowJIT(globalData, dfg, codeBlock);

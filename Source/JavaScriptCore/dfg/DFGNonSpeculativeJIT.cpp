@@ -137,442 +137,446 @@ void NonSpeculativeJIT::numberToInt32(FPRReg fpr, GPRReg gpr)
     truncatedToInteger.link(&m_jit);
 }
 
+void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Node& node)
+{
+    // ...
+    if (checkIterator.hasCheckAtIndex(m_compileIndex))
+        trackEntry(m_jit.label());
+
+    checkConsistency();
+
+    NodeType op = node.op;
+
+    switch (op) {
+    case ConvertThis: {
+        JSValueOperand thisValue(this, node.child1);
+        GPRReg thisGPR = thisValue.gpr();
+        flushRegisters();
+
+        GPRResult result(this);
+        callOperation(operationConvertThis, result.gpr(), thisGPR);
+        cellResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case Int32Constant:
+    case DoubleConstant:
+    case JSConstant:
+        initConstantInfo(m_compileIndex);
+        break;
+    
+    case Argument:
+        initArgumentInfo(m_compileIndex);
+        break;
+
+    case BitAnd:
+    case BitOr:
+    case BitXor:
+        if (isInt32Constant(node.child1)) {
+            IntegerOperand op2(this, node.child2);
+            GPRTemporary result(this, op2);
+
+            bitOp(op, valueOfInt32Constant(node.child1), op2.registerID(), result.registerID());
+
+            integerResult(result.gpr(), m_compileIndex);
+        } else if (isInt32Constant(node.child2)) {
+            IntegerOperand op1(this, node.child1);
+            GPRTemporary result(this, op1);
+
+            bitOp(op, valueOfInt32Constant(node.child2), op1.registerID(), result.registerID());
+
+            integerResult(result.gpr(), m_compileIndex);
+        } else {
+            IntegerOperand op1(this, node.child1);
+            IntegerOperand op2(this, node.child2);
+            GPRTemporary result(this, op1, op2);
+
+            MacroAssembler::RegisterID reg1 = op1.registerID();
+            MacroAssembler::RegisterID reg2 = op2.registerID();
+            bitOp(op, reg1, reg2, result.registerID());
+
+            integerResult(result.gpr(), m_compileIndex);
+        }
+        break;
+
+    case BitRShift:
+    case BitLShift:
+    case BitURShift:
+        if (isInt32Constant(node.child2)) {
+            IntegerOperand op1(this, node.child1);
+            GPRTemporary result(this, op1);
+
+            int shiftAmount = valueOfInt32Constant(node.child2) & 0x1f;
+            // Shifts by zero should have been optimized out of the graph!
+            ASSERT(shiftAmount);
+            shiftOp(op, op1.registerID(), shiftAmount, result.registerID());
+
+            integerResult(result.gpr(), m_compileIndex);
+        } else {
+            // Do not allow shift amount to be used as the result, MacroAssembler does not permit this.
+            IntegerOperand op1(this, node.child1);
+            IntegerOperand op2(this, node.child2);
+            GPRTemporary result(this, op1);
+
+            MacroAssembler::RegisterID reg1 = op1.registerID();
+            MacroAssembler::RegisterID reg2 = op2.registerID();
+            shiftOp(op, reg1, reg2, result.registerID());
+
+            integerResult(result.gpr(), m_compileIndex);
+        }
+        break;
+
+    case UInt32ToNumber: {
+        IntegerOperand op1(this, node.child1);
+        FPRTemporary result(this);
+        m_jit.convertInt32ToDouble(op1.registerID(), result.registerID());
+
+        MacroAssembler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, op1.registerID(), Imm32(0));
+        m_jit.addDouble(JITCompiler::AbsoluteAddress(&twoToThe32), result.registerID());
+        positive.link(&m_jit);
+
+        doubleResult(result.fpr(), m_compileIndex);
+        break;
+    }
+
+    case Int32ToNumber: {
+        IntegerOperand op1(this, node.child1);
+        FPRTemporary result(this);
+        m_jit.convertInt32ToDouble(op1.registerID(), result.registerID());
+        doubleResult(result.fpr(), m_compileIndex);
+        break;
+    }
+
+    case NumberToInt32:
+    case ValueToInt32: {
+        ASSERT(!isInt32Constant(node.child1));
+        GenerationInfo& operandInfo = m_generationInfo[m_jit.graph()[node.child1].virtualRegister];
+
+        switch (operandInfo.registerFormat()) {
+        case DataFormatInteger: {
+            IntegerOperand op1(this, node.child1);
+            GPRTemporary result(this, op1);
+            m_jit.move(op1.registerID(), result.registerID());
+            integerResult(result.gpr(), m_compileIndex);
+            break;
+        }
+
+        case DataFormatDouble: {
+            DoubleOperand op1(this, node.child1);
+            GPRTemporary result(this);
+            numberToInt32(op1.fpr(), result.gpr());
+            integerResult(result.gpr(), m_compileIndex);
+            break;
+        }
+
+        default: {
+            JSValueOperand op1(this, node.child1);
+            GPRTemporary result(this, op1);
+            op1.gpr(); // force op1 to be filled!
+            result.gpr(); // force result to be allocated!
+            
+            switch (operandInfo.registerFormat()) {
+            case DataFormatNone:
+            case DataFormatInteger:
+            case DataFormatDouble:
+                // The operand has been filled as a JSValue; it cannot be in a !DataFormatJS state.
+                CRASH();
+
+            case DataFormatCell:
+            case DataFormatJS:
+            case DataFormatJSCell: {
+                if (op == NumberToInt32) {
+                    FPRTemporary fpTemp(this);
+                    FPRReg fpr = fpTemp.fpr();
+
+                    JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, op1.registerID(), JITCompiler::tagTypeNumberRegister);
+
+                    m_jit.move(op1.registerID(), result.registerID());
+                    m_jit.addPtr(JITCompiler::tagTypeNumberRegister, result.registerID());
+                    m_jit.movePtrToDouble(result.registerID(), fpTemp.registerID());
+                    numberToInt32(fpr, result.gpr());
+                    JITCompiler::Jump wasDouble = m_jit.jump();
+                    
+                    isInteger.link(&m_jit);
+                    m_jit.zeroExtend32ToPtr(op1.registerID(), result.registerID());
+
+                    wasDouble.link(&m_jit);
+                } else
+                    valueToInt32(op1, result.gpr());
+                integerResult(result.gpr(), m_compileIndex);
+                break;
+            }
+
+            case DataFormatJSDouble: {
+                FPRTemporary fpTemp(this);
+                m_jit.move(op1.registerID(), result.registerID());
+                m_jit.addPtr(JITCompiler::tagTypeNumberRegister, result.registerID());
+                m_jit.movePtrToDouble(result.registerID(), fpTemp.registerID());
+                numberToInt32(fpTemp.fpr(), result.gpr());
+                integerResult(result.gpr(), m_compileIndex);
+                break;
+            }
+
+            case DataFormatJSInteger: {
+                m_jit.move(op1.registerID(), result.registerID());
+                jsValueResult(result.gpr(), m_compileIndex, DataFormatJSInteger);
+                break;
+            }
+            }
+        }
+
+        }
+        break;
+    }
+
+    case ValueToNumber: {
+        ASSERT(!isInt32Constant(node.child1));
+        ASSERT(!isDoubleConstant(node.child1));
+        GenerationInfo& operandInfo = m_generationInfo[m_jit.graph()[node.child1].virtualRegister];
+        switch (operandInfo.registerFormat()) {
+        case DataFormatNone:
+        case DataFormatCell:
+        case DataFormatJS:
+        case DataFormatJSCell: {
+            JSValueOperand op1(this, node.child1);
+            FPRTemporary result(this);
+            valueToNumber(op1, result.fpr());
+            doubleResult(result.fpr(), m_compileIndex);
+            break;
+        }
+
+        case DataFormatJSDouble:
+        case DataFormatDouble: {
+            DoubleOperand op1(this, node.child1);
+            FPRTemporary result(this, op1);
+            m_jit.moveDouble(op1.registerID(), result.registerID());
+            doubleResult(result.fpr(), m_compileIndex);
+            break;
+        }
+
+        case DataFormatJSInteger:
+        case DataFormatInteger: {
+            IntegerOperand op1(this, node.child1);
+            FPRTemporary result(this);
+            m_jit.convertInt32ToDouble(op1.registerID(), result.registerID());
+            doubleResult(result.fpr(), m_compileIndex);
+            break;
+        }
+        }
+        break;
+    }
+
+    case ValueAdd: {
+        JSValueOperand arg1(this, node.child1);
+        JSValueOperand arg2(this, node.child2);
+        GPRReg arg1GPR = arg1.gpr();
+        GPRReg arg2GPR = arg2.gpr();
+        flushRegisters();
+
+        GPRResult result(this);
+        callOperation(operationValueAdd, result.gpr(), arg1GPR, arg2GPR);
+
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+        
+    case ArithAdd: {
+        DoubleOperand op1(this, node.child1);
+        DoubleOperand op2(this, node.child2);
+        FPRTemporary result(this, op1, op2);
+
+        MacroAssembler::FPRegisterID reg1 = op1.registerID();
+        MacroAssembler::FPRegisterID reg2 = op2.registerID();
+        m_jit.addDouble(reg1, reg2, result.registerID());
+
+        doubleResult(result.fpr(), m_compileIndex);
+        break;
+    }
+
+    case ArithSub: {
+        DoubleOperand op1(this, node.child1);
+        DoubleOperand op2(this, node.child2);
+        FPRTemporary result(this, op1);
+
+        MacroAssembler::FPRegisterID reg1 = op1.registerID();
+        MacroAssembler::FPRegisterID reg2 = op2.registerID();
+        m_jit.subDouble(reg1, reg2, result.registerID());
+
+        doubleResult(result.fpr(), m_compileIndex);
+        break;
+    }
+
+    case ArithMul: {
+        DoubleOperand op1(this, node.child1);
+        DoubleOperand op2(this, node.child2);
+        FPRTemporary result(this, op1, op2);
+
+        MacroAssembler::FPRegisterID reg1 = op1.registerID();
+        MacroAssembler::FPRegisterID reg2 = op2.registerID();
+        m_jit.mulDouble(reg1, reg2, result.registerID());
+
+        doubleResult(result.fpr(), m_compileIndex);
+        break;
+    }
+
+    case ArithDiv: {
+        DoubleOperand op1(this, node.child1);
+        DoubleOperand op2(this, node.child2);
+        FPRTemporary result(this, op1);
+
+        MacroAssembler::FPRegisterID reg1 = op1.registerID();
+        MacroAssembler::FPRegisterID reg2 = op2.registerID();
+        m_jit.divDouble(reg1, reg2, result.registerID());
+
+        doubleResult(result.fpr(), m_compileIndex);
+        break;
+    }
+
+    case ArithMod: {
+        DoubleOperand arg1(this, node.child1);
+        DoubleOperand arg2(this, node.child2);
+        FPRReg arg1FPR = arg1.fpr();
+        FPRReg arg2FPR = arg2.fpr();
+        flushRegisters();
+
+        FPRResult result(this);
+        callOperation(fmod, result.fpr(), arg1FPR, arg2FPR);
+
+        doubleResult(result.fpr(), m_compileIndex);
+        break;
+    }
+
+    case GetByVal: {
+        JSValueOperand arg1(this, node.child1);
+        JSValueOperand arg2(this, node.child2);
+        GPRReg arg1GPR = arg1.gpr();
+        GPRReg arg2GPR = arg2.gpr();
+        flushRegisters();
+
+        GPRResult result(this);
+        callOperation(operationGetByVal, result.gpr(), arg1GPR, arg2GPR);
+
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case PutByVal:
+    case PutByValAlias: {
+        JSValueOperand arg1(this, node.child1);
+        JSValueOperand arg2(this, node.child2);
+        JSValueOperand arg3(this, node.child3);
+        GPRReg arg1GPR = arg1.gpr();
+        GPRReg arg2GPR = arg2.gpr();
+        GPRReg arg3GPR = arg3.gpr();
+        flushRegisters();
+
+        GPRResult result(this);
+        callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByValStrict : operationPutByValNonStrict, arg1GPR, arg2GPR, arg3GPR);
+
+        noResult(m_compileIndex);
+        break;
+    }
+
+    case GetById: {
+        JSValueOperand base(this, node.child1);
+        GPRReg baseGPR = base.gpr();
+        flushRegisters();
+
+        GPRResult result(this);
+        callOperation(operationGetById, result.gpr(), baseGPR, identifier(node.identifierNumber()));
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case PutById: {
+        JSValueOperand base(this, node.child1);
+        JSValueOperand value(this, node.child2);
+        GPRReg valueGPR = value.gpr();
+        GPRReg baseGPR = base.gpr();
+        flushRegisters();
+
+        callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByIdStrict : operationPutByIdNonStrict, valueGPR, baseGPR, identifier(node.identifierNumber()));
+        noResult(m_compileIndex);
+        break;
+    }
+
+    case PutByIdDirect: {
+        JSValueOperand base(this, node.child1);
+        JSValueOperand value(this, node.child2);
+        GPRReg valueGPR = value.gpr();
+        GPRReg baseGPR = base.gpr();
+        flushRegisters();
+
+        callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByIdDirectStrict : operationPutByIdDirectNonStrict, valueGPR, baseGPR, identifier(node.identifierNumber()));
+        noResult(m_compileIndex);
+        break;
+    }
+
+    case GetGlobalVar: {
+        GPRTemporary result(this);
+
+        JSVariableObject* globalObject = m_jit.codeBlock()->globalObject();
+        m_jit.loadPtr(globalObject->addressOfRegisters(), result.registerID());
+        m_jit.loadPtr(JITCompiler::addressForGlobalVar(result.registerID(), node.varNumber()), result.registerID());
+
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case PutGlobalVar: {
+        JSValueOperand value(this, node.child1);
+        GPRTemporary temp(this);
+
+        JSVariableObject* globalObject = m_jit.codeBlock()->globalObject();
+        m_jit.loadPtr(globalObject->addressOfRegisters(), temp.registerID());
+        m_jit.storePtr(value.registerID(), JITCompiler::addressForGlobalVar(temp.registerID(), node.varNumber()));
+
+        noResult(m_compileIndex);
+        break;
+    }
+
+    case Return: {
+        ASSERT(JITCompiler::callFrameRegister != JITCompiler::regT1);
+        ASSERT(JITCompiler::regT1 != JITCompiler::returnValueRegister);
+        ASSERT(JITCompiler::returnValueRegister != JITCompiler::callFrameRegister);
+
+        // Return the result in returnValueRegister.
+        JSValueOperand op1(this, node.child1);
+        m_jit.move(op1.registerID(), JITCompiler::returnValueRegister);
+
+        // Grab the return address.
+        m_jit.emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, JITCompiler::regT1);
+        // Restore our caller's "r".
+        m_jit.emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, JITCompiler::callFrameRegister);
+        // Return.
+        m_jit.restoreReturnAddressBeforeReturn(JITCompiler::regT1);
+        m_jit.ret();
+
+        noResult(m_compileIndex);
+        break;
+    }
+    }
+
+    if (node.mustGenerate())
+        use(m_compileIndex);
+
+    checkConsistency();
+}
+
 void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator)
 {
+    ASSERT(!m_compileIndex);
     Node* nodes = m_jit.graph().begin();
-    size_t size = m_jit.graph().size();
-    for (m_compileIndex = 0; m_compileIndex < size; ++m_compileIndex) {
+
+    for (; m_compileIndex < m_jit.graph().size(); ++m_compileIndex) {
 #if DFG_DEBUG_VERBOSE
         fprintf(stderr, "index(%d)\n", (int)m_compileIndex);
 #endif
 
-        // Is this node alive?
         Node& node = nodes[m_compileIndex];
         if (!node.refCount)
             continue;
-
-        // 
-        if (checkIterator.hasCheckAtIndex(m_compileIndex))
-            trackEntry(m_jit.label());
-
-        checkConsistency();
-
-        NodeType op = node.op;
-
-        switch (op) {
-        case ConvertThis: {
-            JSValueOperand thisValue(this, node.child1);
-            GPRReg thisGPR = thisValue.gpr();
-            flushRegisters();
-
-            GPRResult result(this);
-            callOperation(operationConvertThis, result.gpr(), thisGPR);
-            cellResult(result.gpr(), m_compileIndex);
-            break;
-        }
-
-        case Int32Constant:
-        case DoubleConstant:
-        case JSConstant:
-            initConstantInfo(m_compileIndex);
-            break;
-        
-        case Argument:
-            initArgumentInfo(m_compileIndex);
-            break;
-
-        case BitAnd:
-        case BitOr:
-        case BitXor:
-            if (isInt32Constant(node.child1)) {
-                IntegerOperand op2(this, node.child2);
-                GPRTemporary result(this, op2);
-
-                bitOp(op, valueOfInt32Constant(node.child1), op2.registerID(), result.registerID());
-
-                integerResult(result.gpr(), m_compileIndex);
-            } else if (isInt32Constant(node.child2)) {
-                IntegerOperand op1(this, node.child1);
-                GPRTemporary result(this, op1);
-
-                bitOp(op, valueOfInt32Constant(node.child2), op1.registerID(), result.registerID());
-
-                integerResult(result.gpr(), m_compileIndex);
-            } else {
-                IntegerOperand op1(this, node.child1);
-                IntegerOperand op2(this, node.child2);
-                GPRTemporary result(this, op1, op2);
-
-                MacroAssembler::RegisterID reg1 = op1.registerID();
-                MacroAssembler::RegisterID reg2 = op2.registerID();
-                bitOp(op, reg1, reg2, result.registerID());
-
-                integerResult(result.gpr(), m_compileIndex);
-            }
-            break;
-
-        case BitRShift:
-        case BitLShift:
-        case BitURShift:
-            if (isInt32Constant(node.child2)) {
-                IntegerOperand op1(this, node.child1);
-                GPRTemporary result(this, op1);
-
-                int shiftAmount = valueOfInt32Constant(node.child2) & 0x1f;
-                // Shifts by zero should have been optimized out of the graph!
-                ASSERT(shiftAmount);
-                shiftOp(op, op1.registerID(), shiftAmount, result.registerID());
-
-                integerResult(result.gpr(), m_compileIndex);
-            } else {
-                // Do not allow shift amount to be used as the result, MacroAssembler does not permit this.
-                IntegerOperand op1(this, node.child1);
-                IntegerOperand op2(this, node.child2);
-                GPRTemporary result(this, op1);
-
-                MacroAssembler::RegisterID reg1 = op1.registerID();
-                MacroAssembler::RegisterID reg2 = op2.registerID();
-                shiftOp(op, reg1, reg2, result.registerID());
-
-                integerResult(result.gpr(), m_compileIndex);
-            }
-            break;
-
-        case UInt32ToNumber: {
-            IntegerOperand op1(this, node.child1);
-            FPRTemporary result(this);
-            m_jit.convertInt32ToDouble(op1.registerID(), result.registerID());
-
-            MacroAssembler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, op1.registerID(), Imm32(0));
-            m_jit.addDouble(JITCompiler::AbsoluteAddress(&twoToThe32), result.registerID());
-            positive.link(&m_jit);
-
-            doubleResult(result.fpr(), m_compileIndex);
-            break;
-        }
-
-        case Int32ToNumber: {
-            IntegerOperand op1(this, node.child1);
-            FPRTemporary result(this);
-            m_jit.convertInt32ToDouble(op1.registerID(), result.registerID());
-            doubleResult(result.fpr(), m_compileIndex);
-            break;
-        }
-
-        case NumberToInt32:
-        case ValueToInt32: {
-            ASSERT(!isInt32Constant(node.child1));
-            GenerationInfo& operandInfo = m_generationInfo[m_jit.graph()[node.child1].virtualRegister];
-
-            switch (operandInfo.registerFormat()) {
-            case DataFormatInteger: {
-                IntegerOperand op1(this, node.child1);
-                GPRTemporary result(this, op1);
-                m_jit.move(op1.registerID(), result.registerID());
-                integerResult(result.gpr(), m_compileIndex);
-                break;
-            }
-
-            case DataFormatDouble: {
-                DoubleOperand op1(this, node.child1);
-                GPRTemporary result(this);
-                numberToInt32(op1.fpr(), result.gpr());
-                integerResult(result.gpr(), m_compileIndex);
-                break;
-            }
-
-            default: {
-                JSValueOperand op1(this, node.child1);
-                GPRTemporary result(this, op1);
-                op1.gpr(); // force op1 to be filled!
-                result.gpr(); // force result to be allocated!
-                
-                switch (operandInfo.registerFormat()) {
-                case DataFormatNone:
-                case DataFormatInteger:
-                case DataFormatDouble:
-                    // The operand has been filled as a JSValue; it cannot be in a !DataFormatJS state.
-                    CRASH();
-
-                case DataFormatCell:
-                case DataFormatJS:
-                case DataFormatJSCell: {
-                    if (op == NumberToInt32) {
-                        FPRTemporary fpTemp(this);
-                        FPRReg fpr = fpTemp.fpr();
-
-                        JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, op1.registerID(), JITCompiler::tagTypeNumberRegister);
-
-                        m_jit.move(op1.registerID(), result.registerID());
-                        m_jit.addPtr(JITCompiler::tagTypeNumberRegister, result.registerID());
-                        m_jit.movePtrToDouble(result.registerID(), fpTemp.registerID());
-                        numberToInt32(fpr, result.gpr());
-                        JITCompiler::Jump wasDouble = m_jit.jump();
-                        
-                        isInteger.link(&m_jit);
-                        m_jit.zeroExtend32ToPtr(op1.registerID(), result.registerID());
-
-                        wasDouble.link(&m_jit);
-                    } else
-                        valueToInt32(op1, result.gpr());
-                    integerResult(result.gpr(), m_compileIndex);
-                    break;
-                }
-
-                case DataFormatJSDouble: {
-                    FPRTemporary fpTemp(this);
-                    m_jit.move(op1.registerID(), result.registerID());
-                    m_jit.addPtr(JITCompiler::tagTypeNumberRegister, result.registerID());
-                    m_jit.movePtrToDouble(result.registerID(), fpTemp.registerID());
-                    numberToInt32(fpTemp.fpr(), result.gpr());
-                    integerResult(result.gpr(), m_compileIndex);
-                    break;
-                }
-
-                case DataFormatJSInteger: {
-                    m_jit.move(op1.registerID(), result.registerID());
-                    jsValueResult(result.gpr(), m_compileIndex, DataFormatJSInteger);
-                    break;
-                }
-                }
-            }
-
-            }
-            break;
-        }
-
-        case ValueToNumber: {
-            ASSERT(!isInt32Constant(node.child1));
-            ASSERT(!isDoubleConstant(node.child1));
-            GenerationInfo& operandInfo = m_generationInfo[m_jit.graph()[node.child1].virtualRegister];
-            switch (operandInfo.registerFormat()) {
-            case DataFormatNone:
-            case DataFormatCell:
-            case DataFormatJS:
-            case DataFormatJSCell: {
-                JSValueOperand op1(this, node.child1);
-                FPRTemporary result(this);
-                valueToNumber(op1, result.fpr());
-                doubleResult(result.fpr(), m_compileIndex);
-                break;
-            }
-
-            case DataFormatJSDouble:
-            case DataFormatDouble: {
-                DoubleOperand op1(this, node.child1);
-                FPRTemporary result(this, op1);
-                m_jit.moveDouble(op1.registerID(), result.registerID());
-                doubleResult(result.fpr(), m_compileIndex);
-                break;
-            }
-
-            case DataFormatJSInteger:
-            case DataFormatInteger: {
-                IntegerOperand op1(this, node.child1);
-                FPRTemporary result(this);
-                m_jit.convertInt32ToDouble(op1.registerID(), result.registerID());
-                doubleResult(result.fpr(), m_compileIndex);
-                break;
-            }
-            }
-            break;
-        }
-
-        case ValueAdd: {
-            JSValueOperand arg1(this, node.child1);
-            JSValueOperand arg2(this, node.child2);
-            GPRReg arg1GPR = arg1.gpr();
-            GPRReg arg2GPR = arg2.gpr();
-            flushRegisters();
-
-            GPRResult result(this);
-            callOperation(operationValueAdd, result.gpr(), arg1GPR, arg2GPR);
-
-            jsValueResult(result.gpr(), m_compileIndex);
-            break;
-        }
-            
-        case ArithAdd: {
-            DoubleOperand op1(this, node.child1);
-            DoubleOperand op2(this, node.child2);
-            FPRTemporary result(this, op1, op2);
-
-            MacroAssembler::FPRegisterID reg1 = op1.registerID();
-            MacroAssembler::FPRegisterID reg2 = op2.registerID();
-            m_jit.addDouble(reg1, reg2, result.registerID());
-
-            doubleResult(result.fpr(), m_compileIndex);
-            break;
-        }
-
-        case ArithSub: {
-            DoubleOperand op1(this, node.child1);
-            DoubleOperand op2(this, node.child2);
-            FPRTemporary result(this, op1);
-
-            MacroAssembler::FPRegisterID reg1 = op1.registerID();
-            MacroAssembler::FPRegisterID reg2 = op2.registerID();
-            m_jit.subDouble(reg1, reg2, result.registerID());
-
-            doubleResult(result.fpr(), m_compileIndex);
-            break;
-        }
-
-        case ArithMul: {
-            DoubleOperand op1(this, node.child1);
-            DoubleOperand op2(this, node.child2);
-            FPRTemporary result(this, op1, op2);
-
-            MacroAssembler::FPRegisterID reg1 = op1.registerID();
-            MacroAssembler::FPRegisterID reg2 = op2.registerID();
-            m_jit.mulDouble(reg1, reg2, result.registerID());
-
-            doubleResult(result.fpr(), m_compileIndex);
-            break;
-        }
-
-        case ArithDiv: {
-            DoubleOperand op1(this, node.child1);
-            DoubleOperand op2(this, node.child2);
-            FPRTemporary result(this, op1);
-
-            MacroAssembler::FPRegisterID reg1 = op1.registerID();
-            MacroAssembler::FPRegisterID reg2 = op2.registerID();
-            m_jit.divDouble(reg1, reg2, result.registerID());
-
-            doubleResult(result.fpr(), m_compileIndex);
-            break;
-        }
-
-        case ArithMod: {
-            DoubleOperand arg1(this, node.child1);
-            DoubleOperand arg2(this, node.child2);
-            FPRReg arg1FPR = arg1.fpr();
-            FPRReg arg2FPR = arg2.fpr();
-            flushRegisters();
-
-            FPRResult result(this);
-            callOperation(fmod, result.fpr(), arg1FPR, arg2FPR);
-
-            doubleResult(result.fpr(), m_compileIndex);
-            break;
-        }
-
-        case GetByVal: {
-            JSValueOperand arg1(this, node.child1);
-            JSValueOperand arg2(this, node.child2);
-            GPRReg arg1GPR = arg1.gpr();
-            GPRReg arg2GPR = arg2.gpr();
-            flushRegisters();
-
-            GPRResult result(this);
-            callOperation(operationGetByVal, result.gpr(), arg1GPR, arg2GPR);
-
-            jsValueResult(result.gpr(), m_compileIndex);
-            break;
-        }
-
-        case PutByVal:
-        case PutByValAlias: {
-            JSValueOperand arg1(this, node.child1);
-            JSValueOperand arg2(this, node.child2);
-            JSValueOperand arg3(this, node.child3);
-            GPRReg arg1GPR = arg1.gpr();
-            GPRReg arg2GPR = arg2.gpr();
-            GPRReg arg3GPR = arg3.gpr();
-            flushRegisters();
-
-            GPRResult result(this);
-            callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByValStrict : operationPutByValNonStrict, arg1GPR, arg2GPR, arg3GPR);
-
-            noResult(m_compileIndex);
-            break;
-        }
-
-        case GetById: {
-            JSValueOperand base(this, node.child1);
-            GPRReg baseGPR = base.gpr();
-            flushRegisters();
-
-            GPRResult result(this);
-            callOperation(operationGetById, result.gpr(), baseGPR, identifier(node.identifierNumber()));
-            jsValueResult(result.gpr(), m_compileIndex);
-            break;
-        }
-
-        case PutById: {
-            JSValueOperand base(this, node.child1);
-            JSValueOperand value(this, node.child2);
-            GPRReg valueGPR = value.gpr();
-            GPRReg baseGPR = base.gpr();
-            flushRegisters();
-
-            callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByIdStrict : operationPutByIdNonStrict, valueGPR, baseGPR, identifier(node.identifierNumber()));
-            noResult(m_compileIndex);
-            break;
-        }
-
-        case PutByIdDirect: {
-            JSValueOperand base(this, node.child1);
-            JSValueOperand value(this, node.child2);
-            GPRReg valueGPR = value.gpr();
-            GPRReg baseGPR = base.gpr();
-            flushRegisters();
-
-            callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByIdDirectStrict : operationPutByIdDirectNonStrict, valueGPR, baseGPR, identifier(node.identifierNumber()));
-            noResult(m_compileIndex);
-            break;
-        }
-
-        case GetGlobalVar: {
-            GPRTemporary result(this);
-
-            JSVariableObject* globalObject = m_jit.codeBlock()->globalObject();
-            m_jit.loadPtr(globalObject->addressOfRegisters(), result.registerID());
-            m_jit.loadPtr(JITCompiler::addressForGlobalVar(result.registerID(), node.varNumber()), result.registerID());
-
-            jsValueResult(result.gpr(), m_compileIndex);
-            break;
-        }
-
-        case PutGlobalVar: {
-            JSValueOperand value(this, node.child1);
-            GPRTemporary temp(this);
-
-            JSVariableObject* globalObject = m_jit.codeBlock()->globalObject();
-            m_jit.loadPtr(globalObject->addressOfRegisters(), temp.registerID());
-            m_jit.storePtr(value.registerID(), JITCompiler::addressForGlobalVar(temp.registerID(), node.varNumber()));
-
-            noResult(m_compileIndex);
-            break;
-        }
-
-        case Return: {
-            ASSERT(JITCompiler::callFrameRegister != JITCompiler::regT1);
-            ASSERT(JITCompiler::regT1 != JITCompiler::returnValueRegister);
-            ASSERT(JITCompiler::returnValueRegister != JITCompiler::callFrameRegister);
-
-            // Return the result in returnValueRegister.
-            JSValueOperand op1(this, node.child1);
-            m_jit.move(op1.registerID(), JITCompiler::returnValueRegister);
-
-            // Grab the return address.
-            m_jit.emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, JITCompiler::regT1);
-            // Restore our caller's "r".
-            m_jit.emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, JITCompiler::callFrameRegister);
-            // Return.
-            m_jit.restoreReturnAddressBeforeReturn(JITCompiler::regT1);
-            m_jit.ret();
-
-            noResult(m_compileIndex);
-            break;
-        }
-        }
-
-        if (node.mustGenerate())
-            use(m_compileIndex);
-
-        checkConsistency();
+        compile(checkIterator, node);
     }
 }
 

@@ -1,3 +1,51 @@
+2011-03-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 56603 - DFG JIT related cleanup
+        Move node generation out to separate function, move binarySearch algorithm out
+        to StdLibExtras, fix Graph::dump() to print comma between non-node children,
+        even if there are no node children.
+
+        * bytecode/CodeBlock.h:
+        (JSC::getCallReturnOffset):
+        (JSC::CodeBlock::getStubInfo):
+        (JSC::CodeBlock::getCallLinkInfo):
+        (JSC::CodeBlock::getMethodCallLinkInfo):
+        (JSC::CodeBlock::bytecodeOffset):
+            - Move binaryChop to binarySearch in StdLibExtras
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::parse):
+        (JSC::DFG::parse):
+            - Make m_noArithmetic a member, initialize m_currentIndex in the constructor.
+        * dfg/DFGByteCodeParser.h:
+            - Change parse() to not take a start index (always 0).
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+            - Fix Graph::dump() to print comma between non-node children, even if there are no node children.
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::JITCodeGenerator):
+            - Initialize m_compileIndex in constructor.
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGNonSpeculativeJIT.h:
+            - Spilt out compilation of individual node.
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationConvertThis):
+        * dfg/DFGOperations.h:
+            - Cleanup parameter name.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+            - Spilt out compilation of individual node.
+        * runtime/Executable.cpp:
+        (JSC::tryDFGCompile):
+            - Change parse() to not take a start index (always 0).
+        * wtf/StdLibExtras.h:
+        (WTF::binarySearch):
+            - Move binaryChop to binarySearch in StdLibExtras
+
 2011-03-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoffrey Garen.
