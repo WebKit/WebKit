@@ -109,7 +109,7 @@ BUGWK55913 DEBUG : jquery/effects.html = TIMEOUT
 BUGWK55913 DEBUG SLOW : jquery/attributes.html = PASS
 BUGWK55913 DEBUG SLOW : jquery/core.html = PASS
 BUGWK55913 DEBUG SLOW : jquery/event.html = PASS
-BUGWK55913 DEBUG SLOW : jquery/manipulation.html = PASS
+BUGWK55913 DEBUG : jquery/manipulation.html = TIMEOUT PASS
 BUGWK55913 DEBUG SLOW : jquery/offset.html = PASS
 BUGWK55913 DEBUG SLOW : jquery/traversing.html = PASS
 
@@ -1814,7 +1814,7 @@ BUGCR32900 WIN LINUX : http/tests/misc/slow-loading-mask.html = IMAGE+TEXT
 // WebKit roll 54059 -> 54075
 BUGCR33538 : fast/dom/Window/anonymous-slot-with-changes.html = TEXT
 
-BUGCR35064 WIN : fast/forms/restore-selection-after-layout.html = TEXT PASS
+BUGCR35064 : fast/forms/restore-selection-after-layout.html = TEXT PASS
 
 // WebKit roll 54493 to 54530: new tests.
 BUGCR35114 : fast/js/parser-syntax-check.html = TEXT
@@ -2765,8 +2765,8 @@ BUGWK51720 DEBUG : http/tests/incremental/split-hex-entities.pl = CRASH PASS
 BUGWK51721 DEBUG SLOW: fast/encoding/parser-tests.html = PASS
 BUGCR67463 MAC : editing/selection/caret-mode-paragraph-keys-navigation.html = TEXT
 
-BUGCR68436 LINUX DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS SLOW TIMEOUT
-BUGCR68436 WIN MAC DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TEXT SLOW TIMEOUT
+BUGCR68436 LINUX DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
+BUGCR68436 WIN MAC DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TEXT TIMEOUT
 BUGCR68576 LINUX DEBUG : svg/batik/paints/patternPreserveAspectRatioA.svg = PASS TIMEOUT CRASH
 BUGCR68599 : http/tests/security/mixedContent/insecure-css-in-main-frame.html = PASS TEXT
 
@@ -3294,7 +3294,7 @@ BUGWK56454 WIN : inspector/elements/mutate-unknown-node.html = PASS TEXT
 
 // Slow
 BUGCR76550 SLOW WIN LINUX DEBUG : fast/dom/Window/window-function-frame-getter-precedence.html = PASS
-BUGCR76550 SLOW MAC DEBUG : fast/dom/Window/window-function-frame-getter-precedence.html = TIMEOUT PASS
+BUGCR76550 MAC DEBUG : fast/dom/Window/window-function-frame-getter-precedence.html = TIMEOUT PASS
 
 // New and flaky
 BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS TEXT
