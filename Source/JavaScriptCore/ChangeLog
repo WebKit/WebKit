@@ -1,3 +1,26 @@
+2011-03-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reverting r81197, breaks JIT + INTERPRETER build.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::hasGlobalResolveInstructionAtBytecodeOffset):
+        (JSC::CodeBlock::hasGlobalResolveInfoAtBytecodeOffset):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addPropertyAccessInstruction):
+        (JSC::CodeBlock::addGlobalResolveInstruction):
+        (JSC::CodeBlock::addStructureStubInfo):
+        * bytecode/Opcode.h:
+        * bytecode/StructureStubInfo.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+        (JSC::BytecodeGenerator::emitCatch):
+
 2011-03-17  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Alexey Proskuryakov.

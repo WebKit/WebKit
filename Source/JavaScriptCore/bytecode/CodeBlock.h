@@ -37,12 +37,15 @@
 #include "JumpTable.h"
 #include "Nodes.h"
 #include "RegExp.h"
-#include "StructureStubInfo.h"
 #include "UString.h"
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+
+#if ENABLE(JIT)
+#include "StructureStubInfo.h"
+#endif
 
 // Register numbers used in bytecode operations have different meaning according to their ranges:
 //      0x80000000-0xFFFFFFFF  Negative indices from the CallFrame pointer are entries in the call frame, see RegisterFile.h.
@@ -65,14 +68,6 @@ namespace JSC {
     static ALWAYS_INLINE int missingThisObjectMarker() { return std::numeric_limits<int>::max(); }
 
     struct HandlerInfo {
-        HandlerInfo(uint32_t start, uint32_t end, uint32_t target, uint32_t scopeDepth)
-            : start(start)
-            , end(end)
-            , target(target)
-            , scopeDepth(scopeDepth)
-        {
-        }
-
         uint32_t start;
         uint32_t end;
         uint32_t target;
@@ -386,17 +381,18 @@ namespace JSC {
         void createActivation(CallFrame*);
 
 #if ENABLE(INTERPRETER)
-        void addPropertyAccessInfo(unsigned propertyAccessInstruction, AccessType) { m_propertyAccessInstructions.append(propertyAccessInstruction); }
-        void addGlobalResolveInfo(unsigned globalResolveInstruction) { m_globalResolveInstructions.append(globalResolveInstruction); }
-        void addCallLinkInfo() { }
+        void addPropertyAccessInstruction(unsigned propertyAccessInstruction) { m_propertyAccessInstructions.append(propertyAccessInstruction); }
+        void addGlobalResolveInstruction(unsigned globalResolveInstruction) { m_globalResolveInstructions.append(globalResolveInstruction); }
+        bool hasGlobalResolveInstructionAtBytecodeOffset(unsigned bytecodeOffset);
 #endif
 #if ENABLE(JIT)
         size_t numberOfStructureStubInfos() const { return m_structureStubInfos.size(); }
-        void addPropertyAccessInfo(unsigned, AccessType accessType) { m_structureStubInfos.append(accessType); }
+        void addStructureStubInfo(const StructureStubInfo& stubInfo) { m_structureStubInfos.append(stubInfo); }
         StructureStubInfo& structureStubInfo(int index) { return m_structureStubInfos[index]; }
 
         void addGlobalResolveInfo(unsigned globalResolveInstruction) { m_globalResolveInfos.append(GlobalResolveInfo(globalResolveInstruction)); }
         GlobalResolveInfo& globalResolveInfo(int index) { return m_globalResolveInfos[index]; }
+        bool hasGlobalResolveInfoAtBytecodeOffset(unsigned bytecodeOffset);
 
         size_t numberOfCallLinkInfos() const { return m_callLinkInfos.size(); }
         void addCallLinkInfo() { m_callLinkInfos.append(CallLinkInfo()); }

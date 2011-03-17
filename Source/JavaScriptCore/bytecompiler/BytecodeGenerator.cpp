@@ -1201,8 +1201,11 @@ RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& pr
             return emitGetScopedVar(dst, depth, index, globalObject);
         }
 
+#if ENABLE(JIT)
         m_codeBlock->addGlobalResolveInfo(instructions().size());
-
+#else
+        m_codeBlock->addGlobalResolveInstruction(instructions().size());
+#endif
         emitOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
         instructions().append(dst->index());
         instructions().append(addConstant(property));
@@ -1338,8 +1341,11 @@ RegisterID* BytecodeGenerator::emitResolveWithBase(RegisterID* baseDst, Register
         return baseDst;
     }
 
+#if ENABLE(JIT)
     m_codeBlock->addGlobalResolveInfo(instructions().size());
-
+#else
+    m_codeBlock->addGlobalResolveInstruction(instructions().size());
+#endif
     emitOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
     instructions().append(propDst->index());
     instructions().append(addConstant(property));
@@ -1357,7 +1363,11 @@ void BytecodeGenerator::emitMethodCheck()
 
 RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, const Identifier& property)
 {
-    m_codeBlock->addPropertyAccessInfo(instructions().size(), access_get_by_id);
+#if ENABLE(JIT)
+    m_codeBlock->addStructureStubInfo(StructureStubInfo(access_get_by_id));
+#else
+    m_codeBlock->addPropertyAccessInstruction(instructions().size());
+#endif
 
     emitOpcode(op_get_by_id);
     instructions().append(dst->index());
@@ -1382,7 +1392,11 @@ RegisterID* BytecodeGenerator::emitGetArgumentsLength(RegisterID* dst, RegisterI
 
 RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& property, RegisterID* value)
 {
-    m_codeBlock->addPropertyAccessInfo(instructions().size(), access_put_by_id);
+#if ENABLE(JIT)
+    m_codeBlock->addStructureStubInfo(StructureStubInfo(access_put_by_id));
+#else
+    m_codeBlock->addPropertyAccessInstruction(instructions().size());
+#endif
 
     emitOpcode(op_put_by_id);
     instructions().append(base->index());
@@ -1398,7 +1412,11 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& p
 
 RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identifier& property, RegisterID* value)
 {
-    m_codeBlock->addPropertyAccessInfo(instructions().size(), access_put_by_id);
+#if ENABLE(JIT)
+    m_codeBlock->addStructureStubInfo(StructureStubInfo(access_put_by_id));
+#else
+    m_codeBlock->addPropertyAccessInstruction(instructions().size());
+#endif
     
     emitOpcode(op_put_by_id);
     instructions().append(base->index());
@@ -1629,7 +1647,9 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
 
     emitExpressionInfo(divot, startOffset, endOffset);
 
+#if ENABLE(JIT)
     m_codeBlock->addCallLinkInfo();
+#endif
 
     // Emit call.
     emitOpcode(opcodeID);
@@ -1744,7 +1764,9 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
 
     emitExpressionInfo(divot, startOffset, endOffset);
 
+#if ENABLE(JIT)
     m_codeBlock->addCallLinkInfo();
+#endif
 
     emitOpcode(op_construct);
     instructions().append(func->index()); // func
@@ -2007,7 +2029,11 @@ RegisterID* BytecodeGenerator::emitNextPropertyName(RegisterID* dst, RegisterID*
 RegisterID* BytecodeGenerator::emitCatch(RegisterID* targetRegister, Label* start, Label* end)
 {
     m_usesExceptions = true;
-    HandlerInfo info = HandlerInfo(start->bind(0, 0), end->bind(0, 0), instructions().size(), m_dynamicScopeDepth + m_baseScopeDepth);
+#if ENABLE(JIT)
+    HandlerInfo info = { start->bind(0, 0), end->bind(0, 0), instructions().size(), m_dynamicScopeDepth + m_baseScopeDepth, CodeLocationLabel() };
+#else
+    HandlerInfo info = { start->bind(0, 0), end->bind(0, 0), instructions().size(), m_dynamicScopeDepth + m_baseScopeDepth };
+#endif
 
     m_codeBlock->addExceptionHandler(info);
     emitOpcode(op_catch);

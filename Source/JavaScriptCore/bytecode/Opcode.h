@@ -270,22 +270,6 @@ namespace JSC {
         return 0;
     }
 
-    enum AccessType {
-        access_get_by_id_self,
-        access_get_by_id_proto,
-        access_get_by_id_chain,
-        access_get_by_id_self_list,
-        access_get_by_id_proto_list,
-        access_put_by_id_transition,
-        access_put_by_id_replace,
-        access_get_by_id,
-        access_put_by_id,
-        access_get_by_id_generic,
-        access_put_by_id_generic,
-        access_get_array_length,
-        access_get_string_length,
-    };
-
 } // namespace JSC
 
 #endif // Opcode_h
