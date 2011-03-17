@@ -72,6 +72,7 @@ void WKAdvanceDefaultButtonPulseAnimation(NSButtonCell *button);
 
 NSString *WKMouseMovedNotification(void);
 NSString *WKWindowWillOrderOnScreenNotification(void);
+NSString *WKWindowWillOrderOffScreenNotification(void);
 void WKSetNSWindowShouldPostEventNotifications(NSWindow *window, BOOL post);
 
 CFTypeID WKGetAXTextMarkerTypeID(void);
@@ -412,10 +413,13 @@ const char* WKSandboxExtensionGetSerializedFormat(WKSandboxExtensionRef sandboxE
 WKSandboxExtensionRef WKSandboxExtensionCreateFromSerializedFormat(const char* serializationFormat, size_t length);
 
 typedef struct __WKScrollbarPainter *WKScrollbarPainterRef;
+typedef struct __WKScrollbarPainterController *WKScrollbarPainterControllerRef;
+
 WKScrollbarPainterRef WKMakeScrollbarPainter(int controlSize, bool isHorizontal);
 WKScrollbarPainterRef WKMakeScrollbarReplacementPainter(WKScrollbarPainterRef oldPainter, int newStyle, int controlSize, bool isHorizontal);
 void WKScrollbarPainterSetDelegate(WKScrollbarPainterRef, id scrollbarPainterDelegate);
 void WKScrollbarPainterPaint(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, CGRect frameRect);
+void WKScrollbarPainterForceFlashScrollers(WKScrollbarPainterControllerRef);
 int WKScrollbarThickness(int controlSize);
 int WKScrollbarMinimumThumbLength(WKScrollbarPainterRef);
 int WKScrollbarMinimumTotalLengthNeededForThumb(WKScrollbarPainterRef);
@@ -426,7 +430,6 @@ void WKSetScrollbarPainterTrackAlpha(WKScrollbarPainterRef, CGFloat);
 bool WKScrollbarPainterIsHorizontal(WKScrollbarPainterRef);
 void WKScrollbarPainterSetOverlayState(WKScrollbarPainterRef, int overlayScrollerState);
 
-typedef struct __WKScrollbarPainterController *WKScrollbarPainterControllerRef;
 WKScrollbarPainterControllerRef WKMakeScrollbarPainterController(id painterControllerDelegate);
 void WKSetPainterForPainterController(WKScrollbarPainterControllerRef, WKScrollbarPainterRef, bool isHorizontal);
 WKScrollbarPainterRef WKVerticalScrollbarPainterForController(WKScrollbarPainterControllerRef);
