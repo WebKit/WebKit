@@ -44,6 +44,11 @@ PlatformCertificateInfo::PlatformCertificateInfo(const ResourceResponse& respons
 {
 }
 
+PlatformCertificateInfo::PlatformCertificateInfo(CFArrayRef certificateChain)
+    : m_certificateChain(certificateChain)
+{
+}
+
 void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     // Special case no certificates, 

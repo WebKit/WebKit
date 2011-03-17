@@ -27,11 +27,15 @@
 #import "WebCoreArgumentCoders.h"
 
 #import "ArgumentCodersCF.h"
+#import "PlatformCertificateInfo.h"
 #import "WebKitSystemInterface.h"
+
+using namespace WebCore;
+using namespace WebKit;
 
 namespace CoreIPC {
 
-void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
+void encodeResourceRequest(ArgumentEncoder* encoder, const ResourceRequest& resourceRequest)
 {
     bool requestIsPresent = resourceRequest.nsURLRequest();
     encoder->encode(requestIsPresent);
@@ -43,14 +47,14 @@ void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequ
     encode(encoder, dictionary.get());
 }
 
-bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
+bool decodeResourceRequest(ArgumentDecoder* decoder, ResourceRequest& resourceRequest)
 {
     bool requestIsPresent;
     if (!decoder->decode(requestIsPresent))
         return false;
 
     if (!requestIsPresent) {
-        resourceRequest = WebCore::ResourceRequest();
+        resourceRequest = ResourceRequest();
         return true;
     }
 
@@ -62,11 +66,11 @@ bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& r
     if (!nsURLRequest)
         return false;
 
-    resourceRequest = WebCore::ResourceRequest(nsURLRequest);
+    resourceRequest = ResourceRequest(nsURLRequest);
     return true;
 }
 
-void encodeResourceResponse(ArgumentEncoder* encoder, const WebCore::ResourceResponse& resourceResponse)
+void encodeResourceResponse(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
 {
     bool responseIsPresent = resourceResponse.nsURLResponse();
     encoder->encode(responseIsPresent);
@@ -78,14 +82,14 @@ void encodeResourceResponse(ArgumentEncoder* encoder, const WebCore::ResourceRes
     encode(encoder, dictionary.get());
 }
 
-bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse& resourceResponse)
+bool decodeResourceResponse(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
 {
     bool responseIsPresent;
     if (!decoder->decode(responseIsPresent))
         return false;
 
     if (!responseIsPresent) {
-        resourceResponse = WebCore::ResourceResponse();
+        resourceResponse = ResourceResponse();
         return true;
     }
 
@@ -97,7 +101,93 @@ bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse&
     if (!nsURLResponse)
         return false;
 
-    resourceResponse = WebCore::ResourceResponse(nsURLResponse);
+    resourceResponse = ResourceResponse(nsURLResponse);
+    return true;
+}
+
+static NSString* nsString(const String& string)
+{
+    return string.impl() ? [NSString stringWithCharacters:reinterpret_cast<const UniChar*>(string.characters()) length:string.length()] : @"";
+}
+
+void encodeResourceError(ArgumentEncoder* encoder, const ResourceError& resourceError)
+{
+    bool errorIsNull = resourceError.isNull();
+    encoder->encode(errorIsNull);
+
+    if (errorIsNull)
+        return;
+
+    NSError *nsError = resourceError.nsError();
+
+    String domain = [nsError domain];
+    encoder->encode(domain);
+    
+    int64_t code = [nsError code];
+    encoder->encode(code);
+
+    HashMap<String, String> stringUserInfoMap;
+
+    NSDictionary* userInfo = [nsError userInfo];
+    for (NSString *key in userInfo) {
+        id value = [userInfo objectForKey:key];
+        if (![value isKindOfClass:[NSString class]])
+            continue;
+
+        stringUserInfoMap.set(key, (NSString *)value);
+        continue;
+    }
+    encoder->encode(stringUserInfoMap);
+
+    id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
+    ASSERT(!peerCertificateChain || [peerCertificateChain isKindOfClass:[NSArray class]]);
+    encoder->encode(PlatformCertificateInfo((CFArrayRef)peerCertificateChain));
+}
+
+bool decodeResourceError(ArgumentDecoder* decoder, ResourceError& resourceError)
+{
+    bool errorIsNull;
+    if (!decoder->decode(errorIsNull))
+        return false;
+    
+    if (errorIsNull) {
+        resourceError = ResourceError();
+        return true;
+    }
+
+    String domain;
+    if (!decoder->decode(domain))
+        return false;
+
+    int64_t code;
+    if (!decoder->decode(code))
+        return false;
+
+    HashMap<String, String> stringUserInfoMap;
+    if (!decoder->decode(stringUserInfoMap))
+        return false;
+
+    PlatformCertificateInfo certificate;
+    if (!decoder->decode(certificate))
+        return false;
+
+    NSUInteger userInfoSize = stringUserInfoMap.size();
+    if (certificate.certificateChain())
+        userInfoSize++;
+
+    NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithCapacity:userInfoSize];
+    
+    HashMap<String, String>::const_iterator it = stringUserInfoMap.begin();
+    HashMap<String, String>::const_iterator end = stringUserInfoMap.end();
+    for (; it != end; ++it)
+        [userInfo setObject:nsString(it->second) forKey:nsString(it->first)];
+
+    if (certificate.certificateChain())
+        [userInfo setObject:(NSArray *)certificate.certificateChain() forKey:@"NSErrorPeerCertificateChainKey"];
+
+    NSError *nsError = [[NSError alloc] initWithDomain:nsString(domain) code:code userInfo:userInfo];
+
+    resourceError = ResourceError(nsError);
     return true;
 }
 

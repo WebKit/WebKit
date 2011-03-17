@@ -1,3 +1,26 @@
+2011-03-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WKErrors need the PeerCertificateChain for certificate errors
+        <rdar://problem/8951784>
+        https://bugs.webkit.org/show_bug.cgi?id=56592
+
+        * Shared/WebCoreArgumentCoders.h:
+        Special case encoding/decoding of ResourceErrors for the mac.
+
+        * Shared/mac/PlatformCertificateInfo.h:
+        * Shared/mac/PlatformCertificateInfo.mm:
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo):
+        Add constructor that take the PeerCertificateChain as CFArrayRef.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::encodeResourceError):
+        (CoreIPC::decodeResourceError):
+        Add encode/decode for ResourceError using the underlying NSError
+        and encoding/decoding as much of the userInfo as we know how to.
+        Right now this includes all string values and the PeerCertificateChain.
+
 2011-03-17  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam Roben.

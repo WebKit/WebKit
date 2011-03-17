@@ -40,6 +40,7 @@ class PlatformCertificateInfo {
 public:
     PlatformCertificateInfo();
     explicit PlatformCertificateInfo(const WebCore::ResourceResponse&);
+    explicit PlatformCertificateInfo(CFArrayRef certificateChain);
 
     CFArrayRef certificateChain() const { return m_certificateChain.get(); }
 
