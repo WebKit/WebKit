@@ -1,3 +1,16 @@
+2011-03-17  Keith Kyzivat  <keith.kyzivat@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        Update autoinstall to install mechanize 0.2.4
+        https://bugs.webkit.org/show_bug.cgi?id=56499
+
+        Newer versions of mechanize support HTTPS proxies, which is necessary
+        for people using webkit-patch behind firewalls.
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        * Scripts/webkitpy/thirdparty/__init__.py:
+
 2011-03-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
