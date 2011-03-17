@@ -126,6 +126,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
     // Use the character iterator to translate the next value into a DOM position.
     BackwardsCharacterIterator charIt(searchRange.get());
     charIt.advance(string.size() - suffixLength - next);
+    // FIXME: charIt can get out of shadow host.
     return VisiblePosition(charIt.range()->endPosition(), DOWNSTREAM);
 }
 
@@ -377,8 +378,8 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c)
         startBox = startBox->nextLeafChild();
     }
     
-    VisiblePosition visPos = startBox->isInlineTextBox() ? VisiblePosition(Position(startNode, static_cast<InlineTextBox *>(startBox)->start(), Position::PositionIsOffsetInAnchor), DOWNSTREAM)
-                                                         : VisiblePosition(positionBeforeNode(startNode), DOWNSTREAM);
+    VisiblePosition visPos = startNode->isTextNode() ? VisiblePosition(Position(startNode, static_cast<InlineTextBox *>(startBox)->start(), Position::PositionIsOffsetInAnchor), DOWNSTREAM)
+                                                     : VisiblePosition(positionBeforeNode(startNode), DOWNSTREAM);
     return positionAvoidingFirstPositionInTable(visPos);
 }
 

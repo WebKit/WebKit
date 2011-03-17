@@ -94,11 +94,13 @@ Position::Position(PassRefPtr<Node> anchorNode, int offset, AnchorType anchorTyp
     , m_anchorType(anchorType)
     , m_isLegacyEditingPosition(false)
 {
+    ASSERT(!m_anchorNode || !editingIgnoresContent(m_anchorNode.get()));
     ASSERT(anchorType == PositionIsOffsetInAnchor);
 }
 
 void Position::moveToPosition(PassRefPtr<Node> node, int offset)
 {
+    ASSERT(!editingIgnoresContent(node.get()));
     ASSERT(anchorType() == PositionIsOffsetInAnchor || m_isLegacyEditingPosition);
     m_anchorNode = node;
     m_offset = offset;

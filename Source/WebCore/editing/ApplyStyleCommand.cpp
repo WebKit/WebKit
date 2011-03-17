@@ -1696,7 +1696,7 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(EditingStyle* style, PassRefPtr<N
         insertNodeAt(dummyElement, positionBeforeNode(startNode.get()));
         positionForStyleComparison = positionBeforeNode(dummyElement.get());
     } else
-        positionForStyleComparison = firstPositionInNode(startNode.get());
+        positionForStyleComparison = firstPositionInOrBeforeNode(startNode.get());
 
     StyleChange styleChange(style, positionForStyleComparison);
 

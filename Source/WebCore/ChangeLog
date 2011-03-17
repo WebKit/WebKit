@@ -1,3 +1,38 @@
+2011-03-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        Assert that editing does not ignore position's anchorNode if position is an offset in anchor
+        https://bugs.webkit.org/show_bug.cgi?id=56027
+
+        Added the assertion in Position::Position and Position::moveToPosition. This assertion catches
+        places where we instantiate positions inside a node on which editingIgnoresContent returns true.
+
+        Test: editing/execCommand/button.html
+
+        * dom/Position.cpp:
+        (WebCore::Position::Position): Added an assertion.
+        (WebCore::Position::moveToPosition): Ditto.
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::operator Position): Avoid creating a position immediately below
+        a node whose content is ignored by editing. While this does not avoid creation of positions
+        inside ignored contents completely, it works in most cases. Filed the bug 56027 to resolve
+        the underlying problem. Without this change, the assertion hits in existing layout tests.
+        cannot be tested directly.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded): Call firstPositionInOrBeforeNode
+        instead of firstPositionInNode because startNode may as well be a br element. Without this change,
+        the assertion hits in existing layout tests.
+        * editing/htmlediting.cpp:
+        (WebCore::canHaveChildrenForEditing): button is editable so content is not ignored. Added a test
+        for this.
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary): Added a FIXME.
+        (WebCore::startPositionForLine): Because br can also have an inline text box, checking that
+        startBox is an inline text box isn't an adequate to instantiate a position inside startNode.
+        Call startNode->isTextNode() instead. Without this change, the assertion hits in existing layout
+        tests.
+
 2011-03-17  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

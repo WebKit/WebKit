@@ -1,3 +1,15 @@
+2011-03-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        Assert that editing does not ignore position's anchorNode if position is an offset in anchor
+        https://bugs.webkit.org/show_bug.cgi?id=56027
+
+        Added a test to ensure WebKit lets users edit contents inside a button element properly.
+
+        * editing/execCommand/button-expected.txt: Added.
+        * editing/execCommand/button.html: Added.
+
 2011-03-17  Adam Roben  <aroben@apple.com>
 
         Skip three tests that fail on one Windows WebKit2 slave but not the other
