@@ -2546,7 +2546,7 @@ QWebPage::ViewportAttributes QWebPage::viewportAttributesForSize(const QSize& av
     result.m_minimumScaleFactor = conf.minimumScale;
     result.m_maximumScaleFactor = conf.maximumScale;
     result.m_devicePixelRatio = conf.devicePixelRatio;
-    result.m_isUserScalable = conf.userScalable;
+    result.m_isUserScalable = static_cast<bool>(conf.userScalable);
 
     d->pixelRatio = conf.devicePixelRatio;
 

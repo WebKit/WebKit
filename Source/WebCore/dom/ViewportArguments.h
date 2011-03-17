@@ -51,7 +51,7 @@ struct ViewportAttributes {
     float minimumScale;
     float maximumScale;
 
-    bool userScalable;
+    float userScalable;
 };
 
 struct ViewportArguments {
@@ -74,7 +74,7 @@ struct ViewportArguments {
         , width(ValueAuto)
         , height(ValueAuto)
         , targetDensityDpi(ValueAuto)
-        , userScalable(true)
+        , userScalable(ValueAuto)
     {
     }
 
@@ -84,8 +84,7 @@ struct ViewportArguments {
     float width;
     float height;
     float targetDensityDpi;
-
-    bool userScalable;
+    float userScalable;
 
     bool operator==(const ViewportArguments& other) const
     {

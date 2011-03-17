@@ -257,32 +257,32 @@ static float findScaleValue(const String& keyString, const String& valueString, 
     return value;
 }
 
-static bool findUserScalableValue(const String& keyString, const String& valueString, Document* document)
+static float findUserScalableValue(const String& keyString, const String& valueString, Document* document)
 {
     // yes and no are used as keywords.
     // Numbers >= 1, numbers <= -1, device-width and device-height are mapped to yes.
     // Numbers in the range <-1, 1>, and unknown values, are mapped to no.
 
     if (equalIgnoringCase(valueString, "yes"))
-        return true;
+        return 1;
     if (equalIgnoringCase(valueString, "no"))
-        return false;
+        return 0;
     if (equalIgnoringCase(valueString, "desktop-width"))
-        return true;
+        return 1;
     if (equalIgnoringCase(valueString, "device-width"))
-        return true;
+        return 1;
     if (equalIgnoringCase(valueString, "device-height"))
-        return true;
+        return 1;
 
     bool ok;
     float value = numericPrefix(keyString, valueString, document, &ok);
     if (!ok)
-        return false;
+        return 0;
 
     if (fabs(value) < 1)
-        return false;
+        return 0;
 
-    return true;
+    return 1;
 }
 
 static float findTargetDensityDPIValue(const String& keyString, const String& valueString, Document* document)

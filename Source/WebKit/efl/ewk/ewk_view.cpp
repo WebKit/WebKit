@@ -4284,7 +4284,7 @@ void ewk_view_viewport_attributes_get(Evas_Object *o, float* w, float* h, float*
     if (device_pixel_ratio)
         *device_pixel_ratio = attributes.devicePixelRatio;
     if (user_scalable)
-        *user_scalable = attributes.userScalable;
+        *user_scalable = static_cast<bool>(attributes.userScalable);
 }
 
 /**

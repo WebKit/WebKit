@@ -1,3 +1,28 @@
+2011-03-16  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Viewport no longer allows an auto value for "user-scalable"
+        https://bugs.webkit.org/show_bug.cgi?id=55416
+
+        This restores our behavior before r67376 the default "user-scalable"
+        behavior can be defined by a WebKit client if a value was not
+        explicitly provided in web content (via the viewport <meta> tag).
+        Here, all WebKit ports default to "yes" after computing
+        viewport arguments. However, in the future they may consider
+        changing the default user-scalable value based on the type
+        of the document being viewed, a user preference, or other reasons.
+
+        Covered by existing tests. Should be no changes.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::computeViewportAttributes): be explicit about 0.
+        (WebCore::findUserScalableValue): convert to return a float, the instance variable type.
+        * dom/ViewportArguments.h:
+        (WebCore::ViewportArguments::ViewportArguments): convert the boolean back to a float to
+        allow for 3 states. Explicit no, explicit yes, and ValueAuto to be defined by the
+        WebKit client.
+
 2011-03-16  David Levin  <levin@chromium.org>
 
         Reviewed by Dmitry Titov.
