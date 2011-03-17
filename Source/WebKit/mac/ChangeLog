@@ -1,3 +1,16 @@
+2011-03-16  Jeff Johnson  <github@lapcatsoftware.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Logic error in -[WebHTMLView close]
+        https://bugs.webkit.org/show_bug.cgi?id=56445
+
+        Page is always nil at this point, because [self _webView] is nil,
+        so the conditional code is never run.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView close]):
+
 2011-03-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

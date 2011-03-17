@@ -1,3 +1,16 @@
+2011-03-16  Jeff Johnson  <github@lapcatsoftware.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Logic error in -[WebHTMLView close]
+        https://bugs.webkit.org/show_bug.cgi?id=56445
+
+        The function setDraggingImageURL() is no longer called and can be deleted.
+
+        No new tests. Deleting dead code.
+
+        * page/DragController.h:
+
 2011-03-16  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Ryosuke Niwa.

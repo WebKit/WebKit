@@ -1985,10 +1985,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     [self removeAllToolTips];
 
     [_private clear];
-
-    Page* page = core([self _webView]);
-    if (page)
-        page->dragController()->setDraggingImageURL(KURL());
 }
 
 - (BOOL)_hasHTMLDocument

@@ -66,7 +66,6 @@ namespace WebCore {
         void setIsHandlingDrag(bool handling) { m_isHandlingDrag = handling; }
         bool isHandlingDrag() const { return m_isHandlingDrag; }
         DragOperation sourceDragOperation() const { return m_sourceDragOperation; }
-        void setDraggingImageURL(const KURL& url) { m_draggingImageURL = url; }
         const KURL& draggingImageURL() const { return m_draggingImageURL; }
         void setDragOffset(const IntPoint& offset) { m_dragOffset = offset; }
         const IntPoint& dragOffset() const { return m_dragOffset; }
