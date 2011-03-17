@@ -34,7 +34,7 @@
 #include "ResourceLoadScheduler.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
-#include <StringExtras.h>
+#include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 

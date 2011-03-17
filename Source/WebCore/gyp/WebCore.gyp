@@ -45,38 +45,30 @@
         'libz.dylib',
       ],
       'sources/': [
-        # Artificially reduce the scope during bring-up.
-        ['exclude', '.*\\.(c|cpp|mm)$'],
-        ['include', 'accessibility/'],
-        # FIXME: include bridge/
-        ['include', 'css/'],
         ['exclude', 'css/CSSParser\\.cpp$'], # Requires tokenizer.cpp
-        ['include', 'dom/'],
-        ['include', 'editing/'],
-        ['include', 'fileapi/'],
-        ['include', 'history/'],
-        ['include', 'html/'],
-        ['include', 'inspector/'],
-        ['include', 'loader/'],
-        ['include', 'mathml/'],
-        ['include', 'notifications/'],
-        ['include', 'page/'],
-        ['include', 'platform/'],
+
         # FIXME: Figure out how to build these mm files.
         ['exclude', 'page/mac/[^/]+.mm$'],
         ['exclude', 'platform/mac/[^/]+.mm$'],
+
+        # FIXME: Build these objects.
+        ['exclude', '(DerivedSources|bridge|plugins)/.*\\.(c|cpp|mm)$'],
 
         ['exclude', 'bindings/[^/]+/'],
         ['include', 'bindings/generic/'],
         ['include', 'bindings/js/'],
         # FIXME: Build bindings/objc/
-        # ['include', 'bindings/objc/'],
+        ['exclude', 'bindings/objc/'],
         ['exclude', 'bindings/js/ScriptControllerMac\\.mm$'],
         ['include', 'bindings/objc/DOMInternal\\.h$'],
+
+        # FIXME: This could should move to Source/ThirdParty.
+        ['exclude', 'thirdparty/'],
 
         # FIXME: Figure out how to store these patterns in a variable.
         ['exclude', '(android|brew|cairo|chromium|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mkl|openvg|pango|posix|qt|skia|soup|symbian|texmap|iphone|win|wince|wx)/'],
         ['exclude', '(Android|Brew|Cairo|CF|CG|Curl|Chromium|Efl|Haiku|Gtk|JSC|Linux|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|V8|Win|WinCE|Wx)\\.(cpp|mm?)$'],
+        ['exclude', 'Chromium[^/]*\\.(cpp|mm?)$'],
 
         ['exclude', 'platform/image-decoders/'],
         ['exclude', 'platform/image-encoders/'],

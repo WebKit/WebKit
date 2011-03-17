@@ -3970,8 +3970,6 @@
             'platform/mac/ThemeMac.h',
             'platform/mac/ThemeMac.mm',
             'platform/mac/ThreadCheck.mm',
-            'platform/mac/WebCoreKeyGenerator.h',
-            'platform/mac/WebCoreKeyGenerator.m',
             'platform/mac/WebCoreNSStringExtras.h',
             'platform/mac/WebCoreNSStringExtras.mm',
             'platform/mac/WebCoreObjCExtras.h',

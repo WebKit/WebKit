@@ -1,3 +1,17 @@
+2011-03-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebCore GYP should build (most) remaining source files
+        https://bugs.webkit.org/show_bug.cgi?id=56515
+
+        We're still not building all the files and we have 1305 link errors,
+        but this patch is progress.
+
+        * WebCore.gypi:
+        * gyp/WebCore.gyp:
+        * plugins/PluginStream.cpp:
+
 2011-03-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.
