@@ -57,6 +57,7 @@
 #include "TextIterator.h"
 #include "WebKitAnimationList.h"
 #include "XMLNames.h"
+#include "htmlediting.h"
 #include <wtf/text/CString.h>
 
 #if ENABLE(SVG)
@@ -1554,7 +1555,7 @@ void Element::updateFocusAppearance(bool /*restorePreviousSelection*/)
             return;
 
         // FIXME: We should restore the previous selection if there is one.
-        VisibleSelection newSelection = VisibleSelection(firstPositionInNode(this), DOWNSTREAM);
+        VisibleSelection newSelection = VisibleSelection(firstPositionInOrBeforeNode(this), DOWNSTREAM);
         
         if (frame->selection()->shouldChangeSelection(newSelection)) {
             frame->selection()->setSelection(newSelection);

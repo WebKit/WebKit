@@ -1,3 +1,22 @@
+2011-03-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Adele Peterson and Enrica Casucci.
+
+        Assert that editing does not ignore position's anchorNode if position is an offset in anchor
+        https://bugs.webkit.org/show_bug.cgi?id=56027
+
+        Debug build fix.
+
+        * dom/Element.cpp:
+        (WebCore::Element::updateFocusAppearance): "this" can be an input element so can't always instantiate
+        a position inside the node. Call firstPositionInOrBeforeNode instead.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::positionAvoidingPrecedingNodes): Exit early when a node's content is ignored by editing instead
+        of just when the node is br.
+        * editing/htmlediting.cpp:
+        (WebCore::lastEditablePositionBeforePositionInRoot): The shadow ancestor node is usually an input element
+        so don't instantiate a position inside it. Call firstPositionInOrBeforeNode instead.
+
 2011-03-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81369.

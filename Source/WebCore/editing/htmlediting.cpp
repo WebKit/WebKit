@@ -300,10 +300,11 @@ VisiblePosition lastEditablePositionBeforePositionInRoot(const Position& positio
         return lastPositionInNode(highestRoot);
 
     Position p = position;
-    
-    if (Node* shadowAncestor = p.deprecatedNode()->shadowAncestorNode())
+
+    if (Node* shadowAncestor = p.deprecatedNode()->shadowAncestorNode()) {
         if (shadowAncestor != p.deprecatedNode())
-            p = firstPositionInNode(shadowAncestor);
+            p = firstPositionInOrBeforeNode(shadowAncestor);
+    }
     
     while (p.deprecatedNode() && !isEditablePosition(p) && p.deprecatedNode()->isDescendantOf(highestRoot))
         p = isAtomicNode(p.deprecatedNode()) ? positionInParentBeforeNode(p.deprecatedNode()) : previousVisuallyDistinctCandidate(p);
