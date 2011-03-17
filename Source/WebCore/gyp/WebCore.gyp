@@ -21,6 +21,7 @@
         '<(DEPTH)/WebCore/ForwardingHeaders',
         '<(PRODUCT_DIR)/usr/local/include',
         '/usr/include/libxml2',
+        '<(PRODUCT_DIR)/DerivedSources/WebCore',
       ],
       'sources': [
         '<@(webcore_files)',
@@ -45,15 +46,11 @@
         'libz.dylib',
       ],
       'sources/': [
-        ['exclude', 'css/CSSParser\\.cpp$'], # Requires tokenizer.cpp
-
         # FIXME: Figure out how to build these mm files.
         ['exclude', 'page/mac/[^/]+.mm$'],
         ['exclude', 'platform/mac/[^/]+.mm$'],
-
-        # FIXME: Build these objects.
         ['exclude', 'DerivedSources/.*\\.mm$'],
-        ['exclude', '(bridge|plugins)/.*\\.(cpp|mm)$'],
+        ['exclude', 'bridge/.*\\.mm$'],
 
         ['exclude', 'bindings/[^/]+/'],
         ['include', 'bindings/generic/'],
@@ -67,13 +64,15 @@
         ['exclude', 'thirdparty/'],
 
         # FIXME: Figure out how to store these patterns in a variable.
-        ['exclude', '(android|brew|cairo|chromium|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mkl|openvg|pango|posix|qt|skia|soup|symbian|texmap|iphone|win|wince|wx)/'],
+        ['exclude', '(android|brew|cairo|chromium|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mkl|openvg|pango|posix|qt|skia|soup|symbian|texmap|iphone|v8|win|wince|wx)/'],
         ['exclude', '(Android|Brew|Cairo|CF|CG|Curl|Chromium|Efl|Haiku|Gtk|JSC|Linux|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|V8|Win|WinCE|Wx)\\.(cpp|mm?)$'],
         ['exclude', 'Chromium[^/]*\\.(cpp|mm?)$'],
 
         ['exclude', 'platform/image-decoders/'],
         ['exclude', 'platform/image-encoders/'],
 
+        ['exclude', 'bridge/testbindings\\.cpp$'], # Remove from GYPI?
+        ['exclude', 'bridge/testqtbindings\\.cpp$'], # Remove from GYPI?
         ['exclude', 'platform/KillRingNone\\.cpp$'],
         ['exclude', 'platform/graphics/cg/FontPlatformData\\.h$'],
         ['exclude', 'platform/graphics/gpu/LoopBlinnPathProcessor\\.(cpp|h)$'],
@@ -85,6 +84,13 @@
         ['exclude', 'platform/text/LocalizedNumberNone\\.cpp$'],
         ['exclude', 'platform/text/TextEncodingDetectorNone\\.cpp$'],
         ['exclude', 'platform/text/Hyphenation\\.cpp$'],
+        ['exclude', 'plugins/PluginDataNone\\.cpp$'],
+        ['exclude', 'plugins/PluginDatabase\\.cpp$'],
+        ['exclude', 'plugins/PluginPackageNone\\.cpp$'],
+        ['exclude', 'plugins/PluginStream\\.cpp$'],
+        ['exclude', 'plugins/PluginView\\.cpp$'],
+        ['exclude', 'plugins/mac/PluginViewMac\\.mm$'],
+        ['exclude', 'plugins/npapi\\.cpp$'],
 
         # FIXME: Check whether we need to build these derived source files.
         ['exclude', 'JSAbstractView\\.(cpp|h)'],

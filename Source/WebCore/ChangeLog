@@ -1,3 +1,14 @@
+2011-03-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add plugins and bridge to the WebCore GYP build
+        https://bugs.webkit.org/show_bug.cgi?id=56546
+
+        506 link errors.
+
+        * gyp/WebCore.gyp:
+
 2011-03-16  Jeff Johnson  <github@lapcatsoftware.com>
 
         Reviewed by Alexey Proskuryakov.
