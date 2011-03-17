@@ -47,10 +47,8 @@
       ],
       'sources/': [
         # FIXME: Figure out how to build these mm files.
-        ['exclude', 'page/mac/[^/]+.mm$'],
         ['exclude', 'platform/mac/[^/]+.mm$'],
         ['exclude', 'DerivedSources/.*\\.mm$'],
-        ['exclude', 'bridge/.*\\.mm$'],
 
         ['exclude', 'bindings/[^/]+/'],
         ['include', 'bindings/generic/'],
@@ -72,6 +70,7 @@
         ['exclude', 'platform/image-encoders/'],
 
         ['exclude', 'bridge/testbindings\\.cpp$'], # Remove from GYPI?
+        ['exclude', 'bridge/testbindings\\.mm$'], # Remove from GYPI?
         ['exclude', 'bridge/testqtbindings\\.cpp$'], # Remove from GYPI?
         ['exclude', 'platform/KillRingNone\\.cpp$'],
         ['exclude', 'platform/graphics/cg/FontPlatformData\\.h$'],
