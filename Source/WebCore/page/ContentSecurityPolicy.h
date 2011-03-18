@@ -48,7 +48,7 @@ private:
     ContentSecurityPolicy();
 
     void parse(const String&);
-    void parseDirective(const UChar*& pos, const UChar* end, Vector<UChar, 32>& name, Vector<UChar, 64>& value);
+    bool parseDirective(const UChar*& pos, const UChar* end, Vector<UChar, 32>& name, Vector<UChar, 64>& value);
     void emitDirective(const String& name, const String& value);
 
     bool m_havePolicy;

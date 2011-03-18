@@ -2,6 +2,29 @@
 
         Reviewed by Eric Seidel.
 
+        Update CSP directive parser to match spec
+        https://bugs.webkit.org/show_bug.cgi?id=56582
+
+        Brandon updated the CSP spec.  I've updated our implementation to
+        match.  In the process, I found a couple bugs in the spec, which I've
+        sent to the working group.  This patch assumes that the bugs will be
+        fixed in the way I suggested.  If they get fixed a different way, we
+        might need to update the parser again.
+
+        Test: http/tests/security/contentSecurityPolicy/directive-parsing.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::isDirectiveNameCharacter):
+        (WebCore::isDirectiveValueCharacter):
+        (WebCore::advanceUntil):
+        (WebCore::ContentSecurityPolicy::parse):
+        (WebCore::ContentSecurityPolicy::parseDirective):
+        * page/ContentSecurityPolicy.h:
+
+2011-03-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         WebCore GYP build should have PrivateHeaders
         https://bugs.webkit.org/show_bug.cgi?id=56604
 

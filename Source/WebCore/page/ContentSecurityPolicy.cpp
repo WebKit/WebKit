@@ -29,6 +29,24 @@
 
 namespace WebCore {
 
+static bool isDirectiveNameCharacter(UChar c)
+{
+    return isASCIIAlpha(c) || isASCIIDigit(c) || c == '-';
+}
+
+static bool isDirectiveValueCharacter(UChar c)
+{
+    return isASCIISpace(c) || (c >= 0x21 && c <= 0x7e); // Whitespace + VCHAR
+}
+
+static void advanceUntil(const UChar*& pos, const UChar* end, UChar delimiter)
+{
+    while (pos < end) {
+        if (*pos++ == delimiter)
+            return;
+    }
+}
+
 class CSPDirective {
 public:
     explicit CSPDirective(const String& value)
@@ -87,7 +105,8 @@ void ContentSecurityPolicy::parse(const String& policy)
         Vector<UChar, 32> name;
         Vector<UChar, 64> value;
 
-        parseDirective(pos, end, name, value);
+        if (!parseDirective(pos, end, name, value))
+            continue;
         if (name.isEmpty())
             continue;
 
@@ -98,47 +117,55 @@ void ContentSecurityPolicy::parse(const String& policy)
     }
 }
 
-void ContentSecurityPolicy::parseDirective(const UChar*& pos, const UChar* end, Vector<UChar, 32>& name, Vector<UChar, 64>& value)
+bool ContentSecurityPolicy::parseDirective(const UChar*& pos, const UChar* end, Vector<UChar, 32>& name, Vector<UChar, 64>& value)
 {
     ASSERT(pos < end);
     ASSERT(name.isEmpty());
     ASSERT(value.isEmpty());
 
-    enum {
-        BeforeDirectiveName,
-        DirectiveName,
-        AfterDirectiveName,
-        DirectiveValue,
-    } state = BeforeDirectiveName;
+    while (pos < end && isASCIISpace(*pos))
+        pos++;
 
     while (pos < end) {
-        UChar currentCharacter = *pos++;
-        switch (state) {
-        case BeforeDirectiveName:
-            if (isASCIISpace(currentCharacter))
-                continue;
-            state = DirectiveName;
-            // Fall through.
-        case DirectiveName:
-            if (!isASCIISpace(currentCharacter)) {
-                name.append(currentCharacter);
-                continue;
-            }
-            state = AfterDirectiveName;
-            // Fall through.
-        case AfterDirectiveName:
-            if (isASCIISpace(currentCharacter))
-                continue;
-            state = DirectiveValue;
-            // Fall through.
-        case DirectiveValue:
-            if (currentCharacter != ';') {
-                value.append(currentCharacter);
-                continue;
-            }
-            return;
+        UChar currentCharacter = *pos;
+        if (currentCharacter == ';')
+            break;
+        if (isASCIISpace(currentCharacter))
+            break;
+        if (!isDirectiveNameCharacter(currentCharacter)) {
+            advanceUntil(pos, end, ';');
+            return false;
         }
+        name.append(currentCharacter);
+        pos++;
     }
+
+    while (pos < end && isASCIISpace(*pos))
+        pos++;
+
+    if (pos < end && *pos == ';') {
+        pos++;
+        return true;
+    }
+
+    while (pos < end) {
+        UChar currentCharacter = *pos;
+        if (currentCharacter == ';')
+            break;
+        if (!isDirectiveValueCharacter(currentCharacter)) {
+            advanceUntil(pos, end, ';');
+            return false;
+        }
+        value.append(currentCharacter);
+        pos++;
+    }
+
+    if (pos < end && *pos == ';') {
+        pos++;
+        return true;
+    }
+
+    return true;
 }
 
 void ContentSecurityPolicy::emitDirective(const String& name, const String& value)

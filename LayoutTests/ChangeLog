@@ -1,3 +1,15 @@
+2011-03-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Update CSP directive parser to match spec
+        https://bugs.webkit.org/show_bug.cgi?id=56582
+
+        Test some error-handling cases.
+
+        * http/tests/security/contentSecurityPolicy/directive-parsing-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/directive-parsing.html: Added.
+
 2011-03-17  James Simonsen  <simonjam@chromium.org>
 
         Unreviewed, update chromium test expectations.
