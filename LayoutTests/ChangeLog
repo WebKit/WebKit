@@ -1,3 +1,11 @@
+2011-03-18  Adam Roben  <aroben@apple.com>
+
+        Disable a flakey inspector test
+
+        <http://webkit.org/b/56565> tracks the failure.
+
+        * inspector/elements/elements-panel-xhtml-structure.xhtml-disabled: Renamed from LayoutTests/inspector/elements/elements-panel-xhtml-structure.xhtml.
+
 2011-03-17  Adam Roben  <aroben@apple.com>
 
         Skip a test that is likely causing later tests to assert
