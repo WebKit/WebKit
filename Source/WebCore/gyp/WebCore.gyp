@@ -25,7 +25,6 @@
       ],
       'sources': [
         '<@(webcore_files)',
-        '<@(webcore_publicheader_files)',
         '<@(webcore_privateheader_files)',
         '<@(webcore_derived_source_files)',
         '$(SDKROOT)/System/Library/Frameworks/Accelerate.framework',
@@ -112,9 +111,6 @@
         ['exclude', 'tokenizer\\.cpp'],
 
         ['exclude', 'AllInOne\\.cpp$'],
-      ],
-      'mac_framework_headers': [
-        '<@(webcore_publicheader_files)',
       ],
       'mac_framework_private_headers': [
         '<@(webcore_privateheader_files)',

@@ -1,3 +1,19 @@
+2011-03-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebCore GYP build should have PrivateHeaders
+        https://bugs.webkit.org/show_bug.cgi?id=56604
+
+        I've manually verified that this produces the correct set of
+        PrivateHeaders (modulo the ForwardingHeaders and icu issue).
+        Unforunately, this patch breakes compile slightly, but I'll fix that
+        in a followup patch.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * gyp/WebCore.gyp:
+
 2011-03-17  Victoria Kirst  <vrk@google.com>
 
         Reviewed by Kenneth Russell.

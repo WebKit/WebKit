@@ -1121,6 +1121,7 @@
         'webcore_prerequisites',
       ],
       'sources': [
+        '<@(webcore_privateheader_files)',
         '<@(webcore_files)',
       ],
       'sources/': [
@@ -1138,6 +1139,7 @@
         'webcore_prerequisites',
       ],
       'sources': [
+        '<@(webcore_privateheader_files)',
         '<@(webcore_files)',
       ],
       'sources/': [
@@ -1164,6 +1166,7 @@
       # if this hard dependency could be split off the rest.
       'hard_dependency': 1,
       'sources': [
+        '<@(webcore_privateheader_files)',
         '<@(webcore_files)',
 
         # For WebCoreSystemInterface, Mac-only.
@@ -1353,6 +1356,7 @@
         'webcore_prerequisites',
       ],
       'sources': [
+        '<@(webcore_privateheader_files)',
         '<@(webcore_files)',
       ],
       'sources/': [
@@ -1413,6 +1417,7 @@
       # if this hard dependency could be split off the rest.
       'hard_dependency': 1,
       'sources': [
+        '<@(webcore_privateheader_files)',
         '<@(webcore_files)',
       ],
       'sources/': [
