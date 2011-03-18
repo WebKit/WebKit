@@ -1,5 +1,21 @@
 2011-03-18  Adam Roben  <aroben@apple.com>
 
+        Fix some leaks in DRT seen on the leaks bot
+
+        Fixes <http://webkit.org/b/56638> addURLToRedirectCallback and
+        setWillSendRequestClearHeaderCallback in DRT are leaky
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/ForwardingHeaders/wtf/OwnArrayPtr.h: Added.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (addURLToRedirectCallback):
+        (setWillSendRequestClearHeaderCallback):
+        Use OwnArrayPtr to cause the strings to be deleted.
+
+2011-03-18  Adam Roben  <aroben@apple.com>
+
         Fix a NSURLCredential leak seen on the leaks bot
 
         Fixes <http://webkit.org/b/56637> -[SynchronousLoader

@@ -39,6 +39,7 @@
 #include <stdio.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/RefPtr.h>
 
 LayoutTestController::LayoutTestController(const std::string& testPathOrURL, const std::string& expectedPixelHash)
@@ -355,15 +356,15 @@ static JSValueRef addURLToRedirectCallback(JSContextRef context, JSObjectRef fun
     ASSERT(!*exception);
 
     size_t maxLength = JSStringGetMaximumUTF8CStringSize(origin.get());
-    char* originBuffer = new char[maxLength + 1];
-    JSStringGetUTF8CString(origin.get(), originBuffer, maxLength + 1);
+    OwnArrayPtr<char> originBuffer = adoptArrayPtr(new char[maxLength + 1]);
+    JSStringGetUTF8CString(origin.get(), originBuffer.get(), maxLength + 1);
 
     maxLength = JSStringGetMaximumUTF8CStringSize(destination.get());
-    char* destinationBuffer = new char[maxLength + 1];
-    JSStringGetUTF8CString(destination.get(), destinationBuffer, maxLength + 1);
+    OwnArrayPtr<char> destinationBuffer = adoptArrayPtr(new char[maxLength + 1]);
+    JSStringGetUTF8CString(destination.get(), destinationBuffer.get(), maxLength + 1);
 
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->addURLToRedirect(originBuffer, destinationBuffer);
+    controller->addURLToRedirect(originBuffer.get(), destinationBuffer.get());
 
     return JSValueMakeUndefined(context);
 }
@@ -1543,11 +1544,11 @@ static JSValueRef setWillSendRequestClearHeaderCallback(JSContextRef context, JS
     ASSERT(!*exception);
 
     size_t maxLength = JSStringGetMaximumUTF8CStringSize(header.get());
-    char* headerBuffer = new char[maxLength + 1];
-    JSStringGetUTF8CString(header.get(), headerBuffer, maxLength + 1);
+    OwnArrayPtr<char> headerBuffer = adoptArrayPtr(new char[maxLength + 1]);
+    JSStringGetUTF8CString(header.get(), headerBuffer.get(), maxLength + 1);
 
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->setWillSendRequestClearHeader(headerBuffer);
+    controller->setWillSendRequestClearHeader(headerBuffer.get());
 
     return JSValueMakeUndefined(context);
 }
