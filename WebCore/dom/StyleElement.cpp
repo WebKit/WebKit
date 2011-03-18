@@ -26,6 +26,7 @@
 #include "MappedAttribute.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
+#include <limits>
 
 namespace WebCore {
 
@@ -58,8 +59,12 @@ void StyleElement::process(Element* e)
     unsigned resultLength = 0;
     for (Node* c = e->firstChild(); c; c = c->nextSibling()) {
         Node::NodeType nodeType = c->nodeType();
-        if (nodeType == Node::TEXT_NODE || nodeType == Node::CDATA_SECTION_NODE || nodeType == Node::COMMENT_NODE)
-            resultLength += c->nodeValue().length();
+        if (nodeType == Node::TEXT_NODE || nodeType == Node::CDATA_SECTION_NODE || nodeType == Node::COMMENT_NODE) {
+            unsigned length = c->nodeValue().length();
+            if (length > std::numeric_limits<unsigned>::max() - resultLength)
+                CRASH();
+            resultLength += length;
+        }
     }
     UChar* text;
     String sheetText = String::createUninitialized(resultLength, text);
