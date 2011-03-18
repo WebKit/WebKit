@@ -1,3 +1,13 @@
+2011-03-18  Adam Roben  <aroben@apple.com>
+
+        Fix a CFNumber leak seen on the leaks bot
+
+        Reviewed by Gavin Barraclough.
+
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::advanceCurrentStream): Use a RetainPtr to cause the CFNumber we allocate to be
+        released.
+
 2011-03-17  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
