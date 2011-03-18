@@ -2042,16 +2042,10 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.basic.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.transparent.2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
-BUGWK15266 LINUX WIN : canvas/philip/tests/2d.shadow.gradient.alpha.html = TEXT
-BUGWK15266 LINUX WIN : canvas/philip/tests/2d.shadow.gradient.basic.html = TEXT
-BUGWK15266 LINUX WIN : canvas/philip/tests/2d.shadow.gradient.transparent.2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.alpha.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.basic.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.scale.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.transparent.2.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.pattern.alpha.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.pattern.basic.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.pattern.transparent.2.html = TEXT
 BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
@@ -2584,13 +2578,6 @@ BUGWK52509 LINUX WIN : fast/canvas/canvas-strokeRect-gradient-shadow.html = TEXT
 // Mainly flaky with mac debug, but also intermittent crashes seen on linux release
 BUGCR64129 MAC LINUX : fast/files/revoke-blob-url.html = CRASH PASS
 
-// Unknown reason. Was introduced at r72588
-BUG_LOISLO WIN LINUX : fast/canvas/canvas-drawImage-shadow.html = TEXT
-
-BUGWK50112 WIN LINUX : fast/canvas/canvas-createPattern-fillRect-shadow.html = TEXT
-
-BUGCR64647 WIN LINUX : fast/canvas/canvas-scale-drawImage-shadow.html = TEXT
-
 BUGCR64672 : fast/regex/invalid-range-in-class.html = TEXT
 
 BUGCR64733 : editing/text-iterator/findString.html = TEXT
@@ -2793,9 +2780,6 @@ BUGWK52082 MAC LEOPARD : fast/text/basic/014.html = IMAGE
 BUGWK52082 MAC LEOPARD: fast/text/midword-break-after-breakable-char.html = IMAGE
 BUGWK52082 WIN LINUX : fast/text/basic/014.html = IMAGE+TEXT
 BUGWK52082 WIN LINUX : fast/text/midword-break-after-breakable-char.html = IMAGE+TEXT
-
-// These were introduced by r75139
-BUGWK51989 WIN LINUX : fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
 
 // These have been flaky for as long as we have test history.
 BUGWK52064 WIN DEBUG : fast/events/overflow-events.html = PASS TEXT
@@ -3230,6 +3214,49 @@ BUGWK56072 WIN-VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = 
 BUGWK56072 MAC SNOWLEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUGWK56072 MAC SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/ruby/base-shorter-than-text.html = FAIL
+
+// Added by junov temporary test failures until blur rendering is re-baselined
+BUGCR42654 WIN LINUX : fast/blockflow/english-lr-text.html = IMAGE
+BUGCR42654 WIN LINUX : fast/borders/border-radius-split-inline.html = IMAGE
+BUGCR42654 WIN LINUX : fast/box-shadow/basic-shadows.html = IMAGE
+BUGCR42654 WIN LINUX : fast/box-shadow/border-radius-big.html = IMAGE
+BUGCR42654 WIN LINUX : fast/box-shadow/box-shadow-radius.html = IMAGE
+BUGCR42654 WIN LINUX : fast/box-shadow/box-shadow-transformed.html = IMAGE
+BUGCR42654 WIN LINUX : fast/box-shadow/inset-box-shadow-radius.html = IMAGE
+BUGCR42654 WIN LINUX : fast/box-shadow/inset-box-shadows.html = IMAGE
+BUGCR42654 WIN LINUX : fast/box-shadow/inset.html = IMAGE
+BUGCR42654 WIN LINUX : fast/box-shadow/shadow-buffer-partial.html = IMAGE
+BUGCR42654 WIN LINUX : fast/box-shadow/shadow-tiling-artifact.html = IMAGE
+BUGCR42654 WIN LINUX : fast/box-shadow/spread-multiple-normal.html = IMAGE
+BUGCR42654 WIN LINUX : fast/box-shadow/spread.html = IMAGE
+BUGCR42654 WIN LINUX : fast/multicol/shadow-breaking.html = IMAGE
+BUGCR42654 WIN LINUX : fast/repaint/box-shadow-h.html = IMAGE
+BUGCR42654 WIN LINUX : fast/repaint/box-shadow-v.html = IMAGE
+BUGCR42654 WIN LINUX : fast/repaint/moving-shadow-on-container.html = IMAGE
+BUGCR42654 WIN LINUX : fast/repaint/moving-shadow-on-path.html = IMAGE
+BUGCR42654 WIN LINUX : fast/repaint/shadow-multiple-horizontal.html = IMAGE
+BUGCR42654 WIN LINUX : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
+BUGCR42654 WIN LINUX : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
+BUGCR42654 WIN LINUX : fast/repaint/shadow-multiple-vertical.html = IMAGE
+BUGCR42654 WIN LINUX : fast/repaint/transform-replaced-shadows.html = IMAGE
+BUGCR42654 WIN LINUX : fast/text/shadow-translucent-fill.html = IMAGE
+BUGCR42654 WIN LINUX : fast/text/stroking-decorations.html = IMAGE
+BUGCR42654 WIN LINUX : fast/text/stroking.html = IMAGE
+BUGCR42654 WIN LINUX : fast/transforms/shadows.html = IMAGE
+BUGCR42654 WIN LINUX : svg/css/arrow-with-shadow.svg = IMAGE
+BUGCR42654 WIN LINUX : svg/css/composite-shadow-example.html = IMAGE
+BUGCR42654 WIN LINUX : svg/css/composite-shadow-text.svg = IMAGE
+BUGCR42654 WIN LINUX : svg/css/composite-shadow-with-opacity.html = IMAGE
+BUGCR42654 WIN LINUX : svg/css/group-with-shadow.svg = IMAGE
+BUGCR42654 WIN LINUX : svg/css/shadow-changes.svg = IMAGE
+BUGCR42654 WIN LINUX : svg/css/shadow-with-large-radius.svg = IMAGE
+BUGCR42654 WIN LINUX : svg/css/shadow-with-negative-offset.svg = IMAGE
+BUGCR42654 WIN LINUX : svg/css/stars-with-shadow.html = IMAGE
+BUGCR42654 WIN LINUX : svg/css/text-gradient-shadow.svg = IMAGE
+BUGCR42654 WIN LINUX : svg/css/text-shadow-multiple.xhtml = IMAGE
+BUGCR42654 WIN LINUX : transitions/svg-text-shadow-transition.html = IMAGE
+BUGCR42654 WIN LINUX : compositing/geometry/clipping-foreground.html = IMAGE
+BUGCR42654 WIN LINUX : compositing/iframes/composited-iframe-alignment.html = IMAGE
 
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 WIN LINUX : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT

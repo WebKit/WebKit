@@ -1,3 +1,22 @@
+2011-03-18  Justin Novosad  <junov@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [Chromium] Canvas shadow is not working with drawImage
+        https://bugs.webkit.org/show_bug.cgi?id=55506
+
+        Patch also fixes shadow blur quality and color. 
+        Affects Chromium win/linux. Also fixes the following bugs:
+        https://bugs.webkit.org/show_bug.cgi?id=50112
+        https://bugs.webkit.org/show_bug.cgi?id=51989
+        https://bugs.webkit.org/show_bug.cgi?id=55410
+        No tests were added, impact is already covered by multiple layout tests.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::paintSkBitmap):
+
 2011-03-15  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
