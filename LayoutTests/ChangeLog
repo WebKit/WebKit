@@ -1,5 +1,14 @@
 2011-03-18  Adam Roben  <aroben@apple.com>
 
+        Skip some timing out tests in WebKit2 on Windows
+
+        Tracked by <http://webkit.org/b/56633> and <http://webkit.org/b/56634>.
+
+        * platform/win-wk2/Skipped: Added inspector/console/command-line-api.html and
+        http/tests/xmlhttprequest/cross-origin-authorization.html.
+
+2011-03-18  Adam Roben  <aroben@apple.com>
+
         Add expected failure results for WebKit2 tests failing on Windows due to font differences
 
         <http://webkit.org/b/56617> tracks the failures.
