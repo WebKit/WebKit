@@ -1,5 +1,14 @@
 2011-03-17  Adam Roben  <aroben@apple.com>
 
+        Skip a test that is likely causing later tests to assert
+
+        <http://webkit.org/b/56599> tracks the failure.
+
+        * platform/win/Skipped: Replaced editing/deleting/5206311-1.html with
+        editing/deleting/5168598.html, which is likely causing the former to assert.
+
+2011-03-17  Adam Roben  <aroben@apple.com>
+
         Add Windows XP results for test added in r81404
 
         The differences from Windows 7 seem to be due to different fonts being used.
