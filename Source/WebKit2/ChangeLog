@@ -1,3 +1,9 @@
+2011-03-18  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, fixed compilation after r81208.
+
+        * GNUmakefile.am:
+
 2011-03-18  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dan Bernstein.
