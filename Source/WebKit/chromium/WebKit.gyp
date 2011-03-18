@@ -738,59 +738,6 @@
             }],
         },
         {
-            'target_name': 'concatenated_devtools_js',
-            'type': 'none',
-            'dependencies': [
-                'devtools_html',
-                '../../WebCore/WebCore.gyp/WebCore.gyp:inspector_protocol_sources'
-            ],
-            'sources': ['<(PRODUCT_DIR)/resources/inspector/DevTools.js'],
-            'actions': [{
-                'action_name': 'concatenate_devtools_js',
-                'script_name': 'scripts/concatenate_js_files.py',
-                'input_page': '../../WebCore/inspector/front-end/inspector.html',
-                'inputs': [
-                    '<@(_script_name)',
-                    '<@(_input_page)',
-                    '<@(webinspector_files)',
-                    '<@(devtools_files)',
-                    '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js'
-                ],
-                'search_path': [
-                    '../../WebCore/inspector/front-end',
-                    'src/js',
-                    '<(SHARED_INTERMEDIATE_DIR)/webcore',
-                ],
-                'outputs': ['<(PRODUCT_DIR)/resources/inspector/DevTools.js'],
-                'action': ['python', '<@(_script_name)', '<@(_input_page)', '<@(_search_path)', '<@(_outputs)'],
-            }],
-        },
-        {
-            'target_name': 'concatenated_devtools_css',
-            'type': 'none',
-            'dependencies': [
-                'devtools_html'
-            ],
-            'sources': ['<(PRODUCT_DIR)/resources/inspector/devTools.css'],
-            'actions': [{
-                'action_name': 'concatenate_devtools_css',
-                'script_name': 'scripts/concatenate_css_files.py',
-                'input_page': '../../WebCore/inspector/front-end/inspector.html',
-                'inputs': [
-                    '<@(_script_name)',
-                    '<@(_input_page)',
-                    '<@(webinspector_files)',
-                    '<@(devtools_files)'
-                ],
-                'search_path': [
-                    '../../WebCore/inspector/front-end',
-                    'src/js',
-                ],
-                'outputs': ['<(PRODUCT_DIR)/resources/inspector/devTools.css'],
-                'action': ['python', '<@(_script_name)', '<@(_input_page)', '<@(_search_path)', '<@(_outputs)'],
-            }],
-        },
-        {
             'target_name': 'generate_devtools_grd',
             'type': 'none',
             'dependencies': [
@@ -1185,6 +1132,61 @@
                     'copies': [{
                         'destination': '<(PRODUCT_DIR)/DumpRenderTree.app/Contents/MacOS/',
                         'files': ['<(PRODUCT_DIR)/osmesa.so'],
+                    }],
+                },
+            ],
+        }],
+        ['debug_devtools==0', {
+            'targets': [
+                {
+                    'target_name': 'concatenated_devtools_js',
+                    'type': 'none',
+                    'dependencies': [
+                        'devtools_html',
+                        '../../WebCore/WebCore.gyp/WebCore.gyp:inspector_protocol_sources'
+                    ],
+                    'actions': [{
+                        'action_name': 'concatenate_devtools_js',
+                        'script_name': 'scripts/concatenate_js_files.py',
+                        'input_page': '../../WebCore/inspector/front-end/inspector.html',
+                        'inputs': [
+                            '<@(_script_name)',
+                            '<@(_input_page)',
+                            '<@(webinspector_files)',
+                            '<@(devtools_files)',
+                            '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js'
+                        ],
+                        'search_path': [
+                            '../../WebCore/inspector/front-end',
+                            'src/js',
+                            '<(SHARED_INTERMEDIATE_DIR)/webcore',
+                        ],
+                        'outputs': ['<(PRODUCT_DIR)/resources/inspector/DevTools.js'],
+                        'action': ['python', '<@(_script_name)', '<@(_input_page)', '<@(_search_path)', '<@(_outputs)'],
+                    }],
+                },
+                {
+                    'target_name': 'concatenated_devtools_css',
+                    'type': 'none',
+                    'dependencies': [
+                        'devtools_html'
+                    ],
+                    'actions': [{
+                        'action_name': 'concatenate_devtools_css',
+                        'script_name': 'scripts/concatenate_css_files.py',
+                        'input_page': '../../WebCore/inspector/front-end/inspector.html',
+                        'inputs': [
+                            '<@(_script_name)',
+                            '<@(_input_page)',
+                            '<@(webinspector_files)',
+                            '<@(devtools_files)'
+                        ],
+                        'search_path': [
+                            '../../WebCore/inspector/front-end',
+                            'src/js',
+                        ],
+                        'outputs': ['<(PRODUCT_DIR)/resources/inspector/devTools.css'],
+                        'action': ['python', '<@(_script_name)', '<@(_input_page)', '<@(_search_path)', '<@(_outputs)'],
                     }],
                 },
             ],

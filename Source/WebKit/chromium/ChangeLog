@@ -1,3 +1,21 @@
+2011-03-18  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] make devtool concatenation targets conditional based on debug_devtools
+        https://bugs.webkit.org/show_bug.cgi?id=56667
+
+        We don't want to run these targets when debug_devtools=1 because it
+        will overwrite the devtools.js and devtools.css files copied by
+        inspector_resources.  On Linux, this triggers a warning because
+        there are two commands that target the same output file when
+        debug_devtools=1.
+
+        I also removed the 'sources' lines since I don't think they do
+        anything for actions.
+
+        * WebKit.gyp:
+
 2011-03-17  Alexey Marinichev  <amarinichev@chromium.org>
 
         Reviewed by Kenneth Russell.
