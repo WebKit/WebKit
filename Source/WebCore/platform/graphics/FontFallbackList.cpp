@@ -111,23 +111,6 @@ const FontData* FontFallbackList::fontDataAt(const Font* font, unsigned realized
     return result;
 }
 
-const FontData* FontFallbackList::fontDataForCharacters(const Font* font, const UChar* characters, int length) const
-{
-    // This method is only called when the primary font does not contain the characters we need.
-    // Begin our search at position 1.
-    unsigned realizedFontIndex = 1;
-    const FontData* fontData = fontDataAt(font, realizedFontIndex);
-    while (fontData && !fontData->containsCharacters(characters, length))
-        fontData = fontDataAt(font, ++realizedFontIndex);
-    
-    if (!fontData) {
-        ASSERT(fontCache()->generation() == m_generation);
-        fontData = fontCache()->getFontDataForCharacters(*font, characters, length);
-    }
-
-    return fontData;
-}
-
 void FontFallbackList::setPlatformFont(const FontPlatformData& platformData)
 {
     m_familyIndex = cAllFamiliesScanned;

@@ -1,3 +1,10 @@
+2011-03-18  Andreas Kling  <kling@webkit.org>
+
+        Unbreak Qt build after r81494.
+
+        * WebKitTestRunner/qt/TestInvocationQt.cpp:
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+
 2011-03-18  Sam Weinig  <sam@webkit.org>
 
         Fix windows build. This was really Adam Roben's fault. I swear!
