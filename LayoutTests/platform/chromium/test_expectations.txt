@@ -2359,8 +2359,7 @@ BUGWEBGL GPU WIN DEBUG SLOW : fast/canvas/webgl/index-validation-with-resized-bu
 // These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
 BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS TEXT
 // BUGCR60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
-BUGCR60651 WIN : fast/canvas/webgl/uniform-location.html = TIMEOUT CRASH
-BUGCR60651 LINUX MAC : fast/canvas/webgl/uniform-location.html = TEXT
+BUGCR60651 : fast/canvas/webgl/uniform-location.html = TEXT
 
 BUG_AUTO LINUX WIN DEBUG : animations/suspend-resume-animation.html = PASS TEXT
 BUG_AUTO LINUX RELEASE : animations/3d/transform-origin-vs-functions.html = PASS TEXT
@@ -3255,8 +3254,15 @@ BUGCR42654 WIN LINUX : svg/css/stars-with-shadow.html = IMAGE
 BUGCR42654 WIN LINUX : svg/css/text-gradient-shadow.svg = IMAGE
 BUGCR42654 WIN LINUX : svg/css/text-shadow-multiple.xhtml = IMAGE
 BUGCR42654 WIN LINUX : transitions/svg-text-shadow-transition.html = IMAGE
-BUGCR42654 WIN LINUX : compositing/geometry/clipping-foreground.html = IMAGE
-BUGCR42654 WIN LINUX : compositing/iframes/composited-iframe-alignment.html = IMAGE
+BUGCR42654 WIN LINUX : compositing/geometry/clipping-foreground.html = IMAGE+TEXT
+BUGCR42654 CPU WIN LINUX : compositing/iframes/composited-iframe-alignment.html = IMAGE+TEXT
+BUGCR42654 WIN LINUX : fast/canvas/shadow-offset-4.html = IMAGE
+BUGCR42654 WIN LINUX : fast/canvas/shadow-offset-5.html = IMAGE
+BUGCR42654 WIN LINUX : fast/canvas/shadow-offset-6.html = IMAGE
+BUGCR42654 WIN LINUX : fast/canvas/shadow-offset-7.html = IMAGE
+BUGCR42654 WIN LINUX : fast/repaint/text-shadow-horizontal.html = IMAGE
+BUGCR42654 WIN LINUX : fast/repaint/text-shadow.html = IMAGE
+BUGCR42654 WIN LINUX : fast/text/shadow-no-blur.html = IMAGE
 
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 WIN LINUX : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT

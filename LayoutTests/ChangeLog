@@ -1,3 +1,11 @@
+2011-03-18  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; test expectations update.
+
+        [chromium] Add some test expectations missing from r81489.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-18  Justin Novosad  <junov@chromium.org>
 
         Reviewed by Kenneth Russell.
