@@ -4260,7 +4260,7 @@
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
-					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
+					"-lWebKitSystemInterface",
 				);
 			};
 			name = Production;
