@@ -45,10 +45,10 @@
 		BC7934AC1190658C005EA8E2 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934AB1190658C005EA8E2 /* WebKit2.framework */; };
 		BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */; };
 		BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8C795B11D2785D004535A1 /* TestControllerMac.mm */; };
-		BC8DAD5D1315C0EC00EC96FC /* TestInvocationMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8DAD5B1315C0EC00EC96FC /* TestInvocationMac.mm */; };
 		BC8DAD7B1316D91000EC96FC /* InjectedBundleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8DAD771316D7B900EC96FC /* InjectedBundleMac.mm */; };
 		BC8FD8CA120E527F00F3E71A /* EventSendingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8FD8C9120E527F00F3E71A /* EventSendingController.cpp */; };
 		BC8FD8D2120E545B00F3E71A /* JSEventSendingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8FD8D0120E545B00F3E71A /* JSEventSendingController.cpp */; };
+		BC9192051333E4F8003011DC /* TestInvocationCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9192041333E4F8003011DC /* TestInvocationCG.cpp */; };
 		BC952C0D11F3B965003398B4 /* JSWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC952C0C11F3B965003398B4 /* JSWrapper.cpp */; };
 		BC952F1F11F3C652003398B4 /* JSLayoutTestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC952F1D11F3C652003398B4 /* JSLayoutTestController.cpp */; };
 		BCC997A411D3C8F60017BCA2 /* InjectedBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */; };
@@ -112,13 +112,13 @@
 		BC7934DD119066EC005EA8E2 /* PlatformWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWebView.h; sourceTree = "<group>"; };
 		BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewMac.mm; sourceTree = "<group>"; };
 		BC8C795B11D2785D004535A1 /* TestControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestControllerMac.mm; sourceTree = "<group>"; };
-		BC8DAD5B1315C0EC00EC96FC /* TestInvocationMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestInvocationMac.mm; sourceTree = "<group>"; };
 		BC8DAD771316D7B900EC96FC /* InjectedBundleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleMac.mm; sourceTree = "<group>"; };
 		BC8FD8C8120E527F00F3E71A /* EventSendingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSendingController.h; sourceTree = "<group>"; };
 		BC8FD8C9120E527F00F3E71A /* EventSendingController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventSendingController.cpp; sourceTree = "<group>"; };
 		BC8FD8CB120E52B000F3E71A /* EventSendingController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EventSendingController.idl; sourceTree = "<group>"; };
 		BC8FD8D0120E545B00F3E71A /* JSEventSendingController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSEventSendingController.cpp; path = DerivedSources/WebKitTestRunner/JSEventSendingController.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC8FD8D1120E545B00F3E71A /* JSEventSendingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSEventSendingController.h; path = DerivedSources/WebKitTestRunner/JSEventSendingController.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC9192041333E4F8003011DC /* TestInvocationCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestInvocationCG.cpp; path = cg/TestInvocationCG.cpp; sourceTree = "<group>"; };
 		BC952C0B11F3B965003398B4 /* JSWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWrapper.h; sourceTree = "<group>"; };
 		BC952C0C11F3B965003398B4 /* JSWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWrapper.cpp; sourceTree = "<group>"; };
 		BC952C0E11F3B97B003398B4 /* JSWrappable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWrappable.h; sourceTree = "<group>"; };
@@ -182,6 +182,7 @@
 		08FB7795FE84155DC02AAC07 /* TestRunner */ = {
 			isa = PBXGroup;
 			children = (
+				BC9192021333E4CD003011DC /* cg */,
 				BC7933FE118F7C74005EA8E2 /* mac */,
 				BC251A1711D16774002EBC01 /* WebKitTestRunnerPrefix.h */,
 				BC7934DD119066EC005EA8E2 /* PlatformWebView.h */,
@@ -277,7 +278,6 @@
 				BC7933FF118F7C84005EA8E2 /* main.mm */,
 				BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */,
 				BC8C795B11D2785D004535A1 /* TestControllerMac.mm */,
-				BC8DAD5B1315C0EC00EC96FC /* TestInvocationMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -291,6 +291,14 @@
 				BC251A1811D16795002EBC01 /* WebKitTestRunner.xcconfig */,
 			);
 			path = Configurations;
+			sourceTree = "<group>";
+		};
+		BC9192021333E4CD003011DC /* cg */ = {
+			isa = PBXGroup;
+			children = (
+				BC9192041333E4F8003011DC /* TestInvocationCG.cpp */,
+			);
+			name = cg;
 			sourceTree = "<group>";
 		};
 		BC952C0A11F3B939003398B4 /* Bindings */ = {
@@ -440,8 +448,8 @@
 				BC793431118F7F19005EA8E2 /* TestController.cpp in Sources */,
 				BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */,
 				BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */,
-				BC8DAD5D1315C0EC00EC96FC /* TestInvocationMac.mm in Sources */,
 				BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */,
+				BC9192051333E4F8003011DC /* TestInvocationCG.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

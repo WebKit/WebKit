@@ -50,6 +50,7 @@ InjectedBundle::InjectedBundle()
     : m_bundle(0)
     , m_topLoadingFrame(0)
     , m_state(Idle)
+    , m_dumpPixels(false)
 {
 }
 
@@ -129,7 +130,9 @@ void InjectedBundle::resetLocalSettings()
 void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody)
 {
     if (WKStringIsEqualToUTF8CString(messageName, "BeginTest")) {
-        ASSERT(!messageBody);
+        ASSERT(messageBody);
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        m_dumpPixels = WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody));
 
         WKRetainPtr<WKStringRef> ackMessageName(AdoptWK, WKStringCreateWithUTF8CString("Ack"));
         WKRetainPtr<WKStringRef> ackMessageBody(AdoptWK, WKStringCreateWithUTF8CString("BeginTest"));
@@ -139,6 +142,7 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
         return;
     } else if (WKStringIsEqualToUTF8CString(messageName, "Reset")) {
         m_state = Idle;
+        m_dumpPixels = false;
 
         resetLocalSettings();
 
@@ -155,6 +159,7 @@ void InjectedBundle::beginTesting()
     m_state = Testing;
 
     m_outputStream.str("");
+    m_pixelResult.clear();
 
     m_layoutTestController = LayoutTestController::create();
     m_gcController = GCController::create();
@@ -182,9 +187,8 @@ void InjectedBundle::done()
     WKRetainPtr<WKStringRef> textOutput(AdoptWK, WKStringCreateWithUTF8CString(m_outputStream.str().c_str()));
     WKDictionaryAddItem(doneMessageBody.get(), textOutputKey.get(), textOutput.get());
     
-    WKRetainPtr<WKStringRef> textOnlyKey(AdoptWK, WKStringCreateWithUTF8CString("TextOnly"));
-    WKRetainPtr<WKBooleanRef> textOnly(AdoptWK, WKBooleanCreate(!m_layoutTestController->shouldDumpPixels()));
-    WKDictionaryAddItem(doneMessageBody.get(), textOnlyKey.get(), textOnly.get());
+    WKRetainPtr<WKStringRef> pixelResultKey = adoptWK(WKStringCreateWithUTF8CString("PixelResult"));
+    WKDictionaryAddItem(doneMessageBody.get(), pixelResultKey.get(), m_pixelResult.get());
 
     WKBundlePostMessage(m_bundle, doneMessageName.get(), doneMessageBody.get());
 

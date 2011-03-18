@@ -46,7 +46,7 @@ public:
 
 private:
     void dump(const char*);
-    void dumpPixelsAndCompareWithExpected();
+    void dumpPixelsAndCompareWithExpected(WKImageRef);
     
     WKRetainPtr<WKURLRef> m_url;
     std::string m_pathOrURL;

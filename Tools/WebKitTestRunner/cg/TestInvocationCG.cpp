@@ -23,39 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "TestInvocation.h"
+#include "config.h"
+#include "TestInvocation.h"
 
-#import "PlatformWebView.h"
-#import "TestController.h"
-#import <ImageIO/CGImageDestination.h>
-#import <LaunchServices/UTCoreTypes.h>
-#import <WebKit2/WKPage.h>
-#import <wtf/RetainPtr.h>
+#include "PlatformWebView.h"
+#include "TestController.h"
+#include <ImageIO/CGImageDestination.h>
+#include <WebKit2/WKImageCG.h>
+#include <wtf/MD5.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/StringExtras.h>
 
-#define COMMON_DIGEST_FOR_OPENSSL
-#import <CommonCrypto/CommonDigest.h>
+#if PLATFORM(MAC)
+#include <LaunchServices/UTCoreTypes.h>
+#endif
+
+#if PLATFORM(WIN)
+static const CFStringRef kUTTypePNG = CFSTR("public.png");
+#endif
 
 namespace WTR {
 
-static CGContextRef createCGContextFromPlatformView(PlatformWebView* platformWebView)
+static CGContextRef createCGContextFromImage(WKImageRef wkImage)
 {
-    WKView* view = platformWebView->platformView();
-    [view display];
+    RetainPtr<CGImageRef> image(AdoptCF, WKImageCreateCGImage(wkImage));
 
-    NSSize webViewSize = [view frame].size;
-    size_t pixelsWide = static_cast<size_t>(webViewSize.width);
-    size_t pixelsHigh = static_cast<size_t>(webViewSize.height);
+    size_t pixelsWide = CGImageGetWidth(image.get());
+    size_t pixelsHigh = CGImageGetHeight(image.get());
     size_t rowBytes = (4 * pixelsWide + 63) & ~63;
     void* buffer = calloc(pixelsHigh, rowBytes);
 
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef context = CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
     CGColorSpaceRelease(colorSpace);
     
-    CGImageRef image = CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [[view window] windowNumber], kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque);
-    CGContextDrawImage(context, CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image)), image);
-    CGImageRelease(image);
+    CGContextDrawImage(context, CGRectMake(0, 0, pixelsWide, pixelsHigh), image.get());
 
     return context;
 }
@@ -68,26 +70,29 @@ void computeMD5HashStringForContext(CGContextRef bitmapContext, char hashString[
     size_t bytesPerRow = CGBitmapContextGetBytesPerRow(bitmapContext);
     
     // We need to swap the bytes to ensure consistent hashes independently of endianness
-    MD5_CTX md5Context;
-    MD5_Init(&md5Context);
+    MD5 md5;
     unsigned char* bitmapData = static_cast<unsigned char*>(CGBitmapContextGetData(bitmapContext));
+#if PLATFORM(MAC)
     if ((CGBitmapContextGetBitmapInfo(bitmapContext) & kCGBitmapByteOrderMask) == kCGBitmapByteOrder32Big) {
         for (unsigned row = 0; row < pixelsHigh; row++) {
-            uint32_t buffer[pixelsWide];
+            Vector<uint8_t> buffer(4 * pixelsWide);
             for (unsigned column = 0; column < pixelsWide; column++)
                 buffer[column] = OSReadLittleInt32(bitmapData, 4 * column);
-            MD5_Update(&md5Context, buffer, 4 * pixelsWide);
+            md5.addBytes(buffer);
             bitmapData += bytesPerRow;
         }
     } else {
+#endif
         for (unsigned row = 0; row < pixelsHigh; row++) {
-            MD5_Update(&md5Context, bitmapData, 4 * pixelsWide);
+            md5.addBytes(bitmapData, 4 * pixelsWide);
             bitmapData += bytesPerRow;
         }
+#if PLATFORM(MAC)
     }
+#endif
 
-    unsigned char hash[16];
-    MD5_Final(hash, &md5Context);
+    Vector<uint8_t, 16> hash;
+    md5.checksum(hash);
     
     hashString[0] = '\0';
     for (int i = 0; i < 16; i++)
@@ -121,18 +126,10 @@ static void dumpBitmap(CGContextRef bitmapContext)
     }
 }
 
-static void forceRepaintFunction(WKErrorRef, void* context)
+void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image)
 {
-    *static_cast<bool*>(context) = true;
-}
+    CGContextRef context = createCGContextFromImage(image);
 
-void TestInvocation::dumpPixelsAndCompareWithExpected()
-{
-    WKPageForceRepaint(TestController::shared().mainWebView()->page(), &m_gotRepaint, forceRepaintFunction);
-    TestController::shared().runUntil(m_gotRepaint, TestController::LongTimeout);
-    
-    CGContextRef context = createCGContextFromPlatformView(TestController::shared().mainWebView());
-    
     // Compute the hash of the bitmap context pixels
     char actualHash[33];
     computeMD5HashStringForContext(context, actualHash);

@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;..\Configurations\WebKitTestRunnerCommon.vsprops;..\Configurations\WebKitTestRunnerCoreFoundation.vsprops"
+			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;..\Configurations\WebKitTestRunnerCommon.vsprops;..\Configurations\WebKitTestRunnerCoreFoundation.vsprops;..\Configurations\WebKitTestRunnerCoreGraphics.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -79,7 +79,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;..\Configurations\WebKitTestRunnerCommon.vsprops;..\Configurations\WebKitTestRunnerCoreFoundation.vsprops"
+			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;..\Configurations\WebKitTestRunnerCommon.vsprops;..\Configurations\WebKitTestRunnerCoreFoundation.vsprops;..\Configurations\WebKitTestRunnerCoreGraphics.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -140,7 +140,7 @@
 		<Configuration
 			Name="Debug_All|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug_all.vsprops;..\Configurations\WebKitTestRunnerCommon.vsprops;..\Configurations\WebKitTestRunnerCoreFoundation.vsprops"
+			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug_all.vsprops;..\Configurations\WebKitTestRunnerCommon.vsprops;..\Configurations\WebKitTestRunnerCoreFoundation.vsprops;..\Configurations\WebKitTestRunnerCoreGraphics.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -323,7 +323,7 @@
 		<Configuration
 			Name="Release_LTCG|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;..\Configurations\WebKitTestRunnerCommon.vsprops;..\Configurations\WebKitTestRunnerCoreFoundation.vsprops"
+			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;..\Configurations\WebKitTestRunnerCommon.vsprops;..\Configurations\WebKitTestRunnerCoreFoundation.vsprops;..\Configurations\WebKitTestRunnerCoreGraphics.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -403,6 +403,14 @@
 			</File>
 			<File
 				RelativePath=".\TestInvocationWin.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="cg"
+			>
+			<File
+				RelativePath="..\cg\TestInvocationCG.cpp"
 				>
 			</File>
 		</Filter>

@@ -28,8 +28,10 @@
 
 namespace WTR {
 
-void TestInvocation::dumpPixelsAndCompareWithExpected()
+#if !PLATFORM(CG)
+void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef)
 {
 }
+#endif
 
 } // namespace WTR

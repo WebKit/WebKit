@@ -30,6 +30,7 @@
 #include "GCController.h"
 #include "LayoutTestController.h"
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKRetainPtr.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -62,11 +63,14 @@ public:
 
     void done();
     std::ostringstream& os() { return m_outputStream; }
+    void setPixelResult(WKImageRef image) { m_pixelResult = image; }
 
     bool isTestRunning() { return m_state == Testing; }
 
     WKBundleFrameRef topLoadingFrame() { return m_topLoadingFrame; }
     void setTopLoadingFrame(WKBundleFrameRef frame) { m_topLoadingFrame = frame; }
+
+    bool shouldDumpPixels() const { return m_dumpPixels; }
 
 private:
     InjectedBundle();
@@ -105,6 +109,10 @@ private:
         Stopping
     };
     State m_state;
+
+    bool m_dumpPixels;
+
+    WKRetainPtr<WKImageRef> m_pixelResult;
 };
 
 } // namespace WTR

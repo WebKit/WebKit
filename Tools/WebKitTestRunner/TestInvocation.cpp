@@ -133,8 +133,9 @@ void TestInvocation::invoke()
 {
     sizeWebViewForCurrentTest(m_pathOrURL.c_str());
 
-    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("BeginTest"));
-    WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), 0);
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("BeginTest"));
+    WKRetainPtr<WKBooleanRef> dumpPixels = adoptWK(WKBooleanCreate(m_dumpPixels));
+    WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), dumpPixels.get());
 
     TestController::shared().runUntil(m_gotInitialResponse, TestController::ShortTimeout);
     if (!m_gotInitialResponse) {
@@ -167,6 +168,8 @@ void TestInvocation::dump(const char* stringToDump)
 
     fputs("#EOF\n", stdout);
     fputs("#EOF\n", stderr);
+    fflush(stdout);
+    fflush(stderr);
 }
 
 void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
@@ -199,15 +202,16 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKRetainPtr<WKStringRef> textOutputKey(AdoptWK, WKStringCreateWithUTF8CString("TextOutput"));
         WKStringRef textOutput = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, textOutputKey.get()));
 
-        WKRetainPtr<WKStringRef> textOnlyKey(AdoptWK, WKStringCreateWithUTF8CString("TextOnly"));
-        bool textOnly = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, textOnlyKey.get())));
+        WKRetainPtr<WKStringRef> pixelResultKey = adoptWK(WKStringCreateWithUTF8CString("PixelResult"));
+        WKImageRef pixelResult = static_cast<WKImageRef>(WKDictionaryGetItemForKey(messageBodyDictionary, pixelResultKey.get()));
+        ASSERT(!pixelResult || m_dumpPixels);
 
         // Dump text.
         dump(toSTD(textOutput).c_str());
 
         // Dump pixels (if necessary).
-        if (m_dumpPixels && !textOnly)
-            dumpPixelsAndCompareWithExpected();
+        if (m_dumpPixels && pixelResult)
+            dumpPixelsAndCompareWithExpected(pixelResult);
 
         fputs("#EOF\n", stdout);
         fflush(stdout);

@@ -1,3 +1,49 @@
+2011-03-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Pixel tests don't work in WebKitTestRunner on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=56630
+
+        Cross-platformize (Mac and Windows CG) the pixel dumping code in WebKitTestRunner to use WebKit2
+        built-in snapshotting instead of using the window server on the Mac.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::InjectedBundle):
+        (WTR::InjectedBundle::didReceiveMessage):
+        (WTR::InjectedBundle::beginTesting):
+        (WTR::InjectedBundle::done):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::setPixelResult):
+        (WTR::InjectedBundle::shouldDumpPixels):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump):
+        Take the snapshot in the bundle and send it to the UIProcess for dumping.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::dump):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/cg: Added.
+        * WebKitTestRunner/cg/TestInvocationCG.cpp: Copied from WebKitTestRunner/mac/TestInvocationMac.mm.
+        (WTR::createCGContextFromImage):
+        (WTR::computeMD5HashStringForContext):
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+        * WebKitTestRunner/mac/TestInvocationMac.mm: Removed.
+        Making pixel dumping code shared for CG ports. Also use the WTF/MD5 instead of platform specific code.
+
+        * WebKitTestRunner/win/TestInvocationWin.cpp:
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+        Keep stub for Cairo build.
+
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCoreGraphics.vsprops: Added.
+        Add CG configuration.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj:
+        Add new files.
+
 2011-03-18  Adam Roben  <aroben@apple.com>
 
         Don't allow Leaks Viewer's vertical scrollbar to cover up long function names

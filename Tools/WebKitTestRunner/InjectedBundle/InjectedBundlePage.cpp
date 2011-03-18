@@ -521,6 +521,9 @@ void InjectedBundlePage::dump()
     if (InjectedBundle::shared().layoutTestController()->shouldDumpBackForwardListsForAllWindows())
         InjectedBundle::shared().dumpBackForwardListsForAllPages();
 
+    if (InjectedBundle::shared().shouldDumpPixels() && InjectedBundle::shared().layoutTestController()->shouldDumpPixels())
+        InjectedBundle::shared().setPixelResult(adoptWK(WKBundlePageCreateSnapshotInViewCoordinates(m_page, WKBundleFrameGetVisibleContentBounds(WKBundlePageGetMainFrame(m_page)), kWKImageOptionsShareable)).get());
+
     InjectedBundle::shared().done();
 }
 
