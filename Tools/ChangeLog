@@ -1,5 +1,13 @@
 2011-03-18  Adam Roben  <aroben@apple.com>
 
+        Ignore an NSNumberFormatter leak on SnowLeopard
+
+        * Scripts/old-run-webkit-tests:
+        (countAndPrintLeaks): Ignore leaks in -[NSNumberFormatter
+        getObjectValue:forString:errorDescription:].
+
+2011-03-18  Adam Roben  <aroben@apple.com>
+
         Fix a leak beneath LayoutTestController::authenticateSession seen on the bots
 
         Rubber-stamped by Mark Rowe.

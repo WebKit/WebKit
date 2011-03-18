@@ -1251,6 +1251,7 @@ sub countAndPrintLeaks($$$)
             "getVMInitArgs", # <rdar://problem/7714444> leak in Java
             "Java_java_lang_System_initProperties", # <rdar://problem/7714465> leak in Java
             "glrCompExecuteKernel", # <rdar://problem/7815391> leak in graphics driver while using OpenGL
+            "NSNumberFormatter getObjectValue:forString:errorDescription:", # <rdar://problem/7149350> Leak in NSNumberFormatter
         );
     }
 
