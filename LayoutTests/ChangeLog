@@ -1,5 +1,62 @@
 2011-03-18  Alexander Pavlov  <apavlov@chromium.org>
 
+        [Chromium] Unreviewed, rebaseline GPU tests after r81414
+
+        * platform/chromium-gpu-linux/compositing/geometry/clipped-video-controller-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/geometry/clipped-video-controller-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/video-fixed-scrolling-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/geometry/video-fixed-scrolling-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/video-opacity-overlay-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/geometry/video-opacity-overlay-expected.png:
+        * platform/chromium-gpu-linux/compositing/layers-inside-overflow-scroll-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/layers-inside-overflow-scroll-expected.png:
+        * platform/chromium-gpu-linux/compositing/overflow/overflow-compositing-descendant-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/overflow/overflow-compositing-descendant-expected.png:
+        * platform/chromium-gpu-linux/compositing/overflow/scroll-ancestor-update-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/chromium-gpu-linux/compositing/reflections/load-video-in-reflection-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/reflections/load-video-in-reflection-expected.png:
+        * platform/chromium-gpu-linux/compositing/self-painting-layers-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/self-painting-layers-expected.png:
+        * platform/chromium-gpu-linux/media/video-canvas-alpha-expected.checksum: Added.
+        * platform/chromium-gpu-linux/media/video-canvas-alpha-expected.png: Added.
+        * platform/chromium-gpu-linux/media/video-display-toggle-expected.checksum:
+        * platform/chromium-gpu-linux/media/video-display-toggle-expected.png:
+        * platform/chromium-gpu-linux/media/video-no-audio-expected.checksum:
+        * platform/chromium-gpu-linux/media/video-no-audio-expected.png:
+        * platform/chromium-gpu-linux/media/video-volume-slider-expected.checksum:
+        * platform/chromium-gpu-linux/media/video-volume-slider-expected.png:
+        * platform/chromium-gpu-linux/media/video-zoom-expected.checksum:
+        * platform/chromium-gpu-linux/media/video-zoom-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/clipped-video-controller-expected.checksum:
+        * platform/chromium-gpu-win/compositing/geometry/clipped-video-controller-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/video-fixed-scrolling-expected.checksum:
+        * platform/chromium-gpu-win/compositing/geometry/video-fixed-scrolling-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/video-opacity-overlay-expected.checksum:
+        * platform/chromium-gpu-win/compositing/geometry/video-opacity-overlay-expected.png:
+        * platform/chromium-gpu-win/compositing/layers-inside-overflow-scroll-expected.checksum:
+        * platform/chromium-gpu-win/compositing/layers-inside-overflow-scroll-expected.png:
+        * platform/chromium-gpu-win/compositing/overflow/overflow-compositing-descendant-expected.checksum:
+        * platform/chromium-gpu-win/compositing/overflow/overflow-compositing-descendant-expected.png:
+        * platform/chromium-gpu-win/compositing/overflow/scroll-ancestor-update-expected.checksum:
+        * platform/chromium-gpu-win/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/chromium-gpu-win/compositing/reflections/load-video-in-reflection-expected.checksum:
+        * platform/chromium-gpu-win/compositing/reflections/load-video-in-reflection-expected.png:
+        * platform/chromium-gpu-win/compositing/self-painting-layers-expected.checksum:
+        * platform/chromium-gpu-win/compositing/self-painting-layers-expected.png:
+        * platform/chromium-gpu-win/media/video-canvas-alpha-expected.checksum:
+        * platform/chromium-gpu-win/media/video-canvas-alpha-expected.png:
+        * platform/chromium-gpu-win/media/video-display-toggle-expected.checksum:
+        * platform/chromium-gpu-win/media/video-display-toggle-expected.png:
+        * platform/chromium-gpu-win/media/video-no-audio-expected.checksum:
+        * platform/chromium-gpu-win/media/video-no-audio-expected.png:
+        * platform/chromium-gpu-win/media/video-volume-slider-expected.checksum:
+        * platform/chromium-gpu-win/media/video-volume-slider-expected.png:
+        * platform/chromium-gpu-win/media/video-zoom-expected.checksum:
+        * platform/chromium-gpu-win/media/video-zoom-expected.png:
+
+2011-03-18  Alexander Pavlov  <apavlov@chromium.org>
+
         [Chromium] Unreviewed, fix custom expectation after r81438
 
         * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
