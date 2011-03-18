@@ -29,7 +29,7 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "NotImplemented.h"
-#include "PageClientQt.h"
+#include "QWebPageClient.h"
 #include "qwebpage.h"
 #include <QAbstractScrollArea>
 #include <QGraphicsObject>
@@ -155,7 +155,7 @@ public:
     ~GraphicsContext3DInternal();
 
     bool isContextValid() { return m_contextValid; }
-    QGLWidget* getOwnerGLWidget(QWebPageClient* webPageClient);
+    QGLWidget* getViewportGLWidget();
     void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
     QRectF boundingRect() const;
 
@@ -253,7 +253,7 @@ public:
     GraphicsContext3D::Attributes m_attrs;
     HostWindow* m_hostWindow;
     QGLWidget* m_glWidget;
-    QGLWidget* m_ownerGLWidget;
+    QGLWidget* m_viewportGLWidget;
     QRectF m_boundingRect;
     GLuint m_texture;
     GLuint m_mainFbo;
@@ -289,26 +289,17 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attribut
     : m_attrs(attrs)
     , m_hostWindow(hostWindow)
     , m_glWidget(0)
-    , m_ownerGLWidget(0)
+    , m_viewportGLWidget(0)
     , m_texture(0)
     , m_mainFbo(0)
     , m_currentFbo(0)
     , m_depthBuffer(0)
     , m_contextValid(true)
 {
-    PageClientQWidget* webPageClient
-        = static_cast<PageClientQWidget*>(hostWindow->platformPageClient());
+    m_viewportGLWidget = getViewportGLWidget();
 
-#if USE(ACCELERATED_COMPOSITING)
-    if (webPageClient->page->settings()->testAttribute(QWebSettings::AcceleratedCompositingEnabled)) {
-        QAbstractScrollArea* scrollArea = qobject_cast<QAbstractScrollArea*>(webPageClient->ownerWidget());
-        if (scrollArea)
-            m_ownerGLWidget = qobject_cast<QGLWidget*>(scrollArea->viewport());
-    }
-#endif
-
-    if (m_ownerGLWidget)
-        m_glWidget = new QGLWidget(0, m_ownerGLWidget);
+    if (m_viewportGLWidget)
+        m_glWidget = new QGLWidget(0, m_viewportGLWidget);
     else {
         QGLFormat format;
         format.setDepth(true);
@@ -471,6 +462,17 @@ GraphicsContext3DInternal::~GraphicsContext3DInternal()
     m_glWidget = 0;
 }
 
+QGLWidget* GraphicsContext3DInternal::getViewportGLWidget()
+{
+    QWebPageClient* webPageClient = m_hostWindow->platformPageClient();
+
+    QAbstractScrollArea* scrollArea = qobject_cast<QAbstractScrollArea*>(webPageClient->ownerWidget());
+    if (scrollArea)
+        return qobject_cast<QGLWidget*>(scrollArea->viewport());
+
+    return 0;
+}
+
 void GraphicsContext3DInternal::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget);
@@ -480,8 +482,9 @@ void GraphicsContext3DInternal::paint(QPainter* painter, const QStyleOptionGraph
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     // Use direct texture mapping if WebGL canvas has a shared OpenGL context
     // with browsers OpenGL context.
-    if (m_ownerGLWidget) {
-        m_ownerGLWidget->drawTexture(rect, m_texture);
+    QGLWidget* viewportGLWidget = getViewportGLWidget();
+    if (viewportGLWidget && viewportGLWidget == m_viewportGLWidget && viewportGLWidget == painter->device()) {
+        viewportGLWidget->drawTexture(rect, m_texture);
         return;
     }
 #endif

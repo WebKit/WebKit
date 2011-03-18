@@ -1,3 +1,22 @@
+2011-03-18  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Enable GraphicsContext3D only when the window surface support OpenGL
+        https://bugs.webkit.org/show_bug.cgi?id=56555
+
+        Allow creation of WebGLRenderingContext in the HTMLCanvasElement
+        only if accelerated compositing is enabled. In GraphicsContext3D,
+        while blitting the surface check that viewport hasn't changed from
+        creation and painter is associated to the viewport.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::getViewportGLWidget):
+        (WebCore::GraphicsContext3DInternal::paint):
+
 2011-03-17  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
