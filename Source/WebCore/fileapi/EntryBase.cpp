@@ -54,7 +54,7 @@ EntryBase::~EntryBase()
 {
 }
 
-String EntryBase::toURI()
+String EntryBase::toURL()
 {
     String originString = m_fileSystem->securityOrigin()->toString();
     ASSERT(!originString.isEmpty());

@@ -195,7 +195,7 @@ module window {
         const unsigned short TEMPORARY = 0;
         const unsigned short PERSISTENT = 1;
         [EnabledAtRuntime=FileSystem] void requestFileSystem(in unsigned short type, in long long size, in [Callback, Optional] FileSystemCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
-        [EnabledAtRuntime=FileSystem] void resolveLocalFileSystemURI(in DOMString uri, in [Callback, Optional] EntryCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
+        [EnabledAtRuntime=FileSystem] void resolveLocalFileSystemURL(in DOMString url, in [Callback, Optional] EntryCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
 
         attribute [EnabledAtRuntime=FileSystem] FlagsConstructor Flags;
 #endif

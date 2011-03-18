@@ -55,7 +55,7 @@ public:
     const String& fullPath() const { return m_fullPath; }
     const String& name() const { return m_name; }
 
-    String toURI();
+    String toURL();
 
 protected:
     EntryBase(PassRefPtr<DOMFileSystemBase>, const String& fullPath);

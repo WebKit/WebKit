@@ -1,21 +1,21 @@
-Tests using resolveLocalFileSystemURI to obtain an Entry from a URI
+Tests using resolveLocalFileSystemURL to obtain an Entry from a URL
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-* Resolving a generated URI.
+* Resolving a generated URL.
 PASS expectedPath is actualPath
 PASS isFile is true
 * Resolving test file by hand
 PASS expectedPath is actualPath
 PASS isFile is true
-* Resolving a completely bogus URI.
+* Resolving a completely bogus URL.
 PASS 
-* Resolving a URI with the wrong protocol
+* Resolving a URL with the wrong protocol
 PASS 
-* Resolving a URI with no slash between type and file
+* Resolving a URL with no slash between type and file
 PASS 
-* Resolving a URI with no slash between protocol and type
+* Resolving a URL with no slash between protocol and type
 PASS 
 * Resolve a path using backslashes
 PASS expectedPath is actualPath
@@ -26,7 +26,7 @@ PASS isDirectory is true
 * Resolve a path using a trailing slash
 PASS expectedPath is actualPath
 PASS isDirectory is true
-* Resolving a persistent URI.
+* Resolving a persistent URL.
 PASS expectedPath is actualPath
 PASS isDirectory is true
 Finished running tests.

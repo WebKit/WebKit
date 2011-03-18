@@ -1,9 +1,9 @@
-Obtaining URI from DirectoryEntry.
+Obtaining URL from DirectoryEntry.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS testDirectoryURI is 'filesystem:file:///temporary/testDirectory'
+PASS testDirectoryURL is 'filesystem:file:///temporary/testDirectory'
 PASS successfullyParsed is true
 
 TEST COMPLETE

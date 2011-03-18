@@ -763,14 +763,14 @@ void DOMWindow::requestFileSystem(int type, long long size, PassRefPtr<FileSyste
     LocalFileSystem::localFileSystem().requestFileSystem(document, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, document), false);
 }
 
-void DOMWindow::resolveLocalFileSystemURI(const String& uri, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+void DOMWindow::resolveLocalFileSystemURL(const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     Document* document = this->document();
     if (!document)
         return;
 
     SecurityOrigin* securityOrigin = document->securityOrigin();
-    KURL completedURL = document->completeURL(uri);
+    KURL completedURL = document->completeURL(url);
     if (!AsyncFileSystem::isAvailable() || !securityOrigin->canAccessFileSystem() || !securityOrigin->canRequest(completedURL)) {
         DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::SECURITY_ERR));
         return;

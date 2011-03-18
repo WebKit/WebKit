@@ -1,3 +1,20 @@
+2011-03-17  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [filesystem] Rename toURI->toURL, resolveLocalFileSystemURI->resolveLocalFileSystemURL
+        https://bugs.webkit.org/show_bug.cgi?id=56502
+
+        * fileapi/Entry.idl:
+        * fileapi/EntryBase.cpp:
+        (WebCore::EntryBase::toURL):
+        * fileapi/EntryBase.h:
+        * fileapi/EntrySync.idl:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::resolveLocalFileSystemURL):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2011-03-17  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -1,4 +1,4 @@
-description("Tests using resolveLocalFileSystemURI to obtain an Entry from a URI");
+description("Tests using resolveLocalFileSystemURL to obtain an Entry from a URL");
 
 var testFileName = '/testFile';
 var fileSystem = null;
@@ -39,9 +39,9 @@ function assertIsFile(entry) {
 // Test body functions ----------------------------------------------------
 
 function runBasicTest() {
-    debug("* Resolving a generated URI.");
+    debug("* Resolving a generated URL.");
     createTestFile(function(entry) {
-        resolveLocalFileSystemURI(entry.toURI(), function(e) {
+        resolveLocalFileSystemURL(entry.toURL(), function(e) {
             assertPathsMatch(entry.fullPath, e.fullPath);
             assertIsFile(e);
             cleanupAndRunNext();
@@ -49,10 +49,10 @@ function runBasicTest() {
     });
 }
 
-function runHandmadeURI() {
+function runHandmadeURL() {
     debug("* Resolving test file by hand");
     createTestFile(function(entry) {
-        resolveLocalFileSystemURI("filesystem:http://127.0.0.1:8000/temporary/testFile", function(e) {
+        resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporary/testFile", function(e) {
             assertPathsMatch(testFileName, e.fullPath);
             assertIsFile(e);
             cleanupAndRunNext();
@@ -60,27 +60,27 @@ function runHandmadeURI() {
     });
 }
 
-function runBogusURI() {
-    debug("* Resolving a completely bogus URI.");
-    resolveLocalFileSystemURI("foo", errorCallback, expectedAndRunNext);
+function runBogusURL() {
+    debug("* Resolving a completely bogus URL.");
+    resolveLocalFileSystemURL("foo", errorCallback, expectedAndRunNext);
 }
 
 function runWrongProtocol() {
-    debug("* Resolving a URI with the wrong protocol");
-    resolveLocalFileSystemURI("http://127.0.0.1:8000/foo/bar/baz", errorCallback, expectedAndRunNext);
+    debug("* Resolving a URL with the wrong protocol");
+    resolveLocalFileSystemURL("http://127.0.0.1:8000/foo/bar/baz", errorCallback, expectedAndRunNext);
 }
 
 function runNotEnoughSlashes() {
-    debug("* Resolving a URI with no slash between type and file");
+    debug("* Resolving a URL with no slash between type and file");
     createTestFile(function(entry) {
-        resolveLocalFileSystemURI("filesystem:http://127.0.0.1:8000/temporarytestFile", errorCallback, expectedAndRunNext);
+        resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporarytestFile", errorCallback, expectedAndRunNext);
     });
 }
 
 function runNotEnoughSlashes2() {
-    debug("* Resolving a URI with no slash between protocol and type");
+    debug("* Resolving a URL with no slash between protocol and type");
     createTestFile(function(entry) {
-        resolveLocalFileSystemURI("filesystem:http://127.0.0.1:8000temporary/testFile", errorCallback, expectedAndRunNext);
+        resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000temporary/testFile", errorCallback, expectedAndRunNext);
     });
 }
 
@@ -88,7 +88,7 @@ function runUseBackSlashes() {
     debug("* Resolve a path using backslashes");
     fileSystem.root.getDirectory("foo", {create:true}, function(entry) {
         entry.getFile("testFile", {create:true}, function(f) {
-            resolveLocalFileSystemURI("filesystem:http://127.0.0.1:8000/temporary/foo\\testFile", function(e) {
+            resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporary/foo\\testFile", function(e) {
                 assertPathsMatch("/foo/testFile", e.fullPath);
                 assertIsFile(e);
                 cleanupAndRunNext();
@@ -100,7 +100,7 @@ function runUseBackSlashes() {
 function runDirectory() {
     debug("* Resolve a directory");
     fileSystem.root.getDirectory("foo", {create:true}, function(entry) {
-        resolveLocalFileSystemURI("filesystem:http://127.0.0.1:8000/temporary/foo", function(e) {
+        resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporary/foo", function(e) {
             assertPathsMatch("/foo", e.fullPath);
             assertIsDirectory(e);
             cleanupAndRunNext();
@@ -111,7 +111,7 @@ function runDirectory() {
 function runWithTrailingSlash() {
     debug("* Resolve a path using a trailing slash");
     fileSystem.root.getDirectory("foo", {create:true}, function(entry) {
-        resolveLocalFileSystemURI("filesystem:http://127.0.0.1:8000/temporary/foo/", function(e) {
+        resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporary/foo/", function(e) {
             assertPathsMatch("/foo", e.fullPath);
             assertIsDirectory(e);
             cleanupAndRunNext();
@@ -120,9 +120,9 @@ function runWithTrailingSlash() {
 }
 
 function runPersistentTest() {
-    debug("* Resolving a persistent URI.");
+    debug("* Resolving a persistent URL.");
     requestFileSystem(PERSISTENT, 100, function(fs) {
-        resolveLocalFileSystemURI(fs.root.toURI(), function(entry) {
+        resolveLocalFileSystemURL(fs.root.toURL(), function(entry) {
             assertPathsMatch("/", entry.fullPath);
             assertIsDirectory(entry);
             cleanupAndRunNext();
@@ -134,8 +134,8 @@ function runPersistentTest() {
 
 var testsList = [
     runBasicTest,
-    runHandmadeURI,
-    runBogusURI,
+    runHandmadeURL,
+    runBogusURL,
     runWrongProtocol,
     runNotEnoughSlashes,
     runNotEnoughSlashes2,

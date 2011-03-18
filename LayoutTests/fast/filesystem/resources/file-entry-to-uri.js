@@ -3,7 +3,7 @@ if (this.importScripts) {
     importScripts('fs-test-util.js');
 }
 
-description("Obtaining URI from FileEntry.");
+description("Obtaining URL from FileEntry.");
 
 var fileSystem = null;
 var testFileName = 'testFileEntry.txt';
@@ -14,14 +14,14 @@ function errorCallback(error) {
     finishJSTest();
 }
 
-function entryToURI(entry) {
-    testFileURI = entry.toURI();
-    shouldBe("testFileURI", "'filesystem:file:///temporary/testFileEntry.txt'");
+function entryToURL(entry) {
+    testFileURL = entry.toURL();
+    shouldBe("testFileURL", "'filesystem:file:///temporary/testFileEntry.txt'");
     finishJSTest();
 }
 
 function createTestFile() {
-    fileSystem.root.getFile(testFileName, {create:true}, entryToURI, errorCallback);
+    fileSystem.root.getFile(testFileName, {create:true}, entryToURL, errorCallback);
 }
 
 function fileSystemCallback(fs) {

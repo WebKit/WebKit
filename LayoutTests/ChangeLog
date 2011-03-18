@@ -1,3 +1,22 @@
+2011-03-17  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [filesystem] Rename toURI->toURL, resolveLocalFileSystemURI->resolveLocalFileSystemURL
+        https://bugs.webkit.org/show_bug.cgi?id=56502
+
+        Leaving the file names as-is for now to avoid svn-apply's
+        handling of move-and-modify.
+
+        * fast/filesystem/directory-entry-to-uri-expected.txt:
+        * fast/filesystem/file-entry-to-uri-expected.txt:
+        * fast/filesystem/resources/directory-entry-to-uri.js:
+        * fast/filesystem/resources/file-entry-to-uri-sync.js:
+        * fast/filesystem/resources/file-entry-to-uri.js:
+        * fast/filesystem/workers/file-entry-to-uri-sync-expected.txt:
+        * http/tests/filesystem/resolve-uri-expected.txt:
+        * http/tests/filesystem/script-tests/resolve-uri.js:
+
 2011-03-17  James Simonsen  <simonjam@chromium.org>
 
         Unreviewed, rebaseline a bunch of chromium tests.

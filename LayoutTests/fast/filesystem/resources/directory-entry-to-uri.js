@@ -3,7 +3,7 @@ if (this.importScripts) {
     importScripts('fs-test-util.js');
 }
 
-description("Obtaining URI from DirectoryEntry.");
+description("Obtaining URL from DirectoryEntry.");
 
 var fileSystem = null;
 var testDirectoryName = 'testDirectory';
@@ -14,14 +14,14 @@ function errorCallback(error) {
     finishJSTest();
 }
 
-function entryToURI(entry) {
-    testDirectoryURI = entry.toURI();
-    shouldBe("testDirectoryURI", "'filesystem:file:///temporary/testDirectory'");
+function entryToURL(entry) {
+    testDirectoryURL = entry.toURL();
+    shouldBe("testDirectoryURL", "'filesystem:file:///temporary/testDirectory'");
     finishJSTest();
 }
 
 function createTestDirectory() {
-    fileSystem.root.getDirectory(testDirectoryName, {create:true}, entryToURI, errorCallback);
+    fileSystem.root.getDirectory(testDirectoryName, {create:true}, entryToURL, errorCallback);
 }
 
 function fileSystemCallback(fs) {

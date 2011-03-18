@@ -390,7 +390,7 @@ namespace WebCore {
             PERSISTENT,
         };
         void requestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>);
-        void resolveLocalFileSystemURI(const String&, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
+        void resolveLocalFileSystemURL(const String&, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
