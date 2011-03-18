@@ -1,3 +1,16 @@
+2011-03-17  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Web page shouldn't swallow alt-key combinations on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=56612
+        
+        Make Alt+Left Arrow and Alt+Right Arrow go back and forward, but make
+        sure any alt-key combinations bubble up to the client.
+
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent): Make Alt+Left Arrow and Alt+Right Arrow go back and forward, ignore any other alt-key combinations.
+
 2011-03-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

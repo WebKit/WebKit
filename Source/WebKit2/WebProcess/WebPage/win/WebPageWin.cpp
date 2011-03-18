@@ -209,33 +209,53 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
 
     switch (keyboardEvent.windowsVirtualKeyCode()) {
     case VK_BACK:
+        if (keyboardEvent.isSystemKey())
+            return false;
         if (keyboardEvent.shiftKey())
             m_page->goForward();
         else
             m_page->goBack();
         break;
     case VK_LEFT:
-        scroll(m_page.get(), ScrollLeft, ScrollByLine);
+        if (keyboardEvent.isSystemKey())
+            m_page->goBack();
+        else
+            scroll(m_page.get(), ScrollLeft, ScrollByLine);
         break;
     case VK_RIGHT:
-        scroll(m_page.get(), ScrollRight, ScrollByLine);
+        if (keyboardEvent.isSystemKey())
+            m_page->goForward();
+        else
+            scroll(m_page.get(), ScrollRight, ScrollByLine);
         break;
     case VK_UP:
+        if (keyboardEvent.isSystemKey())
+            return false;
         scroll(m_page.get(), ScrollUp, ScrollByLine);
         break;
     case VK_DOWN:
+        if (keyboardEvent.isSystemKey())
+            return false;
         scroll(m_page.get(), ScrollDown, ScrollByLine);
         break;
     case VK_HOME:
+        if (keyboardEvent.isSystemKey())
+            return false;
         logicalScroll(m_page.get(), ScrollBlockDirectionBackward, ScrollByDocument);
         break;
     case VK_END:
+        if (keyboardEvent.isSystemKey())
+            return false;
         logicalScroll(m_page.get(), ScrollBlockDirectionForward, ScrollByDocument);
         break;
     case VK_PRIOR:
+        if (keyboardEvent.isSystemKey())
+            return false;
         logicalScroll(m_page.get(), ScrollBlockDirectionBackward, ScrollByPage);
         break;
     case VK_NEXT:
+        if (keyboardEvent.isSystemKey())
+            return false;
         logicalScroll(m_page.get(), ScrollBlockDirectionForward, ScrollByPage);
         break;
     default:
