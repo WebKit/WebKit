@@ -1,3 +1,13 @@
+2011-03-17  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        chromium: uninitialized field in WebViewImpl
+        https://bugs.webkit.org/show_bug.cgi?id=56620
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+
 2011-03-17  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

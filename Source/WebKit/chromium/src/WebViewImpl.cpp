@@ -305,6 +305,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
     , m_layerRenderer(0)
     , m_isAcceleratedCompositingActive(false)
     , m_compositorCreationFailed(false)
+    , m_recreatingGraphicsContext(false)
 #endif
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(SpeechInputClientImpl::create(client))
