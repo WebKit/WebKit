@@ -1,5 +1,30 @@
 2011-03-18  Alejandro G. Castro  <alex@igalia.com>
 
+        Reviewed by Martin Robinson.
+
+        Fixed compilation after r80925.
+
+        * GNUmakefile.am:
+        * UIProcess/gtk/WebFullScreenManagerProxyGtk.cpp: Added.
+        (WebKit::WebFullScreenManagerProxy::enterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::exitFullScreen):
+        (WebKit::WebFullScreenManagerProxy::beganEnterFullScreenAnimation):
+        (WebKit::WebFullScreenManagerProxy::finishedEnterFullScreenAnimation):
+        (WebKit::WebFullScreenManagerProxy::beganExitFullScreenAnimation):
+        (WebKit::WebFullScreenManagerProxy::finishedExitFullScreenAnimation):
+        (WebKit::WebFullScreenManagerProxy::enterAcceleratedCompositingMode):
+        (WebKit::WebFullScreenManagerProxy::exitAcceleratedCompositingMode):
+        (WebKit::WebFullScreenManagerProxy::getFullScreenRect):
+        * WebProcess/FullScreen/gtk/WebFullScreenManagerGtk.cpp: Added.
+        (WebKit::WebFullScreenManagerGtk::WebFullScreenManagerGtk):
+        (WebKit::WebFullScreenManager::create):
+        (WebKit::WebFullScreenManagerGtk::setRootFullScreenLayer):
+        (WebKit::WebFullScreenManagerGtk::beginEnterFullScreenAnimation):
+        (WebKit::WebFullScreenManagerGtk::beginExitFullScreenAnimation):
+        * WebProcess/FullScreen/gtk/WebFullScreenManagerGtk.h: Added.
+
+2011-03-18  Alejandro G. Castro  <alex@igalia.com>
+
         Unreviewed, fixed compilation after r81208.
 
         * GNUmakefile.am:

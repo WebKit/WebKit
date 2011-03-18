@@ -371,6 +371,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/gtk/ChunkedUpdateDrawingAreaProxyGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/TextCheckerGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebContextGtk.cpp \
+	Source/WebKit2/UIProcess/gtk/WebFullScreenManagerProxyGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebInspectorGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebViewWidget.cpp \
 	Source/WebKit2/UIProcess/gtk/WebViewWidget.h \
@@ -490,6 +491,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/Downloads/soup/DownloadSoup.cpp \
 	Source/WebKit2/WebProcess/FullScreen/WebFullScreenManager.cpp \
 	Source/WebKit2/WebProcess/FullScreen/WebFullScreenManager.h \
+	Source/WebKit2/WebProcess/FullScreen/gtk/WebFullScreenManagerGtk.cpp \
+	Source/WebKit2/WebProcess/FullScreen/gtk/WebFullScreenManagerGtk.h \
 	Source/WebKit2/WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \
 	Source/WebKit2/WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
 	Source/WebKit2/WebProcess/Geolocation/WebGeolocationManager.cpp \
