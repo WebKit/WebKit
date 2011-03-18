@@ -1,3 +1,34 @@
+2011-03-17  James Simonsen  <simonjam@chromium.org>
+
+        Unreviewed, rebaseline a bunch of chromium tests.
+
+        * platform/chromium-mac-leopard/fast/block/positioning/auto/vertical-lr/007-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/block/positioning/auto/vertical-lr/007-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/positioning/auto/vertical-rl/007-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/block/positioning/auto/vertical-rl/007-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/Kusa-Makura-background-canvas-expected.png:
+        * platform/chromium-mac-leopard/fast/blockflow/border-vertical-lr-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/border-vertical-lr-expected.png:
+        * platform/chromium-mac-leopard/fast/blockflow/english-lr-text-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/english-lr-text-expected.png:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-lr-selection-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-lr-selection-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-lr-text-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-lr-text-expected.png:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-rl-selection-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-rl-selection-expected.png:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-rl-text-expected.checksum:
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-rl-text-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/japanese-rl-selection-clear-expected.checksum:
+        * platform/chromium-mac-leopard/fast/repaint/japanese-rl-selection-clear-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/japanese-rl-selection-repaint-expected.checksum:
+        * platform/chromium-mac-leopard/fast/repaint/japanese-rl-selection-repaint-expected.png:
+        * platform/chromium-mac-leopard/fast/ruby/base-shorter-than-text-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/ruby/base-shorter-than-text-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/text/international/text-combine-image-test-expected.checksum:
+        * platform/chromium-mac-leopard/fast/text/international/text-combine-image-test-expected.png:
+
 2011-03-17  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
