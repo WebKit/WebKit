@@ -1,3 +1,11 @@
+2011-03-17  Adam Roben  <aroben@apple.com>
+
+        Add Windows XP results for test added in r81404
+
+        The differences from Windows 7 seem to be due to different fonts being used.
+
+        * platform/win-xp/fast/text/emphasis-combined-text-expected.txt: Added.
+
 2011-03-17  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Adam Barth.
