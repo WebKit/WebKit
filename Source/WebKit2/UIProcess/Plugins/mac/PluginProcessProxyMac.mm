@@ -53,7 +53,17 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
     if (renderServerPort != MACH_PORT_NULL)
         parameters.acceleratedCompositingPort = CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND);
 #endif
-}    
+}
+
+void PluginProcessProxy::setModalWindowIsShowing(bool modalWindowIsShowing)
+{
+    // FIXME: Implement.
+}
+
+void PluginProcessProxy::setFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
+{
+    // FIXME: Implement.
+}
 
 } // namespace WebKit
 

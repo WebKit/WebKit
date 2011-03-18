@@ -84,6 +84,11 @@ private:
     void didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID);
     void didClearSiteData(uint64_t callbackID);
 
+#if PLATFORM(MAC)
+    void setModalWindowIsShowing(bool);
+    void setFullscreenWindowIsShowing(bool);
+#endif
+
     void platformInitializePluginProcess(PluginProcessCreationParameters& parameters);
 
     // The plug-in host process manager.

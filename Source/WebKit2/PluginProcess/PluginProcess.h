@@ -52,6 +52,9 @@ public:
 #if PLATFORM(MAC)
     void initializeShim();
 
+    void setModalWindowIsShowing(bool);
+    void setFullscreenWindowIsShowing(bool);
+
 #if USE(ACCELERATED_COMPOSITING)
     mach_port_t compositingRenderServerPort() const { return m_compositingRenderServerPort; }
 #endif

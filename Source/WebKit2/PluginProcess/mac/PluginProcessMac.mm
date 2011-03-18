@@ -33,11 +33,94 @@
 
 #import "NetscapePlugin.h"
 #import "PluginProcessShim.h"
+#import "PluginProcessProxyMessages.h"
 #import "PluginProcessCreationParameters.h"
 #import <WebKitSystemInterface.h>
 #import <dlfcn.h>
+#import <wtf/HashSet.h>
 
 namespace WebKit {
+
+class FullscreenWindowTracker {
+    WTF_MAKE_NONCOPYABLE(FullscreenWindowTracker);
+
+public:
+    FullscreenWindowTracker() { }
+    
+    template<typename T> void windowShown(T window);
+    template<typename T> void windowHidden(T window);
+
+private:
+    typedef HashSet<void*> WindowSet;
+    WindowSet m_windows;
+};
+
+static bool rectCoversAnyScreen(NSRect rect)
+{
+    for (NSScreen *screen in [NSScreen screens]) {
+        if (NSContainsRect(rect, [screen frame]))
+            return YES;
+    }
+    return NO;
+}
+
+#ifndef NP_NO_CARBON
+static bool windowCoversAnyScreen(WindowRef window)
+{
+    HIRect bounds;
+    HIWindowGetBounds(window, kWindowStructureRgn, kHICoordSpaceScreenPixel, &bounds);
+
+    // Convert to Cocoa-style screen coordinates that use a Y offset relative to the zeroth screen's origin.
+    bounds.origin.y = NSHeight([[[NSScreen screens] objectAtIndex:0] frame]) - CGRectGetMaxY(bounds);
+
+    return rectCoversAnyScreen(NSRectFromCGRect(bounds));
+}
+#endif
+
+static bool windowCoversAnyScreen(NSWindow* window)
+{
+    return rectCoversAnyScreen([window frame]);
+}
+
+template<typename T> void FullscreenWindowTracker::windowShown(T window)
+{
+    // If this window is already visible then there is nothing to do.
+    WindowSet::iterator it = m_windows.find(window);
+    if (it != m_windows.end())
+        return;
+    
+    // If the window is not full-screen then we're not interested in it.
+    if (!windowCoversAnyScreen(window))
+        return;
+
+    bool windowSetWasEmpty = m_windows.isEmpty();
+
+    m_windows.add(window);
+    
+    // If this is the first full screen window to be shown, notify the UI process.
+    if (windowSetWasEmpty)
+        PluginProcess::shared().setFullscreenWindowIsShowing(true);
+}
+
+template<typename T> void FullscreenWindowTracker::windowHidden(T window)
+{
+    // If this is not a window that we're tracking then there is nothing to do.
+    WindowSet::iterator it = m_windows.find(window);
+    if (it == m_windows.end())
+        return;
+
+    m_windows.remove(it);
+
+    // If this was the last full screen window that was visible, notify the UI process.
+    if (m_windows.isEmpty())
+        PluginProcess::shared().setFullscreenWindowIsShowing(false);
+}
+
+static FullscreenWindowTracker& fullscreenWindowTracker()
+{
+    DEFINE_STATIC_LOCAL(FullscreenWindowTracker, fullscreenWindowTracker, ());
+    return fullscreenWindowTracker;
+}
 
 static bool isUserbreakSet = false;
 
@@ -78,28 +161,33 @@ static UInt32 getCurrentEventButtonState()
 #endif
 }
     
-static void cocoaWindowShown(NSWindow *)
+static void cocoaWindowShown(NSWindow *window)
 {
-    // FIXME: Implement.
+    fullscreenWindowTracker().windowShown(window);
 }
 
-static void cocoaWindowHidden(NSWindow *)
+static void cocoaWindowHidden(NSWindow *window)
 {
-    // FIXME: Implement.
+    fullscreenWindowTracker().windowHidden(window);
 }
 
-static void carbonWindowShown(WindowRef)
+static void carbonWindowShown(WindowRef window)
 {
-    // FIXME: Implement.
+#ifndef NP_NO_CARBON
+    fullscreenWindowTracker().windowShown(window);
+#endif
 }
 
-static void carbonWindowHidden(WindowRef)
+static void carbonWindowHidden(WindowRef window)
 {
+#ifndef NP_NO_CARBON
+    fullscreenWindowTracker().windowHidden(window);
+#endif
 }
 
-static void setModal(bool)
+static void setModal(bool modalWindowIsShowing)
 {
-    // FIXME: Implement.
+    PluginProcess::shared().setModalWindowIsShowing(modalWindowIsShowing);
 }
 
 void PluginProcess::initializeShim()
@@ -117,6 +205,16 @@ void PluginProcess::initializeShim()
 
     PluginProcessShimInitializeFunc initFunc = reinterpret_cast<PluginProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitPluginProcessShimInitialize"));
     initFunc(callbacks);
+}
+
+void PluginProcess::setModalWindowIsShowing(bool modalWindowIsShowing)
+{
+    m_connection->send(Messages::PluginProcessProxy::SetModalWindowIsShowing(modalWindowIsShowing), 0);
+}
+
+void PluginProcess::setFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
+{
+    m_connection->send(Messages::PluginProcessProxy::SetFullscreenWindowIsShowing(fullscreenWindowIsShowing), 0);
 }
 
 void PluginProcess::platformInitialize(const PluginProcessCreationParameters& parameters)
