@@ -1,3 +1,11 @@
+2011-03-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        Added new GTK+ test expectations.
+
+        * platform/gtk/fast/text/emphasis-combined-text-expected.checksum: Added.
+        * platform/gtk/fast/text/emphasis-combined-text-expected.png: Added.
+        * platform/gtk/fast/text/emphasis-combined-text-expected.txt: Added.
+
 2011-03-18  Jessie Berlin  <jberlin@apple.com>
 
         Two inspector tests failing due to SECURITY_ERR exceptions on Windows 7 Release (WebKit2
