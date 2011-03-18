@@ -153,6 +153,10 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
         return false;
 
     IntRect selectionRect = enclosingIntRect(selectedFrame->selection()->bounds());
+    
+    // Selection rect can be empty for matches that are currently obscured from view.
+    if (selectionRect.isEmpty())
+        return false;
 
     // We want the selection rect in window coordinates.
     IntRect selectionRectInWindowCoordinates = selectedFrame->view()->contentsToWindow(selectionRect);

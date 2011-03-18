@@ -1,3 +1,16 @@
+2011-03-18  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56645
+        Assertion fires when hidden Find-on-Page matches are encountered in WebKit2
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindIndicator):
+        Bail out if the selection rect is empty, before trying to generate an appropriately-sized
+        bitmap. (Previously it was bailing out afterwards, but encountering an assertion in debug
+        builds along the way.)
+
 2011-03-18  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Jon Honeycutt.
