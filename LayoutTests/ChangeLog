@@ -1,5 +1,20 @@
 2011-03-18  Adam Roben  <aroben@apple.com>
 
+        Add expected failure results for WebKit2 tests failing on Windows due to font differences
+
+        <http://webkit.org/b/56617> tracks the failures.
+
+        * platform/win-wk2/css2.1/t0905-c5525-flthw-00-c-g-expected.txt: Added.
+        * platform/win-wk2/css2.1/t0905-c5526-flthw-00-c-g-expected.txt: Added.
+        * platform/win-wk2/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt: Added.
+        * platform/win-wk2/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt: Added.
+        * platform/win-wk2/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt: Added.
+        * platform/win-wk2/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt: Added.
+        * platform/win-wk2/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt: Added.
+        * platform/win-wk2/svg/text/bidi-text-query-expected.txt: Added.
+
+2011-03-18  Adam Roben  <aroben@apple.com>
+
         Skip a test in that is probably causing the next test to crash in WebKit2
 
         <http://webkit.org/b/55780> tracks the failure.
