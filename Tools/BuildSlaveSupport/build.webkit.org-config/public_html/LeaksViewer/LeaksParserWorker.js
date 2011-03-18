@@ -34,12 +34,19 @@ LeaksParserWorker.prototype = {
 
     _parseLeaks: function(text) {
         var leaks = [];
+        var currentSize = 0;
         text.split("\n").forEach(function(line) {
+            var match = /Leak:.*\ssize=(\d+)\s/.exec(line);
+            if (match) {
+                currentSize = parseInt(match[1], 10);
+                return;
+            }
             if (!/^\s+Call stack:/.test(line))
                 return;
 
             // The first frame is not really a frame at all ("Call stack: thread 0xNNNNN:"), so we omit it.
-            leaks.push(line.split(" | ").slice(1).map(function(str) { return str.trim(); }));
+            leaks.push({ size: currentSize, stack: line.split(" | ").slice(1).map(function(str) { return str.trim(); }) });
+            currentSize = 0;
         });
         return leaks;
     },
@@ -49,6 +56,8 @@ LeaksParserWorker.prototype = {
             functionName: functionName,
             selfTime: 0,
             totalTime: 0,
+            averageTime: 0,
+            numberOfCalls: 0,
             children: [],
             childrenByName: {},
             callUID: functionName,
@@ -63,7 +72,7 @@ LeaksParserWorker.prototype = {
     _incorporateLeaks: function(leaks) {
         var self = this;
         leaks.forEach(function(leak) {
-            leak.reduce(function(node, frame, index, array) {
+            leak.stack.reduce(function(node, frame, index, array) {
                 var childNode;
                 if (frame in node.childrenByName)
                     childNode = node.childrenByName[frame];
@@ -74,8 +83,9 @@ LeaksParserWorker.prototype = {
                     node.children.push(childNode);
                 }
                 if (index === array.length - 1)
-                    ++childNode.selfTime;
-                ++childNode.totalTime;
+                    childNode.selfTime += leak.size;
+                childNode.totalTime += leak.size;
+                ++childNode.numberOfCalls;
                 return childNode;
             }, self.profile);
         });

@@ -1,5 +1,32 @@
 2011-03-17  Adam Roben  <aroben@apple.com>
 
+        Show the number of leaked bytes, not just leaked allocations, in Leaks Viewer
+
+        The Self and Total columns now report the number of leaked bytes. The new Calls column shows
+        the number of leaked allocations. And the new Average column shows the average number of
+        leaked bytes per call.
+
+        Fixes <http://webkit.org/b/56344> Leaks Viewer should show how many bytes were leaked, not
+        just how many allocations
+
+        Reviewed by Joe Pecoraro.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksParserWorker.js:
+        (LeaksParserWorker.prototype._parseLeaks): Parse the number of leaked bytes from the "Leak:"
+        line and store it with the leak stack.
+        (LeaksParserWorker.prototype._createNode): Initialize the averageTime and numberOfCalls
+        properties.
+        (LeaksParserWorker.prototype._incorporateLeaks): Updated to get the stack from the .stack
+        property, and changed to store the number of leaked bytes in .selfTime/.totalTime.
+        .numberOfCalls now holds the number of leaked allocations.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/WebInspectorShims.js:
+        (Preferences): Set samplingCPUProfiler to false so that the Average and Calls columns will
+        appear.
+        (monkeyPatchInspectorObjects): Format the values as bytes.
+
+2011-03-17  Adam Roben  <aroben@apple.com>
+
         Make Leaks Viewer able to count leaks in builds that didn't fail any regression tests
 
         Fixes <http://webkit.org/b/56626> Leaks Viewer omits recent builds which didn't fail any

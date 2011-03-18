@@ -33,9 +33,8 @@ var WebInspector = {
 };
 
 var Preferences = {
-    // Setting this to true causes the "Average" and "Calls" columns to be omitted from the profile
-    // view.
-    samplingCPUProfiler: true,
+    // Setting this to false causes the "Average" and "Calls" columns to be shown.
+    samplingCPUProfiler: false,
 };
 
 var ProfilerAgent = {
@@ -55,10 +54,10 @@ function monkeyPatchInspectorObjects() {
     WebInspector.ProfileDataGridNode.prototype.__defineGetter__("data", function() {
         var data = originalGetter.call(this);
 
-        // In our fake "profile", selfTime and totalTime hold leak counts, not time values. Always
-        // display self and total counts as real values, not percentages or milliseconds.
-        data.self = this.selfTime;
-        data.total = this.totalTime;
+        // ProfileDataGridNode formats values as milliseconds, but we are instead measuring bytes.
+        data.self = Number.bytesToString(this.selfTime);
+        data.total = Number.bytesToString(this.totalTime);
+        data.average = Number.bytesToString(this.averageTime);
 
         return data;
     });
