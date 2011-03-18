@@ -1,3 +1,17 @@
+2011-03-17  David Levin  <levin@chromium.org>
+
+        Misc clean-up (see files for details).
+
+        * platform/chromium-mac-leopard/media/controls-after-reload-expected.checksum: Due to r81300.
+        * platform/chromium-mac-leopard/media/controls-after-reload-expected.png: Ditto.
+        * platform/chromium-mac-leopard/media/controls-without-preload-expected.checksum: Due to r81280.
+        * platform/chromium-mac-leopard/media/controls-without-preload-expected.png: Ditto.
+        * platform/chromium-mac-leopard/media/media-document-audio-repaint-expected.checksum: Due to r81285.
+        * platform/chromium-mac-leopard/media/media-document-audio-repaint-expected.png: Ditto.
+        * platform/chromium-win-xp/media/controls-without-preload-expected.checksum: Due to r81280.
+        * platform/chromium-win-xp/media/controls-without-preload-expected.png: Ditto.
+        * platform/chromium/test_expectations.txt: Replace BUG_LEVIN with a bug number.
+
 2011-03-17  Dan Bernstein  <mitz@apple.com>
 
         Added platform-specific expected results for fast/text/emphasis-combined-text.html

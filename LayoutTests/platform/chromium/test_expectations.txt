@@ -3274,7 +3274,7 @@ BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
 
 BUGCR75992 GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
 
-BUG_LEVIN WIN : fast/dom/Window/window-lookup-precedence.html = TEXT
+BUGWK56608 WIN : fast/dom/Window/window-lookup-precedence.html = TEXT
 
 BUGCR76020 GPU WIN : canvas/philip/tests/2d.text.draw.align.end.ltr.html = TEXT
 
