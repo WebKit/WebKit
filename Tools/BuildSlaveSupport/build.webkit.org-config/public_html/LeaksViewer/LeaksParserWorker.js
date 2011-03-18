@@ -89,6 +89,7 @@ LeaksParserWorker.prototype = {
                 return childNode;
             }, self.profile);
         });
+        self.profile.totalTime = self.profile.children.reduce(function(sum, child) { return sum + child.totalTime; }, 0);
     },
 };
 

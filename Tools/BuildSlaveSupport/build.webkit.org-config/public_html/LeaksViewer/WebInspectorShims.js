@@ -55,9 +55,12 @@ function monkeyPatchInspectorObjects() {
         var data = originalGetter.call(this);
 
         // ProfileDataGridNode formats values as milliseconds, but we are instead measuring bytes.
-        data.self = Number.bytesToString(this.selfTime);
-        data.total = Number.bytesToString(this.totalTime);
-        data.average = Number.bytesToString(this.averageTime);
+        if (!this.profileView.showSelfTimeAsPercent)
+            data.self = Number.bytesToString(this.selfTime);
+        if (!this.profileView.showTotalTimeAsPercent)
+            data.total = Number.bytesToString(this.totalTime);
+        if (!this.profileView.showAverageTimeAsPercent)
+            data.average = Number.bytesToString(this.averageTime);
 
         return data;
     });

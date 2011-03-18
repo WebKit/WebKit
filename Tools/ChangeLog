@@ -1,5 +1,24 @@
 2011-03-17  Adam Roben  <aroben@apple.com>
 
+        Allow values in Leaks Viewer to be shown as percentages
+
+        Double-clicking on a column will toggle between showing percentages and showing real values.
+
+        Fixes <http://webkit.org/b/56628> Would like to view values as percentages of the total
+        number of leaked bytes in Leaks Viewer
+
+        Reviewed by Joe Pecoraro.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksParserWorker.js:
+        (LeaksParserWorker.prototype._incorporateLeaks): Calculate the (never-shown) top-level
+        node's totalTime, which is used in calculating percentages.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/WebInspectorShims.js:
+        (monkeyPatchInspectorObjects): Only format values as bytes if we aren't supposed to be
+        showing them as percentages.
+
+2011-03-17  Adam Roben  <aroben@apple.com>
+
         Show the number of leaked bytes, not just leaked allocations, in Leaks Viewer
 
         The Self and Total columns now report the number of leaked bytes. The new Calls column shows
