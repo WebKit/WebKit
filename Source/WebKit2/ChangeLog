@@ -1,3 +1,33 @@
+2011-03-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement PluginProcessProxy::setModalWindowIsShowing
+        https://bugs.webkit.org/show_bug.cgi?id=56615
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::PluginProcessProxy):
+        Initialize m_modalWindowIsShowing.
+
+        (WebKit::PluginProcessProxy::didClose):
+        If m_modalWindowIsShowing is true, we must call endModal.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (-[WKPlaceholderModalWindow _wantsUserAttention]):
+        Add a WKPlaceholderModalWindow.
+
+        (WebKit::PluginProcessProxy::setModalWindowIsShowing):
+        Call beginModal or endModal depending on whether we're showing a modal window or not.
+
+        (WebKit::PluginProcessProxy::beginModal):
+        Create a fake window and start a nested run loop. Listen for NSApplicationWillBecomeActiveNotification notifications.
+
+        (WebKit::PluginProcessProxy::endModal):
+        Tear down the window and the run loop.
+
+        (WebKit::PluginProcessProxy::applicationDidBecomeActive):
+        Make sure that the plug-in process is frontmost.
+
 2011-03-17  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adam Roben.

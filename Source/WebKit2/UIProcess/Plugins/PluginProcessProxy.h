@@ -33,6 +33,12 @@
 #include "ProcessLauncher.h"
 #include <wtf/Deque.h>
 
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+OBJC_CLASS NSObject;
+OBJC_CLASS WKPlaceholderModalWindow;
+#endif
+
 // FIXME: This is platform specific.
 namespace CoreIPC {
     class MachPort;
@@ -87,6 +93,11 @@ private:
 #if PLATFORM(MAC)
     void setModalWindowIsShowing(bool);
     void setFullscreenWindowIsShowing(bool);
+
+    void beginModal();
+    void endModal();
+
+    void applicationDidBecomeActive();
 #endif
 
     void platformInitializePluginProcess(PluginProcessCreationParameters& parameters);
@@ -120,6 +131,12 @@ private:
     // If createPluginConnection is called while the process is still launching we'll keep count of it and send a bunch of requests
     // when the process finishes launching.
     unsigned m_numPendingConnectionRequests;
+
+#if PLATFORM(MAC)
+    RetainPtr<NSObject> m_activationObserver;
+    RetainPtr<WKPlaceholderModalWindow *> m_placeholderWindow;
+    bool m_modalWindowIsShowing;
+#endif
 };
 
 } // namespace WebKit

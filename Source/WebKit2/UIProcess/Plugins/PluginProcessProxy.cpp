@@ -48,6 +48,9 @@ PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManage
     : m_pluginProcessManager(PluginProcessManager)
     , m_pluginInfo(pluginInfo)
     , m_numPendingConnectionRequests(0)
+#if PLATFORM(MAC)
+    , m_modalWindowIsShowing(false)
+#endif
 {
     ProcessLauncher::LaunchOptions launchOptions;
     launchOptions.processType = ProcessLauncher::PluginProcess;
@@ -143,6 +146,11 @@ void PluginProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, Core
 
 void PluginProcessProxy::didClose(CoreIPC::Connection*)
 {
+#if PLATFORM(MAC)
+    if (m_modalWindowIsShowing)
+        endModal();
+#endif
+
     pluginProcessCrashedOrFailedToLaunch();
 }
 
