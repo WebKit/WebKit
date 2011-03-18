@@ -298,7 +298,8 @@ WebInspector.ConsoleView.prototype = {
             this.currentGroup.addMessage(msg);
         }
 
-        if (shouldScrollToLastMessage)
+        // Always scroll when command result arrives.
+        if (shouldScrollToLastMessage || (msg instanceof WebInspector.ConsoleCommandResult))
             this._scheduleScrollIntoView();
     },
 
