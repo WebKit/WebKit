@@ -1,3 +1,9 @@
+2011-03-17  James Simonsen  <simonjam@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-17  David Levin  <levin@chromium.org>
 
         Misc clean-up (see files for details).
