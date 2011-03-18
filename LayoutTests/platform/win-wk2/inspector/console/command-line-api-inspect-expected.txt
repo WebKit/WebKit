@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: line 9: SECURITY_ERR: DOM Exception 18: An attempt was made to break through the security policy of the user agent.
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 281x18
-          text run at (0,0) width 281: "Tests that inspect() command line api works."

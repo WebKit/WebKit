@@ -1,3 +1,17 @@
+2011-03-18  Jessie Berlin  <jberlin@apple.com>
+
+        inspector/console/command-line-api.html timing out on Windows 7 Release (WebKit2 Tests).
+        https://bugs.webkit.org/show_bug.cgi?id=56633
+
+        Unreviewed, skip command-line-api-inspect.html instead of command-line-api.html, since the
+        former appears to be causing the latter (and probably console-clear.html as well) to time
+        out.
+
+        * platform/win-wk2/Skipped:
+        * platform/win-wk2/inspector: Removed.
+        * platform/win-wk2/inspector/console: Removed.
+        * platform/win-wk2/inspector/console/command-line-api-inspect-expected.txt: Removed.
+
 2011-03-18  Sergio Villar Senin  <svillar@igalia.com>
 
         Added new GTK+ test expectations.

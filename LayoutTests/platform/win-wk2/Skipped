@@ -102,7 +102,7 @@ fast/forms/button-align.html
 media/audio-mpeg4-supported.html
 
 # Times out http://webkit.org/b/56633
-inspector/console/command-line-api.html
+inspector/console/command-line-api-inspect.html
 
 # Times out http://webkit.org/b/56634
 http/tests/xmlhttprequest/cross-origin-authorization.html
