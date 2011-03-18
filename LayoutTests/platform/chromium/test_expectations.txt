@@ -22,6 +22,7 @@
 // DEBUG: Expectations apply only to the debug build.
 // RELEASE: Expectations apply only to release build.
 // LINUX/WIN/WIN-XP/WIN-VISTA/MAC: Expectations apply only to these platforms.
+// GPU/CPU: Expectations only apply to a particular compositor. Default: both.
 //
 // Valid values for EXPECTATIONS:
 //
@@ -875,7 +876,7 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 // SVG TESTS
 // -----------------------------------------------------------------
 
-BUGCR8763 LINUX WIN MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE+TEXT IMAGE
+BUGCR8763 MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE
 
 // We show reduced version of the entire SVN image rather than an image
 BUGCR23463 MAC : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
@@ -2518,10 +2519,6 @@ BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
 BUGWK48627 MAC LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE
 BUGWK48627 MAC : svg/custom/createImageElement2.xhtml = IMAGE
 
-// New test, seems V8 differs from JSC here.
-// Added by http://trac.webkit.org/changeset/70910
-BUGWK61246 : fast/js/interpreter-no-activation.html = TEXT
-
 // Failures after WebKit roll 70949:71000
 BUGCR61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT
 BUGCR61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = IMAGE
@@ -3276,6 +3273,7 @@ BUGWK56599 DEBUG : editing/deleting/5206311-1.html = CRASH PASS
 // Flaky
 BUGCR76609 MAC DEBUG : animations/play-state.html = CRASH
 BUGCR76610 WIN MAC DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
+BUGCR76716 DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
 
 // New in WebKit r81404. Text orientation is wrong and emphasis marks are wrong.
 BUGCR76616 WIN LINUX : fast/text/emphasis-combined-text.html = IMAGE+TEXT

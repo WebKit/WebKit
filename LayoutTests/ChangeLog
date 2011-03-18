@@ -1,3 +1,9 @@
+2011-03-18  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Unreviewed, re-enable some stable tests and add a flaky one.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-18  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; new test baselines.
