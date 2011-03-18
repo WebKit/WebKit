@@ -305,8 +305,39 @@
   },
   'targets': [
     {
+      'target_name': 'inspector_idl',
+      'type': 'none',
+      'actions': [
+        {
+          'action_name': 'generateInspectorProtocolIDL',
+          'inputs': [
+            '../inspector/generate-inspector-idl',
+            '../inspector/Inspector.json',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/Inspector.idl',
+          ],
+          'variables': {
+            'generator_include_dirs': [
+            ],
+          },
+          'action': [
+            'python',
+            '../inspector/generate-inspector-idl',
+            '-o',
+            '<@(_outputs)',
+            '<@(_inputs)'
+          ],
+          'message': 'Generating Inspector protocol sources from Inspector.idl',
+        },
+      ]
+    },
+    {
       'target_name': 'inspector_protocol_sources',
       'type': 'none',
+      'dependencies': [
+        'inspector_idl'
+      ],
       'actions': [
         {
           'action_name': 'generateInspectorProtocolSources',
@@ -319,7 +350,7 @@
             '../bindings/scripts/CodeGenerator.pm',
             '../bindings/scripts/IDLParser.pm',
             '../bindings/scripts/IDLStructure.pm',
-            '../inspector/Inspector.idl',
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/Inspector.idl',
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendDispatcher.cpp',
@@ -335,7 +366,7 @@
           'action': [
             'python',
             'scripts/rule_binding.py',
-            '../inspector/Inspector.idl',
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/Inspector.idl',
             '<(SHARED_INTERMEDIATE_DIR)/webcore',
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
             '--',

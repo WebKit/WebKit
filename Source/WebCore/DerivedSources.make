@@ -889,6 +889,9 @@ JS%.h : %.idl $(JS_BINDINGS_SCRIPTS)
 
 # Inspector interfaces generator
 
+Inspector.idl : Inspector.json inspector/generate-inspector-idl
+	python $(WebCore)/inspector/generate-inspector-idl -o Inspector.idl $(WebCore)/inspector/Inspector.json
+
 all : InspectorFrontend.h
 
 INSPECTOR_GENERATOR_SCRIPTS = $(GENERATE_SCRIPTS) inspector/CodeGeneratorInspector.pm

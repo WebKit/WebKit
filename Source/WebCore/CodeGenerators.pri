@@ -547,7 +547,8 @@ IDL_BINDINGS += \
     xml/XSLTProcessor.idl
 
 
-INSPECTOR_INTERFACES = inspector/Inspector.idl
+INSPECTOR_JSON = inspector/Inspector.json
+INSPECTOR_IDL = $${WC_GENERATED_SOURCES_DIR}/Inspector.idl
 INSPECTOR_BACKEND_STUB_QRC = inspector/front-end/InspectorBackendStub.qrc
 INJECTED_SCRIPT_SOURCE = $$PWD/inspector/InjectedScriptSource.js
 
@@ -645,18 +646,27 @@ v8 {
 addExtraCompiler(idl)
 
 # GENERATOR 2: inspector idl compiler
+inspectorJSON.output = $${WC_GENERATED_SOURCES_DIR}/Inspector.idl
+inspectorJSON.input = INSPECTOR_JSON
+inspectorJSON.wkScript = $$PWD/inspector/generate-inspector-idl
+inspectorJSON.commands = python $$inspectorJSON.wkScript -o $${WC_GENERATED_SOURCES_DIR}/Inspector.idl $$PWD/inspector/Inspector.json
+inspectorJSON.depends = $$PWD/inspector/generate-inspector-idl
+inspectorJSON.wkAddOutputToSources = false
+addExtraCompiler(inspectorJSON)
+
 inspectorIDL.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}Frontend.cpp $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}BackendDispatcher.cpp
-inspectorIDL.input = INSPECTOR_INTERFACES
+inspectorIDL.input = INSPECTOR_IDL
 inspectorIDL.wkScript = $$PWD/bindings/scripts/generate-bindings.pl
 inspectorIDL.commands = perl -I$$PWD/bindings/scripts -I$$PWD/inspector $$inspectorIDL.wkScript --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator Inspector --outputDir $$WC_GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
 inspectorIDL.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
               $$PWD/inspector/CodeGeneratorInspector.pm \
               $$PWD/bindings/scripts/IDLParser.pm \
               $$PWD/bindings/scripts/IDLStructure.pm \
-              $$PWD/bindings/scripts/InFilesParser.pm
+              $$PWD/bindings/scripts/InFilesParser.pm \
+              $$PWD/inspector/Inspector.json \
+              $$PWD/inspector/generate-inspector-idl
 addExtraCompiler(inspectorIDL)
 
-inspectorBackendStub.wkAddOutputToSources = false
 inspectorBackendStub.output = generated/InspectorBackendStub.qrc
 inspectorBackendStub.input = INSPECTOR_BACKEND_STUB_QRC
 inspectorBackendStub.tempNames = $$PWD/$$INSPECTOR_BACKEND_STUB_QRC $${WC_GENERATED_SOURCES_DIR}/InspectorBackendStub.qrc

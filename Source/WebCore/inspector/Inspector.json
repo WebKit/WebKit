@@ -1,0 +1,1224 @@
+[
+    {
+        "domain": "Inspector",
+        "types": [],
+        "commands": [
+            {
+                "name": "addScriptToEvaluateOnLoad",
+                "parameters": [
+                    { "name": "scriptSource", "type": "string" }
+                ]
+            },
+            {
+                "name": "removeAllScriptsToEvaluateOnLoad"
+            },
+            {
+                "name": "reloadPage",
+                "parameters": [
+                    { "name": "ignoreCache", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "openInInspectedWindow",
+                "parameters": [
+                    { "name": "url", "type": "string" }
+                ]
+            },
+            {
+                "name": "setSearchingForNode",
+                "parameters": [
+                    { "name": "enabled", "type": "boolean" }
+                ],
+                "returns": [
+                    { "name": "newState", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "didEvaluateForTestInFrontend",
+                "parameters": [
+                    { "name": "testCallId", "type": "long" },
+                    { "name": "jsonResult", "type": "string" }
+                ]
+            },
+            {
+                "name": "highlightDOMNode",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" }
+                ]
+            },
+            {
+                "name": "hideDOMNodeHighlight"
+            },
+            {
+                "name": "highlightFrame",
+                "parameters": [
+                    { "name": "frameId", "type": "unsigned" }
+                ]
+            },
+            {
+                "name": "hideFrameHighlight"
+            },
+            {
+                "name": "setUserAgentOverride",
+                "parameters": [
+                    { "name": "userAgent", "type": "string" }
+                ]
+            },
+            {
+                "name": "getCookies",
+                "returns": [
+                    { "name": "cookies", "$ref": ["Cookie"] },
+                    { "name": "cookiesString", "type": "string" }
+                ]
+            },
+            {
+                "name": "deleteCookie",
+                "parameters": [
+                    { "name": "cookieName", "type": "string" },
+                    { "name": "domain", "type": "string" }
+                ]
+            }
+        ],
+        "events": [
+            {
+                "name": "frontendReused"
+            },
+            {
+                "name": "bringToFront"
+            },
+            {
+                "name": "disconnectFromBackend"
+            },
+            {
+                "name": "inspectedURLChanged",
+                "parameters": [
+                    { "name": "url", "type": "string" }
+                ]
+            },
+            {
+                "name": "domContentEventFired",
+                "parameters": [
+                    { "name": "time", "type": "float" }
+                ]
+            },
+            {
+                "name": "loadEventFired",
+                "parameters": [
+                    { "name": "time", "type": "float" }
+                ]
+            },
+            {
+                "name": "reset"
+            },
+            {
+                "name": "showPanel",
+                "parameters": [
+                    { "name": "panel", "type": "string" }
+                ]
+            },
+            {
+                "name": "evaluateForTestInFrontend",
+                "parameters": [
+                    { "name": "testCallId", "type": "long" },
+                    { "name": "script", "type": "string" }
+                ]
+            },
+            {
+                "name": "inspect",
+                "parameters": [
+                    { "name": "objectId", "$ref": "RuntimeObjectId" },
+                    { "name": "hints", "type": "object" }
+                ]
+            }
+        ]
+    },
+    {
+        "domain": "Runtime",
+        "types": [],
+        "commands": [
+            {
+                "name": "evaluate",
+                "parameters": [
+                    { "name": "expression", "type": "string" },
+                    { "name": "objectGroup", "type": "string" },
+                    { "name": "includeCommandLineAPI", "type": "boolean" }
+                ],
+                "returns": [
+                    { "name": "result", "$ref": "RuntimeObject" }
+                ]
+            },
+            {
+                "name": "evaluateOn",
+                "parameters": [
+                    { "name": "objectId", "$ref": "RuntimeObjectId" },
+                    { "name": "expression", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "result", "$ref": "RuntimeObject" }
+                ]
+            },
+            {
+                "name": "getProperties",
+                "parameters": [
+                    { "name": "objectId", "$ref": "RuntimeObjectId" },
+                    { "name": "ignoreHasOwnProperty", "type": "boolean" },
+                    { "name": "abbreviate", "type": "boolean" }
+                ],
+                "returns": [
+                    { "name": "result", "$ref": ["RuntimeProperty"] }
+                ]
+            },
+            {
+                "name": "setPropertyValue",
+                "parameters": [
+                    { "name": "objectId", "$ref": "RuntimeObjectId" },
+                    { "name": "propertyName", "type": "string" },
+                    { "name": "expression", "type": "string" }
+                ]
+            },
+            {
+                "name": "releaseObject",
+                "parameters": [
+                    { "name": "objectId", "$ref": "RuntimeObjectId" }
+                ]
+            },
+            {
+                "name": "releaseObjectGroup",
+                "parameters": [
+                    { "name": "injectedScriptId", "type": "long" },
+                    { "name": "objectGroup", "type": "string" }
+                ]
+            }
+        ],
+        "events": [
+
+        ]
+    },
+    {
+        "domain": "Console",
+        "types": [],
+        "commands": [
+            {
+                "name": "setConsoleMessagesEnabled",
+                "parameters": [
+                    { "name": "enabled", "type": "boolean" }
+                ],
+                "returns": [
+                    { "name": "newState", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "clearConsoleMessages"
+            },
+            {
+                "name": "setMonitoringXHREnabled",
+                "parameters": [
+                    { "name": "enabled", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "addInspectedNode",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" }
+                ]
+            }
+        ],
+        "events": [
+            {
+                "name": "addConsoleMessage",
+                "parameters": [
+                    { "name": "messageObj", "$ref": "ConsoleMessage" }
+                ]
+            },
+            {
+                "name": "updateConsoleMessageExpiredCount",
+                "parameters": [
+                    { "name": "count", "type": "unsigned" }
+                ]
+            },
+            {
+                "name": "updateConsoleMessageRepeatCount",
+                "parameters": [
+                    { "name": "count", "type": "unsigned" }
+                ]
+            },
+            {
+                "name": "consoleMessagesCleared"
+            }
+        ]
+    },
+    {
+        "domain": "Network",
+        "types": [],
+        "commands": [
+            {
+                "name": "enable",
+                "returns": [
+                    { "name": "resources", "$ref": "NetworkResourceTree" }
+                ]
+            },
+            {
+                "name": "disable"
+            },
+            {
+                "name": "resourceContent",
+                "parameters": [
+                    { "name": "frameId", "type": "unsigned" },
+                    { "name": "url", "type": "string" },
+                    { "name": "base64Encode", "type": "boolean" }
+                ],
+                "returns": [
+                    { "name": "success", "type": "boolean" },
+                    { "name": "content", "type": "string" }
+                ]
+            },
+            {
+                "name": "setExtraHeaders",
+                "parameters": [
+                    { "name": "headers", "$ref": "NetworkHeaders" }
+                ]
+            }
+        ],
+        "events": [
+            {
+                "name": "frameDetachedFromParent",
+                "parameters": [
+                    { "name": "frameId", "type": "unsigned" }
+                ]
+            },
+            {
+                "name": "identifierForInitialRequest",
+                "parameters": [
+                    { "name": "identifier", "type": "long" },
+                    { "name": "url", "type": "string" },
+                    { "name": "loader", "$ref": "NetworkLoader" },
+                    { "name": "callStack", "$ref": ["DebuggerStackFrame"] }
+                ]
+            },
+            {
+                "name": "willSendRequest",
+                "parameters": [
+                    { "name": "identifier", "type": "long" },
+                    { "name": "time", "type": "float" },
+                    { "name": "request", "$ref": "NetworkRequest" },
+                    { "name": "redirectResponse", "$ref": "NetworkResponse" }
+                ]
+            },
+            {
+                "name": "markResourceAsCached",
+                "parameters": [
+                    { "name": "identifier", "type": "long" }
+                ]
+            },
+            {
+                "name": "didReceiveResponse",
+                "parameters": [
+                    { "name": "identifier", "type": "long" },
+                    { "name": "time", "type": "float" },
+                    { "name": "resourceType", "type": "string" },
+                    { "name": "response", "$ref": "NetworkResponse" }
+                ]
+            },
+            {
+                "name": "didReceiveContentLength",
+                "parameters": [
+                    { "name": "identifier", "type": "long" },
+                    { "name": "time", "type": "float" },
+                    { "name": "lengthReceived", "type": "long" }
+                ]
+            },
+            {
+                "name": "didFinishLoading",
+                "parameters": [
+                    { "name": "identifier", "type": "long" },
+                    { "name": "finishTime", "type": "float" }
+                ]
+            },
+            {
+                "name": "didFailLoading",
+                "parameters": [
+                    { "name": "identifier", "type": "long" },
+                    { "name": "time", "type": "float" },
+                    { "name": "localizedDescription", "type": "string" }
+                ]
+            },
+            {
+                "name": "didLoadResourceFromMemoryCache",
+                "parameters": [
+                    { "name": "time", "type": "float" },
+                    { "name": "resource", "$ref": "NetworkCachedResource" }
+                ]
+            },
+            {
+                "name": "setInitialContent",
+                "parameters": [
+                    { "name": "identifier", "type": "long" },
+                    { "name": "sourceString", "type": "string" },
+                    { "name": "type", "type": "string" }
+                ]
+            },
+            {
+                "name": "didCommitLoadForFrame",
+                "parameters": [
+                    { "name": "frame", "$ref": "Frame" },
+                    { "name": "loader", "$ref": "NetworkLoader" }
+                ]
+            },
+            {
+                "name": "didCreateWebSocket",
+                "parameters": [
+                    { "name": "identifier", "type": "unsigned" },
+                    { "name": "requestURL", "type": "string" }
+                ]
+            },
+            {
+                "name": "willSendWebSocketHandshakeRequest",
+                "parameters": [
+                    { "name": "identifier", "type": "unsigned" },
+                    { "name": "time", "type": "float" },
+                    { "name": "request", "$ref": "NetworkWebSocketRequest" }
+                ]
+            },
+            {
+                "name": "didReceiveWebSocketHandshakeResponse",
+                "parameters": [
+                    { "name": "identifier", "type": "unsigned" },
+                    { "name": "time", "type": "float" },
+                    { "name": "response", "$ref": "NetworkWebSocketResponse" }
+                ]
+            },
+            {
+                "name": "didCloseWebSocket",
+                "parameters": [
+                    { "name": "identifier", "type": "unsigned" },
+                    { "name": "time", "type": "float" }
+                ]
+            }
+        ]
+    },
+    {
+        "domain": "Database",
+        "types": [],
+        "commands": [
+            {
+                "name": "getDatabaseTableNames",
+                "parameters": [
+                    { "name": "databaseId", "type": "long" }
+                ],
+                "returns": [
+                    { "name": "tableNames", "type": ["string"] }
+                ]
+            },
+            {
+                "name": "executeSQL",
+                "parameters": [
+                    { "name": "databaseId", "type": "long" },
+                    { "name": "query", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "success", "type": "boolean" },
+                    { "name": "transactionId", "type": "long" }
+                ]
+            }
+        ],
+        "events": [
+            {
+                "name": "addDatabase",
+                "parameters": [
+                    { "name": "database", "$ref": "DatabaseDatabase" }
+                ]
+            },
+            {
+                "name": "sqlTransactionSucceeded",
+                "parameters": [
+                    { "name": "transactionId", "type": "long" },
+                    { "name": "columnNames", "type": ["string"] },
+                    { "name": "values", "type": ["string or number"] }
+                ]
+            },
+            {
+                "name": "sqlTransactionFailed",
+                "parameters": [
+                    { "name": "transactionId", "type": "long" },
+                    { "name": "sqlError", "$ref": "DatabaseError" }
+                ]
+            }
+        ]
+    },
+    {
+        "domain": "DOMStorage",
+        "types": [],
+        "commands": [
+            {
+                "name": "getDOMStorageEntries",
+                "parameters": [
+                    { "name": "storageId", "type": "long" }
+                ],
+                "returns": [
+                    { "name": "entries", "$ref": ["DOMStorageEntry"] }
+                ]
+            },
+            {
+                "name": "setDOMStorageItem",
+                "parameters": [
+                    { "name": "storageId", "type": "long" },
+                    { "name": "key", "type": "string" },
+                    { "name": "value", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "success", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "removeDOMStorageItem",
+                "parameters": [
+                    { "name": "storageId", "type": "long" },
+                    { "name": "key", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "success", "type": "boolean" }
+                ]
+            }
+        ],
+        "events": [
+            {
+                "name": "addDOMStorage",
+                "parameters": [
+                    { "name": "storage", "$ref": "DOMStorageStorage" }
+                ]
+            },
+            {
+                "name": "updateDOMStorage",
+                "parameters": [
+                    { "name": "storageId", "type": "integer" }
+                ]
+            }
+        ]
+    },
+    {
+        "domain": "ApplicationCache",
+        "types": [],
+        "commands": [
+            {
+                "name": "getApplicationCaches",
+                "returns": [
+                    { "name": "applicationCaches", "$ref": "AppCache" }
+                ]
+            }
+        ],
+        "events": [
+            {
+                "name": "updateApplicationCacheStatus",
+                "parameters": [
+                    { "name": "status", "type": "integer" }
+                ]
+            },
+            {
+                "name": "updateNetworkState",
+                "parameters": [
+                    { "name": "isNowOnline", "type": "boolean" }
+                ]
+            }
+        ]
+    },
+    {
+        "domain": "DOM",
+        "types": [],
+        "commands": [
+            {
+                "name": "getDocument",
+                "returns": [
+                    { "name": "root", "$ref": "DOMNode" }
+                ]
+            },
+            {
+                "name": "getChildNodes",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" }
+                ]
+            },
+            {
+                "name": "querySelector",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" },
+                    { "name": "selectors", "type": "string" },
+                    { "name": "documentWide", "type": "boolean" }
+                ],
+                "returns": [
+                    { "name": "elementId", "type": "long" }
+                ]
+            },
+            {
+                "name": "querySelectorAll",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" },
+                    { "name": "selectors", "type": "string" },
+                    { "name": "documentWide", "type": "boolean" }
+                ],
+                "returns": [
+                    { "name": "nodeIds", "type": ["long"] }
+                ]
+            },
+            {
+                "name": "setNodeName",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" },
+                    { "name": "name", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "outNodeId", "type": "long" }
+                ]
+            },
+            {
+                "name": "setNodeValue",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" },
+                    { "name": "value", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "success", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "removeNode",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" }
+                ],
+                "returns": [
+                    { "name": "outNodeId", "type": "long" }
+                ]
+            },
+            {
+                "name": "setAttribute",
+                "parameters": [
+                    { "name": "elementId", "type": "long" },
+                    { "name": "name", "type": "string" },
+                    { "name": "value", "type": "string" }
+                ]
+            },
+            {
+                "name": "removeAttribute",
+                "parameters": [
+                    { "name": "elementId", "type": "long" },
+                    { "name": "name", "type": "string" }
+                ]
+            },
+            {
+                "name": "getEventListenersForNode",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" }
+                ],
+                "returns": [
+                    { "name": "listenersArray", "$ref": ["DOMListener"] }
+                ]
+            },
+            {
+                "name": "copyNode",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" }
+                ]
+            },
+            {
+                "name": "getOuterHTML",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" }
+                ],
+                "returns": [
+                    { "name": "outerHTML", "type": "string" }
+                ]
+            },
+            {
+                "name": "setOuterHTML",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" },
+                    { "name": "outerHTML", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "outNodeId", "type": "long" }
+                ]
+            },
+            {
+                "name": "performSearch",
+                "parameters": [
+                    { "name": "query", "type": "string" },
+                    { "name": "runSynchronously", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "cancelSearch"
+            },
+            {
+                "name": "pushNodeToFrontend",
+                "parameters": [
+                    { "name": "objectId", "$ref": "RuntimeObjectId" }
+                ],
+                "returns": [
+                    { "name": "nodeId", "type": "long" }
+                ]
+            },
+            {
+                "name": "pushNodeByPathToFrontend",
+                "parameters": [
+                    { "name": "path", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "nodeId", "type": "long" }
+                ]
+            },
+            {
+                "name": "resolveNode",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" },
+                    { "name": "objectGroup", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "objectId", "$ref": "RuntimeObjectId" }
+                ]
+            }
+        ],
+        "events": [
+            {
+                "name": "documentUpdated"
+            },
+            {
+                "name": "setChildNodes",
+                "parameters": [
+                    { "name": "parentId", "type": "long" },
+                    { "name": "nodes", "$ref": ["DOMNode"] }
+                ]
+            },
+            {
+                "name": "attributesUpdated",
+                "parameters": [
+                    { "name": "id", "type": "long" },
+                    { "name": "attributes", "$ref": ["DOMAttribute"] }
+                ]
+            },
+            {
+                "name": "characterDataModified",
+                "parameters": [
+                    { "name": "id", "type": "long" },
+                    { "name": "newValue", "type": "string" }
+                ]
+            },
+            {
+                "name": "setDetachedRoot",
+                "parameters": [
+                    { "name": "root", "$ref": "DOMNode" }
+                ]
+            },
+            {
+                "name": "childNodeCountUpdated",
+                "parameters": [
+                    { "name": "id", "type": "long" },
+                    { "name": "newValue", "type": "integer" }
+                ]
+            },
+            {
+                "name": "childNodeInserted",
+                "parameters": [
+                    { "name": "parentId", "type": "long" },
+                    { "name": "prevId", "type": "long" },
+                    { "name": "node", "$ref": "DOMNode" }
+                ]
+            },
+            {
+                "name": "childNodeRemoved",
+                "parameters": [
+                    { "name": "parentId", "type": "long" },
+                    { "name": "id", "type": "long" }
+                ]
+            },
+            {
+                "name": "searchResults",
+                "parameters": [
+                    { "name": "nodeIds", "type": ["long"] }
+                ]
+            }
+        ]
+    },
+    {
+        "domain": "CSS",
+        "types": [],
+        "commands": [
+            {
+                "name": "getStylesForNode",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" }
+                ],
+                "returns": [
+                    { "name": "styles", "$ref": "CSSNodeStyles" }
+                ]
+            },
+            {
+                "name": "getComputedStyleForNode",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" }
+                ],
+                "returns": [
+                    { "name": "style", "$ref": "CSSComputedStyle" }
+                ]
+            },
+            {
+                "name": "getInlineStyleForNode",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" }
+                ],
+                "returns": [
+                    { "name": "style", "$ref": "CSSStyle" }
+                ]
+            },
+            {
+                "name": "getAllStyles",
+                "returns": [
+                    { "name": "styleSheetIds", "type": ["string"] }
+                ]
+            },
+            {
+                "name": "getStyleSheet",
+                "parameters": [
+                    { "name": "styleSheetId", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "styleSheet", "$ref": "CSSStyleSheet" }
+                ]
+            },
+            {
+                "name": "getStyleSheetText",
+                "parameters": [
+                    { "name": "styleSheetId", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "url", "type": "string" },
+                    { "name": "text", "type": "string" }
+                ]
+            },
+            {
+                "name": "setStyleSheetText",
+                "parameters": [
+                    { "name": "styleSheetId", "type": "string" },
+                    { "name": "text", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "success", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "setPropertyText",
+                "parameters": [
+                    { "name": "styleId", "$ref": "CSSStyleId" },
+                    { "name": "propertyIndex", "type": "long" },
+                    { "name": "text", "type": "string" },
+                    { "name": "overwrite", "type": "boolean" }
+                ],
+                "returns": [
+                    { "name": "style", "$ref": "CSSStyle" }
+                ]
+            },
+            {
+                "name": "toggleProperty",
+                "parameters": [
+                    { "name": "styleId", "$ref": "CSSStyleId" },
+                    { "name": "propertyIndex", "type": "long" },
+                    { "name": "disable", "type": "boolean" }
+                ],
+                "returns": [
+                    { "name": "style", "$ref": "CSSStyle" }
+                ]
+            },
+            {
+                "name": "setRuleSelector",
+                "parameters": [
+                    { "name": "ruleId", "$ref": "CSSRuleId" },
+                    { "name": "selector", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "rule", "$ref": "CSSRule" }
+                ]
+            },
+            {
+                "name": "addRule",
+                "parameters": [
+                    { "name": "contextNodeId", "type": "long" },
+                    { "name": "selector", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "rule", "$ref": "CSSRule" }
+                ]
+            },
+            {
+                "name": "getSupportedCSSProperties",
+                "returns": [
+                    { "name": "cssProperties", "type": ["string"] }
+                ]
+            }
+        ],
+        "events": [
+
+        ]
+    },
+    {
+        "domain": "Timeline",
+        "types": [],
+        "commands": [
+            {
+                "name": "start"
+            },
+            {
+                "name": "stop"
+            }
+        ],
+        "events": [
+            {
+                "name": "timelineProfilerWasStarted"
+            },
+            {
+                "name": "timelineProfilerWasStopped"
+            },
+            {
+                "name": "addRecordToTimeline",
+                "parameters": [
+                    { "name": "record", "$ref": "TimelineRecord" }
+                ]
+            }
+        ]
+    },
+    {
+        "domain": "Debugger",
+        "types": [],
+        "commands": [
+            {
+                "name": "enable"
+            },
+            {
+                "name": "disable"
+            },
+            {
+                "name": "activateBreakpoints"
+            },
+            {
+                "name": "deactivateBreakpoints"
+            },
+            {
+                "name": "setJavaScriptBreakpoint",
+                "parameters": [
+                    { "name": "url", "type": "string" },
+                    { "name": "lineNumber", "type": "integer" },
+                    { "name": "columnNumber", "type": "integer" },
+                    { "name": "condition", "type": "string" },
+                    { "name": "enabled", "type": "boolean" }
+                ],
+                "returns": [
+                    { "name": "breakpointId", "type": "string" },
+                    { "name": "locations", "$ref": ["DebuggerLocation"] }
+                ]
+            },
+            {
+                "name": "setJavaScriptBreakpointBySourceId",
+                "parameters": [
+                    { "name": "sourceId", "type": "string" },
+                    { "name": "lineNumber", "type": "integer" },
+                    { "name": "columnNumber", "type": "integer" },
+                    { "name": "condition", "type": "string" },
+                    { "name": "enabled", "type": "boolean" }
+                ],
+                "returns": [
+                    { "name": "breakpointId", "type": "string" },
+                    { "name": "actualLineNumber", "type": "integer" },
+                    { "name": "actualColumnNumber", "type": "integer" }
+                ]
+            },
+            {
+                "name": "removeJavaScriptBreakpoint",
+                "parameters": [
+                    { "name": "breakpointId", "type": "string" }
+                ]
+            },
+            {
+                "name": "continueToLocation",
+                "parameters": [
+                    { "name": "sourceId", "type": "string" },
+                    { "name": "lineNumber", "type": "integer" },
+                    { "name": "columnNumber", "type": "integer" }
+                ]
+            },
+            {
+                "name": "stepOver"
+            },
+            {
+                "name": "stepInto"
+            },
+            {
+                "name": "stepOut"
+            },
+            {
+                "name": "pause"
+            },
+            {
+                "name": "resume"
+            },
+            {
+                "name": "editScriptSource",
+                "parameters": [
+                    { "name": "sourceID", "type": "string" },
+                    { "name": "newContent", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "success", "type": "boolean" },
+                    { "name": "result", "type": "string" },
+                    { "name": "stackFrames", "$ref": ["DebuggerStackFrame"] }
+                ]
+            },
+            {
+                "name": "getScriptSource",
+                "parameters": [
+                    { "name": "sourceID", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "scriptSource", "type": "string" }
+                ]
+            },
+            {
+                "name": "setPauseOnExceptionsState",
+                "parameters": [
+                    { "name": "pauseOnExceptionsState", "type": "long" }
+                ],
+                "returns": [
+                    { "name": "newState", "type": "long" }
+                ]
+            },
+            {
+                "name": "evaluateOnCallFrame",
+                "parameters": [
+                    { "name": "callFrameId", "$ref": "DebuggerCallFrameId" },
+                    { "name": "expression", "type": "string" },
+                    { "name": "objectGroup", "type": "string" },
+                    { "name": "includeCommandLineAPI", "type": "boolean" }
+                ],
+                "returns": [
+                    { "name": "result", "$ref": "RuntimeObjectId" }
+                ]
+            }
+        ],
+        "events": [
+            {
+                "name": "debuggerWasEnabled"
+            },
+            {
+                "name": "debuggerWasDisabled"
+            },
+            {
+                "name": "parsedScriptSource",
+                "parameters": [
+                    { "name": "sourceID", "type": "string" },
+                    { "name": "url", "type": "string" },
+                    { "name": "lineOffset", "type": "integer" },
+                    { "name": "columnOffset", "type": "integer" },
+                    { "name": "length", "type": "integer" },
+                    { "name": "scriptWorldType", "type": "integer" }
+                ]
+            },
+            {
+                "name": "failedToParseScriptSource",
+                "parameters": [
+                    { "name": "url", "type": "string" },
+                    { "name": "data", "type": "string" },
+                    { "name": "firstLine", "type": "integer" },
+                    { "name": "errorLine", "type": "integer" },
+                    { "name": "errorMessage", "type": "string" }
+                ]
+            },
+            {
+                "name": "breakpointResolved",
+                "parameters": [
+                    { "name": "breakpointId", "type": "string" },
+                    { "name": "sourceId", "type": "string" },
+                    { "name": "lineNumber", "type": "integer" },
+                    { "name": "columnNumber", "type": "integer" }
+                ]
+            },
+            {
+                "name": "pausedScript",
+                "parameters": [
+                    { "name": "details", "$ref": "DebuggerBacktrace" }
+                ]
+            },
+            {
+                "name": "resumedScript"
+            },
+            {
+                "name": "didCreateWorker",
+                "parameters": [
+                    { "name": "id", "type": "long" },
+                    { "name": "url", "type": "string" },
+                    { "name": "isShared", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "didDestroyWorker",
+                "parameters": [
+                    { "name": "id", "type": "long" }
+                ]
+            }
+        ]
+    },
+    {
+        "domain": "BrowserDebugger",
+        "types": [],
+        "commands": [
+            {
+                "name": "setDOMBreakpoint",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" },
+                    { "name": "type", "type": "long" }
+                ]
+            },
+            {
+                "name": "removeDOMBreakpoint",
+                "parameters": [
+                    { "name": "nodeId", "type": "long" },
+                    { "name": "type", "type": "long" }
+                ]
+            },
+            {
+                "name": "setEventListenerBreakpoint",
+                "parameters": [
+                    { "name": "eventName", "type": "string" }
+                ]
+            },
+            {
+                "name": "removeEventListenerBreakpoint",
+                "parameters": [
+                    { "name": "eventName", "type": "string" }
+                ]
+            },
+            {
+                "name": "setXHRBreakpoint",
+                "parameters": [
+                    { "name": "url", "type": "string" }
+                ]
+            },
+            {
+                "name": "removeXHRBreakpoint",
+                "parameters": [
+                    { "name": "url", "type": "string" }
+                ]
+            }
+        ],
+        "events": [
+
+        ]
+    },
+    {
+        "domain": "Profiler",
+        "types": [],
+        "commands": [
+            {
+                "name": "enable"
+            },
+            {
+                "name": "disable"
+            },
+            {
+                "name": "isEnabled",
+                "returns": [
+                    { "name": "state", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "start"
+            },
+            {
+                "name": "stop"
+            },
+            {
+                "name": "getProfileHeaders",
+                "returns": [
+                    { "name": "headers", "$ref": ["ProfileHeader"] }
+                ]
+            },
+            {
+                "name": "getProfile",
+                "parameters": [
+                    { "name": "type", "type": "string" },
+                    { "name": "uid", "type": "unsigned" }
+                ],
+                "returns": [
+                    { "name": "profile", "$ref": "Profile" }
+                ]
+            },
+            {
+                "name": "removeProfile",
+                "parameters": [
+                    { "name": "type", "type": "string" },
+                    { "name": "uid", "type": "unsigned" }
+                ]
+            },
+            {
+                "name": "clearProfiles"
+            },
+            {
+                "name": "takeHeapSnapshot",
+                "parameters": [
+                    { "name": "detailed", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "getExactHeapSnapshotNodeRetainedSize",
+                "parameters": [
+                    { "name": "uid", "type": "unsigned" },
+                    { "name": "nodeId", "type": "unsigned" }
+                ],
+                "returns": [
+                    { "name": "size", "type": "long" }
+                ]
+            },
+            {
+                "name": "collectGarbage"
+            }
+        ],
+        "events": [
+            {
+                "name": "profilerWasEnabled"
+            },
+            {
+                "name": "profilerWasDisabled"
+            },
+            {
+                "name": "addProfileHeader",
+                "parameters": [
+                    { "name": "header", "$ref": "ProfileHeader" }
+                ]
+            },
+            {
+                "name": "addHeapSnapshotChunk",
+                "parameters": [
+                    { "name": "uid", "type": "unsigned" },
+                    { "name": "chunk", "type": "string" }
+                ]
+            },
+            {
+                "name": "finishHeapSnapshot",
+                "parameters": [
+                    { "name": "uid", "type": "unsigned" }
+                ]
+            },
+            {
+                "name": "setRecordingProfile",
+                "parameters": [
+                    { "name": "isProfiling", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "resetProfiles"
+            },
+            {
+                "name": "reportHeapSnapshotProgress",
+                "parameters": [
+                    { "name": "done", "type": "integer" },
+                    { "name": "total", "type": "integer" }
+                ]
+            }
+        ]
+    }
+]

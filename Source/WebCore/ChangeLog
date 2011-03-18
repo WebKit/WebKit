@@ -1,3 +1,19 @@
+2011-03-18  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: migrate from Inspector.idl to InspectorAPI.json for protocol schema definition meta bug.
+        https://bugs.webkit.org/show_bug.cgi?id=56294
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * inspector/Inspector.idl: Removed.
+        * inspector/Inspector.json: Added.
+        * inspector/generate-inspector-idl: Added.
+
 2011-03-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
