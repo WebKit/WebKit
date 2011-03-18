@@ -307,11 +307,9 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderObject* container, Rend
         adjacentBox = box->prevRootBox();
         if (adjacentBox)
             adjacentBox->markDirty();
-        if (child->isBR() || (curr && curr->isBR())) {
-            adjacentBox = box->nextRootBox();
-            if (adjacentBox)
-                adjacentBox->markDirty();
-        }
+        adjacentBox = box->nextRootBox();
+        if (adjacentBox && (adjacentBox->lineBreakObj() == child || child->isBR() || (curr && curr->isBR())))
+            adjacentBox->markDirty();
     }
 }
 
