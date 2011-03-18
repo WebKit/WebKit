@@ -1,5 +1,16 @@
 2011-03-18  Andreas Kling  <kling@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Remove unused method FontFallbackList::fontDataForCharacters()
+        https://bugs.webkit.org/show_bug.cgi?id=56657
+
+        * platform/graphics/Font.h:
+        * platform/graphics/FontFallbackList.cpp:
+        * platform/graphics/FontFallbackList.h:
+
+2011-03-18  Andreas Kling  <kling@webkit.org>
+
         Reverting accidental changes in r81498.
 
 2011-03-18  Ilya Tikhonovsky  <loislo@chromium.org>

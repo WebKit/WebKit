@@ -65,8 +65,7 @@ private:
 
     const FontData* primaryFontData(const Font* f) const { return fontDataAt(f, 0); }
     const FontData* fontDataAt(const Font*, unsigned index) const;
-    const FontData* fontDataForCharacters(const Font*, const UChar*, int length) const;
-    
+
     void setPlatformFont(const FontPlatformData&);
 
     void releaseFontData();
