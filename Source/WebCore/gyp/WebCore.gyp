@@ -21,6 +21,7 @@
         '<(DEPTH)/WebCore/ForwardingHeaders',
         '<(PRODUCT_DIR)/usr/local/include',
         '/usr/include/libxml2',
+        '<(PRODUCT_DIR)/DerivedSources',
         '<(PRODUCT_DIR)/DerivedSources/WebCore',
       ],
       'sources': [
@@ -45,25 +46,20 @@
         'libz.dylib',
       ],
       'sources/': [
-        # FIXME: Figure out how to build these mm files.
-        ['exclude', 'DerivedSources/.*\\.mm$'],
-
         # This file fails to build because objc_finalizeOnMainThread is deprecated...
         ['exclude', 'platform/mac/WebCoreObjCExtras.mm$'],
 
         ['exclude', 'bindings/[^/]+/'],
         ['include', 'bindings/generic/'],
         ['include', 'bindings/js/'],
-        # FIXME: Build bindings/objc/
-        ['exclude', 'bindings/js/ScriptControllerMac\\.mm$'],
-        ['include', 'bindings/objc/[^/]+\\.h$'],
+        ['include', 'bindings/objc/'],
 
         # FIXME: This could should move to Source/ThirdParty.
         ['exclude', 'thirdparty/'],
 
         # FIXME: Figure out how to store these patterns in a variable.
-        ['exclude', '(android|brew|cairo|chromium|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mkl|openvg|pango|posix|qt|skia|soup|symbian|texmap|iphone|v8|win|wince|wx)/'],
-        ['exclude', '(Android|Brew|Cairo|CF|Curl|Chromium|Efl|Haiku|Gtk|JSC|Linux|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|V8|Win|WinCE|Wx)\\.(cpp|mm?)$'],
+        ['exclude', '(android|brew|cairo|chromium|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mkl|openvg|pango|qt|skia|soup|symbian|texmap|iphone|v8|win|wince|wx)/'],
+        ['exclude', '(Android|Brew|Cairo|Curl|Chromium|Efl|Haiku|Gtk|JSC|Linux|OpenType|Qt|Safari|Soup|Symbian|V8|Win|WinCE|Wx)\\.(cpp|mm?)$'],
         ['exclude', 'Chromium[^/]*\\.(cpp|mm?)$'],
 
         ['exclude', 'platform/image-decoders/'],
@@ -76,13 +72,14 @@
         ['exclude', 'platform/graphics/cg/FontPlatformData\\.h$'],
         ['exclude', 'platform/graphics/gpu/LoopBlinnPathProcessor\\.(cpp|h)$'],
         # FIXME: Consider excluding GL as a suffix.
+        ['exclude', 'platform/graphics/ImageSource\\.cpp$'],
         ['exclude', 'platform/graphics/opengl/TextureMapperGL\\.cpp$'],
         ['exclude', 'platform/graphics/opentype/OpenTypeUtilities\\.(cpp|h)$'],
-        ['exclude', 'platform/graphics/ImageSource\\.cpp$'],
+        ['exclude', 'platform/posix/SharedBufferPOSIX\\.cpp$'],
+        ['exclude', 'platform/text/Hyphenation\\.cpp$'],
         ['exclude', 'platform/text/LocalizedNumberICU\\.cpp$'],
         ['exclude', 'platform/text/LocalizedNumberNone\\.cpp$'],
         ['exclude', 'platform/text/TextEncodingDetectorNone\\.cpp$'],
-        ['exclude', 'platform/text/Hyphenation\\.cpp$'],
         ['exclude', 'plugins/PluginDataNone\\.cpp$'],
         ['exclude', 'plugins/PluginDatabase\\.cpp$'],
         ['exclude', 'plugins/PluginPackageNone\\.cpp$'],

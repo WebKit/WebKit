@@ -1,3 +1,18 @@
+2011-03-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add ObjC bindings to the WebCore GYP build
+        https://bugs.webkit.org/show_bug.cgi?id=56671
+
+        It turns out we generate a bunch of ObjC bindings files that we don't
+        actually build.  I've manually synced the list of ObjC derived source
+        files to match the existing list.  This brings us down to 19 link
+        errors.
+
+        * WebCore.gypi:
+        * gyp/WebCore.gyp:
+
 2011-03-18  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Eric Seidel.
