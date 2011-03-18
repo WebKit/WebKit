@@ -1,3 +1,13 @@
+2011-03-18  Adam Roben  <aroben@apple.com>
+
+        Fix a leak beneath LayoutTestController::authenticateSession seen on the bots
+
+        Rubber-stamped by Mark Rowe.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::authenticateSession): Use a RetainPtr to cause the NSURLRequest to be
+        released.
+
 2011-03-17  Adam Roben  <aroben@apple.com>
 
         Address a review comment I missed in r81445

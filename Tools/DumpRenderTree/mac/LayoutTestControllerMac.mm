@@ -1034,9 +1034,9 @@ void LayoutTestController::authenticateSession(JSStringRef url, JSStringRef user
     RetainPtr<CFStringRef> usernameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, username));
     RetainPtr<CFStringRef> passwordCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, password));
 
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:(NSString *)urlStringCF.get()]];
+    RetainPtr<NSURLRequest> request(AdoptNS, [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:(NSString *)urlStringCF.get()]]);
 
-    [SynchronousLoader makeRequest:request withUsername:(NSString *)usernameCF.get() password:(NSString *)passwordCF.get()];
+    [SynchronousLoader makeRequest:request.get() withUsername:(NSString *)usernameCF.get() password:(NSString *)passwordCF.get()];
 #endif
 }
 
