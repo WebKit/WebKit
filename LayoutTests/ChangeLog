@@ -1,3 +1,16 @@
+2011-03-18  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix incorrect test onpaste-text-html-types.html
+        https://bugs.webkit.org/show_bug.cgi?id=56621
+
+        The test was checking for the presence of "Text" in event.clipboardData.types,
+        but per http://lists.whatwg.org/pipermail/whatwg-whatwg.org/2010-February/024956.html,
+        this should not be the case.
+
+        * editing/pasteboard/onpaste-text-html-types.html:
+
 2011-03-18  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Unreviewed, remove stale expectations for r81489.

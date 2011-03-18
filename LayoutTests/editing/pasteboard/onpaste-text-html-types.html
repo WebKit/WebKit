@@ -9,7 +9,6 @@ function paste(ev)
 {
     var types = ev.clipboardData.types;
     if (types.indexOf('text/plain') >= 0 &&
-        types.indexOf('Text') >= 0 &&
         types.indexOf('text/html') >= 0)
         document.getElementById("results").innerHTML = "PASS";
 }
