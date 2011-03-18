@@ -1,3 +1,16 @@
+2011-03-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: rename console agent events.
+        https://bugs.webkit.org/show_bug.cgi?id=56646
+
+        addConsoleMessage -> consoleMessage
+        updateConsoleMessageExpiredCount -> consoleMessageExpiredCountUpdate
+        updateConsoleMessageRepeatCount -> consoleMessageRepeatCountUpdate
+
+        * inspector/protocol/console-agent-expected.txt:
+
 2011-03-18  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; new test baselines.

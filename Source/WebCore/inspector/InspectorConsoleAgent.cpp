@@ -233,7 +233,7 @@ void InspectorConsoleAgent::setConsoleMessagesEnabled(bool enabled)
         return;
 
     if (m_expiredConsoleMessageCount)
-        m_frontend->updateConsoleMessageExpiredCount(m_expiredConsoleMessageCount);
+        m_frontend->consoleMessageExpiredCountUpdate(m_expiredConsoleMessageCount);
     unsigned messageCount = m_consoleMessages.size();
     for (unsigned i = 0; i < messageCount; ++i)
         m_consoleMessages[i]->addToFrontend(m_frontend, m_injectedScriptManager);

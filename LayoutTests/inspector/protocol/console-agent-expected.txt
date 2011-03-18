@@ -59,11 +59,11 @@ request:
     }
 }
 
-event ConsoleAgent.addConsoleMessage
+event ConsoleAgent.consoleMessage
 {
     type : "event"
     domain : "Console"
-    event : "addConsoleMessage"
+    event : "consoleMessage"
     body : {
         messageObj : {
             source : 3
@@ -84,11 +84,11 @@ event ConsoleAgent.addConsoleMessage
     }
 }
 
-event ConsoleAgent.updateConsoleMessageRepeatCount
+event ConsoleAgent.consoleMessageRepeatCountUpdate
 {
     type : "event"
     domain : "Console"
-    event : "updateConsoleMessageRepeatCount"
+    event : "consoleMessageRepeatCountUpdate"
     body : {
         count : 2
     }
@@ -192,9 +192,9 @@ Coverage for ConsoleAgent
     clearConsoleMessages : "checked"
     setMonitoringXHREnabled : "checked"
     addInspectedNode : "checked"
-    addConsoleMessage : "checked"
-    updateConsoleMessageExpiredCount : "not checked"
-    updateConsoleMessageRepeatCount : "checked"
+    consoleMessage : "checked"
+    consoleMessageExpiredCountUpdate : "not checked"
+    consoleMessageRepeatCountUpdate : "checked"
     consoleMessagesCleared : "checked"
 }
 

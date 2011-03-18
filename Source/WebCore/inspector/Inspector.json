@@ -225,19 +225,19 @@
         ],
         "events": [
             {
-                "name": "addConsoleMessage",
+                "name": "consoleMessage",
                 "parameters": [
                     { "name": "messageObj", "$ref": "ConsoleMessage" }
                 ]
             },
             {
-                "name": "updateConsoleMessageExpiredCount",
+                "name": "consoleMessageExpiredCountUpdate",
                 "parameters": [
                     { "name": "count", "type": "unsigned" }
                 ]
             },
             {
-                "name": "updateConsoleMessageRepeatCount",
+                "name": "consoleMessageRepeatCountUpdate",
                 "parameters": [
                     { "name": "count", "type": "unsigned" }
                 ]

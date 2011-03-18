@@ -105,7 +105,7 @@ WebInspector.ConsoleView.prototype = {
     _registerConsoleDomainDispatcher: function() {
         var console = this;
         var dispatcher = {
-            addConsoleMessage: function(payload)
+            consoleMessage: function(payload)
             {
                 var consoleMessage = new WebInspector.ConsoleMessage(
                     payload.source,
@@ -121,13 +121,13 @@ WebInspector.ConsoleView.prototype = {
                 console.addMessage(consoleMessage);
             },
 
-            updateConsoleMessageExpiredCount: function(count)
+            consoleMessageExpiredCountUpdate: function(count)
             {
                 var message = String.sprintf(WebInspector.UIString("%d console messages are not shown."), count);
                 console.addMessage(WebInspector.ConsoleMessage.createTextMessage(message, WebInspector.ConsoleMessage.MessageLevel.Warning));
             },
 
-            updateConsoleMessageRepeatCount: function(count)
+            consoleMessageRepeatCountUpdate: function(count)
             {
                 var msg = console.previousMessage;
                 var prevRepeatCount = msg.totalRepeatCount;
