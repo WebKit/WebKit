@@ -171,7 +171,7 @@ class Rebaseliner(object):
         self._rebaseline_port = port.get(
             self._target_port.test_platform_name_to_name(platform), options,
             filesystem=self._filesystem, rebaselining=True)
-        self._rebaselining_tests = []
+        self._rebaselining_tests = set()
         self._rebaselined_tests = []
 
         # Create tests and expectations helper which is used to:
@@ -194,6 +194,8 @@ class Rebaseliner(object):
 
         log_dashed_string('Compiling rebaselining tests', self._platform)
         if not self._compile_rebaselining_tests():
+            return False
+        if not self.get_rebaselining_tests():
             return True
 
         log_dashed_string('Downloading archive', self._platform)
@@ -237,15 +239,23 @@ class Rebaseliner(object):
         """Compile list of tests that need rebaselining for the platform.
 
         Returns:
-          List of tests that need rebaselining or
-          None if there is no such test.
+          False if reftests are wrongly marked as 'needs rebaselining' or True
         """
 
         self._rebaselining_tests = \
             self._test_expectations.get_rebaselining_failures()
         if not self._rebaselining_tests:
             _log.warn('No tests found that need rebaselining.')
-            return None
+            return True
+
+        fs = self._target_port._filesystem
+        for test in self._rebaselining_tests:
+            test_abspath = self._target_port.abspath_for_test(test)
+            if (fs.exists(self._target_port.reftest_expected_filename(test_abspath)) or
+                fs.exists(self._target_port.reftest_expected_mismatch_filename(test_abspath))):
+                _log.error('%s seems to be a reftest. We can not rebase for reftests.', test)
+                self._rebaselining_tests = set()
+                return False
 
         _log.info('Total number of tests needing rebaselining '
                   'for "%s": "%d"', self._platform,
@@ -256,7 +266,7 @@ class Rebaseliner(object):
             _log.info('  %d: %s', test_no, test)
             test_no += 1
 
-        return self._rebaselining_tests
+        return True
 
     def _get_latest_revision(self, url):
         """Get the latest layout test revision number from buildbot.

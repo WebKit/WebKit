@@ -1,3 +1,13 @@
+2011-03-10  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Add a check logic for reftests in case that a reftest is marked AS REBASELINE.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56076
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2011-03-17  Adam Roben  <aroben@apple.com>
 
         Skip a compositing-sensitive test when accelerated compositing is disabled

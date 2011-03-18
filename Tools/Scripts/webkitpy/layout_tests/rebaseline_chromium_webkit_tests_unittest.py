@@ -174,6 +174,20 @@ class TestRebaseliner(unittest.TestCase):
         rebaseliner.run(False)
         self.assertEqual(len(filesystem.written_files), 1)
 
+    def test_rebaselining_tests(self):
+        rebaseliner, filesystem = self.make_rebaseliner(
+            "BUGX REBASELINE MAC : failures/expected/image.html = IMAGE")
+        compile_success = rebaseliner._compile_rebaselining_tests()
+        self.assertTrue(compile_success)
+        self.assertEqual(set(['failures/expected/image.html']), rebaseliner.get_rebaselining_tests())
+
+    def test_rebaselining_tests_should_ignore_reftests(self):
+        rebaseliner, filesystem = self.make_rebaseliner(
+            "BUGX REBASELINE : failures/expected/reftest.html = IMAGE")
+        compile_success = rebaseliner._compile_rebaselining_tests()
+        self.assertFalse(compile_success)
+        self.assertFalse(rebaseliner.get_rebaselining_tests())
+
     def test_one_platform(self):
         rebaseliner, filesystem = self.make_rebaseliner(
             "BUGX REBASELINE MAC : failures/expected/image.html = IMAGE")
