@@ -1,5 +1,15 @@
 2011-03-18  Adam Roben  <aroben@apple.com>
 
+        Don't allow Leaks Viewer's vertical scrollbar to cover up long function names
+
+        Rubber-stamped by Simon Fraser.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.css:
+        (.data-grid .data-container): Use overflow-y:auto instead of the Inspector's default
+        overflow-y:overlay so that the scrollbar doesn't overlay the content.
+
+2011-03-18  Adam Roben  <aroben@apple.com>
+
         Don't ellipsize long or indented function names in Leaks Viewer
 
         Fixes <http://webkit.org/b/56037> Leaks viewer needs horizontal

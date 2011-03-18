@@ -83,6 +83,7 @@
 
 .data-grid .data-container {
     overflow-x: visible;
+    overflow-y: auto;
 }
 
 .data-grid td > div, .data-grid th > div {
