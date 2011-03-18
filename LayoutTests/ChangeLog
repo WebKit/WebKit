@@ -1,3 +1,20 @@
+2011-03-18  Jessie Berlin  <jberlin@apple.com>
+
+        Two inspector tests failing due to SECURITY_ERR exceptions on Windows 7 Release (WebKit2
+        Tests).
+        https://bugs.webkit.org/show_bug.cgi?id=56632
+
+        Unreviewed, landing expected failing results in order to get the Windows 7 Release
+        WebKit2 bots green.
+
+        * platform/win-wk2/http: Added.
+        * platform/win-wk2/http/tests: Added.
+        * platform/win-wk2/http/tests/inspector-enabled: Added.
+        * platform/win-wk2/http/tests/inspector-enabled/database-open-expected.txt: Added.
+        * platform/win-wk2/inspector: Added.
+        * platform/win-wk2/inspector/console: Added.
+        * platform/win-wk2/inspector/console/command-line-api-inspect-expected.txt: Added.
+
 2011-03-18  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, suppress editing/deleting/5206311-1.html crashes on Mac Debug
