@@ -46,10 +46,24 @@ namespace WebCore {
 
 // These values are magic numbers that are used in the transformation
 // from YUV to RGB color values.
+// They are taken from the following webpage:
+// http://www.fourcc.org/fccyvrgb.php
 const float VideoLayerChromium::yuv2RGB[9] = {
-    1.f, 1.f, 1.f,
-    0.f, -.344f, 1.772f,
-    1.403f, -.714f, 0.f,
+    1.164f, 1.164f, 1.164f,
+    0.f, -.391f, 2.018f,
+    1.596f, -.813f, 0.f,
+};
+
+// These values map to 16, 128, and 128 respectively, and are computed
+// as a fraction over 256 (e.g. 16 / 256 = 0.0625).
+// They are used in the YUV to RGBA conversion formula:
+//   Y - 16   : Gives 16 values of head and footroom for overshooting
+//   U - 128  : Turns unsigned U into signed U [-128,127]
+//   V - 128  : Turns unsigned V into signed V [-128,127]
+const float VideoLayerChromium::yuvAdjust[3] = {
+    -0.0625f,
+    -0.5f,
+    -0.5f,
 };
 
 PassRefPtr<VideoLayerChromium> VideoLayerChromium::create(GraphicsLayerChromium* owner,
@@ -288,13 +302,8 @@ void VideoLayerChromium::drawYUV(const VideoLayerChromium::YUVProgram* program)
     GLC(context, context->uniform1i(program->fragmentShader().uTextureLocation(), 2));
     GLC(context, context->uniform1i(program->fragmentShader().vTextureLocation(), 3));
 
-    // This value of 0.5 maps to 128. It is used in the YUV to RGB conversion
-    // formula to turn unsigned u and v values to signed u and v values.
-    // This is loaded as a uniform because certain drivers have problems
-    // reading literal float values.
-    GLC(context, context->uniform1f(program->fragmentShader().signAdjLocation(), 0.5));
-
     GLC(context, context->uniformMatrix3fv(program->fragmentShader().ccMatrixLocation(), 0, const_cast<float*>(yuv2RGB), 1));
+    GLC(context, context->uniform3fv(program->fragmentShader().yuvAdjLocation(), const_cast<float*>(yuvAdjust), 1));
 
     drawTexturedQuad(context, layerRenderer()->projectionMatrix(), ccLayerImpl()->drawTransform(),
                      bounds().width(), bounds().height(), ccLayerImpl()->drawOpacity(),

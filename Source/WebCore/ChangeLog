@@ -1,3 +1,24 @@
+2011-03-17  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Video colors have wrong brightness/contrast
+        https://bugs.webkit.org/show_bug.cgi?id=56598
+
+        This patch changes the YUV to RGB color conversion matrix
+        to have brighter whites and darker blacks in accordance to
+        the BT.601 standard.
+
+        * platform/graphics/chromium/ShaderChromium.cpp:
+        (WebCore::FragmentShaderYUVVideo::FragmentShaderYUVVideo):
+        (WebCore::FragmentShaderYUVVideo::init):
+        (WebCore::FragmentShaderYUVVideo::getShaderString):
+        * platform/graphics/chromium/ShaderChromium.h:
+        (WebCore::FragmentShaderYUVVideo::yuvAdjLocation):
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::drawYUV):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+
 2011-03-17  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Adam Barth.

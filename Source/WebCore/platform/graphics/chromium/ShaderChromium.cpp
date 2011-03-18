@@ -248,7 +248,7 @@ FragmentShaderYUVVideo::FragmentShaderYUVVideo()
     , m_vTextureLocation(-1)
     , m_alphaLocation(-1)
     , m_ccMatrixLocation(-1)
-    , m_signAdjLocation(-1)
+    , m_yuvAdjLocation(-1)
 {
 }
 
@@ -259,10 +259,10 @@ bool FragmentShaderYUVVideo::init(GraphicsContext3D* context, unsigned program)
     m_vTextureLocation = context->getUniformLocation(program, "v_texture");
     m_alphaLocation = context->getUniformLocation(program, "alpha");
     m_ccMatrixLocation = context->getUniformLocation(program, "cc_matrix");
-    m_signAdjLocation = context->getUniformLocation(program, "adj");
+    m_yuvAdjLocation = context->getUniformLocation(program, "yuv_adj");
 
     return m_yTextureLocation != -1 && m_uTextureLocation != -1 && m_vTextureLocation != -1
-           && m_alphaLocation != -1 && m_ccMatrixLocation != -1 && m_signAdjLocation != -1;
+           && m_alphaLocation != -1 && m_ccMatrixLocation != -1 && m_yuvAdjLocation != -1;
 }
 
 String FragmentShaderYUVVideo::getShaderString() const
@@ -276,14 +276,15 @@ String FragmentShaderYUVVideo::getShaderString() const
         uniform sampler2D u_texture;
         uniform sampler2D v_texture;
         uniform float alpha;
-        uniform float adj;
+        uniform vec3 yuv_adj;
         uniform mat3 cc_matrix;
         void main()
         {
-            float y = texture2D(y_texture, y_texCoord).x;
-            float u = texture2D(u_texture, uv_texCoord).x - adj;
-            float v = texture2D(v_texture, uv_texCoord).x - adj;
-            vec3 rgb = cc_matrix * vec3(y, u, v);
+            float y_raw = texture2D(y_texture, y_texCoord).x;
+            float u_unsigned = texture2D(u_texture, uv_texCoord).x;
+            float v_unsigned = texture2D(v_texture, uv_texCoord).x;
+            vec3 yuv = vec3(y_raw, u_unsigned, v_unsigned) + yuv_adj;
+            vec3 rgb = cc_matrix * yuv;
             gl_FragColor = vec4(rgb, float(1)) * alpha;
         }
     );

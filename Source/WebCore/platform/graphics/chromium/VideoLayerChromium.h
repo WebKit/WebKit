@@ -75,6 +75,7 @@ private:
     void saveCurrentFrame(VideoFrameChromium*);
 
     static const float yuv2RGB[9];
+    static const float yuvAdjust[3];
 
     bool m_skipsDraw;
     VideoFrameChromium::Format m_frameFormat;

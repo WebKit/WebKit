@@ -158,7 +158,7 @@ public:
     int vTextureLocation() const { return m_vTextureLocation; }
     int alphaLocation() const { return m_alphaLocation; }
     int ccMatrixLocation() const { return m_ccMatrixLocation; }
-    int signAdjLocation() const { return m_signAdjLocation; }
+    int yuvAdjLocation() const { return m_yuvAdjLocation; }
 
 private:
     int m_yTextureLocation;
@@ -166,7 +166,7 @@ private:
     int m_vTextureLocation;
     int m_alphaLocation;
     int m_ccMatrixLocation;
-    int m_signAdjLocation;
+    int m_yuvAdjLocation;
 };
 
 class FragmentShaderColor {
