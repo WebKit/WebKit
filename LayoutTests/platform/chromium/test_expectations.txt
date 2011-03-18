@@ -99,8 +99,6 @@ BUGCR36539 SLOW : http/tests/misc/uncacheable-script-repeated.html = PASS
 BUGCR32018 SLOW : http/tests/websocket/tests/frame-lengths.html = PASS
 BUGCR69513 DEBUG SLOW : html5lib/webkit-resumer.html = PASS
 
-BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector/change-iframe-src.html = PASS
-
 BUGCR75226 WIN SLOW : http/tests/cache/subresource-expiration-1.html = PASS
 BUGCR75226 WIN SLOW : http/tests/cache/subresource-expiration-2.html = PASS
 
@@ -641,9 +639,9 @@ BUGCR24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 // There is no message port harness to test extensions
 WONTFIX SKIP : inspector/extensions = FAIL
 WONTFIX SKIP : http/tests/inspector/extensions-headers.html = FAIL
+WONTFIX SKIP : http/tests/inspector/extensions-resources-redirect.html = FAIL
 
-// Inspector tests in Debug build are very slow.  If we remove SLOW, we'll see
-// random TIMEOUTs.  Is this issue DRT-specific?
+// Inspector tests in Debug build are very slow.
 BUG_DRT WIN LINUX DEBUG SLOW : inspector = PASS
 BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector = PASS
 BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector-enabled = PASS
@@ -653,16 +651,18 @@ BUGCR26734 MAC SKIP : inspector = PASS
 BUGCR26734 MAC SKIP : http/tests/inspector = PASS
 BUGCR26734 MAC SKIP : http/tests/inspector-enabled = PASS
 
-BUGCR66087 WIN LINUX : inspector/timeline/timeline-layout.html = CRASH TIMEOUT PASS TEXT
-BUGCR66087 WIN LINUX DEBUG SLOW : inspector/timeline/timeline-parse-html.html = PASS
-// WebKit roll 74708:74711
-BUGCR68165 WIN LINUX DEBUG SLOW : inspector/styles/styles-source-lines.html = PASS
-BUGCR66087 WIN LINUX SLOW : inspector/storage-panel-dom-storage.html = PASS TEXT
-
-BUGCR66087 WIN LINUX SLOW : http/tests/inspector/console-resource-errors.html = PASS
-BUGCR66087 WIN LINUX SLOW : http/tests/inspector/inspect-iframe-from-different-domain.html = PASS TEXT
-
+BUGCR66087 WIN LINUX : inspector/timeline/timeline-layout.html = PASS TEXT
 BUGCR75121 WIN LINUX : inspector/styles/styles-add-blank-property.html = PASS TEXT TIMEOUT
+BUGCR67662 WIN LINUX : http/tests/inspector/console-websocket-error.html = TEXT
+
+BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH TIMEOUT
+BUGWK54882 WIN DEBUG: inspector/styles/styles-update-from-js.html = PASS TIMEOUT
+
+BUGWK56454 WIN LINUX : inspector/elements/mutate-unknown-node.html = PASS TEXT
+
+BUG_PFELDMAN SKIP : http/tests/inspector/network/network-timing.html = FAIL
+BUG_PFELDMAN SKIP : http/tests/inspector/network/network-size.html = FAIL
+BUGJAMESR WIN LINUX : inspector/styles/styles-disable-then-delete.html = TIMEOUT PASS
 
 // -----------------------------------------------------------------
 // Other
@@ -2749,11 +2749,6 @@ BUGCR66979 WIN LINUX : fast/dom/global-constructors.html = TEXT PASS
 BUG_YURYS DEBUG SLOW : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
 BUGCR67139 WIN MAC LINUX DEBUG : storage/close-during-stress-test.html = CRASH PASS
 
-// These tests are flaky.
-BUGCR67209 WIN LINUX DEBUG : inspector/console/console-uncaught-exception-in-eval.html = CRASH TIMEOUT PASS
-BUGCR67209 WIN LINUX DEBUG : inspector/timeline/timeline-enum-stability.html = CRASH TIMEOUT PASS
-BUGCR67209 WIN LINUX DEBUG : inspector/console/console-clear.html = CRASH TIMEOUT PASS
-
 // WebKit roll 74255:74308
 BUGCR67416 : fast/text/emphasis.html = FAIL
 BUGCR67416 : fast/text/emphasis-vertical.html = FAIL
@@ -2763,10 +2758,6 @@ BUGCR67540 WIN LINUX : fast/text/emphasis-avoid-ruby.html = IMAGE
 BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-h.html = FAIL
 BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-v.html = IMAGE
 
-BUGCR67662 WIN LINUX RELEASE : http/tests/inspector/console-websocket-error.html = TEXT
-BUGCR67662 WIN LINUX DEBUG SLOW : http/tests/inspector/console-websocket-error.html = TEXT
-BUGCR68173 WIN LINUX RELEASE : http/tests/inspector/extensions-resources-redirect.html = TIMEOUT
-BUGCR68173 WIN LINUX DEBUG : http/tests/inspector/extensions-resources-redirect.html = CRASH TIMEOUT
 
 BUGCR67442 WIN LINUX : fast/canvas/fillText-shadow.html = TEXT
 
@@ -2881,9 +2872,6 @@ BUGCR71418 MAC : fast/transforms/shadows.html = IMAGE PASS
 BUGWK53446 WIN LINUX DEBUG : http/tests/navigation/forward-and-cancel.html = PASS TEXT
 
 BUGWK53459 WIN LINUX : editing/pasteboard/3976872.html = PASS TIMEOUT
-BUGWK53505 WIN DEBUG : inspector/console/console-eval.html = PASS CRASH
-BUGWK53505 WIN DEBUG : inspector/console/console-dir.html = PASS CRASH
-BUGWK53505 WIN DEBUG : inspector/cpu-profiler-profiling.html = PASS CRASH
 
 BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = CRASH PASS
 
@@ -3182,9 +3170,6 @@ BUGV8_1228 : fast/js/preventExtensions.html = TEXT
 
 BUGWK54634 : media/video-controls-in-media-document.html = IMAGE+TEXT IMAGE PASS
 
-BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = TEXT CRASH TIMEOUT
-
-BUGWK54882 WIN : inspector/styles/styles-update-from-js.html = TEXT TIMEOUT
 
 BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
 
@@ -3194,10 +3179,7 @@ BUGJAMESR DEBUG : html5lib/runner.html = PASS TIMEOUT
 
 BUG_ANTONM : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
 
-BUG_PFELDMAN SKIP : http/tests/inspector/network/network-timing.html = FAIL
-BUG_PFELDMAN SKIP : http/tests/inspector/network/network-size.html = FAIL
 
-BUGJAMESR : inspector/styles/styles-disable-then-delete.html = TIMEOUT PASS
 BUGCR74497 : platform/win/plugins/windowless-paint-rect-coordinates.html = CRASH
 
 BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT

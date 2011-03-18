@@ -1,3 +1,15 @@
+2011-03-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: chromium: cleanup Web Inspector expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=56635
+
+        Many Inspector tests are passing now but they still have expectations.
+        I've removed unnecessary expectations and grouped the remainings.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-18  Adam Roben  <aroben@apple.com>
 
         Add Windows WebKit2 expected failure results for a media test
