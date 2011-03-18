@@ -1,5 +1,19 @@
 2011-03-18  Adam Roben  <aroben@apple.com>
 
+        Don't ellipsize long or indented function names in Leaks Viewer
+
+        Fixes <http://webkit.org/b/56037> Leaks viewer needs horizontal
+        scrollbar
+
+        Reviewed by Simon Fraser.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.css:
+        (.data-grid .data-container):
+        (.data-grid td > div, .data-grid th > div):
+        Allow the contents to extend to the right.
+
+2011-03-18  Adam Roben  <aroben@apple.com>
+
         Fix some leaks in DRT seen on the leaks bot
 
         Fixes <http://webkit.org/b/56638> addURLToRedirectCallback and

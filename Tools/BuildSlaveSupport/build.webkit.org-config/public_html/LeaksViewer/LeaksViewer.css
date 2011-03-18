@@ -74,7 +74,17 @@
     padding: 0;
 }
 
+/* Inspector style overrides */
+
 .percent-time-status-bar-item {
     /* We always show leak counts as real values, not percentages, so this button isn't useful. */
     display: none !important;
+}
+
+.data-grid .data-container {
+    overflow-x: visible;
+}
+
+.data-grid td > div, .data-grid th > div {
+    overflow: visible;
 }
