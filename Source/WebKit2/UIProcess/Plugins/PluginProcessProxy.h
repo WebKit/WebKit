@@ -91,9 +91,15 @@ private:
     void didClearSiteData(uint64_t callbackID);
 
 #if PLATFORM(MAC)
-    void setModalWindowIsShowing(bool);
-    void setFullscreenWindowIsShowing(bool);
+    bool getPluginProcessSerialNumber(ProcessSerialNumber&);
+    void makePluginProcessTheFrontProcess();
+    void makeUIProcessTheFrontProcess();
 
+    void setFullscreenWindowIsShowing(bool);
+    void enterFullscreen();
+    void exitFullscreen();
+
+    void setModalWindowIsShowing(bool);
     void beginModal();
     void endModal();
 
@@ -136,6 +142,7 @@ private:
     RetainPtr<NSObject> m_activationObserver;
     RetainPtr<WKPlaceholderModalWindow *> m_placeholderWindow;
     bool m_modalWindowIsShowing;
+    bool m_fullscreenWindowIsShowing;
 #endif
 };
 

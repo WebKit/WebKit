@@ -1,3 +1,43 @@
+2011-03-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement PluginProcessProxy::setFullscreenWindowIsShowing
+        https://bugs.webkit.org/show_bug.cgi?id=56618
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::PluginProcessProxy):
+        Initialize m_fullscreenWindowIsShowing.
+
+        (WebKit::PluginProcessProxy::didClose):
+        if m_fullscreenWindowIsShowing is true, call exitFullscreen.
+
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::getPluginProcessSerialNumber):
+        Add helper function for getting a PSN for the plug-in process.
+
+        (WebKit::PluginProcessProxy::makePluginProcessTheFrontProcess):
+        Make the plug-in process the front process.
+
+        (WebKit::PluginProcessProxy::makeUIProcessTheFrontProcess):
+        Make the current process (the UI process) the front process.
+
+        (WebKit::PluginProcessProxy::setFullscreenWindowIsShowing):
+        Call enterFullscreen or exitFullscreen.
+
+        (WebKit::PluginProcessProxy::enterFullscreen):
+        Make the plug-in process the front process and hide the menu bar.
+
+        (WebKit::PluginProcessProxy::exitFullscreen):
+        Show the menu bar and if necessary make the UI process the front process.
+
+        (WebKit::PluginProcessProxy::endModal):
+        call makeUIProcessTheFrontProcess.
+
+        (WebKit::PluginProcessProxy::applicationDidBecomeActive):
+        Call makePluginProcessTheFrontProcess.
+
 2011-03-17  Adam Roben  <aroben@apple.com>
 
         Make bidi text in <select> menus in WebKit2 on Windows match WebKit1

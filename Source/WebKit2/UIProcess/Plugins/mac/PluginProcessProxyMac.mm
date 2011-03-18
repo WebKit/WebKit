@@ -69,6 +69,68 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
 #endif
 }
 
+bool PluginProcessProxy::getPluginProcessSerialNumber(ProcessSerialNumber& pluginProcessSerialNumber)
+{
+    pid_t pluginProcessPID = m_processLauncher->processIdentifier();
+    return GetProcessForPID(pluginProcessPID, &pluginProcessSerialNumber) == noErr;
+}
+
+void PluginProcessProxy::makePluginProcessTheFrontProcess()
+{
+    ProcessSerialNumber pluginProcessSerialNumber;
+    if (!getPluginProcessSerialNumber(pluginProcessSerialNumber))
+        return;
+
+    SetFrontProcess(&pluginProcessSerialNumber);
+}
+
+void PluginProcessProxy::makeUIProcessTheFrontProcess()
+{
+    ProcessSerialNumber processSerialNumber;
+    GetCurrentProcess(&processSerialNumber);
+    SetFrontProcess(&processSerialNumber);            
+}
+
+void PluginProcessProxy::setFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
+{
+    if (m_fullscreenWindowIsShowing == fullscreenWindowIsShowing)
+        return;
+
+    m_fullscreenWindowIsShowing = fullscreenWindowIsShowing;
+    if (m_fullscreenWindowIsShowing)
+        enterFullscreen();
+    else
+        exitFullscreen();
+}
+
+void PluginProcessProxy::enterFullscreen()
+{
+    [NSMenu setMenuBarVisible:NO];
+
+    makePluginProcessTheFrontProcess();
+}
+
+void PluginProcessProxy::exitFullscreen()
+{
+    [NSMenu setMenuBarVisible:YES];
+
+    // If the plug-in host is the current application then we should bring ourselves to the front when it exits full-screen mode.
+
+    ProcessSerialNumber frontProcessSerialNumber;
+    GetFrontProcess(&frontProcessSerialNumber);
+    Boolean isSameProcess = 0;
+
+    ProcessSerialNumber pluginProcessSerialNumber;
+    if (!getPluginProcessSerialNumber(pluginProcessSerialNumber))
+        return;
+
+    SameProcess(&frontProcessSerialNumber, &pluginProcessSerialNumber, &isSameProcess);
+    if (!isSameProcess)
+        return;
+
+    makeUIProcessTheFrontProcess();
+}
+
 void PluginProcessProxy::setModalWindowIsShowing(bool modalWindowIsShowing)
 {
     if (modalWindowIsShowing == m_modalWindowIsShowing) 
@@ -80,11 +142,6 @@ void PluginProcessProxy::setModalWindowIsShowing(bool modalWindowIsShowing)
         beginModal();
     else
         endModal();
-}
-
-void PluginProcessProxy::setFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
-{
-    // FIXME: Implement.
 }
 
 void PluginProcessProxy::beginModal()
@@ -112,22 +169,13 @@ void PluginProcessProxy::endModal()
     m_activationObserver = nullptr;
     
     [NSApp stopModal];
-    
-    // Make ourselves the front process.
-    ProcessSerialNumber processSerialNumber;
-    GetCurrentProcess(&processSerialNumber);
-    SetFrontProcess(&processSerialNumber);            
+
+    makeUIProcessTheFrontProcess();
 }
     
 void PluginProcessProxy::applicationDidBecomeActive()
 {
-    pid_t pluginProcessPID = m_processLauncher->processIdentifier();
-    ProcessSerialNumber processSerialNumber;
-
-    if (GetProcessForPID(pluginProcessPID, &processSerialNumber) != noErr)
-        return;
-
-    SetFrontProcess(&processSerialNumber);
+    makePluginProcessTheFrontProcess();
 }
 
 

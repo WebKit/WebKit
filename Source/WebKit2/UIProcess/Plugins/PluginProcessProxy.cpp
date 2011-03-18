@@ -50,6 +50,7 @@ PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManage
     , m_numPendingConnectionRequests(0)
 #if PLATFORM(MAC)
     , m_modalWindowIsShowing(false)
+    , m_fullscreenWindowIsShowing(false)
 #endif
 {
     ProcessLauncher::LaunchOptions launchOptions;
@@ -149,6 +150,9 @@ void PluginProcessProxy::didClose(CoreIPC::Connection*)
 #if PLATFORM(MAC)
     if (m_modalWindowIsShowing)
         endModal();
+
+    if (m_fullscreenWindowIsShowing)
+        exitFullscreen();
 #endif
 
     pluginProcessCrashedOrFailedToLaunch();
