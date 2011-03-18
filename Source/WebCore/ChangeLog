@@ -1,3 +1,21 @@
+2011-03-18  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        REGRESSION(78846) [chromium] Justified text renders at incorrect offsets on windows
+        https://bugs.webkit.org/show_bug.cgi?id=56629
+
+        Preserves offsets as absolute floating point offsets and rounds to
+        advances at the last possible second.  I can't prove to myself that
+        this is sound but it seems to work on the test cases I've constructed.
+
+        Will probably change the pixel tests on chromium windows given that we
+        were horribly broken before this patch.
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+
 2011-03-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -1,3 +1,7 @@
+2011-03-18 James Robinson <jamesr@chromium.org>
+
+        [chromium] Add tests that will need a rebaseline on windows to expectations
+
 2011-03-18  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by David Levin.

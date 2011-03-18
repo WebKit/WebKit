@@ -196,7 +196,7 @@ class TransparencyAwareGlyphPainter : public TransparencyAwareFontPainter {
     // left of m_point. We express it this way so that if we're using the Skia
     // drawing path we can use floating-point positioning, even though we have
     // to use integer positioning in the GDI path.
-    bool drawGlyphs(int numGlyphs, const WORD* glyphs, const int* advances, int startAdvance) const;
+    bool drawGlyphs(int numGlyphs, const WORD* glyphs, const int* advances, float startAdvance) const;
 
  private:
     virtual IntRect estimateTextBounds();
@@ -256,11 +256,11 @@ IntRect TransparencyAwareGlyphPainter::estimateTextBounds()
 bool TransparencyAwareGlyphPainter::drawGlyphs(int numGlyphs,
                                                const WORD* glyphs,
                                                const int* advances,
-                                               int startAdvance) const
+                                               float startAdvance) const
 {
     if (!m_useGDI) {
         SkPoint origin = m_point;
-        origin.fX += startAdvance;
+        origin.fX += SkFloatToScalar(startAdvance);
         return paintSkiaText(m_graphicsContext, m_font->platformData().hfont(),
                              numGlyphs, glyphs, advances, 0, &origin);
     }
@@ -400,17 +400,25 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
     Vector<WORD, kMaxBufferLength> glyphs;
     Vector<int, kMaxBufferLength> advances;
     int glyphIndex = 0;  // The starting glyph of the current chunk.
-    int curAdvance = 0;  // How far from the left the current chunk is.
+
+    // In order to round all offsets to the correct pixel boundary, this code keeps track of the absolute position
+    // of each glyph in floating point units and rounds to integer advances at the last possible moment.
+
+    float horizontalOffset = point.x(); // The floating point offset of the left side of the current glyph.
+    int lastHorizontalOffsetRounded = lroundf(horizontalOffset); // The rounded offset of the left side of the last glyph rendered.
     while (glyphIndex < numGlyphs) {
         // How many chars will be in this chunk?
         int curLen = std::min(kMaxBufferLength, numGlyphs - glyphIndex);
         glyphs.resize(curLen);
         advances.resize(curLen);
 
-        int curWidth = 0;
+        float currentWidth = 0;
         for (int i = 0; i < curLen; ++i, ++glyphIndex) {
             glyphs[i] = glyphBuffer.glyphAt(from + glyphIndex);
-            advances[i] = static_cast<int>(glyphBuffer.advanceAt(from + glyphIndex));
+            horizontalOffset += glyphBuffer.advanceAt(from + glyphIndex);
+            advances[i] = lroundf(horizontalOffset) - lastHorizontalOffsetRounded;
+            lastHorizontalOffsetRounded += advances[i];
+            currentWidth += glyphBuffer.advanceAt(from + glyphIndex);
             
             // Bug 26088 - very large positive or negative runs can fail to
             // render so we clamp the size here. In the specs, negative
@@ -420,15 +428,14 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
             // -32830, so we give ourselves a little breathing room.
             const int maxNegativeRun = -32768;
             const int maxPositiveRun =  32768;
-            if ((curWidth + advances[i] < maxNegativeRun) || (curWidth + advances[i] > maxPositiveRun)) 
+            if ((currentWidth + advances[i] < maxNegativeRun) || (currentWidth + advances[i] > maxPositiveRun)) 
                 advances[i] = 0;
-            curWidth += advances[i];
         }
 
         // Actually draw the glyphs (with retry on failure).
         bool success = false;
         for (int executions = 0; executions < 2; ++executions) {
-            success = painter.drawGlyphs(curLen, &glyphs[0], &advances[0], curAdvance);
+            success = painter.drawGlyphs(curLen, &glyphs[0], &advances[0], horizontalOffset - point.x() - currentWidth);
             if (!success && executions == 0) {
                 // Ask the browser to load the font for us and retry.
                 PlatformBridge::ensureFontLoaded(font->platformData().hfont());
@@ -439,8 +446,6 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
 
         if (!success)
             LOG_ERROR("Unable to draw the glyphs after second attempt");
-
-        curAdvance += curWidth;
     }
 }
 
@@ -509,8 +514,7 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
 
     // Uniscribe counts the coordinates from the upper left, while WebKit uses
     // the baseline, so we have to subtract off the ascent.
-    state.draw(graphicsContext, hdc, static_cast<int>(point.x()),
-               static_cast<int>(point.y() - fontMetrics().ascent()), from, to);
+    state.draw(graphicsContext, hdc, lroundf(point.x()), lroundf(point.y() - fontMetrics().ascent()), from, to);
 
     context->canvas()->endPlatformPaint();
 }
