@@ -459,89 +459,6 @@ EOF
     push(@txtInstallProps, "#endif /* ${conditionalString} */\n") if $conditionalString;
 }
 
-my %breakWords = ("before" => 1, "can" => 1, "context" => 1, "dbl" => 1, "drag" => 1,
-                  "drag" => 1, "duration" => 1, "has" => 1, "key" => 1, "loaded" => 1,
-                  "mouse" => 1, "page" => 1, "pop" => 1, "rate" => 1, "select" => 1,
-                  "time" => 1, "touch" => 1, "volume" => 1);
-
-sub SplitEventListenerAttrName {
-    my $attrName = shift;
-
-    my @matches = grep { $attrName =~ /^$_/ } keys (%breakWords);
-
-    if (@matches && (length $matches[0] < length $attrName)) {
-        $attrName = $matches[0] . "-" . substr($attrName, length $matches[0]);
-    }
-
-    return $attrName;
-}
-
-sub EventSignalName {
-    my $attrName = shift;
-    my $name = SplitEventListenerAttrName($attrName) . "-event";
-
-    return $name;
-}
-
-sub GenerateEventListener {
-    my $name = shift;
-    my $object = shift;
-    my $interfaceName = shift;
-
-    my $gobjectSignalName = EventSignalName($name);
-
-    my $txtInstallSignal = << "EOF";
-    g_signal_new("${gobjectSignalName}",
-                 G_TYPE_FROM_CLASS(gobjectClass),
-                 G_SIGNAL_RUN_LAST,
-                 0,
-                 g_signal_accumulator_true_handled, 0,
-                 webkit_marshal_BOOLEAN__OBJECT,
-                 G_TYPE_BOOLEAN, 1,
-                 WEBKIT_TYPE_DOM_EVENT | G_SIGNAL_TYPE_STATIC_SCOPE);
-
-EOF
-    push(@txtInstallSignals, $txtInstallSignal);
-
-    my ${listenerName} = $name . "Listener";
-
-    my $txtInstallEventListener = << "EOF";
-    WebCore::GObjectEventListener::addEventListener(object, coreObject, "${name}", "${gobjectSignalName}");
-EOF
-    push(@txtInstallEventListeners, $txtInstallEventListener);
-
-    $implIncludes{"webkit/WebKitDOMEvent.h"} = 1;
-    $implIncludes{"GObjectEventListener.h"} = 1;
-}
-
-my @eventSignalNames = (
-    # User Interface Event types
-    "focus", "blur",
-    # Basic Event types
-    "load", "unload", "abort", "error", "select", "change", "formchange", "submit", "reset",
-    "resize", "scroll",
-    # Mouse Event types
-    "click", "dblclick", "mousedown", "mouseup",
-    "mousemove", "mouseover", "mouseout",
-    # Mouse Wheel Event types
-    "mousewheel",
-    # Keyboard Event types
-    "keydown", "keypress", "keyup",
-    # -- Events not in the spec but defined in WebKit
-    # Media Event types,
-    "loadstart", "progress", "suspend", "emptied", "stalled", "play",
-    "loadedmetadata", "loadeddata", "waiting", "playing", "canplay",
-    "canplaythrough", "seeking", "seeked", "timeupdate", "ended",
-    "ratechange", "durationchange", "volumechange",
-    # Drag and Drop Event types
-    "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart", "drop",
-    # Cut and Paste Event types
-    "beforecut", "cut", "beforecopy", "copy", "beforepaste", "paste",
-    # Animations
-    "webkitanimationend", "webkitanimationstart", "webkitanimationiteration",
-    # Other
-    "contextmenu", "input", "forminput", "invalid", "search", "selectstart");
-
 sub GenerateProperties {
     my ($object, $interfaceName, $dataNode) = @_;
 
@@ -610,15 +527,6 @@ EOF
         }
     }
 
-    # We need to define all the events there are in all base classes
-    # that implement EventTarget. For now we only care about these
-    # two.
-    if ($interfaceName eq "Node" || $interfaceName eq "DOMWindow") {
-        foreach my $signalName (@eventSignalNames) {
-            GenerateEventListener($signalName, $object, $interfaceName);
-        }
-    }
-
     push(@cBodyPriv, "};\n\n");
 
     $txtGetProp = << "EOF";
@@ -668,13 +576,6 @@ static void ${lowerCaseIfaceName}_constructed(GObject* object)
 {
 EOF
     push(@cBodyPriv, $implContent);
-
-    if (scalar @txtInstallEventListeners > 0) {
-        $implContent = << "EOF";
-    WebCore::${interfaceName}* coreObject = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(object)->coreObject);
-EOF
-    push(@cBodyPriv, $implContent);
-    }
 
     $implContent = << "EOF";
 @txtInstallEventListeners
@@ -833,8 +734,7 @@ sub GenerateFunction {
     foreach my $param (@{$function->parameters}) {
         my $paramIDLType = $param->type;
         if ($paramIDLType eq "EventListener" || $paramIDLType eq "MediaQueryListListener") {
-            push(@hBody, "\n/* TODO: event function ${functionName} */\n\n");
-            push(@cBody, "\n/* TODO: event function ${functionName} */\n\n");
+            # EventListeners are handled elsewhere.
             return;
         }
         addIncludeInBody($paramIDLType);
@@ -1283,6 +1183,7 @@ sub GenerateEventTargetIface {
     my $interfaceName = $dataNode->name;
     my $decamelize = FixUpDecamelizedName(decamelize($interfaceName));
 
+    $implIncludes{"GObjectEventListener.h"} = 1;
     $implIncludes{"WebKitDOMEventTarget.h"} = 1;
     $implIncludes{"WebKitDOMEventPrivate.h"} = 1;
 
@@ -1301,9 +1202,23 @@ static void webkit_dom_${decamelize}_dispatch_event(WebKitDOMEventTarget* target
     }
 }
 
+static gboolean webkit_dom_${decamelize}_add_event_listener(WebKitDOMEventTarget* target, const char* eventName, GCallback handler, gboolean bubble, gpointer userData)
+{
+    WebCore::${interfaceName}* coreTarget = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(target)->coreObject);
+    return WebCore::GObjectEventListener::addEventListener(G_OBJECT(target), coreTarget, eventName, handler, bubble, userData);
+}
+
+static gboolean webkit_dom_${decamelize}_remove_event_listener(WebKitDOMEventTarget* target, const char* eventName, GCallback handler, gboolean bubble)
+{
+    WebCore::${interfaceName}* coreTarget = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(target)->coreObject);
+    return WebCore::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, bubble);
+}
+
 static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_${decamelize}_dispatch_event;
+    iface->add_event_listener = webkit_dom_${decamelize}_add_event_listener;
+    iface->remove_event_listener = webkit_dom_${decamelize}_remove_event_listener;
 }
 
 EOF

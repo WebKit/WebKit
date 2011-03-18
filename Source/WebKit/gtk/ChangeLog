@@ -1,3 +1,15 @@
+2011-03-18  David Keijser  <keijser@gmail.com> and Xan Lopez <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] On-demand event-listeners for DOM event signals
+        https://bugs.webkit.org/show_bug.cgi?id=49649
+
+        * tests/testdomdomwindow.c: update unit tests for new APIs.
+        (load_event_callback): ditto.
+        (test_dom_domview_signals): ditto.
+        (load_status_callback): ditto.
+
 2011-03-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

@@ -105,7 +105,7 @@ static void load_event_callback(WebKitWebView* webView, GParamSpec* spec, DomDom
 {
     WebKitLoadStatus status = webkit_web_view_get_load_status(webView);
     if (status == WEBKIT_LOAD_FINISHED) {
-        g_signal_connect(fixture->domWindow, "click-event", G_CALLBACK(clickedCallback), fixture);
+        webkit_dom_event_target_add_event_listener(WEBKIT_DOM_EVENT_TARGET(fixture->domWindow), "click", G_CALLBACK(clickedCallback), false, fixture);
 
         g_assert(fixture->clicked == FALSE);
         gtk_test_widget_click(GTK_WIDGET(fixture->webView), 1, 0);
@@ -125,7 +125,7 @@ static void test_dom_domview_signals(DomDomviewFixture* fixture, gconstpointer d
 
     fixture->domWindow = domWindow;
 
-    g_signal_connect(fixture->domWindow, "load-event", G_CALLBACK(loadedCallback), fixture);
+    webkit_dom_event_target_add_event_listener(WEBKIT_DOM_EVENT_TARGET(fixture->domWindow), "load", G_CALLBACK(loadedCallback), false, fixture);
     g_signal_connect(fixture->window, "map-event", G_CALLBACK(map_event_cb), fixture);
     g_signal_connect(fixture->webView, "notify::load-status", G_CALLBACK(load_event_callback), fixture);
 
@@ -176,7 +176,7 @@ static void load_status_callback(WebKitWebView* webView, GParamSpec* spec, DomDo
                                                 fixture->domWindow, 0, 0, 0, clientX, clientY,
                                                 FALSE, FALSE, FALSE, FALSE,
                                                 1, WEBKIT_DOM_EVENT_TARGET(element));
-        g_signal_connect(element, "click-event", G_CALLBACK(clicked_cb), fixture);
+        webkit_dom_event_target_add_event_listener(WEBKIT_DOM_EVENT_TARGET(element), "click", G_CALLBACK(clicked_cb), false, fixture);
         g_assert(fixture->clicked == FALSE);
         webkit_dom_event_target_dispatch_event(WEBKIT_DOM_EVENT_TARGET(element), event, NULL);
     }

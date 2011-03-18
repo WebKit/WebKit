@@ -37,9 +37,19 @@ struct _WebKitDOMEventTargetIface {
     GTypeInterface gIface;
 
     /* virtual table */
-    void          (* dispatch_event)(WebKitDOMEventTarget* target,
-                                     WebKitDOMEvent*       event,
-                                     GError**              error);
+    void          (* dispatch_event)(WebKitDOMEventTarget *target,
+                                     WebKitDOMEvent       *event,
+                                     GError              **error);
+
+    gboolean      (* add_event_listener)(WebKitDOMEventTarget *target,
+                                         const char          *eventName,
+                                         GCallback             handler,
+                                         gboolean              bubble,
+                                         gpointer              userData);
+    gboolean      (* remove_event_listener)(WebKitDOMEventTarget *target,
+                                            const char           *eventName,
+                                            GCallback             handler,
+                                            gboolean              bubble);
 };
 
 
@@ -48,6 +58,17 @@ WEBKIT_API GType     webkit_dom_event_target_get_type(void) G_GNUC_CONST;
 WEBKIT_API void      webkit_dom_event_target_dispatch_event(WebKitDOMEventTarget *target,
                                                             WebKitDOMEvent       *event,
                                                             GError              **error);
+
+WEBKIT_API gboolean  webkit_dom_event_target_add_event_listener(WebKitDOMEventTarget *target,
+                                                                const char           *eventName,
+                                                                GCallback             handler,
+                                                                gboolean              bubble,
+                                                                gpointer              userData);
+
+WEBKIT_API gboolean  webkit_dom_event_target_remove_event_listener(WebKitDOMEventTarget *target,
+                                                                   const char           *eventName,
+                                                                   GCallback             handler,
+                                                                   gboolean              bubble);
 
 G_END_DECLS
 

@@ -29,55 +29,58 @@
 
 namespace WebCore {
 
-GObjectEventListener::GObjectEventListener(GObject* object, DOMWindow* window, Node* node, const char* domEventName, const char* signalName)
+typedef void (*GObjectEventListenerCallback)(GObject*, WebKitDOMEvent*, void*);
+
+GObjectEventListener::GObjectEventListener(GObject* object, DOMWindow* window, EventTarget* target, const char* domEventName, GCallback handler, bool capture, void* userData)
     : EventListener(GObjectEventListenerType)
     , m_object(object)
-    , m_coreNode(node)
+    , m_coreTarget(target)
     , m_coreWindow(window)
     , m_domEventName(domEventName)
-    , m_signalName(signalName)
+    , m_handler(handler)
+    , m_capture(capture)
+    , m_userData(userData)
 {
-    ASSERT(!m_coreWindow || !m_coreNode);
+    ASSERT(!m_coreWindow || !m_coreTarget);
 
     g_object_weak_ref(object, reinterpret_cast<GWeakNotify>(GObjectEventListener::gobjectDestroyedCallback), this);
 }
 
 GObjectEventListener::~GObjectEventListener()
 {
-    if (!m_coreWindow && !m_coreNode)
+    if (!m_coreWindow && !m_coreTarget)
         return;
     g_object_weak_unref(m_object, reinterpret_cast<GWeakNotify>(GObjectEventListener::gobjectDestroyedCallback), this);
 }
 
 void GObjectEventListener::gobjectDestroyed()
 {
-    ASSERT(!m_coreWindow || !m_coreNode);
+    ASSERT(!m_coreWindow || !m_coreTarget);
 
-    // We must set m_coreWindow and m_coreNode to null, because removeEventListener may call the
+    // We must set m_coreWindow and m_coreTarget to null, because removeEventListener may call the
     // destructor as a side effect and we must be in the proper state to prevent g_object_weak_unref.
     if (DOMWindow* window = m_coreWindow) {
         m_coreWindow = 0;
-        window->removeEventListener(m_domEventName.data(), this, false);
+        window->removeEventListener(m_domEventName.data(), this, m_capture);
         return;
     }
 
-    Node* node = m_coreNode;
-    m_coreNode = 0; // See above.
-    node->removeEventListener(m_domEventName.data(), this, false);
+    EventTarget* target = m_coreTarget;
+    m_coreTarget = 0; // See above.
+    target->removeEventListener(m_domEventName.data(), this, m_capture);
 }
 
 void GObjectEventListener::handleEvent(ScriptExecutionContext*, Event* event)
 {
-    gboolean handled = FALSE;
     WebKitDOMEvent* gobjectEvent = WEBKIT_DOM_EVENT(WebKit::kit(event));
-    g_signal_emit_by_name(m_object, m_signalName.data(), gobjectEvent, &handled);
+    reinterpret_cast<GObjectEventListenerCallback>(m_handler)(m_object, gobjectEvent, m_userData);
     g_object_unref(gobjectEvent);
 }
 
 bool GObjectEventListener::operator==(const EventListener& listener)
 {
     if (const GObjectEventListener* gobjectEventListener = GObjectEventListener::cast(&listener))
-        return m_signalName == gobjectEventListener->m_signalName && m_object == gobjectEventListener->m_object;
+        return m_object == gobjectEventListener->m_object && m_handler == gobjectEventListener->m_handler;
 
     return false;
 }

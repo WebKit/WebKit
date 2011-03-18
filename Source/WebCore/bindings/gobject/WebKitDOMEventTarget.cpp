@@ -66,15 +66,40 @@ static void webkit_dom_event_target_default_init(WebKitDOMEventTargetIface*)
 
 void webkit_dom_event_target_dispatch_event(WebKitDOMEventTarget* target, WebKitDOMEvent* event, GError** error)
 {
-    WebKitDOMEventTargetIface* iface;
-
     g_return_if_fail(WEBKIT_DOM_IS_EVENT_TARGET(target));
     g_return_if_fail(WEBKIT_DOM_IS_EVENT(event));
 
-    iface = WEBKIT_DOM_EVENT_TARGET_GET_IFACE(target);
+    WebKitDOMEventTargetIface* iface = WEBKIT_DOM_EVENT_TARGET_GET_IFACE(target);
 
     if (iface->dispatch_event)
         iface->dispatch_event(target, event, error);
+}
+
+gboolean webkit_dom_event_target_add_event_listener(WebKitDOMEventTarget* target, const char* eventName, GCallback handler, gboolean bubble, gpointer userData)
+{
+
+    g_return_val_if_fail(WEBKIT_DOM_IS_EVENT_TARGET(target), FALSE);
+    g_return_val_if_fail(eventName, FALSE);
+
+    WebKitDOMEventTargetIface* iface = WEBKIT_DOM_EVENT_TARGET_GET_IFACE(target);
+
+    if (iface->add_event_listener)
+        return iface->add_event_listener(target, eventName, handler, bubble, userData);
+
+    return FALSE;
+}
+
+gboolean webkit_dom_event_target_remove_event_listener(WebKitDOMEventTarget* target, const char* eventName, GCallback handler, gboolean bubble)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_EVENT_TARGET(target), FALSE);
+    g_return_val_if_fail(eventName, FALSE);
+
+    WebKitDOMEventTargetIface* iface = WEBKIT_DOM_EVENT_TARGET_GET_IFACE(target);
+
+    if (iface->remove_event_listener)
+        return iface->remove_event_listener(target, eventName, handler, bubble);
+
+    return FALSE;
 }
 
 namespace WebKit {

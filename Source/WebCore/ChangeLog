@@ -1,3 +1,28 @@
+2011-03-18  David Keijser  <keijser@gmail.com> and Xan Lopez <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] On-demand event-listeners for DOM event signals
+        https://bugs.webkit.org/show_bug.cgi?id=49649
+
+        Add explicit EventTarget API to add/remove event listeners instead
+        of using GSignal, which due to internal limitations in glib makes
+        us preemptively add listeners for all event types.
+
+        * bindings/gobject/GObjectEventListener.cpp: add new
+        addEventListener/removeEventListener methods, and small
+        refactoring to store an EventTarget internally instead of a DOM
+        node, which is more generic and can be reused in more cases.
+        * bindings/gobject/GObjectEventListener.h: ditto.
+        * bindings/gobject/WebKitDOMEventTarget.cpp:
+        (webkit_dom_event_target_add_event_listener): new iface method to
+        add an event listener.
+        (webkit_dom_event_target_remove_event_listener): new iface method
+        to remove an event listener.
+        * bindings/gobject/WebKitDOMEventTarget.h: add new iface methods.
+        * bindings/scripts/CodeGeneratorGObject.pm: change code generation
+        accordingly.
+
 2011-03-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
