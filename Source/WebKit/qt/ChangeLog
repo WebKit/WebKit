@@ -1,3 +1,14 @@
+2011-03-18  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] console.log not being exposed to QmlViewer
+        https://bugs.webkit.org/show_bug.cgi?id=56536
+
+        The documentation is bogus the feature does not exist.
+
+        * declarative/qdeclarativewebview.cpp:
+
 2011-03-17  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

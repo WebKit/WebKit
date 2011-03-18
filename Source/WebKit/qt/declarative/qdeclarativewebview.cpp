@@ -517,13 +517,12 @@ void QDeclarativeWebView::geometryChanged(const QRectF& newGeometry, const QRect
             }
         }
 
-        html: "<script>console.log(\"This is in WebKit!\"); window.qml.qmlCall();</script>"
+        html: "<script>window.qml.qmlCall();</script>"
     }
     \endqml
 
     The output of the example will be:
     \code
-    This is in WebKit!
     This call is in QML!
     \endcode
 
