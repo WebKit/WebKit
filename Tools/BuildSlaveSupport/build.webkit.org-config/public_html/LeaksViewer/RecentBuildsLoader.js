@@ -46,10 +46,9 @@ RecentBuildsLoader.prototype = {
                 for (var stepIndex = 0; stepIndex < build.steps.length; ++stepIndex) {
                     var step = build.steps[stepIndex];
                     if (step.name === "layout-test") {
-                        if (!("results" in step))
+                        if (!("text" in step))
                             continue;
-                        // The first item of results is a status code, the second is the status text.
-                        var strings = step.results[1];
+                        var strings = step.text;
                         for (var stringIndex = 0; stringIndex < strings.length; ++stringIndex) {
                             var match = /^(\d+) total leaks found!$/.exec(strings[stringIndex]);
                             if (!match)

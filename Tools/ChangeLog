@@ -1,3 +1,16 @@
+2011-03-17  Adam Roben  <aroben@apple.com>
+
+        Make Leaks Viewer able to count leaks in builds that didn't fail any regression tests
+
+        Fixes <http://webkit.org/b/56626> Leaks Viewer omits recent builds which didn't fail any
+        regression tests
+
+        Reviewed by James Robinson.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/RecentBuildsLoader.js:
+        (RecentBuildsLoader.prototype.start): Get the number of leaks out of the "text" array, which
+        is always populated, even when all regression tests pass.
+
 2011-03-10  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Tony Chang.
