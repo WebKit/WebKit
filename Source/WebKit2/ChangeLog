@@ -1,3 +1,20 @@
+2011-03-18  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt][WK2] Need a way to debug the web process after the UI process dies
+        https://bugs.webkit.org/show_bug.cgi?id=56116
+
+        Allow the web process to outlive it's parent process
+        in debug builds if the QT_WEBKIT_KEEP_ALIVE_WEB_PROCESS
+        environment variable is set.
+
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::QtWebProcess::setupChildProcess): Used getenv
+        since the prctl call is already in a Linux-only block
+        and the implementation in this file is a candidate
+        for sharing across ports in the future.
+
 2011-03-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.
