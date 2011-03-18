@@ -2882,7 +2882,6 @@ BUGWK55519 GPU MAC : compositing/video/video-background-color.html = IMAGE
 BUGWK47923 GPU : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 
 // The following test is flaky; it occasionally times out, but not always.
-BUGWK47924 GPU WIN LINUX : compositing/iframes/composited-iframe-alignment.html = TIMEOUT PASS
 BUGWK47924 GPU MAC : compositing/iframes/composited-iframe-alignment.html = TIMEOUT IMAGE
 
 // Chromium does not support PDF content in <img> tags.
@@ -3213,56 +3212,6 @@ BUGWK56072 WIN-VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = 
 BUGWK56072 MAC SNOWLEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUGWK56072 MAC SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/ruby/base-shorter-than-text.html = FAIL
-
-// Added by junov temporary test failures until blur rendering is re-baselined
-BUGCR42654 WIN LINUX : fast/blockflow/english-lr-text.html = IMAGE
-BUGCR42654 WIN LINUX : fast/borders/border-radius-split-inline.html = IMAGE
-BUGCR42654 WIN LINUX : fast/box-shadow/basic-shadows.html = IMAGE
-BUGCR42654 WIN LINUX : fast/box-shadow/border-radius-big.html = IMAGE
-BUGCR42654 WIN LINUX : fast/box-shadow/box-shadow-radius.html = IMAGE
-BUGCR42654 WIN LINUX : fast/box-shadow/box-shadow-transformed.html = IMAGE
-BUGCR42654 WIN LINUX : fast/box-shadow/inset-box-shadow-radius.html = IMAGE
-BUGCR42654 WIN LINUX : fast/box-shadow/inset-box-shadows.html = IMAGE
-BUGCR42654 WIN LINUX : fast/box-shadow/inset.html = IMAGE
-BUGCR42654 WIN LINUX : fast/box-shadow/shadow-buffer-partial.html = IMAGE
-BUGCR42654 WIN LINUX : fast/box-shadow/shadow-tiling-artifact.html = IMAGE
-BUGCR42654 WIN LINUX : fast/box-shadow/spread-multiple-normal.html = IMAGE
-BUGCR42654 WIN LINUX : fast/box-shadow/spread.html = IMAGE
-BUGCR42654 WIN LINUX : fast/multicol/shadow-breaking.html = IMAGE
-BUGCR42654 WIN LINUX : fast/repaint/box-shadow-h.html = IMAGE
-BUGCR42654 WIN LINUX : fast/repaint/box-shadow-v.html = IMAGE
-BUGCR42654 WIN LINUX : fast/repaint/moving-shadow-on-container.html = IMAGE
-BUGCR42654 WIN LINUX : fast/repaint/moving-shadow-on-path.html = IMAGE
-BUGCR42654 WIN LINUX : fast/repaint/shadow-multiple-horizontal.html = IMAGE
-BUGCR42654 WIN LINUX : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
-BUGCR42654 WIN LINUX : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
-BUGCR42654 WIN LINUX : fast/repaint/shadow-multiple-vertical.html = IMAGE
-BUGCR42654 WIN LINUX : fast/repaint/transform-replaced-shadows.html = IMAGE
-BUGCR42654 WIN LINUX : fast/text/shadow-translucent-fill.html = IMAGE
-BUGCR42654 WIN LINUX : fast/text/stroking-decorations.html = IMAGE
-BUGCR42654 WIN LINUX : fast/text/stroking.html = IMAGE
-BUGCR42654 WIN LINUX : fast/transforms/shadows.html = IMAGE
-BUGCR42654 WIN LINUX : svg/css/arrow-with-shadow.svg = IMAGE
-BUGCR42654 WIN LINUX : svg/css/composite-shadow-example.html = IMAGE
-BUGCR42654 WIN LINUX : svg/css/composite-shadow-text.svg = IMAGE
-BUGCR42654 WIN LINUX : svg/css/composite-shadow-with-opacity.html = IMAGE
-BUGCR42654 WIN LINUX : svg/css/group-with-shadow.svg = IMAGE
-BUGCR42654 WIN LINUX : svg/css/shadow-changes.svg = IMAGE
-BUGCR42654 WIN LINUX : svg/css/shadow-with-large-radius.svg = IMAGE
-BUGCR42654 WIN LINUX : svg/css/shadow-with-negative-offset.svg = IMAGE
-BUGCR42654 WIN LINUX : svg/css/stars-with-shadow.html = IMAGE
-BUGCR42654 WIN LINUX : svg/css/text-gradient-shadow.svg = IMAGE
-BUGCR42654 WIN LINUX : svg/css/text-shadow-multiple.xhtml = IMAGE
-BUGCR42654 WIN LINUX : transitions/svg-text-shadow-transition.html = IMAGE
-BUGCR42654 WIN LINUX : compositing/geometry/clipping-foreground.html = IMAGE+TEXT
-BUGCR42654 CPU WIN LINUX : compositing/iframes/composited-iframe-alignment.html = IMAGE+TEXT
-BUGCR42654 WIN LINUX : fast/canvas/shadow-offset-4.html = IMAGE
-BUGCR42654 WIN LINUX : fast/canvas/shadow-offset-5.html = IMAGE
-BUGCR42654 WIN LINUX : fast/canvas/shadow-offset-6.html = IMAGE
-BUGCR42654 WIN LINUX : fast/canvas/shadow-offset-7.html = IMAGE
-BUGCR42654 WIN LINUX : fast/repaint/text-shadow-horizontal.html = IMAGE
-BUGCR42654 WIN LINUX : fast/repaint/text-shadow.html = IMAGE
-BUGCR42654 WIN LINUX : fast/text/shadow-no-blur.html = IMAGE
 
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 WIN LINUX : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT

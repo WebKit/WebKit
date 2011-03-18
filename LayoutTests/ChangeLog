@@ -1,3 +1,189 @@
+2011-03-18  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; new test baselines.
+
+        New baselines for shadow quality improved by http://trac.webkit.org/changeset/81489.
+
+        * platform/chromium-linux/compositing/geometry: Added.
+        * platform/chromium-linux/compositing/geometry/clipping-foreground-expected.checksum: Added.
+        * platform/chromium-linux/compositing/geometry/clipping-foreground-expected.png: Added.
+        * platform/chromium-linux/compositing/iframes: Added.
+        * platform/chromium-linux/compositing/iframes/composited-iframe-alignment-expected.checksum: Added.
+        * platform/chromium-linux/compositing/iframes/composited-iframe-alignment-expected.png: Added.
+        * platform/chromium-linux/fast/blockflow/english-lr-text-expected.checksum:
+        * platform/chromium-linux/fast/blockflow/english-lr-text-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-split-inline-expected.checksum:
+        * platform/chromium-linux/fast/borders/border-radius-split-inline-expected.png:
+        * platform/chromium-linux/fast/box-shadow/basic-shadows-expected.checksum:
+        * platform/chromium-linux/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-linux/fast/box-shadow/border-radius-big-expected.checksum:
+        * platform/chromium-linux/fast/box-shadow/border-radius-big-expected.png:
+        * platform/chromium-linux/fast/box-shadow/box-shadow-transformed-expected.checksum:
+        * platform/chromium-linux/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-linux/fast/box-shadow/inset-box-shadows-expected.checksum:
+        * platform/chromium-linux/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-linux/fast/box-shadow/inset-expected.checksum:
+        * platform/chromium-linux/fast/box-shadow/inset-expected.png:
+        * platform/chromium-linux/fast/box-shadow/shadow-tiling-artifact-expected.checksum:
+        * platform/chromium-linux/fast/box-shadow/shadow-tiling-artifact-expected.png:
+        * platform/chromium-linux/fast/box-shadow/spread-expected.checksum:
+        * platform/chromium-linux/fast/box-shadow/spread-expected.png:
+        * platform/chromium-linux/fast/box-shadow/spread-multiple-normal-expected.checksum:
+        * platform/chromium-linux/fast/box-shadow/spread-multiple-normal-expected.png:
+        * platform/chromium-linux/fast/canvas/shadow-offset-4-expected.checksum:
+        * platform/chromium-linux/fast/canvas/shadow-offset-4-expected.png:
+        * platform/chromium-linux/fast/canvas/shadow-offset-5-expected.checksum:
+        * platform/chromium-linux/fast/canvas/shadow-offset-5-expected.png:
+        * platform/chromium-linux/fast/canvas/shadow-offset-6-expected.checksum:
+        * platform/chromium-linux/fast/canvas/shadow-offset-6-expected.png:
+        * platform/chromium-linux/fast/canvas/shadow-offset-7-expected.checksum:
+        * platform/chromium-linux/fast/canvas/shadow-offset-7-expected.png:
+        * platform/chromium-linux/fast/multicol/shadow-breaking-expected.checksum:
+        * platform/chromium-linux/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium-linux/fast/repaint/box-shadow-h-expected.checksum:
+        * platform/chromium-linux/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-linux/fast/repaint/box-shadow-v-expected.checksum:
+        * platform/chromium-linux/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-linux/fast/repaint/moving-shadow-on-container-expected.checksum:
+        * platform/chromium-linux/fast/repaint/moving-shadow-on-container-expected.png:
+        * platform/chromium-linux/fast/repaint/moving-shadow-on-path-expected.checksum:
+        * platform/chromium-linux/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-horizontal-expected.checksum:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-strict-horizontal-expected.checksum:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-strict-vertical-expected.checksum:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-vertical-expected.checksum:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-linux/fast/repaint/text-shadow-expected.checksum:
+        * platform/chromium-linux/fast/repaint/text-shadow-expected.png:
+        * platform/chromium-linux/fast/repaint/text-shadow-horizontal-expected.checksum:
+        * platform/chromium-linux/fast/repaint/text-shadow-horizontal-expected.png:
+        * platform/chromium-linux/fast/text/shadow-no-blur-expected.checksum:
+        * platform/chromium-linux/fast/text/shadow-no-blur-expected.png:
+        * platform/chromium-linux/fast/text/shadow-translucent-fill-expected.checksum:
+        * platform/chromium-linux/fast/text/shadow-translucent-fill-expected.png:
+        * platform/chromium-linux/fast/text/stroking-decorations-expected.checksum:
+        * platform/chromium-linux/fast/text/stroking-decorations-expected.png:
+        * platform/chromium-linux/fast/text/stroking-expected.checksum:
+        * platform/chromium-linux/fast/text/stroking-expected.png:
+        * platform/chromium-linux/fast/transforms/shadows-expected.checksum:
+        * platform/chromium-linux/fast/transforms/shadows-expected.png:
+        * platform/chromium-linux/svg/css/composite-shadow-example-expected.checksum:
+        * platform/chromium-linux/svg/css/composite-shadow-example-expected.png:
+        * platform/chromium-linux/svg/css/composite-shadow-text-expected.checksum:
+        * platform/chromium-linux/svg/css/composite-shadow-text-expected.png:
+        * platform/chromium-linux/svg/css/composite-shadow-with-opacity-expected.checksum:
+        * platform/chromium-linux/svg/css/composite-shadow-with-opacity-expected.png:
+        * platform/chromium-linux/svg/css/group-with-shadow-expected.checksum:
+        * platform/chromium-linux/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-linux/svg/css/shadow-changes-expected.checksum:
+        * platform/chromium-linux/svg/css/shadow-changes-expected.png:
+        * platform/chromium-linux/svg/css/stars-with-shadow-expected.checksum:
+        * platform/chromium-linux/svg/css/stars-with-shadow-expected.png:
+        * platform/chromium-linux/svg/css/text-gradient-shadow-expected.checksum:
+        * platform/chromium-linux/svg/css/text-gradient-shadow-expected.png:
+        * platform/chromium-linux/svg/css/text-shadow-multiple-expected.checksum:
+        * platform/chromium-linux/svg/css/text-shadow-multiple-expected.png:
+        * platform/chromium-linux/transitions/svg-text-shadow-transition-expected.checksum:
+        * platform/chromium-linux/transitions/svg-text-shadow-transition-expected.png:
+        * platform/chromium-win/compositing/geometry: Added.
+        * platform/chromium-win/compositing/geometry/clipping-foreground-expected.checksum: Added.
+        * platform/chromium-win/compositing/geometry/clipping-foreground-expected.png: Added.
+        * platform/chromium-win/compositing/geometry/clipping-foreground-expected.txt: Added.
+        * platform/chromium-win/compositing/iframes: Added.
+        * platform/chromium-win/compositing/iframes/composited-iframe-alignment-expected.checksum: Added.
+        * platform/chromium-win/compositing/iframes/composited-iframe-alignment-expected.png: Added.
+        * platform/chromium-win/compositing/iframes/composited-iframe-alignment-expected.txt: Added.
+        * platform/chromium-win/fast/blockflow/english-lr-text-expected.checksum:
+        * platform/chromium-win/fast/blockflow/english-lr-text-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-split-inline-expected.checksum:
+        * platform/chromium-win/fast/borders/border-radius-split-inline-expected.png:
+        * platform/chromium-win/fast/box-shadow/basic-shadows-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-win/fast/box-shadow/border-radius-big-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/border-radius-big-expected.png:
+        * platform/chromium-win/fast/box-shadow/box-shadow-radius-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/box-shadow-radius-expected.png:
+        * platform/chromium-win/fast/box-shadow/box-shadow-transformed-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-box-shadow-radius-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/inset-box-shadow-radius-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-box-shadows-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/inset-expected.png:
+        * platform/chromium-win/fast/box-shadow/shadow-buffer-partial-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/shadow-buffer-partial-expected.png:
+        * platform/chromium-win/fast/box-shadow/shadow-tiling-artifact-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/shadow-tiling-artifact-expected.png:
+        * platform/chromium-win/fast/box-shadow/spread-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/spread-expected.png:
+        * platform/chromium-win/fast/box-shadow/spread-multiple-normal-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/spread-multiple-normal-expected.png:
+        * platform/chromium-win/fast/canvas/shadow-offset-4-expected.checksum:
+        * platform/chromium-win/fast/canvas/shadow-offset-4-expected.png:
+        * platform/chromium-win/fast/canvas/shadow-offset-5-expected.checksum:
+        * platform/chromium-win/fast/canvas/shadow-offset-5-expected.png:
+        * platform/chromium-win/fast/canvas/shadow-offset-6-expected.checksum:
+        * platform/chromium-win/fast/canvas/shadow-offset-6-expected.png:
+        * platform/chromium-win/fast/canvas/shadow-offset-7-expected.checksum:
+        * platform/chromium-win/fast/canvas/shadow-offset-7-expected.png:
+        * platform/chromium-win/fast/multicol/shadow-breaking-expected.checksum:
+        * platform/chromium-win/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium-win/fast/repaint/box-shadow-h-expected.checksum:
+        * platform/chromium-win/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-win/fast/repaint/box-shadow-v-expected.checksum:
+        * platform/chromium-win/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-win/fast/repaint/moving-shadow-on-container-expected.checksum:
+        * platform/chromium-win/fast/repaint/moving-shadow-on-container-expected.png:
+        * platform/chromium-win/fast/repaint/moving-shadow-on-path-expected.checksum:
+        * platform/chromium-win/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-horizontal-expected.checksum:
+        * platform/chromium-win/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-strict-horizontal-expected.checksum:
+        * platform/chromium-win/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-strict-vertical-expected.checksum:
+        * platform/chromium-win/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-vertical-expected.checksum:
+        * platform/chromium-win/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-win/fast/repaint/transform-replaced-shadows-expected.checksum:
+        * platform/chromium-win/fast/repaint/transform-replaced-shadows-expected.png:
+        * platform/chromium-win/fast/text/shadow-translucent-fill-expected.checksum:
+        * platform/chromium-win/fast/text/shadow-translucent-fill-expected.png:
+        * platform/chromium-win/fast/text/stroking-decorations-expected.checksum:
+        * platform/chromium-win/fast/text/stroking-decorations-expected.png:
+        * platform/chromium-win/fast/text/stroking-expected.checksum:
+        * platform/chromium-win/fast/text/stroking-expected.png:
+        * platform/chromium-win/fast/transforms/shadows-expected.checksum:
+        * platform/chromium-win/fast/transforms/shadows-expected.png:
+        * platform/chromium-win/svg/css/arrow-with-shadow-expected.checksum:
+        * platform/chromium-win/svg/css/arrow-with-shadow-expected.png:
+        * platform/chromium-win/svg/css/composite-shadow-example-expected.checksum:
+        * platform/chromium-win/svg/css/composite-shadow-example-expected.png:
+        * platform/chromium-win/svg/css/composite-shadow-text-expected.checksum:
+        * platform/chromium-win/svg/css/composite-shadow-text-expected.png:
+        * platform/chromium-win/svg/css/composite-shadow-with-opacity-expected.checksum:
+        * platform/chromium-win/svg/css/composite-shadow-with-opacity-expected.png:
+        * platform/chromium-win/svg/css/group-with-shadow-expected.checksum:
+        * platform/chromium-win/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-win/svg/css/shadow-changes-expected.checksum:
+        * platform/chromium-win/svg/css/shadow-changes-expected.png:
+        * platform/chromium-win/svg/css/shadow-with-large-radius-expected.checksum:
+        * platform/chromium-win/svg/css/shadow-with-large-radius-expected.png:
+        * platform/chromium-win/svg/css/shadow-with-negative-offset-expected.checksum:
+        * platform/chromium-win/svg/css/shadow-with-negative-offset-expected.png:
+        * platform/chromium-win/svg/css/stars-with-shadow-expected.checksum:
+        * platform/chromium-win/svg/css/stars-with-shadow-expected.png:
+        * platform/chromium-win/svg/css/text-gradient-shadow-expected.checksum:
+        * platform/chromium-win/svg/css/text-gradient-shadow-expected.png:
+        * platform/chromium-win/svg/css/text-shadow-multiple-expected.checksum:
+        * platform/chromium-win/svg/css/text-shadow-multiple-expected.png:
+        * platform/chromium-win/transitions/svg-text-shadow-transition-expected.checksum:
+        * platform/chromium-win/transitions/svg-text-shadow-transition-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81487.
