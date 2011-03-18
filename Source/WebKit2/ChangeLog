@@ -1,3 +1,19 @@
+2011-03-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Command-period does not stop load when page has focus in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=56601
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView doCommandBySelector:]): If called outside interpretKeyEvents,
+        call through to super.
+        (-[WKView insertText:]): Assert that we are inside interpretKeyEvents.
+        (-[WKView unmarkText]): Ditto.
+        (-[WKView setMarkedText:selectedRange:]): Ditto.
+        (-[WKView _interceptKeyEvent:]): Set a flag to indicate we are inside
+        interpretKeyEvents for use by the above.
+
 2011-03-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

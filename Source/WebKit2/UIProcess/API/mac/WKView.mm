@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,6 +128,7 @@ typedef HashMap<String, ValidationVector> ValidationMap;
     // the application to distinguish the case of a new event from one 
     // that has been already sent to WebCore.
     NSEvent *_keyDownEventBeingResent;
+    bool _isInInterpretKeyEvents;
     Vector<KeypressCommand> _commandsList;
 
     NSSize _resizeScrollOffset;
@@ -1020,6 +1021,10 @@ static const short kIOHIDEventTypeScroll = 6;
 
 - (void)doCommandBySelector:(SEL)selector
 {
+    if (!_data->_isInInterpretKeyEvents) {
+        [super doCommandBySelector:selector];
+        return;
+    }
     if (selector != @selector(noop:))
         _data->_commandsList.append(KeypressCommand(commandNameForSelector(selector)));
 }
@@ -1044,9 +1049,13 @@ static const short kIOHIDEventTypeScroll = 6;
             isFromInputMethod = YES;
     } else
         text = string;
-    
+
     String eventText = text;
     
+    // We'd need a different code path here if we wanted to be able to handle this
+    // outside of interpretKeyEvents.
+    ASSERT(_data->_isInInterpretKeyEvents);
+
     if (!isFromInputMethod)
         _data->_commandsList.append(KeypressCommand("insertText", text));
     else {
@@ -1163,7 +1172,11 @@ static const short kIOHIDEventTypeScroll = 6;
 - (void)unmarkText
 {
     LOG(TextInput, "unmarkText");
-    
+
+    // We'd need a different code path here if we wanted to be able to handle this
+    // outside of interpretKeyEvents.
+    ASSERT(_data->_isInInterpretKeyEvents);
+
     _data->_commandsList.append(KeypressCommand("unmarkText"));
 }
 
@@ -1218,6 +1231,10 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         extractUnderlines(string, _data->_underlines);
     }
     
+    // We'd need a different code path here if we wanted to be able to handle this
+    // outside of interpretKeyEvents.
+    ASSERT(_data->_isInInterpretKeyEvents);
+
     _data->_commandsList.append(KeypressCommand("setMarkedText", text));
     _data->_selectionStart = newSelRange.location;
     _data->_selectionEnd = NSMaxRange(newSelRange);
@@ -1730,10 +1747,17 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (Vector<KeypressCommand>&)_interceptKeyEvent:(NSEvent *)theEvent 
 {
+    ASSERT(!_data->_isInInterpretKeyEvents);
+
+    _data->_isInInterpretKeyEvents = true;
     _data->_commandsList.clear();
-    // interpretKeyEvents will trigger one or more calls to doCommandBySelector or setText
+
+    // Calling interpretKeyEvents will trigger one or more calls to doCommandBySelector and insertText
     // that will populate the commandsList vector.
     [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+
+    _data->_isInInterpretKeyEvents = false;
+
     return _data->_commandsList;
 }
 
