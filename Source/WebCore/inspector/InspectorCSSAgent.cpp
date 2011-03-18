@@ -104,17 +104,21 @@
 //    selectorRange: { start: <number>, end: <number> } // Optional - for source-based rules only
 // }
 //
+// cssStyleSheetInfo = {
+//    styleSheetId : <number>
+//    sourceURL    : <string>
+//    title        : <string>
+//    disabled     : <boolean>
+// }
+//
 // cssStyleSheet = {
-//    styleSheetId   : <number>
-//    sourceURL      : <string>
-//    title          : <string>
-//    disabled       : <boolean>
-//    rules          : [
-//                         #cssRule,
-//                         ...
-//                         #cssRule
-//                     ]
-//    text           : <string> // Optional - whenever the text is available for a text-based stylesheet
+//    styleSheetId : <number>
+//    rules        : [
+//                       #cssRule,
+//                       ...
+//                       #cssRule
+//                   ]
+//    text         : <string> // Optional - whenever the text is available for a text-based stylesheet
 // }
 
 namespace WebCore {
@@ -250,7 +254,7 @@ void InspectorCSSAgent::getComputedStyleForNode(ErrorString* errorString, long n
     *style = inspectorStyle->buildObjectForStyle();
 }
 
-void InspectorCSSAgent::getAllStyles(ErrorString*, RefPtr<InspectorArray>* styles)
+void InspectorCSSAgent::getAllStyleSheets(ErrorString*, RefPtr<InspectorArray>* styleInfos)
 {
     Vector<Document*> documents = m_domAgent->documents();
     for (Vector<Document*>::iterator it = documents.begin(); it != documents.end(); ++it) {
@@ -259,7 +263,7 @@ void InspectorCSSAgent::getAllStyles(ErrorString*, RefPtr<InspectorArray>* style
             StyleSheet* styleSheet = list->item(i);
             if (styleSheet->isCSSStyleSheet()) {
                 InspectorStyleSheet* inspectorStyleSheet = bindStyleSheet(static_cast<CSSStyleSheet*>(styleSheet));
-                (*styles)->pushString(inspectorStyleSheet->id());
+                (*styleInfos)->pushObject(inspectorStyleSheet->buildObjectForStyleSheetInfo());
             }
         }
     }

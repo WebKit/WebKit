@@ -1,3 +1,35 @@
+2011-03-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Fix handling of the CSSAgent.setStyleSheetText() results in CSSStyleModel.js
+        https://bugs.webkit.org/show_bug.cgi?id=56310
+
+        Instead of stylesheet ids, CSSAgent.getAllStyleSheets() now returns metainfo objects containing
+        "styleSheetId", "sourceURL", "disabled", and "title" fields. The latter three are not returned
+        by CSSAgent.getStyleSheet() anymore.
+
+        Test: inspector/styles/get-set-stylesheet-text.html
+
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getAllStyleSheets):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheet):
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheetInfo):
+        * inspector/InspectorStyleSheet.h:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.styleSheetCallback):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.allStylesCallback):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype._styleSheetChanged.callback):
+        (WebInspector.CSSStyleModel.prototype._styleSheetChanged):
+        (WebInspector.CSSStyleModel.prototype._onRevert):
+        (WebInspector.CSSStyleSheet):
+        (WebInspector.CSSStyleSheet.prototype.setText):
+
 2011-03-18  David Keijser  <keijser@gmail.com> and Xan Lopez <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
