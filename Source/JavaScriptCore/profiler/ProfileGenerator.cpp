@@ -40,19 +40,19 @@ namespace JSC {
 
 static const char* NonJSExecution = "(idle)";
 
-PassRefPtr<ProfileGenerator> ProfileGenerator::create(const UString& title, ExecState* originatingExec, unsigned uid)
+PassRefPtr<ProfileGenerator> ProfileGenerator::create(ExecState* exec, const UString& title, unsigned uid)
 {
-    return adoptRef(new ProfileGenerator(title, originatingExec, uid));
+    return adoptRef(new ProfileGenerator(exec, title, uid));
 }
 
-ProfileGenerator::ProfileGenerator(const UString& title, ExecState* originatingExec, unsigned uid)
-    : m_originatingGlobalExec(originatingExec ? originatingExec->lexicalGlobalObject()->globalExec() : 0)
-    , m_profileGroup(originatingExec ? originatingExec->lexicalGlobalObject()->profileGroup() : 0)
+ProfileGenerator::ProfileGenerator(ExecState* exec, const UString& title, unsigned uid)
+    : m_origin(exec ? exec->lexicalGlobalObject() : 0)
+    , m_profileGroup(exec ? exec->lexicalGlobalObject()->profileGroup() : 0)
 {
     m_profile = Profile::create(title, uid);
     m_currentNode = m_head = m_profile->head();
-    if (originatingExec)
-        addParentForConsoleStart(originatingExec);
+    if (exec)
+        addParentForConsoleStart(exec);
 }
 
 void ProfileGenerator::addParentForConsoleStart(ExecState* exec)
@@ -80,7 +80,7 @@ void ProfileGenerator::willExecute(ExecState* callerCallFrame, const CallIdentif
         JAVASCRIPTCORE_PROFILE_WILL_EXECUTE(m_profileGroup, const_cast<char*>(name.data()), const_cast<char*>(url.data()), callIdentifier.m_lineNumber);
     }
 
-    if (!m_originatingGlobalExec)
+    if (!m_origin)
         return;
 
     ASSERT(m_currentNode);
@@ -95,7 +95,7 @@ void ProfileGenerator::didExecute(ExecState* callerCallFrame, const CallIdentifi
         JAVASCRIPTCORE_PROFILE_DID_EXECUTE(m_profileGroup, const_cast<char*>(name.data()), const_cast<char*>(url.data()), callIdentifier.m_lineNumber);
     }
 
-    if (!m_originatingGlobalExec)
+    if (!m_origin)
         return;
 
     ASSERT(m_currentNode);

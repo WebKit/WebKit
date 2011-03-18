@@ -1,3 +1,39 @@
+2011-03-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        [GTK] JSC crashes in 32bit Release bots after r80743
+        https://bugs.webkit.org/show_bug.cgi?id=56180
+        
+        The crash was caused by referencing GC memory from a GC destructor. This
+        is not safe because destruction time / order is not guaranteed.
+
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::create):
+        (JSC::ProfileGenerator::ProfileGenerator):
+        (JSC::ProfileGenerator::willExecute):
+        (JSC::ProfileGenerator::didExecute):
+        * profiler/ProfileGenerator.h:
+        (JSC::ProfileGenerator::origin): Made ExecState* the first argument,
+        to match the rest of this class and JSC.
+        
+        Use a JSGlobalObject* instead of an ExecState* with an indirect reference
+        to a JSGlobalObject* to track our origin. This is simpler and more
+        efficient, and it removes the destruction order dependency that was causing
+        our crash.
+
+        * profiler/Profiler.cpp:
+        (JSC::Profiler::startProfiling): Updated for change to JSGlobalObject*.
+        (JSC::Profiler::stopProfiling): New function for stopping all profiles
+        for a given global object. This is more straight-forward than multiplexing
+        through the old function.
+
+        (JSC::dispatchFunctionToProfiles): Updated for change to JSGlobalObject*.
+        * profiler/Profiler.h: Ditto.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::~JSGlobalObject): Ditto.
+
 2011-03-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

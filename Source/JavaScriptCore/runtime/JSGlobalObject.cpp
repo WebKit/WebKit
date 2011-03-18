@@ -99,7 +99,7 @@ JSGlobalObject::~JSGlobalObject()
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (UNLIKELY(*profiler != 0)) {
-        (*profiler)->stopProfiling(globalExec(), UString());
+        (*profiler)->stopProfiling(this);
     }
 }
 

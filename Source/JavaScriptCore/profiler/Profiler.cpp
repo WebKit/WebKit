@@ -66,25 +66,25 @@ void Profiler::startProfiling(ExecState* exec, const UString& title)
 
     // Check if we currently have a Profile for this global ExecState and title.
     // If so return early and don't create a new Profile.
-    ExecState* globalExec = exec ? exec->lexicalGlobalObject()->globalExec() : 0;
+    JSGlobalObject* origin = exec ? exec->lexicalGlobalObject() : 0;
 
     for (size_t i = 0; i < m_currentProfiles.size(); ++i) {
         ProfileGenerator* profileGenerator = m_currentProfiles[i].get();
-        if (profileGenerator->originatingGlobalExec() == globalExec && profileGenerator->title() == title)
+        if (profileGenerator->origin() == origin && profileGenerator->title() == title)
             return;
     }
 
     s_sharedEnabledProfilerReference = this;
-    RefPtr<ProfileGenerator> profileGenerator = ProfileGenerator::create(title, exec, ++ProfilesUID);
+    RefPtr<ProfileGenerator> profileGenerator = ProfileGenerator::create(exec, title, ++ProfilesUID);
     m_currentProfiles.append(profileGenerator);
 }
 
 PassRefPtr<Profile> Profiler::stopProfiling(ExecState* exec, const UString& title)
 {
-    ExecState* globalExec = exec ? exec->lexicalGlobalObject()->globalExec() : 0;
+    JSGlobalObject* origin = exec ? exec->lexicalGlobalObject() : 0;
     for (ptrdiff_t i = m_currentProfiles.size() - 1; i >= 0; --i) {
         ProfileGenerator* profileGenerator = m_currentProfiles[i].get();
-        if (profileGenerator->originatingGlobalExec() == globalExec && (title.isNull() || profileGenerator->title() == title)) {
+        if (profileGenerator->origin() == origin && (title.isNull() || profileGenerator->title() == title)) {
             profileGenerator->stopProfiling();
             RefPtr<Profile> returnProfile = profileGenerator->profile();
 
@@ -99,10 +99,23 @@ PassRefPtr<Profile> Profiler::stopProfiling(ExecState* exec, const UString& titl
     return 0;
 }
 
+void Profiler::stopProfiling(JSGlobalObject* origin)
+{
+    for (ptrdiff_t i = m_currentProfiles.size() - 1; i >= 0; --i) {
+        ProfileGenerator* profileGenerator = m_currentProfiles[i].get();
+        if (profileGenerator->origin() == origin) {
+            profileGenerator->stopProfiling();
+            m_currentProfiles.remove(i);
+            if (!m_currentProfiles.size())
+                s_sharedEnabledProfilerReference = 0;
+        }
+    }
+}
+
 static inline void dispatchFunctionToProfiles(ExecState* callerOrHandlerCallFrame, const Vector<RefPtr<ProfileGenerator> >& profiles, ProfileGenerator::ProfileFunction function, const CallIdentifier& callIdentifier, unsigned currentProfileTargetGroup)
 {
     for (size_t i = 0; i < profiles.size(); ++i) {
-        if (profiles[i]->profileGroup() == currentProfileTargetGroup || !profiles[i]->originatingGlobalExec())
+        if (profiles[i]->profileGroup() == currentProfileTargetGroup || !profiles[i]->origin())
             (profiles[i].get()->*function)(callerOrHandlerCallFrame, callIdentifier);
     }
 }

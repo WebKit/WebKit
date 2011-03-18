@@ -38,6 +38,7 @@ namespace JSC {
 
     class ExecState;
     class JSGlobalData;
+    class JSGlobalObject;
     class JSObject;
     class JSValue;
     class ProfileGenerator;
@@ -57,6 +58,7 @@ namespace JSC {
 
         void startProfiling(ExecState*, const UString& title);
         PassRefPtr<Profile> stopProfiling(ExecState*, const UString& title);
+        void stopProfiling(JSGlobalObject*);
 
         void willExecute(ExecState* callerCallFrame, JSValue function);
         void willExecute(ExecState* callerCallFrame, const UString& sourceURL, int startingLineNumber);
