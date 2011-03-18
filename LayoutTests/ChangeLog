@@ -1,3 +1,14 @@
+2011-03-18  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; new test baselines.
+
+        New GPU baselines for shadow quality improved by http://trac.webkit.org/changeset/81489.
+
+        * platform/chromium-gpu-linux/compositing/geometry/clipping-foreground-expected.png:
+        * platform/chromium-gpu-linux/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/clipping-foreground-expected.png:
+        * platform/chromium-gpu-win/compositing/iframes/composited-iframe-alignment-expected.png:
+
 2011-03-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
