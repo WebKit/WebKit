@@ -1,3 +1,11 @@
+2011-03-18  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
+        Remove unnecessary brackets around my email address.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-03-18  Adam Roben  <aroben@apple.com>
         
         Remove some files I accidentally added in r81454
