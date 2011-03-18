@@ -1,4 +1,11 @@
 2011-03-18  Adam Roben  <aroben@apple.com>
+        
+        Remove some files I accidentally added in r81454
+
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCoreGraphics.vsprops: Removed.
+        * WebKitTestRunner/cg/TestInvocationCG.cpp: Removed.
+
+2011-03-18  Adam Roben  <aroben@apple.com>
 
         Ignore an NSNumberFormatter leak on SnowLeopard
 
