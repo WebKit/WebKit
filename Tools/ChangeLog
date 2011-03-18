@@ -1,5 +1,11 @@
 2011-03-18  Sam Weinig  <sam@webkit.org>
 
+        Fix windows build. This was really Adam Roben's fault. I swear!
+
+        * WebKitTestRunner/config.h:
+
+2011-03-18  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Roben.
 
         Pixel tests don't work in WebKitTestRunner on Windows
