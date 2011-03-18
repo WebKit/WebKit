@@ -1,3 +1,14 @@
+2011-03-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add some of the remaining platform/mac files to WebCore GYP build
+        https://bugs.webkit.org/show_bug.cgi?id=56616
+
+        These files used to be hard, but are now magically easy.  76 link errors.
+
+        * gyp/WebCore.gyp:
+
 2011-03-17  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Adam Barth.

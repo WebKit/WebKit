@@ -48,10 +48,7 @@
         # FIXME: Figure out how to build these mm files.
         ['exclude', 'DerivedSources/.*\\.mm$'],
 
-        # FIXME: These need to be built, but they're hard.
-        ['exclude', 'platform/mac/DragDataMac.mm$'],
-        ['exclude', 'platform/mac/HTMLConverter.mm$'],
-        ['exclude', 'platform/mac/PasteboardMac.mm$'],
+        # This file fails to build because objc_finalizeOnMainThread is deprecated...
         ['exclude', 'platform/mac/WebCoreObjCExtras.mm$'],
 
         ['exclude', 'bindings/[^/]+/'],
