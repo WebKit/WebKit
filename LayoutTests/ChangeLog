@@ -1,3 +1,10 @@
+2011-03-18  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] JSC crashes in 32bit Release bots after r80743
+        https://bugs.webkit.org/show_bug.cgi?id=56180
+
+        * platform/gtk/Skipped: Unskip tests which should now be passing since this bug is fixed.
+
 2011-03-18  Jessie Berlin  <jberlin@apple.com>
 
         [WebKit2 Windows Release Tests] media tests crashing in QuickTime on apple-windows-8.
