@@ -1,5 +1,15 @@
 2011-03-18  Adam Roben  <aroben@apple.com>
 
+        Skip a test in that is probably causing the next test to crash in WebKit2
+
+        <http://webkit.org/b/55780> tracks the failure.
+
+        * platform/win-wk2/Skipped: Skip platform/win/plugins/draws-gradient.html instead of
+        platform/win/plugins/get-value-netscape-window.html. The former was probably causing the
+        latter to crash.
+
+2011-03-18  Adam Roben  <aroben@apple.com>
+
         Disable a flakey inspector test
 
         <http://webkit.org/b/56565> tracks the failure.
