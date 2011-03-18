@@ -1,5 +1,11 @@
 2011-03-18  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: add missing brace to the generated Inspector.idl.
+
+        * inspector/generate-inspector-idl:
+
+2011-03-18  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: migrate from Inspector.idl to InspectorAPI.json for protocol schema definition meta bug.
