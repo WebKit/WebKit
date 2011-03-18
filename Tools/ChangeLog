@@ -1,5 +1,18 @@
 2011-03-17  Adam Roben  <aroben@apple.com>
 
+        Mark leaky builds orange, even if all regression tests passed
+
+        Fixes <http://webkit.org/b/56609> SnowLeopard Intel Leaks bot appears green on
+        build.webkit.org when all tests pass even though there are still leaks
+
+        Reviewed by Dan Bernstein.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitLeakTests): Set the warnOnWarnings property to True so that the entire build will
+        be marked orange if this build step generates warnings.
+
+2011-03-17  Adam Roben  <aroben@apple.com>
+
         Allow values in Leaks Viewer to be shown as percentages
 
         Double-clicking on a column will toggle between showing percentages and showing real values.
