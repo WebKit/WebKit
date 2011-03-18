@@ -3280,9 +3280,6 @@ BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = CR
 BUGWK56242 LINUX RELEASE : transitions/interrupted-accelerated-transition.html = PASS FAIL
 BUGWK56488 SKIP : compositing/transitions/scale-transition-no-start.html = CRASH
 
-// These are failing sporadically due to WebKit r81222
-BUGWK56454 WIN : inspector/elements/mutate-unknown-node.html = PASS TEXT
-
 // Slow
 BUGCR76550 SLOW WIN LINUX DEBUG : fast/dom/Window/window-function-frame-getter-precedence.html = PASS
 BUGCR76550 MAC DEBUG : fast/dom/Window/window-function-frame-getter-precedence.html = TIMEOUT PASS

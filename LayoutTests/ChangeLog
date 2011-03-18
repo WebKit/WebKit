@@ -1,3 +1,11 @@
+2011-03-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed fix for chromium test_expectations.txt.
+
+        There was a duplicate for inspector/mutate-unknown-node.html
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-18  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
