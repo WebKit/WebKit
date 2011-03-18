@@ -173,8 +173,8 @@ PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
         s = s.parentAnchoredEquivalent();
         e = e.parentAnchoredEquivalent();
     }
-    
-    if (s.isNull() || e.isNull())
+
+    if (!s.containerNode() || !e.containerNode())
         return 0;
 
     // VisibleSelections are supposed to always be valid.  This constructor will ASSERT

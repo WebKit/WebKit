@@ -166,7 +166,7 @@ Position Position::parentAnchoredEquivalent() const
     if (m_offset <= 0 && m_anchorType != PositionIsAfterAnchor) {
         if (m_anchorNode->parentNode() && (editingIgnoresContent(m_anchorNode.get()) || isTableElement(m_anchorNode.get())))
             return positionInParentBeforeNode(m_anchorNode.get());
-        return firstPositionInNode(m_anchorNode.get());
+        return firstPositionInOrBeforeNode(m_anchorNode.get());
     }
     if (!m_anchorNode->offsetInCharacters() && (m_anchorType == PositionIsAfterAnchor || static_cast<unsigned>(m_offset) == m_anchorNode->childNodeCount())
         && (editingIgnoresContent(m_anchorNode.get()) || isTableElement(m_anchorNode.get()))) {

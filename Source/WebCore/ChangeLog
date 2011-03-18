@@ -1,3 +1,19 @@
+2011-03-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(81374, 81384): editing/deleting/5206311-1.html hits assertion on non-Mac platforms
+        https://bugs.webkit.org/show_bug.cgi?id=56599
+
+        Debug build fix.
+
+        * dom/Position.cpp:
+        (WebCore::Position::parentAnchoredEquivalent): If the original position was a position before a node,
+        then we can't necessarily instantiate a position inside the node.
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::toNormalizedRange): Even if s and e were not null, container nodes of s and e
+        could be null. Exit early in those cases as well.
+
 2011-03-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
