@@ -291,7 +291,7 @@ inline PropertyTable::~PropertyTable()
 {
     iterator end = this->end();
     for (iterator iter = begin(); iter != end; ++iter)
-        iter->key->ref();
+        iter->key->deref();
 
     fastFree(m_index);
 }
