@@ -1,3 +1,13 @@
+2011-03-18  Jessie Berlin  <jberlin@apple.com>
+
+        [WebKit2 Windows Release Tests] media tests crashing in QuickTime on apple-windows-8.
+        https://bugs.webkit.org/show_bug.cgi?id=56653
+
+        Unreviewed, skipping media/video-load-readyState.html since that has been crashing
+        on the last 3 runs.
+
+        * platform/win-wk2/Skipped:
+
 2011-03-18 James Robinson <jamesr@chromium.org>
 
         [chromium] Add tests that will need a rebaseline on windows to expectations

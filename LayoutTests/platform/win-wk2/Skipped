@@ -172,3 +172,6 @@ platform/win/plugins/draws-gradient.html
 fast/html/keygen.html
 fast/invalid/residual-style.html
 html5lib/runner.html
+
+# Crashes on apple-windows-8 http://webkit.org/b/56653
+media/video-load-readyState.html
