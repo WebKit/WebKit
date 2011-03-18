@@ -1,5 +1,13 @@
 2011-03-18  Adam Roben  <aroben@apple.com>
 
+        Add Windows WebKit2 expected failure results for a media test
+
+        The failure is tracked by <http://webkit.org/b/56636>.
+
+        * platform/win-wk2/media/controls-without-preload-expected.txt: Added.
+
+2011-03-18  Adam Roben  <aroben@apple.com>
+
         Skip some timing out tests in WebKit2 on Windows
 
         Tracked by <http://webkit.org/b/56633> and <http://webkit.org/b/56634>.
