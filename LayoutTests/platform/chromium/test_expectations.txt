@@ -1679,7 +1679,7 @@ BUGCR27551 WIN : fast/css/shadow-multiple.html = IMAGE
 // WebKit merge 50756:50820, possibly due to WebKit r50808/r50786 and Chromium r31715
 BUGCR27553 WIN : fast/text/atsui-partial-selection.html = IMAGE
 
-BUGCR22700 WIN LINUX : fast/canvas/canvas-shadow.html = TEXT
+BUGCR22700 CPU WIN LINUX : fast/canvas/canvas-shadow.html = TEXT
 
 // Failures from merge 50972:51042
 // The test requires DRT/Test Shell to support error page handling.
@@ -2557,7 +2557,7 @@ BUGCR61739 WIN LINUX DEBUG : animations/suspend-resume-animation-events.html = C
 // New tests added with http://trac.webkit.org/changeset/72472 and further.
 // See https://bugs.webkit.org/show_bug.cgi?id=51982 for more info.
 BUGWK52509 : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
-BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
+BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-gradient-shadow.html = TEXT
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-pattern-shadow.html = TEXT
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT
@@ -3279,3 +3279,6 @@ BUGCR76716 DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
 BUGCR76616 WIN LINUX : fast/text/emphasis-combined-text.html = IMAGE+TEXT
 // Needs leopard baseline. Snow leopard is horribly broken.
 BUGCR76616 MAC : fast/text/emphasis-combined-text.html = IMAGE+TEXT
+
+BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-drawImage-shadow.html = TEXT
+BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-scale-drawImage-shadow.html = TEXT

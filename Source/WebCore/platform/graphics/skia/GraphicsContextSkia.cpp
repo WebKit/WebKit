@@ -1025,6 +1025,14 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
     if (paintingDisabled())
         return;
 
+    if (platformContext()->useGPU()) {
+        GLES2Canvas* canvas = platformContext()->gpuCanvas();
+        canvas->setShadowOffset(size);
+        canvas->setShadowBlur(blurFloat);
+        canvas->setShadowColor(color, colorSpace);
+        canvas->setShadowsIgnoreTransforms(m_state.shadowsIgnoreTransforms);
+    }
+
     // Detect when there's no effective shadow and clear the looper.
     if (!size.width() && !size.height() && !blurFloat) {
         platformContext()->setDrawLooper(0);
