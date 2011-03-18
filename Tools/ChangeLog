@@ -1,5 +1,13 @@
 2011-03-17  Adam Roben  <aroben@apple.com>
 
+        Address a review comment I missed in r81445
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksParserWorker.js:
+        (LeaksParserWorker.prototype._parseLeaks): Anchor the RegExp used to find the number of
+        leaked bytes to speed up searching on long lines.
+
+2011-03-17  Adam Roben  <aroben@apple.com>
+
         Mark leaky builds orange, even if all regression tests passed
 
         Fixes <http://webkit.org/b/56609> SnowLeopard Intel Leaks bot appears green on

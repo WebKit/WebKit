@@ -36,7 +36,7 @@ LeaksParserWorker.prototype = {
         var leaks = [];
         var currentSize = 0;
         text.split("\n").forEach(function(line) {
-            var match = /Leak:.*\ssize=(\d+)\s/.exec(line);
+            var match = /^Leak:.*\ssize=(\d+)\s/.exec(line);
             if (match) {
                 currentSize = parseInt(match[1], 10);
                 return;
