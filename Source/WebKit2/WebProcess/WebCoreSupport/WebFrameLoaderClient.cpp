@@ -1086,6 +1086,11 @@ void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame*)
 
 void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
 {
+    WebPage* webPage = m_frame->page();
+    bool isMainFrame = webPage->mainFrame() == m_frame;
+    
+    const String& mimeType = m_frame->coreFrame()->loader()->documentLoader()->response().mimeType();
+    m_frameHasCustomRepresentation = isMainFrame && WebProcess::shared().shouldUseCustomRepresentationForMIMEType(mimeType);
 }
 
 void WebFrameLoaderClient::transitionToCommittedForNewPage()

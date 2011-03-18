@@ -1,5 +1,18 @@
 2011-03-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Empty gray page after going back from a PDF
+        https://bugs.webkit.org/show_bug.cgi?id=56694
+        <rdar://problem/8811854>
+
+        Update m_frameHasCustomRepresentation when loading a page that's in the page cache.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedFromCachedFrame):
+
+2011-03-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Crash when sending a sync message ends up invalidating the connection
