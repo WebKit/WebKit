@@ -1,3 +1,12 @@
+2011-03-18  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Unreviewed, remove stale expectations for r81489.
+
+        * platform/chromium-win-vista/fast/text/stroking-decorations-expected.checksum: Removed.
+        * platform/chromium-win-vista/fast/text/stroking-decorations-expected.png: Removed.
+        * platform/chromium-win-vista/fast/text/stroking-expected.checksum: Removed.
+        * platform/chromium-win-vista/fast/text/stroking-expected.png: Removed.
+
 2011-03-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
