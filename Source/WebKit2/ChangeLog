@@ -1,3 +1,17 @@
+2011-03-17  Adam Roben  <aroben@apple.com>
+
+        Make bidi text in <select> menus in WebKit2 on Windows match WebKit1
+
+        Fixes <http://webkit.org/b/56614> 3 <select> bidi tests failing on Windows 7 Release
+        (WebKit2 Tests)
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::selectItemWritingDirectionIsNatural):
+        (WebKit::WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection):
+        On Windows, return the same values we return in WebKit1.
+
 2011-03-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

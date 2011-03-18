@@ -640,12 +640,20 @@ void WebChromeClient::formDidBlur(const Node*)
 
 bool WebChromeClient::selectItemWritingDirectionIsNatural()
 {
+#if PLATFORM(WIN)
+    return true;
+#else
     return false;
+#endif
 }
 
 bool WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
 {
+#if PLATFORM(WIN)
+    return false;
+#else
     return true;
+#endif
 }
 
 PassRefPtr<WebCore::PopupMenu> WebChromeClient::createPopupMenu(WebCore::PopupMenuClient* client) const
