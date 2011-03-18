@@ -763,8 +763,8 @@ PASS inner.resizeBy.isInner is true
 PASS inner.resizeBy.constructor.isInner is true
 PASS inner.resizeTo.isInner is true
 PASS inner.resizeTo.constructor.isInner is true
-PASS inner.resolveLocalFileSystemURI.isInner is true
-PASS inner.resolveLocalFileSystemURI.constructor.isInner is true
+PASS inner.resolveLocalFileSystemURL.isInner is true
+PASS inner.resolveLocalFileSystemURL.constructor.isInner is true
 FAIL inner.screen.isInner should be true. Was false.
 FAIL inner.screen.constructor.isInner should be true. Was false.
 PASS inner.scroll.isInner is true
