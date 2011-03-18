@@ -3289,7 +3289,7 @@ BUGCR76578 LINUX DEBUG : svg/filters/big-sized-filter.svg = PASS TIMEOUT
 BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS TEXT
 
 // Assert failed started with WebKit r81384
-BUGWK56599 WIN LINUX DEBUG : editing/deleting/5206311-1.html = CRASH PASS
+BUGWK56599 DEBUG : editing/deleting/5206311-1.html = CRASH PASS
 
 // Flaky
 BUGCR76609 MAC DEBUG : animations/play-state.html = CRASH

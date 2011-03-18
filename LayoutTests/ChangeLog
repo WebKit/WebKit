@@ -1,3 +1,9 @@
+2011-03-18  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, suppress editing/deleting/5206311-1.html crashes on Mac Debug
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-17  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
