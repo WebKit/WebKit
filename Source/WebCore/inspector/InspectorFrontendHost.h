@@ -75,6 +75,9 @@ public:
 
     void copyText(const String& text);
 
+    void saveSessionSetting(const String& key, const String& value);
+    String loadSessionSetting(const String& key);
+
     // Called from [Custom] implementations.
     void showContextMenu(Event*, const Vector<ContextMenuItem*>& items);
     void sendMessageToBackend(const String& message);

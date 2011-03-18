@@ -1,3 +1,18 @@
+2011-03-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: implement inspector session storage.
+        https://bugs.webkit.org/show_bug.cgi?id=56643
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::saveSessionSetting):
+        (WebInspectorClient::loadSessionSetting):
+        (WebInspectorFrontendClient::saveSessionSetting):
+        (WebInspectorFrontendClient::loadSessionSetting):
+        (-[WebInspectorWindowController inspectorClient]):
+
 2011-03-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

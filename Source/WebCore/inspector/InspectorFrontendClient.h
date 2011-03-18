@@ -62,6 +62,9 @@ public:
     virtual void inspectedURLChanged(const String&) = 0;
 
     virtual void sendMessageToBackend(const String&) = 0;
+
+    virtual void saveSessionSetting(const String&, const String&) {}
+    virtual void loadSessionSetting(const String&, String*) {}
 };
 
 } // namespace WebCore

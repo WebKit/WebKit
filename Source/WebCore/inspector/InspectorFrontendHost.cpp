@@ -220,6 +220,20 @@ void InspectorFrontendHost::copyText(const String& text)
     Pasteboard::generalPasteboard()->writePlainText(text);
 }
 
+void InspectorFrontendHost::saveSessionSetting(const String& key, const String& value)
+{
+    if (m_client)
+        m_client->saveSessionSetting(key, value);
+}
+
+String InspectorFrontendHost::loadSessionSetting(const String& key)
+{
+    String value;
+    if (m_client)
+        m_client->loadSessionSetting(key, &value);
+    return value;
+}
+
 void InspectorFrontendHost::sendMessageToBackend(const String& message)
 {
     m_client->sendMessageToBackend(message);

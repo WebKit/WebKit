@@ -322,6 +322,16 @@ void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
     updateWindowTitle();
 }
 
+void WebInspectorFrontendClient::saveSessionSetting(const String& key, const String& value)
+{
+    m_inspectorClient->saveSessionSetting(key, value);
+}
+
+void WebInspectorFrontendClient::loadSessionSetting(const String& key, String* value)
+{
+    m_inspectorClient->loadSessionSetting(key, value);
+}
+
 void WebInspectorFrontendClient::closeWindowWithoutNotifications()
 {
     if (!m_frontendHwnd)

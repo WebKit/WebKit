@@ -35,7 +35,9 @@
 #include <WebCore/PlatformString.h>
 #include <WebCore/WindowMessageListener.h>
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/text/StringHash.h>
 #include <windows.h>
 
 namespace WebCore {
@@ -73,6 +75,9 @@ public:
         releaseFrontendPage();
     }
 
+    void saveSessionSetting(const WTF::String& key, const WTF::String& value);
+    void loadSessionSetting(const WTF::String& key, WTF::String* value);
+
 private:
     ~WebInspectorClient();
     WTF::PassOwnPtr<WebCore::InspectorFrontendClientLocal::Settings> createFrontendSettings();
@@ -83,6 +88,8 @@ private:
     HWND m_frontendHwnd;
 
     OwnPtr<WebNodeHighlight> m_highlight;
+
+    WTF::HashMap<WTF::String, WTF::String> m_sessionSettings;
 };
 
 class WebInspectorFrontendClient : public WebCore::InspectorFrontendClientLocal, WebCore::WindowMessageListener {
@@ -103,6 +110,9 @@ public:
     
     virtual void setAttachedWindowHeight(unsigned height);
     virtual void inspectedURLChanged(const WTF::String& newURL);
+
+    virtual void saveSessionSetting(const WTF::String& key, const WTF::String& value);
+    virtual void loadSessionSetting(const WTF::String& key, WTF::String* value);
 
 private:
     ~WebInspectorFrontendClient();

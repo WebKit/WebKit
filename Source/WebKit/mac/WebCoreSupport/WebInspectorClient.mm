@@ -65,6 +65,7 @@ using namespace WebCore;
 - (BOOL)attached;
 - (void)setFrontendClient:(WebInspectorFrontendClient*)frontendClient;
 - (void)setInspectorClient:(WebInspectorClient*)inspectorClient;
+- (WebInspectorClient*)inspectorClient;
 - (void)setAttachedWindowHeight:(unsigned)height;
 - (void)destroyInspectorView:(bool)notifyInspectorController;
 @end
@@ -199,6 +200,20 @@ void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
 {
     m_inspectedURL = newURL;
     updateWindowTitle();
+}
+
+void WebInspectorFrontendClient::saveSessionSetting(const String& key, const String& value)
+{
+    WebInspectorClient* client = [m_windowController.get() inspectorClient];
+    if (client)
+        client->saveSessionSetting(key, value);
+}
+
+void WebInspectorFrontendClient::loadSessionSetting(const String& key, String* value)
+{
+    WebInspectorClient* client = [m_windowController.get() inspectorClient];
+    if (client)
+        client->loadSessionSetting(key, value);
 }
 
 void WebInspectorFrontendClient::updateWindowTitle() const
@@ -420,6 +435,11 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 - (void)setInspectorClient:(WebInspectorClient*)inspectorClient
 {
     _inspectorClient = inspectorClient;
+}
+
+- (WebInspectorClient*)inspectorClient
+{
+    return _inspectorClient;
 }
 
 - (void)setAttachedWindowHeight:(unsigned)height

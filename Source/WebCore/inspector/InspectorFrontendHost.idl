@@ -47,6 +47,9 @@ module core {
         DOMString localizedStringsURL();
         DOMString hiddenPanels();
 
+        void saveSessionSetting(in DOMString key, in DOMString value);
+        DOMString loadSessionSetting(in DOMString key);
+
         void copyText(in DOMString text);
 
         [Custom] DOMString platform();
