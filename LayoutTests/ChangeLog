@@ -1,3 +1,14 @@
+2011-03-18  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; more test baselines.
+
+        Update the checksums I forgot to update in r81504.
+
+        * platform/chromium-gpu-linux/compositing/geometry/clipping-foreground-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/iframes/composited-iframe-alignment-expected.checksum:
+        * platform/chromium-gpu-win/compositing/geometry/clipping-foreground-expected.checksum:
+        * platform/chromium-gpu-win/compositing/iframes/composited-iframe-alignment-expected.checksum:
+
 2011-03-16  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.
