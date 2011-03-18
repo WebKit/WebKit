@@ -378,7 +378,7 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
 
     m_syncMessageState->endWaitForSyncReply();
 
-    if (!reply)
+    if (!reply && m_client)
         m_client->didFailToSendSyncMessage(this);
 
     return reply.release();

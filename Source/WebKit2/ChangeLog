@@ -1,3 +1,16 @@
+2011-03-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Crash when sending a sync message ends up invalidating the connection
+        https://bugs.webkit.org/show_bug.cgi?id=56686
+        <rdar://problem/9048781>
+
+        Guard against a null client.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::sendSyncMessage):
+
 2011-03-18  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Benjamin Poulain.
