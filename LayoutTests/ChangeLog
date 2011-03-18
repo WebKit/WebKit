@@ -1,3 +1,14 @@
+2011-03-18  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        http/tests/inspector/resource-parameters.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=55867
+
+        Fixed test flakiness by not finishing test before proper resource arrives.
+
+        * http/tests/inspector/resource-parameters.html: Renamed from LayoutTests/http/tests/inspector/resource-parameters.html-disabled.
+
 2011-03-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

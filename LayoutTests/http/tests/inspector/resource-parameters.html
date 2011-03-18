@@ -12,13 +12,14 @@ function submit()
 function test()
 {
     InspectorTest.evaluateInPage("submit()");
-    InspectorTest.addSniffer(WebInspector.NetworkDispatcher.prototype, "didFinishLoading", dumpHAR);
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, onResourceFinished);
 
-    function dumpHAR()
+    function onResourceFinished(event)
     {
-        var resource = WebInspector.resourceForURL("http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=");
-        if (resource)
-           InspectorTest.addObject(new WebInspector.HAREntry(resource).build(), InspectorTest.HARNondeterministicProperties);
+        var resource = event.data;
+        if (resource.url !== "http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=")
+            return;
+        InspectorTest.addObject(new WebInspector.HAREntry(resource).build(), InspectorTest.HARNondeterministicProperties);
         InspectorTest.completeTest();
     }
 }
