@@ -31,6 +31,7 @@
 
 #include "DocumentLoadTiming.h"
 #include "DocumentWriter.h"
+#include "IconDatabaseBase.h"
 #include "NavigationAction.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -193,7 +194,13 @@ namespace WebCore {
         bool startLoadingMainResource(unsigned long identifier);
         void cancelMainResourceLoad(const ResourceError&);
         
+        // Support iconDatabase in synchronous mode.
         void iconLoadDecisionAvailable();
+        
+        // Support iconDatabase in asynchronous mode.
+        void continueIconLoadWithDecision(IconLoadDecision);
+        void getIconLoadDecisionForIconURL(const String&);
+        void getIconDataForIconURL(const String&);
         
         bool isLoadingMainResource() const;
         bool isLoadingSubresources() const;
@@ -326,6 +333,9 @@ namespace WebCore {
         bool m_didCreateGlobalHistoryEntry;
 
         DocumentLoadTiming m_documentLoadTiming;
+    
+        RefPtr<IconLoadDecisionCallback> m_iconLoadDecisionCallback;
+        RefPtr<IconDataCallback> m_iconDataCallback;
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         friend class ApplicationCacheHost;  // for substitute resource delivery

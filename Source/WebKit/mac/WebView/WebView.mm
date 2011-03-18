@@ -5864,7 +5864,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 
     WebFrameLoadDelegateImplementationCache* cache = &_private->frameLoadDelegateImplementations;
     if (cache->didReceiveIconForFrameFunc) {
-        Image* image = iconDatabase().iconForPageURL(core(webFrame)->document()->url().string(), IntSize(16, 16));
+        Image* image = iconDatabase().synchronousIconForPageURL(core(webFrame)->document()->url().string(), IntSize(16, 16));
         if (NSImage *icon = webGetNSImage(image, NSMakeSize(16, 16)))
             CallFrameLoadDelegate(cache->didReceiveIconForFrameFunc, self, @selector(webView:didReceiveIcon:forFrame:), icon, webFrame);
     }

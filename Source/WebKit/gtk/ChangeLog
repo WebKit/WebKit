@@ -1,3 +1,17 @@
+2011-03-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56425
+        More groundwork for WebKit2 IconDatabase
+
+        Update already-used function names:
+        * webkit/webkiticondatabase.cpp:
+        (webkit_icon_database_get_icon_uri):
+        (webkit_icon_database_get_icon_pixbuf):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_icon_uri):
+
 2011-03-16  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

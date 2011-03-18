@@ -137,8 +137,8 @@ static WebIconDatabaseClient* defaultClient()
     // FIXME - <rdar://problem/4697934> - Move the handling of FileURLs to WebCore and implement in ObjC++
     if ([URL _webkit_isFileURL])
         return [self _iconForFileURL:URL withSize:size];
-      
-    if (Image* image = iconDatabase().iconForPageURL(URL, IntSize(size)))
+    
+    if (Image* image = iconDatabase().synchronousIconForPageURL(URL, IntSize(size)))
         if (NSImage *icon = webGetNSImage(image, size))
             return icon;
     return [self defaultIconForURL:URL withSize:size];
@@ -155,7 +155,7 @@ static WebIconDatabaseClient* defaultClient()
         return nil;
     ASSERT_MAIN_THREAD();
 
-    return iconDatabase().iconURLForPageURL(URL);
+    return iconDatabase().synchronousIconURLForPageURL(URL);
 }
 
 - (NSImage *)defaultIconWithSize:(NSSize)size

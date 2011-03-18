@@ -112,6 +112,10 @@ FrameLoader* DocumentLoader::frameLoader() const
 DocumentLoader::~DocumentLoader()
 {
     ASSERT(!m_frame || frameLoader()->activeDocumentLoader() != this || !frameLoader()->isLoading());
+    if (m_iconLoadDecisionCallback)
+        m_iconLoadDecisionCallback->invalidate();
+    if (m_iconDataCallback)
+        m_iconDataCallback->invalidate();
 }
 
 PassRefPtr<SharedBuffer> DocumentLoader::mainResourceData() const
@@ -836,7 +840,39 @@ void DocumentLoader::transferLoadingResourcesFromPage(Page* oldPage)
 void DocumentLoader::iconLoadDecisionAvailable()
 {
     if (m_frame)
-        m_frame->loader()->iconLoadDecisionAvailable();
+        m_frame->loader()->iconLoadDecisionReceived(iconDatabase().synchronousLoadDecisionForIconURL(KURL(frameLoader()->iconURL()), this));
 }
 
+static void iconLoadDecisionCallback(IconLoadDecision decision, void* context)
+{
+    static_cast<DocumentLoader*>(context)->continueIconLoadWithDecision(decision);
 }
+
+void DocumentLoader::getIconLoadDecisionForIconURL(const String& urlString)
+{
+    if (m_iconLoadDecisionCallback)
+        m_iconLoadDecisionCallback->invalidate();
+    m_iconLoadDecisionCallback = IconLoadDecisionCallback::create(this, iconLoadDecisionCallback);
+    iconDatabase().loadDecisionForIconURL(urlString, m_iconLoadDecisionCallback);
+}
+
+void DocumentLoader::continueIconLoadWithDecision(IconLoadDecision decision)
+{
+    if (m_frame)
+        m_frame->loader()->continueIconLoadWithDecision(decision);
+}
+
+static void iconDataCallback(SharedBuffer*, void*)
+{
+    // FIXME: Implement this once we know what parts of WebCore actually need the icon data returned.
+}
+
+void DocumentLoader::getIconDataForIconURL(const String& urlString)
+{   
+    if (m_iconDataCallback)
+        m_iconDataCallback->invalidate();
+    m_iconDataCallback = IconDataCallback::create(this, iconDataCallback);
+    iconDatabase().iconDataForIconURL(urlString, m_iconDataCallback);
+}
+
+} // namespace WebCore

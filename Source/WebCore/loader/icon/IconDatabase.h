@@ -84,14 +84,13 @@ public:
 
     virtual void retainIconForPageURL(const String&);
     virtual void releaseIconForPageURL(const String&);
-
-    virtual Image* iconForPageURL(const String&, const IntSize&);
-    virtual String iconURLForPageURL(const String&);
+    virtual void setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&);
     virtual void setIconURLForPageURL(const String& iconURL, const String& pageURL);
 
-    virtual void setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&);
-    virtual bool iconDataKnownForIconURL(const String&);
-    virtual IconLoadDecision loadDecisionForIconURL(const String&, DocumentLoader*);    
+    virtual Image* synchronousIconForPageURL(const String&, const IntSize&);
+    virtual String synchronousIconURLForPageURL(const String&);
+    virtual bool synchronousIconDataKnownForIconURL(const String&);
+    virtual IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*);    
     
     virtual void setEnabled(bool);
     virtual bool isEnabled() const;

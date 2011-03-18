@@ -35,6 +35,7 @@
 #include "FrameLoaderStateMachine.h"
 #include "FrameLoaderTypes.h"
 #include "HistoryController.h"
+#include "IconDatabaseBase.h"
 #include "PolicyChecker.h"
 #include "ResourceLoadNotifier.h"
 #include "SubframeLoader.h"
@@ -289,12 +290,12 @@ public:
 
     FrameLoaderStateMachine* stateMachine() const { return &m_stateMachine; }
 
-    void iconLoadDecisionAvailable();
+    void startIconLoader();
+    void iconLoadDecisionReceived(IconLoadDecision);
+    void continueIconLoadWithDecision(IconLoadDecision);
 
     bool shouldAllowNavigation(Frame* targetFrame) const;
     Frame* findFrameForNavigation(const AtomicString& name);
-
-    void startIconLoader();
 
     void applyUserAgent(ResourceRequest& request);
 

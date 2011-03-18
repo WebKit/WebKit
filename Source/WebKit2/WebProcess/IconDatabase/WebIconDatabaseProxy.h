@@ -52,17 +52,21 @@ public:
     virtual bool isEnabled() const;
     void setEnabled(bool);
     
-    virtual WebCore::Image* iconForPageURL(const String&, const WebCore::IntSize&);
     
     virtual void retainIconForPageURL(const String&);
     virtual void releaseIconForPageURL(const String&);
-
-    virtual String iconURLForPageURL(const String&);
-    virtual bool iconDataKnownForIconURL(const String&);
-    virtual WebCore::IconLoadDecision loadDecisionForIconURL(const String&, WebCore::DocumentLoader*);
-    
     virtual void setIconURLForPageURL(const String&, const String&);
     virtual void setIconDataForIconURL(PassRefPtr<WebCore::SharedBuffer>, const String&);
+
+    virtual String synchronousIconURLForPageURL(const String&);
+    virtual bool synchronousIconDataKnownForIconURL(const String&);
+    virtual WebCore::IconLoadDecision synchronousLoadDecisionForIconURL(const String&, WebCore::DocumentLoader*);
+    virtual WebCore::Image* synchronousIconForPageURL(const String&, const WebCore::IntSize&);
+    
+    // Asynchronous calls we should use to replace the above when supported.
+    virtual bool supportsAsynchronousMode();
+    virtual void loadDecisionForIconURL(const String&, PassRefPtr<WebCore::IconLoadDecisionCallback>);
+    virtual void iconDataForIconURL(const String&, PassRefPtr<WebCore::IconDataCallback>);
         
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     

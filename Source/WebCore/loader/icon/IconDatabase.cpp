@@ -202,7 +202,7 @@ void IconDatabase::removeAllIcons()
     wakeSyncThread();
 }
 
-Image* IconDatabase::iconForPageURL(const String& pageURLOriginal, const IntSize& size)
+Image* IconDatabase::synchronousIconForPageURL(const String& pageURLOriginal, const IntSize& size)
 {   
     ASSERT_NOT_SYNC_THREAD();
 
@@ -286,10 +286,10 @@ void IconDatabase::readIconForPageURLFromDisk(const String& pageURL)
     // The effect of asking for an Icon for a pageURL automatically queues it to be read from disk
     // if it hasn't already been set in memory.  The special IntSize (0, 0) is a special way of telling 
     // that method "I don't care about the actual Image, i just want you to make sure you're getting it from disk.
-    iconForPageURL(pageURL, IntSize(0,0));
+    synchronousIconForPageURL(pageURL, IntSize(0, 0));
 }
 
-String IconDatabase::iconURLForPageURL(const String& pageURLOriginal)
+String IconDatabase::synchronousIconURLForPageURL(const String& pageURLOriginal)
 {    
     ASSERT_NOT_SYNC_THREAD(); 
         
@@ -626,7 +626,7 @@ void IconDatabase::setIconURLForPageURL(const String& iconURLOriginal, const Str
     }
 }
 
-IconLoadDecision IconDatabase::loadDecisionForIconURL(const String& iconURL, DocumentLoader* notificationDocumentLoader)
+IconLoadDecision IconDatabase::synchronousLoadDecisionForIconURL(const String& iconURL, DocumentLoader* notificationDocumentLoader)
 {
     ASSERT_NOT_SYNC_THREAD();
 
@@ -657,7 +657,7 @@ IconLoadDecision IconDatabase::loadDecisionForIconURL(const String& iconURL, Doc
     return IconLoadUnknown;
 }
 
-bool IconDatabase::iconDataKnownForIconURL(const String& iconURL)
+bool IconDatabase::synchronousIconDataKnownForIconURL(const String& iconURL)
 {
     ASSERT_NOT_SYNC_THREAD();
     

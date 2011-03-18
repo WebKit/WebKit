@@ -261,7 +261,7 @@ gchar* webkit_icon_database_get_icon_uri(WebKitIconDatabase* database, const gch
     g_return_val_if_fail(pageURI, 0);
 
     String pageURL = String::fromUTF8(pageURI);
-    return g_strdup(WebCore::iconDatabase().iconURLForPageURL(pageURL).utf8().data());
+    return g_strdup(WebCore::iconDatabase().synchronousIconURLForPageURL(pageURL).utf8().data());
 }
 
 /**
@@ -291,7 +291,7 @@ GdkPixbuf* webkit_icon_database_get_icon_pixbuf(WebKitIconDatabase* database, co
     String pageURL = String::fromUTF8(pageURI);
     // The exact size we pass is irrelevant to the WebCore::iconDatabase code.
     // We must pass something greater than 0, 0 to get a pixbuf.
-    WebCore::Image* icon = WebCore::iconDatabase().iconForPageURL(pageURL, WebCore::IntSize(16, 16));
+    WebCore::Image* icon = WebCore::iconDatabase().synchronousIconForPageURL(pageURL, WebCore::IntSize(16, 16));
     if (!icon)
         return 0;
     GdkPixbuf* pixbuf = icon->getGdkPixbuf();

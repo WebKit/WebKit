@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-String IconDatabaseBase::iconURLForPageURL(const String&)
+String IconDatabaseBase::synchronousIconURLForPageURL(const String&)
 {
     return String();
 }

@@ -1,3 +1,67 @@
+2011-03-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56425
+        More groundwork for WebKit2 IconDatabase
+
+        -Update the synchronous method names to be prefixed with "synchronous."
+        -Call asynchronous versions of the appropriate methods if the IconDatabase supports them.
+
+        Update icon database calls to be prefixed with "synchronous":
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create):
+        * loader/icon/IconDatabaseBase.h:
+        (WebCore::IconDatabaseBase::synchronousIconDataKnownForIconURL):
+        (WebCore::IconDatabaseBase::synchronousLoadDecisionForIconURL):
+        (WebCore::IconDatabaseBase::synchronousIconForPageURL):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::synchronousIconForPageURL):
+        (WebCore::IconDatabase::readIconForPageURLFromDisk):
+        (WebCore::IconDatabase::synchronousIconURLForPageURL):
+        (WebCore::IconDatabase::synchronousLoadDecisionForIconURL):
+        (WebCore::IconDatabase::synchronousIconDataKnownForIconURL):
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconDatabaseBase.cpp:
+        (WebCore::IconDatabaseBase::synchronousIconURLForPageURL):
+
+        Add nascent support for an asynchronous icon database mode:
+        * loader/icon/IconDatabaseBase.h:
+        (WebCore::EnumCallback::create):
+        (WebCore::EnumCallback::~EnumCallback):
+        (WebCore::EnumCallback::performCallback):
+        (WebCore::EnumCallback::invalidate):
+        (WebCore::EnumCallback::EnumCallback):
+        (WebCore::ObjectCallback::create):
+        (WebCore::ObjectCallback::~ObjectCallback):
+        (WebCore::ObjectCallback::performCallback):
+        (WebCore::ObjectCallback::invalidate):
+        (WebCore::ObjectCallback::ObjectCallback):
+        (WebCore::IconDatabaseBase::supportsAsynchronousMode):
+        (WebCore::IconDatabaseBase::loadDecisionForIconURL):
+        (WebCore::IconDatabaseBase::iconDataForIconURL):
+
+        Add interfaces to use the asynchronous versions of certain IconDatabase calls:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::~DocumentLoader):
+        (WebCore::DocumentLoader::iconLoadDecisionAvailable):
+        (WebCore::iconLoadDecisionCallback):
+        (WebCore::DocumentLoader::getIconLoadDecisionForIconURL):
+        (WebCore::DocumentLoader::continueIconLoadWithDecision):
+        (WebCore::iconDataCallback):
+        (WebCore::DocumentLoader::getIconDataForIconURL):
+        * loader/DocumentLoader.h:
+
+        Break "startIconLoader" into two pieces so it can be used from both the synchronous and asynchronous 
+        icon database modes:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::iconLoadDecisionReceived):
+        (WebCore::FrameLoader::startIconLoader):
+        (WebCore::FrameLoader::continueIconLoadWithDecision):
+        * loader/FrameLoader.h:
+
+        * WebCore.exp.in:
+
 2011-03-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: add missing brace to the generated Inspector.idl.

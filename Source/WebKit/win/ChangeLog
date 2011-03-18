@@ -1,3 +1,16 @@
+2011-03-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56425
+        More groundwork for WebKit2 IconDatabase
+
+        Update already-used function names:
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::iconForURL):
+        (WebIconDatabase::iconURLForURL):
+        (WebIconDatabase::hasIconForURL):
+
 2011-03-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
