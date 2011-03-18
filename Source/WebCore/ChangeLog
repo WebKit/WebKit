@@ -1,3 +1,15 @@
+2011-03-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [CMAKE] Split JSC related configurations from WebCore/CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=56624
+
+        No new tests, just splitting jsc related configuration.
+
+        * CMakeLists.txt:
+        * UseJSC.cmake: Added.
+
 2011-03-16  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.
