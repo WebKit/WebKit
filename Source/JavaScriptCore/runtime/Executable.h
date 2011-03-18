@@ -52,8 +52,8 @@ namespace JSC {
         static const int NUM_PARAMETERS_NOT_COMPILED = -1;
     
     public:
-        ExecutableBase(PassRefPtr<Structure> structure, int numParameters)
-            : JSCell(structure.releaseRef())
+        ExecutableBase(Structure* structure, int numParameters)
+            : JSCell(structure)
             , m_numParametersForCall(numParameters)
             , m_numParametersForConstruct(numParameters)
         {
@@ -118,7 +118,7 @@ namespace JSC {
     private:
 #if ENABLE(JIT)
         NativeExecutable(JSGlobalData& globalData, JITCode callThunk, NativeFunction function, JITCode constructThunk, NativeFunction constructor)
-            : ExecutableBase(globalData.executableStructure, NUM_PARAMETERS_IS_HOST)
+            : ExecutableBase(globalData.executableStructure.get(), NUM_PARAMETERS_IS_HOST)
             , m_function(function)
             , m_constructor(constructor)
         {
@@ -129,7 +129,7 @@ namespace JSC {
         }
 #else
         NativeExecutable(JSGlobalData& globalData, NativeFunction function, NativeFunction constructor)
-            : ExecutableBase(globalData.executableStructure, NUM_PARAMETERS_IS_HOST)
+            : ExecutableBase(globalData.executableStructure.get(), NUM_PARAMETERS_IS_HOST)
             , m_function(function)
             , m_constructor(constructor)
         {
@@ -144,7 +144,7 @@ namespace JSC {
 
     class VPtrHackExecutable : public ExecutableBase {
     public:
-        VPtrHackExecutable(PassRefPtr<Structure> structure)
+        VPtrHackExecutable(Structure* structure)
             : ExecutableBase(structure, NUM_PARAMETERS_IS_HOST)
         {
         }
@@ -154,7 +154,7 @@ namespace JSC {
 
     class ScriptExecutable : public ExecutableBase {
     public:
-        ScriptExecutable(PassRefPtr<Structure> structure, JSGlobalData* globalData, const SourceCode& source, bool isInStrictContext)
+        ScriptExecutable(Structure* structure, JSGlobalData* globalData, const SourceCode& source, bool isInStrictContext)
             : ExecutableBase(structure, NUM_PARAMETERS_NOT_COMPILED)
             , m_source(source)
             , m_features(isInStrictContext ? StrictModeFeature : 0)
@@ -168,7 +168,7 @@ namespace JSC {
 #endif
         }
 
-        ScriptExecutable(PassRefPtr<Structure> structure, ExecState* exec, const SourceCode& source, bool isInStrictContext)
+        ScriptExecutable(Structure* structure, ExecState* exec, const SourceCode& source, bool isInStrictContext)
             : ExecutableBase(structure, NUM_PARAMETERS_NOT_COMPILED)
             , m_source(source)
             , m_features(isInStrictContext ? StrictModeFeature : 0)

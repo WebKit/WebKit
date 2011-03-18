@@ -49,7 +49,7 @@ VPtrHackExecutable::~VPtrHackExecutable()
 }
 
 EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext)
-    : ScriptExecutable(exec->globalData().evalExecutableStructure, exec, source, inStrictContext)
+    : ScriptExecutable(exec->globalData().evalExecutableStructure.get(), exec, source, inStrictContext)
 {
 }
 
@@ -58,7 +58,7 @@ EvalExecutable::~EvalExecutable()
 }
 
 ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
-    : ScriptExecutable(exec->globalData().programExecutableStructure, exec, source, false)
+    : ScriptExecutable(exec->globalData().programExecutableStructure.get(), exec, source, false)
 {
 }
 
@@ -67,7 +67,7 @@ ProgramExecutable::~ProgramExecutable()
 }
 
 FunctionExecutable::FunctionExecutable(JSGlobalData* globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext, int firstLine, int lastLine)
-    : ScriptExecutable(globalData->functionExecutableStructure, globalData, source, inStrictContext)
+    : ScriptExecutable(globalData->functionExecutableStructure.get(), globalData, source, inStrictContext)
     , m_numCapturedVariables(0)
     , m_forceUsesArguments(forceUsesArguments)
     , m_parameters(parameters)
@@ -79,7 +79,7 @@ FunctionExecutable::FunctionExecutable(JSGlobalData* globalData, const Identifie
 }
 
 FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext, int firstLine, int lastLine)
-    : ScriptExecutable(exec->globalData().functionExecutableStructure, exec, source, inStrictContext)
+    : ScriptExecutable(exec->globalData().functionExecutableStructure.get(), exec, source, inStrictContext)
     , m_numCapturedVariables(0)
     , m_forceUsesArguments(forceUsesArguments)
     , m_parameters(parameters)

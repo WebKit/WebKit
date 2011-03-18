@@ -1,5 +1,24 @@
 2011-03-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        1 Structure leaked beneath JSGlobalData::storeVPtrs()
+        https://bugs.webkit.org/show_bug.cgi?id=56595
+
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::ExecutableBase):
+        (JSC::NativeExecutable::NativeExecutable):
+        (JSC::VPtrHackExecutable::VPtrHackExecutable):
+        (JSC::ScriptExecutable::ScriptExecutable): Use a raw pointer instead of
+        PassRefPtr, like JSString does, since JSGlobalData owns the singleton
+        exectuable structure.
+
+2011-03-17  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Mark Rowe.
 
         Fixed some string leaks seen on the buildbot
