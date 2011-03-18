@@ -769,9 +769,9 @@
                 ]
             },
             {
-                "name": "getAllStyleSheets",
+                "name": "getAllStyles",
                 "returns": [
-                    { "name": "styleSheetInfos", "$ref": ["CSSStyleSheetInfo"] }
+                    { "name": "styleSheetIds", "type": ["string"] }
                 ]
             },
             {

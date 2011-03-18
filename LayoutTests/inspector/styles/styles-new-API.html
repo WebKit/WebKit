@@ -102,7 +102,7 @@ function test()
                 loadAndDumpStyleSheet.bind(null, styleSheet.styleSheetId, test_changeSelector));
         }
 
-        function styleSheetInfosLoaded(error, infos)
+        function styleSheetIdsLoaded(error, ids)
         {
             if (error) {
                 InspectorTest.addResult("error: " + error);
@@ -110,10 +110,10 @@ function test()
             }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== All stylesheets ===");
-            for (var i = 0; i < infos.length; ++i)
-                loadAndDumpStyleSheet(infos[i].styleSheetId, (i < infos.length - 1) ? null : patchStyleSheet);
+            for (var i = 0; i < ids.length; ++i)
+                loadAndDumpStyleSheet(ids[i], (i < ids.length - 1) ? null : patchStyleSheet);
         }
-        CSSAgent.getAllStyleSheets(styleSheetInfosLoaded);
+        CSSAgent.getAllStyles(styleSheetIdsLoaded);
     }
 
     function test_changeSelector(styleSheet)
@@ -296,14 +296,13 @@ function test()
     function loadAndDumpStyleSheet(styleSheetId, continuation, error)
     {
         if (error) {
-            InspectorTest.addError("error: " + error);
+            InspectorTest.addRecord("error: " + error);
             return;
         }
-
         function styleSheetLoaded(error, styleSheet)
         {
             if (error) {
-                InspectorTest.addError("error: " + error);
+                InspectorTest.addRecord("error: " + error);
                 return;
             }
             InspectorTest.addResult("");
@@ -321,7 +320,7 @@ function test()
 /*
 Covered API methods:
  - getStylesForNode
- - getAllStyleSheets
+ - getAllStyles
  - getStyleSheet
  - setStyleSheetText
  - setStyleData

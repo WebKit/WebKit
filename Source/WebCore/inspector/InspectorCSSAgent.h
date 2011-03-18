@@ -64,7 +64,7 @@ public:
     void getStylesForNode(ErrorString*, long nodeId, RefPtr<InspectorObject>* result);
     void getInlineStyleForNode(ErrorString*, long nodeId, RefPtr<InspectorObject>* style);
     void getComputedStyleForNode(ErrorString*, long nodeId, RefPtr<InspectorObject>* style);
-    void getAllStyleSheets(ErrorString*, RefPtr<InspectorArray>* styleSheetInfos);
+    void getAllStyles(ErrorString*, RefPtr<InspectorArray>* styles);
     void getStyleSheet(ErrorString*, const String& styleSheetId, RefPtr<InspectorObject>* result);
     void getStyleSheetText(ErrorString*, const String& styleSheetId, String* url, String* result);
     void setStyleSheetText(ErrorString*, const String& styleSheetId, const String& text, bool* success);

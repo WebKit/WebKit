@@ -1,3 +1,30 @@
+2011-03-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r81487.
+        http://trac.webkit.org/changeset/81487
+        https://bugs.webkit.org/show_bug.cgi?id=56662
+
+        "Breaks inspector/styles/styles-add-blank-property.html"
+        (Requested by apavlov on #webkit).
+
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getAllStyles):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheet):
+        * inspector/InspectorStyleSheet.h:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.styleSheetCallback):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.allStylesCallback):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype._styleSheetChanged.callback):
+        (WebInspector.CSSStyleModel.prototype._styleSheetChanged):
+        (WebInspector.CSSStyleModel.prototype._onRevert):
+        (WebInspector.CSSStyleSheet):
+        (WebInspector.CSSStyleSheet.prototype.setText):
+
 2011-03-18  Justin Novosad  <junov@chromium.org>
 
         Reviewed by Kenneth Russell.
