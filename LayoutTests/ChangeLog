@@ -1,3 +1,12 @@
+2011-03-17  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: extract content loading logic from scripts panel.
+        https://bugs.webkit.org/show_bug.cgi?id=55237
+
+        * inspector/debugger/debug-inlined-scripts.html:
+
 2011-03-18  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, rebaseline GPU tests after r81414
