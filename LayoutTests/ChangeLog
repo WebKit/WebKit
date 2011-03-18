@@ -1,5 +1,19 @@
 2011-03-18  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed; new test baselines.
+
+        One last attempt at rebaselining these tests (now that I know how
+        the --gpu flag works).
+
+        * platform/chromium-gpu-linux/compositing/geometry/clipping-foreground-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/geometry/clipping-foreground-expected.png: Removed.
+        * platform/chromium-gpu-linux/compositing/iframes/composited-iframe-alignment-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/iframes/composited-iframe-alignment-expected.png: Removed.
+        * platform/chromium-gpu-win/compositing/geometry/clipping-foreground-expected.checksum:
+        * platform/chromium-gpu-win/compositing/iframes/composited-iframe-alignment-expected.checksum:
+
+2011-03-18  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed; more test baselines.
 
         Update the checksums I forgot to update in r81504.
