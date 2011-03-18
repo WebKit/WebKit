@@ -1,3 +1,7 @@
+2011-03-18  Andreas Kling  <kling@webkit.org>
+
+        Reverting accidental changes in r81498.
+
 2011-03-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

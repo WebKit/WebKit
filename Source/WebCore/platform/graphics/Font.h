@@ -138,6 +138,8 @@ public:
     const FontData* fontDataAt(unsigned) const;
     GlyphData glyphDataForCharacter(UChar32, bool mirror, FontDataVariant = AutoVariant) const;
     bool primaryFontHasGlyphForCharacter(UChar32) const;
+    // Used for complex text, and does not utilize the glyph map cache.
+    const FontData* fontDataForCharacters(const UChar*, int length) const;
 
     static bool isCJKIdeograph(UChar32);
     static bool isCJKIdeographOrSymbol(UChar32);
@@ -251,6 +253,12 @@ inline const FontData* Font::fontDataAt(unsigned index) const
 {
     ASSERT(m_fontList);
     return m_fontList->fontDataAt(this, index);
+}
+
+inline const FontData* Font::fontDataForCharacters(const UChar* characters, int length) const
+{
+    ASSERT(m_fontList);
+    return m_fontList->fontDataForCharacters(this, characters, length);
 }
 
 inline bool Font::isFixedPitch() const
