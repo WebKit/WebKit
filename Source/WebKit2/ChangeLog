@@ -1,3 +1,16 @@
+2011-03-18  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Jon Honeycutt.
+
+        <rdar://problem/9153929> PluginProcess fails to launch due to PluginProcessShim.dylib building for 64-bit only
+
+        Fix a bogus change from r81392 that made PluginProcessShim.xcconfig import DebugRelease.xcconfig.
+        As its name suggests, DebugRelease.xcconfig is only applicable for the debug and release configurations.
+        It overrides the valid build architectures and also restricts the build to only the active architecture.
+        
+        * Configurations/PluginProcessShim.xcconfig: Import BaseTarget.xcconfig instead. This is what
+        each target-specific .xcconfig file should import.
+
 2011-03-17  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.
