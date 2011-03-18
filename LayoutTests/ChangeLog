@@ -1,3 +1,11 @@
+2011-03-17  Adam Roben  <aroben@apple.com>
+
+        Remove some non-compositing results for a test that is now skipped in non-compositing builds
+
+        Reviewed by Sam Weinig.
+
+        * platform/win-xp/media/media-document-audio-repaint-expected.txt: Removed.
+
 2011-03-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin.

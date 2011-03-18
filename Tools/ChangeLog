@@ -1,5 +1,14 @@
 2011-03-17  Adam Roben  <aroben@apple.com>
 
+        Skip a compositing-sensitive test when accelerated compositing is disabled
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/old-run-webkit-tests: Skip media/media-document-audio-repaint.html when
+        accelerated compositing is disabled.
+
+2011-03-17  Adam Roben  <aroben@apple.com>
+
         Start using PlatformSpecificScheduler for the Mac builders
 
         The current set of file/directory patterns should work for Mac builders. We may discover

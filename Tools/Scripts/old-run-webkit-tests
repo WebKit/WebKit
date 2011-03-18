@@ -546,6 +546,9 @@ if (!$hasAcceleratedCompositing) {
     # compositing is enabled.
     $ignoredFiles{'svg/custom/use-on-symbol-inside-pattern.svg'} = 1;
 
+    # This test has an iframe that is put in a layer only in compositing mode.
+    $ignoredFiles{'media/media-document-audio-repaint.html'} = 1;
+
     if (isAppleWebKit()) {
         # In Apple's ports, the default controls for <video> contain a "full
         # screen" button only if accelerated compositing is enabled.
