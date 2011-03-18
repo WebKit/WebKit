@@ -983,8 +983,8 @@ static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoade
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if ([challenge previousFailureCount] == 0) {
-        NSURLCredential *credential = [[NSURLCredential alloc]  initWithUser:m_username password:m_password persistence:NSURLCredentialPersistenceForSession];
-        [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
+        RetainPtr<NSURLCredential> credential(AdoptNS, [[NSURLCredential alloc]  initWithUser:m_username password:m_password persistence:NSURLCredentialPersistenceForSession]);
+        [[challenge sender] useCredential:credential.get() forAuthenticationChallenge:challenge];
         return;
     }
     [[challenge sender] cancelAuthenticationChallenge:challenge];

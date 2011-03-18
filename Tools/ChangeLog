@@ -1,3 +1,16 @@
+2011-03-18  Adam Roben  <aroben@apple.com>
+
+        Fix a NSURLCredential leak seen on the leaks bot
+
+        Fixes <http://webkit.org/b/56637> -[SynchronousLoader
+        connection:didReceiveAuthenticationChallenge:] is leaky
+
+        Reviewed by John Sullivan.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (-[SynchronousLoader connection:didReceiveAuthenticationChallenge:]): Use a RetainPtr to
+        cause the NSURLCredential to be released.
+
 2011-03-18  John Knottenbelt  <jknotten@chromium.org>
 
         Unreviewed.
