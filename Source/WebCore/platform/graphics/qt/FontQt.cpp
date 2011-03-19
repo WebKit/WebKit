@@ -169,21 +169,16 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
             p->restore();
             return;
         }
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
         int skipWidth = QFontMetrics(font).width(string, from, Qt::TextBypassShaping);
         pt.setX(pt.x() + skipWidth);
         string = fromRawDataWithoutRef(sanitized, from, to - from);
-#endif
     }
 
     p->setFont(font);
 
     int flags = run.rtl() ? Qt::TextForceRightToLeft : Qt::TextForceLeftToRight;
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
-    // See QWebPagePrivate::QWebPagePrivate() where the default path is set to Complex for Qt 4.6 and earlier.
     if (!isComplexText && !(ctx->textDrawingMode() & TextModeStroke))
         flags |= Qt::TextBypassShaping;
-#endif
 
     QPainterPath textStrokePath;
     if (ctx->textDrawingMode() & TextModeStroke)
@@ -200,11 +195,7 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
                 p->restore();
             } else {
                 QFontMetrics fm(font);
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
                 QRectF boundingRect(pt.x(), point.y() - fm.ascent(), fm.width(string, -1, flags), fm.height());
-#else
-                QRectF boundingRect(pt.x(), point.y() - fm.ascent(), fm.width(string), fm.height());
-#endif
                 QPainter* shadowPainter = ctxShadow->beginShadowLayer(ctx, boundingRect);
                 if (shadowPainter) {
                     // Since it will be blurred anyway, we don't care about render hints.
@@ -221,11 +212,7 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
                 p->translate(-ctxShadow->offset());
             } else {
                 QFontMetrics fm(font);
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
                 QRectF boundingRect(pt.x(), point.y() - fm.ascent(), fm.width(string, -1, flags), fm.height());
-#else
-                QRectF boundingRect(pt.x(), point.y() - fm.ascent(), fm.width(string), fm.height());
-#endif
                 QPainter* shadowPainter = ctxShadow->beginShadowLayer(ctx, boundingRect);
                 if (shadowPainter) {
                     // Since it will be blurred anyway, we don't care about render hints.
@@ -250,11 +237,7 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
 
 void Font::drawSimpleText(GraphicsContext* ctx, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     drawTextCommon(ctx, run, point, from, to, font(), /* isComplexText = */false);
-#else
-    Q_ASSERT(false);
-#endif
 }
 
 void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const FloatPoint& point, int from, int to) const
@@ -295,7 +278,6 @@ float Font::floatWidthForSimpleText(const TextRun& run, GlyphBuffer* glyphBuffer
     if (!primaryFont()->platformData().size())
         return 0;
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     if (!run.length())
         return 0;
 
@@ -309,10 +291,6 @@ float Font::floatWidthForSimpleText(const TextRun& run, GlyphBuffer* glyphBuffer
         w -= m_wordSpacing;
 
     return w + run.expansion();
-#else
-    Q_ASSERT(false);
-    return 0;
-#endif
 }
 
 float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>*, GlyphOverflow*) const
@@ -339,7 +317,6 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 
 int Font::offsetForPositionForSimpleText(const TextRun& run, float position, bool includePartialGlyphs) const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     String sanitized = Font::normalizeSpaces(run.characters(), run.length());
     QString string = fromRawDataWithoutRef(sanitized);
 
@@ -359,10 +336,6 @@ int Font::offsetForPositionForSimpleText(const TextRun& run, float position, boo
     } while (++curPos < string.size());
 
     return curPos;
-#else
-    Q_ASSERT(false);
-    return 0;
-#endif
 }
 
 int Font::offsetForPositionForComplexText(const TextRun& run, float position, bool) const
@@ -377,7 +350,6 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float position, bo
 
 FloatRect Font::selectionRectForSimpleText(const TextRun& run, const FloatPoint& pt, int h, int from, int to) const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     String sanitized = Font::normalizeSpaces(run.characters(), run.length());
     QString wholeText = fromRawDataWithoutRef(sanitized);
     QString selectedText = fromRawDataWithoutRef(sanitized, from, qMin(to - from, wholeText.length() - from));
@@ -386,10 +358,6 @@ FloatRect Font::selectionRectForSimpleText(const TextRun& run, const FloatPoint&
     int width = QFontMetrics(font()).width(selectedText, -1, Qt::TextBypassShaping);
 
     return FloatRect(pt.x() + startX, pt.y(), width, h);
-#else
-    Q_ASSERT(false);
-    return FloatRect();
-#endif
 }
 
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint& pt, int h, int from, int to) const

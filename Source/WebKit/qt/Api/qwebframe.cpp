@@ -877,11 +877,9 @@ void QWebFrame::load(const QNetworkRequest &req,
         case QNetworkAccessManager::DeleteOperation:
             request.setHTTPMethod("DELETE");
             break;
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
         case QNetworkAccessManager::CustomOperation:
             request.setHTTPMethod(req.attribute(QNetworkRequest::CustomVerbAttribute).toByteArray().constData());
             break;
-#endif
         case QNetworkAccessManager::UnknownOperation:
             // eh?
             break;

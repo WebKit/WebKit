@@ -41,16 +41,6 @@
 #include <QDebug>
 #include <QCoreApplication>
 
-// What type of connection should be used for the signals of the
-// QNetworkReply? This depends on if Qt has a bugfix for this or not.
-// It is fixed in Qt 4.6.3. See https://bugs.webkit.org/show_bug.cgi?id=32113
-// and https://bugs.webkit.org/show_bug.cgi?id=36755
-#if QT_VERSION > QT_VERSION_CHECK(4, 6, 2)
-#define SIGNAL_CONN Qt::DirectConnection
-#else
-#define SIGNAL_CONN Qt::QueuedConnection
-#endif
-
 // In Qt 4.8, the attribute for sending a request synchronously will be made public,
 // for now, use this hackish solution for setting the internal attribute.
 const QNetworkRequest::Attribute gSynchronousNetworkRequestAttribute = static_cast<QNetworkRequest::Attribute>(QNetworkRequest::HttpPipeliningWasUsedAttribute + 7);
@@ -172,10 +162,8 @@ String QNetworkReplyHandler::httpMethod() const
         return "PUT";
     case QNetworkAccessManager::DeleteOperation:
         return "DELETE";
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     case QNetworkAccessManager::CustomOperation:
         return m_resourceHandle->firstRequest().httpMethod();
-#endif
     default:
         ASSERT_NOT_REACHED();
         return "GET";
@@ -208,13 +196,8 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
         m_method = QNetworkAccessManager::PutOperation;
     else if (r.httpMethod() == "DELETE")
         m_method = QNetworkAccessManager::DeleteOperation;
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     else
         m_method = QNetworkAccessManager::CustomOperation;
-#else
-    else
-        m_method = QNetworkAccessManager::UnknownOperation;
-#endif
 
     QObject* originatingObject = 0;
     if (m_resourceHandle->getInternal()->m_context)
@@ -393,13 +376,8 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
         response.setHTTPStatusText(m_reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toByteArray().constData());
 
         // Add remaining headers.
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
         foreach (const QNetworkReply::RawHeaderPair& pair, m_reply->rawHeaderPairs())
             response.setHTTPHeaderField(QString::fromAscii(pair.first), QString::fromAscii(pair.second));
-#else
-        foreach (const QByteArray& headerName, m_reply->rawHeaderList())
-            response.setHTTPHeaderField(QString::fromAscii(headerName), QString::fromAscii(m_reply->rawHeader(headerName)));
-#endif
     }
 
     QUrl redirection = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
@@ -538,11 +516,9 @@ void QNetworkReplyHandler::start()
             m_reply = manager->deleteResource(m_request);
             break;
         }
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
         case QNetworkAccessManager::CustomOperation:
             m_reply = manager->sendCustomRequest(m_request, m_resourceHandle->firstRequest().httpMethod().latin1().data());
             break;
-#endif
         case QNetworkAccessManager::UnknownOperation: {
             m_reply = 0;
             ResourceHandleClient* client = m_resourceHandle->client();
@@ -563,26 +539,20 @@ void QNetworkReplyHandler::start()
         return;
     }
 
-    connect(m_reply, SIGNAL(finished()),
-            this, SLOT(finish()), SIGNAL_CONN);
+    connect(m_reply, SIGNAL(finished()), this, SLOT(finish()));
 
     // For http(s) we know that the headers are complete upon metaDataChanged() emission, so we
     // can send the response as early as possible
     if (scheme == QLatin1String("http") || scheme == QLatin1String("https"))
-        connect(m_reply, SIGNAL(metaDataChanged()),
-                this, SLOT(sendResponseIfNeeded()), SIGNAL_CONN);
+        connect(m_reply, SIGNAL(metaDataChanged()), this, SLOT(sendResponseIfNeeded()));
 
-    connect(m_reply, SIGNAL(readyRead()),
-            this, SLOT(forwardData()), SIGNAL_CONN);
+    connect(m_reply, SIGNAL(readyRead()), this, SLOT(forwardData()));
 
-    if (m_resourceHandle->firstRequest().reportUploadProgress()) {
-        connect(m_reply, SIGNAL(uploadProgress(qint64, qint64)),
-                this, SLOT(uploadProgress(qint64, qint64)), SIGNAL_CONN);
-    }
+    if (m_resourceHandle->firstRequest().reportUploadProgress())
+        connect(m_reply, SIGNAL(uploadProgress(qint64, qint64)), this, SLOT(uploadProgress(qint64, qint64)));
 
     // Make this a direct function call once we require 4.6.1+.
-    connect(this, SIGNAL(processQueuedItems()),
-            this, SLOT(sendQueuedItems()), SIGNAL_CONN);
+    connect(this, SIGNAL(processQueuedItems()), this, SLOT(sendQueuedItems()));
 }
 
 void QNetworkReplyHandler::resetState()

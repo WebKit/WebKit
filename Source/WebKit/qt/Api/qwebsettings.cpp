@@ -477,25 +477,16 @@ QWebSettings::QWebSettings()
     d->fontFamilies.insert(QWebSettings::StandardFont, defaultFont.defaultFamily());
     d->fontFamilies.insert(QWebSettings::SerifFont, defaultFont.defaultFamily());
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     defaultFont.setStyleHint(QFont::Fantasy);
     d->fontFamilies.insert(QWebSettings::FantasyFont, defaultFont.defaultFamily());
 
     defaultFont.setStyleHint(QFont::Cursive);
     d->fontFamilies.insert(QWebSettings::CursiveFont, defaultFont.defaultFamily());
-#else
-    d->fontFamilies.insert(QWebSettings::FantasyFont, defaultFont.defaultFamily());
-    d->fontFamilies.insert(QWebSettings::CursiveFont, defaultFont.defaultFamily());
-#endif
 
     defaultFont.setStyleHint(QFont::SansSerif);
     d->fontFamilies.insert(QWebSettings::SansSerifFont, defaultFont.defaultFamily());
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     defaultFont.setStyleHint(QFont::Monospace);
-#else
-    defaultFont.setStyleHint(QFont::TypeWriter);
-#endif
     d->fontFamilies.insert(QWebSettings::FixedFont, defaultFont.defaultFamily());
 
     d->attributes.insert(QWebSettings::AutoLoadImages, true);

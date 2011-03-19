@@ -25,10 +25,6 @@
 #include "NetworkStateNotifierPrivate.h"
 #include "qnetworkconfigmanager.h"
 
-#if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
-using namespace QtMobility;
-#endif
-
 namespace WebCore {
 
 NetworkStateNotifierPrivate::NetworkStateNotifierPrivate(NetworkStateNotifier* notifier)

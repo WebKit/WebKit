@@ -194,15 +194,7 @@ void ImageDecoderQt::internalReadImage(size_t frameIndex)
 
 bool ImageDecoderQt::internalHandleCurrentImage(size_t frameIndex)
 {
-    QPixmap pixmap;
-
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
-    pixmap = QPixmap::fromImageReader(m_reader.get());
-#else
-    QImage img;
-    if (m_reader->read(&img))
-        pixmap = QPixmap::fromImage(img);
-#endif
+    QPixmap pixmap = QPixmap::fromImageReader(m_reader.get());
 
     if (pixmap.isNull()) {
         frameCount();

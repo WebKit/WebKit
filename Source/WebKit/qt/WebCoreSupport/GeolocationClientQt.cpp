@@ -82,12 +82,7 @@ void GeolocationClientQt::positionUpdated(const QGeoPositionInfo &geoPosition)
     bool providesSpeed = geoPosition.hasAttribute(QGeoPositionInfo::GroundSpeed);
     double speed = geoPosition.attribute(QGeoPositionInfo::GroundSpeed);
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     double timeStampInSeconds = geoPosition.timestamp().toMSecsSinceEpoch() / 1000;
-#else
-    QDateTime datetime = geoPosition.timestamp();
-    double timeStampInSeconds = (datetime.toTime_t() + datetime.time().msec()) / 1000;
-#endif
 
     m_lastPosition = GeolocationPosition::create(timeStampInSeconds, latitude, longitude,
                                                  accuracy, providesAltitude, altitude,

@@ -479,7 +479,6 @@ void GraphicsContext3DInternal::paint(QPainter* painter, const QStyleOptionGraph
 
     QRectF rect = option ? option->rect : boundingRect();
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     // Use direct texture mapping if WebGL canvas has a shared OpenGL context
     // with browsers OpenGL context.
     QGLWidget* viewportGLWidget = getViewportGLWidget();
@@ -487,7 +486,6 @@ void GraphicsContext3DInternal::paint(QPainter* painter, const QStyleOptionGraph
         viewportGLWidget->drawTexture(rect, m_texture);
         return;
     }
-#endif
 
     // Alternatively read pixels to a memory buffer.
     m_glWidget->makeCurrent();

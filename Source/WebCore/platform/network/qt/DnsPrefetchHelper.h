@@ -32,7 +32,7 @@ namespace WebCore {
     class DnsPrefetchHelper : public QObject {
         Q_OBJECT
     public:
-        DnsPrefetchHelper() : QObject(), currentLookups(0) {};
+        DnsPrefetchHelper() : QObject(), currentLookups(0) { }
 
     public slots:
         void lookup(QString hostname)
@@ -42,26 +42,8 @@ namespace WebCore {
             if (currentLookups >= 10)
                 return; // do not launch more than 10 lookups at the same time
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 3)
             currentLookups++;
             QHostInfo::lookupHost(hostname, this, SLOT(lookedUp(QHostInfo)));
-#else
-            // This code is only needed for Qt versions that do not have
-            // the small Qt DNS cache yet.
-
-            QTime* entryTime = lookupCache.object(hostname);
-            if (entryTime && entryTime->elapsed() > 300*1000) {
-                // delete knowledge about lookup if it is already 300 seconds old
-                lookupCache.remove(hostname);
-            } else if (!entryTime) {
-                // not in cache yet, can look it up
-                QTime *tmpTime = new QTime();
-                *tmpTime = QTime::currentTime();
-                lookupCache.insert(hostname, tmpTime);
-                currentLookups++;
-                QHostInfo::lookupHost(hostname, this, SLOT(lookedUp(QHostInfo)));
-            }
-#endif
         }
 
         void lookedUp(const QHostInfo&)
@@ -74,9 +56,6 @@ namespace WebCore {
         }
 
     protected:
-#if QT_VERSION < QT_VERSION_CHECK(4, 6, 3)
-        QCache<QString, QTime> lookupCache; // 100 entries
-#endif
         int currentLookups;
     };
 

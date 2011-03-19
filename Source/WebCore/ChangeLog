@@ -1,3 +1,41 @@
+2011-03-19  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Remove support for Qt 4.6
+        https://bugs.webkit.org/show_bug.cgi?id=56712
+
+        * platform/graphics/qt/FontPlatformDataQt.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::drawTextCommon):
+        (WebCore::Font::drawSimpleText):
+        (WebCore::Font::floatWidthForSimpleText):
+        (WebCore::Font::offsetForPositionForSimpleText):
+        (WebCore::Font::selectionRectForSimpleText):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::paint):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::getImageData):
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::internalHandleCurrentImage):
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::transform):
+        * platform/network/qt/DnsPrefetchHelper.h:
+        (WebCore::DnsPrefetchHelper::DnsPrefetchHelper):
+        (WebCore::DnsPrefetchHelper::lookup):
+        * platform/network/qt/NetworkStateNotifierPrivate.h:
+        * platform/network/qt/NetworkStateNotifierQt.cpp:
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::httpMethod):
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        (WebCore::QNetworkReplyHandler::start):
+        * platform/network/qt/ResourceRequestQt.cpp:
+        (WebCore::ResourceRequest::toNetworkRequest):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintMediaSliderTrack):
+
 2011-03-19  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

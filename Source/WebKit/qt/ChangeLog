@@ -1,5 +1,21 @@
 2011-03-19  Andreas Kling  <kling@webkit.org>
 
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Remove support for Qt 4.6
+        https://bugs.webkit.org/show_bug.cgi?id=56712
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::load):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+        * WebCoreSupport/GeolocationClientQt.cpp:
+        (WebCore::GeolocationClientQt::positionUpdated):
+
+2011-03-19  Andreas Kling  <kling@webkit.org>
+
         Reviewed by Antonio Gomes.
 
         [Qt][Doc] QWebPage::unsupportedContent() passes ownership of the QNetworkReply

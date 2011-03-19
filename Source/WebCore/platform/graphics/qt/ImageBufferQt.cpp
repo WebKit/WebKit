@@ -219,11 +219,7 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& i
     ASSERT(!image.isNull());
 
     const int bytesPerLine = image.bytesPerLine();
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
     const uchar* bits = image.constBits();
-#else
-    const uchar* bits = image.bits();
-#endif
 
     quint32* destRows = reinterpret_cast_ptr<quint32*>(&data[desty * rect.width() * 4 + destx * 4]);
 
