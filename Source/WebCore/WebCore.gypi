@@ -6763,6 +6763,8 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMMessagePort.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMMessagePort.mm',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMMessagePortInternal.h',
+            '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMMouseEvent.mm',
+            '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMMouseEventInternal.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMMutationEvent.mm',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMMutationEventInternal.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMNamedNodeMap.mm',

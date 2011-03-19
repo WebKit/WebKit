@@ -26,6 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// This file intentionally calls objc_finalizeOnMainThread, which is deprecated.
+// According to http://gcc.gnu.org/onlinedocs/gcc-4.2.1/gcc/Diagnostic-Pragmas.html#Diagnostic-Pragmas
+// we need to place this directive before any data or functions are defined.
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 #include "config.h"
 #include "WebCoreObjCExtras.h"
 

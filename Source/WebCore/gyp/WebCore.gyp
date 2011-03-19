@@ -68,6 +68,10 @@
         ['exclude', 'platform/KillRingNone\\.cpp$'],
         ['exclude', 'platform/graphics/cg/FontPlatformData\\.h$'],
         ['exclude', 'platform/graphics/gpu/LoopBlinnPathProcessor\\.(cpp|h)$'],
+        ['exclude', 'platform/graphics/gpu/LoopBlinnLocalTriangulator\\.(cpp|h)$'],
+        ['exclude', 'platform/graphics/gpu/LoopBlinnPathCache\\.(cpp|h)$'],
+        ['exclude', 'platform/graphics/gpu/LoopBlinnShader\\.(cpp|h)$'],
+        ['exclude', 'platform/graphics/gpu/LoopBlinnSolidFillShader\\.(cpp|h)$'],
         # FIXME: Consider excluding GL as a suffix.
         ['exclude', 'platform/graphics/ImageSource\\.cpp$'],
         ['exclude', 'platform/graphics/opengl/TextureMapperGL\\.cpp$'],
@@ -80,8 +84,10 @@
         ['exclude', 'plugins/PluginDataNone\\.cpp$'],
         ['exclude', 'plugins/PluginDatabase\\.cpp$'],
         ['exclude', 'plugins/PluginPackageNone\\.cpp$'],
+        ['exclude', 'plugins/PluginPackage\\.cpp$'],
         ['exclude', 'plugins/PluginStream\\.cpp$'],
         ['exclude', 'plugins/PluginView\\.cpp$'],
+        ['exclude', 'plugins/mac/PluginPackageMac\\.cpp$'],
         ['exclude', 'plugins/mac/PluginViewMac\\.mm$'],
         ['exclude', 'plugins/npapi\\.cpp$'],
 
@@ -102,6 +108,9 @@
         ['exclude', 'tokenizer\\.cpp'],
 
         ['exclude', 'AllInOne\\.cpp$'],
+
+        ['exclude', 'rendering/svg/[^/]+\\.cpp'],
+        ['include', 'rendering/svg/RenderSVGAllInOne\\.cpp$'],
       ],
       'mac_framework_private_headers': [
         '<@(webcore_privateheader_files)',
@@ -143,6 +152,7 @@
             'GCC_PREFIX_HEADER': '<(DEPTH)/WebCore/WebCorePrefix.h',
             'INFOPLIST_FILE': '<(DEPTH)/WebCore/Info.plist',
             'ALWAYS_SEARCH_USER_PATHS': 'NO',
+            'DEAD_CODE_STRIPPING': 'NO',
           },
         }],
       ],

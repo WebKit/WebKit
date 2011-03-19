@@ -4072,7 +4072,6 @@
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
 		ABFE7E120D32FAF60066F4D2 /* MediaControlElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABFE7E100D32FAF50066F4D2 /* MediaControlElements.cpp */; };
 		ABFE7E130D32FAF60066F4D2 /* MediaControlElements.h in Headers */ = {isa = PBXBuildFile; fileRef = ABFE7E110D32FAF50066F4D2 /* MediaControlElements.h */; };
-		ADDF1AD61257CD9A0003A759 /* RenderSVGPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADDF1AD41257CD9A0003A759 /* RenderSVGPath.cpp */; };
 		ADDF1AD71257CD9A0003A759 /* RenderSVGPath.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */; };
 		B0149E7D11A4B21500196A7B /* AsyncImageResizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0149E7911A4B21500196A7B /* AsyncImageResizer.cpp */; };
 		B0149E7E11A4B21500196A7B /* AsyncImageResizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */; };
@@ -24770,7 +24769,6 @@
 				BC8C8FAD0DDCD31B00B592F4 /* RenderStyle.cpp in Sources */,
 				D302754D12A5FEAB004BD828 /* RenderSummary.cpp in Sources */,
 				0F4E57171313276200CF85AF /* RenderSVGAllInOne.cpp in Sources */,
-				ADDF1AD61257CD9A0003A759 /* RenderSVGPath.cpp in Sources */,
 				A8DF4AEC0980C42C0052981B /* RenderTable.cpp in Sources */,
 				A8DF4AEA0980C42C0052981B /* RenderTableCell.cpp in Sources */,
 				A8DF4AE80980C42C0052981B /* RenderTableCol.cpp in Sources */,

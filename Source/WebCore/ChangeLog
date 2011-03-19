@@ -2,6 +2,36 @@
 
         Reviewed by Dimitri Glazkov.
 
+        WebCore GYP build should build
+        https://bugs.webkit.org/show_bug.cgi?id=56696
+
+        After this patch, the WebCore GYP build successfully compiles and
+        links.  I haven't trying executing it yet.
+
+        * WebCore.gypi:
+            - DOMMouseEvent should be included as part of the Objective-C bindings.
+        * WebCore.xcodeproj/project.pbxproj:
+            - RenderSVGPath.cpp was mistakenly included directly in the project
+              instead of being built by RenderSVGAllInOne.
+        * gyp/WebCore.gyp:
+            - Exclude some more files from the build.  These files are absent
+              in the normal build.  I didn't see them earlier because the dead
+              code stripping was hiding them.  (They're probably unreferenced.)
+            - Switch to using RenderSVGAllInOne.  I'm not entirely sure if this
+              part of the patch is necessary, but it matches the normal build
+              more closely.
+        * platform/mac/WebCoreObjCExtras.mm:
+            - The normal build passes the -Wdeprecated-declarations flag when
+              compiling this file.  The GYP folks explicitly do not want to add
+              that feature to GYP, and there does not appear to be a way to
+              remove the deprecated call from this file.
+        * rendering/svg/RenderSVGAllInOne.cpp:
+            - Add RenderSVGPath.cpp, which was missing previously.
+
+2011-03-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
         WebCore GYP build should (almost!) link
         https://bugs.webkit.org/show_bug.cgi?id=56689
 

@@ -34,6 +34,7 @@
 #include "RenderSVGInline.cpp"
 #include "RenderSVGInlineText.cpp"
 #include "RenderSVGModelObject.cpp"
+#include "RenderSVGPath.cpp"
 #include "RenderSVGResource.cpp"
 #include "RenderSVGResourceClipper.cpp"
 #include "RenderSVGResourceContainer.cpp"
