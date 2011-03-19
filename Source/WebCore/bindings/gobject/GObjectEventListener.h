@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010 Igalia S.L.
+ *  Copyright (C) 2010, 2011 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@
 #ifndef GObjectEventListener_h
 #define GObjectEventListener_h
 
-#include "DOMWindow.h"
 #include "EventListener.h"
 #include "EventTarget.h"
 
@@ -34,27 +33,15 @@ namespace WebCore {
 class GObjectEventListener : public EventListener {
 public:
 
-    static bool addEventListener(GObject* object, DOMWindow* window, const char* domEventName, GCallback handler, bool useCapture, void* userData)
-    {
-        RefPtr<GObjectEventListener> listener(adoptRef(new GObjectEventListener(object, window, 0, domEventName, handler, useCapture, userData)));
-        return window->addEventListener(domEventName, listener.release(), useCapture);
-    }
-
     static bool addEventListener(GObject* object, EventTarget* target, const char* domEventName, GCallback handler, bool useCapture, void* userData)
     {
-        RefPtr<GObjectEventListener> listener(adoptRef(new GObjectEventListener(object, 0, target, domEventName, handler, useCapture, userData)));
+        RefPtr<GObjectEventListener> listener(adoptRef(new GObjectEventListener(object, target, domEventName, handler, useCapture, userData)));
         return target->addEventListener(domEventName, listener.release(), useCapture);
-    }
-
-    static bool removeEventListener(GObject* object, DOMWindow* window, const char* domEventName, GCallback handler, bool useCapture)
-    {
-        GObjectEventListener key(object, window, 0, domEventName, handler, useCapture, 0);
-        return window->removeEventListener(domEventName, &key, useCapture);
     }
 
     static bool removeEventListener(GObject* object, EventTarget* target, const char* domEventName, GCallback handler, bool useCapture)
     {
-        GObjectEventListener key(object, 0, target, domEventName, handler, useCapture, 0);
+        GObjectEventListener key(object, target, domEventName, handler, useCapture, 0);
         return target->removeEventListener(domEventName, &key, useCapture);
     }
 
@@ -73,7 +60,7 @@ public:
     virtual bool operator==(const EventListener& other);
 
 private:
-    GObjectEventListener(GObject*, DOMWindow*, EventTarget*, const char* domEventName, GCallback handler, bool capture, void* userData);
+    GObjectEventListener(GObject*, EventTarget*, const char* domEventName, GCallback handler, bool capture, void* userData);
     ~GObjectEventListener();
     void gobjectDestroyed();
 
@@ -81,10 +68,9 @@ private:
 
     GObject* m_object;
 
-    // We do not need to keep a reference to these WebCore objects, because
-    // we only use them when the GObject and thus the WebCore object is alive.
+    // We do not need to keep a reference to the m_coreTarget, because
+    // we only use it when the GObject and thus the m_coreTarget object is alive.
     EventTarget* m_coreTarget;
-    DOMWindow* m_coreWindow;
     CString m_domEventName;
     GCallback m_handler;
     bool m_capture;

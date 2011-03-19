@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010 Igalia S.L.
+ *  Copyright (C) 2010, 2011 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -31,42 +31,35 @@ namespace WebCore {
 
 typedef void (*GObjectEventListenerCallback)(GObject*, WebKitDOMEvent*, void*);
 
-GObjectEventListener::GObjectEventListener(GObject* object, DOMWindow* window, EventTarget* target, const char* domEventName, GCallback handler, bool capture, void* userData)
+GObjectEventListener::GObjectEventListener(GObject* object, EventTarget* target, const char* domEventName, GCallback handler, bool capture, void* userData)
     : EventListener(GObjectEventListenerType)
     , m_object(object)
     , m_coreTarget(target)
-    , m_coreWindow(window)
     , m_domEventName(domEventName)
     , m_handler(handler)
     , m_capture(capture)
     , m_userData(userData)
 {
-    ASSERT(!m_coreWindow || !m_coreTarget);
-
+    ASSERT(m_coreTarget);
     g_object_weak_ref(object, reinterpret_cast<GWeakNotify>(GObjectEventListener::gobjectDestroyedCallback), this);
 }
 
 GObjectEventListener::~GObjectEventListener()
 {
-    if (!m_coreWindow && !m_coreTarget)
+    if (!m_coreTarget)
         return;
     g_object_weak_unref(m_object, reinterpret_cast<GWeakNotify>(GObjectEventListener::gobjectDestroyedCallback), this);
 }
 
 void GObjectEventListener::gobjectDestroyed()
 {
-    ASSERT(!m_coreWindow || !m_coreTarget);
+    ASSERT(m_coreTarget);
 
-    // We must set m_coreWindow and m_coreTarget to null, because removeEventListener may call the
-    // destructor as a side effect and we must be in the proper state to prevent g_object_weak_unref.
-    if (DOMWindow* window = m_coreWindow) {
-        m_coreWindow = 0;
-        window->removeEventListener(m_domEventName.data(), this, m_capture);
-        return;
-    }
-
+    // We must set m_coreTarget to null, because removeEventListener
+    // may call the destructor as a side effect and we must be in the
+    // proper state to prevent g_object_weak_unref.
     EventTarget* target = m_coreTarget;
-    m_coreTarget = 0; // See above.
+    m_coreTarget = 0;
     target->removeEventListener(m_domEventName.data(), this, m_capture);
 }
 

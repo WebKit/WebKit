@@ -1,3 +1,22 @@
+2011-03-19  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Simplify GObjectEventListener
+        https://bugs.webkit.org/show_bug.cgi?id=56698
+
+        Get rid of special case for DOMWindow, since it's also an
+        EventTarget.
+
+        * bindings/gobject/GObjectEventListener.cpp:
+        (WebCore::GObjectEventListener::GObjectEventListener): remove
+        DOMWindow special casing.
+        (WebCore::GObjectEventListener::~GObjectEventListener): ditto.
+        (WebCore::GObjectEventListener::gobjectDestroyed):
+        * bindings/gobject/GObjectEventListener.h:
+        (WebCore::GObjectEventListener::addEventListener): ditto.
+        (WebCore::GObjectEventListener::removeEventListener): ditto.
+
 2011-03-19  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Nikolas Zimmermann.
