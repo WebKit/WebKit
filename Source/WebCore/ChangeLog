@@ -1,3 +1,16 @@
+2011-03-19  Ben Taylor  <bentaylor.solx86@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56195
+        Fix conditional which had an int for one case and a pointer for another.
+        Similar fix as https://bugs.webkit.org/show_bug.cgi?id=56198
+
+        No new tests. Fix compilation on Solaris 10 with Sun Studio C++
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible):
+
 2011-03-19  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

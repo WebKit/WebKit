@@ -321,7 +321,7 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
             event->setTarget(currentTarget);
             currentTarget->dispatchGenericEvent(event.release());
         }
-        currentTarget = (parent && parent->isSVGElement()) ? static_pointer_cast<SVGElement>(parent) : 0;
+        currentTarget = (parent && parent->isSVGElement()) ? static_pointer_cast<SVGElement>(parent) : RefPtr<SVGElement>();
     }
 }
 
