@@ -1,3 +1,19 @@
+2011-03-18  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/56688> Fix clang static analyzer warning in WebCoreViewFactory.m
+
+        Reviewed by Anders Carlsson.
+
+        Fixes the following static analyzer warning:
+
+            Source/WebCore/page/mac/WebCoreViewFactory.m:45:5: warning: Returning 'self' while it is not set to the result of '[(super or self) init...]'
+                 return self;
+                 ^
+
+        * page/mac/WebCoreViewFactory.m:
+        (-[WebCoreViewFactory init]): Assign the result of [super init]
+        to self.
+
 2011-03-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

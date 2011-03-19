@@ -37,7 +37,7 @@ static WebCoreViewFactory *sharedFactory;
 
 - init
 {
-    [super init];
+    self = [super init];
     
     ASSERT(!sharedFactory);
     sharedFactory = [self retain];
