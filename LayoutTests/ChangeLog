@@ -1,3 +1,16 @@
+2011-03-19  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Unreviewed, remove stale expectations for r81528.
+
+        * platform/chromium-win-xp/fast/text/atsui-spacing-features-expected.checksum:
+        * platform/chromium-win-xp/fast/text/atsui-spacing-features-expected.png:
+        * platform/chromium-win-xp/fast/text/justify-nbsp-expected.checksum: Removed.
+        * platform/chromium-win-xp/fast/text/justify-nbsp-expected.png: Removed.
+        * platform/chromium-win-xp/svg/text/text-intro-05-t-expected.checksum: Removed.
+        * platform/chromium-win-xp/svg/text/text-intro-05-t-expected.png: Removed.
+        * platform/chromium-win-xp/svg/transforms/text-with-pattern-inside-transformed-html-expected.checksum: Removed.
+        * platform/chromium-win-xp/svg/transforms/text-with-pattern-inside-transformed-html-expected.png: Removed.
+
 2011-03-18  James Robinson  <jamesr@chromium.org>
 
         Update chromium win pixel baselines for tests with justified text for r81528
