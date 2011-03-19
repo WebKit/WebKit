@@ -264,7 +264,7 @@ QNetworkReply* QNetworkReplyHandler::release()
     return reply;
 }
 
-static bool ignoreHttpError(QNetworkReply* reply, bool receivedData)
+static bool shouldIgnoreHttpError(QNetworkReply* reply, bool receivedData)
 {
     int httpStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 
@@ -300,7 +300,7 @@ void QNetworkReplyHandler::finish()
     }
 
     if (!m_redirected) {
-        if (!m_reply->error() || ignoreHttpError(m_reply, m_responseContainsData))
+        if (!m_reply->error() || shouldIgnoreHttpError(m_reply, m_responseContainsData))
             client->didFinishLoading(m_resourceHandle, 0);
         else {
             QUrl url = m_reply->url();
@@ -339,7 +339,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     if (!m_reply)
         return;
 
-    if (m_reply->error() && !ignoreHttpError(m_reply, m_responseContainsData))
+    if (m_reply->error() && !shouldIgnoreHttpError(m_reply, m_responseContainsData))
         return;
 
     if (m_responseSent || !m_resourceHandle)

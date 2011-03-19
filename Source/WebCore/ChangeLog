@@ -2,6 +2,19 @@
 
         Reviewed by Benjamin Poulain.
 
+        [Qt] Rename ignoreHttpError() to shouldIgnoreHttpError()
+
+        The function doesn't ignore anything, thus it shouldn't have an imperative name.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::shouldIgnoreHttpError):
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+
+2011-03-19  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
         [Qt] Kill layer violation FIXME in ResourceHandleQt.
 
         We were including qwebframe_p.h from WebKit/qt for no reason.
