@@ -1,3 +1,10 @@
+2011-03-18  Dan Bernstein  <mitz@apple.com>
+
+        Revised build fix for r81135.
+
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2011-03-18  Adam Roben  <aroben@apple.com>
 
         Windows build fix
