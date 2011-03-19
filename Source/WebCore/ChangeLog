@@ -1,3 +1,17 @@
+2011-03-19  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed, rolling out r81551.
+        http://trac.webkit.org/changeset/81551
+        https://bugs.webkit.org/show_bug.cgi?id=55336
+
+        Broke some storage tests on Win32.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::statFile):
+        (WebCore::getFileSize):
+        (WebCore::getFileModificationTime):
+        (WebCore::fileExists):
+
 2011-03-19  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Benjamin Poulain.

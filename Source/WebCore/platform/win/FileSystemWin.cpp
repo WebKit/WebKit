@@ -32,7 +32,7 @@
 
 #include "NotImplemented.h"
 #include "PathWalker.h"
-#include "Win32Handle.h"
+#include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
@@ -44,56 +44,34 @@
 
 namespace WebCore {
 
-static const ULONGLONG kSecondsFromFileTimeToTimet = 11644473600;
-
-static inline HANDLE createReadFileHandle(const String& path)
+static bool statFile(String path, struct _stat64& st)
 {
-    String filename = path;
-    return ::CreateFileW(filename.charactersWithNullTermination(), GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-}
-
-static bool getFileInformation(const String& path, BY_HANDLE_FILE_INFORMATION& fileInformation)
-{
-    Win32Handle fileHandle(createReadFileHandle(path));
-    return fileHandle.isValid() && ::GetFileInformationByHandle(fileHandle.get(), &fileInformation);
+    ASSERT_ARG(path, !path.isNull());
+    return !_wstat64(path.charactersWithNullTermination(), &st) && (st.st_mode & _S_IFMT) == _S_IFREG;
 }
 
 bool getFileSize(const String& path, long long& result)
 {
-    BY_HANDLE_FILE_INFORMATION fileInformation;
-    if (!getFileInformation(path, fileInformation))
+    struct _stat64 sb;
+    if (!statFile(path, sb))
         return false;
-
-    ULARGE_INTEGER fileSize;
-    fileSize.HighPart = fileInformation.nFileSizeHigh;
-    fileSize.LowPart = fileInformation.nFileSizeLow;
-
-    if (fileSize.QuadPart > static_cast<ULONGLONG>(std::numeric_limits<long long>::max()))
-        return false;
-
-    result = fileSize.QuadPart;
+    result = sb.st_size;
     return true;
 }
 
 bool getFileModificationTime(const String& path, time_t& result)
 {
-    BY_HANDLE_FILE_INFORMATION fileInformation;
-    if (!getFileInformation(path, fileInformation))
+    struct _stat64 st;
+    if (!statFile(path, st))
         return false;
-
-    ULARGE_INTEGER fileSize;
-    fileSize.HighPart = fileInformation.ftLastWriteTime.dwHighDateTime;
-    fileSize.LowPart = fileInformation.ftLastWriteTime.dwLowDateTime;
-
-    // Information about converting time_t to FileTime is available at http://msdn.microsoft.com/en-us/library/ms724228%28v=vs.85%29.aspx
-    result = fileSize.QuadPart / 10000000 - kSecondsFromFileTimeToTimet;
+    result = st.st_mtime;
     return true;
 }
 
-bool fileExists(const String& path)
+bool fileExists(const String& path) 
 {
-    Win32Handle fileHandle(createReadFileHandle(path));
-    return fileHandle.isValid();
+    struct _stat64 st;
+    return statFile(path, st);
 }
 
 bool deleteFile(const String& path)
