@@ -168,6 +168,12 @@ IF (WTF_USE_ICU_UNICODE)
   )
 ENDIF ()
 
+IF (ENABLE_GEOLOCATION)
+  LIST(APPEND WebCore_SOURCES
+    platform/efl/GeolocationServiceEfl.cpp
+  )
+ENDIF()
+
 IF (ENABLE_VIDEO)
   LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/gstreamer"

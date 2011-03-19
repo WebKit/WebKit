@@ -1,3 +1,25 @@
+2011-03-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add dummy GeolocationServiceEfl. cpp | h
+        https://bugs.webkit.org/show_bug.cgi?id=56710
+
+        Add dummy GeolocationServiceEfl.cpp | h to platform/efl.
+
+        * CMakeListsEfl.txt:
+        * platform/efl/GeolocationServiceEfl.cpp: Added.
+        (WebCore::GeolocationServiceEfl::create):
+        (WebCore::GeolocationServiceEfl::GeolocationServiceEfl):
+        (WebCore::GeolocationServiceEfl::~GeolocationServiceEfl):
+        (WebCore::GeolocationServiceEfl::startUpdating):
+        (WebCore::GeolocationServiceEfl::stopUpdating):
+        (WebCore::GeolocationServiceEfl::suspend):
+        (WebCore::GeolocationServiceEfl::resume):
+        (WebCore::GeolocationServiceEfl::lastPosition):
+        (WebCore::GeolocationServiceEfl::lastError):
+        * platform/efl/GeolocationServiceEfl.h: Added.
+
 2011-03-19  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed, rolling out r81551.
