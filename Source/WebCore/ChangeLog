@@ -1,3 +1,20 @@
+2011-03-19  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Use Win32 API to get file information
+        https://bugs.webkit.org/show_bug.cgi?id=55336
+
+        Use GetFileInformationByHandle() in favour over _wstat64(), GetFileSizeEx()
+        and GetFileAttributesEx() so we can share the code with WinCE.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::createFileHandle):
+        (WebCore::getFileInformation):
+        (WebCore::getFileSize):
+        (WebCore::getFileModificationTime):
+        (WebCore::fileExists):
+
 2011-03-19  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
