@@ -248,6 +248,11 @@ void LayoutTestController::clearAllApplicationCaches()
     // FIXME: implement to support Application Cache quotas.
 }
 
+void LayoutTestController::clearApplicationCacheForOrigin(JSStringRef url)
+{
+    // FIXME: implement to support deleting all ApplicationCache for an origin.
+}
+
 void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
 {
     // FIXME: implement to support Application Cache quotas.

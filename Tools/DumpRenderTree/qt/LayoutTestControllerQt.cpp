@@ -552,6 +552,11 @@ void LayoutTestController::clearAllApplicationCaches()
     DumpRenderTreeSupportQt::clearAllApplicationCaches();
 }
 
+void LayoutTestController::clearApplicationCacheForOrigin(const QString& url)
+{
+    // FIXME: Implement to support deleting all ApplicationCache for an origin.
+}
+
 void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
 {
     if (!m_topLoadingFrame)

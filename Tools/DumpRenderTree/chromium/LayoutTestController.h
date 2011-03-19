@@ -284,6 +284,8 @@ public:
 
     // Clears all Application Caches.
     void clearAllApplicationCaches(const CppArgumentList&, CppVariant*);
+    // Clears Application Cache for an origin.
+    void clearApplicationCacheForOrigin(const CppArgumentList&, CppVariant*);
     // Sets the Application Quota for the localhost origin.
     void setApplicationCacheOriginQuota(const CppArgumentList&, CppVariant*);
 

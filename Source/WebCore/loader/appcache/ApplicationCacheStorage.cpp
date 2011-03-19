@@ -153,6 +153,11 @@ ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const KUR
     return group;
 }
 
+ApplicationCacheGroup* ApplicationCacheStorage::findInMemoryCacheGroup(const KURL& manifestURL) const
+{
+    return m_cachesInMemory.get(manifestURL);
+}
+
 void ApplicationCacheStorage::loadManifestHostHashes()
 {
     static bool hasLoadedHashes = false;
@@ -1306,24 +1311,6 @@ void ApplicationCacheStorage::getOriginsWithCache(HashSet<RefPtr<SecurityOrigin>
     for (size_t i = 0; i < count; ++i) {
         RefPtr<SecurityOrigin> origin = SecurityOrigin::create(urls[i]);
         origins.add(origin);
-    }
-}
-
-void ApplicationCacheStorage::deleteEntriesForOrigin(SecurityOrigin* origin)
-{
-    Vector<KURL> urls;
-    if (!manifestURLs(&urls)) {
-        LOG_ERROR("Failed to retrieve ApplicationCache manifest URLs");
-        return;
-    }
-
-    // Multiple manifest URLs might share the same SecurityOrigin, so we might be creating extra, wasted origins here.
-    // The current schema doesn't allow for a more efficient way of deleting by origin.
-    size_t count = urls.size();
-    for (size_t i = 0; i < count; ++i) {
-        RefPtr<SecurityOrigin> manifestOrigin = SecurityOrigin::create(urls[i]);
-        if (manifestOrigin->isSameSchemeHostPort(origin))
-            deleteCacheGroup(urls[i]);
     }
 }
 

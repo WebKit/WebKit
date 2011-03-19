@@ -485,6 +485,7 @@ fast/js/i18n-bindings-locale.html
 http/tests/appcache/crash-when-navigating-away-then-back.html
 http/tests/appcache/fallback.html
 http/tests/appcache/origin-quota.html
+http/tests/appcache/origin-delete.html
 http/tests/cookies/double-quoted-value-with-semi-colon.html
 http/tests/loading/bad-scheme-subframe.html
 http/tests/loading/bad-server-subframe.html

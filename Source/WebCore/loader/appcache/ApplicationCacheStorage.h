@@ -74,6 +74,7 @@ public:
     ApplicationCacheGroup* fallbackCacheGroupForURL(const KURL&); // Cache that has a fallback entry to load a main resource from if normal loading fails.
 
     ApplicationCacheGroup* findOrCreateCacheGroup(const KURL& manifestURL);
+    ApplicationCacheGroup* findInMemoryCacheGroup(const KURL& manifestURL) const;
     void cacheGroupDestroyed(ApplicationCacheGroup*);
     void cacheGroupMadeObsolete(ApplicationCacheGroup*);
         
@@ -95,7 +96,6 @@ public:
     void vacuumDatabaseFile();
 
     void getOriginsWithCache(HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>&);
-    void deleteEntriesForOrigin(SecurityOrigin*);
     void deleteAllEntries();
 
     static int64_t unknownQuota() { return -1; }

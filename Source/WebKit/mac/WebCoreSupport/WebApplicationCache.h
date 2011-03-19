@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class WebSecurityOrigin;
+
 @interface WebApplicationCache: NSObject
 
 + (long long)maximumSize;
@@ -34,5 +36,6 @@
 + (void)setDefaultOriginQuota:(long long)size;
 
 + (void)deleteAllApplicationCaches;
++ (void)deleteCacheForOrigin:(WebSecurityOrigin *)origin;
 
 @end

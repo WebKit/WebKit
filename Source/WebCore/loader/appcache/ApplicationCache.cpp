@@ -32,6 +32,7 @@
 #include "ApplicationCacheResource.h"
 #include "ApplicationCacheStorage.h"
 #include "ResourceRequest.h"
+#include "SecurityOrigin.h"
 #include <wtf/text/CString.h>
 #include <stdio.h>
 
@@ -182,7 +183,29 @@ void ApplicationCache::clearStorageID()
     ResourceMap::const_iterator end = m_resources.end();
     for (ResourceMap::const_iterator it = m_resources.begin(); it != end; ++it)
         it->second->clearStorageID();
-}    
+}
+    
+void ApplicationCache::deleteCacheForOrigin(SecurityOrigin* origin)
+{
+    Vector<KURL> urls;
+    if (!cacheStorage().manifestURLs(&urls)) {
+        LOG_ERROR("Failed to retrieve ApplicationCache manifest URLs");
+        return;
+    }
+
+    KURL originURL(KURL(), origin->toString());
+
+    size_t count = urls.size();
+    for (size_t i = 0; i < count; ++i) {
+        if (protocolHostAndPortAreEqual(urls[i], originURL)) {
+            ApplicationCacheGroup* group = cacheStorage().findInMemoryCacheGroup(urls[i]);
+            if (group)
+                group->makeObsolete();
+            else
+                cacheStorage().deleteCacheGroup(urls[i]);
+        }
+    }
+}
     
 #ifndef NDEBUG
 void ApplicationCache::dump()

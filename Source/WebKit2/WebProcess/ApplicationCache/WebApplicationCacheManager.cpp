@@ -30,6 +30,7 @@
 #include "SecurityOriginData.h"
 #include "WebApplicationCacheManagerProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/ApplicationCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginHash.h>
@@ -87,7 +88,7 @@ void WebApplicationCacheManager::deleteEntriesForOrigin(const SecurityOriginData
     if (!origin)
         return;
     
-    cacheStorage().deleteEntriesForOrigin(origin.get());
+    ApplicationCache::deleteCacheForOrigin(origin.get());
 #endif
 }
 

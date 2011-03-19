@@ -3234,3 +3234,6 @@ fast/dom/Geolocation/page-reload-cancel-permission-requests.html
 # https://bugs.webkit.org/show_bug.cgi?id=55767
 http/tests/appcache/auth.html
 http/tests/xmlhttprequest/basic-auth.html
+
+# LayoutTestController::clearApplicationCacheForOrigin is not implemented
+http/tests/appcache/origin-delete.html

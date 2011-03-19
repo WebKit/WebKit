@@ -50,6 +50,7 @@ public:
     const std::string& redirectionDestinationForURL(std::string);
     void clearAllApplicationCaches();
     void clearAllDatabases();
+    void clearApplicationCacheForOrigin(JSStringRef name);
     void clearBackForwardList();
     void clearPersistentUserStyleSheet();
     bool callShouldCloseOnWebView();

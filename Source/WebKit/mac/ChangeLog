@@ -1,3 +1,16 @@
+2011-03-19  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        ApplicationCacheGroup is not obsolete after being deleted via ApplicationCacheStorage::deleteEntriesForOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=56415
+        
+        Use new ApplicationCache API to delete all cache for an origin.
+
+        * WebCoreSupport/WebApplicationCache.h:
+        * WebCoreSupport/WebApplicationCache.mm:
+        (+[WebApplicationCache deleteOrigin:]):
+
 2011-03-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

@@ -1,3 +1,29 @@
+2011-03-19  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        ApplicationCacheGroup is not obsolete after being deleted via ApplicationCacheStorage::deleteEntriesForOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=56415
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (clearApplicationCacheForOriginCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp: Adding stubs.
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::clearAllApplicationCaches):
+        (LayoutTestController::clearApplicationCacheForOrigin): 
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm: Adding stub.
+        (LayoutTestController::clearApplicationCacheForOrigin):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp: Adding stub.
+        (LayoutTestController::clearApplicationCacheForOrigin):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp: Adding stub.
+        (LayoutTestController::clearApplicationCacheForOrigin):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp: Adding stub.
+        (LayoutTestController::clearApplicationCacheForOrigin):
+
 2011-03-18  Dan Bernstein  <mitz@apple.com>
 
         Revised build fix for r81135.

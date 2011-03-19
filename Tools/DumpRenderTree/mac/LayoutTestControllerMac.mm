@@ -145,6 +145,15 @@ void LayoutTestController::observeStorageTrackerNotifications(unsigned number)
     [storageDelegate logNotifications:number controller:this];
 }
 
+void LayoutTestController::clearApplicationCacheForOrigin(JSStringRef url)
+{
+    RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, url));
+
+    WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:(NSString *)urlCF.get()]];
+    [WebApplicationCache deleteCacheForOrigin:origin];
+    [origin release];
+}
+
 void LayoutTestController::clearAllDatabases()
 {
     [[WebDatabaseManager sharedWebDatabaseManager] deleteAllDatabases];

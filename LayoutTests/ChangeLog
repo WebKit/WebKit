@@ -1,3 +1,21 @@
+2011-03-19  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        ApplicationCacheGroup is not obsolete after being deleted via ApplicationCacheStorage::deleteEntriesForOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=56415
+
+        This test creates an Application Cache for the DRT origin, deletes it for the origin,
+        and verifies that the Application Cache has obsolete status.
+
+        * http/tests/appcache/origin-delete-expected.txt: Added.
+        * http/tests/appcache/origin-delete.html: Added.
+        * http/tests/appcache/resources/origin-delete-iframe.html: Added.
+        * http/tests/appcache/resources/origin-delete-iframe.manifest: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2011-03-19  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Unreviewed, remove stale expectations for r81528.

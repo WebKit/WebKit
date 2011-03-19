@@ -1,3 +1,14 @@
+2011-03-19  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        ApplicationCacheGroup is not obsolete after being deleted via ApplicationCacheStorage::deleteEntriesForOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=56415
+
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.cpp: calling ApplicationCacheGroup::deleteCacheGroupsForOrigin
+        instead of ApplicationCacheStorage::deleteEntriesForOrigin.
+        (WebKit::WebApplicationCacheManager::deleteEntriesForOrigin):
+
 2011-03-18  Sam Weinig  <sam@webkit.org>
 
         Attempt to fix the WinCairo build.

@@ -185,6 +185,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("addDisallowedURL", &LayoutTestController::addDisallowedURL);
     bindMethod("callShouldCloseOnWebView", &LayoutTestController::callShouldCloseOnWebView);
     bindMethod("clearAllApplicationCaches", &LayoutTestController::clearAllApplicationCaches);
+    bindMethod("clearApplicationCacheForOrigin", &LayoutTestController::clearApplicationCacheForOrigin);
     bindMethod("clearBackForwardList", &LayoutTestController::clearBackForwardList);
     bindMethod("dumpAsWebArchive", &LayoutTestController::dumpAsWebArchive);
     bindMethod("keepWebHistory", &LayoutTestController::keepWebHistory);
@@ -740,6 +741,12 @@ void LayoutTestController::setUseDashboardCompatibilityMode(const CppArgumentLis
 void LayoutTestController::clearAllApplicationCaches(const CppArgumentList&, CppVariant* result)
 {
     // FIXME: implement to support Application Cache Quotas.
+    result->setNull();
+}
+
+void LayoutTestController::clearApplicationCacheForOrigin(const CppArgumentList&, CppVariant* result)
+{
+    // FIXME: Implement to support deleting all ApplicationCache for an origin
     result->setNull();
 }
 

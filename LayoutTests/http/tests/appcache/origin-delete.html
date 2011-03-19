@@ -1,0 +1,58 @@
+<html>
+<head>
+<script>
+
+// Helpers.
+
+function log(message) {
+    document.getElementById("console").innerHTML += message + "<br>";
+}
+
+// Start and end.
+
+function startTest() {
+    if (window.layoutTestController) {
+        layoutTestController.clearAllApplicationCaches();
+        layoutTestController.dumpApplicationCacheDelegateCallbacks();
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    addIFrameWithAppCache();
+}
+
+function finishTest() {
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function addIFrameWithAppCache() {
+    var iframe = document.createElement("iframe");
+    iframe.src = "resources/origin-delete-iframe.html";
+    iframe.id = "cachedFrame";
+    document.body.appendChild(iframe);
+    
+    window.onmessage = function(event) {
+        log(event.data);
+        if (event.data === "PASS - cached iframe-1") {
+            log("clearing cache for origin");
+            layoutTestController.clearApplicationCacheForOrigin("http://127.0.0.1:8000");
+            var frame = document.getElementById('cachedFrame');
+            frame.contentWindow.postMessage("appcache_status", "*");
+        } else if (event.data === "appcache_status=5"){
+            log("SUCCESS - cache was made obsolete");
+            finishTest();
+        } else {
+            log("FAIL - received unexpected message " + event.data);
+            finishTest();
+        }
+    };
+}
+</script>
+</head>
+<body onload="startTest()">
+<p>This test checks that application cache groups correctly become obsolete after application cache is deletion for a specific origin.
+</p>
+<pre id="console"></pre>
+</body>
+</html>

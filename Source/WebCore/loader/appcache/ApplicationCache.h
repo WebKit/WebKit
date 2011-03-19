@@ -42,12 +42,16 @@ class ApplicationCacheResource;
 class DocumentLoader;
 class KURL;
 class ResourceRequest;
+class SecurityOrigin;
 
 typedef Vector<std::pair<KURL, KURL> > FallbackURLVector;
 
 class ApplicationCache : public RefCounted<ApplicationCache> {
 public:
     static PassRefPtr<ApplicationCache> create() { return adoptRef(new ApplicationCache); }
+    
+    static void deleteCacheForOrigin(SecurityOrigin*);
+    
     ~ApplicationCache();
 
     void addResource(PassRefPtr<ApplicationCacheResource> resource);

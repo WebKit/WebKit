@@ -189,6 +189,7 @@ public slots:
     void disableImageLoading();
 
     void clearAllApplicationCaches();
+    void clearApplicationCacheForOrigin(const QString& url);
     void setApplicationCacheOriginQuota(unsigned long long quota);
 
     void setDatabaseQuota(int size);

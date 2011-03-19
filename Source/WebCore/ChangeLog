@@ -1,3 +1,29 @@
+2011-03-19  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        ApplicationCacheGroup is not obsolete after being deleted via ApplicationCacheStorage::deleteEntriesForOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=56415
+
+        To delete all Application Cache for an origin, we must obsolete all
+        in-memory cache groups for that origin. If a cache group isn't in memory,
+        then it must be deleted from disk. The previous implementation correctly
+        removed on-disk cache groups, but did not mark in-memory cache groups as obsolete.
+        This caused an assertion failure in ApplicationCacheStorage::cacheGroupDestroyed()
+        when the DocumentLoader was destroyed.
+
+        Test: http/tests/appcache/origin-delete.html
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::clearStorageID):
+        (WebCore::ApplicationCache::deleteCacheForOrigin):
+        * loader/appcache/ApplicationCache.h:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::findInMemoryCacheGroup):
+        * loader/appcache/ApplicationCacheStorage.h:
+
 2011-03-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.

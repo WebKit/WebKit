@@ -26,7 +26,11 @@
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #import "WebApplicationCache.h"
+
+#import "WebSecurityOriginInternal.h"
+#import <WebCore/ApplicationCache.h>
 #import <WebCore/ApplicationCacheStorage.h>
+#import <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
 
@@ -56,6 +60,11 @@ using namespace WebCore;
 + (void)deleteAllApplicationCaches
 {
     cacheStorage().deleteAllEntries();
+}
+
++ (void)deleteCacheForOrigin:(WebSecurityOrigin *)origin
+{
+    ApplicationCache::deleteCacheForOrigin([origin _core]);
 }
 
 @end
