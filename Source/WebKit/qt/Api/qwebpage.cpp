@@ -4092,6 +4092,8 @@ quint64 QWebPage::bytesReceived() const
 
     At signal emission time the meta-data of the QNetworkReply \a reply is available.
 
+    \note The receiving slot is responsible for deleting the QNetworkReply \a reply.
+
     \note This signal is only emitted if the forwardUnsupportedContent property is set to true.
 
     \sa downloadRequested()

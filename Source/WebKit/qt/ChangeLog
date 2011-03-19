@@ -1,3 +1,15 @@
+2011-03-19  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt][Doc] QWebPage::unsupportedContent() passes ownership of the QNetworkReply
+        https://bugs.webkit.org/show_bug.cgi?id=56711
+
+        Document the fact that when unsupportedContent(QNetworkReply*) is emitted,
+        ownership of the reply is transferred to the receiving slot.
+
+        * Api/qwebpage.cpp:
+
 2011-03-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
