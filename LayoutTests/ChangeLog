@@ -1,3 +1,13 @@
+2011-03-18  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION (r80231): Bad cast in HTMLTreeBuilder::processStartTag
+        https://bugs.webkit.org/show_bug.cgi?id=56380
+
+        * fast/parser/fragment-foreign-content-context-expected.txt: Added.
+        * fast/parser/fragment-foreign-content-context.html: Added.
+
 2011-03-18  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] JSC crashes in 32bit Release bots after r80743

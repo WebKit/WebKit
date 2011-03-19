@@ -125,7 +125,7 @@ bool isSpecialNode(Node* node)
         return true;
     if (node->nodeType() == Node::DOCUMENT_FRAGMENT_NODE)
         return true;
-    if (node->namespaceURI() != xhtmlNamespaceURI)
+    if (!isInHTMLNamespace(node))
         return false;
     const AtomicString& tagName = node->localName();
     return tagName == addressTag
@@ -445,7 +445,7 @@ void HTMLTreeBuilder::constructTreeFromAtomicToken(AtomicHTMLToken& token)
     // the U+0000 characters into replacement characters has compatibility
     // problems.
     m_parser->tokenizer()->setForceNullCharacterReplacement(m_insertionMode == TextMode || m_insertionMode == InForeignContentMode);
-    m_parser->tokenizer()->setShouldAllowCDATA(m_insertionMode == InForeignContentMode && m_tree.currentNode()->namespaceURI() != xhtmlNamespaceURI);
+    m_parser->tokenizer()->setShouldAllowCDATA(m_insertionMode == InForeignContentMode && !isInHTMLNamespace(m_tree.currentNode()));
 }
 
 void HTMLTreeBuilder::processToken(AtomicHTMLToken& token)
@@ -1125,7 +1125,7 @@ bool shouldProcessForeignContentUsingInBodyInsertionMode(AtomicHTMLToken& token,
         || currentElement->hasTagName(SVGNames::descTag)
         || currentElement->hasTagName(SVGNames::titleTag))
         return true;
-    return currentElement->namespaceURI() == HTMLNames::xhtmlNamespaceURI;
+    return isInHTMLNamespace(currentElement);
 }
 
 }
@@ -1451,7 +1451,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         processStartTag(token);
         break;
     case InForeignContentMode: {
-        if (shouldProcessForeignContentUsingInBodyInsertionMode(token, m_tree.currentElement())) {
+        if (shouldProcessForeignContentUsingInBodyInsertionMode(token, m_tree.currentNode())) {
             processForeignContentUsingInBodyModeAndResetMode(token);
             return;
         }
@@ -2297,7 +2297,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             notImplemented();
             return;
         }
-        if (m_tree.currentNode()->namespaceURI() != xhtmlNamespaceURI) {
+        if (!isInHTMLNamespace(m_tree.currentNode())) {
             // FIXME: This code just wants an Element* iterator, instead of an ElementRecord*
             HTMLElementStack::ElementRecord* nodeRecord = m_tree.openElements()->topRecord();
             if (!nodeRecord->node()->hasLocalName(token.name()))
@@ -2310,12 +2310,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
                 }
                 nodeRecord = nodeRecord->next();
                 
-                if (nodeRecord->node()->nodeType() == Node::DOCUMENT_FRAGMENT_NODE) {
-                    ASSERT(isParsingFragment());
-                    break;
-                }
-                
-                if (nodeRecord->node()->namespaceURI() == xhtmlNamespaceURI)
+                if (isInHTMLNamespace(nodeRecord->node()))
                     break;
             }
         }

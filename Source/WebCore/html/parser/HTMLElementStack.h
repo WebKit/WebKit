@@ -28,6 +28,7 @@
 #define HTMLElementStack_h
 
 #include "Element.h"
+#include "HTMLNames.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -167,6 +168,15 @@ private:
     Element* m_headElement;
     Element* m_bodyElement;
 };
+    
+inline bool isInHTMLNamespace(Node* node)
+{
+    // A DocumentFragment takes the place of the document element when parsing
+    // fragments and should be considered in the HTML namespace.
+    return node->namespaceURI() == HTMLNames::xhtmlNamespaceURI
+        || node->nodeType() == Node::DOCUMENT_FRAGMENT_NODE;
+}
+
 
 } // namespace WebCore
 

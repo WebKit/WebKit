@@ -1,3 +1,32 @@
+2011-03-18  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION (r80231): Bad cast in HTMLTreeBuilder::processStartTag
+        https://bugs.webkit.org/show_bug.cgi?id=56380
+        
+        Fix two issues with parsing a fragment that has a foreign content
+        element as its context element. The first issue is that the parser will
+        initially be in the InForeignContentMode insertion mode when processing
+        the first tag in the fragment in this case so one call site needs to
+        change from currentElement() to currentNode(). The second issue is that
+        when we changed fragments from using a fake HTML root element to a
+        DocumentFragment we broke checks that assumed the root element was in
+        the HTML namespace. Fix this by claiming that the DocumentFragment is
+        also in the HTML namespace.
+
+        Test: fast/parser/fragment-foreign-content-context.html
+
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isForeignContentScopeMarker):
+        (WebCore::HTMLElementStack::hasOnlyHTMLElementsInScope):
+        * html/parser/HTMLElementStack.h:
+        (WebCore::isInHTMLNamespace):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::constructTreeFromAtomicToken):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+
 2011-03-18  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dimitri Glazkov.
