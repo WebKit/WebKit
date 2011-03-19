@@ -43,7 +43,7 @@ struct SecurityOriginHash {
             origin->host().impl() ? origin->host().impl()->hash() : 0,
             origin->port()
         };
-        return WTF::StringHasher::createBlobHash<sizeof(hashCodes)>(hashCodes);
+        return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }
     static unsigned hash(const RefPtr<SecurityOrigin>& origin)
     {

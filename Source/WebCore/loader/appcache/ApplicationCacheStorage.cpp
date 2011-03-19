@@ -90,7 +90,7 @@ static unsigned urlHostHash(const KURL& url)
     unsigned hostStart = url.hostStart();
     unsigned hostEnd = url.hostEnd();
     
-    return AlreadyHashed::avoidDeletedValue(WTF::StringHasher::createHash(url.string().characters() + hostStart, hostEnd - hostStart));
+    return AlreadyHashed::avoidDeletedValue(StringHasher::computeHash(url.string().characters() + hostStart, hostEnd - hostStart));
 }
 
 ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const KURL& manifestURL)

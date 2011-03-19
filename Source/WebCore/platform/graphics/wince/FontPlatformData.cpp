@@ -148,7 +148,7 @@ struct FixedSizeFontDataKeyHash {
             font.m_weight,
             // static_cast<unsigned>(font.m_italic);
         };
-        return WTF::StringHasher::createBlobHash<sizeof(hashCodes)>(hashCodes);
+        return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }
 
     static bool equal(const FixedSizeFontDataKey& a, const FixedSizeFontDataKey& b)

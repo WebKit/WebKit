@@ -123,7 +123,7 @@ class FontPlatformData {
     {
         ASSERT(m_font != 0 || m_cgFont == 0);
         uintptr_t hashCodes[3] = { (uintptr_t)m_font, m_widthVariant, m_textOrientation << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique };
-        return WTF::StringHasher::createBlobHash<sizeof(hashCodes)>(hashCodes);
+        return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }
 
     const FontPlatformData& operator=(const FontPlatformData& f);

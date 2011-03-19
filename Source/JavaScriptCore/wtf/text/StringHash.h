@@ -104,7 +104,7 @@ namespace WTF {
 
         static unsigned hash(const UChar* data, unsigned length)
         {
-            return StringHasher::createHash<UChar, foldCase<UChar> >(data, length);
+            return StringHasher::computeHash<UChar, foldCase<UChar> >(data, length);
         }
 
         static unsigned hash(StringImpl* str)
@@ -114,7 +114,7 @@ namespace WTF {
 
         static unsigned hash(const char* data, unsigned length)
         {
-            return StringHasher::createHash<char, foldCase<char> >(data, length);
+            return StringHasher::computeHash<char, foldCase<char> >(data, length);
         }
 
         static bool equal(const StringImpl* a, const StringImpl* b)

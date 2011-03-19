@@ -312,7 +312,7 @@ unsigned PluginPackage::hash() const
         m_mimeToExtensions.size()
     };
 
-    return WTF::StringHasher::createBlobHash<sizeof(hashCodes)>(hashCodes);
+    return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
 }
 
 bool PluginPackage::equal(const PluginPackage& a, const PluginPackage& b)

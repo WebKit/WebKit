@@ -319,7 +319,7 @@ static inline unsigned calculateStringHashAndLengthFromUTF8Internal(const char* 
     if (!data)
         return 0;
 
-    WTF::StringHasher stringHasher;
+    StringHasher stringHasher;
     dataLength = 0;
     utf16Length = 0;
 

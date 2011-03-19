@@ -412,7 +412,7 @@ unsigned MappedAttributeHash::hash(const MappedAttributeKey& key)
     COMPILE_ASSERT(sizeof(key.name) == 4 || sizeof(key.name) == 8, key_name_size);
     COMPILE_ASSERT(sizeof(key.value) == 4 || sizeof(key.value) == 8, key_value_size);
 
-    WTF::StringHasher hasher;
+    StringHasher hasher;
     const UChar* data;
 
     data = reinterpret_cast<const UChar*>(&key.name);

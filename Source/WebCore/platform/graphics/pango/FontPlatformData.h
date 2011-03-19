@@ -74,7 +74,7 @@ public:
     unsigned hash() const
     {
         uintptr_t hashCodes[1] = { reinterpret_cast<uintptr_t>(m_scaledFont) };
-        return WTF::StringHasher::createBlobHash<sizeof(hashCodes)>(hashCodes);
+        return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }
 
     bool operator==(const FontPlatformData&) const;

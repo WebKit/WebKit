@@ -104,7 +104,7 @@ inline unsigned computeHash(const FontPlatformDataCacheKey& fontKey)
         fontKey.m_widthVariant,
         static_cast<unsigned>(fontKey.m_textOrientation) << 4 | static_cast<unsigned>(fontKey.m_orientation) << 3 | static_cast<unsigned>(fontKey.m_italic) << 2 | static_cast<unsigned>(fontKey.m_printerFont) << 1 | static_cast<unsigned>(fontKey.m_renderingMode)
     };
-    return WTF::StringHasher::createBlobHash<sizeof(hashCodes)>(hashCodes);
+    return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
 }
 
 struct FontPlatformDataCacheKeyHash {

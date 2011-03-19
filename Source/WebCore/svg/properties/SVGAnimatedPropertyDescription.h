@@ -69,7 +69,7 @@ struct SVGAnimatedPropertyDescription {
 struct SVGAnimatedPropertyDescriptionHash {
     static unsigned hash(const SVGAnimatedPropertyDescription& key)
     {
-        return WTF::StringHasher::createBlobHash<sizeof(SVGAnimatedPropertyDescription)>(&key);
+        return StringHasher::hashMemory<sizeof(SVGAnimatedPropertyDescription)>(&key);
     }
 
     static bool equal(const SVGAnimatedPropertyDescription& a, const SVGAnimatedPropertyDescription& b)

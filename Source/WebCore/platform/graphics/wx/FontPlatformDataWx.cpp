@@ -126,10 +126,10 @@ unsigned FontPlatformData::computeHash() const
         thisFont->GetStyle(),
         thisFont->GetWeight(),
         thisFont->GetUnderlined(), 
-        WTF::StringHasher::createHash(thisFont->GetFaceName().utf8_str().data())
+        StringHasher::computeHash(thisFont->GetFaceName().utf8_str().data())
     };
 
-    return WTF::StringHasher::createBlobHash<sizeof(hashCodes)>(hashCodes);
+    return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
 }
 
 FontPlatformData::~FontPlatformData()

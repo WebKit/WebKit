@@ -88,7 +88,7 @@ public:
         return result;
     }
 
-    template<typename T, UChar Converter(T)> static inline unsigned createHash(const T* data, unsigned length)
+    template<typename T, UChar Converter(T)> static inline unsigned computeHash(const T* data, unsigned length)
     {
         StringHasher hasher;
         bool rem = length & 1;
@@ -105,7 +105,7 @@ public:
         return hasher.hash();
     }
 
-    template<typename T, UChar Converter(T)> static inline unsigned createHash(const T* data)
+    template<typename T, UChar Converter(T)> static inline unsigned computeHash(const T* data)
     {
         StringHasher hasher;
 
@@ -125,26 +125,26 @@ public:
         return hasher.hash();
     }
 
-    template<typename T> static inline unsigned createHash(const T* data, unsigned length)
+    template<typename T> static inline unsigned computeHash(const T* data, unsigned length)
     {
-        return createHash<T, defaultCoverter>(data, length);
+        return computeHash<T, defaultCoverter>(data, length);
     }
 
-    template<typename T> static inline unsigned createHash(const T* data)
+    template<typename T> static inline unsigned computeHash(const T* data)
     {
-        return createHash<T, defaultCoverter>(data);
+        return computeHash<T, defaultCoverter>(data);
     }
 
-    template<size_t length> static inline unsigned createBlobHash(const void* data)
+    template<size_t length> static inline unsigned hashMemory(const void* data)
     {
         COMPILE_ASSERT(!(length % 4), length_must_be_a_multible_of_four);
-        return createHash<UChar>(static_cast<const UChar*>(data), length / sizeof(UChar));
+        return computeHash<UChar>(static_cast<const UChar*>(data), length / sizeof(UChar));
     }
 
-    static inline unsigned createBlobHash(const void* data, unsigned size)
+    static inline unsigned hashMemory(const void* data, unsigned size)
     {
         ASSERT(!(size % 2));
-        return createHash<UChar>(static_cast<const UChar*>(data), size / sizeof(UChar));
+        return computeHash<UChar>(static_cast<const UChar*>(data), size / sizeof(UChar));
     }
 
 private:
@@ -172,5 +172,7 @@ private:
 };
 
 } // namespace WTF
+
+using WTF::StringHasher;
 
 #endif // WTF_StringHasher_h

@@ -4435,7 +4435,7 @@ void FormElementKey::deref() const
 
 unsigned FormElementKeyHash::hash(const FormElementKey& key)
 {
-    return WTF::StringHasher::createBlobHash<sizeof(FormElementKey)>(&key);
+    return StringHasher::hashMemory<sizeof(FormElementKey)>(&key);
 }
 
 void Document::setIconURL(const String& iconURL, const String& type)

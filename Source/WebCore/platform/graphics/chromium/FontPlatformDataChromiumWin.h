@@ -106,7 +106,7 @@ private:
         HFONT hfont() const { return m_hfont; }
         unsigned hash() const
         {
-            return WTF::StringHasher::createBlobHash<sizeof(HFONT)>(&m_hfont);
+            return StringHasher::hashMemory<sizeof(HFONT)>(&m_hfont);
         }
 
         bool operator==(const RefCountedHFONT& other) const

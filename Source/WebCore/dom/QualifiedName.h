@@ -113,7 +113,7 @@ inline bool operator!=(const QualifiedName& q, const AtomicString& a) { return a
 
 inline unsigned hashComponents(const QualifiedNameComponents& buf)
 {
-    return WTF::StringHasher::createBlobHash<sizeof(QualifiedNameComponents)>(&buf);
+    return StringHasher::hashMemory<sizeof(QualifiedNameComponents)>(&buf);
 }
 
 struct QualifiedNameHash {

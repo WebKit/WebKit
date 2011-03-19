@@ -1,3 +1,50 @@
+2011-03-19  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Rename WTF::StringHasher methods
+        https://bugs.webkit.org/show_bug.cgi?id=53532
+
+        Rename createHash to computeHash and createBlobHash to hashMemory.
+        Also add a using WTF::StringHasher in the header file.
+
+        * dom/Document.cpp:
+        (WebCore::FormElementKeyHash::hash):
+        * dom/QualifiedName.h:
+        (WebCore::hashComponents):
+        * dom/StyledElement.cpp:
+        (WebCore::MappedAttributeHash::hash):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::urlHostHash):
+        * page/SecurityOriginHash.h:
+        (WebCore::SecurityOriginHash::hash):
+        * platform/LinkHash.cpp:
+        (WebCore::visitedLinkHashInline):
+        * platform/cf/BinaryPropertyList.cpp:
+        (WebCore::IntegerArrayHash::hash):
+        * platform/cf/SchedulePair.h:
+        (WebCore::SchedulePairHash::hash):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::computeHash):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.h:
+        (WebCore::FontPlatformData::RefCountedHFONT::hash):
+        * platform/graphics/cocoa/FontPlatformData.h:
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/pango/FontPlatformData.h:
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/wince/FontPlatformData.cpp:
+        (WebCore::FixedSizeFontDataKeyHash::hash):
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::FontPlatformData::computeHash):
+        * platform/network/ProtectionSpaceHash.h:
+        (WebCore::ProtectionSpaceHash::hash):
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::hash):
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::hash):
+        * svg/properties/SVGAnimatedPropertyDescription.h:
+        (WebCore::SVGAnimatedPropertyDescriptionHash::hash):
+
 2011-03-18  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/56688> Fix clang static analyzer warning in WebCoreViewFactory.m

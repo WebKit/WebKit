@@ -1,3 +1,28 @@
+2011-03-19  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Rename WTF::StringHasher methods
+        https://bugs.webkit.org/show_bug.cgi?id=53532
+
+        Rename createHash to computeHash and createBlobHash to hashMemory.
+        Also add a using WTF::StringHasher in the header file.
+
+        * profiler/CallIdentifier.h:
+        (JSC::CallIdentifier::Hash::hash):
+        * runtime/Identifier.cpp:
+        (JSC::IdentifierCStringTranslator::hash):
+        (JSC::IdentifierUCharBufferTranslator::hash):
+        * wtf/StringHasher.h:
+        (WTF::StringHasher::computeHash):
+        (WTF::StringHasher::hashMemory):
+        * wtf/text/StringHash.h:
+        (WTF::CaseFoldingHash::hash):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::computeHash):
+        * wtf/unicode/UTF8.cpp:
+        (WTF::Unicode::calculateStringHashAndLengthFromUTF8Internal):
+
 2011-03-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

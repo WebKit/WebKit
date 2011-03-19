@@ -46,7 +46,7 @@ struct ProtectionSpaceHash {
         // Ignore realm for proxies.
         if (protectionSpace.isProxy())
             codeCount -= sizeof(hashCodes[0]);
-        return WTF::StringHasher::createBlobHash(hashCodes, codeCount);
+        return StringHasher::hashMemory(hashCodes, codeCount);
     }
     
     static bool equal(const ProtectionSpace& a, const ProtectionSpace& b) { return a == b; }

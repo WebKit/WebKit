@@ -197,7 +197,7 @@ static inline bool needsTrailingSlash(const UChar* characters, unsigned length)
 
 static ALWAYS_INLINE LinkHash visitedLinkHashInline(const UChar* url, unsigned length)
 {
-    return AlreadyHashed::avoidDeletedValue(WTF::StringHasher::createHash(url, length));
+    return AlreadyHashed::avoidDeletedValue(StringHasher::computeHash(url, length));
 }
 
 LinkHash visitedLinkHash(const UChar* url, unsigned length)
