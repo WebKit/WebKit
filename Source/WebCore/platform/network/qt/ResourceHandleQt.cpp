@@ -140,7 +140,7 @@ bool ResourceHandle::start(NetworkingContext* context)
 
     getInternal()->m_context = context;
     ResourceHandleInternal *d = getInternal();
-    d->m_job = new QNetworkReplyHandler(this, QNetworkReplyHandler::LoadMode(d->m_defersLoading));
+    d->m_job = new QNetworkReplyHandler(this, QNetworkReplyHandler::AsynchronousLoad, d->m_defersLoading);
     return true;
 }
 
@@ -207,7 +207,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
         d->m_firstRequest.setURL(urlWithCredentials);
     }
     d->m_context = context;
-    d->m_job = new QNetworkReplyHandler(handle.get(), QNetworkReplyHandler::LoadSynchronously);
+    d->m_job = new QNetworkReplyHandler(handle.get(), QNetworkReplyHandler::SynchronousLoad);
 
     QNetworkReply* reply = d->m_job->reply();
     // When using synchronous calls, we are finished when reaching this point.
@@ -225,8 +225,9 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
 
 void ResourceHandle::platformSetDefersLoading(bool defers)
 {
-    if (d->m_job)
-        d->m_job->setLoadMode(QNetworkReplyHandler::LoadMode(defers));
+    if (!d->m_job)
+        return;
+    d->m_job->setLoadingDeferred(defers);
 }
 
 } // namespace WebCore

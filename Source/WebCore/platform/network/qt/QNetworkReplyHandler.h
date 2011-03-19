@@ -39,15 +39,13 @@ class QNetworkReplyHandler : public QObject
 {
     Q_OBJECT
 public:
-    enum LoadMode {
-        LoadNormal,
-        LoadDeferred,
-        LoadResuming,
-        LoadSynchronously
+    enum LoadType {
+        AsynchronousLoad,
+        SynchronousLoad
     };
 
-    QNetworkReplyHandler(ResourceHandle *handle, LoadMode);
-    void setLoadMode(LoadMode);
+    QNetworkReplyHandler(ResourceHandle*, LoadType, bool deferred = false);
+    void setLoadingDeferred(bool);
 
     QNetworkReply* reply() const { return m_reply; }
 
@@ -55,35 +53,34 @@ public:
 
     QNetworkReply* release();
 
-signals:
-    void processQueuedItems();
-
 public slots:
     void finish();
     void sendResponseIfNeeded();
     void forwardData();
-    void sendQueuedItems();
     void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
 
 private:
     void start();
     void resetState();
     String httpMethod() const;
+    void resumeDeferredLoad();
 
     QNetworkReply* m_reply;
     ResourceHandle* m_resourceHandle;
     bool m_redirected;
     bool m_responseSent;
     bool m_responseContainsData;
-    LoadMode m_loadMode;
+    LoadType m_loadType;
     QNetworkAccessManager::Operation m_method;
     QNetworkRequest m_request;
 
+    bool m_deferred;
+
     // defer state holding
-    bool m_shouldStart;
-    bool m_shouldFinish;
-    bool m_shouldSendResponse;
-    bool m_shouldForwardData;
+    bool m_hasStarted;
+    bool m_callFinishOnResume;
+    bool m_callSendResponseIfNeededOnResume;
+    bool m_callForwardDataOnResume;
     int m_redirectionTries;
 };
 

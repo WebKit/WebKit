@@ -1,3 +1,30 @@
+2011-03-19  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Refactor handling of deferred loads
+        https://bugs.webkit.org/show_bug.cgi?id=56715
+
+        Split QNetworkReplyHandler's "load mode" into two parameters
+        instead of trying to fit the deferral mechanism into it.
+
+        Loads are now AsynchronousLoad (default) or SynchronousLoad (for sync XHR.)
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::setLoadingDeferred):
+        (WebCore::QNetworkReplyHandler::resumeDeferredLoad):
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        (WebCore::QNetworkReplyHandler::forwardData):
+        (WebCore::QNetworkReplyHandler::start):
+        (WebCore::QNetworkReplyHandler::resetState):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+
 2011-03-19  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by Alexey Proskuryakov.

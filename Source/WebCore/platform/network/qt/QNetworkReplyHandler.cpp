@@ -170,18 +170,19 @@ String QNetworkReplyHandler::httpMethod() const
     }
 }
 
-QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode loadMode)
+QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadType loadType, bool deferred)
     : QObject(0)
     , m_reply(0)
     , m_resourceHandle(handle)
     , m_redirected(false)
     , m_responseSent(false)
     , m_responseContainsData(false)
-    , m_loadMode(loadMode)
-    , m_shouldStart(true)
-    , m_shouldFinish(false)
-    , m_shouldSendResponse(false)
-    , m_shouldForwardData(false)
+    , m_loadType(loadType)
+    , m_deferred(deferred)
+    , m_hasStarted(false)
+    , m_callFinishOnResume(false)
+    , m_callSendResponseIfNeededOnResume(false)
+    , m_callForwardDataOnResume(false)
     , m_redirectionTries(gMaxRecursionLimit)
 {
     const ResourceRequest &r = m_resourceHandle->firstRequest();
@@ -205,33 +206,36 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
 
     m_request = r.toNetworkRequest(originatingObject);
 
-    if (m_loadMode == LoadSynchronously)
-        m_request.setAttribute(gSynchronousNetworkRequestAttribute, true);
-
-    if (m_loadMode == LoadNormal || m_loadMode == LoadSynchronously)
+    if (!m_deferred)
         start();
-
-    if (m_loadMode == LoadSynchronously)
-        m_loadMode = LoadNormal;
 }
 
-void QNetworkReplyHandler::setLoadMode(LoadMode mode)
+void QNetworkReplyHandler::setLoadingDeferred(bool deferred)
 {
-    // https://bugs.webkit.org/show_bug.cgi?id=26556
-    // We cannot call sendQueuedItems() from here, because the signal that 
-    // caused us to get into deferred mode, might not be processed yet.
-    switch (mode) {
-    case LoadNormal:
-        m_loadMode = LoadResuming;
-        emit processQueuedItems();
-        break;
-    case LoadDeferred:
-        m_loadMode = LoadDeferred;
-        break;
-    case LoadResuming:
-        Q_ASSERT(0); // should never happen
-        break;
-    };
+    m_deferred = deferred;
+
+    if (!deferred)
+        resumeDeferredLoad();
+}
+
+void QNetworkReplyHandler::resumeDeferredLoad()
+{
+    if (!m_hasStarted) {
+        ASSERT(!m_callSendResponseIfNeededOnResume);
+        ASSERT(!m_callForwardDataOnResume);
+        ASSERT(!m_callFinishOnResume);
+        start();
+        return;
+    }
+
+    if (m_callSendResponseIfNeededOnResume)
+        sendResponseIfNeeded();
+
+    if (m_callForwardDataOnResume)
+        forwardData();
+
+    if (m_callFinishOnResume)
+        finish();
 }
 
 void QNetworkReplyHandler::abort()
@@ -275,8 +279,10 @@ static bool ignoreHttpError(QNetworkReply* reply, bool receivedData)
 
 void QNetworkReplyHandler::finish()
 {
-    m_shouldFinish = (m_loadMode != LoadNormal);
-    if (m_shouldFinish)
+    ASSERT(m_hasStarted);
+
+    m_callFinishOnResume = m_deferred;
+    if (m_deferred)
         return;
 
     if (!m_reply)
@@ -324,8 +330,10 @@ void QNetworkReplyHandler::finish()
 
 void QNetworkReplyHandler::sendResponseIfNeeded()
 {
-    m_shouldSendResponse = (m_loadMode != LoadNormal);
-    if (m_shouldSendResponse)
+    ASSERT(m_hasStarted);
+
+    m_callSendResponseIfNeededOnResume = m_deferred;
+    if (m_deferred)
         return;
 
     if (!m_reply)
@@ -427,8 +435,10 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
 
 void QNetworkReplyHandler::forwardData()
 {
-    m_shouldForwardData = (m_loadMode != LoadNormal);
-    if (m_shouldForwardData)
+    ASSERT(m_hasStarted);
+
+    m_callForwardDataOnResume = m_deferred;
+    if (m_deferred)
         return;
 
     if (m_reply->bytesAvailable())
@@ -467,7 +477,11 @@ void QNetworkReplyHandler::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
 
 void QNetworkReplyHandler::start()
 {
-    m_shouldStart = false;
+    ASSERT(!m_hasStarted);
+    m_hasStarted = true;
+
+    if (m_loadType == SynchronousLoad)
+        m_request.setAttribute(gSynchronousNetworkRequestAttribute, true);
 
     ResourceHandleInternal* d = m_resourceHandle->getInternal();
 
@@ -534,7 +548,7 @@ void QNetworkReplyHandler::start()
 
     m_reply->setParent(this);
 
-    if (m_loadMode == LoadSynchronously && m_reply->isFinished()) {
+    if (m_loadType == SynchronousLoad && m_reply->isFinished()) {
         // If supported, a synchronous request will be finished at this point, no need to hook up the signals.
         return;
     }
@@ -550,9 +564,6 @@ void QNetworkReplyHandler::start()
 
     if (m_resourceHandle->firstRequest().reportUploadProgress())
         connect(m_reply, SIGNAL(uploadProgress(qint64, qint64)), this, SLOT(uploadProgress(qint64, qint64)));
-
-    // Make this a direct function call once we require 4.6.1+.
-    connect(this, SIGNAL(processQueuedItems()), this, SLOT(sendQueuedItems()));
 }
 
 void QNetworkReplyHandler::resetState()
@@ -560,29 +571,10 @@ void QNetworkReplyHandler::resetState()
     m_redirected = false;
     m_responseSent = false;
     m_responseContainsData = false;
-    m_shouldStart = true;
-    m_shouldFinish = false;
-    m_shouldSendResponse = false;
-    m_shouldForwardData = false;
-}
-
-void QNetworkReplyHandler::sendQueuedItems()
-{
-    if (m_loadMode != LoadResuming)
-        return;
-    m_loadMode = LoadNormal;
-
-    if (m_shouldStart)
-        start();
-
-    if (m_shouldSendResponse)
-        sendResponseIfNeeded();
-
-    if (m_shouldForwardData)
-        forwardData();
-
-    if (m_shouldFinish)
-        finish(); 
+    m_hasStarted = false;
+    m_callFinishOnResume = false;
+    m_callSendResponseIfNeededOnResume = false;
+    m_callForwardDataOnResume = false;
 }
 
 }
