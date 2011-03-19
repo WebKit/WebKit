@@ -42,9 +42,6 @@
 #include "ResourceHandleInternal.h"
 #include "SharedBuffer.h"
 
-// FIXME: WebCore including these headers from WebKit is a massive layering violation.
-#include "qwebframe_p.h"
-
 #include <QAbstractNetworkCache>
 #include <QCoreApplication>
 #include <QUrl>
