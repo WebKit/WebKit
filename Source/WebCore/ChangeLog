@@ -1,3 +1,17 @@
+2011-03-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        WebCore GYP build should (almost!) link
+        https://bugs.webkit.org/show_bug.cgi?id=56689
+
+        This patch is a grab-bag of small changes to bring the WebCore GYP
+        build down to two link errors or one compile error (take your pick).
+        We might need a GYP change to get this last file to compile, however.
+
+        * WebCore.gypi:
+        * gyp/WebCore.gyp:
+
 2011-03-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.

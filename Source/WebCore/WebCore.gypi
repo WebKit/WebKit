@@ -4759,6 +4759,7 @@
             'platform/mac/PopupMenuMac.mm',
             'platform/mac/PurgeableBufferMac.cpp',
             'platform/mac/RuntimeApplicationChecks.mm',
+            'platform/mac/SSLKeyGeneratorMac.cpp',
             'platform/mac/SchedulePairMac.mm',
             'platform/mac/ScrollAnimatorMac.h',
             'platform/mac/ScrollAnimatorMac.mm',
@@ -6545,6 +6546,9 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/CSSValueKeywords.in',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/CharsetData.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/ColorData.cpp',
+            # This list does not contain all the Objective-C bindings files
+            # that we generate.  We run all the IDL files through the
+            # Objective-C code generator, but not all of them even build.
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMAbstractViewInternal.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMAbstractViewPrivate.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMAttr.mm',
@@ -6765,6 +6769,8 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMNamedNodeMapInternal.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMNode.dep',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMNode.mm',
+            '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMNodeIterator.mm',
+            '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMNodeIteratorInternal.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMNodeList.mm',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMNodeListInternal.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMNotation.mm',
@@ -6776,6 +6782,7 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMPageTransitionEventInternal.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMProcessingInstruction.mm',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMProcessingInstructionInternal.h',
+            '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMProgressEvent.mm',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMRGBColor.mm',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMRGBColorInternal.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMRange.mm',

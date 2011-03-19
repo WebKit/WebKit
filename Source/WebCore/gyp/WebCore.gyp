@@ -46,9 +46,6 @@
         'libz.dylib',
       ],
       'sources/': [
-        # This file fails to build because objc_finalizeOnMainThread is deprecated...
-        ['exclude', 'platform/mac/WebCoreObjCExtras.mm$'],
-
         ['exclude', 'bindings/[^/]+/'],
         ['include', 'bindings/generic/'],
         ['include', 'bindings/js/'],
@@ -59,7 +56,7 @@
 
         # FIXME: Figure out how to store these patterns in a variable.
         ['exclude', '(android|brew|cairo|chromium|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mkl|openvg|pango|qt|skia|soup|symbian|texmap|iphone|v8|win|wince|wx)/'],
-        ['exclude', '(Android|Brew|Cairo|Curl|Chromium|Efl|Haiku|Gtk|JSC|Linux|OpenType|Qt|Safari|Soup|Symbian|V8|Win|WinCE|Wx)\\.(cpp|mm?)$'],
+        ['exclude', '(Android|Brew|Cairo|Curl|Chromium|Efl|Haiku|Gtk|Linux|OpenType|Qt|Safari|Soup|Symbian|V8|Win|WinCE|Wx)\\.(cpp|mm?)$'],
         ['exclude', 'Chromium[^/]*\\.(cpp|mm?)$'],
 
         ['exclude', 'platform/image-decoders/'],
