@@ -34,6 +34,7 @@
 #include "HTMLInterchange.h"
 #include "HTMLLIElement.h"
 #include "HTMLNames.h"
+#include "HTMLObjectElement.h"
 #include "HTMLOListElement.h"
 #include "HTMLUListElement.h"
 #include "PositionIterator.h"
@@ -78,7 +79,7 @@ bool canHaveChildrenForEditing(const Node* node)
         && !node->hasTagName(imgTag)
         && !node->hasTagName(inputTag)
         && !node->hasTagName(textareaTag)
-        && !node->hasTagName(objectTag)
+        && (!node->hasTagName(objectTag) || static_cast<const HTMLObjectElement*>(node)->useFallbackContent())
         && !node->hasTagName(iframeTag)
         && !node->hasTagName(embedTag)
         && !node->hasTagName(appletTag)

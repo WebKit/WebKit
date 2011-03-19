@@ -1,3 +1,15 @@
+2011-03-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Add a test for r81266 and fix HTML Editing for fallback contents in object element
+        https://bugs.webkit.org/show_bug.cgi?id=56505
+
+        Added a test to edit contents of hr and datagrid and object's fallback content.
+
+        * editing/editability/ignored-content-expected.txt: Added.
+        * editing/editability/ignored-content.html: Added.
+
 2011-03-18  Andy Estes  <aestes@apple.com>
 
         Reviewed by Eric Seidel.

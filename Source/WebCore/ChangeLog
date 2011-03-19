@@ -1,3 +1,18 @@
+2011-03-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Add a test for r81266 and fix HTML Editing for fallback contents in object element
+        https://bugs.webkit.org/show_bug.cgi?id=56505
+
+        The bug was caused by canHaveChildrenForEditing's always returning false even when
+        object element used fallback content. Fixed the bug by adding a check.
+
+        Test: editing/editability/ignored-content.html
+
+        * editing/htmlediting.cpp:
+        (WebCore::canHaveChildrenForEditing):
+
 2011-03-18  Andy Estes  <aestes@apple.com>
 
         Reviewed by Eric Seidel.
