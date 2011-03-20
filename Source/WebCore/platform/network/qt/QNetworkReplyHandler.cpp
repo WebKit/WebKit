@@ -45,7 +45,7 @@
 // for now, use this hackish solution for setting the internal attribute.
 const QNetworkRequest::Attribute gSynchronousNetworkRequestAttribute = static_cast<QNetworkRequest::Attribute>(QNetworkRequest::HttpPipeliningWasUsedAttribute + 7);
 
-static const int gMaxRecursionLimit = 10;
+static const int gMaxRedirections = 10;
 
 namespace WebCore {
 
@@ -174,17 +174,12 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadType load
     : QObject(0)
     , m_reply(0)
     , m_resourceHandle(handle)
-    , m_redirected(false)
-    , m_responseSent(false)
-    , m_responseContainsData(false)
     , m_loadType(loadType)
     , m_deferred(deferred)
-    , m_hasStarted(false)
-    , m_callFinishOnResume(false)
-    , m_callSendResponseIfNeededOnResume(false)
-    , m_callForwardDataOnResume(false)
-    , m_redirectionTries(gMaxRecursionLimit)
+    , m_redirectionTries(gMaxRedirections)
 {
+    resetState();
+
     const ResourceRequest &r = m_resourceHandle->firstRequest();
 
     if (r.httpMethod() == "GET")
@@ -208,6 +203,22 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadType load
 
     if (!m_deferred)
         start();
+}
+
+void QNetworkReplyHandler::resetState()
+{
+    m_redirected = false;
+    m_responseSent = false;
+    m_responseContainsData = false;
+    m_hasStarted = false;
+    m_callFinishOnResume = false;
+    m_callSendResponseIfNeededOnResume = false;
+    m_callForwardDataOnResume = false;
+
+    if (m_reply) {
+        m_reply->deleteLater();
+        m_reply = 0;
+    }
 }
 
 void QNetworkReplyHandler::setLoadingDeferred(bool deferred)
@@ -292,6 +303,7 @@ void QNetworkReplyHandler::finish()
 
     if (!m_resourceHandle)
         return;
+
     ResourceHandleClient* client = m_resourceHandle->client();
     if (!client) {
         m_reply->deleteLater();
@@ -299,32 +311,30 @@ void QNetworkReplyHandler::finish()
         return;
     }
 
-    if (!m_redirected) {
-        if (!m_reply->error() || shouldIgnoreHttpError(m_reply, m_responseContainsData))
-            client->didFinishLoading(m_resourceHandle, 0);
-        else {
-            QUrl url = m_reply->url();
-            int httpStatusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-
-            if (httpStatusCode) {
-                ResourceError error("HTTP", httpStatusCode, url.toString(), m_reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString());
-                client->didFail(m_resourceHandle, error);
-            } else {
-                ResourceError error("QtNetwork", m_reply->error(), url.toString(), m_reply->errorString());
-                client->didFail(m_resourceHandle, error);
-            }
-        }
-        if (m_reply) {
-            m_reply->deleteLater();
-            m_reply = 0;
-        }
-    } else {
-        if (m_reply) {
-            m_reply->deleteLater();
-            m_reply = 0;
-        }
+    if (m_redirected) {
         resetState();
         start();
+        return;
+    }
+
+    if (!m_reply->error() || shouldIgnoreHttpError(m_reply, m_responseContainsData))
+        client->didFinishLoading(m_resourceHandle, 0);
+    else {
+        QUrl url = m_reply->url();
+        int httpStatusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+        if (httpStatusCode) {
+            ResourceError error("HTTP", httpStatusCode, url.toString(), m_reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString());
+            client->didFail(m_resourceHandle, error);
+        } else {
+            ResourceError error("QtNetwork", m_reply->error(), url.toString(), m_reply->errorString());
+            client->didFail(m_resourceHandle, error);
+        }
+    }
+
+    if (m_reply) {
+        m_reply->deleteLater();
+        m_reply = 0;
     }
 }
 
@@ -390,47 +400,56 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
 
     QUrl redirection = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
     if (redirection.isValid()) {
-        QUrl newUrl = m_reply->url().resolved(redirection);
-
-        m_redirectionTries--;
-        if (m_redirectionTries == 0) { // 10 or more redirections to the same url is considered infinite recursion
-            ResourceError error(newUrl.host(), 400 /*bad request*/,
-                                newUrl.toString(),
-                                QCoreApplication::translate("QWebPage", "Redirection limit reached"));
-            client->didFail(m_resourceHandle, error);
-            return;
-        }
-        m_redirected = true;
-
-
-        //  Status Code 301 (Moved Permanently), 302 (Moved Temporarily), 303 (See Other):
-        //    - If original request is POST convert to GET and redirect automatically
-        //  Status Code 307 (Temporary Redirect) and all other redirect status codes:
-        //    - Use the HTTP method from the previous request
-        if ((statusCode >= 301 && statusCode <= 303) && m_resourceHandle->firstRequest().httpMethod() == "POST")
-            m_method = QNetworkAccessManager::GetOperation;
-
-        ResourceRequest newRequest = m_resourceHandle->firstRequest();
-        newRequest.setHTTPMethod(httpMethod());
-        newRequest.setURL(newUrl);
-
-        // Should not set Referer after a redirect from a secure resource to non-secure one.
-        if (!newRequest.url().protocolIs("https") && protocolIs(newRequest.httpReferrer(), "https"))
-            newRequest.clearHTTPReferrer();
-
-        client->willSendRequest(m_resourceHandle, newRequest, response);
-        if (!m_resourceHandle) // network error did cancel the request
-            return;
-
-        QObject* originatingObject = 0;
-        if (m_resourceHandle->getInternal()->m_context)
-            originatingObject = m_resourceHandle->getInternal()->m_context->originatingObject();
-
-        m_request = newRequest.toNetworkRequest(originatingObject);
+        redirect(response, redirection);
         return;
     }
 
     client->didReceiveResponse(m_resourceHandle, response);
+}
+
+void QNetworkReplyHandler::redirect(ResourceResponse& response, const QUrl& redirection)
+{
+    QUrl newUrl = m_reply->url().resolved(redirection);
+
+    ResourceHandleClient* client = m_resourceHandle->client();
+    ASSERT(client);
+
+    int statusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+    m_redirectionTries--;
+    if (!m_redirectionTries) {
+        ResourceError error(newUrl.host(), 400 /*bad request*/,
+                            newUrl.toString(),
+                            QCoreApplication::translate("QWebPage", "Redirection limit reached"));
+        client->didFail(m_resourceHandle, error);
+        return;
+    }
+    m_redirected = true;
+
+    //  Status Code 301 (Moved Permanently), 302 (Moved Temporarily), 303 (See Other):
+    //    - If original request is POST convert to GET and redirect automatically
+    //  Status Code 307 (Temporary Redirect) and all other redirect status codes:
+    //    - Use the HTTP method from the previous request
+    if ((statusCode >= 301 && statusCode <= 303) && m_resourceHandle->firstRequest().httpMethod() == "POST")
+        m_method = QNetworkAccessManager::GetOperation;
+
+    ResourceRequest newRequest = m_resourceHandle->firstRequest();
+    newRequest.setHTTPMethod(httpMethod());
+    newRequest.setURL(newUrl);
+
+    // Should not set Referer after a redirect from a secure resource to non-secure one.
+    if (!newRequest.url().protocolIs("https") && protocolIs(newRequest.httpReferrer(), "https"))
+        newRequest.clearHTTPReferrer();
+
+    client->willSendRequest(m_resourceHandle, newRequest, response);
+    if (!m_resourceHandle) // network error did cancel the request
+        return;
+
+    QObject* originatingObject = 0;
+    if (m_resourceHandle->getInternal()->m_context)
+        originatingObject = m_resourceHandle->getInternal()->m_context->originatingObject();
+
+    m_request = newRequest.toNetworkRequest(originatingObject);
 }
 
 void QNetworkReplyHandler::forwardData()
@@ -564,17 +583,6 @@ void QNetworkReplyHandler::start()
 
     if (m_resourceHandle->firstRequest().reportUploadProgress())
         connect(m_reply, SIGNAL(uploadProgress(qint64, qint64)), this, SLOT(uploadProgress(qint64, qint64)));
-}
-
-void QNetworkReplyHandler::resetState()
-{
-    m_redirected = false;
-    m_responseSent = false;
-    m_responseContainsData = false;
-    m_hasStarted = false;
-    m_callFinishOnResume = false;
-    m_callSendResponseIfNeededOnResume = false;
-    m_callForwardDataOnResume = false;
 }
 
 }

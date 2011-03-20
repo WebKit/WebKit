@@ -34,6 +34,7 @@ QT_END_NAMESPACE
 namespace WebCore {
 
 class ResourceHandle;
+class ResourceResponse;
 
 class QNetworkReplyHandler : public QObject
 {
@@ -64,6 +65,7 @@ private:
     void resetState();
     String httpMethod() const;
     void resumeDeferredLoad();
+    void redirect(ResourceResponse&, const QUrl&);
 
     QNetworkReply* m_reply;
     ResourceHandle* m_resourceHandle;
