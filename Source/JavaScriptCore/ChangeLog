@@ -1,3 +1,32 @@
+2011-03-20  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Rename ThreadSafeShared to ThreadSafeRefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=56714
+
+        No new tests. Exposes no new functionality.
+
+        * API/JSClassRef.h:
+        * API/OpaqueJSString.h:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/Atomics.h:
+        * wtf/CMakeLists.txt:
+        * wtf/CrossThreadRefCounted.h:
+        (WTF::CrossThreadRefCounted::CrossThreadRefCounted):
+        (WTF::::crossThreadCopy):
+        * wtf/ThreadSafeRefCounted.h: Copied from wtf/ThreadSafeShared.h.
+        (WTF::ThreadSafeRefCountedBase::ThreadSafeRefCountedBase):
+        (WTF::ThreadSafeRefCountedBase::ref):
+        (WTF::ThreadSafeRefCountedBase::refCount):
+        (WTF::ThreadSafeRefCountedBase::derefBase):
+        (WTF::ThreadSafeRefCounted::ThreadSafeRefCounted):
+        * wtf/ThreadSafeShared.h: Removed.
+        * wtf/Threading.h:
+
 2011-03-19  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

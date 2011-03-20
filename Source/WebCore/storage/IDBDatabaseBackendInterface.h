@@ -46,7 +46,7 @@ class IDBTransactionBackendInterface;
 // This is implemented by IDBDatabaseBackendImpl and optionally others (in order to proxy
 // calls across process barriers). All calls to these classes should be non-blocking and
 // trigger work on a background thread if necessary.
-class IDBDatabaseBackendInterface : public ThreadSafeShared<IDBDatabaseBackendInterface> {
+class IDBDatabaseBackendInterface : public ThreadSafeRefCounted<IDBDatabaseBackendInterface> {
 public:
     virtual ~IDBDatabaseBackendInterface() { }
 

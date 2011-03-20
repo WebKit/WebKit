@@ -42,7 +42,7 @@ namespace WebCore {
 
 class FileStream;
 
-class FileThread : public ThreadSafeShared<FileThread> {
+class FileThread : public ThreadSafeRefCounted<FileThread> {
 public:
     static PassRefPtr<FileThread> create()
     {

@@ -33,7 +33,7 @@ namespace JSC {
     class JSGlobalData;
 }
 
-struct OpaqueJSString : public ThreadSafeShared<OpaqueJSString> {
+struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
 
     static PassRefPtr<OpaqueJSString> create() // null
     {
@@ -54,7 +54,7 @@ struct OpaqueJSString : public ThreadSafeShared<OpaqueJSString> {
     JSC::Identifier identifier(JSC::JSGlobalData*) const;
 
 private:
-    friend class WTF::ThreadSafeShared<OpaqueJSString>;
+    friend class WTF::ThreadSafeRefCounted<OpaqueJSString>;
 
     OpaqueJSString()
         : m_characters(0)

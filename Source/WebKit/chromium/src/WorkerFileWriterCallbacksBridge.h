@@ -38,7 +38,7 @@
 #include "WorkerContext.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/ThreadSafeShared.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
     class AsyncFileWriterClient;
@@ -79,7 +79,7 @@ class WebWorkerBase;
 // should call postShutdownToMainThread before dropping its reference to the
 // bridge. This ensures that the WebFileWriter will be cleared on the main
 // thread and that no further calls to the WebFileWriterClient will be made.
-class WorkerFileWriterCallbacksBridge : public ThreadSafeShared<WorkerFileWriterCallbacksBridge>, public WebCore::WorkerContext::Observer, public WebFileWriterClient {
+class WorkerFileWriterCallbacksBridge : public ThreadSafeRefCounted<WorkerFileWriterCallbacksBridge>, public WebCore::WorkerContext::Observer, public WebFileWriterClient {
 public:
     ~WorkerFileWriterCallbacksBridge();
 

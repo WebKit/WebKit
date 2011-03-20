@@ -34,11 +34,11 @@
 #include "KURL.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
-#include <wtf/ThreadSafeShared.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-class RawData : public ThreadSafeShared<RawData> {
+class RawData : public ThreadSafeRefCounted<RawData> {
 public:
     static PassRefPtr<RawData> create()
     {

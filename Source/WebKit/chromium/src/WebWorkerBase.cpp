@@ -65,7 +65,7 @@ namespace {
 
 // This class is used to route the result of the WebWorkerBase::allowDatabase
 // call back to the worker context.
-class AllowDatabaseMainThreadBridge : public ThreadSafeShared<AllowDatabaseMainThreadBridge> {
+class AllowDatabaseMainThreadBridge : public ThreadSafeRefCounted<AllowDatabaseMainThreadBridge> {
 public:
     static PassRefPtr<AllowDatabaseMainThreadBridge> create(WebWorkerBase* worker, const WTF::String& mode, WebCommonWorkerClient* commonClient, WebFrame* frame, const WTF::String& name, const WTF::String& displayName, unsigned long estimatedSize)
     {

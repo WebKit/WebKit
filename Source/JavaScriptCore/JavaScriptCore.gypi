@@ -199,7 +199,7 @@
             'wtf/StdLibExtras.h',
             'wtf/StringExtras.h',
             'wtf/StringHasher.h',
-            'wtf/ThreadSafeShared.h',
+            'wtf/ThreadSafeRefCounted.h',
             'wtf/ThreadSpecific.h',
             'wtf/Threading.h',
             'wtf/ThreadingPrimitives.h',

@@ -1,3 +1,16 @@
+2011-03-20  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Rename ThreadSafeShared to ThreadSafeRefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=56714
+
+        No new tests. Exposes no new functionality.
+
+        * DumpRenderTree/ForwardingHeaders/wtf/ThreadSafeRefCounted.h: Copied from DumpRenderTree/ForwardingHeaders/wtf/ThreadSafeShared.h.
+        * DumpRenderTree/ForwardingHeaders/wtf/ThreadSafeShared.h: Removed.
+        * Scripts/do-webcore-rename:
+
 2011-03-19  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by Dan Bernstein.

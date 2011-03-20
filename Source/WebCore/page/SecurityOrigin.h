@@ -31,14 +31,14 @@
 
 #include "FrameLoaderTypes.h"
 #include "PlatformString.h"
-#include <wtf/ThreadSafeShared.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 class Document;
 class KURL;
 
-class SecurityOrigin : public ThreadSafeShared<SecurityOrigin> {
+class SecurityOrigin : public ThreadSafeRefCounted<SecurityOrigin> {
 public:
     static PassRefPtr<SecurityOrigin> createFromDatabaseIdentifier(const String&);
     static PassRefPtr<SecurityOrigin> createFromString(const String&);

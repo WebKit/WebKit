@@ -44,7 +44,7 @@ namespace WebCore {
     // PlatformMessagePortChannel is a platform-dependent interface to the remote side of a message channel.
     // This default implementation supports multiple threads running within a single process. Implementations for multi-process platforms should define these public APIs in their own platform-specific PlatformMessagePortChannel file.
     // The goal of this implementation is to eliminate contention except when cloning or closing the port, so each side of the channel has its own separate mutex.
-    class PlatformMessagePortChannel : public ThreadSafeShared<PlatformMessagePortChannel> {
+    class PlatformMessagePortChannel : public ThreadSafeRefCounted<PlatformMessagePortChannel> {
     public:
         static void createChannel(PassRefPtr<MessagePort>, PassRefPtr<MessagePort>);
 
@@ -59,7 +59,7 @@ namespace WebCore {
         MessagePort* locallyEntangledPort(const ScriptExecutionContext*);
 
         // Wrapper for MessageQueue that allows us to do thread safe sharing by two proxies.
-        class MessagePortQueue : public ThreadSafeShared<MessagePortQueue> {
+        class MessagePortQueue : public ThreadSafeRefCounted<MessagePortQueue> {
         public:
             static PassRefPtr<MessagePortQueue> create() { return adoptRef(new MessagePortQueue()); }
 

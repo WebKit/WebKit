@@ -35,7 +35,7 @@
 #include "PlatformString.h"
 #include "SQLiteDatabase.h"
 #include <wtf/Forward.h>
-#include <wtf/ThreadSafeShared.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #ifndef NDEBUG
 #include "SecurityOrigin.h"
 #endif
@@ -46,7 +46,7 @@ class DatabaseAuthorizer;
 class ScriptExecutionContext;
 class SecurityOrigin;
 
-class AbstractDatabase : public ThreadSafeShared<AbstractDatabase> {
+class AbstractDatabase : public ThreadSafeRefCounted<AbstractDatabase> {
 public:
     static bool isAvailable();
     static void setIsAvailable(bool available);

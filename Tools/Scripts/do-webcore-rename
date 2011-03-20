@@ -125,8 +125,6 @@ my %renamesContemplatedForTheFuture = (
     "KURLMac" => "URLMac",
     "KURL_h" => "URL_h",
 
-    "ThreadSafeSharedBase" => "ThreadSafeRefCountedBase",
-    "ThreadSafeShared" => "ThreadSafeRefCounted",
     "TreeShared" => "TreeRefCounted",
 
     "StringImpl" => "SharedString",

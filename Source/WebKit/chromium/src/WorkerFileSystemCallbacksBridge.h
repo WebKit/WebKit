@@ -66,7 +66,7 @@ struct WebFileSystemEntry;
 //  --> Bridge::didXxxOnWorkerThread is called on WorkerThread
 //      This calls the original callbacks (m_callbacksOnWorkerThread) and
 //      releases a self-reference to the bridge.
-class WorkerFileSystemCallbacksBridge : public ThreadSafeShared<WorkerFileSystemCallbacksBridge>, public WebCore::WorkerContext::Observer {
+class WorkerFileSystemCallbacksBridge : public ThreadSafeRefCounted<WorkerFileSystemCallbacksBridge>, public WebCore::WorkerContext::Observer {
 public:
     ~WorkerFileSystemCallbacksBridge();
 

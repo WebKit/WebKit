@@ -67,7 +67,7 @@
             '../ForwardingHeaders/wtf/text/WTFString.h',
             '../ForwardingHeaders/wtf/Threading.h',
             '../ForwardingHeaders/wtf/ThreadingPrimitives.h',
-            '../ForwardingHeaders/wtf/ThreadSafeShared.h',
+            '../ForwardingHeaders/wtf/ThreadSafeRefCounted.h',
             '../ForwardingHeaders/wtf/ThreadSpecific.h',
             '../ForwardingHeaders/wtf/unicode/icu/UnicodeIcu.h',
             '../ForwardingHeaders/wtf/unicode/Unicode.h',

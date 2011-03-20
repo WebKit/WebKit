@@ -72,7 +72,7 @@ enum MessageSendFlags {
     } \
 while (0)
 
-class Connection : public ThreadSafeShared<Connection> {
+class Connection : public ThreadSafeRefCounted<Connection> {
 public:
     class MessageReceiver {
     protected:

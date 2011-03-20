@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class SerializedScriptValue : public ThreadSafeShared<SerializedScriptValue> {
+class SerializedScriptValue : public ThreadSafeRefCounted<SerializedScriptValue> {
 public:
     static void deserializeAndSetProperty(v8::Handle<v8::Object>, const char* propertyName,
                                           v8::PropertyAttribute, SerializedScriptValue*);

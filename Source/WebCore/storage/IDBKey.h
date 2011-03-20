@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class IDBKey : public ThreadSafeShared<IDBKey> {
+class IDBKey : public ThreadSafeRefCounted<IDBKey> {
 public:
     static PassRefPtr<IDBKey> createNull()
     {
@@ -100,8 +100,8 @@ public:
     bool isLessThan(const IDBKey* other) const;
     bool isEqual(const IDBKey* other) const;
 
-    using ThreadSafeShared<IDBKey>::ref;
-    using ThreadSafeShared<IDBKey>::deref;
+    using ThreadSafeRefCounted<IDBKey>::ref;
+    using ThreadSafeRefCounted<IDBKey>::deref;
 
 private:
     IDBKey();

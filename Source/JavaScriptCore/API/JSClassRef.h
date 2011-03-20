@@ -85,7 +85,7 @@ public:
     JSC::WeakGCPtr<JSC::JSObject> cachedPrototype;
 };
 
-struct OpaqueJSClass : public ThreadSafeShared<OpaqueJSClass> {
+struct OpaqueJSClass : public ThreadSafeRefCounted<OpaqueJSClass> {
     static PassRefPtr<OpaqueJSClass> create(const JSClassDefinition*);
     static PassRefPtr<OpaqueJSClass> createNoAutomaticPrototype(const JSClassDefinition*);
     ~OpaqueJSClass();

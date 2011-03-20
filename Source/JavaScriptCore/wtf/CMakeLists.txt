@@ -76,7 +76,7 @@ SET(WTF_HEADERS
     TCSpinLock.h
     TCSystemAlloc.h
     ThreadIdentifierDataPthreads.h
-    ThreadSafeShared.h
+    ThreadSafeRefCounted.h
     ThreadSpecific.h
     Threading.h
     ThreadingPrimitives.h

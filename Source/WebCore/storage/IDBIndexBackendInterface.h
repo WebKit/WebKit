@@ -39,7 +39,7 @@ class IDBKey;
 class IDBKeyRange;
 class IDBTransactionBackendInterface;
 
-class IDBIndexBackendInterface : public ThreadSafeShared<IDBIndexBackendInterface> {
+class IDBIndexBackendInterface : public ThreadSafeRefCounted<IDBIndexBackendInterface> {
 public:
     virtual ~IDBIndexBackendInterface() { }
 

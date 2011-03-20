@@ -56,8 +56,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ThreadSafeShared_h
-#define ThreadSafeShared_h
+#ifndef ThreadSafeRefCounted_h
+#define ThreadSafeRefCounted_h
 
 #include "Platform.h"
 
@@ -66,17 +66,18 @@
 
 namespace WTF {
 
-class ThreadSafeSharedBase {
-    WTF_MAKE_NONCOPYABLE(ThreadSafeSharedBase); WTF_MAKE_FAST_ALLOCATED;
+class ThreadSafeRefCountedBase {
+    WTF_MAKE_NONCOPYABLE(ThreadSafeRefCountedBase);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    ThreadSafeSharedBase(int initialRefCount = 1)
+    ThreadSafeRefCountedBase(int initialRefCount = 1)
         : m_refCount(initialRefCount)
     {
     }
 
     void ref()
     {
-#if USE(LOCKFREE_THREADSAFESHARED)
+#if USE(LOCKFREE_THREADSAFEREFCOUNTED)
         atomicIncrement(&m_refCount);
 #else
         MutexLocker locker(m_mutex);
@@ -91,7 +92,7 @@ public:
 
     int refCount() const
     {
-#if !USE(LOCKFREE_THREADSAFESHARED)
+#if !USE(LOCKFREE_THREADSAFEREFCOUNTED)
         MutexLocker locker(m_mutex);
 #endif
         return static_cast<int const volatile &>(m_refCount);
@@ -101,7 +102,7 @@ protected:
     // Returns whether the pointer should be freed or not.
     bool derefBase()
     {
-#if USE(LOCKFREE_THREADSAFESHARED)
+#if USE(LOCKFREE_THREADSAFEREFCOUNTED)
         if (atomicDecrement(&m_refCount) <= 0)
             return true;
 #else
@@ -122,12 +123,12 @@ private:
     friend class CrossThreadRefCounted;
 
     int m_refCount;
-#if !USE(LOCKFREE_THREADSAFESHARED)
+#if !USE(LOCKFREE_THREADSAFEREFCOUNTED)
     mutable Mutex m_mutex;
 #endif
 };
 
-template<class T> class ThreadSafeShared : public ThreadSafeSharedBase {
+template<class T> class ThreadSafeRefCounted : public ThreadSafeRefCountedBase {
 public:
     void deref()
     {
@@ -136,13 +137,13 @@ public:
     }
 
 protected:
-    ThreadSafeShared()
+    ThreadSafeRefCounted()
     {
     }
 };
 
 } // namespace WTF
 
-using WTF::ThreadSafeShared;
+using WTF::ThreadSafeRefCounted;
 
-#endif // ThreadSafeShared_h
+#endif // ThreadSafeRefCounted_h

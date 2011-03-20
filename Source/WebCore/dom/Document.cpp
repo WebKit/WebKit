@@ -344,7 +344,7 @@ static bool disableRangeMutation(Page* page)
 
 static HashSet<Document*>* documentsThatNeedStyleRecalc = 0;
 
-class DocumentWeakReference : public ThreadSafeShared<DocumentWeakReference> {
+class DocumentWeakReference : public ThreadSafeRefCounted<DocumentWeakReference> {
 public:
     static PassRefPtr<DocumentWeakReference> create(Document* document)
     {

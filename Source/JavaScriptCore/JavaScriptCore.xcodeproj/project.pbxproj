@@ -555,7 +555,7 @@
 		BC3135650F302FA3003DFD3A /* DebuggerActivation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3135630F302FA3003DFD3A /* DebuggerActivation.cpp */; };
 		BC5F7BBE11823B590052C02C /* Atomics.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5F7BBB11823B590052C02C /* Atomics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5F7BBF11823B590052C02C /* ThreadingPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5F7BBC11823B590052C02C /* ThreadingPrimitives.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC5F7BC011823B590052C02C /* ThreadSafeShared.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5F7BBD11823B590052C02C /* ThreadSafeShared.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5F7BC011823B590052C02C /* ThreadSafeRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5F7BBD11823B590052C02C /* ThreadSafeRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC756FC90E2031B200DE7D12 /* JSGlobalObjectFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */; };
 		BC7F8FB90E19D1C3008632C0 /* JSNumberCell.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F8FB80E19D1C3008632C0 /* JSNumberCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1172,7 +1172,7 @@
 		BC337BEA0E1B00CB0076918A /* Error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Error.cpp; sourceTree = "<group>"; };
 		BC5F7BBB11823B590052C02C /* Atomics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Atomics.h; sourceTree = "<group>"; };
 		BC5F7BBC11823B590052C02C /* ThreadingPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadingPrimitives.h; sourceTree = "<group>"; };
-		BC5F7BBD11823B590052C02C /* ThreadSafeShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadSafeShared.h; sourceTree = "<group>"; };
+		BC5F7BBD11823B590052C02C /* ThreadSafeRefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadSafeRefCounted.h; sourceTree = "<group>"; };
 		BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassInfo.h; sourceTree = "<group>"; };
 		BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectFunctions.cpp; sourceTree = "<group>"; };
 		BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectFunctions.h; sourceTree = "<group>"; };
@@ -1682,7 +1682,7 @@
 				E1EE79220D6C95CD00FEA3BA /* Threading.h */,
 				BC5F7BBC11823B590052C02C /* ThreadingPrimitives.h */,
 				E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */,
-				BC5F7BBD11823B590052C02C /* ThreadSafeShared.h */,
+				BC5F7BBD11823B590052C02C /* ThreadSafeRefCounted.h */,
 				E1B7C8BD0DA3A3360074B0DC /* ThreadSpecific.h */,
 				0B330C260F38C62300692DE3 /* TypeTraits.cpp */,
 				0B4D7E620F319AC800AD7E58 /* TypeTraits.h */,
@@ -2480,7 +2480,7 @@
 				18BAB55410DAE066000D945B /* ThreadIdentifierDataPthreads.h in Headers */,
 				BC18C4700E16F5CD00B34460 /* Threading.h in Headers */,
 				BC5F7BBF11823B590052C02C /* ThreadingPrimitives.h in Headers */,
-				BC5F7BC011823B590052C02C /* ThreadSafeShared.h in Headers */,
+				BC5F7BC011823B590052C02C /* ThreadSafeRefCounted.h in Headers */,
 				BC18C4710E16F5CD00B34460 /* ThreadSpecific.h in Headers */,
 				A7386556118697B400540279 /* ThunkGenerators.h in Headers */,
 				14A42E400F4F60EE00599099 /* TimeoutChecker.h in Headers */,

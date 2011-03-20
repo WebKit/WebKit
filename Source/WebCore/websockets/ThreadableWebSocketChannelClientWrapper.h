@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-class ThreadableWebSocketChannelClientWrapper : public ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> {
+class ThreadableWebSocketChannelClientWrapper : public ThreadSafeRefCounted<ThreadableWebSocketChannelClientWrapper> {
 public:
     static PassRefPtr<ThreadableWebSocketChannelClientWrapper> create(WebSocketChannelClient* client)
     {

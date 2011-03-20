@@ -45,7 +45,7 @@ class SQLStatementCallback;
 class SQLStatementErrorCallback;
 class SQLTransaction;
 
-class SQLStatement : public ThreadSafeShared<SQLStatement> {
+class SQLStatement : public ThreadSafeRefCounted<SQLStatement> {
 public:
     static PassRefPtr<SQLStatement> create(Database*, const String&, const Vector<SQLValue>&, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, int permissions);
 

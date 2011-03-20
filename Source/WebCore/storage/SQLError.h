@@ -32,11 +32,11 @@
 #if ENABLE(DATABASE)
 
 #include "PlatformString.h"
-#include <wtf/ThreadSafeShared.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-class SQLError : public ThreadSafeShared<SQLError> {
+class SQLError : public ThreadSafeRefCounted<SQLError> {
 public:
     static PassRefPtr<SQLError> create(unsigned code, const String& message) { return adoptRef(new SQLError(code, message)); }
 

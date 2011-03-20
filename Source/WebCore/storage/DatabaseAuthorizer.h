@@ -31,7 +31,7 @@
 #include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
-#include <wtf/ThreadSafeShared.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -40,7 +40,7 @@ extern const int SQLAuthAllow;
 extern const int SQLAuthIgnore;
 extern const int SQLAuthDeny;
 
-class DatabaseAuthorizer : public ThreadSafeShared<DatabaseAuthorizer> {
+class DatabaseAuthorizer : public ThreadSafeRefCounted<DatabaseAuthorizer> {
 public:
 
     enum Permissions {

@@ -1,3 +1,18 @@
+2011-03-20  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Rename ThreadSafeShared to ThreadSafeRefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=56714
+
+        No new tests. Exposes no new functionality.
+
+        * Platform/CoreIPC/Connection.h:
+        * Platform/WorkQueue.h:
+        * Platform/win/WorkQueueWin.cpp:
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/ThreadLauncher.h:
+
 2011-03-19  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -30,14 +30,14 @@
 
 #if ENABLE(DATABASE)
 
-#include <wtf/ThreadSafeShared.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 class SQLTransaction;
 class SQLResultSet;
 
-class SQLStatementCallback : public ThreadSafeShared<SQLStatementCallback> {
+class SQLStatementCallback : public ThreadSafeRefCounted<SQLStatementCallback> {
 public:
     virtual ~SQLStatementCallback() { }
     virtual bool handleEvent(SQLTransaction*, SQLResultSet*) = 0;

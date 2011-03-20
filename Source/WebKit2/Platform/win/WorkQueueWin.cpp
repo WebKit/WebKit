@@ -210,7 +210,7 @@ void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
         ::QueueUserWorkItem(workThreadCallback, this, WT_EXECUTEDEFAULT);
 }
 
-struct TimerContext : public ThreadSafeShared<TimerContext> {
+struct TimerContext : public ThreadSafeRefCounted<TimerContext> {
     static PassRefPtr<TimerContext> create() { return adoptRef(new TimerContext); }
 
     WorkQueue* queue;

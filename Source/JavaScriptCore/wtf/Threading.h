@@ -67,7 +67,7 @@
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/ThreadSafeShared.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadingPrimitives.h>
 
 // For portability, we do not use thread-safe statics natively supported by some compilers (e.g. gcc).

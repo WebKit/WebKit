@@ -37,7 +37,7 @@ class QLocalSocket;
 
 namespace WebKit {
 
-class ProcessLauncher : public ThreadSafeShared<ProcessLauncher> {
+class ProcessLauncher : public ThreadSafeRefCounted<ProcessLauncher> {
 public:
     class Client {
     public:

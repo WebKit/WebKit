@@ -43,7 +43,7 @@
 namespace WebCore {
 
 // FIXME: All child classes need to be made threadsafe.
-class IDBCallbacks : public ThreadSafeShared<IDBCallbacks> {
+class IDBCallbacks : public ThreadSafeRefCounted<IDBCallbacks> {
 public:
     virtual ~IDBCallbacks() { }
 

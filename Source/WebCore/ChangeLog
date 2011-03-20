@@ -1,3 +1,60 @@
+2011-03-20  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Rename ThreadSafeShared to ThreadSafeRefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=56714
+
+        No new tests. Exposes no new functionality.
+
+        * ForwardingHeaders/wtf/ThreadSafeRefCounted.h: Copied from ForwardingHeaders/wtf/ThreadSafeShared.h.
+        * ForwardingHeaders/wtf/ThreadSafeShared.h: Removed.
+        * bindings/v8/SerializedScriptValue.h:
+        * dom/Document.cpp:
+        * dom/default/PlatformMessagePortChannel.h:
+        * fileapi/FileThread.h:
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::create):
+        (WebCore::ThreadableLoaderClientWrapper::clearClient):
+        (WebCore::ThreadableLoaderClientWrapper::done):
+        (WebCore::ThreadableLoaderClientWrapper::didSendData):
+        (WebCore::ThreadableLoaderClientWrapper::didReceiveResponse):
+        (WebCore::ThreadableLoaderClientWrapper::didReceiveData):
+        (WebCore::ThreadableLoaderClientWrapper::didReceiveCachedMetadata):
+        (WebCore::ThreadableLoaderClientWrapper::didFinishLoading):
+        (WebCore::ThreadableLoaderClientWrapper::didFail):
+        (WebCore::ThreadableLoaderClientWrapper::didFailRedirectCheck):
+        (WebCore::ThreadableLoaderClientWrapper::didReceiveAuthenticationCancellation):
+        (WebCore::ThreadableLoaderClientWrapper::ThreadableLoaderClientWrapper):
+        * page/SecurityOrigin.h:
+        * platform/CrossThreadCopier.h:
+        * platform/network/BlobData.h:
+        * platform/network/cf/SocketStreamHandle.h:
+        * storage/AbstractDatabase.h:
+        * storage/DatabaseAuthorizer.h:
+        * storage/DatabaseCallback.h:
+        * storage/DatabaseThread.h:
+        * storage/IDBCallbacks.h:
+        * storage/IDBCursorBackendInterface.h:
+        * storage/IDBDatabaseBackendInterface.h:
+        * storage/IDBFactoryBackendInterface.h:
+        * storage/IDBIndexBackendInterface.h:
+        * storage/IDBKey.h:
+        * storage/IDBKeyRange.h:
+        * storage/IDBObjectStoreBackendInterface.h:
+        * storage/IDBRequest.h:
+        * storage/IDBTransactionBackendInterface.h:
+        * storage/SQLError.h:
+        * storage/SQLResultSet.h:
+        * storage/SQLStatement.h:
+        * storage/SQLStatementCallback.h:
+        * storage/SQLStatementErrorCallback.h:
+        * storage/SQLTransaction.h:
+        * storage/SQLTransactionCallback.h:
+        * storage/SQLTransactionErrorCallback.h:
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * workers/DefaultSharedWorkerRepository.cpp:
+
 2011-03-20  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

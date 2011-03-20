@@ -34,7 +34,7 @@
 #include "SQLStatement.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
-#include <wtf/ThreadSafeShared.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -50,7 +50,7 @@ class SQLTransactionErrorCallback;
 class SQLValue;
 class VoidCallback;
 
-class SQLTransactionWrapper : public ThreadSafeShared<SQLTransactionWrapper> {
+class SQLTransactionWrapper : public ThreadSafeRefCounted<SQLTransactionWrapper> {
 public:
     virtual ~SQLTransactionWrapper() { }
     virtual bool performPreflight(SQLTransaction*) = 0;
@@ -59,7 +59,7 @@ public:
     virtual SQLError* sqlError() const = 0;
 };
 
-class SQLTransaction : public ThreadSafeShared<SQLTransaction> {
+class SQLTransaction : public ThreadSafeRefCounted<SQLTransaction> {
 public:
     static PassRefPtr<SQLTransaction> create(Database*, PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
                                              PassRefPtr<VoidCallback>, PassRefPtr<SQLTransactionWrapper>, bool readOnly = false);

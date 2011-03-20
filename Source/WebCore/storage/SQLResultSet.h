@@ -33,11 +33,11 @@
 
 #include "ExceptionCode.h"
 #include "SQLResultSetRowList.h"
-#include <wtf/ThreadSafeShared.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-class SQLResultSet : public ThreadSafeShared<SQLResultSet> {
+class SQLResultSet : public ThreadSafeRefCounted<SQLResultSet> {
 public:
     static PassRefPtr<SQLResultSet> create() { return adoptRef(new SQLResultSet); }
 

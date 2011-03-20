@@ -48,7 +48,7 @@ class Document;
 class SQLTransactionClient;
 class SQLTransactionCoordinator;
 
-class DatabaseThread : public ThreadSafeShared<DatabaseThread> {
+class DatabaseThread : public ThreadSafeRefCounted<DatabaseThread> {
 public:
     static PassRefPtr<DatabaseThread> create() { return adoptRef(new DatabaseThread); }
     ~DatabaseThread();

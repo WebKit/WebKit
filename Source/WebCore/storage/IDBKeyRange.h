@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class IDBKeyRange : public ThreadSafeShared<IDBKeyRange> {
+class IDBKeyRange : public ThreadSafeRefCounted<IDBKeyRange> {
 public:
     static PassRefPtr<IDBKeyRange> create(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen)
     {

@@ -41,7 +41,7 @@ class IDBKey;
 class IDBRequest;
 class SerializedScriptValue;
 
-class IDBCursorBackendInterface : public ThreadSafeShared<IDBCursorBackendInterface> {
+class IDBCursorBackendInterface : public ThreadSafeRefCounted<IDBCursorBackendInterface> {
 public:
     virtual ~IDBCursorBackendInterface() {}
 

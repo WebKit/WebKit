@@ -106,7 +106,7 @@ private:
     dispatch_queue_t m_dispatchQueue;
 #endif
 #elif PLATFORM(WIN)
-    class WorkItemWin : public ThreadSafeShared<WorkItemWin> {
+    class WorkItemWin : public ThreadSafeRefCounted<WorkItemWin> {
     public:
         static PassRefPtr<WorkItemWin> create(PassOwnPtr<WorkItem>, WorkQueue*);
         virtual ~WorkItemWin();

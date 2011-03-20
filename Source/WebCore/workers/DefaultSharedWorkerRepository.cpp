@@ -58,7 +58,7 @@
 
 namespace WebCore {
 
-class SharedWorkerProxy : public ThreadSafeShared<SharedWorkerProxy>, public WorkerLoaderProxy, public WorkerReportingProxy {
+class SharedWorkerProxy : public ThreadSafeRefCounted<SharedWorkerProxy>, public WorkerLoaderProxy, public WorkerReportingProxy {
 public:
     static PassRefPtr<SharedWorkerProxy> create(const String& name, const KURL& url, PassRefPtr<SecurityOrigin> origin) { return adoptRef(new SharedWorkerProxy(name, url, origin)); }
 

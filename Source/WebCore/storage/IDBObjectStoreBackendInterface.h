@@ -42,7 +42,7 @@ class IDBKeyRange;
 class IDBTransactionBackendInterface;
 class SerializedScriptValue;
 
-class IDBObjectStoreBackendInterface : public ThreadSafeShared<IDBObjectStoreBackendInterface> {
+class IDBObjectStoreBackendInterface : public ThreadSafeRefCounted<IDBObjectStoreBackendInterface> {
 public:
     virtual ~IDBObjectStoreBackendInterface() { }
 

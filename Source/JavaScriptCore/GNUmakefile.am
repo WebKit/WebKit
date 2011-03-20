@@ -551,7 +551,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/Threading.h \
 	Source/JavaScriptCore/wtf/ThreadingPrimitives.h \
 	Source/JavaScriptCore/wtf/ThreadingPthreads.cpp \
-	Source/JavaScriptCore/wtf/ThreadSafeShared.h \
+	Source/JavaScriptCore/wtf/ThreadSafeRefCounted.h \
 	Source/JavaScriptCore/wtf/ThreadSpecific.h \
 	Source/JavaScriptCore/wtf/TypeTraits.cpp \
 	Source/JavaScriptCore/wtf/TypeTraits.h \

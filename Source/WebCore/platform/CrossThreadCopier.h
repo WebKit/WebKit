@@ -56,7 +56,7 @@ namespace WebCore {
         }
     };
 
-    template<bool isConvertibleToInteger, bool isThreadsafeShared, typename T> struct CrossThreadCopierBase;
+    template<bool isConvertibleToInteger, bool isThreadSafeRefCounted, typename T> struct CrossThreadCopierBase;
 
     // Integers get passed through without any changes.
     template<typename T> struct CrossThreadCopierBase<true, false, T> : public CrossThreadCopierPassThrough<T> {
@@ -114,8 +114,8 @@ namespace WebCore {
     };
 
     template<typename T> struct CrossThreadCopier : public CrossThreadCopierBase<WTF::IsConvertibleToInteger<T>::value,
-                                                                                 WTF::IsSubclassOfTemplate<typename WTF::RemoveTemplate<T, RefPtr>::Type, ThreadSafeShared>::value
-                                                                                     || WTF::IsSubclassOfTemplate<typename WTF::RemoveTemplate<T, PassRefPtr>::Type, ThreadSafeShared>::value,
+                                                                                 WTF::IsSubclassOfTemplate<typename WTF::RemoveTemplate<T, RefPtr>::Type, ThreadSafeRefCounted>::value
+                                                                                     || WTF::IsSubclassOfTemplate<typename WTF::RemoveTemplate<T, PassRefPtr>::Type, ThreadSafeRefCounted>::value,
                                                                                  T> {
     };
 

@@ -46,7 +46,7 @@ namespace WebCore {
 class MessagePort;
 
 // PlatformMessagePortChannel is a platform-dependent interface to the remote side of a message channel.
-class PlatformMessagePortChannel : public ThreadSafeShared<PlatformMessagePortChannel>,
+class PlatformMessagePortChannel : public ThreadSafeRefCounted<PlatformMessagePortChannel>,
                                    public WebKit::WebMessagePortChannelClient {
 public:
     static void createChannel(PassRefPtr<MessagePort>, PassRefPtr<MessagePort>);
