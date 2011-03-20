@@ -1,3 +1,11 @@
+2011-03-20  Sam Weinig  <sam@webkit.org>
+
+        Add http/tests/appcache/origin-delete.html to the Skipped list for WebKit2,
+        since layoutTestController.clearAllApplicationCaches is not yet implemented
+        by WebKitTestRunner.
+
+        * platform/mac-wk2/Skipped:
+
 2011-03-19  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by Alexey Proskuryakov.
