@@ -651,6 +651,11 @@ void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quo
     // FIXME: implement to support Application Cache quotas.
 }
 
+void LayoutTestController::clearApplicationCacheForOrigin(OpaqueJSString*)
+{
+    // FIXME: implement to support deleting all Application Caches for an origin.
+}
+
 void LayoutTestController::clearAllDatabases()
 {
     webkit_remove_all_web_databases();
