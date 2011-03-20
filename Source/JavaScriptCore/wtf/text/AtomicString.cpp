@@ -87,7 +87,7 @@ static inline PassRefPtr<StringImpl> addToStringTable(const T& value)
 struct CStringTranslator {
     static unsigned hash(const char* c)
     {
-        return StringImpl::computeHash(c);
+        return StringHasher::computeHash(c);
     }
 
     static bool equal(StringImpl* r, const char* s)
@@ -176,7 +176,7 @@ bool operator==(const AtomicString& string, const Vector<UChar>& vector)
 struct UCharBufferTranslator {
     static unsigned hash(const UCharBuffer& buf)
     {
-        return StringImpl::computeHash(buf.s, buf.length);
+        return StringHasher::computeHash(buf.s, buf.length);
     }
 
     static bool equal(StringImpl* const& str, const UCharBuffer& buf)
@@ -201,7 +201,7 @@ struct HashAndCharacters {
 struct HashAndCharactersTranslator {
     static unsigned hash(const HashAndCharacters& buffer)
     {
-        ASSERT(buffer.hash == StringImpl::computeHash(buffer.characters, buffer.length));
+        ASSERT(buffer.hash == StringHasher::computeHash(buffer.characters, buffer.length));
         return buffer.hash;
     }
 

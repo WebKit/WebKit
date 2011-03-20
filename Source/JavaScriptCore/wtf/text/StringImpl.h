@@ -136,7 +136,7 @@ private:
     {
         ASSERT(!isStatic());
         ASSERT(!m_hash);
-        ASSERT(hash == computeHash(m_data, m_length));
+        ASSERT(hash == StringHasher::computeHash(m_data, m_length));
         m_hash = hash;
     }
 
@@ -235,11 +235,8 @@ public:
             m_refCountAndFlags &= ~s_refCountFlagIsAtomic;
     }
 
-    unsigned hash() const { if (!m_hash) m_hash = computeHash(m_data, m_length); return m_hash; }
+    unsigned hash() const { if (!m_hash) m_hash = StringHasher::computeHash(m_data, m_length); return m_hash; }
     unsigned existingHash() const { ASSERT(m_hash); return m_hash; }
-    static unsigned computeHash(const UChar* data, unsigned length) { return StringHasher::computeHash<UChar>(data, length); }
-    static unsigned computeHash(const char* data, unsigned length) { return StringHasher::computeHash<char>(data, length); }
-    static unsigned computeHash(const char* data) { return StringHasher::computeHash<char>(data); }
 
     ALWAYS_INLINE void deref() { m_refCountAndFlags -= s_refCountIncrement; if (!(m_refCountAndFlags & (s_refCountMask | s_refCountFlagStatic))) delete this; }
     ALWAYS_INLINE bool hasOneRef() const { return (m_refCountAndFlags & (s_refCountMask | s_refCountFlagStatic)) == s_refCountIncrement; }
