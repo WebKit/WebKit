@@ -30,12 +30,15 @@ function test()
 
     function step2()
     {
-        var resource1 = WebInspector.panels.network.resources[0];
+        // inspector-test.js appears in network panel occasionally in Safari on
+        // Mac, so checking two last resources.
+        var resourcesCount = WebInspector.panels.network.resources.length;
+        var resource1 = WebInspector.panels.network.resources[resourcesCount - 2];
         InspectorTest.addResult(resource1.url);
         InspectorTest.addResult("resourceSize: " + resource1.resourceSize);
         InspectorTest.addResult("transferSize: " + (resource1.transferSize - resource1._responseHeadersSize));
 
-        var resource2 = WebInspector.panels.network.resources[1];
+        var resource2 = WebInspector.panels.network.resources[resourcesCount - 1];
         InspectorTest.addResult(resource2.url);
         InspectorTest.addResult("resourceSize: " + resource2.resourceSize);
         InspectorTest.addResult("transferSize: " + (resource2.transferSize - resource2._responseHeadersSize));
