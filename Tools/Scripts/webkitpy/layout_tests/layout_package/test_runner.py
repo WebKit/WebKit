@@ -498,7 +498,6 @@ class TestRunner:
                 # Keep the tests in alphabetical order.
                 # FIXME: Remove once tests are fixed so they can be run in any
                 # order.
-                test_list.reverse()
                 test_list_tuple = (directory, test_list)
                 test_lists.append(test_list_tuple)
             test_lists.sort(lambda a, b: cmp(len(b[1]), len(a[1])))
@@ -507,7 +506,6 @@ class TestRunner:
         # but each http test takes a very long time to run, so sorting by the
         # number of tests doesn't accurately capture how long they take to run.
         if tests_to_http_lock:
-            tests_to_http_lock.reverse()
             test_lists.insert(0, ("tests_to_http_lock", tests_to_http_lock))
 
         return test_lists

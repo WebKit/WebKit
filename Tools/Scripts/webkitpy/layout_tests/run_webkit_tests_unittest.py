@@ -470,6 +470,22 @@ class MainTest(unittest.TestCase):
                                           tests_included=True)
         self.assertEqual(user.opened_urls, ['/tmp/foo/results.html'])
 
+    def test_run_order(self):
+        # This tests that we run the tests in ascending alphabetical order
+        # per directory. We have to check both the inline and threaded paths
+        # as well as http tests, which are sharded separately.
+        tests_run = get_tests_run(['passes'],
+                                  tests_included=True, flatten_batches=True)
+        self.assertEquals(tests_run, sorted(tests_run))
+
+        tests_run = get_tests_run(['--worker-model', 'threads', 'passes'],
+                                  tests_included=True, flatten_batches=True)
+        self.assertEquals(tests_run, sorted(tests_run))
+
+        tests_run = get_tests_run(['--worker-model', 'inline', 'http/tests/passes'],
+                                  tests_included=True, flatten_batches=True)
+        self.assertEquals(tests_run, sorted(tests_run))
+
     def test_tolerance(self):
         class ImageDiffTestPort(TestPort):
             def diff_image(self, expected_contents, actual_contents,

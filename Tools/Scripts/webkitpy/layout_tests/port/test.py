@@ -128,6 +128,7 @@ def unit_test_list():
               actual_checksum='text-image-checksum_fail-checksum')
     tests.add('failures/unexpected/timeout.html', timeout=True)
     tests.add('http/tests/passes/text.html')
+    tests.add('http/tests/passes/image.html')
     tests.add('http/tests/ssl/text.html')
     tests.add('passes/error.html', error='stuff going to stderr')
     tests.add('passes/image.html')
