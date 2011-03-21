@@ -378,12 +378,12 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
     // If we revalidated the resource and got Not modified, send content length following didReceiveResponse
     // as there will be no calls to didReceiveContentLength from the network stack.
     if (cachedResourceSize && response.httpStatusCode() == 304)
-        didReceiveContentLength(identifier, cachedResourceSize);
+        didReceiveContentLength(identifier, cachedResourceSize, 0);
 }
 
-void InspectorResourceAgent::didReceiveContentLength(unsigned long identifier, int lengthReceived)
+void InspectorResourceAgent::didReceiveContentLength(unsigned long identifier, int dataLength, int lengthReceived)
 {
-    m_frontend->didReceiveContentLength(static_cast<int>(identifier), currentTime(), lengthReceived);
+    m_frontend->didReceiveContentLength(static_cast<int>(identifier), currentTime(), dataLength, lengthReceived);
 }
 
 void InspectorResourceAgent::didFinishLoading(unsigned long identifier, double finishTime)

@@ -6,6 +6,7 @@
     $gzip = $_GET["gzip"];
     $jsdelay = $_GET["jsdelay"];
     $jscontent = $_GET["jscontent"];
+    $chunked = $_GET["chunked"];
 
     # Enable gzip compression if needed
     if ($gzip)
@@ -67,16 +68,30 @@ __foo(<?php echo($jsdelay)?>);
         $data_len = strlen($data);
         print($data);
         if ($size) {
+            if ($chunked) {
+                ob_flush();
+                flush();
+            }
             for ($i = 0; $size && $i < $size - $data_len; ++$i)
                 echo("=");
         }
     } else {
         # Generate dummy text/html.
         if ($size) {
-            for ($i = 0; $i < $size; ++$i)
+            for ($i = 0; $i < $size; ++$i) {
+                if ($chunked && (1 == $i)) {
+                    ob_flush();
+                    flush();
+                }
                 echo("*");
+            }
         } else {
-            echo("Hello world");
+            echo("Hello ");
+            if ($chunked) {
+                ob_flush();
+                flush();
+            }
+            echo("world");
         }
     }
 ?>

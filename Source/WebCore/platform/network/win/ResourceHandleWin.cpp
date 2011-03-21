@@ -242,8 +242,11 @@ bool ResourceHandle::onRequestComplete()
                 resourceHandleClient->didReceiveResponse(this, response);
         }
 
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=19793
+        // -1 means we do not provide any data about transfer size to inspector so it would use
+        // Content-Length headers or content size to show transfer size.
         if (ResourceHandleClient* resourceHandleClient = client())
-            resourceHandleClient->didReceiveData(this, buffer, buffers.dwBufferLength, 0);
+            resourceHandleClient->didReceiveData(this, buffer, buffers.dwBufferLength, -1);
         buffers.dwBufferLength = bufferSize;
     }
 
@@ -385,8 +388,11 @@ void ResourceHandle::fileLoadTimer(Timer<ResourceHandle>*)
         const int bufferSize = 8192;
         char buffer[bufferSize];
         result = ReadFile(fileHandle, &buffer, bufferSize, &bytesRead, 0);
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=19793
+        // -1 means we do not provide any data about transfer size to inspector so it would use
+        // Content-Length headers or content size to show transfer size.
         if (result && bytesRead)
-            client()->didReceiveData(this, buffer, bytesRead, 0);
+            client()->didReceiveData(this, buffer, bytesRead, -1);
         // Check for end of file.
     } while (result && bytesRead);
 

@@ -555,8 +555,10 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
 
 void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* data, int length, int lengthReceived)
 {
+    UNUSED_PARAM(lengthReceived);
+
 #if ENABLE(INSPECTOR)
-    InspectorInstrumentation::didReceiveContentLength(m_frame, m_currentResourceIdentifier, lengthReceived);
+    InspectorInstrumentation::didReceiveContentLength(m_frame, m_currentResourceIdentifier, length, 0);
 #endif
 
     if (handle == m_manifestHandle) {

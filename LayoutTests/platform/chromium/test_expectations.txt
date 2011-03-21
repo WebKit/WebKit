@@ -663,6 +663,10 @@ BUGWK56454 WIN LINUX : inspector/elements/mutate-unknown-node.html = PASS TEXT
 
 BUG_PFELDMAN SKIP : http/tests/inspector/network/network-timing.html = FAIL
 BUG_PFELDMAN SKIP : http/tests/inspector/network/network-size.html = FAIL
+
+// https://bugs.webkit.org/show_bug.cgi?id=56602
+BUG_VSEVIK SKIP : http/tests/inspector/network/network-size-chunked.html = FAIL
+
 BUGJAMESR WIN LINUX : inspector/styles/styles-disable-then-delete.html = TIMEOUT PASS
 
 // -----------------------------------------------------------------

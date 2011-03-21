@@ -1331,3 +1331,6 @@ svg/W3C-I18N/text-dirLTR-ubOverride.svg
 svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context.svg
 svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context.svg
 svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg
+
+# https://bugs.webkit.org/show_bug.cgi?id=56691
+http/tests/inspector/network/network-size-chunked.html

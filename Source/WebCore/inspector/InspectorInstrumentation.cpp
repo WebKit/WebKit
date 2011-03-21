@@ -459,10 +459,10 @@ void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorIns
     }
 }
 
-void InspectorInstrumentation::didReceiveContentLengthImpl(InspectorAgent* inspectorAgent, unsigned long identifier, int lengthReceived)
+void InspectorInstrumentation::didReceiveContentLengthImpl(InspectorAgent* inspectorAgent, unsigned long identifier, int dataLength, int lengthReceived)
 {
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
-        resourceAgent->didReceiveContentLength(identifier, lengthReceived);
+        resourceAgent->didReceiveContentLength(identifier, dataLength, lengthReceived);
 }
 
 void InspectorInstrumentation::didFinishLoadingImpl(InspectorAgent* inspectorAgent, unsigned long identifier, double finishTime)

@@ -913,6 +913,7 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
 {
     UNUSED_PARAM(connection);
+    UNUSED_PARAM(lengthReceived);
 
     LOG(Network, "Handle %p delegate connection:%p didReceiveData:%p lengthReceived:%lld", m_handle, connection, data, lengthReceived);
 
@@ -922,7 +923,10 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
     CallbackGuard guard;
-    m_handle->client()->didReceiveData(m_handle, (const char*)[data bytes], [data length], static_cast<int>(lengthReceived));
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=19793
+    // -1 means we do not provide any data about transfer size to inspector so it would use
+    // Content-Length headers or content size to show transfer size.
+    m_handle->client()->didReceiveData(m_handle, (const char*)[data bytes], [data length], -1);
 }
 
 - (void)connection:(NSURLConnection *)connection willStopBufferingData:(NSData *)data

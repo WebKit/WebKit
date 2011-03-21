@@ -118,7 +118,7 @@ public:
     static void didReceiveResourceData(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willReceiveResourceResponse(Frame*, unsigned long identifier, const ResourceResponse&);
     static void didReceiveResourceResponse(const InspectorInstrumentationCookie&, unsigned long identifier, DocumentLoader*, const ResourceResponse&);
-    static void didReceiveContentLength(Frame*, unsigned long identifier, int lengthReceived);
+    static void didReceiveContentLength(Frame*, unsigned long identifier, int dataLength, int lengthReceived);
     static void didFinishLoading(Frame*, unsigned long identifier, double finishTime);
     static void didFailLoading(Frame*, unsigned long identifier, const ResourceError&);
     static void resourceRetrievedByXMLHttpRequest(ScriptExecutionContext*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
@@ -235,7 +235,7 @@ private:
     static void didReceiveResourceDataImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willReceiveResourceResponseImpl(InspectorAgent*, unsigned long identifier, const ResourceResponse&);
     static void didReceiveResourceResponseImpl(const InspectorInstrumentationCookie&, unsigned long identifier, DocumentLoader*, const ResourceResponse&);
-    static void didReceiveContentLengthImpl(InspectorAgent*, unsigned long identifier, int lengthReceived);
+    static void didReceiveContentLengthImpl(InspectorAgent*, unsigned long identifier, int dataLength, int lengthReceived);
     static void didFinishLoadingImpl(InspectorAgent*, unsigned long identifier, double finishTime);
     static void didFailLoadingImpl(InspectorAgent*, unsigned long identifier, const ResourceError&);
     static void resourceRetrievedByXMLHttpRequestImpl(InspectorAgent*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
@@ -676,11 +676,11 @@ inline void InspectorInstrumentation::didReceiveResourceResponse(const Inspector
 #endif
 }
 
-inline void InspectorInstrumentation::didReceiveContentLength(Frame* frame, unsigned long identifier, int lengthReceived)
+inline void InspectorInstrumentation::didReceiveContentLength(Frame* frame, unsigned long identifier, int dataLength, int lengthReceived)
 {
 #if ENABLE(INSPECTOR)
     if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
-        didReceiveContentLengthImpl(inspectorAgent, identifier, lengthReceived);
+        didReceiveContentLengthImpl(inspectorAgent, identifier, dataLength, lengthReceived);
 #endif
 }
 

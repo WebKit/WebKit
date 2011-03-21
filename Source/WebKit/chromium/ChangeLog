@@ -1,3 +1,17 @@
+2011-03-21  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Inspector does not always show correct transfer size (for compressed/chunked data)
+        https://bugs.webkit.org/show_bug.cgi?id=56691
+
+        Added transfer size support in inspector for compressed data.
+
+        * src/ResourceHandle.cpp:
+        (WebCore::ResourceHandleInternal::didReceiveData):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::didReceiveData):
+
 2011-03-20  Bill Budge  <bbudge@chromium.org>
 
         Reviewed by Adam Barth.

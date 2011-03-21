@@ -478,8 +478,11 @@ void QNetworkReplyHandler::forwardData()
     if (!client)
         return;
 
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=19793
+    // -1 means we do not provide any data about transfer size to inspector so it would use
+    // Content-Length headers or content size to show transfer size.
     if (!data.isEmpty())
-        client->didReceiveData(m_resourceHandle, data.constData(), data.length(), data.length() /*FixMe*/);
+        client->didReceiveData(m_resourceHandle, data.constData(), data.length(), -1);
 }
 
 void QNetworkReplyHandler::uploadProgress(qint64 bytesSent, qint64 bytesTotal)

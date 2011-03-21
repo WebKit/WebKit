@@ -159,18 +159,16 @@ void ResourceHandleInternal::didReceiveResponse(WebURLLoader*, const WebURLRespo
     m_client->didReceiveResponse(m_owner, response.toResourceResponse());
 }
 
-void ResourceHandleInternal::didReceiveData(
-    WebURLLoader*, const char* data, int dataLength)
+void ResourceHandleInternal::didReceiveData(WebURLLoader*, const char* data, int dataLength)
 {
     ASSERT(m_client);
     if (m_state != ConnectionStateReceivedResponse && m_state != ConnectionStateReceivingData)
         CRASH();
     m_state = ConnectionStateReceivingData;
 
-    // FIXME(yurys): it looks like lengthReceived is always the same as
-    // dataLength and that the latter parameter can be eliminated.
-    // See WebKit bug: https://bugs.webkit.org/show_bug.cgi?id=31019
-    m_client->didReceiveData(m_owner, data, dataLength, dataLength);
+    // FIXME(vsevik): Add transfer size support to chromium port
+    // See WebKit bug: https://bugs.webkit.org/show_bug.cgi?id=56602
+    m_client->didReceiveData(m_owner, data, dataLength, -1);
 }
 
 void ResourceHandleInternal::didReceiveCachedMetadata(WebURLLoader*, const char* data, int dataLength)

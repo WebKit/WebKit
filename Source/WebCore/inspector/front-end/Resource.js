@@ -241,7 +241,10 @@ WebInspector.Resource.prototype = {
             return 0;
         if (this.statusCode === 304) // Not modified
             return this._responseHeadersSize;
-        // FIXME: We prefer using Content-Length over resourceSize as
+        if (this._transferSize !== undefined)
+            return this._transferSize;
+        // If we did not receive actual transfer size from network
+        // stack, we prefer using Content-Length over resourceSize as
         // resourceSize may differ from actual transfer size if platform's
         // network stack performed decoding (e.g. gzip decompression).
         // The Content-Length, though, is expected to come from raw
@@ -249,9 +252,14 @@ WebInspector.Resource.prototype = {
         // This won't work for chunked content encoding, so fall back to
         // resourceSize when we don't have Content-Length. This still won't
         // work for chunks with non-trivial encodings. We need a way to
-        // get actaul transfer size from the network stack.
+        // get actual transfer size from the network stack.
         var bodySize = Number(this.responseHeaders["Content-Length"] || this.resourceSize);
         return this._responseHeadersSize + bodySize;
+    },
+
+    increaseTransferSize: function(x)
+    {
+        this._transferSize = (this._transferSize || 0) + x;
     },
 
     get expectedContentLength()

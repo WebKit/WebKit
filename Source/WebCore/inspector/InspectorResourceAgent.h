@@ -92,7 +92,7 @@ public:
     void willSendRequest(unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
     void markResourceAsCached(unsigned long identifier);
     void didReceiveResponse(unsigned long identifier, DocumentLoader* laoder, const ResourceResponse&);
-    void didReceiveContentLength(unsigned long identifier, int lengthReceived);
+    void didReceiveContentLength(unsigned long identifier, int dataLength, int lengthReceived);
     void didFinishLoading(unsigned long identifier, double finishTime);
     void didFailLoading(unsigned long identifier, const ResourceError&);
     void didLoadResourceFromMemoryCache(DocumentLoader*, const CachedResource*);

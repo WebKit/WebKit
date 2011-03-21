@@ -323,6 +323,7 @@
                 "parameters": [
                     { "name": "identifier", "type": "integer" },
                     { "name": "time", "type": "number" },
+                    { "name": "dataLength", "type": "integer" },
                     { "name": "lengthReceived", "type": "integer" }
                 ]
             },

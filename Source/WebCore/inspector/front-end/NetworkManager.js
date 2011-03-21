@@ -186,13 +186,15 @@ WebInspector.NetworkDispatcher.prototype = {
         this._resourceTreeModel.addResourceToFrame(resource.loader.frameId, resource);
     },
 
-    didReceiveContentLength: function(identifier, time, lengthReceived)
+    didReceiveContentLength: function(identifier, time, dataLength, lengthReceived)
     {
         var resource = this._inflightResourcesById[identifier];
         if (!resource)
             return;
 
-        resource.resourceSize += lengthReceived;
+        resource.resourceSize += dataLength;
+        if (lengthReceived != -1)
+            resource.increaseTransferSize(lengthReceived);
         resource.endTime = time;
 
         this._updateResource(resource);

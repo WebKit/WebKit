@@ -284,7 +284,7 @@ void WebDevToolsAgentImpl::willSendRequest(unsigned long resourceId, WebURLReque
 
 void WebDevToolsAgentImpl::didReceiveData(unsigned long resourceId, int length)
 {
-    InspectorInstrumentation::didReceiveContentLength(mainFrame(), resourceId, length);
+    InspectorInstrumentation::didReceiveContentLength(mainFrame(), resourceId, length, -1);
 }
 
 void WebDevToolsAgentImpl::didReceiveResponse(unsigned long resourceId, const WebURLResponse& response)

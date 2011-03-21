@@ -74,12 +74,12 @@ void ResourceLoadNotifier::didReceiveResponse(ResourceLoader* loader, const Reso
     dispatchDidReceiveResponse(loader->documentLoader(), loader->identifier(), r);
 }
 
-void ResourceLoadNotifier::didReceiveData(ResourceLoader* loader, const char* data, int length, int lengthReceived)
+void ResourceLoadNotifier::didReceiveData(ResourceLoader* loader, const char* data, int dataLength, int lengthReceived)
 {
     if (Page* page = m_frame->page())
-        page->progress()->incrementProgress(loader->identifier(), data, length);
+        page->progress()->incrementProgress(loader->identifier(), data, dataLength);
 
-    dispatchDidReceiveContentLength(loader->documentLoader(), loader->identifier(), lengthReceived);
+    dispatchDidReceiveContentLength(loader->documentLoader(), loader->identifier(), dataLength, lengthReceived);
 }
 
 void ResourceLoadNotifier::didFinishLoad(ResourceLoader* loader, double finishTime)
@@ -132,11 +132,11 @@ void ResourceLoadNotifier::dispatchDidReceiveResponse(DocumentLoader* loader, un
     InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, loader, r);
 }
 
-void ResourceLoadNotifier::dispatchDidReceiveContentLength(DocumentLoader* loader, unsigned long identifier, int length)
+void ResourceLoadNotifier::dispatchDidReceiveContentLength(DocumentLoader* loader, unsigned long identifier, int dataLength, int lengthReceived)
 {
-    m_frame->loader()->client()->dispatchDidReceiveContentLength(loader, identifier, length);
+    m_frame->loader()->client()->dispatchDidReceiveContentLength(loader, identifier, dataLength);
 
-    InspectorInstrumentation::didReceiveContentLength(m_frame, identifier, length);
+    InspectorInstrumentation::didReceiveContentLength(m_frame, identifier, dataLength, lengthReceived);
 }
 
 void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier, double finishTime)
@@ -160,7 +160,7 @@ void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader,
         dispatchDidReceiveResponse(loader, identifier, response);
 
     if (length > 0)
-        dispatchDidReceiveContentLength(loader, identifier, length);
+        dispatchDidReceiveContentLength(loader, identifier, length, 0);
 
     if (error.isNull())
         dispatchDidFinishLoading(loader, identifier, 0);

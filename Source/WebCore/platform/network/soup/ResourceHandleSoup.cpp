@@ -364,7 +364,10 @@ static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
 
     ASSERT(!d->m_response.isNull());
 
-    client->didReceiveData(handle.get(), chunk->data, chunk->length, chunk->length);
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=19793
+    // -1 means we do not provide any data about transfer size to inspector so it would use
+    // Content-Length headers or content size to show transfer size.
+    client->didReceiveData(handle.get(), chunk->data, chunk->length, -1);
 }
 
 static SoupSession* createSoupSession()

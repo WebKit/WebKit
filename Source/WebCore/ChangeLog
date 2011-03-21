@@ -1,3 +1,45 @@
+2011-03-21  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Inspector does not always show correct transfer size (for compressed/chunked data)
+        https://bugs.webkit.org/show_bug.cgi?id=56691
+
+        Added transfer size support in inspector for compressed data.
+
+        Test: http/tests/inspector/network/network-size-chunked.html
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didReceiveContentLengthImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didReceiveContentLength):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::didReceiveContentLength):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype.didReceiveContentLength):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.get transferSize):
+        (WebInspector.Resource.prototype.increaseTransferSize):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::didReceiveData):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveContentLength):
+        (WebCore::ResourceLoadNotifier::sendRemainingDelegateMessages):
+        * loader/ResourceLoadNotifier.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didReceiveData):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveData:lengthReceived:]):
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::forwardData):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::gotChunkCallback):
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::ResourceHandle::onRequestComplete):
+        (WebCore::ResourceHandle::fileLoadTimer):
+
 2011-03-21  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Reviewed by Dirk Schulze.

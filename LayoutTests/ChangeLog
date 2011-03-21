@@ -1,3 +1,21 @@
+2011-03-21  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Inspector does not always show correct transfer size (for compressed/chunked data)
+        https://bugs.webkit.org/show_bug.cgi?id=56691
+
+        Added a test for transfer size for chunked encoding type.
+
+        * http/tests/inspector/network/network-size-chunked.html: Added.
+        * http/tests/inspector/network/network-size-expected-chunked.txt: Added.
+        * http/tests/inspector/network/resources/resource.php:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-03-21  Hao Zheng  <zhenghao@google.com>
 
         Reviewed by Darin Adler.
