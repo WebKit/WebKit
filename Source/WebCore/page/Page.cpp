@@ -162,6 +162,7 @@ Page::Page(const PageClients& pageClients)
     , m_canStartMedia(true)
     , m_viewMode(ViewModeWindowed)
     , m_minimumTimerInterval(Settings::defaultMinDOMTimerInterval())
+    , m_isEditable(false)
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;

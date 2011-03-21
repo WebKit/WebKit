@@ -713,7 +713,7 @@ void Node::deprecatedParserAddChild(PassRefPtr<Node>)
 
 bool Node::isContentEditable(EditableLevel editableLevel) const
 {
-    if (document()->inDesignMode())
+    if (document()->inDesignMode() || (document()->frame() && document()->frame()->page() && document()->frame()->page()->isEditable()))
         return true;
 
     // Ideally we'd call ASSERT(!needsStyleRecalc()) here, but

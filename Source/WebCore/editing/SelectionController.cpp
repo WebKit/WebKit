@@ -1824,7 +1824,7 @@ void SelectionController::setSelectionFromNone()
 
     Document* document = m_frame->document();
     bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
-    if (!isNone() || !(document->inDesignMode() || caretBrowsing))
+    if (!isNone() || !(document->isContentEditable() || caretBrowsing))
         return;
 
     Node* node = document->documentElement();

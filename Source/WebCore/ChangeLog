@@ -1,3 +1,30 @@
+2011-03-21  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION (r79953): Can't type in MS Outlook 2011
+        https://bugs.webkit.org/show_bug.cgi?id=56665
+
+        r79953 removed the WebView level editablity which is persistent no matter whether
+        underlying document itself is changed and editability gets lost. The resolution is to
+        set this WebView editable value to WebCore. This avoids the callback from WebCore to
+        WebKit which was the main goal in r79953 to improve performance.
+
+        * WebCore.exp.in:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isReadOnly):
+        * dom/Node.cpp:
+        (WebCore::Node::isContentEditable):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelectionFromNone):
+        * page/DragController.cpp:
+        (WebCore::DragController::operationForLoad):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::setEditable):
+        (WebCore::Page::isEditable):
+
 2011-03-21  Eric Uhrhane <ericu@chromium.org>
 
         Reviewed by David Levin.

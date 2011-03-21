@@ -3172,10 +3172,10 @@ bool QWebPage::focusNextPrevChild(bool next)
 void QWebPage::setContentEditable(bool editable)
 {
     if (isContentEditable() != editable) {
+        d->page->setEditable(editable);
         d->page->setTabKeyCyclesThroughElements(!editable);
         if (d->mainFrame) {
             WebCore::Frame* frame = d->mainFrame->d->frame;
-            frame->document()->setDesignMode(editable ? WebCore::Document::on : WebCore::Document::off);
             if (editable) {
                 frame->editor()->applyEditingStyleToBodyElement();
                 // FIXME: mac port calls this if there is no selectedDOMRange
@@ -3189,7 +3189,7 @@ void QWebPage::setContentEditable(bool editable)
 
 bool QWebPage::isContentEditable() const
 {
-    return d->mainFrame && d->mainFrame->d->frame->document()->inDesignMode();
+    return d->page->isEditable();
 }
 
 /*!

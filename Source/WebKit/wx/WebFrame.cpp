@@ -402,14 +402,14 @@ void wxWebFrame::ResetTextSize()
 
 void wxWebFrame::MakeEditable(bool enable)
 {
-    if (enable != IsEditable() && m_impl->frame && m_impl->frame->document())
-        m_impl->frame->document()->setDesignMode(enable ? WebCore::Document::on : WebCore::Document::off);
+    if (enable != IsEditable() && m_impl->frame && m_impl->frame->page())
+        m_impl->frame->page()->setEditable(enable);
 }
 
 bool wxWebFrame::IsEditable() const
 {
-    if (m_impl->frame && m_impl->frame->document())
-        return m_impl->frame->document()->inDesignMode();
+    if (m_impl->frame && m_impl->frame->page())
+        return m_impl->frame->page()->isEditable();
     return false;
 }
 

@@ -4345,8 +4345,7 @@ gboolean webkit_web_view_get_editable(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    Frame* frame = core(webView)->mainFrame();
-    return frame && frame->document()->inDesignMode();
+    return core(webView)->isEditable();
 }
 
 /**
@@ -4371,15 +4370,14 @@ void webkit_web_view_set_editable(WebKitWebView* webView, gboolean flag)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    Frame* frame = core(webView)->mainFrame();
-    g_return_if_fail(frame);
-
-    // TODO: What happens when the frame is replaced?
     flag = flag != FALSE;
     if (flag == webkit_web_view_get_editable(webView))
         return;
 
-    frame->document()->setDesignMode(flag ? WebCore::Document::on : WebCore::Document::off);
+    core(webView)->setEditable(flag);
+
+    Frame* frame = core(webView)->mainFrame();
+    g_return_if_fail(frame);
 
     if (flag) {
         frame->editor()->applyEditingStyleToBodyElement();

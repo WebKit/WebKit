@@ -1,3 +1,17 @@
+2011-03-21  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION (r79953): Can't type in MS Outlook 2011
+        https://bugs.webkit.org/show_bug.cgi?id=56665
+
+        Restore the expected result before r79953. r79953 changed behavior slightly in function
+        finishedLoadingWithDataSource in file mac/WebView/WebHTMLRepresentation.mm, where
+        core(webFrame)->editor()->applyEditingStyleToBodyElement() was called but not before r79953
+        or after this patch.
+
+        * platform/mac/editing/selection/designmode-no-caret-expected.txt:
+
 2011-03-21  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Jeremy Orlow.

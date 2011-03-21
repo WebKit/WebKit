@@ -291,6 +291,10 @@ namespace WebCore {
         // recursive frameset pages can quickly bring the program to its knees
         // with exponential growth in the number of frames.
         static const int maxNumberOfFrames = 1000;
+
+        void setEditable(bool isEditable) { m_isEditable = isEditable; }
+        bool isEditable() { return m_isEditable; }
+
     private:
         void initGroup();
 
@@ -395,6 +399,8 @@ namespace WebCore {
         double m_minimumTimerInterval;
 
         OwnPtr<ScrollableAreaSet> m_scrollableAreaSet;
+
+        bool m_isEditable;
     };
 
 } // namespace WebCore
