@@ -1,3 +1,43 @@
+2011-03-21  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by Dirk Schulze.
+
+        symbol display <use> at wrong scale
+        https://bugs.webkit.org/show_bug.cgi?id=54538
+
+        SVG spec: http://www.w3.org/TR/SVG/struct.html#UseElement
+        Quotation for referenced <symbol>: "If attributes 'width'
+        and/or 'height' are provided on the 'use' element, then
+        these attributes will be transferred to the generated 'svg'."
+        Quotation for referenced <svg>: "If attributes 'width'
+        and/or 'height' are provided on the 'use' element, then
+        these values will override the corresponding attributes
+        on the 'svg' in the generated tree."
+        For above quotations, we should treat 'use' element as referencing
+        'use' element, just like Firefox 3.6 and Opera 11, instead of
+        corrensponding 'use' element.
+
+        Tests: svg/custom/use-transfer-width-height-properties-to-svg.svg
+               svg/custom/use-transfer-width-height-properties-to-svg1.svg
+               svg/custom/use-transfer-width-height-properties-to-svg2.svg
+               svg/custom/use-transfer-width-height-properties-to-symbol.svg
+               svg/custom/use-transfer-width-height-properties-to-symbol1.svg
+               svg/custom/use-transfer-width-height-properties-to-symbol2.svg
+
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::SVGElementInstance):
+        * svg/SVGElementInstance.h:
+        (WebCore::SVGElementInstance::create):
+        (WebCore::SVGElementInstance::correspondingUseElement):
+        (WebCore::SVGElementInstance::directUseElement):
+        (WebCore::SVGElementInstance::clearUseElements):
+        * svg/SVGUseElement.cpp:
+        (WebCore::updateContainerSize):
+        (WebCore::SVGUseElement::updateContainerSizes):
+        (WebCore::dumpInstanceTree):
+        (WebCore::SVGUseElement::detachInstance):
+        (WebCore::SVGUseElement::buildInstanceTree):
+
 2011-03-21  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Reviewed by Pavel Feldman.

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2011 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,9 +40,9 @@ class SVGElementInstanceList;
 class SVGElementInstance : public TreeShared<SVGElementInstance>,
                            public EventTarget {
 public:
-    static PassRefPtr<SVGElementInstance> create(SVGUseElement* useElement, PassRefPtr<SVGElement> originalElement)
+    static PassRefPtr<SVGElementInstance> create(SVGUseElement* correspondingUseElement, SVGUseElement* directUseElement, PassRefPtr<SVGElement> originalElement)
     {
-        return adoptRef(new SVGElementInstance(useElement, originalElement));
+        return adoptRef(new SVGElementInstance(correspondingUseElement, directUseElement, originalElement));
     }
 
     virtual ~SVGElementInstance();
@@ -55,9 +56,14 @@ public:
     virtual bool dispatchEvent(PassRefPtr<Event>);
 
     SVGElement* correspondingElement() const { return m_element.get(); }
-    SVGUseElement* correspondingUseElement() const { return m_useElement; }
+    SVGUseElement* correspondingUseElement() const { return m_correspondingUseElement; }
+    SVGUseElement* directUseElement() const { return m_directUseElement; }
     SVGElement* shadowTreeElement() const { return m_shadowTreeElement.get(); }
-    void clearUseElement() { m_useElement = 0; }
+    void clearUseElements()
+    {
+        m_directUseElement = 0;
+        m_correspondingUseElement = 0;
+    }
 
     SVGElementInstance* parentNode() const { return parent(); }
     PassRefPtr<SVGElementInstanceList> childNodes();
@@ -120,7 +126,7 @@ public:
 private:
     friend class SVGUseElement;
 
-    SVGElementInstance(SVGUseElement*, PassRefPtr<SVGElement> originalElement);
+    SVGElementInstance(SVGUseElement*, SVGUseElement*, PassRefPtr<SVGElement> originalElement);
 
     virtual Node* toNode() { return shadowTreeElement(); }
     virtual SVGElementInstance* toSVGElementInstance() { return this; }
@@ -150,7 +156,8 @@ private:
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
 
-    SVGUseElement* m_useElement;
+    SVGUseElement* m_correspondingUseElement;
+    SVGUseElement* m_directUseElement;
     RefPtr<SVGElement> m_element;
     RefPtr<SVGElement> m_shadowTreeElement;
 

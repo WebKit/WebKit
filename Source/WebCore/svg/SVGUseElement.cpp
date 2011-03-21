@@ -239,11 +239,15 @@ void SVGUseElement::fillAttributeToPropertyTypeMap()
     attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
 }
 
-static void updateContainerSize(SVGUseElement* useElement, SVGElementInstance* targetInstance)
+static void updateContainerSize(SVGElementInstance* targetInstance)
 {
     // Depth-first used to write the method in early exit style, no particular other reason.
     for (SVGElementInstance* instance = targetInstance->firstChild(); instance; instance = instance->nextSibling())
-        updateContainerSize(useElement, instance);
+        updateContainerSize(instance);
+
+    SVGUseElement* useElement = targetInstance->directUseElement();
+    if (!useElement)
+        return;
 
     SVGElement* correspondingElement = targetInstance->correspondingElement();
     ASSERT(correspondingElement);
@@ -281,7 +285,8 @@ void SVGUseElement::updateContainerSizes()
         return;
 
     // Update whole subtree, scanning for shadow container elements, that correspond to <svg>/<symbol> tags
-    updateContainerSize(this, m_targetElementInstance.get());
+    ASSERT(m_targetElementInstance->directUseElement() == this);
+    updateContainerSize(m_targetElementInstance.get());
 
     if (RenderObject* object = renderer())
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
@@ -380,6 +385,9 @@ void dumpInstanceTree(unsigned int& depth, String& text, SVGElementInstance* tar
     SVGElement* shadowTreeElement = targetInstance->shadowTreeElement();
     ASSERT(shadowTreeElement);
 
+    SVGUseElement* directUseElement = targetInstance->directUseElement();
+    String directUseElementName = directUseElement ? directUseElement->nodeName() : "null";
+
     String elementId = element->getIdAttribute();
     String elementNodeName = element->nodeName();
     String shadowTreeElementNodeName = shadowTreeElement->nodeName();
@@ -389,9 +397,9 @@ void dumpInstanceTree(unsigned int& depth, String& text, SVGElementInstance* tar
     for (unsigned int i = 0; i < depth; ++i)
         text += "  ";
 
-    text += String::format("SVGElementInstance this=%p, (parentNode=%s (%p), firstChild=%s (%p), correspondingElement=%s (%p), shadowTreeElement=%s (%p), id=%s)\n",
+    text += String::format("SVGElementInstance this=%p, (parentNode=%s (%p), firstChild=%s (%p), correspondingElement=%s (%p), directUseElement=%s (%p), shadowTreeElement=%s (%p), id=%s)\n",
                            targetInstance, parentNodeName.latin1().data(), element->parentNode(), firstChildNodeName.latin1().data(), element->firstChild(),
-                           elementNodeName.latin1().data(), element, shadowTreeElementNodeName.latin1().data(), shadowTreeElement, elementId.latin1().data());
+                           elementNodeName.latin1().data(), element, directUseElementName.latin1().data(), directUseElement, shadowTreeElementNodeName.latin1().data(), shadowTreeElement, elementId.latin1().data());
 
     for (unsigned int i = 0; i < depth; ++i)
         text += "  ";
@@ -533,7 +541,7 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
     // Spec: If the 'use' element references a simple graphics element such as a 'rect', then there is only a
     // single SVGElementInstance object, and the correspondingElement attribute on this SVGElementInstance object
     // is the SVGRectElement that corresponds to the referenced 'rect' element.
-    m_targetElementInstance = SVGElementInstance::create(this, target);
+    m_targetElementInstance = SVGElementInstance::create(this, this, target);
 
     // Eventually enter recursion to build SVGElementInstance objects for the sub-tree children
     bool foundProblem = false;
@@ -550,6 +558,7 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
     ASSERT(m_targetElementInstance);
     ASSERT(!m_targetElementInstance->shadowTreeElement());
     ASSERT(m_targetElementInstance->correspondingUseElement() == this);
+    ASSERT(m_targetElementInstance->directUseElement() == this);
     ASSERT(m_targetElementInstance->correspondingElement() == target);
 
     // Build shadow tree from instance tree
@@ -582,6 +591,16 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
     // Consistency checks - this is assumed in updateContainerOffset().
     ASSERT(m_targetElementInstance->shadowTreeElement()->parentNode() == shadowRoot);
 
+    // Transfer event listeners assigned to the referenced element to our shadow tree elements.
+    transferEventListenersToShadowTree(m_targetElementInstance.get());
+
+    // Update container offset/size
+    updateContainerOffsets();
+    updateContainerSizes();
+
+    // Update relative length information
+    updateRelativeLengthsInformation();
+
     // Eventually dump instance tree
 #ifdef DUMP_INSTANCE_TREE
     String text;
@@ -602,23 +621,13 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
 
     fprintf(stderr, "Dumping <use> shadow tree markup:\n%s\n", markup.latin1().data());
 #endif
-
-    // Transfer event listeners assigned to the referenced element to our shadow tree elements.
-    transferEventListenersToShadowTree(m_targetElementInstance.get());
-
-    // Update container offset/size
-    updateContainerOffsets();
-    updateContainerSizes();
-
-    // Update relative length information
-    updateRelativeLengthsInformation();
 }
 
 void SVGUseElement::detachInstance()
 {
     if (!m_targetElementInstance)
         return;
-    m_targetElementInstance->clearUseElement();
+    m_targetElementInstance->clearUseElements();
     m_targetElementInstance = 0;
 }
 
@@ -722,7 +731,7 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
             continue;
 
         // Create SVGElementInstance object, for both container/non-container nodes.
-        RefPtr<SVGElementInstance> instance = SVGElementInstance::create(this, element);
+        RefPtr<SVGElementInstance> instance = SVGElementInstance::create(this, 0, element);
         SVGElementInstance* instancePtr = instance.get();
         targetInstance->appendChild(instance.release());
 
@@ -735,7 +744,7 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
     if (!targetHasUseTag || !newTarget)
         return;
 
-    RefPtr<SVGElementInstance> newInstance = SVGElementInstance::create(this, newTarget);
+    RefPtr<SVGElementInstance> newInstance = SVGElementInstance::create(this, static_cast<SVGUseElement*>(target), newTarget);
     SVGElementInstance* newInstancePtr = newInstance.get();
     targetInstance->appendChild(newInstance.release());
     buildInstanceTree(newTarget, newInstancePtr, foundProblem);

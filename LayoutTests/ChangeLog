@@ -1,3 +1,51 @@
+2011-03-21  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by Dirk Schulze.
+
+        symbol display <use> at wrong scale
+        https://bugs.webkit.org/show_bug.cgi?id=54538
+
+        Test cases for transfering width/height properties from
+        'use' element to 'svg' and 'symbol' elements.
+        See: http://www.w3.org/TR/SVG/struct.html#UseElement
+
+        * platform/mac/svg/custom/use-transfer-width-height-properties-to-svg-expected.checksum: Added.
+        * platform/mac/svg/custom/use-transfer-width-height-properties-to-svg-expected.png: Added.
+        * platform/mac/svg/custom/use-transfer-width-height-properties-to-svg1-expected.checksum: Added.
+        * platform/mac/svg/custom/use-transfer-width-height-properties-to-svg1-expected.png: Added.
+        * platform/mac/svg/custom/use-transfer-width-height-properties-to-svg2-expected.checksum: Added.
+        * platform/mac/svg/custom/use-transfer-width-height-properties-to-svg2-expected.png: Added.
+        * platform/mac/svg/custom/use-transfer-width-height-properties-to-symbol-expected.checksum: Added.
+        * platform/mac/svg/custom/use-transfer-width-height-properties-to-symbol-expected.png: Added.
+        * platform/mac/svg/custom/use-transfer-width-height-properties-to-symbol1-expected.checksum: Added.
+        * platform/mac/svg/custom/use-transfer-width-height-properties-to-symbol1-expected.png: Added.
+        * platform/mac/svg/custom/use-transfer-width-height-properties-to-symbol2-expected.checksum: Added.
+        * platform/mac/svg/custom/use-transfer-width-height-properties-to-symbol2-expected.png: Added.
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-svg-expected.checksum: Added.
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-svg-expected.png: Added.
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-svg1-expected.checksum: Added.
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-svg1-expected.png: Added.
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-svg2-expected.checksum: Added.
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-svg2-expected.png: Added.
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-symbol-expected.checksum: Added.
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-symbol-expected.png: Added.
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-symbol1-expected.checksum: Added.
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-symbol1-expected.png: Added.
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-symbol2-expected.checksum: Added.
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-symbol2-expected.png: Added.
+        * svg/custom/use-transfer-width-height-properties-to-svg-expected.txt: Added.
+        * svg/custom/use-transfer-width-height-properties-to-svg.svg: Added.
+        * svg/custom/use-transfer-width-height-properties-to-svg1-expected.txt: Added.
+        * svg/custom/use-transfer-width-height-properties-to-svg1.svg: Added.
+        * svg/custom/use-transfer-width-height-properties-to-svg2-expected.txt: Added.
+        * svg/custom/use-transfer-width-height-properties-to-svg2.svg: Added.
+        * svg/custom/use-transfer-width-height-properties-to-symbol-expected.txt: Added.
+        * svg/custom/use-transfer-width-height-properties-to-symbol.svg: Added.
+        * svg/custom/use-transfer-width-height-properties-to-symbol1-expected.txt: Added.
+        * svg/custom/use-transfer-width-height-properties-to-symbol1.svg: Added.
+        * svg/custom/use-transfer-width-height-properties-to-symbol2-expected.txt: Added.
+        * svg/custom/use-transfer-width-height-properties-to-symbol2.svg: Added.
+
 2011-03-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric Seidel.
