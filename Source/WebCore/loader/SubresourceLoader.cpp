@@ -60,7 +60,7 @@ SubresourceLoader::~SubresourceLoader()
 #endif
 }
 
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks, bool shouldContentSniff)
+PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks, bool shouldContentSniff, const String& optionalOutgoingReferrer)
 {
     if (!frame)
         return 0;
@@ -75,12 +75,22 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
         FrameLoader::reportLocalLoadFailed(frame, request.url().string());
         return 0;
     }
-    
-    if (SecurityOrigin::shouldHideReferrer(request.url(), fl->outgoingReferrer()))
+
+    String outgoingReferrer;
+    String outgoingOrigin;
+    if (outgoingReferrer.isNull()) {
+        outgoingReferrer = fl->outgoingReferrer();
+        outgoingOrigin = fl->outgoingOrigin();
+    } else {
+        outgoingReferrer = optionalOutgoingReferrer;
+        outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
+    }
+
+    if (SecurityOrigin::shouldHideReferrer(request.url(), outgoingReferrer))
         newRequest.clearHTTPReferrer();
     else if (!request.httpReferrer())
-        newRequest.setHTTPReferrer(fl->outgoingReferrer());
-    FrameLoader::addHTTPOriginIfNeeded(newRequest, fl->outgoingOrigin());
+        newRequest.setHTTPReferrer(outgoingReferrer);
+    FrameLoader::addHTTPOriginIfNeeded(newRequest, outgoingOrigin);
 
     fl->addExtraFieldsToSubresourceRequest(newRequest);
 
