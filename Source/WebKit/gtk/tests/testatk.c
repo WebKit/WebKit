@@ -52,7 +52,7 @@ static const char* comboBoxSelector = "<html><body><select><option selected valu
 
 static const char* formWithTextInputs = "<html><body><form><input type='text' name='entry' /></form></body></html>";
 
-static const char* hypertextAndHyperlinks = "<html><body><p>A paragraph with no links at all</p><p><a href='http://foo.bar.baz/'>A line</a> with <a href='http://bar.baz.foo/'>a link in the middle</a> as well as at the beginning and <a href='http://baz.foo.bar/'>at the end</a></p></body></html>";
+static const char* hypertextAndHyperlinks = "<html><body><p>A paragraph with no links at all</p><p><a href='http://foo.bar.baz/'>A line</a> with <a href='http://bar.baz.foo/'>a link in the middle</a> as well as at the beginning and <a href='http://baz.foo.bar/'>at the end</a></p><ol><li>List item with a <span><a href='http://foo.bar.baz/'>link inside a span node</a></span></li></ol></body></html>";
 
 static const char* layoutAndDataTables = "<html><body><table><tr><th>Odd</th><th>Even</th></tr><tr><td>1</td><td>2</td></tr></table><table><tr><td>foo</td><td>bar</td></tr></table></body></html>";
 
@@ -1405,6 +1405,25 @@ static void testWebkitAtkHypertextAndHyperlinks()
     g_assert_cmpint(atk_hyperlink_get_n_anchors(hLink3), ==, 1);
     g_assert_cmpstr(atk_hyperlink_get_uri(hLink3, 0), ==, "http://baz.foo.bar/");
 
+    AtkObject* list = atk_object_ref_accessible_child(object, 2);
+    g_assert(ATK_OBJECT(list));
+    g_assert(atk_object_get_role(list) == ATK_ROLE_LIST);
+    g_assert_cmpint(atk_object_get_n_accessible_children(list), ==, 1);
+
+    AtkObject* listItem = atk_object_ref_accessible_child(list, 0);
+    g_assert(ATK_IS_TEXT(listItem));
+    g_assert(ATK_IS_HYPERTEXT(listItem));
+
+    AtkHyperlink* hLinkInListItem = atk_hypertext_get_link(ATK_HYPERTEXT(listItem), 0);
+    g_assert(ATK_HYPERLINK(hLinkInListItem));
+    AtkObject* hLinkObject = atk_hyperlink_get_object(hLinkInListItem, 0);
+    g_assert(ATK_OBJECT(hLinkObject));
+    g_assert(atk_object_get_role(hLinkObject) == ATK_ROLE_LINK);
+    g_assert_cmpint(atk_hyperlink_get_start_index(hLinkInListItem), ==, 20);
+    g_assert_cmpint(atk_hyperlink_get_end_index(hLinkInListItem), ==, 43);
+    g_assert_cmpint(atk_hyperlink_get_n_anchors(hLinkInListItem), ==, 1);
+    g_assert_cmpstr(atk_hyperlink_get_uri(hLinkInListItem, 0), ==, "http://foo.bar.baz/");
+
     /* Finally check the AtkAction interface for a given AtkHyperlink. */
     g_assert(ATK_IS_ACTION(hLink1));
     g_assert_cmpint(atk_action_get_n_actions(ATK_ACTION(hLink1)), ==, 1);
@@ -1414,6 +1433,8 @@ static void testWebkitAtkHypertextAndHyperlinks()
 
     g_object_unref(paragraph1);
     g_object_unref(paragraph2);
+    g_object_unref(list);
+    g_object_unref(listItem);
     g_object_unref(webView);
 }
 

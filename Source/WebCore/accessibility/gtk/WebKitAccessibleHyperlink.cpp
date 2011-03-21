@@ -32,6 +32,7 @@
 #include "RenderListMarker.h"
 #include "RenderObject.h"
 #include "TextIterator.h"
+#include "htmlediting.h"
 
 #include <atk/atk.h>
 #include <glib.h>
@@ -230,11 +231,19 @@ static gint webkitAccessibleHyperlinkGetStartIndex(AtkHyperlink* link)
     if (!coreObject)
         return 0;
 
+    AccessibilityObject* parentUnignored = coreObject->parentObjectUnignored();
+    if (!parentUnignored)
+        return 0;
+
     Node* node = coreObject->node();
     if (!node)
         return 0;
 
-    RefPtr<Range> range = Range::create(node->document(), firstPositionInNode(node->parentNode()), firstPositionInNode(node));
+    Node* parentNode = parentUnignored->node();
+    if (!parentNode)
+        return 0;
+
+    RefPtr<Range> range = Range::create(node->document(), firstPositionInOrBeforeNode(parentNode), firstPositionInOrBeforeNode(node));
     return getRangeLengthForObject(coreObject, range.get());
 }
 
@@ -246,11 +255,19 @@ static gint webkitAccessibleHyperlinkGetEndIndex(AtkHyperlink* link)
     if (!coreObject)
         return 0;
 
+    AccessibilityObject* parentUnignored = coreObject->parentObjectUnignored();
+    if (!parentUnignored)
+        return 0;
+
     Node* node = coreObject->node();
     if (!node)
         return 0;
 
-    RefPtr<Range> range = Range::create(node->document(), firstPositionInNode(node->parentNode()), lastPositionInNode(node));
+    Node* parentNode = parentUnignored->node();
+    if (!parentNode)
+        return 0;
+
+    RefPtr<Range> range = Range::create(node->document(), firstPositionInOrBeforeNode(parentNode), lastPositionInOrAfterNode(node));
     return getRangeLengthForObject(coreObject, range.get());
 }
 

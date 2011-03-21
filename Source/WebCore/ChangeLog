@@ -1,3 +1,17 @@
+2011-03-21  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] [Stable] AtkHypertext exposes wrong offsets for links placed inside <span> nodes
+        https://bugs.webkit.org/show_bug.cgi?id=56737
+
+        Only consider parent objects not ignoring accessibility.
+
+        * accessibility/gtk/WebKitAccessibleHyperlink.cpp:
+        (webkitAccessibleHyperlinkGetStartIndex): Look for the parent
+        object not ignoring accessibility for the current hyperlink.
+        (webkitAccessibleHyperlinkGetEndIndex): Ditto.
+
 2011-03-21  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Benjamin Poulain.

@@ -1,3 +1,14 @@
+2011-03-21  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] [Stable] AtkHypertext exposes wrong offsets for links placed inside <span> nodes
+        https://bugs.webkit.org/show_bug.cgi?id=56737
+
+        * tests/testatk.c:
+        (testWebkitAtkHypertextAndHyperlinks): Updated unit test to also
+        check offsets for hyperlinks inside <span> nodes.
+
 2011-03-18  David Keijser  <keijser@gmail.com> and Xan Lopez <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
