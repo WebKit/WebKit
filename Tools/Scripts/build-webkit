@@ -89,6 +89,7 @@ my (
     $linkPrefetchSupport,
     $mathmlSupport,
     $mediaStatisticsSupport,
+    $mediaStreamSupport,
     $meterTagSupport,
     $netscapePluginSupport,
     $notificationsSupport,
@@ -259,6 +260,9 @@ my @features = (
     { option => "touch-events", desc => "Toggle Touch Events support",
       define => "ENABLE_TOUCH_EVENTS", default => isQt(), value => \$touchEventsSupport },
 
+    { option => "media-stream", desc => "Toggle Media Stream API support (implies Blob support, currently Chromium only)",
+      define => "ENABLE_MEDIA_STREAM", default => isChromium(), value => \$mediaStreamSupport },
+
     { option => "video", desc => "Toggle Video support",
       define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk()), value => \$videoSupport },
 
@@ -326,6 +330,7 @@ $svgSupport = $svgSupport || $svgAnimationSupport || $svgAsImageSupport
     || $svgDOMObjCBindingsSupport || $svgFontsSupport
     || $svgForeignObjectSupport || $svgUseSupport;
 
+$blobSupport = $blobSupport || $mediaStreamSupport;
 
 my $programName = basename($0);
 my $usage = <<EOF;

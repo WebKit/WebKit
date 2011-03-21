@@ -1,3 +1,14 @@
+2011-03-21  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Media Stream API patch 0: adding compilation guards.
+        https://bugs.webkit.org/show_bug.cgi?id=56458
+
+        Enabling the feature by default for chromium builds.
+
+        * features.gypi:
+
 2011-03-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
