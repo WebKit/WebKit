@@ -1,3 +1,26 @@
+2011-03-21  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Add a command line option to capture stdout and stderr for DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=56323
+
+        Using freopen to redirect STDOUT and STDERR when DumpRenderTree command line provide 
+        "--stdout" or "--stderr" option.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::~DumpRenderTree):
+        (WebCore::DumpRenderTree::processArgsLine):
+        (WebCore::DumpRenderTree::loadNextTestInStandAloneMode):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (WebCore::DumpRenderTree::setRedirectOutputFileName):
+        (WebCore::DumpRenderTree::setRedirectErrorFileName):
+        * DumpRenderTree/qt/main.cpp:
+        (isOption):
+        (takeOptionValue):
+        (printUsage):
+        (main):
+
 2011-03-21  Adam Roben  <aroben@apple.com>
 
         Fix exceptions on the buildbot due to my last change

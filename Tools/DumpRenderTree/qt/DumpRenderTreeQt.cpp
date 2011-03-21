@@ -499,6 +499,10 @@ DumpRenderTree::DumpRenderTree()
 
 DumpRenderTree::~DumpRenderTree()
 {
+    if (!m_redirectOutputFileName.isEmpty())
+        fclose(stdout);
+    if (!m_redirectErrorFileName.isEmpty())
+        fclose(stderr);
     delete m_mainView;
     delete m_stdin;
     DumpRenderTreeSupportQt::removeMockDeviceOrientation();
@@ -676,9 +680,7 @@ void DumpRenderTree::processArgsLine(const QStringList &args)
 {
     setStandAloneMode(true);
 
-    for (int i = 1; i < args.size(); ++i)
-        if (!args.at(i).startsWith('-'))
-            m_standAloneModeTestList.append(args[i]);
+    m_standAloneModeTestList = args;
 
     QFileInfo firstEntry(m_standAloneModeTestList.first());
     if (firstEntry.isDir()) {
@@ -690,11 +692,12 @@ void DumpRenderTree::processArgsLine(const QStringList &args)
         for (int i = 0; i < m_standAloneModeTestList.size(); ++i)
             m_standAloneModeTestList[i] = folderEntry.absoluteFilePath(m_standAloneModeTestList[i]);
     }
-
-    processLine(m_standAloneModeTestList.first());
-    m_standAloneModeTestList.removeFirst();
-
     connect(this, SIGNAL(ready()), this, SLOT(loadNextTestInStandAloneMode()));
+
+    if (!m_standAloneModeTestList.isEmpty()) {
+        QString first = m_standAloneModeTestList.takeFirst();
+        processLine(first);
+    }
 }
 
 void DumpRenderTree::loadNextTestInStandAloneMode()
@@ -703,9 +706,8 @@ void DumpRenderTree::loadNextTestInStandAloneMode()
         emit quit();
         return;
     }
-
-    processLine(m_standAloneModeTestList.first());
-    m_standAloneModeTestList.removeFirst();
+    QString first = m_standAloneModeTestList.takeFirst();
+    processLine(first);
 }
 
 void DumpRenderTree::processLine(const QString &input)
