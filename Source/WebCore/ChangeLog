@@ -1,3 +1,21 @@
+2011-03-21  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Establishes a V8 context before executing MediaQueryList callbacks.
+        https://bugs.webkit.org/show_bug.cgi?id=56166
+
+        MediaQueryList listener callbacks didn't establish a V8 context
+        before running script, causing crashes on C++-only
+        callstacks (such as user resizing, printing, etc.) I believe this
+        could also be contrived to execute media query list listener
+        callbacks across domain.
+
+        Test: fast/media/media-query-list-callback.html
+
+        * css/MediaQueryListListener.cpp:
+        (WebCore::MediaQueryListListener::queryChanged):
+
 2011-03-21  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

@@ -1,3 +1,14 @@
+2011-03-21  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Adds a regression test for MediaQueryList listener callbacks in V8.
+        https://bugs.webkit.org/show_bug.cgi?id=56166
+
+        * fast/media/media-query-list-callback-expected.txt: Added.
+        * fast/media/media-query-list-callback.html: Added.
+        * fast/media/resources/media-query-list-callback-frame.html: Added.
+
 2011-03-21  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
