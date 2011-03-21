@@ -356,6 +356,8 @@ bool TestController::resetStateToConsistentValues()
     WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(preferences, true);
     WKPreferencesSetJavaScriptCanAccessClipboard(preferences, true);
     WKPreferencesSetDOMPasteAllowed(preferences, true);
+    WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences, true);
+    WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
 
     static WKStringRef standardFontFamily = WKStringCreateWithUTF8CString("Times");
     static WKStringRef cursiveFontFamily = WKStringCreateWithUTF8CString("Apple Chancery");

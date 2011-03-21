@@ -1,3 +1,10 @@
+2011-03-21  Sam Weinig  <sam@webkit.org>
+
+        Fix failing tests on the WebKit2 bots.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
 2011-03-21  Daniel Sievers  <sievers@google.com>
 
         Reviewed by Simon Fraser.
