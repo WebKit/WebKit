@@ -199,3 +199,57 @@ WebInspector.SimpleCookiesTable.prototype = {
             this._dataGrid.updateWidths();
     }
 }
+
+
+WebInspector.Cookies = {}
+
+WebInspector.Cookies.getCookiesAsync = function(callback)
+{
+    function mycallback(error, cookies, cookiesString)
+    {
+        if (error)
+            return;
+        if (cookiesString)
+            callback(WebInspector.Cookies.buildCookiesFromString(cookiesString), false);
+        else
+            callback(cookies, true);
+    }
+
+    InspectorAgent.getCookies(mycallback);
+}
+
+WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)
+{
+    var rawCookies = rawCookieString.split(/;\s*/);
+    var cookies = [];
+
+    if (!(/^\s*$/.test(rawCookieString))) {
+        for (var i = 0; i < rawCookies.length; ++i) {
+            var cookie = rawCookies[i];
+            var delimIndex = cookie.indexOf("=");
+            var name = cookie.substring(0, delimIndex);
+            var value = cookie.substring(delimIndex + 1);
+            var size = name.length + value.length;
+            cookies.push({ name: name, value: value, size: size });
+        }
+    }
+
+    return cookies;
+}
+
+WebInspector.Cookies.cookieMatchesResourceURL = function(cookie, resourceURL)
+{
+    var url = resourceURL.asParsedURL();
+    if (!url || !this.cookieDomainMatchesResourceDomain(cookie.domain, url.host))
+        return false;
+    return (url.path.indexOf(cookie.path) === 0
+        && (!cookie.port || url.port == cookie.port)
+        && (!cookie.secure || url.scheme === "https"));
+}
+
+WebInspector.Cookies.cookieDomainMatchesResourceDomain = function(cookieDomain, resourceDomain)
+{
+    if (cookieDomain.charAt(0) !== '.')
+        return resourceDomain === cookieDomain;
+    return !!resourceDomain.match(new RegExp("^([^\\.]+\\.)?" + cookieDomain.substring(1).escapeForRegExp() + "$"), "i");
+}

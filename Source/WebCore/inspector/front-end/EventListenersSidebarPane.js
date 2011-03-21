@@ -104,7 +104,8 @@ WebInspector.EventListenersSidebarPane.prototype = {
             }
         }
 
-        WebInspector.EventListeners.getEventListenersForNode(node, callback);
+        if (node)
+            node.eventListeners(callback);
     },
 
     _changeSetting: function(event)

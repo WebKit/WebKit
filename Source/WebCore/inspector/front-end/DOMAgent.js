@@ -206,6 +206,11 @@ WebInspector.DOMNode.prototype = {
         DOMAgent.copyNode(this.id, callback);
     },
 
+    eventListeners: function(callback)
+    {
+        DOMAgent.getEventListenersForNode(this.id, callback);
+    },
+
     path: function()
     {
         var path = [];
@@ -539,96 +544,4 @@ WebInspector.DOMDispatcher.prototype = {
         if (this._domAgent._searchResultCollector)
             this._domAgent._searchResultCollector(nodeIds);
     }
-}
-
-WebInspector.ApplicationCacheDispatcher = function()
-{
-}
-
-WebInspector.ApplicationCacheDispatcher.getApplicationCachesAsync = function(callback)
-{
-    function mycallback(error, applicationCaches)
-    {
-        // FIXME: Currently, this list only returns a single application cache.
-        if (!error && applicationCaches)
-            callback(applicationCaches);
-    }
-
-    ApplicationCacheAgent.getApplicationCaches(mycallback);
-}
-
-WebInspector.ApplicationCacheDispatcher.prototype = {
-    updateApplicationCacheStatus: function(status)
-    {
-        WebInspector.panels.resources.updateApplicationCacheStatus(status);
-    },
-
-    updateNetworkState: function(isNowOnline)
-    {
-        WebInspector.panels.resources.updateNetworkState(isNowOnline);
-    }
-}
-
-InspectorBackend.registerDomainDispatcher("ApplicationCache", new WebInspector.ApplicationCacheDispatcher());
-
-WebInspector.Cookies = {}
-
-WebInspector.Cookies.getCookiesAsync = function(callback)
-{
-    function mycallback(error, cookies, cookiesString)
-    {
-        if (error)
-            return;
-        if (cookiesString)
-            callback(WebInspector.Cookies.buildCookiesFromString(cookiesString), false);
-        else
-            callback(cookies, true);
-    }
-
-    InspectorAgent.getCookies(mycallback);
-}
-
-WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)
-{
-    var rawCookies = rawCookieString.split(/;\s*/);
-    var cookies = [];
-
-    if (!(/^\s*$/.test(rawCookieString))) {
-        for (var i = 0; i < rawCookies.length; ++i) {
-            var cookie = rawCookies[i];
-            var delimIndex = cookie.indexOf("=");
-            var name = cookie.substring(0, delimIndex);
-            var value = cookie.substring(delimIndex + 1);
-            var size = name.length + value.length;
-            cookies.push({ name: name, value: value, size: size });
-        }
-    }
-
-    return cookies;
-}
-
-WebInspector.Cookies.cookieMatchesResourceURL = function(cookie, resourceURL)
-{
-    var url = resourceURL.asParsedURL();
-    if (!url || !this.cookieDomainMatchesResourceDomain(cookie.domain, url.host))
-        return false;
-    return (url.path.indexOf(cookie.path) === 0
-        && (!cookie.port || url.port == cookie.port)
-        && (!cookie.secure || url.scheme === "https"));
-}
-
-WebInspector.Cookies.cookieDomainMatchesResourceDomain = function(cookieDomain, resourceDomain)
-{
-    if (cookieDomain.charAt(0) !== '.')
-        return resourceDomain === cookieDomain;
-    return !!resourceDomain.match(new RegExp("^([^\\.]+\\.)?" + cookieDomain.substring(1).escapeForRegExp() + "$"), "i");
-}
-
-WebInspector.EventListeners = {}
-
-WebInspector.EventListeners.getEventListenersForNode = function(node, callback)
-{
-    if (!node)
-        return;
-    DOMAgent.getEventListenersForNode(node.id, callback);
 }

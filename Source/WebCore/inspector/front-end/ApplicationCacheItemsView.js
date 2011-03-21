@@ -268,3 +268,33 @@ WebInspector.ApplicationCacheItemsView.prototype = {
 }
 
 WebInspector.ApplicationCacheItemsView.prototype.__proto__ = WebInspector.View.prototype;
+
+WebInspector.ApplicationCacheDispatcher = function()
+{
+}
+
+WebInspector.ApplicationCacheDispatcher.getApplicationCachesAsync = function(callback)
+{
+    function mycallback(error, applicationCaches)
+    {
+        // FIXME: Currently, this list only returns a single application cache.
+        if (!error && applicationCaches)
+            callback(applicationCaches);
+    }
+
+    ApplicationCacheAgent.getApplicationCaches(mycallback);
+}
+
+WebInspector.ApplicationCacheDispatcher.prototype = {
+    updateApplicationCacheStatus: function(status)
+    {
+        WebInspector.panels.resources.updateApplicationCacheStatus(status);
+    },
+
+    updateNetworkState: function(isNowOnline)
+    {
+        WebInspector.panels.resources.updateNetworkState(isNowOnline);
+    }
+}
+
+InspectorBackend.registerDomainDispatcher("ApplicationCache", new WebInspector.ApplicationCacheDispatcher());

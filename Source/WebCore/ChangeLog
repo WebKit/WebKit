@@ -2,6 +2,28 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: move cookie processing and appcache from DOMAgent.js
+        https://bugs.webkit.org/show_bug.cgi?id=56713
+
+        * inspector/front-end/ApplicationCacheItemsView.js:
+        (WebInspector.ApplicationCacheDispatcher):
+        (WebInspector.ApplicationCacheDispatcher.getApplicationCachesAsync):
+        (WebInspector.ApplicationCacheDispatcher.prototype.updateApplicationCacheStatus):
+        (WebInspector.ApplicationCacheDispatcher.prototype.updateNetworkState):
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.Cookies.getCookiesAsync):
+        (WebInspector.Cookies.buildCookiesFromString):
+        (WebInspector.Cookies.cookieMatchesResourceURL):
+        (WebInspector.Cookies.cookieDomainMatchesResourceDomain):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype.eventListeners):
+        * inspector/front-end/EventListenersSidebarPane.js:
+        (WebInspector.EventListenersSidebarPane.prototype.update):
+
+2011-03-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: migrate Inspector.json to valid JSON types.
         https://bugs.webkit.org/show_bug.cgi?id=56651
 
