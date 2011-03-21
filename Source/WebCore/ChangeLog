@@ -1,3 +1,9 @@
+2011-03-21  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK distcheck build fix.
+
+        * GNUmakefile.am:
+
 2011-03-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric Seidel.
