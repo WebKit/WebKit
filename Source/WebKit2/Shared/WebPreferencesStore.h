@@ -70,6 +70,9 @@ namespace WebKit {
     macro(JavaScriptCanAccessClipboard, javaScriptCanAccessClipboard, Bool, bool, false) \
     macro(ShouldPrintBackgrounds, shouldPrintBackgrounds, Bool, bool, false) \
     macro(FullScreenEnabled, fullScreenEnabled, Bool, bool, false) \
+    macro(WebSecurityEnabled, webSecurityEnabled, Bool, bool, true) \
+    macro(AllowUniversalAccessFromFileURLs, allowUniversalAccessFromFileURLs, Bool, bool, false) \
+    macro(AllowFileAccessFromFileURLs, allowFileAccessFromFileURLs, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

@@ -2,6 +2,28 @@
 
         Reviewed by Anders Carlsson.
 
+        WebKit2 needs preferences to change security knobs
+        https://bugs.webkit.org/show_bug.cgi?id=56762
+
+        Add preferences for WebSecurityEnabled, UniversalAccessFromFileURLsAllowed
+        and FileAccessFromFileURLsAllowed.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetWebSecurityEnabled):
+        (WKPreferencesGetWebSecurityEnabled):
+        (WKPreferencesSetUniversalAccessFromFileURLsAllowed):
+        (WKPreferencesGetUniversalAccessFromFileURLsAllowed):
+        (WKPreferencesSetFileAccessFromFileURLsAllowed):
+        (WKPreferencesGetFileAccessFromFileURLsAllowed):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
+2011-03-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Remove old DrawingArea and LayerHostingView code from WKView.
 
         * UIProcess/API/mac/WKView.mm:

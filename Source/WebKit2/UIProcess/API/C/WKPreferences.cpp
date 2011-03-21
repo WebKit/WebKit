@@ -500,3 +500,33 @@ bool WKPreferencesGetFullScreenEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->fullScreenEnabled();
 }
+
+void WKPreferencesSetWebSecurityEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setWebSecurityEnabled(enabled);
+}
+
+bool WKPreferencesGetWebSecurityEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->webSecurityEnabled();
+}
+
+void WKPreferencesSetUniversalAccessFromFileURLsAllowed(WKPreferencesRef preferencesRef, bool allowed)
+{
+    toImpl(preferencesRef)->setAllowUniversalAccessFromFileURLs(allowed);
+}
+
+bool WKPreferencesGetUniversalAccessFromFileURLsAllowed(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->allowUniversalAccessFromFileURLs();
+}
+
+void WKPreferencesSetFileAccessFromFileURLsAllowed(WKPreferencesRef preferencesRef, bool allowed)
+{
+    toImpl(preferencesRef)->setAllowFileAccessFromFileURLs(allowed);
+}
+
+bool WKPreferencesGetFileAccessFromFileURLsAllowed(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->allowFileAccessFromFileURLs();
+}
