@@ -1,3 +1,37 @@
+2011-03-21  Hao Zheng  <zhenghao@google.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 15713: Rollout r72533 completely.
+        https://bugs.webkit.org/show_bug.cgi?id=15713
+
+        r72599 only rolled out the checksum files, which caused mismatch
+        between checksum and png. Some png files had been
+        rolled out by some other changes, so rollout the remaining png.
+
+        * platform/chromium-linux/css1/box_properties/margin_right-expected.png:
+        * platform/chromium-linux/css1/box_properties/padding_right-expected.png:
+        * platform/chromium-linux/css2.1/t0805-c5520-brdr-b-01-e-expected.png:
+        * platform/chromium-linux/editing/selection/extend-by-word-002-expected.png:
+        * platform/chromium-linux/fast/css/background-shorthand-invalid-url-expected.png:
+        * platform/chromium-linux/fast/doctypes/002-expected.png:
+        * platform/chromium-linux/fast/lists/001-vertical-expected.png:
+        * platform/chromium-linux/fast/lists/002-expected.png:
+        * platform/chromium-linux/fast/lists/003-expected.png:
+        * platform/chromium-linux/fast/lists/007-vertical-expected.png:
+        * platform/chromium-linux/fast/lists/008-vertical-expected.png:
+        * platform/chromium-linux/fast/lists/marker-before-empty-inline-expected.png:
+        * platform/chromium-win/css1/box_properties/margin_right-expected.png:
+        * platform/chromium-win/css1/box_properties/padding_right-expected.png:
+        * platform/chromium-win/fast/css/background-shorthand-invalid-url-expected.png:
+        * platform/chromium-win/fast/doctypes/002-expected.png:
+        * platform/chromium-win/fast/lists/001-vertical-expected.png:
+        * platform/chromium-win/fast/lists/002-expected.png:
+        * platform/chromium-win/fast/lists/003-expected.png:
+        * platform/chromium-win/fast/lists/007-vertical-expected.png:
+        * platform/chromium-win/fast/lists/008-vertical-expected.png:
+        * platform/chromium-win/fast/lists/marker-before-empty-inline-expected.png:
+
 2011-03-21  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Reviewed by Dirk Schulze.
