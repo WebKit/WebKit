@@ -1,3 +1,25 @@
+2011-03-21  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Chris Marrin and Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56325
+        ASSERTION FAILED: paused() in AnimationBase::updateStateMachine()
+
+        Add a test that triggers the assertion by removing the <body>
+        element and re-inserting it.
+
+        While not directly related to this bug, the
+        transform-origin-vs-functions test would occasionally fail because it
+        depended on the order of events being fired. The update to the way
+        animations are keeping their state triggered this more often. Now the
+        output is sorted before finishing the test.
+
+        * animations/3d/transform-origin-vs-functions.html:
+        * animations/body-removal-crash.html: Added.
+        * platform/mac/animations/body-removal-crash-expected.checksum: Added.
+        * platform/mac/animations/body-removal-crash-expected.png: Added.
+        * platform/mac/animations/body-removal-crash-expected.txt: Added.
+
 2011-03-21  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Unreviewed, add flaky and failing tests after r81597.

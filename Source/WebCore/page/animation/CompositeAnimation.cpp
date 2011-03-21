@@ -56,6 +56,7 @@ void CompositeAnimation::clearRenderer()
         CSSPropertyTransitionsMap::const_iterator transitionsEnd = m_transitions.end();
         for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != transitionsEnd; ++it) {
             ImplicitAnimation* transition = it->second.get();
+            animationController()->animationWillBeRemoved(transition);
             transition->clearRenderer();
         }
     }
@@ -64,6 +65,7 @@ void CompositeAnimation::clearRenderer()
         AnimationNameMap::const_iterator animationsEnd = m_keyframeAnimations.end();
         for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != animationsEnd; ++it) {
             KeyframeAnimation* anim = it->second.get();
+            animationController()->animationWillBeRemoved(anim);
             anim->clearRenderer();
         }
     }
@@ -175,8 +177,10 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
     end = m_transitions.end();
     for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != end; ++it) {
         ImplicitAnimation* anim = it->second.get();
-        if (!anim->active())
+        if (!anim->active()) {
+            animationController()->animationWillBeRemoved(anim);
             toBeRemoved.append(anim->animatingProperty());
+        }
     }
 
     // Now remove the transitions from the list
@@ -256,6 +260,7 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, Render
         KeyframeAnimation* keyframeAnim = it->second.get();
         if (keyframeAnim->index() < 0) {
             animsToBeRemoved.append(keyframeAnim->name().impl());
+            animationController()->animationWillBeRemoved(keyframeAnim);
             keyframeAnim->clearRenderer();
         }
     }

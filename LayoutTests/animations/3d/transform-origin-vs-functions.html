@@ -60,7 +60,7 @@
         layoutTestController.waitUntilDone();
       }
 
-      result = "";
+      resultEntries = [];
 
       const expected = {
           "b1" : [ 0,0,-1,0, 0,1,0,0, 1,0,0,0, 0,0,0,1 ],
@@ -87,17 +87,18 @@
               var actual = parseFloat(array[i]);
               var expect = expected[id][i];
               if (!isEqual(actual, expect)) {
-                  result += "FAIL(element '"+id+"' matrix["+i+"]' was:"+actual+", expected:"+expect+")<br>";
+                  resultEntries.push("FAIL(element '"+id+"' matrix["+i+"]' was:"+actual+", expected:"+expect+")<br>");
                   pass = false;
               }
           }
           
           if (pass)
-            result += "PASS(element '"+id+"' matches expected value)<br>";
+            resultEntries.push("PASS(element '"+id+"' matches expected value)<br>");
           
           numSnapshots++;
           if (numSnapshots == 2) {
-              document.getElementById('result').innerHTML = result;
+              resultEntries.sort();
+              document.getElementById('result').innerHTML = resultEntries.join("");
               if (window.layoutTestController)
                   layoutTestController.notifyDone();
           }

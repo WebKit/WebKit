@@ -1,3 +1,52 @@
+2011-03-21  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Chris Marrin and Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56325
+        ASSERTION FAILED: paused() in AnimationBase::updateStateMachine()
+
+        AnimationBase had a custom linked-list/self-pointer for keeping
+        track of animations that needed to be notified of style updates
+        and start progress. This caused problems when AnimationBase was
+        destroyed, since the pointer wasn't managed in any way. I replaced
+        these pointers with HashSets and moved the code that removes animations
+        from the sets into AnimationControllerPrivate, where it belongs.
+        CompositeAnimation is also more careful to tell AnimationControllerPrivate
+        when it no longer needs to keep track of waiting animations.
+
+        This should stop the style updates being called on non-active animations
+        (which was the cause of the state machine error here) and should also
+        stop a few of the related flakey test failures and occasional crashes.
+
+        Test: animations/body-removal-crash.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::AnimationBase):
+        (WebCore::AnimationBase::updateStateMachine):
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::~AnimationBase):
+        - Remove the linked-list
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::AnimationControllerPrivate):
+        (WebCore::AnimationControllerPrivate::addToAnimationsWaitingForStyle):
+        (WebCore::AnimationControllerPrivate::removeFromAnimationsWaitingForStyle):
+        (WebCore::AnimationControllerPrivate::styleAvailable):
+        (WebCore::AnimationControllerPrivate::addToAnimationsWaitingForStartTimeResponse):
+        (WebCore::AnimationControllerPrivate::removeFromAnimationsWaitingForStartTimeResponse):
+        (WebCore::AnimationControllerPrivate::startTimeResponse):
+        (WebCore::AnimationControllerPrivate::animationWillBeRemoved):
+        - New method to remove animations from the waiting lists
+        * page/animation/AnimationControllerPrivate.h:
+        - use a HashSet rather than an AnimationBase* pointer.
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::~CompositeAnimation):
+        (WebCore::CompositeAnimation::clearRenderer):
+        (WebCore::CompositeAnimation::updateTransitions):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        - remove the animations and transitions from the lists when we know
+          they are no longer active (rather than waiting for the AnimationBase
+          to do it when destructing)
+
 2011-03-21  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by James Robinson.

@@ -33,6 +33,7 @@
 #include "PlatformString.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -88,12 +89,14 @@ public:
     void endAnimationUpdate();
     void receivedStartTimeResponse(double);
     
-    void addToStyleAvailableWaitList(AnimationBase*);
-    void removeFromStyleAvailableWaitList(AnimationBase*);    
-    
-    void addToStartTimeResponseWaitList(AnimationBase*, bool willGetResponse);
-    void removeFromStartTimeResponseWaitList(AnimationBase*);    
-    
+    void addToAnimationsWaitingForStyle(AnimationBase*);
+    void removeFromAnimationsWaitingForStyle(AnimationBase*);
+
+    void addToAnimationsWaitingForStartTimeResponse(AnimationBase*, bool willGetResponse);
+    void removeFromAnimationsWaitingForStartTimeResponse(AnimationBase*);
+
+    void animationWillBeRemoved(AnimationBase*);
+
     PassRefPtr<WebKitAnimationList> animationsForRenderer(RenderObject*) const;
     
 private:
@@ -122,11 +125,10 @@ private:
     Vector<RefPtr<Node> > m_nodeChangesToDispatch;
     
     double m_beginAnimationUpdateTime;
-    AnimationBase* m_styleAvailableWaiters;
-    AnimationBase* m_lastStyleAvailableWaiter;
-    
-    AnimationBase* m_startTimeResponseWaiters;
-    AnimationBase* m_lastStartTimeResponseWaiter;
+
+    typedef HashSet<RefPtr<AnimationBase> > WaitingAnimationsSet;
+    WaitingAnimationsSet m_animationsWaitingForStyle;
+    WaitingAnimationsSet m_animationsWaitingForStartTimeResponse;
     bool m_waitingForStartTimeResponse;
 };
 

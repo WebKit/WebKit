@@ -51,7 +51,7 @@ class AnimationBase : public RefCounted<AnimationBase> {
 
 public:
     AnimationBase(const Animation* transition, RenderObject* renderer, CompositeAnimation* compAnim);
-    virtual ~AnimationBase();
+    virtual ~AnimationBase() { }
 
     RenderObject* renderer() const { return m_object; }
     void clearRenderer() { m_object = 0; }
@@ -173,9 +173,6 @@ public:
     double getElapsedTime() const;
     // Setting the elapsed time will adjust the start time and possibly pause time.
     void setElapsedTime(double);
-
-    AnimationBase* next() const { return m_next; }
-    void setNext(AnimationBase* animation) { m_next = animation; }
     
     void styleAvailable() 
     {
@@ -237,8 +234,6 @@ protected:
     bool m_isAccelerated;
     bool m_transformFunctionListValid;
     double m_totalDuration, m_nextIterationDuration;
-    
-    AnimationBase* m_next;
     
 private:
     static void ensurePropertyMap();
