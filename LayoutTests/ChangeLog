@@ -1,3 +1,9 @@
+2011-03-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: skipping new inspector test on GTK unless harness is fixed.
+
+        * platform/gtk/Skipped:
+
 2011-03-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
