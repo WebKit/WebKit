@@ -76,7 +76,7 @@ public:
     void enable(bool skipRecompile);
     bool enabled() { return m_enabled; }
     String getCurrentUserInitiatedProfileName(bool incrementProfileNumber = false);
-    void getExactHeapSnapshotNodeRetainedSize(ErrorString*, unsigned long uid, unsigned long nodeId, long* size);
+    void getExactHeapSnapshotNodeRetainedSize(ErrorString*, unsigned uid, int nodeId, int* size);
     void getProfileHeaders(ErrorString* error, RefPtr<InspectorArray>* headers);
     void getProfile(ErrorString* error, const String& type, unsigned uid, RefPtr<InspectorObject>* profileObject);
     bool isRecordingUserInitiatedProfile() { return m_recordingUserInitiatedProfile; }

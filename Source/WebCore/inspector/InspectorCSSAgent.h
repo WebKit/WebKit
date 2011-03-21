@@ -61,17 +61,17 @@ public:
     ~InspectorCSSAgent();
 
     void reset();
-    void getStylesForNode(ErrorString*, long nodeId, RefPtr<InspectorObject>* result);
-    void getInlineStyleForNode(ErrorString*, long nodeId, RefPtr<InspectorObject>* style);
-    void getComputedStyleForNode(ErrorString*, long nodeId, RefPtr<InspectorObject>* style);
+    void getStylesForNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* result);
+    void getInlineStyleForNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* style);
+    void getComputedStyleForNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* style);
     void getAllStyles(ErrorString*, RefPtr<InspectorArray>* styles);
     void getStyleSheet(ErrorString*, const String& styleSheetId, RefPtr<InspectorObject>* result);
     void getStyleSheetText(ErrorString*, const String& styleSheetId, String* url, String* result);
     void setStyleSheetText(ErrorString*, const String& styleSheetId, const String& text, bool* success);
-    void setPropertyText(ErrorString*, const RefPtr<InspectorObject>& styleId, long propertyIndex, const String& text, bool overwrite, RefPtr<InspectorObject>* result);
-    void toggleProperty(ErrorString*, const RefPtr<InspectorObject>& styleId, long propertyIndex, bool disable, RefPtr<InspectorObject>* result);
+    void setPropertyText(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, const String& text, bool overwrite, RefPtr<InspectorObject>* result);
+    void toggleProperty(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, bool disable, RefPtr<InspectorObject>* result);
     void setRuleSelector(ErrorString*, const RefPtr<InspectorObject>& ruleId, const String& selector, RefPtr<InspectorObject>* result);
-    void addRule(ErrorString*, const long contextNodeId, const String& selector, RefPtr<InspectorObject>* result);
+    void addRule(ErrorString*, const int contextNodeId, const String& selector, RefPtr<InspectorObject>* result);
     void getSupportedCSSProperties(ErrorString*, RefPtr<InspectorArray>* result);
 
 private:
@@ -83,7 +83,7 @@ private:
     static Element* inlineStyleElement(CSSStyleDeclaration*);
 
     InspectorStyleSheetForInlineStyle* asInspectorStyleSheet(Element* element);
-    Element* elementForId(ErrorString*, long nodeId);
+    Element* elementForId(ErrorString*, int nodeId);
 
     InspectorStyleSheet* bindStyleSheet(CSSStyleSheet*);
     InspectorStyleSheet* viaInspectorStyleSheet(Document*, bool createIfAbsent);
@@ -106,9 +106,9 @@ private:
     NodeToInspectorStyleSheet m_nodeToInspectorStyleSheet;
     DocumentToViaInspectorStyleSheet m_documentToInspectorStyleSheet;
 
-    long m_lastStyleSheetId;
-    long m_lastRuleId;
-    long m_lastStyleId;
+    int m_lastStyleSheetId;
+    int m_lastRuleId;
+    int m_lastStyleId;
 };
 
 #endif

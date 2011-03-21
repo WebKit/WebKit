@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-static long nextUnusedId = 1;
+static int nextUnusedId = 1;
 
 PassRefPtr<InspectorDatabaseResource> InspectorDatabaseResource::create(PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
 {

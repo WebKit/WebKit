@@ -63,12 +63,12 @@ public:
     void clearFrontend();
 
     // BrowserDebugger API for InspectorFrontend
-    void setXHRBreakpoint(ErrorString* error, const String& url);
-    void removeXHRBreakpoint(ErrorString* error, const String& url);
-    void setEventListenerBreakpoint(ErrorString* error, const String& eventName);
-    void removeEventListenerBreakpoint(ErrorString* error, const String& eventName);
-    void setDOMBreakpoint(ErrorString* error, long nodeId, long type);
-    void removeDOMBreakpoint(ErrorString* error, long nodeId, long type);
+    void setXHRBreakpoint(ErrorString*, const String& url);
+    void removeXHRBreakpoint(ErrorString*, const String& url);
+    void setEventListenerBreakpoint(ErrorString*, const String& eventName);
+    void removeEventListenerBreakpoint(ErrorString*, const String& eventName);
+    void setDOMBreakpoint(ErrorString*, int nodeId, int type);
+    void removeDOMBreakpoint(ErrorString*, int nodeId, int type);
 
     // InspectorInstrumentation API
     void willInsertDOMNode(Node*, Node* parent);
@@ -87,9 +87,9 @@ private:
     virtual void debuggerWasDisabled();
     void disable();
 
-    void descriptionForDOMEvent(Node* target, long breakpointType, bool insertion, InspectorObject* description);
+    void descriptionForDOMEvent(Node* target, int breakpointType, bool insertion, InspectorObject* description);
     void updateSubtreeBreakpoints(Node*, uint32_t rootMask, bool set);
-    bool hasBreakpoint(Node*, long type);
+    bool hasBreakpoint(Node*, int type);
     void discardBindings();
 
     void clear();

@@ -59,12 +59,12 @@ public:
     void clearResources();
 
     // Called from the front-end.
-    void getDOMStorageEntries(ErrorString*, long storageId, RefPtr<InspectorArray>* entries);
-    void setDOMStorageItem(ErrorString*, long storageId, const String& key, const String& value, bool* success);
-    void removeDOMStorageItem(ErrorString*, long storageId, const String& key, bool* success);
+    void getDOMStorageEntries(ErrorString*, int storageId, RefPtr<InspectorArray>* entries);
+    void setDOMStorageItem(ErrorString*, int storageId, const String& key, const String& value, bool* success);
+    void removeDOMStorageItem(ErrorString*, int storageId, const String& key, bool* success);
 
     // Called from the injected script.
-    long storageId(Storage*);
+    int storageId(Storage*);
 
     // Called from InspectorInstrumentation
     void didUseDOMStorage(StorageArea*, bool isLocalStorage, Frame*);
@@ -72,10 +72,10 @@ public:
 private:
     explicit InspectorDOMStorageAgent(InstrumentingAgents*);
 
-    InspectorDOMStorageResource* getDOMStorageResourceForId(long storageId);
+    InspectorDOMStorageResource* getDOMStorageResourceForId(int storageId);
 
     InstrumentingAgents* m_instrumentingAgents;
-    typedef HashMap<long, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
+    typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
     DOMStorageResourcesMap m_resources;
     InspectorFrontend* m_frontend;
 };

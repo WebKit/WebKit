@@ -79,7 +79,7 @@ void InspectorDOMStorageAgent::clearFrontend()
     m_frontend = 0;
 }
 
-void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, long storageId, RefPtr<InspectorArray>* entries)
+void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, int storageId, RefPtr<InspectorArray>* entries)
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
@@ -96,7 +96,7 @@ void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, long storageId
     }
 }
 
-void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString*, long storageId, const String& key, const String& value, bool* success)
+void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString*, int storageId, const String& key, const String& value, bool* success)
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
@@ -106,7 +106,7 @@ void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString*, long storageId, c
     }
 }
 
-void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString*, long storageId, const String& key, bool* success)
+void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString*, int storageId, const String& key, bool* success)
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
@@ -115,7 +115,7 @@ void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString*, long storageId
     }
 }
 
-long InspectorDOMStorageAgent::storageId(Storage* storage)
+int InspectorDOMStorageAgent::storageId(Storage* storage)
 {
     ASSERT(storage);
     Frame* frame = storage->frame();
@@ -129,7 +129,7 @@ long InspectorDOMStorageAgent::storageId(Storage* storage)
     return 0;
 }
 
-InspectorDOMStorageResource* InspectorDOMStorageAgent::getDOMStorageResourceForId(long storageId)
+InspectorDOMStorageResource* InspectorDOMStorageAgent::getDOMStorageResourceForId(int storageId)
 {
     DOMStorageResourcesMap::iterator it = m_resources.find(storageId);
     if (it == m_resources.end())

@@ -70,9 +70,9 @@ private:
 
 namespace {
 
-long lastTransactionId = 0;
+int lastTransactionId = 0;
 
-void reportTransactionFailed(InspectorFrontend::Database* frontend, long transactionId, SQLError* error)
+void reportTransactionFailed(InspectorFrontend::Database* frontend, int transactionId, SQLError* error)
 {
     if (!frontend)
         return;
@@ -84,7 +84,7 @@ void reportTransactionFailed(InspectorFrontend::Database* frontend, long transac
 
 class StatementCallback : public SQLStatementCallback {
 public:
-    static PassRefPtr<StatementCallback> create(long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
+    static PassRefPtr<StatementCallback> create(int transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
     {
         return adoptRef(new StatementCallback(transactionId, frontendProvider));
     }
@@ -118,16 +118,16 @@ public:
     }
 
 private:
-    StatementCallback(long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
+    StatementCallback(int transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
         : m_transactionId(transactionId)
         , m_frontendProvider(frontendProvider) { }
-    long m_transactionId;
+    int m_transactionId;
     RefPtr<InspectorDatabaseAgent::FrontendProvider> m_frontendProvider;
 };
 
 class StatementErrorCallback : public SQLStatementErrorCallback {
 public:
-    static PassRefPtr<StatementErrorCallback> create(long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
+    static PassRefPtr<StatementErrorCallback> create(int transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
     {
         return adoptRef(new StatementErrorCallback(transactionId, frontendProvider));
     }
@@ -141,16 +141,16 @@ public:
     }
 
 private:
-    StatementErrorCallback(long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
+    StatementErrorCallback(int transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
         : m_transactionId(transactionId)
         , m_frontendProvider(frontendProvider) { }
-    long m_transactionId;
+    int m_transactionId;
     RefPtr<InspectorDatabaseAgent::FrontendProvider> m_frontendProvider;
 };
 
 class TransactionCallback : public SQLTransactionCallback {
 public:
-    static PassRefPtr<TransactionCallback> create(const String& sqlStatement, long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
+    static PassRefPtr<TransactionCallback> create(const String& sqlStatement, int transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
     {
         return adoptRef(new TransactionCallback(sqlStatement, transactionId, frontendProvider));
     }
@@ -170,18 +170,18 @@ public:
         return true;
     }
 private:
-    TransactionCallback(const String& sqlStatement, long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
+    TransactionCallback(const String& sqlStatement, int transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
         : m_sqlStatement(sqlStatement)
         , m_transactionId(transactionId)
         , m_frontendProvider(frontendProvider) { }
     String m_sqlStatement;
-    long m_transactionId;
+    int m_transactionId;
     RefPtr<InspectorDatabaseAgent::FrontendProvider> m_frontendProvider;
 };
 
 class TransactionErrorCallback : public SQLTransactionErrorCallback {
 public:
-    static PassRefPtr<TransactionErrorCallback> create(long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
+    static PassRefPtr<TransactionErrorCallback> create(int transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
     {
         return adoptRef(new TransactionErrorCallback(transactionId, frontendProvider));
     }
@@ -194,10 +194,10 @@ public:
         return true;
     }
 private:
-    TransactionErrorCallback(long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
+    TransactionErrorCallback(int transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
         : m_transactionId(transactionId)
         , m_frontendProvider(frontendProvider) { }
-    long m_transactionId;
+    int m_transactionId;
     RefPtr<InspectorDatabaseAgent::FrontendProvider> m_frontendProvider;
 };
 
@@ -257,7 +257,7 @@ void InspectorDatabaseAgent::clearFrontend()
     m_frontendProvider.clear();
 }
 
-void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString*, long databaseId, RefPtr<InspectorArray>* names)
+void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString*, int databaseId, RefPtr<InspectorArray>* names)
 {
     Database* database = databaseForId(databaseId);
     if (database) {
@@ -268,7 +268,7 @@ void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString*, long databaseId
     }
 }
 
-void InspectorDatabaseAgent::executeSQL(ErrorString*, long databaseId, const String& query, bool* success, long* transactionId)
+void InspectorDatabaseAgent::executeSQL(ErrorString*, int databaseId, const String& query, bool* success, int* transactionId)
 {
     Database* database = databaseForId(databaseId);
     if (!database) {
@@ -284,7 +284,7 @@ void InspectorDatabaseAgent::executeSQL(ErrorString*, long databaseId, const Str
     *success = true;
 }
 
-long InspectorDatabaseAgent::databaseId(Database* database)
+int InspectorDatabaseAgent::databaseId(Database* database)
 {
     for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != m_resources.end(); ++it) {
         if (it->second->database() == database)
@@ -293,7 +293,7 @@ long InspectorDatabaseAgent::databaseId(Database* database)
     return 0;
 }
 
-Database* InspectorDatabaseAgent::databaseForId(long databaseId)
+Database* InspectorDatabaseAgent::databaseForId(int databaseId)
 {
     DatabaseResourcesMap::iterator it = m_resources.find(databaseId);
     if (it == m_resources.end())

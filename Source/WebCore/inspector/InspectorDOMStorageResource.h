@@ -66,7 +66,7 @@ namespace WebCore {
         virtual bool operator==(const EventListener& listener);
 
         bool isSameHostAndType(Frame*, bool isLocalStorage) const;
-        long id() const { return m_id; }
+        int id() const { return m_id; }
         Storage* domStorage() const { return m_domStorage.get(); }
 
     private:
@@ -77,10 +77,10 @@ namespace WebCore {
         bool m_isLocalStorage;
         RefPtr<Frame> m_frame;
         InspectorFrontend::DOMStorage* m_frontend;
-        long m_id;
+        int m_id;
         bool m_reportingChangesToFrontend;
 
-        static long s_nextUnusedId;
+        static int s_nextUnusedId;
     };
 
 } // namespace WebCore

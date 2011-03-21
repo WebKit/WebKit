@@ -93,12 +93,12 @@ public:
     void inspectImpl(PassRefPtr<InspectorValue> objectToInspect, PassRefPtr<InspectorValue> hints);
     void clearConsoleMessages();
     void copyText(const String& text);
-    Node* inspectedNode(unsigned long num);
+    Node* inspectedNode(unsigned int num);
 #if ENABLE(DATABASE)
-    long databaseIdImpl(Database*);
+    int databaseIdImpl(Database*);
 #endif
 #if ENABLE(DOM_STORAGE)
-    long storageIdImpl(Storage*);
+    int storageIdImpl(Storage*);
 #endif
 #if ENABLE(WORKERS)
     long nextWorkerId();

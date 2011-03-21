@@ -120,7 +120,7 @@ public:
     void highlight(ErrorString*, Node*);
     void hideHighlight(ErrorString*);
     void inspect(Node*);
-    void highlightDOMNode(ErrorString*, long nodeId);
+    void highlightDOMNode(ErrorString*, int nodeId);
     void hideDOMNodeHighlight(ErrorString* error) { hideHighlight(error); }
 
     void highlightFrame(ErrorString*, const String& frameId);

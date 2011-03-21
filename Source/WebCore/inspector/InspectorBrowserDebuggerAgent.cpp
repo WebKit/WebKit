@@ -169,7 +169,7 @@ void InspectorBrowserDebuggerAgent::didRemoveDOMNode(Node* node)
     }
 }
 
-void InspectorBrowserDebuggerAgent::setDOMBreakpoint(ErrorString*, long nodeId, long type)
+void InspectorBrowserDebuggerAgent::setDOMBreakpoint(ErrorString*, int nodeId, int type)
 {
     Node* node = m_domAgent->nodeForId(nodeId);
     if (!node)
@@ -183,7 +183,7 @@ void InspectorBrowserDebuggerAgent::setDOMBreakpoint(ErrorString*, long nodeId, 
     }
 }
 
-void InspectorBrowserDebuggerAgent::removeDOMBreakpoint(ErrorString*, long nodeId, long type)
+void InspectorBrowserDebuggerAgent::removeDOMBreakpoint(ErrorString*, int nodeId, int type)
 {
     Node* node = m_domAgent->nodeForId(nodeId);
     if (!node)
@@ -250,7 +250,7 @@ void InspectorBrowserDebuggerAgent::willModifyDOMAttr(Element* element)
     }
 }
 
-void InspectorBrowserDebuggerAgent::descriptionForDOMEvent(Node* target, long breakpointType, bool insertion, InspectorObject* description)
+void InspectorBrowserDebuggerAgent::descriptionForDOMEvent(Node* target, int breakpointType, bool insertion, InspectorObject* description)
 {
     ASSERT(hasBreakpoint(target, breakpointType));
 
@@ -274,13 +274,13 @@ void InspectorBrowserDebuggerAgent::descriptionForDOMEvent(Node* target, long br
             description->setBoolean("insertion", insertion);
     }
 
-    long breakpointOwnerNodeId = m_domAgent->boundNodeId(breakpointOwner);
+    int breakpointOwnerNodeId = m_domAgent->boundNodeId(breakpointOwner);
     ASSERT(breakpointOwnerNodeId);
     description->setNumber("nodeId", breakpointOwnerNodeId);
     description->setNumber("type", breakpointType);
 }
 
-bool InspectorBrowserDebuggerAgent::hasBreakpoint(Node* node, long type)
+bool InspectorBrowserDebuggerAgent::hasBreakpoint(Node* node, int type)
 {
     uint32_t rootBit = 1 << type;
     uint32_t derivedBit = rootBit << domBreakpointDerivedTypeShift;

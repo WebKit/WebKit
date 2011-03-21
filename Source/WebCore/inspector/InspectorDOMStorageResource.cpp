@@ -46,7 +46,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-long InspectorDOMStorageResource::s_nextUnusedId = 1;
+int InspectorDOMStorageResource::s_nextUnusedId = 1;
 
 InspectorDOMStorageResource::InspectorDOMStorageResource(Storage* domStorage, bool isLocalStorage, Frame* frame)
     :  EventListener(InspectorDOMStorageResourceType)

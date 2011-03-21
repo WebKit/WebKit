@@ -340,9 +340,9 @@ void InspectorDOMAgent::releaseDanglingNodes()
     m_danglingNodeToIdMaps.clear();
 }
 
-long InspectorDOMAgent::bind(Node* node, NodeToIdMap* nodesMap)
+int InspectorDOMAgent::bind(Node* node, NodeToIdMap* nodesMap)
 {
-    long id = nodesMap->get(node);
+    int id = nodesMap->get(node);
     if (id)
         return id;
     id = m_lastNodeId++;
@@ -360,7 +360,7 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
             m_domListener->didRemoveDocument(frameOwner->contentDocument());
     }
 
-    long id = nodesMap->get(node);
+    int id = nodesMap->get(node);
     if (!id)
         return;
     m_idToNode.remove(id);
@@ -377,7 +377,7 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
     }
 }
 
-Node* InspectorDOMAgent::assertNode(ErrorString* errorString, long nodeId)
+Node* InspectorDOMAgent::assertNode(ErrorString* errorString, int nodeId)
 {
     Node* node = nodeForId(nodeId);
     if (!node) {
@@ -387,7 +387,7 @@ Node* InspectorDOMAgent::assertNode(ErrorString* errorString, long nodeId)
     return node;
 }
 
-Element* InspectorDOMAgent::assertElement(ErrorString* errorString, long nodeId)
+Element* InspectorDOMAgent::assertElement(ErrorString* errorString, int nodeId)
 {
     Node* node = assertNode(errorString, nodeId);
     if (!node)
@@ -401,7 +401,7 @@ Element* InspectorDOMAgent::assertElement(ErrorString* errorString, long nodeId)
 }
 
 
-HTMLElement* InspectorDOMAgent::assertHTMLElement(ErrorString* errorString, long nodeId)
+HTMLElement* InspectorDOMAgent::assertHTMLElement(ErrorString* errorString, int nodeId)
 {
     Element* element = assertElement(errorString, nodeId);
     if (!element)
@@ -414,7 +414,7 @@ HTMLElement* InspectorDOMAgent::assertHTMLElement(ErrorString* errorString, long
     return toHTMLElement(element);
 }
 
-Node* InspectorDOMAgent::nodeToSelectOn(ErrorString* errorString, long nodeId, bool documentWide)
+Node* InspectorDOMAgent::nodeToSelectOn(ErrorString* errorString, int nodeId, bool documentWide)
 {
     Node* node;
     if (!nodeId) {
@@ -448,7 +448,7 @@ void InspectorDOMAgent::getDocument(ErrorString*, RefPtr<InspectorObject>* root)
         *root = buildObjectForNode(m_document.get(), 2, &m_documentNodeToIdMap);
 }
 
-void InspectorDOMAgent::pushChildNodesToFrontend(long nodeId)
+void InspectorDOMAgent::pushChildNodesToFrontend(int nodeId)
 {
     Node* node = nodeForId(nodeId);
     if (!node || (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE && node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE))
@@ -470,23 +470,23 @@ void InspectorDOMAgent::discardBindings()
     m_childrenRequested.clear();
 }
 
-Node* InspectorDOMAgent::nodeForId(long id)
+Node* InspectorDOMAgent::nodeForId(int id)
 {
     if (!id)
         return 0;
 
-    HashMap<long, Node*>::iterator it = m_idToNode.find(id);
+    HashMap<int, Node*>::iterator it = m_idToNode.find(id);
     if (it != m_idToNode.end())
         return it->second;
     return 0;
 }
 
-void InspectorDOMAgent::getChildNodes(ErrorString*, long nodeId)
+void InspectorDOMAgent::getChildNodes(ErrorString*, int nodeId)
 {
     pushChildNodesToFrontend(nodeId);
 }
 
-void InspectorDOMAgent::querySelector(ErrorString* errorString, long nodeId, const String& selectors, bool documentWide, long* elementId)
+void InspectorDOMAgent::querySelector(ErrorString* errorString, int nodeId, const String& selectors, bool documentWide, int* elementId)
 {
     *elementId = 0;
     Node* node = nodeToSelectOn(errorString, nodeId, documentWide);
@@ -504,7 +504,7 @@ void InspectorDOMAgent::querySelector(ErrorString* errorString, long nodeId, con
         *elementId = pushNodePathToFrontend(element.get());
 }
 
-void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, long nodeId, const String& selectors, bool documentWide, RefPtr<InspectorArray>* result)
+void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, const String& selectors, bool documentWide, RefPtr<InspectorArray>* result)
 {
     Node* node = nodeToSelectOn(errorString, nodeId, documentWide);
     if (!node)
@@ -521,7 +521,7 @@ void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, long nodeId, 
         (*result)->pushNumber(pushNodePathToFrontend(nodes->item(i)));
 }
 
-long InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
+int InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
 {
     ASSERT(nodeToPush);  // Invalid input
 
@@ -531,7 +531,7 @@ long InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
         return 0;
 
     // Return id in case the node is known.
-    long result = m_documentNodeToIdMap.get(nodeToPush);
+    int result = m_documentNodeToIdMap.get(nodeToPush);
     if (result)
         return result;
 
@@ -560,19 +560,19 @@ long InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
 
     NodeToIdMap* map = danglingMap ? danglingMap : &m_documentNodeToIdMap;
     for (int i = path.size() - 1; i >= 0; --i) {
-        long nodeId = map->get(path.at(i));
+        int nodeId = map->get(path.at(i));
         ASSERT(nodeId);
         pushChildNodesToFrontend(nodeId);
     }
     return map->get(nodeToPush);
 }
 
-long InspectorDOMAgent::boundNodeId(Node* node)
+int InspectorDOMAgent::boundNodeId(Node* node)
 {
     return m_documentNodeToIdMap.get(node);
 }
 
-void InspectorDOMAgent::setAttribute(ErrorString* errorString, long elementId, const String& name, const String& value)
+void InspectorDOMAgent::setAttribute(ErrorString* errorString, int elementId, const String& name, const String& value)
 {
     Element* element = assertElement(errorString, elementId);
     if (element) {
@@ -583,7 +583,7 @@ void InspectorDOMAgent::setAttribute(ErrorString* errorString, long elementId, c
     }
 }
 
-void InspectorDOMAgent::removeAttribute(ErrorString* errorString, long elementId, const String& name)
+void InspectorDOMAgent::removeAttribute(ErrorString* errorString, int elementId, const String& name)
 {
     Element* element = assertElement(errorString, elementId);
     if (element) {
@@ -594,7 +594,7 @@ void InspectorDOMAgent::removeAttribute(ErrorString* errorString, long elementId
     }
 }
 
-void InspectorDOMAgent::removeNode(ErrorString*, long nodeId, long* outNodeId)
+void InspectorDOMAgent::removeNode(ErrorString*, int nodeId, int* outNodeId)
 {
     Node* node = nodeForId(nodeId);
     if (!node)
@@ -612,7 +612,7 @@ void InspectorDOMAgent::removeNode(ErrorString*, long nodeId, long* outNodeId)
     *outNodeId = nodeId;
 }
 
-void InspectorDOMAgent::setNodeName(ErrorString*, long nodeId, const String& tagName, long* newId)
+void InspectorDOMAgent::setNodeName(ErrorString*, int nodeId, const String& tagName, int* newId)
 {
     *newId = 0;
 
@@ -649,14 +649,14 @@ void InspectorDOMAgent::setNodeName(ErrorString*, long nodeId, const String& tag
         pushChildNodesToFrontend(*newId);
 }
 
-void InspectorDOMAgent::getOuterHTML(ErrorString* errorString, long nodeId, WTF::String* outerHTML)
+void InspectorDOMAgent::getOuterHTML(ErrorString* errorString, int nodeId, WTF::String* outerHTML)
 {
     HTMLElement* element = assertHTMLElement(errorString, nodeId);
     if (element)
         *outerHTML = element->outerHTML();
 }
 
-void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, long nodeId, const String& outerHTML, long* newId)
+void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const String& outerHTML, int* newId)
 {
     HTMLElement* htmlElement = assertHTMLElement(errorString, nodeId);
     if (!htmlElement)
@@ -693,7 +693,7 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, long nodeId, cons
         pushChildNodesToFrontend(*newId);
 }
 
-void InspectorDOMAgent::setNodeValue(ErrorString*, long nodeId, const String& value, bool* success)
+void InspectorDOMAgent::setNodeValue(ErrorString*, int nodeId, const String& value, bool* success)
 {
     Node* node = nodeForId(nodeId);
     if (node && (node->nodeType() == Node::TEXT_NODE)) {
@@ -706,7 +706,7 @@ void InspectorDOMAgent::setNodeValue(ErrorString*, long nodeId, const String& va
     *success = false;
 }
 
-void InspectorDOMAgent::getEventListenersForNode(ErrorString*, long nodeId, RefPtr<InspectorArray>* listenersArray)
+void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>* listenersArray)
 {
     Node* node = nodeForId(nodeId);
     EventTargetData* d;
@@ -868,7 +868,7 @@ void InspectorDOMAgent::cancelSearch(ErrorString*)
     m_searchResults.clear();
 }
 
-void InspectorDOMAgent::resolveNode(ErrorString* error, long nodeId, const String& objectGroup, RefPtr<InspectorObject>* result)
+void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, const String& objectGroup, RefPtr<InspectorObject>* result)
 {
     Node* node = nodeForId(nodeId);
     if (!node) {
@@ -878,7 +878,7 @@ void InspectorDOMAgent::resolveNode(ErrorString* error, long nodeId, const Strin
     *result = resolveNode(node, objectGroup);
 }
 
-void InspectorDOMAgent::pushNodeToFrontend(ErrorString*, const String& objectId, long* nodeId)
+void InspectorDOMAgent::pushNodeToFrontend(ErrorString*, const String& objectId, int* nodeId)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     Node* node = injectedScript.nodeForObjectId(objectId);
@@ -899,7 +899,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForNode(Node* node, in
 {
     RefPtr<InspectorObject> value = InspectorObject::create();
 
-    long id = bind(node, nodesMap);
+    int id = bind(node, nodesMap);
     String nodeName;
     String localName;
     String nodeValue;
@@ -1085,7 +1085,7 @@ void InspectorDOMAgent::loadEventFired(Document* document)
     if (!frameOwner)
         return;
 
-    long frameOwnerId = m_documentNodeToIdMap.get(frameOwner);
+    int frameOwnerId = m_documentNodeToIdMap.get(frameOwner);
     if (!frameOwnerId)
         return;
 
@@ -1094,11 +1094,11 @@ void InspectorDOMAgent::loadEventFired(Document* document)
         m_frontend->childNodeCountUpdated(frameOwnerId, innerChildNodeCount(frameOwner));
     } else {
         // Re-add frame owner element together with its new children.
-        long parentId = m_documentNodeToIdMap.get(innerParentNode(frameOwner));
+        int parentId = m_documentNodeToIdMap.get(innerParentNode(frameOwner));
         m_frontend->childNodeRemoved(parentId, frameOwnerId);
         RefPtr<InspectorObject> value = buildObjectForNode(frameOwner, 0, &m_documentNodeToIdMap);
         Node* previousSibling = innerPreviousSibling(frameOwner);
-        long prevId = previousSibling ? m_documentNodeToIdMap.get(previousSibling) : 0;
+        int prevId = previousSibling ? m_documentNodeToIdMap.get(previousSibling) : 0;
         m_frontend->childNodeInserted(parentId, prevId, value.release());
         // Invalidate children requested flag for the element.
         m_childrenRequested.remove(m_childrenRequested.find(frameOwnerId));
@@ -1114,7 +1114,7 @@ void InspectorDOMAgent::didInsertDOMNode(Node* node)
     unbind(node, &m_documentNodeToIdMap);
 
     ContainerNode* parent = node->parentNode();
-    long parentId = m_documentNodeToIdMap.get(parent);
+    int parentId = m_documentNodeToIdMap.get(parent);
     // Return if parent is not mapped yet.
     if (!parentId)
         return;
@@ -1125,7 +1125,7 @@ void InspectorDOMAgent::didInsertDOMNode(Node* node)
     } else {
         // Children have been requested -> return value of a new child.
         Node* prevSibling = innerPreviousSibling(node);
-        long prevId = prevSibling ? m_documentNodeToIdMap.get(prevSibling) : 0;
+        int prevId = prevSibling ? m_documentNodeToIdMap.get(prevSibling) : 0;
         RefPtr<InspectorObject> value = buildObjectForNode(node, 0, &m_documentNodeToIdMap);
         m_frontend->childNodeInserted(parentId, prevId, value.release());
     }
@@ -1137,7 +1137,7 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
         return;
 
     ContainerNode* parent = node->parentNode();
-    long parentId = m_documentNodeToIdMap.get(parent);
+    int parentId = m_documentNodeToIdMap.get(parent);
     // If parent is not mapped yet -> ignore the event.
     if (!parentId)
         return;
@@ -1156,7 +1156,7 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
 
 void InspectorDOMAgent::didModifyDOMAttr(Element* element)
 {
-    long id = m_documentNodeToIdMap.get(element);
+    int id = m_documentNodeToIdMap.get(element);
     // If node is not mapped yet -> ignore the event.
     if (!id)
         return;
@@ -1169,7 +1169,7 @@ void InspectorDOMAgent::didModifyDOMAttr(Element* element)
 
 void InspectorDOMAgent::characterDataModified(CharacterData* characterData)
 {
-    long id = m_documentNodeToIdMap.get(characterData);
+    int id = m_documentNodeToIdMap.get(characterData);
     if (!id)
         return;
     m_frontend->characterDataModified(id, characterData->data());
@@ -1177,7 +1177,7 @@ void InspectorDOMAgent::characterDataModified(CharacterData* characterData)
 
 void InspectorDOMAgent::didInvalidateStyleAttr(Node* node)
 {
-    long id = m_documentNodeToIdMap.get(node);
+    int id = m_documentNodeToIdMap.get(node);
     // If node is not mapped yet -> ignore the event.
     if (!id)
         return;
@@ -1251,12 +1251,12 @@ void InspectorDOMAgent::reportNodesAsSearchResults(ListHashSet<Node*>& resultCol
         if (m_searchResults.contains(*it))
             continue;
         m_searchResults.add(*it);
-        nodeIds->pushNumber(static_cast<long long>(pushNodePathToFrontend(*it)));
+        nodeIds->pushNumber(pushNodePathToFrontend(*it));
     }
     m_frontend->searchResults(nodeIds.release());
 }
 
-void InspectorDOMAgent::copyNode(ErrorString*, long nodeId)
+void InspectorDOMAgent::copyNode(ErrorString*, int nodeId)
 {
     Node* node = nodeForId(nodeId);
     if (!node)
@@ -1265,7 +1265,7 @@ void InspectorDOMAgent::copyNode(ErrorString*, long nodeId)
     Pasteboard::generalPasteboard()->writePlainText(markup);
 }
 
-void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString*, const String& path, long* nodeId)
+void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId)
 {
     if (Node* node = nodeForPath(path))
         *nodeId = pushNodePathToFrontend(node);

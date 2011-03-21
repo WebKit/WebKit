@@ -135,7 +135,7 @@ void InjectedScriptHost::copyText(const String& text)
     Pasteboard::generalPasteboard()->writePlainText(text);
 }
 
-Node* InjectedScriptHost::inspectedNode(unsigned long num)
+Node* InjectedScriptHost::inspectedNode(unsigned int num)
 {
     if (num < m_inspectedNodes.size())
         return m_inspectedNodes[num].get();
@@ -143,7 +143,7 @@ Node* InjectedScriptHost::inspectedNode(unsigned long num)
 }
 
 #if ENABLE(DATABASE)
-long InjectedScriptHost::databaseIdImpl(Database* database)
+int InjectedScriptHost::databaseIdImpl(Database* database)
 {
     if (m_databaseAgent)
         return m_databaseAgent->databaseId(database);
@@ -152,7 +152,7 @@ long InjectedScriptHost::databaseIdImpl(Database* database)
 #endif
 
 #if ENABLE(DOM_STORAGE)
-long InjectedScriptHost::storageIdImpl(Storage* storage)
+int InjectedScriptHost::storageIdImpl(Storage* storage)
 {
     if (m_domStorageAgent)
         return m_domStorageAgent->storageId(storage);
@@ -169,13 +169,13 @@ long InjectedScriptHost::nextWorkerId()
 void InjectedScriptHost::didCreateWorker(long id, const String& url, bool isSharedWorker)
 {
     if (m_inspectorAgent)
-        m_inspectorAgent->didCreateWorker(id, url, isSharedWorker);
+        m_inspectorAgent->didCreateWorker(static_cast<int>(id), url, isSharedWorker);
 }
 
 void InjectedScriptHost::didDestroyWorker(long id)
 {
     if (m_inspectorAgent)
-        m_inspectorAgent->didDestroyWorker(id);
+        m_inspectorAgent->didDestroyWorker(static_cast<int>(id));
 }
 #endif // ENABLE(WORKERS)
 

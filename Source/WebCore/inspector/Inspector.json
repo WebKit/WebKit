@@ -36,14 +36,14 @@
             {
                 "name": "didEvaluateForTestInFrontend",
                 "parameters": [
-                    { "name": "testCallId", "type": "long" },
+                    { "name": "testCallId", "type": "integer" },
                     { "name": "jsonResult", "type": "string" }
                 ]
             },
             {
                 "name": "highlightDOMNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" }
+                    { "name": "nodeId", "type": "integer" }
                 ]
             },
             {
@@ -98,13 +98,13 @@
             {
                 "name": "domContentEventFired",
                 "parameters": [
-                    { "name": "time", "type": "float" }
+                    { "name": "time", "type": "number" }
                 ]
             },
             {
                 "name": "loadEventFired",
                 "parameters": [
-                    { "name": "time", "type": "float" }
+                    { "name": "time", "type": "number" }
                 ]
             },
             {
@@ -119,7 +119,7 @@
             {
                 "name": "evaluateForTestInFrontend",
                 "parameters": [
-                    { "name": "testCallId", "type": "long" },
+                    { "name": "testCallId", "type": "integer" },
                     { "name": "script", "type": "string" }
                 ]
             },
@@ -218,7 +218,7 @@
             {
                 "name": "addInspectedNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" }
+                    { "name": "nodeId", "type": "integer" }
                 ]
             }
         ],
@@ -232,13 +232,13 @@
             {
                 "name": "consoleMessageExpiredCountUpdate",
                 "parameters": [
-                    { "name": "count", "type": "unsigned" }
+                    { "name": "count", "type": "integer" }
                 ]
             },
             {
                 "name": "consoleMessageRepeatCountUpdate",
                 "parameters": [
-                    { "name": "count", "type": "unsigned" }
+                    { "name": "count", "type": "integer" }
                 ]
             },
             {
@@ -288,7 +288,7 @@
             {
                 "name": "identifierForInitialRequest",
                 "parameters": [
-                    { "name": "identifier", "type": "long" },
+                    { "name": "identifier", "type": "integer" },
                     { "name": "url", "type": "string" },
                     { "name": "loader", "$ref": "NetworkLoader" },
                     { "name": "callStack", "$ref": ["DebuggerStackFrame"] }
@@ -297,8 +297,8 @@
             {
                 "name": "willSendRequest",
                 "parameters": [
-                    { "name": "identifier", "type": "long" },
-                    { "name": "time", "type": "float" },
+                    { "name": "identifier", "type": "integer" },
+                    { "name": "time", "type": "number" },
                     { "name": "request", "$ref": "NetworkRequest" },
                     { "name": "redirectResponse", "$ref": "NetworkResponse" }
                 ]
@@ -306,14 +306,14 @@
             {
                 "name": "markResourceAsCached",
                 "parameters": [
-                    { "name": "identifier", "type": "long" }
+                    { "name": "identifier", "type": "integer" }
                 ]
             },
             {
                 "name": "didReceiveResponse",
                 "parameters": [
-                    { "name": "identifier", "type": "long" },
-                    { "name": "time", "type": "float" },
+                    { "name": "identifier", "type": "integer" },
+                    { "name": "time", "type": "number" },
                     { "name": "resourceType", "type": "string" },
                     { "name": "response", "$ref": "NetworkResponse" }
                 ]
@@ -321,37 +321,37 @@
             {
                 "name": "didReceiveContentLength",
                 "parameters": [
-                    { "name": "identifier", "type": "long" },
-                    { "name": "time", "type": "float" },
-                    { "name": "lengthReceived", "type": "long" }
+                    { "name": "identifier", "type": "integer" },
+                    { "name": "time", "type": "number" },
+                    { "name": "lengthReceived", "type": "integer" }
                 ]
             },
             {
                 "name": "didFinishLoading",
                 "parameters": [
-                    { "name": "identifier", "type": "long" },
-                    { "name": "finishTime", "type": "float" }
+                    { "name": "identifier", "type": "integer" },
+                    { "name": "finishTime", "type": "number" }
                 ]
             },
             {
                 "name": "didFailLoading",
                 "parameters": [
-                    { "name": "identifier", "type": "long" },
-                    { "name": "time", "type": "float" },
+                    { "name": "identifier", "type": "integer" },
+                    { "name": "time", "type": "number" },
                     { "name": "localizedDescription", "type": "string" }
                 ]
             },
             {
                 "name": "didLoadResourceFromMemoryCache",
                 "parameters": [
-                    { "name": "time", "type": "float" },
+                    { "name": "time", "type": "number" },
                     { "name": "resource", "$ref": "NetworkCachedResource" }
                 ]
             },
             {
                 "name": "setInitialContent",
                 "parameters": [
-                    { "name": "identifier", "type": "long" },
+                    { "name": "identifier", "type": "integer" },
                     { "name": "sourceString", "type": "string" },
                     { "name": "type", "type": "string" }
                 ]
@@ -366,31 +366,31 @@
             {
                 "name": "didCreateWebSocket",
                 "parameters": [
-                    { "name": "identifier", "type": "unsigned" },
+                    { "name": "identifier", "type": "integer" },
                     { "name": "requestURL", "type": "string" }
                 ]
             },
             {
                 "name": "willSendWebSocketHandshakeRequest",
                 "parameters": [
-                    { "name": "identifier", "type": "unsigned" },
-                    { "name": "time", "type": "float" },
+                    { "name": "identifier", "type": "integer" },
+                    { "name": "time", "type": "number" },
                     { "name": "request", "$ref": "NetworkWebSocketRequest" }
                 ]
             },
             {
                 "name": "didReceiveWebSocketHandshakeResponse",
                 "parameters": [
-                    { "name": "identifier", "type": "unsigned" },
-                    { "name": "time", "type": "float" },
+                    { "name": "identifier", "type": "integer" },
+                    { "name": "time", "type": "number" },
                     { "name": "response", "$ref": "NetworkWebSocketResponse" }
                 ]
             },
             {
                 "name": "didCloseWebSocket",
                 "parameters": [
-                    { "name": "identifier", "type": "unsigned" },
-                    { "name": "time", "type": "float" }
+                    { "name": "identifier", "type": "integer" },
+                    { "name": "time", "type": "number" }
                 ]
             }
         ]
@@ -402,7 +402,7 @@
             {
                 "name": "getDatabaseTableNames",
                 "parameters": [
-                    { "name": "databaseId", "type": "long" }
+                    { "name": "databaseId", "type": "integer" }
                 ],
                 "returns": [
                     { "name": "tableNames", "type": ["string"] }
@@ -411,12 +411,12 @@
             {
                 "name": "executeSQL",
                 "parameters": [
-                    { "name": "databaseId", "type": "long" },
+                    { "name": "databaseId", "type": "integer" },
                     { "name": "query", "type": "string" }
                 ],
                 "returns": [
                     { "name": "success", "type": "boolean" },
-                    { "name": "transactionId", "type": "long" }
+                    { "name": "transactionId", "type": "integer" }
                 ]
             }
         ],
@@ -430,7 +430,7 @@
             {
                 "name": "sqlTransactionSucceeded",
                 "parameters": [
-                    { "name": "transactionId", "type": "long" },
+                    { "name": "transactionId", "type": "integer" },
                     { "name": "columnNames", "type": ["string"] },
                     { "name": "values", "type": ["string or number"] }
                 ]
@@ -438,7 +438,7 @@
             {
                 "name": "sqlTransactionFailed",
                 "parameters": [
-                    { "name": "transactionId", "type": "long" },
+                    { "name": "transactionId", "type": "integer" },
                     { "name": "sqlError", "$ref": "DatabaseError" }
                 ]
             }
@@ -451,7 +451,7 @@
             {
                 "name": "getDOMStorageEntries",
                 "parameters": [
-                    { "name": "storageId", "type": "long" }
+                    { "name": "storageId", "type": "integer" }
                 ],
                 "returns": [
                     { "name": "entries", "$ref": ["DOMStorageEntry"] }
@@ -460,7 +460,7 @@
             {
                 "name": "setDOMStorageItem",
                 "parameters": [
-                    { "name": "storageId", "type": "long" },
+                    { "name": "storageId", "type": "integer" },
                     { "name": "key", "type": "string" },
                     { "name": "value", "type": "string" }
                 ],
@@ -471,7 +471,7 @@
             {
                 "name": "removeDOMStorageItem",
                 "parameters": [
-                    { "name": "storageId", "type": "long" },
+                    { "name": "storageId", "type": "integer" },
                     { "name": "key", "type": "string" }
                 ],
                 "returns": [
@@ -533,45 +533,45 @@
             {
                 "name": "getChildNodes",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" }
+                    { "name": "nodeId", "type": "integer" }
                 ]
             },
             {
                 "name": "querySelector",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" },
+                    { "name": "nodeId", "type": "integer" },
                     { "name": "selectors", "type": "string" },
                     { "name": "documentWide", "type": "boolean" }
                 ],
                 "returns": [
-                    { "name": "elementId", "type": "long" }
+                    { "name": "elementId", "type": "integer" }
                 ]
             },
             {
                 "name": "querySelectorAll",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" },
+                    { "name": "nodeId", "type": "integer" },
                     { "name": "selectors", "type": "string" },
                     { "name": "documentWide", "type": "boolean" }
                 ],
                 "returns": [
-                    { "name": "nodeIds", "type": ["long"] }
+                    { "name": "nodeIds", "type": ["integer"] }
                 ]
             },
             {
                 "name": "setNodeName",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" },
+                    { "name": "nodeId", "type": "integer" },
                     { "name": "name", "type": "string" }
                 ],
                 "returns": [
-                    { "name": "outNodeId", "type": "long" }
+                    { "name": "outNodeId", "type": "integer" }
                 ]
             },
             {
                 "name": "setNodeValue",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" },
+                    { "name": "nodeId", "type": "integer" },
                     { "name": "value", "type": "string" }
                 ],
                 "returns": [
@@ -581,16 +581,16 @@
             {
                 "name": "removeNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" }
+                    { "name": "nodeId", "type": "integer" }
                 ],
                 "returns": [
-                    { "name": "outNodeId", "type": "long" }
+                    { "name": "outNodeId", "type": "integer" }
                 ]
             },
             {
                 "name": "setAttribute",
                 "parameters": [
-                    { "name": "elementId", "type": "long" },
+                    { "name": "elementId", "type": "integer" },
                     { "name": "name", "type": "string" },
                     { "name": "value", "type": "string" }
                 ]
@@ -598,14 +598,14 @@
             {
                 "name": "removeAttribute",
                 "parameters": [
-                    { "name": "elementId", "type": "long" },
+                    { "name": "elementId", "type": "integer" },
                     { "name": "name", "type": "string" }
                 ]
             },
             {
                 "name": "getEventListenersForNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" }
+                    { "name": "nodeId", "type": "integer" }
                 ],
                 "returns": [
                     { "name": "listenersArray", "$ref": ["DOMListener"] }
@@ -614,13 +614,13 @@
             {
                 "name": "copyNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" }
+                    { "name": "nodeId", "type": "integer" }
                 ]
             },
             {
                 "name": "getOuterHTML",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" }
+                    { "name": "nodeId", "type": "integer" }
                 ],
                 "returns": [
                     { "name": "outerHTML", "type": "string" }
@@ -629,11 +629,11 @@
             {
                 "name": "setOuterHTML",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" },
+                    { "name": "nodeId", "type": "integer" },
                     { "name": "outerHTML", "type": "string" }
                 ],
                 "returns": [
-                    { "name": "outNodeId", "type": "long" }
+                    { "name": "outNodeId", "type": "integer" }
                 ]
             },
             {
@@ -652,7 +652,7 @@
                     { "name": "objectId", "type": "string" }
                 ],
                 "returns": [
-                    { "name": "nodeId", "type": "long" }
+                    { "name": "nodeId", "type": "integer" }
                 ]
             },
             {
@@ -661,13 +661,13 @@
                     { "name": "path", "type": "string" }
                 ],
                 "returns": [
-                    { "name": "nodeId", "type": "long" }
+                    { "name": "nodeId", "type": "integer" }
                 ]
             },
             {
                 "name": "resolveNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" },
+                    { "name": "nodeId", "type": "integer" },
                     { "name": "objectGroup", "type": "string" }
                 ],
                 "returns": [
@@ -682,21 +682,21 @@
             {
                 "name": "setChildNodes",
                 "parameters": [
-                    { "name": "parentId", "type": "long" },
+                    { "name": "parentId", "type": "integer" },
                     { "name": "nodes", "$ref": ["DOMNode"] }
                 ]
             },
             {
                 "name": "attributesUpdated",
                 "parameters": [
-                    { "name": "id", "type": "long" },
+                    { "name": "id", "type": "integer" },
                     { "name": "attributes", "$ref": ["DOMAttribute"] }
                 ]
             },
             {
                 "name": "characterDataModified",
                 "parameters": [
-                    { "name": "id", "type": "long" },
+                    { "name": "id", "type": "integer" },
                     { "name": "newValue", "type": "string" }
                 ]
             },
@@ -709,29 +709,29 @@
             {
                 "name": "childNodeCountUpdated",
                 "parameters": [
-                    { "name": "id", "type": "long" },
+                    { "name": "id", "type": "integer" },
                     { "name": "newValue", "type": "integer" }
                 ]
             },
             {
                 "name": "childNodeInserted",
                 "parameters": [
-                    { "name": "parentId", "type": "long" },
-                    { "name": "prevId", "type": "long" },
+                    { "name": "parentId", "type": "integer" },
+                    { "name": "prevId", "type": "integer" },
                     { "name": "node", "$ref": "DOMNode" }
                 ]
             },
             {
                 "name": "childNodeRemoved",
                 "parameters": [
-                    { "name": "parentId", "type": "long" },
-                    { "name": "id", "type": "long" }
+                    { "name": "parentId", "type": "integer" },
+                    { "name": "id", "type": "integer" }
                 ]
             },
             {
                 "name": "searchResults",
                 "parameters": [
-                    { "name": "nodeIds", "type": ["long"] }
+                    { "name": "nodeIds", "type": ["integer"] }
                 ]
             }
         ]
@@ -743,7 +743,7 @@
             {
                 "name": "getStylesForNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" }
+                    { "name": "nodeId", "type": "integer" }
                 ],
                 "returns": [
                     { "name": "styles", "$ref": "CSSNodeStyles" }
@@ -752,7 +752,7 @@
             {
                 "name": "getComputedStyleForNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" }
+                    { "name": "nodeId", "type": "integer" }
                 ],
                 "returns": [
                     { "name": "style", "$ref": "CSSComputedStyle" }
@@ -761,7 +761,7 @@
             {
                 "name": "getInlineStyleForNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" }
+                    { "name": "nodeId", "type": "integer" }
                 ],
                 "returns": [
                     { "name": "style", "$ref": "CSSStyle" }
@@ -806,7 +806,7 @@
                 "name": "setPropertyText",
                 "parameters": [
                     { "name": "styleId", "$ref": "CSSStyleId" },
-                    { "name": "propertyIndex", "type": "long" },
+                    { "name": "propertyIndex", "type": "integer" },
                     { "name": "text", "type": "string" },
                     { "name": "overwrite", "type": "boolean" }
                 ],
@@ -818,7 +818,7 @@
                 "name": "toggleProperty",
                 "parameters": [
                     { "name": "styleId", "$ref": "CSSStyleId" },
-                    { "name": "propertyIndex", "type": "long" },
+                    { "name": "propertyIndex", "type": "integer" },
                     { "name": "disable", "type": "boolean" }
                 ],
                 "returns": [
@@ -838,7 +838,7 @@
             {
                 "name": "addRule",
                 "parameters": [
-                    { "name": "contextNodeId", "type": "long" },
+                    { "name": "contextNodeId", "type": "integer" },
                     { "name": "selector", "type": "string" }
                 ],
                 "returns": [
@@ -980,10 +980,10 @@
             {
                 "name": "setPauseOnExceptionsState",
                 "parameters": [
-                    { "name": "pauseOnExceptionsState", "type": "long" }
+                    { "name": "pauseOnExceptionsState", "type": "integer" }
                 ],
                 "returns": [
-                    { "name": "newState", "type": "long" }
+                    { "name": "newState", "type": "integer" }
                 ]
             },
             {
@@ -1048,7 +1048,7 @@
             {
                 "name": "didCreateWorker",
                 "parameters": [
-                    { "name": "id", "type": "long" },
+                    { "name": "id", "type": "integer" },
                     { "name": "url", "type": "string" },
                     { "name": "isShared", "type": "boolean" }
                 ]
@@ -1056,7 +1056,7 @@
             {
                 "name": "didDestroyWorker",
                 "parameters": [
-                    { "name": "id", "type": "long" }
+                    { "name": "id", "type": "integer" }
                 ]
             }
         ]
@@ -1068,15 +1068,15 @@
             {
                 "name": "setDOMBreakpoint",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" },
-                    { "name": "type", "type": "long" }
+                    { "name": "nodeId", "type": "integer" },
+                    { "name": "type", "type": "integer" }
                 ]
             },
             {
                 "name": "removeDOMBreakpoint",
                 "parameters": [
-                    { "name": "nodeId", "type": "long" },
-                    { "name": "type", "type": "long" }
+                    { "name": "nodeId", "type": "integer" },
+                    { "name": "type", "type": "integer" }
                 ]
             },
             {
@@ -1140,7 +1140,7 @@
                 "name": "getProfile",
                 "parameters": [
                     { "name": "type", "type": "string" },
-                    { "name": "uid", "type": "unsigned" }
+                    { "name": "uid", "type": "integer" }
                 ],
                 "returns": [
                     { "name": "profile", "$ref": "Profile" }
@@ -1150,7 +1150,7 @@
                 "name": "removeProfile",
                 "parameters": [
                     { "name": "type", "type": "string" },
-                    { "name": "uid", "type": "unsigned" }
+                    { "name": "uid", "type": "integer" }
                 ]
             },
             {
@@ -1165,11 +1165,11 @@
             {
                 "name": "getExactHeapSnapshotNodeRetainedSize",
                 "parameters": [
-                    { "name": "uid", "type": "unsigned" },
-                    { "name": "nodeId", "type": "unsigned" }
+                    { "name": "uid", "type": "integer" },
+                    { "name": "nodeId", "type": "integer" }
                 ],
                 "returns": [
-                    { "name": "size", "type": "long" }
+                    { "name": "size", "type": "integer" }
                 ]
             },
             {
@@ -1192,14 +1192,14 @@
             {
                 "name": "addHeapSnapshotChunk",
                 "parameters": [
-                    { "name": "uid", "type": "unsigned" },
+                    { "name": "uid", "type": "integer" },
                     { "name": "chunk", "type": "string" }
                 ]
             },
             {
                 "name": "finishHeapSnapshot",
                 "parameters": [
-                    { "name": "uid", "type": "unsigned" }
+                    { "name": "uid", "type": "integer" }
                 ]
             },
             {

@@ -59,17 +59,17 @@ public:
     void clearResources();
 
     // Called from the front-end.
-    void getDatabaseTableNames(ErrorString* error, long databaseId, RefPtr<InspectorArray>* names);
-    void executeSQL(ErrorString* error, long databaseId, const String& query, bool* success, long* transactionId);
+    void getDatabaseTableNames(ErrorString*, int databaseId, RefPtr<InspectorArray>* names);
+    void executeSQL(ErrorString*, int databaseId, const String& query, bool* success, int* transactionId);
 
     // Called from the injected script.
-    long databaseId(Database*);
+    int databaseId(Database*);
 
     void didOpenDatabase(PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 private:
     explicit InspectorDatabaseAgent(InstrumentingAgents*);
 
-    Database* databaseForId(long databaseId);
+    Database* databaseForId(int databaseId);
 
     InstrumentingAgents* m_instrumentingAgents;
     typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;

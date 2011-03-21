@@ -108,23 +108,23 @@ public:
     void reset();
 
     // Methods called from the frontend for DOM nodes inspection.
-    void querySelector(ErrorString*, long nodeId, const String& selectors, bool documentWide, long* elementId);
-    void querySelectorAll(ErrorString*, long nodeId, const String& selectors, bool documentWide, RefPtr<InspectorArray>* result);
+    void querySelector(ErrorString*, int nodeId, const String& selectors, bool documentWide, int* elementId);
+    void querySelectorAll(ErrorString*, int nodeId, const String& selectors, bool documentWide, RefPtr<InspectorArray>* result);
     void getDocument(ErrorString*, RefPtr<InspectorObject>* root);
-    void getChildNodes(ErrorString*, long nodeId);
-    void setAttribute(ErrorString*, long elementId, const String& name, const String& value);
-    void removeAttribute(ErrorString*, long elementId, const String& name);
-    void removeNode(ErrorString*, long nodeId, long* outNodeId);
-    void setNodeName(ErrorString*, long nodeId, const String& name, long* newId);
-    void getOuterHTML(ErrorString*, long nodeId, WTF::String* outerHTML);
-    void setOuterHTML(ErrorString*, long nodeId, const String& outerHTML, long* newId);
-    void setNodeValue(ErrorString*, long nodeId, const String& value, bool* success);
-    void getEventListenersForNode(ErrorString*, long nodeId, RefPtr<InspectorArray>* listenersArray);
+    void getChildNodes(ErrorString*, int nodeId);
+    void setAttribute(ErrorString*, int elementId, const String& name, const String& value);
+    void removeAttribute(ErrorString*, int elementId, const String& name);
+    void removeNode(ErrorString*, int nodeId, int* outNodeId);
+    void setNodeName(ErrorString*, int nodeId, const String& name, int* newId);
+    void getOuterHTML(ErrorString*, int nodeId, WTF::String* outerHTML);
+    void setOuterHTML(ErrorString*, int nodeId, const String& outerHTML, int* newId);
+    void setNodeValue(ErrorString*, int nodeId, const String& value, bool* success);
+    void getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>* listenersArray);
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, bool runSynchronously);
     void cancelSearch(ErrorString*);
-    void resolveNode(ErrorString*, long nodeId, const String& objectGroup, RefPtr<InspectorObject>* result);
-    void pushNodeToFrontend(ErrorString*, const String& objectId, long* nodeId);
-    void pushNodeByPathToFrontend(ErrorString*, const String& path, long* nodeId);
+    void resolveNode(ErrorString*, int nodeId, const String& objectGroup, RefPtr<InspectorObject>* result);
+    void pushNodeToFrontend(ErrorString*, const String& objectId, int* nodeId);
+    void pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId);
 
     // Methods called from the InspectorInstrumentation.
     void setDocument(Document*);
@@ -139,9 +139,9 @@ public:
     void characterDataModified(CharacterData*);
     void didInvalidateStyleAttr(Node*);
 
-    Node* nodeForId(long nodeId);
-    long boundNodeId(Node*);
-    void copyNode(ErrorString*, long nodeId);
+    Node* nodeForId(int nodeId);
+    int boundNodeId(Node*);
+    void copyNode(ErrorString*, int nodeId);
     void setDOMListener(DOMListener*);
 
     String documentURLString(Document*) const;
@@ -161,20 +161,20 @@ private:
     InspectorDOMAgent(InstrumentingAgents*, Page*, InspectorState*, InjectedScriptManager*);
 
     // Node-related methods.
-    typedef HashMap<RefPtr<Node>, long> NodeToIdMap;
-    long bind(Node*, NodeToIdMap*);
+    typedef HashMap<RefPtr<Node>, int> NodeToIdMap;
+    int bind(Node*, NodeToIdMap*);
     void unbind(Node*, NodeToIdMap*);
-    Node* assertNode(ErrorString*, long nodeId);
-    Element* assertElement(ErrorString*, long nodeId);
-    HTMLElement* assertHTMLElement(ErrorString*, long nodeId);
-    Node* nodeToSelectOn(ErrorString*, long nodeId, bool documentWide);
+    Node* assertNode(ErrorString*, int nodeId);
+    Element* assertElement(ErrorString*, int nodeId);
+    HTMLElement* assertHTMLElement(ErrorString*, int nodeId);
+    Node* nodeToSelectOn(ErrorString*, int nodeId, bool documentWide);
 
-    long pushNodePathToFrontend(Node*);
-    void pushChildNodesToFrontend(long nodeId);
+    int pushNodePathToFrontend(Node*);
+    void pushChildNodesToFrontend(int nodeId);
 
-    bool hasBreakpoint(Node*, long type);
+    bool hasBreakpoint(Node*, int type);
     void updateSubtreeBreakpoints(Node* root, uint32_t rootMask, bool value);
-    void descriptionForDOMEvent(Node* target, long breakpointType, bool insertion, PassRefPtr<InspectorObject> description);
+    void descriptionForDOMEvent(Node* target, int breakpointType, bool insertion, PassRefPtr<InspectorObject> description);
 
     PassRefPtr<InspectorObject> buildObjectForNode(Node*, int depth, NodeToIdMap*);
     PassRefPtr<InspectorArray> buildArrayForElementAttributes(Element*);
@@ -198,10 +198,10 @@ private:
     NodeToIdMap m_documentNodeToIdMap;
     // Owns node mappings for dangling nodes.
     Vector<NodeToIdMap*> m_danglingNodeToIdMaps;
-    HashMap<long, Node*> m_idToNode;
-    HashMap<long, NodeToIdMap*> m_idToNodesMap;
-    HashSet<long> m_childrenRequested;
-    long m_lastNodeId;
+    HashMap<int, Node*> m_idToNode;
+    HashMap<int, NodeToIdMap*> m_idToNodesMap;
+    HashSet<int> m_childrenRequested;
+    int m_lastNodeId;
     RefPtr<Document> m_document;
     Deque<MatchJob*> m_pendingMatchJobs;
     Timer<InspectorDOMAgent> m_matchJobsTimer;

@@ -316,7 +316,7 @@ void InspectorDebuggerAgent::stepOut(ErrorString*)
     ScriptDebugServer::shared().stepOutOfFunction();
 }
 
-void InspectorDebuggerAgent::setPauseOnExceptionsState(ErrorString*, long pauseState, long* newState)
+void InspectorDebuggerAgent::setPauseOnExceptionsState(ErrorString*, int pauseState, int* newState)
 {
     ScriptDebugServer::shared().setPauseOnExceptionsState(static_cast<ScriptDebugServer::PauseOnExceptionsState>(pauseState));
     *newState = ScriptDebugServer::shared().pauseOnExceptionsState();

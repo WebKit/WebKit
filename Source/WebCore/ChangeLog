@@ -2,6 +2,123 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: migrate Inspector.json to valid JSON types.
+        https://bugs.webkit.org/show_bug.cgi?id=56651
+
+        This change migrates inspector from long to int as
+        dom, storage, database and other id types.
+
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::inspectedNode):
+        (WebCore::InjectedScriptHost::databaseIdImpl):
+        (WebCore::InjectedScriptHost::storageIdImpl):
+        (WebCore::InjectedScriptHost::didCreateWorker):
+        (WebCore::InjectedScriptHost::didDestroyWorker):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptHost.idl:
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::highlightDOMNode):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        (WebCore::InspectorBrowserDebuggerAgent::setDOMBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::removeDOMBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::descriptionForDOMEvent):
+        (WebCore::InspectorBrowserDebuggerAgent::hasBreakpoint):
+        * inspector/InspectorBrowserDebuggerAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getStylesForNode):
+        (WebCore::InspectorCSSAgent::getInlineStyleForNode):
+        (WebCore::InspectorCSSAgent::getComputedStyleForNode):
+        (WebCore::InspectorCSSAgent::setPropertyText):
+        (WebCore::InspectorCSSAgent::toggleProperty):
+        (WebCore::InspectorCSSAgent::addRule):
+        (WebCore::InspectorCSSAgent::elementForId):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::count):
+        (WebCore::InspectorConsoleAgent::addInspectedNode):
+        (WebCore::InspectorConsoleAgent::setConsoleMessagesEnabled):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::bind):
+        (WebCore::InspectorDOMAgent::unbind):
+        (WebCore::InspectorDOMAgent::assertNode):
+        (WebCore::InspectorDOMAgent::assertElement):
+        (WebCore::InspectorDOMAgent::assertHTMLElement):
+        (WebCore::InspectorDOMAgent::nodeToSelectOn):
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::nodeForId):
+        (WebCore::InspectorDOMAgent::getChildNodes):
+        (WebCore::InspectorDOMAgent::querySelector):
+        (WebCore::InspectorDOMAgent::querySelectorAll):
+        (WebCore::InspectorDOMAgent::pushNodePathToFrontend):
+        (WebCore::InspectorDOMAgent::boundNodeId):
+        (WebCore::InspectorDOMAgent::setAttribute):
+        (WebCore::InspectorDOMAgent::removeAttribute):
+        (WebCore::InspectorDOMAgent::removeNode):
+        (WebCore::InspectorDOMAgent::setNodeName):
+        (WebCore::InspectorDOMAgent::getOuterHTML):
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        (WebCore::InspectorDOMAgent::setNodeValue):
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::resolveNode):
+        (WebCore::InspectorDOMAgent::pushNodeToFrontend):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::loadEventFired):
+        (WebCore::InspectorDOMAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMAgent::didRemoveDOMNode):
+        (WebCore::InspectorDOMAgent::didModifyDOMAttr):
+        (WebCore::InspectorDOMAgent::characterDataModified):
+        (WebCore::InspectorDOMAgent::didInvalidateStyleAttr):
+        (WebCore::InspectorDOMAgent::reportNodesAsSearchResults):
+        (WebCore::InspectorDOMAgent::copyNode):
+        (WebCore::InspectorDOMAgent::pushNodeByPathToFrontend):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageEntries):
+        (WebCore::InspectorDOMStorageAgent::setDOMStorageItem):
+        (WebCore::InspectorDOMStorageAgent::removeDOMStorageItem):
+        (WebCore::InspectorDOMStorageAgent::storageId):
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageResourceForId):
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDOMStorageResource.cpp:
+        * inspector/InspectorDOMStorageResource.h:
+        (WebCore::InspectorDOMStorageResource::id):
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::getDatabaseTableNames):
+        (WebCore::InspectorDatabaseAgent::executeSQL):
+        (WebCore::InspectorDatabaseAgent::databaseId):
+        (WebCore::InspectorDatabaseAgent::databaseForId):
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDatabaseResource.cpp:
+        * inspector/InspectorDatabaseResource.h:
+        (WebCore::InspectorDatabaseResource::id):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setPauseOnExceptionsState):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::getExactHeapSnapshotNodeRetainedSize):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::identifierForInitialRequest):
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::markResourceAsCached):
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::didReceiveContentLength):
+        (WebCore::InspectorResourceAgent::didFinishLoading):
+        (WebCore::InspectorResourceAgent::didFailLoading):
+        (WebCore::InspectorResourceAgent::setInitialContent):
+        (WebCore::InspectorResourceAgent::didCreateWebSocket):
+        (WebCore::InspectorResourceAgent::willSendWebSocketHandshakeRequest):
+        (WebCore::InspectorResourceAgent::didReceiveWebSocketHandshakeResponse):
+        (WebCore::InspectorResourceAgent::didCloseWebSocket):
+        * inspector/generate-inspector-idl:
+
+2011-03-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: make frameId in network agent of type string, not unsigned long.
         https://bugs.webkit.org/show_bug.cgi?id=56708
 

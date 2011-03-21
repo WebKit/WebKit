@@ -49,7 +49,7 @@
 namespace WebCore {
 
 static const unsigned maximumConsoleMessages = 1000;
-static const unsigned expireConsoleMessagesStep = 100;
+static const int expireConsoleMessagesStep = 100;
 
 namespace ConsoleAgentState {
 static const char monitoringXHR[] = "monitoringXHR";
@@ -218,7 +218,7 @@ void InspectorConsoleAgent::setMonitoringXHREnabled(ErrorString*, bool enabled)
     m_inspectorState->setBoolean(ConsoleAgentState::monitoringXHR, enabled);
 }
 
-void InspectorConsoleAgent::addInspectedNode(ErrorString*, long nodeId)
+void InspectorConsoleAgent::addInspectedNode(ErrorString*, int nodeId)
 {
     Node* node = m_inspectorDOMAgent->nodeForId(nodeId);
     if (!node)

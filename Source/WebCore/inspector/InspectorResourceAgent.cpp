@@ -321,7 +321,7 @@ void InspectorResourceAgent::identifierForInitialRequest(unsigned long identifie
         callStackValue = callStack->buildInspectorArray();
     else
         callStackValue = InspectorArray::create();
-    m_frontend->identifierForInitialRequest(identifier, url.string(), loaderObject, callStackValue);
+    m_frontend->identifierForInitialRequest(static_cast<int>(identifier), url.string(), loaderObject, callStackValue);
 }
 
 void InspectorResourceAgent::setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject> headers)
@@ -346,12 +346,12 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, ResourceR
     request.setReportLoadTiming(true);
     request.setReportRawHeaders(true);
 
-    m_frontend->willSendRequest(identifier, currentTime(), buildObjectForResourceRequest(request), buildObjectForResourceResponse(redirectResponse));
+    m_frontend->willSendRequest(static_cast<int>(identifier), currentTime(), buildObjectForResourceRequest(request), buildObjectForResourceResponse(redirectResponse));
 }
 
 void InspectorResourceAgent::markResourceAsCached(unsigned long identifier)
 {
-    m_frontend->markResourceAsCached(identifier);
+    m_frontend->markResourceAsCached(static_cast<int>(identifier));
 }
 
 void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response)
@@ -374,7 +374,7 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
         else if (equalIgnoringFragmentIdentifier(response.url(), loader->url()) && type == "Other")
             type = "Document";
     }
-    m_frontend->didReceiveResponse(identifier, currentTime(), type, resourceResponse);
+    m_frontend->didReceiveResponse(static_cast<int>(identifier), currentTime(), type, resourceResponse);
     // If we revalidated the resource and got Not modified, send content length following didReceiveResponse
     // as there will be no calls to didReceiveContentLength from the network stack.
     if (cachedResourceSize && response.httpStatusCode() == 304)
@@ -383,7 +383,7 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
 
 void InspectorResourceAgent::didReceiveContentLength(unsigned long identifier, int lengthReceived)
 {
-    m_frontend->didReceiveContentLength(identifier, currentTime(), lengthReceived);
+    m_frontend->didReceiveContentLength(static_cast<int>(identifier), currentTime(), lengthReceived);
 }
 
 void InspectorResourceAgent::didFinishLoading(unsigned long identifier, double finishTime)
@@ -391,12 +391,12 @@ void InspectorResourceAgent::didFinishLoading(unsigned long identifier, double f
     if (!finishTime)
         finishTime = currentTime();
 
-    m_frontend->didFinishLoading(identifier, finishTime);
+    m_frontend->didFinishLoading(static_cast<int>(identifier), finishTime);
 }
 
 void InspectorResourceAgent::didFailLoading(unsigned long identifier, const ResourceError& error)
 {
-    m_frontend->didFailLoading(identifier, currentTime(), error.localizedDescription());
+    m_frontend->didFailLoading(static_cast<int>(identifier), currentTime(), error.localizedDescription());
 }
 
 void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* loader, const CachedResource* resource)
@@ -406,7 +406,7 @@ void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* load
 
 void InspectorResourceAgent::setInitialContent(unsigned long identifier, const String& sourceString, const String& type)
 {
-    m_frontend->setInitialContent(identifier, sourceString, type);
+    m_frontend->setInitialContent(static_cast<int>(identifier), sourceString, type);
 }
 
 static PassRefPtr<InspectorObject> buildObjectForFrame(Frame* frame)
@@ -474,7 +474,7 @@ static String createReadableStringFromBinary(const unsigned char* value, size_t 
 
 void InspectorResourceAgent::didCreateWebSocket(unsigned long identifier, const KURL& requestURL)
 {
-    m_frontend->didCreateWebSocket(identifier, requestURL.string());
+    m_frontend->didCreateWebSocket(static_cast<int>(identifier), requestURL.string());
 }
 
 void InspectorResourceAgent::willSendWebSocketHandshakeRequest(unsigned long identifier, const WebSocketHandshakeRequest& request)
@@ -482,7 +482,7 @@ void InspectorResourceAgent::willSendWebSocketHandshakeRequest(unsigned long ide
     RefPtr<InspectorObject> requestObject = InspectorObject::create();
     requestObject->setObject("webSocketHeaderFields", buildObjectForHeaders(request.headerFields()));
     requestObject->setString("webSocketRequestKey3", createReadableStringFromBinary(request.key3().value, sizeof(request.key3().value)));
-    m_frontend->willSendWebSocketHandshakeRequest(identifier, currentTime(), requestObject);
+    m_frontend->willSendWebSocketHandshakeRequest(static_cast<int>(identifier), currentTime(), requestObject);
 }
 
 void InspectorResourceAgent::didReceiveWebSocketHandshakeResponse(unsigned long identifier, const WebSocketHandshakeResponse& response)
@@ -492,12 +492,12 @@ void InspectorResourceAgent::didReceiveWebSocketHandshakeResponse(unsigned long 
     responseObject->setString("statusText", response.statusText());
     responseObject->setObject("webSocketHeaderFields", buildObjectForHeaders(response.headerFields()));
     responseObject->setString("webSocketChallengeResponse", createReadableStringFromBinary(response.challengeResponse().value, sizeof(response.challengeResponse().value)));
-    m_frontend->didReceiveWebSocketHandshakeResponse(identifier, currentTime(), responseObject);
+    m_frontend->didReceiveWebSocketHandshakeResponse(static_cast<int>(identifier), currentTime(), responseObject);
 }
 
 void InspectorResourceAgent::didCloseWebSocket(unsigned long identifier)
 {
-    m_frontend->didCloseWebSocket(identifier, currentTime());
+    m_frontend->didCloseWebSocket(static_cast<int>(identifier), currentTime());
 }
 #endif // ENABLE(WEB_SOCKETS)
 

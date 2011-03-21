@@ -181,7 +181,7 @@ String InspectorProfilerAgent::getCurrentUserInitiatedProfileName(bool increment
     return makeString(UserInitiatedProfileName, '.', String::number(m_currentUserInitiatedProfileNumber));
 }
 
-void InspectorProfilerAgent::getExactHeapSnapshotNodeRetainedSize(ErrorString*, unsigned long uid, unsigned long nodeId, long* size)
+void InspectorProfilerAgent::getExactHeapSnapshotNodeRetainedSize(ErrorString*, unsigned uid, int nodeId, int* size)
 {
     HeapSnapshotsMap::iterator it = m_snapshots.find(uid);
     if (it != m_snapshots.end()) {
@@ -205,13 +205,13 @@ namespace {
 
 class OutputStream : public ScriptHeapSnapshot::OutputStream {
 public:
-    OutputStream(InspectorFrontend::Profiler* frontend, unsigned long uid)
+    OutputStream(InspectorFrontend::Profiler* frontend, unsigned uid)
         : m_frontend(frontend), m_uid(uid) { }
     void Write(const String& chunk) { m_frontend->addHeapSnapshotChunk(m_uid, chunk); }
     void Close() { m_frontend->finishHeapSnapshot(m_uid); }
 private:
     InspectorFrontend::Profiler* m_frontend;
-    unsigned long m_uid;
+    int m_uid;
 };
 
 } // namespace

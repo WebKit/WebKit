@@ -74,9 +74,7 @@ module core {""")
 type_traits = {
     "string": "String",
     "integer": "int",
-    "long": "long",
-    "unsigned": "unsigned long",
-    "float": "double",
+    "number": "double",
     "boolean": "boolean",
     "object": "Object"
 }

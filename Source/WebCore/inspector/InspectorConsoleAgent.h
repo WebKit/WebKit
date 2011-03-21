@@ -79,7 +79,7 @@ public:
     void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL);
 #endif
     void setMonitoringXHREnabled(ErrorString* error, bool enabled);
-    void addInspectedNode(ErrorString*, long nodeId);
+    void addInspectedNode(ErrorString*, int nodeId);
 
 private:
     void setConsoleMessagesEnabled(bool);
@@ -93,7 +93,7 @@ private:
     InspectorFrontend::Console* m_frontend;
     ConsoleMessage* m_previousMessage;
     Vector<OwnPtr<ConsoleMessage> > m_consoleMessages;
-    unsigned m_expiredConsoleMessageCount;
+    int m_expiredConsoleMessageCount;
     HashMap<String, unsigned> m_counts;
     HashMap<String, double> m_times;
 };

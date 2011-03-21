@@ -48,13 +48,13 @@ public:
 
     void bind(InspectorFrontend::Database*);
     Database* database() { return m_database.get(); }
-    long id() const { return m_id; }
+    int id() const { return m_id; }
 
 private:
     InspectorDatabaseResource(PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 
     RefPtr<Database> m_database;
-    long m_id;
+    int m_id;
     String m_domain;
     String m_name;
     String m_version;

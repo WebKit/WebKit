@@ -276,7 +276,7 @@ void InspectorAgent::highlight(ErrorString*, Node* node)
     m_client->highlight(node);
 }
 
-void InspectorAgent::highlightDOMNode(ErrorString* error, long nodeId)
+void InspectorAgent::highlightDOMNode(ErrorString* error, int nodeId)
 {
     Node* node = 0;
     if (m_domAgent && (node = m_domAgent->nodeForId(nodeId)))
