@@ -20,10 +20,7 @@ response:
     requestId : <number>
     body : {
         result : {
-            objectId : {
-                injectedScriptId : <number>
-                id : <number>
-            }
+            objectId : <string>
             hasChildren : true
             type : "object"
             description : "TestObject"
@@ -32,7 +29,7 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.evaluateOn({"injectedScriptId":<number>,"id":<number>},"this.assignedByEvaluateOn = \"evaluateOn function works fine\";")
+RuntimeAgent.evaluateOn(<string>,"this.assignedByEvaluateOn = \"evaluateOn function works fine\";")
 
 request:
 {
@@ -40,10 +37,7 @@ request:
     domain : "Runtime"
     command : "evaluateOn"
     arguments : {
-        objectId : {
-            injectedScriptId : <number>
-            id : <number>
-        }
+        objectId : <string>
         expression : "this.assignedByEvaluateOn = "evaluateOn function works fine";"
     }
 }
@@ -60,7 +54,7 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.setPropertyValue({"injectedScriptId":<number>,"id":<number>},"assignedBySetPropertyValue","true")
+RuntimeAgent.setPropertyValue(<string>,"assignedBySetPropertyValue","true")
 
 request:
 {
@@ -68,10 +62,7 @@ request:
     domain : "Runtime"
     command : "setPropertyValue"
     arguments : {
-        objectId : {
-            injectedScriptId : <number>
-            id : <number>
-        }
+        objectId : <string>
         propertyName : "assignedBySetPropertyValue"
         expression : "true"
     }
@@ -83,7 +74,7 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.setPropertyValue({"injectedScriptId":<number>,"id":<number>},"removedBySetPropertyValue","")
+RuntimeAgent.setPropertyValue(<string>,"removedBySetPropertyValue","")
 
 request:
 {
@@ -91,10 +82,7 @@ request:
     domain : "Runtime"
     command : "setPropertyValue"
     arguments : {
-        objectId : {
-            injectedScriptId : <number>
-            id : <number>
-        }
+        objectId : <string>
         propertyName : "removedBySetPropertyValue"
         expression : ""
     }
@@ -106,7 +94,7 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.getProperties({"injectedScriptId":<number>,"id":<number>},false,false)
+RuntimeAgent.getProperties(<string>,false,false)
 
 request:
 {
@@ -114,10 +102,7 @@ request:
     domain : "Runtime"
     command : "getProperties"
     arguments : {
-        objectId : {
-            injectedScriptId : <number>
-            id : <number>
-        }
+        objectId : <string>
         ignoreHasOwnProperty : false
         abbreviate : false
     }
@@ -145,10 +130,7 @@ response:
             2 : {
                 name : "__proto__"
                 value : {
-                    objectId : {
-                        injectedScriptId : <number>
-                        id : <number>
-                    }
+                    objectId : <string>
                     hasChildren : true
                     type : "object"
                     description : "TestObject"
@@ -159,7 +141,7 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.releaseObject({"injectedScriptId":<number>,"id":<number>})
+RuntimeAgent.releaseObject(<string>)
 
 request:
 {
@@ -167,10 +149,7 @@ request:
     domain : "Runtime"
     command : "releaseObject"
     arguments : {
-        objectId : {
-            injectedScriptId : <number>
-            id : <number>
-        }
+        objectId : <string>
     }
 }
 
@@ -180,7 +159,7 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.releaseObjectGroup(<number>,"test")
+RuntimeAgent.releaseObjectGroup("test")
 
 request:
 {
@@ -188,7 +167,6 @@ request:
     domain : "Runtime"
     command : "releaseObjectGroup"
     arguments : {
-        injectedScriptId : <number>
         objectGroup : "test"
     }
 }

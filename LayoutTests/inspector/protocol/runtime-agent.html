@@ -24,9 +24,9 @@ function test()
             ["RuntimeAgent", "setPropertyValue", result.objectId, 'removedBySetPropertyValue', ''],
             ["RuntimeAgent", "getProperties", result.objectId, false, false],
             ["RuntimeAgent", "releaseObject", result.objectId],
-            ["RuntimeAgent", "releaseObjectGroup", result.objectId.injectedScriptId, 'test']];
+            ["RuntimeAgent", "releaseObjectGroup", 'test']];
 
-        InspectorTest.runProtocolTestSuite("RuntimeAgent", testSuite, ['id', 'requestId', 'injectedScriptId']);
+        InspectorTest.runProtocolTestSuite("RuntimeAgent", testSuite, ['id', 'requestId', 'objectId']);
     }
 
     RuntimeAgent.evaluate('window.testObject', 'test', false, callback);

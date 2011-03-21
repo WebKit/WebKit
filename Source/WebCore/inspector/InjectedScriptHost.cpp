@@ -116,10 +116,10 @@ void InjectedScriptHost::clearInspectedNodes()
     m_inspectedNodes.clear();
 }
 
-void InjectedScriptHost::inspectImpl(PassRefPtr<InspectorValue> objectId, PassRefPtr<InspectorValue> hints)
+void InjectedScriptHost::inspectImpl(PassRefPtr<InspectorValue> object, PassRefPtr<InspectorValue> hints)
 {
     if (m_frontend)
-        m_frontend->inspector()->inspect(objectId->asObject(), hints->asObject());
+        m_frontend->inspector()->inspect(object->asObject(), hints->asObject());
 }
 
 void InjectedScriptHost::clearConsoleMessages()

@@ -90,7 +90,7 @@ public:
     void addInspectedNode(Node*);
     void clearInspectedNodes();
 
-    void inspectImpl(PassRefPtr<InspectorValue> objectId, PassRefPtr<InspectorValue> hints);
+    void inspectImpl(PassRefPtr<InspectorValue> objectToInspect, PassRefPtr<InspectorValue> hints);
     void clearConsoleMessages();
     void copyText(const String& text);
     Node* inspectedNode(unsigned long num);

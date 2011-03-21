@@ -42,7 +42,7 @@ WebInspector.PropertiesSidebarPane.prototype = {
             return;
         }
 
-        RuntimeAgent.releaseObjectGroup(0, "dom-selection");
+        RuntimeAgent.releaseObjectGroup("dom-selection");
         WebInspector.RemoteObject.resolveNode(node, nodeResolved.bind(this));
 
         function nodeResolved(objectPayload)

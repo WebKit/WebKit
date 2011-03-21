@@ -126,7 +126,7 @@
             {
                 "name": "inspect",
                 "parameters": [
-                    { "name": "objectId", "$ref": "RuntimeObjectId" },
+                    { "name": "object", "$ref": "RemoteObject" },
                     { "name": "hints", "type": "object" }
                 ]
             }
@@ -150,7 +150,7 @@
             {
                 "name": "evaluateOn",
                 "parameters": [
-                    { "name": "objectId", "$ref": "RuntimeObjectId" },
+                    { "name": "objectId", "type": "string" },
                     { "name": "expression", "type": "string" }
                 ],
                 "returns": [
@@ -160,7 +160,7 @@
             {
                 "name": "getProperties",
                 "parameters": [
-                    { "name": "objectId", "$ref": "RuntimeObjectId" },
+                    { "name": "objectId", "type": "string" },
                     { "name": "ignoreHasOwnProperty", "type": "boolean" },
                     { "name": "abbreviate", "type": "boolean" }
                 ],
@@ -171,7 +171,7 @@
             {
                 "name": "setPropertyValue",
                 "parameters": [
-                    { "name": "objectId", "$ref": "RuntimeObjectId" },
+                    { "name": "objectId", "type": "string" },
                     { "name": "propertyName", "type": "string" },
                     { "name": "expression", "type": "string" }
                 ]
@@ -179,13 +179,12 @@
             {
                 "name": "releaseObject",
                 "parameters": [
-                    { "name": "objectId", "$ref": "RuntimeObjectId" }
+                    { "name": "objectId", "type": "string" }
                 ]
             },
             {
                 "name": "releaseObjectGroup",
                 "parameters": [
-                    { "name": "injectedScriptId", "type": "long" },
                     { "name": "objectGroup", "type": "string" }
                 ]
             }
@@ -650,7 +649,7 @@
             {
                 "name": "pushNodeToFrontend",
                 "parameters": [
-                    { "name": "objectId", "$ref": "RuntimeObjectId" }
+                    { "name": "objectId", "type": "string" }
                 ],
                 "returns": [
                     { "name": "nodeId", "type": "long" }
@@ -672,7 +671,7 @@
                     { "name": "objectGroup", "type": "string" }
                 ],
                 "returns": [
-                    { "name": "objectId", "$ref": "RuntimeObjectId" }
+                    { "name": "object", "$ref": "Object" }
                 ]
             }
         ],
@@ -990,13 +989,13 @@
             {
                 "name": "evaluateOnCallFrame",
                 "parameters": [
-                    { "name": "callFrameId", "$ref": "DebuggerCallFrameId" },
+                    { "name": "callFrameId", "type": "string" },
                     { "name": "expression", "type": "string" },
                     { "name": "objectGroup", "type": "string" },
                     { "name": "includeCommandLineAPI", "type": "boolean" }
                 ],
                 "returns": [
-                    { "name": "result", "$ref": "RuntimeObjectId" }
+                    { "name": "result", "$ref": "RuntimeObject" }
                 ]
             }
         ],

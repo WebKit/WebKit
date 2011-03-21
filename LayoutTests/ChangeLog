@@ -1,5 +1,18 @@
 2011-03-21  Pavel Feldman  <pfeldman@chromium.org>
 
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: expose object id as string, not JSON struct in the protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=56681
+
+        * http/tests/inspector/protocol-test.js:
+        (initialize_ProtocolTest.InspectorTest.filterProps):
+        (initialize_ProtocolTest.InspectorTest._dumpCallArguments):
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/protocol/runtime-agent.html:
+
+2011-03-21  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: rebaselined Chromium expectations.
 
         * platform/chromium-win/svg/text/text-intro-05-t-expected.txt: Added.

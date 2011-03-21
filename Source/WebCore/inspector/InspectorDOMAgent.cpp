@@ -878,9 +878,9 @@ void InspectorDOMAgent::resolveNode(ErrorString* error, long nodeId, const Strin
     *result = resolveNode(node, objectGroup);
 }
 
-void InspectorDOMAgent::pushNodeToFrontend(ErrorString*, PassRefPtr<InspectorObject> objectId, long* nodeId)
+void InspectorDOMAgent::pushNodeToFrontend(ErrorString*, const String& objectId, long* nodeId)
 {
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId.get());
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     Node* node = injectedScript.nodeForObjectId(objectId);
     if (node)
         *nodeId = pushNodePathToFrontend(node);

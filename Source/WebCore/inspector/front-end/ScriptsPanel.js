@@ -1168,7 +1168,7 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
 
     releaseEvaluationResult: function()
     {
-        RuntimeAgent.releaseObjectGroup(0, this._popoverObjectGroup);
+        RuntimeAgent.releaseObjectGroup(this._popoverObjectGroup);
     }
 }
 

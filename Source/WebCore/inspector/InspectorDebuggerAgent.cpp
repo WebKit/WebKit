@@ -322,9 +322,9 @@ void InspectorDebuggerAgent::setPauseOnExceptionsState(ErrorString*, long pauseS
     *newState = ScriptDebugServer::shared().pauseOnExceptionsState();
 }
 
-void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString* errorString, PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result)
+void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString* errorString, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result)
 {
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(callFrameId.get());
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(callFrameId);
     if (!injectedScript.hasNoValue())
         injectedScript.evaluateOnCallFrame(errorString, callFrameId, expression, objectGroup, includeCommandLineAPI, result);
 }

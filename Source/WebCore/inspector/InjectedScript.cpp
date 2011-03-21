@@ -57,29 +57,28 @@ void InjectedScript::evaluate(ErrorString* errorString, const String& expression
     makeObjectCall(errorString, function, result);
 }
 
-void InjectedScript::evaluateOn(ErrorString* errorString, PassRefPtr<InspectorObject> objectId, const String& expression, RefPtr<InspectorObject>* result)
+void InjectedScript::evaluateOn(ErrorString* errorString, const String& objectId, const String& expression, RefPtr<InspectorObject>* result)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "evaluateOn");
-    function.appendArgument(objectId->toJSONString());
+    function.appendArgument(objectId);
     function.appendArgument(expression);
     makeObjectCall(errorString, function, result);
 }
 
-void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result)
+void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "evaluateOnCallFrame");
-    function.appendArgument(callFrameId->toJSONString());
+    function.appendArgument(callFrameId);
     function.appendArgument(expression);
     function.appendArgument(objectGroup);
     function.appendArgument(includeCommandLineAPI);
     makeObjectCall(errorString, function, result);
 }
 
-void InjectedScript::getProperties(ErrorString* errorString, PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorArray>* properties)
+void InjectedScript::getProperties(ErrorString* errorString, const String& objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorArray>* properties)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "getProperties");
-    String objectIdString = objectId->toJSONString();
-    function.appendArgument(objectIdString);
+    function.appendArgument(objectId);
     function.appendArgument(ignoreHasOwnProperty);
     function.appendArgument(abbreviate);
 
@@ -92,13 +91,13 @@ void InjectedScript::getProperties(ErrorString* errorString, PassRefPtr<Inspecto
     *properties = result->asArray();
 }
 
-Node* InjectedScript::nodeForObjectId(PassRefPtr<InspectorObject> objectId)
+Node* InjectedScript::nodeForObjectId(const String& objectId)
 {
     if (hasNoValue() || !canAccessInspectedWindow())
         return 0;
 
     ScriptFunctionCall function(m_injectedScriptObject, "nodeForObjectId");
-    function.appendArgument(objectId->toJSONString());
+    function.appendArgument(objectId);
 
     bool hadException = false;
     ScriptValue resultValue = function.call(hadException);
@@ -107,10 +106,10 @@ Node* InjectedScript::nodeForObjectId(PassRefPtr<InspectorObject> objectId)
     return InjectedScriptHost::scriptValueAsNode(resultValue);
 }
 
-void InjectedScript::setPropertyValue(ErrorString* errorString, PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression)
+void InjectedScript::setPropertyValue(ErrorString* errorString, const String& objectId, const String& propertyName, const String& expression)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "setPropertyValue");
-    function.appendArgument(objectId->toJSONString());
+    function.appendArgument(objectId);
     function.appendArgument(propertyName);
     function.appendArgument(expression);
     RefPtr<InspectorValue> result;
@@ -118,10 +117,10 @@ void InjectedScript::setPropertyValue(ErrorString* errorString, PassRefPtr<Inspe
     result->asString(errorString);
 }
 
-void InjectedScript::releaseObject(PassRefPtr<InspectorObject> objectId)
+void InjectedScript::releaseObject(const String& objectId)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "releaseObject");
-    function.appendArgument(objectId->toJSONString());
+    function.appendArgument(objectId);
     RefPtr<InspectorValue> result;
     makeCall(function, &result);
 }

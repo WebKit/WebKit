@@ -96,8 +96,7 @@ InjectedScript.prototype = {
             if (typeof object === "object" || typeof object === "function" || this._isHTMLAllCollection(object)) {
                 var id = this._lastBoundObjectId++;
                 this._idToWrappedObject[id] = object;
-                var objectId = { injectedScriptId: injectedScriptId, id: id };
-    
+                var objectId = "{\"injectedScriptId\":" + injectedScriptId + ",\"id\":" + id + "}";    
                 if (objectGroupName) {
                     var group = this._objectGroups[objectGroupName];
                     if (!group) {
@@ -478,7 +477,7 @@ InjectedScript.RemoteObject.fromObject = function(object, objectId, abbreviate)
 
 InjectedScript.CallFrameProxy = function(ordinal, callFrame)
 {
-    this.id = { ordinal: ordinal, injectedScriptId: injectedScriptId };
+    this.id = "{\"ordinal\":" + ordinal + ",\"injectedScriptId\":" + injectedScriptId + "}";
     this.type = callFrame.type;
     this.functionName = (this.type === "function" ? callFrame.functionName : "");
     this.sourceID = callFrame.sourceID;

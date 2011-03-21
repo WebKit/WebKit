@@ -112,9 +112,9 @@ JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)
 JSValue JSInjectedScriptHost::inspect(ExecState* exec)
 {
     if (exec->argumentCount() >= 2) {
-        ScriptValue objectId(exec->globalData(), exec->argument(0));
+        ScriptValue object(exec->globalData(), exec->argument(0));
         ScriptValue hints(exec->globalData(), exec->argument(1));
-        impl()->inspectImpl(objectId.toInspectorValue(exec), hints.toInspectorValue(exec));
+        impl()->inspectImpl(object.toInspectorValue(exec), hints.toInspectorValue(exec));
     }
     return jsUndefined();
 }

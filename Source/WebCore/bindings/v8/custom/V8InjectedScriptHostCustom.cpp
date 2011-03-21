@@ -98,9 +98,9 @@ v8::Handle<v8::Value> V8InjectedScriptHost::inspectCallback(const v8::Arguments&
         return v8::Undefined();
 
     InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
-    ScriptValue objectId(args[0]);
+    ScriptValue object(args[0]);
     ScriptValue hints(args[1]);
-    host->inspectImpl(objectId.toInspectorValue(ScriptState::current()), hints.toInspectorValue(ScriptState::current()));
+    host->inspectImpl(object.toInspectorValue(ScriptState::current()), hints.toInspectorValue(ScriptState::current()));
 
     return v8::Undefined();
 }

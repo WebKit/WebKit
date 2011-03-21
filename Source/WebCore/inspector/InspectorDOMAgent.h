@@ -123,7 +123,7 @@ public:
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, bool runSynchronously);
     void cancelSearch(ErrorString*);
     void resolveNode(ErrorString*, long nodeId, const String& objectGroup, RefPtr<InspectorObject>* result);
-    void pushNodeToFrontend(ErrorString*, PassRefPtr<InspectorObject> objectId, long* nodeId);
+    void pushNodeToFrontend(ErrorString*, const String& objectId, long* nodeId);
     void pushNodeByPathToFrontend(ErrorString*, const String& path, long* nodeId);
 
     // Methods called from the InspectorInstrumentation.

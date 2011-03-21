@@ -75,12 +75,15 @@ InjectedScript InjectedScriptManager::injectedScriptForId(long id)
     return m_idToInjectedScript.get(id);
 }
 
-InjectedScript InjectedScriptManager::injectedScriptForObjectId(InspectorObject* objectId)
+InjectedScript InjectedScriptManager::injectedScriptForObjectId(const String& objectId)
 {
-    long injectedScriptId = 0;
-    bool success = objectId->getNumber("injectedScriptId", &injectedScriptId);
-    if (success)
-        return injectedScriptForId(injectedScriptId);
+    RefPtr<InspectorValue> parsedObjectId = InspectorValue::parseJSON(objectId);
+    if (parsedObjectId && parsedObjectId->type() == InspectorValue::TypeObject) {
+        long injectedScriptId = 0;
+        bool success = parsedObjectId->asObject()->getNumber("injectedScriptId", &injectedScriptId);
+        if (success)
+            return injectedScriptForId(injectedScriptId);
+    }
     return InjectedScript();
 }
 
@@ -92,17 +95,10 @@ void InjectedScriptManager::discardInjectedScripts()
     m_idToInjectedScript.clear();
 }
 
-void InjectedScriptManager::releaseObjectGroup(long injectedScriptId, const String& objectGroup)
+void InjectedScriptManager::releaseObjectGroup(const String& objectGroup)
 {
-    if (injectedScriptId) {
-         InjectedScript injectedScript = m_idToInjectedScript.get(injectedScriptId);
-         if (!injectedScript.hasNoValue())
-             injectedScript.releaseObjectGroup(objectGroup);
-    } else {
-         // Iterate over all injected scripts if injectedScriptId is not specified.
-         for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != m_idToInjectedScript.end(); ++it)
-              it->second.releaseObjectGroup(objectGroup);
-    }
+    for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != m_idToInjectedScript.end(); ++it)
+        it->second.releaseObjectGroup(objectGroup);
 }
 
 String InjectedScriptManager::injectedScriptSource()

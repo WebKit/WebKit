@@ -56,9 +56,9 @@ public:
     pair<long, ScriptObject> injectScript(const String& source, ScriptState*);
     InjectedScript injectedScriptFor(ScriptState*);
     InjectedScript injectedScriptForId(long);
-    InjectedScript injectedScriptForObjectId(InspectorObject* objectId);
+    InjectedScript injectedScriptForObjectId(const String& objectId);
     void discardInjectedScripts();
-    void releaseObjectGroup(long injectedScriptId, const String& objectGroup);
+    void releaseObjectGroup(const String& objectGroup);
 
     static bool canAccessInspectedWindow(ScriptState*);
 

@@ -90,7 +90,7 @@ void InspectorConsoleAgent::clearConsoleMessages(ErrorString*)
     m_consoleMessages.clear();
     m_expiredConsoleMessageCount = 0;
     m_previousMessage = 0;
-    m_injectedScriptManager->releaseObjectGroup(0 /* release the group in all scripts */, "console");
+    m_injectedScriptManager->releaseObjectGroup("console");
     m_inspectorDOMAgent->releaseDanglingNodes();
     if (m_frontend)
         m_frontend->consoleMessagesCleared();

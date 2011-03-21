@@ -1157,9 +1157,9 @@ WebInspector.drawLoadingPieChart = function(canvas, percent) {
     g.fill();
 }
 
-WebInspector.inspect = function(objectId, hints)
+WebInspector.inspect = function(payload, hints)
 {
-    var object = WebInspector.RemoteObject.fromPayload(objectId);
+    var object = WebInspector.RemoteObject.fromPayload(payload);
     if (object.type === "node") {
         // Request node from backend and focus it.
         object.pushNodeToFrontend(WebInspector.updateFocusedNode.bind(WebInspector), object.release.bind(object));

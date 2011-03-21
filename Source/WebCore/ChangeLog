@@ -1,3 +1,57 @@
+2011-03-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: expose object id as string, not JSON struct in the protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=56681
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::inspect):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::inspectCallback):
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::evaluateOn):
+        (WebCore::InjectedScript::evaluateOnCallFrame):
+        (WebCore::InjectedScript::getProperties):
+        (WebCore::InjectedScript::nodeForObjectId):
+        (WebCore::InjectedScript::setPropertyValue):
+        (WebCore::InjectedScript::releaseObject):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::inspectImpl):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::injectedScriptForObjectId):
+        (WebCore::InjectedScriptManager::releaseObjectGroup):
+        * inspector/InjectedScriptManager.h:
+        * inspector/InjectedScriptSource.js:
+        * inspector/Inspector.json:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::clearConsoleMessages):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::pushNodeToFrontend):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::evaluateOnCallFrame):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::evaluateOn):
+        (WebCore::InspectorRuntimeAgent::getProperties):
+        (WebCore::InspectorRuntimeAgent::setPropertyValue):
+        (WebCore::InspectorRuntimeAgent::releaseObject):
+        (WebCore::InspectorRuntimeAgent::releaseObjectGroup):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.completions.evaluatedProperties):
+        (WebInspector.ConsoleView.prototype.completions):
+        * inspector/front-end/PropertiesSidebarPane.js:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.releaseEvaluationResult):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.update):
+        * inspector/front-end/inspector.js:
+        (WebInspector.inspect):
+
 2011-03-20  Bill Budge  <bbudge@chromium.org>
 
         Reviewed by Adam Barth.

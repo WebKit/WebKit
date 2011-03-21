@@ -365,7 +365,7 @@ WebInspector.ConsoleView.prototype = {
 
         function evaluatedProperties(properties)
         {
-            RuntimeAgent.releaseObjectGroup(0, "completion");
+            RuntimeAgent.releaseObjectGroup("completion");
             var propertyNames = [];
             for (var i = 0; properties && i < properties.length; ++i)
                 propertyNames.push(properties[i].name);

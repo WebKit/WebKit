@@ -54,11 +54,11 @@ public:
 
     // Part of the protocol.
     void evaluate(ErrorString*, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result);
-    void evaluateOn(ErrorString*, PassRefPtr<InspectorObject> objectId, const String& expression, RefPtr<InspectorObject>* result);
-    void releaseObject(ErrorString*, PassRefPtr<InspectorObject> objectId);
-    void getProperties(ErrorString*, PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorArray>* result);
-    void setPropertyValue(ErrorString*, PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression);
-    void releaseObjectGroup(ErrorString*, long injectedScriptId, const String& objectGroup);
+    void evaluateOn(ErrorString*, const String& objectId, const String& expression, RefPtr<InspectorObject>* result);
+    void releaseObject(ErrorString*, const String& objectId);
+    void getProperties(ErrorString*, const String& objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorArray>* result);
+    void setPropertyValue(ErrorString*, const String& objectId, const String& propertyName, const String& expression);
+    void releaseObjectGroup(ErrorString*, const String& objectGroup);
 
 private:
     InspectorRuntimeAgent(InjectedScriptManager*, Page*);

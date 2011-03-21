@@ -1,19 +1,21 @@
 var initialize_ProtocolTest = function() {
 
-InspectorTest.filterProps = function(something, nondeterministicProps)
+InspectorTest.filterProps = function(object, nondeterministicProps)
 {
-    if (something instanceof Object)
-        for (var prop in something)
+    if (object instanceof Object)
+        for (var prop in object)
             if (prop in nondeterministicProps)
-                something[prop] = "<" + typeof something[prop] + ">";
+                object[prop] = "<" + typeof object[prop] + ">";
             else
-                something[prop] = this.filterProps(something[prop], nondeterministicProps);
-    else if (something instanceof Array)
-        for (var i = 0; i < something.length; ++i)
-            something[i] = this.filterProps(something[i], nondeterministicProps);
-    else if (typeof something === "number")
-        something = "<number>";
-    return something;
+                object[prop] = this.filterProps(object[prop], nondeterministicProps);
+    else if (object instanceof Array)
+        for (var i = 0; i < object.length; ++i)
+            object[i] = this.filterProps(object[i], nondeterministicProps);
+    else if (typeof object === "number")
+        object = "<number>";
+    else if (typeof object === "string" && object.indexOf("\"id\"") != -1)
+        object = "<string>";
+    return object;
 };
 
 InspectorTest._dumpEvent = function()
@@ -37,7 +39,7 @@ InspectorTest._dumpCallArguments = function(callArguments)
     var functionName = callArgumentsCopy.shift();
     this.filterProps(callArgumentsCopy, this._nondeterministicProps);
     var expression = JSON.stringify(callArgumentsCopy);
-    expression = expression.slice(1, expression.length - 1).replace(/\"<number>\"/g, "<number>");
+    expression = expression.slice(1, expression.length - 1).replace(/\"<number>\"/g, "<number>").replace(/\"<string>\"/g, "<string>");
 
     InspectorTest.addResult("-----------------------------------------------------------");
     InspectorTest.addResult(agentName + "." + functionName + "(" + expression + ")");
