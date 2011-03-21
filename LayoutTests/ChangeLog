@@ -1,3 +1,17 @@
+2011-03-21  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        platform/mac/accessibility/aria-table-with-colspan-cells.html is failing on the Leopard Release tester
+        https://bugs.webkit.org/show_bug.cgi?id=56523
+
+        List and table functionality is not present on Leopard and should be skipped.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-leopard/platform/mac/accessibility: Removed.
+        * platform/mac-leopard/platform/mac/accessibility/aria-table-with-colspan-cells-expected.txt: Removed.
+        * platform/mac-leopard/platform/mac/accessibility/list-items-ignored-expected.txt: Removed.
+
 2011-03-21  Adam Roben  <aroben@apple.com>
 
         Skip another asserting animations test
