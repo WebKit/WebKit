@@ -545,7 +545,7 @@ public:
 
     // Returns a text representation of the render tree.  This method is used
     // to support layout tests.
-    virtual WebString renderTreeAsText() const = 0;
+    virtual WebString renderTreeAsText(bool showDebugInfo = false) const = 0;
 
     // Returns the counter value for the specified element.  This method is
     // used to support layout tests.
@@ -578,7 +578,7 @@ public:
 
     // Dumps the layer tree, used by the accelerated compositor, in
     // text form. This is used only by layout tests.
-    virtual WebString layerTreeAsText() const = 0;
+    virtual WebString layerTreeAsText(bool showDebugInfo = false) const = 0;
 
 protected:
     ~WebFrame() { }

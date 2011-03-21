@@ -906,7 +906,7 @@ Color Frame::tiledBackingStoreBackgroundColor() const
 }
 #endif
 
-String Frame::layerTreeAsText() const
+String Frame::layerTreeAsText(bool showDebugInfo) const
 {
 #if USE(ACCELERATED_COMPOSITING)
     document()->updateLayout();
@@ -914,7 +914,7 @@ String Frame::layerTreeAsText() const
     if (!contentRenderer())
         return String();
 
-    return contentRenderer()->compositor()->layerTreeAsText();
+    return contentRenderer()->compositor()->layerTreeAsText(showDebugInfo);
 #else
     return String();
 #endif

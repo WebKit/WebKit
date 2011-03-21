@@ -384,6 +384,7 @@ public:
     bool shouldAddFileToPasteboard() { return m_shouldAddFileToPasteboard; }
     bool stopProvisionalFrameLoads() { return m_stopProvisionalFrameLoads; }
     bool deferMainResourceDataLoad() { return m_deferMainResourceDataLoad; }
+    void setShowDebugLayerTree(bool value) { m_showDebugLayerTree = value; }
 
     bool testRepaint() const { return m_testRepaint; }
     bool sweepHorizontally() const { return m_sweepHorizontally; }
@@ -556,6 +557,9 @@ private:
 
     // If false, all new requests will not defer the main resource data load.
     bool m_deferMainResourceDataLoad;
+
+    // If true, we will show extended information in the graphics layer tree.
+    bool m_showDebugLayerTree;
 
     WorkQueue m_workQueue;
 
