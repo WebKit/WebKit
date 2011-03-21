@@ -2,6 +2,21 @@
 
         Reviewed by Sam Weinig.
 
+        Plug-in process crashes if it fails to load a plug-in module
+        https://bugs.webkit.org/show_bug.cgi?id=56775
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::initialize):
+        If NetscapePlugin::create returns null, call removePluginControllerProxy with a null plug-in.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::removePluginControllerProxy):
+        Remove an incorrect assertion. Don't invalidate the remote object map if the plug-in is null.
+
+2011-03-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         QT plug-in loads controller at top of movie not bottom
         https://bugs.webkit.org/show_bug.cgi?id=56764
         <rdar://problem/8979037>

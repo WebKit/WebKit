@@ -72,8 +72,6 @@ void WebProcessConnection::destroyPluginControllerProxy(PluginControllerProxy* p
 
 void WebProcessConnection::removePluginControllerProxy(PluginControllerProxy* pluginController, Plugin* plugin)
 {
-    ASSERT(plugin);
-
     {
         ASSERT(m_pluginControllers.contains(pluginController->pluginInstanceID()));
 
@@ -82,7 +80,8 @@ void WebProcessConnection::removePluginControllerProxy(PluginControllerProxy* pl
     }
 
     // Invalidate all objects related to this plug-in.
-    m_npRemoteObjectMap->pluginDestroyed(plugin);
+    if (plugin)
+        m_npRemoteObjectMap->pluginDestroyed(plugin);
 
     if (!m_pluginControllers.isEmpty())
         return;

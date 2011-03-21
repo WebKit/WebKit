@@ -78,8 +78,11 @@ bool PluginControllerProxy::initialize(const Plugin::Parameters& parameters)
     ASSERT(!m_plugin);
 
     m_plugin = NetscapePlugin::create(PluginProcess::shared().netscapePluginModule());
-    if (!m_plugin)
+    if (!m_plugin) {
+        // This will delete the plug-in controller proxy object.
+        m_connection->removePluginControllerProxy(this, 0);
         return false;
+    }
 
     if (!m_plugin->initialize(this, parameters)) {
         // Get the plug-in so we can pass it to removePluginControllerProxy. The pointer is only
