@@ -3316,13 +3316,14 @@ IntRect RenderBox::layoutOverflowRectForPropagation(RenderStyle* parentStyle) co
     if (!hasOverflowClip())
         rect.unite(layoutOverflowRect());
 
-    if (isRelPositioned() || hasTransform()) {
+    bool hasTransform = hasLayer() && layer()->transform();
+    if (isRelPositioned() || hasTransform) {
         // If we are relatively positioned or if we have a transform, then we have to convert
         // this rectangle into physical coordinates, apply relative positioning and transforms
         // to it, and then convert it back.
         flipForWritingMode(rect);
         
-        if (hasTransform())
+        if (hasTransform)
             rect = layer()->currentTransform().mapRect(rect);
 
         if (isRelPositioned())

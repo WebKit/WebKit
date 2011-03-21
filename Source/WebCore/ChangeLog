@@ -1,3 +1,17 @@
+2011-03-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 51465 - chrome.dll!WebCore::RenderLayer::currentTransform
+        ReadAV@NULL (8968fc97874fa23b6799ff8f09c142e4)
+
+        Test: fast/css/webkit-empty-transform-preserve3d-crash.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::layoutOverflowRectForPropagation): Mimicked the
+        rest of the code and check that the RenderBox has a layer to avoid
+        crashing on the layer() call.
+
 2011-03-21  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
