@@ -1,3 +1,21 @@
+2011-03-21  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Stop inserting when the parent is removed
+        https://bugs.webkit.org/show_bug.cgi?id=56690
+
+        Tests: fast/dom/insertedIntoDocument-child.html
+               fast/dom/insertedIntoDocument-iframe.html
+               fast/dom/insertedIntoDocument-sibling.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertedIntoDocument):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::insertedIntoDocument):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::insertedIntoDocument):
+
 2011-03-07  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.

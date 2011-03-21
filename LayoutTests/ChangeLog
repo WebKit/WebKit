@@ -1,3 +1,17 @@
+2011-03-21  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Stop inserting when the parent is removed
+        https://bugs.webkit.org/show_bug.cgi?id=56690
+
+        * fast/dom/insertedIntoDocument-child-expected.txt: Added.
+        * fast/dom/insertedIntoDocument-child.html: Added.
+        * fast/dom/insertedIntoDocument-iframe-expected.txt: Added.
+        * fast/dom/insertedIntoDocument-iframe.html: Added.
+        * fast/dom/insertedIntoDocument-sibling-expected.txt: Added.
+        * fast/dom/insertedIntoDocument-sibling.html: Added.
+
 2011-03-21  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -311,13 +311,16 @@ bool HTMLObjectElement::rendererIsNeeded(RenderStyle* style)
 
 void HTMLObjectElement::insertedIntoDocument()
 {
+    HTMLPlugInImageElement::insertedIntoDocument();
+    if (!inDocument())
+        return;
+
     if (isDocNamedItem() && document()->isHTMLDocument()) {
         HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
         document->addNamedItem(m_name);
         document->addExtraNamedItem(m_id);
     }
 
-    HTMLPlugInImageElement::insertedIntoDocument();
     FormAssociatedElement::insertedIntoDocument();
 }
 
