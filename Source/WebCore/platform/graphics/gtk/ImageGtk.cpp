@@ -152,7 +152,10 @@ PassRefPtr<Image> Image::loadPlatformThemeIcon(const char* name, int size)
 
 GdkPixbuf* BitmapImage::getGdkPixbuf()
 {
-    return cairoImageSurfaceToGdkPixbuf(frameAtIndex(currentFrame()));
+    cairo_surface_t* frame = frameAtIndex(currentFrame());
+    if (!frame)
+        return 0;
+    return cairoImageSurfaceToGdkPixbuf(frame);
 }
 
 }
