@@ -1,3 +1,19 @@
+2011-03-21  Eric Uhrhane <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        [fileapi/chromium] Fetch platform path using GetMetadata before creating File from FileEntry*
+        https://bugs.webkit.org/show_bug.cgi?id=56704
+
+        * fileapi/DOMFileSystemSync.cpp
+        (DOMFileSystemSync::createFile)
+        (class GetPathHelper): Added, to look up path before creating File.
+        * fileapi/DOMFileSystem.cpp
+        (DOMFileSystem::createFile)
+        (GetPathCallback): Added, to look up path before creating File.
+        * platform/FileMetadata.h
+        (struct FileMetadata): Added new field platformPath.
+
 2011-03-21  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Jeremy Orlow.

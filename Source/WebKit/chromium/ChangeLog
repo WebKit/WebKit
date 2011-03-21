@@ -1,3 +1,22 @@
+2011-03-21  Eric Uhrhane <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        [fileapi/chromium] Fetch platform path using GetMetadata before creating File from FileEntry*
+        https://bugs.webkit.org/show_bug.cgi?id=56704
+
+        * src/WebFileSystemCallbacksImpl.cpp:
+        (WebFileSystemCallbacksImpl::didReadMetadata)
+        Pass new platformPath member through.
+
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        (CrossThreadCopierBase)
+        Copy new platformPath member.
+
+        * public/WebFileInfo.h:
+        (struct WebFileInfo)
+        Add new platformPath member.
+
 2011-03-21  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Steve Block.

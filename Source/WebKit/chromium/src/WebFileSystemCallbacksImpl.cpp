@@ -72,6 +72,7 @@ void WebFileSystemCallbacksImpl::didReadMetadata(const WebFileInfo& webFileInfo)
     fileMetadata.modificationTime = webFileInfo.modificationTime;
     fileMetadata.length = webFileInfo.length;
     fileMetadata.type = static_cast<FileMetadata::Type>(webFileInfo.type);
+    fileMetadata.platformPath = webFileInfo.platformPath;
     m_callbacks->didReadMetadata(fileMetadata);
     delete this;
 }

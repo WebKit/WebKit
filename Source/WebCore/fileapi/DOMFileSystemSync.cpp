@@ -33,6 +33,8 @@
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "AsyncFileSystem.h"
+#include "AsyncFileWriter.h"
 #include "DOMFilePath.h"
 #include "DirectoryEntrySync.h"
 #include "ErrorCallback.h"
@@ -40,6 +42,7 @@
 #include "FileEntrySync.h"
 #include "FileError.h"
 #include "FileException.h"
+#include "FileMetadata.h"
 #include "FileSystemCallbacks.h"
 #include "FileWriterBaseCallback.h"
 #include "FileWriterSync.h"
@@ -67,10 +70,105 @@ PassRefPtr<DirectoryEntrySync> DOMFileSystemSync::root()
     return DirectoryEntrySync::create(this, DOMFilePath::root);
 }
 
+namespace {
+
+class GetPathHelper : public AsyncFileSystemCallbacks {
+public:
+    class GetPathResult : public RefCounted<GetPathResult> {
+      public:
+        static PassRefPtr<GetPathResult> create()
+        {
+            return adoptRef(new GetPathResult());
+        }
+
+        bool m_failed;
+        int m_code;
+        String m_path;
+
+      private:
+        GetPathResult()
+            : m_failed(false)
+            , m_code(0)
+        {
+        }
+
+        ~GetPathResult()
+        {
+        }
+        friend class WTF::RefCounted<GetPathResult>;
+    };
+
+    static PassOwnPtr<GetPathHelper> create(PassRefPtr<GetPathResult> result)
+    {
+        return adoptPtr(new GetPathHelper(result));
+    }
+
+    virtual void didSucceed()
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    virtual void didOpenFileSystem(const String&, PassOwnPtr<AsyncFileSystem>)
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    virtual void didReadDirectoryEntry(const String&, bool)
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    virtual void didReadDirectoryEntries(bool)
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    virtual void didCreateFileWriter(PassOwnPtr<AsyncFileWriter>, long long)
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    virtual void didFail(int code)
+    {
+        m_result->m_failed = true;
+        m_result->m_code = code;
+    }
+
+    virtual ~GetPathHelper()
+    {
+    }
+
+    void didReadMetadata(const FileMetadata& metadata)
+    {
+        m_result->m_path = metadata.platformPath;
+    }
+private:
+    GetPathHelper(PassRefPtr<GetPathResult> result)
+        : m_result(result)
+    {
+    }
+
+    RefPtr<GetPathResult> m_result;
+};
+
+} // namespace
+
 PassRefPtr<File> DOMFileSystemSync::createFile(const FileEntrySync* fileEntry, ExceptionCode& ec)
 {
     ec = 0;
     String platformPath = m_asyncFileSystem->virtualToPlatformPath(fileEntry->fullPath());
+    RefPtr<GetPathHelper::GetPathResult> result(GetPathHelper::GetPathResult::create());
+    m_asyncFileSystem->readMetadata(platformPath, GetPathHelper::create(result));
+    if (!m_asyncFileSystem->waitForOperationToComplete()) {
+        ec = FileException::ABORT_ERR;
+        return 0;
+    }
+    if (result->m_failed) {
+        ec = result->m_code;
+        return 0;
+    }
+    if (!result->m_path.isEmpty())
+        platformPath = result->m_path;
     return File::create(platformPath);
 }
 

@@ -31,6 +31,8 @@
 #ifndef FileMetadata_h
 #define FileMetadata_h
 
+#include <wtf/text/WTFString.h>
+
 #if ENABLE(FILE_SYSTEM)
 
 namespace WebCore {
@@ -51,6 +53,8 @@ struct FileMetadata {
     };
 
     Type type;
+
+    String platformPath;
 
     FileMetadata() : modificationTime(0.0), length(-1), type(TypeUnknown) { }
 };

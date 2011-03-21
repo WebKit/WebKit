@@ -31,6 +31,8 @@
 #ifndef WebFileInfo_h
 #define WebFileInfo_h
 
+#include "WebString.h"
+
 namespace WebKit {
 
 struct WebFileInfo {
@@ -49,6 +51,8 @@ struct WebFileInfo {
     };
 
     Type type;
+
+    WebString platformPath;
 
     WebFileInfo() : modificationTime(0.0), length(-1), type(TypeUnknown) { }
 };

@@ -39,6 +39,7 @@
 #include "ErrorCallback.h"
 #include "File.h"
 #include "FileEntry.h"
+#include "FileMetadata.h"
 #include "FileSystemCallbacks.h"
 #include "FileWriter.h"
 #include "FileWriterBaseCallback.h"
@@ -111,12 +112,46 @@ void DOMFileSystem::createWriter(const FileEntry* fileEntry, PassRefPtr<FileWrit
     m_asyncFileSystem->createWriter(fileWriter.get(), platformPath, callbacks.release());
 }
 
-void DOMFileSystem::createFile(const FileEntry* fileEntry, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback>)
-{
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(fileEntry->fullPath());
-    scheduleCallback(successCallback, File::create(platformPath));
-}
+namespace {
+
+class GetPathCallback : public FileSystemCallbacksBase {
+public:
+    static PassOwnPtr<GetPathCallback> create(PassRefPtr<DOMFileSystem> filesystem, const String& path, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+    {
+        return adoptPtr(new GetPathCallback(filesystem, path, successCallback, errorCallback));
+    }
+
+    virtual void didReadMetadata(const FileMetadata& metadata)
+    {
+        if (!metadata.platformPath.isEmpty())
+            m_path = metadata.platformPath;
+
+        m_filesystem->scheduleCallback(m_successCallback.release(), File::create(m_path));
+    }
+
+private:
+    GetPathCallback(PassRefPtr<DOMFileSystem> filesystem, const String& path, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+        : FileSystemCallbacksBase(errorCallback)
+        , m_filesystem(filesystem)
+        , m_path(path)
+        , m_successCallback(successCallback)
+    {
+    }
+
+    RefPtr<DOMFileSystem> m_filesystem;
+    String m_path;
+    RefPtr<FileCallback> m_successCallback;
+};
 
 } // namespace
+
+void DOMFileSystem::createFile(const FileEntry* fileEntry, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+{
+    String platformPath = m_asyncFileSystem->virtualToPlatformPath(fileEntry->fullPath());
+
+    m_asyncFileSystem->readMetadata(platformPath, GetPathCallback::create(this, platformPath, successCallback, errorCallback));
+}
+
+} // namespace WebCore
 
 #endif // ENABLE(FILE_SYSTEM)
