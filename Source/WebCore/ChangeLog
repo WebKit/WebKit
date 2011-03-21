@@ -1,3 +1,15 @@
+2011-03-21  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Remove handling of QNetworkAccessManager::UnknownOperation
+
+        Now that Qt 4.7 is required we never have to fall back to UnknownOperation.
+        Custom verb requests are using CustomOperation already, so this was dead code.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::start):
+
 2011-03-21  Adam Roben  <aroben@apple.com>
 
         Fix multiple-definition linker warnings on Windows

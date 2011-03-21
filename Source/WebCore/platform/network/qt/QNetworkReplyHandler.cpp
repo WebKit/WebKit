@@ -551,17 +551,9 @@ void QNetworkReplyHandler::start()
         case QNetworkAccessManager::CustomOperation:
             m_reply = manager->sendCustomRequest(m_request, m_resourceHandle->firstRequest().httpMethod().latin1().data());
             break;
-        case QNetworkAccessManager::UnknownOperation: {
-            m_reply = 0;
-            ResourceHandleClient* client = m_resourceHandle->client();
-            if (client) {
-                ResourceError error(url.host(), 400 /*bad request*/,
-                                    url.toString(),
-                                    QCoreApplication::translate("QWebPage", "Bad HTTP request"));
-                client->didFail(m_resourceHandle, error);
-            }
+        case QNetworkAccessManager::UnknownOperation:
+            ASSERT_NOT_REACHED();
             return;
-        }
     }
 
     m_reply->setParent(this);
