@@ -1,3 +1,19 @@
+2011-03-21  Adam Roben  <aroben@apple.com>
+
+        Try again to get buildbot to show run-javascriptcore-tests's actual.html as an HTML file
+
+        Fixes <http://webkit.org/b/56746> build.webkit.org shows run-javascriptcore-tests's HTML
+        output as plain text
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunJavaScriptCoreTests): List actual.html as one of our log files so it will get uploaded
+        to the master.
+        (RunJavaScriptCoreTests.commandComplete): Reading the actual.html file here won't work,
+        since we're running on the build master, not the slave. Instead, turn the raw source of
+        actual.html which the build slave uploaded into an HTML log.
+
 2011-03-21  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Mihai Parparita.
