@@ -3225,8 +3225,6 @@ BUGCR75561 MAC : fast/blockflow/text-orientation-basic.html = IMAGE
 BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT
 
 BUGWK56060 LINUX X86_64 : http/tests/loading/preload-slow-loading.php = TEXT
-BUGWK56060 LINUX X86_64 : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
-BUGWK56060 LINUX X86_64 : svg/text/font-size-below-point-five.svg = TEXT
 BUGWK56060 LINUX X86_64 : svg/custom/pattern-excessive-malloc.svg = IMAGE
 BUGWK56060 LINUX X86_64 : fast/images/favicon-as-image.html = IMAGE+TEXT
 
@@ -3278,6 +3276,8 @@ BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS
 BUGCR76609 MAC DEBUG : animations/play-state.html = CRASH
 BUGCR76610 WIN MAC DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGCR76716 DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
+BUGCR76979 WIN : inspector/console/console-dirxml.html = PASS TEXT
+BUGCR76979 LINUX DEBUG : inspector/console/console-dirxml.html = PASS TEXT
 
 // New in WebKit r81404. Text orientation is wrong and emphasis marks are wrong.
 BUGCR76616 WIN LINUX : fast/text/emphasis-combined-text.html = IMAGE+TEXT
@@ -3286,3 +3286,7 @@ BUGCR76616 MAC : fast/text/emphasis-combined-text.html = IMAGE+TEXT
 
 BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-drawImage-shadow.html = TEXT
 BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-scale-drawImage-shadow.html = TEXT
+
+// Started failing after WebKit r81597. Must be sensitive to test order.
+BUGCR76971 WIN LINUX : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
+BUGCR76971 LINUX : svg/text/font-size-below-point-five.svg = TEXT

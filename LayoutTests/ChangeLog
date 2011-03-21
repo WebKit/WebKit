@@ -1,3 +1,9 @@
+2011-03-21  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Unreviewed, add flaky and failing tests after r81597.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-21  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by James Robinson.
