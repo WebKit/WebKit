@@ -1,3 +1,11 @@
+2011-03-21  Adam Roben  <aroben@apple.com>
+
+        Fix multiple-definition linker warnings on Windows
+
+        * WebCore.vcproj/WebCore.vcproj: Exclude RenderSVGPath.cpp from the build, since it is
+        already being compiled via RenderingAllInOne.cpp. Let VS have its way with the rest of the
+        file.
+
 2011-03-21  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Benjamin Poulain.

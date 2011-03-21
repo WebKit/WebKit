@@ -13558,6 +13558,62 @@
 				>
 			</File>
 			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStringCallback.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_LTCG|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStringCallback.h"
+				>
+			</File>
+			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStyleMedia.cpp"
 				>
 				<FileConfiguration
@@ -21238,62 +21294,6 @@
 				>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStringCallback.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_LTCG|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStringCallback.h"
-				>
-			</File>
-			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSText.cpp"
 				>
 				<FileConfiguration
@@ -24740,14 +24740,14 @@
 			<File
 				RelativePath="..\page\Frame.h"
 				>
-			<File
-				RelativePath="..\page\FrameActionScheduler.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\page\FrameActionScheduler.h"
-				>
-			</File>
+				<File
+					RelativePath="..\page\FrameActionScheduler.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\page\FrameActionScheduler.h"
+					>
+				</File>
 			</File>
 			<File
 				RelativePath="..\page\FrameLoadRequest.h"
@@ -24843,22 +24843,6 @@
 			</File>
 			<File
 				RelativePath="..\page\animation\KeyframeAnimation.h"
-				>
-			</File>
-			<File
-				RelativePath="..\page\WebKitAnimation.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\page\WebKitAnimation.h"
-				>
-			</File>
-			<File
-				RelativePath="..\page\WebKitAnimationList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\page\WebKitAnimationList.h"
 				>
 			</File>
 			<File
@@ -25059,6 +25043,22 @@
 			</File>
 			<File
 				RelativePath="..\page\UserStyleSheetTypes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\WebKitAnimation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\WebKitAnimation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\WebKitAnimationList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\WebKitAnimationList.h"
 				>
 			</File>
 			<File
@@ -30561,6 +30561,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\TextCheckerClient.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\TextCodec.cpp"
 					>
 				</File>
@@ -30649,7 +30653,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\TextCodecUTF8.h"
+					RelativePath="..\platform\text\TextCodecUTF16.h"
 					>
 				</File>
 				<File
@@ -30657,11 +30661,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\TextCodecUTF16.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\text\TextCheckerClient.h"
+					RelativePath="..\platform\text\TextCodecUTF8.h"
 					>
 				</File>
 				<File
@@ -40481,6 +40481,54 @@
 				<File
 					RelativePath="..\rendering\svg\RenderSVGPath.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_LTCG|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\rendering\svg\RenderSVGPath.h"
@@ -41384,19 +41432,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\xml\XMLTreeViewer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\xml\XMLTreeViewer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\xml\XMLSerializer.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\xml\XMLSerializer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\xml\XMLTreeViewer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\xml\XMLTreeViewer.h"
 				>
 			</File>
 			<File
@@ -42766,6 +42814,62 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\DatasetDOMStringMap.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_LTCG|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\DatasetDOMStringMap.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\DataTransferItem.cpp"
 				>
 				<FileConfiguration
@@ -42823,62 +42927,6 @@
 			</File>
 			<File
 				RelativePath="..\dom\DataTransferItems.h"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\DatasetDOMStringMap.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_LTCG|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\dom\DatasetDOMStringMap.h"
 				>
 			</File>
 			<File
@@ -50770,6 +50818,22 @@
 			Name="html"
 			>
 			<File
+				RelativePath="..\html\canvas\ArrayBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\ArrayBuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\ArrayBufferView.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\ArrayBufferView.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\AsyncFileWriter.h"
 				>
 			</File>
@@ -50850,22 +50914,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\canvas\ArrayBuffer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\ArrayBuffer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\ArrayBufferView.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\ArrayBufferView.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\canvas\CanvasGradient.cpp"
 				>
 			</File>
@@ -50911,70 +50959,6 @@
 			</File>
 			<File
 				RelativePath="..\html\canvas\CanvasStyle.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\DataView.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\DataView.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Float32Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Float32Array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Int32Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Int32Array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Int16Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Int16Array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Int8Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Int8Array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\UInt16Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\UInt16Array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\UInt32Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\UInt32Array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\UInt8Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\UInt8Array.h"
 				>
 			</File>
 			<File
@@ -51031,6 +51015,14 @@
 			</File>
 			<File
 				RelativePath="..\html\DataGridDataSource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\DataView.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\DataView.h"
 				>
 			</File>
 			<File
@@ -51375,6 +51367,14 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\Flags.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\Float32Array.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\Float32Array.h"
 				>
 			</File>
 			<File
@@ -55910,6 +55910,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\canvas\Int16Array.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\Int16Array.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\Int32Array.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\Int32Array.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\Int8Array.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\Int8Array.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\IsIndexInputType.cpp"
 				>
 			</File>
@@ -56083,6 +56107,30 @@
 			</File>
 			<File
 				RelativePath="..\html\TimeRanges.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\UInt16Array.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\UInt16Array.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\UInt32Array.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\UInt32Array.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\UInt8Array.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\UInt8Array.h"
 				>
 			</File>
 			<File
@@ -56316,14 +56364,14 @@
 					RelativePath="..\html\shadow\SliderThumbElement.h"
 					>
 				</File>
-                <File
-                    RelativePath="..\html\shadow\TextControlInnerElements.cpp"
-                    >
-                </File>
-                <File
-                    RelativePath="..\html\shadow\TextControlInnerElements.h"
-                    >
-                </File>
+				<File
+					RelativePath="..\html\shadow\TextControlInnerElements.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\TextControlInnerElements.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -58485,7 +58533,7 @@
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
-					ExcludedFromBuild="true"
+						ExcludedFromBuild="true"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -65927,9 +65975,8 @@
 			</File>
 			<File
 				RelativePath="..\storage\VersionChangeCallback.h"
-			    >
+				>
 			</File>
-
 		</Filter>
 		<Filter
 			Name="strings"
