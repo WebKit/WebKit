@@ -1,3 +1,17 @@
+2011-03-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        QT plug-in loads controller at top of movie not bottom
+        https://bugs.webkit.org/show_bug.cgi?id=56764
+        <rdar://problem/8979037>
+
+        Create a layer with geometryFlipped set and add the plug-in layer as a sublayer,
+        matching WebKit1.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPostInitialize):
+
 2011-03-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
