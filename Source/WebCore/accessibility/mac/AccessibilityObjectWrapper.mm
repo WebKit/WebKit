@@ -41,6 +41,7 @@
 #import "AccessibilityTableCell.h"
 #import "AccessibilityTableRow.h"
 #import "AccessibilityTableColumn.h"
+#import "Chrome.h"
 #import "ColorMac.h"
 #import "Frame.h"
 #import "FrameLoaderClient.h"
@@ -2330,28 +2331,20 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     FrameView* frameView = m_object->documentFrameView();
     if (!frameView)
         return;
-
-    // simulate a click in the middle of the object
-    IntPoint clickPoint = m_object->clickPoint();
-    NSPoint nsClickPoint = NSMakePoint(clickPoint.x(), clickPoint.y());
-    
-    NSView* view = nil;
-    if (m_object->isAttachment())
-        view = [self attachmentView];
-    else
-        view = frameView->documentView();
-    
-    if (!view)
+    Frame* frame = frameView->frame();
+    if (!frame)
         return;
+    Page* page = frame->page();
+    if (!page)
+        return;
+
+    // Simulate a click in the middle of the object.
+    IntPoint clickPoint = m_object->clickPoint();
     
-    NSPoint nsScreenPoint = [view convertPoint:nsClickPoint toView:nil];
-    
-    // Show the contextual menu for this event.
-    NSEvent* event = [NSEvent mouseEventWithType:NSRightMouseDown location:nsScreenPoint modifierFlags:0 timestamp:0 windowNumber:[[view window] windowNumber] context:0 eventNumber:0 clickCount:1 pressure:1];
-    NSMenu* menu = [view menuForEvent:event];
-    
-    if (menu)
-        [NSMenu popUpContextMenu:menu withEvent:event forView:view];    
+    PlatformMouseEvent mouseEvent(clickPoint, clickPoint, RightButton, MouseEventPressed, 1, false, false, false, false, currentTime());
+    bool handled = frame->eventHandler()->sendContextMenuEvent(mouseEvent);
+    if (handled)
+        page->chrome()->showContextMenu();
 }
 
 - (void)accessibilityPerformAction:(NSString*)action

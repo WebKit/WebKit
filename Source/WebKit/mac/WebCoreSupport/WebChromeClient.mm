@@ -51,14 +51,18 @@
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/Console.h>
 #import <WebCore/Cursor.h>
+#import <WebCore/ContextMenu.h>
+#import <WebCore/ContextMenuController.h>
 #import <WebCore/Element.h>
 #import <WebCore/FileChooser.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Icon.h>
+#import <WebCore/IntPoint.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/NavigationAction.h>
 #import <WebCore/Page.h>
@@ -875,6 +879,35 @@ PassRefPtr<WebCore::SearchPopupMenu> WebChromeClient::createSearchPopupMenu(WebC
 {
     return adoptRef(new SearchPopupMenuMac(client));
 }
+
+#if ENABLE(CONTEXT_MENUS)
+void WebChromeClient::showContextMenu()
+{
+    Page* page = [m_webView page];
+    if (!page)
+        return;
+
+    ContextMenuController* controller = page->contextMenuController();
+    Node* node = controller->hitTestResult().innerNonSharedNode();
+    if (!node)
+        return;
+    Frame* frame = node->document()->frame();
+    if (!frame)
+        return;
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return;
+    NSView* view = frameView->documentView();
+    
+    IntPoint point = frameView->contentsToWindow(controller->hitTestResult().point());
+    NSPoint nsScreenPoint = [view convertPoint:point toView:nil];
+    // Show the contextual menu for this event.
+    NSEvent* event = [NSEvent mouseEventWithType:NSRightMouseDown location:nsScreenPoint modifierFlags:0 timestamp:0 windowNumber:[[view window] windowNumber] context:0 eventNumber:0 clickCount:1 pressure:1];
+    NSMenu* nsMenu = [view menuForEvent:event];
+    if (nsMenu)
+        [NSMenu popUpContextMenu:nsMenu withEvent:event forView:view];    
+}
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
 

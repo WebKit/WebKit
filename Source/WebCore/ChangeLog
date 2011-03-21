@@ -1,3 +1,17 @@
+2011-03-21  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: showContextMenu not working in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=56734
+
+        WebKit2 is not able to directly open a context menu because the UI is in the other process.
+        Instead the chrome client should be used. This also means implementing showContextMenu() in WebKit1
+        code.
+        
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityShowContextMenu]):
+
 2011-03-21  Robert Kroeger  <rjkroege@chromium.org>
 
         Reviewed by Antonio Gomes.

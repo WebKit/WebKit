@@ -1,3 +1,17 @@
+2011-03-21  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: showContextMenu not working in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=56734
+
+        Implement showContextMenu() so accessibility related code can call this
+        independent of whether WK1 or WK2 is running.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::showContextMenu):
+
 2011-03-21  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
