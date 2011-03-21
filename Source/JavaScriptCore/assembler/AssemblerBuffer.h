@@ -114,6 +114,21 @@ namespace JSC {
             putIntUnchecked(value);
         }
 
+        template<typename IntegralType>
+        void putIntegral(IntegralType value)
+        {
+            if (m_size > m_capacity - sizeof(IntegralType))
+                grow();
+            putIntegralUnchecked(value);
+        }
+
+        template<typename IntegralType>
+        void putIntegralUnchecked(IntegralType value)
+        {
+            *reinterpret_cast_ptr<IntegralType*>(&m_buffer[m_size]) = value;
+            m_size += sizeof(IntegralType);
+        }
+
         void* data() const
         {
             return m_buffer;

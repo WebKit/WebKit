@@ -188,29 +188,14 @@ public:
         return AssemblerBuffer::executableCopy(allocator);
     }
 
+    void putShortWithConstantInt(uint16_t insn, uint32_t constant, bool isReusable = false)
+    {
+        putIntegralWithConstantInt(insn, constant, isReusable);
+    }
+
     void putIntWithConstantInt(uint32_t insn, uint32_t constant, bool isReusable = false)
     {
-        if (!m_numConsts)
-            m_maxDistance = maxPoolSize;
-        flushIfNoSpaceFor(4, 4);
-
-        m_loadOffsets.append(AssemblerBuffer::size());
-        if (isReusable)
-            for (int i = 0; i < m_numConsts; ++i) {
-                if (m_mask[i] == ReusableConst && m_pool[i] == constant) {
-                    AssemblerBuffer::putInt(AssemblerType::patchConstantPoolLoad(insn, i));
-                    correctDeltas(4);
-                    return;
-                }
-            }
-
-        m_pool[m_numConsts] = constant;
-        m_mask[m_numConsts] = static_cast<char>(isReusable ? ReusableConst : UniqueConst);
-
-        AssemblerBuffer::putInt(AssemblerType::patchConstantPoolLoad(insn, m_numConsts));
-        ++m_numConsts;
-
-        correctDeltas(4, 4);
+        putIntegralWithConstantInt(insn, constant, isReusable);
     }
 
     // This flushing mechanism can be called after any unconditional jumps.
@@ -248,6 +233,33 @@ private:
         m_lastConstDelta = constSize;
     }
 
+    template<typename IntegralType>
+    void putIntegralWithConstantInt(IntegralType insn, uint32_t constant, bool isReusable)
+    {
+        if (!m_numConsts)
+            m_maxDistance = maxPoolSize;
+        flushIfNoSpaceFor(sizeof(IntegralType), 4);
+
+        m_loadOffsets.append(AssemblerBuffer::size());
+        if (isReusable) {
+            for (int i = 0; i < m_numConsts; ++i) {
+                if (m_mask[i] == ReusableConst && m_pool[i] == constant) {
+                    putIntegral(static_cast<IntegralType>(AssemblerType::patchConstantPoolLoad(insn, i)));
+                    correctDeltas(sizeof(IntegralType));
+                    return;
+                }
+            }
+        }
+
+        m_pool[m_numConsts] = constant;
+        m_mask[m_numConsts] = static_cast<char>(isReusable ? ReusableConst : UniqueConst);
+
+        putIntegral(static_cast<IntegralType>(AssemblerType::patchConstantPoolLoad(insn, m_numConsts)));
+        ++m_numConsts;
+
+        correctDeltas(sizeof(IntegralType), 4);
+    }
+
     void flushConstantPool(bool useBarrier = true)
     {
         if (m_numConsts == 0)
@@ -259,7 +271,7 @@ private:
 
         // Callback to protect the constant pool from execution
         if (useBarrier)
-            AssemblerBuffer::putInt(AssemblerType::placeConstantPoolBarrier(m_numConsts * sizeof(uint32_t) + alignPool));
+            putIntegral(AssemblerType::placeConstantPoolBarrier(m_numConsts * sizeof(uint32_t) + alignPool));
 
         if (alignPool) {
             if (alignPool & 1)
