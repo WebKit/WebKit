@@ -1,3 +1,9 @@
+2011-03-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: rebaselined Chromium expectations.
+
+        * platform/chromium-win/svg/text/text-intro-05-t-expected.txt: Added.
+
 2011-03-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: removing stale Chromium expectations.
