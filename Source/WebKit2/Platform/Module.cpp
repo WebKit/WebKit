@@ -33,6 +33,9 @@ Module::Module(const String& path)
 #if PLATFORM(WIN)
     , m_module(0)
 #endif
+#if PLATFORM(MAC) && !defined(__LP64__)
+    , m_bundleResourceMap(-1)
+#endif
 {
 }
 

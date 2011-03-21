@@ -2,6 +2,34 @@
 
         Reviewed by Sam Weinig.
 
+        QT plug-in fails to load contextual menu
+        https://bugs.webkit.org/show_bug.cgi?id=56777
+        <rdar://problem/8979033>
+
+        Open a Carbon resource map and make it the current map when calling NP_Initialize.
+
+        * Platform/Module.cpp:
+        (WebKit::Module::Module):
+        Initialize m_bundleResourceMap to -1.
+
+        * Platform/Module.h:
+        Add m_bundleResourceMap.
+
+        * Platform/mac/ModuleMac.mm:
+        (WebKit::Module::unload):
+        Close the resource map.
+
+        (WebKit::Module::bundleResourceMap):
+        Open a resource map if necessary.
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad):
+        Get the resource map and make it current before calling NP_Initialize.
+
+2011-03-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Plug-in process crashes if it fails to load a plug-in module
         https://bugs.webkit.org/show_bug.cgi?id=56775
 

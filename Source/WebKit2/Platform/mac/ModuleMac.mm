@@ -48,6 +48,13 @@ bool Module::load()
 
 void Module::unload()
 {
+    ASSERT(m_bundle);
+
+#if !defined(__LP64__)
+    if (m_bundleResourceMap != -1)
+        CFBundleCloseBundleResourceMap(m_bundle.get(), m_bundleResourceMap);
+#endif
+
     // See the comment in Module.h for why we leak the bundle here.
     m_bundle.releaseRef();
 }
@@ -59,5 +66,15 @@ void* Module::platformFunctionPointer(const char* functionName) const
     RetainPtr<CFStringRef> functionNameString(AdoptCF, CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, functionName, kCFStringEncodingASCII, kCFAllocatorNull));
     return CFBundleGetFunctionPointerForName(m_bundle.get(), functionNameString.get());
 }
+
+#if !defined(__LP64__)
+CFBundleRefNum Module::bundleResourceMap()
+{
+    if (m_bundleResourceMap == -1)
+        m_bundleResourceMap = CFBundleOpenBundleResourceMap(m_bundle.get());
+
+    return m_bundleResourceMap;
+}
+#endif
 
 }

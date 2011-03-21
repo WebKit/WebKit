@@ -56,12 +56,19 @@ public:
 
     template<typename FunctionType> FunctionType functionPointer(const char* functionName) const;
 
+#if PLATFORM(MAC) && !defined(__LP64__)
+    CFBundleRefNum bundleResourceMap();
+#endif
+
 private:
     void* platformFunctionPointer(const char* functionName) const;
 
     String m_path;
 #if PLATFORM(MAC)
     RetainPtr<CFBundleRef> m_bundle;
+#if !defined(__LP64__)
+    CFBundleRefNum m_bundleResourceMap;
+#endif
 #elif PLATFORM(WIN)
     HMODULE m_module;
 #elif PLATFORM(QT)
