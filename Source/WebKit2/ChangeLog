@@ -2,6 +2,17 @@
 
         Reviewed by Anders Carlsson.
 
+        Remove old DrawingArea and LayerHostingView code from WKView.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView drawRect:]):
+        (-[WKView hitTest:]):
+        (-[WKView WebKit::]):
+
+2011-03-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Need WebKit2 API for creating a page with a specific main frame name
         https://bugs.webkit.org/show_bug.cgi?id=56759
 

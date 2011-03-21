@@ -111,11 +111,6 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 
     RetainPtr<NSView> _layerHostingView;
 
-    // FIXME: Remove _oldLayerHostingView.
-#if USE(ACCELERATED_COMPOSITING)
-    NSView *_oldLayerHostingView;
-#endif
-
     RetainPtr<id> _remoteAccessibilityChild;
     
     // For asynchronous validation.
@@ -165,12 +160,6 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 @end
 
 @implementation WKView
-
-// FIXME: Remove this once we no longer want to be able to go back to the old drawing area.
-static bool useNewDrawingArea()
-{
-    return true;
-}
 
 - (void)_registerDraggedTypes
 {
@@ -1549,37 +1538,25 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 {
     LOG(View, "drawRect: x:%g, y:%g, width:%g, height:%g", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     _data->_page->endPrinting();
-    if (useNewDrawingArea()) {
-        CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
+    CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
 
-        if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(_data->_page->drawingArea())) {
-            const NSRect *rectsBeingDrawn;
-            NSInteger numRectsBeingDrawn;
-            [self getRectsBeingDrawn:&rectsBeingDrawn count:&numRectsBeingDrawn];
-            for (NSInteger i = 0; i < numRectsBeingDrawn; ++i) {
-                Region unpaintedRegion;
-                IntRect rect = enclosingIntRect(rectsBeingDrawn[i]);
-                drawingArea->paint(context, rect, unpaintedRegion);
+    if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(_data->_page->drawingArea())) {
+        const NSRect *rectsBeingDrawn;
+        NSInteger numRectsBeingDrawn;
+        [self getRectsBeingDrawn:&rectsBeingDrawn count:&numRectsBeingDrawn];
+        for (NSInteger i = 0; i < numRectsBeingDrawn; ++i) {
+            Region unpaintedRegion;
+            IntRect rect = enclosingIntRect(rectsBeingDrawn[i]);
+            drawingArea->paint(context, rect, unpaintedRegion);
 
-                Vector<IntRect> unpaintedRects = unpaintedRegion.rects();
-                for (size_t i = 0; i < unpaintedRects.size(); ++i)
-                    drawPageBackground(context, _data->_page.get(), unpaintedRects[i]);
-            }
-        } else 
-            drawPageBackground(context, _data->_page.get(), enclosingIntRect(rect));
+            Vector<IntRect> unpaintedRects = unpaintedRegion.rects();
+            for (size_t i = 0; i < unpaintedRects.size(); ++i)
+                drawPageBackground(context, _data->_page.get(), unpaintedRects[i]);
+        }
+    } else 
+        drawPageBackground(context, _data->_page.get(), enclosingIntRect(rect));
 
-        _data->_page->didDraw();
-        return;
-    }
-
-    if (_data->_page->isValid() && _data->_page->drawingArea()) {
-        CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
-        _data->_page->drawingArea()->paint(IntRect(rect), context);
-        _data->_page->didDraw();
-    } else if (_data->_page->drawsBackground()) {
-        [_data->_page->drawsTransparentBackground() ? [NSColor clearColor] : [NSColor whiteColor] set];
-        NSRectFill(rect);
-    }
+    _data->_page->didDraw();
 }
 
 - (BOOL)isOpaque
@@ -1644,10 +1621,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     if (hitView && _data && hitView == _data->_layerHostingView)
         hitView = self;
 
-#if USE(ACCELERATED_COMPOSITING)
-    if (hitView && _data && hitView == _data->_oldLayerHostingView)
-        hitView = self;
-#endif
     return hitView;
 }
 
@@ -1688,10 +1661,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (PassOwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
 {
-    if (useNewDrawingArea())
-        return DrawingAreaProxyImpl::create(_data->_page.get());
-
-    return ChunkedUpdateDrawingAreaProxy::create(self, _data->_page.get());
+    return DrawingAreaProxyImpl::create(_data->_page.get());
 }
 
 - (BOOL)_isFocused
