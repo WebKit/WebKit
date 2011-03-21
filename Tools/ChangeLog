@@ -1,5 +1,12 @@
 2011-03-21  Adam Roben  <aroben@apple.com>
 
+        Fix exceptions on the buildbot due to my last change
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunJavaScriptCoreTests.commandComplete): Catch exceptions due to actual.html not existing.
+
+2011-03-21  Adam Roben  <aroben@apple.com>
+
         Teach buildbot to treat run-javascriptcore-tests's actual.html as an HTML file
 
         Fixes <http://webkit.org/b/56746> build.webkit.org shows run-javascriptcore-tests's HTML
