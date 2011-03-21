@@ -1210,5 +1210,6 @@ plugins/refcount-leaks.html
 fast/js/array-sort-modifying-tostring.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=56488
+animations/suspend-resume-animation-events.html
 compositing/transitions/scale-transition-no-start.html
 compositing/transitions/singular-scale-transition.html

@@ -1,3 +1,12 @@
+2011-03-21  Adam Roben  <aroben@apple.com>
+
+        Skip another asserting animations test
+
+        <http://webkit.org/b/56488> tracks the failure
+
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2011-03-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
