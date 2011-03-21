@@ -196,7 +196,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     Settings::setDefaultMinDOMTimerInterval(0.004);
 
     m_drawingArea = DrawingArea::create(this, parameters);
-    m_mainFrame = WebFrame::createMainFrame(this);
+    m_mainFrame = WebFrame::createMainFrame(this, parameters.mainFrameName);
 
     setDrawsBackground(parameters.drawsBackground);
     setDrawsTransparentBackground(parameters.drawsTransparentBackground);

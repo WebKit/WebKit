@@ -291,6 +291,8 @@ public:
     void setCustomTextEncodingName(const String&);
     String customTextEncodingName() const { return m_customTextEncodingName; }
 
+    void setMainFrameName(const String&);
+
     double estimatedProgress() const;
 
     void terminateProcess();
@@ -661,6 +663,7 @@ private:
     String m_applicationNameForUserAgent;
     String m_customUserAgent;
     String m_customTextEncodingName;
+    String m_mainFrameName;
 
 #if ENABLE(INSPECTOR)
     RefPtr<WebInspectorProxy> m_inspector;

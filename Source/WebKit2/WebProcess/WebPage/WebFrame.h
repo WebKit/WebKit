@@ -54,7 +54,7 @@ class WebFrame : public APIObject {
 public:
     static const Type APIType = TypeBundleFrame;
 
-    static PassRefPtr<WebFrame> createMainFrame(WebPage*);
+    static PassRefPtr<WebFrame> createMainFrame(WebPage*, const String& frameName);
     static PassRefPtr<WebFrame> createSubframe(WebPage*, const String& frameName, WebCore::HTMLFrameOwnerElement*);
     ~WebFrame();
 

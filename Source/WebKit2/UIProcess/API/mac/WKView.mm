@@ -172,16 +172,6 @@ static bool useNewDrawingArea()
     return true;
 }
 
-- (id)initWithFrame:(NSRect)frame
-{
-    return [self initWithFrame:frame contextRef:toAPI(WebContext::sharedProcessContext())];
-}
-
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef
-{   
-    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:nil];
-}
-
 - (void)_registerDraggedTypes
 {
     NSMutableSet *types = [[NSMutableSet alloc] initWithArray:PasteboardTypes::forEditing()];
@@ -208,7 +198,22 @@ static bool useNewDrawingArea()
 #endif
 }
 
+- (id)initWithFrame:(NSRect)frame
+{
+    return [self initWithFrame:frame contextRef:toAPI(WebContext::sharedProcessContext())];
+}
+
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef
+{   
+    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:nil];
+}
+
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
+{
+    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:pageGroupRef mainFrameName:nil];
+}
+
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef mainFrameName:(NSString *)mainFrameName
 {
     self = [super initWithFrame:frame];
     if (!self)
@@ -230,7 +235,9 @@ static bool useNewDrawingArea()
 
     _data->_pageClient = PageClientImpl::create(self);
     _data->_page = toImpl(contextRef)->createWebPage(_data->_pageClient.get(), toImpl(pageGroupRef));
+    _data->_page->setMainFrameName(mainFrameName);
     _data->_page->initializeWebPage();
+
 #if ENABLE(FULLSCREEN_API)
     _data->_page->fullScreenManager()->setWebView(self);
 #endif

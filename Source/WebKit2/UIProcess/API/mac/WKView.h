@@ -36,6 +36,7 @@ WK_EXPORT
 
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef;
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef mainFrameName:(NSString *)mainFrameName;
 
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef;
 - (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef;
