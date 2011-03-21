@@ -1,3 +1,21 @@
+2011-03-21  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Add QNetworkReplyHandler::wasAborted()
+
+        Instead of checking if the ResourceHandle is null everywhere,
+        use a wasAborted() method to make the code readable.
+
+        * platform/network/qt/QNetworkReplyHandler.h:
+        (WebCore::QNetworkReplyHandler::wasAborted):
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        (WebCore::QNetworkReplyHandler::redirect):
+        (WebCore::QNetworkReplyHandler::forwardData):
+        (WebCore::QNetworkReplyHandler::uploadProgress):
+
 2011-03-21  Christian Dywan  <christian@lanedo.com>
 
         Reviewed by Martin Robinson.

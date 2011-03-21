@@ -66,6 +66,7 @@ private:
     String httpMethod() const;
     void resumeDeferredLoad();
     void redirect(ResourceResponse&, const QUrl&);
+    bool wasAborted() const { return !m_resourceHandle; }
 
     QNetworkReply* m_reply;
     ResourceHandle* m_resourceHandle;

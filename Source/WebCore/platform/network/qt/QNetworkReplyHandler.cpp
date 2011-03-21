@@ -297,7 +297,7 @@ void QNetworkReplyHandler::finish()
 
     sendResponseIfNeeded();
 
-    if (!m_resourceHandle)
+    if (wasAborted())
         return;
 
     ResourceHandleClient* client = m_resourceHandle->client();
@@ -348,7 +348,10 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     if (m_reply->error() && !shouldIgnoreHttpError(m_reply, m_responseContainsData))
         return;
 
-    if (m_responseSent || !m_resourceHandle)
+    if (wasAborted())
+        return;
+
+    if (m_responseSent)
         return;
     m_responseSent = true;
 
@@ -438,7 +441,7 @@ void QNetworkReplyHandler::redirect(ResourceResponse& response, const QUrl& redi
         newRequest.clearHTTPReferrer();
 
     client->willSendRequest(m_resourceHandle, newRequest, response);
-    if (!m_resourceHandle) // network error did cancel the request
+    if (wasAborted()) // Network error cancelled the request.
         return;
 
     QObject* originatingObject = 0;
@@ -465,7 +468,7 @@ void QNetworkReplyHandler::forwardData()
     if (m_redirected)
         return;
 
-    if (!m_resourceHandle)
+    if (wasAborted())
         return;
 
     QByteArray data = m_reply->read(m_reply->bytesAvailable());
@@ -483,7 +486,7 @@ void QNetworkReplyHandler::forwardData()
 
 void QNetworkReplyHandler::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
 {
-    if (!m_resourceHandle)
+    if (wasAborted())
         return;
 
     ResourceHandleClient* client = m_resourceHandle->client();
