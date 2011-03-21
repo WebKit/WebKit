@@ -3013,7 +3013,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
     if (!m_frame->page())
         return;
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC) && ENABLE(INSPECTOR)
     if (Page* page = m_frame->page()) {
         if (page->mainFrame() == m_frame)
             m_frame->page()->inspectorController()->resume();
