@@ -816,7 +816,6 @@
                                 'tests/TransparencyWinTest.cpp',
                                 'tests/UniscribeHelperTest.cpp',
                                 'tests/WebFrameTest.cpp',
-                                'tests/WebPageSerializerTest.cpp',
                             ],
                         }],
                         ['OS=="mac"', {
