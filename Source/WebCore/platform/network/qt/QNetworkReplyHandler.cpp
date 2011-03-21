@@ -252,8 +252,7 @@ void QNetworkReplyHandler::resumeDeferredLoad()
 void QNetworkReplyHandler::abort()
 {
     m_resourceHandle = 0;
-    if (m_reply) {
-        QNetworkReply* reply = release();
+    if (QNetworkReply* reply = release()) {
         reply->abort();
         reply->deleteLater();
     }
@@ -262,16 +261,13 @@ void QNetworkReplyHandler::abort()
 
 QNetworkReply* QNetworkReplyHandler::release()
 {
+    if (!m_reply)
+        return 0;
+
     QNetworkReply* reply = m_reply;
-    if (m_reply) {
-        disconnect(m_reply, 0, this, 0);
-        // We have queued connections to the QNetworkReply. Make sure any
-        // posted meta call events that were the result of a signal emission
-        // don't reach the slots in our instance.
-        QCoreApplication::removePostedEvents(this, QEvent::MetaCall);
-        m_reply->setParent(0);
-        m_reply = 0;
-    }
+    m_reply = 0;
+    disconnect(reply, 0, this, 0);
+    reply->setParent(0);
     return reply;
 }
 

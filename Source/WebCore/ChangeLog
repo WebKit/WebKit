@@ -1,3 +1,17 @@
+2011-03-21  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Clean up QNetworkReplyHandler::release()
+
+        Since QNetworkReplyHandler no longer uses queued connections to
+        the QNetworkReply, it's not necessary to mess with the event
+        queue when releasing a reply.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::abort):
+        (WebCore::QNetworkReplyHandler::release):
+
 2011-03-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
