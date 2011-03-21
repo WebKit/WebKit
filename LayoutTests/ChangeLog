@@ -1,3 +1,11 @@
+2011-03-20  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: removing stale Chromium expectations.
+
+        * platform/chromium-win-vista/svg/text/text-intro-05-t-expected.checksum: Removed.
+        * platform/chromium-win-vista/svg/text/text-intro-05-t-expected.png: Removed.
+        * platform/chromium-win-xp/svg/text/text-intro-05-t-expected.txt: Removed.
+
 2011-03-20  Sam Weinig  <sam@webkit.org>
 
         Add http/tests/appcache/origin-delete.html to the Skipped list for WebKit2,
