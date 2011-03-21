@@ -727,14 +727,15 @@
             'sources': ['<(PRODUCT_DIR)/resources/inspector/devtools.html'],
             'actions': [{
                 'action_name': 'devtools_html',
+                'script_name': 'scripts/generate_devtools_html.py',
+                'input_page': '../../WebCore/inspector/front-end/inspector.html',
                 'inputs': [
-                    'scripts/generate_devtools_html.py',
-                    # See issue 29695: WebKit.gypi is a source file for devtools.html.
-                    'WebKit.gypi',
-                    '../../WebCore/inspector/front-end/inspector.html',
+                    '<@(_script_name)',
+                    '<@(_input_page)',
+                    '<@(devtools_files)',
                 ],
                 'outputs': ['<(PRODUCT_DIR)/resources/inspector/devtools.html'],
-                'action': ['python', '<@(_inputs)', '<@(_outputs)', '<@(debug_devtools)', '<@(devtools_files)'],
+                'action': ['python', '<@(_script_name)', '<@(_input_page)', '<@(_outputs)', '<@(debug_devtools)', '<@(devtools_files)'],
             }],
         },
         {

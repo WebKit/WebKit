@@ -45,17 +45,17 @@ def GenerateIncludeTag(resource_path):
 
 def main(argv):
 
-    if len(argv) < 5:
-        print('usage: %s ignored inspector_html devtools_html debug'
+    if len(argv) < 4:
+        print('usage: %s inspector_html devtools_html debug'
               ' css_and_js_files_list' % argv[0])
         return 1
 
     # The first argument is ignored. We put 'webkit.gyp' in the inputs list
     # for this script, so every time the list of script gets changed, our html
     # file is rebuilt.
-    inspector_html_name = argv[2]
-    devtools_html_name = argv[3]
-    debug = argv[4] != '0'
+    inspector_html_name = argv[1]
+    devtools_html_name = argv[2]
+    debug = argv[3] != '0'
     inspector_html = open(inspector_html_name, 'r')
     devtools_html = open(devtools_html_name, 'w')
 
@@ -66,7 +66,7 @@ def main(argv):
             continue
         if '</head>' in line:
             if debug:
-                for resource in argv[5:]:
+                for resource in argv[4:]:
                     devtools_html.write(GenerateIncludeTag(resource))
             else:
                 devtools_html.write(GenerateIncludeTag("devTools.css"))

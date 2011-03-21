@@ -1,3 +1,20 @@
+2011-03-21  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [chromium] remove devtools_html's dependency on WebKit.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=56661
+
+        We want to depend on the values in the gypi file, not the gypi file
+        itself.  Actually, if someone edits a gypi file, s/he should re-run
+        gyp to pick up the new dependencies.
+
+        It turns out that this doesn't matter much for this target anymore
+        since we pull the .js dependencies from the inspector html file.
+
+        * WebKit.gyp: cleanup dependencies
+        * scripts/generate_devtools_html.py: remove unused param
+
 2011-03-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81377.
