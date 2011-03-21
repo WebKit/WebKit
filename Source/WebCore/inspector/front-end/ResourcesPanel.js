@@ -185,7 +185,7 @@ WebInspector.ResourcesPanel.prototype = {
 
         var parentTreeElement = parentFrameId ? this._treeElementForFrameId[parentFrameId] : this.resourcesListTreeElement;
         if (!parentTreeElement) {
-            console.warning("No frame with id:" + parentFrameId + " to route " + displayName + " to.")
+            console.warn("No frame with id:" + parentFrameId + " to route " + title + "/" + subtitle + " to.")
             return;
         }
 

@@ -51,7 +51,7 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
 {
     requestId : 4
     protocolErrors : {
-        0 : "Protocol Error: Argument 'frameId' with type 'Number' was not found."
+        0 : "Protocol Error: Argument 'frameId' with type 'String' was not found."
         1 : "Protocol Error: Argument 'url' with type 'String' was not found."
         2 : "Protocol Error: Argument 'base64Encode' with type 'Boolean' was not found."
     }
@@ -59,7 +59,7 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
 {
     requestId : 5
     protocolErrors : {
-        0 : "Protocol Error: Argument 'frameId' with type 'Number' was not found."
+        0 : "Protocol Error: Argument 'frameId' with type 'String' was not found."
         1 : "Protocol Error: Argument 'url' with type 'String' was not found."
         2 : "Protocol Error: Argument 'base64Encode' with type 'Boolean' was not found."
     }

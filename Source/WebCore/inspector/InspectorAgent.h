@@ -112,18 +112,18 @@ public:
     Page* inspectedPage() const { return m_inspectedPage; }
     KURL inspectedURL() const;
     KURL inspectedURLWithoutFragment() const;
-    void reloadPage(ErrorString* error, bool ignoreCache);
+    void reloadPage(ErrorString*, bool ignoreCache);
     void showConsole();
 
     void restoreInspectorStateFromCookie(const String& inspectorCookie);
 
-    void highlight(ErrorString* error, Node*);
-    void hideHighlight(ErrorString* error);
+    void highlight(ErrorString*, Node*);
+    void hideHighlight(ErrorString*);
     void inspect(Node*);
-    void highlightDOMNode(ErrorString* error, long nodeId);
+    void highlightDOMNode(ErrorString*, long nodeId);
     void hideDOMNodeHighlight(ErrorString* error) { hideHighlight(error); }
 
-    void highlightFrame(ErrorString* error, unsigned long frameId);
+    void highlightFrame(ErrorString*, const String& frameId);
     void hideFrameHighlight(ErrorString* error) { hideHighlight(error); }
 
     void setFrontend(InspectorFrontend*);
@@ -162,8 +162,8 @@ public:
 
     void didCommitLoad(DocumentLoader*);
 
-    void getCookies(ErrorString* error, RefPtr<InspectorArray>* cookies, WTF::String* cookiesString);
-    void deleteCookie(ErrorString* error, const String& cookieName, const String& domain);
+    void getCookies(ErrorString*, RefPtr<InspectorArray>* cookies, WTF::String* cookiesString);
+    void deleteCookie(ErrorString*, const String& cookieName, const String& domain);
 
     void domContentLoadedEventFired(DocumentLoader*, const KURL&);
     void loadEventFired(DocumentLoader*, const KURL&);
@@ -179,7 +179,7 @@ public:
     bool hasFrontend() const { return m_frontend; }
 
     void drawNodeHighlight(GraphicsContext&) const;
-    void openInInspectedWindow(ErrorString* error, const String& url);
+    void openInInspectedWindow(ErrorString*, const String& url);
     void drawElementTitle(GraphicsContext&, const IntRect& boundingBox, const IntRect& anchorBox, const FloatRect& overlayRect, WebCore::Settings*) const;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -190,8 +190,8 @@ public:
     // Generic code called from custom implementations.
     void evaluateForTestInFrontend(long testCallId, const String& script);
 
-    void addScriptToEvaluateOnLoad(ErrorString* error, const String& source);
-    void removeAllScriptsToEvaluateOnLoad(ErrorString* error);
+    void addScriptToEvaluateOnLoad(ErrorString*, const String& source);
+    void removeAllScriptsToEvaluateOnLoad(ErrorString*);
     void setInspectorExtensionAPI(const String& source);
 
     InspectorState* state() { return m_state.get(); }
@@ -200,10 +200,10 @@ public:
     void getInspectorState(RefPtr<InspectorObject>* state);
     void setMonitoringXHREnabled(bool enabled, bool* newState);
     // Following are used from InspectorBackend and internally.
-    void setSearchingForNode(ErrorString* error, bool enabled, bool* newState);
-    void didEvaluateForTestInFrontend(ErrorString* error, long callId, const String& jsonResult);
+    void setSearchingForNode(ErrorString*, bool enabled, bool* newState);
+    void didEvaluateForTestInFrontend(ErrorString*, long callId, const String& jsonResult);
 
-    void setUserAgentOverride(ErrorString* error, const String& userAgent);
+    void setUserAgentOverride(ErrorString*, const String& userAgent);
     void applyUserAgentOverride(String* userAgent) const;
 
 private:

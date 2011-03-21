@@ -52,7 +52,7 @@
             {
                 "name": "highlightFrame",
                 "parameters": [
-                    { "name": "frameId", "type": "unsigned" }
+                    { "name": "frameId", "type": "string" }
                 ]
             },
             {
@@ -262,7 +262,7 @@
             {
                 "name": "resourceContent",
                 "parameters": [
-                    { "name": "frameId", "type": "unsigned" },
+                    { "name": "frameId", "type": "string" },
                     { "name": "url", "type": "string" },
                     { "name": "base64Encode", "type": "boolean" }
                 ],
@@ -282,7 +282,7 @@
             {
                 "name": "frameDetachedFromParent",
                 "parameters": [
-                    { "name": "frameId", "type": "unsigned" }
+                    { "name": "frameId", "type": "string" }
                 ]
             },
             {

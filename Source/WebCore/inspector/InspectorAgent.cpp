@@ -283,15 +283,11 @@ void InspectorAgent::highlightDOMNode(ErrorString* error, long nodeId)
         highlight(error, node);
 }
 
-void InspectorAgent::highlightFrame(ErrorString* error, unsigned long frameId)
+void InspectorAgent::highlightFrame(ErrorString* error, const String& frameId)
 {
-    Frame* mainFrame = m_inspectedPage->mainFrame();
-    for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext(mainFrame)) {
-        if (reinterpret_cast<uintptr_t>(frame) == frameId && frame->ownerElement()) {
-            highlight(error, frame->ownerElement());
-            return;
-        }
-    }
+    Frame* frame = m_resourceAgent->frameForId(frameId);
+    if (frame && frame->ownerElement())
+        highlight(error, frame->ownerElement());
 }
 
 void InspectorAgent::hideHighlight(ErrorString*)

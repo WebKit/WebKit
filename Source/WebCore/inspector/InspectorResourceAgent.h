@@ -107,12 +107,12 @@ public:
     void didCloseWebSocket(unsigned long identifier);
 #endif
 
-    Frame* frameForId(unsigned long);
+    Frame* frameForId(const String& frameId);
 
     // Called from frontend 
     void enable(ErrorString*, RefPtr<InspectorObject>*);
     void disable(ErrorString*);
-    void resourceContent(ErrorString*, unsigned long frameId, const String& url, bool base64Encode, bool* resourceFound, String* content);
+    void resourceContent(ErrorString*, const String& frameId, const String& url, bool base64Encode, bool* resourceFound, String* content);
     void setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject>);
 
 private:

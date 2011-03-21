@@ -231,16 +231,18 @@ static PassRefPtr<InspectorObject> buildObjectForResourceResponse(const Resource
     return responseObject;
 }
 
-static unsigned long frameId(Frame* frame)
+static String pointerAsId(void* pointer)
 {
-    return reinterpret_cast<uintptr_t>(frame);
+    unsigned long long address = reinterpret_cast<uintptr_t>(pointer);
+    // We want 0 to be "", so that JavaScript checks for if (frameId) worked.
+    return String::format("%.0llX", address);
 }
 
 static PassRefPtr<InspectorObject> buildObjectForDocumentLoader(DocumentLoader* loader)
 {
     RefPtr<InspectorObject> documentLoaderObject = InspectorObject::create();
-    documentLoaderObject->setNumber("frameId", frameId(loader->frame()));
-    documentLoaderObject->setNumber("loaderId", reinterpret_cast<uintptr_t>(loader));
+    documentLoaderObject->setString("frameId", pointerAsId(loader->frame()));
+    documentLoaderObject->setString("loaderId", pointerAsId(loader));
     documentLoaderObject->setString("url", loader->requestURL().string());
     return documentLoaderObject;
 }
@@ -410,8 +412,8 @@ void InspectorResourceAgent::setInitialContent(unsigned long identifier, const S
 static PassRefPtr<InspectorObject> buildObjectForFrame(Frame* frame)
 {
     RefPtr<InspectorObject> frameObject = InspectorObject::create();
-    frameObject->setNumber("id", frameId(frame));
-    frameObject->setNumber("parentId", frameId(frame->tree()->parent()));
+    frameObject->setString("id", pointerAsId(frame));
+    frameObject->setString("parentId", pointerAsId(frame->tree()->parent()));
     if (frame->ownerElement()) {
         String name = frame->ownerElement()->getAttribute(HTMLNames::nameAttr);
         if (name.isEmpty())
@@ -446,7 +448,7 @@ void InspectorResourceAgent::didCommitLoad(DocumentLoader* loader)
 
 void InspectorResourceAgent::frameDetachedFromParent(Frame* frame)
 {
-    m_frontend->frameDetachedFromParent(frameId(frame));
+    m_frontend->frameDetachedFromParent(pointerAsId(frame));
 }
 
 #if ENABLE(WEB_SOCKETS)
@@ -499,11 +501,11 @@ void InspectorResourceAgent::didCloseWebSocket(unsigned long identifier)
 }
 #endif // ENABLE(WEB_SOCKETS)
 
-Frame* InspectorResourceAgent::frameForId(unsigned long frameId)
+Frame* InspectorResourceAgent::frameForId(const String& frameId)
 {
     Frame* mainFrame = m_page->mainFrame();
     for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext(mainFrame)) {
-        if (reinterpret_cast<uintptr_t>(frame) == frameId)
+        if (pointerAsId(frame) == frameId)
             return frame;
     }
     return 0;
@@ -529,7 +531,7 @@ void InspectorResourceAgent::disable(ErrorString*)
     m_instrumentingAgents->setInspectorResourceAgent(0);
 }
 
-void InspectorResourceAgent::resourceContent(ErrorString*, unsigned long frameId, const String& url, bool base64Encode, bool* success, String* content)
+void InspectorResourceAgent::resourceContent(ErrorString*, const String& frameId, const String& url, bool base64Encode, bool* success, String* content)
 {
     Frame* frame = frameForId(frameId);
     if (!frame) {

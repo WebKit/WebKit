@@ -2,6 +2,28 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: make frameId in network agent of type string, not unsigned long.
+        https://bugs.webkit.org/show_bug.cgi?id=56708
+
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::highlightFrame):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::pointerAsId):
+        (WebCore::buildObjectForDocumentLoader):
+        (WebCore::buildObjectForFrame):
+        (WebCore::InspectorResourceAgent::frameDetachedFromParent):
+        (WebCore::InspectorResourceAgent::frameForId):
+        (WebCore::InspectorResourceAgent::resourceContent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.addOrUpdateFrame):
+
+2011-03-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: expose object id as string, not JSON struct in the protocol.
         https://bugs.webkit.org/show_bug.cgi?id=56681
 
