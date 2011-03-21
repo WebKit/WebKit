@@ -95,6 +95,10 @@
 #include "TouchEvent.h"
 #endif
 
+#if ENABLE(ENABLE_GESTURE_RECOGNIZER)
+#include "PlatformGestureRecognizer.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -201,6 +205,9 @@ EventHandler::EventHandler(Frame* frame)
 #endif
 #if ENABLE(TOUCH_EVENTS)
     , m_touchPressed(false)
+#endif
+#if ENABLE(ENABLE_GESTURE_RECOGNIZER)
+    , m_gestureRecognizer(PlatformGestureRecognizer::create())
 #endif
 {
 }
@@ -3100,6 +3107,11 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             defaultPrevented |= touchEvent->defaultPrevented();
         }
     }
+
+#if ENABLE(ENABLE_GESTURE_RECOGNIZER)
+    if (m_gestureRecognizer)
+        m_gestureRecognizer->processTouchEventForGesture(event, this, defaultPrevented);
+#endif
 
     return defaultPrevented;
 }

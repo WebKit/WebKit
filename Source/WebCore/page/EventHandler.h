@@ -34,6 +34,7 @@
 #include "TextEventInputType.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(MAC) && !defined(__OBJC__)
@@ -74,6 +75,10 @@ class Widget;
 
 #if ENABLE(GESTURE_EVENTS)
 class PlatformGestureEvent;
+#endif
+
+#if ENABLE(ENABLE_GESTURE_RECOGNIZER)
+class PlatformGestureRecognizer;
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
@@ -449,6 +454,9 @@ private:
     typedef HashMap<int, RefPtr<EventTarget> > TouchTargetMap;
     TouchTargetMap m_originatingTouchPointTargets;
     bool m_touchPressed;
+#endif
+#if ENABLE(ENABLE_GESTURE_RECOGNIZER)
+    OwnPtr<PlatformGestureRecognizer> m_gestureRecognizer;
 #endif
 };
 

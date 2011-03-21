@@ -1,3 +1,26 @@
+2011-03-21  Robert Kroeger  <rjkroege@chromium.org>
+
+        Reviewed by Antonio Gomes.
+
+        Add Support to WebCore to optionally call a platform-specific gesture recognizer
+        https://bugs.webkit.org/show_bug.cgi?id=49345
+
+        Added an ability for the EventHandler to invoke an optional platform
+        specific gesture recognizer.
+
+        No tests added because the change should be functionally invisible.
+
+        * WebCore.gypi:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::handleTouchEvent):
+        * page/EventHandler.h:
+        * platform/PlatformGestureRecognizer.cpp: Added.
+        (WebCore::PlatformGestureRecognizer::PlatformGestureRecognizer):
+        (WebCore::PlatformGestureRecognizer::~PlatformGestureRecognizer):
+        (WebCore::PlatformGestureRecognizer::create):
+        * platform/PlatformGestureRecognizer.h: Added.
+
 2011-03-21  Dean Jackson  <dino@apple.com>
 
         Reviewed by Chris Marrin and Simon Fraser.

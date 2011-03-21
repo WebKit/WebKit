@@ -1,3 +1,13 @@
+2011-03-21  Robert Kroeger  <rjkroege@chromium.org>
+
+        Reviewed by Antonio Gomes.
+
+        Flag to enable a platform specific GestureReocognizer framework in Chromium.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49345
+
+        * features.gypi:
+
 2011-03-21  Tony Chang  <tony@chromium.org>
 
         Reviewed by Pavel Feldman.

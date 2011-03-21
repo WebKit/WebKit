@@ -1,3 +1,13 @@
+2011-03-21  Robert Kroeger  <rjkroege@chromium.org>
+
+        Reviewed by Antonio Gomes.
+
+        Flag to enable/disable a GestureReocognizer framework
+
+        https://bugs.webkit.org/show_bug.cgi?id=49345
+
+        * wtf/Platform.h:
+
 2011-03-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
