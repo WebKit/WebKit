@@ -8,13 +8,4 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV > BOD
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 8 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (0,0) size 800x600
-      RenderBlock {DIV} at (0,0) size 800x18
-        RenderText {#text} at (0,0) size 193x18
-          text run at (0,0) width 193: "Select me, select me, select me"
-selection start: position 4 of child 0 {#text} of child 1 {DIV} of body
-selection end:   position 8 of child 0 {#text} of child 1 {DIV} of body
+Select me, select me, select me

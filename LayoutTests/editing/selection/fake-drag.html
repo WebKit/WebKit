@@ -1,12 +1,14 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpEditingCallbacks();
+}
 </script>
 
 <style>
-body { margin: 0; padding: 0 }
+body { margin: 0; padding: 0; }
 </style>
 <script type="text/javascript">
 function step7()
@@ -18,43 +20,44 @@ function step7()
 function step6()
 {
     eventSender.mouseMoveTo(50, 10);
-    window.setTimeout(step7, 1);
+    window.setTimeout(step7, 0);
 }
 
 function step5()
 {
     eventSender.mouseMoveTo(31, 10);
-    window.setTimeout(step6, 1);
+    window.setTimeout(step6, 0);
 }
 
 function step4()
 {
     eventSender.mouseDown();
-    window.setTimeout(step5, 1);
+    window.setTimeout(step5, 0);
 }
 
 function step3()
 {
     eventSender.mouseMoveTo(30, 10);
-    window.setTimeout(step4, 1000);
+    eventSender.leapForward(1000);
+    window.setTimeout(step4, 0);
 }
 
 function step2()
 {
     eventSender.mouseUp();
-    window.setTimeout(step3, 1);
+    window.setTimeout(step3, 0);
 }
 
 function step1()
 {
     eventSender.mouseDown();
-    window.setTimeout(step2, 1);
+    window.setTimeout(step2, 0);
 }
 
 function step0()
 {
     eventSender.mouseMoveTo(1, 10);
-    window.setTimeout(step1, 1);
+    window.setTimeout(step1, 0);
 }
 
 step0();
