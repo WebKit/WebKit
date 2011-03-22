@@ -1,3 +1,13 @@
+2011-03-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        Going to certain pages causes a download of "st.html" or "jsp.html" (news.yahoo.com, etc.)
+        <rdar://problem/9139245>
+
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2011-03-17  Anders Carlsson  <andersca@apple.com>
 
         Add WKWindowWillOrderOffScreenNotification.
