@@ -1,3 +1,32 @@
+2011-03-22  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56242
+        Interrupted accelerated animations/transitions were causing
+        subsequent animations to not start (because they were stuck
+        waiting for a response from the compositing layer). I renamed
+        the instance variable that indicates whether or not to
+        notify animations of start time, from m_waitingForStartTimeResponse
+        to m_waitingForAsyncStartNotification, so that it makes more sense.
+        The actual bug fix was changing the logic so that the flag is reset
+        when the list of waiting animations becomes empty. I mistakenly committed
+        the bad logic in r81613.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        - Always set paused time as we enter the paused state
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::AnimationControllerPrivate):
+        (WebCore::AnimationControllerPrivate::endAnimationUpdate):
+        (WebCore::AnimationControllerPrivate::receivedStartTimeResponse):
+        (WebCore::AnimationControllerPrivate::addToAnimationsWaitingForStartTimeResponse):
+        (WebCore::AnimationControllerPrivate::removeFromAnimationsWaitingForStartTimeResponse):
+        - reset the waiting flag when the list is empty (rather than not empty)
+        (WebCore::AnimationControllerPrivate::startTimeResponse):
+        * page/animation/AnimationControllerPrivate.h:
+        - rename m_waitingForStartTimeResponse to m_waitingForAsyncStartNotification
+
 2011-03-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

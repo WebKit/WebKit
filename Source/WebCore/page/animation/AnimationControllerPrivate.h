@@ -129,7 +129,7 @@ private:
     typedef HashSet<RefPtr<AnimationBase> > WaitingAnimationsSet;
     WaitingAnimationsSet m_animationsWaitingForStyle;
     WaitingAnimationsSet m_animationsWaitingForStartTimeResponse;
-    bool m_waitingForStartTimeResponse;
+    bool m_waitingForAsyncStartNotification;
 };
 
 } // namespace WebCore

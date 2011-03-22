@@ -1065,7 +1065,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
             } else {
                 // We are pausing while waiting for a start response. Cancel the animation and wait. When 
                 // we unpause, we will act as though the start timer just fired
-                m_pauseTime = -1;
+                m_pauseTime = beginAnimationUpdateTime();
                 pauseAnimation(beginAnimationUpdateTime() - m_startTime);
                 m_animState = AnimationStatePausedWaitResponse;
             }
