@@ -158,7 +158,7 @@ public:
     int getFlowSpacingLogicalWidth();
     bool onEndChain(RenderObject* endObject);
     float placeBoxesInInlineDirection(float logicalLeft, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap&);
-    void computeLogicalBoxHeights(int& maxPositionTop, int& maxPositionBottom,
+    void computeLogicalBoxHeights(RootInlineBox*, int& maxPositionTop, int& maxPositionBottom,
                                   int& maxAscent, int& maxDescent, bool& setMaxAscent, bool& setMaxDescent,
                                   bool strictMode, GlyphOverflowAndFallbackFontsMap&, FontBaseline, VerticalPositionCache&);
     void adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent,

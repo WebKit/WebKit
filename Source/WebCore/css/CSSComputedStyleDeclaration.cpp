@@ -29,6 +29,7 @@
 #include "CounterContent.h"
 #include "CursorList.h"
 #include "CSSBorderImageValue.h"
+#include "CSSLineBoxContainValue.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueCache.h"
@@ -200,6 +201,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitHyphenateLimitAfter,
     CSSPropertyWebkitHyphenateLimitBefore,
     CSSPropertyWebkitHyphens,
+    CSSPropertyWebkitLineBoxContain,
     CSSPropertyWebkitLineBreak,
     CSSPropertyWebkitLineClamp,
     CSSPropertyWebkitLocale,
@@ -565,6 +567,13 @@ static PassRefPtr<CSSValue> getTimingFunctionValue(const AnimationList* animList
         }
     }
     return list.release();
+}
+
+static PassRefPtr<CSSValue> createLineBoxContainValue(CSSPrimitiveValueCache* primitiveValueCache, unsigned lineBoxContain)
+{
+    if (!lineBoxContain)
+        return primitiveValueCache->createIdentifierValue(CSSValueNone);
+    return CSSLineBoxContainValue::create(lineBoxContain);
 }
 
 CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(PassRefPtr<Node> n, bool allowVisitedStyle, const String& pseudoElementName)
@@ -1636,7 +1645,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createValue(style->textCombine());
         case CSSPropertyWebkitTextOrientation:
             return CSSPrimitiveValue::create(style->fontDescription().textOrientation());
-
+        case CSSPropertyWebkitLineBoxContain:
+            return createLineBoxContainValue(primitiveValueCache, style->lineBoxContain());
         case CSSPropertyContent:
             return contentToCSSValue(style.get(), primitiveValueCache);
         case CSSPropertyCounterIncrement:

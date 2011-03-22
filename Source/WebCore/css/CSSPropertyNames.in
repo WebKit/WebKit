@@ -231,6 +231,7 @@ z-index
 -webkit-hyphenate-limit-after
 -webkit-hyphenate-limit-before
 -webkit-hyphens
+-webkit-line-box-contain
 -webkit-line-break
 -webkit-line-clamp
 -webkit-locale

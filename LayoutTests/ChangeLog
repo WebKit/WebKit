@@ -1,3 +1,84 @@
+2011-03-22  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56388
+        
+        Implement the CSS3 line-box-contain property. This property provides authors with more control over spacing between lines. For example,
+        you can fix the height of lines and cause all line contents to be ignored. You can make lines fit to glyphs. You can ignore leading and
+        fit to the font size. You can ignore replaced elements, etc.
+
+        Refactor the code in computeLogicalBoxHeights into helper methods on RootInlineBox. verticalPositionForBox moved over to RootInlineBox
+        so that it could be called from RenderBlockLineLayout. ascentAndDescentForBox is the new method that computes the appropriate box
+        height based off the block's line-box-contain value.
+        
+        GlyphOverflow can now have a computeBounds parameter set, in which case glyph bounds will be computed and stored in the overflow struct.
+        
+        RenderInline no longer returns 0 margins in the block direction, since line-box-contain can size around the margin box.
+    
+        * fast/block/lineboxcontain: Added.
+        * fast/block/lineboxcontain/block-font.html: Added.
+        * fast/block/lineboxcontain/block-glyphs-replaced.html: Added.
+        * fast/block/lineboxcontain/block-glyphs.html: Added.
+        * fast/block/lineboxcontain/block-replaced.html: Added.
+        * fast/block/lineboxcontain/block.html: Added.
+        * fast/block/lineboxcontain/font-replaced.html: Added.
+        * fast/block/lineboxcontain/font.html: Added.
+        * fast/block/lineboxcontain/glyphs.html: Added.
+        * fast/block/lineboxcontain/inline-box-replaced.html: Added.
+        * fast/block/lineboxcontain/inline-box-vertical.html: Added.
+        * fast/block/lineboxcontain/inline-box.html: Added.
+        * fast/block/lineboxcontain/inline-replaced.html: Added.
+        * fast/block/lineboxcontain/inline.html: Added.
+        * fast/block/lineboxcontain/none.html: Added.
+        * fast/block/lineboxcontain/replaced.html: Added.
+        * platform/mac/fast/block/lineboxcontain: Added.
+        * platform/mac/fast/block/lineboxcontain/block-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/block-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/block-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/block-font-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/block-font-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/block-font-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/block-glyphs-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/block-glyphs-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/block-glyphs-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/block-glyphs-replaced-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/block-glyphs-replaced-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/block-glyphs-replaced-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/block-replaced-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/block-replaced-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/block-replaced-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/font-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/font-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/font-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/font-replaced-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/font-replaced-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/font-replaced-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/glyphs-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/glyphs-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/glyphs-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-box-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-box-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-box-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-box-replaced-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-box-replaced-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-box-replaced-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-box-vertical-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-box-vertical-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-box-vertical-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-replaced-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-replaced-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/inline-replaced-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/none-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/none-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/none-expected.txt: Added.
+        * platform/mac/fast/block/lineboxcontain/replaced-expected.checksum: Added.
+        * platform/mac/fast/block/lineboxcontain/replaced-expected.png: Added.
+        * platform/mac/fast/block/lineboxcontain/replaced-expected.txt: Added.
+
 2011-03-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81664.

@@ -36,6 +36,7 @@
 #include "CSSImportRule.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
+#include "CSSLineBoxContainValue.h"
 #include "CSSMediaRule.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPageRule.h"
@@ -1836,6 +1837,13 @@ bool CSSParser::parseValue(int propId, bool important)
         // FIXME: For now just support upright and vertical-right.
         if (id == CSSValueVerticalRight || id == CSSValueUpright)
             validPrimitive = true;
+        break;
+
+    case CSSPropertyWebkitLineBoxContain:
+        if (id == CSSValueNone)
+            validPrimitive = true;
+        else
+            return parseLineBoxContain(important);
         break;
 
 #if ENABLE(SVG)
@@ -5610,6 +5618,46 @@ bool CSSParser::parseTextEmphasisStyle(bool important)
     }
 
     return false;
+}
+
+bool CSSParser::parseLineBoxContain(bool important)
+{
+    LineBoxContain lineBoxContain = LineBoxContainNone;
+
+    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
+        if (value->id == CSSValueBlock) {
+            if (lineBoxContain & LineBoxContainBlock)
+                return false;
+            lineBoxContain |= LineBoxContainBlock;
+        } else if (value->id == CSSValueInline) {
+            if (lineBoxContain & LineBoxContainInline)
+                return false;
+            lineBoxContain |= LineBoxContainInline;
+        } else if (value->id == CSSValueFont) {
+            if (lineBoxContain & LineBoxContainFont)
+                return false;
+            lineBoxContain |= LineBoxContainFont;
+        } else if (value->id == CSSValueGlyphs) {
+            if (lineBoxContain & LineBoxContainGlyphs)
+                return false;
+            lineBoxContain |= LineBoxContainGlyphs;
+        } else if (value->id == CSSValueReplaced) {
+            if (lineBoxContain & LineBoxContainReplaced)
+                return false;
+            lineBoxContain |= LineBoxContainReplaced;
+        } else if (value->id == CSSValueInlineBox) {
+            if (lineBoxContain & LineBoxContainInlineBox)
+                return false;
+            lineBoxContain |= LineBoxContainInlineBox;
+        } else
+            return false;
+    }
+    
+    if (!lineBoxContain)
+        return false;
+
+    addProperty(CSSPropertyWebkitLineBoxContain, CSSLineBoxContainValue::create(lineBoxContain), important);
+    return true;
 }
 
 static inline int yyerror(const char*) { return 1; }

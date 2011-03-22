@@ -31745,6 +31745,14 @@
 				RelativePath="..\css\CSSInitialValue.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\css\CSSLineBoxContainValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSLineBoxContainValue.h"
+				>
+			</File>
 			<File
 				RelativePath="..\css\CSSMediaRule.cpp"
 				>

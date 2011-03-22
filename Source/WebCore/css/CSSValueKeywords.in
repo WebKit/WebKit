@@ -794,3 +794,11 @@ farthest-corner
 # -webkit-text-orientation
 upright
 vertical-right
+
+# -webkit-line-box-contain
+font
+glyphs
+inline-box
+replaced
+
+

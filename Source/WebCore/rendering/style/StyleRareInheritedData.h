@@ -84,6 +84,7 @@ public:
     unsigned textEmphasisFill : 1; // TextEmphasisFill
     unsigned textEmphasisMark : 3; // TextEmphasisMark
     unsigned textEmphasisPosition : 1; // TextEmphasisPosition
+    unsigned m_lineBoxContain: 7; // LineBoxContain
 
     AtomicString hyphenationString;
     short hyphenationLimitBefore;

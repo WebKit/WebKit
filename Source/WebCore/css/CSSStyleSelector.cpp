@@ -35,6 +35,7 @@
 #include "CSSCursorImageValue.h"
 #include "CSSFontFaceRule.h"
 #include "CSSImportRule.h"
+#include "CSSLineBoxContainValue.h"
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
 #include "CSSParser.h"
@@ -6170,6 +6171,21 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (m_style->setFontDescription(fontDescription))
                 m_fontDirty = true;
         }
+        return;
+    }
+
+    case CSSPropertyWebkitLineBoxContain: {
+        HANDLE_INHERIT_AND_INITIAL(lineBoxContain, LineBoxContain)
+        if (primitiveValue && primitiveValue->getIdent() == CSSValueNone) {
+            m_style->setLineBoxContain(LineBoxContainNone);
+            return;
+        }
+        
+        if (!value->isCSSLineBoxContainValue())
+            return;
+        
+        CSSLineBoxContainValue* lineBoxContainValue = static_cast<CSSLineBoxContainValue*>(value);
+        m_style->setLineBoxContain(lineBoxContainValue->value());
         return;
     }
 

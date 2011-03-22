@@ -325,7 +325,8 @@ ETextAlign RenderBlock::textAlignmentForLine(bool endsWithSoftBreak) const
     return alignment;
 }
 
-void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
+void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd,
+                                                         GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)
 {
     ETextAlign textAlign = textAlignmentForLine(!reachedEnd && !lineBox->endsWithBreak());
     float logicalLeft = logicalLeftOffsetForLine(logicalHeight(), firstLine);
@@ -358,6 +359,21 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             }
             HashSet<const SimpleFontData*> fallbackFonts;
             GlyphOverflow glyphOverflow;
+            
+            // Always compute glyph overflow if the block's line-box-contain value is "glyphs".
+            if (lineBox->fitsToGlyphs()) {
+                // If we don't stick out of the root line's font box, then don't bother computing our glyph overflow. This optimization
+                // will keep us from computing glyph bounds in nearly all cases.
+                bool includeRootLine = lineBox->includesRootLineBoxFontOrLeading();
+                int baselineShift = lineBox->verticalPositionForBox(r->m_box, verticalPositionCache);
+                int rootDescent = includeRootLine ? lineBox->renderer()->style(firstLine)->font().fontMetrics().descent() : 0;
+                int rootAscent = includeRootLine ? lineBox->renderer()->style(firstLine)->font().fontMetrics().ascent() : 0;
+                int boxAscent = rt->style(firstLine)->font().fontMetrics().ascent() - baselineShift;
+                int boxDescent = rt->style(firstLine)->font().fontMetrics().descent() + baselineShift;
+                if (boxAscent > rootDescent ||  boxDescent > rootAscent)
+                    glyphOverflow.computeBounds = true; 
+            }
+
             int hyphenWidth = 0;
             if (static_cast<InlineTextBox*>(r->m_box)->hasHyphen()) {
                 const AtomicString& hyphenString = rt->style()->hyphenString();
@@ -773,10 +789,10 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
 #endif
 
                         GlyphOverflowAndFallbackFontsMap textBoxDataMap;
-
+                    
                         // Now we position all of our text runs horizontally.
                         if (!isSVGRootInlineBox)
-                            computeInlineDirectionPositionsForLine(lineBox, firstLine, resolver.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap);
+                            computeInlineDirectionPositionsForLine(lineBox, firstLine, resolver.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap, verticalPositionCache);
 
                         // Now position our text runs vertically.
                         computeBlockDirectionPositionsForLine(lineBox, resolver.firstRun(), textBoxDataMap, verticalPositionCache);

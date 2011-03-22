@@ -177,7 +177,7 @@ float Font::width(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFo
         // If the complex text implementation cannot return fallback fonts, avoid
         // returning them for simple text as well.
         static bool returnFallbackFonts = canReturnFallbackFontsForComplexText();
-        return floatWidthForSimpleText(run, 0, returnFallbackFonts ? fallbackFonts : 0, codePathToUse == SimpleWithGlyphOverflow ? glyphOverflow : 0);
+        return floatWidthForSimpleText(run, 0, returnFallbackFonts ? fallbackFonts : 0, codePathToUse == SimpleWithGlyphOverflow || (glyphOverflow && glyphOverflow->computeBounds) ? glyphOverflow : 0);
     }
 
     return floatWidthForComplexText(run, fallbackFonts, glyphOverflow);

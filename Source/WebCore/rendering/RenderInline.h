@@ -42,8 +42,8 @@ public:
     virtual int marginRight() const;
     virtual int marginTop() const;
     virtual int marginBottom() const;
-    virtual int marginBefore() const { return 0; }
-    virtual int marginAfter() const { return 0; }
+    virtual int marginBefore() const;
+    virtual int marginAfter() const;
     virtual int marginStart() const;
     virtual int marginEnd() const;
 

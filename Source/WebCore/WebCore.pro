@@ -394,6 +394,7 @@ SOURCES += \
     css/CSSImportRule.cpp \
     css/CSSInheritedValue.cpp \
     css/CSSInitialValue.cpp \
+    css/CSSLineBoxContainValue.cpp \
     css/CSSMediaRule.cpp \
     css/CSSMutableStyleDeclaration.cpp \
     css/CSSOMUtils.cpp \

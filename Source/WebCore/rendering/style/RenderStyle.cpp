@@ -396,7 +396,8 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             rareInheritedData->locale != other->rareInheritedData->locale ||
             rareInheritedData->textEmphasisMark != other->rareInheritedData->textEmphasisMark ||
             rareInheritedData->textEmphasisPosition != other->rareInheritedData->textEmphasisPosition ||
-            rareInheritedData->textEmphasisCustomMark != other->rareInheritedData->textEmphasisCustomMark)
+            rareInheritedData->textEmphasisCustomMark != other->rareInheritedData->textEmphasisCustomMark ||
+            rareInheritedData->m_lineBoxContain != other->rareInheritedData->m_lineBoxContain)
             return StyleDifferenceLayout;
 
         if (!rareInheritedData->shadowDataEquivalent(*other->rareInheritedData.get()))

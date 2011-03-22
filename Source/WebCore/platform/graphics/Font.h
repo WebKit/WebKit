@@ -61,6 +61,7 @@ struct GlyphOverflow {
         , right(0)
         , top(0)
         , bottom(0)
+        , computeBounds(false)
     {
     }
 
@@ -68,7 +69,9 @@ struct GlyphOverflow {
     int right;
     int top;
     int bottom;
+    bool computeBounds;
 };
+
 
 class Font {
 public:

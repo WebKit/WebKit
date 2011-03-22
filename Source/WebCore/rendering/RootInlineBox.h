@@ -133,6 +133,15 @@ public:
 
     IntRect paddedLayoutOverflowRect(int endPadding) const;
 
+    void ascentAndDescentForBox(InlineBox*, GlyphOverflowAndFallbackFontsMap&, int& ascent, int& descent, bool& affectsAscent, bool& affectsDescent) const;
+    int verticalPositionForBox(InlineBox*, VerticalPositionCache&);
+    bool includeLeadingForBox(InlineBox*) const;
+    bool includeFontForBox(InlineBox*) const;
+    bool includeGlyphsForBox(InlineBox*) const;
+    bool includeMarginForBox(InlineBox*) const;
+    bool fitsToGlyphs() const;
+    bool includesRootLineBoxFontOrLeading() const;
+
 private:
     bool hasEllipsisBox() const { return m_hasEllipsisBoxOrHyphen; }
     void setHasEllipsisBox(bool hasEllipsisBox) { m_hasEllipsisBoxOrHyphen = hasEllipsisBox; }

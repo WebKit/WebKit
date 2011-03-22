@@ -5033,6 +5033,8 @@
 		BC772C4E0C4EB3040083285F /* MIMETypeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */; };
 		BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772C4D0C4EB3040083285F /* MIMETypeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC772C5E0C4EB3440083285F /* MIMETypeRegistryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */; };
+		BC772E131331620C001EC9CE /* CSSLineBoxContainValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772E121331620C001EC9CE /* CSSLineBoxContainValue.h */; };
+		BC772E16133162C2001EC9CE /* CSSLineBoxContainValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772E15133162C2001EC9CE /* CSSLineBoxContainValue.cpp */; };
 		BC77CB870FEBF5AF0070887B /* HTMLDataGridColElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC77CB860FEBF5AF0070887B /* HTMLDataGridColElement.h */; };
 		BC77CBAA0FEBF6C90070887B /* HTMLDataGridColElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC77CBA90FEBF6C90070887B /* HTMLDataGridColElement.cpp */; };
 		BC77CBD30FEBF8310070887B /* JSHTMLDataGridColElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC77CBD10FEBF8310070887B /* JSHTMLDataGridColElement.cpp */; };
@@ -11434,6 +11436,8 @@
 		BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MIMETypeRegistry.cpp; sourceTree = "<group>"; };
 		BC772C4D0C4EB3040083285F /* MIMETypeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MIMETypeRegistry.h; sourceTree = "<group>"; };
 		BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MIMETypeRegistryMac.mm; sourceTree = "<group>"; };
+		BC772E121331620C001EC9CE /* CSSLineBoxContainValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSLineBoxContainValue.h; sourceTree = "<group>"; };
+		BC772E15133162C2001EC9CE /* CSSLineBoxContainValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSLineBoxContainValue.cpp; sourceTree = "<group>"; };
 		BC77CB860FEBF5AF0070887B /* HTMLDataGridColElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDataGridColElement.h; sourceTree = "<group>"; };
 		BC77CB880FEBF5BA0070887B /* HTMLDataGridColElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDataGridColElement.idl; sourceTree = "<group>"; };
 		BC77CBA90FEBF6C90070887B /* HTMLDataGridColElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDataGridColElement.cpp; sourceTree = "<group>"; };
@@ -18714,6 +18718,8 @@
 				A80E6CD70A1989CA007FB8C5 /* CSSInheritedValue.h */,
 				A80E6CD80A1989CA007FB8C5 /* CSSInitialValue.cpp */,
 				A80E6CDE0A1989CA007FB8C5 /* CSSInitialValue.h */,
+				BC772E121331620C001EC9CE /* CSSLineBoxContainValue.h */,
+				BC772E15133162C2001EC9CE /* CSSLineBoxContainValue.cpp */,
 				A80E6CD20A1989CA007FB8C5 /* CSSMediaRule.cpp */,
 				A80E6CD90A1989CA007FB8C5 /* CSSMediaRule.h */,
 				85C56CA20AA89C1000D95755 /* CSSMediaRule.idl */,
@@ -22679,6 +22685,7 @@
 				3194620413022BF1004BB3F8 /* DOMWebKitAnimationList.h in Headers */,
 				319E69B313299BBD004AC91A /* WebKitAnimation.h in Headers */,
 				319E69B613299BBD004AC91A /* WebKitAnimationList.h in Headers */,
+				BC772E131331620C001EC9CE /* CSSLineBoxContainValue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25346,6 +25353,7 @@
 				319E68871327C911004AC91A /* JSWebKitAnimationCustom.cpp in Sources */,
 				319E69B213299BBD004AC91A /* WebKitAnimation.cpp in Sources */,
 				319E69B513299BBD004AC91A /* WebKitAnimationList.cpp in Sources */,
+				BC772E16133162C2001EC9CE /* CSSLineBoxContainValue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

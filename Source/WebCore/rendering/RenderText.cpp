@@ -572,7 +572,7 @@ ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len
             return combineText->combinedTextWidth(f);
     }
 
-    if (f.isFixedPitch() && !f.isSmallCaps() && m_isAllASCII) {
+    if (f.isFixedPitch() && !f.isSmallCaps() && m_isAllASCII && (!glyphOverflow || !glyphOverflow->computeBounds)) {
         float monospaceCharacterWidth = f.spaceWidth();
         float tabWidth = allowTabs() ? monospaceCharacterWidth * 8 : 0;
         float w = 0;
@@ -1247,7 +1247,7 @@ float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, 
 
     float w;
     if (&f == &style()->font()) {
-        if (!style()->preserveNewline() && !from && len == textLength()) {
+        if (!style()->preserveNewline() && !from && len == textLength() && (!glyphOverflow || !glyphOverflow->computeBounds)) {
             if (fallbackFonts) {
                 ASSERT(glyphOverflow);
                 if (preferredLogicalWidthsDirty() || !m_knownToHaveNoOverflowAndNoFallbackFonts) {

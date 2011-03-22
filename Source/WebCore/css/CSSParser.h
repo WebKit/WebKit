@@ -178,6 +178,8 @@ namespace WebCore {
 
         bool parseTextEmphasisStyle(bool important);
 
+        bool parseLineBoxContain(bool important);
+
         int yyparse();
 
         CSSParserSelector* createFloatingSelector();

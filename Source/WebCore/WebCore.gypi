@@ -2453,6 +2453,8 @@
             'css/CSSInheritedValue.h',
             'css/CSSInitialValue.cpp',
             'css/CSSInitialValue.h',
+            'css/CSSLineBoxContainValue.cpp',
+            'css/CSSLineBoxContainValue.h',
             'css/CSSMediaRule.cpp',
             'css/CSSMediaRule.h',
             'css/CSSMutableStyleDeclaration.cpp',

@@ -1,3 +1,97 @@
+2011-03-22  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement the CSS3 line-box-contain property. This property provides authors with more control over spacing between lines. For example,
+        you can fix the height of lines and cause all line contents to be ignored. You can make lines fit to glyphs. You can ignore leading and
+        fit to the font size. You can ignore replaced elements, etc.
+
+        Refactor the code in computeLogicalBoxHeights into helper methods on RootInlineBox. verticalPositionForBox moved over to RootInlineBox
+        so that it could be called from RenderBlockLineLayout. ascentAndDescentForBox is the new method that computes the appropriate box
+        height based off the block's line-box-contain value.
+        
+        GlyphOverflow can now have a computeBounds parameter set, in which case glyph bounds will be computed and stored in the overflow struct.
+        
+        RenderInline no longer returns 0 margins in the block direction, since line-box-contain can size around the margin box.
+        
+        Added new tests in fast/block/lineboxcontain
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createLineBoxContainValue):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSLineBoxContainValue.cpp: Added.
+        (WebCore::CSSLineBoxContainValue::CSSLineBoxContainValue):
+        (WebCore::CSSLineBoxContainValue::cssText):
+        * css/CSSLineBoxContainValue.h: Added.
+        (WebCore::CSSLineBoxContainValue::create):
+        (WebCore::CSSLineBoxContainValue::value):
+        (WebCore::CSSLineBoxContainValue::isCSSLineBoxContainValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseLineBoxContain):
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isCSSLineBoxContainValue):
+        * css/CSSValueKeywords.in:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::width):
+        * platform/graphics/Font.h:
+        (WebCore::GlyphOverflow::GlyphOverflow):
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::floatWidthForSimpleText):
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::floatWidthForComplexText):
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::floatWidthForComplexText):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::marginLeft):
+        (WebCore::RenderInline::marginRight):
+        (WebCore::RenderInline::marginTop):
+        (WebCore::RenderInline::marginBottom):
+        (WebCore::RenderInline::marginBefore):
+        (WebCore::RenderInline::marginAfter):
+        * rendering/RenderInline.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::width):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection):
+        (WebCore::setAscentAndDescent):
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+        (WebCore::RootInlineBox::verticalPositionForBox):
+        (WebCore::RootInlineBox::includeLeadingForBox):
+        (WebCore::RootInlineBox::includeFontForBox):
+        (WebCore::RootInlineBox::includeGlyphsForBox):
+        (WebCore::RootInlineBox::includeMarginForBox):
+        (WebCore::RootInlineBox::fitsToGlyphs):
+        (WebCore::RootInlineBox::includesRootLineBoxFontOrLeading):
+        * rendering/RootInlineBox.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::lineBoxContain):
+        (WebCore::InheritedFlags::setLineBoxContain):
+        (WebCore::InheritedFlags::initialLineBoxContain):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+
 2011-03-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81653.
