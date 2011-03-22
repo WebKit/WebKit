@@ -3135,6 +3135,7 @@ webcore_sources += \
 	Source/WebCore/storage/IDBDatabaseBackendImpl.h \
 	Source/WebCore/storage/IDBDatabaseBackendInterface.h \
 	Source/WebCore/storage/IDBDatabaseCallbacks.h \
+	Source/WebCore/storage/IDBDatabaseCallbacksImpl.h \
 	Source/WebCore/storage/IDBDatabase.cpp \
 	Source/WebCore/storage/IDBDatabaseError.h \
 	Source/WebCore/storage/IDBDatabaseException.h \
@@ -5139,6 +5140,8 @@ EXTRA_DIST += \
 	Source/WebCore/icu/LICENSE \
 	Source/WebCore/inspector/CodeGeneratorInspector.pm \
 	Source/WebCore/inspector/InjectedScriptSource.js \
+	Source/WebCore/inspector/Inspector.json \
+	Source/WebCore/inspector/generate-inspector-idl \
 	Source/WebCore/inspector/xxd.pl \
 	Source/WebCore/LICENSE-APPLE \
 	Source/WebCore/LICENSE-LGPL-2 \
