@@ -1,3 +1,31 @@
+2011-03-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebCore GYP build should build without help from normal WebCore build
+        https://bugs.webkit.org/show_bug.cgi?id=56860
+
+        Before this patch, the WebCore GYP build wasn't generating the derived
+        sources quite right because the ENABLE macros were not being
+        communicated to the "Derived Sources" target.
+
+        This patch also adds the "Copy Forwarding and ICU Headers" as well as
+        the "Streamline Inspector Source" steps, which are present in the
+        normal build.  Unlike the normal build, these steps occur in a new
+        target, called "WebCore Support", which is less than aesthetically
+        beautiful.  Hopefully we'll be able to move them into the WebCore
+        target proper in the future, but that will likely require some GYP
+        changes.
+
+        This patch probably could have been broken down into a couple smaller
+        patches, but that doesn't seem necessary.
+
+        * WebCore.gypi:
+            - This file appears to no longer exist.
+        * gyp/WebCore.gyp:
+        * gyp/copy-forwarding-and-icu-headers.sh: Added.
+        * gyp/streamline-inspector-source.sh: Added.
+
 2011-03-22  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

@@ -69,7 +69,6 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMHTMLFontElement.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMHTMLFormElement.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMHTMLFrameElement.h',
-            '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMHTMLFrameElementPrivate.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMHTMLFrameSetElement.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMHTMLHRElement.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMHTMLHeadElement.h',

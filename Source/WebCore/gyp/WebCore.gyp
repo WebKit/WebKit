@@ -135,6 +135,24 @@
         '<@(webcore_privateheader_files)',
       ],
       'xcode_config_file': '<(project_dir)/Configurations/WebCore.xcconfig',
+      'actions': [
+        {
+          'action_name': 'Copy Forwarding and ICU Headers',
+          'inputs': [],
+          'outputs': [],
+          'action': [
+            'sh', '<(project_dir)/gyp/copy-forwarding-and-icu-headers.sh'
+          ],
+        },
+        {
+          'action_name': 'Streamline Inspector Source',
+          'inputs': [],
+          'outputs': [],
+          'action': [
+            'sh', '<(project_dir)/gyp/streamline-inspector-source.sh'
+          ],
+        },
+      ],
       # FIXME: A number of these actions aren't supposed to run if "${ACTION}" = "installhdrs"
       'postbuilds': [
         {
@@ -181,6 +199,7 @@
       'dependencies': [
         'WebCoreExportFileGenerator',
       ],
+      'xcode_config_file': '<(project_dir)/Configurations/WebCore.xcconfig',
       'actions': [{
         'action_name': 'Generate Derived Sources',
         'inputs': [],
@@ -214,7 +233,7 @@
           '<@(export_file_generator_files)',
         ],
         'action': [
-          'sh', 'generate-webcore-export-file-generator.sh',
+          'sh', '<(project_dir)/gyp/generate-webcore-export-file-generator.sh',
         ],
       }],
     },
@@ -258,6 +277,16 @@
       'sources': [
         '<@(export_file_generator_files)',
       ],
-    }
+      'conditions': [
+        ['OS=="mac"', {
+          'xcode_settings': {
+            # FIXME: Remove these overrides once WebCore.xcconfig is
+            # used only by this project.
+            'GCC_PREFIX_HEADER': '<(project_dir)/WebCorePrefix.h',
+            'INFOPLIST_FILE': '<(project_dir)/Info.plist',
+          },
+        }],
+      ],
+    },
   ], # targets
 }
