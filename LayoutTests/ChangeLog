@@ -1,3 +1,14 @@
+2011-03-21  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Unreviewed, rebaseline win/linux after r81625.
+
+        * platform/chromium-linux/fast/css/percentage-non-integer-expected.checksum:
+        * platform/chromium-linux/fast/css/percentage-non-integer-expected.png:
+        * platform/chromium-linux/fast/css/percentage-non-integer-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/css/percentage-non-integer-expected.txt.
+        * platform/chromium-win/fast/css/percentage-non-integer-expected.checksum:
+        * platform/chromium-win/fast/css/percentage-non-integer-expected.png:
+        * platform/chromium-win/fast/css/percentage-non-integer-expected.txt:
+
 2011-03-21  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Brady Eidson.
