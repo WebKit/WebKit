@@ -735,7 +735,7 @@ void ContainerNode::insertedIntoDocument()
 {
     Node::insertedIntoDocument();
     insertedIntoTree(false);
-    for (Node* child = m_firstChild; child; child = child->nextSibling())
+    for (Node* child = m_firstChild; child && inDocument(); child = child->nextSibling())
         child->insertedIntoDocument();
 }
 

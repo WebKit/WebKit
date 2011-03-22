@@ -217,6 +217,10 @@ bool HTMLEmbedElement::rendererIsNeeded(RenderStyle* style)
 
 void HTMLEmbedElement::insertedIntoDocument()
 {
+    HTMLPlugInImageElement::insertedIntoDocument();
+    if (!inDocument())
+        return;
+
     if (document()->isHTMLDocument())
         static_cast<HTMLDocument*>(document())->addNamedItem(m_name);
 
@@ -233,8 +237,6 @@ void HTMLEmbedElement::insertedIntoDocument()
                 static_cast<HTMLObjectElement*>(n)->setAttribute(heightAttr, height);
         }
     }
-
-    HTMLPlugInImageElement::insertedIntoDocument();
 }
 
 void HTMLEmbedElement::removedFromDocument()
