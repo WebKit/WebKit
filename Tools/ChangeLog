@@ -1,3 +1,21 @@
+2011-03-22  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/56781> Add --dsym switch to enable dsym generation when building with Xcode
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/build-webkit: Updated usage statement to include
+        --dsym.
+        * Scripts/webkitdirs.pm: Added $generateDsym variable.
+        (generateDsym): Added. Call determineGenerateDsym() and
+        return $generateDsym.
+        (determineGenerateDsym): Added.  Parse @ARGV for --dsym and set
+        $generateDsym.
+        (argumentsForXcode): Added.  Returns additional arguments for
+        xcodebuild based on command-line switches.
+        (XcodeOptions): Updated to include argumentsForXcode() in the
+        array returned.
+
 2011-03-22  Adam Roben  <aroben@apple.com>
 
         Make Leopard Debug bots and Windows XP Debug (Tests) core builders

@@ -60,6 +60,7 @@ my $configurationProductDir;
 my $sourceDir;
 my $currentSVNRevision;
 my $osXVersion;
+my $generateDsym;
 my $isQt;
 my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
 my $isSymbian;
@@ -389,12 +390,31 @@ sub currentSVNRevision
     return $currentSVNRevision;
 }
 
+sub generateDsym()
+{
+    determineGenerateDsym();
+    return $generateDsym;
+}
+
+sub determineGenerateDsym()
+{
+    return if defined($generateDsym);
+    $generateDsym = checkForArgumentAndRemoveFromARGV("--dsym");
+}
+
+sub argumentsForXcode()
+{
+    my @args = ();
+    push @args, "DEBUG_INFORMATION_FORMAT=dwarf-with-dsym" if generateDsym();
+    return @args;
+}
+
 sub XcodeOptions
 {
     determineBaseProductDir();
     determineConfiguration();
     determineArchitecture();
-    return (@baseProductDirOption, "-configuration", $configuration, "ARCHS=$architecture");
+    return (@baseProductDirOption, "-configuration", $configuration, "ARCHS=$architecture", argumentsForXcode());
 }
 
 sub XcodeOptionString

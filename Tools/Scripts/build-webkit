@@ -338,6 +338,7 @@ Usage: $programName [options] [options to pass to build system]
   --help                            Show this help message
   --clean                           Cleanup the build directory
   --debug                           Compile in debug mode
+  --dsym                            Change debugging format to dwarf-with-dsym (Mac only)
 
   --chromium                        Build the Chromium port on Mac/Win/Linux
   --efl                             Build the EFL port
