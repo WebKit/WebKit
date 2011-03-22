@@ -1,3 +1,9 @@
+2011-03-22  Adam Roben  <aroben@apple.com>
+
+        Skip a new test that relies on unimplemented LayoutTestController functionality in WTR
+
+        * platform/mac-wk2/Skipped: Added fast/forms/reset-autofilled.html.
+
 2011-03-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed update of database-agent test expectations.
