@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Remove os_win32_files variable from the GYP build
+        https://bugs.webkit.org/show_bug.cgi?id=56804
+
+        Now that our understanding of GYP is sufficiently advanced, we don't
+        need os_win32_files any more.  (Turns out Eric was right, as he always
+        is.)
+
+        * JavaScriptCore.gypi:
+
+2011-03-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         GYP build of JavaScriptCore should be able to link from an empty WebKitBuild directory
         https://bugs.webkit.org/show_bug.cgi?id=56803
 
