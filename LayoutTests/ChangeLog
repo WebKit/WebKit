@@ -1,3 +1,13 @@
+2011-03-22  Adam Roben  <aroben@apple.com>
+
+        Update Windows results for new test added in r81652
+
+        The checked-in results were trying to show that Windows would fail this test, but weren't
+        quite accurate. Even with these new results Windows still fails the test; the failure is
+        tracked by <http://webkit.org/b/56828>.
+
+        * platform/win/fast/forms/reset-autofilled-expected.txt:
+
 2011-03-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Update expectations.
