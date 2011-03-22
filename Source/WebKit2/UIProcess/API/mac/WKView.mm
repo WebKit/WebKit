@@ -71,11 +71,12 @@
 // FIXME (WebKit2) <rdar://problem/8728860> WebKit2 needs to be localized
 #define UI_STRING(__str, __desc) [NSString stringWithUTF8String:__str]
 
-@interface NSApplication (Details)
+@interface NSApplication (WebNSApplicationDetails)
 - (void)speakString:(NSString *)string;
+- (void)_setCurrentEvent:(NSEvent *)event;
 @end
 
-@interface NSWindow (Details)
+@interface NSWindow (WebNSWindowDetails)
 - (NSRect)_growBoxRect;
 - (id)_growBoxOwner;
 - (void)_setShowOpaqueGrowBoxForOwner:(id)owner;
@@ -122,7 +123,7 @@ typedef HashMap<String, ValidationVector> ValidationMap;
     // We keep here the event when resending it to
     // the application to distinguish the case of a new event from one 
     // that has been already sent to WebCore.
-    NSEvent *_keyDownEventBeingResent;
+    RetainPtr<NSEvent> _keyDownEventBeingResent;
     bool _isInInterpretKeyEvents;
     Vector<KeypressCommand> _commandsList;
 
@@ -1100,9 +1101,6 @@ static const short kIOHIDEventTypeScroll = 6;
     // But don't do it if we have already handled the event.
     // Pressing Esc results in a fake event being sent - don't pass it to WebCore.
     if (!eventWasSentToWebCore && event == [NSApp currentEvent] && self == [[self window] firstResponder]) {
-        [_data->_keyDownEventBeingResent release];
-        _data->_keyDownEventBeingResent = nil;
-        
         _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(event, self));
         return YES;
     }
@@ -1135,8 +1133,6 @@ static const short kIOHIDEventTypeScroll = 6;
     // there is no range selection).
     // If this is the case we should ignore the key down.
     if (_data->_keyDownEventBeingResent == theEvent) {
-        [_data->_keyDownEventBeingResent release];
-        _data->_keyDownEventBeingResent = nil;
         [super keyDown:theEvent];
         return;
     }
@@ -1717,9 +1713,14 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     }
 }
 
-- (void)_setEventBeingResent:(NSEvent *)event
+- (void)_resendKeyDownEvent:(NSEvent *)event
 {
-    _data->_keyDownEventBeingResent = [event retain];
+    ASSERT(!_data->_keyDownEventBeingResent);
+    _data->_keyDownEventBeingResent = event;
+    [NSApp _setCurrentEvent:event];
+    [NSApp sendEvent:event];
+
+    _data->_keyDownEventBeingResent = nullptr;
 }
 
 - (Vector<KeypressCommand>&)_interceptKeyEvent:(NSEvent *)theEvent 

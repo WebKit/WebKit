@@ -1,3 +1,24 @@
+2011-03-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r81269): WebKit2 gets into an infinite recursion after an unhandled command key
+        https://bugs.webkit.org/show_bug.cgi?id=56782
+        <rdar://problem/9151993>
+
+        * UIProcess/API/mac/PageClientImpl.mm: (WebKit::PageClientImpl::doneWithKeyEvent):
+        Factored out code for resending an event and moved it to WKView.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView performKeyEquivalent:]): Don't zero out _keyDownEventBeingResent, it's easier
+        to just do that in _resendKeyDownEvent:.
+        (-[WKView keyDown:]): Ditto.
+        (-[WKView _resendKeyDownEvent:]): Moved from PageClientImpl.mm. Added an assertion that we
+        are not already resending an event - it would be too confusing if we ever had to do that,
+        but looks like this never happens.
+
+        * UIProcess/API/mac/WKViewInternal.h: Exposed _resendKeyDownEvent.
+
 2011-03-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

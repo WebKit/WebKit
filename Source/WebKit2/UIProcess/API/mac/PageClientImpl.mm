@@ -48,7 +48,6 @@
 
 @interface NSApplication (WebNSApplicationDetails)
 - (NSCursor *)_cursorRectCursor;
-- (void)_setCurrentEvent:(NSEvent *)event;
 @end
 
 using namespace WebCore;
@@ -329,11 +328,8 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
         return;
     if (wasEventHandled)
         [NSCursor setHiddenUntilMouseMoves:YES];
-    else {
-        [m_wkView _setEventBeingResent:nativeEvent];
-        [NSApp _setCurrentEvent:nativeEvent];
-        [NSApp sendEvent:nativeEvent];
-    }
+    else
+        [m_wkView _resendKeyDownEvent:nativeEvent];
 }
 
 PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)
