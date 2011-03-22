@@ -52,6 +52,7 @@ chdirWebKit();
 
 my $showHelp = 0;
 my $clean = 0;
+my $useGYP = 0;
 my $minimal = 0;
 my $v8 = 0;
 my $installHeaders;
@@ -338,6 +339,7 @@ Usage: $programName [options] [options to pass to build system]
   --help                            Show this help message
   --clean                           Cleanup the build directory
   --debug                           Compile in debug mode
+  --gyp                             Use GYP-generated project files
   --dsym                            Change debugging format to dwarf-with-dsym (Mac only)
 
   --chromium                        Build the Chromium port on Mac/Win/Linux
@@ -364,6 +366,7 @@ EOF
 my %options = (
     'help' => \$showHelp,
     'clean' => \$clean,
+    'gyp' => \$useGYP,
     'install-headers=s' => \$installHeaders,
     'install-libs=s' => \$installLibs,
     'prefix=s' => \$prefixPath,
@@ -416,6 +419,11 @@ for my $dir (@projects, @otherDirs) {
     if (! -d $dir) {
         die "Error: No $dir directory found. Please do a fresh checkout.\n";
     }
+}
+
+# Generate the generate project files from .gyp files
+if ($useGYP) {
+    system("python", "Source/gyp/configure") == 0 or die "Failed to run Source/gyp/configure";
 }
 
 my @options = ();
@@ -564,7 +572,9 @@ for my $dir (@projects) {
     } elsif (isAppleMacWebKit()) {
         my @local_options = @options;
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport && $project ne "ANGLE";
-        $result = buildXCodeProject($project, $clean, @local_options, @ARGV);
+        my $useGYPProject = $useGYP && ($project =~ "WebCore|JavaScriptCore|JavaScriptGlue");
+        my $projectPath = $useGYPProject ? "gyp/$project" : $project;
+        $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
     } elsif (isAppleWinWebKit()) {
         if ($project eq "WebKit") {
             $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);

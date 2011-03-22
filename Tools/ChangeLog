@@ -1,3 +1,15 @@
+2011-03-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add support to build-webkit for building with gyp-generated project files
+        https://bugs.webkit.org/show_bug.cgi?id=56877
+
+        build-webkit is a cesspool.  This change just hacks in --gyp support for Mac.
+        Eventually we'll want to support gyp-generated projects in a more general manner.
+
+        * Scripts/build-webkit:
+
 2011-03-22  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/56781> Add --dsym switch to enable dsym generation when building with Xcode

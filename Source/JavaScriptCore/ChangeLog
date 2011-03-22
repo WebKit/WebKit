@@ -2,6 +2,17 @@
 
         Reviewed by Adam Barth.
 
+        Add support to build-webkit for building with gyp-generated project files
+        https://bugs.webkit.org/show_bug.cgi?id=56877
+
+        Found a couple missing Private headers while trying to make WebCore build.
+
+        * JavaScriptCore.gypi:
+
+2011-03-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Make it possible to build JavaScriptCore and WebCore gyp builds outside of Source
         https://bugs.webkit.org/show_bug.cgi?id=56867
 
