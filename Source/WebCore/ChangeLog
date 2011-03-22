@@ -1,5 +1,18 @@
 2011-03-21  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Add WebCoreExportFileGenerator to WebCore GYP build
+        https://bugs.webkit.org/show_bug.cgi?id=56778
+
+        This target mirrors the eponymous target from WebCore.xcodeproj.
+
+        * WebCore.gypi:
+        * gyp/WebCore.gyp:
+        * generate-webcore-export-file-generator.sh: Added.
+
+2011-03-21  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Dimitri Glazkov.
 
         WebCore GYP build shouldn&apos;t crash on startup

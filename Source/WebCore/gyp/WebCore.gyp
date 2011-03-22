@@ -176,6 +176,9 @@
     {
       'target_name': 'Derived Sources',
       'type': 'none',
+      'dependencies': [
+        'WebCoreExportFileGenerator',
+      ],
       'actions': [{
         'action_name': 'Generate Derived Sources',
         'inputs': [],
@@ -197,6 +200,34 @@
           ]
       }],
     },
-    # FIXME: Add WebCoreExportFileGenerator
+    {
+      'target_name': 'WebCoreExportFileGenerator Generator',
+      'type': 'none',
+      'actions': [{
+        'action_name': 'Generate Export File Generator',
+        'inputs': [
+          '<(DEPTH)/WebCore/WebCore.exp.in',
+        ],
+        'outputs': [
+          '<@(export_file_generator_files)',
+        ],
+        'action': [
+          'sh', 'generate-webcore-export-file-generator.sh',
+        ],
+      }],
+    },
+    {
+      'target_name': 'WebCoreExportFileGenerator',
+      'type': 'executable',
+      'dependencies': [
+        'WebCoreExportFileGenerator Generator',
+      ],
+      'include_dirs': [
+        '<(DEPTH)/WebCore/ForwardingHeaders',
+      ],
+      'sources': [
+        '<@(export_file_generator_files)',
+      ],
+    }
   ], # targets
 }
