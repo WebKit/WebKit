@@ -1,3 +1,12 @@
+2011-03-22  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, Skipped one test failing because of the same reason.
+
+        [GTK] Some test results are one pixel different between the x86_64 and i386 bots
+        https://bugs.webkit.org/show_bug.cgi?id=39022
+
+        * platform/gtk/Skipped: Skip fast/css/percentage-non-integer.html.
+
 2011-03-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed fix for database-agent test.
