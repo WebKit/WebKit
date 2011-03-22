@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        gyp/configure shouldn&apos;t require GYP to be in your path
+        https://bugs.webkit.org/show_bug.cgi?id=56873
+
+        Now that GYP is on Source/ThirdParty/gyp, we can just use that copy
+        instead of requiring GYP to be in the user's path.
+
+        * Source/gyp/configure:
+
+2011-03-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add GYP to Source/ThirdParty
         https://bugs.webkit.org/show_bug.cgi?id=56870
 
