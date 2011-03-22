@@ -380,6 +380,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     
     IntSize oldOffsetFromRenderer = m_graphicsLayer->offsetFromRenderer();
     m_graphicsLayer->setOffsetFromRenderer(localCompositingBounds.location() - IntPoint());
+    
     // If the compositing layer offset changes, we need to repaint.
     if (oldOffsetFromRenderer != m_graphicsLayer->offsetFromRenderer())
         m_graphicsLayer->setNeedsDisplay();
@@ -449,10 +450,9 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         FloatPoint foregroundPosition;
         FloatSize foregroundSize = newSize;
         IntSize foregroundOffset = m_graphicsLayer->offsetFromRenderer();
-        // If we have a clipping layer (which clips descendants), then the foreground layer is a child of it,
-        // so that it gets correctly sorted with children. In that case, position relative to the clipping layer.
         if (m_clippingLayer) {
-            foregroundPosition = FloatPoint() + (localCompositingBounds.location() - clippingBox.location());
+            // If we have a clipping layer (which clips descendants), then the foreground layer is a child of it,
+            // so that it gets correctly sorted with children. In that case, position relative to the clipping layer.
             foregroundSize = FloatSize(clippingBox.size());
             foregroundOffset = clippingBox.location() - IntPoint();
         }
@@ -930,18 +930,6 @@ IntRect RenderLayerBacking::contentsBox() const
     return contentsRect;
 }
 
-// Map the given point from coordinates in the GraphicsLayer to RenderLayer coordinates.
-FloatPoint RenderLayerBacking::graphicsLayerToContentsCoordinates(const GraphicsLayer* graphicsLayer, const FloatPoint& point)
-{
-    return point + FloatSize(graphicsLayer->offsetFromRenderer());
-}
-
-// Map the given point from coordinates in the RenderLayer to GraphicsLayer coordinates.
-FloatPoint RenderLayerBacking::contentsToGraphicsLayerCoordinates(const GraphicsLayer* graphicsLayer, const FloatPoint& point)
-{
-    return point - FloatSize(graphicsLayer->offsetFromRenderer());
-}
-
 bool RenderLayerBacking::paintingGoesToWindow() const
 {
     if (m_owningLayer->isRootLayer())
@@ -966,21 +954,21 @@ void RenderLayerBacking::setContentsNeedDisplay()
 void RenderLayerBacking::setContentsNeedDisplayInRect(const IntRect& r)
 {
     if (m_graphicsLayer && m_graphicsLayer->drawsContent()) {
-        FloatPoint dirtyOrigin = contentsToGraphicsLayerCoordinates(m_graphicsLayer.get(), FloatPoint(r.x(), r.y()));
-        FloatRect dirtyRect(dirtyOrigin, r.size());
-        FloatRect bounds(FloatPoint(), m_graphicsLayer->size());
-        if (bounds.intersects(dirtyRect))
-            m_graphicsLayer->setNeedsDisplayInRect(dirtyRect);
+        IntRect layerDirtyRect = r;
+        layerDirtyRect.move(-m_graphicsLayer->offsetFromRenderer());
+        m_graphicsLayer->setNeedsDisplayInRect(layerDirtyRect);
     }
 
     if (m_foregroundLayer && m_foregroundLayer->drawsContent()) {
-        // FIXME: do incremental repaint
-        m_foregroundLayer->setNeedsDisplay();
+        IntRect layerDirtyRect = r;
+        layerDirtyRect.move(-m_foregroundLayer->offsetFromRenderer());
+        m_foregroundLayer->setNeedsDisplayInRect(layerDirtyRect);
     }
 
     if (m_maskLayer && m_maskLayer->drawsContent()) {
-        // FIXME: do incremental repaint
-        m_maskLayer->setNeedsDisplay();
+        IntRect layerDirtyRect = r;
+        layerDirtyRect.move(-m_maskLayer->offsetFromRenderer());
+        m_maskLayer->setNeedsDisplayInRect(layerDirtyRect);
     }
 }
 
@@ -1108,26 +1096,21 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
 }
 
 // Up-call from compositing layer drawing callback.
-void RenderLayerBacking::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase paintingPhase, const IntRect& clip)
+void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase paintingPhase, const IntRect& clip)
 {
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willPaint(m_owningLayer->renderer()->frame(), clip);
 
-    // We have to use the same root as for hit testing, because both methods
-    // can compute and cache clipRects.
-    IntRect enclosingBBox = compositedBounds();
+    IntSize offset = graphicsLayer->offsetFromRenderer();
+    context.translate(-offset);
 
     IntRect clipRect(clip);
-    
-    // Set up the coordinate space to be in the layer's rendering coordinates.
-    context.translate(-enclosingBBox.x(), -enclosingBBox.y());
-
-    // Offset the clip.
-    clipRect.move(enclosingBBox.x(), enclosingBBox.y());
+    clipRect.move(offset);
     
     // The dirtyRect is in the coords of the painting root.
-    IntRect dirtyRect = enclosingBBox;
+    IntRect dirtyRect = compositedBounds();
     dirtyRect.intersect(clipRect);
 
+    // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
     paintIntoLayer(m_owningLayer, &context, dirtyRect, PaintBehaviorNormal, paintingPhase, renderer());
 
     InspectorInstrumentation::didPaint(cookie);

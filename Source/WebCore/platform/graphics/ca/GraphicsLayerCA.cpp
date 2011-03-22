@@ -550,11 +550,17 @@ void GraphicsLayerCA::setNeedsDisplay()
     setNeedsDisplayInRect(hugeRect);
 }
 
-void GraphicsLayerCA::setNeedsDisplayInRect(const FloatRect& rect)
+void GraphicsLayerCA::setNeedsDisplayInRect(const FloatRect& r)
 {
     if (!drawsContent())
         return;
 
+    FloatRect rect(r);
+    FloatRect layerBounds(FloatPoint(), m_size);
+    rect.intersect(layerBounds);
+    if (rect.isEmpty())
+        return;
+    
     const size_t maxDirtyRects = 32;
     
     for (size_t i = 0; i < m_dirtyRects.size(); ++i) {

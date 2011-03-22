@@ -1,3 +1,44 @@
+2011-03-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Incorrect rendering of composited element with negative z-index child
+        https://bugs.webkit.org/show_bug.cgi?id=56846
+        
+        When a composited element has a child with negative z-index, we make
+        a separate layer for that element's foreground content. This layer
+        was positioned incorrectly (but the content happened to paint at
+        the right location), resulting in right/bottom clipping.
+        
+        Fix this, remove the little-used graphicsLayerToContentsCoordinates()
+        contentsToGraphicsLayerCoordinates() methods, and optimize incremental
+        repaints in the foreground and mask layers.
+
+        Tests: compositing/geometry/foreground-layer.html
+               compositing/geometry/repaint-foreground-layer.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setNeedsDisplayInRect): Cull repaints
+        which fall outside the layer bounds, so callers don't have to,
+        and to avoid unnecessary layer commits.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): If
+        we have a foreground layer inside a clipping layer, the foreground
+        layer's offset is zero, since the clipping layer is its parent.
+        
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect): Use
+        offsetFromRenderer() directly instead of contentsToGraphicsLayerCoordinates().
+        Also do incremental repaints of the foreground and mask layers.
+        
+        (WebCore::RenderLayerBacking::paintContents): It was incorrect to always
+        use compositedBounds() to compute the painting offset, since that's
+        per-RenderLayerBacking, but a single RenderLayerBacking can have different
+        GraphicsLayers with different offsets (e.g. the foreground layer).
+        Instead, use offsetFromRenderer(), which gives has the correct offset.
+
+        * rendering/RenderLayerBacking.h: Remove unused methods.
+
 2011-03-22  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

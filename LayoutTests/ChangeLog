@@ -1,3 +1,22 @@
+2011-03-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Incorrect rendering of composited element with negative z-index child
+        https://bugs.webkit.org/show_bug.cgi?id=56846
+        
+        Testcases for content with a foreground layer, and a foreground layer which is
+        partially repainted.
+
+        * compositing/geometry/foreground-layer-expected.txt: Added.
+        * compositing/geometry/foreground-layer.html: Added.
+        * compositing/geometry/repaint-foreground-layer-expected.txt: Added.
+        * compositing/geometry/repaint-foreground-layer.html: Added.
+        * platform/mac/compositing/geometry/foreground-layer-expected.checksum: Added.
+        * platform/mac/compositing/geometry/foreground-layer-expected.png: Added.
+        * platform/mac/compositing/geometry/repaint-foreground-layer-expected.checksum: Added.
+        * platform/mac/compositing/geometry/repaint-foreground-layer-expected.png: Added.
+
 2011-03-22  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Unreviewed, rebaseline chromium tests after r81684.
