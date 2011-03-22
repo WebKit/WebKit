@@ -84,9 +84,19 @@ static String urlForLogging(const String& url)
 }
 #endif
 
+class DefaultIconDatabaseClient : public IconDatabaseClient {
+public:
+    virtual bool performImport() { return true; }
+    virtual void didImportIconURLForPageURL(const String&) { } 
+    virtual void didImportIconDataForPageURL(const String&) { }
+    virtual void didChangeIconForPageURL(const String&) { }
+    virtual void didRemoveAllIcons() { }
+    virtual void didFinishURLImport() { }
+};
+
 static IconDatabaseClient* defaultClient() 
 {
-    static IconDatabaseClient* defaultClient = new IconDatabaseClient();
+    static IconDatabaseClient* defaultClient = new DefaultIconDatabaseClient();
     return defaultClient;
 }
 
@@ -550,7 +560,7 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
 
         for (unsigned i = 0; i < pageURLs.size(); ++i) {
             LOG(IconDatabase, "Dispatching notification that retaining pageURL %s has a new icon", urlForLogging(pageURLs[i]).ascii().data());
-            m_client->dispatchDidAddIconForPageURL(pageURLs[i]);
+            m_client->didChangeIconForPageURL(pageURLs[i]);
 
             pool.cycle();
         }
@@ -622,7 +632,7 @@ void IconDatabase::setIconURLForPageURL(const String& iconURLOriginal, const Str
         
         LOG(IconDatabase, "Dispatching notification that we changed an icon mapping for url %s", urlForLogging(pageURL).ascii().data());
         AutodrainedPool pool;
-        m_client->dispatchDidAddIconForPageURL(pageURL);
+        m_client->didChangeIconForPageURL(pageURL);
     }
 }
 
@@ -1242,7 +1252,7 @@ void IconDatabase::performURLImport()
         {
             MutexLocker locker(m_pendingReadingLock);
             if (m_pageURLsPendingImport.contains(pageURL)) {
-                m_client->dispatchDidAddIconForPageURL(pageURL);
+                dispatchDidImportIconURLForPageURLOnMainThread(pageURL);
                 m_pageURLsPendingImport.remove(pageURL);
             
                 pool.cycle();
@@ -1316,7 +1326,7 @@ void IconDatabase::performURLImport()
     // Now that we don't hold any locks, perform the actual notifications
     for (unsigned i = 0; i < urlsToNotify.size(); ++i) {
         LOG(IconDatabase, "Notifying icon info known for pageURL %s", urlsToNotify[i].ascii().data());
-        m_client->dispatchDidAddIconForPageURL(urlsToNotify[i]);
+        dispatchDidImportIconURLForPageURLOnMainThread(urlsToNotify[i]);
         if (shouldStopThreadActivity())
             return;
 
@@ -1525,7 +1535,7 @@ bool IconDatabase::readFromDatabase()
         HashSet<String>::iterator end = urlsToNotify.end();
         for (unsigned iteration = 0; iter != end; ++iter, ++iteration) {
             LOG(IconDatabase, "Notifying icon received for pageURL %s", urlForLogging(*iter).ascii().data());
-            m_client->dispatchDidAddIconForPageURL(*iter);
+            dispatchDidImportIconDataForPageURLOnMainThread(*iter);
             if (shouldStopThreadActivity())
                 return didAnyWork;
             
@@ -1723,7 +1733,7 @@ void IconDatabase::removeAllIconsOnThread()
     createDatabaseTables(m_syncDB);
     
     LOG(IconDatabase, "Dispatching notification that we removed all icons");
-    m_client->dispatchDidRemoveAllIcons();    
+    dispatchDidRemoveAllIconsOnMainThread();    
 }
 
 void IconDatabase::deleteAllPreparedStatements()
@@ -2095,6 +2105,110 @@ void IconDatabase::setWasExcludedFromBackup()
 
     SQLiteStatement(m_syncDB, "INSERT INTO IconDatabaseInfo (key, value) VALUES ('ExcludedFromBackup', 1)").executeCommand();
 }
+
+class ClientWorkItem {
+public:
+    ClientWorkItem(IconDatabaseClient* client)
+        : m_client(client)
+    { }
+    virtual void performWork() = 0;
+    virtual ~ClientWorkItem() { }
+
+protected:
+    IconDatabaseClient* m_client;
+};
+
+class ImportedIconURLForPageURLWorkItem : public ClientWorkItem {
+public:
+    ImportedIconURLForPageURLWorkItem(IconDatabaseClient* client, const String& pageURL)
+        : ClientWorkItem(client)
+        , m_pageURL(new String(pageURL.threadsafeCopy()))
+    { }
+    
+    virtual ~ImportedIconURLForPageURLWorkItem()
+    {
+        delete m_pageURL;
+    }
+
+    virtual void performWork()
+    {
+        ASSERT(m_client);
+        m_client->didImportIconURLForPageURL(*m_pageURL);
+        m_client = 0;
+    }
+    
+private:
+    String* m_pageURL;
+};
+
+class ImportedIconDataForPageURLWorkItem : public ClientWorkItem {
+public:
+    ImportedIconDataForPageURLWorkItem(IconDatabaseClient* client, const String& pageURL)
+        : ClientWorkItem(client)
+        , m_pageURL(new String(pageURL.threadsafeCopy()))
+    { }
+    
+    virtual ~ImportedIconDataForPageURLWorkItem()
+    {
+        delete m_pageURL;
+    }
+
+    virtual void performWork()
+    {
+        ASSERT(m_client);
+        m_client->didImportIconDataForPageURL(*m_pageURL);
+        m_client = 0;
+    }
+    
+private:
+    String* m_pageURL;
+};
+
+class RemovedAllIconsWorkItem : public ClientWorkItem {
+public:
+    RemovedAllIconsWorkItem(IconDatabaseClient* client)
+        : ClientWorkItem(client)
+    { }
+
+    virtual void performWork()
+    {
+        ASSERT(m_client);
+        m_client->didRemoveAllIcons();
+        m_client = 0;
+    }
+};
+
+static void performWorkItem(void* context)
+{
+    ClientWorkItem* item = static_cast<ClientWorkItem*>(context);
+    item->performWork();
+    delete item;
+}
+
+void IconDatabase::dispatchDidImportIconURLForPageURLOnMainThread(const String& pageURL)
+{
+    ASSERT_ICON_SYNC_THREAD();
+
+    ImportedIconURLForPageURLWorkItem* work = new ImportedIconURLForPageURLWorkItem(m_client, pageURL);
+    callOnMainThread(performWorkItem, work);
+}
+
+void IconDatabase::dispatchDidImportIconDataForPageURLOnMainThread(const String& pageURL)
+{
+    ASSERT_ICON_SYNC_THREAD();
+
+    ImportedIconDataForPageURLWorkItem* work = new ImportedIconDataForPageURLWorkItem(m_client, pageURL);
+    callOnMainThread(performWorkItem, work);
+}
+
+void IconDatabase::dispatchDidRemoveAllIconsOnMainThread()
+{
+    ASSERT_ICON_SYNC_THREAD();
+
+    RemovedAllIconsWorkItem* work = new RemovedAllIconsWorkItem(m_client);
+    callOnMainThread(performWorkItem, work);
+}
+
 
 } // namespace WebCore
 

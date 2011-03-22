@@ -41,19 +41,34 @@ bool WebIconDatabaseClient::performImport()
     return result;
 }
 
-void WebIconDatabaseClient::dispatchDidRemoveAllIcons()
+void WebIconDatabaseClient::didRemoveAllIcons()
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [[WebIconDatabase sharedIconDatabase] _sendDidRemoveAllIconsNotification];
     [pool drain];
 }
 
-void WebIconDatabaseClient::dispatchDidAddIconForPageURL(const WTF::String& pageURL)
+void WebIconDatabaseClient::didImportIconURLForPageURL(const String& pageURL)
 {
     // This is a quick notification that is likely to fire in a rapidly iterating loop
     // Therefore we let WebCore handle autorelease by draining its pool "from time to time"
     // instead of us doing it every iteration
     [[WebIconDatabase sharedIconDatabase] _sendNotificationForURL:pageURL];
+}
+
+void WebIconDatabaseClient::didImportIconDataForPageURL(const String& pageURL)
+{
+    // WebKit1 only has a single "icon did change" notification.
+    didImportIconURLForPageURL(pageURL);
+}
+void WebIconDatabaseClient::didChangeIconForPageURL(const String& pageURL)
+{
+    // WebKit1 only has a single "icon did change" notification.
+    didImportIconURLForPageURL(pageURL);
+}
+
+void WebIconDatabaseClient::didFinishURLImport()
+{
 }
 
 #endif // ENABLE(ICONDATABASE)

@@ -322,7 +322,13 @@ HBITMAP WebIconDatabase::getOrCreateDefaultIconBitmap(LPSIZE size)
 
 // IconDatabaseClient
 
-void WebIconDatabase::dispatchDidRemoveAllIcons()
+bool WebIconDatabase::performImport()
+{
+    // Windows doesn't do any old-style database importing.
+    return true;
+}
+
+void WebIconDatabase::didRemoveAllIcons()
 {
     // Queueing the empty string is a special way of saying "this queued notification is the didRemoveAllIcons notification"
     MutexLocker locker(m_notificationMutex);
@@ -330,11 +336,27 @@ void WebIconDatabase::dispatchDidRemoveAllIcons()
     scheduleNotificationDelivery();
 }
 
-void WebIconDatabase::dispatchDidAddIconForPageURL(const String& pageURL)
-{   
+void WebIconDatabase::didImportIconURLForPageURL(const WTF::String& pageURL)
+{
     MutexLocker locker(m_notificationMutex);
     m_notificationQueue.append(pageURL.threadsafeCopy());
     scheduleNotificationDelivery();
+}
+
+void WebIconDatabase::didImportIconDataForPageURL(const WTF::String& pageURL)
+{
+    // WebKit1 only has a single "icon did change" notification.
+    didImportIconURLForPageURL(pageURL);
+}
+
+void WebIconDatabase::didChangeIconForPageURL(const WTF::String& pageURL)
+{
+    // WebKit1 only has a single "icon did change" notification.
+    didImportIconURLForPageURL(pageURL);
+}
+
+void WebIconDatabase::didFinishURLImport()
+{
 }
 
 void WebIconDatabase::scheduleNotificationDelivery()

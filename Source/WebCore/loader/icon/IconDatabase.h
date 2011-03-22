@@ -213,6 +213,11 @@ private:
     void removeIconFromSQLDatabase(const String& iconURL);
     void writeIconSnapshotToSQLDatabase(const IconSnapshot&);    
     
+    // Methods to dispatch client callbacks on the main thread
+    void dispatchDidImportIconURLForPageURLOnMainThread(const String&);
+    void dispatchDidImportIconDataForPageURLOnMainThread(const String&);
+    void dispatchDidRemoveAllIconsOnMainThread();
+    
     // The client is set by the main thread before the thread starts, and from then on is only used by the sync thread
     IconDatabaseClient* m_client;
     

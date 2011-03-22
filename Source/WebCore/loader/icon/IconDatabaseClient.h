@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,20 +32,20 @@
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-
-// All of these client methods will be called from a non-main thread
-// Take appropriate measures
  
 namespace WebCore {
 
 class IconDatabaseClient {
-    WTF_MAKE_NONCOPYABLE(IconDatabaseClient); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    IconDatabaseClient() { }
     virtual ~IconDatabaseClient() { }
-    virtual bool performImport() { return true; }
-    virtual void dispatchDidRemoveAllIcons() { }
-    virtual void dispatchDidAddIconForPageURL(const String& /*pageURL*/) { }
+
+    virtual bool performImport() = 0;
+    virtual void didImportIconURLForPageURL(const String&) = 0;
+    virtual void didImportIconDataForPageURL(const String&) = 0;
+    virtual void didChangeIconForPageURL(const String&) = 0;
+    virtual void didRemoveAllIcons() = 0;
+    virtual void didFinishURLImport() = 0;
 };
  
 } // namespace WebCore 

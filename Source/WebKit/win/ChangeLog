@@ -1,3 +1,23 @@
+2011-03-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8648311> and https://bugs.webkit.org/show_bug.cgi?id=56876
+        WK2 Icon DB: Expand IconDatabaseClient interface and move it to the main thread
+
+        Note that while the new client calls always come through on the main thread, our mechanisms to
+        route dispatches to the main thread are still valid and will still work.
+
+        Update to the new IconDatabaseClient interface:
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::performImport):
+        (WebIconDatabase::didRemoveAllIcons):
+        (WebIconDatabase::didImportIconURLForPageURL):
+        (WebIconDatabase::didImportIconDataForPageURL):
+        (WebIconDatabase::didChangeIconForPageURL):
+        (WebIconDatabase::didFinishURLImport):
+        * WebIconDatabase.h:
+
 2011-03-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

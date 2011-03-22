@@ -1,3 +1,48 @@
+2011-03-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8648311> and https://bugs.webkit.org/show_bug.cgi?id=56876
+        WK2 Icon DB: Expand IconDatabaseClient interface and move it to the main thread
+
+        * loader/icon/IconDatabase.cpp:
+        Add a dummy client implementation for non-Mac, non-Win ports:
+        (WebCore::DefaultIconDatabaseClient::performImport):
+        (WebCore::DefaultIconDatabaseClient::didImportIconURLForPageURL):
+        (WebCore::DefaultIconDatabaseClient::didImportIconDataForPageURL):
+        (WebCore::DefaultIconDatabaseClient::didChangeIconForPageURL):
+        (WebCore::DefaultIconDatabaseClient::didRemoveAllIcons):
+        (WebCore::DefaultIconDatabaseClient::didFinishURLImport):
+        (WebCore::defaultClient):
+
+        Either call the client directly when on the main thread, or use the dispatch functions below
+        if on the background thread:
+        (WebCore::IconDatabase::setIconDataForIconURL):
+        (WebCore::IconDatabase::setIconURLForPageURL):
+        (WebCore::IconDatabase::performURLImport):
+        (WebCore::IconDatabase::readFromDatabase):
+        (WebCore::IconDatabase::removeAllIconsOnThread):
+
+        Add a very targeted WorkItem interface for dispatching client calls on the main thread:
+        (WebCore::ClientWorkItem::ClientWorkItem):
+        (WebCore::ClientWorkItem::~ClientWorkItem):
+        (WebCore::ImportedIconURLForPageURLWorkItem::ImportedIconURLForPageURLWorkItem):
+        (WebCore::ImportedIconURLForPageURLWorkItem::~ImportedIconURLForPageURLWorkItem):
+        (WebCore::ImportedIconURLForPageURLWorkItem::performWork):
+        (WebCore::ImportedIconDataForPageURLWorkItem::ImportedIconDataForPageURLWorkItem):
+        (WebCore::ImportedIconDataForPageURLWorkItem::~ImportedIconDataForPageURLWorkItem):
+        (WebCore::ImportedIconDataForPageURLWorkItem::performWork):
+        (WebCore::RemovedAllIconsWorkItem::RemovedAllIconsWorkItem):
+        (WebCore::RemovedAllIconsWorkItem::performWork):
+        (WebCore::performWorkItem):
+
+        Use the client WorkItem interface to perform these callbacks on the main thread:
+        (WebCore::IconDatabase::dispatchDidImportIconURLForPageURLOnMainThread):
+        (WebCore::IconDatabase::dispatchDidImportIconDataForPageURLOnMainThread):
+        (WebCore::IconDatabase::dispatchDidRemoveAllIconsOnMainThread):
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconDatabaseClient.h:
+
 2011-03-22  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

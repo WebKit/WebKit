@@ -32,6 +32,9 @@
 class WebIconDatabaseClient : public WebCore::IconDatabaseClient {
 public:
     virtual bool performImport();
-    virtual void dispatchDidRemoveAllIcons();
-    virtual void dispatchDidAddIconForPageURL(const WTF::String& pageURL);
+    virtual void didRemoveAllIcons();
+    virtual void didImportIconURLForPageURL(const String&);
+    virtual void didImportIconDataForPageURL(const String&);
+    virtual void didChangeIconForPageURL(const String&);
+    virtual void didFinishURLImport();
 };
