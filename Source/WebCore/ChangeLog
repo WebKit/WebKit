@@ -1,3 +1,16 @@
+2011-03-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=56856 RenderListBox needs to be 
+        added to Page::scrollableAreaSet()
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::RenderListBox):
+        (WebCore::RenderListBox::~RenderListBox):
+        * rendering/RenderListBox.h:
+        (WebCore::RenderListBox::disconnectFromPage):
+
 2011-03-22  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

@@ -82,11 +82,17 @@ RenderListBox::RenderListBox(Element* element)
     , m_optionsWidth(0)
     , m_indexOffset(0)
 {
+    if (Page* page = frame()->page()) {
+        m_page = page;
+        m_page->addScrollableArea(this);
+    }
 }
 
 RenderListBox::~RenderListBox()
 {
     setHasVerticalScrollbar(false);
+    if (m_page)
+        m_page->removeScrollableArea(this);
 }
 
 void RenderListBox::updateFromElement()
