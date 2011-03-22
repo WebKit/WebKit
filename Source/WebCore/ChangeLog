@@ -1,3 +1,15 @@
+2011-03-22  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r81653.
+        http://trac.webkit.org/changeset/81653
+        https://bugs.webkit.org/show_bug.cgi?id=56839
+
+        Breaks fast/text/drawBidiText.html on Chromium. (Requested by
+        pfeldman on #webkit).
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+
 2011-03-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Rolling out 81657, 81654, 81651 for breaking tests on chromium.
