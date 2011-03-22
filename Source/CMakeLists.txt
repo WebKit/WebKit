@@ -23,8 +23,13 @@ INCLUDE(WebKitFeatures)
 # -----------------------------------------------------------------------------
 # Determine which port will be built
 # -----------------------------------------------------------------------------
-SET(ALL_PORTS Efl)
-OPTION(PORT "choose which WebKit port to build (one of ${ALL_PORTS})" "NOPORT")
+SET(ALL_PORTS Efl WinCE)
+SET(PORT "NOPORT" CACHE STRING "choose which WebKit port to build (one of ${ALL_PORTS})")
+
+LIST(FIND ALL_PORTS ${PORT} RET)
+IF (${RET} EQUAL -1)
+    MESSAGE(FATAL_ERROR "Please choose which WebKit port to build (one of ${ALL_PORTS})")
+ENDIF ()
 
 # -----------------------------------------------------------------------------
 # Find common packages (used by all ports)
