@@ -51,8 +51,8 @@ double AudioDestination::hardwareSampleRate()
     AudioDeviceID deviceID = kAudioDeviceUnknown;
     UInt32 infoSize = sizeof(deviceID);
 
-    AudioObjectPropertyAddress defaultInputDeviceAddress = { kAudioHardwarePropertyDefaultInputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
-    OSStatus result = AudioObjectGetPropertyData(kAudioObjectSystemObject, &defaultInputDeviceAddress, 0, 0, &infoSize, (void*)&deviceID);
+    AudioObjectPropertyAddress defaultOutputDeviceAddress = { kAudioHardwarePropertyDefaultOutputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
+    OSStatus result = AudioObjectGetPropertyData(kAudioObjectSystemObject, &defaultOutputDeviceAddress, 0, 0, &infoSize, (void*)&deviceID);
     if (result)
         return 0.0; // error
 

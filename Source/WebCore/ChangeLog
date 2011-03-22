@@ -1,3 +1,15 @@
+2011-03-22  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Use default-output instead of default-input to get hardware sample-rate
+        https://bugs.webkit.org/show_bug.cgi?id=56858
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestination::hardwareSampleRate):
+
 2011-03-22  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by David Kilzer.
