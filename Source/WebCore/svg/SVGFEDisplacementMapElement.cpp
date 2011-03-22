@@ -97,13 +97,19 @@ void SVGFEDisplacementMapElement::svgAttributeChanged(const QualifiedName& attrN
 {
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 
-    if (attrName == SVGNames::xChannelSelectorAttr
-        || attrName == SVGNames::yChannelSelectorAttr
-        || attrName == SVGNames::scaleAttr)
+    if (attrName == SVGNames::xChannelSelectorAttr) {
+        ChannelSelectorType selector = static_cast<ChannelSelectorType>(xChannelSelector());
+        if (CHANNEL_UNKNOWN > selector || selector > CHANNEL_A)
+            setXChannelSelectorBaseValue(CHANNEL_UNKNOWN);
         primitiveAttributeChanged(attrName);
-
-    if (attrName == SVGNames::inAttr
-        || attrName == SVGNames::in2Attr)
+    } else if (attrName == SVGNames::yChannelSelectorAttr) {
+        ChannelSelectorType selector = static_cast<ChannelSelectorType>(yChannelSelector());
+        if (CHANNEL_UNKNOWN > selector || selector > CHANNEL_A)
+            setYChannelSelectorBaseValue(CHANNEL_UNKNOWN);
+        primitiveAttributeChanged(attrName);
+    } else if (attrName == SVGNames::scaleAttr)
+        primitiveAttributeChanged(attrName);
+    else if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr)
         invalidate();
 }
 

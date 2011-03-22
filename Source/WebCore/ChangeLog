@@ -1,3 +1,15 @@
+2011-03-22  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Dirk Schulze.
+
+        SVG displacement map should validate channel selections
+        https://bugs.webkit.org/show_bug.cgi?id=56794
+
+        Test: svg/filters/feDisplacementMap-crash-test.xhtml
+
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::svgAttributeChanged):
+
 2011-03-22  Huahui Wu  <mediadependent@gmail.com>
 
         Reviewed by Steve Block.

@@ -1,0 +1,24 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+window.onload = function()
+{
+    document.getElementById('d').xChannelSelector.baseVal=0x80000000;
+    document.getElementById('d').yChannelSelector.baseVal=0x40000000;
+    setTimeout(function () {
+            document.body.innerHTML = "PASS";
+            layoutTestController.notifyDone();
+        }, 0);
+}
+</script>
+<defs><filter id="f"><feDisplacementMap id="d"/></filter></defs>
+<rect width="128" height="128" style="fill:rgb(0,255,0)" filter="url(#f)"/> 
+</svg>
+</body>
+</html>
