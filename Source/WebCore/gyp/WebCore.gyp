@@ -134,6 +134,9 @@
       'mac_framework_private_headers': [
         '<@(webcore_privateheader_files)',
       ],
+      'mac_bundle_resources': [
+        '<@(webcore_resource_files)',
+      ],
       'xcode_config_file': '<(project_dir)/Configurations/WebCore.xcconfig',
       'actions': [
         {
@@ -142,6 +145,14 @@
           'outputs': [],
           'action': [
             'sh', '<(project_dir)/gyp/copy-forwarding-and-icu-headers.sh'
+          ],
+        },
+        {
+          'action_name': 'Copy Inspector Resources',
+          'inputs': [],
+          'outputs': [],
+          'action': [
+            'sh', '<(project_dir)/gyp/copy-inspector-resources.sh'
           ],
         },
         {

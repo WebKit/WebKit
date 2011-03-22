@@ -1,3 +1,17 @@
+2011-03-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add the remaining steps to WebCore GYP build
+        https://bugs.webkit.org/show_bug.cgi?id=56864
+
+        These steps match the normal build.  After this patch, I believe the
+        WebCore GYP build is complete.
+
+        * WebCore.gypi:
+        * gyp/WebCore.gyp:
+        * gyp/copy-inspector-resources.sh: Added.
+
 2011-03-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.
