@@ -388,7 +388,11 @@ public:
     void setIsAnonymous(bool b) { m_isAnonymous = b; }
     bool isAnonymousBlock() const
     {
-        return m_isAnonymous && style()->display() == BLOCK && style()->styleType() == NOPSEUDO && !isListMarker();
+        // This function is kept in sync with anonymous block creation conditions in
+        // RenderBlock::createAnonymousBlock(). This includes creating an anonymous
+        // RenderBlock having a BLOCK or BOX display. Other classes such as RenderTextFragment
+        // are not RenderBlocks and will return false. See https://bugs.webkit.org/show_bug.cgi?id=56709. 
+        return m_isAnonymous && (style()->display() == BLOCK || style()->display() == BOX) && style()->styleType() == NOPSEUDO && isRenderBlock() && !isListMarker();
     }
     bool isAnonymousColumnsBlock() const { return style()->specifiesColumns() && isAnonymousBlock(); }
     bool isAnonymousColumnSpanBlock() const { return style()->columnSpan() && isAnonymousBlock(); }

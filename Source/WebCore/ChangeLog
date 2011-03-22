@@ -2,6 +2,23 @@
 
         Reviewed by Eric Seidel.
 
+        Anonymous blocks need isRenderBlock cast check. Also, need
+        to allow display BOX for flexible boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=56709
+
+        Test: accessibility/anchor-linked-anonymous-block-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::canMergeContiguousAnonymousBlocks): remove specific
+        fix in r81088 which is no longer needed.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isAnonymousBlock): Add isRenderBlock cast
+        check.
+
+2011-03-21  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Revert small change made in r78846 of replacing move with positionLineBox
         in the adjusting position function for inline box.
         https://bugs.webkit.org/show_bug.cgi?id=56300
