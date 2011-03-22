@@ -184,7 +184,6 @@ public:
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void showProfilesPanel();
-    void showScriptsPanel();
 #endif
 
     // Generic code called from custom implementations.

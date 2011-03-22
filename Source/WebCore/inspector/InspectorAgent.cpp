@@ -678,11 +678,6 @@ void InspectorAgent::showProfilesPanel()
 {
     showPanel(profilesPanelName);
 }
-
-void InspectorAgent::showScriptsPanel()
-{
-    showPanel(scriptsPanelName);
-}
 #endif
 
 void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script)

@@ -45,7 +45,6 @@ namespace WebCore {
 
 namespace DebuggerAgentState {
 static const char debuggerEnabled[] = "debuggerEnabled";
-static const char enableWhenShown[] = "debuggerEnableWhenShown";
 static const char javaScriptBreakpoints[] = "javaScriptBreakopints";
 };
 
@@ -69,14 +68,6 @@ InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentin
 InspectorDebuggerAgent::~InspectorDebuggerAgent()
 {
     ASSERT(!m_instrumentingAgents->inspectorDebuggerAgent());
-}
-
-void InspectorDebuggerAgent::startUserInitiatedDebugging()
-{
-    if (m_frontend)
-        enable(false);
-    else
-        m_inspectorState->setBoolean(DebuggerAgentState::enableWhenShown, true);
 }
 
 void InspectorDebuggerAgent::enable(bool restoringFromState)
@@ -128,11 +119,6 @@ void InspectorDebuggerAgent::restore()
 void InspectorDebuggerAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend->debugger();
-
-    if (m_inspectorState->getBoolean(DebuggerAgentState::enableWhenShown)) {
-        m_inspectorState->setBoolean(DebuggerAgentState::enableWhenShown, false);
-        enable(false);
-    }
 }
 
 void InspectorDebuggerAgent::clearFrontend()
@@ -145,7 +131,6 @@ void InspectorDebuggerAgent::clearFrontend()
     // remember this state to re-enable debugger on the next window
     // opening.
     disable();
-    m_inspectorState->setBoolean(DebuggerAgentState::enableWhenShown, true);
 }
 
 void InspectorDebuggerAgent::activateBreakpoints(ErrorString*)

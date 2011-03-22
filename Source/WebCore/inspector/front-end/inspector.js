@@ -985,6 +985,12 @@ WebInspector.showPanel = function(panel)
     this.currentPanel = this.panels[panel];
 }
 
+WebInspector.startUserInitiatedDebugging = function()
+{
+    this.currentPanel = this.panels.scripts;
+    WebInspector.debuggerModel.enableDebugger();
+}
+
 WebInspector.domContentEventFired = function(time)
 {
     this.panels.audits.mainResourceDOMContentTime = time;

@@ -67,7 +67,6 @@ public:
     static PassOwnPtr<InspectorDebuggerAgent> create(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptManager*);
     virtual ~InspectorDebuggerAgent();
 
-    void startUserInitiatedDebugging();
     void enable(ErrorString*) { enable(false); }
     void disable(ErrorString*) { disable(); }
     void disable();

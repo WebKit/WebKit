@@ -110,6 +110,7 @@ private:
     OwnPtr<InspectorFrontend> m_inspectorFrontend;
     InspectorClient* m_inspectorClient;
     bool m_openingFrontend;
+    bool m_startUserInitiatedDebuggingWhenFrontedIsConnected;
 };
 
 }

@@ -58,6 +58,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     , m_inspectorAgent(new InspectorAgent(page, inspectorClient, m_injectedScriptManager.get()))
     , m_inspectorClient(inspectorClient)
     , m_openingFrontend(false)
+    , m_startUserInitiatedDebuggingWhenFrontedIsConnected(false)
 {
 }
 
@@ -137,6 +138,11 @@ void InspectorController::connectFrontend()
 #endif
         m_inspectorAgent->runtimeAgent(),
         m_inspectorAgent->timelineAgent());
+
+    if (m_startUserInitiatedDebuggingWhenFrontedIsConnected) {
+        m_inspectorFrontend->inspector()->startUserInitiatedDebugging();
+        m_startUserInitiatedDebuggingWhenFrontedIsConnected = false;
+    }
 }
 
 void InspectorController::disconnectFrontend()
@@ -275,8 +281,11 @@ void InspectorController::showAndEnableDebugger()
     if (!enabled())
         return;
     show();
-    m_inspectorAgent->showScriptsPanel();
-    m_inspectorAgent->debuggerAgent()->startUserInitiatedDebugging();
+
+    if (m_inspectorFrontend)
+        m_inspectorFrontend->inspector()->startUserInitiatedDebugging();
+    else
+        m_startUserInitiatedDebuggingWhenFrontedIsConnected = true;
 }
 
 void InspectorController::disableDebugger()

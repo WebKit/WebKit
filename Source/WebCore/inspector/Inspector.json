@@ -117,6 +117,9 @@
                 ]
             },
             {
+                "name": "startUserInitiatedDebugging"
+            },
+            {
                 "name": "evaluateForTestInFrontend",
                 "parameters": [
                     { "name": "testCallId", "type": "integer" },

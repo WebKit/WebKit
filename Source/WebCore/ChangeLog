@@ -1,3 +1,26 @@
+2011-03-21  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [REGRESSION] scripts panel is broken when frontend is reopened.
+        https://bugs.webkit.org/show_bug.cgi?id=56747
+
+        Debugger should be enabled on front-end side to guarantee initialization sequence (resources come before scripts).
+
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::showProfilesPanel):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::showAndEnableDebugger):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setFrontend):
+        (WebCore::InspectorDebuggerAgent::clearFrontend):
+        * inspector/InspectorDebuggerAgent.h:
+
 2011-03-22  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
 
         Reviewed by Benjamin Poulain.
