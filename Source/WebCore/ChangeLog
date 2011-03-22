@@ -1,3 +1,16 @@
+2011-03-22  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Clear autofilled flag when reseting a form
+        In service of https://code.google.com/p/chromium/issues/detail?id=70037
+        https://bugs.webkit.org/show_bug.cgi?id=56802
+
+        Test: fast/forms/reset-autofilled.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::reset): Clear the autofilled flag.
+
 2011-03-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

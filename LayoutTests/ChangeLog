@@ -1,3 +1,15 @@
+2011-03-22  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Clear autofilled flag when reseting a form
+        https://bugs.webkit.org/show_bug.cgi?id=56802
+
+        * fast/forms/reset-autofilled-expected.txt: Added.
+        * fast/forms/reset-autofilled.html: Added.
+        * platform/chromium/fast/forms/reset-autofilled-expected.txt: Added.
+        * platform/win/fast/forms/reset-autofilled-expected.txt: Added.
+
 2011-03-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

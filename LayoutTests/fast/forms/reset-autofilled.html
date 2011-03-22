@@ -1,0 +1,45 @@
+<html>
+<head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+    function countAutofilledElements() {
+        return document.querySelectorAll(':-webkit-autofill').length;
+    }
+
+    function test() {
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+        }
+
+        var field = document.getElementById('field');
+        if (window.layoutTestController) {
+            layoutTestController.setAutofilled(field, true);
+        } else {
+            testFailed('This test requires a LayoutTestController.');
+            return;
+        }
+
+        shouldBe('countAutofilledElements()', '1');
+
+        var form = document.getElementById('form');
+        form.reset();
+
+        shouldBe('countAutofilledElements()', '0');
+    }
+    </script>
+
+    <style>
+    #tf {
+      color: #FFFFFF;
+      background-color: #FFFFFF;
+    }
+    </style>
+</head>
+<body onload="test()">
+    This tests that a field's autofilled state is reverted when the form is reset.  It can only be run using DumpRenderTree.<br>
+    <form id="form">
+        <input type="text" id="field" />
+    </form>
+    <div id="console"></div>
+</body>
+</html>
