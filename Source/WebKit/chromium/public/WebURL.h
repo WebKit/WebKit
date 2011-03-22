@@ -143,6 +143,16 @@ inline bool operator<(const WebURL& a, const WebURL& b)
     return a.spec() < b.spec();
 }
 
+inline bool operator==(const WebURL& a, const WebURL& b)
+{
+    return !a.spec().compare(b.spec());
+}
+
+inline bool operator!=(const WebURL& a, const WebURL& b)
+{
+    return !(a == b);
+}
+
 } // namespace WebKit
 
 #endif

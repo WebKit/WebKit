@@ -1,3 +1,36 @@
+2011-03-22  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Relanding:
+        Moving the method that is used to retrieve all the resources in
+        a page from the Chromium code (dom_operations.cc) to WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=55859
+
+
+        * WebKit.gyp:
+        * public/WebPageSerializer.h:
+        * public/WebURL.h:
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * public/WebVector.h:
+        (WebKit::WebVector::contains):
+        * src/WebDataSourceImpl.cpp:
+        (WebKit::WebDataSourceImpl::WebDataSourceImpl):
+        * src/WebPageSerializer.cpp:
+        (WebCore::getSubResourceURLFromElement):
+        (WebCore::retrieveResourcesForElement):
+        (WebCore::retrieveResourcesForFrame):
+        (WebKit::WebPageSerializer::retrieveAllResources):
+        * tests/WebFrameTest.cpp:
+        * tests/WebPageSerializerTest.cpp: Added.
+        * tests/data/pageserialization/awesome.png: Added.
+        * tests/data/pageserialization/embed_iframe.html: Added.
+        * tests/data/pageserialization/object_iframe.html: Added.
+        * tests/data/pageserialization/simple_iframe.html: Added.
+        * tests/data/pageserialization/simple_page.html: Added.
+        * tests/data/pageserialization/top_frame.html: Added.
+
 2011-03-22  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Tony Chang.
