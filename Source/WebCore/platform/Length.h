@@ -1,6 +1,7 @@
 /*
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
     Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+    Copyright (C) 2011 Rik Cabanier (cabanier@adobe.com)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -30,7 +31,6 @@
 namespace WebCore {
 
 const int undefinedLength = -1;
-const int percentScaleFactor = 128;
 const int intMaxForLength = 0x7ffffff; // max value for a 28-bit int
 const int intMinForLength = (-0x7ffffff - 1); // min value for a 28-bit int
 
@@ -52,34 +52,40 @@ public:
     Length(int v, LengthType t, bool q = false)
         : m_intValue(v), m_quirk(q), m_type(t), m_isFloat(false)
     {
-        ASSERT(t != Percent);
+    }
+    
+    Length(float v, LengthType t, bool q = false)
+    : m_floatValue(v), m_quirk(q), m_type(t), m_isFloat(true)
+    {            
     }
 
     Length(double v, LengthType t, bool q = false)
-        : m_quirk(q), m_type(t), m_isFloat(false)
-    {
-        if (m_type == Percent)
-            m_intValue = static_cast<int>(v*percentScaleFactor);
-        else {
-            m_isFloat = true;            
-            m_floatValue = static_cast<float>(v);
-       }
+        : m_quirk(q), m_type(t), m_isFloat(true)
+    {           
+        m_floatValue = static_cast<float>(v);    
     }
 
     bool operator==(const Length& o) const { return (getFloatValue() == o.getFloatValue()) && (m_type == o.m_type) && (m_quirk == o.m_quirk); }
     bool operator!=(const Length& o) const { return (getFloatValue() != o.getFloatValue()) || (m_type != o.m_type) || (m_quirk != o.m_quirk); }
 
+    const Length& operator*=(float v)
+    {        
+        if (m_isFloat)
+            m_floatValue = static_cast<float>(m_floatValue * v);
+        else        
+            m_intValue = static_cast<int>(m_intValue * v);
+        
+        return *this;
+    }
+    
     int value() const {
-        ASSERT(type() != Percent);
-        return rawValue();
+        return getIntValue();
     }
 
-    int rawValue() const { return getIntValue(); }
-
-    double percent() const
+    float percent() const
     {
         ASSERT(type() == Percent);
-        return static_cast<double>(rawValue()) / percentScaleFactor;
+        return getFloatValue();
     }
 
     LengthType type() const { return static_cast<LengthType>(m_type); }
@@ -94,18 +100,17 @@ public:
 
     void setValue(int value)
     {
-        ASSERT(!value || type() != Percent);
         setValue(Fixed, value);
     }
 
-    void setValue(LengthType t, double value)
+    void setValue(LengthType t, float value)
     {
         m_type = t;
-        m_floatValue = static_cast<float>(value);
+        m_floatValue = value;
         m_isFloat = true;    
     }
 
-    void setValue(double value)
+    void setValue(float value)
     {
         *this = Length(value, Fixed);
     }
@@ -119,7 +124,7 @@ public:
             case Percent:
                 if (roundPercentages)
                     return static_cast<int>(round(maxValue * percent() / 100.0));
-                return maxValue * rawValue() / (100 * percentScaleFactor);
+                return static_cast<int>(maxValue * percent() / 100.0);
             case Auto:
                 return maxValue;
             default:
@@ -135,7 +140,7 @@ public:
             case Percent:
                 if (roundPercentages)
                     return static_cast<int>(round(maxValue * percent() / 100.0));
-                return maxValue * rawValue() / (100 * percentScaleFactor);
+                return static_cast<int>(maxValue * percent() / 100.0);
             case Auto:
             default:
                 return 0;
@@ -156,10 +161,14 @@ public:
         }
     }
 
-    bool isUndefined() const { return rawValue() == undefinedLength; }
-    bool isZero() const { return !getIntValue(); }
-    bool isPositive() const { return rawValue() > 0; }
-    bool isNegative() const { return rawValue() < 0; }
+    bool isUndefined() const { return value() == undefinedLength; }
+    bool isZero() const 
+    { 
+        return m_isFloat ? !m_floatValue : !m_intValue;
+    }
+    
+    bool isPositive() const { return getFloatValue() > 0; }
+    bool isNegative() const { return getFloatValue() < 0; }
 
     bool isAuto() const { return type() == Auto; }
     bool isRelative() const { return type() == Relative; }
@@ -167,7 +176,7 @@ public:
     bool isFixed() const { return type() == Fixed; }
     bool isIntrinsicOrAuto() const { return type() == Auto || type() == MinIntrinsic || type() == Intrinsic; }
 
-    Length blend(const Length& from, double progress) const
+    Length blend(const Length& from, float progress) const
     {
         // Blend two lengths to produce a new length that is in between them.  Used for animation.
         if (!from.isZero() && !isZero() && from.type() != type())
@@ -181,29 +190,25 @@ public:
             resultType = from.type();
         
         if (resultType == Percent) {
-            double fromPercent = from.isZero() ? 0. : from.percent();
-            double toPercent = isZero() ? 0. : percent();
+            float fromPercent = from.isZero() ? 0 : from.percent();
+            float toPercent = isZero() ? 0 : percent();
             return Length(fromPercent + (toPercent - fromPercent) * progress, Percent);
         } 
             
-        double fromValue = from.isZero() ? 0 : from.value();
-        double toValue = isZero() ? 0 : value();
+        float fromValue = from.isZero() ? 0 : from.value();
+        float toValue = isZero() ? 0 : value();
         return Length(fromValue + (toValue - fromValue) * progress, resultType);
     }
 
 private:
     int getIntValue() const
     {
-        if (m_isFloat)
-            return static_cast<int>(m_floatValue);
-        return m_intValue;
+        return m_isFloat ? static_cast<int>(m_floatValue) : m_intValue;
     }
 
     float getFloatValue() const
     {
-        if (m_isFloat)
-                return m_floatValue;
-        return m_intValue;
+        return m_isFloat ? m_floatValue : m_intValue;
     }
 
     union {

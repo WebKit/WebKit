@@ -49,13 +49,13 @@ public:
 
     bool hasBorderRadius() const
     {
-        if (m_topLeft.width().rawValue() > 0)
+        if (!m_topLeft.width().isZero())
             return true;
-        if (m_topRight.width().rawValue() > 0)
+        if (!m_topRight.width().isZero())
             return true;
-        if (m_bottomLeft.width().rawValue() > 0)
+        if (!m_bottomLeft.width().isZero())
             return true;
-        if (m_bottomRight.width().rawValue() > 0)
+        if (!m_bottomRight.width().isZero())
             return true;
         return false;
     }

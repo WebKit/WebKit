@@ -113,7 +113,7 @@ static inline Color blendFunc(const AnimationBase* anim, const Color& from, cons
 
 static inline Length blendFunc(const AnimationBase*, const Length& from, const Length& to, double progress)
 {  
-    return to.blend(from, progress);
+    return to.blend(from, narrowPrecisionToFloat(progress));
 }
 
 static inline LengthSize blendFunc(const AnimationBase* anim, const LengthSize& from, const LengthSize& to, double progress)
