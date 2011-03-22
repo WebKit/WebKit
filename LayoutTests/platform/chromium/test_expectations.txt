@@ -3291,3 +3291,7 @@ BUGCR76971 LINUX : svg/text/font-size-below-point-five.svg = TEXT
 
 BUGWK81597 SKIP : http/tests/filesystem/workers/resolve-url-sync.html = TIMEOUT
 BUGWK81597 SKIP : http/tests/filesystem/workers/resolve-url.html = TIMEOUT
+
+// New CSS3 feature in r81684. Some tests fail outside Mac.
+BUGCR77095 WIN LINUX : fast/block/lineboxcontain/block-glyphs-replaced.html = IMAGE+TEXT
+BUGCR77095 WIN LINUX : fast/block/lineboxcontain/glyphs.html = IMAGE+TEXT
