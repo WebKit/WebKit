@@ -154,7 +154,7 @@ public:
         WebDragOperation operation);
     virtual void dragSourceSystemDragEnded();
     virtual WebDragOperation dragTargetDragEnter(
-        const WebDragData& dragData, int identity,
+        const WebDragData&, int identity, // FIXME: remove identity from this function signature.
         const WebPoint& clientPoint,
         const WebPoint& screenPoint,
         WebDragOperationsMask operationsAllowed);
@@ -166,8 +166,6 @@ public:
     virtual void dragTargetDrop(
         const WebPoint& clientPoint,
         const WebPoint& screenPoint);
-    virtual int dragIdentity();
-    virtual bool setDropEffect(bool accept);
     virtual unsigned long createUniqueIdentifierForRequest();
     virtual void inspectElementAt(const WebPoint& point);
     virtual WebString inspectorSettings() const;
@@ -468,22 +466,6 @@ private:
 
     // Represents whether or not this object should process incoming IME events.
     bool m_imeAcceptEvents;
-
-    // True while dispatching system drag and drop events to drag/drop targets
-    // within this WebView.
-    bool m_dragTargetDispatch;
-
-    // Valid when m_dragTargetDispatch is true; the identity of the drag data
-    // copied from the WebDropData object sent from the browser process.
-    int m_dragIdentity;
-
-    // Valid when m_dragTargetDispatch is true. Used to override the default
-    // browser drop effect with the effects "none" or "copy".
-    enum DragTargetDropEffect {
-        DropEffectDefault = -1,
-        DropEffectNone,
-        DropEffectCopy
-    } m_dropEffect;
 
     // The available drag operations (copy, move link...) allowed by the source.
     WebDragOperation m_operationsAllowed;

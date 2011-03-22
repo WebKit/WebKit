@@ -290,9 +290,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
     , m_suppressNextKeypressEvent(false)
     , m_initialNavigationPolicy(WebNavigationPolicyIgnore)
     , m_imeAcceptEvents(true)
-    , m_dragTargetDispatch(false)
-    , m_dragIdentity(0)
-    , m_dropEffect(DropEffectDefault)
     , m_operationsAllowed(WebDragOperationNone)
     , m_dragOperation(WebDragOperationNone)
     , m_autoFillPopupShowing(false)
@@ -1778,7 +1775,7 @@ void WebViewImpl::dragSourceSystemDragEnded()
 }
 
 WebDragOperation WebViewImpl::dragTargetDragEnter(
-    const WebDragData& webDragData, int identity,
+    const WebDragData& webDragData, int identity, // FIXME: remove identity from this function signature.
     const WebPoint& clientPoint,
     const WebPoint& screenPoint,
     WebDragOperationsMask operationsAllowed)
@@ -1786,7 +1783,7 @@ WebDragOperation WebViewImpl::dragTargetDragEnter(
     ASSERT(!m_currentDragData.get());
 
     m_currentDragData = webDragData;
-    m_dragIdentity = identity;
+    UNUSED_PARAM(identity);
     m_operationsAllowed = operationsAllowed;
 
     return dragTargetDragEnterOrOver(clientPoint, screenPoint, DragEnter);
@@ -1812,14 +1809,12 @@ void WebViewImpl::dragTargetDragLeave()
         IntPoint(),
         static_cast<DragOperation>(m_operationsAllowed));
 
-    m_dragTargetDispatch = true;
     m_page->dragController()->dragExited(&dragData);
-    m_dragTargetDispatch = false;
 
-    m_currentDragData = 0;
-    m_dropEffect = DropEffectDefault;
+    // FIXME: why is the drag scroll timer not stopped here?
+
     m_dragOperation = WebDragOperationNone;
-    m_dragIdentity = 0;
+    m_currentDragData = 0;
 }
 
 void WebViewImpl::dragTargetDrop(const WebPoint& clientPoint,
@@ -1845,22 +1840,12 @@ void WebViewImpl::dragTargetDrop(const WebPoint& clientPoint,
         screenPoint,
         static_cast<DragOperation>(m_operationsAllowed));
 
-    m_dragTargetDispatch = true;
     m_page->dragController()->performDrag(&dragData);
-    m_dragTargetDispatch = false;
 
-    m_currentDragData = 0;
-    m_dropEffect = DropEffectDefault;
     m_dragOperation = WebDragOperationNone;
-    m_dragIdentity = 0;
-    m_dragScrollTimer->stop();
-}
+    m_currentDragData = 0;
 
-int WebViewImpl::dragIdentity()
-{
-    if (m_dragTargetDispatch)
-        return m_dragIdentity;
-    return 0;
+    m_dragScrollTimer->stop();
 }
 
 WebDragOperation WebViewImpl::dragTargetDragEnterOrOver(const WebPoint& clientPoint, const WebPoint& screenPoint, DragAction dragAction)
@@ -1873,26 +1858,22 @@ WebDragOperation WebViewImpl::dragTargetDragEnterOrOver(const WebPoint& clientPo
         screenPoint,
         static_cast<DragOperation>(m_operationsAllowed));
 
-    m_dropEffect = DropEffectDefault;
-    m_dragTargetDispatch = true;
-    DragOperation effect = dragAction == DragEnter ? m_page->dragController()->dragEntered(&dragData)
-                                                   : m_page->dragController()->dragUpdated(&dragData);
-    // Mask the operation against the drag source's allowed operations.
-    if (!(effect & dragData.draggingSourceOperationMask()))
-        effect = DragOperationNone;
-    m_dragTargetDispatch = false;
+    DragOperation dropEffect;
+    if (dragAction == DragEnter)
+        dropEffect = m_page->dragController()->dragEntered(&dragData);
+    else
+        dropEffect = m_page->dragController()->dragUpdated(&dragData);
 
-    if (m_dropEffect != DropEffectDefault) {
-        m_dragOperation = (m_dropEffect != DropEffectNone) ? WebDragOperationCopy
-                                                           : WebDragOperationNone;
-    } else
-        m_dragOperation = static_cast<WebDragOperation>(effect);
+    // Mask the drop effect operation against the drag source's allowed operations.
+    if (!(dropEffect & dragData.draggingSourceOperationMask()))
+        dropEffect = DragOperationNone;
+
+     m_dragOperation = static_cast<WebDragOperation>(dropEffect);
 
     if (dragAction == DragOver)
         m_dragScrollTimer->triggerScroll(mainFrameImpl()->frameView(), clientPoint);
     else
         m_dragScrollTimer->stop();
-
 
     return m_dragOperation;
 }
@@ -2032,15 +2013,6 @@ void WebViewImpl::performCustomContextMenuAction(unsigned action)
 }
 
 // WebView --------------------------------------------------------------------
-
-bool WebViewImpl::setDropEffect(bool accept)
-{
-    if (m_dragTargetDispatch) {
-        m_dropEffect = accept ? DropEffectCopy : DropEffectNone;
-        return true;
-    }
-    return false;
-}
 
 void WebViewImpl::setIsTransparent(bool isTransparent)
 {

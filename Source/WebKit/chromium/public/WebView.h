@@ -229,7 +229,7 @@ public:
     // Callback methods when a drag-and-drop operation is trying to drop
     // something on the WebView.
     virtual WebDragOperation dragTargetDragEnter(
-        const WebDragData&, int identity,
+        const WebDragData&, int identity, // FIXME: remove identity from this function signature.
         const WebPoint& clientPoint, const WebPoint& screenPoint,
         WebDragOperationsMask operationsAllowed) = 0;
     virtual WebDragOperation dragTargetDragOver(
@@ -238,13 +238,6 @@ public:
     virtual void dragTargetDragLeave() = 0;
     virtual void dragTargetDrop(
         const WebPoint& clientPoint, const WebPoint& screenPoint) = 0;
-
-    virtual int dragIdentity() = 0;
-
-    // Helper method for drag and drop target operations: override the
-    // default drop effect with either a "copy" (accept true) or "none"
-    // (accept false) effect.  Return true on success.
-    virtual bool setDropEffect(bool accept) = 0;
 
 
     // Support for resource loading initiated by plugins -------------------

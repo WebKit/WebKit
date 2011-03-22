@@ -1,3 +1,26 @@
+2011-03-22  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Remove Gears from Chromium WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=56808
+
+        Gears has been removed from Chromium 12. Remove Gears drag drop support
+        from WebKit. That work lead to http://webkit.org/b/25916, a proposal to
+        add native file drag drop, and its subsequent standardization in HTML5.
+
+        * public/WebBindings.h:
+        * public/WebView.h:
+        * src/WebBindings.cpp:
+        (WebKit::getRangeImpl): FIXME note added.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::dragTargetDragEnter):
+        (WebKit::WebViewImpl::dragTargetDragLeave):
+        (WebKit::WebViewImpl::dragTargetDrop):
+        (WebKit::WebViewImpl::dragTargetDragEnterOrOver):
+        * src/WebViewImpl.h:
+
 2011-03-21  Adam Klein  <adamk@chromium.org>
 
         Reviewed by David Levin.

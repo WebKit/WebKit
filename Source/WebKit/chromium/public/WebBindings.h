@@ -127,17 +127,6 @@ public:
     // undefined.  If iString is false, the opposite is true.
     WEBKIT_API static void extractIdentifierData(const NPIdentifier&, const NPUTF8*& string, int32_t& number, bool& isString);
 
-    // Return true (success) if the given npobj is the current drag event in browser dispatch,
-    // and is accessible based on context execution frames and their security origins and
-    // WebKit clipboard access policy. If so, return the event id and the clipboard data (WebDragData).
-    // This only works with V8.  If compiled without V8, it'll always return false.
-    WEBKIT_API static bool getDragData(NPObject* event, int* eventId, WebDragData*);
-
-    // Invoke the event access policy checks listed above with GetDragData().  No need for clipboard
-    // data or event_id outputs, just confirm the given npobj is the current & accessible drag event.
-    // This only works with V8.  If compiled without V8, it'll always return false.
-    WEBKIT_API static bool isDragEvent(NPObject* event);
-
     // Return true (success) if the given npobj is a range object.
     // If so, return that range as a WebRange object.
     WEBKIT_API static bool getRange(NPObject* range, WebRange*);
