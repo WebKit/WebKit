@@ -1,3 +1,15 @@
+2011-03-22  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(r80096): Number type input unexpectedly rounds fractional values
+        https://bugs.webkit.org/show_bug.cgi?id=56367
+
+        Introduce clampToInteger(unsigned).
+        
+        * wtf/MathExtras.h:
+        (clampToInteger): Added.
+
 2011-03-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

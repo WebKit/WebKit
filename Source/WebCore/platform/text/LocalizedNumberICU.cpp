@@ -34,6 +34,7 @@
 #include <limits>
 #include <unicode/numfmt.h>
 #include <unicode/parsepos.h>
+#include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 
 using namespace std;
@@ -73,12 +74,13 @@ double parseLocalizedNumber(const String& numberString)
     return U_SUCCESS(status) ? numericResult : numeric_limits<double>::quiet_NaN();
 }
 
-String formatLocalizedNumber(double number)
+String formatLocalizedNumber(double number, unsigned fractionDigits)
 {
     NumberFormat* formatter = numberFormatter();
     if (!formatter)
         return String();
     UnicodeString result;
+    formatter->setMaximumFractionDigits(clampToInteger(fractionDigits));
     formatter->format(number, result);
     return String(result.getBuffer(), result.length());
 }

@@ -223,8 +223,9 @@ String NumberInputType::visibleValue() const
     if (currentValue.isEmpty())
         return currentValue;
     double doubleValue = numeric_limits<double>::quiet_NaN();
-    parseToDoubleForNumberType(currentValue, &doubleValue);
-    String localized = formatLocalizedNumber(doubleValue);
+    unsigned decimalPlace;
+    parseToDoubleForNumberTypeWithDecimalPlaces(currentValue, &doubleValue, &decimalPlace);
+    String localized = formatLocalizedNumber(doubleValue, decimalPlace);
     return localized.isEmpty() ? currentValue : localized;
 }
 

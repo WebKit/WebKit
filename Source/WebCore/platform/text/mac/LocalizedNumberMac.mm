@@ -65,10 +65,12 @@ double parseLocalizedNumber(const String& numberString)
     return [number doubleValue];
 }
 
-String formatLocalizedNumber(double inputNumber)
+String formatLocalizedNumber(double inputNumber, unsigned fractionDigits)
 {
     RetainPtr<NSNumber> number(AdoptNS, [[NSNumber alloc] initWithDouble:inputNumber]);
-    return String([numberFormatter() stringFromNumber:number.get()]);
+    RetainPtr<NSNumberFormatter> formatter = numberFormatter();
+    [formatter.get() setMaximumFractionDigits:fractionDigits];
+    return String([formatter.get() stringFromNumber:number.get()]);
 }
 
 } // namespace WebCore

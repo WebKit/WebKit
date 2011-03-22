@@ -42,7 +42,7 @@ double parseLocalizedNumber(const String&)
     return numeric_limits<double>::quiet_NaN();
 }
 
-String formatLocalizedNumber(double)
+String formatLocalizedNumber(double, unsigned)
 {
     return String();
 }

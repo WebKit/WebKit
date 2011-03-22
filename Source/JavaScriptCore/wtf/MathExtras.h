@@ -233,6 +233,11 @@ inline int clampToPositiveInteger(float d)
     return static_cast<int>(std::max<float>(std::min(d, maxIntAsFloat), 0));
 }
 
+inline int clampToInteger(unsigned value)
+{
+    return static_cast<int>(std::min(value, static_cast<unsigned>(std::numeric_limits<int>::max())));
+}
+
 #if !COMPILER(MSVC) && !COMPILER(WINSCW) && !(COMPILER(RVCT) && (OS(SYMBIAN) || PLATFORM(BREWMP)))
 using std::isfinite;
 using std::isinf;

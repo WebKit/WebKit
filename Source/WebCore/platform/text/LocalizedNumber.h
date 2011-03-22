@@ -47,7 +47,9 @@ double parseLocalizedNumber(const String&);
 // current locale.  If an implementation doesn't support localized
 // numbers or the input value is NaN or Infinitiy, the function should
 // return an empty string.
-String formatLocalizedNumber(double);
+// fractionDigits is the maximum length of the fractional parts of the
+// resultant string.
+String formatLocalizedNumber(double, unsigned fractionDigits);
 
 } // namespace WebCore
 

@@ -1,3 +1,36 @@
+2011-03-22  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(r80096): Number type input unexpectedly rounds fractional values
+        https://bugs.webkit.org/show_bug.cgi?id=56367
+        
+        Because the default value of the maximum fractional digits of NSNumberFormatter
+        and ICU NumberFormat is 3, the value 0.55555 is rounded to 0.556 in a
+        localized representation. This bug affects only in Mac and Chromium.
+
+        To fix this bug,
+         - Add "maximum fractional digits" parameter to formatLocalizedNumber(), and
+         - NumberInputType::visibleValue uses parseToDoubleForNumberTypeWithDecimalPlaces()
+          instead of parseToDoubleForNumberType().
+
+        No automated tests because the behavior is locale-dependent. This change
+        updates a manual test.
+
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::visibleValue):
+          Use parseToDoubleForNumberTypeWithDecimalPlaces() and passing fractional
+          part length to formatLocalizedNumber().
+        * manual-tests/input-number-localization.html:
+          Update the test to cover this change.
+        * platform/text/LocalizedNumber.h: Add a parameter to formatLocalizedNumber().
+        * platform/text/LocalizedNumberICU.cpp:
+        (WebCore::formatLocalizedNumber): Call setMaximumFractionalDigits().
+        * platform/text/LocalizedNumberNone.cpp:
+        (WebCore::formatLocalizedNumber):
+        * platform/text/mac/LocalizedNumberMac.mm:
+        (WebCore::formatLocalizedNumber): Call setMaximumFractionalDigits().
+
 2011-03-21  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Eric Seidel.
