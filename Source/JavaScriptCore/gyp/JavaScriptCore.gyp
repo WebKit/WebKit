@@ -138,27 +138,6 @@
             # used only by this project.
             'GCC_PREFIX_HEADER': '<(project_dir)/JavaScriptCorePrefix.h',
             'INFOPLIST_FILE': '<(project_dir)/Info.plist',
-            # This setting mirrors the setting in Base.xcconfig, with
-            # one difference noted below.
-            'WARNING_CFLAGS_BASE': [
-              '-Wall',
-              '-Wextra',
-              '-Wcast-qual',
-              '-Wchar-subscripts',
-              '-Wextra-tokens',
-              '-Wformat=2',
-              '-Winit-self',
-              # FIXME: For some reason, -Wmissing-format-attribute causes a
-              # build error in Assertions.cpp in the GYP build but not in the
-              # non-GYP build.
-              # '-Wmissing-format-attribute',
-              '-Wmissing-noreturn',
-              '-Wpacked',
-              '-Wpointer-arith',
-              '-Wredundant-decls',
-              '-Wundef',
-              '-Wwrite-strings',
-            ],
           },
         }],
       ],

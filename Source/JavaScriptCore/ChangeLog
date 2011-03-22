@@ -1,5 +1,25 @@
 2011-03-21  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Solve the Assertions.cpp / -Wno-missing-format-attribute mystery
+        https://bugs.webkit.org/show_bug.cgi?id=56780
+
+        The reason we couldn't resolve this warning in the GYP build was that
+        the normal build disables this warning specifically for this file.
+        This patch takes the same approach as the previous patch to
+        WebCoreObjCExtras.mm in that it uses a pragma to suppress the warning
+        (rather than a build system configuration).
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            - Remove the special-case for this file.
+        * gyp/JavaScriptCore.gyp:
+            - Remove the work-around for this issue.
+        * wtf/Assertions.cpp:
+            - Add a pragma disabling this warning for this file.
+
+2011-03-21  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Dimitri Glazkov.
 
         WebCore GYP build shouldn't crash on startup
