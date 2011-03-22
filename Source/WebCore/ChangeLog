@@ -1,3 +1,10 @@
+2011-03-22  Anders Carlsson  <andersca@apple.com>
+
+        Fix WebKit2 build.
+
+        * WebCore.exp.in:
+        Export a symbol needed by WebKit2.
+
 2011-03-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
