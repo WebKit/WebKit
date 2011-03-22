@@ -110,7 +110,7 @@ WebInspector.DatabaseDispatcher = function()
 WebInspector.DatabaseDispatcher._callbacks = {};
 
 WebInspector.DatabaseDispatcher.prototype = {
-    DatabaseOpened: function(payload)
+    addDatabase: function(payload)
     {
         var database = new WebInspector.Database(
             payload.id,

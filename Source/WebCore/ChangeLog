@@ -1,3 +1,13 @@
+2011-03-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Rolling out 81657, 81654, 81651 for breaking tests on chromium.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/front-end/Database.js:
+        (WebInspector.DatabaseDispatcher.prototype.addDatabase):
+
 2011-03-21  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
