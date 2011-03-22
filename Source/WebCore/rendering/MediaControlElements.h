@@ -142,16 +142,16 @@ public:
     virtual PassRefPtr<RenderStyle> styleForElement();
     void setVisible(bool);
     bool isVisible() { return m_isVisible; }
-    void setPosition(int x, int y);
     bool hitTest(const IntPoint& absPoint);
 
 private:
     MediaControlVolumeSliderContainerElement(HTMLMediaElement*);
+
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual MediaControlElementType displayType() const;
     virtual const AtomicString& shadowPseudoId() const;
 
     bool m_isVisible;
-    int m_x, m_y;
 };
 
 // ----------------------------

@@ -45,6 +45,7 @@
 #include "RenderMedia.h"
 #include "RenderSlider.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -251,11 +252,41 @@ const AtomicString& MediaControlTimelineContainerElement::shadowPseudoId() const
 
 // ----------------------------
 
+class RenderMediaVolumeSliderContainer : public RenderBlock {
+public:
+    RenderMediaVolumeSliderContainer(Node*);
+
+private:
+    virtual void layout();
+};
+
+RenderMediaVolumeSliderContainer::RenderMediaVolumeSliderContainer(Node* node)
+    : RenderBlock(node)
+{
+}
+
+void RenderMediaVolumeSliderContainer::layout()
+{
+    RenderBlock::layout();
+    if (style()->display() == NONE || !previousSibling() || !previousSibling()->isBox())
+        return;
+
+    RenderBox* buttonBox = toRenderBox(previousSibling());
+
+    if (view())
+        view()->disableLayoutState();
+
+    IntPoint offset = theme()->volumeSliderOffsetFromMuteButton(buttonBox, IntSize(width(), height()));
+    setX(offset.x() + buttonBox->offsetLeft());
+    setY(offset.y() + buttonBox->offsetTop());
+
+    if (view())
+        view()->enableLayoutState();
+}
+
 inline MediaControlVolumeSliderContainerElement::MediaControlVolumeSliderContainerElement(HTMLMediaElement* mediaElement)
     : MediaControlElement(mediaElement)
     , m_isVisible(false)
-    , m_x(0)
-    , m_y(0)
 {
 }
 
@@ -264,12 +295,15 @@ PassRefPtr<MediaControlVolumeSliderContainerElement> MediaControlVolumeSliderCon
     return adoptRef(new MediaControlVolumeSliderContainerElement(mediaElement));
 }
 
+RenderObject* MediaControlVolumeSliderContainerElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderMediaVolumeSliderContainer(this);
+}
+
 PassRefPtr<RenderStyle> MediaControlVolumeSliderContainerElement::styleForElement()
 {
     RefPtr<RenderStyle> style = MediaControlElement::styleForElement();
     style->setPosition(AbsolutePosition);
-    style->setLeft(Length(m_x, Fixed));
-    style->setTop(Length(m_y, Fixed));
     style->setDisplay(m_isVisible ? BLOCK : NONE);
     return style;
 }
@@ -279,14 +313,6 @@ void MediaControlVolumeSliderContainerElement::setVisible(bool visible)
     if (visible == m_isVisible)
         return;
     m_isVisible = visible;
-}
-
-void MediaControlVolumeSliderContainerElement::setPosition(int x, int y)
-{
-    if (x == m_x && y == m_y)
-        return;
-    m_x = x;
-    m_y = y;
 }
 
 bool MediaControlVolumeSliderContainerElement::hitTest(const IntPoint& absPoint)

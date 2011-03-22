@@ -1,3 +1,22 @@
+2011-03-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Move volume slider positioning logic to a custom renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=56498
+
+        No functional change, covered by existing tests.
+
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::updateVolumeSliderContainer): Removed positioning logic.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::RenderMediaVolumeSliderContainer::RenderMediaVolumeSliderContainer): Added.
+        (WebCore::RenderMediaVolumeSliderContainer::layout): Added.
+        (WebCore::MediaControlVolumeSliderContainerElement::MediaControlVolumeSliderContainerElement): Removed storing of coordinates.
+        (WebCore::MediaControlVolumeSliderContainerElement::createRenderer): Added.
+        (WebCore::MediaControlVolumeSliderContainerElement::styleForElement): Removed setting of coordinates.
+        * rendering/MediaControlElements.h: Changed corresponding decls.
+
 2011-03-22  Andrew Wason  <rectalogic@rectalogic.com>
 
         Reviewed by Benjamin Poulain.
