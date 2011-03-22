@@ -120,7 +120,7 @@ void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, Injecte
 
 void ConsoleMessage::updateRepeatCountInConsole(InspectorFrontend::Console* frontend)
 {
-    frontend->consoleMessageRepeatCountUpdate(m_repeatCount);
+    frontend->consoleMessageRepeatCountUpdated(m_repeatCount);
 }
 
 bool ConsoleMessage::isEqual(ConsoleMessage* msg) const

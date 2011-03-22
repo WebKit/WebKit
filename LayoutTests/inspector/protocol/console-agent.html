@@ -7,8 +7,8 @@
 function test()
 {
     var testSuite = [
-        ["ConsoleAgent", "setConsoleMessagesEnabled", false],
-        ["ConsoleAgent", "setConsoleMessagesEnabled", true],
+        ["ConsoleAgent", "disable"],
+        ["ConsoleAgent", "enable"],
         ["RuntimeAgent", "evaluate", "console.info('test'); console.info('test')", "test-group", false],
         ["ConsoleAgent", "clearConsoleMessages"],
         ["ConsoleAgent", "setMonitoringXHREnabled", true],

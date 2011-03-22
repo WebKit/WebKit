@@ -3,36 +3,31 @@ CONSOLE MESSAGE: line 1: test
 Protocol stability test. It is dumping request/response pairs of ConsoleAgent functions.
 
 -----------------------------------------------------------
-ConsoleAgent.setConsoleMessagesEnabled(false)
+ConsoleAgent.disable()
 
 request:
 {
     id : <number>
     domain : "Console"
-    command : "setConsoleMessagesEnabled"
+    command : "disable"
     arguments : {
-        enabled : false
     }
 }
 
 response:
 {
     requestId : <number>
-    body : {
-        newState : false
-    }
 }
 
 -----------------------------------------------------------
-ConsoleAgent.setConsoleMessagesEnabled(true)
+ConsoleAgent.enable()
 
 request:
 {
     id : <number>
     domain : "Console"
-    command : "setConsoleMessagesEnabled"
+    command : "enable"
     arguments : {
-        enabled : true
     }
 }
 
@@ -40,7 +35,7 @@ response:
 {
     requestId : <number>
     body : {
-        newState : true
+        expiredMessagesCount : 0
     }
 }
 
@@ -84,11 +79,11 @@ event ConsoleAgent.consoleMessage
     }
 }
 
-event ConsoleAgent.consoleMessageRepeatCountUpdate
+event ConsoleAgent.consoleMessageRepeatCountUpdated
 {
     type : "event"
     domain : "Console"
-    event : "consoleMessageRepeatCountUpdate"
+    event : "consoleMessageRepeatCountUpdated"
     body : {
         count : 2
     }
@@ -188,13 +183,13 @@ response:
 ===========================================================
 Coverage for ConsoleAgent
 {
-    setConsoleMessagesEnabled : "checked"
+    enable : "checked"
+    disable : "checked"
     clearConsoleMessages : "checked"
     setMonitoringXHREnabled : "checked"
     addInspectedNode : "checked"
     consoleMessage : "checked"
-    consoleMessageExpiredCountUpdate : "not checked"
-    consoleMessageRepeatCountUpdate : "checked"
+    consoleMessageRepeatCountUpdated : "checked"
     consoleMessagesCleared : "checked"
 }
 

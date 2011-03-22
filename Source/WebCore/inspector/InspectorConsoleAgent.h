@@ -58,7 +58,8 @@ public:
     InspectorConsoleAgent(InstrumentingAgents*, InspectorAgent*, InspectorState*, InjectedScriptManager*, InspectorDOMAgent*);
     ~InspectorConsoleAgent();
 
-    void setConsoleMessagesEnabled(ErrorString* error, bool enabled, bool* newState);
+    void enable(ErrorString*, int* consoleMessageExpireCount);
+    void disable(ErrorString*);
     void clearConsoleMessages(ErrorString* error);
     void reset();
     void setFrontend(InspectorFrontend*);
@@ -82,7 +83,6 @@ public:
     void addInspectedNode(ErrorString*, int nodeId);
 
 private:
-    void setConsoleMessagesEnabled(bool);
     void addConsoleMessage(PassOwnPtr<ConsoleMessage>);
 
     InstrumentingAgents* m_instrumentingAgents;

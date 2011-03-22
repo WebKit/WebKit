@@ -1,3 +1,17 @@
+2011-03-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: protocol cleanup. ConsoleAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=56806
+
+        renamed method: void setConsoleMessagesEnabled(in boolean enabled, out boolean newState); => void enable(out long expiredMessagesCount);
+        new method: disable()
+        deleted method: [event] void consoleMessageExpiredCountUpdate(out unsigned long count); delete it. The counter will be transfered as out argument of enable command.
+
+        * inspector/protocol/console-agent-expected.txt:
+        * inspector/protocol/console-agent.html:
+
 2011-03-21  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -198,14 +198,14 @@
         "types": [],
         "commands": [
             {
-                "name": "setConsoleMessagesEnabled",
-                "parameters": [
-                    { "name": "enabled", "type": "boolean" }
-                ],
+                "name": "enable",
                 "returns": [
-                    { "name": "newState", "type": "boolean" }
+                   { "name": "expiredMessagesCount", "type": "integer" }
                 ]
             },
+            {
+                "name": "disable"
+           },
             {
                 "name": "clearConsoleMessages"
             },
@@ -229,14 +229,8 @@
                     { "name": "messageObj", "$ref": "ConsoleMessage" }
                 ]
             },
-            {
-                "name": "consoleMessageExpiredCountUpdate",
-                "parameters": [
-                    { "name": "count", "type": "integer" }
-                ]
-            },
-            {
-                "name": "consoleMessageRepeatCountUpdate",
+           {
+                "name": "consoleMessageRepeatCountUpdated",
                 "parameters": [
                     { "name": "count", "type": "integer" }
                 ]

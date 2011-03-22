@@ -121,13 +121,7 @@ WebInspector.ConsoleView.prototype = {
                 console.addMessage(consoleMessage);
             },
 
-            consoleMessageExpiredCountUpdate: function(count)
-            {
-                var message = String.sprintf(WebInspector.UIString("%d console messages are not shown."), count);
-                console.addMessage(WebInspector.ConsoleMessage.createTextMessage(message, WebInspector.ConsoleMessage.MessageLevel.Warning));
-            },
-
-            consoleMessageRepeatCountUpdate: function(count)
+            consoleMessageRepeatCountUpdated: function(count)
             {
                 var msg = console.previousMessage;
                 var prevRepeatCount = msg.totalRepeatCount;
@@ -152,6 +146,14 @@ WebInspector.ConsoleView.prototype = {
             },
         }
         InspectorBackend.registerDomainDispatcher("Console", dispatcher);
+    },
+
+    setConsoleMessageExpiredCount: function(count)
+    {
+        if (count) {
+            var message = String.sprintf(WebInspector.UIString("%d console messages are not shown."), count);
+            this.addMessage(WebInspector.ConsoleMessage.createTextMessage(message, WebInspector.ConsoleMessage.MessageLevel.Warning));
+        }
     },
 
     _updateFilter: function(e)

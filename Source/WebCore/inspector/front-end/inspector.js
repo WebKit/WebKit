@@ -505,7 +505,7 @@ WebInspector.doLoadedDone = function()
 
     if (WebInspector.settings.monitoringXHREnabled)
         ConsoleAgent.setMonitoringXHREnabled(true);
-    ConsoleAgent.setConsoleMessagesEnabled(true);
+    ConsoleAgent.enable(this.console.setConsoleMessageExpiredCount.bind(this.console));
 
     WebInspector.showPanel(WebInspector.settings.lastActivePanel);
 
