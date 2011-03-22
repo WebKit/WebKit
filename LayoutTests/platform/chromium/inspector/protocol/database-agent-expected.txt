@@ -18,7 +18,7 @@ response:
 {
     requestId : <number>
     body : {
-        success : false
+        success : true
         transactionId : <number>
     }
 }
@@ -41,7 +41,7 @@ response:
 {
     requestId : <number>
     body : {
-        success : false
+        success : true
         transactionId : <number>
     }
 }
@@ -59,11 +59,27 @@ request:
     }
 }
 
+event DatabaseAgent.sqlTransactionSucceeded
+{
+    type : "event"
+    domain : "Database"
+    event : "sqlTransactionSucceeded"
+    body : {
+        transactionId : <number>
+        columnNames : {
+        }
+        values : {
+        }
+    }
+}
+
 response:
 {
     requestId : <number>
     body : {
         tableNames : {
+            0 : "Table1"
+            1 : "sqlite_sequence"
         }
     }
 }
@@ -80,6 +96,34 @@ request:
         expression : "openDatabase('db2', '1.0', 'Database Agent Test second database', 1000);"
         objectGroup : "database-agent-test"
         includeCommandLineAPI : false
+    }
+}
+
+event DatabaseAgent.sqlTransactionFailed
+{
+    type : "event"
+    domain : "Database"
+    event : "sqlTransactionFailed"
+    body : {
+        transactionId : <number>
+        sqlError : {
+            message : <string>
+            code : <number>
+        }
+    }
+}
+
+event DatabaseAgent.sqlTransactionFailed
+{
+    type : "event"
+    domain : "Database"
+    event : "sqlTransactionFailed"
+    body : {
+        transactionId : <number>
+        sqlError : {
+            message : <string>
+            code : <number>
+        }
     }
 }
 
@@ -117,6 +161,6 @@ Coverage for DatabaseAgent
     getDatabaseTableNames : "checked"
     executeSQL : "checked"
     DatabaseOpened : "checked"
-    sqlTransactionSucceeded : "not checked"
-    sqlTransactionFailed : "not checked"
+    sqlTransactionSucceeded : "checked"
+    sqlTransactionFailed : "checked"
 }

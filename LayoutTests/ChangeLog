@@ -1,3 +1,10 @@
+2011-03-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed fix for database-agent test.
+
+        * inspector/protocol/database-agent-expected.txt:
+        * platform/chromium/inspector/protocol/database-agent-expected.txt: Copied from LayoutTests/inspector/protocol/database-agent-expected.txt.
+
 2011-03-22  Ofri Wolfus  <ofri@google.com>
 
         Reviewed by Eric Seidel.
