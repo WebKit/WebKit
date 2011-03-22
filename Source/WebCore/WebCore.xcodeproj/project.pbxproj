@@ -5033,7 +5033,7 @@
 		BC772C4E0C4EB3040083285F /* MIMETypeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */; };
 		BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772C4D0C4EB3040083285F /* MIMETypeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC772C5E0C4EB3440083285F /* MIMETypeRegistryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */; };
-		BC772E131331620C001EC9CE /* CSSLineBoxContainValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772E121331620C001EC9CE /* CSSLineBoxContainValue.h */; };
+		BC772E131331620C001EC9CE /* CSSLineBoxContainValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772E121331620C001EC9CE /* CSSLineBoxContainValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC772E16133162C2001EC9CE /* CSSLineBoxContainValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772E15133162C2001EC9CE /* CSSLineBoxContainValue.cpp */; };
 		BC77CB870FEBF5AF0070887B /* HTMLDataGridColElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC77CB860FEBF5AF0070887B /* HTMLDataGridColElement.h */; };
 		BC77CBAA0FEBF6C90070887B /* HTMLDataGridColElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC77CBA90FEBF6C90070887B /* HTMLDataGridColElement.cpp */; };
