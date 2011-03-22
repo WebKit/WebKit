@@ -1,3 +1,19 @@
+2011-03-22  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add high-quality band-limited audio resampling algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=56692
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/SincResampler.cpp: Added.
+        (WebCore::SincResampler::SincResampler):
+        (WebCore::SincResampler::initializeKernel):
+        (WebCore::SincResampler::consumeSource):
+        (WebCore::SincResampler::process):
+        * platform/audio/SincResampler.h: Added.
+
 2011-03-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
