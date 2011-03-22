@@ -1,3 +1,15 @@
+2011-03-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        WebCore GYP build shouldn't crash on startup
+        https://bugs.webkit.org/show_bug.cgi?id=56776
+
+        Debug builds shouldn't define NDEBUG.  This same logic exists in the
+        project.pbxproj file.
+
+        * gyp/JavaScriptCore.gyp:
+
 2011-03-21  Robert Kroeger  <rjkroege@chromium.org>
 
         Reviewed by Antonio Gomes.

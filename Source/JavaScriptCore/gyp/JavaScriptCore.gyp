@@ -53,6 +53,23 @@
       'include_dirs': [
         '<@(javascriptcore_include_dirs)',
       ],
+      'configurations': {
+        'Production': {
+        },
+        'Release': {
+          'xcode_settings': {
+            'STRIP_INSTALLED_PRODUCT': 'NO',
+          },
+        },
+        'Debug': {
+          'xcode_settings': {
+            'DEAD_CODE_STRIPPING': '$(DEAD_CODE_STRIPPING_debug)',
+            'DEBUG_DEFINES': '$(DEBUG_DEFINES_debug)',
+            'GCC_OPTIMIZATION_LEVEL': '$(GCC_OPTIMIZATION_LEVEL_debug)',
+            'STRIP_INSTALLED_PRODUCT': '$(STRIP_INSTALLED_PRODUCT_debug)',
+          },
+        },
+      },
       'sources': [
         '<@(javascriptcore_files)',
         '<@(javascriptcore_publicheader_files)',

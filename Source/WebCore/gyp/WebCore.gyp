@@ -24,6 +24,23 @@
         '<(PRODUCT_DIR)/DerivedSources',
         '<(PRODUCT_DIR)/DerivedSources/WebCore',
       ],
+      'configurations': {
+        'Production': {
+        },
+        'Release': {
+          'xcode_settings': {
+            'STRIP_INSTALLED_PRODUCT': 'NO',
+          },
+        },
+        'Debug': {
+          'xcode_settings': {
+            'DEAD_CODE_STRIPPING': '$(DEAD_CODE_STRIPPING_debug)',
+            'DEBUG_DEFINES': '$(DEBUG_DEFINES_debug)',
+            'GCC_OPTIMIZATION_LEVEL': '$(GCC_OPTIMIZATION_LEVEL_debug)',
+            'STRIP_INSTALLED_PRODUCT': '$(STRIP_INSTALLED_PRODUCT_debug)',
+          },
+        },
+      },
       'sources': [
         '<@(webcore_files)',
         '<@(webcore_privateheader_files)',
@@ -152,7 +169,6 @@
             'GCC_PREFIX_HEADER': '<(DEPTH)/WebCore/WebCorePrefix.h',
             'INFOPLIST_FILE': '<(DEPTH)/WebCore/Info.plist',
             'ALWAYS_SEARCH_USER_PATHS': 'NO',
-            'DEAD_CODE_STRIPPING': 'NO',
           },
         }],
       ],
