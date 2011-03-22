@@ -1,5 +1,15 @@
 2011-03-22  Adam Roben  <aroben@apple.com>
 
+        Add Windows expected failure results after r81625
+
+        The failure is tracked by <http://webkit.org/b/56829>.
+
+        * platform/win/fast/css/percentage-non-integer-expected.checksum: Added.
+        * platform/win/fast/css/percentage-non-integer-expected.png: Added.
+        * platform/win/fast/css/percentage-non-integer-expected.txt: Added.
+
+2011-03-22  Adam Roben  <aroben@apple.com>
+
         Fix new http tests added in r81635 on Windows
 
         * http/tests/cache/post-redirect-get.php:
