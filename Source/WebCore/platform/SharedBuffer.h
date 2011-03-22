@@ -89,6 +89,10 @@ public:
     const char* platformData() const;
     unsigned platformDataSize() const;
 
+#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+    void append(CFDataRef);
+#endif
+
     PassRefPtr<SharedBuffer> copy() const;
     
     bool hasPurgeableBuffer() const { return m_purgeableBuffer.get(); }
@@ -130,6 +134,10 @@ private:
     mutable Vector<char> m_buffer;
     mutable Vector<char*> m_segments;
     OwnPtr<PurgeableBuffer> m_purgeableBuffer;
+#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+    mutable Vector<RetainPtr<CFDataRef> > m_dataArray;
+    void copyDataArrayAndClear(char *destination, unsigned bytesToCopy) const;
+#endif
 #if USE(CF)
     SharedBuffer(CFDataRef);
     RetainPtr<CFDataRef> m_cfData;

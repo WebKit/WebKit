@@ -61,6 +61,11 @@ namespace WebCore {
         virtual void receivedCancellation(const AuthenticationChallenge&);        
         virtual void didCancel(const ResourceError&);
 
+#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+        virtual bool supportsDataArray() { return true; }
+        virtual void didReceiveDataArray(CFArrayRef);
+#endif
+
         SubresourceLoaderClient* m_client;
         bool m_loadingMultipartContent;
     };

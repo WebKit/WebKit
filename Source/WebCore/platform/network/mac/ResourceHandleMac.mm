@@ -910,6 +910,28 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     m_handle->client()->didReceiveResponse(m_handle, r);
 }
 
+#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+- (void)connection:(NSURLConnection *)connection didReceiveDataArray:(NSArray *)dataArray
+{
+    UNUSED_PARAM(connection);
+    LOG(Network, "Handle %p delegate connection:%p didReceiveDataArray:%p arraySize:%d", m_handle, connection, dataArray, [dataArray count]);
+
+    if (!dataArray)
+        return;
+
+    if (!m_handle || !m_handle->client())
+        return;
+
+    if (m_handle->client()->supportsDataArray())
+        m_handle->client()->didReceiveDataArray(m_handle, reinterpret_cast<CFArrayRef>(dataArray));
+    else {
+        for (NSData *data in dataArray)
+            m_handle->client()->didReceiveData(m_handle, static_cast<const char*>([data bytes]), [data length], static_cast<int>([data length]));
+    }
+    return;
+}
+#endif
+
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
 {
     UNUSED_PARAM(connection);

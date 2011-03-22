@@ -35,6 +35,10 @@
 #include "FrameLoaderClient.h"
 #include "ResourceHandle.h"
 
+#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+#include "InspectorInstrumentation.h"
+#endif
+
 namespace WebCore {
 
 NSCachedURLResponse* ResourceLoader::willCacheResponse(ResourceHandle*, NSCachedURLResponse* response)
@@ -43,6 +47,44 @@ NSCachedURLResponse* ResourceLoader::willCacheResponse(ResourceHandle*, NSCached
         return 0;
     return frameLoader()->client()->willCacheResponse(documentLoader(), identifier(), response);
 }
+
+#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+
+void ResourceLoader::didReceiveDataArray(CFArrayRef dataArray)
+{
+    // Protect this in this delegate method since the additional processing can do
+    // anything including possibly derefing this; one example of this is Radar 3266216.
+    RefPtr<ResourceLoader> protector(this);
+
+    if (!m_shouldBufferData)
+        return;
+
+    if (!m_resourceData)
+        m_resourceData = SharedBuffer::create();
+
+    CFIndex arrayCount = CFArrayGetCount(dataArray);
+    for (CFIndex i = 0; i < arrayCount; ++i) {
+        CFDataRef data = static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, i));
+        int dataLen = static_cast<int>(CFDataGetLength(data));
+
+        m_resourceData->append(data);
+
+        // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
+        // However, with today's computers and networking speeds, this won't happen in practice.
+        // Could be an issue with a giant local file.
+        if (m_sendResourceLoadCallbacks && m_frame)
+            frameLoader()->notifier()->didReceiveData(this, reinterpret_cast<const char*>(CFDataGetBytePtr(data)), dataLen, dataLen);
+    }
+}
+
+void ResourceLoader::didReceiveDataArray(ResourceHandle*, CFArrayRef dataArray)
+{
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceData(m_frame.get(), identifier());
+    didReceiveDataArray(dataArray);
+    InspectorInstrumentation::didReceiveResourceData(cookie);
+}
+
+#endif
 
 }
 

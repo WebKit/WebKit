@@ -167,6 +167,9 @@ void SharedBuffer::clear()
 
     m_buffer.clear();
     m_purgeableBuffer.clear();
+#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+    m_dataArray.clear();
+#endif
 }
 
 PassRefPtr<SharedBuffer> SharedBuffer::copy() const
@@ -206,6 +209,9 @@ const Vector<char>& SharedBuffer::buffer() const
             freeSegment(m_segments[i]);
         }
         m_segments.clear();
+#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+        copyDataArrayAndClear(destination, bytesLeft);
+#endif
     }
     return m_buffer;
 }
