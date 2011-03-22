@@ -7,6 +7,12 @@
     'Production': {
       'xcode_config_file': '<(project_dir)/Configurations/Base.xcconfig',
     },
+    'Profiling': {
+      'xcode_config_file': '<(project_dir)/Configurations/DebugRelease.xcconfig',
+      'xcode_settings': {
+        'STRIP_INSTALLED_PRODUCT': 'NO',
+      },
+    },
     'Release': {
       'xcode_config_file': '<(project_dir)/Configurations/DebugRelease.xcconfig',
       'xcode_settings': {
@@ -29,6 +35,11 @@
       '<(project_dir)/icu',
     ],
   },
+  'target_defaults': {
+    'configurations': {
+      'Profiling': {},
+    },
+  },
   'targets': [
     {
       'target_name': 'JavaScriptCore',
@@ -41,6 +52,11 @@
         '<@(javascriptcore_include_dirs)',
         '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore',
       ],
+      'configurations': {
+        'Production': {
+          'INSTALL_PATH': '$(BUILT_PRODUCTS_DIR)',
+        },
+      },
       'sources': [
         '<@(javascriptcore_files)',
         '<@(javascriptcore_publicheader_files)',

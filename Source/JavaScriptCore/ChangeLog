@@ -1,3 +1,16 @@
+2011-03-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add Profiling Configuration to JavaScriptCore gyp build
+        https://bugs.webkit.org/show_bug.cgi?id=56862
+
+        It appears this is identical to Release, but I suspect
+        there is someone/thing who uses the Profiling target
+        so we're adding it for completeness.
+
+        * gyp/JavaScriptCore.gyp:
+
 2011-03-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
