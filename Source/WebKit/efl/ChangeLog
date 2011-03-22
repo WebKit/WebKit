@@ -1,3 +1,24 @@
+2011-03-22  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        Add void to function without parameters
+        https://bugs.webkit.org/show_bug.cgi?id=56821
+
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_clear):
+        (ewk_cookies_policy_get):
+        * ewk/ewk_cookies.h:
+        * ewk/ewk_private.h:
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_web_database_default_quota_get):
+        (ewk_settings_web_database_path_get):
+        (ewk_settings_proxy_uri_get):
+        (ewk_settings_default_user_agent_get):
+        * ewk/ewk_settings.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_dpi_get):
+
 2011-03-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

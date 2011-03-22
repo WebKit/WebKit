@@ -76,7 +76,7 @@ EAPI Eina_Bool ewk_cookies_file_set(const char *filename)
 /**
  * Clears all the cookies from the cookie jar.
  */
-EAPI void ewk_cookies_clear()
+EAPI void ewk_cookies_clear(void)
 {
 #if USE(SOUP)
     GSList* l;
@@ -207,7 +207,7 @@ EAPI void ewk_cookies_policy_set(Ewk_Cookie_Policy p)
  * @return the current acceptance policy
  * @see Ewk_Cookie_Policy
  */
-EAPI Ewk_Cookie_Policy ewk_cookies_policy_get()
+EAPI Ewk_Cookie_Policy ewk_cookies_policy_get(void)
 {
     Ewk_Cookie_Policy ewk_policy = EWK_COOKIE_JAR_ACCEPT_ALWAYS;
 #if USE(SOUP)

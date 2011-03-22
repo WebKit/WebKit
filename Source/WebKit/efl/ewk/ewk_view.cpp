@@ -4487,7 +4487,7 @@ WebCore::FloatRect ewk_view_page_rect_get(Evas_Object *o)
  *
  * @return device's dpi value.
  */
-int ewk_view_dpi_get()
+int ewk_view_dpi_get(void)
 {
 #ifdef HAVE_ECORE_X
      return ecore_x_dpi_get();

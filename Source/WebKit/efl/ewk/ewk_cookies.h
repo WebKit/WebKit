@@ -76,12 +76,12 @@ typedef enum _Ewk_Cookie_Policy Ewk_Cookie_Policy;
 /************************** Exported functions ***********************/
 
 EAPI Eina_Bool          ewk_cookies_file_set(const char *filename);
-EAPI void               ewk_cookies_clear();
-EAPI Eina_List*         ewk_cookies_get_all();
+EAPI void               ewk_cookies_clear(void);
+EAPI Eina_List*         ewk_cookies_get_all(void);
 EAPI void               ewk_cookies_cookie_del(Ewk_Cookie *cookie);
 EAPI void               ewk_cookies_cookie_free(Ewk_Cookie *cookie);
 EAPI void               ewk_cookies_policy_set(Ewk_Cookie_Policy p);
-EAPI Ewk_Cookie_Policy  ewk_cookies_policy_get();
+EAPI Ewk_Cookie_Policy  ewk_cookies_policy_get(void);
 
 #ifdef __cplusplus
 }

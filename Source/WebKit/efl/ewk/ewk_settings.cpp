@@ -87,7 +87,7 @@ static WTF::String _ewk_settings_webkit_os_version_get()
  *
  * @return the current default database quota in bytes
  */
-uint64_t ewk_settings_web_database_default_quota_get()
+uint64_t ewk_settings_web_database_default_quota_get(void)
 {
     return _ewk_default_web_database_quota;
 }
@@ -120,7 +120,7 @@ void ewk_settings_web_database_path_set(const char *path)
  *
  * @return database path or @c 0 if none or web database is not supported
  */
-const char *ewk_settings_web_database_path_get()
+const char *ewk_settings_web_database_path_get(void)
 {
 #if ENABLE(DATABASE)
     return _ewk_default_web_database_path;
@@ -306,7 +306,7 @@ void ewk_settings_proxy_uri_set(const char* proxy)
  *
  * @return current proxy URI or @c 0 if it's not set
  */
-const char* ewk_settings_proxy_uri_get()
+const char* ewk_settings_proxy_uri_get(void)
 {
 #if USE(SOUP)
     SoupURI* uri;
@@ -332,7 +332,7 @@ const char* ewk_settings_proxy_uri_get()
  *
  * @return a pointer to an eina_stringshare containing the user agent string
  */
-const char* ewk_settings_default_user_agent_get()
+const char* ewk_settings_default_user_agent_get(void)
 {
     WTF::String ua_version = makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+');
     WTF::String static_ua = makeString("Mozilla/5.0 (", _ewk_settings_webkit_platform_get(), "; ", _ewk_settings_webkit_os_version_get(), ") AppleWebKit/", ua_version) + makeString(" (KHTML, like Gecko) Version/5.0 Safari/", ua_version);

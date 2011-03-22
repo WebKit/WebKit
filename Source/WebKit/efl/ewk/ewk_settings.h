@@ -37,9 +37,9 @@ extern "C" {
  * @brief General purpose settings, not tied to any view object.
  */
 
-EAPI uint64_t         ewk_settings_web_database_default_quota_get();
+EAPI uint64_t         ewk_settings_web_database_default_quota_get(void);
 EAPI void             ewk_settings_web_database_path_set(const char *path);
-EAPI const char      *ewk_settings_web_database_path_get();
+EAPI const char      *ewk_settings_web_database_path_get(void);
 
 EAPI Eina_Bool        ewk_settings_icon_database_path_set(const char *path);
 EAPI const char      *ewk_settings_icon_database_path_get(void);
@@ -52,7 +52,7 @@ EAPI Eina_Bool        ewk_settings_cache_directory_path_set(const char *path);
 EAPI const char      *ewk_settings_cache_directory_path_get(void);
 
 EAPI void             ewk_settings_proxy_uri_set(const char* proxy);
-EAPI const char*      ewk_settings_proxy_uri_get();
+EAPI const char*      ewk_settings_proxy_uri_get(void);
 
 #ifdef __cplusplus
 }
