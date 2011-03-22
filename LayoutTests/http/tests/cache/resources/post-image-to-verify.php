@@ -1,4 +1,6 @@
 <?php
+require_once '../../resources/portabilityLayer.php';
+
 clearstatcache();
 if (file_exists(sys_get_temp_dir() . "/post.tmp")) {
     header('HTTP/1.1 404 Not Found');

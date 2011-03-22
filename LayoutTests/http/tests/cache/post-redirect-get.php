@@ -1,4 +1,6 @@
 <?php
+require_once '../resources/portabilityLayer.php';
+
 // This test loads an uncacheable main resource and a cacheable image subresource.
 // We then trigger a POST request, which redirects as a GET back to this page.
 // On this GET request, the image should be loaded from the cache and no HTTP

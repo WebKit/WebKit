@@ -1,5 +1,14 @@
 2011-03-22  Adam Roben  <aroben@apple.com>
 
+        Fix new http tests added in r81635 on Windows
+
+        * http/tests/cache/post-redirect-get.php:
+        * http/tests/cache/post-with-cached-subresources.php:
+        * http/tests/cache/resources/post-image-to-verify.php:
+        Pull in portabilityLayer.php, which implements sys_get_temp_dir for PHP 4.
+
+2011-03-22  Adam Roben  <aroben@apple.com>
+
         Add Windows results for new test added in r81653
 
         Windows differs from Mac due to a different scrollbar width within the listboxes.
