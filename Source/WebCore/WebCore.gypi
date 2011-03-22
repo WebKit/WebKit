@@ -1,5 +1,6 @@
 {
     'variables': {
+        'project_dir': ['.'],
         # These headers are part of WebCore's private API in the Apple Mac build.
         'webcore_privateheader_files': [
             '<(PRODUCT_DIR)/DerivedSources/WebCore/CSSPropertyNames.h',

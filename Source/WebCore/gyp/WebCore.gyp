@@ -3,7 +3,26 @@
     '../../gyp/common.gypi',
     '../WebCore.gypi',
   ],
-  'xcode_config_file': '../Configurations/DebugRelease.xcconfig',
+  'configurations': {
+    'Production': {
+      'xcode_config_file': '<(project_dir)/Configurations/Base.xcconfig',
+    },
+    'Release': {
+      'xcode_config_file': '<(project_dir)/Configurations/DebugRelease.xcconfig',
+      'xcode_settings': {
+        'STRIP_INSTALLED_PRODUCT': 'NO',
+      },
+    },
+    'Debug': {
+      'xcode_config_file': '<(project_dir)/Configurations/DebugRelease.xcconfig',
+      'xcode_settings': {
+        'DEAD_CODE_STRIPPING': '$(DEAD_CODE_STRIPPING_debug)',
+        'DEBUG_DEFINES': '$(DEBUG_DEFINES_debug)',
+        'GCC_OPTIMIZATION_LEVEL': '$(GCC_OPTIMIZATION_LEVEL_debug)',
+        'STRIP_INSTALLED_PRODUCT': '$(STRIP_INSTALLED_PRODUCT_debug)',
+      },
+    },
+  },
   'targets': [
     {
       'target_name': 'WebCore',
@@ -16,31 +35,14 @@
         # FIXME: Add 'Copy Inspector Resources',
       ],
       'include_dirs': [
-        '<(DEPTH)/WebCore',
-        '<(DEPTH)/WebCore/icu',
-        '<(DEPTH)/WebCore/ForwardingHeaders',
+        '<(project_dir)',
+        '<(project_dir)/icu',
+        '<(project_dir)/ForwardingHeaders',
         '<(PRODUCT_DIR)/usr/local/include',
         '/usr/include/libxml2',
         '<(PRODUCT_DIR)/DerivedSources',
         '<(PRODUCT_DIR)/DerivedSources/WebCore',
       ],
-      'configurations': {
-        'Production': {
-        },
-        'Release': {
-          'xcode_settings': {
-            'STRIP_INSTALLED_PRODUCT': 'NO',
-          },
-        },
-        'Debug': {
-          'xcode_settings': {
-            'DEAD_CODE_STRIPPING': '$(DEAD_CODE_STRIPPING_debug)',
-            'DEBUG_DEFINES': '$(DEBUG_DEFINES_debug)',
-            'GCC_OPTIMIZATION_LEVEL': '$(GCC_OPTIMIZATION_LEVEL_debug)',
-            'STRIP_INSTALLED_PRODUCT': '$(STRIP_INSTALLED_PRODUCT_debug)',
-          },
-        },
-      },
       'sources': [
         '<@(webcore_files)',
         '<@(webcore_privateheader_files)',
@@ -132,7 +134,7 @@
       'mac_framework_private_headers': [
         '<@(webcore_privateheader_files)',
       ],
-      'xcode_config_file': '../Configurations/WebCore.xcconfig',
+      'xcode_config_file': '<(project_dir)/Configurations/WebCore.xcconfig',
       # FIXME: A number of these actions aren't supposed to run if "${ACTION}" = "installhdrs"
       'postbuilds': [
         {
@@ -166,8 +168,8 @@
           'xcode_settings': {
             # FIXME: Remove these overrides once WebCore.xcconfig is
             # used only by this project.
-            'GCC_PREFIX_HEADER': '<(DEPTH)/WebCore/WebCorePrefix.h',
-            'INFOPLIST_FILE': '<(DEPTH)/WebCore/Info.plist',
+            'GCC_PREFIX_HEADER': '<(project_dir)/WebCorePrefix.h',
+            'INFOPLIST_FILE': '<(project_dir)/Info.plist',
             'ALWAYS_SEARCH_USER_PATHS': 'NO',
           },
         }],
@@ -196,7 +198,7 @@
         'inputs': [],
          'outputs': [],
          'action': [
-           'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(DEPTH)/WebCore/Info.plist'
+           'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(project_dir)/Info.plist'
           ]
       }],
     },
@@ -206,7 +208,7 @@
       'actions': [{
         'action_name': 'Generate Export File Generator',
         'inputs': [
-          '<(DEPTH)/WebCore/WebCore.exp.in',
+          '<(project_dir)/WebCore.exp.in',
         ],
         'outputs': [
           '<@(export_file_generator_files)',
@@ -223,8 +225,36 @@
         'WebCoreExportFileGenerator Generator',
       ],
       'include_dirs': [
-        '<(DEPTH)/WebCore/ForwardingHeaders',
+        '<(project_dir)/ForwardingHeaders',
       ],
+      'xcode_config_file': '<(project_dir)/Configurations/WebCore.xcconfig',
+      'configurations': {
+        'Production': {
+            'EXPORTED_SYMBOLS_FILE': '',
+            'GCC_OPTIMIZATION_LEVEL': '0',
+            'INSTALL_PATH': '/usr/local/bin',
+            'OTHER_LDFLAGS': '',
+            'SKIP_INSTALL': 'YES',
+        },
+        'Release': {
+          'xcode_settings': {
+            'EXPORTED_SYMBOLS_FILE': '',
+            'GCC_OPTIMIZATION_LEVEL': '0',
+            'INSTALL_PATH': '/usr/local/bin',
+            'OTHER_LDFLAGS': '',
+            'SKIP_INSTALL': 'YES',
+          },
+        },
+        'Debug': {
+          'xcode_settings': {
+            'EXPORTED_SYMBOLS_FILE': '',
+            'GCC_OPTIMIZATION_LEVEL': '0',
+            'INSTALL_PATH': '/usr/local/bin',
+            'OTHER_LDFLAGS': '',
+            'SKIP_INSTALL': 'YES',
+          },
+        },
+      },
       'sources': [
         '<@(export_file_generator_files)',
       ],

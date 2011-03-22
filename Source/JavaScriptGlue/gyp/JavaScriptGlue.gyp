@@ -3,7 +3,41 @@
     '../../gyp/common.gypi',
     'JavaScriptGlue.gypi',
   ],
-  'xcode_config_file': '<(DEPTH)/JavaScriptGlue/Configurations/DebugRelease.xcconfig',
+  'configurations': {
+    'Production': {
+      'xcode_config_file': '<(project_dir)/Configurations/Base.xcconfig',
+      'xcode_settings': {
+        'BUILD_VARIANTS': 'normal',
+        'SECTORDER_FLAGS': [
+          '-sectorder',
+          '__TEXT',
+          '__text',
+          '$(APPLE_INTERNAL_DIR)/OrderFiles/JavaScriptGlue.order',
+        ],
+      },
+    },
+    'Release': {
+      'xcode_config_file': '<(project_dir)/Configurations/DebugRelease.xcconfig',
+      'xcode_settings': {
+        'COPY_PHASE_STRIP': 'YES',
+        'GCC_ENABLE_FIX_AND_CONTINUE': 'NO',
+        'ZERO_LINK': 'NO',
+        'STRIP_INSTALLED_PRODUCT': 'NO',
+        'INSTALL_PATH': '$(BUILT_PRODUCTS_DIR)',
+      },
+    },
+    'Debug': {
+      'xcode_config_file': '<(project_dir)/Configurations/DebugRelease.xcconfig',
+      'xcode_settings': {
+        'COPY_PHASE_STRIP': 'NO',
+        'GCC_DYNAMIC_NO_PIC': 'NO',
+        'DEBUG_DEFINES': '$(DEBUG_DEFINES_debug)',
+        'GCC_OPTIMIZATION_LEVEL': '$(GCC_OPTIMIZATION_LEVEL_debug)',
+        'STRIP_INSTALLED_PRODUCT': '$(STRIP_INSTALLED_PRODUCT_debug)',
+        'INSTALL_PATH': '$(BUILT_PRODUCTS_DIR)',
+      },
+    },
+  },
   'targets': [
     {
       'target_name': 'JavaScriptGlue',
@@ -12,8 +46,8 @@
         'Update Version'
       ],
       'include_dirs': [
-        '<(DEPTH)/JavaScriptGlue/ForwardingHeaders',
-        '<(DEPTH)/JavaScriptGlue/icu',
+        '<(project_dir)/ForwardingHeaders',
+        '<(project_dir)/icu',
         '<(PRODUCT_DIR)/include',
       ],
       'sources': [
@@ -23,7 +57,7 @@
         '$(SDKROOT)/System/Library/Frameworks/Foundation.framework',
         '$(SDKROOT)/System/Library/Frameworks/AppKit.framework',
       ],
-      'xcode_config_file': '../Configurations/JavaScriptGlue.xcconfig',
+      'xcode_config_file': '<(project_dir)/Configurations/JavaScriptGlue.xcconfig',
       'postbuilds': [
         {
           'postbuild_name': 'Check For Global Initializers',
@@ -48,10 +82,11 @@
         ['OS=="mac"', {
           'mac_bundle': 1,
           'xcode_settings': {
+            'OTHER_CFLAGS': '-Wno-deprecated-declarations',
             # FIXME: Remove these overrides once JavaScriptGlue.xcconfig is
             # used only by this project.
-            'INFOPLIST_FILE': '<(DEPTH)/JavaScriptGlue/Info.plist',
-            'EXPORTED_SYMBOLS_FILE': '<(DEPTH)/JavaScriptGlue/JavaScriptGlue.exp', 
+            'INFOPLIST_FILE': '<(project_dir)/Info.plist',
+            'EXPORTED_SYMBOLS_FILE': '<(project_dir)/JavaScriptGlue.exp', 
           },
         }],
       ],
@@ -64,7 +99,7 @@
         'inputs': [],
          'outputs': [],
          'action': [
-           'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(DEPTH)/JavaScriptGlue/Info.plist'
+           'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(project_dir)/Info.plist'
           ]
       }],
     },

@@ -1,10 +1,10 @@
 {
   'target_defaults': {
     'configurations': {
-      'Debug': {},
-      'Release': {},
       'Production': {},
+      'Release': {},
+      'Debug': {},
     },
-    'default_configuration': 'Debug',
   },
+  'default_configuration': 'Production',
 }

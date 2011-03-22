@@ -1,3 +1,16 @@
+2011-03-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Production configuration in GYP isn&apos;t set up correctly
+        https://bugs.webkit.org/show_bug.cgi?id=56786
+
+        Update JavaScriptGlue.gyp with information mined from
+        JavaScriptGlue.xcodeproj.
+
+        * gyp/JavaScriptGlue.gyp:
+        * gyp/JavaScriptGlue.gypi:
+
 2011-03-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

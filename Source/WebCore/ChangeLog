@@ -1,3 +1,15 @@
+2011-03-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Production configuration in GYP isn&apos;t set up correctly
+        https://bugs.webkit.org/show_bug.cgi?id=56786
+
+        Update WebCore.gyp with information mined from WebCore.xcodeproj.
+
+        * WebCore.gypi:
+        * gyp/WebCore.gyp:
+
 2011-03-22  Ofri Wolfus  <ofri@google.com>
 
         Reviewed by Eric Seidel.

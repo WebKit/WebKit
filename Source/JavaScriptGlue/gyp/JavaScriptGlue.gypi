@@ -1,5 +1,6 @@
 {
     'variables': {
+        'project_dir': ['..'],
         'javascriptglue_files': [
             '../JavaScriptGlue.cpp',
             '../JSBase.cpp',

@@ -3,9 +3,27 @@
     '../../gyp/common.gypi',
     '../JavaScriptCore.gypi',
   ],
-  'xcode_config_file': '<(project_dir)/Configurations/DebugRelease.xcconfig',
+  'configurations': {
+    'Production': {
+      'xcode_config_file': '<(project_dir)/Configurations/Base.xcconfig',
+    },
+    'Release': {
+      'xcode_config_file': '<(project_dir)/Configurations/DebugRelease.xcconfig',
+      'xcode_settings': {
+        'STRIP_INSTALLED_PRODUCT': 'NO',
+      },
+    },
+    'Debug': {
+      'xcode_config_file': '<(project_dir)/Configurations/DebugRelease.xcconfig',
+      'xcode_settings': {
+        'DEAD_CODE_STRIPPING': '$(DEAD_CODE_STRIPPING_debug)',
+        'DEBUG_DEFINES': '$(DEBUG_DEFINES_debug)',
+        'GCC_OPTIMIZATION_LEVEL': '$(GCC_OPTIMIZATION_LEVEL_debug)',
+        'STRIP_INSTALLED_PRODUCT': '$(STRIP_INSTALLED_PRODUCT_debug)',
+      },
+    },
+  },
   'variables': {
-    # FIXME: We should use a header map instead of listing these explicitly.
     'javascriptcore_include_dirs': [
       '<(project_dir)',
       '<(project_dir)/icu',
@@ -36,24 +54,8 @@
       ],
       'include_dirs': [
         '<@(javascriptcore_include_dirs)',
+        '<(SHARED_INTERMEDIATE_DIR)',
       ],
-      'configurations': {
-        'Production': {
-        },
-        'Release': {
-          'xcode_settings': {
-            'STRIP_INSTALLED_PRODUCT': 'NO',
-          },
-        },
-        'Debug': {
-          'xcode_settings': {
-            'DEAD_CODE_STRIPPING': '$(DEAD_CODE_STRIPPING_debug)',
-            'DEBUG_DEFINES': '$(DEBUG_DEFINES_debug)',
-            'GCC_OPTIMIZATION_LEVEL': '$(GCC_OPTIMIZATION_LEVEL_debug)',
-            'STRIP_INSTALLED_PRODUCT': '$(STRIP_INSTALLED_PRODUCT_debug)',
-          },
-        },
-      },
       'sources': [
         '<@(javascriptcore_files)',
         '<@(javascriptcore_publicheader_files)',
@@ -213,6 +215,13 @@
       'include_dirs': [
         '<@(javascriptcore_include_dirs)',
       ],
+      'configurations': {
+        'Production': {
+          'xcode_settings': {
+            'INSTALL_PATH': '$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/Resources',
+          },
+        },
+      },
       'sources': [
         '<@(jsc_files)',
         '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
