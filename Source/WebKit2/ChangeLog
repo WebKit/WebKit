@@ -1,5 +1,11 @@
 2011-03-21  Brady Eidson  <beidson@apple.com>
 
+        Fix Mac release builds after https://bugs.webkit.org/show_bug.cgi?id=56783
+
+        * Platform/mac/Logging.mac.mm:
+
+2011-03-21  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Brian Weinstein.
 
         https://bugs.webkit.org/show_bug.cgi?id=56783
