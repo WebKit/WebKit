@@ -34,6 +34,18 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static WebMouseEvent::Button currentMouseButton()
+{
+    NSUInteger pressedMouseButtons = [NSEvent pressedMouseButtons];
+    if (!pressedMouseButtons)
+        return WebMouseEvent::NoButton;
+    if (pressedMouseButtons == 1 << 0)
+        return WebMouseEvent::LeftButton;
+    if (pressedMouseButtons == 1 << 1)
+        return WebMouseEvent::RightButton;
+    return WebMouseEvent::MiddleButton;
+}
+
 static WebMouseEvent::Button mouseButtonForEvent(NSEvent *event)
 {
     switch ([event type]) {
@@ -49,6 +61,9 @@ static WebMouseEvent::Button mouseButtonForEvent(NSEvent *event)
         case NSOtherMouseUp:
         case NSOtherMouseDragged:
             return WebMouseEvent::MiddleButton;
+        case NSMouseEntered:
+        case NSMouseExited:
+            return currentMouseButton();
         default:
             return WebMouseEvent::NoButton;
     }

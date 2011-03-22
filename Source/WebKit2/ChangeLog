@@ -1,3 +1,17 @@
+2011-03-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Cannot make a selection past the end of the visible page (no autoscrolling)
+        <rdar://problem/8823874>
+        https://bugs.webkit.org/show_bug.cgi?id=56847
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::currentMouseButton):
+        (WebKit::mouseButtonForEvent):
+        Add mouse button for mouseEnter/Exit events. [NSEvent buttonNumber] doesn't seem to give the right result
+        for these events, but getting the currentMouseButton does work.
+
 2011-03-21  Brady Eidson  <beidson@apple.com>
 
         Fix Mac release builds after https://bugs.webkit.org/show_bug.cgi?id=56783
