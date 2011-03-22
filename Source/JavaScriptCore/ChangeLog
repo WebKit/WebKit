@@ -2,6 +2,20 @@
 
         Reviewed by Adam Barth.
 
+        Make it possible to build JavaScriptCore and WebCore gyp builds outside of Source
+        https://bugs.webkit.org/show_bug.cgi?id=56867
+
+        This should make it possible to build the gyp-generated JavaScriptCore.xcodeproj
+        from a JavaScriptCore directory outside of Source.
+
+        * gyp/JavaScriptCore.gyp:
+        * gyp/run-if-exists.sh: Added.
+        * gyp/update-info-plist.sh: Added.
+
+2011-03-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Add Profiling Configuration to JavaScriptCore gyp build
         https://bugs.webkit.org/show_bug.cgi?id=56862
 

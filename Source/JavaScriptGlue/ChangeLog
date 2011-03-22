@@ -1,3 +1,17 @@
+2011-03-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make it possible to build JavaScriptCore and WebCore gyp builds outside of Source
+        https://bugs.webkit.org/show_bug.cgi?id=56867
+
+        This should make it possible to build the gyp-generated JavaScriptGlue.xcodeproj
+        from a JavaScriptGlue directory outside of Source.
+
+        * gyp/JavaScriptGlue.gyp:
+        * gyp/run-if-exists.sh: Added.
+        * gyp/update-info-plist.sh: Added.
+
 2011-03-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

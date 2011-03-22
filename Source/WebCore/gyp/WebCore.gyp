@@ -169,25 +169,25 @@
         {
           'postbuild_name': 'Check For Global Initializers',
           'action': [
-            'sh', '<(DEPTH)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-global-initializers'
+            'sh', '<(project_dir)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-global-initializers'
           ],
         },
         {
           'postbuild_name': 'Check For Exit Time Destructors',
           'action': [
-            'sh', '<(DEPTH)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-exit-time-destructors'
+            'sh', '<(project_dir)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-exit-time-destructors'
           ],
         },
         {
           'postbuild_name': 'Check For Weak VTables and Externals',
           'action': [
-            'sh', '<(DEPTH)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-weak-vtables-and-externals'
+            'sh', '<(project_dir)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-weak-vtables-and-externals'
           ],
         },
         {
           'postbuild_name': 'Check For Inappropriate Files in Framework',
           'action': [
-            'sh', '<(DEPTH)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-inappropriate-files-in-framework'
+            'sh', '<(project_dir)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-inappropriate-files-in-framework'
           ],
         },
       ],
@@ -228,7 +228,7 @@
         'inputs': [],
          'outputs': [],
          'action': [
-           'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(project_dir)/Info.plist'
+           'sh', '<(project_dir)/gyp/update-info-plist.sh', '<(project_dir)/Info.plist'
           ]
       }],
     },

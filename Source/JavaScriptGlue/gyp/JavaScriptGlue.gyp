@@ -62,19 +62,19 @@
         {
           'postbuild_name': 'Check For Global Initializers',
           'action': [
-            'sh', '<(DEPTH)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-global-initializers'
+            'sh', '<(project_dir)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-global-initializers'
           ],
         },
         {
           'postbuild_name': 'Check For Weak VTables and Externals',
           'action': [
-            'sh', '<(DEPTH)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-weak-vtables-and-externals'
+            'sh', '<(project_dir)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-weak-vtables-and-externals'
           ],
         },
         {
           'postbuild_name': 'Remove Headers If Needed',
           'action': [
-            'sh', '<(DEPTH)/gyp/remove-headers-if-needed.sh'
+            'sh', '<(project_dir)/gyp/remove-headers-if-needed.sh'
           ],
         },
       ],
@@ -99,7 +99,7 @@
         'inputs': [],
          'outputs': [],
          'action': [
-           'sh', '<(DEPTH)/gyp/update-info-plist.sh', '<(project_dir)/Info.plist'
+           'sh', '<(project_dir)/gyp/update-info-plist.sh', '<(project_dir)/Info.plist'
           ]
       }],
     },
