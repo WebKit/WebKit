@@ -84,6 +84,9 @@ public:
     // If a plug-in is using the Core Animation drawing model, this returns its plug-in layer.
     virtual PlatformLayer* pluginLayer() = 0;
 #endif
+    
+    // Returns whether the plug-in is transparent or not.
+    virtual bool isTransparent() = 0;
 
     // Tells the plug-in that either the plug-ins frame rect or its clip rect has changed. Both rects are in window coordinates.
     virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect) = 0;

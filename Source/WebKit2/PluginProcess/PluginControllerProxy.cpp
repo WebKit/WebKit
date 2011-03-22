@@ -136,11 +136,16 @@ void PluginControllerProxy::paint()
     IntRect dirtyRect = m_dirtyRect;
     m_dirtyRect = IntRect();
 
+    ASSERT(m_plugin);
+
     // Create a graphics context.
     OwnPtr<GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
+
     graphicsContext->translate(-m_frameRect.x(), -m_frameRect.y());
 
-    ASSERT(m_plugin);
+    if (m_plugin->isTransparent())
+        graphicsContext->clearRect(dirtyRect);
+
     m_plugin->paint(graphicsContext.get(), dirtyRect);
 
     m_connection->connection()->send(Messages::PluginProxy::Update(dirtyRect), m_pluginInstanceID);

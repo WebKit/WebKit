@@ -333,7 +333,15 @@ void NetscapePluginModule::determineQuirks()
     if (plugin.bundleIdentifier == "com.macromedia.Flash Player.plugin") {
         // Flash requires that the return value of getprogname() be "WebKitPluginHost".
         m_pluginQuirks.add(PluginQuirks::PrognameShouldBeWebKitPluginHost);
+
+        // Flash supports snapshotting.
         m_pluginQuirks.add(PluginQuirks::SupportsSnapshotting);
+    }
+
+    if (plugin.bundleIdentifier == "com.microsoft.SilverlightPlugin") {
+        // Silverlight doesn't explicitly opt into transparency, so we'll do it whenever
+        // there's a 'background' attribute.
+        m_pluginQuirks.add(PluginQuirks::MakeTransparentIfBackgroundAttributeExists);
     }
 }
 

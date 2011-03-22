@@ -551,7 +551,12 @@ static NPError NPN_SetValue(NPP npp, NPPVariable variable, void *value)
             return NPERR_NO_ERROR;
         }
 
-        case NPPVpluginTransparentBool:
+        case NPPVpluginTransparentBool: {
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+            plugin->setIsTransparent(value);
+            return NPERR_NO_ERROR;
+        }
+
         default:
             notImplemented();
             return NPERR_GENERIC_ERROR;

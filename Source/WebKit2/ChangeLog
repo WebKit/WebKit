@@ -2,6 +2,56 @@
 
         Reviewed by Sam Weinig.
 
+        Microsoft Silverlight playback shows artifacts
+        https://bugs.webkit.org/show_bug.cgi?id=56863
+        <rdar://problem/9103136>
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::paint):
+        If the plug-in is transparent, clear the dirty rect before painting.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        Add the MakeTransparentIfBackgroundAttributeExists quirk for Silverlight plug-ins.
+
+        * Shared/Plugins/PluginQuirks.h:
+        Add MakeTransparentIfBackgroundAttributeExists quirk.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_SetValue):
+        Handle NPPVpluginTransparentBool.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize m_isTransparent to false.
+
+        (WebKit::NetscapePlugin::setIsTransparent):
+        Set m_isTransparent.
+
+        (WebKit::NetscapePlugin::initialize):
+        If the plug-in has the MakeTransparentIfBackgroundAttributeExists quirk, make it transparent
+        if there's a 'background' attribute.
+
+        (WebKit::NetscapePlugin::isTransparent):
+        Add getter.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add isTransparent().
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::paint):
+        Always copy the plug-in backing store to the plug-in proxy backing store.
+
+        (WebKit::PluginProxy::isTransparent):
+        Add getter that should never be called.
+
+        (WebKit::PluginProxy::update):
+        Always copy the plug-in backing store to the plug-in proxy backing store.
+
+2011-03-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Crash when calling PluginProxy::evaluate on a destroyed plug-in
         https://bugs.webkit.org/show_bug.cgi?id=56848
         <rdar://problem/9168975>

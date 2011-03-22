@@ -68,6 +68,7 @@ private:
 #if PLATFORM(MAC)
     virtual PlatformLayer* pluginLayer();
 #endif
+    virtual bool isTransparent();
     virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect);
     virtual void frameDidFinishLoading(uint64_t requestID);
     virtual void frameDidFail(uint64_t requestID, bool wasCancelled);

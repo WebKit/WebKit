@@ -132,7 +132,8 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
     
         // Blit the plug-in backing store into our own backing store.
         OwnPtr<WebCore::GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
-        
+        graphicsContext->setCompositeOperation(CompositeCopy);
+
         m_pluginBackingStore->paint(*graphicsContext, IntPoint(), IntRect(0, 0, m_frameRect.width(), m_frameRect.height()));
 
         m_pluginBackingStoreContainsValidData = true;
@@ -158,6 +159,13 @@ PassRefPtr<ShareableBitmap> PluginProxy::snapshot()
 
     RefPtr<ShareableBitmap> snapshotBuffer = ShareableBitmap::create(bufferSize, snapshotStoreHandle);
     return snapshotBuffer.release();
+}
+
+bool PluginProxy::isTransparent()
+{
+    // This should never be called from the web process.
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
@@ -461,7 +469,7 @@ void PluginProxy::update(const IntRect& paintedRect)
     if (m_backingStore) {
         // Blit the plug-in backing store into our own backing store.
         OwnPtr<GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
-
+        graphicsContext->setCompositeOperation(CompositeCopy);
         m_pluginBackingStore->paint(*graphicsContext, paintedRectPluginCoordinates.location(), 
                                     paintedRectPluginCoordinates);
     }

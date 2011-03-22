@@ -64,6 +64,7 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
 #else
     , m_isWindowed(true)
 #endif
+    , m_isTransparent(false)
     , m_inNPPNew(false)
     , m_loadManually(false)
 #if PLATFORM(MAC)
@@ -190,6 +191,11 @@ void NetscapePlugin::setIsWindowed(bool isWindowed)
         return;
 
     m_isWindowed = isWindowed;
+}
+
+void NetscapePlugin::setIsTransparent(bool isTransparent)
+{
+    m_isTransparent = isTransparent;
 }
 
 void NetscapePlugin::setStatusbarText(const String& statusbarText)
@@ -436,6 +442,17 @@ bool NetscapePlugin::initialize(PluginController* pluginController, const Parame
         values.append(paramValues[i].data());
     }
 
+#if PLATFORM(MAC)
+    if (m_pluginModule->pluginQuirks().contains(PluginQuirks::MakeTransparentIfBackgroundAttributeExists)) {
+        for (size_t i = 0; i < parameters.names.size(); ++i) {
+            if (equalIgnoringCase(parameters.names[i], "background")) {
+                setIsTransparent(true);
+                break;
+            }
+        }
+    }
+#endif
+
     NetscapePlugin* previousNPPNewPlugin = currentNPPNewPlugin;
     
     m_inNPPNew = true;
@@ -504,6 +521,11 @@ PassRefPtr<ShareableBitmap> NetscapePlugin::snapshot()
     platformPaint(context.get(), m_frameRect, true);
     
     return bitmap.release();
+}
+
+bool NetscapePlugin::isTransparent()
+{
+    return m_isTransparent;
 }
 
 void NetscapePlugin::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
