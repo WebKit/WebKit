@@ -1,3 +1,26 @@
+2011-03-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        GYP build of JavaScriptCore should be able to link from an empty WebKitBuild directory
+        https://bugs.webkit.org/show_bug.cgi?id=56803
+
+        Previously, we thought we should generate the derived source files in
+        the shared intermediate build products directory, but there are
+        assumptions built into other parts of the Mac build system that the
+        derived source files will be generated in a particular subdirectory of
+        the build products directory.
+
+        This patch is a partial revert of the change that moved the derived
+        source files to the shared intermediate directory.  After this patch,
+        the GYP build can build JavaScriptCore without help from the main
+        normal build system.
+
+        * JavaScriptCore.gypi:
+        * gyp/JavaScriptCore.gyp:
+        * gyp/generate-derived-sources.sh:
+        * gyp/generate-dtrace-header.sh:
+
 2011-03-22  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by David Levin.
