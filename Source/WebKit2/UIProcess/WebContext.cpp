@@ -29,6 +29,7 @@
 #include "DownloadProxy.h"
 #include "ImmutableArray.h"
 #include "InjectedBundleMessageKinds.h"
+#include "Logging.h"
 #include "RunLoop.h"
 #include "SandboxExtension.h"
 #include "TextChecker.h"
@@ -125,6 +126,10 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_shouldPaintNativeControls(true)
 #endif
 {
+#ifndef NDEBUG
+    WebKit::initializeLogChannelsIfNecessary();
+#endif
+
     contexts().append(this);
 
     addLanguageChangeObserver(this, languageChanged);

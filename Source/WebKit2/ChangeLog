@@ -1,3 +1,21 @@
+2011-03-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Brian Weinstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56783
+        Actually hook up WebKit2 logging on Mac.
+
+        * Platform/Logging.cpp:
+        (WebKit::initializeLogChannel):
+        * Platform/Logging.h:
+        * Platform/mac/Logging.mac.mm: Added.
+        (WebKit::initializeLogChannel):
+ 
+       * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext): Initialize logging if necessary.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2011-03-21  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

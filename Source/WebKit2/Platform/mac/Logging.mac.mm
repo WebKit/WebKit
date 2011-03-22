@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,35 +26,20 @@
 #include "config.h"
 #include "Logging.h"
 
-#if !LOG_DISABLED
-
 namespace WebKit {
 
-WTFLogChannel LogSessionState = { 0x00000001, "WebKit2LogLevel", WTFLogChannelOff };
-WTFLogChannel LogContextMenu  = { 0x00000002, "WebKit2LogLevel", WTFLogChannelOff };
-WTFLogChannel LogTextInput    = { 0x00000004, "WebKit2LogLevel", WTFLogChannelOff };
-WTFLogChannel LogView         = { 0x00000008, "WebKit2LogLevel", WTFLogChannelOff };
-
-#if !PLATFORM(MAC)
 void initializeLogChannel(WTFLogChannel* channel)
 {
-    // FIXME: Each platform will need to define their own initializeLogChannel().
-}
-#endif
-
-void initializeLogChannelsIfNecessary()
-{
-    static bool haveInitializedLogChannels = false;
-    if (haveInitializedLogChannels)
+    channel->state = WTFLogChannelOff;
+    NSString *logLevelString = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithUTF8String:channel->defaultName]];
+    if (!logLevelString)
         return;
-    haveInitializedLogChannels = true;
-
-    initializeLogChannel(&LogContextMenu);
-    initializeLogChannel(&LogSessionState);
-    initializeLogChannel(&LogTextInput);
-    initializeLogChannel(&LogView);
+        
+    unsigned logLevel;
+    if (![[NSScanner scannerWithString:logLevelString] scanHexInt:&logLevel])
+        NSLog(@"unable to parse hex value for %s (%@), logging is off", channel->defaultName, logLevelString);
+    if ((logLevel & channel->mask) == channel->mask)
+        channel->state = WTFLogChannelOn;
 }
 
 } // namespace WebKit
-
-#endif // LOG_DISABLED

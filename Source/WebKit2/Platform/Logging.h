@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Logging_h
-#define Logging_h
+#ifndef WebKitLogging_h
+#define WebKitLogging_h
 
 #include <wtf/Assertions.h>
 
@@ -34,16 +34,17 @@
 #define LOG_CHANNEL_PREFIX Log
 #endif
 
-EXTERN_C_BEGIN
+namespace WebKit {
 
 extern WTFLogChannel LogContextMenu;
 extern WTFLogChannel LogSessionState;
 extern WTFLogChannel LogTextInput;
 extern WTFLogChannel LogView;
 
+void initializeLogChannel(WTFLogChannel*);
 void initializeLogChannelsIfNecessary(void);
 
-EXTERN_C_END
+} // namespace WebKit
 
 #endif // LOG_DISABLED
 
