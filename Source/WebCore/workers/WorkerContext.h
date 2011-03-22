@@ -50,6 +50,8 @@ namespace WebCore {
     class Database;
     class DatabaseCallback;
     class DatabaseSync;
+    class EntryCallback;
+    class EntrySync;
     class ErrorCallback;
     class FileSystemCallback;
     class NotificationCenter;
@@ -129,8 +131,10 @@ namespace WebCore {
             TEMPORARY,
             PERSISTENT,
         };
-        void requestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>);
+        void requestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback>);
         PassRefPtr<DOMFileSystemSync> requestFileSystemSync(int type, long long size, ExceptionCode&);
+        void resolveLocalFileSystemURL(const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback>);
+        PassRefPtr<EntrySync> resolveLocalFileSystemSyncURL(const String& url, ExceptionCode&);
 #endif
 
         // These methods are used for GC marking. See JSWorkerContext::markChildren(MarkStack&) in

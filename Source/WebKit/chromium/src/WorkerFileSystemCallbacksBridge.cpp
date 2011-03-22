@@ -151,9 +151,9 @@ void WorkerFileSystemCallbacksBridge::stop()
     }
 }
 
-void WorkerFileSystemCallbacksBridge::postOpenFileSystemToMainThread(WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, const String& mode)
+void WorkerFileSystemCallbacksBridge::postOpenFileSystemToMainThread(WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, const String& mode)
 {
-    dispatchTaskToMainThread(createCallbackTask(&openFileSystemOnMainThread, commonClient, type, size, this, mode));
+    dispatchTaskToMainThread(createCallbackTask(&openFileSystemOnMainThread, commonClient, type, size, create, this, mode));
 }
 
 void WorkerFileSystemCallbacksBridge::postMoveToMainThread(WebFileSystem* fileSystem, const String& sourcePath, const String& destinationPath, const String& mode)
@@ -213,12 +213,12 @@ void WorkerFileSystemCallbacksBridge::postReadDirectoryToMainThread(WebFileSyste
     dispatchTaskToMainThread(createCallbackTask(&readDirectoryOnMainThread, fileSystem, path, this, mode));
 }
 
-void WorkerFileSystemCallbacksBridge::openFileSystemOnMainThread(ScriptExecutionContext*, WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
+void WorkerFileSystemCallbacksBridge::openFileSystemOnMainThread(ScriptExecutionContext*, WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
 {
     if (!commonClient)
         bridge->didFailOnMainThread(WebFileErrorAbort, mode);
     else {
-        commonClient->openFileSystem(type, size, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
+        commonClient->openFileSystem(type, size, create, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
     }
 }
 

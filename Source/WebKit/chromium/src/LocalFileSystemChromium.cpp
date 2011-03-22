@@ -57,27 +57,38 @@ LocalFileSystem& LocalFileSystem::localFileSystem()
     return *localFileSystem;
 }
 
-void LocalFileSystem::readFileSystem(ScriptExecutionContext* context, AsyncFileSystem::Type type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
-{
-    ASSERT(context && context->isDocument());
-    Document* document = static_cast<Document*>(context);
-    WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
-    webFrame->client()->openFileSystem(webFrame, static_cast<WebFileSystem::Type>(type), 0, false, new WebFileSystemCallbacksImpl(callbacks, type));
-}
+namespace {
 
-void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, AsyncFileSystem::Type type, long long size, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, bool synchronous)
+enum CreationFlag {
+    OpenExisting,
+    CreateIfNotPresent
+};
+
+} // namespace
+
+static void openFileSystemHelper(ScriptExecutionContext* context, AsyncFileSystem::Type type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, bool synchronous, long long size, CreationFlag create)
 {
     ASSERT(context);
     if (context->isDocument()) {
         Document* document = static_cast<Document*>(context);
         WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
-        webFrame->client()->openFileSystem(webFrame, static_cast<WebFileSystem::Type>(type), size, true, new WebFileSystemCallbacksImpl(callbacks, type));
+        webFrame->client()->openFileSystem(webFrame, static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, type));
     } else {
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
         WorkerLoaderProxy* workerLoaderProxy = &workerContext->thread()->workerLoaderProxy();
         WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
-        webWorker->openFileSystemForWorker(static_cast<WebFileSystem::Type>(type), size, new WebFileSystemCallbacksImpl(callbacks, type, context, synchronous), synchronous);
+        webWorker->openFileSystemForWorker(static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, type, context, synchronous), synchronous);
     }
+}
+
+void LocalFileSystem::readFileSystem(ScriptExecutionContext* context, AsyncFileSystem::Type type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, bool synchronous)
+{
+    openFileSystemHelper(context, type, callbacks, synchronous, 0, OpenExisting);
+}
+
+void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, AsyncFileSystem::Type type, long long size, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, bool synchronous)
+{
+    openFileSystemHelper(context, type, callbacks, synchronous, size, CreateIfNotPresent);
 }
 
 } // namespace WebCore

@@ -1,3 +1,23 @@
+2011-03-21  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by David Levin.
+
+        [fileapi] Add URI resolution support to WorkerContext
+        https://bugs.webkit.org/show_bug.cgi?id=55644
+
+        Tests: http/tests/filesystem/workers/resolve-url-sync.html
+               http/tests/filesystem/workers/resolve-url.html
+
+        * fileapi/LocalFileSystem.cpp:
+        (WebCore::LocalFileSystem::readFileSystem):
+        Add support for workers.
+        * fileapi/LocalFileSystem.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::resolveLocalFileSystemURL):
+        (WebCore::WorkerContext::resolveLocalFileSystemSyncURL):
+        * workers/WorkerContext.h:
+        * workers/WorkerContext.idl:
+
 2011-03-21  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.

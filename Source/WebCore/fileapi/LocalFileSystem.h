@@ -54,7 +54,7 @@ public:
     static LocalFileSystem& localFileSystem();
 
     // Does not create the root path for file system, just reads it if available.
-    void readFileSystem(ScriptExecutionContext*, AsyncFileSystem::Type, PassOwnPtr<AsyncFileSystemCallbacks>);
+    void readFileSystem(ScriptExecutionContext*, AsyncFileSystem::Type, PassOwnPtr<AsyncFileSystemCallbacks>, bool synchronous = false);
 
     void requestFileSystem(ScriptExecutionContext*, AsyncFileSystem::Type, long long size, PassOwnPtr<AsyncFileSystemCallbacks>, bool synchronous = false);
 

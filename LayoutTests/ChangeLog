@@ -1,3 +1,27 @@
+2011-03-21  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by David Levin.
+
+        [fileapi] Add URI resolution support to WorkerContext
+        https://bugs.webkit.org/show_bug.cgi?id=55644
+
+        Note that these tests do not run as part of new-run-webkit-tests,
+        but rather in Chromium's ui_test. I've run them locally and confirmed
+        they pass; a subsequent Chromium change will be submitted to run them
+        on the Chromium build bots.
+
+        * http/tests/filesystem/resources/fs-worker-common.js: Added.
+        * http/tests/filesystem/resources/fs-worker-test-util.js: Added.
+        Copied from fast/filesystem/resources for use by HTTP tests.
+        * http/tests/filesystem/script-tests/resolve-uri.js:
+        Updated to be used either in window or worker context.
+        * http/tests/filesystem/workers/resolve-url-expected.txt: Added.
+        * http/tests/filesystem/workers/resolve-url-sync-expected.txt: Added.
+        * http/tests/filesystem/workers/resolve-url-sync.html: Added.
+        * http/tests/filesystem/workers/resolve-url.html: Added.
+        * http/tests/filesystem/workers/script-tests/TEMPLATE.html: Added.
+        * http/tests/filesystem/workers/script-tests/resolve-url-sync.js: Added.
+
 2011-03-21  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.

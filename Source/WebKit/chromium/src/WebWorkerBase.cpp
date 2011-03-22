@@ -237,7 +237,7 @@ bool WebWorkerBase::allowDatabase(WebFrame*, const WebString& name, const WebStr
 }
 
 #if ENABLE(FILE_SYSTEM)
-void WebWorkerBase::openFileSystemForWorker(WebFileSystem::Type type, long long size, WebFileSystemCallbacks* callbacks, bool synchronous)
+void WebWorkerBase::openFileSystemForWorker(WebFileSystem::Type type, long long size, bool create, WebFileSystemCallbacks* callbacks, bool synchronous)
 {
     WorkerRunLoop& runLoop = m_workerThread->runLoop();
     WorkerScriptController* controller = WorkerScriptController::controllerForContext();
@@ -248,7 +248,7 @@ void WebWorkerBase::openFileSystemForWorker(WebFileSystem::Type type, long long 
     mode.append(String::number(runLoop.createUniqueId()));
 
     RefPtr<WorkerFileSystemCallbacksBridge> bridge = WorkerFileSystemCallbacksBridge::create(this, workerContext, callbacks);
-    bridge->postOpenFileSystemToMainThread(commonClient(), type, size, mode);
+    bridge->postOpenFileSystemToMainThread(commonClient(), type, size, create, mode);
 
     if (synchronous) {
         if (runLoop.runInMode(workerContext, mode) == MessageQueueTerminated)

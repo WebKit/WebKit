@@ -92,7 +92,7 @@ public:
     virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize);
 
 #if ENABLE(FILE_SYSTEM)
-    void openFileSystemForWorker(WebFileSystem::Type, long long size, WebFileSystemCallbacks*, bool synchronous);
+    void openFileSystemForWorker(WebFileSystem::Type, long long size, bool create, WebFileSystemCallbacks*, bool synchronous);
 #endif
 
     // Executes the given task on the main thread.

@@ -1,3 +1,8 @@
+if (this.importScripts) {
+    importScripts('../resources/fs-worker-common.js');
+    importScripts('../resources/fs-test-util.js');
+}
+
 description("Tests using resolveLocalFileSystemURL to obtain an Entry from a URL");
 
 var testFileName = '/testFile';
@@ -163,10 +168,10 @@ function fileSystemCallback(fs) {
     cleanupAndRunNext();
 }
 
-if (window.requestFileSystem) {
-    window.jsTestIsAsync = true;
-    requestFileSystem(window.TEMPORARY, 100, fileSystemCallback, errorCallback);
+if (this.requestFileSystem) {
+    jsTestIsAsync = true;
+    requestFileSystem(this.TEMPORARY, 100, fileSystemCallback, errorCallback);
 } else
     debug("This test requires FileSystem API support.");
 
-window.successfullyParsed = true;
+var successfullyParsed = true;
